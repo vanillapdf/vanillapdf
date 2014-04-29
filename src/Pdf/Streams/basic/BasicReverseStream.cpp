@@ -1,0 +1,81 @@
+#include "BasicReverseStream.h"
+#include "Constants.h"
+
+#include <cassert>
+
+namespace Pdf
+{
+	namespace Streams
+	{
+		namespace Basic
+		{
+			using namespace std;
+
+			ReverseStream::ReverseStream(std::istream& stream) : Raw::ReverseStream(stream) {}
+
+			Character ReverseStream::Peek()
+			{
+				/*
+				auto settings = SettingsGet();
+				auto pos = tellg();
+				char ch;
+				do
+				{
+					ch = peek();
+				} while (std::find(settings->skip.begin(), settings->skip.end(), ch) != settings->skip.end());
+
+				seekg(pos);
+				return Character(ch);
+				*/
+
+				return Character(peek());
+			}
+
+			Character ReverseStream::Get()
+			{
+				/*
+				auto settings = SettingsGet();
+				char ch;
+				do
+				{
+					ch = get();
+				} while (std::find(settings->skip.begin(), settings->skip.end(), ch) != settings->skip.end());
+				*/
+
+				return Character(get());
+			}
+
+			unique_ptr<CharacterSet> ReverseStream::Readline(void)
+			{
+				unique_ptr<CharacterSet> result(new CharacterSet());
+
+				char buf[Constant::BUFFER_SIZE];
+
+				auto begin = &buf[0];
+				auto end = &buf[Constant::BUFFER_SIZE - 1];
+
+				getline(buf, Constant::BUFFER_SIZE);
+				auto read = gcount();
+
+				while (Constant::BUFFER_SIZE == read)
+				{
+					reverse(begin, end);
+					result->Insert(result->begin(), begin, end);
+					getline(buf, Constant::BUFFER_SIZE);
+					read = gcount();
+				}
+
+				end = &buf[read];
+				reverse(begin, end);
+				result->Insert(result->begin(), begin, end);
+
+				unget();
+
+				return result;
+			}
+
+			void ReverseStream::Unget() { unget(); }
+		}
+	}
+}
+

@@ -1,0 +1,50 @@
+#include "StringObject.h"
+#include "CharacterSet.h"
+#include "Token.h"
+
+#include <cassert>
+#include <string>
+
+namespace Pdf
+{
+	using namespace std;
+	using namespace Lexical;
+
+	LiteralString::LiteralString(const Token& token) : StringObject(Object::Type::LiteralString, token.value()) {}
+	LiteralString::LiteralString(const CharacterSet& value) : StringObject(Object::Type::LiteralString, value)
+	{
+		// TODO remove <> if contains
+	}
+
+	HexadecimalString::HexadecimalString(const Token& token) : StringObject(Object::Type::HexadecimalString)
+	{
+		auto charset = token.value();
+		_hexadecimal = string(charset.begin(), charset.end());
+
+		int len = (_hexadecimal.length() / 2) - 2;
+
+		for (int i = 0; i < len; ++i)
+		{
+			int val = stoi(_hexadecimal.substr(i * 2, 2), 0, 16);
+			Character ch = Character(val);
+			_value.PushBack(ch);
+		}
+	}
+
+	HexadecimalString::HexadecimalString(const CharacterSet& value) : StringObject(Object::Type::HexadecimalString)
+	{
+		_hexadecimal = string(value.begin(), value.end());
+
+		int len = (_hexadecimal.length() / 2) - 2;
+		
+		for (int i = 0; i < len; ++i)
+		{
+			int val = stoi(_hexadecimal.substr(i * 2, 2), 0, 16);
+			Character ch = Character(val);
+			_value.PushBack(ch);
+		}
+	}
+
+	StringObject::StringObject(Type type, const CharacterSet& value) : Object(type), _value(value) { assert(type == Object::Type::HexadecimalString || type == Object::Type::LiteralString); }
+	StringObject::StringObject(Type type) : Object(type) { assert(type == Object::Type::HexadecimalString || type == Object::Type::LiteralString); }
+}

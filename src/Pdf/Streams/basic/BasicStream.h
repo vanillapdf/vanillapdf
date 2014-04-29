@@ -1,0 +1,29 @@
+#ifndef _BASIC_STREAM_H
+#define _BASIC_STREAM_H
+
+#include "streams/basic/BasicBaseStream.h"
+#include "streams/raw/RawStream.h"
+
+namespace Pdf
+{
+	namespace Streams
+	{
+		namespace Basic
+		{
+			class Stream : public Basic::BaseStream, public Raw::Stream
+			{
+			public:
+				explicit Stream(std::istream& stream);
+
+				Pdf::Streams::Basic::Stream::Stream(const Pdf::Streams::Basic::Stream &);
+
+				virtual Character Peek() override;
+				virtual Character Get() override;
+				virtual void Unget() override;
+				virtual std::unique_ptr<CharacterSet> Readline(void) override;
+			};
+		}
+	}
+}
+
+#endif /* _BASIC_STREAM_H */
