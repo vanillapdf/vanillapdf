@@ -52,6 +52,7 @@ namespace Pdf
 		explicit Character(ValueType value);
 		explicit Character(WhiteSpace value);
 		explicit Character(Delimiter value);
+		explicit Character(Numeric value);
 
 		bool isRegular(void) const;
 		bool isSpace(void) const;
@@ -62,18 +63,19 @@ namespace Pdf
 
 		Character& operator= (ValueType value);
 
-		friend bool operator== (const Character& c1, const Character& c2);
-		friend bool operator!= (const Character& c1, const Character& c2);
-
 		operator ValueType() const { return _value; }
 		ValueType value(void) const;
 
 		friend Streams::Basic::BaseStream& operator>> (Streams::Basic::BaseStream& s, Character& o);
 		
+		friend bool operator== (const Character& c1, const Character& c2);
+		friend bool operator!= (const Character& c1, const Character& c2);
 		friend bool operator== (const Character& c1, const WhiteSpace c2);
 		friend bool operator!= (const Character& c1, const WhiteSpace c2);
 		friend bool operator== (const Character& c1, const Delimiter c2);
 		friend bool operator!= (const Character& c1, const Delimiter c2);
+		friend bool operator== (const Character& c1, const Numeric c2);
+		friend bool operator!= (const Character& c1, const Numeric c2);
 
 	private:
 		ValueType _value;

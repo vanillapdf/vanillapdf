@@ -8,15 +8,47 @@ namespace Pdf
 {
 	using Streams::Basic::BaseStream;
 
-	bool Character::isRegular(void) const
+	#pragma region Constructors
+
+	Character::Character() : _value(0) {}
+	Character::Character(ValueType value) : _value(value) {}
+	Character::Character(WhiteSpace value) : _value(static_cast<ValueType>(value)) {}
+	Character::Character(Delimiter value) : _value(static_cast<ValueType>(value)) {}
+	Character::Character(Numeric value) : _value(static_cast<ValueType>(value)) {}
+
+	#pragma endregion
+
+	#pragma region Operators
+
+	unsigned char Character::value(void) const { return _value; }
+
+	bool operator==(const Character& c1, const Character& c2) { return c1._value == c2._value; }
+	bool operator!=(const Character& c1, const Character& c2) { return c1._value != c2._value; }
+
+	bool operator==(const Character& c1, const Character::WhiteSpace c2) { return c1 == static_cast<Character::ValueType>(c2); }
+	bool operator==(const Character& c1, const Character::Delimiter c2) { return c1 == static_cast<Character::ValueType>(c2); }
+	bool operator==(const Character& c1, const Character::Numeric c2) { return c1 == static_cast<Character::ValueType>(c2); }
+	bool operator!=(const Character& c1, const Character::WhiteSpace c2) { return c1 != static_cast<Character::ValueType>(c2); }
+	bool operator!=(const Character& c1, const Character::Delimiter c2) { return c1 != static_cast<Character::ValueType>(c2); }
+	bool operator!=(const Character& c1, const Character::Numeric c2) { return c1 != static_cast<Character::ValueType>(c2); }
+
+	Character& Character::operator=(ValueType value)
 	{
-		return !isWhiteSpace() && !isDelimiter();
+		this->_value = value;
+		return *this;
 	}
 
-	bool Character::isSpace(void) const
+	BaseStream& operator>>(BaseStream& s, Character& o)
 	{
-		return *this == WhiteSpace::SPACE;
+		o = s.Get();
+		return s;
 	}
+
+	#pragma endregion
+
+	bool Character::isRegular(void) const { return !isWhiteSpace() && !isDelimiter(); }
+	bool Character::isSpace(void) const { return *this == WhiteSpace::SPACE; }
+	bool Character::isEndOfLine(void) const { return *this == WhiteSpace::LINE_FEED; }
 
 	bool Character::isWhiteSpace(void) const
 	{
@@ -54,37 +86,6 @@ namespace Pdf
 		return false;
 	}
 
-	Character& Character::operator=(ValueType value)
-	{
-		this->_value = value;
-		return *this;
-	}
-
-	Character::Character(ValueType value)
-	{
-		this->_value = value;
-	}
-
-	Character::Character()
-	{
-		this->_value = 0;
-	}
-
-	Character::Character(WhiteSpace value)
-	{
-		this->_value = static_cast<ValueType>(value);
-	}
-
-	Character::Character(Delimiter value)
-	{
-		this->_value = static_cast<ValueType>(value);
-	}
-
-	bool Character::isEndOfLine(void) const
-	{
-		return *this == WhiteSpace::LINE_FEED;
-	}
-
 	bool Character::isNumeric(void) const
 	{
 		switch (_value)
@@ -103,45 +104,5 @@ namespace Pdf
 		}
 
 		return false;
-	}
-
-	unsigned char Character::value(void) const
-	{
-		return _value;
-	}
-
-	bool operator==(const Character& c1, const Character& c2)
-	{
-		return c1._value == c2._value;
-	}
-
-	bool operator!=(const Character& c1, const Character& c2)
-	{
-		return c1._value != c2._value;
-	}
-
-	BaseStream& operator>>(BaseStream& s, Character& o)
-	{
-		o = s.Get();
-		return s;
-	}
-
-	bool operator==(const Character& c1, const Character::WhiteSpace c2)
-	{
-		return c1 == static_cast<Character::ValueType>(c2);
-	}
-
-	bool operator==(const Character& c1, const Character::Delimiter c2)
-	{
-		return c1 == static_cast<Character::ValueType>(c2);
-	}
-	bool operator!=(const Character& c1, const Character::WhiteSpace c2)
-	{
-		return c1 != static_cast<Character::ValueType>(c2);
-	}
-
-	bool operator!=(const Character& c1, const Character::Delimiter c2)
-	{
-		return c1 != static_cast<Character::ValueType>(c2);
 	}
 }

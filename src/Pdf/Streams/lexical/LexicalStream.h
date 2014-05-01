@@ -4,6 +4,7 @@
 #include "streams/lexical/LexicalBaseStream.h"
 #include "streams/basic/BasicStream.h"
 #include "BaseObjects/Object.h"
+#include "Constants.h"
 
 namespace Pdf
 {
@@ -29,8 +30,8 @@ namespace Pdf
 				//friend Stream& operator>> (Stream& s, DictionaryObject& o);
 				//friend Stream& operator>> (Stream& s, ArrayObject& o);
 
-				virtual std::unique_ptr<Pdf::Lexical::Token> ReadToken() override;
-				virtual std::unique_ptr<Pdf::Lexical::Token> PeekToken() override;
+				virtual std::shared_ptr<Pdf::Lexical::Token> ReadToken() override;
+				virtual std::shared_ptr<Pdf::Lexical::Token> PeekToken() override;
 				virtual Pdf::Lexical::Token::Type PeekTokenType() override;
 
 				Pdf::Streams::Lexical::Stream::Stream(const Pdf::Streams::Lexical::Stream &);
@@ -39,6 +40,10 @@ namespace Pdf
 				//using Lexical::BaseStream::ReadTokenWithType;
 
 				virtual ~Stream();
+
+			private:
+				std::shared_ptr<Pdf::Lexical::Token> _last_token;
+				streamOffsetValueType _last_token_offset, _advance_position;
 			};
 		}
 	}

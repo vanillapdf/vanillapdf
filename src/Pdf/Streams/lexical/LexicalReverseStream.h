@@ -3,6 +3,7 @@
 
 #include "streams/lexical/LexicalBaseStream.h"
 #include "streams/Basic/BasicReverseStream.h"
+#include "Constants.h"
 
 #include <vector>
 
@@ -31,10 +32,14 @@ namespace Pdf
 				//friend ReverseStream& operator>> (ReverseStream& s, DictionaryObject& o);
 				//friend ReverseStream& operator>> (ReverseStream& s, Trailer& o);
 
-				virtual std::unique_ptr<Pdf::Lexical::Token> ReadToken() override;
-				virtual std::unique_ptr<Pdf::Lexical::Token> PeekToken() override;
+				virtual std::shared_ptr<Pdf::Lexical::Token> ReadToken() override;
+				virtual std::shared_ptr<Pdf::Lexical::Token> PeekToken() override;
 
 				virtual ~ReverseStream();
+
+			private:
+				std::shared_ptr<Pdf::Lexical::Token> _last_token;
+				streamOffsetValueType _last_token_offset, _advance_position;
 			};
 		}
 	}

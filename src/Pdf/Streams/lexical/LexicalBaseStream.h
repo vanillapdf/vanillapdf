@@ -15,10 +15,10 @@ namespace Pdf
 			class BaseStream
 			{
 			public:
-				virtual std::unique_ptr<Pdf::Lexical::Token> ReadToken() = 0;
-				virtual std::unique_ptr<Pdf::Lexical::Token> PeekToken() = 0;
+				virtual std::shared_ptr<Pdf::Lexical::Token> ReadToken() = 0;
+				virtual std::shared_ptr<Pdf::Lexical::Token> PeekToken() = 0;
 				virtual Pdf::Lexical::Token::Type PeekTokenType();
-				virtual std::unique_ptr<Pdf::Lexical::Token> ReadTokenWithType(Pdf::Lexical::Token::Type type);
+				virtual std::shared_ptr<Pdf::Lexical::Token> ReadTokenWithType(Pdf::Lexical::Token::Type type);
 				virtual ~BaseStream() = 0;
 			};
 		}

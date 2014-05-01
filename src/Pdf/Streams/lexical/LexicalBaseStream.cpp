@@ -10,7 +10,7 @@ namespace Pdf
 			using namespace std;
 			using Pdf::Lexical::Token;
 
-			unique_ptr<Token> BaseStream::ReadTokenWithType(Token::Type type)
+			shared_ptr<Token> BaseStream::ReadTokenWithType(Token::Type type)
 			{
 				auto token = ReadToken();
 				if (token->type() != type)

@@ -19,46 +19,53 @@ namespace Pdf
 
 			ReverseStream::ReverseStream(istream& stream) : Basic::ReverseStream(stream) {}
 
-			unique_ptr<Token> ReverseStream::ReadToken()
+			shared_ptr<Token> ReverseStream::ReadToken()
 			{
-			retry:
+				if (_last_token_offset == tellg())
+				{
+					assert(nullptr != _last_token);
+					assert(_BADOFF != _advance_position);
+					assert(_BADOFF != _last_token_offset);
+
+					auto result = _last_token;
+
+					seekg(_advance_position);
+					assert(!eof());
+					assert(!fail());
+
+					_last_token = nullptr;
+					_last_token_offset = _BADOFF;
+					_advance_position = _BADOFF;
+
+					return result;
+				}
 
 				CharacterSet chars;
+
+			retry:
 				Character ch = Get();
 				Character ahead = Peek();
+				Token::Type result_type = Token::Type::UNKNOWN;
 
 				switch (ch)
 				{
 				case Character::WhiteSpace::LINE_FEED:
 					chars.PushBack(ch);
-					return unique_ptr<Token>(new Token(Token::Type::EOL, chars));
+					if (ahead == Character::WhiteSpace::SPACE || ahead == Character::WhiteSpace::CARRIAGE_RETURN)
+						chars.PushBack(Get());
+
+					result_type = Token::Type::EOL;
+					goto prepared;
 				case Character::WhiteSpace::SPACE:
-					if (Peek() == Character::WhiteSpace::LINE_FEED)
-					{
-						chars.PushBack(ch);
-						chars.PushBack(Get());
-					}
-					else
-						goto retry;
-
-					return unique_ptr<Token>(new Token(Token::Type::EOL, chars));
-				case Character::WhiteSpace::CARRIAGE_RETURN:
-					if (ahead == Character::WhiteSpace::LINE_FEED)
-					{
-						chars.PushBack(ch);
-						chars.PushBack(Get());
-					}
-					else
-						throw Exception("Unexpected character follows intended EOL after carriage return: " + ahead);
-
-					return unique_ptr<Token>(new Token(Token::Type::EOL, chars));
+					goto retry;
 				case Character::Delimiter::GREATER_THAN_SIGN:
 					if (ahead == Character::Delimiter::GREATER_THAN_SIGN)
 					{
 						chars.PushBack(ch);
 						chars.PushBack(Get());
 
-						return unique_ptr<Token>(new Token(Token::Type::DICTIONARY_END, chars));
+						result_type = Token::Type::DICTIONARY_END;
+						goto prepared;
 					}
 					else
 						throw Exception("Unexpected character follows intended dictionary end: " + ahead);
@@ -68,7 +75,9 @@ namespace Pdf
 						// Little HACK >> twice
 						chars.PushBack(ch);
 						chars.PushBack(Get());
-						return unique_ptr<Token>(new Token(Token::Type::DICTIONARY_BEGIN, chars));
+
+						result_type = Token::Type::DICTIONARY_BEGIN;
+						goto prepared;
 					}
 					else
 					{
@@ -76,14 +85,17 @@ namespace Pdf
 						while (Peek() != Character::Delimiter::GREATER_THAN_SIGN)
 							chars.PushBack(Get());
 
-						return unique_ptr<Token>(new Token(Token::Type::HEXADECIMAL_STRING, chars));
+						result_type = Token::Type::HEXADECIMAL_STRING;
+						goto eat;
 					}
 				case Character::Delimiter::LEFT_SQUARE_BRACKET:
 					chars.PushBack(ch);
-					return unique_ptr<Token>(new Token(Token::Type::ARRAY_BEGIN, chars));
+					result_type = Token::Type::ARRAY_BEGIN;
+					goto prepared;
 				case Character::Delimiter::RIGHT_SQUARE_BRACKET:
 					chars.PushBack(ch);
-					return unique_ptr<Token>(new Token(Token::Type::ARRAY_END, chars));
+					result_type = Token::Type::ARRAY_END;
+					goto prepared;
 				case Character::Delimiter::SOLIDUS:
 					while (!(Peek().isWhiteSpace() || Peek().isDelimiter()))
 					{
@@ -91,17 +103,21 @@ namespace Pdf
 						chars.PushBack(Get());
 					}
 
-					return unique_ptr<Token>(new Token(Token::Type::NAME_OBJECT, chars));
+					result_type = Token::Type::NAME_OBJECT;
+					goto prepared;
 				case Character::Delimiter::LEFT_PARENTHESIS:
 					while (Peek() != Character::Delimiter::RIGHT_PARENTHESIS)
 						chars.PushBack(Get());
 
-					return unique_ptr<Token>(new Token(Token::Type::LITERAL_STRING, chars));
+					result_type = Token::Type::LITERAL_STRING;
+					goto eat;
 				default:
 					if (ch == 'R')
 					{
 						chars.PushBack(ch);
-						return unique_ptr<Token>(new Token(Token::Type::INDIRECT_REFERENCE_MARKER, chars));
+
+						result_type = Token::Type::INDIRECT_REFERENCE_MARKER;
+						goto prepared;
 					}
 
 					if (ch.isNumeric() || ch == '+' || ch == '-')
@@ -117,30 +133,56 @@ namespace Pdf
 							while (Peek().isNumeric())
 								chars.PushBack(Get());
 
-							return unique_ptr<Token>(new Token(Token::Type::REAL_OBJECT, chars));
+							result_type = Token::Type::REAL_OBJECT;
+							goto prepared;
 						}
 
-						return unique_ptr<Token>(new Token(Token::Type::INTEGER_OBJECT, chars));
+						result_type = Token::Type::INTEGER_OBJECT;
+						goto prepared;
 					}
 
 					chars.PushBack(ch);
 					while (!(Peek().isWhiteSpace() || Peek().isDelimiter()))
 						chars.PushBack(Get());
+
+
+					while (!(Peek().isRegular() || Peek().isWhiteSpace()))
+						chars.PushBack(Get());
+
+					goto prepared;
 				}
 
-				return unique_ptr<Token>(new Token(chars));
+			eat:
+				Get();
+
+			prepared:
+				chars.Reverse();
+				return shared_ptr<Token>(new Token(result_type, chars));
 			}
 
 			ReverseStream::~ReverseStream() {}
 
-			unique_ptr<Token> ReverseStream::PeekToken()
+			shared_ptr<Token> ReverseStream::PeekToken()
 			{
-				auto result = ReadToken();
-				auto size = result->value().Size();
-				for (int i = 0; i < size; ++i)
-					Unget();
+				if (_last_token_offset == tellg())
+				{
+					assert(nullptr != _last_token);
+					assert(_BADOFF != _advance_position);
+					assert(_BADOFF != _last_token_offset);
 
-				return result;
+					return _last_token;
+				}
+
+				auto pos = tellg();
+				_last_token = ReadToken();
+				_advance_position = tellg();
+				_last_token_offset = pos;
+
+				seekg(_last_token_offset);
+				assert(!eof());
+				assert(!fail());
+
+				return _last_token;
 			}
 		}
 	}
