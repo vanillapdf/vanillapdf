@@ -178,4 +178,3 @@ namespace Pdf
 		//bool Stream::GetDeep( void ) const { return _deep; }
 	}
 }
-
