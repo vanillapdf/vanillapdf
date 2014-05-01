@@ -45,9 +45,9 @@ namespace Pdf
 				return Character(get());
 			}
 
-			unique_ptr<Buffer> ReverseStream::Readline(void)
+			shared_ptr<Buffer> ReverseStream::Readline(void)
 			{
-				unique_ptr<Buffer> result(new Buffer());
+				shared_ptr<Buffer> result(new Buffer());
 
 				char buf[Constant::BUFFER_SIZE];
 

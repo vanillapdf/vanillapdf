@@ -27,35 +27,22 @@ namespace Pdf
 
 	Parser& operator>>(Parser& s, ArrayObject& o)
 	{
-		auto token = s.PeekToken();
+		s.LexicalSettingsPush();
+		auto settings = s.LexicalSettingsGet();
+		settings->skip.push_back(Token::Type::EOL);
 
-		if (token->type() == Token::Type::ARRAY_BEGIN)
-		{
+		if (s.PeekTokenType() == Token::Type::ARRAY_BEGIN)
 			s.ReadToken();
-			token = s.PeekToken();
-		}
 
-		if (s.PeekToken()->type() == Token::Type::EOL)
-		{
-			s.ReadToken();
-			token = s.PeekToken();
-		}
-
-		while (token->type() != Token::Type::ARRAY_END)
+		while (s.PeekTokenType() != Token::Type::ARRAY_END)
 		{
 			auto val = s.readObject();
 			o._list.push_back(val);
-
-			while (s.PeekToken()->type() == Token::Type::EOL)
-				s.ReadToken();
-
-			token = s.PeekToken();
 		}
 
 		s.ReadTokenWithType(Token::Type::ARRAY_END);
-		if (s.PeekToken()->type() == Token::Type::EOL)
-			s.ReadToken();
 
+		s.LexicalSettingsPop();
 		return s;
 	}
 }

@@ -67,6 +67,7 @@ namespace Pdf
 		ValueType value(void) const;
 
 		friend Streams::Basic::BaseStream& operator>> (Streams::Basic::BaseStream& s, Character& o);
+		friend Streams::Lexical::Stream& operator>> (Streams::Lexical::Stream& s, Character& o);
 		
 		friend bool operator== (const Character& c1, const Character& c2);
 		friend bool operator!= (const Character& c1, const Character& c2);

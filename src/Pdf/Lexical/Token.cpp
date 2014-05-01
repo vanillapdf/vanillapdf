@@ -14,15 +14,15 @@ namespace Pdf
 
 		Token::Token(Token::Type type) : _type(type) {}
 		Token::Token() : _type(Token::Type::UNKNOWN), _value() {}
-		Token::Token(const Buffer& chars) : _type(evaluate(chars)), _value(chars) { assert(_value.Size() > 0); }
-		Token::Token(const char* chars, int len) : _value(chars, len), _type(evaluate(_value)) { assert(_value.Size() > 0); }
+		Token::Token(const Buffer& chars) : _type(Evaluate(chars)), _value(chars) { assert(_value.Size() > 0); }
+		Token::Token(const char* chars, int len) : _value(chars, len), _type(Evaluate(_value)) { assert(_value.Size() > 0); }
 
 		Token::Token(Type type, const Buffer& chars) : _type(type), _value(chars)
 		{
 			assert(_value.Size() > 0);
 
 			if (_type == Token::Type::UNKNOWN)
-				_type = evaluate(_value);
+				_type = Evaluate(_value);
 		}
 
 		#pragma endregion
@@ -32,7 +32,7 @@ namespace Pdf
 		Token& Token::operator=(const Buffer& s)
 		{
 			_value = s;
-			_type = evaluate(_value);
+			_type = Evaluate(_value);
 			return *this;
 		}
 
@@ -57,7 +57,7 @@ namespace Pdf
 
 		#pragma endregion
 
-		Token::Type Token::evaluate(const Buffer& chars) { return TokenDictionary::find(chars); }
+		Token::Type Token::Evaluate(const Buffer& chars) { return TokenDictionary::find(chars); }
 
 		const Buffer& Token::value() const { return _value; }
 		Token::Type Token::type(void) const { return _type; }

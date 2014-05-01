@@ -37,37 +37,27 @@ namespace Pdf
 
 	Lexical::Parser& operator>>(Lexical::Parser& s, DictionaryObject& o)
 	{
-		auto token = s.PeekToken();
+		s.LexicalSettingsPush();
+		auto settings = s.LexicalSettingsGet();
+		settings->skip.push_back(Token::Type::EOL);
 
-		if (token->type() == Token::Type::DICTIONARY_BEGIN)
-		{
+		if (s.PeekTokenType() == Token::Type::DICTIONARY_BEGIN)
 			s.ReadToken();
-			token = s.PeekToken();
-		}
 
-		if (s.PeekToken()->type() == Token::Type::EOL)
-		{
-			s.ReadToken();
-			token = s.PeekToken();
-		}
-
-		while (token->type() != Token::Type::DICTIONARY_END)
+		while (s.PeekTokenType() != Token::Type::DICTIONARY_END)
 		{
 			auto name = s.readObjectWithType<NameObject>();
 			auto val = s.readObject();
 
+			if (val->GetType() == IObject::Type::NullObject)
+				continue;
+
 			o._list[*name] = val;
-
-			while (s.PeekToken()->type() == Token::Type::EOL)
-				s.ReadToken();
-
-			token = s.PeekToken();
 		}
 
 		s.ReadTokenWithType(Token::Type::DICTIONARY_END);
-		if (s.PeekToken()->type() == Token::Type::EOL)
-			s.ReadToken();
 
+		s.LexicalSettingsPop();
 		return s;
 	}
 

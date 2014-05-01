@@ -42,9 +42,10 @@ namespace Pdf
 					return result;
 				}
 
+				Buffer chars;
+
 			retry:
 
-				Buffer chars;
 				Character ch = Get();
 				Character ahead = Peek();
 				Token::Type result_type = Token::Type::UNKNOWN;
@@ -176,6 +177,11 @@ namespace Pdf
 				Get();
 
 			prepared:
+				auto settings = Lexical::BaseStream::LexicalSettingsGet();
+				if (std::find(settings->skip.begin(), settings->skip.end(), result_type) != settings->skip.end())
+					// TODO handle recursive call using goto probably
+					return ReadToken();
+
 				return shared_ptr<Token>(new Token(result_type, chars));
 			}
 

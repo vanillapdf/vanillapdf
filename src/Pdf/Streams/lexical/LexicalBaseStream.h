@@ -19,6 +19,18 @@ namespace Pdf
 				virtual Pdf::Lexical::Token::Type PeekTokenType();
 				virtual std::shared_ptr<Pdf::Lexical::Token> ReadTokenWithType(Pdf::Lexical::Token::Type type);
 				virtual ~BaseStream() = 0;
+
+				struct LexicalSettings
+				{
+					std::vector<Pdf::Lexical::Token::Type> skip;
+				};
+
+				std::shared_ptr<LexicalSettings> LexicalSettingsGet(void) const;
+				void LexicalSettingsPush(void);
+				std::shared_ptr<LexicalSettings> LexicalSettingsPop(void);
+
+			private:
+				mutable std::vector<std::shared_ptr<LexicalSettings>> _setting_stack;
 			};
 		}
 	}

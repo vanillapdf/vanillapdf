@@ -36,7 +36,7 @@ namespace Pdf
 			};
 
 			static const char* GetTypeValueName(Type type);
-			static Token::Type evaluate(const Buffer& chars);
+			static Token::Type Evaluate(const Buffer& chars);
 
 			Token();
 			explicit Token(const Buffer& chars);

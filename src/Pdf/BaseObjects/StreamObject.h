@@ -14,6 +14,13 @@ namespace Pdf
 	class StreamObject : public Object
 	{
 	public:
+		enum class Type : unsigned char
+		{
+			UNKNOWN = 0,
+			CLASSIC,
+			OBJECT_STREAM
+		};
+
 		StreamObject();
 		explicit StreamObject(boost::intrusive_ptr<DictionaryObject> dictionary);
 
@@ -25,6 +32,7 @@ namespace Pdf
 		std::shared_ptr<Buffer> _data;
 		streamOffsetValueType _rawDataOffset;
 		streamSizeValueType _rawDataLength;
+		Type _type;
 
 		friend void ::boost::intrusive_ptr_add_ref(StreamObject*);
 		friend void ::boost::intrusive_ptr_release(StreamObject*);

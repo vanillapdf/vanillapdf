@@ -17,7 +17,7 @@ namespace Pdf
 
 			Character Stream::Peek()
 			{
-				auto settings = SettingsGet();
+				auto settings = BasicSettingsGet();
 				auto pos = tellg();
 				char ch;
 				do 
@@ -31,7 +31,7 @@ namespace Pdf
 
 			Character Stream::Get()
 			{
-				auto settings = SettingsGet();
+				auto settings = BasicSettingsGet();
 				auto pos = tellg();
 				char ch;
 				do
@@ -42,9 +42,9 @@ namespace Pdf
 				return Character(ch);
 			}
 
-			unique_ptr<Buffer> Stream::Readline()
+			shared_ptr<Buffer> Stream::Readline()
 			{
-				unique_ptr<Buffer> result(new Buffer());
+				shared_ptr<Buffer> result(new Buffer());
 
 				char buf[Constant::BUFFER_SIZE];
 

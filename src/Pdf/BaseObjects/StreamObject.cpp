@@ -15,10 +15,10 @@ namespace Pdf
 	using namespace std;
 
 	StreamObject::StreamObject()
-		: Object(Object::Type::StreamObject), _data(nullptr), _rawDataOffset(_BADOFF), _dictionary(nullptr), _rawDataLength(-1) {}
+		: Object(Object::Type::StreamObject), _data(nullptr), _rawDataOffset(_BADOFF), _dictionary(nullptr), _rawDataLength(-1), _type(Type::UNKNOWN) {}
 
 	StreamObject::StreamObject(boost::intrusive_ptr<DictionaryObject> dictionary)
-		: Object(Object::Type::StreamObject), _data(nullptr), _rawDataOffset(_BADOFF), _dictionary(dictionary), _rawDataLength(-1) {}
+		: Object(Object::Type::StreamObject), _data(nullptr), _rawDataOffset(_BADOFF), _dictionary(dictionary), _rawDataLength(-1), _type(Type::UNKNOWN) {}
 
 	Parser& operator>>(Parser& s, StreamObject& o)
 	{
@@ -28,16 +28,22 @@ namespace Pdf
 			s >> *o._dictionary;
 		}
 
-		auto token = s.PeekToken();
-
-		if (token->type() == Token::Type::STREAM_BEGIN)
+		if (s.PeekTokenType() == Token::Type::STREAM_BEGIN)
 			s.ReadToken();
 
-		if (token->type() == Token::Type::EOL)
-			s.ReadToken();
+		if (s.PeekTokenType() == Token::Type::EOL)
+		{
+			auto token = s.ReadToken();
+			if (token->value().Size() == 1 && token->value()[0] == Character::WhiteSpace::CARRIAGE_RETURN)
+			{
+				stringstream buffer;
+				buffer << "After stream keyword is single CR character at offset " << s.tellg();
 
-		// TODO "Length" 7 hardcoded
-		auto size_raw = o._dictionary->Find(NameObject(Buffer("Length", 7)));
+				throw Exception(buffer.str());
+			}
+		}
+
+		auto size_raw = o._dictionary->Find(Constant::Name::Length);
 		IntegerObject size;
 		auto type = size_raw->GetType();
 		if (type == Object::Type::IntegerObject)

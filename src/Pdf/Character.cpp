@@ -1,13 +1,12 @@
 #include "Character.h"
 #include "Exception.h"
 #include "basic/BasicBaseStream.h"
+#include "Streams/lexical/LexicalStream.h"
 
 #include <climits>
 
 namespace Pdf
 {
-	using Streams::Basic::BaseStream;
-
 	#pragma region Constructors
 
 	Character::Character() : _value(0) {}
@@ -38,7 +37,13 @@ namespace Pdf
 		return *this;
 	}
 
-	BaseStream& operator>>(BaseStream& s, Character& o)
+	Streams::Basic::BaseStream& operator>>(Streams::Basic::BaseStream& s, Character& o)
+	{
+		o = s.Get();
+		return s;
+	}
+
+	Streams::Lexical::Stream& operator>>(Streams::Lexical::Stream& s, Character& o)
 	{
 		o = s.Get();
 		return s;

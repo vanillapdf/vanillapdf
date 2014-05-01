@@ -4,6 +4,7 @@
 #include "Buffer.h"
 
 #include <memory>
+#include <vector>
 
 namespace Pdf
 {
@@ -17,22 +18,22 @@ namespace Pdf
 				virtual Character Peek() = 0;
 				virtual Character Get() = 0;
 				virtual void Unget(void) = 0;
-				virtual std::unique_ptr<Buffer> Readline(void) = 0;
+				virtual std::shared_ptr<Buffer> Readline(void) = 0;
 
 				virtual ~BaseStream() = 0;
 
 			protected:
-				struct Settings
+				struct BasicSettings
 				{
 					std::vector<Character> skip;
 				};
 
-				std::shared_ptr<Settings> SettingsGet(void) const;
-				void SettingsPush(void);
-				std::shared_ptr<Settings> SettingsPop(void);
+				std::shared_ptr<BasicSettings> BasicSettingsGet(void) const;
+				void BasicSettingsPush(void);
+				std::shared_ptr<BasicSettings> BasicSettingsPop(void);
 
 			private:
-				mutable std::vector<std::shared_ptr<Settings>> _setting_stack;
+				mutable std::vector<std::shared_ptr<BasicSettings>> _setting_stack;
 			};
 		}
 	}

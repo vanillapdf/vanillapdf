@@ -4,7 +4,7 @@
 #include "Export.h"
 
 #include <cassert>
-#include <string>
+#include <sstream>
 
 namespace Pdf
 {
@@ -20,9 +20,9 @@ namespace Pdf
 	CrossReferenceTable::Entry CrossReferenceTable::ReadEntry(Lexical::Parser& s, int objNumber)
 	{
 		// TODO space
-		Character sp, key, eol1, eol2;
+		Character sp1, sp2, key, eol1, eol2;
 		Token offset, number;
-		s >> offset >> number >> sp >> key >> eol1 >> eol2;
+		s >> offset >> sp1 >> number >> sp2 >> key >> eol1 >> eol2;
 
 		if (!(eol1 == Character::WhiteSpace::SPACE && eol2 == Character::WhiteSpace::CARRIAGE_RETURN) &&
 			!(eol1 == Character::WhiteSpace::SPACE && eol2 == Character::WhiteSpace::LINE_FEED) &&
@@ -41,7 +41,12 @@ namespace Pdf
 		else if (key == NOT_IN_USE)
 			result._in_use = false;
 		else
-			throw Exception(string("Key in XRef table is either of ") + static_cast<char>(IN_USE.value()) + string(" or ") + static_cast<char>(NOT_IN_USE.value()));
+		{
+			stringstream buffer;
+			buffer << "Key in XRef table is either of " << IN_USE.value() << " or " << NOT_IN_USE.value();
+
+			throw Exception(buffer.str());
+		}
 
 		result._reference = boost::intrusive_ptr<IndirectObject>(new IndirectObject(s.file(), objNumber, IntegerObject(number), IntegerObject(offset)));
 
@@ -53,15 +58,18 @@ namespace Pdf
 		s.ReadTokenWithType(Token::Type::XREF_MARKER);
 		s.ReadTokenWithType(Token::Type::EOL);
 
-		IntegerObject revision, numberOfObjects;
-		s >> revision >> numberOfObjects;
-
-		s.ReadTokenWithType(Token::Type::EOL);
-
-		for (int i = 0; i < numberOfObjects; ++i)
+		while (s.PeekTokenType() != Token::Type::TRAILER)
 		{
-			auto entry = o.ReadEntry(s, static_cast<int>(revision + i));
-			o.Add(entry);
+			IntegerObject revision, numberOfObjects;
+			s >> revision >> numberOfObjects;
+
+			s.ReadTokenWithType(Token::Type::EOL);
+
+			for (int i = 0; i < numberOfObjects; ++i)
+			{
+				auto entry = o.ReadEntry(s, static_cast<int>(revision + i));
+				o.Add(entry);
+			}
 		}
 
 		return s;

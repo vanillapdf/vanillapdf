@@ -25,9 +25,8 @@ namespace Pdf
 		boost::intrusive_ptr<Object> Parser::readObject()
 		{
 			auto offset = tellg();
-			auto type = PeekTokenType();
 
-			switch (type)
+			switch (PeekTokenType())
 			{
 			case Token::Type::DICTIONARY_BEGIN:
 				{

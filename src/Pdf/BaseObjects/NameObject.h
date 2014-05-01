@@ -38,6 +38,21 @@ namespace Pdf
 		friend void ::boost::intrusive_ptr_add_ref(NameObject*);
 		friend void ::boost::intrusive_ptr_release(NameObject*);
 	};
+
+	namespace Constant
+	{
+		namespace Name
+		{
+			#define DECLARE_CONST_NAME(name)	const NameObject name = NameObject(Buffer(#name, sizeof(#name)))
+
+			DECLARE_CONST_NAME(Length);
+			DECLARE_CONST_NAME(Type);
+			DECLARE_CONST_NAME(ObjStm);
+			DECLARE_CONST_NAME(N);
+			DECLARE_CONST_NAME(First);
+			DECLARE_CONST_NAME(Extends);
+		}
+	}
 }
 
 #endif /* _NAME_OBJECT_H */
