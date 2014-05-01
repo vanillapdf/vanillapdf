@@ -11,11 +11,7 @@ namespace Pdf
 	using namespace std;
 	using namespace Pdf::Lexical;
 
-	void CrossReferenceTable::Add(const Entry& e)
-	{
-		_table.push_back(e);
-	}
-
+	void CrossReferenceTable::Add(const Entry& e) { _table.push_back(e); }
 	int CrossReferenceTable::Size(void) const { return _table.size(); }
 	CrossReferenceTable::Entry CrossReferenceTable::At(int at) const { return _table.at(at); }
 
@@ -24,22 +20,25 @@ namespace Pdf
 	CrossReferenceTable::Entry CrossReferenceTable::ReadEntry(Lexical::Parser& s, int objNumber)
 	{
 		// TODO space
-		Character sp, key;
-		Token offset, number, eol;
-		s >> offset >> number >> sp >> key;
-		s >> eol;
+		Character sp, key, eol1, eol2;
+		Token offset, number;
+		s >> offset >> number >> sp >> key >> eol1 >> eol2;
 
-		if (eol.type() != Token::Type::EOL)
+		if (!(eol1 == Character::WhiteSpace::SPACE && eol2 == Character::WhiteSpace::CARRIAGE_RETURN) &&
+			!(eol1 == Character::WhiteSpace::SPACE && eol2 == Character::WhiteSpace::LINE_FEED) &&
+			!(eol1 == Character::WhiteSpace::CARRIAGE_RETURN && eol2 == Character::WhiteSpace::LINE_FEED))
+		{
 			throw Exception("End of line marker was not found in xref table entry");
+		}
 
 		static const Character IN_USE = Character('n');
 		static const Character NOT_IN_USE = Character('f');
 
 		CrossReferenceTable::Entry result;
 
-		if (key.value() == IN_USE)
+		if (key == IN_USE)
 			result._in_use = true;
-		else if (key.value() == NOT_IN_USE)
+		else if (key == NOT_IN_USE)
 			result._in_use = false;
 		else
 			throw Exception(string("Key in XRef table is either of ") + static_cast<char>(IN_USE.value()) + string(" or ") + static_cast<char>(NOT_IN_USE.value()));

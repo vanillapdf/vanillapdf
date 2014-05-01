@@ -57,24 +57,11 @@ namespace Pdf
 					result_type = Token::Type::EOL;
 					goto prepared;
 				case Character::WhiteSpace::SPACE:
-					if (Peek() == Character::WhiteSpace::LINE_FEED)
-					{
-						chars.PushBack(ch);
-						chars.PushBack(Get());
-					}
-					else
-						goto retry;
-
-					result_type = Token::Type::EOL;
-					goto prepared;
+					goto retry;
 				case Character::WhiteSpace::CARRIAGE_RETURN:
+					chars.PushBack(ch);
 					if (ahead == Character::WhiteSpace::LINE_FEED)
-					{
-						chars.PushBack(ch);
 						chars.PushBack(Get());
-					}
-					else
-						throw Exception("Unexpected character follows intended EOL after carriage return: " + ahead);
 
 					result_type = Token::Type::EOL;
 					goto prepared;
@@ -119,8 +106,25 @@ namespace Pdf
 				case Character::Delimiter::SOLIDUS:
 					while (!(Peek().isWhiteSpace() || Peek().isDelimiter()))
 					{
-						/* TODO #sign in name objects */
-						chars.PushBack(Get());
+						if (Peek() == '#')
+						{
+							Character sign = Get();
+							Character num1 = Get();
+							Character num2 = Get();
+
+							string str;
+							str += num1;
+							str += num2;
+
+							int val = stoi(str, 0, 16);
+							Character parsed(val);
+
+							chars.PushBack(parsed);
+						}
+						else
+						{
+							chars.PushBack(Get());
+						}
 					}
 
 					result_type = Token::Type::NAME_OBJECT;
