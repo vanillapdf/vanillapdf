@@ -1,7 +1,7 @@
 #ifndef _CHARACTER_H
 #define _CHARACTER_H
 
-#include "streams/basic/BasicBaseStreamFwd.h"
+#include "Fwd.h"
 
 namespace Pdf
 {

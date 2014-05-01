@@ -18,7 +18,7 @@ namespace Pdf
 				virtual Character Peek() override;
 				virtual Character Get() override;
 				virtual void Unget() override;
-				virtual std::unique_ptr<CharacterSet> Readline(void) override;
+				virtual std::unique_ptr<Buffer> Readline(void) override;
 			};
 		}
 	}

@@ -1,18 +1,17 @@
 #ifndef _REAL_OBJECT_H
 #define _REAL_OBJECT_H
 
+#include "Fwd.h"
 #include "NumericObject.h"
 
 namespace Pdf
 {
-	class CharacterSet;
-
 	class RealObject : public NumericObject
 	{
 	public:
 		RealObject();
 		explicit RealObject(double value);
-		explicit RealObject(const CharacterSet& value);
+		explicit RealObject(const Buffer& value);
 
 		//virtual Object* Clone(void) const  override { return new RealObject(static_cast<RealObject const&>(*this)); };
 

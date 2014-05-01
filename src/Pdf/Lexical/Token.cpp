@@ -2,7 +2,6 @@
 #include "Exception.h"
 #include "lexical/LexicalReverseStream.h"
 #include "lexical/LexicalStream.h"
-#include "IntegerObject.h"
 #include "TokenDictionary.h"
 
 #include <cassert>
@@ -11,53 +10,57 @@ namespace Pdf
 {
 	namespace Lexical
 	{
-		Token& Token::operator=(const CharacterSet& s)
+		#pragma region Constructors
+
+		Token::Token(Token::Type type) : _type(type) {}
+		Token::Token() : _type(Token::Type::UNKNOWN), _value() {}
+		Token::Token(const Buffer& chars) : _type(evaluate(chars)), _value(chars) { assert(_value.Size() > 0); }
+		Token::Token(const char* chars, int len) : _value(chars, len), _type(evaluate(_value)) { assert(_value.Size() > 0); }
+
+		Token::Token(Type type, const Buffer& chars) : _type(type), _value(chars)
+		{
+			assert(_value.Size() > 0);
+
+			if (_type == Token::Type::UNKNOWN)
+				_type = evaluate(_value);
+		}
+
+		#pragma endregion
+
+		#pragma region Operators
+
+		Token& Token::operator=(const Buffer& s)
 		{
 			_value = s;
 			_type = evaluate(_value);
 			return *this;
 		}
 
-		Token::Token(const CharacterSet& chars) : _type(evaluate(chars)), _value(chars)
+		Streams::Lexical::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, Token& o)
 		{
-			assert(_value.Size() > 0);
+			auto result = s.ReadToken();
+
+			o._type = result->_type;
+			o._value = result->_value;
+
+			return s;
 		}
 
-		Token::Token() : _type(Token::Type::UNKNOWN), _value()
+		Streams::Lexical::Stream& operator>>(Streams::Lexical::Stream& s, Token& o)
 		{
+			auto result = s.ReadToken();
+			o._type = result->_type;
+			o._value = result->_value;
 
+			return s;
 		}
 
-		Token::Token(Token::Type type) : _type(type)
-		{
+		#pragma endregion
 
-		}
+		Token::Type Token::evaluate(const Buffer& chars) { return TokenDictionary::find(chars); }
 
-		Token::Token(const char* chars, int len) : _value(chars, len)
-		{
-			assert(_value.Size() > 0);
-		}
-
-		Token::Token(Type type, const CharacterSet& chars) : _type(type), _value(chars)
-		{
-			if (type == Token::Type::UNKNOWN)
-				_type = evaluate(_value);
-		}
-
-		Token::Type Token::evaluate(const CharacterSet& chars) const
-		{
-			return TokenDictionary::find(chars);
-		}
-
-		const CharacterSet& Token::value() const
-		{
-			return _value;
-		}
-
-		Token::Type Token::type(void) const
-		{
-			return _type;
-		}
+		const Buffer& Token::value() const { return _value; }
+		Token::Type Token::type(void) const { return _type; }
 
 		const char* Token::GetTypeValueName(Type type)
 		{
@@ -106,27 +109,9 @@ namespace Pdf
 			case Type::TRAILER:
 				return "TRAILER";
 			default:
+				assert(false);
 				throw Exception("FIXME: Token type is not mapped");
 			}
-		}
-
-		Streams::Lexical::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, Token& o)
-		{
-			auto result = s.ReadToken();
-
-			o._type = result->_type;
-			o._value = result->_value;
-
-			return s;
-		}
-
-		Streams::Lexical::Stream& operator>>(Streams::Lexical::Stream& s, Token& o)
-		{
-			auto result = s.ReadToken();
-			o._type = result->_type;
-			o._value = result->_value;
-
-			return s;
 		}
 	}
 }

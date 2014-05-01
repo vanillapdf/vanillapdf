@@ -1,7 +1,6 @@
 #ifndef _LEXICAL_BASE_STREAM_H
 #define _LEXICAL_BASE_STREAM_H
 
-#include "BaseObjects/CharacterSet.h"
 #include "Lexical/Token.h"
 
 #include <memory>

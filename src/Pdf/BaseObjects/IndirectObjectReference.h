@@ -1,6 +1,7 @@
 #ifndef _INDIRECT_OBJECT_REFERENCE_H
 #define _INDIRECT_OBJECT_REFERENCE_H
 
+#include "Fwd.h"
 #include "BaseObjects/IndirectObject.h"
 
 #include "boost/intrusive_ptr.hpp"
@@ -9,13 +10,6 @@
 
 namespace Pdf
 {
-	namespace Files
-	{
-		class File;
-	}
-
-	class CharacterSet;
-
 	class IndirectObjectReference : public Object
 	{
 	public:

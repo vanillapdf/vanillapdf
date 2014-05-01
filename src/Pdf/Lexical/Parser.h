@@ -1,17 +1,13 @@
 #ifndef _OBJECTS_STREAM_H
 #define _OBJECTS_STREAM_H
 
+#include "Fwd.h"
 #include "streams/lexical/LexicalStream.h"
 
 #include "boost/intrusive_ptr.hpp"
 
 namespace Pdf
 {
-	namespace Files
-	{
-		class File;
-	}
-
 	namespace Lexical
 	{
 		class Parser : public Streams::Lexical::Stream

@@ -1,9 +1,8 @@
 #ifndef _TOKEN_H
 #define _TOKEN_H
 
-#include "BaseObjects/CharacterSet.h"
-#include "streams/lexical/LexicalStreamFwd.h"
-#include "streams/lexical/LexicalReverseStreamFwd.h"
+#include "Fwd.h"
+#include "Buffer.h"
 
 namespace Pdf
 {
@@ -37,18 +36,19 @@ namespace Pdf
 			};
 
 			static const char* GetTypeValueName(Type type);
+			static Token::Type evaluate(const Buffer& chars);
 
 			Token();
-			explicit Token(const CharacterSet& chars);
+			explicit Token(const Buffer& chars);
 			explicit Token(Type type);
 			Token(const char* chars, int len);
-			Token(Type type, const CharacterSet& chars);
+			Token(Type type, const Buffer& chars);
 
 			Type type(void) const;
 
-			const CharacterSet& value() const;
+			const Buffer& value() const;
 
-			Token& operator= (const CharacterSet& value);
+			Token& operator= (const Buffer& value);
 
 			friend Streams::Lexical::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, Token& o);
 			//friend class Streams::Lexical::ReverseStream;
@@ -56,12 +56,9 @@ namespace Pdf
 			friend Streams::Lexical::Stream& operator>> (Streams::Lexical::Stream& s, Token& o);
 			//friend class Streams::Lexical::Stream;
 
-		protected:
-			Token::Type _type;
-			CharacterSet _value;
-
 		private:
-			Token::Type evaluate(const CharacterSet& chars) const;
+			Token::Type _type;
+			Buffer _value;
 		};
 	}
 }

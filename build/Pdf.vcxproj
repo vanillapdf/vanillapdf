@@ -15,8 +15,6 @@
     <ClInclude Include="..\src\Pdf\BaseObjects\ArrayObject.h" />
     <ClInclude Include="..\src\Pdf\BaseObjects\ASCIIFilter.h" />
     <ClInclude Include="..\src\Pdf\BaseObjects\Boolean.h" />
-    <ClInclude Include="..\src\Pdf\BaseObjects\Character.h" />
-    <ClInclude Include="..\src\Pdf\BaseObjects\CharacterSet.h" />
     <ClInclude Include="..\src\Pdf\BaseObjects\CrossReferenceTable.h" />
     <ClInclude Include="..\src\Pdf\BaseObjects\DecompressionFilter.h" />
     <ClInclude Include="..\src\Pdf\BaseObjects\DictionaryObject.h" />
@@ -26,7 +24,6 @@
     <ClInclude Include="..\src\Pdf\BaseObjects\IndirectObjectReference.h" />
     <ClInclude Include="..\src\Pdf\BaseObjects\IntegerObject.h" />
     <ClInclude Include="..\src\Pdf\BaseObjects\Interface\IArrayObject.h" />
-    <ClInclude Include="..\src\Pdf\BaseObjects\Interface\ICharacterSet.h" />
     <ClInclude Include="..\src\Pdf\BaseObjects\Interface\IDictionaryObject.h" />
     <ClInclude Include="..\src\Pdf\BaseObjects\Interface\IIndirectObject.h" />
     <ClInclude Include="..\src\Pdf\BaseObjects\Interface\INameObject.h" />
@@ -38,6 +35,8 @@
     <ClInclude Include="..\src\Pdf\BaseObjects\RealObject.h" />
     <ClInclude Include="..\src\Pdf\BaseObjects\StreamObject.h" />
     <ClInclude Include="..\src\Pdf\BaseObjects\StringObject.h" />
+    <ClInclude Include="..\src\Pdf\Buffer.h" />
+    <ClInclude Include="..\src\Pdf\Character.h" />
     <ClInclude Include="..\src\Pdf\CommonDataStructures\Date.h" />
     <ClInclude Include="..\src\Pdf\CommonDataStructures\NameTree.h" />
     <ClInclude Include="..\src\Pdf\CommonDataStructures\NumberTree.h" />
@@ -50,32 +49,25 @@
     <ClInclude Include="..\src\Pdf\Files\File.h" />
     <ClInclude Include="..\src\Pdf\Files\Header.h" />
     <ClInclude Include="..\src\Pdf\Files\Trailer.h" />
+    <ClInclude Include="..\src\Pdf\Fwd.h" />
+    <ClInclude Include="..\src\Pdf\IBuffer.h" />
     <ClInclude Include="..\src\Pdf\Intrusive.h" />
     <ClInclude Include="..\src\Pdf\Lexical\Parser.h" />
     <ClInclude Include="..\src\Pdf\Lexical\Token.h" />
     <ClInclude Include="..\src\Pdf\Lexical\TokenDictionary.h" />
     <ClInclude Include="..\src\Pdf\Lexical\LexicalTree.h" />
     <ClInclude Include="..\src\Pdf\Streams\basic\BasicBaseStream.h" />
-    <ClInclude Include="..\src\Pdf\Streams\basic\BasicBaseStreamFwd.h" />
     <ClInclude Include="..\src\Pdf\Streams\basic\BasicReverseStream.h" />
-    <ClInclude Include="..\src\Pdf\Streams\basic\BasicReverseStreamFwd.h" />
     <ClInclude Include="..\src\Pdf\Streams\basic\BasicStream.h" />
-    <ClInclude Include="..\src\Pdf\Streams\basic\BasicStreamFwd.h" />
     <ClInclude Include="..\src\Pdf\Streams\lexical\LexicalBaseStream.h" />
     <ClInclude Include="..\src\Pdf\Streams\lexical\LexicalReverseStream.h" />
-    <ClInclude Include="..\src\Pdf\Streams\lexical\LexicalReverseStreamFwd.h" />
     <ClInclude Include="..\src\Pdf\Streams\lexical\LexicalStream.h" />
-    <ClInclude Include="..\src\Pdf\Streams\lexical\LexicalStreamFwd.h" />
-    <ClInclude Include="..\src\Pdf\Streams\lexical\ReverseStreamFwd.h" />
-    <ClInclude Include="..\src\Pdf\Streams\lexical\StreamFwd.h" />
     <ClInclude Include="..\src\Pdf\Streams\raw\RawBaseStream.h" />
     <ClInclude Include="..\src\Pdf\Streams\raw\RawReverseStream.h" />
     <ClInclude Include="..\src\Pdf\Streams\raw\RawStream.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Pdf\BaseObjects\ArrayObject.cpp" />
-    <ClCompile Include="..\src\Pdf\BaseObjects\Character.cpp" />
-    <ClCompile Include="..\src\Pdf\BaseObjects\CharacterSet.cpp" />
     <ClCompile Include="..\src\Pdf\BaseObjects\CrossReferenceTable.cpp" />
     <ClCompile Include="..\src\Pdf\BaseObjects\DictionaryObject.cpp" />
     <ClCompile Include="..\src\Pdf\BaseObjects\IndirectObject.cpp" />
@@ -87,6 +79,8 @@
     <ClCompile Include="..\src\Pdf\BaseObjects\RealObject.cpp" />
     <ClCompile Include="..\src\Pdf\BaseObjects\StreamObject.cpp" />
     <ClCompile Include="..\src\Pdf\BaseObjects\StringObject.cpp" />
+    <ClCompile Include="..\src\Pdf\Buffer.cpp" />
+    <ClCompile Include="..\src\Pdf\Character.cpp" />
     <ClCompile Include="..\src\Pdf\Exceptions\Exception.cpp" />
     <ClCompile Include="..\src\Pdf\Exceptions\InvalidObjectTypeException.cpp" />
     <ClCompile Include="..\src\Pdf\Files\File.cpp" />
@@ -141,7 +135,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\src\Pdf;..\src\Pdf\BaseObjects;..\src\Pdf\Exceptions;..\src\Pdf\Files;..\src\Pdf\Lexical;..\src\Pdf\Streams;..\inc;C:\boost_1_53_0;..\src\Pdf\CommonDataStructures;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\Pdf;..\src\Pdf\BaseObjects;..\src\Pdf\Exceptions;..\src\Pdf\Files;..\src\Pdf\Lexical;..\src\Pdf\Streams;..\inc;C:\boost_1_53_0;..\src\Pdf\CommonDataStructures;..\src\Pdf\BaseObjects\Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -156,7 +150,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\src\Pdf;..\src\Pdf\BaseObjects;..\src\Pdf\Exceptions;..\src\Pdf\Files;..\src\Pdf\Lexical;..\src\Pdf\Streams;..\inc;C:\boost_1_53_0;..\src\Pdf\CommonDataStructures;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\Pdf;..\src\Pdf\BaseObjects;..\src\Pdf\Exceptions;..\src\Pdf\Files;..\src\Pdf\Lexical;..\src\Pdf\Streams;..\inc;C:\boost_1_53_0;..\src\Pdf\CommonDataStructures;..\src\Pdf\BaseObjects\Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

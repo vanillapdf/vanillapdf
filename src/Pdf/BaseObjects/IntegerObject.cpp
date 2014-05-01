@@ -39,7 +39,7 @@ namespace Pdf
 		return *this = value.value();
 	}
 
-	IntegerObject& IntegerObject::operator=(const CharacterSet& value)
+	IntegerObject& IntegerObject::operator=(const Buffer& value)
 	{
 		string str(value.begin(), value.end());
 		_value = stoi(str);
@@ -76,7 +76,7 @@ namespace Pdf
 		// TODO
 		//assert(t == Token::Type::INTEGER_OBJECT);
 
-		CharacterSet set = t.value();
+		Buffer set = t.value();
 		string resultStr(set.begin(), set.end());
 		o._value = stoi(resultStr);
 
@@ -90,7 +90,7 @@ namespace Pdf
 
 		assert(t.type() == Token::Type::INTEGER_OBJECT);
 
-		CharacterSet set = t.value();
+		Buffer set = t.value();
 		string resultStr(set.begin(), set.end());
 		o._value = stoi(resultStr);
 

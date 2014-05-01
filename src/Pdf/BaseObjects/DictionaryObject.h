@@ -1,6 +1,7 @@
 #ifndef _DICTIONARY_OBJECT_H
 #define _DICTIONARY_OBJECT_H
 
+#include "Fwd.h"
 #include "Object.h"
 #include "NameObject.h"
 #include "Interface/IDictionaryObject.h"
@@ -9,11 +10,6 @@
 
 namespace Pdf
 {
-	namespace Lexical
-	{
-		class Parser;
-	}
-
 	class DictionaryObject : public Object, public IDictionaryObject
 	{
 	public:

@@ -1,17 +1,12 @@
 #ifndef _NAME_OBJECT_H
 #define _NAME_OBJECT_H
 
-#include "Interface/INameObject.h"
+#include "INameObject.h"
 #include "BaseObjects/Object.h"
-#include "CharacterSet.h"
+#include "Buffer.h"
 
 namespace Pdf
 {
-	namespace Lexical
-	{
-		class Token;
-	}
-
 	class NameObject : public Object, public INameObject
 	{
 	public:
@@ -30,15 +25,15 @@ namespace Pdf
 
 		NameObject();
 		explicit NameObject(const Pdf::Lexical::Token& token);
-		explicit NameObject(const CharacterSet& name);
+		explicit NameObject(const Buffer& name);
 
 		//const CharacterSet& Value() const;
 
-		virtual const ICharacterSet& Value() const override;
+		virtual const Buffer& Value() const override;
 		bool operator==(const NameObject& other) const;
 
 	private:
-		CharacterSet _value;
+		Buffer _value;
 
 		friend void ::boost::intrusive_ptr_add_ref(NameObject*);
 		friend void ::boost::intrusive_ptr_release(NameObject*);

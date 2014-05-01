@@ -1,5 +1,4 @@
 #include "IndirectObjectReference.h"
-#include "CharacterSet.h"
 #include "File.h"
 
 #include <string>

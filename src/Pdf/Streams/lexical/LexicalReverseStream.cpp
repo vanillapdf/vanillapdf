@@ -1,5 +1,5 @@
 #include "streams/lexical/LexicalReverseStream.h"
-#include "BaseObjects/Character.h"
+#include "Character.h"
 #include "Exceptions/Exception.h"
 #include "BaseObjects/IntegerObject.h"
 #include "Constants.h"
@@ -40,7 +40,7 @@ namespace Pdf
 					return result;
 				}
 
-				CharacterSet chars;
+				Buffer chars;
 
 			retry:
 				Character ch = Get();

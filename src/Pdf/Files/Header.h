@@ -7,19 +7,22 @@
 
 namespace Pdf
 {
-	class Header
+	namespace Files
 	{
-	public:
-		friend Streams::Basic::Stream& operator>> (Streams::Basic::Stream& s, Header& o);
+		class Header
+		{
+		public:
+			friend Streams::Basic::Stream& operator>> (Streams::Basic::Stream& s, Header& o);
 
-	private:
-		int _majorVersion;
-		int _minorVersion;
+		private:
+			int _majorVersion;
+			int _minorVersion;
 
-		mutable long _intrusive_ref_count;
-		friend void ::boost::intrusive_ptr_add_ref(Header*);
-		friend void ::boost::intrusive_ptr_release(Header*);
-	};
+			mutable long _intrusive_ref_count;
+			friend void ::boost::intrusive_ptr_add_ref(Header*);
+			friend void ::boost::intrusive_ptr_release(Header*);
+		};
+	}
 }
 
 #endif /* _HEADER_H */

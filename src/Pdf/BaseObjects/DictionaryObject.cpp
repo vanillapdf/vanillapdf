@@ -89,7 +89,7 @@ namespace Pdf
 
 	IObject* DictionaryObject::IObjectFind(const char* name, int len) const
 	{
-		auto found = _list.find(NameObject(CharacterSet(name, len)));
+		auto found = _list.find(NameObject(Buffer(name, len)));
 		Pdf::Object* ptr = found->second.get();
 		boost::intrusive_ptr_add_ref(ptr);
 		return ptr;
@@ -105,7 +105,7 @@ typedef Pdf::DictionaryObject::listType::const_iterator DictionaryObjectConstIte
 GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, const char *str, int len)
 {
 	Pdf::DictionaryObject* dictionary = reinterpret_cast<Pdf::DictionaryObject*>(handle);
-	Pdf::CharacterSet set(str, len);
+	Pdf::Buffer set(str, len);
 	Pdf::NameObject name(set);
 	boost::intrusive_ptr<Pdf::Object> object = dictionary->Find(name);
 	Pdf::Object* ptr = object.get();

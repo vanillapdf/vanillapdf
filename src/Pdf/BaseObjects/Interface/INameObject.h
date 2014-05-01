@@ -2,7 +2,7 @@
 #define _I_NAME_OBJECT_H
 
 #include "Interface/IObject.h"
-#include "Interface/ICharacterSet.h"
+#include "IBuffer.h"
 
 #include "boost/intrusive_ptr.hpp"
 
@@ -11,7 +11,7 @@ namespace Pdf
 	class INameObject
 	{
 	public:
-		virtual const ICharacterSet& Value() const = 0;
+		virtual const IBuffer& Value() const = 0;
 	};
 }
 

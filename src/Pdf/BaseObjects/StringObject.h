@@ -1,29 +1,25 @@
 #ifndef _STRING_OBJECT_H
 #define _STRING_OBJECT_H
 
+#include "Fwd.h"
 #include "BaseObjects/Object.h"
-#include "CharacterSet.h"
+#include "Buffer.h"
 
 namespace Pdf
 {
-	namespace Lexical
-	{
-		class Token;
-	}
-
 	class StringObject : public Object
 	{
 	protected:
-		CharacterSet _value;
+		Buffer _value;
 
 		explicit StringObject(Type type);
-		StringObject(Type type, const CharacterSet& value);
+		StringObject(Type type, const Buffer& value);
 	};
 
 	class HexadecimalString : public StringObject
 	{
 	public:
-		explicit HexadecimalString(const CharacterSet& value);
+		explicit HexadecimalString(const Buffer& value);
 		explicit HexadecimalString(const Lexical::Token& token);
 
 	private:
@@ -36,7 +32,7 @@ namespace Pdf
 	class LiteralString : public StringObject
 	{
 	public:
-		explicit LiteralString(const CharacterSet& value);
+		explicit LiteralString(const Buffer& value);
 		explicit LiteralString(const Lexical::Token& token);
 
 	private:

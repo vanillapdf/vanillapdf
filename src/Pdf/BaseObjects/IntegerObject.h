@@ -1,15 +1,12 @@
 #ifndef _INTEGER_OBJECT_H
 #define _INTEGER_OBJECT_H
 
+#include "Fwd.h"
 #include "NumericObject.h"
-#include "streams/lexical/LexicalStreamFwd.h"
-#include "streams/lexical/LexicalReverseStreamFwd.h"
 #include "Lexical/Token.h"
 
 namespace Pdf
 {
-	class CharacterSet;
-
 	class IntegerObject : public NumericObject
 	{
 	public:
@@ -30,7 +27,7 @@ namespace Pdf
 		//virtual Object* Clone(void) const  override { return new IntegerObject(static_cast<IntegerObject const&>(*this)); };
 
 		IntegerObject& operator= (ValueType value);
-		IntegerObject& operator= (const CharacterSet& value);
+		IntegerObject& operator= (const Buffer& value);
 		IntegerObject& operator= (const Pdf::Lexical::Token& value);
 
 		friend Streams::Lexical::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, IntegerObject& o);

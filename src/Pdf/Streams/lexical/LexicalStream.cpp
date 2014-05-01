@@ -44,7 +44,7 @@ namespace Pdf
 
 			retry:
 
-				CharacterSet chars;
+				Buffer chars;
 				Character ch = Get();
 				Character ahead = Peek();
 				Token::Type result_type = Token::Type::UNKNOWN;

@@ -8,12 +8,6 @@
 
 namespace Pdf
 {
-	class Header;
-	class IntegerObject;
-	class CrossReferenceTable;
-	class DictionaryObject;
-	class ArrayObject;
-
 	namespace Streams
 	{
 		namespace Lexical

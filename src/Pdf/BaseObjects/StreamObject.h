@@ -1,6 +1,7 @@
 #ifndef _STREAM_OBJECT_H
 #define _STREAM_OBJECT_H
 
+#include "Fwd.h"
 #include "Constants.h"
 #include "BaseObjects/DictionaryObject.h"
 
@@ -10,16 +11,6 @@
 
 namespace Pdf
 {
-	class CharacterSet;
-
-	namespace Streams
-	{
-		namespace Object
-		{
-			class Parser;
-		}
-	}
-
 	class StreamObject : public Object
 	{
 	public:
@@ -31,7 +22,7 @@ namespace Pdf
 
 	private:
 		boost::intrusive_ptr<DictionaryObject> _dictionary;
-		std::shared_ptr<CharacterSet> _data;
+		std::shared_ptr<Buffer> _data;
 		streamOffsetValueType _rawDataOffset;
 		streamSizeValueType _rawDataLength;
 

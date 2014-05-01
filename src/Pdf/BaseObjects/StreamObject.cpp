@@ -4,7 +4,7 @@
 #include "InvalidObjectTypeException.h"
 #include "Lexical/Parser.h"
 #include "File.h"
-#include "CharacterSet.h"
+#include "Buffer.h"
 
 #include <sstream>
 
@@ -37,7 +37,7 @@ namespace Pdf
 			s.ReadToken();
 
 		// TODO "Length" 7 hardcoded
-		auto size_raw = o._dictionary->Find(NameObject(CharacterSet("Length", 7)));
+		auto size_raw = o._dictionary->Find(NameObject(Buffer("Length", 7)));
 		IntegerObject size;
 		auto type = size_raw->GetType();
 		if (type == Object::Type::IntegerObject)
@@ -73,7 +73,7 @@ namespace Pdf
 			s.ReadToken();
 
 		auto data = s.Read(len);
-		CharacterSet se(data.get(), len);
+		Buffer se(data.get(), len);
 
 		// TODO apply filter
 
@@ -86,7 +86,7 @@ namespace Pdf
 
 		o._rawDataOffset = offset;
 		o._rawDataLength = len;
-		o._data = std::shared_ptr<CharacterSet>(new CharacterSet(se));
+		o._data = std::shared_ptr<Buffer>(new Buffer(se));
 
 		return s;
 	}

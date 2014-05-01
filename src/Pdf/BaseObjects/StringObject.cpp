@@ -1,5 +1,4 @@
 #include "StringObject.h"
-#include "CharacterSet.h"
 #include "Token.h"
 
 #include <cassert>
@@ -11,7 +10,7 @@ namespace Pdf
 	using namespace Lexical;
 
 	LiteralString::LiteralString(const Token& token) : StringObject(Object::Type::LiteralString, token.value()) {}
-	LiteralString::LiteralString(const CharacterSet& value) : StringObject(Object::Type::LiteralString, value)
+	LiteralString::LiteralString(const Buffer& value) : StringObject(Object::Type::LiteralString, value)
 	{
 		// TODO remove <> if contains
 	}
@@ -31,7 +30,7 @@ namespace Pdf
 		}
 	}
 
-	HexadecimalString::HexadecimalString(const CharacterSet& value) : StringObject(Object::Type::HexadecimalString)
+	HexadecimalString::HexadecimalString(const Buffer& value) : StringObject(Object::Type::HexadecimalString)
 	{
 		_hexadecimal = string(value.begin(), value.end());
 
@@ -45,6 +44,6 @@ namespace Pdf
 		}
 	}
 
-	StringObject::StringObject(Type type, const CharacterSet& value) : Object(type), _value(value) { assert(type == Object::Type::HexadecimalString || type == Object::Type::LiteralString); }
+	StringObject::StringObject(Type type, const Buffer& value) : Object(type), _value(value) { assert(type == Object::Type::HexadecimalString || type == Object::Type::LiteralString); }
 	StringObject::StringObject(Type type) : Object(type) { assert(type == Object::Type::HexadecimalString || type == Object::Type::LiteralString); }
 }

@@ -1,7 +1,7 @@
 #ifndef _BASIC_BASE_STREAM_H
 #define _BASIC_BASE_STREAM_H
 
-#include "BaseObjects/CharacterSet.h"
+#include "Buffer.h"
 
 #include <memory>
 
@@ -17,7 +17,7 @@ namespace Pdf
 				virtual Character Peek() = 0;
 				virtual Character Get() = 0;
 				virtual void Unget(void) = 0;
-				virtual std::unique_ptr<CharacterSet> Readline(void) = 0;
+				virtual std::unique_ptr<Buffer> Readline(void) = 0;
 
 				virtual ~BaseStream() = 0;
 

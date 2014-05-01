@@ -42,9 +42,9 @@ namespace Pdf
 				return Character(ch);
 			}
 
-			unique_ptr<CharacterSet> Stream::Readline()
+			unique_ptr<Buffer> Stream::Readline()
 			{
-				unique_ptr<CharacterSet> result(new CharacterSet());
+				unique_ptr<Buffer> result(new Buffer());
 
 				char buf[Constant::BUFFER_SIZE];
 

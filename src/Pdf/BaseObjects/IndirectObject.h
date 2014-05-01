@@ -1,6 +1,7 @@
 #ifndef _INDIRECT_OBJECT_H
 #define _INDIRECT_OBJECT_H
 
+#include "Fwd.h"
 #include "BaseObjects/Object.h"
 #include "Interface/IIndirectObject.h"
 
@@ -10,18 +11,11 @@
 
 namespace Pdf
 {
-	class CharacterSet;
-
-	namespace Files
-	{
-		class File;
-	}
-
 	class IndirectObject : public Object, public IIndirectObject
 	{
 	public:
 		IndirectObject(std::shared_ptr<Files::File> file, int objNumber, int genNumber, std::streamoff offset = std::_BADOFF);
-		IndirectObject(std::shared_ptr<Files::File> file, const CharacterSet& value);
+		IndirectObject(std::shared_ptr<Files::File> file, const Buffer& value);
 		IndirectObject(const IndirectObject& other);
 
 		void SetObject(boost::intrusive_ptr<Object> ref);

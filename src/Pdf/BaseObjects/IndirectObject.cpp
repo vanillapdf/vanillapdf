@@ -1,5 +1,4 @@
 #include "IndirectObject.h"
-#include "CharacterSet.h"
 #include "File.h"
 #include "Export.h"
 
@@ -13,7 +12,7 @@ namespace Pdf
 	IndirectObject::IndirectObject(std::shared_ptr<Files::File> file, int objNumber, int genNumber, std::streamoff offset /*= _BADOFF */)
 		: Object(Object::Type::IndirectObject), _file(file), _objNumber(objNumber), _genNumber(genNumber), _offset(offset), _reference(nullptr) {}
 
-	IndirectObject::IndirectObject(std::shared_ptr<Files::File> file, const CharacterSet& value) : Object(Object::Type::IndirectObject), _file(file), _reference(nullptr)
+	IndirectObject::IndirectObject(std::shared_ptr<Files::File> file, const Buffer& value) : Object(Object::Type::IndirectObject), _file(file), _reference(nullptr)
 	{
 		string str(value.begin(), value.end());
 		int space = str.find_first_of(static_cast<unsigned char>(Character::WhiteSpace::SPACE));

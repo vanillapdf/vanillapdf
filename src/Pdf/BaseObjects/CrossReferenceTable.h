@@ -1,8 +1,9 @@
 #ifndef _CROSS_REFERENCE_TABLE_H
 #define _CROSS_REFERENCE_TABLE_H
 
+#include "Fwd.h"
 #include "BaseObjects/Object.h"
-#include "BaseObjects/Character.h"
+#include "Character.h"
 #include "BaseObjects/IntegerObject.h"
 #include "IndirectObject.h"
 #include "Constants.h"
@@ -10,22 +11,6 @@
 #include "boost/intrusive_ptr.hpp"
 
 #include <vector>
-
-namespace Pdf
-{
-	class CrossReferenceTable;
-
-	namespace Lexical
-	{
-		class Parser;
-	}
-}
-
-namespace boost
-{
-	void intrusive_ptr_add_ref(Pdf::CrossReferenceTable* obj);
-	void intrusive_ptr_release(Pdf::CrossReferenceTable* obj);
-}
 
 namespace Pdf
 {

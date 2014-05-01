@@ -1,6 +1,7 @@
 #ifndef _ARRAY_OBJECT_H
 #define _ARRAY_OBJECT_H
 
+#include "Fwd.h"
 #include "Object.h"
 #include "Interface/IArrayObject.h"
 
@@ -8,11 +9,6 @@
 
 namespace Pdf
 {
-	namespace Lexical
-	{
-		class Parser;
-	}
-
 	class ArrayObject : public Object, public IArrayObject
 	{
 	public:

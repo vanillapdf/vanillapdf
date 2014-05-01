@@ -1,5 +1,5 @@
 #include "RealObject.h"
-#include "CharacterSet.h"
+#include "Buffer.h"
 
 #include <string>
 
@@ -9,7 +9,7 @@ namespace Pdf
 	RealObject::RealObject() : NumericObject(Object::Type::RealObject), _value(0) {}
 	RealObject::RealObject(double value) : NumericObject(Object::Type::RealObject), _value(value) {}
 
-	RealObject::RealObject(const CharacterSet& value) : NumericObject(Object::Type::RealObject)
+	RealObject::RealObject(const Buffer& value) : NumericObject(Object::Type::RealObject)
 	{
 		string str(value.begin(), value.end());
 		_value = stod(str);

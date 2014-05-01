@@ -1,7 +1,7 @@
 #ifndef _LEXICAL_TREE_H
 #define _LEXICAL_TREE_H
 
-#include "CharacterSet.h"
+#include "IBuffer.h"
 #include "Lexical/Token.h"
 
 namespace Pdf
@@ -11,10 +11,10 @@ namespace Pdf
 		class Tree
 		{
 		public:
-			bool PathExists(const CharacterSet& path);
-			Token::Type TokenType(const CharacterSet& path);
+			bool PathExists(const IBuffer& path);
+			Token::Type TokenType(const IBuffer& path);
 
-			void Insert(const CharacterSet& path, Token::Type type);
+			void Insert(const IBuffer& path, Token::Type type);
 
 			// TODO later
 			//void Delete(const char *path, int len);
@@ -29,7 +29,7 @@ namespace Pdf
 
 			Node *_root;
 
-			Node* NodeAtPath(const CharacterSet& path);
+			Node* NodeAtPath(const IBuffer& path);
 		};
 	}
 }

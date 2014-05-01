@@ -87,7 +87,7 @@ namespace Pdf
 		boost::intrusive_ptr<IndirectObject> File::GetDocumentCatalog(void) const
 		{
 			static const char root[] = "Root";
-			auto reference = _trailer->dictionary()->Find(NameObject(CharacterSet(root, sizeof(root))));
+			auto reference = _trailer->dictionary()->Find(NameObject(Buffer(root, sizeof(root))));
 			return boost::dynamic_pointer_cast<IndirectObjectReference>(reference)->GetReference();
 		}
 

@@ -1,6 +1,5 @@
 #include "CrossReferenceTable.h"
 #include "Lexical/Parser.h"
-#include "CharacterSet.h"
 #include "Exception.h"
 #include "Export.h"
 
@@ -67,20 +66,6 @@ namespace Pdf
 		}
 
 		return s;
-	}
-}
-
-namespace boost
-{
-	void intrusive_ptr_add_ref(Pdf::CrossReferenceTable* obj)
-	{
-		++obj->_intrusive_ref_count;
-	}
-
-	void intrusive_ptr_release(Pdf::CrossReferenceTable* obj)
-	{
-		if (--obj->_intrusive_ref_count == 0)
-			delete obj;
 	}
 }
 

@@ -4,7 +4,7 @@ namespace Pdf
 {
 	namespace Lexical
 	{
-		void Tree::Insert(const CharacterSet& path, Token::Type type)
+		void Tree::Insert(const IBuffer& path, Token::Type type)
 		{
 			if (nullptr == _root)
 				_root = new Node();
@@ -24,7 +24,7 @@ namespace Pdf
 			(*cur)->type = type;
 		}
 
-		bool Tree::PathExists(const CharacterSet& path)
+		bool Tree::PathExists(const IBuffer& path)
 		{
 			Node *found = NodeAtPath(path);
 			if (nullptr == found)
@@ -33,7 +33,7 @@ namespace Pdf
 			return true;
 		}
 
-		Token::Type Lexical::Tree::TokenType(const CharacterSet& path)
+		Token::Type Lexical::Tree::TokenType(const IBuffer& path)
 		{
 			Node *found = NodeAtPath(path);
 			if (nullptr == found)
@@ -42,7 +42,7 @@ namespace Pdf
 			return found->type;
 		}
 
-		Tree::Node* Lexical::Tree::NodeAtPath(const CharacterSet& path)
+		Tree::Node* Lexical::Tree::NodeAtPath(const IBuffer& path)
 		{
 			if (nullptr == _root)
 				return nullptr;
