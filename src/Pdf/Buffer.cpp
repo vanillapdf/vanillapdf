@@ -4,25 +4,15 @@
 
 namespace Pdf
 {
+	#pragma region Constructors
+
 	Buffer::Buffer() : _value() {}
 	Buffer::Buffer(const char *chars, int len) : _value(&chars[0], &chars[len - 1]) { assert(_value.size() > 0); }
-	void Buffer::Reverse() { std::reverse(_value.begin(), _value.end()); }
+	Buffer::Buffer(const char *begin, const char *end) : _value(begin, end) { assert(_value.size() > 0); }
 
-	Character Buffer::At(long at) const { return _value[at]; }
+	#pragma endregion
 
-	void Buffer::PushBack(const Character& ch) { _value.push_back(ch); }
-
-	void Buffer::Insert(std::vector<Character>::const_iterator it, char* begin, char* end) { _value.insert(it, begin, end); }
-
-	void Buffer::Insert(std::vector<Character>::const_iterator it, Buffer item) { _value.insert(it, item._value.begin(), item._value.end()); }
-
-	long Buffer::Size() const { return _value.size(); }
-
-	const Character* Buffer::Data() const { return _value.data(); }
-
-	std::vector<Character>::const_iterator Buffer::begin() const { return _value.begin(); }
-
-	std::vector<Character>::const_iterator Buffer::end() const { return _value.end(); }
+	#pragma region Operators
 
 	bool Buffer::operator==(const IBuffer& other) const
 	{
@@ -47,5 +37,12 @@ namespace Pdf
 
 	Character Buffer::operator[](unsigned int i) const { return _value[i]; }
 
+	#pragma endregion
+
+	void Buffer::Reverse() { std::reverse(_value.begin(), _value.end()); }
+	Character Buffer::At(long at) const { return _value[at]; }
+	void Buffer::PushBack(const Character& ch) { _value.push_back(ch); }
+	void Buffer::Insert(int idx, const Buffer& item) { _value.insert(_value.begin() + idx, item._value.begin(), item._value.end()); }
+	int Buffer::Size() const { return _value.size(); }
 	std::string Buffer::ToString(void) const { return std::string(_value.begin(), _value.end()); }
 }

@@ -4,6 +4,7 @@
 #include "Lexical/Token.h"
 #include "Intrusive.h"
 #include "streams/basic/BasicStream.h"
+#include "Version.h"
 
 namespace Pdf
 {
@@ -15,8 +16,7 @@ namespace Pdf
 			friend Streams::Basic::Stream& operator>> (Streams::Basic::Stream& s, Header& o);
 
 		private:
-			int _majorVersion;
-			int _minorVersion;
+			Version _version;
 
 			mutable long _intrusive_ref_count;
 			friend void ::boost::intrusive_ptr_add_ref(Header*);

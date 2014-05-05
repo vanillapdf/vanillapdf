@@ -21,7 +21,7 @@ namespace Pdf
 				char ch;
 				do
 				{
-					ch = peek();
+				ch = peek();
 				} while (std::find(settings->skip.begin(), settings->skip.end(), ch) != settings->skip.end());
 
 				seekg(pos);
@@ -38,7 +38,7 @@ namespace Pdf
 				char ch;
 				do
 				{
-					ch = get();
+				ch = get();
 				} while (std::find(settings->skip.begin(), settings->skip.end(), ch) != settings->skip.end());
 				*/
 
@@ -59,15 +59,18 @@ namespace Pdf
 
 				while (Constant::BUFFER_SIZE == read)
 				{
-					reverse(begin, end);
-					result->Insert(result->begin(), begin, end);
+					Buffer tmp(begin, end);
+					tmp.Reverse();
+					result->Insert(0, tmp);
 					getline(buf, Constant::BUFFER_SIZE);
 					read = gcount();
 				}
 
 				end = &buf[read];
-				reverse(begin, end);
-				result->Insert(result->begin(), begin, end);
+
+				Buffer tmp(begin, end);
+				tmp.Reverse();
+				result->Insert(0, tmp);
 
 				unget();
 

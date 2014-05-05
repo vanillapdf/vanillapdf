@@ -20,7 +20,7 @@ namespace Pdf
 				auto settings = BasicSettingsGet();
 				auto pos = tellg();
 				char ch;
-				do 
+				do
 				{
 					ch = get();
 				} while (std::find(settings->skip.begin(), settings->skip.end(), ch) != settings->skip.end());
@@ -56,7 +56,7 @@ namespace Pdf
 
 				while (Constant::BUFFER_SIZE == read)
 				{
-					result->Insert(result->begin(), begin, end);
+					result->Insert(0, Buffer(begin, end));
 					getline(buf, Constant::BUFFER_SIZE);
 					read = gcount();
 				}
@@ -71,7 +71,7 @@ namespace Pdf
 					++begin;
 
 				end = &buf[pos];
-				result->Insert(result->begin(), begin, end);
+				result->Insert(0, Buffer(begin, end));
 
 				return result;
 			}

@@ -13,23 +13,19 @@ namespace Pdf
 	public:
 		Buffer();
 		Buffer(const char *chars, int len);
+		Buffer(const char *begin, const char *end);
 
-		void Buffer::Insert(std::vector<Character>::const_iterator it, char* begin, char* end);
-		void Insert(std::vector<Character>::const_iterator it, Buffer item);
+		void Insert(int idx, const Buffer& item);
 		void PushBack(const Character& ch);
 		void Reverse();
-		virtual long Size() const override;
-		const Character* Data() const;
 
 		std::string ToString(void) const;
-
-		std::vector<Character>::const_iterator begin() const;
-		std::vector<Character>::const_iterator end() const;
 
 		virtual bool operator==(const IBuffer& other) const override;
 		virtual bool operator<(const IBuffer& other) const override;
 		virtual Character operator[](unsigned int i) const override;
 		virtual Character At(long at) const override;
+		virtual int Size() const override;
 
 		bool operator==(const Buffer& other) const;
 		bool operator<(const Buffer& other) const;

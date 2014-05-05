@@ -24,6 +24,8 @@ namespace Pdf
 		StreamObject();
 		explicit StreamObject(DictionaryObject& dictionary);
 
+		Buffer GetData() const;
+
 		//friend Streams::Lexical::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, StreamObject& o);
 		friend Lexical::Parser& operator>> (Lexical::Parser& s, StreamObject& o);
 

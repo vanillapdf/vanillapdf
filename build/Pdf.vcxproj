@@ -13,10 +13,8 @@
   <ItemGroup>
     <ClInclude Include="..\inc\Trie.h" />
     <ClInclude Include="..\src\Pdf\BaseObjects\ArrayObject.h" />
-    <ClInclude Include="..\src\Pdf\BaseObjects\ASCIIFilter.h" />
     <ClInclude Include="..\src\Pdf\BaseObjects\Boolean.h" />
     <ClInclude Include="..\src\Pdf\BaseObjects\CrossReferenceTable.h" />
-    <ClInclude Include="..\src\Pdf\BaseObjects\DecompressionFilter.h" />
     <ClInclude Include="..\src\Pdf\BaseObjects\DictionaryObject.h" />
     <ClInclude Include="..\src\Pdf\BaseObjects\Filter.h" />
     <ClInclude Include="..\src\Pdf\BaseObjects\Function.h" />
@@ -49,6 +47,7 @@
     <ClInclude Include="..\src\Pdf\Files\File.h" />
     <ClInclude Include="..\src\Pdf\Files\Header.h" />
     <ClInclude Include="..\src\Pdf\Files\Trailer.h" />
+    <ClInclude Include="..\src\Pdf\FlateDecodeFilter.h" />
     <ClInclude Include="..\src\Pdf\Fwd.h" />
     <ClInclude Include="..\src\Pdf\IBuffer.h" />
     <ClInclude Include="..\src\Pdf\Intrusive.h" />
@@ -65,6 +64,7 @@
     <ClInclude Include="..\src\Pdf\Streams\raw\RawBaseStream.h" />
     <ClInclude Include="..\src\Pdf\Streams\raw\RawReverseStream.h" />
     <ClInclude Include="..\src\Pdf\Streams\raw\RawStream.h" />
+    <ClInclude Include="..\src\Pdf\Version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Pdf\BaseObjects\ArrayObject.cpp" />
@@ -136,11 +136,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\src\Pdf;..\src\Pdf\BaseObjects;..\src\Pdf\Exceptions;..\src\Pdf\Files;..\src\Pdf\Lexical;..\src\Pdf\Streams;..\inc;C:\boost_1_53_0;..\src\Pdf\CommonDataStructures;..\src\Pdf\BaseObjects\Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\Pdf;..\src\Pdf\BaseObjects;..\src\Pdf\Exceptions;..\src\Pdf\Files;..\src\Pdf\Lexical;..\src\Pdf\Streams;C:\boost_1_55_0;..\src\Pdf\CommonDataStructures;..\src\Pdf\BaseObjects\Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -151,12 +152,13 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\src\Pdf;..\src\Pdf\BaseObjects;..\src\Pdf\Exceptions;..\src\Pdf\Files;..\src\Pdf\Lexical;..\src\Pdf\Streams;..\inc;C:\boost_1_53_0;..\src\Pdf\CommonDataStructures;..\src\Pdf\BaseObjects\Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\Pdf;..\src\Pdf\BaseObjects;..\src\Pdf\Exceptions;..\src\Pdf\Files;..\src\Pdf\Lexical;..\src\Pdf\Streams;C:\boost_1_55_0;..\src\Pdf\CommonDataStructures;..\src\Pdf\BaseObjects\Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

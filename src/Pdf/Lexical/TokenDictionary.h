@@ -1,7 +1,6 @@
 #ifndef _LEXICAL_TOKEN_DICTIONARY_H
 #define _LEXICAL_TOKEN_DICTIONARY_H
 
-#include "Trie.h"
 #include "Buffer.h"
 #include "Lexical/Token.h"
 #include "LexicalTree.h"
@@ -18,7 +17,6 @@ namespace Pdf
 			TokenDictionary();
 			static bool _initialized;
 
-			//static rtv::Trie<Character, Pdf::Lexical::Token::Type> _dictionary;
 			//static std::map<CharacterSet, Pdf::Lexical::Token::Type> _dictionary;
 			static Tree _dictionary;
 

@@ -13,11 +13,10 @@ namespace Pdf
 		struct Hasher {
 			unsigned long operator()(const NameObject& t) const
 			{
-				auto vec = t._value.Data();
 				unsigned long result = 0;
 				unsigned int size = t._value.Size();
 				for (unsigned int i = 0; i < size; ++i)
-					result ^= vec[i];
+					result ^= t._value[i];
 
 				return result;
 			}
@@ -51,6 +50,8 @@ namespace Pdf
 			DECLARE_CONST_NAME(N);
 			DECLARE_CONST_NAME(First);
 			DECLARE_CONST_NAME(Extends);
+			DECLARE_CONST_NAME(Filter);
+			DECLARE_CONST_NAME(FlateDecode);
 		}
 	}
 }

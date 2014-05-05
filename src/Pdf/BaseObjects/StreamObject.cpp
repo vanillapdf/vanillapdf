@@ -6,6 +6,9 @@
 #include "File.h"
 #include "Buffer.h"
 
+// TODO
+#include "FlateDecodeFilter.h"
+
 #include <sstream>
 
 namespace Pdf
@@ -19,6 +22,16 @@ namespace Pdf
 
 	StreamObject::StreamObject(DictionaryObject& dictionary)
 		: Object(Object::Type::StreamObject), _data(nullptr), _rawDataOffset(_BADOFF), _dictionary(boost::intrusive_ptr<DictionaryObject>(&dictionary)), _rawDataLength(-1), _type(Type::UNKNOWN) {}
+
+	Buffer StreamObject::GetData() const
+	{
+		auto filter_name = _dictionary->Find(Pdf::Constant::Name::Filter);
+		if (nullptr == filter_name)
+			return *_data;
+
+		// TODO
+		return ((Filters::FlateDecodeFilter*)(&*filter_name))->Apply(*_data);
+	}
 
 	Parser& operator>>(Parser& s, StreamObject& o)
 	{

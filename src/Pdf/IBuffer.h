@@ -10,7 +10,7 @@ namespace Pdf
 	{
 	public:
 		virtual Character At(long at) const = 0;
-		virtual long Size() const = 0;
+		virtual int Size() const = 0;
 
 		virtual bool operator==(const IBuffer& other) const = 0;
 		virtual bool operator<(const IBuffer& other) const = 0;

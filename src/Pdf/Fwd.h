@@ -4,12 +4,9 @@
 namespace Pdf
 {
 	class ArrayObject;
-	class ASCIIFilter;
 	class Boolean;
 	class CrossReferenceInfo;
-	class DecompressionFilter;
 	class DictionaryObject;
-	class Filter;
 	class Function;
 	class IndirectObject;
 	class IndirectObjectReference;
@@ -47,6 +44,12 @@ namespace Pdf
 		class Parser;
 		class Token;
 		class TokenDictionary;
+	}
+
+	namespace Filters
+	{
+		class Filter;
+		class FlateDecodeFilter;
 	}
 
 	namespace Streams
