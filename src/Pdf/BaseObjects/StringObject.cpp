@@ -2,7 +2,6 @@
 #include "Token.h"
 
 #include <cassert>
-#include <string>
 
 namespace Pdf
 {
@@ -17,8 +16,8 @@ namespace Pdf
 
 	HexadecimalString::HexadecimalString(const Token& token) : StringObject(Object::Type::HexadecimalString)
 	{
-		auto charset = token.value();
-		_hexadecimal = string(charset.begin(), charset.end());
+		auto buffer = token.value();
+		_hexadecimal = buffer.ToString();
 
 		int len = (_hexadecimal.length() / 2) - 2;
 
@@ -32,7 +31,7 @@ namespace Pdf
 
 	HexadecimalString::HexadecimalString(const Buffer& value) : StringObject(Object::Type::HexadecimalString)
 	{
-		_hexadecimal = string(value.begin(), value.end());
+		_hexadecimal = value.ToString();
 
 		int len = (_hexadecimal.length() / 2) - 2;
 		

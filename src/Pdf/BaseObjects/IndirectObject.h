@@ -15,7 +15,6 @@ namespace Pdf
 	{
 	public:
 		IndirectObject(std::shared_ptr<Files::File> file, int objNumber, int genNumber, std::streamoff offset = std::_BADOFF);
-		IndirectObject(std::shared_ptr<Files::File> file, const Buffer& value);
 		IndirectObject(const IndirectObject& other);
 
 		void SetObject(boost::intrusive_ptr<Object> ref);

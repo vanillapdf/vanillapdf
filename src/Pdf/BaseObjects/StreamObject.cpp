@@ -17,8 +17,8 @@ namespace Pdf
 	StreamObject::StreamObject()
 		: Object(Object::Type::StreamObject), _data(nullptr), _rawDataOffset(_BADOFF), _dictionary(nullptr), _rawDataLength(-1), _type(Type::UNKNOWN) {}
 
-	StreamObject::StreamObject(boost::intrusive_ptr<DictionaryObject> dictionary)
-		: Object(Object::Type::StreamObject), _data(nullptr), _rawDataOffset(_BADOFF), _dictionary(dictionary), _rawDataLength(-1), _type(Type::UNKNOWN) {}
+	StreamObject::StreamObject(DictionaryObject& dictionary)
+		: Object(Object::Type::StreamObject), _data(nullptr), _rawDataOffset(_BADOFF), _dictionary(boost::intrusive_ptr<DictionaryObject>(&dictionary)), _rawDataLength(-1), _type(Type::UNKNOWN) {}
 
 	Parser& operator>>(Parser& s, StreamObject& o)
 	{
@@ -75,11 +75,8 @@ namespace Pdf
 		size_t len = static_cast<size_t>(size);
 		streamoff offset = s.tellg();
 
-		if (s.PeekTokenType() == Token::Type::EOL)
-			s.ReadToken();
-
 		auto data = s.Read(len);
-		Buffer se(data.get(), len);
+		auto buffer = std::shared_ptr<Buffer>(new Buffer(data.get(), len));
 
 		// TODO apply filter
 
@@ -92,7 +89,7 @@ namespace Pdf
 
 		o._rawDataOffset = offset;
 		o._rawDataLength = len;
-		o._data = std::shared_ptr<Buffer>(new Buffer(se));
+		o._data = buffer;
 
 		return s;
 	}

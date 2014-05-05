@@ -11,13 +11,13 @@ namespace Pdf
 	using namespace std;
 	using namespace Pdf::Lexical;
 
-	void CrossReferenceTable::Add(const Entry& e) { _table.push_back(e); }
-	int CrossReferenceTable::Size(void) const { return _table.size(); }
-	CrossReferenceTable::Entry CrossReferenceTable::At(int at) const { return _table.at(at); }
+	void CrossReferenceInfo::Add(const Entry& e) { _entries.push_back(e); }
+	int CrossReferenceInfo::Size(void) const { return _entries.size(); }
+	CrossReferenceInfo::Entry CrossReferenceInfo::At(int at) const { return _entries.at(at); }
 
-	CrossReferenceTable::CrossReferenceTable() : _table() {}
+	CrossReferenceInfo::CrossReferenceInfo() : _entries(), _type(CrossReferenceInfo::Type::TABLE) {}
 
-	CrossReferenceTable::Entry CrossReferenceTable::ReadEntry(Lexical::Parser& s, int objNumber)
+	CrossReferenceInfo::Entry CrossReferenceInfo::ReadEntry(Lexical::Parser& s, int objNumber)
 	{
 		// TODO space
 		Character sp1, sp2, key, eol1, eol2;
@@ -34,7 +34,7 @@ namespace Pdf
 		static const Character IN_USE = Character('n');
 		static const Character NOT_IN_USE = Character('f');
 
-		CrossReferenceTable::Entry result;
+		CrossReferenceInfo::Entry result;
 
 		if (key == IN_USE)
 			result._in_use = true;
@@ -53,8 +53,18 @@ namespace Pdf
 		return result;
 	}
 
-	Parser& operator>>(Parser& s, CrossReferenceTable& o)
+	Parser& operator>>(Parser& s, CrossReferenceInfo& o)
 	{
+		// XRef stream
+		if (s.PeekTokenType() == Token::Type::INTEGER_OBJECT)
+		{
+			auto obj = s.readObject();
+
+			// TODO process
+
+			return s;
+		}
+
 		s.ReadTokenWithType(Token::Type::XREF_MARKER);
 		s.ReadTokenWithType(Token::Type::EOL);
 
@@ -80,32 +90,32 @@ using namespace Pdf;
 
 GOTCHANG_PDF_API int CALLING_CONVENTION Xref_Size(XrefHandle handle)
 {
-	CrossReferenceTable* table = reinterpret_cast<CrossReferenceTable*>(handle);
+	CrossReferenceInfo* table = reinterpret_cast<CrossReferenceInfo*>(handle);
 	return table->Size();
 }
 
 GOTCHANG_PDF_API XrefEntryHandle CALLING_CONVENTION Xref_At(XrefHandle handle, int at)
 {
-	CrossReferenceTable* table = reinterpret_cast<CrossReferenceTable*>(handle);
-	CrossReferenceTable::Entry* entry = new CrossReferenceTable::Entry(table->At(at));
+	CrossReferenceInfo* table = reinterpret_cast<CrossReferenceInfo*>(handle);
+	CrossReferenceInfo::Entry* entry = new CrossReferenceInfo::Entry(table->At(at));
 	return reinterpret_cast<XrefEntryHandle>(entry);
 }
 
 GOTCHANG_PDF_API void CALLING_CONVENTION Xref_Release(XrefHandle handle)
 {
-	CrossReferenceTable* table = reinterpret_cast<CrossReferenceTable*>(handle);
+	CrossReferenceInfo* table = reinterpret_cast<CrossReferenceInfo*>(handle);
 	boost::intrusive_ptr_release(table);
 }
 
 GOTCHANG_PDF_API void CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle handle)
 {
-	CrossReferenceTable::Entry* entry = reinterpret_cast<CrossReferenceTable::Entry*>(handle);
+	CrossReferenceInfo::Entry* entry = reinterpret_cast<CrossReferenceInfo::Entry*>(handle);
 	delete entry;
 }
 
 GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION XrefEntry_Reference(XrefEntryHandle handle)
 {
-	CrossReferenceTable::Entry* entry = reinterpret_cast<CrossReferenceTable::Entry*>(handle);
+	CrossReferenceInfo::Entry* entry = reinterpret_cast<CrossReferenceInfo::Entry*>(handle);
 
 	Pdf::IndirectObject *ptr = entry->_reference.get();
 	boost::intrusive_ptr_add_ref(ptr);
@@ -115,7 +125,7 @@ GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION XrefEntry_Reference(Xre
 
 GOTCHANG_PDF_API int CALLING_CONVENTION XrefEntry_In_Use(XrefEntryHandle handle)
 {
-	CrossReferenceTable::Entry* entry = reinterpret_cast<CrossReferenceTable::Entry*>(handle);
+	CrossReferenceInfo::Entry* entry = reinterpret_cast<CrossReferenceInfo::Entry*>(handle);
 
 	if (entry->_in_use)
 		return GOTCHANG_PDF_RV_TRUE;

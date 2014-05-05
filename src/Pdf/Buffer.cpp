@@ -10,7 +10,6 @@ namespace Pdf
 
 	Character Buffer::At(long at) const { return _value[at]; }
 
-	void Buffer::PushBack(Character& ch) { _value.push_back(ch); }
 	void Buffer::PushBack(const Character& ch) { _value.push_back(ch); }
 
 	void Buffer::Insert(std::vector<Character>::const_iterator it, char* begin, char* end) { _value.insert(it, begin, end); }
@@ -47,4 +46,6 @@ namespace Pdf
 	bool Buffer::operator<(const Buffer& other) const { return _value < other._value; }
 
 	Character Buffer::operator[](unsigned int i) const { return _value[i]; }
+
+	std::string Buffer::ToString(void) const { return std::string(_value.begin(), _value.end()); }
 }

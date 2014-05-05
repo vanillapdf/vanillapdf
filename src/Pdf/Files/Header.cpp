@@ -18,11 +18,11 @@ namespace Pdf
 			auto data = s.Readline();
 			assert(data->Size() > 0);
 
-			string str(data->begin(), data->end());
+			string tmp = data->ToString();
 
 			std::smatch sm;
 			std::regex header_regex("%PDF-([0-9])\\.([0-9])");
-			if (std::regex_match(str, sm, header_regex))
+			if (std::regex_match(tmp, sm, header_regex))
 			{
 				assert(sm.size() == 3);
 				o._majorVersion = stoi(sm[1]);

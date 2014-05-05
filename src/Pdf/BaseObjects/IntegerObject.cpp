@@ -5,7 +5,6 @@
 
 #include <cassert>
 #include <vector>
-#include <string>
 
 namespace Pdf
 {
@@ -14,36 +13,34 @@ namespace Pdf
 	using Pdf::Lexical::Token;
 	using namespace Streams::Lexical;
 
+#pragma region Constructors
+
 	IntegerObject::IntegerObject(ValueType value) : NumericObject(Type::IntegerObject), _value(value) {}
 	IntegerObject::IntegerObject() : NumericObject(Type::IntegerObject), _value(0) {}
-	/*
-	IntegerObject::IntegerObject(const CharacterSet& value) : NumericObject(Type::IntegerObject)
-	{
-		string str(value.begin(), value.end());
-		_value = stoi(str);
-	}
-	*/
 
-	IntegerObject::IntegerObject(const Pdf::Lexical::Token& value ) : NumericObject(Type::IntegerObject)
+	IntegerObject::IntegerObject(const Token& value) : NumericObject(Type::IntegerObject)
 	{
 		assert(value.type() == Token::Type::INTEGER_OBJECT);
 
-		auto data = value.value();
-
-		string str(data.begin(), data.end());
-		_value = stoi(str);
+		auto buffer = value.value();
+		_value = stoi(buffer.ToString());
 	}
 
-	IntegerObject& IntegerObject::operator=(const Token& value)
-	{
-		return *this = value.value();
-	}
+#pragma endregion
+
+
+
+#pragma region Operators
+
+	bool operator== (const IntegerObject& i1, const IntegerObject& i2) { return i1._value == i2._value; }
+	bool operator!= (const IntegerObject& i1, const IntegerObject& i2) { return i1._value != i2._value; }
+	bool operator<(const IntegerObject& i1, const IntegerObject& i2) { return i1._value < i2._value; }
+
+	IntegerObject& IntegerObject::operator=(const Token& value) { return *this = value.value(); }
 
 	IntegerObject& IntegerObject::operator=(const Buffer& value)
 	{
-		string str(value.begin(), value.end());
-		_value = stoi(str);
-
+		_value = stoi(value.ToString());
 		return *this;
 	}
 
@@ -53,53 +50,32 @@ namespace Pdf
 		return *this;
 	}
 
-	IntegerObject::ValueType IntegerObject::value( void ) const
-	{
-		return _value;
-	}
+#pragma endregion
 
-	bool operator== (const IntegerObject& i1, const IntegerObject& i2)
-	{
-		return i1._value == i2._value;
-	}
-
-	bool operator!= (const IntegerObject& i1, const IntegerObject& i2)
-	{
-		return i1._value != i2._value;
-	}
+	IntegerObject::ValueType IntegerObject::value(void) const { return _value; }
 
 	ReverseStream& operator>> (ReverseStream& s, IntegerObject& o)
-	{		
-		Token t;
-		s >> t;
+	{
+		auto token = s.ReadToken();
 
-		// TODO
-		//assert(t == Token::Type::INTEGER_OBJECT);
+		assert(token->type() == Token::Type::INTEGER_OBJECT);
 
-		Buffer set = t.value();
-		string resultStr(set.begin(), set.end());
-		o._value = stoi(resultStr);
+		Buffer buffer = token->value();
+		o._value = stoi(buffer.ToString());
 
 		return s;
 	}
 
 	Stream& operator>>(Stream& s, IntegerObject& o)
 	{
-		Token t;
-		s >> t;
+		auto token = s.ReadToken();
 
-		assert(t.type() == Token::Type::INTEGER_OBJECT);
+		assert(token->type() == Token::Type::INTEGER_OBJECT);
 
-		Buffer set = t.value();
-		string resultStr(set.begin(), set.end());
-		o._value = stoi(resultStr);
+		Buffer buffer = token->value();
+		o._value = stoi(buffer.ToString());
 
 		return s;
-	}
-
-	bool operator<( const IntegerObject& i1, const IntegerObject& i2 )
-	{
-		return i1._value < i2._value;
 	}
 }
 

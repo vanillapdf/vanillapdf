@@ -4,6 +4,7 @@
 #include "IBuffer.h"
 
 #include <vector>
+#include <string>
 
 namespace Pdf
 {
@@ -15,11 +16,12 @@ namespace Pdf
 
 		void Buffer::Insert(std::vector<Character>::const_iterator it, char* begin, char* end);
 		void Insert(std::vector<Character>::const_iterator it, Buffer item);
-		void PushBack(Character& ch);
 		void PushBack(const Character& ch);
 		void Reverse();
 		virtual long Size() const override;
 		const Character* Data() const;
+
+		std::string ToString(void) const;
 
 		std::vector<Character>::const_iterator begin() const;
 		std::vector<Character>::const_iterator end() const;

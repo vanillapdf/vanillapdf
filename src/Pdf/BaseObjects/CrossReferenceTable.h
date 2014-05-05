@@ -14,32 +14,39 @@
 
 namespace Pdf
 {
-	class CrossReferenceTable
+	class CrossReferenceInfo
 	{
 	public:
+		enum class Type : unsigned char
+		{
+			TABLE = 0,
+			STREAM
+		};
+
 		struct Entry
 		{
 			boost::intrusive_ptr<IndirectObject> _reference;
 			bool _in_use;
 		};
 
-		CrossReferenceTable();
+		CrossReferenceInfo();
 
 		void Add(const Entry& e);
 		int Size(void) const;
 		Entry At(int at) const;
 
-		friend Lexical::Parser& operator>> (Lexical::Parser& s, CrossReferenceTable& o);
+		friend Lexical::Parser& operator>> (Lexical::Parser& s, CrossReferenceInfo& o);
 
 	private:
-		std::vector<Entry> _table;
+		Type _type;
+		std::vector<Entry> _entries;
 
 		mutable long _intrusive_ref_count;
 
-		friend void ::boost::intrusive_ptr_add_ref(CrossReferenceTable*);
-		friend void ::boost::intrusive_ptr_release(CrossReferenceTable*);
+		friend void ::boost::intrusive_ptr_add_ref(CrossReferenceInfo*);
+		friend void ::boost::intrusive_ptr_release(CrossReferenceInfo*);
 
-		CrossReferenceTable::Entry ReadEntry(Lexical::Parser& s, int objNumber);
+		CrossReferenceInfo::Entry ReadEntry(Lexical::Parser& s, int objNumber);
 	};
 }
 

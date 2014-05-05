@@ -10,14 +10,8 @@ namespace Pdf
 
 	IndirectObjectReference::IndirectObjectReference(std::shared_ptr<Files::File> file) : Object(Object::Type::IndirectReference), _file(file), _reference(nullptr) {}
 
-	IndirectObjectReference::IndirectObjectReference(std::shared_ptr<Files::File> file, int obj_number, int gen_number) : Object(Object::Type::IndirectReference), _file(file)
-	{
-		_obj_number = obj_number;
-		_gen_number = gen_number;
-
-		// TODO
-		//_reference = _file.GetIndirectObject(objNumber, genNumber);
-	}
+	IndirectObjectReference::IndirectObjectReference(std::shared_ptr<Files::File> file, int obj_number, int gen_number) :
+		Object(Object::Type::IndirectReference), _file(file), _obj_number(obj_number), _gen_number(gen_number) {}
 
 	boost::intrusive_ptr<IndirectObject> IndirectObjectReference::GetReference() const
 	{

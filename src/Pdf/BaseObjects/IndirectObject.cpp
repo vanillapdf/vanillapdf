@@ -12,25 +12,10 @@ namespace Pdf
 	IndirectObject::IndirectObject(std::shared_ptr<Files::File> file, int objNumber, int genNumber, std::streamoff offset /*= _BADOFF */)
 		: Object(Object::Type::IndirectObject), _file(file), _objNumber(objNumber), _genNumber(genNumber), _offset(offset), _reference(nullptr) {}
 
-	IndirectObject::IndirectObject(std::shared_ptr<Files::File> file, const Buffer& value) : Object(Object::Type::IndirectObject), _file(file), _reference(nullptr)
-	{
-		string str(value.begin(), value.end());
-		int space = str.find_first_of(static_cast<unsigned char>(Character::WhiteSpace::SPACE));
+	IndirectObject::IndirectObject(const IndirectObject& other) :
+		_file(other._file), _genNumber(other._genNumber), _objNumber(other._objNumber), _offset(other._offset), _reference(other._reference) {}
 
-		_objNumber = stoi(str.substr(0, space));
-		_genNumber = stoi(str.substr(space));
-
-		// TODO 'obj' validation
-	}
-
-	IndirectObject::IndirectObject(const IndirectObject& other) : _file(other._file), _genNumber(other._genNumber), _objNumber(other._objNumber), _offset(other._offset), _reference(other._reference) {}
-
-	void IndirectObject::SetObject(boost::intrusive_ptr<Object> ref)
-	{
-		// TODO validation
-
-		_reference = ref;
-	}
+	void IndirectObject::SetObject(boost::intrusive_ptr<Object> ref) { _reference = ref; }
 
 	boost::intrusive_ptr<Object> IndirectObject::GetObject() const
 	{

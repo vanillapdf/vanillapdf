@@ -6,7 +6,7 @@ namespace Pdf
 	class ArrayObject;
 	class ASCIIFilter;
 	class Boolean;
-	class CrossReferenceTable;
+	class CrossReferenceInfo;
 	class DecompressionFilter;
 	class DictionaryObject;
 	class Filter;

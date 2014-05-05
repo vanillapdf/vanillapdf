@@ -22,7 +22,7 @@ namespace Pdf
 		};
 
 		StreamObject();
-		explicit StreamObject(boost::intrusive_ptr<DictionaryObject> dictionary);
+		explicit StreamObject(DictionaryObject& dictionary);
 
 		//friend Streams::Lexical::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, StreamObject& o);
 		friend Lexical::Parser& operator>> (Lexical::Parser& s, StreamObject& o);

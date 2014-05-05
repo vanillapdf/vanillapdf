@@ -35,7 +35,7 @@ namespace Pdf
 
 					if (PeekTokenType() == Token::Type::STREAM_BEGIN)
 					{
-						auto resultStream = boost::intrusive_ptr<StreamObject>(new StreamObject(result));
+						auto resultStream = boost::intrusive_ptr<StreamObject>(new StreamObject(*result));
 						*this >> *resultStream;
 
 						return resultStream;

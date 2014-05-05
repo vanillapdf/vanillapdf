@@ -18,7 +18,7 @@ namespace Pdf
 		using namespace Streams::Lexical;
 		using namespace Pdf::Lexical;
 
-		File::File(const char *filename) : _input(nullptr), _cache(), _xref(new CrossReferenceTable()), _header(new Header()), _trailer(new Trailer())
+		File::File(const char *filename) : _input(nullptr), _cache(), _xref(new CrossReferenceInfo()), _header(new Header()), _trailer(new Trailer())
 		{
 			_input = shared_ptr<fstream>(new fstream);
 			_input->open(filename, ios_base::in | ios_base::out | std::ifstream::binary);
@@ -93,7 +93,7 @@ namespace Pdf
 
 		boost::intrusive_ptr<Header> File::GetHeader(void) const { return _header; }
 		boost::intrusive_ptr<Trailer> File::GetTrailer(void) const { return _trailer; }
-		boost::intrusive_ptr<CrossReferenceTable> File::GetCrossReferenceTable(void) const { return _xref; }
+		boost::intrusive_ptr<CrossReferenceInfo> File::GetCrossReferenceTable(void) const { return _xref; }
 
 		Lexical::Parser File::GetParser(void) const { return Lexical::Parser(*_stream); }
 	}
