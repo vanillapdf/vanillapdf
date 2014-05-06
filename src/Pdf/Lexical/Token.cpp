@@ -19,8 +19,6 @@ namespace Pdf
 
 		Token::Token(Type type, const Buffer& chars) : _type(type), _value(chars)
 		{
-			assert(_value.Size() > 0);
-
 			if (_type == Token::Type::UNKNOWN)
 				_type = Evaluate(_value);
 		}

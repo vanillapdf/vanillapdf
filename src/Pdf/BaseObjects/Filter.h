@@ -25,7 +25,7 @@ namespace Pdf
 
 			Filter(Type type) : _type(type) {}
 
-			virtual Buffer Apply(Buffer src) const = 0;
+			virtual Buffer Apply(Buffer& src) const = 0;
 
 		protected:
 			Type _type;

@@ -54,6 +54,16 @@ namespace Pdf
 		explicit Character(Delimiter value);
 		explicit Character(Numeric value);
 
+		Character(ValueType hinib, ValueType lonib);
+
+		static ValueType AsciiHexToValue(ValueType c)
+		{
+			if ('0' <= c && c <= '9') { return c - '0'; }
+			if ('a' <= c && c <= 'f') { return c + 10 - 'a'; }
+			if ('A' <= c && c <= 'F') { return c + 10 - 'A'; }
+			//throw Exception();
+		}
+
 		bool isRegular(void) const;
 		bool isSpace(void) const;
 		bool isWhiteSpace(void) const;

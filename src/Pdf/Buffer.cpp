@@ -41,7 +41,8 @@ namespace Pdf
 
 	void Buffer::Reverse() { std::reverse(_value.begin(), _value.end()); }
 	Character Buffer::At(long at) const { return _value[at]; }
-	void Buffer::PushBack(const Character& ch) { _value.push_back(ch); }
+	void Buffer::Append(const Character& ch) { _value.push_back(ch); }
+	void Buffer::Append(const Buffer& item) { Insert(0, item); }
 	void Buffer::Insert(int idx, const Buffer& item) { _value.insert(_value.begin() + idx, item._value.begin(), item._value.end()); }
 	int Buffer::Size() const { return _value.size(); }
 	std::string Buffer::ToString(void) const { return std::string(_value.begin(), _value.end()); }

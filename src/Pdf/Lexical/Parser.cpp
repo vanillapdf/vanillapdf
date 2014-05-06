@@ -33,6 +33,9 @@ namespace Pdf
 					auto result = boost::intrusive_ptr<DictionaryObject>(new DictionaryObject());
 					*this >> *result;
 
+					if (PeekTokenType() == Token::Type::EOL)
+						ReadToken();
+
 					if (PeekTokenType() == Token::Type::STREAM_BEGIN)
 					{
 						auto resultStream = boost::intrusive_ptr<StreamObject>(new StreamObject(*result));
@@ -108,6 +111,11 @@ namespace Pdf
 			{
 				auto token = ReadTokenWithType(Token::Type::LITERAL_STRING);
 				return boost::intrusive_ptr<LiteralString>(new LiteralString(*token));
+			}
+			case Token::Type::REAL_OBJECT:
+			{
+				auto token = ReadTokenWithType(Token::Type::REAL_OBJECT);
+				return boost::intrusive_ptr<RealObject>(new RealObject(*token));
 			}
 			default:
 				throw Exception("No valid object could be found at offset " + static_cast<int>(offset));

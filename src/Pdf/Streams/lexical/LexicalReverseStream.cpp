@@ -30,8 +30,7 @@ namespace Pdf
 					auto result = _last_token;
 
 					seekg(_advance_position);
-					assert(!eof());
-					assert(!fail());
+					assert(good());
 
 					_last_token = nullptr;
 					_last_token_offset = _BADOFF;
@@ -50,9 +49,9 @@ namespace Pdf
 				switch (ch)
 				{
 				case Character::WhiteSpace::LINE_FEED:
-					chars.PushBack(ch);
+					chars.Append(ch);
 					if (ahead == Character::WhiteSpace::SPACE || ahead == Character::WhiteSpace::CARRIAGE_RETURN)
-						chars.PushBack(Get());
+						chars.Append(Get());
 
 					result_type = Token::Type::EOL;
 					goto prepared;
@@ -61,8 +60,8 @@ namespace Pdf
 				case Character::Delimiter::GREATER_THAN_SIGN:
 					if (ahead == Character::Delimiter::GREATER_THAN_SIGN)
 					{
-						chars.PushBack(ch);
-						chars.PushBack(Get());
+						chars.Append(ch);
+						chars.Append(Get());
 
 						result_type = Token::Type::DICTIONARY_END;
 						goto prepared;
@@ -73,48 +72,48 @@ namespace Pdf
 					if (ahead == Character::Delimiter::LESS_THAN_SIGN)
 					{
 						// Little HACK >> twice
-						chars.PushBack(ch);
-						chars.PushBack(Get());
+						chars.Append(ch);
+						chars.Append(Get());
 
 						result_type = Token::Type::DICTIONARY_BEGIN;
 						goto prepared;
 					}
 					else
 					{
-						chars.PushBack(Get());
+						chars.Append(Get());
 						while (Peek() != Character::Delimiter::GREATER_THAN_SIGN)
-							chars.PushBack(Get());
+							chars.Append(Get());
 
 						result_type = Token::Type::HEXADECIMAL_STRING;
 						goto eat;
 					}
 				case Character::Delimiter::LEFT_SQUARE_BRACKET:
-					chars.PushBack(ch);
+					chars.Append(ch);
 					result_type = Token::Type::ARRAY_BEGIN;
 					goto prepared;
 				case Character::Delimiter::RIGHT_SQUARE_BRACKET:
-					chars.PushBack(ch);
+					chars.Append(ch);
 					result_type = Token::Type::ARRAY_END;
 					goto prepared;
 				case Character::Delimiter::SOLIDUS:
 					while (!(Peek().isWhiteSpace() || Peek().isDelimiter()))
 					{
 						/* TODO #sign in name objects */
-						chars.PushBack(Get());
+						chars.Append(Get());
 					}
 
 					result_type = Token::Type::NAME_OBJECT;
 					goto prepared;
 				case Character::Delimiter::LEFT_PARENTHESIS:
 					while (Peek() != Character::Delimiter::RIGHT_PARENTHESIS)
-						chars.PushBack(Get());
+						chars.Append(Get());
 
 					result_type = Token::Type::LITERAL_STRING;
 					goto eat;
 				default:
 					if (ch == 'R')
 					{
-						chars.PushBack(ch);
+						chars.Append(ch);
 
 						result_type = Token::Type::INDIRECT_REFERENCE_MARKER;
 						goto prepared;
@@ -122,16 +121,16 @@ namespace Pdf
 
 					if (ch.isNumeric() || ch == '+' || ch == '-')
 					{
-						chars.PushBack(ch);
+						chars.Append(ch);
 
 						while (Peek().isNumeric())
-							chars.PushBack(Get());
+							chars.Append(Get());
 
 						if (Peek() == '.')
 						{
-							chars.PushBack(Get());
+							chars.Append(Get());
 							while (Peek().isNumeric())
-								chars.PushBack(Get());
+								chars.Append(Get());
 
 							result_type = Token::Type::REAL_OBJECT;
 							goto prepared;
@@ -141,13 +140,13 @@ namespace Pdf
 						goto prepared;
 					}
 
-					chars.PushBack(ch);
+					chars.Append(ch);
 					while (!(Peek().isWhiteSpace() || Peek().isDelimiter()))
-						chars.PushBack(Get());
+						chars.Append(Get());
 
 
 					while (!(Peek().isRegular() || Peek().isWhiteSpace()))
-						chars.PushBack(Get());
+						chars.Append(Get());
 
 					goto prepared;
 				}
@@ -179,8 +178,7 @@ namespace Pdf
 				_last_token_offset = pos;
 
 				seekg(_last_token_offset);
-				assert(!eof());
-				assert(!fail());
+				assert(good());
 
 				return _last_token;
 			}

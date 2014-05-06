@@ -136,12 +136,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\src\Pdf;..\src\Pdf\BaseObjects;..\src\Pdf\Exceptions;..\src\Pdf\Files;..\src\Pdf\Lexical;..\src\Pdf\Streams;C:\boost_1_55_0;..\src\Pdf\CommonDataStructures;..\src\Pdf\BaseObjects\Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\Pdf;..\src\Pdf\BaseObjects;..\src\Pdf\Exceptions;..\src\Pdf\Files;..\src\Pdf\Lexical;..\src\Pdf\Streams;C:\boost_1_55_0;..\src\Pdf\CommonDataStructures;..\src\Pdf\BaseObjects\Interface;..\lib\zlib128-dll\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\lib\zlib128-dll\lib\zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -152,13 +152,13 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\src\Pdf;..\src\Pdf\BaseObjects;..\src\Pdf\Exceptions;..\src\Pdf\Files;..\src\Pdf\Lexical;..\src\Pdf\Streams;C:\boost_1_55_0;..\src\Pdf\CommonDataStructures;..\src\Pdf\BaseObjects\Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\Pdf;..\src\Pdf\BaseObjects;..\src\Pdf\Exceptions;..\src\Pdf\Files;..\src\Pdf\Lexical;..\src\Pdf\Streams;C:\boost_1_55_0;..\src\Pdf\CommonDataStructures;..\src\Pdf\BaseObjects\Interface;..\lib\zlib128-dll\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\lib\zlib128-dll\lib\zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -16,7 +16,8 @@ namespace Pdf
 		Buffer(const char *begin, const char *end);
 
 		void Insert(int idx, const Buffer& item);
-		void PushBack(const Character& ch);
+		void Append(const Character& ch);
+		void Append(const Buffer& item);
 		void Reverse();
 
 		std::string ToString(void) const;

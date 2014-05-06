@@ -30,7 +30,9 @@ namespace Pdf
 			return *_data;
 
 		// TODO
-		return ((Filters::FlateDecodeFilter*)(&*filter_name))->Apply(*_data);
+		Filters::FlateDecodeFilter a;
+		return a.Apply(*_data);
+		//return ((Filters::FlateDecodeFilter*)(&*filter_name))->Apply(*_data);
 	}
 
 	Parser& operator>>(Parser& s, StreamObject& o)
@@ -103,6 +105,8 @@ namespace Pdf
 		o._rawDataOffset = offset;
 		o._rawDataLength = len;
 		o._data = buffer;
+
+		o.GetData();
 
 		return s;
 	}

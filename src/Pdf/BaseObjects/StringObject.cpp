@@ -25,7 +25,7 @@ namespace Pdf
 		{
 			int val = stoi(_hexadecimal.substr(i * 2, 2), 0, 16);
 			Character ch = Character(val);
-			_value.PushBack(ch);
+			_value.Append(ch);
 		}
 	}
 
@@ -39,7 +39,7 @@ namespace Pdf
 		{
 			int val = stoi(_hexadecimal.substr(i * 2, 2), 0, 16);
 			Character ch = Character(val);
-			_value.PushBack(ch);
+			_value.Append(ch);
 		}
 	}
 

@@ -21,7 +21,7 @@ namespace Pdf
 			string tmp = data->ToString();
 
 			std::smatch sm;
-			std::regex header_regex("%PDF-([0-9])\\.([0-9])");
+			std::regex header_regex("%PDF-([0-9])\\.([0-9]).*");
 			if (std::regex_match(tmp, sm, header_regex))
 			{
 				assert(sm.size() == 3);

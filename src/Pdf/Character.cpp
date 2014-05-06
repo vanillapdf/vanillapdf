@@ -14,6 +14,7 @@ namespace Pdf
 	Character::Character(WhiteSpace value) : _value(static_cast<ValueType>(value)) {}
 	Character::Character(Delimiter value) : _value(static_cast<ValueType>(value)) {}
 	Character::Character(Numeric value) : _value(static_cast<ValueType>(value)) {}
+	Character::Character(ValueType hinib, ValueType lonib) : _value((hinib << 4) + lonib) {}
 
 	#pragma endregion
 

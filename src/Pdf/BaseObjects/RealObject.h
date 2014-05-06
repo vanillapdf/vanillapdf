@@ -11,7 +11,7 @@ namespace Pdf
 	public:
 		RealObject();
 		explicit RealObject(double value);
-		explicit RealObject(const Buffer& value);
+		explicit RealObject(const Lexical::Token& token);
 
 		//virtual Object* Clone(void) const  override { return new RealObject(static_cast<RealObject const&>(*this)); };
 

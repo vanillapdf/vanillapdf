@@ -13,7 +13,7 @@ namespace Pdf
 	using Pdf::Lexical::Token;
 	using namespace Streams::Lexical;
 
-#pragma region Constructors
+	#pragma region Constructors
 
 	IntegerObject::IntegerObject(ValueType value) : NumericObject(Type::IntegerObject), _value(value) {}
 	IntegerObject::IntegerObject() : NumericObject(Type::IntegerObject), _value(0) {}
@@ -26,11 +26,9 @@ namespace Pdf
 		_value = stoi(buffer.ToString());
 	}
 
-#pragma endregion
+	#pragma endregion
 
-
-
-#pragma region Operators
+	#pragma region Operators
 
 	bool operator== (const IntegerObject& i1, const IntegerObject& i2) { return i1._value == i2._value; }
 	bool operator!= (const IntegerObject& i1, const IntegerObject& i2) { return i1._value != i2._value; }
@@ -50,7 +48,7 @@ namespace Pdf
 		return *this;
 	}
 
-#pragma endregion
+	#pragma endregion
 
 	IntegerObject::ValueType IntegerObject::value(void) const { return _value; }
 
