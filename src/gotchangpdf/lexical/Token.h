@@ -1,7 +1,7 @@
 #ifndef _TOKEN_H
 #define _TOKEN_H
 
-#include "Fwd.h"
+#include "fwd.h"
 #include "Buffer.h"
 
 namespace gotchangpdf

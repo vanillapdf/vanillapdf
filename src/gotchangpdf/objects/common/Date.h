@@ -1,7 +1,7 @@
 #ifndef _DATE_H
 #define _DATE_H
 
-#include "StringObject.h"
+#include "string_object.h"
 
 // format (D:YYYYMMDDHHmmSSOHH'mm)
 

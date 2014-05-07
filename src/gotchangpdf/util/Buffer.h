@@ -1,7 +1,7 @@
 #ifndef _BUFFER_H
 #define _BUFFER_H
 
-#include "IBuffer.h"
+#include "i_buffer.h"
 
 #include <vector>
 #include <string>

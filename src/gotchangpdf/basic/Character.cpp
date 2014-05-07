@@ -1,7 +1,7 @@
 #include "Character.h"
-#include "Exception.h"
-#include "BasicBaseStream.h"
-#include "LexicalStream.h"
+#include "exception.h"
+#include "basic_base_stream.h"
+#include "lexical_stream.h"
 
 #include <climits>
 

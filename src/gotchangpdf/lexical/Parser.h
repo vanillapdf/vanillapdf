@@ -1,8 +1,8 @@
 #ifndef _OBJECTS_STREAM_H
 #define _OBJECTS_STREAM_H
 
-#include "Fwd.h"
-#include "LexicalStream.h"
+#include "fwd.h"
+#include "lexical_stream.h"
 
 #include "boost/intrusive_ptr.hpp"
 

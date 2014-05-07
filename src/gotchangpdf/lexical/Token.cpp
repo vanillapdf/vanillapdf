@@ -1,8 +1,8 @@
-#include "Token.h"
-#include "Exception.h"
-#include "lexical/LexicalReverseStream.h"
-#include "lexical/LexicalStream.h"
-#include "TokenDictionary.h"
+#include "token.h"
+#include "exception.h"
+#include "lexical_reverse_stream.h"
+#include "lexical_stream.h"
+#include "token_dictionary.h"
 
 #include <cassert>
 

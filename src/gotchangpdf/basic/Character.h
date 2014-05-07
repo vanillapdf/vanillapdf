@@ -1,7 +1,7 @@
 #ifndef _CHARACTER_H
 #define _CHARACTER_H
 
-#include "Fwd.h"
+#include "fwd.h"
 
 namespace gotchangpdf
 {

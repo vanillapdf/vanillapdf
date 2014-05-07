@@ -5,8 +5,8 @@
 
 //#define Derive_Object_CRTP(Type) class Type : public Object_CRTP<Type>
 
-#include "IObject.h"
-#include "Intrusive.h"
+#include "i_object.h"
+#include "intrusive.h"
 
 namespace gotchangpdf
 {

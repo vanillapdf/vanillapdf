@@ -1,6 +1,6 @@
 #include "Header.h"
-#include "lexical/LexicalStream.h"
-#include "Exception.h"
+#include "lexical_stream.h"
+#include "exception.h"
 
 #include <cassert>
 #include <vector>

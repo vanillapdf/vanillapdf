@@ -1,7 +1,7 @@
 #ifndef _RECTANGLE_H
 #define _RECTANGLE_H
 
-#include "ArrayObject.h"
+#include "array_object.h"
 
 namespace gotchangpdf
 {

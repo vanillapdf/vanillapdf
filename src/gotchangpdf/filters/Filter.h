@@ -1,7 +1,7 @@
 #ifndef _FILTER_H
 #define _FILTER_H
 
-#include "Fwd.h"
+#include "fwd.h"
 
 namespace gotchangpdf
 {

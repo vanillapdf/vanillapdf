@@ -1,7 +1,7 @@
 #ifndef _FUNCTION_H
 #define _FUNCTION_H
 
-#include "Object.h"
+#include "object.h"
 
 namespace gotchangpdf
 {

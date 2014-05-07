@@ -1,9 +1,9 @@
 #ifndef _TRAILER_H
 #define _TRAILER_H
 
-#include "Fwd.h"
-#include "DictionaryObject.h"
-#include "Constants.h"
+#include "fwd.h"
+#include "dictionary_object.h"
+#include "constants.h"
 
 namespace gotchangpdf
 {

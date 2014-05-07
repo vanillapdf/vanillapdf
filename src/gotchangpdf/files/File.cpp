@@ -1,10 +1,10 @@
 #include "File.h"
-#include "IntegerObject.h"
-#include "IndirectObject.h"
-#include "IndirectObjectReference.h"
-#include "LexicalReverseStream.h"
-#include "Exception.h"
-#include "Export.h"
+#include "integer_object.h"
+#include "indirect_object.h"
+#include "indirect_object_reference.h"
+#include "lexical_reverse_stream.h"
+#include "exception.h"
+#include "export.h"
 
 #include <memory>
 #include <cassert>

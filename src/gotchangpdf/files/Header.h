@@ -1,10 +1,10 @@
 #ifndef _HEADER_H
 #define _HEADER_H
 
-#include "Token.h"
-#include "Intrusive.h"
-#include "BasicStream.h"
-#include "Version.h"
+#include "token.h"
+#include "intrusive.h"
+#include "basic_stream.h"
+#include "version.h"
 
 namespace gotchangpdf
 {

@@ -1,8 +1,8 @@
 #include "Trailer.h"
-#include "IntegerObject.h"
-#include "Token.h"
-#include "lexical/LexicalReverseStream.h"
-#include "Exception.h"
+#include "integer_object.h"
+#include "token.h"
+#include "lexical_reverse_stream.h"
+#include "exception.h"
 
 #include <cassert>
 

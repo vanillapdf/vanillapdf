@@ -1,12 +1,12 @@
 #ifndef _FILE_H
 #define _FILE_H
 
-#include "CrossReferenceTable.h"
-#include "DictionaryObject.h"
-#include "Parser.h"
+#include "cross_reference_info.h"
+#include "dictionary_object.h"
+#include "parser.h"
 #include "Header.h"
 #include "Trailer.h"
-#include "IndirectObject.h"
+#include "indirect_object.h"
 
 #include <fstream>
 

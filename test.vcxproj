@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\test\Test.c" />
+    <ClCompile Include="src\test\test.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E704EA4D-1AE7-40DA-A961-A71A9C025522}</ProjectGuid>
