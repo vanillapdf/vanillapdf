@@ -3,9 +3,9 @@
 
 #include "Fwd.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Filters
+	namespace filters
 	{
 		class Filter
 		{

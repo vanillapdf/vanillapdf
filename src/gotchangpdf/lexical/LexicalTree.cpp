@@ -1,8 +1,8 @@
 #include "LexicalTree.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Lexical
+	namespace lexical
 	{
 		void Tree::Insert(const IBuffer& path, Token::Type type)
 		{
@@ -33,7 +33,7 @@ namespace Pdf
 			return true;
 		}
 
-		Token::Type Lexical::Tree::TokenType(const IBuffer& path)
+		Token::Type lexical::Tree::TokenType(const IBuffer& path)
 		{
 			Node *found = NodeAtPath(path);
 			if (nullptr == found)
@@ -42,7 +42,7 @@ namespace Pdf
 			return found->type;
 		}
 
-		Tree::Node* Lexical::Tree::NodeAtPath(const IBuffer& path)
+		Tree::Node* lexical::Tree::NodeAtPath(const IBuffer& path)
 		{
 			if (nullptr == _root)
 				return nullptr;

@@ -1,7 +1,7 @@
 #ifndef _CONSTANTS_H
 #define _CONSTANTS_H
 
-namespace Pdf
+namespace gotchangpdf
 {
 	namespace Constant
 	{

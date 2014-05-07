@@ -4,16 +4,16 @@
 #include <cassert>
 #include <algorithm>
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Lexical
+	namespace lexical
 	{
 		using namespace std;
 
 		bool TokenDictionary::_initialized = false;
 
 		//std::map<CharacterSet, Token::Type> TokenDictionary::_dictionary;
-		Lexical::Tree TokenDictionary::_dictionary;
+		lexical::Tree TokenDictionary::_dictionary;
 
 		static const char STREAM_BEGIN[] = "stream";
 		static const char STREAM_END[] = "endstream";

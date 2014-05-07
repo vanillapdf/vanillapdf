@@ -4,15 +4,18 @@
 #include "Object.h"
 #include "Exception.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
-	class InvalidObjectTypeException : public Exception
+	namespace exceptions
 	{
-	public:
-		InvalidObjectTypeException();
-		explicit InvalidObjectTypeException(const Object& obj);
-		InvalidObjectTypeException(const Object& obj, Object::Type type);
-	};
+		class InvalidObjectTypeException : public Exception
+		{
+		public:
+			InvalidObjectTypeException();
+			explicit InvalidObjectTypeException(const Object& obj);
+			InvalidObjectTypeException(const Object& obj, Object::Type type);
+		};
+	}
 }
 
 #endif /* _INVALID_TYPE_EXCEPTION_H */

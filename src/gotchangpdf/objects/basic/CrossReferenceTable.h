@@ -12,7 +12,7 @@
 
 #include <vector>
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class CrossReferenceInfo
 	{
@@ -35,7 +35,7 @@ namespace Pdf
 		int Size(void) const;
 		Entry At(int at) const;
 
-		friend Lexical::Parser& operator>> (Lexical::Parser& s, CrossReferenceInfo& o);
+		friend lexical::Parser& operator>> (lexical::Parser& s, CrossReferenceInfo& o);
 
 	private:
 		Type _type;
@@ -46,7 +46,7 @@ namespace Pdf
 		friend void ::boost::intrusive_ptr_add_ref(CrossReferenceInfo*);
 		friend void ::boost::intrusive_ptr_release(CrossReferenceInfo*);
 
-		CrossReferenceInfo::Entry ReadEntry(Lexical::Parser& s, int objNumber);
+		CrossReferenceInfo::Entry ReadEntry(lexical::Parser& s, int objNumber);
 	};
 }
 

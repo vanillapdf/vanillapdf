@@ -9,12 +9,12 @@
 
 #include <memory>
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class IndirectObject : public Object, public IIndirectObject
 	{
 	public:
-		IndirectObject(std::shared_ptr<Files::File> file, int objNumber, int genNumber, std::streamoff offset = std::_BADOFF);
+		IndirectObject(std::shared_ptr<files::File> file, int objNumber, int genNumber, std::streamoff offset = std::_BADOFF);
 		IndirectObject(const IndirectObject& other);
 
 		void SetObject(boost::intrusive_ptr<Object> ref);
@@ -26,7 +26,7 @@ namespace Pdf
 		virtual streamOffsetValueType GetOffset() const override;
 
 	private:
-		std::shared_ptr<Files::File> _file;
+		std::shared_ptr<files::File> _file;
 		int _objNumber;
 		int _genNumber;
 		streamOffsetValueType _offset;

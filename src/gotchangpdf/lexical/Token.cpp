@@ -6,10 +6,12 @@
 
 #include <cassert>
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Lexical
+	namespace lexical
 	{
+		using namespace exceptions;
+
 		#pragma region Constructors
 
 		Token::Token(Token::Type type) : _type(type) {}
@@ -34,7 +36,7 @@ namespace Pdf
 			return *this;
 		}
 
-		Streams::Lexical::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, Token& o)
+		lexical::ReverseStream& operator>> (lexical::ReverseStream& s, Token& o)
 		{
 			auto result = s.ReadToken();
 
@@ -44,7 +46,7 @@ namespace Pdf
 			return s;
 		}
 
-		Streams::Lexical::Stream& operator>>(Streams::Lexical::Stream& s, Token& o)
+		lexical::Stream& operator>>(lexical::Stream& s, Token& o)
 		{
 			auto result = s.ReadToken();
 			o._type = result->_type;

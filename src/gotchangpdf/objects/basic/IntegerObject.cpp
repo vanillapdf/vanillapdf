@@ -6,12 +6,10 @@
 #include <cassert>
 #include <vector>
 
-namespace Pdf
+namespace gotchangpdf
 {
 	using namespace std;
-
-	using Pdf::Lexical::Token;
-	using namespace Streams::Lexical;
+	using namespace lexical;
 
 	#pragma region Constructors
 
@@ -79,12 +77,12 @@ namespace Pdf
 
 GOTCHANG_PDF_API long long CALLING_CONVENTION IntegerObject_Value(IntegerObjectHandle handle)
 {
-	Pdf::IntegerObject* obj = reinterpret_cast<Pdf::IntegerObject*>(handle);
+	gotchangpdf::IntegerObject* obj = reinterpret_cast<gotchangpdf::IntegerObject*>(handle);
 	return obj->value();
 }
 
 GOTCHANG_PDF_API void CALLING_CONVENTION IntegerObject_Release(IntegerObjectHandle handle)
 {
-	Pdf::IntegerObject* obj = reinterpret_cast<Pdf::IntegerObject*>(handle);
+	gotchangpdf::IntegerObject* obj = reinterpret_cast<gotchangpdf::IntegerObject*>(handle);
 	boost::intrusive_ptr_release(obj);
 }

@@ -1,7 +1,7 @@
 #ifndef _FWD_H
 #define _FWD_H
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class ArrayObject;
 	class Boolean;
@@ -28,17 +28,20 @@ namespace Pdf
 	class Rectangle;
 	class Tree;
 
-	class Exception;
-	class InvalidObjectTypeException;
+	namespace exceptions
+	{
+		class Exception;
+		class InvalidObjectTypeException;
+	}
 
-	namespace Files
+	namespace files
 	{
 		class File;
 		class Header;
 		class Trailer;
 	}
 
-	namespace Lexical
+	namespace lexical
 	{
 		class Tree;
 		class Parser;
@@ -46,34 +49,31 @@ namespace Pdf
 		class TokenDictionary;
 	}
 
-	namespace Filters
+	namespace filters
 	{
 		class Filter;
 		class FlateDecodeFilter;
 	}
 
-	namespace Streams
+	namespace raw
 	{
-		namespace Raw
-		{
-			class BaseStream;
-			class Stream;
-			class ReverseStream;
-		}
+		class BaseStream;
+		class Stream;
+		class ReverseStream;
+	}
 
-		namespace Basic
-		{
-			class BaseStream;
-			class Stream;
-			class ReverseStream;
-		}
+	namespace basic
+	{
+		class BaseStream;
+		class Stream;
+		class ReverseStream;
+	}
 
-		namespace Lexical
-		{
-			class BaseStream;
-			class Stream;
-			class ReverseStream;
-		}
+	namespace lexical
+	{
+		class BaseStream;
+		class Stream;
+		class ReverseStream;
 	}
 
 	class Character;

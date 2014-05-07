@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-namespace Pdf
+namespace gotchangpdf
 {
 	#pragma region Constructors
 

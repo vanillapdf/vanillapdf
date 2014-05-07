@@ -5,9 +5,11 @@
 #include "Object.h"
 #include "IArrayObject.h"
 
+#include "boost/intrusive_ptr.hpp"
+
 #include <vector>
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class ArrayObject : public Object, public IArrayObject
 	{
@@ -17,7 +19,7 @@ namespace Pdf
 		virtual long Size(void) const override;
 		virtual IObject* At(long at) const override;
 
-		friend Lexical::Parser& operator>> (Lexical::Parser& s, ArrayObject& o);
+		friend lexical::Parser& operator>> (lexical::Parser& s, ArrayObject& o);
 
 	private:
 		std::vector<boost::intrusive_ptr<Object>> _list;

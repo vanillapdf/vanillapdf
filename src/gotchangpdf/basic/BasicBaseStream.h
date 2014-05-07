@@ -6,36 +6,34 @@
 #include <memory>
 #include <vector>
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Streams
+	namespace basic
 	{
-		namespace Basic
+		class BaseStream
 		{
-			class BaseStream
+		public:
+			virtual Character Peek() = 0;
+			virtual Character Get() = 0;
+			virtual Character GetHex() = 0;
+			virtual void Unget(void) = 0;
+			virtual std::shared_ptr<Buffer> Readline(void) = 0;
+
+			virtual ~BaseStream() = 0;
+
+		protected:
+			struct BasicSettings
 			{
-			public:
-				virtual Character Peek() = 0;
-				virtual Character Get() = 0;
-				virtual void Unget(void) = 0;
-				virtual std::shared_ptr<Buffer> Readline(void) = 0;
-
-				virtual ~BaseStream() = 0;
-
-			protected:
-				struct BasicSettings
-				{
-					std::vector<Character> skip;
-				};
-
-				std::shared_ptr<BasicSettings> BasicSettingsGet(void) const;
-				void BasicSettingsPush(void);
-				std::shared_ptr<BasicSettings> BasicSettingsPop(void);
-
-			private:
-				mutable std::vector<std::shared_ptr<BasicSettings>> _setting_stack;
+				std::vector<Character> skip;
 			};
-		}
+
+			std::shared_ptr<BasicSettings> BasicSettingsGet(void) const;
+			void BasicSettingsPush(void);
+			std::shared_ptr<BasicSettings> BasicSettingsPop(void);
+
+		private:
+			mutable std::vector<std::shared_ptr<BasicSettings>> _setting_stack;
+		};
 	}
 }
 

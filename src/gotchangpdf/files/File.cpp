@@ -2,7 +2,7 @@
 #include "IntegerObject.h"
 #include "IndirectObject.h"
 #include "IndirectObjectReference.h"
-#include "lexical/LexicalReverseStream.h"
+#include "LexicalReverseStream.h"
 #include "Exception.h"
 #include "Export.h"
 
@@ -10,20 +10,19 @@
 #include <cassert>
 #include <iostream>
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Files
+	namespace files
 	{
 		using namespace std;
-		using namespace Streams::Lexical;
-		using namespace Pdf::Lexical;
+		using namespace lexical;
 
 		File::File(const char *filename) : _input(nullptr), _cache(), _xref(new CrossReferenceInfo()), _header(new Header()), _trailer(new Trailer())
 		{
 			_input = shared_ptr<fstream>(new fstream);
 			_input->open(filename, ios_base::in | ios_base::out | std::ifstream::binary);
 
-			_stream = shared_ptr<Lexical::Parser>(new Lexical::Parser(shared_ptr<File>(this), _input));
+			_stream = shared_ptr<lexical::Parser>(new lexical::Parser(shared_ptr<File>(this), _input));
 		}
 
 		File::~File(void)
@@ -95,11 +94,11 @@ namespace Pdf
 		boost::intrusive_ptr<Trailer> File::GetTrailer(void) const { return _trailer; }
 		boost::intrusive_ptr<CrossReferenceInfo> File::GetCrossReferenceTable(void) const { return _xref; }
 
-		Lexical::Parser File::GetParser(void) const { return Lexical::Parser(*_stream); }
+		lexical::Parser File::GetParser(void) const { return lexical::Parser(*_stream); }
 	}
 }
 
-using namespace Pdf::Files;
+using namespace gotchangpdf::files;
 
 GOTCHANG_PDF_API FileHandle CALLING_CONVENTION File_Create(const char *filename)
 {

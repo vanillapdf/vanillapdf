@@ -5,22 +5,19 @@
 
 #include <memory>
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Streams
-	{		
-		namespace Raw
+	namespace raw
+	{
+		class BaseStream
 		{
-			class BaseStream
-			{
-			public:
+		public:
 
-				virtual std::unique_ptr<char> Read(unsigned int len) = 0;
-				virtual void Read(char *buf, unsigned int len) = 0;
-				virtual void ReadExact(const char* bytes, unsigned int len);
-				virtual ~BaseStream() = 0;
-			};
-		}
+			virtual std::unique_ptr<char> Read(unsigned int len) = 0;
+			virtual void Read(char *buf, unsigned int len) = 0;
+			virtual void ReadExact(const char* bytes, unsigned int len);
+			virtual ~BaseStream() = 0;
+		};
 	}
 }
 

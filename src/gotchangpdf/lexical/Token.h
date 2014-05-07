@@ -4,9 +4,9 @@
 #include "Fwd.h"
 #include "Buffer.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Lexical
+	namespace lexical
 	{
 		class Token
 		{
@@ -50,10 +50,10 @@ namespace Pdf
 
 			Token& operator= (const Buffer& value);
 
-			friend Streams::Lexical::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, Token& o);
+			friend lexical::ReverseStream& operator>> (lexical::ReverseStream& s, Token& o);
 			//friend class Streams::Lexical::ReverseStream;
 
-			friend Streams::Lexical::Stream& operator>> (Streams::Lexical::Stream& s, Token& o);
+			friend lexical::Stream& operator>> (lexical::Stream& s, Token& o);
 			//friend class Streams::Lexical::Stream;
 
 		private:

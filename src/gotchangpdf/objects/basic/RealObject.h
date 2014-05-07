@@ -4,14 +4,14 @@
 #include "Fwd.h"
 #include "NumericObject.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class RealObject : public NumericObject
 	{
 	public:
 		RealObject();
 		explicit RealObject(double value);
-		explicit RealObject(const Lexical::Token& token);
+		explicit RealObject(const lexical::Token& token);
 
 		//virtual Object* Clone(void) const  override { return new RealObject(static_cast<RealObject const&>(*this)); };
 

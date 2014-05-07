@@ -9,7 +9,7 @@
 
 #include <memory>
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class StreamObject : public Object
 	{
@@ -27,7 +27,7 @@ namespace Pdf
 		Buffer GetData() const;
 
 		//friend Streams::Lexical::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, StreamObject& o);
-		friend Lexical::Parser& operator>> (Lexical::Parser& s, StreamObject& o);
+		friend lexical::Parser& operator>> (lexical::Parser& s, StreamObject& o);
 
 	private:
 		boost::intrusive_ptr<DictionaryObject> _dictionary;

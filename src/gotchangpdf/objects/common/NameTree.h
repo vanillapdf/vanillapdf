@@ -3,7 +3,7 @@
 
 #include "Tree.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class NameTree : Tree
 	{

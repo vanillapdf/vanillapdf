@@ -1,7 +1,7 @@
 #ifndef _VERSION_H
 #define _VERSION_H
 
-namespace Pdf
+namespace gotchangpdf
 {
 	enum class Version : unsigned char
 	{

@@ -7,9 +7,9 @@
 
 #include <map>
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Lexical
+	namespace lexical
 	{
 		class TokenDictionary
 		{

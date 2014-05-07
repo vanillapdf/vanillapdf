@@ -4,25 +4,24 @@
 #include "BasicBaseStream.h"
 #include "RawStream.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Streams
+	namespace basic
 	{
-		namespace Basic
+		class Stream : public basic::BaseStream, public raw::Stream
 		{
-			class Stream : public Basic::BaseStream, public Raw::Stream
-			{
-			public:
-				explicit Stream(std::istream& stream);
+		public:
+			explicit Stream(std::istream& stream);
 
-				Pdf::Streams::Basic::Stream::Stream(const Pdf::Streams::Basic::Stream &);
+			Stream(const Stream &);
 
-				virtual Character Peek() override;
-				virtual Character Get() override;
-				virtual void Unget() override;
-				virtual std::shared_ptr<Buffer> Readline(void) override;
-			};
-		}
+			virtual Character Peek() override;
+			virtual Character Get() override;
+			virtual Character GetHex() override;
+			virtual void Unget() override;
+			virtual std::shared_ptr<Buffer> Readline(void) override;
+
+		};
 	}
 }
 

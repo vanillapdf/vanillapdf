@@ -7,27 +7,24 @@
 
 #include <vector>
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Streams
+	namespace lexical
 	{
-		namespace Lexical
+		class ReverseStream : public lexical::BaseStream, public basic::ReverseStream
 		{
-			class ReverseStream : public Lexical::BaseStream, public Basic::ReverseStream
-			{
-			public:
-				explicit ReverseStream(std::istream& stream);
+		public:
+			explicit ReverseStream(std::istream& stream);
 
-				virtual std::shared_ptr<Pdf::Lexical::Token> ReadToken() override;
-				virtual std::shared_ptr<Pdf::Lexical::Token> PeekToken() override;
+			virtual std::shared_ptr<gotchangpdf::lexical::Token> ReadToken() override;
+			virtual std::shared_ptr<gotchangpdf::lexical::Token> PeekToken() override;
 
-				virtual ~ReverseStream();
+			virtual ~ReverseStream();
 
-			private:
-				std::shared_ptr<Pdf::Lexical::Token> _last_token;
-				streamOffsetValueType _last_token_offset, _advance_position;
-			};
-		}
+		private:
+			std::shared_ptr<gotchangpdf::lexical::Token> _last_token;
+			streamOffsetValueType _last_token_offset, _advance_position;
+		};
 	}
 }
 

@@ -5,11 +5,11 @@
 #include <string>
 #include <algorithm>
 
-namespace Pdf
+namespace gotchangpdf
 {
 	using namespace std;
 
-	IndirectObject::IndirectObject(std::shared_ptr<Files::File> file, int objNumber, int genNumber, std::streamoff offset /*= _BADOFF */)
+	IndirectObject::IndirectObject(std::shared_ptr<files::File> file, int objNumber, int genNumber, std::streamoff offset /*= _BADOFF */)
 		: Object(Object::Type::IndirectObject), _file(file), _objNumber(objNumber), _genNumber(genNumber), _offset(offset), _reference(nullptr) {}
 
 	IndirectObject::IndirectObject(const IndirectObject& other) :
@@ -40,28 +40,28 @@ namespace Pdf
 	{
 		auto item = GetObject();
 
-		Pdf::Object *ptr = item.get();
+		gotchangpdf::Object *ptr = item.get();
 		boost::intrusive_ptr_add_ref(ptr);
 
 		return reinterpret_cast<IObject*>(ptr);
 	}
 }
 
-using namespace Pdf;
+using namespace gotchangpdf;
 
 GOTCHANG_PDF_API long long CALLING_CONVENTION IndirectObject_GetOffset(IndirectObjectHandle handle)
 {
-	Pdf::IndirectObject* obj = reinterpret_cast<Pdf::IndirectObject*>(handle);
+	gotchangpdf::IndirectObject* obj = reinterpret_cast<gotchangpdf::IndirectObject*>(handle);
 	return obj->GetOffset();
 }
 
 GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION IndirectObject_GetObject(IndirectObjectHandle handle)
 {
-	Pdf::IndirectObject* obj = reinterpret_cast<Pdf::IndirectObject*>(handle);
+	gotchangpdf::IndirectObject* obj = reinterpret_cast<gotchangpdf::IndirectObject*>(handle);
 
-	boost::intrusive_ptr<Pdf::Object> item = obj->GetObject();
+	boost::intrusive_ptr<gotchangpdf::Object> item = obj->GetObject();
 
-	Pdf::Object *ptr = item.get();
+	gotchangpdf::Object *ptr = item.get();
 	boost::intrusive_ptr_add_ref(ptr);
 
 	return reinterpret_cast<ObjectHandle>(ptr);
@@ -69,6 +69,6 @@ GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION IndirectObject_GetObject(Indire
 
 GOTCHANG_PDF_API void CALLING_CONVENTION IndirectObject_Release(IndirectObjectHandle handle)
 {
-	Pdf::IndirectObject* obj = reinterpret_cast<Pdf::IndirectObject*>(handle);
+	gotchangpdf::IndirectObject* obj = reinterpret_cast<gotchangpdf::IndirectObject*>(handle);
 	boost::intrusive_ptr_release(obj);
 }

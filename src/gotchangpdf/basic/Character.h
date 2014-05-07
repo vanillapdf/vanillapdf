@@ -3,7 +3,7 @@
 
 #include "Fwd.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class Character
 	{
@@ -55,14 +55,7 @@ namespace Pdf
 		explicit Character(Numeric value);
 
 		Character(ValueType hinib, ValueType lonib);
-
-		static ValueType AsciiHexToValue(ValueType c)
-		{
-			if ('0' <= c && c <= '9') { return c - '0'; }
-			if ('a' <= c && c <= 'f') { return c + 10 - 'a'; }
-			if ('A' <= c && c <= 'F') { return c + 10 - 'A'; }
-			//throw Exception();
-		}
+		Character(Character hinib, Character lonib);
 
 		bool isRegular(void) const;
 		bool isSpace(void) const;
@@ -74,10 +67,10 @@ namespace Pdf
 		Character& operator= (ValueType value);
 
 		operator ValueType() const { return _value; }
-		ValueType value(void) const;
+		ValueType Value(void) const;
 
-		friend Streams::Basic::BaseStream& operator>> (Streams::Basic::BaseStream& s, Character& o);
-		friend Streams::Lexical::Stream& operator>> (Streams::Lexical::Stream& s, Character& o);
+		friend basic::BaseStream& operator>> (basic::BaseStream& s, Character& o);
+		friend lexical::Stream& operator>> (lexical::Stream& s, Character& o);
 		
 		friend bool operator== (const Character& c1, const Character& c2);
 		friend bool operator!= (const Character& c1, const Character& c2);

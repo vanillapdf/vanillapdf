@@ -4,7 +4,7 @@
 #include "Constants.h"
 #include "IObject.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class IIndirectObject
 	{

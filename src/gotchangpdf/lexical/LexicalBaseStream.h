@@ -5,34 +5,31 @@
 
 #include <memory>
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Streams
-	{		
-		namespace Lexical
+	namespace lexical
+	{
+		class BaseStream
 		{
-			class BaseStream
+		public:
+			virtual std::shared_ptr<gotchangpdf::lexical::Token> ReadToken() = 0;
+			virtual std::shared_ptr<gotchangpdf::lexical::Token> PeekToken() = 0;
+			virtual gotchangpdf::lexical::Token::Type PeekTokenType();
+			virtual std::shared_ptr<gotchangpdf::lexical::Token> ReadTokenWithType(gotchangpdf::lexical::Token::Type type);
+			virtual ~BaseStream() = 0;
+
+			struct LexicalSettings
 			{
-			public:
-				virtual std::shared_ptr<Pdf::Lexical::Token> ReadToken() = 0;
-				virtual std::shared_ptr<Pdf::Lexical::Token> PeekToken() = 0;
-				virtual Pdf::Lexical::Token::Type PeekTokenType();
-				virtual std::shared_ptr<Pdf::Lexical::Token> ReadTokenWithType(Pdf::Lexical::Token::Type type);
-				virtual ~BaseStream() = 0;
-
-				struct LexicalSettings
-				{
-					std::vector<Pdf::Lexical::Token::Type> skip;
-				};
-
-				std::shared_ptr<LexicalSettings> LexicalSettingsGet(void) const;
-				void LexicalSettingsPush(void);
-				std::shared_ptr<LexicalSettings> LexicalSettingsPop(void);
-
-			private:
-				mutable std::vector<std::shared_ptr<LexicalSettings>> _setting_stack;
+				std::vector<gotchangpdf::lexical::Token::Type> skip;
 			};
-		}
+
+			std::shared_ptr<LexicalSettings> LexicalSettingsGet(void) const;
+			void LexicalSettingsPush(void);
+			std::shared_ptr<LexicalSettings> LexicalSettingsPop(void);
+
+		private:
+			mutable std::vector<std::shared_ptr<LexicalSettings>> _setting_stack;
+		};
 	}
 }
 

@@ -6,40 +6,37 @@
 #include "Object.h"
 #include "Constants.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Streams
+	namespace lexical
 	{
-		namespace Lexical
+		class Stream : public BaseStream, public basic::Stream
 		{
-			class Stream : public BaseStream, public Basic::Stream
-			{
-			public:
-				explicit Stream(std::istream& s);
+		public:
+			explicit Stream(std::istream& s);
 
-				//friend Stream& Pdf::operator>> (Stream& s, IntegerObject& o);
-				//friend Stream& operator>> (Stream& s, Token& o);
-				//friend Stream& operator>> (Stream& s, Header& o);
-				//friend Stream& operator>> (Stream& s, CrossReferenceTable& o);
-				//friend Stream& operator>> (Stream& s, DictionaryObject& o);
-				//friend Stream& operator>> (Stream& s, ArrayObject& o);
+			//friend Stream& Pdf::operator>> (Stream& s, IntegerObject& o);
+			//friend Stream& operator>> (Stream& s, Token& o);
+			//friend Stream& operator>> (Stream& s, Header& o);
+			//friend Stream& operator>> (Stream& s, CrossReferenceTable& o);
+			//friend Stream& operator>> (Stream& s, DictionaryObject& o);
+			//friend Stream& operator>> (Stream& s, ArrayObject& o);
 
-				virtual std::shared_ptr<Pdf::Lexical::Token> ReadToken() override;
-				virtual std::shared_ptr<Pdf::Lexical::Token> PeekToken() override;
-				virtual Pdf::Lexical::Token::Type PeekTokenType() override;
+			virtual std::shared_ptr<gotchangpdf::lexical::Token> ReadToken() override;
+			virtual std::shared_ptr<gotchangpdf::lexical::Token> PeekToken() override;
+			virtual gotchangpdf::lexical::Token::Type PeekTokenType() override;
 
-				Pdf::Streams::Lexical::Stream::Stream(const Pdf::Streams::Lexical::Stream &);
+			Stream(const Stream &);
 
-				//using Basic::Stream::seekg;
-				//using Lexical::BaseStream::ReadTokenWithType;
+			//using Basic::Stream::seekg;
+			//using Lexical::BaseStream::ReadTokenWithType;
 
-				virtual ~Stream();
+			virtual ~Stream();
 
-			private:
-				std::shared_ptr<Pdf::Lexical::Token> _last_token;
-				streamOffsetValueType _last_token_offset, _advance_position;
-			};
-		}
+		private:
+			std::shared_ptr<gotchangpdf::lexical::Token> _last_token;
+			streamOffsetValueType _last_token_offset, _advance_position;
+		};
 	}
 }
 

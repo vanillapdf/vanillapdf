@@ -3,9 +3,9 @@
 
 #include <cassert>
 
-namespace Pdf
+namespace gotchangpdf
 {
-	using namespace Lexical;
+	using namespace lexical;
 
 	NameObject::NameObject() : Object(Object::Type::NameObject) {}
 	NameObject::NameObject(const Token& token) : Object(Object::Type::NameObject), _value(token.value()) { assert(token.type() == Token::Type::NAME_OBJECT); }

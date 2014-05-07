@@ -3,9 +3,7 @@
 
 #include "IObject.h"
 
-#include "boost/intrusive_ptr.hpp"
-
-namespace Pdf
+namespace gotchangpdf
 {
 	class IArrayObject
 	{

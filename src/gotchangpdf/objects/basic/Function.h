@@ -3,7 +3,7 @@
 
 #include "Object.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class Function : public Object
 	{

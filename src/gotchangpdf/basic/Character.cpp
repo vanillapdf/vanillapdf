@@ -5,7 +5,7 @@
 
 #include <climits>
 
-namespace Pdf
+namespace gotchangpdf
 {
 	#pragma region Constructors
 
@@ -15,12 +15,13 @@ namespace Pdf
 	Character::Character(Delimiter value) : _value(static_cast<ValueType>(value)) {}
 	Character::Character(Numeric value) : _value(static_cast<ValueType>(value)) {}
 	Character::Character(ValueType hinib, ValueType lonib) : _value((hinib << 4) + lonib) {}
+	Character::Character(Character hinib, Character lonib) : Character(hinib.Value(), lonib.Value()) {}
 
 	#pragma endregion
 
 	#pragma region Operators
 
-	unsigned char Character::value(void) const { return _value; }
+	Character::ValueType Character::Value(void) const { return _value; }
 
 	bool operator==(const Character& c1, const Character& c2) { return c1._value == c2._value; }
 	bool operator!=(const Character& c1, const Character& c2) { return c1._value != c2._value; }
@@ -38,13 +39,13 @@ namespace Pdf
 		return *this;
 	}
 
-	Streams::Basic::BaseStream& operator>>(Streams::Basic::BaseStream& s, Character& o)
+	basic::BaseStream& operator>>(basic::BaseStream& s, Character& o)
 	{
 		o = s.Get();
 		return s;
 	}
 
-	Streams::Lexical::Stream& operator>>(Streams::Lexical::Stream& s, Character& o)
+	lexical::Stream& operator>>(lexical::Stream& s, Character& o)
 	{
 		o = s.Get();
 		return s;

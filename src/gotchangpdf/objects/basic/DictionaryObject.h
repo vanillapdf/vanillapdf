@@ -6,9 +6,11 @@
 #include "NameObject.h"
 #include "IDictionaryObject.h"
 
+#include "boost/intrusive_ptr.hpp"
+
 #include <unordered_map>
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class DictionaryObject : public Object, public IDictionaryObject
 	{
@@ -20,7 +22,7 @@ namespace Pdf
 
 		DictionaryObject();
 		//friend Objects::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, DictionaryObject& o);
-		friend Lexical::Parser& operator>> (Lexical::Parser& s, DictionaryObject& o);
+		friend lexical::Parser& operator>> (lexical::Parser& s, DictionaryObject& o);
 
 		boost::intrusive_ptr<Object> Find(const NameObject& name) const;
 

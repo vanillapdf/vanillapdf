@@ -4,7 +4,7 @@
 
 #include <cassert>
 
-namespace Pdf
+namespace gotchangpdf
 {
 	Object::Object(Type type) : _type(type), _intrusive_ref_count(0) {}
 	Object::Object() : _type(Type::Unknown), _intrusive_ref_count(0) {}
@@ -38,7 +38,7 @@ namespace boost
 	}
 }
 */
-using namespace Pdf;
+using namespace gotchangpdf;
 
 GOTCHANG_PDF_API const char* Object_TypeName(ObjectType type)
 {

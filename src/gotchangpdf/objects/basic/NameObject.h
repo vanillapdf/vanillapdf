@@ -5,7 +5,7 @@
 #include "Object.h"
 #include "Buffer.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class NameObject : public Object, public INameObject
 	{
@@ -23,7 +23,7 @@ namespace Pdf
 		};
 
 		NameObject();
-		explicit NameObject(const Pdf::Lexical::Token& token);
+		explicit NameObject(const gotchangpdf::lexical::Token& token);
 		explicit NameObject(const Buffer& name);
 
 		//const CharacterSet& Value() const;

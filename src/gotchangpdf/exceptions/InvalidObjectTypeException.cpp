@@ -2,17 +2,19 @@
 
 #include <sstream>
 
-namespace Pdf
+namespace gotchangpdf
 {
-	using namespace std;
+	namespace exceptions
+	{
+		using namespace std;
 
-	InvalidObjectTypeException::InvalidObjectTypeException() : Exception() {}
+		InvalidObjectTypeException::InvalidObjectTypeException() : Exception() {}
 
-	InvalidObjectTypeException::InvalidObjectTypeException(const Object& obj)
-		: Exception(string("Object ") + Pdf::Object::TypeName(obj.GetType()) + string(" is invalid")) {}
+		InvalidObjectTypeException::InvalidObjectTypeException(const Object& obj)
+			: Exception(string("Object ") + gotchangpdf::Object::TypeName(obj.GetType()) + string(" is invalid")) {}
 
-	InvalidObjectTypeException::InvalidObjectTypeException(const Object& obj, Object::Type type)
-		: Exception(string("Object ") + Pdf::Object::TypeName(obj.GetType()) + string(" is invalid, expected was ") + Pdf::Object::TypeName(type)) {}
-
+		InvalidObjectTypeException::InvalidObjectTypeException(const Object& obj, Object::Type type)
+			: Exception(string("Object ") + gotchangpdf::Object::TypeName(obj.GetType()) + string(" is invalid, expected was ") + gotchangpdf::Object::TypeName(type)) {}
+	}
 }
 

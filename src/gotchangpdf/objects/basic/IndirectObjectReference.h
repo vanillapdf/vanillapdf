@@ -8,18 +8,18 @@
 
 #include <memory>
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class IndirectObjectReference : public Object
 	{
 	public:
-		explicit IndirectObjectReference(std::shared_ptr<Files::File> file);
-		IndirectObjectReference(std::shared_ptr<Files::File> file, int obj_number, int gen_number);
+		explicit IndirectObjectReference(std::shared_ptr<files::File> file);
+		IndirectObjectReference(std::shared_ptr<files::File> file, int obj_number, int gen_number);
 
 		boost::intrusive_ptr<IndirectObject> GetReference() const;
 
 	private:
-		std::shared_ptr<Files::File> _file;
+		std::shared_ptr<files::File> _file;
 		mutable boost::intrusive_ptr<IndirectObject> _reference;
 
 		int _obj_number, _gen_number;

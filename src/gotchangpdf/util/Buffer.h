@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class Buffer : public IBuffer
 	{

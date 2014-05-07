@@ -45,6 +45,7 @@
     <ClCompile Include="src\gotchangpdf\util\Buffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Export.h" />
     <ClInclude Include="include\IArrayObject.h" />
     <ClInclude Include="include\IBuffer.h" />
     <ClInclude Include="include\IDictionaryObject.h" />
@@ -55,6 +56,8 @@
     <ClInclude Include="src\gotchangpdf\basic\BasicReverseStream.h" />
     <ClInclude Include="src\gotchangpdf\basic\BasicStream.h" />
     <ClInclude Include="src\gotchangpdf\basic\Character.h" />
+    <ClInclude Include="src\gotchangpdf\documents\Catalog.h" />
+    <ClInclude Include="src\gotchangpdf\documents\Document.h" />
     <ClInclude Include="src\gotchangpdf\exceptions\Exception.h" />
     <ClInclude Include="src\gotchangpdf\exceptions\InvalidObjectTypeException.h" />
     <ClInclude Include="src\gotchangpdf\files\File.h" />
@@ -94,7 +97,6 @@
     <ClInclude Include="src\gotchangpdf\raw\RawStream.h" />
     <ClInclude Include="src\gotchangpdf\util\Buffer.h" />
     <ClInclude Include="src\gotchangpdf\util\Constants.h" />
-    <ClInclude Include="src\gotchangpdf\util\Export.h" />
     <ClInclude Include="src\gotchangpdf\util\Fwd.h" />
     <ClInclude Include="src\gotchangpdf\util\Intrusive.h" />
     <ClInclude Include="src\gotchangpdf\util\Version.h" />

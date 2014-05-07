@@ -6,12 +6,12 @@
 
 #include <cassert>
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Files
+	namespace files
 	{
-		using namespace Lexical;
-		using namespace Streams::Lexical;
+		using namespace exceptions;
+		using namespace lexical;
 		using namespace std;
 
 		Trailer::Trailer() : _xref_offset(0), _dictionary(boost::intrusive_ptr<DictionaryObject>(new DictionaryObject())) {}

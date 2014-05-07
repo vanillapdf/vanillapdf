@@ -5,7 +5,7 @@
 
 //#include "Trie.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class Tree
 	{

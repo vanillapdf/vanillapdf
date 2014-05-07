@@ -11,11 +11,11 @@
 
 #include <sstream>
 
-namespace Pdf
+namespace gotchangpdf
 {
-	using Lexical::Parser;
-	using namespace Lexical;
+	using namespace lexical;
 	using namespace std;
+	using namespace exceptions;
 
 	StreamObject::StreamObject()
 		: Object(Object::Type::StreamObject), _data(nullptr), _rawDataOffset(_BADOFF), _dictionary(nullptr), _rawDataLength(-1), _type(Type::UNKNOWN) {}
@@ -25,12 +25,12 @@ namespace Pdf
 
 	Buffer StreamObject::GetData() const
 	{
-		auto filter_name = _dictionary->Find(Pdf::Constant::Name::Filter);
+		auto filter_name = _dictionary->Find(gotchangpdf::Constant::Name::Filter);
 		if (nullptr == filter_name)
 			return *_data;
 
 		// TODO
-		Filters::FlateDecodeFilter a;
+		filters::FlateDecodeFilter a;
 		return a.Decode(*_data);
 		//return ((Filters::FlateDecodeFilter*)(&*filter_name))->Apply(*_data);
 	}

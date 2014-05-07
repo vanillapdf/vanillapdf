@@ -3,7 +3,7 @@
 
 #include "ArrayObject.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class Rectangle
 	{

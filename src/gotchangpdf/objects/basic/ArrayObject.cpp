@@ -8,9 +8,9 @@
 #include "Exception.h"
 #include "Export.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
-	using namespace Lexical;
+	using namespace lexical;
 
 	ArrayObject::ArrayObject() : Object(Object::Type::ArrayObject) {}
 	long ArrayObject::Size(void) const { return _list.size(); }
@@ -19,7 +19,7 @@ namespace Pdf
 	{
 		auto item = _list[at];
 
-		Pdf::Object *ptr = item.get();
+		gotchangpdf::Object *ptr = item.get();
 		boost::intrusive_ptr_add_ref(ptr);
 
 		return reinterpret_cast<IObject*>(ptr);
@@ -49,18 +49,18 @@ namespace Pdf
 
 GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle handle, int at)
 {
-	Pdf::ArrayObject* arr = reinterpret_cast<Pdf::ArrayObject*>(handle);
+	gotchangpdf::ArrayObject* arr = reinterpret_cast<gotchangpdf::ArrayObject*>(handle);
 	return reinterpret_cast<ObjectHandle>(arr->At(at));
 }
 
 GOTCHANG_PDF_API int CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle handle)
 {
-	Pdf::ArrayObject* arr = reinterpret_cast<Pdf::ArrayObject*>(handle);
+	gotchangpdf::ArrayObject* arr = reinterpret_cast<gotchangpdf::ArrayObject*>(handle);
 	return arr->Size();
 }
 
 GOTCHANG_PDF_API void CALLING_CONVENTION ArrayObject_Release(ArrayObjectHandle handle)
 {
-	Pdf::ArrayObject* obj = reinterpret_cast<Pdf::ArrayObject*>(handle);
+	gotchangpdf::ArrayObject* obj = reinterpret_cast<gotchangpdf::ArrayObject*>(handle);
 	obj->Release();
 }

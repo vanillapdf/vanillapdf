@@ -6,10 +6,11 @@
 #include <cassert>
 #include <sstream>
 
-namespace Pdf
+namespace gotchangpdf
 {
 	using namespace std;
-	using namespace Pdf::Lexical;
+	using namespace lexical;
+	using namespace exceptions;
 
 	void CrossReferenceInfo::Add(const Entry& e) { _entries.push_back(e); }
 	int CrossReferenceInfo::Size(void) const { return _entries.size(); }
@@ -17,7 +18,7 @@ namespace Pdf
 
 	CrossReferenceInfo::CrossReferenceInfo() : _entries(), _type(CrossReferenceInfo::Type::TABLE) {}
 
-	CrossReferenceInfo::Entry CrossReferenceInfo::ReadEntry(Lexical::Parser& s, int objNumber)
+	CrossReferenceInfo::Entry CrossReferenceInfo::ReadEntry(lexical::Parser& s, int objNumber)
 	{
 		// TODO space
 		Character sp1, sp2, key, eol1, eol2;
@@ -43,7 +44,7 @@ namespace Pdf
 		else
 		{
 			stringstream buffer;
-			buffer << "Key in XRef table is either of " << IN_USE.value() << " or " << NOT_IN_USE.value();
+			buffer << "Key in XRef table is either of " << IN_USE.Value() << " or " << NOT_IN_USE.Value();
 
 			throw Exception(buffer.str());
 		}
@@ -86,7 +87,7 @@ namespace Pdf
 	}
 }
 
-using namespace Pdf;
+using namespace gotchangpdf;
 
 GOTCHANG_PDF_API int CALLING_CONVENTION Xref_Size(XrefHandle handle)
 {
@@ -117,7 +118,7 @@ GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION XrefEntry_Reference(Xre
 {
 	CrossReferenceInfo::Entry* entry = reinterpret_cast<CrossReferenceInfo::Entry*>(handle);
 
-	Pdf::IndirectObject *ptr = entry->_reference.get();
+	gotchangpdf::IndirectObject *ptr = entry->_reference.get();
 	boost::intrusive_ptr_add_ref(ptr);
 
 	return reinterpret_cast<IndirectObjectHandle>(ptr);

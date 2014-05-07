@@ -8,7 +8,7 @@
 #include "IObject.h"
 #include "Intrusive.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class Object : public IObject
 	{

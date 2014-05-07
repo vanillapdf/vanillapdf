@@ -4,7 +4,7 @@
 #include "IObject.h"
 #include "Character.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class IBuffer
 	{

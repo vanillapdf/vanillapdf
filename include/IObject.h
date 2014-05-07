@@ -1,7 +1,7 @@
 #ifndef _I_OBJECT_H
 #define _I_OBJECT_H
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class IObject
 	{

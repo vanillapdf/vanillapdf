@@ -1,83 +1,97 @@
 #include "BasicReverseStream.h"
 #include "Constants.h"
+#include "Exception.h"
 
 #include <cassert>
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Streams
+	namespace basic
 	{
-		namespace Basic
+		using namespace std;
+		using namespace exceptions;
+
+		ReverseStream::ReverseStream(std::istream& stream) : raw::ReverseStream(stream) {}
+
+		Character ReverseStream::Peek()
 		{
-			using namespace std;
-
-			ReverseStream::ReverseStream(std::istream& stream) : Raw::ReverseStream(stream) {}
-
-			Character ReverseStream::Peek()
+			/*
+			auto settings = SettingsGet();
+			auto pos = tellg();
+			char ch;
+			do
 			{
-				/*
-				auto settings = SettingsGet();
-				auto pos = tellg();
-				char ch;
-				do
-				{
-				ch = peek();
-				} while (std::find(settings->skip.begin(), settings->skip.end(), ch) != settings->skip.end());
+			ch = peek();
+			} while (std::find(settings->skip.begin(), settings->skip.end(), ch) != settings->skip.end());
 
-				seekg(pos);
-				return Character(ch);
-				*/
+			seekg(pos);
+			return Character(ch);
+			*/
 
-				return Character(peek());
-			}
+			return Character(peek());
+		}
 
-			Character ReverseStream::Get()
+		Character ReverseStream::Get()
+		{
+			/*
+			auto settings = SettingsGet();
+			char ch;
+			do
 			{
-				/*
-				auto settings = SettingsGet();
-				char ch;
-				do
-				{
-				ch = get();
-				} while (std::find(settings->skip.begin(), settings->skip.end(), ch) != settings->skip.end());
-				*/
+			ch = get();
+			} while (std::find(settings->skip.begin(), settings->skip.end(), ch) != settings->skip.end());
+			*/
 
-				return Character(get());
-			}
+			return Character(get());
+		}
 
-			shared_ptr<Buffer> ReverseStream::Readline(void)
+		Character ReverseStream::GetHex()
+		{
+			Character result = Get();
+			char val = result.Value();
+
+			if ('0' <= val && val <= '9')
+				return Character(val - '0');
+			if ('a' <= val && val <= 'f')
+				return Character(val + 10 - 'a');
+			if ('A' <= val && val <= 'F')
+				return Character(val + 10 - 'A');
+
+			throw Exception("Unknown hexadecimal character " + val);
+		}
+
+		shared_ptr<Buffer> ReverseStream::Readline(void)
+		{
+			shared_ptr<Buffer> result(new Buffer());
+
+			char buf[Constant::BUFFER_SIZE];
+
+			auto begin = &buf[0];
+			auto end = &buf[Constant::BUFFER_SIZE - 1];
+
+			getline(buf, Constant::BUFFER_SIZE);
+			auto read = gcount();
+
+			while (Constant::BUFFER_SIZE == read)
 			{
-				shared_ptr<Buffer> result(new Buffer());
-
-				char buf[Constant::BUFFER_SIZE];
-
-				auto begin = &buf[0];
-				auto end = &buf[Constant::BUFFER_SIZE - 1];
-
-				getline(buf, Constant::BUFFER_SIZE);
-				auto read = gcount();
-
-				while (Constant::BUFFER_SIZE == read)
-				{
-					Buffer tmp(begin, end);
-					tmp.Reverse();
-					result->Insert(0, tmp);
-					getline(buf, Constant::BUFFER_SIZE);
-					read = gcount();
-				}
-
-				end = &buf[read];
-
 				Buffer tmp(begin, end);
 				tmp.Reverse();
 				result->Insert(0, tmp);
-
-				unget();
-
-				return result;
+				getline(buf, Constant::BUFFER_SIZE);
+				read = gcount();
 			}
 
-			void ReverseStream::Unget() { unget(); }
+			end = &buf[read];
+
+			Buffer tmp(begin, end);
+			tmp.Reverse();
+			result->Insert(0, tmp);
+
+			unget();
+
+			return result;
 		}
+
+		void ReverseStream::Unget() { unget(); }
 	}
 }

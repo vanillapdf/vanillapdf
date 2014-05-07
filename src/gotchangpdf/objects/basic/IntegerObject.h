@@ -5,7 +5,7 @@
 #include "NumericObject.h"
 #include "Lexical/Token.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class IntegerObject : public NumericObject
 	{
@@ -15,7 +15,7 @@ namespace Pdf
 		IntegerObject();
 		explicit IntegerObject(ValueType value);
 		//explicit IntegerObject(const CharacterSet& value);
-		explicit IntegerObject(const Pdf::Lexical::Token& value);
+		explicit IntegerObject(const gotchangpdf::lexical::Token& value);
 
 		friend bool operator== (const IntegerObject& i1, const IntegerObject& i2);
 		friend bool operator!= (const IntegerObject& i1, const IntegerObject& i2);
@@ -28,10 +28,10 @@ namespace Pdf
 
 		IntegerObject& operator= (ValueType value);
 		IntegerObject& operator= (const Buffer& value);
-		IntegerObject& operator= (const Pdf::Lexical::Token& value);
+		IntegerObject& operator= (const gotchangpdf::lexical::Token& value);
 
-		friend Streams::Lexical::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, IntegerObject& o);
-		friend Streams::Lexical::Stream& operator>> (Streams::Lexical::Stream& s, IntegerObject& o);
+		friend lexical::ReverseStream& operator>> (lexical::ReverseStream& s, IntegerObject& o);
+		friend lexical::Stream& operator>> (lexical::Stream& s, IntegerObject& o);
 
 	private:
 		ValueType _value;

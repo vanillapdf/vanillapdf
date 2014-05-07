@@ -3,10 +3,10 @@
 
 #include <cassert>
 
-namespace Pdf
+namespace gotchangpdf
 {
 	using namespace std;
-	using namespace Lexical;
+	using namespace lexical;
 
 	LiteralString::LiteralString(const Token& token) : StringObject(Object::Type::LiteralString, token.value()) {}
 	LiteralString::LiteralString(const Buffer& value) : StringObject(Object::Type::LiteralString, value)

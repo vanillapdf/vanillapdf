@@ -5,7 +5,7 @@
 #include "Object.h"
 #include "Buffer.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
 	class StringObject : public Object
 	{
@@ -20,7 +20,7 @@ namespace Pdf
 	{
 	public:
 		explicit HexadecimalString(const Buffer& value);
-		explicit HexadecimalString(const Lexical::Token& token);
+		explicit HexadecimalString(const lexical::Token& token);
 
 	private:
 		std::string _hexadecimal;
@@ -33,7 +33,7 @@ namespace Pdf
 	{
 	public:
 		explicit LiteralString(const Buffer& value);
-		explicit LiteralString(const Lexical::Token& token);
+		explicit LiteralString(const lexical::Token& token);
 
 	private:
 		friend void ::boost::intrusive_ptr_add_ref(LiteralString*);

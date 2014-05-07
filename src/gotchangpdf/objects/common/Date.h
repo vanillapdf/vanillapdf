@@ -5,7 +5,7 @@
 
 // format (D:YYYYMMDDHHmmSSOHH'mm)
 
-namespace Pdf
+namespace gotchangpdf
 {
 	struct Date
 	{

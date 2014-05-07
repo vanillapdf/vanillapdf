@@ -4,9 +4,9 @@
 #include "IBuffer.h"
 #include "Lexical/Token.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Lexical
+	namespace lexical
 	{
 		class Tree
 		{

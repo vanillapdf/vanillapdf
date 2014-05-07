@@ -4,9 +4,7 @@
 #include "IObject.h"
 #include "INameObject.h"
 
-#include "boost/intrusive_ptr.hpp"
-
-namespace Pdf
+namespace gotchangpdf
 {
 	class IDictionaryObject
 	{

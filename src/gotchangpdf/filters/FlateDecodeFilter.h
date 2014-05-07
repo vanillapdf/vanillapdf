@@ -9,10 +9,12 @@
 
 #include <algorithm>
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Filters
+	namespace filters
 	{
+		using namespace exceptions;
+
 		class FlateDecodeFilter : Filter
 		{
 		public:

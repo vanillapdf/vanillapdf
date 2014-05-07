@@ -15,12 +15,12 @@
 #include "StringObject.h"
 #include "IndirectObjectReference.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Lexical
+	namespace lexical
 	{
-		using namespace Pdf::Lexical;
-		using Pdf::Object;
+		using namespace lexical;
+		using namespace exceptions;
 
 		boost::intrusive_ptr<Object> Parser::readObject()
 		{
@@ -131,48 +131,43 @@ namespace Pdf
 			return obj;
 		}
 
-		Parser::Parser(std::shared_ptr<Files::File> file, std::shared_ptr<std::istream> stream) : Streams::Lexical::Stream(*stream), _file(file) {}
+		Parser::Parser(std::shared_ptr<files::File> file, std::shared_ptr<std::istream> stream) : lexical::Stream(*stream), _file(file) {}
+		Parser::Parser(const gotchangpdf::lexical::Parser &other) : lexical::Stream(other) { _file = other.file(); }
+		std::shared_ptr<files::File> Parser::file(void) const { return _file; }
 
-		Parser::Parser(const Pdf::Lexical::Parser &other) : Streams::Lexical::Stream(other)
-		{
-			_file = other.file();
-		}
-
-		std::shared_ptr<Files::File> Parser::file(void) const { return _file; }
-
-		boost::intrusive_ptr<Pdf::Object> Parser::readObjectWithType(Pdf::IObject::Type type)
+		boost::intrusive_ptr<gotchangpdf::Object> Parser::readObjectWithType(gotchangpdf::IObject::Type type)
 		{
 			auto obj = readObject();
 
 			switch (type)
 			{
-			case Pdf::IObject::Type::Unknown:
+			case gotchangpdf::IObject::Type::Unknown:
 				throw Exception("FIXME: Are your really trying to return unknown type??");
-			case Pdf::IObject::Type::ArrayObject:
+			case gotchangpdf::IObject::Type::ArrayObject:
 				return boost::dynamic_pointer_cast<ArrayObject>(obj);
-			case Pdf::IObject::Type::Boolean:
+			case gotchangpdf::IObject::Type::Boolean:
 				return boost::dynamic_pointer_cast<Boolean>(obj);
-			case Pdf::IObject::Type::DictionaryObject:
+			case gotchangpdf::IObject::Type::DictionaryObject:
 				return boost::dynamic_pointer_cast<DictionaryObject>(obj);
-			case Pdf::IObject::Type::Function:
+			case gotchangpdf::IObject::Type::Function:
 				return boost::dynamic_pointer_cast<Function>(obj);
-			case Pdf::IObject::Type::IntegerObject:
+			case gotchangpdf::IObject::Type::IntegerObject:
 				return boost::dynamic_pointer_cast<IntegerObject>(obj);
-			case Pdf::IObject::Type::NameObject:
+			case gotchangpdf::IObject::Type::NameObject:
 				return boost::dynamic_pointer_cast<NameObject>(obj);
-			case Pdf::IObject::Type::NullObject:
+			case gotchangpdf::IObject::Type::NullObject:
 				return boost::dynamic_pointer_cast<NullObject>(obj);
-			case Pdf::IObject::Type::RealObject:
+			case gotchangpdf::IObject::Type::RealObject:
 				return boost::dynamic_pointer_cast<RealObject>(obj);
-			case Pdf::IObject::Type::StreamObject:
+			case gotchangpdf::IObject::Type::StreamObject:
 				return boost::dynamic_pointer_cast<StreamObject>(obj);
-			case Pdf::IObject::Type::HexadecimalString:
+			case gotchangpdf::IObject::Type::HexadecimalString:
 				return boost::dynamic_pointer_cast<HexadecimalString>(obj);
-			case Pdf::IObject::Type::LiteralString:
+			case gotchangpdf::IObject::Type::LiteralString:
 				return boost::dynamic_pointer_cast<LiteralString>(obj);
-			case Pdf::IObject::Type::IndirectReference:
+			case gotchangpdf::IObject::Type::IndirectReference:
 				return boost::dynamic_pointer_cast<IndirectObjectReference>(obj);
-			case Pdf::IObject::Type::IndirectObject:
+			case gotchangpdf::IObject::Type::IndirectObject:
 				return boost::dynamic_pointer_cast<IndirectObject>(obj);
 			default:
 				assert(false);

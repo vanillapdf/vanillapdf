@@ -4,23 +4,21 @@
 #include "BasicBaseStream.h"
 #include "RawReverseStream.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Streams
+	namespace basic
 	{
-		namespace Basic
+		class ReverseStream : public BaseStream, public raw::ReverseStream
 		{
-			class ReverseStream : public BaseStream, public Raw::ReverseStream
-			{
-			public:
-				explicit ReverseStream(std::istream& stream);
+		public:
+			explicit ReverseStream(std::istream& stream);
 
-				virtual Character Peek() override;
-				virtual Character Get() override;
-				virtual void Unget() override;
-				virtual std::shared_ptr<Buffer> Readline(void) override;
-			};
-		}
+			virtual Character Peek() override;
+			virtual Character Get() override;
+			virtual Character GetHex() override;
+			virtual void Unget() override;
+			virtual std::shared_ptr<Buffer> Readline(void) override;
+		};
 	}
 }
 

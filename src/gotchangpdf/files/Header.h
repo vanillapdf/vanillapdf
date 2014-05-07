@@ -6,14 +6,14 @@
 #include "BasicStream.h"
 #include "Version.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Files
+	namespace files
 	{
 		class Header
 		{
 		public:
-			friend Streams::Basic::Stream& operator>> (Streams::Basic::Stream& s, Header& o);
+			friend basic::Stream& operator>> (basic::Stream& s, Header& o);
 
 		private:
 			Version _version;

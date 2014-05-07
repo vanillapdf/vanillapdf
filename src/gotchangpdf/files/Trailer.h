@@ -5,16 +5,16 @@
 #include "DictionaryObject.h"
 #include "Constants.h"
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Files
+	namespace files
 	{
 		class Trailer
 		{
 		public:
 			Trailer();
 
-			friend Streams::Lexical::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, Trailer& o);
+			friend lexical::ReverseStream& operator>> (lexical::ReverseStream& s, Trailer& o);
 			streamOffsetValueType xref_offset() const;
 			boost::intrusive_ptr<DictionaryObject> dictionary() const;
 

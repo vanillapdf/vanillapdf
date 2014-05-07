@@ -6,14 +6,14 @@
 #include <vector>
 #include <regex>
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Files
+	namespace files
 	{
 		using namespace std;
-		using namespace Streams::Basic;
+		using namespace exceptions;
 
-		Stream& operator>> (Stream& s, Header& o)
+		basic::Stream& operator>> (basic::Stream& s, Header& o)
 		{
 			auto data = s.Readline();
 			assert(data->Size() > 0);

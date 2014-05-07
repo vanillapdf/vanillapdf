@@ -6,36 +6,36 @@
 
 #include "boost/intrusive_ptr.hpp"
 
-namespace Pdf
+namespace gotchangpdf
 {
-	namespace Lexical
+	namespace lexical
 	{
-		class Parser : public Streams::Lexical::Stream
+		class Parser : public lexical::Stream
 		{
 		public:
-			Parser(std::shared_ptr<Files::File> file, std::shared_ptr<std::istream> stream);
+			Parser(std::shared_ptr<files::File> file, std::shared_ptr<std::istream> stream);
 
 			template<typename T>
 			boost::intrusive_ptr<T> readObjectWithType();
 
-			boost::intrusive_ptr<Pdf::Object> readObjectWithType(Pdf::IObject::Type type);
-			boost::intrusive_ptr<Pdf::Object> readObject();
-			boost::intrusive_ptr<Pdf::Object> peekObject();
+			boost::intrusive_ptr<gotchangpdf::Object> readObjectWithType(gotchangpdf::IObject::Type type);
+			boost::intrusive_ptr<gotchangpdf::Object> readObject();
+			boost::intrusive_ptr<gotchangpdf::Object> peekObject();
 
-			std::shared_ptr<Files::File> file(void) const;
+			std::shared_ptr<files::File> file(void) const;
 			//void SetDeep(bool deep);
 			//bool GetDeep(void) const;
 
-			Pdf::Lexical::Parser::Parser(const Pdf::Lexical::Parser &);
+			gotchangpdf::lexical::Parser::Parser(const gotchangpdf::lexical::Parser &);
 
 		private:
-			std::shared_ptr<Files::File> _file;
+			std::shared_ptr<files::File> _file;
 			//bool _deep;
 		};
 
 		template<typename T>
 		boost::intrusive_ptr<T>
-			Pdf::Lexical::Parser::readObjectWithType()
+			gotchangpdf::lexical::Parser::readObjectWithType()
 		{
 			return boost::dynamic_pointer_cast<T>(readObject());
 		}
