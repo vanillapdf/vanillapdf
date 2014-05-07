@@ -202,8 +202,8 @@ int main()
 	FileHandle file;
 	XrefHandle xref;
 	IndirectObjectHandle catalog;
-	//const char str[] = "..\\test\\manual-memorias.pdf";
-	const char str[] = "..\\test\\pdfSample.pdf";
+	const char str[] = "test\\manual-memorias.pdf";
+	//const char str[] = "test\\pdfSample.pdf";
 
 	file = File_Create(str);
 	result = File_Initialize(file);

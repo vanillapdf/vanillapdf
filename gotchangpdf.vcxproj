@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\gotchangpdf\basic\BasicBaseStream.cpp" />
+    <ClCompile Include="src\gotchangpdf\basic\BasicReverseStream.cpp" />
+    <ClCompile Include="src\gotchangpdf\basic\BasicStream.cpp" />
+    <ClCompile Include="src\gotchangpdf\basic\Character.cpp" />
+    <ClCompile Include="src\gotchangpdf\exceptions\Exception.cpp" />
+    <ClCompile Include="src\gotchangpdf\exceptions\InvalidObjectTypeException.cpp" />
+    <ClCompile Include="src\gotchangpdf\files\File.cpp" />
+    <ClCompile Include="src\gotchangpdf\files\Header.cpp" />
+    <ClCompile Include="src\gotchangpdf\files\Trailer.cpp" />
+    <ClCompile Include="src\gotchangpdf\lexical\LexicalBaseStream.cpp" />
+    <ClCompile Include="src\gotchangpdf\lexical\LexicalReverseStream.cpp" />
+    <ClCompile Include="src\gotchangpdf\lexical\LexicalStream.cpp" />
+    <ClCompile Include="src\gotchangpdf\lexical\LexicalTree.cpp" />
+    <ClCompile Include="src\gotchangpdf\lexical\Parser.cpp" />
+    <ClCompile Include="src\gotchangpdf\lexical\Token.cpp" />
+    <ClCompile Include="src\gotchangpdf\lexical\TokenDictionary.cpp" />
+    <ClCompile Include="src\gotchangpdf\objects\basic\ArrayObject.cpp" />
+    <ClCompile Include="src\gotchangpdf\objects\basic\CrossReferenceTable.cpp" />
+    <ClCompile Include="src\gotchangpdf\objects\basic\DictionaryObject.cpp" />
+    <ClCompile Include="src\gotchangpdf\objects\basic\IndirectObject.cpp" />
+    <ClCompile Include="src\gotchangpdf\objects\basic\IndirectObjectReference.cpp" />
+    <ClCompile Include="src\gotchangpdf\objects\basic\IntegerObject.cpp" />
+    <ClCompile Include="src\gotchangpdf\objects\basic\NameObject.cpp" />
+    <ClCompile Include="src\gotchangpdf\objects\basic\NumericObject.cpp" />
+    <ClCompile Include="src\gotchangpdf\objects\basic\Object.cpp" />
+    <ClCompile Include="src\gotchangpdf\objects\basic\RealObject.cpp" />
+    <ClCompile Include="src\gotchangpdf\objects\basic\StreamObject.cpp" />
+    <ClCompile Include="src\gotchangpdf\objects\basic\StringObject.cpp" />
+    <ClCompile Include="src\gotchangpdf\raw\RawBaseStream.cpp" />
+    <ClCompile Include="src\gotchangpdf\raw\RawReverseStream.cpp" />
+    <ClCompile Include="src\gotchangpdf\raw\RawStream.cpp" />
+    <ClCompile Include="src\gotchangpdf\util\Buffer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\IArrayObject.h" />
+    <ClInclude Include="include\IBuffer.h" />
+    <ClInclude Include="include\IDictionaryObject.h" />
+    <ClInclude Include="include\IIndirectObject.h" />
+    <ClInclude Include="include\INameObject.h" />
+    <ClInclude Include="include\IObject.h" />
+    <ClInclude Include="src\gotchangpdf\basic\BasicBaseStream.h" />
+    <ClInclude Include="src\gotchangpdf\basic\BasicReverseStream.h" />
+    <ClInclude Include="src\gotchangpdf\basic\BasicStream.h" />
+    <ClInclude Include="src\gotchangpdf\basic\Character.h" />
+    <ClInclude Include="src\gotchangpdf\exceptions\Exception.h" />
+    <ClInclude Include="src\gotchangpdf\exceptions\InvalidObjectTypeException.h" />
+    <ClInclude Include="src\gotchangpdf\files\File.h" />
+    <ClInclude Include="src\gotchangpdf\files\Header.h" />
+    <ClInclude Include="src\gotchangpdf\files\Trailer.h" />
+    <ClInclude Include="src\gotchangpdf\filters\Filter.h" />
+    <ClInclude Include="src\gotchangpdf\filters\FlateDecodeFilter.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\LexicalBaseStream.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\LexicalReverseStream.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\LexicalStream.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\LexicalTree.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\Parser.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\Token.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\TokenDictionary.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\ArrayObject.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\Boolean.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\CrossReferenceTable.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\DictionaryObject.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\Function.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\IndirectObject.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\IndirectObjectReference.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\IntegerObject.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\NameObject.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\NullObject.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\NumericObject.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\Object.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\RealObject.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\StreamObject.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\StringObject.h" />
+    <ClInclude Include="src\gotchangpdf\objects\common\Date.h" />
+    <ClInclude Include="src\gotchangpdf\objects\common\NameTree.h" />
+    <ClInclude Include="src\gotchangpdf\objects\common\NumberTree.h" />
+    <ClInclude Include="src\gotchangpdf\objects\common\Rectangle.h" />
+    <ClInclude Include="src\gotchangpdf\objects\common\Tree.h" />
+    <ClInclude Include="src\gotchangpdf\raw\RawBaseStream.h" />
+    <ClInclude Include="src\gotchangpdf\raw\RawReverseStream.h" />
+    <ClInclude Include="src\gotchangpdf\raw\RawStream.h" />
+    <ClInclude Include="src\gotchangpdf\util\Buffer.h" />
+    <ClInclude Include="src\gotchangpdf\util\Constants.h" />
+    <ClInclude Include="src\gotchangpdf\util\Export.h" />
+    <ClInclude Include="src\gotchangpdf\util\Fwd.h" />
+    <ClInclude Include="src\gotchangpdf\util\Intrusive.h" />
+    <ClInclude Include="src\gotchangpdf\util\Version.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{9AF81955-0B8C-4778-9F93-3ED8285D3D49}</ProjectGuid>
+    <RootNamespace>Pdf</RootNamespace>
+    <ProjectName>gotchangpdf</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IntDir>obj\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>build\$(ProjectName)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IntDir>obj\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>build\$(ProjectName)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\objects\basic;src\gotchangpdf\exceptions;src\gotchangpdf\files;src\gotchangpdf\lexical;C:\boost_1_55_0;src\gotchangpdf\objects\common;include;lib\zlib\include;src\gotchangpdf\documents;src\gotchangpdf\raw;src\gotchangpdf\util;src\gotchangpdf\basic;src\gotchangpdf\filters;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>lib\zlib\lib\zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y "lib\zlib\zlib1.dll" "build\$(ProjectName)\$(Configuration)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\objects\basic;src\gotchangpdf\exceptions;src\gotchangpdf\files;src\gotchangpdf\lexical;C:\boost_1_55_0;src\gotchangpdf\objects\common;include;lib\zlib\include;src\gotchangpdf\documents;src\gotchangpdf\raw;src\gotchangpdf\util;src\gotchangpdf\basic;src\gotchangpdf\filters;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>lib\zlib\lib\zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y "lib\zlib\zlib1.dll" "build\$(ProjectName)\$(Configuration)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

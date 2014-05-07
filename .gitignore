@@ -1,11 +1,11 @@
 #Build files
-build/[Dd]ebug*/
-build/[Rr]elease*/
-build/*.suo
-build/*.sdf
-build/*.opensdf
-build/*.user
-build/*.filters
+build/
+obj/
+*.suo
+*.sdf
+*.opensdf
+*.user
+*.filters
 
 #Documentation
 doc/
