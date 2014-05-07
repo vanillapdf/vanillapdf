@@ -5,7 +5,7 @@ namespace gotchangpdf
 {
 	namespace documents
 	{
-		class Document
+		class Catalog
 		{
 		};
 	}

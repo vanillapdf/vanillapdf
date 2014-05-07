@@ -1,6 +1,6 @@
 #Build files
-build/
-obj/
+/build/
+/obj/
 *.suo
 *.sdf
 *.opensdf
@@ -8,7 +8,7 @@ obj/
 *.filters
 
 #Documentation
-doc/
+/doc/
 
 #Test files
-test/
+/test/
