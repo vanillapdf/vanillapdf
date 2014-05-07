@@ -11,14 +11,21 @@ namespace Pdf
 	class Buffer : public IBuffer
 	{
 	public:
+		typedef char ValueType;
+
 		Buffer();
-		Buffer(const char *chars, int len);
-		Buffer(const char *begin, const char *end);
+		Buffer(const ValueType *chars, int len);
+		Buffer(const ValueType *begin, const ValueType *end);
 
 		void Insert(int idx, const Buffer& item);
 		void Append(const Character& ch);
 		void Append(const Buffer& item);
 		void Reverse();
+
+		ValueType* Data();
+		const ValueType* Data() const;
+		ValueType* Data(unsigned int idx);
+		const ValueType* Data(unsigned int idx) const;
 
 		std::string ToString(void) const;
 
@@ -32,7 +39,7 @@ namespace Pdf
 		bool operator<(const Buffer& other) const;
 
 	private:
-		std::vector<Character> _value;
+		std::vector<ValueType> _value;
 	};
 }
 

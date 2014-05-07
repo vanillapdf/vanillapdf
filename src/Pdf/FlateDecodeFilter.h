@@ -3,8 +3,11 @@
 
 #include "BaseObjects/Filter.h"
 #include "Buffer.h"
+#include "Constants.h"
 
 #include "zlib.h"
+
+#include <algorithm>
 
 namespace Pdf
 {
@@ -18,10 +21,10 @@ namespace Pdf
 			virtual Buffer Apply(Buffer& src) const override
 			{
 				int ret;
-				unsigned have;
+				int size = src.Size();
+				int count = size / Constant::BUFFER_SIZE;
 				z_stream strm;
-				unsigned char in[1024];
-				unsigned char out[1024];
+				unsigned char out[Constant::BUFFER_SIZE];
 				Buffer dest;
 
 				/* allocate inflate state */
@@ -35,18 +38,17 @@ namespace Pdf
 					//return ret;
 					throw Exception("TODO");
 
-				/* decompress until deflate stream ends or end of file */
-				do {
-					strm.avail_in = src.Size();
+				for (int i = 0; i < count; ++i)
+				{
+					strm.avail_in = Constant::BUFFER_SIZE;
 					if (strm.avail_in == 0)
 						break;
 
-					//TODO
-					strm.next_in = src.Data();
+					strm.next_in = reinterpret_cast<unsigned char*>(src.Data(i * Constant::BUFFER_SIZE));
 
 					/* run inflate() on input until output buffer not full */
 					do {
-						strm.avail_out = 1024;
+						strm.avail_out = Constant::BUFFER_SIZE;
 						strm.next_out = out;
 						ret = inflate(&strm, Z_NO_FLUSH);
 						assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
@@ -59,16 +61,38 @@ namespace Pdf
 							//return ret;
 							throw Exception("TODO");
 						}
-						have = 1024 - strm.avail_out;
+						unsigned have = Constant::BUFFER_SIZE - strm.avail_out;
 						dest.Append(Buffer(reinterpret_cast<const char*>(out), have));
 					} while (strm.avail_out == 0);
+				}
 
-					/* done when inflate() says it's done */
-				} while (ret != Z_STREAM_END);
+				strm.avail_in = size - count * Constant::BUFFER_SIZE;
+				strm.next_in = reinterpret_cast<unsigned char*>(src.Data(count * Constant::BUFFER_SIZE));
+
+				/* run inflate() on input until output buffer not full */
+				do {
+					strm.avail_out = Constant::BUFFER_SIZE;
+					strm.next_out = out;
+					ret = inflate(&strm, Z_NO_FLUSH);
+					assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
+					switch (ret) {
+					case Z_NEED_DICT:
+						ret = Z_DATA_ERROR;     /* and fall through */
+					case Z_DATA_ERROR:
+					case Z_MEM_ERROR:
+						(void)inflateEnd(&strm);
+						//return ret;
+						throw Exception("TODO");
+					}
+					unsigned have = Constant::BUFFER_SIZE - strm.avail_out;
+					dest.Append(Buffer(reinterpret_cast<const char*>(out), have));
+				} while (strm.avail_out == 0);
 
 				/* clean up and return */
 				(void)inflateEnd(&strm);
 				//return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
+
+				return dest;
 			}
 		};
 	}

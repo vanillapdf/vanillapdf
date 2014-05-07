@@ -93,8 +93,6 @@ namespace Pdf
 		auto data = s.Read(len);
 		auto buffer = std::shared_ptr<Buffer>(new Buffer(data.get(), len));
 
-		// TODO apply filter
-
 		if (s.PeekTokenType() == Token::Type::EOL)
 			s.ReadToken();
 
@@ -105,8 +103,6 @@ namespace Pdf
 		o._rawDataOffset = offset;
 		o._rawDataLength = len;
 		o._data = buffer;
-
-		o.GetData();
 
 		return s;
 	}
