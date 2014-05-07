@@ -23,13 +23,13 @@ namespace gotchangpdf
 			/* read whole stream */
 			s.seekg(ios_base::beg);
 
-			char buf[Constant::BUFFER_SIZE];
+			char buf[constant::BUFFER_SIZE];
 
 			char* begin = &buf[0];
-			char* end = &buf[Constant::BUFFER_SIZE - 1];
+			char* end = &buf[constant::BUFFER_SIZE - 1];
 
 			/* chunk that dirty bytes */
-			while (s.read(buf, Constant::BUFFER_SIZE))
+			while (s.read(buf, constant::BUFFER_SIZE))
 			{
 				reverse(begin, end);
 				_buffer.insert(_buffer.begin(), begin, end);

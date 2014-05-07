@@ -30,6 +30,7 @@ namespace gotchangpdf
 
 		virtual const Buffer& Value() const override;
 		bool operator==(const NameObject& other) const;
+		bool operator!=(const NameObject& other) const;
 
 	private:
 		Buffer _value;
@@ -38,7 +39,7 @@ namespace gotchangpdf
 		friend void ::boost::intrusive_ptr_release(NameObject*);
 	};
 
-	namespace Constant
+	namespace constant
 	{
 		namespace Name
 		{
@@ -52,6 +53,10 @@ namespace gotchangpdf
 			DECLARE_CONST_NAME(Extends);
 			DECLARE_CONST_NAME(Filter);
 			DECLARE_CONST_NAME(FlateDecode);
+			DECLARE_CONST_NAME(Catalog);
+			DECLARE_CONST_NAME(Pages);
+			DECLARE_CONST_NAME(Count);
+			DECLARE_CONST_NAME(Kids);
 		}
 	}
 }

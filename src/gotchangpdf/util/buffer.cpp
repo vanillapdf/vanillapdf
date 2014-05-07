@@ -33,6 +33,7 @@ namespace gotchangpdf
 	}
 
 	bool Buffer::operator==(const Buffer& other) const { return _value == other._value; }
+	bool Buffer::operator!=(const Buffer& other) const { return _value != other._value; }
 	bool Buffer::operator<(const Buffer& other) const { return _value < other._value; }
 
 	Character Buffer::operator[](unsigned int i) const { return Character(_value[i]); }

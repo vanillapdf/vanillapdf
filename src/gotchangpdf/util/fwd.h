@@ -28,6 +28,13 @@ namespace gotchangpdf
 	class Rectangle;
 	class Tree;
 
+	namespace documents
+	{
+		class Document;
+		class Catalog;
+		class PageTree;
+	}
+
 	namespace exceptions
 	{
 		class Exception;

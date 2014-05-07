@@ -26,6 +26,13 @@ namespace gotchangpdf
 
 		boost::intrusive_ptr<Object> Find(const NameObject& name) const;
 
+		template <typename T>
+		boost::intrusive_ptr<T> Find(const NameObject& name) const
+		{
+			auto result = _list.find(name);
+			return boost::dynamic_pointer_cast<T>(result->second);
+		}
+
 		virtual IObject* IObjectFind(const INameObject& name) const override;
 		virtual IObject* IObjectFind(const char* name, int len) const override;
 

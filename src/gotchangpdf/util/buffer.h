@@ -36,6 +36,7 @@ namespace gotchangpdf
 		virtual int Size() const override;
 
 		bool operator==(const Buffer& other) const;
+		bool operator!=(const Buffer& other) const;
 		bool operator<(const Buffer& other) const;
 
 	private:

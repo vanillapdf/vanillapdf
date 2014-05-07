@@ -25,7 +25,7 @@ namespace gotchangpdf
 
 	Buffer StreamObject::GetData() const
 	{
-		auto filter_name = _dictionary->Find(gotchangpdf::Constant::Name::Filter);
+		auto filter_name = _dictionary->Find(gotchangpdf::constant::Name::Filter);
 		if (nullptr == filter_name)
 			return *_data;
 
@@ -58,7 +58,7 @@ namespace gotchangpdf
 			}
 		}
 
-		auto size_raw = o._dictionary->Find(Constant::Name::Length);
+		auto size_raw = o._dictionary->Find(constant::Name::Length);
 		IntegerObject size;
 		auto type = size_raw->GetType();
 		if (type == Object::Type::IntegerObject)

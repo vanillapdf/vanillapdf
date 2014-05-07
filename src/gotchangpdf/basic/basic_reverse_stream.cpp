@@ -64,20 +64,20 @@ namespace gotchangpdf
 		{
 			shared_ptr<Buffer> result(new Buffer());
 
-			char buf[Constant::BUFFER_SIZE];
+			char buf[constant::BUFFER_SIZE];
 
 			auto begin = &buf[0];
-			auto end = &buf[Constant::BUFFER_SIZE - 1];
+			auto end = &buf[constant::BUFFER_SIZE - 1];
 
-			getline(buf, Constant::BUFFER_SIZE);
+			getline(buf, constant::BUFFER_SIZE);
 			auto read = gcount();
 
-			while (Constant::BUFFER_SIZE == read)
+			while (constant::BUFFER_SIZE == read)
 			{
 				Buffer tmp(begin, end);
 				tmp.Reverse();
 				result->Insert(0, tmp);
-				getline(buf, Constant::BUFFER_SIZE);
+				getline(buf, constant::BUFFER_SIZE);
 				read = gcount();
 			}
 

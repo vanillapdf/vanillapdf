@@ -30,9 +30,9 @@ namespace gotchangpdf
 			{
 				int ret;
 				int size = src.Size();
-				int count = size / Constant::BUFFER_SIZE;
+				int count = size / constant::BUFFER_SIZE;
 				z_stream strm;
-				unsigned char out[Constant::BUFFER_SIZE];
+				unsigned char out[constant::BUFFER_SIZE];
 				Buffer dest;
 
 				/* allocate inflate state */
@@ -48,15 +48,15 @@ namespace gotchangpdf
 
 				for (int i = 0; i < count; ++i)
 				{
-					strm.avail_in = Constant::BUFFER_SIZE;
+					strm.avail_in = constant::BUFFER_SIZE;
 					if (strm.avail_in == 0)
 						break;
 
-					strm.next_in = reinterpret_cast<unsigned char*>(src.Data(i * Constant::BUFFER_SIZE));
+					strm.next_in = reinterpret_cast<unsigned char*>(src.Data(i * constant::BUFFER_SIZE));
 
 					/* run inflate() on input until output buffer not full */
 					do {
-						strm.avail_out = Constant::BUFFER_SIZE;
+						strm.avail_out = constant::BUFFER_SIZE;
 						strm.next_out = out;
 						ret = inflate(&strm, Z_NO_FLUSH);
 						assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
@@ -69,17 +69,17 @@ namespace gotchangpdf
 							//return ret;
 							throw Exception("TODO");
 						}
-						unsigned have = Constant::BUFFER_SIZE - strm.avail_out;
+						unsigned have = constant::BUFFER_SIZE - strm.avail_out;
 						dest.Append(Buffer(reinterpret_cast<const char*>(out), have));
 					} while (strm.avail_out == 0);
 				}
 
-				strm.avail_in = size - count * Constant::BUFFER_SIZE;
-				strm.next_in = reinterpret_cast<unsigned char*>(src.Data(count * Constant::BUFFER_SIZE));
+				strm.avail_in = size - count * constant::BUFFER_SIZE;
+				strm.next_in = reinterpret_cast<unsigned char*>(src.Data(count * constant::BUFFER_SIZE));
 
 				/* run inflate() on input until output buffer not full */
 				do {
-					strm.avail_out = Constant::BUFFER_SIZE;
+					strm.avail_out = constant::BUFFER_SIZE;
 					strm.next_out = out;
 					ret = inflate(&strm, Z_NO_FLUSH);
 					assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
@@ -92,7 +92,7 @@ namespace gotchangpdf
 						//return ret;
 						throw Exception("TODO");
 					}
-					unsigned have = Constant::BUFFER_SIZE - strm.avail_out;
+					unsigned have = constant::BUFFER_SIZE - strm.avail_out;
 					dest.Append(Buffer(reinterpret_cast<const char*>(out), have));
 				} while (strm.avail_out == 0);
 
