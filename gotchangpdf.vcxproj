@@ -66,6 +66,7 @@
     <ClInclude Include="src\gotchangpdf\util\constants.h" />
     <ClInclude Include="src\gotchangpdf\util\fwd.h" />
     <ClInclude Include="src\gotchangpdf\util\intrusive.h" />
+    <ClInclude Include="src\gotchangpdf\util\object_reference_wrapper.h" />
     <ClInclude Include="src\gotchangpdf\util\version.h" />
   </ItemGroup>
   <ItemGroup>

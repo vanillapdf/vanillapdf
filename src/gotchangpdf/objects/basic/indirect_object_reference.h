@@ -16,11 +16,11 @@ namespace gotchangpdf
 		explicit IndirectObjectReference(std::shared_ptr<files::File> file);
 		IndirectObjectReference(std::shared_ptr<files::File> file, int obj_number, int gen_number);
 
-		boost::intrusive_ptr<IndirectObject> GetReference() const;
+		ObjectReferenceWrapper<IndirectObject> GetReference() const;
 
 	private:
 		std::shared_ptr<files::File> _file;
-		mutable boost::intrusive_ptr<IndirectObject> _reference;
+		mutable ObjectReferenceWrapper<IndirectObject> _reference;
 
 		int _obj_number, _gen_number;
 

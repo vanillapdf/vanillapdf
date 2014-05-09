@@ -7,6 +7,7 @@
 #include "Header.h"
 #include "Trailer.h"
 #include "indirect_object.h"
+#include "object_reference_wrapper.h"
 
 #include <fstream>
 
@@ -21,20 +22,20 @@ namespace gotchangpdf
 			virtual ~File(void);
 
 			void Initialize(void);
-			boost::intrusive_ptr<CrossReferenceInfo> GetCrossReferenceTable(void) const;
-			boost::intrusive_ptr<IndirectObject> GetDocumentCatalog(void) const;
-			boost::intrusive_ptr<IndirectObject> GetIndirectObject(int objNumber, int genNumber) const;
-			boost::intrusive_ptr<Header> GetHeader(void) const;
-			boost::intrusive_ptr<Trailer> GetTrailer(void) const;
+			ObjectReferenceWrapper<CrossReferenceInfo> GetCrossReferenceTable(void) const;
+			ObjectReferenceWrapper<IndirectObject> GetDocumentCatalog(void) const;
+			ObjectReferenceWrapper<IndirectObject> GetIndirectObject(int objNumber, int genNumber) const;
+			ObjectReferenceWrapper<Header> GetHeader(void) const;
+			ObjectReferenceWrapper<Trailer> GetTrailer(void) const;
 			lexical::Parser GetParser(void) const;
 
 		private:
 			std::shared_ptr<lexical::Parser> _stream;
 			std::shared_ptr<std::fstream> _input;
-			boost::intrusive_ptr<Header> _header;
-			boost::intrusive_ptr<Trailer> _trailer;
-			boost::intrusive_ptr<CrossReferenceInfo> _xref;
-			std::vector<boost::intrusive_ptr<IndirectObject>> _cache;
+			ObjectReferenceWrapper<Header> _header;
+			ObjectReferenceWrapper<Trailer> _trailer;
+			ObjectReferenceWrapper<CrossReferenceInfo> _xref;
+			std::vector<ObjectReferenceWrapper<IndirectObject>> _cache;
 		};
 	}
 }

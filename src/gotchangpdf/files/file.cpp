@@ -54,7 +54,7 @@ namespace gotchangpdf
 			*_stream >> *_trailer->dictionary();
 		}
 
-		boost::intrusive_ptr<IndirectObject> File::GetIndirectObject(int objNumber, int genNumber) const
+		ObjectReferenceWrapper<IndirectObject> File::GetIndirectObject(int objNumber, int genNumber) const
 		{
 			//if (_cache.)
 
@@ -83,16 +83,16 @@ namespace gotchangpdf
 			*/
 		}
 
-		boost::intrusive_ptr<IndirectObject> File::GetDocumentCatalog(void) const
+		ObjectReferenceWrapper<IndirectObject> File::GetDocumentCatalog(void) const
 		{
 			static const char root[] = "Root";
 			auto reference = _trailer->dictionary()->Find(NameObject(Buffer(root, sizeof(root))));
-			return boost::dynamic_pointer_cast<IndirectObjectReference>(reference)->GetReference();
+			return reference.GetAs<IndirectObjectReference>()->GetReference();
 		}
 
-		boost::intrusive_ptr<Header> File::GetHeader(void) const { return _header; }
-		boost::intrusive_ptr<Trailer> File::GetTrailer(void) const { return _trailer; }
-		boost::intrusive_ptr<CrossReferenceInfo> File::GetCrossReferenceTable(void) const { return _xref; }
+		ObjectReferenceWrapper<Header> File::GetHeader(void) const { return _header; }
+		ObjectReferenceWrapper<Trailer> File::GetTrailer(void) const { return _trailer; }
+		ObjectReferenceWrapper<CrossReferenceInfo> File::GetCrossReferenceTable(void) const { return _xref; }
 
 		lexical::Parser File::GetParser(void) const { return lexical::Parser(*_stream); }
 	}
@@ -125,7 +125,7 @@ GOTCHANG_PDF_API XrefHandle CALLING_CONVENTION File_Xref(FileHandle handle)
 	File* file = reinterpret_cast<File*>(handle);
 
 	auto table = file->GetCrossReferenceTable();
-	auto ptr = table.get();
+	auto ptr = table.Get();
 
 	boost::intrusive_ptr_add_ref(ptr);
 	return reinterpret_cast<XrefHandle>(ptr);
@@ -136,7 +136,7 @@ GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION File_GetIndirectObject(
 	File* file = reinterpret_cast<File*>(handle);
 
 	auto item = file->GetIndirectObject(objNumber, genNumber);
-	auto ptr = item.get();
+	auto ptr = item.Get();
 
 	boost::intrusive_ptr_add_ref(ptr);
 	return reinterpret_cast<IndirectObjectHandle>(ptr);
@@ -147,7 +147,7 @@ GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION File_GetDocumentCatalog
 	File* file = reinterpret_cast<File*>(handle);
 
 	auto item = file->GetDocumentCatalog();
-	auto ptr = item.get();
+	auto ptr = item.Get();
 
 	boost::intrusive_ptr_add_ref(ptr);
 	return reinterpret_cast<IndirectObjectHandle>(ptr);

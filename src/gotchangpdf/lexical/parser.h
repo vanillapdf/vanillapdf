@@ -3,8 +3,7 @@
 
 #include "fwd.h"
 #include "lexical_stream.h"
-
-#include "boost/intrusive_ptr.hpp"
+#include "object_reference_wrapper.h"
 
 namespace gotchangpdf
 {
@@ -16,29 +15,22 @@ namespace gotchangpdf
 			Parser(std::shared_ptr<files::File> file, std::shared_ptr<std::istream> stream);
 
 			template<typename T>
-			boost::intrusive_ptr<T> readObjectWithType();
+			ObjectReferenceWrapper<T> readObjectWithType() { return dynamic_wrapper_cast<T>(readObject()); }
 
-			boost::intrusive_ptr<gotchangpdf::Object> readObjectWithType(gotchangpdf::IObject::Type type);
-			boost::intrusive_ptr<gotchangpdf::Object> readObject();
-			boost::intrusive_ptr<gotchangpdf::Object> peekObject();
+			ObjectReferenceWrapper<Object> readObjectWithType(IObject::Type type);
+			ObjectReferenceWrapper<Object> readObject();
+			ObjectReferenceWrapper<Object> peekObject();
 
 			std::shared_ptr<files::File> file(void) const;
 			//void SetDeep(bool deep);
 			//bool GetDeep(void) const;
 
-			gotchangpdf::lexical::Parser::Parser(const gotchangpdf::lexical::Parser &);
+			Parser(const Parser &);
 
 		private:
 			std::shared_ptr<files::File> _file;
 			//bool _deep;
 		};
-
-		template<typename T>
-		boost::intrusive_ptr<T>
-			gotchangpdf::lexical::Parser::readObjectWithType()
-		{
-			return boost::dynamic_pointer_cast<T>(readObject());
-		}
 	}
 }
 

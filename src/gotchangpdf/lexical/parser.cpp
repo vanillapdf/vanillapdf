@@ -22,7 +22,7 @@ namespace gotchangpdf
 		using namespace lexical;
 		using namespace exceptions;
 
-		boost::intrusive_ptr<Object> Parser::readObject()
+		ObjectReferenceWrapper<Object> Parser::readObject()
 		{
 			auto offset = tellg();
 
@@ -30,7 +30,7 @@ namespace gotchangpdf
 			{
 			case Token::Type::DICTIONARY_BEGIN:
 				{
-					auto result = boost::intrusive_ptr<DictionaryObject>(new DictionaryObject());
+					auto result = ObjectReferenceWrapper<DictionaryObject>(new DictionaryObject());
 					*this >> *result;
 
 					if (PeekTokenType() == Token::Type::EOL)
@@ -38,7 +38,7 @@ namespace gotchangpdf
 
 					if (PeekTokenType() == Token::Type::STREAM_BEGIN)
 					{
-						auto resultStream = boost::intrusive_ptr<StreamObject>(new StreamObject(*result));
+						auto resultStream = ObjectReferenceWrapper<StreamObject>(new StreamObject(*result));
 						*this >> *resultStream;
 
 						return resultStream;
@@ -60,7 +60,7 @@ namespace gotchangpdf
 						case Token::Type::INDIRECT_REFERENCE_MARKER:
 						{
 							auto reference_marker = ReadTokenWithType(Token::Type::INDIRECT_REFERENCE_MARKER);
-							return boost::intrusive_ptr<IndirectObjectReference>(new IndirectObjectReference(_file, IntegerObject(*token), IntegerObject(*gen_number)));
+							return ObjectReferenceWrapper<IndirectObjectReference>(new IndirectObjectReference(_file, IntegerObject(*token), IntegerObject(*gen_number)));
 						}
 
 						case Token::Type::INDIRECT_OBJECT_BEGIN:
@@ -82,11 +82,11 @@ namespace gotchangpdf
 						}
 					}
 
-					return boost::intrusive_ptr<IntegerObject>(new IntegerObject(*token));
+					return ObjectReferenceWrapper<IntegerObject>(new IntegerObject(*token));
 				}
 			case Token::Type::ARRAY_BEGIN:
 				{
-					auto result = boost::intrusive_ptr<ArrayObject>(new ArrayObject());
+					auto result = ObjectReferenceWrapper<ArrayObject>(new ArrayObject());
 					*this >> *result;
 
 					//auto token = readToken();
@@ -100,29 +100,29 @@ namespace gotchangpdf
 			case Token::Type::NAME_OBJECT:
 			{
 				auto token = ReadTokenWithType(Token::Type::NAME_OBJECT);
-				return boost::intrusive_ptr<NameObject>(new NameObject(*token));
+				return ObjectReferenceWrapper<NameObject>(new NameObject(*token));
 			}
 			case Token::Type::HEXADECIMAL_STRING:
 			{
 				auto token = ReadTokenWithType(Token::Type::HEXADECIMAL_STRING);
-				return boost::intrusive_ptr<HexadecimalString>(new HexadecimalString(*token));
+				return ObjectReferenceWrapper<HexadecimalString>(new HexadecimalString(*token));
 			}
 			case Token::Type::LITERAL_STRING:
 			{
 				auto token = ReadTokenWithType(Token::Type::LITERAL_STRING);
-				return boost::intrusive_ptr<LiteralString>(new LiteralString(*token));
+				return ObjectReferenceWrapper<LiteralString>(new LiteralString(*token));
 			}
 			case Token::Type::REAL_OBJECT:
 			{
 				auto token = ReadTokenWithType(Token::Type::REAL_OBJECT);
-				return boost::intrusive_ptr<RealObject>(new RealObject(*token));
+				return ObjectReferenceWrapper<RealObject>(new RealObject(*token));
 			}
 			default:
 				throw Exception("No valid object could be found at offset " + static_cast<int>(offset));
 			}
 		}
 
-		boost::intrusive_ptr<Object> Parser::peekObject()
+		ObjectReferenceWrapper<Object> Parser::peekObject()
 		{
 			auto position = tellg();
 			auto obj = readObject();
@@ -135,7 +135,7 @@ namespace gotchangpdf
 		Parser::Parser(const gotchangpdf::lexical::Parser &other) : lexical::Stream(other) { _file = other.file(); }
 		std::shared_ptr<files::File> Parser::file(void) const { return _file; }
 
-		boost::intrusive_ptr<gotchangpdf::Object> Parser::readObjectWithType(gotchangpdf::IObject::Type type)
+		ObjectReferenceWrapper<gotchangpdf::Object> Parser::readObjectWithType(gotchangpdf::IObject::Type type)
 		{
 			auto obj = readObject();
 
@@ -144,31 +144,31 @@ namespace gotchangpdf
 			case gotchangpdf::IObject::Type::Unknown:
 				throw Exception("FIXME: Are your really trying to return unknown type??");
 			case gotchangpdf::IObject::Type::ArrayObject:
-				return boost::dynamic_pointer_cast<ArrayObject>(obj);
+				return obj.GetAs<ArrayObject>();
 			case gotchangpdf::IObject::Type::Boolean:
-				return boost::dynamic_pointer_cast<Boolean>(obj);
+				return obj.GetAs<Boolean>();
 			case gotchangpdf::IObject::Type::DictionaryObject:
-				return boost::dynamic_pointer_cast<DictionaryObject>(obj);
+				return obj.GetAs<DictionaryObject>();
 			case gotchangpdf::IObject::Type::Function:
-				return boost::dynamic_pointer_cast<Function>(obj);
+				return obj.GetAs<Function>();
 			case gotchangpdf::IObject::Type::IntegerObject:
-				return boost::dynamic_pointer_cast<IntegerObject>(obj);
+				return obj.GetAs<IntegerObject>();
 			case gotchangpdf::IObject::Type::NameObject:
-				return boost::dynamic_pointer_cast<NameObject>(obj);
+				return obj.GetAs<NameObject>();
 			case gotchangpdf::IObject::Type::NullObject:
-				return boost::dynamic_pointer_cast<NullObject>(obj);
+				return obj.GetAs<NullObject>();
 			case gotchangpdf::IObject::Type::RealObject:
-				return boost::dynamic_pointer_cast<RealObject>(obj);
+				return obj.GetAs<RealObject>();
 			case gotchangpdf::IObject::Type::StreamObject:
-				return boost::dynamic_pointer_cast<StreamObject>(obj);
+				return obj.GetAs<StreamObject>();
 			case gotchangpdf::IObject::Type::HexadecimalString:
-				return boost::dynamic_pointer_cast<HexadecimalString>(obj);
+				return obj.GetAs<HexadecimalString>();
 			case gotchangpdf::IObject::Type::LiteralString:
-				return boost::dynamic_pointer_cast<LiteralString>(obj);
+				return obj.GetAs<LiteralString>();
 			case gotchangpdf::IObject::Type::IndirectReference:
-				return boost::dynamic_pointer_cast<IndirectObjectReference>(obj);
+				return obj.GetAs<IndirectObjectReference>();
 			case gotchangpdf::IObject::Type::IndirectObject:
-				return boost::dynamic_pointer_cast<IndirectObject>(obj);
+				return obj.GetAs<IndirectObject>();
 			default:
 				assert(false);
 				throw Exception("FIXME: Unknown object type");

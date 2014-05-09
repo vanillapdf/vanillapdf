@@ -4,8 +4,7 @@
 #include "fwd.h"
 #include "object.h"
 #include "i_array_object.h"
-
-#include "boost/intrusive_ptr.hpp"
+#include "object_reference_wrapper.h"
 
 #include <vector>
 
@@ -22,7 +21,7 @@ namespace gotchangpdf
 		friend lexical::Parser& operator>> (lexical::Parser& s, ArrayObject& o);
 
 	private:
-		std::vector<boost::intrusive_ptr<Object>> _list;
+		std::vector<ObjectReferenceWrapper<Object>> _list;
 
 		friend void ::boost::intrusive_ptr_add_ref(ArrayObject*);
 		friend void ::boost::intrusive_ptr_release(ArrayObject*);

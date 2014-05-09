@@ -63,11 +63,11 @@ namespace gotchangpdf
 		auto type = size_raw->GetType();
 		if (type == Object::Type::IntegerObject)
 		{
-			size = *boost::dynamic_pointer_cast<IntegerObject>(size_raw);
+			size = *size_raw.GetAs<IntegerObject>();
 		}
 		else if (type == Object::Type::IndirectReference)
 		{
-			auto ref = boost::dynamic_pointer_cast<IndirectObjectReference>(size_raw);
+			auto ref = size_raw.GetAs<IndirectObjectReference>();
 			auto indirect = ref->GetReference();
 			auto obj = indirect->GetObject();
 
@@ -79,8 +79,7 @@ namespace gotchangpdf
 
 				throw Exception(buffer.str());
 			}
-
-			size = *boost::dynamic_pointer_cast<IntegerObject>(obj);
+			size = *obj.GetAs<IntegerObject>();
 		}
 		else
 		{

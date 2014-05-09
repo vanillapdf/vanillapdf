@@ -15,6 +15,8 @@ namespace gotchangpdf
 		public:
 			friend basic::Stream& operator>> (basic::Stream& s, Header& o);
 
+			Version GetVersion(void) const;
+
 		private:
 			Version _version;
 

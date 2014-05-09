@@ -10,14 +10,14 @@ namespace gotchangpdf
 	using namespace std;
 
 	IndirectObject::IndirectObject(std::shared_ptr<files::File> file, int objNumber, int genNumber, std::streamoff offset /*= _BADOFF */)
-		: Object(Object::Type::IndirectObject), _file(file), _objNumber(objNumber), _genNumber(genNumber), _offset(offset), _reference(nullptr) {}
+		: Object(Object::Type::IndirectObject), _file(file), _objNumber(objNumber), _genNumber(genNumber), _offset(offset), RequireVersion(file->GetHeader()->GetVersion()) {}
 
 	IndirectObject::IndirectObject(const IndirectObject& other) :
-		_file(other._file), _genNumber(other._genNumber), _objNumber(other._objNumber), _offset(other._offset), _reference(other._reference) {}
+		_file(other._file), _genNumber(other._genNumber), _objNumber(other._objNumber), _offset(other._offset), _reference(other._reference), RequireVersion(other._file->GetHeader()->GetVersion()) {}
 
-	void IndirectObject::SetObject(boost::intrusive_ptr<Object> ref) { _reference = ref; }
+	void IndirectObject::SetObject(ObjectReferenceWrapper<Object> ref) { _reference = ref; }
 
-	boost::intrusive_ptr<Object> IndirectObject::GetObject() const
+	ObjectReferenceWrapper<Object> IndirectObject::GetObject() const
 	{
 		if (nullptr == _reference)
 		{
@@ -40,7 +40,7 @@ namespace gotchangpdf
 	{
 		auto item = GetObject();
 
-		gotchangpdf::Object *ptr = item.get();
+		gotchangpdf::Object *ptr = item.Get();
 		boost::intrusive_ptr_add_ref(ptr);
 
 		return reinterpret_cast<IObject*>(ptr);
@@ -59,9 +59,9 @@ GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION IndirectObject_GetObject(Indire
 {
 	gotchangpdf::IndirectObject* obj = reinterpret_cast<gotchangpdf::IndirectObject*>(handle);
 
-	boost::intrusive_ptr<gotchangpdf::Object> item = obj->GetObject();
+	gotchangpdf::ObjectReferenceWrapper<gotchangpdf::Object> item = obj->GetObject();
 
-	gotchangpdf::Object *ptr = item.get();
+	gotchangpdf::Object *ptr = item.Get();
 	boost::intrusive_ptr_add_ref(ptr);
 
 	return reinterpret_cast<ObjectHandle>(ptr);

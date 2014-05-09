@@ -66,5 +66,7 @@ namespace gotchangpdf
 
 			return s;
 		}
+
+		Version Header::GetVersion(void) const { return _version; }
 	}
 }

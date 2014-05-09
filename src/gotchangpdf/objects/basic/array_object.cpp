@@ -19,7 +19,7 @@ namespace gotchangpdf
 	{
 		auto item = _list[at];
 
-		gotchangpdf::Object *ptr = item.get();
+		gotchangpdf::Object *ptr = item.Get();
 		boost::intrusive_ptr_add_ref(ptr);
 
 		return reinterpret_cast<IObject*>(ptr);

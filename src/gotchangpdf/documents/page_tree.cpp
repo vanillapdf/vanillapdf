@@ -14,7 +14,7 @@ namespace gotchangpdf
 
 		PageTree::PageTree(const IndirectObject& obj)
 		{
-			auto dict = boost::dynamic_pointer_cast<DictionaryObject>(obj.GetObject());
+			auto dict = dynamic_wrapper_cast<DictionaryObject>(obj.GetObject());
 
 			if (*dict->Find<NameObject>(Name::Type) != Name::Pages)
 				throw Exception("TODO");

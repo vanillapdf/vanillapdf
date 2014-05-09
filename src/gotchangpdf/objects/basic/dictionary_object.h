@@ -5,8 +5,7 @@
 #include "object.h"
 #include "name_object.h"
 #include "i_dictionary_object.h"
-
-#include "boost/intrusive_ptr.hpp"
+#include "object_reference_wrapper.h"
 
 #include <unordered_map>
 
@@ -16,7 +15,7 @@ namespace gotchangpdf
 	{
 	public:
 		// TODO
-		typedef std::unordered_map<NameObject, boost::intrusive_ptr<Object>, NameObject::Hasher> listType;
+		typedef std::unordered_map<NameObject, ObjectReferenceWrapper<Object>, NameObject::Hasher> listType;
 		listType::const_iterator DictionaryObject::Begin() const;
 		listType::const_iterator DictionaryObject::End() const;
 
@@ -24,13 +23,13 @@ namespace gotchangpdf
 		//friend Objects::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, DictionaryObject& o);
 		friend lexical::Parser& operator>> (lexical::Parser& s, DictionaryObject& o);
 
-		boost::intrusive_ptr<Object> Find(const NameObject& name) const;
+		ObjectReferenceWrapper<Object> Find(const NameObject& name) const;
 
 		template <typename T>
-		boost::intrusive_ptr<T> Find(const NameObject& name) const
+		ObjectReferenceWrapper<T> Find(const NameObject& name) const
 		{
 			auto result = _list.find(name);
-			return boost::dynamic_pointer_cast<T>(result->second);
+			return dynamic_wrapper_cast<T>(result->second);
 		}
 
 		virtual IObject* IObjectFind(const INameObject& name) const override;

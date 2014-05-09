@@ -13,6 +13,17 @@
   <ItemGroup>
     <ClCompile Include="src\test\test.c" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="gotchangpdf.vcxproj">
+      <Project>{9af81955-0b8c-4778-9f93-3ed8285d3d49}</Project>
+      <Private>true</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocal>true</CopyLocal>
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E704EA4D-1AE7-40DA-A961-A71A9C025522}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -66,7 +77,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>build\$(ProjectName)\$(Configuration)\GotchangPdf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -75,6 +87,11 @@
     <PreLinkEvent>
       <Command>xcopy /E /Y "build\gotchangpdf\$(Configuration)" "build\$(ProjectName)\$(Configuration)"</Command>
     </PreLinkEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <ProjectReference />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -92,7 +109,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>build\$(ProjectName)\$(Configuration)\GotchangPdf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -101,6 +119,10 @@
     <PreLinkEvent>
       <Command>xcopy /E /Y "build\gotchangpdf\$(Configuration)" "build\$(ProjectName)\$(Configuration)"</Command>
     </PreLinkEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

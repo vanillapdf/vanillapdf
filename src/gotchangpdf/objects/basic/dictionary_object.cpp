@@ -63,7 +63,7 @@ namespace gotchangpdf
 
 	DictionaryObject::DictionaryObject() : Object(Object::Type::DictionaryObject) {}
 
-	boost::intrusive_ptr<Object> DictionaryObject::Find(const NameObject& name) const
+	ObjectReferenceWrapper<Object> DictionaryObject::Find(const NameObject& name) const
 	{
 		auto result = _list.find(name);
 		return result->second;
@@ -80,7 +80,7 @@ namespace gotchangpdf
 	IObject* DictionaryObject::IObjectFind(const char* name, int len) const
 	{
 		auto found = _list.find(NameObject(Buffer(name, len)));
-		gotchangpdf::Object* ptr = found->second.get();
+		gotchangpdf::Object* ptr = found->second.Get();
 		boost::intrusive_ptr_add_ref(ptr);
 		return ptr;
 	}
@@ -89,7 +89,7 @@ namespace gotchangpdf
 	DictionaryObject::listType::const_iterator DictionaryObject::End() const { return _list.end();}
 }
 
-typedef std::pair<gotchangpdf::NameObject, boost::intrusive_ptr<gotchangpdf::Object>> DictionaryObjectPair;
+typedef std::pair<gotchangpdf::NameObject, gotchangpdf::ObjectReferenceWrapper<gotchangpdf::Object>> DictionaryObjectPair;
 typedef gotchangpdf::DictionaryObject::listType::const_iterator DictionaryObjectConstIterator;
 
 GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, const char *str, int len)
@@ -97,8 +97,8 @@ GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObject_Find(Dictionar
 	gotchangpdf::DictionaryObject* dictionary = reinterpret_cast<gotchangpdf::DictionaryObject*>(handle);
 	gotchangpdf::Buffer set(str, len);
 	gotchangpdf::NameObject name(set);
-	boost::intrusive_ptr<gotchangpdf::Object> object = dictionary->Find(name);
-	gotchangpdf::Object* ptr = object.get();
+	gotchangpdf::ObjectReferenceWrapper<gotchangpdf::Object> object = dictionary->Find(name);
+	gotchangpdf::Object* ptr = object.Get();
 	boost::intrusive_ptr_add_ref(ptr);
 
 	return reinterpret_cast<ObjectHandle>(ptr);
@@ -141,8 +141,7 @@ GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObjectPair_GetValue(D
 {
 	DictionaryObjectPair* pair = reinterpret_cast<DictionaryObjectPair*>(handle);
 
-	boost::intrusive_ptr<gotchangpdf::Object> object = pair->second;
-	gotchangpdf::Object* ptr = object.get();
+	gotchangpdf::Object* ptr = pair->second.Get();
 	boost::intrusive_ptr_add_ref(ptr);
 
 	return reinterpret_cast<ObjectHandle>(ptr);

@@ -4,6 +4,7 @@
 #include "fwd.h"
 #include "integer_object.h"
 #include "array_object.h"
+#include "object_reference_wrapper.h"
 
 namespace gotchangpdf
 {
@@ -16,8 +17,8 @@ namespace gotchangpdf
 			explicit PageTree(const IndirectObject& obj);
 
 		private:
-			boost::intrusive_ptr<IntegerObject> _count;
-			boost::intrusive_ptr<ArrayObject> _kids;
+			ObjectReferenceWrapper<IntegerObject> _count;
+			ObjectReferenceWrapper<ArrayObject> _kids;
 		};
 	}
 }
