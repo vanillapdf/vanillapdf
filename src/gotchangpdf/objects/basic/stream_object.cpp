@@ -18,10 +18,10 @@ namespace gotchangpdf
 	using namespace exceptions;
 
 	StreamObject::StreamObject()
-		: Object(Object::Type::StreamObject), _data(nullptr), _rawDataOffset(_BADOFF), _dictionary(nullptr), _rawDataLength(-1), _type(Type::UNKNOWN) {}
+		: Object(Object::Type::StreamObject), _data(nullptr), _rawDataOffset(_BADOFF), _rawDataLength(-1), _type(Type::UNKNOWN) {}
 
 	StreamObject::StreamObject(DictionaryObject& dictionary)
-		: Object(Object::Type::StreamObject), _data(nullptr), _rawDataOffset(_BADOFF), _dictionary(boost::intrusive_ptr<DictionaryObject>(&dictionary)), _rawDataLength(-1), _type(Type::UNKNOWN) {}
+		: Object(Object::Type::StreamObject), _data(nullptr), _rawDataOffset(_BADOFF), _dictionary(&dictionary), _rawDataLength(-1), _type(Type::UNKNOWN) {}
 
 	Buffer StreamObject::GetData() const
 	{

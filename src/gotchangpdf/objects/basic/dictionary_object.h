@@ -4,14 +4,13 @@
 #include "fwd.h"
 #include "object.h"
 #include "name_object.h"
-#include "i_dictionary_object.h"
 #include "object_reference_wrapper.h"
 
 #include <unordered_map>
 
 namespace gotchangpdf
 {
-	class DictionaryObject : public Object, public IDictionaryObject
+	class DictionaryObject : public Object
 	{
 	public:
 		// TODO
@@ -32,14 +31,14 @@ namespace gotchangpdf
 			return dynamic_wrapper_cast<T>(result->second);
 		}
 
-		virtual IObject* IObjectFind(const INameObject& name) const override;
-		virtual IObject* IObjectFind(const char* name, int len) const override;
-
 	private:
 		listType _list;
 
-		friend void ::boost::intrusive_ptr_add_ref(DictionaryObject*);
-		friend void ::boost::intrusive_ptr_release(DictionaryObject*);
+		template <typename T>
+		friend void ::boost::intrusive_ptr_add_ref(T*);
+
+		template <typename T>
+		friend void ::boost::intrusive_ptr_release(T*);
 	};
 }
 

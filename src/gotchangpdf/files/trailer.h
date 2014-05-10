@@ -2,6 +2,7 @@
 #define _TRAILER_H
 
 #include "fwd.h"
+#include "object_reference_wrapper.h"
 #include "dictionary_object.h"
 #include "constants.h"
 
@@ -16,15 +17,19 @@ namespace gotchangpdf
 
 			friend lexical::ReverseStream& operator>> (lexical::ReverseStream& s, Trailer& o);
 			streamOffsetValueType xref_offset() const;
-			boost::intrusive_ptr<DictionaryObject> dictionary() const;
+			ObjectReferenceWrapper<DictionaryObject> dictionary() const;
 
 		private:
 			streamOffsetValueType _xref_offset;
-			boost::intrusive_ptr<DictionaryObject> _dictionary;
+			ObjectReferenceWrapper<DictionaryObject> _dictionary;
 
 			mutable long _intrusive_ref_count;
-			friend void ::boost::intrusive_ptr_add_ref(Trailer*);
-			friend void ::boost::intrusive_ptr_release(Trailer*);
+
+			template <typename T>
+			friend void ::boost::intrusive_ptr_add_ref(T*);
+
+			template <typename T>
+			friend void ::boost::intrusive_ptr_release(T*);
 		};
 	}
 }

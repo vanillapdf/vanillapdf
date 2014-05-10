@@ -1,13 +1,12 @@
 #ifndef _NAME_OBJECT_H
 #define _NAME_OBJECT_H
 
-#include "i_name_object.h"
 #include "object.h"
 #include "Buffer.h"
 
 namespace gotchangpdf
 {
-	class NameObject : public Object, public INameObject
+	class NameObject : public Object
 	{
 	public:
 		struct Hasher {
@@ -28,15 +27,18 @@ namespace gotchangpdf
 
 		//const CharacterSet& Value() const;
 
-		virtual const Buffer& Value() const override;
+		const Buffer& Value() const;
 		bool operator==(const NameObject& other) const;
 		bool operator!=(const NameObject& other) const;
 
 	private:
 		Buffer _value;
 
-		friend void ::boost::intrusive_ptr_add_ref(NameObject*);
-		friend void ::boost::intrusive_ptr_release(NameObject*);
+		template <typename T>
+		friend void ::boost::intrusive_ptr_add_ref(T*);
+
+		template <typename T>
+		friend void ::boost::intrusive_ptr_release(T*);
 	};
 
 	namespace constant

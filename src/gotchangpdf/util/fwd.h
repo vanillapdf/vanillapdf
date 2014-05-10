@@ -5,7 +5,7 @@ namespace gotchangpdf
 {
 	class ArrayObject;
 	class Boolean;
-	class CrossReferenceInfo;
+	class Xref;
 	class DictionaryObject;
 	class Function;
 	class IndirectObject;

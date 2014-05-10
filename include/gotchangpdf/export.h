@@ -1,4 +1,5 @@
 #ifndef _EXPORT_H
+#define _EXPORT_H
 
 #define CALLING_CONVENTION __stdcall
 

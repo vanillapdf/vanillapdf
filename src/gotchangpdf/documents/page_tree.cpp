@@ -10,9 +10,18 @@ namespace gotchangpdf
 		using namespace constant;
 		using namespace exceptions;
 
-		PageTree::PageTree() : _count(boost::intrusive_ptr<IntegerObject>(new IntegerObject())), _kids(boost::intrusive_ptr<ArrayObject>(new ArrayObject())) {}
+		PageNode::~PageNode() {}
 
-		PageTree::PageTree(const IndirectObject& obj)
+		PageTree::PageTree() : _nodes() {}
+
+		PageTree::PageTree(const IndirectObject& root) : _nodes()
+		{
+			_nodes.push_back(std::shared_ptr<PageTreeNode>(new PageTreeNode(root)));
+		}
+
+		PageTreeNode::PageTreeNode() : _count(boost::intrusive_ptr<IntegerObject>(new IntegerObject())), _kids(boost::intrusive_ptr<ArrayObject>(new ArrayObject())) {}
+
+		PageTreeNode::PageTreeNode(const IndirectObject& obj)
 		{
 			auto dict = dynamic_wrapper_cast<DictionaryObject>(obj.GetObject());
 

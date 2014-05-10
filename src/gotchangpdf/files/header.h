@@ -1,7 +1,6 @@
 #ifndef _HEADER_H
 #define _HEADER_H
 
-#include "token.h"
 #include "intrusive.h"
 #include "basic_stream.h"
 #include "version.h"
@@ -21,8 +20,12 @@ namespace gotchangpdf
 			Version _version;
 
 			mutable long _intrusive_ref_count;
-			friend void ::boost::intrusive_ptr_add_ref(Header*);
-			friend void ::boost::intrusive_ptr_release(Header*);
+
+			template <typename T>
+			friend void ::boost::intrusive_ptr_add_ref(T*);
+
+			template <typename T>
+			friend void ::boost::intrusive_ptr_release(T*);
 		};
 	}
 }

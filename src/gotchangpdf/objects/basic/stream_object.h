@@ -4,8 +4,7 @@
 #include "fwd.h"
 #include "constants.h"
 #include "dictionary_object.h"
-
-#include "boost/intrusive_ptr.hpp"
+#include "object_reference_wrapper.h"
 
 #include <memory>
 
@@ -30,14 +29,17 @@ namespace gotchangpdf
 		friend lexical::Parser& operator>> (lexical::Parser& s, StreamObject& o);
 
 	private:
-		boost::intrusive_ptr<DictionaryObject> _dictionary;
+		ObjectReferenceWrapper<DictionaryObject> _dictionary;
 		std::shared_ptr<Buffer> _data;
 		streamOffsetValueType _rawDataOffset;
 		streamSizeValueType _rawDataLength;
 		Type _type;
 
-		friend void ::boost::intrusive_ptr_add_ref(StreamObject*);
-		friend void ::boost::intrusive_ptr_release(StreamObject*);
+		template <typename T>
+		friend void ::boost::intrusive_ptr_add_ref(T*);
+
+		template <typename T>
+		friend void ::boost::intrusive_ptr_release(T*);
 	};
 }
 

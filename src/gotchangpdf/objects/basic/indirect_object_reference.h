@@ -4,8 +4,6 @@
 #include "fwd.h"
 #include "indirect_object.h"
 
-#include "boost/intrusive_ptr.hpp"
-
 #include <memory>
 
 namespace gotchangpdf
@@ -24,8 +22,11 @@ namespace gotchangpdf
 
 		int _obj_number, _gen_number;
 
-		friend void ::boost::intrusive_ptr_add_ref(IndirectObjectReference*);
-		friend void ::boost::intrusive_ptr_release(IndirectObjectReference*);
+		template <typename T>
+		friend void ::boost::intrusive_ptr_add_ref(T*);
+
+		template <typename T>
+		friend void ::boost::intrusive_ptr_release(T*);
 	};
 }
 

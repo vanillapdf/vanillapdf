@@ -14,7 +14,7 @@ namespace gotchangpdf
 		using namespace lexical;
 		using namespace std;
 
-		Trailer::Trailer() : _xref_offset(0), _dictionary(boost::intrusive_ptr<DictionaryObject>(new DictionaryObject())) {}
+		Trailer::Trailer() : _xref_offset(0), _dictionary(ObjectReferenceWrapper<DictionaryObject>(new DictionaryObject())) {}
 
 		ReverseStream& operator>>(ReverseStream& s, Trailer& o)
 		{
@@ -40,6 +40,6 @@ namespace gotchangpdf
 
 		streamOffsetValueType Trailer::xref_offset() const { return _xref_offset; }
 
-		boost::intrusive_ptr<DictionaryObject> Trailer::dictionary() const { return _dictionary; }
+		ObjectReferenceWrapper<DictionaryObject> Trailer::dictionary() const { return _dictionary; }
 	}
 }

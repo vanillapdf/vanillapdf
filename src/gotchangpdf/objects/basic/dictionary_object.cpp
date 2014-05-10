@@ -49,7 +49,7 @@ namespace gotchangpdf
 			auto name = s.readObjectWithType<NameObject>();
 			auto val = s.readObject();
 
-			if (val->GetType() == IObject::Type::NullObject)
+			if (val->GetType() == Object::Type::NullObject)
 				continue;
 
 			o._list[*name] = val;
@@ -69,22 +69,6 @@ namespace gotchangpdf
 		return result->second;
 	}
 
-	IObject* DictionaryObject::IObjectFind(const INameObject& name) const
-	{
-		// TODO
-		//auto result = _list.find(name);
-		//return result->second;
-		return nullptr;
-	}
-
-	IObject* DictionaryObject::IObjectFind(const char* name, int len) const
-	{
-		auto found = _list.find(NameObject(Buffer(name, len)));
-		gotchangpdf::Object* ptr = found->second.Get();
-		boost::intrusive_ptr_add_ref(ptr);
-		return ptr;
-	}
-
 	DictionaryObject::listType::const_iterator DictionaryObject::Begin() const { return _list.begin(); }
 	DictionaryObject::listType::const_iterator DictionaryObject::End() const { return _list.end();}
 }
@@ -98,8 +82,8 @@ GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObject_Find(Dictionar
 	gotchangpdf::Buffer set(str, len);
 	gotchangpdf::NameObject name(set);
 	gotchangpdf::ObjectReferenceWrapper<gotchangpdf::Object> object = dictionary->Find(name);
-	gotchangpdf::Object* ptr = object.Get();
-	boost::intrusive_ptr_add_ref(ptr);
+	gotchangpdf::Object* ptr = object.AddRefGet();
+	//boost::intrusive_ptr_add_ref(ptr);
 
 	return reinterpret_cast<ObjectHandle>(ptr);
 }
@@ -141,8 +125,8 @@ GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObjectPair_GetValue(D
 {
 	DictionaryObjectPair* pair = reinterpret_cast<DictionaryObjectPair*>(handle);
 
-	gotchangpdf::Object* ptr = pair->second.Get();
-	boost::intrusive_ptr_add_ref(ptr);
+	gotchangpdf::Object* ptr = pair->second.AddRefGet();
+	//boost::intrusive_ptr_add_ref(ptr);
 
 	return reinterpret_cast<ObjectHandle>(ptr);
 }

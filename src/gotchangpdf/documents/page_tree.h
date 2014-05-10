@@ -6,19 +6,43 @@
 #include "array_object.h"
 #include "object_reference_wrapper.h"
 
+#include <vector>
+#include <memory>
+
 namespace gotchangpdf
 {
 	namespace documents
 	{
-		class PageTree
+		class PageNode
 		{
 		public:
-			PageTree();
-			explicit PageTree(const IndirectObject& obj);
+			virtual ~PageNode() = 0;
+		};
+
+		class PageTreeNode : public PageNode
+		{
+		public:
+			PageTreeNode();
+			explicit PageTreeNode(const IndirectObject& obj);
 
 		private:
 			ObjectReferenceWrapper<IntegerObject> _count;
 			ObjectReferenceWrapper<ArrayObject> _kids;
+		};
+
+		class PageObject : public PageNode
+		{
+
+		};
+
+		class PageTree
+		{
+		public:
+			PageTree();
+			explicit PageTree(const IndirectObject& root);
+
+		private:
+			std::vector<std::shared_ptr<PageNode>> _nodes;
 		};
 	}
 }

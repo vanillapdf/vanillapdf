@@ -1,4 +1,4 @@
-#include "export.h"
+#include "gotchangpdf/export.h"
 
 #include <stdio.h>
 #include <assert.h>

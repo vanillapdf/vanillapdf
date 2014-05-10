@@ -4,7 +4,7 @@ namespace gotchangpdf
 {
 	namespace lexical
 	{
-		void Tree::Insert(const IBuffer& path, Token::Type type)
+		void Tree::Insert(const Buffer& path, Token::Type type)
 		{
 			if (nullptr == _root)
 				_root = new Node();
@@ -24,7 +24,7 @@ namespace gotchangpdf
 			(*cur)->type = type;
 		}
 
-		bool Tree::PathExists(const IBuffer& path)
+		bool Tree::PathExists(const Buffer& path)
 		{
 			Node *found = NodeAtPath(path);
 			if (nullptr == found)
@@ -33,7 +33,7 @@ namespace gotchangpdf
 			return true;
 		}
 
-		Token::Type lexical::Tree::TokenType(const IBuffer& path)
+		Token::Type lexical::Tree::TokenType(const Buffer& path)
 		{
 			Node *found = NodeAtPath(path);
 			if (nullptr == found)
@@ -42,7 +42,7 @@ namespace gotchangpdf
 			return found->type;
 		}
 
-		Tree::Node* lexical::Tree::NodeAtPath(const IBuffer& path)
+		Tree::Node* lexical::Tree::NodeAtPath(const Buffer& path)
 		{
 			if (nullptr == _root)
 				return nullptr;

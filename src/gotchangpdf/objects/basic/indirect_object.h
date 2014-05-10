@@ -3,7 +3,7 @@
 
 #include "fwd.h"
 #include "object.h"
-#include "i_indirect_object.h"
+#include "constants.h"
 #include "object_reference_wrapper.h"
 #include "version.h"
 
@@ -11,7 +11,7 @@
 
 namespace gotchangpdf
 {
-	class IndirectObject : public Object, public IIndirectObject, public RequireVersion<Version::PDF12>
+	class IndirectObject : public Object, public RequireVersion<Version::PDF12>
 	{
 	public:
 		IndirectObject(std::shared_ptr<files::File> file, int objNumber, int genNumber, std::streamoff offset = std::_BADOFF);
@@ -20,10 +20,11 @@ namespace gotchangpdf
 		void SetObject(ObjectReferenceWrapper<Object> ref);
 		ObjectReferenceWrapper<Object> GetObject() const;
 		void SetOffset(streamOffsetValueType offset);
+		streamOffsetValueType GetOffset() const;
 
 		/* IIndirectObject */
-		virtual IObject* GetIObject() const override;
-		virtual streamOffsetValueType GetOffset() const override;
+		//virtual IObject* GetIObject() const override;
+		//virtual streamOffsetValueType GetOffset() const override;
 
 	private:
 		std::shared_ptr<files::File> _file;
@@ -33,8 +34,11 @@ namespace gotchangpdf
 
 		mutable ObjectReferenceWrapper<Object> _reference;
 
-		friend void ::boost::intrusive_ptr_add_ref(IndirectObject*);
-		friend void ::boost::intrusive_ptr_release(IndirectObject*);
+		template <typename T>
+		friend void ::boost::intrusive_ptr_add_ref(T*);
+
+		template <typename T>
+		friend void ::boost::intrusive_ptr_release(T*);
 	};
 }
 

@@ -25,8 +25,11 @@ namespace gotchangpdf
 	private:
 		std::string _hexadecimal;
 
-		friend void ::boost::intrusive_ptr_add_ref(HexadecimalString*);
-		friend void ::boost::intrusive_ptr_release(HexadecimalString*);
+		template <typename T>
+		friend void ::boost::intrusive_ptr_add_ref(T*);
+
+		template <typename T>
+		friend void ::boost::intrusive_ptr_release(T*);
 	};
 
 	class LiteralString : public StringObject
@@ -36,8 +39,11 @@ namespace gotchangpdf
 		explicit LiteralString(const lexical::Token& token);
 
 	private:
-		friend void ::boost::intrusive_ptr_add_ref(LiteralString*);
-		friend void ::boost::intrusive_ptr_release(LiteralString*);
+		template <typename T>
+		friend void ::boost::intrusive_ptr_add_ref(T*);
+
+		template <typename T>
+		friend void ::boost::intrusive_ptr_release(T*);
 	};
 }
 

@@ -35,16 +35,17 @@ namespace gotchangpdf
 
 	void IndirectObject::SetOffset(std::streamoff offset) { _offset = offset; }
 	streamOffsetValueType IndirectObject::GetOffset() const { return _offset; }
-
+	/*
 	IObject* IndirectObject::GetIObject() const
 	{
 		auto item = GetObject();
 
-		gotchangpdf::Object *ptr = item.Get();
-		boost::intrusive_ptr_add_ref(ptr);
+		gotchangpdf::Object *ptr = item.AddRefGet();
+		//boost::intrusive_ptr_add_ref(ptr);
 
 		return reinterpret_cast<IObject*>(ptr);
 	}
+	*/
 }
 
 using namespace gotchangpdf;
@@ -61,8 +62,8 @@ GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION IndirectObject_GetObject(Indire
 
 	gotchangpdf::ObjectReferenceWrapper<gotchangpdf::Object> item = obj->GetObject();
 
-	gotchangpdf::Object *ptr = item.Get();
-	boost::intrusive_ptr_add_ref(ptr);
+	gotchangpdf::Object *ptr = item.AddRefGet();
+	//boost::intrusive_ptr_add_ref(ptr);
 
 	return reinterpret_cast<ObjectHandle>(ptr);
 }
@@ -70,5 +71,5 @@ GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION IndirectObject_GetObject(Indire
 GOTCHANG_PDF_API void CALLING_CONVENTION IndirectObject_Release(IndirectObjectHandle handle)
 {
 	gotchangpdf::IndirectObject* obj = reinterpret_cast<gotchangpdf::IndirectObject*>(handle);
-	boost::intrusive_ptr_release(obj);
+	obj->Release();
 }

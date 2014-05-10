@@ -7,9 +7,11 @@ namespace gotchangpdf
 {
 	class NullObject : public Object
 	{
-	private:
-		friend void ::boost::intrusive_ptr_add_ref(NullObject*);
-		friend void ::boost::intrusive_ptr_release(NullObject*);
+		template <typename T>
+		friend void ::boost::intrusive_ptr_add_ref(T*);
+
+		template <typename T>
+		friend void ::boost::intrusive_ptr_release(T*);
 	};
 }
 

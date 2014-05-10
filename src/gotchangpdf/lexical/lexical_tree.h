@@ -1,8 +1,8 @@
 #ifndef _LEXICAL_TREE_H
 #define _LEXICAL_TREE_H
 
-#include "i_buffer.h"
-#include "Lexical/Token.h"
+#include "buffer.h"
+#include "Token.h"
 
 namespace gotchangpdf
 {
@@ -11,10 +11,10 @@ namespace gotchangpdf
 		class Tree
 		{
 		public:
-			bool PathExists(const IBuffer& path);
-			Token::Type TokenType(const IBuffer& path);
+			bool PathExists(const Buffer& path);
+			Token::Type TokenType(const Buffer& path);
 
-			void Insert(const IBuffer& path, Token::Type type);
+			void Insert(const Buffer& path, Token::Type type);
 
 			// TODO later
 			//void Delete(const char *path, int len);
@@ -29,7 +29,7 @@ namespace gotchangpdf
 
 			Node *_root;
 
-			Node* NodeAtPath(const IBuffer& path);
+			Node* NodeAtPath(const Buffer& path);
 		};
 	}
 }

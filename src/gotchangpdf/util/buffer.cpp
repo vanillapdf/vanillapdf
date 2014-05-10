@@ -13,7 +13,7 @@ namespace gotchangpdf
 	#pragma endregion
 
 	#pragma region Operators
-
+	/*
 	bool Buffer::operator==(const IBuffer& other) const
 	{
 		const Buffer *o = dynamic_cast<const Buffer*>(&other);
@@ -31,7 +31,7 @@ namespace gotchangpdf
 
 		return _value < o->_value;
 	}
-
+	*/
 	bool Buffer::operator==(const Buffer& other) const { return _value == other._value; }
 	bool Buffer::operator!=(const Buffer& other) const { return _value != other._value; }
 	bool Buffer::operator<(const Buffer& other) const { return _value < other._value; }

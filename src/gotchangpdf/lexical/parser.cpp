@@ -135,39 +135,39 @@ namespace gotchangpdf
 		Parser::Parser(const gotchangpdf::lexical::Parser &other) : lexical::Stream(other) { _file = other.file(); }
 		std::shared_ptr<files::File> Parser::file(void) const { return _file; }
 
-		ObjectReferenceWrapper<gotchangpdf::Object> Parser::readObjectWithType(gotchangpdf::IObject::Type type)
+		ObjectReferenceWrapper<gotchangpdf::Object> Parser::readObjectWithType(gotchangpdf::Object::Type type)
 		{
 			auto obj = readObject();
 
 			switch (type)
 			{
-			case gotchangpdf::IObject::Type::Unknown:
+			case gotchangpdf::Object::Type::Unknown:
 				throw Exception("FIXME: Are your really trying to return unknown type??");
-			case gotchangpdf::IObject::Type::ArrayObject:
+			case gotchangpdf::Object::Type::ArrayObject:
 				return obj.GetAs<ArrayObject>();
-			case gotchangpdf::IObject::Type::Boolean:
+			case gotchangpdf::Object::Type::Boolean:
 				return obj.GetAs<Boolean>();
-			case gotchangpdf::IObject::Type::DictionaryObject:
+			case gotchangpdf::Object::Type::DictionaryObject:
 				return obj.GetAs<DictionaryObject>();
-			case gotchangpdf::IObject::Type::Function:
+			case gotchangpdf::Object::Type::Function:
 				return obj.GetAs<Function>();
-			case gotchangpdf::IObject::Type::IntegerObject:
+			case gotchangpdf::Object::Type::IntegerObject:
 				return obj.GetAs<IntegerObject>();
-			case gotchangpdf::IObject::Type::NameObject:
+			case gotchangpdf::Object::Type::NameObject:
 				return obj.GetAs<NameObject>();
-			case gotchangpdf::IObject::Type::NullObject:
+			case gotchangpdf::Object::Type::NullObject:
 				return obj.GetAs<NullObject>();
-			case gotchangpdf::IObject::Type::RealObject:
+			case gotchangpdf::Object::Type::RealObject:
 				return obj.GetAs<RealObject>();
-			case gotchangpdf::IObject::Type::StreamObject:
+			case gotchangpdf::Object::Type::StreamObject:
 				return obj.GetAs<StreamObject>();
-			case gotchangpdf::IObject::Type::HexadecimalString:
+			case gotchangpdf::Object::Type::HexadecimalString:
 				return obj.GetAs<HexadecimalString>();
-			case gotchangpdf::IObject::Type::LiteralString:
+			case gotchangpdf::Object::Type::LiteralString:
 				return obj.GetAs<LiteralString>();
-			case gotchangpdf::IObject::Type::IndirectReference:
+			case gotchangpdf::Object::Type::IndirectReference:
 				return obj.GetAs<IndirectObjectReference>();
-			case gotchangpdf::IObject::Type::IndirectObject:
+			case gotchangpdf::Object::Type::IndirectObject:
 				return obj.GetAs<IndirectObject>();
 			default:
 				assert(false);

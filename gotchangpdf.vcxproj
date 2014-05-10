@@ -11,17 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\export.h" />
-    <ClInclude Include="include\i_array_object.h" />
-    <ClInclude Include="include\i_buffer.h" />
-    <ClInclude Include="include\i_dictionary_object.h" />
-    <ClInclude Include="include\i_indirect_object.h" />
-    <ClInclude Include="include\i_name_object.h" />
-    <ClInclude Include="include\i_object.h" />
+    <ClInclude Include="include\gotchangpdf\export.h" />
     <ClInclude Include="src\gotchangpdf\basic\basic_base_stream.h" />
     <ClInclude Include="src\gotchangpdf\basic\basic_reverse_stream.h" />
     <ClInclude Include="src\gotchangpdf\basic\basic_stream.h" />
-    <ClInclude Include="src\gotchangpdf\basic\character.h" />
     <ClInclude Include="src\gotchangpdf\documents\catalog.h" />
     <ClInclude Include="src\gotchangpdf\documents\document.h" />
     <ClInclude Include="src\gotchangpdf\documents\page_tree.h" />
@@ -41,7 +34,7 @@
     <ClInclude Include="src\gotchangpdf\lexical\token_dictionary.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\array_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\boolean.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\cross_reference_info.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\xref.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\dictionary_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\function.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\indirect_object.h" />
@@ -63,7 +56,6 @@
     <ClInclude Include="src\gotchangpdf\raw\raw_reverse_stream.h" />
     <ClInclude Include="src\gotchangpdf\raw\raw_stream.h" />
     <ClInclude Include="src\gotchangpdf\util\buffer.h" />
-    <ClInclude Include="src\gotchangpdf\util\constants.h" />
     <ClInclude Include="src\gotchangpdf\util\fwd.h" />
     <ClInclude Include="src\gotchangpdf\util\intrusive.h" />
     <ClInclude Include="src\gotchangpdf\util\object_reference_wrapper.h" />
@@ -89,7 +81,7 @@
     <ClCompile Include="src\gotchangpdf\lexical\token.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\token_dictionary.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\array_object.cpp" />
-    <ClCompile Include="src\gotchangpdf\objects\basic\cross_reference_info.cpp" />
+    <ClCompile Include="src\gotchangpdf\objects\basic\xref.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\dictionary_object.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\indirect_object.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\indirect_object_reference.cpp" />
@@ -147,7 +139,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\objects\basic;src\gotchangpdf\exceptions;src\gotchangpdf\files;src\gotchangpdf\lexical;C:\boost_1_55_0;src\gotchangpdf\objects\common;include;lib\zlib\include;src\gotchangpdf\documents;src\gotchangpdf\raw;src\gotchangpdf\util;src\gotchangpdf\basic;src\gotchangpdf\filters;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\objects\basic;src\gotchangpdf\exceptions;src\gotchangpdf\files;src\gotchangpdf\lexical;C:\boost_1_55_0;src\gotchangpdf\objects\common;include\gotchangpdf;lib\zlib\include;src\gotchangpdf\documents;src\gotchangpdf\raw;src\gotchangpdf\util;src\gotchangpdf\basic;src\gotchangpdf\filters;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -166,7 +158,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\objects\basic;src\gotchangpdf\exceptions;src\gotchangpdf\files;src\gotchangpdf\lexical;C:\boost_1_55_0;src\gotchangpdf\objects\common;include;lib\zlib\include;src\gotchangpdf\documents;src\gotchangpdf\raw;src\gotchangpdf\util;src\gotchangpdf\basic;src\gotchangpdf\filters;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\objects\basic;src\gotchangpdf\exceptions;src\gotchangpdf\files;src\gotchangpdf\lexical;C:\boost_1_55_0;src\gotchangpdf\objects\common;include\gotchangpdf;lib\zlib\include;src\gotchangpdf\documents;src\gotchangpdf\raw;src\gotchangpdf\util;src\gotchangpdf\basic;src\gotchangpdf\filters;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

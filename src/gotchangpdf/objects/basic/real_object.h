@@ -18,8 +18,11 @@ namespace gotchangpdf
 	private:
 		double _value;
 
-		friend void ::boost::intrusive_ptr_add_ref(RealObject*);
-		friend void ::boost::intrusive_ptr_release(RealObject*);
+		template <typename T>
+		friend void ::boost::intrusive_ptr_add_ref(T*);
+
+		template <typename T>
+		friend void ::boost::intrusive_ptr_release(T*);
 	};
 }
 

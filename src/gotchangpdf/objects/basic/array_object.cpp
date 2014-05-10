@@ -15,14 +15,14 @@ namespace gotchangpdf
 	ArrayObject::ArrayObject() : Object(Object::Type::ArrayObject) {}
 	long ArrayObject::Size(void) const { return _list.size(); }
 
-	IObject* ArrayObject::At(long at) const
+	Object* ArrayObject::At(long at) const
 	{
 		auto item = _list[at];
 
 		gotchangpdf::Object *ptr = item.Get();
 		boost::intrusive_ptr_add_ref(ptr);
 
-		return reinterpret_cast<IObject*>(ptr);
+		return reinterpret_cast<Object*>(ptr);
 	}
 
 	Parser& operator>>(Parser& s, ArrayObject& o)

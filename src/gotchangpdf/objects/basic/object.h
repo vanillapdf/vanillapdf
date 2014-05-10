@@ -5,22 +5,44 @@
 
 //#define Derive_Object_CRTP(Type) class Type : public Object_CRTP<Type>
 
-#include "i_object.h"
 #include "intrusive.h"
 
 namespace gotchangpdf
 {
-	class Object : public IObject
+	class Object
 	{
 	public:
-		virtual Type GetType(void) const override;
+		enum class Type : unsigned char
+		{
+			Unknown = 0,
+			ArrayObject,
+			Boolean,
+			DictionaryObject,
+			Function,
+			IntegerObject,
+			NameObject,
+			//NameTree,
+			NullObject,
+			//NumberTree,
+			RealObject,
+			//Rectangle,
+			StreamObject,
+			HexadecimalString,
+			LiteralString,
+			IndirectReference,
+			IndirectObject
+		};
+
+		static const char* TypeName(Type type);
+
+		Type GetType(void) const;
 
 		//virtual Object* Clone(void) const = 0;
 
 		Object();
 		explicit Object(Type type);
 
-		virtual void Release() override;
+		void Release();
 
 		virtual ~Object() = 0;
 
@@ -28,8 +50,12 @@ namespace gotchangpdf
 		Type _type;
 
 		mutable long _intrusive_ref_count;
-		friend void ::boost::intrusive_ptr_add_ref(Object*);
-		friend void ::boost::intrusive_ptr_release(Object*);
+
+		template <typename T>
+		friend void ::boost::intrusive_ptr_add_ref(T*);
+
+		template <typename T>
+		friend void ::boost::intrusive_ptr_release(T*);
 	};
 	/*
 	template <typename T>

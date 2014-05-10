@@ -2,6 +2,7 @@
 #define _OBJECT_REFERENCE_WRAPPER_H
 
 #include "fwd.h"
+#include "intrusive.h"
 
 #include "boost/intrusive_ptr.hpp"
 
@@ -9,7 +10,7 @@
 
 namespace gotchangpdf
 {
-	template <typename T = Object>
+	template <typename T>
 	class ObjectReferenceWrapper
 	{
 	public:
@@ -25,6 +26,13 @@ namespace gotchangpdf
 		ObjectReferenceWrapper(const ObjectReferenceWrapper<U>& other) : ObjectReferenceWrapper(other.Get()) {}
 
 		//ObjectReferenceWrapper& operator=(const ObjectReferenceWrapper& other) : _data(other._data) { return *this; }
+
+		T* AddRefGet(void) const
+		{
+			auto ptr = _data.get();
+			boost::intrusive_ptr_add_ref(ptr);
+			return ptr;
+		}
 
 		T* Get(void) const { return _data.get(); }
 

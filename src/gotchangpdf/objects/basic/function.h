@@ -8,8 +8,11 @@ namespace gotchangpdf
 	class Function : public Object
 	{
 	private:
-		friend void ::boost::intrusive_ptr_add_ref(Function*);
-		friend void ::boost::intrusive_ptr_release(Function*);
+		template <typename T>
+		friend void ::boost::intrusive_ptr_add_ref(T*);
+
+		template <typename T>
+		friend void ::boost::intrusive_ptr_release(T*);
 	};
 }
 

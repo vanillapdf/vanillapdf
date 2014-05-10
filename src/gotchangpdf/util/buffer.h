@@ -1,14 +1,14 @@
 #ifndef _BUFFER_H
 #define _BUFFER_H
 
-#include "i_buffer.h"
+#include "Character.h"
 
 #include <vector>
 #include <string>
 
 namespace gotchangpdf
 {
-	class Buffer : public IBuffer
+	class Buffer
 	{
 	public:
 		typedef char ValueType;
@@ -29,11 +29,11 @@ namespace gotchangpdf
 
 		std::string ToString(void) const;
 
-		virtual bool operator==(const IBuffer& other) const override;
-		virtual bool operator<(const IBuffer& other) const override;
-		virtual Character operator[](unsigned int i) const override;
-		virtual Character At(long at) const override;
-		virtual int Size() const override;
+		//virtual bool operator==(const IBuffer& other) const override;
+		//virtual bool operator<(const IBuffer& other) const override;
+		Character operator[](unsigned int i) const;
+		Character At(long at) const;
+		int Size() const;
 
 		bool operator==(const Buffer& other) const;
 		bool operator!=(const Buffer& other) const;

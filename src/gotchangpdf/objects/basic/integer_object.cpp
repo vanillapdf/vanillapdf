@@ -84,5 +84,5 @@ GOTCHANG_PDF_API long long CALLING_CONVENTION IntegerObject_Value(IntegerObjectH
 GOTCHANG_PDF_API void CALLING_CONVENTION IntegerObject_Release(IntegerObjectHandle handle)
 {
 	gotchangpdf::IntegerObject* obj = reinterpret_cast<gotchangpdf::IntegerObject*>(handle);
-	boost::intrusive_ptr_release(obj);
+	obj->Release();
 }

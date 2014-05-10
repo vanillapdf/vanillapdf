@@ -3,28 +3,30 @@
 
 #include "fwd.h"
 #include "object.h"
-#include "i_array_object.h"
 #include "object_reference_wrapper.h"
 
 #include <vector>
 
 namespace gotchangpdf
 {
-	class ArrayObject : public Object, public IArrayObject
+	class ArrayObject : public Object
 	{
 	public:
 		ArrayObject();
 
-		virtual long Size(void) const override;
-		virtual IObject* At(long at) const override;
+		long Size(void) const;
+		Object* At(long at) const;
 
 		friend lexical::Parser& operator>> (lexical::Parser& s, ArrayObject& o);
 
 	private:
 		std::vector<ObjectReferenceWrapper<Object>> _list;
 
-		friend void ::boost::intrusive_ptr_add_ref(ArrayObject*);
-		friend void ::boost::intrusive_ptr_release(ArrayObject*);
+		template <typename T>
+		friend void ::boost::intrusive_ptr_add_ref(T*);
+
+		template <typename T>
+		friend void ::boost::intrusive_ptr_release(T*);
 	};
 }
 

@@ -17,7 +17,7 @@ namespace gotchangpdf
 			template<typename T>
 			ObjectReferenceWrapper<T> readObjectWithType() { return dynamic_wrapper_cast<T>(readObject()); }
 
-			ObjectReferenceWrapper<Object> readObjectWithType(IObject::Type type);
+			ObjectReferenceWrapper<Object> readObjectWithType(Object::Type type);
 			ObjectReferenceWrapper<Object> readObject();
 			ObjectReferenceWrapper<Object> peekObject();
 

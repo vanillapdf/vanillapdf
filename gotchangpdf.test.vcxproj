@@ -11,9 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\test\test.c" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="gotchangpdf.vcxproj">
       <Project>{9af81955-0b8c-4778-9f93-3ed8285d3d49}</Project>
       <Private>true</Private>
@@ -24,11 +21,14 @@
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\gotchangpdf.test\test.c" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{E704EA4D-1AE7-40DA-A961-A71A9C025522}</ProjectGuid>
+    <ProjectGuid>{FE84B8DB-924F-4029-849F-D1729F8A040B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Test</RootNamespace>
-    <ProjectName>test</ProjectName>
+    <ProjectName>gotchangpdf.test</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

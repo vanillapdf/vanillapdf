@@ -3,7 +3,7 @@
 
 #include "fwd.h"
 #include "numeric_object.h"
-#include "Lexical/Token.h"
+#include "token.h"
 
 namespace gotchangpdf
 {
@@ -36,8 +36,11 @@ namespace gotchangpdf
 	private:
 		ValueType _value;
 
-		friend void ::boost::intrusive_ptr_add_ref(IntegerObject*);
-		friend void ::boost::intrusive_ptr_release(IntegerObject*);
+		template <typename T>
+		friend void ::boost::intrusive_ptr_add_ref(T*);
+
+		template <typename T>
+		friend void ::boost::intrusive_ptr_release(T*);
 	};
 }
 

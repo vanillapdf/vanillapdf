@@ -1,13 +1,14 @@
 #ifndef _FILE_H
 #define _FILE_H
 
-#include "cross_reference_info.h"
+#include "xref.h"
 #include "dictionary_object.h"
 #include "parser.h"
-#include "Header.h"
-#include "Trailer.h"
+#include "header.h"
+#include "trailer.h"
 #include "indirect_object.h"
 #include "object_reference_wrapper.h"
+#include "catalog.h"
 
 #include <fstream>
 
@@ -22,8 +23,8 @@ namespace gotchangpdf
 			virtual ~File(void);
 
 			void Initialize(void);
-			ObjectReferenceWrapper<CrossReferenceInfo> GetCrossReferenceTable(void) const;
-			ObjectReferenceWrapper<IndirectObject> GetDocumentCatalog(void) const;
+			ObjectReferenceWrapper<Xref> GetXref(void) const;
+			ObjectReferenceWrapper<documents::Catalog> GetDocumentCatalog(void) const;
 			ObjectReferenceWrapper<IndirectObject> GetIndirectObject(int objNumber, int genNumber) const;
 			ObjectReferenceWrapper<Header> GetHeader(void) const;
 			ObjectReferenceWrapper<Trailer> GetTrailer(void) const;
@@ -34,7 +35,7 @@ namespace gotchangpdf
 			std::shared_ptr<std::fstream> _input;
 			ObjectReferenceWrapper<Header> _header;
 			ObjectReferenceWrapper<Trailer> _trailer;
-			ObjectReferenceWrapper<CrossReferenceInfo> _xref;
+			ObjectReferenceWrapper<Xref> _xref;
 			std::vector<ObjectReferenceWrapper<IndirectObject>> _cache;
 		};
 	}

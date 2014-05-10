@@ -1,4 +1,5 @@
-#include "cross_reference_info.h"
+#include "xref.h"
+#include "integer_object.h"
 #include "Parser.h"
 #include "exception.h"
 #include "export.h"
@@ -12,13 +13,13 @@ namespace gotchangpdf
 	using namespace lexical;
 	using namespace exceptions;
 
-	void CrossReferenceInfo::Add(const Entry& e) { _entries.push_back(e); }
-	int CrossReferenceInfo::Size(void) const { return _entries.size(); }
-	CrossReferenceInfo::Entry CrossReferenceInfo::At(int at) const { return _entries.at(at); }
+	void Xref::Add(const Entry& e) { _entries.push_back(e); }
+	int Xref::Size(void) const { return _entries.size(); }
+	Xref::Entry Xref::At(int at) const { return _entries.at(at); }
 
-	CrossReferenceInfo::CrossReferenceInfo() : _entries(), _type(CrossReferenceInfo::Type::TABLE) {}
+	Xref::Xref() : _entries(), _type(Xref::Type::TABLE) {}
 
-	CrossReferenceInfo::Entry CrossReferenceInfo::ReadEntry(lexical::Parser& s, int objNumber)
+	Xref::Entry Xref::ReadEntry(lexical::Parser& s, int objNumber)
 	{
 		// TODO space
 		Character sp1, sp2, key, eol1, eol2;
@@ -35,7 +36,7 @@ namespace gotchangpdf
 		static const Character IN_USE = Character('n');
 		static const Character NOT_IN_USE = Character('f');
 
-		CrossReferenceInfo::Entry result;
+		Xref::Entry result;
 
 		if (key == IN_USE)
 			result._in_use = true;
@@ -49,12 +50,14 @@ namespace gotchangpdf
 			throw Exception(buffer.str());
 		}
 
-		result._reference = boost::intrusive_ptr<IndirectObject>(new IndirectObject(s.file(), objNumber, IntegerObject(number), IntegerObject(offset)));
+		result._reference = ObjectReferenceWrapper<IndirectObject>(new IndirectObject(s.file(), objNumber, IntegerObject(number), IntegerObject(offset)));
 
 		return result;
 	}
 
-	Parser& operator>>(Parser& s, CrossReferenceInfo& o)
+	void Xref::Release() { boost::intrusive_ptr_release(this); }
+
+	Parser& operator>>(Parser& s, Xref& o)
 	{
 		// XRef stream
 		if (s.PeekTokenType() == Token::Type::INTEGER_OBJECT)
@@ -91,42 +94,42 @@ using namespace gotchangpdf;
 
 GOTCHANG_PDF_API int CALLING_CONVENTION Xref_Size(XrefHandle handle)
 {
-	CrossReferenceInfo* table = reinterpret_cast<CrossReferenceInfo*>(handle);
+	Xref* table = reinterpret_cast<Xref*>(handle);
 	return table->Size();
 }
 
 GOTCHANG_PDF_API XrefEntryHandle CALLING_CONVENTION Xref_At(XrefHandle handle, int at)
 {
-	CrossReferenceInfo* table = reinterpret_cast<CrossReferenceInfo*>(handle);
-	CrossReferenceInfo::Entry* entry = new CrossReferenceInfo::Entry(table->At(at));
+	Xref* table = reinterpret_cast<Xref*>(handle);
+	Xref::Entry* entry = new Xref::Entry(table->At(at));
 	return reinterpret_cast<XrefEntryHandle>(entry);
 }
 
 GOTCHANG_PDF_API void CALLING_CONVENTION Xref_Release(XrefHandle handle)
 {
-	CrossReferenceInfo* table = reinterpret_cast<CrossReferenceInfo*>(handle);
-	boost::intrusive_ptr_release(table);
+	Xref* table = reinterpret_cast<Xref*>(handle);
+	table->Release();
 }
 
 GOTCHANG_PDF_API void CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle handle)
 {
-	CrossReferenceInfo::Entry* entry = reinterpret_cast<CrossReferenceInfo::Entry*>(handle);
+	Xref::Entry* entry = reinterpret_cast<Xref::Entry*>(handle);
 	delete entry;
 }
 
 GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION XrefEntry_Reference(XrefEntryHandle handle)
 {
-	CrossReferenceInfo::Entry* entry = reinterpret_cast<CrossReferenceInfo::Entry*>(handle);
+	Xref::Entry* entry = reinterpret_cast<Xref::Entry*>(handle);
 
-	gotchangpdf::IndirectObject *ptr = entry->_reference.get();
-	boost::intrusive_ptr_add_ref(ptr);
+	gotchangpdf::IndirectObject *ptr = entry->_reference.AddRefGet();
+	//boost::intrusive_ptr_add_ref(ptr);
 
 	return reinterpret_cast<IndirectObjectHandle>(ptr);
 }
 
 GOTCHANG_PDF_API int CALLING_CONVENTION XrefEntry_In_Use(XrefEntryHandle handle)
 {
-	CrossReferenceInfo::Entry* entry = reinterpret_cast<CrossReferenceInfo::Entry*>(handle);
+	Xref::Entry* entry = reinterpret_cast<Xref::Entry*>(handle);
 
 	if (entry->_in_use)
 		return GOTCHANG_PDF_RV_TRUE;
