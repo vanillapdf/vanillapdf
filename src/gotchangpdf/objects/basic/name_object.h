@@ -3,10 +3,11 @@
 
 #include "object.h"
 #include "Buffer.h"
+#include "interface.h"
 
 namespace gotchangpdf
 {
-	class NameObject : public Object
+	class NameObject : public Object, public INameObject
 	{
 	public:
 		struct Hasher {
@@ -30,6 +31,8 @@ namespace gotchangpdf
 		const Buffer& Value() const;
 		bool operator==(const NameObject& other) const;
 		bool operator!=(const NameObject& other) const;
+
+		virtual ~NameObject();
 
 	private:
 		Buffer _value;

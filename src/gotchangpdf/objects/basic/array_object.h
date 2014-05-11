@@ -4,20 +4,25 @@
 #include "fwd.h"
 #include "object.h"
 #include "object_reference_wrapper.h"
+#include "interface.h"
 
 #include <vector>
 
 namespace gotchangpdf
 {
-	class ArrayObject : public Object
+	class ArrayObject : public Object, public IArrayObject
 	{
 	public:
 		ArrayObject();
 
-		long Size(void) const;
-		Object* At(long at) const;
+		ObjectReferenceWrapper<Object> operator[](unsigned int i) const;
+		ObjectReferenceWrapper<Object> At(unsigned int at) const;
+
+		int Size(void) const;
 
 		friend lexical::Parser& operator>> (lexical::Parser& s, ArrayObject& o);
+
+		virtual ~ArrayObject();
 
 	private:
 		std::vector<ObjectReferenceWrapper<Object>> _list;

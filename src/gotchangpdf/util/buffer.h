@@ -2,17 +2,16 @@
 #define _BUFFER_H
 
 #include "Character.h"
+#include "interface.h"
 
 #include <vector>
 #include <string>
 
 namespace gotchangpdf
 {
-	class Buffer
+	class Buffer : public IBuffer
 	{
 	public:
-		typedef char ValueType;
-
 		Buffer();
 		Buffer(const ValueType *chars, int len);
 		Buffer(const ValueType *begin, const ValueType *end);

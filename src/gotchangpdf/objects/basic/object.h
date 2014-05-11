@@ -6,38 +6,18 @@
 //#define Derive_Object_CRTP(Type) class Type : public Object_CRTP<Type>
 
 #include "intrusive.h"
+#include "interface.h"
 
 namespace gotchangpdf
 {
-	class Object
+	class Object : public virtual IObject
 	{
 	public:
-		enum class Type : unsigned char
-		{
-			Unknown = 0,
-			ArrayObject,
-			Boolean,
-			DictionaryObject,
-			Function,
-			IntegerObject,
-			NameObject,
-			//NameTree,
-			NullObject,
-			//NumberTree,
-			RealObject,
-			//Rectangle,
-			StreamObject,
-			HexadecimalString,
-			LiteralString,
-			IndirectReference,
-			IndirectObject
-		};
-
-		static const char* TypeName(Type type);
-
 		Type GetType(void) const;
 
 		//virtual Object* Clone(void) const = 0;
+
+		static const char* TypeName(Type type);
 
 		Object();
 		explicit Object(Type type);

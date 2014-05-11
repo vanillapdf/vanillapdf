@@ -13,4 +13,12 @@ namespace gotchangpdf
 	bool NameObject::operator==(const NameObject& other) const { return _value == other._value; }
 	bool NameObject::operator!=(const NameObject& other) const { return _value != other._value; }
 	const Buffer& NameObject::Value() const { return _value; }
+
+	NameObject::~NameObject() {}
+
+	#pragma region DllInterface
+
+	INameObject::~INameObject() {}
+
+	#pragma endregion
 }

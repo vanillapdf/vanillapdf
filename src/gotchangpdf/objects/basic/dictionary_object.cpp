@@ -69,87 +69,139 @@ namespace gotchangpdf
 		return result->second;
 	}
 
-	DictionaryObject::listType::const_iterator DictionaryObject::Begin() const { return _list.begin(); }
-	DictionaryObject::listType::const_iterator DictionaryObject::End() const { return _list.end();}
-}
+	DictionaryObject::Iterator DictionaryObject::Begin(void) const
+	{
+		return DictionaryObject::Iterator(_list.begin());
+	}
 
-typedef std::pair<gotchangpdf::NameObject, gotchangpdf::ObjectReferenceWrapper<gotchangpdf::Object>> DictionaryObjectPair;
-typedef gotchangpdf::DictionaryObject::listType::const_iterator DictionaryObjectConstIterator;
+	DictionaryObject::Iterator DictionaryObject::End(void) const
+	{
+		return DictionaryObject::Iterator(_list.end());
+	}
 
-GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, const char *str, int len)
-{
-	gotchangpdf::DictionaryObject* dictionary = reinterpret_cast<gotchangpdf::DictionaryObject*>(handle);
-	gotchangpdf::Buffer set(str, len);
-	gotchangpdf::NameObject name(set);
-	gotchangpdf::ObjectReferenceWrapper<gotchangpdf::Object> object = dictionary->Find(name);
-	gotchangpdf::Object* ptr = object.AddRefGet();
-	//boost::intrusive_ptr_add_ref(ptr);
+	DictionaryObject::Iterator::Iterator(listType::const_iterator it) : _it(it) {}
 
-	return reinterpret_cast<ObjectHandle>(ptr);
-}
+	NameObject DictionaryObject::Iterator::First() const { return _it->first; }
 
-GOTCHANG_PDF_API DictionaryObjectIteratorHandle CALLING_CONVENTION DictionaryObject_Iterator(DictionaryObjectHandle handle)
-{
-	gotchangpdf::DictionaryObject* dictionary = reinterpret_cast<gotchangpdf::DictionaryObject*>(handle);
-	auto begin = dictionary->Begin();
-	auto result = new DictionaryObjectConstIterator(begin);
-	return reinterpret_cast<DictionaryObjectIteratorHandle>(result);
-}
+	const DictionaryObject::Iterator& DictionaryObject::Iterator::operator++()
+	{
+		++_it;
+		return *this;
+	}
 
-GOTCHANG_PDF_API DictionaryObjectPairHandle CALLING_CONVENTION DictionaryObjectIterator_Next(DictionaryObjectIteratorHandle handle, DictionaryObjectHandle dictionaryHandle)
-{
-	gotchangpdf::DictionaryObject* dictionary = reinterpret_cast<gotchangpdf::DictionaryObject*>(dictionaryHandle);
-	DictionaryObjectConstIterator* iterator = reinterpret_cast<DictionaryObjectConstIterator*>(handle);
-	(*iterator)++;
+	const DictionaryObject::Iterator DictionaryObject::Iterator::operator++(int)
+	{
+		DictionaryObject::Iterator temp(_it);
+		++_it;
+		return temp;
+	}
 
-	if (*iterator == dictionary->End())
-		return nullptr;
+	ObjectReferenceWrapper<Object> DictionaryObject::Iterator::Second() const { return _it->second; }
 
-	DictionaryObjectPair* result = new DictionaryObjectPair((*iterator)->first, (*iterator)->second);
-	return reinterpret_cast<DictionaryObjectPairHandle>(result);
-}
+	bool DictionaryObject::Iterator::operator==(const Iterator& other) const
+	{
+		return _it == other._it;
+	}
 
-GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObjectIterator_Release(DictionaryObjectIteratorHandle handle)
-{
-	DictionaryObjectConstIterator* iterator = reinterpret_cast<DictionaryObjectConstIterator*>(handle);
-	delete iterator;
-}
+	DictionaryObject::Iterator* DictionaryObject::Iterator::Clone() const
+	{
+		return new DictionaryObject::Iterator(_it);
+	}
 
-GOTCHANG_PDF_API NameObjectHandle CALLING_CONVENTION DictionaryObjectPair_GetKey(DictionaryObjectPairHandle handle)
-{
-	DictionaryObjectPair* pair = reinterpret_cast<DictionaryObjectPair*>(handle);
-	return reinterpret_cast<NameObjectHandle>(&pair->first);
-}
+	DictionaryObject::~DictionaryObject() {}
 
-GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObjectPair_GetValue(DictionaryObjectPairHandle handle)
-{
-	DictionaryObjectPair* pair = reinterpret_cast<DictionaryObjectPair*>(handle);
+	#pragma region DllInterface
 
-	gotchangpdf::Object* ptr = pair->second.AddRefGet();
-	//boost::intrusive_ptr_add_ref(ptr);
+	IObject* IDictionaryObject::Find(const INameObject& name) const
+	{
+		auto removed = const_cast<IDictionaryObject*>(this);
+		auto obj = reinterpret_cast<DictionaryObject*>(removed);
+		auto name_parsed = dynamic_cast<const NameObject*>(&name);
 
-	return reinterpret_cast<ObjectHandle>(ptr);
-}
+		auto result = obj->Find(*name_parsed);
+		return result.AddRefGet();
+	}
 
-GOTCHANG_PDF_API int CALLING_CONVENTION DictionaryObjectPair_IsValid(DictionaryObjectPairHandle handle)
-{
-	if (handle == nullptr)
-		return GOTCHANG_PDF_RV_FALSE;
-	else
-		return GOTCHANG_PDF_RV_TRUE;
-}
+	template <typename T>
+	T* IDictionaryObject::Find(const INameObject& name) const
+	{
+		auto removed = const_cast<IDictionaryObject*>(this);
+		auto obj = reinterpret_cast<DictionaryObject*>(removed);
+		auto name_parsed = dynamic_cast<const NameObject*>(&name);
 
-GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObjectPair_Release(DictionaryObjectPairHandle handle)
-{
-	if (handle == nullptr)
-		return;
+		auto result = obj->Find<T>(*name_parsed);
+		return result.AddRefGet();
+	}
 
-	DictionaryObjectPair* pair = reinterpret_cast<DictionaryObjectPair*>(handle);
-	delete pair;
-}
+	IDictionaryObject::IIterator* IDictionaryObject::Begin(void) const
+	{
+		auto removed = const_cast<IDictionaryObject*>(this);
+		auto obj = reinterpret_cast<DictionaryObject*>(removed);
 
-GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObject_Release(DictionaryObjectHandle handle)
-{
-	gotchangpdf::DictionaryObject* obj = reinterpret_cast<gotchangpdf::DictionaryObject*>(handle);
-	obj->Release();
+		return obj->Begin().Clone();
+	}
+
+	IDictionaryObject::IIterator* IDictionaryObject::End(void) const
+	{
+		auto removed = const_cast<IDictionaryObject*>(this);
+		auto obj = reinterpret_cast<DictionaryObject*>(removed);
+
+		return obj->End().Clone();
+	}
+
+	IDictionaryObject::~IDictionaryObject() {};
+
+	INameObject* IDictionaryObject::IIterator::First() const
+	{
+		auto removed = const_cast<IDictionaryObject::IIterator*>(this);
+		auto obj = reinterpret_cast<DictionaryObject::Iterator*>(removed);
+
+		return reinterpret_cast<INameObject*>(new NameObject(obj->First()));
+	}
+
+	IObject* IDictionaryObject::IIterator::Second() const
+	{
+		auto removed = const_cast<IDictionaryObject::IIterator*>(this);
+		auto obj = reinterpret_cast<DictionaryObject::Iterator*>(removed);
+
+		return reinterpret_cast<IObject*>(obj->Second().AddRefGet());
+	}
+
+	const IDictionaryObject::IIterator& IDictionaryObject::IIterator::operator++()
+	{
+		auto removed = const_cast<IDictionaryObject::IIterator*>(this);
+		auto obj = reinterpret_cast<DictionaryObject::Iterator*>(removed);
+
+		auto result = (*obj)++;
+		return result;
+	}
+
+	const IDictionaryObject::IIterator IDictionaryObject::IIterator::operator++(int)
+	{
+		auto removed = const_cast<IDictionaryObject::IIterator*>(this);
+		auto obj = reinterpret_cast<DictionaryObject::Iterator*>(removed);
+
+		return ++(*obj);
+	}
+
+	bool IDictionaryObject::IIterator::operator== (const IDictionaryObject::IIterator& other) const
+	{
+		auto removed = const_cast<IDictionaryObject::IIterator*>(this);
+		auto obj = reinterpret_cast<DictionaryObject::Iterator*>(removed);
+		auto other_parsed = reinterpret_cast<const DictionaryObject::Iterator*>(&other);
+
+		return *obj == *other_parsed;
+	}
+
+	IDictionaryObject::IIterator* IDictionaryObject::IIterator::Clone() const
+	{
+		auto removed = const_cast<IDictionaryObject::IIterator*>(this);
+		auto obj = reinterpret_cast<DictionaryObject::Iterator*>(removed);
+
+		return obj->Clone();
+	}
+
+	IDictionaryObject::IIterator::~IIterator() {}
+
+	#pragma endregion
 }

@@ -9,6 +9,7 @@
 #include "indirect_object.h"
 #include "object_reference_wrapper.h"
 #include "catalog.h"
+#include "interface.h"
 
 #include <fstream>
 
@@ -16,7 +17,7 @@ namespace gotchangpdf
 {
 	namespace files
 	{
-		class File
+		class File : public IFile
 		{
 		public:
 			File(const char *filename);
