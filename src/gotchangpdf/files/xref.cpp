@@ -2,7 +2,7 @@
 #include "integer_object.h"
 #include "Parser.h"
 #include "exception.h"
-#include "export.h"
+#include "gotchangpdf.h"
 
 #include <cassert>
 #include <sstream>
@@ -21,7 +21,6 @@ namespace gotchangpdf
 
 		static Xref::Entry ReadEntry(lexical::Parser& s, int objNumber)
 		{
-			// TODO space
 			Character sp1, sp2, key, eol1, eol2;
 			Token offset, number;
 			s >> offset >> sp1 >> number >> sp2 >> key >> eol1 >> eol2;

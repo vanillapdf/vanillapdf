@@ -1,6 +1,6 @@
 #include "indirect_object.h"
 #include "File.h"
-#include "export.h"
+#include "gotchangpdf.h"
 
 #include <string>
 #include <algorithm>

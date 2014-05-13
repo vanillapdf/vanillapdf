@@ -13,15 +13,13 @@ namespace gotchangpdf
 		class Trailer
 		{
 		public:
-			Trailer();
-
 			friend lexical::ReverseStream& operator>> (lexical::ReverseStream& s, Trailer& o);
 			streamOffsetValueType xref_offset() const;
 			ObjectReferenceWrapper<DictionaryObject> dictionary() const;
 
 		private:
-			streamOffsetValueType _xref_offset;
-			ObjectReferenceWrapper<DictionaryObject> _dictionary;
+			streamOffsetValueType _xref_offset = 0;
+			ObjectReferenceWrapper<DictionaryObject> _dictionary = ObjectReferenceWrapper<DictionaryObject>(new DictionaryObject());
 
 			mutable long _intrusive_ref_count;
 

@@ -9,7 +9,7 @@ namespace gotchangpdf
 {
 	#pragma region Constructors
 
-	Character::Character() : _value(0) {}
+	Character::Character() {}
 	Character::Character(ValueType value) : _value(value) {}
 	Character::Character(WhiteSpace value) : _value(static_cast<ValueType>(value)) {}
 	Character::Character(Delimiter value) : _value(static_cast<ValueType>(value)) {}

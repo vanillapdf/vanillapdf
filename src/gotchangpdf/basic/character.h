@@ -82,7 +82,7 @@ namespace gotchangpdf
 		friend bool operator!= (const Character& c1, const Numeric c2);
 
 	private:
-		ValueType _value;
+		ValueType _value = 0;
 	};
 }
 

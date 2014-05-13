@@ -6,7 +6,7 @@
 #include "integer_object.h"
 #include "indirect_object_reference.h"
 #include "exception.h"
-#include "export.h"
+#include "gotchangpdf.h"
 
 namespace gotchangpdf
 {

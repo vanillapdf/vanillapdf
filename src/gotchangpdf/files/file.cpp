@@ -4,7 +4,7 @@
 #include "indirect_object_reference.h"
 #include "lexical_reverse_stream.h"
 #include "exception.h"
-#include "export.h"
+#include "gotchangpdf.h"
 
 #include <memory>
 #include <cassert>

@@ -5,7 +5,7 @@
 #include "real_object.h"
 #include "integer_object.h"
 #include "indirect_object_reference.h"
-#include "export.h"
+#include "gotchangpdf.h"
 #include "parser.h"
 
 #include <cassert>

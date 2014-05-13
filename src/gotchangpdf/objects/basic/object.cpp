@@ -1,6 +1,6 @@
 #include "object.h"
 #include "exception.h"
-#include "export.h"
+#include "gotchangpdf.h"
 
 #include <cassert>
 

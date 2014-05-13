@@ -14,8 +14,6 @@ namespace gotchangpdf
 		using namespace lexical;
 		using namespace std;
 
-		Trailer::Trailer() : _xref_offset(0), _dictionary(ObjectReferenceWrapper<DictionaryObject>(new DictionaryObject())) {}
-
 		ReverseStream& operator>>(ReverseStream& s, Trailer& o)
 		{
 			s.ReadTokenWithType(Token::Type::EOL);

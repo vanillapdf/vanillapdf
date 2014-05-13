@@ -11,10 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\gotchangpdf\export.h" />
+    <ClInclude Include="include\gotchangpdf\gotchangpdf.h" />
     <ClInclude Include="src\gotchangpdf\basic\basic_base_stream.h" />
     <ClInclude Include="src\gotchangpdf\basic\basic_reverse_stream.h" />
     <ClInclude Include="src\gotchangpdf\basic\basic_stream.h" />
+    <ClInclude Include="src\gotchangpdf\basic\character.h" />
     <ClInclude Include="src\gotchangpdf\documents\catalog.h" />
     <ClInclude Include="src\gotchangpdf\documents\document.h" />
     <ClInclude Include="src\gotchangpdf\documents\page_tree.h" />
