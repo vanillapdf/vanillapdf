@@ -12,11 +12,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\gotchangpdf\export.h" />
-    <ClInclude Include="include\gotchangpdf\interface.h" />
     <ClInclude Include="src\gotchangpdf\basic\basic_base_stream.h" />
     <ClInclude Include="src\gotchangpdf\basic\basic_reverse_stream.h" />
     <ClInclude Include="src\gotchangpdf\basic\basic_stream.h" />
-    <ClInclude Include="src\gotchangpdf\basic\character.h" />
     <ClInclude Include="src\gotchangpdf\documents\catalog.h" />
     <ClInclude Include="src\gotchangpdf\documents\document.h" />
     <ClInclude Include="src\gotchangpdf\documents\page_tree.h" />
@@ -58,7 +56,6 @@
     <ClInclude Include="src\gotchangpdf\raw\raw_reverse_stream.h" />
     <ClInclude Include="src\gotchangpdf\raw\raw_stream.h" />
     <ClInclude Include="src\gotchangpdf\util\buffer.h" />
-    <ClInclude Include="src\gotchangpdf\util\constants.h" />
     <ClInclude Include="src\gotchangpdf\util\fwd.h" />
     <ClInclude Include="src\gotchangpdf\util\intrusive.h" />
     <ClInclude Include="src\gotchangpdf\util\object_reference_wrapper.h" />

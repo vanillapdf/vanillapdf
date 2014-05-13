@@ -3,20 +3,22 @@
 
 #include "fwd.h"
 #include "indirect_object.h"
-#include "interface.h"
 
 #include <vector>
 
 namespace gotchangpdf
 {
-	class Xref : public IXref
+	class Xref
 	{
 	public:
+		enum class Type : unsigned char
+		{
+			TABLE = 0,
+			STREAM
+		};
 
 		struct Entry
 		{
-			Entry();
-			Entry(IXref::IEntry);
 			ObjectReferenceWrapper<IndirectObject> _reference;
 			bool _in_use;
 		};
@@ -29,8 +31,6 @@ namespace gotchangpdf
 		void Release();
 
 		friend lexical::Parser& operator>> (lexical::Parser& s, Xref& o);
-
-		virtual ~Xref();
 
 	private:
 		Type _type;

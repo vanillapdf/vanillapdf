@@ -6,13 +6,12 @@
 #include "constants.h"
 #include "object_reference_wrapper.h"
 #include "version.h"
-#include "interface.h"
 
 #include <memory>
 
 namespace gotchangpdf
 {
-	class IndirectObject : public Object, public RequireVersion<Version::PDF12>, public IIndirectObject
+	class IndirectObject : public Object, public RequireVersion<Version::PDF12>
 	{
 	public:
 		IndirectObject(std::shared_ptr<files::File> file, int objNumber, int genNumber, std::streamoff offset = std::_BADOFF);
@@ -22,8 +21,6 @@ namespace gotchangpdf
 		ObjectReferenceWrapper<Object> GetObject() const;
 		void SetOffset(streamOffsetValueType offset);
 		streamOffsetValueType GetOffset() const;
-
-		virtual ~IndirectObject();
 
 		/* IIndirectObject */
 		//virtual IObject* GetIObject() const override;

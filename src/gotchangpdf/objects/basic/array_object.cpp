@@ -13,13 +13,17 @@ namespace gotchangpdf
 	using namespace lexical;
 
 	ArrayObject::ArrayObject() : Object(Object::Type::ArrayObject) {}
-	int ArrayObject::Size(void) const { return _list.size(); }
+	long ArrayObject::Size(void) const { return _list.size(); }
 
-	ObjectReferenceWrapper<Object> ArrayObject::operator[](unsigned int i) const { return _list[i]; }
+	Object* ArrayObject::At(long at) const
+	{
+		auto item = _list[at];
 
-	ObjectReferenceWrapper<Object> ArrayObject::At(unsigned int at) const { return _list.at(at); }
+		gotchangpdf::Object *ptr = item.Get();
+		boost::intrusive_ptr_add_ref(ptr);
 
-	ArrayObject::~ArrayObject() {}
+		return reinterpret_cast<Object*>(ptr);
+	}
 
 	Parser& operator>>(Parser& s, ArrayObject& o)
 	{
@@ -41,26 +45,22 @@ namespace gotchangpdf
 		s.LexicalSettingsPop();
 		return s;
 	}
+}
 
-	#pragma region DllInterface
+GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle handle, int at)
+{
+	gotchangpdf::ArrayObject* arr = reinterpret_cast<gotchangpdf::ArrayObject*>(handle);
+	return reinterpret_cast<ObjectHandle>(arr->At(at));
+}
 
-	int IArrayObject::Size(void) const
-	{
-		auto removed = const_cast<IArrayObject*>(this);
-		auto obj = reinterpret_cast<ArrayObject*>(removed);
+GOTCHANG_PDF_API int CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle handle)
+{
+	gotchangpdf::ArrayObject* arr = reinterpret_cast<gotchangpdf::ArrayObject*>(handle);
+	return arr->Size();
+}
 
-		return obj->Size();
-	}
-
-	IObject* IArrayObject::At(unsigned int at) const
-	{
-		auto removed = const_cast<IArrayObject*>(this);
-		auto obj = reinterpret_cast<ArrayObject*>(removed);
-
-		return reinterpret_cast<IObject*>(obj->At(at).AddRefGet());
-	}
-
-	IArrayObject::~IArrayObject() {};
-
-	#pragma endregion
+GOTCHANG_PDF_API void CALLING_CONVENTION ArrayObject_Release(ArrayObjectHandle handle)
+{
+	gotchangpdf::ArrayObject* obj = reinterpret_cast<gotchangpdf::ArrayObject*>(handle);
+	obj->Release();
 }

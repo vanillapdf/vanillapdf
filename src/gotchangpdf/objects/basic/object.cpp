@@ -1,7 +1,6 @@
 #include "object.h"
 #include "exception.h"
 #include "export.h"
-#include "indirect_object.h"
 
 #include <cassert>
 
@@ -11,7 +10,7 @@ namespace gotchangpdf
 	Object::Object() : _type(Type::Unknown), _intrusive_ref_count(0) {}
 	Object::~Object() {}
 
-	IObject::Type Object::GetType(void) const
+	Object::Type Object::GetType(void) const
 	{
 		// TODO validate
 		//typeid(*this).name();
@@ -21,7 +20,7 @@ namespace gotchangpdf
 
 	void Object::Release()
 	{
-		::boost::intrusive_ptr_release(this);
+		boost::intrusive_ptr_release(this);
 	}
 
 	const char* Object::TypeName(Type type)
@@ -69,30 +68,23 @@ namespace gotchangpdf
 		}
 	}
 
-	#pragma region DllInterface
+}
 
-	const char* IObject::TypeName(Type type)
-	{
-		return Object::TypeName(type);
-	}
+using namespace gotchangpdf;
 
-	IObject::Type IObject::GetType(void) const
-	{
-		auto removed = const_cast<IObject*>(this);
-		auto obj = reinterpret_cast<Object*>(removed);
+GOTCHANG_PDF_API const char* Object_TypeName(ObjectType type)
+{
+	return Object::TypeName(static_cast<Object::Type>(type));
+}
 
-		return obj->GetType();
-	}
+GOTCHANG_PDF_API ObjectType CALLING_CONVENTION Object_Type(ObjectHandle handle)
+{
+	Object* obj = reinterpret_cast<Object*>(handle);
+	return static_cast<ObjectType>(obj->GetType());
+}
 
-	void IObject::Release()
-	{
-		auto removed = const_cast<IObject*>(this);
-		auto obj = reinterpret_cast<Object*>(removed);
-
-		return obj->Release();
-	}
-
-	IObject::~IObject() {}
-
-	#pragma endregion
+GOTCHANG_PDF_API void CALLING_CONVENTION Object_Release(ObjectHandle handle)
+{
+	Object* obj = reinterpret_cast<Object*>(handle);
+	obj->Release();
 }

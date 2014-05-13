@@ -48,9 +48,7 @@ namespace gotchangpdf
 
 	#pragma endregion
 
-	IntegerObject::ValueType IntegerObject::Value(void) const { return _value; }
-
-	IntegerObject::~IntegerObject() {}
+	IntegerObject::ValueType IntegerObject::value(void) const { return _value; }
 
 	ReverseStream& operator>> (ReverseStream& s, IntegerObject& o)
 	{
@@ -75,18 +73,16 @@ namespace gotchangpdf
 
 		return s;
 	}
+}
 
-	#pragma region DllInterface
+GOTCHANG_PDF_API long long CALLING_CONVENTION IntegerObject_Value(IntegerObjectHandle handle)
+{
+	gotchangpdf::IntegerObject* obj = reinterpret_cast<gotchangpdf::IntegerObject*>(handle);
+	return obj->value();
+}
 
-	IIntegerObject::ValueType IIntegerObject::Value(void) const
-	{
-		auto removed = const_cast<IIntegerObject*>(this);
-		auto obj = reinterpret_cast<IntegerObject*>(removed);
-
-		return obj->Value();
-	}
-
-	IIntegerObject::~IIntegerObject() {}
-
-	#pragma endregion
+GOTCHANG_PDF_API void CALLING_CONVENTION IntegerObject_Release(IntegerObjectHandle handle)
+{
+	gotchangpdf::IntegerObject* obj = reinterpret_cast<gotchangpdf::IntegerObject*>(handle);
+	obj->Release();
 }

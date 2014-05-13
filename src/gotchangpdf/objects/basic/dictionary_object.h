@@ -10,37 +10,17 @@
 
 namespace gotchangpdf
 {
-	class DictionaryObject : public Object, public IDictionaryObject
+	class DictionaryObject : public Object
 	{
-	private:
-		typedef std::unordered_map<NameObject, ObjectReferenceWrapper<Object>, NameObject::Hasher> listType;
-
 	public:
-		class Iterator : public IDictionaryObject::IIterator
-		{
-		public:
-			Iterator(listType::const_iterator it);
-
-			Iterator* Clone() const;
-
-			const Iterator& operator++();
-			const Iterator operator++(int);
-
-			NameObject First() const;
-			ObjectReferenceWrapper<Object> Second() const;
-
-			bool operator==(const Iterator& other) const;
-
-		private:
-			listType::const_iterator _it;
-		};
+		// TODO
+		typedef std::unordered_map<NameObject, ObjectReferenceWrapper<Object>, NameObject::Hasher> listType;
+		listType::const_iterator DictionaryObject::Begin() const;
+		listType::const_iterator DictionaryObject::End() const;
 
 		DictionaryObject();
 		//friend Objects::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, DictionaryObject& o);
 		friend lexical::Parser& operator>> (lexical::Parser& s, DictionaryObject& o);
-
-		Iterator Begin(void) const;
-		Iterator End(void) const;
 
 		ObjectReferenceWrapper<Object> Find(const NameObject& name) const;
 
@@ -51,8 +31,6 @@ namespace gotchangpdf
 			return dynamic_wrapper_cast<T>(result->second);
 		}
 
-		virtual ~DictionaryObject();
-
 	private:
 		listType _list;
 
@@ -61,8 +39,6 @@ namespace gotchangpdf
 
 		template <typename T>
 		friend void ::boost::intrusive_ptr_release(T*);
-
-		//friend class Iterator;
 	};
 }
 

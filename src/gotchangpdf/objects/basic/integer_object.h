@@ -4,11 +4,10 @@
 #include "fwd.h"
 #include "numeric_object.h"
 #include "token.h"
-#include "interface.h"
 
 namespace gotchangpdf
 {
-	class IntegerObject : public NumericObject, public IIntegerObject
+	class IntegerObject : public NumericObject
 	{
 	public:
 		typedef long long ValueType;
@@ -22,7 +21,7 @@ namespace gotchangpdf
 		friend bool operator!= (const IntegerObject& i1, const IntegerObject& i2);
 		friend bool operator< (const IntegerObject& i1, const IntegerObject& i2);
 
-		ValueType Value(void) const;
+		ValueType value(void) const;
 
 		operator ValueType() const { return _value; }
 		//virtual Object* Clone(void) const  override { return new IntegerObject(static_cast<IntegerObject const&>(*this)); };
@@ -33,8 +32,6 @@ namespace gotchangpdf
 
 		friend lexical::ReverseStream& operator>> (lexical::ReverseStream& s, IntegerObject& o);
 		friend lexical::Stream& operator>> (lexical::Stream& s, IntegerObject& o);
-
-		virtual ~IntegerObject();
 
 	private:
 		ValueType _value;

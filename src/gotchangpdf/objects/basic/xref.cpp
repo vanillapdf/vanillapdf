@@ -57,8 +57,6 @@ namespace gotchangpdf
 
 	void Xref::Release() { boost::intrusive_ptr_release(this); }
 
-	Xref::~Xref() {}
-
 	Parser& operator>>(Parser& s, Xref& o)
 	{
 		// XRef stream
@@ -90,52 +88,51 @@ namespace gotchangpdf
 
 		return s;
 	}
+}
 
-	Xref::Entry::Entry() : _in_use(false) {}
+using namespace gotchangpdf;
 
-	Xref::Entry::Entry(IXref::IEntry entry) : _reference(entry._reference), _in_use(entry._in_use) {}
+GOTCHANG_PDF_API int CALLING_CONVENTION Xref_Size(XrefHandle handle)
+{
+	Xref* table = reinterpret_cast<Xref*>(handle);
+	return table->Size();
+}
 
-	#pragma region DllInterface
+GOTCHANG_PDF_API XrefEntryHandle CALLING_CONVENTION Xref_At(XrefHandle handle, int at)
+{
+	Xref* table = reinterpret_cast<Xref*>(handle);
+	Xref::Entry* entry = new Xref::Entry(table->At(at));
+	return reinterpret_cast<XrefEntryHandle>(entry);
+}
 
-	IXref::IEntry::IEntry() : _in_use(false), _reference(nullptr) {}
-	IXref::IEntry::IEntry(IIndirectObject *obj, bool in_use) : _in_use(in_use), _reference(obj) {}
+GOTCHANG_PDF_API void CALLING_CONVENTION Xref_Release(XrefHandle handle)
+{
+	Xref* table = reinterpret_cast<Xref*>(handle);
+	table->Release();
+}
 
-	void IXref::Add(const IEntry& e)
-	{
-		auto removed = const_cast<IXref*>(this);
-		auto obj = reinterpret_cast<Xref*>(removed);
+GOTCHANG_PDF_API void CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle handle)
+{
+	Xref::Entry* entry = reinterpret_cast<Xref::Entry*>(handle);
+	delete entry;
+}
 
-		obj->Add(Xref::Entry(e));
-	}
+GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION XrefEntry_Reference(XrefEntryHandle handle)
+{
+	Xref::Entry* entry = reinterpret_cast<Xref::Entry*>(handle);
 
-	int IXref::Size(void) const
-	{
-		auto removed = const_cast<IXref*>(this);
-		auto obj = reinterpret_cast<Xref*>(removed);
+	gotchangpdf::IndirectObject *ptr = entry->_reference.AddRefGet();
+	//boost::intrusive_ptr_add_ref(ptr);
 
-		return obj->Size();
-	}
+	return reinterpret_cast<IndirectObjectHandle>(ptr);
+}
 
-	IXref::IEntry IXref::At(int at) const
-	{
-		auto removed = const_cast<IXref*>(this);
-		auto obj = reinterpret_cast<Xref*>(removed);
+GOTCHANG_PDF_API int CALLING_CONVENTION XrefEntry_In_Use(XrefEntryHandle handle)
+{
+	Xref::Entry* entry = reinterpret_cast<Xref::Entry*>(handle);
 
-		Xref::Entry entry = obj->At(at);
-		IXref::IEntry result(entry._reference.AddRefGet(), entry._in_use);
-
-		return result;
-	}
-
-	void IXref::Release()
-	{
-		auto removed = const_cast<IXref*>(this);
-		auto obj = reinterpret_cast<Xref*>(removed);
-
-		obj->Release();
-	}
-
-	IXref::~IXref() {}
-
-	#pragma endregion
+	if (entry->_in_use)
+		return GOTCHANG_PDF_RV_TRUE;
+	else
+		return GOTCHANG_PDF_RV_FALSE;
 }

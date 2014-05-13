@@ -33,30 +33,43 @@ namespace gotchangpdf
 		return _reference;
 	}
 
-	void IndirectObject::SetOffset(streamOffsetValueType offset) { _offset = offset; }
+	void IndirectObject::SetOffset(std::streamoff offset) { _offset = offset; }
 	streamOffsetValueType IndirectObject::GetOffset() const { return _offset; }
-
-	IndirectObject::~IndirectObject() {}
-
-	#pragma region DllInterface
-
-	IObject* IIndirectObject::GetObject() const
+	/*
+	IObject* IndirectObject::GetIObject() const
 	{
-		auto removed = const_cast<IIndirectObject*>(this);
-		auto obj = reinterpret_cast<IndirectObject*>(removed);
+		auto item = GetObject();
 
-		return reinterpret_cast<IObject*>(obj->GetObject().AddRefGet());
+		gotchangpdf::Object *ptr = item.AddRefGet();
+		//boost::intrusive_ptr_add_ref(ptr);
+
+		return reinterpret_cast<IObject*>(ptr);
 	}
+	*/
+}
 
-	streamOffsetValueType IIndirectObject::GetOffset() const
-	{
-		auto removed = const_cast<IIndirectObject*>(this);
-		auto obj = reinterpret_cast<IndirectObject*>(removed);
+using namespace gotchangpdf;
 
-		return obj->GetOffset();
-	}
+GOTCHANG_PDF_API long long CALLING_CONVENTION IndirectObject_GetOffset(IndirectObjectHandle handle)
+{
+	gotchangpdf::IndirectObject* obj = reinterpret_cast<gotchangpdf::IndirectObject*>(handle);
+	return obj->GetOffset();
+}
 
-	IIndirectObject::~IIndirectObject() {}
+GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION IndirectObject_GetObject(IndirectObjectHandle handle)
+{
+	gotchangpdf::IndirectObject* obj = reinterpret_cast<gotchangpdf::IndirectObject*>(handle);
 
-	#pragma endregion
+	gotchangpdf::ObjectReferenceWrapper<gotchangpdf::Object> item = obj->GetObject();
+
+	gotchangpdf::Object *ptr = item.AddRefGet();
+	//boost::intrusive_ptr_add_ref(ptr);
+
+	return reinterpret_cast<ObjectHandle>(ptr);
+}
+
+GOTCHANG_PDF_API void CALLING_CONVENTION IndirectObject_Release(IndirectObjectHandle handle)
+{
+	gotchangpdf::IndirectObject* obj = reinterpret_cast<gotchangpdf::IndirectObject*>(handle);
+	obj->Release();
 }
