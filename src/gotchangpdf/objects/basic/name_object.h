@@ -51,8 +51,12 @@ namespace gotchangpdf
 			DECLARE_CONST_NAME(FlateDecode);
 			DECLARE_CONST_NAME(Catalog);
 			DECLARE_CONST_NAME(Pages);
+			DECLARE_CONST_NAME(Page);
 			DECLARE_CONST_NAME(Count);
 			DECLARE_CONST_NAME(Kids);
+			DECLARE_CONST_NAME(Parent);
+			DECLARE_CONST_NAME(MediaBox);
+			DECLARE_CONST_NAME(Resources);
 		}
 	}
 }

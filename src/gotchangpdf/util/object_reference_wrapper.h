@@ -30,7 +30,7 @@ namespace gotchangpdf
 		}
 
 		template <typename U>
-		U* GetAs(void) const { return dynamic_cast<U*>(boost::intrusive_ptr<T>::get()); }
+		inline U* GetAs(void) const { return dynamic_cast<U*>(boost::intrusive_ptr<T>::get()); }
 	};
 }
 

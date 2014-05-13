@@ -4,6 +4,8 @@
 #include "fwd.h"
 #include "integer_object.h"
 #include "array_object.h"
+#include "indirect_object_reference.h"
+#include "rectangle.h"
 #include "object_reference_wrapper.h"
 
 #include <vector>
@@ -32,7 +34,14 @@ namespace gotchangpdf
 
 		class PageObject : public PageNode
 		{
+		public:
+			PageObject();
+			explicit PageObject(const IndirectObject& obj);
 
+		private:
+			ObjectReferenceWrapper<IndirectObjectReference> _parent;
+			ObjectReferenceWrapper<DictionaryObject> _resources;
+			ObjectReferenceWrapper<Rectangle> _media_box;
 		};
 
 		class PageTree

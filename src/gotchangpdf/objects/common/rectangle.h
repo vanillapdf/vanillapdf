@@ -5,10 +5,8 @@
 
 namespace gotchangpdf
 {
-	class Rectangle
+	class Rectangle : public ArrayObject
 	{
-	private:
-		ArrayObject _values;
 	};
 }
 
