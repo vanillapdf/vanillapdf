@@ -14,7 +14,7 @@ namespace gotchangpdf
 
 		Catalog::Catalog(const IndirectObject& root)
 		{
-			auto dict = dynamic_wrapper_cast<DictionaryObject>(root.GetObject());
+			auto dict = root.GetObject().GetAs<DictionaryObject>();
 
 			if (*dict->Find<NameObject>(Name::Type) != Name::Catalog)
 				throw Exception("TODO");

@@ -14,6 +14,12 @@ namespace gotchangpdf
 
 		explicit StringObject(Type type);
 		StringObject(Type type, const Buffer& value);
+
+		template <typename T>
+		friend void ::boost::intrusive_ptr_add_ref(T*);
+
+		template <typename T>
+		friend void ::boost::intrusive_ptr_release(T*);
 	};
 
 	class HexadecimalString : public StringObject

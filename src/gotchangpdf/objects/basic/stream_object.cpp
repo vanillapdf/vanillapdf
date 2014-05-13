@@ -39,7 +39,7 @@ namespace gotchangpdf
 	{
 		if (nullptr == o._dictionary)
 		{
-			o._dictionary = boost::intrusive_ptr<DictionaryObject>(new DictionaryObject());
+			o._dictionary = ObjectReferenceWrapper<DictionaryObject>(new DictionaryObject());
 			s >> *o._dictionary;
 		}
 

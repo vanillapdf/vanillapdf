@@ -15,7 +15,7 @@ namespace gotchangpdf
 			Parser(std::shared_ptr<files::File> file, std::shared_ptr<std::istream> stream);
 
 			template<typename T>
-			ObjectReferenceWrapper<T> readObjectWithType() { return dynamic_wrapper_cast<T>(readObject()); }
+			ObjectReferenceWrapper<T> readObjectWithType() { return readObject().GetAs<T>(); }
 
 			ObjectReferenceWrapper<Object> readObjectWithType(Object::Type type);
 			ObjectReferenceWrapper<Object> readObject();

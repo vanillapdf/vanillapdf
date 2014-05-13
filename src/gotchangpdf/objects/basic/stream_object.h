@@ -34,12 +34,6 @@ namespace gotchangpdf
 		streamOffsetValueType _rawDataOffset;
 		streamSizeValueType _rawDataLength;
 		Type _type;
-
-		template <typename T>
-		friend void ::boost::intrusive_ptr_add_ref(T*);
-
-		template <typename T>
-		friend void ::boost::intrusive_ptr_release(T*);
 	};
 }
 

@@ -19,11 +19,11 @@ namespace gotchangpdf
 			_nodes.push_back(std::shared_ptr<PageTreeNode>(new PageTreeNode(root)));
 		}
 
-		PageTreeNode::PageTreeNode() : _count(boost::intrusive_ptr<IntegerObject>(new IntegerObject())), _kids(boost::intrusive_ptr<ArrayObject>(new ArrayObject())) {}
+		PageTreeNode::PageTreeNode() : _count(ObjectReferenceWrapper<IntegerObject>(new IntegerObject())), _kids(ObjectReferenceWrapper<ArrayObject>(new ArrayObject())) {}
 
 		PageTreeNode::PageTreeNode(const IndirectObject& obj)
 		{
-			auto dict = dynamic_wrapper_cast<DictionaryObject>(obj.GetObject());
+			auto dict = obj.GetObject().GetAs<DictionaryObject>();
 
 			if (*dict->Find<NameObject>(Name::Type) != Name::Pages)
 				throw Exception("TODO");

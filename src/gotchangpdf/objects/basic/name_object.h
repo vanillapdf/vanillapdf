@@ -33,12 +33,6 @@ namespace gotchangpdf
 
 	private:
 		Buffer _value;
-
-		template <typename T>
-		friend void ::boost::intrusive_ptr_add_ref(T*);
-
-		template <typename T>
-		friend void ::boost::intrusive_ptr_release(T*);
 	};
 
 	namespace constant

@@ -48,7 +48,7 @@ namespace gotchangpdf
 
 	#pragma endregion
 
-	IntegerObject::ValueType IntegerObject::value(void) const { return _value; }
+	IntegerObject::ValueType IntegerObject::Value(void) const { return _value; }
 
 	ReverseStream& operator>> (ReverseStream& s, IntegerObject& o)
 	{
@@ -78,7 +78,7 @@ namespace gotchangpdf
 GOTCHANG_PDF_API long long CALLING_CONVENTION IntegerObject_Value(IntegerObjectHandle handle)
 {
 	gotchangpdf::IntegerObject* obj = reinterpret_cast<gotchangpdf::IntegerObject*>(handle);
-	return obj->value();
+	return obj->Value();
 }
 
 GOTCHANG_PDF_API void CALLING_CONVENTION IntegerObject_Release(IntegerObjectHandle handle)

@@ -12,18 +12,6 @@ void print_spaces(int nested)
 		printf("  ");
 }
 
-void process_pair(DictionaryObjectPairHandle pair, int nested)
-{
-	print_spaces(nested);
-	printf("Pair:\n");
-
-	process((ObjectHandle)DictionaryObjectPair_GetKey(pair), nested + 1);
-	process(DictionaryObjectPair_GetValue(pair), nested + 1);
-
-	print_spaces(nested);
-	printf("EndPair\n");
-}
-
 void process(ObjectHandle obj, int nested)
 {
 	int i, size;
@@ -34,7 +22,6 @@ void process(ObjectHandle obj, int nested)
 	IntegerObjectHandle integer;
 	DictionaryObjectHandle dict;
 	DictionaryObjectIteratorHandle iterator;
-	DictionaryObjectPairHandle pair;
 
 	enum ObjectType type = Object_Type(obj);
 
@@ -78,13 +65,19 @@ void process(ObjectHandle obj, int nested)
 		print_spaces(nested);
 		printf("Dictionary begin\n");
 		iterator = DictionaryObject_Iterator(dict);
-		pair = DictionaryObjectIterator_Next(iterator, dict);
-		while(GOTCHANG_PDF_RV_TRUE == DictionaryObjectPair_IsValid(pair))
+		DictionaryObjectIterator_Next(iterator);
+		while (GOTCHANG_PDF_RV_TRUE == DictionaryObjectIterator_IsValid(iterator, dict))
 		{
-			process_pair(pair, nested + 1);
-			DictionaryObjectPair_Release(pair);
+			print_spaces(nested);
+			printf("Pair:\n");
 
-			pair = DictionaryObjectIterator_Next(iterator, dict);
+			process((ObjectHandle)DictionaryObjectIterator_GetKey(iterator), nested + 1);
+			process((ObjectHandle)DictionaryObjectIterator_GetValue(iterator), nested + 1);
+
+			print_spaces(nested);
+			printf("EndPair\n");
+
+			DictionaryObjectIterator_Next(iterator);
 		}
 
 		print_spaces(nested);

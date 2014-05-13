@@ -66,7 +66,6 @@ extern "C"
 
 	DECLARE_OBJECT_HANDLE(DictionaryObject);
 	DECLARE_OBJECT_HANDLE(DictionaryObjectIterator);
-	DECLARE_OBJECT_HANDLE(DictionaryObjectPair);
 	
 	GOTCHANG_PDF_API int CALLING_CONVENTION XrefEntry_In_Use(XrefEntryHandle handle);
 	GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION XrefEntry_Reference(XrefEntryHandle handle);
@@ -80,12 +79,11 @@ extern "C"
 	GOTCHANG_PDF_API const char* Object_TypeName(enum ObjectType type);
 	GOTCHANG_PDF_API void CALLING_CONVENTION Object_Release(ObjectHandle);
 
-	GOTCHANG_PDF_API NameObjectHandle CALLING_CONVENTION DictionaryObjectPair_GetKey(DictionaryObjectPairHandle);
-	GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObjectPair_GetValue(DictionaryObjectPairHandle);
-	GOTCHANG_PDF_API int CALLING_CONVENTION DictionaryObjectPair_IsValid(DictionaryObjectPairHandle);
-	GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObjectPair_Release(DictionaryObjectPairHandle);
+	GOTCHANG_PDF_API NameObjectHandle CALLING_CONVENTION DictionaryObjectIterator_GetKey(DictionaryObjectIteratorHandle);
+	GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObjectIterator_GetValue(DictionaryObjectIteratorHandle);
+	GOTCHANG_PDF_API int CALLING_CONVENTION DictionaryObjectIterator_IsValid(DictionaryObjectIteratorHandle, DictionaryObjectHandle);
 
-	GOTCHANG_PDF_API DictionaryObjectPairHandle CALLING_CONVENTION DictionaryObjectIterator_Next(DictionaryObjectIteratorHandle, DictionaryObjectHandle dictionaryHandle);
+	GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObjectIterator_Next(DictionaryObjectIteratorHandle);
 	GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObjectIterator_Release(DictionaryObjectIteratorHandle);
 
 	GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle, const char *str, int len);

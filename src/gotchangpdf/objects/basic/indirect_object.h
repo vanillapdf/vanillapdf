@@ -14,7 +14,7 @@ namespace gotchangpdf
 	class IndirectObject : public Object, public RequireVersion<Version::PDF12>
 	{
 	public:
-		IndirectObject(std::shared_ptr<files::File> file, int objNumber, int genNumber, std::streamoff offset = std::_BADOFF);
+		IndirectObject(std::shared_ptr<files::File> file, int objNumber, int genNumber, streamOffsetValueType offset = std::_BADOFF);
 		IndirectObject(const IndirectObject& other);
 
 		void SetObject(ObjectReferenceWrapper<Object> ref);
@@ -33,12 +33,6 @@ namespace gotchangpdf
 		streamOffsetValueType _offset;
 
 		mutable ObjectReferenceWrapper<Object> _reference;
-
-		template <typename T>
-		friend void ::boost::intrusive_ptr_add_ref(T*);
-
-		template <typename T>
-		friend void ::boost::intrusive_ptr_release(T*);
 	};
 }
 

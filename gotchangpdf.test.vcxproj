@@ -85,7 +85,8 @@
       </Command>
     </PostBuildEvent>
     <PreLinkEvent>
-      <Command>xcopy /E /Y "build\gotchangpdf\$(Configuration)" "build\$(ProjectName)\$(Configuration)"</Command>
+      <Command>
+      </Command>
     </PreLinkEvent>
     <PreBuildEvent>
       <Command>
@@ -117,7 +118,8 @@
       </Command>
     </PostBuildEvent>
     <PreLinkEvent>
-      <Command>xcopy /E /Y "build\gotchangpdf\$(Configuration)" "build\$(ProjectName)\$(Configuration)"</Command>
+      <Command>
+      </Command>
     </PreLinkEvent>
     <PreBuildEvent>
       <Command>

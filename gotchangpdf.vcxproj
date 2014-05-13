@@ -23,6 +23,7 @@
     <ClInclude Include="src\gotchangpdf\files\file.h" />
     <ClInclude Include="src\gotchangpdf\files\header.h" />
     <ClInclude Include="src\gotchangpdf\files\trailer.h" />
+    <ClInclude Include="src\gotchangpdf\files\xref.h" />
     <ClInclude Include="src\gotchangpdf\filters\filter.h" />
     <ClInclude Include="src\gotchangpdf\filters\flate_decode_filter.h" />
     <ClInclude Include="src\gotchangpdf\lexical\lexical_base_stream.h" />
@@ -34,7 +35,6 @@
     <ClInclude Include="src\gotchangpdf\lexical\token_dictionary.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\array_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\boolean.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\xref.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\dictionary_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\function.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\indirect_object.h" />
@@ -73,6 +73,7 @@
     <ClCompile Include="src\gotchangpdf\files\file.cpp" />
     <ClCompile Include="src\gotchangpdf\files\header.cpp" />
     <ClCompile Include="src\gotchangpdf\files\trailer.cpp" />
+    <ClCompile Include="src\gotchangpdf\files\xref.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\lexical_base_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\lexical_reverse_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\lexical_stream.cpp" />
@@ -81,7 +82,6 @@
     <ClCompile Include="src\gotchangpdf\lexical\token.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\token_dictionary.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\array_object.cpp" />
-    <ClCompile Include="src\gotchangpdf\objects\basic\xref.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\dictionary_object.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\indirect_object.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\indirect_object_reference.cpp" />
@@ -147,7 +147,8 @@
       <AdditionalDependencies>lib\zlib\lib\zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "lib\zlib\zlib1.dll" "build\$(ProjectName)\$(Configuration)"</Command>
+      <Command>xcopy /Y "lib\zlib\zlib1.dll" "build\$(ProjectName)\$(Configuration)"
+xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Configuration)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

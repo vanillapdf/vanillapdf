@@ -21,12 +21,6 @@ namespace gotchangpdf
 		mutable ObjectReferenceWrapper<IndirectObject> _reference;
 
 		int _obj_number, _gen_number;
-
-		template <typename T>
-		friend void ::boost::intrusive_ptr_add_ref(T*);
-
-		template <typename T>
-		friend void ::boost::intrusive_ptr_release(T*);
 	};
 }
 

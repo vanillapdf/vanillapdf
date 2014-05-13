@@ -69,12 +69,42 @@ namespace gotchangpdf
 		return result->second;
 	}
 
-	DictionaryObject::listType::const_iterator DictionaryObject::Begin() const { return _list.begin(); }
-	DictionaryObject::listType::const_iterator DictionaryObject::End() const { return _list.end();}
-}
+	DictionaryObject::Iterator DictionaryObject::Begin(void) const
+	{
+		return DictionaryObject::Iterator(_list.begin());
+	}
 
-typedef std::pair<gotchangpdf::NameObject, gotchangpdf::ObjectReferenceWrapper<gotchangpdf::Object>> DictionaryObjectPair;
-typedef gotchangpdf::DictionaryObject::listType::const_iterator DictionaryObjectConstIterator;
+	DictionaryObject::Iterator DictionaryObject::End(void) const
+	{
+		return DictionaryObject::Iterator(_list.end());
+	}
+
+	DictionaryObject::Iterator::Iterator(listType::const_iterator it) : _it(it) {}
+	NameObject DictionaryObject::Iterator::First() const { return _it->first; }
+	ObjectReferenceWrapper<Object> DictionaryObject::Iterator::Second() const { return _it->second; }
+	bool DictionaryObject::Iterator::operator==(const Iterator& other) const
+	{
+		return _it == other._it;
+	}
+
+	const DictionaryObject::Iterator& DictionaryObject::Iterator::operator++()
+	{
+		++_it;
+		return *this;
+	}
+
+	const DictionaryObject::Iterator DictionaryObject::Iterator::operator++(int)
+	{
+		DictionaryObject::Iterator temp(_it);
+		++_it;
+		return temp;
+	}
+
+	DictionaryObject::Iterator* DictionaryObject::Iterator::Clone() const
+	{
+		return new DictionaryObject::Iterator(_it);
+	}
+}
 
 GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, const char *str, int len)
 {
@@ -91,61 +121,45 @@ GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObject_Find(Dictionar
 GOTCHANG_PDF_API DictionaryObjectIteratorHandle CALLING_CONVENTION DictionaryObject_Iterator(DictionaryObjectHandle handle)
 {
 	gotchangpdf::DictionaryObject* dictionary = reinterpret_cast<gotchangpdf::DictionaryObject*>(handle);
-	auto begin = dictionary->Begin();
-	auto result = new DictionaryObjectConstIterator(begin);
-	return reinterpret_cast<DictionaryObjectIteratorHandle>(result);
+	gotchangpdf::DictionaryObject::Iterator* begin = dictionary->Begin().Clone();
+	return reinterpret_cast<DictionaryObjectIteratorHandle>(begin);
 }
 
-GOTCHANG_PDF_API DictionaryObjectPairHandle CALLING_CONVENTION DictionaryObjectIterator_Next(DictionaryObjectIteratorHandle handle, DictionaryObjectHandle dictionaryHandle)
+GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObjectIterator_Next(DictionaryObjectIteratorHandle handle)
 {
-	gotchangpdf::DictionaryObject* dictionary = reinterpret_cast<gotchangpdf::DictionaryObject*>(dictionaryHandle);
-	DictionaryObjectConstIterator* iterator = reinterpret_cast<DictionaryObjectConstIterator*>(handle);
+	gotchangpdf::DictionaryObject::Iterator* iterator = reinterpret_cast<gotchangpdf::DictionaryObject::Iterator*>(handle);
 	(*iterator)++;
-
-	if (*iterator == dictionary->End())
-		return nullptr;
-
-	DictionaryObjectPair* result = new DictionaryObjectPair((*iterator)->first, (*iterator)->second);
-	return reinterpret_cast<DictionaryObjectPairHandle>(result);
 }
 
 GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObjectIterator_Release(DictionaryObjectIteratorHandle handle)
 {
-	DictionaryObjectConstIterator* iterator = reinterpret_cast<DictionaryObjectConstIterator*>(handle);
-	delete iterator;
+	gotchangpdf::DictionaryObject::Iterator* iterator = reinterpret_cast<gotchangpdf::DictionaryObject::Iterator*>(handle);
+	delete iterator;;
 }
 
-GOTCHANG_PDF_API NameObjectHandle CALLING_CONVENTION DictionaryObjectPair_GetKey(DictionaryObjectPairHandle handle)
+GOTCHANG_PDF_API NameObjectHandle CALLING_CONVENTION DictionaryObjectIterator_GetKey(DictionaryObjectIteratorHandle handle)
 {
-	DictionaryObjectPair* pair = reinterpret_cast<DictionaryObjectPair*>(handle);
-	return reinterpret_cast<NameObjectHandle>(&pair->first);
+	gotchangpdf::DictionaryObject::Iterator* iterator = reinterpret_cast<gotchangpdf::DictionaryObject::Iterator*>(handle);
+	auto result = gotchangpdf::ObjectReferenceWrapper<gotchangpdf::NameObject>(new gotchangpdf::NameObject(iterator->First()));
+	return reinterpret_cast<NameObjectHandle>(result.AddRefGet());
 }
 
-GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObjectPair_GetValue(DictionaryObjectPairHandle handle)
+GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObjectIterator_GetValue(DictionaryObjectIteratorHandle handle)
 {
-	DictionaryObjectPair* pair = reinterpret_cast<DictionaryObjectPair*>(handle);
-
-	gotchangpdf::Object* ptr = pair->second.AddRefGet();
-	//boost::intrusive_ptr_add_ref(ptr);
-
+	gotchangpdf::DictionaryObject::Iterator* iterator = reinterpret_cast<gotchangpdf::DictionaryObject::Iterator*>(handle);
+	gotchangpdf::Object* ptr = iterator->Second().AddRefGet();
 	return reinterpret_cast<ObjectHandle>(ptr);
 }
 
-GOTCHANG_PDF_API int CALLING_CONVENTION DictionaryObjectPair_IsValid(DictionaryObjectPairHandle handle)
+GOTCHANG_PDF_API int CALLING_CONVENTION DictionaryObjectIterator_IsValid(DictionaryObjectIteratorHandle handle, DictionaryObjectHandle dict)
 {
-	if (handle == nullptr)
+	gotchangpdf::DictionaryObject::Iterator* iterator = reinterpret_cast<gotchangpdf::DictionaryObject::Iterator*>(handle);
+	gotchangpdf::DictionaryObject* dictionary = reinterpret_cast<gotchangpdf::DictionaryObject*>(dict);
+
+	if (dictionary->End() == *iterator)
 		return GOTCHANG_PDF_RV_FALSE;
 	else
 		return GOTCHANG_PDF_RV_TRUE;
-}
-
-GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObjectPair_Release(DictionaryObjectPairHandle handle)
-{
-	if (handle == nullptr)
-		return;
-
-	DictionaryObjectPair* pair = reinterpret_cast<DictionaryObjectPair*>(handle);
-	delete pair;
 }
 
 GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObject_Release(DictionaryObjectHandle handle)

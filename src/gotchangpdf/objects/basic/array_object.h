@@ -14,19 +14,15 @@ namespace gotchangpdf
 	public:
 		ArrayObject();
 
-		long Size(void) const;
-		Object* At(long at) const;
+		int Size(void) const;
+
+		ObjectReferenceWrapper<Object> operator[](unsigned int i) const;
+		ObjectReferenceWrapper<Object> At(unsigned int at) const;
 
 		friend lexical::Parser& operator>> (lexical::Parser& s, ArrayObject& o);
 
 	private:
 		std::vector<ObjectReferenceWrapper<Object>> _list;
-
-		template <typename T>
-		friend void ::boost::intrusive_ptr_add_ref(T*);
-
-		template <typename T>
-		friend void ::boost::intrusive_ptr_release(T*);
 	};
 }
 

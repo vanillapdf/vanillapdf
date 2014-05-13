@@ -12,11 +12,31 @@ namespace gotchangpdf
 {
 	class DictionaryObject : public Object
 	{
-	public:
-		// TODO
+	private:
 		typedef std::unordered_map<NameObject, ObjectReferenceWrapper<Object>, NameObject::Hasher> listType;
-		listType::const_iterator DictionaryObject::Begin() const;
-		listType::const_iterator DictionaryObject::End() const;
+
+	public:
+		class Iterator
+		{
+		public:
+			Iterator(listType::const_iterator it);
+
+			Iterator* Clone() const;
+
+			const Iterator& operator++();
+			const Iterator operator++(int);
+
+			NameObject First() const;
+			ObjectReferenceWrapper<Object> Second() const;
+
+			bool operator==(const Iterator& other) const;
+
+		private:
+			listType::const_iterator _it;
+		};
+
+		Iterator Begin(void) const;
+		Iterator End(void) const;
 
 		DictionaryObject();
 		//friend Objects::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, DictionaryObject& o);
@@ -28,17 +48,11 @@ namespace gotchangpdf
 		ObjectReferenceWrapper<T> Find(const NameObject& name) const
 		{
 			auto result = _list.find(name);
-			return dynamic_wrapper_cast<T>(result->second);
+			return result->second.GetAs<T>();
 		}
 
 	private:
 		listType _list;
-
-		template <typename T>
-		friend void ::boost::intrusive_ptr_add_ref(T*);
-
-		template <typename T>
-		friend void ::boost::intrusive_ptr_release(T*);
 	};
 }
 
