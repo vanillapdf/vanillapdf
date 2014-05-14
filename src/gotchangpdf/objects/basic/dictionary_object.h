@@ -45,10 +45,10 @@ namespace gotchangpdf
 		ObjectReferenceWrapper<Object> Find(const NameObject& name) const;
 
 		template <typename T>
-		ObjectReferenceWrapper<T> Find(const NameObject& name) const
+		ObjectReferenceWrapper<T> FindAs(const NameObject& name) const
 		{
 			auto result = _list.find(name);
-			return result->second.GetAs<T>();
+			return dynamic_wrapper_cast<T>(result->second);
 		}
 
 	private:

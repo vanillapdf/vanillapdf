@@ -60,6 +60,12 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(XrefEntry);
 	DECLARE_OBJECT_HANDLE(Xref);
 	DECLARE_OBJECT_HANDLE(Object);
+
+	DECLARE_OBJECT_HANDLE(Catalog);
+	DECLARE_OBJECT_HANDLE(PageTree);
+	DECLARE_OBJECT_HANDLE(PageNode);
+	DECLARE_OBJECT_HANDLE(PageTreeNode);
+	DECLARE_OBJECT_HANDLE(PageObject);
 	
 	DECLARE_OBJECT_HANDLE(ArrayObject);
 	DECLARE_OBJECT_HANDLE(IndirectObject);
@@ -106,7 +112,12 @@ extern "C"
 	GOTCHANG_PDF_API int CALLING_CONVENTION File_Initialize(FileHandle);
 	GOTCHANG_PDF_API XrefHandle CALLING_CONVENTION File_Xref(FileHandle);
 	GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION File_GetIndirectObject(FileHandle, int objNumber, int genNumber);
-	GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION File_GetDocumentCatalog(FileHandle);
+	GOTCHANG_PDF_API CatalogHandle CALLING_CONVENTION File_GetDocumentCatalog(FileHandle);
+
+	GOTCHANG_PDF_API PageTreeHandle CALLING_CONVENTION Catalog_GetPages(CatalogHandle);
+	GOTCHANG_PDF_API PageTreeNodeHandle CALLING_CONVENTION PageTree_GetRoot(PageTreeHandle);
+	GOTCHANG_PDF_API int CALLING_CONVENTION PageTreeNode_GetCount(PageTreeNodeHandle);
+	GOTCHANG_PDF_API ArrayObjectHandle CALLING_CONVENTION PageTreeNode_GetKids(PageTreeNodeHandle);
 
 #ifdef __cplusplus
 };

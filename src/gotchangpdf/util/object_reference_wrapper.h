@@ -32,6 +32,10 @@ namespace gotchangpdf
 		template <typename U>
 		inline U* GetAs(void) const { return dynamic_cast<U*>(boost::intrusive_ptr<T>::get()); }
 	};
+
+	template<class T, class U> ObjectReferenceWrapper<T> static_wrapper_cast(ObjectReferenceWrapper<U> const &p) { return static_cast<T*>(p.get()); }
+	template<class T, class U> ObjectReferenceWrapper<T> const_wrapper_cast(ObjectReferenceWrapper<U> const &p) { return const_cast<T*>(p.get()); }
+	template<class T, class U> ObjectReferenceWrapper<T> dynamic_wrapper_cast(ObjectReferenceWrapper<U> const &p) { return dynamic_cast<T*>(p.get()); }
 }
 
 #endif /* _OBJECT_REFERENCE_WRAPPER_H */

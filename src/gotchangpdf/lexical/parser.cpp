@@ -141,34 +141,34 @@ namespace gotchangpdf
 
 			switch (type)
 			{
-			case gotchangpdf::Object::Type::Unknown:
+			case Object::Type::Unknown:
 				throw Exception("FIXME: Are your really trying to return unknown type??");
-			case gotchangpdf::Object::Type::ArrayObject:
-				return obj.GetAs<ArrayObject>();
-			case gotchangpdf::Object::Type::Boolean:
-				return obj.GetAs<Boolean>();
-			case gotchangpdf::Object::Type::DictionaryObject:
-				return obj.GetAs<DictionaryObject>();
-			case gotchangpdf::Object::Type::Function:
-				return obj.GetAs<Function>();
-			case gotchangpdf::Object::Type::IntegerObject:
-				return obj.GetAs<IntegerObject>();
-			case gotchangpdf::Object::Type::NameObject:
-				return obj.GetAs<NameObject>();
-			case gotchangpdf::Object::Type::NullObject:
-				return obj.GetAs<NullObject>();
-			case gotchangpdf::Object::Type::RealObject:
-				return obj.GetAs<RealObject>();
-			case gotchangpdf::Object::Type::StreamObject:
-				return obj.GetAs<StreamObject>();
-			case gotchangpdf::Object::Type::HexadecimalString:
-				return obj.GetAs<HexadecimalString>();
-			case gotchangpdf::Object::Type::LiteralString:
-				return obj.GetAs<LiteralString>();
-			case gotchangpdf::Object::Type::IndirectReference:
-				return obj.GetAs<IndirectObjectReference>();
-			case gotchangpdf::Object::Type::IndirectObject:
-				return obj.GetAs<IndirectObject>();
+			case Object::Type::ArrayObject:
+				return dynamic_wrapper_cast<ArrayObject>(obj);
+			case Object::Type::Boolean:
+				return dynamic_wrapper_cast<Boolean>(obj);
+			case Object::Type::DictionaryObject:
+				return dynamic_wrapper_cast<DictionaryObject>(obj);
+			case Object::Type::Function:
+				return dynamic_wrapper_cast<Function>(obj);
+			case Object::Type::IntegerObject:
+				return dynamic_wrapper_cast<IntegerObject>(obj);
+			case Object::Type::NameObject:
+				return dynamic_wrapper_cast<NameObject>(obj);
+			case Object::Type::NullObject:
+				return dynamic_wrapper_cast<NullObject>(obj);
+			case Object::Type::RealObject:
+				return dynamic_wrapper_cast<RealObject>(obj);
+			case Object::Type::StreamObject:
+				return dynamic_wrapper_cast<StreamObject>(obj);
+			case Object::Type::HexadecimalString:
+				return dynamic_wrapper_cast<HexadecimalString>(obj);
+			case Object::Type::LiteralString:
+				return dynamic_wrapper_cast<LiteralString>(obj);
+			case Object::Type::IndirectReference:
+				return dynamic_wrapper_cast<IndirectObjectReference>(obj);
+			case Object::Type::IndirectObject:
+				return dynamic_wrapper_cast<IndirectObject>(obj);
 			default:
 				assert(false);
 				throw Exception("FIXME: Unknown object type");

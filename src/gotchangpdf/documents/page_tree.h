@@ -19,13 +19,25 @@ namespace gotchangpdf
 		{
 		public:
 			virtual ~PageNode() = 0;
+
+		private:
+			mutable long _intrusive_ref_count;
+
+			template <typename T>
+			friend void ::boost::intrusive_ptr_add_ref(T*);
+
+			template <typename T>
+			friend void ::boost::intrusive_ptr_release(T*);
 		};
 
 		class PageTreeNode : public PageNode
 		{
 		public:
-			PageTreeNode();
+			//PageTreeNode();
 			explicit PageTreeNode(const IndirectObject& obj);
+
+			inline ObjectReferenceWrapper<IntegerObject> Count(void) const { return _count; }
+			inline ObjectReferenceWrapper<ArrayObject> Kids(void) const { return _kids; }
 
 		private:
 			ObjectReferenceWrapper<IntegerObject> _count;
@@ -35,8 +47,11 @@ namespace gotchangpdf
 		class PageObject : public PageNode
 		{
 		public:
-			PageObject();
+			//PageObject();
 			explicit PageObject(const IndirectObject& obj);
+
+			inline ObjectReferenceWrapper<IndirectObjectReference> Parent(void) const { return _parent; }
+			inline ObjectReferenceWrapper<DictionaryObject> Resources(void) const { return _resources; }
 
 		private:
 			ObjectReferenceWrapper<IndirectObjectReference> _parent;
@@ -47,11 +62,21 @@ namespace gotchangpdf
 		class PageTree
 		{
 		public:
-			PageTree();
+			//PageTree();
 			explicit PageTree(const IndirectObject& root);
 
+			inline ObjectReferenceWrapper<PageTreeNode> GetRoot(void) const { return _root; }
+
 		private:
-			std::vector<std::shared_ptr<PageNode>> _nodes;
+			ObjectReferenceWrapper<PageTreeNode> _root;
+
+			mutable long _intrusive_ref_count;
+
+			template <typename T>
+			friend void ::boost::intrusive_ptr_add_ref(T*);
+
+			template <typename T>
+			friend void ::boost::intrusive_ptr_release(T*);
 		};
 	}
 }

@@ -86,8 +86,8 @@ namespace gotchangpdf
 		ObjectReferenceWrapper<documents::Catalog> File::GetDocumentCatalog(void) const
 		{
 			static const char root[] = "Root";
-			auto reference = _trailer->dictionary()->Find(NameObject(Buffer(root, sizeof(root))));
-			auto indirect = reference.GetAs<IndirectObjectReference>()->GetReference();
+			auto reference = _trailer->dictionary()->FindAs<IndirectObjectReference>(NameObject(Buffer(root, sizeof(root))));
+			auto indirect = reference->GetReferencedObject();
 			return ObjectReferenceWrapper<documents::Catalog>(new documents::Catalog(*indirect));
 		}
 
@@ -143,7 +143,7 @@ GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION File_GetIndirectObject(
 	return reinterpret_cast<IndirectObjectHandle>(ptr);
 }
 
-GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION File_GetDocumentCatalog(FileHandle handle)
+GOTCHANG_PDF_API CatalogHandle CALLING_CONVENTION File_GetDocumentCatalog(FileHandle handle)
 {
 	File* file = reinterpret_cast<File*>(handle);
 
@@ -151,5 +151,5 @@ GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION File_GetDocumentCatalog
 	auto ptr = item.AddRefGet();
 
 	//boost::intrusive_ptr_add_ref(ptr);
-	return reinterpret_cast<IndirectObjectHandle>(ptr);
+	return reinterpret_cast<CatalogHandle>(ptr);
 }

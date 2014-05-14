@@ -2,8 +2,10 @@
 #define _CATALOG_H
 
 #include "fwd.h"
-#include "intrusive.h"
 #include "page_tree.h"
+#include "object_reference_wrapper.h"
+
+#include <memory>
 
 namespace gotchangpdf
 {
@@ -14,8 +16,10 @@ namespace gotchangpdf
 		public:
 			explicit Catalog(const IndirectObject& root);
 
+			inline ObjectReferenceWrapper<PageTree> Pages(void) const { return _pages; }
+
 		private:
-			PageTree _pages;
+			ObjectReferenceWrapper<PageTree> _pages;
 
 			mutable long _intrusive_ref_count;
 

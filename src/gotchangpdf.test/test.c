@@ -213,7 +213,8 @@ int main()
 
 	catalog = File_GetDocumentCatalog(file);
 	printf("Document catalog begin\n");
-	process((ObjectHandle)catalog, 0);
+	// TODO
+	//process((ObjectHandle)catalog, 0);
 	printf("Document catalog end\n");
 
 	Xref_Release(xref);

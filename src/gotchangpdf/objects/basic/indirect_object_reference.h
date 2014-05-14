@@ -14,7 +14,7 @@ namespace gotchangpdf
 		explicit IndirectObjectReference(std::shared_ptr<files::File> file);
 		IndirectObjectReference(std::shared_ptr<files::File> file, int obj_number, int gen_number);
 
-		ObjectReferenceWrapper<IndirectObject> GetReference() const;
+		ObjectReferenceWrapper<IndirectObject> GetReferencedObject() const;
 
 	private:
 		std::shared_ptr<files::File> _file;

@@ -59,16 +59,16 @@ namespace gotchangpdf
 		}
 
 		auto size_raw = o._dictionary->Find(constant::Name::Length);
-		IntegerObject size;
+		ObjectReferenceWrapper<IntegerObject> size;
 		auto type = size_raw->GetType();
 		if (type == Object::Type::IntegerObject)
 		{
-			size = *size_raw.GetAs<IntegerObject>();
+			size = dynamic_wrapper_cast<IntegerObject>(size_raw);
 		}
 		else if (type == Object::Type::IndirectReference)
 		{
-			auto ref = size_raw.GetAs<IndirectObjectReference>();
-			auto indirect = ref->GetReference();
+			auto ref = dynamic_wrapper_cast<IndirectObjectReference>(size_raw);
+			auto indirect = ref->GetReferencedObject();
 			auto obj = indirect->GetObject();
 
 			if (obj->GetType() != Object::Type::IntegerObject)
@@ -79,14 +79,14 @@ namespace gotchangpdf
 
 				throw Exception(buffer.str());
 			}
-			size = *obj.GetAs<IntegerObject>();
+			size = dynamic_wrapper_cast<IntegerObject>(obj);
 		}
 		else
 		{
 			throw InvalidObjectTypeException(*size_raw);
 		}
 
-		size_t len = static_cast<size_t>(size);
+		size_t len = static_cast<size_t>(*size);
 		streamoff offset = s.tellg();
 
 		auto data = s.Read(len);

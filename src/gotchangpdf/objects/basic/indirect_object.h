@@ -19,6 +19,10 @@ namespace gotchangpdf
 
 		void SetObject(ObjectReferenceWrapper<Object> ref);
 		ObjectReferenceWrapper<Object> GetObject() const;
+
+		template <typename T>
+		inline ObjectReferenceWrapper<T> GetObjectAs() const { return dynamic_wrapper_cast<T>(GetObject()); }
+
 		void SetOffset(streamOffsetValueType offset);
 		streamOffsetValueType GetOffset() const;
 
