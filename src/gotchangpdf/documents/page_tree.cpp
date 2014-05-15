@@ -13,6 +13,8 @@ namespace gotchangpdf
 
 		PageNode::~PageNode() {}
 
+		void PageNode::Release() { boost::intrusive_ptr_release(this); }
+
 		//PageTree::PageTree() {}
 
 		PageTree::PageTree(const IndirectObject& root)
@@ -22,11 +24,13 @@ namespace gotchangpdf
 
 			if (*type == Name::Pages)
 				_root = ObjectReferenceWrapper<PageTreeNode>(new PageTreeNode(root));
-			//else if (*type == Name::Page)
-			//	_root = ObjectReferenceWrapper<PageObject>(new PageObject(root));
+			else if (*type == Name::Page)
+				_root = ObjectReferenceWrapper<PageObject>(new PageObject(root));
 			else
 				throw Exception("Cannot initialize PageTree from TODO");
 		}
+
+		void PageTree::Release() { boost::intrusive_ptr_release(this); }
 
 		//PageObject::PageObject() {}
 
@@ -60,11 +64,17 @@ namespace gotchangpdf
 	}
 }
 
-GOTCHANG_PDF_API PageTreeNodeHandle CALLING_CONVENTION PageTree_GetRoot(PageTreeHandle handle)
+GOTCHANG_PDF_API PageNodeHandle CALLING_CONVENTION PageTree_GetRoot(PageTreeHandle handle)
 {
 	gotchangpdf::documents::PageTree* obj = reinterpret_cast<gotchangpdf::documents::PageTree*>(handle);
 	auto root = obj->GetRoot();
-	return reinterpret_cast<PageTreeNodeHandle>(root.AddRefGet());
+	return reinterpret_cast<PageNodeHandle>(root.AddRefGet());
+}
+
+GOTCHANG_PDF_API PageNodeType CALLING_CONVENTION PageNode_GetType(PageNodeHandle handle)
+{
+	gotchangpdf::documents::PageNode* obj = reinterpret_cast<gotchangpdf::documents::PageNode*>(handle);
+	return static_cast<PageNodeType>(obj->GetType());
 }
 
 GOTCHANG_PDF_API int CALLING_CONVENTION PageTreeNode_GetCount(PageTreeNodeHandle handle)

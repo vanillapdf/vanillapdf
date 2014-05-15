@@ -45,6 +45,13 @@ extern "C"
 		IndirectObject
 	};
 
+	enum PageNodeType
+	{
+		UNKNOWN = 0,
+		PAGE_TREE_NODE,
+		PAGE_OBJECT_NODE
+	};
+
 	DECLARE_OBJECT_HANDLE(Boolean);
 	DECLARE_OBJECT_HANDLE(NameObject);
 	DECLARE_OBJECT_HANDLE(NameTree);
@@ -114,8 +121,11 @@ extern "C"
 	GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION File_GetIndirectObject(FileHandle, int objNumber, int genNumber);
 	GOTCHANG_PDF_API CatalogHandle CALLING_CONVENTION File_GetDocumentCatalog(FileHandle);
 
+	GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION IndirectReference_GetReferencedObject(IndirectReferenceHandle);
+
 	GOTCHANG_PDF_API PageTreeHandle CALLING_CONVENTION Catalog_GetPages(CatalogHandle);
-	GOTCHANG_PDF_API PageTreeNodeHandle CALLING_CONVENTION PageTree_GetRoot(PageTreeHandle);
+	GOTCHANG_PDF_API PageNodeHandle CALLING_CONVENTION PageTree_GetRoot(PageTreeHandle);
+	GOTCHANG_PDF_API enum PageNodeType CALLING_CONVENTION PageNode_GetType(PageNodeHandle);
 	GOTCHANG_PDF_API int CALLING_CONVENTION PageTreeNode_GetCount(PageTreeNodeHandle);
 	GOTCHANG_PDF_API ArrayObjectHandle CALLING_CONVENTION PageTreeNode_GetKids(PageTreeNodeHandle);
 

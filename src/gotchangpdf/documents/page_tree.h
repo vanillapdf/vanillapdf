@@ -18,6 +18,17 @@ namespace gotchangpdf
 		class PageNode
 		{
 		public:
+			enum class Type : unsigned char
+			{
+				UNKNOWN = 0,
+				PAGE_TREE_NODE,
+				PAGE_OBJECT_NODE
+			};
+
+			void Release();
+
+			virtual Type GetType() const = 0;
+
 			virtual ~PageNode() = 0;
 
 		private:
@@ -39,6 +50,8 @@ namespace gotchangpdf
 			inline ObjectReferenceWrapper<IntegerObject> Count(void) const { return _count; }
 			inline ObjectReferenceWrapper<ArrayObject> Kids(void) const { return _kids; }
 
+			virtual Type GetType() const override { return PageNode::Type::PAGE_TREE_NODE; }
+
 		private:
 			ObjectReferenceWrapper<IntegerObject> _count;
 			ObjectReferenceWrapper<ArrayObject> _kids;
@@ -53,6 +66,8 @@ namespace gotchangpdf
 			inline ObjectReferenceWrapper<IndirectObjectReference> Parent(void) const { return _parent; }
 			inline ObjectReferenceWrapper<DictionaryObject> Resources(void) const { return _resources; }
 
+			virtual Type GetType() const override { return PageNode::Type::PAGE_OBJECT_NODE; }
+
 		private:
 			ObjectReferenceWrapper<IndirectObjectReference> _parent;
 			ObjectReferenceWrapper<DictionaryObject> _resources;
@@ -65,10 +80,12 @@ namespace gotchangpdf
 			//PageTree();
 			explicit PageTree(const IndirectObject& root);
 
-			inline ObjectReferenceWrapper<PageTreeNode> GetRoot(void) const { return _root; }
+			inline ObjectReferenceWrapper<PageNode> GetRoot(void) const { return _root; }
+
+			void Release();
 
 		private:
-			ObjectReferenceWrapper<PageTreeNode> _root;
+			ObjectReferenceWrapper<PageNode> _root;
 
 			mutable long _intrusive_ref_count;
 

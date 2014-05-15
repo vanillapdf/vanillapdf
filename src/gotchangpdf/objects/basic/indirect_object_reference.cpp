@@ -1,5 +1,6 @@
 #include "indirect_object_reference.h"
 #include "File.h"
+#include "gotchangpdf.h"
 
 #include <string>
 #include <algorithm>
@@ -25,3 +26,8 @@ namespace gotchangpdf
 	}
 }
 
+GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION IndirectReference_GetReferencedObject(IndirectReferenceHandle handle)
+{
+	gotchangpdf::IndirectObjectReference* obj = reinterpret_cast<gotchangpdf::IndirectObjectReference*>(handle);
+	return reinterpret_cast<IndirectObjectHandle>(obj->GetReferencedObject().AddRefGet());
+}

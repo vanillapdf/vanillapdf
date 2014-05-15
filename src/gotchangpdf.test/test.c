@@ -167,6 +167,8 @@ void process(ObjectHandle obj, int nested)
 		print_spaces(nested);
 		printf("Indirect reference begin\n");
 
+		process(IndirectReference_GetReferencedObject((IndirectReferenceHandle)obj), nested + 1);
+
 		print_spaces(nested);
 		printf("Indirect reference end\n");
 		break;
@@ -194,7 +196,12 @@ int main()
 	int i, result, size;
 	FileHandle file;
 	XrefHandle xref;
-	IndirectObjectHandle catalog;
+	CatalogHandle catalog;
+	PageTreeHandle pages;
+	PageNodeHandle root;
+	enum PageNodeType root_type;
+	ArrayObjectHandle page_kids;
+	int page_count;
 	const char str[] = "test\\manual-memorias.pdf";
 	//const char str[] = "test\\pdfSample.pdf";
 
@@ -213,8 +220,26 @@ int main()
 
 	catalog = File_GetDocumentCatalog(file);
 	printf("Document catalog begin\n");
-	// TODO
-	//process((ObjectHandle)catalog, 0);
+
+	pages = Catalog_GetPages(catalog);
+	root = PageTree_GetRoot(pages);
+	root_type = PageNode_GetType(root);
+	
+	switch (root_type)
+	{
+	case PAGE_OBJECT_NODE:
+		break;
+	case PAGE_TREE_NODE:
+		page_count = PageTreeNode_GetCount((PageTreeNodeHandle)root);
+		page_kids = PageTreeNode_GetKids((PageTreeNodeHandle)root);
+		for (i = 0; i < page_count; ++i)
+			process(ArrayObject_At(page_kids, i), 0);
+
+		break;
+	default:
+		break;
+	}
+
 	printf("Document catalog end\n");
 
 	Xref_Release(xref);
