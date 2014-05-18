@@ -2,7 +2,8 @@
 #include "indirect_object.h"
 #include "dictionary_object.h"
 #include "exception.h"
-#include "gotchangpdf.h"
+
+#include "c_page_tree.h"
 
 namespace gotchangpdf
 {
@@ -15,23 +16,57 @@ namespace gotchangpdf
 
 		void PageNode::Release() { boost::intrusive_ptr_release(this); }
 
-		//PageTree::PageTree() {}
-
-		PageTree::PageTree(const IndirectObject& root)
+		ObjectReferenceWrapper<PageNode> PageNode::Create(const IndirectObject& obj)
 		{
-			auto dict = root.GetObjectAs<DictionaryObject>();
+			auto dict = obj.GetObjectAs<DictionaryObject>();
 			auto type = dict->FindAs<NameObject>(Name::Type);
 
 			if (*type == Name::Pages)
-				_root = ObjectReferenceWrapper<PageTreeNode>(new PageTreeNode(root));
+				return ObjectReferenceWrapper<PageTreeNode>(new PageTreeNode(obj));
 			else if (*type == Name::Page)
-				_root = ObjectReferenceWrapper<PageObject>(new PageObject(root));
+				return ObjectReferenceWrapper<PageObject>(new PageObject(obj));
 			else
 				throw Exception("Cannot initialize PageTree from TODO");
 		}
 
+		//PageTree::PageTree() {}
+
+		PageTree::PageTree(const IndirectObject& root) : _root(dynamic_wrapper_cast<PageTreeNode>(PageNode::Create(root))) {}
+
 		void PageTree::Release() { boost::intrusive_ptr_release(this); }
 
+		ObjectReferenceWrapper<PageObject> PageTree::PageInternal(unsigned int number) const
+		{
+			//int count = 0, result = 0;
+			//ObjectReferenceWrapper<PageTreeNode> tree_node;
+			return dynamic_wrapper_cast<PageObject>(_root->Kid(0));
+		}
+
+		/*
+		IntegerObject::ValueType PageTree::PageCountInternal(ObjectReferenceWrapper<PageNode> node) const
+		{
+			int count = 0, result = 0;
+			ObjectReferenceWrapper<PageTreeNode> tree_node;
+
+			auto type = node->GetType();
+			switch (type)
+			{
+			case PageNode::Type::PAGE_TREE_NODE:
+				tree_node = dynamic_wrapper_cast<PageTreeNode>(node);
+				count = tree_node->KidCount();
+				for (unsigned int i = 0; i < count; ++i)
+					result += PageCountInternal(tree_node->Kid(i));
+				break;
+			case PageNode::Type::PAGE_OBJECT_NODE:
+				break;
+			default:
+				assert(false);
+				throw Exception("FIXME: Unknown PageNodeType");
+			}
+
+			return result;
+		}
+		*/
 		//PageObject::PageObject() {}
 
 		PageObject::PageObject(const IndirectObject& obj)
@@ -59,33 +94,26 @@ namespace gotchangpdf
 				throw Exception("TODO");
 
 			_count = dict->FindAs<IntegerObject>(Name::Count);
-			_kids = dict->FindAs<ArrayObject>(Name::Kids);
+			_kids = dict->FindAs<ArrayObject<IndirectObjectReference>>(Name::Kids);
 		}
 	}
 }
 
-GOTCHANG_PDF_API PageNodeHandle CALLING_CONVENTION PageTree_GetRoot(PageTreeHandle handle)
+GOTCHANG_PDF_API long long CALLING_CONVENTION PageTree_GetPageCount(PageTreeHandle handle)
 {
 	gotchangpdf::documents::PageTree* obj = reinterpret_cast<gotchangpdf::documents::PageTree*>(handle);
-	auto root = obj->GetRoot();
-	return reinterpret_cast<PageNodeHandle>(root.AddRefGet());
+	return obj->PageCount();
 }
 
-GOTCHANG_PDF_API PageNodeType CALLING_CONVENTION PageNode_GetType(PageNodeHandle handle)
+GOTCHANG_PDF_API PageObjectHandle CALLING_CONVENTION PageTree_GetPage(PageTreeHandle handle, int at)
 {
-	gotchangpdf::documents::PageNode* obj = reinterpret_cast<gotchangpdf::documents::PageNode*>(handle);
-	return static_cast<PageNodeType>(obj->GetType());
+	gotchangpdf::documents::PageTree* obj = reinterpret_cast<gotchangpdf::documents::PageTree*>(handle);
+	auto page = obj->Page(at);
+	return reinterpret_cast<PageObjectHandle>(page.AddRefGet());
 }
 
-GOTCHANG_PDF_API int CALLING_CONVENTION PageTreeNode_GetCount(PageTreeNodeHandle handle)
+GOTCHANG_PDF_API void CALLING_CONVENTION PageObject_Release(PageObjectHandle handle)
 {
-	gotchangpdf::documents::PageTreeNode* obj = reinterpret_cast<gotchangpdf::documents::PageTreeNode*>(handle);
-	return *obj->Count();
-}
-
-GOTCHANG_PDF_API ArrayObjectHandle CALLING_CONVENTION PageTreeNode_GetKids(PageTreeNodeHandle handle)
-{
-	gotchangpdf::documents::PageTreeNode* obj = reinterpret_cast<gotchangpdf::documents::PageTreeNode*>(handle);
-	auto kids = obj->Kids();
-	return reinterpret_cast<ArrayObjectHandle>(kids.AddRefGet());
+	gotchangpdf::documents::PageObject* obj = reinterpret_cast<gotchangpdf::documents::PageObject*>(handle);
+	obj->Release();
 }

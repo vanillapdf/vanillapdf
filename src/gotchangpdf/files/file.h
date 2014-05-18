@@ -25,7 +25,7 @@ namespace gotchangpdf
 			void Initialize(void);
 			ObjectReferenceWrapper<Xref> GetXref(void) const;
 			ObjectReferenceWrapper<documents::Catalog> GetDocumentCatalog(void) const;
-			ObjectReferenceWrapper<IndirectObject> GetIndirectObject(int objNumber, int genNumber) const;
+			ObjectReferenceWrapper<IndirectObject> GetIndirectObject(unsigned int objNumber, unsigned int genNumber) const;
 			ObjectReferenceWrapper<Header> GetHeader(void) const;
 			ObjectReferenceWrapper<Trailer> GetTrailer(void) const;
 			lexical::Parser GetParser(void) const;

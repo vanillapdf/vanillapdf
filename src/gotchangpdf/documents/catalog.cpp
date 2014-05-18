@@ -4,7 +4,8 @@
 #include "exception.h"
 #include "indirect_object_reference.h"
 #include "page_tree.h"
-#include "gotchangpdf.h"
+
+#include "c_catalog.h"
 
 namespace gotchangpdf
 {

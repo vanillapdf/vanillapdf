@@ -8,7 +8,7 @@ namespace gotchangpdf
 	class NumberTree : Tree
 	{
 	private:
-		ArrayObject _nums;
+		MixedArrayObject _nums;
 	};
 }
 

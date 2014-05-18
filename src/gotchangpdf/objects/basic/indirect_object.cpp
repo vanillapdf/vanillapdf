@@ -1,6 +1,7 @@
 #include "indirect_object.h"
 #include "File.h"
-#include "gotchangpdf.h"
+
+#include "c_indirect_object.h"
 
 #include <string>
 #include <algorithm>

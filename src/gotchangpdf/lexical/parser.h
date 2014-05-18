@@ -1,5 +1,5 @@
-#ifndef _OBJECTS_STREAM_H
-#define _OBJECTS_STREAM_H
+#ifndef _PARSER_H
+#define _PARSER_H
 
 #include "fwd.h"
 #include "lexical_stream.h"
@@ -34,4 +34,4 @@ namespace gotchangpdf
 	}
 }
 
-#endif /* _OBJECTS_STREAM_H */
+#endif /* _PARSER_H */

@@ -65,7 +65,7 @@ namespace gotchangpdf
 		{
 			size = dynamic_wrapper_cast<IntegerObject>(size_raw);
 		}
-		else if (type == Object::Type::IndirectReference)
+		else if (type == Object::Type::IndirectObjectReference)
 		{
 			auto ref = dynamic_wrapper_cast<IndirectObjectReference>(size_raw);
 			auto indirect = ref->GetReferencedObject();

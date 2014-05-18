@@ -1,6 +1,7 @@
 #include "object.h"
 #include "exception.h"
-#include "gotchangpdf.h"
+
+#include "c_object.h"
 
 #include <cassert>
 
@@ -59,7 +60,7 @@ namespace gotchangpdf
 			return "HexadecimalString";
 		case Type::LiteralString:
 			return "LiteralString";
-		case Type::IndirectReference:
+		case Type::IndirectObjectReference:
 			return "IndirectReference";
 		case Type::IndirectObject:
 			return "IndirectObject";

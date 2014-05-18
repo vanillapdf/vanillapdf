@@ -11,7 +11,20 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\gotchangpdf\c_array_object.h" />
+    <ClInclude Include="include\gotchangpdf\c_catalog.h" />
+    <ClInclude Include="include\gotchangpdf\c_dictionary_object.h" />
+    <ClInclude Include="include\gotchangpdf\c_file.h" />
+    <ClInclude Include="include\gotchangpdf\c_indirect_object.h" />
+    <ClInclude Include="include\gotchangpdf\c_indirect_object_reference.h" />
+    <ClInclude Include="include\gotchangpdf\c_integer_object.h" />
+    <ClInclude Include="include\gotchangpdf\c_object.h" />
+    <ClInclude Include="include\gotchangpdf\c_page_tree.h" />
+    <ClInclude Include="include\gotchangpdf\c_export.h" />
     <ClInclude Include="include\gotchangpdf\gotchangpdf.h" />
+    <ClInclude Include="include\gotchangpdf\c_handles.h" />
+    <ClInclude Include="include\gotchangpdf\c_xref.h" />
+    <ClInclude Include="include\gotchangpdf\c_values.h" />
     <ClInclude Include="src\gotchangpdf\basic\basic_base_stream.h" />
     <ClInclude Include="src\gotchangpdf\basic\basic_reverse_stream.h" />
     <ClInclude Include="src\gotchangpdf\basic\basic_stream.h" />
@@ -57,6 +70,7 @@
     <ClInclude Include="src\gotchangpdf\raw\raw_reverse_stream.h" />
     <ClInclude Include="src\gotchangpdf\raw\raw_stream.h" />
     <ClInclude Include="src\gotchangpdf\util\buffer.h" />
+    <ClInclude Include="src\gotchangpdf\util\constants.h" />
     <ClInclude Include="src\gotchangpdf\util\fwd.h" />
     <ClInclude Include="src\gotchangpdf\util\intrusive.h" />
     <ClInclude Include="src\gotchangpdf\util\object_reference_wrapper.h" />

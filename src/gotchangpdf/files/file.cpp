@@ -4,7 +4,8 @@
 #include "indirect_object_reference.h"
 #include "lexical_reverse_stream.h"
 #include "exception.h"
-#include "gotchangpdf.h"
+
+#include "c_file.h"
 
 #include <memory>
 #include <cassert>
@@ -54,7 +55,7 @@ namespace gotchangpdf
 			*_stream >> *_trailer->dictionary();
 		}
 
-		ObjectReferenceWrapper<IndirectObject> File::GetIndirectObject(int objNumber, int genNumber) const
+		ObjectReferenceWrapper<IndirectObject> File::GetIndirectObject(unsigned int objNumber, unsigned int genNumber) const
 		{
 			//if (_cache.)
 

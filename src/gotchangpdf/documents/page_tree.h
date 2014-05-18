@@ -20,10 +20,11 @@ namespace gotchangpdf
 		public:
 			enum class Type : unsigned char
 			{
-				UNKNOWN = 0,
 				PAGE_TREE_NODE,
 				PAGE_OBJECT_NODE
 			};
+
+			static ObjectReferenceWrapper<PageNode> Create(const IndirectObject& obj);
 
 			void Release();
 
@@ -47,14 +48,15 @@ namespace gotchangpdf
 			//PageTreeNode();
 			explicit PageTreeNode(const IndirectObject& obj);
 
-			inline ObjectReferenceWrapper<IntegerObject> Count(void) const { return _count; }
-			inline ObjectReferenceWrapper<ArrayObject> Kids(void) const { return _kids; }
+			inline IntegerObject::ValueType KidCount(void) const { return _count->Value(); }
+			inline ObjectReferenceWrapper<PageNode> Kid(unsigned int number) const { return PageNode::Create(*_kids->At(number)->GetReferencedObject()); }
+			inline ObjectReferenceWrapper<PageNode> operator[](unsigned int number) const { return PageNode::Create(*(*_kids)[number]->GetReferencedObject()); }
 
 			virtual Type GetType() const override { return PageNode::Type::PAGE_TREE_NODE; }
 
 		private:
 			ObjectReferenceWrapper<IntegerObject> _count;
-			ObjectReferenceWrapper<ArrayObject> _kids;
+			ObjectReferenceWrapper<ArrayObject<IndirectObjectReference>> _kids;
 		};
 
 		class PageObject : public PageNode
@@ -80,12 +82,16 @@ namespace gotchangpdf
 			//PageTree();
 			explicit PageTree(const IndirectObject& root);
 
-			inline ObjectReferenceWrapper<PageNode> GetRoot(void) const { return _root; }
+			inline IntegerObject::ValueType PageCount(void) const { return _root->KidCount(); }
+			inline ObjectReferenceWrapper<PageObject> Page(unsigned int number) const { return PageInternal(number); }
+			inline ObjectReferenceWrapper<PageObject> operator[](unsigned int number) const { return PageInternal(number); }
 
 			void Release();
 
 		private:
-			ObjectReferenceWrapper<PageNode> _root;
+			ObjectReferenceWrapper<PageObject> PageInternal(unsigned int number) const;
+
+			ObjectReferenceWrapper<PageTreeNode> _root;
 
 			mutable long _intrusive_ref_count;
 

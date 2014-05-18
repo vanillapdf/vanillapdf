@@ -12,7 +12,7 @@ namespace gotchangpdf
 	{
 	public:
 		explicit IndirectObjectReference(std::shared_ptr<files::File> file);
-		IndirectObjectReference(std::shared_ptr<files::File> file, int obj_number, int gen_number);
+		IndirectObjectReference(std::shared_ptr<files::File> file, unsigned int obj_number, unsigned int gen_number);
 
 		ObjectReferenceWrapper<IndirectObject> GetReferencedObject() const;
 
@@ -20,7 +20,7 @@ namespace gotchangpdf
 		std::shared_ptr<files::File> _file;
 		mutable ObjectReferenceWrapper<IndirectObject> _reference;
 
-		int _obj_number, _gen_number;
+		unsigned int _obj_number, _gen_number;
 	};
 }
 

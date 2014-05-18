@@ -2,7 +2,9 @@
 #include "integer_object.h"
 #include "Parser.h"
 #include "exception.h"
-#include "gotchangpdf.h"
+
+#include "c_xref.h"
+#include "c_values.h"
 
 #include <cassert>
 #include <sstream>

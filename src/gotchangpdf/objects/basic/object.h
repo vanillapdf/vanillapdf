@@ -29,7 +29,7 @@ namespace gotchangpdf
 			StreamObject,
 			HexadecimalString,
 			LiteralString,
-			IndirectReference,
+			IndirectObjectReference,
 			IndirectObject
 		};
 

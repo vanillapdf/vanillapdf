@@ -12,6 +12,15 @@ void print_spaces(int nested)
 		printf("  ");
 }
 
+void process_page(PageObjectHandle obj, int nested)
+{
+	print_spaces(nested);
+	printf("Page begin\n");
+
+	print_spaces(nested);
+	printf("Page end\n");
+}
+
 void process(ObjectHandle obj, int nested)
 {
 	int i, size;
@@ -38,7 +47,7 @@ void process(ObjectHandle obj, int nested)
 		arr = (ArrayObjectHandle)obj;
 		size = ArrayObject_Size(arr);
 		print_spaces(nested);
-		printf("Array begin\n", size);
+		printf("Array begin\n");
 
 		print_spaces(nested + 1);
 		printf("Size: %d\n\n", size);
@@ -50,7 +59,7 @@ void process(ObjectHandle obj, int nested)
 		}
 
 		print_spaces(nested);
-		printf("Array end\n", size);
+		printf("Array end\n");
 
 		break;
 	case Boolean:
@@ -163,11 +172,11 @@ void process(ObjectHandle obj, int nested)
 		print_spaces(nested);
 		printf("Literal string end\n");
 		break;
-	case IndirectReference:
+	case IndirectObjectReference:
 		print_spaces(nested);
 		printf("Indirect reference begin\n");
 
-		process(IndirectReference_GetReferencedObject((IndirectReferenceHandle)obj), nested + 1);
+		process(IndirectReference_GetReferencedObject((IndirectObjectReferenceHandle)obj), nested + 1);
 
 		print_spaces(nested);
 		printf("Indirect reference end\n");
@@ -198,8 +207,6 @@ int main()
 	XrefHandle xref;
 	CatalogHandle catalog;
 	PageTreeHandle pages;
-	PageNodeHandle root;
-	enum PageNodeType root_type;
 	ArrayObjectHandle page_kids;
 	int page_count;
 	const char str[] = "test\\manual-memorias.pdf";
@@ -222,23 +229,16 @@ int main()
 	printf("Document catalog begin\n");
 
 	pages = Catalog_GetPages(catalog);
-	root = PageTree_GetRoot(pages);
-	root_type = PageNode_GetType(root);
-	
-	switch (root_type)
-	{
-	case PAGE_OBJECT_NODE:
-		break;
-	case PAGE_TREE_NODE:
-		page_count = PageTreeNode_GetCount((PageTreeNodeHandle)root);
-		page_kids = PageTreeNode_GetKids((PageTreeNodeHandle)root);
-		for (i = 0; i < page_count; ++i)
-			process(ArrayObject_At(page_kids, i), 0);
+	size = PageTree_GetPageCount(pages);
 
-		break;
-	default:
-		break;
+	for (i = 0; i < size; ++i)
+	{
+		PageObjectHandle page = PageTree_GetPage(pages, i);
+		process_page(page, 1);
+		PageObject_Release(page);
 	}
+
+	//PageTree_Release(pages);
 
 	printf("Document catalog end\n");
 
