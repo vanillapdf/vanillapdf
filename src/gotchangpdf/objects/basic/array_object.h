@@ -7,7 +7,9 @@
 #include "token.h"
 
 // TODO
-#include "abstract_syntax_tree.h"
+//#include "abstract_syntax_tree.h"
+
+//class ArrayObjectAST;
 
 #include <vector>
 
@@ -61,7 +63,7 @@ namespace gotchangpdf
 		std::vector<ObjectReferenceWrapper<T>> _list;
 
 		ArrayObject(std::vector<ObjectReferenceWrapper<T>> list) : _list(std::move(list)) {}
-		friend class ArrayObjectAST;
+		//friend class ArrayObjectAST;
 	};
 
 	class MixedArrayObject : public ArrayObject<Object>
@@ -71,7 +73,7 @@ namespace gotchangpdf
 		//using ArrayObject::ArrayObject;
 	public:
 		MixedArrayObject(std::vector<ObjectReferenceWrapper<Object>> list) : ArrayObject(std::move(list)) {}
-		friend class ArrayObjectAST;
+		//friend class ArrayObjectAST;
 	};
 
 	/*

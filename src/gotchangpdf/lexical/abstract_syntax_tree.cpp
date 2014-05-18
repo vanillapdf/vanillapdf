@@ -2,13 +2,24 @@
 
 #include "name_object.h"
 #include "array_object.h"
+#include "boolean.h"
+#include "dictionary_object.h"
+#include "integer_object.h"
+#include "indirect_object.h"
+#include "indirect_object_reference.h"
+#include "name_object.h"
+#include "null_object.h"
+#include "real_object.h"
+#include "string_object.h"
+#include "stream_object.h"
+#include "function.h"
+
 #include "exception.h"
-#include "object_reference_wrapper.h"
 
 #include <algorithm>
 
 #define NIGGA_MORE_VARIABLE(name, type)			vector<ObjectReferenceWrapper<type>> name
-#define NIGGA_MORE_LAMBDA(name, type)			auto to_##name = [](ObjectAST& obj)->ObjectReferenceWrapper<type>{ return obj.Value(); }
+#define NIGGA_MORE_LAMBDA(name, type)			auto to_##name = [](ObjectAST* obj)->ObjectReferenceWrapper<type>{ return dynamic_wrapper_cast<type>(obj->Value()); }
 #define NIGGA_MORE_TRANSFORM(name, func)		name.resize(_list.size()); \
 	transform(_list.begin(), _list.end(), name.begin(), to_##func)
 

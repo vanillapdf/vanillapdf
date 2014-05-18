@@ -3,6 +3,7 @@
 
 #include "object.h"
 #include "token.h"
+#include "object_reference_wrapper.h"
 
 #include <vector>
 #include <map>
@@ -14,21 +15,29 @@ namespace gotchangpdf
 		class AbstractSyntaxTree
 		{
 		public:
-			virtual ObjectReferenceWrapper<Object> Value() const = 0;
+			virtual ~AbstractSyntaxTree() {};
 		};
 
 		class ObjectAST : public AbstractSyntaxTree
 		{
+		public:
+			virtual ObjectReferenceWrapper<Object> Value() const = 0;
 		};
 
 		class NameObjectAST : public ObjectAST
 		{
+		public:
+			virtual ObjectReferenceWrapper<Object> Value() const override;
+
 		public:
 			Token _value;
 		};
 
 		class IndirectObjectAST : public ObjectAST
 		{
+		public:
+			virtual ObjectReferenceWrapper<Object> Value() const override;
+
 		public:
 			Token _obj, _gen;
 			ObjectAST *child;
@@ -37,11 +46,17 @@ namespace gotchangpdf
 		class IntegerObjectAST : public ObjectAST
 		{
 		public:
+			virtual ObjectReferenceWrapper<Object> Value() const override;
+
+		public:
 			Token _value;
 		};
 
 		class DictionaryObjectAST : public ObjectAST
 		{
+		public:
+			virtual ObjectReferenceWrapper<Object> Value() const override;
+
 		public:
 			std::map<std::string, ObjectAST*> _list;
 		};
