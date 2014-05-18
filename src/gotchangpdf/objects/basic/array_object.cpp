@@ -23,7 +23,7 @@ namespace gotchangpdf
 	using namespace lexical;
 	using namespace exceptions;
 	using namespace std;
-
+	/*
 #define NIGGA_MORE_VARIABLE(name, type)			vector<ObjectReferenceWrapper<type>> name
 #define NIGGA_MORE_LAMBDA(name, type)			auto to_##name = [](ObjectReferenceWrapper<Object> obj)->ObjectReferenceWrapper<type>{ return dynamic_wrapper_cast<type>(obj); }
 #define NIGGA_MORE_TRANSFORM(name, func)		name.resize(list.size()); \
@@ -149,7 +149,7 @@ namespace gotchangpdf
 	}
 
 	ArrayObjectBase::~ArrayObjectBase() {}
-
+	*/
 }
 
 GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle handle, int at)

@@ -79,7 +79,7 @@ namespace gotchangpdf
 			_parent = dict->FindAs<IndirectObjectReference>(Name::Parent);
 
 			//TODO rectangle
-			_media_box = dict->FindAs<Rectangle>(Name::MediaBox);
+			_media_box = dict->FindAs<MixedArrayObject>(Name::MediaBox);
 
 			_resources = dict->FindAs<DictionaryObject>(Name::Resources);
 		}

@@ -6,6 +6,9 @@
 #include "object_reference_wrapper.h"
 #include "token.h"
 
+// TODO
+#include "abstract_syntax_tree.h"
+
 #include <vector>
 
 namespace gotchangpdf
@@ -54,21 +57,21 @@ namespace gotchangpdf
 
 		//virtual ~ArrayObject() {};
 
-	protected:
+	public:
 		std::vector<ObjectReferenceWrapper<T>> _list;
 
-		//ArrayObject(std::vector<ObjectReferenceWrapper<T>> list) : _list(std::move(list)) {}
-		//friend class ArrayObjectBase;
+		ArrayObject(std::vector<ObjectReferenceWrapper<T>> list) : _list(std::move(list)) {}
+		friend class ArrayObjectAST;
 	};
 
 	class MixedArrayObject : public ArrayObject<Object>
 	{
 	public:
-		//MixedArrayObject() : ArrayObject() {}
+		MixedArrayObject() : ArrayObject() {}
 		//using ArrayObject::ArrayObject;
-	private:
-		//MixedArrayObject(std::vector<ObjectReferenceWrapper<Object>> list) : ArrayObject(std::move(list)) {}
-		//friend class ArrayObjectBase;
+	public:
+		MixedArrayObject(std::vector<ObjectReferenceWrapper<Object>> list) : ArrayObject(std::move(list)) {}
+		friend class ArrayObjectAST;
 	};
 
 	/*

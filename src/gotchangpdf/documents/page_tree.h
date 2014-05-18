@@ -73,7 +73,7 @@ namespace gotchangpdf
 		private:
 			ObjectReferenceWrapper<IndirectObjectReference> _parent;
 			ObjectReferenceWrapper<DictionaryObject> _resources;
-			ObjectReferenceWrapper<Rectangle> _media_box;
+			ObjectReferenceWrapper<MixedArrayObject> _media_box;
 		};
 
 		class PageTree
