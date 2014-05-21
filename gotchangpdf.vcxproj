@@ -42,7 +42,6 @@
     <ClInclude Include="src\gotchangpdf\files\xref.h" />
     <ClInclude Include="src\gotchangpdf\filters\filter.h" />
     <ClInclude Include="src\gotchangpdf\filters\flate_decode_filter.h" />
-    <ClInclude Include="src\gotchangpdf\lexical\abstract_syntax_tree.h" />
     <ClInclude Include="src\gotchangpdf\lexical\lexical_base_stream.h" />
     <ClInclude Include="src\gotchangpdf\lexical\lexical_reverse_stream.h" />
     <ClInclude Include="src\gotchangpdf\lexical\lexical_stream.h" />
@@ -93,7 +92,6 @@
     <ClCompile Include="src\gotchangpdf\files\header.cpp" />
     <ClCompile Include="src\gotchangpdf\files\trailer.cpp" />
     <ClCompile Include="src\gotchangpdf\files\xref.cpp" />
-    <ClCompile Include="src\gotchangpdf\lexical\abstract_syntax_tree.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\lexical_base_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\lexical_reverse_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\lexical_stream.cpp" />
