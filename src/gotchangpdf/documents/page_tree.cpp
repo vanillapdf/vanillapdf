@@ -1,7 +1,4 @@
 #include "page_tree.h"
-#include "indirect_object.h"
-#include "dictionary_object.h"
-#include "exception.h"
 
 #include "c_page_tree.h"
 
@@ -12,28 +9,9 @@ namespace gotchangpdf
 		using namespace constant;
 		using namespace exceptions;
 
-		PageNode::~PageNode() {}
-
-		void PageNode::Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
-
-		ObjectReferenceWrapper<PageNode> PageNode::Create(const IndirectObject& obj)
-		{
-			auto dict = obj.GetObjectAs<DictionaryObject>();
-			auto type = dict->FindAs<NameObject>(Name::Type);
-
-			if (*type == Name::Pages)
-				return ObjectReferenceWrapper<PageTreeNode>(new PageTreeNode(obj));
-			else if (*type == Name::Page)
-				return ObjectReferenceWrapper<PageObject>(new PageObject(obj));
-			else
-				throw Exception("Cannot initialize PageTree from TODO");
-		}
-
 		//PageTree::PageTree() {}
 
-		PageTree::PageTree(const IndirectObject& root) : _root(dynamic_wrapper_cast<PageTreeNode>(PageNode::Create(root))) {}
-
-		void PageTree::Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
+		PageTree::PageTree(const DictionaryObject& root) : _root(dynamic_wrapper_cast<PageTreeNode>(PageNode::Create(root))) {}
 
 		ObjectReferenceWrapper<PageObject> PageTree::PageInternal(unsigned int number) const
 		{
@@ -69,34 +47,9 @@ namespace gotchangpdf
 		*/
 		//PageObject::PageObject() {}
 
-		PageObject::PageObject(const IndirectObject& obj)
-		{
-			auto dict = obj.GetObjectAs<DictionaryObject>();
-
-			if (*dict->FindAs<NameObject>(Name::Type) != Name::Page)
-				throw Exception("TODO");
-
-			_parent = dict->FindAs<IndirectObjectReference>(Name::Parent);
-
-			//TODO rectangle
-			_media_box = dict->FindAs<ArrayObject>(Name::MediaBox);
-
-			_resources = dict->FindAs<DictionaryObject>(Name::Resources);
-		}
-
 		//PageTreeNode::PageTreeNode() : _count(ObjectReferenceWrapper<IntegerObject>(new IntegerObject())), _kids(ObjectReferenceWrapper<ArrayObject>(new ArrayObject())) {}
 
-		PageTreeNode::PageTreeNode(const IndirectObject& obj)
-		{
-			auto dict = obj.GetObjectAs<DictionaryObject>();
 
-			if (*dict->FindAs<NameObject>(Name::Type) != Name::Pages)
-				throw Exception("TODO");
-
-			_count = dict->FindAs<IntegerObject>(Name::Count);
-			auto arr = dict->FindAs<ArrayObject>(Name::Kids);
-			_kids = ObjectReferenceWrapper<SpecializedArrayObject<IndirectObjectReference>>(new SpecializedArrayObject<IndirectObjectReference>(*arr));
-		}
 	}
 }
 

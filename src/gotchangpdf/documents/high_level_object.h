@@ -13,7 +13,12 @@ namespace gotchangpdf
 			enum class Type : unsigned char
 			{
 				Unknown = 0,
-				SpecializedArrayObject
+				SpecializedArrayObject,
+				PageObject,
+				ResourceDictionary,
+				Catalog,
+				PageTreeNode,
+				PageTree
 			};
 
 			//static const char* TypeName(Type type);

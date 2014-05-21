@@ -16,6 +16,11 @@ namespace gotchangpdf
 
 		ObjectReferenceWrapper<IndirectObject> GetReferencedObject() const;
 
+		inline ObjectReferenceWrapper<IndirectObject> operator->() const { return GetReferencedObject(); }
+
+		template <typename T>
+		ObjectReferenceWrapper<T> GetReferencedObjectAs() const { return GetReferencedObject()->GetObjectAs<T>(); }
+
 	private:
 		std::shared_ptr<files::File> _file;
 		mutable ObjectReferenceWrapper<IndirectObject> _reference;

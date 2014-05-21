@@ -32,7 +32,11 @@
     <ClInclude Include="src\gotchangpdf\documents\catalog.h" />
     <ClInclude Include="src\gotchangpdf\documents\document.h" />
     <ClInclude Include="src\gotchangpdf\documents\high_level_object.h" />
+    <ClInclude Include="src\gotchangpdf\documents\page_object.h" />
+    <ClInclude Include="src\gotchangpdf\documents\page_node.h" />
     <ClInclude Include="src\gotchangpdf\documents\page_tree.h" />
+    <ClInclude Include="src\gotchangpdf\documents\page_tree_node.h" />
+    <ClInclude Include="src\gotchangpdf\documents\resource_dictionary.h" />
     <ClInclude Include="src\gotchangpdf\documents\specialized_array.h" />
     <ClInclude Include="src\gotchangpdf\exceptions\exception.h" />
     <ClInclude Include="src\gotchangpdf\exceptions\invalid_object_type_exception.h" />
@@ -85,7 +89,10 @@
     <ClCompile Include="src\gotchangpdf\basic\character.cpp" />
     <ClCompile Include="src\gotchangpdf\documents\catalog.cpp" />
     <ClCompile Include="src\gotchangpdf\documents\high_level_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\documents\page_node.cpp" />
+    <ClCompile Include="src\gotchangpdf\documents\page_object.cpp" />
     <ClCompile Include="src\gotchangpdf\documents\page_tree.cpp" />
+    <ClCompile Include="src\gotchangpdf\documents\page_tree_node.cpp" />
     <ClCompile Include="src\gotchangpdf\exceptions\exception.cpp" />
     <ClCompile Include="src\gotchangpdf\exceptions\invalid_object_type_exception.cpp" />
     <ClCompile Include="src\gotchangpdf\files\file.cpp" />
