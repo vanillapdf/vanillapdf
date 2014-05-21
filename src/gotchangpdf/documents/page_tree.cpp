@@ -14,7 +14,7 @@ namespace gotchangpdf
 
 		PageNode::~PageNode() {}
 
-		void PageNode::Release() { boost::intrusive_ptr_release(this); }
+		void PageNode::Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
 
 		ObjectReferenceWrapper<PageNode> PageNode::Create(const IndirectObject& obj)
 		{
@@ -33,7 +33,7 @@ namespace gotchangpdf
 
 		PageTree::PageTree(const IndirectObject& root) : _root(dynamic_wrapper_cast<PageTreeNode>(PageNode::Create(root))) {}
 
-		void PageTree::Release() { boost::intrusive_ptr_release(this); }
+		void PageTree::Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
 
 		ObjectReferenceWrapper<PageObject> PageTree::PageInternal(unsigned int number) const
 		{
@@ -79,7 +79,7 @@ namespace gotchangpdf
 			_parent = dict->FindAs<IndirectObjectReference>(Name::Parent);
 
 			//TODO rectangle
-			_media_box = dict->FindAs<MixedArrayObject>(Name::MediaBox);
+			_media_box = dict->FindAs<ArrayObject>(Name::MediaBox);
 
 			_resources = dict->FindAs<DictionaryObject>(Name::Resources);
 		}
@@ -94,7 +94,8 @@ namespace gotchangpdf
 				throw Exception("TODO");
 
 			_count = dict->FindAs<IntegerObject>(Name::Count);
-			_kids = dict->FindAs<ArrayObject<IndirectObjectReference>>(Name::Kids);
+			auto arr = dict->FindAs<ArrayObject>(Name::Kids);
+			_kids = ObjectReferenceWrapper<SpecializedArrayObject<IndirectObjectReference>>(new SpecializedArrayObject<IndirectObjectReference>(*arr));
 		}
 	}
 }

@@ -14,12 +14,6 @@ namespace gotchangpdf
 
 		explicit StringObject(Type type);
 		StringObject(Type type, const Buffer& value);
-
-		template <typename T>
-		friend void ::boost::intrusive_ptr_add_ref(T*);
-
-		template <typename T>
-		friend void ::boost::intrusive_ptr_release(T*);
 	};
 
 	class HexadecimalString : public StringObject
@@ -30,12 +24,6 @@ namespace gotchangpdf
 
 	private:
 		std::string _hexadecimal;
-
-		template <typename T>
-		friend void ::boost::intrusive_ptr_add_ref(T*);
-
-		template <typename T>
-		friend void ::boost::intrusive_ptr_release(T*);
 	};
 
 	class LiteralString : public StringObject
@@ -43,13 +31,6 @@ namespace gotchangpdf
 	public:
 		explicit LiteralString(const Buffer& value);
 		explicit LiteralString(const lexical::Token& token);
-
-	private:
-		template <typename T>
-		friend void ::boost::intrusive_ptr_add_ref(T*);
-
-		template <typename T>
-		friend void ::boost::intrusive_ptr_release(T*);
 	};
 }
 

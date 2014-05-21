@@ -17,7 +17,7 @@
 #include "exception.h"
 
 #include <algorithm>
-
+/*
 #define NIGGA_MORE_VARIABLE(name, type)			vector<ObjectReferenceWrapper<type>> name
 #define NIGGA_MORE_LAMBDA(name, type)			auto to_##name = [](ObjectAST* obj)->ObjectReferenceWrapper<type>{ return dynamic_wrapper_cast<type>(obj->Value()); }
 #define NIGGA_MORE_TRANSFORM(name, func)		name.resize(_list.size()); \
@@ -30,7 +30,7 @@ namespace gotchangpdf
 		using namespace exceptions;
 		using namespace std;
 
-		void SemanticAnalyzer::Analyze(AbstractSyntaxTree& tree)
+		void SemanticAnalyzer::Analyze(ParseTree& tree)
 		{
 			DictionaryObjectAST *dict = dynamic_cast<DictionaryObjectAST*>(&tree);
 			auto type_found = dict->_list.find(R"(/Type)");
@@ -62,8 +62,8 @@ namespace gotchangpdf
 		{
 			if (_single_typed)
 			{
-				NIGGA_MORE_VARIABLE(arrays, MixedArrayObject);
-				NIGGA_MORE_LAMBDA(array, MixedArrayObject);
+				NIGGA_MORE_VARIABLE(arrays, ArrayObject);
+				NIGGA_MORE_LAMBDA(array, ArrayObject);
 
 				NIGGA_MORE_VARIABLE(bools, Boolean);
 				NIGGA_MORE_LAMBDA(bool, Boolean);
@@ -107,7 +107,7 @@ namespace gotchangpdf
 					throw Exception("FIXME: Are your really trying to return unknown type??");
 				case Object::Type::ArrayObject:
 					NIGGA_MORE_TRANSFORM(arrays, array);
-					return ObjectReferenceWrapper<ArrayObject<MixedArrayObject>>(new ArrayObject<MixedArrayObject>(arrays));
+					return ObjectReferenceWrapper<ArrayObject<ArrayObject>>(new ArrayObject<ArrayObject>(arrays));
 				case Object::Type::Boolean:
 					NIGGA_MORE_TRANSFORM(bools, bool);
 					return ObjectReferenceWrapper<ArrayObject<Boolean>>(new ArrayObject<Boolean>(bools));
@@ -155,8 +155,9 @@ namespace gotchangpdf
 				NIGGA_MORE_LAMBDA(obj, Object);
 				NIGGA_MORE_TRANSFORM(objs, obj);
 
-				return ObjectReferenceWrapper<MixedArrayObject>(new MixedArrayObject(objs));
+				return ObjectReferenceWrapper<ArrayObject>(new ArrayObject(objs));
 			}
 		}
 	}
 }
+*/

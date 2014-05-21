@@ -86,7 +86,7 @@ namespace gotchangpdf
 				}
 			case Token::Type::ARRAY_BEGIN:
 				{
-					auto result = ObjectReferenceWrapper<MixedArrayObject>(new MixedArrayObject());
+					auto result = ObjectReferenceWrapper<ArrayObject>(new ArrayObject());
 					*this >> *result;
 
 					//auto token = readToken();
@@ -144,7 +144,7 @@ namespace gotchangpdf
 			case Object::Type::Unknown:
 				throw Exception("FIXME: Are your really trying to return unknown type??");
 			case Object::Type::ArrayObject:
-				return dynamic_wrapper_cast<MixedArrayObject>(obj);
+				return dynamic_wrapper_cast<ArrayObject>(obj);
 			case Object::Type::Boolean:
 				return dynamic_wrapper_cast<Boolean>(obj);
 			case Object::Type::DictionaryObject:

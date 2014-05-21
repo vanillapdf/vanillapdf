@@ -10,7 +10,7 @@ namespace gotchangpdf
 {
 	namespace files
 	{
-		class Xref
+		class Xref : public boost::intrusive_ref_counter<Xref>
 		{
 		public:
 			enum class Type : unsigned char
@@ -35,14 +35,6 @@ namespace gotchangpdf
 		private:
 			Type _type = Type::TABLE;
 			std::vector<Entry> _entries;
-
-			mutable long _intrusive_ref_count;
-
-			template <typename T>
-			friend void ::boost::intrusive_ptr_add_ref(T*);
-
-			template <typename T>
-			friend void ::boost::intrusive_ptr_release(T*);
 		};
 	}
 }

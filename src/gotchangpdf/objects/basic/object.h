@@ -9,7 +9,7 @@
 
 namespace gotchangpdf
 {
-	class Object
+	class Object : public boost::intrusive_ref_counter<Object>
 	{
 	public:
 		enum class Type : unsigned char
@@ -48,14 +48,6 @@ namespace gotchangpdf
 
 	protected:
 		Type _type;
-
-		mutable long _intrusive_ref_count;
-
-		template <typename T>
-		friend void ::boost::intrusive_ptr_add_ref(T*);
-
-		template <typename T>
-		friend void ::boost::intrusive_ptr_release(T*);
 	};
 	/*
 	template <typename T>

@@ -11,7 +11,7 @@ namespace gotchangpdf
 {
 	namespace documents
 	{
-		class Catalog
+		class Catalog : public boost::intrusive_ref_counter<Catalog>
 		{
 		public:
 			explicit Catalog(const IndirectObject& root);
@@ -20,14 +20,6 @@ namespace gotchangpdf
 
 		private:
 			ObjectReferenceWrapper<PageTree> _pages;
-
-			mutable long _intrusive_ref_count;
-
-			template <typename T>
-			friend void ::boost::intrusive_ptr_add_ref(T*);
-
-			template <typename T>
-			friend void ::boost::intrusive_ptr_release(T*);
 		};
 
 	}

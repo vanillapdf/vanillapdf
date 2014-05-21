@@ -7,8 +7,8 @@
 
 namespace gotchangpdf
 {
-	Object::Object(Type type) : _type(type), _intrusive_ref_count(0) {}
-	Object::Object() : _type(Type::Unknown), _intrusive_ref_count(0) {}
+	Object::Object(Type type) : _type(type) /*_intrusive_ref_count(0)*/ {}
+	Object::Object() : _type(Type::Unknown) /*_intrusive_ref_count(0)*/ {}
 	Object::~Object() {}
 
 	Object::Type Object::GetType(void) const
@@ -21,7 +21,7 @@ namespace gotchangpdf
 
 	void Object::Release()
 	{
-		boost::intrusive_ptr_release(this);
+		boost::sp_adl_block::intrusive_ptr_release(this);
 	}
 
 	const char* Object::TypeName(Type type)
@@ -68,7 +68,6 @@ namespace gotchangpdf
 			return nullptr;
 		}
 	}
-
 }
 
 using namespace gotchangpdf;

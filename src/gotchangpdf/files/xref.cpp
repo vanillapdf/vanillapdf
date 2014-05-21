@@ -56,7 +56,7 @@ namespace gotchangpdf
 			return result;
 		}
 
-		void Xref::Release() { boost::intrusive_ptr_release(this); }
+		void Xref::Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
 
 		Parser& operator>>(Parser& s, Xref& o)
 		{

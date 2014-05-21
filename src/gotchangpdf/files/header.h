@@ -9,7 +9,7 @@ namespace gotchangpdf
 {
 	namespace files
 	{
-		class Header
+		class Header : public boost::intrusive_ref_counter<Header>
 		{
 		public:
 			friend basic::Stream& operator>> (basic::Stream& s, Header& o);
@@ -18,14 +18,6 @@ namespace gotchangpdf
 
 		private:
 			Version _version;
-
-			mutable long _intrusive_ref_count;
-
-			template <typename T>
-			friend void ::boost::intrusive_ptr_add_ref(T*);
-
-			template <typename T>
-			friend void ::boost::intrusive_ptr_release(T*);
 		};
 	}
 }

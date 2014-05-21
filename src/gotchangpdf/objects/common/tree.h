@@ -10,8 +10,8 @@ namespace gotchangpdf
 	class Tree
 	{
 	protected:
-		MixedArrayObject _kids;
-		MixedArrayObject _limits;
+		ArrayObject _kids;
+		ArrayObject _limits;
 	};
 }
 

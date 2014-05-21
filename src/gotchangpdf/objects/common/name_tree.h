@@ -8,7 +8,7 @@ namespace gotchangpdf
 	class NameTree : Tree
 	{
 	private:
-		MixedArrayObject _names;
+		ArrayObject _names;
 	};
 }
 

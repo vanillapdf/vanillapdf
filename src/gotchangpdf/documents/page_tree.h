@@ -15,7 +15,7 @@ namespace gotchangpdf
 {
 	namespace documents
 	{
-		class PageNode
+		class PageNode : public boost::intrusive_ref_counter<PageNode>
 		{
 		public:
 			enum class Type : unsigned char
@@ -31,15 +31,6 @@ namespace gotchangpdf
 			virtual Type GetType() const = 0;
 
 			virtual ~PageNode() = 0;
-
-		private:
-			mutable long _intrusive_ref_count;
-
-			template <typename T>
-			friend void ::boost::intrusive_ptr_add_ref(T*);
-
-			template <typename T>
-			friend void ::boost::intrusive_ptr_release(T*);
 		};
 
 		class PageTreeNode : public PageNode
@@ -56,7 +47,7 @@ namespace gotchangpdf
 
 		private:
 			ObjectReferenceWrapper<IntegerObject> _count;
-			ObjectReferenceWrapper<ArrayObject<IndirectObjectReference>> _kids;
+			ObjectReferenceWrapper<SpecializedArrayObject<IndirectObjectReference>> _kids;
 		};
 
 		class PageObject : public PageNode
@@ -73,10 +64,10 @@ namespace gotchangpdf
 		private:
 			ObjectReferenceWrapper<IndirectObjectReference> _parent;
 			ObjectReferenceWrapper<DictionaryObject> _resources;
-			ObjectReferenceWrapper<MixedArrayObject> _media_box;
+			ObjectReferenceWrapper<ArrayObject> _media_box;
 		};
 
-		class PageTree
+		class PageTree : public boost::intrusive_ref_counter<PageTree>
 		{
 		public:
 			//PageTree();
@@ -92,14 +83,6 @@ namespace gotchangpdf
 			ObjectReferenceWrapper<PageObject> PageInternal(unsigned int number) const;
 
 			ObjectReferenceWrapper<PageTreeNode> _root;
-
-			mutable long _intrusive_ref_count;
-
-			template <typename T>
-			friend void ::boost::intrusive_ptr_add_ref(T*);
-
-			template <typename T>
-			friend void ::boost::intrusive_ptr_release(T*);
 		};
 	}
 }

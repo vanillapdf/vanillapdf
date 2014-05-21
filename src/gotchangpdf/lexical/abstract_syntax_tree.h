@@ -12,13 +12,14 @@ namespace gotchangpdf
 {
 	namespace lexical
 	{
-		class AbstractSyntaxTree
+		/*
+		class ParseTree
 		{
 		public:
-			virtual ~AbstractSyntaxTree() {};
+			virtual ~ParseTree() {};
 		};
 
-		class ObjectAST : public AbstractSyntaxTree
+		class ObjectAST : public ParseTree
 		{
 		public:
 			virtual ObjectReferenceWrapper<Object> Value() const = 0;
@@ -75,8 +76,9 @@ namespace gotchangpdf
 		class SemanticAnalyzer
 		{
 		public:
-			static void Analyze(AbstractSyntaxTree& tree);
+			static void Analyze(ParseTree& tree);
 		};
+		*/
 	}
 }
 

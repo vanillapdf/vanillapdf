@@ -10,7 +10,7 @@ namespace gotchangpdf
 {
 	namespace files
 	{
-		class Trailer
+		class Trailer : public boost::intrusive_ref_counter<Trailer>
 		{
 		public:
 			friend lexical::ReverseStream& operator>> (lexical::ReverseStream& s, Trailer& o);
@@ -20,14 +20,6 @@ namespace gotchangpdf
 		private:
 			streamOffsetValueType _xref_offset = 0;
 			ObjectReferenceWrapper<DictionaryObject> _dictionary = ObjectReferenceWrapper<DictionaryObject>(new DictionaryObject());
-
-			mutable long _intrusive_ref_count;
-
-			template <typename T>
-			friend void ::boost::intrusive_ptr_add_ref(T*);
-
-			template <typename T>
-			friend void ::boost::intrusive_ptr_release(T*);
 		};
 	}
 }

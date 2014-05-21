@@ -3,7 +3,7 @@
 
 namespace gotchangpdf
 {
-	class MixedArrayObject;
+	class ArrayObject;
 	class Boolean;
 	class Xref;
 	class DictionaryObject;

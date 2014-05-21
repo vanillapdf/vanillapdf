@@ -23,6 +23,27 @@ namespace gotchangpdf
 	using namespace lexical;
 	using namespace exceptions;
 	using namespace std;
+
+	lexical::Parser& operator>>(lexical::Parser& s, ArrayObject& o)
+	{
+		s.LexicalSettingsPush();
+		auto settings = s.LexicalSettingsGet();
+		settings->skip.push_back(lexical::Token::Type::EOL);
+
+		if (s.PeekTokenType() == lexical::Token::Type::ARRAY_BEGIN)
+			s.ReadToken();
+
+		while (s.PeekTokenType() != lexical::Token::Type::ARRAY_END)
+		{
+			auto val = s.readObject();
+			o._list.push_back(val);
+		}
+
+		s.ReadTokenWithType(lexical::Token::Type::ARRAY_END);
+
+		s.LexicalSettingsPop();
+		return s;
+	}
 	/*
 #define NIGGA_MORE_VARIABLE(name, type)			vector<ObjectReferenceWrapper<type>> name
 #define NIGGA_MORE_LAMBDA(name, type)			auto to_##name = [](ObjectReferenceWrapper<Object> obj)->ObjectReferenceWrapper<type>{ return dynamic_wrapper_cast<type>(obj); }
@@ -154,18 +175,18 @@ namespace gotchangpdf
 
 GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle handle, int at)
 {
-	gotchangpdf::MixedArrayObject* arr = reinterpret_cast<gotchangpdf::MixedArrayObject*>(handle);
+	gotchangpdf::ArrayObject* arr = reinterpret_cast<gotchangpdf::ArrayObject*>(handle);
 	return reinterpret_cast<ObjectHandle>(arr->At(at).AddRefGet());
 }
 
 GOTCHANG_PDF_API int CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle handle)
 {
-	gotchangpdf::MixedArrayObject* arr = reinterpret_cast<gotchangpdf::MixedArrayObject*>(handle);
+	gotchangpdf::ArrayObject* arr = reinterpret_cast<gotchangpdf::ArrayObject*>(handle);
 	return arr->Size();
 }
 
 GOTCHANG_PDF_API void CALLING_CONVENTION ArrayObject_Release(ArrayObjectHandle handle)
 {
-	gotchangpdf::MixedArrayObject* obj = reinterpret_cast<gotchangpdf::MixedArrayObject*>(handle);
+	gotchangpdf::ArrayObject* obj = reinterpret_cast<gotchangpdf::ArrayObject*>(handle);
 	obj->Release();
 }

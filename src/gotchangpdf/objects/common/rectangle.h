@@ -1,24 +1,28 @@
 #ifndef _RECTANGLE_H
 #define _RECTANGLE_H
 
-#include "array_object.h"
+//#include "array_object.h"
 #include "integer_object.h"
+#include "specialized_array.h"
 
 namespace gotchangpdf
 {
-	class Rectangle
+	namespace documents
 	{
-	public:
-		//Rectangle() : ArrayObject() {}
-		//using ArrayObject::ArrayObject;
+		class Rectangle
+		{
+		public:
+			//Rectangle() : ArrayObject() {}
+			//using ArrayObject::ArrayObject;
 
-		//virtual ~Rectangle() {}
-	private:
-		//Rectangle(std::vector<ObjectReferenceWrapper<IntegerObject>> list) : _list(std::move(list)) {}
-		//friend class ArrayObjectBase;
+			//virtual ~Rectangle() {}
+		private:
+			//Rectangle(std::vector<ObjectReferenceWrapper<IntegerObject>> list) : _list(std::move(list)) {}
+			//friend class ArrayObjectBase;
 
-		ArrayObject<IntegerObject> _list;
-	};
+			SpecializedArrayObject<IntegerObject> _list;
+		};
+	}
 }
 
 #endif /* _RECTANGLE_H */

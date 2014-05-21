@@ -4,8 +4,6 @@
 #include "fwd.h"
 #include "intrusive.h"
 
-#include "boost/intrusive_ptr.hpp"
-
 #include <cassert>
 
 namespace gotchangpdf
@@ -25,7 +23,7 @@ namespace gotchangpdf
 		T* AddRefGet(void) const
 		{
 			auto ptr = boost::intrusive_ptr<T>::get();
-			boost::intrusive_ptr_add_ref(ptr);
+			boost::sp_adl_block::intrusive_ptr_add_ref(ptr);
 			return ptr;
 		}
 
