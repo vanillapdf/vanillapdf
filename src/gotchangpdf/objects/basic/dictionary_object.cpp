@@ -55,6 +55,7 @@ namespace gotchangpdf
 				continue;
 
 			o._list[*name] = val;
+			val->SetParent(&o);
 		}
 
 		s.ReadTokenWithType(Token::Type::DICTIONARY_END);

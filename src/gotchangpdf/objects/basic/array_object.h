@@ -4,7 +4,6 @@
 #include "fwd.h"
 #include "object.h"
 #include "object_reference_wrapper.h"
-#include "token.h"
 
 #include <vector>
 
@@ -21,13 +20,8 @@ namespace gotchangpdf
 
 		friend lexical::Parser& operator>> (lexical::Parser& s, ArrayObject& o);
 
-		//virtual ~ArrayObject() {};
-
-	public:
+	private:
 		std::vector<ObjectReferenceWrapper<Object>> _list;
-
-		ArrayObject(std::vector<ObjectReferenceWrapper<Object>>&& list) : _list(std::move(list)) {}
-		//friend class ArrayObjectAST;
 	};
 }
 

@@ -12,6 +12,7 @@
 #include "c_xref.h"
 #include "c_catalog.h"
 #include "c_page_tree.h"
+#include "c_page_object.h"
 
 /* objects */
 #include "c_array_object.h"

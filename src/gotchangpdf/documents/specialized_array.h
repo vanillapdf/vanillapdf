@@ -9,22 +9,17 @@ namespace gotchangpdf
 	namespace documents
 	{
 		template <typename T>
-		class SpecializedArrayObject : public HighLevelObject
+		class SpecializedArrayObject : public HighLevelObject<ArrayObject>
 		{
 		public:
 			SpecializedArrayObject<T>() {}
-			SpecializedArrayObject<T>(const ArrayObject& obj) : _array(new ArrayObject(obj)) {}
+			SpecializedArrayObject<T>(ObjectReferenceWrapper<ArrayObject> obj) : HighLevelObject(obj) {/* TODO validation of array */}
 
 			virtual inline Type GetType(void) const { return HighLevelObject::Type::SpecializedArrayObject; }
 
-			inline int Size(void) const { return _array->Size(); }
-			inline ObjectReferenceWrapper<T> operator[](unsigned int i) const { return dynamic_wrapper_cast<T>((*_array)[i]); }
-			inline ObjectReferenceWrapper<T> At(unsigned int at) const { return dynamic_wrapper_cast<T>(_array->At(at)); }
-
-		public:
-			SpecializedArrayObject(std::vector<ObjectReferenceWrapper<T>>&& list) : _array(std::move(list)) {}
-			ObjectReferenceWrapper<ArrayObject> _array;
-			//friend class ArrayObjectAST;
+			inline int Size(void) const { return _obj->Size(); }
+			inline ObjectReferenceWrapper<T> operator[](unsigned int i) const { return dynamic_wrapper_cast<T>((*_obj)[i]); }
+			inline ObjectReferenceWrapper<T> At(unsigned int at) const { return dynamic_wrapper_cast<T>(_obj->At(at)); }
 		};
 	}
 }

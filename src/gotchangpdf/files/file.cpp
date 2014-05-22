@@ -89,7 +89,7 @@ namespace gotchangpdf
 			static const char root[] = "Root";
 			auto reference = _trailer->dictionary()->FindAs<IndirectObjectReference>(NameObject(Buffer(root, sizeof(root))));
 			auto dict = reference->GetReferencedObjectAs<DictionaryObject>();
-			return ObjectReferenceWrapper<documents::Catalog>(new documents::Catalog(*dict));
+			return ObjectReferenceWrapper<documents::Catalog>(new documents::Catalog(dict));
 		}
 
 		ObjectReferenceWrapper<Header> File::GetHeader(void) const { return _header; }

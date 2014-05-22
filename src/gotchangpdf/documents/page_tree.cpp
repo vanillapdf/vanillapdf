@@ -11,13 +11,13 @@ namespace gotchangpdf
 
 		//PageTree::PageTree() {}
 
-		PageTree::PageTree(const DictionaryObject& root) : _root(dynamic_wrapper_cast<PageTreeNode>(PageNode::Create(root))) {}
+		PageTree::PageTree(ObjectReferenceWrapper<DictionaryObject> root) : HighLevelObject(new PageTreeNode(root)) {}
 
 		ObjectReferenceWrapper<PageObject> PageTree::PageInternal(unsigned int number) const
 		{
 			//int count = 0, result = 0;
 			//ObjectReferenceWrapper<PageTreeNode> tree_node;
-			return dynamic_wrapper_cast<PageObject>(_root->Kid(0));
+			return dynamic_wrapper_cast<PageObject>(_obj->Kid(0));
 		}
 
 		/*
@@ -66,8 +66,8 @@ GOTCHANG_PDF_API PageObjectHandle CALLING_CONVENTION PageTree_GetPage(PageTreeHa
 	return reinterpret_cast<PageObjectHandle>(page.AddRefGet());
 }
 
-GOTCHANG_PDF_API void CALLING_CONVENTION PageObject_Release(PageObjectHandle handle)
+GOTCHANG_PDF_API void CALLING_CONVENTION PageTree_Release(PageTreeHandle handle)
 {
-	gotchangpdf::documents::PageObject* obj = reinterpret_cast<gotchangpdf::documents::PageObject*>(handle);
+	gotchangpdf::documents::PageTree* obj = reinterpret_cast<gotchangpdf::documents::PageTree*>(handle);
 	obj->Release();
 }

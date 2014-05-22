@@ -8,10 +8,11 @@ namespace gotchangpdf
 {
 	namespace documents
 	{
-		class PageNode : public HighLevelObject
+		class PageNode : public HighLevelObject<DictionaryObject>
 		{
 		public:
-			static ObjectReferenceWrapper<PageNode> Create(const DictionaryObject& obj);
+			explicit PageNode(ObjectReferenceWrapper<DictionaryObject> obj) : HighLevelObject(obj) {}
+			static ObjectReferenceWrapper<PageNode> Create(ObjectReferenceWrapper<DictionaryObject> obj);
 			virtual ~PageNode() = 0;
 		};
 	}

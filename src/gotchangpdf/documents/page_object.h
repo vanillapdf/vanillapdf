@@ -14,16 +14,15 @@ namespace gotchangpdf
 		{
 		public:
 			//PageObject();
-			explicit PageObject(const DictionaryObject& obj);
+			explicit PageObject(ObjectReferenceWrapper<DictionaryObject> obj);
 
 			//inline ObjectReferenceWrapper<IndirectObjectReference> Parent(void) const { return _parent; }
-			inline ObjectReferenceWrapper<ResourceDictionary> Resources(void) const { return _resources; }
+			ObjectReferenceWrapper<ResourceDictionary> Resources(void) const;
 
 			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageObject; }
 
 		private:
-			ObjectReferenceWrapper<DictionaryObject> _dictionary;
-			ObjectReferenceWrapper<ResourceDictionary> _resources;
+			mutable ObjectReferenceWrapper<ResourceDictionary> _resources;
 		};
 	}
 }

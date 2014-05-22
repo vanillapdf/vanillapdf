@@ -14,15 +14,15 @@ namespace gotchangpdf
 		using namespace constant;
 		using namespace exceptions;
 
-		Catalog::Catalog(const DictionaryObject& root)
+		Catalog::Catalog(ObjectReferenceWrapper<DictionaryObject> root) : HighLevelObject(root)
 		{
-			if (*root.FindAs<NameObject>(Name::Type) != Name::Catalog)
+			if (*root->FindAs<NameObject>(Name::Type) != Name::Catalog)
 				throw Exception("TODO");
 
-			auto pages = *root.FindAs<IndirectObjectReference>(Name::Pages);
+			auto pages = *root->FindAs<IndirectObjectReference>(Name::Pages);
 			auto page_root = pages.GetReferencedObjectAs<DictionaryObject>();
 
-			_pages = ObjectReferenceWrapper<PageTree>(new PageTree(*page_root));
+			_pages = ObjectReferenceWrapper<PageTree>(new PageTree(page_root));
 		}
 	}
 }

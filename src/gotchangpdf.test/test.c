@@ -238,7 +238,7 @@ int main()
 		PageObject_Release(page);
 	}
 
-	//PageTree_Release(pages);
+	PageTree_Release(pages);
 
 	printf("Document catalog end\n");
 

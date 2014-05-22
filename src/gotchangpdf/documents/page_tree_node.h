@@ -16,19 +16,17 @@ namespace gotchangpdf
 		{
 		public:
 			//PageTreeNode();
-			explicit PageTreeNode(const DictionaryObject& obj);
+			explicit PageTreeNode(ObjectReferenceWrapper<DictionaryObject> obj);
 
-			inline IntegerObject::ValueType KidCount(void) const { return _count->Value(); }
-			inline ObjectReferenceWrapper<PageNode> Kid(unsigned int number) const { return PageNode::Create(*_kids->At(number)->GetReferencedObjectAs<DictionaryObject>()); }
-			inline ObjectReferenceWrapper<PageNode> operator[](unsigned int number) const { return PageNode::Create(*(*_kids)[number]->GetReferencedObjectAs<DictionaryObject>()); }
+			IntegerObject::ValueType KidCount(void) const;
+			ObjectReferenceWrapper<PageNode> Kid(unsigned int number) const;
+			ObjectReferenceWrapper<PageNode> operator[](unsigned int number) const;
 
 			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageTreeNode; }
 
 		private:
-			ObjectReferenceWrapper<DictionaryObject> _dictionary;
-
-			ObjectReferenceWrapper<IntegerObject> _count;
-			ObjectReferenceWrapper<SpecializedArrayObject<IndirectObjectReference>> _kids;
+			mutable ObjectReferenceWrapper<IntegerObject> _count;
+			mutable ObjectReferenceWrapper<SpecializedArrayObject<IndirectObjectReference>> _kids;
 		};
 	}
 }

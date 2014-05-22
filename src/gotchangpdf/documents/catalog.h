@@ -10,10 +10,10 @@ namespace gotchangpdf
 {
 	namespace documents
 	{
-		class Catalog : public HighLevelObject
+		class Catalog : public HighLevelObject<DictionaryObject>
 		{
 		public:
-			explicit Catalog(const DictionaryObject& root);
+			explicit Catalog(ObjectReferenceWrapper<DictionaryObject> root);
 
 			inline ObjectReferenceWrapper<PageTree> Pages(void) const { return _pages; }
 

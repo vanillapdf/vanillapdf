@@ -9,11 +9,11 @@ namespace gotchangpdf
 {
 	namespace documents
 	{
-		class ResourceDictionary : public HighLevelObject
+		class ResourceDictionary : public HighLevelObject<DictionaryObject>
 		{
 		public:
 			//PageObject();
-			explicit ResourceDictionary(const DictionaryObject& obj) : _dictionary(new DictionaryObject(obj)) {}
+			explicit ResourceDictionary(ObjectReferenceWrapper<DictionaryObject> obj) : HighLevelObject(obj) {}
 
 			//inline ObjectReferenceWrapper<IndirectObjectReference> Parent(void) const { return _parent; }
 			//inline ObjectReferenceWrapper<DictionaryObject> Resources(void) const { return _resources; }

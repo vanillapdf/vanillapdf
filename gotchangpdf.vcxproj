@@ -19,6 +19,7 @@
     <ClInclude Include="include\gotchangpdf\c_indirect_object_reference.h" />
     <ClInclude Include="include\gotchangpdf\c_integer_object.h" />
     <ClInclude Include="include\gotchangpdf\c_object.h" />
+    <ClInclude Include="include\gotchangpdf\c_page_object.h" />
     <ClInclude Include="include\gotchangpdf\c_page_tree.h" />
     <ClInclude Include="include\gotchangpdf\c_export.h" />
     <ClInclude Include="include\gotchangpdf\gotchangpdf.h" />

@@ -2,12 +2,14 @@
 #define _HIGH_LEVEL_OBJECT
 
 #include "intrusive.h"
+#include "object_reference_wrapper.h"
 
 namespace gotchangpdf
 {
 	namespace documents
 	{
-		class HighLevelObject : public boost::intrusive_ref_counter<HighLevelObject>
+		template <typename T>
+		class HighLevelObject : public boost::intrusive_ref_counter<HighLevelObject<T>>
 		{
 		public:
 			enum class Type : unsigned char
@@ -21,13 +23,20 @@ namespace gotchangpdf
 				PageTree
 			};
 
-			//static const char* TypeName(Type type);
+			explicit HighLevelObject(ObjectReferenceWrapper<T> obj) : _obj(obj) {}
 
+			//static ObjectReferenceWrapper<HighLevelObject> Create(ObjectReferenceWrapper<Object> low_level);
 			virtual inline Type GetType(void) const = 0;
 
-			void Release();
+			inline void SetParent(ObjectReferenceWrapper<Object> obj) { _obj->SetParent(obj); }
+			inline ObjectReferenceWrapper<Object> GetParent() const { return _obj->GetParent(); }
 
-			virtual ~HighLevelObject() = 0;
+			void Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
+
+			virtual ~HighLevelObject() {};
+
+		protected:
+			ObjectReferenceWrapper<T> _obj;
 		};
 	}
 }

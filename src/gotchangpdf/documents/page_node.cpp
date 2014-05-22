@@ -15,9 +15,9 @@ namespace gotchangpdf
 
 		PageNode::~PageNode() {}
 
-		ObjectReferenceWrapper<PageNode> PageNode::Create(const DictionaryObject& obj)
+		ObjectReferenceWrapper<PageNode> PageNode::Create(ObjectReferenceWrapper<DictionaryObject> obj)
 		{
-			auto type = obj.FindAs<NameObject>(Name::Type);
+			auto type = obj->FindAs<NameObject>(Name::Type);
 
 			if (*type == Name::Pages)
 				return ObjectReferenceWrapper<PageTreeNode>(new PageTreeNode(obj));

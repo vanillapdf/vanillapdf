@@ -6,6 +6,7 @@
 //#define Derive_Object_CRTP(Type) class Type : public Object_CRTP<Type>
 
 #include "intrusive.h"
+#include "object_reference_wrapper.h"
 
 namespace gotchangpdf
 {
@@ -34,8 +35,10 @@ namespace gotchangpdf
 		};
 
 		static const char* TypeName(Type type);
-
 		Type GetType(void) const;
+
+		inline void SetParent(ObjectReferenceWrapper<Object> obj) { _parent = obj; }
+		inline ObjectReferenceWrapper<Object> GetParent() const { return _parent; }
 
 		//virtual Object* Clone(void) const = 0;
 
@@ -48,6 +51,7 @@ namespace gotchangpdf
 
 	protected:
 		Type _type;
+		ObjectReferenceWrapper<Object> _parent = nullptr;
 	};
 	/*
 	template <typename T>
