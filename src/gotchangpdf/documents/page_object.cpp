@@ -27,12 +27,11 @@ namespace gotchangpdf
 
 		ObjectReferenceWrapper<ResourceDictionary> PageObject::Resources(void) const
 		{
-			if (_resources->GetParent() != _obj)
+			if (_resources->GetContainer() != _obj)
 				_resources = new ResourceDictionary(_obj->FindAs<DictionaryObject>(Name::Resources));
 
 			return _resources;
 		}
-
 	}
 }
 

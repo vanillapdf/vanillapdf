@@ -35,23 +35,22 @@ namespace gotchangpdf
 		};
 
 		static const char* TypeName(Type type);
-		Type GetType(void) const;
+		virtual inline Type GetType(void) const = 0;
 
-		inline void SetParent(ObjectReferenceWrapper<Object> obj) { _parent = obj; }
-		inline ObjectReferenceWrapper<Object> GetParent() const { return _parent; }
+		inline void SetContainer(ObjectReferenceWrapper<Object> obj) { _container = obj; }
+		inline ObjectReferenceWrapper<Object> GetContainer() const { return _container; }
 
 		//virtual Object* Clone(void) const = 0;
 
 		Object();
 		explicit Object(Type type);
 
-		void Release();
+		inline void Release() { boost::sp_adl_block::intrusive_ptr_release(this); };
 
 		virtual ~Object() = 0;
 
 	protected:
-		Type _type;
-		ObjectReferenceWrapper<Object> _parent = nullptr;
+		ObjectReferenceWrapper<Object> _container = nullptr;
 	};
 	/*
 	template <typename T>

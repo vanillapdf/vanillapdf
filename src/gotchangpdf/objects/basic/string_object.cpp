@@ -8,13 +8,13 @@ namespace gotchangpdf
 	using namespace std;
 	using namespace lexical;
 
-	LiteralString::LiteralString(const Token& token) : StringObject(Object::Type::LiteralString, token.value()) {}
-	LiteralString::LiteralString(const Buffer& value) : StringObject(Object::Type::LiteralString, value)
+	LiteralString::LiteralString(const Token& token) : StringObject(token.value()) {}
+	LiteralString::LiteralString(const Buffer& value) : StringObject(value)
 	{
 		// TODO remove <> if contains
 	}
 
-	HexadecimalString::HexadecimalString(const Token& token) : StringObject(Object::Type::HexadecimalString)
+	HexadecimalString::HexadecimalString(const Token& token)
 	{
 		auto buffer = token.value();
 		_hexadecimal = buffer.ToString();
@@ -29,7 +29,7 @@ namespace gotchangpdf
 		}
 	}
 
-	HexadecimalString::HexadecimalString(const Buffer& value) : StringObject(Object::Type::HexadecimalString)
+	HexadecimalString::HexadecimalString(const Buffer& value)
 	{
 		_hexadecimal = value.ToString();
 
@@ -43,6 +43,6 @@ namespace gotchangpdf
 		}
 	}
 
-	StringObject::StringObject(Type type, const Buffer& value) : Object(type), _value(value) { assert(type == Object::Type::HexadecimalString || type == Object::Type::LiteralString); }
-	StringObject::StringObject(Type type) : Object(type) { assert(type == Object::Type::HexadecimalString || type == Object::Type::LiteralString); }
+	StringObject::StringObject(const Buffer& value) : _value(value) {}
+	StringObject::StringObject() {}
 }

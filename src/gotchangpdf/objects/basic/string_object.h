@@ -3,7 +3,7 @@
 
 #include "fwd.h"
 #include "object.h"
-#include "Buffer.h"
+#include "buffer.h"
 
 namespace gotchangpdf
 {
@@ -12,8 +12,8 @@ namespace gotchangpdf
 	protected:
 		Buffer _value;
 
-		explicit StringObject(Type type);
-		StringObject(Type type, const Buffer& value);
+		StringObject();
+		explicit StringObject(const Buffer& value);
 	};
 
 	class HexadecimalString : public StringObject
@@ -21,6 +21,8 @@ namespace gotchangpdf
 	public:
 		explicit HexadecimalString(const Buffer& value);
 		explicit HexadecimalString(const lexical::Token& token);
+
+		virtual inline Object::Type GetType(void) const override { return Object::Type::HexadecimalString; }
 
 	private:
 		std::string _hexadecimal;
@@ -31,6 +33,8 @@ namespace gotchangpdf
 	public:
 		explicit LiteralString(const Buffer& value);
 		explicit LiteralString(const lexical::Token& token);
+
+		virtual inline Object::Type GetType(void) const override { return Object::Type::LiteralString; }
 	};
 }
 

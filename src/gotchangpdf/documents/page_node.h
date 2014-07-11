@@ -3,6 +3,7 @@
 
 #include "object_reference_wrapper.h"
 #include "high_level_object.h"
+#include "dictionary_object.h"
 
 namespace gotchangpdf
 {

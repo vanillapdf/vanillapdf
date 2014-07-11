@@ -4,6 +4,8 @@
 #include "fwd.h"
 #include "intrusive.h"
 
+//#include "boost/static_assert.hpp"
+
 #include <cassert>
 
 namespace gotchangpdf
@@ -29,6 +31,9 @@ namespace gotchangpdf
 
 		template <typename U>
 		inline U* GetAs(void) const { return dynamic_cast<U*>(boost::intrusive_ptr<T>::get()); }
+
+	private:
+		//BOOST_STATIC_ASSERT((std::is_base_of<boost::intrusive_ref_counter<T>, T>::value));
 	};
 
 	template<class T, class U> ObjectReferenceWrapper<T> static_wrapper_cast(ObjectReferenceWrapper<U> const &p) { return static_cast<T*>(p.get()); }

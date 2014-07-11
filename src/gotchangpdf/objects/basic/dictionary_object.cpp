@@ -55,7 +55,7 @@ namespace gotchangpdf
 				continue;
 
 			o._list[*name] = val;
-			val->SetParent(&o);
+			val->SetContainer(&o);
 		}
 
 		s.ReadTokenWithType(Token::Type::DICTIONARY_END);
@@ -63,8 +63,6 @@ namespace gotchangpdf
 		s.LexicalSettingsPop();
 		return s;
 	}
-
-	DictionaryObject::DictionaryObject() : Object(Object::Type::DictionaryObject) {}
 
 	ObjectReferenceWrapper<Object> DictionaryObject::Find(const NameObject& name) const
 	{

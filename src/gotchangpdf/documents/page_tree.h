@@ -11,13 +11,13 @@ namespace gotchangpdf
 {
 	namespace documents
 	{
-		class PageTree : public HighLevelObject<PageTreeNode>
+		class PageTree : public HighLevelObject<DictionaryObject>
 		{
 		public:
 			//PageTree();
 			explicit PageTree(ObjectReferenceWrapper<DictionaryObject> root);
 
-			inline IntegerObject::ValueType PageCount(void) const { return _obj->KidCount(); }
+			inline IntegerObject::ValueType PageCount(void) const { return _root->KidCount(); }
 			inline ObjectReferenceWrapper<PageObject> Page(unsigned int number) const { return PageInternal(number); }
 			inline ObjectReferenceWrapper<PageObject> operator[](unsigned int number) const { return PageInternal(number); }
 
@@ -25,6 +25,8 @@ namespace gotchangpdf
 
 		private:
 			ObjectReferenceWrapper<PageObject> PageInternal(unsigned int number) const;
+
+			mutable ObjectReferenceWrapper<PageTreeNode> _root;
 		};
 	}
 }

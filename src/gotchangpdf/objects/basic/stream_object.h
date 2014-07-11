@@ -25,15 +25,17 @@ namespace gotchangpdf
 
 		Buffer GetData() const;
 
+		virtual inline Object::Type GetType(void) const override { return Object::Type::StreamObject; }
+
 		//friend Streams::Lexical::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, StreamObject& o);
 		friend lexical::Parser& operator>> (lexical::Parser& s, StreamObject& o);
 
 	private:
-		ObjectReferenceWrapper<DictionaryObject> _dictionary;
-		std::shared_ptr<Buffer> _data;
-		streamOffsetValueType _rawDataOffset;
-		streamSizeValueType _rawDataLength;
-		Type _type;
+		ObjectReferenceWrapper<DictionaryObject> _dictionary = nullptr;
+		std::shared_ptr<Buffer> _data = nullptr;
+		streamOffsetValueType _rawDataOffset = std::_BADOFF;
+		streamSizeValueType _rawDataLength = -1;
+		Type _type = Type::UNKNOWN;
 	};
 }
 

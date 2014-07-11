@@ -30,11 +30,13 @@ namespace gotchangpdf
 		IntegerObject& operator= (const Buffer& value);
 		IntegerObject& operator= (const lexical::Token& value);
 
+		virtual inline Object::Type GetType(void) const override { return Object::Type::IntegerObject; }
+
 		friend lexical::ReverseStream& operator>> (lexical::ReverseStream& s, IntegerObject& o);
 		friend lexical::Stream& operator>> (lexical::Stream& s, IntegerObject& o);
 
 	private:
-		ValueType _value;
+		ValueType _value = 0;
 	};
 }
 

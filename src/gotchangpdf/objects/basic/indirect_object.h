@@ -26,6 +26,8 @@ namespace gotchangpdf
 		void SetOffset(streamOffsetValueType offset);
 		streamOffsetValueType GetOffset() const;
 
+		virtual inline Object::Type GetType(void) const override { return Object::Type::IndirectObject; }
+
 		/* IIndirectObject */
 		//virtual IObject* GetIObject() const override;
 		//virtual streamOffsetValueType GetOffset() const override;

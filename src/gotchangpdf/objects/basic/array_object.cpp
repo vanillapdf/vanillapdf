@@ -23,7 +23,7 @@ namespace gotchangpdf
 		{
 			auto val = s.readObject();
 			o._list.push_back(val);
-			val->SetParent(&o);
+			val->SetContainer(&o);
 		}
 
 		s.ReadTokenWithType(lexical::Token::Type::ARRAY_END);

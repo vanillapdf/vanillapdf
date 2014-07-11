@@ -3,8 +3,8 @@
 #include "indirect_object_reference.h"
 #include "invalid_object_type_exception.h"
 #include "parser.h"
-#include "File.h"
-#include "Buffer.h"
+#include "file.h"
+#include "buffer.h"
 
 // TODO
 #include "flate_decode_filter.h"
@@ -17,11 +17,9 @@ namespace gotchangpdf
 	using namespace std;
 	using namespace exceptions;
 
-	StreamObject::StreamObject()
-		: Object(Object::Type::StreamObject), _data(nullptr), _rawDataOffset(_BADOFF), _rawDataLength(-1), _type(Type::UNKNOWN) {}
+	StreamObject::StreamObject() {}
 
-	StreamObject::StreamObject(DictionaryObject& dictionary)
-		: Object(Object::Type::StreamObject), _data(nullptr), _rawDataOffset(_BADOFF), _dictionary(&dictionary), _rawDataLength(-1), _type(Type::UNKNOWN) {}
+	StreamObject::StreamObject(DictionaryObject& dictionary) : _dictionary(&dictionary) {}
 
 	Buffer StreamObject::GetData() const
 	{

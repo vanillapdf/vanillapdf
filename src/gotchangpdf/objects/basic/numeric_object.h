@@ -7,9 +7,6 @@ namespace gotchangpdf
 {
 	class NumericObject : public Object
 	{
-	protected:
-		explicit NumericObject(Type type);
-
 	public:
 		virtual ~NumericObject() = 0;
 	};

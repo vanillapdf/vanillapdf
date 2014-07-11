@@ -1,8 +1,8 @@
 #ifndef _INTRUSIVE_H
 #define _INTRUSIVE_H
 
-#include "boost/intrusive_ptr.hpp"
 #include "boost/smart_ptr/intrusive_ref_counter.hpp"
+#include "boost/smart_ptr/intrusive_ptr.hpp"
 
 namespace boost
 {

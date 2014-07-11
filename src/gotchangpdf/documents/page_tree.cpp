@@ -11,13 +11,13 @@ namespace gotchangpdf
 
 		//PageTree::PageTree() {}
 
-		PageTree::PageTree(ObjectReferenceWrapper<DictionaryObject> root) : HighLevelObject(new PageTreeNode(root)) {}
+		PageTree::PageTree(ObjectReferenceWrapper<DictionaryObject> root) : HighLevelObject(root), _root(new PageTreeNode(root)) {}
 
 		ObjectReferenceWrapper<PageObject> PageTree::PageInternal(unsigned int number) const
 		{
 			//int count = 0, result = 0;
 			//ObjectReferenceWrapper<PageTreeNode> tree_node;
-			return dynamic_wrapper_cast<PageObject>(_obj->Kid(0));
+			return dynamic_wrapper_cast<PageObject>(_root->Kid(0));
 		}
 
 		/*

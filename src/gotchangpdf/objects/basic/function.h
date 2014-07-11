@@ -7,6 +7,9 @@ namespace gotchangpdf
 {
 	class Function : public Object
 	{
+	public:
+		virtual inline Object::Type GetType(void) const override { return Object::Type::Function; }
+
 	private:
 	};
 }

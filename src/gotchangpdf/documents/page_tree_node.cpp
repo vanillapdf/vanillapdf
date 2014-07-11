@@ -22,7 +22,7 @@ namespace gotchangpdf
 
 		IntegerObject::ValueType PageTreeNode::KidCount(void) const
 		{
-			if (_count->GetParent() != _obj)
+			if (_count->GetContainer() != _obj)
 				_count = _obj->FindAs<IntegerObject>(Name::Count);
 
 			return _count->Value();
@@ -30,7 +30,7 @@ namespace gotchangpdf
 
 		ObjectReferenceWrapper<PageNode> PageTreeNode::Kid(unsigned int number) const
 		{
-			if (_kids->GetParent() != _obj)
+			if (_kids->GetContainer() != _obj)
 			{
 				auto arr = _obj->FindAs<ArrayObject>(Name::Kids);
 				_kids = ObjectReferenceWrapper<SpecializedArrayObject<IndirectObjectReference>>(new SpecializedArrayObject<IndirectObjectReference>(arr));
@@ -41,7 +41,7 @@ namespace gotchangpdf
 
 		ObjectReferenceWrapper<PageNode> PageTreeNode::operator[](unsigned int number) const
 		{
-			if (_kids->GetParent() != _obj)
+			if (_kids->GetContainer() != _obj)
 			{
 				auto arr = _obj->FindAs<ArrayObject>(Name::Kids);
 				_kids = ObjectReferenceWrapper<SpecializedArrayObject<IndirectObjectReference>>(new SpecializedArrayObject<IndirectObjectReference>(arr));

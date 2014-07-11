@@ -12,11 +12,11 @@ namespace gotchangpdf
 	class ArrayObject : public Object
 	{
 	public:
-		ArrayObject() : Object(Object::Type::ArrayObject) {};
-
 		inline int Size(void) const { return _list.size(); }
 		inline ObjectReferenceWrapper<Object> operator[](unsigned int i) const { return _list[i]; }
 		inline ObjectReferenceWrapper<Object> At(unsigned int at) const { return _list.at(at); }
+
+		virtual inline Object::Type GetType(void) const override { return Object::Type::ArrayObject; }
 
 		friend lexical::Parser& operator>> (lexical::Parser& s, ArrayObject& o);
 

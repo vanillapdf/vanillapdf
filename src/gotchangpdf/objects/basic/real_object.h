@@ -13,10 +13,12 @@ namespace gotchangpdf
 		explicit RealObject(double value);
 		explicit RealObject(const lexical::Token& token);
 
+		virtual inline Object::Type GetType(void) const override { return Object::Type::RealObject; }
+
 		//virtual Object* Clone(void) const  override { return new RealObject(static_cast<RealObject const&>(*this)); };
 
 	private:
-		double _value;
+		double _value = 0;
 	};
 }
 

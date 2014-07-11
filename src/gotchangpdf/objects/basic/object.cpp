@@ -7,22 +7,8 @@
 
 namespace gotchangpdf
 {
-	Object::Object(Type type) : _type(type) /*_intrusive_ref_count(0)*/ {}
-	Object::Object() : _type(Type::Unknown) /*_intrusive_ref_count(0)*/ {}
+	Object::Object() /*_intrusive_ref_count(0)*/ {}
 	Object::~Object() {}
-
-	Object::Type Object::GetType(void) const
-	{
-		// TODO validate
-		//typeid(*this).name();
-
-		return _type;
-	}
-
-	void Object::Release()
-	{
-		boost::sp_adl_block::intrusive_ptr_release(this);
-	}
 
 	const char* Object::TypeName(Type type)
 	{

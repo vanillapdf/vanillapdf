@@ -11,7 +11,7 @@ namespace gotchangpdf
 	using namespace std;
 
 	IndirectObject::IndirectObject(std::shared_ptr<files::File> file, int objNumber, int genNumber, streamOffsetValueType offset /*= _BADOFF */)
-		: Object(Object::Type::IndirectObject), _file(file), _objNumber(objNumber), _genNumber(genNumber), _offset(offset), RequireVersion(file->GetHeader()->GetVersion()) {}
+		: _file(file), _objNumber(objNumber), _genNumber(genNumber), _offset(offset), RequireVersion(file->GetHeader()->GetVersion()) {}
 
 	IndirectObject::IndirectObject(const IndirectObject& other) :
 		_file(other._file), _genNumber(other._genNumber), _objNumber(other._objNumber), _offset(other._offset), _reference(other._reference), RequireVersion(other._file->GetHeader()->GetVersion()) {}

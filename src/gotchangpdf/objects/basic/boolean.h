@@ -7,8 +7,11 @@ namespace gotchangpdf
 {
 	class Boolean : public Object
 	{
+	public:
+		virtual inline Object::Type GetType(void) const override { return Object::Type::Boolean; }
+
 	private:
-		bool _value;
+		bool _value = false;
 	};
 }
 

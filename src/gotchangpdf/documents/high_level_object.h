@@ -2,7 +2,11 @@
 #define _HIGH_LEVEL_OBJECT
 
 #include "intrusive.h"
+#include "object.h"
 #include "object_reference_wrapper.h"
+
+#include "boost/static_assert.hpp"
+//#include "boost/concept_check.hpp"
 
 namespace gotchangpdf
 {
@@ -28,14 +32,16 @@ namespace gotchangpdf
 			//static ObjectReferenceWrapper<HighLevelObject> Create(ObjectReferenceWrapper<Object> low_level);
 			virtual inline Type GetType(void) const = 0;
 
-			inline void SetParent(ObjectReferenceWrapper<Object> obj) { _obj->SetParent(obj); }
-			inline ObjectReferenceWrapper<Object> GetParent() const { return _obj->GetParent(); }
+			inline void SetContainer(ObjectReferenceWrapper<Object> obj) { _obj->SetContainer(obj); }
+			inline ObjectReferenceWrapper<Object> GetContainer() const { return _obj->GetContainer(); }
 
-			void Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
+			inline void Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
 
 			virtual ~HighLevelObject() {};
 
 		protected:
+			BOOST_STATIC_ASSERT((std::is_base_of<Object, T>::value));
+
 			ObjectReferenceWrapper<T> _obj;
 		};
 	}

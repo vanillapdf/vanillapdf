@@ -35,10 +35,11 @@ namespace gotchangpdf
 			listType::const_iterator _it;
 		};
 
+		virtual inline Object::Type GetType(void) const override { return Object::Type::DictionaryObject; }
+
 		Iterator Begin(void) const;
 		Iterator End(void) const;
 
-		DictionaryObject();
 		//friend Objects::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, DictionaryObject& o);
 		friend lexical::Parser& operator>> (lexical::Parser& s, DictionaryObject& o);
 

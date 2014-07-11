@@ -14,10 +14,10 @@ namespace gotchangpdf
 
 	#pragma region Constructors
 
-	IntegerObject::IntegerObject(ValueType value) : NumericObject(Type::IntegerObject), _value(value) {}
-	IntegerObject::IntegerObject() : NumericObject(Type::IntegerObject), _value(0) {}
+	IntegerObject::IntegerObject(ValueType value) : _value(value) {}
+	IntegerObject::IntegerObject() {}
 
-	IntegerObject::IntegerObject(const Token& value) : NumericObject(Type::IntegerObject)
+	IntegerObject::IntegerObject(const Token& value)
 	{
 		assert(value.type() == Token::Type::INTEGER_OBJECT);
 

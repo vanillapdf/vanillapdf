@@ -21,6 +21,8 @@ namespace gotchangpdf
 		template <typename T>
 		ObjectReferenceWrapper<T> GetReferencedObjectAs() const { return GetReferencedObject()->GetObjectAs<T>(); }
 
+		virtual inline Object::Type GetType(void) const override { return Object::Type::IndirectObjectReference; }
+
 	private:
 		std::shared_ptr<files::File> _file;
 		mutable ObjectReferenceWrapper<IndirectObject> _reference;

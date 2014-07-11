@@ -31,6 +31,8 @@ namespace gotchangpdf
 		bool operator==(const NameObject& other) const;
 		bool operator!=(const NameObject& other) const;
 
+		virtual inline Object::Type GetType(void) const override { return Object::Type::NameObject; }
+
 	private:
 		Buffer _value;
 	};
@@ -54,7 +56,7 @@ namespace gotchangpdf
 			DECLARE_CONST_NAME(Page);
 			DECLARE_CONST_NAME(Count);
 			DECLARE_CONST_NAME(Kids);
-			DECLARE_CONST_NAME(Parent);
+			DECLARE_CONST_NAME(Container);
 			DECLARE_CONST_NAME(MediaBox);
 			DECLARE_CONST_NAME(Resources);
 		}
