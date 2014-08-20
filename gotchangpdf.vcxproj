@@ -38,7 +38,6 @@
     <ClInclude Include="src\gotchangpdf\documents\page_tree.h" />
     <ClInclude Include="src\gotchangpdf\documents\page_tree_node.h" />
     <ClInclude Include="src\gotchangpdf\documents\resource_dictionary.h" />
-    <ClInclude Include="src\gotchangpdf\documents\specialized_array.h" />
     <ClInclude Include="src\gotchangpdf\exceptions\exception.h" />
     <ClInclude Include="src\gotchangpdf\exceptions\invalid_object_type_exception.h" />
     <ClInclude Include="src\gotchangpdf\files\file.h" />
@@ -76,6 +75,7 @@
     <ClInclude Include="src\gotchangpdf\raw\raw_base_stream.h" />
     <ClInclude Include="src\gotchangpdf\raw\raw_reverse_stream.h" />
     <ClInclude Include="src\gotchangpdf\raw\raw_stream.h" />
+    <ClInclude Include="src\gotchangpdf\util\bind.h" />
     <ClInclude Include="src\gotchangpdf\util\buffer.h" />
     <ClInclude Include="src\gotchangpdf\util\constants.h" />
     <ClInclude Include="src\gotchangpdf\util\fwd.h" />

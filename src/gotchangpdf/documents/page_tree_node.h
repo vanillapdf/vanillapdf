@@ -2,11 +2,12 @@
 #define _PAGE_TREE_NODE_H
 
 #include "fwd.h"
+#include "array_object.h"
 #include "integer_object.h"
-#include "specialized_array.h"
 #include "page_node.h"
 #include "indirect_object_reference.h"
 #include "dictionary_object.h"
+#include "bind.h"
 
 namespace gotchangpdf
 {
@@ -25,8 +26,11 @@ namespace gotchangpdf
 			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageTreeNode; }
 
 		private:
-			mutable ObjectReferenceWrapper<IntegerObject> _count;
-			mutable ObjectReferenceWrapper<SpecializedArrayObject<IndirectObjectReference>> _kids;
+			Bind<DictionaryObject, IntegerObject> _count;
+			Bind<DictionaryObject, ArrayObject<IndirectObjectReference>> _kids;
+
+			ObjectReferenceWrapper<IntegerObject> GetCount(ObjectReferenceWrapper<DictionaryObject> obj);
+			ObjectReferenceWrapper<ArrayObject<IndirectObjectReference>> GetKids(ObjectReferenceWrapper<DictionaryObject> obj);
 		};
 	}
 }

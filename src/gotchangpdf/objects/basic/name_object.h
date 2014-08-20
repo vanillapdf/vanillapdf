@@ -59,6 +59,7 @@ namespace gotchangpdf
 			DECLARE_CONST_NAME(Container);
 			DECLARE_CONST_NAME(MediaBox);
 			DECLARE_CONST_NAME(Resources);
+			DECLARE_CONST_NAME(Parent);
 		}
 	}
 }

@@ -20,7 +20,7 @@ namespace gotchangpdf
 			//friend Stream& operator>> (Stream& s, Header& o);
 			//friend Stream& operator>> (Stream& s, CrossReferenceTable& o);
 			//friend Stream& operator>> (Stream& s, DictionaryObject& o);
-			//friend Stream& operator>> (Stream& s, ArrayObject& o);
+			//friend Stream& operator>> (Stream& s, MixedArrayObject& o);
 
 			virtual std::shared_ptr<gotchangpdf::lexical::Token> ReadToken() override;
 			virtual std::shared_ptr<gotchangpdf::lexical::Token> PeekToken() override;

@@ -47,7 +47,7 @@ namespace gotchangpdf
 		*/
 		//PageObject::PageObject() {}
 
-		//PageTreeNode::PageTreeNode() : _count(ObjectReferenceWrapper<IntegerObject>(new IntegerObject())), _kids(ObjectReferenceWrapper<ArrayObject>(new ArrayObject())) {}
+		//PageTreeNode::PageTreeNode() : _count(ObjectReferenceWrapper<IntegerObject>(new IntegerObject())), _kids(ObjectReferenceWrapper<MixedArrayObject>(new MixedArrayObject())) {}
 
 
 	}

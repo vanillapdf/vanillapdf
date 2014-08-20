@@ -1,26 +1,22 @@
 #ifndef _RECTANGLE_H
 #define _RECTANGLE_H
 
-//#include "array_object.h"
+#include "high_level_object.h"
 #include "integer_object.h"
-#include "specialized_array.h"
+#include "array_object.h"
 
 namespace gotchangpdf
 {
 	namespace documents
 	{
-		class Rectangle
+		class Rectangle : public HighLevelObject<ArrayObject<IntegerObject>>
 		{
 		public:
-			//Rectangle() : ArrayObject() {}
-			//using ArrayObject::ArrayObject;
+			explicit Rectangle(ObjectReferenceWrapper<ArrayObject<IntegerObject>> list) : HighLevelObject(list) {}
 
-			//virtual ~Rectangle() {}
+			virtual inline HighLevelObject::Type GetType(void) const { return HighLevelObject::Type::Rectangle; }
+
 		private:
-			//Rectangle(std::vector<ObjectReferenceWrapper<IntegerObject>> list) : _list(std::move(list)) {}
-			//friend class ArrayObjectBase;
-
-			SpecializedArrayObject<IntegerObject> _list;
 		};
 	}
 }

@@ -1,7 +1,5 @@
 #include "high_level_object.h"
 
-#include "specialized_array.h"
-
 #include "object.h"
 #include "dictionary_object.h"
 #include "name_object.h"
@@ -24,7 +22,7 @@ namespace gotchangpdf
 				if (*high_type == Name::Pages)
 				{
 					//auto parent = dict->FindAs<IndirectObjectReference>(Name::Parent);
-					//return ObjectReferenceWrapper<SpecializedArrayObject<IndirectObjectReference>>(new SpecializedArrayObject<IndirectObjectReference>(low_level));
+					//return ObjectReferenceWrapper<SpecializedMixedArrayObject<IndirectObjectReference>>(new SpecializedMixedArrayObject<IndirectObjectReference>(low_level));
 				}
 			}
 		}

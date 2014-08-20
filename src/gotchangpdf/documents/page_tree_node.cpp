@@ -10,44 +10,44 @@ namespace gotchangpdf
 		using namespace constant;
 		using namespace exceptions;
 
-		PageTreeNode::PageTreeNode(ObjectReferenceWrapper<DictionaryObject> obj) : PageNode(obj)
+		PageTreeNode::PageTreeNode(ObjectReferenceWrapper<DictionaryObject> obj) :
+			PageNode(obj),
+			_count(Bind<DictionaryObject, IntegerObject>(_obj, std::bind(&PageTreeNode::GetCount, this, _obj))),
+			_kids(Bind<DictionaryObject, ArrayObject<IndirectObjectReference>>(_obj, std::bind(&PageTreeNode::GetKids, this, _obj)))
 		{
 			if (*_obj->FindAs<NameObject>(Name::Type) != Name::Pages)
 				throw Exception("TODO");
-
-			_count = _obj->FindAs<IntegerObject>(Name::Count);
-			auto arr = _obj->FindAs<ArrayObject>(Name::Kids);
-			_kids = ObjectReferenceWrapper<SpecializedArrayObject<IndirectObjectReference>>(new SpecializedArrayObject<IndirectObjectReference>(arr));
 		}
 
 		IntegerObject::ValueType PageTreeNode::KidCount(void) const
 		{
-			if (_count->GetContainer() != _obj)
-				_count = _obj->FindAs<IntegerObject>(Name::Count);
-
 			return _count->Value();
 		}
 
 		ObjectReferenceWrapper<PageNode> PageTreeNode::Kid(unsigned int number) const
 		{
-			if (_kids->GetContainer() != _obj)
-			{
-				auto arr = _obj->FindAs<ArrayObject>(Name::Kids);
-				_kids = ObjectReferenceWrapper<SpecializedArrayObject<IndirectObjectReference>>(new SpecializedArrayObject<IndirectObjectReference>(arr));
-			}
-
-			return PageNode::Create(_kids->At(number)->GetReferencedObjectAs<DictionaryObject>());
+			auto page = _kids->At(number)->GetReferencedObjectAs<DictionaryObject>();
+			return PageNode::Create(page);
 		}
 
 		ObjectReferenceWrapper<PageNode> PageTreeNode::operator[](unsigned int number) const
 		{
-			if (_kids->GetContainer() != _obj)
-			{
-				auto arr = _obj->FindAs<ArrayObject>(Name::Kids);
-				_kids = ObjectReferenceWrapper<SpecializedArrayObject<IndirectObjectReference>>(new SpecializedArrayObject<IndirectObjectReference>(arr));
-			}
+			auto page = (*_kids)[number]->GetReferencedObjectAs<DictionaryObject>();
+			return PageNode::Create(page);
+		}
 
-			return PageNode::Create((*_kids)[number]->GetReferencedObjectAs<DictionaryObject>());
+		ObjectReferenceWrapper<IntegerObject> PageTreeNode::GetCount(ObjectReferenceWrapper<DictionaryObject> obj)
+		{
+			auto count = obj->FindAs<IntegerObject>(Name::Count);
+			return count;
+		}
+
+		ObjectReferenceWrapper<ArrayObject<IndirectObjectReference>> PageTreeNode::GetKids(ObjectReferenceWrapper<DictionaryObject> obj)
+		{
+			auto kids = obj->FindAs<MixedArrayObject>(Name::Kids);
+			auto specialized = kids->ToArrayType<IndirectObjectReference>();
+
+			return specialized;
 		}
 	}
 }

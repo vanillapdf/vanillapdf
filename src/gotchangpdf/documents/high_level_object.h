@@ -1,12 +1,11 @@
-#ifndef _HIGH_LEVEL_OBJECT
-#define _HIGH_LEVEL_OBJECT
+#ifndef _HIGH_LEVEL_OBJECT_H
+#define _HIGH_LEVEL_OBJECT_H
 
 #include "intrusive.h"
 #include "object.h"
 #include "object_reference_wrapper.h"
 
 #include "boost/static_assert.hpp"
-//#include "boost/concept_check.hpp"
 
 namespace gotchangpdf
 {
@@ -19,12 +18,12 @@ namespace gotchangpdf
 			enum class Type : unsigned char
 			{
 				Unknown = 0,
-				SpecializedArrayObject,
 				PageObject,
 				ResourceDictionary,
 				Catalog,
 				PageTreeNode,
-				PageTree
+				PageTree,
+				Rectangle
 			};
 
 			explicit HighLevelObject(ObjectReferenceWrapper<T> obj) : _obj(obj) {}
@@ -47,4 +46,4 @@ namespace gotchangpdf
 	}
 }
 
-#endif /* _HIGH_LEVEL_OBJECT */
+#endif /* _HIGH_LEVEL_OBJECT_H */

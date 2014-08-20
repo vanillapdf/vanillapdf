@@ -5,6 +5,9 @@
 #include "page_node.h"
 #include "dictionary_object.h"
 #include "resource_dictionary.h"
+#include "rectangle.h"
+#include "page_tree_node.h"
+#include "bind.h"
 
 namespace gotchangpdf
 {
@@ -16,13 +19,20 @@ namespace gotchangpdf
 			//PageObject();
 			explicit PageObject(ObjectReferenceWrapper<DictionaryObject> obj);
 
-			//inline ObjectReferenceWrapper<IndirectObjectReference> Parent(void) const { return _parent; }
-			ObjectReferenceWrapper<ResourceDictionary> Resources(void) const;
+			ObjectReferenceWrapper<PageTreeNode> Parent(void) const { return _parent(); }
+			ObjectReferenceWrapper<ResourceDictionary> Resources(void) const { return _resources(); }
+			ObjectReferenceWrapper<Rectangle> MediaBox(void) const { return _media_box(); }
 
 			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageObject; }
 
 		private:
-			mutable ObjectReferenceWrapper<ResourceDictionary> _resources;
+			Bind<DictionaryObject, PageTreeNode> _parent;
+			Bind<DictionaryObject, ResourceDictionary> _resources;
+			Bind<DictionaryObject, Rectangle> _media_box;
+
+			ObjectReferenceWrapper<PageTreeNode> GetParent(ObjectReferenceWrapper<DictionaryObject> obj);
+			ObjectReferenceWrapper<ResourceDictionary> GetResources(ObjectReferenceWrapper<DictionaryObject> obj);
+			ObjectReferenceWrapper<Rectangle> GetMediaBox(ObjectReferenceWrapper<DictionaryObject> obj);
 		};
 	}
 }
