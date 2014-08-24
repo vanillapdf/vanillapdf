@@ -28,6 +28,8 @@ namespace gotchangpdf
 
 			explicit HighLevelObject(SmartPtr<T> obj) : _obj(obj) {}
 
+			inline SmartPtr<T> Get(void) const { return _obj; }
+
 			//static ObjectReferenceWrapper<HighLevelObject> Create(ObjectReferenceWrapper<Object> low_level);
 			virtual inline Type GetType(void) const = 0;
 

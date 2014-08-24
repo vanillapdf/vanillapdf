@@ -24,16 +24,14 @@ namespace gotchangpdf
 			return _count->Value();
 		}
 
-		SmartPtr<PageNode> PageTreeNode::Kid(unsigned int number) const
+		SmartPtr<ArrayObject<PageNode>> PageTreeNode::Kids() const
 		{
-			auto page = _kids->At(number)->GetReferencedObjectAs<DictionaryObject>();
-			return PageNode::Create(page);
-		}
-
-		SmartPtr<PageNode> PageTreeNode::operator[](unsigned int number) const
-		{
-			auto page = (*_kids)[number]->GetReferencedObjectAs<DictionaryObject>();
-			return PageNode::Create(page);
+			return _kids->Convert<PageNode>(
+				[](SmartPtr<IndirectObjectReference>& obj)->SmartPtr<PageNode>
+			{
+				auto page = obj->GetReferencedObjectAs<DictionaryObject>();
+				return PageNode::Create(page);
+			});
 		}
 
 		SmartPtr<IntegerObject> PageTreeNode::GetCount(SmartPtr<DictionaryObject> obj)
@@ -45,7 +43,7 @@ namespace gotchangpdf
 		SmartPtr<ArrayObject<IndirectObjectReference>> PageTreeNode::GetKids(SmartPtr<DictionaryObject> obj)
 		{
 			auto kids = obj->FindAs<MixedArrayObject>(Name::Kids);
-			auto specialized = kids->ToArrayType<IndirectObjectReference>();
+			auto specialized = kids->CastToArrayType<IndirectObjectReference>();
 
 			return specialized;
 		}

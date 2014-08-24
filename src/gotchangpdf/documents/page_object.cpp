@@ -40,7 +40,7 @@ namespace gotchangpdf
 		SmartPtr<Rectangle> PageObject::GetMediaBox(SmartPtr<DictionaryObject> obj)
 		{
 			auto box = _obj->FindAs<MixedArrayObject>(Name::MediaBox);
-			auto specialized = box->ToArrayType<IntegerObject>();
+			auto specialized = box->CastToArrayType<IntegerObject>();
 			auto rectangle = new Rectangle(SmartPtr<ArrayObject<IntegerObject>>(specialized));
 
 			return SmartPtr<Rectangle>(rectangle);

@@ -45,6 +45,16 @@ namespace gotchangpdf
 			return s;
 		}
 
+		template <typename U>
+		SmartPtr<ArrayObject<U>> Convert(std::function<SmartPtr<U>(SmartPtr<T>& obj)> f)
+		{
+			std::vector<SmartPtr<U>> list;
+			list.resize(_list.size());
+			transform(_list.begin(), _list.end(), list.begin(), f);
+
+			return SmartPtr<ArrayObject<U>>(new ArrayObject<U>(list));
+		}
+
 	protected:
 		std::vector<SmartPtr<T>> _list;
 	};
@@ -53,13 +63,9 @@ namespace gotchangpdf
 	{
 	public:
 		template <typename T>
-		SmartPtr<ArrayObject<T>> ToArrayType()
+		SmartPtr<ArrayObject<T>> CastToArrayType()
 		{
-			std::vector<SmartPtr<T>> list;
-			list.resize(_list.size());
-			transform(_list.begin(), _list.end(), list.begin(), [](SmartPtr<Object>& obj)->SmartPtr<T>{ return dynamic_wrapper_cast<T>(obj); });
-
-			return SmartPtr<ArrayObject<T>>(new ArrayObject<T>(list));
+			return Convert<T>([](SmartPtr<Object>& obj)->SmartPtr<T>{ return dynamic_wrapper_cast<T>(obj); });
 		}
 	};
 }

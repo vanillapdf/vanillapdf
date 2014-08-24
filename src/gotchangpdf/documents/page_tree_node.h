@@ -20,8 +20,7 @@ namespace gotchangpdf
 			explicit PageTreeNode(SmartPtr<DictionaryObject> obj);
 
 			IntegerObject::ValueType KidCount(void) const;
-			SmartPtr<PageNode> Kid(unsigned int number) const;
-			SmartPtr<PageNode> operator[](unsigned int number) const;
+			SmartPtr<ArrayObject<PageNode>> Kids(void) const;
 
 			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageTreeNode; }
 

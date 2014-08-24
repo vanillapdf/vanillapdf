@@ -11,4 +11,7 @@
 /doc/
 
 #Test files
-/test/
+/test/*.pdf
+
+#Log files
+/log/*.log

@@ -1,5 +1,7 @@
 #include "page_tree.h"
 
+#include "invalid_object_type_exception.h"
+
 #include "c_page_tree.h"
 
 namespace gotchangpdf
@@ -7,7 +9,6 @@ namespace gotchangpdf
 	namespace documents
 	{
 		using namespace constant;
-		using namespace exceptions;
 
 		//PageTree::PageTree() {}
 
@@ -15,41 +16,65 @@ namespace gotchangpdf
 
 		SmartPtr<PageObject> PageTree::PageInternal(unsigned int number) const
 		{
-			//int count = 0, result = 0;
-			//ObjectReferenceWrapper<PageTreeNode> tree_node;
-			return dynamic_wrapper_cast<PageObject>(_root->Kid(0));
-		}
+			auto node = _root;
+			unsigned int current = 1;
 
-		/*
-		IntegerObject::ValueType PageTree::PageCountInternal(ObjectReferenceWrapper<PageNode> node) const
-		{
-			int count = 0, result = 0;
-			ObjectReferenceWrapper<PageTreeNode> tree_node;
-
-			auto type = node->GetType();
-			switch (type)
+		dive:
+			auto kids = node->Kids();
+			auto count = kids->Size();
+			for (int i = 0; i < count; ++i)
 			{
-			case PageNode::Type::PAGE_TREE_NODE:
-				tree_node = dynamic_wrapper_cast<PageTreeNode>(node);
-				count = tree_node->KidCount();
-				for (unsigned int i = 0; i < count; ++i)
-					result += PageCountInternal(tree_node->Kid(i));
-				break;
-			case PageNode::Type::PAGE_OBJECT_NODE:
-				break;
-			default:
-				assert(false);
-				throw Exception("FIXME: Unknown PageNodeType");
+				unsigned int under = 0;
+
+				auto kid = kids->At(i);
+				switch (kid->GetType())
+				{
+				case HighLevelObject::Type::PageTreeNode:
+					under = node->KidCount();
+					if (current + under >= number)
+					{
+						auto tree_node = dynamic_wrapper_cast<PageTreeNode>(kid);
+						if (HasTreeChilds(tree_node))
+						{
+							node = tree_node;
+							goto dive;
+						}
+
+						auto result = tree_node->Kids()->At(number - current);
+						return dynamic_wrapper_cast<PageObject>(result);
+					}
+					else
+					{
+						current += under;
+					}
+
+					break;
+				case HighLevelObject::Type::PageObject:
+					if (current == number)
+						return dynamic_wrapper_cast<PageObject>(kid);
+					else
+						current++;
+					break;
+				default:
+					throw new exceptions::InvalidObjectTypeException(*kid->Get());
+				}
 			}
 
-			return result;
+			throw new exceptions::Exception("Page number was not found: " + number);
 		}
-		*/
-		//PageObject::PageObject() {}
 
-		//PageTreeNode::PageTreeNode() : _count(ObjectReferenceWrapper<IntegerObject>(new IntegerObject())), _kids(ObjectReferenceWrapper<MixedArrayObject>(new MixedArrayObject())) {}
+		bool PageTree::HasTreeChilds(SmartPtr<PageTreeNode> node) const
+		{
+			auto kids = node->Kids();
+			auto count = kids->Size();;
+			for (int i = 0; i < count; ++i)
+			{
+				if (kids->At(i)->GetType() == HighLevelObject::Type::PageTreeNode)
+					return true;
+			}
 
-
+			return false;
+		}
 	}
 }
 

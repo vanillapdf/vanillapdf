@@ -34,6 +34,9 @@ void process(ObjectHandle obj, int nested)
 
 	enum ObjectType type = Object_Type(obj);
 
+	if (nested > 2)
+		return;
+
 	switch (type)
 	{
 	case Unknown:
@@ -200,7 +203,7 @@ void process(ObjectHandle obj, int nested)
 	}
 }
 
-int main()
+int main(int argc, char *argv[])
 {
 	int i, result, size;
 	FileHandle file;
@@ -209,13 +212,13 @@ int main()
 	PageTreeHandle pages;
 	ArrayObjectHandle page_kids;
 	int page_count;
-	const char str[] = "test\\manual-memorias.pdf";
-	//const char str[] = "test\\pdfSample.pdf";
 
-	file = File_Create(str);
+	if (argc != 2)
+		return 1;
+
+	file = File_Create(argv[1]);
 	result = File_Initialize(file);
 	xref = File_Xref(file);
-
 	size = Xref_Size(xref);
 
 	for (i = 1; i < size; ++i)
@@ -224,7 +227,6 @@ int main()
 		process((ObjectHandle)indirect, 0);
 		IndirectObject_Release(indirect);
 	}
-
 	catalog = File_GetDocumentCatalog(file);
 	printf("Document catalog begin\n");
 
@@ -233,7 +235,7 @@ int main()
 
 	for (i = 0; i < size; ++i)
 	{
-		PageObjectHandle page = PageTree_GetPage(pages, i);
+		PageObjectHandle page = PageTree_GetPage(pages, i + 1);
 		process_page(page, 1);
 		PageObject_Release(page);
 	}
@@ -245,5 +247,5 @@ int main()
 	Xref_Release(xref);
 	File_Release(file);
 
-	getchar();
+	return 0;
 }

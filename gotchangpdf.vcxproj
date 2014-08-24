@@ -193,7 +193,8 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Co
       <AdditionalDependencies>lib\zlib\lib\zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "lib\zlib\zlib1.dll" "build\$(ProjectName)\$(Configuration)"</Command>
+      <Command>xcopy /Y "lib\zlib\zlib1.dll" "build\$(ProjectName)\$(Configuration)"
+xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Configuration)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

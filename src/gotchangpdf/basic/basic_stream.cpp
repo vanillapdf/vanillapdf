@@ -78,7 +78,7 @@ namespace gotchangpdf
 
 			int rd = static_cast<int>(read);
 			Character ch(buf[std::max(0, rd - 2)]);
-			streamsize pos = ch == Character::WhiteSpace::CARRIAGE_RETURN ? std::max(0, rd - 2) : std::max(0, rd - 1);
+			streamsize pos = (ch == Character::WhiteSpace::CARRIAGE_RETURN ? std::max(0, rd - 2) : std::max(0, rd - 1));
 
 			assert(pos >= 0);
 

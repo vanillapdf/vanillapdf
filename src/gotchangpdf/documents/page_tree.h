@@ -25,8 +25,9 @@ namespace gotchangpdf
 
 		private:
 			SmartPtr<PageObject> PageInternal(unsigned int number) const;
+			bool HasTreeChilds(SmartPtr<PageTreeNode> node) const;
 
-			mutable SmartPtr<PageTreeNode> _root;
+			SmartPtr<PageTreeNode> _root;
 		};
 	}
 }
