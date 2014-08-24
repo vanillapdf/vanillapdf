@@ -1,7 +1,7 @@
 #ifndef _PAGE_NODE_H
 #define _PAGE_NODE_H
 
-#include "object_reference_wrapper.h"
+#include "smart_ptr.h"
 #include "high_level_object.h"
 #include "dictionary_object.h"
 
@@ -12,8 +12,8 @@ namespace gotchangpdf
 		class PageNode : public HighLevelObject<DictionaryObject>
 		{
 		public:
-			explicit PageNode(ObjectReferenceWrapper<DictionaryObject> obj) : HighLevelObject(obj) {}
-			static ObjectReferenceWrapper<PageNode> Create(ObjectReferenceWrapper<DictionaryObject> obj);
+			explicit PageNode(SmartPtr<DictionaryObject> obj) : HighLevelObject(obj) {}
+			static SmartPtr<PageNode> Create(SmartPtr<DictionaryObject> obj);
 			virtual ~PageNode() = 0;
 		};
 	}

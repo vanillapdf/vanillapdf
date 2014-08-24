@@ -3,7 +3,7 @@
 
 #include "fwd.h"
 #include "object.h"
-#include "object_reference_wrapper.h"
+#include "smart_ptr.h"
 
 #include <vector>
 #include <algorithm>
@@ -15,11 +15,11 @@ namespace gotchangpdf
 	{
 	public:
 		ArrayObject() {}
-		explicit ArrayObject(std::vector<ObjectReferenceWrapper<T>> list) : _list(list) {}
+		explicit ArrayObject(std::vector<SmartPtr<T>> list) : _list(list) {}
 
 		inline int Size(void) const { return _list.size(); }
-		inline ObjectReferenceWrapper<T> operator[](unsigned int i) const { return _list[i]; }
-		inline ObjectReferenceWrapper<T> At(unsigned int at) const { return _list.at(at); }
+		inline SmartPtr<T> operator[](unsigned int i) const { return _list[i]; }
+		inline SmartPtr<T> At(unsigned int at) const { return _list.at(at); }
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::ArrayObject; }
 
@@ -46,20 +46,20 @@ namespace gotchangpdf
 		}
 
 	protected:
-		std::vector<ObjectReferenceWrapper<T>> _list;
+		std::vector<SmartPtr<T>> _list;
 	};
 
 	class MixedArrayObject : public ArrayObject<Object>
 	{
 	public:
 		template <typename T>
-		ObjectReferenceWrapper<ArrayObject<T>> ToArrayType()
+		SmartPtr<ArrayObject<T>> ToArrayType()
 		{
-			std::vector<ObjectReferenceWrapper<T>> list;
+			std::vector<SmartPtr<T>> list;
 			list.resize(_list.size());
-			transform(_list.begin(), _list.end(), list.begin(), [](ObjectReferenceWrapper<Object>& obj)->ObjectReferenceWrapper<T>{ return dynamic_wrapper_cast<T>(obj); });
+			transform(_list.begin(), _list.end(), list.begin(), [](SmartPtr<Object>& obj)->SmartPtr<T>{ return dynamic_wrapper_cast<T>(obj); });
 
-			return ObjectReferenceWrapper<ArrayObject<T>>(new ArrayObject<T>(list));
+			return SmartPtr<ArrayObject<T>>(new ArrayObject<T>(list));
 		}
 	};
 }

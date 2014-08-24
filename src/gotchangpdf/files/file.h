@@ -7,7 +7,7 @@
 #include "header.h"
 #include "trailer.h"
 #include "indirect_object.h"
-#include "object_reference_wrapper.h"
+#include "smart_ptr.h"
 #include "catalog.h"
 
 #include <fstream>
@@ -23,20 +23,20 @@ namespace gotchangpdf
 			virtual ~File(void);
 
 			void Initialize(void);
-			ObjectReferenceWrapper<Xref> GetXref(void) const;
-			ObjectReferenceWrapper<documents::Catalog> GetDocumentCatalog(void) const;
-			ObjectReferenceWrapper<IndirectObject> GetIndirectObject(unsigned int objNumber, unsigned int genNumber) const;
-			ObjectReferenceWrapper<Header> GetHeader(void) const;
-			ObjectReferenceWrapper<Trailer> GetTrailer(void) const;
+			SmartPtr<Xref> GetXref(void) const;
+			SmartPtr<documents::Catalog> GetDocumentCatalog(void) const;
+			SmartPtr<IndirectObject> GetIndirectObject(unsigned int objNumber, unsigned int genNumber) const;
+			SmartPtr<Header> GetHeader(void) const;
+			SmartPtr<Trailer> GetTrailer(void) const;
 			lexical::Parser GetParser(void) const;
 
 		private:
 			std::shared_ptr<lexical::Parser> _stream;
 			std::shared_ptr<std::fstream> _input;
-			ObjectReferenceWrapper<Header> _header;
-			ObjectReferenceWrapper<Trailer> _trailer;
-			ObjectReferenceWrapper<Xref> _xref;
-			std::vector<ObjectReferenceWrapper<IndirectObject>> _cache;
+			SmartPtr<Header> _header;
+			SmartPtr<Trailer> _trailer;
+			SmartPtr<Xref> _xref;
+			std::vector<SmartPtr<IndirectObject>> _cache;
 		};
 	}
 }

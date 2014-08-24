@@ -3,7 +3,7 @@
 
 #include "fwd.h"
 #include "lexical_stream.h"
-#include "object_reference_wrapper.h"
+#include "smart_ptr.h"
 
 namespace gotchangpdf
 {
@@ -15,11 +15,11 @@ namespace gotchangpdf
 			Parser(std::shared_ptr<files::File> file, std::shared_ptr<std::istream> stream);
 
 			template<typename T>
-			ObjectReferenceWrapper<T> readObjectWithType() { return readObject().GetAs<T>(); }
+			SmartPtr<T> readObjectWithType() { return readObject().GetAs<T>(); }
 
-			ObjectReferenceWrapper<Object> readObjectWithType(Object::Type type);
-			ObjectReferenceWrapper<Object> readObject();
-			ObjectReferenceWrapper<Object> peekObject();
+			SmartPtr<Object> readObjectWithType(Object::Type type);
+			SmartPtr<Object> readObject();
+			SmartPtr<Object> peekObject();
 
 			std::shared_ptr<files::File> file(void) const;
 			//void SetDeep(bool deep);

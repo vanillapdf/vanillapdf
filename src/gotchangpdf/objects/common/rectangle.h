@@ -12,7 +12,7 @@ namespace gotchangpdf
 		class Rectangle : public HighLevelObject<ArrayObject<IntegerObject>>
 		{
 		public:
-			explicit Rectangle(ObjectReferenceWrapper<ArrayObject<IntegerObject>> list) : HighLevelObject(list) {}
+			explicit Rectangle(SmartPtr<ArrayObject<IntegerObject>> list) : HighLevelObject(list) {}
 
 			virtual inline HighLevelObject::Type GetType(void) const { return HighLevelObject::Type::Rectangle; }
 

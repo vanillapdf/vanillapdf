@@ -55,7 +55,7 @@ namespace gotchangpdf
 			*_stream >> *_trailer->dictionary();
 		}
 
-		ObjectReferenceWrapper<IndirectObject> File::GetIndirectObject(unsigned int objNumber, unsigned int genNumber) const
+		SmartPtr<IndirectObject> File::GetIndirectObject(unsigned int objNumber, unsigned int genNumber) const
 		{
 			//if (_cache.)
 
@@ -84,17 +84,17 @@ namespace gotchangpdf
 			*/
 		}
 
-		ObjectReferenceWrapper<documents::Catalog> File::GetDocumentCatalog(void) const
+		SmartPtr<documents::Catalog> File::GetDocumentCatalog(void) const
 		{
 			static const char root[] = "Root";
 			auto reference = _trailer->dictionary()->FindAs<IndirectObjectReference>(NameObject(Buffer(root, sizeof(root))));
 			auto dict = reference->GetReferencedObjectAs<DictionaryObject>();
-			return ObjectReferenceWrapper<documents::Catalog>(new documents::Catalog(dict));
+			return SmartPtr<documents::Catalog>(new documents::Catalog(dict));
 		}
 
-		ObjectReferenceWrapper<Header> File::GetHeader(void) const { return _header; }
-		ObjectReferenceWrapper<Trailer> File::GetTrailer(void) const { return _trailer; }
-		ObjectReferenceWrapper<Xref> File::GetXref(void) const { return _xref; }
+		SmartPtr<Header> File::GetHeader(void) const { return _header; }
+		SmartPtr<Trailer> File::GetTrailer(void) const { return _trailer; }
+		SmartPtr<Xref> File::GetXref(void) const { return _xref; }
 
 		lexical::Parser File::GetParser(void) const { return lexical::Parser(*_stream); }
 	}

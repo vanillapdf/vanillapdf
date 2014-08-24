@@ -3,7 +3,7 @@
 
 #include "intrusive.h"
 #include "object.h"
-#include "object_reference_wrapper.h"
+#include "smart_ptr.h"
 
 #include "boost/static_assert.hpp"
 
@@ -26,13 +26,13 @@ namespace gotchangpdf
 				Rectangle
 			};
 
-			explicit HighLevelObject(ObjectReferenceWrapper<T> obj) : _obj(obj) {}
+			explicit HighLevelObject(SmartPtr<T> obj) : _obj(obj) {}
 
 			//static ObjectReferenceWrapper<HighLevelObject> Create(ObjectReferenceWrapper<Object> low_level);
 			virtual inline Type GetType(void) const = 0;
 
-			inline void SetContainer(ObjectReferenceWrapper<Object> obj) { _obj->SetContainer(obj); }
-			inline ObjectReferenceWrapper<Object> GetContainer() const { return _obj->GetContainer(); }
+			inline void SetContainer(SmartPtr<Object> obj) { _obj->SetContainer(obj); }
+			inline SmartPtr<Object> GetContainer() const { return _obj->GetContainer(); }
 
 			inline void Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
 
@@ -41,7 +41,7 @@ namespace gotchangpdf
 		protected:
 			BOOST_STATIC_ASSERT((std::is_base_of<Object, T>::value));
 
-			ObjectReferenceWrapper<T> _obj;
+			SmartPtr<T> _obj;
 		};
 	}
 }

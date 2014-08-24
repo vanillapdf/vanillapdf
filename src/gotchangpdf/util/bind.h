@@ -2,12 +2,12 @@
 #define _BIND_H
 
 #include "fwd.h"
-#include "object_reference_wrapper.h"
+#include "smart_ptr.h"
 #include "object.h"
+#include "high_level_object.h"
 
-//#include "boost/static_assert.hpp"
+#include "boost/static_assert.hpp"
 
-//#include <cassert>
 #include <functional>
 
 namespace gotchangpdf
@@ -16,24 +16,23 @@ namespace gotchangpdf
 	class Bind
 	{
 	public:
-		typedef std::function<ObjectReferenceWrapper<Child>(ObjectReferenceWrapper<Container>)> GetChildFunction;
+		typedef std::function<SmartPtr<Child>(SmartPtr<Container>)> GetChildFunction;
 
-		Bind(ObjectReferenceWrapper<Container> container, GetChildFunction func)
+		Bind(SmartPtr<Container> container, GetChildFunction func)
 			: _child(nullptr), _container(container), _func(func) {}
 
-		ObjectReferenceWrapper<Child> operator()() const { return GetChild(); }
+		SmartPtr<Child> operator()() const { return GetChild(); }
 		Child& operator*() const { return *GetChild(); }
-		ObjectReferenceWrapper<Child> operator->() const { return GetChild(); }
+		SmartPtr<Child> operator->() const { return GetChild(); }
 
 	private:
-		//BOOST_STATIC_ASSERT((std::is_base_of<Object, Child>::value));
-		//BOOST_STATIC_ASSERT((std::is_base_of<Object, Container>::value));
+		BOOST_STATIC_ASSERT((std::is_base_of<Object, Container>::value));
 
-		mutable ObjectReferenceWrapper<Child> _child;
-		ObjectReferenceWrapper<Container> _container;
+		mutable SmartPtr<Child> _child;
+		SmartPtr<Container> _container;
 		GetChildFunction _func;
 
-		ObjectReferenceWrapper<Child> GetChild() const
+		SmartPtr<Child> GetChild() const
 		{
 			if (nullptr == _child || _child->GetContainer() != _container)
 				_child = _func(_container);

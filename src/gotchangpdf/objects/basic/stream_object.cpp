@@ -37,7 +37,7 @@ namespace gotchangpdf
 	{
 		if (nullptr == o._dictionary)
 		{
-			o._dictionary = ObjectReferenceWrapper<DictionaryObject>(new DictionaryObject());
+			o._dictionary = SmartPtr<DictionaryObject>(new DictionaryObject());
 			s >> *o._dictionary;
 		}
 
@@ -57,7 +57,7 @@ namespace gotchangpdf
 		}
 
 		auto size_raw = o._dictionary->Find(constant::Name::Length);
-		ObjectReferenceWrapper<IntegerObject> size;
+		SmartPtr<IntegerObject> size;
 		auto type = size_raw->GetType();
 		if (type == Object::Type::IntegerObject)
 		{

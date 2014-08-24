@@ -64,7 +64,7 @@ namespace gotchangpdf
 		return s;
 	}
 
-	ObjectReferenceWrapper<Object> DictionaryObject::Find(const NameObject& name) const
+	SmartPtr<Object> DictionaryObject::Find(const NameObject& name) const
 	{
 		auto result = _list.find(name);
 		return result->second;
@@ -82,7 +82,7 @@ namespace gotchangpdf
 
 	DictionaryObject::Iterator::Iterator(listType::const_iterator it) : _it(it) {}
 	NameObject DictionaryObject::Iterator::First() const { return _it->first; }
-	ObjectReferenceWrapper<Object> DictionaryObject::Iterator::Second() const { return _it->second; }
+	SmartPtr<Object> DictionaryObject::Iterator::Second() const { return _it->second; }
 	bool DictionaryObject::Iterator::operator==(const Iterator& other) const
 	{
 		return _it == other._it;
@@ -112,7 +112,7 @@ GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObject_Find(Dictionar
 	gotchangpdf::DictionaryObject* dictionary = reinterpret_cast<gotchangpdf::DictionaryObject*>(handle);
 	gotchangpdf::Buffer set(str, len);
 	gotchangpdf::NameObject name(set);
-	gotchangpdf::ObjectReferenceWrapper<gotchangpdf::Object> object = dictionary->Find(name);
+	gotchangpdf::SmartPtr<gotchangpdf::Object> object = dictionary->Find(name);
 	gotchangpdf::Object* ptr = object.AddRefGet();
 	//boost::intrusive_ptr_add_ref(ptr);
 
@@ -141,7 +141,7 @@ GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObjectIterator_Release(Dictio
 GOTCHANG_PDF_API NameObjectHandle CALLING_CONVENTION DictionaryObjectIterator_GetKey(DictionaryObjectIteratorHandle handle)
 {
 	gotchangpdf::DictionaryObject::Iterator* iterator = reinterpret_cast<gotchangpdf::DictionaryObject::Iterator*>(handle);
-	auto result = gotchangpdf::ObjectReferenceWrapper<gotchangpdf::NameObject>(new gotchangpdf::NameObject(iterator->First()));
+	auto result = gotchangpdf::SmartPtr<gotchangpdf::NameObject>(new gotchangpdf::NameObject(iterator->First()));
 	return reinterpret_cast<NameObjectHandle>(result.AddRefGet());
 }
 

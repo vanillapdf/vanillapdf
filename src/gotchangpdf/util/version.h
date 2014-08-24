@@ -24,7 +24,7 @@ namespace gotchangpdf
 		RequireVersion(Version current)
 		{
 			if (static_cast<unsigned char>(ver) > static_cast<unsigned char>(current))
-				throw exceptions::Exception("");
+				throw exceptions::Exception("TODO");
 		}
 	};
 }

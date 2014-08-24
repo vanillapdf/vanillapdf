@@ -13,7 +13,7 @@ namespace gotchangpdf
 		using namespace exceptions;
 		using namespace constant;
 
-		PageObject::PageObject(ObjectReferenceWrapper<DictionaryObject> obj) :
+		PageObject::PageObject(SmartPtr<DictionaryObject> obj) :
 			PageNode(obj),
 			_parent(Bind<DictionaryObject, PageTreeNode>(_obj, std::bind(&PageObject::GetParent, this, _obj))),
 			_resources(Bind<DictionaryObject, ResourceDictionary>(_obj, std::bind(&PageObject::GetResources, this, _obj))),
@@ -23,27 +23,27 @@ namespace gotchangpdf
 				throw Exception("TODO");
 		}
 
-		ObjectReferenceWrapper<PageTreeNode> PageObject::GetParent(ObjectReferenceWrapper<DictionaryObject> obj)
+		SmartPtr<PageTreeNode> PageObject::GetParent(SmartPtr<DictionaryObject> obj)
 		{
 			auto node = new PageTreeNode(_obj->FindAs<DictionaryObject>(Name::Parent));
-			return ObjectReferenceWrapper<PageTreeNode>(node);
+			return SmartPtr<PageTreeNode>(node);
 		}
 
-		ObjectReferenceWrapper<ResourceDictionary> PageObject::GetResources(ObjectReferenceWrapper<DictionaryObject> obj)
+		SmartPtr<ResourceDictionary> PageObject::GetResources(SmartPtr<DictionaryObject> obj)
 		{
 			auto resource = _obj->FindAs<DictionaryObject>(Name::Resources);
 			auto dict = new ResourceDictionary(resource);
 
-			return ObjectReferenceWrapper<ResourceDictionary>(dict);
+			return SmartPtr<ResourceDictionary>(dict);
 		}
 
-		ObjectReferenceWrapper<Rectangle> PageObject::GetMediaBox(ObjectReferenceWrapper<DictionaryObject> obj)
+		SmartPtr<Rectangle> PageObject::GetMediaBox(SmartPtr<DictionaryObject> obj)
 		{
 			auto box = _obj->FindAs<MixedArrayObject>(Name::MediaBox);
 			auto specialized = box->ToArrayType<IntegerObject>();
-			auto rectangle = new Rectangle(ObjectReferenceWrapper<ArrayObject<IntegerObject>>(specialized));
+			auto rectangle = new Rectangle(SmartPtr<ArrayObject<IntegerObject>>(specialized));
 
-			return ObjectReferenceWrapper<Rectangle>(rectangle);
+			return SmartPtr<Rectangle>(rectangle);
 		}
 	}
 }

@@ -10,7 +10,7 @@ namespace gotchangpdf
 		using namespace constant;
 		using namespace exceptions;
 
-		PageTreeNode::PageTreeNode(ObjectReferenceWrapper<DictionaryObject> obj) :
+		PageTreeNode::PageTreeNode(SmartPtr<DictionaryObject> obj) :
 			PageNode(obj),
 			_count(Bind<DictionaryObject, IntegerObject>(_obj, std::bind(&PageTreeNode::GetCount, this, _obj))),
 			_kids(Bind<DictionaryObject, ArrayObject<IndirectObjectReference>>(_obj, std::bind(&PageTreeNode::GetKids, this, _obj)))
@@ -24,25 +24,25 @@ namespace gotchangpdf
 			return _count->Value();
 		}
 
-		ObjectReferenceWrapper<PageNode> PageTreeNode::Kid(unsigned int number) const
+		SmartPtr<PageNode> PageTreeNode::Kid(unsigned int number) const
 		{
 			auto page = _kids->At(number)->GetReferencedObjectAs<DictionaryObject>();
 			return PageNode::Create(page);
 		}
 
-		ObjectReferenceWrapper<PageNode> PageTreeNode::operator[](unsigned int number) const
+		SmartPtr<PageNode> PageTreeNode::operator[](unsigned int number) const
 		{
 			auto page = (*_kids)[number]->GetReferencedObjectAs<DictionaryObject>();
 			return PageNode::Create(page);
 		}
 
-		ObjectReferenceWrapper<IntegerObject> PageTreeNode::GetCount(ObjectReferenceWrapper<DictionaryObject> obj)
+		SmartPtr<IntegerObject> PageTreeNode::GetCount(SmartPtr<DictionaryObject> obj)
 		{
 			auto count = obj->FindAs<IntegerObject>(Name::Count);
 			return count;
 		}
 
-		ObjectReferenceWrapper<ArrayObject<IndirectObjectReference>> PageTreeNode::GetKids(ObjectReferenceWrapper<DictionaryObject> obj)
+		SmartPtr<ArrayObject<IndirectObjectReference>> PageTreeNode::GetKids(SmartPtr<DictionaryObject> obj)
 		{
 			auto kids = obj->FindAs<MixedArrayObject>(Name::Kids);
 			auto specialized = kids->ToArrayType<IndirectObjectReference>();

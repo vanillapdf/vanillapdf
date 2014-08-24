@@ -22,7 +22,7 @@ namespace gotchangpdf
 		using namespace lexical;
 		using namespace exceptions;
 
-		ObjectReferenceWrapper<Object> Parser::readObject()
+		SmartPtr<Object> Parser::readObject()
 		{
 			auto offset = tellg();
 
@@ -30,7 +30,7 @@ namespace gotchangpdf
 			{
 			case Token::Type::DICTIONARY_BEGIN:
 				{
-					auto result = ObjectReferenceWrapper<DictionaryObject>(new DictionaryObject());
+					auto result = SmartPtr<DictionaryObject>(new DictionaryObject());
 					*this >> *result;
 
 					if (PeekTokenType() == Token::Type::EOL)
@@ -38,7 +38,7 @@ namespace gotchangpdf
 
 					if (PeekTokenType() == Token::Type::STREAM_BEGIN)
 					{
-						auto resultStream = ObjectReferenceWrapper<StreamObject>(new StreamObject(*result));
+						auto resultStream = SmartPtr<StreamObject>(new StreamObject(*result));
 						*this >> *resultStream;
 
 						return resultStream;
@@ -60,7 +60,7 @@ namespace gotchangpdf
 						case Token::Type::INDIRECT_REFERENCE_MARKER:
 						{
 							auto reference_marker = ReadTokenWithType(Token::Type::INDIRECT_REFERENCE_MARKER);
-							return ObjectReferenceWrapper<IndirectObjectReference>(new IndirectObjectReference(_file, IntegerObject(*token), IntegerObject(*gen_number)));
+							return SmartPtr<IndirectObjectReference>(new IndirectObjectReference(_file, IntegerObject(*token), IntegerObject(*gen_number)));
 						}
 
 						case Token::Type::INDIRECT_OBJECT_BEGIN:
@@ -82,11 +82,11 @@ namespace gotchangpdf
 						}
 					}
 
-					return ObjectReferenceWrapper<IntegerObject>(new IntegerObject(*token));
+					return SmartPtr<IntegerObject>(new IntegerObject(*token));
 				}
 			case Token::Type::ARRAY_BEGIN:
 				{
-					auto result = ObjectReferenceWrapper<MixedArrayObject>(new MixedArrayObject());
+					auto result = SmartPtr<MixedArrayObject>(new MixedArrayObject());
 					*this >> *result;
 
 					//auto token = readToken();
@@ -100,29 +100,29 @@ namespace gotchangpdf
 			case Token::Type::NAME_OBJECT:
 			{
 				auto token = ReadTokenWithType(Token::Type::NAME_OBJECT);
-				return ObjectReferenceWrapper<NameObject>(new NameObject(*token));
+				return SmartPtr<NameObject>(new NameObject(*token));
 			}
 			case Token::Type::HEXADECIMAL_STRING:
 			{
 				auto token = ReadTokenWithType(Token::Type::HEXADECIMAL_STRING);
-				return ObjectReferenceWrapper<HexadecimalString>(new HexadecimalString(*token));
+				return SmartPtr<HexadecimalString>(new HexadecimalString(*token));
 			}
 			case Token::Type::LITERAL_STRING:
 			{
 				auto token = ReadTokenWithType(Token::Type::LITERAL_STRING);
-				return ObjectReferenceWrapper<LiteralString>(new LiteralString(*token));
+				return SmartPtr<LiteralString>(new LiteralString(*token));
 			}
 			case Token::Type::REAL_OBJECT:
 			{
 				auto token = ReadTokenWithType(Token::Type::REAL_OBJECT);
-				return ObjectReferenceWrapper<RealObject>(new RealObject(*token));
+				return SmartPtr<RealObject>(new RealObject(*token));
 			}
 			default:
 				throw Exception("No valid object could be found at offset " + static_cast<int>(offset));
 			}
 		}
 
-		ObjectReferenceWrapper<Object> Parser::peekObject()
+		SmartPtr<Object> Parser::peekObject()
 		{
 			auto position = tellg();
 			auto obj = readObject();
@@ -135,7 +135,7 @@ namespace gotchangpdf
 		Parser::Parser(const gotchangpdf::lexical::Parser &other) : lexical::Stream(other) { _file = other.file(); }
 		std::shared_ptr<files::File> Parser::file(void) const { return _file; }
 
-		ObjectReferenceWrapper<gotchangpdf::Object> Parser::readObjectWithType(gotchangpdf::Object::Type type)
+		SmartPtr<gotchangpdf::Object> Parser::readObjectWithType(gotchangpdf::Object::Type type)
 		{
 			auto obj = readObject();
 

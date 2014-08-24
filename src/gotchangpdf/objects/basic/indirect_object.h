@@ -4,7 +4,7 @@
 #include "fwd.h"
 #include "object.h"
 #include "constants.h"
-#include "object_reference_wrapper.h"
+#include "smart_ptr.h"
 #include "version.h"
 
 #include <memory>
@@ -17,11 +17,11 @@ namespace gotchangpdf
 		IndirectObject(std::shared_ptr<files::File> file, int objNumber, int genNumber, streamOffsetValueType offset = std::_BADOFF);
 		IndirectObject(const IndirectObject& other);
 
-		void SetObject(ObjectReferenceWrapper<Object> ref);
-		ObjectReferenceWrapper<Object> GetObject() const;
+		void SetObject(SmartPtr<Object> ref);
+		SmartPtr<Object> GetObject() const;
 
 		template <typename T>
-		inline ObjectReferenceWrapper<T> GetObjectAs() const { return dynamic_wrapper_cast<T>(GetObject()); }
+		inline SmartPtr<T> GetObjectAs() const { return dynamic_wrapper_cast<T>(GetObject()); }
 
 		void SetOffset(streamOffsetValueType offset);
 		streamOffsetValueType GetOffset() const;
@@ -38,7 +38,7 @@ namespace gotchangpdf
 		int _genNumber;
 		streamOffsetValueType _offset;
 
-		mutable ObjectReferenceWrapper<Object> _reference;
+		mutable SmartPtr<Object> _reference;
 	};
 }
 

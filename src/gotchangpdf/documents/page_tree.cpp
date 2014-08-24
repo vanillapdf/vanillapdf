@@ -11,9 +11,9 @@ namespace gotchangpdf
 
 		//PageTree::PageTree() {}
 
-		PageTree::PageTree(ObjectReferenceWrapper<DictionaryObject> root) : HighLevelObject(root), _root(new PageTreeNode(root)) {}
+		PageTree::PageTree(SmartPtr<DictionaryObject> root) : HighLevelObject(root), _root(new PageTreeNode(root)) {}
 
-		ObjectReferenceWrapper<PageObject> PageTree::PageInternal(unsigned int number) const
+		SmartPtr<PageObject> PageTree::PageInternal(unsigned int number) const
 		{
 			//int count = 0, result = 0;
 			//ObjectReferenceWrapper<PageTreeNode> tree_node;

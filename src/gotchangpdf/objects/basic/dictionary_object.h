@@ -4,7 +4,7 @@
 #include "fwd.h"
 #include "object.h"
 #include "name_object.h"
-#include "object_reference_wrapper.h"
+#include "smart_ptr.h"
 
 #include <unordered_map>
 
@@ -13,7 +13,7 @@ namespace gotchangpdf
 	class DictionaryObject : public Object
 	{
 	private:
-		typedef std::unordered_map<NameObject, ObjectReferenceWrapper<Object>, NameObject::Hasher> listType;
+		typedef std::unordered_map<NameObject, SmartPtr<Object>, NameObject::Hasher> listType;
 
 	public:
 		class Iterator
@@ -27,7 +27,7 @@ namespace gotchangpdf
 			const Iterator operator++(int);
 
 			NameObject First() const;
-			ObjectReferenceWrapper<Object> Second() const;
+			SmartPtr<Object> Second() const;
 
 			bool operator==(const Iterator& other) const;
 
@@ -43,10 +43,10 @@ namespace gotchangpdf
 		//friend Objects::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, DictionaryObject& o);
 		friend lexical::Parser& operator>> (lexical::Parser& s, DictionaryObject& o);
 
-		ObjectReferenceWrapper<Object> Find(const NameObject& name) const;
+		SmartPtr<Object> Find(const NameObject& name) const;
 
 		template <typename T>
-		ObjectReferenceWrapper<T> FindAs(const NameObject& name) const
+		SmartPtr<T> FindAs(const NameObject& name) const
 		{
 			auto result = _list.find(name);
 			return dynamic_wrapper_cast<T>(result->second);

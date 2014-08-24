@@ -51,7 +51,7 @@ namespace gotchangpdf
 				throw Exception(buffer.str());
 			}
 
-			result._reference = ObjectReferenceWrapper<IndirectObject>(new IndirectObject(s.file(), objNumber, IntegerObject(number), IntegerObject(offset)));
+			result._reference = SmartPtr<IndirectObject>(new IndirectObject(s.file(), objNumber, IntegerObject(number), IntegerObject(offset)));
 
 			return result;
 		}

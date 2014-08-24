@@ -16,9 +16,9 @@ namespace gotchangpdf
 	IndirectObject::IndirectObject(const IndirectObject& other) :
 		_file(other._file), _genNumber(other._genNumber), _objNumber(other._objNumber), _offset(other._offset), _reference(other._reference), RequireVersion(other._file->GetHeader()->GetVersion()) {}
 
-	void IndirectObject::SetObject(ObjectReferenceWrapper<Object> ref) { _reference = ref; }
+	void IndirectObject::SetObject(SmartPtr<Object> ref) { _reference = ref; }
 
-	ObjectReferenceWrapper<Object> IndirectObject::GetObject() const
+	SmartPtr<Object> IndirectObject::GetObject() const
 	{
 		if (nullptr == _reference)
 		{
@@ -61,7 +61,7 @@ GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION IndirectObject_GetObject(Indire
 {
 	gotchangpdf::IndirectObject* obj = reinterpret_cast<gotchangpdf::IndirectObject*>(handle);
 
-	gotchangpdf::ObjectReferenceWrapper<gotchangpdf::Object> item = obj->GetObject();
+	gotchangpdf::SmartPtr<gotchangpdf::Object> item = obj->GetObject();
 
 	gotchangpdf::Object *ptr = item.AddRefGet();
 	//boost::intrusive_ptr_add_ref(ptr);

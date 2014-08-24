@@ -21,7 +21,7 @@ namespace gotchangpdf
 
 			struct Entry
 			{
-				ObjectReferenceWrapper<IndirectObject> _reference;
+				SmartPtr<IndirectObject> _reference;
 				bool _in_use;
 			};
 

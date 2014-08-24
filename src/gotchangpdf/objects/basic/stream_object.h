@@ -4,7 +4,7 @@
 #include "fwd.h"
 #include "constants.h"
 #include "dictionary_object.h"
-#include "object_reference_wrapper.h"
+#include "smart_ptr.h"
 
 #include <memory>
 
@@ -31,7 +31,7 @@ namespace gotchangpdf
 		friend lexical::Parser& operator>> (lexical::Parser& s, StreamObject& o);
 
 	private:
-		ObjectReferenceWrapper<DictionaryObject> _dictionary = nullptr;
+		SmartPtr<DictionaryObject> _dictionary = nullptr;
 		std::shared_ptr<Buffer> _data = nullptr;
 		streamOffsetValueType _rawDataOffset = std::_BADOFF;
 		streamSizeValueType _rawDataLength = -1;

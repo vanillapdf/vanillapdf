@@ -38,6 +38,6 @@ namespace gotchangpdf
 
 		streamOffsetValueType Trailer::xref_offset() const { return _xref_offset; }
 
-		ObjectReferenceWrapper<DictionaryObject> Trailer::dictionary() const { return _dictionary; }
+		SmartPtr<DictionaryObject> Trailer::dictionary() const { return _dictionary; }
 	}
 }

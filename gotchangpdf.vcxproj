@@ -80,7 +80,7 @@
     <ClInclude Include="src\gotchangpdf\util\constants.h" />
     <ClInclude Include="src\gotchangpdf\util\fwd.h" />
     <ClInclude Include="src\gotchangpdf\util\intrusive.h" />
-    <ClInclude Include="src\gotchangpdf\util\object_reference_wrapper.h" />
+    <ClInclude Include="src\gotchangpdf\util\smart_ptr.h" />
     <ClInclude Include="src\gotchangpdf\util\version.h" />
   </ItemGroup>
   <ItemGroup>
@@ -89,7 +89,6 @@
     <ClCompile Include="src\gotchangpdf\basic\basic_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\basic\character.cpp" />
     <ClCompile Include="src\gotchangpdf\documents\catalog.cpp" />
-    <ClCompile Include="src\gotchangpdf\documents\high_level_object.cpp" />
     <ClCompile Include="src\gotchangpdf\documents\page_node.cpp" />
     <ClCompile Include="src\gotchangpdf\documents\page_object.cpp" />
     <ClCompile Include="src\gotchangpdf\documents\page_tree.cpp" />

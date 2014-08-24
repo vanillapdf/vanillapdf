@@ -17,11 +17,11 @@ namespace gotchangpdf
 		{
 		public:
 			//PageObject();
-			explicit PageObject(ObjectReferenceWrapper<DictionaryObject> obj);
+			explicit PageObject(SmartPtr<DictionaryObject> obj);
 
-			ObjectReferenceWrapper<PageTreeNode> Parent(void) const { return _parent(); }
-			ObjectReferenceWrapper<ResourceDictionary> Resources(void) const { return _resources(); }
-			ObjectReferenceWrapper<Rectangle> MediaBox(void) const { return _media_box(); }
+			SmartPtr<PageTreeNode> Parent(void) const { return _parent(); }
+			SmartPtr<ResourceDictionary> Resources(void) const { return _resources(); }
+			SmartPtr<Rectangle> MediaBox(void) const { return _media_box(); }
 
 			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageObject; }
 
@@ -30,9 +30,9 @@ namespace gotchangpdf
 			Bind<DictionaryObject, ResourceDictionary> _resources;
 			Bind<DictionaryObject, Rectangle> _media_box;
 
-			ObjectReferenceWrapper<PageTreeNode> GetParent(ObjectReferenceWrapper<DictionaryObject> obj);
-			ObjectReferenceWrapper<ResourceDictionary> GetResources(ObjectReferenceWrapper<DictionaryObject> obj);
-			ObjectReferenceWrapper<Rectangle> GetMediaBox(ObjectReferenceWrapper<DictionaryObject> obj);
+			SmartPtr<PageTreeNode> GetParent(SmartPtr<DictionaryObject> obj);
+			SmartPtr<ResourceDictionary> GetResources(SmartPtr<DictionaryObject> obj);
+			SmartPtr<Rectangle> GetMediaBox(SmartPtr<DictionaryObject> obj);
 		};
 	}
 }

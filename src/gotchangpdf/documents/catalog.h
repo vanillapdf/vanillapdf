@@ -3,7 +3,7 @@
 
 #include "fwd.h"
 #include "page_tree.h"
-#include "object_reference_wrapper.h"
+#include "smart_ptr.h"
 #include "high_level_object.h"
 
 namespace gotchangpdf
@@ -13,14 +13,14 @@ namespace gotchangpdf
 		class Catalog : public HighLevelObject<DictionaryObject>
 		{
 		public:
-			explicit Catalog(ObjectReferenceWrapper<DictionaryObject> root);
+			explicit Catalog(SmartPtr<DictionaryObject> root);
 
-			inline ObjectReferenceWrapper<PageTree> Pages(void) const { return _pages; }
+			inline SmartPtr<PageTree> Pages(void) const { return _pages; }
 
 			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::Catalog; }
 
 		private:
-			ObjectReferenceWrapper<PageTree> _pages;
+			SmartPtr<PageTree> _pages;
 		};
 
 	}

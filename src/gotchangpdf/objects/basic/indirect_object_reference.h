@@ -14,18 +14,18 @@ namespace gotchangpdf
 		explicit IndirectObjectReference(std::shared_ptr<files::File> file);
 		IndirectObjectReference(std::shared_ptr<files::File> file, unsigned int obj_number, unsigned int gen_number);
 
-		ObjectReferenceWrapper<IndirectObject> GetReferencedObject() const;
+		SmartPtr<IndirectObject> GetReferencedObject() const;
 
-		inline ObjectReferenceWrapper<IndirectObject> operator->() const { return GetReferencedObject(); }
+		inline SmartPtr<IndirectObject> operator->() const { return GetReferencedObject(); }
 
 		template <typename T>
-		ObjectReferenceWrapper<T> GetReferencedObjectAs() const { return GetReferencedObject()->GetObjectAs<T>(); }
+		SmartPtr<T> GetReferencedObjectAs() const { return GetReferencedObject()->GetObjectAs<T>(); }
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::IndirectObjectReference; }
 
 	private:
 		std::shared_ptr<files::File> _file;
-		mutable ObjectReferenceWrapper<IndirectObject> _reference;
+		mutable SmartPtr<IndirectObject> _reference;
 
 		unsigned int _obj_number, _gen_number;
 	};

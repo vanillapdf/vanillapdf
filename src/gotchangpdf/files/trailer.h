@@ -2,7 +2,7 @@
 #define _TRAILER_H
 
 #include "fwd.h"
-#include "object_reference_wrapper.h"
+#include "smart_ptr.h"
 #include "dictionary_object.h"
 #include "constants.h"
 
@@ -15,11 +15,11 @@ namespace gotchangpdf
 		public:
 			friend lexical::ReverseStream& operator>> (lexical::ReverseStream& s, Trailer& o);
 			streamOffsetValueType xref_offset() const;
-			ObjectReferenceWrapper<DictionaryObject> dictionary() const;
+			SmartPtr<DictionaryObject> dictionary() const;
 
 		private:
 			streamOffsetValueType _xref_offset = 0;
-			ObjectReferenceWrapper<DictionaryObject> _dictionary = ObjectReferenceWrapper<DictionaryObject>(new DictionaryObject());
+			SmartPtr<DictionaryObject> _dictionary = SmartPtr<DictionaryObject>(new DictionaryObject());
 		};
 	}
 }
