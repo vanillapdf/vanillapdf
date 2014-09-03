@@ -37,6 +37,9 @@ namespace gotchangpdf
 			SmartPtr<Trailer> _trailer;
 			SmartPtr<Xref> _xref;
 			std::vector<SmartPtr<IndirectObject>> _cache;
+
+			bool _initialized = false;
+			const char *_filename = nullptr;
 		};
 	}
 }

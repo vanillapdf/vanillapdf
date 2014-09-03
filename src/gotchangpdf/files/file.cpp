@@ -11,20 +11,17 @@
 #include <cassert>
 #include <iostream>
 
+#include <boost/filesystem.hpp>
+
 namespace gotchangpdf
 {
 	namespace files
 	{
 		using namespace std;
 		using namespace lexical;
+		using namespace exceptions;
 
-		File::File(const char *filename) : _input(nullptr), _cache(), _xref(new Xref()), _header(new Header()), _trailer(new Trailer())
-		{
-			_input = shared_ptr<fstream>(new fstream);
-			_input->open(filename, ios_base::in | ios_base::out | std::ifstream::binary);
-
-			_stream = shared_ptr<lexical::Parser>(new lexical::Parser(shared_ptr<File>(this), _input));
-		}
+		File::File(const char *filename) : _input(nullptr), _cache(), _xref(new Xref()), _header(new Header()), _trailer(new Trailer()), _filename(filename) {}
 
 		File::~File(void)
 		{
@@ -39,6 +36,17 @@ namespace gotchangpdf
 
 		void File::Initialize(void)
 		{
+			if (!boost::filesystem::exists(_filename))
+				throw new exceptions::Exception("File does not exist");
+
+			_input = shared_ptr<fstream>(new fstream);
+			_input->open(_filename, ios_base::in | ios_base::out | std::ifstream::binary);
+
+			if (!_input->good())
+				throw new exceptions::Exception("Could not open file");
+
+			_stream = shared_ptr<lexical::Parser>(new lexical::Parser(shared_ptr<File>(this), _input));
+
 			_stream->seekg(ios_base::beg);
 			*_stream >> *_header;
 
@@ -53,10 +61,15 @@ namespace gotchangpdf
 
 			// HACK
 			*_stream >> *_trailer->dictionary();
+
+			_initialized = true;
 		}
 
 		SmartPtr<IndirectObject> File::GetIndirectObject(unsigned int objNumber, unsigned int genNumber) const
 		{
+			if (!_initialized)
+				throw new Exception("File has not been initialized yet");
+
 			//if (_cache.)
 
 			//TODO
@@ -86,6 +99,9 @@ namespace gotchangpdf
 
 		SmartPtr<documents::Catalog> File::GetDocumentCatalog(void) const
 		{
+			if (!_initialized)
+				throw new Exception("File has not been initialized yet");
+
 			static const char root[] = "Root";
 			auto reference = _trailer->dictionary()->FindAs<IndirectObjectReference>(NameObject(Buffer(root, sizeof(root))));
 			auto dict = reference->GetReferencedObjectAs<DictionaryObject>();
