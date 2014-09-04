@@ -11,7 +11,7 @@
 #include <cassert>
 #include <iostream>
 
-#include <boost/filesystem.hpp>
+#include <boost/filesystem/operations.hpp>
 
 namespace gotchangpdf
 {
