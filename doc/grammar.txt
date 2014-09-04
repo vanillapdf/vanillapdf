@@ -1,0 +1,38 @@
+<object>					::= <object-header> <EOL> <object-body> <EOL> <object-trailer> <EOL>
+<object-header>				::= <integer> <space> <integer> <space> "obj"
+<object-body>				::= <dictionary> | <array> | <dictionary> <stream>
+<object-trailer>			::= "endobj"
+
+<boolean>					::= "true" | "false"
+<numeric>					::= <integer> | <real>
+<integer>					::= <optional-sign> <digits>
+<real>						::= <optional-sign> <digits> "." <optional-digits> | <optional-sign> <optional-digits> "." <digits>
+<string>					::= <literal-string> | <hex-string>
+<hex-string>				::= "<" <text> ">"
+<literal-string>			::= "(" <literal-text> ")"
+<dictionary>				::= "<<" <key-value-pairs> ">>"
+<Name-Object>				::= "/" <text>
+<stream>					::= "stream" <bytes> "endstream"
+<array>						::= "[" <optional-values> "]"
+<indirect-reference>		::= <integer> <whitespace> <integer> <whitespace> "R" <EOL>
+
+<key-value-pairs>			::= <Name-Object> <optional-whitespace> <value> <EOL> | <Name-Object> <optional-whitespace> <value> <EOL> <key-value-pairs>
+<optional-values>			::= "" | <values>
+<values>					::= <value> | <value> <values>
+<value>						::= <string> | <numeric> | <boolean> | <array> | <dictionary> | <indirect-reference> | <Name-Object>
+<optional-sign>				::= "" | <sign>
+<sign>						::= <plus-sign> | <minus-sign>
+<plus-sign>					::= "+" | "+" <plus-sign>
+<minus-sign>				::= "-" | "-" <minus-sign>
+
+<optional-digits>			::= "" | <digits>
+<digits>					::= <digit> | <digit> <digits>
+<digit>						::= "0" | "1" | "2" | "3" | "4"| "5" | "6" | "7" | "8" | "9"
+<EOL>						::= " \n" | "\r\n" | "\n"
+
+<literal-text>				::= <text-without-parenthesis> | "(" <literal-text> ")"
+<text-without-parenthesis>	::= [^()]*
+
+<optional-whitespace>		::= "" | <whitespace>
+<whitespace>				::= <whitespace-character> | <whitespace-character> <whitespace>
+<whitespace-character>		::= NUL | HT | LF | FF | CR | SP
