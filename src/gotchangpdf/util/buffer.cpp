@@ -9,6 +9,7 @@ namespace gotchangpdf
 	Buffer::Buffer() : _value() {}
 	Buffer::Buffer(const ValueType *chars, int len) : _value(&chars[0], &chars[len - 1]) { assert(_value.size() > 0); }
 	Buffer::Buffer(const ValueType *begin, const ValueType *end) : _value(begin, end) { assert(_value.size() > 0); }
+	Buffer::Buffer(const std::vector<ValueType>& data) : _value(data) { assert(_value.size() > 0); }
 
 	#pragma endregion
 
@@ -36,12 +37,12 @@ namespace gotchangpdf
 	bool Buffer::operator!=(const Buffer& other) const { return _value != other._value; }
 	bool Buffer::operator<(const Buffer& other) const { return _value < other._value; }
 
-	Character Buffer::operator[](unsigned int i) const { return Character(_value[i]); }
+	Buffer::ValueType Buffer::operator[](unsigned int i) const { return _value[i]; }
 
 	#pragma endregion
 
 	void Buffer::Reverse() { std::reverse(_value.begin(), _value.end()); }
-	Character Buffer::At(long at) const { return Character(_value[at]); }
+	Buffer::ValueType Buffer::At(long at) const { return _value[at]; }
 	void Buffer::Append(const Character& ch) { _value.push_back(ch); }
 	void Buffer::Append(const Buffer& item) { Insert(0, item); }
 	void Buffer::Insert(int idx, const Buffer& item) { _value.insert(_value.begin() + idx, item._value.begin(), item._value.end()); }

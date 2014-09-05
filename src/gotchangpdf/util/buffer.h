@@ -16,6 +16,7 @@ namespace gotchangpdf
 		Buffer();
 		Buffer(const ValueType *chars, int len);
 		Buffer(const ValueType *begin, const ValueType *end);
+		Buffer(const std::vector<ValueType>& data);
 
 		void Insert(int idx, const Buffer& item);
 		void Append(const Character& ch);
@@ -31,8 +32,8 @@ namespace gotchangpdf
 
 		//virtual bool operator==(const IBuffer& other) const override;
 		//virtual bool operator<(const IBuffer& other) const override;
-		Character operator[](unsigned int i) const;
-		Character At(long at) const;
+		ValueType operator[](unsigned int i) const;
+		ValueType At(long at) const;
 		int Size() const;
 
 		bool operator==(const Buffer& other) const;

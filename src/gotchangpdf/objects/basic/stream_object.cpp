@@ -47,7 +47,7 @@ namespace gotchangpdf
 		if (s.PeekTokenType() == Token::Type::EOL)
 		{
 			auto token = s.ReadToken();
-			if (token->value().Size() == 1 && token->value()[0] == Character::WhiteSpace::CARRIAGE_RETURN)
+			if (token->value().Size() == 1 && Character(token->value()[0]) == Character::WhiteSpace::CARRIAGE_RETURN)
 			{
 				stringstream buffer;
 				buffer << "After stream keyword is single CR character at offset " << s.tellg();
