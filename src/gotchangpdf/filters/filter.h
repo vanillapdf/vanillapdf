@@ -25,8 +25,8 @@ namespace gotchangpdf
 
 			Filter(Type type) : _type(type) {}
 
-			virtual Buffer Encode(Buffer& src) const = 0;
-			virtual Buffer Decode(Buffer& src) const = 0;
+			virtual Buffer Encode(const Buffer& src) const = 0;
+			virtual Buffer Decode(const Buffer& src) const = 0;
 
 		protected:
 			Type _type;

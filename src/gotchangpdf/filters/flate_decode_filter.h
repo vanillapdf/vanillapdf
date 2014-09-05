@@ -4,103 +4,50 @@
 #include "Filter.h"
 #include "Buffer.h"
 #include "constants.h"
+#include "exception.h"
 
-#include "zlib.h"
+#include <vector>
 
-#include <algorithm>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/iostreams/filter/zlib.hpp>
 
 namespace gotchangpdf
 {
 	namespace filters
 	{
 		using namespace exceptions;
+		namespace io = boost::iostreams;
 
 		class FlateDecodeFilter : Filter
 		{
 		public:
 			FlateDecodeFilter() : Filter(Type::FlateDecode) {}
 
-			virtual Buffer Encode(Buffer& src) const override
+			virtual Buffer Encode(const Buffer& src) const override
 			{
-				// TODO
-				throw Exception("TODO");
+				std::vector<char> dest;
+				io::filtering_ostream os;
+
+				os.push(io::zlib_compressor());
+				os.push(io::back_inserter(dest));
+
+				io::write(os, src.Data(), src.Size());
+
+				return Buffer(dest);
 			}
 
-			virtual Buffer Decode(Buffer& src) const override
+			virtual Buffer Decode(const Buffer& src) const override
 			{
-				int ret;
-				int size = src.Size();
-				int count = size / constant::BUFFER_SIZE;
-				z_stream strm;
-				unsigned char out[constant::BUFFER_SIZE];
-				Buffer dest;
+				std::vector<char> dest;
+				io::filtering_ostream os;
 
-				/* allocate inflate state */
-				strm.zalloc = Z_NULL;
-				strm.zfree = Z_NULL;
-				strm.opaque = Z_NULL;
-				strm.avail_in = 0;
-				strm.next_in = Z_NULL;
-				ret = inflateInit(&strm);
-				if (ret != Z_OK)
-					//return ret;
-					throw Exception("TODO");
+				os.push(io::zlib_decompressor());
+				os.push(io::back_inserter(dest));
 
-				for (int i = 0; i < count; ++i)
-				{
-					strm.avail_in = constant::BUFFER_SIZE;
-					if (strm.avail_in == 0)
-						break;
+				io::write(os, src.Data(), src.Size());
 
-					strm.next_in = reinterpret_cast<unsigned char*>(src.Data(i * constant::BUFFER_SIZE));
-
-					/* run inflate() on input until output buffer not full */
-					do {
-						strm.avail_out = constant::BUFFER_SIZE;
-						strm.next_out = out;
-						ret = inflate(&strm, Z_NO_FLUSH);
-						assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
-						switch (ret) {
-						case Z_NEED_DICT:
-							ret = Z_DATA_ERROR;     /* and fall through */
-						case Z_DATA_ERROR:
-						case Z_MEM_ERROR:
-							(void)inflateEnd(&strm);
-							//return ret;
-							throw Exception("TODO");
-						}
-						unsigned have = constant::BUFFER_SIZE - strm.avail_out;
-						dest.Append(Buffer(reinterpret_cast<const char*>(out), have));
-					} while (strm.avail_out == 0);
-				}
-
-				strm.avail_in = size - count * constant::BUFFER_SIZE;
-				strm.next_in = reinterpret_cast<unsigned char*>(src.Data(count * constant::BUFFER_SIZE));
-
-				/* run inflate() on input until output buffer not full */
-				do {
-					strm.avail_out = constant::BUFFER_SIZE;
-					strm.next_out = out;
-					ret = inflate(&strm, Z_NO_FLUSH);
-					assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
-					switch (ret) {
-					case Z_NEED_DICT:
-						ret = Z_DATA_ERROR;     /* and fall through */
-					case Z_DATA_ERROR:
-					case Z_MEM_ERROR:
-						(void)inflateEnd(&strm);
-						//return ret;
-						throw Exception("TODO");
-					}
-					unsigned have = constant::BUFFER_SIZE - strm.avail_out;
-					dest.Append(Buffer(reinterpret_cast<const char*>(out), have));
-				} while (strm.avail_out == 0);
-
-				/* clean up and return */
-				(void)inflateEnd(&strm);
-				//return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
-
-				return dest;
+				return Buffer(dest);
 			}
 		};
 	}
