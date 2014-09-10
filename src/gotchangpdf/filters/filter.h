@@ -23,13 +23,10 @@ namespace gotchangpdf
 				JPXDecode
 			};
 
-			Filter(Type type) : _type(type) {}
-
 			virtual Buffer Encode(const Buffer& src) const = 0;
 			virtual Buffer Decode(const Buffer& src) const = 0;
 
-		protected:
-			Type _type;
+			virtual inline Type GetType(void) const = 0;
 		};
 	}
 }
