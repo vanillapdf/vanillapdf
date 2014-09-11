@@ -5,8 +5,9 @@
 
 //#define Derive_Object_CRTP(Type) class Type : public Object_CRTP<Type>
 
-#include "intrusive.h"
 #include "smart_ptr.h"
+
+#include <boost/smart_ptr/intrusive_ref_counter.hpp>
 
 namespace gotchangpdf
 {

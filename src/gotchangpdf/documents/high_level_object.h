@@ -1,11 +1,12 @@
 #ifndef _HIGH_LEVEL_OBJECT_H
 #define _HIGH_LEVEL_OBJECT_H
 
-#include "intrusive.h"
 #include "object.h"
 #include "smart_ptr.h"
 
-#include "boost/static_assert.hpp"
+#include <boost/static_assert.hpp>
+
+#include <boost/smart_ptr/intrusive_ref_counter.hpp>
 
 namespace gotchangpdf
 {

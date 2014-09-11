@@ -1,9 +1,10 @@
 #ifndef _HEADER_H
 #define _HEADER_H
 
-#include "intrusive.h"
 #include "basic_stream.h"
 #include "version.h"
+
+#include <boost/smart_ptr/intrusive_ref_counter.hpp>
 
 namespace gotchangpdf
 {

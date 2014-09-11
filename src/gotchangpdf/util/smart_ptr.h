@@ -2,7 +2,8 @@
 #define _SMART_PTR
 
 #include "fwd.h"
-#include "intrusive.h"
+
+#include <boost/smart_ptr/intrusive_ptr.hpp>
 
 //#include "boost/static_assert.hpp"
 
