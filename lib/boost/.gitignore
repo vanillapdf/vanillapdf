@@ -1,0 +1,9 @@
+# Boost build files
+/bin.v2/*
+/stage/lib/*.lib
+*.exe
+*.log
+*.jam
+*.obj
+*.ilk
+*.pdb
