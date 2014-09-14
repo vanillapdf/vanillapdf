@@ -17,7 +17,7 @@ if ($os eq "MSWin32") {
 	# Running windows
 	print "MS Windows\n";
 	
-	$path = '..\build\gotchangpdf.test\Debug\gotchangpdf.test.exe';
+	$path = '..\build\gotchangpdf.test\debug\gotchangpdf.test.exe';
 }
 elsif ($os eq "LinuxTODO") {
 	# Running linux
