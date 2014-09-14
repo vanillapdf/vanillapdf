@@ -24,7 +24,9 @@ else {
 	die "Unknown platform $os";
 }
 
-if (! -d $gotchangpdf::boost_local_dir) die "Boost local directory does not exist, call copy boost at first";
+if (! -d $gotchangpdf::boost_local_dir) {
+	die "Boost local directory does not exist, call copy boost at first";
+}
 
 # Change working directory to boost dir
 chdir $gotchangpdf::boost_local_dir;
