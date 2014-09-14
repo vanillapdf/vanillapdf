@@ -1,0 +1,10 @@
+# Boost build files
+*.obj
+
+zdll.lib
+zdll.exp
+zlib.pdb
+
+zlib1.dll
+zlib1.res
+zlib1.pdb
