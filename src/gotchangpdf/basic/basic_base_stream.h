@@ -1,7 +1,7 @@
 #ifndef _BASIC_BASE_STREAM_H
 #define _BASIC_BASE_STREAM_H
 
-#include "Buffer.h"
+#include "buffer.h"
 
 #include <memory>
 #include <vector>
