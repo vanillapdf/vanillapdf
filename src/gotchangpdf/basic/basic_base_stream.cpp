@@ -6,22 +6,22 @@ namespace gotchangpdf
 	{
 		BaseStream::~BaseStream() {}
 
-		std::shared_ptr<BaseStream::BasicSettings> BaseStream::BasicSettingsGet(void) const
+		BaseStream::BasicSettings& BaseStream::BasicSettingsGet(void) const
 		{
 			if (0 == _setting_stack.size())
-				_setting_stack.push_back(std::shared_ptr<BaseStream::BasicSettings>(new BasicSettings()));
+				_setting_stack.push_back(BasicSettings());
 
 			return _setting_stack.back();
 		}
 
 		void BaseStream::BasicSettingsPush(void)
 		{
-			_setting_stack.push_back(std::shared_ptr<BaseStream::BasicSettings>(new BasicSettings()));
+			_setting_stack.push_back(BasicSettings());
 		}
 
-		std::shared_ptr<BaseStream::BasicSettings> BaseStream::BasicSettingsPop(void)
+		BaseStream::BasicSettings& BaseStream::BasicSettingsPop(void)
 		{
-			auto result = BasicSettingsGet();
+			BaseStream::BasicSettings& result = BasicSettingsGet();
 			_setting_stack.pop_back();
 
 			return result;

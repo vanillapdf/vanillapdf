@@ -47,7 +47,7 @@ namespace gotchangpdf
 			{
 			case Character::WhiteSpace::LINE_FEED:
 				chars.Append(ch);
-				if (ahead == Character::WhiteSpace::SPACE || ahead == Character::WhiteSpace::CARRIAGE_RETURN)
+				if (ahead.isSpace() || ahead.Equals(Character::WhiteSpace::CARRIAGE_RETURN))
 					chars.Append(Get());
 
 				result_type = Token::Type::EOL;
@@ -55,7 +55,7 @@ namespace gotchangpdf
 			case Character::WhiteSpace::SPACE:
 				goto retry;
 			case Character::Delimiter::GREATER_THAN_SIGN:
-				if (ahead == Character::Delimiter::GREATER_THAN_SIGN)
+				if (ahead.Equals(Character::Delimiter::GREATER_THAN_SIGN))
 				{
 					chars.Append(ch);
 					chars.Append(Get());
@@ -66,7 +66,7 @@ namespace gotchangpdf
 				else
 					throw Exception("Unexpected character follows intended dictionary end: " + ahead);
 			case Character::Delimiter::LESS_THAN_SIGN:
-				if (ahead == Character::Delimiter::LESS_THAN_SIGN)
+				if (ahead.Equals(Character::Delimiter::LESS_THAN_SIGN))
 				{
 					// Little HACK >> twice
 					chars.Append(ch);
@@ -78,7 +78,7 @@ namespace gotchangpdf
 				else
 				{
 					chars.Append(Get());
-					while (Peek() != Character::Delimiter::GREATER_THAN_SIGN)
+					while (!Peek().Equals(Character::Delimiter::GREATER_THAN_SIGN))
 						chars.Append(Get());
 
 					result_type = Token::Type::HEXADECIMAL_STRING;
@@ -102,7 +102,7 @@ namespace gotchangpdf
 				result_type = Token::Type::NAME_OBJECT;
 				goto prepared;
 			case Character::Delimiter::LEFT_PARENTHESIS:
-				while (Peek() != Character::Delimiter::RIGHT_PARENTHESIS)
+				while (!Peek().Equals(Character::Delimiter::RIGHT_PARENTHESIS))
 					chars.Append(Get());
 
 				result_type = Token::Type::LITERAL_STRING;

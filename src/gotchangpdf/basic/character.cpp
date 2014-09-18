@@ -3,8 +3,6 @@
 #include "basic_base_stream.h"
 #include "lexical_stream.h"
 
-#include <climits>
-
 namespace gotchangpdf
 {
 	#pragma region Constructors
@@ -20,18 +18,6 @@ namespace gotchangpdf
 	#pragma endregion
 
 	#pragma region Operators
-
-	Character::ValueType Character::Value(void) const { return _value; }
-
-	bool operator==(const Character& c1, const Character& c2) { return c1._value == c2._value; }
-	bool operator!=(const Character& c1, const Character& c2) { return c1._value != c2._value; }
-
-	bool operator==(const Character& c1, const Character::WhiteSpace c2) { return c1 == static_cast<Character::ValueType>(c2); }
-	bool operator==(const Character& c1, const Character::Delimiter c2) { return c1 == static_cast<Character::ValueType>(c2); }
-	bool operator==(const Character& c1, const Character::Numeric c2) { return c1 == static_cast<Character::ValueType>(c2); }
-	bool operator!=(const Character& c1, const Character::WhiteSpace c2) { return c1 != static_cast<Character::ValueType>(c2); }
-	bool operator!=(const Character& c1, const Character::Delimiter c2) { return c1 != static_cast<Character::ValueType>(c2); }
-	bool operator!=(const Character& c1, const Character::Numeric c2) { return c1 != static_cast<Character::ValueType>(c2); }
 
 	Character& Character::operator=(ValueType value)
 	{
@@ -53,20 +39,16 @@ namespace gotchangpdf
 
 	#pragma endregion
 
-	bool Character::isRegular(void) const { return !isWhiteSpace() && !isDelimiter(); }
-	bool Character::isSpace(void) const { return *this == WhiteSpace::SPACE; }
-	bool Character::isEndOfLine(void) const { return *this == WhiteSpace::LINE_FEED; }
-
 	bool Character::isWhiteSpace(void) const
 	{
 		switch (_value)
 		{
-			case static_cast<int>(WhiteSpace::NUL):
-			case static_cast<int>(WhiteSpace::HORIZONTAL_TAB):
-			case static_cast<int>(WhiteSpace::LINE_FEED):
-			case static_cast<int>(WhiteSpace::FORM_FEED):
-			case static_cast<int>(WhiteSpace::CARRIAGE_RETURN):
-			case static_cast<int>(WhiteSpace::SPACE):
+			case static_cast<ValueType>(WhiteSpace::NUL) :
+			case static_cast<ValueType>(WhiteSpace::HORIZONTAL_TAB) :
+			case static_cast<ValueType>(WhiteSpace::LINE_FEED) :
+			case static_cast<ValueType>(WhiteSpace::FORM_FEED) :
+			case static_cast<ValueType>(WhiteSpace::CARRIAGE_RETURN) :
+			case static_cast<ValueType>(WhiteSpace::SPACE) :
 				return true;
 		}
 
@@ -77,16 +59,16 @@ namespace gotchangpdf
 	{
 		switch (_value)
 		{
-			case static_cast<int>(Delimiter::LEFT_PARENTHESIS):
-			case static_cast<int>(Delimiter::RIGHT_PARENTHESIS):
-			case static_cast<int>(Delimiter::LESS_THAN_SIGN):
-			case static_cast<int>(Delimiter::GREATER_THAN_SIGN):
-			case static_cast<int>(Delimiter::LEFT_SQUARE_BRACKET):
-			case static_cast<int>(Delimiter::RIGHT_SQUARE_BRACKET):
-			case static_cast<int>(Delimiter::LEFT_CURLY_BRACKET):
-			case static_cast<int>(Delimiter::RIGHT_CURLY_BRACKET):
-			case static_cast<int>(Delimiter::SOLIDUS):
-			case static_cast<int>(Delimiter::PERCENT_SIGN):
+			case static_cast<ValueType>(Delimiter::LEFT_PARENTHESIS) :
+			case static_cast<ValueType>(Delimiter::RIGHT_PARENTHESIS) :
+			case static_cast<ValueType>(Delimiter::LESS_THAN_SIGN) :
+			case static_cast<ValueType>(Delimiter::GREATER_THAN_SIGN) :
+			case static_cast<ValueType>(Delimiter::LEFT_SQUARE_BRACKET) :
+			case static_cast<ValueType>(Delimiter::RIGHT_SQUARE_BRACKET) :
+			case static_cast<ValueType>(Delimiter::LEFT_CURLY_BRACKET) :
+			case static_cast<ValueType>(Delimiter::RIGHT_CURLY_BRACKET) :
+			case static_cast<ValueType>(Delimiter::SOLIDUS) :
+			case static_cast<ValueType>(Delimiter::PERCENT_SIGN) :
 				return true;
 		}
 
@@ -97,16 +79,16 @@ namespace gotchangpdf
 	{
 		switch (_value)
 		{
-			case static_cast<int>(Numeric::ZERO):
-			case static_cast<int>(Numeric::ONE):
-			case static_cast<int>(Numeric::TWO):
-			case static_cast<int>(Numeric::THREE):
-			case static_cast<int>(Numeric::FOUR):
-			case static_cast<int>(Numeric::FIVE):
-			case static_cast<int>(Numeric::SIX):
-			case static_cast<int>(Numeric::SEVEN):
-			case static_cast<int>(Numeric::EIGHT):
-			case static_cast<int>(Numeric::NINE):
+			case static_cast<ValueType>(Numeric::ZERO) :
+			case static_cast<ValueType>(Numeric::ONE) :
+			case static_cast<ValueType>(Numeric::TWO) :
+			case static_cast<ValueType>(Numeric::THREE) :
+			case static_cast<ValueType>(Numeric::FOUR) :
+			case static_cast<ValueType>(Numeric::FIVE) :
+			case static_cast<ValueType>(Numeric::SIX) :
+			case static_cast<ValueType>(Numeric::SEVEN) :
+			case static_cast<ValueType>(Numeric::EIGHT) :
+			case static_cast<ValueType>(Numeric::NINE) :
 				return true;
 		}
 

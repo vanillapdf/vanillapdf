@@ -83,6 +83,7 @@
     <ClInclude Include="src\gotchangpdf\util\version.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="lib\boost\libs\iostreams\src\zlib.cpp" />
     <ClCompile Include="src\gotchangpdf\basic\basic_base_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\basic\basic_reverse_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\basic\basic_stream.cpp" />
@@ -164,16 +165,16 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\objects\basic;src\gotchangpdf\exceptions;src\gotchangpdf\files;src\gotchangpdf\lexical;lib\boost;src\gotchangpdf\objects\common;include\gotchangpdf;src\gotchangpdf\documents;src\gotchangpdf\raw;src\gotchangpdf\util;src\gotchangpdf\basic;src\gotchangpdf\filters;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;BOOST_IOSTREAMS_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\objects\basic;src\gotchangpdf\exceptions;src\gotchangpdf\files;src\gotchangpdf\lexical;lib\boost;src\gotchangpdf\objects\common;include\gotchangpdf;src\gotchangpdf\documents;src\gotchangpdf\raw;src\gotchangpdf\util;src\gotchangpdf\basic;src\gotchangpdf\filters;lib\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libboost_system-vc120-mt-gd-1_55.lib;libboost_filesystem-vc120-mt-gd-1_55.lib;libboost_iostreams-vc120-mt-gd-1_55.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libboost_system-vc120-mt-gd-1_55.lib;libboost_filesystem-vc120-mt-gd-1_55.lib;libboost_iostreams-vc120-mt-gd-1_55.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>lib\boost\stage\lib;lib\zlib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "lib\zlib\zlib1.dll"  "build\$(ProjectName)\$(Configuration)"
+      <Command>xcopy /Y "lib\zlib\zlib1.dll"  "build\$(ProjectName)\$(Configuration)"
 xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Configuration)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -184,18 +185,18 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Co
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;BOOST_IOSTREAMS_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\objects\basic;src\gotchangpdf\exceptions;src\gotchangpdf\files;src\gotchangpdf\lexical;lib\boost;src\gotchangpdf\objects\common;include\gotchangpdf;src\gotchangpdf\documents;src\gotchangpdf\raw;src\gotchangpdf\util;src\gotchangpdf\basic;src\gotchangpdf\filters;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\objects\basic;src\gotchangpdf\exceptions;src\gotchangpdf\files;src\gotchangpdf\lexical;lib\boost;src\gotchangpdf\objects\common;include\gotchangpdf;src\gotchangpdf\documents;src\gotchangpdf\raw;src\gotchangpdf\util;src\gotchangpdf\basic;src\gotchangpdf\filters;lib\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>libboost_system-vc120-mt-1_55.lib;libboost_filesystem-vc120-mt-1_55.lib;libboost_iostreams-vc120-mt-1_55.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libboost_system-vc120-mt-1_55.lib;libboost_filesystem-vc120-mt-1_55.lib;libboost_iostreams-vc120-mt-1_55.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>lib\boost\stage\lib;lib\zlib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "lib\zlib\zlib1.dll"  "build\$(ProjectName)\$(Configuration)"
+      <Command>xcopy /Y "lib\zlib\zlib1.dll"  "build\$(ProjectName)\$(Configuration)"
 xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Configuration)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

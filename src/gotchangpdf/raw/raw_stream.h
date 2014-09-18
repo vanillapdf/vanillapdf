@@ -16,7 +16,7 @@ namespace gotchangpdf
 			Stream(const Stream &);
 
 			virtual void Read(char* bytes, unsigned int len) override;
-			virtual std::unique_ptr<char> Read(unsigned int len) override;
+			virtual char* Read(unsigned int len) override;
 
 			virtual ~Stream();
 		};

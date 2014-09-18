@@ -27,9 +27,9 @@ namespace gotchangpdf
 			Token offset, number;
 			s >> offset >> sp1 >> number >> sp2 >> key >> eol1 >> eol2;
 
-			if (!(eol1 == Character::WhiteSpace::SPACE && eol2 == Character::WhiteSpace::CARRIAGE_RETURN) &&
-				!(eol1 == Character::WhiteSpace::SPACE && eol2 == Character::WhiteSpace::LINE_FEED) &&
-				!(eol1 == Character::WhiteSpace::CARRIAGE_RETURN && eol2 == Character::WhiteSpace::LINE_FEED))
+			if (!(eol1.isSpace() && eol2.Equals(Character::WhiteSpace::CARRIAGE_RETURN)) &&
+				!(eol1.isSpace() && eol2.isNewline()) &&
+				!(eol1.Equals(Character::WhiteSpace::CARRIAGE_RETURN) && eol2.isNewline()))
 			{
 				throw Exception("End of line marker was not found in xref table entry");
 			}

@@ -32,7 +32,7 @@ namespace gotchangpdf
 
 	private:
 		SmartPtr<DictionaryObject> _dictionary = nullptr;
-		std::shared_ptr<Buffer> _data = nullptr;
+		Buffer _data;
 		streamOffsetValueType _rawDataOffset = std::_BADOFF;
 		streamSizeValueType _rawDataLength = -1;
 		Type _type = Type::UNKNOWN;

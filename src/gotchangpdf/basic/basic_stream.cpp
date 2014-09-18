@@ -9,7 +9,6 @@ namespace gotchangpdf
 {
 	namespace basic
 	{
-		using namespace std;
 		using namespace exceptions;
 
 		Stream::Stream(std::istream& stream) : raw::Stream(stream) {}
@@ -23,7 +22,7 @@ namespace gotchangpdf
 			do
 			{
 				ch = get();
-			} while (std::find(settings->skip.begin(), settings->skip.end(), ch) != settings->skip.end());
+			} while (std::find(settings.skip.begin(), settings.skip.end(), ch) != settings.skip.end());
 
 			seekg(pos);
 			return Character(ch);
@@ -37,7 +36,7 @@ namespace gotchangpdf
 			do
 			{
 				ch = get();
-			} while (std::find(settings->skip.begin(), settings->skip.end(), ch) != settings->skip.end());
+			} while (std::find(settings.skip.begin(), settings.skip.end(), ch) != settings.skip.end());
 
 			return Character(ch);
 		}
@@ -57,9 +56,9 @@ namespace gotchangpdf
 			throw Exception("Unknown hexadecimal character " + val);
 		}
 
-		shared_ptr<Buffer> Stream::Readline()
+		Buffer Stream::Readline()
 		{
-			shared_ptr<Buffer> result(new Buffer());
+			Buffer result;
 
 			char buf[constant::BUFFER_SIZE];
 
@@ -67,26 +66,26 @@ namespace gotchangpdf
 			auto end = &buf[constant::BUFFER_SIZE - 1];
 
 			getline(buf, constant::BUFFER_SIZE);
-			streamsize read = gcount();
+			std::streamsize read = gcount();
 
 			while (constant::BUFFER_SIZE == read)
 			{
-				result->Insert(0, Buffer(begin, end));
+				result.Insert(0, Buffer(begin, end));
 				getline(buf, constant::BUFFER_SIZE);
 				read = gcount();
 			}
 
 			int rd = static_cast<int>(read);
 			Character ch(buf[std::max(0, rd - 2)]);
-			streamsize pos = (ch == Character::WhiteSpace::CARRIAGE_RETURN ? std::max(0, rd - 2) : std::max(0, rd - 1));
+			std::streamsize pos = (ch.Equals(Character::WhiteSpace::CARRIAGE_RETURN) ? std::max(0, rd - 2) : std::max(0, rd - 1));
 
 			assert(pos >= 0);
 
-			if (static_cast<unsigned char>(Character::WhiteSpace::CARRIAGE_RETURN) == *begin)
+			if (static_cast<Character::ValueType>(Character::WhiteSpace::CARRIAGE_RETURN) == *begin)
 				++begin;
 
 			end = &buf[pos];
-			result->Insert(0, Buffer(begin, end));
+			result.Insert(0, Buffer(begin, end));
 
 			return result;
 		}

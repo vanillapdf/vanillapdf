@@ -96,16 +96,10 @@ namespace gotchangpdf
 			std::istream::read(bytes, len);
 		}
 
-		unique_ptr<char> ReverseStream::Read(size_t len)
+		char* ReverseStream::Read(unsigned int len)
 		{
-			unique_ptr<char> result(new char[len]);
-
-			/* unique_ptr handles memory in case of exception,
-			otherwise try-catch would needed to be involved */
-			char *hack = result.get();
-
-			Read(hack, len);
-
+			char *result = new char[len];
+			Read(result, len);
 			return result;
 		}
 	}

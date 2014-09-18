@@ -7,6 +7,9 @@ namespace gotchangpdf
 {
 	class Character
 	{
+		friend basic::BaseStream& operator>> (basic::BaseStream& s, Character& o);
+		friend lexical::Stream& operator>> (lexical::Stream& s, Character& o);
+
 	public:
 		typedef unsigned char ValueType;
 
@@ -61,29 +64,36 @@ namespace gotchangpdf
 		bool isSpace(void) const;
 		bool isWhiteSpace(void) const;
 		bool isDelimiter(void) const;
-		bool isEndOfLine(void) const;
+		bool isNewline(void) const;
 		bool isNumeric(void) const;
 
 		Character& operator= (ValueType value);
 
-		operator ValueType() const { return _value; }
+		operator ValueType() const;
 		ValueType Value(void) const;
 
-		friend basic::BaseStream& operator>> (basic::BaseStream& s, Character& o);
-		friend lexical::Stream& operator>> (lexical::Stream& s, Character& o);
-		
-		friend bool operator== (const Character& c1, const Character& c2);
-		friend bool operator!= (const Character& c1, const Character& c2);
-		friend bool operator== (const Character& c1, const WhiteSpace c2);
-		friend bool operator!= (const Character& c1, const WhiteSpace c2);
-		friend bool operator== (const Character& c1, const Delimiter c2);
-		friend bool operator!= (const Character& c1, const Delimiter c2);
-		friend bool operator== (const Character& c1, const Numeric c2);
-		friend bool operator!= (const Character& c1, const Numeric c2);
+		bool Equals(const ValueType c) const;
+		bool Equals(const Character& c) const;
+		bool Equals(const WhiteSpace c) const;
+		bool Equals(const Delimiter c) const;
+		bool Equals(const Numeric c) const;
 
 	private:
 		ValueType _value = 0;
 	};
+
+	inline bool Character::Equals(const ValueType c) const { return _value == c; }
+	inline bool Character::Equals(const Character& c) const { return Equals(c._value); }
+	inline bool Character::Equals(const WhiteSpace c) const { return Equals(static_cast<Character::ValueType>(c)); }
+	inline bool Character::Equals(const Delimiter c) const { return Equals(static_cast<Character::ValueType>(c)); }
+	inline bool Character::Equals(const Numeric c) const { return Equals(static_cast<Character::ValueType>(c)); }
+
+	inline Character::ValueType Character::Value(void) const { return _value; }
+	inline Character::operator ValueType() const { return _value; }
+
+	inline bool Character::isRegular(void) const { return !isWhiteSpace() && !isDelimiter(); }
+	inline bool Character::isSpace(void) const { return Equals(WhiteSpace::SPACE); }
+	inline bool Character::isNewline(void) const { return Equals(WhiteSpace::LINE_FEED); }
 }
 
 #endif /* _CHARACTER_H */

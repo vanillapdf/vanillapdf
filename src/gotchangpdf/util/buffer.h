@@ -14,6 +14,8 @@ namespace gotchangpdf
 		typedef char ValueType;
 
 		Buffer();
+		Buffer(const Buffer& other);
+		Buffer(Buffer&& other);
 		Buffer(const ValueType *chars, int len);
 		Buffer(const ValueType *begin, const ValueType *end);
 		Buffer(const std::vector<ValueType>& data);

@@ -8,7 +8,6 @@ namespace gotchangpdf
 {
 	namespace basic
 	{
-		using namespace std;
 		using namespace exceptions;
 
 		ReverseStream::ReverseStream(std::istream& stream) : raw::ReverseStream(stream) {}
@@ -60,9 +59,9 @@ namespace gotchangpdf
 			throw Exception("Unknown hexadecimal character " + val);
 		}
 
-		shared_ptr<Buffer> ReverseStream::Readline(void)
+		Buffer ReverseStream::Readline(void)
 		{
-			shared_ptr<Buffer> result(new Buffer());
+			Buffer result;
 
 			char buf[constant::BUFFER_SIZE];
 
@@ -76,7 +75,7 @@ namespace gotchangpdf
 			{
 				Buffer tmp(begin, end);
 				tmp.Reverse();
-				result->Insert(0, tmp);
+				result.Insert(0, tmp);
 				getline(buf, constant::BUFFER_SIZE);
 				read = gcount();
 			}
@@ -85,7 +84,7 @@ namespace gotchangpdf
 
 			Buffer tmp(begin, end);
 			tmp.Reverse();
-			result->Insert(0, tmp);
+			result.Insert(0, tmp);
 
 			unget();
 

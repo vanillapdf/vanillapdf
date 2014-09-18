@@ -72,7 +72,7 @@ namespace gotchangpdf
 		public:
 			explicit ReverseStream(std::istream& stream);
 			virtual void Read(char* bytes, unsigned int len) override;
-			virtual std::unique_ptr<char> Read(unsigned int len) override;
+			virtual char* Read(unsigned int len) override;
 
 			virtual ~ReverseStream();
 

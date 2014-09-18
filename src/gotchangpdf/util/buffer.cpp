@@ -7,6 +7,8 @@ namespace gotchangpdf
 	#pragma region Constructors
 
 	Buffer::Buffer() : _value() {}
+	Buffer::Buffer(const Buffer& other) : _value(other._value) {}
+	Buffer::Buffer(Buffer&& other) : _value(std::move(other._value)) {}
 	Buffer::Buffer(const ValueType *chars, int len) : _value(&chars[0], &chars[len - 1]) { assert(_value.size() > 0); }
 	Buffer::Buffer(const ValueType *begin, const ValueType *end) : _value(begin, end) { assert(_value.size() > 0); }
 	Buffer::Buffer(const std::vector<ValueType>& data) : _value(data) { assert(_value.size() > 0); }

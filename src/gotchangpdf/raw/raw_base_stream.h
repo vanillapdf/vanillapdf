@@ -13,7 +13,7 @@ namespace gotchangpdf
 		{
 		public:
 
-			virtual std::unique_ptr<char> Read(unsigned int len) = 0;
+			virtual char* Read(unsigned int len) = 0;
 			virtual void Read(char *buf, unsigned int len) = 0;
 			virtual void ReadExact(const char* bytes, unsigned int len);
 			virtual ~BaseStream() = 0;

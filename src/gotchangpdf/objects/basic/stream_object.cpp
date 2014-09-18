@@ -23,13 +23,13 @@ namespace gotchangpdf
 
 	Buffer StreamObject::GetData() const
 	{
-		auto filter_name = _dictionary->Find(gotchangpdf::constant::Name::Filter);
+		auto filter_name = _dictionary->Find(constant::Name::Filter);
 		if (nullptr == filter_name)
-			return *_data;
+			return _data;
 
 		// TODO
 		filters::FlateDecodeFilter a;
-		return a.Decode(*_data);
+		return a.Decode(_data);
 		//return ((Filters::FlateDecodeFilter*)(&*filter_name))->Apply(*_data);
 	}
 
@@ -47,7 +47,7 @@ namespace gotchangpdf
 		if (s.PeekTokenType() == Token::Type::EOL)
 		{
 			auto token = s.ReadToken();
-			if (token->value().Size() == 1 && Character(token->value()[0]) == Character::WhiteSpace::CARRIAGE_RETURN)
+			if (token->value().Size() == 1 && Character(token->value()[0]).Equals(Character::WhiteSpace::CARRIAGE_RETURN))
 			{
 				stringstream buffer;
 				buffer << "After stream keyword is single CR character at offset " << s.tellg();
@@ -88,7 +88,7 @@ namespace gotchangpdf
 		streamoff offset = s.tellg();
 
 		auto data = s.Read(len);
-		auto buffer = std::shared_ptr<Buffer>(new Buffer(data.get(), len));
+		auto buffer = Buffer(data, len);
 
 		if (s.PeekTokenType() == Token::Type::EOL)
 			s.ReadToken();

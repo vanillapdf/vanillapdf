@@ -17,7 +17,7 @@ namespace gotchangpdf
 			virtual Character Get() override;
 			virtual Character GetHex() override;
 			virtual void Unget() override;
-			virtual std::shared_ptr<Buffer> Readline(void) override;
+			virtual Buffer Readline(void) override;
 		};
 	}
 }
