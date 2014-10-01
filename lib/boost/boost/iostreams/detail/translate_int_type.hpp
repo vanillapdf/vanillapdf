@@ -50,7 +50,7 @@ struct translate_int_type_impl<false> {
         static typename TargetTr::int_type 
         translate(typename SourceTr::int_type c)
             { 
-                return SourceTr::eq_int_type(SourceTr::eof()) ?
+                return SourceTr::eq_int_type(c, SourceTr::eof()) ?
                            TargetTr::eof() :
                            TargetTr::to_int_type(SourceTr::to_char_type(c));
             }
