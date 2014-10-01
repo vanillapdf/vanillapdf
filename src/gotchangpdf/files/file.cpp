@@ -1,4 +1,4 @@
-#include "File.h"
+#include "file.h"
 #include "integer_object.h"
 #include "indirect_object.h"
 #include "indirect_object_reference.h"
@@ -21,7 +21,7 @@ namespace gotchangpdf
 		using namespace lexical;
 		using namespace exceptions;
 
-		File::File(const char *filename) : _input(nullptr), _cache(), _xref(new Xref()), _header(new Header()), _trailer(new Trailer()), _filename(filename) {}
+		File::File(const char * filename) : _filename(filename) {}
 
 		File::~File(void)
 		{
@@ -36,36 +36,46 @@ namespace gotchangpdf
 
 		void File::Initialize(void)
 		{
+			if (_initialized)
+				return;
+
+			_cache = vector<SmartPtr<IndirectObject>>();
+			_xref = SmartPtr<Xref>(new Xref());
+			_header = SmartPtr<Header>(new Header());
+			_trailer = SmartPtr<Trailer>(new Trailer());
+
 			if (!boost::filesystem::exists(_filename))
 				throw new exceptions::Exception("File does not exist");
 
-			_input = shared_ptr<fstream>(new fstream);
-			_input->open(_filename, ios_base::in | ios_base::out | std::ifstream::binary);
+			_input = shared_ptr<FileDevice>(new FileDevice());
+			_input->open(_filename,
+				ios_base::in | ios_base::out | ios_base::binary);
 
-			if (!_input->good())
+			if (!_input || !_input->good())
 				throw new exceptions::Exception("Could not open file");
 
-			_stream = shared_ptr<lexical::Parser>(new lexical::Parser(shared_ptr<File>(this), _input));
+			Parser stream = Parser(this, *_input);
 
-			_stream->seekg(ios_base::beg);
-			*_stream >> *_header;
+			stream.seekg(ios_base::beg);
+			stream >> *_header;
 
-			ReverseStream reversed = ReverseStream(*_stream);
+			ReverseStream reversed = ReverseStream(*_input);
 			reversed >> *_trailer;
 
-			_stream->seekg(_trailer->xref_offset(), ios_base::beg);
-			*_stream >> *_xref;
+			stream.seekg(_trailer->xref_offset(), ios_base::beg);
+			stream >> *_xref;
 
-			_stream->ReadTokenWithType(Token::Type::TRAILER);
-			_stream->ReadTokenWithType(Token::Type::EOL);
+			stream.ReadTokenWithType(Token::Type::TRAILER);
+			stream.ReadTokenWithType(Token::Type::EOL);
 
 			// HACK
-			*_stream >> *_trailer->dictionary();
+			stream >> *_trailer->dictionary();
 
 			_initialized = true;
 		}
 
-		SmartPtr<IndirectObject> File::GetIndirectObject(unsigned int objNumber, unsigned int genNumber) const
+		SmartPtr<IndirectObject> File::GetIndirectObject(unsigned int objNumber,
+			unsigned int genNumber) const
 		{
 			if (!_initialized)
 				throw new Exception("File has not been initialized yet");
@@ -102,17 +112,10 @@ namespace gotchangpdf
 			if (!_initialized)
 				throw new Exception("File has not been initialized yet");
 
-			static const char root[] = "Root";
-			auto reference = _trailer->dictionary()->FindAs<IndirectObjectReference>(NameObject(Buffer(root, sizeof(root))));
+			auto reference = _trailer->dictionary()->FindAs<IndirectObjectReference>(constant::Name::Root);
 			auto dict = reference->GetReferencedObjectAs<DictionaryObject>();
 			return SmartPtr<documents::Catalog>(new documents::Catalog(dict));
 		}
-
-		SmartPtr<Header> File::GetHeader(void) const { return _header; }
-		SmartPtr<Trailer> File::GetTrailer(void) const { return _trailer; }
-		SmartPtr<Xref> File::GetXref(void) const { return _xref; }
-
-		lexical::Parser File::GetParser(void) const { return lexical::Parser(*_stream); }
 	}
 }
 
@@ -145,11 +148,11 @@ GOTCHANG_PDF_API XrefHandle CALLING_CONVENTION File_Xref(FileHandle handle)
 	auto table = file->GetXref();
 	auto ptr = table.AddRefGet();
 
-	//boost::intrusive_ptr_add_ref(ptr);
 	return reinterpret_cast<XrefHandle>(ptr);
 }
 
-GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION File_GetIndirectObject(FileHandle handle, int objNumber, int genNumber)
+GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION File_GetIndirectObject(
+	FileHandle handle, int objNumber, int genNumber)
 {
 	File* file = reinterpret_cast<File*>(handle);
 
@@ -160,7 +163,8 @@ GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION File_GetIndirectObject(
 	return reinterpret_cast<IndirectObjectHandle>(ptr);
 }
 
-GOTCHANG_PDF_API CatalogHandle CALLING_CONVENTION File_GetDocumentCatalog(FileHandle handle)
+GOTCHANG_PDF_API CatalogHandle CALLING_CONVENTION File_GetDocumentCatalog(
+	FileHandle handle)
 {
 	File* file = reinterpret_cast<File*>(handle);
 

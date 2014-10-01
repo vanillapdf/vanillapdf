@@ -16,8 +16,8 @@ namespace gotchangpdf
 
 		Token::Token(Token::Type type) : _type(type) {}
 		Token::Token() : _type(Token::Type::UNKNOWN), _value() {}
-		Token::Token(const Buffer& chars) : _type(Evaluate(chars)), _value(chars) { assert(_value.Size() > 0); }
-		Token::Token(const char* chars, int len) : _value(chars, len), _type(Evaluate(_value)) { assert(_value.Size() > 0); }
+		Token::Token(const Buffer& chars) : _type(Evaluate(chars)), _value(chars) { assert(_value.size() > 0); }
+		Token::Token(const char* chars, int len) : _value(chars, len), _type(Evaluate(_value)) { assert(_value.size() > 0); }
 
 		Token::Token(Type type, const Buffer& chars) : _type(type), _value(chars)
 		{

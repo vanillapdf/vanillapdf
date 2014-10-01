@@ -10,9 +10,9 @@ namespace gotchangpdf
 {
 	using namespace std;
 
-	IndirectObjectReference::IndirectObjectReference(std::shared_ptr<files::File> file) : _file(file) {}
+	IndirectObjectReference::IndirectObjectReference(files::File * file) : _file(file) {}
 
-	IndirectObjectReference::IndirectObjectReference(std::shared_ptr<files::File> file, unsigned int obj_number, unsigned int gen_number) :
+	IndirectObjectReference::IndirectObjectReference(files::File * file, unsigned int obj_number, unsigned int gen_number) :
 		_file(file), _obj_number(obj_number), _gen_number(gen_number) {}
 
 	SmartPtr<IndirectObject> IndirectObjectReference::GetReferencedObject() const

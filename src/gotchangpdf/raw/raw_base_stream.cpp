@@ -9,12 +9,10 @@ namespace gotchangpdf
 
 		BaseStream::~BaseStream() {}
 
-		void BaseStream::ReadExact(const char* bytes, unsigned int len)
+		void BaseStream::read_exact(const Buffer & buf)
 		{
-			auto buf = Read(len);
-
-			for (size_t i = 0; i < len; ++i)
-			if (bytes[i] != buf[i])
+			auto cmp = read(buf.size());
+			if (buf != cmp)
 				throw Exception("Stream bytes is not equal to input");
 		}
 	}

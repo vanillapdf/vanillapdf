@@ -1,9 +1,11 @@
 #ifndef _RAW_BASE_STREAM_H
 #define _RAW_BASE_STREAM_H
 
-#include "constants.h"
+#include "character.h"
+#include "buffer.h"
 
-#include <memory>
+#include <istream>
+#include <boost/iostreams/filtering_stream.hpp>
 
 namespace gotchangpdf
 {
@@ -12,10 +14,18 @@ namespace gotchangpdf
 		class BaseStream
 		{
 		public:
+			typedef std::istream CharacterSource;
+			typedef std::basic_streambuf<char> CharacterSourceBuffer;
+			typedef boost::iostreams::filtering_stream<boost::iostreams::input_seekable, char> CharacterFilteringSource;
+			typedef boost::iostreams::filtering_streambuf<boost::iostreams::input_seekable, char> CharacterFilteringSourceBuffer;
 
-			virtual char* Read(unsigned int len) = 0;
-			virtual void Read(char *buf, unsigned int len) = 0;
-			virtual void ReadExact(const char* bytes, unsigned int len);
+		public:
+			virtual Buffer read(unsigned int len) = 0;
+			virtual void read_exact(const Buffer & buf);
+
+			virtual char get_hex(void) = 0;
+			virtual Buffer readline(void) = 0;
+
 			virtual ~BaseStream() = 0;
 		};
 	}

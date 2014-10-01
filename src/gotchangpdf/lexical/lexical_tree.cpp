@@ -10,7 +10,7 @@ namespace gotchangpdf
 				_root = new Node();
 
 			Node **cur = &_root;
-			int len = path.Size();
+			int len = path.size();
 			for (int i = 0; i < len; ++i)
 			{
 				cur = &(*cur)->childs[path[i]];
@@ -48,7 +48,7 @@ namespace gotchangpdf
 				return nullptr;
 
 			Node *cur = _root;
-			int len = path.Size();
+			int len = path.size();
 			for (int i = 0; i < len; ++i)
 			{
 				cur = cur->childs[path[i]];

@@ -9,10 +9,11 @@ namespace gotchangpdf
 {
 	namespace basic
 	{
+		using namespace std;
 		using namespace exceptions;
 
-		Stream::Stream(std::istream& stream) : raw::Stream(stream) {}
-		Stream::Stream(const Stream &other) : raw::Stream(other) {}
+		Stream::Stream(CharacterSource & stream) : raw::Stream(stream) {}
+		Stream::Stream(const Stream & other) : raw::Stream(other) {}
 
 		Character Stream::Peek()
 		{
@@ -60,7 +61,7 @@ namespace gotchangpdf
 		{
 			Buffer result;
 
-			char buf[constant::BUFFER_SIZE];
+			Character buf[constant::BUFFER_SIZE];
 
 			auto begin = &buf[0];
 			auto end = &buf[constant::BUFFER_SIZE - 1];
@@ -70,7 +71,7 @@ namespace gotchangpdf
 
 			while (constant::BUFFER_SIZE == read)
 			{
-				result.Insert(0, Buffer(begin, end));
+				result.insert(result.begin(), begin, end);
 				getline(buf, constant::BUFFER_SIZE);
 				read = gcount();
 			}
@@ -85,7 +86,7 @@ namespace gotchangpdf
 				++begin;
 
 			end = &buf[pos];
-			result.Insert(0, Buffer(begin, end));
+			result.insert(result.begin(), begin, end);
 
 			return result;
 		}

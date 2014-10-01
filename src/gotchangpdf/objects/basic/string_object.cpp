@@ -24,8 +24,14 @@ namespace gotchangpdf
 		for (int i = 0; i < len; ++i)
 		{
 			int val = stoi(_hexadecimal.substr(i * 2, 2), 0, 16);
-			Character ch = Character(val);
-			_value.Append(ch);
+
+			assert(std::numeric_limits<unsigned char>::min() < val &&
+				std::numeric_limits<unsigned char>::max() > val);
+
+			/* this can be done, because we are dealing with 2
+			hexadecimal chars, which cannot be greater than 0xFF */
+			unsigned char parsed = static_cast<char>(val);
+			_value.push_back(parsed);
 		}
 	}
 
@@ -38,8 +44,14 @@ namespace gotchangpdf
 		for (int i = 0; i < len; ++i)
 		{
 			int val = stoi(_hexadecimal.substr(i * 2, 2), 0, 16);
-			Character ch = Character(val);
-			_value.Append(ch);
+
+			assert(std::numeric_limits<unsigned char>::min() < val &&
+				std::numeric_limits<unsigned char>::max() > val);
+
+			/* this can be done, because we are dealing with 2
+			hexadecimal chars, which cannot be greater than 0xFF */
+			unsigned char parsed = static_cast<char>(val);
+			_value.push_back(parsed);
 		}
 	}
 

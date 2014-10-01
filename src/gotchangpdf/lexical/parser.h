@@ -12,7 +12,8 @@ namespace gotchangpdf
 		class Parser : public lexical::Stream
 		{
 		public:
-			Parser(std::shared_ptr<files::File> file, std::shared_ptr<std::istream> stream);
+			Parser(files::File * file, CharacterSource & stream);
+			Parser(const Parser & other);
 
 			template<typename T>
 			SmartPtr<T> readObjectWithType() { return readObject().GetAs<T>(); }
@@ -21,16 +22,16 @@ namespace gotchangpdf
 			SmartPtr<Object> readObject();
 			SmartPtr<Object> peekObject();
 
-			std::shared_ptr<files::File> file(void) const;
+			files::File * file(void) const;
 			//void SetDeep(bool deep);
 			//bool GetDeep(void) const;
 
-			Parser(const Parser &);
-
 		private:
-			std::shared_ptr<files::File> _file;
+			files::File * _file;
 			//bool _deep;
 		};
+
+		inline files::File * Parser::file(void) const { return _file; }
 	}
 }
 

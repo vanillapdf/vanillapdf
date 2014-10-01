@@ -2,6 +2,9 @@
 #include "exception.h"
 #include "constants.h"
 
+#include <limits>
+#include <cassert>
+
 namespace gotchangpdf
 {
 	namespace raw
@@ -9,13 +12,9 @@ namespace gotchangpdf
 		using namespace exceptions;
 		using namespace std;
 
-		ReverseStream::ReverseBuf::ReverseBuf(istream& s)
+		ReverseStream::ReverseBuf::ReverseBuf(CharacterSource & s)// : _source(s)
 		{
 			/* TODO optimization */
-
-			/* do not mess with invalid streams */
-			if (s.eof() || s.fail())
-				throw Exception("Input stream is in invalid state");
 
 			/* get current offset for later restoration */
 			auto offset = s.tellg();
@@ -23,10 +22,13 @@ namespace gotchangpdf
 			/* read whole stream */
 			s.seekg(ios_base::beg);
 
-			char buf[constant::BUFFER_SIZE];
+			/* do not mess with invalid streams */
+			if (s.eof() || s.fail())
+				throw Exception("Input stream is in invalid state");
 
-			char* begin = &buf[0];
-			char* end = &buf[constant::BUFFER_SIZE - 1];
+			char buf[constant::BUFFER_SIZE];
+			auto begin = &buf[0];
+			auto end = &buf[constant::BUFFER_SIZE - 1];
 
 			/* chunk that dirty bytes */
 			while (s.read(buf, constant::BUFFER_SIZE))
@@ -47,60 +49,153 @@ namespace gotchangpdf
 			s.clear();
 			s.seekg(offset);
 		}
+
+		ReverseStream::ReverseBuf::~ReverseBuf()
+		{
+			//pubsync();
+		}
+
+		ReverseStream::ReverseBuf::pos_type ReverseStream::ReverseBuf::seekoff(off_type offset,
+			ios_base::seekdir dir,
+			ios_base::openmode mode)
+		{
+			if (dir == ios_base::end)
+				offset += (off_type)(egptr());
+			else if (dir == ios_base::cur
+				&& (mode & ios_base::out) == 0)
+				offset += (off_type)(gptr() - eback());
+			else if (dir != ios_base::beg)
+				offset = _BADOFF;
+
+			return (pos_type(offset));
+		}
+
+		ReverseStream::ReverseBuf::pos_type ReverseStream::ReverseBuf::seekpos(pos_type ptr,
+			ios_base::openmode mode)
+		{
+			streamoff offset = (streamoff)ptr;
+			gbump((int)(gptr() - eback() + offset));
+
+			return (streampos(offset));
+		}
+
 		/*
 		int ReverseStream::ReverseBuf::sync()
 		{
 		// cout << s << ": " << str(); str("");  return !cout;
 		}
 		*/
-		ReverseStream::ReverseBuf::~ReverseBuf()
-		{
-			//pubsync();
-		}
 		/*
-		streambuf::int_type ReverseStream::ReverseBuf::underflow()
+		ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::underflow()
 		{
-		return  gptr() == egptr() ?
-		traits_type::eof() :
-		traits_type::to_int_type(*gptr());
+			if (gptr() > egptr()) // buffer not exhausted
+				return traits_type::to_int_type(*gptr());
+
+			Character * base = _buffer.data();
+			Character * start = base;
+
+			if (eback() == base) // true when this isn't the first fill
+			{
+				// Make arrangements for putback characters
+				std::memmove(base, egptr() - put_back_, put_back_);
+				start += put_back_;
+			}
+
+			// start is now the start of the buffer, proper.
+			// Read from fptr_ in to the provided buffer
+
+			//_offset -= constant::BUFFER_SIZE;
+			_offset = 0;
+
+			_source.seekg(_offset);
+			_source.read(start, constant::BUFFER_SIZE - (start - base));
+
+			assert(!_source.fail());
+
+			if (_source.eof())
+				return traits_type::eof();
+
+			// Set buffer pointers
+			setg(_buffer.data() + _buffer.size(), _buffer.data() + _buffer.size() - 1, _buffer.data());
+
+			return traits_type::to_int_type(*gptr());
 		}
 
-		streambuf::int_type ReverseStream::ReverseBuf::uflow()
+		ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::uflow()
 		{
-		if (gptr() == egptr())
-		return traits_type::eof();
+			if (gptr() == egptr())
+				return traits_type::eof();
 
-		return traits_type::to_int_type(*_Gninc());
+			return traits_type::to_int_type(*_Gndec());
 		}
 
-		streambuf::int_type ReverseStream::ReverseBuf::pbackfail(int_type ch)
+		ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::pbackfail(int_type ch)
 		{
-		if (gptr() == eback() || (ch != traits_type::eof() && ch != gptr()[-1]))
-		return traits_type::eof();
+			if (gptr() == eback() || (ch != traits_type::eof() && ch != gptr()[-1]))
+				return traits_type::eof();
 
-		return traits_type::to_int_type(*_Gndec());
+			return traits_type::to_int_type(*_Gninc());
 		}
 
 		streamsize ReverseStream::ReverseBuf::showmanyc()
 		{
-		assert(std::less_equal<const char *>()(gptr(), egptr()));
-		return egptr() - gptr();
+			assert(std::less_equal<const Character *>()(egptr(), gptr()));
+			return gptr() - egptr();
 		}
 		*/
-		ReverseStream::ReverseStream(std::istream& stream) : std::istream(new ReverseBuf(stream)) {}
+		ReverseStream::ReverseStream(CharacterSource & stream) : CharacterSource(new ReverseBuf(stream)) {}
 
-		ReverseStream::~ReverseStream() { delete std::istream::rdbuf(); }
+		ReverseStream::~ReverseStream() { delete CharacterSource::rdbuf(); }
 
-		void ReverseStream::Read(char* bytes, unsigned int len)
+		Buffer ReverseStream::read(unsigned int len)
 		{
-			std::istream::read(bytes, len);
+			Buffer result;
+			CharacterSource::read(result.data(), len);
+			return result;
 		}
 
-		char* ReverseStream::Read(unsigned int len)
+		Buffer ReverseStream::readline(void)
 		{
-			char *result = new char[len];
-			Read(result, len);
+			Buffer result;
+
+			char buf[constant::BUFFER_SIZE];
+
+			auto begin = &buf[0];
+			auto end = &buf[constant::BUFFER_SIZE - 1];
+
+			getline(buf, constant::BUFFER_SIZE);
+			auto read = gcount();
+
+			while (constant::BUFFER_SIZE == read)
+			{
+				std::reverse(begin, end);
+				result.insert(result.begin(), begin, end);
+				getline(buf, constant::BUFFER_SIZE);
+				read = gcount();
+			}
+
+			end = &buf[read];
+
+			std::reverse(begin, end);
+			result.insert(result.begin(), begin, end);
+
+			unget();
+
 			return result;
+		}
+
+		char ReverseStream::get_hex()
+		{
+			char val = get();
+
+			if ('0' <= val && val <= '9')
+				return val - '0';
+			if ('a' <= val && val <= 'f')
+				return val + 10 - 'a';
+			if ('A' <= val && val <= 'F')
+				return val + 10 - 'A';
+
+			throw exceptions::Exception("Unknown hexadecimal character " + val);
 		}
 	}
 }

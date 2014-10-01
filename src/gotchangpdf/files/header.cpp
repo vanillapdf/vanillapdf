@@ -13,10 +13,10 @@ namespace gotchangpdf
 		using namespace std;
 		using namespace exceptions;
 
-		basic::Stream& operator>> (basic::Stream& s, Header& o)
+		raw::Stream& operator>> (raw::Stream& s, Header& o)
 		{
-			auto data = s.Readline();
-			assert(data.Size() > 0);
+			auto data = s.readline();
+			assert(data.size() > 0);
 
 			string tmp = data.ToString();
 

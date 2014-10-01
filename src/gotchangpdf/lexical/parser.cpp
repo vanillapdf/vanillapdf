@@ -1,6 +1,6 @@
-#include "Lexical/Parser.h"
+#include "parser.h"
 #include "exception.h"
-#include "File.h"
+#include "file.h"
 
 #include "stream_object.h"
 #include "boolean.h"
@@ -21,6 +21,12 @@ namespace gotchangpdf
 	{
 		using namespace lexical;
 		using namespace exceptions;
+
+		Parser::Parser(files::File * file, CharacterSource & stream)
+			: lexical::Stream(stream), _file(file) {}
+
+		Parser::Parser(const gotchangpdf::lexical::Parser &other)
+			: lexical::Stream(other) { _file = other.file(); }
 
 		SmartPtr<Object> Parser::readObject()
 		{
@@ -130,10 +136,6 @@ namespace gotchangpdf
 
 			return obj;
 		}
-
-		Parser::Parser(std::shared_ptr<files::File> file, std::shared_ptr<std::istream> stream) : lexical::Stream(*stream), _file(file) {}
-		Parser::Parser(const gotchangpdf::lexical::Parser &other) : lexical::Stream(other) { _file = other.file(); }
-		std::shared_ptr<files::File> Parser::file(void) const { return _file; }
 
 		SmartPtr<gotchangpdf::Object> Parser::readObjectWithType(gotchangpdf::Object::Type type)
 		{

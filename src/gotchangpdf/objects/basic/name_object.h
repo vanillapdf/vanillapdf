@@ -13,7 +13,7 @@ namespace gotchangpdf
 			unsigned long operator()(const NameObject& t) const
 			{
 				unsigned long result = 0;
-				unsigned int size = t._value.Size();
+				unsigned int size = t._value.size();
 				for (unsigned int i = 0; i < size; ++i)
 					result ^= t._value[i];
 
@@ -41,7 +41,7 @@ namespace gotchangpdf
 	{
 		namespace Name
 		{
-			#define DECLARE_CONST_NAME(name)	const NameObject name = NameObject(Buffer(#name, sizeof(#name)))
+#			define DECLARE_CONST_NAME(name)	const NameObject name = NameObject(Buffer(#name, sizeof(#name)))
 
 			DECLARE_CONST_NAME(Length);
 			DECLARE_CONST_NAME(Type);
@@ -60,6 +60,7 @@ namespace gotchangpdf
 			DECLARE_CONST_NAME(MediaBox);
 			DECLARE_CONST_NAME(Resources);
 			DECLARE_CONST_NAME(Parent);
+			DECLARE_CONST_NAME(Root);
 		}
 	}
 }

@@ -69,13 +69,6 @@ namespace gotchangpdf
 		class ReverseStream;
 	}
 
-	namespace basic
-	{
-		class BaseStream;
-		class Stream;
-		class ReverseStream;
-	}
-
 	namespace lexical
 	{
 		class BaseStream;

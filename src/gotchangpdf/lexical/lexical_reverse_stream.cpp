@@ -13,8 +13,10 @@ namespace gotchangpdf
 	{
 		using namespace std;
 		using namespace exceptions;
+		using namespace character;
 
-		ReverseStream::ReverseStream(istream& stream) : basic::ReverseStream(stream) {}
+		ReverseStream::ReverseStream(CharacterSource & stream)
+			: raw::ReverseStream(stream), _last_token_offset(_BADOFF) {}
 
 		shared_ptr<Token> ReverseStream::ReadToken()
 		{
@@ -39,95 +41,95 @@ namespace gotchangpdf
 			Buffer chars;
 
 		retry:
-			Character ch = Get();
-			Character ahead = Peek();
+			char ch = get();
+			char ahead = peek();
 			Token::Type result_type = Token::Type::UNKNOWN;
 
 			switch (ch)
 			{
-			case Character::WhiteSpace::LINE_FEED:
-				chars.Append(ch);
-				if (ahead.isSpace() || ahead.Equals(Character::WhiteSpace::CARRIAGE_RETURN))
-					chars.Append(Get());
+			case WhiteSpace::LINE_FEED:
+				chars.push_back(ch);
+				if (IsSpace(ahead) || Equals(ahead, WhiteSpace::CARRIAGE_RETURN))
+					chars.push_back(get());
 
 				result_type = Token::Type::EOL;
 				goto prepared;
-			case Character::WhiteSpace::SPACE:
+			case WhiteSpace::SPACE:
 				goto retry;
-			case Character::Delimiter::GREATER_THAN_SIGN:
-				if (ahead.Equals(Character::Delimiter::GREATER_THAN_SIGN))
+			case Delimiter::GREATER_THAN_SIGN:
+				if (Equals(ahead, Delimiter::GREATER_THAN_SIGN))
 				{
-					chars.Append(ch);
-					chars.Append(Get());
+					chars.push_back(ch);
+					chars.push_back(get());
 
 					result_type = Token::Type::DICTIONARY_END;
 					goto prepared;
 				}
 				else
 					throw Exception("Unexpected character follows intended dictionary end: " + ahead);
-			case Character::Delimiter::LESS_THAN_SIGN:
-				if (ahead.Equals(Character::Delimiter::LESS_THAN_SIGN))
+			case Delimiter::LESS_THAN_SIGN:
+				if (Equals(ahead, Delimiter::LESS_THAN_SIGN))
 				{
 					// Little HACK >> twice
-					chars.Append(ch);
-					chars.Append(Get());
+					chars.push_back(ch);
+					chars.push_back(get());
 
 					result_type = Token::Type::DICTIONARY_BEGIN;
 					goto prepared;
 				}
 				else
 				{
-					chars.Append(Get());
-					while (!Peek().Equals(Character::Delimiter::GREATER_THAN_SIGN))
-						chars.Append(Get());
+					chars.push_back(get());
+					while (!Equals(peek(), Delimiter::GREATER_THAN_SIGN))
+						chars.push_back(get());
 
 					result_type = Token::Type::HEXADECIMAL_STRING;
 					goto eat;
 				}
-			case Character::Delimiter::LEFT_SQUARE_BRACKET:
-				chars.Append(ch);
+			case Delimiter::LEFT_SQUARE_BRACKET:
+				chars.push_back(ch);
 				result_type = Token::Type::ARRAY_BEGIN;
 				goto prepared;
-			case Character::Delimiter::RIGHT_SQUARE_BRACKET:
-				chars.Append(ch);
+			case Delimiter::RIGHT_SQUARE_BRACKET:
+				chars.push_back(ch);
 				result_type = Token::Type::ARRAY_END;
 				goto prepared;
-			case Character::Delimiter::SOLIDUS:
-				while (!(Peek().isWhiteSpace() || Peek().isDelimiter()))
+			case Delimiter::SOLIDUS:
+				while (!(IsWhiteSpace(peek()) || IsDelimiter(peek())))
 				{
 					/* TODO #sign in name objects */
-					chars.Append(Get());
+					chars.push_back(get());
 				}
 
 				result_type = Token::Type::NAME_OBJECT;
 				goto prepared;
-			case Character::Delimiter::LEFT_PARENTHESIS:
-				while (!Peek().Equals(Character::Delimiter::RIGHT_PARENTHESIS))
-					chars.Append(Get());
+			case Delimiter::LEFT_PARENTHESIS:
+				while (!Equals(peek(), Delimiter::RIGHT_PARENTHESIS))
+					chars.push_back(get());
 
 				result_type = Token::Type::LITERAL_STRING;
 				goto eat;
 			default:
-				if (ch == 'R')
+				if (Equals(ch, 'R'))
 				{
-					chars.Append(ch);
+					chars.push_back(ch);
 
 					result_type = Token::Type::INDIRECT_REFERENCE_MARKER;
 					goto prepared;
 				}
 
-				if (ch.isNumeric() || ch == '+' || ch == '-')
+				if (IsNumeric(ch) || Equals(ch, '+') || Equals(ch, '-'))
 				{
-					chars.Append(ch);
+					chars.push_back(ch);
 
-					while (Peek().isNumeric())
-						chars.Append(Get());
+					while (IsNumeric(peek()))
+						chars.push_back(get());
 
-					if (Peek() == '.')
+					if (Equals(peek(), '.'))
 					{
-						chars.Append(Get());
-						while (Peek().isNumeric())
-							chars.Append(Get());
+						chars.push_back(get());
+						while (IsNumeric(peek()))
+							chars.push_back(get());
 
 						result_type = Token::Type::REAL_OBJECT;
 						goto prepared;
@@ -137,22 +139,22 @@ namespace gotchangpdf
 					goto prepared;
 				}
 
-				chars.Append(ch);
-				while (!(Peek().isWhiteSpace() || Peek().isDelimiter()))
-					chars.Append(Get());
+				chars.push_back(ch);
+				while (!(IsWhiteSpace(peek()) || IsDelimiter(peek())))
+					chars.push_back(get());
 
 
-				while (!(Peek().isRegular() || Peek().isWhiteSpace()))
-					chars.Append(Get());
+				while (!(IsRegular(peek()) || IsWhiteSpace(peek())))
+					chars.push_back(get());
 
 				goto prepared;
 			}
 
 		eat:
-			Get();
+			get();
 
 		prepared:
-			chars.Reverse();
+			chars.reverse();
 			return shared_ptr<Token>(new Token(result_type, chars));
 		}
 

@@ -16,6 +16,7 @@ namespace gotchangpdf
 	using namespace lexical;
 	using namespace std;
 	using namespace exceptions;
+	using namespace character;
 
 	StreamObject::StreamObject() {}
 
@@ -47,7 +48,7 @@ namespace gotchangpdf
 		if (s.PeekTokenType() == Token::Type::EOL)
 		{
 			auto token = s.ReadToken();
-			if (token->value().Size() == 1 && Character(token->value()[0]).Equals(Character::WhiteSpace::CARRIAGE_RETURN))
+			if (token->value().size() == 1 && Equals(token->value()[0], WhiteSpace::CARRIAGE_RETURN))
 			{
 				stringstream buffer;
 				buffer << "After stream keyword is single CR character at offset " << s.tellg();
@@ -87,8 +88,7 @@ namespace gotchangpdf
 		size_t len = static_cast<size_t>(*size);
 		streamoff offset = s.tellg();
 
-		auto data = s.Read(len);
-		auto buffer = Buffer(data, len);
+		auto data = s.read(len);
 
 		if (s.PeekTokenType() == Token::Type::EOL)
 			s.ReadToken();
@@ -99,7 +99,7 @@ namespace gotchangpdf
 
 		o._rawDataOffset = offset;
 		o._rawDataLength = len;
-		o._data = buffer;
+		o._data = data;
 
 		return s;
 	}

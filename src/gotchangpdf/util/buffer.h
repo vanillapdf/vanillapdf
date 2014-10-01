@@ -1,50 +1,50 @@
 #ifndef _BUFFER_H
 #define _BUFFER_H
 
-#include "Character.h"
+#include "character.h"
 
 #include <vector>
 #include <string>
 
 namespace gotchangpdf
 {
-	class Buffer
+	class Buffer : public std::vector<char>
 	{
+		typedef std::vector<char> MyBase;
+
 	public:
-		typedef char ValueType;
-
 		Buffer();
-		Buffer(const Buffer& other);
-		Buffer(Buffer&& other);
-		Buffer(const ValueType *chars, int len);
-		Buffer(const ValueType *begin, const ValueType *end);
-		Buffer(const std::vector<ValueType>& data);
+		Buffer(const Buffer & other);
+		Buffer(Buffer && other);
 
-		void Insert(int idx, const Buffer& item);
-		void Append(const Character& ch);
-		void Append(const Buffer& item);
-		void Reverse();
+		template <typename U>
+		Buffer(const std::vector<U> & other);
 
-		ValueType* Data();
-		const ValueType* Data() const;
-		ValueType* Data(unsigned int idx);
-		const ValueType* Data(unsigned int idx) const;
+		Buffer(const char * chars, int len);
+		Buffer(const char *begin, const char *end);
+		//Buffer(const std::vector<value_type>& data);
+
+		//void Insert(int idx, const Buffer& item);
+		//void Append(const Character& ch);
+		//void Append(const Buffer& item);
+		void reverse();
 
 		std::string ToString(void) const;
-
-		//virtual bool operator==(const IBuffer& other) const override;
-		//virtual bool operator<(const IBuffer& other) const override;
-		ValueType operator[](unsigned int i) const;
-		ValueType At(long at) const;
-		int Size() const;
-
-		bool operator==(const Buffer& other) const;
-		bool operator!=(const Buffer& other) const;
-		bool operator<(const Buffer& other) const;
-
-	private:
-		std::vector<ValueType> _value;
 	};
+
+	template <typename U>
+	Buffer::Buffer(const std::vector<U> & other)
+		: MyBase(other.begin(), other.end()) {}
+
+	inline std::string Buffer::ToString(void) const
+	{
+		return std::string(begin(), end());
+	}
+
+	inline void Buffer::reverse()
+	{
+		std::reverse(begin(), end());
+	}
 }
 
 #endif /* _BUFFER_H */

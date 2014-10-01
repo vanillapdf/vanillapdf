@@ -3,10 +3,6 @@
 
 #include "raw_base_stream.h"
 
-#include <vector>
-#include <memory>
-#include <istream>
-
 namespace gotchangpdf
 {
 	namespace raw
@@ -48,35 +44,45 @@ namespace gotchangpdf
 #pragma warning (disable : 4250)
 #endif
 
-		class ReverseStream : public raw::BaseStream, public std::istream
+		class ReverseStream : public raw::BaseStream::CharacterSource, public raw::BaseStream
 		{
-		private:
-
-			class ReverseBuf : public std::streambuf
-			{
-			private:
-				std::vector<char> _buffer;
-
-			public:
-				explicit ReverseBuf(std::istream& s);
-				~ReverseBuf();
-				//int sync();
-				/*
-				int_type underflow();
-				int_type uflow();
-				int_type pbackfail(int_type ch);
-				streamsize showmanyc();
-				*/
-			};
+		public:
+			friend class ReverseBuf;
 
 		public:
-			explicit ReverseStream(std::istream& stream);
-			virtual void Read(char* bytes, unsigned int len) override;
-			virtual char* Read(unsigned int len) override;
-
+			explicit ReverseStream(CharacterSource & stream);
 			virtual ~ReverseStream();
+			
+			virtual Buffer read(unsigned int len) override;
+			virtual char get_hex() override;
+			virtual Buffer readline(void) override;
 
-			friend class ReverseBuf;
+		private:
+			class ReverseBuf : public raw::BaseStream::CharacterSourceBuffer
+			{
+			public:
+				explicit ReverseBuf(CharacterSource & s);
+				~ReverseBuf();
+				//int sync();
+
+				virtual pos_type seekoff(off_type,
+					ios_base::seekdir,
+					ios_base::openmode = ios_base::in | ios_base::out) override;
+
+				virtual pos_type seekpos(pos_type,
+					ios_base::openmode = ios_base::in | ios_base::out) override;
+
+				/*
+				virtual int_type underflow() override;
+				virtual int_type uflow() override;
+				virtual int_type pbackfail(int_type ch) override;
+				virtual std::streamsize showmanyc() override;
+				*/
+			private:
+				Buffer _buffer;
+				//CharacterSource & _source;
+				//std::streampos _offset;
+			};
 		};
 	}
 

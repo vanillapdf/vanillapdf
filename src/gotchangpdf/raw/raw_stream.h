@@ -3,22 +3,28 @@
 
 #include "raw_base_stream.h"
 
-#include <istream>
-
 namespace gotchangpdf
 {
 	namespace raw
 	{
-		class Stream : public raw::BaseStream, public std::istream
+		class Stream : public raw::BaseStream::CharacterSource, public raw::BaseStream
 		{
 		public:
-			explicit Stream(std::istream& stream);
-			Stream(const Stream &);
-
-			virtual void Read(char* bytes, unsigned int len) override;
-			virtual char* Read(unsigned int len) override;
-
+			explicit Stream(CharacterSource & stream);
+			Stream(const Stream & other);
 			virtual ~Stream();
+
+			virtual Buffer read(unsigned int len) override;
+			virtual char get_hex() override;
+			virtual Buffer readline(void) override;
+
+		private:
+			class FilteringBuffer : public CharacterFilteringSourceBuffer
+			{
+			public:
+				FilteringBuffer(CharacterSource & stream) : CharacterFilteringSourceBuffer(stream) {}
+				FilteringBuffer(CharacterSourceBuffer & buf) : CharacterFilteringSourceBuffer(buf) {}
+			};
 		};
 	}
 }

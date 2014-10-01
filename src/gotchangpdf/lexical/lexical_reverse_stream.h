@@ -2,7 +2,7 @@
 #define _LEXICAL_REVERSE_STREAM_H
 
 #include "lexical_base_stream.h"
-#include "basic_reverse_stream.h"
+#include "raw_reverse_stream.h"
 #include "constants.h"
 
 #include <vector>
@@ -11,18 +11,18 @@ namespace gotchangpdf
 {
 	namespace lexical
 	{
-		class ReverseStream : public lexical::BaseStream, public basic::ReverseStream
+		class ReverseStream : public lexical::BaseStream, public raw::ReverseStream
 		{
 		public:
-			explicit ReverseStream(std::istream& stream);
+			explicit ReverseStream(CharacterSource & stream);
 
-			virtual std::shared_ptr<gotchangpdf::lexical::Token> ReadToken() override;
-			virtual std::shared_ptr<gotchangpdf::lexical::Token> PeekToken() override;
+			virtual std::shared_ptr<lexical::Token> ReadToken() override;
+			virtual std::shared_ptr<lexical::Token> PeekToken() override;
 
 			virtual ~ReverseStream();
 
 		private:
-			std::shared_ptr<gotchangpdf::lexical::Token> _last_token;
+			std::shared_ptr<lexical::Token> _last_token;
 			streamOffsetValueType _last_token_offset, _advance_position;
 		};
 	}

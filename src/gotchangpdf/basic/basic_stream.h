@@ -3,6 +3,7 @@
 
 #include "basic_base_stream.h"
 #include "raw_stream.h"
+#include "character_source.h"
 
 namespace gotchangpdf
 {
@@ -11,9 +12,8 @@ namespace gotchangpdf
 		class Stream : public basic::BaseStream, public raw::Stream
 		{
 		public:
-			explicit Stream(std::istream& stream);
-
-			Stream(const Stream &);
+			explicit Stream(CharacterSource & stream);
+			Stream(const Stream & other);
 
 			virtual Character Peek() override;
 			virtual Character Get() override;

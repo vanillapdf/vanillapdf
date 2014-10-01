@@ -26,10 +26,6 @@
     <ClInclude Include="include\gotchangpdf\c_handles.h" />
     <ClInclude Include="include\gotchangpdf\c_xref.h" />
     <ClInclude Include="include\gotchangpdf\c_values.h" />
-    <ClInclude Include="src\gotchangpdf\basic\basic_base_stream.h" />
-    <ClInclude Include="src\gotchangpdf\basic\basic_reverse_stream.h" />
-    <ClInclude Include="src\gotchangpdf\basic\basic_stream.h" />
-    <ClInclude Include="src\gotchangpdf\basic\character.h" />
     <ClInclude Include="src\gotchangpdf\documents\catalog.h" />
     <ClInclude Include="src\gotchangpdf\documents\document.h" />
     <ClInclude Include="src\gotchangpdf\documents\high_level_object.h" />
@@ -72,22 +68,22 @@
     <ClInclude Include="src\gotchangpdf\objects\common\number_tree.h" />
     <ClInclude Include="src\gotchangpdf\objects\common\rectangle.h" />
     <ClInclude Include="src\gotchangpdf\objects\common\tree.h" />
+    <ClInclude Include="src\gotchangpdf\raw\character.h" />
     <ClInclude Include="src\gotchangpdf\raw\raw_base_stream.h" />
     <ClInclude Include="src\gotchangpdf\raw\raw_reverse_stream.h" />
     <ClInclude Include="src\gotchangpdf\raw\raw_stream.h" />
     <ClInclude Include="src\gotchangpdf\util\bind.h" />
     <ClInclude Include="src\gotchangpdf\util\buffer.h" />
+    <ClInclude Include="src\gotchangpdf\util\character_device.h" />
+    <ClInclude Include="src\gotchangpdf\util\character_sink.h" />
     <ClInclude Include="src\gotchangpdf\util\constants.h" />
+    <ClInclude Include="src\gotchangpdf\util\file_device.h" />
     <ClInclude Include="src\gotchangpdf\util\fwd.h" />
     <ClInclude Include="src\gotchangpdf\util\smart_ptr.h" />
     <ClInclude Include="src\gotchangpdf\util\version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\boost\libs\iostreams\src\zlib.cpp" />
-    <ClCompile Include="src\gotchangpdf\basic\basic_base_stream.cpp" />
-    <ClCompile Include="src\gotchangpdf\basic\basic_reverse_stream.cpp" />
-    <ClCompile Include="src\gotchangpdf\basic\basic_stream.cpp" />
-    <ClCompile Include="src\gotchangpdf\basic\character.cpp" />
     <ClCompile Include="src\gotchangpdf\documents\catalog.cpp" />
     <ClCompile Include="src\gotchangpdf\documents\page_node.cpp" />
     <ClCompile Include="src\gotchangpdf\documents\page_object.cpp" />
@@ -118,6 +114,7 @@
     <ClCompile Include="src\gotchangpdf\objects\basic\real_object.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\stream_object.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\string_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\raw\character.cpp" />
     <ClCompile Include="src\gotchangpdf\raw\raw_base_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\raw\raw_reverse_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\raw\raw_stream.cpp" />

@@ -2,10 +2,8 @@
 
 #include "constants.h"
 #include "exception.h"
+#include "character_sink.h"
 
-#include <vector>
-
-#include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
 
@@ -17,28 +15,28 @@ namespace gotchangpdf
 
 		Buffer FlateDecodeFilter::Encode(const Buffer& src) const
 		{
-			std::vector<char> dest;
-			io::filtering_ostream os;
+			Buffer dest;
+			CharacterFilteringSink sink;
 
-			os.push(io::zlib_compressor());
-			os.push(io::back_inserter(dest));
+			sink.push(io::zlib_compressor());
+			sink.push(io::back_inserter(dest));
 
-			io::write(os, src.Data(), src.Size());
+			io::write(sink, src.data(), src.size());
 
 			return Buffer(dest);
 		}
 
 		Buffer FlateDecodeFilter::Decode(const Buffer& src) const
 		{
-			std::vector<char> dest;
-			io::filtering_ostream os;
+			Buffer dest;
+			CharacterFilteringSink sink;
 
-			os.push(io::zlib_decompressor());
-			os.push(io::back_inserter(dest));
+			sink.push(io::zlib_decompressor());
+			sink.push(io::back_inserter(dest));
 
-			io::write(os, src.Data(), src.Size());
+			io::write(sink, src.data(), src.size());
 
-			return Buffer(dest);
+			return dest;
 		}
 	}
 }

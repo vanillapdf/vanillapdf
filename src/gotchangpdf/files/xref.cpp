@@ -16,6 +16,7 @@ namespace gotchangpdf
 		using namespace std;
 		using namespace lexical;
 		using namespace exceptions;
+		using namespace character;
 
 		void Xref::Add(const Entry& e) { _entries.push_back(e); }
 		int Xref::Size(void) const { return _entries.size(); }
@@ -23,19 +24,19 @@ namespace gotchangpdf
 
 		static Xref::Entry ReadEntry(lexical::Parser& s, int objNumber)
 		{
-			Character sp1, sp2, key, eol1, eol2;
+			char sp1, sp2, key, eol1, eol2;
 			Token offset, number;
 			s >> offset >> sp1 >> number >> sp2 >> key >> eol1 >> eol2;
 
-			if (!(eol1.isSpace() && eol2.Equals(Character::WhiteSpace::CARRIAGE_RETURN)) &&
-				!(eol1.isSpace() && eol2.isNewline()) &&
-				!(eol1.Equals(Character::WhiteSpace::CARRIAGE_RETURN) && eol2.isNewline()))
+			if (!(IsSpace(eol1) && Equals(eol2, WhiteSpace::CARRIAGE_RETURN)) &&
+				!(IsSpace(eol1) && IsNewline(eol2)) &&
+				!(Equals(eol1, WhiteSpace::CARRIAGE_RETURN) && IsNewline(eol2)))
 			{
 				throw Exception("End of line marker was not found in xref table entry");
 			}
 
-			static const Character IN_USE = Character('n');
-			static const Character NOT_IN_USE = Character('f');
+			static const char IN_USE = 'n';
+			static const char NOT_IN_USE = 'f';
 
 			Xref::Entry result;
 
@@ -46,7 +47,7 @@ namespace gotchangpdf
 			else
 			{
 				stringstream buffer;
-				buffer << "Key in XRef table is either of " << IN_USE.Value() << " or " << NOT_IN_USE.Value();
+				buffer << "Key in XRef table is either of " << IN_USE << " or " << NOT_IN_USE;
 
 				throw Exception(buffer.str());
 			}

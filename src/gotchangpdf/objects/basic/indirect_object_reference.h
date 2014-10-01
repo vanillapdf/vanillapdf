@@ -11,24 +11,40 @@ namespace gotchangpdf
 	class IndirectObjectReference : public Object
 	{
 	public:
-		explicit IndirectObjectReference(std::shared_ptr<files::File> file);
-		IndirectObjectReference(std::shared_ptr<files::File> file, unsigned int obj_number, unsigned int gen_number);
+		explicit IndirectObjectReference(files::File * file);
+		IndirectObjectReference(files::File * file, unsigned int obj_number,
+			unsigned int gen_number);
 
 		SmartPtr<IndirectObject> GetReferencedObject() const;
-
-		inline SmartPtr<IndirectObject> operator->() const { return GetReferencedObject(); }
+		SmartPtr<IndirectObject> operator->() const;
 
 		template <typename T>
-		SmartPtr<T> GetReferencedObjectAs() const { return GetReferencedObject()->GetObjectAs<T>(); }
+		SmartPtr<T> GetReferencedObjectAs() const;
 
-		virtual inline Object::Type GetType(void) const override { return Object::Type::IndirectObjectReference; }
+		virtual Object::Type GetType(void) const override;
 
 	private:
-		std::shared_ptr<files::File> _file;
+		files::File * _file;
 		mutable SmartPtr<IndirectObject> _reference;
 
 		unsigned int _obj_number, _gen_number;
 	};
+
+	template <typename T>
+	SmartPtr<T> IndirectObjectReference::GetReferencedObjectAs() const
+	{
+		return GetReferencedObject()->GetObjectAs<T>();
+	}
+
+	inline Object::Type IndirectObjectReference::GetType(void) const
+	{
+		return Object::Type::IndirectObjectReference;
+	}
+
+	inline SmartPtr<IndirectObject> IndirectObjectReference::operator->() const
+	{
+		return GetReferencedObject();
+	}
 }
 
 #endif /* _INDIRECT_OBJECT_REFERENCE_H */
