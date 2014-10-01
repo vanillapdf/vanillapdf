@@ -1,7 +1,6 @@
 #ifndef _RAW_BASE_STREAM_H
 #define _RAW_BASE_STREAM_H
 
-#include "character.h"
 #include "buffer.h"
 
 #include <istream>
@@ -15,7 +14,7 @@ namespace gotchangpdf
 		{
 		public:
 			typedef std::istream CharacterSource;
-			typedef std::basic_streambuf<char> CharacterSourceBuffer;
+			typedef std::streambuf CharacterSourceBuffer;
 			typedef boost::iostreams::filtering_stream<boost::iostreams::input_seekable, char> CharacterFilteringSource;
 			typedef boost::iostreams::filtering_streambuf<boost::iostreams::input_seekable, char> CharacterFilteringSourceBuffer;
 

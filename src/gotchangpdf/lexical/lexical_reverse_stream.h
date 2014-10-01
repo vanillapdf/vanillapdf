@@ -16,8 +16,8 @@ namespace gotchangpdf
 		public:
 			explicit ReverseStream(CharacterSource & stream);
 
-			virtual std::shared_ptr<lexical::Token> ReadToken() override;
-			virtual std::shared_ptr<lexical::Token> PeekToken() override;
+			virtual lexical::Token ReadToken() override;
+			virtual lexical::Token PeekToken() override;
 
 			virtual ~ReverseStream();
 

@@ -1,10 +1,12 @@
 #include "stream_object.h"
+
 #include "integer_object.h"
 #include "indirect_object_reference.h"
 #include "invalid_object_type_exception.h"
 #include "parser.h"
 #include "file.h"
 #include "buffer.h"
+#include "character.h"
 
 // TODO
 #include "flate_decode_filter.h"
@@ -48,7 +50,7 @@ namespace gotchangpdf
 		if (s.PeekTokenType() == Token::Type::EOL)
 		{
 			auto token = s.ReadToken();
-			if (token->value().size() == 1 && Equals(token->value()[0], WhiteSpace::CARRIAGE_RETURN))
+			if (token.Value().size() == 1 && Equals(token.Value()[0], WhiteSpace::CARRIAGE_RETURN))
 			{
 				stringstream buffer;
 				buffer << "After stream keyword is single CR character at offset " << s.tellg();

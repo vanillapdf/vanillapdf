@@ -66,13 +66,13 @@ namespace gotchangpdf
 						case Token::Type::INDIRECT_REFERENCE_MARKER:
 						{
 							auto reference_marker = ReadTokenWithType(Token::Type::INDIRECT_REFERENCE_MARKER);
-							return SmartPtr<IndirectObjectReference>(new IndirectObjectReference(_file, IntegerObject(*token), IntegerObject(*gen_number)));
+							return SmartPtr<IndirectObjectReference>(new IndirectObjectReference(_file, IntegerObject(token), IntegerObject(gen_number)));
 						}
 
 						case Token::Type::INDIRECT_OBJECT_BEGIN:
 						{
 							auto reference_marker = ReadTokenWithType(Token::Type::INDIRECT_OBJECT_BEGIN);
-							auto indirect = _file->GetIndirectObject(IntegerObject(*token), IntegerObject(*gen_number));
+							auto indirect = _file->GetIndirectObject(IntegerObject(token), IntegerObject(gen_number));
 
 							ReadTokenWithType(Token::Type::EOL);
 							auto data = readObject();
@@ -88,7 +88,7 @@ namespace gotchangpdf
 						}
 					}
 
-					return SmartPtr<IntegerObject>(new IntegerObject(*token));
+					return SmartPtr<IntegerObject>(new IntegerObject(token));
 				}
 			case Token::Type::ARRAY_BEGIN:
 				{
@@ -106,22 +106,22 @@ namespace gotchangpdf
 			case Token::Type::NAME_OBJECT:
 			{
 				auto token = ReadTokenWithType(Token::Type::NAME_OBJECT);
-				return SmartPtr<NameObject>(new NameObject(*token));
+				return SmartPtr<NameObject>(new NameObject(token));
 			}
 			case Token::Type::HEXADECIMAL_STRING:
 			{
 				auto token = ReadTokenWithType(Token::Type::HEXADECIMAL_STRING);
-				return SmartPtr<HexadecimalString>(new HexadecimalString(*token));
+				return SmartPtr<HexadecimalString>(new HexadecimalString(token));
 			}
 			case Token::Type::LITERAL_STRING:
 			{
 				auto token = ReadTokenWithType(Token::Type::LITERAL_STRING);
-				return SmartPtr<LiteralString>(new LiteralString(*token));
+				return SmartPtr<LiteralString>(new LiteralString(token));
 			}
 			case Token::Type::REAL_OBJECT:
 			{
 				auto token = ReadTokenWithType(Token::Type::REAL_OBJECT);
-				return SmartPtr<RealObject>(new RealObject(*token));
+				return SmartPtr<RealObject>(new RealObject(token));
 			}
 			default:
 				throw Exception("No valid object could be found at offset " + static_cast<int>(offset));

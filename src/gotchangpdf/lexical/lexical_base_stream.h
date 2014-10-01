@@ -12,15 +12,15 @@ namespace gotchangpdf
 		class BaseStream
 		{
 		public:
-			virtual std::shared_ptr<lexical::Token> ReadToken() = 0;
-			virtual std::shared_ptr<lexical::Token> PeekToken() = 0;
-			virtual gotchangpdf::lexical::Token::Type PeekTokenType();
-			virtual std::shared_ptr<lexical::Token> ReadTokenWithType(gotchangpdf::lexical::Token::Type type);
+			virtual lexical::Token ReadToken() = 0;
+			virtual lexical::Token PeekToken() = 0;
+			virtual Token::Type PeekTokenType();
+			virtual lexical::Token ReadTokenWithType(Token::Type type);
 			virtual ~BaseStream() = 0;
 
 			struct LexicalSettings
 			{
-				std::vector<lexical::Token::Type> skip;
+				std::vector<Token::Type> skip;
 			};
 
 			std::shared_ptr<LexicalSettings> LexicalSettingsGet(void) const;

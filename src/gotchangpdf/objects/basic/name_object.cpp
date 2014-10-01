@@ -8,9 +8,18 @@ namespace gotchangpdf
 	using namespace lexical;
 
 	NameObject::NameObject() {}
-	NameObject::NameObject(const Token& token) : _value(token.value()) { assert(token.type() == Token::Type::NAME_OBJECT); }
+	NameObject::NameObject(const Token& token) : _value(token.Value()) { assert(token.GetType() == Token::Type::NAME_OBJECT); }
 	NameObject::NameObject(const Buffer& name) : _value(name) {}
-	bool NameObject::operator==(const NameObject& other) const { return _value == other._value; }
-	bool NameObject::operator!=(const NameObject& other) const { return _value != other._value; }
-	const Buffer& NameObject::Value() const { return _value; }
+
+	unsigned long NameObject::Hasher::operator()(const NameObject& t) const
+	{
+		unsigned long result = 0;
+		for (auto & val : t.Value())
+		{
+			std::hash<char> hash_fn;
+			result ^= hash_fn(val);
+		}
+
+		return result;
+	}
 }

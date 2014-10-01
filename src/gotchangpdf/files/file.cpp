@@ -83,8 +83,8 @@ namespace gotchangpdf
 			//if (_cache.)
 
 			//TODO
-			auto item = _xref->At(objNumber);
-			return item._reference;
+			auto item = _xref->at(objNumber);
+			return item.reference;
 			/*
 			auto pos = _stream->tellg();
 

@@ -19,8 +19,8 @@ namespace gotchangpdf
 			if (*root->FindAs<NameObject>(Name::Type) != Name::Catalog)
 				throw Exception("TODO");
 
-			auto pages = *root->FindAs<IndirectObjectReference>(Name::Pages);
-			auto page_root = pages.GetReferencedObjectAs<DictionaryObject>();
+			auto pages = root->FindAs<IndirectObjectReference>(Name::Pages);
+			auto page_root = pages->GetReferencedObjectAs<DictionaryObject>();
 
 			_pages = SmartPtr<PageTree>(new PageTree(page_root));
 		}

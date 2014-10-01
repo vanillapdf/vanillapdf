@@ -39,16 +39,17 @@ namespace gotchangpdf
 			static Token::Type Evaluate(const Buffer& chars);
 
 			Token();
+			Token(const Token& other);
+			Token(Token && other);
 			explicit Token(const Buffer& chars);
 			explicit Token(Type type);
-			Token(const char* chars, int len);
 			Token(Type type, const Buffer& chars);
 
-			Type type(void) const;
+			Token::Type GetType(void) const;
 
-			const Buffer& value() const;
+			const Buffer& Value() const;
 
-			Token& operator= (const Buffer& value);
+			Token& operator= (const Token& value);
 
 			friend lexical::ReverseStream& operator>> (lexical::ReverseStream& s, Token& o);
 			//friend class Streams::Lexical::ReverseStream;
@@ -60,6 +61,9 @@ namespace gotchangpdf
 			Token::Type _type;
 			Buffer _value;
 		};
+
+		inline const Buffer& Token::Value() const { return _value; }
+		inline Token::Type Token::GetType(void) const { return _type; }
 	}
 }
 

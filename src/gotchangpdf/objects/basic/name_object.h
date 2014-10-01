@@ -4,38 +4,56 @@
 #include "object.h"
 #include "Buffer.h"
 
+#include <stddef.h>
+
 namespace gotchangpdf
 {
 	class NameObject : public Object
 	{
 	public:
-		struct Hasher {
-			unsigned long operator()(const NameObject& t) const
-			{
-				unsigned long result = 0;
-				unsigned int size = t._value.size();
-				for (unsigned int i = 0; i < size; ++i)
-					result ^= t._value[i];
-
-				return result;
-			}
+		struct Hasher
+		{
+			unsigned long operator()(const NameObject& t) const;
 		};
 
 		NameObject();
 		explicit NameObject(const gotchangpdf::lexical::Token& token);
 		explicit NameObject(const Buffer& name);
 
-		//const CharacterSet& Value() const;
-
 		const Buffer& Value() const;
+
 		bool operator==(const NameObject& other) const;
 		bool operator!=(const NameObject& other) const;
 
-		virtual inline Object::Type GetType(void) const override { return Object::Type::NameObject; }
+		bool Equals(const NameObject& other) const;
+
+		virtual Object::Type GetType(void) const override;
 
 	private:
 		Buffer _value;
 	};
+
+	inline bool NameObject::operator==(const NameObject& other) const
+	{
+		return Equals(other);
+	}
+
+	inline bool NameObject::operator!=(const NameObject& other) const
+	{
+		return !Equals(other);
+	}
+
+	inline Object::Type NameObject::GetType(void) const
+	{
+		return Object::Type::NameObject;
+	}
+
+	inline bool NameObject::Equals(const NameObject& other) const
+	{
+		return _value.Equals(other._value);
+	}
+
+	inline const Buffer& NameObject::Value() const { return _value; }
 
 	namespace constant
 	{

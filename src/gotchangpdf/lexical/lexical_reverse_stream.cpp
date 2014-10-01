@@ -1,8 +1,9 @@
 #include "lexical_reverse_stream.h"
-#include "Character.h"
+
 #include "exception.h"
 #include "integer_object.h"
 #include "constants.h"
+#include "character.h"
 
 #include <cassert>
 #include <functional>
@@ -18,7 +19,7 @@ namespace gotchangpdf
 		ReverseStream::ReverseStream(CharacterSource & stream)
 			: raw::ReverseStream(stream), _last_token_offset(_BADOFF) {}
 
-		shared_ptr<Token> ReverseStream::ReadToken()
+		Token ReverseStream::ReadToken()
 		{
 			if (_last_token_offset == tellg())
 			{
@@ -35,7 +36,7 @@ namespace gotchangpdf
 				_last_token_offset = _BADOFF;
 				_advance_position = _BADOFF;
 
-				return result;
+				return *result;
 			}
 
 			Buffer chars;
@@ -154,13 +155,13 @@ namespace gotchangpdf
 			get();
 
 		prepared:
-			chars.reverse();
-			return shared_ptr<Token>(new Token(result_type, chars));
+			std::reverse(chars.begin(), chars.end());
+			return Token(result_type, chars);
 		}
 
 		ReverseStream::~ReverseStream() {}
 
-		shared_ptr<Token> ReverseStream::PeekToken()
+		Token ReverseStream::PeekToken()
 		{
 			if (_last_token_offset == tellg())
 			{
@@ -168,18 +169,18 @@ namespace gotchangpdf
 				assert(_BADOFF != _advance_position);
 				assert(_BADOFF != _last_token_offset);
 
-				return _last_token;
+				return *_last_token;
 			}
 
 			auto pos = tellg();
-			_last_token = ReadToken();
+			_last_token = std::make_shared<Token>(ReadToken());
 			_advance_position = tellg();
 			_last_token_offset = pos;
 
 			seekg(_last_token_offset);
 			assert(good());
 
-			return _last_token;
+			return *_last_token;
 		}
 	}
 }

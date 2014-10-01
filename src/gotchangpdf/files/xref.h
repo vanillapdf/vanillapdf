@@ -10,7 +10,13 @@ namespace gotchangpdf
 {
 	namespace files
 	{
-		class Xref : public boost::intrusive_ref_counter<Xref>
+		struct XrefEntry
+		{
+			SmartPtr<IndirectObject> reference;
+			bool in_use;
+		};
+
+		class Xref : public std::vector<XrefEntry>, public boost::intrusive_ref_counter<Xref>
 		{
 		public:
 			enum class Type : unsigned char
@@ -19,22 +25,12 @@ namespace gotchangpdf
 				STREAM
 			};
 
-			struct Entry
-			{
-				SmartPtr<IndirectObject> _reference;
-				bool _in_use;
-			};
-
-			void Add(const Entry& e);
-			int Size(void) const;
-			Entry At(int at) const;
 			void Release();
 
 			friend lexical::Parser& operator>> (lexical::Parser& s, Xref& o);
 
 		private:
 			Type _type = Type::TABLE;
-			std::vector<Entry> _entries;
 		};
 	}
 }

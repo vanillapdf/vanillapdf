@@ -17,10 +17,6 @@ namespace gotchangpdf
 		//explicit IntegerObject(const CharacterSet& value);
 		explicit IntegerObject(const lexical::Token& value);
 
-		friend bool operator== (const IntegerObject& i1, const IntegerObject& i2);
-		friend bool operator!= (const IntegerObject& i1, const IntegerObject& i2);
-		friend bool operator< (const IntegerObject& i1, const IntegerObject& i2);
-
 		ValueType Value(void) const;
 
 		operator ValueType() const { return _value; }
@@ -30,7 +26,7 @@ namespace gotchangpdf
 		IntegerObject& operator= (const Buffer& value);
 		IntegerObject& operator= (const lexical::Token& value);
 
-		virtual inline Object::Type GetType(void) const override { return Object::Type::IntegerObject; }
+		virtual Object::Type GetType(void) const override;
 
 		friend lexical::ReverseStream& operator>> (lexical::ReverseStream& s, IntegerObject& o);
 		friend lexical::Stream& operator>> (lexical::Stream& s, IntegerObject& o);
@@ -38,6 +34,8 @@ namespace gotchangpdf
 	private:
 		ValueType _value = 0;
 	};
+
+	inline  Object::Type IntegerObject::GetType(void) const { return Object::Type::IntegerObject; }
 }
 
 #endif /* _INTEGER_OBJECT_H */

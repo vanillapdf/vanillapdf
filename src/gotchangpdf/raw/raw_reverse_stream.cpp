@@ -2,7 +2,6 @@
 #include "exception.h"
 #include "constants.h"
 
-#include <limits>
 #include <cassert>
 
 namespace gotchangpdf
@@ -149,7 +148,7 @@ namespace gotchangpdf
 
 		Buffer ReverseStream::read(unsigned int len)
 		{
-			Buffer result;
+			Buffer result(len);
 			CharacterSource::read(result.data(), len);
 			return result;
 		}

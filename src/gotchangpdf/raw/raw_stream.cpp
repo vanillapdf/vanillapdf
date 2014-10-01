@@ -1,16 +1,13 @@
 #include "raw_stream.h"
+
 #include "exception.h"
 #include "constants.h"
-
-#include <limits>
-#include <streambuf>
-#include <boost/iostreams/device/back_inserter.hpp>
+#include "character.h"
 
 namespace gotchangpdf
 {
 	namespace raw
 	{
-		namespace io = boost::iostreams;
 		using namespace character;
 
 		Stream::Stream(CharacterSource & stream)
@@ -19,13 +16,11 @@ namespace gotchangpdf
 		Stream::Stream(const raw::Stream & other)
 			: CharacterSource(other.rdbuf()) {}
 
-
 		Stream::~Stream() { delete CharacterSource::rdbuf(); }
 
 		Buffer Stream::read(unsigned int len)
 		{
-			Buffer result;
-			result.resize(len);
+			Buffer result(len);
 			CharacterSource::read(result.data(), len);
 			return result;
 		}

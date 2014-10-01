@@ -1,8 +1,6 @@
 #ifndef _BUFFER_H
 #define _BUFFER_H
 
-#include "character.h"
-
 #include <vector>
 #include <string>
 
@@ -10,40 +8,52 @@ namespace gotchangpdf
 {
 	class Buffer : public std::vector<char>
 	{
-		typedef std::vector<char> MyBase;
+	public:
+		typedef std::vector<char> _Mybase;
+
+		typedef _Mybase::value_type value_type;
+		typedef _Mybase::size_type size_type;
+		typedef _Mybase::difference_type difference_type;
+		typedef _Mybase::pointer pointer;
+		typedef _Mybase::const_pointer const_pointer;
+		typedef _Mybase::reference reference;
+		typedef _Mybase::const_reference const_reference;
 
 	public:
 		Buffer();
 		Buffer(const Buffer & other);
 		Buffer(Buffer && other);
 
+		explicit Buffer(size_type count);
+
 		template <typename U>
 		Buffer(const std::vector<U> & other);
 
-		Buffer(const char * chars, int len);
-		Buffer(const char *begin, const char *end);
+		Buffer(const value_type * chars, int len);
+		Buffer(const value_type * begin, const value_type * end);
 		//Buffer(const std::vector<value_type>& data);
 
 		//void Insert(int idx, const Buffer& item);
 		//void Append(const Character& ch);
 		//void Append(const Buffer& item);
-		void reverse();
+
+		bool Equals(const Buffer& other) const;
 
 		std::string ToString(void) const;
 	};
 
 	template <typename U>
 	Buffer::Buffer(const std::vector<U> & other)
-		: MyBase(other.begin(), other.end()) {}
+		: _Mybase(other.begin(), other.end()) {}
 
 	inline std::string Buffer::ToString(void) const
 	{
 		return std::string(begin(), end());
 	}
 
-	inline void Buffer::reverse()
+	inline bool Buffer::Equals(const Buffer& other) const
 	{
-		std::reverse(begin(), end());
+		return *this == other;
 	}
 }
 

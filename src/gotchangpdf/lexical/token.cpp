@@ -15,9 +15,11 @@ namespace gotchangpdf
 		#pragma region Constructors
 
 		Token::Token(Token::Type type) : _type(type) {}
+		Token::Token(const Token& other) { Token::operator= (other); }
+		Token::Token(Token && other) : _value(std::move(other._value)), _type(other._type) {}
+
 		Token::Token() : _type(Token::Type::UNKNOWN), _value() {}
 		Token::Token(const Buffer& chars) : _type(Evaluate(chars)), _value(chars) { assert(_value.size() > 0); }
-		Token::Token(const char* chars, int len) : _value(chars, len), _type(Evaluate(_value)) { assert(_value.size() > 0); }
 
 		Token::Token(Type type, const Buffer& chars) : _type(type), _value(chars)
 		{
@@ -29,10 +31,11 @@ namespace gotchangpdf
 
 		#pragma region Operators
 
-		Token& Token::operator=(const Buffer& s)
+		Token& Token::operator=(const Token& s)
 		{
-			_value = s;
-			_type = Evaluate(_value);
+			_type = s._type;
+			_value = s._value;
+
 			return *this;
 		}
 
@@ -40,8 +43,8 @@ namespace gotchangpdf
 		{
 			auto result = s.ReadToken();
 
-			o._type = result->_type;
-			o._value = result->_value;
+			o._type = result._type;
+			o._value = result._value;
 
 			return s;
 		}
@@ -49,8 +52,8 @@ namespace gotchangpdf
 		lexical::Stream& operator>>(lexical::Stream& s, Token& o)
 		{
 			auto result = s.ReadToken();
-			o._type = result->_type;
-			o._value = result->_value;
+			o._type = result._type;
+			o._value = result._value;
 
 			return s;
 		}
@@ -58,9 +61,6 @@ namespace gotchangpdf
 		#pragma endregion
 
 		Token::Type Token::Evaluate(const Buffer& chars) { return TokenDictionary::find(chars); }
-
-		const Buffer& Token::value() const { return _value; }
-		Token::Type Token::type(void) const { return _type; }
 
 		const char* Token::GetTypeValueName(Type type)
 		{

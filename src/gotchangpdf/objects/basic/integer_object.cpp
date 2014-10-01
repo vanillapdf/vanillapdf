@@ -19,9 +19,9 @@ namespace gotchangpdf
 
 	IntegerObject::IntegerObject(const Token& value)
 	{
-		assert(value.type() == Token::Type::INTEGER_OBJECT);
+		assert(value.GetType() == Token::Type::INTEGER_OBJECT);
 
-		auto buffer = value.value();
+		auto buffer = value.Value();
 		_value = stoi(buffer.ToString());
 	}
 
@@ -29,11 +29,10 @@ namespace gotchangpdf
 
 	#pragma region Operators
 
-	bool operator== (const IntegerObject& i1, const IntegerObject& i2) { return i1._value == i2._value; }
-	bool operator!= (const IntegerObject& i1, const IntegerObject& i2) { return i1._value != i2._value; }
-	bool operator<(const IntegerObject& i1, const IntegerObject& i2) { return i1._value < i2._value; }
-
-	IntegerObject& IntegerObject::operator=(const Token& value) { return *this = value.value(); }
+	IntegerObject& IntegerObject::operator=(const Token& value)
+	{
+		return this->operator=(value.Value());
+	}
 
 	IntegerObject& IntegerObject::operator=(const Buffer& value)
 	{
@@ -55,9 +54,9 @@ namespace gotchangpdf
 	{
 		auto token = s.ReadToken();
 
-		assert(token->type() == Token::Type::INTEGER_OBJECT);
+		assert(token.GetType() == Token::Type::INTEGER_OBJECT);
 
-		Buffer buffer = token->value();
+		Buffer buffer = token.Value();
 		o._value = stoi(buffer.ToString());
 
 		return s;
@@ -67,9 +66,9 @@ namespace gotchangpdf
 	{
 		auto token = s.ReadToken();
 
-		assert(token->type() == Token::Type::INTEGER_OBJECT);
+		assert(token.GetType() == Token::Type::INTEGER_OBJECT);
 
-		Buffer buffer = token->value();
+		Buffer buffer = token.Value();
 		o._value = stoi(buffer.ToString());
 
 		return s;

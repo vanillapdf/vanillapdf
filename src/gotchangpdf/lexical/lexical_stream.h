@@ -19,9 +19,8 @@ namespace gotchangpdf
 			explicit Stream(CharacterSource & s);
 			Stream(const Stream & other);
 
-			virtual std::shared_ptr<lexical::Token> ReadToken() override;
-			virtual std::shared_ptr<lexical::Token> PeekToken() override;
-			virtual lexical::Token::Type PeekTokenType() override;
+			virtual lexical::Token ReadToken() override;
+			virtual lexical::Token PeekToken() override;
 
 			//using Basic::Stream::seekg;
 			//using Lexical::BaseStream::ReadTokenWithType;

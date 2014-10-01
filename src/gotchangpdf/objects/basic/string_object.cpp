@@ -8,7 +8,7 @@ namespace gotchangpdf
 	using namespace std;
 	using namespace lexical;
 
-	LiteralString::LiteralString(const Token& token) : StringObject(token.value()) {}
+	LiteralString::LiteralString(const Token& token) : StringObject(token.Value()) {}
 	LiteralString::LiteralString(const Buffer& value) : StringObject(value)
 	{
 		// TODO remove <> if contains
@@ -16,7 +16,7 @@ namespace gotchangpdf
 
 	HexadecimalString::HexadecimalString(const Token& token)
 	{
-		auto buffer = token.value();
+		auto buffer = token.Value();
 		_hexadecimal = buffer.ToString();
 
 		int len = (_hexadecimal.length() / 2) - 2;

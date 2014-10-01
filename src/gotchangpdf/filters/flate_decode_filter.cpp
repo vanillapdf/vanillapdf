@@ -23,7 +23,7 @@ namespace gotchangpdf
 
 			io::write(sink, src.data(), src.size());
 
-			return Buffer(dest);
+			return dest;
 		}
 
 		Buffer FlateDecodeFilter::Decode(const Buffer& src) const

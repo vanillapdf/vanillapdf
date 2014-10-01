@@ -12,10 +12,10 @@ namespace gotchangpdf
 
 		BaseStream::~BaseStream() {}
 
-		shared_ptr<Token> BaseStream::ReadTokenWithType(Token::Type type)
+		Token BaseStream::ReadTokenWithType(Token::Type type)
 		{
 			auto token = ReadToken();
-			if (token->type() != type)
+			if (token.GetType() != type)
 			{
 				stringstream buffer;
 				buffer << "Token type does not correspond to required type: " << Token::GetTypeValueName(type);
@@ -29,7 +29,7 @@ namespace gotchangpdf
 		{
 			// TODO optimize
 			auto token = PeekToken();
-			return token->type();
+			return token.GetType();
 		}
 
 		std::shared_ptr<BaseStream::LexicalSettings> BaseStream::LexicalSettingsGet(void) const

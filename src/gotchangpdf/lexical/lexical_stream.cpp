@@ -1,7 +1,9 @@
 #include "lexical_stream.h"
+
 #include "exception.h"
 #include "constants.h"
 #include "token_dictionary.h"
+#include "character.h"
 
 #include <cassert>
 #include <algorithm>
@@ -23,7 +25,7 @@ namespace gotchangpdf
 
 		/* We need to move to some serious lexer */
 
-		shared_ptr<Token> Stream::ReadToken()
+		Token Stream::ReadToken()
 		{
 			if (_last_token_offset == tellg())
 			{
@@ -40,7 +42,7 @@ namespace gotchangpdf
 				_last_token_offset = _BADOFF;
 				_advance_position = _BADOFF;
 
-				return result;
+				return *result;
 			}
 
 			Buffer chars;
@@ -111,12 +113,20 @@ namespace gotchangpdf
 					if (Equals(peek(), '#'))
 					{
 						char sign = get();
+						assert(Equals(sign, '#'));
+
+						// TODO check hex flags, clear if persists
+						unsigned int value;
+						*this >> std::hex >> value;
+
+						/*
+						char sign = get();
 						char hinib = get_hex();
 						char lonib = get_hex();
 
 						char val = (hinib << 4) + lonib;
-
-						chars.push_back(val);
+						*/
+						chars.push_back(value & 0xFF);
 					}
 					else
 					{
@@ -178,11 +188,11 @@ namespace gotchangpdf
 				// TODO handle recursive call using goto probably
 				return ReadToken();
 
-			return shared_ptr<Token>(new Token(result_type, chars));
+			return Token(result_type, chars);
 		}
 
 		/* Peek need cache */
-		shared_ptr<Token> Stream::PeekToken()
+		Token Stream::PeekToken()
 		{
 			if (_last_token_offset == tellg())
 			{
@@ -190,27 +200,20 @@ namespace gotchangpdf
 				assert(_BADOFF != _advance_position);
 				assert(_BADOFF != _last_token_offset);
 
-				return _last_token;
+				return *_last_token;
 			}
 
 			auto pos = tellg();
-			_last_token = ReadToken();
+			_last_token = std::make_shared<Token>(ReadToken());
 			_advance_position = tellg();
 			_last_token_offset = pos;
 
 			seekg(_last_token_offset);
 			assert(good());
 
-			return _last_token;
+			return *_last_token;
 		}
 
 		Stream::~Stream() {}
-
-		Token::Type Stream::PeekTokenType()
-		{
-			// TODO optimize
-			auto token = PeekToken();
-			return token->type();
-		}
 	}
 }
