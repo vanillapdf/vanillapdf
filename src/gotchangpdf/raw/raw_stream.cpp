@@ -10,13 +10,20 @@ namespace gotchangpdf
 	{
 		using namespace character;
 
+#ifdef USE_BOOST_FILTERING_STREAMS
 		Stream::Stream(CharacterSource & stream)
 			: CharacterSource(new FilteringBuffer(stream)) {}
 
+		Stream::~Stream() { delete CharacterSource::rdbuf(); }
+#else
+		Stream::Stream(CharacterSource & stream)
+			: CharacterSource(stream.rdbuf()) {}
+
+		Stream::~Stream() {}
+#endif
+
 		Stream::Stream(const raw::Stream & other)
 			: CharacterSource(other.rdbuf()) {}
-
-		Stream::~Stream() { delete CharacterSource::rdbuf(); }
 
 		Buffer Stream::read(unsigned int len)
 		{

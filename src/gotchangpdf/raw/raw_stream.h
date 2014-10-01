@@ -19,12 +19,15 @@ namespace gotchangpdf
 			virtual Buffer readline(void) override;
 
 		private:
+
+#ifdef USE_BOOST_FILTERING_STREAMS
 			class FilteringBuffer : public CharacterFilteringSourceBuffer
 			{
 			public:
 				FilteringBuffer(CharacterSource & stream) : CharacterFilteringSourceBuffer(stream) {}
 				FilteringBuffer(CharacterSourceBuffer & buf) : CharacterFilteringSourceBuffer(buf) {}
 			};
+#endif
 		};
 	}
 }
