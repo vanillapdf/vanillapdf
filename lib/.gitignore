@@ -1,0 +1,22 @@
+# Boost build files
+/boost/bin.v2/*
+/boost/stage/lib/*.lib
+/boost/**/*.exe
+/boost/**/*.log
+/boost/**/*.jam
+/boost/**/*.obj
+/boost/**/*.ilk
+/boost/**/*.pdb
+
+# Zlib object files
+/zlib/*.obj
+
+# Zlib import library
+/zlib/zdll.lib
+/zlib/zdll.exp
+/zlib/zlib.pdb
+
+# Zlib dynamic library
+/zlib/zlib1.dll
+/zlib/zlib1.res
+/zlib/zlib1.pdb
