@@ -42,11 +42,17 @@
     <ClInclude Include="src\gotchangpdf\files\xref.h" />
     <ClInclude Include="src\gotchangpdf\filters\filter.h" />
     <ClInclude Include="src\gotchangpdf\filters\flate_decode_filter.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\abstract_syntax_tree.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\deferred.h" />
     <ClInclude Include="src\gotchangpdf\lexical\lexical_base_stream.h" />
     <ClInclude Include="src\gotchangpdf\lexical\lexical_reverse_stream.h" />
     <ClInclude Include="src\gotchangpdf\lexical\lexical_stream.h" />
     <ClInclude Include="src\gotchangpdf\lexical\lexical_tree.h" />
     <ClInclude Include="src\gotchangpdf\lexical\parser.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\spirit_grammar.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\spirit_lexer.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\spirit_parser.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\spirit_value_grammar.h" />
     <ClInclude Include="src\gotchangpdf\lexical\token.h" />
     <ClInclude Include="src\gotchangpdf\lexical\token_dictionary.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\array_object.h" />

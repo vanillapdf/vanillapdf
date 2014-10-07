@@ -19,6 +19,12 @@ namespace gotchangpdf
 		typedef _Mybase::reference reference;
 		typedef _Mybase::const_reference const_reference;
 
+		typedef _Mybase::iterator iterator;
+		typedef _Mybase::const_iterator const_iterator;
+
+		typedef _Mybase::reverse_iterator reverse_iterator;
+		typedef _Mybase::const_reverse_iterator const_reverse_iterator;
+
 	public:
 		Buffer();
 		Buffer(const Buffer & other);
@@ -31,6 +37,11 @@ namespace gotchangpdf
 
 		Buffer(const value_type * chars, int len);
 		Buffer(const value_type * begin, const value_type * end);
+
+		template<class _Iter,
+		class = typename std::enable_if<std::_Is_iterator<_Iter>::value,
+			void>::type>
+			Buffer(_Iter begin, _Iter end) : _Mybase(begin, end) {}
 		//Buffer(const std::vector<value_type>& data);
 
 		//void Insert(int idx, const Buffer& item);

@@ -13,6 +13,11 @@
 
 #include <boost/filesystem/operations.hpp>
 
+//
+#include "spirit_lexer.h"
+#include "spirit_grammar.h"
+//
+
 namespace gotchangpdf
 {
 	namespace files
@@ -50,6 +55,9 @@ namespace gotchangpdf
 			_input = shared_ptr<FileDevice>(new FileDevice());
 			_input->open(_filename,
 				ios_base::in | ios_base::out | ios_base::binary);
+
+			lexical::SpiritLexer aa;
+			SpiritGrammar gram(aa);
 
 			if (!_input || !_input->good())
 				throw new exceptions::Exception("Could not open file");
