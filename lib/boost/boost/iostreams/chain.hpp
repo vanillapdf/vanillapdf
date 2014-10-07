@@ -133,7 +133,7 @@ public:
     typedef chain_client<Self>                     client_type;
     friend class chain_client<Self>;
 private:
-    typedef linked_streambuf<Ch, Tr>                   streambuf_type;
+    typedef linked_streambuf<Ch>                   streambuf_type;
     typedef std::list<streambuf_type*>             list_type;
     typedef chain_base<Self, Ch, Tr, Alloc, Mode>  my_type;
 protected:
@@ -237,7 +237,7 @@ private:
         typedef typename unwrap_ios<T>::type              component_type;
         typedef stream_buffer<
                     component_type,
-                    Tr,
+                    BOOST_IOSTREAMS_CHAR_TRAITS(char_type),
                     Alloc, Mode
                 >                                         streambuf_t;
         typedef typename list_type::iterator              iterator;
@@ -323,7 +323,7 @@ private:
             {
                 if ((flags_ & f_open) != 0) {
                     flags_ &= ~f_open;
-                    stream_buffer< basic_null_device<Ch, Mode>, Tr > null;
+                    stream_buffer< basic_null_device<Ch, Mode> > null;
                     if ((flags_ & f_complete) == 0) {
                         null.open(basic_null_device<Ch, Mode>());
                         set_next(links_.back(), &null);
