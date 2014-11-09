@@ -102,8 +102,13 @@ namespace gotchangpdf
 				//this->self += anything;
 
 				this->self += true_ | false_;
+				this->self += integer | float_;
+				this->self += obj | endobj;
+
+				this->self += indirect_reference_marker;
 				//this->self += dot;
-				//this->self += line_feed | space | carriage_return | null | horizontal_tab | form_feed;
+
+				this->self += line_feed | space | carriage_return | null | horizontal_tab | form_feed;
 
 				/* Raw values */
 				/*

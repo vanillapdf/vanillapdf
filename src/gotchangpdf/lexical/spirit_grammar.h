@@ -16,7 +16,7 @@ namespace gotchangpdf
 		//namespace ast = gotchangpdf::lexical::ast;
 
 		struct SpiritGrammar : qi::grammar<SpiritLexer::iterator_type,
-			ast::BooleanObject()>
+			ast::IndirectObject()>
 		{
 			SpiritGrammar(const lexical::SpiritLexer& lexer);
 

@@ -12,7 +12,7 @@ namespace gotchangpdf
 		using qi::lit;
 
 		SpiritGrammar::SpiritGrammar(const lexical::SpiritLexer& lexer) :
-			base_type(boolean_object, "Grammar")
+			base_type(indirect_object, "Grammar")
 		{
 			//auto local_begin = qi::lazy(boost::phoenix::construct<qi::position>(qi::_a, qi::_b));
 			//start %= qi::eps[qi::_a = qi::_r1, qi::_b = qi::_r2] >> indirect_object;
@@ -32,7 +32,6 @@ namespace gotchangpdf
 				true_
 				| false_;
 
-			/*
 			auto integer_object = boost::spirit::qi::as<ast::IntegerObject>()[(
 				qi::eps
 				>> lexer.integer
@@ -72,7 +71,7 @@ namespace gotchangpdf
 				integer_object
 				>> integer_object
 				>> lexer.indirect_reference_marker;
-				*/
+
 			/*
 			integer_object %=
 				qi::eps
