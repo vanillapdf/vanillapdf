@@ -10,6 +10,7 @@
 
 //#include <boost/fusion/include/adapt_struct.hpp>
 #include <boost/fusion/adapted/struct/adapt_struct.hpp>
+#include <boost/fusion/include/std_pair.hpp>
 #include <boost/variant/variant.hpp>
 
 namespace gotchangpdf
@@ -95,6 +96,14 @@ namespace gotchangpdf
 					}
 				};
 
+				struct Comparator
+				{
+					bool operator()(const ASTNameObject& first, const ASTNameObject& second) const
+					{
+						return first.name.Equals(second.name);
+					}
+				};
+
 				Buffer name;
 
 				mutable long references = 0;
@@ -122,7 +131,7 @@ namespace gotchangpdf
 				mutable long references = 0;
 			};
 
-			typedef ::std::map<ast::ASTNameObject, ast::DirectObject, ast::ASTNameObject::Hasher> map_type;
+			typedef std::map<ast::NameObject, ast::DirectObject, ast::ASTNameObject::Comparator> map_type;
 			struct ASTDictionaryObject
 			{
 				map_type map;
@@ -153,7 +162,7 @@ namespace gotchangpdf
 			struct ASTStreamObject
 			{
 				DictionaryObject dictionary;
-				Buffer data;
+				int data_offset;
 				mutable long references = 0;
 			};
 
@@ -178,48 +187,48 @@ BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::lexical::ast::DirectObject, /**/)
 BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::lexical::ast::FunctionObject, /**/)
 BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::lexical::ast::NullObject, /**/)
 
-	BOOST_FUSION_ADAPT_STRUCT(
-	gotchangpdf::lexical::ast::ArrayObject,
-	(std::vector<gotchangpdf::lexical::ast::DirectObject>, Content->_array))
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::lexical::ast::ArrayObject,
+(std::vector<gotchangpdf::lexical::ast::DirectObject>, Content->_array))
 
-	BOOST_FUSION_ADAPT_STRUCT(
-	gotchangpdf::lexical::ast::NameObject,
-	(gotchangpdf::Buffer, Content->value))
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::lexical::ast::NameObject,
+(gotchangpdf::Buffer, Content->value))
 
-	BOOST_FUSION_ADAPT_STRUCT(
-	gotchangpdf::lexical::ast::DictionaryObject,
-	(gotchangpdf::lexical::ast::map_type, Content->map))
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::lexical::ast::DictionaryObject,
+(gotchangpdf::lexical::ast::map_type, Content->map))
 
-	BOOST_FUSION_ADAPT_STRUCT(
-	gotchangpdf::lexical::ast::IndirectReferenceObject,
-	(gotchangpdf::lexical::ast::IntegerObject, Content->objNumber)
-	(gotchangpdf::lexical::ast::IntegerObject, Content->genNumber))
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::lexical::ast::IndirectReferenceObject,
+(gotchangpdf::lexical::ast::IntegerObject, Content->objNumber)
+(gotchangpdf::lexical::ast::IntegerObject, Content->genNumber))
 
-	BOOST_FUSION_ADAPT_STRUCT(
-	gotchangpdf::lexical::ast::IntegerObject,
-	(float, Content->value))
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::lexical::ast::IntegerObject,
+(int, Content->value))
 
-	BOOST_FUSION_ADAPT_STRUCT(
-	gotchangpdf::lexical::ast::RealObject,
-	(double, Content->value))
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::lexical::ast::RealObject,
+(double, Content->value))
 
-	BOOST_FUSION_ADAPT_STRUCT(
-	gotchangpdf::lexical::ast::StreamObject,
-	(gotchangpdf::lexical::ast::DictionaryObject, Content->dictionary)
-	(gotchangpdf::Buffer, Content->data))
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::lexical::ast::StreamObject,
+(gotchangpdf::lexical::ast::DictionaryObject, Content->dictionary)
+(int, Content->data_offset))
 
-	BOOST_FUSION_ADAPT_STRUCT(
-	gotchangpdf::lexical::ast::LiteralStringObject,
-	(gotchangpdf::Buffer, Content->value))
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::lexical::ast::LiteralStringObject,
+(gotchangpdf::Buffer, Content->value))
 
-	BOOST_FUSION_ADAPT_STRUCT(
-	gotchangpdf::lexical::ast::HexadecimalStringObject,
-	(gotchangpdf::Buffer, Content->value))
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::lexical::ast::HexadecimalStringObject,
+(gotchangpdf::Buffer, Content->value))
 
-	BOOST_FUSION_ADAPT_STRUCT(
-	gotchangpdf::lexical::ast::IndirectObject,
-	(gotchangpdf::lexical::ast::IntegerObject, Content->objNumber)
-	(gotchangpdf::lexical::ast::IntegerObject, Content->genNumber)
-	(gotchangpdf::lexical::ast::DirectObject, Content->obj))
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::lexical::ast::IndirectObject,
+(gotchangpdf::lexical::ast::IntegerObject, Content->objNumber)
+(gotchangpdf::lexical::ast::IntegerObject, Content->genNumber)
+(gotchangpdf::lexical::ast::DirectObject, Content->obj))
 
 #endif /* _ABSTRACT_SYNTAX_TREE_H */

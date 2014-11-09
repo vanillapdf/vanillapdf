@@ -16,6 +16,8 @@
 //
 #include "spirit_lexer.h"
 #include "spirit_grammar.h"
+
+#include <boost/spirit/include/lex_generate_static_lexertl.hpp>
 //
 
 namespace gotchangpdf
@@ -56,8 +58,69 @@ namespace gotchangpdf
 			_input->open(_filename,
 				ios_base::in | ios_base::out | ios_base::binary);
 
-			lexical::SpiritLexer aa;
-			SpiritGrammar gram(aa);
+			lexical::SpiritLexer lexer;
+			SpiritGrammar gram(lexer);
+			ast::IndirectObject obj;
+			ast::BooleanObject boo;
+			/*
+			string str("4 0 obj"
+				"<<"
+				"/ Type / Page"
+				"/ Parent 5 0 R"
+				"/ Resources <<"
+				"/ Font <<"
+				"/ F0 6 0 R"
+				"/ F1 7 0 R"
+				">>"
+				"/ ProcSet 2 0 R"
+				">>"
+				"/ Contents 9 0 R"
+				">>"
+				"endobj");
+				*/
+			/*
+			string str("4 0 obj\n"
+			"115\n"
+			"endobj");
+				*/
+
+			string str("false");
+
+			//std::string::const_iterator beg = str.begin();
+			//std::string::const_iterator end = str.end();
+
+			std::string::iterator it = str.begin();
+			lexical::pos_iterator_type iter(str.begin(), str.end(), "test");
+			lexical::pos_iterator_type end;
+
+			//lexical::SpiritLexer::iterator_type position_begin(str.begin(), str.end(), "test");
+			//lexical::SpiritLexer::iterator_type position_end;
+
+			try
+			{
+				using boost::spirit::ascii::space;
+
+				//fstream out("static_lexer.hpp", std::ios_base::out);
+				//auto dfa = boost::spirit::lex::lexertl::generate_static_dfa(aa, out, "sl");
+				//auto test = lex::tokenize(begin, end, aa, gram);
+				//bool result = boost::spirit::qi::phrase_parse(iter, end, gram, qi::in_state("WS")[lexer.self]);
+				auto result = lex::tokenize_and_parse(iter, end, lexer, gram, boo);
+				if (result)
+				{
+					auto which = boo.which();
+					auto yes = boost::get<ast::True>(boo);
+					auto no = boost::get<ast::False>(boo);
+					return;
+				}
+				//out.close();
+			}
+			catch (std::exception e)
+			{
+			}
+			catch (...)
+			{
+				
+			}
 
 			if (!_input || !_input->good())
 				throw new exceptions::Exception("Could not open file");

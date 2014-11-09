@@ -3,7 +3,7 @@
 
 #include "buffer.h"
 
-#include <fstream>
+#include <istream>
 #include <string>
 #include <utility>
 #include <stack>
@@ -16,6 +16,10 @@
 #include <boost/spirit/include/classic_attribute.hpp>
 #include <boost/spirit/include/classic_symbols.hpp>
 
+#ifdef USE_STATIC_LEXER
+#include "static_lexer.hpp"
+#endif
+
 namespace gotchangpdf
 {
 	namespace lexical
@@ -23,18 +27,22 @@ namespace gotchangpdf
 		namespace spirit = boost::spirit;
 		namespace lex = boost::spirit::lex;
 
-		namespace
-		{
-			typedef Buffer::iterator base_iterator_type;
-			typedef spirit::classic::position_iterator2<base_iterator_type> pos_iterator_type;
-			typedef lex::lexertl::token<pos_iterator_type> Tok;
+
+		typedef std::string::iterator base_iterator_type;
+		typedef spirit::classic::position_iterator2<base_iterator_type> pos_iterator_type;
+
+		//typedef lex::lexertl::token<pos_iterator_type> token_type;
+
+		typedef lex::lexertl::token <
+			pos_iterator_type, boost::mpl::vector<Buffer, int, char, double>
+		> token_type;
 
 #ifdef USE_STATIC_LEXER
-			typedef boost::spirit::lex::lexertl::static_actor_lexer<Tok, lex::lexertl::static_::lexer_sl> lexer_type;
+		typedef boost::spirit::lex::lexertl::static_actor_lexer<Tok, lex::lexertl::static_::lexer_sl> lexer_type;
 #else
-			typedef lex::lexertl::actor_lexer<Tok> lexer_type;
+		//typedef lex::lexertl::actor_lexer<token_type> lexer_type;
+		typedef lex::lexertl::lexer<token_type> lexer_type;
 #endif
-		}
 
 		class SpiritLexer : public lex::lexer<lexer_type>
 		{
@@ -45,7 +53,7 @@ namespace gotchangpdf
 			typedef lex::token_def<char> CharToken;
 			typedef lex::token_def<double> FloatToken;
 
-			typedef lexer_type::iterator_type Iterator;
+			//typedef lexer_type::iterator_type Iterator;
 
 		public:
 			SpiritLexer()
@@ -89,9 +97,13 @@ namespace gotchangpdf
 				float_ = "[0-9]+\".\"[0-9]+";
 				integer = "[0-9]+";
 
+				anything = ".*";
+
+				//this->self += anything;
+
 				this->self += true_ | false_;
-				this->self += dot;
-				this->self += line_feed | space | carriage_return | null | horizontal_tab | form_feed;
+				//this->self += dot;
+				//this->self += line_feed | space | carriage_return | null | horizontal_tab | form_feed;
 
 				/* Raw values */
 				/*
@@ -135,14 +147,16 @@ namespace gotchangpdf
 				*/
 			}
 
-			StringToken true_, false_;
-			StringToken obj, endobj;
+			StringToken anything;
+
+			ConsumedToken true_, false_;
+			ConsumedToken obj, endobj;
 			StringToken stream_begin, stream_end;
-			StringToken dictionary_begin, dictionary_end;
+			ConsumedToken dictionary_begin, dictionary_end;
 			CharToken line_feed, space, carriage_return, null, horizontal_tab, form_feed;
-			CharToken left_bracket, right_bracket, left_parenthesis, right_parenthesis;
-			CharToken less_than_sign, greater_than_sign;
-			CharToken indirect_reference_marker;
+			ConsumedToken left_bracket, right_bracket, left_parenthesis, right_parenthesis;
+			ConsumedToken less_than_sign, greater_than_sign;
+			ConsumedToken indirect_reference_marker;
 			ConsumedToken dot, name_object_begin;
 			CharToken plus, minus;
 			IntegerToken integer;

@@ -52,7 +52,7 @@
     <ClInclude Include="src\gotchangpdf\lexical\spirit_grammar.h" />
     <ClInclude Include="src\gotchangpdf\lexical\spirit_lexer.h" />
     <ClInclude Include="src\gotchangpdf\lexical\spirit_parser.h" />
-    <ClInclude Include="src\gotchangpdf\lexical\spirit_value_grammar.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\static_lexer.hpp" />
     <ClInclude Include="src\gotchangpdf\lexical\token.h" />
     <ClInclude Include="src\gotchangpdf\lexical\token_dictionary.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\array_object.h" />
@@ -107,6 +107,7 @@
     <ClCompile Include="src\gotchangpdf\lexical\lexical_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\lexical_tree.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\parser.cpp" />
+    <ClCompile Include="src\gotchangpdf\lexical\spirit_grammar.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\token.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\token_dictionary.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\array_object.cpp" />
