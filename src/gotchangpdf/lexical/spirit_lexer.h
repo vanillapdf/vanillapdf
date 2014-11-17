@@ -15,6 +15,7 @@
 #include <boost/spirit/include/classic_functor_parser.hpp>
 #include <boost/spirit/include/classic_attribute.hpp>
 #include <boost/spirit/include/classic_symbols.hpp>
+#include <boost/spirit/include/qi.hpp>
 
 #ifdef USE_STATIC_LEXER
 #include "static_lexer.hpp"
@@ -28,7 +29,7 @@ namespace gotchangpdf
 		namespace lex = boost::spirit::lex;
 
 
-		typedef std::string::iterator base_iterator_type;
+		typedef boost::spirit::istream_iterator base_iterator_type;
 		typedef spirit::classic::position_iterator2<base_iterator_type> pos_iterator_type;
 
 		//typedef lex::lexertl::token<pos_iterator_type> token_type;

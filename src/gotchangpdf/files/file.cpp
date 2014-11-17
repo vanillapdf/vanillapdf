@@ -17,7 +17,7 @@
 #include "spirit_lexer.h"
 #include "spirit_grammar.h"
 
-#include <boost/spirit/include/lex_generate_static_lexertl.hpp>
+//#include <boost/spirit/include/lex_generate_static_lexertl.hpp>
 //
 
 namespace gotchangpdf
@@ -58,40 +58,25 @@ namespace gotchangpdf
 			_input->open(_filename,
 				ios_base::in | ios_base::out | ios_base::binary);
 
+			// Don't skip whitespace explicitly
+			noskipws(*_input);
+
 			lexical::SpiritLexer lexer;
-			SpiritGrammar gram(lexer);
+			lexical::SpiritGrammar grammar(lexer);
 			ast::IndirectObject obj;
 
-			/*
-			string str("4 0 obj"
-				"<<"
-				"/ Type / Page"
-				"/ Parent 5 0 R"
-				"/ Resources <<"
-				"/ Font <<"
-				"/ F0 6 0 R"
-				"/ F1 7 0 R"
-				">>"
-				"/ ProcSet 2 0 R"
-				">>"
-				"/ Contents 9 0 R"
-				">>"
-				"endobj");
-				*/
+			// Direct cast to pos_iterator_type is not possible
+			lexical::base_iterator_type input_begin_base(*_input);
+			lexical::base_iterator_type input_end_base;
 
-			string str("4 0 obj\n"
-			"115\n"
-			"endobj");
-
-			std::string::iterator it = str.begin();
-			lexical::pos_iterator_type iter(str.begin(), str.end(), "test");
-			lexical::pos_iterator_type end;
+			lexical::pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _filename);
+			lexical::pos_iterator_type input_end_pos;
 
 			try
 			{
 				//fstream out("static_lexer.hpp", std::ios_base::out);
 				//auto dfa = boost::spirit::lex::lexertl::generate_static_dfa(aa, out, "sl");
-				auto result = lex::tokenize_and_parse(iter, end, lexer, gram, obj);
+				auto result = lex::tokenize_and_parse(input_begin_pos, input_end_pos, lexer, grammar, obj);
 				if (result)
 				{
 					return;

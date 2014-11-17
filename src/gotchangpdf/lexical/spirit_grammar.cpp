@@ -31,12 +31,12 @@ namespace gotchangpdf
 			boolean_object =
 				true_
 				| false_;
-
+			/*
 			auto integer_object = boost::spirit::qi::as<ast::IntegerObject>()[(
 				qi::eps
 				>> lexer.integer
 				)];
-
+				*/
 			indirect_object %=
 				integer_object
 				>> qi::omit[lexer.space]
@@ -69,14 +69,15 @@ namespace gotchangpdf
 
 			indirect_reference_object %=
 				integer_object
+				>> qi::omit[lexer.space]
 				>> integer_object
+				>> qi::omit[lexer.space]
 				>> lexer.indirect_reference_marker;
 
-			/*
 			integer_object %=
 				qi::eps
 				>> lexer.integer;
-
+			/*
 			real_object %=
 				qi::eps
 				>> lexer.float_;

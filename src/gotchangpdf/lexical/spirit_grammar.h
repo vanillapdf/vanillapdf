@@ -4,16 +4,11 @@
 #include "spirit_lexer.h"
 #include "abstract_syntax_tree.h"
 
-#include <boost/spirit/include/qi.hpp>
-//#include <boost/spirit/include/phoenix.hpp>
-//#include <boost/spirit/repository/include/qi_iter_pos.hpp>
-
 namespace gotchangpdf
 {
 	namespace lexical
 	{
 		namespace qi = boost::spirit::qi;
-		//namespace ast = gotchangpdf::lexical::ast;
 
 		struct SpiritGrammar : qi::grammar<SpiritLexer::iterator_type,
 			ast::IndirectObject()>
@@ -30,7 +25,7 @@ namespace gotchangpdf
 			Rule<ast::DictionaryObject> dictionary_object;
 			Rule<ast::FunctionObject> function_object;
 			Rule<ast::IndirectReferenceObject> indirect_reference_object;
-			//Rule<ast::IntegerObject> integer_object;
+			Rule<ast::IntegerObject> integer_object;
 			Rule<ast::NameObject> name_object;
 			Rule<ast::NullObject> null_object;
 			Rule<ast::RealObject> real_object;

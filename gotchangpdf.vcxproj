@@ -51,7 +51,6 @@
     <ClInclude Include="src\gotchangpdf\lexical\parser.h" />
     <ClInclude Include="src\gotchangpdf\lexical\spirit_grammar.h" />
     <ClInclude Include="src\gotchangpdf\lexical\spirit_lexer.h" />
-    <ClInclude Include="src\gotchangpdf\lexical\spirit_parser.h" />
     <ClInclude Include="src\gotchangpdf\lexical\token.h" />
     <ClInclude Include="src\gotchangpdf\lexical\token_dictionary.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\array_object.h" />
