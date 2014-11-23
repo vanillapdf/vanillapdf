@@ -25,10 +25,11 @@ namespace gotchangpdf
 {
 	namespace lexical
 	{
-		using namespace lexical;
+		using namespace std;
 		using namespace exceptions;
 
 		namespace qi = boost::spirit::qi;
+		namespace lex = boost::spirit::lex;
 
 		SpiritParser::SpiritParser(files::File * file, CharacterSource & stream)
 			: lexical::Stream(stream), _file(file) {}
@@ -38,66 +39,53 @@ namespace gotchangpdf
 
 		SmartPtr<Object> SpiritParser::readObject()
 		{
-			lexical::SpiritLexer lexer;
-			lexical::SpiritGrammar grammar(lexer);
+			SpiritLexer lexer;
+			SpiritGrammar grammar(lexer);
 			ast::IndirectObject obj;
 
-			std::noskipws(*this);
+			//auto off = tellg();
+			//auto pos = off.seekpos();
+
+			// Don't skip whitespace explicitly
+			noskipws(*this);
 
 			// Direct cast to pos_iterator_type is not possible
-			//lexical::base_iterator_type input_begin_base(*this);
-			//lexical::base_iterator_type input_end_base;
+			base_iterator_type input_begin_base(*this);
+			base_iterator_type input_end_base;
 
-			//lexical::pos_iterator_type input_begin_pos(input_begin_base, input_end_base, "aa");
-			//lexical::pos_iterator_type input_end_pos;
-
-			//
-
-
-			std::string str("1 0 obj\n"
-				"[/YES 2]\n"
-				"endobj");
-
-			std::stringstream ss(str);
-
-			std::noskipws(ss);
-
-			lexical::base_iterator_type str_beg(ss);
-			lexical::base_iterator_type str_end;
-
-			lexical::pos_iterator_type str_beg_fwd(str_beg, str_end, "aa");
-			lexical::pos_iterator_type str_end_fwd;
-
-			//
+			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _file->GetFilename());
+			pos_iterator_type input_end_pos;
 
 			try
 			{
-				//auto result = boost::spirit::lex::tokenize_and_phrase_parse(input_begin_pos, input_end_pos, lexer, grammar, qi::in_state("WS")[lexer.self], obj);
-				auto result = boost::spirit::lex::tokenize_and_parse(str_beg_fwd, str_end_fwd, lexer, grammar, obj);
+				auto result = lex::tokenize_and_parse(input_begin_pos, input_end_pos, lexer, grammar, obj);
 				if (result) {
 					return nullptr;
 				}
 				else {
-
-					std::cout << "Parsing failed" << std::endl;
-					const auto& pos = str_beg_fwd.get_position();
-					std::cout <<
-						"Error at file " << pos.file << " line " << pos.line << " column " << pos.column << std::endl <<
-						"'" << str_beg_fwd.get_currentline() << "'" << std::endl <<
-						std::setw(pos.column) << " ^- here" << std::endl;
+					//auto off2 = tellg();
+					//auto pos2 = off2.seekpos();
+					cout << "Parsing failed" << endl;
+					const auto& pos = input_begin_pos.get_position();
+					cout <<
+						"Error at file " << pos.file << " line " << pos.line << " column " << pos.column << endl <<
+						"'" << input_begin_pos.get_currentline() << "'" << endl <<
+						setw(pos.column + 8) << " ^- here" << endl;
 
 					return nullptr;
 				}
 			}
 			catch (const qi::expectation_failure<lexer_type::iterator_type>& exception) {
-				std::cout << "Parsing failed" << std::endl;
+				cout << "Parsing failed" << endl;
 
+				//auto off2 = tellg();
+				//auto pos2 = off2.seekpos();
 				auto pos_begin = (*exception.first).value().begin();
 				const auto& pos = pos_begin.get_position();
-				std::cout <<
-					"Error at file " << pos.file << " line " << pos.line << " column " << pos.column << " Expecting " << exception.what_ << std::endl <<
-					"'" << pos_begin.get_currentline() << "'" << std::endl <<
-					std::setw(pos.column) << " ^- here" << std::endl;
+				cout <<
+					"Error at file " << pos.file << " line " << pos.line << " column " << pos.column << " Expecting " << exception.what_ << endl <<
+					"'" << pos_begin.get_currentline() << "'" << endl <<
+					setw(pos.column + 8) << " ^- here" << endl;
 
 				return nullptr;
 			}

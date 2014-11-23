@@ -12,31 +12,24 @@ namespace gotchangpdf
 			/* keywords */
 			true_ = "true";
 			false_ = "false";
-
-			//obj = "obj";
-			//endobj = "endobj";
-
-			dictionary_begin = "<<";
-			dictionary_end = ">>";
-
+			obj = "obj";
+			endobj = "endobj";
 			stream_begin = "stream";
 			stream_end = "endstream";
 
+			/* delimiters */
 			left_parenthesis = '(';
 			right_parenthesis = ')';
-
 			less_than_sign = '<';
 			greater_than_sign = '>';
+			left_bracket = '[';
+			right_bracket = ']';
+			left_curly_bracket = '{';
+			right_curly_bracket = '}';
+			solidus = '/';
+			percent_sign = '%';
 
-			indirect_reference_marker = 'R';
-
-			name_object_begin = '/';
-			name_object_value = "[a-zA-Z]*";
-
-			plus = '+';
-			minus = '-';
-			dot = '.';
-
+			/* whitespace */
 			line_feed = '\n';
 			space = ' ';
 			carriage_return = '\r';
@@ -44,8 +37,16 @@ namespace gotchangpdf
 			horizontal_tab = '\t';
 			form_feed = '\f';
 
-			left_bracket = '[';
-			right_bracket = ']';
+			dictionary_begin = "<<";
+			dictionary_end = ">>";
+
+			//indirect_reference_marker = 'R';
+
+			regular_character = "[a-zA-Z]";
+
+			//plus = '+';
+			//minus = '-';
+			//dot = '.';
 
 			float_ = "[0-9]+\".\"[0-9]+";
 			integer = "[0-9]+";
@@ -54,19 +55,21 @@ namespace gotchangpdf
 
 			//this->self += anything;
 
-			this->self += name_object_begin;
-			this->self += name_object_value;
+			//this->self += name_object_begin;
+			//this->self += name_object_value;
 
 			this->self += true_ | false_;
 			this->self += integer | float_;
-			//this->self += obj | endobj;
+			this->self += obj | endobj;
+
+			this->self += regular_character;
 
 			//this->self += indirect_reference_marker;
 			//this->self += dot;
 
 			this->self += line_feed | space | carriage_return | null | horizontal_tab | form_feed;
 
-			this->self += less_than_sign | greater_than_sign | left_bracket | right_bracket | left_parenthesis | right_parenthesis;
+			this->self += less_than_sign | greater_than_sign | left_bracket | right_bracket | left_parenthesis | right_parenthesis | left_curly_bracket | right_curly_bracket | solidus | percent_sign;
 			this->self += dictionary_begin | dictionary_end;
 
 			//this->self("WS") = line_feed | space | carriage_return | null | horizontal_tab | form_feed;

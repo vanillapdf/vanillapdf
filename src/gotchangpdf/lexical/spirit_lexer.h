@@ -58,19 +58,31 @@ namespace gotchangpdf
 
 		public:
 			StringToken anything;
-			StringToken name_object_value;
+			//StringToken name_object_value;
 
 		public:
+			/* keywords */
 			ConsumedToken true_, false_;
-			//ConsumedToken obj, endobj;
+			ConsumedToken obj, endobj;
 			ConsumedToken stream_begin, stream_end;
-			ConsumedToken dictionary_begin, dictionary_end;
-			ConsumedToken line_feed, space, carriage_return, null, horizontal_tab, form_feed;
-			ConsumedToken left_bracket, right_bracket, left_parenthesis, right_parenthesis;
+
+			/* delimiters */
+			ConsumedToken left_bracket, right_bracket;
 			ConsumedToken less_than_sign, greater_than_sign;
-			ConsumedToken indirect_reference_marker;
-			ConsumedToken dot, name_object_begin;
-			CharToken plus, minus;
+			ConsumedToken left_parenthesis, right_parenthesis;
+			ConsumedToken left_curly_bracket, right_curly_bracket;
+			ConsumedToken solidus;
+			ConsumedToken percent_sign;
+
+			/* whitespace */
+			ConsumedToken line_feed, space, carriage_return, null, horizontal_tab, form_feed;
+			
+			//ConsumedToken indirect_reference_marker;
+			//ConsumedToken dot;
+
+			ConsumedToken dictionary_begin, dictionary_end;
+			//CharToken plus, minus;
+			CharToken regular_character;
 			IntegerToken integer;
 			FloatToken float_;
 		};

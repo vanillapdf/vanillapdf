@@ -56,9 +56,6 @@ namespace gotchangpdf
 			_input->open(_filename,
 				ios_base::in | ios_base::out | ios_base::binary);
 
-			// Don't skip whitespace explicitly
-			noskipws(*_input);
-
 			//fstream out("static_lexer.hpp", std::ios_base::out);
 			//auto dfa = boost::spirit::lex::lexertl::generate_static_dfa(aa, out, "sl");
 

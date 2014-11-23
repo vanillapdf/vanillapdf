@@ -24,6 +24,13 @@ namespace gotchangpdf
 				| lexer.horizontal_tab
 				| lexer.null;
 
+			auto whitespaces =
+				*whitespace;
+
+			auto eol =
+				-lexer.carriage_return
+				>> lexer.line_feed;
+
 			auto true_ = boost::spirit::qi::as<ast::True>()[(
 				qi::eps
 				>> lexer.true_
@@ -43,13 +50,11 @@ namespace gotchangpdf
 				>> lexer.space
 				>> integer_object
 				>> lexer.space
-				>> qi::omit[lexer.name_object_value] // obj
-				>> -lexer.carriage_return
-				>> lexer.line_feed
+				>> lexer.obj
+				>> eol
 				>> direct_object
-				>> -lexer.carriage_return
-				>> lexer.line_feed
-				>> qi::omit[lexer.name_object_value]; // endobj
+				>> eol
+				>> lexer.endobj;
 
 			/*
 			string_object =
@@ -69,14 +74,14 @@ namespace gotchangpdf
 				| real_object
 				| stream_object
 				| string_object;
-			/*
+
 			indirect_reference_object %=
 				integer_object
 				>> lexer.space
 				>> integer_object
 				>> lexer.space
-				>> lexer.indirect_reference_marker;
-				*/
+				>> lexer.regular_character; // TODO 'R'
+
 			integer_object %=
 				qi::eps
 				>> lexer.integer;
@@ -87,8 +92,8 @@ namespace gotchangpdf
 
 			name_object %=
 				qi::eps
-				>> lexer.name_object_begin
-				>> lexer.name_object_value;
+				>> lexer.solidus
+				> *lexer.regular_character;
 
 			// TODO
 			/*
@@ -100,19 +105,17 @@ namespace gotchangpdf
 
 			array_object %=
 				lexer.left_bracket
-				> -whitespace
-				>> *(direct_object >> -whitespace)
-				> -whitespace
+				> -whitespaces
+				> *(direct_object >> -whitespaces)
+				> -whitespaces
 				> lexer.right_bracket;
 
-			/*
 			dictionary_object %=
 				lexer.dictionary_begin
-				>> -whitespace
-				>> *(name_object >> -whitespace >> direct_object >> -whitespace)
-				>> -whitespace
-				>> lexer.dictionary_end;
-				*/
+				> -whitespaces
+				> *(name_object >> -whitespaces >> direct_object >> -whitespaces)
+				> -whitespaces
+				> lexer.dictionary_end;
 			/*
 			stream_object %=
 				dictionary_object
@@ -127,7 +130,7 @@ namespace gotchangpdf
 				>> lexer.right_parenthesis;
 				*/
 
-			/*
+
 			BOOST_SPIRIT_DEBUG_NODE(boolean_object);
 			BOOST_SPIRIT_DEBUG_NODE(indirect_object);
 			BOOST_SPIRIT_DEBUG_NODE(direct_object);
@@ -136,7 +139,7 @@ namespace gotchangpdf
 			BOOST_SPIRIT_DEBUG_NODE(name_object);
 			BOOST_SPIRIT_DEBUG_NODE(array_object);
 			BOOST_SPIRIT_DEBUG_NODE(dictionary_object);
-			*/
+
 		}
 	}
 }
