@@ -2,6 +2,7 @@
 #define _INTEGER_OBJECT_H
 
 #include "fwd.h"
+#include "constants.h"
 #include "numeric_object.h"
 #include "token.h"
 
@@ -10,19 +11,19 @@ namespace gotchangpdf
 	class IntegerObject : public NumericObject
 	{
 	public:
-		typedef long long ValueType;
+		typedef types::integer value_type;
 
 		IntegerObject();
-		explicit IntegerObject(ValueType value);
+		explicit IntegerObject(value_type value);
 		//explicit IntegerObject(const CharacterSet& value);
 		explicit IntegerObject(const lexical::Token& value);
 
-		ValueType Value(void) const;
+		value_type Value(void) const;
 
-		operator ValueType() const { return _value; }
+		operator value_type() const { return _value; }
 		//virtual Object* Clone(void) const  override { return new IntegerObject(static_cast<IntegerObject const&>(*this)); };
 
-		IntegerObject& operator= (ValueType value);
+		IntegerObject& operator= (value_type value);
 		IntegerObject& operator= (const Buffer& value);
 		IntegerObject& operator= (const lexical::Token& value);
 
@@ -31,9 +32,12 @@ namespace gotchangpdf
 		friend lexical::ReverseStream& operator>> (lexical::ReverseStream& s, IntegerObject& o);
 		friend lexical::Stream& operator>> (lexical::Stream& s, IntegerObject& o);
 
-	private:
-		ValueType _value = 0;
+	//private:
+	public:
+		value_type _value = 0;
 	};
+
+	typedef SmartPtr<IntegerObject> IntegerObjectPtr;
 
 	inline  Object::Type IntegerObject::GetType(void) const { return Object::Type::IntegerObject; }
 }

@@ -14,7 +14,7 @@ namespace gotchangpdf
 
 	#pragma region Constructors
 
-	IntegerObject::IntegerObject(ValueType value) : _value(value) {}
+	IntegerObject::IntegerObject(value_type value) : _value(value) {}
 	IntegerObject::IntegerObject() {}
 
 	IntegerObject::IntegerObject(const Token& value)
@@ -40,7 +40,7 @@ namespace gotchangpdf
 		return *this;
 	}
 
-	IntegerObject& IntegerObject::operator=(ValueType value)
+	IntegerObject& IntegerObject::operator=(value_type value)
 	{
 		_value = value;
 		return *this;
@@ -48,7 +48,7 @@ namespace gotchangpdf
 
 	#pragma endregion
 
-	IntegerObject::ValueType IntegerObject::Value(void) const { return _value; }
+	IntegerObject::value_type IntegerObject::Value(void) const { return _value; }
 
 	ReverseStream& operator>> (ReverseStream& s, IntegerObject& o)
 	{

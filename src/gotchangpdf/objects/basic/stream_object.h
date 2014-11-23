@@ -30,13 +30,16 @@ namespace gotchangpdf
 		//friend Streams::Lexical::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, StreamObject& o);
 		friend lexical::Parser& operator>> (lexical::Parser& s, StreamObject& o);
 
-	private:
+	public:
 		SmartPtr<DictionaryObject> _dictionary = nullptr;
+		types::stream_offset _raw_data_offset = std::_BADOFF;
+
+	private:
 		Buffer _data;
-		streamOffsetValueType _rawDataOffset = std::_BADOFF;
-		streamSizeValueType _rawDataLength = -1;
 		Type _type = Type::UNKNOWN;
 	};
+
+	typedef SmartPtr<StreamObject> StreamObjectPtr;
 }
 
 #endif /* _STREAM_OBJECT_H */

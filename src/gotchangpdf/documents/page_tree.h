@@ -17,14 +17,14 @@ namespace gotchangpdf
 			//PageTree();
 			explicit PageTree(SmartPtr<DictionaryObject> root);
 
-			inline IntegerObject::ValueType PageCount(void) const { return _root->KidCount(); }
-			inline SmartPtr<PageObject> Page(unsigned int number) const { return PageInternal(number); }
-			inline SmartPtr<PageObject> operator[](unsigned int number) const { return PageInternal(number); }
+			inline IntegerObject::value_type PageCount(void) const { return _root->KidCount(); }
+			inline SmartPtr<PageObject> Page(types::integer number) const { return PageInternal(number); }
+			inline SmartPtr<PageObject> operator[](types::integer number) const { return PageInternal(number); }
 
 			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageTree; }
 
 		private:
-			SmartPtr<PageObject> PageInternal(unsigned int number) const;
+			SmartPtr<PageObject> PageInternal(types::integer number) const;
 			bool HasTreeChilds(SmartPtr<PageTreeNode> node) const;
 
 			SmartPtr<PageTreeNode> _root;

@@ -1,5 +1,6 @@
 #include "indirect_object_reference.h"
-#include "File.h"
+
+#include "file.h"
 
 #include "c_indirect_object_reference.h"
 
@@ -12,7 +13,7 @@ namespace gotchangpdf
 
 	IndirectObjectReference::IndirectObjectReference(files::File * file) : _file(file) {}
 
-	IndirectObjectReference::IndirectObjectReference(files::File * file, unsigned int obj_number, unsigned int gen_number) :
+	IndirectObjectReference::IndirectObjectReference(files::File * file, types::integer obj_number, types::ushort gen_number) :
 		_file(file), _obj_number(obj_number), _gen_number(gen_number) {}
 
 	SmartPtr<IndirectObject> IndirectObjectReference::GetReferencedObject() const

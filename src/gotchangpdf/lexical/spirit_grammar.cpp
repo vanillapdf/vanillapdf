@@ -30,7 +30,7 @@ namespace gotchangpdf
 			auto eol =
 				-lexer.carriage_return
 				>> lexer.line_feed;
-
+			/*
 			auto true_ = boost::spirit::qi::as<ast::True>()[(
 				qi::eps
 				>> lexer.true_
@@ -44,7 +44,8 @@ namespace gotchangpdf
 			boolean_object =
 				true_
 				| false_;
-
+				*/
+			/*
 			indirect_object %=
 				integer_object
 				>> lexer.space
@@ -55,7 +56,7 @@ namespace gotchangpdf
 				>> direct_object
 				>> eol
 				>> lexer.endobj;
-
+				*/
 			/*
 			string_object =
 				literal_string_object
@@ -75,12 +76,13 @@ namespace gotchangpdf
 				| stream_object
 				| string_object;
 
+
 			indirect_reference_object %=
 				integer_object
 				>> lexer.space
 				>> integer_object
 				>> lexer.space
-				>> lexer.regular_character; // TODO 'R'
+				>> qi::omit[lexer.regular_character]; // TODO 'R'
 
 			integer_object %=
 				qi::eps
@@ -91,6 +93,11 @@ namespace gotchangpdf
 				>> lexer.float_;
 
 			name_object %=
+				qi::eps
+				>> lexer.solidus
+				> *lexer.regular_character;
+
+			name_object_dereferenced %=
 				qi::eps
 				>> lexer.solidus
 				> *lexer.regular_character;
@@ -113,9 +120,10 @@ namespace gotchangpdf
 			dictionary_object %=
 				lexer.dictionary_begin
 				> -whitespaces
-				> *(name_object >> -whitespaces >> direct_object >> -whitespaces)
+				> *(name_object_dereferenced >> -whitespaces >> direct_object >> -whitespaces)
 				> -whitespaces
 				> lexer.dictionary_end;
+
 			/*
 			stream_object %=
 				dictionary_object
@@ -130,7 +138,7 @@ namespace gotchangpdf
 				>> lexer.right_parenthesis;
 				*/
 
-
+			/*
 			BOOST_SPIRIT_DEBUG_NODE(boolean_object);
 			BOOST_SPIRIT_DEBUG_NODE(indirect_object);
 			BOOST_SPIRIT_DEBUG_NODE(direct_object);
@@ -139,7 +147,7 @@ namespace gotchangpdf
 			BOOST_SPIRIT_DEBUG_NODE(name_object);
 			BOOST_SPIRIT_DEBUG_NODE(array_object);
 			BOOST_SPIRIT_DEBUG_NODE(dictionary_object);
-
+			*/
 		}
 	}
 }

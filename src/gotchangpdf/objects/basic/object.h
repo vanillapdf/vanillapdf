@@ -11,6 +11,10 @@
 
 namespace gotchangpdf
 {
+	class Object;
+
+	typedef SmartPtr<Object> ObjectPtr;
+
 	class Object : public boost::intrusive_ref_counter<Object>
 	{
 	public:
@@ -38,8 +42,8 @@ namespace gotchangpdf
 		static const char* TypeName(Type type);
 		virtual inline Type GetType(void) const = 0;
 
-		inline void SetContainer(SmartPtr<Object> obj) { _container = obj; }
-		inline SmartPtr<Object> GetContainer() const { return _container; }
+		inline void SetContainer(ObjectPtr obj) { _container = obj; }
+		inline ObjectPtr GetContainer() const { return _container; }
 
 		//virtual Object* Clone(void) const = 0;
 
@@ -51,7 +55,7 @@ namespace gotchangpdf
 		virtual ~Object() = 0;
 
 	protected:
-		SmartPtr<Object> _container = nullptr;
+		ObjectPtr _container = nullptr;
 	};
 	/*
 	template <typename T>

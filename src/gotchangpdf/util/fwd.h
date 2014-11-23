@@ -4,10 +4,10 @@
 namespace gotchangpdf
 {
 	class MixedArrayObject;
-	class Boolean;
+	class BooleanObject;
 	class Xref;
 	class DictionaryObject;
-	class Function;
+	class FunctionObject;
 	class IndirectObject;
 	class IndirectObjectReference;
 	class IntegerObject;

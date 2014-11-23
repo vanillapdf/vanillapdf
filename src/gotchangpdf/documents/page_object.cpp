@@ -19,19 +19,19 @@ namespace gotchangpdf
 			_resources(Bind<DictionaryObject, ResourceDictionary>(_obj, std::bind(&PageObject::GetResources, this, _obj))),
 			_media_box(Bind<DictionaryObject, Rectangle>(_obj, std::bind(&PageObject::GetMediaBox, this, _obj)))
 		{
-			if (*_obj->FindAs<NameObject>(Name::Type) != Name::Page)
+			if (*_obj->FindAs<NameObjectPtr>(Name::Type) != Name::Page)
 				throw Exception("TODO");
 		}
 
 		SmartPtr<PageTreeNode> PageObject::GetParent(SmartPtr<DictionaryObject> obj)
 		{
-			auto node = new PageTreeNode(_obj->FindAs<DictionaryObject>(Name::Parent));
+			auto node = new PageTreeNode(_obj->FindAs<DictionaryObjectPtr>(Name::Parent));
 			return SmartPtr<PageTreeNode>(node);
 		}
 
 		SmartPtr<ResourceDictionary> PageObject::GetResources(SmartPtr<DictionaryObject> obj)
 		{
-			auto resource = _obj->FindAs<DictionaryObject>(Name::Resources);
+			auto resource = _obj->FindAs<DictionaryObjectPtr>(Name::Resources);
 			auto dict = new ResourceDictionary(resource);
 
 			return SmartPtr<ResourceDictionary>(dict);
@@ -39,9 +39,9 @@ namespace gotchangpdf
 
 		SmartPtr<Rectangle> PageObject::GetMediaBox(SmartPtr<DictionaryObject> obj)
 		{
-			auto box = _obj->FindAs<MixedArrayObject>(Name::MediaBox);
-			auto specialized = box->CastToArrayType<IntegerObject>();
-			auto rectangle = new Rectangle(SmartPtr<ArrayObject<IntegerObject>>(specialized));
+			auto box = _obj->FindAs<MixedArrayObjectPtr>(Name::MediaBox);
+			auto specialized = box->CastToArrayType<IntegerObjectPtr>();
+			auto rectangle = new Rectangle(SmartPtr<ArrayObject<IntegerObjectPtr>>(specialized));
 
 			return SmartPtr<Rectangle>(rectangle);
 		}

@@ -9,9 +9,10 @@ namespace gotchangpdf
 {
 	class StringObject : public Object
 	{
-	protected:
+	public:
 		Buffer _value;
 
+	protected:
 		StringObject();
 		explicit StringObject(const Buffer& value);
 	};
@@ -24,7 +25,8 @@ namespace gotchangpdf
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::HexadecimalString; }
 
-	private:
+	//private:
+	public:
 		std::string _hexadecimal;
 	};
 
@@ -36,6 +38,9 @@ namespace gotchangpdf
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::LiteralString; }
 	};
+
+	typedef SmartPtr<LiteralString> LiteralStringPtr;
+	typedef SmartPtr<HexadecimalString> HexadecimalStringPtr;
 }
 
 #endif /* _STRING_OBJECT_H */

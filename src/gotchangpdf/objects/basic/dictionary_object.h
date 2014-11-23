@@ -5,6 +5,8 @@
 #include "object.h"
 #include "name_object.h"
 #include "smart_ptr.h"
+#include "direct_object.h"
+#include "object_visitors.h"
 
 #include <unordered_map>
 
@@ -12,14 +14,14 @@ namespace gotchangpdf
 {
 	class DictionaryObject : public Object
 	{
-	private:
-		typedef std::unordered_map<NameObject, SmartPtr<Object>, NameObject::Hasher> listType;
+	public:
+		typedef std::unordered_map<NameObject, DirectObject, NameObject::Hasher> value_type;
 
 	public:
 		class Iterator
 		{
 		public:
-			Iterator(listType::const_iterator it);
+			Iterator(value_type::const_iterator it);
 
 			Iterator* Clone() const;
 
@@ -27,12 +29,12 @@ namespace gotchangpdf
 			const Iterator operator++(int);
 
 			NameObject First() const;
-			SmartPtr<Object> Second() const;
+			DirectObject Second() const;
 
 			bool operator==(const Iterator& other) const;
 
 		private:
-			listType::const_iterator _it;
+			value_type::const_iterator _it;
 		};
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::DictionaryObject; }
@@ -43,18 +45,31 @@ namespace gotchangpdf
 		//friend Objects::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, DictionaryObject& o);
 		friend lexical::Parser& operator>> (lexical::Parser& s, DictionaryObject& o);
 
-		SmartPtr<Object> Find(const NameObject& name) const;
+		DirectObject Find(const NameObject& name) const;
 
 		template <typename T>
-		SmartPtr<T> FindAs(const NameObject& name) const
+		const T FindAs(const NameObject& name) const
 		{
 			auto result = _list.find(name);
-			return dynamic_wrapper_cast<T>(result->second);
+
+			ObjectVisitor<T> visitor;
+			return result->second.apply_visitor(visitor);
+			//return dynamic_wrapper_cast<T>(result->second);
+
+
+			// TODO
+			//return nullptr;
 		}
 
-	private:
-		listType _list;
+		const value_type& GetMap(void) const { return _list; }
+		void SetMap(value_type& list) { _list = list; }
+
+	//private:
+	public:
+		value_type _list;
 	};
+
+	typedef SmartPtr<DictionaryObject> DictionaryObjectPtr;
 }
 
 #endif /* _DICTIONARY_OBJECT_H */

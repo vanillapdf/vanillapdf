@@ -2,19 +2,7 @@
 
 #include "exception.h"
 #include "file.h"
-
-#include "stream_object.h"
-#include "boolean.h"
-#include "null_object.h"
-#include "Function.h"
 #include "indirect_object.h"
-#include "dictionary_object.h"
-#include "array_object.h"
-#include "integer_object.h"
-#include "stream_object.h"
-#include "real_object.h"
-#include "string_object.h"
-#include "indirect_object_reference.h"
 
 #include "spirit_lexer.h"
 #include "spirit_grammar.h"
@@ -41,10 +29,7 @@ namespace gotchangpdf
 		{
 			SpiritLexer lexer;
 			SpiritGrammar grammar(lexer);
-			ast::IndirectObject obj;
-
-			//auto off = tellg();
-			//auto pos = off.seekpos();
+			IndirectObjectPtr obj(new IndirectObject(_file));
 
 			// Don't skip whitespace explicitly
 			noskipws(*this);
@@ -63,12 +48,11 @@ namespace gotchangpdf
 					return nullptr;
 				}
 				else {
-					//auto off2 = tellg();
-					//auto pos2 = off2.seekpos();
+					auto offset = tellg();
 					cout << "Parsing failed" << endl;
 					const auto& pos = input_begin_pos.get_position();
 					cout <<
-						"Error at file " << pos.file << " line " << pos.line << " column " << pos.column << endl <<
+						"Error at file " << pos.file << " offset " << offset << endl <<
 						"'" << input_begin_pos.get_currentline() << "'" << endl <<
 						setw(pos.column + 8) << " ^- here" << endl;
 
@@ -78,19 +62,18 @@ namespace gotchangpdf
 			catch (const qi::expectation_failure<lexer_type::iterator_type>& exception) {
 				cout << "Parsing failed" << endl;
 
-				//auto off2 = tellg();
-				//auto pos2 = off2.seekpos();
+				auto offset = tellg();
 				auto pos_begin = (*exception.first).value().begin();
 				const auto& pos = pos_begin.get_position();
 				cout <<
-					"Error at file " << pos.file << " line " << pos.line << " column " << pos.column << " Expecting " << exception.what_ << endl <<
+					"Error at file " << pos.file << " offset " << offset << " Expecting " << exception.what_ << endl <<
 					"'" << pos_begin.get_currentline() << "'" << endl <<
 					setw(pos.column + 8) << " ^- here" << endl;
 
 				return nullptr;
 			}
 
-			return SmartPtr<Object>(new IndirectObject(_file, 1, 2));
+			return SmartPtr<Object>(new IndirectObject(_file));
 		}
 
 		SmartPtr<Object> SpiritParser::peekObject()
@@ -102,7 +85,7 @@ namespace gotchangpdf
 
 			return obj;
 			*/
-			return SmartPtr<Object>(new IndirectObject(_file, 1, 2));
+			return SmartPtr<Object>(new IndirectObject(_file));
 		}
 
 		SmartPtr<gotchangpdf::Object> SpiritParser::readObjectWithType(gotchangpdf::Object::Type type)
@@ -145,7 +128,7 @@ namespace gotchangpdf
 				throw Exception("FIXME: Unknown object type");
 			}
 			*/
-			return SmartPtr<Object>(new IndirectObject(_file, 1, 2));
+			return SmartPtr<Object>(new IndirectObject(_file));
 		}
 
 		//void Stream::SetDeep( bool deep ) { _deep = deep; }

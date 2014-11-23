@@ -11,16 +11,20 @@ namespace gotchangpdf
 	class NameObject : public Object
 	{
 	public:
+		typedef Buffer value_type;
+
+	public:
 		struct Hasher
 		{
 			unsigned long operator()(const NameObject& t) const;
+			bool operator()(const NameObject& first, const NameObject& second) const;
 		};
 
 		NameObject();
 		explicit NameObject(const gotchangpdf::lexical::Token& token);
-		explicit NameObject(const Buffer& name);
+		explicit NameObject(const value_type& name);
 
-		const Buffer& Value() const;
+		const value_type& Value() const;
 
 		bool operator==(const NameObject& other) const;
 		bool operator!=(const NameObject& other) const;
@@ -29,9 +33,14 @@ namespace gotchangpdf
 
 		virtual Object::Type GetType(void) const override;
 
-	private:
-		Buffer _value;
+		void SetName(value_type& name) { _value = name; }
+
+	//private:
+	public:
+		value_type _value;
 	};
+
+	typedef SmartPtr<NameObject> NameObjectPtr;
 
 	inline bool NameObject::operator==(const NameObject& other) const
 	{
@@ -53,7 +62,12 @@ namespace gotchangpdf
 		return _value.Equals(other._value);
 	}
 
-	inline const Buffer& NameObject::Value() const { return _value; }
+	inline const NameObject::value_type& NameObject::Value() const { return _value; }
+
+	inline bool NameObject::Hasher::operator()(const NameObject& first, const NameObject& second) const
+	{
+		return first.Equals(second);
+	}
 
 	namespace constant
 	{

@@ -39,6 +39,7 @@ namespace gotchangpdf
 
 	lexical::Parser& operator>>(lexical::Parser& s, DictionaryObject& o)
 	{
+		/*
 		s.LexicalSettingsPush();
 		auto settings = s.LexicalSettingsGet();
 		settings->skip.push_back(Token::Type::EOL);
@@ -61,10 +62,11 @@ namespace gotchangpdf
 		s.ReadTokenWithType(Token::Type::DICTIONARY_END);
 
 		s.LexicalSettingsPop();
+		*/
 		return s;
 	}
 
-	SmartPtr<Object> DictionaryObject::Find(const NameObject& name) const
+	DirectObject DictionaryObject::Find(const NameObject& name) const
 	{
 		auto result = _list.find(name);
 		return result->second;
@@ -80,9 +82,9 @@ namespace gotchangpdf
 		return DictionaryObject::Iterator(_list.end());
 	}
 
-	DictionaryObject::Iterator::Iterator(listType::const_iterator it) : _it(it) {}
+	DictionaryObject::Iterator::Iterator(value_type::const_iterator it) : _it(it) {}
 	NameObject DictionaryObject::Iterator::First() const { return _it->first; }
-	SmartPtr<Object> DictionaryObject::Iterator::Second() const { return _it->second; }
+	DirectObject DictionaryObject::Iterator::Second() const { return _it->second; }
 	bool DictionaryObject::Iterator::operator==(const Iterator& other) const
 	{
 		return _it == other._it;
@@ -112,7 +114,8 @@ GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObject_Find(Dictionar
 	gotchangpdf::DictionaryObject* dictionary = reinterpret_cast<gotchangpdf::DictionaryObject*>(handle);
 	gotchangpdf::Buffer set(str, len);
 	gotchangpdf::NameObject name(set);
-	gotchangpdf::SmartPtr<gotchangpdf::Object> object = dictionary->Find(name);
+	gotchangpdf::ObjectBaseVisitor visitor;
+	gotchangpdf::ObjectPtr object = dictionary->Find(name).apply_visitor(visitor);
 	gotchangpdf::Object* ptr = object.AddRefGet();
 	//boost::intrusive_ptr_add_ref(ptr);
 
@@ -148,7 +151,8 @@ GOTCHANG_PDF_API NameObjectHandle CALLING_CONVENTION DictionaryObjectIterator_Ge
 GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObjectIterator_GetValue(DictionaryObjectIteratorHandle handle)
 {
 	gotchangpdf::DictionaryObject::Iterator* iterator = reinterpret_cast<gotchangpdf::DictionaryObject::Iterator*>(handle);
-	gotchangpdf::Object* ptr = iterator->Second().AddRefGet();
+	gotchangpdf::ObjectBaseVisitor visitor;
+	gotchangpdf::Object* ptr = iterator->Second().apply_visitor(visitor).AddRefGet();
 	return reinterpret_cast<ObjectHandle>(ptr);
 }
 

@@ -16,6 +16,8 @@ namespace gotchangpdf
 			static SmartPtr<PageNode> Create(SmartPtr<DictionaryObject> obj);
 			virtual ~PageNode() = 0;
 		};
+
+		typedef SmartPtr<PageNode> PageNodePtr;
 	}
 }
 

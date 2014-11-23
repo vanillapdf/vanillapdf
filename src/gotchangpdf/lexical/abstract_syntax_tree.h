@@ -1,196 +1,137 @@
 #ifndef _ABSTRACT_SYNTAX_TREE_H
 #define _ABSTRACT_SYNTAX_TREE_H
 
-#include "buffer.h"
-#include "deferred.h"
+#include "constants.h"
+#include "direct_object.h"
 
-#include <vector>
-#include <map>
-#include <stddef.h>
-
-//#include <boost/fusion/include/adapt_struct.hpp>
+//#include <boost/fusion/include/adapt_struct.hpp
 #include <boost/fusion/adapted/struct/adapt_struct.hpp>
 #include <boost/fusion/include/std_pair.hpp>
-#include <boost/variant/variant.hpp>
 
-namespace gotchangpdf
-{
-	namespace lexical
-	{
-		namespace ast
-		{
-			struct True
-			{
-				mutable long references = 0;
-			};
-
-			struct False
-			{
-				mutable long references = 0;
-			};
-
-			struct ASTArrayObject;
-			struct ASTDictionaryObject;
-			struct ASTNameObject;
-			struct ASTFunctionObject;
-			struct ASTNullObject;
-			struct ASTIndirectReferenceObject;
-			struct ASTIntegerObject;
-			struct ASTRealObject;
-			struct ASTStreamObject;
-			struct ASTLiteralStringObject;
-			struct ASTHexadecimalStringObject;
-
-			typedef Deferred<ASTArrayObject> ArrayObject;
-			typedef Deferred<ASTNameObject> NameObject;
-			typedef Deferred<ASTFunctionObject> FunctionObject;
-			typedef Deferred<ASTDictionaryObject> DictionaryObject;
-			typedef Deferred<ASTNullObject> NullObject;
-			typedef Deferred<ASTIndirectReferenceObject> IndirectReferenceObject;
-			typedef Deferred<ASTIntegerObject> IntegerObject;
-			typedef Deferred<ASTRealObject> RealObject;
-			typedef Deferred<ASTStreamObject> StreamObject;
-
-			typedef Deferred<ASTHexadecimalStringObject> HexadecimalStringObject;
-			typedef Deferred<ASTLiteralStringObject> LiteralStringObject;
-
-			typedef boost::variant<LiteralStringObject, HexadecimalStringObject> StringObject;
-
-			typedef boost::variant<True, False> BooleanObject;
-
-			typedef boost::variant <
-				ArrayObject,
-				NameObject,
-				DictionaryObject,
-				FunctionObject,
-				NullObject,
-				BooleanObject,
-				IndirectReferenceObject,
-				IntegerObject,
-				RealObject,
-				StreamObject,
-				StringObject
-			> DirectObject;
-
-			struct ASTArrayObject
-			{
-				std::vector<DirectObject> _array;
-
-				mutable long references = 0;
-			};
-
-			struct ASTNameObject
-			{
-				struct Hasher
-				{
-					unsigned long operator()(const ASTNameObject& t) const
-					{
-						unsigned long result = 0;
-						for (auto & val : t.value)
-						{
-							std::hash<char> hash_fn;
-							result ^= hash_fn(val);
-						}
-
-						return result;
-					}
-				};
-
-				struct Comparator
-				{
-					bool operator()(const ASTNameObject& first, const ASTNameObject& second) const
-					{
-						return first.value.Equals(second.value);
-					}
-				};
-
-				Buffer value;
-
-				mutable long references = 0;
-			};
-
-			struct ASTLiteralStringObject
-			{
-				Buffer value;
-				mutable long references = 0;
-			};
-
-			struct ASTHexadecimalStringObject
-			{
-				Buffer value;
-				mutable long references = 0;
-			};
-
-			struct ASTFunctionObject
-			{
-				mutable long references = 0;
-			};
-
-			struct ASTNullObject
-			{
-				mutable long references = 0;
-			};
-
-			typedef std::map<ast::NameObject, ast::DirectObject, ast::ASTNameObject::Comparator> map_type;
-			struct ASTDictionaryObject
-			{
-				map_type map;
-
-				mutable long references = 0;
-			};
-
-			struct ASTIndirectReferenceObject
-			{
-				IntegerObject objNumber;
-				IntegerObject genNumber;
-
-				mutable long references = 0;
-			};
-
-			struct ASTIntegerObject
-			{
-				int value;
-				mutable long references = 0;
-			};
-
-			struct ASTRealObject
-			{
-				double value;
-				mutable long references = 0;
-			};
-
-			struct ASTStreamObject
-			{
-				DictionaryObject dictionary;
-				int data_offset;
-				mutable long references = 0;
-			};
-
-			struct ASTIndirectObject
-			{
-				IntegerObject objNumber;
-				IntegerObject genNumber;
-
-				DirectObject obj;
-
-				mutable long references = 0;
-			};
-
-			typedef Deferred<ASTIndirectObject> IndirectObject;
-		}
-	}
-}
-
-namespace ast = gotchangpdf::lexical::ast;
-
-BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::lexical::ast::DirectObject, /**/)
-BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::lexical::ast::FunctionObject, /**/)
-BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::lexical::ast::NullObject, /**/)
+BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::DirectObject, /**/)
+BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::StringObjectPtr, /**/)
+BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::FunctionObjectPtr, /**/)
+BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::NullObjectPtr, /**/)
 
 BOOST_FUSION_ADAPT_STRUCT(
-gotchangpdf::lexical::ast::ArrayObject,
-(std::vector<gotchangpdf::lexical::ast::DirectObject>, Content->_array))
+gotchangpdf::IntegerObjectPtr,
+(gotchangpdf::types::integer, get()->_value)
+)
 
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::NameObject,
+(gotchangpdf::Buffer, _value)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::NameObjectPtr,
+(gotchangpdf::Buffer, get()->_value)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::MixedArrayObjectPtr,
+(gotchangpdf::MixedArrayObject::value_type, get()->_list)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::DictionaryObjectPtr,
+(gotchangpdf::DictionaryObject::value_type, get()->_list)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::IndirectObjectReferencePtr,
+(gotchangpdf::types::integer, get()->_obj_number)
+(gotchangpdf::types::ushort, get()->_gen_number)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::RealObjectPtr,
+(gotchangpdf::types::real, get()->_value)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::StreamObjectPtr,
+(gotchangpdf::DictionaryObject::value_type, get()->_dictionary)
+(gotchangpdf::types::stream_offset, get()->_raw_data_offset)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::LiteralStringPtr,
+(gotchangpdf::Buffer, get()->_value)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::HexadecimalStringPtr,
+(gotchangpdf::Buffer, get()->_value)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::IndirectObject,
+(gotchangpdf::types::integer, get()->_obj_number)
+(gotchangpdf::types::integer, get()->_gen_number)
+(gotchangpdf::DirectObject, get()->_reference)
+)
+
+
+/*
+BOOST_FUSION_ADAPT_ADT(
+gotchangpdf::MixedArrayObjectPtr,
+(gotchangpdf::MixedArrayObject::value_type, gotchangpdf::MixedArrayObject::value_type, obj->GetList(), obj->SetList(val))
+)
+
+BOOST_FUSION_ADAPT_ADT(
+gotchangpdf::DictionaryObjectPtr,
+(gotchangpdf::DictionaryObject::value_type, gotchangpdf::DictionaryObject::value_type, obj->GetMap(), obj->SetMap(val))
+)
+*/
+/*
+BOOST_FUSION_ADAPT_ADT(
+gotchangpdf::IntegerObjectPtr,
+(gotchangpdf::IntegerObject::value_type, gotchangpdf::IntegerObject::value_type, obj->Value(), obj->operator=(val))
+)
+*/
+/*
+BOOST_FUSION_ADAPT_ADT(
+gotchangpdf::NameObjectPtr,
+(gotchangpdf::NameObject::value_type, gotchangpdf::NameObject::value_type, obj->Value(), obj->SetName(val))
+)
+
+BOOST_FUSION_ADAPT_ADT(
+gotchangpdf::IndirectObject,
+(gotchangpdf::IntegerObject, gotchangpdf::IntegerObject, obj.GetObjectNumber(), obj.SetObjectNumber(val))
+//(gotchangpdf::IntegerObject, gotchangpdf::IntegerObject, obj.GetGenerationNumber(), obj.SetGenerationNumber(val))
+//(gotchangpdf::streamOffsetValueType, gotchangpdf::streamOffsetValueType, obj.GetOffset(), obj->SetOffset(val))
+//(gotchangpdf::SmartPtr<gotchangpdf::Object>, gotchangpdf::SmartPtr<gotchangpdf::Object>, obj.GetObject(), obj.SetObject(val))
+)
+*/
+/*
+BOOST_FUSION_ADAPT_ADT(
+gotchangpdf::IndirectObjectReferencePtr,
+(gotchangpdf::types::integer, gotchangpdf::types::integer, obj->GetObjectNumber(), obj->SetObjectNumber(val))
+(gotchangpdf::types::ushort, gotchangpdf::types::ushort, obj->GetGenerationNumber(), obj->SetGenerationNumber(val))
+)
+*/
+/*
+BOOST_FUSION_ADAPT_ADT(
+gotchangpdf::IndirectObject,
+(gotchangpdf::types::integer, gotchangpdf::types::integer, obj.GetObjectNumber(), obj.SetObjectNumber(val))
+(gotchangpdf::types::ushort, gotchangpdf::types::ushort, obj.GetGenerationNumber(), obj.SetGenerationNumber(val))
+//(gotchangpdf::streamOffsetValueType, gotchangpdf::streamOffsetValueType, obj.GetOffset(), obj->SetOffset(val))
+(gotchangpdf::SmartPtr<gotchangpdf::Object>, gotchangpdf::SmartPtr<gotchangpdf::Object>, obj.GetObject(), obj.SetObject(val))
+)
+
+BOOST_FUSION_ADAPT_ADT(
+gotchangpdf::IndirectObjectReferencePtr,
+(gotchangpdf::types::integer, gotchangpdf::types::integer, obj->GetObjectNumber(), obj->SetObjectNumber(val))
+(gotchangpdf::types::ushort, gotchangpdf::types::ushort, obj->GetGenerationNumber(), obj->SetGenerationNumber(val))
+)
+*/
+/*
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::MixedArrayObjectPtr,
+(std::vector<gotchangpdf::DirectObject>, Content->_array))
+*/
+/*
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::lexical::ast::NameObject,
 (gotchangpdf::Buffer, Content->value))
@@ -230,5 +171,5 @@ gotchangpdf::lexical::ast::IndirectObject,
 (gotchangpdf::lexical::ast::IntegerObject, Content->objNumber)
 (gotchangpdf::lexical::ast::IntegerObject, Content->genNumber)
 (gotchangpdf::lexical::ast::DirectObject, Content->obj))
-
+*/
 #endif /* _ABSTRACT_SYNTAX_TREE_H */

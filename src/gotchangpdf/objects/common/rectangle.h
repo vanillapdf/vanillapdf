@@ -9,10 +9,10 @@ namespace gotchangpdf
 {
 	namespace documents
 	{
-		class Rectangle : public HighLevelObject<ArrayObject<IntegerObject>>
+		class Rectangle : public HighLevelObject<ArrayObject<IntegerObjectPtr>>
 		{
 		public:
-			explicit Rectangle(SmartPtr<ArrayObject<IntegerObject>> list) : HighLevelObject(list) {}
+			explicit Rectangle(SmartPtr<ArrayObject<IntegerObjectPtr>> list) : HighLevelObject(list) {}
 
 			virtual inline HighLevelObject::Type GetType(void) const { return HighLevelObject::Type::Rectangle; }
 

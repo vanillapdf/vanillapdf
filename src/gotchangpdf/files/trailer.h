@@ -14,11 +14,11 @@ namespace gotchangpdf
 		{
 		public:
 			friend lexical::ReverseStream& operator>> (lexical::ReverseStream& s, Trailer& o);
-			streamOffsetValueType xref_offset() const;
+			types::stream_offset xref_offset() const;
 			SmartPtr<DictionaryObject> dictionary() const;
 
 		private:
-			streamOffsetValueType _xref_offset = 0;
+			types::stream_offset _xref_offset = std::_BADOFF;
 			SmartPtr<DictionaryObject> _dictionary = SmartPtr<DictionaryObject>(new DictionaryObject());
 		};
 	}

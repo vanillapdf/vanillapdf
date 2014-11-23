@@ -82,8 +82,8 @@ namespace gotchangpdf
 			_initialized = true;
 		}
 
-		SmartPtr<IndirectObject> File::GetIndirectObject(unsigned int objNumber,
-			unsigned int genNumber) const
+		SmartPtr<IndirectObject> File::GetIndirectObject(types::integer objNumber,
+			types::ushort genNumber) const
 		{
 			if (!_initialized)
 				throw new Exception("File has not been initialized yet");
@@ -120,8 +120,8 @@ namespace gotchangpdf
 			if (!_initialized)
 				throw new Exception("File has not been initialized yet");
 
-			auto reference = _trailer->dictionary()->FindAs<IndirectObjectReference>(constant::Name::Root);
-			auto dict = reference->GetReferencedObjectAs<DictionaryObject>();
+			auto reference = _trailer->dictionary()->FindAs<IndirectObjectReferencePtr>(constant::Name::Root);
+			auto dict = reference->GetReferencedObjectAs<DictionaryObjectPtr>();
 			return SmartPtr<documents::Catalog>(new documents::Catalog(dict));
 		}
 	}

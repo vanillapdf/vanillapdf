@@ -16,11 +16,11 @@ namespace gotchangpdf
 
 		Catalog::Catalog(SmartPtr<DictionaryObject> root) : HighLevelObject(root)
 		{
-			if (*root->FindAs<NameObject>(Name::Type) != Name::Catalog)
+			if (*root->FindAs<NameObjectPtr>(Name::Type) != Name::Catalog)
 				throw Exception("TODO");
 
-			auto pages = root->FindAs<IndirectObjectReference>(Name::Pages);
-			auto page_root = pages->GetReferencedObjectAs<DictionaryObject>();
+			auto pages = root->FindAs<IndirectObjectReferencePtr>(Name::Pages);
+			auto page_root = pages->GetReferencedObjectAs<DictionaryObjectPtr>();
 
 			_pages = SmartPtr<PageTree>(new PageTree(page_root));
 		}

@@ -14,17 +14,17 @@ namespace gotchangpdf
 
 		PageTree::PageTree(SmartPtr<DictionaryObject> root) : HighLevelObject(root), _root(new PageTreeNode(root)) {}
 
-		SmartPtr<PageObject> PageTree::PageInternal(unsigned int number) const
+		SmartPtr<PageObject> PageTree::PageInternal(types::integer number) const
 		{
 			auto node = _root;
-			unsigned int current = 1;
+			IntegerObject::value_type current = 1;
 
 		dive:
 			auto kids = node->Kids();
 			auto count = kids->Size();
 			for (int i = 0; i < count; ++i)
 			{
-				unsigned int under = 0;
+				IntegerObject::value_type under = 0;
 
 				auto kid = kids->At(i);
 				switch (kid->GetType())
@@ -45,6 +45,7 @@ namespace gotchangpdf
 					}
 					else
 					{
+						assert(current + under >= current);
 						current += under;
 					}
 

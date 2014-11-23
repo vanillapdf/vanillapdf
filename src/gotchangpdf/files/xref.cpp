@@ -20,7 +20,7 @@ namespace gotchangpdf
 		using namespace exceptions;
 		using namespace character;
 
-		XrefEntry ReadEntry(lexical::Parser& s, int objNumber)
+		XrefEntry ReadEntry(lexical::Parser& s, types::integer objNumber)
 		{
 			char sp1, sp2, key, eol1, eol2;
 			Token offset, number;
@@ -50,8 +50,12 @@ namespace gotchangpdf
 				throw Exception(buffer.str());
 			}
 
-			result.reference = SmartPtr<IndirectObject>(new IndirectObject(s.file(), objNumber, IntegerObject(number), IntegerObject(offset)));
+			auto reference = SmartPtr<IndirectObject>(new IndirectObject(s.file()));
+			reference->SetObjectNumber(objNumber);
+			reference->SetGenerationNumber(IntegerObject(number));
+			reference->SetOffset(IntegerObject(offset));
 
+			result.reference = reference;
 			return result;
 		}
 
@@ -79,9 +83,12 @@ namespace gotchangpdf
 
 				s.ReadTokenWithType(Token::Type::EOL);
 
-				for (int i = 0; i < numberOfObjects; ++i)
+				for (types::integer i = 0; i < numberOfObjects; ++i)
 				{
-					auto entry = ReadEntry(s, static_cast<int>(revision + i));
+					// check for overflow
+					assert(revision + i >= revision);
+
+					auto entry = ReadEntry(s, static_cast<types::integer>(revision + i));
 					o.push_back(entry);
 				}
 			}

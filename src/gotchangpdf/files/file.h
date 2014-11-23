@@ -10,6 +10,7 @@
 #include "smart_ptr.h"
 #include "catalog.h"
 #include "file_device.h"
+#include "constants.h"
 
 namespace gotchangpdf
 {
@@ -24,8 +25,8 @@ namespace gotchangpdf
 			void Initialize(void);
 			SmartPtr<Xref> GetXref(void) const;
 			SmartPtr<documents::Catalog> GetDocumentCatalog(void) const;
-			SmartPtr<IndirectObject> GetIndirectObject(unsigned int objNumber,
-				unsigned int genNumber) const;
+			SmartPtr<IndirectObject> GetIndirectObject(types::integer objNumber,
+				types::ushort genNumber) const;
 			SmartPtr<Header> GetHeader(void) const;
 			SmartPtr<Trailer> GetTrailer(void) const;
 			std::weak_ptr<FileDevice> GetInputStream(void) const;

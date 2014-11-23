@@ -3,9 +3,9 @@
 #include "file.h"
 
 #include "stream_object.h"
-#include "boolean.h"
+#include "boolean_object.h"
 #include "null_object.h"
-#include "Function.h"
+#include "function_object.h"
 #include "indirect_object.h"
 #include "dictionary_object.h"
 #include "array_object.h"
@@ -77,7 +77,7 @@ namespace gotchangpdf
 							ReadTokenWithType(Token::Type::EOL);
 							auto data = readObject();
 
-							indirect->SetObject(data);
+							//indirect->SetObject(data);
 							// TODO check cast if needed
 							indirect->SetOffset(offset);
 
@@ -148,11 +148,11 @@ namespace gotchangpdf
 			case Object::Type::ArrayObject:
 				return dynamic_wrapper_cast<MixedArrayObject>(obj);
 			case Object::Type::Boolean:
-				return dynamic_wrapper_cast<Boolean>(obj);
+				return dynamic_wrapper_cast<BooleanObject>(obj);
 			case Object::Type::DictionaryObject:
 				return dynamic_wrapper_cast<DictionaryObject>(obj);
 			case Object::Type::Function:
-				return dynamic_wrapper_cast<Function>(obj);
+				return dynamic_wrapper_cast<FunctionObject>(obj);
 			case Object::Type::IntegerObject:
 				return dynamic_wrapper_cast<IntegerObject>(obj);
 			case Object::Type::NameObject:

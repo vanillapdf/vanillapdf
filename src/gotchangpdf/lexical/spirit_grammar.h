@@ -11,28 +11,29 @@ namespace gotchangpdf
 		namespace qi = boost::spirit::qi;
 
 		struct SpiritGrammar : qi::grammar<SpiritLexer::iterator_type,
-			ast::IndirectObject()>
+			IndirectObjectPtr()>
 		{
 			SpiritGrammar(const lexical::SpiritLexer& lexer);
 
 		private:
 			template <typename A, typename... Inherited> using Rule = qi::rule<SpiritLexer::iterator_type, A(Inherited...)>;
 
-			Rule<ast::IndirectObject> indirect_object;
-			Rule<ast::DirectObject> direct_object;
-			Rule<ast::ArrayObject> array_object;
-			Rule<ast::BooleanObject> boolean_object;
-			Rule<ast::DictionaryObject> dictionary_object;
-			Rule<ast::FunctionObject> function_object;
-			Rule<ast::IndirectReferenceObject> indirect_reference_object;
-			Rule<ast::IntegerObject> integer_object;
-			Rule<ast::NameObject> name_object;
-			Rule<ast::NullObject> null_object;
-			Rule<ast::RealObject> real_object;
-			Rule<ast::StreamObject> stream_object;
-			Rule<ast::StringObject> string_object;
-			Rule<ast::LiteralStringObject> literal_string_object;
-			Rule<ast::HexadecimalStringObject> hexadecimal_string_object;
+			Rule<IndirectObjectPtr> indirect_object;
+			Rule<DirectObject> direct_object;
+			Rule<MixedArrayObjectPtr> array_object;
+			Rule<BooleanObjectPtr> boolean_object;
+			Rule<DictionaryObjectPtr> dictionary_object;
+			Rule<FunctionObjectPtr> function_object;
+			Rule<IndirectObjectReferencePtr> indirect_reference_object;
+			Rule<IntegerObjectPtr> integer_object;
+			Rule<NameObject> name_object_dereferenced;
+			Rule<NameObjectPtr> name_object;
+			Rule<NullObjectPtr> null_object;
+			Rule<RealObjectPtr> real_object;
+			Rule<StreamObjectPtr> stream_object;
+			Rule<StringObjectPtr> string_object;
+			//Rule<LiteralStringPtr> literal_string_object;
+			//Rule<HexadecimalStringPtr> hexadecimal_string_object;
 		};
 	}
 }

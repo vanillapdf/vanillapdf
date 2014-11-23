@@ -2,6 +2,7 @@
 #define SPIRIT_LEXER_H
 
 #include "buffer.h"
+#include "constants.h"
 
 #include <istream>
 #include <string>
@@ -50,7 +51,8 @@ namespace gotchangpdf
 		public:
 			typedef boost::spirit::lex::token_def<boost::spirit::lex::omit> ConsumedToken;
 			typedef boost::spirit::lex::token_def<Buffer> StringToken;
-			typedef boost::spirit::lex::token_def<int> IntegerToken;
+			typedef boost::spirit::lex::token_def<types::integer> IntegerToken;
+			typedef boost::spirit::lex::token_def<types::ushort> UShortToken;
 			typedef boost::spirit::lex::token_def<char> CharToken;
 			typedef boost::spirit::lex::token_def<double> FloatToken;
 

@@ -17,7 +17,7 @@ namespace gotchangpdf
 
 		SmartPtr<PageNode> PageNode::Create(SmartPtr<DictionaryObject> obj)
 		{
-			auto type = obj->FindAs<NameObject>(Name::Type);
+			auto type = obj->FindAs<NameObjectPtr>(Name::Type);
 
 			if (*type == Name::Pages)
 				return SmartPtr<PageTreeNode>(new PageTreeNode(obj));

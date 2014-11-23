@@ -1,6 +1,8 @@
 #ifndef _CONSTANTS_H
 #define _CONSTANTS_H
 
+#include <cstdint>
+
 namespace gotchangpdf
 {
 	namespace constant
@@ -8,8 +10,16 @@ namespace gotchangpdf
 		const int BUFFER_SIZE = 4096;
 	}
 
-	typedef long long streamOffsetValueType;
-	typedef long long streamSizeValueType;
+	namespace types
+	{
+		typedef uint16_t ushort;
+		typedef uint32_t integer;
+
+		typedef int64_t stream_offset;
+		typedef int64_t stream_size;
+
+		typedef double real;
+	}
 }
 
 #endif /* _CONSTANTS_H */

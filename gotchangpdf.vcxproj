@@ -55,9 +55,10 @@
     <ClInclude Include="src\gotchangpdf\lexical\token.h" />
     <ClInclude Include="src\gotchangpdf\lexical\token_dictionary.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\array_object.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\boolean.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\boolean_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\dictionary_object.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\function.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\direct_object.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\function_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\indirect_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\indirect_object_reference.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\integer_object.h" />
@@ -65,6 +66,7 @@
     <ClInclude Include="src\gotchangpdf\objects\basic\null_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\numeric_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\object.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\object_visitors.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\real_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\stream_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\string_object.h" />
@@ -171,7 +173,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\objects\basic;src\gotchangpdf\exceptions;src\gotchangpdf\files;src\gotchangpdf\lexical;lib\boost;src\gotchangpdf\objects\common;include\gotchangpdf;src\gotchangpdf\documents;src\gotchangpdf\raw;src\gotchangpdf\util;src\gotchangpdf\basic;src\gotchangpdf\filters;lib\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;DEBUG;BOOST_SPIRIT_DEBUG;BOOST_SPIRIT_DEBUG_TRACENODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;DEBUG;BOOST_SPIRIT_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

@@ -7,6 +7,7 @@
 #include "file.h"
 #include "buffer.h"
 #include "character.h"
+#include "object_visitors.h"
 
 // TODO
 #include "flate_decode_filter.h"
@@ -26,9 +27,12 @@ namespace gotchangpdf
 
 	Buffer StreamObject::GetData() const
 	{
-		auto filter_name = _dictionary->Find(constant::Name::Filter);
-		if (nullptr == filter_name)
+		auto filter = _dictionary->Find(constant::Name::Filter);
+		if (filter.empty())
 			return _data;
+
+		ObjectVisitor<NameObject> visitor;
+		auto filter_name = filter.apply_visitor(visitor);
 
 		// TODO
 		filters::FlateDecodeFilter a;
@@ -59,8 +63,27 @@ namespace gotchangpdf
 			}
 		}
 
+		IntegerObjectPtr size;
+
+		ObjectVisitor<boost::variant<IntegerObject, IndirectObjectReference>> visitor;
 		auto size_raw = o._dictionary->Find(constant::Name::Length);
-		SmartPtr<IntegerObject> size;
+		int type = size_raw.which();
+
+		ObjectVisitor<IntegerObject> integer_visitor;
+		ObjectVisitor<IndirectObjectReference> indirect_visitor;
+		IndirectObjectReferencePtr indirect;
+		switch (type)
+		{
+		case 0:
+			//size = size_raw.apply_visitor(integer_visitor);
+		case 1:
+			//indirect = size_raw.apply_visitor(indirect_visitor);
+			//size = indirect->GetReferencedObject();
+		default:
+			break;
+		}
+
+		/*
 		auto type = size_raw->GetType();
 		if (type == Object::Type::IntegerObject)
 		{
@@ -86,7 +109,7 @@ namespace gotchangpdf
 		{
 			throw InvalidObjectTypeException(*size_raw);
 		}
-
+		*/
 		size_t len = static_cast<size_t>(*size);
 		streamoff offset = s.tellg();
 
@@ -99,8 +122,7 @@ namespace gotchangpdf
 		s.ReadTokenWithType(Token::Type::EOL);
 		s.ReadTokenWithType(Token::Type::INDIRECT_OBJECT_END);
 
-		o._rawDataOffset = offset;
-		o._rawDataLength = len;
+		o._raw_data_offset = offset;
 		o._data = data;
 
 		return s;
