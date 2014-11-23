@@ -1,5 +1,7 @@
 #include "indirect_object.h"
-#include "File.h"
+
+#include "file.h"
+#include "spirit_parser.h"
 
 #include "c_indirect_object.h"
 
@@ -35,7 +37,7 @@ namespace gotchangpdf
 			auto stream = _file->GetInputStream();
 			if (auto locked = stream.lock())
 			{
-				auto parser = lexical::Parser(_file, *locked);
+				auto parser = lexical::SpiritParser(_file, *locked);
 				auto pos = parser.tellg();
 				parser.seekg(_offset);
 				auto obj = parser.readObjectWithType<IndirectObject>();

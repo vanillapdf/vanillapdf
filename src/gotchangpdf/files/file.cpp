@@ -1,4 +1,5 @@
 #include "file.h"
+
 #include "integer_object.h"
 #include "indirect_object.h"
 #include "indirect_object_reference.h"
@@ -14,9 +15,6 @@
 #include <boost/filesystem/operations.hpp>
 
 //
-#include "spirit_lexer.h"
-#include "spirit_grammar.h"
-
 //#include <boost/spirit/include/lex_generate_static_lexertl.hpp>
 //
 
@@ -61,35 +59,8 @@ namespace gotchangpdf
 			// Don't skip whitespace explicitly
 			noskipws(*_input);
 
-			lexical::SpiritLexer lexer;
-			lexical::SpiritGrammar grammar(lexer);
-			ast::IndirectObject obj;
-
-			// Direct cast to pos_iterator_type is not possible
-			lexical::base_iterator_type input_begin_base(*_input);
-			lexical::base_iterator_type input_end_base;
-
-			lexical::pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _filename);
-			lexical::pos_iterator_type input_end_pos;
-
-			try
-			{
-				//fstream out("static_lexer.hpp", std::ios_base::out);
-				//auto dfa = boost::spirit::lex::lexertl::generate_static_dfa(aa, out, "sl");
-				auto result = lex::tokenize_and_parse(input_begin_pos, input_end_pos, lexer, grammar, obj);
-				if (result)
-				{
-					return;
-				}
-				//out.close();
-			}
-			catch (std::exception e)
-			{
-			}
-			catch (...)
-			{
-				
-			}
+			//fstream out("static_lexer.hpp", std::ios_base::out);
+			//auto dfa = boost::spirit::lex::lexertl::generate_static_dfa(aa, out, "sl");
 
 			if (!_input || !_input->good())
 				throw new exceptions::Exception("Could not open file");

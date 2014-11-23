@@ -9,14 +9,20 @@ namespace gotchangpdf
 	{
 		namespace repo = boost::spirit::repository;
 
-		using qi::lit;
-
 		SpiritGrammar::SpiritGrammar(const lexical::SpiritLexer& lexer) :
 			base_type(indirect_object, "Grammar")
 		{
 			//auto local_begin = qi::lazy(boost::phoenix::construct<qi::position>(qi::_a, qi::_b));
 			//start %= qi::eps[qi::_a = qi::_r1, qi::_b = qi::_r2] >> indirect_object;
 			//start %= qi::eps [qi::_a = qi::_r1] >> boolean_object;
+
+			auto whitespace =
+				lexer.space
+				| lexer.carriage_return
+				| lexer.line_feed
+				| lexer.form_feed
+				| lexer.horizontal_tab
+				| lexer.null;
 
 			auto true_ = boost::spirit::qi::as<ast::True>()[(
 				qi::eps
@@ -31,28 +37,25 @@ namespace gotchangpdf
 			boolean_object =
 				true_
 				| false_;
-			/*
-			auto integer_object = boost::spirit::qi::as<ast::IntegerObject>()[(
-				qi::eps
-				>> lexer.integer
-				)];
-				*/
+
 			indirect_object %=
 				integer_object
-				>> qi::omit[lexer.space]
+				>> lexer.space
 				>> integer_object
-				>> qi::omit[lexer.space]
-				>> lexer.obj
-				>> -(qi::omit[lexer.carriage_return])
-				>> qi::omit[lexer.line_feed]
+				>> lexer.space
+				>> qi::omit[lexer.name_object_value] // obj
+				>> -lexer.carriage_return
+				>> lexer.line_feed
 				>> direct_object
-				>> -(qi::omit[lexer.carriage_return])
-				>> qi::omit[lexer.line_feed]
-				>> lexer.endobj;
+				>> -lexer.carriage_return
+				>> lexer.line_feed
+				>> qi::omit[lexer.name_object_value]; // endobj
 
+			/*
 			string_object =
 				literal_string_object
 				| hexadecimal_string_object;
+				*/
 
 			direct_object =
 				array_object
@@ -66,54 +69,74 @@ namespace gotchangpdf
 				| real_object
 				| stream_object
 				| string_object;
-
+			/*
 			indirect_reference_object %=
 				integer_object
-				>> qi::omit[lexer.space]
+				>> lexer.space
 				>> integer_object
-				>> qi::omit[lexer.space]
+				>> lexer.space
 				>> lexer.indirect_reference_marker;
-
+				*/
 			integer_object %=
 				qi::eps
 				>> lexer.integer;
-			/*
+
 			real_object %=
 				qi::eps
 				>> lexer.float_;
 
-			// TODO
 			name_object %=
 				qi::eps
-				>> lexer.name_object_begin;
+				>> lexer.name_object_begin
+				>> lexer.name_object_value;
 
 			// TODO
+			/*
 			hexadecimal_string_object %=
 				lexer.less_than_sign
 				>> lexer.anything
 				>> lexer.greater_than_sign;
+				*/
 
 			array_object %=
 				lexer.left_bracket
-				>> direct_object
-				>> lexer.right_bracket;
+				> -whitespace
+				>> *(direct_object >> -whitespace)
+				> -whitespace
+				> lexer.right_bracket;
 
+			/*
 			dictionary_object %=
 				lexer.dictionary_begin
-				>> *(name_object >> direct_object)
+				>> -whitespace
+				>> *(name_object >> -whitespace >> direct_object >> -whitespace)
+				>> -whitespace
 				>> lexer.dictionary_end;
-
+				*/
+			/*
 			stream_object %=
 				dictionary_object
 				>> lexer.stream_begin
 				>> repo::qi::iter_pos;
-
+				*/
 			// TODO
+			/*
 			literal_string_object %=
 				lexer.left_parenthesis
 				>> lexer.anything
 				>> lexer.right_parenthesis;
 				*/
+
+			/*
+			BOOST_SPIRIT_DEBUG_NODE(boolean_object);
+			BOOST_SPIRIT_DEBUG_NODE(indirect_object);
+			BOOST_SPIRIT_DEBUG_NODE(direct_object);
+			BOOST_SPIRIT_DEBUG_NODE(indirect_reference_object);
+			BOOST_SPIRIT_DEBUG_NODE(integer_object);
+			BOOST_SPIRIT_DEBUG_NODE(name_object);
+			BOOST_SPIRIT_DEBUG_NODE(array_object);
+			BOOST_SPIRIT_DEBUG_NODE(dictionary_object);
+			*/
 		}
 	}
 }

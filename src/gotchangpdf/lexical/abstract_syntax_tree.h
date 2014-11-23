@@ -86,7 +86,7 @@ namespace gotchangpdf
 					unsigned long operator()(const ASTNameObject& t) const
 					{
 						unsigned long result = 0;
-						for (auto & val : t.name)
+						for (auto & val : t.value)
 						{
 							std::hash<char> hash_fn;
 							result ^= hash_fn(val);
@@ -100,11 +100,11 @@ namespace gotchangpdf
 				{
 					bool operator()(const ASTNameObject& first, const ASTNameObject& second) const
 					{
-						return first.name.Equals(second.name);
+						return first.value.Equals(second.value);
 					}
 				};
 
-				Buffer name;
+				Buffer value;
 
 				mutable long references = 0;
 			};

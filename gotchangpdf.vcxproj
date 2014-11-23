@@ -51,6 +51,7 @@
     <ClInclude Include="src\gotchangpdf\lexical\parser.h" />
     <ClInclude Include="src\gotchangpdf\lexical\spirit_grammar.h" />
     <ClInclude Include="src\gotchangpdf\lexical\spirit_lexer.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\spirit_parser.h" />
     <ClInclude Include="src\gotchangpdf\lexical\token.h" />
     <ClInclude Include="src\gotchangpdf\lexical\token_dictionary.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\array_object.h" />
@@ -106,6 +107,8 @@
     <ClCompile Include="src\gotchangpdf\lexical\lexical_tree.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\parser.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\spirit_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\lexical\spirit_lexer.cpp" />
+    <ClCompile Include="src\gotchangpdf\lexical\spirit_parser.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\token.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\token_dictionary.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\array_object.cpp" />
@@ -168,7 +171,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\objects\basic;src\gotchangpdf\exceptions;src\gotchangpdf\files;src\gotchangpdf\lexical;lib\boost;src\gotchangpdf\objects\common;include\gotchangpdf;src\gotchangpdf\documents;src\gotchangpdf\raw;src\gotchangpdf\util;src\gotchangpdf\basic;src\gotchangpdf\filters;lib\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;DEBUG;BOOST_SPIRIT_DEBUG;BOOST_SPIRIT_DEBUG_TRACENODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -187,7 +190,7 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Co
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;RELEASE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\objects\basic;src\gotchangpdf\exceptions;src\gotchangpdf\files;src\gotchangpdf\lexical;lib\boost;src\gotchangpdf\objects\common;include\gotchangpdf;src\gotchangpdf\documents;src\gotchangpdf\raw;src\gotchangpdf\util;src\gotchangpdf\basic;src\gotchangpdf\filters;lib\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
