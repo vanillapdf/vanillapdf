@@ -2,7 +2,7 @@
 #define _HIGH_LEVEL_OBJECT_H
 
 #include "object.h"
-#include "smart_ptr.h"
+#include "deferred.h"
 
 #include <boost/static_assert.hpp>
 
@@ -27,15 +27,39 @@ namespace gotchangpdf
 				Rectangle
 			};
 
-			explicit HighLevelObject(SmartPtr<T> obj) : _obj(obj) {}
+			explicit HighLevelObject(Deferred<T> obj) : _obj(obj) {}
 
-			inline SmartPtr<T> Get(void) const { return _obj; }
+			inline Deferred<T> Get(void) const { return _obj; }
 
 			//static ObjectReferenceWrapper<HighLevelObject> Create(ObjectReferenceWrapper<Object> low_level);
 			virtual inline Type GetType(void) const = 0;
 
-			inline void SetContainer(SmartPtr<Object> obj) { _obj->SetContainer(obj); }
-			inline SmartPtr<Object> GetContainer() const { return _obj->GetContainer(); }
+			inline void SetContainer(DirectObject obj)
+			{
+				//DirectToBaseVisitor visitor;
+				//auto base = obj->apply_visitor(visitor);
+				_obj->SetContainer(obj);
+			}
+
+			inline DirectObject GetContainer() const
+			{
+				return _obj->GetContainer();
+				/*
+				auto container = _obj->GetContainer();
+				auto type = container->GetType();
+				switch (type)
+				{
+				case gotchangpdf::Object::Type::ArrayObject:
+					return MixedArrayObjectPtr(*container.GetAs<MixedArrayObject>());
+				case gotchangpdf::Object::Type::DictionaryObject:
+					return DictionaryObjectPtr(*container.GetAs<DictionaryObject>());
+				case gotchangpdf::Object::Type::StreamObject:
+					return StreamObjectPtr(*container.GetAs<StreamObject>());
+				default:
+					throw exceptions::Exception("TODO");
+				}
+				*/
+			}
 
 			inline void Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
 
@@ -44,7 +68,7 @@ namespace gotchangpdf
 		protected:
 			BOOST_STATIC_ASSERT((std::is_base_of<Object, T>::value));
 
-			SmartPtr<T> _obj;
+			Deferred<T> _obj;
 		};
 	}
 }

@@ -1,6 +1,5 @@
 #include "page_tree_node.h"
 
-//#include "object.h"
 #include "high_level_object.h"
 
 namespace gotchangpdf
@@ -10,10 +9,10 @@ namespace gotchangpdf
 		using namespace constant;
 		using namespace exceptions;
 
-		PageTreeNode::PageTreeNode(SmartPtr<DictionaryObject> obj) :
+		PageTreeNode::PageTreeNode(DictionaryObjectPtr obj) :
 			PageNode(obj),
-			_count(Bind<DictionaryObject, IntegerObject>(_obj, std::bind(&PageTreeNode::GetCount, this, _obj))),
-			_kids(Bind<DictionaryObject, ArrayObject<IndirectObjectReferencePtr>>(_obj, std::bind(&PageTreeNode::GetKids, this, _obj)))
+			_count(Bind<DictionaryObjectPtr, IntegerObjectPtr>(_obj, std::bind(&PageTreeNode::GetCount, this, _obj))),
+			_kids(Bind<DictionaryObjectPtr, Deferred<ArrayObject<IndirectObjectReferencePtr>>>(_obj, std::bind(&PageTreeNode::GetKids, this, _obj)))
 		{
 			if (*_obj->FindAs<NameObjectPtr>(Name::Type) != Name::Pages)
 				throw Exception("TODO");
@@ -24,7 +23,7 @@ namespace gotchangpdf
 			return _count->Value();
 		}
 
-		SmartPtr<ArrayObject<PageNodePtr>> PageTreeNode::Kids() const
+		Deferred<ArrayObject<PageNodePtr>> PageTreeNode::Kids() const
 		{
 			return _kids->Convert<PageNodePtr>(
 				[](IndirectObjectReferencePtr& obj)
@@ -40,7 +39,7 @@ namespace gotchangpdf
 			return count;
 		}
 
-		SmartPtr<ArrayObject<IndirectObjectReferencePtr>> PageTreeNode::GetKids(DictionaryObjectPtr obj)
+		Deferred<ArrayObject<IndirectObjectReferencePtr>> PageTreeNode::GetKids(DictionaryObjectPtr obj)
 		{
 			auto kids = obj->FindAs<MixedArrayObjectPtr>(Name::Kids);
 			auto specialized = kids->CastToArrayType<IndirectObjectReferencePtr>();

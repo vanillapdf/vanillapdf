@@ -12,7 +12,7 @@ namespace gotchangpdf
 	{
 		struct XrefEntry
 		{
-			SmartPtr<IndirectObject> reference;
+			Deferred<IndirectObject> reference;
 			bool in_use;
 		};
 

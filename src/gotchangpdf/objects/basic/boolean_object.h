@@ -2,10 +2,11 @@
 #define _BOOLEAN_OBJECT_H
 
 #include "object.h"
+#include "containerable.h"
 
 namespace gotchangpdf
 {
-	class BooleanObject : public Object
+	class BooleanObject : public Object, public ParentContainer<ContainerPtr>
 	{
 	public:
 		virtual inline Object::Type GetType(void) const override { return Object::Type::Boolean; }
@@ -15,7 +16,7 @@ namespace gotchangpdf
 		bool _value = false;
 	};
 
-	typedef SmartPtr<BooleanObject> BooleanObjectPtr;
+	typedef Deferred<BooleanObject> BooleanObjectPtr;
 }
 
 #endif /* _BOOLEAN_OBJECT_H */

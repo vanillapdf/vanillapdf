@@ -15,14 +15,14 @@ namespace gotchangpdf
 
 		PageNode::~PageNode() {}
 
-		SmartPtr<PageNode> PageNode::Create(SmartPtr<DictionaryObject> obj)
+		PageNodePtr PageNode::Create(DictionaryObjectPtr obj)
 		{
 			auto type = obj->FindAs<NameObjectPtr>(Name::Type);
 
 			if (*type == Name::Pages)
-				return SmartPtr<PageTreeNode>(new PageTreeNode(obj));
+				return new PageTreeNode(obj);
 			else if (*type == Name::Page)
-				return SmartPtr<PageObject>(new PageObject(obj));
+				return new PageObject(obj);
 			else
 				throw Exception("Cannot initialize PageTree from TODO");
 		}

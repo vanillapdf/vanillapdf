@@ -7,6 +7,7 @@
 #include "page_node.h"
 #include "indirect_object_reference.h"
 #include "dictionary_object.h"
+#include "integer_object.h"
 #include "bind.h"
 
 namespace gotchangpdf
@@ -16,21 +17,22 @@ namespace gotchangpdf
 		class PageTreeNode : public PageNode
 		{
 		public:
-			//PageTreeNode();
-			explicit PageTreeNode(SmartPtr<DictionaryObject> obj);
+			explicit PageTreeNode(DictionaryObjectPtr obj);
 
 			types::integer KidCount(void) const;
-			SmartPtr<ArrayObject<PageNodePtr>> Kids(void) const;
+			Deferred<ArrayObject<PageNodePtr>> Kids(void) const;
 
 			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageTreeNode; }
 
 		private:
-			Bind<DictionaryObject, IntegerObject> _count;
-			Bind<DictionaryObject, ArrayObject<IndirectObjectReferencePtr>> _kids;
+			Bind<DictionaryObjectPtr, IntegerObjectPtr> _count;
+			Bind<DictionaryObjectPtr, Deferred<ArrayObject<IndirectObjectReferencePtr>>> _kids;
 
-			SmartPtr<IntegerObject> GetCount(DictionaryObjectPtr obj);
-			SmartPtr<ArrayObject<IndirectObjectReferencePtr>> GetKids(DictionaryObjectPtr obj);
+			IntegerObjectPtr GetCount(DictionaryObjectPtr obj);
+			Deferred<ArrayObject<IndirectObjectReferencePtr>> GetKids(DictionaryObjectPtr obj);
 		};
+
+		typedef SmartPtr<PageTreeNode> PageTreeNodePtr;
 	}
 }
 

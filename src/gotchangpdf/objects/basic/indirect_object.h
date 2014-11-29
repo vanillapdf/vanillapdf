@@ -3,16 +3,20 @@
 
 #include "fwd.h"
 #include "object.h"
+#include "objects.h"
 #include "direct_object.h"
 #include "constants.h"
-#include "smart_ptr.h"
+#include "deferred.h"
 #include "version.h"
+
+//#include <boost/optional.hpp>
 
 namespace gotchangpdf
 {
 	class IndirectObject : public Object, public RequireVersion<Version::PDF12>
 	{
 	public:
+		IndirectObject() = default;
 		explicit IndirectObject(files::File * file);
 		IndirectObject(const IndirectObject& other);
 
@@ -41,11 +45,12 @@ namespace gotchangpdf
 		types::integer _obj_number = 0;
 		types::ushort _gen_number = 0;
 		types::stream_offset _offset = std::_BADOFF;
-		mutable DirectObject _reference;
+		mutable DirectObject _reference = NullObject::GetInstance();
+		//mutable boost::optional<DirectObject> _reference;
 
 	private:
 		files::File * _file = nullptr;
-		//mutable SmartPtr<Object> _reference;
+		//mutable Deferred<Object> _reference;
 	};
 
 	inline void IndirectObject::SetOffset(types::stream_offset offset)
@@ -92,7 +97,7 @@ namespace gotchangpdf
 		return obj.apply_visitor(visitor);
 	}
 
-	typedef SmartPtr<IndirectObject> IndirectObjectPtr;
+	typedef Deferred<IndirectObject> IndirectObjectPtr;
 }
 
 #endif /* _INDIRECT_OBJECT_H */

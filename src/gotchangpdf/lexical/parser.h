@@ -3,7 +3,7 @@
 
 #include "fwd.h"
 #include "lexical_stream.h"
-#include "smart_ptr.h"
+#include "deferred.h"
 
 namespace gotchangpdf
 {
@@ -16,11 +16,11 @@ namespace gotchangpdf
 			Parser(const Parser & other);
 
 			template<typename T>
-			SmartPtr<T> readObjectWithType() { return readObject().GetAs<T>(); }
+			Deferred<T> readObjectWithType() { return readObject().GetAs<T>(); }
 
-			SmartPtr<Object> readObjectWithType(Object::Type type);
-			SmartPtr<Object> readObject();
-			SmartPtr<Object> peekObject();
+			//DirectObject readObjectWithType(Object::Type type);
+			DirectObject readObject();
+			DirectObject peekObject();
 
 			files::File * file(void) const;
 			//void SetDeep(bool deep);

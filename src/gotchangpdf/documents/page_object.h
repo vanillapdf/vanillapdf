@@ -8,6 +8,7 @@
 #include "rectangle.h"
 #include "page_tree_node.h"
 #include "bind.h"
+#include "smart_ptr.h"
 
 namespace gotchangpdf
 {
@@ -16,24 +17,25 @@ namespace gotchangpdf
 		class PageObject : public PageNode
 		{
 		public:
-			//PageObject();
-			explicit PageObject(SmartPtr<DictionaryObject> obj);
+			explicit PageObject(DictionaryObjectPtr obj);
 
-			SmartPtr<PageTreeNode> Parent(void) const { return _parent(); }
-			SmartPtr<ResourceDictionary> Resources(void) const { return _resources(); }
-			SmartPtr<Rectangle> MediaBox(void) const { return _media_box(); }
+			PageTreeNodePtr Parent(void) const { return _parent(); }
+			ResourceDictionaryPtr Resources(void) const { return _resources(); }
+			RectanglePtr MediaBox(void) const { return _media_box(); }
 
 			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageObject; }
 
 		private:
-			Bind<DictionaryObject, PageTreeNode> _parent;
-			Bind<DictionaryObject, ResourceDictionary> _resources;
-			Bind<DictionaryObject, Rectangle> _media_box;
+			Bind<DictionaryObjectPtr, PageTreeNodePtr> _parent;
+			Bind<DictionaryObjectPtr, ResourceDictionaryPtr> _resources;
+			Bind<DictionaryObjectPtr, RectanglePtr> _media_box;
 
-			SmartPtr<PageTreeNode> GetParent(SmartPtr<DictionaryObject> obj);
-			SmartPtr<ResourceDictionary> GetResources(SmartPtr<DictionaryObject> obj);
-			SmartPtr<Rectangle> GetMediaBox(SmartPtr<DictionaryObject> obj);
+			PageTreeNodePtr GetParent(DictionaryObjectPtr obj);
+			ResourceDictionaryPtr GetResources(DictionaryObjectPtr obj);
+			RectanglePtr GetMediaBox(DictionaryObjectPtr obj);
 		};
+
+		typedef SmartPtr<PageObject> PageObjectPtr;
 	}
 }
 

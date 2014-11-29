@@ -1,6 +1,8 @@
 #ifndef _FWD_H
 #define _FWD_H
 
+#include "deferred.h"
+
 namespace gotchangpdf
 {
 	class MixedArrayObject;
@@ -78,6 +80,8 @@ namespace gotchangpdf
 
 	class Character;
 	class Buffer;
+
+	typedef Deferred<NameObject> NameObjectPtr;
 }
 
 #endif /* _FWD_H */

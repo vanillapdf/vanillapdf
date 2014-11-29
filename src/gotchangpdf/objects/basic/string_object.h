@@ -4,6 +4,7 @@
 #include "fwd.h"
 #include "object.h"
 #include "buffer.h"
+#include "containerable.h"
 
 namespace gotchangpdf
 {
@@ -17,9 +18,10 @@ namespace gotchangpdf
 		explicit StringObject(const Buffer& value);
 	};
 
-	class HexadecimalString : public StringObject
+	class HexadecimalString : public StringObject, public ParentContainer<ContainerPtr>
 	{
 	public:
+		HexadecimalString() = default;
 		explicit HexadecimalString(const Buffer& value);
 		explicit HexadecimalString(const lexical::Token& token);
 
@@ -30,17 +32,18 @@ namespace gotchangpdf
 		std::string _hexadecimal;
 	};
 
-	class LiteralString : public StringObject
+	class LiteralString : public StringObject, public ParentContainer<ContainerPtr>
 	{
 	public:
+		LiteralString() = default;
 		explicit LiteralString(const Buffer& value);
 		explicit LiteralString(const lexical::Token& token);
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::LiteralString; }
 	};
 
-	typedef SmartPtr<LiteralString> LiteralStringPtr;
-	typedef SmartPtr<HexadecimalString> HexadecimalStringPtr;
+	typedef Deferred<LiteralString> LiteralStringPtr;
+	typedef Deferred<HexadecimalString> HexadecimalStringPtr;
 }
 
 #endif /* _STRING_OBJECT_H */

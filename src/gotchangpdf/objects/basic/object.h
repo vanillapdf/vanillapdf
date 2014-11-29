@@ -5,15 +5,43 @@
 
 //#define Derive_Object_CRTP(Type) class Type : public Object_CRTP<Type>
 
+#include "fwd.h"
+#include "deferred.h"
 #include "smart_ptr.h"
+#include "direct_object.h"
 
+#include <boost/variant/variant.hpp>
 #include <boost/smart_ptr/intrusive_ref_counter.hpp>
 
 namespace gotchangpdf
 {
-	class Object;
+	typedef boost::variant <
+		Deferred<NullObject>,
+		Deferred<LiteralString>,
+		Deferred<HexadecimalString>
+	> StringObjectPtr;
 
-	typedef SmartPtr<Object> ObjectPtr;
+	typedef boost::variant <
+		Deferred<NullObject>,
+		Deferred<IntegerObject>,
+		Deferred<RealObject>
+	> NumericObjectPtr;
+
+	//typedef boost::variant <
+	//	// first is null object
+	//	Deferred<NullObject>,
+	//	Deferred<MixedArrayObject>,
+	//	Deferred<NameObject>,
+	//	Deferred<DictionaryObject>,
+	//	Deferred<FunctionObject>,
+	//	Deferred<BooleanObject>,
+	//	Deferred<IndirectObjectReference>,
+	//	Deferred<IntegerObject>,
+	//	Deferred<RealObject>,
+	//	Deferred<StreamObject>,
+	//	Deferred<LiteralString>,
+	//	Deferred<HexadecimalString>
+	//> DirectObject;
 
 	class Object : public boost::intrusive_ref_counter<Object>
 	{
@@ -42,33 +70,25 @@ namespace gotchangpdf
 		static const char* TypeName(Type type);
 		virtual inline Type GetType(void) const = 0;
 
-		inline void SetContainer(ObjectPtr obj) { _container = obj; }
-		inline ObjectPtr GetContainer() const { return _container; }
-
-		//virtual Object* Clone(void) const = 0;
-
 		Object();
 		explicit Object(Type type);
 
-		inline void Release() { boost::sp_adl_block::intrusive_ptr_release(this); };
+		inline void Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
 
 		virtual ~Object() = 0;
-
-	protected:
-		ObjectPtr _container = nullptr;
 	};
-	/*
-	template <typename T>
-	class Object_CRTP : public Object
-	{
-	public:
-		Object_CRTP() : Object() {};
-		explicit Object_CRTP(Type type) : Object(type) {};
-
-		virtual Object* Clone(void) const  override { return new T(static_cast<T const&>(*this)); };
-		virtual ~Object_CRTP() {};
-	};
-	*/
 }
+
+//#include "array_object.h"
+//#include "name_object.h"
+//#include "dictionary_object.h"
+//#include "function_object.h"
+//#include "null_object.h"
+//#include "boolean_object.h"
+//#include "indirect_object_reference.h"
+//#include "integer_object.h"
+//#include "real_object.h"
+//#include "stream_object.h"
+//#include "string_object.h"
 
 #endif /* _OBJECT_H */

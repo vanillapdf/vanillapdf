@@ -10,7 +10,7 @@ namespace gotchangpdf
 		namespace repo = boost::spirit::repository;
 
 		SpiritGrammar::SpiritGrammar(const lexical::SpiritLexer& lexer) :
-			base_type(indirect_object, "Grammar")
+			base_type(integer_object, "Grammar")
 		{
 			//auto local_begin = qi::lazy(boost::phoenix::construct<qi::position>(qi::_a, qi::_b));
 			//start %= qi::eps[qi::_a = qi::_r1, qi::_b = qi::_r2] >> indirect_object;
@@ -62,7 +62,7 @@ namespace gotchangpdf
 				literal_string_object
 				| hexadecimal_string_object;
 				*/
-
+			/*
 			direct_object =
 				array_object
 				| boolean_object
@@ -75,19 +75,19 @@ namespace gotchangpdf
 				| real_object
 				| stream_object
 				| string_object;
-
-
+				*/
+			/*
 			indirect_reference_object %=
 				integer_object
 				>> lexer.space
 				>> integer_object
 				>> lexer.space
 				>> qi::omit[lexer.regular_character]; // TODO 'R'
-
+				*/
 			integer_object %=
 				qi::eps
 				>> lexer.integer;
-
+			/*
 			real_object %=
 				qi::eps
 				>> lexer.float_;
@@ -101,7 +101,7 @@ namespace gotchangpdf
 				qi::eps
 				>> lexer.solidus
 				> *lexer.regular_character;
-
+				*/
 			// TODO
 			/*
 			hexadecimal_string_object %=
@@ -109,7 +109,7 @@ namespace gotchangpdf
 				>> lexer.anything
 				>> lexer.greater_than_sign;
 				*/
-
+			/*
 			array_object %=
 				lexer.left_bracket
 				> -whitespaces
@@ -123,7 +123,7 @@ namespace gotchangpdf
 				> *(name_object_dereferenced >> -whitespaces >> direct_object >> -whitespaces)
 				> -whitespaces
 				> lexer.dictionary_end;
-
+				*/
 			/*
 			stream_object %=
 				dictionary_object

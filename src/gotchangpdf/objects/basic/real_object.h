@@ -3,11 +3,12 @@
 
 #include "fwd.h"
 #include "constants.h"
-#include "numeric_object.h"
+#include "object.h"
+#include "containerable.h"
 
 namespace gotchangpdf
 {
-	class RealObject : public NumericObject
+	class RealObject : public Object, public ParentContainer<ContainerPtr>
 	{
 	public:
 		typedef types::real value_type;
@@ -26,7 +27,7 @@ namespace gotchangpdf
 		types::real _value = 0;
 	};
 
-	typedef SmartPtr<RealObject> RealObjectPtr;
+	typedef Deferred<RealObject> RealObjectPtr;
 }
 
 #endif /* _REAL_OBJECT_H */

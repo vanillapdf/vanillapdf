@@ -28,7 +28,9 @@ namespace gotchangpdf
 
 	DirectObject IndirectObject::GetObject() const
 	{
-		if (_reference.empty())
+		IsNullVisitor visitor;
+		auto has_value = _reference.apply_visitor(visitor);
+		if (!has_value)
 		{
 			auto stream = _file->GetInputStream();
 			if (auto locked = stream.lock())

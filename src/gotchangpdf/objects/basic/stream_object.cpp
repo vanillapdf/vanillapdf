@@ -23,7 +23,7 @@ namespace gotchangpdf
 
 	StreamObject::StreamObject() {}
 
-	StreamObject::StreamObject(DictionaryObject& dictionary) : _dictionary(&dictionary) {}
+	StreamObject::StreamObject(const DictionaryObject& dictionary) : _dictionary(dictionary) {}
 
 	Buffer StreamObject::GetData() const
 	{
@@ -42,9 +42,8 @@ namespace gotchangpdf
 
 	Parser& operator>>(Parser& s, StreamObject& o)
 	{
-		if (nullptr == o._dictionary)
+		if (!o._dictionary)
 		{
-			o._dictionary = SmartPtr<DictionaryObject>(new DictionaryObject());
 			s >> *o._dictionary;
 		}
 

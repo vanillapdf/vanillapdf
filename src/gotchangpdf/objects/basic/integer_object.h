@@ -3,12 +3,13 @@
 
 #include "fwd.h"
 #include "constants.h"
-#include "numeric_object.h"
 #include "token.h"
+#include "object.h"
+#include "containerable.h"
 
 namespace gotchangpdf
 {
-	class IntegerObject : public NumericObject
+	class IntegerObject : public Object, public ParentContainer<ContainerPtr>
 	{
 	public:
 		typedef types::integer value_type;
@@ -37,7 +38,7 @@ namespace gotchangpdf
 		value_type _value = 0;
 	};
 
-	typedef SmartPtr<IntegerObject> IntegerObjectPtr;
+	typedef Deferred<IntegerObject> IntegerObjectPtr;
 
 	inline  Object::Type IntegerObject::GetType(void) const { return Object::Type::IntegerObject; }
 }

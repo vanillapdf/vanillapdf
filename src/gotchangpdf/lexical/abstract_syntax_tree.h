@@ -1,75 +1,101 @@
 #ifndef _ABSTRACT_SYNTAX_TREE_H
 #define _ABSTRACT_SYNTAX_TREE_H
 
+#include "deferred.h"
 #include "constants.h"
 #include "direct_object.h"
+#include "objects.h"
 
 //#include <boost/fusion/include/adapt_struct.hpp
 #include <boost/fusion/adapted/struct/adapt_struct.hpp>
 #include <boost/fusion/include/std_pair.hpp>
 
+namespace gotchangpdf
+{
+	namespace lexical
+	{
+		namespace ast
+		{
+			class IntegerObjectTest
+			{
+			public:
+				types::integer value = 0;
+
+				mutable long references = 0;
+			};
+
+			typedef Deferred<IntegerObjectTest> IntegerObjectTestPtr;
+		}
+	}
+}
+
 BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::DirectObject, /**/)
 BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::StringObjectPtr, /**/)
 BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::FunctionObjectPtr, /**/)
 BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::NullObjectPtr, /**/)
-
+/*
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::lexical::ast::IntegerObjectTestPtr,
+(gotchangpdf::types::integer, Content->value)
+)
+*/
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::IntegerObjectPtr,
-(gotchangpdf::types::integer, get()->_value)
+(gotchangpdf::types::integer, Content->_value)
 )
-
+/*
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::NameObject,
 (gotchangpdf::Buffer, _value)
 )
-
+*/
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::NameObjectPtr,
-(gotchangpdf::Buffer, get()->_value)
+(gotchangpdf::Buffer, Content->_value)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::MixedArrayObjectPtr,
-(gotchangpdf::MixedArrayObject::value_type, get()->_list)
+(gotchangpdf::MixedArrayObject::value_type, Content->_list)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::DictionaryObjectPtr,
-(gotchangpdf::DictionaryObject::value_type, get()->_list)
+(gotchangpdf::DictionaryObject::value_type, Content->_list)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::IndirectObjectReferencePtr,
-(gotchangpdf::types::integer, get()->_obj_number)
-(gotchangpdf::types::ushort, get()->_gen_number)
+(gotchangpdf::types::integer, Content->_obj_number)
+(gotchangpdf::types::ushort, Content->_gen_number)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::RealObjectPtr,
-(gotchangpdf::types::real, get()->_value)
+(gotchangpdf::types::real, Content->_value)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::StreamObjectPtr,
-(gotchangpdf::DictionaryObject::value_type, get()->_dictionary)
-(gotchangpdf::types::stream_offset, get()->_raw_data_offset)
+(gotchangpdf::DictionaryObject::value_type, Content->_dictionary)
+(gotchangpdf::types::stream_offset, Content->_raw_data_offset)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::LiteralStringPtr,
-(gotchangpdf::Buffer, get()->_value)
+(gotchangpdf::Buffer, Content->_value)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::HexadecimalStringPtr,
-(gotchangpdf::Buffer, get()->_value)
+(gotchangpdf::Buffer, Content->_value)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-gotchangpdf::IndirectObject,
-(gotchangpdf::types::integer, get()->_obj_number)
-(gotchangpdf::types::integer, get()->_gen_number)
-(gotchangpdf::DirectObject, get()->_reference)
+gotchangpdf::IndirectObjectPtr,
+(gotchangpdf::types::integer, Content->_obj_number)
+(gotchangpdf::types::ushort, Content->_gen_number)
+(gotchangpdf::DirectObject, Content->_reference)
 )
 
 
@@ -101,7 +127,7 @@ gotchangpdf::IndirectObject,
 (gotchangpdf::IntegerObject, gotchangpdf::IntegerObject, obj.GetObjectNumber(), obj.SetObjectNumber(val))
 //(gotchangpdf::IntegerObject, gotchangpdf::IntegerObject, obj.GetGenerationNumber(), obj.SetGenerationNumber(val))
 //(gotchangpdf::streamOffsetValueType, gotchangpdf::streamOffsetValueType, obj.GetOffset(), obj->SetOffset(val))
-//(gotchangpdf::SmartPtr<gotchangpdf::Object>, gotchangpdf::SmartPtr<gotchangpdf::Object>, obj.GetObject(), obj.SetObject(val))
+//(gotchangpdf::Deferred<gotchangpdf::Object>, gotchangpdf::Deferred<gotchangpdf::Object>, obj.GetObject(), obj.SetObject(val))
 )
 */
 /*
@@ -117,7 +143,7 @@ gotchangpdf::IndirectObject,
 (gotchangpdf::types::integer, gotchangpdf::types::integer, obj.GetObjectNumber(), obj.SetObjectNumber(val))
 (gotchangpdf::types::ushort, gotchangpdf::types::ushort, obj.GetGenerationNumber(), obj.SetGenerationNumber(val))
 //(gotchangpdf::streamOffsetValueType, gotchangpdf::streamOffsetValueType, obj.GetOffset(), obj->SetOffset(val))
-(gotchangpdf::SmartPtr<gotchangpdf::Object>, gotchangpdf::SmartPtr<gotchangpdf::Object>, obj.GetObject(), obj.SetObject(val))
+(gotchangpdf::Deferred<gotchangpdf::Object>, gotchangpdf::Deferred<gotchangpdf::Object>, obj.GetObject(), obj.SetObject(val))
 )
 
 BOOST_FUSION_ADAPT_ADT(

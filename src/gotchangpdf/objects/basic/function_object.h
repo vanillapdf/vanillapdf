@@ -2,10 +2,11 @@
 #define _FUNCTION_OBJECT_H
 
 #include "object.h"
+#include "containerable.h"
 
 namespace gotchangpdf
 {
-	class FunctionObject : public Object
+	class FunctionObject : public Object, public ParentContainer<ContainerPtr>
 	{
 	public:
 		virtual inline Object::Type GetType(void) const override { return Object::Type::Function; }
@@ -13,7 +14,7 @@ namespace gotchangpdf
 	private:
 	};
 
-	typedef SmartPtr<FunctionObject> FunctionObjectPtr;
+	typedef Deferred<FunctionObject> FunctionObjectPtr;
 }
 
 #endif /* _FUNCTION_OBJECT_H */

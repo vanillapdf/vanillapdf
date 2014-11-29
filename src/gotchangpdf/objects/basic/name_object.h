@@ -2,13 +2,20 @@
 #define _NAME_OBJECT_H
 
 #include "object.h"
-#include "Buffer.h"
+#include "buffer.h"
+#include "containerable.h"
 
 #include <stddef.h>
 
 namespace gotchangpdf
 {
-	class NameObject : public Object
+	template <typename Container>
+	class NameObjectBase : public Object, public Container
+	{
+
+	};
+
+	class NameObject : public NameObjectBase<ParentContainer<ContainerPtr>>
 	{
 	public:
 		typedef Buffer value_type;
@@ -35,12 +42,12 @@ namespace gotchangpdf
 
 		void SetName(value_type& name) { _value = name; }
 
-	//private:
+		//private:
 	public:
 		value_type _value;
 	};
 
-	typedef SmartPtr<NameObject> NameObjectPtr;
+	typedef Deferred<NameObject> NameObjectPtr;
 
 	inline bool NameObject::operator==(const NameObject& other) const
 	{

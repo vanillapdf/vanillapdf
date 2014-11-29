@@ -15,6 +15,9 @@ namespace gotchangpdf
 	class SmartPtr : public boost::intrusive_ptr<T>
 	{
 	public:
+		typedef typename T value_type;
+
+	public:
 		SmartPtr() : boost::intrusive_ptr<T>() {}
 		SmartPtr(T* data) : boost::intrusive_ptr<T>(data) {}
 
@@ -22,6 +25,10 @@ namespace gotchangpdf
 		SmartPtr(const SmartPtr<U>& other) : boost::intrusive_ptr<T>(other.get()) {}
 
 		//ObjectReferenceWrapper& operator=(const ObjectReferenceWrapper& other) : _data(other._data) { return *this; }
+
+		bool HasContents(void) const { return nullptr == boost::intrusive_ptr<T>::get(); }
+
+		operator bool() const { return HasContents(); }
 
 		T* AddRefGet(void) const
 		{

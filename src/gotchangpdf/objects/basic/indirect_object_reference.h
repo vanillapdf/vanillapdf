@@ -2,23 +2,26 @@
 #define _INDIRECT_OBJECT_REFERENCE_H
 
 #include "fwd.h"
+#include "object.h"
 #include "constants.h"
 #include "indirect_object.h"
+#include "containerable.h"
 
 #include <memory>
 
 namespace gotchangpdf
 {
-	class IndirectObjectReference : public Object
+	class IndirectObjectReference : public Object, public ParentContainer<ContainerPtr>
 	{
 	public:
+		IndirectObjectReference() = default;
 		explicit IndirectObjectReference(files::File * file);
 		IndirectObjectReference(files::File * file,
 			types::integer obj_number,
 			types::ushort gen_number);
 
-		SmartPtr<IndirectObject> GetReferencedObject() const;
-		SmartPtr<IndirectObject> operator->() const;
+		Deferred<IndirectObject> GetReferencedObject() const;
+		Deferred<IndirectObject> operator->() const;
 
 		template <typename T>
 		const T GetReferencedObjectAs() const;
@@ -37,10 +40,10 @@ namespace gotchangpdf
 
 	private:
 		files::File * _file;
-		mutable SmartPtr<IndirectObject> _reference;
+		mutable Deferred<IndirectObject> _reference;
 	};
 
-	typedef SmartPtr<IndirectObjectReference> IndirectObjectReferencePtr;
+	typedef Deferred<IndirectObjectReference> IndirectObjectReferencePtr;
 
 	template <typename T>
 	const T IndirectObjectReference::GetReferencedObjectAs() const
@@ -53,7 +56,7 @@ namespace gotchangpdf
 		return Object::Type::IndirectObjectReference;
 	}
 
-	inline SmartPtr<IndirectObject> IndirectObjectReference::operator->() const
+	inline Deferred<IndirectObject> IndirectObjectReference::operator->() const
 	{
 		return GetReferencedObject();
 	}

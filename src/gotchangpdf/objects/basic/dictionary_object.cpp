@@ -65,58 +65,16 @@ namespace gotchangpdf
 		*/
 		return s;
 	}
-
-	DirectObject DictionaryObject::Find(const NameObject& name) const
-	{
-		auto result = _list.find(name);
-		return result->second;
-	}
-
-	DictionaryObject::Iterator DictionaryObject::Begin(void) const
-	{
-		return DictionaryObject::Iterator(_list.begin());
-	}
-
-	DictionaryObject::Iterator DictionaryObject::End(void) const
-	{
-		return DictionaryObject::Iterator(_list.end());
-	}
-
-	DictionaryObject::Iterator::Iterator(value_type::const_iterator it) : _it(it) {}
-	NameObject DictionaryObject::Iterator::First() const { return _it->first; }
-	DirectObject DictionaryObject::Iterator::Second() const { return _it->second; }
-	bool DictionaryObject::Iterator::operator==(const Iterator& other) const
-	{
-		return _it == other._it;
-	}
-
-	const DictionaryObject::Iterator& DictionaryObject::Iterator::operator++()
-	{
-		++_it;
-		return *this;
-	}
-
-	const DictionaryObject::Iterator DictionaryObject::Iterator::operator++(int)
-	{
-		DictionaryObject::Iterator temp(_it);
-		++_it;
-		return temp;
-	}
-
-	DictionaryObject::Iterator* DictionaryObject::Iterator::Clone() const
-	{
-		return new DictionaryObject::Iterator(_it);
-	}
 }
 
 GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, const char *str, int len)
 {
-	gotchangpdf::DictionaryObject* dictionary = reinterpret_cast<gotchangpdf::DictionaryObject*>(handle);
+	auto dictionary = reinterpret_cast<gotchangpdf::DictionaryObject*>(handle);
 	gotchangpdf::Buffer set(str, len);
 	gotchangpdf::NameObject name(set);
 	gotchangpdf::ObjectBaseVisitor visitor;
-	gotchangpdf::ObjectPtr object = dictionary->Find(name).apply_visitor(visitor);
-	gotchangpdf::Object* ptr = object.AddRefGet();
+	auto object = dictionary->Find(name).apply_visitor(visitor);
+	auto ptr = object.AddRefGet();
 	//boost::intrusive_ptr_add_ref(ptr);
 
 	return reinterpret_cast<ObjectHandle>(ptr);
@@ -144,8 +102,8 @@ GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObjectIterator_Release(Dictio
 GOTCHANG_PDF_API NameObjectHandle CALLING_CONVENTION DictionaryObjectIterator_GetKey(DictionaryObjectIteratorHandle handle)
 {
 	gotchangpdf::DictionaryObject::Iterator* iterator = reinterpret_cast<gotchangpdf::DictionaryObject::Iterator*>(handle);
-	auto result = gotchangpdf::SmartPtr<gotchangpdf::NameObject>(new gotchangpdf::NameObject(iterator->First()));
-	return reinterpret_cast<NameObjectHandle>(result.AddRefGet());
+	auto result = gotchangpdf::Deferred<gotchangpdf::NameObject>(gotchangpdf::NameObject(iterator->First()));
+	return reinterpret_cast<NameObjectHandle>(AddRefGet(result));
 }
 
 GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObjectIterator_GetValue(DictionaryObjectIteratorHandle handle)

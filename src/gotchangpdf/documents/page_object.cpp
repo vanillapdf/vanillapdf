@@ -13,37 +13,37 @@ namespace gotchangpdf
 		using namespace exceptions;
 		using namespace constant;
 
-		PageObject::PageObject(SmartPtr<DictionaryObject> obj) :
+		PageObject::PageObject(DictionaryObjectPtr obj) :
 			PageNode(obj),
-			_parent(Bind<DictionaryObject, PageTreeNode>(_obj, std::bind(&PageObject::GetParent, this, _obj))),
-			_resources(Bind<DictionaryObject, ResourceDictionary>(_obj, std::bind(&PageObject::GetResources, this, _obj))),
-			_media_box(Bind<DictionaryObject, Rectangle>(_obj, std::bind(&PageObject::GetMediaBox, this, _obj)))
+			_parent(Bind<DictionaryObjectPtr, SmartPtr<PageTreeNode>>(_obj, std::bind(&PageObject::GetParent, this, _obj))),
+			_resources(Bind<DictionaryObjectPtr, ResourceDictionaryPtr>(_obj, std::bind(&PageObject::GetResources, this, _obj))),
+			_media_box(Bind<DictionaryObjectPtr, SmartPtr<Rectangle>>(_obj, std::bind(&PageObject::GetMediaBox, this, _obj)))
 		{
 			if (*_obj->FindAs<NameObjectPtr>(Name::Type) != Name::Page)
 				throw Exception("TODO");
 		}
 
-		SmartPtr<PageTreeNode> PageObject::GetParent(SmartPtr<DictionaryObject> obj)
+		PageTreeNodePtr PageObject::GetParent(DictionaryObjectPtr obj)
 		{
 			auto node = new PageTreeNode(_obj->FindAs<DictionaryObjectPtr>(Name::Parent));
-			return SmartPtr<PageTreeNode>(node);
+			return node;
 		}
 
-		SmartPtr<ResourceDictionary> PageObject::GetResources(SmartPtr<DictionaryObject> obj)
+		ResourceDictionaryPtr PageObject::GetResources(DictionaryObjectPtr obj)
 		{
 			auto resource = _obj->FindAs<DictionaryObjectPtr>(Name::Resources);
 			auto dict = new ResourceDictionary(resource);
 
-			return SmartPtr<ResourceDictionary>(dict);
+			return dict;
 		}
 
-		SmartPtr<Rectangle> PageObject::GetMediaBox(SmartPtr<DictionaryObject> obj)
+		RectanglePtr PageObject::GetMediaBox(DictionaryObjectPtr obj)
 		{
 			auto box = _obj->FindAs<MixedArrayObjectPtr>(Name::MediaBox);
 			auto specialized = box->CastToArrayType<IntegerObjectPtr>();
-			auto rectangle = new Rectangle(SmartPtr<ArrayObject<IntegerObjectPtr>>(specialized));
+			auto rectangle = new Rectangle(Deferred<ArrayObject<IntegerObjectPtr>>(specialized));
 
-			return SmartPtr<Rectangle>(rectangle);
+			return rectangle;
 		}
 	}
 }

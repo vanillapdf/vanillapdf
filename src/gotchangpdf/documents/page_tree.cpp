@@ -12,9 +12,9 @@ namespace gotchangpdf
 
 		//PageTree::PageTree() {}
 
-		PageTree::PageTree(SmartPtr<DictionaryObject> root) : HighLevelObject(root), _root(new PageTreeNode(root)) {}
+		PageTree::PageTree(DictionaryObjectPtr root) : HighLevelObject(root), _root(new PageTreeNode(root)) {}
 
-		SmartPtr<PageObject> PageTree::PageInternal(types::integer number) const
+		PageObjectPtr PageTree::PageInternal(types::integer number) const
 		{
 			auto node = _root;
 			IntegerObject::value_type current = 1;
@@ -64,7 +64,7 @@ namespace gotchangpdf
 			throw new exceptions::Exception("Page number was not found: " + number);
 		}
 
-		bool PageTree::HasTreeChilds(SmartPtr<PageTreeNode> node) const
+		bool PageTree::HasTreeChilds(PageTreeNodePtr node) const
 		{
 			auto kids = node->Kids();
 			auto count = kids->Size();;

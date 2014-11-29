@@ -13,13 +13,15 @@ namespace gotchangpdf
 		{
 		public:
 			//PageObject();
-			explicit ResourceDictionary(SmartPtr<DictionaryObject> obj) : HighLevelObject(obj) {}
+			explicit ResourceDictionary(DictionaryObjectPtr obj) : HighLevelObject(obj) {}
 
 			//inline ObjectReferenceWrapper<IndirectObjectReference> Parent(void) const { return _parent; }
 			//inline ObjectReferenceWrapper<DictionaryObject> Resources(void) const { return _resources; }
 
 			virtual inline Type GetType() const override { return HighLevelObject::Type::ResourceDictionary; }
 		};
+
+		typedef SmartPtr<ResourceDictionary> ResourceDictionaryPtr;
 	}
 }
 

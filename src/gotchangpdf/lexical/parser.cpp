@@ -28,7 +28,7 @@ namespace gotchangpdf
 		Parser::Parser(const gotchangpdf::lexical::Parser &other)
 			: lexical::Stream(other) { _file = other.file(); }
 
-		SmartPtr<Object> Parser::readObject()
+		DirectObject Parser::readObject()
 		{
 			auto offset = tellg();
 
@@ -36,21 +36,21 @@ namespace gotchangpdf
 			{
 			case Token::Type::DICTIONARY_BEGIN:
 				{
-					auto result = SmartPtr<DictionaryObject>(new DictionaryObject());
-					*this >> *result;
+					DictionaryObject result;
+					*this >> result;
 
 					if (PeekTokenType() == Token::Type::EOL)
 						ReadToken();
 
 					if (PeekTokenType() == Token::Type::STREAM_BEGIN)
 					{
-						auto resultStream = SmartPtr<StreamObject>(new StreamObject(*result));
-						*this >> *resultStream;
+						StreamObject resultStream;
+						*this >> resultStream;
 
-						return resultStream;
+						return Deferred<StreamObject>(resultStream);
 					}
 
-					return result;
+					return Deferred<DictionaryObject>(result);
 				}
 			case Token::Type::INTEGER_OBJECT:
 				{
@@ -66,7 +66,7 @@ namespace gotchangpdf
 						case Token::Type::INDIRECT_REFERENCE_MARKER:
 						{
 							auto reference_marker = ReadTokenWithType(Token::Type::INDIRECT_REFERENCE_MARKER);
-							return SmartPtr<IndirectObjectReference>(new IndirectObjectReference(_file, IntegerObject(token), IntegerObject(gen_number)));
+							return Deferred<IndirectObjectReference>(IndirectObjectReference(_file, IntegerObject(token), IntegerObject(gen_number)));
 						}
 
 						case Token::Type::INDIRECT_OBJECT_BEGIN:
@@ -81,23 +81,23 @@ namespace gotchangpdf
 							// TODO check cast if needed
 							indirect->SetOffset(offset);
 
-							return indirect;
+							return NullObject::GetInstance();
 						}
 						default:
 							seekg(pos);
 						}
 					}
 
-					return SmartPtr<IntegerObject>(new IntegerObject(token));
+					return Deferred<IntegerObject>(IntegerObject(token));
 				}
 			case Token::Type::ARRAY_BEGIN:
 				{
-					auto result = SmartPtr<MixedArrayObject>(new MixedArrayObject());
-					*this >> *result;
+					MixedArrayObject result;
+					*this >> result;
 
 					//auto token = readToken();
 					//if (token->type() == Token::Type::INDIRECT_OBJECT_END)
-					return result;
+					return Deferred<MixedArrayObject>(result);
 
 					// TODO is this possible?
 					//assert(false);
@@ -106,29 +106,29 @@ namespace gotchangpdf
 			case Token::Type::NAME_OBJECT:
 			{
 				auto token = ReadTokenWithType(Token::Type::NAME_OBJECT);
-				return SmartPtr<NameObject>(new NameObject(token));
+				return Deferred<NameObject>(NameObject(token));
 			}
 			case Token::Type::HEXADECIMAL_STRING:
 			{
 				auto token = ReadTokenWithType(Token::Type::HEXADECIMAL_STRING);
-				return SmartPtr<HexadecimalString>(new HexadecimalString(token));
+				return Deferred<HexadecimalString>(HexadecimalString(token));
 			}
 			case Token::Type::LITERAL_STRING:
 			{
 				auto token = ReadTokenWithType(Token::Type::LITERAL_STRING);
-				return SmartPtr<LiteralString>(new LiteralString(token));
+				return Deferred<LiteralString>(LiteralString(token));
 			}
 			case Token::Type::REAL_OBJECT:
 			{
 				auto token = ReadTokenWithType(Token::Type::REAL_OBJECT);
-				return SmartPtr<RealObject>(new RealObject(token));
+				return Deferred<RealObject>(RealObject(token));
 			}
 			default:
 				throw Exception("No valid object could be found at offset " + static_cast<int>(offset));
 			}
 		}
 
-		SmartPtr<Object> Parser::peekObject()
+		DirectObject Parser::peekObject()
 		{
 			auto position = tellg();
 			auto obj = readObject();
@@ -136,8 +136,8 @@ namespace gotchangpdf
 
 			return obj;
 		}
-
-		SmartPtr<gotchangpdf::Object> Parser::readObjectWithType(gotchangpdf::Object::Type type)
+		/*
+		DirectObject Parser::readObjectWithType(gotchangpdf::Object::Type type)
 		{
 			auto obj = readObject();
 
@@ -176,7 +176,7 @@ namespace gotchangpdf
 				throw Exception("FIXME: Unknown object type");
 			}
 		}
-
+		*/
 		//void Stream::SetDeep( bool deep ) { _deep = deep; }
 
 		//bool Stream::GetDeep( void ) const { return _deep; }

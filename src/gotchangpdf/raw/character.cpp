@@ -1,7 +1,7 @@
 #include "character.h"
-#include "exception.h"
-#include "basic_base_stream.h"
-#include "lexical_stream.h"
+//#include "exception.h"
+//#include "basic_base_stream.h"
+//#include "lexical_stream.h"
 
 namespace gotchangpdf
 {

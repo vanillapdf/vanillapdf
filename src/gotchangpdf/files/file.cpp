@@ -44,10 +44,10 @@ namespace gotchangpdf
 			if (_initialized)
 				return;
 
-			_cache = vector<SmartPtr<IndirectObject>>();
-			_xref = SmartPtr<Xref>(new Xref());
-			_header = SmartPtr<Header>(new Header());
-			_trailer = SmartPtr<Trailer>(new Trailer());
+			_cache = vector<Deferred<IndirectObject>>();
+			_xref = Deferred<Xref>(Xref());
+			_header = Deferred<Header>(Header());
+			_trailer = Deferred<Trailer>(Trailer());
 
 			if (!boost::filesystem::exists(_filename))
 				throw new exceptions::Exception("File does not exist");
@@ -82,7 +82,7 @@ namespace gotchangpdf
 			_initialized = true;
 		}
 
-		SmartPtr<IndirectObject> File::GetIndirectObject(types::integer objNumber,
+		Deferred<IndirectObject> File::GetIndirectObject(types::integer objNumber,
 			types::ushort genNumber) const
 		{
 			if (!_initialized)
@@ -122,7 +122,7 @@ namespace gotchangpdf
 
 			auto reference = _trailer->dictionary()->FindAs<IndirectObjectReferencePtr>(constant::Name::Root);
 			auto dict = reference->GetReferencedObjectAs<DictionaryObjectPtr>();
-			return SmartPtr<documents::Catalog>(new documents::Catalog(dict));
+			return new documents::Catalog(dict);
 		}
 	}
 }

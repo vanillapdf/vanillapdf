@@ -1,14 +1,20 @@
 #include "array_object.h"
+
 #include "parser.h"
 #include "token.h"
+#include "object_visitors.h"
+#include "objects.h"
 
 #include "c_array_object.h"
 
 GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle handle, int at)
 {
 	gotchangpdf::MixedArrayObject* arr = reinterpret_cast<gotchangpdf::MixedArrayObject*>(handle);
+	auto item = arr->At(at);
 	gotchangpdf::ObjectBaseVisitor visitor;
-	return reinterpret_cast<ObjectHandle>(arr->At(at).apply_visitor(visitor).AddRefGet());
+	auto direct = item.apply_visitor(visitor);
+	auto ptr = direct.AddRefGet();
+	return reinterpret_cast<ObjectHandle>(ptr);
 }
 
 GOTCHANG_PDF_API int CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle handle)

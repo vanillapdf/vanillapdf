@@ -11,7 +11,7 @@ namespace gotchangpdf
 		namespace qi = boost::spirit::qi;
 
 		struct SpiritGrammar : qi::grammar<SpiritLexer::iterator_type,
-			IndirectObjectPtr()>
+			IntegerObjectPtr()>
 		{
 			SpiritGrammar(const lexical::SpiritLexer& lexer);
 

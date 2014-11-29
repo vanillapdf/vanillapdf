@@ -50,7 +50,7 @@ namespace gotchangpdf
 				throw Exception(buffer.str());
 			}
 
-			auto reference = SmartPtr<IndirectObject>(new IndirectObject(s.file()));
+			Deferred<IndirectObject> reference = IndirectObject(s.file());
 			reference->SetObjectNumber(objNumber);
 			reference->SetGenerationNumber(IntegerObject(number));
 			reference->SetOffset(IntegerObject(offset));

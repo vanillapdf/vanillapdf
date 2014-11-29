@@ -43,7 +43,6 @@
     <ClInclude Include="src\gotchangpdf\filters\filter.h" />
     <ClInclude Include="src\gotchangpdf\filters\flate_decode_filter.h" />
     <ClInclude Include="src\gotchangpdf\lexical\abstract_syntax_tree.h" />
-    <ClInclude Include="src\gotchangpdf\lexical\deferred.h" />
     <ClInclude Include="src\gotchangpdf\lexical\lexical_base_stream.h" />
     <ClInclude Include="src\gotchangpdf\lexical\lexical_reverse_stream.h" />
     <ClInclude Include="src\gotchangpdf\lexical\lexical_stream.h" />
@@ -56,6 +55,7 @@
     <ClInclude Include="src\gotchangpdf\lexical\token_dictionary.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\array_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\boolean_object.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\containerable.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\dictionary_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\direct_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\function_object.h" />
@@ -64,8 +64,8 @@
     <ClInclude Include="src\gotchangpdf\objects\basic\integer_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\name_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\null_object.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\numeric_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\object.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\objects.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\object_visitors.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\real_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\stream_object.h" />
@@ -84,8 +84,11 @@
     <ClInclude Include="src\gotchangpdf\util\character_device.h" />
     <ClInclude Include="src\gotchangpdf\util\character_sink.h" />
     <ClInclude Include="src\gotchangpdf\util\constants.h" />
+    <ClInclude Include="src\gotchangpdf\util\deferred.h" />
     <ClInclude Include="src\gotchangpdf\util\file_device.h" />
     <ClInclude Include="src\gotchangpdf\util\fwd.h" />
+    <ClInclude Include="src\gotchangpdf\util\hasher.h" />
+    <ClInclude Include="src\gotchangpdf\util\operators.h" />
     <ClInclude Include="src\gotchangpdf\util\smart_ptr.h" />
     <ClInclude Include="src\gotchangpdf\util\version.h" />
   </ItemGroup>
@@ -119,7 +122,6 @@
     <ClCompile Include="src\gotchangpdf\objects\basic\indirect_object_reference.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\integer_object.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\name_object.cpp" />
-    <ClCompile Include="src\gotchangpdf\objects\basic\numeric_object.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\object.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\real_object.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\stream_object.cpp" />

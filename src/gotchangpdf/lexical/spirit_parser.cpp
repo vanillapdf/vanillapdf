@@ -25,11 +25,11 @@ namespace gotchangpdf
 		SpiritParser::SpiritParser(const gotchangpdf::lexical::Parser &other)
 			: lexical::Stream(other) { _file = other.file(); }
 
-		SmartPtr<Object> SpiritParser::readObject()
+		DirectObject SpiritParser::readObject()
 		{
 			SpiritLexer lexer;
 			SpiritGrammar grammar(lexer);
-			IndirectObjectPtr obj(new IndirectObject(_file));
+			IntegerObjectPtr obj;
 
 			// Don't skip whitespace explicitly
 			noskipws(*this);
@@ -45,7 +45,7 @@ namespace gotchangpdf
 			{
 				auto result = lex::tokenize_and_parse(input_begin_pos, input_end_pos, lexer, grammar, obj);
 				if (result) {
-					return nullptr;
+					return NullObject::GetInstance();
 				}
 				else {
 					auto offset = tellg();
@@ -56,7 +56,7 @@ namespace gotchangpdf
 						"'" << input_begin_pos.get_currentline() << "'" << endl <<
 						setw(pos.column + 8) << " ^- here" << endl;
 
-					return nullptr;
+					return NullObject::GetInstance();
 				}
 			}
 			catch (const qi::expectation_failure<lexer_type::iterator_type>& exception) {
@@ -70,13 +70,13 @@ namespace gotchangpdf
 					"'" << pos_begin.get_currentline() << "'" << endl <<
 					setw(pos.column + 8) << " ^- here" << endl;
 
-				return nullptr;
+				return NullObject::GetInstance();
 			}
 
-			return SmartPtr<Object>(new IndirectObject(_file));
+			return NullObject::GetInstance();
 		}
 
-		SmartPtr<Object> SpiritParser::peekObject()
+		DirectObject SpiritParser::peekObject()
 		{
 			/*
 			auto position = tellg();
@@ -85,12 +85,12 @@ namespace gotchangpdf
 
 			return obj;
 			*/
-			return SmartPtr<Object>(new IndirectObject(_file));
+			return NullObject::GetInstance();
 		}
-
-		SmartPtr<gotchangpdf::Object> SpiritParser::readObjectWithType(gotchangpdf::Object::Type type)
+		/*
+		Deferred<gotchangpdf::Object> SpiritParser::readObjectWithType(gotchangpdf::Object::Type type)
 		{
-			/*
+
 			auto obj = readObject();
 
 			switch (type)
@@ -127,9 +127,10 @@ namespace gotchangpdf
 				assert(false);
 				throw Exception("FIXME: Unknown object type");
 			}
-			*/
-			return SmartPtr<Object>(new IndirectObject(_file));
+
+			return Deferred<Object>(new IndirectObject(_file));
 		}
+		*/
 
 		//void Stream::SetDeep( bool deep ) { _deep = deep; }
 

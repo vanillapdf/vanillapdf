@@ -2,17 +2,18 @@
 #define _ARRAY_OBJECT_H
 
 #include "fwd.h"
+#include "deferred.h"
 #include "object.h"
-#include "smart_ptr.h"
 #include "direct_object.h"
+#include "containerable.h"
 
 #include <vector>
 #include <algorithm>
 
 namespace gotchangpdf
 {
-	template <typename T>
-	class ArrayObject : public Object
+	template <typename T, typename Container = ParentContainer<ContainerPtr>>
+	class ArrayObject : public Object, public Container
 	{
 	public:
 		typedef std::vector<T> value_type;
@@ -27,7 +28,7 @@ namespace gotchangpdf
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::ArrayObject; }
 
-		friend lexical::Parser& operator>> (lexical::Parser& s, ArrayObject<T>& o)
+		friend lexical::Parser& operator>> (lexical::Parser& s, ArrayObject<T, Container>& o)
 		{
 			/*
 			s.LexicalSettingsPush();
@@ -52,13 +53,13 @@ namespace gotchangpdf
 		}
 
 		template <typename U>
-		SmartPtr<ArrayObject<U>> Convert(std::function<const U(T& obj)> f)
+		Deferred<ArrayObject<U, Container>> Convert(std::function<const U(T& obj)> f)
 		{
 			std::vector<U> list;
 			list.resize(_list.size());
 			transform(_list.begin(), _list.end(), list.begin(), f);
 
-			return SmartPtr<ArrayObject<U>>(new ArrayObject<U>(list));
+			return ArrayObject<U, Container>(list);
 		}
 
 		const value_type& GetList(void) const { return _list; }
@@ -73,7 +74,7 @@ namespace gotchangpdf
 	{
 	public:
 		template <typename T>
-		SmartPtr<ArrayObject<T>> CastToArrayType()
+		Deferred<ArrayObject<T>> CastToArrayType()
 		{
 			return Convert<T>([](DirectObject obj)
 			{
@@ -83,7 +84,7 @@ namespace gotchangpdf
 		}
 	};
 
-	typedef SmartPtr<MixedArrayObject> MixedArrayObjectPtr;
+	typedef Deferred<MixedArrayObject> MixedArrayObjectPtr;
 }
 
 #endif /* _ARRAY_OBJECT_H */

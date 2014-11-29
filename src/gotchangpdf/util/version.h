@@ -21,6 +21,7 @@ namespace gotchangpdf
 	class RequireVersion
 	{
 	public:
+		RequireVersion() = default;
 		RequireVersion(Version current)
 		{
 			if (static_cast<unsigned char>(ver) > static_cast<unsigned char>(current))

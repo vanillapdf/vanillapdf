@@ -4,7 +4,7 @@
 #include "fwd.h"
 #include "constants.h"
 #include "dictionary_object.h"
-#include "smart_ptr.h"
+#include "deferred.h"
 
 #include <memory>
 
@@ -21,7 +21,7 @@ namespace gotchangpdf
 		};
 
 		StreamObject();
-		explicit StreamObject(DictionaryObject& dictionary);
+		explicit StreamObject(const DictionaryObject& dictionary);
 
 		Buffer GetData() const;
 
@@ -31,7 +31,7 @@ namespace gotchangpdf
 		friend lexical::Parser& operator>> (lexical::Parser& s, StreamObject& o);
 
 	public:
-		SmartPtr<DictionaryObject> _dictionary = nullptr;
+		DictionaryObjectPtr _dictionary;
 		types::stream_offset _raw_data_offset = std::_BADOFF;
 
 	private:
@@ -39,7 +39,7 @@ namespace gotchangpdf
 		Type _type = Type::UNKNOWN;
 	};
 
-	typedef SmartPtr<StreamObject> StreamObjectPtr;
+	typedef Deferred<StreamObject> StreamObjectPtr;
 }
 
 #endif /* _STREAM_OBJECT_H */

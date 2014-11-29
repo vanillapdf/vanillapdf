@@ -2,27 +2,28 @@
 #define _NULL_OBJECT_H
 
 #include "object.h"
+#include "containerable.h"
 
 namespace gotchangpdf
 {
-	class NullObject : public Object
+	class NullObject : public Object, public ParentContainer<ContainerPtr>
 	{
 	public:
 		virtual inline Object::Type GetType(void) const override { return Object::Type::NullObject; }
 
-		static NullObject& GetInstance(void)
+		static Deferred<NullObject> GetInstance(void)
 		{
 			static NullObject instance;
 			return instance;
 		}
 
-	private:
+	public:
 		NullObject() = default;
-		NullObject(const NullObject&) = delete;
-		NullObject& operator=(const NullObject&) = delete;
+		NullObject(const NullObject&) = default;
+		NullObject& operator=(const NullObject&) = default;
 	};
 
-	typedef SmartPtr<NullObject> NullObjectPtr;
+	typedef Deferred<NullObject> NullObjectPtr;
 }
 
 #endif /* _NULL_OBJECT_H */
