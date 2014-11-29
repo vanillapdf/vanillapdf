@@ -16,7 +16,7 @@ namespace gotchangpdf
 			Parser(const Parser & other);
 
 			template<typename T>
-			Deferred<T> readObjectWithType() { return readObject().GetAs<T>(); }
+			Deferred<T> readObjectWithType() { return DirectObjectGetAs<T>(readObject()); }
 
 			//DirectObject readObjectWithType(Object::Type type);
 			DirectObject readObject();

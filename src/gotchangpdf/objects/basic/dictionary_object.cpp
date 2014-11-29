@@ -52,11 +52,14 @@ namespace gotchangpdf
 			auto name = s.readObjectWithType<NameObject>();
 			auto val = s.readObject();
 
-			if (val->GetType() == Object::Type::NullObject)
+			IsNullVisitor visitor;
+			//ObjectBaseVisitor base_visitor;
+			if (val.apply_visitor(visitor))
 				continue;
 
+			//auto base = val.apply_visitor(base_visitor);
 			o._list[*name] = val;
-			val->SetContainer(&o);
+			//base->SetContainer(&o);
 		}
 
 		s.ReadTokenWithType(Token::Type::DICTIONARY_END);

@@ -11,21 +11,4 @@ namespace std
 	};
 }
 
-namespace gotchangpdf
-{
-	template <typename T>
-	struct Hasher
-	{
-		unsigned long operator()(const T& t) const
-		{
-			return 0;
-		}
-
-		bool operator()(const T& first, const T& second) const
-		{
-			return true;
-		}
-	};
-}
-
-#endif /* _BIND_H */
+#endif /* _HASHER_H */

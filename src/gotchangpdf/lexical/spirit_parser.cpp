@@ -8,6 +8,7 @@
 #include "spirit_grammar.h"
 
 #include <iomanip>
+//#include <boost/variant/get.hpp>
 
 namespace gotchangpdf
 {
@@ -29,7 +30,7 @@ namespace gotchangpdf
 		{
 			SpiritLexer lexer;
 			SpiritGrammar grammar(lexer);
-			IntegerObjectPtr obj;
+			IndirectObjectPtr obj = IndirectObject(_file);
 
 			// Don't skip whitespace explicitly
 			noskipws(*this);
@@ -45,6 +46,11 @@ namespace gotchangpdf
 			{
 				auto result = lex::tokenize_and_parse(input_begin_pos, input_end_pos, lexer, grammar, obj);
 				if (result) {
+					//auto type = obj->GetObject().type();
+					auto which = obj->GetObject().which();
+					//auto aa = boost::get<DictionaryObjectPtr>(obj);
+					ObjectVisitor<DictionaryObject> visitor;
+					auto test = obj->GetObject().apply_visitor(visitor);
 					return NullObject::GetInstance();
 				}
 				else {

@@ -12,12 +12,20 @@ namespace gotchangpdf
 	class IsNullVisitor : public boost::static_visitor<bool>
 	{
 	public:
+
 		template <typename T>
-		bool operator()(T) const
+		bool operator()(T obj) const
 		{
-			return std::is_same<T, NullObject>::value;
+			return std::is_same<T, NullObjectPtr>::value;
 			//return (T == NullObject);
 		}
+
+		/*
+		bool operator()(DirectObject obj) const
+		{
+			return (obj.which() == 0);
+		}
+		*/
 	};
 
 	class ObjectBaseVisitor : public boost::static_visitor<SmartPtr<Object>>

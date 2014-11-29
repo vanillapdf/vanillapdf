@@ -34,32 +34,8 @@ namespace gotchangpdf
 			//static ObjectReferenceWrapper<HighLevelObject> Create(ObjectReferenceWrapper<Object> low_level);
 			virtual inline Type GetType(void) const = 0;
 
-			inline void SetContainer(DirectObject obj)
-			{
-				//DirectToBaseVisitor visitor;
-				//auto base = obj->apply_visitor(visitor);
-				_obj->SetContainer(obj);
-			}
-
-			inline DirectObject GetContainer() const
-			{
-				return _obj->GetContainer();
-				/*
-				auto container = _obj->GetContainer();
-				auto type = container->GetType();
-				switch (type)
-				{
-				case gotchangpdf::Object::Type::ArrayObject:
-					return MixedArrayObjectPtr(*container.GetAs<MixedArrayObject>());
-				case gotchangpdf::Object::Type::DictionaryObject:
-					return DictionaryObjectPtr(*container.GetAs<DictionaryObject>());
-				case gotchangpdf::Object::Type::StreamObject:
-					return StreamObjectPtr(*container.GetAs<StreamObject>());
-				default:
-					throw exceptions::Exception("TODO");
-				}
-				*/
-			}
+			inline void SetContainer(DirectObject obj) { _obj->SetContainer(obj); }
+			inline DirectObject GetContainer() const { return _obj->GetContainer(); }
 
 			inline void Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
 

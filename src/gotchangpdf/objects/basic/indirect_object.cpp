@@ -2,6 +2,7 @@
 
 #include "file.h"
 #include "spirit_parser.h"
+#include "object_visitors.h"
 
 #include "c_indirect_object.h"
 
@@ -29,8 +30,8 @@ namespace gotchangpdf
 	DirectObject IndirectObject::GetObject() const
 	{
 		IsNullVisitor visitor;
-		auto has_value = _reference.apply_visitor(visitor);
-		if (!has_value)
+		auto is_null = _reference.apply_visitor(visitor);
+		if (is_null)
 		{
 			auto stream = _file->GetInputStream();
 			if (auto locked = stream.lock())
