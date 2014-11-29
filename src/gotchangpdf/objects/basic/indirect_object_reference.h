@@ -43,8 +43,6 @@ namespace gotchangpdf
 		mutable Deferred<IndirectObject> _reference;
 	};
 
-	typedef Deferred<IndirectObjectReference> IndirectObjectReferencePtr;
-
 	template <typename T>
 	const T IndirectObjectReference::GetReferencedObjectAs() const
 	{

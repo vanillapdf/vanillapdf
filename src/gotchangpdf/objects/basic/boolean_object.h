@@ -15,8 +15,6 @@ namespace gotchangpdf
 	public:
 		bool _value = false;
 	};
-
-	typedef Deferred<BooleanObject> BooleanObjectPtr;
 }
 
 #endif /* _BOOLEAN_OBJECT_H */

@@ -26,8 +26,6 @@ namespace gotchangpdf
 	public:
 		types::real _value = 0;
 	};
-
-	typedef Deferred<RealObject> RealObjectPtr;
 }
 
 #endif /* _REAL_OBJECT_H */

@@ -38,8 +38,6 @@ namespace gotchangpdf
 		value_type _value = 0;
 	};
 
-	typedef Deferred<IntegerObject> IntegerObjectPtr;
-
 	inline  Object::Type IntegerObject::GetType(void) const { return Object::Type::IntegerObject; }
 }
 

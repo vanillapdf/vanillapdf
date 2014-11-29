@@ -96,8 +96,6 @@ namespace gotchangpdf
 
 		return obj.apply_visitor(visitor);
 	}
-
-	typedef Deferred<IndirectObject> IndirectObjectPtr;
 }
 
 #endif /* _INDIRECT_OBJECT_H */

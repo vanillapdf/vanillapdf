@@ -47,8 +47,6 @@ namespace gotchangpdf
 		value_type _value;
 	};
 
-	typedef Deferred<NameObject> NameObjectPtr;
-
 	inline bool NameObject::operator==(const NameObject& other) const
 	{
 		return Equals(other);

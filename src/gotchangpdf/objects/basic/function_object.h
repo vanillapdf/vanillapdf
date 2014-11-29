@@ -13,8 +13,6 @@ namespace gotchangpdf
 
 	private:
 	};
-
-	typedef Deferred<FunctionObject> FunctionObjectPtr;
 }
 
 #endif /* _FUNCTION_OBJECT_H */

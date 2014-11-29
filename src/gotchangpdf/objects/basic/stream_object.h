@@ -38,8 +38,6 @@ namespace gotchangpdf
 		Buffer _data;
 		Type _type = Type::UNKNOWN;
 	};
-
-	typedef Deferred<StreamObject> StreamObjectPtr;
 }
 
 #endif /* _STREAM_OBJECT_H */

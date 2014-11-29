@@ -41,9 +41,6 @@ namespace gotchangpdf
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::LiteralString; }
 	};
-
-	typedef Deferred<LiteralString> LiteralStringPtr;
-	typedef Deferred<HexadecimalString> HexadecimalStringPtr;
 }
 
 #endif /* _STRING_OBJECT_H */

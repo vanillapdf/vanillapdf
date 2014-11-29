@@ -22,8 +22,6 @@ namespace gotchangpdf
 		NullObject(const NullObject&) = default;
 		NullObject& operator=(const NullObject&) = default;
 	};
-
-	typedef Deferred<NullObject> NullObjectPtr;
 }
 
 #endif /* _NULL_OBJECT_H */

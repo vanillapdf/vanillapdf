@@ -82,6 +82,18 @@ namespace gotchangpdf
 	class Buffer;
 
 	typedef Deferred<NameObject> NameObjectPtr;
+	typedef Deferred<DictionaryObject> DictionaryObjectPtr;
+	typedef Deferred<MixedArrayObject> MixedArrayObjectPtr;
+	typedef Deferred<BooleanObject> BooleanObjectPtr;
+	typedef Deferred<FunctionObject> FunctionObjectPtr;
+	typedef Deferred<IndirectObject> IndirectObjectPtr;
+	typedef Deferred<IndirectObjectReference> IndirectObjectReferencePtr;
+	typedef Deferred<IntegerObject> IntegerObjectPtr;
+	typedef Deferred<NullObject> NullObjectPtr;
+	typedef Deferred<RealObject> RealObjectPtr;
+	typedef Deferred<StreamObject> StreamObjectPtr;
+	typedef Deferred<LiteralString> LiteralStringPtr;
+	typedef Deferred<HexadecimalString> HexadecimalStringPtr;
 }
 
 #endif /* _FWD_H */

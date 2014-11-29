@@ -83,8 +83,6 @@ namespace gotchangpdf
 			});
 		}
 	};
-
-	typedef Deferred<MixedArrayObject> MixedArrayObjectPtr;
 }
 
 #endif /* _ARRAY_OBJECT_H */
