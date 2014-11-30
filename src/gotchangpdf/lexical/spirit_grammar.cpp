@@ -3,6 +3,42 @@
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/spirit/repository/include/qi_iter_pos.hpp>
 
+//#include <boost/spirit/include/qi.hpp>
+
+namespace qi = boost::spirit::qi;
+namespace phx = boost::phoenix;
+
+namespace boost {
+	namespace spirit {
+		namespace traits
+		{
+			template <>
+			struct transform_attribute<gotchangpdf::IntegerObjectPtr, gotchangpdf::types::integer, qi::domain>
+			{
+				//typedef int type;
+				static int pre(gotchangpdf::types::integer& d) { return 0; }//not useful in this case but required to avoid compiler errors
+				static void post(gotchangpdf::types::integer& val, gotchangpdf::IntegerObjectPtr const& attr) //`val` is the "returned" string, `attr` is what int_ parses
+				{
+					val = attr->Value();
+				}
+				static void fail(gotchangpdf::types::integer&) {}
+			};
+
+			template <>
+			struct transform_attribute<gotchangpdf::IntegerObjectPtr, gotchangpdf::types::ushort, qi::domain>
+			{
+				//typedef int type;
+				static int pre(gotchangpdf::types::ushort& d) { return 0; }//not useful in this case but required to avoid compiler errors
+				static void post(gotchangpdf::types::ushort& val, gotchangpdf::IntegerObjectPtr const& attr) //`val` is the "returned" string, `attr` is what int_ parses
+				{
+					val = attr->Value();
+				}
+				static void fail(gotchangpdf::types::ushort&) {}
+			};
+		}
+	}
+}
+
 namespace gotchangpdf
 {
 	namespace lexical
@@ -29,7 +65,7 @@ namespace gotchangpdf
 
 			auto eol =
 				-lexer.carriage_return
-				>> lexer.line_feed;
+				> lexer.line_feed;
 			/*
 			auto true_ = boost::spirit::qi::as<ast::True>()[(
 				qi::eps
@@ -81,7 +117,7 @@ namespace gotchangpdf
 				>> lexer.space
 				>> integer_object
 				>> lexer.space
-				>> qi::omit[lexer.regular_character]; // TODO 'R'
+				>> lexer.indirect_reference_marker;
 
 			integer_object %=
 				qi::eps
@@ -94,7 +130,7 @@ namespace gotchangpdf
 			name_object %=
 				qi::eps
 				>> lexer.solidus
-				> *lexer.regular_character;
+				>> lexer.regular_characters;
 			/*
 			name_object_dereferenced %=
 				qi::eps
@@ -111,16 +147,16 @@ namespace gotchangpdf
 
 			array_object %=
 				lexer.left_bracket
-				> -whitespaces
-				> *(direct_object >> -whitespaces)
-				> -whitespaces
+				> whitespaces
+				> *(direct_object > whitespaces)
+				> whitespaces
 				> lexer.right_bracket;
 
 			dictionary_object %=
 				lexer.dictionary_begin
-				> -whitespaces
-				> *(name_object >> -whitespaces >> direct_object >> -whitespaces)
-				> -whitespaces
+				> whitespaces
+				> *(name_object > whitespaces > direct_object > whitespaces)
+				> whitespaces
 				> lexer.dictionary_end;
 
 			/*
@@ -137,7 +173,6 @@ namespace gotchangpdf
 				>> lexer.right_parenthesis;
 				*/
 
-			/*
 			BOOST_SPIRIT_DEBUG_NODE(boolean_object);
 			BOOST_SPIRIT_DEBUG_NODE(indirect_object);
 			BOOST_SPIRIT_DEBUG_NODE(direct_object);
@@ -146,7 +181,7 @@ namespace gotchangpdf
 			BOOST_SPIRIT_DEBUG_NODE(name_object);
 			BOOST_SPIRIT_DEBUG_NODE(array_object);
 			BOOST_SPIRIT_DEBUG_NODE(dictionary_object);
-			*/
 		}
 	}
 }
+

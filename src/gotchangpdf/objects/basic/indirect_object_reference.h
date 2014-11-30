@@ -28,15 +28,15 @@ namespace gotchangpdf
 
 		virtual Object::Type GetType(void) const override;
 
-		void SetObjectNumber(types::integer number);
-		types::integer GetObjectNumber() const;
+		void SetObjectNumber(IntegerObjectPtr number);
+		IntegerObjectPtr GetObjectNumber() const;
 
-		void SetGenerationNumber(types::ushort number);
-		types::ushort GetGenerationNumber() const;
+		void SetGenerationNumber(IntegerObjectPtr number);
+		IntegerObjectPtr GetGenerationNumber() const;
 
 	public:
-		types::integer _obj_number = -1;
-		types::ushort _gen_number = -1;
+		IntegerObjectPtr _obj_number = 0;
+		IntegerObjectPtr _gen_number = 0;
 
 	private:
 		files::File * _file;
@@ -59,22 +59,22 @@ namespace gotchangpdf
 		return GetReferencedObject();
 	}
 
-	inline void IndirectObjectReference::SetObjectNumber(types::integer number)
+	inline void IndirectObjectReference::SetObjectNumber(IntegerObjectPtr number)
 	{
 		_obj_number = number;
 	}
 
-	inline types::integer IndirectObjectReference::GetObjectNumber() const
+	inline IntegerObjectPtr IndirectObjectReference::GetObjectNumber() const
 	{
 		return _obj_number;
 	}
 
-	inline void IndirectObjectReference::SetGenerationNumber(types::ushort number)
+	inline void IndirectObjectReference::SetGenerationNumber(IntegerObjectPtr number)
 	{
 		_gen_number = number;
 	}
 
-	inline types::ushort IndirectObjectReference::GetGenerationNumber() const
+	inline IntegerObjectPtr IndirectObjectReference::GetGenerationNumber() const
 	{
 		return _gen_number;
 	}

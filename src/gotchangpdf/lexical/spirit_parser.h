@@ -15,12 +15,12 @@ namespace gotchangpdf
 			SpiritParser(files::File * file, CharacterSource & stream);
 			SpiritParser(const Parser & other);
 
-			template<typename T>
-			Deferred<T> readObjectWithType() { return DirectObjectGetAs<T>(readObject()); }
+			//template<typename T>
+			//Deferred<T> readObjectWithType() { return DirectObjectGetAs<T>(readObject()); }
 
 			//DirectObject readObjectWithType(Object::Type type);
-			DirectObject readObject();
-			DirectObject peekObject();
+			IndirectObjectPtr readObject();
+			IndirectObjectPtr peekObject();
 
 			files::File * file(void) const;
 			//void SetDeep(bool deep);

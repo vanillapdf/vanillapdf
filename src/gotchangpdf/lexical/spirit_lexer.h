@@ -79,12 +79,12 @@ namespace gotchangpdf
 			/* whitespace */
 			ConsumedToken line_feed, space, carriage_return, null, horizontal_tab, form_feed;
 			
-			//ConsumedToken indirect_reference_marker;
+			ConsumedToken indirect_reference_marker;
 			//ConsumedToken dot;
 
 			ConsumedToken dictionary_begin, dictionary_end;
 			//CharToken plus, minus;
-			CharToken regular_character;
+			StringToken regular_characters;
 			IntegerToken integer;
 			FloatToken float_;
 		};

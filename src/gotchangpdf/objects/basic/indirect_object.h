@@ -29,11 +29,11 @@ namespace gotchangpdf
 		void SetOffset(types::stream_offset offset);
 		types::stream_offset GetOffset() const;
 
-		void SetObjectNumber(types::integer number);
-		types::integer GetObjectNumber() const;
+		void SetObjectNumber(IntegerObjectPtr number);
+		IntegerObjectPtr GetObjectNumber() const;
 
-		void SetGenerationNumber(types::ushort number);
-		types::ushort GetGenerationNumber() const;
+		void SetGenerationNumber(IntegerObjectPtr number);
+		IntegerObjectPtr GetGenerationNumber() const;
 
 		virtual Object::Type GetType(void) const override;
 
@@ -42,8 +42,8 @@ namespace gotchangpdf
 		//virtual streamOffsetValueType GetOffset() const override;
 
 	public:
-		types::integer _obj_number = 0;
-		types::ushort _gen_number = 0;
+		IntegerObjectPtr _obj_number;
+		IntegerObjectPtr _gen_number;
 		types::stream_offset _offset = std::_BADOFF;
 		mutable DirectObject _reference = NullObject::GetInstance();
 		//mutable boost::optional<DirectObject> _reference;
@@ -63,22 +63,22 @@ namespace gotchangpdf
 		return _offset;
 	}
 
-	inline void IndirectObject::SetObjectNumber(types::integer number)
+	inline void IndirectObject::SetObjectNumber(IntegerObjectPtr number)
 	{
 		_obj_number = number;
 	}
 
-	inline types::integer IndirectObject::GetObjectNumber() const
+	inline IntegerObjectPtr IndirectObject::GetObjectNumber() const
 	{
 		return _obj_number;
 	}
 
-	inline void IndirectObject::SetGenerationNumber(types::ushort number)
+	inline void IndirectObject::SetGenerationNumber(IntegerObjectPtr number)
 	{
 		_gen_number = number;
 	}
 
-	inline types::ushort IndirectObject::GetGenerationNumber() const
+	inline IntegerObjectPtr IndirectObject::GetGenerationNumber() const
 	{
 		return _gen_number;
 	}

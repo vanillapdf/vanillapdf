@@ -26,7 +26,7 @@ namespace gotchangpdf
 		SpiritParser::SpiritParser(const gotchangpdf::lexical::Parser &other)
 			: lexical::Stream(other) { _file = other.file(); }
 
-		DirectObject SpiritParser::readObject()
+		IndirectObjectPtr SpiritParser::readObject()
 		{
 			SpiritLexer lexer;
 			SpiritGrammar grammar(lexer);
@@ -46,12 +46,7 @@ namespace gotchangpdf
 			{
 				auto result = lex::tokenize_and_parse(input_begin_pos, input_end_pos, lexer, grammar, obj);
 				if (result) {
-					//auto type = obj->GetObject().type();
-					auto which = obj->GetObject().which();
-					//auto aa = boost::get<DictionaryObjectPtr>(obj);
-					ObjectVisitor<DictionaryObject> visitor;
-					auto test = obj->GetObject().apply_visitor(visitor);
-					return NullObject::GetInstance();
+					return obj;
 				}
 				else {
 					auto offset = tellg();
@@ -62,7 +57,7 @@ namespace gotchangpdf
 						"'" << input_begin_pos.get_currentline() << "'" << endl <<
 						setw(pos.column + 8) << " ^- here" << endl;
 
-					return NullObject::GetInstance();
+					throw exceptions::Exception("Parsing failed");
 				}
 			}
 			catch (const qi::expectation_failure<lexer_type::iterator_type>& exception) {
@@ -76,13 +71,11 @@ namespace gotchangpdf
 					"'" << pos_begin.get_currentline() << "'" << endl <<
 					setw(pos.column + 8) << " ^- here" << endl;
 
-				return NullObject::GetInstance();
+				throw;
 			}
-
-			return NullObject::GetInstance();
 		}
 
-		DirectObject SpiritParser::peekObject()
+		IndirectObjectPtr SpiritParser::peekObject()
 		{
 			/*
 			auto position = tellg();
@@ -91,7 +84,7 @@ namespace gotchangpdf
 
 			return obj;
 			*/
-			return NullObject::GetInstance();
+			return IndirectObjectPtr();
 		}
 		/*
 		Deferred<gotchangpdf::Object> SpiritParser::readObjectWithType(gotchangpdf::Object::Type type)

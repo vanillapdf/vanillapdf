@@ -40,9 +40,9 @@ namespace gotchangpdf
 			dictionary_begin = "<<";
 			dictionary_end = ">>";
 
-			//indirect_reference_marker = 'R';
+			indirect_reference_marker = 'R';
 
-			regular_character = "[a-zA-Z]";
+			regular_characters = "[a-zA-Z]+";
 
 			//plus = '+';
 			//minus = '-';
@@ -59,18 +59,18 @@ namespace gotchangpdf
 			//this->self += name_object_value;
 
 			this->self += true_ | false_;
-			this->self += integer | float_;
 			this->self += obj | endobj;
+			this->self += dictionary_begin | dictionary_end;
+			this->self += line_feed | space | carriage_return | null | horizontal_tab | form_feed;
+			this->self += less_than_sign | greater_than_sign | left_bracket | right_bracket | left_parenthesis | right_parenthesis | left_curly_bracket | right_curly_bracket | solidus | percent_sign;
 
-			this->self += regular_character;
+			this->self += indirect_reference_marker;
+
+			this->self += regular_characters;
+			this->self += integer | float_;
 
 			//this->self += indirect_reference_marker;
 			//this->self += dot;
-
-			this->self += line_feed | space | carriage_return | null | horizontal_tab | form_feed;
-
-			this->self += less_than_sign | greater_than_sign | left_bracket | right_bracket | left_parenthesis | right_parenthesis | left_curly_bracket | right_curly_bracket | solidus | percent_sign;
-			this->self += dictionary_begin | dictionary_end;
 
 			//this->self("WS") = line_feed | space | carriage_return | null | horizontal_tab | form_feed;
 

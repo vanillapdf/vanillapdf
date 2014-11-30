@@ -9,7 +9,7 @@
 //#include <boost/fusion/include/adapt_struct.hpp
 #include <boost/fusion/adapted/struct/adapt_struct.hpp>
 #include <boost/fusion/include/std_pair.hpp>
-
+/*
 namespace gotchangpdf
 {
 	namespace lexical
@@ -28,7 +28,7 @@ namespace gotchangpdf
 		}
 	}
 }
-
+*/
 BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::DirectObject, /**/)
 BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::StringObjectPtr, /**/)
 BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::FunctionObjectPtr, /**/)
@@ -66,8 +66,8 @@ gotchangpdf::DictionaryObjectPtr,
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::IndirectObjectReferencePtr,
-(gotchangpdf::types::integer, Content->_obj_number)
-(gotchangpdf::types::ushort, Content->_gen_number)
+(gotchangpdf::IntegerObjectPtr, Content->_obj_number)
+(gotchangpdf::IntegerObjectPtr, Content->_gen_number)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
@@ -93,8 +93,8 @@ gotchangpdf::HexadecimalStringPtr,
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::IndirectObjectPtr,
-(gotchangpdf::types::integer, Content->_obj_number)
-(gotchangpdf::types::ushort, Content->_gen_number)
+(gotchangpdf::IntegerObjectPtr, Content->_obj_number)
+(gotchangpdf::IntegerObjectPtr, Content->_gen_number)
 (gotchangpdf::DirectObject, Content->_reference)
 )
 
