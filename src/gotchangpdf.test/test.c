@@ -227,6 +227,7 @@ int main(int argc, char *argv[])
 		process((ObjectHandle)indirect, 0);
 		IndirectObject_Release(indirect);
 	}
+	/*
 	catalog = File_GetDocumentCatalog(file);
 	printf("Document catalog begin\n");
 
@@ -243,7 +244,7 @@ int main(int argc, char *argv[])
 	PageTree_Release(pages);
 
 	printf("Document catalog end\n");
-
+	*/
 	Xref_Release(xref);
 	File_Release(file);
 

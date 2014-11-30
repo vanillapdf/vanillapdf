@@ -45,6 +45,7 @@ namespace gotchangpdf
 		IntegerObjectPtr _obj_number;
 		IntegerObjectPtr _gen_number;
 		types::stream_offset _offset = std::_BADOFF;
+
 		mutable DirectObject _reference = NullObject::GetInstance();
 		//mutable boost::optional<DirectObject> _reference;
 

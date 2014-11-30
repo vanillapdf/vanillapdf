@@ -9,14 +9,16 @@
 #include <utility>
 #include <stack>
 
-#include <boost/spirit/include/classic_position_iterator.hpp>
+#include <boost/spirit/include/qi.hpp>
+
 #include <boost/spirit/include/lex_lexertl.hpp>
 #include <boost/spirit/include/lex_static_lexertl.hpp>
+
+#include <boost/spirit/include/classic_position_iterator.hpp>
 #include <boost/spirit/include/classic_core.hpp>
 #include <boost/spirit/include/classic_functor_parser.hpp>
 #include <boost/spirit/include/classic_attribute.hpp>
 #include <boost/spirit/include/classic_symbols.hpp>
-#include <boost/spirit/include/qi.hpp>
 
 #ifdef USE_STATIC_LEXER
 #include "static_lexer.hpp"
@@ -84,7 +86,7 @@ namespace gotchangpdf
 
 			ConsumedToken dictionary_begin, dictionary_end;
 			//CharToken plus, minus;
-			StringToken regular_characters;
+			StringToken word, literal_text, parenthesed_string;
 			IntegerToken integer;
 			FloatToken float_;
 		};

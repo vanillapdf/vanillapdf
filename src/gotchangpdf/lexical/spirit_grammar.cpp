@@ -35,9 +35,29 @@ namespace boost {
 				}
 				static void fail(gotchangpdf::types::ushort&) {}
 			};
+
+			template <>
+			struct transform_attribute<gotchangpdf::lexical::base_iterator_type, gotchangpdf::types::stream_offset, qi::domain>
+			{
+				//typedef int type;
+				static int pre(gotchangpdf::types::stream_offset& d) { return 0; }//not useful in this case but required to avoid compiler errors
+				static void post(gotchangpdf::types::stream_offset& val, gotchangpdf::lexical::pos_iterator_type const& attr) //`val` is the "returned" string, `attr` is what int_ parses
+				{
+					val = 0;
+				}
+				static void fail(gotchangpdf::types::stream_offset&) {}
+			};
 		}
 	}
 }
+
+#define BOOST_SPIRIT_AUTO(domain_, name, expr)                                  \
+	typedef boost::proto::result_of::                                           \
+	deep_copy<BOOST_TYPEOF(expr)>::type name##_expr_type;                   \
+	BOOST_SPIRIT_ASSERT_MATCH(\
+	boost::spirit::domain_::domain, name##_expr_type);                      \
+	BOOST_AUTO(name, boost::proto::deep_copy(expr));                            \
+
 
 namespace gotchangpdf
 {
@@ -46,12 +66,12 @@ namespace gotchangpdf
 		namespace repo = boost::spirit::repository;
 
 		SpiritGrammar::SpiritGrammar(const lexical::SpiritLexer& lexer) :
-			base_type(indirect_object, "Grammar")
+			base_type(indirect_object, "Indirect object grammar")
 		{
 			//auto local_begin = qi::lazy(boost::phoenix::construct<qi::position>(qi::_a, qi::_b));
 			//start %= qi::eps[qi::_a = qi::_r1, qi::_b = qi::_r2] >> indirect_object;
 			//start %= qi::eps [qi::_a = qi::_r1] >> boolean_object;
-
+			/*
 			auto whitespace =
 				lexer.space
 				| lexer.carriage_return
@@ -65,7 +85,19 @@ namespace gotchangpdf
 
 			auto eol =
 				-lexer.carriage_return
-				> lexer.line_feed;
+				>> lexer.line_feed;
+				*/
+
+			BOOST_SPIRIT_AUTO(qi, whitespace, lexer.space
+				| lexer.carriage_return
+				| lexer.line_feed
+				| lexer.form_feed
+				| lexer.horizontal_tab
+				| lexer.null);
+
+			BOOST_SPIRIT_AUTO(qi, whitespaces, *whitespace);
+			BOOST_SPIRIT_AUTO(qi, eol, -lexer.carriage_return >> lexer.line_feed);
+
 			/*
 			auto true_ = boost::spirit::qi::as<ast::True>()[(
 				qi::eps
@@ -88,10 +120,11 @@ namespace gotchangpdf
 				>> integer_object
 				>> lexer.space
 				>> lexer.obj
+				//>> qi::attr_cast(repo::qi::iter_pos)
 				>> eol
-				>> direct_object
-				>> eol
-				>> lexer.endobj;
+				>> direct_object;
+				//>> eol
+				//>> lexer.endobj;
 
 			/*
 			string_object =
@@ -102,15 +135,15 @@ namespace gotchangpdf
 			direct_object =
 				array_object
 				//| boolean_object
+				| stream_object
 				| dictionary_object
 				//| function_object
 				| indirect_reference_object
 				| integer_object
-				| name_object;
+				| name_object
 				//| null_object
 				//| real_object
-				//| stream_object
-				//| string_object;
+				| literal_string_object;
 
 			indirect_reference_object %=
 				integer_object
@@ -130,7 +163,7 @@ namespace gotchangpdf
 			name_object %=
 				qi::eps
 				>> lexer.solidus
-				>> lexer.regular_characters;
+				>> lexer.word;
 			/*
 			name_object_dereferenced %=
 				qi::eps
@@ -159,20 +192,23 @@ namespace gotchangpdf
 				> whitespaces
 				> lexer.dictionary_end;
 
-			/*
 			stream_object %=
 				dictionary_object
+				>> whitespaces
 				>> lexer.stream_begin
-				>> repo::qi::iter_pos;
-				*/
-			// TODO
-			/*
-			literal_string_object %=
-				lexer.left_parenthesis
-				>> lexer.anything
-				>> lexer.right_parenthesis;
-				*/
+				> eol;
+				//> repo::qi::iter_pos;
+				//> lexer.anything // skip length
+				//> lexer.stream_end;
 
+			literal_string_object %=
+				qi::eps
+				>> lexer.parenthesed_string;
+			/*
+				lexer.left_parenthesis
+				> (lexer.word | lexer.literal_text)
+				> lexer.right_parenthesis;
+				*/
 			BOOST_SPIRIT_DEBUG_NODE(boolean_object);
 			BOOST_SPIRIT_DEBUG_NODE(indirect_object);
 			BOOST_SPIRIT_DEBUG_NODE(direct_object);
@@ -181,6 +217,7 @@ namespace gotchangpdf
 			BOOST_SPIRIT_DEBUG_NODE(name_object);
 			BOOST_SPIRIT_DEBUG_NODE(array_object);
 			BOOST_SPIRIT_DEBUG_NODE(dictionary_object);
+			BOOST_SPIRIT_DEBUG_NODE(literal_string_object);
 		}
 	}
 }

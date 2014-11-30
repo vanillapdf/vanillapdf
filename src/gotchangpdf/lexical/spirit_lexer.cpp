@@ -42,16 +42,19 @@ namespace gotchangpdf
 
 			indirect_reference_marker = 'R';
 
-			regular_characters = "[a-zA-Z]+";
+			word = "[0-9a-zA-Z+,]+";
 
 			//plus = '+';
 			//minus = '-';
 			//dot = '.';
 
 			float_ = "[0-9]+\".\"[0-9]+";
-			integer = "[0-9]+";
+			integer = "(\\+|-)?[0-9]+";
 
-			anything = ".*";
+			//anything = ".*";
+			//literal_text = "[0-9a-zA-Z:./ ]+";
+			parenthesed_string = "\\([0-9a-zA-Z:./ ]+\\)";
+			//parenthesed_string = "a" | "b";
 
 			//this->self += anything;
 
@@ -61,13 +64,15 @@ namespace gotchangpdf
 			this->self += true_ | false_;
 			this->self += obj | endobj;
 			this->self += dictionary_begin | dictionary_end;
+			this->self += stream_begin | stream_end;
 			this->self += line_feed | space | carriage_return | null | horizontal_tab | form_feed;
 			this->self += less_than_sign | greater_than_sign | left_bracket | right_bracket | left_parenthesis | right_parenthesis | left_curly_bracket | right_curly_bracket | solidus | percent_sign;
 
 			this->self += indirect_reference_marker;
 
-			this->self += regular_characters;
 			this->self += integer | float_;
+			this->self += word;
+			this->self += parenthesed_string;
 
 			//this->self += indirect_reference_marker;
 			//this->self += dot;

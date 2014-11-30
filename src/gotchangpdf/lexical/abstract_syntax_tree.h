@@ -77,7 +77,7 @@ gotchangpdf::RealObjectPtr,
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::StreamObjectPtr,
-(gotchangpdf::DictionaryObject::value_type, Content->_dictionary)
+(gotchangpdf::DictionaryObjectPtr, Content->_dictionary)
 (gotchangpdf::types::stream_offset, Content->_raw_data_offset)
 )
 
@@ -95,6 +95,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::IndirectObjectPtr,
 (gotchangpdf::IntegerObjectPtr, Content->_obj_number)
 (gotchangpdf::IntegerObjectPtr, Content->_gen_number)
+//(gotchangpdf::types::stream_offset, Content->_offset)
 (gotchangpdf::DirectObject, Content->_reference)
 )
 

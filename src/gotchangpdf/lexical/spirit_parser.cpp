@@ -31,6 +31,7 @@ namespace gotchangpdf
 			SpiritLexer lexer;
 			SpiritGrammar grammar(lexer);
 			IndirectObjectPtr obj = IndirectObject(_file);
+			obj->SetOffset(tellg());
 
 			// Don't skip whitespace explicitly
 			noskipws(*this);
@@ -46,6 +47,12 @@ namespace gotchangpdf
 			{
 				auto result = lex::tokenize_and_parse(input_begin_pos, input_end_pos, lexer, grammar, obj);
 				if (result) {
+					auto direct = obj->GetObject();
+					if (9 == direct.which()) {
+						ObjectVisitor<StreamObject> visitor;
+						auto stream = direct.apply_visitor(visitor);
+						stream._raw_data_offset = tellg();
+					}
 					return obj;
 				}
 				else {
@@ -55,7 +62,7 @@ namespace gotchangpdf
 					cout <<
 						"Error at file " << pos.file << " offset " << offset << endl <<
 						"'" << input_begin_pos.get_currentline() << "'" << endl <<
-						setw(pos.column + 8) << " ^- here" << endl;
+						setw(pos.column + 7) << " ^- here" << endl;
 
 					throw exceptions::Exception("Parsing failed");
 				}
@@ -69,7 +76,7 @@ namespace gotchangpdf
 				cout <<
 					"Error at file " << pos.file << " offset " << offset << " Expecting " << exception.what_ << endl <<
 					"'" << pos_begin.get_currentline() << "'" << endl <<
-					setw(pos.column + 8) << " ^- here" << endl;
+					setw(pos.column + 7) << " ^- here" << endl;
 
 				throw;
 			}
