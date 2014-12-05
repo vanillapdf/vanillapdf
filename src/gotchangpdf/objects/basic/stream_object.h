@@ -34,8 +34,11 @@ namespace gotchangpdf
 		DictionaryObjectPtr _dictionary;
 		types::stream_offset _raw_data_offset = std::_BADOFF;
 
+		// TEMP
+		void ReadData(raw::Stream stream) const;
+
 	private:
-		Buffer _data;
+		mutable Buffer _data;
 		Type _type = Type::UNKNOWN;
 	};
 }

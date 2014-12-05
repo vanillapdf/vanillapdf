@@ -58,6 +58,30 @@ namespace boost {
 	boost::spirit::domain_::domain, name##_expr_type);                      \
 	BOOST_AUTO(name, boost::proto::deep_copy(expr));                            \
 
+void test(gotchangpdf::IndirectObjectReferencePtr obj, gotchangpdf::files::File* file)
+{
+	obj->SetFile(file);
+}
+
+typedef
+boost::spirit::context<
+boost::fusion::cons<gotchangpdf::IndirectObjectPtr&, boost::fusion::nil>,
+boost::fusion::vector1<int>
+> f_context;
+void f(gotchangpdf::IntegerObjectPtr attribute, const f_context& con, bool& mFlag){
+	std::cout << "matched integer: '" << attribute << "'" << std::endl
+		<< "match flag: " << mFlag << std::endl;
+
+	//assign output attribute from parsed value    
+	auto test = qi::_a;
+	auto bb = boost::phoenix::at_c<0>(con.locals);
+	auto ee = boost::fusion::at_c<0>(con.locals);
+}
+
+void print(gotchangpdf::IndirectObjectReferencePtr const& obj)
+{
+	std::cout << "Obj: " << obj->GetObjectNumber()->Value() << "Gen: " << obj->GetGenerationNumber()->Value() << std::endl;
+}
 
 namespace gotchangpdf
 {
@@ -69,24 +93,7 @@ namespace gotchangpdf
 			base_type(indirect_object, "Indirect object grammar")
 		{
 			//auto local_begin = qi::lazy(boost::phoenix::construct<qi::position>(qi::_a, qi::_b));
-			//start %= qi::eps[qi::_a = qi::_r1, qi::_b = qi::_r2] >> indirect_object;
-			//start %= qi::eps [qi::_a = qi::_r1] >> boolean_object;
-			/*
-			auto whitespace =
-				lexer.space
-				| lexer.carriage_return
-				| lexer.line_feed
-				| lexer.form_feed
-				| lexer.horizontal_tab
-				| lexer.null;
-
-			auto whitespaces =
-				*whitespace;
-
-			auto eol =
-				-lexer.carriage_return
-				>> lexer.line_feed;
-				*/
+			//start %= indirect_object;
 
 			BOOST_SPIRIT_AUTO(qi, whitespace, lexer.space
 				| lexer.carriage_return
@@ -122,7 +129,7 @@ namespace gotchangpdf
 				>> lexer.obj
 				//>> qi::attr_cast(repo::qi::iter_pos)
 				>> eol
-				>> direct_object;
+				>> direct_object(qi::_r1);
 				//>> eol
 				//>> lexer.endobj;
 
@@ -132,17 +139,17 @@ namespace gotchangpdf
 				| hexadecimal_string_object;
 				*/
 
-			direct_object =
-				array_object
-				//| boolean_object
-				| stream_object
-				| dictionary_object
-				//| function_object
-				| indirect_reference_object
+			direct_object %=
+				array_object(qi::_r1)
+				//| boolean_object(qi::_r1)
+				| stream_object(qi::_r1)
+				| dictionary_object(qi::_r1)
+				//| function_object(qi::_r1)
+				| indirect_reference_object[boost::phoenix::bind(&test, qi::_1, qi::_r1)]
 				| integer_object
 				| name_object
-				//| null_object
-				//| real_object
+				//| null_object(qi::_r1)
+				//| real_object(qi::_r1)
 				| literal_string_object;
 
 			indirect_reference_object %=
@@ -181,19 +188,19 @@ namespace gotchangpdf
 			array_object %=
 				lexer.left_bracket
 				> whitespaces
-				> *(direct_object > whitespaces)
+				> *(direct_object(qi::_r1) > whitespaces)
 				> whitespaces
 				> lexer.right_bracket;
 
 			dictionary_object %=
 				lexer.dictionary_begin
 				> whitespaces
-				> *(name_object > whitespaces > direct_object > whitespaces)
+				> *(name_object > whitespaces > direct_object(qi::_r1) > whitespaces)
 				> whitespaces
 				> lexer.dictionary_end;
 
 			stream_object %=
-				dictionary_object
+				dictionary_object(qi::_r1)
 				>> whitespaces
 				>> lexer.stream_begin
 				> eol;

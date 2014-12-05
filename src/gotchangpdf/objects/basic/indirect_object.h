@@ -9,14 +9,12 @@
 #include "deferred.h"
 #include "version.h"
 
-//#include <boost/optional.hpp>
-
 namespace gotchangpdf
 {
 	class IndirectObject : public Object, public RequireVersion<Version::PDF12>
 	{
 	public:
-		IndirectObject() = default;
+		explicit IndirectObject() = default;
 		explicit IndirectObject(files::File * file);
 		IndirectObject(const IndirectObject& other);
 
@@ -35,6 +33,9 @@ namespace gotchangpdf
 		void SetGenerationNumber(IntegerObjectPtr number);
 		IntegerObjectPtr GetGenerationNumber() const;
 
+		void SetFile(files::File *file);
+		files::File* GetFile() const;
+
 		virtual Object::Type GetType(void) const override;
 
 		/* IIndirectObject */
@@ -46,11 +47,12 @@ namespace gotchangpdf
 		IntegerObjectPtr _gen_number;
 		types::stream_offset _offset = std::_BADOFF;
 
+		files::File * _file = nullptr;
+
 		mutable DirectObject _reference = NullObject::GetInstance();
 		//mutable boost::optional<DirectObject> _reference;
 
 	private:
-		files::File * _file = nullptr;
 		//mutable Deferred<Object> _reference;
 	};
 
@@ -87,6 +89,16 @@ namespace gotchangpdf
 	inline Object::Type IndirectObject::GetType(void) const
 	{
 		return Object::Type::IndirectObject;
+	}
+
+	inline void IndirectObject::SetFile(files::File *file)
+	{
+		_file = file;
+	}
+
+	inline files::File* IndirectObject::GetFile() const
+	{
+		return _file;
 	}
 
 	template <typename T>

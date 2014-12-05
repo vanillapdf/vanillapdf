@@ -19,7 +19,7 @@ namespace gotchangpdf
 		typedef std::vector<T> value_type;
 
 	public:
-		ArrayObject() {}
+		explicit ArrayObject() {}
 		explicit ArrayObject(value_type& list) : _list(list) {}
 
 		inline int Size(void) const { return _list.size(); }

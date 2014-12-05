@@ -14,7 +14,7 @@ namespace gotchangpdf
 	public:
 		typedef types::integer value_type;
 
-		IntegerObject();
+		explicit IntegerObject() = default;
 		explicit IntegerObject(value_type value);
 		//explicit IntegerObject(const CharacterSet& value);
 		explicit IntegerObject(const lexical::Token& value);

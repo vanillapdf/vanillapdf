@@ -39,9 +39,18 @@ namespace gotchangpdf
 				auto parser = lexical::SpiritParser(_file, *locked);
 				auto pos = parser.tellg();
 				parser.seekg(_offset);
+
 				auto obj = parser.readObject();
-				parser.seekg(pos);
 				_reference = obj->GetObject();
+				if (9 == _reference.which()) {
+					ObjectVisitor<StreamObject> visitor;
+					auto stream = _reference.apply_visitor(visitor);
+					stream._raw_data_offset = parser.tellg();
+					stream.ReadData(parser);
+				}
+
+				parser.seekg(pos);
+				//_reference = obj->GetObject();
 			}
 			else
 			{

@@ -14,7 +14,7 @@ namespace gotchangpdf
 	class IndirectObjectReference : public Object, public ParentContainer<ContainerPtr>
 	{
 	public:
-		IndirectObjectReference() = default;
+		explicit IndirectObjectReference() = default;
 		explicit IndirectObjectReference(files::File * file);
 		IndirectObjectReference(files::File * file,
 			types::integer obj_number,
@@ -33,6 +33,9 @@ namespace gotchangpdf
 
 		void SetGenerationNumber(IntegerObjectPtr number);
 		IntegerObjectPtr GetGenerationNumber() const;
+
+		void SetFile(files::File *file);
+		files::File* GetFile() const;
 
 	public:
 		IntegerObjectPtr _obj_number = 0;
@@ -77,6 +80,16 @@ namespace gotchangpdf
 	inline IntegerObjectPtr IndirectObjectReference::GetGenerationNumber() const
 	{
 		return _gen_number;
+	}
+
+	inline void IndirectObjectReference::SetFile(files::File *file)
+	{
+		_file = file;
+	}
+
+	inline files::File* IndirectObjectReference::GetFile() const
+	{
+		return _file;
 	}
 }
 

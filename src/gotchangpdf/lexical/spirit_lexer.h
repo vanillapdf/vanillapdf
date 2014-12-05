@@ -41,8 +41,8 @@ namespace gotchangpdf
 #ifdef USE_STATIC_LEXER
 		typedef boost::spirit::lex::lexertl::static_actor_lexer<Tok, boost::spirit::lex::lexertl::static_::lexer_sl> lexer_type;
 #else
-		//typedef lex::lexertl::actor_lexer<token_type> lexer_type;
-		typedef boost::spirit::lex::lexertl::lexer<token_type> lexer_type;
+		typedef boost::spirit::lex::lexertl::actor_lexer<token_type> lexer_type;
+		//typedef boost::spirit::lex::lexertl::lexer<token_type> lexer_type;
 #endif
 
 		class SpiritLexer : public boost::spirit::lex::lexer<lexer_type>

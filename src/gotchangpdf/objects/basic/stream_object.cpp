@@ -10,6 +10,7 @@
 #include "object_visitors.h"
 
 // TODO
+#include "spirit_parser.h"
 #include "flate_decode_filter.h"
 
 #include <sstream>
@@ -24,6 +25,20 @@ namespace gotchangpdf
 	StreamObject::StreamObject() {}
 
 	StreamObject::StreamObject(const DictionaryObject& dictionary) : _dictionary(dictionary) {}
+
+	void StreamObject::ReadData(raw::Stream stream) const
+	{
+		auto size_raw = _dictionary->Find(constant::Name::Length);
+		KillIndirectionVisitor<IntegerObjectPtr> visitor;
+		IntegerObjectPtr size = size_raw.apply_visitor(visitor);
+
+		size_t len = static_cast<size_t>(*size);
+
+		auto pos = stream.tellg();
+		stream.seekg(_raw_data_offset);
+		_data = stream.read(len);
+		stream.seekg(pos);
+	}
 
 	Buffer StreamObject::GetData() const
 	{

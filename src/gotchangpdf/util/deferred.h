@@ -57,7 +57,7 @@ namespace gotchangpdf
 			Content.Owner = this;
 		}
 
-		bool HasContents(void) const { return nullptr == Contents; }
+		bool HasContents(void) const { return nullptr != Contents; }
 
 		operator bool() const { return HasContents(); }
 
@@ -190,7 +190,7 @@ namespace gotchangpdf
 			return *this;
 		}
 
-		bool HasContents(void) const { return nullptr == Contents; }
+		bool HasContents(void) const { return nullptr != Contents; }
 		operator bool() const { return HasContents(); }
 
 		// Support insertion as if this were itself a container

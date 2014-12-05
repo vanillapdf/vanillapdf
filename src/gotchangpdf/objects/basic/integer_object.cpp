@@ -15,7 +15,6 @@ namespace gotchangpdf
 	#pragma region Constructors
 
 	IntegerObject::IntegerObject(value_type value) : _value(value) {}
-	IntegerObject::IntegerObject() {}
 
 	IntegerObject::IntegerObject(const Token& value)
 	{

@@ -28,6 +28,32 @@ namespace gotchangpdf
 		*/
 	};
 
+	template <typename T>
+	class KillIndirectionVisitor : public boost::static_visitor<T>
+	{
+	public:
+		T operator()(IndirectObjectReferencePtr obj) const
+		{
+			auto indirect = obj->GetReferencedObject();
+			auto direct = indirect->GetObject();
+			return direct.apply_visitor(*this);
+		}
+		/*
+		T operator()(T obj) const
+		{
+			//ObjectVisitor<T> visitor;
+			//return obj->apply_visitor(visitor);
+			return obj;
+		}
+		*/
+
+		template <typename U>
+		T operator()(U obj) const
+		{
+			return obj;
+		}
+	};
+
 	class ObjectBaseVisitor : public boost::static_visitor<SmartPtr<Object>>
 	{
 	public:
