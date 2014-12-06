@@ -9,15 +9,19 @@
 #include "containerable.h"
 #include "hasher.h"
 
-#include <unordered_map>
+//#include <unordered_map>
+#include <map>
+//#include <vector>
 
 namespace gotchangpdf
 {
-	template <typename T, typename NameType, typename Container = ParentContainer<ContainerPtr>>
+	template <typename NameT, typename ValueT, typename Container = ParentContainer<ContainerPtr>>
 	class DictionaryObjectBase : public Object, public Container
 	{
 	public:
-		typedef std::unordered_map<NameType, T, std::hash<NameType>> value_type;
+		//typedef std::unordered_map<NameType, T, std::hash<NameType>> value_type;
+		typedef std::map<NameT, ValueT> value_type;
+		//typedef std::vector<std::pair<NameType, T>> value_type;
 
 	public:
 		class Iterator
@@ -53,8 +57,8 @@ namespace gotchangpdf
 				return new Iterator(_it);
 			}
 
-			NameType First() const { return _it->first; }
-			T Second() const { return _it->second; }
+			NameT First() const { return _it->first; }
+			ValueT Second() const { return _it->second; }
 
 			bool operator==(const Iterator& other) const
 			{
@@ -70,17 +74,12 @@ namespace gotchangpdf
 		//friend Objects::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, DictionaryObject& o);
 
 		template <typename U>
-		const U FindAs(const NameObject& name) const
+		const U FindAs(const NameT& name) const
 		{
 			auto result = _list.find(name);
 
 			ObjectVisitor<U> visitor;
 			return result->second.apply_visitor(visitor);
-			//return dynamic_wrapper_cast<T>(result->second);
-
-
-			// TODO
-			//return nullptr;
 		}
 
 		const value_type& GetMap(void) const { return _list; }
@@ -96,7 +95,7 @@ namespace gotchangpdf
 			return Iterator(_list.end());
 		}
 
-		T Find(const NameType& name) const
+		ValueT Find(const NameT& name) const
 		{
 			auto result = _list.find(name);
 			return result->second;
@@ -107,7 +106,7 @@ namespace gotchangpdf
 		value_type _list;
 	};
 
-	class DictionaryObject : public DictionaryObjectBase<DirectObject, NameObjectPtr>
+	class DictionaryObject : public DictionaryObjectBase<NameObject, DirectObject>
 	{
 		friend lexical::Parser& operator>> (lexical::Parser& s, DictionaryObject& o);
 	};

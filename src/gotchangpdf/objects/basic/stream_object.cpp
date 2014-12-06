@@ -10,7 +10,6 @@
 #include "object_visitors.h"
 
 // TODO
-#include "spirit_parser.h"
 #include "flate_decode_filter.h"
 
 #include <sstream>

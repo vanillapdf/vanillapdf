@@ -43,12 +43,12 @@ BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::IntegerObjectPtr,
 (gotchangpdf::types::integer, Content->_value)
 )
-/*
+
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::NameObject,
 (gotchangpdf::Buffer, _value)
 )
-*/
+
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::NameObjectPtr,
 (gotchangpdf::Buffer, Content->_value)

@@ -77,7 +77,6 @@ void process(ObjectHandle obj, int nested)
 		print_spaces(nested);
 		printf("Dictionary begin\n");
 		iterator = DictionaryObject_Iterator(dict);
-		DictionaryObjectIterator_Next(iterator);
 		while (GOTCHANG_PDF_RV_TRUE == DictionaryObjectIterator_IsValid(iterator, dict))
 		{
 			print_spaces(nested);

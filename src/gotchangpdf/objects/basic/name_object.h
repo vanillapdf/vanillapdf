@@ -35,6 +35,7 @@ namespace gotchangpdf
 
 		bool operator==(const NameObject& other) const;
 		bool operator!=(const NameObject& other) const;
+		bool operator<(const NameObject& other) const;
 
 		bool Equals(const NameObject& other) const;
 
@@ -55,6 +56,11 @@ namespace gotchangpdf
 	inline bool NameObject::operator!=(const NameObject& other) const
 	{
 		return !Equals(other);
+	}
+
+	inline bool NameObject::operator<(const NameObject& other) const
+	{
+		return _value < other._value;
 	}
 
 	inline Object::Type NameObject::GetType(void) const

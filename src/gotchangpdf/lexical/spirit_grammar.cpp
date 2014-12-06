@@ -3,53 +3,7 @@
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/spirit/repository/include/qi_iter_pos.hpp>
 
-//#include <boost/spirit/include/qi.hpp>
-
-namespace qi = boost::spirit::qi;
-namespace phx = boost::phoenix;
-
-namespace boost {
-	namespace spirit {
-		namespace traits
-		{
-			template <>
-			struct transform_attribute<gotchangpdf::IntegerObjectPtr, gotchangpdf::types::integer, qi::domain>
-			{
-				//typedef int type;
-				static int pre(gotchangpdf::types::integer& d) { return 0; }//not useful in this case but required to avoid compiler errors
-				static void post(gotchangpdf::types::integer& val, gotchangpdf::IntegerObjectPtr const& attr) //`val` is the "returned" string, `attr` is what int_ parses
-				{
-					val = attr->Value();
-				}
-				static void fail(gotchangpdf::types::integer&) {}
-			};
-
-			template <>
-			struct transform_attribute<gotchangpdf::IntegerObjectPtr, gotchangpdf::types::ushort, qi::domain>
-			{
-				//typedef int type;
-				static int pre(gotchangpdf::types::ushort& d) { return 0; }//not useful in this case but required to avoid compiler errors
-				static void post(gotchangpdf::types::ushort& val, gotchangpdf::IntegerObjectPtr const& attr) //`val` is the "returned" string, `attr` is what int_ parses
-				{
-					val = attr->Value();
-				}
-				static void fail(gotchangpdf::types::ushort&) {}
-			};
-
-			template <>
-			struct transform_attribute<gotchangpdf::lexical::base_iterator_type, gotchangpdf::types::stream_offset, qi::domain>
-			{
-				//typedef int type;
-				static int pre(gotchangpdf::types::stream_offset& d) { return 0; }//not useful in this case but required to avoid compiler errors
-				static void post(gotchangpdf::types::stream_offset& val, gotchangpdf::lexical::pos_iterator_type const& attr) //`val` is the "returned" string, `attr` is what int_ parses
-				{
-					val = 0;
-				}
-				static void fail(gotchangpdf::types::stream_offset&) {}
-			};
-		}
-	}
-}
+#include <boost/fusion/include/std_pair.hpp>
 
 #define BOOST_SPIRIT_AUTO(domain_, name, expr)                                  \
 	typedef boost::proto::result_of::                                           \
@@ -58,29 +12,29 @@ namespace boost {
 	boost::spirit::domain_::domain, name##_expr_type);                      \
 	BOOST_AUTO(name, boost::proto::deep_copy(expr));                            \
 
-void test(gotchangpdf::IndirectObjectReferencePtr obj, gotchangpdf::files::File* file)
+void indirect_reference_handler(gotchangpdf::IndirectObjectReferencePtr obj, gotchangpdf::files::File* file)
 {
 	obj->SetFile(file);
 }
 
+void dictionary_item_handler(gotchangpdf::DictionaryObjectPtr obj, gotchangpdf::NameObjectPtr name, gotchangpdf::DirectObject item)
+{
+	auto aa = item;
+}
+
 typedef
 boost::spirit::context<
-boost::fusion::cons<gotchangpdf::IndirectObjectPtr&, boost::fusion::nil>,
-boost::fusion::vector1<int>
+boost::fusion::cons<gotchangpdf::DictionaryObjectPtr&, boost::fusion::cons<gotchangpdf::files::File*, boost::fusion::nil>>,
+boost::fusion::vector2<gotchangpdf::NameObjectPtr, gotchangpdf::DirectObject>
 > f_context;
-void f(gotchangpdf::IntegerObjectPtr attribute, const f_context& con, bool& mFlag){
+void f(boost::spirit::unused_type attribute, const boost::spirit::unused_type& con, bool& mFlag){
 	std::cout << "matched integer: '" << attribute << "'" << std::endl
 		<< "match flag: " << mFlag << std::endl;
 
 	//assign output attribute from parsed value    
-	auto test = qi::_a;
-	auto bb = boost::phoenix::at_c<0>(con.locals);
-	auto ee = boost::fusion::at_c<0>(con.locals);
-}
-
-void print(gotchangpdf::IndirectObjectReferencePtr const& obj)
-{
-	std::cout << "Obj: " << obj->GetObjectNumber()->Value() << "Gen: " << obj->GetGenerationNumber()->Value() << std::endl;
+	//auto test = qi::_a;
+	//auto bb = boost::phoenix::at_c<0>(con.locals);
+	//auto ee = boost::fusion::at_c<0>(con.locals);
 }
 
 namespace gotchangpdf
@@ -145,7 +99,7 @@ namespace gotchangpdf
 				| stream_object(qi::_r1)
 				| dictionary_object(qi::_r1)
 				//| function_object(qi::_r1)
-				| indirect_reference_object[boost::phoenix::bind(&test, qi::_1, qi::_r1)]
+				| indirect_reference_object[boost::phoenix::bind(&indirect_reference_handler, qi::_1, qi::_r1)]
 				| integer_object
 				| name_object
 				//| null_object(qi::_r1)
@@ -170,7 +124,12 @@ namespace gotchangpdf
 			name_object %=
 				qi::eps
 				>> lexer.solidus
-				>> lexer.word;
+				> lexer.word;
+
+			name_key %=
+				qi::eps
+				>> lexer.solidus
+				> lexer.word;
 			/*
 			name_object_dereferenced %=
 				qi::eps
@@ -189,14 +148,14 @@ namespace gotchangpdf
 				lexer.left_bracket
 				> whitespaces
 				> *(direct_object(qi::_r1) > whitespaces)
-				> whitespaces
+				//> whitespaces
 				> lexer.right_bracket;
 
 			dictionary_object %=
 				lexer.dictionary_begin
 				> whitespaces
-				> *(name_object > whitespaces > direct_object(qi::_r1) > whitespaces)
-				> whitespaces
+				> *(name_key > whitespaces > direct_object(qi::_r1) > whitespaces)
+				//> whitespaces
 				> lexer.dictionary_end;
 
 			stream_object %=

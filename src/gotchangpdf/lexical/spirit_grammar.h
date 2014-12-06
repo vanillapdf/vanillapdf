@@ -23,11 +23,13 @@ namespace gotchangpdf
 
 			Rule<MixedArrayObjectPtr, files::File*> array_object;
 			Rule<BooleanObjectPtr> boolean_object;
-			Rule<DictionaryObjectPtr, files::File*> dictionary_object;
+			//Rule<DictionaryObjectPtr, files::File*> dictionary_object;
+			qi::rule<SpiritLexer::iterator_type, DictionaryObjectPtr(files::File*), qi::locals<NameObjectPtr, DirectObject>> dictionary_object;
 			Rule<FunctionObjectPtr> function_object;
 			Rule<IndirectObjectReferencePtr> indirect_reference_object;
 			Rule<IntegerObjectPtr> integer_object;
 			Rule<NameObjectPtr> name_object;
+			Rule<NameObject> name_key;
 			Rule<NullObjectPtr> null_object;
 			Rule<RealObjectPtr> real_object;
 			Rule<StreamObjectPtr, files::File*> stream_object;
