@@ -6,8 +6,9 @@
 #include "direct_object.h"
 #include "objects.h"
 
-//#include <boost/fusion/include/adapt_struct.hpp
-#include <boost/fusion/adapted/struct/adapt_struct.hpp>
+#include <boost/fusion/include/adapt_struct.hpp>
+//#include <boost/fusion/>
+//#include <boost/fusion/adapted/adt/adapt_adt.hpp>
 #include <boost/fusion/include/std_pair.hpp>
 /*
 namespace gotchangpdf
@@ -39,6 +40,7 @@ gotchangpdf::lexical::ast::IntegerObjectTestPtr,
 (gotchangpdf::types::integer, Content->value)
 )
 */
+
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::IntegerObjectPtr,
 (gotchangpdf::types::integer, Content->_value)
@@ -114,15 +116,16 @@ gotchangpdf::DictionaryObjectPtr,
 /*
 BOOST_FUSION_ADAPT_ADT(
 gotchangpdf::IntegerObjectPtr,
-(gotchangpdf::IntegerObject::value_type, gotchangpdf::IntegerObject::value_type, obj->Value(), obj->operator=(val))
+(gotchangpdf::IntegerObject::value_type, const gotchangpdf::IntegerObject::value_type, obj->Value(), obj->operator=(val))
 )
 */
 /*
 BOOST_FUSION_ADAPT_ADT(
-gotchangpdf::NameObjectPtr,
-(gotchangpdf::NameObject::value_type, gotchangpdf::NameObject::value_type, obj->Value(), obj->SetName(val))
+gotchangpdf::NameObject,
+(gotchangpdf::NameObject::value_type, const gotchangpdf::NameObject::value_type, obj.Value(), obj.SetName(val))
 )
-
+*/
+/*
 BOOST_FUSION_ADAPT_ADT(
 gotchangpdf::IndirectObject,
 (gotchangpdf::IntegerObject, gotchangpdf::IntegerObject, obj.GetObjectNumber(), obj.SetObjectNumber(val))

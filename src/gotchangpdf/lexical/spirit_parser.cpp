@@ -23,7 +23,7 @@ namespace gotchangpdf
 		SpiritParser::SpiritParser(files::File * file, CharacterSource & stream)
 			: lexical::Stream(stream), _file(file) {}
 
-		SpiritParser::SpiritParser(const gotchangpdf::lexical::Parser &other)
+		SpiritParser::SpiritParser(const SpiritParser & other)
 			: lexical::Stream(other) { _file = other.file(); }
 
 		IndirectObjectPtr SpiritParser::readObject()

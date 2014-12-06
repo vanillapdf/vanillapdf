@@ -9,13 +9,7 @@
 
 namespace gotchangpdf
 {
-	template <typename Container>
-	class NameObjectBase : public Object, public Container
-	{
-
-	};
-
-	class NameObject : public NameObjectBase<ParentContainer<ContainerPtr>>
+	class NameObject : public Object, public ParentContainer<ContainerPtr>
 	{
 	public:
 		typedef Buffer value_type;

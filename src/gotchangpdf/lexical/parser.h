@@ -3,6 +3,7 @@
 
 #include "fwd.h"
 #include "lexical_stream.h"
+#include "direct_object.h"
 #include "deferred.h"
 
 namespace gotchangpdf

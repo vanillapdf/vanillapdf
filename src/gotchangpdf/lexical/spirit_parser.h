@@ -3,7 +3,6 @@
 
 #include "fwd.h"
 #include "lexical_stream.h"
-#include "deferred.h"
 
 namespace gotchangpdf
 {
@@ -13,7 +12,7 @@ namespace gotchangpdf
 		{
 		public:
 			SpiritParser(files::File * file, CharacterSource & stream);
-			SpiritParser(const Parser & other);
+			SpiritParser(const SpiritParser & other);
 
 			//template<typename T>
 			//Deferred<T> readObjectWithType() { return DirectObjectGetAs<T>(readObject()); }

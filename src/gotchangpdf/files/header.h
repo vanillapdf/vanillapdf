@@ -1,7 +1,7 @@
 #ifndef _HEADER_H
 #define _HEADER_H
 
-#include "raw_stream.h"
+#include "fwd.h"
 #include "version.h"
 
 #include <boost/smart_ptr/intrusive_ref_counter.hpp>
@@ -15,6 +15,8 @@ namespace gotchangpdf
 		public:
 			friend raw::Stream& operator>> (raw::Stream& s, Header& o);
 
+		public:
+			inline void Release() const { boost::sp_adl_block::intrusive_ptr_release(this); }
 			Version GetVersion(void) const;
 
 		private:

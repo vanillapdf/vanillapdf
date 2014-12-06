@@ -27,17 +27,10 @@ namespace gotchangpdf
 		class Iterator
 		{
 		public:
-			Iterator::Iterator(typename value_type::const_iterator it) : _it(it) {}
+			typedef typename value_type::const_iterator const_iterator;
 
-			Iterator Begin(void) const
-			{
-				return Iterator(_list.begin());
-			}
-
-			Iterator End(void) const
-			{
-				return Iterator(_list.end());
-			}
+		public:
+			Iterator::Iterator(const_iterator it) : _it(it) {}
 
 			const Iterator& operator++()
 			{
@@ -66,7 +59,7 @@ namespace gotchangpdf
 			}
 
 		private:
-			typename value_type::const_iterator _it;
+			const_iterator _it;
 		};
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::DictionaryObject; }

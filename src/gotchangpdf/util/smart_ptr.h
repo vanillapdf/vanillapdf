@@ -28,8 +28,6 @@ namespace gotchangpdf
 
 		bool HasContents(void) const { return nullptr == boost::intrusive_ptr<T>::get(); }
 
-		operator bool() const { return HasContents(); }
-
 		T* AddRefGet(void) const
 		{
 			auto ptr = boost::intrusive_ptr<T>::get();

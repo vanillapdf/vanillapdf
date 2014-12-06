@@ -1,18 +1,20 @@
 #include "file.h"
 
-#include "integer_object.h"
 #include "indirect_object.h"
-#include "indirect_object_reference.h"
 #include "lexical_reverse_stream.h"
 #include "exception.h"
+
+#include "xref.h"
+#include "header.h"
+#include "trailer.h"
+#include "parser.h"
+#include "catalog.h"
 
 #include "c_file.h"
 
 #include <memory>
 #include <cassert>
 #include <iostream>
-
-#include <boost/filesystem/operations.hpp>
 
 //
 //#include <boost/spirit/include/lex_generate_static_lexertl.hpp>
@@ -23,6 +25,7 @@ namespace gotchangpdf
 	namespace files
 	{
 		using namespace std;
+		using namespace files;
 		using namespace lexical;
 		using namespace exceptions;
 
@@ -44,13 +47,12 @@ namespace gotchangpdf
 			if (_initialized)
 				return;
 
-			_cache = vector<Deferred<IndirectObject>>();
+			_cache = vector<IndirectObjectPtr>();
 			_xref = Deferred<Xref>(Xref());
 			_header = Deferred<Header>(Header());
 			_trailer = Deferred<Trailer>(Trailer());
 
-			if (!boost::filesystem::exists(_filename))
-				throw new exceptions::Exception("File does not exist");
+			//TODO check if file exists
 
 			_input = shared_ptr<FileDevice>(new FileDevice());
 			_input->open(_filename,
@@ -124,6 +126,10 @@ namespace gotchangpdf
 			auto dict = reference->GetReferencedObjectAs<DictionaryObjectPtr>();
 			return new documents::Catalog(dict);
 		}
+
+		Deferred<files::Header> File::GetHeader(void) const { return _header; }
+		Deferred<files::Trailer> File::GetTrailer(void) const { return _trailer; }
+		Deferred<files::Xref> File::GetXref(void) const { return _xref; }
 	}
 }
 

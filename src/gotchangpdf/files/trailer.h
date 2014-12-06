@@ -2,9 +2,9 @@
 #define _TRAILER_H
 
 #include "fwd.h"
-#include "deferred.h"
-#include "dictionary_object.h"
 #include "constants.h"
+
+#include <boost/smart_ptr/intrusive_ref_counter.hpp>
 
 namespace gotchangpdf
 {
@@ -14,8 +14,12 @@ namespace gotchangpdf
 		{
 		public:
 			friend lexical::ReverseStream& operator>> (lexical::ReverseStream& s, Trailer& o);
+
+		public:			
 			types::stream_offset xref_offset() const;
 			DictionaryObjectPtr dictionary() const;
+
+			inline void Release() const { boost::sp_adl_block::intrusive_ptr_release(this); }
 
 		private:
 			types::stream_offset _xref_offset = std::_BADOFF;

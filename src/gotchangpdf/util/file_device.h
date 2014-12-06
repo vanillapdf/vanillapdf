@@ -5,7 +5,7 @@
 
 namespace gotchangpdf
 {
-	namespace io = boost::iostreams;
+	//namespace io = boost::iostreams;
 
 	typedef std::fstream FileDevice;
 	//typedef std::basic_file<Character> FileDevice;

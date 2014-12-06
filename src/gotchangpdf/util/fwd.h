@@ -7,7 +7,6 @@ namespace gotchangpdf
 {
 	class MixedArrayObject;
 	class BooleanObject;
-	class Xref;
 	class DictionaryObject;
 	class FunctionObject;
 	class IndirectObject;
@@ -48,6 +47,7 @@ namespace gotchangpdf
 		class File;
 		class Header;
 		class Trailer;
+		class Xref;
 	}
 
 	namespace lexical

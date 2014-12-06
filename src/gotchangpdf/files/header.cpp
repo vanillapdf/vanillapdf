@@ -1,5 +1,6 @@
-#include "Header.h"
-#include "lexical_stream.h"
+#include "header.h"
+
+#include "raw_stream.h"
 #include "exception.h"
 
 #include <cassert>

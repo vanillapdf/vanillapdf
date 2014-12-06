@@ -1,6 +1,7 @@
 #include "indirect_object.h"
 
 #include "file.h"
+#include "header.h"
 #include "spirit_parser.h"
 #include "object_visitors.h"
 

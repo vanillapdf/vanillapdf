@@ -1,5 +1,6 @@
 #include "xref.h"
 
+#include "indirect_object.h"
 #include "integer_object.h"
 #include "Parser.h"
 #include "exception.h"
@@ -58,8 +59,6 @@ namespace gotchangpdf
 			result.reference = reference;
 			return result;
 		}
-
-		void Xref::Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
 
 		Parser& operator>>(Parser& s, Xref& o)
 		{

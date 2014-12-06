@@ -82,20 +82,6 @@ namespace gotchangpdf
 		auto size_raw = o._dictionary->Find(constant::Name::Length);
 		int type = size_raw.which();
 
-		ObjectVisitor<IntegerObject> integer_visitor;
-		ObjectVisitor<IndirectObjectReference> indirect_visitor;
-		IndirectObjectReferencePtr indirect;
-		switch (type)
-		{
-		case 0:
-			//size = size_raw.apply_visitor(integer_visitor);
-		case 1:
-			//indirect = size_raw.apply_visitor(indirect_visitor);
-			//size = indirect->GetReferencedObject();
-		default:
-			break;
-		}
-
 		/*
 		auto type = size_raw->GetType();
 		if (type == Object::Type::IntegerObject)

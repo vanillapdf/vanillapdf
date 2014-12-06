@@ -3,8 +3,6 @@
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/spirit/repository/include/qi_iter_pos.hpp>
 
-#include <boost/fusion/include/std_pair.hpp>
-
 #define BOOST_SPIRIT_AUTO(domain_, name, expr)                                  \
 	typedef boost::proto::result_of::                                           \
 	deep_copy<BOOST_TYPEOF(expr)>::type name##_expr_type;                   \

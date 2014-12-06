@@ -3,6 +3,7 @@
 
 #include "object.h"
 #include "direct_object.h"
+#include "smart_ptr.h"
 #include "exception.h"
 
 #include <boost/variant/static_visitor.hpp>

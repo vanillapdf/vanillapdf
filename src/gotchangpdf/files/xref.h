@@ -2,9 +2,10 @@
 #define _XREF_H
 
 #include "fwd.h"
-#include "indirect_object.h"
 
 #include <vector>
+
+#include <boost/smart_ptr/intrusive_ref_counter.hpp>
 
 namespace gotchangpdf
 {
@@ -12,7 +13,7 @@ namespace gotchangpdf
 	{
 		struct XrefEntry
 		{
-			Deferred<IndirectObject> reference;
+			IndirectObjectPtr reference;
 			bool in_use;
 		};
 
@@ -25,7 +26,7 @@ namespace gotchangpdf
 				STREAM
 			};
 
-			void Release();
+			inline void Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
 
 			friend lexical::Parser& operator>> (lexical::Parser& s, Xref& o);
 

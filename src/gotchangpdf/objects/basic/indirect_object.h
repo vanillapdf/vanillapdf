@@ -6,7 +6,6 @@
 #include "objects.h"
 #include "direct_object.h"
 #include "constants.h"
-#include "deferred.h"
 #include "version.h"
 
 namespace gotchangpdf
