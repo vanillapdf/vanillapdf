@@ -25,10 +25,9 @@ namespace gotchangpdf
 			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageTreeNode; }
 
 		private:
-			Bind<DictionaryObjectPtr, IntegerObjectPtr> _count;
-			Bind<DictionaryObjectPtr, Deferred<ArrayObject<IndirectObjectReferencePtr>>> _kids;
+			Bind<IntegerObjectPtr> _count;
+			Bind<Deferred<ArrayObject<IndirectObjectReferencePtr>>> _kids;
 
-			IntegerObjectPtr GetCount(DictionaryObjectPtr obj);
 			Deferred<ArrayObject<IndirectObjectReferencePtr>> GetKids(DictionaryObjectPtr obj);
 		};
 

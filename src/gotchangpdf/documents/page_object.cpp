@@ -15,9 +15,9 @@ namespace gotchangpdf
 
 		PageObject::PageObject(DictionaryObjectPtr obj) :
 			PageNode(obj),
-			_parent(Bind<DictionaryObjectPtr, SmartPtr<PageTreeNode>>(_obj, std::bind(&PageObject::GetParent, this, _obj))),
-			_resources(Bind<DictionaryObjectPtr, ResourceDictionaryPtr>(_obj, std::bind(&PageObject::GetResources, this, _obj))),
-			_media_box(Bind<DictionaryObjectPtr, SmartPtr<Rectangle>>(_obj, std::bind(&PageObject::GetMediaBox, this, _obj)))
+			_parent(Bind<PageTreeNodePtr>(_obj, std::bind(&PageObject::GetParent, this, _obj))),
+			_resources(Bind<ResourceDictionaryPtr>(_obj, std::bind(&PageObject::GetResources, this, _obj))),
+			_media_box(Bind<RectanglePtr>(_obj, std::bind(&PageObject::GetMediaBox, this, _obj)))
 		{
 			if (*_obj->FindAs<NameObjectPtr>(Name::Type) != Name::Page)
 				throw Exception("TODO");

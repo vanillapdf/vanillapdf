@@ -26,9 +26,9 @@ namespace gotchangpdf
 			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageObject; }
 
 		private:
-			Bind<DictionaryObjectPtr, PageTreeNodePtr> _parent;
-			Bind<DictionaryObjectPtr, ResourceDictionaryPtr> _resources;
-			Bind<DictionaryObjectPtr, RectanglePtr> _media_box;
+			Bind<PageTreeNodePtr> _parent;
+			Bind<ResourceDictionaryPtr> _resources;
+			Bind<RectanglePtr> _media_box;
 
 			PageTreeNodePtr GetParent(DictionaryObjectPtr obj);
 			ResourceDictionaryPtr GetResources(DictionaryObjectPtr obj);

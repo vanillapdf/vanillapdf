@@ -1,7 +1,5 @@
 #include "page_tree_node.h"
 
-#include "high_level_object.h"
-
 namespace gotchangpdf
 {
 	namespace documents
@@ -11,8 +9,8 @@ namespace gotchangpdf
 
 		PageTreeNode::PageTreeNode(DictionaryObjectPtr obj) :
 			PageNode(obj),
-			_count(Bind<DictionaryObjectPtr, IntegerObjectPtr>(_obj, std::bind(&PageTreeNode::GetCount, this, _obj))),
-			_kids(Bind<DictionaryObjectPtr, Deferred<ArrayObject<IndirectObjectReferencePtr>>>(_obj, std::bind(&PageTreeNode::GetKids, this, _obj)))
+			_count(Bind<IntegerObjectPtr>(_obj, [](DictionaryObjectPtr obj) { return obj->FindAs<IntegerObjectPtr>(Name::Count); })),
+			_kids(Bind<Deferred<ArrayObject<IndirectObjectReferencePtr>>>(_obj, std::bind(&PageTreeNode::GetKids, this, _obj)))
 		{
 			if (*_obj->FindAs<NameObjectPtr>(Name::Type) != Name::Pages)
 				throw Exception("TODO");
@@ -31,12 +29,6 @@ namespace gotchangpdf
 				auto page = obj->GetReferencedObjectAs<DictionaryObjectPtr>();
 				return PageNode::Create(page);
 			});
-		}
-
-		IntegerObjectPtr PageTreeNode::GetCount(DictionaryObjectPtr obj)
-		{
-			auto count = obj->FindAs<IntegerObjectPtr>(Name::Count);
-			return count;
 		}
 
 		Deferred<ArrayObject<IndirectObjectReferencePtr>> PageTreeNode::GetKids(DictionaryObjectPtr obj)

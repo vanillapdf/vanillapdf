@@ -5,6 +5,9 @@
 
 namespace gotchangpdf
 {
+	template <typename T, typename Container>
+	class ArrayObject;
+
 	class MixedArrayObject;
 	class BooleanObject;
 	class DictionaryObject;
@@ -28,6 +31,9 @@ namespace gotchangpdf
 	class NumberTree;
 	class Rectangle;
 	class Tree;
+
+	class Character;
+	class Buffer;
 
 	namespace documents
 	{
@@ -78,22 +84,22 @@ namespace gotchangpdf
 		class ReverseStream;
 	}
 
-	class Character;
-	class Buffer;
+	template <typename T, typename Container>
+	using ArrayObjectPtr = Deferred<ArrayObject<T, Container>>;
 
-	typedef Deferred<NameObject> NameObjectPtr;
-	typedef Deferred<DictionaryObject> DictionaryObjectPtr;
-	typedef Deferred<MixedArrayObject> MixedArrayObjectPtr;
-	typedef Deferred<BooleanObject> BooleanObjectPtr;
-	typedef Deferred<FunctionObject> FunctionObjectPtr;
-	typedef Deferred<IndirectObject> IndirectObjectPtr;
-	typedef Deferred<IndirectObjectReference> IndirectObjectReferencePtr;
-	typedef Deferred<IntegerObject> IntegerObjectPtr;
-	typedef Deferred<NullObject> NullObjectPtr;
-	typedef Deferred<RealObject> RealObjectPtr;
-	typedef Deferred<StreamObject> StreamObjectPtr;
-	typedef Deferred<LiteralString> LiteralStringPtr;
-	typedef Deferred<HexadecimalString> HexadecimalStringPtr;
+	using NameObjectPtr = Deferred<NameObject>;
+	using DictionaryObjectPtr = Deferred<DictionaryObject>;
+	using MixedArrayObjectPtr = Deferred<MixedArrayObject>;
+	using BooleanObjectPtr = Deferred<BooleanObject>;
+	using FunctionObjectPtr = Deferred<FunctionObject>;
+	using IndirectObjectPtr = Deferred<IndirectObject>;
+	using IndirectObjectReferencePtr = Deferred<IndirectObjectReference>;
+	using IntegerObjectPtr = Deferred<IntegerObject>;
+	using NullObjectPtr = Deferred<NullObject>;
+	using RealObjectPtr = Deferred<RealObject>;
+	using StreamObjectPtr = Deferred<StreamObject>;
+	using LiteralStringPtr = Deferred<LiteralString>;
+	using HexadecimalStringPtr = Deferred<HexadecimalString>;
 }
 
 #endif /* _FWD_H */

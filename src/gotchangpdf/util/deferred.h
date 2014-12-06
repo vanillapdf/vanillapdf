@@ -59,8 +59,6 @@ namespace gotchangpdf
 
 		bool HasContents(void) const { return nullptr != Contents; }
 
-		//operator bool() const { return HasContents(); }
-
 		operator T()
 		{
 			if (Contents)
@@ -124,8 +122,6 @@ namespace gotchangpdf
 
 		T* AddRefGet(void)
 		{
-			//auto ptr = boost::intrusive_ptr<T>::get();
-			//auto ptr = (*obj.Content).get();
 			auto ptr = Content.get();
 			boost::sp_adl_block::intrusive_ptr_add_ref(ptr);
 			return ptr;
@@ -191,7 +187,6 @@ namespace gotchangpdf
 		}
 
 		bool HasContents(void) const { return nullptr != Contents; }
-		//operator bool() const { return HasContents(); }
 
 		// Support insertion as if this were itself a container
 		void insert(const iterator& pos, const value_type& value)

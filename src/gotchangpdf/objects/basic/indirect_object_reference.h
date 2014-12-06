@@ -14,28 +14,27 @@ namespace gotchangpdf
 	class IndirectObjectReference : public Object, public ParentContainer<ContainerPtr>
 	{
 	public:
-		explicit IndirectObjectReference() = default;
 		explicit IndirectObjectReference(files::File * file);
 		IndirectObjectReference(files::File * file,
 			types::integer obj_number,
 			types::ushort gen_number);
 
-		Deferred<IndirectObject> GetReferencedObject() const;
-		Deferred<IndirectObject> operator->() const;
+		IndirectObjectPtr GetReferencedObject() const;
+		inline IndirectObjectPtr operator->() const { return GetReferencedObject(); }
 
 		template <typename T>
-		const T GetReferencedObjectAs() const;
+		inline const T GetReferencedObjectAs() const { return GetReferencedObject()->GetObjectAs<T>(); }
 
-		virtual Object::Type GetType(void) const override;
+		virtual inline Object::Type GetType(void) const override { return Object::Type::IndirectObjectReference; }
 
-		void SetObjectNumber(IntegerObjectPtr number);
-		IntegerObjectPtr GetObjectNumber() const;
+		inline void SetObjectNumber(IntegerObjectPtr number){ _obj_number = number; }
+		inline IntegerObjectPtr GetObjectNumber() const { return _obj_number; }
 
-		void SetGenerationNumber(IntegerObjectPtr number);
-		IntegerObjectPtr GetGenerationNumber() const;
+		inline void SetGenerationNumber(IntegerObjectPtr number){ _gen_number = number; }
+		inline IntegerObjectPtr GetGenerationNumber() const { return _gen_number; }
 
-		void SetFile(files::File *file);
-		files::File* GetFile() const;
+		inline void SetFile(files::File *file) { _file = file; }
+		inline files::File* GetFile() const { return _file; }
 
 	public:
 		IntegerObjectPtr _obj_number = 0;
@@ -43,54 +42,14 @@ namespace gotchangpdf
 
 	private:
 		files::File * _file;
-		mutable Deferred<IndirectObject> _reference;
+		mutable IndirectObjectPtr _reference;
+
+		explicit IndirectObjectReference() = default;
+		friend Deferred<IndirectObjectReference>;
+
+		template <typename T>
+		friend T* Allocate();
 	};
-
-	template <typename T>
-	const T IndirectObjectReference::GetReferencedObjectAs() const
-	{
-		return GetReferencedObject()->GetObjectAs<T>();
-	}
-
-	inline Object::Type IndirectObjectReference::GetType(void) const
-	{
-		return Object::Type::IndirectObjectReference;
-	}
-
-	inline Deferred<IndirectObject> IndirectObjectReference::operator->() const
-	{
-		return GetReferencedObject();
-	}
-
-	inline void IndirectObjectReference::SetObjectNumber(IntegerObjectPtr number)
-	{
-		_obj_number = number;
-	}
-
-	inline IntegerObjectPtr IndirectObjectReference::GetObjectNumber() const
-	{
-		return _obj_number;
-	}
-
-	inline void IndirectObjectReference::SetGenerationNumber(IntegerObjectPtr number)
-	{
-		_gen_number = number;
-	}
-
-	inline IntegerObjectPtr IndirectObjectReference::GetGenerationNumber() const
-	{
-		return _gen_number;
-	}
-
-	inline void IndirectObjectReference::SetFile(files::File *file)
-	{
-		_file = file;
-	}
-
-	inline files::File* IndirectObjectReference::GetFile() const
-	{
-		return _file;
-	}
 }
 
 #endif /* _INDIRECT_OBJECT_REFERENCE_H */
