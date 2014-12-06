@@ -47,13 +47,6 @@ namespace gotchangpdf
 			{
 				auto result = lex::tokenize_and_parse(input_begin_pos, input_end_pos, lexer, grammar(_file), obj);
 				if (result) {
-					auto direct = obj->GetObject();
-					if (6 == direct.which()) {
-						ObjectVisitor<IndirectObjectReference> visitor;
-						auto reference = direct.apply_visitor(visitor);
-						reference.SetFile(_file);
-					}
-
 					return obj;
 				}
 				else {

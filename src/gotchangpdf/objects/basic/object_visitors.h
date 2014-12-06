@@ -38,19 +38,16 @@ namespace gotchangpdf
 			auto direct = indirect->GetObject();
 			return direct.apply_visitor(*this);
 		}
-		/*
+
 		T operator()(T obj) const
 		{
-			//ObjectVisitor<T> visitor;
-			//return obj->apply_visitor(visitor);
 			return obj;
 		}
-		*/
 
 		template <typename U>
 		T operator()(U obj) const
 		{
-			return obj;
+			throw exceptions::Exception("Type cast error");
 		}
 	};
 

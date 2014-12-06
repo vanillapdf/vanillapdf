@@ -6,6 +6,11 @@
 
 namespace gotchangpdf
 {
+	inline bool operator==(const DirectObject& lhs, const DirectObject& rhs)
+	{
+		return lhs.operator==(rhs);
+	}
+
 	inline bool operator!=(const DirectObject& lhs, const DirectObject& rhs)
 	{
 		return !(lhs.operator==(rhs));

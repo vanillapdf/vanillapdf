@@ -59,7 +59,7 @@ namespace gotchangpdf
 
 		bool HasContents(void) const { return nullptr != Contents; }
 
-		operator bool() const { return HasContents(); }
+		//operator bool() const { return HasContents(); }
 
 		operator T()
 		{
@@ -191,7 +191,7 @@ namespace gotchangpdf
 		}
 
 		bool HasContents(void) const { return nullptr != Contents; }
-		operator bool() const { return HasContents(); }
+		//operator bool() const { return HasContents(); }
 
 		// Support insertion as if this were itself a container
 		void insert(const iterator& pos, const value_type& value)

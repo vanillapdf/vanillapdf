@@ -56,7 +56,7 @@ namespace gotchangpdf
 
 	Parser& operator>>(Parser& s, StreamObject& o)
 	{
-		if (!o._dictionary)
+		if (!o._dictionary.HasContents())
 		{
 			s >> *o._dictionary;
 		}

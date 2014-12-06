@@ -34,7 +34,7 @@ namespace gotchangpdf
 
 		Child& GetChild() const
 		{
-			if (_child || _child->GetContainer() != _container)
+			if (_child.HasContents() || _child->GetContainer() != _container)
 				_child = _func(_container);
 
 			return _child;

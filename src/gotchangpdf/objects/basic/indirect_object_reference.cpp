@@ -19,10 +19,10 @@ namespace gotchangpdf
 
 	Deferred<IndirectObject> IndirectObjectReference::GetReferencedObject() const
 	{
-		if (!_reference)
+		if (!_reference.HasContents())
 		{
 			// TODO
-			_reference = _file->GetIndirectObject(_obj_number, _gen_number);
+			_reference = _file->GetIndirectObject(_obj_number->Value(), _gen_number->Value());
 		}
 
 		return _reference;
