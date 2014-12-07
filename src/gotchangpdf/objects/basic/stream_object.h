@@ -20,7 +20,8 @@ namespace gotchangpdf
 			OBJECT_STREAM
 		};
 
-		StreamObject();
+		StreamObject() = default;
+		explicit StreamObject(files::File * file);
 		explicit StreamObject(const DictionaryObject& dictionary);
 
 		Buffer GetData() const;
@@ -34,12 +35,11 @@ namespace gotchangpdf
 		DictionaryObjectPtr _dictionary;
 		types::stream_offset _raw_data_offset = std::_BADOFF;
 
-		// TEMP
-		void ReadData(raw::Stream stream) const;
-
 	private:
 		mutable Buffer _data;
 		Type _type = Type::UNKNOWN;
+
+		files::File *_file;
 	};
 }
 

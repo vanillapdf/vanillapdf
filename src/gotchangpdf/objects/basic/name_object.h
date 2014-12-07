@@ -15,25 +15,19 @@ namespace gotchangpdf
 		typedef Buffer value_type;
 
 	public:
-		struct Hasher
-		{
-			unsigned long operator()(const NameObject& t) const;
-			bool operator()(const NameObject& first, const NameObject& second) const;
-		};
-
-		NameObject();
+		NameObject() = default;
 		explicit NameObject(const gotchangpdf::lexical::Token& token);
 		explicit NameObject(const value_type& name);
 
-		const value_type& Value() const;
+		inline const value_type& Value() const { return _value; }
 
-		bool operator==(const NameObject& other) const;
-		bool operator!=(const NameObject& other) const;
-		bool operator<(const NameObject& other) const;
+		inline bool operator==(const NameObject& other) const { return Equals(other); }
+		inline bool operator!=(const NameObject& other) const { return !Equals(other); }
+		inline bool operator<(const NameObject& other) const { return _value < other._value; }
 
-		bool Equals(const NameObject& other) const;
+		inline bool Equals(const NameObject& other) const { return _value.Equals(other._value); }
 
-		virtual Object::Type GetType(void) const override;
+		virtual inline Object::Type GetType(void) const override { return Object::Type::NameObject; }
 
 		void SetName(value_type& name) { _value = name; }
 
@@ -41,38 +35,6 @@ namespace gotchangpdf
 	public:
 		value_type _value;
 	};
-
-	inline bool NameObject::operator==(const NameObject& other) const
-	{
-		return Equals(other);
-	}
-
-	inline bool NameObject::operator!=(const NameObject& other) const
-	{
-		return !Equals(other);
-	}
-
-	inline bool NameObject::operator<(const NameObject& other) const
-	{
-		return _value < other._value;
-	}
-
-	inline Object::Type NameObject::GetType(void) const
-	{
-		return Object::Type::NameObject;
-	}
-
-	inline bool NameObject::Equals(const NameObject& other) const
-	{
-		return _value.Equals(other._value);
-	}
-
-	inline const NameObject::value_type& NameObject::Value() const { return _value; }
-
-	inline bool NameObject::Hasher::operator()(const NameObject& first, const NameObject& second) const
-	{
-		return first.Equals(second);
-	}
 
 	namespace constant
 	{
@@ -100,6 +62,14 @@ namespace gotchangpdf
 			DECLARE_CONST_NAME(Root);
 		}
 	}
+}
+
+namespace std
+{
+	template <> struct hash<gotchangpdf::NameObject>
+	{
+		size_t operator()(const gotchangpdf::NameObject& name) const;
+	};
 }
 
 #endif /* _NAME_OBJECT_H */

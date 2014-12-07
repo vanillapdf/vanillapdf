@@ -21,26 +21,36 @@ namespace gotchangpdf
 	using namespace exceptions;
 	using namespace character;
 
-	StreamObject::StreamObject() {}
-
+	StreamObject::StreamObject(files::File * file) : _file(file) {}
 	StreamObject::StreamObject(const DictionaryObject& dictionary) : _dictionary(dictionary) {}
-
-	void StreamObject::ReadData(raw::Stream stream) const
-	{
-		auto size_raw = _dictionary->Find(constant::Name::Length);
-		KillIndirectionVisitor<IntegerObjectPtr> visitor;
-		IntegerObjectPtr size = size_raw.apply_visitor(visitor);
-
-		size_t len = static_cast<size_t>(*size);
-
-		auto pos = stream.tellg();
-		stream.seekg(_raw_data_offset);
-		_data = stream.read(len);
-		stream.seekg(pos);
-	}
 
 	Buffer StreamObject::GetData() const
 	{
+		if (_data.empty())
+		{
+			auto stream = _file->GetInputStream();
+			if (auto locked = stream.lock())
+			{
+				auto size_raw = _dictionary->Find(constant::Name::Length);
+				KillIndirectionVisitor<IntegerObjectPtr> visitor;
+				IntegerObjectPtr size = size_raw.apply_visitor(visitor);
+
+				size_t len = static_cast<size_t>(*size);
+
+				auto stream = raw::Stream(*locked);
+				auto pos = stream.tellg();
+				stream.seekg(_raw_data_offset);
+				_data = stream.read(len);
+				stream.seekg(pos);
+
+				stream.seekg(pos);
+			}
+			else
+			{
+				throw exceptions::Exception("Could not obtain fstream lock");
+			}
+		}
+
 		auto filter = _dictionary->Find(constant::Name::Filter);
 		if (filter.empty())
 			return _data;

@@ -87,7 +87,6 @@
     <ClInclude Include="src\gotchangpdf\util\deferred.h" />
     <ClInclude Include="src\gotchangpdf\util\file_device.h" />
     <ClInclude Include="src\gotchangpdf\util\fwd.h" />
-    <ClInclude Include="src\gotchangpdf\util\hasher.h" />
     <ClInclude Include="src\gotchangpdf\util\operators.h" />
     <ClInclude Include="src\gotchangpdf\util\smart_ptr.h" />
     <ClInclude Include="src\gotchangpdf\util\version.h" />
@@ -131,7 +130,6 @@
     <ClCompile Include="src\gotchangpdf\raw\raw_reverse_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\raw\raw_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\util\buffer.cpp" />
-    <ClCompile Include="src\gotchangpdf\util\hasher.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9AF81955-0B8C-4778-9F93-3ED8285D3D49}</ProjectGuid>

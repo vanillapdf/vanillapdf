@@ -2,14 +2,6 @@
 #define _FILE_H
 
 #include "fwd.h"
-//#include "xref.h"
-//#include "dictionary_object.h"
-//#include "parser.h"
-//#include "header.h"
-//#include "trailer.h"
-//#include "indirect_object.h"
-//#include "deferred.h"
-//#include "catalog.h"
 #include "smart_ptr.h"
 #include "file_device.h"
 #include "constants.h"

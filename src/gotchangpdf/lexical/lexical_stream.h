@@ -3,7 +3,6 @@
 
 #include "lexical_base_stream.h"
 #include "raw_stream.h"
-#include "object.h"
 #include "constants.h"
 
 namespace gotchangpdf

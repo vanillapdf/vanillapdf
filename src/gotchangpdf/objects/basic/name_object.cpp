@@ -7,14 +7,16 @@ namespace gotchangpdf
 {
 	using namespace lexical;
 
-	NameObject::NameObject() {}
 	NameObject::NameObject(const Token& token) : _value(token.Value()) { assert(token.GetType() == Token::Type::NAME_OBJECT); }
 	NameObject::NameObject(const Buffer& name) : _value(name) {}
+}
 
-	unsigned long NameObject::Hasher::operator()(const NameObject& t) const
+namespace std
+{
+	size_t hash<gotchangpdf::NameObject>::operator()(const gotchangpdf::NameObject& name) const
 	{
-		unsigned long result = 0;
-		for (auto & val : t.Value())
+		size_t result = 0;
+		for (auto & val : name.Value())
 		{
 			std::hash<char> hash_fn;
 			result ^= hash_fn(val);

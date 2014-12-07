@@ -2,12 +2,10 @@
 #define _DICTIONARY_OBJECT_H
 
 #include "fwd.h"
-#include "deferred.h"
 #include "direct_object.h"
 #include "object_visitors.h"
 #include "name_object.h"
 #include "containerable.h"
-#include "hasher.h"
 
 //#include <unordered_map>
 #include <map>
@@ -19,9 +17,9 @@ namespace gotchangpdf
 	class DictionaryObjectBase : public Object, public Container
 	{
 	public:
-		//typedef std::unordered_map<NameType, T, std::hash<NameType>> value_type;
+		//typedef std::unordered_map<NameT, ValueT, std::hash<NameT>> value_type;
 		typedef std::map<NameT, ValueT> value_type;
-		//typedef std::vector<std::pair<NameType, T>> value_type;
+		//typedef std::vector<std::pair<NameT, ValueT>> value_type;
 
 	public:
 		class Iterator
@@ -64,8 +62,6 @@ namespace gotchangpdf
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::DictionaryObject; }
 
-		//friend Objects::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, DictionaryObject& o);
-
 		template <typename U>
 		const U FindAs(const NameT& name) const
 		{
@@ -102,6 +98,7 @@ namespace gotchangpdf
 	class DictionaryObject : public DictionaryObjectBase<NameObject, DirectObject>
 	{
 		friend lexical::Parser& operator>> (lexical::Parser& s, DictionaryObject& o);
+		//friend Objects::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, DictionaryObject& o);
 	};
 }
 
