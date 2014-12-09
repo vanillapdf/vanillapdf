@@ -5,7 +5,7 @@
 
 namespace gotchangpdf
 {
-	template <typename T, typename Container>
+	template <typename T>
 	class ArrayObject;
 
 	class MixedArrayObject;
@@ -84,8 +84,8 @@ namespace gotchangpdf
 		class ReverseStream;
 	}
 
-	template <typename T, typename Container>
-	using ArrayObjectPtr = Deferred<ArrayObject<T, Container>>;
+	template <typename T>
+	using ArrayObjectPtr = Deferred<ArrayObject<T>>;
 
 	using NameObjectPtr = Deferred<NameObject>;
 	using DictionaryObjectPtr = Deferred<DictionaryObject>;

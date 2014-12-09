@@ -5,7 +5,7 @@
 #include "direct_object.h"
 #include "object_visitors.h"
 #include "name_object.h"
-#include "containerable.h"
+#include "containable.h"
 
 //#include <unordered_map>
 #include <map>
@@ -13,8 +13,8 @@
 
 namespace gotchangpdf
 {
-	template <typename NameT, typename ValueT, typename Container = ParentContainer<ContainerPtr>>
-	class DictionaryObjectBase : public Object, public Container
+	template <typename NameT, typename ValueT>
+	class DictionaryObjectBase : public Containable
 	{
 	public:
 		//typedef std::unordered_map<NameT, ValueT, std::hash<NameT>> value_type;

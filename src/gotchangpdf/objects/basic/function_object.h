@@ -2,11 +2,11 @@
 #define _FUNCTION_OBJECT_H
 
 #include "object.h"
-#include "containerable.h"
+#include "containable.h"
 
 namespace gotchangpdf
 {
-	class FunctionObject : public Object, public ParentContainer<ContainerPtr>
+	class FunctionObject : public Containable
 	{
 	public:
 		virtual inline Object::Type GetType(void) const override { return Object::Type::Function; }

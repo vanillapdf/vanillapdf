@@ -55,7 +55,7 @@
     <ClInclude Include="src\gotchangpdf\lexical\token_dictionary.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\array_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\boolean_object.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\containerable.h" />
+    <ClInclude Include="src\gotchangpdf\objects\basic\containable.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\dictionary_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\direct_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\function_object.h" />

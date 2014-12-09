@@ -4,11 +4,11 @@
 #include "fwd.h"
 #include "object.h"
 #include "buffer.h"
-#include "containerable.h"
+#include "containable.h"
 
 namespace gotchangpdf
 {
-	class StringObject : public Object
+	class StringObject : public Containable
 	{
 	public:
 		Buffer _value;
@@ -18,7 +18,7 @@ namespace gotchangpdf
 		explicit StringObject(const Buffer& value);
 	};
 
-	class HexadecimalString : public StringObject, public ParentContainer<ContainerPtr>
+	class HexadecimalString : public StringObject
 	{
 	public:
 		HexadecimalString() = default;
@@ -32,7 +32,7 @@ namespace gotchangpdf
 		std::string _hexadecimal;
 	};
 
-	class LiteralString : public StringObject, public ParentContainer<ContainerPtr>
+	class LiteralString : public StringObject
 	{
 	public:
 		LiteralString() = default;

@@ -2,20 +2,16 @@
 #define _CONTAINERABLE_H
 
 #include "fwd.h"
-#include "deferred.h"
-
-//#include "array_object.h"
-//#include "dictionary_object.h"
-//#include "null_object.h"
+#include "object.h"
 
 #include <boost/variant/variant.hpp>
 
 namespace gotchangpdf
 {
 	typedef boost::variant <
-		Deferred<NullObject>,
-		Deferred<MixedArrayObject>,
-		Deferred<DictionaryObject>
+		NullObjectPtr,
+		MixedArrayObjectPtr,
+		DictionaryObjectPtr
 	> ContainerPtr;
 	/*
 	typedef boost::variant <
@@ -33,15 +29,15 @@ namespace gotchangpdf
 		Deferred<HexadecimalString>
 	> ContainerableObject;
 	*/
-	template <typename T>
-	class ParentContainer
+
+	class Containable : public Object
 	{
 	public:
-		inline void SetContainer(T obj) { _container = obj; }
-		inline T GetContainer() const { return _container; }
+		inline void SetContainer(ContainerPtr obj) { _container = obj; }
+		inline ContainerPtr GetContainer() const { return _container; }
 
-	protected:
-		T _container;
+	private:
+		ContainerPtr _container;
 	};
 }
 

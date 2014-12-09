@@ -5,13 +5,13 @@
 #include "object.h"
 #include "constants.h"
 #include "indirect_object.h"
-#include "containerable.h"
+#include "containable.h"
 
 #include <memory>
 
 namespace gotchangpdf
 {
-	class IndirectObjectReference : public Object, public ParentContainer<ContainerPtr>
+	class IndirectObjectReference : public Containable
 	{
 	public:
 		explicit IndirectObjectReference(files::File * file);

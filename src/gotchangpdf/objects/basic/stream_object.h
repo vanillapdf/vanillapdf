@@ -5,6 +5,7 @@
 #include "constants.h"
 #include "dictionary_object.h"
 #include "deferred.h"
+#include "buffer.h"
 
 #include <memory>
 

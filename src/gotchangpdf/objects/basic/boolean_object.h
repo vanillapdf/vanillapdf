@@ -2,11 +2,11 @@
 #define _BOOLEAN_OBJECT_H
 
 #include "object.h"
-#include "containerable.h"
+#include "containable.h"
 
 namespace gotchangpdf
 {
-	class BooleanObject : public Object, public ParentContainer<ContainerPtr>
+	class BooleanObject : public Containable
 	{
 	public:
 		virtual inline Object::Type GetType(void) const override { return Object::Type::Boolean; }

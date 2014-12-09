@@ -2,11 +2,11 @@
 #define _NULL_OBJECT_H
 
 #include "object.h"
-#include "containerable.h"
+#include "containable.h"
 
 namespace gotchangpdf
 {
-	class NullObject : public Object, public ParentContainer<ContainerPtr>
+	class NullObject : public Containable
 	{
 	public:
 		virtual inline Object::Type GetType(void) const override { return Object::Type::NullObject; }

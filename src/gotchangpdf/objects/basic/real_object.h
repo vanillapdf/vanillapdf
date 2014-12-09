@@ -4,11 +4,11 @@
 #include "fwd.h"
 #include "constants.h"
 #include "object.h"
-#include "containerable.h"
+#include "containable.h"
 
 namespace gotchangpdf
 {
-	class RealObject : public Object, public ParentContainer<ContainerPtr>
+	class RealObject : public Containable
 	{
 	public:
 		typedef types::real value_type;

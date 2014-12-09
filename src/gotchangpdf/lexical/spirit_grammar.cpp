@@ -5,9 +5,9 @@
 
 #define BOOST_SPIRIT_AUTO(domain_, name, expr)                                  \
 	typedef boost::proto::result_of::                                           \
-	deep_copy<BOOST_TYPEOF(expr)>::type name##_expr_type;                   \
-	BOOST_SPIRIT_ASSERT_MATCH(\
-	boost::spirit::domain_::domain, name##_expr_type);                      \
+	deep_copy<BOOST_TYPEOF(expr)>::type name##_expr_type;                       \
+	BOOST_SPIRIT_ASSERT_MATCH(                                                  \
+	boost::spirit::domain_::domain, name##_expr_type);                          \
 	BOOST_AUTO(name, boost::proto::deep_copy(expr));                            \
 
 void indirect_reference_handler(gotchangpdf::IndirectObjectReferencePtr obj, gotchangpdf::files::File* file)
@@ -15,9 +15,11 @@ void indirect_reference_handler(gotchangpdf::IndirectObjectReferencePtr obj, got
 	obj->SetFile(file);
 }
 
-void dictionary_item_handler(gotchangpdf::DictionaryObjectPtr obj, gotchangpdf::NameObjectPtr name, gotchangpdf::DirectObject item)
+void dictionary_item_handler(gotchangpdf::DictionaryObjectPtr obj, gotchangpdf::DirectObject item)
 {
-	auto aa = item;
+	gotchangpdf::ContainableVisitor visitor;
+	auto containable = item.apply_visitor(visitor);
+	containable->SetContainer(obj);
 }
 
 typedef
@@ -152,7 +154,12 @@ namespace gotchangpdf
 			dictionary_object %=
 				lexer.dictionary_begin
 				> whitespaces
-				> *(name_key > whitespaces > direct_object(qi::_r1) > whitespaces)
+				> *(
+					name_key
+					> whitespaces
+					> direct_object(qi::_r1)[boost::phoenix::bind(&dictionary_item_handler, qi::_val, qi::_1)]
+					> whitespaces
+					)
 				//> whitespaces
 				> lexer.dictionary_end;
 

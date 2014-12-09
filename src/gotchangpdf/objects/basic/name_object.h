@@ -3,13 +3,13 @@
 
 #include "object.h"
 #include "buffer.h"
-#include "containerable.h"
+#include "containable.h"
 
 #include <stddef.h>
 
 namespace gotchangpdf
 {
-	class NameObject : public Object, public ParentContainer<ContainerPtr>
+	class NameObject : public Containable
 	{
 	public:
 		typedef Buffer value_type;

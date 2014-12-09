@@ -5,11 +5,11 @@
 #include "constants.h"
 #include "token.h"
 #include "object.h"
-#include "containerable.h"
+#include "containable.h"
 
 namespace gotchangpdf
 {
-	class IntegerObject : public Object, public ParentContainer<ContainerPtr>
+	class IntegerObject : public Containable
 	{
 	public:
 		typedef types::integer value_type;

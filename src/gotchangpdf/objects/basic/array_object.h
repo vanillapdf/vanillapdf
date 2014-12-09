@@ -5,15 +5,15 @@
 #include "deferred.h"
 #include "object.h"
 #include "direct_object.h"
-#include "containerable.h"
+#include "containable.h"
 
 #include <vector>
 #include <algorithm>
 
 namespace gotchangpdf
 {
-	template <typename T, typename Container = ParentContainer<ContainerPtr>>
-	class ArrayObject : public Object, public Container
+	template <typename T>
+	class ArrayObject : public Containable
 	{
 	public:
 		typedef std::vector<T> value_type;
@@ -28,7 +28,7 @@ namespace gotchangpdf
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::ArrayObject; }
 
-		friend lexical::Parser& operator>> (lexical::Parser& s, ArrayObject<T, Container>& o)
+		friend lexical::Parser& operator>> (lexical::Parser& s, ArrayObject<T>& o)
 		{
 			/*
 			s.LexicalSettingsPush();
@@ -53,13 +53,13 @@ namespace gotchangpdf
 		}
 
 		template <typename U>
-		Deferred<ArrayObject<U, Container>> Convert(std::function<const U(T& obj)> f)
+		ArrayObjectPtr<U> Convert(std::function<const U(T& obj)> f)
 		{
 			std::vector<U> list;
 			list.resize(_list.size());
 			transform(_list.begin(), _list.end(), list.begin(), f);
 
-			return ArrayObject<U, Container>(list);
+			return ArrayObject<U>(list);
 		}
 
 		const value_type& GetList(void) const { return _list; }
@@ -74,7 +74,7 @@ namespace gotchangpdf
 	{
 	public:
 		template <typename T>
-		Deferred<ArrayObject<T>> CastToArrayType()
+		ArrayObjectPtr<T> CastToArrayType()
 		{
 			return Convert<T>([](DirectObject obj)
 			{
