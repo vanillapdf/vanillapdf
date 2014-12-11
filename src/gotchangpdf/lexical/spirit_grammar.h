@@ -30,7 +30,8 @@ namespace gotchangpdf
 			Rule<NameObject> name_key;
 			Rule<NullObjectPtr> null_object;
 			Rule<RealObjectPtr> real_object;
-			Rule<StreamObjectPtr, files::File*> stream_object;
+			//Rule<StreamObjectPtr, files::File*> stream_object;
+			qi::rule<SpiritLexer::iterator_type, StreamObjectPtr(files::File*), qi::locals<DictionaryObjectPtr, int>> stream_object;
 			Rule<StringObjectPtr> string_object;
 			Rule<LiteralStringPtr> literal_string_object;
 			Rule<HexadecimalStringPtr> hexadecimal_string_object;

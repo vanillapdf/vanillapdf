@@ -1,5 +1,9 @@
 #include "spirit_grammar.h"
 
+//#include "constants.h"
+//#include "integer_object.h"
+//#include "object_visitors.h"
+
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/spirit/repository/include/qi_iter_pos.hpp>
 
@@ -22,6 +26,23 @@ void dictionary_item_handler(gotchangpdf::DictionaryObjectPtr obj, gotchangpdf::
 	containable->SetContainer(obj);
 }
 
+void array_item_handler(gotchangpdf::MixedArrayObjectPtr obj, gotchangpdf::DirectObject item)
+{
+	gotchangpdf::ContainableVisitor visitor;
+	auto containable = item.apply_visitor(visitor);
+	containable->SetContainer(obj);
+}
+
+void stream_item_handler(gotchangpdf::DictionaryObjectPtr obj, int& value)
+{
+	auto size_raw = obj->Find(gotchangpdf::constant::Name::Length);
+	gotchangpdf::KillIndirectionVisitor<gotchangpdf::IntegerObjectPtr> visitor;
+	gotchangpdf::IntegerObjectPtr size = size_raw.apply_visitor(visitor);
+
+	// TODO for newline hack
+	value = static_cast<int>(*size) + 1;
+}
+/*
 typedef
 boost::spirit::context<
 boost::fusion::cons<gotchangpdf::DictionaryObjectPtr&, boost::fusion::cons<gotchangpdf::files::File*, boost::fusion::nil>>,
@@ -36,12 +57,14 @@ void f(boost::spirit::unused_type attribute, const boost::spirit::unused_type& c
 	//auto bb = boost::phoenix::at_c<0>(con.locals);
 	//auto ee = boost::fusion::at_c<0>(con.locals);
 }
-
+*/
 namespace gotchangpdf
 {
 	namespace lexical
 	{
 		namespace repo = boost::spirit::repository;
+		namespace ascii = boost::spirit::ascii;
+		namespace phoenix = boost::phoenix;
 
 		SpiritGrammar::SpiritGrammar(const lexical::SpiritLexer& lexer) :
 			base_type(indirect_object, "Indirect object grammar")
@@ -83,9 +106,9 @@ namespace gotchangpdf
 				>> lexer.obj
 				//>> qi::attr_cast(repo::qi::iter_pos)
 				>> eol
-				>> direct_object(qi::_r1);
-				//>> eol
-				//>> lexer.endobj;
+				>> direct_object(qi::_r1)
+				> eol
+				> lexer.endobj;
 
 			/*
 			string_object =
@@ -147,7 +170,10 @@ namespace gotchangpdf
 			array_object %=
 				lexer.left_bracket
 				> whitespaces
-				> *(direct_object(qi::_r1) > whitespaces)
+				> *(
+					direct_object(qi::_r1)[phoenix::bind(&array_item_handler, qi::_val, qi::_1)]
+					> whitespaces
+					)
 				//> whitespaces
 				> lexer.right_bracket;
 
@@ -157,20 +183,26 @@ namespace gotchangpdf
 				> *(
 					name_key
 					> whitespaces
-					> direct_object(qi::_r1)[boost::phoenix::bind(&dictionary_item_handler, qi::_val, qi::_1)]
+					> direct_object(qi::_r1)[phoenix::bind(&dictionary_item_handler, qi::_val, qi::_1)]
 					> whitespaces
 					)
 				//> whitespaces
 				> lexer.dictionary_end;
 
 			stream_object %=
-				dictionary_object(qi::_r1)
+				dictionary_object(qi::_r1)[qi::_a = qi::_1]
 				>> whitespaces
-				>> lexer.stream_begin
-				> eol;
-				//> repo::qi::iter_pos;
-				//> lexer.anything // skip length
-				//> lexer.stream_end;
+				>> lexer.stream_begin[phoenix::bind(&stream_item_handler, qi::_a, qi::_b)]
+				//> eol
+				//> qi::in_state("STREAM")[qi::repeat(1)[lexer.character]]
+				//> (qi::in_state("STREAM")[lexer.character])
+				//> repo::qi::iter_pos
+				//> repo::qi::seek["endstream"]
+				// TODO change stream state
+				> qi::repeat(qi::_b)[lexer.character]
+				//> qi::in_state("INITIAL")[lexer.self]
+				// TODO custom parser without lexer, input dictionary, read length, skip and return
+				> lexer.stream_end;
 
 			literal_string_object %=
 				qi::eps
@@ -180,15 +212,17 @@ namespace gotchangpdf
 				> (lexer.word | lexer.literal_text)
 				> lexer.right_parenthesis;
 				*/
-			BOOST_SPIRIT_DEBUG_NODE(boolean_object);
-			BOOST_SPIRIT_DEBUG_NODE(indirect_object);
-			BOOST_SPIRIT_DEBUG_NODE(direct_object);
-			BOOST_SPIRIT_DEBUG_NODE(indirect_reference_object);
-			BOOST_SPIRIT_DEBUG_NODE(integer_object);
-			BOOST_SPIRIT_DEBUG_NODE(name_object);
-			BOOST_SPIRIT_DEBUG_NODE(array_object);
-			BOOST_SPIRIT_DEBUG_NODE(dictionary_object);
-			BOOST_SPIRIT_DEBUG_NODE(literal_string_object);
+			//BOOST_SPIRIT_DEBUG_NODE(boolean_object);
+			//BOOST_SPIRIT_DEBUG_NODE(indirect_object);
+			//BOOST_SPIRIT_DEBUG_NODE(direct_object);
+			//BOOST_SPIRIT_DEBUG_NODE(indirect_reference_object);
+			//BOOST_SPIRIT_DEBUG_NODE(integer_object);
+			//BOOST_SPIRIT_DEBUG_NODE(name_object);
+			//BOOST_SPIRIT_DEBUG_NODE(name_key);
+			//BOOST_SPIRIT_DEBUG_NODE(array_object);
+			//BOOST_SPIRIT_DEBUG_NODE(dictionary_object);
+			//BOOST_SPIRIT_DEBUG_NODE(literal_string_object);
+			//BOOST_SPIRIT_DEBUG_NODE(stream_object);
 		}
 	}
 }
