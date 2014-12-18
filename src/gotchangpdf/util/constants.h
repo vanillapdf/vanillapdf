@@ -13,7 +13,8 @@ namespace gotchangpdf
 	namespace types
 	{
 		typedef uint16_t ushort;
-		typedef uint32_t integer;
+		typedef int32_t integer;
+		typedef uint32_t uinteger;
 
 		typedef int64_t stream_offset;
 		typedef int64_t stream_size;

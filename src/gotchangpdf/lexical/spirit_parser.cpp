@@ -28,8 +28,8 @@ namespace gotchangpdf
 
 		IndirectObjectPtr SpiritParser::readObject()
 		{
-			SpiritLexer lexer;
-			SpiritGrammar grammar(lexer);
+			//SpiritLexer lexer;
+			SpiritGrammar grammar;
 			IndirectObjectPtr obj = IndirectObject(_file);
 			obj->SetOffset(tellg());
 
@@ -45,7 +45,8 @@ namespace gotchangpdf
 
 			try
 			{
-				auto result = lex::tokenize_and_parse(input_begin_pos, input_end_pos, lexer, grammar(_file), obj);
+				auto result = qi::parse(input_begin_pos, input_end_pos, grammar(_file), obj);
+				//auto result = lex::tokenize_and_parse(input_begin_pos, input_end_pos, lexer, grammar(_file), obj);
 				if (result) {
 					return obj;
 				}
@@ -61,11 +62,11 @@ namespace gotchangpdf
 					throw exceptions::Exception("Parsing failed");
 				}
 			}
-			catch (const qi::expectation_failure<lexer_type::iterator_type>& exception) {
+			catch (const qi::expectation_failure<pos_iterator_type>& exception) {
 				cout << "Parsing failed" << endl;
 
 				auto offset = tellg();
-				auto pos_begin = (*exception.first).value().begin();
+				auto pos_begin = exception.first;
 				const auto& pos = pos_begin.get_position();
 				cout <<
 					"Error at file " << pos.file << " offset " << offset << " Expecting " << exception.what_ << endl <<

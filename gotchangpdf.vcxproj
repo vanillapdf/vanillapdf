@@ -174,7 +174,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\objects\basic;src\gotchangpdf\exceptions;src\gotchangpdf\files;src\gotchangpdf\lexical;lib\boost;src\gotchangpdf\objects\common;include\gotchangpdf;src\gotchangpdf\documents;src\gotchangpdf\raw;src\gotchangpdf\util;src\gotchangpdf\basic;src\gotchangpdf\filters;lib\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;DEBUG;BOOST_SPIRIT_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

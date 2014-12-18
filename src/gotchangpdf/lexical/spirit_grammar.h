@@ -10,13 +10,13 @@ namespace gotchangpdf
 	{
 		namespace qi = boost::spirit::qi;
 
-		struct SpiritGrammar : qi::grammar<SpiritLexer::iterator_type,
+		struct SpiritGrammar : qi::grammar<lexical::pos_iterator_type,
 			IndirectObjectPtr(files::File*)>
 		{
-			SpiritGrammar(const lexical::SpiritLexer& lexer);
+			SpiritGrammar();
 
 		private:
-			template <typename A, typename... Inherited> using Rule = qi::rule<SpiritLexer::iterator_type, A(Inherited...)>;
+			template <typename A, typename... Inherited> using Rule = qi::rule<lexical::pos_iterator_type, A(Inherited...)>;
 			Rule<IndirectObjectPtr, files::File*> indirect_object;
 
 			Rule<DirectObject, files::File*> direct_object;
@@ -31,7 +31,7 @@ namespace gotchangpdf
 			Rule<NullObjectPtr> null_object;
 			Rule<RealObjectPtr> real_object;
 			//Rule<StreamObjectPtr, files::File*> stream_object;
-			qi::rule<SpiritLexer::iterator_type, StreamObjectPtr(files::File*), qi::locals<DictionaryObjectPtr, int>> stream_object;
+			qi::rule<lexical::pos_iterator_type, StreamObjectPtr(files::File*), qi::locals<DictionaryObjectPtr, int>> stream_object;
 			Rule<StringObjectPtr> string_object;
 			Rule<LiteralStringPtr> literal_string_object;
 			Rule<HexadecimalStringPtr> hexadecimal_string_object;

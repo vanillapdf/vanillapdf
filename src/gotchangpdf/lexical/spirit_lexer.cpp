@@ -64,8 +64,8 @@ namespace gotchangpdf
 			this->self += true_ | false_;
 			this->self += obj | endobj;
 			this->self += dictionary_begin | dictionary_end;
-			this->self += stream_begin[lex::_state = "STREAM"];
-			//this->self += stream_begin | stream_end;
+			//this->self += stream_begin[lex::_state = "STREAM_BEGIN"];
+			this->self += stream_begin | stream_end;
 			this->self += line_feed | space | carriage_return | null | horizontal_tab | form_feed;
 			this->self += less_than_sign | greater_than_sign | left_bracket | right_bracket | left_parenthesis | right_parenthesis | left_curly_bracket | right_curly_bracket | solidus | percent_sign;
 
@@ -75,13 +75,13 @@ namespace gotchangpdf
 			this->self += word;
 			this->self += parenthesed_string;
 
-			character = ".|\\r|\\n";
+			//character = ".|\\r|\\n";
 			//character = ".|\\r|\\n";
 			//character = "[\x01-\xFF]";
 			//character = "[\\r\\na-zA-Z]";
 
-			this->self("STREAM") = stream_end[lex::_state = initial_state()] | character;
-			//this->self("STREAM") = character;
+			//this->self("STREAM_BEGIN") = end_of_line[lex::_state = "STREAM_DATA"];
+			//this->self("STREAM_DATA") = stream_end[lex::_state = initial_state()] | character;
 
 			//this->self += indirect_reference_marker;
 			//this->self += dot;

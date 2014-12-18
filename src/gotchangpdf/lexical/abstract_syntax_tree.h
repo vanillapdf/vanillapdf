@@ -34,12 +34,18 @@ BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::DirectObject, /**/)
 BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::StringObjectPtr, /**/)
 BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::FunctionObjectPtr, /**/)
 BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::NullObjectPtr, /**/)
+
 /*
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::lexical::ast::IntegerObjectTestPtr,
 (gotchangpdf::types::integer, Content->value)
 )
 */
+
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::BooleanObjectPtr,
+(bool, Content->_value)
+)
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::IntegerObjectPtr,
@@ -80,7 +86,7 @@ gotchangpdf::RealObjectPtr,
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::StreamObjectPtr,
 (gotchangpdf::DictionaryObjectPtr, Content->_dictionary)
-(gotchangpdf::types::stream_offset, Content->_raw_data_offset)
+//(gotchangpdf::types::stream_offset, Content->_raw_data_offset)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
