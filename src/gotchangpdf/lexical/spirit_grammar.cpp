@@ -147,13 +147,13 @@ namespace gotchangpdf
 				//> whitespaces
 				> qi::lit(">>");
 
-			stream_object %=
+			stream_object =
 				dictionary_object(qi::_r1)[qi::_a = qi::_1]
 				>> whitespaces
 				>> qi::lit("stream")[phoenix::bind(&stream_item_handler, qi::_a, qi::_b)]
-				>> eol
-				>> repo::qi::advance(qi::_b)
-				>> qi::lit("endstream");
+				> eol
+				> repo::qi::advance(qi::_b)
+				> qi::lit("endstream");
 
 			literal_string_object %=
 				qi::lit("(")
