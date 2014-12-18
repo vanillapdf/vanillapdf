@@ -16,10 +16,6 @@
 #include <cassert>
 #include <iostream>
 
-//
-//#include <boost/spirit/include/lex_generate_static_lexertl.hpp>
-//
-
 namespace gotchangpdf
 {
 	namespace files
@@ -57,9 +53,6 @@ namespace gotchangpdf
 			_input = shared_ptr<FileDevice>(new FileDevice());
 			_input->open(_filename,
 				ios_base::in | ios_base::out | ios_base::binary);
-
-			//fstream out("static_lexer.hpp", std::ios_base::out);
-			//auto dfa = boost::spirit::lex::lexertl::generate_static_dfa(aa, out, "sl");
 
 			if (!_input || !_input->good())
 				throw new exceptions::Exception("Could not open file");

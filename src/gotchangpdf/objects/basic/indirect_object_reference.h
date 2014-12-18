@@ -5,6 +5,7 @@
 #include "object.h"
 #include "constants.h"
 #include "indirect_object.h"
+#include "integer_object.h"
 #include "containable.h"
 
 #include <memory>
@@ -36,6 +37,12 @@ namespace gotchangpdf
 		inline void SetFile(files::File *file) { _file = file; }
 		inline files::File* GetFile() const { return _file; }
 
+		inline bool Equals(const IndirectObjectReference& other) const { return _obj_number->Equals(*other._obj_number) && _gen_number->Equals(*other._gen_number); }
+
+		inline bool operator==(const IndirectObjectReference& other) const { return Equals(other); }
+		inline bool operator!=(const IndirectObjectReference& other) const { return !Equals(other); }
+		bool operator<(const IndirectObjectReference& other) const;
+
 	public:
 		IntegerObjectPtr _obj_number = 0;
 		IntegerObjectPtr _gen_number = 0;
@@ -49,6 +56,14 @@ namespace gotchangpdf
 
 		template <typename T>
 		friend T* Allocate();
+	};
+}
+
+namespace std
+{
+	template <> struct hash<gotchangpdf::IndirectObjectReference>
+	{
+		size_t operator()(const gotchangpdf::IndirectObjectReference& ref) const;
 	};
 }
 

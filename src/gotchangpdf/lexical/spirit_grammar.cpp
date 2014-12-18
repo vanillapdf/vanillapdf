@@ -1,8 +1,5 @@
 #include "spirit_grammar.h"
 
-//#include "constants.h"
-//#include "integer_object.h"
-//#include "object_visitors.h"
 #include "file.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -48,34 +45,8 @@ std::ostream& operator<<(std::ostream& os, const boost::spirit::qi::rule<gotchan
 {
 	return os;
 }
-
-std::ostream& operator<<(std::ostream& os, const gotchangpdf::MixedArrayObjectPtr param)
-{
-	return os;
-}
-
-std::ostream& operator<<(std::ostream& os, const gotchangpdf::files::File * param)
-{
-	os << param->GetFilename();
-	return os;
-}
 */
-/*
-typedef
-boost::spirit::context<
-boost::fusion::cons<gotchangpdf::DictionaryObjectPtr&, boost::fusion::cons<gotchangpdf::files::File*, boost::fusion::nil>>,
-boost::fusion::vector2<gotchangpdf::NameObjectPtr, gotchangpdf::DirectObject>
-> f_context;
-void f(boost::spirit::unused_type attribute, const boost::spirit::unused_type& con, bool& mFlag){
-	std::cout << "matched integer: '" << attribute << "'" << std::endl
-		<< "match flag: " << mFlag << std::endl;
 
-	//assign output attribute from parsed value    
-	//auto test = qi::_a;
-	//auto bb = boost::phoenix::at_c<0>(con.locals);
-	//auto ee = boost::fusion::at_c<0>(con.locals);
-}
-*/
 namespace gotchangpdf
 {
 	namespace lexical
@@ -88,7 +59,6 @@ namespace gotchangpdf
 			base_type(indirect_object, "Indirect object grammar")
 		{
 			//auto local_begin = qi::lazy(boost::phoenix::construct<qi::position>(qi::_a, qi::_b));
-			//start %= indirect_object;
 
 			BOOST_SPIRIT_AUTO(qi, whitespace, qi::omit[qi::char_(" \r\n\f\t") | qi::char_('\0')]);
 			BOOST_SPIRIT_AUTO(qi, whitespaces, *whitespace);
@@ -109,12 +79,6 @@ namespace gotchangpdf
 				>> direct_object(qi::_r1)
 				>> eol
 				>> qi::lit("endobj");
-
-			/*
-			string_object =
-				literal_string_object
-				| hexadecimal_string_object;
-				*/
 
 			direct_object %=
 				array_object(qi::_r1)
@@ -159,7 +123,7 @@ namespace gotchangpdf
 			hexadecimal_string_object %=
 				qi::lit('<')
 				>> *(qi::digit)
-				>> qi::lit('>');
+				> qi::lit('>');
 
 			array_object %=
 				qi::lit('[')
@@ -184,7 +148,7 @@ namespace gotchangpdf
 				> qi::lit(">>");
 
 			stream_object %=
-				dictionary_object(qi::_r1)[qi::_a = qi::_1]
+				dictionary_object(qi::_r1)
 				>> whitespaces
 				>> qi::lit("stream")[phoenix::bind(&stream_item_handler, qi::_a, qi::_b)]
 				>> eol
@@ -194,7 +158,7 @@ namespace gotchangpdf
 			literal_string_object %=
 				qi::lit("(")
 				>> *(qi::char_ - qi::char_('()')) // TODO there can be balanced or escaped
-				>> qi::lit(")");
+				> qi::lit(")");
 
 			BOOST_SPIRIT_DEBUG_NODE(boolean_object);
 			BOOST_SPIRIT_DEBUG_NODE(indirect_object);

@@ -33,6 +33,12 @@ namespace gotchangpdf
 		friend lexical::ReverseStream& operator>> (lexical::ReverseStream& s, IntegerObject& o);
 		friend lexical::Stream& operator>> (lexical::Stream& s, IntegerObject& o);
 
+		inline bool Equals(const IntegerObject& other) const { return _value == other._value; }
+
+		inline bool operator==(const IntegerObject& other) const { return Equals(other); }
+		inline bool operator!=(const IntegerObject& other) const { return !Equals(other); }
+		inline bool operator<(const IntegerObject& other) const { return _value < other._value; }
+
 	//private:
 	public:
 		value_type _value = 0;

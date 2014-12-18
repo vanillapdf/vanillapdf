@@ -4,7 +4,6 @@
 #include "file.h"
 #include "indirect_object.h"
 
-#include "spirit_lexer.h"
 #include "spirit_grammar.h"
 
 #include <iomanip>
@@ -18,7 +17,6 @@ namespace gotchangpdf
 		using namespace exceptions;
 
 		namespace qi = boost::spirit::qi;
-		namespace lex = boost::spirit::lex;
 
 		SpiritParser::SpiritParser(files::File * file, CharacterSource & stream)
 			: lexical::Stream(stream), _file(file) {}
@@ -28,7 +26,6 @@ namespace gotchangpdf
 
 		IndirectObjectPtr SpiritParser::readObject()
 		{
-			//SpiritLexer lexer;
 			SpiritGrammar grammar;
 			IndirectObjectPtr obj = IndirectObject(_file);
 			obj->SetOffset(tellg());

@@ -8,6 +8,9 @@
 #include "containable.h"
 #include "stream_object.h"
 
+#include <map>
+#include <sstream>
+
 #include <boost/variant/static_visitor.hpp>
 
 namespace gotchangpdf
@@ -31,6 +34,15 @@ namespace gotchangpdf
 	public:
 		T operator()(IndirectObjectReferencePtr obj) const
 		{
+			auto found = visited.find(*obj);
+			if (found != visited.end()) {
+				std::stringstream ss;
+				ss << "Cyclic reference was found for " << obj->GetObjectNumber()->Value() << " " << obj->GetGenerationNumber()->Value() << " R";
+				throw exceptions::Exception(ss.str());
+			}
+
+			visited[*obj] = true;
+
 			auto indirect = obj->GetReferencedObject();
 			auto direct = indirect->GetObject();
 			return direct.apply_visitor(*this);
@@ -40,6 +52,9 @@ namespace gotchangpdf
 
 		template <typename U>
 		inline T operator()(U obj) const { throw exceptions::Exception("Type cast error"); }
+
+	private:
+		mutable std::map<IndirectObjectReference, bool> visited;
 	};
 
 	class ObjectBaseVisitor : public boost::static_visitor<SmartPtr<Object>>

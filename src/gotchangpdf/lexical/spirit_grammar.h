@@ -1,13 +1,18 @@
 #ifndef SPIRIT_GRAMMAR_H
 #define SPIRIT_GRAMMAR_H
 
-#include "spirit_lexer.h"
 #include "abstract_syntax_tree.h"
+
+#include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/classic_position_iterator.hpp>
 
 namespace gotchangpdf
 {
 	namespace lexical
 	{
+		typedef boost::spirit::istream_iterator base_iterator_type;
+		typedef boost::spirit::classic::position_iterator2<base_iterator_type> pos_iterator_type;
+
 		namespace qi = boost::spirit::qi;
 
 		struct SpiritGrammar : qi::grammar<lexical::pos_iterator_type,
@@ -30,7 +35,6 @@ namespace gotchangpdf
 			Rule<NameObject> name_key;
 			Rule<NullObjectPtr> null_object;
 			Rule<RealObjectPtr> real_object;
-			//Rule<StreamObjectPtr, files::File*> stream_object;
 			qi::rule<lexical::pos_iterator_type, StreamObjectPtr(files::File*), qi::locals<DictionaryObjectPtr, int>> stream_object;
 			Rule<StringObjectPtr> string_object;
 			Rule<LiteralStringPtr> literal_string_object;
