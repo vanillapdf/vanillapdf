@@ -2,6 +2,7 @@
 
 #include "indirect_object.h"
 #include "lexical_reverse_stream.h"
+#include "spirit_parser.h"
 #include "exception.h"
 
 #include "xref.h"
@@ -15,6 +16,9 @@
 #include <memory>
 #include <cassert>
 #include <iostream>
+
+#include <boost/scope_exit.hpp>
+#include <boost/typeof/incr_registration_group.hpp>
 
 namespace gotchangpdf
 {
@@ -78,7 +82,7 @@ namespace gotchangpdf
 		}
 
 		Deferred<IndirectObject> File::GetIndirectObject(types::integer objNumber,
-			types::ushort genNumber) const
+			types::ushort genNumber)
 		{
 			if (!_initialized)
 				throw new Exception("File has not been initialized yet");
@@ -87,7 +91,19 @@ namespace gotchangpdf
 
 			//TODO
 			auto item = _xref->at(objNumber);
-			return item.reference;
+			auto reference = item.reference;
+
+			if (item.reference->IsEmpty()) {
+				auto rewind_pos = _input->tellg();
+				BOOST_SCOPE_EXIT(&_input, &rewind_pos) {
+					_input->seekg(rewind_pos);
+				} BOOST_SCOPE_EXIT_END;
+				auto parser = SpiritParser(this, *_input);
+				return parser.readObject(item.offset);
+			}
+
+			return item.reference->GetReferencedObject();
+
 			/*
 			auto pos = _stream->tellg();
 

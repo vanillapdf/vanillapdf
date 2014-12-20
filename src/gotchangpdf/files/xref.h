@@ -2,6 +2,7 @@
 #define _XREF_H
 
 #include "fwd.h"
+#include "constants.h"
 
 #include <vector>
 
@@ -13,7 +14,8 @@ namespace gotchangpdf
 	{
 		struct XrefEntry
 		{
-			IndirectObjectPtr reference;
+			IndirectObjectReferencePtr reference;
+			types::stream_offset offset;
 			bool in_use;
 		};
 

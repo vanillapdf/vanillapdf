@@ -18,31 +18,48 @@ namespace gotchangpdf
 
 		namespace qi = boost::spirit::qi;
 
+		class SpiritParser::Impl
+		{
+		public:
+			Impl(files::File * file) : _file(file) {}
+
+			files::File * _file;
+			SpiritGrammar grammar;
+		};
+
 		SpiritParser::SpiritParser(files::File * file, CharacterSource & stream)
-			: lexical::Stream(stream), _file(file) {}
+			: lexical::Stream(stream), _impl(new Impl(file)) {}
 
 		SpiritParser::SpiritParser(const SpiritParser & other)
-			: lexical::Stream(other) { _file = other.file(); }
+			: lexical::Stream(other) { _impl->_file = other._impl->_file; }
 
-		IndirectObjectPtr SpiritParser::readObject()
+		files::File * SpiritParser::file(void) const { return _impl->_file; }
+
+		IndirectObjectPtr SpiritParser::readObject(types::stream_offset offset)
 		{
-			SpiritGrammar grammar;
-			IndirectObjectPtr obj = IndirectObject(_file);
-			obj->SetOffset(tellg());
+			IndirectObjectPtr obj = IndirectObject(_impl->_file);
+			obj->SetOffset(offset);
 
 			// Don't skip whitespace explicitly
 			noskipws(*this);
 
+			// Stream begin info
+			seekg(std::ios::beg);
+			base_iterator_type stream_begin_base(*this);
+			base_iterator_type stream_end_base;
+			pos_iterator_type stream_begin_pos(stream_begin_base, stream_end_base, _impl->_file->GetFilename());
+
 			// Direct cast to pos_iterator_type is not possible
+			seekg(offset, std::ios::beg);
 			base_iterator_type input_begin_base(*this);
 			base_iterator_type input_end_base;
 
-			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _file->GetFilename());
+			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _impl->_file->GetFilename());
 			pos_iterator_type input_end_pos;
 
 			try
 			{
-				auto result = qi::parse(input_begin_pos, input_end_pos, grammar(_file), obj);
+				auto result = qi::parse(input_begin_pos, input_end_pos, _impl->grammar(_impl->_file, boost::phoenix::cref(stream_begin_pos)), obj);
 				//auto result = lex::tokenize_and_parse(input_begin_pos, input_end_pos, lexer, grammar(_file), obj);
 				if (result) {
 					return obj;
@@ -74,7 +91,7 @@ namespace gotchangpdf
 			}
 		}
 
-		IndirectObjectPtr SpiritParser::peekObject()
+		IndirectObjectPtr SpiritParser::peekObject(types::stream_offset offset)
 		{
 			/*
 			auto position = tellg();

@@ -58,11 +58,16 @@ namespace gotchangpdf
 		SpiritGrammar::SpiritGrammar() :
 			base_type(indirect_object, "Indirect object grammar")
 		{
-			//auto local_begin = qi::lazy(boost::phoenix::construct<qi::position>(qi::_a, qi::_b));
-
 			BOOST_SPIRIT_AUTO(qi, whitespace, qi::omit[qi::char_(" \r\n\f\t") | qi::char_('\0')]);
 			BOOST_SPIRIT_AUTO(qi, whitespaces, *whitespace);
 			BOOST_SPIRIT_AUTO(qi, eol, -qi::lit('\r') >> qi::lit('\n'));
+			BOOST_SPIRIT_AUTO(qi, name, qi::lit('/') > *qi::char_("0-9a-zA-Z+,"));
+			//BOOST_SPIRIT_AUTO(qi, capture_position, repo::qi::iter_pos[qi::_val = boost::phoenix::bind(std::distance<pos_iterator_type>, qi::_a, qi::_1)]);
+
+			auto stream_offset = boost::spirit::qi::as<types::stream_offset>()[(
+				qi::eps
+				>> repo::qi::iter_pos[qi::_val = boost::phoenix::bind(std::distance<pos_iterator_type>, qi::_a, qi::_1)]
+				)];
 
 			boolean_object %=
 				qi::eps
@@ -70,14 +75,15 @@ namespace gotchangpdf
 
 			indirect_object %=
 				integer_object
-				>> qi::lit(' ')
+				>> whitespace
 				>> integer_object
-				>> qi::lit(' ')
+				>> whitespace
 				>> qi::lit("obj")
 				//>> qi::attr_cast(repo::qi::iter_pos)
-				>> eol
+				//>> stream_offset
+				>> whitespaces
 				>> direct_object(qi::_r1)
-				>> eol
+				>> whitespaces
 				>> qi::lit("endobj");
 
 			direct_object %=
@@ -91,7 +97,8 @@ namespace gotchangpdf
 				| name_object
 				| null_object
 				| real_object
-				| literal_string_object;
+				| literal_string_object
+				| hexadecimal_string_object;
 
 			null_object %=
 				qi::eps
@@ -113,12 +120,10 @@ namespace gotchangpdf
 				>> qi::float_;
 
 			name_object %=
-				qi::lit('/')
-				> *qi::char_("0-9a-zA-Z+,");
+				name;
 
 			name_key %=
-				qi::lit('/')
-				> *qi::char_("0-9a-zA-Z+,");
+				name;
 
 			hexadecimal_string_object %=
 				qi::lit('<')
@@ -130,9 +135,8 @@ namespace gotchangpdf
 				> whitespaces
 				> *(
 					direct_object(qi::_r1)[phoenix::bind(&array_item_handler, qi::_val, qi::_1)]
-					> whitespaces
+					>> whitespaces
 					)
-				//> whitespaces
 				> qi::lit(']');
 
 			dictionary_object %=
@@ -140,11 +144,10 @@ namespace gotchangpdf
 				> whitespaces
 				> *(
 					name_key
-					> whitespaces
-					> direct_object(qi::_r1)[phoenix::bind(&dictionary_item_handler, qi::_val, qi::_1)]
-					> whitespaces
+					>> whitespaces
+					>> direct_object(qi::_r1)[phoenix::bind(&dictionary_item_handler, qi::_val, qi::_1)]
+					>> whitespaces
 					)
-				//> whitespaces
 				> qi::lit(">>");
 
 			stream_object =
@@ -152,7 +155,9 @@ namespace gotchangpdf
 				>> whitespaces
 				>> qi::lit("stream")[phoenix::bind(&stream_item_handler, qi::_a, qi::_b)]
 				> eol
+				//> repo::qi::iter_pos
 				> repo::qi::advance(qi::_b)
+				> -eol
 				> qi::lit("endstream");
 
 			literal_string_object %=

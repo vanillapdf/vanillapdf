@@ -4,6 +4,8 @@
 #include "fwd.h"
 #include "lexical_stream.h"
 
+#include <memory>
+
 namespace gotchangpdf
 {
 	namespace lexical
@@ -18,19 +20,15 @@ namespace gotchangpdf
 			//Deferred<T> readObjectWithType() { return DirectObjectGetAs<T>(readObject()); }
 
 			//DirectObject readObjectWithType(Object::Type type);
-			IndirectObjectPtr readObject();
-			IndirectObjectPtr peekObject();
+			IndirectObjectPtr readObject(types::stream_offset offset);
+			IndirectObjectPtr peekObject(types::stream_offset offset);
 
 			files::File * file(void) const;
-			//void SetDeep(bool deep);
-			//bool GetDeep(void) const;
 
 		private:
-			files::File * _file;
-			//bool _deep;
+			class Impl;
+			std::shared_ptr<Impl> _impl;
 		};
-
-		inline files::File * SpiritParser::file(void) const { return _file; }
 	}
 }
 

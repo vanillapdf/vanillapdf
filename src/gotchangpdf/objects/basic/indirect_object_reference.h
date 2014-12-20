@@ -17,8 +17,8 @@ namespace gotchangpdf
 	public:
 		explicit IndirectObjectReference(files::File * file);
 		IndirectObjectReference(files::File * file,
-			types::integer obj_number,
-			types::ushort gen_number);
+			IntegerObjectPtr obj_number,
+			IntegerObjectPtr gen_number);
 
 		IndirectObjectPtr GetReferencedObject() const;
 		inline IndirectObjectPtr operator->() const { return GetReferencedObject(); }
@@ -38,6 +38,8 @@ namespace gotchangpdf
 		inline files::File* GetFile() const { return _file; }
 
 		inline bool Equals(const IndirectObjectReference& other) const { return _obj_number->Equals(*other._obj_number) && _gen_number->Equals(*other._gen_number); }
+
+		inline bool IsEmpty() const { return !_reference.HasContents(); }
 
 		inline bool operator==(const IndirectObjectReference& other) const { return Equals(other); }
 		inline bool operator!=(const IndirectObjectReference& other) const { return !Equals(other); }

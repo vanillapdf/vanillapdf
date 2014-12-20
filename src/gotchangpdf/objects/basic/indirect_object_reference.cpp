@@ -14,7 +14,7 @@ namespace gotchangpdf
 
 	IndirectObjectReference::IndirectObjectReference(files::File * file) : _file(file) {}
 
-	IndirectObjectReference::IndirectObjectReference(files::File * file, types::integer obj_number, types::ushort gen_number) :
+	IndirectObjectReference::IndirectObjectReference(files::File * file, IntegerObjectPtr obj_number, IntegerObjectPtr gen_number) :
 		_file(file), _obj_number(obj_number), _gen_number(gen_number) {}
 
 	Deferred<IndirectObject> IndirectObjectReference::GetReferencedObject() const

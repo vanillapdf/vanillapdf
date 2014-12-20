@@ -39,11 +39,11 @@ namespace gotchangpdf
 			{
 				auto parser = lexical::SpiritParser(_file, *locked);
 				auto pos = parser.tellg();
-				parser.seekg(_offset);
+				//parser.seekg(_offset);
 
-				auto obj = parser.readObject();
+				auto obj = parser.readObject(_offset);
 				_reference = obj->GetObject();
-				parser.seekg(pos);
+				//parser.seekg(pos);
 			}
 			else
 			{
