@@ -44,7 +44,7 @@ namespace gotchangpdf
 
 					if (PeekTokenType() == Token::Type::STREAM_BEGIN)
 					{
-						StreamObject resultStream;
+						StreamObject resultStream(result);
 						*this >> resultStream;
 
 						return Deferred<StreamObject>(resultStream);

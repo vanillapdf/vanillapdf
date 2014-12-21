@@ -38,6 +38,7 @@ namespace gotchangpdf
 		inline IntegerObjectPtr GetObjectNumber() const { return _obj_number; }
 		inline IntegerObjectPtr GetGenerationNumber() const { return _gen_number; }
 		inline files::File* GetFile() const { return _file; }
+		inline void SetFile(files::File* file) { _file = file; }
 
 		inline bool Equals(const IndirectObjectReference& other) const { return _obj_number->Equals(*other._obj_number) && _gen_number->Equals(*other._gen_number); }
 

@@ -7,40 +7,13 @@
 #include "objects.h"
 
 #include <boost/fusion/include/adapt_struct.hpp>
-//#include <boost/fusion/>
 //#include <boost/fusion/adapted/adt/adapt_adt.hpp>
 #include <boost/fusion/include/std_pair.hpp>
-/*
-namespace gotchangpdf
-{
-	namespace lexical
-	{
-		namespace ast
-		{
-			class IntegerObjectTest
-			{
-			public:
-				types::integer value = 0;
 
-				mutable long references = 0;
-			};
-
-			typedef Deferred<IntegerObjectTest> IntegerObjectTestPtr;
-		}
-	}
-}
-*/
 BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::DirectObject, /**/)
 BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::StringObjectPtr, /**/)
 BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::FunctionObjectPtr, /**/)
 BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::NullObjectPtr, /**/)
-
-/*
-BOOST_FUSION_ADAPT_STRUCT(
-gotchangpdf::lexical::ast::IntegerObjectTestPtr,
-(gotchangpdf::types::integer, Content->value)
-)
-*/
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::BooleanObjectPtr,
@@ -103,7 +76,6 @@ BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::IndirectObjectPtr,
 (gotchangpdf::IntegerObjectPtr, Content->_obj_number)
 (gotchangpdf::IntegerObjectPtr, Content->_gen_number)
-(gotchangpdf::types::stream_offset, Content->_offset)
 (gotchangpdf::DirectObject, Content->_reference)
 )
 

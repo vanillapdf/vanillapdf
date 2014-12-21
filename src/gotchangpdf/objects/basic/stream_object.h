@@ -21,7 +21,6 @@ namespace gotchangpdf
 			OBJECT_STREAM
 		};
 
-		StreamObject() = default;
 		explicit StreamObject(files::File * file);
 		explicit StreamObject(const DictionaryObject& dictionary);
 
@@ -41,6 +40,13 @@ namespace gotchangpdf
 		Type _type = Type::UNKNOWN;
 
 		files::File *_file;
+
+		explicit StreamObject() = default;
+
+		friend Deferred<StreamObject>;
+
+		template <typename T>
+		friend T* Allocate();
 	};
 }
 

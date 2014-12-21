@@ -30,17 +30,18 @@ namespace gotchangpdf
 			Rule<BooleanObjectPtr> boolean_object;
 			Rule<DictionaryObjectPtr, files::File*> dictionary_object;
 			Rule<FunctionObjectPtr> function_object;
-			//Rule<IndirectObjectReferencePtr, files::File*> indirect_reference_object;
-			qi::rule<pos_iterator_type, IndirectObjectReferencePtr(files::File*), qi::locals<IntegerObjectPtr, IntegerObjectPtr>> indirect_reference_object;
+			Rule<IndirectObjectReferencePtr> indirect_object_reference;
 			Rule<IntegerObjectPtr> integer_object;
 			Rule<NameObjectPtr> name_object;
 			Rule<NameObject> name_key;
 			Rule<NullObjectPtr> null_object;
 			Rule<RealObjectPtr> real_object;
-			qi::rule<pos_iterator_type, StreamObjectPtr(files::File*), qi::locals<DictionaryObjectPtr, int>> stream_object;
+			qi::rule<pos_iterator_type, StreamObjectPtr(files::File*), qi::locals<DictionaryObjectPtr, types::stream_size>> stream_object;
 			Rule<StringObjectPtr> string_object;
 			Rule<LiteralStringPtr> literal_string_object;
 			Rule<HexadecimalStringPtr> hexadecimal_string_object;
+
+			qi::real_parser<float, qi::strict_real_policies<float>> strict_float_parser;
 		};
 	}
 }

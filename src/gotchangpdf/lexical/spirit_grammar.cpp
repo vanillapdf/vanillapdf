@@ -14,9 +14,9 @@
 	boost::spirit::domain_::domain, name##_expr_type);                          \
 	BOOST_AUTO(name, boost::proto::deep_copy(expr));                            \
 
-gotchangpdf::IndirectObjectReferencePtr indirect_reference_handler(gotchangpdf::files::File* file, gotchangpdf::IntegerObjectPtr obj, gotchangpdf::IntegerObjectPtr gen)
+void indirect_reference_handler(gotchangpdf::IndirectObjectReferencePtr obj, gotchangpdf::files::File* file)
 {
-	return gotchangpdf::IndirectObjectReference(file, obj, gen);
+	obj->SetFile(file);
 }
 
 void dictionary_item_handler(gotchangpdf::DictionaryObjectPtr obj, gotchangpdf::DirectObject item)
@@ -33,13 +33,13 @@ void array_item_handler(gotchangpdf::MixedArrayObjectPtr obj, gotchangpdf::Direc
 	containable->SetContainer(obj);
 }
 
-void stream_item_handler(gotchangpdf::DictionaryObjectPtr obj, int& value)
+void stream_item_handler(gotchangpdf::DictionaryObjectPtr obj, gotchangpdf::types::stream_size& value)
 {
 	auto size_raw = obj->Find(gotchangpdf::constant::Name::Length);
 	gotchangpdf::KillIndirectionVisitor<gotchangpdf::IntegerObjectPtr> visitor;
 	gotchangpdf::IntegerObjectPtr size = size_raw.apply_visitor(visitor);
 
-	value = static_cast<int>(*size);
+	value = static_cast<gotchangpdf::types::stream_size>(*size);
 }
 /*
 std::ostream& operator<<(std::ostream& os, const boost::spirit::qi::rule<gotchangpdf::lexical::pos_iterator_type, gotchangpdf::IndirectObjectPtr(gotchangpdf::files::File*)> param)
@@ -59,10 +59,11 @@ namespace gotchangpdf
 		SpiritGrammar::SpiritGrammar() :
 			base_type(indirect_object, "Indirect object grammar")
 		{
+			BOOST_SPIRIT_AUTO(qi, delimiter, qi::omit[qi::char_("()<>[]{}/%")]);
 			BOOST_SPIRIT_AUTO(qi, whitespace, qi::omit[qi::char_(" \r\n\f\t") | qi::char_('\0')]);
 			BOOST_SPIRIT_AUTO(qi, whitespaces, *whitespace);
 			BOOST_SPIRIT_AUTO(qi, eol, -qi::lit('\r') >> qi::lit('\n'));
-			BOOST_SPIRIT_AUTO(qi, name, qi::lit('/') > *qi::char_("0-9a-zA-Z+,"));
+			BOOST_SPIRIT_AUTO(qi, name, qi::lit('/') > *((qi::char_ - whitespace - delimiter) | (qi::char_('%') > qi::digit > qi::digit)));
 
 			boolean_object %=
 				qi::eps
@@ -74,11 +75,10 @@ namespace gotchangpdf
 				>> integer_object
 				>> whitespace
 				>> qi::lit("obj")
-				>> repo::qi::iter_offset
 				>> whitespaces
 				>> direct_object(qi::_r1)
-				>> whitespaces
-				>> qi::lit("endobj");
+				> whitespaces
+				> qi::lit("endobj");
 
 			direct_object %=
 				array_object(qi::_r1)
@@ -86,11 +86,11 @@ namespace gotchangpdf
 				| stream_object(qi::_r1)
 				| dictionary_object(qi::_r1)
 				| function_object
-				| indirect_reference_object(qi::_r1)//[boost::phoenix::bind(&indirect_reference_handler, qi::_1, qi::_r1)]
+				| indirect_object_reference[phoenix::bind(&indirect_reference_handler, qi::_1, qi::_r1)]
+				| real_object
 				| integer_object
 				| name_object
 				| null_object
-				| real_object
 				| literal_string_object
 				| hexadecimal_string_object;
 
@@ -98,12 +98,12 @@ namespace gotchangpdf
 				qi::eps
 				>> qi::lit("null")[qi::_val = NullObject::GetInstance()];
 
-			indirect_reference_object %=
-				integer_object[qi::_a = qi::_1]
+			indirect_object_reference %=
+				integer_object
 				>> whitespace
-				>> integer_object[qi::_b = qi::_1]
+				>> integer_object
 				>> whitespace
-				>> qi::lit('R')[qi::_val = boost::phoenix::bind(&indirect_reference_handler, qi::_r1, qi::_a, qi::_b)];
+				>> qi::lit('R');
 
 			integer_object %=
 				qi::eps
@@ -111,7 +111,8 @@ namespace gotchangpdf
 
 			real_object %=
 				qi::eps
-				>> qi::float_;
+				//>> qi::float_
+				>> strict_float_parser;
 
 			name_object %=
 				name;
@@ -162,7 +163,7 @@ namespace gotchangpdf
 			BOOST_SPIRIT_DEBUG_NODE(boolean_object);
 			BOOST_SPIRIT_DEBUG_NODE(indirect_object);
 			BOOST_SPIRIT_DEBUG_NODE(direct_object);
-			BOOST_SPIRIT_DEBUG_NODE(indirect_reference_object);
+			BOOST_SPIRIT_DEBUG_NODE(indirect_object_reference);
 			BOOST_SPIRIT_DEBUG_NODE(integer_object);
 			BOOST_SPIRIT_DEBUG_NODE(name_object);
 			BOOST_SPIRIT_DEBUG_NODE(name_key);
