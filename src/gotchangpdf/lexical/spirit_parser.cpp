@@ -43,33 +43,27 @@ namespace gotchangpdf
 			// Don't skip whitespace explicitly
 			noskipws(*this);
 
-			// Stream begin info
-			seekg(std::ios::beg);
-			base_iterator_type stream_begin_base(*this);
-			base_iterator_type stream_end_base;
-			pos_iterator_type stream_begin_pos(stream_begin_base, stream_end_base, _impl->_file->GetFilename());
-
 			// Direct cast to pos_iterator_type is not possible
 			seekg(offset, std::ios::beg);
 			base_iterator_type input_begin_base(*this);
 			base_iterator_type input_end_base;
 
-			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _impl->_file->GetFilename());
+			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _impl->_file->GetFilename(), 1, 1, offset);
 			pos_iterator_type input_end_pos;
 
 			try
 			{
-				auto result = qi::parse(input_begin_pos, input_end_pos, _impl->grammar(_impl->_file, boost::phoenix::cref(stream_begin_pos)), obj);
+				auto result = qi::parse(input_begin_pos, input_end_pos, _impl->grammar(_impl->_file), obj);
 				//auto result = lex::tokenize_and_parse(input_begin_pos, input_end_pos, lexer, grammar(_file), obj);
 				if (result) {
 					return obj;
 				}
 				else {
-					auto offset = tellg();
+					//auto offset = tellg();
 					cout << "Parsing failed" << endl;
 					const auto& pos = input_begin_pos.get_position();
 					cout <<
-						"Error at file " << pos.file << " offset " << offset << endl <<
+						"Error at file " << pos.file << " offset " << pos.offset << endl <<
 						"'" << input_begin_pos.get_currentline() << "'" << endl <<
 						setw(pos.column + 7) << " ^- here" << endl;
 
@@ -79,11 +73,10 @@ namespace gotchangpdf
 			catch (const qi::expectation_failure<pos_iterator_type>& exception) {
 				cout << "Parsing failed" << endl;
 
-				auto offset = tellg();
 				auto pos_begin = exception.first;
 				const auto& pos = pos_begin.get_position();
 				cout <<
-					"Error at file " << pos.file << " offset " << offset << " Expecting " << exception.what_ << endl <<
+					"Error at file " << pos.file << " offset " << pos.offset << " Expecting " << exception.what_ << endl <<
 					"'" << pos_begin.get_currentline() << "'" << endl <<
 					setw(pos.column + 7) << " ^- here" << endl;
 

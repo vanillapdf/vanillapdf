@@ -43,10 +43,13 @@
     <ClInclude Include="src\gotchangpdf\filters\filter.h" />
     <ClInclude Include="src\gotchangpdf\filters\flate_decode_filter.h" />
     <ClInclude Include="src\gotchangpdf\lexical\abstract_syntax_tree.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\file_position.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\iter_offset_parser.h" />
     <ClInclude Include="src\gotchangpdf\lexical\lexical_base_stream.h" />
     <ClInclude Include="src\gotchangpdf\lexical\lexical_reverse_stream.h" />
     <ClInclude Include="src\gotchangpdf\lexical\lexical_stream.h" />
     <ClInclude Include="src\gotchangpdf\lexical\lexical_tree.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\offset_iterator.h" />
     <ClInclude Include="src\gotchangpdf\lexical\parser.h" />
     <ClInclude Include="src\gotchangpdf\lexical\spirit_grammar.h" />
     <ClInclude Include="src\gotchangpdf\lexical\spirit_parser.h" />

@@ -1,6 +1,7 @@
 #include "spirit_grammar.h"
 
 #include "file.h"
+#include "iter_offset_parser.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/spirit/repository/include/qi_iter_pos.hpp>
@@ -62,12 +63,6 @@ namespace gotchangpdf
 			BOOST_SPIRIT_AUTO(qi, whitespaces, *whitespace);
 			BOOST_SPIRIT_AUTO(qi, eol, -qi::lit('\r') >> qi::lit('\n'));
 			BOOST_SPIRIT_AUTO(qi, name, qi::lit('/') > *qi::char_("0-9a-zA-Z+,"));
-			//BOOST_SPIRIT_AUTO(qi, capture_position, repo::qi::iter_pos[qi::_val = boost::phoenix::bind(std::distance<pos_iterator_type>, qi::_a, qi::_1)]);
-
-			auto stream_offset = boost::spirit::qi::as<types::stream_offset>()[(
-				qi::eps
-				>> repo::qi::iter_pos[qi::_val = boost::phoenix::bind(std::distance<pos_iterator_type>, qi::_a, qi::_1)]
-				)];
 
 			boolean_object %=
 				qi::eps
@@ -79,8 +74,7 @@ namespace gotchangpdf
 				>> integer_object
 				>> whitespace
 				>> qi::lit("obj")
-				//>> qi::attr_cast(repo::qi::iter_pos)
-				//>> stream_offset
+				>> repo::qi::iter_offset
 				>> whitespaces
 				>> direct_object(qi::_r1)
 				>> whitespaces
@@ -155,7 +149,7 @@ namespace gotchangpdf
 				>> whitespaces
 				>> qi::lit("stream")[phoenix::bind(&stream_item_handler, qi::_a, qi::_b)]
 				> eol
-				//> repo::qi::iter_pos
+				> repo::qi::iter_offset
 				> repo::qi::advance(qi::_b)
 				> -eol
 				> qi::lit("endstream");
