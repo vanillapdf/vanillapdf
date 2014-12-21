@@ -24,6 +24,8 @@ namespace gotchangpdf
 			SmartPtr<documents::Catalog> GetDocumentCatalog(void) const;
 			Deferred<IndirectObject> GetIndirectObject(types::integer objNumber,
 				types::ushort genNumber);
+			bool IsIndirectObjectIntialized(types::integer objNumber,
+				types::ushort genNumber);
 			Deferred<files::Header> GetHeader(void) const;
 			Deferred<files::Trailer> GetTrailer(void) const;
 			std::weak_ptr<FileDevice> GetInputStream(void) const;

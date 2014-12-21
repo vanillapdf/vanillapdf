@@ -66,11 +66,12 @@ namespace gotchangpdf
 
 	Parser& operator>>(Parser& s, StreamObject& o)
 	{
+		/*
 		if (!o._dictionary.HasContents())
 		{
 			s >> *o._dictionary;
 		}
-
+		*/
 		if (s.PeekTokenType() == Token::Type::STREAM_BEGIN)
 			s.ReadToken();
 

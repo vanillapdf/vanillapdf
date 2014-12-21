@@ -15,8 +15,10 @@ namespace gotchangpdf
 	class Bind
 	{
 	public:
+		BOOST_STATIC_ASSERT((std::is_base_of<Object, typename DictionaryObjectPtr::value_type>::value));
 		typedef std::function<Child(DictionaryObjectPtr)> GetChildFunction;
 
+	public:
 		Bind(DictionaryObjectPtr container, GetChildFunction func)
 			: _child(), _container(container), _func(func) {}
 
@@ -25,20 +27,21 @@ namespace gotchangpdf
 		Child operator->() const { return GetChild(); }
 
 	private:
-		BOOST_STATIC_ASSERT((std::is_base_of<Object, typename DictionaryObjectPtr::value_type>::value));
+		Child& GetChild() const;
 
-		mutable Child _child;
 		DictionaryObjectPtr _container;
 		GetChildFunction _func;
-
-		Child& GetChild() const
-		{
-			if (!_child.HasContents() || _child->GetContainer() != _container)
-				_child = _func(_container);
-
-			return _child;
-		}
+		mutable Child _child;
 	};
+
+	template <typename Child>
+	Child& Bind<Child>::GetChild() const
+	{
+		if (_child->GetContainer() != _container)
+			_child = _func(_container);
+
+		return _child;
+	}
 }
 
 #endif /* _BIND_H */

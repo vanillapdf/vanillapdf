@@ -26,8 +26,6 @@ namespace gotchangpdf
 
 		//ObjectReferenceWrapper& operator=(const ObjectReferenceWrapper& other) : _data(other._data) { return *this; }
 
-		bool HasContents(void) const { return nullptr != boost::intrusive_ptr<T>::get(); }
-
 		T* AddRefGet(void) const
 		{
 			auto ptr = boost::intrusive_ptr<T>::get();

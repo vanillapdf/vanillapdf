@@ -57,8 +57,6 @@ namespace gotchangpdf
 			Content.Owner = this;
 		}
 
-		bool HasContents(void) const { return nullptr != Contents; }
-
 		operator T()
 		{
 			if (Contents)
@@ -185,8 +183,6 @@ namespace gotchangpdf
 
 			return *this;
 		}
-
-		bool HasContents(void) const { return nullptr != Contents; }
 
 		// Support insertion as if this were itself a container
 		void insert(const iterator& pos, const value_type& value)

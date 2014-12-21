@@ -14,9 +14,9 @@
 	boost::spirit::domain_::domain, name##_expr_type);                          \
 	BOOST_AUTO(name, boost::proto::deep_copy(expr));                            \
 
-void indirect_reference_handler(gotchangpdf::IndirectObjectReferencePtr obj, gotchangpdf::files::File* file)
+gotchangpdf::IndirectObjectReferencePtr indirect_reference_handler(gotchangpdf::files::File* file, gotchangpdf::IntegerObjectPtr obj, gotchangpdf::IntegerObjectPtr gen)
 {
-	obj->SetFile(file);
+	return gotchangpdf::IndirectObjectReference(file, obj, gen);
 }
 
 void dictionary_item_handler(gotchangpdf::DictionaryObjectPtr obj, gotchangpdf::DirectObject item)
@@ -86,7 +86,7 @@ namespace gotchangpdf
 				| stream_object(qi::_r1)
 				| dictionary_object(qi::_r1)
 				| function_object
-				| indirect_reference_object[boost::phoenix::bind(&indirect_reference_handler, qi::_1, qi::_r1)]
+				| indirect_reference_object(qi::_r1)//[boost::phoenix::bind(&indirect_reference_handler, qi::_1, qi::_r1)]
 				| integer_object
 				| name_object
 				| null_object
@@ -99,11 +99,11 @@ namespace gotchangpdf
 				>> qi::lit("null")[qi::_val = NullObject::GetInstance()];
 
 			indirect_reference_object %=
-				integer_object
-				>> qi::lit(' ')
-				>> integer_object
-				>> qi::lit(' ')
-				>> qi::lit('R');
+				integer_object[qi::_a = qi::_1]
+				>> whitespace
+				>> integer_object[qi::_b = qi::_1]
+				>> whitespace
+				>> qi::lit('R')[qi::_val = boost::phoenix::bind(&indirect_reference_handler, qi::_r1, qi::_a, qi::_b)];
 
 			integer_object %=
 				qi::eps

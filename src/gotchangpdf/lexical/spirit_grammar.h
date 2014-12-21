@@ -30,7 +30,8 @@ namespace gotchangpdf
 			Rule<BooleanObjectPtr> boolean_object;
 			Rule<DictionaryObjectPtr, files::File*> dictionary_object;
 			Rule<FunctionObjectPtr> function_object;
-			Rule<IndirectObjectReferencePtr> indirect_reference_object;
+			//Rule<IndirectObjectReferencePtr, files::File*> indirect_reference_object;
+			qi::rule<pos_iterator_type, IndirectObjectReferencePtr(files::File*), qi::locals<IntegerObjectPtr, IntegerObjectPtr>> indirect_reference_object;
 			Rule<IntegerObjectPtr> integer_object;
 			Rule<NameObjectPtr> name_object;
 			Rule<NameObject> name_key;

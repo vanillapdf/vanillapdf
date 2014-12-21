@@ -81,6 +81,13 @@ namespace gotchangpdf
 			_initialized = true;
 		}
 
+		bool File::IsIndirectObjectIntialized(types::integer objNumber,
+			types::ushort genNumber)
+		{
+			auto item = _xref->at(objNumber);
+			return item.initialized;
+		}
+
 		Deferred<IndirectObject> File::GetIndirectObject(types::integer objNumber,
 			types::ushort genNumber)
 		{
@@ -89,20 +96,18 @@ namespace gotchangpdf
 
 			//if (_cache.)
 
-			//TODO
 			auto item = _xref->at(objNumber);
-			auto reference = item.reference;
-
-			if (item.reference->IsEmpty()) {
+			if (!item.initialized) {
 				auto rewind_pos = _input->tellg();
 				BOOST_SCOPE_EXIT(&_input, &rewind_pos) {
 					_input->seekg(rewind_pos);
 				} BOOST_SCOPE_EXIT_END;
 				auto parser = SpiritParser(this, *_input);
-				return parser.readObject(item.offset);
+				item.reference = parser.readObject(item.offset);
+				item.initialized = true;
 			}
 
-			return item.reference->GetReferencedObject();
+			return item.reference;
 
 			/*
 			auto pos = _stream->tellg();

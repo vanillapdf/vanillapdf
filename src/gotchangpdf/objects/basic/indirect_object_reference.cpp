@@ -5,52 +5,66 @@
 
 #include "c_indirect_object_reference.h"
 
-#include <string>
-#include <algorithm>
-
 namespace gotchangpdf
 {
-	using namespace std;
-
-	IndirectObjectReference::IndirectObjectReference(files::File * file) : _file(file) {}
-
 	IndirectObjectReference::IndirectObjectReference(files::File * file, IntegerObjectPtr obj_number, IntegerObjectPtr gen_number) :
-		_file(file), _obj_number(obj_number), _gen_number(gen_number) {}
-
-	Deferred<IndirectObject> IndirectObjectReference::GetReferencedObject() const
+		_file(file), _obj_number(obj_number), _gen_number(gen_number)
 	{
-		if (!_reference.HasContents())
-		{
-			// TODO
-			_reference = _file->GetIndirectObject(_obj_number->Value(), _gen_number->Value());
+		assert(nullptr != _file);
+
+		if (_file->IsIndirectObjectIntialized(_obj_number->Value(), _gen_number->Value())) {
+			_object = _file->GetIndirectObject(_obj_number->Value(), _gen_number->Value());
+			_initialized = true;
+		}
+		else {
+			_initialized = false;
+		}
+	}
+
+	void IndirectObjectReference::SetObject(files::File * file,
+		IntegerObjectPtr obj_number,
+		IntegerObjectPtr gen_number)
+	{
+		assert(nullptr != file);
+
+		_file = file;
+		if (_file->IsIndirectObjectIntialized(_obj_number->Value(), _gen_number->Value())) {
+			_object = _file->GetIndirectObject(_obj_number->Value(), _gen_number->Value());
+			_initialized = true;
+		}
+		else {
+			_initialized = false;
+		}
+	}
+
+	void IndirectObjectReference::SetObject(files::File * file, IndirectObjectPtr obj)
+	{
+		assert(nullptr != file);
+
+		_file = file;
+		_object = obj;
+		_initialized = true;
+	}
+
+	IndirectObjectPtr IndirectObjectReference::GetReferencedObject() const
+	{
+		if (!_initialized) {
+			_object = _file->GetIndirectObject(_obj_number->Value(), _gen_number->Value());
+			_initialized = true;
 		}
 
-		return _reference;
+		return _object;
 	}
 
 	bool IndirectObjectReference::operator<(const IndirectObjectReference& other) const
 	{
-		if (*_obj_number < *other._obj_number)
-			return true;
+		if (*_obj_number != *other._obj_number)
+			return *_obj_number < *other._obj_number;
 
-		if (*_gen_number < *other._gen_number)
-			return true;
+		if (*_gen_number != *other._gen_number)
+			return *_gen_number < *other._gen_number;
 
 		return false;
-	}
-}
-
-namespace std
-{
-	size_t hash<gotchangpdf::IndirectObjectReference>::operator()(const gotchangpdf::IndirectObjectReference& ref) const
-	{
-		std::hash<gotchangpdf::types::integer> hash_fn;
-
-		size_t result = 0;
-		result ^= hash_fn(ref.GetObjectNumber()->Value());
-		result ^= hash_fn(ref.GetGenerationNumber()->Value());
-
-		return result;
 	}
 }
 

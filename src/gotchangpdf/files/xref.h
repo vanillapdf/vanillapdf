@@ -14,9 +14,12 @@ namespace gotchangpdf
 	{
 		struct XrefEntry
 		{
-			IndirectObjectReferencePtr reference;
+			IndirectObjectPtr reference;
+			types::integer obj_number;
+			types::ushort gen_number;
 			types::stream_offset offset;
 			bool in_use;
+			bool initialized;
 		};
 
 		class Xref : public std::vector<XrefEntry>, public boost::intrusive_ref_counter<Xref>

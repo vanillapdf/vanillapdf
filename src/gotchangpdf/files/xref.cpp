@@ -51,8 +51,10 @@ namespace gotchangpdf
 				throw Exception(buffer.str());
 			}
 
-			result.reference = IndirectObjectReference(s.file(), objNumber, number);
 			result.offset = IntegerObject(offset);
+			result.obj_number = objNumber;
+			result.gen_number = IntegerObject(number);
+			result.initialized = false;
 			return result;
 		}
 
@@ -124,8 +126,7 @@ GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION XrefEntry_Reference(Xre
 {
 	XrefEntry* entry = reinterpret_cast<XrefEntry*>(handle);
 
-	auto reference = entry->reference->GetReferencedObject();
-	gotchangpdf::IndirectObject *ptr = reference.AddRefGet();
+	gotchangpdf::IndirectObject *ptr = entry->reference.AddRefGet();
 	//boost::intrusive_ptr_add_ref(ptr);
 
 	return reinterpret_cast<IndirectObjectHandle>(ptr);
