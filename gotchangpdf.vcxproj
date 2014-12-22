@@ -89,6 +89,7 @@
     <ClInclude Include="src\gotchangpdf\util\deferred.h" />
     <ClInclude Include="src\gotchangpdf\util\file_device.h" />
     <ClInclude Include="src\gotchangpdf\util\fwd.h" />
+    <ClInclude Include="src\gotchangpdf\util\log.h" />
     <ClInclude Include="src\gotchangpdf\util\operators.h" />
     <ClInclude Include="src\gotchangpdf\util\smart_ptr.h" />
     <ClInclude Include="src\gotchangpdf\util\version.h" />
@@ -179,7 +180,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libboost_system-vc120-mt-gd-1_55.lib;libboost_filesystem-vc120-mt-gd-1_55.lib;libboost_iostreams-vc120-mt-gd-1_55.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libboost_system-vc120-mt-gd-1_55.lib;libboost_filesystem-vc120-mt-gd-1_55.lib;libboost_iostreams-vc120-mt-gd-1_55.lib;libboost_log-vc120-mt-gd-1_55.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>lib\boost\stage\lib;lib\zlib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -201,7 +202,7 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Co
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>libboost_system-vc120-mt-1_55.lib;libboost_filesystem-vc120-mt-1_55.lib;libboost_iostreams-vc120-mt-1_55.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libboost_system-vc120-mt-1_55.lib;libboost_filesystem-vc120-mt-1_55.lib;libboost_iostreams-vc120-mt-1_55.lib;libboost_log-vc120-mt-1_55.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>lib\boost\stage\lib;lib\zlib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
