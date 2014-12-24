@@ -11,4 +11,4 @@
 !/test/*.pdf
 
 #Log files
-/log/*.log
+/log/**/*.log
