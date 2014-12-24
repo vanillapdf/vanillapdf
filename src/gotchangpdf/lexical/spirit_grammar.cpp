@@ -4,7 +4,6 @@
 #include "iter_offset_parser.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-#include <boost/spirit/repository/include/qi_iter_pos.hpp>
 #include <boost/spirit/repository/include/qi_advance.hpp>
 
 #define BOOST_SPIRIT_AUTO(domain_, name, expr)                                  \
