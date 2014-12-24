@@ -16,6 +16,14 @@
 #include <boost/log/sources/global_logger_storage.hpp>
 #include <boost/log/sinks/text_multifile_backend.hpp>
 
+#include <boost/log/attributes/scoped_attribute.hpp>
+#include <boost/log/attributes/named_scope.hpp>
+
+#include <boost/log/support/date_time.hpp>
+#include <boost/log/attributes/attribute.hpp>
+#include <boost/log/attributes/attribute_cast.hpp>
+#include <boost/log/attributes/attribute_value.hpp>
+
 namespace gotchangpdf
 {
 	namespace log
@@ -25,6 +33,7 @@ namespace gotchangpdf
 		namespace sinks = boost::log::sinks;
 		namespace keywords = boost::log::keywords;
 		namespace expr = boost::log::expressions;
+		namespace attrs = boost::log::attributes;
 
 		enum class Severity
 		{
@@ -35,32 +44,44 @@ namespace gotchangpdf
 			fatal
 		};
 
-		typedef src::severity_channel_logger_mt<
-			Severity,
-			std::string
-		> file_logger_mt;
+		typedef src::severity_logger_mt<Severity> file_logger_mt;
+
+		template <typename CharT, typename TraitsT>
+		std::basic_ostream<CharT, TraitsT>& operator<< (std::basic_ostream<CharT, TraitsT>& strm, const Severity level)
+		{
+			switch (level) {
+			case Severity::debug:
+				strm << "debug"; break;
+			case Severity::info:
+				strm << "info"; break;
+			case Severity::warning:
+				strm << "warning"; break;
+			case Severity::error:
+				strm << "error"; break;
+			case Severity::fatal:
+				strm << "fatal"; break;
+			}
+
+			return strm;
+		}
 
 		BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT(file_logger, file_logger_mt)
 		{
 			file_logger_mt lg;
 
-			//logging::add_common_attributes();
+			logging::core::get()->add_global_attribute("Scope", attrs::constant<std::string>("general"));
+			logging::add_common_attributes();
 			//logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::info);
-
-			//logging::add_file_log
-			//	(
-			//	keywords::file_name = "sample_%N.log",                                        /*< file name pattern >*/
-			//	keywords::rotation_size = 10 * 1024 * 1024,                                   /*< rotate files every 10 MiB... >*/
-			//	keywords::time_based_rotation = sinks::file::rotation_at_time_point(0, 0, 0), /*< ...or at midnight >*/
-			//	keywords::format = "[%TimeStamp%]: %Message%"                                 /*< log record format >*/
-			//	);
 
 			auto core = logging::core::get();
 
 			auto backend = boost::make_shared<sinks::text_multifile_backend>();
 
+			auto filename = expr::stream << "log/" << expr::attr<std::string>("Scope") << ".log";
+			auto composer = sinks::file::as_file_name_composer(filename);
+
 			// Set up the file naming pattern
-			backend->set_file_name_composer(sinks::file::as_file_name_composer(expr::stream << "logs/" << expr::attr<std::string>("Filename") << ".log"));
+			backend->set_file_name_composer(composer);
 
 			// Wrap it into the frontend and register in the core.
 			// The backend requires synchronization in the frontend.
@@ -68,11 +89,12 @@ namespace gotchangpdf
 			boost::shared_ptr<sink_t> sink(new sink_t(backend));
 
 			// Set the formatter
-			sink->set_formatter
-				(
-				expr::stream
-				<< "[Filename: " << expr::attr<std::string>("Filename")
-				<< "] " << expr::smessage
+			sink->set_formatter(
+				expr::format("[%1%] (%2%) <%3%> : %4%")
+				% expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%Y-%m-%d %H:%M:%S")
+				% expr::attr<attrs::current_thread_id::value_type>("ThreadID")
+				% expr::attr<Severity>("Severity")
+				% expr::smessage
 				);
 
 			core->add_sink(sink);
@@ -82,29 +104,15 @@ namespace gotchangpdf
 	}
 }
 
-#define LOG_DEBUG BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::debug)
-#define LOG_INFO  BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::info)
-#define LOG_WARN  BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::warning)
-#define LOG_ERROR BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::error)
-#define LOG_FATAL BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::fatal)
+//BOOST_LOG_ATTRIBUTE_KEYWORD(line_id, "LineID", unsigned int)
+//BOOST_LOG_ATTRIBUTE_KEYWORD(severity, "Severity", severity_level)
+//BOOST_LOG_ATTRIBUTE_KEYWORD(tag_attr, "Tag", std::string)
 
-//int main(int, char*[])
-//{
-//	using namespace boost::log::trivial;
-//
-//	BOOST_LOG_SEV(gotchangpdf::file_logger::get(), warning) << "Hello, world!";
-//	BOOST_LOG_CHANNEL(gotchangpdf::file_logger::get(), "net");
-//		//<< logging::add_value("RemoteAddress", m_remote_addr)
-//		//<< "Connection shut down";
-//	/*
-//	BOOST_LOG_SEV(lg, trace) << "A trace severity message";
-//	BOOST_LOG_SEV(lg, debug) << "A debug severity message";
-//	BOOST_LOG_SEV(lg, info) << "An informational severity message";
-//	BOOST_LOG_SEV(lg, warning) << "A warning severity message";
-//	BOOST_LOG_SEV(lg, error) << "An error severity message";
-//	BOOST_LOG_SEV(lg, fatal) << "A fatal severity message";
-//	*/
-//	return 0;
-//}
+#define LOG_SCOPE(name) BOOST_LOG_SCOPED_THREAD_ATTR("Scope", boost::log::attributes::constant<std::string>(name))
+#define LOG_DEBUG       BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::debug)
+#define LOG_INFO        BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::info)
+#define LOG_WARN        BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::warning)
+#define LOG_ERROR       BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::error)
+#define LOG_FATAL       BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::fatal)
 
 #endif /* _LOG_H */

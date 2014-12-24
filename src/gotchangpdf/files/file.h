@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <vector>
+#include <string>
 
 namespace gotchangpdf
 {
@@ -16,7 +17,7 @@ namespace gotchangpdf
 		class File
 		{
 		public:
-			File(const char *filename);
+			File(std:: string filename);
 			~File(void);
 
 			void Initialize(void);
@@ -29,7 +30,7 @@ namespace gotchangpdf
 			Deferred<files::Header> GetHeader(void) const;
 			Deferred<files::Trailer> GetTrailer(void) const;
 			std::weak_ptr<FileDevice> GetInputStream(void) const;
-			const char * GetFilename(void) const;
+			std::string GetFilename(void) const;
 
 		private:
 			std::shared_ptr<FileDevice> _input;
@@ -39,7 +40,7 @@ namespace gotchangpdf
 			std::vector<IndirectObjectPtr> _cache;
 
 			bool _initialized = false;
-			const char *_filename = nullptr;
+			std::string _filename;
 		};
 
 		inline std::weak_ptr<FileDevice> File::GetInputStream(void) const
@@ -47,7 +48,7 @@ namespace gotchangpdf
 			return _input;
 		}
 
-		inline const char * File::GetFilename(void) const
+		inline std::string File::GetFilename(void) const
 		{
 			return _filename;
 		}

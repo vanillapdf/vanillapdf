@@ -6,6 +6,7 @@
 #include "exception.h"
 
 #include "xref.h"
+#include "log.h"
 #include "header.h"
 #include "trailer.h"
 #include "parser.h"
@@ -29,10 +30,15 @@ namespace gotchangpdf
 		using namespace lexical;
 		using namespace exceptions;
 
-		File::File(const char * filename) : _filename(filename) {}
+		File::File(std::string filename) : _filename(filename)
+		{
+			LOG_DEBUG << "File constructor";
+		}
 
 		File::~File(void)
 		{
+			LOG_DEBUG << "File destructor";
+
 			if (nullptr != _input)
 			{
 				_input->close();
@@ -44,6 +50,8 @@ namespace gotchangpdf
 
 		void File::Initialize(void)
 		{
+			LOG_DEBUG << "Initialize";
+
 			if (_initialized)
 				return;
 
@@ -91,6 +99,8 @@ namespace gotchangpdf
 		Deferred<IndirectObject> File::GetIndirectObject(types::integer objNumber,
 			types::ushort genNumber)
 		{
+			LOG_DEBUG << "GetIndirectObject " << objNumber << " and " << genNumber;
+
 			if (!_initialized)
 				throw new Exception("File has not been initialized yet");
 
@@ -151,18 +161,33 @@ using namespace gotchangpdf::files;
 
 GOTCHANG_PDF_API FileHandle CALLING_CONVENTION File_Create(const char *filename)
 {
-	return reinterpret_cast<FileHandle>(new File(filename));
+	LOG_SCOPE(filename);
+
+	try
+	{
+		auto file = new File(filename);
+		return reinterpret_cast<FileHandle>(file);
+	}
+	catch (...)
+	{
+		// TODO log
+		std::exception_ptr active_exception = std::current_exception();
+		return nullptr;
+	}
 }
 
 GOTCHANG_PDF_API void CALLING_CONVENTION File_Release(FileHandle handle)
 {
 	File* file = reinterpret_cast<File*>(handle);
+	LOG_SCOPE(file->GetFilename());
+
 	delete file;
 }
 
 GOTCHANG_PDF_API int CALLING_CONVENTION File_Initialize(FileHandle handle)
 {
 	File* file = reinterpret_cast<File*>(handle);
+	LOG_SCOPE(file->GetFilename());
 
 	// TODO
 	file->Initialize();
@@ -172,6 +197,7 @@ GOTCHANG_PDF_API int CALLING_CONVENTION File_Initialize(FileHandle handle)
 GOTCHANG_PDF_API XrefHandle CALLING_CONVENTION File_Xref(FileHandle handle)
 {
 	File* file = reinterpret_cast<File*>(handle);
+	LOG_SCOPE(file->GetFilename());
 
 	auto table = file->GetXref();
 	auto ptr = table.AddRefGet();
@@ -183,6 +209,7 @@ GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION File_GetIndirectObject(
 	FileHandle handle, int objNumber, int genNumber)
 {
 	File* file = reinterpret_cast<File*>(handle);
+	LOG_SCOPE(file->GetFilename());
 
 	auto item = file->GetIndirectObject(objNumber, genNumber);
 	auto ptr = item.AddRefGet();
@@ -195,6 +222,7 @@ GOTCHANG_PDF_API CatalogHandle CALLING_CONVENTION File_GetDocumentCatalog(
 	FileHandle handle)
 {
 	File* file = reinterpret_cast<File*>(handle);
+	LOG_SCOPE(file->GetFilename());
 
 	auto item = file->GetDocumentCatalog();
 	auto ptr = item.AddRefGet();
