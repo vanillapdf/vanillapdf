@@ -17,7 +17,7 @@ namespace gotchangpdf
 		class File
 		{
 		public:
-			File(std:: string filename);
+			File(std::string filename);
 			~File(void);
 
 			void Initialize(void);
@@ -34,9 +34,9 @@ namespace gotchangpdf
 
 		private:
 			std::shared_ptr<FileDevice> _input;
-			Deferred<files::Header> _header;
-			Deferred<files::Trailer> _trailer;
-			Deferred<files::Xref> _xref;
+			Deferred<Header> _header;
+			Deferred<Trailer> _trailer;
+			Deferred<Xref> _xref;
 			std::vector<IndirectObjectPtr> _cache;
 
 			bool _initialized = false;

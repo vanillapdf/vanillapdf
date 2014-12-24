@@ -1,7 +1,7 @@
 #ifndef _C_EXPORT_H
 #define _C_EXPORT_H
 
-#define CALLING_CONVENTION __stdcall
+#define CALLING_CONVENTION __cdecl
 
 #ifdef PROJECT_CONFIGURATION_DLL
 #ifdef PDF_EXPORTS

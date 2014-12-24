@@ -151,9 +151,9 @@ namespace gotchangpdf
 			return new documents::Catalog(dict);
 		}
 
-		Deferred<files::Header> File::GetHeader(void) const { return _header; }
-		Deferred<files::Trailer> File::GetTrailer(void) const { return _trailer; }
-		Deferred<files::Xref> File::GetXref(void) const { return _xref; }
+		Deferred<Header> File::GetHeader(void) const { return _header; }
+		Deferred<Trailer> File::GetTrailer(void) const { return _trailer; }
+		Deferred<Xref> File::GetXref(void) const { return _xref; }
 	}
 }
 

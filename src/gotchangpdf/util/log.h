@@ -4,25 +4,19 @@
 #include "file.h"
 
 #include <boost/log/core.hpp>
-#include <boost/log/trivial.hpp>
 #include <boost/log/expressions.hpp>
-#include <boost/log/sinks/text_file_backend.hpp>
-#include <boost/log/utility/setup/file.hpp>
-#include <boost/log/utility/setup/common_attributes.hpp>
+
+#include <boost/log/sources/global_logger_storage.hpp>
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/sources/record_ostream.hpp>
 
-#include <boost/log/sources/severity_channel_logger.hpp>
-#include <boost/log/sources/global_logger_storage.hpp>
+#include <boost/log/sinks/sync_frontend.hpp>
 #include <boost/log/sinks/text_multifile_backend.hpp>
 
 #include <boost/log/attributes/scoped_attribute.hpp>
-#include <boost/log/attributes/named_scope.hpp>
+#include <boost/log/utility/setup/common_attributes.hpp>
 
 #include <boost/log/support/date_time.hpp>
-#include <boost/log/attributes/attribute.hpp>
-#include <boost/log/attributes/attribute_cast.hpp>
-#include <boost/log/attributes/attribute_value.hpp>
 
 namespace gotchangpdf
 {
@@ -31,7 +25,6 @@ namespace gotchangpdf
 		namespace logging = boost::log;
 		namespace src = boost::log::sources;
 		namespace sinks = boost::log::sinks;
-		namespace keywords = boost::log::keywords;
 		namespace expr = boost::log::expressions;
 		namespace attrs = boost::log::attributes;
 
@@ -43,8 +36,6 @@ namespace gotchangpdf
 			error,
 			fatal
 		};
-
-		typedef src::severity_logger_mt<Severity> file_logger_mt;
 
 		template <typename CharT, typename TraitsT>
 		std::basic_ostream<CharT, TraitsT>& operator<< (std::basic_ostream<CharT, TraitsT>& strm, const Severity level)
@@ -65,18 +56,22 @@ namespace gotchangpdf
 			return strm;
 		}
 
+		typedef src::severity_logger_mt<Severity> file_logger_mt;
 		BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT(file_logger, file_logger_mt)
 		{
 			file_logger_mt lg;
 
-			logging::core::get()->add_global_attribute("Scope", attrs::constant<std::string>("general"));
 			logging::add_common_attributes();
 			//logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::info);
 
+			// Add per file scope
 			auto core = logging::core::get();
+			core->add_global_attribute("Scope", attrs::constant<std::string>("general"));
 
+			// One log file for every scope
 			auto backend = boost::make_shared<sinks::text_multifile_backend>();
 
+			// Log destination directory
 			auto filename = expr::stream << "log/" << expr::attr<std::string>("Scope") << ".log";
 			auto composer = sinks::file::as_file_name_composer(filename);
 
