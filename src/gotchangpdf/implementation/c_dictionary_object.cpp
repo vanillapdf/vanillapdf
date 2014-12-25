@@ -35,21 +35,23 @@ GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObjectIterator_Next(Dictionar
 GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObjectIterator_Release(DictionaryIteratorHandle handle)
 {
 	DictionaryObject::Iterator* iterator = reinterpret_cast<DictionaryObject::Iterator*>(handle);
-	delete iterator;;
+	delete iterator;
 }
 
 GOTCHANG_PDF_API NameHandle CALLING_CONVENTION DictionaryObjectIterator_GetKey(DictionaryIteratorHandle handle)
 {
 	DictionaryObject::Iterator* iterator = reinterpret_cast<DictionaryObject::Iterator*>(handle);
-	auto result = Deferred<NameObject>(NameObject(iterator->First()));
-	return reinterpret_cast<NameHandle>(AddRefGet(result));
+	NameObjectPtr name = iterator->First();
+	NameObject* ptr = name.AddRefGet();
+	return reinterpret_cast<NameHandle>(ptr);
 }
 
 GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObjectIterator_GetValue(DictionaryIteratorHandle handle)
 {
 	DictionaryObject::Iterator* iterator = reinterpret_cast<DictionaryObject::Iterator*>(handle);
 	ObjectBaseVisitor visitor;
-	Object* ptr = iterator->Second().apply_visitor(visitor).AddRefGet();
+	DirectObject direct = iterator->Second();
+	Object* ptr = direct.apply_visitor(visitor).AddRefGet();
 	return reinterpret_cast<ObjectHandle>(ptr);
 }
 

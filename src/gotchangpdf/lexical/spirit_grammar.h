@@ -34,7 +34,6 @@ namespace gotchangpdf
 			Rule<IndirectObjectReferencePtr> indirect_object_reference;
 			Rule<IntegerObjectPtr> integer_object;
 			Rule<NameObjectPtr> name_object;
-			Rule<NameObject> name_key;
 			Rule<NullObjectPtr> null_object;
 			Rule<RealObjectPtr> real_object;
 			qi::rule<pos_iterator_type, StreamObjectPtr(files::File*), qi::locals<DictionaryObjectPtr, types::stream_size>> stream_object;

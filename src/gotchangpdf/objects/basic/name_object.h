@@ -39,6 +39,10 @@ namespace gotchangpdf
 		friend std::ostream& operator<<(std::ostream& os, const NameObject& name);
 	};
 
+	inline bool operator==(const NameObjectPtr& first, const NameObjectPtr& other) { return *first == *other; }
+	inline bool operator!=(const NameObjectPtr& first, const NameObjectPtr& other) { return *first != *other; }
+	inline bool operator<(const NameObjectPtr& first, const NameObjectPtr& other) { return *first < *other; }
+
 	namespace constant
 	{
 		namespace Name

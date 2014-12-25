@@ -103,7 +103,7 @@ namespace gotchangpdf
 		value_type _list;
 	};
 
-	class DictionaryObject : public DictionaryObjectBase<NameObject, DirectObject>
+	class DictionaryObject : public DictionaryObjectBase<NameObjectPtr, DirectObject>
 	{
 	public:
 		inline bool Equals(const DictionaryObject& other) const { return this == &other; }

@@ -63,8 +63,6 @@ namespace gotchangpdf
 		DirectObjectGrammar::DirectObjectGrammar() :
 			base_type(direct_object, "Direct object grammar")
 		{
-			BOOST_SPIRIT_AUTO(qi, name, qi::lit('/') > *((qi::char_ - whitespace - delimiter) | (qi::char_('%') > qi::digit > qi::digit)));
-
 			boolean_object %=
 				qi::eps
 				>> qi::bool_;
@@ -104,10 +102,11 @@ namespace gotchangpdf
 				>> strict_float_parser;
 
 			name_object %=
-				name;
-
-			name_key %=
-				name;
+				qi::lit('/')
+				> *(
+					(qi::char_ - whitespace - delimiter)
+					| (qi::char_('%') > qi::digit > qi::digit)
+				);
 
 			hexadecimal_string_object %=
 				qi::lit('<')
@@ -127,7 +126,7 @@ namespace gotchangpdf
 				qi::lit("<<")
 				> whitespaces
 				> *(
-				name_key
+				name_object
 				>> whitespaces
 				>> direct_object(qi::_r1)[phoenix::bind(&dictionary_item_handler, qi::_val, qi::_1)]
 				>> whitespaces
@@ -154,7 +153,6 @@ namespace gotchangpdf
 			BOOST_SPIRIT_DEBUG_NODE(indirect_object_reference);
 			BOOST_SPIRIT_DEBUG_NODE(integer_object);
 			BOOST_SPIRIT_DEBUG_NODE(name_object);
-			BOOST_SPIRIT_DEBUG_NODE(name_key);
 			BOOST_SPIRIT_DEBUG_NODE(array_object);
 			BOOST_SPIRIT_DEBUG_NODE(dictionary_object);
 			BOOST_SPIRIT_DEBUG_NODE(literal_string_object);
