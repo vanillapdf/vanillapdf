@@ -18,7 +18,7 @@ namespace gotchangpdf
 			SpiritParser(const SpiritParser & other);
 
 			template<typename T>
-			T ReadDirectObjectWithType() { return DirectObjectGetAs<T>(readObject()); }
+			T ReadDirectObjectWithType(types::stream_offset offset) { return DirectObjectGetAs<T>(ReadDirectObject(offset)); }
 
 			DirectObject ReadDirectObject(types::stream_offset offset);
 			IndirectObjectPtr ReadIndirectObject(types::stream_offset offset);

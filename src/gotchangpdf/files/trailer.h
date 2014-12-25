@@ -15,9 +15,10 @@ namespace gotchangpdf
 		public:
 			friend lexical::ReverseStream& operator>> (lexical::ReverseStream& s, Trailer& o);
 
-		public:			
-			types::stream_offset xref_offset() const;
-			DictionaryObjectPtr dictionary() const;
+		public:
+			types::stream_offset GetXrefOffset() const { return _xref_offset; }
+			DictionaryObjectPtr GetDictionary() const { return _dictionary; }
+			void SetDictionary(DictionaryObjectPtr dict) { _dictionary = dict; }
 
 			inline void Release() const { boost::sp_adl_block::intrusive_ptr_release(this); }
 

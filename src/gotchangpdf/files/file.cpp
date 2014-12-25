@@ -75,14 +75,16 @@ namespace gotchangpdf
 			ReverseStream reversed = ReverseStream(*_input);
 			reversed >> *_trailer;
 
-			stream.seekg(_trailer->xref_offset(), ios_base::beg);
+			stream.seekg(_trailer->GetXrefOffset(), ios_base::beg);
 			stream >> *_xref;
 
 			stream.ReadTokenWithType(Token::Type::TRAILER);
 			stream.ReadTokenWithType(Token::Type::EOL);
 
 			// HACK
-			//stream >> *_trailer->dictionary();
+			SpiritParser spirit_parser = SpiritParser(this, *_input);
+			auto trailer_dict = spirit_parser.ReadDirectObjectWithType<DictionaryObjectPtr>(_input->tellg());
+			_trailer->SetDictionary(trailer_dict);
 
 			_initialized = true;
 		}
@@ -94,7 +96,7 @@ namespace gotchangpdf
 			return item.initialized;
 		}
 
-		Deferred<IndirectObject> File::GetIndirectObject(types::integer objNumber,
+		IndirectObjectPtr File::GetIndirectObject(types::integer objNumber,
 			types::ushort genNumber)
 		{
 			LOG_DEBUG << "GetIndirectObject " << objNumber << " and " << genNumber;
@@ -144,7 +146,7 @@ namespace gotchangpdf
 			if (!_initialized)
 				throw new Exception("File has not been initialized yet");
 
-			auto reference = _trailer->dictionary()->FindAs<IndirectObjectReferencePtr>(constant::Name::Root);
+			auto reference = _trailer->GetDictionary()->FindAs<IndirectObjectReferencePtr>(constant::Name::Root);
 			auto dict = reference->GetReferencedObjectAs<DictionaryObjectPtr>();
 			return new documents::Catalog(dict);
 		}

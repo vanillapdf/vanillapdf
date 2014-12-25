@@ -207,8 +207,8 @@ int main(int argc, char *argv[])
 	int i, size;
 	FileHandle file = NULL;
 	XrefHandle xref = NULL;
-	//CatalogHandle catalog;
-	//PageTreeHandle pages;
+	CatalogHandle catalog;
+	PageTreeHandle pages;
 
 	if (argc != 2)
 		return 1;
@@ -226,7 +226,7 @@ int main(int argc, char *argv[])
 		process((ObjectHandle)indirect, 0);
 		IndirectObject_Release(indirect);
 	}
-	/*
+
 	RETURN_ERROR_IF_NOT_SUCCESS(File_GetDocumentCatalog(file, &catalog));
 	printf("Document catalog begin\n");
 
@@ -242,7 +242,6 @@ int main(int argc, char *argv[])
 
 	PageTree_Release(pages);
 	printf("Document catalog end\n");
-	*/
 
 	Xref_Release(xref);
 	File_Release(file);

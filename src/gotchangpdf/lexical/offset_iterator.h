@@ -75,7 +75,7 @@ namespace gotchangpdf
 			{}
 
 			offset_iterator(const offset_iterator& iter)
-				: base_t(iter) {}
+				: base_t(iter), _startline(iter._startline) {}
 
 			offset_iterator& operator=(const offset_iterator& iter)
 			{
@@ -109,16 +109,12 @@ namespace gotchangpdf
 			{
 				ForwardIteratorT endline = _startline;
 				while (endline != this->_end && *endline != '\r' && *endline != '\n')
-				{
 					++endline;
-				}
+
 				return endline;
 			}
 
-			void newline(void)
-			{
-				_startline = this->base();
-			}
+			void newline(void) { _startline = this->base(); }
 		};
 	}
 }

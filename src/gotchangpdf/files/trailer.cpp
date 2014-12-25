@@ -36,9 +36,5 @@ namespace gotchangpdf
 
 			return s;
 		}
-
-		types::stream_offset Trailer::xref_offset() const { return _xref_offset; }
-
-		DictionaryObjectPtr Trailer::dictionary() const { return _dictionary; }
 	}
 }

@@ -111,7 +111,7 @@ namespace gotchangpdf
 
 			hexadecimal_string_object %=
 				qi::lit('<')
-				>> *(qi::digit)
+				>> *(qi::char_("0-9a-fA-F"))
 				> qi::lit('>');
 
 			array_object %=
