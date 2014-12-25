@@ -8,7 +8,6 @@
 #include "indirect_object_reference.h"
 #include "dictionary_object.h"
 #include "integer_object.h"
-#include "bind.h"
 
 namespace gotchangpdf
 {
@@ -23,12 +22,6 @@ namespace gotchangpdf
 			Deferred<ArrayObject<PageNodePtr>> Kids(void) const;
 
 			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageTreeNode; }
-
-		private:
-			Bind<IntegerObjectPtr> _count;
-			Bind<Deferred<ArrayObject<IndirectObjectReferencePtr>>> _kids;
-
-			Deferred<ArrayObject<IndirectObjectReferencePtr>> GetKids(DictionaryObjectPtr obj);
 		};
 
 		typedef SmartPtr<PageTreeNode> PageTreeNodePtr;

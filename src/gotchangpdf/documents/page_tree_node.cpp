@@ -8,9 +8,7 @@ namespace gotchangpdf
 		using namespace exceptions;
 
 		PageTreeNode::PageTreeNode(DictionaryObjectPtr obj) :
-			PageNode(obj),
-			_count(Bind<IntegerObjectPtr>(_obj, [](DictionaryObjectPtr obj) { return obj->FindAs<IntegerObjectPtr>(Name::Count); })),
-			_kids(Bind<Deferred<ArrayObject<IndirectObjectReferencePtr>>>(_obj, std::bind(&PageTreeNode::GetKids, this, _obj)))
+			PageNode(obj)
 		{
 			if (*_obj->FindAs<NameObjectPtr>(Name::Type) != Name::Pages)
 				throw Exception("TODO");
@@ -18,25 +16,20 @@ namespace gotchangpdf
 
 		types::integer PageTreeNode::KidCount(void) const
 		{
-			return _count->Value();
+			return _obj->FindAs<IntegerObjectPtr>(Name::Count)->Value();
 		}
 
-		Deferred<ArrayObject<PageNodePtr>> PageTreeNode::Kids() const
+		ArrayObjectPtr<PageNodePtr> PageTreeNode::Kids() const
 		{
-			return _kids->Convert<PageNodePtr>(
+			auto kids = _obj->FindAs<MixedArrayObjectPtr>(Name::Kids);
+			auto specialized = kids->CastToArrayType<IndirectObjectReferencePtr>();
+
+			return specialized->Convert<PageNodePtr>(
 				[](IndirectObjectReferencePtr& obj)
 			{
 				auto page = obj->GetReferencedObjectAs<DictionaryObjectPtr>();
 				return PageNode::Create(page);
 			});
-		}
-
-		Deferred<ArrayObject<IndirectObjectReferencePtr>> PageTreeNode::GetKids(DictionaryObjectPtr obj)
-		{
-			auto kids = obj->FindAs<MixedArrayObjectPtr>(Name::Kids);
-			auto specialized = kids->CastToArrayType<IndirectObjectReferencePtr>();
-
-			return specialized;
 		}
 	}
 }

@@ -23,15 +23,16 @@ namespace gotchangpdf
 			for (int i = 0; i < count; ++i)
 			{
 				IntegerObject::value_type under = 0;
+				SmartPtr<PageTreeNode> tree_node;
 
 				auto kid = kids->At(i);
 				switch (kid->GetType())
 				{
 				case HighLevelObject::Type::PageTreeNode:
-					under = node->KidCount();
-					if (current + under >= number)
+					tree_node = dynamic_wrapper_cast<PageTreeNode>(kid);
+					under = tree_node->KidCount();
+					if (current + under > number)
 					{
-						auto tree_node = dynamic_wrapper_cast<PageTreeNode>(kid);
 						if (HasTreeChilds(tree_node))
 						{
 							node = tree_node;
@@ -55,7 +56,7 @@ namespace gotchangpdf
 						current++;
 					break;
 				default:
-					throw new exceptions::InvalidObjectTypeException(*kid->Get());
+					throw new exceptions::InvalidObjectTypeException(*kid->GetObject());
 				}
 			}
 

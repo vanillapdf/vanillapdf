@@ -12,7 +12,7 @@ namespace gotchangpdf
 		class PageNode;
 		typedef SmartPtr<PageNode> PageNodePtr;
 
-		class PageNode : public HighLevelObject<DictionaryObject>
+		class PageNode : public HighLevelObject<DictionaryObjectPtr>
 		{
 		public:
 			explicit PageNode(DictionaryObjectPtr obj) : HighLevelObject(obj) {}

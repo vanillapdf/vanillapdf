@@ -11,7 +11,7 @@ namespace gotchangpdf
 {
 	namespace documents
 	{
-		class PageTree : public HighLevelObject<DictionaryObject>
+		class PageTree : public HighLevelObject<DictionaryObjectPtr>
 		{
 		public:
 			//PageTree();

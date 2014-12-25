@@ -10,7 +10,7 @@ namespace gotchangpdf
 {
 	namespace documents
 	{
-		class Catalog : public HighLevelObject<DictionaryObject>
+		class Catalog : public HighLevelObject<DictionaryObjectPtr>
 		{
 		public:
 			explicit Catalog(DictionaryObjectPtr root);

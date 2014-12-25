@@ -28,13 +28,13 @@ namespace gotchangpdf
 
 		T* AddRefGet(void) const
 		{
-			auto ptr = boost::intrusive_ptr<T>::get();
-			boost::sp_adl_block::intrusive_ptr_add_ref(ptr);
+			auto ptr = get();
+			ptr->AddRef();
 			return ptr;
 		}
 
 		template <typename U>
-		inline U* GetAs(void) const { return dynamic_cast<U*>(boost::intrusive_ptr<T>::get()); }
+		inline U* GetAs(void) const { return dynamic_cast<U*>(get()); }
 
 	private:
 		//BOOST_STATIC_ASSERT((std::is_base_of<boost::intrusive_ref_counter<T>, T>::value));

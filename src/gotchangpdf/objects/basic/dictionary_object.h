@@ -105,6 +105,12 @@ namespace gotchangpdf
 
 	class DictionaryObject : public DictionaryObjectBase<NameObject, DirectObject>
 	{
+	public:
+		inline bool Equals(const DictionaryObject& other) const { return this == &other; }
+
+		inline bool operator==(const DictionaryObject& other) const { return Equals(other); }
+		inline bool operator!=(const DictionaryObject& other) const { return !Equals(other); }
+		inline bool operator<(const DictionaryObject& other) const { return false; }
 	};
 }
 

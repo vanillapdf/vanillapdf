@@ -31,6 +31,7 @@ namespace gotchangpdf
 				STREAM
 			};
 
+			inline void AddRef() { boost::sp_adl_block::intrusive_ptr_add_ref(this); }
 			inline void Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
 
 			friend lexical::Parser& operator>> (lexical::Parser& s, Xref& o);

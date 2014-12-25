@@ -9,7 +9,7 @@ namespace gotchangpdf
 {
 	namespace documents
 	{
-		class ResourceDictionary : public HighLevelObject<DictionaryObject>
+		class ResourceDictionary : public HighLevelObject<DictionaryObjectPtr>
 		{
 		public:
 			//PageObject();

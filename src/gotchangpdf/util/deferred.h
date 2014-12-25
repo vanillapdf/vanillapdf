@@ -120,9 +120,8 @@ namespace gotchangpdf
 
 		T* AddRefGet(void)
 		{
-			auto ptr = Content.get();
-			boost::sp_adl_block::intrusive_ptr_add_ref(ptr);
-			return ptr;
+			Content->AddRef();
+			return Content.get();
 		}
 
 	protected:
@@ -250,11 +249,8 @@ namespace gotchangpdf
 	template<typename T>
 	T* AddRefGet(Deferred<T> obj)
 	{
-		//auto ptr = boost::intrusive_ptr<T>::get();
-		//auto ptr = (*obj.Content).get();
-		auto ptr = obj.Content.get();
-		boost::sp_adl_block::intrusive_ptr_add_ref(ptr);
-		return ptr;
+		obj.Content->AddRef();
+		return obj.Content.get();
 	}
 
 	//template <typename U>

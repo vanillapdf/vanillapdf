@@ -27,24 +27,18 @@ namespace gotchangpdf
 				Rectangle
 			};
 
-			explicit HighLevelObject(Deferred<T> obj) : _obj(obj) {}
+			explicit HighLevelObject(T obj) : _obj(obj) {}
 
-			inline Deferred<T> Get(void) const { return _obj; }
-
-			//static ObjectReferenceWrapper<HighLevelObject> Create(ObjectReferenceWrapper<Object> low_level);
+			inline T GetObject(void) const { return _obj; }
 			virtual inline Type GetType(void) const = 0;
 
-			inline void SetContainer(DirectObject obj) { _obj->SetContainer(obj); }
-			inline DirectObject GetContainer() const { return _obj->GetContainer(); }
-
+			inline void AddRef() { boost::sp_adl_block::intrusive_ptr_add_ref(this); }
 			inline void Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
 
 			virtual ~HighLevelObject() {};
 
 		protected:
-			BOOST_STATIC_ASSERT((std::is_base_of<Object, T>::value));
-
-			Deferred<T> _obj;
+			T _obj;
 		};
 	}
 }

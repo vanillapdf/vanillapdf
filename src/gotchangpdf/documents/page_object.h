@@ -7,7 +7,6 @@
 #include "resource_dictionary.h"
 #include "rectangle.h"
 #include "page_tree_node.h"
-#include "bind.h"
 #include "smart_ptr.h"
 
 namespace gotchangpdf
@@ -19,20 +18,11 @@ namespace gotchangpdf
 		public:
 			explicit PageObject(DictionaryObjectPtr obj);
 
-			PageTreeNodePtr Parent(void) const { return _parent(); }
-			ResourceDictionaryPtr Resources(void) const { return _resources(); }
-			RectanglePtr MediaBox(void) const { return _media_box(); }
+			PageTreeNodePtr Parent(void) const;
+			ResourceDictionaryPtr Resources(void) const;
+			RectanglePtr MediaBox(void) const;
 
 			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageObject; }
-
-		private:
-			Bind<PageTreeNodePtr> _parent;
-			Bind<ResourceDictionaryPtr> _resources;
-			Bind<RectanglePtr> _media_box;
-
-			PageTreeNodePtr GetParent(DictionaryObjectPtr obj);
-			ResourceDictionaryPtr GetResources(DictionaryObjectPtr obj);
-			RectanglePtr GetMediaBox(DictionaryObjectPtr obj);
 		};
 
 		typedef SmartPtr<PageObject> PageObjectPtr;

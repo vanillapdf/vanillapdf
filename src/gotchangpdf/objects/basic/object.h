@@ -54,6 +54,7 @@ namespace gotchangpdf
 		static const char* TypeName(Type type);
 		virtual inline Type GetType(void) const = 0;
 
+		inline void AddRef() const { boost::sp_adl_block::intrusive_ptr_add_ref(this); }
 		inline void Release() const { boost::sp_adl_block::intrusive_ptr_release(this); }
 
 		virtual ~Object() = 0;
