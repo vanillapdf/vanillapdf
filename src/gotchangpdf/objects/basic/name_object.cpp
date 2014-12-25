@@ -9,6 +9,12 @@ namespace gotchangpdf
 
 	NameObject::NameObject(const Token& token) : _value(token.Value()) { assert(token.GetType() == Token::Type::NAME_OBJECT); }
 	NameObject::NameObject(const Buffer& name) : _value(name) {}
+
+	std::ostream& operator<<(std::ostream& os, const NameObject& name)
+	{
+		os << name.Value().ToString();
+		return os;
+	}
 }
 
 namespace std

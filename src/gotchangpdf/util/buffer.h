@@ -9,8 +9,8 @@ namespace gotchangpdf
 	class Buffer : public std::vector<char>
 	{
 	public:
-		typedef std::vector<char> _Mybase;
-
+		typedef std::vector<char> base_type;
+		/*
 		typedef _Mybase::value_type value_type;
 		typedef _Mybase::size_type size_type;
 		typedef _Mybase::difference_type difference_type;
@@ -24,6 +24,7 @@ namespace gotchangpdf
 
 		typedef _Mybase::reverse_iterator reverse_iterator;
 		typedef _Mybase::const_reverse_iterator const_reverse_iterator;
+		*/
 
 	public:
 		Buffer();
@@ -41,7 +42,7 @@ namespace gotchangpdf
 		template<class _Iter,
 		class = typename std::enable_if<std::_Is_iterator<_Iter>::value,
 			void>::type>
-			Buffer(_Iter begin, _Iter end) : _Mybase(begin, end) {}
+			Buffer(_Iter begin, _Iter end) : base_type(begin, end) {}
 		//Buffer(const std::vector<value_type>& data);
 
 		//void Insert(int idx, const Buffer& item);

@@ -7,11 +7,11 @@ namespace gotchangpdf
 	#pragma region Constructors
 
 	Buffer::Buffer() {}
-	Buffer::Buffer(const Buffer & other) : _Mybase(other) {}
-	Buffer::Buffer(Buffer && other) : _Mybase(std::move(other)) {}
-	Buffer::Buffer(size_type count) : _Mybase(count) {}
-	Buffer::Buffer(const char * chars, int len) : _Mybase(&chars[0], &chars[len - 1]) { assert(size() > 0); }
-	Buffer::Buffer(const char * begin, const char * end) : _Mybase(begin, end) { assert(size() > 0); }
+	Buffer::Buffer(const Buffer & other) : base_type(other) {}
+	Buffer::Buffer(Buffer && other) : base_type(std::move(other)) {}
+	Buffer::Buffer(size_type count) : base_type(count) {}
+	Buffer::Buffer(const char * chars, int len) : base_type(&chars[0], &chars[len - 1]) { assert(size() > 0); }
+	Buffer::Buffer(const char * begin, const char * end) : base_type(begin, end) { assert(size() > 0); }
 	//Buffer::Buffer(const std::vector<ValueType>& data) : _value(data) { assert(_value.size() > 0); }
 
 	#pragma endregion

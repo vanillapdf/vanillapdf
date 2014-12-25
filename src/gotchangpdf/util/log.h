@@ -62,11 +62,11 @@ namespace gotchangpdf
 			file_logger_mt lg;
 
 			logging::add_common_attributes();
-			//logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::info);
 
 			// Add per file scope
 			auto core = logging::core::get();
 			core->add_global_attribute("Scope", attrs::constant<std::string>("general"));
+			core->set_filter(expr::attr<Severity>("Severity") >= Severity::warning);
 
 			// One log file for every scope
 			auto backend = boost::make_shared<sinks::text_multifile_backend>();

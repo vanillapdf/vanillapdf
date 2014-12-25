@@ -11,6 +11,8 @@
 #include <map>
 //#include <vector>
 
+#include <sstream>
+
 namespace gotchangpdf
 {
 	template <typename NameT, typename ValueT>
@@ -65,10 +67,10 @@ namespace gotchangpdf
 		template <typename U>
 		const U FindAs(const NameT& name) const
 		{
-			auto result = _list.find(name);
+			auto result = Find(name);
 
 			ObjectVisitor<U> visitor;
-			return result->second.apply_visitor(visitor);
+			return result.apply_visitor(visitor);
 		}
 
 		const value_type& GetMap(void) const { return _list; }
@@ -87,6 +89,12 @@ namespace gotchangpdf
 		ValueT Find(const NameT& name) const
 		{
 			auto result = _list.find(name);
+			if (result == _list.end()) {
+				std::stringstream ss;
+				ss << "Item with name " << name << " was not found in dictionary";
+				throw exceptions::Exception(ss.str());
+			}
+
 			return result->second;
 		}
 

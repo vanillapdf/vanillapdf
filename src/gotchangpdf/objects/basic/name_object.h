@@ -34,6 +34,9 @@ namespace gotchangpdf
 		//private:
 	public:
 		value_type _value;
+
+	private:
+		friend std::ostream& operator<<(std::ostream& os, const NameObject& name);
 	};
 
 	namespace constant
