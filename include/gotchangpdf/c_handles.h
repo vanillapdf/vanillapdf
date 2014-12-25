@@ -1,7 +1,7 @@
 #ifndef _C_HANDLES_H
 #define _C_HANDLES_H
 
-#define DECLARE_OBJECT_HANDLE(x)	typedef struct x##HandleTag *x##Handle
+#define DECLARE_OBJECT_HANDLE(x)	typedef struct x##HandleTag *x##Handle, **P##x##Handle
 
 #ifdef __cplusplus
 extern "C"

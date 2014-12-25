@@ -2,80 +2,106 @@
 #include "xref.h"
 #include "indirect_object.h"
 #include "catalog.h"
+#include "log.h"
 
 #include "c_file.h"
-#include "log.h"
+#include "c_helper.h"
 
 using namespace gotchangpdf::files;
 
-GOTCHANG_PDF_API FileHandle CALLING_CONVENTION File_Create(const char *filename)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Create(const char *filename, PFileHandle result)
 {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
 	LOG_SCOPE(filename);
 
 	try
 	{
 		auto file = new File(filename);
-		return reinterpret_cast<FileHandle>(file);
+		*result = reinterpret_cast<FileHandle>(file);
+		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
-	catch (...)
-	{
-		// TODO log
-		std::exception_ptr active_exception = std::current_exception();
-		return nullptr;
-	}
+	C_INTERFACE_EXCEPTION_HANDLERS
 }
 
 GOTCHANG_PDF_API void CALLING_CONVENTION File_Release(FileHandle handle)
 {
 	File* file = reinterpret_cast<File*>(handle);
-	LOG_SCOPE(file->GetFilename());
-
-	delete file;
+	if (nullptr != file) {
+		LOG_SCOPE(file->GetFilename());
+		delete file;
+	}
 }
 
-GOTCHANG_PDF_API int CALLING_CONVENTION File_Initialize(FileHandle handle)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle)
 {
 	File* file = reinterpret_cast<File*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
 	LOG_SCOPE(file->GetFilename());
 
-	// TODO
-	file->Initialize();
-	return 0;
+	try
+	{
+		file->Initialize();
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
 }
 
-GOTCHANG_PDF_API XrefHandle CALLING_CONVENTION File_Xref(FileHandle handle)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Xref(FileHandle handle, PXrefHandle result)
 {
 	File* file = reinterpret_cast<File*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_SCOPE(file->GetFilename());
 
-	auto table = file->GetXref();
-	auto ptr = table.AddRefGet();
+	try
+	{
+		auto table = file->GetXref();
+		auto ptr = table.AddRefGet();
 
-	return reinterpret_cast<XrefHandle>(ptr);
+		*result = reinterpret_cast<XrefHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
 }
 
-GOTCHANG_PDF_API IndirectHandle CALLING_CONVENTION File_GetIndirectObject(
-	FileHandle handle, int objNumber, int genNumber)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
+	FileHandle handle, int objNumber, int genNumber, PIndirectHandle result)
 {
 	File* file = reinterpret_cast<File*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_SCOPE(file->GetFilename());
 
-	auto item = file->GetIndirectObject(objNumber, genNumber);
-	auto ptr = item.AddRefGet();
+	try
+	{
+		auto item = file->GetIndirectObject(objNumber, genNumber);
+		auto ptr = item.AddRefGet();
 
-	//boost::intrusive_ptr_add_ref(ptr);
-	return reinterpret_cast<IndirectHandle>(ptr);
+		//boost::intrusive_ptr_add_ref(ptr);
+		*result = reinterpret_cast<IndirectHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
 }
 
-GOTCHANG_PDF_API CatalogHandle CALLING_CONVENTION File_GetDocumentCatalog(
-	FileHandle handle)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetDocumentCatalog(
+	FileHandle handle, PCatalogHandle result)
 {
 	File* file = reinterpret_cast<File*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_SCOPE(file->GetFilename());
 
-	auto item = file->GetDocumentCatalog();
-	auto ptr = item.AddRefGet();
+	try
+	{
+		auto item = file->GetDocumentCatalog();
+		auto ptr = item.AddRefGet();
 
-	//boost::intrusive_ptr_add_ref(ptr);
-	return reinterpret_cast<CatalogHandle>(ptr);
+		//boost::intrusive_ptr_add_ref(ptr);
+		*result = reinterpret_cast<CatalogHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
 }

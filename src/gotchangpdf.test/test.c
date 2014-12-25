@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <assert.h>
 
+#define RETURN_ERROR_IF_NOT_SUCCESS(var) do { int __result__ = (var);  if (GOTCHANG_PDF_ERROR_SUCCES != __result__) return __result__; } while(0)
+
 void process(ObjectHandle obj, int nested);
 
 void print_spaces(int nested)
@@ -202,23 +204,25 @@ void process(ObjectHandle obj, int nested)
 
 int main(int argc, char *argv[])
 {
-	int i, result, size;
-	FileHandle file;
-	XrefHandle xref;
+	int i, size;
+	FileHandle file = NULL;
+	XrefHandle xref = NULL;
 	//CatalogHandle catalog;
 	//PageTreeHandle pages;
 
 	if (argc != 2)
 		return 1;
 
-	file = File_Create(argv[1]);
-	result = File_Initialize(file);
-	xref = File_Xref(file);
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Create(argv[1], &file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Xref(file, &xref));
 	size = Xref_Size(xref);
 
 	for (i = 1; i < size; ++i)
 	{
-		IndirectHandle indirect = File_GetIndirectObject(file, i, 0);
+		IndirectHandle indirect = NULL;
+		RETURN_ERROR_IF_NOT_SUCCESS(File_GetIndirectObject(file, i, 0, &indirect));
+
 		process((ObjectHandle)indirect, 0);
 		IndirectObject_Release(indirect);
 	}
