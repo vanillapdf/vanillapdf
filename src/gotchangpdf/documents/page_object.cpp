@@ -4,8 +4,6 @@
 #include "integer_object.h"
 #include "exception.h"
 
-#include "c_page_object.h"
-
 namespace gotchangpdf
 {
 	namespace documents
@@ -46,10 +44,4 @@ namespace gotchangpdf
 			return rectangle;
 		}
 	}
-}
-
-GOTCHANG_PDF_API void CALLING_CONVENTION PageObject_Release(PageObjectHandle handle)
-{
-	gotchangpdf::documents::PageObject* obj = reinterpret_cast<gotchangpdf::documents::PageObject*>(handle);
-	obj->Release();
 }

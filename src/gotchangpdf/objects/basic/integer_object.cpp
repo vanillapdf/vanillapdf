@@ -2,8 +2,6 @@
 #include "lexical_reverse_stream.h"
 #include "lexical_stream.h"
 
-#include "c_integer_object.h"
-
 #include <cassert>
 #include <vector>
 
@@ -72,16 +70,4 @@ namespace gotchangpdf
 
 		return s;
 	}
-}
-
-GOTCHANG_PDF_API long long CALLING_CONVENTION IntegerObject_Value(IntegerObjectHandle handle)
-{
-	gotchangpdf::IntegerObject* obj = reinterpret_cast<gotchangpdf::IntegerObject*>(handle);
-	return obj->Value();
-}
-
-GOTCHANG_PDF_API void CALLING_CONVENTION IntegerObject_Release(IntegerObjectHandle handle)
-{
-	gotchangpdf::IntegerObject* obj = reinterpret_cast<gotchangpdf::IntegerObject*>(handle);
-	obj->Release();
 }

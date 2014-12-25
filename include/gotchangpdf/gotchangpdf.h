@@ -1,6 +1,8 @@
 #ifndef _GOTCHANGPDF_H
 #define _GOTCHANGPDF_H
 
+/* utils */
+#include "c_error.h"
 #include "c_export.h"
 #include "c_values.h"
 #include "c_handles.h"

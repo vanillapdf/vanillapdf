@@ -5,8 +5,6 @@
 #include "indirect_object_reference.h"
 #include "page_tree.h"
 
-#include "c_catalog.h"
-
 namespace gotchangpdf
 {
 	namespace documents
@@ -25,11 +23,4 @@ namespace gotchangpdf
 			_pages = PageTreePtr(new PageTree(page_root));
 		}
 	}
-}
-
-GOTCHANG_PDF_API PageTreeHandle CALLING_CONVENTION Catalog_GetPages(CatalogHandle handle)
-{
-	gotchangpdf::documents::Catalog* obj = reinterpret_cast<gotchangpdf::documents::Catalog*>(handle);
-	auto pages = obj->Pages();
-	return reinterpret_cast<PageTreeHandle>(pages.AddRefGet());
 }

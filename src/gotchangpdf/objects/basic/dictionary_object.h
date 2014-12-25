@@ -97,8 +97,6 @@ namespace gotchangpdf
 
 	class DictionaryObject : public DictionaryObjectBase<NameObject, DirectObject>
 	{
-		friend lexical::Parser& operator>> (lexical::Parser& s, DictionaryObject& o);
-		//friend Objects::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, DictionaryObject& o);
 	};
 }
 

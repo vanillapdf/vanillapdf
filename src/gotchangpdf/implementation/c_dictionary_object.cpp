@@ -1,82 +1,17 @@
 #include "dictionary_object.h"
-
-#include "exception.h"
-#include "array_object.h"
-#include "string_object.h"
-#include "real_object.h"
-#include "integer_object.h"
-#include "indirect_object_reference.h"
-#include "parser.h"
+#include "objects.h"
 
 #include "c_dictionary_object.h"
 #include "c_values.h"
 
-#include <cassert>
-
-namespace gotchangpdf
-{
-	using namespace lexical;
-	//using namespace std;
-
-	/*
-	ReverseStream& operator>>(ReverseStream& s, DictionaryObject& o)
-	{
-		auto token = s.readToken();
-
-		while (*token != Token::Type::DICTIONARY_END)
-		{
-			s >> *token;
-			if (*token != Token::Type::DICTIONARY_BEGIN)
-			{
-				Token name;
-				s >> name;
-			}
-		}
-
-		//o._value = result->value();
-		return s;
-	}
-	*/
-
-	lexical::Parser& operator>>(lexical::Parser& s, DictionaryObject& o)
-	{
-		/*
-		s.LexicalSettingsPush();
-		auto settings = s.LexicalSettingsGet();
-		settings->skip.push_back(Token::Type::EOL);
-
-		if (s.PeekTokenType() == Token::Type::DICTIONARY_BEGIN)
-			s.ReadToken();
-
-		while (s.PeekTokenType() != Token::Type::DICTIONARY_END)
-		{
-			auto name = s.readObjectWithType<NameObject>();
-			auto val = s.readObject();
-
-			IsNullVisitor visitor;
-			//ObjectBaseVisitor base_visitor;
-			if (val.apply_visitor(visitor))
-				continue;
-
-			//auto base = val.apply_visitor(base_visitor);
-			o._list[*name] = val;
-			//base->SetContainer(&o);
-		}
-
-		s.ReadTokenWithType(Token::Type::DICTIONARY_END);
-
-		s.LexicalSettingsPop();
-		*/
-		return s;
-	}
-}
+using namespace gotchangpdf;
 
 GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, const char *str, int len)
 {
 	auto dictionary = reinterpret_cast<gotchangpdf::DictionaryObject*>(handle);
-	gotchangpdf::Buffer set(str, len);
+	Buffer set(str, len);
 	gotchangpdf::NameObject name(set);
-	gotchangpdf::ObjectBaseVisitor visitor;
+	ObjectBaseVisitor visitor;
 	auto object = dictionary->Find(name).apply_visitor(visitor);
 	auto ptr = object.AddRefGet();
 	//boost::intrusive_ptr_add_ref(ptr);
@@ -106,15 +41,15 @@ GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObjectIterator_Release(Dictio
 GOTCHANG_PDF_API NameObjectHandle CALLING_CONVENTION DictionaryObjectIterator_GetKey(DictionaryObjectIteratorHandle handle)
 {
 	gotchangpdf::DictionaryObject::Iterator* iterator = reinterpret_cast<gotchangpdf::DictionaryObject::Iterator*>(handle);
-	auto result = gotchangpdf::Deferred<gotchangpdf::NameObject>(gotchangpdf::NameObject(iterator->First()));
+	auto result = Deferred<gotchangpdf::NameObject>(gotchangpdf::NameObject(iterator->First()));
 	return reinterpret_cast<NameObjectHandle>(AddRefGet(result));
 }
 
 GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObjectIterator_GetValue(DictionaryObjectIteratorHandle handle)
 {
 	gotchangpdf::DictionaryObject::Iterator* iterator = reinterpret_cast<gotchangpdf::DictionaryObject::Iterator*>(handle);
-	gotchangpdf::ObjectBaseVisitor visitor;
-	gotchangpdf::Object* ptr = iterator->Second().apply_visitor(visitor).AddRefGet();
+	ObjectBaseVisitor visitor;
+	Object* ptr = iterator->Second().apply_visitor(visitor).AddRefGet();
 	return reinterpret_cast<ObjectHandle>(ptr);
 }
 

@@ -14,6 +14,7 @@
     <ClInclude Include="include\gotchangpdf\c_array_object.h" />
     <ClInclude Include="include\gotchangpdf\c_catalog.h" />
     <ClInclude Include="include\gotchangpdf\c_dictionary_object.h" />
+    <ClInclude Include="include\gotchangpdf\c_error.h" />
     <ClInclude Include="include\gotchangpdf\c_file.h" />
     <ClInclude Include="include\gotchangpdf\c_indirect_object.h" />
     <ClInclude Include="include\gotchangpdf\c_indirect_object_reference.h" />
@@ -108,6 +109,17 @@
     <ClCompile Include="src\gotchangpdf\files\trailer.cpp" />
     <ClCompile Include="src\gotchangpdf\files\xref.cpp" />
     <ClCompile Include="src\gotchangpdf\filters\flate_decode_filter.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_array_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_catalog.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_dictionary_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_file.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_indirect_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_indirect_object_reference.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_integer_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_page_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_page_tree.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_xref.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\lexical_base_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\lexical_reverse_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\lexical_stream.cpp" />
@@ -117,8 +129,6 @@
     <ClCompile Include="src\gotchangpdf\lexical\spirit_parser.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\token.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\token_dictionary.cpp" />
-    <ClCompile Include="src\gotchangpdf\objects\basic\array_object.cpp" />
-    <ClCompile Include="src\gotchangpdf\objects\basic\dictionary_object.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\indirect_object.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\indirect_object_reference.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\integer_object.cpp" />

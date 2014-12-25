@@ -3,8 +3,6 @@
 #include "file.h"
 #include "objects.h"
 
-#include "c_indirect_object_reference.h"
-
 namespace gotchangpdf
 {
 	IndirectObjectReference::IndirectObjectReference(files::File * file, IntegerObjectPtr obj_number, IntegerObjectPtr gen_number) :
@@ -66,10 +64,4 @@ namespace gotchangpdf
 
 		return false;
 	}
-}
-
-GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION IndirectReference_GetReferencedObject(IndirectObjectReferenceHandle handle)
-{
-	gotchangpdf::IndirectObjectReference* obj = reinterpret_cast<gotchangpdf::IndirectObjectReference*>(handle);
-	return reinterpret_cast<IndirectObjectHandle>(AddRefGet(obj->GetReferencedObject()));
 }
