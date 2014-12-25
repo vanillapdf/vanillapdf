@@ -5,9 +5,9 @@
 
 using namespace gotchangpdf;
 
-GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle handle, int at)
+GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION ArrayObject_At(ArrayHandle handle, int at)
 {
-	gotchangpdf::MixedArrayObject* arr = reinterpret_cast<gotchangpdf::MixedArrayObject*>(handle);
+	MixedArrayObject* arr = reinterpret_cast<MixedArrayObject*>(handle);
 	auto item = arr->At(at);
 	ObjectBaseVisitor visitor;
 	auto direct = item.apply_visitor(visitor);
@@ -15,14 +15,14 @@ GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION ArrayObject_At(ArrayObjectHandl
 	return reinterpret_cast<ObjectHandle>(ptr);
 }
 
-GOTCHANG_PDF_API int CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle handle)
+GOTCHANG_PDF_API int CALLING_CONVENTION ArrayObject_Size(ArrayHandle handle)
 {
-	gotchangpdf::MixedArrayObject* arr = reinterpret_cast<gotchangpdf::MixedArrayObject*>(handle);
+	MixedArrayObject* arr = reinterpret_cast<MixedArrayObject*>(handle);
 	return arr->Size();
 }
 
-GOTCHANG_PDF_API void CALLING_CONVENTION ArrayObject_Release(ArrayObjectHandle handle)
+GOTCHANG_PDF_API void CALLING_CONVENTION ArrayObject_Release(ArrayHandle handle)
 {
-	gotchangpdf::MixedArrayObject* obj = reinterpret_cast<gotchangpdf::MixedArrayObject*>(handle);
+	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
 	obj->Release();
 }

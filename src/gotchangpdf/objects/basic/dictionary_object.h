@@ -60,7 +60,7 @@ namespace gotchangpdf
 			const_iterator _it;
 		};
 
-		virtual inline Object::Type GetType(void) const override { return Object::Type::DictionaryObject; }
+		virtual inline Object::Type GetType(void) const override { return Object::Type::Dictionary; }
 
 		template <typename U>
 		const U FindAs(const NameT& name) const

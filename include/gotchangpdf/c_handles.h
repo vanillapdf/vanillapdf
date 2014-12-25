@@ -12,35 +12,30 @@ extern "C"
 	enum ObjectType
 	{
 		Unknown = 0,
-		ArrayObject,
+		Array,
 		Boolean,
-		DictionaryObject,
+		Dictionary,
 		Function,
-		IntegerObject,
-		NameObject,
-		//NameTree,
-		NullObject,
-		//NumberTree,
-		RealObject,
-		//Rectangle,
-		StreamObject,
+		Integer,
+		Name,
+		Null,
+		Real,
+		Stream,
 		HexadecimalString,
 		LiteralString,
-		IndirectObjectReference,
-		IndirectObject
+		IndirectReference,
+		Indirect
 	};
 
 	DECLARE_OBJECT_HANDLE(Boolean);
-	DECLARE_OBJECT_HANDLE(NameObject);
-	DECLARE_OBJECT_HANDLE(NameTree);
-	DECLARE_OBJECT_HANDLE(NullObject);
-	DECLARE_OBJECT_HANDLE(ObjectStream);
-	DECLARE_OBJECT_HANDLE(RealObject);
-	DECLARE_OBJECT_HANDLE(IntegerObject);
-	DECLARE_OBJECT_HANDLE(StreamObject);
+	DECLARE_OBJECT_HANDLE(Name);
+	DECLARE_OBJECT_HANDLE(Null);
+	DECLARE_OBJECT_HANDLE(Real);
+	DECLARE_OBJECT_HANDLE(Integer);
+	DECLARE_OBJECT_HANDLE(Stream);
 	DECLARE_OBJECT_HANDLE(HexadecimalString);
 	DECLARE_OBJECT_HANDLE(LiteralString);
-	DECLARE_OBJECT_HANDLE(IndirectObjectReference);
+	DECLARE_OBJECT_HANDLE(IndirectReference);
 	DECLARE_OBJECT_HANDLE(File);
 	DECLARE_OBJECT_HANDLE(XrefEntry);
 	DECLARE_OBJECT_HANDLE(Xref);
@@ -50,11 +45,11 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(PageTree);
 	DECLARE_OBJECT_HANDLE(PageObject);
 
-	DECLARE_OBJECT_HANDLE(ArrayObject);
-	DECLARE_OBJECT_HANDLE(IndirectObject);
+	DECLARE_OBJECT_HANDLE(Array);
+	DECLARE_OBJECT_HANDLE(Indirect);
 
-	DECLARE_OBJECT_HANDLE(DictionaryObject);
-	DECLARE_OBJECT_HANDLE(DictionaryObjectIterator);
+	DECLARE_OBJECT_HANDLE(Dictionary);
+	DECLARE_OBJECT_HANDLE(DictionaryIterator);
 
 #ifdef __cplusplus
 };

@@ -54,7 +54,7 @@ GOTCHANG_PDF_API XrefHandle CALLING_CONVENTION File_Xref(FileHandle handle)
 	return reinterpret_cast<XrefHandle>(ptr);
 }
 
-GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION File_GetIndirectObject(
+GOTCHANG_PDF_API IndirectHandle CALLING_CONVENTION File_GetIndirectObject(
 	FileHandle handle, int objNumber, int genNumber)
 {
 	File* file = reinterpret_cast<File*>(handle);
@@ -64,7 +64,7 @@ GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION File_GetIndirectObject(
 	auto ptr = item.AddRefGet();
 
 	//boost::intrusive_ptr_add_ref(ptr);
-	return reinterpret_cast<IndirectObjectHandle>(ptr);
+	return reinterpret_cast<IndirectHandle>(ptr);
 }
 
 GOTCHANG_PDF_API CatalogHandle CALLING_CONVENTION File_GetDocumentCatalog(

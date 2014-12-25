@@ -18,7 +18,7 @@ namespace gotchangpdf
 		explicit RealObject(double value);
 		explicit RealObject(const lexical::Token& token);
 
-		virtual inline Object::Type GetType(void) const override { return Object::Type::RealObject; }
+		virtual inline Object::Type GetType(void) const override { return Object::Type::Real; }
 
 		//virtual Object* Clone(void) const  override { return new RealObject(static_cast<RealObject const&>(*this)); };
 

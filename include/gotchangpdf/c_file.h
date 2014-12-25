@@ -13,7 +13,7 @@ extern "C"
 	GOTCHANG_PDF_API void CALLING_CONVENTION File_Release(FileHandle);
 	GOTCHANG_PDF_API int CALLING_CONVENTION File_Initialize(FileHandle);
 	GOTCHANG_PDF_API XrefHandle CALLING_CONVENTION File_Xref(FileHandle);
-	GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION File_GetIndirectObject(FileHandle, int objNumber, int genNumber);
+	GOTCHANG_PDF_API IndirectHandle CALLING_CONVENTION File_GetIndirectObject(FileHandle, int objNumber, int genNumber);
 	GOTCHANG_PDF_API CatalogHandle CALLING_CONVENTION File_GetDocumentCatalog(FileHandle);
 
 #ifdef __cplusplus

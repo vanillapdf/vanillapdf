@@ -27,7 +27,7 @@ namespace gotchangpdf
 
 		inline bool Equals(const NameObject& other) const { return _value.Equals(other._value); }
 
-		virtual inline Object::Type GetType(void) const override { return Object::Type::NameObject; }
+		virtual inline Object::Type GetType(void) const override { return Object::Type::Name; }
 
 		void SetName(value_type& name) { _value = name; }
 

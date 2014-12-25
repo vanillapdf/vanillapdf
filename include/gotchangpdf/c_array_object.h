@@ -9,9 +9,9 @@ extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API int CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle);
-	GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle, int at);
-	GOTCHANG_PDF_API void CALLING_CONVENTION ArrayObject_Release(ArrayObjectHandle);
+	GOTCHANG_PDF_API int CALLING_CONVENTION ArrayObject_Size(ArrayHandle);
+	GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION ArrayObject_At(ArrayHandle, int at);
+	GOTCHANG_PDF_API void CALLING_CONVENTION ArrayObject_Release(ArrayHandle);
 
 #ifdef __cplusplus
 };

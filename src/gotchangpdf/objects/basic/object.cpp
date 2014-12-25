@@ -16,38 +16,38 @@ namespace gotchangpdf
 		{
 		case Type::Unknown:
 			return "Unknown";
-		case Type::ArrayObject:
-			return "ArrayObject";
+		case Type::Array:
+			return "Array";
 		case Type::Boolean:
 			return "Boolean";
-		case Type::DictionaryObject:
-			return "DictionaryObject";
+		case Type::Dictionary:
+			return "Dictionary";
 		case Type::Function:
 			return "Function";
-		case Type::IntegerObject:
-			return "IntegerObject";
-		case Type::NameObject:
-			return "NameObject";
+		case Type::Integer:
+			return "Integer";
+		case Type::Name:
+			return "Name";
 			//case Type::NameTree:
 			//	return "NameTree";
-		case Type::NullObject:
-			return "NullObject";
+		case Type::Null:
+			return "Null";
 			//case Type::NumberTree:
 			//	return "NumberTree";
-		case Type::RealObject:
-			return "RealObject";
+		case Type::Real:
+			return "Real";
 			//case Type::Rectangle:
 			//	return "Rectangle";
-		case Type::StreamObject:
-			return "StreamObject";
+		case Type::Stream:
+			return "Stream";
 		case Type::HexadecimalString:
 			return "HexadecimalString";
 		case Type::LiteralString:
 			return "LiteralString";
-		case Type::IndirectObjectReference:
+		case Type::IndirectReference:
 			return "IndirectReference";
-		case Type::IndirectObject:
-			return "IndirectObject";
+		case Type::Indirect:
+			return "Indirect";
 		default:
 			return nullptr;
 		}

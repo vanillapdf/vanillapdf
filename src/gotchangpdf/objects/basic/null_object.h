@@ -9,7 +9,7 @@ namespace gotchangpdf
 	class NullObject : public Containable
 	{
 	public:
-		virtual inline Object::Type GetType(void) const override { return Object::Type::NullObject; }
+		virtual inline Object::Type GetType(void) const override { return Object::Type::Null; }
 
 		static Deferred<NullObject> GetInstance(void)
 		{

@@ -4,6 +4,7 @@
 #include "c_xref.h"
 #include "c_values.h"
 
+using namespace gotchangpdf;
 using namespace gotchangpdf::files;
 
 GOTCHANG_PDF_API int CALLING_CONVENTION Xref_Size(XrefHandle handle)
@@ -31,14 +32,14 @@ GOTCHANG_PDF_API void CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle handl
 	delete entry;
 }
 
-GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION XrefEntry_Reference(XrefEntryHandle handle)
+GOTCHANG_PDF_API IndirectHandle CALLING_CONVENTION XrefEntry_Reference(XrefEntryHandle handle)
 {
 	XrefEntry* entry = reinterpret_cast<XrefEntry*>(handle);
 
-	gotchangpdf::IndirectObject *ptr = entry->reference.AddRefGet();
+	IndirectObject *ptr = entry->reference.AddRefGet();
 	//boost::intrusive_ptr_add_ref(ptr);
 
-	return reinterpret_cast<IndirectObjectHandle>(ptr);
+	return reinterpret_cast<IndirectHandle>(ptr);
 }
 
 GOTCHANG_PDF_API int CALLING_CONVENTION XrefEntry_In_Use(XrefEntryHandle handle)

@@ -44,7 +44,7 @@ namespace gotchangpdf
 		value_type _value = 0;
 	};
 
-	inline  Object::Type IntegerObject::GetType(void) const { return Object::Type::IntegerObject; }
+	inline  Object::Type IntegerObject::GetType(void) const { return Object::Type::Integer; }
 }
 
 #endif /* _INTEGER_OBJECT_H */

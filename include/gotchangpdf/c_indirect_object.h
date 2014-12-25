@@ -9,9 +9,9 @@ extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION IndirectObject_GetObject(IndirectObjectHandle);
-	GOTCHANG_PDF_API long long CALLING_CONVENTION IndirectObject_GetOffset(IndirectObjectHandle);
-	GOTCHANG_PDF_API void CALLING_CONVENTION IndirectObject_Release(IndirectObjectHandle);
+	GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION IndirectObject_GetObject(IndirectHandle);
+	GOTCHANG_PDF_API long long CALLING_CONVENTION IndirectObject_GetOffset(IndirectHandle);
+	GOTCHANG_PDF_API void CALLING_CONVENTION IndirectObject_Release(IndirectHandle);
 
 #ifdef __cplusplus
 };

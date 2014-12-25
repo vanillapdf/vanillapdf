@@ -3,15 +3,15 @@
 
 using namespace gotchangpdf;
 
-GOTCHANG_PDF_API long long CALLING_CONVENTION IndirectObject_GetOffset(IndirectObjectHandle handle)
+GOTCHANG_PDF_API long long CALLING_CONVENTION IndirectObject_GetOffset(IndirectHandle handle)
 {
-	gotchangpdf::IndirectObject* obj = reinterpret_cast<gotchangpdf::IndirectObject*>(handle);
+	IndirectObject* obj = reinterpret_cast<IndirectObject*>(handle);
 	return obj->GetOffset();
 }
 
-GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION IndirectObject_GetObject(IndirectObjectHandle handle)
+GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION IndirectObject_GetObject(IndirectHandle handle)
 {
-	gotchangpdf::IndirectObject* obj = reinterpret_cast<gotchangpdf::IndirectObject*>(handle);
+	IndirectObject* obj = reinterpret_cast<IndirectObject*>(handle);
 
 	DirectObject item = obj->GetObject();
 	ObjectBaseVisitor visitor;
@@ -22,8 +22,8 @@ GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION IndirectObject_GetObject(Indire
 	return reinterpret_cast<ObjectHandle>(ptr);
 }
 
-GOTCHANG_PDF_API void CALLING_CONVENTION IndirectObject_Release(IndirectObjectHandle handle)
+GOTCHANG_PDF_API void CALLING_CONVENTION IndirectObject_Release(IndirectHandle handle)
 {
-	gotchangpdf::IndirectObject* obj = reinterpret_cast<gotchangpdf::IndirectObject*>(handle);
+	IndirectObject* obj = reinterpret_cast<IndirectObject*>(handle);
 	obj->Release();
 }

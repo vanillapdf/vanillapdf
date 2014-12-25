@@ -26,7 +26,7 @@ namespace gotchangpdf
 
 		Buffer GetData() const;
 
-		virtual inline Object::Type GetType(void) const override { return Object::Type::StreamObject; }
+		virtual inline Object::Type GetType(void) const override { return Object::Type::Stream; }
 
 		//friend Streams::Lexical::ReverseStream& operator>> (Streams::Lexical::ReverseStream& s, StreamObject& o);
 		friend lexical::Parser& operator>> (lexical::Parser& s, StreamObject& o);

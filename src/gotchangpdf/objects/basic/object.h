@@ -29,22 +29,22 @@ namespace gotchangpdf
 		enum class Type : unsigned char
 		{
 			Unknown = 0,
-			ArrayObject,
+			Array,
 			Boolean,
-			DictionaryObject,
+			Dictionary,
 			Function,
-			IntegerObject,
-			NameObject,
+			Integer,
+			Name,
 			//NameTree,
-			NullObject,
+			Null,
 			//NumberTree,
-			RealObject,
+			Real,
 			//Rectangle,
-			StreamObject,
+			Stream,
 			HexadecimalString,
 			LiteralString,
-			IndirectObjectReference,
-			IndirectObject
+			IndirectReference,
+			Indirect
 		};
 
 	public:

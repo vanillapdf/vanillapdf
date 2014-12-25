@@ -27,7 +27,7 @@ namespace gotchangpdf
 		template <typename T>
 		inline const T GetReferencedObjectAs() const { return GetReferencedObject()->GetObjectAs<T>(); }
 
-		virtual inline Object::Type GetType(void) const override { return Object::Type::IndirectObjectReference; }
+		virtual inline Object::Type GetType(void) const override { return Object::Type::IndirectReference; }
 
 		void SetObject(files::File * file,
 			IntegerObjectPtr obj_number,

@@ -9,7 +9,7 @@ extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION IndirectReference_GetReferencedObject(IndirectObjectReferenceHandle);
+	GOTCHANG_PDF_API IndirectHandle CALLING_CONVENTION IndirectReference_GetReferencedObject(IndirectReferenceHandle);
 
 #ifdef __cplusplus
 };

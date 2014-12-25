@@ -10,7 +10,7 @@ extern "C"
 #endif
 
 	GOTCHANG_PDF_API int CALLING_CONVENTION XrefEntry_In_Use(XrefEntryHandle handle);
-	GOTCHANG_PDF_API IndirectObjectHandle CALLING_CONVENTION XrefEntry_Reference(XrefEntryHandle handle);
+	GOTCHANG_PDF_API IndirectHandle CALLING_CONVENTION XrefEntry_Reference(XrefEntryHandle handle);
 	GOTCHANG_PDF_API void CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle);
 
 	GOTCHANG_PDF_API int CALLING_CONVENTION Xref_Size(XrefHandle);

@@ -23,14 +23,12 @@ void process_page(PageObjectHandle obj, int nested)
 
 void process(ObjectHandle obj, int nested)
 {
-	int i, size;
-	long long val;
-	const char *name;
+	int i, size, val;
 	ObjectHandle child;
-	ArrayObjectHandle arr;
-	IntegerObjectHandle integer;
-	DictionaryObjectHandle dict;
-	DictionaryObjectIteratorHandle iterator;
+	ArrayHandle arr;
+	IntegerHandle integer;
+	DictionaryHandle dict;
+	DictionaryIteratorHandle iterator;
 
 	enum ObjectType type = Object_Type(obj);
 
@@ -46,8 +44,8 @@ void process(ObjectHandle obj, int nested)
 		assert(0);
 
 		break;
-	case ArrayObject:
-		arr = (ArrayObjectHandle)obj;
+	case Array:
+		arr = (ArrayHandle)obj;
 		size = ArrayObject_Size(arr);
 		print_spaces(nested);
 		printf("Array begin\n");
@@ -72,8 +70,8 @@ void process(ObjectHandle obj, int nested)
 		print_spaces(nested);
 		printf("Boolean object end\n");
 		break;
-	case DictionaryObject:
-		dict = (DictionaryObjectHandle)obj;
+	case Dictionary:
+		dict = (DictionaryHandle)obj;
 		print_spaces(nested);
 		printf("Dictionary begin\n");
 		iterator = DictionaryObject_Iterator(dict);
@@ -102,19 +100,19 @@ void process(ObjectHandle obj, int nested)
 		print_spaces(nested);
 		printf("Function object end\n");
 		break;
-	case IntegerObject:
+	case Integer:
 		print_spaces(nested);
 		printf("Integer object begin\n");
 
-		integer = (IntegerObjectHandle)obj;
+		integer = (IntegerHandle)obj;
 		val = IntegerObject_Value(integer);
 		print_spaces(nested + 1);
-		printf("Value: %lld\n", val);
+		printf("Value: %d\n", val);
 
 		print_spaces(nested);
 		printf("Integer object end\n");
 		break;
-	case NameObject:
+	case Name:
 		print_spaces(nested);
 		printf("Name object begin\n");
 
@@ -130,7 +128,7 @@ void process(ObjectHandle obj, int nested)
 		printf("Name tree object end\n");
 		break;
 		*/
-	case NullObject:
+	case Null:
 		print_spaces(nested);
 		printf("Null object begin\n");
 
@@ -146,14 +144,14 @@ void process(ObjectHandle obj, int nested)
 		printf("Object stream end\n");
 		break;
 		*/
-	case RealObject:
+	case Real:
 		print_spaces(nested);
 		printf("Real object begin\n");
 
 		print_spaces(nested);
 		printf("Real object end\n");
 		break;
-	case StreamObject:
+	case Stream:
 		print_spaces(nested);
 		printf("Stream object begin\n");
 
@@ -174,23 +172,23 @@ void process(ObjectHandle obj, int nested)
 		print_spaces(nested);
 		printf("Literal string end\n");
 		break;
-	case IndirectObjectReference:
+	case IndirectReference:
 		print_spaces(nested);
 		printf("Indirect reference begin\n");
 
-		process(IndirectReference_GetReferencedObject((IndirectObjectReferenceHandle)obj), nested + 1);
+		process((ObjectHandle)IndirectReference_GetReferencedObject((IndirectReferenceHandle)obj), nested + 1);
 
 		print_spaces(nested);
 		printf("Indirect reference end\n");
 		break;
-	case IndirectObject:
+	case Indirect:
 		print_spaces(nested);
 		printf("Indirect object begin\n");
 
 		print_spaces(nested + 1);
-		printf("Offset: %d\n\n", IndirectObject_GetOffset((IndirectObjectHandle)obj));
+		printf("Offset: %d\n\n", IndirectObject_GetOffset((IndirectHandle)obj));
 
-		child = IndirectObject_GetObject((IndirectObjectHandle)obj);
+		child = IndirectObject_GetObject((IndirectHandle)obj);
 		process(child, nested + 1);
 		Object_Release(child);
 
@@ -207,10 +205,8 @@ int main(int argc, char *argv[])
 	int i, result, size;
 	FileHandle file;
 	XrefHandle xref;
-	CatalogHandle catalog;
-	PageTreeHandle pages;
-	ArrayObjectHandle page_kids;
-	int page_count;
+	//CatalogHandle catalog;
+	//PageTreeHandle pages;
 
 	if (argc != 2)
 		return 1;
@@ -222,7 +218,7 @@ int main(int argc, char *argv[])
 
 	for (i = 1; i < size; ++i)
 	{
-		IndirectObjectHandle indirect = File_GetIndirectObject(file, i, 0);
+		IndirectHandle indirect = File_GetIndirectObject(file, i, 0);
 		process((ObjectHandle)indirect, 0);
 		IndirectObject_Release(indirect);
 	}
@@ -241,9 +237,9 @@ int main(int argc, char *argv[])
 	}
 
 	PageTree_Release(pages);
-
-	printf("Document catalog end\n");
 	*/
+	printf("Document catalog end\n");
+
 	Xref_Release(xref);
 	File_Release(file);
 

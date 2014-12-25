@@ -3,7 +3,7 @@
 
 using namespace gotchangpdf::documents;
 
-GOTCHANG_PDF_API long long CALLING_CONVENTION PageTree_GetPageCount(PageTreeHandle handle)
+GOTCHANG_PDF_API int CALLING_CONVENTION PageTree_GetPageCount(PageTreeHandle handle)
 {
 	PageTree* obj = reinterpret_cast<PageTree*>(handle);
 	return obj->PageCount();

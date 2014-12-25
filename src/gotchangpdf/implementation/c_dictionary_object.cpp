@@ -6,11 +6,11 @@
 
 using namespace gotchangpdf;
 
-GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, const char *str, int len)
+GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObject_Find(DictionaryHandle handle, const char *str, int len)
 {
-	auto dictionary = reinterpret_cast<gotchangpdf::DictionaryObject*>(handle);
+	auto dictionary = reinterpret_cast<DictionaryObject*>(handle);
 	Buffer set(str, len);
-	gotchangpdf::NameObject name(set);
+	NameObject name(set);
 	ObjectBaseVisitor visitor;
 	auto object = dictionary->Find(name).apply_visitor(visitor);
 	auto ptr = object.AddRefGet();
@@ -19,44 +19,44 @@ GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObject_Find(Dictionar
 	return reinterpret_cast<ObjectHandle>(ptr);
 }
 
-GOTCHANG_PDF_API DictionaryObjectIteratorHandle CALLING_CONVENTION DictionaryObject_Iterator(DictionaryObjectHandle handle)
+GOTCHANG_PDF_API DictionaryIteratorHandle CALLING_CONVENTION DictionaryObject_Iterator(DictionaryHandle handle)
 {
-	gotchangpdf::DictionaryObject* dictionary = reinterpret_cast<gotchangpdf::DictionaryObject*>(handle);
-	gotchangpdf::DictionaryObject::Iterator* begin = dictionary->Begin().Clone();
-	return reinterpret_cast<DictionaryObjectIteratorHandle>(begin);
+	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(handle);
+	DictionaryObject::Iterator* begin = dictionary->Begin().Clone();
+	return reinterpret_cast<DictionaryIteratorHandle>(begin);
 }
 
-GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObjectIterator_Next(DictionaryObjectIteratorHandle handle)
+GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObjectIterator_Next(DictionaryIteratorHandle handle)
 {
-	gotchangpdf::DictionaryObject::Iterator* iterator = reinterpret_cast<gotchangpdf::DictionaryObject::Iterator*>(handle);
+	DictionaryObject::Iterator* iterator = reinterpret_cast<DictionaryObject::Iterator*>(handle);
 	++(*iterator);
 }
 
-GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObjectIterator_Release(DictionaryObjectIteratorHandle handle)
+GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObjectIterator_Release(DictionaryIteratorHandle handle)
 {
-	gotchangpdf::DictionaryObject::Iterator* iterator = reinterpret_cast<gotchangpdf::DictionaryObject::Iterator*>(handle);
+	DictionaryObject::Iterator* iterator = reinterpret_cast<DictionaryObject::Iterator*>(handle);
 	delete iterator;;
 }
 
-GOTCHANG_PDF_API NameObjectHandle CALLING_CONVENTION DictionaryObjectIterator_GetKey(DictionaryObjectIteratorHandle handle)
+GOTCHANG_PDF_API NameHandle CALLING_CONVENTION DictionaryObjectIterator_GetKey(DictionaryIteratorHandle handle)
 {
-	gotchangpdf::DictionaryObject::Iterator* iterator = reinterpret_cast<gotchangpdf::DictionaryObject::Iterator*>(handle);
-	auto result = Deferred<gotchangpdf::NameObject>(gotchangpdf::NameObject(iterator->First()));
-	return reinterpret_cast<NameObjectHandle>(AddRefGet(result));
+	DictionaryObject::Iterator* iterator = reinterpret_cast<DictionaryObject::Iterator*>(handle);
+	auto result = Deferred<NameObject>(NameObject(iterator->First()));
+	return reinterpret_cast<NameHandle>(AddRefGet(result));
 }
 
-GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObjectIterator_GetValue(DictionaryObjectIteratorHandle handle)
+GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION DictionaryObjectIterator_GetValue(DictionaryIteratorHandle handle)
 {
-	gotchangpdf::DictionaryObject::Iterator* iterator = reinterpret_cast<gotchangpdf::DictionaryObject::Iterator*>(handle);
+	DictionaryObject::Iterator* iterator = reinterpret_cast<DictionaryObject::Iterator*>(handle);
 	ObjectBaseVisitor visitor;
 	Object* ptr = iterator->Second().apply_visitor(visitor).AddRefGet();
 	return reinterpret_cast<ObjectHandle>(ptr);
 }
 
-GOTCHANG_PDF_API int CALLING_CONVENTION DictionaryObjectIterator_IsValid(DictionaryObjectIteratorHandle handle, DictionaryObjectHandle dict)
+GOTCHANG_PDF_API int CALLING_CONVENTION DictionaryObjectIterator_IsValid(DictionaryIteratorHandle handle, DictionaryHandle dict)
 {
-	gotchangpdf::DictionaryObject::Iterator* iterator = reinterpret_cast<gotchangpdf::DictionaryObject::Iterator*>(handle);
-	gotchangpdf::DictionaryObject* dictionary = reinterpret_cast<gotchangpdf::DictionaryObject*>(dict);
+	DictionaryObject::Iterator* iterator = reinterpret_cast<DictionaryObject::Iterator*>(handle);
+	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(dict);
 
 	if (dictionary->End() == *iterator)
 		return GOTCHANG_PDF_RV_FALSE;
@@ -64,8 +64,8 @@ GOTCHANG_PDF_API int CALLING_CONVENTION DictionaryObjectIterator_IsValid(Diction
 		return GOTCHANG_PDF_RV_TRUE;
 }
 
-GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObject_Release(DictionaryObjectHandle handle)
+GOTCHANG_PDF_API void CALLING_CONVENTION DictionaryObject_Release(DictionaryHandle handle)
 {
-	gotchangpdf::DictionaryObject* obj = reinterpret_cast<gotchangpdf::DictionaryObject*>(handle);
+	DictionaryObject* obj = reinterpret_cast<DictionaryObject*>(handle);
 	obj->Release();
 }

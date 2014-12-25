@@ -34,7 +34,7 @@ namespace gotchangpdf
 		inline void SetFile(files::File *file) { _file = file; }
 		inline files::File* GetFile() const { return _file; }
 
-		virtual inline Object::Type GetType(void) const override { return Object::Type::IndirectObject; }
+		virtual inline Object::Type GetType(void) const override { return Object::Type::Indirect; }
 
 		/* IIndirectObject */
 		//virtual IObject* GetIObject() const override;

@@ -9,8 +9,8 @@ extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API int CALLING_CONVENTION IntegerObject_Value(IntegerObjectHandle);
-	GOTCHANG_PDF_API void CALLING_CONVENTION IntegerObject_Release(IntegerObjectHandle);
+	GOTCHANG_PDF_API int CALLING_CONVENTION IntegerObject_Value(IntegerHandle);
+	GOTCHANG_PDF_API void CALLING_CONVENTION IntegerObject_Release(IntegerHandle);
 
 #ifdef __cplusplus
 };

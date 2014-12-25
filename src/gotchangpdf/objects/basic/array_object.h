@@ -26,7 +26,7 @@ namespace gotchangpdf
 		inline const T& operator[](unsigned int i) const { return _list[i]; }
 		inline const T& At(unsigned int at) const { return _list.at(at); }
 
-		virtual inline Object::Type GetType(void) const override { return Object::Type::ArrayObject; }
+		virtual inline Object::Type GetType(void) const override { return Object::Type::Array; }
 
 		friend lexical::Parser& operator>> (lexical::Parser& s, ArrayObject<T>& o)
 		{
