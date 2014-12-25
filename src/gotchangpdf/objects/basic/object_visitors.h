@@ -77,7 +77,7 @@ namespace gotchangpdf
 	class ObjectVisitor : public boost::static_visitor<T>
 	{
 	public:
-		inline Deferred<T> operator()(Deferred<T> obj) const { return obj; }
+		inline T operator()(T obj) const { return obj; }
 
 		template <typename U>
 		inline T operator()(U obj) const { throw exceptions::Exception("Type cast error"); }
@@ -91,7 +91,7 @@ namespace gotchangpdf
 	};
 
 	template <typename T>
-	inline Deferred<T> DirectObjectGetAs(DirectObject obj)
+	inline T DirectObjectGetAs(DirectObject obj)
 	{
 		ObjectVisitor<T> visitor;
 		return obj.apply_visitor(visitor);

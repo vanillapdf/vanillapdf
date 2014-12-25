@@ -55,29 +55,19 @@ namespace gotchangpdf
 		namespace ascii = boost::spirit::ascii;
 		namespace phoenix = boost::phoenix;
 
-		SpiritGrammar::SpiritGrammar() :
-			base_type(indirect_object, "Indirect object grammar")
+		BOOST_SPIRIT_AUTO(qi, delimiter, qi::omit[qi::char_("()<>[]{}/%")]);
+		BOOST_SPIRIT_AUTO(qi, whitespace, qi::omit[qi::char_(" \r\n\f\t") | qi::char_('\0')]);
+		BOOST_SPIRIT_AUTO(qi, whitespaces, *whitespace);
+		BOOST_SPIRIT_AUTO(qi, eol, -qi::lit('\r') >> qi::lit('\n'));
+
+		DirectObjectGrammar::DirectObjectGrammar() :
+			base_type(direct_object, "Direct object grammar")
 		{
-			BOOST_SPIRIT_AUTO(qi, delimiter, qi::omit[qi::char_("()<>[]{}/%")]);
-			BOOST_SPIRIT_AUTO(qi, whitespace, qi::omit[qi::char_(" \r\n\f\t") | qi::char_('\0')]);
-			BOOST_SPIRIT_AUTO(qi, whitespaces, *whitespace);
-			BOOST_SPIRIT_AUTO(qi, eol, -qi::lit('\r') >> qi::lit('\n'));
 			BOOST_SPIRIT_AUTO(qi, name, qi::lit('/') > *((qi::char_ - whitespace - delimiter) | (qi::char_('%') > qi::digit > qi::digit)));
 
 			boolean_object %=
 				qi::eps
 				>> qi::bool_;
-
-			indirect_object %=
-				integer_object
-				>> whitespace
-				>> integer_object
-				>> whitespace
-				>> qi::lit("obj")
-				>> whitespaces
-				>> direct_object(qi::_r1)
-				> whitespaces
-				> qi::lit("endobj");
 
 			direct_object %=
 				array_object(qi::_r1)
@@ -128,20 +118,20 @@ namespace gotchangpdf
 				qi::lit('[')
 				> whitespaces
 				> *(
-					direct_object(qi::_r1)[phoenix::bind(&array_item_handler, qi::_val, qi::_1)]
-					>> whitespaces
-					)
+				direct_object(qi::_r1)[phoenix::bind(&array_item_handler, qi::_val, qi::_1)]
+				>> whitespaces
+				)
 				> qi::lit(']');
 
 			dictionary_object %=
 				qi::lit("<<")
 				> whitespaces
 				> *(
-					name_key
-					>> whitespaces
-					>> direct_object(qi::_r1)[phoenix::bind(&dictionary_item_handler, qi::_val, qi::_1)]
-					>> whitespaces
-					)
+				name_key
+				>> whitespaces
+				>> direct_object(qi::_r1)[phoenix::bind(&dictionary_item_handler, qi::_val, qi::_1)]
+				>> whitespaces
+				)
 				> qi::lit(">>");
 
 			stream_object =
@@ -160,7 +150,6 @@ namespace gotchangpdf
 				> qi::lit(")");
 
 			BOOST_SPIRIT_DEBUG_NODE(boolean_object);
-			BOOST_SPIRIT_DEBUG_NODE(indirect_object);
 			BOOST_SPIRIT_DEBUG_NODE(direct_object);
 			BOOST_SPIRIT_DEBUG_NODE(indirect_object_reference);
 			BOOST_SPIRIT_DEBUG_NODE(integer_object);
@@ -170,6 +159,32 @@ namespace gotchangpdf
 			BOOST_SPIRIT_DEBUG_NODE(dictionary_object);
 			BOOST_SPIRIT_DEBUG_NODE(literal_string_object);
 			//BOOST_SPIRIT_DEBUG_NODE(stream_object);
+		}
+
+		IndirectObjectGrammar::IndirectObjectGrammar() :
+			base_type(indirect_object, "Indirect object grammar")
+		{
+			indirect_object %=
+				object_number
+				>> whitespace
+				>> generation_number
+				>> whitespace
+				>> qi::lit("obj")
+				>> whitespaces
+				>> direct_object(qi::_r1)
+				> whitespaces
+				> qi::lit("endobj");
+
+			object_number %=
+				qi::eps
+				>> qi::int_;
+
+			generation_number %=
+				qi::eps
+				>> qi::ushort_;
+
+			BOOST_SPIRIT_DEBUG_NODE(indirect_object);
+
 		}
 	}
 }

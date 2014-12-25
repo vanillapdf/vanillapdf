@@ -24,7 +24,8 @@ namespace gotchangpdf
 			Impl(files::File * file) : _file(file) {}
 
 			files::File * _file;
-			SpiritGrammar grammar;
+			IndirectObjectGrammar _indirect_grammar;
+			DirectObjectGrammar _direct_grammar;
 		};
 
 		SpiritParser::SpiritParser(files::File * file, CharacterSource & stream)
@@ -35,10 +36,9 @@ namespace gotchangpdf
 
 		files::File * SpiritParser::file(void) const { return _impl->_file; }
 
-		IndirectObjectPtr SpiritParser::readObject(types::stream_offset offset)
+		DirectObject SpiritParser::ReadDirectObject(types::stream_offset offset)
 		{
-			IndirectObjectPtr obj = IndirectObject(_impl->_file);
-			obj->SetOffset(offset);
+			DirectObject obj;
 
 			// Don't skip whitespace explicitly
 			noskipws(*this);
@@ -53,8 +53,7 @@ namespace gotchangpdf
 
 			try
 			{
-				auto result = qi::parse(input_begin_pos, input_end_pos, _impl->grammar(_impl->_file), obj);
-				//auto result = lex::tokenize_and_parse(input_begin_pos, input_end_pos, lexer, grammar(_file), obj);
+				auto result = qi::parse(input_begin_pos, input_end_pos, _impl->_direct_grammar(_impl->_file), obj);
 				if (result) {
 					return obj;
 				}
@@ -84,64 +83,52 @@ namespace gotchangpdf
 			}
 		}
 
-		IndirectObjectPtr SpiritParser::peekObject(types::stream_offset offset)
+		IndirectObjectPtr SpiritParser::ReadIndirectObject(types::stream_offset offset)
 		{
-			/*
-			auto position = tellg();
-			auto obj = readObject();
-			seekg(position);
+			IndirectObjectPtr obj = IndirectObject(_impl->_file);
+			obj->SetOffset(offset);
 
-			return obj;
-			*/
-			return IndirectObjectPtr();
-		}
-		/*
-		Deferred<gotchangpdf::Object> SpiritParser::readObjectWithType(gotchangpdf::Object::Type type)
-		{
+			// Don't skip whitespace explicitly
+			noskipws(*this);
 
-			auto obj = readObject();
+			// Direct cast to pos_iterator_type is not possible
+			seekg(offset, std::ios::beg);
+			base_iterator_type input_begin_base(*this);
+			base_iterator_type input_end_base;
 
-			switch (type)
+			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _impl->_file->GetFilename(), 1, 1, offset);
+			pos_iterator_type input_end_pos;
+
+			try
 			{
-			case Object::Type::Unknown:
-				throw Exception("FIXME: Are your really trying to return unknown type??");
-			case Object::Type::ArrayObject:
-				return dynamic_wrapper_cast<MixedArrayObject>(obj);
-			case Object::Type::Boolean:
-				return dynamic_wrapper_cast<Boolean>(obj);
-			case Object::Type::DictionaryObject:
-				return dynamic_wrapper_cast<DictionaryObject>(obj);
-			case Object::Type::Function:
-				return dynamic_wrapper_cast<Function>(obj);
-			case Object::Type::IntegerObject:
-				return dynamic_wrapper_cast<IntegerObject>(obj);
-			case Object::Type::NameObject:
-				return dynamic_wrapper_cast<NameObject>(obj);
-			case Object::Type::NullObject:
-				return dynamic_wrapper_cast<NullObject>(obj);
-			case Object::Type::RealObject:
-				return dynamic_wrapper_cast<RealObject>(obj);
-			case Object::Type::StreamObject:
-				return dynamic_wrapper_cast<StreamObject>(obj);
-			case Object::Type::HexadecimalString:
-				return dynamic_wrapper_cast<HexadecimalString>(obj);
-			case Object::Type::LiteralString:
-				return dynamic_wrapper_cast<LiteralString>(obj);
-			case Object::Type::IndirectObjectReference:
-				return dynamic_wrapper_cast<IndirectObjectReference>(obj);
-			case Object::Type::IndirectObject:
-				return dynamic_wrapper_cast<IndirectObject>(obj);
-			default:
-				assert(false);
-				throw Exception("FIXME: Unknown object type");
+				auto result = qi::parse(input_begin_pos, input_end_pos, _impl->_indirect_grammar(_impl->_file), obj);
+				if (result) {
+					return obj;
+				}
+				else {
+					//auto offset = tellg();
+					cout << "Parsing failed" << endl;
+					const auto& pos = input_begin_pos.get_position();
+					cout <<
+						"Error at file " << pos.file << " offset " << pos.offset << endl <<
+						"'" << input_begin_pos.get_currentline() << "'" << endl <<
+						setw(pos.column + 7) << " ^- here" << endl;
+
+					throw exceptions::Exception("Parsing failed");
+				}
 			}
+			catch (const qi::expectation_failure<pos_iterator_type>& exception) {
+				cout << "Parsing failed" << endl;
 
-			return Deferred<Object>(new IndirectObject(_file));
+				auto pos_begin = exception.first;
+				const auto& pos = pos_begin.get_position();
+				cout <<
+					"Error at file " << pos.file << " offset " << pos.offset << " Expecting " << exception.what_ << endl <<
+					"'" << pos_begin.get_currentline() << "'" << endl <<
+					setw(pos.column + 7) << " ^- here" << endl;
+
+				throw;
+			}
 		}
-		*/
-
-		//void Stream::SetDeep( bool deep ) { _deep = deep; }
-
-		//bool Stream::GetDeep( void ) const { return _deep; }
 	}
 }

@@ -39,7 +39,7 @@ namespace gotchangpdf
 				auto pos = parser.tellg();
 				//parser.seekg(_offset);
 
-				auto obj = parser.readObject(_offset);
+				auto obj = parser.ReadIndirectObject(_offset);
 				_reference = obj->GetObject();
 				//parser.seekg(pos);
 			}

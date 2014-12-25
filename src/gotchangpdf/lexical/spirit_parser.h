@@ -3,6 +3,7 @@
 
 #include "fwd.h"
 #include "lexical_stream.h"
+#include "direct_object.h"
 
 #include <memory>
 
@@ -16,12 +17,11 @@ namespace gotchangpdf
 			SpiritParser(files::File * file, CharacterSource & stream);
 			SpiritParser(const SpiritParser & other);
 
-			//template<typename T>
-			//Deferred<T> readObjectWithType() { return DirectObjectGetAs<T>(readObject()); }
+			template<typename T>
+			T ReadDirectObjectWithType() { return DirectObjectGetAs<T>(readObject()); }
 
-			//DirectObject readObjectWithType(Object::Type type);
-			IndirectObjectPtr readObject(types::stream_offset offset);
-			IndirectObjectPtr peekObject(types::stream_offset offset);
+			DirectObject ReadDirectObject(types::stream_offset offset);
+			IndirectObjectPtr ReadIndirectObject(types::stream_offset offset);
 
 			files::File * file(void) const;
 

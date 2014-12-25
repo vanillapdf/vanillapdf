@@ -111,7 +111,7 @@ namespace gotchangpdf
 					_input->seekg(rewind_pos);
 				} BOOST_SCOPE_EXIT_END;
 				auto parser = SpiritParser(this, *_input);
-				item.reference = parser.readObject(item.offset);
+				item.reference = parser.ReadIndirectObject(item.offset);
 				item.initialized = true;
 			}
 
