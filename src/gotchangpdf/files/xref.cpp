@@ -18,7 +18,7 @@ namespace gotchangpdf
 		using namespace exceptions;
 		using namespace character;
 
-		XrefEntry ReadEntry(lexical::Parser& s, types::integer objNumber)
+		XrefEntryPtr ReadEntry(lexical::Parser& s, types::integer objNumber)
 		{
 			char sp1, sp2, key, eol1, eol2;
 			Token offset, number;
@@ -34,12 +34,11 @@ namespace gotchangpdf
 			static const char IN_USE = 'n';
 			static const char NOT_IN_USE = 'f';
 
-			XrefEntry result;
-
+			bool usage = false;
 			if (key == IN_USE)
-				result.in_use = true;
+				usage = true;
 			else if (key == NOT_IN_USE)
-				result.in_use = false;
+				usage = false;
 			else
 			{
 				stringstream buffer;
@@ -48,10 +47,12 @@ namespace gotchangpdf
 				throw Exception(buffer.str());
 			}
 
-			result.offset = IntegerObject(offset);
-			result.obj_number = objNumber;
-			result.gen_number = IntegerObject(number);
-			result.initialized = false;
+			XrefEntry result;
+			result.SetUsage(usage);
+			result.SetOffset(IntegerObject(offset));
+			result.SetObjectNumber(objNumber);
+			result.SetGenerationNumber(IntegerObject(number));
+			result.SetInitialized(false);
 			return result;
 		}
 

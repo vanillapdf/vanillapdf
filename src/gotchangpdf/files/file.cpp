@@ -93,7 +93,7 @@ namespace gotchangpdf
 			types::ushort genNumber)
 		{
 			auto item = _xref->at(objNumber);
-			return item.initialized;
+			return item->Initialized();
 		}
 
 		IndirectObjectPtr File::GetIndirectObject(types::integer objNumber,
@@ -107,17 +107,19 @@ namespace gotchangpdf
 			//if (_cache.)
 
 			auto item = _xref->at(objNumber);
-			if (!item.initialized) {
+			if (!item->Initialized()) {
 				auto rewind_pos = _input->tellg();
 				BOOST_SCOPE_EXIT(&_input, &rewind_pos) {
 					_input->seekg(rewind_pos);
 				} BOOST_SCOPE_EXIT_END;
 				auto parser = SpiritParser(this, *_input);
-				item.reference = parser.ReadIndirectObject(item.offset);
-				item.initialized = true;
+				auto offset = item->GetOffset();
+				auto object = parser.ReadIndirectObject(offset);
+				item->SetReference(object);
+				item->SetInitialized(true);
 			}
 
-			return item.reference;
+			return item->GetReference();;
 
 			/*
 			auto pos = _stream->tellg();
