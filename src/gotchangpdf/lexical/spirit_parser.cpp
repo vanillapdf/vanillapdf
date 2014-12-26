@@ -3,6 +3,7 @@
 #include "exception.h"
 #include "file.h"
 #include "indirect_object.h"
+#include "log.h"
 
 #include "spirit_grammar.h"
 
@@ -58,11 +59,11 @@ namespace gotchangpdf
 					return obj;
 				}
 				else {
-					//auto offset = tellg();
-					cout << "Parsing failed" << endl;
+					LOG_ERROR << "Parsing failed" << endl;
+
 					const auto& pos = input_begin_pos.get_position();
-					cout <<
-						"Error at file " << pos.file << " offset " << pos.offset << endl <<
+					LOG_ERROR <<
+						"Error at offset " << pos.offset << endl <<
 						"'" << input_begin_pos.get_currentline() << "'" << endl <<
 						setw(pos.column + 7) << " ^- here" << endl;
 
@@ -70,12 +71,13 @@ namespace gotchangpdf
 				}
 			}
 			catch (const qi::expectation_failure<pos_iterator_type>& exception) {
-				cout << "Parsing failed" << endl;
+				LOG_ERROR << "Parsing failed" << endl;
 
 				auto pos_begin = exception.first;
 				const auto& pos = pos_begin.get_position();
-				cout <<
-					"Error at file " << pos.file << " offset " << pos.offset << " Expecting " << exception.what_ << endl <<
+				LOG_ERROR <<
+					"Error at offset " << pos.offset << endl <<
+					"Expecting " << exception.what() << endl <<
 					"'" << pos_begin.get_currentline() << "'" << endl <<
 					setw(pos.column + 7) << " ^- here" << endl;
 
