@@ -5,9 +5,6 @@
 
 namespace gotchangpdf
 {
-	Object::Object() /*_intrusive_ref_count(0)*/ {}
-	Object::~Object() {}
-
 	const char* Object::TypeName(Type type)
 	{
 		// TODO this should be a single line solution using preprocessor

@@ -10,7 +10,11 @@ namespace gotchangpdf
 	public:
 		inline void AddRef() const { boost::sp_adl_block::intrusive_ptr_add_ref(this); }
 		inline void Release() const { boost::sp_adl_block::intrusive_ptr_release(this); }
+
+		virtual ~IUnknown() = 0;
 	};
+
+	inline IUnknown::~IUnknown() {}
 }
 
 #endif /* _UNKNOWN_INTERFACE_H */

@@ -42,9 +42,9 @@ namespace gotchangpdf
 		};
 
 	public:
-		Object();
+		Object() = default;
+		virtual ~Object() = default;
 		explicit Object(Type type);
-		virtual ~Object() = 0;
 
 		static const char* TypeName(Type type);
 		virtual inline Type GetType(void) const = 0;
