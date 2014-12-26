@@ -24,13 +24,14 @@ namespace gotchangpdf
 		//typedef std::vector<std::pair<NameT, ValueT>> value_type;
 
 	public:
-		class Iterator
+		class Iterator : public boost::intrusive_ref_counter<Iterator>
 		{
 		public:
 			typedef typename value_type::const_iterator const_iterator;
 
 		public:
-			Iterator::Iterator(const_iterator it) : _it(it) {}
+			Iterator() = default;
+			Iterator(typename const_iterator it) : _it(it) {}
 
 			const Iterator& operator++()
 			{
@@ -45,11 +46,6 @@ namespace gotchangpdf
 				return temp;
 			}
 
-			Iterator* Clone() const
-			{
-				return new Iterator(_it);
-			}
-
 			NameT First() const { return _it->first; }
 			ValueT Second() const { return _it->second; }
 
@@ -58,9 +54,14 @@ namespace gotchangpdf
 				return _it == other._it;
 			}
 
+			inline void AddRef() { boost::sp_adl_block::intrusive_ptr_add_ref(this); }
+			inline void Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
+
 		private:
 			const_iterator _it;
 		};
+
+		typedef Deferred<Iterator> IteratorPtr;
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::Dictionary; }
 
@@ -76,12 +77,12 @@ namespace gotchangpdf
 		const value_type& GetMap(void) const { return _list; }
 		void SetMap(value_type& list) { _list = list; }
 
-		Iterator Begin(void) const
+		IteratorPtr Begin(void) const
 		{
 			return Iterator(_list.begin());
 		}
 
-		Iterator End(void) const
+		IteratorPtr End(void) const
 		{
 			return Iterator(_list.end());
 		}

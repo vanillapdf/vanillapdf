@@ -3,15 +3,16 @@
 
 #include "c_export.h"
 #include "c_handles.h"
+#include "c_values.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API int CALLING_CONVENTION ArrayObject_Size(ArrayHandle);
-	GOTCHANG_PDF_API ObjectHandle CALLING_CONVENTION ArrayObject_At(ArrayHandle, int at);
-	GOTCHANG_PDF_API void CALLING_CONVENTION ArrayObject_Release(ArrayHandle);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayHandle handle, out_integer_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayHandle handle, integer_type at, PObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Release(ArrayHandle handle);
 
 #ifdef __cplusplus
 };

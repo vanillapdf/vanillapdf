@@ -3,15 +3,16 @@
 
 #include "c_export.h"
 #include "c_handles.h"
+#include "c_values.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API enum ObjectType CALLING_CONVENTION Object_Type(ObjectHandle);
-	GOTCHANG_PDF_API const char* Object_TypeName(enum ObjectType type);
-	GOTCHANG_PDF_API void CALLING_CONVENTION Object_Release(ObjectHandle);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Type(ObjectHandle handle, PObjectType result);
+	GOTCHANG_PDF_API error_type Object_TypeName(enum ObjectType type, out_string_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Release(ObjectHandle handle);
 
 #ifdef __cplusplus
 };

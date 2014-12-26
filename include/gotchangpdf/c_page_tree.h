@@ -3,15 +3,16 @@
 
 #include "c_export.h"
 #include "c_handles.h"
+#include "c_values.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API int CALLING_CONVENTION PageTree_GetPageCount(PageTreeHandle);
-	GOTCHANG_PDF_API PageObjectHandle CALLING_CONVENTION PageTree_GetPage(PageTreeHandle, int at);
-	GOTCHANG_PDF_API void CALLING_CONVENTION PageTree_Release(PageTreeHandle);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPageCount(PageTreeHandle handle, out_integer_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle handle, integer_type at, PPageObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_Release(PageTreeHandle handle);
 
 #ifdef __cplusplus
 };

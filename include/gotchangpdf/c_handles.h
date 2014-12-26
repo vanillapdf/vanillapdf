@@ -27,6 +27,8 @@ extern "C"
 		Indirect
 	};
 
+	typedef enum ObjectType* PObjectType;
+
 	DECLARE_OBJECT_HANDLE(Boolean);
 	DECLARE_OBJECT_HANDLE(Name);
 	DECLARE_OBJECT_HANDLE(Null);

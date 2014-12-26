@@ -3,13 +3,14 @@
 
 #include "c_export.h"
 #include "c_handles.h"
+#include "c_values.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API IndirectHandle CALLING_CONVENTION IndirectReference_GetReferencedObject(IndirectReferenceHandle);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObject(IndirectReferenceHandle handle, PIndirectHandle result);
 
 #ifdef __cplusplus
 };

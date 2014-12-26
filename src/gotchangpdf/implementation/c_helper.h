@@ -1,6 +1,9 @@
 #ifndef _C_HELPER_H
 #define _C_HELPER_H
 
+#include "exception.h"
+#include "log.h"
+
 #include "c_values.h"
 
 #define RETURN_ERROR_IF_NULL(var, error_code) do { if (nullptr == var) return error_code; } while(0)

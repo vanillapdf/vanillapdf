@@ -1,10 +1,24 @@
 #ifndef _VALUES_H
 #define _VALUES_H
 
-typedef int error_type;
+#include <stdint.h>
 
-#define GOTCHANG_PDF_RV_TRUE		0
-#define GOTCHANG_PDF_RV_FALSE		1
+typedef int32_t error_type;
+
+typedef int32_t boolean_type;
+typedef int32_t* out_boolean_type;
+
+typedef int32_t integer_type;
+typedef int32_t* out_integer_type;
+
+typedef int64_t offset_type;
+typedef int64_t* out_offset_type;
+
+typedef const char* string_type;
+typedef const char** out_string_type;
+
+#define GOTCHANG_PDF_RV_TRUE               0
+#define GOTCHANG_PDF_RV_FALSE              1
 
 #define GOTCHANG_PDF_ERROR_SUCCES          0
 #define GOTCHANG_PDF_ERROR_GENERAL         1

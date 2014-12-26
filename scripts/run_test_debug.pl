@@ -35,7 +35,7 @@ my $tm=localtime;
 my ($day,$month,$year, $hour, $min, $sec)=($tm->mday,$tm->mon,$tm->year + 1900, $tm->hour, $tm->min, $tm->sec);
 
 # Open log file
-open (my $log, '>', "..\\log\\$hour-$min-$sec\_$day-$month-$year\_$os.log") or die "Could not open log file: $!";
+open (my $log, '>', "..\\log\\$day-$month-$year\_$hour-$min-$sec\_$os.log") or die "Could not open log file: $!";
 
 # Directory containing test cases
 my $testdir = '../test';
@@ -54,14 +54,17 @@ while (my $file = readdir(DIR)) {
     # Use a regular expression to find files ending in .pdf
     next unless ($file =~ m/\.pdf$/);
 	
+	print "Found test case named \"$file\"...  ";
 	print $log "Found test case named \"$file\"...  ";
 	
 	system("$path $file_path > NUL");
 	
 	if ($? == 0) {
+		print "Passed!\n";
 		print $log "Passed!\n";
 	}
 	else {
+		print "Failed!\n";
 		print $log "Failed!\n";
 		$failed_count++;
 	}
@@ -69,9 +72,11 @@ while (my $file = readdir(DIR)) {
 
 if ($failed_count == 0) {
 	print "All tests have finished successfully";
+	print $log "All tests have finished successfully";
 }
 else {
 	print "$failed_count test scenarios failed";
+	print $log "$failed_count test scenarios failed";
 }
 
 closedir(DIR);

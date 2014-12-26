@@ -10,12 +10,12 @@ extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Create(const char *filename, PFileHandle result);
-	GOTCHANG_PDF_API void CALLING_CONVENTION File_Release(FileHandle);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Xref(FileHandle, PXrefHandle result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(FileHandle, int objNumber, int genNumber, PIndirectHandle result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetDocumentCatalog(FileHandle, PCatalogHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Create(string_type filename, PFileHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Release(FileHandle handle);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Xref(FileHandle handle, PXrefHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(FileHandle handle, integer_type objNumber, integer_type genNumber, PIndirectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetDocumentCatalog(FileHandle handle, PCatalogHandle result);
 
 #ifdef __cplusplus
 };

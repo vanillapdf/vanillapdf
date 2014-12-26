@@ -2,7 +2,6 @@
 #include "xref.h"
 #include "indirect_object.h"
 #include "catalog.h"
-#include "log.h"
 
 #include "c_file.h"
 #include "c_helper.h"
@@ -25,13 +24,18 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Create(const char *filename,
 	C_INTERFACE_EXCEPTION_HANDLERS
 }
 
-GOTCHANG_PDF_API void CALLING_CONVENTION File_Release(FileHandle handle)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Release(FileHandle handle)
 {
 	File* file = reinterpret_cast<File*>(handle);
-	if (nullptr != file) {
-		LOG_SCOPE(file->GetFilename());
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
+	LOG_SCOPE(file->GetFilename());
+
+	try
+	{
 		delete file;
+		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
+	C_INTERFACE_EXCEPTION_HANDLERS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle)
@@ -79,7 +83,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
 		auto item = file->GetIndirectObject(objNumber, genNumber);
 		auto ptr = item.AddRefGet();
 
-		//boost::intrusive_ptr_add_ref(ptr);
 		*result = reinterpret_cast<IndirectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
@@ -99,7 +102,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetDocumentCatalog(
 		auto item = file->GetDocumentCatalog();
 		auto ptr = item.AddRefGet();
 
-		//boost::intrusive_ptr_add_ref(ptr);
 		*result = reinterpret_cast<CatalogHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}

@@ -5,7 +5,7 @@
 
 #define RETURN_ERROR_IF_NOT_SUCCESS(var) do { int __result__ = (var);  if (GOTCHANG_PDF_ERROR_SUCCES != __result__) return __result__; } while(0)
 
-void process(ObjectHandle obj, int nested);
+int process(ObjectHandle obj, int nested);
 
 void print_spaces(int nested)
 {
@@ -14,28 +14,31 @@ void print_spaces(int nested)
 		printf("  ");
 }
 
-void process_page(PageObjectHandle obj, int nested)
+int process_page(PageObjectHandle obj, int nested)
 {
 	print_spaces(nested);
 	printf("Page begin\n");
 
 	print_spaces(nested);
 	printf("Page end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-void process(ObjectHandle obj, int nested)
+int process(ObjectHandle obj, int nested)
 {
-	int i, size, val;
-	ObjectHandle child;
-	ArrayHandle arr;
-	IntegerHandle integer;
-	DictionaryHandle dict;
+	long long offset;
+	int i, size, val, boolean;
+	IndirectHandle indirect;
+	ObjectHandle child, dictionary_value;
 	DictionaryIteratorHandle iterator;
+	NameHandle dictionary_key;
+	enum ObjectType type;
 
-	enum ObjectType type = Object_Type(obj);
+	RETURN_ERROR_IF_NOT_SUCCESS(Object_Type(obj, &type));
 
 	if (nested > 2)
-		return;
+		return GOTCHANG_PDF_ERROR_SUCCES;
 
 	switch (type)
 	{
@@ -47,8 +50,7 @@ void process(ObjectHandle obj, int nested)
 
 		break;
 	case Array:
-		arr = (ArrayHandle)obj;
-		size = ArrayObject_Size(arr);
+		RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_Size((ArrayHandle)obj, &size));
 		print_spaces(nested);
 		printf("Array begin\n");
 
@@ -56,9 +58,9 @@ void process(ObjectHandle obj, int nested)
 		printf("Size: %d\n\n", size);
 		for (i = 0; i < size; ++i)
 		{
-			child = ArrayObject_At(arr, i);
-			process(child, nested + 1);
-			Object_Release(child);
+			RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_At((ArrayHandle)obj, i, &child));
+			RETURN_ERROR_IF_NOT_SUCCESS(process(child, nested + 1));
+			RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(child));
 		}
 
 		print_spaces(nested);
@@ -73,22 +75,24 @@ void process(ObjectHandle obj, int nested)
 		printf("Boolean object end\n");
 		break;
 	case Dictionary:
-		dict = (DictionaryHandle)obj;
 		print_spaces(nested);
 		printf("Dictionary begin\n");
-		iterator = DictionaryObject_Iterator(dict);
-		while (GOTCHANG_PDF_RV_TRUE == DictionaryObjectIterator_IsValid(iterator, dict))
+		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Iterator((DictionaryHandle)obj, &iterator));
+		while (GOTCHANG_PDF_ERROR_SUCCES == DictionaryObjectIterator_IsValid(iterator, (DictionaryHandle)obj, &boolean)
+			&& GOTCHANG_PDF_RV_TRUE == boolean)
 		{
 			print_spaces(nested);
 			printf("Pair:\n");
 
-			process((ObjectHandle)DictionaryObjectIterator_GetKey(iterator), nested + 1);
-			process((ObjectHandle)DictionaryObjectIterator_GetValue(iterator), nested + 1);
+			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_GetKey(iterator, &dictionary_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_GetValue(iterator, &dictionary_value));
+			RETURN_ERROR_IF_NOT_SUCCESS(process((ObjectHandle)dictionary_key, nested + 1));
+			RETURN_ERROR_IF_NOT_SUCCESS(process((ObjectHandle)dictionary_value, nested + 1));
 
 			print_spaces(nested);
 			printf("EndPair\n");
 
-			DictionaryObjectIterator_Next(iterator);
+			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_Next(iterator));
 		}
 
 		print_spaces(nested);
@@ -106,8 +110,7 @@ void process(ObjectHandle obj, int nested)
 		print_spaces(nested);
 		printf("Integer object begin\n");
 
-		integer = (IntegerHandle)obj;
-		val = IntegerObject_Value(integer);
+		RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Value((IntegerHandle)obj, &val));
 		print_spaces(nested + 1);
 		printf("Value: %d\n", val);
 
@@ -133,6 +136,8 @@ void process(ObjectHandle obj, int nested)
 	case Null:
 		print_spaces(nested);
 		printf("Null object begin\n");
+
+		printf("Value: null\n");
 
 		print_spaces(nested);
 		printf("Null object end\n");
@@ -178,7 +183,8 @@ void process(ObjectHandle obj, int nested)
 		print_spaces(nested);
 		printf("Indirect reference begin\n");
 
-		process((ObjectHandle)IndirectReference_GetReferencedObject((IndirectReferenceHandle)obj), nested + 1);
+		RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedObject((IndirectReferenceHandle)obj, &indirect));
+		RETURN_ERROR_IF_NOT_SUCCESS(process((ObjectHandle)indirect, nested + 1));
 
 		print_spaces(nested);
 		printf("Indirect reference end\n");
@@ -187,12 +193,13 @@ void process(ObjectHandle obj, int nested)
 		print_spaces(nested);
 		printf("Indirect object begin\n");
 
+		RETURN_ERROR_IF_NOT_SUCCESS(IndirectObject_GetOffset((IndirectHandle)obj, &offset));
 		print_spaces(nested + 1);
-		printf("Offset: %d\n\n", IndirectObject_GetOffset((IndirectHandle)obj));
+		printf("Offset: %lld\n\n", offset);
 
-		child = IndirectObject_GetObject((IndirectHandle)obj);
-		process(child, nested + 1);
-		Object_Release(child);
+		RETURN_ERROR_IF_NOT_SUCCESS(IndirectObject_GetObject((IndirectHandle)obj, &child));
+		RETURN_ERROR_IF_NOT_SUCCESS(process(child, nested + 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(child));
 
 		print_spaces(nested);
 		printf("Indirect object end\n");
@@ -200,6 +207,8 @@ void process(ObjectHandle obj, int nested)
 	default:
 		break;
 	}
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
 int main(int argc, char *argv[])
@@ -211,40 +220,41 @@ int main(int argc, char *argv[])
 	PageTreeHandle pages;
 
 	if (argc != 2)
-		return 1;
+		return GOTCHANG_PDF_ERROR_GENERAL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Create(argv[1], &file));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Xref(file, &xref));
-	size = Xref_Size(xref);
+	RETURN_ERROR_IF_NOT_SUCCESS(Xref_Size(xref, &size));
 
 	for (i = 1; i < size; ++i)
 	{
 		IndirectHandle indirect = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(File_GetIndirectObject(file, i, 0, &indirect));
 
-		process((ObjectHandle)indirect, 0);
-		IndirectObject_Release(indirect);
+		RETURN_ERROR_IF_NOT_SUCCESS(process((ObjectHandle)indirect, 0));
+		RETURN_ERROR_IF_NOT_SUCCESS(IndirectObject_Release(indirect));
 	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(File_GetDocumentCatalog(file, &catalog));
 	printf("Document catalog begin\n");
 
-	pages = Catalog_GetPages(catalog);
-	size = PageTree_GetPageCount(pages);
+	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_GetPages(catalog, &pages));
+	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(pages, &size));
 
-	for (i = 0; i < size; ++i)
+	for (i = 1; i <= size; ++i)
 	{
-		PageObjectHandle page = PageTree_GetPage(pages, i + 1);
-		process_page(page, 1);
-		PageObject_Release(page);
+		PageObjectHandle page = NULL;
+		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(pages, i, &page));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_page(page, 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(page));
 	}
 
-	PageTree_Release(pages);
+	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_Release(pages));
 	printf("Document catalog end\n");
 
-	Xref_Release(xref);
-	File_Release(file);
+	RETURN_ERROR_IF_NOT_SUCCESS(Xref_Release(xref));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));
 
-	return 0;
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }

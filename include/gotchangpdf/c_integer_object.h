@@ -3,14 +3,15 @@
 
 #include "c_export.h"
 #include "c_handles.h"
+#include "c_values.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API int CALLING_CONVENTION IntegerObject_Value(IntegerHandle);
-	GOTCHANG_PDF_API void CALLING_CONVENTION IntegerObject_Release(IntegerHandle);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_Value(IntegerHandle handle, out_integer_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_Release(IntegerHandle handle);
 
 #ifdef __cplusplus
 };

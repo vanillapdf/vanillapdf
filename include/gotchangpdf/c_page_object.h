@@ -3,13 +3,14 @@
 
 #include "c_export.h"
 #include "c_handles.h"
+#include "c_values.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API void CALLING_CONVENTION PageObject_Release(PageObjectHandle);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_Release(PageObjectHandle handle);
 
 #ifdef __cplusplus
 };
