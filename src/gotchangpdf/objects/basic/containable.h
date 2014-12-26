@@ -30,7 +30,7 @@ namespace gotchangpdf
 	> ContainerableObject;
 	*/
 
-	class Containable : public Object
+	class Containable
 	{
 	public:
 		inline void SetContainer(ContainerPtr obj) { _container = obj; }

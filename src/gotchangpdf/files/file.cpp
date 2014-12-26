@@ -104,8 +104,6 @@ namespace gotchangpdf
 			if (!_initialized)
 				throw new Exception("File has not been initialized yet");
 
-			//if (_cache.)
-
 			auto item = _xref->at(objNumber);
 			if (!item->Initialized()) {
 				auto rewind_pos = _input->tellg();
@@ -120,27 +118,6 @@ namespace gotchangpdf
 			}
 
 			return item->GetReference();;
-
-			/*
-			auto pos = _stream->tellg();
-
-			_stream->seekg(item._reference->GetOffset());
-
-			auto obj = _stream->readObject();
-			_stream->seekg(pos);
-
-			assert(obj->GetType() == Object::Type::IndirectObject);
-
-			auto indirect = boost::dynamic_pointer_cast<IndirectObject>(obj);
-			_cache.push_back(indirect);
-			if (_cache.size() > 16)
-				_cache.erase(_cache.begin());
-
-			// TODO
-			item._reference = indirect;
-
-			return indirect;
-			*/
 		}
 
 		SmartPtr<documents::Catalog> File::GetDocumentCatalog(void) const

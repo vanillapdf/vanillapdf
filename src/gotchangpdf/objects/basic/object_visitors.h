@@ -57,20 +57,32 @@ namespace gotchangpdf
 		mutable std::map<IndirectObjectReference, bool> visited;
 	};
 
-	class ObjectBaseVisitor : public boost::static_visitor<SmartPtr<Object>>
+	class ObjectBaseVisitor : public boost::static_visitor<Object*>
 	{
 	public:
 		template <typename T>
-		inline SmartPtr<Object> operator()(Deferred<T> obj) const { return obj.Content.get(); }
+		inline Object* operator()(Deferred<T> obj) const { return obj.Content.get(); }
 	};
 
-	class ContainableVisitor : public boost::static_visitor<SmartPtr<Containable>>
+	class ObjectBaseAddRefVisitor : public boost::static_visitor<Object*>
 	{
 	public:
 		template <typename T>
-		inline SmartPtr<Containable> operator()(Deferred<T> obj) const { return obj.Content.get(); }
+		inline Object* operator()(Deferred<T> obj) const
+		{
+			auto result = obj.Content.get();
+			result->AddRef();
+			return result;
+		}
+	};
 
-		inline SmartPtr<Containable> operator()(StreamObjectPtr obj) const { throw exceptions::Exception("Type cast error"); }
+	class ContainableVisitor : public boost::static_visitor<Containable*>
+	{
+	public:
+		template <typename T>
+		inline Containable* operator()(T obj) const { return obj.Content.get(); }
+
+		inline Containable* operator()(StreamObjectPtr obj) const { throw exceptions::Exception("Type cast error"); }
 	};
 
 	template <typename T>

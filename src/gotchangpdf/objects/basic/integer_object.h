@@ -9,7 +9,7 @@
 
 namespace gotchangpdf
 {
-	class IntegerObject : public Containable
+	class IntegerObject : public Containable, public Object
 	{
 	public:
 		typedef types::integer value_type;

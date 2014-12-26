@@ -12,7 +12,7 @@
 
 namespace gotchangpdf
 {
-	class IndirectObjectReference : public Containable
+	class IndirectObjectReference : public Containable, public Object
 	{
 	public:
 		IndirectObjectReference(files::File * file,

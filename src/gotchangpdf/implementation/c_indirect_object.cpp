@@ -30,11 +30,10 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectObject_GetObject(Indirect
 	try
 	{
 		DirectObject item = obj->GetObject();
-		ObjectBaseVisitor visitor;
+		ObjectBaseAddRefVisitor visitor;
 		auto base = item.apply_visitor(visitor);
-		Object *ptr = base.AddRefGet();
 
-		*result = reinterpret_cast<ObjectHandle>(ptr);
+		*result = reinterpret_cast<ObjectHandle>(base);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS

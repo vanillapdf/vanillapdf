@@ -13,7 +13,7 @@
 namespace gotchangpdf
 {
 	template <typename T>
-	class ArrayObject : public Containable
+	class ArrayObject : public Containable, public Object
 	{
 	public:
 		typedef std::vector<T> value_type;

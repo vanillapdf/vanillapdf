@@ -8,7 +8,7 @@
 
 namespace gotchangpdf
 {
-	class RealObject : public Containable
+	class RealObject : public Containable, public Object
 	{
 	public:
 		typedef types::real value_type;

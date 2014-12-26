@@ -8,7 +8,7 @@
 
 namespace gotchangpdf
 {
-	class StringObject : public Containable
+	class StringObject : public Containable, public Object
 	{
 	public:
 		Buffer _value;

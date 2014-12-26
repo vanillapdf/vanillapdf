@@ -9,7 +9,7 @@
 
 namespace gotchangpdf
 {
-	class NameObject : public Containable
+	class NameObject : public Containable, public Object
 	{
 	public:
 		typedef Buffer value_type;

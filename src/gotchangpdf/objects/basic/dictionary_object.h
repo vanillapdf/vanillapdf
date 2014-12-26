@@ -16,7 +16,7 @@
 namespace gotchangpdf
 {
 	template <typename NameT, typename ValueT>
-	class DictionaryObjectBase : public Containable
+	class DictionaryObjectBase : public Containable, public Object
 	{
 	public:
 		//typedef std::unordered_map<NameT, ValueT, std::hash<NameT>> value_type;

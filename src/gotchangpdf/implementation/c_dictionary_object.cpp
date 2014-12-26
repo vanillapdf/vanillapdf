@@ -19,11 +19,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryH
 		auto length = strlen(str);
 		Buffer set(str, length);
 		NameObject name(set);
-		ObjectBaseVisitor visitor;
-		auto object = obj->Find(name).apply_visitor(visitor);
-		auto ptr = object.AddRefGet();
+		auto direct = obj->Find(name);
+		ObjectBaseAddRefVisitor visitor;
+		auto base = direct.apply_visitor(visitor);
 
-		*result = reinterpret_cast<ObjectHandle>(ptr);
+		*result = reinterpret_cast<ObjectHandle>(base);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS
@@ -101,11 +101,10 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetValue
 
 	try
 	{
-		ObjectBaseVisitor visitor;
+		ObjectBaseAddRefVisitor visitor;
 		DirectObject direct = iterator->Second();
 		auto base = direct.apply_visitor(visitor);
-		Object* ptr = base.AddRefGet();
-		*result = reinterpret_cast<ObjectHandle>(ptr);
+		*result = reinterpret_cast<ObjectHandle>(base);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS

@@ -6,7 +6,7 @@
 
 namespace gotchangpdf
 {
-	class BooleanObject : public Containable
+	class BooleanObject : public Containable, public Object
 	{
 	public:
 		virtual inline Object::Type GetType(void) const override { return Object::Type::Boolean; }

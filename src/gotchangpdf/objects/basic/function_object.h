@@ -6,7 +6,7 @@
 
 namespace gotchangpdf
 {
-	class FunctionObject : public Containable
+	class FunctionObject : public Containable, public Object
 	{
 	public:
 		virtual inline Object::Type GetType(void) const override { return Object::Type::Function; }
