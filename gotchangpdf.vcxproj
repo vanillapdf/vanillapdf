@@ -92,6 +92,7 @@
     <ClInclude Include="src\gotchangpdf\util\fwd.h" />
     <ClInclude Include="src\gotchangpdf\util\log.h" />
     <ClInclude Include="src\gotchangpdf\util\smart_ptr.h" />
+    <ClInclude Include="src\gotchangpdf\util\unknown_interface.h" />
     <ClInclude Include="src\gotchangpdf\util\version.h" />
   </ItemGroup>
   <ItemGroup>

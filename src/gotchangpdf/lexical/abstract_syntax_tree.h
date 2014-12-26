@@ -11,7 +11,6 @@
 #include <boost/fusion/include/std_pair.hpp>
 
 BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::DirectObject, /**/)
-BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::StringObjectPtr, /**/)
 BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::FunctionObjectPtr, /**/)
 BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::NullObjectPtr, /**/)
 

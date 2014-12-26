@@ -2,21 +2,19 @@
 #define _HEADER_H
 
 #include "fwd.h"
+#include "unknown_interface.h"
 #include "version.h"
-
-#include <boost/smart_ptr/intrusive_ref_counter.hpp>
 
 namespace gotchangpdf
 {
 	namespace files
 	{
-		class Header : public boost::intrusive_ref_counter<Header>
+		class Header : public IUnknown
 		{
 		public:
 			friend raw::Stream& operator>> (raw::Stream& s, Header& o);
 
 		public:
-			inline void Release() const { boost::sp_adl_block::intrusive_ptr_release(this); }
 			Version GetVersion(void) const;
 
 		private:

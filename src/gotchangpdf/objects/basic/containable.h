@@ -13,22 +13,6 @@ namespace gotchangpdf
 		MixedArrayObjectPtr,
 		DictionaryObjectPtr
 	> ContainerPtr;
-	/*
-	typedef boost::variant <
-		// first is null object
-		Deferred<NullObject>,
-		Deferred<MixedArrayObject>,
-		Deferred<NameObject>,
-		Deferred<DictionaryObject>,
-		Deferred<FunctionObject>,
-		Deferred<BooleanObject>,
-		Deferred<IndirectObjectReference>,
-		Deferred<IntegerObject>,
-		Deferred<RealObject>,
-		Deferred<LiteralString>,
-		Deferred<HexadecimalString>
-	> ContainerableObject;
-	*/
 
 	class Containable
 	{

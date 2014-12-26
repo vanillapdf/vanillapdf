@@ -2,15 +2,12 @@
 #define _OBJECT_H
 
 #include "fwd.h"
-#include "deferred.h"
-#include "smart_ptr.h"
-#include "direct_object.h"
-
-#include <boost/variant/variant.hpp>
-#include <boost/smart_ptr/intrusive_ref_counter.hpp>
+#include "constants.h"
+#include "unknown_interface.h"
 
 namespace gotchangpdf
 {
+	/*
 	typedef boost::variant <
 		Deferred<NullObject>,
 		Deferred<LiteralString>,
@@ -22,8 +19,8 @@ namespace gotchangpdf
 		Deferred<IntegerObject>,
 		Deferred<RealObject>
 	> NumericObjectPtr;
-
-	class Object : public boost::intrusive_ref_counter<Object>
+	*/
+	class Object : public IUnknown
 	{
 	public:
 		enum class Type : unsigned char
@@ -35,11 +32,8 @@ namespace gotchangpdf
 			Function,
 			Integer,
 			Name,
-			//NameTree,
 			Null,
-			//NumberTree,
 			Real,
-			//Rectangle,
 			Stream,
 			HexadecimalString,
 			LiteralString,
@@ -50,14 +44,16 @@ namespace gotchangpdf
 	public:
 		Object();
 		explicit Object(Type type);
+		virtual ~Object() = 0;
 
 		static const char* TypeName(Type type);
 		virtual inline Type GetType(void) const = 0;
-
-		inline void AddRef() const { boost::sp_adl_block::intrusive_ptr_add_ref(this); }
-		inline void Release() const { boost::sp_adl_block::intrusive_ptr_release(this); }
-
-		virtual ~Object() = 0;
+		/*
+	private:
+		types::integer _obj_number = 0;
+		types::ushort _gen_number = 0;
+		types::stream_offset _offset = std::_BADOFF;
+		*/
 	};
 }
 

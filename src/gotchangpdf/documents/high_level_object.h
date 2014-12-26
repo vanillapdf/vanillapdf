@@ -6,14 +6,12 @@
 
 #include <boost/static_assert.hpp>
 
-#include <boost/smart_ptr/intrusive_ref_counter.hpp>
-
 namespace gotchangpdf
 {
 	namespace documents
 	{
 		template <typename T>
-		class HighLevelObject : public boost::intrusive_ref_counter<HighLevelObject<T>>
+		class HighLevelObject : public IUnknown
 		{
 		public:
 			enum class Type : unsigned char
@@ -31,9 +29,6 @@ namespace gotchangpdf
 
 			inline T GetObject(void) const { return _obj; }
 			virtual inline Type GetType(void) const = 0;
-
-			inline void AddRef() { boost::sp_adl_block::intrusive_ptr_add_ref(this); }
-			inline void Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
 
 			virtual ~HighLevelObject() {};
 

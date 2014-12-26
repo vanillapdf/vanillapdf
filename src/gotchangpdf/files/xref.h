@@ -2,17 +2,16 @@
 #define _XREF_H
 
 #include "fwd.h"
+#include "unknown_interface.h"
 #include "constants.h"
 
 #include <vector>
-
-#include <boost/smart_ptr/intrusive_ref_counter.hpp>
 
 namespace gotchangpdf
 {
 	namespace files
 	{
-		class XrefEntry : public boost::intrusive_ref_counter<XrefEntry>
+		class XrefEntry : public IUnknown
 		{
 		public:
 			XrefEntry() = default;
@@ -35,9 +34,6 @@ namespace gotchangpdf
 			bool Initialized(void) const { return _initialized; }
 			void SetInitialized(bool value) { _initialized = value; }
 
-			inline void AddRef() { boost::sp_adl_block::intrusive_ptr_add_ref(this); }
-			inline void Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
-
 		private:
 			IndirectObjectPtr _reference;
 			types::integer _obj_number;
@@ -49,7 +45,7 @@ namespace gotchangpdf
 
 		typedef Deferred<XrefEntry> XrefEntryPtr;
 
-		class Xref : public std::vector<XrefEntryPtr>, public boost::intrusive_ref_counter<Xref>
+		class Xref : public std::vector<XrefEntryPtr>, public IUnknown
 		{
 		public:
 			enum class Type : unsigned char
@@ -57,9 +53,6 @@ namespace gotchangpdf
 				TABLE = 0,
 				STREAM
 			};
-
-			inline void AddRef() { boost::sp_adl_block::intrusive_ptr_add_ref(this); }
-			inline void Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
 
 			friend lexical::Parser& operator>> (lexical::Parser& s, Xref& o);
 

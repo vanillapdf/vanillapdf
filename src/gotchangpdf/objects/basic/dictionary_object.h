@@ -2,6 +2,7 @@
 #define _DICTIONARY_OBJECT_H
 
 #include "fwd.h"
+#include "unknown_interface.h"
 #include "direct_object.h"
 #include "object_visitors.h"
 #include "name_object.h"
@@ -24,7 +25,7 @@ namespace gotchangpdf
 		//typedef std::vector<std::pair<NameT, ValueT>> value_type;
 
 	public:
-		class Iterator : public boost::intrusive_ref_counter<Iterator>
+		class Iterator : public IUnknown
 		{
 		public:
 			typedef typename value_type::const_iterator const_iterator;
@@ -53,9 +54,6 @@ namespace gotchangpdf
 			{
 				return _it == other._it;
 			}
-
-			inline void AddRef() { boost::sp_adl_block::intrusive_ptr_add_ref(this); }
-			inline void Release() { boost::sp_adl_block::intrusive_ptr_release(this); }
 
 		private:
 			const_iterator _it;

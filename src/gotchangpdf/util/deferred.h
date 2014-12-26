@@ -2,12 +2,12 @@
 #define _DEFERRED_H
 
 #include <boost/smart_ptr/intrusive_ptr.hpp>
-#include <boost/smart_ptr/intrusive_ref_counter.hpp>
+//#include <boost/smart_ptr/intrusive_ref_counter.hpp>
 
 namespace gotchangpdf
 {
-	using boost::sp_adl_block::intrusive_ptr_add_ref;
-	using boost::sp_adl_block::intrusive_ptr_release;
+	//using boost::sp_adl_block::intrusive_ptr_add_ref;
+	//using boost::sp_adl_block::intrusive_ptr_release;
 
 	template <typename T>
 	inline T* Allocate() { return new T; }
