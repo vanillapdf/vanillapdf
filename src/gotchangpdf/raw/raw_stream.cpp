@@ -50,32 +50,29 @@ namespace gotchangpdf
 		{
 			Buffer result;
 
-			char buf[constant::BUFFER_SIZE];
+			while (!eof()) {
+				int val = get();
+				assert(val != std::char_traits<char>::eof());
 
-			auto begin = &buf[0];
-			auto end = &buf[constant::BUFFER_SIZE - 1];
+				if (Equals(val, WhiteSpace::CARRIAGE_RETURN)) {
+					int val2 = peek();
+					if (Equals(val2, WhiteSpace::LINE_FEED)) {
+						get();
+					}
 
-			getline(buf, constant::BUFFER_SIZE);
-			std::streamsize read = gcount();
+					break;
+				}
 
-			while (constant::BUFFER_SIZE == read)
-			{
-				result.insert(result.begin(), begin, end);
-				getline(buf, constant::BUFFER_SIZE);
-				read = gcount();
+				if (Equals(val, WhiteSpace::LINE_FEED)) {
+					break;
+				}
+
+				assert(std::numeric_limits<char>::min() <= val &&
+					std::numeric_limits<char>::max() >= val);
+				char ch = static_cast<char>(val);
+
+				result.push_back(ch);
 			}
-
-			int rd = static_cast<int>(read);
-			char ch(buf[std::max(0, rd - 2)]);
-			std::streamsize pos = (Equals(ch, WhiteSpace::CARRIAGE_RETURN) ? std::max(0, rd - 2) : std::max(0, rd - 1));
-
-			assert(pos >= 0);
-
-			if (Equals(*begin, WhiteSpace::CARRIAGE_RETURN))
-				++begin;
-
-			end = &buf[pos];
-			result.insert(result.begin(), begin, end);
 
 			return result;
 		}
