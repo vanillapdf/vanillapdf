@@ -1,4 +1,8 @@
 #include "object.h"
+#include "array_object.h"
+#include "dictionary_object.h"
+#include "integer_object.h"
+#include "indirect_object_reference.h"
 #include "c_object.h"
 
 #include "c_helper.h"
@@ -39,6 +43,76 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Release(ObjectHandle handl
 	try
 	{
 		obj->Release();
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToArray(ObjectHandle handle, PArrayHandle result)
+{
+	Object* obj = reinterpret_cast<Object*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	try
+	{
+		MixedArrayObject* converted = dynamic_cast<MixedArrayObject*>(obj);
+		*result = reinterpret_cast<ArrayHandle>(converted);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToDictionary(ObjectHandle handle, PDictionaryHandle result)
+{
+	Object* obj = reinterpret_cast<Object*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	try
+	{
+		DictionaryObject* converted = dynamic_cast<DictionaryObject*>(obj);
+		*result = reinterpret_cast<DictionaryHandle>(converted);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToIndirectReference(ObjectHandle handle, PIndirectReferenceHandle result)
+{
+	Object* obj = reinterpret_cast<Object*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	try
+	{
+		IndirectObjectReference* converted = dynamic_cast<IndirectObjectReference*>(obj);
+		*result = reinterpret_cast<IndirectReferenceHandle>(converted);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToInteger(ObjectHandle handle, PIntegerHandle result)
+{
+	Object* obj = reinterpret_cast<Object*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	try
+	{
+		IntegerObject* converted = dynamic_cast<IntegerObject*>(obj);
+		*result = reinterpret_cast<IntegerHandle>(converted);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToName(ObjectHandle handle, PNameHandle result)
+{
+	Object* obj = reinterpret_cast<Object*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	try
+	{
+		NameObject* converted = dynamic_cast<NameObject*>(obj);
+		*result = reinterpret_cast<NameHandle>(converted);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS

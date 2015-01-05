@@ -37,8 +37,7 @@ namespace gotchangpdf
 			Stream,
 			HexadecimalString,
 			LiteralString,
-			IndirectReference,
-			Indirect
+			IndirectReference
 		};
 
 	public:

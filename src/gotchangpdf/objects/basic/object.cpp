@@ -43,8 +43,6 @@ namespace gotchangpdf
 			return "LiteralString";
 		case Type::IndirectReference:
 			return "IndirectReference";
-		case Type::Indirect:
-			return "Indirect";
 		default:
 			return nullptr;
 		}

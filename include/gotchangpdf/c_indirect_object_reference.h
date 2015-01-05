@@ -11,6 +11,7 @@ extern "C"
 #endif
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObject(IndirectReferenceHandle handle, PIndirectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_Release(IndirectReferenceHandle handle);
 
 #ifdef __cplusplus
 };

@@ -23,8 +23,7 @@ extern "C"
 		Stream,
 		HexadecimalString,
 		LiteralString,
-		IndirectReference,
-		Indirect
+		IndirectReference
 	};
 
 	typedef enum ObjectType* PObjectType;

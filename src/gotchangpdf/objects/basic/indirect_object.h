@@ -10,7 +10,7 @@
 
 namespace gotchangpdf
 {
-	class IndirectObject : public Object, public RequireVersion<Version::PDF12>
+	class IndirectObject : public RequireVersion<Version::PDF12>, public IUnknown
 	{
 	public:
 		explicit IndirectObject(files::File * file);
@@ -33,8 +33,6 @@ namespace gotchangpdf
 
 		inline void SetFile(files::File *file) { _file = file; }
 		inline files::File* GetFile() const { return _file; }
-
-		virtual inline Object::Type GetType(void) const override { return Object::Type::Indirect; }
 
 		/* IIndirectObject */
 		//virtual IObject* GetIObject() const override;

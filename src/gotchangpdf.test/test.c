@@ -25,12 +25,55 @@ int process_page(PageObjectHandle obj, int nested)
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
+int process_indirect(IndirectHandle indirect, int nested)
+{
+	offset_type offset = 0;
+	ObjectHandle child = NULL;
+
+	print_spaces(nested);
+	printf("Indirect object begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(IndirectObject_GetOffset(indirect, &offset));
+	print_spaces(nested + 1);
+	printf("Offset: %lld\n\n", offset);
+	RETURN_ERROR_IF_NOT_SUCCESS(IndirectObject_GetObject(indirect, &child));
+	RETURN_ERROR_IF_NOT_SUCCESS(process(child, 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(child));
+
+	print_spaces(nested);
+	printf("Indirect object end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+int process_name(NameHandle name, int nested)
+{
+	string_type str;
+
+	print_spaces(nested);
+	printf("Name object begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(NameObject_Value(name, &str));
+
+	print_spaces(nested + 1);
+	printf("Value: %s\n", str);
+
+	print_spaces(nested);
+	printf("Name object end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
 int process(ObjectHandle obj, int nested)
 {
-	long long offset;
 	int i, size, val, boolean;
 	IndirectHandle indirect;
+	IndirectReferenceHandle indirect_reference;
+	ArrayHandle arr;
+	IntegerHandle integer;
+	NameHandle name;
 	ObjectHandle child, dictionary_value;
+	DictionaryHandle dictionary;
 	DictionaryIteratorHandle iterator;
 	NameHandle dictionary_key;
 	enum ObjectType type;
@@ -45,23 +88,24 @@ int process(ObjectHandle obj, int nested)
 	case Unknown:
 		print_spaces(nested);
 		printf("UNRECOGNIZED OBJECT TYPE!\n");
-
-		assert(0);
-
-		break;
+		return GOTCHANG_PDF_ERROR_GENERAL;
 	case Array:
-		RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_Size((ArrayHandle)obj, &size));
 		print_spaces(nested);
 		printf("Array begin\n");
+
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToArray(obj, &arr));
+		RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_Size(arr, &size));
 
 		print_spaces(nested + 1);
 		printf("Size: %d\n\n", size);
 		for (i = 0; i < size; ++i)
 		{
-			RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_At((ArrayHandle)obj, i, &child));
+			RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_At(arr, i, &child));
 			RETURN_ERROR_IF_NOT_SUCCESS(process(child, nested + 1));
 			RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(child));
 		}
+
+		//RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_Release(arr));
 
 		print_spaces(nested);
 		printf("Array end\n");
@@ -77,8 +121,11 @@ int process(ObjectHandle obj, int nested)
 	case Dictionary:
 		print_spaces(nested);
 		printf("Dictionary begin\n");
-		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Iterator((DictionaryHandle)obj, &iterator));
-		while (GOTCHANG_PDF_ERROR_SUCCES == DictionaryObjectIterator_IsValid(iterator, (DictionaryHandle)obj, &boolean)
+
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToDictionary(obj, &dictionary));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Iterator(dictionary, &iterator));
+		while (GOTCHANG_PDF_ERROR_SUCCES == DictionaryObjectIterator_IsValid(iterator, dictionary, &boolean)
 			&& GOTCHANG_PDF_RV_TRUE == boolean)
 		{
 			print_spaces(nested);
@@ -86,14 +133,21 @@ int process(ObjectHandle obj, int nested)
 
 			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_GetKey(iterator, &dictionary_key));
 			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_GetValue(iterator, &dictionary_value));
-			RETURN_ERROR_IF_NOT_SUCCESS(process((ObjectHandle)dictionary_key, nested + 1));
-			RETURN_ERROR_IF_NOT_SUCCESS(process((ObjectHandle)dictionary_value, nested + 1));
+
+			RETURN_ERROR_IF_NOT_SUCCESS(process_name(dictionary_key, nested + 1));
+			RETURN_ERROR_IF_NOT_SUCCESS(process(dictionary_value, nested + 1));
+
+			RETURN_ERROR_IF_NOT_SUCCESS(NameObject_Release(dictionary_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(dictionary_value));
 
 			print_spaces(nested);
 			printf("EndPair\n");
 
 			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_Next(iterator));
 		}
+
+		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_Release(iterator));
+		//RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Release(dictionary));
 
 		print_spaces(nested);
 		printf("Dictionary End\n");
@@ -110,7 +164,8 @@ int process(ObjectHandle obj, int nested)
 		print_spaces(nested);
 		printf("Integer object begin\n");
 
-		RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Value((IntegerHandle)obj, &val));
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToInteger(obj, &integer));
+		RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Value(integer, &val));
 		print_spaces(nested + 1);
 		printf("Value: %d\n", val);
 
@@ -118,11 +173,8 @@ int process(ObjectHandle obj, int nested)
 		printf("Integer object end\n");
 		break;
 	case Name:
-		print_spaces(nested);
-		printf("Name object begin\n");
-
-		print_spaces(nested);
-		printf("Name object end\n");
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToName(obj, &name));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_name(name, nested));
 		break;
 		/*
 	case NameTree:
@@ -183,29 +235,17 @@ int process(ObjectHandle obj, int nested)
 		print_spaces(nested);
 		printf("Indirect reference begin\n");
 
-		RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedObject((IndirectReferenceHandle)obj, &indirect));
-		RETURN_ERROR_IF_NOT_SUCCESS(process((ObjectHandle)indirect, nested + 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToIndirectReference(obj, &indirect_reference));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedObject(indirect_reference, &indirect));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_indirect(indirect, nested + 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(IndirectObject_Release(indirect));
 
 		print_spaces(nested);
 		printf("Indirect reference end\n");
 		break;
-	case Indirect:
-		print_spaces(nested);
-		printf("Indirect object begin\n");
-
-		RETURN_ERROR_IF_NOT_SUCCESS(IndirectObject_GetOffset((IndirectHandle)obj, &offset));
-		print_spaces(nested + 1);
-		printf("Offset: %lld\n\n", offset);
-
-		RETURN_ERROR_IF_NOT_SUCCESS(IndirectObject_GetObject((IndirectHandle)obj, &child));
-		RETURN_ERROR_IF_NOT_SUCCESS(process(child, nested + 1));
-		RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(child));
-
-		print_spaces(nested);
-		printf("Indirect object end\n");
-		break;
 	default:
-		break;
+		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
@@ -231,8 +271,7 @@ int main(int argc, char *argv[])
 	{
 		IndirectHandle indirect = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(File_GetIndirectObject(file, i, 0, &indirect));
-
-		RETURN_ERROR_IF_NOT_SUCCESS(process((ObjectHandle)indirect, 0));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_indirect(indirect, 0));
 		RETURN_ERROR_IF_NOT_SUCCESS(IndirectObject_Release(indirect));
 	}
 

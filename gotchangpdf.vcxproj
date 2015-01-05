@@ -18,6 +18,7 @@
     <ClInclude Include="include\gotchangpdf\c_indirect_object.h" />
     <ClInclude Include="include\gotchangpdf\c_indirect_object_reference.h" />
     <ClInclude Include="include\gotchangpdf\c_integer_object.h" />
+    <ClInclude Include="include\gotchangpdf\c_name_object.h" />
     <ClInclude Include="include\gotchangpdf\c_object.h" />
     <ClInclude Include="include\gotchangpdf\c_page_object.h" />
     <ClInclude Include="include\gotchangpdf\c_page_tree.h" />
@@ -116,6 +117,7 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_indirect_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_indirect_object_reference.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_integer_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_name_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_page_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_page_tree.cpp" />
