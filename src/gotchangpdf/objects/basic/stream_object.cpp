@@ -66,74 +66,74 @@ namespace gotchangpdf
 
 	Parser& operator>>(Parser& s, StreamObject& o)
 	{
-		/*
-		if (!o._dictionary.HasContents())
-		{
-			s >> *o._dictionary;
-		}
-		*/
-		if (s.PeekTokenType() == Token::Type::STREAM_BEGIN)
-			s.ReadToken();
+		///*
+		//if (!o._dictionary.HasContents())
+		//{
+		//	s >> *o._dictionary;
+		//}
+		//*/
+		//if (s.PeekTokenType() == Token::Type::STREAM_BEGIN)
+		//	s.ReadToken();
 
-		if (s.PeekTokenType() == Token::Type::EOL)
-		{
-			auto token = s.ReadToken();
-			if (token.Value().size() == 1 && Equals(token.Value()[0], WhiteSpace::CARRIAGE_RETURN))
-			{
-				stringstream buffer;
-				buffer << "After stream keyword is single CR character at offset " << s.tellg();
+		//if (s.PeekTokenType() == Token::Type::EOL)
+		//{
+		//	auto token = s.ReadToken();
+		//	if (token.Value().size() == 1 && Equals(token.Value()[0], WhiteSpace::CARRIAGE_RETURN))
+		//	{
+		//		stringstream buffer;
+		//		buffer << "After stream keyword is single CR character at offset " << s.tellg();
 
-				throw Exception(buffer.str());
-			}
-		}
+		//		throw Exception(buffer.str());
+		//	}
+		//}
 
-		IntegerObjectPtr size;
+		//IntegerObjectPtr size;
 
-		ObjectVisitor<boost::variant<IntegerObject, IndirectObjectReference>> visitor;
-		auto size_raw = o._dictionary->Find(constant::Name::Length);
-		int type = size_raw.which();
+		//ObjectVisitor<boost::variant<IntegerObject, IndirectObjectReference>> visitor;
+		//auto size_raw = o._dictionary->Find(constant::Name::Length);
+		//int type = size_raw.which();
 
-		/*
-		auto type = size_raw->GetType();
-		if (type == Object::Type::IntegerObject)
-		{
-			size = dynamic_wrapper_cast<IntegerObject>(size_raw);
-		}
-		else if (type == Object::Type::IndirectObjectReference)
-		{
-			auto ref = dynamic_wrapper_cast<IndirectObjectReference>(size_raw);
-			auto indirect = ref->GetReferencedObject();
-			auto obj = indirect->GetObject();
+		///*
+		//auto type = size_raw->GetType();
+		//if (type == Object::Type::IntegerObject)
+		//{
+		//	size = dynamic_wrapper_cast<IntegerObject>(size_raw);
+		//}
+		//else if (type == Object::Type::IndirectObjectReference)
+		//{
+		//	auto ref = dynamic_wrapper_cast<IndirectObjectReference>(size_raw);
+		//	auto indirect = ref->GetReferencedObject();
+		//	auto obj = indirect->GetObject();
 
-			if (obj->GetType() != Object::Type::IntegerObject)
-			{
-				stringstream buffer;
-				buffer << "Length value is an Indirect Reference to an object of type "
-					<< Object::TypeName(obj->GetType()) << " at offset " << indirect->GetOffset();
+		//	if (obj->GetType() != Object::Type::IntegerObject)
+		//	{
+		//		stringstream buffer;
+		//		buffer << "Length value is an Indirect Reference to an object of type "
+		//			<< Object::TypeName(obj->GetType()) << " at offset " << indirect->GetOffset();
 
-				throw Exception(buffer.str());
-			}
-			size = dynamic_wrapper_cast<IntegerObject>(obj);
-		}
-		else
-		{
-			throw InvalidObjectTypeException(*size_raw);
-		}
-		*/
-		size_t len = static_cast<size_t>(*size);
-		streamoff offset = s.tellg();
+		//		throw Exception(buffer.str());
+		//	}
+		//	size = dynamic_wrapper_cast<IntegerObject>(obj);
+		//}
+		//else
+		//{
+		//	throw InvalidObjectTypeException(*size_raw);
+		//}
+		//*/
+		//size_t len = static_cast<size_t>(*size);
+		//streamoff offset = s.tellg();
 
-		auto data = s.read(len);
+		//auto data = s.read(len);
 
-		if (s.PeekTokenType() == Token::Type::EOL)
-			s.ReadToken();
+		//if (s.PeekTokenType() == Token::Type::EOL)
+		//	s.ReadToken();
 
-		s.ReadTokenWithType(Token::Type::STREAM_END);
-		s.ReadTokenWithType(Token::Type::EOL);
-		s.ReadTokenWithType(Token::Type::INDIRECT_OBJECT_END);
+		//s.ReadTokenWithType(Token::Type::STREAM_END);
+		//s.ReadTokenWithType(Token::Type::EOL);
+		//s.ReadTokenWithType(Token::Type::INDIRECT_OBJECT_END);
 
-		o._raw_data_offset = offset;
-		o._data = data;
+		//o._raw_data_offset = offset;
+		//o._data = data;
 
 		return s;
 	}
