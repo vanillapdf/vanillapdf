@@ -192,7 +192,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libboost_system-vc120-mt-gd-1_55.lib;libboost_filesystem-vc120-mt-gd-1_55.lib;libboost_iostreams-vc120-mt-gd-1_55.lib;libboost_log-vc120-mt-gd-1_55.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libboost_system-vc120-mt-gd-1_57.lib;libboost_filesystem-vc120-mt-gd-1_57.lib;libboost_iostreams-vc120-mt-gd-1_57.lib;libboost_log-vc120-mt-gd-1_57.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>lib\boost\stage\lib;lib\zlib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -214,7 +214,7 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Co
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>libboost_system-vc120-mt-1_55.lib;libboost_filesystem-vc120-mt-1_55.lib;libboost_iostreams-vc120-mt-1_55.lib;libboost_log-vc120-mt-1_55.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libboost_system-vc120-mt-1_57.lib;libboost_filesystem-vc120-mt-1_57.lib;libboost_iostreams-vc120-mt-1_57.lib;libboost_log-vc120-mt-1_57.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>lib\boost\stage\lib;lib\zlib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
