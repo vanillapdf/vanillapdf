@@ -182,8 +182,6 @@ namespace gotchangpdf
 				>> qi::ushort_;
 
 			BOOST_SPIRIT_DEBUG_NODE(indirect_object);
-
 		}
 	}
 }
-

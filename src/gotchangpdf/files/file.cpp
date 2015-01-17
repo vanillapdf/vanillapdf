@@ -114,7 +114,7 @@ namespace gotchangpdf
 				item->SetInitialized(true);
 			}
 
-			return item->GetReference();;
+			return item->GetReference();
 		}
 
 		SmartPtr<documents::Catalog> File::GetDocumentCatalog(void) const

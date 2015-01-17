@@ -13,7 +13,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedOb
 
 	try
 	{
-		*result = reinterpret_cast<IndirectHandle>(AddRefGet(obj->GetReferencedObject()));
+		*result = reinterpret_cast<IndirectHandle>(obj->GetReferencedObject().AddRefGet());
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS

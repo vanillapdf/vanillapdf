@@ -13,16 +13,14 @@ namespace gotchangpdf
 	using namespace std;
 
 	IndirectObject::IndirectObject(files::File * file)
-		: _file(file),
-		  RequireVersion(file->GetHeader()->GetVersion()) {}
+		: _file(file) {}
 
 	IndirectObject::IndirectObject(const IndirectObject& other)
 		: _file(other._file),
 		  _gen_number(other._gen_number),
 		  _obj_number(other._obj_number),
 		  _offset(other._offset),
-		  _reference(other._reference),
-		  RequireVersion(other._file->GetHeader()->GetVersion()) {}
+		  _reference(other._reference) {}
 
 	void IndirectObject::SetObject(DirectObject ref) { _reference = ref; }
 

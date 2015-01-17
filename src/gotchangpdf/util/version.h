@@ -22,7 +22,8 @@ namespace gotchangpdf
 	{
 	public:
 		RequireVersion() = default;
-		RequireVersion(Version current)
+
+		void OnWriteCheck(Version file_version)
 		{
 			if (static_cast<unsigned char>(ver) > static_cast<unsigned char>(current))
 				throw exceptions::Exception("TODO");
