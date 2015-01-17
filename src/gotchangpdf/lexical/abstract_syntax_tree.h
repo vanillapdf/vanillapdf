@@ -26,7 +26,7 @@ gotchangpdf::IntegerObjectPtr,
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::NameObjectPtr,
-(gotchangpdf::Buffer, Content->_value)
+(gotchangpdf::BufferPtr, Content->_value)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
@@ -58,12 +58,12 @@ gotchangpdf::StreamObjectPtr,
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::LiteralStringPtr,
-(gotchangpdf::Buffer, Content->_value)
+(gotchangpdf::BufferPtr, Content->_value)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::HexadecimalStringPtr,
-(gotchangpdf::Buffer, Content->_value)
+(gotchangpdf::BufferPtr, Content->_value)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(

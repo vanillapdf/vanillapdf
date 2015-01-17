@@ -28,6 +28,12 @@ extern "C"
 
 	typedef enum ObjectType* PObjectType;
 
+	DECLARE_OBJECT_HANDLE(Indirect);
+
+	/* Basic */
+	DECLARE_OBJECT_HANDLE(Object);
+
+	DECLARE_OBJECT_HANDLE(Array);
 	DECLARE_OBJECT_HANDLE(Boolean);
 	DECLARE_OBJECT_HANDLE(Name);
 	DECLARE_OBJECT_HANDLE(Null);
@@ -37,20 +43,22 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(HexadecimalString);
 	DECLARE_OBJECT_HANDLE(LiteralString);
 	DECLARE_OBJECT_HANDLE(IndirectReference);
+	DECLARE_OBJECT_HANDLE(Dictionary);
+
+	DECLARE_OBJECT_HANDLE(DictionaryIterator);
+
+	/* File */
 	DECLARE_OBJECT_HANDLE(File);
 	DECLARE_OBJECT_HANDLE(XrefEntry);
 	DECLARE_OBJECT_HANDLE(Xref);
-	DECLARE_OBJECT_HANDLE(Object);
 
+	/* Semantic */
 	DECLARE_OBJECT_HANDLE(Catalog);
 	DECLARE_OBJECT_HANDLE(PageTree);
 	DECLARE_OBJECT_HANDLE(PageObject);
 
-	DECLARE_OBJECT_HANDLE(Array);
-	DECLARE_OBJECT_HANDLE(Indirect);
-
-	DECLARE_OBJECT_HANDLE(Dictionary);
-	DECLARE_OBJECT_HANDLE(DictionaryIterator);
+	/* Utils */
+	DECLARE_OBJECT_HANDLE(Buffer);
 
 #ifdef __cplusplus
 };

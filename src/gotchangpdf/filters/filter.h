@@ -23,8 +23,8 @@ namespace gotchangpdf
 				JPXDecode
 			};
 
-			virtual Buffer Encode(const Buffer& src) const = 0;
-			virtual Buffer Decode(const Buffer& src) const = 0;
+			virtual BufferPtr Encode(BufferPtr src) const = 0;
+			virtual BufferPtr Decode(BufferPtr src) const = 0;
 
 			virtual inline Type GetType(void) const = 0;
 		};

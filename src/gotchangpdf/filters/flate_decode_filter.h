@@ -13,8 +13,8 @@ namespace gotchangpdf
 		public:
 			virtual inline Type GetType(void) const override { return Filter::Type::FlateDecode; }
 
-			virtual Buffer Encode(const Buffer& src) const override;
-			virtual Buffer Decode(const Buffer& src) const override;
+			virtual BufferPtr Encode(BufferPtr src) const override;
+			virtual BufferPtr Decode(BufferPtr src) const override;
 		};
 	}
 }

@@ -25,7 +25,7 @@ namespace gotchangpdf
 		Stream::Stream(const raw::Stream & other)
 			: CharacterSource(other.rdbuf()) {}
 
-		Buffer Stream::read(unsigned int len)
+		BufferPtr Stream::read(unsigned int len)
 		{
 			Buffer result(len);
 			CharacterSource::read(result.data(), len);
@@ -46,7 +46,7 @@ namespace gotchangpdf
 			throw exceptions::Exception("Unknown hexadecimal character " + val);
 		}
 
-		Buffer Stream::readline(void)
+		BufferPtr Stream::readline(void)
 		{
 			Buffer result;
 

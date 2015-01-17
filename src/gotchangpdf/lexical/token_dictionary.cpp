@@ -24,7 +24,7 @@ namespace gotchangpdf
 		static const char END_OF_FILE[] = "%%EOF";
 		static const char TRAILER[] = "trailer";
 
-		Token::Type TokenDictionary::find(const Buffer& set)
+		Token::Type TokenDictionary::find(BufferPtr set)
 		{
 			Initialize();
 			return _dictionary.TokenType(set);

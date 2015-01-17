@@ -12,24 +12,24 @@ namespace gotchangpdf
 	class NameObject : public Containable, public Object
 	{
 	public:
-		typedef Buffer value_type;
+		typedef BufferPtr value_type;
 
 	public:
 		NameObject() = default;
-		explicit NameObject(const gotchangpdf::lexical::Token& token);
-		explicit NameObject(const value_type& name);
+		explicit NameObject(const lexical::Token& token);
+		explicit NameObject(value_type name);
 
-		inline const value_type& Value() const { return _value; }
+		inline value_type Value() const { return _value; }
 
 		inline bool operator==(const NameObject& other) const { return Equals(other); }
 		inline bool operator!=(const NameObject& other) const { return !Equals(other); }
-		inline bool operator<(const NameObject& other) const { return _value < other._value; }
+		inline bool operator<(const NameObject& other) const { return *_value < *other._value; }
 
-		inline bool Equals(const NameObject& other) const { return _value.Equals(other._value); }
+		inline bool Equals(const NameObject& other) const { return _value->Equals(*other._value); }
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::Name; }
 
-		void SetName(value_type& name) { _value = name; }
+		void SetName(value_type name) { _value = name; }
 
 		//private:
 	public:

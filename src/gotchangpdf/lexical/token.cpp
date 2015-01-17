@@ -19,9 +19,9 @@ namespace gotchangpdf
 		Token::Token(Token && other) : _value(std::move(other._value)), _type(other._type) {}
 
 		Token::Token() : _type(Token::Type::UNKNOWN), _value() {}
-		Token::Token(const Buffer& chars) : _type(Evaluate(chars)), _value(chars) { assert(_value.size() > 0); }
+		Token::Token(BufferPtr chars) : _type(Evaluate(chars)), _value(chars) { assert(_value->size() > 0); }
 
-		Token::Token(Type type, const Buffer& chars) : _type(type), _value(chars)
+		Token::Token(Type type, BufferPtr chars) : _type(type), _value(chars)
 		{
 			if (_type == Token::Type::UNKNOWN)
 				_type = Evaluate(_value);
@@ -60,7 +60,7 @@ namespace gotchangpdf
 
 		#pragma endregion
 
-		Token::Type Token::Evaluate(const Buffer& chars) { return TokenDictionary::find(chars); }
+		Token::Type Token::Evaluate(BufferPtr chars) { return TokenDictionary::find(chars); }
 
 		const char* Token::GetTypeValueName(Type type)
 		{

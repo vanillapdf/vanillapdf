@@ -14,6 +14,9 @@ typedef int32_t* out_integer_type;
 typedef int64_t offset_type;
 typedef int64_t* out_offset_type;
 
+typedef int64_t size_type;
+typedef int64_t* out_size_type;
+
 typedef const char* string_type;
 typedef const char** out_string_type;
 

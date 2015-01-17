@@ -1,6 +1,7 @@
 #ifndef _RAW_BASE_STREAM_H
 #define _RAW_BASE_STREAM_H
 
+#include "fwd.h"
 #include "buffer.h"
 
 #include <istream>
@@ -19,11 +20,11 @@ namespace gotchangpdf
 			typedef boost::iostreams::filtering_streambuf<boost::iostreams::input_seekable, char> CharacterFilteringSourceBuffer;
 
 		public:
-			virtual Buffer read(unsigned int len) = 0;
-			virtual void read_exact(const Buffer & buf);
+			virtual BufferPtr read(unsigned int len) = 0;
+			virtual void read_exact(BufferPtr buf);
 
 			virtual char get_hex(void) = 0;
-			virtual Buffer readline(void) = 0;
+			virtual BufferPtr readline(void) = 0;
 
 			virtual ~BaseStream() = 0;
 		};

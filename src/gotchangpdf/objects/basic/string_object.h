@@ -11,18 +11,18 @@ namespace gotchangpdf
 	class StringObject : public Containable, public Object
 	{
 	public:
-		Buffer _value;
+		BufferPtr _value;
 
 	protected:
 		StringObject();
-		explicit StringObject(const Buffer& value);
+		explicit StringObject(BufferPtr value);
 	};
 
 	class HexadecimalString : public StringObject
 	{
 	public:
 		HexadecimalString() = default;
-		explicit HexadecimalString(const Buffer& value);
+		explicit HexadecimalString(BufferPtr value);
 		explicit HexadecimalString(const lexical::Token& token);
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::HexadecimalString; }
@@ -36,7 +36,7 @@ namespace gotchangpdf
 	{
 	public:
 		LiteralString() = default;
-		explicit LiteralString(const Buffer& value);
+		explicit LiteralString(BufferPtr value);
 		explicit LiteralString(const lexical::Token& token);
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::LiteralString; }

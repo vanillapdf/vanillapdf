@@ -17,9 +17,9 @@ namespace gotchangpdf
 		raw::Stream& operator>> (raw::Stream& s, Header& o)
 		{
 			auto data = s.readline();
-			assert(data.size() > 0);
+			assert(data->size() > 0);
 
-			string tmp = data.ToString();
+			string tmp = data->ToString();
 
 			std::smatch sm;
 			std::regex header_regex("%PDF-([0-9])\\.([0-9]).*");

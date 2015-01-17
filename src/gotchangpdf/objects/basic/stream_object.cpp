@@ -24,9 +24,9 @@ namespace gotchangpdf
 	StreamObject::StreamObject(files::File * file) : _file(file) {}
 	StreamObject::StreamObject(const DictionaryObject& dictionary) : _dictionary(dictionary) {}
 
-	Buffer StreamObject::GetData() const
+	BufferPtr StreamObject::GetData() const
 	{
-		if (_data.empty())
+		if (_data->empty())
 		{
 			auto stream = _file->GetInputStream();
 			if (auto locked = stream.lock())

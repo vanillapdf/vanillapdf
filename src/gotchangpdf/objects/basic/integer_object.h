@@ -19,13 +19,13 @@ namespace gotchangpdf
 		//explicit IntegerObject(const CharacterSet& value);
 		explicit IntegerObject(const lexical::Token& value);
 
-		value_type Value(void) const;
+		inline value_type IntegerObject::Value(void) const { return _value; }
 
 		operator value_type() const { return _value; }
 		//virtual Object* Clone(void) const  override { return new IntegerObject(static_cast<IntegerObject const&>(*this)); };
 
 		IntegerObject& operator= (value_type value);
-		IntegerObject& operator= (const Buffer& value);
+		IntegerObject& operator= (BufferPtr value);
 		IntegerObject& operator= (const lexical::Token& value);
 
 		virtual Object::Type GetType(void) const override;

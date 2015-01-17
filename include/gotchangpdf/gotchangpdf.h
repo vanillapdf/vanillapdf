@@ -24,4 +24,6 @@
 #include "c_name_object.h"
 #include "c_object.h"
 
+#include "c_buffer.h"
+
 #endif /* _GOTCHANGPDF_H */

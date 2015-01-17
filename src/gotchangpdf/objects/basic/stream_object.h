@@ -24,7 +24,7 @@ namespace gotchangpdf
 		explicit StreamObject(files::File * file);
 		explicit StreamObject(const DictionaryObject& dictionary);
 
-		Buffer GetData() const;
+		BufferPtr GetData() const;
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::Stream; }
 
@@ -36,14 +36,13 @@ namespace gotchangpdf
 		types::stream_offset _raw_data_offset = std::_BADOFF;
 
 	private:
-		mutable Buffer _data;
+		mutable BufferPtr _data;
 		Type _type = Type::UNKNOWN;
 
 		files::File *_file;
 
 		explicit StreamObject() = default;
-
-		friend Deferred<StreamObject>;
+		friend StreamObjectPtr;
 
 		template <typename T>
 		friend T* Allocate();

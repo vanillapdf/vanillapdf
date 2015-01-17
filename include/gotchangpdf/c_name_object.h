@@ -10,7 +10,7 @@ extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Value(NameHandle handle, out_string_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Value(NameHandle handle, PBufferHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Release(NameHandle handle);
 
 #ifdef __cplusplus

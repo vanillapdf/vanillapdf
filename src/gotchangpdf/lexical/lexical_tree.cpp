@@ -4,27 +4,27 @@ namespace gotchangpdf
 {
 	namespace lexical
 	{
-		void Tree::Insert(const Buffer& path, Token::Type type)
+		void Tree::Insert(BufferPtr path, Token::Type type)
 		{
 			if (nullptr == _root)
 				_root = new Node();
 
 			Node **cur = &_root;
-			int len = path.size();
+			int len = path->size();
 			for (int i = 0; i < len; ++i)
 			{
-				cur = &(*cur)->childs[path[i]];
+				cur = &(*cur)->childs[path->at(i)];
 				if (nullptr == *cur)
 				{
 					*cur = new Node();
-					(*cur)->value = path[i];
+					(*cur)->value = path->at(i);
 				}
 			}
 
 			(*cur)->type = type;
 		}
 
-		bool Tree::PathExists(const Buffer& path)
+		bool Tree::PathExists(BufferPtr path)
 		{
 			Node *found = NodeAtPath(path);
 			if (nullptr == found)
@@ -33,7 +33,7 @@ namespace gotchangpdf
 			return true;
 		}
 
-		Token::Type lexical::Tree::TokenType(const Buffer& path)
+		Token::Type lexical::Tree::TokenType(BufferPtr path)
 		{
 			Node *found = NodeAtPath(path);
 			if (nullptr == found)
@@ -42,16 +42,16 @@ namespace gotchangpdf
 			return found->type;
 		}
 
-		Tree::Node* lexical::Tree::NodeAtPath(const Buffer& path)
+		Tree::Node* lexical::Tree::NodeAtPath(BufferPtr path)
 		{
 			if (nullptr == _root)
 				return nullptr;
 
 			Node *cur = _root;
-			int len = path.size();
+			int len = path->size();
 			for (int i = 0; i < len; ++i)
 			{
-				cur = cur->childs[path[i]];
+				cur = cur->childs[path->at(i)];
 				if (nullptr == cur)
 					return nullptr;
 			}

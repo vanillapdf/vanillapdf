@@ -24,7 +24,7 @@ namespace gotchangpdf
 
 		public:
 			//static std::vector<const char*> lexemes(enum Type key);
-			static Token::Type find(const Buffer& set);
+			static Token::Type find(BufferPtr set);
 		};
 	}
 }

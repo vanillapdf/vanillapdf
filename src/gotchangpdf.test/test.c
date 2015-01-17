@@ -1,6 +1,8 @@
 #include "gotchangpdf/gotchangpdf.h"
 
 #include <stdio.h>
+#include <stdlib.h> 
+#include <string.h>
 #include <assert.h>
 
 #define RETURN_ERROR_IF_NOT_SUCCESS(var) do { int __result__ = (var);  if (GOTCHANG_PDF_ERROR_SUCCES != __result__) return __result__; } while(0)
@@ -46,17 +48,43 @@ int process_indirect(IndirectHandle indirect, int nested)
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
+int process_buffer(BufferHandle buffer, int nested)
+{
+	string_type data;
+	char* local_string;
+	size_type size;
+
+	print_spaces(nested);
+	printf("Buffer begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetSize(buffer, &size));
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(buffer, &data));
+
+	local_string = calloc(sizeof(char), size + 1);
+	memcpy(local_string, data, size);
+
+	print_spaces(nested + 1);
+	printf("Size: %lld\n", size);
+	print_spaces(nested + 1);
+	printf("Data: %s\n", local_string);
+
+	free(local_string);
+
+	print_spaces(nested);
+	printf("Buffer end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
 int process_name(NameHandle name, int nested)
 {
-	string_type str;
+	BufferHandle buffer;
 
 	print_spaces(nested);
 	printf("Name object begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(NameObject_Value(name, &str));
-
-	print_spaces(nested + 1);
-	printf("Value: %s\n", str);
+	RETURN_ERROR_IF_NOT_SUCCESS(NameObject_Value(name, &buffer));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(buffer, nested + 1));
 
 	print_spaces(nested);
 	printf("Name object end\n");
@@ -105,8 +133,6 @@ int process(ObjectHandle obj, int nested)
 			RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(child));
 		}
 
-		//RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_Release(arr));
-
 		print_spaces(nested);
 		printf("Array end\n");
 
@@ -147,7 +173,6 @@ int process(ObjectHandle obj, int nested)
 		}
 
 		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_Release(iterator));
-		//RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Release(dictionary));
 
 		print_spaces(nested);
 		printf("Dictionary End\n");

@@ -172,7 +172,7 @@ namespace gotchangpdf
 			: Contents(new (Allocate<T>()) T())
 		{
 			Content.Owner = this;
-			Contents->Container.push_back(value_type(a, b));
+			Contents->push_back(value_type(a, b));
 		}
 
 		DeferredContainer& operator=(const DeferredContainer& rhs)
@@ -186,25 +186,35 @@ namespace gotchangpdf
 		// Support insertion as if this were itself a container
 		void insert(const iterator& pos, const value_type& value)
 		{
-			Content->Container.insert(pos, value);
+			Content->insert(pos, value);
 		}
 
 		// Retrieve a starting iterator as if this were itself a container
 		iterator begin()
 		{
-			return Content->Container.begin();
+			return Content->begin();
 		}
 
 		// Retrieve an ending iterator as if this were itself a container
 		iterator end()
 		{
-			return Content->Container.end();
+			return Content->end();
 		}
 
 		// Check if the wrapped container is empty
 		bool empty() const
 		{
-			return Content->Container.empty();
+			return Content->empty();
+		}
+
+		T& operator*() const
+		{
+			return Content.operator*();
+		}
+
+		T* operator->() const
+		{
+			return Content.operator->();
 		}
 
 		//
@@ -240,6 +250,12 @@ namespace gotchangpdf
 			// Linkage to the owning wrapper
 			DeferredContainer* Owner;
 		} Content;
+
+		T* AddRefGet(void)
+		{
+			Content->AddRef();
+			return Content.get();
+		}
 
 	protected:
 		// Internal state

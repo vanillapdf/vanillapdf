@@ -36,18 +36,18 @@ namespace gotchangpdf
 			};
 
 			static const char* GetTypeValueName(Type type);
-			static Token::Type Evaluate(const Buffer& chars);
+			static Token::Type Evaluate(BufferPtr chars);
 
 			Token();
 			Token(const Token& other);
 			Token(Token && other);
-			explicit Token(const Buffer& chars);
+			explicit Token(BufferPtr chars);
 			explicit Token(Type type);
-			Token(Type type, const Buffer& chars);
+			Token(Type type, BufferPtr chars);
 
 			Token::Type GetType(void) const;
 
-			const Buffer& Value() const;
+			BufferPtr Value() const;
 
 			Token& operator= (const Token& value);
 
@@ -59,10 +59,10 @@ namespace gotchangpdf
 
 		private:
 			Token::Type _type;
-			Buffer _value;
+			BufferPtr _value;
 		};
 
-		inline const Buffer& Token::Value() const { return _value; }
+		inline BufferPtr Token::Value() const { return _value; }
 		inline Token::Type Token::GetType(void) const { return _type; }
 	}
 }

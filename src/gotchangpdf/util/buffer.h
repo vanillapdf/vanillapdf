@@ -1,40 +1,27 @@
 #ifndef _BUFFER_H
 #define _BUFFER_H
 
+#include "fwd.h"
+#include "unknown_interface.h"
+
 #include <vector>
 #include <string>
 
 namespace gotchangpdf
 {
-	class Buffer : public std::vector<char>
+	class Buffer : public std::vector<char>, public IUnknown
 	{
 	public:
 		typedef std::vector<char> base_type;
-		/*
-		typedef _Mybase::value_type value_type;
-		typedef _Mybase::size_type size_type;
-		typedef _Mybase::difference_type difference_type;
-		typedef _Mybase::pointer pointer;
-		typedef _Mybase::const_pointer const_pointer;
-		typedef _Mybase::reference reference;
-		typedef _Mybase::const_reference const_reference;
-
-		typedef _Mybase::iterator iterator;
-		typedef _Mybase::const_iterator const_iterator;
-
-		typedef _Mybase::reverse_iterator reverse_iterator;
-		typedef _Mybase::const_reverse_iterator const_reverse_iterator;
-		*/
 
 	public:
-		Buffer();
-		Buffer(const Buffer & other);
+		Buffer() = default;
+		Buffer(const Buffer& other) = default;
 		Buffer(Buffer && other);
-
 		explicit Buffer(size_type count);
 
 		template <typename U>
-		Buffer(const std::vector<U> & other);
+		Buffer(const std::vector<U> & other) : _Mybase(other.begin(), other.end()) {}
 
 		Buffer(const value_type * chars, int len);
 		Buffer(const value_type * begin, const value_type * end);
@@ -43,30 +30,14 @@ namespace gotchangpdf
 		class = typename std::enable_if<std::_Is_iterator<_Iter>::value,
 			void>::type>
 			Buffer(_Iter begin, _Iter end) : base_type(begin, end) {}
+
+		virtual ~Buffer() = default;
 		//Buffer(const std::vector<value_type>& data);
 
-		//void Insert(int idx, const Buffer& item);
-		//void Append(const Character& ch);
-		//void Append(const Buffer& item);
+		bool Equals(Buffer other) const { return *this == other; }
 
-		bool Equals(const Buffer& other) const;
-
-		std::string ToString(void) const;
+		std::string ToString(void) const { return std::string(begin(), end()); }
 	};
-
-	template <typename U>
-	Buffer::Buffer(const std::vector<U> & other)
-		: _Mybase(other.begin(), other.end()) {}
-
-	inline std::string Buffer::ToString(void) const
-	{
-		return std::string(begin(), end());
-	}
-
-	inline bool Buffer::Equals(const Buffer& other) const
-	{
-		return *this == other;
-	}
 }
 
 #endif /* _BUFFER_H */

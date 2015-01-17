@@ -11,10 +11,10 @@ namespace gotchangpdf
 		class Tree
 		{
 		public:
-			bool PathExists(const Buffer& path);
-			Token::Type TokenType(const Buffer& path);
+			bool PathExists(BufferPtr path);
+			Token::Type TokenType(BufferPtr path);
 
-			void Insert(const Buffer& path, Token::Type type);
+			void Insert(BufferPtr path, Token::Type type);
 
 			// TODO later
 			//void Delete(const char *path, int len);
@@ -29,7 +29,7 @@ namespace gotchangpdf
 
 			Node *_root;
 
-			Node* NodeAtPath(const Buffer& path);
+			Node* NodeAtPath(BufferPtr path);
 		};
 	}
 }

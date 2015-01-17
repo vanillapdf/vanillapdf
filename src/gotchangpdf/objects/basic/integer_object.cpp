@@ -19,7 +19,7 @@ namespace gotchangpdf
 		assert(value.GetType() == Token::Type::INTEGER_OBJECT);
 
 		auto buffer = value.Value();
-		_value = stoi(buffer.ToString());
+		_value = stoi(buffer->ToString());
 	}
 
 	#pragma endregion
@@ -31,9 +31,9 @@ namespace gotchangpdf
 		return this->operator=(value.Value());
 	}
 
-	IntegerObject& IntegerObject::operator=(const Buffer& value)
+	IntegerObject& IntegerObject::operator=(BufferPtr value)
 	{
-		_value = stoi(value.ToString());
+		_value = stoi(value->ToString());
 		return *this;
 	}
 
@@ -45,16 +45,14 @@ namespace gotchangpdf
 
 	#pragma endregion
 
-	IntegerObject::value_type IntegerObject::Value(void) const { return _value; }
-
 	ReverseStream& operator>> (ReverseStream& s, IntegerObject& o)
 	{
 		auto token = s.ReadToken();
 
 		assert(token.GetType() == Token::Type::INTEGER_OBJECT);
 
-		Buffer buffer = token.Value();
-		o._value = stoi(buffer.ToString());
+		auto buffer = token.Value();
+		o._value = stoi(buffer->ToString());
 
 		return s;
 	}
@@ -65,8 +63,8 @@ namespace gotchangpdf
 
 		assert(token.GetType() == Token::Type::INTEGER_OBJECT);
 
-		Buffer buffer = token.Value();
-		o._value = stoi(buffer.ToString());
+		auto buffer = token.Value();
+		o._value = stoi(buffer->ToString());
 
 		return s;
 	}

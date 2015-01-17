@@ -13,7 +13,7 @@ namespace gotchangpdf
 	{
 		namespace io = boost::iostreams;
 
-		Buffer FlateDecodeFilter::Encode(const Buffer& src) const
+		BufferPtr FlateDecodeFilter::Encode(BufferPtr src) const
 		{
 			Buffer dest;
 			CharacterFilteringSink sink;
@@ -21,12 +21,12 @@ namespace gotchangpdf
 			sink.push(io::zlib_compressor());
 			sink.push(io::back_inserter(dest));
 
-			io::write(sink, src.data(), src.size());
+			io::write(sink, src->data(), src->size());
 
 			return dest;
 		}
 
-		Buffer FlateDecodeFilter::Decode(const Buffer& src) const
+		BufferPtr FlateDecodeFilter::Decode(BufferPtr src) const
 		{
 			Buffer dest;
 			CharacterFilteringSink sink;
@@ -34,7 +34,7 @@ namespace gotchangpdf
 			sink.push(io::zlib_decompressor());
 			sink.push(io::back_inserter(dest));
 
-			io::write(sink, src.data(), src.size());
+			io::write(sink, src->data(), src->size());
 
 			return dest;
 		}

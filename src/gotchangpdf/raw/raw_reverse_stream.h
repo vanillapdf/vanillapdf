@@ -53,9 +53,9 @@ namespace gotchangpdf
 			explicit ReverseStream(CharacterSource & stream);
 			virtual ~ReverseStream();
 			
-			virtual Buffer read(unsigned int len) override;
+			virtual BufferPtr read(unsigned int len) override;
 			virtual char get_hex() override;
-			virtual Buffer readline(void) override;
+			virtual BufferPtr readline(void) override;
 
 		private:
 			class ReverseBuf : public raw::BaseStream::CharacterSourceBuffer

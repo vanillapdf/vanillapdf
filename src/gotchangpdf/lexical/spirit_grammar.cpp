@@ -105,7 +105,7 @@ namespace gotchangpdf
 				qi::lit('/')
 				> *(
 					(qi::char_ - whitespace - delimiter)
-					| (qi::char_('%') > qi::digit > qi::digit)
+					//| (qi::char_('%') > qi::digit > qi::digit)
 				);
 
 			hexadecimal_string_object %=

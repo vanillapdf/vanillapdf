@@ -9,7 +9,7 @@ namespace gotchangpdf
 	using namespace lexical;
 
 	LiteralString::LiteralString(const Token& token) : StringObject(token.Value()) {}
-	LiteralString::LiteralString(const Buffer& value) : StringObject(value)
+	LiteralString::LiteralString(BufferPtr value) : StringObject(value)
 	{
 		// TODO remove <> if contains
 	}
@@ -17,7 +17,7 @@ namespace gotchangpdf
 	HexadecimalString::HexadecimalString(const Token& token)
 	{
 		auto buffer = token.Value();
-		_hexadecimal = buffer.ToString();
+		_hexadecimal = buffer->ToString();
 
 		int len = (_hexadecimal.length() / 2) - 2;
 
@@ -31,13 +31,13 @@ namespace gotchangpdf
 			/* this can be done, because we are dealing with 2
 			hexadecimal chars, which cannot be greater than 0xFF */
 			unsigned char parsed = static_cast<char>(val);
-			_value.push_back(parsed);
+			_value->push_back(parsed);
 		}
 	}
 
-	HexadecimalString::HexadecimalString(const Buffer& value)
+	HexadecimalString::HexadecimalString(BufferPtr value)
 	{
-		_hexadecimal = value.ToString();
+		_hexadecimal = value->ToString();
 
 		int len = (_hexadecimal.length() / 2) - 2;
 		
@@ -51,10 +51,10 @@ namespace gotchangpdf
 			/* this can be done, because we are dealing with 2
 			hexadecimal chars, which cannot be greater than 0xFF */
 			unsigned char parsed = static_cast<char>(val);
-			_value.push_back(parsed);
+			_value->push_back(parsed);
 		}
 	}
 
-	StringObject::StringObject(const Buffer& value) : _value(value) {}
+	StringObject::StringObject(BufferPtr value) : _value(value) {}
 	StringObject::StringObject() {}
 }

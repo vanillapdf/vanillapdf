@@ -2,6 +2,7 @@
 #define _FWD_H
 
 #include "deferred.h"
+#include "smart_ptr.h"
 
 namespace gotchangpdf
 {
@@ -35,6 +36,8 @@ namespace gotchangpdf
 	class Character;
 	class Buffer;
 
+	class Containable;
+
 	namespace documents
 	{
 		class Document;
@@ -54,6 +57,7 @@ namespace gotchangpdf
 		class Header;
 		class Trailer;
 		class Xref;
+		class XrefEntry;
 	}
 
 	namespace lexical
@@ -100,6 +104,13 @@ namespace gotchangpdf
 	using StreamObjectPtr = Deferred<StreamObject>;
 	using LiteralStringPtr = Deferred<LiteralString>;
 	using HexadecimalStringPtr = Deferred<HexadecimalString>;
+
+	using BufferPtr = DeferredContainer<Buffer>;
+
+	using XrefEntryPtr = Deferred<files::XrefEntry>;
+	using HeaderPtr = Deferred<files::Header>;
+	using TrailerPtr = Deferred<files::Trailer>;
+	using XrefPtr = Deferred<files::Xref>;
 }
 
 #endif /* _FWD_H */

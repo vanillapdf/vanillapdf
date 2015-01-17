@@ -5,7 +5,7 @@
 
 using namespace gotchangpdf;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Value(NameHandle handle, out_string_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Value(NameHandle handle, PBufferHandle result)
 {
 	NameObject* obj = reinterpret_cast<NameObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -14,8 +14,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Value(NameHandle handl
 	try
 	{
 		auto buffer = obj->Value();
-		auto str = buffer.ToString();
-		*result = str.c_str();
+		auto ptr = buffer.AddRefGet();
+		*result = reinterpret_cast<BufferHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS
