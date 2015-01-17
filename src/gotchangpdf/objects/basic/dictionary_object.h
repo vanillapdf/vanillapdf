@@ -5,7 +5,7 @@
 #include "unknown_interface.h"
 #include "direct_object.h"
 #include "object_visitors.h"
-#include "name_object.h"
+//#include "name_object.h"
 #include "containable.h"
 
 //#include <unordered_map>
@@ -59,7 +59,7 @@ namespace gotchangpdf
 			const_iterator _it;
 		};
 
-		typedef Deferred<Iterator> IteratorPtr;
+		using IteratorPtr = Deferred<Iterator>;
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::Dictionary; }
 

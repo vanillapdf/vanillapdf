@@ -62,8 +62,8 @@ namespace gotchangpdf
 			return ArrayObject<U>(list);
 		}
 
-		const value_type& GetList(void) const { return _list; }
-		void SetList(value_type& list) { _list = list; }
+		//const value_type& GetList(void) const { return _list; }
+		//void SetList(value_type& list) { _list = list; }
 
 	//protected:
 	public:

@@ -43,8 +43,6 @@ namespace gotchangpdf
 			bool _initialized;
 		};
 
-		typedef Deferred<XrefEntry> XrefEntryPtr;
-
 		class Xref : public std::vector<XrefEntryPtr>, public IUnknown
 		{
 		public:

@@ -3,9 +3,9 @@
 
 #include "object.h"
 #include "direct_object.h"
-#include "smart_ptr.h"
 #include "exception.h"
-#include "containable.h"
+//#include "smart_ptr.h"
+//#include "containable.h"
 #include "stream_object.h"
 
 #include <map>
@@ -61,14 +61,14 @@ namespace gotchangpdf
 	{
 	public:
 		template <typename T>
-		inline Object* operator()(Deferred<T> obj) const { return obj.Content.get(); }
+		inline Object* operator()(T obj) const { return obj.Content.get(); }
 	};
 
 	class ObjectBaseAddRefVisitor : public boost::static_visitor<Object*>
 	{
 	public:
 		template <typename T>
-		inline Object* operator()(Deferred<T> obj) const
+		inline Object* operator()(T obj) const
 		{
 			auto result = obj.Content.get();
 			result->AddRef();

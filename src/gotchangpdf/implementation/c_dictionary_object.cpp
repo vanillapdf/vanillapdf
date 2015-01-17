@@ -7,19 +7,17 @@
 
 using namespace gotchangpdf;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryHandle handle, string_type str, PObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryHandle handle, NameHandle name, PObjectHandle result)
 {
 	DictionaryObject* obj = reinterpret_cast<DictionaryObject*>(handle);
+	NameObject* name_object = reinterpret_cast<NameObject*>(name);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(str);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(name_object);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try
 	{
-		auto length = strlen(str);
-		Buffer set(str, length);
-		NameObject name(set);
-		auto direct = obj->Find(name);
+		auto direct = obj->Find(*name_object);
 		ObjectBaseAddRefVisitor visitor;
 		auto base = direct.apply_visitor(visitor);
 

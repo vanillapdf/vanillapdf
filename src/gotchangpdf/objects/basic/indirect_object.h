@@ -47,11 +47,10 @@ namespace gotchangpdf
 
 	private:
 		files::File * _file = nullptr;
-		//mutable Deferred<Object> _reference;
 
 		explicit IndirectObject() = default;
 
-		friend Deferred<IndirectObject>;
+		friend IndirectObjectPtr;
 
 		template <typename T>
 		friend T* Allocate();

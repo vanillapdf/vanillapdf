@@ -11,7 +11,7 @@ namespace gotchangpdf
 	public:
 		virtual inline Object::Type GetType(void) const override { return Object::Type::Null; }
 
-		static Deferred<NullObject> GetInstance(void)
+		static NullObjectPtr GetInstance(void)
 		{
 			static NullObject instance;
 			return instance;

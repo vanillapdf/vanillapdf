@@ -54,9 +54,6 @@ namespace gotchangpdf
 				return;
 
 			_cache = vector<IndirectObjectPtr>();
-			_xref = Deferred<Xref>(Xref());
-			_header = Deferred<Header>(Header());
-			_trailer = Deferred<Trailer>(Trailer());
 
 			//TODO check if file exists
 
@@ -130,8 +127,8 @@ namespace gotchangpdf
 			return new documents::Catalog(dict);
 		}
 
-		Deferred<Header> File::GetHeader(void) const { return _header; }
-		Deferred<Trailer> File::GetTrailer(void) const { return _trailer; }
-		Deferred<Xref> File::GetXref(void) const { return _xref; }
+		HeaderPtr File::GetHeader(void) const { return _header; }
+		TrailerPtr File::GetTrailer(void) const { return _trailer; }
+		XrefPtr File::GetXref(void) const { return _xref; }
 	}
 }

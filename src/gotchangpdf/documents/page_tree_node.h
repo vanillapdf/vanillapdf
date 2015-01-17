@@ -19,7 +19,7 @@ namespace gotchangpdf
 			explicit PageTreeNode(DictionaryObjectPtr obj);
 
 			types::integer KidCount(void) const;
-			Deferred<ArrayObject<PageNodePtr>> Kids(void) const;
+			ArrayObjectPtr<PageNodePtr> Kids(void) const;
 
 			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageTreeNode; }
 		};

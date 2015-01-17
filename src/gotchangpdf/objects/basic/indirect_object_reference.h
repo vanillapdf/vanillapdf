@@ -56,7 +56,7 @@ namespace gotchangpdf
 		mutable bool _initialized = false;
 
 		explicit IndirectObjectReference() = default;
-		friend Deferred<IndirectObjectReference>;
+		friend IndirectObjectReferencePtr;
 
 		template <typename T>
 		friend T* Allocate();
