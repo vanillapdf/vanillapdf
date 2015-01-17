@@ -11,7 +11,6 @@ extern "C"
 	// TODO i have no idea how export enum without clone
 	enum ObjectType
 	{
-		Unknown = 0,
 		Array,
 		Boolean,
 		Dictionary,

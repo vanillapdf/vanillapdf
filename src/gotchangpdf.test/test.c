@@ -53,6 +53,7 @@ int process_buffer(BufferHandle buffer, int nested)
 	string_type data;
 	char* local_string;
 	size_type size;
+	size_t size_converted;
 
 	print_spaces(nested);
 	printf("Buffer begin\n");
@@ -60,11 +61,19 @@ int process_buffer(BufferHandle buffer, int nested)
 	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetSize(buffer, &size));
 	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(buffer, &data));
 
-	local_string = calloc(sizeof(char), size + 1);
-	memcpy(local_string, data, size);
+	if (size >= SIZE_MAX)
+		return GOTCHANG_PDF_ERROR_GENERAL;
+
+	size_converted = (size_t)size;
+
+	local_string = calloc(sizeof(char), size_converted + 1);
+	if (NULL == local_string)
+		return GOTCHANG_PDF_ERROR_GENERAL;
+
+	memcpy(local_string, data, size_converted);
 
 	print_spaces(nested + 1);
-	printf("Size: %lld\n", size);
+	printf("Size: %d\n", size_converted);
 	print_spaces(nested + 1);
 	printf("Data: %s\n", local_string);
 
@@ -113,10 +122,6 @@ int process(ObjectHandle obj, int nested)
 
 	switch (type)
 	{
-	case Unknown:
-		print_spaces(nested);
-		printf("UNRECOGNIZED OBJECT TYPE!\n");
-		return GOTCHANG_PDF_ERROR_GENERAL;
 	case Array:
 		print_spaces(nested);
 		printf("Array begin\n");

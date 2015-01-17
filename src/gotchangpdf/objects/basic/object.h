@@ -12,7 +12,6 @@ namespace gotchangpdf
 	public:
 		enum class Type : unsigned char
 		{
-			Unknown = 0,
 			Array,
 			Boolean,
 			Dictionary,

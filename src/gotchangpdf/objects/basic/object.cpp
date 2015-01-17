@@ -11,8 +11,6 @@ namespace gotchangpdf
 
 		switch (type)
 		{
-		case Type::Unknown:
-			return "Unknown";
 		case Type::Array:
 			return "Array";
 		case Type::Boolean:
