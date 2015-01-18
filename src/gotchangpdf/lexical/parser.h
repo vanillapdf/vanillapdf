@@ -3,8 +3,6 @@
 
 #include "fwd.h"
 #include "lexical_stream.h"
-#include "direct_object.h"
-#include "deferred.h"
 
 namespace gotchangpdf
 {
@@ -13,8 +11,8 @@ namespace gotchangpdf
 		class Parser : public lexical::Stream
 		{
 		public:
-			Parser(files::File * file, CharacterSource & stream);
-			Parser(const Parser & other);
+			Parser(files::File * file, CharacterSource & stream) : lexical::Stream(stream), _file(file) {}
+			Parser(const Parser & other) : lexical::Stream(other) { _file = other.file(); }
 
 			files::File * file(void) const;
 

@@ -13,7 +13,7 @@ namespace gotchangpdf
 	class BooleanObject;
 	class DictionaryObject;
 	class FunctionObject;
-	class IndirectObject;
+	//class IndirectObject;
 	class IndirectObjectReference;
 	class IntegerObject;
 	class NameObject;
@@ -96,7 +96,6 @@ namespace gotchangpdf
 	using MixedArrayObjectPtr = Deferred<MixedArrayObject>;
 	using BooleanObjectPtr = Deferred<BooleanObject>;
 	using FunctionObjectPtr = Deferred<FunctionObject>;
-	using IndirectObjectPtr = Deferred<IndirectObject>;
 	using IndirectObjectReferencePtr = Deferred<IndirectObjectReference>;
 	using IntegerObjectPtr = Deferred<IntegerObject>;
 	using NullObjectPtr = Deferred<NullObject>;

@@ -27,8 +27,6 @@ extern "C"
 
 	typedef enum ObjectType* PObjectType;
 
-	DECLARE_OBJECT_HANDLE(Indirect);
-
 	/* Basic */
 	DECLARE_OBJECT_HANDLE(Object);
 

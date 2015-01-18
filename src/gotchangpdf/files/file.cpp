@@ -1,6 +1,5 @@
 #include "file.h"
 
-#include "indirect_object.h"
 #include "lexical_reverse_stream.h"
 #include "spirit_parser.h"
 #include "exception.h"
@@ -53,7 +52,7 @@ namespace gotchangpdf
 			if (_initialized)
 				return;
 
-			_cache = vector<IndirectObjectPtr>();
+			_cache = vector<DirectObject>();
 
 			//TODO check if file exists
 
@@ -93,7 +92,7 @@ namespace gotchangpdf
 			return item->Initialized();
 		}
 
-		IndirectObjectPtr File::GetIndirectObject(types::integer objNumber,
+		DirectObject File::GetIndirectObject(types::integer objNumber,
 			types::ushort genNumber)
 		{
 			LOG_DEBUG << "GetIndirectObject " << objNumber << " and " << genNumber;
@@ -109,11 +108,12 @@ namespace gotchangpdf
 				} BOOST_SCOPE_EXIT_END;
 				auto parser = SpiritParser(this, *_input);
 				auto offset = item->GetOffset();
-				auto object = parser.ReadIndirectObject(offset);
+				auto object = parser.ReadDirectObject(offset);
 				item->SetReference(object);
 				item->SetInitialized(true);
 			}
 
+			auto result = item->GetReference();
 			return item->GetReference();
 		}
 

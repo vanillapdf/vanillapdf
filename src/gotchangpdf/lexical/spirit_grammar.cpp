@@ -13,35 +13,54 @@
 	boost::spirit::domain_::domain, name##_expr_type);                          \
 	BOOST_AUTO(name, boost::proto::deep_copy(expr));                            \
 
-void indirect_reference_handler(gotchangpdf::IndirectObjectReferencePtr obj, gotchangpdf::files::File* file)
+using namespace gotchangpdf;
+
+void direct_object_file_handler(DirectObject obj, files::File* file)
 {
-	obj->SetFile(file);
+	ObjectBaseVisitor visitor;
+	auto base = obj.apply_visitor(visitor);
+	base->SetFile(file);
 }
 
-void dictionary_item_handler(gotchangpdf::DictionaryObjectPtr obj, gotchangpdf::DirectObject item)
+void direct_object_offset_handler(DirectObject obj, types::stream_offset offset)
 {
-	gotchangpdf::ContainableVisitor visitor;
+	ObjectBaseVisitor visitor;
+	auto base = obj.apply_visitor(visitor);
+	base->SetOffset(offset);
+}
+
+void indirect_object_handler(DirectObject obj, IntegerObjectPtr obj_number, IntegerObjectPtr gen_number)
+{
+	ObjectBaseVisitor visitor;
+	auto base = obj.apply_visitor(visitor);
+	base->SetObjectNumber(obj_number->Value());
+	base->SetGenerationNumber(gen_number->Value());
+}
+
+void dictionary_item_handler(DictionaryObjectPtr obj, ContainableObject item)
+{
+	ContainableVisitor visitor;
 	auto containable = item.apply_visitor(visitor);
 	containable->SetContainer(obj);
 }
 
-void array_item_handler(gotchangpdf::MixedArrayObjectPtr obj, gotchangpdf::DirectObject item)
+void array_item_handler(MixedArrayObjectPtr obj, ContainableObject item)
 {
-	gotchangpdf::ContainableVisitor visitor;
+	ContainableVisitor visitor;
 	auto containable = item.apply_visitor(visitor);
 	containable->SetContainer(obj);
 }
 
-void stream_item_handler(gotchangpdf::DictionaryObjectPtr obj, gotchangpdf::types::stream_size& value)
+void stream_item_handler(DictionaryObjectPtr obj, types::stream_size& value)
 {
-	auto size_raw = obj->Find(gotchangpdf::constant::Name::Length);
-	gotchangpdf::KillIndirectionVisitor<gotchangpdf::IntegerObjectPtr> visitor;
-	gotchangpdf::IntegerObjectPtr size = size_raw.apply_visitor(visitor);
+	auto size_raw = obj->Find(constant::Name::Length);
+	KillIndirectionVisitor<gotchangpdf::IntegerObjectPtr> visitor;
+	IntegerObjectPtr size = size_raw.apply_visitor(visitor);
 
-	value = static_cast<gotchangpdf::types::stream_size>(*size);
+	value = static_cast<types::stream_size>(*size);
 }
 /*
-std::ostream& operator<<(std::ostream& os, const boost::spirit::qi::rule<gotchangpdf::lexical::pos_iterator_type, gotchangpdf::IndirectObjectPtr(gotchangpdf::files::File*)> param)
+std::ostream& operator<<(std::ostream& os, const boost::spirit::qi::rule<gotchangpdf::lexical::pos_iterator_type, gotchangpdf::DirectObject(gotchangpdf::files::File*)> param)
 {
 	return os;
 }
@@ -61,25 +80,72 @@ namespace gotchangpdf
 		BOOST_SPIRIT_AUTO(qi, eol, -qi::lit('\r') >> qi::lit('\n'));
 
 		DirectObjectGrammar::DirectObjectGrammar() :
-			base_type(direct_object, "Direct object grammar")
+			base_type(start, "Direct object grammar")
 		{
+			//start %= direct_object[phoenix::bind(&direct_object_handler, qi::_1, qi::_r1, qi::_r2)];
+
+			start %=
+				(
+					qi::omit[object_number[qi::_a = qi::_1]]
+					>> whitespace
+					>> qi::omit[generation_number[qi::_b = qi::_1]]
+					>> whitespace
+					>> qi::lit("obj")
+					>> whitespaces
+					>> direct_object(qi::_r1)
+					[
+						phoenix::bind(&direct_object_offset_handler, qi::_1, qi::_r2),
+						phoenix::bind(&indirect_object_handler, qi::_val, qi::_a, qi::_b)
+					]
+					> whitespaces
+					> qi::lit("endobj")
+				) | direct_object(qi::_r1)
+				[
+					phoenix::bind(&direct_object_offset_handler, qi::_1, qi::_r2)
+				];
+
+			object_number %=
+				qi::eps
+				>> qi::int_;
+
+			generation_number %=
+				qi::eps
+				>> qi::ushort_;
+
 			boolean_object %=
 				qi::eps
 				>> qi::bool_;
 
 			direct_object %=
+				(
 				array_object(qi::_r1)
 				| boolean_object
 				| stream_object(qi::_r1)
 				| dictionary_object(qi::_r1)
 				| function_object
-				| indirect_object_reference[phoenix::bind(&indirect_reference_handler, qi::_1, qi::_r1)]
+				| indirect_object_reference
 				| real_object
 				| integer_object
 				| name_object
 				| null_object
 				| literal_string_object
-				| hexadecimal_string_object;
+				| hexadecimal_string_object
+				)[phoenix::bind(&direct_object_file_handler, qi::_1, qi::_r1)];
+
+			containable_object %=
+				(
+				array_object(qi::_r1)
+				| boolean_object
+				| dictionary_object(qi::_r1)
+				| function_object
+				| indirect_object_reference
+				| real_object
+				| integer_object
+				| name_object
+				| null_object
+				| literal_string_object
+				| hexadecimal_string_object
+				)[phoenix::bind(&direct_object_file_handler, qi::_1, qi::_r1)];
 
 			null_object %=
 				qi::eps
@@ -117,7 +183,7 @@ namespace gotchangpdf
 				qi::lit('[')
 				> whitespaces
 				> *(
-				direct_object(qi::_r1)[phoenix::bind(&array_item_handler, qi::_val, qi::_1)]
+				containable_object(qi::_r1)[phoenix::bind(&array_item_handler, qi::_val, qi::_1)]
 				>> whitespaces
 				)
 				> qi::lit(']');
@@ -128,7 +194,7 @@ namespace gotchangpdf
 				> *(
 				name_object
 				>> whitespaces
-				>> direct_object(qi::_r1)[phoenix::bind(&dictionary_item_handler, qi::_val, qi::_1)]
+				>> containable_object(qi::_r1)[phoenix::bind(&dictionary_item_handler, qi::_val, qi::_1)]
 				>> whitespaces
 				)
 				> qi::lit(">>");
@@ -148,6 +214,7 @@ namespace gotchangpdf
 				>> *(qi::char_ - qi::char_('()')) // TODO there can be balanced or escaped
 				> qi::lit(")");
 
+			BOOST_SPIRIT_DEBUG_NODE(start);
 			BOOST_SPIRIT_DEBUG_NODE(boolean_object);
 			BOOST_SPIRIT_DEBUG_NODE(direct_object);
 			BOOST_SPIRIT_DEBUG_NODE(indirect_object_reference);
@@ -157,31 +224,6 @@ namespace gotchangpdf
 			BOOST_SPIRIT_DEBUG_NODE(dictionary_object);
 			BOOST_SPIRIT_DEBUG_NODE(literal_string_object);
 			//BOOST_SPIRIT_DEBUG_NODE(stream_object);
-		}
-
-		IndirectObjectGrammar::IndirectObjectGrammar() :
-			base_type(indirect_object, "Indirect object grammar")
-		{
-			indirect_object %=
-				object_number
-				>> whitespace
-				>> generation_number
-				>> whitespace
-				>> qi::lit("obj")
-				>> whitespaces
-				>> direct_object(qi::_r1)
-				> whitespaces
-				> qi::lit("endobj");
-
-			object_number %=
-				qi::eps
-				>> qi::int_;
-
-			generation_number %=
-				qi::eps
-				>> qi::ushort_;
-
-			BOOST_SPIRIT_DEBUG_NODE(indirect_object);
 		}
 	}
 }

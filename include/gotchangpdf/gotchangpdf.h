@@ -18,7 +18,6 @@
 /* objects */
 #include "c_array_object.h"
 #include "c_dictionary_object.h"
-#include "c_indirect_object.h"
 #include "c_indirect_object_reference.h"
 #include "c_integer_object.h"
 #include "c_name_object.h"

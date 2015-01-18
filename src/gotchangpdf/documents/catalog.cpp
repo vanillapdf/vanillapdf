@@ -1,5 +1,4 @@
 #include "catalog.h"
-#include "indirect_object.h"
 #include "dictionary_object.h"
 #include "exception.h"
 #include "indirect_object_reference.h"

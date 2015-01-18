@@ -1,11 +1,11 @@
 #include "file.h"
 #include "xref.h"
-#include "indirect_object.h"
 #include "catalog.h"
 
 #include "c_file.h"
 #include "c_helper.h"
 
+using namespace gotchangpdf;
 using namespace gotchangpdf::files;
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Create(const char *filename, PFileHandle result)
@@ -71,7 +71,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Xref(FileHandle handle, PXre
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
-	FileHandle handle, int objNumber, int genNumber, PIndirectHandle result)
+	FileHandle handle, int objNumber, int genNumber, PObjectHandle result)
 {
 	File* file = reinterpret_cast<File*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
@@ -81,9 +81,10 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
 	try
 	{
 		auto item = file->GetIndirectObject(objNumber, genNumber);
-		auto ptr = item.AddRefGet();
+		ObjectBaseAddRefVisitor visitor;
+		auto ptr = item.apply_visitor(visitor);
 
-		*result = reinterpret_cast<IndirectHandle>(ptr);
+		*result = reinterpret_cast<ObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS

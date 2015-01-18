@@ -70,13 +70,13 @@ namespace gotchangpdf
 		value_type _list;
 	};
 
-	class MixedArrayObject : public ArrayObject<DirectObject>
+	class MixedArrayObject : public ArrayObject<ContainableObject>
 	{
 	public:
 		template <typename T>
 		ArrayObjectPtr<T> CastToArrayType()
 		{
-			return Convert<T>([](DirectObject obj)
+			return Convert<T>([](ContainableObject obj)
 			{
 				ObjectVisitor<T> visitor;
 				return obj.apply_visitor(visitor);

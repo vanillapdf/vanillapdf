@@ -6,10 +6,11 @@
 namespace gotchangpdf
 {
 	IndirectObjectReference::IndirectObjectReference(files::File * file, IntegerObjectPtr obj_number, IntegerObjectPtr gen_number) :
-		_file(file), _obj_number(obj_number), _gen_number(gen_number)
+		_obj_number(obj_number), _gen_number(gen_number)
 	{
-		assert(nullptr != _file);
+		assert(nullptr != file);
 
+		_file = file;
 		if (_file->IsIndirectObjectIntialized(_obj_number->Value(), _gen_number->Value())) {
 			_object = _file->GetIndirectObject(_obj_number->Value(), _gen_number->Value());
 			_initialized = true;
@@ -35,7 +36,7 @@ namespace gotchangpdf
 		}
 	}
 
-	void IndirectObjectReference::SetObject(files::File * file, IndirectObjectPtr obj)
+	void IndirectObjectReference::SetObject(files::File * file, DirectObject obj)
 	{
 		assert(nullptr != file);
 
@@ -44,7 +45,7 @@ namespace gotchangpdf
 		_initialized = true;
 	}
 
-	IndirectObjectPtr IndirectObjectReference::GetReferencedObject() const
+	DirectObject IndirectObjectReference::GetReferencedObject() const
 	{
 		if (!_initialized) {
 			_object = _file->GetIndirectObject(_obj_number->Value(), _gen_number->Value());
@@ -52,6 +53,11 @@ namespace gotchangpdf
 		}
 
 		return _object;
+	}
+
+	bool IndirectObjectReference::Equals(const IndirectObjectReference& other) const
+	{
+		return _obj_number->Equals(*other._obj_number) && _gen_number->Equals(*other._gen_number);
 	}
 
 	bool IndirectObjectReference::operator<(const IndirectObjectReference& other) const

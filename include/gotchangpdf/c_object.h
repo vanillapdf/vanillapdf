@@ -11,7 +11,8 @@ extern "C"
 #endif
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Type(ObjectHandle handle, PObjectType result);
-	GOTCHANG_PDF_API error_type Object_TypeName(enum ObjectType type, out_string_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_TypeName(enum ObjectType type, out_string_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle handle, out_offset_type result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Release(ObjectHandle handle);
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToArray(ObjectHandle handle, PArrayHandle result);

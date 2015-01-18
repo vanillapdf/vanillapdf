@@ -2,6 +2,7 @@
 #define _XREF_H
 
 #include "fwd.h"
+#include "direct_object.h"
 #include "unknown_interface.h"
 #include "constants.h"
 
@@ -16,8 +17,8 @@ namespace gotchangpdf
 		public:
 			XrefEntry() = default;
 
-			IndirectObjectPtr GetReference(void) const { return _reference; }
-			void SetReference(IndirectObjectPtr ref) { _reference = ref; }
+			DirectObject GetReference(void) const { return _reference; }
+			void SetReference(DirectObject ref) { _reference = ref; }
 
 			types::integer GetObjectNumber(void) const { return _obj_number; }
 			void SetObjectNumber(types::integer value) { _obj_number = value; }
@@ -35,7 +36,7 @@ namespace gotchangpdf
 			void SetInitialized(bool value) { _initialized = value; }
 
 		private:
-			IndirectObjectPtr _reference;
+			DirectObject _reference;
 			types::integer _obj_number;
 			types::ushort _gen_number;
 			types::stream_offset _offset;

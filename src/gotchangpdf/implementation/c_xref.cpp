@@ -1,5 +1,6 @@
 #include "xref.h"
-#include "indirect_object.h"
+
+#include "object_visitors.h"
 
 #include "c_xref.h"
 #include "c_values.h"
@@ -64,7 +65,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle
 	C_INTERFACE_EXCEPTION_HANDLERS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Reference(XrefEntryHandle handle, PIndirectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Reference(XrefEntryHandle handle, PObjectHandle result)
 {
 	XrefEntry* entry = reinterpret_cast<XrefEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -72,10 +73,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Reference(XrefEntryHand
 
 	try
 	{
-		IndirectObjectPtr indirect = entry->GetReference();
-		IndirectObject *ptr = indirect.AddRefGet();
+		auto direct = entry->GetReference();
+		ObjectBaseAddRefVisitor visitor;
+		auto base = direct.apply_visitor(visitor);
 
-		*result = reinterpret_cast<IndirectHandle>(ptr);
+		*result = reinterpret_cast<ObjectHandle>(base);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS

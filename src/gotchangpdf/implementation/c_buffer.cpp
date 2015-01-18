@@ -32,3 +32,16 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_GetData(BufferHandle handl
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS
 }
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_Release(BufferHandle handle)
+{
+	Buffer* obj = reinterpret_cast<Buffer*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	try
+	{
+		obj->Release();
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}

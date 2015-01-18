@@ -5,6 +5,7 @@
 #include "smart_ptr.h"
 #include "file_device.h"
 #include "constants.h"
+#include "direct_object.h"
 
 #include <memory>
 #include <vector>
@@ -22,7 +23,7 @@ namespace gotchangpdf
 
 			void Initialize(void);
 			SmartPtr<documents::Catalog> GetDocumentCatalog(void) const;
-			IndirectObjectPtr GetIndirectObject(types::integer objNumber,
+			DirectObject GetIndirectObject(types::integer objNumber,
 				types::ushort genNumber);
 			bool IsIndirectObjectIntialized(types::integer objNumber,
 				types::ushort genNumber);
@@ -39,7 +40,7 @@ namespace gotchangpdf
 			HeaderPtr _header;
 			TrailerPtr _trailer;
 			XrefPtr _xref;
-			std::vector<IndirectObjectPtr> _cache;
+			std::vector<DirectObject> _cache;
 
 			bool _initialized = false;
 			std::string _filename;

@@ -11,7 +11,7 @@ extern "C"
 #endif
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_In_Use(XrefEntryHandle handle, out_boolean_type result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Reference(XrefEntryHandle handle, PIndirectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Reference(XrefEntryHandle handle, PObjectHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle handle);
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_Size(XrefHandle handle, out_integer_type result);

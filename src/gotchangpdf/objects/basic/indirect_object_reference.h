@@ -3,9 +3,8 @@
 
 #include "fwd.h"
 #include "object.h"
+#include "objects.h"
 #include "constants.h"
-#include "indirect_object.h"
-#include "integer_object.h"
 #include "containable.h"
 
 #include <memory>
@@ -19,13 +18,18 @@ namespace gotchangpdf
 			IntegerObjectPtr obj_number,
 			IntegerObjectPtr gen_number);
 
-		IndirectObjectReference(files::File * file, IndirectObjectPtr obj);
+		IndirectObjectReference(files::File * file, DirectObject obj);
 
-		IndirectObjectPtr GetReferencedObject() const;
-		inline IndirectObjectPtr operator->() const { return GetReferencedObject(); }
+		DirectObject GetReferencedObject() const;
+		inline DirectObject operator->() const { return GetReferencedObject(); }
 
 		template <typename T>
-		inline const T GetReferencedObjectAs() const { return GetReferencedObject()->GetObjectAs<T>(); }
+		inline const T GetReferencedObjectAs() const
+		{
+			ObjectVisitor<T> visitor;
+			auto direct = GetReferencedObject();
+			return direct.apply_visitor(visitor);
+		}
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::IndirectReference; }
 
@@ -33,14 +37,12 @@ namespace gotchangpdf
 			IntegerObjectPtr obj_number,
 			IntegerObjectPtr gen_number);
 
-		void SetObject(files::File * file, IndirectObjectPtr obj);
+		void SetObject(files::File * file, DirectObject obj);
 
 		inline IntegerObjectPtr GetObjectNumber() const { return _obj_number; }
 		inline IntegerObjectPtr GetGenerationNumber() const { return _gen_number; }
-		inline files::File* GetFile() const { return _file; }
-		inline void SetFile(files::File* file) { _file = file; }
 
-		inline bool Equals(const IndirectObjectReference& other) const { return _obj_number->Equals(*other._obj_number) && _gen_number->Equals(*other._gen_number); }
+		bool Equals(const IndirectObjectReference& other) const;
 
 		inline bool operator==(const IndirectObjectReference& other) const { return Equals(other); }
 		inline bool operator!=(const IndirectObjectReference& other) const { return !Equals(other); }
@@ -51,8 +53,7 @@ namespace gotchangpdf
 		IntegerObjectPtr _gen_number = 0;
 
 	private:
-		files::File * _file = nullptr;
-		mutable IndirectObjectPtr _object;
+		mutable DirectObject _object;
 		mutable bool _initialized = false;
 
 		explicit IndirectObjectReference() = default;

@@ -21,7 +21,7 @@ namespace gotchangpdf
 			T ReadDirectObjectWithType(types::stream_offset offset) { return DirectObjectGetAs<T>(ReadDirectObject(offset)); }
 
 			DirectObject ReadDirectObject(types::stream_offset offset);
-			IndirectObjectPtr ReadIndirectObject(types::stream_offset offset);
+			//DirectObject ReadIndirectObject(types::stream_offset offset);
 
 			files::File * file(void) const;
 

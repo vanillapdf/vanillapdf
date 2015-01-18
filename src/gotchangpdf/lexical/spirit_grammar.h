@@ -17,7 +17,8 @@ namespace gotchangpdf
 		namespace qi = boost::spirit::qi;
 
 		class DirectObjectGrammar : public qi::grammar<pos_iterator_type,
-			DirectObject(files::File*)>
+			DirectObject(files::File*, types::stream_offset),
+			qi::locals<IntegerObjectPtr, IntegerObjectPtr>>
 		{
 		public:
 			DirectObjectGrammar();
@@ -26,7 +27,9 @@ namespace gotchangpdf
 			template <typename A, typename... Inherited>
 			using Rule = qi::rule<pos_iterator_type, A(Inherited...)>;
 
+			qi::rule<pos_iterator_type, DirectObject(files::File*, types::stream_offset), qi::locals<IntegerObjectPtr, IntegerObjectPtr>> start;
 			Rule<DirectObject, files::File*> direct_object;
+			Rule<ContainableObject, files::File*> containable_object;
 			Rule<MixedArrayObjectPtr, files::File*> array_object;
 			Rule<BooleanObjectPtr> boolean_object;
 			Rule<DictionaryObjectPtr, files::File*> dictionary_object;
@@ -40,23 +43,10 @@ namespace gotchangpdf
 			Rule<LiteralStringPtr> literal_string_object;
 			Rule<HexadecimalStringPtr> hexadecimal_string_object;
 
-			qi::real_parser<float, qi::strict_real_policies<float>> strict_float_parser;
-		};
-
-		class IndirectObjectGrammar : public qi::grammar<pos_iterator_type,
-			IndirectObjectPtr(files::File*)>
-		{
-		public:
-			IndirectObjectGrammar();
-
-		private:
-			template <typename A, typename... Inherited>
-			using Rule = qi::rule<pos_iterator_type, A(Inherited...)>;
-
-			Rule<IndirectObjectPtr, files::File*> indirect_object;
 			Rule<IntegerObjectPtr> object_number;
 			Rule<IntegerObjectPtr> generation_number;
-			DirectObjectGrammar direct_object;
+
+			qi::real_parser<float, qi::strict_real_policies<float>> strict_float_parser;
 		};
 	}
 }

@@ -35,6 +35,21 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Type(ObjectHandle handle, 
 	C_INTERFACE_EXCEPTION_HANDLERS
 }
 
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle handle, out_offset_type result)
+{
+	Object* obj = reinterpret_cast<Object*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	LOG_SCOPE(obj->GetFile()->GetFilename());
+
+	try
+	{
+		*result = obj->GetOffset();
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Release(ObjectHandle handle)
 {
 	Object* obj = reinterpret_cast<Object*>(handle);

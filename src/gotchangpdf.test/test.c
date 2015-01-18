@@ -26,7 +26,7 @@ int process_page(PageObjectHandle obj, int nested)
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
-
+/*
 int process_indirect(IndirectHandle indirect, int nested)
 {
 	offset_type offset = 0;
@@ -47,7 +47,7 @@ int process_indirect(IndirectHandle indirect, int nested)
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
-
+*/
 int process_buffer(BufferHandle buffer, int nested)
 {
 	string_type data;
@@ -94,6 +94,7 @@ int process_name(NameHandle name, int nested)
 
 	RETURN_ERROR_IF_NOT_SUCCESS(NameObject_Value(name, &buffer));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(buffer, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(buffer));
 
 	print_spaces(nested);
 	printf("Name object end\n");
@@ -104,7 +105,6 @@ int process_name(NameHandle name, int nested)
 int process(ObjectHandle obj, int nested)
 {
 	int i, size, val, boolean;
-	IndirectHandle indirect;
 	IndirectReferenceHandle indirect_reference;
 	ArrayHandle arr;
 	IntegerHandle integer;
@@ -267,9 +267,9 @@ int process(ObjectHandle obj, int nested)
 
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToIndirectReference(obj, &indirect_reference));
 
-		RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedObject(indirect_reference, &indirect));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_indirect(indirect, nested + 1));
-		RETURN_ERROR_IF_NOT_SUCCESS(IndirectObject_Release(indirect));
+		RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedObject(indirect_reference, &child));
+		RETURN_ERROR_IF_NOT_SUCCESS(process(child, nested + 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(child));
 
 		print_spaces(nested);
 		printf("Indirect reference end\n");
@@ -299,10 +299,10 @@ int main(int argc, char *argv[])
 
 	for (i = 1; i < size; ++i)
 	{
-		IndirectHandle indirect = NULL;
-		RETURN_ERROR_IF_NOT_SUCCESS(File_GetIndirectObject(file, i, 0, &indirect));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_indirect(indirect, 0));
-		RETURN_ERROR_IF_NOT_SUCCESS(IndirectObject_Release(indirect));
+		ObjectHandle object = NULL;
+		RETURN_ERROR_IF_NOT_SUCCESS(File_GetIndirectObject(file, i, 0, &object));
+		RETURN_ERROR_IF_NOT_SUCCESS(process(object, 0));
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(object));
 	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(File_GetDocumentCatalog(file, &catalog));
@@ -315,7 +315,7 @@ int main(int argc, char *argv[])
 	{
 		PageObjectHandle page = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(pages, i, &page));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_page(page, 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_page(page, 0));
 		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(page));
 	}
 

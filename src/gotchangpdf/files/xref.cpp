@@ -1,6 +1,5 @@
 #include "xref.h"
 
-#include "indirect_object.h"
 #include "integer_object.h"
 #include "parser.h"
 #include "exception.h"

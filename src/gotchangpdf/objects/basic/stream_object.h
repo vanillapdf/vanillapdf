@@ -21,7 +21,6 @@ namespace gotchangpdf
 			OBJECT_STREAM
 		};
 
-		explicit StreamObject(files::File * file);
 		explicit StreamObject(const DictionaryObject& dictionary);
 
 		BufferPtr GetData() const;
@@ -38,8 +37,6 @@ namespace gotchangpdf
 	private:
 		mutable BufferPtr _data;
 		Type _type = Type::UNKNOWN;
-
-		files::File *_file;
 
 		explicit StreamObject() = default;
 		friend StreamObjectPtr;

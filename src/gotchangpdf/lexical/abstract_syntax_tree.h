@@ -66,13 +66,6 @@ gotchangpdf::HexadecimalStringPtr,
 (gotchangpdf::BufferPtr, Content->_value)
 )
 
-BOOST_FUSION_ADAPT_STRUCT(
-gotchangpdf::IndirectObjectPtr,
-(gotchangpdf::IntegerObjectPtr, Content->_obj_number)
-(gotchangpdf::IntegerObjectPtr, Content->_gen_number)
-(gotchangpdf::DirectObject, Content->_reference)
-)
-
 
 /*
 BOOST_FUSION_ADAPT_ADT(

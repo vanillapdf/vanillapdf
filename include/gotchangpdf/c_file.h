@@ -14,7 +14,7 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Release(FileHandle handle);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Xref(FileHandle handle, PXrefHandle result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(FileHandle handle, integer_type objNumber, integer_type genNumber, PIndirectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(FileHandle handle, integer_type objNumber, integer_type genNumber, PObjectHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetDocumentCatalog(FileHandle handle, PCatalogHandle result);
 
 #ifdef __cplusplus

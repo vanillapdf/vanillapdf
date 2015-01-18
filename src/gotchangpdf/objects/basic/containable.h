@@ -13,6 +13,21 @@ namespace gotchangpdf
 		DictionaryObjectPtr
 	> ContainerPtr;
 
+	typedef boost::variant <
+		// first is null object
+		NullObjectPtr,
+		MixedArrayObjectPtr,
+		NameObjectPtr,
+		DictionaryObjectPtr,
+		FunctionObjectPtr,
+		BooleanObjectPtr,
+		IndirectObjectReferencePtr,
+		IntegerObjectPtr,
+		RealObjectPtr,
+		LiteralStringPtr,
+		HexadecimalStringPtr
+	> ContainableObject;
+
 	class Containable
 	{
 	public:
