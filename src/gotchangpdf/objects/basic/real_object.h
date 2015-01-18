@@ -2,7 +2,6 @@
 #define _REAL_OBJECT_H
 
 #include "fwd.h"
-#include "constants.h"
 #include "object.h"
 #include "containable.h"
 
@@ -16,11 +15,8 @@ namespace gotchangpdf
 	public:
 		RealObject();
 		explicit RealObject(double value);
-		explicit RealObject(const lexical::Token& token);
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::Real; }
-
-		//virtual Object* Clone(void) const  override { return new RealObject(static_cast<RealObject const&>(*this)); };
 
 	//private:
 	public:

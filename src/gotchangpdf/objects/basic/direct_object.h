@@ -24,4 +24,6 @@ namespace gotchangpdf
 	> DirectObject;
 }
 
+#include "objects.h"
+
 #endif /* _DIRECT_OBJECT_H */

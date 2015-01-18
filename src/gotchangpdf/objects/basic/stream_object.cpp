@@ -1,8 +1,9 @@
 #include "stream_object.h"
 
 #include "file.h"
-#include "integer_object.h"
+#include "dictionary_object.h"
 #include "name_object.h"
+#include "integer_object.h"
 #include "raw_stream.h"
 #include "object_visitors.h"
 
@@ -11,7 +12,7 @@
 
 namespace gotchangpdf
 {
-	StreamObject::StreamObject(const DictionaryObject& dictionary) : _dictionary(dictionary) {}
+	StreamObject::StreamObject(DictionaryObjectPtr dictionary) : _dictionary(dictionary) {}
 
 	BufferPtr StreamObject::GetData() const
 	{

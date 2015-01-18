@@ -4,6 +4,7 @@
 #include "fwd.h"
 #include "lexical_stream.h"
 #include "direct_object.h"
+#include "object_visitors.h"
 
 #include <memory>
 
@@ -18,7 +19,12 @@ namespace gotchangpdf
 			SpiritParser(const SpiritParser & other);
 
 			template<typename T>
-			T ReadDirectObjectWithType(types::stream_offset offset) { return DirectObjectGetAs<T>(ReadDirectObject(offset)); }
+			T ReadDirectObjectWithType(types::stream_offset offset)
+			{
+				auto direct = ReadDirectObject(offset);
+				ObjectVisitor<T> visitor;
+				return direct.apply_visitor(visitor);
+			}
 
 			DirectObject ReadDirectObject(types::stream_offset offset);
 			//DirectObject ReadIndirectObject(types::stream_offset offset);

@@ -3,11 +3,12 @@
 
 #include "fwd.h"
 #include "object.h"
-#include "objects.h"
+#include "integer_object.h"
+#include "direct_object.h"
 #include "constants.h"
 #include "containable.h"
 
-#include <memory>
+//#include <memory>
 
 namespace gotchangpdf
 {

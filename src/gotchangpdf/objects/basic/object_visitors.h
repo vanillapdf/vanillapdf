@@ -5,7 +5,7 @@
 #include "direct_object.h"
 #include "exception.h"
 #include "indirect_object_reference.h"
-#include "stream_object.h"
+//#include "stream_object.h"
 
 #include <map>
 #include <sstream>
@@ -92,20 +92,6 @@ namespace gotchangpdf
 		template <typename U>
 		inline T operator()(const U& obj) const { throw exceptions::Exception("Type cast error"); }
 	};
-
-	class DirectToBaseVisitor : public boost::static_visitor<boost::intrusive_ptr<Object>>
-	{
-	public:
-		template <typename T>
-		inline boost::intrusive_ptr<Object> operator()(T& obj) const { return obj.Content.get(); }
-	};
-
-	template <typename T>
-	inline T DirectObjectGetAs(DirectObject obj)
-	{
-		ObjectVisitor<T> visitor;
-		return obj.apply_visitor(visitor);
-	}
 }
 
 #endif /* _OBJECT_VISITORS_H */

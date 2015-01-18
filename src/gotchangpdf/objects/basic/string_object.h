@@ -3,8 +3,8 @@
 
 #include "fwd.h"
 #include "object.h"
-#include "buffer.h"
 #include "containable.h"
+#include "buffer.h"
 
 namespace gotchangpdf
 {

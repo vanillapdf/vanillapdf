@@ -1,4 +1,5 @@
 #include "name_object.h"
+
 #include "token.h"
 
 #include <cassert>

@@ -1,4 +1,5 @@
 #include "integer_object.h"
+
 #include "lexical_reverse_stream.h"
 #include "lexical_stream.h"
 

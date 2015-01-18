@@ -2,10 +2,8 @@
 #define _DICTIONARY_OBJECT_H
 
 #include "fwd.h"
-#include "unknown_interface.h"
-#include "direct_object.h"
+#include "object.h"
 #include "object_visitors.h"
-//#include "name_object.h"
 #include "containable.h"
 
 //#include <unordered_map>
