@@ -31,12 +31,17 @@ gotchangpdf::NameObjectPtr,
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::MixedArrayObjectPtr,
-(gotchangpdf::MixedArrayObject::value_type, Content->_list)
+(gotchangpdf::MixedArrayObject::list_type, Content->_list)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::DictionaryObjectPtr,
-(gotchangpdf::DictionaryObject::value_type, Content->_list)
+(gotchangpdf::DictionaryObject::list_type, Content->_list)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::DictionaryObject,
+(gotchangpdf::DictionaryObject::list_type, _list)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
@@ -52,7 +57,7 @@ gotchangpdf::RealObjectPtr,
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::StreamObjectPtr,
-(gotchangpdf::DictionaryObjectPtr, Content->_dictionary)
+(gotchangpdf::DictionaryObjectPtr, Content->_header)
 (gotchangpdf::types::stream_offset, Content->_raw_data_offset)
 )
 

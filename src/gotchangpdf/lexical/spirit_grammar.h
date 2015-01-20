@@ -33,6 +33,7 @@ namespace gotchangpdf
 			Rule<MixedArrayObjectPtr, files::File*> array_object;
 			Rule<BooleanObjectPtr> boolean_object;
 			Rule<DictionaryObjectPtr, files::File*> dictionary_object;
+			Rule<DictionaryObject, files::File*> dictionary_object_raw;
 			Rule<FunctionObjectPtr> function_object;
 			Rule<IndirectObjectReferencePtr> indirect_object_reference;
 			Rule<IntegerObjectPtr> integer_object;

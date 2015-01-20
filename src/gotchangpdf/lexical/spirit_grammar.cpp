@@ -29,7 +29,7 @@ void direct_object_offset_handler(DirectObject obj, types::stream_offset offset)
 	base->SetOffset(offset);
 }
 
-void indirect_object_handler(DirectObject obj, IntegerObjectPtr obj_number, IntegerObjectPtr gen_number)
+void indirect_object_handler(DirectObject obj, const IntegerObjectPtr obj_number, const IntegerObjectPtr gen_number)
 {
 	ObjectBaseVisitor visitor;
 	auto base = obj.apply_visitor(visitor);
@@ -37,21 +37,21 @@ void indirect_object_handler(DirectObject obj, IntegerObjectPtr obj_number, Inte
 	base->SetGenerationNumber(gen_number->Value());
 }
 
-void dictionary_item_handler(DictionaryObjectPtr obj, ContainableObject item)
+void dictionary_item_handler(const DictionaryObjectPtr obj, ContainableObject item)
 {
 	ContainableVisitor visitor;
 	auto containable = item.apply_visitor(visitor);
 	containable->SetContainer(obj);
 }
 
-void array_item_handler(MixedArrayObjectPtr obj, ContainableObject item)
+void array_item_handler(const MixedArrayObjectPtr obj, ContainableObject item)
 {
 	ContainableVisitor visitor;
 	auto containable = item.apply_visitor(visitor);
 	containable->SetContainer(obj);
 }
 
-void stream_item_handler(DictionaryObjectPtr obj, types::stream_size& value)
+void stream_item_handler(const DictionaryObjectPtr& obj, types::stream_size& value)
 {
 	auto size_raw = obj->Find(constant::Name::Length);
 	KillIndirectionVisitor<gotchangpdf::IntegerObjectPtr> visitor;
@@ -82,8 +82,6 @@ namespace gotchangpdf
 		DirectObjectGrammar::DirectObjectGrammar() :
 			base_type(start, "Direct object grammar")
 		{
-			//start %= direct_object[phoenix::bind(&direct_object_handler, qi::_1, qi::_r1, qi::_r2)];
-
 			start %=
 				(
 					qi::omit[object_number[qi::_a = qi::_1]]
@@ -199,8 +197,19 @@ namespace gotchangpdf
 				)
 				> qi::lit(">>");
 
-			stream_object =
-				dictionary_object(qi::_r1)[qi::_a = qi::_1]
+			dictionary_object_raw %=
+				qi::lit("<<")
+				> whitespaces
+				> *(
+				name_object
+				>> whitespaces
+				>> containable_object(qi::_r1)[phoenix::bind(&dictionary_item_handler, qi::_val, qi::_1)]
+				>> whitespaces
+				)
+				> qi::lit(">>");
+
+			stream_object %=
+				dictionary_object_raw(qi::_r1)[qi::_a = qi::_1]
 				>> whitespaces
 				>> qi::lit("stream")[phoenix::bind(&stream_item_handler, qi::_a, qi::_b)]
 				> eol
