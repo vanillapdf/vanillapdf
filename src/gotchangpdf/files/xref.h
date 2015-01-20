@@ -53,7 +53,7 @@ namespace gotchangpdf
 				STREAM
 			};
 
-			friend lexical::Parser& operator>> (lexical::Parser& s, Xref& o);
+			friend lexical::SpiritParser& operator>> (lexical::SpiritParser& s, Xref& o);
 
 		private:
 			Type _type = Type::TABLE;

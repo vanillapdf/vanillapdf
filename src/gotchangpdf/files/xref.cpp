@@ -1,7 +1,7 @@
 #include "xref.h"
 
+#include "spirit_parser.h"
 #include "integer_object.h"
-#include "parser.h"
 #include "exception.h"
 #include "character.h"
 
@@ -17,7 +17,7 @@ namespace gotchangpdf
 		using namespace exceptions;
 		using namespace character;
 
-		XrefEntryPtr ReadEntry(lexical::Parser& s, types::integer objNumber)
+		XrefEntryPtr ReadEntry(lexical::SpiritParser& s, types::integer objNumber)
 		{
 			char sp1, sp2, key, eol1, eol2;
 			Token offset, number;
@@ -55,14 +55,14 @@ namespace gotchangpdf
 			return result;
 		}
 
-		Parser& operator>>(Parser& s, Xref& o)
+		SpiritParser& operator>>(SpiritParser& s, Xref& o)
 		{
 			// XRef stream
 			if (s.PeekTokenType() == Token::Type::INTEGER_OBJECT)
 			{
-				//auto obj = s.readObject();
-
-				// TODO process
+				auto xref = s.ReadDirectObjectWithType<StreamObjectPtr>();
+				auto header = xref->GetHeader();
+				auto body = xref->GetBody();
 
 				return s;
 			}
