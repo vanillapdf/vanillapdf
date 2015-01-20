@@ -2,9 +2,8 @@
 #define _CATALOG_H
 
 #include "fwd.h"
-#include "page_tree.h"
-#include "deferred.h"
 #include "high_level_object.h"
+#include "page_tree.h"
 
 namespace gotchangpdf
 {

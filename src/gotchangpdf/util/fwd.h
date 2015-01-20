@@ -42,7 +42,13 @@ namespace gotchangpdf
 	{
 		class Document;
 		class Catalog;
+		class PageNode;
 		class PageTree;
+		class PageTreeNode;
+		class PageObject;
+
+		class ResourceDictionary;
+		class Rectangle;
 	}
 
 	namespace exceptions
@@ -86,14 +92,18 @@ namespace gotchangpdf
 		class BaseStream;
 		class Stream;
 		class ReverseStream;
+		class SpiritParser;
 	}
+
+	using BufferPtr = DeferredContainer<Buffer>;
 
 	template <typename T>
 	using ArrayObjectPtr = Deferred<ArrayObject<T>>;
 
-	using NameObjectPtr = Deferred<NameObject>;
 	using DictionaryObjectPtr = Deferred<DictionaryObject>;
 	using MixedArrayObjectPtr = Deferred<MixedArrayObject>;
+
+	using NameObjectPtr = Deferred<NameObject>;
 	using BooleanObjectPtr = Deferred<BooleanObject>;
 	using FunctionObjectPtr = Deferred<FunctionObject>;
 	using IndirectObjectReferencePtr = Deferred<IndirectObjectReference>;
@@ -104,12 +114,18 @@ namespace gotchangpdf
 	using LiteralStringPtr = Deferred<LiteralString>;
 	using HexadecimalStringPtr = Deferred<HexadecimalString>;
 
-	using BufferPtr = DeferredContainer<Buffer>;
-
 	using XrefEntryPtr = Deferred<files::XrefEntry>;
 	using HeaderPtr = Deferred<files::Header>;
 	using TrailerPtr = Deferred<files::Trailer>;
 	using XrefPtr = Deferred<files::Xref>;
+
+	using PageTreePtr = SmartPtr<documents::PageTree>;
+	using PageTreeNodePtr = SmartPtr<documents::PageTreeNode>;
+	using PageObjectPtr = SmartPtr<documents::PageObject>;
+	using PageNodePtr = SmartPtr<documents::PageNode>;
+	using ResourceDictionaryPtr = SmartPtr<documents::ResourceDictionary>;
+	using RectanglePtr = SmartPtr<documents::Rectangle>;
+	using CatalogPtr = SmartPtr<documents::Catalog>;
 }
 
 #endif /* _FWD_H */

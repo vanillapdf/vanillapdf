@@ -23,11 +23,21 @@ namespace gotchangpdf
 			{
 				auto direct = ReadDirectObject(offset);
 				ObjectVisitor<T> visitor;
-				return direct.apply_visitor(visitor);
+				auto converted = direct.apply_visitor(visitor);
+				return converted;
 			}
 
+			template<typename T>
+			T ReadDirectObjectWithType(void)
+			{
+				auto direct = ReadDirectObject();
+				ObjectVisitor<T> visitor;
+				auto converted = direct.apply_visitor(visitor);
+				return converted;
+			}
+
+			DirectObject ReadDirectObject(void);
 			DirectObject ReadDirectObject(types::stream_offset offset);
-			//DirectObject ReadIndirectObject(types::stream_offset offset);
 
 			files::File * file(void) const;
 

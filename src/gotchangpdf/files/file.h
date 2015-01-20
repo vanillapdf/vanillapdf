@@ -2,7 +2,6 @@
 #define _FILE_H
 
 #include "fwd.h"
-#include "smart_ptr.h"
 #include "file_device.h"
 #include "constants.h"
 #include "direct_object.h"
@@ -22,7 +21,7 @@ namespace gotchangpdf
 			~File(void);
 
 			void Initialize(void);
-			SmartPtr<documents::Catalog> GetDocumentCatalog(void) const;
+			CatalogPtr GetDocumentCatalog(void) const;
 			DirectObject GetIndirectObject(types::integer objNumber,
 				types::ushort genNumber);
 			bool IsIndirectObjectIntialized(types::integer objNumber,

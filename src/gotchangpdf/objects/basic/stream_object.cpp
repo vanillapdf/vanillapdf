@@ -12,16 +12,16 @@
 
 namespace gotchangpdf
 {
-	StreamObject::StreamObject(DictionaryObjectPtr dictionary) : _dictionary(dictionary) {}
+	StreamObject::StreamObject(DictionaryObjectPtr dictionary) : _header(dictionary) {}
 
-	BufferPtr StreamObject::GetData() const
+	BufferPtr StreamObject::GetBody() const
 	{
-		if (_data->empty())
+		if (_body->empty())
 		{
 			auto stream = _file->GetInputStream();
 			if (auto locked = stream.lock())
 			{
-				auto size_raw = _dictionary->Find(constant::Name::Length);
+				auto size_raw = _header->Find(constant::Name::Length);
 				KillIndirectionVisitor<IntegerObjectPtr> visitor;
 				IntegerObjectPtr size = size_raw.apply_visitor(visitor);
 
@@ -30,7 +30,7 @@ namespace gotchangpdf
 				auto stream = raw::Stream(*locked);
 				auto pos = stream.tellg();
 				stream.seekg(_raw_data_offset);
-				_data = stream.read(len);
+				_body = stream.read(len);
 				stream.seekg(pos);
 			}
 			else
@@ -39,16 +39,16 @@ namespace gotchangpdf
 			}
 		}
 
-		auto filter = _dictionary->Find(constant::Name::Filter);
+		auto filter = _header->Find(constant::Name::Filter);
 		if (filter.empty())
-			return _data;
+			return _body;
 
 		ObjectVisitor<NameObject> visitor;
 		auto filter_name = filter.apply_visitor(visitor);
 
 		// TODO
 		filters::FlateDecodeFilter a;
-		return a.Decode(_data);
+		return a.Decode(_body);
 		//return ((Filters::FlateDecodeFilter*)(&*filter_name))->Apply(*_data);
 	}
 }

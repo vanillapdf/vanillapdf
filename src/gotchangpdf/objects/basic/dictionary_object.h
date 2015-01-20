@@ -18,16 +18,19 @@ namespace gotchangpdf
 	class DictionaryObjectBase : public Containable, public Object
 	{
 	public:
-		//typedef std::unordered_map<NameT, ValueT, std::hash<NameT>> value_type;
-		typedef std::map<NameT, ValueT> value_type;
-		//typedef std::vector<std::pair<NameT, ValueT>> value_type;
+		//typedef std::unordered_map<NameT, ValueT, std::hash<NameT>> list_type;
+		typedef std::map<NameT, ValueT> list_type;
+		//typedef std::vector<std::pair<NameT, ValueT>> list_type;
+
+		typedef typename list_type::value_type value_type;
+		typedef typename list_type::iterator iterator;
+		typedef typename list_type::const_iterator const_iterator;
+		typedef typename list_type::size_type size_type;
+		typedef typename list_type::reference reference;
 
 	public:
 		class Iterator : public IUnknown
 		{
-		public:
-			typedef typename value_type::const_iterator const_iterator;
-
 		public:
 			Iterator() = default;
 			Iterator(typename const_iterator it) : _it(it) {}
@@ -70,8 +73,8 @@ namespace gotchangpdf
 			return result.apply_visitor(visitor);
 		}
 
-		const value_type& GetMap(void) const { return _list; }
-		void SetMap(value_type& list) { _list = list; }
+		const list_type& GetMap(void) const { return _list; }
+		void SetMap(list_type& list) { _list = list; }
 
 		IteratorPtr Begin(void) const
 		{
@@ -81,6 +84,22 @@ namespace gotchangpdf
 		IteratorPtr End(void) const
 		{
 			return Iterator(_list.end());
+		}
+
+		const_iterator begin(void) const
+		{
+			return _list.begin();
+		}
+
+		const_iterator end(void) const
+		{
+			return _list.end();
+		}
+
+		iterator insert(const_iterator pos,
+			const value_type& value)
+		{
+			return _list.insert(pos, value);
 		}
 
 		ValueT Find(const NameT& name) const
@@ -95,9 +114,19 @@ namespace gotchangpdf
 			return result->second;
 		}
 
+		bool TryFind(const NameT& name, ValueT& result) const
+		{
+			auto item = _list.find(name);
+			if (item == _list.end())
+				return false;
+
+			result = item->second;
+			return true;
+		}
+
 		//private:
 	public:
-		value_type _list;
+		list_type _list;
 	};
 
 	class DictionaryObject : public DictionaryObjectBase<NameObjectPtr, ContainableObject>

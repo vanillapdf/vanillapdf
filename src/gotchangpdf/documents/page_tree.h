@@ -1,11 +1,10 @@
 #ifndef _PAGE_TREE_H
 #define _PAGE_TREE_H
 
+#include "fwd.h"
 #include "high_level_object.h"
-#include "deferred.h"
-#include "dictionary_object.h"
-#include "page_object.h"
 #include "page_tree_node.h"
+#include "page_object.h"
 
 namespace gotchangpdf
 {
@@ -17,7 +16,7 @@ namespace gotchangpdf
 			//PageTree();
 			explicit PageTree(DictionaryObjectPtr root);
 
-			inline IntegerObject::value_type PageCount(void) const { return _root->KidCount(); }
+			inline types::integer PageCount(void) const { return _root->KidCount(); }
 			inline PageObjectPtr Page(types::integer number) const { return PageInternal(number); }
 			inline PageObjectPtr operator[](types::integer number) const { return PageInternal(number); }
 
@@ -29,8 +28,6 @@ namespace gotchangpdf
 
 			PageTreeNodePtr _root;
 		};
-
-		typedef SmartPtr<PageTree> PageTreePtr;
 	}
 }
 

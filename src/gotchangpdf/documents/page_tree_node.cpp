@@ -1,5 +1,9 @@
 #include "page_tree_node.h"
 
+#include "dictionary_object.h"
+#include "name_object.h"
+#include "integer_object.h"
+
 namespace gotchangpdf
 {
 	namespace documents

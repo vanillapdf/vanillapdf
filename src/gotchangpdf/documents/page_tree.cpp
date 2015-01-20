@@ -1,5 +1,6 @@
 #include "page_tree.h"
 
+#include "array_object.h"
 #include "invalid_object_type_exception.h"
 
 namespace gotchangpdf
@@ -15,15 +16,15 @@ namespace gotchangpdf
 		PageObjectPtr PageTree::PageInternal(types::integer number) const
 		{
 			auto node = _root;
-			IntegerObject::value_type current = 1;
+			types::integer current = 1;
 
 		dive:
 			auto kids = node->Kids();
 			auto count = kids->Size();
 			for (int i = 0; i < count; ++i)
 			{
-				IntegerObject::value_type under = 0;
-				SmartPtr<PageTreeNode> tree_node;
+				types::integer under = 0;
+				PageTreeNodePtr tree_node;
 
 				auto kid = kids->At(i);
 				switch (kid->GetType())

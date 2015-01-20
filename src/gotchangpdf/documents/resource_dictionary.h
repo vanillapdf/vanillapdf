@@ -3,7 +3,6 @@
 
 #include "fwd.h"
 #include "high_level_object.h"
-#include "dictionary_object.h"
 
 namespace gotchangpdf
 {
@@ -20,8 +19,6 @@ namespace gotchangpdf
 
 			virtual inline Type GetType() const override { return HighLevelObject::Type::ResourceDictionary; }
 		};
-
-		typedef SmartPtr<ResourceDictionary> ResourceDictionaryPtr;
 	}
 }
 

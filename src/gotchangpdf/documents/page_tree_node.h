@@ -2,12 +2,7 @@
 #define _PAGE_TREE_NODE_H
 
 #include "fwd.h"
-#include "constants.h"
-#include "array_object.h"
 #include "page_node.h"
-#include "indirect_object_reference.h"
-#include "dictionary_object.h"
-#include "integer_object.h"
 
 namespace gotchangpdf
 {
@@ -23,8 +18,6 @@ namespace gotchangpdf
 
 			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageTreeNode; }
 		};
-
-		typedef SmartPtr<PageTreeNode> PageTreeNodePtr;
 	}
 }
 

@@ -14,11 +14,16 @@ namespace gotchangpdf
 	class ArrayObject : public Containable, public Object
 	{
 	public:
-		typedef std::vector<T> value_type;
+		typedef std::vector<T> list_type;
+		typedef typename list_type::value_type value_type;
+		typedef typename list_type::iterator iterator;
+		typedef typename list_type::const_iterator const_iterator;
+		typedef typename list_type::size_type size_type;
+		typedef typename list_type::reference reference;
 
 	public:
 		explicit ArrayObject() {}
-		explicit ArrayObject(value_type& list) : _list(list) {}
+		explicit ArrayObject(list_type& list) : _list(list) {}
 
 		inline int Size(void) const { return _list.size(); }
 		inline const T& operator[](unsigned int i) const { return _list[i]; }
@@ -38,7 +43,7 @@ namespace gotchangpdf
 
 	//protected:
 	public:
-		value_type _list;
+		list_type _list;
 	};
 
 	class MixedArrayObject : public ArrayObject<ContainableObject>

@@ -12,19 +12,19 @@ namespace gotchangpdf
 	class StreamObject : public Object
 	{
 	public:
-
 		explicit StreamObject(DictionaryObjectPtr dictionary);
-
-		BufferPtr GetData() const;
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::Stream; }
 
+		BufferPtr GetBody() const;
+		DictionaryObjectPtr GetHeader() const { return _header; }
+
 	public:
-		DictionaryObjectPtr _dictionary;
+		DictionaryObjectPtr _header;
 		types::stream_offset _raw_data_offset = std::_BADOFF;
 
 	private:
-		mutable BufferPtr _data;
+		mutable BufferPtr _body;
 
 		explicit StreamObject() = default;
 		friend StreamObjectPtr;

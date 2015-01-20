@@ -8,7 +8,6 @@
 #include "log.h"
 #include "header.h"
 #include "trailer.h"
-#include "parser.h"
 #include "catalog.h"
 
 #include <memory>
@@ -63,7 +62,7 @@ namespace gotchangpdf
 			if (!_input || !_input->good())
 				throw new exceptions::Exception("Could not open file");
 
-			Parser stream = Parser(this, *_input);
+			SpiritParser stream = SpiritParser(this, *_input);
 
 			stream.seekg(ios_base::beg);
 			stream >> *_header;
@@ -78,8 +77,7 @@ namespace gotchangpdf
 			stream.ReadTokenWithType(Token::Type::EOL);
 
 			// HACK
-			SpiritParser spirit_parser = SpiritParser(this, *_input);
-			auto trailer_dict = spirit_parser.ReadDirectObjectWithType<DictionaryObjectPtr>(_input->tellg());
+			auto trailer_dict = stream.ReadDirectObjectWithType<DictionaryObjectPtr>(_input->tellg());
 			_trailer->SetDictionary(trailer_dict);
 
 			_initialized = true;

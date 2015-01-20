@@ -38,15 +38,22 @@ namespace gotchangpdf
 
 		DirectObject SpiritParser::ReadDirectObject(types::stream_offset offset)
 		{
+			seekg(offset, std::ios::beg);
+			return ReadDirectObject();
+		}
+
+		DirectObject SpiritParser::ReadDirectObject(void)
+		{
 			DirectObject obj;
 
 			// Don't skip whitespace explicitly
 			noskipws(*this);
 
 			// Direct cast to pos_iterator_type is not possible
-			seekg(offset, std::ios::beg);
 			base_iterator_type input_begin_base(*this);
 			base_iterator_type input_end_base;
+
+			types::stream_offset offset = tellg();
 
 			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _impl->_file->GetFilename(), 1, 1, offset);
 			pos_iterator_type input_end_pos;

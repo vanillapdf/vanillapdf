@@ -1,5 +1,8 @@
 #include "page_object.h"
 
+#include "page_tree_node.h"
+#include "resource_dictionary.h"
+#include "rectangle.h"
 #include "name_object.h"
 #include "integer_object.h"
 #include "exception.h"

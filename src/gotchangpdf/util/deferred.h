@@ -141,6 +141,8 @@ namespace gotchangpdf
 		typedef typename T::value_type value_type;
 		typedef typename T::iterator iterator;
 		typedef typename T::const_iterator const_iterator;
+		typedef typename T::size_type size_type;
+		typedef typename T::reference reference;
 
 		DeferredContainer()
 			: Contents(reinterpret_cast<T*>(nullptr))

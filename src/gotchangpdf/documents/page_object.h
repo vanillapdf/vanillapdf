@@ -3,11 +3,6 @@
 
 #include "fwd.h"
 #include "page_node.h"
-#include "dictionary_object.h"
-#include "resource_dictionary.h"
-#include "rectangle.h"
-#include "page_tree_node.h"
-#include "smart_ptr.h"
 
 namespace gotchangpdf
 {
@@ -24,8 +19,6 @@ namespace gotchangpdf
 
 			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageObject; }
 		};
-
-		typedef SmartPtr<PageObject> PageObjectPtr;
 	}
 }
 
