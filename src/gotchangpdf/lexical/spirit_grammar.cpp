@@ -39,16 +39,14 @@ void indirect_object_handler(DirectObject obj, const IntegerObjectPtr obj_number
 
 void dictionary_item_handler(const DictionaryObjectPtr obj, ContainableObject item)
 {
-	ContainableVisitor visitor;
-	auto containable = item.apply_visitor(visitor);
-	containable->SetContainer(obj);
+	SetContainerVisitor visitor(obj);
+	item.apply_visitor(visitor);
 }
 
 void array_item_handler(const MixedArrayObjectPtr obj, ContainableObject item)
 {
-	ContainableVisitor visitor;
-	auto containable = item.apply_visitor(visitor);
-	containable->SetContainer(obj);
+	SetContainerVisitor visitor(obj);
+	item.apply_visitor(visitor);
 }
 
 void stream_item_handler(const DictionaryObjectPtr& obj, types::stream_size& value)
