@@ -5,50 +5,12 @@
 
 namespace gotchangpdf
 {
-	IndirectObjectReference::IndirectObjectReference(files::File * file, IntegerObjectPtr obj_number, IntegerObjectPtr gen_number) :
-		_obj_number(obj_number), _gen_number(gen_number)
-	{
-		assert(nullptr != file);
-
-		_file = file;
-		if (_file->IsIndirectObjectIntialized(_obj_number->Value(), _gen_number->Value())) {
-			_object = _file->GetIndirectObject(_obj_number->Value(), _gen_number->Value());
-			_initialized = true;
-		}
-		else {
-			_initialized = false;
-		}
-	}
-
-	void IndirectObjectReference::SetObject(files::File * file,
-		IntegerObjectPtr obj_number,
-		IntegerObjectPtr gen_number)
-	{
-		assert(nullptr != file);
-
-		_file = file;
-		if (_file->IsIndirectObjectIntialized(_obj_number->Value(), _gen_number->Value())) {
-			_object = _file->GetIndirectObject(_obj_number->Value(), _gen_number->Value());
-			_initialized = true;
-		}
-		else {
-			_initialized = false;
-		}
-	}
-
-	void IndirectObjectReference::SetObject(files::File * file, DirectObject obj)
-	{
-		assert(nullptr != file);
-
-		_file = file;
-		_object = obj;
-		_initialized = true;
-	}
+	IndirectObjectReference::IndirectObjectReference(DirectObject obj) : _object(obj) {}
 
 	DirectObject IndirectObjectReference::GetReferencedObject() const
 	{
 		if (!_initialized) {
-			_object = _file->GetIndirectObject(_obj_number->Value(), _gen_number->Value());
+			_object = _file->GetIndirectObject(_ref_obj->Value(), _ref_gen->Value());
 			_initialized = true;
 		}
 
@@ -57,16 +19,17 @@ namespace gotchangpdf
 
 	bool IndirectObjectReference::Equals(const IndirectObjectReference& other) const
 	{
-		return _obj_number->Equals(*other._obj_number) && _gen_number->Equals(*other._gen_number);
+		return _ref_obj->Equals(*other._ref_obj) && _ref_gen->Equals(*other._ref_gen);
+		return false;
 	}
 
 	bool IndirectObjectReference::operator<(const IndirectObjectReference& other) const
 	{
-		if (*_obj_number != *other._obj_number)
-			return *_obj_number < *other._obj_number;
+		if (*_ref_obj != *other._ref_obj)
+			return *_ref_obj < *other._ref_obj;
 
-		if (*_gen_number != *other._gen_number)
-			return *_gen_number < *other._gen_number;
+		if (*_ref_gen != *other._ref_gen)
+			return *_ref_gen < *other._ref_gen;
 
 		return false;
 	}

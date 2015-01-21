@@ -1,7 +1,6 @@
 #ifndef _ABSTRACT_SYNTAX_TREE_H
 #define _ABSTRACT_SYNTAX_TREE_H
 
-#include "deferred.h"
 #include "constants.h"
 #include "direct_object.h"
 #include "objects.h"
@@ -46,8 +45,8 @@ gotchangpdf::DictionaryObject,
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::IndirectObjectReferencePtr,
-(gotchangpdf::IntegerObjectPtr, Content->_obj_number)
-(gotchangpdf::IntegerObjectPtr, Content->_gen_number)
+(gotchangpdf::IntegerObjectPtr, Content->_ref_obj)
+(gotchangpdf::IntegerObjectPtr, Content->_ref_gen)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(

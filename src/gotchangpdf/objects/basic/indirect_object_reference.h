@@ -7,6 +7,7 @@
 #include "direct_object.h"
 #include "constants.h"
 #include "containable.h"
+#include "objects.h"
 
 //#include <memory>
 
@@ -15,11 +16,8 @@ namespace gotchangpdf
 	class IndirectObjectReference : public Containable, public Object
 	{
 	public:
-		IndirectObjectReference(files::File * file,
-			IntegerObjectPtr obj_number,
-			IntegerObjectPtr gen_number);
-
-		IndirectObjectReference(files::File * file, DirectObject obj);
+		IndirectObjectReference() = default;
+		explicit IndirectObjectReference(DirectObject obj);
 
 		DirectObject GetReferencedObject() const;
 		inline DirectObject operator->() const { return GetReferencedObject(); }
@@ -34,34 +32,22 @@ namespace gotchangpdf
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::IndirectReference; }
 
-		void SetObject(files::File * file,
-			IntegerObjectPtr obj_number,
-			IntegerObjectPtr gen_number);
-
-		void SetObject(files::File * file, DirectObject obj);
-
-		inline IntegerObjectPtr GetObjectNumber() const { return _obj_number; }
-		inline IntegerObjectPtr GetGenerationNumber() const { return _gen_number; }
-
 		bool Equals(const IndirectObjectReference& other) const;
 
 		inline bool operator==(const IndirectObjectReference& other) const { return Equals(other); }
 		inline bool operator!=(const IndirectObjectReference& other) const { return !Equals(other); }
 		bool operator<(const IndirectObjectReference& other) const;
 
+		inline IntegerObjectPtr GetObjectNumber() const { return _ref_obj; }
+		inline IntegerObjectPtr GetGenerationNumber() const { return _ref_gen; }
+
 	public:
-		IntegerObjectPtr _obj_number = 0;
-		IntegerObjectPtr _gen_number = 0;
+		IntegerObjectPtr _ref_obj = 0;
+		IntegerObjectPtr _ref_gen = 0;
 
 	private:
 		mutable DirectObject _object;
 		mutable bool _initialized = false;
-
-		explicit IndirectObjectReference() = default;
-		friend IndirectObjectReferencePtr;
-
-		template <typename T>
-		friend T* Allocate();
 	};
 }
 
