@@ -7,13 +7,21 @@
 namespace gotchangpdf
 {
 	template <typename T>
+	struct Deferred;
+
+	template <typename T>
+	struct DeferredContainer;
+
+	template <typename T>
+	class SmartPtr;
+
+	template <typename T>
 	class ArrayObject;
 
 	class MixedArrayObject;
 	class BooleanObject;
 	class DictionaryObject;
 	class FunctionObject;
-	//class IndirectObject;
 	class IndirectObjectReference;
 	class IntegerObject;
 	class NameObject;

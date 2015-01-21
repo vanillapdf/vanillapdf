@@ -2,7 +2,6 @@
 #define _HIGH_LEVEL_OBJECT_H
 
 #include "object.h"
-#include "deferred.h"
 
 #include <boost/static_assert.hpp>
 

@@ -8,6 +8,7 @@
 namespace gotchangpdf
 {
 	typedef boost::variant <
+		// first is null object
 		NullObjectPtr,
 		MixedArrayObjectPtr,
 		DictionaryObjectPtr

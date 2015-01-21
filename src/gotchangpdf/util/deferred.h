@@ -37,7 +37,7 @@ namespace gotchangpdf
 	template <typename T>
 	struct Deferred
 	{
-		typedef typename T value_type;
+		typedef T value_type;
 
 		Deferred() : Contents(reinterpret_cast<T*>(nullptr)){
 			Content.Owner = this;
