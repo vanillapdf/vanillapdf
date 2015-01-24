@@ -6,6 +6,7 @@
 
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
 
 namespace gotchangpdf
 {
@@ -16,30 +17,35 @@ namespace gotchangpdf
 		BufferPtr FlateDecodeFilter::Encode(BufferPtr src) const
 		{
 			Buffer dest;
-			CharacterFilteringSink sink;
+			{
+				CharacterFilteringSink sink;
 
-			sink.push(io::zlib_compressor());
-			sink.push(io::back_inserter(dest));
+				sink.push(io::zlib_compressor());
+				sink.push(io::back_inserter(dest));
 
-			io::write(sink, src->data(), src->size());
+				io::write(sink, src->data(), src->size());
 
-			sink.flush();
+				// using block instead of flush
+			}
+
 			return dest;
 		}
 
 		BufferPtr FlateDecodeFilter::Decode(BufferPtr src) const
 		{
 			Buffer dest;
-			CharacterFilteringSink sink;
+			{
+				CharacterFilteringSink sink;
 
-			sink.push(io::zlib_decompressor());
-			sink.push(io::back_inserter(dest));
+				sink.push(io::zlib_decompressor());
+				sink.push(io::back_inserter(dest));
 
-			io::write(sink, src->data(), src->size());
+				io::write(sink, src->data(), src->size());
 
-			sink.flush();
+				// using block instead of flush
+			}
+
 			return dest;
 		}
 	}
 }
-

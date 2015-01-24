@@ -5,7 +5,6 @@
 #include "name_object.h"
 #include "integer_object.h"
 #include "raw_stream.h"
-#include "object_visitors.h"
 
 // TODO
 #include "flate_decode_filter.h"
@@ -53,7 +52,7 @@ namespace gotchangpdf
 
 		// TODO
 		filters::FlateDecodeFilter a;
-		return a.Encode(result);
+		return a.Decode(result);
 		//return ((Filters::FlateDecodeFilter*)(&*filter_name))->Apply(*_data);
 	}
 }
