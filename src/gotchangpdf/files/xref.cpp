@@ -4,6 +4,7 @@
 #include "integer_object.h"
 #include "exception.h"
 #include "character.h"
+#include "array_object.h"
 
 #include <cassert>
 #include <sstream>
@@ -60,9 +61,58 @@ namespace gotchangpdf
 			// XRef stream
 			if (s.PeekTokenType() == Token::Type::INTEGER_OBJECT)
 			{
+				// Get stream object data
 				auto xref = s.ReadDirectObjectWithType<StreamObjectPtr>();
 				auto header = xref->GetHeader();
+
+				auto fields = header->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::W);
+
+				auto field_size = fields->Size();
+				assert(field_size == 3);
+
 				auto body = xref->GetBodyDecoded();
+
+				// Iterate over entries
+				auto it = body.begin();
+				while (it != body.end())
+				{
+					int field1 = 0;
+					auto field1_size = fields->At(0);
+					assert(*field1_size == 1);
+					for (int i = 0; i < *field1_size; ++i)
+					{
+						field1 = (field1 << 8) + (*it)++;
+					}
+
+					int field2 = 0;
+					auto field2_size = fields->At(1);
+					assert(*field2_size == 2);
+					for (int i = 0; i < *field2_size; ++i)
+					{
+						field2 = (field2 << 8) + (*it)++;
+					}
+
+					int field3 = 0;
+					auto field3_size = fields->At(2);
+					assert(*field3_size == 1);
+					for (int i = 0; i < *field3_size; ++i)
+					{
+						field3 = (field3 << 8) + (*it)++;
+					}
+
+					XrefEntry entry;
+					switch (*it)
+					{
+					case '\0':
+					case '\1':
+					case '\2':
+					default:
+						throw exceptions::Exception("Unknown field in cross reference stream");
+					}
+
+					//o.push_back(entry);
+					++it;
+				}
 
 				return s;
 			}

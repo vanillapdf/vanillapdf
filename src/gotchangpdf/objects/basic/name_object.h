@@ -67,6 +67,7 @@ namespace gotchangpdf
 			DECLARE_CONST_NAME(Resources);
 			DECLARE_CONST_NAME(Parent);
 			DECLARE_CONST_NAME(Root);
+			DECLARE_CONST_NAME(W);
 		}
 	}
 }
