@@ -2,10 +2,9 @@
 #define _OBJECT_VISITORS_H
 
 #include "object.h"
-//#include "direct_object.h"
 #include "exception.h"
+#include "containable.h"
 #include "indirect_object_reference.h"
-//#include "stream_object.h"
 
 #include <map>
 #include <sstream>
@@ -17,10 +16,6 @@ namespace gotchangpdf
 	class IsNullVisitor : public boost::static_visitor<bool>
 	{
 	public:
-
-		//template <typename T>
-		//inline bool operator()(T obj) const { return std::is_same<T, NullObjectPtr>::value; }
-
 		inline bool operator()(const NullObjectPtr& obj) const { return true; }
 
 		template <typename T>
@@ -96,6 +91,18 @@ namespace gotchangpdf
 
 		template <typename U>
 		inline T operator()(const U& obj) const { throw exceptions::Exception("Type cast error"); }
+	};
+
+	template <typename T>
+	class ObjectVisitor<ArrayObjectPtr<T>> : public boost::static_visitor<ArrayObjectPtr<T>>
+	{
+	public:
+		inline ArrayObjectPtr<T> operator()(ArrayObjectPtr<T>& obj) const { return obj; }
+
+		inline ArrayObjectPtr<T> operator()(MixedArrayObjectPtr& obj) const { return obj->CastToArrayType<T>(); }
+
+		template <typename U>
+		inline ArrayObjectPtr<T> operator()(const U& obj) const { throw exceptions::Exception("Type cast error"); }
 	};
 }
 
