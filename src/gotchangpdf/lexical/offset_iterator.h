@@ -122,11 +122,13 @@ namespace gotchangpdf
 				typename base_t::reference val = *(this->base());
 				if (val == '\n') {
 					++this->base_reference();
+					this->next_char(_pos);
 					this->next_line(_pos);
 					this->newline();
 				}
 				else if (val == '\r') {
 					++this->base_reference();
+					this->next_char(_pos);
 					if (this->base_reference() == _end || *(this->base()) != '\n')
 					{
 						this->next_line(_pos);
@@ -136,12 +138,12 @@ namespace gotchangpdf
 				else if (val == '\t') {
 					this->tabulation(_pos);
 					++this->base_reference();
+					this->next_char(_pos);
 				}
 				else {
 					++this->base_reference();
+					this->next_char(_pos);
 				}
-
-				this->next_char(_pos);
 
 				// The iterator is at the end only if it's the same
 				//  of the

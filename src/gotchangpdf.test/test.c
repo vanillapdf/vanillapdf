@@ -26,28 +26,7 @@ int process_page(PageObjectHandle obj, int nested)
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
-/*
-int process_indirect(IndirectHandle indirect, int nested)
-{
-	offset_type offset = 0;
-	ObjectHandle child = NULL;
 
-	print_spaces(nested);
-	printf("Indirect object begin\n");
-
-	RETURN_ERROR_IF_NOT_SUCCESS(IndirectObject_GetOffset(indirect, &offset));
-	print_spaces(nested + 1);
-	printf("Offset: %lld\n\n", offset);
-	RETURN_ERROR_IF_NOT_SUCCESS(IndirectObject_GetObject(indirect, &child));
-	RETURN_ERROR_IF_NOT_SUCCESS(process(child, 1));
-	RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(child));
-
-	print_spaces(nested);
-	printf("Indirect object end\n");
-
-	return GOTCHANG_PDF_ERROR_SUCCES;
-}
-*/
 int process_buffer(BufferHandle buffer, int nested)
 {
 	string_type data;
