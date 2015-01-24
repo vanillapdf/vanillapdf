@@ -77,6 +77,7 @@
     <ClInclude Include="src\gotchangpdf\objects\common\number_tree.h" />
     <ClInclude Include="src\gotchangpdf\objects\common\rectangle.h" />
     <ClInclude Include="src\gotchangpdf\objects\common\tree.h" />
+    <ClInclude Include="src\gotchangpdf\precompiled.h" />
     <ClInclude Include="src\gotchangpdf\raw\character.h" />
     <ClInclude Include="src\gotchangpdf\raw\raw_base_stream.h" />
     <ClInclude Include="src\gotchangpdf\raw\raw_reverse_stream.h" />
@@ -94,7 +95,9 @@
     <ClInclude Include="src\gotchangpdf\util\version.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="lib\boost\libs\iostreams\src\zlib.cpp" />
+    <ClCompile Include="lib\boost\libs\iostreams\src\zlib.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\gotchangpdf\documents\catalog.cpp" />
     <ClCompile Include="src\gotchangpdf\documents\page_node.cpp" />
     <ClCompile Include="src\gotchangpdf\documents\page_object.cpp" />
@@ -134,6 +137,9 @@
     <ClCompile Include="src\gotchangpdf\objects\basic\real_object.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\stream_object.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\string_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\precompiled.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\gotchangpdf\raw\character.cpp" />
     <ClCompile Include="src\gotchangpdf\raw\raw_base_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\raw\raw_reverse_stream.cpp" />
@@ -184,6 +190,9 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\objects\basic;src\gotchangpdf\exceptions;src\gotchangpdf\files;src\gotchangpdf\lexical;lib\boost;src\gotchangpdf\objects\common;include\gotchangpdf;src\gotchangpdf\documents;src\gotchangpdf\raw;src\gotchangpdf\util;src\gotchangpdf\basic;src\gotchangpdf\filters;lib\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;BOOST_SPIRIT_USE_PHOENIX_V3;PDF_EXPORTS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
+      <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

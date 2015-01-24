@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "catalog.h"
 
 #include "constants.h"
