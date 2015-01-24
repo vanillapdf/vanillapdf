@@ -65,7 +65,7 @@ namespace gotchangpdf
 		virtual inline Object::Type GetType(void) const override { return Object::Type::Dictionary; }
 
 		template <typename U>
-		const U FindAs(const NameT& name) const
+		U FindAs(const NameT& name) const
 		{
 			auto result = Find(name);
 
@@ -139,5 +139,7 @@ namespace gotchangpdf
 		inline bool operator<(const DictionaryObject& other) const { return false; }
 	};
 }
+
+#include "objects.h"
 
 #endif /* _DICTIONARY_OBJECT_H */

@@ -62,4 +62,6 @@ namespace gotchangpdf
 	};
 }
 
+#include "objects.h"
+
 #endif /* _ARRAY_OBJECT_H */
