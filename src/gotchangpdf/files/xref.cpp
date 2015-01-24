@@ -62,7 +62,7 @@ namespace gotchangpdf
 			{
 				auto xref = s.ReadDirectObjectWithType<StreamObjectPtr>();
 				auto header = xref->GetHeader();
-				auto body = xref->GetBody();
+				auto body = xref->GetBodyDecoded();
 
 				return s;
 			}

@@ -15,12 +15,10 @@ namespace gotchangpdf
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::Stream; }
 
-		BufferPtr GetBody() const { return _body; }
-		void SetBody(BufferPtr body) { _body = body; }
+		inline DictionaryObjectPtr GetHeader() const { return _header; }
+		inline void SetHeader(DictionaryObjectPtr header) { _header = header; }
 
-		DictionaryObjectPtr GetHeader() const { return _header; }
-		void SetHeader(DictionaryObjectPtr header) {_header = header; }
-
+		BufferPtr GetBody() const;
 		BufferPtr GetBodyDecoded() const;
 
 	public:
@@ -28,7 +26,7 @@ namespace gotchangpdf
 		types::stream_offset _raw_data_offset = std::_BADOFF;
 
 	private:
-		BufferPtr _body;
+		mutable BufferPtr _body;
 	};
 }
 

@@ -1,7 +1,7 @@
 #ifndef _CHARACTER_SINK_H
 #define _CHARACTER_SINK_H
 
-#include <ostream>
+#include <fstream>
 #include <boost/iostreams/filtering_stream.hpp>
 
 namespace gotchangpdf

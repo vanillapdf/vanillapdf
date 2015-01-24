@@ -57,12 +57,6 @@ void stream_item_handler(const DictionaryObjectPtr& obj, types::stream_size& val
 
 	value = static_cast<types::stream_size>(*size);
 }
-/*
-std::ostream& operator<<(std::ostream& os, const boost::spirit::qi::rule<gotchangpdf::lexical::pos_iterator_type, gotchangpdf::DirectObject(gotchangpdf::files::File*)> param)
-{
-	return os;
-}
-*/
 
 namespace gotchangpdf
 {
@@ -230,7 +224,7 @@ namespace gotchangpdf
 			BOOST_SPIRIT_DEBUG_NODE(array_object);
 			BOOST_SPIRIT_DEBUG_NODE(dictionary_object);
 			BOOST_SPIRIT_DEBUG_NODE(literal_string_object);
-			//BOOST_SPIRIT_DEBUG_NODE(stream_object);
+			BOOST_SPIRIT_DEBUG_NODE(stream_object);
 		}
 	}
 }

@@ -103,7 +103,8 @@ namespace gotchangpdf
 		private:
 			ForwardIteratorT _startline;
 
-			friend class base_t;
+			//friend class base_t;
+			friend class boost::iterator_core_access;
 
 			ForwardIteratorT get_endline() const
 			{
@@ -115,6 +116,37 @@ namespace gotchangpdf
 			}
 
 			void newline(void) { _startline = this->base(); }
+
+			void increment()
+			{
+				typename base_t::reference val = *(this->base());
+				if (val == '\n') {
+					++this->base_reference();
+					this->next_line(_pos);
+					this->newline();
+				}
+				else if (val == '\r') {
+					++this->base_reference();
+					if (this->base_reference() == _end || *(this->base()) != '\n')
+					{
+						this->next_line(_pos);
+						this->newline();
+					}
+				}
+				else if (val == '\t') {
+					this->tabulation(_pos);
+					++this->base_reference();
+				}
+				else {
+					++this->base_reference();
+				}
+
+				this->next_char(_pos);
+
+				// The iterator is at the end only if it's the same
+				//  of the
+				_isend = (this->base_reference() == _end);
+			}
 		};
 	}
 }

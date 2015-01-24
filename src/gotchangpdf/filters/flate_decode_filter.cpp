@@ -23,6 +23,7 @@ namespace gotchangpdf
 
 			io::write(sink, src->data(), src->size());
 
+			sink.flush();
 			return dest;
 		}
 
@@ -36,6 +37,7 @@ namespace gotchangpdf
 
 			io::write(sink, src->data(), src->size());
 
+			sink.flush();
 			return dest;
 		}
 	}
