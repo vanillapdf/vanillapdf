@@ -80,6 +80,11 @@ namespace gotchangpdf
 		class Parser;
 		class Token;
 		class TokenDictionary;
+
+		class BaseStream;
+		class Stream;
+		class ReverseStream;
+		class SpiritParser;
 	}
 
 	namespace filters
@@ -93,14 +98,6 @@ namespace gotchangpdf
 		class BaseStream;
 		class Stream;
 		class ReverseStream;
-	}
-
-	namespace lexical
-	{
-		class BaseStream;
-		class Stream;
-		class ReverseStream;
-		class SpiritParser;
 	}
 
 	using BufferPtr = DeferredContainer<Buffer>;

@@ -1,14 +1,14 @@
 #ifndef _CHARACTER_SINK_H
 #define _CHARACTER_SINK_H
 
-#include <fstream>
+#include <ostream>
 #include <boost/iostreams/filtering_stream.hpp>
 
 namespace gotchangpdf
 {
 	namespace io = boost::iostreams;
 
-	typedef std::ofstream CharacterSink;
+	typedef std::ostream CharacterSink;
 	typedef io::filtering_ostream CharacterFilteringSink;
 }
 

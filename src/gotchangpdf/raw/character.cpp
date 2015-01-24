@@ -53,25 +53,5 @@ namespace gotchangpdf
 
 			return false;
 		}
-
-		bool IsNumeric(const char c)
-		{
-			switch (c)
-			{
-			case Numeric::ZERO:
-			case Numeric::ONE:
-			case Numeric::TWO:
-			case Numeric::THREE:
-			case Numeric::FOUR:
-			case Numeric::FIVE:
-			case Numeric::SIX:
-			case Numeric::SEVEN:
-			case Numeric::EIGHT:
-			case Numeric::NINE:
-				return true;
-			}
-
-			return false;
-		}
 	}
 }

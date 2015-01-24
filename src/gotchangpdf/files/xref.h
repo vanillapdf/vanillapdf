@@ -15,25 +15,23 @@ namespace gotchangpdf
 		class XrefEntry : public IUnknown
 		{
 		public:
-			XrefEntry() = default;
+			inline DirectObject GetReference(void) const { return _reference; }
+			inline void SetReference(DirectObject ref) { _reference = ref; }
 
-			DirectObject GetReference(void) const { return _reference; }
-			void SetReference(DirectObject ref) { _reference = ref; }
+			inline types::integer GetObjectNumber(void) const { return _obj_number; }
+			inline void SetObjectNumber(types::integer value) { _obj_number = value; }
 
-			types::integer GetObjectNumber(void) const { return _obj_number; }
-			void SetObjectNumber(types::integer value) { _obj_number = value; }
+			inline types::ushort GetGenerationNumber(void) const { return _gen_number; }
+			inline void SetGenerationNumber(types::ushort value) { _gen_number = value; }
 
-			types::ushort GetGenerationNumber(void) const { return _gen_number; }
-			void SetGenerationNumber(types::ushort value) { _gen_number = value; }
+			inline types::stream_offset GetOffset(void) const { return _offset; }
+			inline void SetOffset(types::stream_offset value) { _offset = value; }
 
-			types::stream_offset GetOffset(void) const { return _offset; }
-			void SetOffset(types::stream_offset value) { _offset = value; }
+			inline bool InUse(void) const { return _in_use; }
+			inline void SetUsage(bool value) { _in_use = value; }
 
-			bool InUse(void) const { return _in_use; }
-			void SetUsage(bool value) { _in_use = value; }
-
-			bool Initialized(void) const { return _initialized; }
-			void SetInitialized(bool value) { _initialized = value; }
+			inline bool Initialized(void) const { return _initialized; }
+			inline void SetInitialized(bool value) { _initialized = value; }
 
 		private:
 			DirectObject _reference;

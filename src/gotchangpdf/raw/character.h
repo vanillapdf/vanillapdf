@@ -35,20 +35,6 @@ namespace gotchangpdf
 			PERCENT_SIGN = 0x25
 		};
 
-		enum class Numeric : char
-		{
-			ZERO = '0',
-			ONE = '1',
-			TWO = '2',
-			THREE = '3',
-			FOUR = '4',
-			FIVE = '5',
-			SIX = '6',
-			SEVEN = '7',
-			EIGHT = '8',
-			NINE = '9'
-		};
-
 		//Character(MyValueType hinib, MyValueType lonib);
 		//Character(Character hinib, Character lonib);
 
@@ -63,11 +49,10 @@ namespace gotchangpdf
 		inline bool Equals(const char c1, const char c2) { return c1 == c2; }
 		inline bool Equals(const char c1, const WhiteSpace c2) { return Equals(c1, static_cast<char>(c2)); }
 		inline bool Equals(const char c1, const Delimiter c2) { return Equals(c1, static_cast<char>(c2)); }
-		inline bool Equals(const char c1, const Numeric c2) { return Equals(c1, static_cast<char>(c2)); }
 
 		bool IsWhiteSpace(const char c);
 		bool IsDelimiter(const char c);
-		bool IsNumeric(const char c);
+		inline bool IsNumeric(const char c) { return (c >= '0' && c <= '9'); }
 
 		inline bool IsRegular(const char c) { return !IsWhiteSpace(c) && !IsDelimiter(c); }
 		inline bool IsSpace(const char c) { return Equals(c, WhiteSpace::SPACE); }
