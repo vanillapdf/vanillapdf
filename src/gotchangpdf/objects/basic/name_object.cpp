@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "name_object.h"
 
 #include "token.h"

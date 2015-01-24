@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "indirect_object_reference.h"
 
 #include "file.h"

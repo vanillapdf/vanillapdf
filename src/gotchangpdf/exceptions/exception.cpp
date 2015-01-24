@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "exception.h"
 
 namespace gotchangpdf

@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "stream_object.h"
 
 #include "file.h"

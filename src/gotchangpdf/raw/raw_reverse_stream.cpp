@@ -1,4 +1,6 @@
+#include "precompiled.h"
 #include "raw_reverse_stream.h"
+
 #include "exception.h"
 #include "constants.h"
 

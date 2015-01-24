@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "file.h"
 #include "xref.h"
 #include "catalog.h"

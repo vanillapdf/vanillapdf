@@ -1,5 +1,6 @@
+#include "precompiled.h"
 #include "lexical_base_stream.h"
-#include "Exceptions/Exception.h"
+#include "exception.h"
 
 #include <sstream>
 

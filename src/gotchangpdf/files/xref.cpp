@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "xref.h"
 
 #include "spirit_parser.h"

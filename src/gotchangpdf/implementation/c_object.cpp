@@ -1,10 +1,6 @@
-#include "object.h"
-#include "array_object.h"
-#include "dictionary_object.h"
-#include "integer_object.h"
-#include "indirect_object_reference.h"
-#include "c_object.h"
+#include "precompiled.h"
 
+#include "c_object.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

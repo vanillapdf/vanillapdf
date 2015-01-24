@@ -1,9 +1,6 @@
 #ifndef _FWD_H
 #define _FWD_H
 
-#include "deferred.h"
-#include "smart_ptr.h"
-
 namespace gotchangpdf
 {
 	template <typename T>

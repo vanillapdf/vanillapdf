@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "raw_stream.h"
 
 #include "exception.h"

@@ -1,4 +1,6 @@
+#include "precompiled.h"
 #include "token.h"
+
 #include "exception.h"
 #include "lexical_reverse_stream.h"
 #include "lexical_stream.h"

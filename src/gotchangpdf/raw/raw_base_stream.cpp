@@ -1,4 +1,6 @@
+#include "precompiled.h"
 #include "raw_base_stream.h"
+
 #include "exception.h"
 
 namespace gotchangpdf

@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "lexical_tree.h"
 
 namespace gotchangpdf

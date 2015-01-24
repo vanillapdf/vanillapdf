@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "token_dictionary.h"
 #include "exception.h"
 

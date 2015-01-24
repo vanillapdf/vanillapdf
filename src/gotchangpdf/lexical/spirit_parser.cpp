@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "spirit_parser.h"
 
 #include "exception.h"

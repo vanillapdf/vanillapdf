@@ -1,6 +1,7 @@
+#include "precompiled.h"
 #include "page_object.h"
-#include "c_page_object.h"
 
+#include "c_page_object.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf::documents;

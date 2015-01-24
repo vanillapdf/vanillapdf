@@ -1,4 +1,6 @@
+#include "precompiled.h"
 #include "object.h"
+
 #include "exception.h"
 
 #include <cassert>

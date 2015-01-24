@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "trailer.h"
 
 #include "integer_object.h"

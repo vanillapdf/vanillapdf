@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "lexical_stream.h"
 
 #include "exception.h"

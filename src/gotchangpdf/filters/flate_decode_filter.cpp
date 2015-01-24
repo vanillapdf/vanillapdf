@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "flate_decode_filter.h"
 
 #include "constants.h"

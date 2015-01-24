@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "invalid_object_type_exception.h"
 
 #include <sstream>

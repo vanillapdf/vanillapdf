@@ -1,6 +1,6 @@
-#include "name_object.h"
-#include "c_name_object.h"
+#include "precompiled.h"
 
+#include "c_name_object.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

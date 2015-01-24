@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "character.h"
 //#include "exception.h"
 //#include "basic_base_stream.h"

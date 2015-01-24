@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "spirit_grammar.h"
 
 #include "file.h"

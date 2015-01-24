@@ -1,6 +1,7 @@
+#include "precompiled.h"
 #include "catalog.h"
-#include "c_catalog.h"
 
+#include "c_catalog.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf::documents;

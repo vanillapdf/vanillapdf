@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "page_node.h"
 
 #include "exception.h"
