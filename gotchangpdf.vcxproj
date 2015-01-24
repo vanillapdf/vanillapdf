@@ -81,7 +81,6 @@
     <ClInclude Include="src\gotchangpdf\raw\raw_base_stream.h" />
     <ClInclude Include="src\gotchangpdf\raw\raw_reverse_stream.h" />
     <ClInclude Include="src\gotchangpdf\raw\raw_stream.h" />
-    <ClInclude Include="src\gotchangpdf\util\bind.h" />
     <ClInclude Include="src\gotchangpdf\util\buffer.h" />
     <ClInclude Include="src\gotchangpdf\util\character_device.h" />
     <ClInclude Include="src\gotchangpdf\util\character_sink.h" />
