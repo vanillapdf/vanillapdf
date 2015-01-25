@@ -1,7 +1,6 @@
 #ifndef SPIRIT_GRAMMAR_H
 #define SPIRIT_GRAMMAR_H
 
-#include "abstract_syntax_tree.h"
 #include "file_position.h"
 #include "offset_iterator.h"
 
@@ -43,9 +42,6 @@ namespace gotchangpdf
 			qi::rule<pos_iterator_type, StreamObjectPtr(files::File*), qi::locals<DictionaryObjectPtr, types::stream_size>> stream_object;
 			Rule<LiteralStringPtr> literal_string_object;
 			Rule<HexadecimalStringPtr> hexadecimal_string_object;
-
-			Rule<IntegerObjectPtr> object_number;
-			Rule<IntegerObjectPtr> generation_number;
 
 			qi::real_parser<float, qi::strict_real_policies<float>> strict_float_parser;
 		};

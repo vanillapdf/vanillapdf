@@ -3,6 +3,7 @@
 
 #include "file.h"
 #include "iter_offset_parser.h"
+#include "abstract_syntax_tree.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/spirit/repository/include/qi_advance.hpp>
@@ -77,9 +78,9 @@ namespace gotchangpdf
 		{
 			start %=
 				(
-					qi::omit[object_number[qi::_a = qi::_1]]
+					qi::omit[integer_object[qi::_a = qi::_1]]
 					>> whitespace
-					>> qi::omit[generation_number[qi::_b = qi::_1]]
+					>> qi::omit[integer_object[qi::_b = qi::_1]]
 					>> whitespace
 					>> qi::lit("obj")
 					>> whitespaces
@@ -94,14 +95,6 @@ namespace gotchangpdf
 				[
 					phoenix::bind(&direct_object_offset_handler, qi::_1, qi::_r2)
 				];
-
-			object_number %=
-				qi::eps
-				>> qi::int_;
-
-			generation_number %=
-				qi::eps
-				>> qi::ushort_;
 
 			boolean_object %=
 				qi::eps
