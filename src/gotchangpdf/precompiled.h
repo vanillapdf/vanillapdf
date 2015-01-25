@@ -1,3 +1,6 @@
+#ifndef _PRECOMPILED_H
+#define _PRECOMPILED_H
+
 // Solution
 #include "deferred.h"
 #include "smart_ptr.h"
@@ -52,3 +55,5 @@
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/spirit/repository/include/qi_advance.hpp>
 #include <boost/spirit/include/classic_position_iterator.hpp>
+
+#endif /* _PRECOMPILED_H */

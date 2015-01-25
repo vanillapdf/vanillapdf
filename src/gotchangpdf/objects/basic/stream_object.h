@@ -6,6 +6,8 @@
 #include "buffer.h"
 #include "dictionary_object.h"
 
+#include <iosfwd>
+
 namespace gotchangpdf
 {
 	class StreamObject : public Object

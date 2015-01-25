@@ -5,6 +5,8 @@
 #include "constants.h"
 #include "unknown_interface.h"
 
+#include <iosfwd>
+
 namespace gotchangpdf
 {
 	class Object : public IUnknown

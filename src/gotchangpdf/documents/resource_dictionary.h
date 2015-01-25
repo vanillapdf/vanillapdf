@@ -3,6 +3,7 @@
 
 #include "fwd.h"
 #include "high_level_object.h"
+#include "dictionary_object.h"
 
 namespace gotchangpdf
 {

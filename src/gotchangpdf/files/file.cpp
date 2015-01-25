@@ -121,7 +121,8 @@ namespace gotchangpdf
 			if (!_initialized)
 				throw new Exception("File has not been initialized yet");
 
-			auto reference = _trailer->GetDictionary()->FindAs<IndirectObjectReferencePtr>(constant::Name::Root);
+			auto dictionary = _trailer->GetDictionary();
+			auto reference = dictionary->FindAs<IndirectObjectReferencePtr>(constant::Name::Root);
 			auto dict = reference->GetReferencedObjectAs<DictionaryObjectPtr>();
 			return new documents::Catalog(dict);
 		}

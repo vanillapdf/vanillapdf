@@ -2,8 +2,11 @@
 #define _TRAILER_H
 
 #include "fwd.h"
+#include "dictionary_object.h"
 #include "unknown_interface.h"
 #include "constants.h"
+
+#include <iosfwd>
 
 namespace gotchangpdf
 {
