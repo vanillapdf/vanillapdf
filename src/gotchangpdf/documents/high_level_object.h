@@ -3,8 +3,6 @@
 
 #include "object.h"
 
-#include <boost/static_assert.hpp>
-
 namespace gotchangpdf
 {
 	namespace documents

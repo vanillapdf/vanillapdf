@@ -1,11 +1,9 @@
 #ifndef _LEXICAL_TOKEN_DICTIONARY_H
 #define _LEXICAL_TOKEN_DICTIONARY_H
 
-#include "Buffer.h"
-#include "Lexical/Token.h"
+#include "buffer.h"
+#include "token.h"
 #include "lexical_tree.h"
-
-#include <map>
 
 namespace gotchangpdf
 {

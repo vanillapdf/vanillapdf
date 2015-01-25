@@ -9,8 +9,6 @@
 #include "containable.h"
 #include "objects.h"
 
-//#include <memory>
-
 namespace gotchangpdf
 {
 	class IndirectObjectReference : public Containable, public Object

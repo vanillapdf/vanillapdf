@@ -16,7 +16,7 @@
 #include <iostream>
 
 #include <boost/scope_exit.hpp>
-#include <boost/typeof/incr_registration_group.hpp>
+//#include <boost/typeof/incr_registration_group.hpp>
 
 namespace gotchangpdf
 {

@@ -1,3 +1,4 @@
+// Solution
 #include "deferred.h"
 #include "smart_ptr.h"
 #include "objects.h"
@@ -5,3 +6,49 @@
 #include "exception.h"
 #include "constants.h"
 #include "log.h"
+
+// C++ standard
+#include <map>
+#include <string>
+#include <memory>
+#include <vector>
+
+#include <exception>
+#include <cstdint>
+#include <algorithm>
+#include <functional>
+#include <sstream>
+#include <cstddef>
+#include <locale>
+
+#include <iosfwd>
+#include <istream>
+#include <ostream>
+#include <iostream>
+#include <fstream>
+
+#include <cassert>
+
+// Boost
+#include <boost/static_assert.hpp>
+#include <boost/variant.hpp>
+#include <boost/scope_exit.hpp>
+#include <boost/smart_ptr/intrusive_ptr.hpp>
+#include <boost/smart_ptr/intrusive_ref_counter.hpp>
+
+// IO streams
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/iostreams/filter/zlib.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
+
+// Fusion
+#include <boost/fusion/include/adapt_struct.hpp>
+#include <boost/fusion/adapted/adt/adapt_adt.hpp>
+#include <boost/fusion/include/std_pair.hpp>
+
+// Spirit
+#include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/phoenix.hpp>
+#include <boost/spirit/repository/include/qi_advance.hpp>
+#include <boost/spirit/include/classic_position_iterator.hpp>

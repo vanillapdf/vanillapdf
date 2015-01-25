@@ -5,7 +5,7 @@
 #include "buffer.h"
 #include "containable.h"
 
-#include <stddef.h>
+#include <cstddef>
 
 namespace gotchangpdf
 {
