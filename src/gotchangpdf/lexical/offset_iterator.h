@@ -7,15 +7,17 @@ namespace gotchangpdf
 {
 	namespace lexical
 	{
+		namespace classic = boost::spirit::classic;
+
 		template
 		<
 			typename ForwardIteratorT,
 			typename PositionT
 		>
-		class offset_iterator : public boost::spirit::classic::position_iterator<ForwardIteratorT, PositionT, offset_iterator<ForwardIteratorT, PositionT>>
+		class offset_iterator : public classic::position_iterator<ForwardIteratorT, PositionT, offset_iterator<ForwardIteratorT, PositionT>>
 		{
 		public:
-			using base_t = boost::spirit::classic::position_iterator<ForwardIteratorT, PositionT, offset_iterator<ForwardIteratorT, PositionT>>;
+			using base_t = classic::position_iterator<ForwardIteratorT, PositionT, offset_iterator<ForwardIteratorT, PositionT>>;
 
 		public:
 			typedef typename base_t::value_type value_type;
