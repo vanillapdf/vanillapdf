@@ -15,6 +15,11 @@
 		LOG_ERROR << "Caught exception on interface: " << e.what(); \
 		return GOTCHANG_PDF_ERROR_GENERAL; \
 	} \
+	catch (std::exception& e) \
+	{ \
+		LOG_ERROR << "Caught std exception on interface: " << e.what(); \
+		return GOTCHANG_PDF_ERROR_GENERAL; \
+	} \
 	catch (...) \
 	{ \
 		LOG_ERROR << "Caught unknown exception on interface"; \
