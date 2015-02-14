@@ -4,6 +4,7 @@
 #include "exception.h"
 #include "constants.h"
 #include "character.h"
+#include "util.h"
 
 namespace gotchangpdf
 {
@@ -35,14 +36,19 @@ namespace gotchangpdf
 
 		char Stream::get_hex()
 		{
-			char val = get();
+			auto val = get();
 
-			if ('0' <= val && val <= '9')
-				return val - '0';
-			if ('a' <= val && val <= 'f')
-				return val + 10 - 'a';
-			if ('A' <= val && val <= 'F')
-				return val + 10 - 'A';
+			if (!IsInRange<decltype(val), char>(val))
+				throw exceptions::Exception("Value is out of range");
+
+			char ch = static_cast<char>(val);
+
+			if ('0' <= ch && ch <= '9')
+				return ch - '0';
+			if ('a' <= ch && ch <= 'f')
+				return ch + 10 - 'a';
+			if ('A' <= ch && ch <= 'F')
+				return ch + 10 - 'A';
 
 			throw exceptions::Exception("Unknown hexadecimal character " + val);
 		}
@@ -52,27 +58,28 @@ namespace gotchangpdf
 			Buffer result;
 
 			while (!eof()) {
-				int val = get();
+				auto val = get();
 				assert(val != std::char_traits<char>::eof());
 
-				if (Equals(val, WhiteSpace::CARRIAGE_RETURN)) {
+				if (!IsInRange<decltype(val), char>(val))
+					throw exceptions::Exception("Value is out of range");
+
+				auto value = static_cast<char>(val);
+
+				if (Equals(value, WhiteSpace::CARRIAGE_RETURN)) {
 					int val2 = peek();
-					if (Equals(val2, WhiteSpace::LINE_FEED)) {
+					if (IsInRange<decltype(val2), char>(val2) && Equals(static_cast<char>(val2), WhiteSpace::LINE_FEED)) {
 						get();
 					}
 
 					break;
 				}
 
-				if (Equals(val, WhiteSpace::LINE_FEED)) {
+				if (Equals(value, WhiteSpace::LINE_FEED)) {
 					break;
 				}
 
-				assert(std::numeric_limits<char>::min() <= val &&
-					std::numeric_limits<char>::max() >= val);
-				char ch = static_cast<char>(val);
-
-				result.push_back(ch);
+				result.push_back(value);
 			}
 
 			return result;

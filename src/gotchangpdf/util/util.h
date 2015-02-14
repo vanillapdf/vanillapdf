@@ -5,8 +5,8 @@
 
 namespace gotchangpdf
 {
-	template <typename ValueType, typename RangeType = ValueType>
-	bool IsInRange(ValueType value) {
+	template <typename ValueType, typename RangeType>
+	bool IsInRange(ValueType value) _NOEXCEPT {
 		return (value >= std::numeric_limits<RangeType>::min()) &&
 			(value <= std::numeric_limits<RangeType>::max());
 	}

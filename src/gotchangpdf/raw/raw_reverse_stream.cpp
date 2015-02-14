@@ -3,6 +3,7 @@
 
 #include "exception.h"
 #include "constants.h"
+#include "util.h"
 
 #include <cassert>
 
@@ -72,7 +73,7 @@ namespace gotchangpdf
 		}
 
 		ReverseStream::ReverseBuf::pos_type ReverseStream::ReverseBuf::seekpos(pos_type ptr,
-			ios_base::openmode mode)
+			ios_base::openmode)
 		{
 			streamoff offset = (streamoff)ptr;
 			gbump((int)(gptr() - eback() + offset));
@@ -187,14 +188,19 @@ namespace gotchangpdf
 
 		char ReverseStream::get_hex()
 		{
-			char val = get();
+			auto val = get();
 
-			if ('0' <= val && val <= '9')
-				return val - '0';
-			if ('a' <= val && val <= 'f')
-				return val + 10 - 'a';
-			if ('A' <= val && val <= 'F')
-				return val + 10 - 'A';
+			if (!IsInRange<decltype(val), char>(val))
+				throw exceptions::Exception("Value is out of range");
+
+			char ch = static_cast<char>(val);
+
+			if ('0' <= ch && ch <= '9')
+				return ch - '0';
+			if ('a' <= ch && ch <= 'f')
+				return ch + 10 - 'a';
+			if ('A' <= ch && ch <= 'F')
+				return ch + 10 - 'A';
 
 			throw exceptions::Exception("Unknown hexadecimal character " + val);
 		}

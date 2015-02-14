@@ -11,12 +11,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_GetSize(BufferHandle handl
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		*result = obj->size();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	*result = obj->size();
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_GetData(BufferHandle handle, out_string_type result)
@@ -25,12 +21,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_GetData(BufferHandle handl
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		*result = obj->data();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	*result = obj->data();
+	return GOTCHANG_PDF_ERROR_SUCCES;
+
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_Release(BufferHandle handle)

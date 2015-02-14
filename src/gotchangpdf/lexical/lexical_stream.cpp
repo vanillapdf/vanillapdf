@@ -221,7 +221,7 @@ namespace gotchangpdf
 		Stream& operator>>(Stream& s, char& o)
 		{
 			auto value = s.get();
-			if (!IsInRange<char>(value))
+			if (!IsInRange<decltype(value), char>(value))
 				throw exceptions::Exception("Character is out of range");
 
 			o = static_cast<char>(value);

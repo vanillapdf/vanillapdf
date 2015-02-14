@@ -11,6 +11,9 @@ typedef int32_t* out_boolean_type;
 typedef int32_t integer_type;
 typedef int32_t* out_integer_type;
 
+typedef uint16_t ushort_type;
+typedef uint16_t* out_ushort_type;
+
 typedef int64_t offset_type;
 typedef int64_t* out_offset_type;
 
