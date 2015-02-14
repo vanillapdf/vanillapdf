@@ -57,21 +57,12 @@ namespace gotchangpdf
 			Content.Owner = this;
 		}
 
-		operator T()
-		{
-			if (Contents)
-				return *Contents;
+		inline operator T() { return *Contents; }
+		inline operator T() const { return *Contents; }
 
-			return T();
-		}
-
-		operator T() const
-		{
-			if (Contents)
-				return *Contents;
-
-			return T();
-		}
+		inline bool operator==(const Deferred& other) const { return *Contents == *other.Contents; }
+		inline bool operator!=(const Deferred& other) const { return *Contents != *other.Contents; }
+		inline bool operator<(const Deferred& other) const { return *Contents < *other.Contents; }
 
 		T& operator*() const
 		{
@@ -184,6 +175,13 @@ namespace gotchangpdf
 
 			return *this;
 		}
+
+		inline operator T() { return *Contents; }
+		inline operator T() const { return *Contents; }
+
+		inline bool operator==(const DeferredContainer& other) const { return *Contents == *other.Contents; }
+		inline bool operator!=(const DeferredContainer& other) const { return *Contents != *other.Contents; }
+		inline bool operator<(const DeferredContainer& other) const { return *Contents < *other.Contents; }
 
 		// Support insertion as if this were itself a container
 		void insert(const iterator& pos, const value_type& value)

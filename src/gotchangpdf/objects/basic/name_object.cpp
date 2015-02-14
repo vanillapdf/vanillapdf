@@ -10,7 +10,6 @@ namespace gotchangpdf
 	using namespace lexical;
 
 	NameObject::NameObject(const Token& token) : _value(token.Value()) { assert(token.GetType() == Token::Type::NAME_OBJECT); }
-	NameObject::NameObject(value_type name) : _value(name) {}
 
 	std::ostream& operator<<(std::ostream& os, const NameObject& name)
 	{

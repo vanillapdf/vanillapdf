@@ -26,9 +26,11 @@ namespace gotchangpdf
 		explicit ArrayObject() {}
 		explicit ArrayObject(list_type& list) : _list(list) {}
 
-		inline int Size(void) const { return _list.size(); }
+		inline types::integer Size(void) const { return _list.size(); }
 		inline const T& operator[](unsigned int i) const { return _list[i]; }
+		inline T& operator[](unsigned int i) { return _list[i]; }
 		inline const T& At(unsigned int at) const { return _list.at(at); }
+		inline T& At(unsigned int at) { return _list.at(at); }
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::Array; }
 

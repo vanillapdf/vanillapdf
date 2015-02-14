@@ -17,7 +17,7 @@ namespace gotchangpdf
 	public:
 		NameObject() = default;
 		explicit NameObject(const lexical::Token& token);
-		explicit NameObject(value_type name);
+		explicit NameObject(value_type name) : _value(name) {}
 
 		inline value_type Value() const { return _value; }
 
@@ -38,10 +38,6 @@ namespace gotchangpdf
 	private:
 		friend std::ostream& operator<<(std::ostream& os, const NameObject& name);
 	};
-
-	inline bool operator==(const NameObjectPtr& first, const NameObjectPtr& other) { return *first == *other; }
-	inline bool operator!=(const NameObjectPtr& first, const NameObjectPtr& other) { return *first != *other; }
-	inline bool operator<(const NameObjectPtr& first, const NameObjectPtr& other) { return *first < *other; }
 
 	namespace constant
 	{
