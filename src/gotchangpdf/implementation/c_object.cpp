@@ -1,4 +1,5 @@
 #include "precompiled.h"
+#include "file.h"
 
 #include "c_object.h"
 #include "c_helper.h"

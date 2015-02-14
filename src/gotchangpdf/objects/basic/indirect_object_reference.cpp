@@ -21,7 +21,6 @@ namespace gotchangpdf
 	bool IndirectObjectReference::Equals(const IndirectObjectReference& other) const
 	{
 		return _ref_obj->Equals(*other._ref_obj) && _ref_gen->Equals(*other._ref_gen);
-		return false;
 	}
 
 	bool IndirectObjectReference::operator<(const IndirectObjectReference& other) const

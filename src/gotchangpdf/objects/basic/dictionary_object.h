@@ -124,6 +124,8 @@ namespace gotchangpdf
 			return true;
 		}
 
+		inline bool Contains(const NameT& name) const { return (_list.find(name) != _list.end()); }
+
 		//private:
 	public:
 		list_type _list;
@@ -136,7 +138,7 @@ namespace gotchangpdf
 
 		inline bool operator==(const DictionaryObject& other) const { return Equals(other); }
 		inline bool operator!=(const DictionaryObject& other) const { return !Equals(other); }
-		inline bool operator<(const DictionaryObject& other) const { return false; }
+		inline bool operator<(const DictionaryObject&) const { return false; }
 	};
 }
 

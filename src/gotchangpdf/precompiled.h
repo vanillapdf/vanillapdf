@@ -1,6 +1,12 @@
 #ifndef _PRECOMPILED_H
 #define _PRECOMPILED_H
 
+// decorated name length exceeded, name was truncated
+#pragma warning (disable: 4503)
+
+// forceinline not inlined
+#pragma warning (disable: 4714)
+
 // Solution
 #include "deferred.h"
 #include "smart_ptr.h"
@@ -8,7 +14,14 @@
 #include "object_visitors.h"
 #include "exception.h"
 #include "constants.h"
+
+#pragma warning (push, 3)
+// snprintf in boost
+#pragma warning (disable: 4996)
 #include "log.h"
+#pragma warning (pop)
+
+#pragma warning (push, 3)
 
 // C++ standard
 #include <map>
@@ -55,5 +68,7 @@
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/spirit/repository/include/qi_advance.hpp>
 #include <boost/spirit/include/classic_position_iterator.hpp>
+
+#pragma warning (pop)
 
 #endif /* _PRECOMPILED_H */

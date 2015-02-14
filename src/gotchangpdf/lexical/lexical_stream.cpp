@@ -1,10 +1,11 @@
 #include "precompiled.h"
-#include "lexical_stream.h"
 
+#include "lexical_stream.h"
 #include "exception.h"
 #include "constants.h"
 #include "token_dictionary.h"
 #include "character.h"
+#include "util.h"
 
 #include <cassert>
 #include <algorithm>
@@ -23,6 +24,8 @@ namespace gotchangpdf
 			_last_token_offset(_BADOFF) {}
 
 		Stream::Stream(const Stream &other) : raw::Stream(other) {}
+
+		Stream::~Stream() {}
 
 		/* We need to move to some serious lexer */
 
@@ -215,6 +218,14 @@ namespace gotchangpdf
 			return *_last_token;
 		}
 
-		Stream::~Stream() {}
+		Stream& operator>>(Stream& s, char& o)
+		{
+			auto value = s.get();
+			if (!IsInRange<char>(value))
+				throw exceptions::Exception("Character is out of range");
+
+			o = static_cast<char>(value);
+			return s;
+		}
 	}
 }

@@ -1,11 +1,6 @@
 #ifndef _LOG_H
 #define _LOG_H
 
-#include "file.h"
-
-#pragma warning(push)
-#pragma warning(disable: 4996)
-
 #include <boost/log/core.hpp>
 #include <boost/log/expressions.hpp>
 
@@ -20,8 +15,6 @@
 #include <boost/log/utility/setup/common_attributes.hpp>
 
 #include <boost/log/support/date_time.hpp>
-
-#pragma warning(pop)
 
 namespace gotchangpdf
 {

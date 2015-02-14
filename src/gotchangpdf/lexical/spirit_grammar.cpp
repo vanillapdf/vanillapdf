@@ -5,8 +5,10 @@
 #include "iter_offset_parser.h"
 #include "abstract_syntax_tree.h"
 
+#pragma warning (push, 3)
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/spirit/repository/include/qi_advance.hpp>
+#pragma warning (pop)
 
 #define BOOST_SPIRIT_AUTO(domain_, name, expr)                                  \
 	typedef boost::proto::result_of::                                           \

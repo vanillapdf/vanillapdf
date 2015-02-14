@@ -17,11 +17,11 @@ namespace gotchangpdf
 			return instance;
 		}
 
-		inline bool Equals(const NullObject& other) const { return true; }
+		inline bool Equals(const NullObject&) const { return true; }
 
 		inline bool operator==(const NullObject& other) const { return Equals(other); }
 		inline bool operator!=(const NullObject& other) const { return !Equals(other); }
-		inline bool operator<(const NullObject& other) const { return false; }
+		inline bool operator<(const NullObject&) const { return false; }
 
 	public:
 		NullObject() = default;

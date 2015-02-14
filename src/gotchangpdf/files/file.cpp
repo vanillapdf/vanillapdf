@@ -23,7 +23,6 @@ namespace gotchangpdf
 	namespace files
 	{
 		using namespace std;
-		using namespace files;
 		using namespace lexical;
 		using namespace exceptions;
 

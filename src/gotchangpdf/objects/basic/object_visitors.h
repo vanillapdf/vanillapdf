@@ -16,10 +16,10 @@ namespace gotchangpdf
 	class IsNullVisitor : public boost::static_visitor<bool>
 	{
 	public:
-		inline bool operator()(const NullObjectPtr& obj) const { return true; }
+		inline bool operator()(const NullObjectPtr&) const { return true; }
 
 		template <typename T>
-		inline bool operator()(const T& obj) const { return false; }
+		inline bool operator()(const T&) const { return false; }
 	};
 
 	template <typename T>
@@ -44,7 +44,7 @@ namespace gotchangpdf
 		inline T operator()(T& obj) const { return obj; }
 
 		template <typename U>
-		inline T operator()(const U& obj) const { throw exceptions::Exception("Type cast error"); }
+		inline T operator()(const U&) const { throw exceptions::Exception("Type cast error"); }
 
 	private:
 		mutable std::map<IndirectObjectReference, bool> visited;
@@ -76,6 +76,9 @@ namespace gotchangpdf
 			: _container(container),
 			boost::static_visitor<void>() {}
 
+		SetContainerVisitor& operator=(const SetContainerVisitor&) = delete;
+		SetContainerVisitor(const SetContainerVisitor&) = delete;
+
 		template <typename T>
 		inline void operator()(T& obj) const { obj->SetContainer(_container); }
 
@@ -90,7 +93,7 @@ namespace gotchangpdf
 		inline T operator()(T& obj) const { return obj; }
 
 		template <typename U>
-		inline T operator()(const U& obj) const { throw exceptions::Exception("Type cast error"); }
+		inline T operator()(const U&) const { throw exceptions::Exception("Type cast error"); }
 	};
 
 	template <typename T>
@@ -102,7 +105,7 @@ namespace gotchangpdf
 		inline ArrayObjectPtr<T> operator()(MixedArrayObjectPtr& obj) const { return obj->CastToArrayType<T>(); }
 
 		template <typename U>
-		inline ArrayObjectPtr<T> operator()(const U& obj) const { throw exceptions::Exception("Type cast error"); }
+		inline ArrayObjectPtr<T> operator()(const U&) const { throw exceptions::Exception("Type cast error"); }
 	};
 }
 
