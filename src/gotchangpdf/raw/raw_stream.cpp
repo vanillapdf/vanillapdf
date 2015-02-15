@@ -27,7 +27,7 @@ namespace gotchangpdf
 		Stream::Stream(const raw::Stream & other)
 			: CharacterSource(other.rdbuf()) {}
 
-		BufferPtr Stream::read(unsigned int len)
+		BufferPtr Stream::read(types::stream_size len)
 		{
 			Buffer result(len);
 			CharacterSource::read(result.data(), len);

@@ -17,19 +17,17 @@ namespace gotchangpdf
 		if (!_body->empty())
 			return _body;
 
-		auto stream = _file->GetInputStream();
-		if (auto locked = stream.lock())
+		auto input = _file->GetInputStream();
+		if (auto locked = input.lock())
 		{
 			auto size_raw = _header->Find(constant::Name::Length);
 			KillIndirectionVisitor<IntegerObjectPtr> visitor;
 			IntegerObjectPtr size = size_raw.apply_visitor(visitor);
 
-			size_t len = static_cast<size_t>(*size);
-
 			auto stream = raw::Stream(*locked);
 			auto pos = stream.tellg();
 			stream.seekg(_raw_data_offset);
-			_body = stream.read(len);
+			_body = stream.read(*size);
 			stream.seekg(pos);
 		}
 		else

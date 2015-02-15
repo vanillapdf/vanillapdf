@@ -20,7 +20,7 @@ namespace gotchangpdf
 			typedef boost::iostreams::filtering_streambuf<boost::iostreams::input_seekable, char> CharacterFilteringSourceBuffer;
 
 		public:
-			virtual BufferPtr read(unsigned int len) = 0;
+			virtual BufferPtr read(types::stream_size len) = 0;
 			virtual void read_exact(BufferPtr buf);
 
 			virtual char get_hex(void) = 0;
