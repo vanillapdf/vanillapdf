@@ -86,12 +86,12 @@ namespace gotchangpdf
 			return Iterator(_list.end());
 		}
 
-		const_iterator begin(void) const
+		const_iterator begin(void) const _NOEXCEPT
 		{
 			return _list.begin();
 		}
 
-		const_iterator end(void) const
+		const_iterator end(void) const _NOEXCEPT
 		{
 			return _list.end();
 		}

@@ -19,7 +19,7 @@ namespace gotchangpdf
 		explicit NameObject(const lexical::Token& token);
 		explicit NameObject(value_type name) : _value(name) {}
 
-		inline value_type Value() const { return _value; }
+		inline value_type Value() const _NOEXCEPT { return _value; }
 
 		inline bool operator==(const NameObject& other) const { return Equals(other); }
 		inline bool operator!=(const NameObject& other) const { return !Equals(other); }

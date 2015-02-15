@@ -14,7 +14,7 @@ namespace gotchangpdf
 			Stream(const Stream & other);
 			virtual ~Stream();
 
-			virtual BufferPtr read(types::stream_size len) override;
+			virtual BufferPtr read(types::uinteger len) override;
 			virtual char get_hex() override;
 			virtual BufferPtr readline(void) override;
 
