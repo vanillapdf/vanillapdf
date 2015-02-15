@@ -43,7 +43,7 @@ namespace gotchangpdf
 	{
 		namespace Name
 		{
-#			define DECLARE_CONST_NAME(name)	const NameObject name = NameObject(Buffer(#name, sizeof(#name)))
+#			define DECLARE_CONST_NAME(name)	const NameObjectPtr name = NameObject(Buffer(#name, sizeof(#name)))
 
 			DECLARE_CONST_NAME(Length);
 			DECLARE_CONST_NAME(Type);
