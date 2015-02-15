@@ -23,6 +23,7 @@
     <ClInclude Include="include\gotchangpdf\c_page_object.h" />
     <ClInclude Include="include\gotchangpdf\c_page_tree.h" />
     <ClInclude Include="include\gotchangpdf\c_export.h" />
+    <ClInclude Include="include\gotchangpdf\c_stream_object.h" />
     <ClInclude Include="include\gotchangpdf\gotchangpdf.h" />
     <ClInclude Include="include\gotchangpdf\c_handles.h" />
     <ClInclude Include="include\gotchangpdf\c_xref.h" />
@@ -123,6 +124,7 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_page_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_page_tree.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_stream_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_xref.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\lexical_base_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\lexical_reverse_stream.cpp" />
