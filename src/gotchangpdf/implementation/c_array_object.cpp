@@ -29,12 +29,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayHandle hand
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		*result = obj->Size();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	*result = obj->Size();
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Release(ArrayHandle handle)
@@ -42,10 +38,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Release(ArrayHandle h
 	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
-	try
-	{
-		obj->Release();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	obj->Release();
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }

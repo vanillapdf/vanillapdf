@@ -46,10 +46,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Release(NameHandle han
 	NameObject* obj = reinterpret_cast<NameObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
-	try
-	{
-		obj->Release();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	obj->Release();
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }

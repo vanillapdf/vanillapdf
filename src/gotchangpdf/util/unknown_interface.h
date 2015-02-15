@@ -8,8 +8,8 @@ namespace gotchangpdf
 	class IUnknown : public boost::intrusive_ref_counter<IUnknown>
 	{
 	public:
-		inline void AddRef() const { boost::sp_adl_block::intrusive_ptr_add_ref(this); }
-		inline void Release() const { boost::sp_adl_block::intrusive_ptr_release(this); }
+		inline void AddRef() const _NOEXCEPT { boost::sp_adl_block::intrusive_ptr_add_ref(this); }
+		inline void Release() const _NOEXCEPT { boost::sp_adl_block::intrusive_ptr_release(this); }
 
 		virtual ~IUnknown() = 0;
 	};

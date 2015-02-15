@@ -62,12 +62,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Release(
 	DictionaryObject::Iterator* iterator = reinterpret_cast<DictionaryObject::Iterator*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
 
-	try
-	{
-		iterator->Release();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	iterator->Release();
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetKey(
@@ -135,10 +131,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Release(Dictiona
 	DictionaryObject* obj = reinterpret_cast<DictionaryObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
-	try
-	{
-		obj->Release();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	obj->Release();
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }

@@ -18,7 +18,7 @@ namespace gotchangpdf
 		explicit IntegerObject(value_type value);
 		explicit IntegerObject(const lexical::Token& value);
 
-		inline value_type IntegerObject::Value(void) const { return _value; }
+		inline value_type IntegerObject::Value(void) const _NOEXCEPT { return _value; }
 
 		operator value_type() const { return _value; }
 
@@ -31,7 +31,7 @@ namespace gotchangpdf
 		friend lexical::ReverseStream& operator>> (lexical::ReverseStream& s, IntegerObject& o);
 		friend lexical::Stream& operator>> (lexical::Stream& s, IntegerObject& o);
 
-		inline bool Equals(const IntegerObject& other) const { return _value == other._value; }
+		inline bool Equals(const IntegerObject& other) const _NOEXCEPT { return _value == other._value; }
 
 		inline bool operator==(const IntegerObject& other) const { return Equals(other); }
 		inline bool operator!=(const IntegerObject& other) const { return !Equals(other); }

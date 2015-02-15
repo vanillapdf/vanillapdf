@@ -185,15 +185,6 @@ int process(ObjectHandle obj, int nested)
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToName(obj, &name));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_name(name, nested));
 		break;
-		/*
-	case NameTree:
-		print_spaces(nested);
-		printf("Name tree object begin\n");
-
-		print_spaces(nested);
-		printf("Name tree object end\n");
-		break;
-		*/
 	case Null:
 		print_spaces(nested);
 		printf("Null object begin\n");
@@ -203,15 +194,6 @@ int process(ObjectHandle obj, int nested)
 		print_spaces(nested);
 		printf("Null object end\n");
 		break;
-		/*
-	case ObjectStream:
-		print_spaces(nested);
-		printf("Object stream begin\n");
-
-		print_spaces(nested);
-		printf("Object stream end\n");
-		break;
-		*/
 	case Real:
 		print_spaces(nested);
 		printf("Real object begin\n");

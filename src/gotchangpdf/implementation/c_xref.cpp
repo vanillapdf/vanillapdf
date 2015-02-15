@@ -39,12 +39,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_Release(XrefHandle handle)
 	Xref* table = reinterpret_cast<Xref*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(table);
 
-	try
-	{
-		table->Release();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	table->Release();
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle handle)
@@ -52,12 +48,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle
 	XrefEntry* entry = reinterpret_cast<XrefEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 
-	try
-	{
-		entry->Release();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	entry->Release();
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Reference(XrefEntryHandle handle, PObjectHandle result)

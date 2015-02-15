@@ -10,12 +10,8 @@ GOTCHANG_PDF_API error_type Object_TypeName(enum ObjectType type, out_string_typ
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		*result = Object::TypeName(static_cast<Object::Type>(type));
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	*result = Object::TypeName(static_cast<Object::Type>(type));
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Type(ObjectHandle handle, PObjectType result)
@@ -52,12 +48,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Release(ObjectHandle handl
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
-	try
-	{
-		obj->Release();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	obj->Release();
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToArray(ObjectHandle handle, PArrayHandle result)

@@ -28,28 +28,28 @@ namespace gotchangpdf
 			IndirectReference
 		};
 
-		static const char* TypeName(Type type);
+		static const char* TypeName(Type type) _NOEXCEPT;
 
 	public:
 		Object() = default;
 		virtual ~Object() = 0;
 
-		virtual inline Type GetType(void) const = 0;
+		virtual inline Type GetType(void) const _NOEXCEPT = 0;
 
 	public:
-		inline bool IsIndirect(void) const { return _obj_number > 0; }
+		inline bool IsIndirect(void) const _NOEXCEPT { return _obj_number > 0; }
 
-		inline void SetOffset(types::stream_offset offset) { _offset = offset; }
-		inline types::stream_offset GetOffset() const { return _offset; }
+		inline void SetOffset(types::stream_offset offset) _NOEXCEPT { _offset = offset; }
+		inline types::stream_offset GetOffset() const _NOEXCEPT { return _offset; }
 
-		inline void SetObjectNumber(types::integer number){ _obj_number = number; }
-		inline types::integer GetObjectNumber() const { return _obj_number; }
+		inline void SetObjectNumber(types::integer number) _NOEXCEPT { _obj_number = number; }
+		inline types::integer GetObjectNumber() const _NOEXCEPT { return _obj_number; }
 
-		inline void SetGenerationNumber(types::ushort number){ _gen_number = number; }
-		inline types::ushort GetGenerationNumber() const { return _gen_number; }
+		inline void SetGenerationNumber(types::ushort number) _NOEXCEPT { _gen_number = number; }
+		inline types::ushort GetGenerationNumber() const _NOEXCEPT { return _gen_number; }
 
-		inline void SetFile(files::File *file) { _file = file; }
-		inline files::File* GetFile() const { return _file; }
+		inline void SetFile(files::File *file) _NOEXCEPT{ _file = file; }
+		inline files::File* GetFile() const _NOEXCEPT { return _file; }
 
 	protected:
 		files::File * _file = nullptr;
