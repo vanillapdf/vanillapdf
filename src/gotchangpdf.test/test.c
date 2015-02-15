@@ -81,17 +81,56 @@ int process_name(NameHandle name, int nested)
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
+int process_dictionary(DictionaryHandle dictionary, int nested)
+{
+	int boolean;
+	DictionaryIteratorHandle iterator;
+	NameHandle key;
+	ObjectHandle value;
+
+	print_spaces(nested);
+	printf("Dictionary begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Iterator(dictionary, &iterator));
+	while (GOTCHANG_PDF_ERROR_SUCCES == DictionaryObjectIterator_IsValid(iterator, dictionary, &boolean)
+		&& GOTCHANG_PDF_RV_TRUE == boolean)
+	{
+		print_spaces(nested);
+		printf("Pair:\n");
+
+		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_GetKey(iterator, &key));
+		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_GetValue(iterator, &value));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(process_name(key, nested + 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(process(value, nested + 1));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(NameObject_Release(key));
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(value));
+
+		print_spaces(nested);
+		printf("EndPair\n");
+
+		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_Next(iterator));
+	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_Release(iterator));
+
+	print_spaces(nested);
+	printf("Dictionary End\n");
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
 int process(ObjectHandle obj, int nested)
 {
-	int i, size, val, boolean;
+	int i, size, val;
+	BufferHandle body_raw, body_decoded;
 	IndirectReferenceHandle indirect_reference;
 	ArrayHandle arr;
 	IntegerHandle integer;
+	StreamHandle stream;
 	NameHandle name;
-	ObjectHandle child, dictionary_value;
+	ObjectHandle child;
 	DictionaryHandle dictionary;
-	DictionaryIteratorHandle iterator;
-	NameHandle dictionary_key;
 	enum ObjectType type;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_Type(obj, &type));
@@ -129,38 +168,8 @@ int process(ObjectHandle obj, int nested)
 		printf("Boolean object end\n");
 		break;
 	case Dictionary:
-		print_spaces(nested);
-		printf("Dictionary begin\n");
-
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToDictionary(obj, &dictionary));
-
-		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Iterator(dictionary, &iterator));
-		while (GOTCHANG_PDF_ERROR_SUCCES == DictionaryObjectIterator_IsValid(iterator, dictionary, &boolean)
-			&& GOTCHANG_PDF_RV_TRUE == boolean)
-		{
-			print_spaces(nested);
-			printf("Pair:\n");
-
-			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_GetKey(iterator, &dictionary_key));
-			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_GetValue(iterator, &dictionary_value));
-
-			RETURN_ERROR_IF_NOT_SUCCESS(process_name(dictionary_key, nested + 1));
-			RETURN_ERROR_IF_NOT_SUCCESS(process(dictionary_value, nested + 1));
-
-			RETURN_ERROR_IF_NOT_SUCCESS(NameObject_Release(dictionary_key));
-			RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(dictionary_value));
-
-			print_spaces(nested);
-			printf("EndPair\n");
-
-			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_Next(iterator));
-		}
-
-		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_Release(iterator));
-
-		print_spaces(nested);
-		printf("Dictionary End\n");
-
+		RETURN_ERROR_IF_NOT_SUCCESS(process_dictionary(dictionary, nested));
 		break;
 	case Function:
 		print_spaces(nested);
@@ -204,6 +213,15 @@ int process(ObjectHandle obj, int nested)
 	case Stream:
 		print_spaces(nested);
 		printf("Stream object begin\n");
+
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToStream(obj, &stream));
+		RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_Header(stream, &dictionary));
+		RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_BodyRaw(stream, &body_raw));
+		RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_BodyRaw(stream, &body_decoded));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(process_dictionary(dictionary, nested));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(body_raw, nested));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(body_decoded, nested));
 
 		print_spaces(nested);
 		printf("Stream object end\n");

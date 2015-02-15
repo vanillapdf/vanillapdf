@@ -19,6 +19,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Type(ObjectHandle handle, 
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
 	{
@@ -47,6 +48,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Release(ObjectHandle handl
 {
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	obj->Release();
 	return GOTCHANG_PDF_ERROR_SUCCES;
@@ -56,6 +58,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToArray(ObjectHandle handl
 {
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
 	{
@@ -70,6 +73,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToDictionary(ObjectHandle 
 {
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
 	{
@@ -80,10 +84,26 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToDictionary(ObjectHandle 
 	C_INTERFACE_EXCEPTION_HANDLERS
 }
 
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToStream(ObjectHandle handle, PStreamHandle result)
+{
+	Object* obj = reinterpret_cast<Object*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	LOG_SCOPE(obj->GetFile()->GetFilename());
+
+	try
+	{
+		StreamObject* converted = dynamic_cast<StreamObject*>(obj);
+		*result = reinterpret_cast<StreamHandle>(converted);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToIndirectReference(ObjectHandle handle, PIndirectReferenceHandle result)
 {
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
 	{
@@ -98,6 +118,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToInteger(ObjectHandle han
 {
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
 	{
@@ -112,6 +133,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToName(ObjectHandle handle
 {
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
 	{
