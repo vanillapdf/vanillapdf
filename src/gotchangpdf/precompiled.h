@@ -7,6 +7,9 @@
 // forceinline not inlined
 #pragma warning (disable: 4714)
 
+// Do while false
+#pragma warning (disable: 4127)
+
 // Solution
 #include "deferred.h"
 #include "smart_ptr.h"

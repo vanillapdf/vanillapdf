@@ -28,7 +28,7 @@ namespace gotchangpdf
 			IndirectReference
 		};
 
-		static const char* TypeName(Type type) _NOEXCEPT;
+		static const char* TypeName(Type type);
 
 	public:
 		Object() = default;

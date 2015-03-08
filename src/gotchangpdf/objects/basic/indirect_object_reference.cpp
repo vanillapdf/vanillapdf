@@ -11,7 +11,7 @@ namespace gotchangpdf
 	DirectObject IndirectObjectReference::GetReferencedObject() const
 	{
 		if (!_initialized) {
-			_object = _file->GetIndirectObject(_ref_obj->Value(), _ref_gen->Value());
+			_object = _file->GetIndirectObject(_ref_obj->Value(), _ref_gen->SafeConvert<types::ushort>());
 			_initialized = true;
 		}
 

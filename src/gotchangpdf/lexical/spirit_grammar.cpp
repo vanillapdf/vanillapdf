@@ -38,7 +38,7 @@ void indirect_object_handler(DirectObject obj, const IntegerObjectPtr obj_number
 	ObjectBaseVisitor visitor;
 	auto base = obj.apply_visitor(visitor);
 	base->SetObjectNumber(obj_number->Value());
-	base->SetGenerationNumber(gen_number->Value());
+	base->SetGenerationNumber(gen_number->SafeConvert<types::ushort>());
 }
 
 void dictionary_item_handler(const DictionaryObjectPtr obj, ContainableObject item)

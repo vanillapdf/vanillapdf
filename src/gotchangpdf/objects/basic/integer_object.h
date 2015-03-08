@@ -6,6 +6,7 @@
 #include "token.h"
 #include "object.h"
 #include "containable.h"
+#include "util.h"
 
 namespace gotchangpdf
 {
@@ -18,7 +19,16 @@ namespace gotchangpdf
 		explicit IntegerObject(value_type value);
 		explicit IntegerObject(const lexical::Token& value);
 
-		inline value_type IntegerObject::Value(void) const _NOEXCEPT { return _value; }
+		inline value_type Value(void) const _NOEXCEPT { return _value; }
+
+		template <typename T>
+		inline T SafeConvert(void) const
+		{
+			if (!IsInRange<value_type, T>(_value))
+				throw exceptions::Exception("Integer value is out of range");
+
+			return static_cast<T>(_value);
+		}
 
 		operator value_type() const { return _value; }
 

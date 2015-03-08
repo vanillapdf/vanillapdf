@@ -84,7 +84,7 @@ namespace gotchangpdf
 		}
 
 		bool File::IsIndirectObjectIntialized(types::integer objNumber,
-			types::ushort genNumber)
+			types::ushort)
 		{
 			auto item = _xref->at(objNumber);
 			return item->Initialized();
