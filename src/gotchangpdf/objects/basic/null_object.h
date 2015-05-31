@@ -10,6 +10,8 @@ namespace gotchangpdf
 	{
 	public:
 		virtual inline Object::Type GetType(void) const override { return Object::Type::Null; }
+		virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
+		virtual inline ContainerPtr GetContainer() const override { return _container; }
 
 		static NullObjectPtr GetInstance(void)
 		{
@@ -27,6 +29,9 @@ namespace gotchangpdf
 		NullObject() = default;
 		NullObject(const NullObject&) = default;
 		NullObject& operator=(const NullObject&) = default;
+
+	private:
+		ContainerPtr _container;
 	};
 }
 

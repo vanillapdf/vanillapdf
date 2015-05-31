@@ -32,8 +32,6 @@ namespace gotchangpdf
 		inline const T& At(unsigned int at) const { return _list.at(at); }
 		inline T& At(unsigned int at) { return _list.at(at); }
 
-		virtual inline Object::Type GetType(void) const override { return Object::Type::Array; }
-
 		template <typename U>
 		ArrayObjectPtr<U> Convert(std::function<const U(T& obj)> f)
 		{
@@ -44,9 +42,16 @@ namespace gotchangpdf
 			return ArrayObject<U>(list);
 		}
 
+		virtual inline Object::Type GetType(void) const override { return Object::Type::Array; }
+		virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
+		virtual inline ContainerPtr GetContainer() const override { return _container; }
+
 	//protected:
 	public:
 		list_type _list;
+
+	private:
+		ContainerPtr _container;
 	};
 
 	class MixedArrayObject : public ArrayObject<ContainableObject>
@@ -64,6 +69,6 @@ namespace gotchangpdf
 	};
 }
 
-#include "objects.h"
+//#include "objects.h"
 
 #endif /* _ARRAY_OBJECT_H */

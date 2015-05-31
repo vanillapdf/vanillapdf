@@ -37,6 +37,8 @@ namespace gotchangpdf
 		IntegerObject& operator= (const lexical::Token& value);
 
 		virtual Object::Type GetType(void) const override { return Object::Type::Integer; }
+		virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
+		virtual inline ContainerPtr GetContainer() const override { return _container; }
 
 		friend lexical::ReverseStream& operator>> (lexical::ReverseStream& s, IntegerObject& o);
 		friend lexical::Stream& operator>> (lexical::Stream& s, IntegerObject& o);
@@ -50,6 +52,9 @@ namespace gotchangpdf
 	//private:
 	public:
 		value_type _value = 0;
+
+	private:
+		ContainerPtr _container;
 	};
 }
 

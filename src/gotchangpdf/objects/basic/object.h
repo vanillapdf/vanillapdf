@@ -32,7 +32,6 @@ namespace gotchangpdf
 
 	public:
 		Object() = default;
-		virtual ~Object() = 0;
 
 		virtual inline Type GetType(void) const _NOEXCEPT = 0;
 
@@ -57,8 +56,6 @@ namespace gotchangpdf
 		types::ushort _gen_number;
 		types::stream_offset _offset = std::_BADOFF;
 	};
-
-	inline Object::~Object() {}
 }
 
 #endif /* _OBJECT_H */

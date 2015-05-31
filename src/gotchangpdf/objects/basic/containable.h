@@ -32,22 +32,9 @@ namespace gotchangpdf
 	class Containable
 	{
 	public:
-		Containable() = default;
-		virtual ~Containable() = 0;
-
-	public:
-		inline void SetContainer(ContainerPtr obj) { _container = obj; }
-		inline ContainerPtr GetContainer() const { return _container; }
-
-	private:
-		ContainerPtr _container;
+		virtual void SetContainer(ContainerPtr obj) = 0;
+		virtual ContainerPtr GetContainer() const = 0;
 	};
-
-	inline Containable::~Containable() {}
 }
-
-#include "array_object.h"
-#include "dictionary_object.h"
-#include "null_object.h"
 
 #endif /* _CONTAINABLE_H */

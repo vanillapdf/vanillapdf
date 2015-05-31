@@ -13,6 +13,7 @@ namespace gotchangpdf
 	{
 	public:
 		typedef BufferPtr value_type;
+		friend std::ostream& operator<<(std::ostream& os, const NameObject& name);
 
 	public:
 		NameObject() = default;
@@ -28,6 +29,8 @@ namespace gotchangpdf
 		inline bool Equals(const NameObject& other) const { return _value->Equals(*other._value); }
 
 		virtual inline Object::Type GetType(void) const override { return Object::Type::Name; }
+		virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
+		virtual inline ContainerPtr GetContainer() const override { return _container; }
 
 		void SetName(value_type name) { _value = name; }
 
@@ -36,7 +39,7 @@ namespace gotchangpdf
 		value_type _value;
 
 	private:
-		friend std::ostream& operator<<(std::ostream& os, const NameObject& name);
+		ContainerPtr _container;
 	};
 
 	namespace constant

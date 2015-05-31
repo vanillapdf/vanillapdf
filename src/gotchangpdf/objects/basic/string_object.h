@@ -13,9 +13,15 @@ namespace gotchangpdf
 	public:
 		BufferPtr _value;
 
+		virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
+		virtual inline ContainerPtr GetContainer() const override { return _container; }
+
 	protected:
 		StringObject();
 		explicit StringObject(BufferPtr value);
+
+	private:
+		ContainerPtr _container;
 	};
 
 	class HexadecimalString : public StringObject

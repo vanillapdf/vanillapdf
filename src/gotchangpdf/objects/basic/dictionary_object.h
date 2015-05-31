@@ -62,8 +62,6 @@ namespace gotchangpdf
 
 		using IteratorPtr = Deferred<Iterator>;
 
-		virtual inline Object::Type GetType(void) const override { return Object::Type::Dictionary; }
-
 		template <typename U>
 		U FindAs(const NameT& name) const
 		{
@@ -126,9 +124,14 @@ namespace gotchangpdf
 
 		inline bool Contains(const NameT& name) const { return (_list.find(name) != _list.end()); }
 
+		virtual inline Object::Type GetType(void) const override { return Object::Type::Dictionary; }
+		virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
+		virtual inline ContainerPtr GetContainer() const override { return _container; }
+
 		//private:
 	public:
 		list_type _list;
+		ContainerPtr _container;
 	};
 
 	class DictionaryObject : public DictionaryObjectBase<NameObjectPtr, ContainableObject>
@@ -141,7 +144,5 @@ namespace gotchangpdf
 		inline bool operator<(const DictionaryObject&) const { return false; }
 	};
 }
-
-#include "objects.h"
 
 #endif /* _DICTIONARY_OBJECT_H */
