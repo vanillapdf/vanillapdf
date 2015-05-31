@@ -60,7 +60,7 @@ namespace gotchangpdf
 				ios_base::in | ios_base::out | ios_base::binary);
 
 			if (!_input || !_input->good())
-				throw new exceptions::Exception("Could not open file");
+				throw exceptions::Exception("Could not open file");
 
 			SpiritParser stream = SpiritParser(this, *_input);
 
