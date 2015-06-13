@@ -13,13 +13,14 @@
 
 namespace gotchangpdf
 {
-	class IsNullVisitor : public boost::static_visitor<bool>
+	template <typename T>
+	class IsTypeVisitor : public boost::static_visitor < bool >
 	{
 	public:
-		inline bool operator()(const NullObjectPtr&) const { return true; }
+		inline bool operator()(const T&) const { return true; }
 
-		template <typename T>
-		inline bool operator()(const T&) const { return false; }
+		template <typename U>
+		inline bool operator()(const U&) const { return false; }
 	};
 
 	template <typename T>
