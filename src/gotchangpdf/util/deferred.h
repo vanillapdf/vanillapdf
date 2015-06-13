@@ -2,30 +2,17 @@
 #define _DEFERRED_H
 
 #include <boost/smart_ptr/intrusive_ptr.hpp>
-//#include <boost/smart_ptr/intrusive_ref_counter.hpp>
 
 namespace gotchangpdf
 {
-	//using boost::sp_adl_block::intrusive_ptr_add_ref;
-	//using boost::sp_adl_block::intrusive_ptr_release;
-
 	template <typename T>
 	inline T* Allocate() { return new T; }
 
-	/*
-	template <typename T>
-	inline void Deallocate(T* ptr) { delete ptr; }
+	template<typename T>
+	inline void intrusive_ptr_add_ref(T* expr) { expr->AddRef(); }
 
 	template<typename T>
-	inline void intrusive_ptr_add_ref(T* expr) { ++expr->references; }
-
-	template<typename T>
-	inline void intrusive_ptr_release(T* expr)
-	{
-	if (--expr->references == 0)
-	Deallocate(expr);
-	}
-	*/
+	inline void intrusive_ptr_release(T* expr) { expr->Release(); }
 
 	/*!
 	* \class Deferred
@@ -39,21 +26,24 @@ namespace gotchangpdf
 	{
 		typedef T value_type;
 
-		Deferred() : Contents(reinterpret_cast<T*>(nullptr)){
-			Content.Owner = this;
-		}
-
-		Deferred(const T& expr) : Contents(new (Allocate<T>()) T(expr)){
-			Content.Owner = this;
-		}
-
 		Deferred(const Deferred& rhs) : Contents(rhs.Contents){
 			Content.Owner = this;
 		}
 
-		template <typename VariantContentT>
-		Deferred(const VariantContentT& content) : Contents(new (Allocate<T>()) T(content))
+		template <typename... Parameters>
+		Deferred(const Parameters&... p) : Contents(new (Allocate<T>()) T(p...))
 		{
+			Content.Owner = this;
+		}
+
+		template <typename U>
+		Deferred(std::initializer_list<U> list) : Contents(new (Allocate<T>()) T(list))
+		{
+			Content.Owner = this;
+		}
+
+		template <>
+		Deferred() : Contents(reinterpret_cast<T*>(nullptr)){
 			Content.Owner = this;
 		}
 
@@ -135,21 +125,26 @@ namespace gotchangpdf
 		typedef typename T::size_type size_type;
 		typedef typename T::reference reference;
 
-		DeferredContainer()
-			: Contents(reinterpret_cast<T*>(nullptr))
-		{
-			Content.Owner = this;
-		}
-
-		DeferredContainer(const T& expr)
-			: Contents(new (Allocate<T>()) T(expr))
-		{
-			Content.Owner = this;
-		}
-
 		DeferredContainer(const DeferredContainer& rhs)
 			: Contents(rhs.Contents)
 		{
+			Content.Owner = this;
+		}
+
+		template <typename... Parameters>
+		DeferredContainer(const Parameters&... p) : Contents(new (Allocate<T>()) T(p...))
+		{
+			Content.Owner = this;
+		}
+
+		template <typename U>
+		DeferredContainer(std::initializer_list<U> list) : Contents(new (Allocate<T>()) T(list))
+		{
+			Content.Owner = this;
+		}
+
+		template <>
+		DeferredContainer() : Contents(reinterpret_cast<T*>(nullptr)){
 			Content.Owner = this;
 		}
 
@@ -160,6 +155,7 @@ namespace gotchangpdf
 		// to the constructor; to make the wrapper look as if it holds
 		// an underlying iterator pair, we use this constructor.
 		//
+		/*
 		template <typename ContentOfSomeKind>
 		DeferredContainer(const ContentOfSomeKind& a, const ContentOfSomeKind& b)
 			: Contents(new (Allocate<T>()) T())
@@ -167,6 +163,7 @@ namespace gotchangpdf
 			Content.Owner = this;
 			Contents->push_back(value_type(a, b));
 		}
+		*/
 
 		DeferredContainer& operator=(const DeferredContainer& rhs)
 		{
