@@ -96,7 +96,7 @@ namespace gotchangpdf
 			LOG_DEBUG << "GetIndirectObject " << objNumber << " and " << genNumber;
 
 			if (!_initialized)
-				throw new Exception("File has not been initialized yet");
+				throw Exception("File has not been initialized yet");
 
 			auto item = _xref->at(objNumber);
 			if (!item->Initialized()) {
@@ -118,7 +118,7 @@ namespace gotchangpdf
 		SmartPtr<documents::Catalog> File::GetDocumentCatalog(void) const
 		{
 			if (!_initialized)
-				throw new Exception("File has not been initialized yet");
+				throw Exception("File has not been initialized yet");
 
 			auto dictionary = _trailer->GetDictionary();
 			auto reference = dictionary->FindAs<IndirectObjectReferencePtr>(constant::Name::Root);
