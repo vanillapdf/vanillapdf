@@ -25,6 +25,7 @@ namespace gotchangpdf
 
 		Buffer(const value_type * chars, int len);
 		Buffer(const value_type * begin, const value_type * end);
+		Buffer(size_type _Count, const value_type& _Val);
 
 		template<class _Iter,
 		class = typename std::enable_if<std::_Is_iterator<_Iter>::value,
