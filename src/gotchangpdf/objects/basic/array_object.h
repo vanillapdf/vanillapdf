@@ -25,6 +25,7 @@ namespace gotchangpdf
 	public:
 		explicit ArrayObject() {}
 		explicit ArrayObject(list_type& list) : _list(list) {}
+		explicit ArrayObject(std::initializer_list<T> list) : _list(list) {}
 
 		inline types::integer Size(void) const _NOEXCEPT { return _list.size(); }
 		inline const T& operator[](unsigned int i) const { return _list[i]; }
