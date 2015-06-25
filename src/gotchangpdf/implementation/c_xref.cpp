@@ -52,25 +52,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Reference(XrefEntryHandle handle, PObjectHandle result)
-{
-	XrefEntry* entry = reinterpret_cast<XrefEntry*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-	try
-	{
-		auto direct = entry->GetReference();
-		ObjectBaseAddRefVisitor visitor;
-		auto base = direct.apply_visitor(visitor);
-
-		*result = reinterpret_cast<ObjectHandle>(base);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
-}
-
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_In_Use(XrefEntryHandle handle, out_boolean_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_InUse(XrefEntryHandle handle, out_boolean_type result)
 {
 	XrefEntry* entry = reinterpret_cast<XrefEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);

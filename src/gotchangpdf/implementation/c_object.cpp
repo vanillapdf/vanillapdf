@@ -6,7 +6,7 @@
 
 using namespace gotchangpdf;
 
-GOTCHANG_PDF_API error_type Object_TypeName(enum ObjectType type, out_string_type result)
+GOTCHANG_PDF_API error_type Object_TypeName(ObjectType type, out_string_type result)
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	try

@@ -67,8 +67,15 @@ namespace gotchangpdf
 		class File;
 		class Header;
 		class Trailer;
+
 		class Xref;
+		class XrefTable;
+		class XrefStream;
+
 		class XrefEntry;
+		class XrefUsedEntry;
+		class XrefFreeEntry;
+		class XrefCompressedEntry;
 	}
 
 	namespace lexical
@@ -116,10 +123,17 @@ namespace gotchangpdf
 	using LiteralStringPtr = Deferred<LiteralString>;
 	using HexadecimalStringPtr = Deferred<HexadecimalString>;
 
-	using XrefEntryPtr = Deferred<files::XrefEntry>;
+	using XrefEntryPtr = SmartPtr<files::XrefEntry>;
+	using XrefFreeEntryPtr = SmartPtr<files::XrefFreeEntry>;
+	using XrefUsedEntryPtr = SmartPtr<files::XrefUsedEntry>;
+	using XrefCompressedEntryPtr = SmartPtr<files::XrefCompressedEntry>;
+
 	using HeaderPtr = Deferred<files::Header>;
 	using TrailerPtr = Deferred<files::Trailer>;
-	using XrefPtr = Deferred<files::Xref>;
+
+	using XrefPtr = SmartPtr<files::Xref>;
+	using XrefTablePtr = SmartPtr<files::XrefTable>;
+	using XrefStreamPtr = SmartPtr<files::XrefStream>;
 
 	using PageTreePtr = SmartPtr<documents::PageTree>;
 	using PageTreeNodePtr = SmartPtr<documents::PageTreeNode>;

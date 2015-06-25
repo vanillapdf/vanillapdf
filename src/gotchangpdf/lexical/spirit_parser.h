@@ -36,6 +36,9 @@ namespace gotchangpdf
 				return converted;
 			}
 
+			XrefPtr ReadXref(void);
+			XrefPtr ReadXref(types::stream_offset offset);
+
 			DirectObject ReadDirectObject(void);
 			DirectObject ReadDirectObject(types::stream_offset offset);
 

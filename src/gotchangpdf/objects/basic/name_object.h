@@ -48,6 +48,11 @@ namespace gotchangpdf
 		{
 #			define DECLARE_CONST_NAME(name)	const NameObjectPtr name = NameObject(Buffer(#name, sizeof(#name)))
 
+			DECLARE_CONST_NAME(BitsPerComponent);
+			DECLARE_CONST_NAME(Colors);
+			DECLARE_CONST_NAME(Columns);
+			DECLARE_CONST_NAME(DecodeParms);
+			DECLARE_CONST_NAME(EarlyChange);
 			DECLARE_CONST_NAME(Length);
 			DECLARE_CONST_NAME(Type);
 			DECLARE_CONST_NAME(ObjStm);
@@ -56,6 +61,7 @@ namespace gotchangpdf
 			DECLARE_CONST_NAME(Extends);
 			DECLARE_CONST_NAME(Filter);
 			DECLARE_CONST_NAME(FlateDecode);
+			DECLARE_CONST_NAME(Index);
 			DECLARE_CONST_NAME(Catalog);
 			DECLARE_CONST_NAME(Pages);
 			DECLARE_CONST_NAME(Page);
@@ -65,7 +71,10 @@ namespace gotchangpdf
 			DECLARE_CONST_NAME(MediaBox);
 			DECLARE_CONST_NAME(Resources);
 			DECLARE_CONST_NAME(Parent);
+			DECLARE_CONST_NAME(Predictor);
+			DECLARE_CONST_NAME(Prev);
 			DECLARE_CONST_NAME(Root);
+			DECLARE_CONST_NAME(Size);
 			DECLARE_CONST_NAME(W);
 		}
 	}

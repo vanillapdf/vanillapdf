@@ -8,25 +8,6 @@ extern "C"
 {
 #endif
 
-	// TODO i have no idea how export enum without clone
-	enum ObjectType
-	{
-		Array,
-		Boolean,
-		Dictionary,
-		Function,
-		Integer,
-		Name,
-		Null,
-		Real,
-		Stream,
-		HexadecimalString,
-		LiteralString,
-		IndirectReference
-	};
-
-	typedef enum ObjectType* PObjectType;
-
 	/* Basic */
 	DECLARE_OBJECT_HANDLE(Object);
 
@@ -47,6 +28,9 @@ extern "C"
 	/* File */
 	DECLARE_OBJECT_HANDLE(File);
 	DECLARE_OBJECT_HANDLE(XrefEntry);
+	DECLARE_OBJECT_HANDLE(XrefFreeEntry);
+	DECLARE_OBJECT_HANDLE(XrefUsedEntry);
+	DECLARE_OBJECT_HANDLE(XrefCompressedEntry);
 	DECLARE_OBJECT_HANDLE(Xref);
 
 	/* Semantic */
