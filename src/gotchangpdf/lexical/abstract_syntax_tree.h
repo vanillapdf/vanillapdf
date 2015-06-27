@@ -9,10 +9,6 @@
 //#include <boost/fusion/adapted/adt/adapt_adt.hpp>
 #include <boost/fusion/include/std_pair.hpp>
 
-BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::DirectObject, /**/)
-BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::FunctionObjectPtr, /**/)
-BOOST_FUSION_ADAPT_STRUCT(gotchangpdf::NullObjectPtr, /**/)
-
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::BooleanObjectPtr,
 (bool, Content->_value)

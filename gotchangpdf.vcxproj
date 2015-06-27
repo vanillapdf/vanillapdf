@@ -42,6 +42,8 @@
     <ClInclude Include="src\gotchangpdf\files\header.h" />
     <ClInclude Include="src\gotchangpdf\files\trailer.h" />
     <ClInclude Include="src\gotchangpdf\files\xref.h" />
+    <ClInclude Include="src\gotchangpdf\files\xref_chain.h" />
+    <ClInclude Include="src\gotchangpdf\files\xref_with_trailer.h" />
     <ClInclude Include="src\gotchangpdf\filters\filter.h" />
     <ClInclude Include="src\gotchangpdf\filters\flate_decode_filter.h" />
     <ClInclude Include="src\gotchangpdf\implementation\c_helper.h" />
@@ -202,7 +204,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libboost_system-vc120-mt-gd-1_57.lib;libboost_filesystem-vc120-mt-gd-1_57.lib;libboost_iostreams-vc120-mt-gd-1_57.lib;libboost_log-vc120-mt-gd-1_57.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libboost_system-vc120-mt-gd-1_58.lib;libboost_filesystem-vc120-mt-gd-1_58.lib;libboost_iostreams-vc120-mt-gd-1_58.lib;libboost_log-vc120-mt-gd-1_58.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>lib\boost\stage\lib;lib\zlib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -227,7 +229,7 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Co
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>libboost_system-vc120-mt-1_57.lib;libboost_filesystem-vc120-mt-1_57.lib;libboost_iostreams-vc120-mt-1_57.lib;libboost_log-vc120-mt-1_57.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libboost_system-vc120-mt-1_58.lib;libboost_filesystem-vc120-mt-1_58.lib;libboost_iostreams-vc120-mt-1_58.lib;libboost_log-vc120-mt-1_58.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>lib\boost\stage\lib;lib\zlib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
