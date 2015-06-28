@@ -47,6 +47,9 @@ namespace gotchangpdf
 		virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
 		virtual inline ContainerPtr GetContainer() const override { return _container; }
 
+		list_type GetItems(void) const { return _list; }
+		void GetItems(const list_type& value) const { _list = value; }
+
 	//protected:
 	public:
 		list_type _list;

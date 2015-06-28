@@ -60,7 +60,7 @@ namespace gotchangpdf
 			const_iterator _it;
 		};
 
-		using IteratorPtr = Deferred<Iterator>;
+		using IteratorPtr = SmartPtr<Iterator>;
 
 		template <typename U>
 		U FindAs(const NameT& name) const
@@ -71,17 +71,17 @@ namespace gotchangpdf
 			return result.apply_visitor(visitor);
 		}
 
-		const list_type& GetMap(void) const { return _list; }
-		void SetMap(list_type& list) { _list = list; }
+		list_type GetItems(void) const { return _list; }
+		void SetItems(const list_type& list) { _list = list; }
 
 		IteratorPtr Begin(void) const
 		{
-			return Iterator(_list.begin());
+			return new Iterator(_list.begin());
 		}
 
 		IteratorPtr End(void) const
 		{
-			return Iterator(_list.end());
+			return new Iterator(_list.end());
 		}
 
 		const_iterator begin(void) const _NOEXCEPT
