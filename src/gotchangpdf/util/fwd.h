@@ -71,6 +71,8 @@ namespace gotchangpdf
 		class Xref;
 		class XrefTable;
 		class XrefStream;
+		class XrefChain;
+		class XrefWithMetadata;
 
 		class XrefEntry;
 		class XrefUsedEntry;
@@ -123,13 +125,15 @@ namespace gotchangpdf
 	using LiteralStringPtr = Deferred<LiteralString>;
 	using HexadecimalStringPtr = Deferred<HexadecimalString>;
 
+	using XrefChainPtr = SmartPtr<files::XrefChain>;
+	using XrefWithMetadataPtr = SmartPtr<files::XrefWithMetadata>;
 	using XrefEntryPtr = SmartPtr<files::XrefEntry>;
 	using XrefFreeEntryPtr = SmartPtr<files::XrefFreeEntry>;
 	using XrefUsedEntryPtr = SmartPtr<files::XrefUsedEntry>;
 	using XrefCompressedEntryPtr = SmartPtr<files::XrefCompressedEntry>;
 
-	using HeaderPtr = Deferred<files::Header>;
-	using TrailerPtr = Deferred<files::Trailer>;
+	using HeaderPtr = SmartPtr<files::Header>;
+	using TrailerPtr = SmartPtr<files::Trailer>;
 
 	using XrefPtr = SmartPtr<files::Xref>;
 	using XrefTablePtr = SmartPtr<files::XrefTable>;

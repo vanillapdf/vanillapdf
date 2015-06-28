@@ -27,9 +27,8 @@ namespace gotchangpdf
 			bool IsIndirectObjectIntialized(types::integer objNumber,
 				types::ushort genNumber);
 
-			XrefPtr GetXref(void) const;
+			XrefChainPtr GetXrefChain(void) const;
 			HeaderPtr GetHeader(void) const;
-			TrailerPtr GetTrailer(void) const;
 
 			inline std::string GetFilename(void) const { return _filename; }
 			inline std::weak_ptr<FileDevice> GetInputStream(void) const { return _input; }
@@ -37,12 +36,14 @@ namespace gotchangpdf
 		private:
 			std::shared_ptr<FileDevice> _input;
 			HeaderPtr _header;
-			TrailerPtr _trailer;
-			XrefPtr _xref;
+			XrefChainPtr _xref;
 			std::vector<DirectObject> _cache;
 
 			bool _initialized = false;
 			std::string _filename;
+
+			XrefEntryPtr GetXrefEntry(types::integer objNumber,
+				types::ushort genNumber);
 		};
 	}
 }

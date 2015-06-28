@@ -5,7 +5,7 @@
 #include "spirit_parser.h"
 #include "exception.h"
 
-#include "xref.h"
+#include "xref_chain.h"
 #include "log.h"
 #include "header.h"
 #include "trailer.h"
@@ -26,7 +26,10 @@ namespace gotchangpdf
 		using namespace lexical;
 		using namespace exceptions;
 
-		File::File(std::string filename) : _filename(filename)
+		File::File(std::string filename)
+			: _filename(filename),
+			_header(new Header()),
+			_xref(new XrefChain())
 		{
 			LOG_DEBUG << "File constructor";
 		}
@@ -67,26 +70,72 @@ namespace gotchangpdf
 			stream.seekg(ios_base::beg);
 			stream >> *_header;
 
+			TrailerPtr trailer(new Trailer());
 			ReverseStream reversed = ReverseStream(*_input);
-			reversed >> *_trailer;
+			reversed >> *trailer;
 
-			stream.seekg(_trailer->GetXrefOffset(), ios_base::beg);
-			stream >> *_xref;
+			auto offset = trailer->GetXrefOffset();
+			do {
+				XrefWithMetadataPtr item;
 
-			stream.ReadTokenWithType(Token::Type::TRAILER);
-			stream.ReadTokenWithType(Token::Type::EOL);
+				// TODO read trailer
+				auto xref = stream.ReadXref(offset);
+				if (xref->GetType() == Xref::Type::TABLE) {
+					stream.ReadTokenWithType(Token::Type::TRAILER);
+					stream.ReadTokenWithType(Token::Type::EOL);
 
-			// HACK
-			auto trailer_dict = stream.ReadDirectObjectWithType<DictionaryObjectPtr>(_input->tellg());
-			_trailer->SetDictionary(trailer_dict);
+					// HACK
+					auto trailer_dict = stream.ReadDirectObjectWithType<DictionaryObjectPtr>(_input->tellg());
+					trailer->SetDictionary(trailer_dict);
+
+					assert(trailer->GetXrefOffset() == offset);
+					item = XrefWithMetadataPtr(new XrefWithMetadata(xref, trailer));
+				} else if (xref->GetType() == Xref::Type::STREAM) {
+					auto xref_stream = dynamic_wrapper_cast<XrefStream>(xref);
+					item = XrefWithMetadataPtr(new XrefWithMetadata(xref_stream, offset));
+				} else {
+					throw Exception("Unknown xref type");
+				}
+
+				_xref->Append(item);
+				if (item->GetDictionary()->Contains(constant::Name::Prev)) {
+					offset = item->GetDictionary()->FindAs<IntegerObjectPtr>(constant::Name::Prev)->Value();
+				} else {
+					break;
+				}
+			} while (true);
 
 			_initialized = true;
 		}
 
-		bool File::IsIndirectObjectIntialized(types::integer objNumber,
-			types::ushort)
+		XrefEntryPtr File::GetXrefEntry(types::integer objNumber,
+			types::ushort genNumber)
 		{
-			auto item = _xref->at(objNumber);
+			// TODO xref entry should be a map, instead of vector for searching
+
+			if (!_initialized)
+				throw Exception("File has not been initialized yet");
+
+			for (auto it = _xref->Begin(); *it != *_xref->End(); (*it)++) {
+				auto xref = it->Value()->GetXref();
+				for (auto item : *xref) {
+					if (item->GetObjectNumber() == objNumber && item->GetGenerationNumber() == genNumber)
+						return item;
+				}
+			}
+
+			std::stringstream ss;
+			ss << "Item " << objNumber << " " << genNumber << " was not found";
+			throw Exception(ss.str());
+		}
+
+		bool File::IsIndirectObjectIntialized(types::integer objNumber,
+			types::ushort genNumber)
+		{
+			if (!_initialized)
+				throw Exception("File has not been initialized yet");
+
+			auto item = GetXrefEntry(objNumber, genNumber);
 			return item->Initialized();
 		}
 
@@ -98,21 +147,54 @@ namespace gotchangpdf
 			if (!_initialized)
 				throw Exception("File has not been initialized yet");
 
-			auto item = _xref->at(objNumber);
-			if (!item->Initialized()) {
-				auto rewind_pos = _input->tellg();
-				BOOST_SCOPE_EXIT(&_input, &rewind_pos) {
-					_input->seekg(rewind_pos);
-				} BOOST_SCOPE_EXIT_END;
-				auto parser = SpiritParser(this, *_input);
-				auto offset = item->GetOffset();
-				auto object = parser.ReadDirectObject(offset);
-				item->SetReference(object);
-				item->SetInitialized(true);
-			}
+			auto item = GetXrefEntry(objNumber, genNumber);
+			if (!item->InUse())
+				throw Exception("Required object is marked as free");
 
-			auto result = item->GetReference();
-			return item->GetReference();
+
+			switch (item->GetUsage()) {
+			case XrefEntry::Usage::USED:
+			{
+				auto used = dynamic_wrapper_cast<XrefUsedEntry>(item);
+
+				if (!used->Initialized()) {
+					auto rewind_pos = _input->tellg();
+					BOOST_SCOPE_EXIT(_input, rewind_pos)
+					{
+						_input->seekg(rewind_pos);
+					} BOOST_SCOPE_EXIT_END;
+					auto parser = SpiritParser(this, *_input);
+					auto offset = used->GetOffset();
+					auto object = parser.ReadDirectObject(offset);
+					used->SetReference(object);
+					used->SetInitialized(true);
+				}
+
+				return used->GetReference();
+			}
+			case XrefEntry::Usage::COMPRESSED:
+			{
+				auto compressed = dynamic_wrapper_cast<XrefCompressedEntry>(item);
+
+				if (!compressed->Initialized()) {
+					auto stm = GetIndirectObject(compressed->GetObjectStreamNumber(), 0);
+
+					ObjectVisitor<StreamObjectPtr> stream_visitor;
+					auto converted = stm.apply_visitor(stream_visitor);
+					auto header = converted->GetHeader();
+					auto body = converted->GetBodyDecoded();
+
+					//auto parser = SpiritParser(this, body->ToStringStream());
+
+					//compressed->SetReference(object);
+					compressed->SetInitialized(true);
+				}
+
+				return compressed->GetReference();
+			}
+			default:
+				throw Exception("Unknown entry type");
+			}
 		}
 
 		SmartPtr<documents::Catalog> File::GetDocumentCatalog(void) const
@@ -120,14 +202,13 @@ namespace gotchangpdf
 			if (!_initialized)
 				throw Exception("File has not been initialized yet");
 
-			auto dictionary = _trailer->GetDictionary();
+			auto dictionary = _xref->Begin()->Value()->GetDictionary();
 			auto reference = dictionary->FindAs<IndirectObjectReferencePtr>(constant::Name::Root);
 			auto dict = reference->GetReferencedObjectAs<DictionaryObjectPtr>();
 			return new documents::Catalog(dict);
 		}
 
 		HeaderPtr File::GetHeader(void) const { return _header; }
-		TrailerPtr File::GetTrailer(void) const { return _trailer; }
-		XrefPtr File::GetXref(void) const { return _xref; }
+		XrefChainPtr File::GetXrefChain(void) const { return _xref; }
 	}
 }

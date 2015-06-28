@@ -1,6 +1,6 @@
 #include "precompiled.h"
 #include "file.h"
-#include "xref.h"
+#include "xref_chain.h"
 #include "catalog.h"
 
 #include "c_file.h"
@@ -62,7 +62,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Xref(FileHandle handle, PXre
 
 	try
 	{
-		auto table = file->GetXref();
+		// TODO only begin, not whole chain
+		auto chain = file->GetXrefChain();
+		auto table = chain->Begin()->Value()->GetXref();
 		auto ptr = table.AddRefGet();
 
 		*result = reinterpret_cast<XrefHandle>(ptr);

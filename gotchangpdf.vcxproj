@@ -43,7 +43,7 @@
     <ClInclude Include="src\gotchangpdf\files\trailer.h" />
     <ClInclude Include="src\gotchangpdf\files\xref.h" />
     <ClInclude Include="src\gotchangpdf\files\xref_chain.h" />
-    <ClInclude Include="src\gotchangpdf\files\xref_with_trailer.h" />
+    <ClInclude Include="src\gotchangpdf\files\xref_with_metadata.h" />
     <ClInclude Include="src\gotchangpdf\filters\filter.h" />
     <ClInclude Include="src\gotchangpdf\filters\flate_decode_filter.h" />
     <ClInclude Include="src\gotchangpdf\implementation\c_helper.h" />

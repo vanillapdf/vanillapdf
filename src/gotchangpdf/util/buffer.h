@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <string>
+#include <sstream>
 
 namespace gotchangpdf
 {
@@ -38,6 +39,7 @@ namespace gotchangpdf
 		bool Equals(Buffer other) const { return *this == other; }
 
 		std::string ToString(void) const { return std::string(begin(), end()); }
+		std::stringstream ToStringStream(void) const { return std::stringstream(ToString()); }
 	};
 }
 

@@ -122,7 +122,7 @@ namespace gotchangpdf
 
 						IntegerObject field1;
 						for (int i = 0; i < *field1_size; ++i) {
-							field1 = (field1 << 8) + *it;
+							field1 = (field1 << 8) + (*it & 0xff);
 							it++;
 						}
 
@@ -130,13 +130,13 @@ namespace gotchangpdf
 
 						IntegerObject field2;
 						for (int i = 0; i < *field2_size; ++i) {
-							field2 = (field2 << 8) + *it;
+							field2 = (field2 << 8) + (*it & 0xff);
 							it++;
 						}
 
 						IntegerObject field3;
 						for (int i = 0; i < *field3_size; ++i) {
-							field3 = (field3 << 8) + *it;
+							field3 = (field3 << 8) + (*it & 0xff);
 							it++;
 						}
 
@@ -146,7 +146,7 @@ namespace gotchangpdf
 							XrefFreeEntryPtr entry(new files::XrefFreeEntry());
 							entry->SetObjectNumber(*subsection_index + idx);
 							entry->SetNextFreeObjectNumber(field2);
-							entry->SetGenerationNumber(field3);
+							entry->SetGenerationNumber(field3.SafeConvert<types::ushort>());
 							result->push_back(entry);
 							break;
 						}
@@ -154,7 +154,7 @@ namespace gotchangpdf
 						{
 							XrefUsedEntryPtr entry(new files::XrefUsedEntry());
 							entry->SetOffset(field2);
-							entry->SetGenerationNumber(field3);
+							entry->SetGenerationNumber(field3.SafeConvert<types::ushort>());
 							entry->SetObjectNumber(*subsection_index + idx);
 							result->push_back(entry);
 							break;
@@ -174,6 +174,7 @@ namespace gotchangpdf
 					}
 				}
 
+				result->SetDictionary(header);
 				return result;
 			}
 

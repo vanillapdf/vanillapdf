@@ -22,8 +22,8 @@ namespace gotchangpdf
 			};
 
 		public:
-			inline types::uinteger GetObjectNumber(void) const { return _obj_number; }
-			inline void SetObjectNumber(types::uinteger value) { _obj_number = value; }
+			inline types::integer GetObjectNumber(void) const { return _obj_number; }
+			inline void SetObjectNumber(types::integer value) { _obj_number = value; }
 
 			inline types::ushort GetGenerationNumber(void) const { return _gen_number; }
 			inline void SetGenerationNumber(types::ushort value) { _gen_number = value; }
@@ -38,8 +38,8 @@ namespace gotchangpdf
 			virtual ~XrefEntry() {};
 
 		protected:
-			types::uinteger _obj_number;
-			types::ushort _gen_number;
+			types::integer _obj_number = 0;
+			types::ushort _gen_number = 0;
 			bool _initialized = false;
 		};
 
@@ -48,11 +48,11 @@ namespace gotchangpdf
 		public:
 			virtual Usage GetUsage(void) const override { return XrefEntry::Usage::FREE; }
 
-			inline types::uinteger GetNextFreeObjectNumber(void) const { return _next; }
-			inline void SetNextFreeObjectNumber(types::uinteger value) { _next = value; }
+			inline types::integer GetNextFreeObjectNumber(void) const { return _next; }
+			inline void SetNextFreeObjectNumber(types::integer value) { _next = value; }
 
 		private:
-			types::uinteger _next;
+			types::integer _next;
 		};
 
 		class XrefUsedEntry : public XrefEntry
@@ -79,16 +79,16 @@ namespace gotchangpdf
 			inline DirectObject GetReference(void) const { return _reference; }
 			inline void SetReference(DirectObject ref) { _reference = ref; }
 
-			inline types::uinteger GetObjectStreamNumber(void) const { return _object_stream_number; }
-			inline void SetObjectStreamNumber(types::uinteger value) { _object_stream_number = value; }
+			inline types::integer GetObjectStreamNumber(void) const { return _object_stream_number; }
+			inline void SetObjectStreamNumber(types::integer value) { _object_stream_number = value; }
 
-			inline types::uinteger GetIndex(void) const { return _index; }
-			inline void SetIndex(types::uinteger value) { _index = value; }
+			inline types::integer GetIndex(void) const { return _index; }
+			inline void SetIndex(types::integer value) { _index = value; }
 
 		private:
 			DirectObject _reference;
-			types::uinteger _object_stream_number;
-			types::uinteger _index;
+			types::integer _object_stream_number;
+			types::integer _index;
 		};
 
 		class Xref : public std::vector<XrefEntryPtr>, public IUnknown
@@ -115,6 +115,12 @@ namespace gotchangpdf
 		{
 		public:
 			virtual Type GetType(void) const override { return Xref::Type::STREAM; }
+
+			inline DictionaryObjectPtr GetDictionary(void) const { return _dictionary; }
+			inline void SetDictionary(DictionaryObjectPtr dictionary) { _dictionary = dictionary; }
+
+		private:
+			DictionaryObjectPtr _dictionary;
 		};
 	}
 }
