@@ -7,6 +7,7 @@
 
 #include <boost/fusion/include/adapt_struct.hpp>
 //#include <boost/fusion/adapted/adt/adapt_adt.hpp>
+//#include <boost/spirit/home/support/adapt_adt_attributes.hpp>
 #include <boost/fusion/include/std_pair.hpp>
 
 BOOST_FUSION_ADAPT_STRUCT(
