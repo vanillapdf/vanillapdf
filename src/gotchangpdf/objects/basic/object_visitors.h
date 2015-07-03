@@ -32,7 +32,7 @@ namespace gotchangpdf
 			auto found = visited.find(*obj);
 			if (found != visited.end()) {
 				std::stringstream ss;
-				ss << "Cyclic reference was found for " << obj->GetObjectNumber() << " " << obj->GetGenerationNumber() << " R";
+				ss << "Cyclic reference was found for " << obj->GetReferencedObjectNumber() << " " << obj->GetReferencedGenerationNumber() << " R";
 				throw exceptions::Exception(ss.str());
 			}
 

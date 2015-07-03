@@ -33,12 +33,12 @@ void direct_object_offset_handler(DirectObject obj, types::stream_offset offset)
 	base->SetOffset(offset);
 }
 
-void indirect_object_handler(DirectObject obj, const IntegerObjectPtr obj_number, const IntegerObjectPtr gen_number)
+void indirect_object_handler(DirectObject obj, types::integer obj_number, types::ushort gen_number)
 {
 	ObjectBaseVisitor visitor;
 	auto base = obj.apply_visitor(visitor);
-	base->SetObjectNumber(obj_number->Value());
-	base->SetGenerationNumber(gen_number->SafeConvert<types::ushort>());
+	base->SetObjectNumber(obj_number);
+	base->SetGenerationNumber(gen_number);
 }
 
 void dictionary_item_handler(const DictionaryObjectPtr obj, ContainableObject item)
@@ -80,9 +80,9 @@ namespace gotchangpdf
 		{
 			start %=
 				(
-					qi::omit[integer_object[qi::_a = qi::_1]]
+					qi::omit[qi::int_[qi::_a = qi::_1]]
 					>> whitespace
-					>> qi::omit[integer_object[qi::_b = qi::_1]]
+					>> qi::omit[qi::ushort_[qi::_b = qi::_1]]
 					>> whitespace
 					>> qi::lit("obj")
 					>> whitespaces
@@ -138,9 +138,9 @@ namespace gotchangpdf
 				>> qi::lit("null")[qi::_val = NullObject::GetInstance()];
 
 			indirect_object_reference %=
-				integer_object
+				qi::int_
 				>> whitespace
-				>> integer_object
+				>> qi::ushort_
 				>> whitespace
 				>> qi::lit('R');
 

@@ -19,7 +19,7 @@ namespace gotchangpdf
 
 		class DirectObjectGrammar : public qi::grammar<pos_iterator_type,
 			DirectObject(files::File*, types::stream_offset),
-			qi::locals<IntegerObjectPtr, IntegerObjectPtr>>
+			qi::locals<types::integer, types::ushort>>
 		{
 		public:
 			DirectObjectGrammar();
@@ -28,7 +28,7 @@ namespace gotchangpdf
 			template <typename A, typename... Inherited>
 			using Rule = qi::rule<pos_iterator_type, A(Inherited...)>;
 
-			qi::rule<pos_iterator_type, DirectObject(files::File*, types::stream_offset), qi::locals<IntegerObjectPtr, IntegerObjectPtr>> start;
+			qi::rule<pos_iterator_type, DirectObject(files::File*, types::stream_offset), qi::locals<types::integer, types::ushort>> start;
 			Rule<DirectObject, files::File*> direct_object;
 			Rule<ContainableObject, files::File*> containable_object;
 			Rule<MixedArrayObjectPtr, files::File*> array_object;

@@ -38,12 +38,12 @@ namespace gotchangpdf
 		inline bool operator!=(const IndirectObjectReference& other) const { return !Equals(other); }
 		bool operator<(const IndirectObjectReference& other) const;
 
-		inline IntegerObjectPtr GetReferencedObjectNumber() const { return _ref_obj; }
-		inline IntegerObjectPtr GetReferencedGenerationNumber() const { return _ref_gen; }
+		inline types::integer GetReferencedObjectNumber() const { return _ref_obj; }
+		inline types::ushort GetReferencedGenerationNumber() const { return _ref_gen; }
 
 	public:
-		IntegerObjectPtr _ref_obj = 0;
-		IntegerObjectPtr _ref_gen = 0;
+		types::integer _ref_obj = 0;
+		types::ushort _ref_gen = 0;
 
 	private:
 		mutable DirectObject _object;

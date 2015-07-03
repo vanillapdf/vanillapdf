@@ -42,8 +42,8 @@ gotchangpdf::DictionaryObject,
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::IndirectObjectReferencePtr,
-(gotchangpdf::IntegerObjectPtr, Content->_ref_obj)
-(gotchangpdf::IntegerObjectPtr, Content->_ref_gen)
+(gotchangpdf::types::integer, Content->_ref_obj)
+(gotchangpdf::types::ushort, Content->_ref_gen)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
