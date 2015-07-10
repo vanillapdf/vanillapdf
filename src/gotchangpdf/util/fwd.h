@@ -43,6 +43,8 @@ namespace gotchangpdf
 
 	class Containable;
 
+	struct ObjectStreamHeader;
+
 	namespace documents
 	{
 		class Document;

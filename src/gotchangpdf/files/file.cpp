@@ -159,8 +159,7 @@ namespace gotchangpdf
 
 				if (!used->Initialized()) {
 					auto rewind_pos = _input->tellg();
-					BOOST_SCOPE_EXIT(_input, rewind_pos)
-					{
+					BOOST_SCOPE_EXIT(_input, rewind_pos) {
 						_input->seekg(rewind_pos);
 					} BOOST_SCOPE_EXIT_END;
 					auto parser = SpiritParser(this, *_input);
@@ -182,12 +181,30 @@ namespace gotchangpdf
 					ObjectVisitor<StreamObjectPtr> stream_visitor;
 					auto converted = stm.apply_visitor(stream_visitor);
 					auto header = converted->GetHeader();
+					auto size = header->FindAs<IntegerObjectPtr>(constant::Name::N);
+					auto first = header->FindAs<IntegerObjectPtr>(constant::Name::First);
 					auto body = converted->GetBodyDecoded();
 
-					//auto parser = SpiritParser(this, body->ToStringStream());
+					auto stream = body->ToStringStream();
+					auto parser = SpiritParser(this, stream);
+					auto stream_entries = parser.ReadObjectStreamEntries(first->Value(), size->Value());
+					for (auto stream_entry : stream_entries)
+					{
+						ObjectBaseVisitor visitor;
+						auto stream_entry_base = stream_entry.apply_visitor(visitor);
+						auto object_number = stream_entry_base->GetObjectNumber();
 
-					//compressed->SetReference(object);
-					compressed->SetInitialized(true);
+						auto stream_entry_xref = GetXrefEntry(object_number, 0);
+						if (stream_entry_xref->GetUsage() != XrefEntry::Usage::COMPRESSED)
+							throw exceptions::Exception("Compressed entry type expected");
+
+						auto stream_compressed_entry_xref = dynamic_wrapper_cast<XrefCompressedEntry>(stream_entry_xref);
+						stream_compressed_entry_xref->SetReference(stream_entry);
+						item->SetInitialized(true);
+					}
+
+					if (!compressed->Initialized())
+						throw exceptions::Exception("Item was not found in object stream");
 				}
 
 				return compressed->GetReference();

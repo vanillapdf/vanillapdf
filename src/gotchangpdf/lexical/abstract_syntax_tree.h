@@ -11,6 +11,13 @@
 #include <boost/fusion/include/std_pair.hpp>
 
 BOOST_FUSION_ADAPT_STRUCT(
+gotchangpdf::lexical::ObjectStreamHeader,
+(gotchangpdf::types::integer, object_number)
+(gotchangpdf::types::stream_offset, offset)
+)
+
+
+BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::BooleanObjectPtr,
 (bool, Content->_value)
 )

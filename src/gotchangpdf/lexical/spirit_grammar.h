@@ -1,8 +1,9 @@
-#ifndef SPIRIT_GRAMMAR_H
-#define SPIRIT_GRAMMAR_H
+#ifndef _SPIRIT_GRAMMAR_H
+#define _SPIRIT_GRAMMAR_H
 
 #include "file_position.h"
 #include "offset_iterator.h"
+#include "object_stream_header.h"
 
 #pragma warning (push, 3)
 #include <boost/spirit/include/qi.hpp>
@@ -47,7 +48,21 @@ namespace gotchangpdf
 
 			qi::real_parser<float, qi::strict_real_policies<float>> strict_float_parser;
 		};
+
+		class ObjectStreamGrammar : public qi::grammar < pos_iterator_type,
+			ObjectStreamHeaders(types::integer size) >
+		{
+		public:
+			ObjectStreamGrammar();
+
+		private:
+			template <typename A, typename... Inherited>
+			using Rule = qi::rule < pos_iterator_type, A(Inherited...) > ;
+
+			qi::rule<pos_iterator_type, ObjectStreamHeaders(types::integer size)> start;
+			Rule<ObjectStreamHeader> header;
+		};
 	}
 }
 
-#endif
+#endif /* _SPIRIT_GRAMMAR_H */

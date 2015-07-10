@@ -5,7 +5,9 @@
 #include "lexical_stream.h"
 #include "direct_object.h"
 #include "object_visitors.h"
+#include "object_stream_header.h"
 
+#include <vector>
 #include <memory>
 
 namespace gotchangpdf
@@ -35,6 +37,9 @@ namespace gotchangpdf
 				auto converted = direct.apply_visitor(visitor);
 				return converted;
 			}
+
+			std::vector<DirectObject> ReadObjectStreamEntries(types::integer first, types::integer size);
+			ObjectStreamHeaders ReadObjectStreamHeaders(types::integer size);
 
 			XrefPtr ReadXref(void);
 			XrefPtr ReadXref(types::stream_offset offset);

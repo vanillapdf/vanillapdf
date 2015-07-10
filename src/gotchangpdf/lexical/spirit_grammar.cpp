@@ -7,6 +7,7 @@
 
 #pragma warning (push, 3)
 #include <boost/spirit/include/phoenix.hpp>
+#include <boost/spirit/include/qi_repeat.hpp>
 #include <boost/spirit/repository/include/qi_advance.hpp>
 #pragma warning (pop)
 
@@ -221,6 +222,22 @@ namespace gotchangpdf
 			BOOST_SPIRIT_DEBUG_NODE(dictionary_object);
 			BOOST_SPIRIT_DEBUG_NODE(literal_string_object);
 			BOOST_SPIRIT_DEBUG_NODE(stream_object);
+		}
+
+		ObjectStreamGrammar::ObjectStreamGrammar() :
+			base_type(start, "Direct object grammar")
+		{
+			start %=
+				qi::repeat(qi::_r1)[header];
+
+			header %=
+				qi::int_
+				> whitespaces
+				> qi::long_long
+				> whitespaces;
+
+			BOOST_SPIRIT_DEBUG_NODE(start);
+			BOOST_SPIRIT_DEBUG_NODE(header);
 		}
 	}
 }

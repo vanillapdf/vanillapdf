@@ -27,8 +27,10 @@ namespace gotchangpdf
 		public:
 			Impl(files::File * file) : _file(file) {}
 
+			XrefEntryPtr ReadTableEntry(lexical::SpiritParser& s, types::integer objNumber);
+
 			files::File * _file;
-			//IndirectObjectGrammar _indirect_grammar;
+			ObjectStreamGrammar _obj_stream_grammar;
 			DirectObjectGrammar _direct_grammar;
 		};
 
@@ -40,7 +42,7 @@ namespace gotchangpdf
 
 		files::File * SpiritParser::file(void) const { return _impl->_file; }
 
-		XrefEntryPtr ReadTableEntry(lexical::SpiritParser& s, types::integer objNumber)
+		XrefEntryPtr SpiritParser::Impl::ReadTableEntry(lexical::SpiritParser& s, types::integer objNumber)
 		{
 			char sp1, sp2, key, eol1, eol2;
 			Token offset, number;
@@ -193,12 +195,76 @@ namespace gotchangpdf
 					// check for overflow
 					assert(revision + i >= revision);
 
-					auto entry = ReadTableEntry(*this, static_cast<types::integer>(revision + i));
+					auto entry = _impl->ReadTableEntry(*this, static_cast<types::integer>(revision + i));
 					table->push_back(entry);
 				}
 			}
 
 			return table;
+		}
+
+		std::vector<DirectObject> SpiritParser::ReadObjectStreamEntries(types::integer first, types::integer size)
+		{
+			std::vector<DirectObject> result;
+			auto headers = ReadObjectStreamHeaders(size);
+			for (auto header : headers) {
+				seekg(first + header.offset);
+				auto obj = ReadDirectObject();
+
+				ObjectBaseVisitor visitor;
+				auto base = obj.apply_visitor(visitor);
+				base->SetObjectNumber(header.object_number);
+
+				result.push_back(obj);
+			}
+
+			return result;
+		}
+
+		std::vector<ObjectStreamHeader> SpiritParser::ReadObjectStreamHeaders(types::integer size)
+		{
+			std::vector<ObjectStreamHeader> obj;
+
+			// Don't skip whitespace explicitly
+			noskipws(*this);
+
+			// Direct cast to pos_iterator_type is not possible
+			base_iterator_type input_begin_base(*this);
+			base_iterator_type input_end_base;
+
+			types::stream_offset offset = tellg();
+
+			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _impl->_file->GetFilename(), 1, 1, offset);
+			pos_iterator_type input_end_pos;
+
+			try {
+				auto result = qi::parse(input_begin_pos, input_end_pos, _impl->_obj_stream_grammar(size), obj);
+				if (result) {
+					return obj;
+				} else {
+					LOG_ERROR << "Parsing failed" << endl;
+
+					const auto& pos = input_begin_pos.get_position();
+					LOG_ERROR <<
+						"Error at offset " << pos.offset << endl <<
+						"'" << input_begin_pos.get_currentline() << "'" << endl <<
+						setw(pos.column + 7) << " ^- here" << endl;
+
+					throw exceptions::Exception("Parsing failed");
+				}
+			} catch (const qi::expectation_failure<pos_iterator_type>& exception) {
+				LOG_ERROR << "Parsing failed" << endl;
+
+				auto pos_begin = exception.first;
+				const auto& pos = pos_begin.get_position();
+				LOG_ERROR <<
+					"Error at offset " << pos.offset << endl <<
+					"Expecting " << exception.what() << endl <<
+					"'" << pos_begin.get_currentline() << "'" << endl <<
+					setw(pos.column + 7) << " ^- here" << endl;
+
+				throw;
+			}
 		}
 
 		DirectObject SpiritParser::ReadDirectObject(types::stream_offset offset)

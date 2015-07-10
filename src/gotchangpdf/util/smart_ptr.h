@@ -40,6 +40,14 @@ namespace gotchangpdf
 		//BOOST_STATIC_ASSERT((std::is_base_of<boost::intrusive_ref_counter<T>, T>::value));
 	};
 
+	template<typename T,
+	typename... ArgTypes> inline
+	SmartPtr<T> make_intrusive(ArgTypes&&... args)
+	{
+		auto tmp = new T(args...);
+		return SmartPtr<T>(tmp);
+	}
+
 	template<class T, class U> SmartPtr<T> static_wrapper_cast(SmartPtr<U> const &p) { return static_cast<T*>(p.get()); }
 	template<class T, class U> SmartPtr<T> const_wrapper_cast(SmartPtr<U> const &p) { return const_cast<T*>(p.get()); }
 	template<class T, class U> SmartPtr<T> dynamic_wrapper_cast(SmartPtr<U> const &p) { return dynamic_cast<T*>(p.get()); }

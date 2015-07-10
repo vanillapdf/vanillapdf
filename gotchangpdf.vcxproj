@@ -54,6 +54,7 @@
     <ClInclude Include="src\gotchangpdf\lexical\lexical_reverse_stream.h" />
     <ClInclude Include="src\gotchangpdf\lexical\lexical_stream.h" />
     <ClInclude Include="src\gotchangpdf\lexical\lexical_tree.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\object_stream_header.h" />
     <ClInclude Include="src\gotchangpdf\lexical\offset_iterator.h" />
     <ClInclude Include="src\gotchangpdf\lexical\spirit_grammar.h" />
     <ClInclude Include="src\gotchangpdf\lexical\spirit_parser.h" />
