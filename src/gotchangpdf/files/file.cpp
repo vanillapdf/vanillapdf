@@ -88,7 +88,20 @@ namespace gotchangpdf
 					auto trailer_dict = stream.ReadDirectObjectWithType<DictionaryObjectPtr>(_input->tellg());
 					trailer->SetDictionary(trailer_dict);
 
-					assert(trailer->GetXrefOffset() == offset);
+					stream.ReadTokenWithType(Token::Type::EOL);
+					stream.ReadTokenWithType(Token::Type::START_XREF);
+					stream.ReadTokenWithType(Token::Type::EOL);
+
+					IntegerObject trailer_offset;
+					stream >> trailer_offset;
+
+					stream.ReadTokenWithType(Token::Type::EOL);
+					//stream.ReadTokenWithType(Token::Type::END_OF_FILE); // TODO
+
+					// This actually does not work
+					//assert(trailer_offset == offset);
+					trailer->SetXrefOffset(offset);
+
 					item = XrefWithMetadataPtr(new XrefWithMetadata(xref, trailer));
 				} else if (xref->GetType() == Xref::Type::STREAM) {
 					auto xref_stream = dynamic_wrapper_cast<XrefStream>(xref);

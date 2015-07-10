@@ -19,6 +19,7 @@ namespace gotchangpdf
 
 		public:
 			types::stream_offset GetXrefOffset() const { return _xref_offset; }
+			void SetXrefOffset(types::stream_offset offset) { _xref_offset = offset; }
 			DictionaryObjectPtr GetDictionary() const { return _dictionary; }
 			void SetDictionary(DictionaryObjectPtr dict) { _dictionary = dict; }
 

@@ -293,6 +293,10 @@ namespace gotchangpdf
 			{
 				auto result = qi::parse(input_begin_pos, input_end_pos, _impl->_direct_grammar(_impl->_file, offset), obj);
 				if (result) {
+					// For some reason, end of parsing and current offset does not match
+					// So I adjust current stream position
+					auto end_pos = input_begin_pos.get_position();
+					seekg(end_pos.offset, std::ios::beg);
 					return obj;
 				}
 				else {
