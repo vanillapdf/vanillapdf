@@ -11,7 +11,7 @@ namespace gotchangpdf
 	DirectObject IndirectObjectReference::GetReferencedObject() const
 	{
 		if (!_initialized) {
-			_object = _file->GetIndirectObject(_ref_obj->Value(), _ref_gen->SafeConvert<types::ushort>());
+			_object = _file->GetIndirectObject(_ref_obj, _ref_gen);
 			_initialized = true;
 		}
 
@@ -20,16 +20,16 @@ namespace gotchangpdf
 
 	bool IndirectObjectReference::Equals(const IndirectObjectReference& other) const
 	{
-		return _ref_obj->Equals(*other._ref_obj) && _ref_gen->Equals(*other._ref_gen);
+		return _ref_obj == other._ref_obj && _ref_gen == other._ref_gen;
 	}
 
 	bool IndirectObjectReference::operator<(const IndirectObjectReference& other) const
 	{
-		if (*_ref_obj != *other._ref_obj)
-			return *_ref_obj < *other._ref_obj;
+		if (_ref_obj != other._ref_obj)
+			return _ref_obj < other._ref_obj;
 
-		if (*_ref_gen != *other._ref_gen)
-			return *_ref_gen < *other._ref_gen;
+		if (_ref_gen != other._ref_gen)
+			return _ref_gen < other._ref_gen;
 
 		return false;
 	}
