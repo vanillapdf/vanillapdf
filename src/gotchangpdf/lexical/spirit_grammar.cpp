@@ -74,7 +74,8 @@ namespace gotchangpdf
 		BOOST_SPIRIT_AUTO(qi, delimiter, qi::omit[qi::char_("()<>[]{}/%")]);
 		BOOST_SPIRIT_AUTO(qi, whitespace, qi::omit[qi::char_(" \r\n\f\t") | qi::char_('\0')]);
 		BOOST_SPIRIT_AUTO(qi, whitespaces, *whitespace);
-		BOOST_SPIRIT_AUTO(qi, eol, -qi::lit('\r') >> qi::lit('\n'));
+		BOOST_SPIRIT_AUTO(qi, eol, (-qi::lit('\r') >> qi::lit('\n')) | (qi::lit('\r') >> -qi::lit('\n')));
+		BOOST_SPIRIT_AUTO(qi, optcrlf, -qi::lit('\r') >> qi::lit('\n'));
 
 		DirectObjectGrammar::DirectObjectGrammar() :
 			base_type(start, "Direct object grammar")
@@ -201,7 +202,7 @@ namespace gotchangpdf
 				dictionary_object_raw(qi::_r1)[qi::_a = qi::_1]
 				>> whitespaces
 				>> qi::lit("stream")[phoenix::bind(&stream_item_handler, qi::_a, qi::_b)]
-				> eol
+				> optcrlf
 				> repo::qi::iter_offset
 				> repo::qi::advance(qi::_b)
 				> -eol
