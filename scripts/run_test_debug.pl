@@ -32,7 +32,7 @@ else {
 
 # Get current date
 my $tm=localtime;
-my ($day,$month,$year, $hour, $min, $sec)=($tm->mday,$tm->mon,$tm->year + 1900, $tm->hour, $tm->min, $tm->sec);
+my ($day,$month,$year, $hour, $min, $sec)=($tm->mday,$tm->mon + 1,$tm->year + 1900, $tm->hour, $tm->min, $tm->sec);
 
 # Open log file
 open (my $log, '>', "..\\log\\$day-$month-$year\_$hour-$min-$sec\_$os.log") or die "Could not open log file: $!";
