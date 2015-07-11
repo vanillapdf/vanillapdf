@@ -40,7 +40,7 @@ namespace gotchangpdf
 				return;
 
 			auto chain = _file->GetXrefChain();
-			auto stm = _file->GetIndirectObject(_obj_number, 0);
+			auto stm = _file->GetIndirectObject(_object_stream_number, 0);
 
 			ObjectVisitor<StreamObjectPtr> stream_visitor;
 			auto converted = stm.apply_visitor(stream_visitor);
