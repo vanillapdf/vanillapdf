@@ -58,6 +58,10 @@ namespace gotchangpdf
 				goto prepared;
 			case WhiteSpace::SPACE:
 				goto retry;
+			case WhiteSpace::CARRIAGE_RETURN:
+				chars.push_back(ch);
+				result_type = Token::Type::EOL;
+				goto prepared;
 			case Delimiter::GREATER_THAN_SIGN:
 				if (Equals(ahead, Delimiter::GREATER_THAN_SIGN))
 				{
