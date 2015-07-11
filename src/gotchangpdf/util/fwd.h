@@ -108,6 +108,9 @@ namespace gotchangpdf
 		class ReverseStream;
 	}
 
+	using FilterPtr = SmartPtr<filters::Filter>;
+	using FlateDecodeFilterPtr = SmartPtr<filters::FlateDecodeFilter>;
+
 	using BufferPtr = DeferredContainer<Buffer>;
 
 	template <typename T>

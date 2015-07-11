@@ -7,7 +7,7 @@ namespace gotchangpdf
 {
 	namespace filters
 	{
-		class Filter
+		class Filter : public IUnknown
 		{
 		public:
 			enum class Type : unsigned char
@@ -23,10 +23,12 @@ namespace gotchangpdf
 				JPXDecode
 			};
 
-			virtual BufferPtr Encode(BufferPtr src) const = 0;
-			virtual BufferPtr Decode(BufferPtr src) const = 0;
+			virtual BufferPtr Encode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
+			virtual BufferPtr Decode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
 
 			virtual inline Type GetType(void) const = 0;
+
+			static FilterPtr GetByName(const NameObjectPtr name);
 		};
 	}
 }

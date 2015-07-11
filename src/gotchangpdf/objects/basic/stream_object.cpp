@@ -42,16 +42,34 @@ namespace gotchangpdf
 	{
 		BufferPtr result = GetBody();
 
-		auto filter = _header->Find(constant::Name::Filter);
-		if (filter.empty())
-			return result;
+		if (_header->Contains(constant::Name::Filter)) {
+			auto filter = _header->Find(constant::Name::Filter);
 
-		ObjectVisitor<NameObjectPtr> visitor;
-		auto filter_name = filter.apply_visitor(visitor);
+			IsTypeVisitor<NameObjectPtr> nameVisitor;
+			IsTypeVisitor<MixedArrayObjectPtr> arrayVisitor;
 
-		// TODO
-		filters::FlateDecodeFilter a;
-		return a.Decode(result);
-		//return ((Filters::FlateDecodeFilter*)(&*filter_name))->Apply(*_data);
+			bool isFilterName = filter.apply_visitor(nameVisitor);
+			bool isFilterArray = filter.apply_visitor(arrayVisitor);
+
+			assert(isFilterName ^ isFilterArray);
+
+			if (isFilterName) {
+				ObjectVisitor<NameObjectPtr> convert_visitor;
+				auto filter_name = filter.apply_visitor(convert_visitor);
+				auto filterInstance = filters::Filter::GetByName(filter_name);
+				if (_header->Contains(constant::Name::DecodeParms)) {
+					auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
+					return filterInstance->Decode(result, params);
+				}
+
+				return filterInstance->Decode(result);
+			}
+
+			if (isFilterArray) {
+				assert(false); //TODO
+			}
+		}
+
+		return result;
 	}
 }

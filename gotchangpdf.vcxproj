@@ -115,6 +115,7 @@
     <ClCompile Include="src\gotchangpdf\files\header.cpp" />
     <ClCompile Include="src\gotchangpdf\files\trailer.cpp" />
     <ClCompile Include="src\gotchangpdf\files\xref.cpp" />
+    <ClCompile Include="src\gotchangpdf\filters\filter.cpp" />
     <ClCompile Include="src\gotchangpdf\filters\flate_decode_filter.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_array_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_buffer.cpp" />
