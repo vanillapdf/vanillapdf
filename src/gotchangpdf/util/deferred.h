@@ -124,6 +124,7 @@ namespace gotchangpdf
 		typedef typename T::const_iterator const_iterator;
 		typedef typename T::size_type size_type;
 		typedef typename T::reference reference;
+		typedef typename T::const_reference const_reference;
 
 		DeferredContainer(const DeferredContainer& rhs)
 			: Contents(rhs.Contents)
@@ -202,6 +203,16 @@ namespace gotchangpdf
 		bool empty() const
 		{
 			return Content->empty();
+		}
+
+		const_reference operator[](size_type i) const
+		{
+			return Content->operator[](i);
+		}
+
+		reference operator[](size_type i)
+		{
+			return Content->operator[](i);
 		}
 
 		T& operator*() const
