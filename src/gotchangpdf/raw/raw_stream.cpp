@@ -34,6 +34,12 @@ namespace gotchangpdf
 			return result;
 		}
 
+		void Stream::read(BufferPtr& result, types::uinteger len)
+		{
+			result->resize(len);
+			CharacterSource::read(result->data(), len);
+		}
+
 		char Stream::get_hex()
 		{
 			auto val = get();

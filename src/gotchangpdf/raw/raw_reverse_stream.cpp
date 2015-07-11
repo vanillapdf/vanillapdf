@@ -149,6 +149,12 @@ namespace gotchangpdf
 
 		ReverseStream::~ReverseStream() { delete CharacterSource::rdbuf(); }
 
+		void ReverseStream::read(types::uinteger len, BufferPtr& result)
+		{
+			result->resize(len);
+			CharacterSource::read(result->data(), len);
+		}
+
 		BufferPtr ReverseStream::read(types::uinteger len)
 		{
 			Buffer result(len);
