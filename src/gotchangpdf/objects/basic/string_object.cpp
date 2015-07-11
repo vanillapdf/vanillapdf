@@ -10,13 +10,13 @@ namespace gotchangpdf
 	using namespace std;
 	using namespace lexical;
 
-	LiteralString::LiteralString(const Token& token) : StringObject(token.Value()) {}
-	LiteralString::LiteralString(BufferPtr value) : StringObject(value)
+	LiteralStringObject::LiteralStringObject(const Token& token) : StringObject(token.Value()) {}
+	LiteralStringObject::LiteralStringObject(BufferPtr value) : StringObject(value)
 	{
 		// TODO remove <> if contains
 	}
 
-	HexadecimalString::HexadecimalString(const Token& token)
+	HexadecimalStringObject::HexadecimalStringObject(const Token& token)
 	{
 		auto buffer = token.Value();
 		_hexadecimal = buffer->ToString();
@@ -37,7 +37,7 @@ namespace gotchangpdf
 		}
 	}
 
-	HexadecimalString::HexadecimalString(BufferPtr value)
+	HexadecimalStringObject::HexadecimalStringObject(BufferPtr value)
 	{
 		_hexadecimal = value->ToString();
 

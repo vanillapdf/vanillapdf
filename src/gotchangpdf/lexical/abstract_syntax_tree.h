@@ -65,12 +65,12 @@ gotchangpdf::StreamObjectPtr,
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-gotchangpdf::LiteralStringPtr,
+gotchangpdf::LiteralStringObjectPtr,
 (gotchangpdf::BufferPtr, Content->_value)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-gotchangpdf::HexadecimalStringPtr,
+gotchangpdf::HexadecimalStringObjectPtr,
 (gotchangpdf::BufferPtr, Content->_value)
 )
 

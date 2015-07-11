@@ -124,7 +124,7 @@ namespace gotchangpdf
 
 		inline bool Contains(const NameT& name) const { return (_list.find(name) != _list.end()); }
 
-		virtual inline Object::Type GetType(void) const override { return Object::Type::Dictionary; }
+		virtual inline Object::Type GetType(void) const _NOEXCEPT override{ return Object::Type::Dictionary; }
 		virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
 		virtual inline ContainerPtr GetContainer() const override { return _container; }
 

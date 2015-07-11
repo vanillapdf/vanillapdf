@@ -25,8 +25,8 @@ namespace gotchangpdf
 		IndirectObjectReferencePtr,
 		IntegerObjectPtr,
 		RealObjectPtr,
-		LiteralStringPtr,
-		HexadecimalStringPtr
+		LiteralStringObjectPtr,
+		HexadecimalStringObjectPtr
 	> ContainableObject;
 
 	class Containable

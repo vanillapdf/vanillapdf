@@ -58,13 +58,105 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_InUse(XrefEntryHandle h
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		if (entry->InUse())
-			*result = GOTCHANG_PDF_RV_TRUE;
-		else
-			*result = GOTCHANG_PDF_RV_FALSE;
+	if (entry->InUse())
+		*result = GOTCHANG_PDF_RV_TRUE;
+	else
+		*result = GOTCHANG_PDF_RV_FALSE;
 
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Type(XrefEntryHandle handle, PXrefEntryType result)
+{
+	XrefEntry* entry = reinterpret_cast<XrefEntry*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	switch (entry->GetUsage()) {
+	case XrefEntry::Usage::Free:
+		*result = Free; break;
+	case XrefEntry::Usage::Used:
+		*result = Used; break;
+	case XrefEntry::Usage::Compressed:
+		*result = Compressed; break;
+	default:
+		return GOTCHANG_PDF_ERROR_GENERAL;
+	}
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToFreeEntry(XrefEntryHandle handle, PXrefFreeEntryHandle result)
+{
+	XrefEntry* entry = reinterpret_cast<XrefEntry*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		XrefFreeEntry* converted = dynamic_cast<XrefFreeEntry*>(entry);
+		*result = reinterpret_cast<XrefFreeEntryHandle>(converted);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToUsedEntry(XrefEntryHandle handle, PXrefUsedEntryHandle result)
+{
+	XrefEntry* entry = reinterpret_cast<XrefEntry*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		XrefUsedEntry* converted = dynamic_cast<XrefUsedEntry*>(entry);
+		*result = reinterpret_cast<XrefUsedEntryHandle>(converted);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToCompressedEntry(XrefEntryHandle handle, PXrefCompressedEntryHandle result)
+{
+	XrefEntry* entry = reinterpret_cast<XrefEntry*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		XrefCompressedEntry* converted = dynamic_cast<XrefCompressedEntry*>(entry);
+		*result = reinterpret_cast<XrefCompressedEntryHandle>(converted);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_Reference(XrefUsedEntryHandle handle, PObjectHandle result)
+{
+	XrefUsedEntry* entry = reinterpret_cast<XrefUsedEntry*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto direct = entry->GetReference();
+
+		ObjectBaseAddRefVisitor visitor;
+		auto base = direct.apply_visitor(visitor);
+		*result = reinterpret_cast<ObjectHandle>(base);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Reference(XrefCompressedEntryHandle handle, PObjectHandle result)
+{
+	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto direct = entry->GetReference();
+
+		ObjectBaseAddRefVisitor visitor;
+		auto base = direct.apply_visitor(visitor);
+		*result = reinterpret_cast<ObjectHandle>(base);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS

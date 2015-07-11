@@ -19,8 +19,8 @@ namespace gotchangpdf
 		IntegerObjectPtr,
 		RealObjectPtr,
 		StreamObjectPtr,
-		LiteralStringPtr,
-		HexadecimalStringPtr
+		LiteralStringObjectPtr,
+		HexadecimalStringObjectPtr
 	> DirectObject;
 }
 

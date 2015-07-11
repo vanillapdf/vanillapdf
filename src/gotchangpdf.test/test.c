@@ -217,7 +217,7 @@ int process(ObjectHandle obj, int nested)
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToStream(obj, &stream));
 		RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_Header(stream, &dictionary));
 		RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_BodyRaw(stream, &body_raw));
-		RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_BodyRaw(stream, &body_decoded));
+		RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_BodyDecoded(stream, &body_decoded));
 
 		RETURN_ERROR_IF_NOT_SUCCESS(process_dictionary(dictionary, nested));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(body_raw, nested));
@@ -254,6 +254,7 @@ int process(ObjectHandle obj, int nested)
 		printf("Indirect reference end\n");
 		break;
 	default:
+		printf("Unknown object type\n");
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
 
@@ -265,8 +266,8 @@ int main(int argc, char *argv[])
 	int i, size;
 	FileHandle file = NULL;
 	XrefHandle xref = NULL;
-	CatalogHandle catalog;
-	PageTreeHandle pages;
+	CatalogHandle catalog = NULL;
+	PageTreeHandle pages = NULL;
 
 	if (argc != 2)
 		return GOTCHANG_PDF_ERROR_GENERAL;
@@ -278,10 +279,37 @@ int main(int argc, char *argv[])
 
 	for (i = 1; i < size; ++i)
 	{
-		ObjectHandle object = NULL;
-		RETURN_ERROR_IF_NOT_SUCCESS(File_GetIndirectObject(file, i, 0, &object));
-		RETURN_ERROR_IF_NOT_SUCCESS(process(object, 0));
-		RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(object));
+		ObjectHandle obj = NULL;
+		XrefFreeEntryHandle free_entry = NULL;
+		XrefCompressedEntryHandle compressed_entry = NULL;
+		XrefUsedEntryHandle used_entry = NULL;
+		XrefEntryHandle entry = NULL;
+		XrefEntryType type;
+		RETURN_ERROR_IF_NOT_SUCCESS(Xref_At(xref, i, &entry));
+		RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_Type(entry, &type));
+
+		switch (type) {
+		case Free:
+			RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_ToFreeEntry(entry, &free_entry));
+			break;
+		case Used:
+			RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_ToUsedEntry(entry, &used_entry));
+			RETURN_ERROR_IF_NOT_SUCCESS(XrefUsedEntry_Reference(used_entry, &obj));
+			RETURN_ERROR_IF_NOT_SUCCESS(process(obj, 0));
+			break;
+		case Compressed:
+			RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_ToCompressedEntry(entry, &compressed_entry));
+			RETURN_ERROR_IF_NOT_SUCCESS(XrefCompressedEntry_Reference(compressed_entry, &obj));
+			RETURN_ERROR_IF_NOT_SUCCESS(process(obj, 0));
+			break;
+		default:
+			printf("Unknown xref entry type\n");
+			return GOTCHANG_PDF_ERROR_GENERAL;
+		}
+
+		//RETURN_ERROR_IF_NOT_SUCCESS(File_GetIndirectObject(file, i, 0, &object));
+		//RETURN_ERROR_IF_NOT_SUCCESS(process(object, 0));
+		//RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(object));
 	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(File_GetDocumentCatalog(file, &catalog));

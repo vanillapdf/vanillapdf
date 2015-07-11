@@ -80,7 +80,7 @@ namespace gotchangpdf
 
 				// TODO read trailer
 				auto xref = stream.ReadXref(offset);
-				if (xref->GetType() == Xref::Type::TABLE) {
+				if (xref->GetType() == Xref::Type::Table) {
 					stream.ReadTokenWithType(Token::Type::TRAILER);
 					stream.ReadTokenWithType(Token::Type::EOL);
 
@@ -103,7 +103,7 @@ namespace gotchangpdf
 					trailer->SetXrefOffset(offset);
 
 					item = XrefWithMetadataPtr(new XrefWithMetadata(xref, trailer));
-				} else if (xref->GetType() == Xref::Type::STREAM) {
+				} else if (xref->GetType() == Xref::Type::Stream) {
 					auto xref_stream = dynamic_wrapper_cast<XrefStream>(xref);
 					item = XrefWithMetadataPtr(new XrefWithMetadata(xref_stream, offset));
 				} else {
@@ -121,37 +121,6 @@ namespace gotchangpdf
 			_initialized = true;
 		}
 
-		XrefEntryPtr File::GetXrefEntry(types::integer objNumber,
-			types::ushort genNumber)
-		{
-			// TODO xref entry should be a map, instead of vector for searching
-
-			if (!_initialized)
-				throw Exception("File has not been initialized yet");
-
-			for (auto it = _xref->Begin(); *it != *_xref->End(); (*it)++) {
-				auto xref = it->Value()->GetXref();
-				for (auto item : *xref) {
-					if (item->GetObjectNumber() == objNumber && item->GetGenerationNumber() == genNumber)
-						return item;
-				}
-			}
-
-			std::stringstream ss;
-			ss << "Item " << objNumber << " " << genNumber << " was not found";
-			throw Exception(ss.str());
-		}
-
-		bool File::IsIndirectObjectIntialized(types::integer objNumber,
-			types::ushort genNumber)
-		{
-			if (!_initialized)
-				throw Exception("File has not been initialized yet");
-
-			auto item = GetXrefEntry(objNumber, genNumber);
-			return item->Initialized();
-		}
-
 		DirectObject File::GetIndirectObject(types::integer objNumber,
 			types::ushort genNumber)
 		{
@@ -160,66 +129,19 @@ namespace gotchangpdf
 			if (!_initialized)
 				throw Exception("File has not been initialized yet");
 
-			auto item = GetXrefEntry(objNumber, genNumber);
+			auto item = _xref->GetXrefEntry(objNumber, genNumber);
 			if (!item->InUse())
 				throw Exception("Required object is marked as free");
 
-
 			switch (item->GetUsage()) {
-			case XrefEntry::Usage::USED:
+			case XrefEntry::Usage::Used:
 			{
 				auto used = dynamic_wrapper_cast<XrefUsedEntry>(item);
-
-				if (!used->Initialized()) {
-					auto rewind_pos = _input->tellg();
-					BOOST_SCOPE_EXIT(_input, rewind_pos) {
-						_input->seekg(rewind_pos);
-					} BOOST_SCOPE_EXIT_END;
-					auto parser = SpiritParser(this, *_input);
-					auto offset = used->GetOffset();
-					auto object = parser.ReadDirectObject(offset);
-					used->SetReference(object);
-					used->SetInitialized(true);
-				}
-
 				return used->GetReference();
 			}
-			case XrefEntry::Usage::COMPRESSED:
+			case XrefEntry::Usage::Compressed:
 			{
 				auto compressed = dynamic_wrapper_cast<XrefCompressedEntry>(item);
-
-				if (!compressed->Initialized()) {
-					auto stm = GetIndirectObject(compressed->GetObjectStreamNumber(), 0);
-
-					ObjectVisitor<StreamObjectPtr> stream_visitor;
-					auto converted = stm.apply_visitor(stream_visitor);
-					auto header = converted->GetHeader();
-					auto size = header->FindAs<IntegerObjectPtr>(constant::Name::N);
-					auto first = header->FindAs<IntegerObjectPtr>(constant::Name::First);
-					auto body = converted->GetBodyDecoded();
-
-					auto stream = body->ToStringStream();
-					auto parser = SpiritParser(this, stream);
-					auto stream_entries = parser.ReadObjectStreamEntries(first->Value(), size->Value());
-					for (auto stream_entry : stream_entries)
-					{
-						ObjectBaseVisitor visitor;
-						auto stream_entry_base = stream_entry.apply_visitor(visitor);
-						auto object_number = stream_entry_base->GetObjectNumber();
-
-						auto stream_entry_xref = GetXrefEntry(object_number, 0);
-						if (stream_entry_xref->GetUsage() != XrefEntry::Usage::COMPRESSED)
-							throw exceptions::Exception("Compressed entry type expected");
-
-						auto stream_compressed_entry_xref = dynamic_wrapper_cast<XrefCompressedEntry>(stream_entry_xref);
-						stream_compressed_entry_xref->SetReference(stream_entry);
-						item->SetInitialized(true);
-					}
-
-					if (!compressed->Initialized())
-						throw exceptions::Exception("Item was not found in object stream");
-				}
-
 				return compressed->GetReference();
 			}
 			default:
@@ -227,7 +149,7 @@ namespace gotchangpdf
 			}
 		}
 
-		SmartPtr<documents::Catalog> File::GetDocumentCatalog(void) const
+		CatalogPtr File::GetDocumentCatalog(void) const
 		{
 			if (!_initialized)
 				throw Exception("File has not been initialized yet");

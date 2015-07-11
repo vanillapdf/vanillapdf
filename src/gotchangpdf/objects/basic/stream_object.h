@@ -15,7 +15,7 @@ namespace gotchangpdf
 	public:
 		StreamObject() = default;
 
-		virtual inline Object::Type GetType(void) const override { return Object::Type::Stream; }
+		virtual inline Object::Type GetType(void) const _NOEXCEPT override{ return Object::Type::Stream; }
 
 		inline DictionaryObjectPtr GetHeader() const { return _header; }
 		inline void SetHeader(DictionaryObjectPtr header) { _header = header; }

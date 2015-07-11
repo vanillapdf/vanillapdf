@@ -24,8 +24,6 @@ namespace gotchangpdf
 			CatalogPtr GetDocumentCatalog(void) const;
 			DirectObject GetIndirectObject(types::integer objNumber,
 				types::ushort genNumber);
-			bool IsIndirectObjectIntialized(types::integer objNumber,
-				types::ushort genNumber);
 
 			XrefChainPtr GetXrefChain(void) const;
 			HeaderPtr GetHeader(void) const;
@@ -41,9 +39,6 @@ namespace gotchangpdf
 
 			bool _initialized = false;
 			std::string _filename;
-
-			XrefEntryPtr GetXrefEntry(types::integer objNumber,
-				types::ushort genNumber);
 		};
 	}
 }

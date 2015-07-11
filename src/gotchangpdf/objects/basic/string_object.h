@@ -24,28 +24,28 @@ namespace gotchangpdf
 		ContainerPtr _container;
 	};
 
-	class HexadecimalString : public StringObject
+	class HexadecimalStringObject : public StringObject
 	{
 	public:
-		HexadecimalString() = default;
-		explicit HexadecimalString(BufferPtr value);
-		explicit HexadecimalString(const lexical::Token& token);
+		HexadecimalStringObject() = default;
+		explicit HexadecimalStringObject(BufferPtr value);
+		explicit HexadecimalStringObject(const lexical::Token& token);
 
-		virtual inline Object::Type GetType(void) const override { return Object::Type::HexadecimalString; }
+		virtual inline Object::Type GetType(void) const _NOEXCEPT override{ return Object::Type::HexadecimalString; }
 
 	//private:
 	public:
 		std::string _hexadecimal;
 	};
 
-	class LiteralString : public StringObject
+	class LiteralStringObject : public StringObject
 	{
 	public:
-		LiteralString() = default;
-		explicit LiteralString(BufferPtr value);
-		explicit LiteralString(const lexical::Token& token);
+		LiteralStringObject() = default;
+		explicit LiteralStringObject(BufferPtr value);
+		explicit LiteralStringObject(const lexical::Token& token);
 
-		virtual inline Object::Type GetType(void) const override { return Object::Type::LiteralString; }
+		virtual inline Object::Type GetType(void) const _NOEXCEPT override{ return Object::Type::LiteralString; }
 	};
 }
 

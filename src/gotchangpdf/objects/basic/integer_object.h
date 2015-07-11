@@ -36,7 +36,7 @@ namespace gotchangpdf
 		IntegerObject& operator= (BufferPtr value);
 		IntegerObject& operator= (const lexical::Token& value);
 
-		virtual Object::Type GetType(void) const override { return Object::Type::Integer; }
+		virtual Object::Type GetType(void) const _NOEXCEPT override{ return Object::Type::Integer; }
 		virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
 		virtual inline ContainerPtr GetContainer() const override { return _container; }
 

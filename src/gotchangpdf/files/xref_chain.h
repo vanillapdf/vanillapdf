@@ -53,6 +53,24 @@ namespace gotchangpdf
 			IteratorPtr End(void) const { return new Iterator(_list.end()); }
 			void Append(XrefWithMetadataPtr item) { _list.push_back(item); }
 
+			XrefEntryPtr GetXrefEntry(types::integer objNumber,
+				types::ushort genNumber)
+			{
+				// TODO xref entry should be a map, instead of vector for searching
+
+				for (auto it = _list.begin(); it != _list.end(); it++) {
+					auto xref = (*it)->GetXref();
+					for (auto item : *xref) {
+						if (item->GetObjectNumber() == objNumber && item->GetGenerationNumber() == genNumber)
+							return item;
+					}
+				}
+
+				std::stringstream ss;
+				ss << "Item " << objNumber << " " << genNumber << " was not found";
+				throw exceptions::Exception(ss.str());
+			}
+
 		private:
 			list_type _list;
 		};

@@ -59,6 +59,7 @@ namespace gotchangpdf
 
 			if (key == IN_USE) {
 				XrefUsedEntryPtr result(new files::XrefUsedEntry());
+				result->SetFile(_file);
 				result->SetOffset(IntegerObject(offset));
 				result->SetObjectNumber(objNumber);
 				result->SetGenerationNumber(IntegerObject(number).SafeConvert<types::ushort>());
@@ -66,6 +67,7 @@ namespace gotchangpdf
 				return result;
 			} else if (key == NOT_IN_USE) {
 				XrefFreeEntryPtr result(new files::XrefFreeEntry());
+				result->SetFile(_file);
 				result->SetNextFreeObjectNumber(IntegerObject(offset));
 				result->SetObjectNumber(objNumber);
 				result->SetGenerationNumber(IntegerObject(number).SafeConvert<types::ushort>());
@@ -146,6 +148,7 @@ namespace gotchangpdf
 						case 0:
 						{
 							XrefFreeEntryPtr entry(new files::XrefFreeEntry());
+							entry->SetFile(_impl->_file);
 							entry->SetObjectNumber(*subsection_index + idx);
 							entry->SetNextFreeObjectNumber(field2);
 							entry->SetGenerationNumber(field3.SafeConvert<types::ushort>());
@@ -155,6 +158,7 @@ namespace gotchangpdf
 						case 1:
 						{
 							XrefUsedEntryPtr entry(new files::XrefUsedEntry());
+							entry->SetFile(_impl->_file);
 							entry->SetOffset(field2);
 							entry->SetGenerationNumber(field3.SafeConvert<types::ushort>());
 							entry->SetObjectNumber(*subsection_index + idx);
@@ -164,6 +168,7 @@ namespace gotchangpdf
 						case 2:
 						{
 							XrefCompressedEntryPtr entry(new files::XrefCompressedEntry());
+							entry->SetFile(_impl->_file);
 							entry->SetObjectNumber(*subsection_index + idx);
 							entry->SetObjectStreamNumber(field2);
 							entry->SetIndex(field3);

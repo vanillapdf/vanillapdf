@@ -27,7 +27,35 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Type(ObjectHandle handle, 
 
 	try
 	{
-		*result = static_cast<ObjectType>(obj->GetType());
+		switch (obj->GetType()) {
+		case Object::Type::Array:
+			*result = Array; break;
+		case Object::Type::Boolean:
+			*result = Boolean; break;
+		case Object::Type::Dictionary:
+			*result = Dictionary; break;
+		case Object::Type::Function:
+			*result = Function; break;
+		case Object::Type::Integer:
+			*result = Integer; break;
+		case Object::Type::Name:
+			*result = Name; break;
+		case Object::Type::Null:
+			*result = Null; break;
+		case Object::Type::Real:
+			*result = Real; break;
+		case Object::Type::Stream:
+			*result = Stream; break;
+		case Object::Type::HexadecimalString:
+			*result = HexadecimalString; break;
+		case Object::Type::LiteralString:
+			*result = LiteralString; break;
+		case Object::Type::IndirectReference:
+			*result = IndirectReference; break;
+		default:
+			return GOTCHANG_PDF_ERROR_GENERAL;
+		}
+
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS

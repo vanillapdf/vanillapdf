@@ -29,8 +29,8 @@ namespace gotchangpdf
 	class StreamObject;
 
 	class StringObject;
-	class HexadecimalString;
-	class LiteralString;
+	class HexadecimalStringObject;
+	class LiteralStringObject;
 
 	class Date;
 	class NameTree;
@@ -124,8 +124,8 @@ namespace gotchangpdf
 	using NullObjectPtr = Deferred<NullObject>;
 	using RealObjectPtr = Deferred<RealObject>;
 	using StreamObjectPtr = Deferred<StreamObject>;
-	using LiteralStringPtr = Deferred<LiteralString>;
-	using HexadecimalStringPtr = Deferred<HexadecimalString>;
+	using LiteralStringObjectPtr = Deferred<LiteralStringObject>;
+	using HexadecimalStringObjectPtr = Deferred<HexadecimalStringObject>;
 
 	using XrefChainPtr = SmartPtr<files::XrefChain>;
 	using XrefWithMetadataPtr = SmartPtr<files::XrefWithMetadata>;

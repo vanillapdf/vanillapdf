@@ -36,7 +36,7 @@ namespace gotchangpdf
 		virtual inline Type GetType(void) const _NOEXCEPT = 0;
 
 	public:
-		inline bool IsIndirect(void) const _NOEXCEPT { return _obj_number > 0; }
+		inline bool IsIndirect(void) const _NOEXCEPT { return _obj_number >= 0; }
 
 		inline void SetOffset(types::stream_offset offset) _NOEXCEPT { _offset = offset; }
 		inline types::stream_offset GetOffset() const _NOEXCEPT { return _offset; }
@@ -52,8 +52,8 @@ namespace gotchangpdf
 
 	protected:
 		files::File * _file = nullptr;
-		types::integer _obj_number;
-		types::ushort _gen_number;
+		types::integer _obj_number = -1;
+		types::ushort _gen_number = 0;
 		types::stream_offset _offset = std::_BADOFF;
 	};
 }

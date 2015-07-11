@@ -28,7 +28,7 @@ namespace gotchangpdf
 			return direct.apply_visitor(visitor);
 		}
 
-		virtual inline Object::Type GetType(void) const override { return Object::Type::IndirectReference; }
+		virtual inline Object::Type GetType(void) const _NOEXCEPT override{ return Object::Type::IndirectReference; }
 		virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
 		virtual inline ContainerPtr GetContainer() const override { return _container; }
 
