@@ -123,7 +123,7 @@ int process_dictionary(DictionaryHandle dictionary, int nested)
 int process(ObjectHandle obj, int nested)
 {
 	int i, size, val;
-	BufferHandle body_raw, body_decoded;
+	BufferHandle body_decoded;
 	IndirectReferenceHandle indirect_reference;
 	ArrayHandle arr;
 	IntegerHandle integer;
@@ -216,11 +216,9 @@ int process(ObjectHandle obj, int nested)
 
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToStream(obj, &stream));
 		RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_Header(stream, &dictionary));
-		RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_BodyRaw(stream, &body_raw));
 		RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_BodyDecoded(stream, &body_decoded));
 
 		RETURN_ERROR_IF_NOT_SUCCESS(process_dictionary(dictionary, nested));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(body_raw, nested));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(body_decoded, nested));
 
 		print_spaces(nested);
