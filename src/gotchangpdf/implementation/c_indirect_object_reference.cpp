@@ -27,6 +27,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_Release(Indirec
 {
 	IndirectObjectReference* obj = reinterpret_cast<IndirectObjectReference*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	obj->Release();
 	return GOTCHANG_PDF_ERROR_SUCCES;

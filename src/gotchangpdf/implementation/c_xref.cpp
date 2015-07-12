@@ -1,6 +1,8 @@
 #include "precompiled.h"
 #include "xref.h"
 
+#include "file.h"
+
 #include "c_xref.h"
 #include "c_values.h"
 #include "c_helper.h"
@@ -13,6 +15,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_Size(XrefHandle handle, out_
 	Xref* table = reinterpret_cast<Xref*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(table);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	LOG_SCOPE(table->GetFile()->GetFilename());
 
 	*result = table->size();
 	return GOTCHANG_PDF_ERROR_SUCCES;
@@ -23,6 +26,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_At(XrefHandle handle, intege
 	Xref* table = reinterpret_cast<Xref*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(table);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	LOG_SCOPE(table->GetFile()->GetFilename());
 
 	try
 	{
@@ -38,6 +42,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_Release(XrefHandle handle)
 {
 	Xref* table = reinterpret_cast<Xref*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(table);
+	LOG_SCOPE(table->GetFile()->GetFilename());
 
 	table->Release();
 	return GOTCHANG_PDF_ERROR_SUCCES;
@@ -47,6 +52,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle
 {
 	XrefEntry* entry = reinterpret_cast<XrefEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
+	LOG_SCOPE(entry->GetFile()->GetFilename());
 
 	entry->Release();
 	return GOTCHANG_PDF_ERROR_SUCCES;
@@ -57,6 +63,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_InUse(XrefEntryHandle h
 	XrefEntry* entry = reinterpret_cast<XrefEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	LOG_SCOPE(entry->GetFile()->GetFilename());
 
 	if (entry->InUse())
 		*result = GOTCHANG_PDF_RV_TRUE;
@@ -71,6 +78,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Type(XrefEntryHandle ha
 	XrefEntry* entry = reinterpret_cast<XrefEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	LOG_SCOPE(entry->GetFile()->GetFilename());
 
 	switch (entry->GetUsage()) {
 	case XrefEntry::Usage::Free:
@@ -91,6 +99,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToFreeEntry(XrefEntryHa
 	XrefEntry* entry = reinterpret_cast<XrefEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	LOG_SCOPE(entry->GetFile()->GetFilename());
 
 	try {
 		XrefFreeEntry* converted = dynamic_cast<XrefFreeEntry*>(entry);
@@ -105,6 +114,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToUsedEntry(XrefEntryHa
 	XrefEntry* entry = reinterpret_cast<XrefEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	LOG_SCOPE(entry->GetFile()->GetFilename());
 
 	try {
 		XrefUsedEntry* converted = dynamic_cast<XrefUsedEntry*>(entry);
@@ -119,6 +129,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToCompressedEntry(XrefE
 	XrefEntry* entry = reinterpret_cast<XrefEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	LOG_SCOPE(entry->GetFile()->GetFilename());
 
 	try {
 		XrefCompressedEntry* converted = dynamic_cast<XrefCompressedEntry*>(entry);
@@ -133,6 +144,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_Reference(XrefUsedE
 	XrefUsedEntry* entry = reinterpret_cast<XrefUsedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	LOG_SCOPE(entry->GetFile()->GetFilename());
 
 	try {
 		auto direct = entry->GetReference();
@@ -150,6 +162,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Reference(Xre
 	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	LOG_SCOPE(entry->GetFile()->GetFilename());
 
 	try {
 		auto direct = entry->GetReference();

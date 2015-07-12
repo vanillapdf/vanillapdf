@@ -1,4 +1,5 @@
 #include "precompiled.h"
+#include "file.h"
 
 #include "c_name_object.h"
 #include "c_helper.h"
@@ -30,6 +31,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Value(NameHandle handl
 	NameObject* obj = reinterpret_cast<NameObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
 	{
@@ -45,6 +47,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Release(NameHandle han
 {
 	NameObject* obj = reinterpret_cast<NameObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	obj->Release();
 	return GOTCHANG_PDF_ERROR_SUCCES;
