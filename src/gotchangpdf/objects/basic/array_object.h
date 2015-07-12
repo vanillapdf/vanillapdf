@@ -33,6 +33,11 @@ namespace gotchangpdf
 		inline const T& At(unsigned int at) const { return _list.at(at); }
 		inline T& At(unsigned int at) { return _list.at(at); }
 
+		iterator begin() _NOEXCEPT { return _list.begin(); }
+		const_iterator begin() const _NOEXCEPT { return _list.begin(); }
+		iterator end() _NOEXCEPT { return _list.end(); }
+		const_iterator end() const _NOEXCEPT { return _list.end(); }
+
 		template <typename U>
 		ArrayObjectPtr<U> Convert(std::function<const U(T& obj)> f)
 		{
