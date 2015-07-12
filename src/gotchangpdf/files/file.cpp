@@ -155,9 +155,8 @@ namespace gotchangpdf
 				throw Exception("File has not been initialized yet");
 
 			auto dictionary = _xref->Begin()->Value()->GetDictionary();
-			auto reference = dictionary->FindAs<IndirectObjectReferencePtr>(constant::Name::Root);
-			auto dict = reference->GetReferencedObjectAs<DictionaryObjectPtr>();
-			return new documents::Catalog(dict);
+			auto root = dictionary->FindAs<DictionaryObjectPtr>(constant::Name::Root);
+			return new documents::Catalog(root);
 		}
 
 		HeaderPtr File::GetHeader(void) const { return _header; }

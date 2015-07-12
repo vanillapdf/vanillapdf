@@ -26,14 +26,12 @@ namespace gotchangpdf
 
 		ArrayObjectPtr<PageNodePtr> PageTreeNode::Kids() const
 		{
-			auto kids = _obj->FindAs<MixedArrayObjectPtr>(Name::Kids);
-			auto specialized = kids->CastToArrayType<IndirectObjectReferencePtr>();
+			auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(Name::Kids);
 
-			return specialized->Convert<PageNodePtr>(
-				[](IndirectObjectReferencePtr& obj)
+			return kids->Convert<PageNodePtr>(
+				[] (DictionaryObjectPtr& obj)
 			{
-				auto page = obj->GetReferencedObjectAs<DictionaryObjectPtr>();
-				return PageNode::Create(page);
+				return PageNode::Create(obj);
 			});
 		}
 	}

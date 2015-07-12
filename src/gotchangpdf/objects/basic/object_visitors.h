@@ -23,34 +23,6 @@ namespace gotchangpdf
 		inline bool operator()(const U&) const { return false; }
 	};
 
-	template <typename T>
-	class KillIndirectionVisitor : public boost::static_visitor<T>
-	{
-	public:
-		T operator()(IndirectObjectReferencePtr& obj) const
-		{
-			auto found = visited.find(*obj);
-			if (found != visited.end()) {
-				std::stringstream ss;
-				ss << "Cyclic reference was found for " << obj->GetReferencedObjectNumber() << " " << obj->GetReferencedGenerationNumber() << " R";
-				throw exceptions::Exception(ss.str());
-			}
-
-			visited[*obj] = true;
-
-			auto direct = obj->GetReferencedObject();
-			return direct.apply_visitor(*this);
-		}
-
-		inline T operator()(T& obj) const { return obj; }
-
-		template <typename U>
-		inline T operator()(const U&) const { throw exceptions::Exception("Type cast error"); }
-
-	private:
-		mutable std::map<IndirectObjectReference, bool> visited;
-	};
-
 	class ObjectBaseVisitor : public boost::static_visitor<Object*>
 	{
 	public:
@@ -91,10 +63,28 @@ namespace gotchangpdf
 	class ObjectVisitor : public boost::static_visitor<T>
 	{
 	public:
+		T operator()(IndirectObjectReferencePtr& obj) const
+		{
+			auto found = visited.find(*obj);
+			if (found != visited.end()) {
+				std::stringstream ss;
+				ss << "Cyclic reference was found for " << obj->GetReferencedObjectNumber() << " " << obj->GetReferencedGenerationNumber() << " R";
+				throw exceptions::Exception(ss.str());
+			}
+
+			visited[*obj] = true;
+
+			auto direct = obj->GetReferencedObject();
+			return direct.apply_visitor(*this);
+		}
+
 		inline T operator()(T& obj) const { return obj; }
 
 		template <typename U>
 		inline T operator()(const U&) const { throw exceptions::Exception("Type cast error"); }
+
+	private:
+		mutable std::map<IndirectObjectReference, bool> visited;
 	};
 
 	template <typename T>
