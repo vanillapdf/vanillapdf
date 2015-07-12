@@ -29,6 +29,7 @@ namespace gotchangpdf
 
 	private:
 		mutable BufferPtr _body;
+		mutable BufferPtr _body_decoded;
 	};
 }
 
