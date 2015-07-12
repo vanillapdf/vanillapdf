@@ -27,6 +27,24 @@ void direct_object_file_handler(DirectObject obj, files::File* file)
 	base->SetFile(file);
 }
 
+void containable_object_file_handler(ContainableObject obj, files::File* file)
+{
+	ObjectBaseVisitor visitor;
+	auto base = obj.apply_visitor(visitor);
+	base->SetFile(file);
+}
+
+void name_object_file_handler(NameObjectPtr obj, files::File* file)
+{
+	obj->SetFile(file);
+}
+
+void stream_object_file_handler(StreamObjectPtr obj, files::File* file)
+{
+	obj->SetFile(file);
+	obj->GetHeader()->SetFile(file);
+}
+
 void direct_object_offset_handler(DirectObject obj, types::stream_offset offset)
 {
 	ObjectBaseVisitor visitor;
@@ -56,10 +74,7 @@ void array_item_handler(const MixedArrayObjectPtr obj, ContainableObject item)
 
 void stream_item_handler(const DictionaryObjectPtr& obj, types::stream_size& value)
 {
-	auto size_raw = obj->Find(constant::Name::Length);
-	KillIndirectionVisitor<gotchangpdf::IntegerObjectPtr> visitor;
-	IntegerObjectPtr size = size_raw.apply_visitor(visitor);
-
+	auto size = obj->FindAs<gotchangpdf::IntegerObjectPtr>(constant::Name::Length);
 	value = static_cast<types::stream_size>(*size);
 }
 
@@ -133,7 +148,7 @@ namespace gotchangpdf
 				| null_object
 				| literal_string_object
 				| hexadecimal_string_object
-				)[phoenix::bind(&direct_object_file_handler, qi::_1, qi::_r1)];
+				)[phoenix::bind(&containable_object_file_handler, qi::_1, qi::_r1)];
 
 			null_object %=
 				qi::eps
@@ -180,7 +195,7 @@ namespace gotchangpdf
 				qi::lit("<<")
 				> whitespaces
 				> *(
-				name_object
+				name_object[phoenix::bind(&name_object_file_handler, qi::_1, qi::_r1)]
 				>> whitespaces
 				>> containable_object(qi::_r1)[phoenix::bind(&dictionary_item_handler, qi::_val, qi::_1)]
 				>> whitespaces
@@ -191,7 +206,7 @@ namespace gotchangpdf
 				qi::lit("<<")
 				> whitespaces
 				> *(
-				name_object
+				name_object[phoenix::bind(&name_object_file_handler, qi::_1, qi::_r1)]
 				>> whitespaces
 				>> containable_object(qi::_r1)[phoenix::bind(&dictionary_item_handler, qi::_val, qi::_1)]
 				>> whitespaces
@@ -206,7 +221,7 @@ namespace gotchangpdf
 				> repo::qi::iter_offset
 				> repo::qi::advance(qi::_b)
 				> -eol
-				> qi::lit("endstream");
+				> qi::lit("endstream")[phoenix::bind(&stream_object_file_handler, qi::_val, qi::_r1)];
 
 			literal_string_object %=
 				qi::lit("(")

@@ -90,7 +90,7 @@ namespace gotchangpdf
 		XrefPtr SpiritParser::ReadXref(void)
 		{
 			if (PeekTokenType() == Token::Type::INTEGER_OBJECT) {
-				XrefStreamPtr result(new files::XrefStream());
+				XrefStreamPtr result = new files::XrefStream();
 
 				// Get stream object data
 				auto xref = ReadDirectObjectWithType<StreamObjectPtr>();
@@ -181,31 +181,33 @@ namespace gotchangpdf
 					}
 				}
 
+				result->SetFile(_impl->_file);
 				result->SetDictionary(header);
 				return result;
-			}
+			} else {
+				XrefTablePtr table(new files::XrefTable());
 
-			XrefTablePtr table(new files::XrefTable());
-
-			ReadTokenWithType(Token::Type::XREF_MARKER);
-			ReadTokenWithType(Token::Type::EOL);
-
-			while (PeekTokenType() != Token::Type::TRAILER) {
-				IntegerObject revision, numberOfObjects;
-				*this >> revision >> numberOfObjects;
-
+				ReadTokenWithType(Token::Type::XREF_MARKER);
 				ReadTokenWithType(Token::Type::EOL);
 
-				for (types::integer i = 0; i < numberOfObjects; ++i) {
-					// check for overflow
-					assert(revision + i >= revision);
+				while (PeekTokenType() != Token::Type::TRAILER) {
+					IntegerObject revision, numberOfObjects;
+					*this >> revision >> numberOfObjects;
 
-					auto entry = _impl->ReadTableEntry(*this, static_cast<types::integer>(revision + i));
-					table->push_back(entry);
+					ReadTokenWithType(Token::Type::EOL);
+
+					for (types::integer i = 0; i < numberOfObjects; ++i) {
+						// check for overflow
+						assert(revision + i >= revision);
+
+						auto entry = _impl->ReadTableEntry(*this, static_cast<types::integer>(revision + i));
+						table->push_back(entry);
+					}
 				}
-			}
 
-			return table;
+				table->SetFile(_impl->_file);
+				return table;
+			}
 		}
 
 		std::vector<DirectObject> SpiritParser::ReadObjectStreamEntries(types::integer first, types::integer size)
