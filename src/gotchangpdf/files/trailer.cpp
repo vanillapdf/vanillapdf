@@ -18,8 +18,12 @@ namespace gotchangpdf
 
 		ReverseStream& operator>>(ReverseStream& s, Trailer& o)
 		{
-			s.ReadTokenWithType(Token::Type::EOL);
-			s.ReadTokenWithType(Token::Type::END_OF_FILE);
+			auto first = s.ReadToken();
+			if (first.GetType() == Token::Type::EOL)
+				s.ReadTokenWithType(Token::Type::END_OF_FILE);
+			else if (first.GetType() != Token::Type::END_OF_FILE)
+				throw Exception("Could not find EOF marker");
+
 			s.ReadTokenWithType(Token::Type::EOL);
 
 			IntegerObject offset;
