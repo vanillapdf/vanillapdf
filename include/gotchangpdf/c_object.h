@@ -37,6 +37,8 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToIndirectReference(ObjectHandle handle, PIndirectReferenceHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToInteger(ObjectHandle handle, PIntegerHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToName(ObjectHandle handle, PNameHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToLiteralString(ObjectHandle handle, PLiteralStringHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToHexadecimalString(ObjectHandle handle, PHexadecimalStringHandle result);
 
 #ifdef __cplusplus
 };

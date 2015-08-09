@@ -95,6 +95,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToArray(ObjectHandle handl
 	try
 	{
 		MixedArrayObject* converted = dynamic_cast<MixedArrayObject*>(obj);
+		if (nullptr == converted)
+			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
+
 		*result = reinterpret_cast<ArrayHandle>(converted);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
@@ -110,6 +113,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToDictionary(ObjectHandle 
 	try
 	{
 		DictionaryObject* converted = dynamic_cast<DictionaryObject*>(obj);
+		if (nullptr == converted)
+			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
+
 		*result = reinterpret_cast<DictionaryHandle>(converted);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
@@ -125,6 +131,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToStream(ObjectHandle hand
 	try
 	{
 		StreamObject* converted = dynamic_cast<StreamObject*>(obj);
+		if (nullptr == converted)
+			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
+
 		*result = reinterpret_cast<StreamHandle>(converted);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
@@ -140,6 +149,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToIndirectReference(Object
 	try
 	{
 		IndirectObjectReference* converted = dynamic_cast<IndirectObjectReference*>(obj);
+		if (nullptr == converted)
+			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
+
 		*result = reinterpret_cast<IndirectReferenceHandle>(converted);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
@@ -155,6 +167,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToInteger(ObjectHandle han
 	try
 	{
 		IntegerObject* converted = dynamic_cast<IntegerObject*>(obj);
+		if (nullptr == converted)
+			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
+
 		*result = reinterpret_cast<IntegerHandle>(converted);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
@@ -170,7 +185,41 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToName(ObjectHandle handle
 	try
 	{
 		NameObject* converted = dynamic_cast<NameObject*>(obj);
+		if (nullptr == converted)
+			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
+
 		*result = reinterpret_cast<NameHandle>(converted);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToLiteralString(ObjectHandle handle, PLiteralStringHandle result)
+{
+	Object* obj = reinterpret_cast<Object*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	LOG_SCOPE(obj->GetFile()->GetFilename());
+
+	try {
+		LiteralStringObject* converted = dynamic_cast<LiteralStringObject*>(obj);
+		*result = reinterpret_cast<LiteralStringHandle>(converted);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToHexadecimalString(ObjectHandle handle, PHexadecimalStringHandle result)
+{
+	Object* obj = reinterpret_cast<Object*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	LOG_SCOPE(obj->GetFile()->GetFilename());
+
+	try {
+		HexadecimalStringObject* converted = dynamic_cast<HexadecimalStringObject*>(obj);
+		if (nullptr == converted)
+			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
+
+		*result = reinterpret_cast<HexadecimalStringHandle>(converted);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS

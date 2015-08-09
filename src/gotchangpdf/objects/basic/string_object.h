@@ -11,10 +11,13 @@ namespace gotchangpdf
 	class StringObject : public Containable, public Object
 	{
 	public:
-		BufferPtr _value;
-
 		virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
 		virtual inline ContainerPtr GetContainer() const override { return _container; }
+
+		inline BufferPtr Value() const { return _value; }
+
+	public:
+		BufferPtr _value;
 
 	protected:
 		StringObject();
