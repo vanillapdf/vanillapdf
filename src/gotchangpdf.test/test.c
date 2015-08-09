@@ -81,6 +81,40 @@ int process_name(NameHandle name, int nested)
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
+int process_lit_string(LiteralStringHandle string, int nested)
+{
+	BufferHandle buffer;
+
+	print_spaces(nested);
+	printf("Literal string begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(LiteralStringObject_Value(string, &buffer));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(buffer, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(buffer));
+
+	print_spaces(nested);
+	printf("Literal string end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+int process_hex_string(HexadecimalStringHandle string, int nested)
+{
+	BufferHandle buffer;
+
+	print_spaces(nested);
+	printf("Hexadecimal string begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(HexadecimalStringObject_Value(string, &buffer));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(buffer, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(buffer));
+
+	print_spaces(nested);
+	printf("Hexadecimal string end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
 int process_dictionary(DictionaryHandle dictionary, int nested)
 {
 	int boolean;
@@ -131,6 +165,8 @@ int process(ObjectHandle obj, int nested)
 	NameHandle name;
 	ObjectHandle child;
 	DictionaryHandle dictionary;
+	LiteralStringHandle literal_string;
+	HexadecimalStringHandle hex_string;
 	enum ObjectType type;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_Type(obj, &type));
@@ -225,18 +261,12 @@ int process(ObjectHandle obj, int nested)
 		printf("Stream object end\n");
 		break;
 	case HexadecimalString:
-		print_spaces(nested);
-		printf("Hexadecimal string begin\n");
-
-		print_spaces(nested);
-		printf("Hexadecimal string end\n");
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToHexadecimalString(obj, &hex_string));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_hex_string(hex_string, nested));
 		break;
 	case LiteralString:
-		print_spaces(nested);
-		printf("Literal string begin\n");
-
-		print_spaces(nested);
-		printf("Literal string end\n");
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToLiteralString(obj, &literal_string));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_lit_string(literal_string, nested));
 		break;
 	case IndirectReference:
 		print_spaces(nested);
