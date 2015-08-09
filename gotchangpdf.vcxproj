@@ -199,7 +199,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\objects\basic;src\gotchangpdf\exceptions;src\gotchangpdf\files;src\gotchangpdf\lexical;lib\boost;src\gotchangpdf\objects\common;include\gotchangpdf;src\gotchangpdf\documents;src\gotchangpdf\raw;src\gotchangpdf\util;src\gotchangpdf\basic;src\gotchangpdf\filters;lib\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;BOOST_SPIRIT_USE_PHOENIX_V3;PDF_EXPORTS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;BOOST_SPIRIT_USE_PHOENIX_V3;PDF_EXPORTS;REVERSE_BUFFER_OPTIMIZATION;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalOptions>/Zm256 %(AdditionalOptions)</AdditionalOptions>
@@ -221,7 +221,7 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Co
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;BOOST_SPIRIT_USE_PHOENIX_V3;PDF_EXPORTS;RELEASE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;BOOST_SPIRIT_USE_PHOENIX_V3;PDF_EXPORTS;REVERSE_BUFFER_OPTIMIZATION;RELEASE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\objects\basic;src\gotchangpdf\exceptions;src\gotchangpdf\files;src\gotchangpdf\lexical;lib\boost;src\gotchangpdf\objects\common;include\gotchangpdf;src\gotchangpdf\documents;src\gotchangpdf\raw;src\gotchangpdf\util;src\gotchangpdf\basic;src\gotchangpdf\filters;lib\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
