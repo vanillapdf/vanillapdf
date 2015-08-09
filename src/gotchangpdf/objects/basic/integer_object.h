@@ -22,13 +22,7 @@ namespace gotchangpdf
 		inline value_type Value(void) const _NOEXCEPT { return _value; }
 
 		template <typename T>
-		inline T SafeConvert(void) const
-		{
-			if (!IsInRange<value_type, T>(_value))
-				throw exceptions::Exception("Integer value is out of range");
-
-			return static_cast<T>(_value);
-		}
+		inline T SafeConvert(void) const { return gotchangpdf::SafeConvert<T>(_value); }
 
 		operator value_type() const { return _value; }
 
