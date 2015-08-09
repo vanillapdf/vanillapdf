@@ -9,10 +9,105 @@
 
 namespace gotchangpdf
 {
+	namespace constant
+	{
+		const int REVERSE_BUFFER_SIZE = 2048; // seek with 4096 fails for some reason
+		const int REVERSE_BUFFER_PUTBACK_SIZE = 16;
+	}
+
 	namespace raw
 	{
 		using namespace exceptions;
 		using namespace std;
+
+#ifdef REVERSE_BUFFER_OPTIMIZATION
+
+		ReverseStream::ReverseBuf::ReverseBuf(CharacterSource & s)
+			: _source(s),
+			_put_back(constant::REVERSE_BUFFER_PUTBACK_SIZE),
+			_buffer(constant::REVERSE_BUFFER_SIZE + _put_back),
+			_base(_buffer.data())
+		{
+			char *end = &_buffer.front() + _buffer.size();
+			setg(end, end, end);
+		}
+
+		ReverseStream::ReverseBuf::~ReverseBuf()
+		{
+			//pubsync();
+		}
+
+		int ReverseStream::ReverseBuf::sync()
+		{
+			//cout << s << ": " << str(); str("");  return !cout;
+			return 0;
+		}
+
+		ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::underflow()
+		{
+			if (gptr() > egptr()) // buffer not exhausted
+				return traits_type::to_int_type(*gptr());
+
+			char *start = _buffer.data() + _buffer.size() - 1;
+
+			bool put_back = false;
+			if (egptr() == _base) // true when this isn't the first fill
+			{
+				// Make arrangements for putback characters
+				std::memmove(_buffer.data() + _buffer.size() - _put_back, _base, _put_back);
+				start -= _put_back - 1;
+				put_back = true;
+			}
+
+			// start is now the start of the buffer, proper.
+			// Read from fptr_ in to the provided buffer
+
+			auto to_read = put_back ? _buffer.size() - _put_back : _buffer.size();
+			_offset -= to_read;
+			_source.seekg(_offset, std::ios::end);
+			_source.read(_buffer.data(), to_read);
+			_base = _buffer.data();
+
+			assert(!_source.fail());
+
+			auto size = _source.gcount();
+			if (size < 0)
+				return traits_type::eof();
+
+			if (size < to_read) {
+				_base = start - size + 1;
+				std::memmove(_base, _buffer.data(), SafeConvert<size_t>(size));
+			}
+
+			// Set buffer pointers
+			setg(_buffer.data() + _buffer.size() - 1, start, _base);
+
+			return traits_type::to_int_type(*gptr());
+		}
+
+		ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::uflow()
+		{
+			if (gptr() == egptr())
+				return traits_type::eof();
+
+			return traits_type::to_int_type(*_Gndec());
+		}
+
+		ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::pbackfail(int_type ch)
+		{
+			if (gptr() == eback() || (ch != traits_type::eof() && ch != gptr()[-1]))
+				return traits_type::eof();
+
+			return traits_type::to_int_type(*_Gninc());
+		}
+
+		streamsize ReverseStream::ReverseBuf::showmanyc()
+		{
+			assert(std::less_equal<const char *>()(egptr(), gptr()));
+			return gptr() - egptr();
+		}
+
+#else
 
 		ReverseStream::ReverseBuf::ReverseBuf(CharacterSource & s)// : _source(s)
 		{
@@ -57,6 +152,8 @@ namespace gotchangpdf
 			//pubsync();
 		}
 
+#endif /* REVERSE_BUFFER_OPTIMIZATION */
+
 		ReverseStream::ReverseBuf::pos_type ReverseStream::ReverseBuf::seekoff(off_type offset,
 			ios_base::seekdir dir,
 			ios_base::openmode mode)
@@ -65,7 +162,7 @@ namespace gotchangpdf
 				offset += (off_type)(egptr());
 			else if (dir == ios_base::cur
 				&& (mode & ios_base::out) == 0)
-				offset += (off_type)(gptr() - eback());
+				offset += (off_type)(eback() - gptr());
 			else if (dir != ios_base::beg)
 				offset = _BADOFF;
 
@@ -76,75 +173,11 @@ namespace gotchangpdf
 			ios_base::openmode)
 		{
 			streamoff offset = (streamoff)ptr;
-			gbump((int)(gptr() - eback() + offset));
+			gbump((int)(eback() - gptr() + offset));
 
 			return (streampos(offset));
 		}
 
-		/*
-		int ReverseStream::ReverseBuf::sync()
-		{
-		// cout << s << ": " << str(); str("");  return !cout;
-		}
-		*/
-		/*
-		ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::underflow()
-		{
-			if (gptr() > egptr()) // buffer not exhausted
-				return traits_type::to_int_type(*gptr());
-
-			Character * base = _buffer.data();
-			Character * start = base;
-
-			if (eback() == base) // true when this isn't the first fill
-			{
-				// Make arrangements for putback characters
-				std::memmove(base, egptr() - put_back_, put_back_);
-				start += put_back_;
-			}
-
-			// start is now the start of the buffer, proper.
-			// Read from fptr_ in to the provided buffer
-
-			//_offset -= constant::BUFFER_SIZE;
-			_offset = 0;
-
-			_source.seekg(_offset);
-			_source.read(start, constant::BUFFER_SIZE - (start - base));
-
-			assert(!_source.fail());
-
-			if (_source.eof())
-				return traits_type::eof();
-
-			// Set buffer pointers
-			setg(_buffer.data() + _buffer.size(), _buffer.data() + _buffer.size() - 1, _buffer.data());
-
-			return traits_type::to_int_type(*gptr());
-		}
-
-		ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::uflow()
-		{
-			if (gptr() == egptr())
-				return traits_type::eof();
-
-			return traits_type::to_int_type(*_Gndec());
-		}
-
-		ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::pbackfail(int_type ch)
-		{
-			if (gptr() == eback() || (ch != traits_type::eof() && ch != gptr()[-1]))
-				return traits_type::eof();
-
-			return traits_type::to_int_type(*_Gninc());
-		}
-
-		streamsize ReverseStream::ReverseBuf::showmanyc()
-		{
-			assert(std::less_equal<const Character *>()(egptr(), gptr()));
-			return gptr() - egptr();
-		}
-		*/
 		ReverseStream::ReverseStream(CharacterSource & stream) : CharacterSource(new ReverseBuf(stream)) {}
 
 		ReverseStream::~ReverseStream() { delete CharacterSource::rdbuf(); }

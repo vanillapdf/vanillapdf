@@ -64,7 +64,6 @@ namespace gotchangpdf
 			public:
 				explicit ReverseBuf(CharacterSource & s);
 				~ReverseBuf();
-				//int sync();
 
 				virtual pos_type seekoff(off_type,
 					ios_base::seekdir,
@@ -73,16 +72,23 @@ namespace gotchangpdf
 				virtual pos_type seekpos(pos_type,
 					ios_base::openmode = ios_base::in | ios_base::out) override;
 
-				/*
+#ifdef REVERSE_BUFFER_OPTIMIZATION
+			public:
+				int sync();
 				virtual int_type underflow() override;
 				virtual int_type uflow() override;
 				virtual int_type pbackfail(int_type ch) override;
 				virtual std::streamsize showmanyc() override;
-				*/
+
+			private:
+				CharacterSource & _source;
+				std::streampos _offset;
+				const std::size_t _put_back;
+				char *_base;
+#endif /* REVERSE_BUFFER_OPTIMIZATION */
+
 			private:
 				Buffer _buffer;
-				//CharacterSource & _source;
-				//std::streampos _offset;
 			};
 		};
 	}
