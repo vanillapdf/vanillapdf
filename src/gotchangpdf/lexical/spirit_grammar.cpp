@@ -174,7 +174,7 @@ namespace gotchangpdf
 				qi::lit('/')
 				> *(
 					(qi::char_ - whitespace - delimiter)
-					//| (qi::char_('%') > qi::digit > qi::digit)
+					//| (qi::char_('#') > qi::digit > qi::digit)
 				);
 
 			hexadecimal_string_object %=
@@ -225,7 +225,12 @@ namespace gotchangpdf
 
 			literal_string_object %=
 				qi::lit("(")
-				>> *(qi::char_ - qi::char_('()')) // TODO there can be balanced or escaped
+				>> *(
+				(qi::lit('\\') >> qi::char_)
+				| qi::char_('(') [qi::_a += 1]
+				| (qi::eps(qi::_a > 0) >> qi::char_(')')[qi::_a -= 1])
+				| (qi::char_ - qi::char_('(') - qi::char_(')'))
+				)
 				> qi::lit(")");
 
 			BOOST_SPIRIT_DEBUG_NODE(start);

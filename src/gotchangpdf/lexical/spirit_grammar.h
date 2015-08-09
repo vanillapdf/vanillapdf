@@ -43,7 +43,8 @@ namespace gotchangpdf
 			Rule<NullObjectPtr> null_object;
 			Rule<RealObjectPtr> real_object;
 			qi::rule<pos_iterator_type, StreamObjectPtr(files::File*), qi::locals<DictionaryObjectPtr, types::stream_size>> stream_object;
-			Rule<LiteralStringObjectPtr> literal_string_object;
+			qi::rule<pos_iterator_type, LiteralStringObjectPtr(), qi::locals<types::integer>> literal_string_object;
+			//Rule<LiteralStringObjectPtr> literal_string_object;
 			Rule<HexadecimalStringObjectPtr> hexadecimal_string_object;
 
 			qi::real_parser<float, qi::strict_real_policies<float>> strict_float_parser;
