@@ -31,7 +31,7 @@ namespace gotchangpdf
 
 			XrefPtr GetXref() const { return _xref; }
 			DictionaryObjectPtr GetDictionary() const { return _dictionary; }
-			types::stream_offset GetOffset() const { return _offset; }
+			types::stream_offset GetOffset() const _NOEXCEPT { return _offset; }
 
 		private:
 			XrefPtr _xref;
