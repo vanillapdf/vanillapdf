@@ -53,7 +53,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle
 	C_INTERFACE_EXCEPTION_HANDLERS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Xref(FileHandle handle, PXrefHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle, PXrefChainHandle result)
 {
 	File* file = reinterpret_cast<File*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
@@ -62,12 +62,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Xref(FileHandle handle, PXre
 
 	try
 	{
-		// TODO only begin, not whole chain
 		auto chain = file->GetXrefChain();
-		auto table = chain->Begin()->Value()->GetXref();
-		auto ptr = table.AddRefGet();
-
-		*result = reinterpret_cast<XrefHandle>(ptr);
+		auto ptr = chain.AddRefGet();
+		*result = reinterpret_cast<XrefChainHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS

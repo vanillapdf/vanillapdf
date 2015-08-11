@@ -56,6 +56,19 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_At(XrefSubsectionHandle handle, integer_type at, PXrefEntryHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_Release(XrefSubsectionHandle handle);
 
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_GetValue(XrefChainIteratorHandle handle, PXrefWithMetadataHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_IsValid(XrefChainIteratorHandle handle, XrefChainHandle chain, out_boolean_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_Next(XrefChainIteratorHandle handle);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_Release(XrefChainIteratorHandle handle);
+
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChain_Iterator(XrefChainHandle handle, PXrefChainIteratorHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChain_Release(XrefChainHandle handle);
+
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefWithMetadata_Dictionary(XrefWithMetadataHandle handle, PDictionaryHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefWithMetadata_Xref(XrefWithMetadataHandle handle, PXrefHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefWithMetadata_Offset(XrefWithMetadataHandle handle, out_offset_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefWithMetadata_Release(XrefWithMetadataHandle handle);
+
 #ifdef __cplusplus
 };
 #endif

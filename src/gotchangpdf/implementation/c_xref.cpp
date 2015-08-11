@@ -1,5 +1,7 @@
 #include "precompiled.h"
 #include "xref.h"
+#include "xref_chain.h"
+#include "xref_with_metadata.h"
 
 #include "file.h"
 
@@ -217,5 +219,128 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_Release(XrefSubsec
 	LOG_SCOPE(section->GetParent()->GetFile()->GetFilename());
 
 	section->Release();
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_GetValue(XrefChainIteratorHandle handle, PXrefWithMetadataHandle result)
+{
+	XrefChain::Iterator* iterator = reinterpret_cast<XrefChain::Iterator*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
+	//LOG_SCOPE(chain->GetParent()->GetFile()->GetFilename());
+
+	try {
+		auto entry = iterator->Value();
+		auto ptr = entry.AddRefGet();
+		*result = reinterpret_cast<XrefWithMetadataHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_IsValid(XrefChainIteratorHandle handle, XrefChainHandle chain_handle, out_boolean_type result)
+{
+	XrefChain::Iterator* iterator = reinterpret_cast<XrefChain::Iterator*>(handle);
+	XrefChain* chain = reinterpret_cast<XrefChain*>(chain_handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(chain);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	//LOG_SCOPE(dictionary->GetFile()->GetFilename());
+
+	try {
+		if (*chain->End() == *iterator)
+			*result = GOTCHANG_PDF_RV_FALSE;
+		else
+			*result = GOTCHANG_PDF_RV_TRUE;
+
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_Next(XrefChainIteratorHandle handle)
+{
+	XrefChain::Iterator* iterator = reinterpret_cast<XrefChain::Iterator*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
+
+	try {
+		++(*iterator);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_Release(XrefChainIteratorHandle handle)
+{
+	XrefChain::Iterator* it = reinterpret_cast<XrefChain::Iterator*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(it);
+	//LOG_SCOPE(chain->GetFile()->GetFilename());
+
+	it->Release();
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChain_Iterator(XrefChainHandle handle, PXrefChainIteratorHandle result)
+{
+	XrefChain* chain = reinterpret_cast<XrefChain*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(chain);
+	//LOG_SCOPE(chain->GetFile()->GetFilename());
+
+	auto begin = chain->Begin();
+	auto ptr = begin.AddRefGet();
+	*result = reinterpret_cast<XrefChainIteratorHandle>(ptr);
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChain_Release(XrefChainHandle handle)
+{
+	XrefChain* chain = reinterpret_cast<XrefChain*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(chain);
+	//LOG_SCOPE(chain->GetFile()->GetFilename());
+
+	chain->Release();
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefWithMetadata_Dictionary(XrefWithMetadataHandle handle, PDictionaryHandle result)
+{
+	XrefWithMetadata* xref = reinterpret_cast<XrefWithMetadata*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
+	//LOG_SCOPE(chain->GetFile()->GetFilename());
+
+	auto dict = xref->GetDictionary();
+	auto ptr = dict.AddRefGet();
+	*result = reinterpret_cast<DictionaryHandle>(ptr);
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefWithMetadata_Xref(XrefWithMetadataHandle handle, PXrefHandle result)
+{
+	XrefWithMetadata* xref = reinterpret_cast<XrefWithMetadata*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
+	//LOG_SCOPE(chain->GetFile()->GetFilename());
+
+	auto data = xref->GetXref();
+	auto ptr = data.AddRefGet();
+	*result = reinterpret_cast<XrefHandle>(ptr);
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefWithMetadata_Offset(XrefWithMetadataHandle handle, out_offset_type result)
+{
+	XrefWithMetadata* xref = reinterpret_cast<XrefWithMetadata*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
+	//LOG_SCOPE(xref->GetParent()->GetFile()->GetFilename());
+
+	*result = xref->GetOffset();
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefWithMetadata_Release(XrefWithMetadataHandle handle)
+{
+	XrefWithMetadata* xref = reinterpret_cast<XrefWithMetadata*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
+	//LOG_SCOPE(chain->GetFile()->GetFilename());
+
+	xref->Release();
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
