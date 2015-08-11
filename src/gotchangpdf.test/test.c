@@ -156,7 +156,7 @@ int process_dictionary(DictionaryHandle dictionary, int nested)
 
 int process(ObjectHandle obj, int nested)
 {
-	int i, size, val;
+	int i, size, val, obj_num, gen_num;
 	BufferHandle body_decoded;
 	IndirectReferenceHandle indirect_reference;
 	ArrayHandle arr;
@@ -168,6 +168,7 @@ int process(ObjectHandle obj, int nested)
 	LiteralStringHandle literal_string;
 	HexadecimalStringHandle hex_string;
 	enum ObjectType type;
+	string_type type_name;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_Type(obj, &type));
 
@@ -274,8 +275,21 @@ int process(ObjectHandle obj, int nested)
 
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToIndirectReference(obj, &indirect_reference));
 
+		RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedObjectNumber(indirect_reference, &obj_num));
+		RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedGenerationNumber(indirect_reference, &gen_num));
 		RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedObject(indirect_reference, &child));
-		RETURN_ERROR_IF_NOT_SUCCESS(process(child, nested + 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_Type(child, &type));
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_TypeName(type, &type_name));
+
+		print_spaces(nested + 1);
+		printf("Object Number: %d\n", obj_num);
+
+		print_spaces(nested + 1);
+		printf("Generation Number: %d\n", gen_num);
+
+		print_spaces(nested + 1);
+		printf("Type: %s\n", type_name);
+
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(child));
 
 		print_spaces(nested);
@@ -289,20 +303,10 @@ int process(ObjectHandle obj, int nested)
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-int main(int argc, char *argv[])
+int process_xref(XrefHandle xref)
 {
 	int i, size;
-	FileHandle file = NULL;
-	XrefHandle xref = NULL;
-	CatalogHandle catalog = NULL;
-	PageTreeHandle pages = NULL;
 
-	if (argc != 2)
-		return GOTCHANG_PDF_ERROR_GENERAL;
-
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Create(argv[1], &file));
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file));
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Xref(file, &xref));
 	RETURN_ERROR_IF_NOT_SUCCESS(Xref_Size(xref, &size));
 
 	for (i = 0; i < size; ++i) {
@@ -331,21 +335,55 @@ int main(int argc, char *argv[])
 					RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_ToUsedEntry(entry, &used_entry));
 					RETURN_ERROR_IF_NOT_SUCCESS(XrefUsedEntry_Reference(used_entry, &obj));
 					RETURN_ERROR_IF_NOT_SUCCESS(process(obj, 0));
+					RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));
 					break;
 				case Compressed:
 					RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_ToCompressedEntry(entry, &compressed_entry));
 					RETURN_ERROR_IF_NOT_SUCCESS(XrefCompressedEntry_Reference(compressed_entry, &obj));
 					RETURN_ERROR_IF_NOT_SUCCESS(process(obj, 0));
+					RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));
 					break;
 				default:
 					printf("Unknown xref entry type\n");
 					return GOTCHANG_PDF_ERROR_GENERAL;
 			}
-
-			//RETURN_ERROR_IF_NOT_SUCCESS(File_GetIndirectObject(file, i, 0, &object));
-			//RETURN_ERROR_IF_NOT_SUCCESS(process(object, 0));
-			//RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(object));
 		}
+	}
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+int main(int argc, char *argv[])
+{
+	int i, valid, size;
+	FileHandle file = NULL;
+	XrefChainHandle chain = NULL;
+	XrefChainIteratorHandle chain_iterator = NULL;
+	CatalogHandle catalog = NULL;
+	PageTreeHandle pages = NULL;
+
+	if (argc != 2)
+		return GOTCHANG_PDF_ERROR_GENERAL;
+
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Create(argv[1], &file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_XrefChain(file, &chain));
+	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Iterator(chain, &chain_iterator));
+
+	while (GOTCHANG_PDF_ERROR_SUCCES == XrefChainIterator_IsValid(chain_iterator, chain, &valid)
+		&& GOTCHANG_PDF_RV_TRUE == valid) {
+		XrefWithMetadataHandle data = NULL;
+		XrefHandle xref = NULL;
+
+		RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_GetValue(chain_iterator, &data));
+		RETURN_ERROR_IF_NOT_SUCCESS(XrefWithMetadata_Xref(data, &xref));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(process_xref(xref));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(Xref_Release(xref));
+		RETURN_ERROR_IF_NOT_SUCCESS(XrefWithMetadata_Release(data));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_Next(chain_iterator));
 	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(File_GetDocumentCatalog(file, &catalog));
@@ -365,7 +403,9 @@ int main(int argc, char *argv[])
 	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_Release(pages));
 	printf("Document catalog end\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Xref_Release(xref));
+	
+	RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_Release(chain_iterator));
+	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Release(chain));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
