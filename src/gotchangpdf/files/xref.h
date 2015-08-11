@@ -106,7 +106,33 @@ namespace gotchangpdf
 			types::integer _index = -1;
 		};
 
-		class Xref : public std::vector<XrefEntryPtr>, public IUnknown
+		class XrefSubsection : public IUnknown
+		{
+		public:
+			XrefSubsection(types::integer index, types::integer size) : _index(index) { _entries.reserve(size); }
+			void Add(XrefEntryPtr entry) { _entries.push_back(entry); }
+			types::integer Size(void) const _NOEXCEPT { return _entries.size(); }
+			XrefEntryPtr At(types::uinteger at) { return _entries.at(at); }
+			void SetParent(XrefPtr parent) { _parent = parent; }
+			XrefPtr GetParent(void) const { return _parent; }
+
+			types::integer Index(void) const _NOEXCEPT
+			{
+				if (_entries.size() > 0) {
+					auto entry = _entries.at(0);
+					assert(entry->GetObjectNumber() == _index);
+				}
+
+				return _index;
+			}
+
+		private:
+			types::integer _index;
+			std::vector<XrefEntryPtr> _entries;
+			XrefPtr _parent;
+		};
+
+		class Xref : public IUnknown
 		{
 		public:
 			enum class Type
@@ -118,11 +144,16 @@ namespace gotchangpdf
 			inline void SetFile(files::File *file) _NOEXCEPT { _file = file; }
 			inline files::File* GetFile() const _NOEXCEPT { return _file; }
 
+			void Add(XrefSubsectionPtr section) { section->SetParent(this); _sections.push_back(section); }
+			types::integer Size(void) const _NOEXCEPT { return _sections.size(); }
+			XrefSubsectionPtr At(types::integer at) { return _sections.at(at); }
+
 			virtual Type GetType(void) const _NOEXCEPT = 0;
 			virtual ~Xref() {};
 
 		protected:
 			files::File * _file = nullptr;
+			std::vector<XrefSubsectionPtr> _sections;
 		};
 
 		class XrefTable : public Xref

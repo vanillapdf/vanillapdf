@@ -122,6 +122,8 @@ namespace gotchangpdf
 
 					auto subsection_index = index->At(i);
 					auto subsection_size = index->At(i + 1);
+
+					XrefSubsectionPtr subsection(new files::XrefSubsection(subsection_index->Value(), subsection_size->Value()));
 					for (auto idx = 0; idx < *subsection_size; idx++) {
 
 						IntegerObject field1;
@@ -152,7 +154,7 @@ namespace gotchangpdf
 							entry->SetObjectNumber(*subsection_index + idx);
 							entry->SetNextFreeObjectNumber(field2);
 							entry->SetGenerationNumber(field3.SafeConvert<types::ushort>());
-							result->push_back(entry);
+							subsection->Add(entry);
 							break;
 						}
 						case 1:
@@ -162,7 +164,7 @@ namespace gotchangpdf
 							entry->SetOffset(field2);
 							entry->SetGenerationNumber(field3.SafeConvert<types::ushort>());
 							entry->SetObjectNumber(*subsection_index + idx);
-							result->push_back(entry);
+							subsection->Add(entry);
 							break;
 						}
 						case 2:
@@ -172,13 +174,15 @@ namespace gotchangpdf
 							entry->SetObjectNumber(*subsection_index + idx);
 							entry->SetObjectStreamNumber(field2);
 							entry->SetIndex(field3);
-							result->push_back(entry);
+							subsection->Add(entry);
 							break;
 						}
 						default:
 							throw exceptions::Exception("Unknown field in cross reference stream");
 						}
 					}
+
+					result->Add(subsection);
 				}
 
 				result->SetFile(_impl->_file);
@@ -196,13 +200,16 @@ namespace gotchangpdf
 
 					ReadTokenWithType(Token::Type::EOL);
 
+					XrefSubsectionPtr subsection(new files::XrefSubsection(revision, numberOfObjects));
 					for (types::integer i = 0; i < numberOfObjects; ++i) {
-						// check for overflow
-						assert(revision + i >= revision);
+						if (revision + i < revision)
+							throw exceptions::Exception("Revision number overflow");
 
 						auto entry = _impl->ReadTableEntry(*this, static_cast<types::integer>(revision + i));
-						table->push_back(entry);
+						subsection->Add(entry);
 					}
+
+					table->Add(subsection);
 				}
 
 				table->SetFile(_impl->_file);

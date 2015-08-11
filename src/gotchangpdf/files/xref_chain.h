@@ -46,7 +46,7 @@ namespace gotchangpdf
 				list_type::const_iterator _it;
 			};
 
-			using IteratorPtr = SmartPtr < Iterator > ;
+			using IteratorPtr = SmartPtr < Iterator >;
 
 		public:
 			IteratorPtr Begin() const { return new Iterator(_list.begin()); }
@@ -56,13 +56,20 @@ namespace gotchangpdf
 			XrefEntryPtr GetXrefEntry(types::integer objNumber,
 				types::ushort genNumber)
 			{
-				// TODO xref entry should be a map, instead of vector for searching
-
 				for (auto it = _list.begin(); it != _list.end(); it++) {
 					auto xref = (*it)->GetXref();
-					for (auto item : *xref) {
-						if (item->GetObjectNumber() == objNumber && item->GetGenerationNumber() == genNumber)
-							return item;
+
+					for (int i = 0; i < xref->Size(); ++i) {
+						auto section = xref->At(i);
+						if (objNumber < section->Index() || objNumber >= section->Index() + section->Size())
+							continue;
+
+						auto item = section->At(objNumber - section->Index());
+						assert(item->GetObjectNumber() == objNumber);
+						if (item->GetObjectNumber() != objNumber || item->GetGenerationNumber() != genNumber)
+							continue;
+
+						return item;
 					}
 				}
 

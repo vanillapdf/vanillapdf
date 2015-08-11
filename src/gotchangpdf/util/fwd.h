@@ -71,6 +71,7 @@ namespace gotchangpdf
 		class Trailer;
 
 		class Xref;
+		class XrefSubsection;
 		class XrefTable;
 		class XrefStream;
 		class XrefChain;
@@ -141,6 +142,7 @@ namespace gotchangpdf
 	using TrailerPtr = SmartPtr<files::Trailer>;
 
 	using XrefPtr = SmartPtr<files::Xref>;
+	using XrefSubsectionPtr = SmartPtr<files::XrefSubsection>;
 	using XrefTablePtr = SmartPtr<files::XrefTable>;
 	using XrefStreamPtr = SmartPtr<files::XrefStream>;
 
