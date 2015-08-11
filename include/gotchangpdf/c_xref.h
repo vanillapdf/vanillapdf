@@ -48,8 +48,13 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Release(XrefCompressedEntryHandle handle);
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_Size(XrefHandle handle, out_integer_type result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_At(XrefHandle handle, integer_type at, PXrefEntryHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_At(XrefHandle handle, integer_type at, PXrefSubsectionHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_Release(XrefHandle handle);
+
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_Index(XrefSubsectionHandle handle, out_integer_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_Size(XrefSubsectionHandle handle, out_integer_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_At(XrefSubsectionHandle handle, integer_type at, PXrefEntryHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_Release(XrefSubsectionHandle handle);
 
 #ifdef __cplusplus
 };

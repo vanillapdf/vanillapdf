@@ -32,6 +32,7 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(XrefUsedEntry);
 	DECLARE_OBJECT_HANDLE(XrefCompressedEntry);
 	DECLARE_OBJECT_HANDLE(Xref);
+	DECLARE_OBJECT_HANDLE(XrefSubsection);
 
 	/* Semantic */
 	DECLARE_OBJECT_HANDLE(Catalog);
