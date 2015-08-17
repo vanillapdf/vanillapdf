@@ -33,7 +33,7 @@ chdir $gotchangpdf::boost_local_dir;
 
 if (! -f "b2.exe") {
 	# Build boost build
-	system("$bootstrap") == 0 or die $!;
+	system("start $bootstrap") == 0 or die $!;
 }
 
 # Build all dependent libraries
