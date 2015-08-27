@@ -10,7 +10,6 @@
 #include "spirit_grammar.h"
 
 #include <iomanip>
-//#include <boost/variant/get.hpp>
 
 namespace gotchangpdf
 {
@@ -29,7 +28,10 @@ namespace gotchangpdf
 
 			XrefEntryPtr ReadTableEntry(lexical::SpiritParser& s, types::integer objNumber);
 
-			files::File * _file;
+			template <typename Result, typename Grammar, typename Iterator>
+			Result Read(Grammar grammar, Iterator& input_begin_pos, Iterator& input_end_pos);
+
+			files::File *_file = nullptr;
 			ObjectStreamGrammar _obj_stream_grammar;
 			DirectObjectGrammar _direct_grammar;
 		};
@@ -75,9 +77,46 @@ namespace gotchangpdf
 				return result;
 			} else {
 				stringstream buffer;
-				buffer << "Key in XRef table is either of " << IN_USE << " or " << NOT_IN_USE;
+				buffer << "Key in XRef table is neither of " << IN_USE << " or " << NOT_IN_USE;
 
 				throw Exception(buffer.str());
+			}
+		}
+
+		template <typename Result, typename Grammar, typename Iterator>
+		Result SpiritParser::Impl::Read(Grammar grammar, Iterator& input_begin_pos, Iterator& input_end_pos)
+		{
+			Result obj;
+
+			try {
+				auto result = qi::parse(input_begin_pos, input_end_pos, grammar, obj);
+				if (result) {
+					return obj;
+				}
+				else {
+					LOG_ERROR << "Parsing failed" << endl;
+
+					const auto& pos = input_begin_pos.get_position();
+					LOG_ERROR <<
+						"Error at offset " << pos.offset << endl <<
+						"'" << input_begin_pos.get_currentline() << "'" << endl <<
+						setw(pos.column + 7) << " ^- here";
+
+					throw exceptions::Exception("Parsing failed");
+				}
+			}
+			catch (const qi::expectation_failure<pos_iterator_type>& exception) {
+				LOG_ERROR << "Parsing failed" << endl;
+
+				auto pos_begin = exception.first;
+				const auto& pos = pos_begin.get_position();
+				LOG_ERROR <<
+					"Error at offset " << pos.offset << endl <<
+					"Expecting " << exception.what() << endl <<
+					"'" << pos_begin.get_currentline() << "'" << endl <<
+					setw(pos.column + 7) << " ^- here";
+
+				throw;
 			}
 		}
 
@@ -90,7 +129,7 @@ namespace gotchangpdf
 		XrefPtr SpiritParser::ReadXref(void)
 		{
 			if (PeekTokenType() == Token::Type::INTEGER_OBJECT) {
-				XrefStreamPtr result = new files::XrefStream();
+				XrefStreamPtr result(new files::XrefStream());
 
 				// Get stream object data
 				auto xref = ReadDirectObjectWithType<StreamObjectPtr>();
@@ -127,7 +166,7 @@ namespace gotchangpdf
 					for (auto idx = 0; idx < *subsection_size; idx++) {
 
 						IntegerObject field1;
-						for (int i = 0; i < *field1_size; ++i) {
+						for (int j = 0; j < *field1_size; ++j) {
 							field1 = (field1 << 8) + (*it & 0xff);
 							it++;
 						}
@@ -135,13 +174,13 @@ namespace gotchangpdf
 						assert(field1 == 0 || field1 == 1 || field1 == 2);
 
 						IntegerObject field2;
-						for (int i = 0; i < *field2_size; ++i) {
+						for (int j = 0; j < *field2_size; ++j) {
 							field2 = (field2 << 8) + (*it & 0xff);
 							it++;
 						}
 
 						IntegerObject field3;
-						for (int i = 0; i < *field3_size; ++i) {
+						for (int j = 0; j < *field3_size; ++j) {
 							field3 = (field3 << 8) + (*it & 0xff);
 							it++;
 						}
@@ -201,13 +240,15 @@ namespace gotchangpdf
 					ReadTokenWithType(Token::Type::EOL);
 
 					XrefSubsectionPtr subsection(new files::XrefSubsection(revision, numberOfObjects));
-					for (types::integer i = 0; i < numberOfObjects; ++i) {
-						if (revision + i < revision)
-							throw exceptions::Exception("Revision number overflow");
 
-						auto entry = _impl->ReadTableEntry(*this, static_cast<types::integer>(revision + i));
+					auto start = omp_get_wtime();
+					for (types::integer i = 0; i < numberOfObjects; ++i) {
+						auto entry = _impl->ReadTableEntry(*this, SafeAddition(revision, i));
 						subsection->Add(entry);
 					}
+
+					auto end = omp_get_wtime();
+					LOG_DEBUG << "Subsection - Items: " << numberOfObjects << " Time: " << end - start;
 
 					table->Add(subsection);
 				}
@@ -237,8 +278,6 @@ namespace gotchangpdf
 
 		std::vector<ObjectStreamHeader> SpiritParser::ReadObjectStreamHeaders(types::integer size)
 		{
-			std::vector<ObjectStreamHeader> obj;
-
 			// Don't skip whitespace explicitly
 			noskipws(*this);
 
@@ -251,34 +290,7 @@ namespace gotchangpdf
 			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _impl->_file->GetFilename(), 1, 1, offset);
 			pos_iterator_type input_end_pos;
 
-			try {
-				auto result = qi::parse(input_begin_pos, input_end_pos, _impl->_obj_stream_grammar(size), obj);
-				if (result) {
-					return obj;
-				} else {
-					LOG_ERROR << "Parsing failed" << endl;
-
-					const auto& pos = input_begin_pos.get_position();
-					LOG_ERROR <<
-						"Error at offset " << pos.offset << endl <<
-						"'" << input_begin_pos.get_currentline() << "'" << endl <<
-						setw(pos.column + 7) << " ^- here" << endl;
-
-					throw exceptions::Exception("Parsing failed");
-				}
-			} catch (const qi::expectation_failure<pos_iterator_type>& exception) {
-				LOG_ERROR << "Parsing failed" << endl;
-
-				auto pos_begin = exception.first;
-				const auto& pos = pos_begin.get_position();
-				LOG_ERROR <<
-					"Error at offset " << pos.offset << endl <<
-					"Expecting " << exception.what() << endl <<
-					"'" << pos_begin.get_currentline() << "'" << endl <<
-					setw(pos.column + 7) << " ^- here" << endl;
-
-				throw;
-			}
+			return _impl->Read<std::vector<ObjectStreamHeader>>(_impl->_obj_stream_grammar(size), input_begin_pos, input_end_pos);
 		}
 
 		DirectObject SpiritParser::ReadDirectObject(types::stream_offset offset)
@@ -289,8 +301,6 @@ namespace gotchangpdf
 
 		DirectObject SpiritParser::ReadDirectObject(void)
 		{
-			DirectObject obj;
-
 			// Don't skip whitespace explicitly
 			noskipws(*this);
 
@@ -303,41 +313,14 @@ namespace gotchangpdf
 			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _impl->_file->GetFilename(), 1, 1, offset);
 			pos_iterator_type input_end_pos;
 
-			try
-			{
-				auto result = qi::parse(input_begin_pos, input_end_pos, _impl->_direct_grammar(_impl->_file, offset), obj);
-				if (result) {
-					// For some reason, end of parsing and current offset does not match
-					// So I adjust current stream position
-					auto end_pos = input_begin_pos.get_position();
-					seekg(end_pos.offset, std::ios::beg);
-					return obj;
-				}
-				else {
-					LOG_ERROR << "Parsing failed" << endl;
+			auto result = _impl->Read<DirectObject>(_impl->_direct_grammar(_impl->_file, offset), input_begin_pos, input_end_pos);
 
-					const auto& pos = input_begin_pos.get_position();
-					LOG_ERROR <<
-						"Error at offset " << pos.offset << endl <<
-						"'" << input_begin_pos.get_currentline() << "'" << endl <<
-						setw(pos.column + 7) << " ^- here" << endl;
+			// For some reason, end of parsing and current offset does not match
+			// So I adjust current stream position
+			auto end_pos = input_begin_pos.get_position();
+			seekg(end_pos.offset, std::ios::beg);
 
-					throw exceptions::Exception("Parsing failed");
-				}
-			}
-			catch (const qi::expectation_failure<pos_iterator_type>& exception) {
-				LOG_ERROR << "Parsing failed" << endl;
-
-				auto pos_begin = exception.first;
-				const auto& pos = pos_begin.get_position();
-				LOG_ERROR <<
-					"Error at offset " << pos.offset << endl <<
-					"Expecting " << exception.what() << endl <<
-					"'" << pos_begin.get_currentline() << "'" << endl <<
-					setw(pos.column + 7) << " ^- here" << endl;
-
-				throw;
-			}
+			return result;
 		}
 	}
 }
