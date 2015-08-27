@@ -106,7 +106,7 @@ namespace gotchangpdf
 #define LOG_SCOPE(name) BOOST_LOG_SCOPED_THREAD_ATTR("Scope", boost::log::attributes::constant<std::string>(name))
 #define LOG_DEBUG       BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::debug)
 #define LOG_INFO        BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::info)
-#define LOG_WARN        BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::warning)
+#define LOG_WARNING     BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::warning)
 #define LOG_ERROR       BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::error)
 #define LOG_FATAL       BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::fatal)
 
