@@ -50,6 +50,19 @@ namespace gotchangpdf
 	private:
 		ContainerPtr _container;
 	};
+
+	inline IntegerObject SafeAddition(IntegerObject::value_type number, IntegerObject::value_type addend) {
+
+		types::double_integer result = number + addend;
+		static_assert(sizeof(result) == 2 * sizeof(number), "Adjust type of result to be double size of the value type");
+
+		auto converted = gotchangpdf::SafeConvert<IntegerObject::value_type>(result);
+		return IntegerObject(converted);
+	}
+
+	inline IntegerObject SafeAddition(const IntegerObject& number, const IntegerObject& addend) {
+		return SafeAddition(number.Value(), addend.Value());
+	}
 }
 
 #endif /* _INTEGER_OBJECT_H */
