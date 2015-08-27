@@ -43,11 +43,7 @@ namespace gotchangpdf
 		char Stream::get_hex()
 		{
 			auto val = get();
-
-			if (!IsInRange<decltype(val), char>(val))
-				throw exceptions::Exception("Value is out of range");
-
-			char ch = static_cast<char>(val);
+			char ch = SafeConvert<char>(val);
 
 			if ('0' <= ch && ch <= '9')
 				return ch - '0';
@@ -67,10 +63,7 @@ namespace gotchangpdf
 				auto val = get();
 				assert(val != std::char_traits<char>::eof());
 
-				if (!IsInRange<decltype(val), char>(val))
-					throw exceptions::Exception("Value is out of range");
-
-				auto value = static_cast<char>(val);
+				auto value = SafeConvert<char>(val);
 
 				if (Equals(value, WhiteSpace::CARRIAGE_RETURN)) {
 					int val2 = peek();
