@@ -31,12 +31,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Release(FileHandle handle)
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
 	LOG_SCOPE(file->GetFilename());
 
-	try
-	{
-		delete file;
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	delete file;
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle)

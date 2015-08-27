@@ -71,7 +71,7 @@ namespace gotchangpdf
 			stream >> *_header;
 
 			TrailerPtr trailer(new Trailer());
-			ReverseStream reversed = ReverseStream(*_input);
+			ReverseStream reversed(*_input);
 			reversed >> *trailer;
 
 			auto offset = trailer->GetXrefOffset();
