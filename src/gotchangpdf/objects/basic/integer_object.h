@@ -14,6 +14,9 @@ namespace gotchangpdf
 	{
 	public:
 		typedef types::integer value_type;
+		typedef types::double_integer value_type_doubled;
+
+		static_assert(sizeof(value_type_doubled) == 2 * sizeof(value_type), "Adjust type of value_type_doubled to be double size of the value type");
 
 		IntegerObject() = default;
 		explicit IntegerObject(value_type value);
@@ -53,9 +56,7 @@ namespace gotchangpdf
 
 	inline IntegerObject SafeAddition(IntegerObject::value_type number, IntegerObject::value_type addend) {
 
-		types::double_integer result = number + addend;
-		static_assert(sizeof(result) == 2 * sizeof(number), "Adjust type of result to be double size of the value type");
-
+		IntegerObject::value_type_doubled result = number + addend;
 		auto converted = gotchangpdf::SafeConvert<IntegerObject::value_type>(result);
 		return IntegerObject(converted);
 	}
