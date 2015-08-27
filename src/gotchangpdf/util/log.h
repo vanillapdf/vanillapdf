@@ -54,6 +54,8 @@ namespace gotchangpdf
 			return strm;
 		}
 
+		static const Severity max_level = Severity::warning;
+
 		typedef src::severity_logger_mt<Severity> file_logger_mt;
 		BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT(file_logger, file_logger_mt)
 		{
@@ -64,7 +66,7 @@ namespace gotchangpdf
 			// Add per file scope
 			auto core = logging::core::get();
 			core->add_global_attribute("Scope", attrs::constant<std::string>("general"));
-			core->set_filter(expr::attr<Severity>("Severity") >= Severity::warning);
+			core->set_filter(expr::attr<Severity>("Severity") >= max_level);
 
 			// One log file for every scope
 			auto backend = boost::make_shared<sinks::text_multifile_backend>();
