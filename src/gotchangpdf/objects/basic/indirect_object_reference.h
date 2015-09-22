@@ -14,8 +14,8 @@ namespace gotchangpdf
 	class IndirectObjectReference : public Containable, public Object
 	{
 	public:
-		IndirectObjectReference() = default;
 		explicit IndirectObjectReference(DirectObject obj);
+		IndirectObjectReference(types::integer obj, types::ushort gen);
 
 		DirectObject GetReferencedObject() const;
 		inline DirectObject operator->() const { return GetReferencedObject(); }
@@ -41,14 +41,13 @@ namespace gotchangpdf
 		inline types::integer GetReferencedObjectNumber() const _NOEXCEPT { return _ref_obj; }
 		inline types::ushort GetReferencedGenerationNumber() const _NOEXCEPT { return _ref_gen; }
 
-	public:
-		types::integer _ref_obj = 0;
-		types::ushort _ref_gen = 0;
-
 	private:
 		mutable DirectObject _object;
 		mutable bool _initialized = false;
 		ContainerPtr _container;
+
+		types::integer _ref_obj = 0;
+		types::ushort _ref_gen = 0;
 	};
 }
 

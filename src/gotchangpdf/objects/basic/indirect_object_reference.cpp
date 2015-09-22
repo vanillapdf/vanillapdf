@@ -8,6 +8,8 @@ namespace gotchangpdf
 {
 	IndirectObjectReference::IndirectObjectReference(DirectObject obj) : _object(obj) {}
 
+	IndirectObjectReference::IndirectObjectReference(types::integer obj, types::ushort gen) : _ref_obj(obj), _ref_gen(gen) {}
+
 	DirectObject IndirectObjectReference::GetReferencedObject() const
 	{
 		if (!_initialized) {

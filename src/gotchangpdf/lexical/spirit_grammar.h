@@ -37,7 +37,7 @@ namespace gotchangpdf
 			Rule<DictionaryObjectPtr, files::File*> dictionary_object;
 			Rule<DictionaryObject, files::File*> dictionary_object_raw;
 			Rule<FunctionObjectPtr> function_object;
-			Rule<IndirectObjectReferencePtr> indirect_object_reference;
+			qi::rule<pos_iterator_type, IndirectObjectReferencePtr(), qi::locals<types::integer, types::ushort>> indirect_object_reference;
 			Rule<IntegerObjectPtr> integer_object;
 			Rule<NameObjectPtr> name_object;
 			Rule<NullObjectPtr> null_object;

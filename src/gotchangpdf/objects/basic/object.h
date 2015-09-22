@@ -31,8 +31,6 @@ namespace gotchangpdf
 		static const char* TypeName(Type type);
 
 	public:
-		Object() = default;
-
 		virtual inline Type GetType(void) const _NOEXCEPT = 0;
 
 	public:

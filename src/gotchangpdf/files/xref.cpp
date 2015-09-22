@@ -57,13 +57,17 @@ namespace gotchangpdf
 				auto stream_entry_base = stream_entry.apply_visitor(visitor);
 				auto object_number = stream_entry_base->GetObjectNumber();
 
-				auto stream_entry_xref = chain->GetXrefEntry(object_number, 0);
-				if (stream_entry_xref->GetUsage() != XrefEntry::Usage::Compressed)
+				XrefEntryBaseVisitor xref_base_visitor;
+				auto stream_entry_xref_variant = chain->GetXrefEntry(object_number, 0);
+				auto stream_entry_xref_base = stream_entry_xref_variant.apply_visitor(xref_base_visitor);
+
+				if (stream_entry_xref_base->GetUsage() != XrefEntryBase::Usage::Compressed)
 					throw exceptions::Exception("Compressed entry type expected");
 
-				auto stream_compressed_entry_xref = dynamic_wrapper_cast<XrefCompressedEntry>(stream_entry_xref);
+				XrefEntryVisitor<XrefCompressedEntryPtr> xref_compressed_visitor;
+				auto stream_compressed_entry_xref = stream_entry_xref_variant.apply_visitor(xref_compressed_visitor);
 				stream_compressed_entry_xref->SetReference(stream_entry);
-				stream_entry_xref->SetInitialized(true);
+				stream_compressed_entry_xref->SetInitialized(true);
 			}
 
 			if (!Initialized())

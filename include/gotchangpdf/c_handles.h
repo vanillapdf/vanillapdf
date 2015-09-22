@@ -33,7 +33,6 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(XrefCompressedEntry);
 	DECLARE_OBJECT_HANDLE(Xref);
 	DECLARE_OBJECT_HANDLE(XrefChain);
-	DECLARE_OBJECT_HANDLE(XrefWithMetadata);
 	DECLARE_OBJECT_HANDLE(XrefSubsection);
 
 	DECLARE_OBJECT_HANDLE(XrefChainIterator);

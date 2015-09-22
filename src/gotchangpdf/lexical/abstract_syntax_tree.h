@@ -4,6 +4,7 @@
 #include "constants.h"
 #include "direct_object.h"
 #include "objects.h"
+#include "object_stream_header.h"
 
 #include <boost/fusion/include/adapt_struct.hpp>
 //#include <boost/fusion/adapted/adt/adapt_adt.hpp>
@@ -45,12 +46,6 @@ gotchangpdf::DictionaryObjectPtr,
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::DictionaryObject,
 (gotchangpdf::DictionaryObject::list_type, _list)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
-gotchangpdf::IndirectObjectReferencePtr,
-(gotchangpdf::types::integer, Content->_ref_obj)
-(gotchangpdf::types::ushort, Content->_ref_gen)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(

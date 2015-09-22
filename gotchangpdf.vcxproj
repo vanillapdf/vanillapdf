@@ -41,7 +41,6 @@
     <ClInclude Include="src\gotchangpdf\exceptions\invalid_object_type_exception.h" />
     <ClInclude Include="src\gotchangpdf\files\file.h" />
     <ClInclude Include="src\gotchangpdf\files\header.h" />
-    <ClInclude Include="src\gotchangpdf\files\trailer.h" />
     <ClInclude Include="src\gotchangpdf\files\xref.h" />
     <ClInclude Include="src\gotchangpdf\files\xref_chain.h" />
     <ClInclude Include="src\gotchangpdf\files\xref_with_metadata.h" />
@@ -61,6 +60,7 @@
     <ClInclude Include="src\gotchangpdf\lexical\spirit_parser.h" />
     <ClInclude Include="src\gotchangpdf\lexical\token.h" />
     <ClInclude Include="src\gotchangpdf\lexical\token_dictionary.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\xref_grammar.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\array_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\boolean_object.h" />
     <ClInclude Include="src\gotchangpdf\objects\basic\containable.h" />
@@ -114,7 +114,6 @@
     <ClCompile Include="src\gotchangpdf\exceptions\invalid_object_type_exception.cpp" />
     <ClCompile Include="src\gotchangpdf\files\file.cpp" />
     <ClCompile Include="src\gotchangpdf\files\header.cpp" />
-    <ClCompile Include="src\gotchangpdf\files\trailer.cpp" />
     <ClCompile Include="src\gotchangpdf\files\xref.cpp" />
     <ClCompile Include="src\gotchangpdf\filters\filter.cpp" />
     <ClCompile Include="src\gotchangpdf\filters\flate_decode_filter.cpp" />
@@ -140,6 +139,7 @@
     <ClCompile Include="src\gotchangpdf\lexical\spirit_parser.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\token.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\token_dictionary.cpp" />
+    <ClCompile Include="src\gotchangpdf\lexical\xref_grammar.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\indirect_object_reference.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\integer_object.cpp" />
     <ClCompile Include="src\gotchangpdf\objects\basic\name_object.cpp" />

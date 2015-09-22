@@ -2,6 +2,7 @@
 #define _SPIRIT_PARSER_H
 
 #include "fwd.h"
+#include "xref.h"
 #include "lexical_stream.h"
 #include "direct_object.h"
 #include "object_visitors.h"
@@ -41,8 +42,8 @@ namespace gotchangpdf
 			std::vector<DirectObject> ReadObjectStreamEntries(types::integer first, types::integer size);
 			ObjectStreamHeaders ReadObjectStreamHeaders(types::integer size);
 
-			XrefPtr ReadXref(void);
-			XrefPtr ReadXref(types::stream_offset offset);
+			files::Xref ReadXref(void);
+			files::Xref ReadXref(types::stream_offset offset);
 
 			DirectObject ReadDirectObject(void);
 			DirectObject ReadDirectObject(types::stream_offset offset);

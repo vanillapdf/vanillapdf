@@ -4,7 +4,7 @@
 #include "fwd.h"
 #include "deferred.h"
 #include "smart_ptr.h"
-#include "xref_with_metadata.h"
+#include "xref.h"
 
 #include <list>
 
@@ -15,7 +15,7 @@ namespace gotchangpdf
 		class XrefChain : public IUnknown
 		{
 		public:
-			using list_type = std::list<XrefWithMetadataPtr>;
+			using list_type = std::list<Xref>;
 
 		public:
 			class Iterator : public IUnknown
@@ -37,7 +37,7 @@ namespace gotchangpdf
 					return temp;
 				}
 
-				XrefWithMetadataPtr Value() const { return *_it; }
+				Xref Value() const { return *_it; }
 
 				bool operator==(const Iterator& other) const { return _it == other._it; }
 				bool operator!=(const Iterator& other) const { return _it != other._it; }
@@ -51,22 +51,27 @@ namespace gotchangpdf
 		public:
 			IteratorPtr Begin() const { return new Iterator(_list.begin()); }
 			IteratorPtr End(void) const { return new Iterator(_list.end()); }
-			void Append(XrefWithMetadataPtr item) { _list.push_back(item); }
+			void Append(Xref item) { _list.push_back(item); }
 
-			XrefEntryPtr GetXrefEntry(types::integer objNumber,
+			XrefEntry GetXrefEntry(types::integer objNumber,
 				types::ushort genNumber)
 			{
 				for (auto it = _list.begin(); it != _list.end(); it++) {
-					auto xref = (*it)->GetXref();
+					XrefBaseVisitor visitor;
+					auto xref_variant = (*it);
+					auto xref = xref_variant.apply_visitor(visitor);
 
 					for (int i = 0; i < xref->Size(); ++i) {
 						auto section = xref->At(i);
 						if (objNumber < section->Index() || objNumber >= section->Index() + section->Size())
 							continue;
 
+						XrefEntryBaseVisitor base_visitor;
 						auto item = section->At(objNumber - section->Index());
-						assert(item->GetObjectNumber() == objNumber);
-						if (item->GetObjectNumber() != objNumber || item->GetGenerationNumber() != genNumber)
+						auto item_base = item.apply_visitor(base_visitor);
+
+						assert(item_base->GetObjectNumber() == objNumber);
+						if (item_base->GetObjectNumber() != objNumber || item_base->GetGenerationNumber() != genNumber)
 							continue;
 
 						return item;

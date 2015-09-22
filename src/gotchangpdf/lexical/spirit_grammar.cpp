@@ -155,11 +155,11 @@ namespace gotchangpdf
 				>> qi::lit("null")[qi::_val = NullObject::GetInstance()];
 
 			indirect_object_reference %=
-				qi::int_
+				qi::omit[qi::int_[qi::_a = qi::_1]]
 				>> whitespace
-				>> qi::ushort_
+				>> qi::omit[qi::ushort_[qi::_b = qi::_1]]
 				>> whitespace
-				>> qi::lit('R');
+				>> qi::lit('R')[qi::_val = phoenix::construct<IndirectObjectReferencePtr>(qi::_a, qi::_b)];
 
 			integer_object %=
 				qi::eps

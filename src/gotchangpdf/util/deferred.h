@@ -5,14 +5,17 @@
 
 namespace gotchangpdf
 {
-	template <typename T>
-	inline T* Allocate() { return new T; }
-
 	template<typename T>
 	inline void intrusive_ptr_add_ref(T* expr) { expr->AddRef(); }
 
 	template<typename T>
 	inline void intrusive_ptr_release(T* expr) { expr->Release(); }
+
+	 /* The plan was to use template <typename = std::enable_if<std::is_constructible<T>::value>>
+	 to determine if the class T has default constructor.
+	 Unfortunately class T is not defined yet, which is a must for std::is_constructible.
+	 Therefore we use another template parameter, where it is a developer responsibility
+	 to provide information about existence of default constructor. */
 
 	/*!
 	* \class Deferred
@@ -21,29 +24,36 @@ namespace gotchangpdf
 	* This class is used to speed up the construction of the AST. The construction of the node is only done when an access to the data is issued.
 	* This code has been taken from the Eddi Compiler project (https://github.com/wichtounet/eddic/) and has been adapted a little.
 	*/
-	template <typename T>
+	template <typename T, bool DefautConstructible = true>
 	struct Deferred
 	{
 		typedef T value_type;
 
-		Deferred(const Deferred& rhs) : Contents(rhs.Contents){
+		Deferred(T* value) : Contents(value)
+		{
+			Content.Owner = this;
+		}
+
+		Deferred(const Deferred& rhs) : Contents(rhs.Contents)
+		{
 			Content.Owner = this;
 		}
 
 		template <typename... Parameters>
-		Deferred(const Parameters&... p) : Contents(new (Allocate<T>()) T(p...))
+		Deferred(const Parameters&... p) : Contents(new T(p...))
 		{
 			Content.Owner = this;
 		}
 
 		template <typename U>
-		Deferred(std::initializer_list<U> list) : Contents(new (Allocate<T>()) T(list))
+		Deferred(std::initializer_list<U> list) : Contents(new T(list))
 		{
 			Content.Owner = this;
 		}
 
-		template <>
-		Deferred() : Contents(reinterpret_cast<T*>(nullptr)){
+		template <typename = std::enable_if<DefautConstructible>>
+		Deferred() : Contents(reinterpret_cast<T*>(nullptr))
+		{
 			Content.Owner = this;
 		}
 
@@ -72,6 +82,15 @@ namespace gotchangpdf
 			return *this;
 		}
 
+		//
+		// Wrapper for accessing the content safely
+		//
+		// Constructs a default node in the parent wrapper if necessary,
+		// or simply returns the existing content of the wrapper. This
+		// helper is necessary for exposing a compatible interface with
+		// boost::fusion adapters.
+		//
+
 		/*!
 		* \struct SafeContentAccess
 		* \brief Provide safe content access to the content of the deferred node
@@ -90,8 +109,26 @@ namespace gotchangpdf
 
 			T* get(void) const
 			{
-				if (!Owner->Contents)
-					Owner->Contents.reset(new (Allocate<T>()) T());
+				return get_internal<DefautConstructible>();
+			}
+
+			template <bool Constructible>
+			T* get_internal(void) const
+			{
+				assert(Owner->Contents);
+				if (!Owner->Contents) {
+					return nullptr;
+				}
+
+				return Owner->Contents.get();
+			}
+
+			template <>
+			T* get_internal<true>(void) const
+			{
+				if (!Owner->Contents) {
+					Owner->Contents.reset(new T());
+				}
 
 				return Owner->Contents.get();
 			}
@@ -116,8 +153,8 @@ namespace gotchangpdf
 	* This class is used to speed up the construction of the AST. The construction of the node is only done when an access to the data is issued.
 	* This code has been taken from the Epoch Compiler project (http://code.google.com/p/epoch-language/) and has been adapted a little.
 	*/
-	template <typename T>
-	struct DeferredContainer
+	template <typename T, bool DefautConstructible = true>
+	struct DeferredContainer : public Deferred<T, DefautConstructible>
 	{
 		typedef typename T::value_type value_type;
 		typedef typename T::iterator iterator;
@@ -126,60 +163,33 @@ namespace gotchangpdf
 		typedef typename T::reference reference;
 		typedef typename T::const_reference const_reference;
 
-		DeferredContainer(const DeferredContainer& rhs)
-			: Contents(rhs.Contents)
+		DeferredContainer(T* value) : Deferred(value)
+		{
+			Content.Owner = this;
+		}
+
+		DeferredContainer(const Deferred& rhs) : Deferred(rhs)
 		{
 			Content.Owner = this;
 		}
 
 		template <typename... Parameters>
-		DeferredContainer(const Parameters&... p) : Contents(new (Allocate<T>()) T(p...))
+		DeferredContainer(const Parameters&... p) : Deferred(p...)
 		{
 			Content.Owner = this;
 		}
 
 		template <typename U>
-		DeferredContainer(std::initializer_list<U> list) : Contents(new (Allocate<T>()) T(list))
+		DeferredContainer(std::initializer_list<U> list) : Deferred(list)
 		{
 			Content.Owner = this;
 		}
 
-		template <>
-		DeferredContainer() : Contents(reinterpret_cast<T*>(nullptr)){
-			Content.Owner = this;
-		}
-
-		//
-		// Construction from a pair of some indeterminate values
-		//
-		// This is predominantly used when an iterator range is passed
-		// to the constructor; to make the wrapper look as if it holds
-		// an underlying iterator pair, we use this constructor.
-		//
-		/*
-		template <typename ContentOfSomeKind>
-		DeferredContainer(const ContentOfSomeKind& a, const ContentOfSomeKind& b)
-			: Contents(new (Allocate<T>()) T())
+		template <typename = std::enable_if<std::is_constructible<T>::value>>
+		DeferredContainer() : Deferred()
 		{
 			Content.Owner = this;
-			Contents->push_back(value_type(a, b));
 		}
-		*/
-
-		DeferredContainer& operator=(const DeferredContainer& rhs)
-		{
-			if (this != &rhs)
-				Contents = rhs.Contents;
-
-			return *this;
-		}
-
-		inline operator T() { return *Contents; }
-		inline operator T() const { return *Contents; }
-
-		inline bool operator==(const DeferredContainer& other) const { return *Contents == *other.Contents; }
-		inline bool operator!=(const DeferredContainer& other) const { return *Contents != *other.Contents; }
-		inline bool operator<(const DeferredContainer& other) const { return *Contents < *other.Contents; }
 
 		// Support insertion as if this were itself a container
 		void insert(const iterator& pos, const value_type& value)
@@ -214,60 +224,6 @@ namespace gotchangpdf
 		{
 			return Content->operator[](i);
 		}
-
-		T& operator*() const
-		{
-			return Content.operator*();
-		}
-
-		T* operator->() const
-		{
-			return Content.operator->();
-		}
-
-		//
-		// Wrapper for accessing the content safely
-		//
-		// Constructs a default node in the parent wrapper if necessary,
-		// or simply returns the existing content of the wrapper. This
-		// helper is necessary for exposing a compatible interface with
-		// boost::fusion adapters.
-		//
-		struct SafeContentAccess
-		{
-			// Dereference operator
-			T& operator*() const
-			{
-				return *get();
-			}
-
-			// Indirection operator
-			T* operator->() const
-			{
-				return get();
-			}
-
-			T* get(void) const
-			{
-				if (!Owner->Contents)
-					Owner->Contents.reset(new (Allocate<T>()) T());
-
-				return Owner->Contents.get();
-			}
-
-			// Linkage to the owning wrapper
-			DeferredContainer* Owner;
-		} Content;
-
-		T* AddRefGet(void)
-		{
-			Content->AddRef();
-			return Content.get();
-		}
-
-	protected:
-		// Internal state
-		mutable boost::intrusive_ptr<T> Contents;
 	};
 
 	template<typename T>

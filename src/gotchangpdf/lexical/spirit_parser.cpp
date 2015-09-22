@@ -8,6 +8,7 @@
 #include "log.h"
 
 #include "spirit_grammar.h"
+#include "xref_grammar.h"
 
 #include <iomanip>
 
@@ -26,12 +27,13 @@ namespace gotchangpdf
 		public:
 			Impl(files::File * file) : _file(file) {}
 
-			XrefEntryPtr ReadTableEntry(lexical::SpiritParser& s, types::integer objNumber);
+			files::XrefEntry ReadTableEntry(lexical::SpiritParser& s, types::integer objNumber);
 
 			template <typename Result, typename Grammar, typename Iterator>
-			Result Read(Grammar grammar, Iterator& input_begin_pos, Iterator& input_end_pos);
+			Result Read(Grammar& grammar, Iterator& input_begin_pos, Iterator& input_end_pos);
 
 			files::File *_file = nullptr;
+			XrefTableSubsectionsGrammar _xref_grammar;
 			ObjectStreamGrammar _obj_stream_grammar;
 			DirectObjectGrammar _direct_grammar;
 		};
@@ -44,7 +46,7 @@ namespace gotchangpdf
 
 		files::File * SpiritParser::file(void) const { return _impl->_file; }
 
-		XrefEntryPtr SpiritParser::Impl::ReadTableEntry(lexical::SpiritParser& s, types::integer objNumber)
+		files::XrefEntry SpiritParser::Impl::ReadTableEntry(lexical::SpiritParser& s, types::integer objNumber)
 		{
 			char sp1, sp2, key, eol1, eol2;
 			Token offset, number;
@@ -60,19 +62,13 @@ namespace gotchangpdf
 			static const char NOT_IN_USE = 'f';
 
 			if (key == IN_USE) {
-				XrefUsedEntryPtr result(new files::XrefUsedEntry());
+				XrefUsedEntryPtr result(objNumber, IntegerObject(number).SafeConvert<types::ushort>(), IntegerObject(offset).SafeConvert<types::stream_offset>());
 				result->SetFile(_file);
-				result->SetOffset(IntegerObject(offset));
-				result->SetObjectNumber(objNumber);
-				result->SetGenerationNumber(IntegerObject(number).SafeConvert<types::ushort>());
 				result->SetInitialized(false);
 				return result;
 			} else if (key == NOT_IN_USE) {
-				XrefFreeEntryPtr result(new files::XrefFreeEntry());
+				XrefFreeEntryPtr result(objNumber, IntegerObject(number).SafeConvert<types::ushort>(), IntegerObject(offset).SafeConvert<types::integer>());
 				result->SetFile(_file);
-				result->SetNextFreeObjectNumber(IntegerObject(offset));
-				result->SetObjectNumber(objNumber);
-				result->SetGenerationNumber(IntegerObject(number).SafeConvert<types::ushort>());
 				result->SetInitialized(false);
 				return result;
 			} else {
@@ -84,26 +80,24 @@ namespace gotchangpdf
 		}
 
 		template <typename Result, typename Grammar, typename Iterator>
-		Result SpiritParser::Impl::Read(Grammar grammar, Iterator& input_begin_pos, Iterator& input_end_pos)
+		Result SpiritParser::Impl::Read(Grammar& grammar, Iterator& input_begin_pos, Iterator& input_end_pos)
 		{
-			Result obj;
-
 			try {
+				Result obj;
 				auto result = qi::parse(input_begin_pos, input_end_pos, grammar, obj);
 				if (result) {
 					return obj;
 				}
-				else {
-					LOG_ERROR << "Parsing failed" << endl;
 
-					const auto& pos = input_begin_pos.get_position();
-					LOG_ERROR <<
-						"Error at offset " << pos.offset << endl <<
-						"'" << input_begin_pos.get_currentline() << "'" << endl <<
-						setw(pos.column + 7) << " ^- here";
+				LOG_ERROR << "Parsing failed" << endl;
 
-					throw exceptions::Exception("Parsing failed");
-				}
+				const auto& pos = input_begin_pos.get_position();
+				LOG_ERROR <<
+					"Error at offset " << pos.offset << endl <<
+					"'" << input_begin_pos.get_currentline() << "'" << endl <<
+					setw(pos.column + 7) << " ^- here";
+
+				throw exceptions::Exception("Parsing failed");
 			}
 			catch (const qi::expectation_failure<pos_iterator_type>& exception) {
 				LOG_ERROR << "Parsing failed" << endl;
@@ -120,16 +114,16 @@ namespace gotchangpdf
 			}
 		}
 
-		XrefPtr SpiritParser::ReadXref(types::stream_offset offset)
+		files::Xref SpiritParser::ReadXref(types::stream_offset offset)
 		{
 			seekg(offset, ios_base::beg);
 			return ReadXref();
 		}
 
-		XrefPtr SpiritParser::ReadXref(void)
+		files::Xref SpiritParser::ReadXref(void)
 		{
 			if (PeekTokenType() == Token::Type::INTEGER_OBJECT) {
-				XrefStreamPtr result(new files::XrefStream());
+				XrefStreamPtr result = XrefStreamPtr(files::XrefStream());
 
 				// Get stream object data
 				auto xref = ReadDirectObjectWithType<StreamObjectPtr>();
@@ -162,7 +156,7 @@ namespace gotchangpdf
 					auto subsection_index = index->At(i);
 					auto subsection_size = index->At(i + 1);
 
-					XrefSubsectionPtr subsection(new files::XrefSubsection(subsection_index->Value(), subsection_size->Value()));
+					XrefSubsectionPtr subsection(subsection_index->Value(), subsection_size->Value());
 					for (auto idx = 0; idx < *subsection_size; idx++) {
 
 						IntegerObject field1;
@@ -188,31 +182,22 @@ namespace gotchangpdf
 						switch (field1) {
 						case 0:
 						{
-							XrefFreeEntryPtr entry(new files::XrefFreeEntry());
+							XrefFreeEntryPtr entry(*subsection_index + idx, field3.SafeConvert<types::ushort>(), field2);
 							entry->SetFile(_impl->_file);
-							entry->SetObjectNumber(*subsection_index + idx);
-							entry->SetNextFreeObjectNumber(field2);
-							entry->SetGenerationNumber(field3.SafeConvert<types::ushort>());
 							subsection->Add(entry);
 							break;
 						}
 						case 1:
 						{
-							XrefUsedEntryPtr entry(new files::XrefUsedEntry());
+							XrefUsedEntryPtr entry(*subsection_index + idx, field3.SafeConvert<types::ushort>(), field2);
 							entry->SetFile(_impl->_file);
-							entry->SetOffset(field2);
-							entry->SetGenerationNumber(field3.SafeConvert<types::ushort>());
-							entry->SetObjectNumber(*subsection_index + idx);
 							subsection->Add(entry);
 							break;
 						}
 						case 2:
 						{
-							XrefCompressedEntryPtr entry(new files::XrefCompressedEntry());
+							XrefCompressedEntryPtr entry(*subsection_index + idx, static_cast<types::ushort>(0), field2, field3);
 							entry->SetFile(_impl->_file);
-							entry->SetObjectNumber(*subsection_index + idx);
-							entry->SetObjectStreamNumber(field2);
-							entry->SetIndex(field3);
 							subsection->Add(entry);
 							break;
 						}
@@ -225,9 +210,12 @@ namespace gotchangpdf
 				}
 
 				result->SetFile(_impl->_file);
-				result->SetDictionary(header);
+				result->SetTrailerDictionary(header);
 				return result;
 			} else {
+#ifdef OLD_STYLE_PARSING
+				auto start = omp_get_wtime();
+
 				XrefTablePtr table(new files::XrefTable());
 
 				ReadTokenWithType(Token::Type::XREF_MARKER);
@@ -241,20 +229,40 @@ namespace gotchangpdf
 
 					XrefSubsectionPtr subsection(new files::XrefSubsection(revision, numberOfObjects));
 
-					auto start = omp_get_wtime();
+					
 					for (types::integer i = 0; i < numberOfObjects; ++i) {
 						auto entry = _impl->ReadTableEntry(*this, SafeAddition(revision, i));
 						subsection->Add(entry);
 					}
 
-					auto end = omp_get_wtime();
-					LOG_DEBUG << "Subsection - Items: " << numberOfObjects << " Time: " << end - start;
-
 					table->Add(subsection);
 				}
 
 				table->SetFile(_impl->_file);
+
+				auto end = omp_get_wtime();
+				LOG_WARNING << "Xref parsing time: " << end - start;
 				return table;
+#else
+			// Don't skip whitespace explicitly
+			noskipws(*this);
+
+			// Direct cast to pos_iterator_type is not possible
+			base_iterator_type input_begin_base(*this);
+			base_iterator_type input_end_base;
+
+			types::stream_offset offset = tellg();
+
+			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _impl->_file->GetFilename(), 1, 1, offset);
+			pos_iterator_type input_end_pos;
+
+			auto start = omp_get_wtime();
+			auto result = _impl->Read<files::Xref>(_impl->_xref_grammar(_impl->_file), input_begin_pos, input_end_pos);
+			auto end = omp_get_wtime();
+
+			LOG_WARNING << "Xref parsing time: " << end - start;
+			return result;
+#endif
 			}
 		}
 
@@ -290,7 +298,8 @@ namespace gotchangpdf
 			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _impl->_file->GetFilename(), 1, 1, offset);
 			pos_iterator_type input_end_pos;
 
-			return _impl->Read<std::vector<ObjectStreamHeader>>(_impl->_obj_stream_grammar(size), input_begin_pos, input_end_pos);
+			const auto& gram = _impl->_obj_stream_grammar(size);
+			return _impl->Read<std::vector<ObjectStreamHeader>>(gram, input_begin_pos, input_end_pos);
 		}
 
 		DirectObject SpiritParser::ReadDirectObject(types::stream_offset offset)
@@ -313,14 +322,8 @@ namespace gotchangpdf
 			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _impl->_file->GetFilename(), 1, 1, offset);
 			pos_iterator_type input_end_pos;
 
-			auto result = _impl->Read<DirectObject>(_impl->_direct_grammar(_impl->_file, offset), input_begin_pos, input_end_pos);
-
-			// For some reason, end of parsing and current offset does not match
-			// So I adjust current stream position
-			auto end_pos = input_begin_pos.get_position();
-			seekg(end_pos.offset, std::ios::beg);
-
-			return result;
+			const auto& gram = _impl->_direct_grammar(_impl->_file, offset);
+			return _impl->Read<DirectObject>(gram, input_begin_pos, input_end_pos);
 		}
 	}
 }

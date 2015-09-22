@@ -3,10 +3,10 @@
 
 namespace gotchangpdf
 {
-	template <typename T>
+	template <typename T, bool DefaultConstructible /* = true */>
 	struct Deferred;
 
-	template <typename T>
+	template <typename T, bool DefaultConstructible /* = true */>
 	struct DeferredContainer;
 
 	template <typename T>
@@ -43,8 +43,6 @@ namespace gotchangpdf
 
 	class Containable;
 
-	struct ObjectStreamHeader;
-
 	namespace documents
 	{
 		class Document;
@@ -68,16 +66,15 @@ namespace gotchangpdf
 	{
 		class File;
 		class Header;
-		class Trailer;
 
-		class Xref;
+		class XrefBase;
 		class XrefSubsection;
 		class XrefTable;
 		class XrefStream;
 		class XrefChain;
 		class XrefWithMetadata;
 
-		class XrefEntry;
+		class XrefEntryBase;
 		class XrefUsedEntry;
 		class XrefFreeEntry;
 		class XrefCompressedEntry;
@@ -94,6 +91,8 @@ namespace gotchangpdf
 		class Stream;
 		class ReverseStream;
 		class SpiritParser;
+
+		struct ObjectStreamHeader;
 	}
 
 	namespace filters
@@ -123,9 +122,9 @@ namespace gotchangpdf
 	using NameObjectPtr = Deferred<NameObject>;
 	using BooleanObjectPtr = Deferred<BooleanObject>;
 	using FunctionObjectPtr = Deferred<FunctionObject>;
-	using IndirectObjectReferencePtr = Deferred<IndirectObjectReference>;
+	using IndirectObjectReferencePtr = Deferred<IndirectObjectReference, false>;
 	using IntegerObjectPtr = Deferred<IntegerObject>;
-	using NullObjectPtr = Deferred<NullObject>;
+	using NullObjectPtr = Deferred<NullObject, false>;
 	using RealObjectPtr = Deferred<RealObject>;
 	using StreamObjectPtr = Deferred<StreamObject>;
 	using LiteralStringObjectPtr = Deferred<LiteralStringObject>;
@@ -133,18 +132,17 @@ namespace gotchangpdf
 
 	using XrefChainPtr = SmartPtr<files::XrefChain>;
 	using XrefWithMetadataPtr = SmartPtr<files::XrefWithMetadata>;
-	using XrefEntryPtr = SmartPtr<files::XrefEntry>;
-	using XrefFreeEntryPtr = SmartPtr<files::XrefFreeEntry>;
-	using XrefUsedEntryPtr = SmartPtr<files::XrefUsedEntry>;
-	using XrefCompressedEntryPtr = SmartPtr<files::XrefCompressedEntry>;
+	using XrefEntryBasePtr = Deferred<files::XrefEntryBase, false>;
+	using XrefFreeEntryPtr = Deferred<files::XrefFreeEntry, false>;
+	using XrefUsedEntryPtr = Deferred<files::XrefUsedEntry, false>;
+	using XrefCompressedEntryPtr = Deferred<files::XrefCompressedEntry, false>;
 
 	using HeaderPtr = SmartPtr<files::Header>;
-	using TrailerPtr = SmartPtr<files::Trailer>;
 
-	using XrefPtr = SmartPtr<files::Xref>;
-	using XrefSubsectionPtr = SmartPtr<files::XrefSubsection>;
-	using XrefTablePtr = SmartPtr<files::XrefTable>;
-	using XrefStreamPtr = SmartPtr<files::XrefStream>;
+	using XrefBasePtr = Deferred<files::XrefBase>;
+	using XrefSubsectionPtr = Deferred<files::XrefSubsection, false>;
+	using XrefTablePtr = Deferred<files::XrefTable>;
+	using XrefStreamPtr = Deferred<files::XrefStream>;
 
 	using PageTreePtr = SmartPtr<documents::PageTree>;
 	using PageTreeNodePtr = SmartPtr<documents::PageTreeNode>;

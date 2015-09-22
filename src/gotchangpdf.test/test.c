@@ -372,17 +372,13 @@ int main(int argc, char *argv[])
 
 	while (GOTCHANG_PDF_ERROR_SUCCES == XrefChainIterator_IsValid(chain_iterator, chain, &valid)
 		&& GOTCHANG_PDF_RV_TRUE == valid) {
-		XrefWithMetadataHandle data = NULL;
 		XrefHandle xref = NULL;
 
-		RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_GetValue(chain_iterator, &data));
-		RETURN_ERROR_IF_NOT_SUCCESS(XrefWithMetadata_Xref(data, &xref));
+		RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_GetValue(chain_iterator, &xref));
 
 		RETURN_ERROR_IF_NOT_SUCCESS(process_xref(xref));
 
 		RETURN_ERROR_IF_NOT_SUCCESS(Xref_Release(xref));
-		RETURN_ERROR_IF_NOT_SUCCESS(XrefWithMetadata_Release(data));
-
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_Next(chain_iterator));
 	}
 

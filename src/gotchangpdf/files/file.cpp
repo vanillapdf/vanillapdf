@@ -70,49 +70,23 @@ namespace gotchangpdf
 			stream.seekg(ios_base::beg);
 			stream >> *_header;
 
-			TrailerPtr trailer(new Trailer());
+			IntegerObject offset;
 			ReverseStream reversed(*_input);
-			reversed >> *trailer;
+			reversed.ReadTokenWithType(Token::Type::EOL);
+			reversed.ReadTokenWithType(Token::Type::END_OF_FILE);
+			reversed.ReadTokenWithType(Token::Type::EOL);
+			reversed >> offset;
+			reversed.ReadTokenWithType(Token::Type::EOL);
+			reversed.ReadTokenWithType(Token::Type::START_XREF);
 
-			auto offset = trailer->GetXrefOffset();
 			do {
-				XrefWithMetadataPtr item;
+				XrefBaseVisitor visitor;
+				auto xref_variant = stream.ReadXref(offset);
+				auto xref = xref_variant.apply_visitor(visitor);
 
-				// TODO read trailer
-				auto xref = stream.ReadXref(offset);
-				if (xref->GetType() == Xref::Type::Table) {
-					stream.ReadTokenWithType(Token::Type::TRAILER);
-					stream.ReadTokenWithType(Token::Type::EOL);
-
-					// HACK
-					auto trailer_dict = stream.ReadDirectObjectWithType<DictionaryObjectPtr>(_input->tellg());
-					trailer->SetDictionary(trailer_dict);
-
-					stream.ReadTokenWithType(Token::Type::EOL);
-					stream.ReadTokenWithType(Token::Type::START_XREF);
-					stream.ReadTokenWithType(Token::Type::EOL);
-
-					IntegerObject trailer_offset;
-					stream >> trailer_offset;
-
-					stream.ReadTokenWithType(Token::Type::EOL);
-					//stream.ReadTokenWithType(Token::Type::END_OF_FILE); // TODO
-
-					// This actually does not work
-					//assert(trailer_offset == offset);
-					trailer->SetXrefOffset(offset);
-
-					item = XrefWithMetadataPtr(new XrefWithMetadata(xref, trailer));
-				} else if (xref->GetType() == Xref::Type::Stream) {
-					auto xref_stream = dynamic_wrapper_cast<XrefStream>(xref);
-					item = XrefWithMetadataPtr(new XrefWithMetadata(xref_stream, offset));
-				} else {
-					throw Exception("Unknown xref type");
-				}
-
-				_xref->Append(item);
-				if (item->GetDictionary()->Contains(constant::Name::Prev)) {
-					offset = item->GetDictionary()->FindAs<IntegerObjectPtr>(constant::Name::Prev)->Value();
+				_xref->Append(xref_variant);
+				if (xref->GetTrailerDictionary()->Contains(constant::Name::Prev)) {
+					offset = xref->GetTrailerDictionary()->FindAs<IntegerObjectPtr>(constant::Name::Prev)->Value();
 				} else {
 					break;
 				}
@@ -129,19 +103,24 @@ namespace gotchangpdf
 			if (!_initialized)
 				throw Exception("File has not been initialized yet");
 
+			XrefEntryBaseVisitor base_visitor;
 			auto item = _xref->GetXrefEntry(objNumber, genNumber);
-			if (!item->InUse())
+			auto item_base = item.apply_visitor(base_visitor);
+
+			if (!item_base->InUse())
 				throw Exception("Required object is marked as free");
 
-			switch (item->GetUsage()) {
-			case XrefEntry::Usage::Used:
+			switch (item_base->GetUsage()) {
+			case XrefEntryBase::Usage::Used:
 			{
-				auto used = dynamic_wrapper_cast<XrefUsedEntry>(item);
+				XrefEntryVisitor<XrefUsedEntryPtr> visitor;
+				auto used = item.apply_visitor(visitor);
 				return used->GetReference();
 			}
-			case XrefEntry::Usage::Compressed:
+			case XrefEntryBase::Usage::Compressed:
 			{
-				auto compressed = dynamic_wrapper_cast<XrefCompressedEntry>(item);
+				XrefEntryVisitor<XrefCompressedEntryPtr> visitor;
+				auto compressed = item.apply_visitor(visitor);
 				return compressed->GetReference();
 			}
 			default:
@@ -154,7 +133,10 @@ namespace gotchangpdf
 			if (!_initialized)
 				throw Exception("File has not been initialized yet");
 
-			auto dictionary = _xref->Begin()->Value()->GetDictionary();
+			XrefBaseVisitor visitor;
+			auto xref_variant = _xref->Begin()->Value();
+			auto xref = xref_variant.apply_visitor(visitor);
+			auto dictionary = xref->GetTrailerDictionary();
 			auto root = dictionary->FindAs<DictionaryObjectPtr>(constant::Name::Root);
 			return new documents::Catalog(root);
 		}
