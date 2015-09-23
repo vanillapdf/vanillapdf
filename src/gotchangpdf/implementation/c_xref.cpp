@@ -1,7 +1,6 @@
 #include "precompiled.h"
 #include "xref.h"
 #include "xref_chain.h"
-#include "xref_with_metadata.h"
 
 #include "file.h"
 

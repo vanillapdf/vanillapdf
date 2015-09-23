@@ -8,7 +8,6 @@
 #include "xref_chain.h"
 #include "log.h"
 #include "header.h"
-#include "trailer.h"
 #include "catalog.h"
 
 #include <memory>
