@@ -118,11 +118,11 @@ namespace gotchangpdf
 				> qi::omit[gen_parser[qi::_b = qi::_1]]
 				> qi::lit(' ')
 				> (
-					qi::lit('f')[qi::_val = phoenix::construct<XrefFreeEntryPtr>(qi::_r1, qi::_b, qi::_a)]
-					|
 					qi::lit('n')[qi::_val = phoenix::construct<XrefUsedEntryPtr>(qi::_r1, qi::_b, qi::_a)]
+					|
+					qi::lit('f')[qi::_val = phoenix::construct<XrefFreeEntryPtr>(qi::_r1, qi::_b, qi::_a)]
 				)
-				> (qi::lit(" \r") | qi::lit(" \n") | qi::lit("\r\n"));
+				> (qi::lit("\r\n") | qi::lit(" \n") | qi::lit(" \r"));
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 			BOOST_SPIRIT_DEBUG_NODE(subsection);
