@@ -48,6 +48,8 @@ namespace gotchangpdf
 			DirectObject ReadDirectObject(void);
 			DirectObject ReadDirectObject(types::stream_offset offset);
 
+			types::integer ReadLastXrefOffset();
+
 			files::File * file(void) const;
 
 		private:

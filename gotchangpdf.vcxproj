@@ -55,6 +55,7 @@
     <ClInclude Include="src\gotchangpdf\lexical\lexical_tree.h" />
     <ClInclude Include="src\gotchangpdf\lexical\object_stream_header.h" />
     <ClInclude Include="src\gotchangpdf\lexical\offset_iterator.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\reverse_grammar.h" />
     <ClInclude Include="src\gotchangpdf\lexical\spirit_grammar.h" />
     <ClInclude Include="src\gotchangpdf\lexical\spirit_parser.h" />
     <ClInclude Include="src\gotchangpdf\lexical\token.h" />
@@ -134,6 +135,7 @@
     <ClCompile Include="src\gotchangpdf\lexical\lexical_reverse_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\lexical_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\lexical_tree.cpp" />
+    <ClCompile Include="src\gotchangpdf\lexical\reverse_grammar.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\spirit_grammar.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\spirit_parser.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\token.cpp" />

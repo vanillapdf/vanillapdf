@@ -9,6 +9,7 @@
 
 #include "spirit_grammar.h"
 #include "xref_grammar.h"
+#include "reverse_grammar.h"
 
 #include <iomanip>
 
@@ -36,6 +37,7 @@ namespace gotchangpdf
 			XrefTableSubsectionsGrammar _xref_grammar;
 			ObjectStreamGrammar _obj_stream_grammar;
 			DirectObjectGrammar _direct_grammar;
+			ReverseGrammar _reverse_grammar;
 		};
 
 		SpiritParser::SpiritParser(files::File * file, CharacterSource & stream)
@@ -282,6 +284,24 @@ namespace gotchangpdf
 			}
 
 			return result;
+		}
+
+		types::integer SpiritParser::ReadLastXrefOffset()
+		{
+			// Don't skip whitespace explicitly
+			noskipws(*this);
+
+			// Direct cast to pos_iterator_type is not possible
+			base_iterator_type input_begin_base(*this);
+			base_iterator_type input_end_base;
+
+			types::stream_offset offset = tellg();
+
+			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _impl->_file->GetFilename(), 1, 1, offset);
+			pos_iterator_type input_end_pos;
+
+			const auto& gram = _impl->_reverse_grammar;
+			return _impl->Read<types::integer>(gram, input_begin_pos, input_end_pos);
 		}
 
 		std::vector<ObjectStreamHeader> SpiritParser::ReadObjectStreamHeaders(types::integer size)

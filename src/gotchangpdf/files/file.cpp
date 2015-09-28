@@ -69,14 +69,12 @@ namespace gotchangpdf
 			stream.seekg(ios_base::beg);
 			stream >> *_header;
 
-			IntegerObject offset;
-			ReverseStream reversed(*_input);
-			reversed.ReadTokenWithType(Token::Type::EOL);
-			reversed.ReadTokenWithType(Token::Type::END_OF_FILE);
-			reversed.ReadTokenWithType(Token::Type::EOL);
-			reversed >> offset;
-			reversed.ReadTokenWithType(Token::Type::EOL);
-			reversed.ReadTokenWithType(Token::Type::START_XREF);
+			types::integer offset;
+			{
+				raw::ReverseStream raw_reversed(*_input);
+				SpiritParser reverse_stream = SpiritParser(this, raw_reversed);
+				offset = reverse_stream.ReadLastXrefOffset();
+			}
 
 			do {
 				XrefBaseVisitor visitor;
