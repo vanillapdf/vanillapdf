@@ -11,13 +11,6 @@
 #include <boost/spirit/repository/include/qi_advance.hpp>
 #pragma warning (pop)
 
-#define BOOST_SPIRIT_AUTO(domain_, name, expr)                                  \
-	typedef boost::proto::result_of::                                           \
-	deep_copy<BOOST_TYPEOF(expr)>::type name##_expr_type;                       \
-	BOOST_SPIRIT_ASSERT_MATCH(                                                  \
-	boost::spirit::domain_::domain, name##_expr_type);                          \
-	BOOST_AUTO(name, boost::proto::deep_copy(expr));                            \
-
 using namespace gotchangpdf;
 
 void direct_object_file_handler(DirectObject obj, files::File* file)
@@ -85,12 +78,6 @@ namespace gotchangpdf
 		namespace repo = boost::spirit::repository;
 		namespace ascii = boost::spirit::ascii;
 		namespace phoenix = boost::phoenix;
-
-		BOOST_SPIRIT_AUTO(qi, delimiter, qi::omit[qi::char_("()<>[]{}/%")]);
-		BOOST_SPIRIT_AUTO(qi, whitespace, qi::omit[qi::char_(" \r\n\f\t") | qi::char_('\0')]);
-		BOOST_SPIRIT_AUTO(qi, whitespaces, *whitespace);
-		BOOST_SPIRIT_AUTO(qi, eol, (-qi::lit('\r') >> qi::lit('\n')) | (qi::lit('\r') >> -qi::lit('\n')));
-		BOOST_SPIRIT_AUTO(qi, optcrlf, -qi::lit('\r') >> qi::lit('\n'));
 
 		DirectObjectGrammar::DirectObjectGrammar() :
 			base_type(start, "Direct object grammar")
@@ -173,7 +160,7 @@ namespace gotchangpdf
 			name_object %=
 				qi::lit('/')
 				> *(
-					(qi::char_ - whitespace - delimiter)
+					(qi::char_ - whitespace - qi::omit[qi::char_("()<>[]{}/%")])
 					//| (qi::char_('#') > qi::digit > qi::digit)
 				);
 
@@ -217,7 +204,7 @@ namespace gotchangpdf
 				dictionary_object_raw(qi::_r1)[qi::_a = qi::_1]
 				>> whitespaces
 				>> qi::lit("stream")[phoenix::bind(&stream_item_handler, qi::_a, qi::_b)]
-				> optcrlf
+				> -qi::lit('\r') > qi::lit('\n')
 				> repo::qi::iter_offset
 				> repo::qi::advance(qi::_b)
 				> -eol
@@ -243,22 +230,6 @@ namespace gotchangpdf
 			BOOST_SPIRIT_DEBUG_NODE(dictionary_object);
 			BOOST_SPIRIT_DEBUG_NODE(literal_string_object);
 			BOOST_SPIRIT_DEBUG_NODE(stream_object);
-		}
-
-		ObjectStreamGrammar::ObjectStreamGrammar() :
-			base_type(start, "Direct object grammar")
-		{
-			start %=
-				qi::repeat(qi::_r1)[header];
-
-			header %=
-				qi::int_
-				> whitespaces
-				> qi::long_long
-				> whitespaces;
-
-			BOOST_SPIRIT_DEBUG_NODE(start);
-			BOOST_SPIRIT_DEBUG_NODE(header);
 		}
 	}
 }

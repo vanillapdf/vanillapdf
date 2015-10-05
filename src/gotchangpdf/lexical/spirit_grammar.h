@@ -1,9 +1,8 @@
 #ifndef _SPIRIT_GRAMMAR_H
 #define _SPIRIT_GRAMMAR_H
 
-#include "file_position.h"
-#include "offset_iterator.h"
-#include "object_stream_header.h"
+#include "qi_common.h"
+#include "whitespace_grammar.h"
 
 #pragma warning (push, 3)
 #include <boost/spirit/include/qi.hpp>
@@ -13,9 +12,6 @@ namespace gotchangpdf
 {
 	namespace lexical
 	{
-		typedef boost::spirit::istream_iterator base_iterator_type;
-		typedef offset_iterator<base_iterator_type, pdf_position> pos_iterator_type;
-
 		namespace qi = boost::spirit::qi;
 
 		class DirectObjectGrammar : public qi::grammar<pos_iterator_type,
@@ -48,20 +44,10 @@ namespace gotchangpdf
 			Rule<HexadecimalStringObjectPtr> hexadecimal_string_object;
 
 			qi::real_parser<float, qi::strict_real_policies<float>> strict_float_parser;
-		};
 
-		class ObjectStreamGrammar : public qi::grammar < pos_iterator_type,
-			ObjectStreamHeaders(types::integer size) >
-		{
-		public:
-			ObjectStreamGrammar();
-
-		private:
-			template <typename A, typename... Inherited>
-			using Rule = qi::rule < pos_iterator_type, A(Inherited...) > ;
-
-			qi::rule<pos_iterator_type, ObjectStreamHeaders(types::integer size)> start;
-			Rule<ObjectStreamHeader> header;
+			EndOfLine eol;
+			SingleWhitespace whitespace;
+			Whitespace whitespaces;
 		};
 	}
 }

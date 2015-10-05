@@ -11,13 +11,6 @@
 #include <boost/spirit/repository/include/qi_advance.hpp>
 #pragma warning (pop)
 
-#define BOOST_SPIRIT_AUTO(domain_, name, expr)                                  \
-	typedef boost::proto::result_of::                                           \
-	deep_copy<BOOST_TYPEOF(expr)>::type name##_expr_type;                       \
-	BOOST_SPIRIT_ASSERT_MATCH(                                                  \
-	boost::spirit::domain_::domain, name##_expr_type);                          \
-	BOOST_AUTO(name, boost::proto::deep_copy(expr));                            \
-
 using namespace gotchangpdf;
 
 void add_section(files::Xref xref, const XrefSubsectionPtr& section)
@@ -73,36 +66,30 @@ namespace gotchangpdf
 {
 	namespace lexical
 	{
-		namespace repo = boost::spirit::repository;
-		namespace ascii = boost::spirit::ascii;
 		namespace phoenix = boost::phoenix;
-
-		BOOST_SPIRIT_AUTO(qi, eol2, (-qi::lit('\r') >> qi::lit('\n')) | (qi::lit('\r') >> -qi::lit('\n')));
-		BOOST_SPIRIT_AUTO(qi, whitespace2, qi::omit[qi::char_(" \r\n\f\t") | qi::char_('\0')]);
-		BOOST_SPIRIT_AUTO(qi, whitespaces2, *whitespace2);
 
 		XrefTableSubsectionsGrammar::XrefTableSubsectionsGrammar() :
 			base_type(start, "Xref table subsections grammar")
 		{
 			start %=
 				qi::lit("xref")[qi::_val = phoenix::construct<XrefTablePtr>(files::XrefTable()), phoenix::bind(&set_file_to_xref, qi::_r0, qi::_r1)]
-				> whitespaces2
+				> whitespaces
 				> qi::omit[*(subsection(qi::_r1)[phoenix::bind(&add_section, qi::_r0, qi::_1), phoenix::bind(&set_file_to_subsection, qi::_1, qi::_r1)])]
 				> qi::lit("trailer")
-				> eol2
+				> eol
 				> qi::omit[direct_object(qi::_r1, 0)[phoenix::bind(&set_trailer, qi::_r0, qi::_1)]]
-				> eol2
+				> eol
 				> qi::lit("startxref")
-				> eol2
+				> eol
 				> qi::omit[qi::int_[phoenix::bind(&set_last_offset, qi::_r0, qi::_1)]]
-				> eol2
+				> eol
 				> qi::lit("%%EOF");
 
 			subsection %=
 				qi::eps
 				>> qi::omit
 				[
-					(qi::int_ > qi::lit(' ') > qi::int_ > whitespaces2)
+					(qi::int_ > qi::lit(' ') > qi::int_ > whitespaces)
 					[
 						qi::_a = qi::_1, qi::_b = qi::_2, qi::_c = 0, qi::_val = phoenix::construct<XrefSubsectionPtr>(qi::_1, qi::_2)
 					]
