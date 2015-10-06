@@ -12,9 +12,12 @@
 #pragma warning (pop)
 
 using namespace gotchangpdf;
+using namespace gotchangpdf::lexical;
 
 void direct_object_file_handler(DirectObject obj, files::File* file)
 {
+	assert(nullptr != file);
+
 	ObjectBaseVisitor visitor;
 	auto base = obj.apply_visitor(visitor);
 	base->SetFile(file);
@@ -22,6 +25,8 @@ void direct_object_file_handler(DirectObject obj, files::File* file)
 
 void containable_object_file_handler(ContainableObject obj, files::File* file)
 {
+	assert(nullptr != file);
+
 	ObjectBaseVisitor visitor;
 	auto base = obj.apply_visitor(visitor);
 	base->SetFile(file);
@@ -29,13 +34,16 @@ void containable_object_file_handler(ContainableObject obj, files::File* file)
 
 void name_object_file_handler(NameObjectPtr obj, files::File* file)
 {
+	assert(nullptr != file);
+
 	obj->SetFile(file);
 }
 
-void stream_object_file_handler(StreamObjectPtr obj, files::File* file)
+void dictionary_file_handler(DictionaryObjectPtr& obj, files::File* file)
 {
+	assert(nullptr != file);
+
 	obj->SetFile(file);
-	obj->GetHeader()->SetFile(file);
 }
 
 void direct_object_offset_handler(DirectObject obj, types::stream_offset offset)
@@ -65,7 +73,7 @@ void array_item_handler(const MixedArrayObjectPtr obj, ContainableObject item)
 	item.apply_visitor(visitor);
 }
 
-void stream_item_handler(const DictionaryObjectPtr& obj, types::stream_size& value)
+void dictionary_length(const DictionaryObjectPtr& obj, types::stream_size& value)
 {
 	auto size = obj->FindAs<gotchangpdf::IntegerObjectPtr>(constant::Name::Length);
 	value = static_cast<types::stream_size>(*size);
@@ -102,16 +110,12 @@ namespace gotchangpdf
 					phoenix::bind(&direct_object_offset_handler, qi::_1, qi::_r2)
 				];
 
-			boolean_object %=
-				qi::eps
-				>> qi::bool_;
-
 			direct_object %=
+				dict_or_stream(qi::_r1)[phoenix::bind(&direct_object_file_handler, qi::_1, qi::_r1)]
+				|
 				(
 				array_object(qi::_r1)
 				| boolean_object
-				| stream_object(qi::_r1)
-				| dictionary_object(qi::_r1)
 				| function_object
 				| indirect_object_reference
 				| real_object
@@ -122,114 +126,184 @@ namespace gotchangpdf
 				| hexadecimal_string_object
 				)[phoenix::bind(&direct_object_file_handler, qi::_1, qi::_r1)];
 
-			containable_object %=
-				(
-				array_object(qi::_r1)
-				| boolean_object
-				| dictionary_object(qi::_r1)
-				| function_object
-				| indirect_object_reference
-				| real_object
-				| integer_object
-				| name_object
-				| null_object
-				| literal_string_object
-				| hexadecimal_string_object
-				)[phoenix::bind(&containable_object_file_handler, qi::_1, qi::_r1)];
+			BOOST_SPIRIT_DEBUG_NODE(start);
+			BOOST_SPIRIT_DEBUG_NODE(direct_object);
+		}
 
-			null_object %=
+		BooleanGrammar::BooleanGrammar() :
+			base_type(start, "Boolean grammar")
+		{
+			start %=
 				qi::eps
-				>> qi::lit("null")[qi::_val = NullObject::GetInstance()];
+				>> qi::bool_;
 
-			indirect_object_reference %=
+			BOOST_SPIRIT_DEBUG_NODE(start);
+		}
+
+		ArrayGrammar::ArrayGrammar(ContainableGrammar& containable_object) :
+			base_type(start, "Array grammar"),
+			containable_object(containable_object)
+		{
+			start %=
+				qi::lit('[')
+				> whitespaces
+				> *(
+					containable_object(qi::_r1)[phoenix::bind(&array_item_handler, qi::_val, qi::_1)]
+					>> whitespaces
+					)
+				> qi::lit(']');
+
+			BOOST_SPIRIT_DEBUG_NODE(start);
+		}
+
+		IndirectObjectReferenceGrammar::IndirectObjectReferenceGrammar() :
+			base_type(start, "Indirect object reference grammar")
+		{
+			start %=
 				qi::omit[qi::int_[qi::_a = qi::_1]]
 				>> whitespace
 				>> qi::omit[qi::ushort_[qi::_b = qi::_1]]
 				>> whitespace
 				>> qi::lit('R')[qi::_val = phoenix::construct<IndirectObjectReferencePtr>(qi::_a, qi::_b)];
 
-			integer_object %=
+			BOOST_SPIRIT_DEBUG_NODE(start);
+		}
+
+		FunctionGrammar::FunctionGrammar() :
+			base_type(start, "Function grammar")
+		{
+			//start %=
+			//	qi::eps
+			//	>> strict_float_parser;
+
+			BOOST_SPIRIT_DEBUG_NODE(start);
+		}
+
+		RealGrammar::RealGrammar() :
+			base_type(start, "Real grammar")
+		{
+			start %=
+				qi::eps
+				>> strict_float_parser;
+
+			BOOST_SPIRIT_DEBUG_NODE(start);
+		}
+
+		IntegerGrammar::IntegerGrammar() :
+			base_type(start, "Integer grammar")
+		{
+			start %=
 				qi::eps
 				>> qi::int_;
 
-			real_object %=
+			BOOST_SPIRIT_DEBUG_NODE(start);
+		}
+
+		NullGrammar::NullGrammar() :
+			base_type(start, "Null grammar")
+		{
+			start %=
 				qi::eps
-				//>> qi::float_
-				>> strict_float_parser;
+				>> qi::lit("null")[qi::_val = NullObject::GetInstance()];
 
-			name_object %=
-				qi::lit('/')
-				> *(
-					(qi::char_ - whitespace - qi::omit[qi::char_("()<>[]{}/%")])
-					//| (qi::char_('#') > qi::digit > qi::digit)
-				);
+			BOOST_SPIRIT_DEBUG_NODE(start);
+		}
 
-			hexadecimal_string_object %=
+		LiteralStringGrammar::LiteralStringGrammar() :
+			base_type(start, "Literal string grammar")
+		{
+			start %=
+				qi::lit("(")
+				>> *(
+					(qi::lit('\\') >> qi::char_)
+					| qi::char_('(')[qi::_a += 1]
+					| (qi::eps(qi::_a > 0) >> qi::char_(')')[qi::_a -= 1])
+					| (qi::char_ - qi::char_('(') - qi::char_(')'))
+					)
+				> qi::lit(")");
+
+			BOOST_SPIRIT_DEBUG_NODE(start);
+		}
+
+		HexadecimalStringGrammar::HexadecimalStringGrammar() :
+			base_type(start, "Hexadecimal string grammar")
+		{
+			start %=
 				qi::lit('<')
 				>> *(qi::char_("0-9a-fA-F"))
 				> qi::lit('>');
 
-			array_object %=
-				qi::lit('[')
-				> whitespaces
-				> *(
-				containable_object(qi::_r1)[phoenix::bind(&array_item_handler, qi::_val, qi::_1)]
-				>> whitespaces
-				)
-				> qi::lit(']');
+			BOOST_SPIRIT_DEBUG_NODE(start);
+		}
 
-			dictionary_object %=
-				qi::lit("<<")
-				> whitespaces
-				> *(
-				name_object[phoenix::bind(&name_object_file_handler, qi::_1, qi::_r1)]
-				>> whitespaces
-				>> containable_object(qi::_r1)[phoenix::bind(&dictionary_item_handler, qi::_val, qi::_1)]
-				>> whitespaces
-				)
-				> qi::lit(">>");
-
-			dictionary_object_raw %=
-				qi::lit("<<")
-				> whitespaces
-				> *(
-				name_object[phoenix::bind(&name_object_file_handler, qi::_1, qi::_r1)]
-				>> whitespaces
-				>> containable_object(qi::_r1)[phoenix::bind(&dictionary_item_handler, qi::_val, qi::_1)]
-				>> whitespaces
-				)
-				> qi::lit(">>");
-
-			stream_object %=
-				dictionary_object_raw(qi::_r1)[qi::_a = qi::_1]
-				>> whitespaces
-				>> qi::lit("stream")[phoenix::bind(&stream_item_handler, qi::_a, qi::_b)]
-				> -qi::lit('\r') > qi::lit('\n')
-				> repo::qi::iter_offset
-				> repo::qi::advance(qi::_b)
-				> -eol
-				> qi::lit("endstream")[phoenix::bind(&stream_object_file_handler, qi::_val, qi::_r1)];
-
-			literal_string_object %=
-				qi::lit("(")
-				>> *(
-				(qi::lit('\\') >> qi::char_)
-				| qi::char_('(') [qi::_a += 1]
-				| (qi::eps(qi::_a > 0) >> qi::char_(')')[qi::_a -= 1])
-				| (qi::char_ - qi::char_('(') - qi::char_(')'))
-				)
-				> qi::lit(")");
+		ContainableGrammar::ContainableGrammar() :
+			base_type(start, "Containable grammar")
+		{
+			start %=
+				(
+					array_object(qi::_r1)
+					| boolean_object
+					| dictionary_object(qi::_r1)
+					| function_object
+					| indirect_object_reference
+					| real_object
+					| integer_object
+					| name_object
+					| null_object
+					| literal_string_object
+					| hexadecimal_string_object
+					)[phoenix::bind(&containable_object_file_handler, qi::_1, qi::_r1)];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
-			BOOST_SPIRIT_DEBUG_NODE(boolean_object);
-			BOOST_SPIRIT_DEBUG_NODE(direct_object);
-			BOOST_SPIRIT_DEBUG_NODE(indirect_object_reference);
-			BOOST_SPIRIT_DEBUG_NODE(integer_object);
-			BOOST_SPIRIT_DEBUG_NODE(name_object);
-			BOOST_SPIRIT_DEBUG_NODE(array_object);
-			BOOST_SPIRIT_DEBUG_NODE(dictionary_object);
-			BOOST_SPIRIT_DEBUG_NODE(literal_string_object);
-			BOOST_SPIRIT_DEBUG_NODE(stream_object);
+		}
+
+		DictionaryGrammar::DictionaryGrammar(ContainableGrammar& containable_grammar) :
+			base_type(start, "Dictionary grammar"),
+			containable_object(containable_grammar)
+		{
+			start %=
+				qi::lit("<<")
+				> whitespaces
+				> *(
+					name_object[phoenix::bind(&name_object_file_handler, qi::_1, qi::_r1)]
+					>> whitespaces
+					>> containable_object(qi::_r1)[phoenix::bind(&dictionary_item_handler, qi::_val, qi::_1)]
+					>> whitespaces
+					)
+				> qi::lit(">>");
+
+			BOOST_SPIRIT_DEBUG_NODE(start);
+		}
+
+		DictionaryOrStreamGrammar::DictionaryOrStreamGrammar() :
+			base_type(start, "Dictionary or stream grammar")
+		{
+			start %=
+				qi::omit[dictionary_object(qi::_r1)[qi::_c = qi::_1]]
+				>> ((
+					whitespaces
+					>> qi::lit("stream")[phoenix::bind(&dictionary_length, qi::_c, qi::_a)]
+					> -qi::lit('\r') > qi::lit('\n')
+					> qi::omit[repo::qi::iter_offset[qi::_b = qi::_1]]
+					> repo::qi::advance(qi::_a)
+					> -eol
+					> qi::lit("endstream")
+				)[qi::_val = phoenix::construct<StreamObjectPtr>(qi::_c, qi::_b), phoenix::bind(&dictionary_file_handler, qi::_c, qi::_r1)] | qi::eps[qi::_val = qi::_c]);
+
+			BOOST_SPIRIT_DEBUG_NODE(start);
+		}
+
+		NameGrammar::NameGrammar() :
+			base_type(start, "Name grammar")
+		{
+			start %=
+				qi::lit('/')
+				> *(
+					(qi::char_ - whitespace - qi::char_("()<>[]{}/%"))
+					//| (qi::char_('#') > qi::digit > qi::digit)
+					);
+
+			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
 	}
 }

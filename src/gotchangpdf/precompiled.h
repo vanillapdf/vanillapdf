@@ -70,6 +70,12 @@
 #include <boost/fusion/include/std_pair.hpp>
 
 // Spirit
+
+// conversion from 'unsigned int' to 'float', possible loss of data in real_impl
+#pragma warning (disable: 4244)
+
+// signed/unsigned mismatch in real_impl
+#pragma warning (disable: 4018)
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/spirit/repository/include/qi_advance.hpp>

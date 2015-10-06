@@ -72,7 +72,6 @@ namespace gotchangpdf
 		class XrefTable;
 		class XrefStream;
 		class XrefChain;
-		class XrefWithMetadata;
 
 		class XrefEntryBase;
 		class XrefUsedEntry;
@@ -131,7 +130,6 @@ namespace gotchangpdf
 	using HexadecimalStringObjectPtr = Deferred<HexadecimalStringObject>;
 
 	using XrefChainPtr = SmartPtr<files::XrefChain>;
-	using XrefWithMetadataPtr = SmartPtr<files::XrefWithMetadata>;
 	using XrefEntryBasePtr = Deferred<files::XrefEntryBase, false>;
 	using XrefFreeEntryPtr = Deferred<files::XrefFreeEntry, false>;
 	using XrefUsedEntryPtr = Deferred<files::XrefUsedEntry, false>;

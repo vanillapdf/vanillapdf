@@ -42,22 +42,22 @@ BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::DictionaryObjectPtr,
 (gotchangpdf::DictionaryObject::list_type, Content->_list)
 )
-
-BOOST_FUSION_ADAPT_STRUCT(
-gotchangpdf::DictionaryObject,
-(gotchangpdf::DictionaryObject::list_type, _list)
-)
+//
+//BOOST_FUSION_ADAPT_STRUCT(
+//gotchangpdf::DictionaryObject,
+//(gotchangpdf::DictionaryObject::list_type, _list)
+//)
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::RealObjectPtr,
 (gotchangpdf::types::real, Content->_value)
 )
 
-BOOST_FUSION_ADAPT_STRUCT(
-gotchangpdf::StreamObjectPtr,
-(gotchangpdf::DictionaryObjectPtr, Content->_header)
-(gotchangpdf::types::stream_offset, Content->_raw_data_offset)
-)
+//BOOST_FUSION_ADAPT_STRUCT(
+//gotchangpdf::StreamObjectPtr,
+//(gotchangpdf::DictionaryObjectPtr, Content->_header)
+//(gotchangpdf::types::stream_offset, Content->_raw_data_offset)
+//)
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::LiteralStringObjectPtr,

@@ -12,6 +12,8 @@
 
 namespace gotchangpdf
 {
+	StreamObject::StreamObject(DictionaryObjectPtr header, types::stream_offset offset) : _header(header), _raw_data_offset(offset) {}
+
 	BufferPtr StreamObject::GetBody() const
 	{
 		if (!_body->empty())

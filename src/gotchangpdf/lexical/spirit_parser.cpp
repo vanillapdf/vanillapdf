@@ -260,7 +260,8 @@ namespace gotchangpdf
 			pos_iterator_type input_end_pos;
 
 			auto start = omp_get_wtime();
-			auto result = _impl->Read<files::Xref>(_impl->_xref_grammar(_impl->_file), input_begin_pos, input_end_pos);
+			const auto& gram = _impl->_xref_grammar(_impl->_file);
+			auto result = _impl->Read<files::Xref>(gram, input_begin_pos, input_end_pos);
 			auto end = omp_get_wtime();
 
 			LOG_WARNING << "Xref parsing time: " << end - start;
