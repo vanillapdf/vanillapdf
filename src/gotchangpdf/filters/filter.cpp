@@ -8,13 +8,13 @@
 namespace gotchangpdf
 {
 	namespace filters
-	{
+	{		
 		FilterPtr Filter::GetByName(const NameObjectPtr name)
 		{
 			if (name->Equals(constant::Name::FlateDecode))
 				return new FlateDecodeFilter();
 
-			throw exceptions::Exception("Unknown filter type");
+			throw exceptions::Exception("Unknown filter type: " + name->Value()->ToString());
 		}
 	}
 }
