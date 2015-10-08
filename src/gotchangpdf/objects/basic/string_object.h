@@ -32,7 +32,6 @@ namespace gotchangpdf
 	public:
 		HexadecimalStringObject() = default;
 		explicit HexadecimalStringObject(BufferPtr value);
-		explicit HexadecimalStringObject(const lexical::Token& token);
 
 		virtual inline Object::Type GetType(void) const _NOEXCEPT override{ return Object::Type::HexadecimalString; }
 
@@ -46,7 +45,6 @@ namespace gotchangpdf
 	public:
 		LiteralStringObject() = default;
 		explicit LiteralStringObject(BufferPtr value);
-		explicit LiteralStringObject(const lexical::Token& token);
 
 		virtual inline Object::Type GetType(void) const _NOEXCEPT override{ return Object::Type::LiteralString; }
 	};

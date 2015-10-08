@@ -3,7 +3,6 @@
 
 #include "fwd.h"
 #include "constants.h"
-#include "token.h"
 #include "object.h"
 #include "containable.h"
 #include "util.h"
@@ -20,7 +19,6 @@ namespace gotchangpdf
 
 		IntegerObject() = default;
 		explicit IntegerObject(value_type value);
-		explicit IntegerObject(const lexical::Token& value);
 
 		inline value_type Value(void) const _NOEXCEPT { return _value; }
 

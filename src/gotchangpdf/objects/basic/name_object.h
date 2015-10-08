@@ -17,7 +17,6 @@ namespace gotchangpdf
 
 	public:
 		NameObject() = default;
-		explicit NameObject(const lexical::Token& token);
 		explicit NameObject(value_type name) : _value(name) {}
 
 		inline value_type Value() const _NOEXCEPT { return _value; }

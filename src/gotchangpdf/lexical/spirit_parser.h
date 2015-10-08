@@ -3,7 +3,7 @@
 
 #include "fwd.h"
 #include "xref.h"
-#include "lexical_stream.h"
+#include "raw_stream.h"
 #include "direct_object.h"
 #include "object_visitors.h"
 #include "object_stream_header.h"
@@ -15,7 +15,7 @@ namespace gotchangpdf
 {
 	namespace lexical
 	{
-		class SpiritParser : public lexical::Stream
+		class SpiritParser : public raw::Stream
 		{
 		public:
 			SpiritParser(files::File * file, CharacterSource & stream);

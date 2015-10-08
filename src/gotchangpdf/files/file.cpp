@@ -1,7 +1,7 @@
 #include "precompiled.h"
 #include "file.h"
 
-#include "lexical_reverse_stream.h"
+#include "raw_reverse_stream.h"
 #include "spirit_parser.h"
 #include "exception.h"
 

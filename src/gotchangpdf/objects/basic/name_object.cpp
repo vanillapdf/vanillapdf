@@ -1,15 +1,11 @@
 #include "precompiled.h"
 #include "name_object.h"
 
-#include "token.h"
-
 #include <cassert>
 
 namespace gotchangpdf
 {
 	using namespace lexical;
-
-	NameObject::NameObject(const Token& token) : _value(token.Value()) { assert(token.GetType() == Token::Type::NAME_OBJECT); }
 
 	std::ostream& operator<<(std::ostream& os, const NameObject& name)
 	{

@@ -42,45 +42,12 @@ namespace gotchangpdf
 		};
 
 		SpiritParser::SpiritParser(files::File * file, CharacterSource & stream)
-			: lexical::Stream(stream), _impl(new Impl(file)) {}
+			: raw::Stream(stream), _impl(new Impl(file)) {}
 
 		SpiritParser::SpiritParser(const SpiritParser & other)
-			: lexical::Stream(other) { _impl->_file = other._impl->_file; }
+			: raw::Stream(other) { _impl->_file = other._impl->_file; }
 
 		files::File * SpiritParser::file(void) const { return _impl->_file; }
-
-		files::XrefEntry SpiritParser::Impl::ReadTableEntry(lexical::SpiritParser& s, types::integer objNumber)
-		{
-			char sp1, sp2, key, eol1, eol2;
-			Token offset, number;
-			s >> offset >> sp1 >> number >> sp2 >> key >> eol1 >> eol2;
-
-			if (!(IsSpace(eol1) && Equals(eol2, WhiteSpace::CARRIAGE_RETURN)) &&
-				!(IsSpace(eol1) && IsNewline(eol2)) &&
-				!(Equals(eol1, WhiteSpace::CARRIAGE_RETURN) && IsNewline(eol2))) {
-				throw Exception("End of line marker was not found in xref table entry");
-			}
-
-			static const char IN_USE = 'n';
-			static const char NOT_IN_USE = 'f';
-
-			if (key == IN_USE) {
-				XrefUsedEntryPtr result(objNumber, IntegerObject(number).SafeConvert<types::ushort>(), IntegerObject(offset).SafeConvert<types::stream_offset>());
-				result->SetFile(_file);
-				result->SetInitialized(false);
-				return result;
-			} else if (key == NOT_IN_USE) {
-				XrefFreeEntryPtr result(objNumber, IntegerObject(number).SafeConvert<types::ushort>(), IntegerObject(offset).SafeConvert<types::integer>());
-				result->SetFile(_file);
-				result->SetInitialized(false);
-				return result;
-			} else {
-				stringstream buffer;
-				buffer << "Key in XRef table is neither of " << IN_USE << " or " << NOT_IN_USE;
-
-				throw Exception(buffer.str());
-			}
-		}
 
 		template <typename Result, typename Grammar, typename Iterator>
 		Result SpiritParser::Impl::Read(Grammar& grammar, Iterator& input_begin_pos, Iterator& input_end_pos)

@@ -1,37 +1,18 @@
 #include "precompiled.h"
 #include "integer_object.h"
 
-#include "lexical_reverse_stream.h"
-#include "lexical_stream.h"
-
 #include <cassert>
 #include <vector>
 
 namespace gotchangpdf
 {
 	using namespace std;
-	using namespace lexical;
-
-	#pragma region Constructors
 
 	IntegerObject::IntegerObject(value_type value) : _value(value) {}
-
-	IntegerObject::IntegerObject(const Token& value)
-	{
-		assert(value.GetType() == Token::Type::INTEGER_OBJECT);
-
-		auto buffer = value.Value();
-		_value = stoi(buffer->ToString());
-	}
 
 	#pragma endregion
 
 	#pragma region Operators
-
-	IntegerObject& IntegerObject::operator=(const Token& value)
-	{
-		return this->operator=(value.Value());
-	}
 
 	IntegerObject& IntegerObject::operator=(BufferPtr value)
 	{
@@ -43,31 +24,5 @@ namespace gotchangpdf
 	{
 		_value = value;
 		return *this;
-	}
-
-	#pragma endregion
-
-	ReverseStream& operator>> (ReverseStream& s, IntegerObject& o)
-	{
-		auto token = s.ReadToken();
-
-		assert(token.GetType() == Token::Type::INTEGER_OBJECT);
-
-		auto buffer = token.Value();
-		o._value = stoi(buffer->ToString());
-
-		return s;
-	}
-
-	Stream& operator>>(Stream& s, IntegerObject& o)
-	{
-		auto token = s.ReadToken();
-
-		assert(token.GetType() == Token::Type::INTEGER_OBJECT);
-
-		auto buffer = token.Value();
-		o._value = stoi(buffer->ToString());
-
-		return s;
 	}
 }
