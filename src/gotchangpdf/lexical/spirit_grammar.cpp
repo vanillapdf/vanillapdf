@@ -23,29 +23,6 @@ void direct_object_file_handler(DirectObject obj, files::File* file)
 	base->SetFile(file);
 }
 
-void containable_object_file_handler(ContainableObject obj, files::File* file)
-{
-	assert(nullptr != file);
-
-	ObjectBaseVisitor visitor;
-	auto base = obj.apply_visitor(visitor);
-	base->SetFile(file);
-}
-
-void name_object_file_handler(NameObjectPtr obj, files::File* file)
-{
-	assert(nullptr != file);
-
-	obj->SetFile(file);
-}
-
-void dictionary_file_handler(DictionaryObjectPtr& obj, files::File* file)
-{
-	assert(nullptr != file);
-
-	obj->SetFile(file);
-}
-
 void direct_object_offset_handler(DirectObject obj, types::stream_offset offset)
 {
 	ObjectBaseVisitor visitor;
@@ -252,7 +229,7 @@ namespace gotchangpdf
 					| null_object
 					| literal_string_object
 					| hexadecimal_string_object
-					)[phoenix::bind(&containable_object_file_handler, qi::_1, qi::_r1)];
+					)[phoenix::bind(&direct_object_file_handler, qi::_1, qi::_r1)];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
@@ -265,7 +242,7 @@ namespace gotchangpdf
 				qi::lit("<<")
 				> whitespaces
 				> *(
-					name_object[phoenix::bind(&name_object_file_handler, qi::_1, qi::_r1)]
+					name_object[phoenix::bind(&direct_object_file_handler, qi::_1, qi::_r1)]
 					>> whitespaces
 					>> containable_object(qi::_r1)[phoenix::bind(&dictionary_item_handler, qi::_val, qi::_1)]
 					>> whitespaces
@@ -275,20 +252,58 @@ namespace gotchangpdf
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
 
+		StreamDataGrammar::StreamDataGrammar() :
+			base_type(start, "Stream data grammar")
+		{
+			start %=
+				qi::lit("stream")[phoenix::bind(&dictionary_length, qi::_r2, qi::_a)]
+				> -qi::lit('\r') > qi::lit('\n')
+				> qi::omit[repo::qi::iter_offset[qi::_b = qi::_1]]
+				> repo::qi::advance(qi::_a)
+				> -eol
+				> qi::lit("endstream")[qi::_val = phoenix::construct<StreamObjectPtr>(qi::_r2, qi::_b)];
+
+			BOOST_SPIRIT_DEBUG_NODE(start);
+		}
+
+		IndirectStreamGrammar::IndirectStreamGrammar() :
+			base_type(start, "Indirect Stream grammar")
+		{
+			start %=
+				qi::omit[qi::int_[qi::_a = qi::_1]]
+				> whitespace
+				> qi::omit[qi::ushort_[qi::_b = qi::_1]]
+				> whitespace
+				> qi::lit("obj")
+				> whitespaces
+				> qi::omit[dictionary_object(qi::_r1)[qi::_c = qi::_1]]
+				> stream_data(qi::_r1, qi::_c)
+				[
+					phoenix::bind(&direct_object_file_handler, qi::_c, qi::_r1),
+					phoenix::bind(&direct_object_file_handler, qi::_val, qi::_r1),
+					phoenix::bind(&direct_object_offset_handler, qi::_val, qi::_r2),
+					phoenix::bind(&indirect_object_handler, qi::_val, qi::_a, qi::_b)
+				]
+				> whitespaces
+				> qi::lit("endobj");
+
+			BOOST_SPIRIT_DEBUG_NODE(start);
+		}
+
 		DictionaryOrStreamGrammar::DictionaryOrStreamGrammar() :
 			base_type(start, "Dictionary or stream grammar")
 		{
 			start %=
 				qi::omit[dictionary_object(qi::_r1)[qi::_c = qi::_1]]
-				>> ((
+				>> (
 					whitespaces
-					>> qi::lit("stream")[phoenix::bind(&dictionary_length, qi::_c, qi::_a)]
-					> -qi::lit('\r') > qi::lit('\n')
-					> qi::omit[repo::qi::iter_offset[qi::_b = qi::_1]]
-					> repo::qi::advance(qi::_a)
-					> -eol
-					> qi::lit("endstream")
-				)[qi::_val = phoenix::construct<StreamObjectPtr>(qi::_c, qi::_b), phoenix::bind(&dictionary_file_handler, qi::_c, qi::_r1)] | qi::eps[qi::_val = qi::_c]);
+					>> stream_data(qi::_r1, qi::_c)
+					[
+						phoenix::bind(&direct_object_file_handler, qi::_c, qi::_r1),
+						phoenix::bind(&direct_object_file_handler, qi::_val, qi::_r1)
+					]
+					| qi::eps[qi::_val = qi::_c]
+				);
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}

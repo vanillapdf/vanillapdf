@@ -137,6 +137,19 @@ namespace gotchangpdf
 			EndOfLine eol;
 		};
 
+		class StreamDataGrammar : public qi::grammar<pos_iterator_type,
+			StreamObjectPtr(files::File*, DictionaryObjectPtr),
+			qi::locals<types::stream_size, types::stream_size>>
+		{
+		public:
+			StreamDataGrammar();
+
+		private:
+			qi::rule<pos_iterator_type, StreamObjectPtr(files::File*, DictionaryObjectPtr), qi::locals<types::stream_size, types::stream_size>> start;
+			Whitespace whitespaces;
+			EndOfLine eol;
+		};
+
 		class ContainableGrammar : public qi::grammar<pos_iterator_type,
 			ContainableObject(files::File*)>
 		{
@@ -158,6 +171,23 @@ namespace gotchangpdf
 			HexadecimalStringGrammar hexadecimal_string_object;
 		};
 
+		class IndirectStreamGrammar : public qi::grammar<pos_iterator_type,
+			StreamObjectPtr(files::File*, types::stream_offset),
+			qi::locals<types::integer, types::ushort, DictionaryObjectPtr >>
+		{
+		public:
+			IndirectStreamGrammar();
+
+		private:
+			qi::rule<pos_iterator_type, StreamObjectPtr(files::File*, types::stream_offset), qi::locals<types::integer, types::ushort, DictionaryObjectPtr>> start;
+			StreamDataGrammar stream_data;
+			ContainableGrammar containable_object;
+			DictionaryGrammar dictionary_object = { containable_object };
+
+			Whitespace whitespaces;
+			SingleWhitespace whitespace;
+		};
+
 		using DictionaryOrStream = boost::variant<DictionaryObjectPtr, StreamObjectPtr>;
 		class DictionaryOrStreamGrammar : public qi::grammar<pos_iterator_type,
 			DictionaryOrStream(files::File*),
@@ -170,6 +200,7 @@ namespace gotchangpdf
 			qi::rule<pos_iterator_type, DictionaryOrStream(files::File*), qi::locals<types::stream_size, types::stream_size, DictionaryObjectPtr>> start;
 			ContainableGrammar containable_object;
 			DictionaryGrammar dictionary_object = { containable_object };
+			StreamDataGrammar stream_data;
 			NameGrammar name_object;
 			Whitespace whitespaces;
 			EndOfLine eol;

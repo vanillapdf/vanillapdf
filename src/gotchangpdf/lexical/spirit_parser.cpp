@@ -125,128 +125,6 @@ namespace gotchangpdf
 
 		files::Xref SpiritParser::ReadXref(void)
 		{
-			if (PeekTokenType() == Token::Type::INTEGER_OBJECT) {
-				XrefStreamPtr result = XrefStreamPtr(files::XrefStream());
-
-				// Get stream object data
-				auto xref = ReadDirectObjectWithType<StreamObjectPtr>();
-				auto header = xref->GetHeader();
-
-				auto fields = header->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::W);
-				auto size = header->FindAs<IntegerObjectPtr>(constant::Name::Size);
-
-				auto field_size = fields->Size();
-				assert(field_size == 3);
-
-				ArrayObjectPtr<IntegerObjectPtr> index = { IntegerObjectPtr(0), size };
-				if (header->Contains(constant::Name::Index)) {
-					index = header->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::Index);
-				}
-
-				auto index_size = index->Size();
-				assert(index_size % 2 == 0);
-
-				auto body = xref->GetBodyDecoded();
-
-				auto field1_size = fields->At(0);
-				auto field2_size = fields->At(1);
-				auto field3_size = fields->At(2);
-
-				// Iterate over entries
-				auto it = body.begin();
-				for (auto i = 0; i < index_size; i += 2) {
-
-					auto subsection_index = index->At(i);
-					auto subsection_size = index->At(i + 1);
-
-					XrefSubsectionPtr subsection(subsection_index->Value(), subsection_size->Value());
-					for (auto idx = 0; idx < *subsection_size; idx++) {
-
-						IntegerObject field1;
-						for (int j = 0; j < *field1_size; ++j) {
-							field1 = (field1 << 8) + (*it & 0xff);
-							it++;
-						}
-
-						assert(field1 == 0 || field1 == 1 || field1 == 2);
-
-						IntegerObject field2;
-						for (int j = 0; j < *field2_size; ++j) {
-							field2 = (field2 << 8) + (*it & 0xff);
-							it++;
-						}
-
-						IntegerObject field3;
-						for (int j = 0; j < *field3_size; ++j) {
-							field3 = (field3 << 8) + (*it & 0xff);
-							it++;
-						}
-
-						switch (field1) {
-						case 0:
-						{
-							XrefFreeEntryPtr entry(*subsection_index + idx, field3.SafeConvert<types::ushort>(), field2);
-							entry->SetFile(_impl->_file);
-							subsection->Add(entry);
-							break;
-						}
-						case 1:
-						{
-							XrefUsedEntryPtr entry(*subsection_index + idx, field3.SafeConvert<types::ushort>(), field2);
-							entry->SetFile(_impl->_file);
-							subsection->Add(entry);
-							break;
-						}
-						case 2:
-						{
-							XrefCompressedEntryPtr entry(*subsection_index + idx, static_cast<types::ushort>(0), field2, field3);
-							entry->SetFile(_impl->_file);
-							subsection->Add(entry);
-							break;
-						}
-						default:
-							throw exceptions::Exception("Unknown field in cross reference stream");
-						}
-					}
-
-					result->Add(subsection);
-				}
-
-				result->SetFile(_impl->_file);
-				result->SetTrailerDictionary(header);
-				return result;
-			} else {
-#ifdef OLD_STYLE_PARSING
-				auto start = omp_get_wtime();
-
-				XrefTablePtr table(new files::XrefTable());
-
-				ReadTokenWithType(Token::Type::XREF_MARKER);
-				ReadTokenWithType(Token::Type::EOL);
-
-				while (PeekTokenType() != Token::Type::TRAILER) {
-					IntegerObject revision, numberOfObjects;
-					*this >> revision >> numberOfObjects;
-
-					ReadTokenWithType(Token::Type::EOL);
-
-					XrefSubsectionPtr subsection(new files::XrefSubsection(revision, numberOfObjects));
-
-					
-					for (types::integer i = 0; i < numberOfObjects; ++i) {
-						auto entry = _impl->ReadTableEntry(*this, SafeAddition(revision, i));
-						subsection->Add(entry);
-					}
-
-					table->Add(subsection);
-				}
-
-				table->SetFile(_impl->_file);
-
-				auto end = omp_get_wtime();
-				LOG_WARNING << "Xref parsing time: " << end - start;
-				return table;
-#else
 			// Don't skip whitespace explicitly
 			noskipws(*this);
 
@@ -259,15 +137,8 @@ namespace gotchangpdf
 			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _impl->_file->GetFilename(), 1, 1, offset);
 			pos_iterator_type input_end_pos;
 
-			auto start = omp_get_wtime();
-			const auto& gram = _impl->_xref_grammar(_impl->_file);
-			auto result = _impl->Read<files::Xref>(gram, input_begin_pos, input_end_pos);
-			auto end = omp_get_wtime();
-
-			LOG_WARNING << "Xref parsing time: " << end - start;
-			return result;
-#endif
-			}
+			const auto& gram = _impl->_xref_grammar(_impl->_file, offset);
+			return _impl->Read<files::Xref>(gram, input_begin_pos, input_end_pos);
 		}
 
 		std::vector<DirectObject> SpiritParser::ReadObjectStreamEntries(types::integer first, types::integer size)

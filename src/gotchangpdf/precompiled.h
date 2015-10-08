@@ -48,9 +48,6 @@
 
 #include <cassert>
 
-// OpenMP
-#include <omp.h>
-
 // Boost
 #include <boost/static_assert.hpp>
 #include <boost/variant.hpp>
