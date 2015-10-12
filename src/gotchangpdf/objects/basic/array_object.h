@@ -21,6 +21,7 @@ namespace gotchangpdf
 		typedef typename list_type::const_iterator const_iterator;
 		typedef typename list_type::size_type size_type;
 		typedef typename list_type::reference reference;
+		typedef typename list_type::const_reference const_reference;
 
 	public:
 		explicit ArrayObject() {}
