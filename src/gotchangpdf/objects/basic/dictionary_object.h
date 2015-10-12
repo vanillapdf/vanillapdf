@@ -3,7 +3,9 @@
 
 #include "fwd.h"
 #include "object.h"
-#include "object_visitors.h"
+#include "smart_ptr.h"
+#include "exception.h"
+//#include "object_visitors.h"
 #include "containable.h"
 
 //#include <unordered_map>
@@ -14,26 +16,26 @@
 
 namespace gotchangpdf
 {
-	template <typename NameT, typename ValueT>
-	class DictionaryObjectBase : public Containable, public Object
+	class DictionaryObject : public Containable, public Object
 	{
 	public:
-		//typedef std::unordered_map<NameT, ValueT, std::hash<NameT>> list_type;
-		typedef std::map<NameT, ValueT> list_type;
-		//typedef std::vector<std::pair<NameT, ValueT>> list_type;
+		//typedef std::unordered_map<NameObjectPtr, ContainableObject, std::hash<NameObjectPtr>> list_type;
+		typedef std::map<NameObjectPtr, ContainableObject> list_type;
+		//typedef std::vector<std::pair<NameObjectPtr, ContainableObject>> list_type;
 
-		typedef typename list_type::value_type value_type;
-		typedef typename list_type::iterator iterator;
-		typedef typename list_type::const_iterator const_iterator;
-		typedef typename list_type::size_type size_type;
-		typedef typename list_type::reference reference;
+		typedef list_type::value_type value_type;
+		typedef list_type::iterator iterator;
+		typedef list_type::const_iterator const_iterator;
+		typedef list_type::size_type size_type;
+		typedef list_type::reference reference;
+		typedef list_type::const_reference const_reference;
 
 	public:
 		class Iterator : public IUnknown
 		{
 		public:
 			Iterator() = default;
-			Iterator(typename const_iterator it) : _it(it) {}
+			Iterator(const_iterator it) : _it(it) {}
 
 			const Iterator& operator++()
 			{
@@ -48,8 +50,8 @@ namespace gotchangpdf
 				return temp;
 			}
 
-			NameT First() const { return _it->first; }
-			ValueT Second() const { return _it->second; }
+			NameObjectPtr First() const { return _it->first; }
+			ContainableObject Second() const { return _it->second; }
 
 			bool operator==(const Iterator& other) const
 			{
@@ -63,7 +65,7 @@ namespace gotchangpdf
 		using IteratorPtr = SmartPtr<Iterator>;
 
 		template <typename U>
-		U FindAs(const NameT& name) const
+		U FindAs(const NameObjectPtr& name) const
 		{
 			auto result = Find(name);
 
@@ -100,7 +102,7 @@ namespace gotchangpdf
 			return _list.insert(pos, value);
 		}
 
-		ValueT Find(const NameT& name) const
+		ContainableObject Find(const NameObjectPtr& name) const
 		{
 			auto result = _list.find(name);
 			if (result == _list.end()) {
@@ -112,7 +114,7 @@ namespace gotchangpdf
 			return result->second;
 		}
 
-		bool TryFind(const NameT& name, ValueT& result) const
+		bool TryFind(const NameObjectPtr& name, ContainableObject& result) const
 		{
 			auto item = _list.find(name);
 			if (item == _list.end())
@@ -122,7 +124,7 @@ namespace gotchangpdf
 			return true;
 		}
 
-		inline bool Contains(const NameT& name) const { return (_list.find(name) != _list.end()); }
+		inline bool Contains(const NameObjectPtr& name) const { return (_list.find(name) != _list.end()); }
 
 		virtual inline Object::Type GetType(void) const _NOEXCEPT override{ return Object::Type::Dictionary; }
 		virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
@@ -132,16 +134,6 @@ namespace gotchangpdf
 	public:
 		list_type _list;
 		ContainerPtr _container;
-	};
-
-	class DictionaryObject : public DictionaryObjectBase<NameObjectPtr, ContainableObject>
-	{
-	public:
-		inline bool Equals(const DictionaryObject& other) const { return this == &other; }
-
-		inline bool operator==(const DictionaryObject& other) const { return Equals(other); }
-		inline bool operator!=(const DictionaryObject& other) const { return !Equals(other); }
-		inline bool operator<(const DictionaryObject&) const { return false; }
 	};
 }
 
