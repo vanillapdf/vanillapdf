@@ -38,13 +38,13 @@ void indirect_object_handler(DirectObject obj, types::integer obj_number, types:
 	base->SetGenerationNumber(gen_number);
 }
 
-void dictionary_item_handler(const DictionaryObjectPtr obj, ContainableObject item)
+void dictionary_item_handler(DictionaryObjectPtr obj, ContainableObject item)
 {
 	SetContainerVisitor visitor(obj);
 	item.apply_visitor(visitor);
 }
 
-void array_item_handler(const MixedArrayObjectPtr obj, ContainableObject item)
+void array_item_handler(MixedArrayObjectPtr obj, ContainableObject item)
 {
 	SetContainerVisitor visitor(obj);
 	item.apply_visitor(visitor);

@@ -4,16 +4,10 @@
 #include "fwd.h"
 
 #include <boost/variant/variant.hpp>
+#include <boost/smart_ptr/intrusive_ptr.hpp>
 
 namespace gotchangpdf
 {
-	typedef boost::variant <
-		// first is null object
-		NullObjectPtr,
-		MixedArrayObjectPtr,
-		DictionaryObjectPtr
-	> ContainerPtr;
-
 	typedef boost::variant <
 		// first is null object
 		NullObjectPtr,
@@ -28,6 +22,8 @@ namespace gotchangpdf
 		LiteralStringObjectPtr,
 		HexadecimalStringObjectPtr
 	> ContainableObject;
+
+	typedef boost::intrusive_ptr<Object> ContainerPtr;
 
 	class Containable
 	{

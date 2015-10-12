@@ -5,6 +5,8 @@
 #include "exception.h"
 #include "containable.h"
 #include "indirect_object_reference.h"
+#include "dictionary_object.h"
+#include "array_object.h"
 
 #include <map>
 #include <sstream>
@@ -45,8 +47,17 @@ namespace gotchangpdf
 	class SetContainerVisitor : public boost::static_visitor<void>
 	{
 	public:
-		explicit SetContainerVisitor(const ContainerPtr& container)
-			: _container(container),
+		explicit SetContainerVisitor(DictionaryObjectPtr& container)
+			: _container(static_cast<Object*>(container.Content.get())),
+			boost::static_visitor<void>() {}
+
+		explicit SetContainerVisitor(MixedArrayObjectPtr& container)
+			: _container(static_cast<Object*>(container.Content.get())),
+			boost::static_visitor<void>() {}
+
+		template <typename T>
+		explicit SetContainerVisitor(ArrayObjectPtr<T>& container)
+			: _container(static_cast<Object*>(container.Content.get())),
 			boost::static_visitor<void>() {}
 
 		SetContainerVisitor& operator=(const SetContainerVisitor&) = delete;
@@ -56,7 +67,7 @@ namespace gotchangpdf
 		inline void operator()(T& obj) const { obj->SetContainer(_container); }
 
 	private:
-		const ContainerPtr& _container;
+		ContainerPtr _container;
 	};
 
 	template <typename T>
