@@ -24,7 +24,7 @@ namespace gotchangpdf
 	* This class is used to speed up the construction of the AST. The construction of the node is only done when an access to the data is issued.
 	* This code has been taken from the Eddi Compiler project (https://github.com/wichtounet/eddic/) and has been adapted a little.
 	*/
-	template <typename T, bool DefautConstructible = true>
+	template <typename T, bool DefaultConstructible = true>
 	struct Deferred
 	{
 		typedef T value_type;
@@ -51,7 +51,7 @@ namespace gotchangpdf
 			Content.Owner = this;
 		}
 
-		template <typename = std::enable_if<DefautConstructible>>
+		template <typename = std::enable_if<DefaultConstructible>>
 		Deferred() : Contents(reinterpret_cast<T*>(nullptr))
 		{
 			Content.Owner = this;
@@ -109,7 +109,7 @@ namespace gotchangpdf
 
 			T* get(void) const
 			{
-				return get_internal<DefautConstructible>();
+				return get_internal<DefaultConstructible>();
 			}
 
 			template <bool Constructible>
@@ -153,8 +153,8 @@ namespace gotchangpdf
 	* This class is used to speed up the construction of the AST. The construction of the node is only done when an access to the data is issued.
 	* This code has been taken from the Epoch Compiler project (http://code.google.com/p/epoch-language/) and has been adapted a little.
 	*/
-	template <typename T, bool DefautConstructible = true>
-	struct DeferredContainer : public Deferred<T, DefautConstructible>
+	template <typename T, bool DefaultConstructible = true>
+	struct DeferredContainer : public Deferred<T, DefaultConstructible>
 	{
 		typedef typename T::value_type value_type;
 		typedef typename T::iterator iterator;
@@ -185,7 +185,7 @@ namespace gotchangpdf
 			Content.Owner = this;
 		}
 
-		template <typename = std::enable_if<std::is_constructible<T>::value>>
+		template <typename = std::enable_if<DefaultConstructible>>
 		DeferredContainer() : Deferred()
 		{
 			Content.Owner = this;

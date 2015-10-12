@@ -82,11 +82,11 @@ namespace gotchangpdf
 				auto xref = xref_variant.apply_visitor(visitor);
 
 				_xref->Append(xref_variant);
-				if (xref->GetTrailerDictionary()->Contains(constant::Name::Prev)) {
-					offset = xref->GetTrailerDictionary()->FindAs<IntegerObjectPtr>(constant::Name::Prev)->Value();
-				} else {
+				if (!xref->GetTrailerDictionary()->Contains(constant::Name::Prev)) {
 					break;
 				}
+
+				offset = xref->GetTrailerDictionary()->FindAs<IntegerObjectPtr>(constant::Name::Prev)->Value();
 			} while (true);
 
 			_initialized = true;
