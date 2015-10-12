@@ -129,13 +129,13 @@ namespace gotchangpdf
 	using LiteralStringObjectPtr = Deferred<LiteralStringObject>;
 	using HexadecimalStringObjectPtr = Deferred<HexadecimalStringObject>;
 
-	using XrefChainPtr = SmartPtr<files::XrefChain>;
+	using XrefChainPtr = Deferred<files::XrefChain>;
 	using XrefEntryBasePtr = Deferred<files::XrefEntryBase, false>;
 	using XrefFreeEntryPtr = Deferred<files::XrefFreeEntry, false>;
 	using XrefUsedEntryPtr = Deferred<files::XrefUsedEntry, false>;
 	using XrefCompressedEntryPtr = Deferred<files::XrefCompressedEntry, false>;
 
-	using HeaderPtr = SmartPtr<files::Header>;
+	using HeaderPtr = Deferred<files::Header>;
 
 	using XrefBasePtr = Deferred<files::XrefBase>;
 	using XrefSubsectionPtr = Deferred<files::XrefSubsection, false>;
