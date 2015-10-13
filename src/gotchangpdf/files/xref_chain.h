@@ -3,7 +3,6 @@
 
 #include "fwd.h"
 #include "deferred.h"
-#include "smart_ptr.h"
 #include "xref.h"
 
 #include <list>
@@ -20,6 +19,12 @@ namespace gotchangpdf
 		public:
 			class Iterator : public IUnknown
 			{
+			public:
+				typedef list_type::const_iterator::value_type value_type;
+				typedef list_type::const_iterator::difference_type difference_type;
+				typedef list_type::const_iterator::pointer pointer;
+				typedef list_type::const_iterator::reference reference;
+
 			public:
 				Iterator() = default;
 				Iterator(list_type::const_iterator it) : _it(it) {}
@@ -46,11 +51,11 @@ namespace gotchangpdf
 				list_type::const_iterator _it;
 			};
 
-			using IteratorPtr = SmartPtr < Iterator >;
+			using IteratorPtr = DeferredIterator<Iterator>;
 
 		public:
-			IteratorPtr Begin() const { return new Iterator(_list.begin()); }
-			IteratorPtr End(void) const { return new Iterator(_list.end()); }
+			IteratorPtr Begin() const { return _list.begin(); }
+			IteratorPtr End(void) const { return _list.end(); }
 			void Append(Xref item) { _list.push_back(item); }
 
 			XrefEntry GetXrefEntry(types::integer objNumber,
