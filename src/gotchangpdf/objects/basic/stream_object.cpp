@@ -6,9 +6,9 @@
 #include "name_object.h"
 #include "integer_object.h"
 #include "raw_stream.h"
-
-// TODO
-#include "flate_decode_filter.h"
+#include "filter.h"
+#include "filter_utils.h"
+#include "filter_visitors.h"
 
 namespace gotchangpdf
 {
@@ -52,14 +52,17 @@ namespace gotchangpdf
 			assert(is_filter_name ^ is_filter_array);
 
 			if (is_filter_name) {
+				FilterBaseVisitor visitor;
+
 				auto filter_name = _header->FindAs<NameObjectPtr>(constant::Name::Filter);
-				auto filterInstance = filters::Filter::GetByName(filter_name);
+				auto filter_variant = filters::GetFilterByName(filter_name);
+				auto filter_base = filter_variant.apply_visitor(visitor);
 				if (_header->Contains(constant::Name::DecodeParms)) {
 					auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
-					return filterInstance->Decode(result, params);
+					return filter_base->Decode(result, params);
 				}
 
-				return filterInstance->Decode(result);
+				return filter_base->Decode(result);
 			}
 
 			if (is_filter_array) {
@@ -73,8 +76,11 @@ namespace gotchangpdf
 				}
 
 				for (int i = 0; i < filter_array->Size(); ++i) {
+					FilterBaseVisitor visitor;
+
 					auto current_filter = (*filter_array)[i];
-					auto filterInstance = filters::Filter::GetByName(current_filter);
+					auto filter_variant = filters::GetFilterByName(current_filter);
+					auto filter_base = filter_variant.apply_visitor(visitor);
 
 					if (has_params) {
 						auto current_param = (*params)[i];
@@ -82,14 +88,14 @@ namespace gotchangpdf
 						IsTypeVisitor<NullObjectPtr> is_null_visitor;
 						bool is_param_null = current_param.apply_visitor(is_null_visitor);
 						if (is_param_null) {
-							result = filterInstance->Decode(result);
+							result = filter_base->Decode(result);
 						} else {
 							ObjectVisitor<DictionaryObjectPtr> dictionary_convert;
 							auto dict = current_param.apply_visitor(dictionary_convert);
-							result = filterInstance->Decode(result, dict);
+							result = filter_base->Decode(result, dict);
 						}
 					} else {
-						result = filterInstance->Decode(result);
+						result = filter_base->Decode(result);
 					}
 				}
 			}

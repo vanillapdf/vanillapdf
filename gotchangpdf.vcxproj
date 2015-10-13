@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="filter_visitors.h" />
     <ClInclude Include="include\gotchangpdf\c_array_object.h" />
     <ClInclude Include="include\gotchangpdf\c_buffer.h" />
     <ClInclude Include="include\gotchangpdf\c_catalog.h" />
@@ -44,6 +45,7 @@
     <ClInclude Include="src\gotchangpdf\files\xref.h" />
     <ClInclude Include="src\gotchangpdf\files\xref_chain.h" />
     <ClInclude Include="src\gotchangpdf\filters\filter.h" />
+    <ClInclude Include="src\gotchangpdf\filters\filter_utils.h" />
     <ClInclude Include="src\gotchangpdf\filters\flate_decode_filter.h" />
     <ClInclude Include="src\gotchangpdf\implementation\c_helper.h" />
     <ClInclude Include="src\gotchangpdf\lexical\abstract_syntax_tree.h" />
@@ -112,7 +114,7 @@
     <ClCompile Include="src\gotchangpdf\files\file.cpp" />
     <ClCompile Include="src\gotchangpdf\files\header.cpp" />
     <ClCompile Include="src\gotchangpdf\files\xref.cpp" />
-    <ClCompile Include="src\gotchangpdf\filters\filter.cpp" />
+    <ClCompile Include="src\gotchangpdf\filters\filter_utils.cpp" />
     <ClCompile Include="src\gotchangpdf\filters\flate_decode_filter.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_array_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_buffer.cpp" />

@@ -27,8 +27,6 @@ namespace gotchangpdf
 			virtual BufferPtr Decode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
 
 			virtual inline Type GetType(void) const = 0;
-
-			static FilterPtr GetByName(const NameObjectPtr name);
 		};
 	}
 }
