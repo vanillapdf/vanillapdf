@@ -37,8 +37,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(Diction
 
 	try
 	{
-		DictionaryObject::IteratorPtr begin = obj->Begin();
-		DictionaryObject::Iterator* ptr = begin.AddRefGet();
+		auto begin = DictionaryObject::IteratorPtr(obj->begin());
+		auto ptr = begin.AddRefGet();
 		*result = reinterpret_cast<DictionaryIteratorHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
@@ -120,7 +120,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(
 
 	try
 	{
-		if (*dictionary->End() == *iterator)
+		if (dictionary->end() == iterator->Value())
 			*result = GOTCHANG_PDF_RV_FALSE;
 		else
 			*result = GOTCHANG_PDF_RV_TRUE;

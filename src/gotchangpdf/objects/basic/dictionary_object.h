@@ -3,7 +3,6 @@
 
 #include "fwd.h"
 #include "object.h"
-#include "smart_ptr.h"
 #include "exception.h"
 //#include "object_visitors.h"
 #include "containable.h"
@@ -34,6 +33,12 @@ namespace gotchangpdf
 		class Iterator : public IUnknown
 		{
 		public:
+			typedef const_iterator::value_type value_type;
+			typedef const_iterator::difference_type difference_type;
+			typedef const_iterator::pointer pointer;
+			typedef const_iterator::reference reference;
+
+		public:
 			Iterator() = default;
 			Iterator(const_iterator it) : _it(it) {}
 
@@ -52,6 +57,7 @@ namespace gotchangpdf
 
 			NameObjectPtr First() const { return _it->first; }
 			ContainableObject Second() const { return _it->second; }
+			const_iterator Value() const { return _it; }
 
 			bool operator==(const Iterator& other) const
 			{
@@ -62,7 +68,7 @@ namespace gotchangpdf
 			const_iterator _it;
 		};
 
-		using IteratorPtr = SmartPtr<Iterator>;
+		using IteratorPtr = DeferredIterator<Iterator>;
 
 		template <typename U>
 		U FindAs(const NameObjectPtr& name) const
@@ -75,16 +81,6 @@ namespace gotchangpdf
 
 		list_type GetItems(void) const { return _list; }
 		void SetItems(const list_type& list) { _list = list; }
-
-		IteratorPtr Begin(void) const
-		{
-			return new Iterator(_list.begin());
-		}
-
-		IteratorPtr End(void) const
-		{
-			return new Iterator(_list.end());
-		}
 
 		const_iterator begin(void) const _NOEXCEPT
 		{

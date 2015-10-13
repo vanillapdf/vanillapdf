@@ -163,33 +163,18 @@ namespace gotchangpdf
 		typedef typename T::reference reference;
 		typedef typename T::const_reference const_reference;
 
-		DeferredContainer(T* value) : Deferred(value)
-		{
-			Content.Owner = this;
-		}
+		DeferredContainer(T* value) : Deferred(value) {}
 
-		DeferredContainer(const Deferred& rhs) : Deferred(rhs)
-		{
-			Content.Owner = this;
-		}
+		DeferredContainer(const Deferred& rhs) : Deferred(rhs) {}
 
 		template <typename... Parameters>
-		DeferredContainer(const Parameters&... p) : Deferred(p...)
-		{
-			Content.Owner = this;
-		}
+		DeferredContainer(const Parameters&... p) : Deferred(p...) {}
 
 		template <typename U>
-		DeferredContainer(std::initializer_list<U> list) : Deferred(list)
-		{
-			Content.Owner = this;
-		}
+		DeferredContainer(std::initializer_list<U> list) : Deferred(list) {}
 
 		template <typename = std::enable_if<DefaultConstructible>>
-		DeferredContainer() : Deferred()
-		{
-			Content.Owner = this;
-		}
+		DeferredContainer() : Deferred() {}
 
 		// Support insertion as if this were itself a container
 		void insert(const iterator& pos, const value_type& value)
@@ -224,6 +209,28 @@ namespace gotchangpdf
 		{
 			return Content->operator[](i);
 		}
+	};
+
+	template <typename T, bool DefaultConstructible = true>
+	struct DeferredIterator: public Deferred<T, DefaultConstructible>
+	{
+		typedef typename T::value_type value_type;
+		typedef typename T::difference_type difference_type;
+		typedef typename T::pointer pointer;
+		typedef typename T::reference reference;
+
+		DeferredIterator(T* value) : Deferred(value) {}
+
+		DeferredIterator(const Deferred& rhs) : Deferred(rhs) {}
+
+		template <typename... Parameters>
+		DeferredIterator(const Parameters&... p) : Deferred(p...) {}
+
+		template <typename U>
+		DeferredIterator(std::initializer_list<U> list) : Deferred(list) {}
+
+		template <typename = std::enable_if<DefaultConstructible>>
+		DeferredIterator() : Deferred() {}
 	};
 
 	template<typename T>
