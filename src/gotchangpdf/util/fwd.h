@@ -9,6 +9,9 @@ namespace gotchangpdf
 	template <typename T, bool DefaultConstructible /* = true */>
 	struct DeferredContainer;
 
+	template <typename T, bool DefaultConstructible /* = true */>
+	struct DeferredIterator;
+
 	template <typename T>
 	class SmartPtr;
 
@@ -38,7 +41,6 @@ namespace gotchangpdf
 	class Rectangle;
 	class Tree;
 
-	class Character;
 	class Buffer;
 
 	class Containable;
@@ -81,16 +83,7 @@ namespace gotchangpdf
 
 	namespace lexical
 	{
-		class Tree;
-		class Parser;
-		class Token;
-		class TokenDictionary;
-
-		class BaseStream;
-		class Stream;
-		class ReverseStream;
 		class SpiritParser;
-
 		struct ObjectStreamHeader;
 	}
 
@@ -136,7 +129,6 @@ namespace gotchangpdf
 
 	using HeaderPtr = Deferred<files::Header>;
 
-	using XrefBasePtr = Deferred<files::XrefBase>;
 	using XrefSubsectionPtr = Deferred<files::XrefSubsection, false>;
 	using XrefTablePtr = Deferred<files::XrefTable>;
 	using XrefStreamPtr = Deferred<files::XrefStream>;

@@ -29,14 +29,10 @@ namespace gotchangpdf
 
 		IntegerObject& operator= (value_type value);
 		IntegerObject& operator= (BufferPtr value);
-		IntegerObject& operator= (const lexical::Token& value);
 
 		virtual Object::Type GetType(void) const _NOEXCEPT override{ return Object::Type::Integer; }
 		virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
 		virtual inline ContainerPtr GetContainer() const override { return _container; }
-
-		friend lexical::ReverseStream& operator>> (lexical::ReverseStream& s, IntegerObject& o);
-		friend lexical::Stream& operator>> (lexical::Stream& s, IntegerObject& o);
 
 		inline bool Equals(const IntegerObject& other) const _NOEXCEPT { return _value == other._value; }
 
