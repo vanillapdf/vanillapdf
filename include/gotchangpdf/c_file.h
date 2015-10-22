@@ -10,7 +10,7 @@ extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Create(string_type filename, PFileHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Open(string_type filename, PFileHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Release(FileHandle handle);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle, PXrefChainHandle result);

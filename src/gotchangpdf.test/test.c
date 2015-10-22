@@ -365,7 +365,7 @@ int main(int argc, char *argv[])
 	if (argc != 2)
 		return GOTCHANG_PDF_ERROR_GENERAL;
 
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Create(argv[1], &file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Open(argv[1], &file));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_XrefChain(file, &chain));
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Iterator(chain, &chain_iterator));

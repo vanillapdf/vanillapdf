@@ -9,7 +9,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::files;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Create(const char *filename, PFileHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Open(const char *filename, PFileHandle result)
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
