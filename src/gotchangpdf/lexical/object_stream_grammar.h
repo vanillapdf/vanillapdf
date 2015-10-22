@@ -5,9 +5,7 @@
 #include "whitespace_grammar.h"
 #include "object_stream_header.h"
 
-#pragma warning (push, 3)
 #include <boost/spirit/include/qi.hpp>
-#pragma warning (pop)
 
 namespace gotchangpdf
 {

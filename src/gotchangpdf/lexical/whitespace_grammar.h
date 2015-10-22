@@ -5,9 +5,7 @@
 #include "offset_iterator.h"
 #include "qi_common.h"
 
-#pragma warning (push, 3)
 #include <boost/spirit/include/qi.hpp>
-#pragma warning (pop)
 
 namespace gotchangpdf
 {

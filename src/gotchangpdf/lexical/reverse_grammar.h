@@ -4,9 +4,7 @@
 #include "qi_common.h"
 #include "whitespace_grammar.h"
 
-#pragma warning (push, 3)
 #include <boost/spirit/include/qi.hpp>
-#pragma warning (pop)
 
 namespace gotchangpdf
 {
