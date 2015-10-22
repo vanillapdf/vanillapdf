@@ -18,15 +18,15 @@ gotchangpdf::lexical::ObjectStreamHeader,
 )
 
 
-BOOST_FUSION_ADAPT_STRUCT(
-gotchangpdf::BooleanObjectPtr,
-(bool, Content->_value)
-)
+//BOOST_FUSION_ADAPT_STRUCT(
+//gotchangpdf::BooleanObjectPtr,
+//(bool, Content->_value)
+//)
 
-BOOST_FUSION_ADAPT_STRUCT(
-gotchangpdf::IntegerObjectPtr,
-(gotchangpdf::types::integer, Content->_value)
-)
+//BOOST_FUSION_ADAPT_STRUCT(
+//gotchangpdf::IntegerObjectPtr,
+//(gotchangpdf::types::integer, Content->_value)
+//)
 
 BOOST_FUSION_ADAPT_STRUCT(
 gotchangpdf::NameObjectPtr,
@@ -48,10 +48,10 @@ gotchangpdf::DictionaryObjectPtr,
 //(gotchangpdf::DictionaryObject::list_type, _list)
 //)
 
-BOOST_FUSION_ADAPT_STRUCT(
-gotchangpdf::RealObjectPtr,
-(gotchangpdf::types::real, Content->_value)
-)
+//BOOST_FUSION_ADAPT_STRUCT(
+//gotchangpdf::RealObjectPtr,
+//(gotchangpdf::types::real, Content->_value)
+//)
 
 //BOOST_FUSION_ADAPT_STRUCT(
 //gotchangpdf::StreamObjectPtr,

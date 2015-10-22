@@ -15,8 +15,6 @@ namespace gotchangpdf
 		typedef types::integer value_type;
 		typedef types::double_integer value_type_doubled;
 
-		static_assert(sizeof(value_type_doubled) == 2 * sizeof(value_type), "Adjust type of value_type_doubled to be double size of the value type");
-
 		IntegerObject() = default;
 		explicit IntegerObject(value_type value);
 
@@ -40,11 +38,8 @@ namespace gotchangpdf
 		inline bool operator!=(const IntegerObject& other) const { return !Equals(other); }
 		inline bool operator<(const IntegerObject& other) const { return _value < other._value; }
 
-	//private:
-	public:
-		value_type _value = 0;
-
 	private:
+		value_type _value = 0;
 		ContainerPtr _container;
 	};
 

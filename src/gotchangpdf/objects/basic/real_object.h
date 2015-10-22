@@ -14,7 +14,7 @@ namespace gotchangpdf
 
 	public:
 		RealObject();
-		explicit RealObject(double value);
+		explicit RealObject(types::real value);
 
 		virtual inline Object::Type GetType(void) const _NOEXCEPT override{ return Object::Type::Real; }
 		virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }

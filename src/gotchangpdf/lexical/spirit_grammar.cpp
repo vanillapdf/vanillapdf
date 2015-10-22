@@ -112,7 +112,7 @@ namespace gotchangpdf
 		{
 			start %=
 				qi::eps
-				>> qi::bool_;
+				>> qi::omit[qi::bool_[qi::_val = phoenix::construct<BooleanObjectPtr>(qi::_1)]];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
@@ -161,7 +161,7 @@ namespace gotchangpdf
 		{
 			start %=
 				qi::eps
-				>> strict_float_parser;
+				>> qi::omit[strict_float_parser[qi::_val = phoenix::construct<RealObjectPtr>(qi::_1)]];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
@@ -171,7 +171,7 @@ namespace gotchangpdf
 		{
 			start %=
 				qi::eps
-				>> qi::int_;
+				>> qi::omit[qi::int_[qi::_val = phoenix::construct<IntegerObjectPtr>(qi::_1)]];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}

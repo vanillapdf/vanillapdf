@@ -6,6 +6,6 @@
 namespace gotchangpdf
 {
 	RealObject::RealObject() {}
-	RealObject::RealObject(double value) : _value(value) {}
+	RealObject::RealObject(types::real value) : _value(value) {}
 }
 
