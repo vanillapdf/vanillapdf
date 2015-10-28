@@ -19,7 +19,54 @@ namespace gotchangpdf
 	class IsTypeVisitor : public boost::static_visitor < bool >
 	{
 	public:
+		bool operator()(IndirectObjectReferencePtr& obj) const
+		{
+			auto found = visited.find(*obj);
+			if (found != visited.end()) {
+				std::stringstream ss;
+				ss << "Cyclic reference was found for " << obj->GetReferencedObjectNumber() << " " << obj->GetReferencedGenerationNumber() << " R";
+				throw exceptions::Exception(ss.str());
+			}
+
+			visited[*obj] = true;
+
+			auto direct = obj->GetReferencedObject();
+			return direct.apply_visitor(*this);
+		}
+
 		inline bool operator()(const T&) const { return true; }
+
+		template <typename U>
+		inline bool operator()(const U&) const { return false; }
+
+	private:
+		mutable std::map<IndirectObjectReference, bool> visited;
+	};
+
+	template <>
+	class IsTypeVisitor<IndirectObjectReferencePtr> : public boost::static_visitor < bool >
+	{
+	public:
+		inline bool operator()(const IndirectObjectReferencePtr&) const { return true; }
+
+		template <typename U>
+		inline bool operator()(const U&) const { return false; }
+	};
+
+	template <typename T>
+	class IsTypeVisitor<ArrayObjectPtr<T>> : public boost::static_visitor<bool>
+	{
+	public:
+		bool operator()(MixedArrayObjectPtr& obj) const
+		{
+			IsTypeVisitor<T> visitor;
+			for (auto& item : *obj) {
+				if (!item.apply_visitor(visitor))
+					return false;
+			}
+
+			return true;
+		}
 
 		template <typename U>
 		inline bool operator()(const U&) const { return false; }
@@ -98,12 +145,20 @@ namespace gotchangpdf
 		mutable std::map<IndirectObjectReference, bool> visited;
 	};
 
+	template <>
+	class ObjectVisitor<IndirectObjectReferencePtr> : public boost::static_visitor<IndirectObjectReferencePtr>
+	{
+	public:
+		inline IndirectObjectReferencePtr operator()(IndirectObjectReferencePtr& obj) const { return obj; }
+
+		template <typename U>
+		inline IndirectObjectReferencePtr operator()(const U&) const { throw exceptions::Exception("Type cast error"); }
+	};
+
 	template <typename T>
 	class ObjectVisitor<ArrayObjectPtr<T>> : public boost::static_visitor<ArrayObjectPtr<T>>
 	{
 	public:
-		inline ArrayObjectPtr<T> operator()(ArrayObjectPtr<T>& obj) const { return obj; }
-
 		inline ArrayObjectPtr<T> operator()(MixedArrayObjectPtr& obj) const { return obj->CastToArrayType<T>(); }
 
 		template <typename U>
