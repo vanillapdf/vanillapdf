@@ -5,11 +5,6 @@
 
 namespace gotchangpdf
 {
-	template<typename T>
-	inline void intrusive_ptr_add_ref(T* expr) { expr->AddRef(); }
-
-	template<typename T>
-	inline void intrusive_ptr_release(T* expr) { expr->Release(); }
 
 	 /* The plan was to use template <typename = std::enable_if<std::is_constructible<T>::value>>
 	 to determine if the class T has default constructor.
