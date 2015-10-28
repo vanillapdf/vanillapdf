@@ -3,11 +3,9 @@
 
 #include "file.h"
 #include "xref_chain.h"
-#include "smart_ptr.h"
 #include "spirit_parser.h"
 
 #include <boost/scope_exit.hpp>
-
 
 namespace gotchangpdf
 {

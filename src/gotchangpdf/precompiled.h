@@ -12,7 +12,6 @@
 
 // Solution
 #include "deferred.h"
-#include "smart_ptr.h"
 #include "objects.h"
 #include "object_visitors.h"
 #include "exception.h"
