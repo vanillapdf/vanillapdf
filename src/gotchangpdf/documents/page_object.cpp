@@ -16,7 +16,7 @@ namespace gotchangpdf
 		using namespace constant;
 
 		PageObject::PageObject(DictionaryObjectPtr obj) :
-			PageNode(obj)
+			PageNodeBase(obj)
 		{
 			if (*_obj->FindAs<NameObjectPtr>(Name::Type) != Name::Page)
 				throw Exception("TODO");

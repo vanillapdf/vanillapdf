@@ -3,12 +3,13 @@
 
 #include "fwd.h"
 #include "page_node.h"
+#include "page_node_utils.h"
 
 namespace gotchangpdf
 {
 	namespace documents
 	{
-		class PageTreeNode : public PageNode
+		class PageTreeNode : public PageNodeBase
 		{
 		public:
 			explicit PageTreeNode(DictionaryObjectPtr obj);

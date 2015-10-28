@@ -8,12 +8,11 @@ namespace gotchangpdf
 {
 	namespace documents
 	{
-		class PageNode : public HighLevelObject<DictionaryObjectPtr>
+		class PageNodeBase : public HighLevelObject<DictionaryObjectPtr>
 		{
 		public:
-			explicit PageNode(DictionaryObjectPtr obj) : HighLevelObject(obj) {}
-			static PageNodePtr Create(DictionaryObjectPtr obj);
-			virtual ~PageNode() = 0;
+			explicit PageNodeBase(DictionaryObjectPtr obj) : HighLevelObject(obj) {}
+			virtual ~PageNodeBase() = 0;
 		};
 	}
 }

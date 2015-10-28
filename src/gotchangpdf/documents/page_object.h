@@ -8,7 +8,7 @@ namespace gotchangpdf
 {
 	namespace documents
 	{
-		class PageObject : public PageNode
+		class PageObject : public PageNodeBase
 		{
 		public:
 			explicit PageObject(DictionaryObjectPtr obj);

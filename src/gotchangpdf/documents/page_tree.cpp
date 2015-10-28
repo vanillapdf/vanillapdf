@@ -19,6 +19,10 @@ namespace gotchangpdf
 			auto node = _root;
 			types::integer current = 1;
 
+			PageNodeBaseVisitor base_visitor;
+			PageNodeVisitor<PageTreeNodePtr> tree_visitor;
+			PageNodeVisitor<PageObjectPtr> object_visitor;
+
 		dive:
 			auto kids = node->Kids();
 			auto count = kids->Size();
@@ -28,10 +32,12 @@ namespace gotchangpdf
 				PageTreeNodePtr tree_node;
 
 				auto kid = kids->At(i);
-				switch (kid->GetType())
+				auto kid_base = kid.apply_visitor(base_visitor);
+
+				switch (kid_base->GetType())
 				{
 				case HighLevelObject::Type::PageTreeNode:
-					tree_node = dynamic_wrapper_cast<PageTreeNode>(kid);
+					tree_node = kid.apply_visitor(tree_visitor);
 					under = tree_node->KidCount();
 					if (current + under > number)
 					{
@@ -42,7 +48,7 @@ namespace gotchangpdf
 						}
 
 						auto result = tree_node->Kids()->At(number - current);
-						return dynamic_wrapper_cast<PageObject>(result);
+						return result.apply_visitor(object_visitor);
 					}
 					else
 					{
@@ -53,12 +59,12 @@ namespace gotchangpdf
 					break;
 				case HighLevelObject::Type::PageObject:
 					if (current == number)
-						return dynamic_wrapper_cast<PageObject>(kid);
+						return kid.apply_visitor(object_visitor);
 					else
 						current++;
 					break;
 				default:
-					throw new exceptions::InvalidObjectTypeException(*kid->GetObject());
+					throw new exceptions::InvalidObjectTypeException(*kid_base->GetObject());
 				}
 			}
 
@@ -67,11 +73,14 @@ namespace gotchangpdf
 
 		bool PageTree::HasTreeChilds(PageTreeNodePtr node) const
 		{
+			PageNodeBaseVisitor base_visitor;
 			auto kids = node->Kids();
 			auto count = kids->Size();;
 			for (int i = 0; i < count; ++i)
 			{
-				if (kids->At(i)->GetType() == HighLevelObject::Type::PageTreeNode)
+				auto kid = kids->At(i);
+				auto kid_base = kid.apply_visitor(base_visitor);
+				if (kid_base->GetType() == HighLevelObject::Type::PageTreeNode)
 					return true;
 			}
 

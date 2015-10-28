@@ -49,7 +49,7 @@ namespace gotchangpdf
 	{
 		class Document;
 		class Catalog;
-		class PageNode;
+		class PageNodeBase;
 		class PageTree;
 		class PageTreeNode;
 		class PageObject;
@@ -133,13 +133,12 @@ namespace gotchangpdf
 	using XrefTablePtr = Deferred<files::XrefTable>;
 	using XrefStreamPtr = Deferred<files::XrefStream>;
 
-	using PageTreePtr = SmartPtr<documents::PageTree>;
-	using PageTreeNodePtr = SmartPtr<documents::PageTreeNode>;
-	using PageObjectPtr = SmartPtr<documents::PageObject>;
-	using PageNodePtr = SmartPtr<documents::PageNode>;
-	using ResourceDictionaryPtr = SmartPtr<documents::ResourceDictionary>;
-	using RectanglePtr = SmartPtr<documents::Rectangle>;
-	using CatalogPtr = SmartPtr<documents::Catalog>;
+	using PageTreePtr = Deferred<documents::PageTree, false>;
+	using PageTreeNodePtr = Deferred<documents::PageTreeNode, false>;
+	using PageObjectPtr = Deferred<documents::PageObject, false>;
+	using ResourceDictionaryPtr = Deferred<documents::ResourceDictionary, false>;
+	using RectanglePtr = Deferred<documents::Rectangle, false>;
+	using CatalogPtr = Deferred<documents::Catalog, false>;
 }
 
 #endif /* _FWD_H */

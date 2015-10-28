@@ -1,6 +1,7 @@
 #include "precompiled.h"
 #include "page_tree_node.h"
 
+#include "page_object.h"
 #include "dictionary_object.h"
 #include "name_object.h"
 #include "integer_object.h"
@@ -13,7 +14,7 @@ namespace gotchangpdf
 		using namespace exceptions;
 
 		PageTreeNode::PageTreeNode(DictionaryObjectPtr obj) :
-			PageNode(obj)
+			PageNodeBase(obj)
 		{
 			if (*_obj->FindAs<NameObjectPtr>(Name::Type) != Name::Pages)
 				throw Exception("TODO");
@@ -31,7 +32,7 @@ namespace gotchangpdf
 			return kids->Convert<PageNodePtr>(
 				[] (DictionaryObjectPtr& obj)
 			{
-				return PageNode::Create(obj);
+				return CreatePageNode(obj);
 			});
 		}
 	}
