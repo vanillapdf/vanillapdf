@@ -16,10 +16,26 @@ void print_spaces(int nested)
 		printf("  ");
 }
 
-int process_page(PageObjectHandle obj, int nested)
+int process_contents(ContentsHandle obj, int nested)
 {
 	print_spaces(nested);
+	printf("Contents begin\n");
+
+	print_spaces(nested);
+	printf("Contents end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+int process_page(PageObjectHandle obj, int nested)
+{
+	ContentsHandle contents;
+
+	print_spaces(nested);
 	printf("Page begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(PageObject_GetContents(obj, &contents));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_contents(contents, nested + 1));
 
 	print_spaces(nested);
 	printf("Page end\n");
@@ -33,6 +49,7 @@ int process_buffer(BufferHandle buffer, int nested)
 	char* local_string;
 	size_type size;
 	size_t size_converted;
+	size_t print_size;
 
 	print_spaces(nested);
 	printf("Buffer begin\n");
@@ -44,12 +61,13 @@ int process_buffer(BufferHandle buffer, int nested)
 		return GOTCHANG_PDF_ERROR_GENERAL;
 
 	size_converted = (size_t)size;
+	print_size = size_converted > 20 ? 10 : size_converted;
 
-	local_string = calloc(sizeof(char), size_converted + 1);
+	local_string = calloc(sizeof(char), print_size + 1);
 	if (NULL == local_string)
 		return GOTCHANG_PDF_ERROR_GENERAL;
 
-	memcpy(local_string, data, size_converted);
+	memcpy(local_string, data, print_size);
 
 	print_spaces(nested + 1);
 	printf("Size: %d\n", size_converted);

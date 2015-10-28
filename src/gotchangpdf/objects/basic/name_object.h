@@ -50,6 +50,8 @@ namespace gotchangpdf
 			DECLARE_CONST_NAME(BitsPerComponent);
 			DECLARE_CONST_NAME(Colors);
 			DECLARE_CONST_NAME(Columns);
+			DECLARE_CONST_NAME(Container);
+			DECLARE_CONST_NAME(Contents);
 			DECLARE_CONST_NAME(DecodeParms);
 			DECLARE_CONST_NAME(EarlyChange);
 			DECLARE_CONST_NAME(Length);
@@ -66,7 +68,6 @@ namespace gotchangpdf
 			DECLARE_CONST_NAME(Page);
 			DECLARE_CONST_NAME(Count);
 			DECLARE_CONST_NAME(Kids);
-			DECLARE_CONST_NAME(Container);
 			DECLARE_CONST_NAME(MediaBox);
 			DECLARE_CONST_NAME(Resources);
 			DECLARE_CONST_NAME(Parent);

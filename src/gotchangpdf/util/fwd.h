@@ -55,6 +55,9 @@ namespace gotchangpdf
 		class PageObject;
 
 		class ResourceDictionary;
+		class ContentStream;
+		class Contents;
+
 		class Rectangle;
 	}
 
@@ -137,8 +140,11 @@ namespace gotchangpdf
 	using PageTreeNodePtr = Deferred<documents::PageTreeNode, false>;
 	using PageObjectPtr = Deferred<documents::PageObject, false>;
 	using ResourceDictionaryPtr = Deferred<documents::ResourceDictionary, false>;
+	using ContentStreamPtr = Deferred<documents::ContentStream, false>;
 	using RectanglePtr = Deferred<documents::Rectangle, false>;
 	using CatalogPtr = Deferred<documents::Catalog, false>;
+
+	using ContentsPtr = Deferred<documents::Contents>;
 }
 
 #endif /* _FWD_H */

@@ -36,6 +36,7 @@ namespace gotchangpdf
 
 			files::File *_file = nullptr;
 			XrefTableSubsectionsGrammar _xref_grammar;
+			ContentStreamGrammar _content_stream_grammar;
 			ObjectStreamGrammar _obj_stream_grammar;
 			DirectObjectGrammar _direct_grammar;
 			ReverseGrammar _reverse_grammar;
@@ -106,6 +107,24 @@ namespace gotchangpdf
 
 			const auto& gram = _impl->_xref_grammar(_impl->_file, offset);
 			return _impl->Read<files::Xref>(gram, input_begin_pos, input_end_pos);
+		}
+
+		ContentStreamOperationCollection SpiritParser::ReadContentStreamOperations(void)
+		{
+			// Don't skip whitespace explicitly
+			noskipws(*this);
+
+			// Direct cast to pos_iterator_type is not possible
+			base_iterator_type input_begin_base(*this);
+			base_iterator_type input_end_base;
+
+			types::stream_offset offset = tellg();
+
+			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _impl->_file->GetFilename(), 1, 1, offset);
+			pos_iterator_type input_end_pos;
+
+			const auto& gram = _impl->_content_stream_grammar(_impl->_file);
+			return _impl->Read<ContentStreamOperationCollection>(gram, input_begin_pos, input_end_pos);
 		}
 
 		std::vector<DirectObject> SpiritParser::ReadObjectStreamEntries(types::integer first, types::integer size)

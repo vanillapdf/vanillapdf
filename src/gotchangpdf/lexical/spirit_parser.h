@@ -7,6 +7,7 @@
 #include "direct_object.h"
 #include "object_visitors.h"
 #include "object_stream_header.h"
+#include "content_stream_grammar.h"
 
 #include <vector>
 #include <memory>
@@ -41,6 +42,7 @@ namespace gotchangpdf
 
 			std::vector<DirectObject> ReadObjectStreamEntries(types::integer first, types::integer size);
 			ObjectStreamHeaders ReadObjectStreamHeaders(types::integer size);
+			ContentStreamOperationCollection ReadContentStreamOperations(void);
 
 			files::Xref ReadXref(void);
 			files::Xref ReadXref(types::stream_offset offset);

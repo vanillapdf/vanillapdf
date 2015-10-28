@@ -37,10 +37,12 @@ extern "C"
 
 	DECLARE_OBJECT_HANDLE(XrefChainIterator);
 
-	/* Semantic */
+	/* Document */
 	DECLARE_OBJECT_HANDLE(Catalog);
 	DECLARE_OBJECT_HANDLE(PageTree);
 	DECLARE_OBJECT_HANDLE(PageObject);
+	
+	DECLARE_OBJECT_HANDLE(Contents);
 
 	/* Utils */
 	DECLARE_OBJECT_HANDLE(Buffer);

@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\gotchangpdf\c_contents.h" />
     <ClInclude Include="include\gotchangpdf\c_array_object.h" />
     <ClInclude Include="include\gotchangpdf\c_buffer.h" />
     <ClInclude Include="include\gotchangpdf\c_catalog.h" />
@@ -30,6 +31,8 @@
     <ClInclude Include="include\gotchangpdf\c_xref.h" />
     <ClInclude Include="include\gotchangpdf\c_values.h" />
     <ClInclude Include="src\gotchangpdf\documents\catalog.h" />
+    <ClInclude Include="src\gotchangpdf\documents\contents.h" />
+    <ClInclude Include="src\gotchangpdf\documents\content_stream.h" />
     <ClInclude Include="src\gotchangpdf\documents\document.h" />
     <ClInclude Include="src\gotchangpdf\documents\high_level_object.h" />
     <ClInclude Include="src\gotchangpdf\documents\page_node_utils.h" />
@@ -106,6 +109,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\gotchangpdf\documents\catalog.cpp" />
+    <ClCompile Include="src\gotchangpdf\documents\contents.cpp" />
+    <ClCompile Include="src\gotchangpdf\documents\content_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\documents\page_node.cpp" />
     <ClCompile Include="src\gotchangpdf\documents\page_node_utils.cpp" />
     <ClCompile Include="src\gotchangpdf\documents\page_object.cpp" />
@@ -121,6 +126,7 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_array_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_buffer.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_catalog.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_contents.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_dictionary_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_file.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_indirect_object_reference.cpp" />

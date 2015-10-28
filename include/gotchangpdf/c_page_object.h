@@ -10,6 +10,7 @@ extern "C"
 {
 #endif
 
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObjectHandle handle, PContentsHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_Release(PageObjectHandle handle);
 
 #ifdef __cplusplus

@@ -19,7 +19,8 @@ namespace gotchangpdf
 				Catalog,
 				PageTreeNode,
 				PageTree,
-				Rectangle
+				Rectangle,
+				ContentStream
 			};
 
 			explicit HighLevelObject(T obj) : _obj(obj) {}
