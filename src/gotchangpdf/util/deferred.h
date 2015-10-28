@@ -5,7 +5,6 @@
 
 namespace gotchangpdf
 {
-
 	 /* The plan was to use template <typename = std::enable_if<std::is_constructible<T>::value>>
 	 to determine if the class T has default constructor.
 	 Unfortunately class T is not defined yet, which is a must for std::is_constructible.
@@ -52,8 +51,8 @@ namespace gotchangpdf
 			Content.Owner = this;
 		}
 
-		inline operator T() { return *Contents; }
-		inline operator T() const { return *Contents; }
+		inline operator T&() { return *Contents; }
+		inline operator T&() const { return *Contents; }
 
 		inline bool operator==(const Deferred& other) const { return *Contents == *other.Contents; }
 		inline bool operator!=(const Deferred& other) const { return *Contents != *other.Contents; }
