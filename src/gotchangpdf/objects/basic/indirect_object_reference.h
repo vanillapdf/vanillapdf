@@ -14,6 +14,7 @@ namespace gotchangpdf
 	class IndirectObjectReference : public Containable, public Object
 	{
 	public:
+		IndirectObjectReference() = default;
 		explicit IndirectObjectReference(DirectObject obj);
 		IndirectObjectReference(types::integer obj, types::ushort gen);
 

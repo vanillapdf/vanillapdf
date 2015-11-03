@@ -3,8 +3,8 @@
 
 #include "fwd.h"
 #include "file_device.h"
-#include "constants.h"
-#include "direct_object.h"
+#include "header.h"
+#include "xref_chain.h"
 
 #include <memory>
 #include <vector>

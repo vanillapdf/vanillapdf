@@ -6,7 +6,16 @@
 
 namespace gotchangpdf
 {
-	IndirectObjectReference::IndirectObjectReference(DirectObject obj) : _object(obj) {}
+	IndirectObjectReference::IndirectObjectReference(DirectObject obj) : _object(obj)
+	{
+		ObjectBaseVisitor visitor;
+		auto base = obj.apply_visitor(visitor);
+
+		assert(base->IsIndirect());
+		_ref_obj = base->GetObjectNumber();
+		_ref_gen = base->GetGenerationNumber();
+		_initialized = true;
+	}
 
 	IndirectObjectReference::IndirectObjectReference(types::integer obj, types::ushort gen) : _ref_obj(obj), _ref_gen(gen) {}
 

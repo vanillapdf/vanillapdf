@@ -5,12 +5,6 @@
 
 namespace gotchangpdf
 {
-	 /* The plan was to use template <typename = std::enable_if<std::is_constructible<T>::value>>
-	 to determine if the class T has default constructor.
-	 Unfortunately class T is not defined yet, which is a must for std::is_constructible.
-	 Therefore we use another template parameter, where it is a developer responsibility
-	 to provide information about existence of default constructor. */
-
 	/*!
 	* \class Deferred
 	* \brief Deferred construction container for AST nodes.
@@ -18,7 +12,7 @@ namespace gotchangpdf
 	* This class is used to speed up the construction of the AST. The construction of the node is only done when an access to the data is issued.
 	* This code has been taken from the Eddi Compiler project (https://github.com/wichtounet/eddic/) and has been adapted a little.
 	*/
-	template <typename T, bool DefaultConstructible = true>
+	template <typename T>
 	struct Deferred
 	{
 		typedef T value_type;
@@ -33,19 +27,19 @@ namespace gotchangpdf
 			Content.Owner = this;
 		}
 
-		template <typename... Parameters>
+		template <typename... Parameters, typename = std::enable_if_t<std::is_constructible<T, Parameters...>::value>>
 		Deferred(const Parameters&... p) : Contents(new T(p...))
 		{
 			Content.Owner = this;
 		}
 
-		template <typename U>
+		template <typename U, typename = std::enable_if_t<std::is_constructible<T, std::initializer_list<U>>::value>>
 		Deferred(std::initializer_list<U> list) : Contents(new T(list))
 		{
 			Content.Owner = this;
 		}
 
-		template <typename = std::enable_if<DefaultConstructible>>
+		template <typename = std::enable_if_t<std::is_constructible<T>::value>>
 		Deferred() : Contents(reinterpret_cast<T*>(nullptr))
 		{
 			Content.Owner = this;
@@ -103,7 +97,7 @@ namespace gotchangpdf
 
 			T* get(void) const
 			{
-				return get_internal<DefaultConstructible>();
+				return get_internal<std::is_constructible<T>::value>();
 			}
 
 			template <bool Constructible>
@@ -147,8 +141,8 @@ namespace gotchangpdf
 	* This class is used to speed up the construction of the AST. The construction of the node is only done when an access to the data is issued.
 	* This code has been taken from the Epoch Compiler project (http://code.google.com/p/epoch-language/) and has been adapted a little.
 	*/
-	template <typename T, bool DefaultConstructible = true>
-	struct DeferredContainer : public Deferred<T, DefaultConstructible>
+	template <typename T>
+	struct DeferredContainer : public Deferred<T>
 	{
 		typedef typename T::value_type value_type;
 		typedef typename T::iterator iterator;
@@ -161,13 +155,13 @@ namespace gotchangpdf
 
 		DeferredContainer(const Deferred& rhs) : Deferred(rhs) {}
 
-		template <typename... Parameters>
+		template <typename... Parameters, typename = std::enable_if_t<std::is_constructible<T, Parameters...>::value>>
 		DeferredContainer(const Parameters&... p) : Deferred(p...) {}
 
-		template <typename U>
+		template <typename U, typename = std::enable_if_t<std::is_constructible<T, std::initializer_list<U>>::value>>
 		DeferredContainer(std::initializer_list<U> list) : Deferred(list) {}
 
-		template <typename = std::enable_if<DefaultConstructible>>
+		template <typename = std::enable_if_t<std::is_constructible<T>::value>>
 		DeferredContainer() : Deferred() {}
 
 		// Support insertion as if this were itself a container
@@ -205,8 +199,8 @@ namespace gotchangpdf
 		}
 	};
 
-	template <typename T, bool DefaultConstructible = true>
-	struct DeferredIterator: public Deferred<T, DefaultConstructible>
+	template <typename T>
+	struct DeferredIterator: public Deferred<T>
 	{
 		typedef typename T::value_type value_type;
 		typedef typename T::difference_type difference_type;
@@ -217,24 +211,14 @@ namespace gotchangpdf
 
 		DeferredIterator(const Deferred& rhs) : Deferred(rhs) {}
 
-		template <typename... Parameters>
+		template <typename... Parameters, typename = std::enable_if_t<std::is_constructible<T, Parameters...>::value>>
 		DeferredIterator(const Parameters&... p) : Deferred(p...) {}
 
-		template <typename U>
+		template <typename U, typename = std::enable_if_t<std::is_constructible<T, std::initializer_list<U>>::value>>
 		DeferredIterator(std::initializer_list<U> list) : Deferred(list) {}
 
-		template <typename = std::enable_if<DefaultConstructible>>
+		template <typename = std::enable_if_t<std::is_constructible<T>::value>>
 		DeferredIterator() : Deferred() {}
 	};
-
-	template<typename T>
-	T* AddRefGet(Deferred<T> obj)
-	{
-		obj.Content->AddRef();
-		return obj.Content.get();
-	}
-
-	//template <typename U>
-	//inline U* GetAs(void) const { return dynamic_cast<U*>(boost::intrusive_ptr<T>::get()); }
 }
 #endif /* _DEFERRED_H */

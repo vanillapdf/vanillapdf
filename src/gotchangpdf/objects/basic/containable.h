@@ -5,18 +5,19 @@
 
 #include <boost/variant/variant.hpp>
 #include <boost/smart_ptr/intrusive_ptr.hpp>
+#include <boost/variant/recursive_wrapper.hpp>
 
 namespace gotchangpdf
 {
 	typedef boost::variant <
 		// first is null object
 		NullObjectPtr,
-		MixedArrayObjectPtr,
+		boost::recursive_wrapper<MixedArrayObjectPtr>,
 		NameObjectPtr,
-		DictionaryObjectPtr,
+		boost::recursive_wrapper<DictionaryObjectPtr>,
 		FunctionObjectPtr,
 		BooleanObjectPtr,
-		IndirectObjectReferencePtr,
+		boost::recursive_wrapper<IndirectObjectReferencePtr>,
 		IntegerObjectPtr,
 		RealObjectPtr,
 		LiteralStringObjectPtr,

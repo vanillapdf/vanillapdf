@@ -8,8 +8,6 @@ namespace gotchangpdf
 {
 	class NullObject : public Containable, public Object
 	{
-		//friend struct Deferred<NullObject>;
-
 	public:
 		virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Null; }
 		virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
@@ -26,11 +24,6 @@ namespace gotchangpdf
 		inline bool operator==(const NullObject& other) const { return Equals(other); }
 		inline bool operator!=(const NullObject& other) const { return !Equals(other); }
 		inline bool operator<(const NullObject&) const { return false; }
-
-	private:
-		NullObject() = default;
-		NullObject(const NullObject&) = default;
-		NullObject& operator=(const NullObject&) = default;
 
 	private:
 		ContainerPtr _container;

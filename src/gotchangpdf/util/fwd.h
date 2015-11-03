@@ -3,13 +3,13 @@
 
 namespace gotchangpdf
 {
-	template <typename T, bool DefaultConstructible /* = true */>
+	template <typename T>
 	struct Deferred;
 
-	template <typename T, bool DefaultConstructible /* = true */>
+	template <typename T>
 	struct DeferredContainer;
 
-	template <typename T, bool DefaultConstructible /* = true */>
+	template <typename T>
 	struct DeferredIterator;
 
 	template <typename T>
@@ -116,33 +116,33 @@ namespace gotchangpdf
 	using NameObjectPtr = Deferred<NameObject>;
 	using BooleanObjectPtr = Deferred<BooleanObject>;
 	using FunctionObjectPtr = Deferred<FunctionObject>;
-	using IndirectObjectReferencePtr = Deferred<IndirectObjectReference, false>;
+	using IndirectObjectReferencePtr = Deferred<IndirectObjectReference>;
 	using IntegerObjectPtr = Deferred<IntegerObject>;
-	using NullObjectPtr = Deferred<NullObject, false>;
+	using NullObjectPtr = Deferred<NullObject>;
 	using RealObjectPtr = Deferred<RealObject>;
 	using StreamObjectPtr = Deferred<StreamObject>;
 	using LiteralStringObjectPtr = Deferred<LiteralStringObject>;
 	using HexadecimalStringObjectPtr = Deferred<HexadecimalStringObject>;
 
 	using XrefChainPtr = Deferred<files::XrefChain>;
-	using XrefEntryBasePtr = Deferred<files::XrefEntryBase, false>;
-	using XrefFreeEntryPtr = Deferred<files::XrefFreeEntry, false>;
-	using XrefUsedEntryPtr = Deferred<files::XrefUsedEntry, false>;
-	using XrefCompressedEntryPtr = Deferred<files::XrefCompressedEntry, false>;
+	using XrefEntryBasePtr = Deferred<files::XrefEntryBase>;
+	using XrefFreeEntryPtr = Deferred<files::XrefFreeEntry>;
+	using XrefUsedEntryPtr = Deferred<files::XrefUsedEntry>;
+	using XrefCompressedEntryPtr = Deferred<files::XrefCompressedEntry>;
 
 	using HeaderPtr = Deferred<files::Header>;
 
-	using XrefSubsectionPtr = Deferred<files::XrefSubsection, false>;
+	using XrefSubsectionPtr = Deferred<files::XrefSubsection>;
 	using XrefTablePtr = Deferred<files::XrefTable>;
 	using XrefStreamPtr = Deferred<files::XrefStream>;
 
-	using PageTreePtr = Deferred<documents::PageTree, false>;
-	using PageTreeNodePtr = Deferred<documents::PageTreeNode, false>;
-	using PageObjectPtr = Deferred<documents::PageObject, false>;
-	using ResourceDictionaryPtr = Deferred<documents::ResourceDictionary, false>;
-	using ContentStreamPtr = Deferred<documents::ContentStream, false>;
-	using RectanglePtr = Deferred<documents::Rectangle, false>;
-	using CatalogPtr = Deferred<documents::Catalog, false>;
+	using PageTreePtr = Deferred<documents::PageTree>;
+	using PageTreeNodePtr = Deferred<documents::PageTreeNode>;
+	using PageObjectPtr = Deferred<documents::PageObject>;
+	using ResourceDictionaryPtr = Deferred<documents::ResourceDictionary>;
+	using ContentStreamPtr = Deferred<documents::ContentStream>;
+	using RectanglePtr = Deferred<documents::Rectangle>;
+	using CatalogPtr = Deferred<documents::Catalog>;
 
 	using ContentsPtr = Deferred<documents::Contents>;
 }

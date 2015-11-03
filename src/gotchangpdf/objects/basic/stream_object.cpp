@@ -2,9 +2,6 @@
 #include "stream_object.h"
 
 #include "file.h"
-#include "dictionary_object.h"
-#include "name_object.h"
-#include "integer_object.h"
 #include "raw_stream.h"
 #include "filter.h"
 #include "filter_utils.h"
