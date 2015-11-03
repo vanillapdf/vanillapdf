@@ -79,6 +79,7 @@ namespace gotchangpdf
 		class XrefChain;
 
 		class XrefEntryBase;
+		class XrefNullEntry;
 		class XrefUsedEntry;
 		class XrefFreeEntry;
 		class XrefCompressedEntry;
@@ -126,6 +127,7 @@ namespace gotchangpdf
 
 	using XrefChainPtr = Deferred<files::XrefChain>;
 	using XrefEntryBasePtr = Deferred<files::XrefEntryBase>;
+	using XrefNullEntryPtr = Deferred<files::XrefNullEntry>;
 	using XrefFreeEntryPtr = Deferred<files::XrefFreeEntry>;
 	using XrefUsedEntryPtr = Deferred<files::XrefUsedEntry>;
 	using XrefCompressedEntryPtr = Deferred<files::XrefCompressedEntry>;

@@ -16,6 +16,7 @@ namespace gotchangpdf
 	namespace files
 	{
 		typedef boost::variant <
+			XrefNullEntryPtr,
 			XrefFreeEntryPtr,
 			XrefUsedEntryPtr,
 			XrefCompressedEntryPtr
@@ -30,7 +31,8 @@ namespace gotchangpdf
 		{
 		public:
 			enum class Usage {
-				Used = 0,
+				Null = 0,
+				Used,
 				Free,
 				Compressed
 			};
@@ -50,21 +52,26 @@ namespace gotchangpdf
 
 			inline bool InUse(void) const _NOEXCEPT{ return GetUsage() == Usage::Compressed || GetUsage() == Usage::Used; }
 
-			inline bool Initialized(void) const { return _initialized; }
-			inline void SetInitialized(bool value) { _initialized = value; }
-
 			inline void SetFile(files::File *file) _NOEXCEPT { _file = file; }
 			inline files::File* GetFile() const _NOEXCEPT { return _file; }
 
 			virtual ~XrefEntryBase() {};
 
 		protected:
-			virtual void Initialize(void) = 0;
-
 			files::File * _file = nullptr;
 			types::integer _obj_number = -1;
 			types::ushort _gen_number = 0;
-			bool _initialized = false;
+
+		private:
+			// Private only for NullEntry
+			XrefEntryBase() = default;
+			friend class XrefNullEntry;
+		};
+
+		class XrefNullEntry : public XrefEntryBase
+		{
+		public:
+			virtual Usage GetUsage(void) const _NOEXCEPT override { return XrefEntryBase::Usage::Null; }
 		};
 
 		class XrefFreeEntry : public XrefEntryBase
@@ -78,9 +85,6 @@ namespace gotchangpdf
 
 			inline types::integer GetNextFreeObjectNumber(void) const _NOEXCEPT { return _next; }
 			inline void SetNextFreeObjectNumber(types::integer value) _NOEXCEPT { _next = value; }
-
-		protected:
-			virtual void Initialize(void) override { /* Nothing to initialize for free entries */ }
 
 		private:
 			types::integer _next = -1;
@@ -101,12 +105,15 @@ namespace gotchangpdf
 			inline types::stream_offset GetOffset(void) const _NOEXCEPT { return _offset; }
 			inline void SetOffset(types::stream_offset value) _NOEXCEPT { _offset = value; }
 
-		protected:
-			virtual void Initialize(void) override;
+			inline bool Initialized(void) const { return _initialized; }
+			inline void SetInitialized(bool value) { _initialized = value; }
 
 		private:
+			void Initialize(void);
+
 			DirectObject _reference;
 			types::stream_offset _offset = std::_BADOFF;
+			bool _initialized = false;
 		};
 
 		class XrefCompressedEntry : public XrefEntryBase
@@ -127,13 +134,16 @@ namespace gotchangpdf
 			inline types::integer GetIndex(void) const _NOEXCEPT { return _index; }
 			inline void SetIndex(types::integer value) _NOEXCEPT { _index = value; }
 
-		protected:
-			virtual void Initialize(void) override;
+			inline bool Initialized(void) const { return _initialized; }
+			inline void SetInitialized(bool value) { _initialized = value; }
 
 		private:
+			void Initialize(void);
+
 			DirectObject _reference;
 			types::integer _object_stream_number = -1;
 			types::integer _index = -1;
+			bool _initialized = false;
 		};
 
 		class XrefEntryBaseVisitor : public boost::static_visitor<XrefEntryBase*>
@@ -156,6 +166,7 @@ namespace gotchangpdf
 		class XrefSubsection : public IUnknown
 		{
 		public:
+			XrefSubsection() = default;
 			XrefSubsection(types::integer index, types::integer size) : _index(index) { _entries.reserve(size); }
 			void Add(XrefEntry entry) { _entries.push_back(entry); }
 			types::integer Size(void) const _NOEXCEPT { return _entries.size(); }
@@ -165,7 +176,7 @@ namespace gotchangpdf
 			inline void SetFile(files::File *file) _NOEXCEPT { _file = file; }
 			inline files::File* GetFile() const _NOEXCEPT { return _file; }
 
-			types::integer Index(void) const _NOEXCEPT
+			types::integer Index(void) const
 			{
 				if (_entries.size() > 0) {
 					auto entry = _entries.at(0);
@@ -179,7 +190,7 @@ namespace gotchangpdf
 
 		private:
 			files::File * _file = nullptr;
-			types::integer _index;
+			types::integer _index = 0;
 			std::vector<XrefEntry> _entries;
 			//Xref _parent; // TODO parent holding strong ref - cyclic dependecies
 		};
