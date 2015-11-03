@@ -17,9 +17,12 @@ namespace gotchangpdf
 		{
 			if (*root->FindAs<NameObjectPtr>(Name::Type) != Name::Catalog)
 				throw exceptions::Exception("TODO");
+		}
 
-			auto pages = root->FindAs<DictionaryObjectPtr>(Name::Pages);
-			_pages = PageTreePtr(new PageTree(pages));
+		PageTreePtr Catalog::Pages(void) const
+		{
+			auto pages = _obj->FindAs<DictionaryObjectPtr>(Name::Pages);
+			return PageTreePtr(pages);
 		}
 	}
 }

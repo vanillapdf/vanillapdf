@@ -14,12 +14,9 @@ namespace gotchangpdf
 		public:
 			explicit Catalog(DictionaryObjectPtr root);
 
-			inline PageTreePtr Pages(void) const { return _pages; }
+			PageTreePtr Pages(void) const;
 
 			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::Catalog; }
-
-		private:
-			PageTreePtr _pages;
 		};
 
 	}
