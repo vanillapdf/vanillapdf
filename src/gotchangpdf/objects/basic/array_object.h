@@ -43,8 +43,8 @@ namespace gotchangpdf
 		ArrayObjectPtr<U> Convert(std::function<const U(T& obj)> f)
 		{
 			std::vector<U> list;
-			list.resize(_list.size());
-			transform(_list.begin(), _list.end(), list.begin(), f);
+			list.reserve(_list.size());
+			std::transform(_list.begin(), _list.end(), std::back_inserter(list), f);
 
 			return ArrayObject<U>(list);
 		}
