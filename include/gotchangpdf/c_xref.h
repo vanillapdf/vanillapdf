@@ -11,9 +11,10 @@ extern "C"
 #endif
 
 	typedef enum {
-		Free,
-		Used,
-		Compressed
+		XrefEntryNull,
+		XrefEntryFree,
+		XrefEntryUsed,
+		XrefEntryCompressed
 	} XrefEntryType, *PXrefEntryType;
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Type(XrefEntryHandle handle, PXrefEntryType result);

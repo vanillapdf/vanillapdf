@@ -120,6 +120,8 @@ namespace gotchangpdf
 				auto compressed = item.apply_visitor(visitor);
 				return compressed->GetReference();
 			}
+			case XrefEntryBase::Usage::Null:
+				throw Exception("Specified entry " + std::to_string(objNumber) + " " + std::to_string(genNumber) + " obj is missing");
 			default:
 				throw Exception("Unknown entry type");
 			}

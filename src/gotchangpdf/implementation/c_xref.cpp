@@ -108,13 +108,19 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Type(XrefEntryHandle ha
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_SCOPE(entry->GetFile()->GetFilename());
 
+	// I do not use Null entry intentionally - it is only for default construction
+	// It might be something going on
+	assert(entry->GetUsage() != XrefEntryBase::Usage::Null);
+
 	switch (entry->GetUsage()) {
 	case XrefEntryBase::Usage::Free:
-		*result = Free; break;
+		*result = XrefEntryFree; break;
 	case XrefEntryBase::Usage::Used:
-		*result = Used; break;
+		*result = XrefEntryUsed; break;
 	case XrefEntryBase::Usage::Compressed:
-		*result = Compressed; break;
+		*result = XrefEntryCompressed; break;
+	case XrefEntryBase::Usage::Null:
+		*result = XrefEntryNull; break;
 	default:
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
