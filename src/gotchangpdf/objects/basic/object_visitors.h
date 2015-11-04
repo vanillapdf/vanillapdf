@@ -94,18 +94,8 @@ namespace gotchangpdf
 	class SetContainerVisitor : public boost::static_visitor<void>
 	{
 	public:
-		explicit SetContainerVisitor(DictionaryObjectPtr& container)
-			: _container(static_cast<Object*>(container.Content.get())),
-			boost::static_visitor<void>() {}
-
-		explicit SetContainerVisitor(MixedArrayObjectPtr& container)
-			: _container(static_cast<Object*>(container.Content.get())),
-			boost::static_visitor<void>() {}
-
-		template <typename T>
-		explicit SetContainerVisitor(ArrayObjectPtr<T>& container)
-			: _container(static_cast<Object*>(container.Content.get())),
-			boost::static_visitor<void>() {}
+		explicit SetContainerVisitor(const ContainerPtr container)
+			: _container(container), boost::static_visitor<void>() {}
 
 		SetContainerVisitor& operator=(const SetContainerVisitor&) = delete;
 		SetContainerVisitor(const SetContainerVisitor&) = delete;
@@ -114,7 +104,7 @@ namespace gotchangpdf
 		inline void operator()(T& obj) const { obj->SetContainer(_container); }
 
 	private:
-		ContainerPtr _container;
+		const ContainerPtr _container;
 	};
 
 	template <typename T>

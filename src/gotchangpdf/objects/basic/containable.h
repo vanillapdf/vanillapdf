@@ -11,6 +11,13 @@ namespace gotchangpdf
 {
 	typedef boost::variant <
 		// first is null object
+		boost::recursive_wrapper<NullObjectPtr>,
+		boost::recursive_wrapper<MixedArrayObjectPtr>,
+		boost::recursive_wrapper<DictionaryObjectPtr>
+	> ContainerPtr;
+
+	typedef boost::variant <
+		// first is null object
 		NullObjectPtr,
 		boost::recursive_wrapper<MixedArrayObjectPtr>,
 		NameObjectPtr,
@@ -23,8 +30,6 @@ namespace gotchangpdf
 		LiteralStringObjectPtr,
 		HexadecimalStringObjectPtr
 	> ContainableObject;
-
-	typedef boost::intrusive_ptr<Object> ContainerPtr;
 
 	class Containable
 	{
