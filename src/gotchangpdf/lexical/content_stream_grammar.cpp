@@ -29,9 +29,9 @@ namespace gotchangpdf
 		ContentStreamOperatorGrammar::ContentStreamOperatorGrammar() :
 			base_type(start, "Content stream operator grammar")
 		{
-			//start %=
-			//	qi::lit("BT")[qi::_val = phoenix::construct<Operator1Ptr>()]
-			//	| qi::eps[qi::_val = phoenix::construct<Operator2Ptr>()];
+			start %=
+				qi::lit("BT")[qi::_val = phoenix::construct<BeginTextOperatorPtr>()]
+				| qi::lit("ET")[qi::_val = phoenix::construct<EndTextOperatorPtr>()];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
@@ -39,12 +39,12 @@ namespace gotchangpdf
 		ContentStreamGrammar::ContentStreamGrammar() :
 			base_type(start, "Content stream grammar")
 		{
-			//start %=
-			//	*(operation(qi::_r1) >> eol);
+			start %=
+				*(operation(qi::_r1) >> eol);
 
-			//operation %=
-			//	*(_operand(qi::_r1) >> whitespace)
-			//	> _operator;
+			operation %=
+				*(_operand(qi::_r1) >> whitespace)
+				> _operator;
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 			BOOST_SPIRIT_DEBUG_NODE(operation);

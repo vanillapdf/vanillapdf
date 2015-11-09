@@ -11,6 +11,56 @@ namespace gotchangpdf
 {
 	namespace documents
 	{
+		class ContentOperationBase : public IUnknown
+		{
+
+		};
+
+		class BeginTextOperation : public ContentOperationBase
+		{
+
+		};
+
+		class EndTextOperation : public ContentOperationBase
+		{
+
+		};
+
+		typedef Deferred<BeginTextOperation> BeginTextOperationPtr;
+		typedef Deferred<EndTextOperation> EndTextOperationPtr;
+
+		typedef boost::variant<
+			BeginTextOperationPtr,
+			EndTextOperationPtr
+		> ContentOperationPtr;
+
+		class ContentObjectBase : public IUnknown
+		{
+
+		};
+
+		class TextObject : public ContentObjectBase
+		{
+		public:
+			TextObject(lexical::ContentStreamOperationCollection ops) : _operations(ops) {}
+
+		private:
+			lexical::ContentStreamOperationCollection _operations;
+		};
+
+		typedef Deferred<TextObject> TextObjectPtr;
+
+		typedef boost::variant<
+			TextObjectPtr
+		> ContentObjectPtr;
+
+		typedef boost::variant<
+			ContentObjectPtr,
+			ContentOperationPtr
+		> ContentInstructionPtr;
+
+		typedef std::vector<ContentInstructionPtr> ContentInstructionCollection;
+
 		class Contents : public IUnknown
 		{
 		public:
@@ -18,9 +68,11 @@ namespace gotchangpdf
 			explicit Contents(StreamObjectPtr obj);
 			explicit Contents(ArrayObjectPtr<IndirectObjectReferencePtr> obj);
 
-			lexical::ContentStreamOperationCollection Operations(void) const;
+			ContentInstructionCollection Operations(void) const;
+			types::uinteger GetOperationsSize(void) const;
+			ContentInstructionPtr GetOperationAt(types::uinteger at) const;
 
-			inline types::integer GetContentStreamSize(void) const { return _contents.size(); }
+			inline types::uinteger GetContentStreamSize(void) const { return _contents.size(); }
 			inline ContentStreamPtr GetContentStreamAt(types::uinteger at) const { return _contents.at(at); }
 
 		private:

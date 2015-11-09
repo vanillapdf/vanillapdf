@@ -50,12 +50,22 @@ namespace gotchangpdf
 		};
 
 		class OperatorBase : public IUnknown {};
-		class Operator1 : public OperatorBase {};
-		class Operator2 : public OperatorBase {};
+		class BeginTextOperator : public OperatorBase {};
+		class EndTextOperator : public OperatorBase {};
 
-		typedef Deferred<Operator1> Operator1Ptr;
-		typedef Deferred<Operator2> Operator2Ptr;
-		typedef boost::variant<Operator1Ptr, Operator2Ptr> ContentStreamOperator;
+		typedef Deferred<BeginTextOperator> BeginTextOperatorPtr;
+		typedef Deferred<EndTextOperator> EndTextOperatorPtr;
+		typedef boost::variant<BeginTextOperatorPtr, EndTextOperatorPtr> ContentStreamOperator;
+
+		template <typename T>
+		class IsContentStreamOperatorVisitor : public boost::static_visitor<bool>
+		{
+		public:
+			inline bool operator()(const T&) const { return true; }
+
+			template <typename U>
+			inline bool operator()(const U&) const { return false; }
+		};
 
 		class ContentStreamOperatorGrammar : public qi::grammar<pos_iterator_type,
 			ContentStreamOperator()>
