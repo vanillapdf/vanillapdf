@@ -4,6 +4,8 @@
 #include "file_position.h"
 #include "offset_iterator.h"
 
+#include <boost/spirit/home/support/iterators/istream_iterator.hpp>
+
 namespace gotchangpdf
 {
 	namespace lexical

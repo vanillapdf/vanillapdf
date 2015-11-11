@@ -2,6 +2,7 @@
 #include "file.h"
 #include "xref_chain.h"
 #include "catalog.h"
+#include "object_visitors.h"
 
 #include "c_file.h"
 #include "c_helper.h"

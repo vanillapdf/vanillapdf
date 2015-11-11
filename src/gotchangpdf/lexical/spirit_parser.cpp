@@ -14,6 +14,8 @@
 
 #include <iomanip>
 
+#include <boost/spirit/include/qi.hpp>
+
 namespace gotchangpdf
 {
 	namespace lexical
@@ -60,7 +62,7 @@ namespace gotchangpdf
 					return obj;
 				}
 
-				LOG_ERROR << "Parsing failed" << endl;
+				LOG_ERROR << "Parsing failed";
 
 				const auto& pos = input_begin_pos.get_position();
 				LOG_ERROR <<
@@ -71,7 +73,7 @@ namespace gotchangpdf
 				throw exceptions::Exception("Parsing failed");
 			}
 			catch (const qi::expectation_failure<pos_iterator_type>& exception) {
-				LOG_ERROR << "Parsing failed" << endl;
+				LOG_ERROR << "Parsing failed";
 
 				auto pos_begin = exception.first;
 				const auto& pos = pos_begin.get_position();

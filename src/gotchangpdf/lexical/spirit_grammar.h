@@ -4,7 +4,19 @@
 #include "qi_common.h"
 #include "whitespace_grammar.h"
 
-#include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/qi_grammar.hpp>
+
+#pragma warning (push, 3)
+
+// conversion from 'unsigned int' to 'float', possible loss of data in real_impl
+#pragma warning (disable: 4244)
+
+// signed/unsigned mismatch in real_impl
+#pragma warning (disable: 4018)
+
+#include <boost/spirit/home/qi/numeric/real.hpp>
+
+#pragma warning (pop)
 
 namespace gotchangpdf
 {

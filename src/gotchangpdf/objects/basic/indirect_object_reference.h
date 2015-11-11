@@ -2,12 +2,9 @@
 #define _INDIRECT_OBJECT_REFERENCE_H
 
 #include "fwd.h"
-#include "object.h"
-#include "integer_object.h"
-#include "direct_object.h"
-#include "constants.h"
 #include "containable.h"
 #include "objects.h"
+#include "direct_object.h"
 
 namespace gotchangpdf
 {
@@ -51,5 +48,7 @@ namespace gotchangpdf
 		types::ushort _ref_gen = 0;
 	};
 }
+
+#include "object_visitors.h"
 
 #endif /* _INDIRECT_OBJECT_REFERENCE_H */

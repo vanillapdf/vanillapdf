@@ -3,6 +3,7 @@
 
 #include "file.h"
 #include "objects.h"
+#include "object_visitors.h"
 
 namespace gotchangpdf
 {

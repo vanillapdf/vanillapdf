@@ -1,7 +1,9 @@
-#ifndef _OBJECTS_H
-#define _OBJECTS_H
+// Every file has its own include guard
 
 // Do not reorder the includes spontaneously
+
+// base
+#include "object.h"
 
 // self-sufficient
 #include "null_object.h"
@@ -17,5 +19,3 @@
 #include "dictionary_object.h"
 #include "stream_object.h"
 #include "indirect_object_reference.h"
-
-#endif /* _OBJECTS_H */

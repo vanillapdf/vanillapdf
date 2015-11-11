@@ -9,6 +9,7 @@
 #include "name_object.h"
 #include "integer_object.h"
 #include "exception.h"
+#include "object_visitors.h"
 
 namespace gotchangpdf
 {

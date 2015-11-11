@@ -1,5 +1,6 @@
 #include "precompiled.h"
 #include "file.h"
+#include "object_visitors.h"
 
 #include "c_array_object.h"
 #include "c_helper.h"

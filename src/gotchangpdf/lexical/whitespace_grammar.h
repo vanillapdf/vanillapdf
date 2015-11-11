@@ -5,7 +5,7 @@
 #include "offset_iterator.h"
 #include "qi_common.h"
 
-#include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/qi_grammar.hpp>
 
 namespace gotchangpdf
 {

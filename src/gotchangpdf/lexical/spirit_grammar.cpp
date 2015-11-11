@@ -4,12 +4,11 @@
 #include "file.h"
 #include "iter_offset_parser.h"
 #include "abstract_syntax_tree.h"
+#include "object_visitors.h"
 
-#pragma warning (push, 3)
+#include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix.hpp>
-#include <boost/spirit/include/qi_repeat.hpp>
 #include <boost/spirit/repository/include/qi_advance.hpp>
-#pragma warning (pop)
 
 using namespace gotchangpdf;
 using namespace gotchangpdf::lexical;

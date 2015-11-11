@@ -2,6 +2,8 @@
 #include "object_stream_grammar.h"
 #include "abstract_syntax_tree.h"
 
+#include <boost/spirit/include/qi.hpp>
+
 namespace gotchangpdf
 {
 	namespace lexical

@@ -1,6 +1,8 @@
 #include "precompiled.h"
 #include "file.h"
 
+#include "object_visitors.h"
+
 #include "c_indirect_object_reference.h"
 #include "c_helper.h"
 

@@ -3,6 +3,7 @@
 #include "xref_chain.h"
 
 #include "file.h"
+#include "object_visitors.h"
 
 #include "c_xref.h"
 #include "c_values.h"

@@ -5,7 +5,7 @@
 #include "whitespace_grammar.h"
 #include "object_stream_header.h"
 
-#include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/qi_grammar.hpp>
 
 namespace gotchangpdf
 {

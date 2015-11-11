@@ -4,7 +4,6 @@
 #include "fwd.h"
 #include "object.h"
 #include "exception.h"
-//#include "object_visitors.h"
 #include "containable.h"
 
 //#include <unordered_map>
@@ -132,5 +131,7 @@ namespace gotchangpdf
 		ContainerPtr _container;
 	};
 }
+
+#include "object_visitors.h"
 
 #endif /* _DICTIONARY_OBJECT_H */

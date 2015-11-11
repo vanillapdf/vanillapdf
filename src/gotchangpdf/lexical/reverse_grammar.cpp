@@ -1,6 +1,8 @@
 #include "precompiled.h"
 #include "reverse_grammar.h"
 
+#include <boost/spirit/include/qi.hpp>
+
 namespace gotchangpdf
 {
 	namespace lexical

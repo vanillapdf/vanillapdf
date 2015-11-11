@@ -1,6 +1,8 @@
 #include "precompiled.h"
 #include "whitespace_grammar.h"
 
+#include <boost/spirit/include/qi.hpp>
+
 namespace gotchangpdf
 {
 	namespace lexical

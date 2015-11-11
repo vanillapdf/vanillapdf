@@ -6,6 +6,7 @@
 #include "filter.h"
 #include "filter_utils.h"
 #include "filter_visitors.h"
+#include "object_visitors.h"
 
 namespace gotchangpdf
 {

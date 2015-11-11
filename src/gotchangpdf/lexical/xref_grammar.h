@@ -6,7 +6,8 @@
 #include "qi_common.h"
 #include "whitespace_grammar.h"
 
-#include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/qi_grammar.hpp>
+#include <boost/spirit/home/qi/numeric/int.hpp>
 
 namespace gotchangpdf
 {
