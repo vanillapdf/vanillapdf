@@ -41,7 +41,7 @@ namespace gotchangpdf
 					// begin text
 					assert(it->first.size() == 0);
 
-					auto last = std::find_if(it, ops.end(), [is_end_text](const lexical::ContentStreamOperationCollection::value_type& item) {
+					auto last = std::find_if(it, ops.end(), [is_end_text](const decltype(it)::value_type& item) {
 						return item.second.apply_visitor(is_end_text);
 					});
 
@@ -52,6 +52,8 @@ namespace gotchangpdf
 				}
 				else {
 					// generic
+					ContentOperationPtr generic_operation = *it;
+					result.push_back(generic_operation);
 				}
 
 				++it;

@@ -30,6 +30,7 @@ namespace gotchangpdf
 		typedef Deferred<EndTextOperation> EndTextOperationPtr;
 
 		typedef boost::variant<
+			lexical::ContentStreamOperation,
 			BeginTextOperationPtr,
 			EndTextOperationPtr
 		> ContentOperationPtr;
