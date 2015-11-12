@@ -30,7 +30,7 @@ int process_contents(ContentsHandle obj, int nested)
 	printf("Size: %d\n", size);
 
 	for (i = 0; i < size; ++i) {
-		RETURN_ERROR_IF_NOT_SUCCESS(Contents_GetOperationAt(obj, i));
+		//RETURN_ERROR_IF_NOT_SUCCESS(Contents_GetOperationAt(obj, i));
 	}
 
 	print_spaces(nested);
