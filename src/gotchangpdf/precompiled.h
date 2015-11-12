@@ -20,6 +20,11 @@
 
 /*---------------------------------------------------*/
 
+// Boost variant size if by default only 20
+// Content stream grammar requires around 70
+#define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
+#define BOOST_MPL_LIMIT_LIST_SIZE 80
+
 // Solution
 #include "deferred.h"
 #include "objects.h"
