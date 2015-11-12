@@ -54,6 +54,7 @@
     <ClInclude Include="src\gotchangpdf\implementation\c_helper.h" />
     <ClInclude Include="src\gotchangpdf\lexical\abstract_syntax_tree.h" />
     <ClInclude Include="src\gotchangpdf\lexical\content_stream_grammar.h" />
+    <ClInclude Include="src\gotchangpdf\lexical\content_stream_operator_grammar.h" />
     <ClInclude Include="src\gotchangpdf\lexical\file_position.h" />
     <ClInclude Include="src\gotchangpdf\lexical\iter_offset_parser.h" />
     <ClInclude Include="src\gotchangpdf\lexical\object_stream_grammar.h" />
@@ -139,6 +140,7 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_string_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_xref.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\content_stream_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\lexical\content_stream_operator_grammar.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\object_stream_grammar.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\reverse_grammar.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\spirit_grammar.cpp" />
