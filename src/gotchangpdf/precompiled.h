@@ -35,4 +35,6 @@
 #pragma warning (disable: 4996)
 #include "log.h"
 
+#include <boost/spirit/include/qi_grammar.hpp>
+
 #endif /* _PRECOMPILED_H */

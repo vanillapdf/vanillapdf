@@ -66,7 +66,7 @@ namespace gotchangpdf
 			ContentStreamOperandGrammar _operand;
 			ContentStreamOperatorGrammar _operator;
 			EndOfLine eol;
-			SingleWhitespace whitespace;
+			Whitespace whitespaces;
 		};
 	}
 }

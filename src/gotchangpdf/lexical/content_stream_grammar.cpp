@@ -3,7 +3,6 @@
 //#include "abstract_syntax_tree.h"
 
 #include <boost/spirit/include/qi.hpp>
-#include <boost/spirit/include/phoenix.hpp>
 
 namespace gotchangpdf
 {
@@ -33,10 +32,10 @@ namespace gotchangpdf
 			base_type(start, "Content stream grammar")
 		{
 			start %=
-				*(operation(qi::_r1) >> eol);
+				*(operation(qi::_r1) > whitespaces);
 
 			operation %=
-				*(_operand(qi::_r1) >> whitespace)
+				*(_operand(qi::_r1) > whitespaces)
 				>> _operator;
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
