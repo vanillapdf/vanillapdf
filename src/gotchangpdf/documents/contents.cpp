@@ -27,7 +27,12 @@ namespace gotchangpdf
 
 			for (auto item : _contents) {
 				auto operations = item->Operations();
-				ops.insert(ops.end(), operations.begin(), operations.end());
+				auto size = operations.size();
+				ops.reserve(ops.size() + size);
+				for (unsigned int i = 0; i < size; ++i) {
+					auto op = operations.at(i);
+					ops.push_back(op);
+				}
 			}
 
 			// visitors
