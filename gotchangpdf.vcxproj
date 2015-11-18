@@ -139,7 +139,7 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_stream_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_string_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_xref.cpp" />
-    <ClCompile Include="src\gotchangpdf\lexical\clipping_path.cpp" />
+    <ClCompile Include="src\gotchangpdf\lexical\clipping_path_grammar.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\color_grammar.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\compatibility_grammar.cpp" />
     <ClCompile Include="src\gotchangpdf\lexical\content_stream_grammar.cpp" />
