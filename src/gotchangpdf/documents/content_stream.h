@@ -5,7 +5,7 @@
 #include "high_level_object.h"
 #include "stream_object.h"
 
-#include "content_stream_grammar.h"
+#include "content_stream_operations.h"
 
 namespace gotchangpdf
 {

@@ -14,20 +14,6 @@ namespace gotchangpdf
 	{
 		namespace qi = boost::spirit::qi;
 
-		typedef boost::variant <
-			// first is null object
-			NullObjectPtr,
-			MixedArrayObjectPtr,
-			NameObjectPtr,
-			DictionaryObjectPtr,
-			FunctionObjectPtr,
-			BooleanObjectPtr,
-			IntegerObjectPtr,
-			RealObjectPtr,
-			LiteralStringObjectPtr,
-			HexadecimalStringObjectPtr
-		> ContentStreamOperand;
-
 		class ContentStreamOperandGrammar : public qi::grammar<pos_iterator_type,
 			ContentStreamOperand(files::File*)>
 		{
@@ -49,9 +35,6 @@ namespace gotchangpdf
 			LiteralStringGrammar literal_string_object;
 			HexadecimalStringGrammar hexadecimal_string_object;
 		};
-
-		typedef std::pair<std::vector<ContentStreamOperand>, ContentStreamOperator> ContentStreamOperation;
-		typedef std::vector<ContentStreamOperation> ContentStreamOperationCollection;
 
 		class ContentStreamGrammar : public qi::grammar<pos_iterator_type,
 			ContentStreamOperationCollection(files::File*)>
