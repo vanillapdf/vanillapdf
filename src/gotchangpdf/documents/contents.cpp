@@ -23,6 +23,9 @@ namespace gotchangpdf
 
 		ContentInstructionCollection Contents::Operations(void) const
 		{
+			if (!_operations.empty())
+				return _operations;
+
 			lexical::ContentStreamOperationCollection ops;
 
 			for (auto item : _contents) {
@@ -35,19 +38,21 @@ namespace gotchangpdf
 				}
 			}
 
-			// visitors
-			lexical::IsContentStreamOperatorVisitor<lexical::BeginTextOperatorPtr> is_begin_text;
-			lexical::IsContentStreamOperatorVisitor<lexical::EndTextOperatorPtr> is_end_text;
+			// visitor
+			lexical::ContentStreamOperatorTypeVisitor type_visitor;
 
 			ContentInstructionCollection result;
 			auto it = ops.begin();
 			while (it != ops.end()) {
-				if (it->second.apply_visitor(is_begin_text)) {
+				auto type = it->second.apply_visitor(type_visitor);
+				if (type == lexical::OperatorBase::Type::BeginText) {
 					// begin text
 					assert(it->first.size() == 0);
 
-					auto last = std::find_if(it, ops.end(), [is_end_text](const decltype(it)::value_type& item) {
-						return item.second.apply_visitor(is_end_text);
+					auto last = std::find_if(it, ops.end(), [type_visitor](const decltype(it)::value_type& item) {
+						auto op = item.second;
+						auto type = op.apply_visitor(type_visitor);
+						return (type == lexical::OperatorBase::Type::EndText);
 					});
 
 					lexical::ContentStreamOperationCollection text_object_data(it, last);
@@ -64,6 +69,7 @@ namespace gotchangpdf
 				++it;
 			}
 
+			_operations = result;
 			return result;
 		}
 

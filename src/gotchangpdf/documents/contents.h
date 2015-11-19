@@ -78,6 +78,7 @@ namespace gotchangpdf
 
 		private:
 			std::vector<ContentStreamPtr> _contents;
+			mutable ContentInstructionCollection _operations;
 		};
 	}
 }
