@@ -194,6 +194,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToLiteralString(ObjectHand
 
 	try {
 		LiteralStringObject* converted = dynamic_cast<LiteralStringObject*>(obj);
+		if (nullptr == converted)
+			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
+
 		*result = reinterpret_cast<LiteralStringHandle>(converted);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
