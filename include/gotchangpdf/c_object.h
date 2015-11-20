@@ -12,13 +12,13 @@ extern "C"
 
 	// TODO i have no idea how export enum without clone
 	typedef enum {
+		Null = 0,
 		Array,
 		Boolean,
 		Dictionary,
 		Function,
 		Integer,
 		Name,
-		Null,
 		Real,
 		Stream,
 		HexadecimalString,

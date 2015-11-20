@@ -12,15 +12,15 @@ namespace gotchangpdf
 	class Object : public IUnknown
 	{
 	public:
-		enum class Type : unsigned char
+		enum class Type
 		{
+			Null = 0,
 			Array,
 			Boolean,
 			Dictionary,
 			Function,
 			Integer,
 			Name,
-			Null,
 			Real,
 			Stream,
 			HexadecimalString,
@@ -31,7 +31,7 @@ namespace gotchangpdf
 		static const char* TypeName(Type type);
 
 	public:
-		virtual inline Type GetType(void) const _NOEXCEPT = 0;
+		virtual Type GetType(void) const _NOEXCEPT = 0;
 
 	public:
 		inline bool IsIndirect(void) const _NOEXCEPT { return _obj_number >= 0; }
