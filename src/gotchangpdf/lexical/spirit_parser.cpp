@@ -11,6 +11,7 @@
 #include "xref_grammar.h"
 #include "reverse_grammar.h"
 #include "object_stream_grammar.h"
+#include "content_stream_grammar.h"
 
 #include <iomanip>
 

@@ -7,7 +7,7 @@
 #include "direct_object.h"
 #include "object_visitors.h"
 #include "object_stream_header.h"
-#include "content_stream_grammar.h"
+#include "content_stream_operations.h"
 
 #include <vector>
 #include <memory>

@@ -2,6 +2,7 @@
 #define _CONTENT_STREAM_GRAMMAR_H
 
 #include "qi_common.h"
+#include "content_stream_operations.h"
 #include "content_stream_operator_grammar.h"
 #include "spirit_grammar.h"
 
@@ -44,7 +45,7 @@ namespace gotchangpdf
 
 		private:
 			qi::rule<pos_iterator_type, ContentStreamOperationCollection(files::File*)> start;
-			qi::rule<pos_iterator_type, ContentStreamOperation(files::File*)> operation;
+			qi::rule<pos_iterator_type, ContentStreamOperationPtr(files::File*)> operation;
 
 			ContentStreamOperandGrammar _operand;
 			ContentStreamOperatorGrammar _operator;

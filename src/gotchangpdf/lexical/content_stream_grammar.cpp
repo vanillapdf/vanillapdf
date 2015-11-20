@@ -3,6 +3,7 @@
 //#include "abstract_syntax_tree.h"
 
 #include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/phoenix.hpp>
 
 namespace gotchangpdf
 {
@@ -35,8 +36,14 @@ namespace gotchangpdf
 				*(operation(qi::_r1) > whitespaces);
 
 			operation %=
-				*(_operand(qi::_r1) > whitespaces)
-				>> _operator;
+				qi::eps
+				>> qi::omit
+				[
+					(
+						*(_operand(qi::_r1) > whitespaces)
+						>> _operator
+					)[qi::_val = phoenix::construct<ContentStreamOperationPtr>(qi::_1, qi::_2)]
+				];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 			BOOST_SPIRIT_DEBUG_NODE(operation);

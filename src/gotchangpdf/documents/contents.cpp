@@ -21,10 +21,10 @@ namespace gotchangpdf
 			}
 		}
 
-		ContentInstructionCollection Contents::Operations(void) const
+		ContentInstructionCollection Contents::Instructions(void) const
 		{
-			if (!_operations.empty())
-				return _operations;
+			if (!_instructions.empty())
+				return _instructions;
 
 			lexical::ContentStreamOperationCollection ops;
 
@@ -38,21 +38,19 @@ namespace gotchangpdf
 				}
 			}
 
-			// visitor
-			lexical::ContentStreamOperatorTypeVisitor type_visitor;
+			// visitors
+			lexical::IsContentStreamOperatorTypeVisitor<lexical::BeginTextOperatorPtr> is_begin_text;
+			lexical::IsContentStreamOperatorTypeVisitor<lexical::EndTextOperatorPtr> is_end_text;
 
 			ContentInstructionCollection result;
 			auto it = ops.begin();
 			while (it != ops.end()) {
-				auto type = it->second.apply_visitor(type_visitor);
-				if (type == lexical::OperatorBase::Type::BeginText) {
+				if (it->GetOperator().apply_visitor(is_begin_text)) {
 					// begin text
-					assert(it->first.size() == 0);
+					assert(it->GetOperands().size() == 0);
 
-					auto last = std::find_if(it, ops.end(), [type_visitor](const decltype(it)::value_type& item) {
-						auto op = item.second;
-						auto type = op.apply_visitor(type_visitor);
-						return (type == lexical::OperatorBase::Type::EndText);
+					auto last = std::find_if(it, ops.end(), [is_end_text](const decltype(it)::value_type& item) {
+						return item.GetOperator().apply_visitor(is_end_text);
 					});
 
 					lexical::ContentStreamOperationCollection text_object_data(it, last);
@@ -69,19 +67,19 @@ namespace gotchangpdf
 				++it;
 			}
 
-			_operations = result;
+			_instructions = result;
 			return result;
 		}
 
-		types::uinteger Contents::GetOperationsSize(void) const
+		types::uinteger Contents::GetInstructionsSize(void) const
 		{
-			auto ops = Operations();
+			auto ops = Instructions();
 			return ops.size();
 		}
 
-		ContentInstructionPtr Contents::GetOperationAt(types::uinteger at) const
+		ContentInstructionPtr Contents::GetInstructionAt(types::uinteger at) const
 		{
-			auto ops = Operations();
+			auto ops = Instructions();
 			return ops.at(at);
 		}
 	}

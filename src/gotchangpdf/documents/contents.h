@@ -11,17 +11,12 @@ namespace gotchangpdf
 {
 	namespace documents
 	{
-		class ContentOperationBase : public IUnknown
+		class BeginTextOperation : public lexical::ContentStreamOperation
 		{
 
 		};
 
-		class BeginTextOperation : public ContentOperationBase
-		{
-
-		};
-
-		class EndTextOperation : public ContentOperationBase
+		class EndTextOperation : public lexical::ContentStreamOperation
 		{
 
 		};
@@ -35,12 +30,7 @@ namespace gotchangpdf
 			EndTextOperationPtr
 		> ContentOperationPtr;
 
-		class ContentObjectBase : public IUnknown
-		{
-
-		};
-
-		class TextObject : public ContentObjectBase
+		class TextObject : public lexical::ContentInstructionBase
 		{
 		public:
 			TextObject(lexical::ContentStreamOperationCollection ops) : _operations(ops) {}
@@ -69,16 +59,16 @@ namespace gotchangpdf
 			explicit Contents(StreamObjectPtr obj);
 			explicit Contents(ArrayObjectPtr<IndirectObjectReferencePtr> obj);
 
-			ContentInstructionCollection Operations(void) const;
-			types::uinteger GetOperationsSize(void) const;
-			ContentInstructionPtr GetOperationAt(types::uinteger at) const;
+			ContentInstructionCollection Instructions(void) const;
+			types::uinteger GetInstructionsSize(void) const;
+			ContentInstructionPtr GetInstructionAt(types::uinteger at) const;
 
 			inline types::uinteger GetContentStreamSize(void) const { return _contents.size(); }
 			inline ContentStreamPtr GetContentStreamAt(types::uinteger at) const { return _contents.at(at); }
 
 		private:
 			std::vector<ContentStreamPtr> _contents;
-			mutable ContentInstructionCollection _operations;
+			mutable ContentInstructionCollection _instructions;
 		};
 	}
 }

@@ -91,117 +91,141 @@ namespace gotchangpdf
 				BeginCompatibilitySection,
 				EndCompatibilitySection
 			};
+
+			virtual Type GetType(void) const _NOEXCEPT = 0;
+			virtual std::string Value(void) const = 0;
+			virtual ~OperatorBase() {};
 		};
 
-		class UnknownOperator : public OperatorBase {};
+		// Unknown operator from compatibility section
+		class UnknownOperator : public OperatorBase
+		{
+		public:
+			UnknownOperator() = default;
+			UnknownOperator(const BufferPtr& data) : _data(data) {}
+
+			virtual inline Type GetType(void) const _NOEXCEPT { return Type::Unknown; }
+			virtual inline std::string Value(void) const override { return _data->ToString(); }
+
+		private:
+			BufferPtr _data;
+		};
+
+#define GENERIC_OPERATOR_DEFINITION(Name, Val) \
+class Name##Operator : public OperatorBase \
+{ \
+public: \
+	virtual inline Type GetType(void) const _NOEXCEPT { return Type::##Name; } \
+	virtual inline std::string Value(void) const override { return Val; } \
+};
 
 		// General graphics state
-		class LineWidthOperator : public OperatorBase {};				//w
-		class LineCapOperator : public OperatorBase {};					//J
-		class LineJoinOperator : public OperatorBase {};				//j
-		class MiterLimitOperator : public OperatorBase {};				//M
-		class DashPatternOperator : public OperatorBase {};				//d
-		class ColorRenderingIntentOperator : public OperatorBase {};	//ri
-		class FlatnessOperator : public OperatorBase {};				//i
-		class GraphicsStateOperator : public OperatorBase {};			//gs
+		GENERIC_OPERATOR_DEFINITION(LineWidth, "w");
+		GENERIC_OPERATOR_DEFINITION(LineCap, "J");
+		GENERIC_OPERATOR_DEFINITION(LineJoin, "j");
+		GENERIC_OPERATOR_DEFINITION(MiterLimit, "M");
+		GENERIC_OPERATOR_DEFINITION(DashPattern, "d");
+		GENERIC_OPERATOR_DEFINITION(ColorRenderingIntent, "ri");
+		GENERIC_OPERATOR_DEFINITION(Flatness, "i");
+		GENERIC_OPERATOR_DEFINITION(GraphicsState, "gs");
 
 		// Special graphics state
-		class SaveGraphicsStateOperator : public OperatorBase {};		//q
-		class RestoreGraphicsStateOperator : public OperatorBase {};	//Q
-		class TransformationMatrixOperator : public OperatorBase {};	//cm
+		GENERIC_OPERATOR_DEFINITION(SaveGraphicsState, "q");
+		GENERIC_OPERATOR_DEFINITION(RestoreGraphicsState, "Q");
+		GENERIC_OPERATOR_DEFINITION(TransformationMatrix, "cm");
 
 		// Path construction
-		class BeginSubpathOperator : public OperatorBase {};		//m
-		class LineOperator : public OperatorBase {};				//l
-		class FullCurveOperator : public OperatorBase {};			//c
-		class FinalCurveOperator : public OperatorBase {};			//v
-		class InitialCurveOperator : public OperatorBase {};		//y
-		class CloseSubpathOperator : public OperatorBase {};		//h
-		class RectangleOperator : public OperatorBase {};			//re
+		GENERIC_OPERATOR_DEFINITION(BeginSubpath, "m");
+		GENERIC_OPERATOR_DEFINITION(Line, "l");
+		GENERIC_OPERATOR_DEFINITION(FullCurve, "c");
+		GENERIC_OPERATOR_DEFINITION(FinalCurve, "v");
+		GENERIC_OPERATOR_DEFINITION(InitialCurve, "y");
+		GENERIC_OPERATOR_DEFINITION(CloseSubpath, "h");
+		GENERIC_OPERATOR_DEFINITION(Rectangle, "re");
 
 		// Path painting
-		class StrokeOperator : public OperatorBase {};					//S
-		class CloseAndStrokeOperator : public OperatorBase {};			//s
-		class FillPathNonzeroOperator : public OperatorBase {};			//f
-		class FillPathCompatibilityOperator : public OperatorBase {};	//F
-		class FillPathEvenOddOperator : public OperatorBase {};			//f*
-		class FillStrokeNonzeroOperator : public OperatorBase {};		//B
-		class FillStrokeEvenOddOperator : public OperatorBase {};		//B*
-		class CloseFillStrokeNonzeroOperator : public OperatorBase {};	//b
-		class CloseFillStrokeEvenOddOperator : public OperatorBase {};	//b*
-		class EndPathOperator : public OperatorBase {};					//n
+		GENERIC_OPERATOR_DEFINITION(Stroke, "S");
+		GENERIC_OPERATOR_DEFINITION(CloseAndStroke, "s");
+		GENERIC_OPERATOR_DEFINITION(FillPathNonzero, "f");
+		GENERIC_OPERATOR_DEFINITION(FillPathCompatibility, "F");
+		GENERIC_OPERATOR_DEFINITION(FillPathEvenOdd, "f*");
+		GENERIC_OPERATOR_DEFINITION(FillStrokeNonzero, "B");
+		GENERIC_OPERATOR_DEFINITION(FillStrokeEvenOdd, "B*");
+		GENERIC_OPERATOR_DEFINITION(CloseFillStrokeNonzero, "b");
+		GENERIC_OPERATOR_DEFINITION(CloseFillStrokeEvenOdd, "b*");
+		GENERIC_OPERATOR_DEFINITION(EndPath, "n");
 
 		// Clipping paths
-		class ClipPathNonzeroOperator : public OperatorBase {};		//W
-		class ClipPathEvenOddOperator : public OperatorBase {};		//W*
+		GENERIC_OPERATOR_DEFINITION(ClipPathNonzero, "W");
+		GENERIC_OPERATOR_DEFINITION(ClipPathEvenOdd, "W*");
 
 		// Text objects
-		class BeginTextOperator : public OperatorBase {};			//BT
-		class EndTextOperator : public OperatorBase {};				//ET
+		GENERIC_OPERATOR_DEFINITION(BeginText, "BT");
+		GENERIC_OPERATOR_DEFINITION(EndText, "ET");
 
 		// Text state
-		class CharacterSpacingOperator : public OperatorBase {};	//Tc
-		class WordSpacingOperator : public OperatorBase {};			//Tw
-		class HorizontalScalingOperator : public OperatorBase {};	//Tz
-		class LeadingOperator : public OperatorBase {};				//TL
-		class TextFontOperator : public OperatorBase {};			//Tf
-		class TextRenderingModeOperator : public OperatorBase {};	//Tr
-		class TextRiseOperator : public OperatorBase {};			//Ts
+		GENERIC_OPERATOR_DEFINITION(CharacterSpacing, "Tc");
+		GENERIC_OPERATOR_DEFINITION(WordSpacing, "Tw");
+		GENERIC_OPERATOR_DEFINITION(HorizontalScaling, "Tz");
+		GENERIC_OPERATOR_DEFINITION(Leading, "TL");
+		GENERIC_OPERATOR_DEFINITION(TextFont, "Tf");
+		GENERIC_OPERATOR_DEFINITION(TextRenderingMode, "Tr");
+		GENERIC_OPERATOR_DEFINITION(TextRise, "Ts");
 
 		// Text positioning
-		class TextTranslateOperator : public OperatorBase {};			//Td
-		class TextTranslateLeadingOperator : public OperatorBase {};	//TD
-		class TextMatrixOperator : public OperatorBase {};				//Tm
-		class TextNextLineOperator : public OperatorBase {};			//T*
+		GENERIC_OPERATOR_DEFINITION(TextTranslate, "Td");
+		GENERIC_OPERATOR_DEFINITION(TextTranslateLeading, "TD");
+		GENERIC_OPERATOR_DEFINITION(TextMatrix, "Tm");
+		GENERIC_OPERATOR_DEFINITION(TextNextLine, "T*");
 
 		// Text showing
-		class TextShowOperator : public OperatorBase {};					//Tj
-		class TextShowArrayOperator : public OperatorBase {};				//TJ
-		class TextNextLineShowOperator : public OperatorBase {};			//'
-		class TextNextLineShowSpacingOperator : public OperatorBase {};		//"
+		GENERIC_OPERATOR_DEFINITION(TextShow, "Tj");
+		GENERIC_OPERATOR_DEFINITION(TextShowArray, "TJ");
+		GENERIC_OPERATOR_DEFINITION(TextNextLineShow, "'");
+		GENERIC_OPERATOR_DEFINITION(TextNextLineShowSpacing, "\"");
 
 		// Type 3 fonts
-		class SetCharWidthOperator : public OperatorBase {};		//d0
-		class SetCacheDeviceOperator : public OperatorBase {};		//d1
+		GENERIC_OPERATOR_DEFINITION(SetCharWidth, "d0");
+		GENERIC_OPERATOR_DEFINITION(SetCacheDevice, "d1");
 
 		// Color
-		class ColorSpaceStrokeOperator : public OperatorBase {};					//CS
-		class ColorSpaceNonstrokeOperator : public OperatorBase {};					//cs
-		class SetColorStrokeOperator : public OperatorBase {};						//SC
-		class SetColorStrokeExtendedOperator : public OperatorBase {};				//SCN
-		class SetColorNonstrokeOperator : public OperatorBase {};					//sc
-		class SetColorNonstrokeExtendedOperator : public OperatorBase {};			//scn
-		class SetStrokingColorSpaceGrayOperator : public OperatorBase {};			//G
-		class SetNonstrokingColorSpaceGrayOperator : public OperatorBase {};		//g
-		class SetStrokingColorSpaceRGBOperator : public OperatorBase {};			//RG
-		class SetNonstrokingColorSpaceRGBOperator : public OperatorBase {};			//rg
-		class SetStrokingColorSpaceCMYKOperator : public OperatorBase {};			//K
-		class SetNonstrokingColorSpaceCMYKOperator : public OperatorBase {};		//k
+		GENERIC_OPERATOR_DEFINITION(ColorSpaceStroke, "CS");
+		GENERIC_OPERATOR_DEFINITION(ColorSpaceNonstroke, "cs");
+		GENERIC_OPERATOR_DEFINITION(SetColorStroke, "SC");
+		GENERIC_OPERATOR_DEFINITION(SetColorStrokeExtended, "SCN");
+		GENERIC_OPERATOR_DEFINITION(SetColorNonstroke, "sc");
+		GENERIC_OPERATOR_DEFINITION(SetColorNonstrokeExtended, "scn");
+		GENERIC_OPERATOR_DEFINITION(SetStrokingColorSpaceGray, "G");
+		GENERIC_OPERATOR_DEFINITION(SetNonstrokingColorSpaceGray, "g");
+		GENERIC_OPERATOR_DEFINITION(SetStrokingColorSpaceRGB, "RG");
+		GENERIC_OPERATOR_DEFINITION(SetNonstrokingColorSpaceRGB, "rg");
+		GENERIC_OPERATOR_DEFINITION(SetStrokingColorSpaceCMYK, "K");
+		GENERIC_OPERATOR_DEFINITION(SetNonstrokingColorSpaceCMYK, "k");
 
 		// Shading patterns
-		class ShadingPaintOperator : public OperatorBase {};				//sh
+		GENERIC_OPERATOR_DEFINITION(ShadingPaint, "sh");
 
 		// Inline images
-		class BeginInlineImageObjectOperator : public OperatorBase {};		//BI
-		class BeginInlineImageDataOperator : public OperatorBase {};		//ID
-		class EndInlineImageObjectOperator : public OperatorBase {};		//EI
+		GENERIC_OPERATOR_DEFINITION(BeginInlineImageObject, "BI");
+		GENERIC_OPERATOR_DEFINITION(BeginInlineImageData, "ID");
+		GENERIC_OPERATOR_DEFINITION(EndInlineImageObject, "EI");
 
 		// XObjects
-		class InvokeXObjectOperator : public OperatorBase {};								//Do
+		GENERIC_OPERATOR_DEFINITION(InvokeXObject, "Do");
 
 		// Marked content
-		class DefineMarkedContentPointOperator : public OperatorBase {};					//MP
-		class DefineMarkedContentPointWithPropertyListOperator : public OperatorBase {};	//DP
-		class BeginMarkedContentSequenceOperator : public OperatorBase {};					//BMC
-		class BeginMarkedContentSequenceWithPropertyListOperator : public OperatorBase {};	//BDC
-		class EndMarkedContentSequenceOperator : public OperatorBase {};					//EMC
+		GENERIC_OPERATOR_DEFINITION(DefineMarkedContentPoint, "MP");
+		GENERIC_OPERATOR_DEFINITION(DefineMarkedContentPointWithPropertyList, "DP");
+		GENERIC_OPERATOR_DEFINITION(BeginMarkedContentSequence, "BMC");
+		GENERIC_OPERATOR_DEFINITION(BeginMarkedContentSequenceWithPropertyList, "BDC");
+		GENERIC_OPERATOR_DEFINITION(EndMarkedContentSequence, "EMC");
 
 		// Compatibility
-		class BeginCompatibilitySectionOperator : public OperatorBase {};					//BX
-		class EndCompatibilitySectionOperator : public OperatorBase {};						//EX
+		GENERIC_OPERATOR_DEFINITION(BeginCompatibilitySection, "BX");
+		GENERIC_OPERATOR_DEFINITION(EndCompatibilitySection, "EX");
 
 		typedef boost::variant<
-			EmptyOperatorPtr,
+			UnknownOperatorPtr,
 			LineWidthOperatorPtr,
 			LineCapOperatorPtr,
 			LineJoinOperatorPtr,
@@ -408,85 +432,6 @@ namespace gotchangpdf
 			inline bool operator()(const U&) const { return false; }
 		};
 
-		class ContentStreamOperatorTypeVisitor : public boost::static_visitor<OperatorBase::Type>
-		{
-		public:
-			inline OperatorBase::Type operator()(const UnknownOperatorPtr&) const { return OperatorBase::Type::Unknown; }
-			inline OperatorBase::Type operator()(const LineWidthOperatorPtr&) const { return OperatorBase::Type::LineWidth; }
-			inline OperatorBase::Type operator()(const LineCapOperatorPtr&) const { return OperatorBase::Type::LineCap; }
-			inline OperatorBase::Type operator()(const LineJoinOperatorPtr&) const { return OperatorBase::Type::LineJoin; }
-			inline OperatorBase::Type operator()(const MiterLimitOperatorPtr&) const { return OperatorBase::Type::MiterLimit; }
-			inline OperatorBase::Type operator()(const DashPatternOperatorPtr&) const { return OperatorBase::Type::DashPattern; }
-			inline OperatorBase::Type operator()(const ColorRenderingIntentOperatorPtr&) const { return OperatorBase::Type::ColorRenderingIntent; }
-			inline OperatorBase::Type operator()(const FlatnessOperatorPtr&) const { return OperatorBase::Type::Flatness; }
-			inline OperatorBase::Type operator()(const GraphicsStateOperatorPtr&) const { return OperatorBase::Type::GraphicsState; }
-			inline OperatorBase::Type operator()(const SaveGraphicsStateOperatorPtr&) const { return OperatorBase::Type::SaveGraphicsState; }
-			inline OperatorBase::Type operator()(const RestoreGraphicsStateOperatorPtr&) const { return OperatorBase::Type::RestoreGraphicsState; }
-			inline OperatorBase::Type operator()(const TransformationMatrixOperatorPtr&) const { return OperatorBase::Type::TransformationMatrix; }
-			inline OperatorBase::Type operator()(const BeginSubpathOperatorPtr&) const { return OperatorBase::Type::BeginSubpath; }
-			inline OperatorBase::Type operator()(const LineOperatorPtr&) const { return OperatorBase::Type::Line; }
-			inline OperatorBase::Type operator()(const FullCurveOperatorPtr&) const { return OperatorBase::Type::FullCurve; }
-			inline OperatorBase::Type operator()(const FinalCurveOperatorPtr&) const { return OperatorBase::Type::FinalCurve; }
-			inline OperatorBase::Type operator()(const InitialCurveOperatorPtr&) const { return OperatorBase::Type::InitialCurve; }
-			inline OperatorBase::Type operator()(const CloseSubpathOperatorPtr&) const { return OperatorBase::Type::CloseSubpath; }
-			inline OperatorBase::Type operator()(const RectangleOperatorPtr&) const { return OperatorBase::Type::Rectangle; }
-			inline OperatorBase::Type operator()(const StrokeOperatorPtr&) const { return OperatorBase::Type::Stroke; }
-			inline OperatorBase::Type operator()(const CloseAndStrokeOperatorPtr&) const { return OperatorBase::Type::CloseAndStroke; }
-			inline OperatorBase::Type operator()(const FillPathNonzeroOperatorPtr&) const { return OperatorBase::Type::FillPathNonzero; }
-			inline OperatorBase::Type operator()(const FillPathCompatibilityOperatorPtr&) const { return OperatorBase::Type::FillPathCompatibility; }
-			inline OperatorBase::Type operator()(const FillPathEvenOddOperatorPtr&) const { return OperatorBase::Type::FillPathEvenOdd; }
-			inline OperatorBase::Type operator()(const FillStrokeNonzeroOperatorPtr&) const { return OperatorBase::Type::FillStrokeNonzero; }
-			inline OperatorBase::Type operator()(const FillStrokeEvenOddOperatorPtr&) const { return OperatorBase::Type::FillStrokeEvenOdd; }
-			inline OperatorBase::Type operator()(const CloseFillStrokeNonzeroOperatorPtr&) const { return OperatorBase::Type::CloseFillStrokeNonzero; }
-			inline OperatorBase::Type operator()(const CloseFillStrokeEvenOddOperatorPtr&) const { return OperatorBase::Type::CloseFillStrokeEvenOdd; }
-			inline OperatorBase::Type operator()(const EndPathOperatorPtr&) const { return OperatorBase::Type::EndPath; }
-			inline OperatorBase::Type operator()(const ClipPathNonzeroOperatorPtr&) const { return OperatorBase::Type::ClipPathNonzero; }
-			inline OperatorBase::Type operator()(const ClipPathEvenOddOperatorPtr&) const { return OperatorBase::Type::ClipPathEvenOdd; }
-			inline OperatorBase::Type operator()(const BeginTextOperatorPtr&) const { return OperatorBase::Type::BeginText; }
-			inline OperatorBase::Type operator()(const EndTextOperatorPtr&) const { return OperatorBase::Type::EndText; }
-			inline OperatorBase::Type operator()(const CharacterSpacingOperatorPtr&) const { return OperatorBase::Type::CharacterSpacing; }
-			inline OperatorBase::Type operator()(const WordSpacingOperatorPtr&) const { return OperatorBase::Type::WordSpacing; }
-			inline OperatorBase::Type operator()(const HorizontalScalingOperatorPtr&) const { return OperatorBase::Type::HorizontalScaling; }
-			inline OperatorBase::Type operator()(const LeadingOperatorPtr&) const { return OperatorBase::Type::Leading; }
-			inline OperatorBase::Type operator()(const TextFontOperatorPtr&) const { return OperatorBase::Type::TextFont; }
-			inline OperatorBase::Type operator()(const TextRenderingModeOperatorPtr&) const { return OperatorBase::Type::TextRenderingMode; }
-			inline OperatorBase::Type operator()(const TextRiseOperatorPtr&) const { return OperatorBase::Type::TextRise; }
-			inline OperatorBase::Type operator()(const TextTranslateOperatorPtr&) const { return OperatorBase::Type::TextTranslate; }
-			inline OperatorBase::Type operator()(const TextTranslateLeadingOperatorPtr&) const { return OperatorBase::Type::TextTranslateLeading; }
-			inline OperatorBase::Type operator()(const TextMatrixOperatorPtr&) const { return OperatorBase::Type::TextMatrix; }
-			inline OperatorBase::Type operator()(const TextNextLineOperatorPtr&) const { return OperatorBase::Type::TextNextLine; }
-			inline OperatorBase::Type operator()(const TextShowOperatorPtr&) const { return OperatorBase::Type::TextShow; }
-			inline OperatorBase::Type operator()(const TextShowArrayOperatorPtr&) const { return OperatorBase::Type::TextShowArray; }
-			inline OperatorBase::Type operator()(const TextNextLineShowOperatorPtr&) const { return OperatorBase::Type::TextNextLineShow; }
-			inline OperatorBase::Type operator()(const TextNextLineShowSpacingOperatorPtr&) const { return OperatorBase::Type::TextNextLineShowSpacing; }
-			inline OperatorBase::Type operator()(const SetCharWidthOperatorPtr&) const { return OperatorBase::Type::SetCharWidth; }
-			inline OperatorBase::Type operator()(const SetCacheDeviceOperatorPtr&) const { return OperatorBase::Type::SetCacheDevice; }
-			inline OperatorBase::Type operator()(const ColorSpaceStrokeOperatorPtr&) const { return OperatorBase::Type::ColorSpaceStroke; }
-			inline OperatorBase::Type operator()(const ColorSpaceNonstrokeOperatorPtr&) const { return OperatorBase::Type::ColorSpaceNonstroke; }
-			inline OperatorBase::Type operator()(const SetColorStrokeOperatorPtr&) const { return OperatorBase::Type::SetColorStroke; }
-			inline OperatorBase::Type operator()(const SetColorStrokeExtendedOperatorPtr&) const { return OperatorBase::Type::SetColorStrokeExtended; }
-			inline OperatorBase::Type operator()(const SetColorNonstrokeOperatorPtr&) const { return OperatorBase::Type::SetColorNonstroke; }
-			inline OperatorBase::Type operator()(const SetColorNonstrokeExtendedOperatorPtr&) const { return OperatorBase::Type::SetColorNonstrokeExtended; }
-			inline OperatorBase::Type operator()(const SetStrokingColorSpaceGrayOperatorPtr&) const { return OperatorBase::Type::SetStrokingColorSpaceGray; }
-			inline OperatorBase::Type operator()(const SetNonstrokingColorSpaceGrayOperatorPtr&) const { return OperatorBase::Type::SetNonstrokingColorSpaceGray; }
-			inline OperatorBase::Type operator()(const SetStrokingColorSpaceRGBOperatorPtr&) const { return OperatorBase::Type::SetStrokingColorSpaceRGB; }
-			inline OperatorBase::Type operator()(const SetNonstrokingColorSpaceRGBOperatorPtr&) const { return OperatorBase::Type::SetNonstrokingColorSpaceRGB; }
-			inline OperatorBase::Type operator()(const SetStrokingColorSpaceCMYKOperatorPtr&) const { return OperatorBase::Type::SetStrokingColorSpaceCMYK; }
-			inline OperatorBase::Type operator()(const SetNonstrokingColorSpaceCMYKOperatorPtr&) const { return OperatorBase::Type::SetNonstrokingColorSpaceCMYK; }
-			inline OperatorBase::Type operator()(const ShadingPaintOperatorPtr&) const { return OperatorBase::Type::ShadingPaint; }
-			inline OperatorBase::Type operator()(const BeginInlineImageObjectOperatorPtr&) const { return OperatorBase::Type::BeginInlineImageObject; }
-			inline OperatorBase::Type operator()(const BeginInlineImageDataOperatorPtr&) const { return OperatorBase::Type::BeginInlineImageData; }
-			inline OperatorBase::Type operator()(const EndInlineImageObjectOperatorPtr&) const { return OperatorBase::Type::EndInlineImageObject; }
-			inline OperatorBase::Type operator()(const InvokeXObjectOperatorPtr&) const { return OperatorBase::Type::InvokeXObject; }
-			inline OperatorBase::Type operator()(const DefineMarkedContentPointOperatorPtr&) const { return OperatorBase::Type::DefineMarkedContentPoint; }
-			inline OperatorBase::Type operator()(const DefineMarkedContentPointWithPropertyListOperatorPtr&) const { return OperatorBase::Type::DefineMarkedContentPointWithPropertyList; }
-			inline OperatorBase::Type operator()(const BeginMarkedContentSequenceOperatorPtr&) const { return OperatorBase::Type::BeginMarkedContentSequence; }
-			inline OperatorBase::Type operator()(const BeginMarkedContentSequenceWithPropertyListOperatorPtr&) const { return OperatorBase::Type::BeginMarkedContentSequenceWithPropertyList; }
-			inline OperatorBase::Type operator()(const EndMarkedContentSequenceOperatorPtr&) const { return OperatorBase::Type::EndMarkedContentSequence; }
-			inline OperatorBase::Type operator()(const BeginCompatibilitySectionOperatorPtr&) const { return OperatorBase::Type::BeginCompatibilitySection; }
-			inline OperatorBase::Type operator()(const EndCompatibilitySectionOperatorPtr&) const { return OperatorBase::Type::EndCompatibilitySection; }
-		};
-
 		typedef boost::variant <
 			// first is null object
 			NullObjectPtr,
@@ -501,7 +446,21 @@ namespace gotchangpdf
 			HexadecimalStringObjectPtr
 		> ContentStreamOperand;
 
-		typedef std::pair<std::vector<ContentStreamOperand>, ContentStreamOperator> ContentStreamOperation;
+		class ContentInstructionBase : public IUnknown {};
+		class ContentStreamOperation : public ContentInstructionBase
+		{
+		public:
+			ContentStreamOperation() = default;
+			ContentStreamOperation(std::vector<ContentStreamOperand> operands, ContentStreamOperator oper) :
+				_operator(oper), _operands(operands) {}
+			ContentStreamOperator GetOperator() const { return _operator; }
+			std::vector<ContentStreamOperand> GetOperands() const { return _operands; }
+
+		private:
+			ContentStreamOperator _operator;
+			std::vector<ContentStreamOperand> _operands;
+		};
+
 		typedef std::vector<ContentStreamOperation> ContentStreamOperationCollection;
 	}
 }

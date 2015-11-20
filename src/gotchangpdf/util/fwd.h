@@ -90,6 +90,8 @@ namespace gotchangpdf
 		class SpiritParser;
 		struct ObjectStreamHeader;
 
+		class ContentStreamOperation;
+
 		class UnknownOperator;
 
 		class LineWidthOperator;
@@ -179,6 +181,8 @@ namespace gotchangpdf
 
 		class BeginCompatibilitySectionOperator;
 		class EndCompatibilitySectionOperator;
+
+		typedef Deferred<ContentStreamOperation> ContentStreamOperationPtr;
 
 		typedef Deferred<UnknownOperator> UnknownOperatorPtr;
 
