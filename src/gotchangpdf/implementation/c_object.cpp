@@ -27,29 +27,29 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Type(ObjectHandle handle, 
 
 	switch (obj->GetType()) {
 	case Object::Type::Array:
-		*result = Array; break;
+		*result = ObjectType_Array; break;
 	case Object::Type::Boolean:
-		*result = Boolean; break;
+		*result = ObjectType_Boolean; break;
 	case Object::Type::Dictionary:
-		*result = Dictionary; break;
+		*result = ObjectType_Dictionary; break;
 	case Object::Type::Function:
-		*result = Function; break;
+		*result = ObjectType_Function; break;
 	case Object::Type::Integer:
-		*result = Integer; break;
+		*result = ObjectType_Integer; break;
 	case Object::Type::Name:
-		*result = Name; break;
+		*result = ObjectType_Name; break;
 	case Object::Type::Null:
-		*result = Null; break;
+		*result = ObjectType_Null; break;
 	case Object::Type::Real:
-		*result = Real; break;
+		*result = ObjectType_Real; break;
 	case Object::Type::Stream:
-		*result = Stream; break;
+		*result = ObjectType_Stream; break;
 	case Object::Type::HexadecimalString:
-		*result = HexadecimalString; break;
+		*result = ObjectType_HexadecimalString; break;
 	case Object::Type::LiteralString:
-		*result = LiteralString; break;
+		*result = ObjectType_LiteralString; break;
 	case Object::Type::IndirectReference:
-		*result = IndirectReference; break;
+		*result = ObjectType_IndirectReference; break;
 	default:
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}

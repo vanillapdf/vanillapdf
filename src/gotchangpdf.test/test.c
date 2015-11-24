@@ -207,7 +207,7 @@ int process(ObjectHandle obj, int nested)
 
 	switch (type)
 	{
-	case Array:
+	case ObjectType_Array:
 		print_spaces(nested);
 		printf("Array begin\n");
 
@@ -227,25 +227,25 @@ int process(ObjectHandle obj, int nested)
 		printf("Array end\n");
 
 		break;
-	case Boolean:
+	case ObjectType_Boolean:
 		print_spaces(nested);
 		printf("Boolean object begin\n");
 
 		print_spaces(nested);
 		printf("Boolean object end\n");
 		break;
-	case Dictionary:
+	case ObjectType_Dictionary:
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToDictionary(obj, &dictionary));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_dictionary(dictionary, nested));
 		break;
-	case Function:
+	case ObjectType_Function:
 		print_spaces(nested);
 		printf("Function object begin\n");
 
 		print_spaces(nested);
 		printf("Function object end\n");
 		break;
-	case Integer:
+	case ObjectType_Integer:
 		print_spaces(nested);
 		printf("Integer object begin\n");
 
@@ -257,11 +257,11 @@ int process(ObjectHandle obj, int nested)
 		print_spaces(nested);
 		printf("Integer object end\n");
 		break;
-	case Name:
+	case ObjectType_Name:
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToName(obj, &name));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_name(name, nested));
 		break;
-	case Null:
+	case ObjectType_Null:
 		print_spaces(nested);
 		printf("Null object begin\n");
 
@@ -270,14 +270,14 @@ int process(ObjectHandle obj, int nested)
 		print_spaces(nested);
 		printf("Null object end\n");
 		break;
-	case Real:
+	case ObjectType_Real:
 		print_spaces(nested);
 		printf("Real object begin\n");
 
 		print_spaces(nested);
 		printf("Real object end\n");
 		break;
-	case Stream:
+	case ObjectType_Stream:
 		print_spaces(nested);
 		printf("Stream object begin\n");
 
@@ -291,15 +291,15 @@ int process(ObjectHandle obj, int nested)
 		print_spaces(nested);
 		printf("Stream object end\n");
 		break;
-	case HexadecimalString:
+	case ObjectType_HexadecimalString:
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToHexadecimalString(obj, &hex_string));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_hex_string(hex_string, nested));
 		break;
-	case LiteralString:
+	case ObjectType_LiteralString:
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToLiteralString(obj, &literal_string));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_lit_string(literal_string, nested));
 		break;
-	case IndirectReference:
+	case ObjectType_IndirectReference:
 		print_spaces(nested);
 		printf("Indirect reference begin\n");
 

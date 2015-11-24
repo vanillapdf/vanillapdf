@@ -12,18 +12,18 @@ extern "C"
 
 	// TODO i have no idea how export enum without clone
 	typedef enum {
-		Null = 0,
-		Array,
-		Boolean,
-		Dictionary,
-		Function,
-		Integer,
-		Name,
-		Real,
-		Stream,
-		HexadecimalString,
-		LiteralString,
-		IndirectReference
+		ObjectType_Null = 0,
+		ObjectType_Array,
+		ObjectType_Boolean,
+		ObjectType_Dictionary,
+		ObjectType_Function,
+		ObjectType_Integer,
+		ObjectType_Name,
+		ObjectType_Real,
+		ObjectType_Stream,
+		ObjectType_HexadecimalString,
+		ObjectType_LiteralString,
+		ObjectType_IndirectReference
 	} ObjectType, *PObjectType;
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Type(ObjectHandle handle, PObjectType result);
