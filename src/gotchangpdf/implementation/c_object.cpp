@@ -82,6 +82,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToArray(ObjectHandle handl
 {
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
@@ -100,6 +101,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToDictionary(ObjectHandle 
 {
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
@@ -118,6 +120,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToStream(ObjectHandle hand
 {
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
@@ -136,6 +139,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToIndirectReference(Object
 {
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
@@ -154,6 +158,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToInteger(ObjectHandle han
 {
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
@@ -172,6 +177,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToName(ObjectHandle handle
 {
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
@@ -190,6 +196,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToLiteralString(ObjectHand
 {
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try {
@@ -207,6 +214,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToHexadecimalString(Object
 {
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try {
