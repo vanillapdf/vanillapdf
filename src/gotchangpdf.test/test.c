@@ -16,6 +16,40 @@ void print_spaces(int nested)
 		printf("  ");
 }
 
+int process_instruction(ContentInstructionHandle obj, int nested)
+{
+	ContentInstructionType type;
+
+	print_spaces(nested);
+	printf("Content instruction\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_GetType(obj, &type));
+	switch (type)
+	{
+	case ContentInstructionType_Object:
+		print_spaces(nested + 1);
+		printf("Content object begin\n");
+		print_spaces(nested + 1);
+		printf("Content object end\n");
+		break;
+	case ContentInstructionType_Operation:
+		print_spaces(nested + 1);
+		printf("Content operation begin\n");
+		print_spaces(nested + 1);
+		printf("Content operation end\n");
+		break;
+	default:
+		print_spaces(nested);
+		printf("Unrecognized content instruction type\n");
+		return GOTCHANG_PDF_ERROR_GENERAL;
+	}
+
+	print_spaces(nested);
+	printf("Content instruction end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
 int process_contents(ContentsHandle obj, int nested)
 {
 	int i;
@@ -24,13 +58,16 @@ int process_contents(ContentsHandle obj, int nested)
 	print_spaces(nested);
 	printf("Contents begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Contents_GetOperationsSize(obj, &size));
+	RETURN_ERROR_IF_NOT_SUCCESS(Contents_GetInstructionsSize(obj, &size));
 
 	print_spaces(nested + 1);
 	printf("Size: %d\n", size);
 
 	for (i = 0; i < size; ++i) {
-		//RETURN_ERROR_IF_NOT_SUCCESS(Contents_GetOperationAt(obj, i));
+		ContentInstructionHandle instruction = NULL;
+		RETURN_ERROR_IF_NOT_SUCCESS(Contents_GetInstructionAt(obj, i, &instruction));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_instruction(instruction, nested + 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_Release(instruction));
 	}
 
 	print_spaces(nested);
@@ -326,6 +363,7 @@ int process(ObjectHandle obj, int nested)
 		printf("Indirect reference end\n");
 		break;
 	default:
+		print_spaces(nested);
 		printf("Unknown object type\n");
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
