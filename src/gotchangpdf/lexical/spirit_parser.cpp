@@ -2,7 +2,6 @@
 #include "spirit_parser.h"
 
 #include "xref.h"
-#include "character.h"
 #include "exception.h"
 #include "file.h"
 #include "log.h"
@@ -23,7 +22,6 @@ namespace gotchangpdf
 	{
 		using namespace std;
 		using namespace exceptions;
-		using namespace character;
 
 		namespace qi = boost::spirit::qi;
 

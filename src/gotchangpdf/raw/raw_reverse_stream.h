@@ -55,7 +55,6 @@ namespace gotchangpdf
 			
 			virtual void read(BufferPtr& result, types::uinteger len) override;
 			virtual BufferPtr read(types::uinteger len) override;
-			virtual char get_hex() override;
 			virtual BufferPtr readline(void) override;
 
 		private:
@@ -72,7 +71,6 @@ namespace gotchangpdf
 				virtual pos_type seekpos(pos_type,
 					ios_base::openmode = ios_base::in | ios_base::out) override;
 
-#ifdef REVERSE_BUFFER_OPTIMIZATION
 			public:
 				int sync();
 				virtual int_type underflow() override;
@@ -85,7 +83,6 @@ namespace gotchangpdf
 				std::streampos _offset;
 				const std::size_t _put_back;
 				char *_base;
-#endif /* REVERSE_BUFFER_OPTIMIZATION */
 
 			private:
 				Buffer _buffer;

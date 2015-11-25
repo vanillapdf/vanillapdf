@@ -20,8 +20,6 @@ namespace gotchangpdf
 		using namespace exceptions;
 		using namespace std;
 
-#ifdef REVERSE_BUFFER_OPTIMIZATION
-
 		ReverseStream::ReverseBuf::ReverseBuf(CharacterSource & s)
 			: _source(s),
 			_put_back(constant::REVERSE_BUFFER_PUTBACK_SIZE),
@@ -107,53 +105,6 @@ namespace gotchangpdf
 			return gptr() - egptr();
 		}
 
-#else
-
-		ReverseStream::ReverseBuf::ReverseBuf(CharacterSource & s)// : _source(s)
-		{
-			/* TODO optimization */
-
-			/* get current offset for later restoration */
-			auto offset = s.tellg();
-
-			/* read whole stream */
-			s.seekg(ios_base::beg);
-
-			/* do not mess with invalid streams */
-			if (s.eof() || s.fail())
-				throw Exception("Input stream is in invalid state");
-
-			char buf[constant::BUFFER_SIZE];
-			auto begin = &buf[0];
-			auto end = &buf[constant::BUFFER_SIZE - 1];
-
-			/* chunk that dirty bytes */
-			while (s.read(buf, constant::BUFFER_SIZE))
-			{
-				reverse(begin, end);
-				_buffer.insert(_buffer.begin(), begin, end);
-			}
-
-			/* read whats left in the buffer */
-			end = &buf[s.gcount()];
-			reverse(begin, end);
-			_buffer.insert(_buffer.begin(), begin, end);
-
-			/* set our internal buffer */
-			setg(_buffer.data(), _buffer.data(), _buffer.data() + _buffer.size());
-
-			/* preserve clean state */
-			s.clear();
-			s.seekg(offset);
-		}
-
-		ReverseStream::ReverseBuf::~ReverseBuf()
-		{
-			//pubsync();
-		}
-
-#endif /* REVERSE_BUFFER_OPTIMIZATION */
-
 		ReverseStream::ReverseBuf::pos_type ReverseStream::ReverseBuf::seekoff(off_type offset,
 			ios_base::seekdir dir,
 			ios_base::openmode mode)
@@ -223,25 +174,6 @@ namespace gotchangpdf
 			unget();
 
 			return result;
-		}
-
-		char ReverseStream::get_hex()
-		{
-			auto val = get();
-
-			if (!IsInRange<decltype(val), char>(val))
-				throw exceptions::Exception("Value is out of range");
-
-			char ch = static_cast<char>(val);
-
-			if ('0' <= ch && ch <= '9')
-				return ch - '0';
-			if ('a' <= ch && ch <= 'f')
-				return ch + 10 - 'a';
-			if ('A' <= ch && ch <= 'F')
-				return ch + 10 - 'A';
-
-			throw exceptions::Exception("Unknown hexadecimal character " + val);
 		}
 	}
 }

@@ -5,7 +5,6 @@
 #include "buffer.h"
 
 #include <istream>
-#include <boost/iostreams/filtering_stream.hpp>
 
 namespace gotchangpdf
 {
@@ -16,15 +15,11 @@ namespace gotchangpdf
 		public:
 			typedef std::istream CharacterSource;
 			typedef std::streambuf CharacterSourceBuffer;
-			typedef boost::iostreams::filtering_stream<boost::iostreams::input_seekable, char> CharacterFilteringSource;
-			typedef boost::iostreams::filtering_streambuf<boost::iostreams::input_seekable, char> CharacterFilteringSourceBuffer;
 
 		public:
 			virtual void read(BufferPtr& result, types::uinteger len) = 0;
 			virtual BufferPtr read(types::uinteger len) = 0;
 			virtual void read_exact(BufferPtr buf);
-
-			virtual char get_hex(void) = 0;
 			virtual BufferPtr readline(void) = 0;
 
 			virtual ~BaseStream() = 0;

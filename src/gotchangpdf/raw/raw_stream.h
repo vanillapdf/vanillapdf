@@ -16,19 +16,7 @@ namespace gotchangpdf
 
 			virtual BufferPtr read(types::uinteger len) override;
 			virtual void read(BufferPtr& result, types::uinteger len) override;
-			virtual char get_hex() override;
 			virtual BufferPtr readline(void) override;
-
-		private:
-
-#ifdef USE_BOOST_FILTERING_STREAMS
-			class FilteringBuffer : public CharacterFilteringSourceBuffer
-			{
-			public:
-				FilteringBuffer(CharacterSource & stream) : CharacterFilteringSourceBuffer(stream) {}
-				FilteringBuffer(CharacterSourceBuffer & buf) : CharacterFilteringSourceBuffer(buf) {}
-			};
-#endif
 		};
 	}
 }
