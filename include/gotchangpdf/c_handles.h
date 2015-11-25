@@ -42,7 +42,22 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(PageTree);
 	DECLARE_OBJECT_HANDLE(PageObject);
 	
+	/* Contents */
 	DECLARE_OBJECT_HANDLE(Contents);
+
+	/* Content instructions */
+	DECLARE_OBJECT_HANDLE(ContentInstruction);
+	DECLARE_OBJECT_HANDLE(ContentObject);
+	DECLARE_OBJECT_HANDLE(ContentOperation);
+
+	/* Content operations */
+	DECLARE_OBJECT_HANDLE(ContentOperator);
+
+	/* Content operators */
+	DECLARE_OBJECT_HANDLE(ContentOperatorUnknown);
+
+	/* Content objects */
+	DECLARE_OBJECT_HANDLE(ContentObjectText);
 
 	/* Utils */
 	DECLARE_OBJECT_HANDLE(Buffer);

@@ -93,7 +93,7 @@ namespace gotchangpdf
 			};
 
 			virtual Type GetType(void) const _NOEXCEPT = 0;
-			virtual std::string Value(void) const = 0;
+			virtual BufferPtr Value(void) const = 0;
 			virtual ~OperatorBase() {};
 		};
 
@@ -105,7 +105,7 @@ namespace gotchangpdf
 			UnknownOperator(const BufferPtr& data) : _data(data) {}
 
 			virtual inline Type GetType(void) const _NOEXCEPT { return Type::Unknown; }
-			virtual inline std::string Value(void) const override { return _data->ToString(); }
+			virtual inline BufferPtr Value(void) const override { return _data; }
 
 		private:
 			BufferPtr _data;
@@ -116,7 +116,7 @@ class Name##Operator : public OperatorBase \
 { \
 public: \
 	virtual inline Type GetType(void) const _NOEXCEPT { return Type::##Name; } \
-	virtual inline std::string Value(void) const override { return Val; } \
+	virtual inline BufferPtr Value(void) const override { return BufferPtr(Val); } \
 };
 
 		// General graphics state
@@ -422,6 +422,13 @@ public: \
 			EndCompatibilitySectionOperatorPtr
 		> CompatibilityOperators;
 
+		class ContentStreamOperatorBaseVisitor : public boost::static_visitor<OperatorBase*>
+		{
+		public:
+			template <typename T>
+			inline OperatorBase* operator()(T& obj) const { return obj.Content.get(); }
+		};
+
 		template <typename T>
 		class IsContentStreamOperatorTypeVisitor : public boost::static_visitor<bool>
 		{
@@ -446,15 +453,111 @@ public: \
 			HexadecimalStringObjectPtr
 		> ContentStreamOperand;
 
-		class ContentInstructionBase : public IUnknown {};
+		class ContentInstructionBase : public IUnknown
+		{
+		public:
+			enum class Type
+			{
+				Object,
+				Operation
+			};
+
+			virtual Type GetInstructionType(void) const _NOEXCEPT = 0;
+		};
+
 		class ContentStreamOperation : public ContentInstructionBase
 		{
+		public:
+			enum class Type
+			{
+				Generic = 0,
+				LineWidth,
+				LineCap,
+				LineJoin,
+				MiterLimit,
+				DashPattern,
+				ColorRenderingIntent,
+				Flatness,
+				GraphicsState,
+				SaveGraphicsState,
+				RestoreGraphicsState,
+				TransformationMatrix,
+				BeginSubpath,
+				Line,
+				FullCurve,
+				FinalCurve,
+				InitialCurve,
+				CloseSubpath,
+				Rectangle,
+				Stroke,
+				CloseAndStroke,
+				FillPathNonzero,
+				FillPathCompatibility,
+				FillPathEvenOdd,
+				FillStrokeNonzero,
+				FillStrokeEvenOdd,
+				CloseFillStrokeNonzero,
+				CloseFillStrokeEvenOdd,
+				EndPath,
+				ClipPathNonzero,
+				ClipPathEvenOdd,
+				BeginText,
+				EndText,
+				CharacterSpacing,
+				WordSpacing,
+				HorizontalScaling,
+				Leading,
+				TextFont,
+				TextRenderingMode,
+				TextRise,
+				TextTranslate,
+				TextTranslateLeading,
+				TextMatrix,
+				TextNextLine,
+				TextShow,
+				TextShowArray,
+				TextNextLineShow,
+				TextNextLineShowSpacing,
+				SetCharWidth,
+				SetCacheDevice,
+				ColorSpaceStroke,
+				ColorSpaceNonstroke,
+				SetColorStroke,
+				SetColorStrokeExtended,
+				SetColorNonstroke,
+				SetColorNonstrokeExtended,
+				SetStrokingColorSpaceGray,
+				SetNonstrokingColorSpaceGray,
+				SetStrokingColorSpaceRGB,
+				SetNonstrokingColorSpaceRGB,
+				SetStrokingColorSpaceCMYK,
+				SetNonstrokingColorSpaceCMYK,
+				ShadingPaint,
+				BeginInlineImageObject,
+				BeginInlineImageData,
+				EndInlineImageObject,
+				InvokeXObject,
+				DefineMarkedContentPoint,
+				DefineMarkedContentPointWithPropertyList,
+				BeginMarkedContentSequence,
+				BeginMarkedContentSequenceWithPropertyList,
+				EndMarkedContentSequence,
+				BeginCompatibilitySection,
+				EndCompatibilitySection
+			};
+
 		public:
 			ContentStreamOperation() = default;
 			ContentStreamOperation(std::vector<ContentStreamOperand> operands, ContentStreamOperator oper) :
 				_operator(oper), _operands(operands) {}
 			ContentStreamOperator GetOperator() const { return _operator; }
 			std::vector<ContentStreamOperand> GetOperands() const { return _operands; }
+
+			types::uinteger GetOperandsSize() const { return _operands.size(); }
+			ContentStreamOperand GetOperandAt(types::uinteger at) const { return _operands.at(at); }
+
+			inline virtual ContentInstructionBase::Type GetInstructionType(void) const _NOEXCEPT override { return ContentInstructionBase::Type::Operation; }
+			inline virtual Type GetOperationType(void) const _NOEXCEPT { return Type::Generic; }
 
 		private:
 			ContentStreamOperator _operator;
