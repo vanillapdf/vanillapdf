@@ -9,11 +9,12 @@ namespace gotchangpdf
 
 	//Buffer::Buffer() {}
 	//Buffer::Buffer(BufferPtr other) : base_type(other) {}
-	Buffer::Buffer(Buffer && other) : base_type(std::move(other)) {}
-	Buffer::Buffer(size_type count) : base_type(count) {}
-	Buffer::Buffer(const char * chars, int len) : base_type(&chars[0], &chars[len - 1]) { assert(size() > 0); }
-	Buffer::Buffer(const char * begin, const char * end) : base_type(begin, end) { assert(size() > 0); }
-	Buffer::Buffer(size_type _Count, const value_type& _Val) : base_type(_Count, _Val) {}
+	//Buffer::Buffer(Buffer && other) : base_type(std::move(other)) {}
+	Buffer::Buffer(size_type count) { _value.reserve(count); }
+	Buffer::Buffer(const value_type * chars) : Buffer(chars, strlen(chars)) {}
+	Buffer::Buffer(const char * chars, int len) : _value(&chars[0], &chars[len - 1]) { assert(_value.size() > 0); }
+	Buffer::Buffer(const char * begin, const char * end) : _value(begin, end) { assert(_value.size() > 0); }
+	Buffer::Buffer(size_type count, const value_type& val) : _value(count, val) {}
 	//Buffer::Buffer(const std::vector<ValueType>& data) : _value(data) { assert(_value.size() > 0); }
 
 	#pragma endregion

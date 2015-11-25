@@ -28,7 +28,7 @@ namespace gotchangpdf
 
 			/* this can be done, because we are dealing with 2
 			hexadecimal chars, which cannot be greater than 0xFF */
-			unsigned char parsed = static_cast<char>(val);
+			auto parsed = static_cast<char>(val);
 			_value->push_back(parsed);
 		}
 	}
