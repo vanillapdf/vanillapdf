@@ -6,10 +6,8 @@
 
 namespace gotchangpdf
 {
-	namespace io = boost::iostreams;
-
 	typedef std::iostream CharacterDevice;
-	typedef io::filtering_stream<io::seekable, char> CharacterFilteringDevice;
+	typedef boost::iostreams::filtering_stream<io::seekable, char> CharacterFilteringDevice;
 }
 
 #endif /* _CHARACTER_DEVICE_H */
