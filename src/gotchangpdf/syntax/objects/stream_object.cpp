@@ -19,7 +19,11 @@ namespace gotchangpdf
 			if (!_body->empty())
 				return _body;
 
-			auto input = _file->GetInputStream();
+			auto locked_file = _file.lock();
+			if (!locked_file)
+				throw Exception("File already disposed");
+
+			auto input = locked_file->GetInputStream();
 			if (auto locked = input.lock()) {
 				auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
 				auto stream = Stream(*locked);

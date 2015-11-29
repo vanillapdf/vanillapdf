@@ -25,7 +25,11 @@ namespace gotchangpdf
 		DirectObject IndirectObjectReference::GetReferencedObject() const
 		{
 			if (!_initialized) {
-				_object = _file->GetIndirectObject(_ref_obj, _ref_gen);
+				auto locked_file = _file.lock();
+				if (!locked_file)
+					throw Exception("File already disposed");
+
+				_object = locked_file->GetIndirectObject(_ref_obj, _ref_gen);
 				_initialized = true;
 			}
 

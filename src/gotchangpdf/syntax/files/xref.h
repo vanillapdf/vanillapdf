@@ -52,13 +52,13 @@ namespace gotchangpdf
 
 			inline bool InUse(void) const _NOEXCEPT{ return GetUsage() == Usage::Compressed || GetUsage() == Usage::Used; }
 
-			inline void SetFile(File *file) _NOEXCEPT { _file = file; }
-			inline File* GetFile() const _NOEXCEPT { return _file; }
+			inline void SetFile(std::weak_ptr<File> file) _NOEXCEPT { _file = file; }
+			inline std::weak_ptr<File> GetFile() const _NOEXCEPT { return _file; }
 
 			virtual ~XrefEntryBase() {};
 
 		protected:
-			File * _file = nullptr;
+			std::weak_ptr<File> _file;
 			types::integer _obj_number = -1;
 			types::ushort _gen_number = 0;
 
@@ -173,8 +173,8 @@ namespace gotchangpdf
 			XrefEntry At(types::uinteger at) { return _entries.at(at); }
 			//void SetParent(Xref parent) { _parent = parent; }
 			//Xref GetParent(void) const { return _parent; }
-			inline void SetFile(File *file) _NOEXCEPT { _file = file; }
-			inline File* GetFile() const _NOEXCEPT { return _file; }
+			inline void SetFile(std::weak_ptr<File> file) _NOEXCEPT { _file = file; }
+			inline std::weak_ptr<File> GetFile() const _NOEXCEPT { return _file; }
 
 			types::integer Index(void) const
 			{
@@ -189,7 +189,7 @@ namespace gotchangpdf
 			}
 
 		private:
-			File * _file = nullptr;
+			std::weak_ptr<File> _file;
 			types::integer _index = 0;
 			std::vector<XrefEntry> _entries;
 			//Xref _parent; // TODO parent holding strong ref - cyclic dependecies
@@ -204,8 +204,8 @@ namespace gotchangpdf
 				Stream
 			};
 
-			inline void SetFile(File *file) _NOEXCEPT { _file = file; }
-			inline File* GetFile() const _NOEXCEPT { return _file; }
+			inline void SetFile(std::weak_ptr<File>file) _NOEXCEPT { _file = file; }
+			inline std::weak_ptr<File> GetFile() const _NOEXCEPT { return _file; }
 
 			inline DictionaryObjectPtr GetTrailerDictionary(void) const { return _trailer_dictionary; }
 			inline void SetTrailerDictionary(DictionaryObjectPtr dictionary) { _trailer_dictionary = dictionary; }
@@ -221,7 +221,7 @@ namespace gotchangpdf
 			virtual ~XrefBase() {};
 
 		protected:
-			File * _file = nullptr;
+			std::weak_ptr<File> _file;
 			std::vector<XrefSubsectionPtr> _sections;
 			types::stream_offset _last_xref_offset = std::_BADOFF;
 			DictionaryObjectPtr _trailer_dictionary;

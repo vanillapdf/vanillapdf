@@ -16,7 +16,11 @@ namespace gotchangpdf
 			if (Initialized())
 				return;
 
-			auto weak_input = _file->GetInputStream();
+			auto locked_file = _file.lock();
+			if (!locked_file)
+				throw Exception("File already disposed");
+
+			auto weak_input = locked_file->GetInputStream();
 			if (auto input = weak_input.lock()) {
 				auto rewind_pos = input->tellg();
 				BOOST_SCOPE_EXIT(input, rewind_pos)
@@ -37,8 +41,12 @@ namespace gotchangpdf
 			if (Initialized())
 				return;
 
-			auto chain = _file->GetXrefChain();
-			auto stm = _file->GetIndirectObject(_object_stream_number, 0);
+			auto locked_file = _file.lock();
+			if (!locked_file)
+				throw Exception("File already disposed");
+
+			auto chain = locked_file->GetXrefChain();
+			auto stm = locked_file->GetIndirectObject(_object_stream_number, 0);
 
 			ObjectVisitor<StreamObjectPtr> stream_visitor;
 			auto converted = stm.apply_visitor(stream_visitor);

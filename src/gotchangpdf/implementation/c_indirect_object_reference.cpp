@@ -13,7 +13,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedOb
 {
 	IndirectObjectReference* obj = reinterpret_cast<IndirectObjectReference*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
@@ -30,7 +30,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_Release(Indirec
 {
 	IndirectObjectReference* obj = reinterpret_cast<IndirectObjectReference*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	obj->Release();
 	return GOTCHANG_PDF_ERROR_SUCCES;
@@ -41,7 +41,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedOb
 	IndirectObjectReference* obj = reinterpret_cast<IndirectObjectReference*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	*result = obj->GetReferencedObjectNumber();
 	return GOTCHANG_PDF_ERROR_SUCCES;
@@ -52,7 +52,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedGe
 	IndirectObjectReference* obj = reinterpret_cast<IndirectObjectReference*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	*result = obj->GetReferencedGenerationNumber();
 	return GOTCHANG_PDF_ERROR_SUCCES;

@@ -16,7 +16,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryH
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(name_object);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
@@ -35,7 +35,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(Diction
 	DictionaryObject* obj = reinterpret_cast<DictionaryObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
@@ -118,7 +118,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(dictionary);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(dictionary->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(dictionary->GetFile());
 
 	try
 	{
@@ -136,7 +136,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Release(Dictiona
 {
 	DictionaryObject* obj = reinterpret_cast<DictionaryObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	obj->Release();
 	return GOTCHANG_PDF_ERROR_SUCCES;

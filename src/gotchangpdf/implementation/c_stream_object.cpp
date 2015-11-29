@@ -12,7 +12,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_Header(StreamHandle 
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
@@ -29,7 +29,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_BodyRaw(StreamHandle
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
@@ -46,7 +46,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_BodyDecoded(StreamHa
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
@@ -62,7 +62,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_Release(StreamHandle
 {
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	obj->Release();
 	return GOTCHANG_PDF_ERROR_SUCCES;

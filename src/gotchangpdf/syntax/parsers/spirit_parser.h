@@ -19,7 +19,7 @@ namespace gotchangpdf
 		class SpiritParser : public Stream
 		{
 		public:
-			SpiritParser(File * file, CharacterSource & stream);
+			SpiritParser(std::weak_ptr<File> file, CharacterSource & stream);
 			SpiritParser(const SpiritParser & other);
 
 			template<typename T>
@@ -52,7 +52,7 @@ namespace gotchangpdf
 
 			types::integer ReadLastXrefOffset();
 
-			File * file(void) const;
+			std::weak_ptr<File> file(void) const;
 
 		private:
 			class Impl;

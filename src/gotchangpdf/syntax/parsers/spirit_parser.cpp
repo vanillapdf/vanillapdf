@@ -27,14 +27,14 @@ namespace gotchangpdf
 		class SpiritParser::Impl
 		{
 		public:
-			Impl(File * file) : _file(file) {}
+			Impl(std::weak_ptr<File> file) : _file(file) {}
 
 			XrefEntry ReadTableEntry(syntax::SpiritParser& s, types::integer objNumber);
 
 			template <typename Result, typename Grammar, typename Iterator>
 			Result Read(Grammar& grammar, Iterator& input_begin_pos, Iterator& input_end_pos);
 
-			File *_file = nullptr;
+			std::weak_ptr<File> _file;
 			XrefTableSubsectionsGrammar _xref_grammar;
 			contents::ContentStreamGrammar _content_stream_grammar;
 			ObjectStreamGrammar _obj_stream_grammar;
@@ -42,13 +42,13 @@ namespace gotchangpdf
 			ReverseGrammar _reverse_grammar;
 		};
 
-		SpiritParser::SpiritParser(File * file, CharacterSource & stream)
+		SpiritParser::SpiritParser(std::weak_ptr<File> file, CharacterSource & stream)
 			: Stream(stream), _impl(new Impl(file)) {}
 
 		SpiritParser::SpiritParser(const SpiritParser & other)
 			: Stream(other) { _impl->_file = other._impl->_file; }
 
-		File * SpiritParser::file(void) const { return _impl->_file; }
+		std::weak_ptr<File> SpiritParser::file(void) const { return _impl->_file; }
 
 		template <typename Result, typename Grammar, typename Iterator>
 		Result SpiritParser::Impl::Read(Grammar& grammar, Iterator& input_begin_pos, Iterator& input_end_pos)
@@ -100,12 +100,15 @@ namespace gotchangpdf
 			base_iterator_type input_begin_base(*this);
 			base_iterator_type input_end_base;
 
-			types::stream_offset offset = tellg();
+			auto locked_file = _impl->_file.lock();
+			if (!locked_file)
+				throw Exception("File is closed");
 
-			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _impl->_file->GetFilename(), 1, 1, offset);
+			types::stream_offset offset = tellg();
+			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, locked_file->GetFilename(), 1, 1, offset);
 			pos_iterator_type input_end_pos;
 
-			const auto& gram = _impl->_xref_grammar(_impl->_file, offset);
+			const auto& gram = _impl->_xref_grammar(&locked_file, offset);
 			return _impl->Read<Xref>(gram, input_begin_pos, input_end_pos);
 		}
 
@@ -118,12 +121,15 @@ namespace gotchangpdf
 			base_iterator_type input_begin_base(*this);
 			base_iterator_type input_end_base;
 
-			types::stream_offset offset = tellg();
+			auto locked_file = _impl->_file.lock();
+			if (!locked_file)
+				throw Exception("File is closed");
 
-			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _impl->_file->GetFilename(), 1, 1, offset);
+			types::stream_offset offset = tellg();
+			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, locked_file->GetFilename(), 1, 1, offset);
 			pos_iterator_type input_end_pos;
 
-			const auto& gram = _impl->_content_stream_grammar(_impl->_file);
+			const auto& gram = _impl->_content_stream_grammar(&locked_file);
 			return _impl->Read<contents::OperationCollection>(gram, input_begin_pos, input_end_pos);
 		}
 
@@ -154,9 +160,12 @@ namespace gotchangpdf
 			base_iterator_type input_begin_base(*this);
 			base_iterator_type input_end_base;
 
-			types::stream_offset offset = tellg();
+			auto locked_file = _impl->_file.lock();
+			if (!locked_file)
+				throw Exception("File is closed");
 
-			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _impl->_file->GetFilename(), 1, 1, offset);
+			types::stream_offset offset = tellg();
+			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, locked_file->GetFilename(), 1, 1, offset);
 			pos_iterator_type input_end_pos;
 
 			const auto& gram = _impl->_reverse_grammar;
@@ -172,9 +181,12 @@ namespace gotchangpdf
 			base_iterator_type input_begin_base(*this);
 			base_iterator_type input_end_base;
 
-			types::stream_offset offset = tellg();
+			auto locked_file = _impl->_file.lock();
+			if (!locked_file)
+				throw Exception("File is closed");
 
-			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _impl->_file->GetFilename(), 1, 1, offset);
+			types::stream_offset offset = tellg();
+			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, locked_file->GetFilename(), 1, 1, offset);
 			pos_iterator_type input_end_pos;
 
 			const auto& gram = _impl->_obj_stream_grammar(size);
@@ -196,12 +208,15 @@ namespace gotchangpdf
 			base_iterator_type input_begin_base(*this);
 			base_iterator_type input_end_base;
 
-			types::stream_offset offset = tellg();
+			auto locked_file = _impl->_file.lock();
+			if (!locked_file)
+				throw Exception("File is closed");
 
-			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, _impl->_file->GetFilename(), 1, 1, offset);
+			types::stream_offset offset = tellg();
+			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, locked_file->GetFilename(), 1, 1, offset);
 			pos_iterator_type input_end_pos;
 
-			const auto& gram = _impl->_direct_grammar(_impl->_file, offset);
+			const auto& gram = _impl->_direct_grammar(&locked_file, offset);
 			return _impl->Read<DirectObject>(gram, input_begin_pos, input_end_pos);
 		}
 	}

@@ -1,7 +1,6 @@
 #include "precompiled.h"
 #include "spirit_grammar.h"
 
-#include "file.h"
 #include "iter_offset_parser.h"
 #include "abstract_syntax_tree.h"
 #include "object_visitors.h"
@@ -13,13 +12,13 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-void direct_object_file_handler(DirectObject obj, File* file)
+void direct_object_file_handler(DirectObject obj, std::shared_ptr<File>* file)
 {
-	assert(nullptr != file);
+	assert(nullptr != file && *file);
 
 	ObjectBaseVisitor visitor;
 	auto base = obj.apply_visitor(visitor);
-	base->SetFile(file);
+	base->SetFile(*file);
 }
 
 void direct_object_offset_handler(DirectObject obj, types::stream_offset offset)

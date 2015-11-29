@@ -12,7 +12,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_Value(Literal
 	LiteralStringObject* obj = reinterpret_cast<LiteralStringObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	auto buffer = obj->Value();
 	auto ptr = buffer.AddRefGet();
@@ -24,7 +24,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_Release(Liter
 {
 	LiteralStringObject* obj = reinterpret_cast<LiteralStringObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	obj->Release();
 	return GOTCHANG_PDF_ERROR_SUCCES;
@@ -35,7 +35,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Value(Hex
 	HexadecimalStringObject* obj = reinterpret_cast<HexadecimalStringObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	auto buffer = obj->Value();
 	auto ptr = buffer.AddRefGet();
@@ -47,7 +47,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Release(H
 {
 	HexadecimalStringObject* obj = reinterpret_cast<HexadecimalStringObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	obj->Release();
 	return GOTCHANG_PDF_ERROR_SUCCES;

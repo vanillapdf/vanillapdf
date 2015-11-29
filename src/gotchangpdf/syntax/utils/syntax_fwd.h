@@ -23,11 +23,11 @@ namespace gotchangpdf
 
 		// Filters
 		class Filter;
-		class FlateDecodeFilter;
-		using FlateDecodeFilterPtr = Deferred<FlateDecodeFilter>;
+		class FlateDecodeFilter; using FlateDecodeFilterPtr = Deferred<FlateDecodeFilter>;
 
 		// Files
 		class File;
+		class FileHolder; using FileHolderPtr = Deferred<FileHolder>;
 		class Header;
 
 		class XrefBase;

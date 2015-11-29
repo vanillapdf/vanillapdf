@@ -429,6 +429,7 @@ int main(int argc, char *argv[])
 {
 	int i, valid, size;
 	FileHandle file = NULL;
+	FileHolderHandle file_holder = NULL;
 	XrefChainHandle chain = NULL;
 	XrefChainIteratorHandle chain_iterator = NULL;
 	CatalogHandle catalog = NULL;
@@ -438,7 +439,8 @@ int main(int argc, char *argv[])
 		return GOTCHANG_PDF_ERROR_GENERAL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Open(argv[1], &file));
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file));
+	RETURN_ERROR_IF_NOT_SUCCESS(FileHolder_Create(file, &file_holder));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file, file_holder));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_XrefChain(file, &chain));
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Iterator(chain, &chain_iterator));
 
@@ -454,27 +456,27 @@ int main(int argc, char *argv[])
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_Next(chain_iterator));
 	}
 
-	RETURN_ERROR_IF_NOT_SUCCESS(File_GetDocumentCatalog(file, &catalog));
-	printf("Document catalog begin\n");
+	//RETURN_ERROR_IF_NOT_SUCCESS(File_GetDocumentCatalog(file, &catalog));
+	//printf("Document catalog begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_GetPages(catalog, &pages));
-	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(pages, &size));
+	//RETURN_ERROR_IF_NOT_SUCCESS(Catalog_GetPages(catalog, &pages));
+	//RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(pages, &size));
 
-	for (i = 1; i <= size; ++i)
-	{
-		PageObjectHandle page = NULL;
-		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(pages, i, &page));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_page(page, 0));
-		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(page));
-	}
+	//for (i = 1; i <= size; ++i)
+	//{
+	//	PageObjectHandle page = NULL;
+	//	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(pages, i, &page));
+	//	RETURN_ERROR_IF_NOT_SUCCESS(process_page(page, 0));
+	//	RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(page));
+	//}
 
-	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_Release(pages));
-	printf("Document catalog end\n");
+	//RETURN_ERROR_IF_NOT_SUCCESS(PageTree_Release(pages));
+	//printf("Document catalog end\n");
 
 	
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_Release(chain_iterator));
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Release(chain));
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));
+	RETURN_ERROR_IF_NOT_SUCCESS(FileHolder_Release(file_holder));
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }

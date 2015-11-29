@@ -1,7 +1,6 @@
 #include "precompiled.h"
 #include "xref_grammar.h"
 
-#include "file.h"
 #include "iter_offset_parser.h"
 #include "abstract_syntax_tree.h"
 
@@ -23,23 +22,28 @@ void add_entry(XrefSubsectionPtr section, const XrefEntry& entry)
 	section->Add(entry);
 }
 
-void set_file_to_entry(XrefEntry& entry, File* file)
+void set_file_to_entry(XrefEntry& entry, std::shared_ptr<File>* file)
 {
+	assert(nullptr != file && *file);
+
 	XrefEntryBaseVisitor visitor;
 	auto base = entry.apply_visitor(visitor);
-	base->SetFile(file);
+	base->SetFile(*file);
 }
 
-void set_file_to_subsection(XrefSubsectionPtr& section, File* file)
+void set_file_to_subsection(XrefSubsectionPtr& section, std::shared_ptr<File>* file)
 {
-	section->SetFile(file);
+	assert(nullptr != file && *file);
+	section->SetFile(*file);
 }
 
-void set_file_to_xref(Xref& xref, File* file)
+void set_file_to_xref(Xref& xref, std::shared_ptr<File>* file)
 {
+	assert(nullptr != file && *file);
+
 	XrefBaseVisitor visitor;
 	auto base = xref.apply_visitor(visitor);
-	base->SetFile(file);
+	base->SetFile(*file);
 }
 
 void set_trailer(Xref& xref, DictionaryObjectPtr& dict)
@@ -57,8 +61,10 @@ void set_last_offset(Xref& xref, types::integer offset)
 	base->SetLastXrefOffset(offset);
 }
 
-void read_xref_stream_data(Xref xref, StreamObjectPtr stream, File* file)
+void read_xref_stream_data(Xref xref, StreamObjectPtr stream, std::shared_ptr<File>* file)
 {
+	assert(nullptr != file && *file);
+
 	XrefBaseVisitor visitor;
 	auto xref_base = xref.apply_visitor(visitor);
 
@@ -119,21 +125,21 @@ void read_xref_stream_data(Xref xref, StreamObjectPtr stream, File* file)
 			case 0:
 			{
 				XrefFreeEntryPtr entry(*subsection_index + idx, field3.SafeConvert<types::ushort>(), field2);
-				entry->SetFile(file);
+				entry->SetFile(*file);
 				subsection->Add(entry);
 				break;
 			}
 			case 1:
 			{
 				XrefUsedEntryPtr entry(*subsection_index + idx, field3.SafeConvert<types::ushort>(), field2);
-				entry->SetFile(file);
+				entry->SetFile(*file);
 				subsection->Add(entry);
 				break;
 			}
 			case 2:
 			{
 				XrefCompressedEntryPtr entry(*subsection_index + idx, static_cast<types::ushort>(0), field2, field3);
-				entry->SetFile(file);
+				entry->SetFile(*file);
 				subsection->Add(entry);
 				break;
 			}
@@ -145,7 +151,7 @@ void read_xref_stream_data(Xref xref, StreamObjectPtr stream, File* file)
 		xref_base->Add(subsection);
 	}
 
-	xref_base->SetFile(file);
+	xref_base->SetFile(*file);
 	xref_base->SetTrailerDictionary(header);
 }
 

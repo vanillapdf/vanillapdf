@@ -26,4 +26,12 @@
 		return GOTCHANG_PDF_ERROR_GENERAL; \
 	}
 
+#define LOG_WEAK_FILE_SCOPE(file) \
+	auto __locked_file__ = file.lock(); \
+	if (!__locked_file__) \
+		return GOTCHANG_PDF_ERROR_FILE_DISPOSED; \
+	\
+	LOG_SCOPE(__locked_file__->GetFilename()); \
+
+
 #endif /* _C_HELPER_H */

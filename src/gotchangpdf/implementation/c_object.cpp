@@ -24,7 +24,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Type(ObjectHandle handle, 
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	switch (obj->GetType()) {
 	case Object::Type::Array:
@@ -63,7 +63,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle han
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	*result = obj->GetOffset();
 	return GOTCHANG_PDF_ERROR_SUCCES;
@@ -73,7 +73,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Release(ObjectHandle handl
 {
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	obj->Release();
 	return GOTCHANG_PDF_ERROR_SUCCES;
@@ -84,7 +84,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToArray(ObjectHandle handl
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
@@ -103,7 +103,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToDictionary(ObjectHandle 
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
@@ -122,7 +122,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToStream(ObjectHandle hand
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
@@ -141,7 +141,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToIndirectReference(Object
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
@@ -160,7 +160,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToInteger(ObjectHandle han
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
@@ -179,7 +179,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToName(ObjectHandle handle
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
@@ -198,7 +198,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToLiteralString(ObjectHand
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try {
 		LiteralStringObject* converted = dynamic_cast<LiteralStringObject*>(obj);
@@ -216,7 +216,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToHexadecimalString(Object
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(obj->GetFile()->GetFilename());
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try {
 		HexadecimalStringObject* converted = dynamic_cast<HexadecimalStringObject*>(obj);

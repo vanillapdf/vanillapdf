@@ -29,5 +29,6 @@ typedef const char** out_string_type;
 #define GOTCHANG_PDF_ERROR_SUCCES          0
 #define GOTCHANG_PDF_ERROR_GENERAL         1
 #define GOTCHANG_PDF_ERROR_PARAMETER_VALUE 2
+#define GOTCHANG_PDF_ERROR_FILE_DISPOSED   3
 
 #endif /* _VALUES_H */

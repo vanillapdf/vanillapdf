@@ -6,6 +6,7 @@
 #include "unknown_interface.h"
 
 #include <iosfwd>
+#include <memory>
 
 namespace gotchangpdf
 {
@@ -47,11 +48,11 @@ namespace gotchangpdf
 			inline void SetGenerationNumber(types::ushort number) _NOEXCEPT { _gen_number = number; }
 			inline types::ushort GetGenerationNumber() const _NOEXCEPT { return _gen_number; }
 
-			inline void SetFile(File *file) _NOEXCEPT { _file = file; }
-			inline File* GetFile() const _NOEXCEPT { return _file; }
+			inline void SetFile(std::weak_ptr<File> file) _NOEXCEPT { _file = file; }
+			inline std::weak_ptr<File> GetFile() const _NOEXCEPT { return _file; }
 
 		protected:
-			File * _file = nullptr;
+			std::weak_ptr<File> _file;
 			types::integer _obj_number = -1;
 			types::ushort _gen_number = 0;
 			types::stream_offset _offset = std::_BADOFF;

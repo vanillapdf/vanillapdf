@@ -6,16 +6,7 @@
 #include "exception.h"
 
 #include "xref_chain.h"
-#include "log.h"
 #include "header.h"
-#include "catalog.h"
-
-#include <memory>
-#include <cassert>
-#include <iostream>
-
-#include <boost/scope_exit.hpp>
-//#include <boost/typeof/incr_registration_group.hpp>
 
 namespace gotchangpdf
 {
@@ -24,9 +15,7 @@ namespace gotchangpdf
 		using namespace std;
 
 		File::File(std::string filename)
-			: _filename(filename),
-			_header(new Header()),
-			_xref(new XrefChain())
+			: _filename(filename)
 		{
 			LOG_DEBUG << "File constructor";
 		}
@@ -44,21 +33,21 @@ namespace gotchangpdf
 			_cache.clear();
 		}
 
-		void File::Initialize(void)
+		void File::Initialize(std::shared_ptr<File> holder)
 		{
 			LOG_DEBUG << "Initialize";
 
 			if (_initialized)
 				return;
 
-			_input = shared_ptr<FileDevice>(new FileDevice());
+			_input = make_shared<FileDevice>();
 			_input->open(_filename,
 				ios_base::in | ios_base::out | ios_base::binary);
 
 			if (!_input || !_input->good())
 				throw Exception("Could not open file");
 
-			SpiritParser stream = SpiritParser(this, *_input);
+			SpiritParser stream = SpiritParser(holder, *_input);
 
 			stream.seekg(ios_base::beg);
 			stream >> *_header;
@@ -66,7 +55,7 @@ namespace gotchangpdf
 			types::integer offset;
 			{
 				ReverseStream raw_reversed(*_input);
-				SpiritParser reverse_stream = SpiritParser(this, raw_reversed);
+				SpiritParser reverse_stream = SpiritParser(holder, raw_reversed);
 				offset = reverse_stream.ReadLastXrefOffset();
 			}
 
@@ -121,18 +110,18 @@ namespace gotchangpdf
 			}
 		}
 
-		semantics::CatalogPtr File::GetDocumentCatalog(void) const
-		{
-			if (!_initialized)
-				throw Exception("File has not been initialized yet");
+		//semantics::CatalogPtr File::GetDocumentCatalog(void) const
+		//{
+		//	if (!_initialized)
+		//		throw Exception("File has not been initialized yet");
 
-			XrefBaseVisitor visitor;
-			auto xref_variant = _xref->Begin()->Value();
-			auto xref = xref_variant.apply_visitor(visitor);
-			auto dictionary = xref->GetTrailerDictionary();
-			auto root = dictionary->FindAs<DictionaryObjectPtr>(constant::Name::Root);
-			return new semantics::Catalog(root);
-		}
+		//	XrefBaseVisitor visitor;
+		//	auto xref_variant = _xref->Begin()->Value();
+		//	auto xref = xref_variant.apply_visitor(visitor);
+		//	auto dictionary = xref->GetTrailerDictionary();
+		//	auto root = dictionary->FindAs<DictionaryObjectPtr>(constant::Name::Root);
+		//	return new semantics::Catalog(root);
+		//}
 
 		HeaderPtr File::GetHeader(void) const { return _header; }
 		XrefChainPtr File::GetXrefChain(void) const { return _xref; }

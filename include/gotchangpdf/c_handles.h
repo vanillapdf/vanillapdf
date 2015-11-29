@@ -27,6 +27,7 @@ extern "C"
 
 	/* File */
 	DECLARE_OBJECT_HANDLE(File);
+	DECLARE_OBJECT_HANDLE(FileHolder);
 	DECLARE_OBJECT_HANDLE(XrefEntry);
 	DECLARE_OBJECT_HANDLE(XrefFreeEntry);
 	DECLARE_OBJECT_HANDLE(XrefUsedEntry);

@@ -101,13 +101,13 @@ namespace gotchangpdf
 		};
 
 		class ArrayGrammar : public qi::grammar<pos_iterator_type,
-			MixedArrayObjectPtr(File*)>
+			MixedArrayObjectPtr(std::shared_ptr<File>*)>
 		{
 		public:
 			ArrayGrammar(ContainableGrammar &containable_object);
 
 		private:
-			qi::rule<pos_iterator_type, MixedArrayObjectPtr(File*)> start;
+			qi::rule<pos_iterator_type, MixedArrayObjectPtr(std::shared_ptr<File>*)> start;
 			ContainableGrammar &containable_object;
 			Whitespace whitespaces;
 		};
@@ -134,13 +134,13 @@ namespace gotchangpdf
 		};
 
 		class DictionaryGrammar : public qi::grammar<pos_iterator_type,
-			DictionaryObjectPtr(File*)>
+			DictionaryObjectPtr(std::shared_ptr<File>*)>
 		{
 		public:
 			DictionaryGrammar(ContainableGrammar& containable_grammar);
 
 		private:
-			qi::rule<pos_iterator_type, DictionaryObjectPtr(File*)> start;
+			qi::rule<pos_iterator_type, DictionaryObjectPtr(std::shared_ptr<File>*)> start;
 			ContainableGrammar &containable_object;
 			NameGrammar name_object;
 			Whitespace whitespaces;
@@ -148,26 +148,26 @@ namespace gotchangpdf
 		};
 
 		class StreamDataGrammar : public qi::grammar<pos_iterator_type,
-			StreamObjectPtr(File*, DictionaryObjectPtr),
+			StreamObjectPtr(std::shared_ptr<File>*, DictionaryObjectPtr),
 			qi::locals<types::stream_size, types::stream_size>>
 		{
 		public:
 			StreamDataGrammar();
 
 		private:
-			qi::rule<pos_iterator_type, StreamObjectPtr(File*, DictionaryObjectPtr), qi::locals<types::stream_size, types::stream_size>> start;
+			qi::rule<pos_iterator_type, StreamObjectPtr(std::shared_ptr<File>*, DictionaryObjectPtr), qi::locals<types::stream_size, types::stream_size>> start;
 			Whitespace whitespaces;
 			EndOfLine eol;
 		};
 
 		class ContainableGrammar : public qi::grammar<pos_iterator_type,
-			ContainableObject(File*)>
+			ContainableObject(std::shared_ptr<File>*)>
 		{
 		public:
 			ContainableGrammar();
 
 		private:
-			qi::rule<pos_iterator_type, ContainableObject(File*)> start;
+			qi::rule<pos_iterator_type, ContainableObject(std::shared_ptr<File>*)> start;
 			ArrayGrammar array_object = { *this };
 			BooleanGrammar boolean_object;
 			DictionaryGrammar dictionary_object = { *this };
@@ -182,14 +182,14 @@ namespace gotchangpdf
 		};
 
 		class IndirectStreamGrammar : public qi::grammar<pos_iterator_type,
-			StreamObjectPtr(File*, types::stream_offset),
+			StreamObjectPtr(std::shared_ptr<File>*, types::stream_offset),
 			qi::locals<types::integer, types::ushort, DictionaryObjectPtr >>
 		{
 		public:
 			IndirectStreamGrammar();
 
 		private:
-			qi::rule<pos_iterator_type, StreamObjectPtr(File*, types::stream_offset), qi::locals<types::integer, types::ushort, DictionaryObjectPtr>> start;
+			qi::rule<pos_iterator_type, StreamObjectPtr(std::shared_ptr<File>*, types::stream_offset), qi::locals<types::integer, types::ushort, DictionaryObjectPtr>> start;
 			StreamDataGrammar stream_data;
 			ContainableGrammar containable_object;
 			DictionaryGrammar dictionary_object = { containable_object };
@@ -200,14 +200,14 @@ namespace gotchangpdf
 
 		using DictionaryOrStream = boost::variant<DictionaryObjectPtr, StreamObjectPtr>;
 		class DictionaryOrStreamGrammar : public qi::grammar<pos_iterator_type,
-			DictionaryOrStream(File*),
+			DictionaryOrStream(std::shared_ptr<File>*),
 			qi::locals<types::stream_size, types::stream_size, DictionaryObjectPtr >>
 		{
 		public:
 			DictionaryOrStreamGrammar();
 
 		private:
-			qi::rule<pos_iterator_type, DictionaryOrStream(File*), qi::locals<types::stream_size, types::stream_size, DictionaryObjectPtr>> start;
+			qi::rule<pos_iterator_type, DictionaryOrStream(std::shared_ptr<File>*), qi::locals<types::stream_size, types::stream_size, DictionaryObjectPtr>> start;
 			ContainableGrammar containable_object;
 			DictionaryGrammar dictionary_object = { containable_object };
 			StreamDataGrammar stream_data;
@@ -217,15 +217,15 @@ namespace gotchangpdf
 		};
 
 		class DirectObjectGrammar : public qi::grammar<pos_iterator_type,
-			DirectObject(File*, types::stream_offset),
+			DirectObject(std::shared_ptr<File>*, types::stream_offset),
 			qi::locals<types::integer, types::ushort>>
 		{
 		public:
 			DirectObjectGrammar();
 
 		private:
-			qi::rule<pos_iterator_type, DirectObject(File*, types::stream_offset), qi::locals<types::integer, types::ushort>> start;
-			qi::rule<pos_iterator_type, DirectObject(File*)> direct_object;
+			qi::rule<pos_iterator_type, DirectObject(std::shared_ptr<File>*, types::stream_offset), qi::locals<types::integer, types::ushort>> start;
+			qi::rule<pos_iterator_type, DirectObject(std::shared_ptr<File>*)> direct_object;
 
 			ContainableGrammar containable_object;
 			DictionaryOrStreamGrammar dict_or_stream;

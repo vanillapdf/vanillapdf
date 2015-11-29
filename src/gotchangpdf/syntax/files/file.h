@@ -20,8 +20,7 @@ namespace gotchangpdf
 			File(std::string filename);
 			~File(void);
 
-			void Initialize(void);
-			semantics::CatalogPtr GetDocumentCatalog(void) const;
+			void Initialize(std::shared_ptr<File> holder);
 			DirectObject GetIndirectObject(types::integer objNumber,
 				types::ushort genNumber);
 
@@ -39,6 +38,16 @@ namespace gotchangpdf
 
 			bool _initialized = false;
 			std::string _filename;
+		};
+
+		class FileHolder : public IUnknown
+		{
+		public:
+			explicit FileHolder(File* file) : _file(file) {}
+			std::shared_ptr<File> Value() const { return _file; }
+
+		private:
+			std::shared_ptr<File> _file;
 		};
 	}
 }

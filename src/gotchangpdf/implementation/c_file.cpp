@@ -14,7 +14,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Open(const char *filename, P
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
 	LOG_SCOPE(filename);
 
 	try
@@ -26,25 +25,18 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Open(const char *filename, P
 	C_INTERFACE_EXCEPTION_HANDLERS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Release(FileHandle handle)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle, FileHolderHandle holder_handle)
 {
 	File* file = reinterpret_cast<File*>(handle);
+	FileHolder* holder = reinterpret_cast<FileHolder*>(holder_handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
-	LOG_SCOPE(file->GetFilename());
-
-	delete file;
-	return GOTCHANG_PDF_ERROR_SUCCES;
-}
-
-GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle)
-{
-	File* file = reinterpret_cast<File*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
 	LOG_SCOPE(file->GetFilename());
 
 	try
 	{
-		file->Initialize();
+		auto val = holder->Value();
+		file->Initialize(val);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS
@@ -87,8 +79,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
 	C_INTERFACE_EXCEPTION_HANDLERS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetDocumentCatalog(
-	FileHandle handle, PCatalogHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION FileHolder_Create(FileHandle handle, PFileHolderHandle result)
 {
 	File* file = reinterpret_cast<File*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
@@ -97,11 +88,20 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetDocumentCatalog(
 
 	try
 	{
-		auto item = file->GetDocumentCatalog();
-		auto ptr = item.AddRefGet();
+		FileHolderPtr holder(file);
+		auto ptr = holder.AddRefGet();
 
-		*result = reinterpret_cast<CatalogHandle>(ptr);
+		*result = reinterpret_cast<FileHolderHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION FileHolder_Release(FileHolderHandle handle)
+{
+	FileHolder* obj = reinterpret_cast<FileHolder*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	obj->Release();
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }
