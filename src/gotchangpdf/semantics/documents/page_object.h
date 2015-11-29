@@ -1,0 +1,26 @@
+#ifndef _PAGE_H
+#define _PAGE_H
+
+#include "semantics_fwd.h"
+#include "page_node.h"
+
+namespace gotchangpdf
+{
+	namespace semantics
+	{
+		class PageObject : public PageNodeBase
+		{
+		public:
+			explicit PageObject(syntax::DictionaryObjectPtr obj);
+
+			PageTreeNodePtr Parent(void) const;
+			ResourceDictionaryPtr Resources(void) const;
+			RectanglePtr MediaBox(void) const;
+			ContentsPtr Contents(void) const;
+
+			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageObject; }
+		};
+	}
+}
+
+#endif /* _PAGE_H */

@@ -5,6 +5,7 @@
 #include "c_helper.h"
 
 using namespace gotchangpdf;
+using namespace gotchangpdf::syntax;
 
 GOTCHANG_PDF_API error_type Object_TypeName(ObjectType type, out_string_type result)
 {

@@ -10,8 +10,7 @@
 #include "c_helper.h"
 
 using namespace gotchangpdf;
-using namespace gotchangpdf::files;
-
+using namespace gotchangpdf::syntax;
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_TrailerDictionary(XrefHandle handle, PDictionaryHandle result)
 {

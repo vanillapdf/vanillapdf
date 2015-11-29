@@ -7,6 +7,7 @@
 #include "c_helper.h"
 
 using namespace gotchangpdf;
+using namespace gotchangpdf::syntax;
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObject(IndirectReferenceHandle handle, PObjectHandle result)
 {

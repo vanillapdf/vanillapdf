@@ -6,6 +6,7 @@
 #include "c_helper.h"
 
 using namespace gotchangpdf;
+using namespace gotchangpdf::syntax;
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayHandle handle, integer_type at, PObjectHandle result)
 {

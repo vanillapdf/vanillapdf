@@ -5,6 +5,7 @@
 #include "c_helper.h"
 
 using namespace gotchangpdf;
+using namespace gotchangpdf::syntax;
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_Value(IntegerHandle handle, out_integer_type result)
 {

@@ -11,119 +11,105 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\gotchangpdf\c_contents.h" />
     <ClInclude Include="include\gotchangpdf\c_array_object.h" />
     <ClInclude Include="include\gotchangpdf\c_buffer.h" />
     <ClInclude Include="include\gotchangpdf\c_catalog.h" />
+    <ClInclude Include="include\gotchangpdf\c_contents.h" />
     <ClInclude Include="include\gotchangpdf\c_dictionary_object.h" />
+    <ClInclude Include="include\gotchangpdf\c_export.h" />
     <ClInclude Include="include\gotchangpdf\c_file.h" />
+    <ClInclude Include="include\gotchangpdf\c_handles.h" />
     <ClInclude Include="include\gotchangpdf\c_indirect_object_reference.h" />
     <ClInclude Include="include\gotchangpdf\c_integer_object.h" />
     <ClInclude Include="include\gotchangpdf\c_name_object.h" />
     <ClInclude Include="include\gotchangpdf\c_object.h" />
     <ClInclude Include="include\gotchangpdf\c_page_object.h" />
     <ClInclude Include="include\gotchangpdf\c_page_tree.h" />
-    <ClInclude Include="include\gotchangpdf\c_export.h" />
     <ClInclude Include="include\gotchangpdf\c_stream_object.h" />
     <ClInclude Include="include\gotchangpdf\c_string_object.h" />
-    <ClInclude Include="include\gotchangpdf\gotchangpdf.h" />
-    <ClInclude Include="include\gotchangpdf\c_handles.h" />
-    <ClInclude Include="include\gotchangpdf\c_xref.h" />
     <ClInclude Include="include\gotchangpdf\c_values.h" />
-    <ClInclude Include="src\gotchangpdf\documents\catalog.h" />
-    <ClInclude Include="src\gotchangpdf\documents\contents.h" />
-    <ClInclude Include="src\gotchangpdf\documents\content_stream.h" />
-    <ClInclude Include="src\gotchangpdf\documents\document.h" />
-    <ClInclude Include="src\gotchangpdf\documents\high_level_object.h" />
-    <ClInclude Include="src\gotchangpdf\documents\page_node_utils.h" />
-    <ClInclude Include="src\gotchangpdf\documents\page_object.h" />
-    <ClInclude Include="src\gotchangpdf\documents\page_node.h" />
-    <ClInclude Include="src\gotchangpdf\documents\page_tree.h" />
-    <ClInclude Include="src\gotchangpdf\documents\page_tree_node.h" />
-    <ClInclude Include="src\gotchangpdf\documents\resource_dictionary.h" />
-    <ClInclude Include="src\gotchangpdf\exceptions\exception.h" />
-    <ClInclude Include="src\gotchangpdf\exceptions\invalid_object_type_exception.h" />
-    <ClInclude Include="src\gotchangpdf\files\file.h" />
-    <ClInclude Include="src\gotchangpdf\files\header.h" />
-    <ClInclude Include="src\gotchangpdf\files\xref.h" />
-    <ClInclude Include="src\gotchangpdf\files\xref_chain.h" />
-    <ClInclude Include="src\gotchangpdf\filters\filter.h" />
-    <ClInclude Include="src\gotchangpdf\filters\filter_utils.h" />
-    <ClInclude Include="src\gotchangpdf\filters\filter_visitors.h" />
-    <ClInclude Include="src\gotchangpdf\filters\flate_decode_filter.h" />
+    <ClInclude Include="include\gotchangpdf\c_xref.h" />
+    <ClInclude Include="include\gotchangpdf\gotchangpdf.h" />
     <ClInclude Include="src\gotchangpdf\implementation\c_helper.h" />
-    <ClInclude Include="src\gotchangpdf\lexical\abstract_syntax_tree.h" />
-    <ClInclude Include="src\gotchangpdf\lexical\content_stream_grammar.h" />
-    <ClInclude Include="src\gotchangpdf\lexical\content_stream_operations.h" />
-    <ClInclude Include="src\gotchangpdf\lexical\content_stream_operator_grammar.h" />
-    <ClInclude Include="src\gotchangpdf\lexical\file_position.h" />
-    <ClInclude Include="src\gotchangpdf\lexical\iter_offset_parser.h" />
-    <ClInclude Include="src\gotchangpdf\lexical\object_stream_grammar.h" />
-    <ClInclude Include="src\gotchangpdf\lexical\object_stream_header.h" />
-    <ClInclude Include="src\gotchangpdf\lexical\offset_iterator.h" />
-    <ClInclude Include="src\gotchangpdf\lexical\qi_common.h" />
-    <ClInclude Include="src\gotchangpdf\lexical\reverse_grammar.h" />
-    <ClInclude Include="src\gotchangpdf\lexical\spirit_grammar.h" />
-    <ClInclude Include="src\gotchangpdf\lexical\spirit_parser.h" />
-    <ClInclude Include="src\gotchangpdf\lexical\whitespace_grammar.h" />
-    <ClInclude Include="src\gotchangpdf\lexical\xref_grammar.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\array_object.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\boolean_object.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\containable.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\dictionary_object.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\direct_object.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\function_object.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\indirect_object_reference.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\integer_object.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\name_object.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\null_object.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\object.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\objects.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\object_visitors.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\real_object.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\stream_object.h" />
-    <ClInclude Include="src\gotchangpdf\objects\basic\string_object.h" />
-    <ClInclude Include="src\gotchangpdf\objects\common\date.h" />
-    <ClInclude Include="src\gotchangpdf\objects\common\name_tree.h" />
-    <ClInclude Include="src\gotchangpdf\objects\common\number_tree.h" />
-    <ClInclude Include="src\gotchangpdf\objects\common\rectangle.h" />
-    <ClInclude Include="src\gotchangpdf\objects\common\tree.h" />
     <ClInclude Include="src\gotchangpdf\precompiled.h" />
-    <ClInclude Include="src\gotchangpdf\raw\raw_base_stream.h" />
-    <ClInclude Include="src\gotchangpdf\raw\raw_reverse_stream.h" />
-    <ClInclude Include="src\gotchangpdf\raw\raw_stream.h" />
-    <ClInclude Include="src\gotchangpdf\util\buffer.h" />
-    <ClInclude Include="src\gotchangpdf\util\character_device.h" />
-    <ClInclude Include="src\gotchangpdf\util\character_sink.h" />
-    <ClInclude Include="src\gotchangpdf\util\constants.h" />
-    <ClInclude Include="src\gotchangpdf\util\deferred.h" />
-    <ClInclude Include="src\gotchangpdf\util\file_device.h" />
-    <ClInclude Include="src\gotchangpdf\util\fwd.h" />
-    <ClInclude Include="src\gotchangpdf\util\log.h" />
-    <ClInclude Include="src\gotchangpdf\util\unknown_interface.h" />
-    <ClInclude Include="src\gotchangpdf\util\util.h" />
-    <ClInclude Include="src\gotchangpdf\util\version.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\documents\catalog.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\documents\contents.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\documents\content_stream.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\documents\document.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\documents\page_node.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\documents\page_node_utils.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\documents\page_object.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\documents\page_tree.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\documents\page_tree_node.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\documents\resource_dictionary.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\objects\date.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\objects\high_level_object.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\objects\name_tree.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\objects\number_tree.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\objects\rectangle.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\objects\tree.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\utils\semantics_fwd.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\exceptions\exception.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\exceptions\invalid_object_type_exception.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\files\file.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\files\header.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\files\xref.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\files\xref_chain.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\filters\filter.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\filters\filter_utils.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\filters\filter_visitors.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\filters\flate_decode_filter.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\array_object.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\boolean_object.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\containable.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\dictionary_object.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\direct_object.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\function_object.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\indirect_object_reference.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\integer_object.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\name_object.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\null_object.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\object.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\objects.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\object_visitors.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\real_object.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\stream_object.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\string_object.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\abstract_syntax_tree.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\contents\content_stream_grammar.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\contents\content_stream_operations.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\contents\content_stream_operator_grammar.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\file_position.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\iter_offset_parser.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\object_stream_grammar.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\object_stream_header.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\offset_iterator.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\qi_common.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\reverse_grammar.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\spirit_grammar.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\spirit_parser.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\whitespace_grammar.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\xref_grammar.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\streams\raw_base_stream.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\streams\raw_reverse_stream.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\streams\raw_stream.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\utils\buffer.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\utils\character_device.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\utils\character_sink.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\utils\constants.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\utils\deferred.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\utils\file_device.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\utils\syntax_fwd.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\utils\log.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\utils\unknown_interface.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\utils\util.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\utils\version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\boost\libs\iostreams\src\zlib.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\gotchangpdf\documents\catalog.cpp" />
-    <ClCompile Include="src\gotchangpdf\documents\contents.cpp" />
-    <ClCompile Include="src\gotchangpdf\documents\content_stream.cpp" />
-    <ClCompile Include="src\gotchangpdf\documents\page_node.cpp" />
-    <ClCompile Include="src\gotchangpdf\documents\page_node_utils.cpp" />
-    <ClCompile Include="src\gotchangpdf\documents\page_object.cpp" />
-    <ClCompile Include="src\gotchangpdf\documents\page_tree.cpp" />
-    <ClCompile Include="src\gotchangpdf\documents\page_tree_node.cpp" />
-    <ClCompile Include="src\gotchangpdf\exceptions\exception.cpp" />
-    <ClCompile Include="src\gotchangpdf\exceptions\invalid_object_type_exception.cpp" />
-    <ClCompile Include="src\gotchangpdf\files\file.cpp" />
-    <ClCompile Include="src\gotchangpdf\files\header.cpp" />
-    <ClCompile Include="src\gotchangpdf\files\xref.cpp" />
-    <ClCompile Include="src\gotchangpdf\filters\filter_utils.cpp" />
-    <ClCompile Include="src\gotchangpdf\filters\flate_decode_filter.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_array_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_buffer.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_catalog.cpp" />
@@ -139,30 +125,43 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_stream_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_string_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_xref.cpp" />
-    <ClCompile Include="src\gotchangpdf\lexical\content_stream_simple_operators.cpp" />
-    <ClCompile Include="src\gotchangpdf\lexical\content_stream_grammar.cpp" />
-    <ClCompile Include="src\gotchangpdf\lexical\content_stream_operator_grammar.cpp" />
-    <ClCompile Include="src\gotchangpdf\lexical\object_stream_grammar.cpp" />
-    <ClCompile Include="src\gotchangpdf\lexical\reverse_grammar.cpp" />
-    <ClCompile Include="src\gotchangpdf\lexical\spirit_grammar.cpp" />
-    <ClCompile Include="src\gotchangpdf\lexical\spirit_parser.cpp" />
-    <ClCompile Include="src\gotchangpdf\lexical\whitespace_grammar.cpp" />
-    <ClCompile Include="src\gotchangpdf\lexical\xref_grammar.cpp" />
-    <ClCompile Include="src\gotchangpdf\objects\basic\indirect_object_reference.cpp" />
-    <ClCompile Include="src\gotchangpdf\objects\basic\integer_object.cpp" />
-    <ClCompile Include="src\gotchangpdf\objects\basic\name_object.cpp" />
-    <ClCompile Include="src\gotchangpdf\objects\basic\object.cpp" />
-    <ClCompile Include="src\gotchangpdf\objects\basic\real_object.cpp" />
-    <ClCompile Include="src\gotchangpdf\objects\basic\stream_object.cpp" />
-    <ClCompile Include="src\gotchangpdf\objects\basic\string_object.cpp" />
     <ClCompile Include="src\gotchangpdf\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\gotchangpdf\raw\raw_base_stream.cpp" />
-    <ClCompile Include="src\gotchangpdf\raw\raw_reverse_stream.cpp" />
-    <ClCompile Include="src\gotchangpdf\raw\raw_stream.cpp" />
-    <ClCompile Include="src\gotchangpdf\util\buffer.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\documents\catalog.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\documents\contents.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\documents\content_stream.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\documents\page_node_utils.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\documents\page_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\documents\page_tree.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\documents\page_tree_node.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\exceptions\exception.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\exceptions\invalid_object_type_exception.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\files\file.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\files\header.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\files\xref.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\filters\filter_utils.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\filters\flate_decode_filter.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\objects\indirect_object_reference.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\objects\integer_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\objects\name_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\objects\object.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\objects\stream_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\objects\string_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\content_stream_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\content_stream_operator_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\content_stream_simple_operators.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\object_stream_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\reverse_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\spirit_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\spirit_parser.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\whitespace_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\xref_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\streams\raw_base_stream.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\streams\raw_reverse_stream.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\streams\raw_stream.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\utils\buffer.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9AF81955-0B8C-4778-9F93-3ED8285D3D49}</ProjectGuid>
@@ -208,7 +207,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\objects\basic;src\gotchangpdf\exceptions;src\gotchangpdf\files;src\gotchangpdf\lexical;lib\boost;src\gotchangpdf\objects\common;include\gotchangpdf;src\gotchangpdf\documents;src\gotchangpdf\raw;src\gotchangpdf\util;src\gotchangpdf\basic;src\gotchangpdf\filters;lib\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\syntax;src\gotchangpdf\syntax\exceptions;src\gotchangpdf\syntax\files;src\gotchangpdf\syntax\objects;src\gotchangpdf\syntax\parsers;src\gotchangpdf\syntax\parsers\contents;src\gotchangpdf\syntax\streams;src\gotchangpdf\syntax\filters;src\gotchangpdf\syntax\utils;src\gotchangpdf\semantics;src\gotchangpdf\semantics\objects;src\gotchangpdf\semantics\documents;src\gotchangpdf\semantics\utils;include\gotchangpdf;lib\zlib;lib\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;BOOST_SPIRIT_USE_PHOENIX_V3;PDF_EXPORTS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
@@ -232,7 +231,7 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Co
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;BOOST_SPIRIT_USE_PHOENIX_V3;PDF_EXPORTS;RELEASE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\objects\basic;src\gotchangpdf\exceptions;src\gotchangpdf\files;src\gotchangpdf\lexical;lib\boost;src\gotchangpdf\objects\common;include\gotchangpdf;src\gotchangpdf\documents;src\gotchangpdf\raw;src\gotchangpdf\util;src\gotchangpdf\basic;src\gotchangpdf\filters;lib\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\syntax;src\gotchangpdf\syntax\exceptions;src\gotchangpdf\syntax\files;src\gotchangpdf\syntax\objects;src\gotchangpdf\syntax\parsers;src\gotchangpdf\syntax\parsers\contents;src\gotchangpdf\syntax\streams;src\gotchangpdf\syntax\filters;src\gotchangpdf\syntax\utils;src\gotchangpdf\semantics;src\gotchangpdf\semantics\objects;src\gotchangpdf\semantics\documents;src\gotchangpdf\semantics\utils;include\gotchangpdf;lib\zlib;lib\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalOptions>/Zm512 %(AdditionalOptions)</AdditionalOptions>

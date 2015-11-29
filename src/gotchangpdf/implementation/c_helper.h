@@ -10,7 +10,7 @@
 #define RETURN_ERROR_PARAM_VALUE_IF_NULL(var) RETURN_ERROR_IF_NULL(var, GOTCHANG_PDF_ERROR_PARAMETER_VALUE)
 
 #define C_INTERFACE_EXCEPTION_HANDLERS \
-	catch (gotchangpdf::exceptions::Exception& e) \
+	catch (gotchangpdf::syntax::Exception& e) \
 	{ \
 		LOG_ERROR << "Caught exception on interface: " << e.what(); \
 		return GOTCHANG_PDF_ERROR_GENERAL; \

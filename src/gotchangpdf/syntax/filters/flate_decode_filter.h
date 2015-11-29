@@ -1,0 +1,24 @@
+#ifndef _FLATE_DECODE_FILTER_H
+#define _FLATE_DECODE_FILTER_H
+
+#include "filter.h"
+#include "buffer.h"
+
+namespace gotchangpdf
+{
+	namespace syntax
+	{
+		class FlateDecodeFilter : public Filter
+		{
+		public:
+			virtual inline Type GetType(void) const _NOEXCEPT override { return Filter::Type::FlateDecode; }
+
+			virtual BufferPtr Encode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const override;
+			virtual BufferPtr Decode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const override;
+
+			BufferPtr ApplyPredictor(BufferPtr src, DictionaryObjectPtr parameters) const;
+		};
+	}
+}
+
+#endif /* _FLATE_DECODE_FILTER_H */

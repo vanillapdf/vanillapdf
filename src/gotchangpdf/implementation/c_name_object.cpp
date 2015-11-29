@@ -5,6 +5,7 @@
 #include "c_helper.h"
 
 using namespace gotchangpdf;
+using namespace gotchangpdf::syntax;
 
 NameHandle Length = reinterpret_cast<NameHandle>(constant::Name::Length.Content.get());
 NameHandle Type = reinterpret_cast<NameHandle>(constant::Name::Type.Content.get());

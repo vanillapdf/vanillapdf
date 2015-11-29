@@ -5,7 +5,7 @@
 
 #include "c_helper.h"
 
-using namespace gotchangpdf::documents;
+using namespace gotchangpdf::semantics;
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPageCount(PageTreeHandle handle, out_integer_type result)
 {

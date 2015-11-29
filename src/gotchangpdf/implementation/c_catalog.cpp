@@ -4,7 +4,7 @@
 #include "c_catalog.h"
 #include "c_helper.h"
 
-using namespace gotchangpdf::documents;
+using namespace gotchangpdf::semantics;
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPages(CatalogHandle handle, PPageTreeHandle result)
 {

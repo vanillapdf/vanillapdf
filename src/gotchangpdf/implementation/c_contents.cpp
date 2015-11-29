@@ -5,8 +5,9 @@
 #include "c_helper.h"
 
 using namespace gotchangpdf;
-using namespace gotchangpdf::documents;
-using namespace gotchangpdf::lexical;
+using namespace gotchangpdf::semantics;
+using namespace gotchangpdf::syntax;
+using namespace gotchangpdf::syntax::contents;
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionsSize(ContentsHandle handle, out_integer_type result)
 {
@@ -54,15 +55,15 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_Release(ContentsHandle h
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_GetType(ContentInstructionHandle handle, PContentInstructionType result)
 {
-	ContentInstructionBase* obj = reinterpret_cast<ContentInstructionBase*>(handle);
+	contents::InstructionBase* obj = reinterpret_cast<contents::InstructionBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	//LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	switch (obj->GetInstructionType()) {
-	case ContentInstructionBase::Type::Object:
+	case contents::InstructionBase::Type::Object:
 		*result = ContentInstructionType_Object; break;
-	case ContentInstructionBase::Type::Operation:
+	case contents::InstructionBase::Type::Operation:
 		*result = ContentInstructionType_Operation; break;
 	default:
 		return GOTCHANG_PDF_ERROR_GENERAL;
@@ -73,13 +74,13 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_GetType(Conten
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_ToOperation(ContentInstructionHandle handle, PContentOperationHandle result)
 {
-	ContentInstructionBase* obj = reinterpret_cast<ContentInstructionBase*>(handle);
+	contents::InstructionBase* obj = reinterpret_cast<contents::InstructionBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	//LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
 	{
-		ContentStreamOperation* converted = dynamic_cast<ContentStreamOperation*>(obj);
+		contents::Operation* converted = dynamic_cast<contents::Operation*>(obj);
 		if (nullptr == converted)
 			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
 
@@ -91,7 +92,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_ToOperation(Co
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_ToObject(ContentInstructionHandle handle, PContentObjectHandle result)
 {
-	ContentInstructionBase* obj = reinterpret_cast<ContentInstructionBase*>(handle);
+	contents::InstructionBase* obj = reinterpret_cast<contents::InstructionBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	//LOG_SCOPE(obj->GetFile()->GetFilename());
@@ -110,7 +111,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_ToObject(Conte
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_Release(ContentInstructionHandle handle)
 {
-	ContentInstructionBase* obj = reinterpret_cast<ContentInstructionBase*>(handle);
+	contents::InstructionBase* obj = reinterpret_cast<contents::InstructionBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	//LOG_SCOPE(obj->GetFile()->GetFilename());
 
@@ -196,159 +197,159 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_GetType(ContentOperationHandle handle, PContentOperationType result)
 {
-	ContentStreamOperation* obj = reinterpret_cast<ContentStreamOperation*>(handle);
+	contents::Operation* obj = reinterpret_cast<contents::Operation*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	//LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	switch (obj->GetOperationType()) {
-	case ContentStreamOperation::Type::Generic:
+	case contents::Operation::Type::Generic:
 		*result = ContentOperationType_Generic; break;
-	case ContentStreamOperation::Type::LineWidth:
+	case contents::Operation::Type::LineWidth:
 		*result = ContentOperationType_LineWidth; break;
-	case ContentStreamOperation::Type::LineCap:
+	case contents::Operation::Type::LineCap:
 		*result = ContentOperationType_LineCap; break;
-	case ContentStreamOperation::Type::LineJoin:
+	case contents::Operation::Type::LineJoin:
 		*result = ContentOperationType_LineJoin; break;
-	case ContentStreamOperation::Type::MiterLimit:
+	case contents::Operation::Type::MiterLimit:
 		*result = ContentOperationType_MiterLimit; break;
-	case ContentStreamOperation::Type::DashPattern:
+	case contents::Operation::Type::DashPattern:
 		*result = ContentOperationType_DashPattern; break;
-	case ContentStreamOperation::Type::ColorRenderingIntent:
+	case contents::Operation::Type::ColorRenderingIntent:
 		*result = ContentOperationType_ColorRenderingIntent; break;
-	case ContentStreamOperation::Type::Flatness:
+	case contents::Operation::Type::Flatness:
 		*result = ContentOperationType_Flatness; break;
-	case ContentStreamOperation::Type::GraphicsState:
+	case contents::Operation::Type::GraphicsState:
 		*result = ContentOperationType_GraphicsState; break;
-	case ContentStreamOperation::Type::SaveGraphicsState:
+	case contents::Operation::Type::SaveGraphicsState:
 		*result = ContentOperationType_SaveGraphicsState; break;
-	case ContentStreamOperation::Type::RestoreGraphicsState:
+	case contents::Operation::Type::RestoreGraphicsState:
 		*result = ContentOperationType_RestoreGraphicsState; break;
-	case ContentStreamOperation::Type::TransformationMatrix:
+	case contents::Operation::Type::TransformationMatrix:
 		*result = ContentOperationType_TransformationMatrix; break;
-	case ContentStreamOperation::Type::BeginSubpath:
+	case contents::Operation::Type::BeginSubpath:
 		*result = ContentOperationType_BeginSubpath; break;
-	case ContentStreamOperation::Type::Line:
+	case contents::Operation::Type::Line:
 		*result = ContentOperationType_Line; break;
-	case ContentStreamOperation::Type::FullCurve:
+	case contents::Operation::Type::FullCurve:
 		*result = ContentOperationType_FullCurve; break;
-	case ContentStreamOperation::Type::FinalCurve:
+	case contents::Operation::Type::FinalCurve:
 		*result = ContentOperationType_FinalCurve; break;
-	case ContentStreamOperation::Type::InitialCurve:
+	case contents::Operation::Type::InitialCurve:
 		*result = ContentOperationType_InitialCurve; break;
-	case ContentStreamOperation::Type::CloseSubpath:
+	case contents::Operation::Type::CloseSubpath:
 		*result = ContentOperationType_CloseSubpath; break;
-	case ContentStreamOperation::Type::Rectangle:
+	case contents::Operation::Type::Rectangle:
 		*result = ContentOperationType_Rectangle; break;
-	case ContentStreamOperation::Type::Stroke:
+	case contents::Operation::Type::Stroke:
 		*result = ContentOperationType_Stroke; break;
-	case ContentStreamOperation::Type::CloseAndStroke:
+	case contents::Operation::Type::CloseAndStroke:
 		*result = ContentOperationType_CloseAndStroke; break;
-	case ContentStreamOperation::Type::FillPathNonzero:
+	case contents::Operation::Type::FillPathNonzero:
 		*result = ContentOperationType_FillPathNonzero; break;
-	case ContentStreamOperation::Type::FillPathCompatibility:
+	case contents::Operation::Type::FillPathCompatibility:
 		*result = ContentOperationType_FillPathCompatibility; break;
-	case ContentStreamOperation::Type::FillPathEvenOdd:
+	case contents::Operation::Type::FillPathEvenOdd:
 		*result = ContentOperationType_FillPathEvenOdd; break;
-	case ContentStreamOperation::Type::FillStrokeNonzero:
+	case contents::Operation::Type::FillStrokeNonzero:
 		*result = ContentOperationType_FillStrokeNonzero; break;
-	case ContentStreamOperation::Type::FillStrokeEvenOdd:
+	case contents::Operation::Type::FillStrokeEvenOdd:
 		*result = ContentOperationType_FillStrokeEvenOdd; break;
-	case ContentStreamOperation::Type::CloseFillStrokeNonzero:
+	case contents::Operation::Type::CloseFillStrokeNonzero:
 		*result = ContentOperationType_CloseFillStrokeNonzero; break;
-	case ContentStreamOperation::Type::CloseFillStrokeEvenOdd:
+	case contents::Operation::Type::CloseFillStrokeEvenOdd:
 		*result = ContentOperationType_CloseFillStrokeEvenOdd; break;
-	case ContentStreamOperation::Type::EndPath:
+	case contents::Operation::Type::EndPath:
 		*result = ContentOperationType_EndPath; break;
-	case ContentStreamOperation::Type::ClipPathNonzero:
+	case contents::Operation::Type::ClipPathNonzero:
 		*result = ContentOperationType_ClipPathNonzero; break;
-	case ContentStreamOperation::Type::ClipPathEvenOdd:
+	case contents::Operation::Type::ClipPathEvenOdd:
 		*result = ContentOperationType_ClipPathEvenOdd; break;
-	case ContentStreamOperation::Type::BeginText:
+	case contents::Operation::Type::BeginText:
 		*result = ContentOperationType_BeginText; break;
-	case ContentStreamOperation::Type::EndText:
+	case contents::Operation::Type::EndText:
 		*result = ContentOperationType_EndText; break;
-	case ContentStreamOperation::Type::CharacterSpacing:
+	case contents::Operation::Type::CharacterSpacing:
 		*result = ContentOperationType_CharacterSpacing; break;
-	case ContentStreamOperation::Type::WordSpacing:
+	case contents::Operation::Type::WordSpacing:
 		*result = ContentOperationType_WordSpacing; break;
-	case ContentStreamOperation::Type::HorizontalScaling:
+	case contents::Operation::Type::HorizontalScaling:
 		*result = ContentOperationType_HorizontalScaling; break;
-	case ContentStreamOperation::Type::Leading:
+	case contents::Operation::Type::Leading:
 		*result = ContentOperationType_Leading; break;
-	case ContentStreamOperation::Type::TextFont:
+	case contents::Operation::Type::TextFont:
 		*result = ContentOperationType_TextFont; break;
-	case ContentStreamOperation::Type::TextRenderingMode:
+	case contents::Operation::Type::TextRenderingMode:
 		*result = ContentOperationType_TextRenderingMode; break;
-	case ContentStreamOperation::Type::TextRise:
+	case contents::Operation::Type::TextRise:
 		*result = ContentOperationType_TextRise; break;
-	case ContentStreamOperation::Type::TextTranslate:
+	case contents::Operation::Type::TextTranslate:
 		*result = ContentOperationType_TextTranslate; break;
-	case ContentStreamOperation::Type::TextTranslateLeading:
+	case contents::Operation::Type::TextTranslateLeading:
 		*result = ContentOperationType_TextTranslateLeading; break;
-	case ContentStreamOperation::Type::TextMatrix:
+	case contents::Operation::Type::TextMatrix:
 		*result = ContentOperationType_TextMatrix; break;
-	case ContentStreamOperation::Type::TextNextLine:
+	case contents::Operation::Type::TextNextLine:
 		*result = ContentOperationType_TextNextLine; break;
-	case ContentStreamOperation::Type::TextShow:
+	case contents::Operation::Type::TextShow:
 		*result = ContentOperationType_TextShow; break;
-	case ContentStreamOperation::Type::TextShowArray:
+	case contents::Operation::Type::TextShowArray:
 		*result = ContentOperationType_TextShowArray; break;
-	case ContentStreamOperation::Type::TextNextLineShow:
+	case contents::Operation::Type::TextNextLineShow:
 		*result = ContentOperationType_TextNextLineShow; break;
-	case ContentStreamOperation::Type::TextNextLineShowSpacing:
+	case contents::Operation::Type::TextNextLineShowSpacing:
 		*result = ContentOperationType_TextNextLineShowSpacing; break;
-	case ContentStreamOperation::Type::SetCharWidth:
+	case contents::Operation::Type::SetCharWidth:
 		*result = ContentOperationType_SetCharWidth; break;
-	case ContentStreamOperation::Type::SetCacheDevice:
+	case contents::Operation::Type::SetCacheDevice:
 		*result = ContentOperationType_SetCacheDevice; break;
-	case ContentStreamOperation::Type::ColorSpaceStroke:
+	case contents::Operation::Type::ColorSpaceStroke:
 		*result = ContentOperationType_ColorSpaceStroke; break;
-	case ContentStreamOperation::Type::ColorSpaceNonstroke:
+	case contents::Operation::Type::ColorSpaceNonstroke:
 		*result = ContentOperationType_ColorSpaceNonstroke; break;
-	case ContentStreamOperation::Type::SetColorStroke:
+	case contents::Operation::Type::SetColorStroke:
 		*result = ContentOperationType_SetColorStroke; break;
-	case ContentStreamOperation::Type::SetColorStrokeExtended:
+	case contents::Operation::Type::SetColorStrokeExtended:
 		*result = ContentOperationType_SetColorStrokeExtended; break;
-	case ContentStreamOperation::Type::SetColorNonstroke:
+	case contents::Operation::Type::SetColorNonstroke:
 		*result = ContentOperationType_SetColorNonstroke; break;
-	case ContentStreamOperation::Type::SetColorNonstrokeExtended:
+	case contents::Operation::Type::SetColorNonstrokeExtended:
 		*result = ContentOperationType_SetColorNonstrokeExtended; break;
-	case ContentStreamOperation::Type::SetStrokingColorSpaceGray:
+	case contents::Operation::Type::SetStrokingColorSpaceGray:
 		*result = ContentOperationType_SetStrokingColorSpaceGray; break;
-	case ContentStreamOperation::Type::SetNonstrokingColorSpaceGray:
+	case contents::Operation::Type::SetNonstrokingColorSpaceGray:
 		*result = ContentOperationType_SetNonstrokingColorSpaceGray; break;
-	case ContentStreamOperation::Type::SetStrokingColorSpaceRGB:
+	case contents::Operation::Type::SetStrokingColorSpaceRGB:
 		*result = ContentOperationType_SetStrokingColorSpaceRGB; break;
-	case ContentStreamOperation::Type::SetNonstrokingColorSpaceRGB:
+	case contents::Operation::Type::SetNonstrokingColorSpaceRGB:
 		*result = ContentOperationType_SetNonstrokingColorSpaceRGB; break;
-	case ContentStreamOperation::Type::SetStrokingColorSpaceCMYK:
+	case contents::Operation::Type::SetStrokingColorSpaceCMYK:
 		*result = ContentOperationType_SetStrokingColorSpaceCMYK; break;
-	case ContentStreamOperation::Type::SetNonstrokingColorSpaceCMYK:
+	case contents::Operation::Type::SetNonstrokingColorSpaceCMYK:
 		*result = ContentOperationType_SetNonstrokingColorSpaceCMYK; break;
-	case ContentStreamOperation::Type::ShadingPaint:
+	case contents::Operation::Type::ShadingPaint:
 		*result = ContentOperationType_ShadingPaint; break;
-	case ContentStreamOperation::Type::BeginInlineImageObject:
+	case contents::Operation::Type::BeginInlineImageObject:
 		*result = ContentOperationType_BeginInlineImageObject; break;
-	case ContentStreamOperation::Type::BeginInlineImageData:
+	case contents::Operation::Type::BeginInlineImageData:
 		*result = ContentOperationType_BeginInlineImageData; break;
-	case ContentStreamOperation::Type::EndInlineImageObject:
+	case contents::Operation::Type::EndInlineImageObject:
 		*result = ContentOperationType_EndInlineImageObject; break;
-	case ContentStreamOperation::Type::InvokeXObject:
+	case contents::Operation::Type::InvokeXObject:
 		*result = ContentOperationType_InvokeXObject; break;
-	case ContentStreamOperation::Type::DefineMarkedContentPoint:
+	case contents::Operation::Type::DefineMarkedContentPoint:
 		*result = ContentOperationType_DefineMarkedContentPoint; break;
-	case ContentStreamOperation::Type::DefineMarkedContentPointWithPropertyList:
+	case contents::Operation::Type::DefineMarkedContentPointWithPropertyList:
 		*result = ContentOperationType_DefineMarkedContentPointWithPropertyList; break;
-	case ContentStreamOperation::Type::BeginMarkedContentSequence:
+	case contents::Operation::Type::BeginMarkedContentSequence:
 		*result = ContentOperationType_BeginMarkedContentSequence; break;
-	case ContentStreamOperation::Type::BeginMarkedContentSequenceWithPropertyList:
+	case contents::Operation::Type::BeginMarkedContentSequenceWithPropertyList:
 		*result = ContentOperationType_BeginMarkedContentSequenceWithPropertyList; break;
-	case ContentStreamOperation::Type::EndMarkedContentSequence:
+	case contents::Operation::Type::EndMarkedContentSequence:
 		*result = ContentOperationType_EndMarkedContentSequence; break;
-	case ContentStreamOperation::Type::BeginCompatibilitySection:
+	case contents::Operation::Type::BeginCompatibilitySection:
 		*result = ContentOperationType_BeginCompatibilitySection; break;
-	case ContentStreamOperation::Type::EndCompatibilitySection:
+	case contents::Operation::Type::EndCompatibilitySection:
 		*result = ContentOperationType_EndCompatibilitySection; break;
 	default:
 		return GOTCHANG_PDF_ERROR_GENERAL;
@@ -359,7 +360,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_GetType(ContentO
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_Release(ContentOperationHandle handle)
 {
-	ContentStreamOperation* obj = reinterpret_cast<ContentStreamOperation*>(handle);
+	contents::Operation* obj = reinterpret_cast<contents::Operation*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	//LOG_SCOPE(obj->GetFile()->GetFilename());
 
@@ -369,14 +370,14 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_Release(ContentO
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_GetOperator(ContentOperationHandle handle, PContentOperatorHandle result)
 {
-	ContentStreamOperation* obj = reinterpret_cast<ContentStreamOperation*>(handle);
+	contents::Operation* obj = reinterpret_cast<contents::Operation*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	//LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
 	{
-		ContentStreamOperatorBaseVisitor visitor;
+		contents::OperatorBaseVisitor visitor;
 		auto oper = obj->GetOperator();
 		auto base = oper.apply_visitor(visitor);
 		base->AddRef();
@@ -388,7 +389,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_GetOperator(Cont
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_GetOperandsSize(ContentOperationHandle handle, out_integer_type result)
 {
-	ContentStreamOperation* obj = reinterpret_cast<ContentStreamOperation*>(handle);
+	contents::Operation* obj = reinterpret_cast<contents::Operation*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	//LOG_SCOPE(obj->GetFile()->GetFilename());
@@ -403,7 +404,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_GetOperandsSize(
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_GetOperandAt(ContentOperationHandle handle, integer_type at, PObjectHandle result)
 {
-	ContentStreamOperation* obj = reinterpret_cast<ContentStreamOperation*>(handle);
+	contents::Operation* obj = reinterpret_cast<contents::Operation*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	//LOG_SCOPE(obj->GetFile()->GetFilename());
@@ -421,7 +422,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_GetOperandAt(Con
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_GetType(ContentOperatorHandle handle, PContentOperatorType result)
 {
-	OperatorBase* obj = reinterpret_cast<OperatorBase*>(handle);
+	contents::OperatorBase* obj = reinterpret_cast<contents::OperatorBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	//LOG_SCOPE(obj->GetFile()->GetFilename());
