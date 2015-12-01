@@ -11,21 +11,23 @@ namespace gotchangpdf
 {
 	namespace semantics
 	{
-		class BeginTextOperation : public syntax::contents::Operation
+		class BeginTextOperation : public syntax::contents::OperationBase
 		{
-
+		public:
+			inline virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::BeginText; }
 		};
 
-		class EndTextOperation : public syntax::contents::Operation
+		class EndTextOperation : public syntax::contents::OperationBase
 		{
-
+		public:
+			inline virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::EndText; }
 		};
 
 		typedef Deferred<BeginTextOperation> BeginTextOperationPtr;
 		typedef Deferred<EndTextOperation> EndTextOperationPtr;
 
 		typedef boost::variant<
-			syntax::contents::OperationPtr,
+			syntax::contents::OperationGenericPtr,
 			BeginTextOperationPtr,
 			EndTextOperationPtr
 		> ContentOperationPtr;

@@ -7,8 +7,11 @@
 #include "indirect_object_reference.h"
 #include "dictionary_object.h"
 #include "array_object.h"
+#include "general_visitors.h"
+#include "conversion_visitor.h"
 
 #include <map>
+#include <memory>
 #include <sstream>
 
 #include <boost/variant/static_visitor.hpp>
@@ -18,7 +21,7 @@ namespace gotchangpdf
 	namespace syntax
 	{
 		template <typename T>
-		class IsTypeVisitor : public boost::static_visitor < bool >
+		class IsTypeVisitor : public boost::static_visitor<bool>
 		{
 		public:
 			bool operator()(IndirectObjectReferencePtr& obj) const
@@ -46,7 +49,7 @@ namespace gotchangpdf
 		};
 
 		template <>
-		class IsTypeVisitor<IndirectObjectReferencePtr> : public boost::static_visitor < bool >
+		class IsTypeVisitor<IndirectObjectReferencePtr> : public boost::static_visitor<bool>
 		{
 		public:
 			inline bool operator()(const IndirectObjectReferencePtr&) const { return true; }
@@ -70,27 +73,19 @@ namespace gotchangpdf
 				return true;
 			}
 
+		public:
+			inline bool operator()(const T&) const { return true; }
+
 			template <typename U>
 			inline bool operator()(const U&) const { return false; }
 		};
 
-		class ObjectBaseVisitor : public boost::static_visitor<Object*>
+		class ObjectBaseVisitor : public BaseVisitor<Object*>
 		{
-		public:
-			template <typename T>
-			inline Object* operator()(T& obj) const { return obj.Content.get(); }
 		};
 
-		class ObjectBaseAddRefVisitor : public boost::static_visitor<Object*>
+		class ObjectBaseAddRefVisitor : public BaseAddRefVisitor<Object*>
 		{
-		public:
-			template <typename T>
-			inline Object* operator()(T& obj) const
-			{
-				auto result = obj.Content.get();
-				result->AddRef();
-				return result;
-			}
 		};
 
 		class SetContainerVisitor : public boost::static_visitor<void>
@@ -109,52 +104,45 @@ namespace gotchangpdf
 			const ContainerPtr _container;
 		};
 
-		template <typename T>
-		class ObjectVisitor : public boost::static_visitor<T>
+		class SetFileVisitor : public boost::static_visitor<void>
 		{
 		public:
-			T operator()(IndirectObjectReferencePtr& obj) const
+			explicit SetFileVisitor(std::weak_ptr<File> file) : _file(file) {}
+
+			template <typename T>
+			inline void operator()(const Deferred<T>& obj) const { obj->SetFile(_file); }
+
+			void operator()(const MixedArrayObjectPtr& obj)
 			{
-				auto found = visited.find(*obj);
-				if (found != visited.end()) {
-					std::stringstream ss;
-					ss << "Cyclic reference was found for " << obj->GetReferencedObjectNumber() << " " << obj->GetReferencedGenerationNumber() << " R";
-					throw Exception(ss.str());
+				obj->SetFile(_file);
+				for (auto item : *obj) {
+					item.apply_visitor(*this);
 				}
-
-				visited[*obj] = true;
-
-				auto direct = obj->GetReferencedObject();
-				return direct.apply_visitor(*this);
 			}
 
-			inline T operator()(T& obj) const { return obj; }
+			void operator()(const DictionaryObjectPtr& obj)
+			{
+				obj->SetFile(_file);
+				for (auto item : *obj) {
+					item.first->SetFile(_file);
+					item.second.apply_visitor(*this);
+				}
+			}
 
-			template <typename U>
-			inline T operator()(const U&) const { throw Exception("Type cast error"); }
+			void operator()(const StreamObjectPtr& obj)
+			{
+				obj->SetFile(_file);
+
+				auto header = obj->GetHeader();
+				header->SetFile(_file);
+				for (auto item : *header) {
+					item.first->SetFile(_file);
+					item.second.apply_visitor(*this);
+				}
+			}
 
 		private:
-			mutable std::map<IndirectObjectReference, bool> visited;
-		};
-
-		template <>
-		class ObjectVisitor<IndirectObjectReferencePtr> : public boost::static_visitor<IndirectObjectReferencePtr>
-		{
-		public:
-			inline IndirectObjectReferencePtr operator()(IndirectObjectReferencePtr& obj) const { return obj; }
-
-			template <typename U>
-			inline IndirectObjectReferencePtr operator()(const U&) const { throw Exception("Type cast error"); }
-		};
-
-		template <typename T>
-		class ObjectVisitor<ArrayObjectPtr<T>> : public boost::static_visitor<ArrayObjectPtr<T>>
-		{
-		public:
-			inline ArrayObjectPtr<T> operator()(MixedArrayObjectPtr& obj) const { return obj->CastToArrayType<T>(); }
-
-			template <typename U>
-			inline ArrayObjectPtr<T> operator()(const U&) const { throw Exception("Type cast error"); }
+			std::weak_ptr<File> _file;
 		};
 	}
 }

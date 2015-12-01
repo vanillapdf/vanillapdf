@@ -4,6 +4,7 @@
 #include "file.h"
 #include "xref_chain.h"
 #include "spirit_parser.h"
+#include "object_visitors.h"
 
 #include <boost/scope_exit.hpp>
 
@@ -48,7 +49,7 @@ namespace gotchangpdf
 			auto chain = locked_file->GetXrefChain();
 			auto stm = locked_file->GetIndirectObject(_object_stream_number, 0);
 
-			ObjectVisitor<StreamObjectPtr> stream_visitor;
+			ConversionVisitor<StreamObjectPtr> stream_visitor;
 			auto converted = stm.apply_visitor(stream_visitor);
 			auto header = converted->GetHeader();
 			auto size = header->FindAs<IntegerObjectPtr>(constant::Name::N);

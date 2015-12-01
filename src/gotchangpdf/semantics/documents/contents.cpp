@@ -47,12 +47,13 @@ namespace gotchangpdf
 			ContentInstructionCollection result;
 			auto it = ops.begin();
 			while (it != ops.end()) {
-				if (it->GetOperator().apply_visitor(is_begin_text)) {
+				auto item = *it;
+				if (item->GetOperator().apply_visitor(is_begin_text)) {
 					// begin text
-					assert(it->GetOperands().size() == 0);
+					assert(item->GetOperands().size() == 0);
 
 					auto last = std::find_if(it, ops.end(), [is_end_text](const decltype(it)::value_type& item) {
-						return item.GetOperator().apply_visitor(is_end_text);
+						return item->GetOperator().apply_visitor(is_end_text);
 					});
 
 					contents::OperationCollection text_object_data(it, last);

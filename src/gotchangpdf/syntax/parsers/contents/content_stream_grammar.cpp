@@ -44,7 +44,7 @@ namespace gotchangpdf
 						(
 							*(_operand(qi::_r1) > whitespaces)
 							>> _operator
-						)[qi::_val = phoenix::construct<OperationPtr>(qi::_1, qi::_2)]
+						)[qi::_val = phoenix::construct<OperationGenericPtr>(qi::_1, qi::_2)]
 					];
 
 				BOOST_SPIRIT_DEBUG_NODE(start);

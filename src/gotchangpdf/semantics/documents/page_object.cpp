@@ -79,13 +79,13 @@ namespace gotchangpdf
 			}
 
 			if (is_ref) {
-				ObjectVisitor<StreamObjectPtr> visitor;
+				ConversionVisitor<StreamObjectPtr> visitor;
 				auto data = content.apply_visitor(visitor);
 				return ContentsPtr(data);
 			}
 
 			if (is_array) {
-				ObjectVisitor<ArrayObjectPtr<IndirectObjectReferencePtr>> visitor;
+				ConversionVisitor<ArrayObjectPtr<IndirectObjectReferencePtr>> visitor;
 				auto data = content.apply_visitor(visitor);
 				return ContentsPtr(data);
 			}

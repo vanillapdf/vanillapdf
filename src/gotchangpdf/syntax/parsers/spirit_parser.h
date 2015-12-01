@@ -5,7 +5,7 @@
 #include "xref.h"
 #include "raw_stream.h"
 #include "direct_object.h"
-#include "object_visitors.h"
+#include "conversion_visitor.h"
 #include "object_stream_header.h"
 #include "content_stream_operations.h"
 
@@ -26,7 +26,7 @@ namespace gotchangpdf
 			T ReadDirectObjectWithType(types::stream_offset offset)
 			{
 				auto direct = ReadDirectObject(offset);
-				ObjectVisitor<T> visitor;
+				ConversionVisitor<T> visitor;
 				auto converted = direct.apply_visitor(visitor);
 				return converted;
 			}
@@ -35,7 +35,7 @@ namespace gotchangpdf
 			T ReadDirectObjectWithType(void)
 			{
 				auto direct = ReadDirectObject();
-				ObjectVisitor<T> visitor;
+				ConversionVisitor<T> visitor;
 				auto converted = direct.apply_visitor(visitor);
 				return converted;
 			}

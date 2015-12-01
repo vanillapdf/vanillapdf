@@ -106,7 +106,8 @@ namespace gotchangpdf
 
 		namespace contents
 		{
-			class Operation;
+			class OperationBase;
+			class OperationGeneric;
 
 			class UnknownOperator;
 
@@ -198,7 +199,8 @@ namespace gotchangpdf
 			class BeginCompatibilitySectionOperator;
 			class EndCompatibilitySectionOperator;
 
-			typedef Deferred<Operation> OperationPtr;
+			typedef Deferred<OperationBase> OperationBasePtr;
+			typedef Deferred<OperationGeneric> OperationGenericPtr;
 
 			typedef Deferred<UnknownOperator> UnknownOperatorPtr;
 

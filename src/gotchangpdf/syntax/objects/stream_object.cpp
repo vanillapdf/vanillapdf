@@ -96,7 +96,7 @@ namespace gotchangpdf
 								result = filter_base->Decode(result);
 							}
 							else {
-								ObjectVisitor<DictionaryObjectPtr> dictionary_convert;
+								ConversionVisitor<DictionaryObjectPtr> dictionary_convert;
 								auto dict = current_param.apply_visitor(dictionary_convert);
 								result = filter_base->Decode(result, dict);
 							}

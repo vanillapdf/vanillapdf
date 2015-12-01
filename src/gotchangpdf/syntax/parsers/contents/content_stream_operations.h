@@ -467,7 +467,7 @@ public: \
 				virtual Type GetInstructionType(void) const _NOEXCEPT = 0;
 			};
 
-			class Operation : public InstructionBase
+			class OperationBase : public InstructionBase
 			{
 			public:
 				enum class Type
@@ -549,8 +549,15 @@ public: \
 				};
 
 			public:
-				Operation() = default;
-				Operation(std::vector<Operand> operands, Operator oper) :
+				inline virtual InstructionBase::Type GetInstructionType(void) const _NOEXCEPT override { return InstructionBase::Type::Operation; }
+				virtual Type GetOperationType(void) const _NOEXCEPT = 0;
+			};
+
+			class OperationGeneric : public OperationBase
+			{
+			public:
+				OperationGeneric() = default;
+				OperationGeneric(std::vector<Operand> operands, Operator oper) :
 					_operator(oper), _operands(operands) {}
 				Operator GetOperator() const { return _operator; }
 				std::vector<Operand> GetOperands() const { return _operands; }
@@ -559,14 +566,14 @@ public: \
 				Operand GetOperandAt(types::uinteger at) const { return _operands.at(at); }
 
 				inline virtual InstructionBase::Type GetInstructionType(void) const _NOEXCEPT override { return InstructionBase::Type::Operation; }
-				inline virtual Type GetOperationType(void) const _NOEXCEPT { return Type::Generic; }
+				inline virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::Generic; }
 
 			private:
 				Operator _operator;
 				std::vector<Operand> _operands;
 			};
 
-			typedef std::vector<Operation> OperationCollection;
+			typedef std::vector<OperationGenericPtr> OperationCollection;
 		}
 	}
 }

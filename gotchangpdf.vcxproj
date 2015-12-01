@@ -72,6 +72,7 @@
     <ClInclude Include="src\gotchangpdf\syntax\objects\null_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\objects.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\conversion_visitor.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\object_visitors.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\real_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\stream_object.h" />
@@ -105,6 +106,7 @@
     <ClInclude Include="src\gotchangpdf\syntax\utils\unknown_interface.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\util.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\version.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\utils\general_visitors.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\boost\libs\iostreams\src\zlib.cpp">

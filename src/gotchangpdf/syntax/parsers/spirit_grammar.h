@@ -89,14 +89,14 @@ namespace gotchangpdf
 		};
 
 		class IndirectObjectReferenceGrammar : public qi::grammar<pos_iterator_type,
-			IndirectObjectReferencePtr(),
+			IndirectObjectReferencePtr(std::shared_ptr<File>*),
 			qi::locals<types::integer, types::ushort>>
 		{
 		public:
 			IndirectObjectReferenceGrammar();
 
 		private:
-			qi::rule<pos_iterator_type, IndirectObjectReferencePtr(), qi::locals<types::integer, types::ushort>> start;
+			qi::rule<pos_iterator_type, IndirectObjectReferencePtr(std::shared_ptr<File>*), qi::locals<types::integer, types::ushort>> start;
 			SingleWhitespace whitespace;
 		};
 

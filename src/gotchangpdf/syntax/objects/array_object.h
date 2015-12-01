@@ -74,7 +74,7 @@ namespace gotchangpdf
 			{
 				return Convert<T>([](ContainableObject obj)
 				{
-					ObjectVisitor<T> visitor;
+					ConversionVisitor<T> visitor;
 					return obj.apply_visitor(visitor);
 				});
 			}

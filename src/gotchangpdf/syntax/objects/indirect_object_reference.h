@@ -23,7 +23,7 @@ namespace gotchangpdf
 			template <typename T>
 			inline const T GetReferencedObjectAs() const
 			{
-				ObjectVisitor<T> visitor;
+				ConversionVisitor<T> visitor;
 				auto direct = GetReferencedObject();
 				return direct.apply_visitor(visitor);
 			}
@@ -52,6 +52,6 @@ namespace gotchangpdf
 	}
 }
 
-#include "object_visitors.h"
+#include "conversion_visitor.h"
 
 #endif /* _INDIRECT_OBJECT_REFERENCE_H */

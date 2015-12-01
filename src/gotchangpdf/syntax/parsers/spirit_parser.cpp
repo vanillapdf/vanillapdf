@@ -5,6 +5,7 @@
 #include "exception.h"
 #include "file.h"
 #include "log.h"
+#include "object_visitors.h"
 
 #include "spirit_grammar.h"
 #include "xref_grammar.h"
@@ -109,7 +110,11 @@ namespace gotchangpdf
 			pos_iterator_type input_end_pos;
 
 			const auto& gram = _impl->_xref_grammar(&locked_file, offset);
-			return _impl->Read<Xref>(gram, input_begin_pos, input_end_pos);
+			auto result = _impl->Read<Xref>(gram, input_begin_pos, input_end_pos);
+
+			SetFileVisitor visitor(locked_file);
+			result.apply_visitor(visitor);
+			return result;
 		}
 
 		contents::OperationCollection SpiritParser::ReadContentStreamOperations(void)
@@ -130,7 +135,17 @@ namespace gotchangpdf
 			pos_iterator_type input_end_pos;
 
 			const auto& gram = _impl->_content_stream_grammar(&locked_file);
-			return _impl->Read<contents::OperationCollection>(gram, input_begin_pos, input_end_pos);
+			auto result = _impl->Read<contents::OperationCollection>(gram, input_begin_pos, input_end_pos);
+
+			SetFileVisitor visitor(locked_file);
+			for (auto item : result) {
+				auto operands = item->GetOperands();
+				for (auto operand : operands) {
+					operand.apply_visitor(visitor);
+				}
+			}
+
+			return result;
 		}
 
 		std::vector<DirectObject> SpiritParser::ReadObjectStreamEntries(types::integer first, types::integer size)
@@ -217,7 +232,11 @@ namespace gotchangpdf
 			pos_iterator_type input_end_pos;
 
 			const auto& gram = _impl->_direct_grammar(&locked_file, offset);
-			return _impl->Read<DirectObject>(gram, input_begin_pos, input_end_pos);
+			auto result = _impl->Read<DirectObject>(gram, input_begin_pos, input_end_pos);
+
+			SetFileVisitor visitor(locked_file);
+			result.apply_visitor(visitor);
+			return result;
 		}
 	}
 }

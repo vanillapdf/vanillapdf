@@ -76,7 +76,7 @@ namespace gotchangpdf
 			{
 				auto result = Find(name);
 
-				ObjectVisitor<U> visitor;
+				ConversionVisitor<U> visitor;
 				return result.apply_visitor(visitor);
 			}
 
@@ -135,6 +135,6 @@ namespace gotchangpdf
 	}
 }
 
-#include "object_visitors.h"
+#include "conversion_visitor.h"
 
 #endif /* _DICTIONARY_OBJECT_H */
