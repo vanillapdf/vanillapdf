@@ -22,7 +22,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\gotchangpdf.test\test.c" />
+    <ClCompile Include="src\gotchangpdf.test\documents.c" />
+    <ClCompile Include="src\gotchangpdf.test\files.c" />
+    <ClCompile Include="src\gotchangpdf.test\main.c" />
+    <ClCompile Include="src\gotchangpdf.test\objects.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\gotchangpdf.test\test.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FE84B8DB-924F-4029-849F-D1729F8A040B}</ProjectGuid>

@@ -23,8 +23,8 @@ typedef int64_t* out_size_type;
 typedef const char* string_type;
 typedef const char** out_string_type;
 
-#define GOTCHANG_PDF_RV_TRUE               0
-#define GOTCHANG_PDF_RV_FALSE              1
+#define GOTCHANG_PDF_RV_FALSE              0
+#define GOTCHANG_PDF_RV_TRUE               1
 
 #define GOTCHANG_PDF_ERROR_SUCCES          0
 #define GOTCHANG_PDF_ERROR_GENERAL         1
