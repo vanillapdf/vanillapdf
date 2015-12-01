@@ -26,6 +26,7 @@
     <ClCompile Include="src\gotchangpdf.test\files.c" />
     <ClCompile Include="src\gotchangpdf.test\main.c" />
     <ClCompile Include="src\gotchangpdf.test\objects.c" />
+    <ClCompile Include="src\gotchangpdf.test\utils.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\gotchangpdf.test\test.h" />

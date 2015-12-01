@@ -53,9 +53,10 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(ContentOperation);
 
 	/* Content operations */
-	DECLARE_OBJECT_HANDLE(ContentOperator);
+	DECLARE_OBJECT_HANDLE(ContentOperationGeneric);
 
 	/* Content operators */
+	DECLARE_OBJECT_HANDLE(ContentOperator);
 	DECLARE_OBJECT_HANDLE(ContentOperatorUnknown);
 
 	/* Content objects */

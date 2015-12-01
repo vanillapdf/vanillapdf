@@ -121,7 +121,7 @@ int process_object(ObjectHandle obj, int nested)
 		RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_Size(arr, &size));
 
 		print_spaces(nested + 1);
-		printf("Size: %d\n\n", size);
+		printf("Size: %d\n", size);
 		for (i = 0; i < size; ++i)
 		{
 			RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_At(arr, i, &child));
@@ -193,6 +193,9 @@ int process_object(ObjectHandle obj, int nested)
 
 		RETURN_ERROR_IF_NOT_SUCCESS(process_dictionary(dictionary, nested));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(body_decoded, nested));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Release(dictionary));
+		RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(body_decoded));
 
 		print_spaces(nested);
 		printf("Stream object end\n");
