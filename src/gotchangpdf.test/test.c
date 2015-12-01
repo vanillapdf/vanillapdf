@@ -432,8 +432,6 @@ int main(int argc, char *argv[])
 	FileHolderHandle file_holder = NULL;
 	XrefChainHandle chain = NULL;
 	XrefChainIteratorHandle chain_iterator = NULL;
-	CatalogHandle catalog = NULL;
-	PageTreeHandle pages = NULL;
 
 	if (argc != 2)
 		return GOTCHANG_PDF_ERROR_GENERAL;
@@ -456,23 +454,29 @@ int main(int argc, char *argv[])
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_Next(chain_iterator));
 	}
 
-	//RETURN_ERROR_IF_NOT_SUCCESS(File_GetDocumentCatalog(file, &catalog));
-	//printf("Document catalog begin\n");
+	{
+		DocumentHandle document = NULL;
+		CatalogHandle catalog = NULL;
+		PageTreeHandle pages = NULL;
 
-	//RETURN_ERROR_IF_NOT_SUCCESS(Catalog_GetPages(catalog, &pages));
-	//RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(pages, &size));
+		RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenExisting(file_holder, &document));
+		RETURN_ERROR_IF_NOT_SUCCESS(Document_GetCatalog(document, &catalog));
 
-	//for (i = 1; i <= size; ++i)
-	//{
-	//	PageObjectHandle page = NULL;
-	//	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(pages, i, &page));
-	//	RETURN_ERROR_IF_NOT_SUCCESS(process_page(page, 0));
-	//	RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(page));
-	//}
+		RETURN_ERROR_IF_NOT_SUCCESS(Catalog_GetPages(catalog, &pages));
+		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(pages, &size));
 
-	//RETURN_ERROR_IF_NOT_SUCCESS(PageTree_Release(pages));
-	//printf("Document catalog end\n");
+		for (i = 1; i <= size; ++i)
+		{
+			PageObjectHandle page = NULL;
+			RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(pages, i, &page));
+			RETURN_ERROR_IF_NOT_SUCCESS(process_page(page, 0));
+			RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(page));
+		}
 
+		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_Release(pages));
+		RETURN_ERROR_IF_NOT_SUCCESS(Catalog_Release(catalog));
+		RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));
+	}
 	
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_Release(chain_iterator));
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Release(chain));

@@ -110,19 +110,6 @@ namespace gotchangpdf
 			}
 		}
 
-		//semantics::CatalogPtr File::GetDocumentCatalog(void) const
-		//{
-		//	if (!_initialized)
-		//		throw Exception("File has not been initialized yet");
-
-		//	XrefBaseVisitor visitor;
-		//	auto xref_variant = _xref->Begin()->Value();
-		//	auto xref = xref_variant.apply_visitor(visitor);
-		//	auto dictionary = xref->GetTrailerDictionary();
-		//	auto root = dictionary->FindAs<DictionaryObjectPtr>(constant::Name::Root);
-		//	return new semantics::Catalog(root);
-		//}
-
 		HeaderPtr File::GetHeader(void) const { return _header; }
 		XrefChainPtr File::GetXrefChain(void) const { return _xref; }
 	}

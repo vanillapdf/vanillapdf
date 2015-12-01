@@ -8,9 +8,10 @@
 
 /* files */
 #include "c_file.h"
+#include "c_xref.h"
 
 /* documents */
-#include "c_xref.h"
+#include "c_document.h"
 #include "c_catalog.h"
 #include "c_page_tree.h"
 #include "c_page_object.h"

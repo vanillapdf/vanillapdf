@@ -16,6 +16,7 @@
     <ClInclude Include="include\gotchangpdf\c_catalog.h" />
     <ClInclude Include="include\gotchangpdf\c_contents.h" />
     <ClInclude Include="include\gotchangpdf\c_dictionary_object.h" />
+    <ClInclude Include="include\gotchangpdf\c_document.h" />
     <ClInclude Include="include\gotchangpdf\c_export.h" />
     <ClInclude Include="include\gotchangpdf\c_file.h" />
     <ClInclude Include="include\gotchangpdf\c_handles.h" />
@@ -115,6 +116,7 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_catalog.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_contents.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_dictionary_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_document.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_file.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_indirect_object_reference.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_integer_object.cpp" />
