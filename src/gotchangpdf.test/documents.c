@@ -3,7 +3,7 @@
 error_type process_content_object(ContentObjectHandle obj, int nested)
 {
 	ContentObjectType type;
-	ContentObjectTextHandle text_object;
+	ContentObjectTextHandle text_object = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_GetType(obj, &type));
 	switch (type)
@@ -51,7 +51,7 @@ error_type process_content_object_text(ContentObjectTextHandle obj, int nested)
 error_type process_content_operation(ContentOperationHandle obj, int nested)
 {
 	ContentOperationType type;
-	ContentOperationGenericHandle generic_operation;
+	ContentOperationGenericHandle generic_operation = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_GetType(obj, &type));
 	switch (type)
@@ -161,8 +161,8 @@ error_type process_content_instruction(ContentInstructionHandle obj, int nested)
 
 error_type process_contents(ContentsHandle obj, int nested)
 {
-	int i;
-	integer_type size;
+	int i = 0;
+	integer_type size = 0;
 
 	print_spaces(nested);
 	printf("Contents begin\n");
@@ -187,7 +187,7 @@ error_type process_contents(ContentsHandle obj, int nested)
 
 error_type process_page(PageObjectHandle obj, int nested)
 {
-	ContentsHandle contents;
+	ContentsHandle contents = NULL;
 
 	print_spaces(nested);
 	printf("Page begin\n");

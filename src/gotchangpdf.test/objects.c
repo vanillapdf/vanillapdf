@@ -2,7 +2,7 @@
 
 int process_name(NameHandle name, int nested)
 {
-	BufferHandle buffer;
+	BufferHandle buffer = NULL;
 
 	print_spaces(nested);
 	printf("Name object begin\n");
@@ -19,7 +19,7 @@ int process_name(NameHandle name, int nested)
 
 int process_lit_string(LiteralStringHandle string, int nested)
 {
-	BufferHandle buffer;
+	BufferHandle buffer = NULL;
 
 	print_spaces(nested);
 	printf("Literal string begin\n");
@@ -36,7 +36,7 @@ int process_lit_string(LiteralStringHandle string, int nested)
 
 int process_hex_string(HexadecimalStringHandle string, int nested)
 {
-	BufferHandle buffer;
+	BufferHandle buffer = NULL;
 
 	print_spaces(nested);
 	printf("Hexadecimal string begin\n");
@@ -53,7 +53,7 @@ int process_hex_string(HexadecimalStringHandle string, int nested)
 
 int process_dictionary(DictionaryHandle dictionary, int nested)
 {
-	int boolean = 0;
+	int boolean = GOTCHANG_PDF_RV_FALSE;
 	DictionaryIteratorHandle iterator = NULL;
 
 	print_spaces(nested);
@@ -91,112 +91,207 @@ int process_dictionary(DictionaryHandle dictionary, int nested)
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
+error_type process_stream(StreamHandle stream, int nested)
+{
+	BufferHandle body_decoded = NULL;
+	DictionaryHandle dictionary = NULL;
+
+	print_spaces(nested);
+	printf("Stream object begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_Header(stream, &dictionary));
+	RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_BodyDecoded(stream, &body_decoded));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(process_dictionary(dictionary, nested));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(body_decoded, nested));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Release(dictionary));
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(body_decoded));
+
+	print_spaces(nested);
+	printf("Stream object end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_array(ArrayHandle arr, int nested)
+{
+	int i = 0;
+	int size = 0;
+
+	print_spaces(nested);
+	printf("Array begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_Size(arr, &size));
+
+	print_spaces(nested + 1);
+	printf("Size: %d\n", size);
+	for (i = 0; i < size; ++i)
+	{
+		ObjectHandle item = NULL;
+		RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_At(arr, i, &item));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_object(item, nested + 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(item));
+	}
+
+	print_spaces(nested);
+	printf("Array end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_integer(IntegerHandle integer, int nested)
+{
+	int value = 0;
+
+	print_spaces(nested);
+	printf("Integer object begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Value(integer, &value));
+	print_spaces(nested + 1);
+	printf("Value: %d\n", value);
+
+	print_spaces(nested);
+	printf("Integer object end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_boolean(BooleanHandle name, int nested)
+{
+	print_spaces(nested);
+	printf("Boolean object begin\n");
+
+	print_spaces(nested);
+	printf("Boolean object end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_reference(IndirectReferenceHandle reference, int nested)
+{
+	enum ObjectType type;
+	int obj_num = 0;
+	int gen_num = 0;
+	ObjectHandle child = NULL;
+	string_type type_name = NULL;
+
+	print_spaces(nested);
+	printf("Indirect reference begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedObjectNumber(reference, &obj_num));
+	RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedGenerationNumber(reference, &gen_num));
+	RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedObject(reference, &child));
+	RETURN_ERROR_IF_NOT_SUCCESS(Object_Type(child, &type));
+	RETURN_ERROR_IF_NOT_SUCCESS(Object_TypeName(type, &type_name));
+	RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(child));
+
+	print_spaces(nested + 1);
+	printf("Object Number: %d\n", obj_num);
+
+	print_spaces(nested + 1);
+	printf("Generation Number: %d\n", gen_num);
+
+	print_spaces(nested + 1);
+	printf("Type: %s\n", type_name);
+
+	print_spaces(nested);
+	printf("Indirect reference end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_real(RealHandle name, int nested)
+{
+	print_spaces(nested);
+	printf("Real object begin\n");
+
+	print_spaces(nested);
+	printf("Real object end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_null(NullHandle obj, int nested)
+{
+	print_spaces(nested);
+	printf("Null object begin\n");
+
+	printf("Value: null\n");
+
+	print_spaces(nested);
+	printf("Null object end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_function(FunctionHandle func, int nested)
+{
+	print_spaces(nested);
+	printf("Function object begin\n");
+
+	print_spaces(nested);
+	printf("Function object end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
 int process_object(ObjectHandle obj, int nested)
 {
-	int i, size, val, obj_num, gen_num;
-	BufferHandle body_decoded;
-	IndirectReferenceHandle indirect_reference;
-	ArrayHandle arr;
-	IntegerHandle integer;
-	StreamHandle stream;
-	NameHandle name;
-	ObjectHandle child;
-	DictionaryHandle dictionary;
-	LiteralStringHandle literal_string;
-	HexadecimalStringHandle hex_string;
 	enum ObjectType type;
-	string_type type_name;
+	RealHandle real = NULL;
+	BooleanHandle boolean = NULL;
+	NullHandle null_object = NULL;
+	FunctionHandle func = NULL;
+	IndirectReferenceHandle indirect_reference = NULL;
+	ArrayHandle arr = NULL;
+	IntegerHandle integer = NULL;
+	StreamHandle stream = NULL;
+	NameHandle name = NULL;
+	ObjectHandle child = NULL;
+	DictionaryHandle dictionary = NULL;
+	LiteralStringHandle literal_string = NULL;
+	HexadecimalStringHandle hex_string = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_Type(obj, &type));
 
 	switch (type)
 	{
 	case ObjectType_Array:
-		print_spaces(nested);
-		printf("Array begin\n");
-
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToArray(obj, &arr));
-		RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_Size(arr, &size));
-
-		print_spaces(nested + 1);
-		printf("Size: %d\n", size);
-		for (i = 0; i < size; ++i)
-		{
-			RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_At(arr, i, &child));
-			RETURN_ERROR_IF_NOT_SUCCESS(process_object(child, nested + 1));
-			RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(child));
-		}
-
-		print_spaces(nested);
-		printf("Array end\n");
-
+		RETURN_ERROR_IF_NOT_SUCCESS(process_array(arr, nested));
 		break;
 	case ObjectType_Boolean:
-		print_spaces(nested);
-		printf("Boolean object begin\n");
-
-		print_spaces(nested);
-		printf("Boolean object end\n");
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToBoolean(obj, &boolean));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_boolean(boolean, nested));
 		break;
 	case ObjectType_Dictionary:
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToDictionary(obj, &dictionary));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_dictionary(dictionary, nested));
 		break;
 	case ObjectType_Function:
-		print_spaces(nested);
-		printf("Function object begin\n");
-
-		print_spaces(nested);
-		printf("Function object end\n");
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToFunction(obj, &func));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_function(func, nested));
 		break;
 	case ObjectType_Integer:
-		print_spaces(nested);
-		printf("Integer object begin\n");
-
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToInteger(obj, &integer));
-		RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Value(integer, &val));
-		print_spaces(nested + 1);
-		printf("Value: %d\n", val);
-
-		print_spaces(nested);
-		printf("Integer object end\n");
+		RETURN_ERROR_IF_NOT_SUCCESS(process_integer(integer, nested));
 		break;
 	case ObjectType_Name:
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToName(obj, &name));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_name(name, nested));
 		break;
 	case ObjectType_Null:
-		print_spaces(nested);
-		printf("Null object begin\n");
-
-		printf("Value: null\n");
-
-		print_spaces(nested);
-		printf("Null object end\n");
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToNull(obj, &null_object));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_null(null_object, nested));
 		break;
 	case ObjectType_Real:
-		print_spaces(nested);
-		printf("Real object begin\n");
-
-		print_spaces(nested);
-		printf("Real object end\n");
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToReal(obj, &real));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_real(real, nested));
 		break;
 	case ObjectType_Stream:
-		print_spaces(nested);
-		printf("Stream object begin\n");
-
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToStream(obj, &stream));
-		RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_Header(stream, &dictionary));
-		RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_BodyDecoded(stream, &body_decoded));
-
-		RETURN_ERROR_IF_NOT_SUCCESS(process_dictionary(dictionary, nested));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(body_decoded, nested));
-
-		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Release(dictionary));
-		RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(body_decoded));
-
-		print_spaces(nested);
-		printf("Stream object end\n");
+		RETURN_ERROR_IF_NOT_SUCCESS(process_stream(stream, nested));
 		break;
 	case ObjectType_HexadecimalString:
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToHexadecimalString(obj, &hex_string));
@@ -207,30 +302,8 @@ int process_object(ObjectHandle obj, int nested)
 		RETURN_ERROR_IF_NOT_SUCCESS(process_lit_string(literal_string, nested));
 		break;
 	case ObjectType_IndirectReference:
-		print_spaces(nested);
-		printf("Indirect reference begin\n");
-
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToIndirectReference(obj, &indirect_reference));
-
-		RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedObjectNumber(indirect_reference, &obj_num));
-		RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedGenerationNumber(indirect_reference, &gen_num));
-		RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedObject(indirect_reference, &child));
-		RETURN_ERROR_IF_NOT_SUCCESS(Object_Type(child, &type));
-		RETURN_ERROR_IF_NOT_SUCCESS(Object_TypeName(type, &type_name));
-
-		print_spaces(nested + 1);
-		printf("Object Number: %d\n", obj_num);
-
-		print_spaces(nested + 1);
-		printf("Generation Number: %d\n", gen_num);
-
-		print_spaces(nested + 1);
-		printf("Type: %s\n", type_name);
-
-		RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(child));
-
-		print_spaces(nested);
-		printf("Indirect reference end\n");
+		RETURN_ERROR_IF_NOT_SUCCESS(process_reference(indirect_reference, nested));
 		break;
 	default:
 		print_spaces(nested);
