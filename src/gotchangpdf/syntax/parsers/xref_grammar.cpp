@@ -3,6 +3,7 @@
 
 #include "iter_offset_parser.h"
 #include "abstract_syntax_tree.h"
+#include "object_visitors.h"
 
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix.hpp>
@@ -148,6 +149,7 @@ void read_xref_stream_data(Xref xref, StreamObjectPtr stream, std::shared_ptr<Fi
 			}
 		}
 
+		subsection->SetFile(*file);
 		xref_base->Add(subsection);
 	}
 

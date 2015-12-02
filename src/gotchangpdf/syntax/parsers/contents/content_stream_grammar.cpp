@@ -1,9 +1,12 @@
 #include "precompiled.h"
 #include "content_stream_grammar.h"
-//#include "abstract_syntax_tree.h"
+#include "object_visitors.h"
 
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix.hpp>
+
+using namespace gotchangpdf;
+using namespace gotchangpdf::syntax;
 
 namespace gotchangpdf
 {
@@ -19,14 +22,14 @@ namespace gotchangpdf
 				start %=
 					array_object(qi::_r1)
 					| dictionary_object(qi::_r1)
-					| boolean_object
-					| function_object
-					| real_object
-					| integer_object
-					| name_object
-					| null_object
-					| literal_string_object
-					| hexadecimal_string_object;
+					| boolean_object(qi::_r1)
+					| function_object(qi::_r1)
+					| real_object(qi::_r1)
+					| integer_object(qi::_r1)
+					| name_object(qi::_r1)
+					| null_object(qi::_r1)
+					| literal_string_object(qi::_r1)
+					| hexadecimal_string_object(qi::_r1);
 
 				BOOST_SPIRIT_DEBUG_NODE(start);
 			}

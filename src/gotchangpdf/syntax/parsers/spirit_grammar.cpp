@@ -12,10 +12,12 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-void indirect_object_file_handler(IndirectObjectReferencePtr obj, std::shared_ptr<File>* file)
+void direct_object_file_handler(DirectObject obj, std::shared_ptr<File>* file)
 {
 	assert(nullptr != file && *file);
-	obj->SetFile(*file);
+
+	SetFileVisitor visitor(*file);
+	obj.apply_visitor(visitor);
 }
 
 void direct_object_offset_handler(DirectObject obj, types::stream_offset offset)
@@ -72,16 +74,16 @@ namespace gotchangpdf
 
 			direct_object %=
 				dict_or_stream(qi::_r1)
-				|array_object(qi::_r1)
-				| boolean_object
-				| function_object
+				| array_object(qi::_r1)
+				| boolean_object(qi::_r1)
+				| function_object(qi::_r1)
 				| indirect_object_reference(qi::_r1)
-				| real_object
-				| integer_object
-				| name_object
-				| null_object
-				| literal_string_object
-				| hexadecimal_string_object;
+				| real_object(qi::_r1)
+				| integer_object(qi::_r1)
+				| name_object(qi::_r1)
+				| null_object(qi::_r1)
+				| literal_string_object(qi::_r1)
+				| hexadecimal_string_object(qi::_r1);
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 			BOOST_SPIRIT_DEBUG_NODE(direct_object);
@@ -92,7 +94,14 @@ namespace gotchangpdf
 		{
 			start %=
 				qi::eps
-				>> qi::omit[qi::bool_[qi::_val = phoenix::construct<BooleanObjectPtr>(qi::_1)]];
+				>> qi::omit
+				[
+					qi::bool_
+					[
+						qi::_val = phoenix::construct<BooleanObjectPtr>(qi::_1),
+						phoenix::bind(&direct_object_file_handler, qi::_val, qi::_r1)
+					]
+				];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
@@ -105,9 +114,10 @@ namespace gotchangpdf
 				qi::lit('[')
 				> whitespaces
 				> *(
+					containable_object(qi::_r1)
 					>> whitespaces
 					)
-				> qi::lit(']');
+				> qi::lit(']')[phoenix::bind(&direct_object_file_handler, qi::_val, qi::_r1)];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
@@ -120,9 +130,10 @@ namespace gotchangpdf
 				>> whitespace
 				>> qi::omit[qi::ushort_[qi::_b = qi::_1]]
 				>> whitespace
-				>> qi::lit('R')[
+				>> qi::lit('R')
+				[
 					qi::_val = phoenix::construct<IndirectObjectReferencePtr>(qi::_a, qi::_b),
-					phoenix::bind(&indirect_object_file_handler, qi::_val, qi::_r1)
+					phoenix::bind(&direct_object_file_handler, qi::_val, qi::_r1)
 				];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
@@ -143,7 +154,14 @@ namespace gotchangpdf
 		{
 			start %=
 				qi::eps
-				>> qi::omit[strict_float_parser[qi::_val = phoenix::construct<RealObjectPtr>(qi::_1)]];
+				>> qi::omit
+				[
+					strict_float_parser
+					[
+						qi::_val = phoenix::construct<RealObjectPtr>(qi::_1),
+						phoenix::bind(&direct_object_file_handler, qi::_val, qi::_r1)
+					]
+				];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
@@ -153,7 +171,14 @@ namespace gotchangpdf
 		{
 			start %=
 				qi::eps
-				>> qi::omit[qi::int_[qi::_val = phoenix::construct<IntegerObjectPtr>(qi::_1)]];
+				>> qi::omit
+				[
+					qi::int_
+					[
+						qi::_val = phoenix::construct<IntegerObjectPtr>(qi::_1),
+						phoenix::bind(&direct_object_file_handler, qi::_val, qi::_r1)
+					]
+				];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
@@ -163,7 +188,11 @@ namespace gotchangpdf
 		{
 			start %=
 				qi::eps
-				>> qi::lit("null")[qi::_val = NullObject::GetInstance()];
+				>> qi::lit("null")
+				[
+					qi::_val = NullObject::GetInstance(),
+					phoenix::bind(&direct_object_file_handler, qi::_val, qi::_r1)
+				];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
@@ -179,7 +208,7 @@ namespace gotchangpdf
 					| (qi::eps(qi::_a > 0) >> qi::char_(')')[qi::_a -= 1])
 					| (qi::char_ - qi::char_('(') - qi::char_(')'))
 					)
-				> qi::lit(")");
+				> qi::lit(")")[phoenix::bind(&direct_object_file_handler, qi::_val, qi::_r1)];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
@@ -190,7 +219,7 @@ namespace gotchangpdf
 			start %=
 				qi::lit('<')
 				>> *(qi::char_("0-9a-fA-F"))
-				> qi::lit('>');
+				> qi::lit('>')[phoenix::bind(&direct_object_file_handler, qi::_val, qi::_r1)];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
@@ -200,16 +229,16 @@ namespace gotchangpdf
 		{
 			start %=
 				array_object(qi::_r1)
-				| boolean_object
+				| boolean_object(qi::_r1)
 				| dictionary_object(qi::_r1)
-				| function_object
+				| function_object(qi::_r1)
 				| indirect_object_reference(qi::_r1)
-				| real_object
-				| integer_object
-				| name_object
-				| null_object
-				| literal_string_object
-				| hexadecimal_string_object;
+				| real_object(qi::_r1)
+				| integer_object(qi::_r1)
+				| name_object(qi::_r1)
+				| null_object(qi::_r1)
+				| literal_string_object(qi::_r1)
+				| hexadecimal_string_object(qi::_r1);
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
@@ -222,11 +251,12 @@ namespace gotchangpdf
 				qi::lit("<<")
 				> whitespaces
 				> *(
-					name_object
+					name_object(qi::_r1)
 					>> whitespaces
+					>> containable_object(qi::_r1)
 					>> whitespaces
 					)
-				> qi::lit(">>");
+				> qi::lit(">>")[phoenix::bind(&direct_object_file_handler, qi::_val, qi::_r1)];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
@@ -240,7 +270,11 @@ namespace gotchangpdf
 				> qi::omit[repo::qi::iter_offset[qi::_b = qi::_1]]
 				> repo::qi::advance(qi::_a)
 				> -eol
-				> qi::lit("endstream")[qi::_val = phoenix::construct<StreamObjectPtr>(qi::_r2, qi::_b)];
+				> qi::lit("endstream")
+				[
+					qi::_val = phoenix::construct<StreamObjectPtr>(qi::_r2, qi::_b),
+					phoenix::bind(&direct_object_file_handler, qi::_val, qi::_r1)
+				];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
@@ -289,7 +323,7 @@ namespace gotchangpdf
 				> *(
 					(qi::char_ - whitespace - qi::char_("()<>[]{}/%"))
 					//| (qi::char_('#') > qi::digit > qi::digit)
-					);
+					)[phoenix::bind(&direct_object_file_handler, qi::_val, qi::_r1)];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
