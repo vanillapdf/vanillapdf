@@ -28,13 +28,13 @@ namespace gotchangpdf
 		}
 
 		template <typename... Parameters, typename = std::enable_if_t<std::is_constructible<T, Parameters...>::value>>
-		Deferred(const Parameters&... p) : Contents(new T(p...))
+		Deferred(const Parameters&... p) : Contents(pdf_new T(p...))
 		{
 			Content.Owner = this;
 		}
 
 		template <typename U, typename = std::enable_if_t<std::is_constructible<T, std::initializer_list<U>>::value>>
-		Deferred(std::initializer_list<U> list) : Contents(new T(list))
+		Deferred(std::initializer_list<U> list) : Contents(pdf_new T(list))
 		{
 			Content.Owner = this;
 		}
@@ -115,7 +115,7 @@ namespace gotchangpdf
 			T* get_internal<true>(void) const
 			{
 				if (!Owner->Contents) {
-					Owner->Contents.reset(new T());
+					Owner->Contents.reset(pdf_new T());
 				}
 
 				return Owner->Contents.get();

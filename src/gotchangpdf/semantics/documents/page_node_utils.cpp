@@ -18,9 +18,9 @@ namespace gotchangpdf
 			auto type = obj->FindAs<syntax::NameObjectPtr>(Name::Type);
 
 			if (*type == Name::Pages)
-				return PageTreeNodePtr(new PageTreeNode(obj));
+				return PageTreeNodePtr(pdf_new PageTreeNode(obj));
 			else if (*type == Name::Page)
-				return PageObjectPtr(new PageObject(obj));
+				return PageObjectPtr(pdf_new PageObject(obj));
 			else
 				throw syntax::Exception("Cannot initialize PageTree from TODO");
 		}

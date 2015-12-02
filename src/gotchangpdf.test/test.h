@@ -8,6 +8,11 @@
 #include <string.h>
 #include <assert.h>
 
+#ifdef _DEBUG
+	#define _CRTDBG_MAP_ALLOC
+	#include <crtdbg.h>
+#endif
+
 void print_spaces(int nested);
 
 error_type process_object(ObjectHandle obj, int nested);

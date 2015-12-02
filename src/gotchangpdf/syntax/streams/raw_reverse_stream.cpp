@@ -128,7 +128,7 @@ namespace gotchangpdf
 			return (streampos(offset));
 		}
 
-		ReverseStream::ReverseStream(CharacterSource & stream) : CharacterSource(new ReverseBuf(stream)) {}
+		ReverseStream::ReverseStream(CharacterSource & stream) : CharacterSource(pdf_new ReverseBuf(stream)) {}
 
 		ReverseStream::~ReverseStream() { delete CharacterSource::rdbuf(); }
 

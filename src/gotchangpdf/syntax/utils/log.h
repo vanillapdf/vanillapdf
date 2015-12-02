@@ -81,7 +81,7 @@ namespace gotchangpdf
 			// Wrap it into the frontend and register in the core.
 			// The backend requires synchronization in the frontend.
 			typedef sinks::synchronous_sink<sinks::text_multifile_backend> sink_t;
-			boost::shared_ptr<sink_t> sink(new sink_t(backend));
+			boost::shared_ptr<sink_t> sink(pdf_new sink_t(backend));
 
 			// Set the formatter
 			sink->set_formatter(

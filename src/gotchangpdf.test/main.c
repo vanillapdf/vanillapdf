@@ -11,6 +11,11 @@ int main(int argc, char *argv[])
 	if (argc != 2)
 		return GOTCHANG_PDF_ERROR_GENERAL;
 
+#ifdef _MSC_VER
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//_CrtSetBreakAlloc(803506);
+#endif
+
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Open(argv[1], &file));
 	RETURN_ERROR_IF_NOT_SUCCESS(FileHolder_Create(file, &file_holder));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file, file_holder));
@@ -58,6 +63,10 @@ int main(int argc, char *argv[])
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_Release(chain_iterator));
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Release(chain));
 	RETURN_ERROR_IF_NOT_SUCCESS(FileHolder_Release(file_holder));
+
+#ifdef _MSC_VER
+	_CrtDumpMemoryLeaks();
+#endif
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }

@@ -44,7 +44,7 @@ namespace gotchangpdf
 		};
 
 		SpiritParser::SpiritParser(std::weak_ptr<File> file, CharacterSource & stream)
-			: Stream(stream), _impl(new Impl(file)) {}
+			: Stream(stream), _impl(pdf_new Impl(file)) {}
 
 		SpiritParser::SpiritParser(const SpiritParser & other)
 			: Stream(other) { _impl->_file = other._impl->_file; }

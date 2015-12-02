@@ -25,6 +25,17 @@
 #define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
 #define BOOST_MPL_LIMIT_LIST_SIZE 80
 
+// Memory leak tracking
+#ifdef _DEBUG
+	#define _CRTDBG_MAP_ALLOC
+	#include <crtdbg.h>
+
+	#ifndef DBG_NEW
+		#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+		#define pdf_new DBG_NEW
+	#endif
+#endif
+
 // Solution
 #include "deferred.h"
 #include "objects.h"

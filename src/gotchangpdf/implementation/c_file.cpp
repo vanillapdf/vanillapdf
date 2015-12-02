@@ -18,7 +18,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Open(const char *filename, P
 
 	try
 	{
-		auto file = new File(filename);
+		auto file = pdf_new File(filename);
 		*result = reinterpret_cast<FileHandle>(file);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}

@@ -17,7 +17,7 @@ namespace gotchangpdf
 
 			static NullObjectPtr GetInstance(void)
 			{
-				static NullObjectPtr instance = NullObjectPtr(new NullObject());
+				static NullObjectPtr instance = NullObjectPtr(pdf_new NullObject());
 				return instance;
 			}
 
