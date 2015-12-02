@@ -11,7 +11,7 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class NameObject : public Containable, public Object
+		class NameObject : public Object
 		{
 		public:
 			typedef BufferPtr value_type;
@@ -30,17 +30,12 @@ namespace gotchangpdf
 			inline bool Equals(const NameObject& other) const { return _value->Equals(*other._value); }
 
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Name; }
-			virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
-			virtual inline ContainerPtr GetContainer() const override { return _container; }
 
 			void SetName(value_type name) { _value = name; }
 
 			//private:
 		public:
 			value_type _value;
-
-		private:
-			ContainerPtr _container;
 		};
 	}
 

@@ -14,7 +14,7 @@ namespace gotchangpdf
 	namespace syntax
 	{
 		template <typename T>
-		class ArrayObject : public Containable, public Object
+		class ArrayObject : public Object
 		{
 		public:
 			typedef std::vector<T> list_type;
@@ -52,8 +52,6 @@ namespace gotchangpdf
 			}
 
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Array; }
-			virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
-			virtual inline ContainerPtr GetContainer() const override { return _container; }
 
 			list_type GetItems(void) const { return _list; }
 			void GetItems(const list_type& value) const { _list = value; }
@@ -61,9 +59,6 @@ namespace gotchangpdf
 			//protected:
 		public:
 			list_type _list;
-
-		private:
-			ContainerPtr _container;
 		};
 
 		class MixedArrayObject : public ArrayObject<ContainableObject>

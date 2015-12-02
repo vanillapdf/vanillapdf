@@ -16,7 +16,7 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class DictionaryObject : public Containable, public Object
+		class DictionaryObject : public Object
 		{
 		public:
 			//typedef std::unordered_map<NameObjectPtr, ContainableObject, std::hash<NameObjectPtr>> list_type;
@@ -124,13 +124,10 @@ namespace gotchangpdf
 			inline bool Contains(const NameObjectPtr& name) const { return (_list.find(name) != _list.end()); }
 
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Dictionary; }
-			virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
-			virtual inline ContainerPtr GetContainer() const override { return _container; }
 
 			//private:
 		public:
 			list_type _list;
-			ContainerPtr _container;
 		};
 	}
 }

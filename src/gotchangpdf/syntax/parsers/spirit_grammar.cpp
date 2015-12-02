@@ -33,18 +33,6 @@ void indirect_object_handler(DirectObject obj, types::integer obj_number, types:
 	base->SetGenerationNumber(gen_number);
 }
 
-void dictionary_item_handler(DictionaryObjectPtr obj, ContainableObject item)
-{
-	SetContainerVisitor visitor(obj);
-	item.apply_visitor(visitor);
-}
-
-void array_item_handler(MixedArrayObjectPtr obj, ContainableObject item)
-{
-	SetContainerVisitor visitor(obj);
-	item.apply_visitor(visitor);
-}
-
 void dictionary_length(const DictionaryObjectPtr& obj, types::stream_size& value)
 {
 	auto size = obj->FindAs<IntegerObjectPtr>(constant::Name::Length);
@@ -117,7 +105,6 @@ namespace gotchangpdf
 				qi::lit('[')
 				> whitespaces
 				> *(
-					containable_object(qi::_r1)[phoenix::bind(&array_item_handler, qi::_val, qi::_1)]
 					>> whitespaces
 					)
 				> qi::lit(']');
@@ -237,7 +224,6 @@ namespace gotchangpdf
 				> *(
 					name_object
 					>> whitespaces
-					>> containable_object(qi::_r1)[phoenix::bind(&dictionary_item_handler, qi::_val, qi::_1)]
 					>> whitespaces
 					)
 				> qi::lit(">>");

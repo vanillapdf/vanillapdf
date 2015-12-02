@@ -10,23 +10,18 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class StringObject : public Containable, public Object
+		class StringObject : public Object
 		{
 		public:
-			virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
-			virtual inline ContainerPtr GetContainer() const override { return _container; }
-
 			inline BufferPtr Value() const { return _value; }
-
-		public:
-			BufferPtr _value;
 
 		protected:
 			StringObject();
 			explicit StringObject(BufferPtr value);
 
-		private:
-			ContainerPtr _container;
+			// private
+		public:
+			BufferPtr _value;
 		};
 
 		class HexadecimalStringObject : public StringObject

@@ -11,7 +11,7 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class IntegerObject : public Containable, public Object
+		class IntegerObject : public Object
 		{
 		public:
 			typedef types::integer value_type;
@@ -31,8 +31,6 @@ namespace gotchangpdf
 			IntegerObject& operator= (BufferPtr value);
 
 			virtual Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Integer; }
-			virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
-			virtual inline ContainerPtr GetContainer() const override { return _container; }
 
 			inline bool Equals(const IntegerObject& other) const _NOEXCEPT { return _value == other._value; }
 
@@ -42,7 +40,6 @@ namespace gotchangpdf
 
 		private:
 			value_type _value = 0;
-			ContainerPtr _container;
 		};
 
 		inline IntegerObject SafeAddition(IntegerObject::value_type number, IntegerObject::value_type addend) {

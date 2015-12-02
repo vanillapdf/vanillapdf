@@ -8,12 +8,10 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class NullObject : public Containable, public Object
+		class NullObject : public Object
 		{
 		public:
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Null; }
-			virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
-			virtual inline ContainerPtr GetContainer() const override { return _container; }
 
 			static NullObjectPtr GetInstance(void)
 			{
@@ -26,9 +24,6 @@ namespace gotchangpdf
 			inline bool operator==(const NullObject& other) const { return Equals(other); }
 			inline bool operator!=(const NullObject& other) const { return !Equals(other); }
 			inline bool operator<(const NullObject&) const { return false; }
-
-		private:
-			ContainerPtr _container;
 		};
 	}
 }

@@ -10,7 +10,7 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class IndirectObjectReference : public Containable, public Object
+		class IndirectObjectReference : public Object
 		{
 		public:
 			IndirectObjectReference() = default;
@@ -29,8 +29,6 @@ namespace gotchangpdf
 			}
 
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::IndirectReference; }
-			virtual inline void SetContainer(ContainerPtr obj) override { _container = obj; }
-			virtual inline ContainerPtr GetContainer() const override { return _container; }
 
 			bool Equals(const IndirectObjectReference& other) const;
 
@@ -44,7 +42,6 @@ namespace gotchangpdf
 		private:
 			mutable DirectObject _object;
 			mutable bool _initialized = false;
-			ContainerPtr _container;
 
 			types::integer _ref_obj = 0;
 			types::ushort _ref_gen = 0;

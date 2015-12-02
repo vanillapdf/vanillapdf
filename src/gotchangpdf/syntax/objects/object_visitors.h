@@ -88,22 +88,6 @@ namespace gotchangpdf
 		{
 		};
 
-		class SetContainerVisitor : public boost::static_visitor<void>
-		{
-		public:
-			explicit SetContainerVisitor(const ContainerPtr container)
-				: _container(container), boost::static_visitor<void>() {}
-
-			SetContainerVisitor& operator=(const SetContainerVisitor&) = delete;
-			SetContainerVisitor(const SetContainerVisitor&) = delete;
-
-			template <typename T>
-			inline void operator()(T& obj) const { obj->SetContainer(_container); }
-
-		private:
-			const ContainerPtr _container;
-		};
-
 		class SetFileVisitor : public boost::static_visitor<void>
 		{
 		public:
