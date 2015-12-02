@@ -3,6 +3,7 @@
 
 #include "syntax_fwd.h"
 #include "unknown_interface.h"
+#include "general_visitors.h"
 
 #include <vector>
 #include <boost/variant/variant.hpp>
@@ -424,15 +425,8 @@ public: \
 				EndCompatibilitySectionOperatorPtr
 			> CompatibilityOperators;
 
-			class OperatorBaseVisitor : public boost::static_visitor<OperatorBase*>
-			{
-			public:
-				template <typename T>
-				inline OperatorBase* operator()(T& obj) const { return obj.Content.get(); }
-			};
-
 			template <typename T>
-			class IsOperatorTypeVisitor : public boost::static_visitor<bool>
+			class IsTypeVisitor : public boost::static_visitor<bool>
 			{
 			public:
 				inline bool operator()(const T&) const { return true; }
@@ -572,6 +566,11 @@ public: \
 				Operator _operator;
 				std::vector<Operand> _operands;
 			};
+
+			using OperatorBaseVisitor = BaseVisitor<OperatorBase*>;
+			using OperationBaseVisitor = BaseVisitor<OperationBase*>;
+			using OperatorBaseAddRefVisitor = BaseAddRefVisitor<OperatorBase*>;
+			using OperationBaseAddRefVisitor = BaseAddRefVisitor<OperationBase*>;
 
 			typedef std::vector<OperationGenericPtr> OperationCollection;
 		}

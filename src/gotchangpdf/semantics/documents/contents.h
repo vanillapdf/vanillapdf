@@ -32,6 +32,8 @@ namespace gotchangpdf
 			EndTextOperationPtr
 		> ContentOperationPtr;
 
+		typedef std::vector<ContentOperationPtr> ContentOperationCollection;
+
 		class ContentObjectBase : public syntax::contents::InstructionBase
 		{
 		public:
@@ -47,12 +49,15 @@ namespace gotchangpdf
 		class TextObject : public ContentObjectBase
 		{
 		public:
-			TextObject(syntax::contents::OperationCollection ops) : _operations(ops) {}
+			TextObject(ContentOperationCollection ops) : _operations(ops) {}
 
 			inline virtual Type GetType(void) const _NOEXCEPT override { return Type::TextObject; }
 
+			types::uinteger GetOperationsSize(void) const { return _operations.size(); }
+			ContentOperationPtr GetOperationAt(types::uinteger at) const { return _operations.at(at); }
+
 		private:
-			syntax::contents::OperationCollection _operations;
+			ContentOperationCollection _operations;
 		};
 
 		typedef Deferred<TextObject> TextObjectPtr;

@@ -29,18 +29,18 @@ error_type process_content_object_text(ContentObjectTextHandle obj, int nested)
 	print_spaces(nested);
 	printf("Text object begin\n");
 
-	//RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectText_GetOperationsSize(obj, &size));
+	RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectText_GetOperationsSize(obj, &size));
 
 	print_spaces(nested + 1);
-	printf("Size: %d\n", size);
+	printf("Operations: %d\n", size);
 
-	//for (i = 0; i < size; ++i)
-	//{
-	//	ContentOperationHandle operation = NULL;
-	//	RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectText_GetOperationAt(obj, i, &operation));
-	//	RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation(operation, nested + 1));
-	//	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_Release(operation));
-	//}
+	for (i = 0; i < size; ++i)
+	{
+		ContentOperationHandle operation = NULL;
+		RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectText_GetOperationAt(obj, i, &operation));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation(operation, nested + 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_Release(operation));
+	}
 
 	print_spaces(nested);
 	printf("Text object end\n");
@@ -85,7 +85,7 @@ error_type process_content_operation_generic(ContentOperationGenericHandle obj, 
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationGeneric_GetOperandsSize(obj, &size));
 
 	print_spaces(nested + 1);
-	printf("Size: %d\n", size);
+	printf("Operands: %d\n", size);
 
 	for (i = 0; i < size; ++i)
 	{

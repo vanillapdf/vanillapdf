@@ -168,30 +168,33 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_Release(ContentObje
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationsSize(ContentObjectTextHandle handle, out_integer_type result)
 {
-	ContentObjectBase* obj = reinterpret_cast<ContentObjectBase*>(handle);
+	TextObject* obj = reinterpret_cast<TextObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	//LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
 	{
-		// TODO
-		return GOTCHANG_PDF_ERROR_GENERAL;
+		*result = obj->GetOperationsSize();
+		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(ContentObjectTextHandle handle, integer_type at, PContentOperationHandle result)
 {
-	ContentObjectBase* obj = reinterpret_cast<ContentObjectBase*>(handle);
+	TextObject* obj = reinterpret_cast<TextObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	//LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
 	{
-		// TODO
-		return GOTCHANG_PDF_ERROR_GENERAL;
+		OperationBaseAddRefVisitor visitor;
+		auto item = obj->GetOperationAt(at);
+		auto ptr = item.apply_visitor(visitor);
+		*result = reinterpret_cast<ContentOperationHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS
 }
