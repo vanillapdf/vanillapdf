@@ -21,6 +21,7 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(HexadecimalString);
 	DECLARE_OBJECT_HANDLE(LiteralString);
 	DECLARE_OBJECT_HANDLE(IndirectReference);
+	DECLARE_OBJECT_HANDLE(Function);
 	DECLARE_OBJECT_HANDLE(Dictionary);
 
 	DECLARE_OBJECT_HANDLE(DictionaryIterator);
