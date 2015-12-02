@@ -48,7 +48,11 @@ error_type process_xref(XrefHandle xref, int nested)
 				printf("Unknown xref entry type\n");
 				return GOTCHANG_PDF_ERROR_GENERAL;
 			}
+
+			RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_Release(entry));
 		}
+
+		RETURN_ERROR_IF_NOT_SUCCESS(XrefSubsection_Release(subsection));
 	}
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
