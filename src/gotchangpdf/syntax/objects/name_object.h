@@ -48,37 +48,35 @@ namespace gotchangpdf
 	{
 		namespace Name
 		{
-#			define DECLARE_CONST_NAME(name)	const syntax::NameObjectPtr name = syntax::NameObject(Buffer(#name, sizeof(#name)))
-
-			DECLARE_CONST_NAME(BitsPerComponent);
-			DECLARE_CONST_NAME(Colors);
-			DECLARE_CONST_NAME(Columns);
-			DECLARE_CONST_NAME(Container);
-			DECLARE_CONST_NAME(Contents);
-			DECLARE_CONST_NAME(DecodeParms);
-			DECLARE_CONST_NAME(EarlyChange);
-			DECLARE_CONST_NAME(Length);
-			DECLARE_CONST_NAME(Type);
-			DECLARE_CONST_NAME(ObjStm);
-			DECLARE_CONST_NAME(N);
-			DECLARE_CONST_NAME(First);
-			DECLARE_CONST_NAME(Extends);
-			DECLARE_CONST_NAME(Filter);
-			DECLARE_CONST_NAME(FlateDecode);
-			DECLARE_CONST_NAME(Index);
-			DECLARE_CONST_NAME(Catalog);
-			DECLARE_CONST_NAME(Pages);
-			DECLARE_CONST_NAME(Page);
-			DECLARE_CONST_NAME(Count);
-			DECLARE_CONST_NAME(Kids);
-			DECLARE_CONST_NAME(MediaBox);
-			DECLARE_CONST_NAME(Resources);
-			DECLARE_CONST_NAME(Parent);
-			DECLARE_CONST_NAME(Predictor);
-			DECLARE_CONST_NAME(Prev);
-			DECLARE_CONST_NAME(Root);
-			DECLARE_CONST_NAME(Size);
-			DECLARE_CONST_NAME(W);
+			extern const syntax::NameObjectPtr BitsPerComponent;
+			extern const syntax::NameObjectPtr Colors;
+			extern const syntax::NameObjectPtr Columns;
+			extern const syntax::NameObjectPtr Container;
+			extern const syntax::NameObjectPtr Contents;
+			extern const syntax::NameObjectPtr DecodeParms;
+			extern const syntax::NameObjectPtr EarlyChange;
+			extern const syntax::NameObjectPtr Length;
+			extern const syntax::NameObjectPtr Type;
+			extern const syntax::NameObjectPtr ObjStm;
+			extern const syntax::NameObjectPtr N;
+			extern const syntax::NameObjectPtr First;
+			extern const syntax::NameObjectPtr Extends;
+			extern const syntax::NameObjectPtr Filter;
+			extern const syntax::NameObjectPtr FlateDecode;
+			extern const syntax::NameObjectPtr Index;
+			extern const syntax::NameObjectPtr Catalog;
+			extern const syntax::NameObjectPtr Pages;
+			extern const syntax::NameObjectPtr Page;
+			extern const syntax::NameObjectPtr Count;
+			extern const syntax::NameObjectPtr Kids;
+			extern const syntax::NameObjectPtr MediaBox;
+			extern const syntax::NameObjectPtr Resources;
+			extern const syntax::NameObjectPtr Parent;
+			extern const syntax::NameObjectPtr Predictor;
+			extern const syntax::NameObjectPtr Prev;
+			extern const syntax::NameObjectPtr Root;
+			extern const syntax::NameObjectPtr Size;
+			extern const syntax::NameObjectPtr W;
 		}
 	}
 }
