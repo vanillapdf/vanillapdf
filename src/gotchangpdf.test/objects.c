@@ -53,10 +53,8 @@ int process_hex_string(HexadecimalStringHandle string, int nested)
 
 int process_dictionary(DictionaryHandle dictionary, int nested)
 {
-	int boolean;
-	DictionaryIteratorHandle iterator;
-	NameHandle key;
-	ObjectHandle value;
+	int boolean = 0;
+	DictionaryIteratorHandle iterator = NULL;
 
 	print_spaces(nested);
 	printf("Dictionary begin\n");
@@ -65,6 +63,9 @@ int process_dictionary(DictionaryHandle dictionary, int nested)
 	while (GOTCHANG_PDF_ERROR_SUCCES == DictionaryObjectIterator_IsValid(iterator, dictionary, &boolean)
 		&& GOTCHANG_PDF_RV_TRUE == boolean)
 	{
+		NameHandle key = NULL;
+		ObjectHandle value = NULL;
+
 		print_spaces(nested);
 		printf("Pair:\n");
 
