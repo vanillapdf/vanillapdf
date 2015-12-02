@@ -108,9 +108,6 @@ int process_object(ObjectHandle obj, int nested)
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_Type(obj, &type));
 
-	if (nested > 2)
-		return GOTCHANG_PDF_ERROR_SUCCES;
-
 	switch (type)
 	{
 	case ObjectType_Array:
