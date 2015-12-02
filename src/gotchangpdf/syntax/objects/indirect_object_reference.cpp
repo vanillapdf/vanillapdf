@@ -9,7 +9,7 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		IndirectObjectReference::IndirectObjectReference(DirectObject obj) : _object(obj)
+		IndirectObjectReference::IndirectObjectReference(DirectObject obj)
 		{
 			ObjectBaseVisitor visitor;
 			auto base = obj.apply_visitor(visitor);
@@ -17,23 +17,17 @@ namespace gotchangpdf
 			assert(base->IsIndirect());
 			_ref_obj = base->GetObjectNumber();
 			_ref_gen = base->GetGenerationNumber();
-			_initialized = true;
 		}
 
 		IndirectObjectReference::IndirectObjectReference(types::integer obj, types::ushort gen) : _ref_obj(obj), _ref_gen(gen) {}
 
 		DirectObject IndirectObjectReference::GetReferencedObject() const
 		{
-			if (!_initialized) {
-				auto locked_file = _file.lock();
-				if (!locked_file)
-					throw Exception("File already disposed");
+			auto locked_file = _file.lock();
+			if (!locked_file)
+				throw Exception("File already disposed");
 
-				_object = locked_file->GetIndirectObject(_ref_obj, _ref_gen);
-				_initialized = true;
-			}
-
-			return _object;
+			return locked_file->GetIndirectObject(_ref_obj, _ref_gen);
 		}
 
 		bool IndirectObjectReference::Equals(const IndirectObjectReference& other) const

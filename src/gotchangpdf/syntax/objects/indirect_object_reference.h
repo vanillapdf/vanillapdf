@@ -40,9 +40,6 @@ namespace gotchangpdf
 			inline types::ushort GetReferencedGenerationNumber() const _NOEXCEPT { return _ref_gen; }
 
 		private:
-			mutable DirectObject _object;
-			mutable bool _initialized = false;
-
 			types::integer _ref_obj = 0;
 			types::ushort _ref_gen = 0;
 		};
