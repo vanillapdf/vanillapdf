@@ -45,8 +45,8 @@ namespace gotchangpdf
 			Content.Owner = this;
 		}
 
-		inline operator T&() { return *Contents; }
-		inline operator T&() const { return *Contents; }
+		inline operator T&() { return Content.operator*(); }
+		inline operator T&() const { return Content.operator*(); }
 
 		inline bool operator==(const Deferred& other) const { return *Contents == *other.Contents; }
 		inline bool operator!=(const Deferred& other) const { return *Contents != *other.Contents; }
