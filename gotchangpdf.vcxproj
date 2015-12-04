@@ -58,13 +58,11 @@
     <ClInclude Include="src\gotchangpdf\syntax\files\xref_chain.h" />
     <ClInclude Include="src\gotchangpdf\syntax\filters\filter.h" />
     <ClInclude Include="src\gotchangpdf\syntax\filters\filter_utils.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\filters\filter_visitors.h" />
     <ClInclude Include="src\gotchangpdf\syntax\filters\flate_decode_filter.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\array_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\boolean_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\containable.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\dictionary_object.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\objects\direct_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\function_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\indirect_object_reference.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\integer_object.h" />
@@ -72,8 +70,7 @@
     <ClInclude Include="src\gotchangpdf\syntax\objects\null_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\objects.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\objects\conversion_visitor.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\objects\object_visitors.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\object_utils.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\real_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\stream_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\string_object.h" />
@@ -106,7 +103,6 @@
     <ClInclude Include="src\gotchangpdf\syntax\utils\unknown_interface.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\util.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\version.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\utils\general_visitors.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\boost\libs\iostreams\src\zlib.cpp">
