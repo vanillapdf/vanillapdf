@@ -45,10 +45,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Type(ObjectHandle handle, 
 		*result = ObjectType_Real; break;
 	case Object::Type::Stream:
 		*result = ObjectType_Stream; break;
-	case Object::Type::HexadecimalString:
-		*result = ObjectType_HexadecimalString; break;
-	case Object::Type::LiteralString:
-		*result = ObjectType_LiteralString; break;
+	case Object::Type::String:
+		*result = ObjectType_String; break;
 	case Object::Type::IndirectReference:
 		*result = ObjectType_IndirectReference; break;
 	default:
@@ -265,7 +263,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToNull(ObjectHandle handle
 	C_INTERFACE_EXCEPTION_HANDLERS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToLiteralString(ObjectHandle handle, PLiteralStringHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle handle, PStringHandle result)
 {
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -273,29 +271,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToLiteralString(ObjectHand
 	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try {
-		LiteralStringObject* converted = dynamic_cast<LiteralStringObject*>(obj);
+		StringObjectBase* converted = dynamic_cast<StringObjectBase*>(obj);
 		if (nullptr == converted)
 			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
 
-		*result = reinterpret_cast<LiteralStringHandle>(converted);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
-}
-
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToHexadecimalString(ObjectHandle handle, PHexadecimalStringHandle result)
-{
-	Object* obj = reinterpret_cast<Object*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_WEAK_FILE_SCOPE(obj->GetFile());
-
-	try {
-		HexadecimalStringObject* converted = dynamic_cast<HexadecimalStringObject*>(obj);
-		if (nullptr == converted)
-			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
-
-		*result = reinterpret_cast<HexadecimalStringHandle>(converted);
+		*result = reinterpret_cast<StringHandle>(converted);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS

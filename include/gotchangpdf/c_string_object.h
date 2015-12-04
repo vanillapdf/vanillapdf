@@ -10,6 +10,15 @@ extern "C"
 {
 #endif
 
+	typedef enum {
+		StringType_Literal = 0,
+		StringType_Hexadecimal = 1
+	} StringType, *PStringType;
+
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_Type(StringHandle handle, PStringType result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_ToLiteral(StringHandle handle, PLiteralStringHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_ToHexadecimal(StringHandle handle, PHexadecimalStringHandle result);
+
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_Value(LiteralStringHandle handle, PBufferHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_Release(LiteralStringHandle handle);
 

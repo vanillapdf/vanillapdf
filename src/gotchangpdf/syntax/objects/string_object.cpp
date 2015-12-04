@@ -7,10 +7,7 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		LiteralStringObject::LiteralStringObject(BufferPtr value) : StringObject(value)
-		{
-			// TODO remove <> if contains
-		}
+		LiteralStringObject::LiteralStringObject(BufferPtr value) : _value(value) {}
 
 		HexadecimalStringObject::HexadecimalStringObject(BufferPtr value)
 		{
@@ -31,8 +28,5 @@ namespace gotchangpdf
 				_value->push_back(parsed);
 			}
 		}
-
-		StringObject::StringObject(BufferPtr value) : _value(value) {}
-		StringObject::StringObject() {}
 	}
 }

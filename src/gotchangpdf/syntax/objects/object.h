@@ -26,8 +26,7 @@ namespace gotchangpdf
 				Name,
 				Real,
 				Stream,
-				HexadecimalString,
-				LiteralString,
+				String,
 				IndirectReference
 			};
 

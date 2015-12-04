@@ -13,9 +13,9 @@
 #include "integer_object.h"
 #include "real_object.h"
 #include "string_object.h"
+#include "indirect_object_reference.h"
 
 // recursive
 #include "array_object.h"
 #include "dictionary_object.h"
 #include "stream_object.h"
-#include "indirect_object_reference.h"

@@ -21,8 +21,7 @@ extern "C"
 		ObjectType_Name,
 		ObjectType_Real,
 		ObjectType_Stream,
-		ObjectType_HexadecimalString,
-		ObjectType_LiteralString,
+		ObjectType_String,
 		ObjectType_IndirectReference
 	} ObjectType, *PObjectType;
 
@@ -41,8 +40,7 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToNull(ObjectHandle handle, PNullHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToName(ObjectHandle handle, PNameHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToFunction(ObjectHandle handle, PFunctionHandle result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToLiteralString(ObjectHandle handle, PLiteralStringHandle result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToHexadecimalString(ObjectHandle handle, PHexadecimalStringHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle handle, PStringHandle result);
 
 #ifdef __cplusplus
 };

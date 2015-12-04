@@ -26,10 +26,12 @@ error_type process_boolean(BooleanHandle boolean, int nested);
 error_type process_reference(IndirectReferenceHandle reference, int nested);
 error_type process_real(RealHandle real, int nested);
 error_type process_null(NullHandle obj, int nested);
-error_type process_lit_string(LiteralStringHandle string, int nested);
-error_type process_hex_string(HexadecimalStringHandle string, int nested);
+error_type process_string(StringHandle string, int nested);
 error_type process_dictionary(DictionaryHandle dictionary, int nested);
 error_type process_stream(StreamHandle stream, int nested);
+
+error_type process_lit_string(LiteralStringHandle string, int nested);
+error_type process_hex_string(HexadecimalStringHandle string, int nested);
 
 /* Contents */
 error_type process_content_instruction(ContentInstructionHandle obj, int nested);

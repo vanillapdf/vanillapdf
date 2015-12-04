@@ -2,7 +2,6 @@
 #define _STRING_OBJECT_H
 
 #include "syntax_fwd.h"
-#include "object.h"
 #include "containable.h"
 #include "buffer.h"
 
@@ -10,40 +9,51 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class StringObject : public Object
+		class StringObjectBase : public ContainableObject
 		{
 		public:
-			inline BufferPtr Value() const { return _value; }
+			enum class StringType
+			{
+				Literal = 0,
+				Hexadecimal
+			};
 
-		protected:
-			StringObject();
-			explicit StringObject(BufferPtr value);
+			virtual BufferPtr Value() const = 0;
 
-			// private
-		public:
-			BufferPtr _value;
+			virtual StringType GetStringType(void) const _NOEXCEPT = 0;
+			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::String; }
 		};
 
-		class HexadecimalStringObject : public StringObject
+		class HexadecimalStringObject : public StringObjectBase
 		{
 		public:
 			HexadecimalStringObject() = default;
 			explicit HexadecimalStringObject(BufferPtr value);
 
-			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::HexadecimalString; }
+			virtual inline StringObjectBase::StringType GetStringType(void) const _NOEXCEPT override { return StringObjectBase::StringType::Hexadecimal; }
+
+			virtual inline BufferPtr Value() const override { return _value; }
 
 			//private:
 		public:
+			BufferPtr _value;
+
+		private:
 			std::string _hexadecimal;
 		};
 
-		class LiteralStringObject : public StringObject
+		class LiteralStringObject : public StringObjectBase
 		{
 		public:
 			LiteralStringObject() = default;
 			explicit LiteralStringObject(BufferPtr value);
 
-			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::LiteralString; }
+			virtual inline StringObjectBase::StringType GetStringType(void) const _NOEXCEPT override { return StringObjectBase::StringType::Literal; }
+
+			virtual inline BufferPtr Value() const override { return _value; }
+
+		public:
+			BufferPtr _value;
 		};
 	}
 }

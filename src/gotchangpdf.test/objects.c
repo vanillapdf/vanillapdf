@@ -236,6 +236,33 @@ error_type process_function(FunctionHandle func, int nested)
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
+int process_string(StringHandle obj, int nested)
+{
+	enum StringType type;
+	LiteralStringHandle literal_str = NULL;
+	HexadecimalStringHandle hexadecimal_str = NULL;
+
+	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Type(obj, &type));
+
+	switch (type)
+	{
+	case StringType_Literal:
+		RETURN_ERROR_IF_NOT_SUCCESS(StringObject_ToLiteral(obj, &literal_str));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_lit_string(literal_str, nested));
+		break;
+	case StringType_Hexadecimal:
+		RETURN_ERROR_IF_NOT_SUCCESS(StringObject_ToHexadecimal(obj, &hexadecimal_str));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_hex_string(hexadecimal_str, nested));
+		break;
+	default:
+		print_spaces(nested);
+		printf("Unknown string type\n");
+		return GOTCHANG_PDF_ERROR_GENERAL;
+	}
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
 int process_object(ObjectHandle obj, int nested)
 {
 	enum ObjectType type;
@@ -250,8 +277,7 @@ int process_object(ObjectHandle obj, int nested)
 	NameHandle name = NULL;
 	ObjectHandle child = NULL;
 	DictionaryHandle dictionary = NULL;
-	LiteralStringHandle literal_string = NULL;
-	HexadecimalStringHandle hex_string = NULL;
+	StringHandle string = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_Type(obj, &type));
 
@@ -293,13 +319,9 @@ int process_object(ObjectHandle obj, int nested)
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToStream(obj, &stream));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_stream(stream, nested));
 		break;
-	case ObjectType_HexadecimalString:
-		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToHexadecimalString(obj, &hex_string));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_hex_string(hex_string, nested));
-		break;
-	case ObjectType_LiteralString:
-		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToLiteralString(obj, &literal_string));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_lit_string(literal_string, nested));
+	case ObjectType_String:
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToString(obj, &string));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_string(string, nested));
 		break;
 	case ObjectType_IndirectReference:
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToIndirectReference(obj, &indirect_reference));

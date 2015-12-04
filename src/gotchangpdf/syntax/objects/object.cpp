@@ -39,10 +39,8 @@ namespace gotchangpdf
 				//	return "Rectangle";
 			case Type::Stream:
 				return "Stream";
-			case Type::HexadecimalString:
-				return "HexadecimalString";
-			case Type::LiteralString:
-				return "LiteralString";
+			case Type::String:
+				return "String";
 			case Type::IndirectReference:
 				return "IndirectReference";
 			default:
