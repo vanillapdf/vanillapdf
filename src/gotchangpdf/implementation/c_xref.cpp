@@ -133,12 +133,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToFreeEntry(XrefEntryHa
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_WEAK_FILE_SCOPE(entry->GetFile());
 
-	try {
-		XrefFreeEntry* converted = dynamic_cast<XrefFreeEntry*>(entry);
-		*result = reinterpret_cast<XrefFreeEntryHandle>(converted);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	return SafeObjectConvert<XrefEntryBase, XrefFreeEntry, XrefFreeEntryHandle>(entry, result);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToUsedEntry(XrefEntryHandle handle, PXrefUsedEntryHandle result)
@@ -148,12 +143,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToUsedEntry(XrefEntryHa
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_WEAK_FILE_SCOPE(entry->GetFile());
 
-	try {
-		XrefUsedEntry* converted = dynamic_cast<XrefUsedEntry*>(entry);
-		*result = reinterpret_cast<XrefUsedEntryHandle>(converted);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	return SafeObjectConvert<XrefEntryBase, XrefUsedEntry, XrefUsedEntryHandle>(entry, result);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToCompressedEntry(XrefEntryHandle handle, PXrefCompressedEntryHandle result)
@@ -163,12 +153,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToCompressedEntry(XrefE
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_WEAK_FILE_SCOPE(entry->GetFile());
 
-	try {
-		XrefCompressedEntry* converted = dynamic_cast<XrefCompressedEntry*>(entry);
-		*result = reinterpret_cast<XrefCompressedEntryHandle>(converted);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	return SafeObjectConvert<XrefEntryBase, XrefCompressedEntry, XrefCompressedEntryHandle>(entry, result);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_Reference(XrefUsedEntryHandle handle, PObjectHandle result)

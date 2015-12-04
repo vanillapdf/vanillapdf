@@ -26,10 +26,5 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Value(NameHandle handl
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Release(NameHandle handle)
 {
-	NameObject* obj = reinterpret_cast<NameObject*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	LOG_WEAK_FILE_SCOPE(obj->GetFile());
-
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return ObjectRelease<NameObject, NameHandle>(handle);
 }

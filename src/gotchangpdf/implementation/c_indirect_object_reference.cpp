@@ -25,12 +25,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedOb
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_Release(IndirectReferenceHandle handle)
 {
-	IndirectObjectReference* obj = reinterpret_cast<IndirectObjectReference*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	LOG_WEAK_FILE_SCOPE(obj->GetFile());
-
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return ObjectRelease<IndirectObjectReference, IndirectReferenceHandle>(handle);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObjectNumber(IndirectReferenceHandle handle, out_integer_type result)

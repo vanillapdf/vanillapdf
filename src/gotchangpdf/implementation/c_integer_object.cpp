@@ -20,10 +20,5 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_Value(IntegerHandle
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_Release(IntegerHandle handle)
 {
-	IntegerObject* obj = reinterpret_cast<IntegerObject*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	LOG_WEAK_FILE_SCOPE(obj->GetFile());
-
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return ObjectRelease<IntegerObject, IntegerHandle>(handle);
 }

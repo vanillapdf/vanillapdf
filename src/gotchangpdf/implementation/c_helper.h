@@ -33,5 +33,31 @@
 	\
 	LOG_SCOPE(__locked_file__->GetFilename()); \
 
+template <typename SourceT, typename DestT, typename HandleT>
+error_type SafeObjectConvert(SourceT* from, HandleT* result) noexcept
+{
+	try
+	{
+		DestT* converted = dynamic_cast<DestT*>(from);
+		if (nullptr == converted)
+			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
+
+		*result = reinterpret_cast<HandleT>(converted);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
+template <typename T, typename HandleT>
+error_type ObjectRelease(HandleT handle) noexcept
+{
+	T* obj = reinterpret_cast<T*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	LOG_WEAK_FILE_SCOPE(obj->GetFile());
+
+	obj->Release();
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
 
 #endif /* _C_HELPER_H */

@@ -38,10 +38,5 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayHandle hand
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Release(ArrayHandle handle)
 {
-	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	LOG_WEAK_FILE_SCOPE(obj->GetFile());
-
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return ObjectRelease<MixedArrayObject, ArrayHandle>(handle);
 }

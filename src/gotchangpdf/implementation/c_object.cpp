@@ -69,12 +69,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle han
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Release(ObjectHandle handle)
 {
-	Object* obj = reinterpret_cast<Object*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	LOG_WEAK_FILE_SCOPE(obj->GetFile());
-
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return ObjectRelease<Object, ObjectHandle>(handle);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToArray(ObjectHandle handle, PArrayHandle result)
@@ -160,16 +155,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToInteger(ObjectHandle han
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
-	try
-	{
-		IntegerObject* converted = dynamic_cast<IntegerObject*>(obj);
-		if (nullptr == converted)
-			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
-
-		*result = reinterpret_cast<IntegerHandle>(converted);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	return SafeObjectConvert<Object, IntegerObject, IntegerHandle>(obj, result);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToName(ObjectHandle handle, PNameHandle result)
@@ -179,16 +165,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToName(ObjectHandle handle
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
-	try
-	{
-		NameObject* converted = dynamic_cast<NameObject*>(obj);
-		if (nullptr == converted)
-			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
-
-		*result = reinterpret_cast<NameHandle>(converted);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	return SafeObjectConvert<Object, NameObject, NameHandle>(obj, result);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToFunction(ObjectHandle handle, PFunctionHandle result)
@@ -198,15 +175,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToFunction(ObjectHandle ha
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
-	try {
-		FunctionObject* converted = dynamic_cast<FunctionObject*>(obj);
-		if (nullptr == converted)
-			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
-
-		*result = reinterpret_cast<FunctionHandle>(converted);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	return SafeObjectConvert<Object, FunctionObject, FunctionHandle>(obj, result);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToBoolean(ObjectHandle handle, PBooleanHandle result)
@@ -216,15 +185,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToBoolean(ObjectHandle han
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
-	try {
-		BooleanObject* converted = dynamic_cast<BooleanObject*>(obj);
-		if (nullptr == converted)
-			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
-
-		*result = reinterpret_cast<BooleanHandle>(converted);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	return SafeObjectConvert<Object, BooleanObject, BooleanHandle>(obj, result);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToReal(ObjectHandle handle, PRealHandle result)
@@ -234,15 +195,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToReal(ObjectHandle handle
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
-	try {
-		RealObject* converted = dynamic_cast<RealObject*>(obj);
-		if (nullptr == converted)
-			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
-
-		*result = reinterpret_cast<RealHandle>(converted);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	return SafeObjectConvert<Object, RealObject, RealHandle>(obj, result);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToNull(ObjectHandle handle, PNullHandle result)
@@ -252,15 +205,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToNull(ObjectHandle handle
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
-	try {
-		NullObject* converted = dynamic_cast<NullObject*>(obj);
-		if (nullptr == converted)
-			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
-
-		*result = reinterpret_cast<NullHandle>(converted);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	return SafeObjectConvert<Object, NullObject, NullHandle>(obj, result);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle handle, PStringHandle result)
@@ -270,13 +215,5 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle hand
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
-	try {
-		StringObjectBase* converted = dynamic_cast<StringObjectBase*>(obj);
-		if (nullptr == converted)
-			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
-
-		*result = reinterpret_cast<StringHandle>(converted);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	return SafeObjectConvert<Object, StringObjectBase, StringHandle>(obj, result);
 }

@@ -60,10 +60,5 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_BodyDecoded(StreamHa
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_Release(StreamHandle handle)
 {
-	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	LOG_WEAK_FILE_SCOPE(obj->GetFile());
-
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return ObjectRelease<StreamObject, StreamHandle>(handle);
 }
