@@ -12,6 +12,14 @@ namespace gotchangpdf
 	{
 		typedef boost::spirit::istream_iterator base_iterator_type;
 		typedef offset_iterator<base_iterator_type, pdf_position> pos_iterator_type;
+
+		template <typename From, typename To>
+		void convert(Deferred<From>& from, Deferred<To>& to)
+		{
+			auto base = from.Content.get();
+			auto ptr = static_cast<To*>(base);
+			to = Deferred<To>(ptr);
+		}
 	}
 }
 

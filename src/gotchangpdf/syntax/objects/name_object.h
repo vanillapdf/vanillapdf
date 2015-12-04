@@ -1,9 +1,8 @@
 #ifndef _NAME_OBJECT_H
 #define _NAME_OBJECT_H
 
-#include "object.h"
-#include "buffer.h"
 #include "containable.h"
+#include "buffer.h"
 
 #include <cstddef>
 
@@ -11,7 +10,7 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class NameObject : public Object
+		class NameObject : public ContainableObject
 		{
 		public:
 			typedef BufferPtr value_type;
@@ -33,7 +32,6 @@ namespace gotchangpdf
 
 			void SetName(value_type name) { _value = name; }
 
-			//private:
 		public:
 			value_type _value;
 		};

@@ -14,7 +14,7 @@ namespace gotchangpdf
 		class XrefChain : public IUnknown
 		{
 		public:
-			using list_type = std::list<Xref>;
+			using list_type = std::list<XrefBasePtr>;
 
 		public:
 			class Iterator : public IUnknown
@@ -42,7 +42,7 @@ namespace gotchangpdf
 					return temp;
 				}
 
-				Xref Value() const { return *_it; }
+				list_type::value_type Value() const { return *_it; }
 
 				bool operator==(const Iterator& other) const { return _it == other._it; }
 				bool operator!=(const Iterator& other) const { return _it != other._it; }
@@ -56,27 +56,22 @@ namespace gotchangpdf
 		public:
 			IteratorPtr Begin() const { return _list.begin(); }
 			IteratorPtr End(void) const { return _list.end(); }
-			void Append(Xref item) { _list.push_back(item); }
+			void Append(list_type::value_type item) { _list.push_back(item); }
 
-			XrefEntry GetXrefEntry(types::integer objNumber,
+			XrefEntryBasePtr GetXrefEntry(types::integer objNumber,
 				types::ushort genNumber)
 			{
 				for (auto it = _list.begin(); it != _list.end(); it++) {
-					XrefBaseVisitor visitor;
-					auto xref_variant = (*it);
-					auto xref = xref_variant.apply_visitor(visitor);
+					auto xref = (*it);
 
 					for (int i = 0; i < xref->Size(); ++i) {
 						auto section = xref->At(i);
 						if (objNumber < section->Index() || objNumber >= section->Index() + section->Size())
 							continue;
 
-						XrefEntryBaseVisitor base_visitor;
 						auto item = section->At(objNumber - section->Index());
-						auto item_base = item.apply_visitor(base_visitor);
-
-						assert(item_base->GetObjectNumber() == objNumber);
-						if (item_base->GetObjectNumber() != objNumber || item_base->GetGenerationNumber() != genNumber)
+						assert(item->GetObjectNumber() == objNumber);
+						if (item->GetObjectNumber() != objNumber || item->GetGenerationNumber() != genNumber)
 							continue;
 
 						return item;

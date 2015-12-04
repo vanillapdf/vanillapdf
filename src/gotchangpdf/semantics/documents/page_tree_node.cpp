@@ -25,11 +25,11 @@ namespace gotchangpdf
 			return _obj->FindAs<IntegerObjectPtr>(Name::Count)->Value();
 		}
 
-		ArrayObjectPtr<PageNodePtr> PageTreeNode::Kids() const
+		ArrayObjectPtr<PageNodeBasePtr> PageTreeNode::Kids() const
 		{
 			auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(Name::Kids);
 
-			return kids->Convert<PageNodePtr>(
+			return kids->Convert<PageNodeBasePtr>(
 				[] (DictionaryObjectPtr& obj)
 			{
 				return CreatePageNode(obj);

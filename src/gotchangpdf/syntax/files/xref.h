@@ -2,30 +2,37 @@
 #define _XREF_H
 
 #include "syntax_fwd.h"
-#include "direct_object.h"
 #include "unknown_interface.h"
 #include "constants.h"
 
 #include <vector>
 
-#include <boost/variant/variant.hpp>
-#include <boost/variant/static_visitor.hpp>
-
 namespace gotchangpdf
 {
 	namespace syntax
 	{
-		typedef boost::variant <
-			XrefNullEntryPtr,
-			XrefFreeEntryPtr,
-			XrefUsedEntryPtr,
-			XrefCompressedEntryPtr
-		> XrefEntry;
+		class XrefUtils
+		{
+		public:
+			template <typename T>
+			static T ConvertTo(const XrefEntryBasePtr& obj)
+			{
+				auto ptr = obj.Content.get();
+				auto converted = dynamic_cast<typename T::value_type *>(ptr);
+				if (nullptr == converted)
+					throw Exception("Could not convert object to destination type");
 
-		typedef boost::variant <
-			XrefTablePtr,
-			XrefStreamPtr
-		> Xref;
+				return T(converted);
+			}
+
+			template <typename T>
+			static bool IsType(const XrefEntryBasePtr& obj)
+			{
+				auto ptr = obj.Content.get();
+				auto converted = dynamic_cast<typename T::value_type *>(ptr);
+				return (nullptr != converted);
+			}
+		};
 
 		class XrefEntryBase : public IUnknown
 		{
@@ -99,8 +106,8 @@ namespace gotchangpdf
 		public:
 			virtual Usage GetUsage(void) const _NOEXCEPT override{ return XrefEntryBase::Usage::Used; }
 
-			inline DirectObject GetReference(void) { Initialize(); return _reference; }
-			inline void SetReference(DirectObject ref) { _reference = ref; }
+			inline ObjectPtr GetReference(void) { Initialize(); return _reference; }
+			inline void SetReference(ObjectPtr ref) { _reference = ref; }
 
 			inline types::stream_offset GetOffset(void) const _NOEXCEPT { return _offset; }
 			inline void SetOffset(types::stream_offset value) _NOEXCEPT { _offset = value; }
@@ -111,7 +118,7 @@ namespace gotchangpdf
 		private:
 			void Initialize(void);
 
-			DirectObject _reference;
+			ObjectPtr _reference = NullObject::GetInstance();
 			types::stream_offset _offset = std::_BADOFF;
 			bool _initialized = false;
 		};
@@ -125,8 +132,8 @@ namespace gotchangpdf
 		public:
 			virtual Usage GetUsage(void) const _NOEXCEPT override { return XrefEntryBase::Usage::Compressed; }
 
-			inline DirectObject GetReference(void) { Initialize(); return _reference; }
-			inline void SetReference(DirectObject ref) { _reference = ref; }
+			inline ObjectPtr GetReference(void) { Initialize(); return _reference; }
+			inline void SetReference(ObjectPtr ref) { _reference = ref; }
 
 			inline types::integer GetObjectStreamNumber(void) const _NOEXCEPT { return _object_stream_number; }
 			inline void SetObjectStreamNumber(types::integer value) _NOEXCEPT { _object_stream_number = value; }
@@ -140,27 +147,10 @@ namespace gotchangpdf
 		private:
 			void Initialize(void);
 
-			DirectObject _reference;
+			ObjectPtr _reference = NullObject::GetInstance();
 			types::integer _object_stream_number = -1;
 			types::integer _index = -1;
 			bool _initialized = false;
-		};
-
-		class XrefEntryBaseVisitor : public boost::static_visitor<XrefEntryBase*>
-		{
-		public:
-			template <typename T>
-			inline XrefEntryBase* operator()(T& entry) const { return entry.Content.get(); }
-		};
-
-		template <typename T>
-		class XrefEntryVisitor : public boost::static_visitor<T>
-		{
-		public:
-			inline T operator()(T& entry) const { return entry; }
-
-			template <typename U>
-			inline T operator()(const U&) const { throw Exception("Type cast error"); }
 		};
 
 		class XrefSubsection : public IUnknown
@@ -168,9 +158,9 @@ namespace gotchangpdf
 		public:
 			XrefSubsection() = default;
 			XrefSubsection(types::integer index, types::integer size) : _index(index) { _entries.reserve(size); }
-			void Add(XrefEntry entry) { _entries.push_back(entry); }
+			void Add(XrefEntryBasePtr entry) { _entries.push_back(entry); }
 			types::integer Size(void) const _NOEXCEPT { return _entries.size(); }
-			XrefEntry At(types::uinteger at) { return _entries.at(at); }
+			XrefEntryBasePtr At(types::uinteger at) { return _entries.at(at); }
 			//void SetParent(Xref parent) { _parent = parent; }
 			//Xref GetParent(void) const { return _parent; }
 			inline void SetFile(std::weak_ptr<File> file) _NOEXCEPT { _file = file; }
@@ -180,9 +170,7 @@ namespace gotchangpdf
 			{
 				if (_entries.size() > 0) {
 					auto entry = _entries.at(0);
-					XrefEntryBaseVisitor visitor;
-					auto base = entry.apply_visitor(visitor);
-					assert(base->GetObjectNumber() == _index);
+					assert(entry->GetObjectNumber() == _index);
 				}
 
 				return _index;
@@ -191,7 +179,7 @@ namespace gotchangpdf
 		private:
 			std::weak_ptr<File> _file;
 			types::integer _index = 0;
-			std::vector<XrefEntry> _entries;
+			std::vector<XrefEntryBasePtr> _entries;
 			//Xref _parent; // TODO parent holding strong ref - cyclic dependecies
 		};
 
@@ -237,23 +225,6 @@ namespace gotchangpdf
 		{
 		public:
 			virtual Type GetType(void) const _NOEXCEPT override { return XrefBase::Type::Stream; }
-		};
-
-		class XrefBaseVisitor : public boost::static_visitor<XrefBase*>
-		{
-		public:
-			template <typename T>
-			inline XrefBase* operator()(T& xref) const { return xref.Content.get(); }
-		};
-
-		template <typename T>
-		class XrefVisitor : public boost::static_visitor<T>
-		{
-		public:
-			inline T operator()(T& xref) const { return xref; }
-
-			template <typename U>
-			inline T operator()(const U&) const { throw exceptions::Exception("Type cast error"); }
 		};
 	}
 }

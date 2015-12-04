@@ -3,7 +3,6 @@
 
 #include "syntax_fwd.h"
 #include "constants.h"
-#include "object.h"
 #include "containable.h"
 #include "util.h"
 
@@ -11,7 +10,7 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class IntegerObject : public Object
+		class IntegerObject : public ContainableObject
 		{
 		public:
 			typedef types::integer value_type;

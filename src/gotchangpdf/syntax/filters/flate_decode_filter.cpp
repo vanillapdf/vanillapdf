@@ -9,6 +9,7 @@
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
 
 namespace gotchangpdf
 {
@@ -20,7 +21,7 @@ namespace gotchangpdf
 		{
 			Buffer dest;
 			{
-				CharacterFilteringSink sink;
+				boost::iostreams::filtering_ostream sink;
 
 				sink.push(io::zlib_compressor());
 				sink.push(io::back_inserter(dest));
@@ -37,7 +38,7 @@ namespace gotchangpdf
 		{
 			Buffer dest;
 			{
-				CharacterFilteringSink sink;
+				boost::iostreams::filtering_ostream sink;
 
 				sink.push(io::zlib_decompressor());
 				sink.push(io::back_inserter(dest));

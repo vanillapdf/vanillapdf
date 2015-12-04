@@ -1,9 +1,7 @@
 #include "precompiled.h"
 #include "xref.h"
 #include "xref_chain.h"
-
 #include "file.h"
-#include "object_visitors.h"
 
 #include "c_xref.h"
 #include "c_values.h"
@@ -182,10 +180,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_Reference(XrefUsedE
 
 	try {
 		auto direct = entry->GetReference();
-
-		ObjectBaseAddRefVisitor visitor;
-		auto base = direct.apply_visitor(visitor);
-		*result = reinterpret_cast<ObjectHandle>(base);
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<ObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS
@@ -201,9 +197,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Reference(Xre
 	try {
 		auto direct = entry->GetReference();
 
-		ObjectBaseAddRefVisitor visitor;
-		auto base = direct.apply_visitor(visitor);
-		*result = reinterpret_cast<ObjectHandle>(base);
+		auto base = ObjectUtils::GetObjectBase(direct);
+		auto ptr = base.AddRefGet();
+		*result = reinterpret_cast<ObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS
@@ -237,9 +233,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_At(XrefSubsectionH
 
 	try {
 		auto entry = section->At(at);
-		XrefEntryBaseVisitor visitor;
-		auto ptr = entry.apply_visitor(visitor);
-		ptr->AddRef();
+		auto ptr = entry.AddRefGet();
 		*result = reinterpret_cast<XrefEntryHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
@@ -264,9 +258,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_GetValue(XrefCh
 
 	try {
 		auto entry = iterator->Value();
-		XrefBaseVisitor visitor;
-		auto ptr = entry.apply_visitor(visitor);
-		ptr->AddRef();
+		auto ptr = entry.AddRefGet();
 		*result = reinterpret_cast<XrefHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}

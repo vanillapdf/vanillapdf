@@ -2,6 +2,7 @@
 #include "content_stream_operator_grammar.h"
 
 #include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/phoenix.hpp>
 
 namespace gotchangpdf
 {
@@ -9,23 +10,99 @@ namespace gotchangpdf
 	{
 		namespace contents
 		{
+			namespace phoenix = boost::phoenix;
+
+				void convert_Unknown(UnknownOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_LineWidth(LineWidthOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_LineCap(LineCapOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_LineJoin(LineJoinOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_MiterLimit(MiterLimitOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_DashPattern(DashPatternOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_ColorRenderingIntent(ColorRenderingIntentOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_Flatness(FlatnessOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_GraphicsState(GraphicsStateOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_SaveGraphicsState(SaveGraphicsStateOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_RestoreGraphicsState(RestoreGraphicsStateOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_TransformationMatrix(TransformationMatrixOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_BeginSubpath(BeginSubpathOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_Line(LineOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_FullCurve(FullCurveOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_FinalCurve(FinalCurveOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_InitialCurve(InitialCurveOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_CloseSubpath(CloseSubpathOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_Rectangle(RectangleOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_Stroke(StrokeOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_CloseAndStroke(CloseAndStrokeOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_FillPathNonzero(FillPathNonzeroOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_FillPathCompatibility(FillPathCompatibilityOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_FillPathEvenOdd(FillPathEvenOddOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_FillStrokeNonzero(FillStrokeNonzeroOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_FillStrokeEvenOdd(FillStrokeEvenOddOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_CloseFillStrokeNonzero(CloseFillStrokeNonzeroOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_CloseFillStrokeEvenOdd(CloseFillStrokeEvenOddOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_EndPath(EndPathOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_ClipPathNonzero(ClipPathNonzeroOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_ClipPathEvenOdd(ClipPathEvenOddOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_BeginText(BeginTextOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_EndText(EndTextOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_CharacterSpacing(CharacterSpacingOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_WordSpacing(WordSpacingOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_HorizontalScaling(HorizontalScalingOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_Leading(LeadingOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_TextFont(TextFontOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_TextRenderingMode(TextRenderingModeOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_TextRise(TextRiseOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_TextTranslate(TextTranslateOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_TextTranslateLeading(TextTranslateLeadingOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_TextMatrix(TextMatrixOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_TextNextLine(TextNextLineOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_TextShow(TextShowOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_TextShowArray(TextShowArrayOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_TextNextLineShow(TextNextLineShowOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_TextNextLineShowSpacing(TextNextLineShowSpacingOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_SetCharWidth(SetCharWidthOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_SetCacheDevice(SetCacheDeviceOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_ColorSpaceStroke(ColorSpaceStrokeOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_ColorSpaceNonstroke(ColorSpaceNonstrokeOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_SetColorStroke(SetColorStrokeOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_SetColorStrokeExtended(SetColorStrokeExtendedOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_SetColorNonstroke(SetColorNonstrokeOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_SetColorNonstrokeExtended(SetColorNonstrokeExtendedOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_SetStrokingColorSpaceGray(SetStrokingColorSpaceGrayOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_SetNonstrokingColorSpaceGray(SetNonstrokingColorSpaceGrayOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_SetStrokingColorSpaceRGB(SetStrokingColorSpaceRGBOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_SetNonstrokingColorSpaceRGB(SetNonstrokingColorSpaceRGBOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_SetStrokingColorSpaceCMYK(SetStrokingColorSpaceCMYKOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_SetNonstrokingColorSpaceCMYK(SetNonstrokingColorSpaceCMYKOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_ShadingPaint(ShadingPaintOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_BeginInlineImageObject(BeginInlineImageObjectOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_BeginInlineImageData(BeginInlineImageDataOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_EndInlineImageObject(EndInlineImageObjectOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_InvokeXObject(InvokeXObjectOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_DefineMarkedContentPoint(DefineMarkedContentPointOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_DefineMarkedContentPointWithPropertyList(DefineMarkedContentPointWithPropertyListOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_BeginMarkedContentSequence(BeginMarkedContentSequenceOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_BeginMarkedContentSequenceWithPropertyList(BeginMarkedContentSequenceWithPropertyListOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_EndMarkedContentSequence(EndMarkedContentSequenceOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_BeginCompatibilitySection(BeginCompatibilitySectionOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
+				void convert_EndCompatibilitySection(EndCompatibilitySectionOperatorPtr& obj, OperatorBasePtr& result) { return convert(obj, result); }
 
 			ColorGrammar::ColorGrammar() :
 				base_type(start, "Color grammar")
 			{
 				start %=
-					color_space_stroke
-					| color_space_nstroke
-					| sc_stroke
-					| sc_extended_stroke
-					| sc_nstroke
-					| sc_extended_nstroke
-					| sgray
-					| nsgray
-					| srgb
-					| nsrgb
-					| scmyk
-					| nscmyk;
+					color_space_stroke[phoenix::bind(&convert_ColorSpaceStroke, qi::_1, qi::_val)]
+					| color_space_nstroke[phoenix::bind(&convert_ColorSpaceNonstroke, qi::_1, qi::_val)]
+					| sc_stroke[phoenix::bind(&convert_SetColorStroke, qi::_1, qi::_val)]
+					| sc_extended_stroke[phoenix::bind(&convert_SetColorStrokeExtended, qi::_1, qi::_val)]
+					| sc_nstroke[phoenix::bind(&convert_SetColorNonstroke, qi::_1, qi::_val)]
+					| sc_extended_nstroke[phoenix::bind(&convert_SetColorNonstrokeExtended, qi::_1, qi::_val)]
+					| sgray[phoenix::bind(&convert_SetStrokingColorSpaceGray, qi::_1, qi::_val)]
+					| nsgray[phoenix::bind(&convert_SetNonstrokingColorSpaceGray, qi::_1, qi::_val)]
+					| srgb[phoenix::bind(&convert_SetStrokingColorSpaceRGB, qi::_1, qi::_val)]
+					| nsrgb[phoenix::bind(&convert_SetNonstrokingColorSpaceRGB, qi::_1, qi::_val)]
+					| scmyk[phoenix::bind(&convert_SetStrokingColorSpaceCMYK, qi::_1, qi::_val)]
+					| nscmyk[phoenix::bind(&convert_SetNonstrokingColorSpaceCMYK, qi::_1, qi::_val)];
 
 				color_space_stroke %=
 					qi::eps
@@ -94,8 +171,8 @@ namespace gotchangpdf
 				base_type(start, "Clipping path grammar")
 			{
 				start %=
-					non_zero
-					| even_odd;
+					non_zero[phoenix::bind(&convert_ClipPathNonzero, qi::_1, qi::_val)]
+					| even_odd[phoenix::bind(&convert_ClipPathEvenOdd, qi::_1, qi::_val)];
 
 				non_zero %=
 					qi::eps
@@ -115,8 +192,8 @@ namespace gotchangpdf
 			{
 				start %=
 					// TODO: enter compatibility section - suppress errors from unknown operators
-					begin_compatibility
-					| end_compatibility;
+					begin_compatibility[phoenix::bind(&convert_BeginCompatibilitySection, qi::_1, qi::_val)]
+					| end_compatibility[phoenix::bind(&convert_EndCompatibilitySection, qi::_1, qi::_val)];
 
 				begin_compatibility %=
 					qi::eps
@@ -135,14 +212,14 @@ namespace gotchangpdf
 				base_type(start, "General graphics state grammar")
 			{
 				start %=
-					line_width
-					| line_cap
-					| line_join
-					| miter_limit
-					| dash_pattern
-					| color_rendering_intent
-					| flatness
-					| graphics_state;
+					line_width[phoenix::bind(&convert_LineWidth, qi::_1, qi::_val)]
+					| line_cap[phoenix::bind(&convert_LineCap, qi::_1, qi::_val)]
+					| line_join[phoenix::bind(&convert_LineJoin, qi::_1, qi::_val)]
+					| miter_limit[phoenix::bind(&convert_MiterLimit, qi::_1, qi::_val)]
+					| dash_pattern[phoenix::bind(&convert_DashPattern, qi::_1, qi::_val)]
+					| color_rendering_intent[phoenix::bind(&convert_ColorRenderingIntent, qi::_1, qi::_val)]
+					| flatness[phoenix::bind(&convert_Flatness, qi::_1, qi::_val)]
+					| graphics_state[phoenix::bind(&convert_GraphicsState, qi::_1, qi::_val)];
 
 				line_width %=
 					qi::eps
@@ -191,9 +268,9 @@ namespace gotchangpdf
 				base_type(start, "Inline image grammar")
 			{
 				start %=
-					begin_image
-					| begin_data
-					| end_image;
+					begin_image[phoenix::bind(&convert_BeginInlineImageObject, qi::_1, qi::_val)]
+					| begin_data[phoenix::bind(&convert_BeginInlineImageData, qi::_1, qi::_val)]
+					| end_image[phoenix::bind(&convert_EndInlineImageObject, qi::_1, qi::_val)];
 
 				begin_image %=
 					qi::eps
@@ -217,11 +294,11 @@ namespace gotchangpdf
 				base_type(start, "Marked content grammar")
 			{
 				start %=
-					define
-					| define_prop
-					| begin
-					| begin_prop
-					| end;
+					define[phoenix::bind(&convert_DefineMarkedContentPoint, qi::_1, qi::_val)]
+					| define_prop[phoenix::bind(&convert_DefineMarkedContentPointWithPropertyList, qi::_1, qi::_val)]
+					| begin[phoenix::bind(&convert_BeginMarkedContentSequence, qi::_1, qi::_val)]
+					| begin_prop[phoenix::bind(&convert_BeginMarkedContentSequenceWithPropertyList, qi::_1, qi::_val)]
+					| end[phoenix::bind(&convert_EndMarkedContentSequence, qi::_1, qi::_val)];
 
 				define %=
 					qi::eps
@@ -255,13 +332,13 @@ namespace gotchangpdf
 				base_type(start, "Path construction grammar")
 			{
 				start %=
-					begin
-					| line
-					| full_curve
-					| final_curve
-					| initial_curve
-					| close
-					| rectangle;
+					begin[phoenix::bind(&convert_BeginSubpath, qi::_1, qi::_val)]
+					| line[phoenix::bind(&convert_Line, qi::_1, qi::_val)]
+					| full_curve[phoenix::bind(&convert_FullCurve, qi::_1, qi::_val)]
+					| final_curve[phoenix::bind(&convert_FinalCurve, qi::_1, qi::_val)]
+					| initial_curve[phoenix::bind(&convert_InitialCurve, qi::_1, qi::_val)]
+					| close[phoenix::bind(&convert_CloseSubpath, qi::_1, qi::_val)]
+					| rectangle[phoenix::bind(&convert_Rectangle, qi::_1, qi::_val)];
 
 				begin %=
 					qi::eps
@@ -305,16 +382,16 @@ namespace gotchangpdf
 				base_type(start, "Path painting grammar")
 			{
 				start %=
-					stroke
-					| close_stroke
-					| fill_nz
-					| fill_comp
-					| fill_eo
-					| fill_stroke_nz
-					| fill_stroke_eo
-					| close_fill_stroke_nz
-					| close_fill_stroke_eo
-					| end_path;
+					stroke[phoenix::bind(&convert_Stroke, qi::_1, qi::_val)]
+					| close_stroke[phoenix::bind(&convert_CloseAndStroke, qi::_1, qi::_val)]
+					| fill_nz[phoenix::bind(&convert_FillPathNonzero, qi::_1, qi::_val)]
+					| fill_comp[phoenix::bind(&convert_FillPathCompatibility, qi::_1, qi::_val)]
+					| fill_eo[phoenix::bind(&convert_FillPathEvenOdd, qi::_1, qi::_val)]
+					| fill_stroke_nz[phoenix::bind(&convert_FillStrokeNonzero, qi::_1, qi::_val)]
+					| fill_stroke_eo[phoenix::bind(&convert_FillStrokeEvenOdd, qi::_1, qi::_val)]
+					| close_fill_stroke_nz[phoenix::bind(&convert_CloseFillStrokeNonzero, qi::_1, qi::_val)]
+					| close_fill_stroke_eo[phoenix::bind(&convert_CloseFillStrokeEvenOdd, qi::_1, qi::_val)]
+					| end_path[phoenix::bind(&convert_EndPath, qi::_1, qi::_val)];
 
 				stroke %=
 					qi::eps
@@ -373,7 +450,7 @@ namespace gotchangpdf
 				base_type(start, "Shading pattern grammar")
 			{
 				start %=
-					shading;
+					shading[phoenix::bind(&convert_ShadingPaint, qi::_1, qi::_val)];
 
 				shading %=
 					qi::eps
@@ -387,9 +464,9 @@ namespace gotchangpdf
 				base_type(start, "Special graphics state grammar")
 			{
 				start %=
-					save
-					| restore
-					| matrix;
+					save[phoenix::bind(&convert_SaveGraphicsState, qi::_1, qi::_val)]
+					| restore[phoenix::bind(&convert_RestoreGraphicsState, qi::_1, qi::_val)]
+					| matrix[phoenix::bind(&convert_TransformationMatrix, qi::_1, qi::_val)];
 
 				save %=
 					qi::eps
@@ -413,8 +490,8 @@ namespace gotchangpdf
 				base_type(start, "Text object grammar")
 			{
 				start %=
-					begin_text
-					| end_text;
+					begin_text[phoenix::bind(&convert_BeginText, qi::_1, qi::_val)]
+					| end_text[phoenix::bind(&convert_EndText, qi::_1, qi::_val)];
 
 				begin_text %=
 					qi::eps
@@ -433,10 +510,10 @@ namespace gotchangpdf
 				base_type(start, "Text positioning grammar")
 			{
 				start %=
-					translate
-					| translate_leading
-					| matrix
-					| next_line;
+					translate[phoenix::bind(&convert_TextTranslate, qi::_1, qi::_val)]
+					| translate_leading[phoenix::bind(&convert_TextTranslateLeading, qi::_1, qi::_val)]
+					| matrix[phoenix::bind(&convert_TextMatrix, qi::_1, qi::_val)]
+					| next_line[phoenix::bind(&convert_TextNextLine, qi::_1, qi::_val)];
 
 				translate %=
 					qi::eps
@@ -465,10 +542,10 @@ namespace gotchangpdf
 				base_type(start, "Text showing grammar")
 			{
 				start %=
-					show
-					| show_array
-					| next_line_show
-					| next_line_show_spacing;
+					show[phoenix::bind(&convert_TextShow, qi::_1, qi::_val)]
+					| show_array[phoenix::bind(&convert_TextShowArray, qi::_1, qi::_val)]
+					| next_line_show[phoenix::bind(&convert_TextNextLineShow, qi::_1, qi::_val)]
+					| next_line_show_spacing[phoenix::bind(&convert_TextNextLineShowSpacing, qi::_1, qi::_val)];
 
 				show %=
 					qi::eps
@@ -497,13 +574,13 @@ namespace gotchangpdf
 				base_type(start, "Text state grammar")
 			{
 				start %=
-					char_spacing
-					| word_spacing
-					| hscaling
-					| leading
-					| font
-					| rendering_mode
-					| rise;
+					char_spacing[phoenix::bind(&convert_CharacterSpacing, qi::_1, qi::_val)]
+					| word_spacing[phoenix::bind(&convert_WordSpacing, qi::_1, qi::_val)]
+					| hscaling[phoenix::bind(&convert_HorizontalScaling, qi::_1, qi::_val)]
+					| leading[phoenix::bind(&convert_Leading, qi::_1, qi::_val)]
+					| font[phoenix::bind(&convert_TextFont, qi::_1, qi::_val)]
+					| rendering_mode[phoenix::bind(&convert_TextRenderingMode, qi::_1, qi::_val)]
+					| rise[phoenix::bind(&convert_TextRise, qi::_1, qi::_val)];
 
 				char_spacing %=
 					qi::eps
@@ -547,8 +624,8 @@ namespace gotchangpdf
 				base_type(start, "Type 3 font grammar")
 			{
 				start %=
-					char_width
-					| cache_device;
+					char_width[phoenix::bind(&convert_SetCharWidth, qi::_1, qi::_val)]
+					| cache_device[phoenix::bind(&convert_SetCacheDevice, qi::_1, qi::_val)];
 
 				char_width %=
 					qi::eps
@@ -567,7 +644,7 @@ namespace gotchangpdf
 				base_type(start, "XObject grammar")
 			{
 				start %=
-					invoke;
+					invoke[phoenix::bind(&convert_InvokeXObject, qi::_1, qi::_val)];
 
 				invoke %=
 					qi::eps

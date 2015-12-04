@@ -8,10 +8,10 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class FlateDecodeFilter : public Filter
+		class FlateDecodeFilter : public FilterBase
 		{
 		public:
-			virtual inline Type GetType(void) const _NOEXCEPT override { return Filter::Type::FlateDecode; }
+			virtual inline Type GetType(void) const _NOEXCEPT override { return FilterBase::Type::FlateDecode; }
 
 			virtual BufferPtr Encode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const override;
 			virtual BufferPtr Decode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const override;

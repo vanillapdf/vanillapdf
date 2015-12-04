@@ -14,7 +14,7 @@ namespace gotchangpdf
 	namespace syntax
 	{
 		template <typename T>
-		class ArrayObject : public Object
+		class ArrayObject : public ContainableObject
 		{
 		public:
 			typedef std::vector<T> list_type;
@@ -61,18 +61,14 @@ namespace gotchangpdf
 			list_type _list;
 		};
 
-		class MixedArrayObject : public ArrayObject<ContainableObject>
+		class MixedArrayObject : public ArrayObject<ContainableObjectPtr>
 		{
 		public:
+			MixedArrayObject() = default;
+			MixedArrayObject(list_type items) : ArrayObject<ContainableObjectPtr>(items) {}
+
 			template <typename T>
-			ArrayObjectPtr<T> CastToArrayType()
-			{
-				return Convert<T>([](ContainableObject obj)
-				{
-					ConversionVisitor<T> visitor;
-					return obj.apply_visitor(visitor);
-				});
-			}
+			ArrayObjectPtr<T> CastToArrayType() { return Convert<T>([](ContainableObjectPtr obj) { return ObjectUtils::ConvertTo<T>(obj); }); }
 		};
 	}
 }

@@ -2,13 +2,12 @@
 #define _BOOLEAN_OBJECT_H
 
 #include "object.h"
-#include "containable.h"
 
 namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class BooleanObject : public Object
+		class BooleanObject : public ContainableObject
 		{
 		public:
 			BooleanObject() = default;

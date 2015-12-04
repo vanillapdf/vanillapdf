@@ -1,6 +1,5 @@
 #include "precompiled.h"
 #include "contents.h"
-#include "object_visitors.h"
 
 #include "c_contents.h"
 #include "c_helper.h"
@@ -34,10 +33,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(Content
 
 	try
 	{
-		ContentStreamInstructionBaseVisitor visitor;
 		auto instruction = obj->GetInstructionAt(at);
-		auto base = instruction.apply_visitor(visitor);
-		base->AddRef();
+		auto base = instruction.AddRefGet();
 		*result = reinterpret_cast<ContentInstructionHandle>(base);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
@@ -190,9 +187,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(
 
 	try
 	{
-		OperationBaseAddRefVisitor visitor;
 		auto item = obj->GetOperationAt(at);
-		auto ptr = item.apply_visitor(visitor);
+		auto ptr = item.AddRefGet();
 		*result = reinterpret_cast<ContentOperationHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
@@ -398,10 +394,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperat
 
 	try
 	{
-		contents::OperatorBaseVisitor visitor;
 		auto oper = obj->GetOperator();
-		auto base = oper.apply_visitor(visitor);
-		base->AddRef();
+		auto base = oper.AddRefGet();
 		*result = reinterpret_cast<ContentOperatorHandle>(base);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
@@ -432,9 +426,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperan
 
 	try
 	{
-		ObjectBaseAddRefVisitor visitor;
 		auto item = obj->GetOperandAt(at);
-		auto ptr = item.apply_visitor(visitor);
+		auto ptr = item.AddRefGet();
 		*result = reinterpret_cast<ObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}

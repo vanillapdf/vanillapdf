@@ -47,6 +47,18 @@ namespace gotchangpdf
 			qi::rule<pos_iterator_type, LiteralStringObjectPtr(std::shared_ptr<File>*), qi::locals<types::integer>> start;
 		};
 
+		class StringGrammar : public qi::grammar<pos_iterator_type,
+			StringObjectPtr(std::shared_ptr<File>*)>
+		{
+		public:
+			StringGrammar();
+
+		private:
+			qi::rule<pos_iterator_type, StringObjectPtr(std::shared_ptr<File>*)> start;
+			HexadecimalStringGrammar hexadecimal_string;
+			LiteralStringGrammar literal_string;
+		};
+
 		class NullGrammar : public qi::grammar<pos_iterator_type,
 			NullObjectPtr(std::shared_ptr<File>*)>
 		{
@@ -161,13 +173,13 @@ namespace gotchangpdf
 		};
 
 		class ContainableGrammar : public qi::grammar<pos_iterator_type,
-			ContainableObject(std::shared_ptr<File>*)>
+			ContainableObjectPtr(std::shared_ptr<File>*)>
 		{
 		public:
 			ContainableGrammar();
 
 		private:
-			qi::rule<pos_iterator_type, ContainableObject(std::shared_ptr<File>*)> start;
+			qi::rule<pos_iterator_type, ContainableObjectPtr(std::shared_ptr<File>*)> start;
 			ArrayGrammar array_object = { *this };
 			BooleanGrammar boolean_object;
 			DictionaryGrammar dictionary_object = { *this };
@@ -177,8 +189,7 @@ namespace gotchangpdf
 			IntegerGrammar integer_object;
 			NameGrammar name_object;
 			NullGrammar null_object;
-			LiteralStringGrammar literal_string_object;
-			HexadecimalStringGrammar hexadecimal_string_object;
+			StringGrammar string_object;
 		};
 
 		class IndirectStreamGrammar : public qi::grammar<pos_iterator_type,
@@ -198,16 +209,15 @@ namespace gotchangpdf
 			SingleWhitespace whitespace;
 		};
 
-		using DictionaryOrStream = boost::variant<DictionaryObjectPtr, StreamObjectPtr>;
 		class DictionaryOrStreamGrammar : public qi::grammar<pos_iterator_type,
-			DictionaryOrStream(std::shared_ptr<File>*),
+			ObjectPtr(std::shared_ptr<File>*),
 			qi::locals<types::stream_size, types::stream_size, DictionaryObjectPtr >>
 		{
 		public:
 			DictionaryOrStreamGrammar();
 
 		private:
-			qi::rule<pos_iterator_type, DictionaryOrStream(std::shared_ptr<File>*), qi::locals<types::stream_size, types::stream_size, DictionaryObjectPtr>> start;
+			qi::rule<pos_iterator_type, ObjectPtr(std::shared_ptr<File>*), qi::locals<types::stream_size, types::stream_size, DictionaryObjectPtr>> start;
 			ContainableGrammar containable_object;
 			DictionaryGrammar dictionary_object = { containable_object };
 			StreamDataGrammar stream_data;
@@ -217,15 +227,15 @@ namespace gotchangpdf
 		};
 
 		class DirectObjectGrammar : public qi::grammar<pos_iterator_type,
-			DirectObject(std::shared_ptr<File>*, types::stream_offset),
+			ObjectPtr(std::shared_ptr<File>*, types::stream_offset),
 			qi::locals<types::integer, types::ushort>>
 		{
 		public:
 			DirectObjectGrammar();
 
 		private:
-			qi::rule<pos_iterator_type, DirectObject(std::shared_ptr<File>*, types::stream_offset), qi::locals<types::integer, types::ushort>> start;
-			qi::rule<pos_iterator_type, DirectObject(std::shared_ptr<File>*)> direct_object;
+			qi::rule<pos_iterator_type, ObjectPtr(std::shared_ptr<File>*, types::stream_offset), qi::locals<types::integer, types::ushort>> start;
+			qi::rule<pos_iterator_type, ObjectPtr(std::shared_ptr<File>*)> direct_object;
 
 			ContainableGrammar containable_object;
 			DictionaryOrStreamGrammar dict_or_stream;
@@ -237,8 +247,7 @@ namespace gotchangpdf
 			IntegerGrammar integer_object;
 			NameGrammar name_object;
 			NullGrammar null_object;
-			LiteralStringGrammar literal_string_object;
-			HexadecimalStringGrammar hexadecimal_string_object;
+			StringGrammar string_object;
 
 			SingleWhitespace whitespace;
 			Whitespace whitespaces;

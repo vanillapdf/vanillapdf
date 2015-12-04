@@ -13,14 +13,14 @@ namespace gotchangpdf
 	{
 		using namespace constant;
 
-		PageNodePtr CreatePageNode(syntax::DictionaryObjectPtr obj)
+		PageNodeBasePtr CreatePageNode(syntax::DictionaryObjectPtr obj)
 		{
 			auto type = obj->FindAs<syntax::NameObjectPtr>(Name::Type);
 
 			if (*type == Name::Pages)
-				return PageTreeNodePtr(pdf_new PageTreeNode(obj));
+				return PageTreeNodePtr(obj);
 			else if (*type == Name::Page)
-				return PageObjectPtr(pdf_new PageObject(obj));
+				return PageObjectPtr(obj);
 			else
 				throw syntax::Exception("Cannot initialize PageTree from TODO");
 		}

@@ -2,7 +2,6 @@
 #define _ABSTRACT_SYNTAX_TREE_H
 
 #include "constants.h"
-#include "direct_object.h"
 #include "objects.h"
 #include "object_stream_header.h"
 

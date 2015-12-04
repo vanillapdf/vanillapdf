@@ -4,17 +4,11 @@
 #include "syntax_fwd.h"
 #include "flate_decode_filter.h"
 
-#include <boost/variant/variant.hpp>
-
 namespace gotchangpdf
 {
 	namespace syntax
 	{
-		typedef boost::variant<
-			FlateDecodeFilterPtr
-		> FilterPtr;
-
-		FilterPtr GetFilterByName(const NameObjectPtr name);
+		FilterBasePtr GetFilterByName(const NameObjectPtr name);
 	}
 }
 

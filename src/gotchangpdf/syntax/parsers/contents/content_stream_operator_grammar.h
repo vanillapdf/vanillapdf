@@ -16,13 +16,13 @@ namespace gotchangpdf
 			namespace qi = boost::spirit::qi;
 
 			class GeneralGraphicsStateGrammar : public qi::grammar<pos_iterator_type,
-				GeneralGraphicsStateOperators()>
+				OperatorBasePtr()>
 			{
 			public:
 				GeneralGraphicsStateGrammar();
 
 			private:
-				qi::rule<pos_iterator_type, GeneralGraphicsStateOperators()> start;
+				qi::rule<pos_iterator_type, OperatorBasePtr()> start;
 				qi::rule<pos_iterator_type, LineWidthOperatorPtr()> line_width;
 				qi::rule<pos_iterator_type, LineCapOperatorPtr()> line_cap;
 				qi::rule<pos_iterator_type, LineJoinOperatorPtr()> line_join;
@@ -34,26 +34,26 @@ namespace gotchangpdf
 			};
 
 			class SpecialGraphicsStateGrammar : public qi::grammar<pos_iterator_type,
-				SpecialGraphicsStateOperators()>
+				OperatorBasePtr()>
 			{
 			public:
 				SpecialGraphicsStateGrammar();
 
 			private:
-				qi::rule<pos_iterator_type, SpecialGraphicsStateOperators()> start;
+				qi::rule<pos_iterator_type, OperatorBasePtr()> start;
 				qi::rule<pos_iterator_type, SaveGraphicsStateOperatorPtr()> save;
 				qi::rule<pos_iterator_type, RestoreGraphicsStateOperatorPtr()> restore;
 				qi::rule<pos_iterator_type, TransformationMatrixOperatorPtr()> matrix;
 			};
 
 			class PathConstructionGrammar : public qi::grammar<pos_iterator_type,
-				PathConstructionOperators()>
+				OperatorBasePtr()>
 			{
 			public:
 				PathConstructionGrammar();
 
 			private:
-				qi::rule<pos_iterator_type, PathConstructionOperators()> start;
+				qi::rule<pos_iterator_type, OperatorBasePtr()> start;
 				qi::rule<pos_iterator_type, BeginSubpathOperatorPtr()> begin;
 				qi::rule<pos_iterator_type, LineOperatorPtr()> line;
 				qi::rule<pos_iterator_type, FullCurveOperatorPtr()> full_curve;
@@ -64,13 +64,13 @@ namespace gotchangpdf
 			};
 
 			class PathPaintingGrammar : public qi::grammar<pos_iterator_type,
-				PathPaintingOperators()>
+				OperatorBasePtr()>
 			{
 			public:
 				PathPaintingGrammar();
 
 			private:
-				qi::rule<pos_iterator_type, PathPaintingOperators()> start;
+				qi::rule<pos_iterator_type, OperatorBasePtr()> start;
 				qi::rule<pos_iterator_type, StrokeOperatorPtr()> stroke;
 				qi::rule<pos_iterator_type, CloseAndStrokeOperatorPtr()> close_stroke;
 				qi::rule<pos_iterator_type, FillPathNonzeroOperatorPtr()> fill_nz;
@@ -84,37 +84,37 @@ namespace gotchangpdf
 			};
 
 			class ClippingPathGrammar : public qi::grammar<pos_iterator_type,
-				ClippingPathOperators()>
+				OperatorBasePtr()>
 			{
 			public:
 				ClippingPathGrammar();
 
 			private:
-				qi::rule<pos_iterator_type, ClippingPathOperators()> start;
+				qi::rule<pos_iterator_type, OperatorBasePtr()> start;
 				qi::rule<pos_iterator_type, ClipPathNonzeroOperatorPtr()> non_zero;
 				qi::rule<pos_iterator_type, ClipPathEvenOddOperatorPtr()> even_odd;
 			};
 
 			class TextObjectGrammar : public qi::grammar<pos_iterator_type,
-				TextObjectOperators()>
+				OperatorBasePtr()>
 			{
 			public:
 				TextObjectGrammar();
 
 			private:
-				qi::rule<pos_iterator_type, TextObjectOperators()> start;
+				qi::rule<pos_iterator_type, OperatorBasePtr()> start;
 				qi::rule<pos_iterator_type, BeginTextOperatorPtr()> begin_text;
 				qi::rule<pos_iterator_type, EndTextOperatorPtr()> end_text;
 			};
 
 			class TextStateGrammar : public qi::grammar<pos_iterator_type,
-				TextStateOperators()>
+				OperatorBasePtr()>
 			{
 			public:
 				TextStateGrammar();
 
 			private:
-				qi::rule<pos_iterator_type, TextStateOperators()> start;
+				qi::rule<pos_iterator_type, OperatorBasePtr()> start;
 				qi::rule<pos_iterator_type, CharacterSpacingOperatorPtr()> char_spacing;
 				qi::rule<pos_iterator_type, WordSpacingOperatorPtr()> word_spacing;
 				qi::rule<pos_iterator_type, HorizontalScalingOperatorPtr()> hscaling;
@@ -125,13 +125,13 @@ namespace gotchangpdf
 			};
 
 			class TextPositioningGrammar : public qi::grammar<pos_iterator_type,
-				TextPositioningOperators()>
+				OperatorBasePtr()>
 			{
 			public:
 				TextPositioningGrammar();
 
 			private:
-				qi::rule<pos_iterator_type, TextPositioningOperators()> start;
+				qi::rule<pos_iterator_type, OperatorBasePtr()> start;
 				qi::rule<pos_iterator_type, TextTranslateOperatorPtr()> translate;
 				qi::rule<pos_iterator_type, TextTranslateLeadingOperatorPtr()> translate_leading;
 				qi::rule<pos_iterator_type, TextMatrixOperatorPtr()> matrix;
@@ -139,13 +139,13 @@ namespace gotchangpdf
 			};
 
 			class TextShowingGrammar : public qi::grammar<pos_iterator_type,
-				TextShowingOperators()>
+				OperatorBasePtr()>
 			{
 			public:
 				TextShowingGrammar();
 
 			private:
-				qi::rule<pos_iterator_type, TextShowingOperators()> start;
+				qi::rule<pos_iterator_type, OperatorBasePtr()> start;
 				qi::rule<pos_iterator_type, TextShowOperatorPtr()> show;
 				qi::rule<pos_iterator_type, TextShowArrayOperatorPtr()> show_array;
 				qi::rule<pos_iterator_type, TextNextLineShowOperatorPtr()> next_line_show;
@@ -153,25 +153,25 @@ namespace gotchangpdf
 			};
 
 			class Type3FontGrammar : public qi::grammar<pos_iterator_type,
-				Type3FontOperators()>
+				OperatorBasePtr()>
 			{
 			public:
 				Type3FontGrammar();
 
 			private:
-				qi::rule<pos_iterator_type, Type3FontOperators()> start;
+				qi::rule<pos_iterator_type, OperatorBasePtr()> start;
 				qi::rule<pos_iterator_type, SetCharWidthOperatorPtr()> char_width;
 				qi::rule<pos_iterator_type, SetCacheDeviceOperatorPtr()> cache_device;
 			};
 
 			class ColorGrammar : public qi::grammar<pos_iterator_type,
-				ColorOperators()>
+				OperatorBasePtr()>
 			{
 			public:
 				ColorGrammar();
 
 			private:
-				qi::rule<pos_iterator_type, ColorOperators()> start;
+				qi::rule<pos_iterator_type, OperatorBasePtr()> start;
 				qi::rule<pos_iterator_type, ColorSpaceStrokeOperatorPtr()> color_space_stroke;
 				qi::rule<pos_iterator_type, ColorSpaceNonstrokeOperatorPtr()> color_space_nstroke;
 				qi::rule<pos_iterator_type, SetColorStrokeOperatorPtr()> sc_stroke;
@@ -187,48 +187,48 @@ namespace gotchangpdf
 			};
 
 			class ShadingPatternGrammar : public qi::grammar<pos_iterator_type,
-				ShadingPatternOperators()>
+				OperatorBasePtr()>
 			{
 			public:
 				ShadingPatternGrammar();
 
 			private:
-				qi::rule<pos_iterator_type, ShadingPatternOperators()> start;
+				qi::rule<pos_iterator_type, OperatorBasePtr()> start;
 				qi::rule<pos_iterator_type, ShadingPaintOperatorPtr()> shading;
 			};
 
 			class InlineImageGrammar : public qi::grammar<pos_iterator_type,
-				InlineImageOperators()>
+				OperatorBasePtr()>
 			{
 			public:
 				InlineImageGrammar();
 
 			private:
-				qi::rule<pos_iterator_type, InlineImageOperators()> start;
+				qi::rule<pos_iterator_type, OperatorBasePtr()> start;
 				qi::rule<pos_iterator_type, BeginInlineImageObjectOperatorPtr()> begin_image;
 				qi::rule<pos_iterator_type, BeginInlineImageDataOperatorPtr()> begin_data;
 				qi::rule<pos_iterator_type, EndInlineImageObjectOperatorPtr()> end_image;
 			};
 
 			class XObjectGrammar : public qi::grammar<pos_iterator_type,
-				XObjectOperators()>
+				OperatorBasePtr()>
 			{
 			public:
 				XObjectGrammar();
 
 			private:
-				qi::rule<pos_iterator_type, XObjectOperators()> start;
+				qi::rule<pos_iterator_type, OperatorBasePtr()> start;
 				qi::rule<pos_iterator_type, InvokeXObjectOperatorPtr()> invoke;
 			};
 
 			class MarkedContentGrammar : public qi::grammar<pos_iterator_type,
-				MarkedContentOperators()>
+				OperatorBasePtr()>
 			{
 			public:
 				MarkedContentGrammar();
 
 			private:
-				qi::rule<pos_iterator_type, MarkedContentOperators()> start;
+				qi::rule<pos_iterator_type, OperatorBasePtr()> start;
 				qi::rule<pos_iterator_type, DefineMarkedContentPointOperatorPtr()> define;
 				qi::rule<pos_iterator_type, DefineMarkedContentPointWithPropertyListOperatorPtr()> define_prop;
 				qi::rule<pos_iterator_type, BeginMarkedContentSequenceOperatorPtr()> begin;
@@ -237,25 +237,25 @@ namespace gotchangpdf
 			};
 
 			class CompatibilityGrammar : public qi::grammar<pos_iterator_type,
-				CompatibilityOperators()>
+				OperatorBasePtr()>
 			{
 			public:
 				CompatibilityGrammar();
 
 			private:
-				qi::rule<pos_iterator_type, CompatibilityOperators()> start;
+				qi::rule<pos_iterator_type, OperatorBasePtr()> start;
 				qi::rule<pos_iterator_type, BeginCompatibilitySectionOperatorPtr()> begin_compatibility;
 				qi::rule<pos_iterator_type, EndCompatibilitySectionOperatorPtr()> end_compatibility;
 			};
 
 			class OperatorGrammar : public qi::grammar<pos_iterator_type,
-				Operator()>
+				OperatorBasePtr()>
 			{
 			public:
 				OperatorGrammar();
 
 			private:
-				qi::rule<pos_iterator_type, Operator()> start;
+				qi::rule<pos_iterator_type, OperatorBasePtr()> start;
 				GeneralGraphicsStateGrammar general_graphics_state;
 				SpecialGraphicsStateGrammar special_graphics_state;
 				PathConstructionGrammar path_construction;

@@ -16,11 +16,11 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class DictionaryObject : public Object
+		class DictionaryObject : public ContainableObject
 		{
 		public:
 			//typedef std::unordered_map<NameObjectPtr, ContainableObject, std::hash<NameObjectPtr>> list_type;
-			typedef std::map<NameObjectPtr, ContainableObject> list_type;
+			typedef std::map<NameObjectPtr, ContainableObjectPtr> list_type;
 			//typedef std::vector<std::pair<NameObjectPtr, ContainableObject>> list_type;
 
 			typedef list_type::value_type value_type;
@@ -57,7 +57,7 @@ namespace gotchangpdf
 				}
 
 				NameObjectPtr First() const { return _it->first; }
-				ContainableObject Second() const { return _it->second; }
+				ContainableObjectPtr Second() const { return _it->second; }
 				const_iterator Value() const { return _it; }
 
 				bool operator==(const Iterator& other) const
@@ -75,9 +75,7 @@ namespace gotchangpdf
 			U FindAs(const NameObjectPtr& name) const
 			{
 				auto result = Find(name);
-
-				ConversionVisitor<U> visitor;
-				return result.apply_visitor(visitor);
+				return ObjectUtils::ConvertTo<U>(result);
 			}
 
 			list_type GetItems(void) const { return _list; }
@@ -99,7 +97,7 @@ namespace gotchangpdf
 				return _list.insert(pos, value);
 			}
 
-			ContainableObject Find(const NameObjectPtr& name) const
+			ContainableObjectPtr Find(const NameObjectPtr& name) const
 			{
 				auto result = _list.find(name);
 				if (result == _list.end()) {
@@ -111,7 +109,7 @@ namespace gotchangpdf
 				return result->second;
 			}
 
-			bool TryFind(const NameObjectPtr& name, ContainableObject& result) const
+			bool TryFind(const NameObjectPtr& name, ContainableObjectPtr& result) const
 			{
 				auto item = _list.find(name);
 				if (item == _list.end())
@@ -125,13 +123,10 @@ namespace gotchangpdf
 
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Dictionary; }
 
-			//private:
 		public:
 			list_type _list;
 		};
 	}
 }
-
-#include "conversion_visitor.h"
 
 #endif /* _DICTIONARY_OBJECT_H */

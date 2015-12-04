@@ -5,7 +5,6 @@
 #include "exception.h"
 #include "file.h"
 #include "log.h"
-#include "object_visitors.h"
 
 #include "spirit_grammar.h"
 #include "xref_grammar.h"
@@ -84,13 +83,13 @@ namespace gotchangpdf
 			}
 		}
 
-		Xref SpiritParser::ReadXref(types::stream_offset offset)
+		XrefBasePtr SpiritParser::ReadXref(types::stream_offset offset)
 		{
 			seekg(offset, ios_base::beg);
 			return ReadXref();
 		}
 
-		Xref SpiritParser::ReadXref(void)
+		XrefBasePtr SpiritParser::ReadXref(void)
 		{
 			// Don't skip whitespace explicitly
 			noskipws(*this);
@@ -108,7 +107,7 @@ namespace gotchangpdf
 			pos_iterator_type input_end_pos;
 
 			const auto& gram = _impl->_xref_grammar(&locked_file, offset);
-			return _impl->Read<Xref>(gram, input_begin_pos, input_end_pos);
+			return _impl->Read<XrefBasePtr>(gram, input_begin_pos, input_end_pos);
 		}
 
 		contents::OperationCollection SpiritParser::ReadContentStreamOperations(void)
@@ -132,17 +131,14 @@ namespace gotchangpdf
 			return _impl->Read<contents::OperationCollection>(gram, input_begin_pos, input_end_pos);
 		}
 
-		std::vector<DirectObject> SpiritParser::ReadObjectStreamEntries(types::integer first, types::integer size)
+		std::vector<ObjectPtr> SpiritParser::ReadObjectStreamEntries(types::integer first, types::integer size)
 		{
-			std::vector<DirectObject> result;
+			std::vector<ObjectPtr> result;
 			auto headers = ReadObjectStreamHeaders(size);
 			for (auto header : headers) {
 				seekg(first + header.offset);
 				auto obj = ReadDirectObject();
-
-				ObjectBaseVisitor visitor;
-				auto base = obj.apply_visitor(visitor);
-				base->SetObjectNumber(header.object_number);
+				obj->SetObjectNumber(header.object_number);
 
 				result.push_back(obj);
 			}
@@ -192,13 +188,13 @@ namespace gotchangpdf
 			return _impl->Read<std::vector<ObjectStreamHeader>>(gram, input_begin_pos, input_end_pos);
 		}
 
-		DirectObject SpiritParser::ReadDirectObject(types::stream_offset offset)
+		ObjectPtr SpiritParser::ReadDirectObject(types::stream_offset offset)
 		{
 			seekg(offset, std::ios::beg);
 			return ReadDirectObject();
 		}
 
-		DirectObject SpiritParser::ReadDirectObject(void)
+		ObjectPtr SpiritParser::ReadDirectObject(void)
 		{
 			// Don't skip whitespace explicitly
 			noskipws(*this);
@@ -216,7 +212,7 @@ namespace gotchangpdf
 			pos_iterator_type input_end_pos;
 
 			const auto& gram = _impl->_direct_grammar(&locked_file, offset);
-			return _impl->Read<DirectObject>(gram, input_begin_pos, input_end_pos);
+			return _impl->Read<ObjectPtr>(gram, input_begin_pos, input_end_pos);
 		}
 	}
 }

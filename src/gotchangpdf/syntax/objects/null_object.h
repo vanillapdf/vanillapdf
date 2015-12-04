@@ -1,14 +1,13 @@
 #ifndef _NULL_OBJECT_H
 #define _NULL_OBJECT_H
 
-#include "object.h"
 #include "containable.h"
 
 namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class NullObject : public Object
+		class NullObject : public ContainableObject
 		{
 		public:
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Null; }

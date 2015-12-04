@@ -3,7 +3,6 @@
 
 #include "semantics_fwd.h"
 #include "content_stream.h"
-#include "direct_object.h"
 
 #include <vector>
 
@@ -23,16 +22,22 @@ namespace gotchangpdf
 			inline virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::EndText; }
 		};
 
+		class TextShowOperation : public syntax::contents::OperationBase
+		{
+		public:
+			explicit TextShowOperation(syntax::StringObjectPtr str);
+
+			inline virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::TextShow; }
+
+		private:
+			syntax::StringObjectPtr _str;
+		};
+
 		typedef Deferred<BeginTextOperation> BeginTextOperationPtr;
 		typedef Deferred<EndTextOperation> EndTextOperationPtr;
+		typedef Deferred<TextShowOperation> TextShowOperationPtr;
 
-		typedef boost::variant<
-			syntax::contents::OperationGenericPtr,
-			BeginTextOperationPtr,
-			EndTextOperationPtr
-		> ContentOperationPtr;
-
-		typedef std::vector<ContentOperationPtr> ContentOperationCollection;
+		typedef std::vector<syntax::contents::OperationBasePtr> ContentOperationCollection;
 
 		class ContentObjectBase : public syntax::contents::InstructionBase
 		{
@@ -54,7 +59,7 @@ namespace gotchangpdf
 			inline virtual Type GetType(void) const _NOEXCEPT override { return Type::TextObject; }
 
 			types::uinteger GetOperationsSize(void) const { return _operations.size(); }
-			ContentOperationPtr GetOperationAt(types::uinteger at) const { return _operations.at(at); }
+			syntax::contents::OperationBasePtr GetOperationAt(types::uinteger at) const { return _operations.at(at); }
 
 		private:
 			ContentOperationCollection _operations;
@@ -62,26 +67,7 @@ namespace gotchangpdf
 
 		typedef Deferred<TextObject> TextObjectPtr;
 
-		typedef boost::variant<
-			TextObjectPtr
-		> ContentObjectPtr;
-
-		typedef boost::variant<
-			ContentObjectPtr,
-			ContentOperationPtr
-		> ContentInstructionPtr;
-
-		class ContentStreamInstructionBaseVisitor : public boost::static_visitor<syntax::contents::InstructionBase*>
-		{
-		public:
-			inline syntax::contents::InstructionBase* operator()(ContentObjectPtr obj) const { return obj.apply_visitor(*this); }
-			inline syntax::contents::InstructionBase* operator()(ContentOperationPtr obj) const { return obj.apply_visitor(*this); }
-
-			template <typename T>
-			inline syntax::contents::InstructionBase* operator()(Deferred<T>& obj) const { return obj.Content.get(); }
-		};
-
-		typedef std::vector<ContentInstructionPtr> ContentInstructionCollection;
+		typedef std::vector<syntax::contents::InstructionBasePtr> ContentInstructionCollection;
 
 		class Contents : public IUnknown
 		{
@@ -92,7 +78,7 @@ namespace gotchangpdf
 
 			ContentInstructionCollection Instructions(void) const;
 			types::uinteger GetInstructionsSize(void) const;
-			ContentInstructionPtr GetInstructionAt(types::uinteger at) const;
+			syntax::contents::InstructionBasePtr GetInstructionAt(types::uinteger at) const;
 
 			inline types::uinteger GetContentStreamSize(void) const { return _contents.size(); }
 			inline ContentStreamPtr GetContentStreamAt(types::uinteger at) const { return _contents.at(at); }

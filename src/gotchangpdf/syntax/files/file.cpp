@@ -60,11 +60,8 @@ namespace gotchangpdf
 			}
 
 			do {
-				XrefBaseVisitor visitor;
-				auto xref_variant = stream.ReadXref(offset);
-				auto xref = xref_variant.apply_visitor(visitor);
-
-				_xref->Append(xref_variant);
+				auto xref = stream.ReadXref(offset);
+				_xref->Append(xref);
 				if (!xref->GetTrailerDictionary()->Contains(constant::Name::Prev)) {
 					break;
 				}
@@ -75,7 +72,7 @@ namespace gotchangpdf
 			_initialized = true;
 		}
 
-		DirectObject File::GetIndirectObject(types::integer objNumber,
+		ObjectPtr File::GetIndirectObject(types::integer objNumber,
 			types::ushort genNumber)
 		{
 			LOG_DEBUG << "GetIndirectObject " << objNumber << " and " << genNumber;
@@ -83,24 +80,20 @@ namespace gotchangpdf
 			if (!_initialized)
 				throw Exception("File has not been initialized yet");
 
-			XrefEntryBaseVisitor base_visitor;
 			auto item = _xref->GetXrefEntry(objNumber, genNumber);
-			auto item_base = item.apply_visitor(base_visitor);
 
-			if (!item_base->InUse())
+			if (!item->InUse())
 				throw Exception("Required object is marked as free");
 
-			switch (item_base->GetUsage()) {
+			switch (item->GetUsage()) {
 			case XrefEntryBase::Usage::Used:
 			{
-				XrefEntryVisitor<XrefUsedEntryPtr> visitor;
-				auto used = item.apply_visitor(visitor);
+				auto used = XrefUtils::ConvertTo<XrefUsedEntryPtr>(item);
 				return used->GetReference();
 			}
 			case XrefEntryBase::Usage::Compressed:
 			{
-				XrefEntryVisitor<XrefCompressedEntryPtr> visitor;
-				auto compressed = item.apply_visitor(visitor);
+				auto compressed = XrefUtils::ConvertTo<XrefCompressedEntryPtr>(item);
 				return compressed->GetReference();
 			}
 			case XrefEntryBase::Usage::Null:

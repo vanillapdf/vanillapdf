@@ -2,7 +2,6 @@
 #include "file.h"
 #include "xref_chain.h"
 #include "catalog.h"
-#include "object_visitors.h"
 
 #include "c_file.h"
 #include "c_helper.h"
@@ -70,8 +69,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
 	try
 	{
 		auto item = file->GetIndirectObject(objNumber, genNumber);
-		ObjectBaseAddRefVisitor visitor;
-		auto ptr = item.apply_visitor(visitor);
+		auto ptr = item.AddRefGet();
 
 		*result = reinterpret_cast<ObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;

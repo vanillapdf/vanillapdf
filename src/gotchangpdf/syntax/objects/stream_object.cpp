@@ -5,8 +5,6 @@
 #include "raw_stream.h"
 #include "filter.h"
 #include "filter_utils.h"
-#include "filter_visitors.h"
-#include "object_visitors.h"
 
 namespace gotchangpdf
 {
@@ -46,28 +44,21 @@ namespace gotchangpdf
 
 			BufferPtr result = GetBody();
 			if (_header->Contains(constant::Name::Filter)) {
-				auto filter = _header->Find(constant::Name::Filter);
-
-				IsTypeVisitor<NameObjectPtr> name_visitor;
-				IsTypeVisitor<MixedArrayObjectPtr> array_visitor;
-
-				bool is_filter_name = filter.apply_visitor(name_visitor);
-				bool is_filter_array = filter.apply_visitor(array_visitor);
+				auto filter_obj = _header->Find(constant::Name::Filter);
+				bool is_filter_name = ObjectUtils::IsType<NameObjectPtr>(filter_obj);
+				bool is_filter_array = ObjectUtils::IsType<MixedArrayObjectPtr>(filter_obj);
 
 				assert(is_filter_name ^ is_filter_array);
 
 				if (is_filter_name) {
-					FilterBaseVisitor visitor;
-
 					auto filter_name = _header->FindAs<NameObjectPtr>(constant::Name::Filter);
-					auto filter_variant = GetFilterByName(filter_name);
-					auto filter_base = filter_variant.apply_visitor(visitor);
+					auto filter = GetFilterByName(filter_name);
 					if (_header->Contains(constant::Name::DecodeParms)) {
 						auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
-						return filter_base->Decode(result, params);
+						return filter->Decode(result, params);
 					}
 
-					return filter_base->Decode(result);
+					return filter->Decode(result);
 				}
 
 				if (is_filter_array) {
@@ -81,28 +72,22 @@ namespace gotchangpdf
 					}
 
 					for (int i = 0; i < filter_array->Size(); ++i) {
-						FilterBaseVisitor visitor;
-
 						auto current_filter = (*filter_array)[i];
-						auto filter_variant = GetFilterByName(current_filter);
-						auto filter_base = filter_variant.apply_visitor(visitor);
+						auto filter = GetFilterByName(current_filter);
 
 						if (has_params) {
 							auto current_param = (*params)[i];
-
-							IsTypeVisitor<NullObjectPtr> is_null_visitor;
-							bool is_param_null = current_param.apply_visitor(is_null_visitor);
+							bool is_param_null = ObjectUtils::IsType<NullObjectPtr>(current_param);
 							if (is_param_null) {
-								result = filter_base->Decode(result);
+								result = filter->Decode(result);
 							}
 							else {
-								ConversionVisitor<DictionaryObjectPtr> dictionary_convert;
-								auto dict = current_param.apply_visitor(dictionary_convert);
-								result = filter_base->Decode(result, dict);
+								auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(current_param);
+								result = filter->Decode(result, dict);
 							}
 						}
 						else {
-							result = filter_base->Decode(result);
+							result = filter->Decode(result);
 						}
 					}
 				}

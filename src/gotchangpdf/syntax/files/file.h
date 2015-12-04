@@ -21,7 +21,7 @@ namespace gotchangpdf
 			~File(void);
 
 			void Initialize(std::shared_ptr<File> holder);
-			DirectObject GetIndirectObject(types::integer objNumber,
+			ObjectPtr GetIndirectObject(types::integer objNumber,
 				types::ushort genNumber);
 
 			XrefChainPtr GetXrefChain(void) const;
@@ -34,7 +34,7 @@ namespace gotchangpdf
 			std::shared_ptr<FileDevice> _input;
 			HeaderPtr _header;
 			XrefChainPtr _xref;
-			std::vector<DirectObject> _cache;
+			std::vector<ObjectPtr> _cache;
 
 			bool _initialized = false;
 			std::string _filename;

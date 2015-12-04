@@ -3,27 +3,17 @@
 
 #include "syntax_fwd.h"
 
-#include <boost/variant/variant.hpp>
-#include <boost/variant/recursive_wrapper.hpp>
-
 namespace gotchangpdf
 {
 	namespace syntax
 	{
-		typedef boost::variant <
-			// first is null object
-			NullObjectPtr,
-			boost::recursive_wrapper<MixedArrayObjectPtr>,
-			NameObjectPtr,
-			boost::recursive_wrapper<DictionaryObjectPtr>,
-			FunctionObjectPtr,
-			BooleanObjectPtr,
-			boost::recursive_wrapper<IndirectObjectReferencePtr>,
-			IntegerObjectPtr,
-			RealObjectPtr,
-			LiteralStringObjectPtr,
-			HexadecimalStringObjectPtr
-		> ContainableObject;
+		class ContainableObject : public Object
+		{
+		public:
+			virtual ~ContainableObject() = 0;
+		};
+
+		inline ContainableObject::~ContainableObject() {}
 	}
 }
 

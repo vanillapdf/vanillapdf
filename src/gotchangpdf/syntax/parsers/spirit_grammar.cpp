@@ -3,7 +3,6 @@
 
 #include "iter_offset_parser.h"
 #include "abstract_syntax_tree.h"
-#include "object_visitors.h"
 
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix.hpp>
@@ -12,27 +11,47 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-void direct_object_file_handler(DirectObject obj, std::shared_ptr<File>* file)
+void direct_object_file_handler(ObjectPtr obj, std::shared_ptr<File>* file)
 {
 	assert(nullptr != file && *file);
 
-	SetFileVisitor visitor(*file);
-	obj.apply_visitor(visitor);
+	obj->SetFile(*file);
+
+	// This is a special case, which tries to dereference the object type
+	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(obj)) {
+		return;
+	}
+
+	if (ObjectUtils::IsType<StreamObjectPtr>(obj)) {
+		auto converted = ObjectUtils::ConvertTo<StreamObjectPtr>(obj);
+		auto header = converted->GetHeader();
+		direct_object_file_handler(header, file);
+	}
+	else if (ObjectUtils::IsType<MixedArrayObjectPtr>(obj)) {
+		auto converted = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(obj);
+
+		for (auto item : *converted) {
+			direct_object_file_handler(item, file);
+		}
+	}
+	else if (ObjectUtils::IsType<DictionaryObjectPtr>(obj)) {
+		auto converted = ObjectUtils::ConvertTo<DictionaryObjectPtr>(obj);
+		for (auto item : *converted) {
+			direct_object_file_handler(item.first, file);
+			direct_object_file_handler(item.second, file);
+		}
+	}
 }
 
-void direct_object_offset_handler(DirectObject obj, types::stream_offset offset)
+void direct_object_offset_handler(ObjectPtr obj, types::stream_offset offset)
 {
-	ObjectBaseVisitor visitor;
-	auto base = obj.apply_visitor(visitor);
-	base->SetOffset(offset);
+	obj->SetOffset(offset);
 }
 
-void indirect_object_handler(DirectObject obj, types::integer obj_number, types::ushort gen_number)
+void indirect_object_handler(ObjectPtr obj, types::integer obj_number, types::ushort gen_number)
 {
-	ObjectBaseVisitor visitor;
-	auto base = obj.apply_visitor(visitor);
-	base->SetObjectNumber(obj_number);
-	base->SetGenerationNumber(gen_number);
+	obj->SetObjectNumber(obj_number);
+	obj->SetGenerationNumber(gen_number);
 }
 
 void dictionary_length(const DictionaryObjectPtr& obj, types::stream_size& value)
@@ -48,6 +67,32 @@ namespace gotchangpdf
 		namespace repo = boost::spirit::repository;
 		namespace ascii = boost::spirit::ascii;
 		namespace phoenix = boost::phoenix;
+
+		void literal_to_string(LiteralStringObjectPtr& obj, StringObjectPtr& result) { return convert(obj, result); }
+		void hexadecimal_to_string(HexadecimalStringObjectPtr& obj, StringObjectPtr& result) { return convert(obj, result); }
+
+		void convert_array(MixedArrayObjectPtr& obj, ContainableObjectPtr& result) { return convert(obj, result); }
+		void convert_dictionary(DictionaryObjectPtr& obj, ContainableObjectPtr& result) { return convert(obj, result); }
+		void convert_integer(IntegerObjectPtr& obj, ContainableObjectPtr& result) { return convert(obj, result); }
+		void convert_real(RealObjectPtr& obj, ContainableObjectPtr& result) { return convert(obj, result); }
+		void convert_null(NullObjectPtr& obj, ContainableObjectPtr& result) { return convert(obj, result); }
+		void convert_string(StringObjectPtr& obj, ContainableObjectPtr& result) { return convert(obj, result); }
+		void convert_name(NameObjectPtr& obj, ContainableObjectPtr& result) { return convert(obj, result); }
+		void convert_reference(IndirectObjectReferencePtr& obj, ContainableObjectPtr& result) { return convert(obj, result); }
+		void convert_function(FunctionObjectPtr& obj, ContainableObjectPtr& result) { return convert(obj, result); }
+		void convert_boolean(BooleanObjectPtr& obj, ContainableObjectPtr& result) { return convert(obj, result); }
+
+		void convert_stream_to_obj(StreamObjectPtr& obj, ObjectPtr& result) { return convert(obj, result); }
+		void convert_array_to_obj(MixedArrayObjectPtr& obj, ObjectPtr& result) { return convert(obj, result); }
+		void convert_dictionary_to_obj(DictionaryObjectPtr& obj, ObjectPtr& result) { return convert(obj, result); }
+		void convert_integer_to_obj(IntegerObjectPtr& obj, ObjectPtr& result) { return convert(obj, result); }
+		void convert_real_to_obj(RealObjectPtr& obj, ObjectPtr& result) { return convert(obj, result); }
+		void convert_null_to_obj(NullObjectPtr& obj, ObjectPtr& result) { return convert(obj, result); }
+		void convert_string_to_obj(StringObjectPtr& obj, ObjectPtr& result) { return convert(obj, result); }
+		void convert_name_to_obj(NameObjectPtr& obj, ObjectPtr& result) { return convert(obj, result); }
+		void convert_reference_to_obj(IndirectObjectReferencePtr& obj, ObjectPtr& result) { return convert(obj, result); }
+		void convert_function_to_obj(FunctionObjectPtr& obj, ObjectPtr& result) { return convert(obj, result); }
+		void convert_boolean_to_obj(BooleanObjectPtr& obj, ObjectPtr& result) { return convert(obj, result); }
 
 		DirectObjectGrammar::DirectObjectGrammar() :
 			base_type(start, "Direct object grammar")
@@ -74,16 +119,15 @@ namespace gotchangpdf
 
 			direct_object %=
 				dict_or_stream(qi::_r1)
-				| array_object(qi::_r1)
-				| boolean_object(qi::_r1)
-				| function_object(qi::_r1)
-				| indirect_object_reference(qi::_r1)
-				| real_object(qi::_r1)
-				| integer_object(qi::_r1)
-				| name_object(qi::_r1)
-				| null_object(qi::_r1)
-				| literal_string_object(qi::_r1)
-				| hexadecimal_string_object(qi::_r1);
+				| array_object(qi::_r1)[phoenix::bind(&convert_array_to_obj, qi::_1, qi::_val)]
+				| boolean_object(qi::_r1)[phoenix::bind(&convert_boolean_to_obj, qi::_1, qi::_val)]
+				| function_object(qi::_r1)[phoenix::bind(&convert_function_to_obj, qi::_1, qi::_val)]
+				| indirect_object_reference(qi::_r1)[phoenix::bind(&convert_reference_to_obj, qi::_1, qi::_val)]
+				| real_object(qi::_r1)[phoenix::bind(&convert_real_to_obj, qi::_1, qi::_val)]
+				| integer_object(qi::_r1)[phoenix::bind(&convert_integer_to_obj, qi::_1, qi::_val)]
+				| name_object(qi::_r1)[phoenix::bind(&convert_name_to_obj, qi::_1, qi::_val)]
+				| null_object(qi::_r1)[phoenix::bind(&convert_null_to_obj, qi::_1, qi::_val)]
+				| string_object(qi::_r1)[phoenix::bind(&convert_string_to_obj, qi::_1, qi::_val)];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 			BOOST_SPIRIT_DEBUG_NODE(direct_object);
@@ -224,21 +268,30 @@ namespace gotchangpdf
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
 
+		StringGrammar::StringGrammar() :
+			base_type(start, "String grammar")
+		{
+			start %=
+				literal_string(qi::_r1)[phoenix::bind(&literal_to_string, qi::_1, qi::_val)]
+				| hexadecimal_string(qi::_r1)[phoenix::bind(&hexadecimal_to_string, qi::_1, qi::_val)];
+
+			BOOST_SPIRIT_DEBUG_NODE(start);
+		}
+
 		ContainableGrammar::ContainableGrammar() :
 			base_type(start, "Containable grammar")
 		{
 			start %=
-				array_object(qi::_r1)
-				| boolean_object(qi::_r1)
-				| dictionary_object(qi::_r1)
-				| function_object(qi::_r1)
-				| indirect_object_reference(qi::_r1)
-				| real_object(qi::_r1)
-				| integer_object(qi::_r1)
-				| name_object(qi::_r1)
-				| null_object(qi::_r1)
-				| literal_string_object(qi::_r1)
-				| hexadecimal_string_object(qi::_r1);
+				array_object(qi::_r1)[phoenix::bind(&convert_array, qi::_1, qi::_val)]
+				| boolean_object(qi::_r1)[phoenix::bind(&convert_boolean, qi::_1, qi::_val)]
+				| dictionary_object(qi::_r1)[phoenix::bind(&convert_dictionary, qi::_1, qi::_val)]
+				| function_object(qi::_r1)[phoenix::bind(&convert_function, qi::_1, qi::_val)]
+				| indirect_object_reference(qi::_r1)[phoenix::bind(&convert_reference, qi::_1, qi::_val)]
+				| real_object(qi::_r1)[phoenix::bind(&convert_real, qi::_1, qi::_val)]
+				| integer_object(qi::_r1)[phoenix::bind(&convert_integer, qi::_1, qi::_val)]
+				| name_object(qi::_r1)[phoenix::bind(&convert_name, qi::_1, qi::_val)]
+				| null_object(qi::_r1)[phoenix::bind(&convert_null, qi::_1, qi::_val)]
+				| string_object(qi::_r1)[phoenix::bind(&convert_string, qi::_1, qi::_val)];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
@@ -308,7 +361,7 @@ namespace gotchangpdf
 				qi::omit[dictionary_object(qi::_r1)[qi::_c = qi::_1]]
 				>> (
 					whitespaces
-					>> stream_data(qi::_r1, qi::_c)
+					>> stream_data(qi::_r1, qi::_c)[phoenix::bind(&convert_stream_to_obj, qi::_1, qi::_val)]
 					| qi::eps[qi::_val = qi::_c]
 				);
 

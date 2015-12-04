@@ -2,12 +2,10 @@
 #define _CHARACTER_DEVICE_H
 
 #include <iostream>
-#include <boost/iostreams/filtering_stream.hpp>
 
 namespace gotchangpdf
 {
 	typedef std::iostream CharacterDevice;
-	typedef boost::iostreams::filtering_stream<io::seekable, char> CharacterFilteringDevice;
 }
 
 #endif /* _CHARACTER_DEVICE_H */

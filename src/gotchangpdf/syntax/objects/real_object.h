@@ -2,14 +2,13 @@
 #define _REAL_OBJECT_H
 
 #include "syntax_fwd.h"
-#include "object.h"
 #include "containable.h"
 
 namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class RealObject : public Object
+		class RealObject : public ContainableObject
 		{
 		public:
 			typedef types::real value_type;

@@ -21,11 +21,8 @@ namespace gotchangpdf
 
 			CatalogPtr GetDocumentCatalog(void) const
 			{
-				syntax::XrefBaseVisitor visitor;
-
 				auto chain = _holder->Value()->GetXrefChain();
-				auto xref_variant = chain->Begin()->Value();
-				auto xref = xref_variant.apply_visitor(visitor);
+				auto xref = chain->Begin()->Value();
 				auto dictionary = xref->GetTrailerDictionary();
 				auto root = dictionary->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Root);
 				return Catalog(root);

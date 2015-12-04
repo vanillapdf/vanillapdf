@@ -7,9 +7,11 @@ namespace gotchangpdf
 {
 	namespace semantics
 	{
+		class ContentObjectBase; using ContentObjectBasePtr = Deferred<ContentObjectBase>;
+
 		class Document; using DocumentPtr = Deferred<Document>;
 		class Catalog; using CatalogPtr = Deferred<Catalog>;
-		class PageNodeBase;
+		class PageNodeBase; using PageNodeBasePtr = Deferred<PageNodeBase>;
 		class PageTree; using PageTreePtr = Deferred<PageTree>;
 		class PageTreeNode; using PageTreeNodePtr = Deferred<PageTreeNode>;
 		class PageObject; using PageObjectPtr = Deferred<PageObject>;

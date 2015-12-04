@@ -22,7 +22,7 @@ namespace gotchangpdf
 		class InvalidObjectTypeException;
 
 		// Filters
-		class Filter;
+		class FilterBase; using FilterBasePtr = Deferred<FilterBase>;
 		class FlateDecodeFilter; using FlateDecodeFilterPtr = Deferred<FlateDecodeFilter>;
 
 		// Files
@@ -30,7 +30,7 @@ namespace gotchangpdf
 		class FileHolder; using FileHolderPtr = Deferred<FileHolder>;
 		class Header;
 
-		class XrefBase;
+		class XrefBase; using XrefBasePtr = Deferred<XrefBase>;
 		class XrefSubsection;
 		class XrefTable;
 		class XrefStream;
@@ -62,7 +62,9 @@ namespace gotchangpdf
 		class ReverseStream;
 
 		// Objects
-		class Containable;
+		class ObjectUtils;
+		class Object;
+		class ContainableObject;
 
 		template <typename T>
 		class ArrayObject;
@@ -79,7 +81,7 @@ namespace gotchangpdf
 		class Object;
 		class RealObject;
 		class StreamObject;
-		class StringObject;
+		class StringObjectBase;
 		class HexadecimalStringObject;
 		class LiteralStringObject;
 
@@ -89,6 +91,8 @@ namespace gotchangpdf
 		using DictionaryObjectPtr = Deferred<DictionaryObject>;
 		using MixedArrayObjectPtr = Deferred<MixedArrayObject>;
 
+		using ObjectPtr = Deferred<Object>;
+		using ContainableObjectPtr = Deferred<ContainableObject>;
 		using NameObjectPtr = Deferred<NameObject>;
 		using BooleanObjectPtr = Deferred<BooleanObject>;
 		using FunctionObjectPtr = Deferred<FunctionObject>;
@@ -97,6 +101,7 @@ namespace gotchangpdf
 		using NullObjectPtr = Deferred<NullObject>;
 		using RealObjectPtr = Deferred<RealObject>;
 		using StreamObjectPtr = Deferred<StreamObject>;
+		using StringObjectPtr = Deferred<StringObjectBase>;
 		using LiteralStringObjectPtr = Deferred<LiteralStringObject>;
 		using HexadecimalStringObjectPtr = Deferred<HexadecimalStringObject>;
 
@@ -106,9 +111,12 @@ namespace gotchangpdf
 
 		namespace contents
 		{
+			class InstructionBase; using InstructionBasePtr = Deferred<InstructionBase>;
+
 			class OperationBase;
 			class OperationGeneric;
 
+			class OperatorBase;
 			class UnknownOperator;
 
 			class LineWidthOperator;
@@ -202,6 +210,7 @@ namespace gotchangpdf
 			typedef Deferred<OperationBase> OperationBasePtr;
 			typedef Deferred<OperationGeneric> OperationGenericPtr;
 
+			typedef Deferred<OperatorBase> OperatorBasePtr;
 			typedef Deferred<UnknownOperator> UnknownOperatorPtr;
 
 			typedef Deferred<LineWidthOperator> LineWidthOperatorPtr;

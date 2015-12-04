@@ -3,10 +3,8 @@
 
 #include "syntax_fwd.h"
 #include "unknown_interface.h"
-#include "general_visitors.h"
 
 #include <vector>
-#include <boost/variant/variant.hpp>
 
 namespace gotchangpdf
 {
@@ -227,228 +225,6 @@ public: \
 			GENERIC_OPERATOR_DEFINITION(BeginCompatibilitySection, "BX");
 			GENERIC_OPERATOR_DEFINITION(EndCompatibilitySection, "EX");
 
-			typedef boost::variant <
-				UnknownOperatorPtr,
-				LineWidthOperatorPtr,
-				LineCapOperatorPtr,
-				LineJoinOperatorPtr,
-				MiterLimitOperatorPtr,
-				DashPatternOperatorPtr,
-				ColorRenderingIntentOperatorPtr,
-				FlatnessOperatorPtr,
-				GraphicsStateOperatorPtr,
-				SaveGraphicsStateOperatorPtr,
-				RestoreGraphicsStateOperatorPtr,
-				TransformationMatrixOperatorPtr,
-				BeginSubpathOperatorPtr,
-				LineOperatorPtr,
-				FullCurveOperatorPtr,
-				FinalCurveOperatorPtr,
-				InitialCurveOperatorPtr,
-				CloseSubpathOperatorPtr,
-				RectangleOperatorPtr,
-				StrokeOperatorPtr,
-				CloseAndStrokeOperatorPtr,
-				FillPathNonzeroOperatorPtr,
-				FillPathCompatibilityOperatorPtr,
-				FillPathEvenOddOperatorPtr,
-				FillStrokeNonzeroOperatorPtr,
-				FillStrokeEvenOddOperatorPtr,
-				CloseFillStrokeNonzeroOperatorPtr,
-				CloseFillStrokeEvenOddOperatorPtr,
-				EndPathOperatorPtr,
-				ClipPathNonzeroOperatorPtr,
-				ClipPathEvenOddOperatorPtr,
-				BeginTextOperatorPtr,
-				EndTextOperatorPtr,
-				CharacterSpacingOperatorPtr,
-				WordSpacingOperatorPtr,
-				HorizontalScalingOperatorPtr,
-				LeadingOperatorPtr,
-				TextFontOperatorPtr,
-				TextRenderingModeOperatorPtr,
-				TextRiseOperatorPtr,
-				TextTranslateOperatorPtr,
-				TextTranslateLeadingOperatorPtr,
-				TextMatrixOperatorPtr,
-				TextNextLineOperatorPtr,
-				TextShowOperatorPtr,
-				TextShowArrayOperatorPtr,
-				TextNextLineShowOperatorPtr,
-				TextNextLineShowSpacingOperatorPtr,
-				SetCharWidthOperatorPtr,
-				SetCacheDeviceOperatorPtr,
-				ColorSpaceStrokeOperatorPtr,
-				ColorSpaceNonstrokeOperatorPtr,
-				SetColorStrokeOperatorPtr,
-				SetColorStrokeExtendedOperatorPtr,
-				SetColorNonstrokeOperatorPtr,
-				SetColorNonstrokeExtendedOperatorPtr,
-				SetStrokingColorSpaceGrayOperatorPtr,
-				SetNonstrokingColorSpaceGrayOperatorPtr,
-				SetStrokingColorSpaceRGBOperatorPtr,
-				SetNonstrokingColorSpaceRGBOperatorPtr,
-				SetStrokingColorSpaceCMYKOperatorPtr,
-				SetNonstrokingColorSpaceCMYKOperatorPtr,
-				ShadingPaintOperatorPtr,
-				BeginInlineImageObjectOperatorPtr,
-				BeginInlineImageDataOperatorPtr,
-				EndInlineImageObjectOperatorPtr,
-				InvokeXObjectOperatorPtr,
-				DefineMarkedContentPointOperatorPtr,
-				DefineMarkedContentPointWithPropertyListOperatorPtr,
-				BeginMarkedContentSequenceOperatorPtr,
-				BeginMarkedContentSequenceWithPropertyListOperatorPtr,
-				EndMarkedContentSequenceOperatorPtr,
-				BeginCompatibilitySectionOperatorPtr,
-				EndCompatibilitySectionOperatorPtr
-			> Operator;
-
-			typedef boost::variant<
-				LineWidthOperatorPtr,
-				LineCapOperatorPtr,
-				LineJoinOperatorPtr,
-				MiterLimitOperatorPtr,
-				DashPatternOperatorPtr,
-				ColorRenderingIntentOperatorPtr,
-				FlatnessOperatorPtr,
-				GraphicsStateOperatorPtr
-			> GeneralGraphicsStateOperators;
-
-			typedef boost::variant<
-				SaveGraphicsStateOperatorPtr,
-				RestoreGraphicsStateOperatorPtr,
-				TransformationMatrixOperatorPtr
-			> SpecialGraphicsStateOperators;
-
-			typedef boost::variant<
-				BeginSubpathOperatorPtr,
-				LineOperatorPtr,
-				FullCurveOperatorPtr,
-				FinalCurveOperatorPtr,
-				InitialCurveOperatorPtr,
-				CloseSubpathOperatorPtr,
-				RectangleOperatorPtr
-			> PathConstructionOperators;
-
-			typedef boost::variant<
-				StrokeOperatorPtr,
-				CloseAndStrokeOperatorPtr,
-				FillPathNonzeroOperatorPtr,
-				FillPathCompatibilityOperatorPtr,
-				FillPathEvenOddOperatorPtr,
-				FillStrokeNonzeroOperatorPtr,
-				FillStrokeEvenOddOperatorPtr,
-				CloseFillStrokeNonzeroOperatorPtr,
-				CloseFillStrokeEvenOddOperatorPtr,
-				EndPathOperatorPtr
-			> PathPaintingOperators;
-
-			typedef boost::variant<
-				ClipPathNonzeroOperatorPtr,
-				ClipPathEvenOddOperatorPtr
-			> ClippingPathOperators;
-
-			typedef boost::variant<
-				BeginTextOperatorPtr,
-				EndTextOperatorPtr
-			> TextObjectOperators;
-
-			typedef boost::variant<
-				CharacterSpacingOperatorPtr,
-				WordSpacingOperatorPtr,
-				HorizontalScalingOperatorPtr,
-				LeadingOperatorPtr,
-				TextFontOperatorPtr,
-				TextRenderingModeOperatorPtr,
-				TextRiseOperatorPtr
-			> TextStateOperators;
-
-			typedef boost::variant<
-				TextTranslateOperatorPtr,
-				TextTranslateLeadingOperatorPtr,
-				TextMatrixOperatorPtr,
-				TextNextLineOperatorPtr
-			> TextPositioningOperators;
-
-			typedef boost::variant<
-				TextShowOperatorPtr,
-				TextShowArrayOperatorPtr,
-				TextNextLineShowOperatorPtr,
-				TextNextLineShowSpacingOperatorPtr
-			> TextShowingOperators;
-
-			typedef boost::variant<
-				SetCharWidthOperatorPtr,
-				SetCacheDeviceOperatorPtr
-			> Type3FontOperators;
-
-			typedef boost::variant<
-				ColorSpaceStrokeOperatorPtr,
-				ColorSpaceNonstrokeOperatorPtr,
-				SetColorStrokeOperatorPtr,
-				SetColorStrokeExtendedOperatorPtr,
-				SetColorNonstrokeOperatorPtr,
-				SetColorNonstrokeExtendedOperatorPtr,
-				SetStrokingColorSpaceGrayOperatorPtr,
-				SetNonstrokingColorSpaceGrayOperatorPtr,
-				SetStrokingColorSpaceRGBOperatorPtr,
-				SetNonstrokingColorSpaceRGBOperatorPtr,
-				SetStrokingColorSpaceCMYKOperatorPtr,
-				SetNonstrokingColorSpaceCMYKOperatorPtr
-			> ColorOperators;
-
-			typedef boost::variant<
-				ShadingPaintOperatorPtr
-			> ShadingPatternOperators;
-
-			typedef boost::variant<
-				BeginInlineImageObjectOperatorPtr,
-				BeginInlineImageDataOperatorPtr,
-				EndInlineImageObjectOperatorPtr
-			> InlineImageOperators;
-
-			typedef boost::variant<
-				InvokeXObjectOperatorPtr
-			> XObjectOperators;
-
-			typedef boost::variant<
-				DefineMarkedContentPointOperatorPtr,
-				DefineMarkedContentPointWithPropertyListOperatorPtr,
-				BeginMarkedContentSequenceOperatorPtr,
-				BeginMarkedContentSequenceWithPropertyListOperatorPtr,
-				EndMarkedContentSequenceOperatorPtr
-			> MarkedContentOperators;
-
-			typedef boost::variant<
-				BeginCompatibilitySectionOperatorPtr,
-				EndCompatibilitySectionOperatorPtr
-			> CompatibilityOperators;
-
-			template <typename T>
-			class IsTypeVisitor : public boost::static_visitor<bool>
-			{
-			public:
-				inline bool operator()(const T&) const { return true; }
-
-				template <typename U>
-				inline bool operator()(const U&) const { return false; }
-			};
-
-			typedef boost::variant <
-				// first is null object
-				NullObjectPtr,
-				MixedArrayObjectPtr,
-				NameObjectPtr,
-				DictionaryObjectPtr,
-				FunctionObjectPtr,
-				BooleanObjectPtr,
-				IntegerObjectPtr,
-				RealObjectPtr,
-				LiteralStringObjectPtr,
-				HexadecimalStringObjectPtr
-			> Operand;
-
 			class InstructionBase : public IUnknown
 			{
 			public:
@@ -551,26 +327,21 @@ public: \
 			{
 			public:
 				OperationGeneric() = default;
-				OperationGeneric(std::vector<Operand> operands, Operator oper) :
+				OperationGeneric(std::vector<ObjectPtr> operands, OperatorBasePtr oper) :
 					_operator(oper), _operands(operands) {}
-				Operator GetOperator() const { return _operator; }
-				std::vector<Operand> GetOperands() const { return _operands; }
+				OperatorBasePtr GetOperator() const { return _operator; }
+				std::vector<ObjectPtr> GetOperands() const { return _operands; }
 
 				types::uinteger GetOperandsSize() const { return _operands.size(); }
-				Operand GetOperandAt(types::uinteger at) const { return _operands.at(at); }
+				ObjectPtr GetOperandAt(types::uinteger at) const { return _operands.at(at); }
 
 				inline virtual InstructionBase::Type GetInstructionType(void) const _NOEXCEPT override { return InstructionBase::Type::Operation; }
 				inline virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::Generic; }
 
 			private:
-				Operator _operator;
-				std::vector<Operand> _operands;
+				OperatorBasePtr _operator;
+				std::vector<ObjectPtr> _operands;
 			};
-
-			using OperatorBaseVisitor = BaseVisitor<OperatorBase*>;
-			using OperationBaseVisitor = BaseVisitor<OperationBase*>;
-			using OperatorBaseAddRefVisitor = BaseAddRefVisitor<OperatorBase*>;
-			using OperationBaseAddRefVisitor = BaseAddRefVisitor<OperationBase*>;
 
 			typedef std::vector<OperationGenericPtr> OperationCollection;
 		}

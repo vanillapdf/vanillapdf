@@ -16,15 +16,15 @@ namespace gotchangpdf
 		namespace qi = boost::spirit::qi;
 
 		class XrefTableSubsectionsGrammar : public qi::grammar<pos_iterator_type,
-			Xref(std::shared_ptr<File>*, types::stream_offset)>
+			XrefBasePtr(std::shared_ptr<File>*, types::stream_offset)>
 		{
 		public:
 			XrefTableSubsectionsGrammar();
 
 		private:
-			qi::rule<pos_iterator_type, Xref(std::shared_ptr<File>*, types::stream_offset)> start;
+			qi::rule<pos_iterator_type, XrefBasePtr(std::shared_ptr<File>*, types::stream_offset)> start;
 			qi::rule<pos_iterator_type, XrefSubsectionPtr(std::shared_ptr<File>*), qi::locals<types::integer, types::integer, types::integer>> subsection;
-			qi::rule<pos_iterator_type, XrefEntry(types::integer), qi::locals<types::integer, types::ushort>> entry;
+			qi::rule<pos_iterator_type, XrefEntryBasePtr(types::integer), qi::locals<types::integer, types::ushort>> entry;
 
 			qi::int_parser<types::integer, 10U, 10, 10> offset_parser;
 			qi::int_parser<types::ushort, 10U, 5, 5> gen_parser;

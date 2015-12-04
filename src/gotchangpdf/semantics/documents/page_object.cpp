@@ -9,7 +9,6 @@
 #include "name_object.h"
 #include "integer_object.h"
 #include "exception.h"
-#include "object_visitors.h"
 
 namespace gotchangpdf
 {
@@ -45,20 +44,16 @@ namespace gotchangpdf
 
 		ContentsPtr PageObject::Contents() const
 		{
-			IsTypeVisitor<NullObjectPtr> null_visitor;
-			IsTypeVisitor<StreamObjectPtr> ref_visitor;
-			IsTypeVisitor<ArrayObjectPtr<StreamObjectPtr>> array_visitor;
-
-			ContainableObject content;
+			ContainableObjectPtr content;
 			auto found = _obj->TryFind(Name::Contents, content);
 
 			// Missing entry, return empty collection
 			if (!found)
 				return ContentsPtr();
 
-			bool is_null = content.apply_visitor(null_visitor);
-			bool is_ref = content.apply_visitor(ref_visitor);
-			bool is_array = content.apply_visitor(array_visitor);
+			bool is_null = ObjectUtils::IsType<NullObjectPtr>(content);
+			bool is_ref = ObjectUtils::IsType<StreamObjectPtr>(content);
+			bool is_array = ObjectUtils::IsType<ArrayObjectPtr<StreamObjectPtr>>(content);
 
 			// Missing entry, return empty collection
 			if (is_null) {
@@ -70,23 +65,19 @@ namespace gotchangpdf
 			if (!(is_ref ^ is_array)) {
 
 				// This is programming safe check
-				assert(!(is_ref && is_array) && "Error in object visitors, object is stream and array at the same time");
+				assert(!(is_ref && is_array) && "Error in object utils, object is stream and array at the same time");
 
-				ObjectBaseVisitor base_visitor;
-				auto base = content.apply_visitor(base_visitor);
-				auto base_type_str = Object::TypeName(base->GetType());
+				auto base_type_str = Object::TypeName(content->GetType());
 				throw Exception("Invalid contents type: " + std::string(base_type_str));
 			}
 
 			if (is_ref) {
-				ConversionVisitor<StreamObjectPtr> visitor;
-				auto data = content.apply_visitor(visitor);
+				auto data = ObjectUtils::ConvertTo<StreamObjectPtr>(content);
 				return ContentsPtr(data);
 			}
 
 			if (is_array) {
-				ConversionVisitor<ArrayObjectPtr<IndirectObjectReferencePtr>> visitor;
-				auto data = content.apply_visitor(visitor);
+				auto data = ObjectUtils::ConvertTo<ArrayObjectPtr<IndirectObjectReferencePtr>>(content);
 				return ContentsPtr(data);
 			}
 

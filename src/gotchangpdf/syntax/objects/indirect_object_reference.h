@@ -3,29 +3,26 @@
 
 #include "syntax_fwd.h"
 #include "containable.h"
-#include "objects.h"
-#include "direct_object.h"
 
 namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class IndirectObjectReference : public Object
+		class IndirectObjectReference : public ContainableObject
 		{
 		public:
 			IndirectObjectReference() = default;
-			explicit IndirectObjectReference(DirectObject obj);
+			explicit IndirectObjectReference(ObjectPtr obj);
 			IndirectObjectReference(types::integer obj, types::ushort gen);
 
-			DirectObject GetReferencedObject() const;
-			inline DirectObject operator->() const { return GetReferencedObject(); }
+			ObjectPtr GetReferencedObject() const;
+			inline ObjectPtr operator->() const { return GetReferencedObject(); }
 
 			template <typename T>
 			inline const T GetReferencedObjectAs() const
 			{
-				ConversionVisitor<T> visitor;
 				auto direct = GetReferencedObject();
-				return direct.apply_visitor(visitor);
+				return ObjectUtils::ConvertTo<T>(direct);
 			}
 
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::IndirectReference; }
@@ -45,7 +42,5 @@ namespace gotchangpdf
 		};
 	}
 }
-
-#include "conversion_visitor.h"
 
 #endif /* _INDIRECT_OBJECT_REFERENCE_H */

@@ -20,11 +20,6 @@
 
 /*---------------------------------------------------*/
 
-// Boost variant size if by default only 20
-// Content stream grammar requires around 70
-#define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
-#define BOOST_MPL_LIMIT_LIST_SIZE 80
-
 // Memory leak tracking
 #ifdef _DEBUG
 	#define _CRTDBG_MAP_ALLOC
@@ -39,13 +34,12 @@
 // Solution
 #include "deferred.h"
 #include "objects.h"
+#include "object_utils.h"
 #include "exception.h"
 #include "constants.h"
 
 // snprintf in boost
 #pragma warning (disable: 4996)
 #include "log.h"
-
-#include <boost/spirit/include/qi_grammar.hpp>
 
 #endif /* _PRECOMPILED_H */

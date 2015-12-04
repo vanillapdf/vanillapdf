@@ -18,13 +18,13 @@ namespace gotchangpdf
 			namespace qi = boost::spirit::qi;
 
 			class OperandGrammar : public qi::grammar<pos_iterator_type,
-				Operand(std::shared_ptr<File>*)>
+				ObjectPtr(std::shared_ptr<File>*)>
 			{
 			public:
 				OperandGrammar();
 
 			private:
-				qi::rule<pos_iterator_type, Operand(std::shared_ptr<File>*)> start;
+				qi::rule<pos_iterator_type, ObjectPtr(std::shared_ptr<File>*)> start;
 
 				ContainableGrammar containable_object;
 				NullGrammar null_object;
@@ -35,8 +35,7 @@ namespace gotchangpdf
 				BooleanGrammar boolean_object;
 				IntegerGrammar integer_object;
 				RealGrammar real_object;
-				LiteralStringGrammar literal_string_object;
-				HexadecimalStringGrammar hexadecimal_string_object;
+				StringGrammar string_object;
 			};
 
 			class ContentStreamGrammar : public qi::grammar<pos_iterator_type,

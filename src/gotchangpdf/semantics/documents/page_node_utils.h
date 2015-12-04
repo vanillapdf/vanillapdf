@@ -3,35 +3,33 @@
 
 #include "semantics_fwd.h"
 
-#include <boost/variant/variant.hpp>
-#include <boost/variant/static_visitor.hpp>
-
 namespace gotchangpdf
 {
 	namespace semantics
 	{
-		typedef boost::variant<
-			PageObjectPtr,
-			PageTreeNodePtr
-		> PageNodePtr;
+		PageNodeBasePtr CreatePageNode(syntax::DictionaryObjectPtr obj);
 
-		PageNodePtr CreatePageNode(syntax::DictionaryObjectPtr obj);
-
-		class PageNodeBaseVisitor : public boost::static_visitor<PageNodeBase*>
+		class PageNodeUtils
 		{
 		public:
 			template <typename T>
-			inline PageNodeBase* operator()(T& obj) const { return obj.Content.get(); }
-		};
+			static T ConvertTo(const PageNodeBasePtr& obj)
+			{
+				auto ptr = obj.Content.get();
+				auto converted = dynamic_cast<typename T::value_type *>(ptr);
+				if (nullptr == converted)
+					throw Exception("Could not convert object to destination type");
 
-		template <typename T>
-		class PageNodeVisitor : public boost::static_visitor<T>
-		{
-		public:
-			inline T operator()(T& obj) const { return obj; }
+				return T(converted);
+			}
 
-			template <typename U>
-			inline T operator()(const U&) const { throw syntax::Exception("Type cast error"); }
+			template <typename T>
+			static bool IsType(const PageNodeBasePtr& obj)
+			{
+				auto ptr = obj.Content.get();
+				auto converted = dynamic_cast<typename T::value_type *>(ptr);
+				return (nullptr != converted);
+			}
 		};
 	}
 }

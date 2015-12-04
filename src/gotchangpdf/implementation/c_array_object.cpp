@@ -1,6 +1,5 @@
 #include "precompiled.h"
 #include "file.h"
-#include "object_visitors.h"
 
 #include "c_array_object.h"
 #include "c_helper.h"
@@ -18,10 +17,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayHandle handle
 	try
 	{
 		auto direct = obj->At(at);
-		ObjectBaseAddRefVisitor visitor;
-		auto base = direct.apply_visitor(visitor);
-		*result = reinterpret_cast<ObjectHandle>(base);
-
+		auto base = ObjectUtils::GetObjectBase(direct);
+		auto ptr = base.AddRefGet();
+		*result = reinterpret_cast<ObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS

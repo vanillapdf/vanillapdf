@@ -3,7 +3,6 @@
 
 #include "iter_offset_parser.h"
 #include "abstract_syntax_tree.h"
-#include "object_visitors.h"
 
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix.hpp>
@@ -11,25 +10,20 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-void add_section(Xref xref, const XrefSubsectionPtr& section)
+void add_section(XrefBasePtr xref, const XrefSubsectionPtr& section)
 {
-	XrefBaseVisitor visitor;
-	auto base = xref.apply_visitor(visitor);
-	base->Add(section);
+	xref->Add(section);
 }
 
-void add_entry(XrefSubsectionPtr section, const XrefEntry& entry)
+void add_entry(XrefSubsectionPtr section, const XrefEntryBasePtr& entry)
 {
 	section->Add(entry);
 }
 
-void set_file_to_entry(XrefEntry& entry, std::shared_ptr<File>* file)
+void set_file_to_entry(XrefEntryBasePtr& entry, std::shared_ptr<File>* file)
 {
 	assert(nullptr != file && *file);
-
-	XrefEntryBaseVisitor visitor;
-	auto base = entry.apply_visitor(visitor);
-	base->SetFile(*file);
+	entry->SetFile(*file);
 }
 
 void set_file_to_subsection(XrefSubsectionPtr& section, std::shared_ptr<File>* file)
@@ -38,36 +32,25 @@ void set_file_to_subsection(XrefSubsectionPtr& section, std::shared_ptr<File>* f
 	section->SetFile(*file);
 }
 
-void set_file_to_xref(Xref& xref, std::shared_ptr<File>* file)
+void set_file_to_xref(XrefBasePtr& xref, std::shared_ptr<File>* file)
 {
 	assert(nullptr != file && *file);
-
-	XrefBaseVisitor visitor;
-	auto base = xref.apply_visitor(visitor);
-	base->SetFile(*file);
+	xref->SetFile(*file);
 }
 
-void set_trailer(Xref& xref, DictionaryObjectPtr& dict)
+void set_trailer(XrefBasePtr& xref, DictionaryObjectPtr& dict)
 {
-	XrefBaseVisitor visitor;
-	auto base = xref.apply_visitor(visitor);
-
-	base->SetTrailerDictionary(dict);
+	xref->SetTrailerDictionary(dict);
 }
 
-void set_last_offset(Xref& xref, types::integer offset)
+void set_last_offset(XrefBasePtr& xref, types::integer offset)
 {
-	XrefBaseVisitor visitor;
-	auto base = xref.apply_visitor(visitor);
-	base->SetLastXrefOffset(offset);
+	xref->SetLastXrefOffset(offset);
 }
 
-void read_xref_stream_data(Xref xref, StreamObjectPtr stream, std::shared_ptr<File>* file)
+void read_xref_stream_data(XrefBasePtr xref, StreamObjectPtr stream, std::shared_ptr<File>* file)
 {
 	assert(nullptr != file && *file);
-
-	XrefBaseVisitor visitor;
-	auto xref_base = xref.apply_visitor(visitor);
 
 	// Get stream object data
 	auto header = stream->GetHeader();
@@ -150,11 +133,11 @@ void read_xref_stream_data(Xref xref, StreamObjectPtr stream, std::shared_ptr<Fi
 		}
 
 		subsection->SetFile(*file);
-		xref_base->Add(subsection);
+		xref->Add(subsection);
 	}
 
-	xref_base->SetFile(*file);
-	xref_base->SetTrailerDictionary(header);
+	xref->SetFile(*file);
+	xref->SetTrailerDictionary(header);
 }
 
 namespace gotchangpdf

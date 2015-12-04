@@ -4,8 +4,6 @@
 #include "syntax_fwd.h"
 #include "xref.h"
 #include "raw_stream.h"
-#include "direct_object.h"
-#include "conversion_visitor.h"
 #include "object_stream_header.h"
 #include "content_stream_operations.h"
 
@@ -26,29 +24,25 @@ namespace gotchangpdf
 			T ReadDirectObjectWithType(types::stream_offset offset)
 			{
 				auto direct = ReadDirectObject(offset);
-				ConversionVisitor<T> visitor;
-				auto converted = direct.apply_visitor(visitor);
-				return converted;
+				return ObjectUtils::ConvertTo<T>(direct);
 			}
 
 			template<typename T>
 			T ReadDirectObjectWithType(void)
 			{
 				auto direct = ReadDirectObject();
-				ConversionVisitor<T> visitor;
-				auto converted = direct.apply_visitor(visitor);
-				return converted;
+				return ObjectUtils::ConvertTo<T>(direct);
 			}
 
-			std::vector<DirectObject> ReadObjectStreamEntries(types::integer first, types::integer size);
+			std::vector<ObjectPtr> ReadObjectStreamEntries(types::integer first, types::integer size);
 			ObjectStreamHeaders ReadObjectStreamHeaders(types::integer size);
 			contents::OperationCollection ReadContentStreamOperations(void);
 
-			Xref ReadXref(void);
-			Xref ReadXref(types::stream_offset offset);
+			XrefBasePtr ReadXref(void);
+			XrefBasePtr ReadXref(types::stream_offset offset);
 
-			DirectObject ReadDirectObject(void);
-			DirectObject ReadDirectObject(types::stream_offset offset);
+			ObjectPtr ReadDirectObject(void);
+			ObjectPtr ReadDirectObject(types::stream_offset offset);
 
 			types::integer ReadLastXrefOffset();
 

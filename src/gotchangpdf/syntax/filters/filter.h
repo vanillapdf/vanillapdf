@@ -7,7 +7,7 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class Filter : public IUnknown
+		class FilterBase : public IUnknown
 		{
 		public:
 			enum class Type : unsigned char

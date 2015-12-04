@@ -3,25 +3,21 @@
 
 #include "file.h"
 #include "objects.h"
-#include "object_visitors.h"
 
 namespace gotchangpdf
 {
 	namespace syntax
 	{
-		IndirectObjectReference::IndirectObjectReference(DirectObject obj)
+		IndirectObjectReference::IndirectObjectReference(ObjectPtr obj)
 		{
-			ObjectBaseVisitor visitor;
-			auto base = obj.apply_visitor(visitor);
-
-			assert(base->IsIndirect());
-			_ref_obj = base->GetObjectNumber();
-			_ref_gen = base->GetGenerationNumber();
+			assert(obj->IsIndirect());
+			_ref_obj = obj->GetObjectNumber();
+			_ref_gen = obj->GetGenerationNumber();
 		}
 
 		IndirectObjectReference::IndirectObjectReference(types::integer obj, types::ushort gen) : _ref_obj(obj), _ref_gen(gen) {}
 
-		DirectObject IndirectObjectReference::GetReferencedObject() const
+		ObjectPtr IndirectObjectReference::GetReferencedObject() const
 		{
 			auto locked_file = _file.lock();
 			if (!locked_file)
