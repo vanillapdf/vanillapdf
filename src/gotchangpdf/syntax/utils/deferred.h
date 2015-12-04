@@ -19,10 +19,22 @@ namespace gotchangpdf
 
 		Deferred(T* value) : Contents(value)
 		{
+			assert(nullptr != value);
 			Content.Owner = this;
 		}
 
 		Deferred(const Deferred& rhs) : Contents(rhs.Contents)
+		{
+			Content.Owner = this;
+		}
+
+		Deferred(Deferred&& rhs) : Contents(std::move(rhs.Contents))
+		{
+			Content.Owner = this;
+		}
+
+		template <typename U, typename = std::enable_if_t<std::is_convertible<U*, T*>::value>>
+		Deferred(const Deferred<U>& rhs) : Contents(rhs.Content.get())
 		{
 			Content.Owner = this;
 		}
@@ -39,18 +51,26 @@ namespace gotchangpdf
 			Content.Owner = this;
 		}
 
-		template <typename = std::enable_if_t<std::is_constructible<T>::value>>
+		//template <typename = std::enable_if_t<std::is_constructible<T>::value>>
 		Deferred() : Contents(reinterpret_cast<T*>(nullptr))
 		{
 			Content.Owner = this;
 		}
 
+		//template <typename U, typename = std::enable_if_t<std::is_convertible<U*, T*>::value>>
+		//Deferred& operator=(const Deferred<U>& rhs)
+		//{
+		//	Contents.reset(rhs.Content.get());
+		//	Content.Owner = this;
+		//	return *this;
+		//}
+
 		inline operator T&() { return Content.operator*(); }
 		inline operator T&() const { return Content.operator*(); }
 
-		inline bool operator==(const Deferred& other) const { return *Contents == *other.Contents; }
-		inline bool operator!=(const Deferred& other) const { return *Contents != *other.Contents; }
-		inline bool operator<(const Deferred& other) const { return *Contents < *other.Contents; }
+		inline bool operator==(const Deferred& other) const { return *Content == *other.Content; }
+		inline bool operator!=(const Deferred& other) const { return *Content != *other.Content; }
+		inline bool operator<(const Deferred& other) const { return *Content < *other.Content; }
 
 		T& operator*() const
 		{
@@ -64,9 +84,15 @@ namespace gotchangpdf
 
 		Deferred& operator=(const Deferred& rhs)
 		{
-			if (this != &rhs)
-				Contents = rhs.Contents;
+			//if (this != &rhs)
+			Contents = rhs.Contents;
+			return *this;
+		}
 
+		Deferred& operator=(Deferred&& rhs)
+		{
+			//if (this != &rhs)
+			Contents = std::move(rhs.Contents);
 			return *this;
 		}
 
@@ -121,13 +147,20 @@ namespace gotchangpdf
 				return Owner->Contents.get();
 			}
 
-			Deferred* Owner;
+			Deferred* Owner = nullptr;
 		} Content;
 
 		T* AddRefGet(void)
 		{
 			Content->AddRef();
 			return Content.get();
+		}
+
+		virtual ~Deferred()
+		{
+			if (this == Content.Owner) {
+				Content.Owner = nullptr;
+			}
 		}
 
 	protected:
@@ -161,7 +194,7 @@ namespace gotchangpdf
 		template <typename U, typename = std::enable_if_t<std::is_constructible<T, std::initializer_list<U>>::value>>
 		DeferredContainer(std::initializer_list<U> list) : Deferred(list) {}
 
-		template <typename = std::enable_if_t<std::is_constructible<T>::value>>
+		//template <typename = std::enable_if_t<std::is_constructible<T>::value>>
 		DeferredContainer() : Deferred() {}
 
 		// Support insertion as if this were itself a container
@@ -217,7 +250,7 @@ namespace gotchangpdf
 		template <typename U, typename = std::enable_if_t<std::is_constructible<T, std::initializer_list<U>>::value>>
 		DeferredIterator(std::initializer_list<U> list) : Deferred(list) {}
 
-		template <typename = std::enable_if_t<std::is_constructible<T>::value>>
+		//template <typename = std::enable_if_t<std::is_constructible<T>::value>>
 		DeferredIterator() : Deferred() {}
 	};
 }
