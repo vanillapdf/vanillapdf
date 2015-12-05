@@ -8,7 +8,7 @@
 #include <string.h>
 #include <assert.h>
 
-#ifdef _DEBUG
+#ifdef DEBUG
 	#define _CRTDBG_MAP_ALLOC
 	#include <crtdbg.h>
 #endif

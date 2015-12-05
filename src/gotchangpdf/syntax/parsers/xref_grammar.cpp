@@ -58,9 +58,7 @@ void read_xref_stream_data(XrefBasePtr xref, StreamObjectPtr stream, std::shared
 	auto fields = header->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::W);
 	auto size = header->FindAs<IntegerObjectPtr>(constant::Name::Size);
 
-	auto field_size = fields->Size();
-	assert(field_size == 3);
-
+	assert(fields->Size() == 3);
 	ArrayObjectPtr<IntegerObjectPtr> index = { IntegerObjectPtr(0), size };
 	if (header->Contains(constant::Name::Index)) {
 		index = header->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::Index);

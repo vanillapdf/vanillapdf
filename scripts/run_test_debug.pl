@@ -23,7 +23,7 @@ elsif ($os eq "LinuxTODO") {
 	# Running linux
 	print "Linux\n";
 	
-	$path = '..\build\gotchangpdf.test\Debug\gotchangpdf.test';
+	$path = '..\build\gotchangpdf.test\debug\gotchangpdf.test';
 }
 else {
 	# Unknown platform

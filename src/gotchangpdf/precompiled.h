@@ -21,14 +21,19 @@
 /*---------------------------------------------------*/
 
 // Memory leak tracking
-#ifdef _DEBUG
+#if defined(DEBUG)
 	#define _CRTDBG_MAP_ALLOC
 	#include <crtdbg.h>
 
-	#ifndef DBG_NEW
-		#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
-		#define pdf_new DBG_NEW
+	#ifndef pdf_new
+		#define pdf_new new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
 	#endif
+#elif defined(RELEASE)
+	#ifndef pdf_new
+		#define pdf_new new
+	#endif
+#else
+	#error Unknown project configuration
 #endif
 
 // Solution
