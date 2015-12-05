@@ -7,8 +7,6 @@ namespace gotchangpdf
 {
 	namespace semantics
 	{
-		class ContentObjectBase; using ContentObjectBasePtr = Deferred<ContentObjectBase>;
-
 		class Document; using DocumentPtr = Deferred<Document>;
 		class Catalog; using CatalogPtr = Deferred<Catalog>;
 		class PageNodeBase; using PageNodeBasePtr = Deferred<PageNodeBase>;
@@ -17,8 +15,6 @@ namespace gotchangpdf
 		class PageObject; using PageObjectPtr = Deferred<PageObject>;
 
 		class ResourceDictionary; using ResourceDictionaryPtr = Deferred<ResourceDictionary>;
-		class ContentStream; using ContentStreamPtr = Deferred<ContentStream>;
-		class Contents; using ContentsPtr = Deferred<Contents>;
 
 		class Rectangle; using RectanglePtr = Deferred<Rectangle>;
 
@@ -27,6 +23,18 @@ namespace gotchangpdf
 		class NumberTree;
 		class Rectangle;
 		class Tree;
+
+		class ContentStream; using ContentStreamPtr = Deferred<ContentStream>;
+		class Contents; using ContentsPtr = Deferred<Contents>;
+
+		namespace contents
+		{
+			class ContentObjectBase; using ContentObjectBasePtr = Deferred<ContentObjectBase>;
+			class OperationBeginText; using OperationBeginTextPtr = Deferred<OperationBeginText>;
+			class OperationEndText; using OperationEndTextPtr = Deferred<OperationEndText>;
+			class OperationTextShow; using OperationTextShowPtr = Deferred<OperationTextShow>;
+			class TextObject; using TextObjectPtr = Deferred<TextObject>;
+		}
 	}
 }
 

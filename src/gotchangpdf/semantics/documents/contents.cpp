@@ -7,7 +7,208 @@ namespace gotchangpdf
 {
 	namespace semantics
 	{
+		namespace sync = syntax::contents;
+
+		namespace contents
+		{
+			class ContentUtils
+			{
+			public:
+				static sync::OperationBasePtr ConvertGenericOperation(sync::OperationGenericPtr obj)
+				{
+					auto oper = obj->GetOperator();
+					auto type = oper->GetType();
+					switch (type)
+					{
+					case sync::OperatorBase::Type::Unknown:
+						return obj;
+					case sync::OperatorBase::Type::LineWidth:
+						return obj;
+					case sync::OperatorBase::Type::LineCap:
+						return obj;
+					case sync::OperatorBase::Type::LineJoin:
+						return obj;
+					case sync::OperatorBase::Type::MiterLimit:
+						return obj;
+					case sync::OperatorBase::Type::DashPattern:
+						return obj;
+					case sync::OperatorBase::Type::ColorRenderingIntent:
+						return obj;
+					case sync::OperatorBase::Type::Flatness:
+						return obj;
+					case sync::OperatorBase::Type::GraphicsState:
+						return obj;
+					case sync::OperatorBase::Type::SaveGraphicsState:
+						return obj;
+					case sync::OperatorBase::Type::RestoreGraphicsState:
+						return obj;
+					case sync::OperatorBase::Type::TransformationMatrix:
+						return obj;
+					case sync::OperatorBase::Type::BeginSubpath:
+						return obj;
+					case sync::OperatorBase::Type::Line:
+						return obj;
+					case sync::OperatorBase::Type::FullCurve:
+						return obj;
+					case sync::OperatorBase::Type::FinalCurve:
+						return obj;
+					case sync::OperatorBase::Type::InitialCurve:
+						return obj;
+					case sync::OperatorBase::Type::CloseSubpath:
+						return obj;
+					case sync::OperatorBase::Type::Rectangle:
+						return obj;
+					case sync::OperatorBase::Type::Stroke:
+						return obj;
+					case sync::OperatorBase::Type::CloseAndStroke:
+						return obj;
+					case sync::OperatorBase::Type::FillPathNonzero:
+						return obj;
+					case sync::OperatorBase::Type::FillPathCompatibility:
+						return obj;
+					case sync::OperatorBase::Type::FillPathEvenOdd:
+						return obj;
+					case sync::OperatorBase::Type::FillStrokeNonzero:
+						return obj;
+					case sync::OperatorBase::Type::FillStrokeEvenOdd:
+						return obj;
+					case sync::OperatorBase::Type::CloseFillStrokeNonzero:
+						return obj;
+					case sync::OperatorBase::Type::CloseFillStrokeEvenOdd:
+						return obj;
+					case sync::OperatorBase::Type::EndPath:
+						return obj;
+					case sync::OperatorBase::Type::ClipPathNonzero:
+						return obj;
+					case sync::OperatorBase::Type::ClipPathEvenOdd:
+						return obj;
+					case sync::OperatorBase::Type::BeginText:
+						assert(obj->GetOperandsSize() == 0);
+						return OperationBeginTextPtr();
+					case sync::OperatorBase::Type::EndText:
+						assert(obj->GetOperandsSize() == 0);
+						return OperationEndTextPtr();
+					case sync::OperatorBase::Type::CharacterSpacing:
+						return obj;
+					case sync::OperatorBase::Type::WordSpacing:
+						return obj;
+					case sync::OperatorBase::Type::HorizontalScaling:
+						return obj;
+					case sync::OperatorBase::Type::Leading:
+						return obj;
+					case sync::OperatorBase::Type::TextFont:
+						return obj;
+					case sync::OperatorBase::Type::TextRenderingMode:
+						return obj;
+					case sync::OperatorBase::Type::TextRise:
+						return obj;
+					case sync::OperatorBase::Type::TextTranslate:
+						return obj;
+					case sync::OperatorBase::Type::TextTranslateLeading:
+						return obj;
+					case sync::OperatorBase::Type::TextMatrix:
+						return obj;
+					case sync::OperatorBase::Type::TextNextLine:
+						return obj;
+					case sync::OperatorBase::Type::TextShow:
+					{
+						auto operands = obj->GetOperands();
+						if (1 != operands.size())
+							return obj;
+
+						auto item = operands.at(0);
+						if (!syntax::ObjectUtils::IsType<syntax::StringObjectPtr>(item))
+							return obj;
+
+						auto str = syntax::ObjectUtils::ConvertTo<syntax::StringObjectPtr>(item);
+						return OperationTextShowPtr(str);
+					}
+					case sync::OperatorBase::Type::TextShowArray:
+						return obj;
+					case sync::OperatorBase::Type::TextNextLineShow:
+						return obj;
+					case sync::OperatorBase::Type::TextNextLineShowSpacing:
+						return obj;
+					case sync::OperatorBase::Type::SetCharWidth:
+						return obj;
+					case sync::OperatorBase::Type::SetCacheDevice:
+						return obj;
+					case sync::OperatorBase::Type::ColorSpaceStroke:
+						return obj;
+					case sync::OperatorBase::Type::ColorSpaceNonstroke:
+						return obj;
+					case sync::OperatorBase::Type::SetColorStroke:
+						return obj;
+					case sync::OperatorBase::Type::SetColorStrokeExtended:
+						return obj;
+					case sync::OperatorBase::Type::SetColorNonstroke:
+						return obj;
+					case sync::OperatorBase::Type::SetColorNonstrokeExtended:
+						return obj;
+					case sync::OperatorBase::Type::SetStrokingColorSpaceGray:
+						return obj;
+					case sync::OperatorBase::Type::SetNonstrokingColorSpaceGray:
+						return obj;
+					case sync::OperatorBase::Type::SetStrokingColorSpaceRGB:
+						return obj;
+					case sync::OperatorBase::Type::SetNonstrokingColorSpaceRGB:
+						return obj;
+					case sync::OperatorBase::Type::SetStrokingColorSpaceCMYK:
+						return obj;
+					case sync::OperatorBase::Type::SetNonstrokingColorSpaceCMYK:
+						return obj;
+					case sync::OperatorBase::Type::ShadingPaint:
+						return obj;
+					case sync::OperatorBase::Type::BeginInlineImageObject:
+						return obj;
+					case sync::OperatorBase::Type::BeginInlineImageData:
+						return obj;
+					case sync::OperatorBase::Type::EndInlineImageObject:
+						return obj;
+					case sync::OperatorBase::Type::InvokeXObject:
+						return obj;
+					case sync::OperatorBase::Type::DefineMarkedContentPoint:
+						return obj;
+					case sync::OperatorBase::Type::DefineMarkedContentPointWithPropertyList:
+						return obj;
+					case sync::OperatorBase::Type::BeginMarkedContentSequence:
+						return obj;
+					case sync::OperatorBase::Type::BeginMarkedContentSequenceWithPropertyList:
+						return obj;
+					case sync::OperatorBase::Type::EndMarkedContentSequence:
+						return obj;
+					case sync::OperatorBase::Type::BeginCompatibilitySection:
+						return obj;
+					case sync::OperatorBase::Type::EndCompatibilitySection:
+						return obj;
+					default:
+						throw syntax::Exception("Unknown operation type");
+					}
+				}
+
+				template <typename T>
+				static T ConvertTo(const sync::OperationBasePtr& obj)
+				{
+					auto ptr = obj.Content.get();
+					auto converted = dynamic_cast<typename T::value_type *>(ptr);
+					if (nullptr == converted)
+						throw Exception("Could not convert object to destination type");
+
+					return T(converted);
+				}
+
+				template <typename T>
+				static bool IsType(const sync::OperationBasePtr& obj)
+				{
+					auto ptr = obj.Content.get();
+					auto converted = dynamic_cast<typename T::value_type *>(ptr);
+					return (nullptr != converted);
+				}
+			};
+		}
+
 		using namespace syntax;
+		using namespace contents;
 
 		Contents::Contents(StreamObjectPtr obj)
 		{
@@ -23,195 +224,12 @@ namespace gotchangpdf
 			}
 		}
 
-		class ContentUtils
-		{
-		public:
-			static contents::OperationBasePtr ConvertGenericOperation(contents::OperationGenericPtr obj)
-			{
-				auto type = obj->GetOperationType();
-				switch (type)
-				{
-				case contents::OperationBase::Type::Generic:
-					return obj;
-				case contents::OperationBase::Type::LineWidth:
-					return obj;
-				case contents::OperationBase::Type::LineCap:
-					return obj;
-				case contents::OperationBase::Type::LineJoin:
-					return obj;
-				case contents::OperationBase::Type::MiterLimit:
-					return obj;
-				case contents::OperationBase::Type::DashPattern:
-					return obj;
-				case contents::OperationBase::Type::ColorRenderingIntent:
-					return obj;
-				case contents::OperationBase::Type::Flatness:
-					return obj;
-				case contents::OperationBase::Type::GraphicsState:
-					return obj;
-				case contents::OperationBase::Type::SaveGraphicsState:
-					return obj;
-				case contents::OperationBase::Type::RestoreGraphicsState:
-					return obj;
-				case contents::OperationBase::Type::TransformationMatrix:
-					return obj;
-				case contents::OperationBase::Type::BeginSubpath:
-					return obj;
-				case contents::OperationBase::Type::Line:
-					return obj;
-				case contents::OperationBase::Type::FullCurve:
-					return obj;
-				case contents::OperationBase::Type::FinalCurve:
-					return obj;
-				case contents::OperationBase::Type::InitialCurve:
-					return obj;
-				case contents::OperationBase::Type::CloseSubpath:
-					return obj;
-				case contents::OperationBase::Type::Rectangle:
-					return obj;
-				case contents::OperationBase::Type::Stroke:
-					return obj;
-				case contents::OperationBase::Type::CloseAndStroke:
-					return obj;
-				case contents::OperationBase::Type::FillPathNonzero:
-					return obj;
-				case contents::OperationBase::Type::FillPathCompatibility:
-					return obj;
-				case contents::OperationBase::Type::FillPathEvenOdd:
-					return obj;
-				case contents::OperationBase::Type::FillStrokeNonzero:
-					return obj;
-				case contents::OperationBase::Type::FillStrokeEvenOdd:
-					return obj;
-				case contents::OperationBase::Type::CloseFillStrokeNonzero:
-					return obj;
-				case contents::OperationBase::Type::CloseFillStrokeEvenOdd:
-					return obj;
-				case contents::OperationBase::Type::EndPath:
-					return obj;
-				case contents::OperationBase::Type::ClipPathNonzero:
-					return obj;
-				case contents::OperationBase::Type::ClipPathEvenOdd:
-					return obj;
-				case contents::OperationBase::Type::BeginText:
-					assert(obj->GetOperandsSize() == 0);
-					return BeginTextOperationPtr();
-				case contents::OperationBase::Type::EndText:
-					assert(obj->GetOperandsSize() == 0);
-					return EndTextOperationPtr();
-				case contents::OperationBase::Type::CharacterSpacing:
-					return obj;
-				case contents::OperationBase::Type::WordSpacing:
-					return obj;
-				case contents::OperationBase::Type::HorizontalScaling:
-					return obj;
-				case contents::OperationBase::Type::Leading:
-					return obj;
-				case contents::OperationBase::Type::TextFont:
-					return obj;
-				case contents::OperationBase::Type::TextRenderingMode:
-					return obj;
-				case contents::OperationBase::Type::TextRise:
-					return obj;
-				case contents::OperationBase::Type::TextTranslate:
-					return obj;
-				case contents::OperationBase::Type::TextTranslateLeading:
-					return obj;
-				case contents::OperationBase::Type::TextMatrix:
-					return obj;
-				case contents::OperationBase::Type::TextNextLine:
-					return obj;
-				case contents::OperationBase::Type::TextShow:
-					return obj;
-				case contents::OperationBase::Type::TextShowArray:
-					return obj;
-				case contents::OperationBase::Type::TextNextLineShow:
-					return obj;
-				case contents::OperationBase::Type::TextNextLineShowSpacing:
-					return obj;
-				case contents::OperationBase::Type::SetCharWidth:
-					return obj;
-				case contents::OperationBase::Type::SetCacheDevice:
-					return obj;
-				case contents::OperationBase::Type::ColorSpaceStroke:
-					return obj;
-				case contents::OperationBase::Type::ColorSpaceNonstroke:
-					return obj;
-				case contents::OperationBase::Type::SetColorStroke:
-					return obj;
-				case contents::OperationBase::Type::SetColorStrokeExtended:
-					return obj;
-				case contents::OperationBase::Type::SetColorNonstroke:
-					return obj;
-				case contents::OperationBase::Type::SetColorNonstrokeExtended:
-					return obj;
-				case contents::OperationBase::Type::SetStrokingColorSpaceGray:
-					return obj;
-				case contents::OperationBase::Type::SetNonstrokingColorSpaceGray:
-					return obj;
-				case contents::OperationBase::Type::SetStrokingColorSpaceRGB:
-					return obj;
-				case contents::OperationBase::Type::SetNonstrokingColorSpaceRGB:
-					return obj;
-				case contents::OperationBase::Type::SetStrokingColorSpaceCMYK:
-					return obj;
-				case contents::OperationBase::Type::SetNonstrokingColorSpaceCMYK:
-					return obj;
-				case contents::OperationBase::Type::ShadingPaint:
-					return obj;
-				case contents::OperationBase::Type::BeginInlineImageObject:
-					return obj;
-				case contents::OperationBase::Type::BeginInlineImageData:
-					return obj;
-				case contents::OperationBase::Type::EndInlineImageObject:
-					return obj;
-				case contents::OperationBase::Type::InvokeXObject:
-					return obj;
-				case contents::OperationBase::Type::DefineMarkedContentPoint:
-					return obj;
-				case contents::OperationBase::Type::DefineMarkedContentPointWithPropertyList:
-					return obj;
-				case contents::OperationBase::Type::BeginMarkedContentSequence:
-					return obj;
-				case contents::OperationBase::Type::BeginMarkedContentSequenceWithPropertyList:
-					return obj;
-				case contents::OperationBase::Type::EndMarkedContentSequence:
-					return obj;
-				case contents::OperationBase::Type::BeginCompatibilitySection:
-					return obj;
-				case contents::OperationBase::Type::EndCompatibilitySection:
-					return obj;
-				default:
-					throw Exception("Unknown operation type");
-				}
-			}
-
-			template <typename T>
-			static T ConvertTo(const contents::OperationBasePtr& obj)
-			{
-				auto ptr = obj.Content.get();
-				auto converted = dynamic_cast<typename T::value_type *>(ptr);
-				if (nullptr == converted)
-					throw Exception("Could not convert object to destination type");
-
-				return T(converted);
-			}
-
-			template <typename T>
-			static bool IsType(const contents::OperationBasePtr& obj)
-			{
-				auto ptr = obj.Content.get();
-				auto converted = dynamic_cast<typename T::value_type *>(ptr);
-				return (nullptr != converted);
-			}
-		};
-
-		ContentInstructionCollection Contents::Instructions(void) const
+		contents::InstructionCollection Contents::Instructions(void) const
 		{
 			if (!_instructions.empty())
 				return _instructions;
 
-			ContentOperationCollection ops;
+			OperationCollection ops;
 
 			for (auto item : _contents) {
 				auto operations = item->Operations();
@@ -225,11 +243,11 @@ namespace gotchangpdf
 				}
 			}
 
-			ContentInstructionCollection result;
+			InstructionCollection result;
 			for (auto it = ops.begin(); it != ops.end(); ++it) {
-				if (ContentUtils::IsType<BeginTextOperationPtr>(*it)) {
+				if (ContentUtils::IsType<OperationBeginTextPtr>(*it)) {
 					auto last = std::find_if(it + 1, ops.end(), [it](const decltype(it)::value_type& item) {
-						return ContentUtils::IsType<EndTextOperationPtr>(item);
+						return ContentUtils::IsType<OperationEndTextPtr>(item);
 					});
 
 					assert(ops.end() != last && "End of current Text Object was not found");
@@ -239,7 +257,7 @@ namespace gotchangpdf
 					}
 
 					// Construct the collection
-					ContentOperationCollection text_object_data(it, last);
+					OperationCollection text_object_data(it, last);
 
 					// Erase Begin and End of Text Object, because they are not part of object
 					text_object_data.erase(text_object_data.begin());
@@ -265,7 +283,7 @@ namespace gotchangpdf
 			return ops.size();
 		}
 
-		contents::InstructionBasePtr Contents::GetInstructionAt(types::uinteger at) const
+		sync::InstructionBasePtr Contents::GetInstructionAt(types::uinteger at) const
 		{
 			auto ops = Instructions();
 			return ops.at(at);
