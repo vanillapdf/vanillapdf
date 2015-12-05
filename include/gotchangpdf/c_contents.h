@@ -195,11 +195,16 @@ extern "C"
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_GetType(ContentOperationHandle handle, PContentOperationType result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToGeneric(ContentOperationHandle handle, PContentOperationGenericHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShow(ContentOperationHandle handle, PContentOperationTextShowHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_Release(ContentOperationHandle handle);
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperator(ContentOperationGenericHandle handle, PContentOperatorHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandsSize(ContentOperationGenericHandle handle, out_integer_type result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandAt(ContentOperationGenericHandle handle, integer_type at, PObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_Release(ContentOperationGenericHandle handle);
+
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_Value(ContentOperationTextShowHandle handle, PStringHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_Release(ContentOperationTextShowHandle handle);
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_GetType(ContentOperatorHandle handle, PContentOperatorType result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_GetValue(ContentOperatorHandle handle, PBufferHandle result);

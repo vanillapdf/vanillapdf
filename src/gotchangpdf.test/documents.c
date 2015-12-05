@@ -52,6 +52,7 @@ error_type process_content_operation(ContentOperationHandle obj, int nested)
 {
 	ContentOperationType type;
 	ContentOperationGenericHandle generic_operation = NULL;
+	ContentOperationTextShowHandle textshow_operation = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_GetType(obj, &type));
 	switch (type)
@@ -59,6 +60,10 @@ error_type process_content_operation(ContentOperationHandle obj, int nested)
 	case ContentOperationType_Generic:
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToGeneric(obj, &generic_operation));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_generic(generic_operation, nested + 1));
+		break;
+	case ContentOperationType_TextShow:
+		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextShow(obj, &textshow_operation));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_textshow(textshow_operation, nested + 1));
 		break;
 	default:
 		print_spaces(nested + 1);
@@ -97,6 +102,25 @@ error_type process_content_operation_generic(ContentOperationGenericHandle obj, 
 
 	print_spaces(nested);
 	printf("Generic content operation end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_content_operation_textshow(ContentOperationTextShowHandle obj, int nested)
+{
+	int i = 0;
+	int size = 0;
+	ContentOperatorHandle oper = NULL;
+	StringHandle str = NULL;
+
+	print_spaces(nested);
+	printf("Text show content operation begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextShow_Value(obj, &str));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_string(str, nested + 1));
+
+	print_spaces(nested);
+	printf("Text show operation end\n");
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
