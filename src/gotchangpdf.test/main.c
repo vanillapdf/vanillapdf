@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 	if (argc != 2)
 		return GOTCHANG_PDF_ERROR_GENERAL;
 
-#ifdef _MSC_VER
+#if (defined(DEBUG) && defined(_MSC_VER))
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//_CrtSetBreakAlloc(803506);
 #endif
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Release(chain));
 	RETURN_ERROR_IF_NOT_SUCCESS(FileHolder_Release(file_holder));
 
-#ifdef _MSC_VER
+#if (defined(DEBUG) && defined(_MSC_VER))
 	_CrtDumpMemoryLeaks();
 #endif
 
