@@ -31,7 +31,6 @@ namespace gotchangpdf
 				ArrayGrammar array_object = { containable_object };
 				NameGrammar name_object;
 				DictionaryGrammar dictionary_object = { containable_object };
-				FunctionGrammar function_object;
 				BooleanGrammar boolean_object;
 				IntegerGrammar integer_object;
 				RealGrammar real_object;

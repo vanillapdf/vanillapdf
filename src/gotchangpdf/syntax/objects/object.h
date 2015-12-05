@@ -21,7 +21,6 @@ namespace gotchangpdf
 				Array,
 				Boolean,
 				Dictionary,
-				Function,
 				Integer,
 				Name,
 				Real,

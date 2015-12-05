@@ -20,7 +20,6 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(Stream);
 	DECLARE_OBJECT_HANDLE(String);
 	DECLARE_OBJECT_HANDLE(IndirectReference);
-	DECLARE_OBJECT_HANDLE(Function);
 	DECLARE_OBJECT_HANDLE(Dictionary);
 
 	DECLARE_OBJECT_HANDLE(DictionaryIterator);

@@ -72,7 +72,6 @@ namespace gotchangpdf
 		class MixedArrayObject;
 		class BooleanObject;
 		class DictionaryObject;
-		class FunctionObject;
 		class IndirectObjectReference;
 		class IntegerObject;
 		class NameObject;
@@ -95,7 +94,6 @@ namespace gotchangpdf
 		using ContainableObjectPtr = Deferred<ContainableObject>;
 		using NameObjectPtr = Deferred<NameObject>;
 		using BooleanObjectPtr = Deferred<BooleanObject>;
-		using FunctionObjectPtr = Deferred<FunctionObject>;
 		using IndirectObjectReferencePtr = Deferred<IndirectObjectReference>;
 		using IntegerObjectPtr = Deferred<IntegerObject>;
 		using NullObjectPtr = Deferred<NullObject>;

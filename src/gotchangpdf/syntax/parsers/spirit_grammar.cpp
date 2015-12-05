@@ -79,7 +79,6 @@ namespace gotchangpdf
 		void convert_string(StringObjectPtr& obj, ContainableObjectPtr& result) { return convert(obj, result); }
 		void convert_name(NameObjectPtr& obj, ContainableObjectPtr& result) { return convert(obj, result); }
 		void convert_reference(IndirectObjectReferencePtr& obj, ContainableObjectPtr& result) { return convert(obj, result); }
-		void convert_function(FunctionObjectPtr& obj, ContainableObjectPtr& result) { return convert(obj, result); }
 		void convert_boolean(BooleanObjectPtr& obj, ContainableObjectPtr& result) { return convert(obj, result); }
 
 		void convert_stream_to_obj(StreamObjectPtr& obj, ObjectPtr& result) { return convert(obj, result); }
@@ -91,7 +90,6 @@ namespace gotchangpdf
 		void convert_string_to_obj(StringObjectPtr& obj, ObjectPtr& result) { return convert(obj, result); }
 		void convert_name_to_obj(NameObjectPtr& obj, ObjectPtr& result) { return convert(obj, result); }
 		void convert_reference_to_obj(IndirectObjectReferencePtr& obj, ObjectPtr& result) { return convert(obj, result); }
-		void convert_function_to_obj(FunctionObjectPtr& obj, ObjectPtr& result) { return convert(obj, result); }
 		void convert_boolean_to_obj(BooleanObjectPtr& obj, ObjectPtr& result) { return convert(obj, result); }
 
 		DirectObjectGrammar::DirectObjectGrammar() :
@@ -121,7 +119,6 @@ namespace gotchangpdf
 				dict_or_stream(qi::_r1)
 				| array_object(qi::_r1)[phoenix::bind(&convert_array_to_obj, qi::_1, qi::_val)]
 				| boolean_object(qi::_r1)[phoenix::bind(&convert_boolean_to_obj, qi::_1, qi::_val)]
-				| function_object(qi::_r1)[phoenix::bind(&convert_function_to_obj, qi::_1, qi::_val)]
 				| indirect_object_reference(qi::_r1)[phoenix::bind(&convert_reference_to_obj, qi::_1, qi::_val)]
 				| real_object(qi::_r1)[phoenix::bind(&convert_real_to_obj, qi::_1, qi::_val)]
 				| integer_object(qi::_r1)[phoenix::bind(&convert_integer_to_obj, qi::_1, qi::_val)]
@@ -179,16 +176,6 @@ namespace gotchangpdf
 					qi::_val = phoenix::construct<IndirectObjectReferencePtr>(qi::_a, qi::_b),
 					phoenix::bind(&direct_object_file_handler, qi::_val, qi::_r1)
 				];
-
-			BOOST_SPIRIT_DEBUG_NODE(start);
-		}
-
-		FunctionGrammar::FunctionGrammar() :
-			base_type(start, "Function grammar")
-		{
-			//start %=
-			//	qi::eps
-			//	>> strict_float_parser;
 
 			BOOST_SPIRIT_DEBUG_NODE(start);
 		}
@@ -285,7 +272,6 @@ namespace gotchangpdf
 				array_object(qi::_r1)[phoenix::bind(&convert_array, qi::_1, qi::_val)]
 				| boolean_object(qi::_r1)[phoenix::bind(&convert_boolean, qi::_1, qi::_val)]
 				| dictionary_object(qi::_r1)[phoenix::bind(&convert_dictionary, qi::_1, qi::_val)]
-				| function_object(qi::_r1)[phoenix::bind(&convert_function, qi::_1, qi::_val)]
 				| indirect_object_reference(qi::_r1)[phoenix::bind(&convert_reference, qi::_1, qi::_val)]
 				| real_object(qi::_r1)[phoenix::bind(&convert_real, qi::_1, qi::_val)]
 				| integer_object(qi::_r1)[phoenix::bind(&convert_integer, qi::_1, qi::_val)]

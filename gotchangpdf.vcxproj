@@ -63,7 +63,6 @@
     <ClInclude Include="src\gotchangpdf\syntax\objects\boolean_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\containable.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\dictionary_object.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\objects\function_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\indirect_object_reference.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\integer_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\name_object.h" />

@@ -20,7 +20,6 @@ error_type process_buffer(BufferHandle buffer, int nested);
 error_type process_object(ObjectHandle obj, int nested);
 error_type process_name(NameHandle name, int nested);
 error_type process_array(ArrayHandle arr, int nested);
-error_type process_function(FunctionHandle func, int nested);
 error_type process_integer(IntegerHandle integer, int nested);
 error_type process_boolean(BooleanHandle boolean, int nested);
 error_type process_reference(IndirectReferenceHandle reference, int nested);

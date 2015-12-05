@@ -33,8 +33,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Type(ObjectHandle handle, 
 		*result = ObjectType_Boolean; break;
 	case Object::Type::Dictionary:
 		*result = ObjectType_Dictionary; break;
-	case Object::Type::Function:
-		*result = ObjectType_Function; break;
 	case Object::Type::Integer:
 		*result = ObjectType_Integer; break;
 	case Object::Type::Name:
@@ -166,16 +164,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToName(ObjectHandle handle
 	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	return SafeObjectConvert<Object, NameObject, NameHandle>(obj, result);
-}
-
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToFunction(ObjectHandle handle, PFunctionHandle result)
-{
-	Object* obj = reinterpret_cast<Object*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_WEAK_FILE_SCOPE(obj->GetFile());
-
-	return SafeObjectConvert<Object, FunctionObject, FunctionHandle>(obj, result);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToBoolean(ObjectHandle handle, PBooleanHandle result)

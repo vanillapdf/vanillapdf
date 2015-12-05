@@ -225,17 +225,6 @@ error_type process_null(NullHandle obj, int nested)
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-error_type process_function(FunctionHandle func, int nested)
-{
-	print_spaces(nested);
-	printf("Function object begin\n");
-
-	print_spaces(nested);
-	printf("Function object end\n");
-
-	return GOTCHANG_PDF_ERROR_SUCCES;
-}
-
 int process_string(StringHandle obj, int nested)
 {
 	enum StringType type;
@@ -269,7 +258,6 @@ int process_object(ObjectHandle obj, int nested)
 	RealHandle real = NULL;
 	BooleanHandle boolean = NULL;
 	NullHandle null_object = NULL;
-	FunctionHandle func = NULL;
 	IndirectReferenceHandle indirect_reference = NULL;
 	ArrayHandle arr = NULL;
 	IntegerHandle integer = NULL;
@@ -294,10 +282,6 @@ int process_object(ObjectHandle obj, int nested)
 	case ObjectType_Dictionary:
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToDictionary(obj, &dictionary));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_dictionary(dictionary, nested));
-		break;
-	case ObjectType_Function:
-		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToFunction(obj, &func));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_function(func, nested));
 		break;
 	case ObjectType_Integer:
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToInteger(obj, &integer));

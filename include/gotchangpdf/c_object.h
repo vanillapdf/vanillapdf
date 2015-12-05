@@ -16,7 +16,6 @@ extern "C"
 		ObjectType_Array,
 		ObjectType_Boolean,
 		ObjectType_Dictionary,
-		ObjectType_Function,
 		ObjectType_Integer,
 		ObjectType_Name,
 		ObjectType_Real,
@@ -39,7 +38,6 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToReal(ObjectHandle handle, PRealHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToNull(ObjectHandle handle, PNullHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToName(ObjectHandle handle, PNameHandle result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToFunction(ObjectHandle handle, PFunctionHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle handle, PStringHandle result);
 
 #ifdef __cplusplus

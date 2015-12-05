@@ -90,16 +90,6 @@ namespace gotchangpdf
 			qi::real_parser<float, qi::strict_real_policies<float>> strict_float_parser;
 		};
 
-		class FunctionGrammar : public qi::grammar<pos_iterator_type,
-			FunctionObjectPtr(std::shared_ptr<File>*)>
-		{
-		public:
-			FunctionGrammar();
-
-		private:
-			qi::rule<pos_iterator_type, FunctionObjectPtr(std::shared_ptr<File>*)> start;
-		};
-
 		class IndirectObjectReferenceGrammar : public qi::grammar<pos_iterator_type,
 			IndirectObjectReferencePtr(std::shared_ptr<File>*),
 			qi::locals<types::integer, types::ushort>>
@@ -183,7 +173,6 @@ namespace gotchangpdf
 			ArrayGrammar array_object = { *this };
 			BooleanGrammar boolean_object;
 			DictionaryGrammar dictionary_object = { *this };
-			FunctionGrammar function_object;
 			IndirectObjectReferenceGrammar indirect_object_reference;
 			RealGrammar real_object;
 			IntegerGrammar integer_object;
@@ -241,7 +230,6 @@ namespace gotchangpdf
 			DictionaryOrStreamGrammar dict_or_stream;
 			ArrayGrammar array_object = { containable_object };
 			BooleanGrammar boolean_object;
-			FunctionGrammar function_object;
 			IndirectObjectReferenceGrammar indirect_object_reference;
 			RealGrammar real_object;
 			IntegerGrammar integer_object;

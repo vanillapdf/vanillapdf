@@ -23,7 +23,6 @@ namespace gotchangpdf
 			void convert_string_to_object(StringObjectPtr obj, ObjectPtr& result) { return convert(obj, result); }
 			void convert_name_to_object(NameObjectPtr obj, ObjectPtr& result) { return convert(obj, result); }
 			void convert_reference_to_object(IndirectObjectReferencePtr obj, ObjectPtr& result) { return convert(obj, result); }
-			void convert_function_to_object(FunctionObjectPtr obj, ObjectPtr& result) { return convert(obj, result); }
 			void convert_boolean_to_object(BooleanObjectPtr obj, ObjectPtr& result) { return convert(obj, result); }
 
 			OperandGrammar::OperandGrammar() :
@@ -33,7 +32,6 @@ namespace gotchangpdf
 					array_object(qi::_r1)[phoenix::bind(&convert_array_to_object, qi::_1, qi::_val)]
 					| boolean_object(qi::_r1)[phoenix::bind(&convert_boolean_to_object, qi::_1, qi::_val)]
 					| dictionary_object(qi::_r1)[phoenix::bind(&convert_dictionary_to_object, qi::_1, qi::_val)]
-					| function_object(qi::_r1)[phoenix::bind(&convert_function_to_object, qi::_1, qi::_val)]
 					| real_object(qi::_r1)[phoenix::bind(&convert_real_to_object, qi::_1, qi::_val)]
 					| integer_object(qi::_r1)[phoenix::bind(&convert_integer_to_object, qi::_1, qi::_val)]
 					| name_object(qi::_r1)[phoenix::bind(&convert_name_to_object, qi::_1, qi::_val)]

@@ -8,7 +8,6 @@
 // self-sufficient
 #include "null_object.h"
 #include "name_object.h"
-#include "function_object.h"
 #include "boolean_object.h"
 #include "integer_object.h"
 #include "real_object.h"
