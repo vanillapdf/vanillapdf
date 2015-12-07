@@ -41,6 +41,7 @@ namespace gotchangpdf
 	{
 		namespace Name
 		{
+			extern const syntax::NameObjectPtr ASCII85Decode;
 			extern const syntax::NameObjectPtr BitsPerComponent;
 			extern const syntax::NameObjectPtr Colors;
 			extern const syntax::NameObjectPtr Columns;

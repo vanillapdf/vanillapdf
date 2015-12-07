@@ -58,8 +58,8 @@
     <ClInclude Include="src\gotchangpdf\syntax\files\header.h" />
     <ClInclude Include="src\gotchangpdf\syntax\files\xref.h" />
     <ClInclude Include="src\gotchangpdf\syntax\files\xref_chain.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\filters\ascii_85_decode_filter.h" />
     <ClInclude Include="src\gotchangpdf\syntax\filters\filter.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\filters\filter_utils.h" />
     <ClInclude Include="src\gotchangpdf\syntax\filters\flate_decode_filter.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\array_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\boolean_object.h" />
@@ -94,6 +94,7 @@
     <ClInclude Include="src\gotchangpdf\syntax\streams\raw_reverse_stream.h" />
     <ClInclude Include="src\gotchangpdf\syntax\streams\raw_stream.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\buffer.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\utils\character.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\character_device.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\character_sink.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\constants.h" />
@@ -144,7 +145,8 @@
     <ClCompile Include="src\gotchangpdf\syntax\files\file.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\files\header.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\files\xref.cpp" />
-    <ClCompile Include="src\gotchangpdf\syntax\filters\filter_utils.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\filters\ascii_85_decode_filter.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\filters\filter.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\filters\flate_decode_filter.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\indirect_object_reference.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\integer_object.cpp" />

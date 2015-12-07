@@ -22,7 +22,8 @@ namespace gotchangpdf
 		class InvalidObjectTypeException;
 
 		// Filters
-		class FilterBase; using FilterBasePtr = Deferred<FilterBase>;
+		class FilterBase; using FilterBasePtr = Deferred<FilterBase>;		
+		class ASCII85DecodeFilter; using ASCII85DecodeFilterPtr = Deferred<ASCII85DecodeFilter>;
 		class FlateDecodeFilter; using FlateDecodeFilterPtr = Deferred<FlateDecodeFilter>;
 
 		// Files

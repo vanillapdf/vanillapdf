@@ -4,7 +4,6 @@
 #include "file.h"
 #include "raw_stream.h"
 #include "filter.h"
-#include "filter_utils.h"
 
 namespace gotchangpdf
 {
@@ -52,7 +51,7 @@ namespace gotchangpdf
 
 				if (is_filter_name) {
 					auto filter_name = _header->FindAs<NameObjectPtr>(constant::Name::Filter);
-					auto filter = GetFilterByName(filter_name);
+					auto filter = FilterBase::GetFilterByName(filter_name);
 					if (_header->Contains(constant::Name::DecodeParms)) {
 						auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
 						return filter->Decode(result, params);
@@ -73,7 +72,7 @@ namespace gotchangpdf
 
 					for (int i = 0; i < filter_array->Size(); ++i) {
 						auto current_filter = (*filter_array)[i];
-						auto filter = GetFilterByName(current_filter);
+						auto filter = FilterBase::GetFilterByName(current_filter);
 
 						if (has_params) {
 							auto current_param = (*params)[i];

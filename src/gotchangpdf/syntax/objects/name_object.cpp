@@ -21,6 +21,7 @@ namespace gotchangpdf
 		{
 #			define DECLARE_CONST_NAME(name)	const syntax::NameObjectPtr name(BufferPtr(#name, sizeof(#name)))
 
+			DECLARE_CONST_NAME(ASCII85Decode);
 			DECLARE_CONST_NAME(BitsPerComponent);
 			DECLARE_CONST_NAME(Colors);
 			DECLARE_CONST_NAME(Columns);
