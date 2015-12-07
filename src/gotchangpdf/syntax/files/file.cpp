@@ -62,6 +62,15 @@ namespace gotchangpdf
 			do {
 				auto xref = stream.ReadXref(offset);
 				_xref->Append(xref);
+
+				if (xref->GetTrailerDictionary()->Contains(constant::Name::XRefStm)) {
+					auto stm_offset = xref->GetTrailerDictionary()->FindAs<IntegerObjectPtr>(constant::Name::XRefStm)->Value();
+					auto xref_stm = stream.ReadXref(stm_offset);
+
+					assert(!xref_stm->GetTrailerDictionary()->Contains(constant::Name::Prev));
+					_xref->Append(xref_stm);
+				}
+
 				if (!xref->GetTrailerDictionary()->Contains(constant::Name::Prev)) {
 					break;
 				}

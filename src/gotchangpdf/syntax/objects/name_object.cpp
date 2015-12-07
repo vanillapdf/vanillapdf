@@ -50,6 +50,7 @@ namespace gotchangpdf
 			DECLARE_CONST_NAME(Root);
 			DECLARE_CONST_NAME(Size);
 			DECLARE_CONST_NAME(W);
+			DECLARE_CONST_NAME(XRefStm);
 		}
 	}
 }
