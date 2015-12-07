@@ -24,7 +24,7 @@ namespace gotchangpdf
 			template <typename T>
 			inline T SafeConvert(void) const { return gotchangpdf::SafeConvert<T>(_value); }
 
-			operator value_type() const { return _value; }
+			operator value_type() const _NOEXCEPT { return _value; }
 
 			IntegerObject& operator= (value_type value);
 			IntegerObject& operator= (BufferPtr value);

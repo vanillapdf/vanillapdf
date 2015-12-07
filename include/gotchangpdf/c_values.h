@@ -5,8 +5,11 @@
 
 typedef int32_t error_type;
 
-typedef int32_t boolean_type;
-typedef int32_t* out_boolean_type;
+typedef int8_t boolean_type;
+typedef int8_t* out_boolean_type;
+
+typedef double real_type;
+typedef double* out_real_type;
 
 typedef int32_t integer_type;
 typedef int32_t* out_integer_type;

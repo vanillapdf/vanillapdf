@@ -2,7 +2,7 @@
 
 int main(int argc, char *argv[])
 {
-	int valid = GOTCHANG_PDF_RV_FALSE;
+	boolean_type valid = GOTCHANG_PDF_RV_FALSE;
 	FileHandle file = NULL;
 	FileHolderHandle file_holder = NULL;
 	XrefChainHandle chain = NULL;

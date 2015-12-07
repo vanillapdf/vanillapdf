@@ -15,6 +15,9 @@ namespace gotchangpdf
 
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Boolean; }
 
+			inline bool Value(void) const _NOEXCEPT { return _value; }
+			inline operator bool() const _NOEXCEPT { return _value; }
+
 		private:
 			bool _value = false;
 		};

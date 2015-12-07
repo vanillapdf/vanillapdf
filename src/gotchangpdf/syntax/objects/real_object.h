@@ -19,6 +19,9 @@ namespace gotchangpdf
 
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Real; }
 
+			inline value_type Value(void) const _NOEXCEPT { return _value; }
+			operator value_type() const _NOEXCEPT { return _value; }
+
 		private:
 			types::real _value = 0;
 		};

@@ -20,6 +20,8 @@
 
 /* objects */
 #include "c_array_object.h"
+#include "c_boolean_object.h"
+#include "c_real_object.h"
 #include "c_string_object.h"
 #include "c_stream_object.h"
 #include "c_dictionary_object.h"

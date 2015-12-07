@@ -53,7 +53,7 @@ int process_hex_string(HexadecimalStringHandle string, int nested)
 
 int process_dictionary(DictionaryHandle dictionary, int nested)
 {
-	int boolean = GOTCHANG_PDF_RV_FALSE;
+	boolean_type boolean = GOTCHANG_PDF_RV_FALSE;
 	DictionaryIteratorHandle iterator = NULL;
 
 	print_spaces(nested);
@@ -93,20 +93,20 @@ int process_dictionary(DictionaryHandle dictionary, int nested)
 
 error_type process_stream(StreamHandle stream, int nested)
 {
-	BufferHandle body_decoded = NULL;
+	BufferHandle body = NULL;
 	DictionaryHandle dictionary = NULL;
 
 	print_spaces(nested);
 	printf("Stream object begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_Header(stream, &dictionary));
-	RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_BodyDecoded(stream, &body_decoded));
+	RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_BodyRaw(stream, &body));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(process_dictionary(dictionary, nested));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(body_decoded, nested));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(body, nested));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Release(dictionary));
-	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(body_decoded));
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(body));
 
 	print_spaces(nested);
 	printf("Stream object end\n");
@@ -117,7 +117,7 @@ error_type process_stream(StreamHandle stream, int nested)
 error_type process_array(ArrayHandle arr, int nested)
 {
 	int i = 0;
-	int size = 0;
+	integer_type size = 0;
 
 	print_spaces(nested);
 	printf("Array begin\n");
@@ -142,7 +142,7 @@ error_type process_array(ArrayHandle arr, int nested)
 
 error_type process_integer(IntegerHandle integer, int nested)
 {
-	int value = 0;
+	integer_type value = 0;
 
 	print_spaces(nested);
 	printf("Integer object begin\n");
@@ -157,10 +157,20 @@ error_type process_integer(IntegerHandle integer, int nested)
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-error_type process_boolean(BooleanHandle name, int nested)
+error_type process_boolean(BooleanHandle obj, int nested)
 {
+	boolean_type value = GOTCHANG_PDF_RV_FALSE;
+
 	print_spaces(nested);
 	printf("Boolean object begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(BooleanObject_Value(obj, &value));
+
+	print_spaces(nested + 1);
+	if (GOTCHANG_PDF_RV_TRUE == value)
+		printf("Value: true\n");
+	else
+		printf("Value: false\n");
 
 	print_spaces(nested);
 	printf("Boolean object end\n");
@@ -171,8 +181,8 @@ error_type process_boolean(BooleanHandle name, int nested)
 error_type process_reference(IndirectReferenceHandle reference, int nested)
 {
 	enum ObjectType type;
-	int obj_num = 0;
-	int gen_num = 0;
+	integer_type obj_num = 0;
+	integer_type gen_num = 0;
 	ObjectHandle child = NULL;
 	string_type type_name = NULL;
 
@@ -201,10 +211,16 @@ error_type process_reference(IndirectReferenceHandle reference, int nested)
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-error_type process_real(RealHandle name, int nested)
+error_type process_real(RealHandle obj, int nested)
 {
+	real_type value = 0;
+
 	print_spaces(nested);
 	printf("Real object begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(RealObject_Value(obj, &value));
+	print_spaces(nested + 1);
+	printf("Value: %g\n", value);
 
 	print_spaces(nested);
 	printf("Real object end\n");
