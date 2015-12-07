@@ -159,9 +159,24 @@
     <ClCompile Include="src\gotchangpdf\syntax\objects\object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\stream_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\string_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\clipping_path_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\color_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\compatibility_grammar.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\content_stream_grammar.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\content_stream_operator_grammar.cpp" />
-    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\content_stream_simple_operators.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\general_graphics_state_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\inline_image_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\marked_content_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\path_construction_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\path_painting_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\shading_pattern_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\special_graphics_state_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\text_object_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\text_positioning_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\text_showing_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\text_state_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\type_3_font_grammar.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\xobject_grammar.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\parsers\object_stream_grammar.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\parsers\reverse_grammar.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\parsers\spirit_grammar.cpp" />
@@ -208,6 +223,7 @@
     <IntDir>obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>build\$(ProjectName)\$(Configuration)\</OutDir>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release|Win32'">
     <IntDir>obj\$(ProjectName)\$(Configuration)\</IntDir>
@@ -223,6 +239,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalOptions>/Zm512 %(AdditionalOptions)</AdditionalOptions>
+      <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
