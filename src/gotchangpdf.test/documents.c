@@ -118,6 +118,7 @@ error_type process_content_operation_textshow(ContentOperationTextShowHandle obj
 
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextShow_Value(obj, &str));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_string(str, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(str));
 
 	print_spaces(nested);
 	printf("Text show operation end\n");
@@ -163,13 +164,10 @@ error_type process_content_instruction(ContentInstructionHandle obj, int nested)
 	case ContentInstructionType_Object:
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_ToObject(obj, &object_handle));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_content_object(object_handle, nested + 1));
-
 		break;
 	case ContentInstructionType_Operation:
-
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_ToOperation(obj, &operation_handle));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation(operation_handle, nested + 1));
-
 		break;
 	default:
 		print_spaces(nested + 1);
