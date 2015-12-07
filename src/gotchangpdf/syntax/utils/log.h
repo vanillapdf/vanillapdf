@@ -13,8 +13,9 @@
 
 #include <boost/log/attributes/scoped_attribute.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
+#include <boost/log/utility/manipulators/add_value.hpp>
 
-#include <boost/log/support/date_time.hpp>
+//#include <boost/log/support/date_time.hpp>
 
 namespace gotchangpdf
 {
@@ -54,8 +55,9 @@ namespace gotchangpdf
 			return strm;
 		}
 
-		static const Severity max_level = Severity::warning;
+		void log_formatter(logging::record_view const& rec, logging::formatting_ostream& strm);
 
+		extern const Severity max_level;
 		typedef src::severity_logger_mt<Severity> file_logger_mt;
 		BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT(file_logger, file_logger_mt)
 		{
@@ -84,16 +86,8 @@ namespace gotchangpdf
 			boost::shared_ptr<sink_t> sink(pdf_new sink_t(backend));
 
 			// Set the formatter
-			sink->set_formatter(
-				expr::format("[%1%] (%2%) <%3%> : %4%")
-				% expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%Y-%m-%d %H:%M:%S")
-				% expr::attr<attrs::current_thread_id::value_type>("ThreadID")
-				% expr::attr<Severity>("Severity")
-				% expr::smessage
-				);
-
+			sink->set_formatter(&log_formatter);
 			core->add_sink(sink);
-
 			return lg;
 		}
 	}
@@ -104,10 +98,21 @@ namespace gotchangpdf
 //BOOST_LOG_ATTRIBUTE_KEYWORD(tag_attr, "Tag", std::string)
 
 #define LOG_SCOPE(name) BOOST_LOG_SCOPED_THREAD_ATTR("Scope", boost::log::attributes::constant<std::string>(name))
-#define LOG_DEBUG       BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::debug)
-#define LOG_INFO        BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::info)
-#define LOG_WARNING     BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::warning)
-#define LOG_ERROR       BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::error)
-#define LOG_FATAL       BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::fatal)
+#define __LOG_INTERNAL_HELPER__(Severity)       BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), Severity) \
+  << boost::log::add_value("Line", __LINE__)      \
+  << boost::log::add_value("File", __FILE__)       \
+  << boost::log::add_value("Function", __FUNCTION__)
+
+#define LOG_DEBUG       __LOG_INTERNAL_HELPER__(gotchangpdf::log::Severity::debug)
+#define LOG_INFO        __LOG_INTERNAL_HELPER__(gotchangpdf::log::Severity::info)
+#define LOG_WARNING     __LOG_INTERNAL_HELPER__(gotchangpdf::log::Severity::warning)
+#define LOG_ERROR       __LOG_INTERNAL_HELPER__(gotchangpdf::log::Severity::error)
+#define LOG_FATAL       __LOG_INTERNAL_HELPER__(gotchangpdf::log::Severity::fatal)
+
+//#define LOG_DEBUG       BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::debug)
+//#define LOG_INFO        BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::info)
+//#define LOG_WARNING     BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::warning)
+//#define LOG_ERROR       BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::error)
+//#define LOG_FATAL       BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::fatal)
 
 #endif /* _LOG_H */
