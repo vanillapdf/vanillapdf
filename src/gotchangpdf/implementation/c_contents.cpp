@@ -1,5 +1,7 @@
 #include "precompiled.h"
 #include "contents.h"
+#include "content_stream_operations.h"
+#include "content_stream_objects.h"
 
 #include "c_contents.h"
 #include "c_helper.h"

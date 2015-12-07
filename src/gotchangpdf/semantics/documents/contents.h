@@ -3,70 +3,13 @@
 
 #include "semantics_fwd.h"
 #include "content_stream.h"
-
-#include <vector>
+#include "content_stream_instruction_base.h"
 
 namespace gotchangpdf
 {
 	namespace semantics
 	{
-		namespace contents
-		{
-			class OperationBeginText : public syntax::contents::OperationBase
-			{
-			public:
-				inline virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::BeginText; }
-			};
-
-			class OperationEndText : public syntax::contents::OperationBase
-			{
-			public:
-				inline virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::EndText; }
-			};
-
-			class OperationTextShow : public syntax::contents::OperationBase
-			{
-			public:
-				explicit OperationTextShow(syntax::StringObjectPtr str) : _str(str) {}
-
-				inline virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::TextShow; }
-
-				syntax::StringObjectPtr Value() const { return _str; }
-
-			private:
-				syntax::StringObjectPtr _str;
-			};
-
-			typedef std::vector<syntax::contents::OperationBasePtr> OperationCollection;
-
-			class ContentObjectBase : public syntax::contents::InstructionBase
-			{
-			public:
-				enum class Type
-				{
-					TextObject
-				};
-
-				virtual Type GetType(void) const _NOEXCEPT = 0;
-				inline virtual syntax::contents::InstructionBase::Type GetInstructionType(void) const _NOEXCEPT override { return InstructionBase::Type::Object; }
-			};
-
-			class TextObject : public ContentObjectBase
-			{
-			public:
-				TextObject(OperationCollection ops) : _operations(ops) {}
-
-				inline virtual Type GetType(void) const _NOEXCEPT override { return Type::TextObject; }
-
-				types::uinteger GetOperationsSize(void) const { return _operations.size(); }
-				syntax::contents::OperationBasePtr GetOperationAt(types::uinteger at) const { return _operations.at(at); }
-
-			private:
-				OperationCollection _operations;
-			};
-
-			typedef std::vector<syntax::contents::InstructionBasePtr> InstructionCollection;
-		}
+		namespace sync = syntax::contents;
 
 		class Contents : public IUnknown
 		{
@@ -75,7 +18,7 @@ namespace gotchangpdf
 			explicit Contents(syntax::StreamObjectPtr obj);
 			explicit Contents(syntax::ArrayObjectPtr<syntax::IndirectObjectReferencePtr> obj);
 
-			contents::InstructionCollection Instructions(void) const;
+			sync::BaseInstructionCollection Instructions(void) const;
 			types::uinteger GetInstructionsSize(void) const;
 			syntax::contents::InstructionBasePtr GetInstructionAt(types::uinteger at) const;
 
@@ -84,7 +27,7 @@ namespace gotchangpdf
 
 		private:
 			std::vector<ContentStreamPtr> _contents;
-			mutable contents::InstructionCollection _instructions;
+			mutable sync::BaseInstructionCollection _instructions;
 		};
 	}
 }

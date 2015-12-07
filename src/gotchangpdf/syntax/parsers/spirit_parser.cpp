@@ -110,7 +110,7 @@ namespace gotchangpdf
 			return _impl->Read<XrefBasePtr>(gram, input_begin_pos, input_end_pos);
 		}
 
-		contents::OperationCollection SpiritParser::ReadContentStreamOperations(void)
+		contents::GenericOperationCollection SpiritParser::ReadContentStreamOperations(void)
 		{
 			// Don't skip whitespace explicitly
 			noskipws(*this);
@@ -128,7 +128,7 @@ namespace gotchangpdf
 			pos_iterator_type input_end_pos;
 
 			const auto& gram = _impl->_content_stream_grammar(&locked_file);
-			return _impl->Read<contents::OperationCollection>(gram, input_begin_pos, input_end_pos);
+			return _impl->Read<contents::GenericOperationCollection>(gram, input_begin_pos, input_end_pos);
 		}
 
 		std::vector<ObjectPtr> SpiritParser::ReadObjectStreamEntries(types::integer first, types::integer size)

@@ -2,6 +2,9 @@
 #include "contents.h"
 
 #include "content_stream_grammar.h"
+#include "content_stream_operation_generic.h"
+#include "content_stream_operators.h"
+#include "content_stream_objects.h"
 
 namespace gotchangpdf
 {
@@ -224,12 +227,12 @@ namespace gotchangpdf
 			}
 		}
 
-		contents::InstructionCollection Contents::Instructions(void) const
+		sync::BaseInstructionCollection Contents::Instructions(void) const
 		{
 			if (!_instructions.empty())
 				return _instructions;
 
-			OperationCollection ops;
+			sync::BaseOperationCollection ops;
 
 			for (auto item : _contents) {
 				auto operations = item->Operations();
@@ -243,7 +246,7 @@ namespace gotchangpdf
 				}
 			}
 
-			InstructionCollection result;
+			sync::BaseInstructionCollection result;
 			for (auto it = ops.begin(); it != ops.end(); ++it) {
 				if (ContentUtils::IsType<OperationBeginTextPtr>(*it)) {
 					auto last = std::find_if(it + 1, ops.end(), [it](const decltype(it)::value_type& item) {
@@ -257,7 +260,7 @@ namespace gotchangpdf
 					}
 
 					// Construct the collection
-					OperationCollection text_object_data(it, last);
+					sync::BaseOperationCollection text_object_data(it, last);
 
 					// Erase Begin and End of Text Object, because they are not part of object
 					text_object_data.erase(text_object_data.begin());

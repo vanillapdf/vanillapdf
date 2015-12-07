@@ -4,7 +4,7 @@
 #include "semantics_fwd.h"
 #include "high_level_object.h"
 
-#include "content_stream_operations.h"
+#include "content_stream_operation_generic.h"
 
 namespace gotchangpdf
 {
@@ -16,7 +16,7 @@ namespace gotchangpdf
 			explicit ContentStream(syntax::StreamObjectPtr obj);
 			virtual inline Type GetType() const override { return HighLevelObject::Type::ContentStream; }
 
-			syntax::contents::OperationCollection Operations(void) const;
+			syntax::contents::GenericOperationCollection Operations(void) const;
 		};
 	}
 }

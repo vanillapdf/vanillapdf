@@ -9,7 +9,7 @@ namespace gotchangpdf
 	{
 		ContentStream::ContentStream(syntax::StreamObjectPtr obj) : HighLevelObject(obj) {}
 
-		syntax::contents::OperationCollection ContentStream::Operations(void) const
+		syntax::contents::GenericOperationCollection ContentStream::Operations(void) const
 		{
 			auto body = _obj->GetBodyDecoded();
 			auto strm = body->ToStringStream();

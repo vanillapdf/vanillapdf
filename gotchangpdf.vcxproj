@@ -37,6 +37,8 @@
     <ClInclude Include="src\gotchangpdf\precompiled.h" />
     <ClInclude Include="src\gotchangpdf\semantics\documents\catalog.h" />
     <ClInclude Include="src\gotchangpdf\semantics\documents\contents.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\documents\content_stream_objects.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\documents\content_stream_operations.h" />
     <ClInclude Include="src\gotchangpdf\semantics\documents\content_stream.h" />
     <ClInclude Include="src\gotchangpdf\semantics\documents\document.h" />
     <ClInclude Include="src\gotchangpdf\semantics\documents\page_node.h" />
@@ -77,8 +79,11 @@
     <ClInclude Include="src\gotchangpdf\syntax\objects\string_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\parsers\abstract_syntax_tree.h" />
     <ClInclude Include="src\gotchangpdf\syntax\parsers\contents\content_stream_grammar.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\parsers\contents\content_stream_operations.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\contents\content_stream_operation_base.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\contents\content_stream_operators.h" />
     <ClInclude Include="src\gotchangpdf\syntax\parsers\contents\content_stream_operator_grammar.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\contents\content_stream_instruction_base.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\contents\content_stream_operation_generic.h" />
     <ClInclude Include="src\gotchangpdf\syntax\parsers\file_position.h" />
     <ClInclude Include="src\gotchangpdf\syntax\parsers\iter_offset_parser.h" />
     <ClInclude Include="src\gotchangpdf\syntax\parsers\object_stream_grammar.h" />

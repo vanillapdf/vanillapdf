@@ -1,10 +1,10 @@
-#ifndef _CONTENT_STREAM_OPERATIONS_H
-#define _CONTENT_STREAM_OPERATIONS_H
+#ifndef _CONTENT_STREAM_OPERATORS_H
+#define _CONTENT_STREAM_OPERATORS_H
 
 #include "syntax_fwd.h"
 #include "unknown_interface.h"
-
-#include <vector>
+#include "deferred.h"
+#include "buffer.h"
 
 namespace gotchangpdf
 {
@@ -224,128 +224,8 @@ public: \
 			// Compatibility
 			GENERIC_OPERATOR_DEFINITION(BeginCompatibilitySection, "BX");
 			GENERIC_OPERATOR_DEFINITION(EndCompatibilitySection, "EX");
-
-			class InstructionBase : public IUnknown
-			{
-			public:
-				enum class Type
-				{
-					Object,
-					Operation
-				};
-
-				virtual Type GetInstructionType(void) const _NOEXCEPT = 0;
-			};
-
-			class OperationBase : public InstructionBase
-			{
-			public:
-				enum class Type
-				{
-					Generic = 0,
-					LineWidth,
-					LineCap,
-					LineJoin,
-					MiterLimit,
-					DashPattern,
-					ColorRenderingIntent,
-					Flatness,
-					GraphicsState,
-					SaveGraphicsState,
-					RestoreGraphicsState,
-					TransformationMatrix,
-					BeginSubpath,
-					Line,
-					FullCurve,
-					FinalCurve,
-					InitialCurve,
-					CloseSubpath,
-					Rectangle,
-					Stroke,
-					CloseAndStroke,
-					FillPathNonzero,
-					FillPathCompatibility,
-					FillPathEvenOdd,
-					FillStrokeNonzero,
-					FillStrokeEvenOdd,
-					CloseFillStrokeNonzero,
-					CloseFillStrokeEvenOdd,
-					EndPath,
-					ClipPathNonzero,
-					ClipPathEvenOdd,
-					BeginText,
-					EndText,
-					CharacterSpacing,
-					WordSpacing,
-					HorizontalScaling,
-					Leading,
-					TextFont,
-					TextRenderingMode,
-					TextRise,
-					TextTranslate,
-					TextTranslateLeading,
-					TextMatrix,
-					TextNextLine,
-					TextShow,
-					TextShowArray,
-					TextNextLineShow,
-					TextNextLineShowSpacing,
-					SetCharWidth,
-					SetCacheDevice,
-					ColorSpaceStroke,
-					ColorSpaceNonstroke,
-					SetColorStroke,
-					SetColorStrokeExtended,
-					SetColorNonstroke,
-					SetColorNonstrokeExtended,
-					SetStrokingColorSpaceGray,
-					SetNonstrokingColorSpaceGray,
-					SetStrokingColorSpaceRGB,
-					SetNonstrokingColorSpaceRGB,
-					SetStrokingColorSpaceCMYK,
-					SetNonstrokingColorSpaceCMYK,
-					ShadingPaint,
-					BeginInlineImageObject,
-					BeginInlineImageData,
-					EndInlineImageObject,
-					InvokeXObject,
-					DefineMarkedContentPoint,
-					DefineMarkedContentPointWithPropertyList,
-					BeginMarkedContentSequence,
-					BeginMarkedContentSequenceWithPropertyList,
-					EndMarkedContentSequence,
-					BeginCompatibilitySection,
-					EndCompatibilitySection
-				};
-
-			public:
-				inline virtual InstructionBase::Type GetInstructionType(void) const _NOEXCEPT override { return InstructionBase::Type::Operation; }
-				virtual Type GetOperationType(void) const _NOEXCEPT = 0;
-			};
-
-			class OperationGeneric : public OperationBase
-			{
-			public:
-				OperationGeneric() = default;
-				OperationGeneric(std::vector<ObjectPtr> operands, OperatorBasePtr oper) :
-					_operator(oper), _operands(operands) {}
-				OperatorBasePtr GetOperator() const { return _operator; }
-				std::vector<ObjectPtr> GetOperands() const { return _operands; }
-
-				types::uinteger GetOperandsSize() const { return _operands.size(); }
-				ObjectPtr GetOperandAt(types::uinteger at) const { return _operands.at(at); }
-
-				inline virtual InstructionBase::Type GetInstructionType(void) const _NOEXCEPT override { return InstructionBase::Type::Operation; }
-				inline virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::Generic; }
-
-			private:
-				OperatorBasePtr _operator;
-				std::vector<ObjectPtr> _operands;
-			};
-
-			typedef std::vector<OperationGenericPtr> OperationCollection;
 		}
 	}
 }
 
-#endif /* _CONTENT_STREAM_OPERATIONS_H */
+#endif /* _CONTENT_STREAM_OPERATORS_H */

@@ -36,7 +36,7 @@ namespace gotchangpdf
 
 			std::vector<ObjectPtr> ReadObjectStreamEntries(types::integer first, types::integer size);
 			ObjectStreamHeaders ReadObjectStreamHeaders(types::integer size);
-			contents::OperationCollection ReadContentStreamOperations(void);
+			contents::GenericOperationCollection ReadContentStreamOperations(void);
 
 			XrefBasePtr ReadXref(void);
 			XrefBasePtr ReadXref(types::stream_offset offset);

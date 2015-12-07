@@ -38,13 +38,13 @@ namespace gotchangpdf
 			};
 
 			class ContentStreamGrammar : public qi::grammar<pos_iterator_type,
-				OperationCollection(std::shared_ptr<File>*)>
+				GenericOperationCollection(std::shared_ptr<File>*)>
 			{
 			public:
 				ContentStreamGrammar();
 
 			private:
-				qi::rule<pos_iterator_type, OperationCollection(std::shared_ptr<File>*)> start;
+				qi::rule<pos_iterator_type, GenericOperationCollection(std::shared_ptr<File>*)> start;
 				qi::rule<pos_iterator_type, OperationGenericPtr(std::shared_ptr<File>*)> operation;
 
 				OperandGrammar _operand;
