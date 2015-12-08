@@ -18,6 +18,7 @@ namespace gotchangpdf
 			explicit RealObject(types::real value) : _value(value) {}
 
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Real; }
+			virtual inline std::string ToString(void) const override { return std::to_string(_value); }
 
 			inline value_type Value(void) const _NOEXCEPT { return _value; }
 			operator value_type() const _NOEXCEPT { return _value; }

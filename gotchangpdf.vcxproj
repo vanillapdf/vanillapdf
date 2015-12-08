@@ -152,6 +152,7 @@
     <ClCompile Include="src\gotchangpdf\syntax\filters\ascii_85_decode_filter.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\filters\filter.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\filters\flate_decode_filter.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\objects\dictionary_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\indirect_object_reference.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\integer_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\name_object.cpp" />

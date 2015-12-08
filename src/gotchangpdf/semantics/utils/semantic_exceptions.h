@@ -20,15 +20,13 @@ namespace gotchangpdf
 			template <typename SyntacticObjectT, typename SemanticObjectT>
 			static SemanticContextException Construct(const SyntacticObjectT& obj)
 			{
-				//std::stringstream ss;
-				//ss << obj;
 				std::string msg(
 					std::string("Could not convert object of type ")
 					+ typeid(SyntacticObjectT).name()
 					+ " to type "
 					+ typeid(SemanticObjectT).name()
 					+ ". Data: "
-					//+ ss.str()
+					+ obj.ToString()
 					);
 
 				return SemanticContextException(msg);

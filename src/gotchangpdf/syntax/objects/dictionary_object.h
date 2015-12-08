@@ -28,6 +28,10 @@ namespace gotchangpdf
 			typedef list_type::reference reference;
 			typedef list_type::const_reference const_reference;
 
+			friend std::ostream& operator<<(std::ostream& os, const DictionaryObject& obj);
+			virtual std::string ToString(void) const override;
+			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Dictionary; }
+
 		public:
 			class Iterator : public IUnknown
 			{
@@ -76,48 +80,13 @@ namespace gotchangpdf
 				return ObjectUtils::ConvertTo<U>(result);
 			}
 
-			list_type GetItems(void) const { return _list; }
-			void SetItems(const list_type& list) { _list = list; }
+			const_iterator begin(void) const _NOEXCEPT;
+			const_iterator end(void) const _NOEXCEPT;
 
-			const_iterator begin(void) const _NOEXCEPT
-			{
-				return _list.begin();
-			}
-
-			const_iterator end(void) const _NOEXCEPT
-			{
-				return _list.end();
-			}
-
-			iterator insert(const_iterator pos,
-				const value_type& value)
-			{
-				return _list.insert(pos, value);
-			}
-
-			ContainableObjectPtr Find(const NameObjectPtr& name) const
-			{
-				auto result = _list.find(name);
-				if (result == _list.end()) {
-					throw GeneralException("Item with name " + name->Value()->ToString() + " was not found in dictionary");
-				}
-
-				return result->second;
-			}
-
-			bool TryFind(const NameObjectPtr& name, ContainableObjectPtr& result) const
-			{
-				auto item = _list.find(name);
-				if (item == _list.end())
-					return false;
-
-				result = item->second;
-				return true;
-			}
-
-			inline bool Contains(const NameObjectPtr& name) const { return (_list.find(name) != _list.end()); }
-
-			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Dictionary; }
+			iterator insert(const_iterator pos,	const value_type& value);
+			ContainableObjectPtr Find(const NameObjectPtr& name) const;
+			bool TryFind(const NameObjectPtr& name, ContainableObjectPtr& result) const;
+			bool Contains(const NameObjectPtr& name) const;
 
 		public:
 			list_type _list;

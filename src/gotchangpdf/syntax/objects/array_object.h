@@ -53,8 +53,20 @@ namespace gotchangpdf
 
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Array; }
 
-			list_type GetItems(void) const { return _list; }
-			void GetItems(const list_type& value) const { _list = value; }
+			virtual std::string ToString(void) const override
+			{
+				std::stringstream ss;
+				ss << "[";
+				bool first = true;
+				for (auto item : _list) {
+					//ss << (first ? "" : " ") << item;
+					ss << (first ? "" : " ") << "TODO";
+					first = false;
+				}
+
+				ss << "]";
+				return ss.str();
+			}
 
 			//protected:
 		public:
@@ -69,6 +81,20 @@ namespace gotchangpdf
 
 			template <typename T>
 			ArrayObjectPtr<T> CastToArrayType() { return Convert<T>([](ContainableObjectPtr obj) { return ObjectUtils::ConvertTo<T>(obj); }); }
+
+			virtual std::string ToString(void) const override
+			{
+				std::stringstream ss;
+				ss << "[";
+				bool first = true;
+				for (auto item : _list) {
+					ss << (first ? "" : " ") << item->ToString();
+					first = false;
+				}
+
+				ss << "]";
+				return ss.str();
+			}
 		};
 	}
 }

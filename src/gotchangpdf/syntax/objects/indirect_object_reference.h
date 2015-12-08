@@ -26,6 +26,7 @@ namespace gotchangpdf
 			}
 
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::IndirectReference; }
+			virtual std::string ToString(void) const override;
 
 			bool Equals(const IndirectObjectReference& other) const;
 

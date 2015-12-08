@@ -90,5 +90,12 @@ namespace gotchangpdf
 			std::swap(result, _body_decoded);
 			return _body_decoded;
 		}
+
+		std::string StreamObject::ToString(void) const
+		{
+			std::stringstream ss;
+			ss << _header << "stream: " << _body->size() << std::endl;
+			return ss.str();
+		}
 	}
 }

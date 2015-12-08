@@ -32,6 +32,7 @@ namespace gotchangpdf
 			virtual Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Integer; }
 
 			inline bool Equals(const IntegerObject& other) const _NOEXCEPT { return _value == other._value; }
+			virtual inline std::string ToString(void) const override { return std::to_string(_value); }
 
 			inline bool operator==(const IntegerObject& other) const { return Equals(other); }
 			inline bool operator!=(const IntegerObject& other) const { return !Equals(other); }

@@ -18,6 +18,7 @@ namespace gotchangpdf
 			StreamObject() = default;
 			StreamObject(DictionaryObjectPtr header, types::stream_offset offset);
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Stream; }
+			virtual std::string ToString(void) const override;
 
 			inline DictionaryObjectPtr GetHeader() const { return _header; }
 			inline void SetHeader(DictionaryObjectPtr header) { _header = header; }

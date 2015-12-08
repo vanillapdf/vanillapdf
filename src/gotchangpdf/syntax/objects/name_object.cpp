@@ -2,15 +2,13 @@
 #include "name_object.h"
 #include "c_name_object.h"
 
-#include <cassert>
-
 namespace gotchangpdf
 {
 	namespace syntax
 	{
 		std::ostream& operator<<(std::ostream& os, const syntax::NameObject& name)
 		{
-			os << name.Value()->ToString();
+			os << name.ToString();
 			return os;
 		}
 	}
