@@ -19,11 +19,12 @@ namespace gotchangpdf
 		public:
 			virtual void read(BufferPtr& result, types::uinteger len) = 0;
 			virtual BufferPtr read(types::uinteger len) = 0;
-			virtual void read_exact(BufferPtr buf);
 			virtual BufferPtr readline(void) = 0;
 
 			virtual ~BaseStream() = 0;
 		};
+
+		inline BaseStream::~BaseStream() {}
 	}
 }
 
