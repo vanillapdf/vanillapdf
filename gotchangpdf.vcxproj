@@ -223,7 +223,7 @@
     <IntDir>obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>build\$(ProjectName)\$(Configuration)\</OutDir>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release|Win32'">
     <IntDir>obj\$(ProjectName)\$(Configuration)\</IntDir>
@@ -239,7 +239,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalOptions>/Zm512 %(AdditionalOptions)</AdditionalOptions>
-      <EnablePREfast>true</EnablePREfast>
+      <EnablePREfast>false</EnablePREfast>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
