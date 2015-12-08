@@ -25,8 +25,8 @@ namespace gotchangpdf
 		};
 
 	public:
-		explicit ExceptionBase(const std::string& msg, Type type) : exception(msg.c_str()), _type(type) {}
-		ExceptionBase(const char * const & msg, Type type) : exception(msg), _type(type) {}
+		ExceptionBase(const std::string& msg, Type type);
+		ExceptionBase(const char * const & msg, Type type);
 
 		virtual inline Type code() const { return _type; }
 		virtual ~ExceptionBase() = 0;
@@ -35,20 +35,18 @@ namespace gotchangpdf
 		Type _type = Type::General;
 	};
 
-	inline ExceptionBase::~ExceptionBase() {}
-
 	class GeneralException : public ExceptionBase
 	{
 	public:
-		explicit GeneralException(const char * const & msg) : ExceptionBase(msg, Type::General) {}
-		explicit GeneralException(const std::string& msg) : ExceptionBase(msg, Type::General) {}
+		explicit GeneralException(const char * const & msg);
+		explicit GeneralException(const std::string& msg);
 	};
 
 	class NotSupportedException : public ExceptionBase
 	{
 	public:
-		explicit NotSupportedException(const char * const & msg) : ExceptionBase(msg, Type::NotSupported) {}
-		explicit NotSupportedException(const std::string& msg) : ExceptionBase(msg, Type::NotSupported) {}
+		explicit NotSupportedException(const char * const & msg);
+		explicit NotSupportedException(const std::string& msg);
 	};
 
 	namespace syntax
@@ -56,37 +54,33 @@ namespace gotchangpdf
 		class ParseException : public ExceptionBase
 		{
 		public:
-			explicit ParseException(types::stream_offset offset)
-				: ExceptionBase("Could not parse object at offset " + std::to_string(offset), Type::ParseException) {}
+			explicit ParseException(types::stream_offset offset);
 		};
 
 		class FileDisposedException : public ExceptionBase
 		{
 		public:
-			explicit FileDisposedException() : ExceptionBase("Current file has been already disposed", Type::FileDisposed) {}
+			FileDisposedException();
 		};
 
 		class FileNotInitializedException : public ExceptionBase
 		{
 		public:
-			explicit FileNotInitializedException(const char * const & filename)
-				: ExceptionBase("File " + std::string(filename) + "has not been initialized", Type::FileNotInitialized) {}
-			explicit FileNotInitializedException(const std::string& filename)
-				: FileNotInitializedException(filename.c_str()) {}
+			explicit FileNotInitializedException(const char * const & filename);
+			explicit FileNotInitializedException(const std::string& filename);
 		};
 
 		class ObjectMissingException : public ExceptionBase
 		{
 		public:
-			ObjectMissingException(types::integer objNumber, types::ushort genNumber)
-				: ExceptionBase("Object " + std::to_string(objNumber) + " " + std::to_string(genNumber) + "is missing", Type::ObjectMissing) {}
+			ObjectMissingException(types::integer objNumber, types::ushort genNumber);
 		};
 
 		class ConversionException : public ExceptionBase
 		{
 		public:
-			explicit ConversionException(const char * const & msg) : ExceptionBase(msg, Type::Conversion) {}
-			explicit ConversionException(const std::string& msg) : ExceptionBase(msg, Type::Conversion) {}
+			explicit ConversionException(const char * const & msg);
+			explicit ConversionException(const std::string& msg);
 		};
 
 		template <typename DestT>
