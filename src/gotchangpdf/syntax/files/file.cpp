@@ -117,7 +117,20 @@ namespace gotchangpdf
 			}
 		}
 
-		HeaderPtr File::GetHeader(void) const { return _header; }
-		XrefChainPtr File::GetXrefChain(void) const { return _xref; }
+		HeaderPtr File::GetHeader(void) const
+		{
+			if (!_initialized)
+				throw FileNotInitializedException(_filename);
+
+			return _header;
+		}
+
+		XrefChainPtr File::GetXrefChain(void) const
+		{
+			if (!_initialized)
+				throw FileNotInitializedException(_filename);
+
+			return _xref;
+		}
 	}
 }
