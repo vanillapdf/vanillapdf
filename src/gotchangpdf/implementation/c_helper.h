@@ -12,42 +12,42 @@
 #define C_INTERFACE_EXCEPTION_HANDLERS \
 	catch (gotchangpdf::syntax::ObjectMissingException& e) \
 	{ \
-		LOG_ERROR << "Caught object missing exception on interface: " << e.what(); \
+		LOG_ERROR << e.what(); \
 		return GOTCHANG_PDF_ERROR_OBJECT_MISSING; \
 	} \
 	catch (gotchangpdf::syntax::FileNotInitializedException& e) \
 	{ \
-		LOG_ERROR << "Caught file not initialized exception on interface: " << e.what(); \
+		LOG_ERROR << e.what(); \
 		return GOTCHANG_PDF_ERROR_FILE_NOT_INITIALIZED; \
 	} \
 	catch (gotchangpdf::syntax::FileDisposedException& e) \
 	{ \
-		LOG_ERROR << "Caught file disposed exception on interface: " << e.what(); \
+		LOG_ERROR << e.what(); \
 		return GOTCHANG_PDF_ERROR_FILE_DISPOSED; \
 	} \
 	catch (gotchangpdf::NotSupportedException& e) \
 	{ \
-		LOG_ERROR << "Caught not supported exception on interface: " << e.what(); \
+		LOG_ERROR << e.what(); \
 		return GOTCHANG_PDF_ERROR_NOT_SUPPORTED; \
 	} \
 	catch (gotchangpdf::GeneralException& e) \
 	{ \
-		LOG_ERROR << "Caught general exception on interface: " << e.what(); \
+		LOG_ERROR << e.what(); \
 		return GOTCHANG_PDF_ERROR_GENERAL; \
 	} \
 	catch (gotchangpdf::ExceptionBase& e) \
 	{ \
-		LOG_ERROR << "Caught base exception on interface: " << e.what(); \
+		LOG_ERROR << e.what(); \
 		return GOTCHANG_PDF_ERROR_GENERAL; \
 	} \
 	catch (std::exception& e) \
 	{ \
-		LOG_ERROR << "Caught std exception on interface: " << e.what(); \
+		LOG_ERROR << e.what(); \
 		return GOTCHANG_PDF_ERROR_GENERAL; \
 	} \
 	catch (...) \
 	{ \
-		LOG_ERROR << "Caught unknown exception on interface"; \
+		LOG_ERROR << "Caught unknown exception"; \
 		return GOTCHANG_PDF_ERROR_GENERAL; \
 	}
 
