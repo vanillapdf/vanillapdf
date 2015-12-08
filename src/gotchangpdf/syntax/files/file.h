@@ -28,7 +28,7 @@ namespace gotchangpdf
 			HeaderPtr GetHeader(void) const;
 
 			inline std::string GetFilename(void) const { return _filename; }
-			inline std::weak_ptr<FileDevice> GetInputStream(void) const { return _input; }
+			inline std::shared_ptr<FileDevice> GetInputStream(void) const { return _input; }
 
 		private:
 			std::shared_ptr<FileDevice> _input;

@@ -46,7 +46,7 @@ namespace gotchangpdf
 					bool passed = false;
 					auto result = GetInternal<T>(obj, visited, passed);
 					if (!passed)
-						throw Exception("Could not convert object to indirect destination type");
+						throw ConversionExceptionFactory<T>::Construct(obj);
 
 					return result;
 				}
@@ -68,7 +68,7 @@ namespace gotchangpdf
 
 					auto converted = dynamic_cast<IndirectObjectReference*>(ptr);
 					if (nullptr == converted)
-						throw Exception("Could not convert object to indirect reference type");
+						throw ConversionExceptionFactory<IndirectObjectReference>::Construct(obj);
 
 					auto reference = IndirectObjectReferencePtr(converted);
 
@@ -76,7 +76,7 @@ namespace gotchangpdf
 					if (found != visited.end()) {
 						std::stringstream ss;
 						ss << "Cyclic reference was found for " << converted->GetReferencedObjectNumber() << " " << converted->GetReferencedGenerationNumber() << " R";
-						throw Exception(ss.str());
+						throw GeneralException(ss.str());
 					}
 
 					visited[*converted] = true;
@@ -102,7 +102,7 @@ namespace gotchangpdf
 					auto ptr = obj.Content.get();
 					auto converted = dynamic_cast<IndirectObjectReference*>(ptr);
 					if (nullptr == converted)
-						throw Exception("Could not convert object to destination type");
+						throw ConversionExceptionFactory<IndirectObjectReference>::Construct(obj);
 
 					return IndirectObjectReferencePtr(converted);
 				}

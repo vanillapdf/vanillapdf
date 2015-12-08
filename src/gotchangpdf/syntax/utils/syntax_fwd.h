@@ -15,10 +15,15 @@ namespace gotchangpdf
 	class Buffer;
 	using BufferPtr = DeferredContainer<Buffer>;
 
+	// Exceptions
+	class ExceptionBase;
+	class GeneralException;
+
 	namespace syntax
 	{
 		// Exceptions
-		class Exception;
+		class ConversionException;
+		class FileDisposedException;
 		class InvalidObjectTypeException;
 
 		// Filters

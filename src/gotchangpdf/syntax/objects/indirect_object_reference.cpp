@@ -21,7 +21,7 @@ namespace gotchangpdf
 		{
 			auto locked_file = _file.lock();
 			if (!locked_file)
-				throw Exception("File already disposed");
+				throw FileDisposedException();
 
 			return locked_file->GetIndirectObject(_ref_obj, _ref_gen);
 		}

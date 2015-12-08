@@ -43,7 +43,7 @@ namespace gotchangpdf
 
 				// Character outside of base 85 range
 				if (ch < '!' || ch > 'u')
-					throw Exception("Illegal character in ascii 85 filter: " + ch);
+					throw GeneralException("Illegal character in ascii 85 filter: " + ch);
 
 				// Insert to our sequence
 				sequence[current] = ch - '!';

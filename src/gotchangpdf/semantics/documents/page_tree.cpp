@@ -2,7 +2,6 @@
 #include "page_tree.h"
 
 #include "array_object.h"
-#include "invalid_object_type_exception.h"
 
 namespace gotchangpdf
 {
@@ -23,11 +22,9 @@ namespace gotchangpdf
 		dive:
 			auto kids = node->Kids();
 			auto count = kids->Size();
-			for (int i = 0; i < count; ++i)
-			{
+			for (int i = 0; i < count; ++i) {
 				auto kid = kids->At(i);
-				switch (kid->GetType())
-				{
+				switch (kid->GetType()) {
 				case HighLevelObject::Type::PageTreeNode:
 				{
 					auto tree_node = PageNodeUtils::ConvertTo<PageTreeNodePtr>(kid);
@@ -58,11 +55,12 @@ namespace gotchangpdf
 						current++;
 					break;
 				default:
-					throw InvalidObjectTypeException(*kid->GetObject());
+					assert(!"Kids array contains item with invalid type");
+					break;
 				}
 			}
 
-			throw Exception("Page number was not found: " + number);
+			throw GeneralException("Page number was not found: " + number);
 		}
 
 		bool PageTree::HasTreeChilds(PageTreeNodePtr node) const

@@ -20,7 +20,7 @@ namespace gotchangpdf
 				auto ptr = obj.Content.get();
 				auto converted = dynamic_cast<typename T::value_type *>(ptr);
 				if (nullptr == converted)
-					throw Exception("Could not convert object to destination type");
+					throw ConversionExceptionFactory<T>::Construct(obj);
 
 				return T(converted);
 			}

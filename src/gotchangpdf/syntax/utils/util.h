@@ -17,7 +17,7 @@ namespace gotchangpdf
 	DestType SafeConvert(SourceType value)
 	{
 		if (!IsInRange<SourceType, DestType>(value))
-			throw syntax::Exception("Integer value is out of range");
+			throw syntax::ConversionExceptionFactory<DestType>::Construct(value);
 
 		return static_cast<DestType>(value);
 	}

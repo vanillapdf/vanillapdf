@@ -54,8 +54,8 @@
     <ClInclude Include="src\gotchangpdf\semantics\objects\rectangle.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\tree.h" />
     <ClInclude Include="src\gotchangpdf\semantics\utils\semantics_fwd.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\utils\semantic_exceptions.h" />
     <ClInclude Include="src\gotchangpdf\syntax\exceptions\exception.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\exceptions\invalid_object_type_exception.h" />
     <ClInclude Include="src\gotchangpdf\syntax\files\file.h" />
     <ClInclude Include="src\gotchangpdf\syntax\files\header.h" />
     <ClInclude Include="src\gotchangpdf\syntax\files\xref.h" />
@@ -146,7 +146,6 @@
     <ClCompile Include="src\gotchangpdf\semantics\documents\page_tree.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\documents\page_tree_node.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\exceptions\exception.cpp" />
-    <ClCompile Include="src\gotchangpdf\syntax\exceptions\invalid_object_type_exception.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\files\file.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\files\header.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\files\xref.cpp" />
@@ -183,7 +182,6 @@
     <ClCompile Include="src\gotchangpdf\syntax\parsers\spirit_parser.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\parsers\whitespace_grammar.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\parsers\xref_grammar.cpp" />
-    <ClCompile Include="src\gotchangpdf\syntax\streams\raw_base_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\streams\raw_reverse_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\streams\raw_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\utils\buffer.cpp" />

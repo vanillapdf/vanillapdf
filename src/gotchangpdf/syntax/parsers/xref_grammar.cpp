@@ -126,7 +126,8 @@ void read_xref_stream_data(XrefBasePtr xref, StreamObjectPtr stream, std::shared
 				break;
 			}
 			default:
-				throw Exception("Unknown field in cross reference stream");
+				LOG_ERROR << "Unrecognized data found in xref stream data";
+				break;
 			}
 		}
 

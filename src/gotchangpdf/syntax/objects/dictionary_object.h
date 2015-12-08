@@ -10,8 +10,6 @@
 #include <map>
 //#include <vector>
 
-#include <sstream>
-
 namespace gotchangpdf
 {
 	namespace syntax
@@ -101,9 +99,7 @@ namespace gotchangpdf
 			{
 				auto result = _list.find(name);
 				if (result == _list.end()) {
-					std::stringstream ss;
-					ss << "Item with name " << name << " was not found in dictionary";
-					throw Exception(ss.str());
+					throw GeneralException("Item with name " + name->Value()->ToString() + " was not found in dictionary");
 				}
 
 				return result->second;

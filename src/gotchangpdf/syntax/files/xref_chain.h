@@ -80,7 +80,7 @@ namespace gotchangpdf
 
 				std::stringstream ss;
 				ss << "Item " << objNumber << " " << genNumber << " was not found";
-				throw Exception(ss.str());
+				throw GeneralException(ss.str());
 			}
 
 		private:

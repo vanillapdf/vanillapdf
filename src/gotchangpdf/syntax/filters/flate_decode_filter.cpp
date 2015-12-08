@@ -87,7 +87,7 @@ namespace gotchangpdf
 				change = parameters->FindAs<IntegerObjectPtr>(constant::Name::EarlyChange);
 
 			if (*predictor == 2) {
-				throw Exception("TIFF predictor is currently not supported");
+				throw NotSupportedException("TIFF predictor is currently not supported");
 			} else if (*predictor >= 10) {
 				int bytesPerPixel = (*colors) * (*bits) / 8;
 				int bytesPerRow = ((*colors) * (*columns) * (*bits) + 7) / 8;
@@ -149,7 +149,8 @@ namespace gotchangpdf
 							}
 							break;
 						default:
-							throw syntax::Exception("Unknown filter type");
+							LOG_ERROR << "Unknown filter type: " << filter;
+							break;
 					}
 
 					result->insert(result.end(), curr.begin(), curr.end());

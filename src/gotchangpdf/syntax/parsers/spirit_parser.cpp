@@ -66,7 +66,7 @@ namespace gotchangpdf
 					"'" << input_begin_pos.get_currentline() << "'" << endl <<
 					setw(pos.column + 7) << " ^- here";
 
-				throw Exception("Parsing failed");
+				throw ParseException(pos.offset);
 			}
 			catch (const qi::expectation_failure<pos_iterator_type>& exception) {
 				LOG_ERROR << "Parsing failed";
@@ -79,7 +79,7 @@ namespace gotchangpdf
 					"'" << pos_begin.get_currentline() << "'" << endl <<
 					setw(pos.column + 7) << " ^- here";
 
-				throw;
+				throw ParseException(pos.offset);
 			}
 		}
 
@@ -100,7 +100,7 @@ namespace gotchangpdf
 
 			auto locked_file = _impl->_file.lock();
 			if (!locked_file)
-				throw Exception("File is closed");
+				throw FileDisposedException();
 
 			types::stream_offset offset = tellg();
 			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, locked_file->GetFilename(), 1, 1, offset);
@@ -121,7 +121,7 @@ namespace gotchangpdf
 
 			auto locked_file = _impl->_file.lock();
 			if (!locked_file)
-				throw Exception("File is closed");
+				throw FileDisposedException();
 
 			types::stream_offset offset = tellg();
 			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, locked_file->GetFilename(), 1, 1, offset);
@@ -157,7 +157,7 @@ namespace gotchangpdf
 
 			auto locked_file = _impl->_file.lock();
 			if (!locked_file)
-				throw Exception("File is closed");
+				throw FileDisposedException();
 
 			types::stream_offset offset = tellg();
 			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, locked_file->GetFilename(), 1, 1, offset);
@@ -178,7 +178,7 @@ namespace gotchangpdf
 
 			auto locked_file = _impl->_file.lock();
 			if (!locked_file)
-				throw Exception("File is closed");
+				throw FileDisposedException();
 
 			types::stream_offset offset = tellg();
 			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, locked_file->GetFilename(), 1, 1, offset);
@@ -205,7 +205,7 @@ namespace gotchangpdf
 
 			auto locked_file = _impl->_file.lock();
 			if (!locked_file)
-				throw Exception("File is closed");
+				throw FileDisposedException();
 
 			types::stream_offset offset = tellg();
 			pos_iterator_type input_begin_pos(input_begin_base, input_end_base, locked_file->GetFilename(), 1, 1, offset);

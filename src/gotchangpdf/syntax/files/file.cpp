@@ -45,7 +45,7 @@ namespace gotchangpdf
 				ios_base::in | ios_base::out | ios_base::binary);
 
 			if (!_input || !_input->good())
-				throw Exception("Could not open file");
+				throw GeneralException("Could not open file");
 
 			SpiritParser stream = SpiritParser(holder, *_input);
 
@@ -87,12 +87,12 @@ namespace gotchangpdf
 			LOG_DEBUG << "GetIndirectObject " << objNumber << " and " << genNumber;
 
 			if (!_initialized)
-				throw Exception("File has not been initialized yet");
+				throw FileNotInitializedException(_filename);
 
 			auto item = _xref->GetXrefEntry(objNumber, genNumber);
 
 			if (!item->InUse())
-				throw Exception("Required object is marked as free");
+				throw ObjectMissingException(objNumber, genNumber);
 
 			switch (item->GetUsage()) {
 			case XrefEntryBase::Usage::Used:
@@ -106,9 +106,14 @@ namespace gotchangpdf
 				return compressed->GetReference();
 			}
 			case XrefEntryBase::Usage::Null:
-				throw Exception("Specified entry " + std::to_string(objNumber) + " " + std::to_string(genNumber) + " obj is missing");
+				LOG_ERROR << "Xref entry type is null for object " << objNumber << " " << genNumber;
+				throw ObjectMissingException(objNumber, genNumber);
+			case XrefEntryBase::Usage::Free:
+				LOG_ERROR << "Xref entry type is free for object " << objNumber << " " << genNumber << " and InUse() returned true";
+				assert(!"Current entry is supposed to be InUse(), while it's type is Free");
+				throw ObjectMissingException(objNumber, genNumber);
 			default:
-				throw Exception("Unknown entry type");
+				throw GeneralException("Unknown entry type");
 			}
 		}
 

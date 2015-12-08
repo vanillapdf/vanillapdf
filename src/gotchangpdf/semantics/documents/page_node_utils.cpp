@@ -6,6 +6,7 @@
 #include "dictionary_object.h"
 #include "page_tree_node.h"
 #include "page_object.h"
+#include "semantic_exceptions.h"
 
 namespace gotchangpdf
 {
@@ -15,6 +16,9 @@ namespace gotchangpdf
 
 		PageNodeBasePtr CreatePageNode(syntax::DictionaryObjectPtr obj)
 		{
+			if (!obj->Contains(Name::Type))
+				throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageNodeBase>(obj);
+
 			auto type = obj->FindAs<syntax::NameObjectPtr>(Name::Type);
 
 			if (*type == Name::Pages)
@@ -22,7 +26,7 @@ namespace gotchangpdf
 			else if (*type == Name::Page)
 				return PageObjectPtr(obj);
 			else
-				throw syntax::Exception("Cannot initialize PageTree from TODO");
+				throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageNodeBase>(obj);
 		}
 	}
 }

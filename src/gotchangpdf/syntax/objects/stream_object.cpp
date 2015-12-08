@@ -18,20 +18,15 @@ namespace gotchangpdf
 
 			auto locked_file = _file.lock();
 			if (!locked_file)
-				throw Exception("File already disposed");
+				throw FileDisposedException();
 
 			auto input = locked_file->GetInputStream();
-			if (auto locked = input.lock()) {
-				auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
-				auto stream = Stream(*locked);
-				auto pos = stream.tellg();
-				stream.seekg(_raw_data_offset);
-				_body = stream.read(*size);
-				stream.seekg(pos);
-			}
-			else {
-				throw Exception("Could not obtain fstream lock");
-			}
+			auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
+			auto stream = Stream(*input);
+			auto pos = stream.tellg();
+			stream.seekg(_raw_data_offset);
+			_body = stream.read(*size);
+			stream.seekg(pos);
 
 			return _body;
 		}

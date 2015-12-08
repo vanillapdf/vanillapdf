@@ -8,7 +8,7 @@
 #include "rectangle.h"
 #include "name_object.h"
 #include "integer_object.h"
-#include "exception.h"
+#include "semantic_exceptions.h"
 
 namespace gotchangpdf
 {
@@ -21,7 +21,7 @@ namespace gotchangpdf
 			PageNodeBase(obj)
 		{
 			if (*_obj->FindAs<NameObjectPtr>(Name::Type) != Name::Page)
-				throw Exception("TODO");
+				throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageObject>(obj);
 		}
 
 		PageTreeNodePtr PageObject::Parent() const
@@ -68,7 +68,7 @@ namespace gotchangpdf
 				assert(!(is_ref && is_array) && "Error in object utils, object is stream and array at the same time");
 
 				auto base_type_str = Object::TypeName(content->GetType());
-				throw Exception("Invalid contents type: " + std::string(base_type_str));
+				throw GeneralException("Invalid contents type: " + std::string(base_type_str));
 			}
 
 			if (is_ref) {
@@ -81,7 +81,7 @@ namespace gotchangpdf
 				return ContentsPtr(data);
 			}
 
-			throw Exception("Unreachable code");
+			throw GeneralException("Unreachable code");
 		}
 	}
 }

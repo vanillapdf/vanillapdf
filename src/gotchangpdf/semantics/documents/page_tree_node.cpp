@@ -5,6 +5,7 @@
 #include "dictionary_object.h"
 #include "name_object.h"
 #include "integer_object.h"
+#include "semantic_exceptions.h"
 
 namespace gotchangpdf
 {
@@ -16,24 +17,16 @@ namespace gotchangpdf
 		PageTreeNode::PageTreeNode(DictionaryObjectPtr obj) :
 			PageNodeBase(obj)
 		{
-			if (*_obj->FindAs<NameObjectPtr>(Name::Type) != Name::Pages)
-				throw Exception("TODO");
+			if (!_obj->Contains(Name::Type) || *_obj->FindAs<NameObjectPtr>(Name::Type) != Name::Pages)
+				throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageTreeNode>(obj);
 		}
 
-		types::integer PageTreeNode::KidCount(void) const
-		{
-			return _obj->FindAs<IntegerObjectPtr>(Name::Count)->Value();
-		}
+		types::integer PageTreeNode::KidCount(void) const { return _obj->FindAs<IntegerObjectPtr>(Name::Count)->Value(); }
 
 		ArrayObjectPtr<PageNodeBasePtr> PageTreeNode::Kids() const
 		{
 			auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(Name::Kids);
-
-			return kids->Convert<PageNodeBasePtr>(
-				[] (DictionaryObjectPtr& obj)
-			{
-				return CreatePageNode(obj);
-			});
+			return kids->Convert<PageNodeBasePtr>([](DictionaryObjectPtr& obj) { return CreatePageNode(obj); });
 		}
 	}
 }

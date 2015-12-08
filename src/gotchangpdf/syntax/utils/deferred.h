@@ -57,14 +57,6 @@ namespace gotchangpdf
 			Content.Owner = this;
 		}
 
-		//template <typename U, typename = std::enable_if_t<std::is_convertible<U*, T*>::value>>
-		//Deferred& operator=(const Deferred<U>& rhs)
-		//{
-		//	Contents.reset(rhs.Content.get());
-		//	Content.Owner = this;
-		//	return *this;
-		//}
-
 		inline operator T&() { return Content.operator*(); }
 		inline operator T&() const { return Content.operator*(); }
 

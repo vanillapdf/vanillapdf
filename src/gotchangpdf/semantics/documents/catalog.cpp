@@ -6,6 +6,7 @@
 #include "name_object.h"
 #include "exception.h"
 #include "page_tree.h"
+#include "semantic_exceptions.h"
 
 namespace gotchangpdf
 {
@@ -14,7 +15,7 @@ namespace gotchangpdf
 		Catalog::Catalog(syntax::DictionaryObjectPtr root) : HighLevelObject(root)
 		{
 			if (*root->FindAs<syntax::NameObjectPtr>(constant::Name::Type) != constant::Name::Catalog)
-				throw syntax::Exception("TODO");
+				throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, Catalog>(root);
 		}
 
 		PageTreePtr Catalog::Pages(void) const

@@ -18,22 +18,18 @@ namespace gotchangpdf
 
 			auto locked_file = _file.lock();
 			if (!locked_file)
-				throw Exception("File already disposed");
+				throw FileDisposedException();
 
-			auto weak_input = locked_file->GetInputStream();
-			if (auto input = weak_input.lock()) {
-				auto rewind_pos = input->tellg();
-				BOOST_SCOPE_EXIT(input, rewind_pos)
-				{
-					input->seekg(rewind_pos);
-				} BOOST_SCOPE_EXIT_END;
-				auto parser = SpiritParser(_file, *input);
-				auto object = parser.ReadDirectObject(_offset);
-				SetReference(object);
-				SetInitialized(true);
-			} else {
-				throw Exception("Could not lock input stream");
-			}
+			auto input = locked_file->GetInputStream();
+			auto rewind_pos = input->tellg();
+			BOOST_SCOPE_EXIT(input, rewind_pos)
+			{
+				input->seekg(rewind_pos);
+			} BOOST_SCOPE_EXIT_END;
+			auto parser = SpiritParser(_file, *input);
+			auto object = parser.ReadDirectObject(_offset);
+			SetReference(object);
+			SetInitialized(true);
 		}
 
 		void XrefCompressedEntry::Initialize(void)
@@ -43,7 +39,7 @@ namespace gotchangpdf
 
 			auto locked_file = _file.lock();
 			if (!locked_file)
-				throw Exception("File already disposed");
+				throw FileDisposedException();
 
 			auto chain = locked_file->GetXrefChain();
 			auto stm = locked_file->GetIndirectObject(_object_stream_number, 0);
@@ -59,18 +55,19 @@ namespace gotchangpdf
 			auto stream_entries = parser.ReadObjectStreamEntries(first->Value(), size->Value());
 			for (auto stream_entry : stream_entries) {
 				auto object_number = stream_entry->GetObjectNumber();
-
 				auto stream_entry_xref = chain->GetXrefEntry(object_number, 0);
-				if (stream_entry_xref->GetUsage() != XrefEntryBase::Usage::Compressed)
-					throw Exception("Compressed entry type expected");
+
+				assert(stream_entry_xref->GetUsage() == XrefEntryBase::Usage::Compressed && "Stream entry has different usage than Compressed");
+				if (stream_entry_xref->GetUsage() != XrefEntryBase::Usage::Compressed) {
+					continue;
+				}
 
 				auto stream_compressed_entry_xref = XrefUtils::ConvertTo<XrefCompressedEntryPtr>(stream_entry_xref);
 				stream_compressed_entry_xref->SetReference(stream_entry);
 				stream_compressed_entry_xref->SetInitialized(true);
 			}
 
-			if (!Initialized())
-				throw Exception("Item was not found in object stream");
+			assert(Initialized());
 		}
 	}
 }
