@@ -6,6 +6,8 @@ namespace gotchangpdf
 {
 	namespace log
 	{
+		const Severity max_level = Severity::warning;
+
 		std::string convert_posix_time(const boost::posix_time::ptime& time)
 		{
 			static const char* time_format = "%Y-%m-%d %H:%M:%S";
@@ -18,7 +20,6 @@ namespace gotchangpdf
 			return ss.str();
 		}
 
-		const Severity max_level = Severity::warning;
 		void log_formatter(logging::record_view const& rec, logging::formatting_ostream& strm)
 		{
 			auto posix_tm = logging::extract<boost::posix_time::ptime>("TimeStamp", rec);
@@ -32,7 +33,7 @@ namespace gotchangpdf
 			auto full_path = logging::extract< std::string >("File", rec);
 			strm << " { "
 				<< boost::filesystem::path(full_path.get()).filename().string()
-				<< ": " << logging::extract<long>("Line", rec)
+				<< ":" << logging::extract<long>("Line", rec)
 				<< " in " << logging::extract<std::string>("Function", rec)
 				<< " }";
 		}
