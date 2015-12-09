@@ -7,6 +7,13 @@ namespace gotchangpdf
 {
 	namespace semantics
 	{
+		class OptionalEntryMissingException : public ExceptionBase
+		{
+		public:
+			explicit OptionalEntryMissingException(const syntax::DictionaryObjectPtr& container, const syntax::NameObjectPtr& entry)
+				: ExceptionBase(container->ToString() + "does not contain optional entry: " + entry->ToString(), Type::OptionalEntryMissing) {}
+		};
+
 		class SemanticContextException : public ExceptionBase
 		{
 		public:

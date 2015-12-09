@@ -12,16 +12,26 @@ namespace gotchangpdf
 	class ExceptionBase : public std::exception
 	{
 	public:
-		enum class Type
+		enum class Type : unsigned int
 		{
-			General = 0,
-			Conversion,
+			// global
+			Success = 0,
+			InvalidParameter,
 			NotSupported,
+
+			// syntax
+			Conversion = 0x00010000,
 			FileDisposed,
 			FileNotInitialized,
 			ObjectMissing,
 			ParseException,
-			SemanticContext
+
+			// semantic
+			OptionalEntryMissing = 0x10000000,
+			SemanticContext,
+
+			// global
+			General = 0xFFFFFFFF
 		};
 
 	public:

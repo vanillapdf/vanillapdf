@@ -133,6 +133,7 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_real_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_stream_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_string_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_values.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_xref.cpp" />
     <ClCompile Include="src\gotchangpdf\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">Create</PrecompiledHeader>
