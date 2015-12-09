@@ -64,9 +64,5 @@ int main(int argc, char *argv[])
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Release(chain));
 	RETURN_ERROR_IF_NOT_SUCCESS(FileHolder_Release(file_holder));
 
-#if (defined(DEBUG) && defined(_MSC_VER))
-	_CrtDumpMemoryLeaks();
-#endif
-
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
