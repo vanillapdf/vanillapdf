@@ -71,6 +71,7 @@ namespace gotchangpdf
 			extern const syntax::NameObjectPtr Prev;
 			extern const syntax::NameObjectPtr Root;
 			extern const syntax::NameObjectPtr Size;
+			extern const syntax::NameObjectPtr Version;
 			extern const syntax::NameObjectPtr W;
 			extern const syntax::NameObjectPtr XRefStm;
 		}
