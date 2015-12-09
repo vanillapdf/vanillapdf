@@ -15,6 +15,7 @@
 
 void print_spaces(int nested);
 error_type process_buffer(BufferHandle buffer, int nested);
+error_type process_version(PDFVersion version, int nested);
 
 /* Objects */
 error_type process_object(ObjectHandle obj, int nested);

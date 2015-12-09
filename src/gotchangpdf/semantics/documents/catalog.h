@@ -4,6 +4,7 @@
 #include "semantics_fwd.h"
 #include "high_level_object.h"
 #include "page_tree.h"
+#include "version.h"
 
 namespace gotchangpdf
 {
@@ -13,6 +14,10 @@ namespace gotchangpdf
 		{
 		public:
 			explicit Catalog(syntax::DictionaryObjectPtr root);
+
+			// optional entries
+			Version Version(void) const;
+
 
 			PageTreePtr Pages(void) const;
 

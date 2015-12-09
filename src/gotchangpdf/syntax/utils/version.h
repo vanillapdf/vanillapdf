@@ -5,7 +5,7 @@
 
 namespace gotchangpdf
 {
-	enum class Version : unsigned char
+	enum class Version
 	{
 		PDF10,
 		PDF11,

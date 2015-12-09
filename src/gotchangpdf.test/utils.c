@@ -45,3 +45,11 @@ error_type process_buffer(BufferHandle buffer, int nested)
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
+
+error_type process_version(PDFVersion version, int nested)
+{
+	print_spaces(nested);
+	printf("PDF Version: 1.%d \n", version);
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}

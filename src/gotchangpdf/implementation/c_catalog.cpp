@@ -4,6 +4,7 @@
 #include "c_catalog.h"
 #include "c_helper.h"
 
+using namespace gotchangpdf;
 using namespace gotchangpdf::semantics;
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPages(CatalogHandle handle, PPageTreeHandle result)
@@ -17,6 +18,40 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPages(CatalogHandle ha
 		auto pages = obj->Pages();
 		auto ptr = pages.AddRefGet();
 		*result = reinterpret_cast<PageTreeHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetVersion(CatalogHandle handle, PPDFVersion result)
+{
+	Catalog* obj = reinterpret_cast<Catalog*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		switch (obj->Version()) {
+		case Version::PDF10:
+			*result = PDFVersion_10; break;
+		case Version::PDF11:
+			*result = PDFVersion_11; break;
+		case Version::PDF12:
+			*result = PDFVersion_12; break;
+		case Version::PDF13:
+			*result = PDFVersion_13; break;
+		case Version::PDF14:
+			*result = PDFVersion_14; break;
+		case Version::PDF15:
+			*result = PDFVersion_15; break;
+		case Version::PDF16:
+			*result = PDFVersion_16; break;
+		case Version::PDF17:
+			*result = PDFVersion_17; break;
+		default:
+			return GOTCHANG_PDF_ERROR_GENERAL;
+		}
+
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS
