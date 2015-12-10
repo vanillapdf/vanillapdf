@@ -17,7 +17,7 @@ namespace gotchangpdf
 			types::integer KidCount(void) const;
 			syntax::ArrayObjectPtr<PageNodeBasePtr> Kids(void) const;
 
-			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageTreeNode; }
+			virtual NodeType GetNodeType(void) const noexcept override { return NodeType::Tree; }
 		};
 	}
 }

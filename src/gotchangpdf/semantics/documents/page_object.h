@@ -18,7 +18,7 @@ namespace gotchangpdf
 			RectanglePtr MediaBox(void) const;
 			ContentsPtr Contents(void) const;
 
-			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageObject; }
+			virtual NodeType GetNodeType(void) const noexcept override { return NodeType::Object; }
 		};
 	}
 }

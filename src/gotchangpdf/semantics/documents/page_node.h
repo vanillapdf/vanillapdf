@@ -11,7 +11,15 @@ namespace gotchangpdf
 		class PageNodeBase : public HighLevelObject<syntax::DictionaryObjectPtr>
 		{
 		public:
+			enum class NodeType
+			{
+				Tree,
+				Object
+			};
+
 			explicit PageNodeBase(syntax::DictionaryObjectPtr obj) : HighLevelObject(obj) {}
+
+			virtual NodeType GetNodeType(void) const noexcept = 0;
 			virtual ~PageNodeBase() = 0;
 		};
 

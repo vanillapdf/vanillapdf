@@ -24,8 +24,8 @@ namespace gotchangpdf
 			auto count = kids->Size();
 			for (int i = 0; i < count; ++i) {
 				auto kid = kids->At(i);
-				switch (kid->GetType()) {
-				case HighLevelObject::Type::PageTreeNode:
+				switch (kid->GetNodeType()) {
+				case PageNodeBase::NodeType::Tree:
 				{
 					auto tree_node = PageNodeUtils::ConvertTo<PageTreeNodePtr>(kid);
 					auto under = tree_node->KidCount();
@@ -48,7 +48,7 @@ namespace gotchangpdf
 
 					break;
 				}
-				case HighLevelObject::Type::PageObject:
+				case PageNodeBase::NodeType::Object:
 					if (current == number)
 						return PageNodeUtils::ConvertTo<PageObjectPtr>(kid);
 					else
@@ -69,7 +69,7 @@ namespace gotchangpdf
 			auto count = kids->Size();;
 			for (int i = 0; i < count; ++i) {
 				auto kid = kids->At(i);
-				if (kid->GetType() == HighLevelObject::Type::PageTreeNode)
+				if (kid->GetNodeType() == PageNodeBase::NodeType::Tree)
 					return true;
 			}
 

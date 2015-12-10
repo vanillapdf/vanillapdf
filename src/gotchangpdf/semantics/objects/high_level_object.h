@@ -11,25 +11,8 @@ namespace gotchangpdf
 		class HighLevelObject : public IUnknown
 		{
 		public:
-			enum class Type : unsigned char
-			{
-				Unknown = 0,
-				PageObject,
-				ResourceDictionary,
-				Catalog,
-				PageTreeNode,
-				PageTree,
-				Rectangle,
-				ContentStream
-			};
-
-			explicit HighLevelObject(T obj) : _obj(obj) {}
-
+			explicit HighLevelObject(const T& obj) : _obj(obj) {}
 			inline T GetObject(void) const { return _obj; }
-			virtual inline Type GetType(void) const = 0;
-
-			virtual ~HighLevelObject() {};
-
 		protected:
 			T _obj;
 		};

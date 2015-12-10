@@ -20,8 +20,6 @@ namespace gotchangpdf
 
 
 			PageTreePtr Pages(void) const;
-
-			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::Catalog; }
 		};
 
 	}

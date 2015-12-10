@@ -14,8 +14,6 @@ namespace gotchangpdf
 		{
 		public:
 			explicit ContentStream(syntax::StreamObjectPtr obj);
-			virtual inline Type GetType() const override { return HighLevelObject::Type::ContentStream; }
-
 			syntax::contents::GenericOperationCollection Operations(void) const;
 		};
 	}

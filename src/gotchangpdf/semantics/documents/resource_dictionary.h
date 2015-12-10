@@ -16,8 +16,6 @@ namespace gotchangpdf
 
 			//inline ObjectReferenceWrapper<IndirectObjectReference> Parent(void) const { return _parent; }
 			//inline ObjectReferenceWrapper<DictionaryObject> Resources(void) const { return _resources; }
-
-			virtual inline Type GetType() const override { return HighLevelObject::Type::ResourceDictionary; }
 		};
 	}
 }

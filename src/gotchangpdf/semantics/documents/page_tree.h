@@ -20,8 +20,6 @@ namespace gotchangpdf
 			inline PageObjectPtr Page(types::integer number) const { return PageInternal(number); }
 			inline PageObjectPtr operator[](types::integer number) const { return PageInternal(number); }
 
-			virtual inline HighLevelObject::Type GetType() const override { return HighLevelObject::Type::PageTree; }
-
 		private:
 			PageObjectPtr PageInternal(types::integer number) const;
 			bool HasTreeChilds(PageTreeNodePtr node) const;

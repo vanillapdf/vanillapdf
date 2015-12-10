@@ -11,9 +11,6 @@ namespace gotchangpdf
 		{
 		public:
 			explicit Rectangle(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> list) : HighLevelObject(list) {}
-
-			virtual inline HighLevelObject::Type GetType(void) const { return HighLevelObject::Type::Rectangle; }
-
 		private:
 		};
 	}
