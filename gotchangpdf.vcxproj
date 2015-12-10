@@ -32,6 +32,7 @@
     <ClInclude Include="include\gotchangpdf\c_stream_object.h" />
     <ClInclude Include="include\gotchangpdf\c_string_object.h" />
     <ClInclude Include="include\gotchangpdf\c_values.h" />
+    <ClInclude Include="include\gotchangpdf\c_version.h" />
     <ClInclude Include="include\gotchangpdf\c_xref.h" />
     <ClInclude Include="include\gotchangpdf\gotchangpdf.h" />
     <ClInclude Include="src\gotchangpdf\implementation\c_helper.h" />

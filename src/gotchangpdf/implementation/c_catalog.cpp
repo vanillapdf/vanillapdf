@@ -49,9 +49,25 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetVersion(CatalogHandle 
 		case Version::PDF17:
 			*result = PDFVersion_17; break;
 		default:
-			return GOTCHANG_PDF_ERROR_GENERAL;
+			return GOTCHANG_PDF_ERROR_NOT_SUPPORTED;
 		}
 
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetExtensions(CatalogHandle handle, PDeveloperExtensionsHandle result)
+{
+	Catalog* obj = reinterpret_cast<Catalog*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto extensions = obj->Extensions();
+		auto ptr = extensions.AddRefGet();
+		*result = reinterpret_cast<DeveloperExtensionsHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	C_INTERFACE_EXCEPTION_HANDLERS
