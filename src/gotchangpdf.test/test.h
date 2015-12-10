@@ -49,6 +49,14 @@ error_type process_content_operation_textshow(ContentOperationTextShowHandle obj
 error_type process_page(PageObjectHandle obj, int nested);
 error_type process_xref(XrefHandle xref, int nested);
 
-#define RETURN_ERROR_IF_NOT_SUCCESS(var) do { int __result__ = (var);  if (GOTCHANG_PDF_ERROR_SUCCES != __result__) return __result__; } while(0)
+#define RETURN_ERROR_IF_NOT_SUCCESS(var) do { error_type __result__ = (var);  if (GOTCHANG_PDF_ERROR_SUCCES != __result__) return __result__; } while(0)
+
+#define RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(eval, call) \
+do { \
+	error_type __result__ = (eval); \
+	if (GOTCHANG_PDF_ERROR_SUCCES == __result__) { RETURN_ERROR_IF_NOT_SUCCESS(call); } \
+	else if (GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING == __result__) { /* Do nothing */} \
+	else { return __result__; } \
+} while(0)
 
 #endif /* _GOTCHANGPDF_TEST_H */

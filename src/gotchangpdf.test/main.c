@@ -41,22 +41,11 @@ int main(int argc, char *argv[])
 		CatalogHandle catalog = NULL;
 		PageTreeHandle pages = NULL;
 		PDFVersion version;
-		error_type result = GOTCHANG_PDF_ERROR_GENERAL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenExisting(file_holder, &document));
 		RETURN_ERROR_IF_NOT_SUCCESS(Document_GetCatalog(document, &catalog));
 
-		result = Catalog_GetVersion(catalog, &version);
-		if (GOTCHANG_PDF_ERROR_SUCCES == result) {
-			RETURN_ERROR_IF_NOT_SUCCESS(process_version(version, 0));
-		}
-		else if (GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING == result) {
-			// skip missing entry
-		}
-		else {
-			// Error occured during processing version entry
-			return result;
-		}
+		RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(Catalog_GetVersion(catalog, &version), process_version(version, 0));
 
 		RETURN_ERROR_IF_NOT_SUCCESS(Catalog_GetPages(catalog, &pages));
 		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(pages, &size));
