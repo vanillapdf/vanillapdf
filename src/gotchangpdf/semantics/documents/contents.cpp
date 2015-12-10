@@ -6,6 +6,8 @@
 #include "content_stream_operators.h"
 #include "content_stream_objects.h"
 
+#include <numeric>
+
 namespace gotchangpdf
 {
 	namespace semantics
@@ -233,15 +235,15 @@ namespace gotchangpdf
 			if (!_instructions.empty())
 				return _instructions;
 
+			int final_size = std::accumulate(_contents.begin(), _contents.end(), 0, [](unsigned int sum, const ContentStreamPtr& stream) { return sum + stream->Operations().size(); });
 			sync::BaseOperationCollection ops;
+			ops.reserve(final_size);
 
 			for (auto item : _contents) {
 				auto operations = item->Operations();
 				auto size = operations.size();
-				ops.reserve(ops.size() + size);
 				for (unsigned int i = 0; i < size; ++i) {
 					auto op = operations.at(i);
-
 					auto converted = ContentUtils::ConvertGenericOperation(op);
 					ops.push_back(converted);
 				}
@@ -283,14 +285,18 @@ namespace gotchangpdf
 
 		types::uinteger Contents::GetInstructionsSize(void) const
 		{
-			auto ops = Instructions();
-			return ops.size();
+			if (!_instructions.empty())
+				return _instructions.size();
+
+			return Instructions().size();
 		}
 
 		sync::InstructionBasePtr Contents::GetInstructionAt(types::uinteger at) const
 		{
-			auto ops = Instructions();
-			return ops.at(at);
+			if (!_instructions.empty())
+				return _instructions.at(at);
+
+			return Instructions().at(at);
 		}
 	}
 }

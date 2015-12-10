@@ -15,6 +15,9 @@ namespace gotchangpdf
 		public:
 			explicit ContentStream(syntax::StreamObjectPtr obj);
 			syntax::contents::GenericOperationCollection Operations(void) const;
+
+		private:
+			mutable syntax::contents::GenericOperationCollection _operations;
 		};
 	}
 }

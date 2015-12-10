@@ -11,10 +11,14 @@ namespace gotchangpdf
 
 		syntax::contents::GenericOperationCollection ContentStream::Operations(void) const
 		{
+			if (!_operations.empty())
+				return _operations;
+
 			auto body = _obj->GetBodyDecoded();
 			auto strm = body->ToStringStream();
 			auto parser = syntax::SpiritParser(_obj->GetFile(), strm);
-			return parser.ReadContentStreamOperations();
+			_operations = parser.ReadContentStreamOperations();
+			return _operations;
 		}
 	}
 }

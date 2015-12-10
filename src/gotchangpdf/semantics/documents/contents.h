@@ -9,8 +9,6 @@ namespace gotchangpdf
 {
 	namespace semantics
 	{
-		namespace sync = syntax::contents;
-
 		class Contents : public IUnknown
 		{
 		public:
@@ -18,7 +16,7 @@ namespace gotchangpdf
 			explicit Contents(syntax::StreamObjectPtr obj);
 			explicit Contents(syntax::ArrayObjectPtr<syntax::IndirectObjectReferencePtr> obj);
 
-			sync::BaseInstructionCollection Instructions(void) const;
+			syntax::contents::BaseInstructionCollection Instructions(void) const;
 			types::uinteger GetInstructionsSize(void) const;
 			syntax::contents::InstructionBasePtr GetInstructionAt(types::uinteger at) const;
 
@@ -27,7 +25,7 @@ namespace gotchangpdf
 
 		private:
 			std::vector<ContentStreamPtr> _contents;
-			mutable sync::BaseInstructionCollection _instructions;
+			mutable syntax::contents::BaseInstructionCollection _instructions;
 		};
 	}
 }
