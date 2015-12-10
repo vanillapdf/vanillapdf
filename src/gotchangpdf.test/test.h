@@ -48,6 +48,7 @@ error_type process_content_operation_textshow(ContentOperationTextShowHandle obj
 /* Documents */
 error_type process_page(PageObjectHandle obj, int nested);
 error_type process_xref(XrefHandle xref, int nested);
+error_type process_extensions(DeveloperExtensionsHandle extensions, int nested);
 
 #define RETURN_ERROR_IF_NOT_SUCCESS(var) do { error_type __result__ = (var);  if (GOTCHANG_PDF_ERROR_SUCCES != __result__) return __result__; } while(0)
 

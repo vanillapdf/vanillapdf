@@ -40,12 +40,14 @@ int main(int argc, char *argv[])
 		DocumentHandle document = NULL;
 		CatalogHandle catalog = NULL;
 		PageTreeHandle pages = NULL;
+		DeveloperExtensionsHandle extensions = NULL;
 		PDFVersion version;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenExisting(file_holder, &document));
 		RETURN_ERROR_IF_NOT_SUCCESS(Document_GetCatalog(document, &catalog));
 
 		RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(Catalog_GetVersion(catalog, &version), process_version(version, 0));
+		RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(Catalog_GetExtensions(catalog, &extensions), process_extensions(extensions, 0));
 
 		RETURN_ERROR_IF_NOT_SUCCESS(Catalog_GetPages(catalog, &pages));
 		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(pages, &size));

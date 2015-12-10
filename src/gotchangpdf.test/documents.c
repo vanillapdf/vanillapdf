@@ -223,3 +223,29 @@ error_type process_page(PageObjectHandle obj, int nested)
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
+
+error_type process_extensions(DeveloperExtensionsHandle extensions, int nested)
+{
+	IntegerHandle level = NULL;
+	PDFVersion base_version;
+
+	print_spaces(nested);
+	printf("Developer extensions begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtensions_GetBaseVersion(extensions, &base_version));
+	RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtensions_GetExtensionLevel(extensions, &level));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(process_version(base_version, nested + 2));
+
+	print_spaces(nested + 1);
+	printf("Extensions level begin\n");
+	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(level, nested + 2));
+	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(level));
+	print_spaces(nested + 1);
+	printf("Extensions level end\n");
+
+	print_spaces(nested);
+	printf("Developer extensions end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
