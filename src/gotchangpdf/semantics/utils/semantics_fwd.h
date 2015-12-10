@@ -27,6 +27,8 @@ namespace gotchangpdf
 		class ContentStream; using ContentStreamPtr = Deferred<ContentStream>;
 		class Contents; using ContentsPtr = Deferred<Contents>;
 
+		class DeveloperExtensions; using DeveloperExtensionsPtr = Deferred<DeveloperExtensions>;
+
 		namespace contents
 		{
 			class ContentObjectBase; using ContentObjectBasePtr = Deferred<ContentObjectBase>;

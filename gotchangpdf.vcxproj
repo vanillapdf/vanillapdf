@@ -16,6 +16,7 @@
     <ClInclude Include="include\gotchangpdf\c_buffer.h" />
     <ClInclude Include="include\gotchangpdf\c_catalog.h" />
     <ClInclude Include="include\gotchangpdf\c_contents.h" />
+    <ClInclude Include="include\gotchangpdf\c_developer_extensions.h" />
     <ClInclude Include="include\gotchangpdf\c_dictionary_object.h" />
     <ClInclude Include="include\gotchangpdf\c_document.h" />
     <ClInclude Include="include\gotchangpdf\c_export.h" />
@@ -48,6 +49,7 @@
     <ClInclude Include="src\gotchangpdf\semantics\documents\page_tree_node.h" />
     <ClInclude Include="src\gotchangpdf\semantics\documents\resource_dictionary.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\date.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\objects\developer_extensions.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\high_level_object.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\name_tree.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\number_tree.h" />
@@ -55,6 +57,7 @@
     <ClInclude Include="src\gotchangpdf\semantics\objects\tree.h" />
     <ClInclude Include="src\gotchangpdf\semantics\utils\semantics_fwd.h" />
     <ClInclude Include="src\gotchangpdf\semantics\utils\semantic_exceptions.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\utils\semantic_utils.h" />
     <ClInclude Include="src\gotchangpdf\syntax\exceptions\exception.h" />
     <ClInclude Include="src\gotchangpdf\syntax\files\file.h" />
     <ClInclude Include="src\gotchangpdf\syntax\files\header.h" />
@@ -121,6 +124,7 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_buffer.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_catalog.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_contents.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_developer_extensions.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_dictionary_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_document.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_file.cpp" />
@@ -146,6 +150,8 @@
     <ClCompile Include="src\gotchangpdf\semantics\documents\page_object.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\documents\page_tree.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\documents\page_tree_node.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\objects\developer_extensions.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\utils\semantic_utils.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\exceptions\exception.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\files\file.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\files\header.cpp" />

@@ -3,6 +3,7 @@
 
 #include "semantics_fwd.h"
 #include "high_level_object.h"
+#include "developer_extensions.h"
 #include "page_tree.h"
 #include "version.h"
 
@@ -17,6 +18,7 @@ namespace gotchangpdf
 
 			// optional entries
 			Version Version(void) const;
+			DeveloperExtensionsPtr Extensions(void) const;
 
 
 			PageTreePtr Pages(void) const;
