@@ -14,12 +14,13 @@ namespace gotchangpdf
 		std::string DictionaryObject::ToString(void) const
 		{
 			std::stringstream ss;
-			ss << "<<" << std::endl;
+			ss << "<< ";
+			bool first = true;
 			for (auto item : _list) {
-				ss << "  " << item.first << " " << item.second->ToString() << std::endl;
+				ss << (first ? "" : ", ") << item.first << " " << item.second->ToString();
+				first = false;
 			}
-			ss << ">>" << std::endl;
-
+			ss << " >>";
 			return ss.str();
 		}
 
