@@ -3,7 +3,7 @@
 
 #include "unknown_interface.h"
 #include "qi_common.h"
-#include "content_stream_operations.h"
+#include "content_stream_operators.h"
 
 #include <boost/spirit/include/qi_grammar.hpp>
 

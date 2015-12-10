@@ -2,7 +2,7 @@
 #define _CONTENT_STREAM_GRAMMAR_H
 
 #include "qi_common.h"
-#include "content_stream_operations.h"
+#include "content_stream_operation_generic.h"
 #include "content_stream_operator_grammar.h"
 #include "spirit_grammar.h"
 

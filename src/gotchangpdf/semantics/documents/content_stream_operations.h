@@ -2,7 +2,8 @@
 #define _CONTENT_STREAM_OPERATIONS_H
 
 #include "semantics_fwd.h"
-#include "content_stream.h"
+#include "content_stream_operation_base.h"
+#include "string_object.h"
 
 #include <vector>
 

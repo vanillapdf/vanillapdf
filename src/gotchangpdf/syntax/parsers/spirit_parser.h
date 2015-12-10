@@ -5,7 +5,7 @@
 #include "xref.h"
 #include "raw_stream.h"
 #include "object_stream_header.h"
-#include "content_stream_operations.h"
+#include "content_stream_operation_generic.h"
 
 #include <vector>
 #include <memory>

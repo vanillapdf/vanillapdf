@@ -2,7 +2,7 @@
 #include "contents.h"
 
 #include "content_stream_grammar.h"
-#include "content_stream_operation_generic.h"
+#include "content_stream_operations.h"
 #include "content_stream_operators.h"
 #include "content_stream_objects.h"
 
