@@ -43,13 +43,17 @@ namespace gotchangpdf
 		namespace Name
 		{
 			extern const syntax::NameObjectPtr ASCII85Decode;
+			extern const syntax::NameObjectPtr BaseVersion;
 			extern const syntax::NameObjectPtr BitsPerComponent;
 			extern const syntax::NameObjectPtr Colors;
 			extern const syntax::NameObjectPtr Columns;
 			extern const syntax::NameObjectPtr Container;
 			extern const syntax::NameObjectPtr Contents;
 			extern const syntax::NameObjectPtr DecodeParms;
+			extern const syntax::NameObjectPtr DeveloperExtensions;
 			extern const syntax::NameObjectPtr EarlyChange;
+			extern const syntax::NameObjectPtr ExtensionLevel;
+			extern const syntax::NameObjectPtr Extensions;
 			extern const syntax::NameObjectPtr Length;
 			extern const syntax::NameObjectPtr Type;
 			extern const syntax::NameObjectPtr ObjStm;

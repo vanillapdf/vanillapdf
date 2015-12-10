@@ -33,16 +33,20 @@ namespace std
 	namespace gotchangpdf { namespace constant { namespace Name { \
 	const syntax::NameObjectPtr name(BufferPtr(#name, sizeof(#name))); \
 	} /* Name */ } /* constant */ } /* gotchangpdf */ \
-	NameHandle name = reinterpret_cast<NameHandle>(gotchangpdf::constant::Name::##name##.Content.get());
+	const NameHandle NameConstant_##name = reinterpret_cast<NameHandle>(gotchangpdf::constant::Name::##name##.Content.get());
 
 DECLARE_CONST_NAME(ASCII85Decode);
+DECLARE_CONST_NAME(BaseVersion);
 DECLARE_CONST_NAME(BitsPerComponent);
 DECLARE_CONST_NAME(Colors);
 DECLARE_CONST_NAME(Columns);
 DECLARE_CONST_NAME(Container);
 DECLARE_CONST_NAME(Contents);
 DECLARE_CONST_NAME(DecodeParms);
+DECLARE_CONST_NAME(DeveloperExtensions);
 DECLARE_CONST_NAME(EarlyChange);
+DECLARE_CONST_NAME(ExtensionLevel);
+DECLARE_CONST_NAME(Extensions);
 DECLARE_CONST_NAME(Length);
 DECLARE_CONST_NAME(Type);
 DECLARE_CONST_NAME(ObjStm);

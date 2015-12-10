@@ -45,6 +45,7 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(Catalog);
 	DECLARE_OBJECT_HANDLE(PageTree);
 	DECLARE_OBJECT_HANDLE(PageObject);
+	DECLARE_OBJECT_HANDLE(DeveloperExtensions);
 	
 	/* Contents */
 	DECLARE_OBJECT_HANDLE(Contents);
