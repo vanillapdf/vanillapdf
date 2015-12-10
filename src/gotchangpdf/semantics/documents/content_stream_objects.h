@@ -12,7 +12,6 @@ namespace gotchangpdf
 	{
 		namespace contents
 		{
-			namespace sync = syntax::contents;
 			class ContentObjectBase : public syntax::contents::InstructionBase
 			{
 			public:
@@ -28,15 +27,15 @@ namespace gotchangpdf
 			class TextObject : public ContentObjectBase
 			{
 			public:
-				TextObject(sync::BaseOperationCollection ops) : _operations(ops) {}
+				TextObject(syntax::contents::BaseOperationCollection ops) : _operations(ops) {}
 
 				inline virtual Type GetType(void) const _NOEXCEPT override { return Type::TextObject; }
 
 				types::uinteger GetOperationsSize(void) const { return _operations.size(); }
-				sync::OperationBasePtr GetOperationAt(types::uinteger at) const { return _operations.at(at); }
+				syntax::contents::OperationBasePtr GetOperationAt(types::uinteger at) const { return _operations.at(at); }
 
 			private:
-				sync::BaseOperationCollection _operations;
+				syntax::contents::BaseOperationCollection _operations;
 			};
 		}
 	}
