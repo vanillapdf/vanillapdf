@@ -2,6 +2,7 @@
 #define _C_HELPER_H
 
 #include "exception.h"
+#include "semantic_exceptions.h"
 #include "log.h"
 
 #include "c_values.h"
@@ -10,6 +11,11 @@
 #define RETURN_ERROR_PARAM_VALUE_IF_NULL(var) RETURN_ERROR_IF_NULL(var, GOTCHANG_PDF_ERROR_PARAMETER_VALUE)
 
 #define C_INTERFACE_EXCEPTION_HANDLERS \
+	catch (gotchangpdf::semantics::OptionalEntryMissingException& e) \
+	{ \
+		LOG_DEBUG << e.what(); \
+		return static_cast<error_type>(e.code()); \
+	} \
 	catch (gotchangpdf::ExceptionBase& e) \
 	{ \
 		LOG_ERROR << e.what(); \
