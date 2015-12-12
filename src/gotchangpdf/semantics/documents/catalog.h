@@ -6,6 +6,7 @@
 #include "developer_extensions.h"
 #include "page_tree.h"
 #include "version.h"
+#include "page_label.h"
 
 namespace gotchangpdf
 {
@@ -19,8 +20,9 @@ namespace gotchangpdf
 			// optional entries
 			Version Version(void) const;
 			DeveloperExtensionsPtr Extensions(void) const;
+			PageLabelsPtr PageLabels(void) const;
 
-
+			// required
 			PageTreePtr Pages(void) const;
 		};
 

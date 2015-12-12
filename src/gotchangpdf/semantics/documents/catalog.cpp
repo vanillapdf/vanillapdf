@@ -41,5 +41,11 @@ namespace gotchangpdf
 			auto pages = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Pages);
 			return PageTreePtr(pages);
 		}
+
+		PageLabelsPtr Catalog::PageLabels(void) const
+		{
+			auto labels = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::PageLabels);
+			return PageLabelsPtr(labels);
+		}
 	}
 }

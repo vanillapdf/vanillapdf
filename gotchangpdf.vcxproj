@@ -52,8 +52,9 @@
     <ClInclude Include="src\gotchangpdf\semantics\objects\date.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\developer_extensions.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\high_level_object.h" />
-    <ClInclude Include="src\gotchangpdf\semantics\objects\rectangle.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\objects\page_label.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\tree.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\objects\rectangle.h" />
     <ClInclude Include="src\gotchangpdf\semantics\utils\semantics_fwd.h" />
     <ClInclude Include="src\gotchangpdf\semantics\utils\semantic_exceptions.h" />
     <ClInclude Include="src\gotchangpdf\semantics\utils\semantic_utils.h" />

@@ -40,6 +40,8 @@ namespace gotchangpdf
 		class Contents; using ContentsPtr = Deferred<Contents>;
 
 		class DeveloperExtensions; using DeveloperExtensionsPtr = Deferred<DeveloperExtensions>;
+		class PageLabel; using PageLabelPtr = Deferred<PageLabel>;
+		class PageLabels; using PageLabelsPtr = Deferred<PageLabels>;
 
 		namespace contents
 		{
