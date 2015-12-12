@@ -24,14 +24,6 @@ namespace gotchangpdf
 			return ss.str();
 		}
 
-		DictionaryObject::const_iterator DictionaryObject::begin(void) const _NOEXCEPT { return _list.begin(); }
-		DictionaryObject::const_iterator DictionaryObject::end(void) const _NOEXCEPT { return _list.end(); }
-
-		DictionaryObject::iterator DictionaryObject::insert(const_iterator pos, const value_type & value)
-		{
-			return _list.insert(pos, value);
-		}
-
 		ContainableObjectPtr DictionaryObject::Find(const NameObjectPtr & name) const
 		{
 			auto result = _list.find(name);
@@ -53,5 +45,11 @@ namespace gotchangpdf
 		}
 
 		bool DictionaryObject::Contains(const NameObjectPtr & name) const { return (_list.find(name) != _list.end()); }
+		std::vector<ContainableObjectPtr> DictionaryObject::Values() const
+		{
+			std::vector<ContainableObjectPtr> result;
+			std::for_each(_list.begin(), _list.end(), [&result](const std::pair<NameObjectPtr, ContainableObjectPtr>& item) {result.push_back(item.second); });
+			return result;
+		}
 	}
 }

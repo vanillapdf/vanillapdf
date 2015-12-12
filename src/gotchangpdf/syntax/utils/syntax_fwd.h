@@ -72,6 +72,9 @@ namespace gotchangpdf
 		class Object;
 		class ContainableObject;
 
+		template <typename KeyT, typename ValueT, typename MapT /*= std::map<KeyT, ValueT>*/>
+		class DictionaryObjectBase;
+
 		template <typename T>
 		class ArrayObject;
 
@@ -92,6 +95,9 @@ namespace gotchangpdf
 
 		template <typename T>
 		using ArrayObjectPtr = Deferred<ArrayObject<T>>;
+
+		template <typename KeyT, typename ValueT, typename MapT /*= std::map<KeyT, ValueT>*/>
+		using DictionaryObjectBasePtr = Deferred<DictionaryObjectBase<KeyT, ValueT, MapT>>;
 
 		using DictionaryObjectPtr = Deferred<DictionaryObject>;
 		using MixedArrayObjectPtr = Deferred<MixedArrayObject>;

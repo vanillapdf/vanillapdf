@@ -6,40 +6,35 @@
 #include "exception.h"
 #include "containable.h"
 
-//#include <unordered_map>
 #include <map>
-//#include <vector>
+#include <vector>
 
 namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class DictionaryObject : public ContainableObject
+		template <typename KeyT, typename ValueT, typename MapT = std::map<KeyT, ValueT>>
+		class DictionaryObjectBase : public ContainableObject
 		{
 		public:
 			//typedef std::unordered_map<NameObjectPtr, ContainableObject, std::hash<NameObjectPtr>> list_type;
-			typedef std::map<NameObjectPtr, ContainableObjectPtr> list_type;
-			//typedef std::vector<std::pair<NameObjectPtr, ContainableObject>> list_type;
+			typedef MapT list_type;
 
-			typedef list_type::value_type value_type;
-			typedef list_type::iterator iterator;
-			typedef list_type::const_iterator const_iterator;
-			typedef list_type::size_type size_type;
-			typedef list_type::reference reference;
-			typedef list_type::const_reference const_reference;
-
-			friend std::ostream& operator<<(std::ostream& os, const DictionaryObject& obj);
-			virtual std::string ToString(void) const override;
-			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Dictionary; }
+			typedef typename list_type::value_type value_type;
+			typedef typename list_type::iterator iterator;
+			typedef typename list_type::const_iterator const_iterator;
+			typedef typename list_type::size_type size_type;
+			typedef typename list_type::reference reference;
+			typedef typename list_type::const_reference const_reference;
 
 		public:
 			class Iterator : public IUnknown
 			{
 			public:
-				typedef const_iterator::value_type value_type;
-				typedef const_iterator::difference_type difference_type;
-				typedef const_iterator::pointer pointer;
-				typedef const_iterator::reference reference;
+				typedef typename const_iterator::value_type value_type;
+				typedef typename const_iterator::difference_type difference_type;
+				typedef typename const_iterator::pointer pointer;
+				typedef typename const_iterator::reference reference;
 
 			public:
 				Iterator() = default;
@@ -58,8 +53,8 @@ namespace gotchangpdf
 					return temp;
 				}
 
-				NameObjectPtr First() const { return _it->first; }
-				ContainableObjectPtr Second() const { return _it->second; }
+				KeyT First() const { return _it->first; }
+				ValueT Second() const { return _it->second; }
 				const_iterator Value() const { return _it; }
 
 				bool operator==(const Iterator& other) const
@@ -73,23 +68,33 @@ namespace gotchangpdf
 
 			using IteratorPtr = DeferredIterator<Iterator>;
 
+			// std container
+			const_iterator begin(void) const _NOEXCEPT { return _list.begin(); }
+			const_iterator end(void) const _NOEXCEPT { return _list.end(); }
+			iterator insert(const_iterator pos, const value_type & value) { return _list.insert(pos, value); }
+
+		public:
+			list_type _list;
+		};
+
+		class DictionaryObject : public DictionaryObjectBase<NameObjectPtr, ContainableObjectPtr>
+		{
+		public:
+			friend std::ostream& operator<<(std::ostream& os, const DictionaryObject& obj);
+			virtual std::string ToString(void) const override;
+			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Dictionary; }
+
 			template <typename U>
 			U FindAs(const NameObjectPtr& name) const
 			{
 				auto result = Find(name);
 				return ObjectUtils::ConvertTo<U>(result);
 			}
-
-			const_iterator begin(void) const _NOEXCEPT;
-			const_iterator end(void) const _NOEXCEPT;
-
-			iterator insert(const_iterator pos,	const value_type& value);
+			
+			std::vector<ContainableObjectPtr> Values() const;
 			ContainableObjectPtr Find(const NameObjectPtr& name) const;
 			bool TryFind(const NameObjectPtr& name, ContainableObjectPtr& result) const;
 			bool Contains(const NameObjectPtr& name) const;
-
-		public:
-			list_type _list;
 		};
 	}
 }
