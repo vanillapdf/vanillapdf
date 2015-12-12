@@ -1,7 +1,6 @@
 #include "precompiled.h"
 #include "file.h"
 #include "xref_chain.h"
-#include "catalog.h"
 
 #include "c_file.h"
 #include "c_helper.h"
