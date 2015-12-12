@@ -7,6 +7,21 @@ namespace gotchangpdf
 {
 	namespace semantics
 	{
+		template <typename KeyT, typename ValueT>
+		class TreeBase;
+		template <typename KeyT, typename ValueT>
+		using TreeBasePtr = Deferred<TreeBase<KeyT, ValueT>>;
+
+		template <typename ValueT>
+		class NameTree;
+		template <typename ValueT>
+		using NameTreePtr = Deferred<NameTree<ValueT>>;
+
+		template <typename ValueT>
+		class NumberTree;
+		template <typename ValueT>
+		using NumberTreePtr = Deferred<NumberTree<ValueT>>;
+
 		class Document; using DocumentPtr = Deferred<Document>;
 		class Catalog; using CatalogPtr = Deferred<Catalog>;
 		class PageNodeBase; using PageNodeBasePtr = Deferred<PageNodeBase>;
@@ -17,10 +32,7 @@ namespace gotchangpdf
 		class ResourceDictionary; using ResourceDictionaryPtr = Deferred<ResourceDictionary>;
 
 		class Rectangle; using RectanglePtr = Deferred<Rectangle>;
-
 		class Date;
-		class NameTree;
-		class NumberTree;
 		class Rectangle;
 		class Tree;
 
