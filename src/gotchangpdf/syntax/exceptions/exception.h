@@ -110,9 +110,11 @@ namespace gotchangpdf
 			class Constructor<SourceT, false>
 			{
 			public:
-				static ConversionException Construct(const SourceT& obj)
+				static ConversionException Construct(const SourceT&)
 				{
-					std::string msg("Could not convert object of type " + typeid(SourceT).name() + " to type " + typeid(DestT).name());
+					std::string source_name(typeid(SourceT).name());
+					std::string dest_name(typeid(DestT).name());
+					std::string msg("Could not convert object of type " + source_name + " to type " + dest_name);
 					return ConversionException(msg);
 				}
 			};
