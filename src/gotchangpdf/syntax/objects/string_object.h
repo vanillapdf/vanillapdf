@@ -22,6 +22,9 @@ namespace gotchangpdf
 
 			virtual StringType GetStringType(void) const _NOEXCEPT = 0;
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::String; }
+
+			bool Equals(const StringObjectBase& other) const { return Value() == other.Value();	}
+			inline bool operator==(const StringObjectBase& other) const { return Equals(other); }
 		};
 
 		class HexadecimalStringObject : public StringObjectBase

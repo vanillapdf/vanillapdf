@@ -26,6 +26,113 @@ namespace gotchangpdf
 			template <typename T>
 			static bool IsType(const ObjectPtr& obj) { return ObjectTypeFunctor<T>::IsType(obj); }
 
+			static bool ValueEquals(const ObjectPtr& first, const ObjectPtr& second)
+			{
+				if (first->GetType() != second->GetType())
+					return false;
+
+				auto type = first->GetType();
+				switch (type) {
+				case Object::Type::Array:
+				{
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<MixedArrayObject*>(first.Content.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<MixedArrayObject*>(second.Content.get());
+
+					auto first_size = first_converted->Size();
+					auto second_size = second_converted->Size();
+					if (first_size != second_size)
+						return false;
+
+					for (int i = 0; i < first_size; ++i)
+						if (!ValueEquals(first_converted->At(i), second_converted->At(i)))
+							return false;
+
+					return true;
+				}
+				case Object::Type::Boolean:
+				{
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<BooleanObject*>(first.Content.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<BooleanObject*>(second.Content.get());
+					return (*first_converted == *second_converted);
+				}
+				case Object::Type::Dictionary:
+				{
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<DictionaryObject*>(first.Content.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<DictionaryObject*>(second.Content.get());
+
+					auto first_vals = first_converted->Values();
+					auto second_vals = second_converted->Values();
+					auto first_vals_size = first_vals.size();
+					auto second_vals_size = second_vals.size();
+					if (first_vals_size != second_vals_size)
+						return false;
+
+					for (unsigned int i = 0; i < second_vals_size; ++i)
+						if (!ValueEquals(first_vals[i], second_vals[i]))
+							return false;
+
+					return true;
+				}
+				case Object::Type::IndirectReference:
+				{
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<IndirectObjectReference*>(first.Content.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<IndirectObjectReference*>(second.Content.get());
+					return (*first_converted == *second_converted);
+				}
+				case Object::Type::Integer:
+				{
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<IntegerObject*>(first.Content.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<IntegerObject*>(second.Content.get());
+					return (*first_converted == *second_converted);
+				}
+				case Object::Type::Name:
+				{
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<NameObject*>(first.Content.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<NameObject*>(second.Content.get());
+					return (*first_converted == *second_converted);
+				}
+				case Object::Type::Null:
+				{
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<NullObject*>(first.Content.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<NullObject*>(second.Content.get());
+					return (*first_converted == *second_converted);
+				}
+				case Object::Type::Real:
+				{
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<RealObject*>(first.Content.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<RealObject*>(second.Content.get());
+					return (*first_converted == *second_converted);
+				}
+				case Object::Type::Stream:
+				{
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<StreamObject*>(first.Content.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<StreamObject*>(second.Content.get());
+
+					auto first_header = first_converted->GetHeader();
+					auto second_header = second_converted->GetHeader();
+					if (!ValueEquals(first_header, second_header))
+						return false;
+
+					auto first_body = first_converted->GetBody();
+					auto second_body = second_converted->GetBody();
+					if (first_body != second_body)
+						return false;
+
+					return true;
+				}
+				case Object::Type::String:
+				{
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<StringObjectBase*>(first.Content.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<StringObjectBase*>(second.Content.get());
+					return (*first_converted == *second_converted);
+				}
+				default:
+					assert(!"Unknown object type");
+				}
+
+				return false;
+			}
+
 		private:
 			// This whole masquerade is because template functions cannot be partially specialized
 			template <typename T>
