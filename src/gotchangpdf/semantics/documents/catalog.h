@@ -6,7 +6,7 @@
 #include "developer_extensions.h"
 #include "page_tree.h"
 #include "version.h"
-#include "page_label.h"
+#include "page_labels.h"
 
 namespace gotchangpdf
 {
