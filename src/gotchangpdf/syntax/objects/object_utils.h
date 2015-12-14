@@ -143,7 +143,7 @@ namespace gotchangpdf
 				{
 					std::map<IndirectObjectReference, bool> visited;
 					bool passed = false;
-					auto result = GetInternal<T>(obj, visited, passed);
+					auto result = GetInternal(obj, visited, passed);
 					return passed;
 				}
 
@@ -151,14 +151,13 @@ namespace gotchangpdf
 				{
 					std::map<IndirectObjectReference, bool> visited;
 					bool passed = false;
-					auto result = GetInternal<T>(obj, visited, passed);
+					auto result = GetInternal(obj, visited, passed);
 					if (!passed)
 						throw ConversionExceptionFactory<T>::Construct(obj);
 
 					return result;
 				}
 
-				template <typename T>
 				static T GetInternal(const ObjectPtr& obj, std::map<IndirectObjectReference, bool>& visited, bool& result)
 				{
 					auto ptr = obj.Content.get();
@@ -177,8 +176,6 @@ namespace gotchangpdf
 					if (nullptr == converted)
 						throw ConversionExceptionFactory<IndirectObjectReference>::Construct(obj);
 
-					auto reference = IndirectObjectReferencePtr(converted);
-
 					auto found = visited.find(*converted);
 					if (found != visited.end()) {
 						std::stringstream ss;
@@ -189,7 +186,7 @@ namespace gotchangpdf
 					visited[*converted] = true;
 
 					auto direct = converted->GetReferencedObject();
-					return GetInternal<T>(direct, visited, result);
+					return GetInternal(direct, visited, result);
 				}
 			};			
 
@@ -221,12 +218,17 @@ namespace gotchangpdf
 			public:
 				static bool IsType(const ObjectPtr& obj)
 				{
+					auto ptr = obj.Content.get();
+					auto converted = dynamic_cast<ArrayObject<T>*>(ptr);
+					if (nullptr != converted)
+						return true;
+
 					bool is_array = ObjectTypeFunctor<MixedArrayObjectPtr>::IsType(obj);
 					if (!is_array)
 						return false;
 
-					auto converted = ObjectTypeFunctor<MixedArrayObjectPtr>::Convert(obj);
-					for (auto& item : *converted) {
+					auto mixed = ObjectTypeFunctor<MixedArrayObjectPtr>::Convert(obj);
+					for (auto& item : *mixed) {
 						if (!ObjectTypeFunctor<T>::IsType(item))
 							return false;
 					}
@@ -236,6 +238,11 @@ namespace gotchangpdf
 
 				static ArrayObjectPtr<T> Convert(const ObjectPtr& obj)
 				{
+					auto ptr = obj.Content.get();
+					auto converted = dynamic_cast<ArrayObject<T>*>(ptr);
+					if (nullptr != converted)
+						return converted;
+
 					auto mixed = ObjectTypeFunctor<MixedArrayObjectPtr>::Convert(obj);
 					return mixed->CastToArrayType<T>();
 				}
