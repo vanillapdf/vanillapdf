@@ -11,16 +11,18 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedOb
 {
 	IndirectObjectReference* obj = reinterpret_cast<IndirectObjectReference*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
-		auto direct = obj->GetReferencedObject();
-		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<ObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+		LOG_OBJECT_SCOPE(obj);
+		try
+		{
+			auto direct = obj->GetReferencedObject();
+			auto ptr = direct.AddRefGet();
+			*result = reinterpret_cast<ObjectHandle>(ptr);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_Release(IndirectReferenceHandle handle)
@@ -33,10 +35,14 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedOb
 	IndirectObjectReference* obj = reinterpret_cast<IndirectObjectReference*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
-	*result = obj->GetReferencedObjectNumber();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	try
+	{
+		LOG_OBJECT_SCOPE(obj);
+
+		*result = obj->GetReferencedObjectNumber();
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedGenerationNumber(IndirectReferenceHandle handle, out_integer_type result)
@@ -44,8 +50,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedGe
 	IndirectObjectReference* obj = reinterpret_cast<IndirectObjectReference*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
-	*result = obj->GetReferencedGenerationNumber();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	try
+	{
+		LOG_OBJECT_SCOPE(obj);
+
+		*result = obj->GetReferencedGenerationNumber();
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_SCOPE_EXCEPTIONS
 }

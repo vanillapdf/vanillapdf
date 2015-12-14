@@ -1,5 +1,6 @@
 #include "precompiled.h"
 #include "page_labels.h"
+#include "file.h"
 
 #include "c_page_labels.h"
 #include "c_helper.h"
@@ -12,14 +13,17 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_Contains(PageLabelsHan
 	PageLabels* obj = reinterpret_cast<PageLabels*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	//LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
-		*result = obj->Contains(page_number);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+		LOG_HIGH_OBJECT_SCOPE(obj);
+
+		try
+		{
+			*result = obj->Contains(page_number);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_At(PageLabelsHandle handle, integer_type page_number, PPageLabelHandle result)
@@ -27,26 +31,32 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_At(PageLabelsHandle ha
 	PageLabels* obj = reinterpret_cast<PageLabels*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	//LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
-		auto page = obj->Find(page_number);
-		auto ptr = page.AddRefGet();
-		*result = reinterpret_cast<PageLabelHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+		LOG_HIGH_OBJECT_SCOPE(obj);
+		try
+		{
+			auto page = obj->Find(page_number);
+			auto ptr = page.AddRefGet();
+			*result = reinterpret_cast<PageLabelHandle>(ptr);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_Release(PageLabelsHandle handle)
 {
 	PageLabels* obj = reinterpret_cast<PageLabels*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	//LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	try
+	{
+		LOG_HIGH_OBJECT_SCOPE(obj);
+
+		obj->Release();
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_P(PageLabelHandle handle, PStringHandle result)
@@ -56,12 +66,15 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_P(PageLabelHandle handl
 
 	try
 	{
-		auto p = obj->P();
-		auto ptr = p.AddRefGet();
-		*result = reinterpret_cast<StringHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+		LOG_HIGH_OBJECT_SCOPE(obj);
+		try
+		{
+			auto p = obj->P();
+			auto ptr = p.AddRefGet();
+			*result = reinterpret_cast<StringHandle>(ptr);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_St(PageLabelHandle handle, PIntegerHandle result)
@@ -71,12 +84,16 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_St(PageLabelHandle hand
 
 	try
 	{
-		auto st = obj->St();
-		auto ptr = st.AddRefGet();
-		*result = reinterpret_cast<IntegerHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+		LOG_HIGH_OBJECT_SCOPE(obj);
+
+		try
+		{
+			auto st = obj->St();
+			auto ptr = st.AddRefGet();
+			*result = reinterpret_cast<IntegerHandle>(ptr);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_S(PageLabelHandle handle, PNumberingStyle result)
@@ -86,32 +103,40 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_S(PageLabelHandle handl
 
 	try
 	{
-		switch (obj->S()) {
-		case PageLabel::NumberingStyle::Decimal:
-			*result = NumberingStyle_Decimal; break;
-		case PageLabel::NumberingStyle::UpperRoman:
-			*result = NumberingStyle_UpperRoman; break;
-		case PageLabel::NumberingStyle::LowerRoman:
-			*result = NumberingStyle_LowerRoman; break;
-		case PageLabel::NumberingStyle::UpperLetters:
-			*result = NumberingStyle_UpperLetters; break;
-		case PageLabel::NumberingStyle::LowerLetters:
-			*result = NumberingStyle_LowerLetters; break;
-		default:
-			return GOTCHANG_PDF_ERROR_GENERAL;
-		}
+		LOG_HIGH_OBJECT_SCOPE(obj);
 
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+		try
+		{
+			switch (obj->S()) {
+			case PageLabel::NumberingStyle::Decimal:
+				*result = NumberingStyle_Decimal; break;
+			case PageLabel::NumberingStyle::UpperRoman:
+				*result = NumberingStyle_UpperRoman; break;
+			case PageLabel::NumberingStyle::LowerRoman:
+				*result = NumberingStyle_LowerRoman; break;
+			case PageLabel::NumberingStyle::UpperLetters:
+				*result = NumberingStyle_UpperLetters; break;
+			case PageLabel::NumberingStyle::LowerLetters:
+				*result = NumberingStyle_LowerLetters; break;
+			default:
+				return GOTCHANG_PDF_ERROR_GENERAL;
+			}
+
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Release(PageLabelHandle handle)
 {
 	PageLabel* obj = reinterpret_cast<PageLabel*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	//LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	try
+	{
+		LOG_HIGH_OBJECT_SCOPE(obj);
+
+		obj->Release();
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_SCOPE_EXCEPTIONS
 }

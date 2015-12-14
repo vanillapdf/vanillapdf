@@ -12,15 +12,17 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Open(const char *filename, P
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(filename);
 
 	try
 	{
-		auto file = pdf_new File(filename);
-		*result = reinterpret_cast<FileHandle>(file);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+		LOG_SCOPE(filename);
+		try
+		{
+			auto file = pdf_new File(filename);
+			*result = reinterpret_cast<FileHandle>(file);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle, FileHolderHandle holder_handle)
@@ -29,15 +31,17 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle
 	FileHolder* holder = reinterpret_cast<FileHolder*>(holder_handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
-	LOG_SCOPE(file->GetFilename());
 
 	try
 	{
-		auto val = holder->Value();
-		file->Initialize(val);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+		LOG_SCOPE(file->GetFilename());
+		try
+		{
+			auto val = holder->Value();
+			file->Initialize(val);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle, PXrefChainHandle result)
@@ -49,12 +53,16 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle,
 
 	try
 	{
-		auto chain = file->GetXrefChain();
-		auto ptr = chain.AddRefGet();
-		*result = reinterpret_cast<XrefChainHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+		LOG_SCOPE(file->GetFilename());
+
+		try
+		{
+			auto chain = file->GetXrefChain();
+			auto ptr = chain.AddRefGet();
+			*result = reinterpret_cast<XrefChainHandle>(ptr);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
@@ -63,17 +71,20 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
 	File* file = reinterpret_cast<File*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(file->GetFilename());
 
 	try
 	{
-		auto item = file->GetIndirectObject(objNumber, genNumber);
-		auto ptr = item.AddRefGet();
+		LOG_SCOPE(file->GetFilename());
 
-		*result = reinterpret_cast<ObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+		try
+		{
+			auto item = file->GetIndirectObject(objNumber, genNumber);
+			auto ptr = item.AddRefGet();
+
+			*result = reinterpret_cast<ObjectHandle>(ptr);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION FileHolder_Create(FileHandle handle, PFileHolderHandle result)
@@ -85,13 +96,17 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION FileHolder_Create(FileHandle hand
 
 	try
 	{
-		FileHolderPtr holder(file);
-		auto ptr = holder.AddRefGet();
+		LOG_SCOPE(file->GetFilename());
 
-		*result = reinterpret_cast<FileHolderHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+		try
+		{
+			FileHolderPtr holder(file);
+			auto ptr = holder.AddRefGet();
+
+			*result = reinterpret_cast<FileHolderHandle>(ptr);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION FileHolder_Release(FileHolderHandle handle)

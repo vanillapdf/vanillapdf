@@ -12,16 +12,18 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Value(NameHandle handl
 	NameObject* obj = reinterpret_cast<NameObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
-		auto buffer = obj->Value();
-		auto ptr = buffer.AddRefGet();
-		*result = reinterpret_cast<BufferHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+		LOG_OBJECT_SCOPE(obj);
+		try
+		{
+			auto buffer = obj->Value();
+			auto ptr = buffer.AddRefGet();
+			*result = reinterpret_cast<BufferHandle>(ptr);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Release(NameHandle handle)

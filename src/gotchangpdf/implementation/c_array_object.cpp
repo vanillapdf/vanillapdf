@@ -12,17 +12,20 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayHandle handle
 	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
-		auto direct = obj->At(at);
-		auto base = ObjectUtils::GetObjectBase(direct);
-		auto ptr = base.AddRefGet();
-		*result = reinterpret_cast<ObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+		LOG_OBJECT_SCOPE(obj);
+
+		try
+		{
+			auto direct = obj->At(at);
+			auto base = ObjectUtils::GetObjectBase(direct);
+			auto ptr = base.AddRefGet();
+			*result = reinterpret_cast<ObjectHandle>(ptr);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayHandle handle, out_integer_type result)
@@ -30,10 +33,14 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayHandle hand
 	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
-	*result = obj->Size();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	try
+	{
+		LOG_OBJECT_SCOPE(obj);
+
+		*result = obj->Size();
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Release(ArrayHandle handle)

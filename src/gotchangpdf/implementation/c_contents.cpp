@@ -24,7 +24,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionsSize(Cont
 		*result = obj->GetInstructionsSize();
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(ContentsHandle handle, integer_type at, PContentInstructionHandle result)
@@ -41,7 +41,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(Content
 		*result = reinterpret_cast<ContentInstructionHandle>(base);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_Release(ContentsHandle handle)
@@ -75,39 +75,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_GetType(Conten
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_ToOperation(ContentInstructionHandle handle, PContentOperationHandle result)
 {
-	InstructionBase* obj = reinterpret_cast<InstructionBase*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	//LOG_SCOPE(obj->GetFile()->GetFilename());
-
-	try
-	{
-		OperationBase* converted = dynamic_cast<OperationBase*>(obj);
-		if (nullptr == converted)
-			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
-
-		*result = reinterpret_cast<ContentOperationHandle>(converted);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	return SafeObjectConvertNoScope<InstructionBase, OperationBase, ContentInstructionHandle, ContentOperationHandle>(handle, result);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_ToObject(ContentInstructionHandle handle, PContentObjectHandle result)
 {
-	InstructionBase* obj = reinterpret_cast<InstructionBase*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	//LOG_SCOPE(obj->GetFile()->GetFilename());
-
-	try
-	{
-		ContentObjectBase* converted = dynamic_cast<ContentObjectBase*>(obj);
-		if (nullptr == converted)
-			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
-
-		*result = reinterpret_cast<ContentObjectHandle>(converted);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	return SafeObjectConvertNoScope<InstructionBase, ContentObjectBase, ContentInstructionHandle, ContentObjectHandle>(handle, result);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_Release(ContentInstructionHandle handle)
@@ -139,21 +112,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_GetType(ContentObje
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_ToText(ContentObjectHandle handle, PContentObjectTextHandle result)
 {
-	ContentObjectBase* obj = reinterpret_cast<ContentObjectBase*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	//LOG_SCOPE(obj->GetFile()->GetFilename());
-
-	try
-	{
-		TextObject* converted = dynamic_cast<TextObject*>(obj);
-		if (nullptr == converted)
-			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
-
-		*result = reinterpret_cast<ContentObjectTextHandle>(converted);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	return SafeObjectConvertNoScope<ContentObjectBase, TextObject, ContentObjectHandle, ContentObjectTextHandle>(handle, result);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_Release(ContentObjectHandle handle)
@@ -178,7 +137,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationsSi
 		*result = obj->GetOperationsSize();
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(ContentObjectTextHandle handle, integer_type at, PContentOperationHandle result)
@@ -195,7 +154,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(
 		*result = reinterpret_cast<ContentOperationHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_GetType(ContentOperationHandle handle, PContentOperationType result)
@@ -363,20 +322,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_GetType(ContentO
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToGeneric(ContentOperationHandle handle, PContentOperationGenericHandle result)
 {
-	OperationBase* obj = reinterpret_cast<OperationBase*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-	return SafeObjectConvert<OperationBase, OperationGeneric, ContentOperationGenericHandle>(obj, result);
+	return SafeObjectConvertNoScope<OperationBase, OperationGeneric, ContentOperationHandle, ContentOperationGenericHandle>(handle, result);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShow(ContentOperationHandle handle, PContentOperationTextShowHandle result)
 {
-	OperationBase* obj = reinterpret_cast<OperationBase*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-	return SafeObjectConvert<OperationBase, OperationTextShow, ContentOperationTextShowHandle>(obj, result);
+	return SafeObjectConvertNoScope<OperationBase, OperationTextShow, ContentOperationHandle, ContentOperationTextShowHandle>(handle, result);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_Release(ContentOperationHandle handle)
@@ -403,7 +354,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperat
 		*result = reinterpret_cast<ContentOperatorHandle>(base);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandsSize(ContentOperationGenericHandle handle, out_integer_type result)
@@ -418,7 +369,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperan
 		*result = obj->GetOperandsSize();
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandAt(ContentOperationGenericHandle handle, integer_type at, PObjectHandle result)
@@ -435,7 +386,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperan
 		*result = reinterpret_cast<ObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_Release(ContentOperationGenericHandle handle)
@@ -462,7 +413,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_Value(Co
 		*result = reinterpret_cast<StringHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_Release(ContentOperationTextShowHandle handle)
@@ -652,7 +603,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_GetValue(ContentO
 		*result = reinterpret_cast<BufferHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_Release(ContentOperatorHandle handle)

@@ -23,7 +23,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_GetData(BufferHandle handl
 
 	*result = obj->data();
 	return GOTCHANG_PDF_ERROR_SUCCES;
-
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_Release(BufferHandle handle)

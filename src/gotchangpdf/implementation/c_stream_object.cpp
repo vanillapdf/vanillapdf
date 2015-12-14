@@ -12,16 +12,18 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_Header(StreamHandle 
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
-		auto header = obj->GetHeader();
-		auto ptr = header.AddRefGet();
-		*result = reinterpret_cast<DictionaryHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+		LOG_OBJECT_SCOPE(obj);
+		try
+		{
+			auto header = obj->GetHeader();
+			auto ptr = header.AddRefGet();
+			*result = reinterpret_cast<DictionaryHandle>(ptr);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_BodyRaw(StreamHandle handle, PBufferHandle result)
@@ -29,16 +31,19 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_BodyRaw(StreamHandle
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
-		auto header = obj->GetBody();
-		auto ptr = header.AddRefGet();
-		*result = reinterpret_cast<BufferHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+		LOG_OBJECT_SCOPE(obj);
+
+		try
+		{
+			auto header = obj->GetBody();
+			auto ptr = header.AddRefGet();
+			*result = reinterpret_cast<BufferHandle>(ptr);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_BodyDecoded(StreamHandle handle, PBufferHandle result)
@@ -46,16 +51,19 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_BodyDecoded(StreamHa
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
 	try
 	{
-		auto header = obj->GetBodyDecoded();
-		auto ptr = header.AddRefGet();
-		*result = reinterpret_cast<BufferHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+		LOG_OBJECT_SCOPE(obj);
+
+		try
+		{
+			auto header = obj->GetBodyDecoded();
+			auto ptr = header.AddRefGet();
+			*result = reinterpret_cast<BufferHandle>(ptr);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_Release(StreamHandle handle)

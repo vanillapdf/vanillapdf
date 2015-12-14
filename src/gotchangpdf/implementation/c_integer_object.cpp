@@ -12,10 +12,14 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_Value(IntegerHandle
 	IntegerObject* obj = reinterpret_cast<IntegerObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
-	*result = obj->Value();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	try
+	{
+		LOG_OBJECT_SCOPE(obj);
+
+		*result = obj->Value();
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_Release(IntegerHandle handle)

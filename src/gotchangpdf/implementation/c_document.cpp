@@ -12,16 +12,17 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenNew(string_type file
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(filename);
 
 	try
 	{
+		LOG_SCOPE(filename);
+
 		DocumentPtr doc(filename);
 		auto ptr = doc.AddRefGet();
 		*result = reinterpret_cast<DocumentHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHolderHandle holder_handle, PDocumentHandle result)
@@ -38,7 +39,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHolderH
 		*result = reinterpret_cast<DocumentHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandle handle, PCatalogHandle result)
@@ -55,7 +56,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandl
 		*result = reinterpret_cast<CatalogHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_Release(DocumentHandle handle)

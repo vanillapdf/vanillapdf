@@ -1,6 +1,7 @@
 #include "precompiled.h"
 #include "page_object.h"
 #include "contents.h"
+#include "file.h"
 
 #include "c_page_object.h"
 #include "c_helper.h"
@@ -12,16 +13,19 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObject
 	PageObject* obj = reinterpret_cast<PageObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	//LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
 	{
-		auto contents = obj->Contents();
-		auto ptr = contents.AddRefGet();
-		*result = reinterpret_cast<ContentsHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+		LOG_HIGH_OBJECT_SCOPE(obj);
+
+		try
+		{
+			auto contents = obj->Contents();
+			auto ptr = contents.AddRefGet();
+			*result = reinterpret_cast<ContentsHandle>(ptr);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_Release(PageObjectHandle handle)
@@ -29,6 +33,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_Release(PageObjectHand
 	PageObject* obj = reinterpret_cast<PageObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	try
+	{
+		LOG_HIGH_OBJECT_SCOPE(obj);
+
+		obj->Release();
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_SCOPE_EXCEPTIONS
 }

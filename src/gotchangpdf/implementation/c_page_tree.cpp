@@ -1,8 +1,8 @@
 #include "precompiled.h"
 #include "page_tree.h"
+#include "file.h"
 
 #include "c_page_tree.h"
-
 #include "c_helper.h"
 
 using namespace gotchangpdf::semantics;
@@ -15,10 +15,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPageCount(PageTreeHan
 
 	try
 	{
+		LOG_HIGH_OBJECT_SCOPE(obj);
+
 		*result = obj->PageCount();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle handle, integer_type at, PPageObjectHandle result)
@@ -29,12 +30,15 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle h
 
 	try
 	{
-		auto page = obj->Page(at);
-		auto ptr = page.AddRefGet();
-		*result = reinterpret_cast<PageObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	C_INTERFACE_EXCEPTION_HANDLERS
+		LOG_HIGH_OBJECT_SCOPE(obj);
+		try
+		{
+			auto page = obj->Page(at);
+			auto ptr = page.AddRefGet();
+			*result = reinterpret_cast<PageObjectHandle>(ptr);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_Release(PageTreeHandle handle)
@@ -42,6 +46,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_Release(PageTreeHandle h
 	PageTree* obj = reinterpret_cast<PageTree*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	try
+	{
+		LOG_HIGH_OBJECT_SCOPE(obj);
+
+		obj->Release();
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_SCOPE_EXCEPTIONS
 }
