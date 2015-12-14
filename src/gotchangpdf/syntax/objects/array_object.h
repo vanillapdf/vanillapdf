@@ -29,6 +29,8 @@ namespace gotchangpdf
 			explicit ArrayObject() {}
 			explicit ArrayObject(list_type& list) : _list(list) {}
 			explicit ArrayObject(std::initializer_list<T> list) : _list(list) {}
+			explicit ArrayObject(const ContainableObject& other, list_type& list)
+				: ContainableObject(other), _list(list) {}
 
 			inline types::integer Size(void) const _NOEXCEPT { return _list.size(); }
 			inline const T& operator[](unsigned int i) const { return _list[i]; }
@@ -47,8 +49,7 @@ namespace gotchangpdf
 				std::vector<U> list;
 				list.reserve(_list.size());
 				std::transform(_list.begin(), _list.end(), std::back_inserter(list), f);
-
-				return ArrayObject<U>(list);
+				return ArrayObject<U>(*this, list);
 			}
 
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Array; }
