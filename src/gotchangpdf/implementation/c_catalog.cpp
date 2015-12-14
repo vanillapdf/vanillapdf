@@ -73,6 +73,22 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetExtensions(CatalogHand
 	C_INTERFACE_EXCEPTION_HANDLERS
 }
 
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLabels(CatalogHandle handle, PPageLabelsHandle result)
+{
+	Catalog* obj = reinterpret_cast<Catalog*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto labels = obj->PageLabels();
+		auto ptr = labels.AddRefGet();
+		*result = reinterpret_cast<PageLabelsHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	C_INTERFACE_EXCEPTION_HANDLERS
+}
+
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_Release(CatalogHandle handle)
 {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);

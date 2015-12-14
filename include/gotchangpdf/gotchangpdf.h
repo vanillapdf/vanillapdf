@@ -16,6 +16,7 @@
 #include "c_page_tree.h"
 #include "c_page_object.h"
 #include "c_developer_extensions.h"
+#include "c_page_labels.h"
 
 #include "c_contents.h"
 

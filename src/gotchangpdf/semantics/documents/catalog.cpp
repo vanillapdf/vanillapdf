@@ -44,6 +44,9 @@ namespace gotchangpdf
 
 		PageLabelsPtr Catalog::PageLabels(void) const
 		{
+			if (!_obj->Contains(constant::Name::PageLabels))
+				throw OptionalEntryMissingException(_obj, constant::Name::PageLabels);
+
 			auto labels = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::PageLabels);
 			return PageLabelsPtr(labels);
 		}
