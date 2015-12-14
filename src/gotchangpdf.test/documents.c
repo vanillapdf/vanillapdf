@@ -249,3 +249,85 @@ error_type process_extensions(DeveloperExtensionsHandle extensions, int nested)
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
+
+error_type process_catalog(CatalogHandle catalog, int nested)
+{
+	int i = 0;
+	integer_type size = 0;
+	PageTreeHandle pages = NULL;
+	DeveloperExtensionsHandle extensions = NULL;
+	PageLabelsHandle page_labels = NULL;
+	PDFVersion version;
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_GetPages(catalog, &pages));
+	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(pages, &size));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(Catalog_GetVersion(catalog, &version), process_version(version, 0));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Catalog_GetExtensions(catalog, &extensions), process_extensions(extensions, 0), DeveloperExtensions_Release(extensions));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Catalog_GetPageLabels(catalog, &page_labels), process_page_labels(page_labels, size, 0), PageLabels_Release(page_labels));
+
+	for (i = 1; i <= size; ++i)
+	{
+		PageObjectHandle page = NULL;
+		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(pages, i, &page));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_page(page, 0));
+		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(page));
+	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_Release(pages));
+	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_Release(catalog));
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_page_labels(PageLabelsHandle labels, integer_type size, int nested)
+{
+	int i = 0;
+
+	print_spaces(nested);
+	printf("Page labels begin\n");
+
+	for (i = 1; i <= size; ++i)
+	{
+		boolean_type contains = GOTCHANG_PDF_RV_FALSE;
+		PageLabelHandle label = NULL;
+		RETURN_ERROR_IF_NOT_SUCCESS(PageLabels_Contains(labels, i, &contains));
+		if (GOTCHANG_PDF_RV_TRUE != contains)
+			continue;
+
+		RETURN_ERROR_IF_NOT_SUCCESS(PageLabels_At(labels, i, &label));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_page_label(label, nested + 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(PageLabel_Release(label));
+	}
+
+	print_spaces(nested);
+	printf("Page labels end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_page_label(PageLabelHandle label, int nested)
+{
+	StringHandle p = NULL;
+	IntegerHandle st = NULL;
+	NumberingStyle s;
+
+	print_spaces(nested);
+	printf("Page label begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(PageLabel_P(label, &p));
+	RETURN_ERROR_IF_NOT_SUCCESS(PageLabel_St(label, &st));
+	RETURN_ERROR_IF_NOT_SUCCESS(PageLabel_S(label, &s));
+
+	printf("Numbering Style: %d\n", s);
+	RETURN_ERROR_IF_NOT_SUCCESS(process_string(p, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(st, nested + 1));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(p));
+	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(st));
+
+	print_spaces(nested);
+	printf("Page label end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}

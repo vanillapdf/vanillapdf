@@ -35,33 +35,12 @@ int main(int argc, char *argv[])
 	}
 
 	{
-		int i = 0;
-		integer_type size = 0;
 		DocumentHandle document = NULL;
 		CatalogHandle catalog = NULL;
-		PageTreeHandle pages = NULL;
-		DeveloperExtensionsHandle extensions = NULL;
-		PDFVersion version;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenExisting(file_holder, &document));
 		RETURN_ERROR_IF_NOT_SUCCESS(Document_GetCatalog(document, &catalog));
-
-		RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(Catalog_GetVersion(catalog, &version), process_version(version, 0));
-		RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(Catalog_GetExtensions(catalog, &extensions), process_extensions(extensions, 0));
-
-		RETURN_ERROR_IF_NOT_SUCCESS(Catalog_GetPages(catalog, &pages));
-		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(pages, &size));
-
-		for (i = 1; i <= size; ++i)
-		{
-			PageObjectHandle page = NULL;
-			RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(pages, i, &page));
-			RETURN_ERROR_IF_NOT_SUCCESS(process_page(page, 0));
-			RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(page));
-		}
-
-		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_Release(pages));
-		RETURN_ERROR_IF_NOT_SUCCESS(Catalog_Release(catalog));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_catalog(catalog, 0));
 		RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));
 	}
 	
