@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 
 	{
 		int i = 0;
-		int size = 0;
+		integer_type size = 0;
 		DocumentHandle document = NULL;
 		CatalogHandle catalog = NULL;
 		PageTreeHandle pages = NULL;

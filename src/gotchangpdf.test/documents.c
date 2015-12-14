@@ -235,7 +235,7 @@ error_type process_extensions(DeveloperExtensionsHandle extensions, int nested)
 	RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtensions_GetBaseVersion(extensions, &base_version));
 	RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtensions_GetExtensionLevel(extensions, &level));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(process_version(base_version, nested + 2));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_version(base_version, nested + 1));
 
 	print_spaces(nested + 1);
 	printf("Extensions level begin\n");
