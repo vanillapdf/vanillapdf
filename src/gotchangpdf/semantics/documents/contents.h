@@ -9,7 +9,7 @@ namespace gotchangpdf
 {
 	namespace semantics
 	{
-		class Contents : public IUnknown
+		class Contents : public HighLevelObject<syntax::ObjectPtr>
 		{
 		public:
 			Contents() = default;
@@ -20,11 +20,7 @@ namespace gotchangpdf
 			types::uinteger GetInstructionsSize(void) const;
 			syntax::contents::InstructionBasePtr GetInstructionAt(types::uinteger at) const;
 
-			inline types::uinteger GetContentStreamSize(void) const { return _contents.size(); }
-			inline ContentStreamPtr GetContentStreamAt(types::uinteger at) const { return _contents.at(at); }
-
 		private:
-			std::vector<ContentStreamPtr> _contents;
 			mutable syntax::contents::BaseInstructionCollection _instructions;
 		};
 	}

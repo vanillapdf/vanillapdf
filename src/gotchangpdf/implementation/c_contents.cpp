@@ -2,6 +2,7 @@
 #include "contents.h"
 #include "content_stream_operations.h"
 #include "content_stream_objects.h"
+#include "file.h"
 
 #include "c_contents.h"
 #include "c_helper.h"
@@ -17,14 +18,17 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionsSize(Cont
 	Contents* obj = reinterpret_cast<Contents*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	//LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
 	{
-		*result = obj->GetInstructionsSize();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	CATCH_GOTCHNGPDF_EXCEPTIONS
+		LOG_HIGH_OBJECT_SCOPE(obj);
+
+		try
+		{
+			*result = obj->GetInstructionsSize();
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(ContentsHandle handle, integer_type at, PContentInstructionHandle result)
@@ -32,26 +36,33 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(Content
 	Contents* obj = reinterpret_cast<Contents*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	//LOG_SCOPE(obj->GetFile()->GetFilename());
 
 	try
 	{
-		auto instruction = obj->GetInstructionAt(at);
-		auto base = instruction.AddRefGet();
-		*result = reinterpret_cast<ContentInstructionHandle>(base);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	CATCH_GOTCHNGPDF_EXCEPTIONS
+		LOG_HIGH_OBJECT_SCOPE(obj);
+
+		try
+		{
+			auto instruction = obj->GetInstructionAt(at);
+			auto base = instruction.AddRefGet();
+			*result = reinterpret_cast<ContentInstructionHandle>(base);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_Release(ContentsHandle handle)
 {
 	Contents* obj = reinterpret_cast<Contents*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	//LOG_SCOPE(obj->GetFile()->GetFilename());
 
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	try
+	{
+		LOG_HIGH_OBJECT_SCOPE(obj);
+
+		obj->Release();
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_GetType(ContentInstructionHandle handle, PContentInstructionType result)
