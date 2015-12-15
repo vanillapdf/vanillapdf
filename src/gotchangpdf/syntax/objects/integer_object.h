@@ -18,6 +18,7 @@ namespace gotchangpdf
 
 			IntegerObject() = default;
 			explicit IntegerObject(value_type value);
+			explicit IntegerObject(const RealObject& value);
 
 			inline value_type Value(void) const _NOEXCEPT { return _value; }
 

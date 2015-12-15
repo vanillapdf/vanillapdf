@@ -1,11 +1,11 @@
 #ifndef _OBJECT_UTILS_H
 #define _OBJECT_UTILS_H
 
+#include "syntax_fwd.h"
 #include "deferred.h"
-#include "object.h"
 #include "exception.h"
-#include "indirect_object_reference.h"
-#include "array_object.h"
+#include "objects.h"
+#include "util.h"
 
 #include <map>
 #include <sstream>
@@ -135,41 +135,85 @@ namespace gotchangpdf
 
 		private:
 			// This whole masquerade is because template functions cannot be partially specialized
+
 			template <typename T>
-			class ObjectTypeFunctor
+			class ConversionHelper
 			{
 			public:
-				static bool IsType(const ObjectPtr& obj)
+				static T Get(const ObjectPtr& obj, bool& result)
 				{
-					std::map<IndirectObjectReference, bool> visited;
-					bool passed = false;
-					auto result = GetInternal(obj, visited, passed);
-					return passed;
-				}
+					auto ptr = obj.Content.get();
+					auto converted = dynamic_cast<typename T::value_type *>(ptr);
+					if (nullptr == converted) {
+						result = false;
+						return T();
+					}
 
-				static T Convert(const ObjectPtr& obj)
+					result = true;
+					return T(converted);
+				}
+			};
+
+			template <>
+			class ConversionHelper<IntegerObjectPtr>
+			{
+			public:
+				static IntegerObjectPtr Get(const ObjectPtr& obj, bool& result)
 				{
-					std::map<IndirectObjectReference, bool> visited;
-					bool passed = false;
-					auto result = GetInternal(obj, visited, passed);
-					if (!passed)
-						throw ConversionExceptionFactory<T>::Construct(obj);
+					auto ptr = obj.Content.get();
+					auto int_converted = dynamic_cast<IntegerObject *>(ptr);
+					auto real_converted = dynamic_cast<RealObject *>(ptr);
 
-					return result;
+					if (int_converted) {
+						result = true;
+						return IntegerObjectPtr(int_converted);
+					}
+
+					if (real_converted) {
+						result = true;
+						return IntegerObjectPtr(*real_converted);
+					}
+
+					result = false;
+					return IntegerObjectPtr();
 				}
+			};
 
-				static T GetInternal(const ObjectPtr& obj, std::map<IndirectObjectReference, bool>& visited, bool& result)
+			template <>
+			class ConversionHelper<RealObjectPtr>
+			{
+			public:
+				static RealObjectPtr Get(const ObjectPtr& obj, bool& result)
+				{
+					auto ptr = obj.Content.get();
+					auto int_converted = dynamic_cast<IntegerObject *>(ptr);
+					auto real_converted = dynamic_cast<RealObject *>(ptr);
+
+					if (int_converted) {
+						result = true;
+						return RealObjectPtr(*int_converted);
+					}
+
+					if (real_converted) {
+						result = true;
+						return RealObjectPtr(real_converted);
+					}
+
+					result = false;
+					return RealObjectPtr();
+				}
+			};
+
+			template <typename T>
+			class DereferenceHelper
+			{
+			public:
+				static T Get(const ObjectPtr& obj, std::map<IndirectObjectReference, bool>& visited, bool& result)
 				{
 					auto ptr = obj.Content.get();
 					bool is_ref = (ptr->GetType() == Object::Type::IndirectReference);
 					if (!is_ref) {
-						auto converted = dynamic_cast<typename T::value_type *>(ptr);
-						if (nullptr == converted) {
-							return T();
-						}
-
-						result = true;
-						return T(converted);
+						return ConversionHelper<T>::Get(obj, result);
 					}
 
 					auto converted = dynamic_cast<IndirectObjectReference*>(ptr);
@@ -186,9 +230,33 @@ namespace gotchangpdf
 					visited[*converted] = true;
 
 					auto direct = converted->GetReferencedObject();
-					return GetInternal(direct, visited, result);
+					return Get(direct, visited, result);
 				}
-			};			
+			};
+
+			template <typename T>
+			class ObjectTypeFunctor
+			{
+			public:
+				static bool IsType(const ObjectPtr& obj)
+				{
+					std::map<IndirectObjectReference, bool> visited;
+					bool passed = false;
+					auto result = DereferenceHelper<T>::Get(obj, visited, passed);
+					return passed;
+				}
+
+				static T Convert(const ObjectPtr& obj)
+				{
+					std::map<IndirectObjectReference, bool> visited;
+					bool passed = false;
+					auto result = DereferenceHelper<T>::Get(obj, visited, passed);
+					if (!passed)
+						throw ConversionExceptionFactory<T>::Construct(obj);
+
+					return result;
+				}
+			};
 
 			template <>
 			class ObjectTypeFunctor<IndirectObjectReferencePtr>
@@ -218,9 +286,10 @@ namespace gotchangpdf
 			public:
 				static bool IsType(const ObjectPtr& obj)
 				{
-					auto ptr = obj.Content.get();
-					auto converted = dynamic_cast<ArrayObject<T>*>(ptr);
-					if (nullptr != converted)
+					bool found = false;
+					std::map<IndirectObjectReference, bool> visited;
+					DereferenceHelper<ArrayObjectPtr<T>>::Get(obj, visited, found);
+					if (found)
 						return true;
 
 					bool is_array = ObjectTypeFunctor<MixedArrayObjectPtr>::IsType(obj);
@@ -238,9 +307,10 @@ namespace gotchangpdf
 
 				static ArrayObjectPtr<T> Convert(const ObjectPtr& obj)
 				{
-					auto ptr = obj.Content.get();
-					auto converted = dynamic_cast<ArrayObject<T>*>(ptr);
-					if (nullptr != converted)
+					bool found = false;
+					std::map<IndirectObjectReference, bool> visited;
+					auto converted = DereferenceHelper<ArrayObjectPtr<T>>::Get(obj, visited, found);
+					if (found)
 						return converted;
 
 					auto mixed = ObjectTypeFunctor<MixedArrayObjectPtr>::Convert(obj);
