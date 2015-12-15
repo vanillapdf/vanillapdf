@@ -37,6 +37,7 @@ namespace gotchangpdf
 			std::vector<ObjectPtr> _cache;
 
 			bool _initialized = false;
+			std::string _full_path;
 			std::string _filename;
 		};
 

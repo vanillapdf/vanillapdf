@@ -14,10 +14,20 @@ namespace gotchangpdf
 	{
 		using namespace std;
 
-		File::File(std::string filename)
-			: _filename(filename)
+		std::string extract_filename(const std::string& filepath)
+		{
+			int pos = filepath.rfind("\\");
+			if (pos == std::string::npos)
+				pos = -1;
+
+			return std::string(filepath.begin() + pos + 1, filepath.end());
+		}
+
+		File::File(std::string path)
+			: _full_path(path)
 		{
 			LOG_DEBUG << "File constructor";
+			_filename = extract_filename(path);
 		}
 
 		File::~File(void)
