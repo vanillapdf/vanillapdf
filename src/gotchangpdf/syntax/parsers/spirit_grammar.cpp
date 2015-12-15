@@ -296,6 +296,7 @@ namespace gotchangpdf
 					>> containable_object(qi::_r1)
 					>> whitespaces
 					)
+				> whitespaces
 				> qi::lit(">>")[phoenix::bind(&direct_object_file_handler, qi::_val, qi::_r1)];
 
 			BOOST_SPIRIT_DEBUG_NODE(start);

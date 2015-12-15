@@ -162,15 +162,10 @@ namespace gotchangpdf
 					> qi::lit("xref")[qi::_val = phoenix::construct<XrefTablePtr>(), phoenix::bind(&set_file_to_xref, qi::_val, qi::_r1)]
 					> whitespaces
 					> qi::omit[*(subsection(qi::_r1)[phoenix::bind(&add_section, qi::_r0, qi::_1), phoenix::bind(&set_file_to_subsection, qi::_1, qi::_r1)])]
+					> whitespaces
 					> qi::lit("trailer")
 					> eol > whitespaces
 					> qi::omit[dictionary_object(qi::_r1)[phoenix::bind(&set_trailer, qi::_r0, qi::_1)]]
-					> eol > whitespaces
-					> qi::lit("startxref")
-					> eol > whitespaces
-					> qi::omit[qi::int_[phoenix::bind(&set_last_offset, qi::_r0, qi::_1)]]
-					> eol > whitespaces
-					> qi::lit("%%EOF")
 				);
 
 			subsection %=
