@@ -17,6 +17,7 @@ extern "C"
 
 	GOTCHANG_PDF_API extern const NameHandle AA;
 	GOTCHANG_PDF_API extern const NameHandle ASCII85Decode;
+	GOTCHANG_PDF_API extern const NameHandle ASCIIHexDecode;
 	GOTCHANG_PDF_API extern const NameHandle AcroForm;
 	GOTCHANG_PDF_API extern const NameHandle BaseVersion;
 	GOTCHANG_PDF_API extern const NameHandle BitsPerComponent;
