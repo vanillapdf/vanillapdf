@@ -33,7 +33,7 @@ namespace gotchangpdf
 			auto full_path = logging::extract< std::string >("File", rec);
 			strm << " { "
 				<< boost::filesystem::path(full_path.get()).filename().string()
-				<< ":" << logging::extract<long>("Line", rec)
+				<< ":" << logging::extract<int>("Line", rec)
 				<< " in " << logging::extract<std::string>("Function", rec)
 				<< " }";
 		}
