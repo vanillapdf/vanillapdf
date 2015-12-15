@@ -164,7 +164,7 @@ namespace gotchangpdf
 					> qi::omit[*(subsection(qi::_r1)[phoenix::bind(&add_section, qi::_r0, qi::_1), phoenix::bind(&set_file_to_subsection, qi::_1, qi::_r1)])]
 					> whitespaces
 					> qi::lit("trailer")
-					> eol > whitespaces
+					> whitespaces
 					> qi::omit[dictionary_object(qi::_r1)[phoenix::bind(&set_trailer, qi::_r0, qi::_1)]]
 				);
 
