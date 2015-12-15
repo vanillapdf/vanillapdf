@@ -50,7 +50,7 @@ namespace gotchangpdf
 			friend class ReverseBuf;
 
 		public:
-			explicit ReverseStream(CharacterSource & stream);
+			explicit ReverseStream(CharacterSource & stream, types::stream_size size);
 			virtual ~ReverseStream();
 			
 			virtual void read(BufferPtr& result, types::uinteger len) override;
@@ -61,7 +61,7 @@ namespace gotchangpdf
 			class ReverseBuf : public BaseStream::CharacterSourceBuffer
 			{
 			public:
-				explicit ReverseBuf(CharacterSource & s);
+				explicit ReverseBuf(CharacterSource & s, types::stream_size size);
 				~ReverseBuf();
 
 				virtual pos_type seekoff(off_type,
@@ -80,7 +80,8 @@ namespace gotchangpdf
 
 			private:
 				CharacterSource & _source;
-				std::streampos _offset;
+				types::stream_offset _offset;
+				types::stream_size _size;
 				const std::size_t _put_back;
 				char *_base;
 

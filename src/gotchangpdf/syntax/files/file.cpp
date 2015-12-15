@@ -41,12 +41,13 @@ namespace gotchangpdf
 				return;
 
 			_input = make_shared<FileDevice>();
-			_input->open(_filename,
-				ios_base::in | ios_base::out | ios_base::binary);
+			_input->open(_full_path,
+				ios_base::in | ios_base::out | ios_base::binary | ios::ate);
 
 			if (!_input || !_input->good())
 				throw GeneralException("Could not open file");
 
+			auto file_size = _input->tellg();
 			SpiritParser stream = SpiritParser(holder, *_input);
 
 			stream.seekg(ios_base::beg);
@@ -54,7 +55,7 @@ namespace gotchangpdf
 
 			types::integer offset;
 			{
-				ReverseStream raw_reversed(*_input);
+				ReverseStream raw_reversed(*_input, file_size);
 				SpiritParser reverse_stream = SpiritParser(holder, raw_reversed);
 				offset = reverse_stream.ReadLastXrefOffset();
 			}

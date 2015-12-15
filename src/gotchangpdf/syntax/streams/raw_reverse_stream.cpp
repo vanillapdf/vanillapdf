@@ -19,8 +19,9 @@ namespace gotchangpdf
 	{
 		using namespace std;
 
-		ReverseStream::ReverseBuf::ReverseBuf(CharacterSource & s)
-			: _source(s),
+		ReverseStream::ReverseBuf::ReverseBuf(CharacterSource & s, types::stream_size size)
+			: _source(s), _size(size),
+			_offset(0),
 			_put_back(constant::REVERSE_BUFFER_PUTBACK_SIZE),
 			_buffer(constant::REVERSE_BUFFER_SIZE + _put_back),
 			_base(_buffer.data())
@@ -60,7 +61,14 @@ namespace gotchangpdf
 			// Read from fptr_ in to the provided buffer
 
 			auto to_read = put_back ? _buffer.size() - _put_back : _buffer.size();
-			_offset -= to_read;
+			if (_offset - to_read < -_size) {
+				to_read = SafeConvert<decltype(to_read)>(_size + _offset);
+				_offset = -_size;
+			}
+			else {
+				_offset -= to_read;
+			}
+
 			_source.seekg(_offset, std::ios::end);
 			_source.read(_buffer.data(), to_read);
 			_base = _buffer.data();
@@ -68,7 +76,7 @@ namespace gotchangpdf
 			assert(!_source.fail());
 
 			auto size = _source.gcount();
-			if (size < 0)
+			if (size <= 0)
 				return traits_type::eof();
 
 			if (size < to_read) {
@@ -77,7 +85,7 @@ namespace gotchangpdf
 			}
 
 			// Set buffer pointers
-			setg(_buffer.data() + _buffer.size() - 1, start, _base);
+			setg(start, start, _base);
 
 			return traits_type::to_int_type(*gptr());
 		}
@@ -87,7 +95,10 @@ namespace gotchangpdf
 			if (gptr() == egptr())
 				return traits_type::eof();
 
-			return traits_type::to_int_type(*_Gndec());
+			// We need post decrement, which is not available
+			auto current = *gptr();
+			_Gndec();
+			return traits_type::to_int_type(current);
 		}
 
 		ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::pbackfail(int_type ch)
@@ -128,7 +139,7 @@ namespace gotchangpdf
 			return (streampos(offset));
 		}
 
-		ReverseStream::ReverseStream(CharacterSource & stream) : CharacterSource(pdf_new ReverseBuf(stream)) {}
+		ReverseStream::ReverseStream(CharacterSource & stream, types::stream_size size) : CharacterSource(pdf_new ReverseBuf(stream, size)) {}
 
 		ReverseStream::~ReverseStream() { delete CharacterSource::rdbuf(); }
 
