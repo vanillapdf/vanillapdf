@@ -41,9 +41,6 @@ namespace gotchangpdf
 			//private:
 		public:
 			BufferPtr _value;
-
-		private:
-			std::string _hexadecimal;
 		};
 
 		class LiteralStringObject : public StringObjectBase

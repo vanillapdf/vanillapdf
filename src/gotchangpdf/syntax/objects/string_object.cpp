@@ -11,21 +11,23 @@ namespace gotchangpdf
 
 		HexadecimalStringObject::HexadecimalStringObject(BufferPtr value)
 		{
-			_hexadecimal = value->ToString();
+			auto hexadecimal = value->ToString();
 
-			int len = (_hexadecimal.length() / 2) - 2;
+			unsigned int len = (hexadecimal.length() / 2);
+			for (unsigned int i = 0; i < len; ++i) {
+				int val = stoi(hexadecimal.substr(i * 2, 2), 0, 16);
+				auto parsed = SafeConvert<unsigned char, int>(val);
+				char converted = reinterpret_cast<char&>(parsed);
+				_value->push_back(converted);
+			}
 
-			for (int i = 0; i < len; ++i)
-			{
-				int val = stoi(_hexadecimal.substr(i * 2, 2), 0, 16);
-
-				assert(std::numeric_limits<unsigned char>::min() < val &&
-					std::numeric_limits<unsigned char>::max() > val);
-
-				/* this can be done, because we are dealing with 2
-				hexadecimal chars, which cannot be greater than 0xFF */
-				auto parsed = static_cast<char>(val);
-				_value->push_back(parsed);
+			// Last byte in unpaired
+			if (len * 2 < hexadecimal.length()) {
+				std::string pair { hexadecimal[hexadecimal.length() - 1], 0 };
+				int val = stoi(pair, 0, 16);
+				auto parsed = SafeConvert<unsigned char, int>(val);
+				char converted = reinterpret_cast<char&>(parsed);
+				_value->push_back(converted);
 			}
 		}
 	}
