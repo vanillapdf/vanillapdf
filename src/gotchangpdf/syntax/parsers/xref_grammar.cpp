@@ -149,7 +149,8 @@ namespace gotchangpdf
 			base_type(start, "Xref table subsections grammar")
 		{
 			start %=
-				qi::omit[stream_object(qi::_r1, qi::_r2)
+				whitespaces
+				>> qi::omit[stream_object(qi::_r1, qi::_r2)
 				[
 					qi::_val = phoenix::construct<XrefStreamPtr>(),
 					phoenix::bind(&set_file_to_xref, qi::_val, qi::_r1),
@@ -157,17 +158,18 @@ namespace gotchangpdf
 				]]
 				|
 				(
-					qi::lit("xref")[qi::_val = phoenix::construct<XrefTablePtr>(), phoenix::bind(&set_file_to_xref, qi::_val, qi::_r1)]
+					whitespaces
+					> qi::lit("xref")[qi::_val = phoenix::construct<XrefTablePtr>(), phoenix::bind(&set_file_to_xref, qi::_val, qi::_r1)]
 					> whitespaces
 					> qi::omit[*(subsection(qi::_r1)[phoenix::bind(&add_section, qi::_r0, qi::_1), phoenix::bind(&set_file_to_subsection, qi::_1, qi::_r1)])]
 					> qi::lit("trailer")
-					> eol
+					> eol > whitespaces
 					> qi::omit[dictionary_object(qi::_r1)[phoenix::bind(&set_trailer, qi::_r0, qi::_1)]]
-					> eol
+					> eol > whitespaces
 					> qi::lit("startxref")
-					> eol
+					> eol > whitespaces
 					> qi::omit[qi::int_[phoenix::bind(&set_last_offset, qi::_r0, qi::_1)]]
-					> eol
+					> eol > whitespaces
 					> qi::lit("%%EOF")
 				);
 

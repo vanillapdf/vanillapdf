@@ -97,7 +97,8 @@ namespace gotchangpdf
 		{
 			start %=
 				(
-					qi::omit[qi::int_[qi::_a = qi::_1]]
+					whitespaces
+					>> qi::omit[qi::int_[qi::_a = qi::_1]]
 					>> whitespace
 					>> qi::omit[qi::ushort_[qi::_b = qi::_1]]
 					>> whitespace
@@ -329,6 +330,7 @@ namespace gotchangpdf
 				> qi::lit("obj")
 				> whitespaces
 				> qi::omit[dictionary_object(qi::_r1)[qi::_c = qi::_1]]
+				> whitespaces
 				> stream_data(qi::_r1, qi::_c)
 				[
 					phoenix::bind(&direct_object_offset_handler, qi::_val, qi::_r2),
