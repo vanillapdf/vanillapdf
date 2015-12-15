@@ -44,6 +44,7 @@ namespace gotchangpdf
 		{
 			extern const syntax::NameObjectPtr AA;
 			extern const syntax::NameObjectPtr ASCII85Decode;
+			extern const syntax::NameObjectPtr ASCIIHexDecode;
 			extern const syntax::NameObjectPtr AcroForm;
 			extern const syntax::NameObjectPtr BaseVersion;
 			extern const syntax::NameObjectPtr BitsPerComponent;

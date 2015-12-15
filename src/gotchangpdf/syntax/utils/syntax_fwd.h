@@ -29,6 +29,7 @@ namespace gotchangpdf
 		// Filters
 		class FilterBase; using FilterBasePtr = Deferred<FilterBase>;		
 		class ASCII85DecodeFilter; using ASCII85DecodeFilterPtr = Deferred<ASCII85DecodeFilter>;
+		class ASCIIHexDecodeFilter; using ASCIIHexDecodeFilterPtr = Deferred<ASCIIHexDecodeFilter>;
 		class FlateDecodeFilter; using FlateDecodeFilterPtr = Deferred<FlateDecodeFilter>;
 
 		// Files

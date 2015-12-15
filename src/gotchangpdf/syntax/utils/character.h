@@ -39,7 +39,7 @@ namespace gotchangpdf
 		inline bool Equals(const char c1, const WhiteSpace c2) { return Equals(c1, static_cast<char>(c2)); }
 		inline bool Equals(const char c1, const Delimiter c2) { return Equals(c1, static_cast<char>(c2)); }
 
-		bool IsWhiteSpace(const char c)
+		inline bool IsWhiteSpace(const char c)
 		{
 			switch (c)
 			{
@@ -55,7 +55,7 @@ namespace gotchangpdf
 			return false;
 		}
 
-		bool IsDelimiter(const char c)
+		inline bool IsDelimiter(const char c)
 		{
 			switch (c)
 			{
