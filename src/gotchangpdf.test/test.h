@@ -52,6 +52,7 @@ error_type process_xref(XrefHandle xref, int nested);
 error_type process_extensions(DeveloperExtensionsHandle extensions, int nested);
 error_type process_page_labels(PageLabelsHandle labels, integer_type size, int nested);
 error_type process_page_label(PageLabelHandle label, int nested);
+error_type process_page_layout(PageLayout page_layout, int nested);
 
 #define RETURN_ERROR_IF_NOT_SUCCESS(var) do { error_type __result__ = (var);  if (GOTCHANG_PDF_ERROR_SUCCES != __result__) return __result__; } while(0)
 

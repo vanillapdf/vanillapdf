@@ -258,11 +258,13 @@ error_type process_catalog(CatalogHandle catalog, int nested)
 	DeveloperExtensionsHandle extensions = NULL;
 	PageLabelsHandle page_labels = NULL;
 	PDFVersion version;
+	PageLayout page_layout;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_GetPages(catalog, &pages));
 	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(pages, &size));
 
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(Catalog_GetVersion(catalog, &version), process_version(version, 0));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(Catalog_GetPageLayout(catalog, &page_layout), process_page_layout(page_layout, 0));
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Catalog_GetExtensions(catalog, &extensions), process_extensions(extensions, 0), DeveloperExtensions_Release(extensions));
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Catalog_GetPageLabels(catalog, &page_labels), process_page_labels(page_labels, size, 0), PageLabels_Release(page_labels));
 
@@ -319,6 +321,7 @@ error_type process_page_label(PageLabelHandle label, int nested)
 	RETURN_ERROR_IF_NOT_SUCCESS(PageLabel_St(label, &st));
 	RETURN_ERROR_IF_NOT_SUCCESS(PageLabel_S(label, &s));
 
+	print_spaces(nested + 1);
 	printf("Numbering Style: %d\n", s);
 	RETURN_ERROR_IF_NOT_SUCCESS(process_string(p, nested + 1));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(st, nested + 1));
@@ -328,6 +331,14 @@ error_type process_page_label(PageLabelHandle label, int nested)
 
 	print_spaces(nested);
 	printf("Page label end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_page_layout(PageLayout page_layout, int nested)
+{
+	print_spaces(nested);
+	printf("Page layout: %d\n", page_layout);
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
