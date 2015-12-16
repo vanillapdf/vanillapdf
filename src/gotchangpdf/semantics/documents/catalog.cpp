@@ -50,5 +50,27 @@ namespace gotchangpdf
 			auto labels = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::PageLabels);
 			return PageLabelsPtr(labels);
 		}
+
+		PageLayout Catalog::PageLayout(void) const
+		{
+			if (!_obj->Contains(constant::Name::PageLayout))
+				throw OptionalEntryMissingException(_obj, constant::Name::PageLayout);
+
+			auto layout = _obj->FindAs<syntax::NameObjectPtr>(constant::Name::PageLayout);
+			if (layout == constant::Name::SinglePage)
+				return PageLayout::SinglePage;
+			else if (layout == constant::Name::OneColumn)
+				return PageLayout::OneColumn;
+			else if (layout == constant::Name::TwoColumnLeft)
+				return PageLayout::TwoColumnLeft;
+			else if (layout == constant::Name::TwoColumnRight)
+				return PageLayout::TwoColumnRight;
+			else if (layout == constant::Name::TwoPageLeft)
+				return PageLayout::TwoPageLeft;
+			else if (layout == constant::Name::TwoPageRight)
+				return PageLayout::TwoPageRight;
+			else
+				throw GeneralException("Unknown value in PageLayout entry: " + layout->ToString());
+		}
 	}
 }

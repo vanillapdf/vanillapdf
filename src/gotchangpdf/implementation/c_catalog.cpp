@@ -103,6 +103,39 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLabels(CatalogHand
 	} CATCH_SCOPE_EXCEPTIONS
 }
 
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHandle handle, PPageLayout result)
+{
+	Catalog* obj = reinterpret_cast<Catalog*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		LOG_HIGH_OBJECT_SCOPE(obj);
+		try
+		{
+			switch (obj->PageLayout()) {
+			case semantics::PageLayout::SinglePage:
+				*result = PageLayout_SinglePage; break;
+			case semantics::PageLayout::OneColumn:
+				*result = PageLayout_OneColumn; break;
+			case semantics::PageLayout::TwoColumnLeft:
+				*result = PageLayout_TwoColumnLeft; break;
+			case semantics::PageLayout::TwoColumnRight:
+				*result = PageLayout_TwoColumnRight; break;
+			case semantics::PageLayout::TwoPageLeft:
+				*result = PageLayout_TwoPageLeft; break;
+			case semantics::PageLayout::TwoPageRight:
+				*result = PageLayout_TwoPageRight; break;
+			default:
+				return GOTCHANG_PDF_ERROR_NOT_SUPPORTED;
+			}
+
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
+}
+
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_Release(CatalogHandle handle)
 {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);

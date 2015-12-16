@@ -12,6 +12,16 @@ namespace gotchangpdf
 {
 	namespace semantics
 	{
+		enum class PageLayout
+		{
+			SinglePage = 0,
+			OneColumn,
+			TwoColumnLeft,
+			TwoColumnRight,
+			TwoPageLeft,
+			TwoPageRight
+		};
+
 		class Catalog : public HighLevelObject<syntax::DictionaryObjectPtr>
 		{
 		public:
@@ -21,6 +31,7 @@ namespace gotchangpdf
 			Version Version(void) const;
 			DeveloperExtensionsPtr Extensions(void) const;
 			PageLabelsPtr PageLabels(void) const;
+			PageLayout PageLayout(void) const;
 
 			// required
 			PageTreePtr Pages(void) const;

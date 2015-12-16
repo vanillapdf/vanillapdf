@@ -12,8 +12,19 @@ extern "C"
 {
 #endif
 
+	typedef enum
+	{
+		PageLayout_SinglePage = 0,
+		PageLayout_OneColumn,
+		PageLayout_TwoColumnLeft,
+		PageLayout_TwoColumnRight,
+		PageLayout_TwoPageLeft,
+		PageLayout_TwoPageRight
+	} PageLayout, *PPageLayout;
+
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPages(CatalogHandle handle, PPageTreeHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLabels(CatalogHandle handle, PPageLabelsHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHandle handle, PPageLayout result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetVersion(CatalogHandle handle, PPDFVersion result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetExtensions(CatalogHandle handle, PDeveloperExtensionsHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_Release(CatalogHandle handle);
