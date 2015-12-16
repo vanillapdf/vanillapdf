@@ -100,6 +100,12 @@ namespace gotchangpdf
 			extern const syntax::NameObjectPtr S;
 			extern const syntax::NameObjectPtr St;
 			extern const syntax::NameObjectPtr Size;
+			extern const syntax::NameObjectPtr SinglePage;
+			extern const syntax::NameObjectPtr OneColumn;
+			extern const syntax::NameObjectPtr TwoColumnLeft;
+			extern const syntax::NameObjectPtr TwoColumnRight;
+			extern const syntax::NameObjectPtr TwoPageLeft;
+			extern const syntax::NameObjectPtr TwoPageRight;
 			extern const syntax::NameObjectPtr SpiderInfo;
 			extern const syntax::NameObjectPtr StructTreeRoot;
 			extern const syntax::NameObjectPtr Threads;
