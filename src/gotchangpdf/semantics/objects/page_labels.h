@@ -5,6 +5,7 @@
 #include "high_level_object.h"
 #include "semantic_exceptions.h"
 
+#include "object_utils.h"
 #include "dictionary_object.h"
 #include "integer_object.h"
 #include "name_object.h"
@@ -76,7 +77,7 @@ namespace gotchangpdf
 			explicit PageLabels(const syntax::DictionaryObjectPtr& obj) : HighLevelObject(obj)
 			{
 				_tree = NumberTreePtr<PageLabelPtr>(obj, [](const syntax::ContainableObjectPtr& item) {
-					auto dict = ConvertUtils<syntax::ContainableObjectPtr>::ConvertTo<syntax::DictionaryObjectPtr>(item);
+					auto dict = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(item);
 					return PageLabelPtr(dict);
 				});
 			}
