@@ -115,6 +115,34 @@ namespace gotchangpdf
 			extern const syntax::NameObjectPtr ViewerPreferences;
 			extern const syntax::NameObjectPtr W;
 			extern const syntax::NameObjectPtr XRefStm;
+			extern const syntax::NameObjectPtr HideToolbar;
+			extern const syntax::NameObjectPtr HideMenubar;
+			extern const syntax::NameObjectPtr HideWindowUI;
+			extern const syntax::NameObjectPtr FitWindow;
+			extern const syntax::NameObjectPtr CenterWindow;
+			extern const syntax::NameObjectPtr DisplayDocTitle;
+			extern const syntax::NameObjectPtr NonFullScreenPageMode;
+			extern const syntax::NameObjectPtr Direction;
+			extern const syntax::NameObjectPtr ViewArea;
+			extern const syntax::NameObjectPtr ViewClip;
+			extern const syntax::NameObjectPtr PrintArea;
+			extern const syntax::NameObjectPtr PrintClip;
+			extern const syntax::NameObjectPtr PrintScaling;
+			extern const syntax::NameObjectPtr Duplex;
+			extern const syntax::NameObjectPtr PickTrayByPDFSize;
+			extern const syntax::NameObjectPtr PrintPageRange;
+			extern const syntax::NameObjectPtr NumCopies;
+			extern const syntax::NameObjectPtr UseNone;
+			extern const syntax::NameObjectPtr UseOutlines;
+			extern const syntax::NameObjectPtr UseThumbs;
+			extern const syntax::NameObjectPtr UseOC;
+			extern const syntax::NameObjectPtr L2R;
+			extern const syntax::NameObjectPtr R2L;
+			extern const syntax::NameObjectPtr AppDefault;
+			extern const syntax::NameObjectPtr None;
+			extern const syntax::NameObjectPtr Simplex;
+			extern const syntax::NameObjectPtr DuplexFlipShortEdge;
+			extern const syntax::NameObjectPtr DuplexFlipLongEdge;
 		}
 	}
 }

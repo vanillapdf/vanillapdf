@@ -257,6 +257,7 @@ error_type process_catalog(CatalogHandle catalog, int nested)
 	PageTreeHandle pages = NULL;
 	DeveloperExtensionsHandle extensions = NULL;
 	PageLabelsHandle page_labels = NULL;
+	ViewerPreferencesHandle viewer_preferences = NULL;
 	PDFVersion version;
 	PageLayout page_layout;
 
@@ -265,8 +266,17 @@ error_type process_catalog(CatalogHandle catalog, int nested)
 
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(Catalog_GetVersion(catalog, &version), process_version(version, 0));
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(Catalog_GetPageLayout(catalog, &page_layout), process_page_layout(page_layout, 0));
-	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Catalog_GetExtensions(catalog, &extensions), process_extensions(extensions, 0), DeveloperExtensions_Release(extensions));
-	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Catalog_GetPageLabels(catalog, &page_labels), process_page_labels(page_labels, size, 0), PageLabels_Release(page_labels));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Catalog_GetExtensions(catalog, &extensions),
+		process_extensions(extensions, 0),
+		DeveloperExtensions_Release(extensions));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Catalog_GetPageLabels(catalog, &page_labels),
+		process_page_labels(page_labels, size, 0),
+		PageLabels_Release(page_labels));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Catalog_GetViewerPreferences(catalog, &viewer_preferences),
+		process_viewer_preferences(viewer_preferences, 0),
+		ViewerPreferences_Release(viewer_preferences));
 
 	for (i = 1; i <= size; ++i)
 	{
@@ -339,6 +349,71 @@ error_type process_page_layout(PageLayout page_layout, int nested)
 {
 	print_spaces(nested);
 	printf("Page layout: %d\n", page_layout);
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_viewer_preferences(ViewerPreferencesHandle preferences, int nested)
+{
+	Duplex duplex;
+	PrintScaling print_scaling;
+	PageMode page_mode;
+	ReadingOrder reading_order;
+	BooleanHandle boolean = NULL;
+	NameHandle name = NULL;
+	IntegerHandle integer = NULL;
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetHideToolbar(preferences, &boolean), process_boolean(boolean, nested + 1), BooleanObject_Release(boolean));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetHideMenubar(preferences, &boolean), process_boolean(boolean, nested + 1), BooleanObject_Release(boolean));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetHideWindowUI(preferences, &boolean), process_boolean(boolean, nested + 1), BooleanObject_Release(boolean));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetFitWindow(preferences, &boolean), process_boolean(boolean, nested + 1), BooleanObject_Release(boolean));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetDisplayDocTitle(preferences, &boolean), process_boolean(boolean, nested + 1), BooleanObject_Release(boolean));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(ViewerPreferences_GetNonFullScreenPageMode(preferences, &page_mode), proces_page_mode(page_mode, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(ViewerPreferences_GetDirection(preferences, &reading_order), proces_reading_order(reading_order, nested + 1));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetViewArea(preferences, &name), process_name(name, nested + 1), NameObject_Release(name));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetViewClip(preferences, &name), process_name(name, nested + 1), NameObject_Release(name));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetPrintArea(preferences, &name), process_name(name, nested + 1), NameObject_Release(name));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetPrintClip(preferences, &name), process_name(name, nested + 1), NameObject_Release(name));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(ViewerPreferences_GetPrintScaling(preferences, &print_scaling), proces_print_scaling(print_scaling, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(ViewerPreferences_GetDuplex(preferences, &duplex), process_duplex(duplex, nested + 1));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetPickTrayByPDFSize(preferences, &boolean), process_boolean(boolean, nested + 1), BooleanObject_Release(boolean));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetNumCopies(preferences, &integer), process_integer(integer, nested + 1), IntegerObject_Release(integer));
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type proces_page_mode(PageMode page_mode, int nested)
+{
+	print_spaces(nested);
+	printf("Page Mode: %d\n", page_mode);
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type proces_reading_order(ReadingOrder order, int nested)
+{
+	print_spaces(nested);
+	printf("Reading order: %d\n", order);
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type proces_print_scaling(PrintScaling scaling, int nested)
+{
+	print_spaces(nested);
+	printf("Print scaling: %d\n", scaling);
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_duplex(Duplex duplex, int nested)
+{
+	print_spaces(nested);
+	printf("Duplex: %d\n", duplex);
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }

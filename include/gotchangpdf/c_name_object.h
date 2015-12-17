@@ -88,6 +88,34 @@ extern "C"
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_ViewerPreferences;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_W;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_XRefStm;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_HideToolbar;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_HideMenubar;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_HideWindowUI;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_FitWindow;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_CenterWindow;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_DisplayDocTitle;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_NonFullScreenPageMode;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Direction;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_ViewArea;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_ViewClip;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_PrintArea;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_PrintClip;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_PrintScaling;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Duplex;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_PickTrayByPDFSize;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_PrintPageRange;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_NumCopies;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_UseNone;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_UseOutlines;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_UseThumbs;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_UseOC;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_L2R;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_R2L;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_AppDefault;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_None;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Simplex;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_DuplexFlipShortEdge;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_DuplexFlipLongEdge;
 
 #ifdef __cplusplus
 };

@@ -32,6 +32,7 @@ namespace gotchangpdf
 			DeveloperExtensionsPtr Extensions(void) const;
 			PageLabelsPtr PageLabels(void) const;
 			PageLayout PageLayout(void) const;
+			bool ViewerPreferences(ViewerPreferencesPtr& result) const;
 
 			// required
 			PageTreePtr Pages(void) const;

@@ -72,5 +72,14 @@ namespace gotchangpdf
 			else
 				throw GeneralException("Unknown value in PageLayout entry: " + layout->ToString());
 		}
+		bool Catalog::ViewerPreferences(ViewerPreferencesPtr& result) const
+		{
+			if (!_obj->Contains(constant::Name::ViewerPreferences))
+				return false;
+
+			auto prefs = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::ViewerPreferences);
+			result = ViewerPreferencesPtr(prefs);
+			return true;
+		}
 	}
 }

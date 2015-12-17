@@ -53,6 +53,11 @@ error_type process_extensions(DeveloperExtensionsHandle extensions, int nested);
 error_type process_page_labels(PageLabelsHandle labels, integer_type size, int nested);
 error_type process_page_label(PageLabelHandle label, int nested);
 error_type process_page_layout(PageLayout page_layout, int nested);
+error_type process_viewer_preferences(ViewerPreferencesHandle preferences, int nested);
+error_type proces_page_mode(PageMode page_mode, int nested);
+error_type proces_reading_order(ReadingOrder order, int nested);
+error_type proces_print_scaling(PrintScaling scaling, int nested);
+error_type process_duplex(Duplex duplex, int nested);
 
 #define RETURN_ERROR_IF_NOT_SUCCESS(var) do { error_type __result__ = (var);  if (GOTCHANG_PDF_ERROR_SUCCES != __result__) return __result__; } while(0)
 

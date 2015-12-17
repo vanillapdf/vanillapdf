@@ -36,6 +36,7 @@
     <ClInclude Include="include\gotchangpdf\c_version.h" />
     <ClInclude Include="include\gotchangpdf\c_xref.h" />
     <ClInclude Include="include\gotchangpdf\gotchangpdf.h" />
+    <ClInclude Include="include\gotchangpdf\c_viewer_preferences.h" />
     <ClInclude Include="src\gotchangpdf\implementation\c_helper.h" />
     <ClInclude Include="src\gotchangpdf\precompiled.h" />
     <ClInclude Include="src\gotchangpdf\semantics\documents\catalog.h" />
@@ -54,9 +55,11 @@
     <ClInclude Include="src\gotchangpdf\semantics\objects\date.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\developer_extensions.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\high_level_object.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\objects\name_dictionary.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\page_labels.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\tree.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\rectangle.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\objects\viewer_preferences.h" />
     <ClInclude Include="src\gotchangpdf\semantics\utils\semantics_fwd.h" />
     <ClInclude Include="src\gotchangpdf\semantics\utils\semantic_exceptions.h" />
     <ClInclude Include="src\gotchangpdf\semantics\utils\semantic_utils.h" />
@@ -142,6 +145,7 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_stream_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_string_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_values.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_viewer_preferences.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_xref.cpp" />
     <ClCompile Include="src\gotchangpdf\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">Create</PrecompiledHeader>
