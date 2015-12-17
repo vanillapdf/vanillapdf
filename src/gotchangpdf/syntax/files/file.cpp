@@ -17,10 +17,14 @@ namespace gotchangpdf
 		std::string extract_filename(const std::string& filepath)
 		{
 			int pos = filepath.rfind("\\");
-			if (pos == std::string::npos)
-				pos = -1;
+			if (pos == std::string::npos) {
+				pos = filepath.rfind('/');
+				if (pos == std::string::npos) {
+					pos = -1;
+				}
+			}
 
-			return std::string(filepath.begin() + pos + 1, filepath.end());
+			return std::string(filepath.begin() + (pos + 1), filepath.end());
 		}
 
 		File::File(std::string path)
