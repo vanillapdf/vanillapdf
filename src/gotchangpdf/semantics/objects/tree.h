@@ -171,7 +171,7 @@ namespace gotchangpdf
 					return ContainsInternal(leaf->Values(), key);
 				} break;
 				default:
-					assert(!"Unknown node type"); return false;
+					assert(!"Unknown node type");
 				}
 
 				return false;
@@ -231,7 +231,7 @@ namespace gotchangpdf
 					return FindInternal(leaf->Values(), key);
 				} break;
 				default:
-					assert(!"Unknown node type"); return false;
+					assert(!"Unknown node type");
 				}
 
 				throw GeneralException("Tree node does not contain required item");
