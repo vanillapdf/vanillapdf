@@ -12,11 +12,11 @@ extern "C"
 
 	typedef enum
 	{
-		PageMode_UseNone = 0,
-		PageMode_UseOutlines,
-		PageMode_UseThumbs,
-		PageMode_UseOC
-	} PageMode, *PPageMode;
+		NonFullScreenPageMode_UseNone = 0,
+		NonFullScreenPageMode_UseOutlines,
+		NonFullScreenPageMode_UseThumbs,
+		NonFullScreenPageMode_UseOC
+	} NonFullScreenPageMode, *PNonFullScreenPageMode;
 
 	typedef enum
 	{
@@ -42,7 +42,7 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideWindowUI(ViewerPreferencesHandle handle, PBooleanHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetFitWindow(ViewerPreferencesHandle handle, PBooleanHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDisplayDocTitle(ViewerPreferencesHandle handle, PBooleanHandle result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNonFullScreenPageMode(ViewerPreferencesHandle handle, PPageMode result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNonFullScreenPageMode(ViewerPreferencesHandle handle, PNonFullScreenPageMode result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDirection(ViewerPreferencesHandle handle, PReadingOrder result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewArea(ViewerPreferencesHandle handle, PNameHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewClip(ViewerPreferencesHandle handle, PNameHandle result);

@@ -118,7 +118,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDisplayDocTi
 	} CATCH_SCOPE_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNonFullScreenPageMode(ViewerPreferencesHandle handle, PPageMode result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNonFullScreenPageMode(ViewerPreferencesHandle handle, PNonFullScreenPageMode result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -130,20 +130,20 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNonFullScree
 
 		try
 		{
-			ViewerPreferences::PageModeType mode;
+			ViewerPreferences::NonFullScreenPageModeType mode;
 			auto contains = obj->NonFullScreenPageMode(mode);
 			if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 
 			switch (mode)
 			{
-			case ViewerPreferences::PageModeType::UseNone:
-				*result = PageMode_UseNone;
-			case ViewerPreferences::PageModeType::UseOutlines:
-				*result = PageMode_UseOutlines;
-			case ViewerPreferences::PageModeType::UseThumbs:
-				*result = PageMode_UseThumbs;
-			case ViewerPreferences::PageModeType::UseOC:
-				*result = PageMode_UseOC;
+			case ViewerPreferences::NonFullScreenPageModeType::UseNone:
+				*result = NonFullScreenPageMode_UseNone;
+			case ViewerPreferences::NonFullScreenPageModeType::UseOutlines:
+				*result = NonFullScreenPageMode_UseOutlines;
+			case ViewerPreferences::NonFullScreenPageModeType::UseThumbs:
+				*result = NonFullScreenPageMode_UseThumbs;
+			case ViewerPreferences::NonFullScreenPageModeType::UseOC:
+				*result = NonFullScreenPageMode_UseOC;
 			default:
 				return GOTCHANG_PDF_ERROR_GENERAL;
 			}

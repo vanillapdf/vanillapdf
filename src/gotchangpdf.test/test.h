@@ -54,7 +54,7 @@ error_type process_page_labels(PageLabelsHandle labels, integer_type size, int n
 error_type process_page_label(PageLabelHandle label, int nested);
 error_type process_page_layout(PageLayout page_layout, int nested);
 error_type process_viewer_preferences(ViewerPreferencesHandle preferences, int nested);
-error_type proces_page_mode(PageMode page_mode, int nested);
+error_type proces_nonfullscreen_page_mode(NonFullScreenPageMode page_mode, int nested);
 error_type proces_reading_order(ReadingOrder order, int nested);
 error_type proces_print_scaling(PrintScaling scaling, int nested);
 error_type process_duplex(Duplex duplex, int nested);

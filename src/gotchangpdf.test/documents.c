@@ -357,7 +357,7 @@ error_type process_viewer_preferences(ViewerPreferencesHandle preferences, int n
 {
 	Duplex duplex;
 	PrintScaling print_scaling;
-	PageMode page_mode;
+	NonFullScreenPageMode page_mode;
 	ReadingOrder reading_order;
 	BooleanHandle boolean = NULL;
 	NameHandle name = NULL;
@@ -386,10 +386,10 @@ error_type process_viewer_preferences(ViewerPreferencesHandle preferences, int n
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-error_type proces_page_mode(PageMode page_mode, int nested)
+error_type proces_nonfullscreen_page_mode(NonFullScreenPageMode page_mode, int nested)
 {
 	print_spaces(nested);
-	printf("Page Mode: %d\n", page_mode);
+	printf("Non-FullScreen page Mode: %d\n", page_mode);
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
