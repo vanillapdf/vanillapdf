@@ -9,10 +9,17 @@ namespace gotchangpdf
 {
 	namespace semantics
 	{
+		class PrintPageRange : public HighLevelObject<syntax::ArrayObjectPtr>
+		{
+		public:
+
+		private:
+		};
+
 		class ViewerPreferences : public HighLevelObject<syntax::DictionaryObjectPtr>
 		{
 		public:
-			enum class PageModeType
+			enum class NonFullScreenPageModeType
 			{
 				UseNone = 0,
 				UseOutlines,
@@ -96,20 +103,20 @@ namespace gotchangpdf
 				return true;
 			}
 
-			bool NonFullScreenPageMode(PageModeType& result) const
+			bool NonFullScreenPageMode(NonFullScreenPageModeType& result) const
 			{
 				if (!_obj->Contains(constant::Name::NonFullScreenPageMode))
 					return false;
 
 				auto name = _obj->FindAs<syntax::NameObjectPtr>(constant::Name::NonFullScreenPageMode);
 				if (name == constant::Name::UseNone)
-					result = PageModeType::UseNone;
+					result = NonFullScreenPageModeType::UseNone;
 				else if (name == constant::Name::UseOutlines)
-					result = PageModeType::UseOutlines;
+					result = NonFullScreenPageModeType::UseOutlines;
 				else if (name == constant::Name::UseThumbs)
-					result = PageModeType::UseThumbs;
+					result = NonFullScreenPageModeType::UseThumbs;
 				else if (name == constant::Name::UseOC)
-					result = PageModeType::UseOC;
+					result = NonFullScreenPageModeType::UseOC;
 				else
 					throw GeneralException("Unknown page mode type: " + name->ToString());
 
