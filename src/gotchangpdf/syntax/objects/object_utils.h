@@ -38,6 +38,10 @@ namespace gotchangpdf
 					auto first_converted = ConvertUtils<Object*>::ConvertTo<MixedArrayObject*>(first.Content.get());
 					auto second_converted = ConvertUtils<Object*>::ConvertTo<MixedArrayObject*>(second.Content.get());
 
+					assert(nullptr != first_converted && nullptr != second_converted);
+					if (nullptr == first_converted || nullptr == second_converted)
+						return false;
+
 					auto first_size = first_converted->Size();
 					auto second_size = second_converted->Size();
 					if (first_size != second_size)
@@ -53,12 +57,21 @@ namespace gotchangpdf
 				{
 					auto first_converted = ConvertUtils<Object*>::ConvertTo<BooleanObject*>(first.Content.get());
 					auto second_converted = ConvertUtils<Object*>::ConvertTo<BooleanObject*>(second.Content.get());
+
+					assert(nullptr != first_converted && nullptr != second_converted);
+					if (nullptr == first_converted || nullptr == second_converted)
+						return false;
+
 					return (*first_converted == *second_converted);
 				}
 				case Object::Type::Dictionary:
 				{
 					auto first_converted = ConvertUtils<Object*>::ConvertTo<DictionaryObject*>(first.Content.get());
 					auto second_converted = ConvertUtils<Object*>::ConvertTo<DictionaryObject*>(second.Content.get());
+
+					assert(nullptr != first_converted && nullptr != second_converted);
+					if (nullptr == first_converted || nullptr == second_converted)
+						return false;
 
 					auto first_vals = first_converted->Values();
 					auto second_vals = second_converted->Values();
@@ -77,36 +90,65 @@ namespace gotchangpdf
 				{
 					auto first_converted = ConvertUtils<Object*>::ConvertTo<IndirectObjectReference*>(first.Content.get());
 					auto second_converted = ConvertUtils<Object*>::ConvertTo<IndirectObjectReference*>(second.Content.get());
+
+					assert(nullptr != first_converted && nullptr != second_converted);
+					if (nullptr == first_converted || nullptr == second_converted)
+						return false;
+
 					return (*first_converted == *second_converted);
 				}
 				case Object::Type::Integer:
 				{
 					auto first_converted = ConvertUtils<Object*>::ConvertTo<IntegerObject*>(first.Content.get());
 					auto second_converted = ConvertUtils<Object*>::ConvertTo<IntegerObject*>(second.Content.get());
+
+					assert(nullptr != first_converted && nullptr != second_converted);
+					if (nullptr == first_converted || nullptr == second_converted)
+						return false;
+
 					return (*first_converted == *second_converted);
 				}
 				case Object::Type::Name:
 				{
 					auto first_converted = ConvertUtils<Object*>::ConvertTo<NameObject*>(first.Content.get());
 					auto second_converted = ConvertUtils<Object*>::ConvertTo<NameObject*>(second.Content.get());
+
+					assert(nullptr != first_converted && nullptr != second_converted);
+					if (nullptr == first_converted || nullptr == second_converted)
+						return false;
+
 					return (*first_converted == *second_converted);
 				}
 				case Object::Type::Null:
 				{
 					auto first_converted = ConvertUtils<Object*>::ConvertTo<NullObject*>(first.Content.get());
 					auto second_converted = ConvertUtils<Object*>::ConvertTo<NullObject*>(second.Content.get());
+
+					assert(nullptr != first_converted && nullptr != second_converted);
+					if (nullptr == first_converted || nullptr == second_converted)
+						return false;
+
 					return (*first_converted == *second_converted);
 				}
 				case Object::Type::Real:
 				{
 					auto first_converted = ConvertUtils<Object*>::ConvertTo<RealObject*>(first.Content.get());
 					auto second_converted = ConvertUtils<Object*>::ConvertTo<RealObject*>(second.Content.get());
+
+					assert(nullptr != first_converted && nullptr != second_converted);
+					if (nullptr == first_converted || nullptr == second_converted)
+						return false;
+
 					return (*first_converted == *second_converted);
 				}
 				case Object::Type::Stream:
 				{
 					auto first_converted = ConvertUtils<Object*>::ConvertTo<StreamObject*>(first.Content.get());
 					auto second_converted = ConvertUtils<Object*>::ConvertTo<StreamObject*>(second.Content.get());
+
+					assert(nullptr != first_converted && nullptr != second_converted);
+					if (nullptr == first_converted || nullptr == second_converted)
+						return false;
 
 					auto first_header = first_converted->GetHeader();
 					auto second_header = second_converted->GetHeader();
@@ -124,6 +166,11 @@ namespace gotchangpdf
 				{
 					auto first_converted = ConvertUtils<Object*>::ConvertTo<StringObjectBase*>(first.Content.get());
 					auto second_converted = ConvertUtils<Object*>::ConvertTo<StringObjectBase*>(second.Content.get());
+
+					assert(nullptr != first_converted && nullptr != second_converted);
+					if (nullptr == first_converted || nullptr == second_converted)
+						return false;
+
 					return (*first_converted == *second_converted);
 				}
 				default:
