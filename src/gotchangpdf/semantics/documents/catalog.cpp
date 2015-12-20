@@ -51,27 +51,46 @@ namespace gotchangpdf
 			return PageLabelsPtr(labels);
 		}
 
-		PageLayout Catalog::PageLayout(void) const
+		Catalog::PageLayoutType Catalog::PageLayout(void) const
 		{
 			if (!_obj->Contains(constant::Name::PageLayout))
 				throw OptionalEntryMissingException(_obj, constant::Name::PageLayout);
 
 			auto layout = _obj->FindAs<syntax::NameObjectPtr>(constant::Name::PageLayout);
 			if (layout == constant::Name::SinglePage)
-				return PageLayout::SinglePage;
+				return PageLayoutType::SinglePage;
 			else if (layout == constant::Name::OneColumn)
-				return PageLayout::OneColumn;
+				return PageLayoutType::OneColumn;
 			else if (layout == constant::Name::TwoColumnLeft)
-				return PageLayout::TwoColumnLeft;
+				return PageLayoutType::TwoColumnLeft;
 			else if (layout == constant::Name::TwoColumnRight)
-				return PageLayout::TwoColumnRight;
+				return PageLayoutType::TwoColumnRight;
 			else if (layout == constant::Name::TwoPageLeft)
-				return PageLayout::TwoPageLeft;
+				return PageLayoutType::TwoPageLeft;
 			else if (layout == constant::Name::TwoPageRight)
-				return PageLayout::TwoPageRight;
+				return PageLayoutType::TwoPageRight;
 			else
 				throw GeneralException("Unknown value in PageLayout entry: " + layout->ToString());
 		}
+
+		NameDictionaryPtr Catalog::Names(void) const
+		{
+			if (!_obj->Contains(constant::Name::Names))
+				throw OptionalEntryMissingException(_obj, constant::Name::Names);
+
+			auto names = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Names);
+			return NameDictionaryPtr(names);
+		}
+
+		NamedDestinationsPtr Catalog::Dests(void) const
+		{
+			if (!_obj->Contains(constant::Name::Dests))
+				throw OptionalEntryMissingException(_obj, constant::Name::Dests);
+
+			auto dests = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Dests);
+			return NamedDestinationsPtr(dests);
+		}
+
 		bool Catalog::ViewerPreferences(ViewerPreferencesPtr& result) const
 		{
 			if (!_obj->Contains(constant::Name::ViewerPreferences))
@@ -79,6 +98,30 @@ namespace gotchangpdf
 
 			auto prefs = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::ViewerPreferences);
 			result = ViewerPreferencesPtr(prefs);
+			return true;
+		}
+
+		bool Catalog::PageMode(PageModeType& result) const
+		{
+			if (!_obj->Contains(constant::Name::PageMode))
+				return false;
+
+			auto page_mode = _obj->FindAs<syntax::NameObjectPtr>(constant::Name::PageMode);
+			if (page_mode == constant::Name::UseNone)
+				result = PageModeType::UseNone;
+			else if (page_mode == constant::Name::UseOutlines)
+				result = PageModeType::UseOutlines;
+			else if (page_mode == constant::Name::UseThumbs)
+				result = PageModeType::UseThumbs;
+			else if (page_mode == constant::Name::FullScreen)
+				result = PageModeType::FullScreen;
+			else if (page_mode == constant::Name::UseOC)
+				result = PageModeType::UseOC;
+			else if (page_mode == constant::Name::UseAttachments)
+				result = PageModeType::UseAttachments;
+			else
+				throw GeneralException("Unknown page mode type: " + page_mode->ToString());
+
 			return true;
 		}
 	}

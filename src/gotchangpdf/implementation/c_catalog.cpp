@@ -115,17 +115,17 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHand
 		try
 		{
 			switch (obj->PageLayout()) {
-			case semantics::PageLayout::SinglePage:
+			case semantics::Catalog::PageLayoutType::SinglePage:
 				*result = PageLayout_SinglePage; break;
-			case semantics::PageLayout::OneColumn:
+			case semantics::Catalog::PageLayoutType::OneColumn:
 				*result = PageLayout_OneColumn; break;
-			case semantics::PageLayout::TwoColumnLeft:
+			case semantics::Catalog::PageLayoutType::TwoColumnLeft:
 				*result = PageLayout_TwoColumnLeft; break;
-			case semantics::PageLayout::TwoColumnRight:
+			case semantics::Catalog::PageLayoutType::TwoColumnRight:
 				*result = PageLayout_TwoColumnRight; break;
-			case semantics::PageLayout::TwoPageLeft:
+			case semantics::Catalog::PageLayoutType::TwoPageLeft:
 				*result = PageLayout_TwoPageLeft; break;
-			case semantics::PageLayout::TwoPageRight:
+			case semantics::Catalog::PageLayoutType::TwoPageRight:
 				*result = PageLayout_TwoPageRight; break;
 			default:
 				return GOTCHANG_PDF_ERROR_NOT_SUPPORTED;

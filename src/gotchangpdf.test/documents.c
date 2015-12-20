@@ -369,7 +369,7 @@ error_type process_viewer_preferences(ViewerPreferencesHandle preferences, int n
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetFitWindow(preferences, &boolean), process_boolean(boolean, nested + 1), BooleanObject_Release(boolean));
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetDisplayDocTitle(preferences, &boolean), process_boolean(boolean, nested + 1), BooleanObject_Release(boolean));
 
-	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(ViewerPreferences_GetNonFullScreenPageMode(preferences, &page_mode), proces_page_mode(page_mode, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(ViewerPreferences_GetNonFullScreenPageMode(preferences, &page_mode), proces_nonfullscreen_page_mode(page_mode, nested + 1));
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(ViewerPreferences_GetDirection(preferences, &reading_order), proces_reading_order(reading_order, nested + 1));
 
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetViewArea(preferences, &name), process_name(name, nested + 1), NameObject_Release(name));

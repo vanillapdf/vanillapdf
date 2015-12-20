@@ -12,18 +12,18 @@ namespace gotchangpdf
 {
 	namespace semantics
 	{
-		enum class PageLayout
-		{
-			SinglePage = 0,
-			OneColumn,
-			TwoColumnLeft,
-			TwoColumnRight,
-			TwoPageLeft,
-			TwoPageRight
-		};
-
 		class Catalog : public HighLevelObject<syntax::DictionaryObjectPtr>
 		{
+		public:
+			enum class PageLayoutType
+			{
+				SinglePage = 0,
+				OneColumn,
+				TwoColumnLeft,
+				TwoColumnRight,
+				TwoPageLeft,
+				TwoPageRight
+			};
 		public:
 			explicit Catalog(syntax::DictionaryObjectPtr root);
 
@@ -31,7 +31,7 @@ namespace gotchangpdf
 			Version Version(void) const;
 			DeveloperExtensionsPtr Extensions(void) const;
 			PageLabelsPtr PageLabels(void) const;
-			PageLayout PageLayout(void) const;
+			PageLayoutType PageLayout(void) const;
 			bool ViewerPreferences(ViewerPreferencesPtr& result) const;
 
 			// required

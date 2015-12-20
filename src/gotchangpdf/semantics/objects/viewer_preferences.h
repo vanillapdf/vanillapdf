@@ -9,7 +9,7 @@ namespace gotchangpdf
 {
 	namespace semantics
 	{
-		class PrintPageRange : public HighLevelObject<syntax::ArrayObjectPtr>
+		class PrintPageRange : public HighLevelObject<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>>
 		{
 		public:
 
