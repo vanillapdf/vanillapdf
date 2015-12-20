@@ -75,7 +75,7 @@ void read_xref_stream_data(XrefBasePtr xref, StreamObjectPtr stream, std::shared
 
 	// Iterate over entries
 	auto it = body.begin();
-	for (auto i = 0; i < index_size; i += 2) {
+	for (unsigned int i = 0; i < index_size; i += 2) {
 
 		auto subsection_index = index->At(i);
 		auto subsection_size = index->At(i + 1);

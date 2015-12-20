@@ -16,7 +16,7 @@ namespace gotchangpdf
 		using namespace contents;
 
 		Contents::Contents(StreamObjectPtr obj) : HighLevelObject(obj) {}
-		Contents::Contents(ArrayObjectPtr<IndirectObjectReferencePtr> obj) : HighLevelObject(obj) {}
+		Contents::Contents(ArrayObjectPtr<IndirectObjectReferencePtr> obj) : HighLevelObject(obj->Data()) {}
 
 		BaseInstructionCollection Contents::Instructions(void) const
 		{
@@ -30,7 +30,7 @@ namespace gotchangpdf
 			}
 			else if (ObjectUtils::IsType<ArrayObjectPtr<IndirectObjectReferencePtr>>(_obj)) {
 				auto converted = ObjectUtils::ConvertTo<ArrayObjectPtr<IndirectObjectReferencePtr>>(_obj);
-				for (auto& ref : *converted) {
+				for (auto ref : *converted) {
 					auto item = ref->GetReferencedObjectAs<StreamObjectPtr>();
 					contents.push_back(item);
 				}

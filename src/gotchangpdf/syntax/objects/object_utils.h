@@ -47,7 +47,7 @@ namespace gotchangpdf
 					if (first_size != second_size)
 						return false;
 
-					for (int i = 0; i < first_size; ++i)
+					for (unsigned int i = 0; i < first_size; ++i)
 						if (!ValueEquals(first_converted->At(i), second_converted->At(i)))
 							return false;
 
@@ -361,7 +361,7 @@ namespace gotchangpdf
 						return converted;
 
 					auto mixed = ObjectTypeFunctor<MixedArrayObjectPtr>::Convert(obj);
-					return mixed->CastToArrayType<T>();
+					return ArrayObjectPtr<T>(mixed);
 				}
 			};
 		};

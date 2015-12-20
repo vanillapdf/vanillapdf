@@ -4,9 +4,13 @@
 #include "exception.h"
 
 #include <climits>
+#include <type_traits>
 
 namespace gotchangpdf
 {
+	template<template<typename...> class X, typename T> struct instantiation_of : public std::false_type {};
+	template<template<typename...> class X, typename... Y> struct instantiation_of<X, X<Y...>> : public std::true_type {};
+
 	template <typename ValueType, typename RangeType>
 	bool IsInRange(ValueType value) _NOEXCEPT {
 		return (value >= std::numeric_limits<RangeType>::min()) &&

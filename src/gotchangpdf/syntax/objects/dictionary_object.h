@@ -35,6 +35,7 @@ namespace gotchangpdf
 				typedef typename const_iterator::difference_type difference_type;
 				typedef typename const_iterator::pointer pointer;
 				typedef typename const_iterator::reference reference;
+				typedef typename const_iterator::iterator_category iterator_category;
 
 			public:
 				Iterator() = default;

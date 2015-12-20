@@ -65,7 +65,7 @@ namespace gotchangpdf
 						assert(filter_array->Size() == params->Size());
 					}
 
-					for (int i = 0; i < filter_array->Size(); ++i) {
+					for (unsigned int i = 0; i < filter_array->Size(); ++i) {
 						auto current_filter = (*filter_array)[i];
 						auto filter = FilterBase::GetFilterByName(current_filter);
 

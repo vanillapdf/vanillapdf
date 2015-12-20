@@ -22,7 +22,7 @@ namespace gotchangpdf
 		dive:
 			auto kids = node->Kids();
 			auto count = kids->Size();
-			for (int i = 0; i < count; ++i) {
+			for (decltype(count) i = 0; i < count; ++i) {
 				auto kid = kids->At(i);
 				switch (kid->GetNodeType()) {
 				case PageNodeBase::NodeType::Tree:
@@ -67,7 +67,7 @@ namespace gotchangpdf
 		{
 			auto kids = node->Kids();
 			auto count = kids->Size();;
-			for (int i = 0; i < count; ++i) {
+			for (decltype(count) i = 0; i < count; ++i) {
 				auto kid = kids->At(i);
 				if (kid->GetNodeType() == PageNodeBase::NodeType::Tree)
 					return true;

@@ -37,8 +37,7 @@ namespace gotchangpdf
 		RectanglePtr PageObject::MediaBox() const
 		{
 			auto box = _obj->FindAs<MixedArrayObjectPtr>(Name::MediaBox);
-			auto specialized = box->CastToArrayType<IntegerObjectPtr>();
-			return RectanglePtr(ArrayObjectPtr<IntegerObjectPtr>(specialized));
+			return RectanglePtr(box);
 		}
 
 		ContentsPtr PageObject::Contents() const

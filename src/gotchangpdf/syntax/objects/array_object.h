@@ -4,6 +4,7 @@
 #include "syntax_fwd.h"
 #include "object.h"
 #include "containable.h"
+#include "util.h"
 
 #include <vector>
 #include <algorithm>
@@ -13,30 +14,33 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		template <typename T>
-		class ArrayObject : public ContainableObject
+		class MixedArrayObject : public ContainableObject
 		{
 		public:
-			typedef std::vector<T> list_type;
-			typedef typename list_type::value_type value_type;
-			typedef typename list_type::iterator iterator;
-			typedef typename list_type::const_iterator const_iterator;
-			typedef typename list_type::size_type size_type;
-			typedef typename list_type::reference reference;
-			typedef typename list_type::const_reference const_reference;
+			typedef std::vector<ContainableObjectPtr> list_type;
+			typedef list_type::value_type value_type;
+			typedef list_type::iterator iterator;
+			typedef list_type::const_iterator const_iterator;
+			typedef list_type::size_type size_type;
+			typedef list_type::reference reference;
+			typedef list_type::const_reference const_reference;
 
 		public:
-			explicit ArrayObject() {}
-			explicit ArrayObject(list_type& list) : _list(list) {}
-			explicit ArrayObject(std::initializer_list<T> list) : _list(list) {}
-			explicit ArrayObject(const ContainableObject& other, list_type& list)
+			MixedArrayObject() = default;
+			explicit MixedArrayObject(const list_type& list) : _list(list) {}
+			explicit MixedArrayObject(const std::initializer_list<ContainableObjectPtr>& list) : _list(list) {}
+			MixedArrayObject(const ContainableObject& other, list_type& list)
 				: ContainableObject(other), _list(list) {}
 
-			inline types::integer Size(void) const _NOEXCEPT { return _list.size(); }
-			inline const T& operator[](unsigned int i) const { return _list[i]; }
-			inline T& operator[](unsigned int i) { return _list[i]; }
-			inline const T& At(unsigned int at) const { return _list.at(at); }
-			inline T& At(unsigned int at) { return _list.at(at); }
+			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Array; }
+			inline types::uinteger Size(void) const _NOEXCEPT { return _list.size(); }
+			inline const ContainableObjectPtr& operator[](unsigned int i) const { return _list[i]; }
+			inline ContainableObjectPtr& operator[](unsigned int i) { return _list[i]; }
+			inline const ContainableObjectPtr& At(unsigned int at) const { return _list.at(at); }
+			inline ContainableObjectPtr& At(unsigned int at) { return _list.at(at); }
+
+			// stl compatibility
+			void push_back(const value_type& value) { _list.push_back(value); }
 
 			iterator begin() _NOEXCEPT { return _list.begin(); }
 			const_iterator begin() const _NOEXCEPT { return _list.begin(); }
@@ -44,44 +48,10 @@ namespace gotchangpdf
 			const_iterator end() const _NOEXCEPT { return _list.end(); }
 
 			template <typename U>
-			ArrayObjectPtr<U> Convert(std::function<const U(T& obj)> f)
+			ArrayObjectPtr<U> Convert(std::function<U(const ContainableObjectPtr& obj)> f) const
 			{
-				std::vector<U> list;
-				list.reserve(_list.size());
-				std::transform(_list.begin(), _list.end(), std::back_inserter(list), f);
-				return ArrayObject<U>(*this, list);
+				return ArrayObjectPtr<U>(*this, f);
 			}
-
-			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Array; }
-
-			virtual std::string ToString(void) const override
-			{
-				std::stringstream ss;
-				ss << "[";
-				bool first = true;
-				for (auto item : _list) {
-					//ss << (first ? "" : " ") << item;
-					ss << (first ? "" : " ") << "TODO";
-					first = false;
-				}
-
-				ss << "]";
-				return ss.str();
-			}
-
-			//protected:
-		public:
-			list_type _list;
-		};
-
-		class MixedArrayObject : public ArrayObject<ContainableObjectPtr>
-		{
-		public:
-			MixedArrayObject() = default;
-			MixedArrayObject(list_type items) : ArrayObject<ContainableObjectPtr>(items) {}
-
-			template <typename T>
-			ArrayObjectPtr<T> CastToArrayType() { return Convert<T>([](ContainableObjectPtr obj) { return ObjectUtils::ConvertTo<T>(obj); }); }
 
 			virtual std::string ToString(void) const override
 			{
@@ -96,6 +66,120 @@ namespace gotchangpdf
 				ss << "]";
 				return ss.str();
 			}
+
+			//protected:
+		public:
+			list_type _list;
+		};
+
+		// This class shall act as a front-end above mixed array
+		template <typename T>
+		class ArrayObject : public IUnknown
+		{
+		public:
+			typedef std::vector<T> list_type;
+			typedef typename list_type::value_type value_type;
+			typedef typename list_type::iterator iterator;
+			typedef typename list_type::const_iterator const_iterator;
+			typedef typename list_type::size_type size_type;
+			typedef typename list_type::reference reference;
+			typedef typename list_type::const_reference const_reference;
+
+			friend class ArrayObject;
+
+		public:
+			template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value && std::is_base_of<Object, T::value_type>::value>>
+			ArrayObject() : _conversion([](const ContainableObjectPtr& obj) { return ObjectUtils::ConvertTo<T>(obj); }) {}
+
+			template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value && std::is_base_of<Object, T::value_type>::value>>
+			explicit ArrayObject(const MixedArrayObject& other)
+				: _list(other),	_conversion([](const ContainableObjectPtr& obj) { return ObjectUtils::ConvertTo<T>(obj); }) {}
+
+			template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value && std::is_base_of<Object, T::value_type>::value>>
+			explicit ArrayObject(const list_type& list) : _conversion([](const ContainableObjectPtr& obj) { return ObjectUtils::ConvertTo<T>(obj); })
+			{ for (auto item : other) _list->push_back(item); }
+
+			template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value && std::is_base_of<Object, T::value_type>::value>>
+			explicit ArrayObject(const std::initializer_list<T>& list) : _conversion([](const ContainableObjectPtr& obj) { return ObjectUtils::ConvertTo<T>(obj); })
+			{ for (auto item : list) _list->push_back(item); }
+
+			//explicit ArrayObject(std::function<T(const ContainableObjectPtr& obj)> conversion) : _conversion(conversion) {}
+			explicit ArrayObject(const list_type& list, std::function<T(const ContainableObjectPtr& obj)> conversion)
+				: _conversion(conversion) { for (auto item : list) _list->push_back(item); }
+
+			explicit ArrayObject(const std::initializer_list<T>& list, std::function<T(const ContainableObjectPtr& obj)> conversion)
+				: _conversion(conversion) { for (auto item : list) _list->push_back(item); }
+
+			ArrayObject(const MixedArrayObject& other, std::function<T(const ContainableObjectPtr& obj)> conversion)
+			: _conversion(conversion) { for (auto item : other) _list->push_back(item); }
+
+			template <typename U>
+			ArrayObject(const ArrayObject<U>& other, std::function<T(const U& obj)> new_conversion)
+			{
+				auto other_conversion = other._conversion;
+				_conversion = [other_conversion, new_conversion](const ContainableObjectPtr& obj) { return new_conversion(other_conversion(obj)); };
+				for (auto item : other) _list->push_back(item);
+			}
+
+			inline MixedArrayObjectPtr Data(void) const { return _list; }
+			inline types::uinteger Size(void) const _NOEXCEPT { return _list->Size(); }
+			inline const T operator[](unsigned int i) const { return _conversion((*_list)[i]); }
+			inline T operator[](unsigned int i) { return _conversion((*_list)[i]); }
+			inline const T At(unsigned int at) const { return _conversion(_list->At(at)); }
+			inline T At(unsigned int at) { return _conversion(_list->At(at)); }
+
+			template <typename U>
+			ArrayObjectPtr<U> Convert(std::function<U(const T& obj)> f) const
+			{
+				return ArrayObjectPtr<U>(*this, f);
+			}
+
+		public:
+			class Iterator : public IUnknown, public std::iterator<std::input_iterator_tag, T>
+			{
+			public:
+				Iterator(std::function<T(const ContainableObjectPtr& obj)> conversion) : _conversion(conversion) {};
+				Iterator(typename MixedArrayObject::iterator it, const std::function<T(const ContainableObjectPtr& obj)>& conversion)
+					: _it(it), _conversion(conversion) {}
+
+				const Iterator& operator++()
+				{
+					++_it;
+					return *this;
+				}
+
+				const Iterator operator++(int)
+				{
+					Iterator temp(_it);
+					++_it;
+					return temp;
+				}
+
+				bool operator==(const Iterator& other) const
+				{
+					return _it == other._it;
+				}
+
+				bool operator!=(const Iterator& other) const
+				{
+					return _it != other._it;
+				}
+
+				T operator*() const { return _conversion(_it.operator*()); }
+
+			private:
+				typename MixedArrayObject::iterator _it;
+				std::function<T(const ContainableObjectPtr& obj)> _conversion;
+			};
+
+			Iterator begin() { return Iterator(_list->begin(), _conversion); }
+			Iterator begin() const { return Iterator(_list->begin(), _conversion); }
+			Iterator end() { return Iterator(_list->end(), _conversion); }
+			Iterator end() const { return Iterator(_list->end(), _conversion); }
+
+		private:
+			MixedArrayObjectPtr _list;
+			std::function<T(const ContainableObjectPtr& obj)> _conversion;
 		};
 	}
 }
