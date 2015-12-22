@@ -25,6 +25,15 @@ namespace gotchangpdf
 				TwoPageLeft,
 				TwoPageRight
 			};
+			enum class PageModeType
+			{
+				UseNone = 0,
+				UseOutlines,
+				UseThumbs,
+				FullScreen,
+				UseOC,
+				UseAttachments
+			};
 		public:
 			explicit Catalog(syntax::DictionaryObjectPtr root);
 
@@ -34,6 +43,7 @@ namespace gotchangpdf
 			PageLabelsPtr PageLabels(void) const;
 			PageLayoutType PageLayout(void) const;
 			bool ViewerPreferences(ViewerPreferencesPtr& result) const;
+			bool PageMode(PageModeType& result) const;
 
 			// required
 			PageTreePtr Pages(void) const;

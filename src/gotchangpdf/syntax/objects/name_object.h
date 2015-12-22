@@ -143,6 +143,8 @@ namespace gotchangpdf
 			extern const syntax::NameObjectPtr Simplex;
 			extern const syntax::NameObjectPtr DuplexFlipShortEdge;
 			extern const syntax::NameObjectPtr DuplexFlipLongEdge;
+			extern const syntax::NameObjectPtr FullScreen;
+			extern const syntax::NameObjectPtr UseAttachments;
 		}
 	}
 }
