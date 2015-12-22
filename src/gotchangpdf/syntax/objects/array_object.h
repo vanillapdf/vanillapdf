@@ -93,7 +93,8 @@ namespace gotchangpdf
 
 			template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value && std::is_base_of<Object, T::value_type>::value>>
 			explicit ArrayObject(const MixedArrayObject& other)
-				: _list(other),	_conversion([](const ContainableObjectPtr& obj) { return ObjectUtils::ConvertTo<T>(obj); }) {}
+				: _list(other),	_conversion([](const ContainableObjectPtr& obj) { return ObjectUtils::ConvertTo<T>(obj); })
+			{ for (auto item : other) _conversion(item); }
 
 			template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value && std::is_base_of<Object, T::value_type>::value>>
 			explicit ArrayObject(const list_type& list) : _conversion([](const ContainableObjectPtr& obj) { return ObjectUtils::ConvertTo<T>(obj); })
@@ -111,7 +112,7 @@ namespace gotchangpdf
 				: _conversion(conversion) { for (auto item : list) _list->push_back(item); }
 
 			ArrayObject(const MixedArrayObject& other, std::function<T(const ContainableObjectPtr& obj)> conversion)
-			: _conversion(conversion) { for (auto item : other) _list->push_back(item); }
+			: _list(other), _conversion(conversion)	{ for (auto item : other) _conversion(item); }
 
 			template <typename U>
 			ArrayObject(const ArrayObject<U>& other, std::function<T(const U& obj)> new_conversion)
