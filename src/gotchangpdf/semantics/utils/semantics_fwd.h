@@ -39,6 +39,7 @@ namespace gotchangpdf
 		class ContentStream; using ContentStreamPtr = Deferred<ContentStream>;
 		class Contents; using ContentsPtr = Deferred<Contents>;
 
+		class PageRange; using PageRangePtr = Deferred<PageRange>;
 		class ViewerPreferences; using ViewerPreferencesPtr = Deferred<ViewerPreferences>;
 		class DeveloperExtensions; using DeveloperExtensionsPtr = Deferred<DeveloperExtensions>;
 		class PageLabel; using PageLabelPtr = Deferred<PageLabel>;

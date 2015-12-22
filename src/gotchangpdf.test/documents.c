@@ -362,6 +362,7 @@ error_type process_viewer_preferences(ViewerPreferencesHandle preferences, int n
 	BooleanHandle boolean = NULL;
 	NameHandle name = NULL;
 	IntegerHandle integer = NULL;
+	PageRangeHandle page_range = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetHideToolbar(preferences, &boolean), process_boolean(boolean, nested + 1), BooleanObject_Release(boolean));
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetHideMenubar(preferences, &boolean), process_boolean(boolean, nested + 1), BooleanObject_Release(boolean));
@@ -381,7 +382,35 @@ error_type process_viewer_preferences(ViewerPreferencesHandle preferences, int n
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(ViewerPreferences_GetDuplex(preferences, &duplex), process_duplex(duplex, nested + 1));
 
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetPickTrayByPDFSize(preferences, &boolean), process_boolean(boolean, nested + 1), BooleanObject_Release(boolean));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetPrintPageRange(preferences, &page_range), process_page_range(page_range, nested + 1), PageRange_Release(page_range));
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetNumCopies(preferences, &integer), process_integer(integer, nested + 1), IntegerObject_Release(integer));
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_page_range(PageRangeHandle range, int nested)
+{
+	int i = 0;
+	integer_type size = 0;
+
+	RETURN_ERROR_IF_NOT_SUCCESS(PageRange_GetSize(range, &size));
+
+	for (i = 1; i <= size; ++i)
+	{
+		PageSubRangeHandle sub_range = NULL;
+		IntegerHandle first_page = NULL;
+		IntegerHandle last_page = NULL;
+		RETURN_ERROR_IF_NOT_SUCCESS(PageRange_GetSubrange(range, i, &sub_range));
+		RETURN_ERROR_IF_NOT_SUCCESS(PageSubRange_GetFirstPage(sub_range, &first_page));
+		RETURN_ERROR_IF_NOT_SUCCESS(PageSubRange_GetLastPage(sub_range, &last_page));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(process_integer(first_page, nested + 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_integer(last_page, nested + 1));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(first_page));
+		RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(last_page));
+		RETURN_ERROR_IF_NOT_SUCCESS(PageSubRange_Release(sub_range));
+	}
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }

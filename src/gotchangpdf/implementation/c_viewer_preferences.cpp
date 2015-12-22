@@ -358,6 +358,28 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPickTrayByPD
 	} CATCH_SCOPE_EXCEPTIONS
 }
 
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintPageRange(ViewerPreferencesHandle handle, PPageRangeHandle result)
+{
+	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		LOG_HIGH_OBJECT_SCOPE(obj);
+
+		try
+		{
+			PageRangePtr direct;
+			auto contains = obj->PrintPageRange(direct);
+			if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+			auto ptr = direct.AddRefGet();
+			*result = reinterpret_cast<PageRangeHandle>(ptr);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
+}
+
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNumCopies(ViewerPreferencesHandle handle, PIntegerHandle result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
@@ -383,4 +405,96 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNumCopies(Vi
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_Release(ViewerPreferencesHandle handle)
 {
 	return HighObjectRelease<ViewerPreferences, ViewerPreferencesHandle>(handle);
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSize(PageRangeHandle handle, out_integer_type result)
+{
+	PageRange* obj = reinterpret_cast<PageRange*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		//LOG_HIGH_OBJECT_SCOPE(obj);
+
+		try
+		{
+			*result = obj->Size();
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSubrange(PageRangeHandle handle, integer_type at, PPageSubRangeHandle result)
+{
+	PageRange* obj = reinterpret_cast<PageRange*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		//LOG_HIGH_OBJECT_SCOPE(obj);
+
+		try
+		{
+			auto direct = obj->At(at);
+			auto ptr = direct.AddRefGet();
+			*result = reinterpret_cast<PageSubRangeHandle>(ptr);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageSubRange_GetFirstPage(PageSubRangeHandle handle, PIntegerHandle result)
+{
+	PageRange::SubRange* obj = reinterpret_cast<PageRange::SubRange*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto direct = obj->FirstPage();
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<IntegerHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageSubRange_GetLastPage(PageSubRangeHandle handle, PIntegerHandle result)
+{
+	PageRange::SubRange* obj = reinterpret_cast<PageRange::SubRange*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto direct = obj->LastPage();
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<IntegerHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageSubRange_Release(PageSubRangeHandle handle)
+{
+	PageRange::SubRange* obj = reinterpret_cast<PageRange::SubRange*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	try
+	{
+		obj->Release();
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_Release(PageRangeHandle handle)
+{
+	PageRange* obj = reinterpret_cast<PageRange*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	try
+	{
+		obj->Release();
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }

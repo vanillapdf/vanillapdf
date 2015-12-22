@@ -4,16 +4,40 @@
 #include "semantics_fwd.h"
 #include "high_level_object.h"
 #include "dictionary_object.h"
+#include "array_object.h"
 
 namespace gotchangpdf
 {
 	namespace semantics
 	{
-		class PrintPageRange : public HighLevelObject<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>>
+		class PageRange : public HighLevelObject<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>>
 		{
 		public:
+			class SubRange : public IUnknown
+			{
+			public:
+				SubRange(syntax::IntegerObjectPtr first, syntax::IntegerObjectPtr last) :
+					_first_page(first), _last_page(last) {}
 
-		private:
+				syntax::IntegerObjectPtr FirstPage(void) const { return _first_page; }
+				syntax::IntegerObjectPtr LastPage(void) const { return _last_page; }
+
+			private:
+				syntax::IntegerObjectPtr _first_page;
+				syntax::IntegerObjectPtr _last_page;
+			};
+
+			using SubRangePtr = Deferred<SubRange>;
+
+		public:
+			explicit PageRange(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> obj)
+				: HighLevelObject(obj) { assert(obj->Size() % 2 == 0); }
+
+			types::uinteger Size(void) const { return _obj->Size() / 2; }
+			SubRangePtr At(types::uinteger at) const
+			{
+				return SubRangePtr(_obj->At(at), _obj->At(at + 1));
+			}
 		};
 
 		class ViewerPreferences : public HighLevelObject<syntax::DictionaryObjectPtr>
@@ -218,7 +242,16 @@ namespace gotchangpdf
 				return true;
 			}
 
-			//syntax::MixedArrayObjectPtr PrintPageRange(void) const;
+			bool PrintPageRange(PageRangePtr& result) const
+			{
+				if (!_obj->Contains(constant::Name::PrintPageRange))
+					return false;
+
+				auto range = _obj->FindAs<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>>(constant::Name::PrintPageRange);
+				result = PageRangePtr(range);
+				return true;
+			}
+
 			bool NumCopies(syntax::IntegerObjectPtr& result) const
 			{
 				if (!_obj->Contains(constant::Name::NumCopies))

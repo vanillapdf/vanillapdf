@@ -7,6 +7,7 @@
 #include "page_tree.h"
 #include "version.h"
 #include "page_labels.h"
+#include "viewer_preferences.h"
 
 namespace gotchangpdf
 {

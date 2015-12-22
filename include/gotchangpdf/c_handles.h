@@ -49,6 +49,8 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(PageLabels);
 	DECLARE_OBJECT_HANDLE(PageLabel);
 	DECLARE_OBJECT_HANDLE(ViewerPreferences);
+	DECLARE_OBJECT_HANDLE(PageRange);
+	DECLARE_OBJECT_HANDLE(PageSubRange);
 	
 	/* Contents */
 	DECLARE_OBJECT_HANDLE(Contents);
