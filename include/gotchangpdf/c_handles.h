@@ -51,6 +51,11 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(ViewerPreferences);
 	DECLARE_OBJECT_HANDLE(PageRange);
 	DECLARE_OBJECT_HANDLE(PageSubRange);
+	DECLARE_OBJECT_HANDLE(OutlineBase);
+	DECLARE_OBJECT_HANDLE(Outline);
+	DECLARE_OBJECT_HANDLE(OutlineItem);
+	DECLARE_OBJECT_HANDLE(OutlineItemColor);
+	DECLARE_OBJECT_HANDLE(OutlineItemFlags);
 	
 	/* Contents */
 	DECLARE_OBJECT_HANDLE(Contents);

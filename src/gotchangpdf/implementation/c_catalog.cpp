@@ -157,6 +157,27 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetViewerPreferences(Cata
 	} CATCH_SCOPE_EXCEPTIONS
 }
 
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetOutlines(CatalogHandle handle, POutlineHandle result)
+{
+	Catalog* obj = reinterpret_cast<Catalog*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		LOG_HIGH_OBJECT_SCOPE(obj);
+		try
+		{
+			OutlinePtr direct;
+			auto contains = obj->Outlines(direct);
+			if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+			auto ptr = direct.AddRefGet();
+			*result = reinterpret_cast<OutlineHandle>(ptr);
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		} CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_SCOPE_EXCEPTIONS
+}
+
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_Release(CatalogHandle handle)
 {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);

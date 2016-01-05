@@ -8,6 +8,7 @@
 #include "page_tree.h"
 #include "semantic_exceptions.h"
 #include "semantic_utils.h"
+#include "outline.h"
 
 namespace gotchangpdf
 {
@@ -122,6 +123,16 @@ namespace gotchangpdf
 			else
 				throw GeneralException("Unknown page mode type: " + page_mode->ToString());
 
+			return true;
+		}
+
+		bool Catalog::Outlines(OutlinePtr& result) const
+		{
+			if (!_obj->Contains(constant::Name::Outlines))
+				return false;
+
+			auto outlines = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Outlines);
+			result = OutlinePtr(outlines);
 			return true;
 		}
 	}

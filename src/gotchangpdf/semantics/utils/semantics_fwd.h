@@ -39,6 +39,11 @@ namespace gotchangpdf
 		class ContentStream; using ContentStreamPtr = Deferred<ContentStream>;
 		class Contents; using ContentsPtr = Deferred<Contents>;
 
+		class OutlineItemColor; using OutlineItemColorPtr = Deferred<OutlineItemColor>;
+		class OutlineItemFlags; using OutlineItemFlagsPtr = Deferred<OutlineItemFlags>;
+		class OutlineBase; using OutlineBasePtr = Deferred<OutlineBase>;
+		class Outline; using OutlinePtr = Deferred<Outline>;
+		class OutlineItem; using OutlineItemPtr = Deferred<OutlineItem>;
 		class PageRange; using PageRangePtr = Deferred<PageRange>;
 		class ViewerPreferences; using ViewerPreferencesPtr = Deferred<ViewerPreferences>;
 		class DeveloperExtensions; using DeveloperExtensionsPtr = Deferred<DeveloperExtensions>;

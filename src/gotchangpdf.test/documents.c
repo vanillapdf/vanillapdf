@@ -258,36 +258,199 @@ error_type process_catalog(CatalogHandle catalog, int nested)
 	DeveloperExtensionsHandle extensions = NULL;
 	PageLabelsHandle page_labels = NULL;
 	ViewerPreferencesHandle viewer_preferences = NULL;
+	OutlineHandle outlines = NULL;
 	PDFVersion version;
 	PageLayout page_layout;
+
+	print_spaces(nested);
+	printf("Document catalog begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_GetPages(catalog, &pages));
 	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(pages, &size));
 
-	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(Catalog_GetVersion(catalog, &version), process_version(version, 0));
-	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(Catalog_GetPageLayout(catalog, &page_layout), process_page_layout(page_layout, 0));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(Catalog_GetVersion(catalog, &version), process_version(version, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(Catalog_GetPageLayout(catalog, &page_layout), process_page_layout(page_layout, nested + 1));
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Catalog_GetExtensions(catalog, &extensions),
-		process_extensions(extensions, 0),
+		process_extensions(extensions, nested + 1),
 		DeveloperExtensions_Release(extensions));
 
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Catalog_GetPageLabels(catalog, &page_labels),
-		process_page_labels(page_labels, size, 0),
+		process_page_labels(page_labels, size, nested + 1),
 		PageLabels_Release(page_labels));
 
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Catalog_GetViewerPreferences(catalog, &viewer_preferences),
-		process_viewer_preferences(viewer_preferences, 0),
+		process_viewer_preferences(viewer_preferences, nested + 1),
 		ViewerPreferences_Release(viewer_preferences));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Catalog_GetOutlines(catalog, &outlines),
+		process_outline(outlines, nested + 1),
+		Outline_Release(outlines));
 
 	for (i = 1; i <= size; ++i)
 	{
 		PageObjectHandle page = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(pages, i, &page));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_page(page, 0));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_page(page, nested + 1));
 		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(page));
 	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_Release(pages));
 	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_Release(catalog));
+
+	print_spaces(nested);
+	printf("Document catalog begin\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_outline(OutlineHandle outline, int nested)
+{
+	OutlineItemHandle first = NULL;
+	OutlineItemHandle last = NULL;
+	IntegerHandle count = NULL;
+
+	print_spaces(nested);
+	printf("Document outline begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Outline_GetFirst(outline, &first),
+		process_outline_item(first, nested + 1),
+		OutlineItem_Release(first));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Outline_GetLast(outline, &last),
+		process_outline_item(last, nested + 1),
+		OutlineItem_Release(last));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Outline_GetCount(outline, &count),
+		process_integer(count, nested + 1),
+		IntegerObject_Release(count));
+
+	print_spaces(nested);
+	printf("Document outline end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_outline_item(OutlineItemHandle outline, int nested)
+{
+	OutlineBaseHandle parent = NULL;
+	OutlineItemHandle first = NULL;
+	OutlineItemHandle last = NULL;
+	OutlineItemHandle next = NULL;
+	OutlineItemHandle prev = NULL;
+	IntegerHandle count = NULL;
+	StringHandle title = NULL;
+	OutlineItemColorHandle color = NULL;
+	OutlineItemFlagsHandle flags = NULL;
+
+	print_spaces(nested);
+	printf("Document outline begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(OutlineItem_GetTitle(outline, &title));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_string(title, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(title));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(OutlineItem_GetParent(outline, &parent));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_outline_base(parent, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(OutlineBase_Release(parent));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(OutlineItem_GetFirst(outline, &first),
+		process_outline_item(first, nested + 1),
+		OutlineItem_Release(first));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(OutlineItem_GetLast(outline, &last),
+		process_outline_item(last, nested + 1),
+		OutlineItem_Release(last));
+
+	//RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(OutlineItem_GetPrev(outline, &prev),
+	//	process_outline_item(prev, nested + 1),
+	//	OutlineItem_Release(prev));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(OutlineItem_GetNext(outline, &next),
+		process_outline_item(next, nested + 1),
+		OutlineItem_Release(next));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(OutlineItem_GetCount(outline, &count),
+		process_integer(count, nested + 1),
+		IntegerObject_Release(count));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(OutlineItem_GetColor(outline, &color),
+		process_outline_item_color(color, nested + 1),
+		OutlineItemColor_Release(color));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(OutlineItem_GetFlags(outline, &flags),
+		process_outline_item_flags(flags, nested + 1),
+		OutlineItemFlags_Release(flags));
+
+	print_spaces(nested);
+	printf("Document outline end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_outline_base(OutlineBaseHandle outline, int nested)
+{
+	OutlineType type;
+
+	print_spaces(nested);
+	printf("Outline base begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(OutlineBase_GetType(outline, &type));
+
+	print_spaces(nested + 1);
+	printf("Type: %d\n", type);
+
+	print_spaces(nested);
+	printf("Outline base end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_outline_item_color(OutlineItemColorHandle obj, int nested)
+{
+	IntegerHandle red = NULL;
+	IntegerHandle green = NULL;
+	IntegerHandle blue = NULL;
+
+	print_spaces(nested);
+	printf("Outline item color begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(OutlineItemColor_GetRed(obj, &red));
+	RETURN_ERROR_IF_NOT_SUCCESS(OutlineItemColor_GetGreen(obj, &green));
+	RETURN_ERROR_IF_NOT_SUCCESS(OutlineItemColor_GetBlue(obj, &blue));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(red, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(green, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(blue, nested + 1));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(red));
+	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(green));
+	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(blue));
+
+	print_spaces(nested);
+	printf("Outline item color end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_outline_item_flags(OutlineItemFlagsHandle obj, int nested)
+{
+	boolean_type is_italic = GOTCHANG_PDF_FALSE;
+	boolean_type is_bold = GOTCHANG_PDF_FALSE;
+
+	print_spaces(nested);
+	printf("Outline item flags begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(OutlineItemFlags_IsItalic(obj, &is_italic));
+	RETURN_ERROR_IF_NOT_SUCCESS(OutlineItemFlags_IsBold(obj, &is_bold));
+
+	print_spaces(nested + 1);
+	printf("Italic: %d\n", is_italic);
+
+	print_spaces(nested + 1);
+	printf("Bold: %d\n", is_bold);
+
+	print_spaces(nested);
+	printf("Outline item flags end\n");
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }

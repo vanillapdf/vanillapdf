@@ -8,6 +8,7 @@
 #include "version.h"
 #include "page_labels.h"
 #include "viewer_preferences.h"
+#include "outline.h"
 
 namespace gotchangpdf
 {
@@ -25,6 +26,7 @@ namespace gotchangpdf
 				TwoPageLeft,
 				TwoPageRight
 			};
+
 			enum class PageModeType
 			{
 				UseNone = 0,
@@ -34,6 +36,7 @@ namespace gotchangpdf
 				UseOC,
 				UseAttachments
 			};
+
 		public:
 			explicit Catalog(syntax::DictionaryObjectPtr root);
 
@@ -44,6 +47,7 @@ namespace gotchangpdf
 			PageLayoutType PageLayout(void) const;
 			bool ViewerPreferences(ViewerPreferencesPtr& result) const;
 			bool PageMode(PageModeType& result) const;
+			bool Outlines(OutlinePtr& result) const;
 
 			// required
 			PageTreePtr Pages(void) const;

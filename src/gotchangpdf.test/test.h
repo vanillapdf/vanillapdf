@@ -59,6 +59,11 @@ error_type proces_nonfullscreen_page_mode(NonFullScreenPageMode page_mode, int n
 error_type proces_reading_order(ReadingOrder order, int nested);
 error_type proces_print_scaling(PrintScaling scaling, int nested);
 error_type process_duplex(Duplex duplex, int nested);
+error_type process_outline(OutlineHandle outline, int nested);
+error_type process_outline_base(OutlineBaseHandle outline, int nested);
+error_type process_outline_item(OutlineItemHandle outline, int nested);
+error_type process_outline_item_color(OutlineItemColorHandle obj, int nested);
+error_type process_outline_item_flags(OutlineItemFlagsHandle obj, int nested);
 
 #define RETURN_ERROR_IF_NOT_SUCCESS(var) do { error_type __result__ = (var);  if (GOTCHANG_PDF_ERROR_SUCCES != __result__) return __result__; } while(0)
 
