@@ -34,8 +34,8 @@ extern "C"
 #endif
 
 	// boolean values
-	GOTCHANG_PDF_API extern const boolean_type GOTCHANG_PDF_RV_FALSE;
-	GOTCHANG_PDF_API extern const boolean_type GOTCHANG_PDF_RV_TRUE;
+	GOTCHANG_PDF_API extern const boolean_type GOTCHANG_PDF_FALSE;
+	GOTCHANG_PDF_API extern const boolean_type GOTCHANG_PDF_TRUE;
 
 	// global error states
 	GOTCHANG_PDF_API extern const error_type GOTCHANG_PDF_ERROR_SUCCES;

@@ -301,10 +301,10 @@ error_type process_page_labels(PageLabelsHandle labels, integer_type size, int n
 
 	for (i = 1; i <= size; ++i)
 	{
-		boolean_type contains = GOTCHANG_PDF_RV_FALSE;
+		boolean_type contains = GOTCHANG_PDF_FALSE;
 		PageLabelHandle label = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(PageLabels_Contains(labels, i, &contains));
-		if (GOTCHANG_PDF_RV_TRUE != contains)
+		if (GOTCHANG_PDF_TRUE != contains)
 			continue;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(PageLabels_At(labels, i, &label));

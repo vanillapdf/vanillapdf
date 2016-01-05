@@ -4,8 +4,8 @@
 #include "exception.h"
 
 // boolean values
-GOTCHANG_PDF_API const boolean_type GOTCHANG_PDF_RV_FALSE	= false;
-GOTCHANG_PDF_API const boolean_type GOTCHANG_PDF_RV_TRUE	= true;
+GOTCHANG_PDF_API const boolean_type GOTCHANG_PDF_FALSE	= false;
+GOTCHANG_PDF_API const boolean_type GOTCHANG_PDF_TRUE	= true;
 
 // global error states
 GOTCHANG_PDF_API const error_type GOTCHANG_PDF_ERROR_SUCCES				= static_cast<error_type>(gotchangpdf::ExceptionBase::Type::Success);

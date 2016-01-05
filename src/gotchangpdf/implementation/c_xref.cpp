@@ -117,9 +117,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_InUse(XrefEntryHandle h
 		LOG_WEAK_FILE_SCOPE(entry->GetFile());
 
 		if (entry->InUse())
-			*result = GOTCHANG_PDF_RV_TRUE;
+			*result = GOTCHANG_PDF_TRUE;
 		else
-			*result = GOTCHANG_PDF_RV_FALSE;
+			*result = GOTCHANG_PDF_FALSE;
 
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_SCOPE_EXCEPTIONS
@@ -296,9 +296,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_IsValid(XrefCha
 
 	try {
 		if (*chain->End() == *iterator)
-			*result = GOTCHANG_PDF_RV_FALSE;
+			*result = GOTCHANG_PDF_FALSE;
 		else
-			*result = GOTCHANG_PDF_RV_TRUE;
+			*result = GOTCHANG_PDF_TRUE;
 
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS

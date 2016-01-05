@@ -2,7 +2,7 @@
 
 int main(int argc, char *argv[])
 {
-	boolean_type valid = GOTCHANG_PDF_RV_FALSE;
+	boolean_type valid = GOTCHANG_PDF_FALSE;
 	FileHandle file = NULL;
 	FileHolderHandle file_holder = NULL;
 	XrefChainHandle chain = NULL;
@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Iterator(chain, &chain_iterator));
 
 	while (GOTCHANG_PDF_ERROR_SUCCES == XrefChainIterator_IsValid(chain_iterator, chain, &valid)
-		&& GOTCHANG_PDF_RV_TRUE == valid) {
+		&& GOTCHANG_PDF_TRUE == valid) {
 		XrefHandle xref = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_GetValue(chain_iterator, &xref));
