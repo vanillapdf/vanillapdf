@@ -5,8 +5,6 @@
 #include "semantic_exceptions.h"
 #include "semantic_utils.h"
 
-#include <regex>
-
 namespace gotchangpdf
 {
 	namespace semantics
