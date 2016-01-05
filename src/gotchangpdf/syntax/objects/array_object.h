@@ -123,7 +123,7 @@ namespace gotchangpdf
 			}
 
 			inline MixedArrayObjectPtr Data(void) const { return _list; }
-			inline types::uinteger Size(void) const _NOEXCEPT { return _list->Size(); }
+			inline types::uinteger Size(void) const { return _list->Size(); }
 			inline const T operator[](unsigned int i) const { return _conversion((*_list)[i]); }
 			inline T operator[](unsigned int i) { return _conversion((*_list)[i]); }
 			inline const T At(unsigned int at) const { return _conversion(_list->At(at)); }
