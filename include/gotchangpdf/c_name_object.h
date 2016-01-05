@@ -118,6 +118,12 @@ extern "C"
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_DuplexFlipLongEdge;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_FullScreen;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_UseAttachments;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Last;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Next;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Dest;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_C;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_F;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Title;
 
 #ifdef __cplusplus
 };
