@@ -17,7 +17,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenNew(string_type file
 	{
 		LOG_SCOPE(filename);
 
-		DocumentPtr doc(filename);
+		std::string name(filename);
+		DocumentPtr doc(name);
 		auto ptr = doc.AddRefGet();
 		*result = reinterpret_cast<DocumentHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -25,7 +26,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenNew(string_type file
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHolderHandle holder_handle, PDocumentHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHandle holder_handle, PDocumentHandle result)
 {
 	FileHolder* holder = reinterpret_cast<FileHolder*>(holder_handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);

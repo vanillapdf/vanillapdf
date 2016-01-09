@@ -11,7 +11,7 @@ extern "C"
 #endif
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenNew(string_type filename, PDocumentHandle result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHolderHandle holder, PDocumentHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHandle holder, PDocumentHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandle handle, PCatalogHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_Release(DocumentHandle handle);
 

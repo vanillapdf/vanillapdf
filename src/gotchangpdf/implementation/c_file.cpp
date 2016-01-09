@@ -8,7 +8,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Open(const char *filename, PFileHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Open(string_type filename, PFileHandle result)
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -16,29 +16,31 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Open(const char *filename, P
 	try
 	{
 		LOG_SCOPE(filename);
+
 		try
 		{
-			auto file = pdf_new File(filename);
-			*result = reinterpret_cast<FileHandle>(file);
+			FileHolderPtr holder(pdf_new FileHolder(filename));
+			auto ptr = holder.AddRefGet();
+			*result = reinterpret_cast<FileHandle>(ptr);
 			return GOTCHANG_PDF_ERROR_SUCCES;
 		} CATCH_GOTCHNGPDF_EXCEPTIONS
 	} CATCH_SCOPE_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle, FileHolderHandle holder_handle)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle)
 {
-	File* file = reinterpret_cast<File*>(handle);
-	FileHolder* holder = reinterpret_cast<FileHolder*>(holder_handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
+	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
 
 	try
 	{
+		auto file = holder->Value();
+		if (!file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
 		LOG_SCOPE(file->GetFilename());
+
 		try
 		{
-			auto val = holder->Value();
-			file->Initialize(val);
+			file->Initialize();
 			return GOTCHANG_PDF_ERROR_SUCCES;
 		} CATCH_GOTCHNGPDF_EXCEPTIONS
 	} CATCH_SCOPE_EXCEPTIONS
@@ -46,13 +48,14 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle, PXrefChainHandle result)
 {
-	File* file = reinterpret_cast<File*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
+	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(file->GetFilename());
 
 	try
 	{
+		auto file = holder->Value();
+		if (!file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
 		LOG_SCOPE(file->GetFilename());
 
 		try
@@ -68,12 +71,14 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle,
 GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
 	FileHandle handle, integer_type objNumber, ushort_type genNumber, PObjectHandle result)
 {
-	File* file = reinterpret_cast<File*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
+	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try
 	{
+		auto file = holder->Value();
+		if (!file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
 		LOG_SCOPE(file->GetFilename());
 
 		try
@@ -87,33 +92,18 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
 	} CATCH_SCOPE_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION FileHolder_Create(FileHandle handle, PFileHolderHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Release(FileHandle handle)
 {
-	File* file = reinterpret_cast<File*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_SCOPE(file->GetFilename());
+	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
 
 	try
 	{
+		auto file = holder->Value();
+		if (!file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
 		LOG_SCOPE(file->GetFilename());
 
-		try
-		{
-			FileHolderPtr holder(file);
-			auto ptr = holder.AddRefGet();
-
-			*result = reinterpret_cast<FileHolderHandle>(ptr);
-			return GOTCHANG_PDF_ERROR_SUCCES;
-		} CATCH_GOTCHNGPDF_EXCEPTIONS
+		holder->Release();
+		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_SCOPE_EXCEPTIONS
-}
-
-GOTCHANG_PDF_API error_type CALLING_CONVENTION FileHolder_Release(FileHolderHandle handle)
-{
-	FileHolder* obj = reinterpret_cast<FileHolder*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
 }

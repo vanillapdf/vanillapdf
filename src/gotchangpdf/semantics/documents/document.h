@@ -16,7 +16,7 @@ namespace gotchangpdf
 		class Document : public IUnknown
 		{
 		public:
-			Document(const std::string& filename) : _holder(pdf_new syntax::File(filename)) { _holder->Value()->Initialize(_holder->Value()); }
+			Document(const std::string& filename) : _holder(filename) { _holder->Value()->Initialize(); }
 			Document(syntax::FileHolderPtr holder) : _holder(holder) { assert(holder->Value()); }
 
 			CatalogPtr GetDocumentCatalog(void) const

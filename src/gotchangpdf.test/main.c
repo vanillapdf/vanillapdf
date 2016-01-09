@@ -4,7 +4,6 @@ int main(int argc, char *argv[])
 {
 	boolean_type valid = GOTCHANG_PDF_FALSE;
 	FileHandle file = NULL;
-	FileHolderHandle file_holder = NULL;
 	XrefChainHandle chain = NULL;
 	XrefChainIteratorHandle chain_iterator = NULL;
 
@@ -17,8 +16,7 @@ int main(int argc, char *argv[])
 #endif
 
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Open(argv[1], &file));
-	RETURN_ERROR_IF_NOT_SUCCESS(FileHolder_Create(file, &file_holder));
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file, file_holder));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_XrefChain(file, &chain));
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Iterator(chain, &chain_iterator));
 
@@ -38,7 +36,7 @@ int main(int argc, char *argv[])
 		DocumentHandle document = NULL;
 		CatalogHandle catalog = NULL;
 
-		RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenExisting(file_holder, &document));
+		RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenExisting(file, &document));
 		RETURN_ERROR_IF_NOT_SUCCESS(Document_GetCatalog(document, &catalog));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_catalog(catalog, 0));
 		RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));
@@ -46,7 +44,7 @@ int main(int argc, char *argv[])
 	
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_Release(chain_iterator));
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Release(chain));
-	RETURN_ERROR_IF_NOT_SUCCESS(FileHolder_Release(file_holder));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }

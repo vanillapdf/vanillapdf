@@ -14,13 +14,12 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class File
+		class File : public std::enable_shared_from_this<File>
 		{
 		public:
-			File(std::string filename);
-			~File(void);
+			static std::shared_ptr<File> Open(const std::string& path);
 
-			void Initialize(std::shared_ptr<File> holder);
+			void Initialize(void);
 			ObjectPtr GetIndirectObject(types::integer objNumber,
 				types::ushort genNumber);
 
@@ -29,6 +28,8 @@ namespace gotchangpdf
 
 			inline std::string GetFilename(void) const { return _filename; }
 			inline std::shared_ptr<FileDevice> GetInputStream(void) const { return _input; }
+
+			~File(void);
 
 		private:
 			std::shared_ptr<FileDevice> _input;
@@ -39,12 +40,17 @@ namespace gotchangpdf
 			bool _initialized = false;
 			std::string _full_path;
 			std::string _filename;
+
+			std::string extract_filename(const std::string& filepath);
+
+		private:
+			File(const std::string& path);
 		};
 
 		class FileHolder : public IUnknown
 		{
 		public:
-			explicit FileHolder(File* file) : _file(file) {}
+			explicit FileHolder(const std::string& path) { _file = File::Open(path); }
 			std::shared_ptr<File> Value() const { return _file; }
 
 		private:

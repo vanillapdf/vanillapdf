@@ -14,20 +14,12 @@ namespace gotchangpdf
 	{
 		using namespace std;
 
-		std::string extract_filename(const std::string& filepath)
+		std::shared_ptr<File> File::Open(const std::string& path)
 		{
-			int pos = filepath.rfind("\\");
-			if (pos == std::string::npos) {
-				pos = filepath.rfind('/');
-				if (pos == std::string::npos) {
-					pos = -1;
-				}
-			}
-
-			return std::string(filepath.begin() + (pos + 1), filepath.end());
+			return std::shared_ptr<File>(new File(path));
 		}
 
-		File::File(std::string path)
+		File::File(const std::string& path)
 			: _full_path(path)
 		{
 			LOG_DEBUG << "File constructor";
@@ -47,7 +39,20 @@ namespace gotchangpdf
 			_cache.clear();
 		}
 
-		void File::Initialize(std::shared_ptr<File> holder)
+		std::string File::extract_filename(const std::string& filepath)
+		{
+			int pos = filepath.rfind("\\");
+			if (pos == std::string::npos) {
+				pos = filepath.rfind('/');
+				if (pos == std::string::npos) {
+					pos = -1;
+				}
+			}
+
+			return std::string(filepath.begin() + (pos + 1), filepath.end());
+		}
+
+		void File::Initialize()
 		{
 			LOG_DEBUG << "Initialize";
 
@@ -62,7 +67,7 @@ namespace gotchangpdf
 				throw GeneralException("Could not open file");
 
 			auto file_size = _input->tellg();
-			SpiritParser stream = SpiritParser(holder, *_input);
+			SpiritParser stream = SpiritParser(shared_from_this(), *_input);
 
 			stream.seekg(ios_base::beg);
 			stream >> *_header;
@@ -70,7 +75,7 @@ namespace gotchangpdf
 			types::integer offset;
 			{
 				ReverseStream raw_reversed(*_input, file_size);
-				SpiritParser reverse_stream = SpiritParser(holder, raw_reversed);
+				SpiritParser reverse_stream = SpiritParser(shared_from_this(), raw_reversed);
 				offset = reverse_stream.ReadLastXrefOffset();
 			}
 
