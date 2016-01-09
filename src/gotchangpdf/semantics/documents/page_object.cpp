@@ -40,14 +40,14 @@ namespace gotchangpdf
 			return RectanglePtr(box);
 		}
 
-		ContentsPtr PageObject::Contents() const
+		bool PageObject::Contents(ContentsPtr& result) const
 		{
 			ContainableObjectPtr content;
 			auto found = _obj->TryFind(Name::Contents, content);
 
 			// Missing entry, return empty collection
 			if (!found)
-				return ContentsPtr();
+				return false;
 
 			bool is_null = ObjectUtils::IsType<NullObjectPtr>(content);
 			bool is_ref = ObjectUtils::IsType<StreamObjectPtr>(content);
@@ -55,7 +55,7 @@ namespace gotchangpdf
 
 			// Missing entry, return empty collection
 			if (is_null) {
-				return ContentsPtr();
+				return false;
 			}
 
 			// Content shall be stream or array of references to stream
@@ -71,12 +71,14 @@ namespace gotchangpdf
 
 			if (is_ref) {
 				auto data = ObjectUtils::ConvertTo<StreamObjectPtr>(content);
-				return ContentsPtr(data);
+				result = ContentsPtr(data);
+				return true;
 			}
 
 			if (is_array) {
 				auto data = ObjectUtils::ConvertTo<ArrayObjectPtr<IndirectObjectReferencePtr>>(content);
-				return ContentsPtr(data);
+				result = ContentsPtr(data);
+				return true;
 			}
 
 			throw GeneralException("Unreachable code");

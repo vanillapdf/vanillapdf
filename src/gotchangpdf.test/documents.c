@@ -214,9 +214,9 @@ error_type process_page(PageObjectHandle obj, int nested)
 	print_spaces(nested);
 	printf("Page begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(PageObject_GetContents(obj, &contents));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_contents(contents, nested + 1));
-	RETURN_ERROR_IF_NOT_SUCCESS(Contents_Release(contents));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageObject_GetContents(obj, &contents),
+		process_contents(contents, nested + 1),
+		Contents_Release(contents));
 
 	print_spaces(nested);
 	printf("Page end\n");
