@@ -8,6 +8,8 @@
 #include "xref_chain.h"
 #include "header.h"
 
+#include <iomanip>
+
 namespace gotchangpdf
 {
 	namespace syntax
@@ -151,6 +153,100 @@ namespace gotchangpdf
 				throw FileNotInitializedException(_filename);
 
 			return _xref;
+		}
+
+		// experimental
+		void File::SaveAs(const std::string& path)
+		{
+			if (!_initialized)
+				throw FileNotInitializedException(_filename);
+
+			std::fstream output;
+			output.open(path, ios_base::out | ios_base::binary);
+
+			if (!output || !output.good())
+				throw GeneralException("Could not open file");
+
+			auto ver = _header->GetVersion();
+			output << "%%PDF-1." << static_cast<int>(ver) << endl;
+			
+			auto end = _xref->End();
+			for (auto it = _xref->Begin(); it != end; ++(*it)) {
+				auto xref_base = it->Value();
+
+				if (xref_base->GetType() == XrefBase::Type::Stream)
+					continue;
+
+				auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(xref_base);
+				auto table_size = xref_table->Size();
+				for (int i = 0; i < table_size; ++i) {
+					auto subsection = xref_table->At(i);
+					auto subsection_size = subsection->Size();
+
+					for (int j = 0; j < subsection_size; ++j) {
+						auto entry = subsection->At(j);
+
+						if (!entry->InUse())
+							continue;
+
+						auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
+						auto obj = used_entry->GetReference();
+						auto obj_str = obj->ToPdf();
+
+						//TODO: This is kinda hacky
+						// make new xref table for storing modified values
+						auto obj_offset = output.tellg();
+						used_entry->SetOffset(obj_offset);
+						obj->SetOffset(obj_offset);
+
+						output << obj->GetObjectNumber() << " " << obj->GetGenerationNumber() << " " << "obj" << endl;
+						output << obj_str << endl;
+						output << "endobj" << endl;
+					}
+				}
+
+				auto last_offset = output.tellg();
+				output << "xref" << endl;
+				for (int i = 0; i < table_size; ++i) {
+					auto subsection = xref_table->At(i);
+					auto subsection_size = subsection->Size();
+					auto subsection_idx = subsection->Index();
+
+					output << subsection_idx << " " << subsection_size << endl;
+					for (int j = 0; j < subsection_size; ++j) {
+						auto entry = subsection->At(j);
+						if (!entry->InUse()) {
+							output << setfill('0') << setw(10) << 0;
+							output << ' ';
+							output << setfill('0') << setw(10) << 65535;
+							output << ' ';
+							output << 'f';
+							output << ' ';
+							output << '\n';
+							continue;
+						}
+
+						auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
+						output << setfill('0') << setw(10) << used_entry->GetOffset();
+						output << ' ';
+						output << setfill('0') << setw(10) << used_entry->GetGenerationNumber();
+						output << ' ';
+						output << 'n';
+						output << ' ';
+						output << '\n';
+					}
+				}
+
+				auto trailer = xref_table->GetTrailerDictionary();
+				output << "trailer" << endl;
+				output << trailer->ToPdf() << endl;
+				output << "startxref" << endl;
+				output << last_offset << endl;
+				output << "%%EOF" << endl;
+			}
+
+			output.flush();
+			output.close();
 		}
 	}
 }
