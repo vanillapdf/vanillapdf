@@ -5,16 +5,16 @@
 
 namespace gotchangpdf
 {
-	enum class Version
+	enum class Version : int
 	{
-		PDF10,
-		PDF11,
-		PDF12,
-		PDF13,
-		PDF14,
-		PDF15,
-		PDF16,
-		PDF17
+		PDF10 = 0,
+		PDF11 = 1,
+		PDF12 = 2,
+		PDF13 = 3,
+		PDF14 = 4,
+		PDF15 = 5,
+		PDF16 = 6,
+		PDF17 = 7
 	};
 
 	template <Version ver>
