@@ -101,7 +101,7 @@ namespace gotchangpdf
 			_initialized = true;
 		}
 
-		ObjectPtr File::GetIndirectObject(types::integer objNumber,
+		ObjectPtr File::GetIndirectObject(types::uinteger objNumber,
 			types::ushort genNumber)
 		{
 			LOG_DEBUG << "GetIndirectObject " << objNumber << " and " << genNumber;

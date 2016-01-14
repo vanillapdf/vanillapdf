@@ -2,12 +2,12 @@
 
 error_type process_xref(XrefHandle xref, int nested)
 {
-	int i = 0, size = 0;
+	integer_type i = 0, size = 0;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Xref_Size(xref, &size));
 
 	for (i = 0; i < size; ++i) {
-		int j = 0, subsection_size = 0;
+		uinteger_type j = 0, subsection_size = 0;
 		XrefSubsectionHandle subsection = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(Xref_At(xref, i, &subsection));

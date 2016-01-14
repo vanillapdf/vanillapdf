@@ -34,11 +34,11 @@ namespace gotchangpdf
 			inline bool operator!=(const IndirectObjectReference& other) const { return !Equals(other); }
 			bool operator<(const IndirectObjectReference& other) const;
 
-			inline types::integer GetReferencedObjectNumber() const _NOEXCEPT { return _ref_obj; }
+			inline types::uinteger GetReferencedObjectNumber() const _NOEXCEPT { return _ref_obj; }
 			inline types::ushort GetReferencedGenerationNumber() const _NOEXCEPT { return _ref_gen; }
 
 		private:
-			types::integer _ref_obj = 0;
+			types::uinteger _ref_obj = 0;
 			types::ushort _ref_gen = 0;
 		};
 	}

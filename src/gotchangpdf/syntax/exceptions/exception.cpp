@@ -26,7 +26,7 @@ namespace gotchangpdf
 		FileNotInitializedException::FileNotInitializedException(const std::string& filename)
 			: FileNotInitializedException(filename.c_str()) {}
 
-		ObjectMissingException::ObjectMissingException(types::integer objNumber, types::ushort genNumber)
+		ObjectMissingException::ObjectMissingException(types::uinteger objNumber, types::ushort genNumber)
 			: ExceptionBase("Object " + std::to_string(objNumber) + " " + std::to_string(genNumber) + " is missing", Type::ObjectMissing) {}
 
 		ConversionException::ConversionException(const char * const & msg) : ExceptionBase(msg, Type::Conversion) {}

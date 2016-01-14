@@ -23,8 +23,8 @@ error_type process_content_object(ContentObjectHandle obj, int nested)
 
 error_type process_content_object_text(ContentObjectTextHandle obj, int nested)
 {
-	int i = 0;
-	int size = 0;
+	integer_type i = 0;
+	integer_type size = 0;
 
 	print_spaces(nested);
 	printf("Text object begin\n");
@@ -76,8 +76,8 @@ error_type process_content_operation(ContentOperationHandle obj, int nested)
 
 error_type process_content_operation_generic(ContentOperationGenericHandle obj, int nested)
 {
-	int i = 0;
-	int size = 0;
+	integer_type i = 0;
+	integer_type size = 0;
 	ContentOperatorHandle oper = NULL;
 
 	print_spaces(nested);
@@ -108,8 +108,6 @@ error_type process_content_operation_generic(ContentOperationGenericHandle obj, 
 
 error_type process_content_operation_textshow(ContentOperationTextShowHandle obj, int nested)
 {
-	int i = 0;
-	int size = 0;
 	ContentOperatorHandle oper = NULL;
 	StringHandle str = NULL;
 
@@ -183,7 +181,7 @@ error_type process_content_instruction(ContentInstructionHandle obj, int nested)
 
 error_type process_contents(ContentsHandle obj, int nested)
 {
-	int i = 0;
+	integer_type i = 0;
 	integer_type size = 0;
 
 	print_spaces(nested);
@@ -252,7 +250,7 @@ error_type process_extensions(DeveloperExtensionsHandle extensions, int nested)
 
 error_type process_catalog(CatalogHandle catalog, int nested)
 {
-	int i = 0;
+	integer_type i = 0;
 	integer_type size = 0;
 	PageTreeHandle pages = NULL;
 	DeveloperExtensionsHandle extensions = NULL;
@@ -457,7 +455,7 @@ error_type process_outline_item_flags(OutlineItemFlagsHandle obj, int nested)
 
 error_type process_page_labels(PageLabelsHandle labels, integer_type size, int nested)
 {
-	int i = 0;
+	integer_type i = 0;
 
 	print_spaces(nested);
 	printf("Page labels begin\n");
@@ -553,7 +551,7 @@ error_type process_viewer_preferences(ViewerPreferencesHandle preferences, int n
 
 error_type process_page_range(PageRangeHandle range, int nested)
 {
-	int i = 0;
+	integer_type i = 0;
 	integer_type size = 0;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(PageRange_GetSize(range, &size));

@@ -116,7 +116,7 @@ error_type process_stream(StreamHandle stream, int nested)
 
 error_type process_array(ArrayHandle arr, int nested)
 {
-	int i = 0;
+	integer_type i = 0;
 	integer_type size = 0;
 
 	print_spaces(nested);

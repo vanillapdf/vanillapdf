@@ -37,13 +37,13 @@ namespace gotchangpdf
 			virtual std::string ToString(void) const = 0;
 
 		public:
-			inline bool IsIndirect(void) const _NOEXCEPT { return _obj_number >= 0; }
+			inline bool IsIndirect(void) const _NOEXCEPT { return _indirect; }
 
 			inline void SetOffset(types::stream_offset offset) _NOEXCEPT { _offset = offset; }
 			inline types::stream_offset GetOffset() const _NOEXCEPT { return _offset; }
 
-			inline void SetObjectNumber(types::integer number) _NOEXCEPT { _obj_number = number; }
-			inline types::integer GetObjectNumber() const _NOEXCEPT { return _obj_number; }
+			inline void SetObjectNumber(types::uinteger number) _NOEXCEPT { _indirect = true; _obj_number = number; }
+			inline types::uinteger GetObjectNumber() const _NOEXCEPT { return _obj_number; }
 
 			inline void SetGenerationNumber(types::ushort number) _NOEXCEPT { _gen_number = number; }
 			inline types::ushort GetGenerationNumber() const _NOEXCEPT { return _gen_number; }
@@ -53,7 +53,8 @@ namespace gotchangpdf
 
 		protected:
 			std::weak_ptr<File> _file;
-			types::integer _obj_number = -1;
+			bool _indirect = false;
+			types::uinteger _obj_number = 0;
 			types::ushort _gen_number = 0;
 			types::stream_offset _offset = std::_BADOFF;
 		};

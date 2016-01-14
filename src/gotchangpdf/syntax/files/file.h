@@ -18,9 +18,10 @@ namespace gotchangpdf
 		{
 		public:
 			static std::shared_ptr<File> Open(const std::string& path);
+			void SaveAs(const std::string& path);
 
 			void Initialize(void);
-			ObjectPtr GetIndirectObject(types::integer objNumber,
+			ObjectPtr GetIndirectObject(types::uinteger objNumber,
 				types::ushort genNumber);
 
 			XrefChainPtr GetXrefChain(void) const;
