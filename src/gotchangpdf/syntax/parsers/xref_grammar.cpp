@@ -43,11 +43,6 @@ void set_trailer(XrefBasePtr& xref, DictionaryObjectPtr& dict)
 	xref->SetTrailerDictionary(dict);
 }
 
-void set_last_offset(XrefBasePtr& xref, types::integer offset)
-{
-	xref->SetLastXrefOffset(offset);
-}
-
 void read_xref_stream_data(XrefBasePtr xref, StreamObjectPtr stream, std::shared_ptr<File>* file)
 {
 	assert(nullptr != file && *file);
