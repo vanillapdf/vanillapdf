@@ -11,7 +11,7 @@ namespace gotchangpdf
 		{
 		public:
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Null; }
-			virtual inline std::string ToString(void) const override { return "null"; }
+			virtual inline std::string ToPdf(void) const override { return "null"; }
 
 			static NullObjectPtr GetInstance(void)
 			{

@@ -81,8 +81,8 @@ namespace gotchangpdf
 		class DictionaryObject : public DictionaryObjectBase<NameObjectPtr, ContainableObjectPtr>
 		{
 		public:
-			friend std::ostream& operator<<(std::ostream& os, const DictionaryObject& obj);
 			virtual std::string ToString(void) const override;
+			virtual std::string ToPdf(void) const override;
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Dictionary; }
 
 			template <typename U>

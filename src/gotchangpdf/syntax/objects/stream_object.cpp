@@ -94,7 +94,17 @@ namespace gotchangpdf
 		std::string StreamObject::ToString(void) const
 		{
 			std::stringstream ss;
-			ss << _header << "stream: " << _body->size() << std::endl;
+			ss << _header->ToString() << "stream: " << GetBody()->size() << std::endl;
+			return ss.str();
+		}
+
+		std::string StreamObject::ToPdf(void) const
+		{
+			std::stringstream ss;
+			ss << _header->ToPdf() << std::endl;
+			ss << "stream" << std::endl;
+			ss << GetBody()->ToString();
+			ss << "endstream";
 			return ss.str();
 		}
 	}

@@ -67,6 +67,20 @@ namespace gotchangpdf
 				return ss.str();
 			}
 
+			virtual std::string ToPdf(void) const override
+			{
+				std::stringstream ss;
+				ss << "[";
+				bool first = true;
+				for (auto item : _list) {
+					ss << (first ? "" : " ") << item->ToPdf();
+					first = false;
+				}
+
+				ss << "]";
+				return ss.str();
+			}
+
 			//protected:
 		public:
 			list_type _list;

@@ -5,22 +5,27 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		std::ostream& operator<<(std::ostream& os, const syntax::DictionaryObject& obj)
-		{
-			os << obj.ToString();
-			return os;
-		}
-
 		std::string DictionaryObject::ToString(void) const
 		{
 			std::stringstream ss;
-			ss << "<< ";
+			ss << "<<" << std::endl;
+			for (auto item : _list) {
+				ss << item.first->ToString() << " " << item.second->ToString() << std::endl;
+			}
+			ss << ">>";
+			return ss.str();
+		}
+
+		std::string DictionaryObject::ToPdf(void) const
+		{
+			std::stringstream ss;
+			ss << "<<";
 			bool first = true;
 			for (auto item : _list) {
-				ss << (first ? "" : ", ") << item.first << " " << item.second->ToString();
+				ss << (first ? "" : " ") << item.first->ToPdf() << " " << item.second->ToPdf();
 				first = false;
 			}
-			ss << " >>";
+			ss << ">>";
 			return ss.str();
 		}
 
@@ -28,7 +33,7 @@ namespace gotchangpdf
 		{
 			auto result = _list.find(name);
 			if (result == _list.end()) {
-				throw GeneralException("Item with name " + name->Value()->ToString() + " was not found in dictionary");
+				throw GeneralException("Item with name " + name->ToString() + " was not found in dictionary");
 			}
 
 			return result->second;

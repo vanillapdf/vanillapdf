@@ -2,18 +2,6 @@
 #include "name_object.h"
 #include "c_name_object.h"
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		std::ostream& operator<<(std::ostream& os, const syntax::NameObject& name)
-		{
-			os << name.ToString();
-			return os;
-		}
-	}
-}
-
 namespace std
 {
 	size_t hash<gotchangpdf::syntax::NameObject>::operator()(const gotchangpdf::syntax::NameObject& name) const

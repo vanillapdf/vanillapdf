@@ -34,7 +34,8 @@ namespace gotchangpdf
 
 		public:
 			virtual Type GetType(void) const _NOEXCEPT = 0;
-			virtual std::string ToString(void) const = 0;
+			virtual std::string ToString(void) const { return ToPdf(); }
+			virtual std::string ToPdf(void) const = 0;
 
 		public:
 			inline bool IsIndirect(void) const _NOEXCEPT { return _indirect; }

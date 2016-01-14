@@ -14,7 +14,6 @@ namespace gotchangpdf
 		{
 		public:
 			typedef BufferPtr value_type;
-			friend std::ostream& operator<<(std::ostream& os, const NameObject& name);
 
 		public:
 			NameObject() = default;
@@ -30,6 +29,7 @@ namespace gotchangpdf
 
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Name; }
 			virtual inline std::string ToString(void) const override { return _value->ToString(); }
+			virtual inline std::string ToPdf(void) const override { return "/" + _value->ToString(); }
 
 			void SetName(value_type name) { _value = name; }
 

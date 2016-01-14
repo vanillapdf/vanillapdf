@@ -42,7 +42,7 @@ namespace gotchangpdf
 			return false;
 		}
 
-		std::string IndirectObjectReference::ToString(void) const
+		std::string IndirectObjectReference::ToPdf(void) const
 		{
 			return std::to_string(_ref_obj) + " " + std::to_string(_gen_number) + " R";
 		}

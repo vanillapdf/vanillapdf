@@ -30,5 +30,26 @@ namespace gotchangpdf
 				_value->push_back(converted);
 			}
 		}
+
+		std::string HexadecimalStringObject::ToPdf() const
+		{
+			std::stringstream ss;
+			ss << '<';
+
+			auto size = _value->size();
+			for (decltype(size) i = 0; i < size; ++i) {
+				auto current = _value[i];
+				int converted = static_cast<int>(current);
+				ss << std::hex << converted;
+			}
+
+			ss << '>';
+			return ss.str();
+		}
+
+		std::string LiteralStringObject::ToPdf() const
+		{
+			return '(' + _value->ToString() + ')';
+		}
 	}
 }
