@@ -183,7 +183,7 @@ namespace gotchangpdf
 					auto subsection = xref_table->At(i);
 					auto subsection_size = subsection->Size();
 
-					for (int j = 0; j < subsection_size; ++j) {
+					for (decltype(subsection_size) j = 0; j < subsection_size; ++j) {
 						auto entry = subsection->At(j);
 
 						if (!entry->InUse())
@@ -213,7 +213,7 @@ namespace gotchangpdf
 					auto subsection_idx = subsection->Index();
 
 					output << subsection_idx << " " << subsection_size << endl;
-					for (int j = 0; j < subsection_size; ++j) {
+					for (decltype(subsection_size) j = 0; j < subsection_size; ++j) {
 						auto entry = subsection->At(j);
 						if (!entry->InUse()) {
 							output << setfill('0') << setw(10) << 0;
