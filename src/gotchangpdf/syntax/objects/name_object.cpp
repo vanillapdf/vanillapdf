@@ -2,6 +2,34 @@
 #include "name_object.h"
 #include "c_name_object.h"
 
+namespace gotchangpdf
+{
+	namespace syntax
+	{
+		std::string NameObject::ToString(void) const
+		{
+			std::stringstream ss;
+			auto size = _value->size();
+			for (decltype(size) i = 0; i < size; ++i) {
+				auto current = _value[i];
+				if (current < '!' || current > '~') {
+					/* Regular characters that are outside the range
+					EXCLAMATION MARK(21h) (!) to TILDE (7Eh) (~)
+					should be written using the hexadecimal notation */
+					int converted = static_cast<int>(current);
+					ss << '#';
+					ss << std::hex << converted;
+					continue;
+				}
+
+				ss << current;
+			}
+
+			return ss.str();
+		}
+	}
+}
+
 namespace std
 {
 	size_t hash<gotchangpdf::syntax::NameObject>::operator()(const gotchangpdf::syntax::NameObject& name) const

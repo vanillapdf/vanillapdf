@@ -7,7 +7,7 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		enum class WhiteSpace : char
+		enum WhiteSpace
 		{
 			NUL = 0x00,
 			HORIZONTAL_TAB = 0x09,
@@ -17,7 +17,7 @@ namespace gotchangpdf
 			SPACE = 0x20
 		};
 
-		enum class Delimiter : char
+		enum Delimiter
 		{
 			LEFT_PARENTHESIS = 0x28,
 			RIGHT_PARENTHESIS = 0x29,
@@ -31,24 +31,16 @@ namespace gotchangpdf
 			PERCENT_SIGN = 0x25
 		};
 
-		inline bool Equals(const char c1, const int c2) { return c1 == c2; }
-		inline bool Equals(const char c1, const long c2) { return c1 == c2; }
-		inline bool Equals(const char c1, const unsigned char c2) { return c1 == c2; }
-		inline bool Equals(const char c1, const signed char c2) { return c1 == c2; }
-		inline bool Equals(const char c1, const char c2) { return c1 == c2; }
-		inline bool Equals(const char c1, const WhiteSpace c2) { return Equals(c1, static_cast<char>(c2)); }
-		inline bool Equals(const char c1, const Delimiter c2) { return Equals(c1, static_cast<char>(c2)); }
-
 		inline bool IsWhiteSpace(const char c)
 		{
 			switch (c)
 			{
-			case static_cast<const char>(WhiteSpace::NUL):
-			case static_cast<const char>(WhiteSpace::HORIZONTAL_TAB):
-			case static_cast<const char>(WhiteSpace::LINE_FEED):
-			case static_cast<const char>(WhiteSpace::FORM_FEED):
-			case static_cast<const char>(WhiteSpace::CARRIAGE_RETURN):
-			case static_cast<const char>(WhiteSpace::SPACE):
+			case WhiteSpace::NUL:
+			case WhiteSpace::HORIZONTAL_TAB:
+			case WhiteSpace::LINE_FEED:
+			case WhiteSpace::FORM_FEED:
+			case WhiteSpace::CARRIAGE_RETURN:
+			case WhiteSpace::SPACE:
 				return true;
 			}
 
@@ -59,16 +51,16 @@ namespace gotchangpdf
 		{
 			switch (c)
 			{
-			case static_cast<const char>(Delimiter::LEFT_PARENTHESIS):
-			case static_cast<const char>(Delimiter::RIGHT_PARENTHESIS):
-			case static_cast<const char>(Delimiter::LESS_THAN_SIGN):
-			case static_cast<const char>(Delimiter::GREATER_THAN_SIGN):
-			case static_cast<const char>(Delimiter::LEFT_SQUARE_BRACKET):
-			case static_cast<const char>(Delimiter::RIGHT_SQUARE_BRACKET):
-			case static_cast<const char>(Delimiter::LEFT_CURLY_BRACKET):
-			case static_cast<const char>(Delimiter::RIGHT_CURLY_BRACKET):
-			case static_cast<const char>(Delimiter::SOLIDUS):
-			case static_cast<const char>(Delimiter::PERCENT_SIGN):
+			case Delimiter::LEFT_PARENTHESIS:
+			case Delimiter::RIGHT_PARENTHESIS:
+			case Delimiter::LESS_THAN_SIGN:
+			case Delimiter::GREATER_THAN_SIGN:
+			case Delimiter::LEFT_SQUARE_BRACKET:
+			case Delimiter::RIGHT_SQUARE_BRACKET:
+			case Delimiter::LEFT_CURLY_BRACKET:
+			case Delimiter::RIGHT_CURLY_BRACKET:
+			case Delimiter::SOLIDUS:
+			case Delimiter::PERCENT_SIGN:
 				return true;
 			}
 
@@ -76,10 +68,9 @@ namespace gotchangpdf
 		}
 
 		inline bool IsNumeric(const char c) { return (c >= '0' && c <= '9'); }
-
 		inline bool IsRegular(const char c) { return !IsWhiteSpace(c) && !IsDelimiter(c); }
-		inline bool IsSpace(const char c) { return Equals(c, WhiteSpace::SPACE); }
-		inline bool IsNewline(const char c) { return Equals(c, WhiteSpace::LINE_FEED); }
+		inline bool IsSpace(const char c) { return c == WhiteSpace::SPACE; }
+		inline bool IsNewline(const char c) { return c == WhiteSpace::LINE_FEED; }
 	}
 }
 

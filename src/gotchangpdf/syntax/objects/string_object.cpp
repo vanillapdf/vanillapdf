@@ -1,7 +1,10 @@
 #include "precompiled.h"
 #include "string_object.h"
+#include "character.h"
 
 #include <cassert>
+#include <cctype>
+#include <iomanip>
 
 namespace gotchangpdf
 {
@@ -49,7 +52,64 @@ namespace gotchangpdf
 
 		std::string LiteralStringObject::ToPdf() const
 		{
-			return '(' + _value->ToString() + ')';
+			std::stringstream ss;
+			ss << '(';
+
+			auto size = _value->size();
+			for (decltype(size) i = 0; i < size; ++i) {
+				auto current = _value[i];
+
+				if (current == '\n') {
+					ss << '\\' << 'n';
+					continue;
+				}
+
+				if (current == '\r') {
+					ss << '\\' << 'r';
+					continue;
+				}
+
+				if (current == '\t') {
+					ss << '\\' << 't';
+					continue;
+				}
+
+				if (current == '\b') {
+					ss << '\\' << 'b';
+					continue;
+				}
+
+				if (current == '\f') {
+					ss << '\\' << 'f';
+					continue;
+				}
+
+				if (current == '(') {
+					ss << '\\' << '(';
+					continue;
+				}
+
+				if (current == ')') {
+					ss << '\\' << ')';
+					continue;
+				}
+
+				if (current == '\\') {
+					ss << '\\' << '\\';
+					continue;
+				}
+
+				if (!std::isprint(current)) {
+					int converted = static_cast<int>(current);
+					ss << '\\' << std::setfill('0') << std::setw(3) << std::oct << converted;
+					continue;
+				}
+
+				ss << current;
+			}
+
+			ss << ')';
+			return ss.str();
 		}
 	}
 }

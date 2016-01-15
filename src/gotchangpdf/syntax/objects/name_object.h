@@ -28,8 +28,8 @@ namespace gotchangpdf
 			inline bool Equals(const NameObject& other) const { return _value->Equals(*other._value); }
 
 			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Name; }
-			virtual inline std::string ToString(void) const override { return _value->ToString(); }
-			virtual inline std::string ToPdf(void) const override { return "/" + _value->ToString(); }
+			virtual inline std::string ToPdf(void) const override { return "/" + ToString(); }
+			virtual std::string ToString(void) const override;
 
 			void SetName(value_type name) { _value = name; }
 
