@@ -74,23 +74,23 @@ namespace gotchangpdf
 				throw GeneralException("Unknown value in PageLayout entry: " + layout->ToString());
 		}
 
-		NameDictionaryPtr Catalog::Names(void) const
-		{
-			if (!_obj->Contains(constant::Name::Names))
-				throw OptionalEntryMissingException(_obj, constant::Name::Names);
+		//NameDictionaryPtr Catalog::Names(void) const
+		//{
+		//	if (!_obj->Contains(constant::Name::Names))
+		//		throw OptionalEntryMissingException(_obj, constant::Name::Names);
 
-			auto names = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Names);
-			return NameDictionaryPtr(names);
-		}
+		//	auto names = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Names);
+		//	return NameDictionaryPtr(names);
+		//}
 
-		NamedDestinationsPtr Catalog::Dests(void) const
-		{
-			if (!_obj->Contains(constant::Name::Dests))
-				throw OptionalEntryMissingException(_obj, constant::Name::Dests);
+		//NamedDestinationsPtr Catalog::Dests(void) const
+		//{
+		//	if (!_obj->Contains(constant::Name::Dests))
+		//		throw OptionalEntryMissingException(_obj, constant::Name::Dests);
 
-			auto dests = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Dests);
-			return NamedDestinationsPtr(dests);
-		}
+		//	auto dests = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Dests);
+		//	return NamedDestinationsPtr(dests);
+		//}
 
 		bool Catalog::ViewerPreferences(ViewerPreferencesPtr& result) const
 		{
