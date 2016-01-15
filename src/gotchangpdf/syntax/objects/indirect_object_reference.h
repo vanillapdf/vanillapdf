@@ -13,7 +13,7 @@ namespace gotchangpdf
 		public:
 			IndirectObjectReference() = default;
 			explicit IndirectObjectReference(ObjectPtr obj);
-			IndirectObjectReference(types::integer obj, types::ushort gen);
+			IndirectObjectReference(types::uinteger obj, types::ushort gen);
 
 			ObjectPtr GetReferencedObject() const;
 			inline ObjectPtr operator->() const { return GetReferencedObject(); }
