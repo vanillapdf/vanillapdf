@@ -2,6 +2,7 @@
 #define _SPIRIT_PARSER_H
 
 #include "syntax_fwd.h"
+#include "parser_interface.h"
 #include "xref.h"
 #include "raw_stream.h"
 #include "object_stream_header.h"
@@ -14,7 +15,7 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class SpiritParser : public Stream
+		class SpiritParser : public Stream, public IParser
 		{
 		public:
 			SpiritParser(std::weak_ptr<File> file, CharacterSource & stream);
@@ -34,19 +35,19 @@ namespace gotchangpdf
 				return ObjectUtils::ConvertTo<T>(direct);
 			}
 
-			std::vector<ObjectPtr> ReadObjectStreamEntries(types::integer first, types::integer size);
-			ObjectStreamHeaders ReadObjectStreamHeaders(types::integer size);
+			virtual std::vector<ObjectPtr> ReadObjectStreamEntries(types::integer first, types::integer size) override;
+			virtual ObjectStreamHeaders ReadObjectStreamHeaders(types::integer size) override;
 			contents::GenericOperationCollection ReadContentStreamOperations(void);
 
-			XrefBasePtr ReadXref(void);
-			XrefBasePtr ReadXref(types::stream_offset offset);
+			virtual XrefBasePtr ReadXref(void) override;
+			virtual XrefBasePtr ReadXref(types::stream_offset offset) override;
 
-			ObjectPtr ReadDirectObject(void);
-			ObjectPtr ReadDirectObject(types::stream_offset offset);
+			virtual ObjectPtr ReadDirectObject(void) override;
+			virtual ObjectPtr ReadDirectObject(types::stream_offset offset) override;
 
-			types::integer ReadLastXrefOffset();
+			virtual types::integer ReadLastXrefOffset() override;
 
-			std::weak_ptr<File> file(void) const;
+			std::weak_ptr<File> GetFile(void) const;
 
 		private:
 			class Impl;

@@ -46,7 +46,7 @@ namespace gotchangpdf
 		SpiritParser::SpiritParser(const SpiritParser & other)
 			: Stream(other) { _impl->_file = other._impl->_file; }
 
-		std::weak_ptr<File> SpiritParser::file(void) const { return _impl->_file; }
+		std::weak_ptr<File> SpiritParser::GetFile(void) const { return _impl->_file; }
 
 		template <typename Result, typename Grammar, typename Iterator>
 		Result SpiritParser::Impl::Read(Grammar& grammar, Iterator& input_begin_pos, Iterator& input_end_pos)
