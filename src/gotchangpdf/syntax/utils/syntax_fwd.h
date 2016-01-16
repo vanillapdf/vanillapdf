@@ -62,6 +62,7 @@ namespace gotchangpdf
 		using XrefUsedEntryPtr = Deferred<XrefUsedEntry>;
 		using XrefCompressedEntryPtr = Deferred<XrefCompressedEntry>;
 
+		class Token; using TokenPtr = Deferred<Token>;
 
 		// Streams
 		class BaseStream;

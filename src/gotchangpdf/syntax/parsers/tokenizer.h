@@ -15,15 +15,15 @@ namespace gotchangpdf
 			explicit Tokenizer(CharacterSource & s);
 			Tokenizer(const Tokenizer & other);
 
-			Token ReadToken(void);
-			Token PeekToken(void);
-			Token ReadTokenWithType(Token::Type type);
+			TokenPtr ReadToken(void);
+			TokenPtr PeekToken(void);
+			TokenPtr ReadTokenWithType(Token::Type type);
 			Token::Type PeekTokenType(void);
 
 			virtual ~Tokenizer();
 
 		private:
-			std::shared_ptr<Token> _last_token;
+			TokenPtr _last_token;
 			types::stream_offset _last_token_offset, _advance_position;
 		};
 	}

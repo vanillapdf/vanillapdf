@@ -12,82 +12,50 @@ namespace gotchangpdf
 		class ObjectFactory
 		{
 		public:
-			static IntegerObjectPtr CreateInteger(Token token)
+			static IntegerObjectPtr CreateInteger(TokenPtr token)
 			{
-				if (token.GetType() != Token::Type::INTEGER_OBJECT)
+				if (token->GetType() != Token::Type::INTEGER_OBJECT)
 					throw GeneralException("Expected integer token type");
 
-				auto buffer = token.Value();
+				auto buffer = token->Value();
 				auto value = stoi(buffer->ToString());
 				return IntegerObjectPtr(value);
 			}
 
-			static RealObjectPtr CreateReal(Token token)
+			static RealObjectPtr CreateReal(TokenPtr token)
 			{
-				if (token.GetType() != Token::Type::REAL_OBJECT)
+				if (token->GetType() != Token::Type::REAL_OBJECT)
 					throw GeneralException("Expected real token type");
 
-				auto buffer = token.Value();
+				auto buffer = token->Value();
 				auto value = stof(buffer->ToString());
 				return RealObjectPtr(value);
 			}
 
-			static NameObjectPtr CreateName(Token token)
+			static NameObjectPtr CreateName(TokenPtr token)
 			{
-				if (token.GetType() != Token::Type::NAME_OBJECT)
+				if (token->GetType() != Token::Type::NAME_OBJECT)
 					throw GeneralException("Expected name token type");
 
-				auto buffer = token.Value();
-				if (buffer[0] != Delimiter::SOLIDUS) {
-					assert(!"Name object does not start with solidus");
-					throw GeneralException("Name object does not start with solidus");
-				}
-
-				buffer->erase(buffer.begin());
+				auto buffer = token->Value();
 				return NameObjectPtr(buffer);
 			}
 
-			static HexadecimalStringObjectPtr CreateHexString(Token token)
+			static HexadecimalStringObjectPtr CreateHexString(TokenPtr token)
 			{
-				if (token.GetType() != Token::Type::HEXADECIMAL_STRING)
+				if (token->GetType() != Token::Type::HEXADECIMAL_STRING)
 					throw GeneralException("Expected hexadecimal string token type");
 
-				auto buffer = token.Value();
-
-				if (buffer->front() != Delimiter::LESS_THAN_SIGN ) {
-					assert(!"Missing <");
-					throw GeneralException("Hexadecimal string does not start with " + Delimiter::LESS_THAN_SIGN);
-				}
-
-				if (buffer->back() != Delimiter::GREATER_THAN_SIGN) {
-					assert(!"Missing >");
-					throw GeneralException("Hexadecimal string does not end with " + Delimiter::GREATER_THAN_SIGN);
-				}
-
-				buffer->erase(buffer.begin());
-				buffer->erase(buffer.end());
+				auto buffer = token->Value();
 				return HexadecimalStringObjectPtr(buffer);
 			}
 
-			static LiteralStringObjectPtr CreateLitString(Token token)
+			static LiteralStringObjectPtr CreateLitString(TokenPtr token)
 			{
-				if (token.GetType() != Token::Type::LITERAL_STRING)
+				if (token->GetType() != Token::Type::LITERAL_STRING)
 					throw GeneralException("Expected literal string token type");
 
-				auto buffer = token.Value();
-
-				if (buffer->front() != Delimiter::LEFT_PARENTHESIS) {
-					assert(!"Missing (");
-					throw GeneralException("Literal string does not start with " + Delimiter::LEFT_PARENTHESIS);
-				}
-
-				if (buffer->back() != Delimiter::RIGHT_PARENTHESIS) {
-					assert(!"Missing )");
-					throw GeneralException("Literal string does not end with " + Delimiter::RIGHT_PARENTHESIS);
-				}
-
-				buffer->erase(buffer.begin());
-				buffer->erase(buffer.end());
+				auto buffer = token->Value();
 				return LiteralStringObjectPtr(buffer);
 			}
 		};
@@ -124,8 +92,12 @@ namespace gotchangpdf
 					if (val->GetType() == Object::Type::Null)
 						continue;
 
-					ContainableObjectPtr containable = ObjectUtils::ConvertTo<ContainableObjectPtr>(val);
-					dictionary._list[name] = containable;
+					auto containable_ptr = dynamic_cast<ContainableObject*>(val.Content.get());
+					if (nullptr == containable_ptr)
+						throw GeneralException("Could not convert parsed object to containable: " + val->ToString());
+
+					//ContainableObjectPtr containable = ObjectUtils::ConvertTo<ContainableObjectPtr>(val);
+					dictionary._list[name] = ContainableObjectPtr(containable_ptr);
 				}
 
 				ReadTokenWithType(Token::Type::DICTIONARY_END);
@@ -138,9 +110,12 @@ namespace gotchangpdf
 				{
 					ReadTokenWithType(Token::Type::STREAM_BEGIN);
 					auto stream_offset = tellg();
-					return StreamObjectPtr(dictionary, stream_offset);
+					auto result = StreamObjectPtr(dictionary, stream_offset);
+					result->SetFile(_file);
+					return result;
 				}
 
+				dictionary.SetFile(_file);
 				return DictionaryObjectPtr(dictionary);
 			}
 			case Token::Type::INTEGER_OBJECT:
@@ -176,6 +151,7 @@ namespace gotchangpdf
 						direct->SetObjectNumber(obj_number->Value());
 						direct->SetGenerationNumber(gen_number->SafeConvert<types::ushort>());
 						direct->SetOffset(offset);
+						direct->SetFile(_file);
 
 						return direct;
 					}
@@ -184,7 +160,9 @@ namespace gotchangpdf
 					}
 				}
 
-				return ObjectFactory::CreateInteger(token);
+				auto result = ObjectFactory::CreateInteger(token);
+				result->SetFile(_file);
+				return result;
 			}
 			case Token::Type::ARRAY_BEGIN:
 			{
@@ -208,27 +186,36 @@ namespace gotchangpdf
 				//s.LexicalSettingsPop();
 				///
 
+				result->SetFile(_file);
 				return result;
 			}
 			case Token::Type::NAME_OBJECT:
 			{
 				auto token = ReadTokenWithType(Token::Type::NAME_OBJECT);
-				return ObjectFactory::CreateName(token);
+				auto result = ObjectFactory::CreateName(token);
+				result->SetFile(_file);
+				return result;
 			}
 			case Token::Type::HEXADECIMAL_STRING:
 			{
 				auto token = ReadTokenWithType(Token::Type::HEXADECIMAL_STRING);
-				return ObjectFactory::CreateHexString(token);
+				auto result = ObjectFactory::CreateHexString(token);
+				result->SetFile(_file);
+				return result;
 			}
 			case Token::Type::LITERAL_STRING:
 			{
 				auto token = ReadTokenWithType(Token::Type::LITERAL_STRING);
-				return ObjectFactory::CreateLitString(token);
+				auto result = ObjectFactory::CreateLitString(token);
+				result->SetFile(_file);
+				return result;
 			}
 			case Token::Type::REAL_OBJECT:
 			{
 				auto token = ReadTokenWithType(Token::Type::REAL_OBJECT);
-				return ObjectFactory::CreateReal(token);
+				auto result = ObjectFactory::CreateReal(token);
+				result->SetFile(_file);
+				return result;
 			}
 			default:
 				throw GeneralException("No valid object could be found at offset " + static_cast<int>(offset));

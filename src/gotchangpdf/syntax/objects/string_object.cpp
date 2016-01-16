@@ -57,7 +57,7 @@ namespace gotchangpdf
 
 			auto size = _value->size();
 			for (decltype(size) i = 0; i < size; ++i) {
-				auto current = _value[i];
+				unsigned char current = _value[i];
 
 				if (current == '\n') {
 					ss << '\\' << 'n';

@@ -8,7 +8,7 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class Token
+		class Token : public IUnknown
 		{
 		public:
 			enum class Type : unsigned char

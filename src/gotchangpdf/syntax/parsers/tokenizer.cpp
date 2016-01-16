@@ -9,6 +9,7 @@
 
 #include <cassert>
 #include <algorithm>
+#include <iomanip>
 
 namespace gotchangpdf
 {
@@ -18,7 +19,6 @@ namespace gotchangpdf
 
 		Tokenizer::Tokenizer(CharacterSource & stream)
 			: Stream(stream),
-			_last_token(nullptr),
 			_last_token_offset(_BADOFF) {}
 
 		Tokenizer::Tokenizer(const Tokenizer &other) : Stream(other) {}
@@ -27,11 +27,10 @@ namespace gotchangpdf
 
 		/* We need to move to some serious lexer */
 
-		Token Tokenizer::ReadToken()
+		TokenPtr Tokenizer::ReadToken()
 		{
 			if (_last_token_offset == tellg())
 			{
-				assert(nullptr != _last_token);
 				assert(_BADOFF != _advance_position);
 				assert(_BADOFF != _last_token_offset);
 
@@ -40,14 +39,13 @@ namespace gotchangpdf
 				seekg(_advance_position);
 				assert(good());
 
-				_last_token = nullptr;
 				_last_token_offset = _BADOFF;
 				_advance_position = _BADOFF;
 
 				return *result;
 			}
 
-			Buffer chars;
+			BufferPtr chars;
 
 		retry:
 
@@ -58,24 +56,24 @@ namespace gotchangpdf
 			switch (ch)
 			{
 			case WhiteSpace::LINE_FEED:
-				chars.push_back(ch);
+				chars->push_back(ch);
 
 				result_type = Token::Type::EOL;
 				goto prepared;
 			case WhiteSpace::SPACE:
 				goto retry;
 			case WhiteSpace::CARRIAGE_RETURN:
-				chars.push_back(ch);
+				chars->push_back(ch);
 				if (ahead == WhiteSpace::LINE_FEED)
-					chars.push_back(get());
+					chars->push_back(get());
 
 				result_type = Token::Type::EOL;
 				goto prepared;
 			case Delimiter::GREATER_THAN_SIGN:
 				if (ahead == Delimiter::GREATER_THAN_SIGN)
 				{
-					chars.push_back(ch);
-					chars.push_back(get());
+					chars->push_back(ch);
+					chars->push_back(get());
 
 					result_type = Token::Type::DICTIONARY_END;
 					goto prepared;
@@ -86,27 +84,27 @@ namespace gotchangpdf
 				if (ahead == Delimiter::LESS_THAN_SIGN)
 				{
 					// Little HACK >> twice
-					chars.push_back(ch);
-					chars.push_back(get());
+					chars->push_back(ch);
+					chars->push_back(get());
 
 					result_type = Token::Type::DICTIONARY_BEGIN;
 					goto prepared;
 				}
 				else
 				{
-					chars.push_back(get());
+					chars->push_back(get());
 					while (peek() != Delimiter::GREATER_THAN_SIGN)
-						chars.push_back(get());
+						chars->push_back(get());
 
 					result_type = Token::Type::HEXADECIMAL_STRING;
 					goto eat;
 				}
 			case Delimiter::LEFT_SQUARE_BRACKET:
-				chars.push_back(ch);
+				chars->push_back(ch);
 				result_type = Token::Type::ARRAY_BEGIN;
 				goto prepared;
 			case Delimiter::RIGHT_SQUARE_BRACKET:
-				chars.push_back(ch);
+				chars->push_back(ch);
 				result_type = Token::Type::ARRAY_END;
 				goto prepared;
 			case Delimiter::SOLIDUS:
@@ -128,26 +126,109 @@ namespace gotchangpdf
 
 						char val = (hinib << 4) + lonib;
 						*/
-						chars.push_back(value & 0xFF);
+						chars->push_back(value & 0xFF);
 					}
 					else
 					{
-						chars.push_back(get());
+						chars->push_back(get());
 					}
 				}
 
 				result_type = Token::Type::NAME_OBJECT;
 				goto prepared;
 			case Delimiter::LEFT_PARENTHESIS:
-				while (peek() != Delimiter::RIGHT_PARENTHESIS)
-					chars.push_back(get());
+				for (;;) {
+					char current = get();
+					char next = peek();
+
+					if (current == Delimiter::RIGHT_PARENTHESIS) {
+						break;
+					}
+
+					if (current != '\\') {
+						chars->push_back(current);
+						continue;
+					}
+
+					// escaped characters
+					if (next == 'r') {
+						char consume = get();
+						chars->push_back('\r');
+						continue;
+					}
+
+					if (next == 'f') {
+						char consume = get();
+						chars->push_back('\f');
+						continue;
+					}
+
+					if (next == 't') {
+						char consume = get();
+						chars->push_back('\t');
+						continue;
+					}
+
+					if (next == 'n') {
+						char consume = get();
+						chars->push_back('\n');
+						continue;
+					}
+
+					if (next == 'b') {
+						char consume = get();
+						chars->push_back('\b');
+						continue;
+					}
+
+					if (next == '(') {
+						char consume = get();
+						chars->push_back('(');
+						continue;
+					}
+
+					if (next == ')') {
+						char consume = get();
+						chars->push_back(')');
+						continue;
+					}
+
+					if (next == '\\') {
+						char consume = get();
+						chars->push_back('\\');
+						continue;
+					}
+
+					if (IsNumeric(next)) {
+						std::stringstream octal;
+						for (int i = 0; i < 3; ++i) {
+							if (IsNumeric(peek())) {
+								char current = get();
+								octal << current;
+							}
+							else {
+								assert(!"Found invalid value in octal representation inside literal string");
+								throw GeneralException("Expected octal value inside literal string: " + octal.str());
+							}
+						}
+
+						int value = 0;
+						octal >> std::oct >> value;
+						auto converted = SafeConvert<unsigned char, int>(value);
+						char char_converted = reinterpret_cast<char&>(converted);
+						chars->push_back(char_converted);
+						continue;
+					}
+
+					assert(!"Unrecognized escape sequence");
+				}
 
 				result_type = Token::Type::LITERAL_STRING;
-				goto eat;
+				goto prepared;
 			default:
 				if (ch == 'R')
 				{
-					chars.push_back(ch);
+					chars->push_back(ch);
 
 					result_type = Token::Type::INDIRECT_REFERENCE_MARKER;
 					goto prepared;
@@ -155,15 +236,15 @@ namespace gotchangpdf
 
 				if (IsNumeric(ch) || (ch == '+') || (ch == '-'))
 				{
-					chars.push_back(ch);
+					chars->push_back(ch);
 
 					while (IsNumeric(peek()))
-						chars.push_back(get());
+						chars->push_back(get());
 
 					if (peek() == '.') {
-						chars.push_back(get());
+						chars->push_back(get());
 						while (IsNumeric(peek()))
-							chars.push_back(get());
+							chars->push_back(get());
 
 						result_type = Token::Type::REAL_OBJECT;
 						goto prepared;
@@ -173,9 +254,9 @@ namespace gotchangpdf
 					goto prepared;
 				}
 
-				chars.push_back(ch);
+				chars->push_back(ch);
 				while (!(IsWhiteSpace(peek()) || IsDelimiter(peek())))
-					chars.push_back(get());
+					chars->push_back(get());
 
 				goto prepared;
 			}
@@ -189,15 +270,14 @@ namespace gotchangpdf
 			//	// TODO handle recursive call using goto probably
 			//	return ReadToken();
 
-			return Token(result_type, chars);
+			return TokenPtr(result_type, chars);
 		}
 
 		/* Peek need cache */
-		Token Tokenizer::PeekToken()
+		TokenPtr Tokenizer::PeekToken()
 		{
 			if (_last_token_offset == tellg())
 			{
-				assert(nullptr != _last_token);
 				assert(_BADOFF != _advance_position);
 				assert(_BADOFF != _last_token_offset);
 
@@ -205,7 +285,7 @@ namespace gotchangpdf
 			}
 
 			auto pos = tellg();
-			_last_token = std::make_shared<Token>(ReadToken());
+			_last_token = ReadToken();
 			_advance_position = tellg();
 			_last_token_offset = pos;
 
@@ -215,7 +295,7 @@ namespace gotchangpdf
 			return *_last_token;
 		}
 
-		Token Tokenizer::ReadTokenWithType(Token::Type type)
+		TokenPtr Tokenizer::ReadTokenWithType(Token::Type type)
 		{
 			auto current_type = PeekTokenType();
 			if (current_type != type)
@@ -227,7 +307,7 @@ namespace gotchangpdf
 		Token::Type Tokenizer::PeekTokenType(void)
 		{
 			auto current = PeekToken();
-			return current.GetType();
+			return current->GetType();
 		}
 	}
 }
