@@ -27,6 +27,9 @@ namespace gotchangpdf
 
 	bool Buffer::operator<(const Buffer& other) const
 	{
+		if (other.size() != size())
+			return size() < other.size();
+
 		auto size = this->size();
 		for (decltype(size) i = 0; i < size; ++i) {
 			if (at(i) == other[i])
