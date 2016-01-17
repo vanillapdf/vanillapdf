@@ -12,6 +12,17 @@ namespace gotchangpdf
 		class ObjectFactory
 		{
 		public:
+			static BooleanObjectPtr CreateBoolean(TokenPtr token)
+			{
+				if (token->GetType() == Token::Type::TRUE_VALUE)
+					return BooleanObjectPtr(true);
+
+				if (token->GetType() == Token::Type::FALSE_VALUE)
+					return BooleanObjectPtr(false);
+
+				throw GeneralException("Expected boolean token type");
+
+			}
 			static IntegerObjectPtr CreateInteger(TokenPtr token)
 			{
 				if (token->GetType() != Token::Type::INTEGER_OBJECT)
@@ -72,19 +83,13 @@ namespace gotchangpdf
 		{
 			auto offset = tellg();
 
-			switch (PeekTokenType())
+			switch (PeekTokenTypeSkip())
 			{
 			case Token::Type::DICTIONARY_BEGIN:
 			{
 				DictionaryObject dictionary;
-
-				////
-				//s.LexicalSettingsPush();
-				//auto settings = s.LexicalSettingsGet();
-				//settings->skip.push_back(Token::Type::EOL);
-
-				ReadTokenWithType(Token::Type::DICTIONARY_BEGIN);
-				while (PeekTokenType() != Token::Type::DICTIONARY_END)
+				ReadTokenWithTypeSkip(Token::Type::DICTIONARY_BEGIN);
+				while (PeekTokenTypeSkip() != Token::Type::DICTIONARY_END)
 				{
 					auto name = ReadDirectObjectWithType<NameObjectPtr>();
 					auto val = ReadDirectObject();
@@ -96,22 +101,23 @@ namespace gotchangpdf
 					if (nullptr == containable_ptr)
 						throw GeneralException("Could not convert parsed object to containable: " + val->ToString());
 
-					//ContainableObjectPtr containable = ObjectUtils::ConvertTo<ContainableObjectPtr>(val);
 					dictionary._list[name] = ContainableObjectPtr(containable_ptr);
 				}
 
-				ReadTokenWithType(Token::Type::DICTIONARY_END);
+				ReadTokenWithTypeSkip(Token::Type::DICTIONARY_END);
 
-				//s.LexicalSettingsPop();
-				//return s;
-				////
-
-				if (PeekTokenType() == Token::Type::STREAM_BEGIN)
+				if (PeekTokenTypeSkip() == Token::Type::STREAM_BEGIN)
 				{
-					ReadTokenWithType(Token::Type::STREAM_BEGIN);
+					ReadTokenWithTypeSkip(Token::Type::STREAM_BEGIN);
+					ReadTokenWithTypeSkip(Token::Type::EOL);
 					auto stream_offset = tellg();
+					auto length = dictionary.FindAs<IntegerObjectPtr>(constant::Name::Length);
+					seekg(length->Value(), ios_base::cur);
+					ReadTokenWithTypeSkip(Token::Type::STREAM_END);
+
 					auto result = StreamObjectPtr(dictionary, stream_offset);
 					result->SetFile(_file);
+					result->GetHeader()->SetFile(_file);
 					return result;
 				}
 
@@ -120,20 +126,20 @@ namespace gotchangpdf
 			}
 			case Token::Type::INTEGER_OBJECT:
 			{
-				auto token = ReadTokenWithType(Token::Type::INTEGER_OBJECT);
+				auto token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 
-				if (PeekTokenType() == Token::Type::INTEGER_OBJECT)
+				if (PeekTokenTypeSkip() == Token::Type::INTEGER_OBJECT)
 				{
 					auto pos = tellg();
-					auto ahead = ReadToken();
+					auto ahead = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 					auto obj_number = ObjectFactory::CreateInteger(token);
 					auto gen_number = ObjectFactory::CreateInteger(ahead);
 
-					switch (PeekTokenType())
+					switch (PeekTokenTypeSkip())
 					{
 					case Token::Type::INDIRECT_REFERENCE_MARKER:
 					{
-						auto reference_marker = ReadTokenWithType(Token::Type::INDIRECT_REFERENCE_MARKER);
+						auto reference_marker = ReadTokenWithTypeSkip(Token::Type::INDIRECT_REFERENCE_MARKER);
 						IndirectObjectReferencePtr result(obj_number->Value(), gen_number->SafeConvert<types::ushort>());
 						result->SetFile(_file);
 						return result;
@@ -141,7 +147,7 @@ namespace gotchangpdf
 
 					case Token::Type::INDIRECT_OBJECT_BEGIN:
 					{
-						ReadTokenWithType(Token::Type::INDIRECT_OBJECT_BEGIN);
+						ReadTokenWithTypeSkip(Token::Type::INDIRECT_OBJECT_BEGIN);
 
 						auto locked_file = _file.lock();
 						if (!locked_file)
@@ -167,58 +173,72 @@ namespace gotchangpdf
 			case Token::Type::ARRAY_BEGIN:
 			{
 				MixedArrayObjectPtr result;
-
-				////
-				//s.LexicalSettingsPush();
-				//auto settings = s.LexicalSettingsGet();
-				//settings->skip.push_back(Token::Type::EOL);
-
-				ReadTokenWithType(Token::Type::ARRAY_BEGIN);
-				while (PeekTokenType() != Token::Type::ARRAY_END)
+				ReadTokenWithTypeSkip(Token::Type::ARRAY_BEGIN);
+				while (PeekTokenTypeSkip() != Token::Type::ARRAY_END)
 				{
 					auto val = ReadDirectObject();
-					ContainableObjectPtr containable = ObjectUtils::ConvertTo<ContainableObjectPtr>(val);
-					result->push_back(containable);
+					auto containable_ptr = dynamic_cast<ContainableObject*>(val.Content.get());
+					if (nullptr == containable_ptr)
+						throw GeneralException("Could not convert parsed object to containable: " + val->ToString());
+
+					result->push_back(containable_ptr);
 				}
 
-				ReadTokenWithType(Token::Type::ARRAY_END);
-
-				//s.LexicalSettingsPop();
-				///
-
+				ReadTokenWithTypeSkip(Token::Type::ARRAY_END);
 				result->SetFile(_file);
 				return result;
 			}
 			case Token::Type::NAME_OBJECT:
 			{
-				auto token = ReadTokenWithType(Token::Type::NAME_OBJECT);
+				auto token = ReadTokenWithTypeSkip(Token::Type::NAME_OBJECT);
 				auto result = ObjectFactory::CreateName(token);
 				result->SetFile(_file);
 				return result;
 			}
 			case Token::Type::HEXADECIMAL_STRING:
 			{
-				auto token = ReadTokenWithType(Token::Type::HEXADECIMAL_STRING);
+				auto token = ReadTokenWithTypeSkip(Token::Type::HEXADECIMAL_STRING);
 				auto result = ObjectFactory::CreateHexString(token);
 				result->SetFile(_file);
 				return result;
 			}
 			case Token::Type::LITERAL_STRING:
 			{
-				auto token = ReadTokenWithType(Token::Type::LITERAL_STRING);
+				auto token = ReadTokenWithTypeSkip(Token::Type::LITERAL_STRING);
 				auto result = ObjectFactory::CreateLitString(token);
 				result->SetFile(_file);
 				return result;
 			}
 			case Token::Type::REAL_OBJECT:
 			{
-				auto token = ReadTokenWithType(Token::Type::REAL_OBJECT);
+				auto token = ReadTokenWithTypeSkip(Token::Type::REAL_OBJECT);
 				auto result = ObjectFactory::CreateReal(token);
 				result->SetFile(_file);
 				return result;
 			}
+			case Token::Type::TRUE_VALUE:
+			{
+				auto token = ReadTokenWithTypeSkip(Token::Type::TRUE_VALUE);
+				auto result = ObjectFactory::CreateBoolean(token);
+				result->SetFile(_file);
+				return result;
+			}
+			case Token::Type::FALSE_VALUE:
+			{
+				auto token = ReadTokenWithTypeSkip(Token::Type::FALSE_VALUE);
+				auto result = ObjectFactory::CreateBoolean(token);
+				result->SetFile(_file);
+				return result;
+			}
+			case Token::Type::NULL_OBJECT:
+			{
+				ReadTokenWithTypeSkip(Token::Type::NULL_OBJECT);
+				auto result = NullObject::GetInstance();
+				result->SetFile(_file);
+				return result;
+			}
 			default:
-				throw GeneralException("No valid object could be found at offset " + static_cast<int>(offset));
+				throw GeneralException("No valid object could be found at offset " + std::to_string(offset));
 			}
 		}
 
@@ -235,6 +255,50 @@ namespace gotchangpdf
 			seekg(position);
 
 			return obj;
+		}
+
+		TokenPtr Parser::ReadTokenSkip()
+		{
+			for (;;) {
+				auto token = ReadToken();
+				if (token->GetType() == Token::Type::EOL)
+					continue;
+
+				return token;
+			}
+		}
+
+		TokenPtr Parser::PeekTokenSkip()
+		{
+			auto position = tellg();
+			auto obj = ReadTokenSkip();
+			seekg(position);
+
+			return obj;
+		}
+
+		Token::Type Parser::PeekTokenTypeSkip()
+		{
+			auto token = PeekTokenSkip();
+			return token->GetType();
+		}
+
+		TokenPtr Parser::ReadTokenWithTypeSkip(Token::Type type)
+		{
+			auto offset = tellg();
+			for (;;) {
+				auto token = ReadToken();
+
+				if (token->GetType() == type)
+					return token;
+
+				if (token->GetType() == Token::Type::EOL)
+					continue;
+
+				std::stringstream ss;
+				ss << "Could not find token type " << Token::GetTypeValueName(type) << " at offset " << offset;
+				throw GeneralException(ss.str());
+			}
 		}
 	}
 }

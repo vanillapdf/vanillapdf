@@ -45,6 +45,11 @@ namespace gotchangpdf
 
 		private:
 			std::weak_ptr<File> _file;
+
+			TokenPtr ReadTokenSkip();
+			TokenPtr PeekTokenSkip();
+			Token::Type PeekTokenTypeSkip();
+			TokenPtr ReadTokenWithTypeSkip(Token::Type type);
 		};
 	}
 }

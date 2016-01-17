@@ -25,6 +25,8 @@ namespace gotchangpdf
 		static const char END_OF_FILE[] = "%%EOF";
 		static const char TRAILER[] = "trailer";
 		static const char NULL_OBJECT[] = "null";
+		static const char TRUE_VALUE[] = "true";
+		static const char FALSE_VALUE[] = "false";
 
 		Token::Type TokenDictionary::Find(BufferPtr set)
 		{
@@ -48,6 +50,8 @@ namespace gotchangpdf
 			INSERT_TO_DICTIONARY(END_OF_FILE);
 			INSERT_TO_DICTIONARY(TRAILER);
 			INSERT_TO_DICTIONARY(NULL_OBJECT);
+			INSERT_TO_DICTIONARY(TRUE_VALUE);
+			INSERT_TO_DICTIONARY(FALSE_VALUE);
 
 			_initialized = true;
 		}
