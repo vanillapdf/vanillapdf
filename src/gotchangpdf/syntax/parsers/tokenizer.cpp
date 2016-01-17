@@ -199,6 +199,22 @@ namespace gotchangpdf
 						continue;
 					}
 
+					// Backslash at the EOL shall be disregarded
+					if (next == '\r') {
+						char consume = get();
+						if (peek() == '\n') {
+							char consume_another = get();
+						}
+
+						continue;
+					}
+
+					// Backslash at the EOL shall be disregarded
+					if (next == '\n') {
+						char consume = get();
+						continue;
+					}
+
 					if (IsNumeric(next)) {
 						std::stringstream octal;
 						for (int i = 0; i < 3; ++i) {
