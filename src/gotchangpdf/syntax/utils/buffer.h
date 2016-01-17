@@ -26,12 +26,7 @@ namespace gotchangpdf
 
 		std::string ToString(void) const { return std::string(begin(), end()); }
 		std::stringstream ToStringStream(void) const { return std::stringstream(ToString()); }
-
 		bool Equals(const Buffer& other) const;
-		bool operator<(const Buffer& other) const;
-
-		inline bool operator==(const Buffer& other) const { return Equals(other); }
-		inline bool operator!=(const Buffer& other) const { return !Equals(other); }
 
 		virtual ~Buffer() {}
 	};

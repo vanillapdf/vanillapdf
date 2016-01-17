@@ -13,31 +13,8 @@ namespace gotchangpdf
 
 	bool Buffer::Equals(const Buffer& other) const
 	{
-		if (other.size() != size())
-			return false;
-
-		auto size = this->size();
-		for (decltype(size) i = 0; i < size; ++i) {
-			if (at(i) != other[i])
-				return false;
-		}
-
-		return true;
-	}
-
-	bool Buffer::operator<(const Buffer& other) const
-	{
-		if (other.size() != size())
-			return size() < other.size();
-
-		auto size = this->size();
-		for (decltype(size) i = 0; i < size; ++i) {
-			if (at(i) == other[i])
-				continue;
-
-			return at(i) < other[i];
-		}
-
-		return false;
+		auto my_base = static_cast<const base_type&>(*this);
+		auto other_base = static_cast<const base_type&>(other);
+		return std::operator==(my_base, other_base);
 	}
 }
