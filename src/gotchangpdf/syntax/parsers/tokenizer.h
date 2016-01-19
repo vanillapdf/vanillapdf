@@ -20,8 +20,6 @@ namespace gotchangpdf
 			TokenPtr ReadTokenWithType(Token::Type type);
 			Token::Type PeekTokenType(void);
 
-			virtual ~Tokenizer();
-
 		private:
 			TokenPtr _last_token;
 			types::stream_offset _last_token_offset, _advance_position;

@@ -23,10 +23,6 @@ namespace gotchangpdf
 
 		Tokenizer::Tokenizer(const Tokenizer &other) : Stream(other) {}
 
-		Tokenizer::~Tokenizer() {}
-
-		/* We need to move to some serious lexer */
-
 		TokenPtr Tokenizer::ReadToken()
 		{
 			if (_last_token_offset == tellg())
