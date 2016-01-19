@@ -46,8 +46,8 @@ namespace gotchangpdf
 			explicit Token(Type type);
 			Token(Type type, BufferPtr chars);
 
-			inline Token::Type GetType(void) const { return _type; }
-			inline BufferPtr Value() const { return _value; }
+			Token::Type GetType(void) const { return _type; }
+			BufferPtr Value() const { return _value; }
 
 		private:
 			Type _type = Type::UNKNOWN;

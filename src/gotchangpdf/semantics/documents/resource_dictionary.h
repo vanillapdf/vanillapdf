@@ -14,8 +14,8 @@ namespace gotchangpdf
 			//PageObject();
 			explicit ResourceDictionary(syntax::DictionaryObjectPtr obj) : HighLevelObject(obj) {}
 
-			//inline ObjectReferenceWrapper<IndirectObjectReference> Parent(void) const { return _parent; }
-			//inline ObjectReferenceWrapper<DictionaryObject> Resources(void) const { return _resources; }
+			//ObjectReferenceWrapper<IndirectObjectReference> Parent(void) const { return _parent; }
+			//ObjectReferenceWrapper<DictionaryObject> Resources(void) const { return _resources; }
 		};
 	}
 }

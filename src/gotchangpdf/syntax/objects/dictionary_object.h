@@ -83,7 +83,7 @@ namespace gotchangpdf
 		public:
 			virtual std::string ToString(void) const override;
 			virtual std::string ToPdf(void) const override;
-			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Dictionary; }
+			virtual Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Dictionary; }
 
 			template <typename U>
 			U FindAs(const NameObjectPtr& name) const

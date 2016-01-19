@@ -38,7 +38,7 @@ namespace gotchangpdf
 		ExceptionBase(const std::string& msg, Type type);
 		ExceptionBase(const char * const & msg, Type type);
 
-		virtual inline Type code() const { return _type; }
+		virtual Type code() const { return _type; }
 		virtual ~ExceptionBase() = 0;
 
 	protected:

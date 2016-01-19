@@ -21,7 +21,7 @@ namespace gotchangpdf
 				};
 
 				virtual Type GetType(void) const _NOEXCEPT = 0;
-				inline virtual syntax::contents::InstructionBase::Type GetInstructionType(void) const _NOEXCEPT override { return InstructionBase::Type::Object; }
+				virtual syntax::contents::InstructionBase::Type GetInstructionType(void) const _NOEXCEPT override { return InstructionBase::Type::Object; }
 			};
 
 			class TextObject : public ContentObjectBase
@@ -29,7 +29,7 @@ namespace gotchangpdf
 			public:
 				TextObject(syntax::contents::BaseOperationCollection ops) : _operations(ops) {}
 
-				inline virtual Type GetType(void) const _NOEXCEPT override { return Type::TextObject; }
+				virtual Type GetType(void) const _NOEXCEPT override { return Type::TextObject; }
 
 				types::uinteger GetOperationsSize(void) const { return _operations.size(); }
 				syntax::contents::OperationBasePtr GetOperationAt(types::uinteger at) const { return _operations.at(at); }

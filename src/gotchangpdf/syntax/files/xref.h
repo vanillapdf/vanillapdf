@@ -49,18 +49,18 @@ namespace gotchangpdf
 				: _obj_number(obj_number), _gen_number(gen_number) {}
 
 		public:
-			inline types::uinteger GetObjectNumber(void) const _NOEXCEPT { return _obj_number; }
-			inline void SetObjectNumber(types::uinteger value) _NOEXCEPT { _obj_number = value; }
+			types::uinteger GetObjectNumber(void) const _NOEXCEPT { return _obj_number; }
+			void SetObjectNumber(types::uinteger value) _NOEXCEPT { _obj_number = value; }
 
-			inline types::ushort GetGenerationNumber(void) const _NOEXCEPT { return _gen_number; }
-			inline void SetGenerationNumber(types::ushort value) _NOEXCEPT { _gen_number = value; }
+			types::ushort GetGenerationNumber(void) const _NOEXCEPT { return _gen_number; }
+			void SetGenerationNumber(types::ushort value) _NOEXCEPT { _gen_number = value; }
 
 			virtual Usage GetUsage(void) const _NOEXCEPT = 0;
 
-			inline bool InUse(void) const _NOEXCEPT{ return GetUsage() == Usage::Compressed || GetUsage() == Usage::Used; }
+			bool InUse(void) const _NOEXCEPT{ return GetUsage() == Usage::Compressed || GetUsage() == Usage::Used; }
 
-			inline void SetFile(std::weak_ptr<File> file) _NOEXCEPT { _file = file; }
-			inline std::weak_ptr<File> GetFile() const _NOEXCEPT { return _file; }
+			void SetFile(std::weak_ptr<File> file) _NOEXCEPT { _file = file; }
+			std::weak_ptr<File> GetFile() const _NOEXCEPT { return _file; }
 
 			virtual ~XrefEntryBase() {};
 
@@ -90,8 +90,8 @@ namespace gotchangpdf
 		public:
 			virtual Usage GetUsage(void) const _NOEXCEPT override { return XrefEntryBase::Usage::Free; }
 
-			inline types::uinteger GetNextFreeObjectNumber(void) const _NOEXCEPT { return _next; }
-			inline void SetNextFreeObjectNumber(types::uinteger value) _NOEXCEPT { _next = value; }
+			types::uinteger GetNextFreeObjectNumber(void) const _NOEXCEPT { return _next; }
+			void SetNextFreeObjectNumber(types::uinteger value) _NOEXCEPT { _next = value; }
 
 		private:
 			types::uinteger _next = 0;
@@ -106,14 +106,14 @@ namespace gotchangpdf
 		public:
 			virtual Usage GetUsage(void) const _NOEXCEPT override{ return XrefEntryBase::Usage::Used; }
 
-			inline ObjectPtr GetReference(void) { Initialize(); return _reference; }
-			inline void SetReference(ObjectPtr ref) { _reference = ref; }
+			ObjectPtr GetReference(void) { Initialize(); return _reference; }
+			void SetReference(ObjectPtr ref) { _reference = ref; }
 
-			inline types::stream_offset GetOffset(void) const _NOEXCEPT { return _offset; }
-			inline void SetOffset(types::stream_offset value) _NOEXCEPT { _offset = value; }
+			types::stream_offset GetOffset(void) const _NOEXCEPT { return _offset; }
+			void SetOffset(types::stream_offset value) _NOEXCEPT { _offset = value; }
 
-			inline bool Initialized(void) const { return _initialized; }
-			inline void SetInitialized(bool value) { _initialized = value; }
+			bool Initialized(void) const { return _initialized; }
+			void SetInitialized(bool value) { _initialized = value; }
 
 		private:
 			void Initialize(void);
@@ -132,17 +132,17 @@ namespace gotchangpdf
 		public:
 			virtual Usage GetUsage(void) const _NOEXCEPT override { return XrefEntryBase::Usage::Compressed; }
 
-			inline ObjectPtr GetReference(void) { Initialize(); return _reference; }
-			inline void SetReference(ObjectPtr ref) { _reference = ref; }
+			ObjectPtr GetReference(void) { Initialize(); return _reference; }
+			void SetReference(ObjectPtr ref) { _reference = ref; }
 
-			inline types::uinteger GetObjectStreamNumber(void) const _NOEXCEPT { return _object_stream_number; }
-			inline void SetObjectStreamNumber(types::uinteger value) _NOEXCEPT { _object_stream_number = value; }
+			types::uinteger GetObjectStreamNumber(void) const _NOEXCEPT { return _object_stream_number; }
+			void SetObjectStreamNumber(types::uinteger value) _NOEXCEPT { _object_stream_number = value; }
 
-			inline types::uinteger GetIndex(void) const _NOEXCEPT { return _index; }
-			inline void SetIndex(types::uinteger value) _NOEXCEPT { _index = value; }
+			types::uinteger GetIndex(void) const _NOEXCEPT { return _index; }
+			void SetIndex(types::uinteger value) _NOEXCEPT { _index = value; }
 
-			inline bool Initialized(void) const { return _initialized; }
-			inline void SetInitialized(bool value) { _initialized = value; }
+			bool Initialized(void) const { return _initialized; }
+			void SetInitialized(bool value) { _initialized = value; }
 
 		private:
 			void Initialize(void);
@@ -163,8 +163,8 @@ namespace gotchangpdf
 			XrefEntryBasePtr At(types::uinteger at) { return _entries.at(at); }
 			//void SetParent(Xref parent) { _parent = parent; }
 			//Xref GetParent(void) const { return _parent; }
-			inline void SetFile(std::weak_ptr<File> file) _NOEXCEPT { _file = file; }
-			inline std::weak_ptr<File> GetFile() const _NOEXCEPT { return _file; }
+			void SetFile(std::weak_ptr<File> file) _NOEXCEPT { _file = file; }
+			std::weak_ptr<File> GetFile() const _NOEXCEPT { return _file; }
 
 			types::uinteger Index(void) const
 			{
@@ -192,11 +192,11 @@ namespace gotchangpdf
 				Stream
 			};
 
-			inline void SetFile(std::weak_ptr<File>file) _NOEXCEPT { _file = file; }
-			inline std::weak_ptr<File> GetFile() const _NOEXCEPT { return _file; }
+			void SetFile(std::weak_ptr<File>file) _NOEXCEPT { _file = file; }
+			std::weak_ptr<File> GetFile() const _NOEXCEPT { return _file; }
 
-			inline DictionaryObjectPtr GetTrailerDictionary(void) const { return _trailer_dictionary; }
-			inline void SetTrailerDictionary(DictionaryObjectPtr dictionary) { _trailer_dictionary = dictionary; }
+			DictionaryObjectPtr GetTrailerDictionary(void) const { return _trailer_dictionary; }
+			void SetTrailerDictionary(DictionaryObjectPtr dictionary) { _trailer_dictionary = dictionary; }
 
 			types::stream_offset GetLastXrefOffset() const _NOEXCEPT { return _last_xref_offset; }
 			void SetLastXrefOffset(types::stream_offset offset) _NOEXCEPT { _last_xref_offset = offset; }

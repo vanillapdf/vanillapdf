@@ -94,7 +94,7 @@ namespace gotchangpdf
 				};
 
 			public:
-				inline virtual InstructionBase::Type GetInstructionType(void) const _NOEXCEPT override { return InstructionBase::Type::Operation; }
+				virtual InstructionBase::Type GetInstructionType(void) const _NOEXCEPT override { return InstructionBase::Type::Operation; }
 				virtual Type GetOperationType(void) const _NOEXCEPT = 0;
 			};
 

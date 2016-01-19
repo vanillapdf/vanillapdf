@@ -16,13 +16,13 @@ namespace gotchangpdf
 			class OperationBeginText : public syntax::contents::OperationBase
 			{
 			public:
-				inline virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::BeginText; }
+				virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::BeginText; }
 			};
 
 			class OperationEndText : public syntax::contents::OperationBase
 			{
 			public:
-				inline virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::EndText; }
+				virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::EndText; }
 			};
 
 			class OperationTextShow : public syntax::contents::OperationBase
@@ -30,7 +30,7 @@ namespace gotchangpdf
 			public:
 				explicit OperationTextShow(syntax::StringObjectPtr str) : _str(str) {}
 
-				inline virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::TextShow; }
+				virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::TextShow; }
 
 				syntax::StringObjectPtr Value() const { return _str; }
 

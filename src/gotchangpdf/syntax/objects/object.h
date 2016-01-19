@@ -38,19 +38,19 @@ namespace gotchangpdf
 			virtual std::string ToPdf(void) const = 0;
 
 		public:
-			inline bool IsIndirect(void) const _NOEXCEPT { return _indirect; }
+			bool IsIndirect(void) const _NOEXCEPT { return _indirect; }
 
-			inline void SetOffset(types::stream_offset offset) _NOEXCEPT { _offset = offset; }
-			inline types::stream_offset GetOffset() const _NOEXCEPT { return _offset; }
+			void SetOffset(types::stream_offset offset) _NOEXCEPT { _offset = offset; }
+			types::stream_offset GetOffset() const _NOEXCEPT { return _offset; }
 
-			inline void SetObjectNumber(types::uinteger number) _NOEXCEPT { _indirect = true; _obj_number = number; }
-			inline types::uinteger GetObjectNumber() const _NOEXCEPT { return _obj_number; }
+			void SetObjectNumber(types::uinteger number) _NOEXCEPT { _indirect = true; _obj_number = number; }
+			types::uinteger GetObjectNumber() const _NOEXCEPT { return _obj_number; }
 
-			inline void SetGenerationNumber(types::ushort number) _NOEXCEPT { _gen_number = number; }
-			inline types::ushort GetGenerationNumber() const _NOEXCEPT { return _gen_number; }
+			void SetGenerationNumber(types::ushort number) _NOEXCEPT { _gen_number = number; }
+			types::ushort GetGenerationNumber() const _NOEXCEPT { return _gen_number; }
 
-			inline void SetFile(std::weak_ptr<File> file) _NOEXCEPT { _file = file; }
-			inline std::weak_ptr<File> GetFile() const _NOEXCEPT { return _file; }
+			void SetFile(std::weak_ptr<File> file) _NOEXCEPT { _file = file; }
+			std::weak_ptr<File> GetFile() const _NOEXCEPT { return _file; }
 
 		protected:
 			std::weak_ptr<File> _file;

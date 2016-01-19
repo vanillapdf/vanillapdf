@@ -13,7 +13,7 @@ namespace gotchangpdf
 			virtual ~ContainableObject() = 0;
 		};
 
-		inline ContainableObject::~ContainableObject() {}
+		ContainableObject::~ContainableObject() {}
 	}
 }
 

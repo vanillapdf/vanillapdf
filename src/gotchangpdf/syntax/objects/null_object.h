@@ -10,8 +10,8 @@ namespace gotchangpdf
 		class NullObject : public ContainableObject
 		{
 		public:
-			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Null; }
-			virtual inline std::string ToPdf(void) const override { return "null"; }
+			virtual Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Null; }
+			virtual std::string ToPdf(void) const override { return "null"; }
 
 			static NullObjectPtr GetInstance(void)
 			{
@@ -19,11 +19,11 @@ namespace gotchangpdf
 				return instance;
 			}
 
-			inline bool Equals(const NullObject&) const { return true; }
+			bool Equals(const NullObject&) const { return true; }
 
-			inline bool operator==(const NullObject& other) const { return Equals(other); }
-			inline bool operator!=(const NullObject& other) const { return !Equals(other); }
-			inline bool operator<(const NullObject&) const { return false; }
+			bool operator==(const NullObject& other) const { return Equals(other); }
+			bool operator!=(const NullObject& other) const { return !Equals(other); }
+			bool operator<(const NullObject&) const { return false; }
 		};
 	}
 }

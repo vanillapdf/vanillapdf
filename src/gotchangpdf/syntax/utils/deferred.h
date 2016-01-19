@@ -57,12 +57,12 @@ namespace gotchangpdf
 			Content.Owner = this;
 		}
 
-		inline operator T&() { return Content.operator*(); }
-		inline operator T&() const { return Content.operator*(); }
+		operator T&() { return Content.operator*(); }
+		operator T&() const { return Content.operator*(); }
 
-		inline bool operator==(const Deferred& other) const { return *Content == *other.Content; }
-		inline bool operator!=(const Deferred& other) const { return *Content != *other.Content; }
-		inline bool operator<(const Deferred& other) const { return *Content < *other.Content; }
+		bool operator==(const Deferred& other) const { return *Content == *other.Content; }
+		bool operator!=(const Deferred& other) const { return *Content != *other.Content; }
+		bool operator<(const Deferred& other) const { return *Content < *other.Content; }
 
 		T& operator*() const
 		{

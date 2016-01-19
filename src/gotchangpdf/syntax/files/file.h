@@ -27,8 +27,8 @@ namespace gotchangpdf
 			XrefChainPtr GetXrefChain(void) const;
 			HeaderPtr GetHeader(void) const;
 
-			inline std::string GetFilename(void) const { return _filename; }
-			inline std::shared_ptr<FileDevice> GetInputStream(void) const { return _input; }
+			std::string GetFilename(void) const { return _filename; }
+			std::shared_ptr<FileDevice> GetInputStream(void) const { return _input; }
 
 			~File(void);
 

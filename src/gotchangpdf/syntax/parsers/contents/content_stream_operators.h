@@ -105,8 +105,8 @@ namespace gotchangpdf
 				UnknownOperator() = default;
 				UnknownOperator(const BufferPtr& data) : _data(data) {}
 
-				virtual inline Type GetType(void) const _NOEXCEPT { return Type::Unknown; }
-				virtual inline BufferPtr Value(void) const override { return _data; }
+				virtual Type GetType(void) const _NOEXCEPT { return Type::Unknown; }
+				virtual BufferPtr Value(void) const override { return _data; }
 
 			private:
 				BufferPtr _data;
@@ -116,8 +116,8 @@ namespace gotchangpdf
 class Name##Operator : public OperatorBase \
 { \
 public: \
-	virtual inline Type GetType(void) const _NOEXCEPT { return Type::##Name; } \
-	virtual inline BufferPtr Value(void) const override { return BufferPtr(Val); } \
+	virtual Type GetType(void) const _NOEXCEPT { return Type::##Name; } \
+	virtual BufferPtr Value(void) const override { return BufferPtr(Val); } \
 };
 
 			// General graphics state

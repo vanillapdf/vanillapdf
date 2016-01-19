@@ -24,7 +24,7 @@ namespace gotchangpdf
 			virtual ~BaseStream() = 0;
 		};
 
-		inline BaseStream::~BaseStream() {}
+		BaseStream::~BaseStream() {}
 	}
 }
 

@@ -12,7 +12,7 @@ namespace gotchangpdf
 		{
 		public:
 			explicit HighLevelObject(const T& obj) : _obj(obj) {}
-			inline T GetObject(void) const { return _obj; }
+			T GetObject(void) const { return _obj; }
 		protected:
 			T _obj;
 		};

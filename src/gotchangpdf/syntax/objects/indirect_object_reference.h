@@ -16,26 +16,26 @@ namespace gotchangpdf
 			IndirectObjectReference(types::uinteger obj, types::ushort gen);
 
 			ObjectPtr GetReferencedObject() const;
-			inline ObjectPtr operator->() const { return GetReferencedObject(); }
+			ObjectPtr operator->() const { return GetReferencedObject(); }
 
 			template <typename T>
-			inline const T GetReferencedObjectAs() const
+			const T GetReferencedObjectAs() const
 			{
 				auto direct = GetReferencedObject();
 				return ObjectUtils::ConvertTo<T>(direct);
 			}
 
-			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::IndirectReference; }
+			virtual Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::IndirectReference; }
 			virtual std::string ToPdf(void) const override;
 
 			bool Equals(const IndirectObjectReference& other) const;
 
-			inline bool operator==(const IndirectObjectReference& other) const { return Equals(other); }
-			inline bool operator!=(const IndirectObjectReference& other) const { return !Equals(other); }
+			bool operator==(const IndirectObjectReference& other) const { return Equals(other); }
+			bool operator!=(const IndirectObjectReference& other) const { return !Equals(other); }
 			bool operator<(const IndirectObjectReference& other) const;
 
-			inline types::uinteger GetReferencedObjectNumber() const _NOEXCEPT { return _ref_obj; }
-			inline types::ushort GetReferencedGenerationNumber() const _NOEXCEPT { return _ref_gen; }
+			types::uinteger GetReferencedObjectNumber() const _NOEXCEPT { return _ref_obj; }
+			types::ushort GetReferencedGenerationNumber() const _NOEXCEPT { return _ref_gen; }
 
 		private:
 			types::uinteger _ref_obj = 0;

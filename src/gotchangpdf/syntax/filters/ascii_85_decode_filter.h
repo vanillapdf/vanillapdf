@@ -10,7 +10,7 @@ namespace gotchangpdf
 		class ASCII85DecodeFilter : public FilterBase
 		{
 		public:
-			virtual inline Type GetType(void) const _NOEXCEPT override { return FilterBase::Type::ASCII85Decode; }
+			virtual Type GetType(void) const _NOEXCEPT override { return FilterBase::Type::ASCII85Decode; }
 
 			virtual BufferPtr Encode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const override;
 			virtual BufferPtr Decode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const override;

@@ -21,10 +21,10 @@ namespace gotchangpdf
 			virtual BufferPtr Value() const = 0;
 
 			virtual StringType GetStringType(void) const _NOEXCEPT = 0;
-			virtual inline Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::String; }
+			virtual Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::String; }
 
 			bool Equals(const StringObjectBase& other) const { return Value() == other.Value();	}
-			inline bool operator==(const StringObjectBase& other) const { return Equals(other); }
+			bool operator==(const StringObjectBase& other) const { return Equals(other); }
 		};
 
 		class HexadecimalStringObject : public StringObjectBase
@@ -33,9 +33,9 @@ namespace gotchangpdf
 			HexadecimalStringObject() = default;
 			explicit HexadecimalStringObject(BufferPtr value);
 
-			virtual inline StringObjectBase::StringType GetStringType(void) const _NOEXCEPT override { return StringObjectBase::StringType::Hexadecimal; }
+			virtual StringObjectBase::StringType GetStringType(void) const _NOEXCEPT override { return StringObjectBase::StringType::Hexadecimal; }
 
-			virtual inline BufferPtr Value() const override { return _value; }
+			virtual BufferPtr Value() const override { return _value; }
 			virtual std::string ToPdf(void) const override;
 
 			//private:
@@ -49,8 +49,8 @@ namespace gotchangpdf
 			LiteralStringObject() = default;
 			explicit LiteralStringObject(BufferPtr value);
 
-			virtual inline StringObjectBase::StringType GetStringType(void) const _NOEXCEPT override { return StringObjectBase::StringType::Literal; }
-			virtual inline BufferPtr Value() const override { return _value; }
+			virtual StringObjectBase::StringType GetStringType(void) const _NOEXCEPT override { return StringObjectBase::StringType::Literal; }
+			virtual BufferPtr Value() const override { return _value; }
 			virtual std::string ToPdf(void) const override;
 
 		public:
