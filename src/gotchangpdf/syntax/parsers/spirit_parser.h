@@ -36,7 +36,6 @@ namespace gotchangpdf
 			}
 
 			virtual std::vector<ObjectPtr> ReadObjectStreamEntries(types::integer first, types::integer size) override;
-			virtual ObjectStreamHeaders ReadObjectStreamHeaders(types::integer size) override;
 			contents::GenericOperationCollection ReadContentStreamOperations(void);
 
 			virtual XrefBasePtr ReadXref(void) override;
@@ -45,13 +44,15 @@ namespace gotchangpdf
 			virtual ObjectPtr ReadDirectObject(void) override;
 			virtual ObjectPtr ReadDirectObject(types::stream_offset offset) override;
 
-			virtual types::integer ReadLastXrefOffset() override;
+			types::integer ReadLastXrefOffset();
 
 			std::weak_ptr<File> GetFile(void) const;
 
 		private:
 			class Impl;
 			std::shared_ptr<Impl> _impl;
+
+			ObjectStreamHeaders ReadObjectStreamHeaders(types::integer size);
 		};
 	}
 }
