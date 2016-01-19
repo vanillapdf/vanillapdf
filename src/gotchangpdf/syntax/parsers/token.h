@@ -31,11 +31,12 @@ namespace gotchangpdf
 				INDIRECT_OBJECT_END,
 				XREF_MARKER,
 				START_XREF,
-				END_OF_FILE,
+				END_OF_FILE_MARKER,
 				TRAILER,
 				NULL_OBJECT,
 				TRUE_VALUE,
-				FALSE_VALUE
+				FALSE_VALUE,
+				END_OF_FILE
 			};
 
 			static const char* GetTypeValueName(Type type);

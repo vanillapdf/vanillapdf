@@ -65,6 +65,8 @@ namespace gotchangpdf
 				return "XREF_MARKER";
 			case Type::START_XREF:
 				return "START_XREF";
+			case Type::END_OF_FILE_MARKER:
+				return "END_OF_FILE_MARKER";
 			case Type::END_OF_FILE:
 				return "END_OF_FILE";
 			case Type::TRAILER:

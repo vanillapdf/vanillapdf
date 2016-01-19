@@ -51,6 +51,9 @@ namespace gotchangpdf
 
 			switch (ch)
 			{
+			case EOF:
+				result_type = Token::Type::END_OF_FILE;
+				goto prepared;
 			case WhiteSpace::LINE_FEED:
 				chars->push_back(WhiteSpace::LINE_FEED);
 
@@ -85,7 +88,7 @@ namespace gotchangpdf
 					goto prepared;
 				}
 
-				if (IsNumeric(ahead)) {
+				if (IsNumeric(ahead) || IsAlpha(ahead)) {
 					for (;;) {
 						auto current_meta = get();
 						auto next_meta = peek();
@@ -104,7 +107,7 @@ namespace gotchangpdf
 					}
 
 					result_type = Token::Type::HEXADECIMAL_STRING;
-					goto eat;
+					goto prepared;
 				}
 
 				throw GeneralException("Unexpected character at offset: " + std::to_string(tellg()));
@@ -147,7 +150,7 @@ namespace gotchangpdf
 					auto current = SafeConvert<unsigned char>(current_meta);
 					auto next = SafeConvert<unsigned char>(next_meta);
 
-					if (current_meta == Delimiter::RIGHT_PARENTHESIS) {
+					if (current == Delimiter::RIGHT_PARENTHESIS) {
 						break;
 					}
 
@@ -290,9 +293,6 @@ namespace gotchangpdf
 
 				goto prepared;
 			}
-
-		eat:
-			ignore();
 
 		prepared:
 			return TokenPtr(result_type, chars);

@@ -69,6 +69,7 @@ namespace gotchangpdf
 
 		inline bool IsEof(const int c) { return c == EOF; }
 		inline bool IsNumeric(const int c) { return (c >= '0' && c <= '9'); }
+		inline bool IsAlpha(const int c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
 		inline bool IsRegular(const int c) { return !IsWhiteSpace(c) && !IsDelimiter(c) && !IsEof(c); }
 		inline bool IsSpace(const int c) { return c == WhiteSpace::SPACE; }
 		inline bool IsNewline(const int c) { return c == WhiteSpace::LINE_FEED; }
