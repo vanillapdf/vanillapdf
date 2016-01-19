@@ -9,6 +9,16 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
+#pragma region Objects
+
+		Parser::Parser(std::weak_ptr<File> file, CharacterSource & stream)
+			: Tokenizer(stream), _file(file) {}
+
+		Parser::Parser(const Parser & other)
+			: Tokenizer(other), _file(other._file) {}
+
+		std::weak_ptr<File> Parser::GetFile(void) const { return _file; }
+
 		class ObjectFactory
 		{
 		public:
@@ -78,14 +88,6 @@ namespace gotchangpdf
 				return LiteralStringObjectPtr(buffer);
 			}
 		};
-
-		Parser::Parser(std::weak_ptr<File> file, CharacterSource & stream)
-			: Tokenizer(stream), _file(file) {}
-
-		Parser::Parser(const Parser & other)
-			: Tokenizer(other), _file(other._file) {}
-
-		std::weak_ptr<File> Parser::GetFile(void) const { return _file; }
 
 		ObjectPtr Parser::ReadIndirectObject(void)
 		{
@@ -260,6 +262,48 @@ namespace gotchangpdf
 			}
 		}
 
+		ObjectStreamHeader Parser::ReadObjectStreamHeader()
+		{
+			ObjectStreamHeader result;
+
+			auto obj_number_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
+			auto offset_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
+
+			auto obj_number = ObjectFactory::CreateInteger(obj_number_token);
+			auto offset = ObjectFactory::CreateInteger(offset_token);
+
+			result.object_number = obj_number->Value();
+			result.offset = offset->Value();
+			return result;
+		}
+
+		ObjectStreamHeaders Parser::ReadObjectStreamHeaders(types::integer size)
+		{
+			ObjectStreamHeaders result;
+			result.reserve(size);
+			for (types::integer i = 0; i < size; ++i) {
+				auto item = ReadObjectStreamHeader();
+				result.push_back(item);
+			}
+
+			return result;
+		}
+
+		std::vector<ObjectPtr> Parser::ReadObjectStreamEntries(types::integer first, types::integer size)
+		{
+			std::vector<ObjectPtr> result;
+			auto headers = ReadObjectStreamHeaders(size);
+			for (auto header : headers) {
+				seekg(first + header.offset);
+				auto obj = ReadDirectObject();
+				obj->SetObjectNumber(header.object_number);
+
+				result.push_back(obj);
+			}
+
+			return result;
+		}
+
 		ObjectPtr Parser::ReadDirectObject(types::stream_offset offset)
 		{
 			seekg(offset, ios_base::beg);
@@ -274,6 +318,10 @@ namespace gotchangpdf
 
 			return obj;
 		}
+
+#pragma endregion
+
+#pragma region Tokens
 
 		TokenPtr Parser::ReadTokenSkip()
 		{
@@ -318,5 +366,7 @@ namespace gotchangpdf
 				throw GeneralException(ss.str());
 			}
 		}
+
+#pragma endregion
 	}
 }

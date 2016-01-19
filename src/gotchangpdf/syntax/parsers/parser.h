@@ -42,8 +42,7 @@ namespace gotchangpdf
 			virtual ObjectPtr ReadDirectObject(types::stream_offset offset) override;
 			ObjectPtr PeekDirectObject(void);
 
-			virtual std::vector<ObjectPtr> ReadObjectStreamEntries(types::integer first, types::integer size) override { return std::vector<ObjectPtr>(); }
-			virtual ObjectStreamHeaders ReadObjectStreamHeaders(types::integer size) override { return ObjectStreamHeaders(); }
+			virtual std::vector<ObjectPtr> ReadObjectStreamEntries(types::integer first, types::integer size) override;
 			//contents::GenericOperationCollection ReadContentStreamOperations(void) = 0;
 
 		private:
@@ -53,6 +52,9 @@ namespace gotchangpdf
 			TokenPtr PeekTokenSkip();
 			Token::Type PeekTokenTypeSkip();
 			TokenPtr ReadTokenWithTypeSkip(Token::Type type);
+
+			ObjectStreamHeaders ReadObjectStreamHeaders(types::integer size);
+			ObjectStreamHeader ReadObjectStreamHeader();
 		};
 	}
 }
