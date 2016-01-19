@@ -137,13 +137,13 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNonFullScree
 			switch (mode)
 			{
 			case ViewerPreferences::NonFullScreenPageModeType::UseNone:
-				*result = NonFullScreenPageMode_UseNone;
+				*result = NonFullScreenPageMode_UseNone; break;
 			case ViewerPreferences::NonFullScreenPageModeType::UseOutlines:
-				*result = NonFullScreenPageMode_UseOutlines;
+				*result = NonFullScreenPageMode_UseOutlines; break;
 			case ViewerPreferences::NonFullScreenPageModeType::UseThumbs:
-				*result = NonFullScreenPageMode_UseThumbs;
+				*result = NonFullScreenPageMode_UseThumbs; break;
 			case ViewerPreferences::NonFullScreenPageModeType::UseOC:
-				*result = NonFullScreenPageMode_UseOC;
+				*result = NonFullScreenPageMode_UseOC; break;
 			default:
 				return GOTCHANG_PDF_ERROR_GENERAL;
 			}
@@ -172,9 +172,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDirection(Vi
 			switch (order)
 			{
 			case ViewerPreferences::ReadingOrderType::LeftToRight:
-				*result = ReadingOrder_LeftToRight;
+				*result = ReadingOrder_LeftToRight; break;
 			case ViewerPreferences::ReadingOrderType::RightToLeft:
-				*result = ReadingOrder_RightToLeft;
+				*result = ReadingOrder_RightToLeft; break;
 			default:
 				return GOTCHANG_PDF_ERROR_GENERAL;
 			}
@@ -291,9 +291,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintScaling
 			switch (scaling)
 			{
 			case ViewerPreferences::PrintScalingType::AppDefault:
-				*result = PrintScaling_AppDefault;
+				*result = PrintScaling_AppDefault; break;
 			case ViewerPreferences::PrintScalingType::None:
-				*result = PrintScaling_None;
+				*result = PrintScaling_None; break;
 			default:
 				return GOTCHANG_PDF_ERROR_GENERAL;
 			}
@@ -322,11 +322,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDuplex(Viewe
 			switch (duplex)
 			{
 			case ViewerPreferences::DuplexType::Simplex:
-				*result = Duplex_Simplex;
+				*result = Duplex_Simplex; break;
 			case ViewerPreferences::DuplexType::DuplexFlipShortEdge:
-				*result = Duplex_DuplexFlipShortEdge;
+				*result = Duplex_DuplexFlipShortEdge; break;
 			case ViewerPreferences::DuplexType::DuplexFlipLongEdge:
-				*result = Duplex_DuplexFlipLongEdge;
+				*result = Duplex_DuplexFlipLongEdge; break;
 			default:
 				return GOTCHANG_PDF_ERROR_GENERAL;
 			}
