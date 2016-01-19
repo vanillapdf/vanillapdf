@@ -184,6 +184,7 @@
     <ClCompile Include="src\gotchangpdf\syntax\objects\integer_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\name_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\object.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\objects\real_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\stream_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\string_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\clipping_path_grammar.cpp" />

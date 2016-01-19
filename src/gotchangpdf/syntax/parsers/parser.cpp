@@ -39,7 +39,15 @@ namespace gotchangpdf
 					throw GeneralException("Expected real token type");
 
 				auto buffer = token->Value();
-				auto value = stof(buffer->ToString());
+				auto str = buffer->ToString();
+				auto value = std::stof(str);
+				auto pos = str.rfind('.');
+				if (-1 != pos) {
+					auto precision = str.size() - pos - 1;
+					auto converted = SafeConvert<unsigned char>(precision);
+					return RealObjectPtr(value, converted);
+				}
+
 				return RealObjectPtr(value);
 			}
 

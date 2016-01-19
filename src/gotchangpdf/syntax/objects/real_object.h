@@ -16,17 +16,18 @@ namespace gotchangpdf
 		public:
 			RealObject() = default;
 			explicit RealObject(types::real value) : _value(value) {}
+			explicit RealObject(types::real value, int precision) : _value(value), _precision(precision) {}
 			explicit RealObject(const IntegerObject& value) { _value = SafeConvert<types::real>(value.Value()); }
 
-			virtual inline std::string ToPdf(void) const override { return std::to_string(_value); }
 			virtual Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Real; }
+			virtual std::string ToPdf(void) const override;
 
-			inline value_type Value(void) const _NOEXCEPT { return _value; }
-			 value_type Value(void) const _NOEXCEPT { return _value; }
+			value_type Value(void) const _NOEXCEPT { return _value; }
 			operator value_type() const _NOEXCEPT { return _value; }
 
 		private:
 			types::real _value = 0;
+			int _precision = 0;
 		};
 	}
 }
