@@ -31,7 +31,7 @@ namespace gotchangpdf
 			PERCENT_SIGN = 0x25
 		};
 
-		inline bool IsWhiteSpace(const char c)
+		inline bool IsWhiteSpace(const int c)
 		{
 			switch (c)
 			{
@@ -47,7 +47,7 @@ namespace gotchangpdf
 			return false;
 		}
 
-		inline bool IsDelimiter(const char c)
+		inline bool IsDelimiter(const int c)
 		{
 			switch (c)
 			{
@@ -67,10 +67,11 @@ namespace gotchangpdf
 			return false;
 		}
 
-		inline bool IsNumeric(const char c) { return (c >= '0' && c <= '9'); }
-		inline bool IsRegular(const char c) { return !IsWhiteSpace(c) && !IsDelimiter(c); }
-		inline bool IsSpace(const char c) { return c == WhiteSpace::SPACE; }
-		inline bool IsNewline(const char c) { return c == WhiteSpace::LINE_FEED; }
+		inline bool IsEof(const int c) { return c == EOF; }
+		inline bool IsNumeric(const int c) { return (c >= '0' && c <= '9'); }
+		inline bool IsRegular(const int c) { return !IsWhiteSpace(c) && !IsDelimiter(c) && !IsEof(c); }
+		inline bool IsSpace(const int c) { return c == WhiteSpace::SPACE; }
+		inline bool IsNewline(const int c) { return c == WhiteSpace::LINE_FEED; }
 	}
 }
 

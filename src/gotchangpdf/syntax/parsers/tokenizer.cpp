@@ -45,99 +45,109 @@ namespace gotchangpdf
 
 		retry:
 
-			char ch = get();
-			char ahead = peek();
+			int ch = get();
+			int ahead = peek();
 			Token::Type result_type = Token::Type::UNKNOWN;
 
 			switch (ch)
 			{
 			case WhiteSpace::LINE_FEED:
-				chars->push_back(ch);
+				chars->push_back(WhiteSpace::LINE_FEED);
 
 				result_type = Token::Type::EOL;
 				goto prepared;
 			case WhiteSpace::SPACE:
 				goto retry;
 			case WhiteSpace::CARRIAGE_RETURN:
-				chars->push_back(ch);
-				if (ahead == WhiteSpace::LINE_FEED)
-					chars->push_back(get());
+				chars->push_back(WhiteSpace::CARRIAGE_RETURN);
+				if (ahead == WhiteSpace::LINE_FEED && ignore()) {
+					chars->push_back(WhiteSpace::LINE_FEED);
+				}
 
 				result_type = Token::Type::EOL;
 				goto prepared;
 			case Delimiter::GREATER_THAN_SIGN:
-				if (ahead == Delimiter::GREATER_THAN_SIGN)
-				{
-					chars->push_back(ch);
-					chars->push_back(get());
+				if (ahead == Delimiter::GREATER_THAN_SIGN && ignore()) {
+					chars->push_back(Delimiter::GREATER_THAN_SIGN);
+					chars->push_back(Delimiter::GREATER_THAN_SIGN);
 
 					result_type = Token::Type::DICTIONARY_END;
 					goto prepared;
 				}
-				else
-					throw GeneralException("Unexpected character follows intended dictionary end: " + ahead);
+
+				throw GeneralException("Unexpected character at offset: " + std::to_string(tellg()));
 			case Delimiter::LESS_THAN_SIGN:
-				if (ahead == Delimiter::LESS_THAN_SIGN)
-				{
-					// Little HACK >> twice
-					chars->push_back(ch);
-					chars->push_back(get());
+				if (ahead == Delimiter::LESS_THAN_SIGN && ignore()) {
+					chars->push_back(Delimiter::LESS_THAN_SIGN);
+					chars->push_back(Delimiter::LESS_THAN_SIGN);
 
 					result_type = Token::Type::DICTIONARY_BEGIN;
 					goto prepared;
 				}
-				else
-				{
-					chars->push_back(get());
-					while (peek() != Delimiter::GREATER_THAN_SIGN)
-						chars->push_back(get());
+
+				if (IsNumeric(ahead)) {
+					for (;;) {
+						auto current_meta = get();
+						auto next_meta = peek();
+
+						assert(current_meta != EOF && next_meta != EOF);
+						if (current_meta == EOF || next_meta == EOF) {
+							break;
+						}
+
+						auto current = SafeConvert<unsigned char>(current_meta);
+						if (current == Delimiter::GREATER_THAN_SIGN) {
+							break;
+						}
+
+						chars->push_back(current);
+					}
 
 					result_type = Token::Type::HEXADECIMAL_STRING;
 					goto eat;
 				}
+
+				throw GeneralException("Unexpected character at offset: " + std::to_string(tellg()));
 			case Delimiter::LEFT_SQUARE_BRACKET:
-				chars->push_back(ch);
+				chars->push_back(Delimiter::LEFT_SQUARE_BRACKET);
 				result_type = Token::Type::ARRAY_BEGIN;
 				goto prepared;
 			case Delimiter::RIGHT_SQUARE_BRACKET:
-				chars->push_back(ch);
+				chars->push_back(Delimiter::RIGHT_SQUARE_BRACKET);
 				result_type = Token::Type::ARRAY_END;
 				goto prepared;
 			case Delimiter::SOLIDUS:
-				while (!(IsWhiteSpace(peek()) || IsDelimiter(peek())))
-				{
-					if (peek() == '#')
-					{
-						char sign = get();
-						assert(sign == '#');
-
-						// TODO check hex flags, clear if persists
-						unsigned int value;
-						*this >> std::hex >> value;
-
-						/*
-						char sign = get();
-						char hinib = get_hex();
-						char lonib = get_hex();
-
-						char val = (hinib << 4) + lonib;
-						*/
-						chars->push_back(value & 0xFF);
+				while (IsRegular(peek())) {
+					auto current = static_cast<char>(get());
+					if (current == '#') {
+						auto values = read(2);
+						auto str = values->ToString();
+						auto val = stoi(str, 0, 16);
+						auto parsed = SafeConvert<unsigned char, int>(val);
+						char converted = reinterpret_cast<char&>(parsed);
+						chars->push_back(converted);
+						continue;
 					}
-					else
-					{
-						chars->push_back(get());
-					}
+
+					chars->push_back(current);
 				}
 
 				result_type = Token::Type::NAME_OBJECT;
 				goto prepared;
 			case Delimiter::LEFT_PARENTHESIS:
 				for (;;) {
-					char current = get();
-					char next = peek();
+					int current_meta = get();
+					int next_meta = peek();
 
-					if (current == Delimiter::RIGHT_PARENTHESIS) {
+					assert(current_meta != EOF && next_meta != EOF);
+					if (current_meta == EOF || next_meta == EOF) {
+						break;
+					}
+
+					auto current = SafeConvert<unsigned char>(current_meta);
+					auto next = SafeConvert<unsigned char>(next_meta);
+
+					if (current_meta == Delimiter::RIGHT_PARENTHESIS) {
 						break;
 					}
 
@@ -147,76 +157,71 @@ namespace gotchangpdf
 					}
 
 					// escaped characters
-					if (next == 'r') {
-						char consume = get();
+					if (next == 'r' && ignore()) {
 						chars->push_back('\r');
 						continue;
 					}
 
-					if (next == 'f') {
-						char consume = get();
+					if (next == 'f' && ignore()) {
 						chars->push_back('\f');
 						continue;
 					}
 
-					if (next == 't') {
-						char consume = get();
+					if (next == 't' && ignore()) {
 						chars->push_back('\t');
 						continue;
 					}
 
-					if (next == 'n') {
-						char consume = get();
+					if (next == 'n' && ignore()) {
 						chars->push_back('\n');
 						continue;
 					}
 
-					if (next == 'b') {
-						char consume = get();
+					if (next == 'b' && ignore()) {
 						chars->push_back('\b');
 						continue;
 					}
 
-					if (next == '(') {
-						char consume = get();
+					if (next == '(' && ignore()) {
 						chars->push_back('(');
 						continue;
 					}
 
-					if (next == ')') {
-						char consume = get();
+					if (next == ')' && ignore()) {
 						chars->push_back(')');
 						continue;
 					}
 
-					if (next == '\\') {
-						char consume = get();
+					if (next == '\\' && ignore()) {
 						chars->push_back('\\');
 						continue;
 					}
 
 					// Backslash at the EOL shall be disregarded
-					if (next == '\r') {
-						char consume = get();
+					if (next == '\r' && ignore()) {
 						if (peek() == '\n') {
-							char consume_another = get();
+							ignore();
 						}
 
 						continue;
 					}
 
 					// Backslash at the EOL shall be disregarded
-					if (next == '\n') {
-						char consume = get();
+					if (next == '\n' && ignore()) {
 						continue;
 					}
 
 					if (IsNumeric(next)) {
 						std::stringstream octal;
 						for (int i = 0; i < 3; ++i) {
-							if (IsNumeric(peek())) {
-								char current = get();
-								octal << current;
+							auto numeric_meta = peek();
+							if (EOF == numeric_meta) {
+								break;
+							}
+
+							auto numeric = SafeConvert<unsigned char>(numeric_meta);
+							if (IsNumeric(numeric) && ignore()) {
+								octal << numeric;
 							}
 							else {
 								assert(!"Found invalid value in octal representation inside literal string");
@@ -238,25 +243,28 @@ namespace gotchangpdf
 				result_type = Token::Type::LITERAL_STRING;
 				goto prepared;
 			default:
-				if (ch == 'R')
-				{
-					chars->push_back(ch);
+				if (ch == 'R') {
+					chars->push_back('R');
 
 					result_type = Token::Type::INDIRECT_REFERENCE_MARKER;
 					goto prepared;
 				}
 
-				if (IsNumeric(ch) || (ch == '+') || (ch == '-'))
-				{
-					chars->push_back(ch);
+				auto current = SafeConvert<unsigned char>(ch);
+				if (IsNumeric(current) || (current == '+') || (current == '-')) {
+					chars->push_back(current);
 
-					while (IsNumeric(peek()))
-						chars->push_back(get());
+					while (IsNumeric(peek())) {
+						auto numeric = static_cast<char>(get());
+						chars->push_back(numeric);
+					}
 
-					if (peek() == '.') {
-						chars->push_back(get());
-						while (IsNumeric(peek()))
-							chars->push_back(get());
+					if (peek() == '.' && ignore()) {
+						chars->push_back('.');
+						while (IsNumeric(peek())) {
+							auto next = static_cast<char>(get());
+							chars->push_back(next);
+						}
 
 						result_type = Token::Type::REAL_OBJECT;
 						goto prepared;
@@ -266,22 +274,27 @@ namespace gotchangpdf
 					goto prepared;
 				}
 
-				chars->push_back(ch);
-				while (!(IsWhiteSpace(peek()) || IsDelimiter(peek())))
-					chars->push_back(get());
+				chars->push_back(current);
+				for (;;) {
+					auto next_meta = peek();
+					if (EOF == next_meta) {
+						break;
+					}
+
+					auto next = SafeConvert<unsigned char>(next_meta);
+					if (!IsRegular(next))
+						break;
+
+					chars->push_back(next); ignore();
+				}
 
 				goto prepared;
 			}
 
 		eat:
-			get();
+			ignore();
 
 		prepared:
-			//auto settings = lexical::BaseStream::LexicalSettingsGet();
-			//if (std::find(settings->skip.begin(), settings->skip.end(), result_type) != settings->skip.end())
-			//	// TODO handle recursive call using goto probably
-			//	return ReadToken();
-
 			return TokenPtr(result_type, chars);
 		}
 
