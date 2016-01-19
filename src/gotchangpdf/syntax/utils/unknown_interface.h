@@ -14,7 +14,7 @@ namespace gotchangpdf
 		virtual ~IUnknown() = 0;
 	};
 
-	IUnknown::~IUnknown() {}
+	inline IUnknown::~IUnknown() {}
 }
 
 #endif /* _UNKNOWN_INTERFACE_H */

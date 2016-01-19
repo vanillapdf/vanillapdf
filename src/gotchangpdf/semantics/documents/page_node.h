@@ -23,7 +23,7 @@ namespace gotchangpdf
 			virtual ~PageNodeBase() = 0;
 		};
 
-		PageNodeBase::~PageNodeBase() {}
+		inline PageNodeBase::~PageNodeBase() {}
 	}
 }
 
