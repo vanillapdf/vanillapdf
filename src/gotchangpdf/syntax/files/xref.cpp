@@ -4,6 +4,7 @@
 #include "file.h"
 #include "xref_chain.h"
 #include "spirit_parser.h"
+#include "parser.h"
 
 #include <boost/scope_exit.hpp>
 
@@ -26,8 +27,8 @@ namespace gotchangpdf
 			{
 				input->seekg(rewind_pos);
 			} BOOST_SCOPE_EXIT_END;
-			auto parser = SpiritParser(_file, *input);
-			auto object = parser.ReadDirectObject(_offset);
+			auto parser = Parser(_file, *input);
+			auto object = parser.ReadIndirectObject(_offset);
 			SetReference(object);
 			SetInitialized(true);
 		}
@@ -51,7 +52,7 @@ namespace gotchangpdf
 			auto body = converted->GetBodyDecoded();
 
 			auto stream = body->ToStringStream();
-			auto parser = syntax::SpiritParser(_file, stream);
+			auto parser = Parser(_file, stream);
 			auto stream_entries = parser.ReadObjectStreamEntries(first->Value(), size->Value());
 			for (auto stream_entry : stream_entries) {
 				auto object_number = stream_entry->GetObjectNumber();
