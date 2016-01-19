@@ -29,7 +29,7 @@ namespace gotchangpdf
 					throw GeneralException("Expected integer token type");
 
 				auto buffer = token->Value();
-				auto value = stoi(buffer->ToString());
+				auto value = std::stoi(buffer->ToString());
 				return IntegerObjectPtr(value);
 			}
 
@@ -87,6 +87,36 @@ namespace gotchangpdf
 
 		std::weak_ptr<File> Parser::GetFile(void) const { return _file; }
 
+		ObjectPtr Parser::ReadIndirectObject(void)
+		{
+			auto offset = tellg();
+			auto obj_number_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
+			auto gen_number_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
+			auto begin_token = ReadTokenWithTypeSkip(Token::Type::INDIRECT_OBJECT_BEGIN);
+			auto direct = ReadDirectObject();
+			auto end_token = ReadTokenWithTypeSkip(Token::Type::INDIRECT_OBJECT_END);
+
+			auto locked_file = _file.lock();
+			if (!locked_file)
+				throw FileDisposedException();
+
+			auto obj_number = ObjectFactory::CreateInteger(obj_number_token);
+			auto gen_number = ObjectFactory::CreateInteger(gen_number_token);
+			direct->SetObjectNumber(obj_number->Value());
+			direct->SetGenerationNumber(gen_number->SafeConvert<types::ushort>());
+			direct->SetOffset(offset);
+			direct->SetFile(_file);
+
+			assert(direct->IsIndirect());
+			return direct;
+		}
+
+		ObjectPtr Parser::ReadIndirectObject(types::stream_offset offset)
+		{
+			seekg(offset, ios_base::beg);
+			return ReadIndirectObject();
+		}
+
 		ObjectPtr Parser::ReadDirectObject()
 		{
 			auto offset = tellg();
@@ -136,43 +166,23 @@ namespace gotchangpdf
 			{
 				auto token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 
+				auto pos = tellg();
 				if (PeekTokenTypeSkip() == Token::Type::INTEGER_OBJECT)
 				{
-					auto pos = tellg();
 					auto ahead = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 					auto obj_number = ObjectFactory::CreateInteger(token);
 					auto gen_number = ObjectFactory::CreateInteger(ahead);
 
-					switch (PeekTokenTypeSkip())
-					{
-					case Token::Type::INDIRECT_REFERENCE_MARKER:
-					{
+					if (PeekTokenTypeSkip() == Token::Type::INDIRECT_REFERENCE_MARKER) {
 						auto reference_marker = ReadTokenWithTypeSkip(Token::Type::INDIRECT_REFERENCE_MARKER);
 						IndirectObjectReferencePtr result(obj_number->Value(), gen_number->SafeConvert<types::ushort>());
 						result->SetFile(_file);
 						return result;
 					}
-
-					case Token::Type::INDIRECT_OBJECT_BEGIN:
-					{
-						ReadTokenWithTypeSkip(Token::Type::INDIRECT_OBJECT_BEGIN);
-
-						auto locked_file = _file.lock();
-						if (!locked_file)
-							throw FileDisposedException();
-
-						auto direct = ReadDirectObject();
-						direct->SetObjectNumber(obj_number->Value());
-						direct->SetGenerationNumber(gen_number->SafeConvert<types::ushort>());
-						direct->SetOffset(offset);
-						direct->SetFile(_file);
-
-						return direct;
-					}
-					default:
-						seekg(pos);
-					}
 				}
+
+				// TODO we can peek only one next token, therefore we need to seek back
+				seekg(pos);
 
 				auto result = ObjectFactory::CreateInteger(token);
 				result->SetFile(_file);

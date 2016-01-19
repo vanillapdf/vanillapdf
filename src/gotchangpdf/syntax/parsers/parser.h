@@ -35,6 +35,9 @@ namespace gotchangpdf
 			virtual XrefBasePtr ReadXref(types::stream_offset offset) override { return XrefBasePtr(); }
 			virtual types::integer ReadLastXrefOffset() override { return 0; }
 
+			ObjectPtr ReadIndirectObject(void);
+			ObjectPtr ReadIndirectObject(types::stream_offset offset);
+
 			virtual ObjectPtr ReadDirectObject(void) override;
 			virtual ObjectPtr ReadDirectObject(types::stream_offset offset) override;
 			ObjectPtr PeekDirectObject(void);
