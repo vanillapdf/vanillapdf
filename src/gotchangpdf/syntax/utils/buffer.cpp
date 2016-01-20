@@ -17,4 +17,28 @@ namespace gotchangpdf
 		auto other_base = static_cast<const base_type&>(other);
 		return std::operator==(my_base, other_base);
 	}
+
+	bool operator==(const char * left, const Buffer& right)
+	{
+		assert(nullptr != left);
+		return (0 == strncmp(left, right.data(), right.size()));
+	}
+
+	bool operator==(const Buffer& left, const char * right)
+	{
+		assert(nullptr != right);
+		return (0 == strncmp(right, left.data(), left.size()));
+	}
+
+	bool operator!=(const char * left, const Buffer& right)
+	{
+		assert(nullptr != left);
+		return (0 != strncmp(left, right.data(), right.size()));
+	}
+
+	bool operator!=(const Buffer& left, const char * right)
+	{
+		assert(nullptr != right);
+		return (0 != strncmp(right, left.data(), left.size()));
+	}
 }

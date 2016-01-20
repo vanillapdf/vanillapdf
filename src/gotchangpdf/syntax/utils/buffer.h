@@ -30,6 +30,11 @@ namespace gotchangpdf
 
 		virtual ~Buffer() {}
 	};
+
+	bool operator==(const char * left, const Buffer& right);
+	bool operator==(const Buffer& left, const char * right);
+	bool operator!=(const char * left, const Buffer& right);
+	bool operator!=(const Buffer& left, const char * right);
 }
 
 #endif /* _BUFFER_H */
