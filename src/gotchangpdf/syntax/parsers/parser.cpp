@@ -4,7 +4,9 @@
 #include "token.h"
 #include "file.h"
 #include "character.h"
+
 #include "content_stream_operation_generic.h"
+#include "content_stream_operators.h"
 
 namespace gotchangpdf
 {
@@ -412,7 +414,7 @@ namespace gotchangpdf
 					continue;
 
 				std::stringstream ss;
-				ss << "Could not find token type " << Token::GetTypeValueName(type) << " at offset " << offset;
+				ss << "Could not find token type " << static_cast<int>(type) << " at offset " << offset;
 				throw GeneralException(ss.str());
 			}
 		}
@@ -429,15 +431,16 @@ namespace gotchangpdf
 			auto offset = ObjectFactory::CreateInteger(offset_token);
 			auto gen_number = ObjectFactory::CreateInteger(generation_token);
 
-			if (PeekTokenTypeSkip() == Token::Type::XREF_USED_ENTRY) {
-				ReadTokenWithTypeSkip(Token::Type::XREF_USED_ENTRY);
+			auto peeked_token = PeekTokenSkip();
+			if (*peeked_token->Value() == "n") {
+				ReadTokenSkip();
 				XrefUsedEntryPtr result(objNumber, gen_number->SafeConvert<types::ushort>(), offset->Value());
 				result->SetFile(_file);
 				return result;
 			}
 
-			if (PeekTokenTypeSkip() == Token::Type::XREF_FREE_ENTRY) {
-				ReadTokenWithTypeSkip(Token::Type::XREF_FREE_ENTRY);
+			if (*peeked_token->Value() == "f") {
+				ReadTokenSkip();
 				XrefFreeEntryPtr result(objNumber, gen_number->SafeConvert<types::ushort>(), offset->Value());
 				result->SetFile(_file);
 				return result;
@@ -596,7 +599,7 @@ namespace gotchangpdf
 		contents::GenericOperationCollection Parser::ReadContentStreamOperations(void)
 		{
 			contents::GenericOperationCollection result;
-			while (PeekTokenTypeSkip() != Token::Type::END_OF_FILE && !eof()) {
+			while (PeekTokenTypeSkip() != Token::Type::END_OF_INPUT) {
 				auto operation = ReadContentStreamOperation();
 				result.push_back(operation);
 			}
@@ -620,11 +623,157 @@ namespace gotchangpdf
 
 		contents::OperatorBasePtr Parser::ReadOperator()
 		{
-			switch (PeekTokenTypeSkip())
+			auto token = ReadTokenSkip();
+			switch (token->GetType())
 			{
+			case Token::Type::LINE_WIDTH:
+				return contents::LineWidthOperatorPtr();
+			case Token::Type::LINE_CAP:
+				return contents::LineCapOperatorPtr();
+			case Token::Type::LINE_JOIN:
+				return contents::LineJoinOperatorPtr();
+			case Token::Type::MITER_LIMIT:
+				return contents::MiterLimitOperatorPtr();
+			case Token::Type::DASH_PATTERN:
+				return contents::DashPatternOperatorPtr();
+			case Token::Type::COLOR_RENDERING_INTENT:
+				return contents::ColorRenderingIntentOperatorPtr();
+			case Token::Type::FLATNESS:
+				return contents::FlatnessOperatorPtr();
+			case Token::Type::GRAPHICS_STATE:
+				return contents::GraphicsStateOperatorPtr();
+			case Token::Type::SAVE_GRAPHICS_STATE:
+				return contents::SaveGraphicsStateOperatorPtr();
+			case Token::Type::RESTORE_GRAPHIC_STATE:
+				return contents::RestoreGraphicsStateOperatorPtr();
+			case Token::Type::TRANSFORMATION_MATRIX:
+				return contents::TransformationMatrixOperatorPtr();
+			case Token::Type::BEGIN_SUBPATH:
+				return contents::BeginSubpathOperatorPtr();
+			case Token::Type::LINE:
+				return contents::LineOperatorPtr();
+			case Token::Type::FULL_CURVE:
+				return contents::FullCurveOperatorPtr();
+			case Token::Type::FINAL_CURVE:
+				return contents::FinalCurveOperatorPtr();
+			case Token::Type::INITIAL_CURVE:
+				return contents::InitialCurveOperatorPtr();
+			case Token::Type::CLOSE_SUBPATH:
+				return contents::CloseSubpathOperatorPtr();
+			case Token::Type::RECTANGLE:
+				return contents::RectangleOperatorPtr();
+			case Token::Type::STROKE:
+				return contents::StrokeOperatorPtr();
+			case Token::Type::CLOSE_AND_STROKE:
+				return contents::CloseAndStrokeOperatorPtr();
+			case Token::Type::FILL_PATH_NONZERO:
+				return contents::FillPathNonzeroOperatorPtr();
+			case Token::Type::FILL_PATH_COMPATIBILITY:
+				return contents::FillPathCompatibilityOperatorPtr();
+			case Token::Type::FILL_PATH_EVEN_ODD:
+				return contents::FillPathEvenOddOperatorPtr();
+			case Token::Type::FILL_STROKE_NONZERO:
+				return contents::FillStrokeNonzeroOperatorPtr();
+			case Token::Type::FILL_STROKE_EVEN_ODD:
+				return contents::FillStrokeEvenOddOperatorPtr();
+			case Token::Type::CLOSE_FILL_STROKE_NONZERO:
+				return contents::CloseFillStrokeNonzeroOperatorPtr();
+			case Token::Type::CLOSE_FILL_STROKE_EVEN_ODD:
+				return contents::CloseFillStrokeEvenOddOperatorPtr();
+			case Token::Type::END_PATH:
+				return contents::EndPathOperatorPtr();
+			case Token::Type::CLIP_PATH_NONZERO:
+				return contents::ClipPathNonzeroOperatorPtr();
+			case Token::Type::CLIP_PATH_EVEN_ODD:
+				return contents::ClipPathEvenOddOperatorPtr();
+			case Token::Type::BEGIN_TEXT:
+				return contents::BeginTextOperatorPtr();
+			case Token::Type::END_TEXT:
+				return contents::EndTextOperatorPtr();
+			case Token::Type::CHARACTER_SPACING:
+				return contents::CharacterSpacingOperatorPtr();
+			case Token::Type::WORD_SPACING:
+				return contents::WordSpacingOperatorPtr();
+			case Token::Type::HORIZONTAL_SCALING:
+				return contents::HorizontalScalingOperatorPtr();
+			case Token::Type::LEADING:
+				return contents::LeadingOperatorPtr();
+			case Token::Type::TEXT_FONT:
+				return contents::TextFontOperatorPtr();
+			case Token::Type::TEXT_RENDERING_MODE:
+				return contents::TextRenderingModeOperatorPtr();
+			case Token::Type::TEXT_RISE:
+				return contents::TextRiseOperatorPtr();
+			case Token::Type::TEXT_TRANSLATE:
+				return contents::TextTranslateOperatorPtr();
+			case Token::Type::TEXT_TRANSLATE_LEADING:
+				return contents::TextTranslateLeadingOperatorPtr();
+			case Token::Type::TEXT_MATRIX:
+				return contents::TextMatrixOperatorPtr();
+			case Token::Type::TEXT_NEXT_LINE:
+				return contents::TextNextLineOperatorPtr();
+			case Token::Type::TEXT_SHOW:
+				return contents::TextShowOperatorPtr();
+			case Token::Type::TEXT_SHOW_ARRAY:
+				return contents::TextShowArrayOperatorPtr();
+			case Token::Type::TEXT_NEXT_LINE_SHOW:
+				return contents::TextNextLineShowOperatorPtr();
+			case Token::Type::TEXT_NEXT_LINE_SHOW_SPACING:
+				return contents::TextNextLineOperatorPtr();
+			case Token::Type::SET_CHAR_WIDTH:
+				return contents::SetCharWidthOperatorPtr();
+			case Token::Type::SET_CACHE_DEVICE:
+				return contents::SetCacheDeviceOperatorPtr();
+			case Token::Type::COLOR_SPACE_STROKE:
+				return contents::ColorSpaceStrokeOperatorPtr();
+			case Token::Type::COLOR_SPACE_NONSTROKE:
+				return contents::ColorSpaceNonstrokeOperatorPtr();
+			case Token::Type::SET_COLOR_STROKE:
+				return contents::SetColorStrokeOperatorPtr();
+			case Token::Type::SET_COLOR_STROKE_EXTENDED:
+				return contents::SetColorStrokeExtendedOperatorPtr();
+			case Token::Type::SET_COLOR_NONSTROKE:
+				return contents::SetColorNonstrokeOperatorPtr();
+			case Token::Type::SET_COLOR_NONSTROKE_EXTENDED:
+				return contents::SetColorNonstrokeExtendedOperatorPtr();
+			case Token::Type::SET_STROKING_COLOR_SPACE_GRAY:
+				return contents::SetNonstrokingColorSpaceGrayOperatorPtr();
+			case Token::Type::SET_NONSTROKING_COLOR_SPACE_GRAY:
+				return contents::SetNonstrokingColorSpaceGrayOperatorPtr();
+			case Token::Type::SET_STROKING_COLOR_SPACE_RGB:
+				return contents::SetStrokingColorSpaceRGBOperatorPtr();
+			case Token::Type::SET_NONSTROKING_COLOR_SPACE_RGB:
+				return contents::SetNonstrokingColorSpaceRGBOperatorPtr();
+			case Token::Type::SET_STROKING_COLOR_SPACE_CMYK:
+				return contents::SetStrokingColorSpaceCMYKOperatorPtr();
+			case Token::Type::SET_NONSTROKING_COLOR_SPACE_CMYK:
+				return contents::SetNonstrokingColorSpaceCMYKOperatorPtr();
+			case Token::Type::SHADING_PAINT:
+				return contents::ShadingPaintOperatorPtr();
+			case Token::Type::BEGIN_INLINE_IMAGE_OBJECT:
+				return contents::BeginInlineImageObjectOperatorPtr();
+			case Token::Type::BEGIN_INLINE_IMAGE_DATA:
+				return contents::BeginInlineImageDataOperatorPtr();
+			case Token::Type::END_INLINE_IMAGE_OBJECT:
+				return contents::EndInlineImageObjectOperatorPtr();
+			case Token::Type::INVOKE_X_OBJECT:
+				return contents::InvokeXObjectOperatorPtr();
+			case Token::Type::DEFINE_MARKED_CONTENT_POINT:
+				return contents::DefineMarkedContentPointOperatorPtr();
+			case Token::Type::DEFINE_MARKED_CONTENT_POINT_WITH_PROPERTY_LIST:
+				return contents::DefineMarkedContentPointWithPropertyListOperatorPtr();
+			case Token::Type::BEGIN_MARKED_CONTENT_SEQUENCE:
+				return contents::BeginMarkedContentSequenceOperatorPtr();
+			case Token::Type::BEGIN_MARKED_CONTENT_SEQUENCE_WITH_PROPERTY_LIST:
+				return contents::BeginMarkedContentSequenceWithPropertyListOperatorPtr();
+			case Token::Type::END_MARKED_CONTENT_SEQUENCE:
+				return contents::EndMarkedContentSequenceOperatorPtr();
+			case Token::Type::BEGIN_COMPATIBILITY_SECTION:
+				return contents::BeginCompatibilitySectionOperatorPtr();
+			case Token::Type::END_COMPATIBILITY_SECTION:
+				return contents::EndCompatibilitySectionOperatorPtr();
 			default:
-				ReadTokenSkip();
-				return contents::OperatorBasePtr();
+				return contents::UnknownOperatorPtr(token->Value());
 			}
 		}
 

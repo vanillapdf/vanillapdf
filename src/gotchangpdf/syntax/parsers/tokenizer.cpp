@@ -52,7 +52,7 @@ namespace gotchangpdf
 			switch (ch)
 			{
 			case EOF:
-				result_type = Token::Type::END_OF_FILE;
+				result_type = Token::Type::END_OF_INPUT;
 				goto prepared;
 			case WhiteSpace::LINE_FEED:
 				chars->push_back(WhiteSpace::LINE_FEED);
@@ -290,8 +290,6 @@ namespace gotchangpdf
 
 					chars->push_back(next); ignore();
 				}
-
-				goto prepared;
 			}
 
 		prepared:
