@@ -27,7 +27,7 @@ error_type process_buffer(BufferHandle buffer, int nested)
 	size_converted = (size_t)size;
 	print_size = size_converted > 20 ? 10 : size_converted;
 
-	local_string = calloc(sizeof(char), print_size + 1);
+	local_string = (char*)calloc(sizeof(char), print_size + 1);
 	if (NULL == local_string)
 		return GOTCHANG_PDF_ERROR_GENERAL;
 

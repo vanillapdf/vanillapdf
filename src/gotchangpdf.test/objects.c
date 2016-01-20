@@ -180,7 +180,7 @@ error_type process_boolean(BooleanHandle obj, int nested)
 
 error_type process_reference(IndirectReferenceHandle reference, int nested)
 {
-	enum ObjectType type;
+	ObjectType type;
 	integer_type obj_num = 0;
 	integer_type gen_num = 0;
 	ObjectHandle child = NULL;
@@ -243,7 +243,7 @@ error_type process_null(NullHandle obj, int nested)
 
 int process_string(StringHandle obj, int nested)
 {
-	enum StringType type;
+	StringType type;
 	LiteralStringHandle literal_str = NULL;
 	HexadecimalStringHandle hexadecimal_str = NULL;
 
@@ -270,7 +270,7 @@ int process_string(StringHandle obj, int nested)
 
 int process_object(ObjectHandle obj, int nested)
 {
-	enum ObjectType type;
+	ObjectType type;
 	RealHandle real = NULL;
 	BooleanHandle boolean = NULL;
 	NullHandle null_object = NULL;
