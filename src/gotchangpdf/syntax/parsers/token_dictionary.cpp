@@ -27,6 +27,8 @@ namespace gotchangpdf
 		static const char NULL_OBJECT[] = "null";
 		static const char TRUE_VALUE[] = "true";
 		static const char FALSE_VALUE[] = "false";
+		static const char XREF_FREE_ENTRY[] = "f";
+		static const char XREF_USED_ENTRY[] = "n";
 
 		Token::Type TokenDictionary::Find(BufferPtr set)
 		{
@@ -52,6 +54,8 @@ namespace gotchangpdf
 			INSERT_TO_DICTIONARY(NULL_OBJECT);
 			INSERT_TO_DICTIONARY(TRUE_VALUE);
 			INSERT_TO_DICTIONARY(FALSE_VALUE);
+			INSERT_TO_DICTIONARY(XREF_FREE_ENTRY);
+			INSERT_TO_DICTIONARY(XREF_USED_ENTRY);
 
 			_initialized = true;
 		}

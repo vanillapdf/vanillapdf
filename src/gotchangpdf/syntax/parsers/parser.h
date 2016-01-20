@@ -31,8 +31,8 @@ namespace gotchangpdf
 				return ObjectUtils::ConvertTo<T>(direct);
 			}
 
-			virtual XrefBasePtr ReadXref(void) override { return XrefBasePtr(); }
-			virtual XrefBasePtr ReadXref(types::stream_offset offset) override { return XrefBasePtr(); }
+			virtual XrefBasePtr ReadXref(void) override;
+			virtual XrefBasePtr ReadXref(types::stream_offset offset) override;
 
 			ObjectPtr ReadIndirectObject(void);
 			ObjectPtr ReadIndirectObject(types::stream_offset offset);
@@ -54,6 +54,9 @@ namespace gotchangpdf
 
 			ObjectStreamHeaders ReadObjectStreamHeaders(types::integer size);
 			ObjectStreamHeader ReadObjectStreamHeader();
+			XrefEntryBasePtr ReadTableEntry(types::integer objNumber);
+			XrefTablePtr ReadXrefTable();
+			XrefStreamPtr ReadXrefStream();
 		};
 	}
 }

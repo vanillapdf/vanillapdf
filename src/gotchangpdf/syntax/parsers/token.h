@@ -36,7 +36,9 @@ namespace gotchangpdf
 				NULL_OBJECT,
 				TRUE_VALUE,
 				FALSE_VALUE,
-				END_OF_FILE
+				END_OF_FILE,
+				XREF_USED_ENTRY,
+				XREF_FREE_ENTRY
 			};
 
 			static const char* GetTypeValueName(Type type);

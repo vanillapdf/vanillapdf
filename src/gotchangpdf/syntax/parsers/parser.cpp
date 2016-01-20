@@ -368,5 +368,176 @@ namespace gotchangpdf
 		}
 
 #pragma endregion
+
+#pragma region Xref
+
+		XrefEntryBasePtr Parser::ReadTableEntry(types::integer objNumber)
+		{
+			auto offset_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
+			auto generation_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
+
+			auto offset = ObjectFactory::CreateInteger(offset_token);
+			auto gen_number = ObjectFactory::CreateInteger(generation_token);
+
+			if (PeekTokenTypeSkip() == Token::Type::XREF_USED_ENTRY) {
+				ReadTokenWithTypeSkip(Token::Type::XREF_USED_ENTRY);
+				XrefUsedEntryPtr result(objNumber, gen_number->SafeConvert<types::ushort>(), offset->Value());
+				result->SetFile(_file);
+				return result;
+			}
+
+			if (PeekTokenTypeSkip() == Token::Type::XREF_FREE_ENTRY) {
+				ReadTokenWithTypeSkip(Token::Type::XREF_FREE_ENTRY);
+				XrefFreeEntryPtr result(objNumber, gen_number->SafeConvert<types::ushort>(), offset->Value());
+				result->SetFile(_file);
+				return result;
+			}
+
+			std::stringstream buffer;
+			buffer << "Key in XRef table is neither of " << 'n' << " or " << 'f';
+			throw GeneralException(buffer.str());
+		}
+
+		XrefTablePtr Parser::ReadXrefTable()
+		{
+			XrefTablePtr table;
+
+			ReadTokenWithTypeSkip(Token::Type::XREF_MARKER);
+			while (PeekTokenTypeSkip() != Token::Type::TRAILER) {
+				auto revision_base_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
+				auto size_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
+
+				auto revision_base = ObjectFactory::CreateInteger(revision_base_token);
+				auto size = ObjectFactory::CreateInteger(size_token);
+
+				XrefSubsectionPtr subsection(revision_base->Value(), size->Value());
+				for (int i = 0; i < size->Value(); ++i) {
+					auto entry = ReadTableEntry(SafeAddition(revision_base->Value(), i));
+					subsection->Add(entry);
+				}
+
+				subsection->SetFile(_file);
+				table->Add(subsection);
+			}
+
+			ReadTokenWithTypeSkip(Token::Type::TRAILER);
+			auto trailer_dictionary = ReadDirectObjectWithType<DictionaryObjectPtr>();
+
+			table->SetTrailerDictionary(trailer_dictionary);
+			table->SetFile(_file);
+			return table;
+		}
+
+		XrefStreamPtr Parser::ReadXrefStream()
+		{
+			XrefStreamPtr result;
+
+			auto indirect = ReadIndirectObject();
+			auto stream = ObjectUtils::ConvertTo<StreamObjectPtr>(indirect);
+
+			// Get stream object data
+			auto header = stream->GetHeader();
+
+			auto fields = header->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::W);
+			auto size = header->FindAs<IntegerObjectPtr>(constant::Name::Size);
+
+			assert(fields->Size() == 3);
+			ArrayObjectPtr<IntegerObjectPtr> index = { IntegerObjectPtr(0), size };
+			if (header->Contains(constant::Name::Index)) {
+				index = header->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::Index);
+			}
+
+			auto index_size = index->Size();
+			assert(index_size % 2 == 0);
+
+			auto body = stream->GetBodyDecoded();
+
+			auto field1_size = fields->At(0);
+			auto field2_size = fields->At(1);
+			auto field3_size = fields->At(2);
+
+			// Iterate over entries
+			auto it = body.begin();
+			for (unsigned int i = 0; i < index_size; i += 2) {
+
+				auto subsection_index = index->At(i);
+				auto subsection_size = index->At(i + 1);
+
+				XrefSubsectionPtr subsection(subsection_index->Value(), subsection_size->Value());
+				for (auto idx = 0; idx < *subsection_size; idx++) {
+
+					IntegerObject field1;
+					for (int j = 0; j < *field1_size; ++j) {
+						field1 = (field1 << 8) + (*it & 0xff);
+						it++;
+					}
+
+					assert(field1 == 0 || field1 == 1 || field1 == 2);
+
+					IntegerObject field2;
+					for (int j = 0; j < *field2_size; ++j) {
+						field2 = (field2 << 8) + (*it & 0xff);
+						it++;
+					}
+
+					IntegerObject field3;
+					for (int j = 0; j < *field3_size; ++j) {
+						field3 = (field3 << 8) + (*it & 0xff);
+						it++;
+					}
+
+					switch (field1) {
+					case 0:
+					{
+						XrefFreeEntryPtr entry(*subsection_index + idx, field3.SafeConvert<types::ushort>(), field2);
+						entry->SetFile(_file);
+						subsection->Add(entry);
+						break;
+					}
+					case 1:
+					{
+						XrefUsedEntryPtr entry(*subsection_index + idx, field3.SafeConvert<types::ushort>(), field2);
+						entry->SetFile(_file);
+						subsection->Add(entry);
+						break;
+					}
+					case 2:
+					{
+						XrefCompressedEntryPtr entry(*subsection_index + idx, static_cast<types::ushort>(0), field2, field3);
+						entry->SetFile(_file);
+						subsection->Add(entry);
+						break;
+					}
+					default:
+						LOG_ERROR << "Unrecognized data found in xref stream data";
+						break;
+					}
+				}
+
+				subsection->SetFile(_file);
+				result->Add(subsection);
+			}
+
+			result->SetFile(_file);
+			result->SetTrailerDictionary(header);
+			return result;
+		}
+
+		XrefBasePtr Parser::ReadXref(void)
+		{
+			if (PeekTokenTypeSkip() == Token::Type::XREF_MARKER) {
+				return ReadXrefTable();
+			}
+
+			return ReadXrefStream();
+		}
+
+		XrefBasePtr Parser::ReadXref(types::stream_offset offset)
+		{
+			seekg(offset, ios_base::beg);
+			return ReadXref();
+		}
+
+#pragma endregion
 	}
 }
