@@ -3,10 +3,7 @@
 
 #include "syntax_fwd.h"
 #include "parser_interface.h"
-#include "xref.h"
 #include "raw_stream.h"
-#include "object_stream_header.h"
-#include "content_stream_operation_generic.h"
 
 #include <vector>
 #include <memory>
@@ -36,7 +33,7 @@ namespace gotchangpdf
 			}
 
 			virtual std::vector<ObjectPtr> ReadObjectStreamEntries(types::integer first, types::integer size) override;
-			contents::GenericOperationCollection ReadContentStreamOperations(void);
+			std::vector<contents::OperationGenericPtr> ReadContentStreamOperations(void);
 
 			virtual XrefBasePtr ReadXref(void) override;
 			virtual XrefBasePtr ReadXref(types::stream_offset offset) override;
