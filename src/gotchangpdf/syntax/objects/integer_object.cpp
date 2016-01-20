@@ -15,16 +15,22 @@ namespace gotchangpdf
 			_value = gotchangpdf::SafeConvert<value_type>(value.Value());
 		}
 
-		IntegerObject& IntegerObject::operator=(BufferPtr value)
-		{
-			_value = stoi(value->ToString());
-			return *this;
-		}
-
 		IntegerObject& IntegerObject::operator=(value_type value)
 		{
 			_value = value;
 			return *this;
+		}
+
+		IntegerObject SafeAddition(IntegerObject::value_type number, IntegerObject::value_type addend)
+		{
+			IntegerObject::value_type_doubled result = number + addend;
+			auto converted = gotchangpdf::SafeConvert<IntegerObject::value_type>(result);
+			return IntegerObject(converted);
+		}
+
+		IntegerObject SafeAddition(const IntegerObject& number, const IntegerObject& addend)
+		{
+			return SafeAddition(number.Value(), addend.Value());
 		}
 	}
 }

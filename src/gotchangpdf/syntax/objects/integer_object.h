@@ -19,16 +19,13 @@ namespace gotchangpdf
 			IntegerObject() = default;
 			explicit IntegerObject(value_type value);
 			explicit IntegerObject(const RealObject& value);
-
-			value_type Value(void) const _NOEXCEPT { return _value; }
+			IntegerObject& operator= (value_type value);
 
 			template <typename T>
 			T SafeConvert(void) const { return gotchangpdf::SafeConvert<T>(_value); }
 
 			operator value_type() const _NOEXCEPT { return _value; }
-
-			IntegerObject& operator= (value_type value);
-			IntegerObject& operator= (BufferPtr value);
+			value_type Value(void) const _NOEXCEPT { return _value; }
 
 			virtual Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Integer; }
 
@@ -43,16 +40,8 @@ namespace gotchangpdf
 			value_type _value = 0;
 		};
 
-		IntegerObject SafeAddition(IntegerObject::value_type number, IntegerObject::value_type addend) {
-
-			IntegerObject::value_type_doubled result = number + addend;
-			auto converted = gotchangpdf::SafeConvert<IntegerObject::value_type>(result);
-			return IntegerObject(converted);
-		}
-
-		IntegerObject SafeAddition(const IntegerObject& number, const IntegerObject& addend) {
-			return SafeAddition(number.Value(), addend.Value());
-		}
+		IntegerObject SafeAddition(IntegerObject::value_type number, IntegerObject::value_type addend);
+		IntegerObject SafeAddition(const IntegerObject& number, const IntegerObject& addend);
 	}
 }
 
