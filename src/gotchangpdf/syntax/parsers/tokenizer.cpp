@@ -315,8 +315,6 @@ namespace gotchangpdf
 			_last_token_offset = pos;
 
 			seekg(_last_token_offset);
-			assert(good());
-
 			return *_last_token;
 		}
 
