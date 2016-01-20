@@ -125,8 +125,8 @@ namespace gotchangpdf
 		{
 			class InstructionBase; using InstructionBasePtr = Deferred<InstructionBase>;
 
-			class OperationBase;
-			class OperationGeneric;
+			class OperationBase; using OperationBasePtr = Deferred<OperationBase>;
+			class OperationGeneric; using OperationGenericPtr = Deferred<OperationGeneric>;
 
 			class OperatorBase;
 			class UnknownOperator;
