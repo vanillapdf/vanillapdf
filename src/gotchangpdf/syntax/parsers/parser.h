@@ -42,7 +42,7 @@ namespace gotchangpdf
 			ObjectPtr PeekDirectObject(void);
 
 			virtual std::vector<ObjectPtr> ReadObjectStreamEntries(types::integer first, types::integer size) override;
-			//contents::GenericOperationCollection ReadContentStreamOperations(void) = 0;
+			std::vector<contents::OperationGenericPtr> ReadContentStreamOperations(void);
 
 		private:
 			std::weak_ptr<File> _file;
@@ -57,6 +57,24 @@ namespace gotchangpdf
 			XrefEntryBasePtr ReadTableEntry(types::integer objNumber);
 			XrefTablePtr ReadXrefTable();
 			XrefStreamPtr ReadXrefStream();
+
+			BooleanObjectPtr ReadFalse();
+			BooleanObjectPtr ReadTrue();
+			IntegerObjectPtr ReadInteger();
+			ObjectPtr ReadIntegerReference();
+			RealObjectPtr ReadReal();
+			NullObjectPtr ReadNull();
+			DictionaryObjectPtr ReadDictionary();
+			ObjectPtr ReadDictionaryStream();
+			MixedArrayObjectPtr ReadArray();
+			NameObjectPtr ReadName();
+			LiteralStringObjectPtr ReadLiteralString();
+			HexadecimalStringObjectPtr ReadHexadecimalString();
+
+			contents::OperationGenericPtr ReadContentStreamOperation(void);
+			bool IsOperand(Token::Type type);
+			ObjectPtr ReadOperand();
+			contents::OperatorBasePtr ReadOperator();
 		};
 	}
 }

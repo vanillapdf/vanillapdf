@@ -4,6 +4,7 @@
 #include "token.h"
 #include "file.h"
 #include "character.h"
+#include "content_stream_operation_generic.h"
 
 namespace gotchangpdf
 {
@@ -89,6 +90,157 @@ namespace gotchangpdf
 			}
 		};
 
+		IntegerObjectPtr Parser::ReadInteger()
+		{
+			auto token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
+			auto result = ObjectFactory::CreateInteger(token);
+			result->SetFile(_file);
+			return result;
+		}
+
+		ObjectPtr Parser::ReadIntegerReference()
+		{
+			auto integer = ReadInteger();
+
+			auto pos = tellg();
+			if (PeekTokenTypeSkip() == Token::Type::INTEGER_OBJECT) {
+				auto ahead = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
+				auto gen_number = ObjectFactory::CreateInteger(ahead);
+
+				if (PeekTokenTypeSkip() == Token::Type::INDIRECT_REFERENCE_MARKER) {
+					auto reference_marker = ReadTokenWithTypeSkip(Token::Type::INDIRECT_REFERENCE_MARKER);
+					IndirectObjectReferencePtr result(integer->Value(), gen_number->SafeConvert<types::ushort>());
+					result->SetFile(_file);
+					return result;
+				}
+
+				// TODO we can peek only one next token, therefore we need to seek back
+				seekg(pos);
+			}
+
+			return integer;
+		}
+
+		RealObjectPtr Parser::ReadReal()
+		{
+			auto token = ReadTokenWithTypeSkip(Token::Type::REAL_OBJECT);
+			auto result = ObjectFactory::CreateReal(token);
+			result->SetFile(_file);
+			return result;
+		}
+
+		NullObjectPtr Parser::ReadNull()
+		{
+			ReadTokenWithTypeSkip(Token::Type::NULL_OBJECT);
+			auto result = NullObject::GetInstance();
+			result->SetFile(_file);
+			return result;
+		}
+
+		DictionaryObjectPtr Parser::ReadDictionary()
+		{
+			DictionaryObjectPtr dictionary;
+			ReadTokenWithTypeSkip(Token::Type::DICTIONARY_BEGIN);
+			while (PeekTokenTypeSkip() != Token::Type::DICTIONARY_END)
+			{
+				auto name = ReadDirectObjectWithType<NameObjectPtr>();
+				auto val = ReadDirectObject();
+
+				if (val->GetType() == Object::Type::Null)
+					continue;
+
+				auto containable_ptr = dynamic_cast<ContainableObject*>(val.Content.get());
+				if (nullptr == containable_ptr)
+					throw GeneralException("Could not convert parsed object to containable: " + val->ToString());
+
+				dictionary->_list[name] = ContainableObjectPtr(containable_ptr);
+			}
+
+			ReadTokenWithTypeSkip(Token::Type::DICTIONARY_END);
+			dictionary->SetFile(_file);
+			return dictionary;
+		}
+
+		ObjectPtr Parser::ReadDictionaryStream()
+		{
+			auto dictionary = ReadDictionary();
+			if (PeekTokenTypeSkip() == Token::Type::STREAM_BEGIN)
+			{
+				ReadTokenWithTypeSkip(Token::Type::STREAM_BEGIN);
+				ReadTokenWithTypeSkip(Token::Type::EOL);
+				auto stream_offset = tellg();
+				auto length = dictionary->FindAs<IntegerObjectPtr>(constant::Name::Length);
+				seekg(length->Value(), ios_base::cur);
+				ReadTokenWithTypeSkip(Token::Type::STREAM_END);
+
+				auto result = StreamObjectPtr(dictionary, stream_offset);
+				result->SetFile(_file);
+				result->GetHeader()->SetFile(_file);
+				return result;
+			}
+
+			return dictionary;
+		}
+
+		MixedArrayObjectPtr Parser::ReadArray()
+		{
+			MixedArrayObjectPtr result;
+			ReadTokenWithTypeSkip(Token::Type::ARRAY_BEGIN);
+			while (PeekTokenTypeSkip() != Token::Type::ARRAY_END)
+			{
+				auto val = ReadDirectObject();
+				auto containable_ptr = dynamic_cast<ContainableObject*>(val.Content.get());
+				if (nullptr == containable_ptr)
+					throw GeneralException("Could not convert parsed object to containable: " + val->ToString());
+
+				result->push_back(containable_ptr);
+			}
+
+			ReadTokenWithTypeSkip(Token::Type::ARRAY_END);
+			result->SetFile(_file);
+			return result;
+		}
+
+		NameObjectPtr Parser::ReadName()
+		{
+			auto token = ReadTokenWithTypeSkip(Token::Type::NAME_OBJECT);
+			auto result = ObjectFactory::CreateName(token);
+			result->SetFile(_file);
+			return result;
+		}
+
+		LiteralStringObjectPtr Parser::ReadLiteralString()
+		{
+			auto token = ReadTokenWithTypeSkip(Token::Type::LITERAL_STRING);
+			auto result = ObjectFactory::CreateLitString(token);
+			result->SetFile(_file);
+			return result;
+		}
+
+		HexadecimalStringObjectPtr Parser::ReadHexadecimalString()
+		{
+			auto token = ReadTokenWithTypeSkip(Token::Type::HEXADECIMAL_STRING);
+			auto result = ObjectFactory::CreateHexString(token);
+			result->SetFile(_file);
+			return result;
+		}
+
+		BooleanObjectPtr Parser::ReadTrue()
+		{
+			auto token = ReadTokenWithTypeSkip(Token::Type::TRUE_VALUE);
+			auto result = ObjectFactory::CreateBoolean(token);
+			result->SetFile(_file);
+			return result;
+		}
+
+		BooleanObjectPtr Parser::ReadFalse()
+		{
+			auto token = ReadTokenWithTypeSkip(Token::Type::FALSE_VALUE);
+			auto result = ObjectFactory::CreateBoolean(token);
+			result->SetFile(_file);
+			return result;
+		}
+
 		ObjectPtr Parser::ReadIndirectObject(void)
 		{
 			auto offset = tellg();
@@ -122,141 +274,28 @@ namespace gotchangpdf
 		ObjectPtr Parser::ReadDirectObject()
 		{
 			auto offset = tellg();
-
 			switch (PeekTokenTypeSkip())
 			{
 			case Token::Type::DICTIONARY_BEGIN:
-			{
-				DictionaryObject dictionary;
-				ReadTokenWithTypeSkip(Token::Type::DICTIONARY_BEGIN);
-				while (PeekTokenTypeSkip() != Token::Type::DICTIONARY_END)
-				{
-					auto name = ReadDirectObjectWithType<NameObjectPtr>();
-					auto val = ReadDirectObject();
-
-					if (val->GetType() == Object::Type::Null)
-						continue;
-
-					auto containable_ptr = dynamic_cast<ContainableObject*>(val.Content.get());
-					if (nullptr == containable_ptr)
-						throw GeneralException("Could not convert parsed object to containable: " + val->ToString());
-
-					dictionary._list[name] = ContainableObjectPtr(containable_ptr);
-				}
-
-				ReadTokenWithTypeSkip(Token::Type::DICTIONARY_END);
-
-				if (PeekTokenTypeSkip() == Token::Type::STREAM_BEGIN)
-				{
-					ReadTokenWithTypeSkip(Token::Type::STREAM_BEGIN);
-					ReadTokenWithTypeSkip(Token::Type::EOL);
-					auto stream_offset = tellg();
-					auto length = dictionary.FindAs<IntegerObjectPtr>(constant::Name::Length);
-					seekg(length->Value(), ios_base::cur);
-					ReadTokenWithTypeSkip(Token::Type::STREAM_END);
-
-					auto result = StreamObjectPtr(dictionary, stream_offset);
-					result->SetFile(_file);
-					result->GetHeader()->SetFile(_file);
-					return result;
-				}
-
-				dictionary.SetFile(_file);
-				return DictionaryObjectPtr(dictionary);
-			}
+				return ReadDictionaryStream();
 			case Token::Type::INTEGER_OBJECT:
-			{
-				auto token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
-
-				auto pos = tellg();
-				if (PeekTokenTypeSkip() == Token::Type::INTEGER_OBJECT)
-				{
-					auto ahead = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
-					auto obj_number = ObjectFactory::CreateInteger(token);
-					auto gen_number = ObjectFactory::CreateInteger(ahead);
-
-					if (PeekTokenTypeSkip() == Token::Type::INDIRECT_REFERENCE_MARKER) {
-						auto reference_marker = ReadTokenWithTypeSkip(Token::Type::INDIRECT_REFERENCE_MARKER);
-						IndirectObjectReferencePtr result(obj_number->Value(), gen_number->SafeConvert<types::ushort>());
-						result->SetFile(_file);
-						return result;
-					}
-				}
-
-				// TODO we can peek only one next token, therefore we need to seek back
-				seekg(pos);
-
-				auto result = ObjectFactory::CreateInteger(token);
-				result->SetFile(_file);
-				return result;
-			}
+				return ReadIntegerReference();
 			case Token::Type::ARRAY_BEGIN:
-			{
-				MixedArrayObjectPtr result;
-				ReadTokenWithTypeSkip(Token::Type::ARRAY_BEGIN);
-				while (PeekTokenTypeSkip() != Token::Type::ARRAY_END)
-				{
-					auto val = ReadDirectObject();
-					auto containable_ptr = dynamic_cast<ContainableObject*>(val.Content.get());
-					if (nullptr == containable_ptr)
-						throw GeneralException("Could not convert parsed object to containable: " + val->ToString());
-
-					result->push_back(containable_ptr);
-				}
-
-				ReadTokenWithTypeSkip(Token::Type::ARRAY_END);
-				result->SetFile(_file);
-				return result;
-			}
+				return ReadArray();
 			case Token::Type::NAME_OBJECT:
-			{
-				auto token = ReadTokenWithTypeSkip(Token::Type::NAME_OBJECT);
-				auto result = ObjectFactory::CreateName(token);
-				result->SetFile(_file);
-				return result;
-			}
+				return ReadName();
 			case Token::Type::HEXADECIMAL_STRING:
-			{
-				auto token = ReadTokenWithTypeSkip(Token::Type::HEXADECIMAL_STRING);
-				auto result = ObjectFactory::CreateHexString(token);
-				result->SetFile(_file);
-				return result;
-			}
+				return ReadHexadecimalString();
 			case Token::Type::LITERAL_STRING:
-			{
-				auto token = ReadTokenWithTypeSkip(Token::Type::LITERAL_STRING);
-				auto result = ObjectFactory::CreateLitString(token);
-				result->SetFile(_file);
-				return result;
-			}
+				return ReadLiteralString();
 			case Token::Type::REAL_OBJECT:
-			{
-				auto token = ReadTokenWithTypeSkip(Token::Type::REAL_OBJECT);
-				auto result = ObjectFactory::CreateReal(token);
-				result->SetFile(_file);
-				return result;
-			}
+				return ReadReal();
 			case Token::Type::TRUE_VALUE:
-			{
-				auto token = ReadTokenWithTypeSkip(Token::Type::TRUE_VALUE);
-				auto result = ObjectFactory::CreateBoolean(token);
-				result->SetFile(_file);
-				return result;
-			}
+				return ReadTrue();
 			case Token::Type::FALSE_VALUE:
-			{
-				auto token = ReadTokenWithTypeSkip(Token::Type::FALSE_VALUE);
-				auto result = ObjectFactory::CreateBoolean(token);
-				result->SetFile(_file);
-				return result;
-			}
+				return ReadFalse();
 			case Token::Type::NULL_OBJECT:
-			{
-				ReadTokenWithTypeSkip(Token::Type::NULL_OBJECT);
-				auto result = NullObject::GetInstance();
-				result->SetFile(_file);
-				return result;
-			}
+				return ReadNull();
 			default:
 				throw GeneralException("No valid object could be found at offset " + std::to_string(offset));
 			}
@@ -337,10 +376,21 @@ namespace gotchangpdf
 		TokenPtr Parser::PeekTokenSkip()
 		{
 			auto position = tellg();
-			auto obj = ReadTokenSkip();
-			seekg(position);
+			bool rewind = false;
+			for (;;) {
+				auto token = PeekToken();
+				if (token->GetType() == Token::Type::EOL) {
+					ReadToken();
+					rewind = true;
+					continue;
+				}
 
-			return obj;
+				if (rewind) {
+					seekg(position);
+				}
+
+				return token;
+			}
 		}
 
 		Token::Type Parser::PeekTokenTypeSkip()
@@ -539,5 +589,96 @@ namespace gotchangpdf
 		}
 
 #pragma endregion
+
+
+#pragma region Content streams
+
+		contents::GenericOperationCollection Parser::ReadContentStreamOperations(void)
+		{
+			contents::GenericOperationCollection result;
+			while (PeekTokenTypeSkip() != Token::Type::END_OF_FILE && !eof()) {
+				auto operation = ReadContentStreamOperation();
+				result.push_back(operation);
+			}
+
+			return result;
+		}
+
+		contents::OperationGenericPtr Parser::ReadContentStreamOperation(void)
+		{
+			contents::OperationGenericPtr result;
+
+			std::vector<ObjectPtr> operands;
+			while (IsOperand(PeekTokenTypeSkip())) {
+				auto operand = ReadOperand();
+				operands.push_back(operand);
+			}
+
+			auto oper = ReadOperator();
+			return contents::OperationGenericPtr(operands, oper);
+		}
+
+		contents::OperatorBasePtr Parser::ReadOperator()
+		{
+			switch (PeekTokenTypeSkip())
+			{
+			default:
+				ReadTokenSkip();
+				return contents::OperatorBasePtr();
+			}
+		}
+
+		bool Parser::IsOperand(Token::Type type)
+		{
+			switch (type)
+			{
+			case Token::Type::DICTIONARY_BEGIN:
+			case Token::Type::INTEGER_OBJECT:
+			case Token::Type::ARRAY_BEGIN:
+			case Token::Type::NAME_OBJECT:
+			case Token::Type::HEXADECIMAL_STRING:
+			case Token::Type::LITERAL_STRING:
+			case Token::Type::REAL_OBJECT:
+			case Token::Type::TRUE_VALUE:
+			case Token::Type::FALSE_VALUE:
+			case Token::Type::NULL_OBJECT:
+				return true;
+			}
+
+			return false;
+		}
+
+		ObjectPtr Parser::ReadOperand()
+		{
+			auto offset = tellg();
+			switch (PeekTokenTypeSkip())
+			{
+			case Token::Type::DICTIONARY_BEGIN:
+				return ReadDictionary();
+			case Token::Type::INTEGER_OBJECT:
+				return ReadInteger();
+			case Token::Type::ARRAY_BEGIN:
+				return ReadArray();
+			case Token::Type::NAME_OBJECT:
+				return ReadName();
+			case Token::Type::HEXADECIMAL_STRING:
+				return ReadHexadecimalString();
+			case Token::Type::LITERAL_STRING:
+				return ReadLiteralString();
+			case Token::Type::REAL_OBJECT:
+				return ReadReal();
+			case Token::Type::TRUE_VALUE:
+				return ReadTrue();
+			case Token::Type::FALSE_VALUE:
+				return ReadFalse();
+			case Token::Type::NULL_OBJECT:
+				return ReadNull();
+			default:
+				throw GeneralException("No valid object could be found at offset " + std::to_string(offset));
+			}
+		}
+
+#pragma endregion
+
 	}
 }
