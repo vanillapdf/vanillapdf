@@ -3,10 +3,7 @@
 
 #include "file.h"
 #include "xref_chain.h"
-#include "spirit_parser.h"
 #include "parser.h"
-
-#include <boost/scope_exit.hpp>
 
 namespace gotchangpdf
 {
@@ -23,10 +20,7 @@ namespace gotchangpdf
 
 			auto input = locked_file->GetInputStream();
 			auto rewind_pos = input->tellg();
-			BOOST_SCOPE_EXIT(input, rewind_pos)
-			{
-				input->seekg(rewind_pos);
-			} BOOST_SCOPE_EXIT_END;
+			SCOPE_GUARD_CAPTURE_REFERENCES(input->seekg(rewind_pos));
 			auto parser = Parser(_file, *input);
 			auto object = parser.ReadIndirectObject(_offset);
 			SetReference(object);
@@ -35,7 +29,7 @@ namespace gotchangpdf
 
 		void XrefCompressedEntry::Initialize(void)
 		{
-			if (Initialized())
+			if (_initialized)
 				return;
 
 			auto locked_file = _file.lock();
@@ -68,7 +62,7 @@ namespace gotchangpdf
 				stream_compressed_entry_xref->SetInitialized(true);
 			}
 
-			assert(Initialized());
+			assert(_initialized);
 		}
 	}
 }
