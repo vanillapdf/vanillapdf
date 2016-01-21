@@ -3,6 +3,8 @@
 
 #include "raw_reverse_stream.h"
 #include "spirit_parser.h"
+#include "parser.h"
+#include "reverse_parser.h"
 #include "exception.h"
 
 #include "xref_chain.h"
@@ -69,7 +71,7 @@ namespace gotchangpdf
 				throw GeneralException("Could not open file");
 
 			auto file_size = _input->tellg();
-			SpiritParser stream = SpiritParser(shared_from_this(), *_input);
+			auto stream = Parser(shared_from_this(), *_input);
 
 			stream.seekg(ios_base::beg);
 			stream >> *_header;
@@ -77,7 +79,7 @@ namespace gotchangpdf
 			types::integer offset;
 			{
 				ReverseStream raw_reversed(*_input, file_size);
-				SpiritParser reverse_stream = SpiritParser(shared_from_this(), raw_reversed);
+				auto reverse_stream = ReverseParser(raw_reversed);
 				offset = reverse_stream.ReadLastXrefOffset();
 			}
 

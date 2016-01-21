@@ -1,6 +1,7 @@
 #include "precompiled.h"
 #include "content_stream.h"
 
+#include "parser.h"
 #include "spirit_parser.h"
 
 namespace gotchangpdf
@@ -16,7 +17,7 @@ namespace gotchangpdf
 
 			auto body = _obj->GetBodyDecoded();
 			auto strm = body->ToStringStream();
-			auto parser = syntax::SpiritParser(_obj->GetFile(), strm);
+			auto parser = syntax::Parser(_obj->GetFile(), strm);
 			_operations = parser.ReadContentStreamOperations();
 			return _operations;
 		}
