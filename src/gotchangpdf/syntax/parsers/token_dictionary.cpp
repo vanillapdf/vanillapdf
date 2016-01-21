@@ -22,11 +22,14 @@ namespace gotchangpdf
 		static const char INDIRECT_OBJECT_END[] = "endobj";
 		static const char XREF_MARKER[] = "xref";
 		static const char START_XREF[] = "startxref";
-		static const char END_OF_FILE_MARKER[] = "%%EOF";
 		static const char TRAILER[] = "trailer";
 		static const char NULL_OBJECT[] = "null";
 		static const char TRUE_VALUE[] = "true";
 		static const char FALSE_VALUE[] = "false";
+
+		// reverse tokens
+		static const char REVERSE_END_OF_FILE_MARKER[] = "FOE%%";
+		static const char REVERSE_START_XREF[] = "ferxtrats";
 
 		// content streams
 		static const char LINE_WIDTH[] = "w";
@@ -122,11 +125,14 @@ namespace gotchangpdf
 			INSERT_TO_DICTIONARY(INDIRECT_OBJECT_END);
 			INSERT_TO_DICTIONARY(XREF_MARKER);
 			INSERT_TO_DICTIONARY(START_XREF);
-			INSERT_TO_DICTIONARY(END_OF_FILE_MARKER);
 			INSERT_TO_DICTIONARY(TRAILER);
 			INSERT_TO_DICTIONARY(NULL_OBJECT);
 			INSERT_TO_DICTIONARY(TRUE_VALUE);
 			INSERT_TO_DICTIONARY(FALSE_VALUE);
+
+			// reverse tokens
+			INSERT_TO_DICTIONARY(REVERSE_END_OF_FILE_MARKER);
+			INSERT_TO_DICTIONARY(REVERSE_START_XREF);
 
 			// content streams
 			INSERT_TO_DICTIONARY(LINE_WIDTH);

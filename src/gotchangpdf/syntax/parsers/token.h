@@ -31,12 +31,17 @@ namespace gotchangpdf
 				INDIRECT_OBJECT_END,
 				XREF_MARKER,
 				START_XREF,
-				END_OF_FILE_MARKER,
 				TRAILER,
 				NULL_OBJECT,
 				TRUE_VALUE,
 				FALSE_VALUE,
 				END_OF_INPUT,
+
+				// reverse tokens
+				REVERSE_EOL,
+				REVERSE_INTEGER_OBJECT,
+				REVERSE_END_OF_FILE_MARKER,
+				REVERSE_START_XREF,
 
 				// content streams
 				LINE_WIDTH,
