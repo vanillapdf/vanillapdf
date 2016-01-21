@@ -7,28 +7,23 @@ namespace gotchangpdf
 	{
 		void Tree::Insert(BufferPtr path, Token::Type type)
 		{
-			if (nullptr == _root)
-				_root = new Node();
-
-			Node **cur = &_root;
+			auto cur = _root;
 			int len = path->size();
-			for (int i = 0; i < len; ++i)
-			{
-				cur = &(*cur)->childs[path->at(i)];
-				if (nullptr == *cur)
-				{
-					*cur = new Node();
-					(*cur)->value = path->at(i);
+			for (int i = 0; i < len; ++i) {
+				if (!cur->childs[path->at(i)]) {
+					cur->childs[path->at(i)] = std::make_shared<Node>(path->at(i));
 				}
+
+				cur = cur->childs[path->at(i)];
 			}
 
-			(*cur)->type = type;
+			cur->type = type;
 		}
 
 		bool Tree::PathExists(BufferPtr path)
 		{
-			Node *found = NodeAtPath(path);
-			if (nullptr == found)
+			auto found = NodeAtPath(path);
+			if (!found)
 				return false;
 
 			return true;
@@ -36,25 +31,22 @@ namespace gotchangpdf
 
 		Token::Type Tree::TokenType(BufferPtr path)
 		{
-			Node *found = NodeAtPath(path);
-			if (nullptr == found)
+			auto found = NodeAtPath(path);
+			if (!found)
 				return Token::Type::UNKNOWN;
 
 			return found->type;
 		}
 
-		Tree::Node* Tree::NodeAtPath(BufferPtr path)
+		std::shared_ptr<Tree::Node> Tree::NodeAtPath(BufferPtr path)
 		{
-			if (nullptr == _root)
-				return nullptr;
-
-			Node *cur = _root;
-			int len = path->size();
-			for (int i = 0; i < len; ++i)
-			{
+			auto cur = _root;
+			auto len = path->size();
+			for (decltype(len) i = 0; i < len; ++i) {
 				cur = cur->childs[path->at(i)];
-				if (nullptr == cur)
-					return nullptr;
+				if (!cur) {
+					return std::shared_ptr<Tree::Node>();
+				}
 			}
 
 			return cur;

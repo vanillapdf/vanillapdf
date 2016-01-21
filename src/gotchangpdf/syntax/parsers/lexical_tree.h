@@ -1,7 +1,6 @@
 #ifndef _LEXICAL_TREE_H
 #define _LEXICAL_TREE_H
 
-#include "buffer.h"
 #include "token.h"
 
 namespace gotchangpdf
@@ -13,23 +12,20 @@ namespace gotchangpdf
 		public:
 			bool PathExists(BufferPtr path);
 			Token::Type TokenType(BufferPtr path);
-
 			void Insert(BufferPtr path, Token::Type type);
-
-			// TODO later
-			//void Delete(const char *path, int len);
 
 		private:
 			struct Node
 			{
-				unsigned char value;
-				Token::Type type;
-				Node *childs[255];
+				Node() = default;
+				Node(unsigned char val) : value(val) {}
+				unsigned char value = 0;
+				Token::Type type = Token::Type::UNKNOWN;
+				std::shared_ptr<Node> childs[std::numeric_limits<decltype(value)>::max()];
 			};
 
-			Node* _root;
-
-			Node* NodeAtPath(BufferPtr path);
+			std::shared_ptr<Node> _root = std::make_shared<Node>();
+			std::shared_ptr<Node> NodeAtPath(BufferPtr path);
 		};
 	}
 }
