@@ -42,7 +42,7 @@ namespace gotchangpdf
 			ObjectPtr PeekDirectObject(void);
 
 			virtual std::vector<ObjectPtr> ReadObjectStreamEntries(types::integer first, types::integer size) override;
-			std::vector<contents::OperationGenericPtr> ReadContentStreamOperations(void);
+			virtual std::vector<contents::OperationGenericPtr> ReadContentStreamOperations(void) override;
 
 		private:
 			std::weak_ptr<File> _file;

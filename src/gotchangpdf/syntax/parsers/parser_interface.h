@@ -19,10 +19,9 @@ namespace gotchangpdf
 
 			virtual ObjectPtr ReadDirectObject(void) = 0;
 			virtual ObjectPtr ReadDirectObject(types::stream_offset offset) = 0;
-			//virtual ObjectPtr PeekDirectObject(void) = 0;
 
 			virtual std::vector<ObjectPtr> ReadObjectStreamEntries(types::integer first, types::integer size) = 0;
-			//contents::GenericOperationCollection ReadContentStreamOperations(void) = 0;
+			virtual std::vector<contents::OperationGenericPtr> ReadContentStreamOperations(void) = 0;
 
 			virtual ~IParser() {}
 		};
