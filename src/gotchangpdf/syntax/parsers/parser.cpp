@@ -753,6 +753,7 @@ namespace gotchangpdf
 			case Token::Type::BEGIN_INLINE_IMAGE_OBJECT:
 				return contents::BeginInlineImageObjectOperatorPtr();
 			case Token::Type::BEGIN_INLINE_IMAGE_DATA:
+				throw NotSupportedException("Begin inline image data operator is not yet supported");
 				return contents::BeginInlineImageDataOperatorPtr();
 			case Token::Type::END_INLINE_IMAGE_OBJECT:
 				return contents::EndInlineImageObjectOperatorPtr();
