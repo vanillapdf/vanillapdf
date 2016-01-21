@@ -68,10 +68,10 @@ namespace gotchangpdf
 
 					// Construct the collection
 					BaseOperationCollection text_object_data(it, last);
+					// iterators are inserted [it, last) meaning, ET is not inserted
 
-					// Erase Begin and End of Text Object, because they are not part of object
+					// Erase Begin of Text Object, because it is not part of object
 					text_object_data.erase(text_object_data.begin());
-					text_object_data.pop_back();
 
 					TextObjectPtr text_object(text_object_data);
 					result.push_back(text_object);
