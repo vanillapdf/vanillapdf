@@ -19,24 +19,23 @@ namespace gotchangpdf
 
 		Tokenizer::Tokenizer(CharacterSource & stream)
 			: Stream(stream),
-			_last_token_offset(_BADOFF) {}
+			_last_token_offset(_BADOFF),
+			_advance_position(_BADOFF) {}
 
 		Tokenizer::Tokenizer(const Tokenizer &other) : Stream(other) {}
 
 		TokenPtr Tokenizer::ReadToken()
 		{
-			if (_last_token_offset == tellg())
-			{
-				assert(_BADOFF != _advance_position);
+			auto current_offset = tellg();
+			if (_token_cached && _last_token_offset == current_offset) {
 				assert(_BADOFF != _last_token_offset);
 
 				auto result = _last_token;
 
 				seekg(_advance_position);
-				assert(good());
-
 				_last_token_offset = _BADOFF;
 				_advance_position = _BADOFF;
+				_token_cached = false;
 
 				return *result;
 			}
@@ -51,6 +50,11 @@ namespace gotchangpdf
 
 			switch (ch)
 			{
+			case WhiteSpace::SPACE:
+			case WhiteSpace::FORM_FEED:
+			case WhiteSpace::HORIZONTAL_TAB:
+			case WhiteSpace::NUL:
+				goto retry;
 			case EOF:
 				result_type = Token::Type::END_OF_INPUT;
 				goto prepared;
@@ -59,8 +63,6 @@ namespace gotchangpdf
 
 				result_type = Token::Type::EOL;
 				goto prepared;
-			case WhiteSpace::SPACE:
-				goto retry;
 			case WhiteSpace::CARRIAGE_RETURN:
 				chars->push_back(WhiteSpace::CARRIAGE_RETURN);
 				if (ahead == WhiteSpace::LINE_FEED && ignore()) {
@@ -88,29 +90,37 @@ namespace gotchangpdf
 					goto prepared;
 				}
 
-				if (IsNumeric(ahead) || IsAlpha(ahead)) {
-					for (;;) {
-						auto current_meta = get();
-						auto next_meta = peek();
-
-						assert(current_meta != EOF && next_meta != EOF);
-						if (current_meta == EOF || next_meta == EOF) {
-							break;
-						}
-
-						auto current = SafeConvert<unsigned char>(current_meta);
-						if (current == Delimiter::GREATER_THAN_SIGN) {
-							break;
-						}
-
-						chars->push_back(current);
-					}
+				// empty hexadecimal string
+				if (ahead == Delimiter::GREATER_THAN_SIGN && ignore()) {
 
 					result_type = Token::Type::HEXADECIMAL_STRING;
 					goto prepared;
 				}
 
-				throw GeneralException("Unexpected character at offset: " + std::to_string(tellg()));
+				for (;;) {
+					auto current_meta = get();
+					auto next_meta = peek();
+
+					assert(current_meta != EOF && next_meta != EOF);
+					if (current_meta == EOF || next_meta == EOF) {
+						break;
+					}
+
+					auto current = SafeConvert<unsigned char>(current_meta);
+					if (current == Delimiter::GREATER_THAN_SIGN) {
+						break;
+					}
+
+					if (IsNumeric(current) || IsAlpha(current)) {
+						chars->push_back(current);
+						continue;
+					}
+
+					throw GeneralException("Unexpected character in hexadecimal string " + std::to_string(current));
+				}
+
+				result_type = Token::Type::HEXADECIMAL_STRING;
+				goto prepared;
 			case Delimiter::LEFT_SQUARE_BRACKET:
 				chars->push_back(Delimiter::LEFT_SQUARE_BRACKET);
 				result_type = Token::Type::ARRAY_BEGIN;
@@ -152,6 +162,15 @@ namespace gotchangpdf
 
 					if (current == Delimiter::RIGHT_PARENTHESIS) {
 						break;
+					}
+
+					if (current == '\r') {
+						if (next == '\n') {
+							ignore();
+						}
+
+						chars->push_back(WhiteSpace::LINE_FEED);
+						continue;
 					}
 
 					if (current != '\\') {
@@ -254,12 +273,17 @@ namespace gotchangpdf
 				}
 
 				auto current = SafeConvert<unsigned char>(ch);
-				if (IsNumeric(current) || (current == '+') || (current == '-')) {
+				bool has_dot = (current == '.');
+				if (IsNumeric(current) || (current == '+') || (current == '-') || has_dot) {
 					chars->push_back(current);
-
 					while (IsNumeric(peek())) {
 						auto numeric = static_cast<char>(get());
 						chars->push_back(numeric);
+					}
+
+					if (has_dot) {
+						result_type = Token::Type::REAL_OBJECT;
+						goto prepared;
 					}
 
 					if (peek() == '.' && ignore()) {
@@ -299,20 +323,30 @@ namespace gotchangpdf
 		/* Peek need cache */
 		TokenPtr Tokenizer::PeekToken()
 		{
-			if (_last_token_offset == tellg())
-			{
+			auto current = tellg();
+			if (_token_cached && _last_token_offset == current) {
 				assert(_BADOFF != _advance_position);
 				assert(_BADOFF != _last_token_offset);
 
 				return *_last_token;
 			}
 
-			auto pos = tellg();
 			_last_token = ReadToken();
 			_advance_position = tellg();
-			_last_token_offset = pos;
+			_last_token_offset = current;
+			_token_cached = true;
+
+			if (_BADOFF == _advance_position && _BADOFF == _last_token_offset) {
+				assert(_last_token->GetType() == Token::Type::END_OF_INPUT);
+			}
+
+			if (_BADOFF == _advance_position && eof()) {
+				clear();
+			}
 
 			seekg(_last_token_offset);
+			assert(_last_token_offset == tellg());
+
 			return *_last_token;
 		}
 
