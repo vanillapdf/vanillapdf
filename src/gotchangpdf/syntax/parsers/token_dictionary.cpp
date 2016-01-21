@@ -9,13 +9,6 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		using namespace std;
-
-		bool TokenDictionary::_initialized = false;
-
-		//std::map<CharacterSet, Token::Type> TokenDictionary::_dictionary;
-		Tree TokenDictionary::_dictionary;
-
 		static const char STREAM_BEGIN[] = "stream";
 		static const char STREAM_END[] = "endstream";
 		static const char INDIRECT_OBJECT_BEGIN[] = "obj";

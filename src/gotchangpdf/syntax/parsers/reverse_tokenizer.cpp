@@ -18,11 +18,15 @@ namespace gotchangpdf
 		ReverseTokenizer::ReverseTokenizer(CharacterSource & stream)
 			: Stream(stream),
 			_last_token_offset(_BADOFF),
-			_advance_position(_BADOFF) {}
+			_advance_position(_BADOFF)
+		{
+			_dictionary.Initialize();
+		}
 
 		ReverseTokenizer::ReverseTokenizer(const ReverseTokenizer &other)
 			: Stream(other), _last_token_offset(other._last_token_offset),
-			_advance_position(other._advance_position) {}
+			_advance_position(other._advance_position),
+			_dictionary(other._dictionary) {}
 
 		TokenPtr ReverseTokenizer::ReadToken()
 		{
@@ -103,6 +107,9 @@ namespace gotchangpdf
 					chars->push_back(next); ignore();
 				}
 			}
+
+			assert(result_type == Token::Type::UNKNOWN);
+			result_type = _dictionary.Find(chars);
 
 		prepared:
 			return TokenPtr(result_type, chars);

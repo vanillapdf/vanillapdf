@@ -20,9 +20,15 @@ namespace gotchangpdf
 		Tokenizer::Tokenizer(CharacterSource & stream)
 			: Stream(stream),
 			_last_token_offset(_BADOFF),
-			_advance_position(_BADOFF) {}
+			_advance_position(_BADOFF)
+		{
+			_dictionary.Initialize();
+		}
 
-		Tokenizer::Tokenizer(const Tokenizer &other) : Stream(other) {}
+		Tokenizer::Tokenizer(const Tokenizer &other)
+			: Stream(other), _last_token_offset(other._last_token_offset),
+			_advance_position(other._advance_position),
+			_dictionary(other._dictionary) {}
 
 		TokenPtr Tokenizer::ReadToken()
 		{
@@ -315,6 +321,9 @@ namespace gotchangpdf
 					chars->push_back(next); ignore();
 				}
 			}
+
+			assert(result_type == Token::Type::UNKNOWN);
+			result_type = _dictionary.Find(chars);
 
 		prepared:
 			return TokenPtr(result_type, chars);

@@ -119,10 +119,7 @@ namespace gotchangpdf
 				END_COMPATIBILITY_SECTION
 			};
 
-			static Token::Type Evaluate(BufferPtr chars);
-
 			Token() = default;
-			explicit Token(BufferPtr chars);
 			explicit Token(Type type);
 			Token(Type type, BufferPtr chars);
 
