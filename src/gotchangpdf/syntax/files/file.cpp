@@ -2,7 +2,6 @@
 #include "file.h"
 
 #include "raw_reverse_stream.h"
-#include "spirit_parser.h"
 #include "parser.h"
 #include "reverse_parser.h"
 #include "exception.h"

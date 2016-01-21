@@ -2,7 +2,6 @@
 #include "content_stream.h"
 
 #include "parser.h"
-#include "spirit_parser.h"
 
 namespace gotchangpdf
 {
