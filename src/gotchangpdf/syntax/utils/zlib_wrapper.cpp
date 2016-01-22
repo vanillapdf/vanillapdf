@@ -1,0 +1,126 @@
+#include "precompiled.h"
+#include "zlib_wrapper.h"
+#include "zlib.h"
+
+#include <cassert>
+
+namespace gotchangpdf
+{
+	BufferPtr ZlibWrapper::Deflate(std::istream& input, types::stream_size length)
+	{
+		int rv = 0;
+		int flush = Z_NO_FLUSH;
+		z_stream strm = { 0 };
+		BufferPtr result;
+		std::vector<uint8_t> in_buffer(constant::BUFFER_SIZE);
+		std::vector<uint8_t> out_buffer(constant::BUFFER_SIZE);
+
+		/* allocate deflate state */
+		strm.zalloc = Z_NULL;
+		strm.zfree = Z_NULL;
+		strm.opaque = Z_NULL;
+		rv = deflateInit(&strm, Z_DEFAULT_COMPRESSION);
+		if (rv != Z_OK) {
+			throw GeneralException("Zlib initialization failed");
+		}
+
+		do {
+			input.read(reinterpret_cast<char *>(in_buffer.data()), std::min(length, static_cast<types::stream_size>(constant::BUFFER_SIZE)));
+			auto read = input.gcount();
+			if (read == 0)
+				break;
+
+			length -= read;
+			strm.avail_in = static_cast<uInt>(read);
+			strm.next_in = in_buffer.data();
+			flush = (strm.avail_in == 0) ? Z_FINISH : Z_NO_FLUSH;
+
+			/* run deflate() on input until output buffer not full, finish
+			compression if all of source has been read in */
+			do {
+				strm.avail_out = constant::BUFFER_SIZE;
+				strm.next_out = out_buffer.data();
+				rv = deflate(&strm, flush);
+				assert(rv != Z_STREAM_ERROR);
+				unsigned int have = constant::BUFFER_SIZE - strm.avail_out;
+				result->insert(result.end(), out_buffer.begin(), out_buffer.begin() + have);
+			} while (strm.avail_out == 0);
+			assert(strm.avail_in == 0);
+
+		/* done when last data in file processed */
+		} while (flush != Z_FINISH);
+		assert(rv == Z_STREAM_END);
+
+		/* clean up and return */
+		(void)deflateEnd(&strm);
+		return result;
+	}
+
+	BufferPtr ZlibWrapper::Inflate(std::istream& input, types::stream_size length)
+	{
+		int rv = 0;
+		z_stream strm = { 0 };
+		BufferPtr result;
+		std::vector<uint8_t> in_buffer(constant::BUFFER_SIZE);
+		std::vector<uint8_t> out_buffer(constant::BUFFER_SIZE);
+
+		/* allocate inflate state */
+		strm.zalloc = Z_NULL;
+		strm.zfree = Z_NULL;
+		strm.opaque = Z_NULL;
+		strm.avail_in = 0;
+		strm.next_in = Z_NULL;
+		rv = inflateInit(&strm);
+		if (rv != Z_OK) {
+			throw GeneralException("Zlib initialization failed");
+		}
+
+		/* decompress until deflate stream ends or end of file */
+		do {
+			input.read(reinterpret_cast<char *>(in_buffer.data()), std::min(length, static_cast<types::stream_size>(constant::BUFFER_SIZE)));
+			auto read = input.gcount();
+			if (read == 0)
+				break;
+
+			length -= read;
+			strm.avail_in = static_cast<uInt>(read);
+			strm.next_in = in_buffer.data();
+
+			/* run inflate() on input until output buffer not full */
+			do {
+				strm.avail_out = constant::BUFFER_SIZE;
+				strm.next_out = out_buffer.data();
+				rv = inflate(&strm, Z_NO_FLUSH);
+				assert(rv != Z_STREAM_ERROR);  /* state not clobbered */
+				switch (rv) {
+				case Z_NEED_DICT:
+					rv = Z_DATA_ERROR;     /* and fall through */
+				case Z_DATA_ERROR:
+				case Z_MEM_ERROR:
+					(void)inflateEnd(&strm);
+					throw GeneralException("Could not decompress data");
+				}
+				unsigned int have = constant::BUFFER_SIZE - strm.avail_out;
+				result->insert(result.end(), out_buffer.begin(), out_buffer.begin() + have);
+			} while (strm.avail_out == 0);
+
+			/* done when inflate() says it's done */
+		} while (rv != Z_STREAM_END);
+
+		/* clean up and return */
+		(void)inflateEnd(&strm);
+		return result;
+	}
+
+	BufferPtr ZlibWrapper::Deflate(const Buffer& input)
+	{
+		auto stream = input.ToStringStream();
+		return Deflate(stream, input.size());
+	}
+
+	BufferPtr ZlibWrapper::Inflate(const Buffer& input)
+	{
+		auto stream = input.ToStringStream();
+		return Inflate(stream, input.size());
+	}
+}
