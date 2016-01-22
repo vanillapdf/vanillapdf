@@ -13,14 +13,14 @@ namespace gotchangpdf
 {
 	namespace semantics
 	{
-		class OutlineItemColor : public HighLevelObject<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>>
+		class OutlineItemColor : public HighLevelObject<syntax::ArrayObjectPtr<syntax::RealObjectPtr>>
 		{
 		public:
-			explicit OutlineItemColor(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> rgb) : HighLevelObject(rgb) { assert(rgb->Size() == 3); }
+			explicit OutlineItemColor(syntax::ArrayObjectPtr<syntax::RealObjectPtr> rgb) : HighLevelObject(rgb) { assert(rgb->Size() == 3); }
 
-			syntax::IntegerObjectPtr Red(void) const { return _obj->At(0); }
-			syntax::IntegerObjectPtr Green(void) const { return _obj->At(1); }
-			syntax::IntegerObjectPtr Blue(void) const { return _obj->At(2); }
+			syntax::RealObjectPtr Red(void) const { return _obj->At(0); }
+			syntax::RealObjectPtr Green(void) const { return _obj->At(1); }
+			syntax::RealObjectPtr Blue(void) const { return _obj->At(2); }
 		};
 
 		class OutlineItemFlags : public HighLevelObject<syntax::IntegerObjectPtr>
@@ -133,7 +133,7 @@ namespace gotchangpdf
 				if (!_obj->Contains(constant::Name::C))
 					return false;
 
-				auto color = _obj->FindAs<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>>(constant::Name::F);
+				auto color = _obj->FindAs<syntax::ArrayObjectPtr<syntax::RealObjectPtr>>(constant::Name::C);
 				result = OutlineItemColorPtr(color);
 				return true;
 			}
