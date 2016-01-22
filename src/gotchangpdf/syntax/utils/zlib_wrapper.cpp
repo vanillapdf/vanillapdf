@@ -52,7 +52,7 @@ namespace gotchangpdf
 		assert(rv == Z_STREAM_END);
 
 		/* clean up and return */
-		(void)deflateEnd(&strm);
+		deflateEnd(&strm);
 		return result;
 	}
 
@@ -91,24 +91,23 @@ namespace gotchangpdf
 				strm.avail_out = constant::BUFFER_SIZE;
 				strm.next_out = out_buffer.data();
 				rv = inflate(&strm, Z_NO_FLUSH);
-				assert(rv != Z_STREAM_ERROR);  /* state not clobbered */
+				assert(rv != Z_STREAM_ERROR);
 				switch (rv) {
 				case Z_NEED_DICT:
-					rv = Z_DATA_ERROR;     /* and fall through */
 				case Z_DATA_ERROR:
 				case Z_MEM_ERROR:
-					(void)inflateEnd(&strm);
-					throw GeneralException("Could not decompress data");
+					throw GeneralException("Could not decompress data: " + std::string(strm.msg));
 				}
+
 				unsigned int have = constant::BUFFER_SIZE - strm.avail_out;
 				result->insert(result.end(), out_buffer.begin(), out_buffer.begin() + have);
 			} while (strm.avail_out == 0);
 
-			/* done when inflate() says it's done */
+		/* done when inflate() says it's done */
 		} while (rv != Z_STREAM_END);
 
 		/* clean up and return */
-		(void)inflateEnd(&strm);
+		inflateEnd(&strm);
 		return result;
 	}
 
