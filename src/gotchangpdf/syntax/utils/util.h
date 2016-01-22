@@ -87,8 +87,8 @@ namespace gotchangpdf
 		explicit ScopeGuard(FunctionType deleter) : _deleter(deleter) {}
 		ScopeGuard(const ScopeGuard& other) = delete;
 		ScopeGuard& operator=(const ScopeGuard& other) = delete;
-		ScopeGuard(ScopeGuard&& other) = default;
-		ScopeGuard& operator=(ScopeGuard&& other) = default;
+		ScopeGuard(ScopeGuard&& other) : _deleter(std::move(other._deleter)) { other.Release(); }
+		ScopeGuard& operator=(ScopeGuard&& other) { _deleter = std::move(other._deleter); other.Release(); return *this; }
 		void Release() { _released = true; }
 		~ScopeGuard() { if (!_released) _deleter(); }
 
@@ -101,7 +101,7 @@ namespace gotchangpdf
 	{
 	public:
 		template <typename FunctionType>
-		static ScopeGuard<FunctionType>&& CreateGuard(FunctionType&& f) { return std::move(ScopeGuard<FunctionType>(std::forward<FunctionType>(f))); }
+		static ScopeGuard<FunctionType> CreateGuard(FunctionType&& f) { return ScopeGuard<FunctionType>(std::forward<FunctionType>(f)); }
 
 	private:
 		ScopeGuardFactory();
@@ -110,7 +110,6 @@ namespace gotchangpdf
 #define TOKENPASTE(x, y, z) x ## y ## z
 #define TOKENPASTE2(x, y, z) TOKENPASTE(x, y, z)
 #define SCOPE_GUARD(deleter_function) auto TOKENPASTE2(__scope_guard_, __LINE__, __) = ScopeGuardFactory::CreateGuard(deleter_function);
-#define SCOPE_GUARD_CAPTURE(deleter_function_code, ...) auto TOKENPASTE2(__scope_guard_, __LINE__, __) = ScopeGuardFactory::CreateGuard([__VA_ARGS__](){ deleter_function_code; });
 #define SCOPE_GUARD_CAPTURE_REFERENCES(deleter_function_code) auto TOKENPASTE2(__scope_guard_, __LINE__, __) = ScopeGuardFactory::CreateGuard([&](){ deleter_function_code; });
 #define SCOPE_GUARD_CAPTURE_VALUES(deleter_function_code) auto TOKENPASTE2(__scope_guard_, __LINE__, __) = ScopeGuardFactory::CreateGuard([=](){ deleter_function_code; });
 

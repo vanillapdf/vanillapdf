@@ -20,7 +20,7 @@ namespace gotchangpdf
 
 			auto input = locked_file->GetInputStream();
 			auto rewind_pos = input->tellg();
-			SCOPE_GUARD_CAPTURE_REFERENCES(input->seekg(rewind_pos));
+			SCOPE_GUARD_CAPTURE_VALUES(input->seekg(rewind_pos));
 			auto parser = Parser(_file, *input);
 			auto object = parser.ReadIndirectObject(_offset);
 			SetReference(object);
