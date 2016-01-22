@@ -14,19 +14,23 @@ namespace gotchangpdf
 			return reinterpret_cast<char&>(converted);
 		}
 
-		BufferPtr ASCIIHexDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const
+		BufferPtr ASCIIHexDecodeFilter::Encode(std::istream&, types::stream_size, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */) const
 		{
-			return src;
+			throw NotSupportedException("ASCIIHexDecodeFilter encoding is not supported");
 		}
 
-		BufferPtr ASCIIHexDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters) const
+		BufferPtr ASCIIHexDecodeFilter::Decode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */) const
 		{
 			BufferPtr result;
 
-			auto size = src->size();
 			std::string hex_pair;
-			for (unsigned int i = 0; i < size; ++i) {
-				auto ch = src[i];
+			for (decltype(length) i = 0; i < length; ++i) {
+				auto meta = src.get();
+				if (meta == EOF) {
+					throw GeneralException("Unexpected end of file inside stream");
+				}
+
+				auto ch = SafeConvert<unsigned char>(meta);
 
 				// End of data marker
 				if (ch == '>')
@@ -62,6 +66,18 @@ namespace gotchangpdf
 			}
 
 			return result;
+		}
+
+		BufferPtr ASCIIHexDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const
+		{
+			auto stream = src->ToStringStream();
+			return Encode(stream, src->size());
+		}
+
+		BufferPtr ASCIIHexDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters) const
+		{
+			auto stream = src->ToStringStream();
+			return Decode(stream, src->size());
 		}
 	}
 }

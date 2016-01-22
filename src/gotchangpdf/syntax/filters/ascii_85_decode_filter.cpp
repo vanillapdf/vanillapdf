@@ -6,12 +6,12 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		BufferPtr ASCII85DecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const
+		BufferPtr ASCII85DecodeFilter::Encode(std::istream&, types::stream_size, DictionaryObjectPtr parameters /* = DictionaryObjectPtr() */) const
 		{
-			return src;
+			throw NotSupportedException("ASCII85DecodeFilter encoding is not supported");
 		}
 
-		BufferPtr ASCII85DecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters) const
+		BufferPtr ASCII85DecodeFilter::Decode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters /* = DictionaryObjectPtr() */) const
 		{
 			BufferPtr result;
 
@@ -19,12 +19,18 @@ namespace gotchangpdf
 			char sequence[5] = { 0 };
 
 			// Iterate over all elements
-			auto size = src->size();
-			for (unsigned int i = 0; i < size; ++i) {
-				auto ch = src[i];
+			for (decltype(length) i = 0; i < length; ++i) {
+				auto meta = src.get();
+				auto next = src.peek();
+
+				if (meta == EOF) {
+					throw GeneralException("Unexpected end of file inside stream");
+				}
+
+				auto ch = SafeConvert<unsigned char>(meta);
 
 				// End of sequence
-				if (ch == '~' && i < (size - 1) && src[i + 1] == '>') {
+				if (ch == '~' && next == '>') {
 					break;
 				}
 
@@ -86,6 +92,18 @@ namespace gotchangpdf
 			}
 
 			return result;
+		}
+
+		BufferPtr ASCII85DecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const
+		{
+			auto stream = src->ToStringStream();
+			return Encode(stream, src->size());
+		}
+
+		BufferPtr ASCII85DecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters) const
+		{
+			auto stream = src->ToStringStream();
+			return Decode(stream, src->size());
 		}
 	}
 }

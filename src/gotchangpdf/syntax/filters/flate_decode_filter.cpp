@@ -3,7 +3,7 @@
 
 #include "constants.h"
 #include "exception.h"
-#include "character_sink.h"
+#include "zlib_wrapper.h"
 #include "raw_stream.h"
 
 #include <boost/iostreams/device/back_inserter.hpp>
@@ -15,39 +15,29 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		namespace io = boost::iostreams;
+		//namespace io = boost::iostreams;
 
 		BufferPtr FlateDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const
 		{
-			Buffer dest;
-			{
-				boost::iostreams::filtering_ostream sink;
-
-				sink.push(io::zlib_compressor());
-				sink.push(io::back_inserter(dest));
-
-				io::write(sink, src->data(), src->size());
-
-				// using block instead of flush
-			}
-
-			return dest;
+			auto stream = src->ToStringStream();
+			return ZlibWrapper::Deflate(stream, src->size());
 		}
 
 		BufferPtr FlateDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters) const
 		{
-			Buffer dest;
-			{
-				boost::iostreams::filtering_ostream sink;
+			auto stream = src->ToStringStream();
+			auto dest = ZlibWrapper::Inflate(stream, src->size());
+			return ApplyPredictor(dest, parameters);
+		}
 
-				sink.push(io::zlib_decompressor());
-				sink.push(io::back_inserter(dest));
+		BufferPtr FlateDecodeFilter::Encode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters) const
+		{
+			return ZlibWrapper::Deflate(src, length);
+		}
 
-				io::write(sink, src->data(), src->size());
-
-				// using block instead of flush
-			}
-
+		BufferPtr FlateDecodeFilter::Decode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters) const
+		{
+			auto dest = ZlibWrapper::Inflate(src, length);
 			return ApplyPredictor(dest, parameters);
 		}
 
@@ -94,8 +84,8 @@ namespace gotchangpdf
 
 				auto tmp = src->ToStringStream();
 				Stream strm(tmp);
-				BufferPtr curr(bytesPerRow, '\0');
-				BufferPtr prior(bytesPerRow, '\0');
+				Buffer curr(bytesPerRow, '\0');
+				Buffer prior(bytesPerRow, '\0');
 
 				while (strm.peek() != EOF) {
 					auto filter = strm.get();
