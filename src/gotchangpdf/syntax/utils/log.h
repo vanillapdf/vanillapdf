@@ -99,8 +99,8 @@ namespace gotchangpdf
 
 #define LOG_SCOPE(name) BOOST_LOG_SCOPED_THREAD_ATTR("Scope", boost::log::attributes::constant<std::string>(name))
 #define __LOG_INTERNAL_HELPER__(Severity)       BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), Severity) \
-  << boost::log::add_value("Line", __LINE__)      \
-  << boost::log::add_value("File", __FILE__)       \
+  << boost::log::add_value("Line", static_cast<int>(__LINE__)) \
+  << boost::log::add_value("File", __FILE__) \
   << boost::log::add_value("Function", __FUNCTION__)
 
 #define LOG_DEBUG       __LOG_INTERNAL_HELPER__(gotchangpdf::log::Severity::debug)
