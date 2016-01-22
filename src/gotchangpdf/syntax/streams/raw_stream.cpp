@@ -19,21 +19,20 @@ namespace gotchangpdf
 
 		BufferPtr Stream::read(types::uinteger len)
 		{
-			BufferPtr result;
-			result->resize(len);
+			BufferPtr result(len);
 			CharacterSource::read(result->data(), len);
 			return result;
 		}
 
-		void Stream::read(BufferPtr& result, types::uinteger len)
+		void Stream::read(Buffer& result, types::uinteger len)
 		{
-			result->resize(len);
-			CharacterSource::read(result->data(), len);
+			result.resize(len);
+			CharacterSource::read(result.data(), len);
 		}
 
 		BufferPtr Stream::readline(void)
 		{
-			Buffer result;
+			BufferPtr result;
 
 			while (!eof()) {
 				auto val = get();
@@ -54,7 +53,7 @@ namespace gotchangpdf
 					break;
 				}
 
-				result.push_back(value);
+				result->push_back(value);
 			}
 
 			return result;
