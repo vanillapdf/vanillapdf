@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <cassert>
 
 namespace gotchangpdf
 {
@@ -19,10 +20,15 @@ namespace gotchangpdf
 	public:
 		Buffer() = default;
 		explicit Buffer(size_type count);
-		explicit Buffer(const value_type * chars);
-		Buffer(const value_type * chars, int len);
+		explicit Buffer(const char * chars);
 		Buffer(const value_type * begin, const value_type * end);
 		Buffer(size_type count, const value_type& val);
+
+		template <typename T, typename = std::enable_if<sizeof(T) == sizeof(value_type)>>
+		Buffer(const T * chars, int len) : base_type(
+			reinterpret_cast<const value_type *>(&chars[0]),
+			reinterpret_cast<const value_type *>(&chars[len - 1])
+		) { assert(size() > 0); }
 
 		std::string ToString(void) const { return std::string(begin(), end()); }
 		std::stringstream ToStringStream(void) const { return std::stringstream(ToString()); }

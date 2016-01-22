@@ -1,13 +1,10 @@
 #include "precompiled.h"
 #include "buffer.h"
 
-#include <cassert>
-
 namespace gotchangpdf
 {
 	Buffer::Buffer(size_type count) : base_type(count) {}
-	Buffer::Buffer(const value_type * chars) : Buffer(chars, strlen(chars) + 1) {}
-	Buffer::Buffer(const value_type * chars, int len) : base_type(&chars[0], &chars[len - 1]) { assert(size() > 0); }
+	Buffer::Buffer(const char * chars) : Buffer(chars, strlen(chars) + 1) {}
 	Buffer::Buffer(const value_type * begin, const value_type * end) : base_type(begin, end) { assert(size() > 0); }
 	Buffer::Buffer(size_type count, const value_type& val) : base_type(count, val) {}
 
@@ -21,24 +18,24 @@ namespace gotchangpdf
 	bool operator==(const char * left, const Buffer& right)
 	{
 		assert(nullptr != left);
-		return (0 == strncmp(left, right.data(), right.size()));
+		return (0 == strncmp(left, reinterpret_cast<const char*>(right.data()), right.size()));
 	}
 
 	bool operator==(const Buffer& left, const char * right)
 	{
 		assert(nullptr != right);
-		return (0 == strncmp(right, left.data(), left.size()));
+		return (0 == strncmp(right, reinterpret_cast<const char*>(left.data()), left.size()));
 	}
 
 	bool operator!=(const char * left, const Buffer& right)
 	{
 		assert(nullptr != left);
-		return (0 != strncmp(left, right.data(), right.size()));
+		return (0 != strncmp(left, reinterpret_cast<const char*>(right.data()), right.size()));
 	}
 
 	bool operator!=(const Buffer& left, const char * right)
 	{
 		assert(nullptr != right);
-		return (0 != strncmp(right, left.data(), left.size()));
+		return (0 != strncmp(right, reinterpret_cast<const char*>(left.data()), left.size()));
 	}
 }
