@@ -86,6 +86,10 @@ namespace gotchangpdf
 				auto xref = stream.ReadXref(offset);
 				_xref->Append(xref);
 
+				if (xref->GetTrailerDictionary()->Contains(constant::Name::Encrypt)) {
+					throw NotSupportedException("Encrypted files are not yet supported");
+				}
+
 				if (xref->GetTrailerDictionary()->Contains(constant::Name::XRefStm)) {
 					auto stm_offset = xref->GetTrailerDictionary()->FindAs<IntegerObjectPtr>(constant::Name::XRefStm)->Value();
 					auto xref_stm = stream.ReadXref(stm_offset);
