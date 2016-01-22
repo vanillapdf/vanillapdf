@@ -106,8 +106,6 @@
     <ClInclude Include="src\gotchangpdf\syntax\streams\raw_stream.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\buffer.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\character.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\utils\character_device.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\utils\character_sink.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\constants.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\deferred.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\file_device.h" />
