@@ -114,6 +114,7 @@
     <ClInclude Include="src\gotchangpdf\syntax\utils\unknown_interface.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\util.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\version.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\utils\zlib_wrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\boost\libs\iostreams\src\zlib.cpp">
@@ -185,6 +186,7 @@
     <ClCompile Include="src\gotchangpdf\syntax\streams\raw_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\utils\buffer.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\utils\log.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\utils\zlib_wrapper.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9AF81955-0B8C-4778-9F93-3ED8285D3D49}</ProjectGuid>
