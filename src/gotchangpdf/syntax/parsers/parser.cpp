@@ -33,13 +33,13 @@ namespace gotchangpdf
 				if (token->GetType() == Token::Type::FALSE_VALUE)
 					return BooleanObjectPtr(false);
 
+				assert(!"Expected boolean token type");
 				throw GeneralException("Expected boolean token type");
-
 			}
+
 			static IntegerObjectPtr CreateInteger(TokenPtr token)
 			{
-				if (token->GetType() != Token::Type::INTEGER_OBJECT)
-					throw GeneralException("Expected integer token type");
+				assert(token->GetType() == Token::Type::INTEGER_OBJECT && "Expected integer token type");
 
 				auto buffer = token->Value();
 				auto value = std::stoi(buffer->ToString());
@@ -48,8 +48,7 @@ namespace gotchangpdf
 
 			static RealObjectPtr CreateReal(TokenPtr token)
 			{
-				if (token->GetType() != Token::Type::REAL_OBJECT)
-					throw GeneralException("Expected real token type");
+				assert(token->GetType() == Token::Type::REAL_OBJECT && "Expected real token type");
 
 				auto buffer = token->Value();
 				auto str = buffer->ToString();
@@ -66,8 +65,7 @@ namespace gotchangpdf
 
 			static NameObjectPtr CreateName(TokenPtr token)
 			{
-				if (token->GetType() != Token::Type::NAME_OBJECT)
-					throw GeneralException("Expected name token type");
+				assert(token->GetType() == Token::Type::NAME_OBJECT && "Expected name token type");
 
 				auto buffer = token->Value();
 				return NameObjectPtr(buffer);
@@ -75,8 +73,7 @@ namespace gotchangpdf
 
 			static HexadecimalStringObjectPtr CreateHexString(TokenPtr token)
 			{
-				if (token->GetType() != Token::Type::HEXADECIMAL_STRING)
-					throw GeneralException("Expected hexadecimal string token type");
+				assert(token->GetType() == Token::Type::HEXADECIMAL_STRING && "Expected hexadecimal string token type");
 
 				auto buffer = token->Value();
 				return HexadecimalStringObjectPtr(buffer);
@@ -84,8 +81,7 @@ namespace gotchangpdf
 
 			static LiteralStringObjectPtr CreateLitString(TokenPtr token)
 			{
-				if (token->GetType() != Token::Type::LITERAL_STRING)
-					throw GeneralException("Expected literal string token type");
+				assert(token->GetType() == Token::Type::LITERAL_STRING && "Expected literal string token type");
 
 				auto buffer = token->Value();
 				return LiteralStringObjectPtr(buffer);
@@ -153,7 +149,7 @@ namespace gotchangpdf
 
 				auto containable_ptr = dynamic_cast<ContainableObject*>(val.Content.get());
 				if (nullptr == containable_ptr)
-					throw GeneralException("Could not convert parsed object to containable: " + val->ToString());
+					throw ConversionExceptionFactory<ContainableObject>::Construct(val);
 
 				dictionary->_list[name] = ContainableObjectPtr(containable_ptr);
 			}
@@ -193,7 +189,7 @@ namespace gotchangpdf
 				auto val = ReadDirectObject();
 				auto containable_ptr = dynamic_cast<ContainableObject*>(val.Content.get());
 				if (nullptr == containable_ptr)
-					throw GeneralException("Could not convert parsed object to containable: " + val->ToString());
+					throw ConversionExceptionFactory<ContainableObject>::Construct(val);
 
 				result->push_back(containable_ptr);
 			}
@@ -299,7 +295,7 @@ namespace gotchangpdf
 			case Token::Type::NULL_OBJECT:
 				return ReadNull();
 			default:
-				throw GeneralException("No valid object could be found at offset " + std::to_string(offset));
+				throw ParseException(offset);
 			}
 		}
 
@@ -413,9 +409,7 @@ namespace gotchangpdf
 				if (token->GetType() == Token::Type::EOL)
 					continue;
 
-				std::stringstream ss;
-				ss << "Could not find token type " << static_cast<int>(type) << " at offset " << offset;
-				throw GeneralException(ss.str());
+				throw ParseException(offset);
 			}
 		}
 
@@ -446,9 +440,7 @@ namespace gotchangpdf
 				return result;
 			}
 
-			std::stringstream buffer;
-			buffer << "Key in XRef table is neither of " << 'n' << " or " << 'f';
-			throw GeneralException(buffer.str());
+			throw ParseException(tellg());
 		}
 
 		XrefTablePtr Parser::ReadXrefTable()
@@ -824,7 +816,7 @@ namespace gotchangpdf
 			case Token::Type::NULL_OBJECT:
 				return ReadNull();
 			default:
-				throw GeneralException("No valid object could be found at offset " + std::to_string(offset));
+				throw ParseException(offset);
 			}
 		}
 
