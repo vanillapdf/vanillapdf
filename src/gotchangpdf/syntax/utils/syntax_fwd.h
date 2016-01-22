@@ -118,7 +118,6 @@ namespace gotchangpdf
 		using HexadecimalStringObjectPtr = Deferred<HexadecimalStringObject>;
 
 		// Parsers
-		class SpiritParser;
 		struct ObjectStreamHeader;
 
 		namespace contents
