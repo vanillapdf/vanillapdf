@@ -22,11 +22,11 @@ namespace gotchangpdf
 
 			auto input = locked_file->GetInputStream();
 			auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
+			auto pos = input->tellg();
+			input->seekg(_raw_data_offset);
+			SCOPE_GUARD_CAPTURE_VALUES(input->seekg(pos));
 			auto stream = Stream(*input);
-			auto pos = stream.tellg();
-			stream.seekg(_raw_data_offset);
 			_body = stream.read(*size);
-			stream.seekg(pos);
 
 			return _body;
 		}
@@ -36,59 +36,74 @@ namespace gotchangpdf
 			if (!_body_decoded->empty())
 				return _body_decoded;
 
-			BufferPtr result = GetBody();
-			if (_header->Contains(constant::Name::Filter)) {
-				auto filter_obj = _header->Find(constant::Name::Filter);
-				bool is_filter_name = ObjectUtils::IsType<NameObjectPtr>(filter_obj);
-				bool is_filter_array = ObjectUtils::IsType<MixedArrayObjectPtr>(filter_obj);
-
-				assert(is_filter_name ^ is_filter_array);
-
-				if (is_filter_name) {
-					auto filter_name = _header->FindAs<NameObjectPtr>(constant::Name::Filter);
-					auto filter = FilterBase::GetFilterByName(filter_name);
-					if (_header->Contains(constant::Name::DecodeParms)) {
-						auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
-						return filter->Decode(result, params);
-					}
-
-					return filter->Decode(result);
-				}
-
-				if (is_filter_array) {
-					auto filter_array = _header->FindAs<ArrayObjectPtr<NameObjectPtr>>(constant::Name::Filter);
-
-					MixedArrayObjectPtr params;
-					bool has_params = _header->Contains(constant::Name::DecodeParms);
-					if (has_params) {
-						params = _header->FindAs<MixedArrayObjectPtr>(constant::Name::DecodeParms);
-						assert(filter_array->Size() == params->Size());
-					}
-
-					for (unsigned int i = 0; i < filter_array->Size(); ++i) {
-						auto current_filter = (*filter_array)[i];
-						auto filter = FilterBase::GetFilterByName(current_filter);
-
-						if (has_params) {
-							auto current_param = (*params)[i];
-							bool is_param_null = ObjectUtils::IsType<NullObjectPtr>(current_param);
-							if (is_param_null) {
-								result = filter->Decode(result);
-							}
-							else {
-								auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(current_param);
-								result = filter->Decode(result, dict);
-							}
-						}
-						else {
-							result = filter->Decode(result);
-						}
-					}
-				}
+			if (!_header->Contains(constant::Name::Filter)) {
+				return GetBody();
 			}
 
-			std::swap(result, _body_decoded);
-			return _body_decoded;
+			auto locked_file = _file.lock();
+			if (!locked_file)
+				throw FileDisposedException();
+
+			auto stream = locked_file->GetInputStream();
+			auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
+			auto pos = stream->tellg();
+			stream->seekg(_raw_data_offset);
+			SCOPE_GUARD_CAPTURE_VALUES(stream->seekg(pos));
+
+			auto filter_obj = _header->Find(constant::Name::Filter);
+			bool is_filter_name = ObjectUtils::IsType<NameObjectPtr>(filter_obj);
+			bool is_filter_array = ObjectUtils::IsType<ArrayObjectPtr<NameObjectPtr>>(filter_obj);
+
+			if (is_filter_name) {
+				auto filter_name = _header->FindAs<NameObjectPtr>(constant::Name::Filter);
+				auto filter = FilterBase::GetFilterByName(filter_name);
+				if (_header->Contains(constant::Name::DecodeParms)) {
+					auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
+					_body_decoded = filter->Decode(*stream, *size, params);
+					return _body_decoded;
+				}
+
+				_body_decoded = filter->Decode(*stream, *size);
+				return _body_decoded;
+			}
+
+			if (is_filter_array) {
+				auto filter_array = _header->FindAs<ArrayObjectPtr<NameObjectPtr>>(constant::Name::Filter);
+
+				MixedArrayObjectPtr params;
+				bool has_params = _header->Contains(constant::Name::DecodeParms);
+				if (has_params) {
+					params = _header->FindAs<MixedArrayObjectPtr>(constant::Name::DecodeParms);
+					assert(filter_array->Size() == params->Size());
+				}
+
+				BufferPtr result = GetBody();
+				for (unsigned int i = 0; i < filter_array->Size(); ++i) {
+					auto current_filter = (*filter_array)[i];
+					auto filter = FilterBase::GetFilterByName(current_filter);
+
+					if (has_params) {
+						auto current_param = (*params)[i];
+						bool is_param_null = ObjectUtils::IsType<NullObjectPtr>(current_param);
+						if (is_param_null) {
+							result = filter->Decode(result);
+							continue;
+						}
+
+						auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(current_param);
+						result = filter->Decode(result, dict);
+						continue;
+					}
+
+					result = filter->Decode(result);
+				}
+
+				_body_decoded = result;
+				return _body_decoded;
+			}
+
+			assert(is_filter_name ^ is_filter_array);
+			throw GeneralException("Filter is neither name nor array of names");
 		}
 
 		std::string StreamObject::ToString(void) const
