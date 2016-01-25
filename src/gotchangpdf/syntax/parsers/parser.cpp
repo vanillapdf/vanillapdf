@@ -147,7 +147,7 @@ namespace gotchangpdf
 				if (val->GetType() == Object::Type::Null)
 					continue;
 
-				auto containable_ptr = dynamic_cast<ContainableObject*>(val.Content.get());
+				auto containable_ptr = dynamic_cast<ContainableObject*>(val.get());
 				if (nullptr == containable_ptr)
 					throw ConversionExceptionFactory<ContainableObject>::Construct(val);
 
@@ -187,7 +187,7 @@ namespace gotchangpdf
 			while (PeekTokenTypeSkip() != Token::Type::ARRAY_END)
 			{
 				auto val = ReadDirectObject();
-				auto containable_ptr = dynamic_cast<ContainableObject*>(val.Content.get());
+				auto containable_ptr = dynamic_cast<ContainableObject*>(val.get());
 				if (nullptr == containable_ptr)
 					throw ConversionExceptionFactory<ContainableObject>::Construct(val);
 
@@ -601,8 +601,6 @@ namespace gotchangpdf
 
 		contents::OperationGenericPtr Parser::ReadContentStreamOperation(void)
 		{
-			contents::OperationGenericPtr result;
-
 			std::vector<ObjectPtr> operands;
 			while (IsOperand(PeekTokenTypeSkip())) {
 				auto operand = ReadOperand();

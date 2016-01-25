@@ -63,7 +63,7 @@ namespace gotchangpdf
 		public:
 			static Deferred<T> ConvertTo(const BaseT& obj)
 			{
-				auto ptr = obj.Content.get();
+				auto ptr = obj.get();
 				auto converted = dynamic_cast<typename T *>(ptr);
 				if (nullptr == converted)
 					throw syntax::ConversionExceptionFactory<T>::Construct(obj);
@@ -73,7 +73,7 @@ namespace gotchangpdf
 
 			static bool IsType(const BaseT& obj)
 			{
-				auto ptr = obj.Content.get();
+				auto ptr = obj.get();
 				auto converted = dynamic_cast<typename T *>(ptr);
 				return (nullptr != converted);
 			}

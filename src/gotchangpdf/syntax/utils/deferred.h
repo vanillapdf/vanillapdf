@@ -13,8 +13,9 @@ namespace gotchangpdf
 	* This code has been taken from the Eddi Compiler project (https://github.com/wichtounet/eddic/) and has been adapted a little.
 	*/
 	template <typename T>
-	struct Deferred
+	class Deferred
 	{
+	public:
 		typedef T value_type;
 
 		Deferred(T* value) : Contents(value)
@@ -34,7 +35,7 @@ namespace gotchangpdf
 		}
 
 		template <typename U, typename = std::enable_if_t<std::is_convertible<U*, T*>::value>>
-		Deferred(const Deferred<U>& rhs) : Contents(rhs.Content.get())
+		Deferred(const Deferred<U>& rhs) : Contents(rhs.get())
 		{
 			Content.Owner = this;
 		}
@@ -57,26 +58,25 @@ namespace gotchangpdf
 			Content.Owner = this;
 		}
 
-		operator T&() { return Content.operator*(); }
-		operator T&() const { return Content.operator*(); }
+		operator T&() { return *Contents; }
+		operator T&() const { return *Contents; }
 
-		bool operator==(const Deferred& other) const { return *Content == *other.Content; }
-		bool operator!=(const Deferred& other) const { return *Content != *other.Content; }
-		bool operator<(const Deferred& other) const { return *Content < *other.Content; }
+		bool operator==(const Deferred& other) const { return *Contents == *other.Contents; }
+		bool operator!=(const Deferred& other) const { return *Contents != *other.Contents; }
+		bool operator<(const Deferred& other) const { return *Contents < *other.Contents; }
 
 		T& operator*() const
 		{
-			return Content.operator*();
+			return *Content.get();
 		}
 
 		T* operator->() const
 		{
-			return Content.operator->();
+			return Content.get();
 		}
 
 		Deferred& operator=(const Deferred& rhs)
 		{
-			//if (this != &rhs)
 			Contents = rhs.Contents;
 			return *this;
 		}
@@ -88,21 +88,33 @@ namespace gotchangpdf
 			return *this;
 		}
 
-		//
-		// Wrapper for accessing the content safely
-		//
-		// Constructs a default node in the parent wrapper if necessary,
-		// or simply returns the existing content of the wrapper. This
-		// helper is necessary for exposing a compatible interface with
-		// boost::fusion adapters.
-		//
+		T* get(void) const
+		{
+			return Content.get();
+		}
+
+		T* AddRefGet(void)
+		{
+			Content->AddRef();
+			return Content.get();
+		}
+
+		virtual ~Deferred()
+		{
+			if (this == Content.Owner) {
+				Content.Owner = nullptr;
+			}
+		}
+
+	protected:
 
 		/*!
 		* \struct SafeContentAccess
 		* \brief Provide safe content access to the content of the deferred node
 		*/
-		struct SafeContentAccess
+		class SafeContentAccess
 		{
+		public:
 			T& operator*() const
 			{
 				return *get();
@@ -121,7 +133,7 @@ namespace gotchangpdf
 			template <bool Constructible>
 			T* get_internal(void) const
 			{
-				assert(Owner->Contents);
+				assert(Owner && Owner->Contents);
 				if (!Owner->Contents) {
 					return nullptr;
 				}
@@ -132,6 +144,7 @@ namespace gotchangpdf
 			template <>
 			T* get_internal<true>(void) const
 			{
+				assert(Owner);
 				if (!Owner->Contents) {
 					Owner->Contents.reset(pdf_new T());
 				}
@@ -140,22 +153,12 @@ namespace gotchangpdf
 			}
 
 			Deferred* Owner = nullptr;
-		} Content;
-
-		T* AddRefGet(void)
-		{
-			Content->AddRef();
-			return Content.get();
-		}
-
-		virtual ~Deferred()
-		{
-			if (this == Content.Owner) {
-				Content.Owner = nullptr;
-			}
-		}
+		};
 
 	protected:
+		SafeContentAccess Content;
+
+	private:
 		mutable boost::intrusive_ptr<T> Contents;
 	};
 
@@ -167,8 +170,9 @@ namespace gotchangpdf
 	* This code has been taken from the Epoch Compiler project (http://code.google.com/p/epoch-language/) and has been adapted a little.
 	*/
 	template <typename T>
-	struct DeferredContainer : public Deferred<T>
+	class DeferredContainer : public Deferred<T>
 	{
+	public:
 		typedef typename T::value_type value_type;
 		typedef typename T::iterator iterator;
 		typedef typename T::const_iterator const_iterator;
@@ -176,8 +180,8 @@ namespace gotchangpdf
 		typedef typename T::reference reference;
 		typedef typename T::const_reference const_reference;
 
+	public:
 		DeferredContainer(T* value) : Deferred(value) {}
-
 		DeferredContainer(const Deferred& rhs) : Deferred(rhs) {}
 
 		template <typename... Parameters, typename = std::enable_if_t<std::is_constructible<T, Parameters...>::value>>
@@ -225,15 +229,16 @@ namespace gotchangpdf
 	};
 
 	template <typename T>
-	struct DeferredIterator: public Deferred<T>
+	class DeferredIterator: public Deferred<T>
 	{
+	public:
 		typedef typename T::value_type value_type;
 		typedef typename T::difference_type difference_type;
 		typedef typename T::pointer pointer;
 		typedef typename T::reference reference;
 
+	public:
 		DeferredIterator(T* value) : Deferred(value) {}
-
 		DeferredIterator(const Deferred& rhs) : Deferred(rhs) {}
 
 		template <typename... Parameters, typename = std::enable_if_t<std::is_constructible<T, Parameters...>::value>>

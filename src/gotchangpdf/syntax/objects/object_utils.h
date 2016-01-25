@@ -18,7 +18,7 @@ namespace gotchangpdf
 		{
 		public:
 			template <typename T, typename = std::enable_if_t<std::is_base_of<Object, T>::value>>
-			static ObjectPtr GetObjectBase(const Deferred<T>& obj) { return static_cast<Object*>(obj.Content.get()); }
+			static ObjectPtr GetObjectBase(const Deferred<T>& obj) { return static_cast<Object*>(obj.get()); }
 
 			template <typename T>
 			static T ConvertTo(const ObjectPtr& obj) { return ObjectTypeFunctor<T>::Convert(obj); }
@@ -35,8 +35,8 @@ namespace gotchangpdf
 				switch (type) {
 				case Object::Type::Array:
 				{
-					auto first_converted = ConvertUtils<Object*>::ConvertTo<MixedArrayObject*>(first.Content.get());
-					auto second_converted = ConvertUtils<Object*>::ConvertTo<MixedArrayObject*>(second.Content.get());
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<MixedArrayObject*>(first.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<MixedArrayObject*>(second.get());
 
 					assert(nullptr != first_converted && nullptr != second_converted);
 					if (nullptr == first_converted || nullptr == second_converted)
@@ -55,8 +55,8 @@ namespace gotchangpdf
 				}
 				case Object::Type::Boolean:
 				{
-					auto first_converted = ConvertUtils<Object*>::ConvertTo<BooleanObject*>(first.Content.get());
-					auto second_converted = ConvertUtils<Object*>::ConvertTo<BooleanObject*>(second.Content.get());
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<BooleanObject*>(first.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<BooleanObject*>(second.get());
 
 					assert(nullptr != first_converted && nullptr != second_converted);
 					if (nullptr == first_converted || nullptr == second_converted)
@@ -66,8 +66,8 @@ namespace gotchangpdf
 				}
 				case Object::Type::Dictionary:
 				{
-					auto first_converted = ConvertUtils<Object*>::ConvertTo<DictionaryObject*>(first.Content.get());
-					auto second_converted = ConvertUtils<Object*>::ConvertTo<DictionaryObject*>(second.Content.get());
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<DictionaryObject*>(first.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<DictionaryObject*>(second.get());
 
 					assert(nullptr != first_converted && nullptr != second_converted);
 					if (nullptr == first_converted || nullptr == second_converted)
@@ -88,8 +88,8 @@ namespace gotchangpdf
 				}
 				case Object::Type::IndirectReference:
 				{
-					auto first_converted = ConvertUtils<Object*>::ConvertTo<IndirectObjectReference*>(first.Content.get());
-					auto second_converted = ConvertUtils<Object*>::ConvertTo<IndirectObjectReference*>(second.Content.get());
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<IndirectObjectReference*>(first.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<IndirectObjectReference*>(second.get());
 
 					assert(nullptr != first_converted && nullptr != second_converted);
 					if (nullptr == first_converted || nullptr == second_converted)
@@ -99,8 +99,8 @@ namespace gotchangpdf
 				}
 				case Object::Type::Integer:
 				{
-					auto first_converted = ConvertUtils<Object*>::ConvertTo<IntegerObject*>(first.Content.get());
-					auto second_converted = ConvertUtils<Object*>::ConvertTo<IntegerObject*>(second.Content.get());
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<IntegerObject*>(first.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<IntegerObject*>(second.get());
 
 					assert(nullptr != first_converted && nullptr != second_converted);
 					if (nullptr == first_converted || nullptr == second_converted)
@@ -110,8 +110,8 @@ namespace gotchangpdf
 				}
 				case Object::Type::Name:
 				{
-					auto first_converted = ConvertUtils<Object*>::ConvertTo<NameObject*>(first.Content.get());
-					auto second_converted = ConvertUtils<Object*>::ConvertTo<NameObject*>(second.Content.get());
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<NameObject*>(first.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<NameObject*>(second.get());
 
 					assert(nullptr != first_converted && nullptr != second_converted);
 					if (nullptr == first_converted || nullptr == second_converted)
@@ -121,8 +121,8 @@ namespace gotchangpdf
 				}
 				case Object::Type::Null:
 				{
-					auto first_converted = ConvertUtils<Object*>::ConvertTo<NullObject*>(first.Content.get());
-					auto second_converted = ConvertUtils<Object*>::ConvertTo<NullObject*>(second.Content.get());
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<NullObject*>(first.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<NullObject*>(second.get());
 
 					assert(nullptr != first_converted && nullptr != second_converted);
 					if (nullptr == first_converted || nullptr == second_converted)
@@ -132,8 +132,8 @@ namespace gotchangpdf
 				}
 				case Object::Type::Real:
 				{
-					auto first_converted = ConvertUtils<Object*>::ConvertTo<RealObject*>(first.Content.get());
-					auto second_converted = ConvertUtils<Object*>::ConvertTo<RealObject*>(second.Content.get());
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<RealObject*>(first.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<RealObject*>(second.get());
 
 					assert(nullptr != first_converted && nullptr != second_converted);
 					if (nullptr == first_converted || nullptr == second_converted)
@@ -143,8 +143,8 @@ namespace gotchangpdf
 				}
 				case Object::Type::Stream:
 				{
-					auto first_converted = ConvertUtils<Object*>::ConvertTo<StreamObject*>(first.Content.get());
-					auto second_converted = ConvertUtils<Object*>::ConvertTo<StreamObject*>(second.Content.get());
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<StreamObject*>(first.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<StreamObject*>(second.get());
 
 					assert(nullptr != first_converted && nullptr != second_converted);
 					if (nullptr == first_converted || nullptr == second_converted)
@@ -164,8 +164,8 @@ namespace gotchangpdf
 				}
 				case Object::Type::String:
 				{
-					auto first_converted = ConvertUtils<Object*>::ConvertTo<StringObjectBase*>(first.Content.get());
-					auto second_converted = ConvertUtils<Object*>::ConvertTo<StringObjectBase*>(second.Content.get());
+					auto first_converted = ConvertUtils<Object*>::ConvertTo<StringObjectBase*>(first.get());
+					auto second_converted = ConvertUtils<Object*>::ConvertTo<StringObjectBase*>(second.get());
 
 					assert(nullptr != first_converted && nullptr != second_converted);
 					if (nullptr == first_converted || nullptr == second_converted)
@@ -189,7 +189,7 @@ namespace gotchangpdf
 			public:
 				static T Get(const ObjectPtr& obj, bool& result)
 				{
-					auto ptr = obj.Content.get();
+					auto ptr = obj.get();
 					auto converted = dynamic_cast<typename T::value_type *>(ptr);
 					if (nullptr == converted) {
 						result = false;
@@ -207,7 +207,7 @@ namespace gotchangpdf
 			public:
 				static IntegerObjectPtr Get(const ObjectPtr& obj, bool& result)
 				{
-					auto ptr = obj.Content.get();
+					auto ptr = obj.get();
 					auto int_converted = dynamic_cast<IntegerObject *>(ptr);
 					auto real_converted = dynamic_cast<RealObject *>(ptr);
 
@@ -232,7 +232,7 @@ namespace gotchangpdf
 			public:
 				static RealObjectPtr Get(const ObjectPtr& obj, bool& result)
 				{
-					auto ptr = obj.Content.get();
+					auto ptr = obj.get();
 					auto int_converted = dynamic_cast<IntegerObject *>(ptr);
 					auto real_converted = dynamic_cast<RealObject *>(ptr);
 
@@ -257,7 +257,7 @@ namespace gotchangpdf
 			public:
 				static T Get(const ObjectPtr& obj, std::map<IndirectObjectReference, bool>& visited, bool& result)
 				{
-					auto ptr = obj.Content.get();
+					auto ptr = obj.get();
 					bool is_ref = (ptr->GetType() == Object::Type::IndirectReference);
 					if (!is_ref) {
 						return ConversionHelper<T>::Get(obj, result);
@@ -311,14 +311,14 @@ namespace gotchangpdf
 			public:
 				static bool IsType(const ObjectPtr& obj)
 				{
-					auto ptr = obj.Content.get();
+					auto ptr = obj.get();
 					auto converted = dynamic_cast<IndirectObjectReference*>(ptr);
 					return (nullptr != converted);
 				}
 
 				static IndirectObjectReferencePtr Convert(const ObjectPtr& obj)
 				{
-					auto ptr = obj.Content.get();
+					auto ptr = obj.get();
 					auto converted = dynamic_cast<IndirectObjectReference*>(ptr);
 					if (nullptr == converted)
 						throw ConversionExceptionFactory<IndirectObjectReference>::Construct(obj);

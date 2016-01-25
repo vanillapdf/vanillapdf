@@ -125,7 +125,7 @@ namespace gotchangpdf
 			public:
 				static ConversionException Construct(const Deferred<SourceT>& obj)
 				{
-					auto ptr = obj.Content.get();
+					auto ptr = obj.get();
 					std::string source_name = (nullptr == ptr ? "nullptr" : typeid(*ptr).name());
 					std::string msg("Could not convert object of type " + source_name + " to type " + typeid(DestT).name());
 					return ConversionException(msg);

@@ -4,13 +4,13 @@
 namespace gotchangpdf
 {
 	template <typename T>
-	struct Deferred;
+	class Deferred;
 
 	template <typename T>
-	struct DeferredContainer;
+	class DeferredContainer;
 
 	template <typename T>
-	struct DeferredIterator;
+	class DeferredIterator;
 
 	class Buffer;
 	using BufferPtr = DeferredContainer<Buffer>;

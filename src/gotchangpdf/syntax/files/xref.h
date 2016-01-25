@@ -17,7 +17,7 @@ namespace gotchangpdf
 			template <typename T>
 			static T ConvertTo(const XrefEntryBasePtr& obj)
 			{
-				auto ptr = obj.Content.get();
+				auto ptr = obj.get();
 				auto converted = dynamic_cast<typename T::value_type *>(ptr);
 				if (nullptr == converted)
 					throw ConversionExceptionFactory<T>::Construct(obj);
@@ -28,7 +28,7 @@ namespace gotchangpdf
 			template <typename T>
 			static bool IsType(const XrefEntryBasePtr& obj)
 			{
-				auto ptr = obj.Content.get();
+				auto ptr = obj.get();
 				auto converted = dynamic_cast<typename T::value_type *>(ptr);
 				return (nullptr != converted);
 			}
