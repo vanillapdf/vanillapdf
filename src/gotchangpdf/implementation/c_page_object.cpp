@@ -16,30 +16,16 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObject
 
 	try
 	{
-		LOG_HIGH_OBJECT_SCOPE(obj);
-
-		try
-		{
-			ContentsPtr contents;
-			auto contains = obj->Contents(contents);
-			if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
-			auto ptr = contents.AddRefGet();
-			*result = reinterpret_cast<ContentsHandle>(ptr);
-			return GOTCHANG_PDF_ERROR_SUCCES;
-		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
+		ContentsPtr contents;
+		auto contains = obj->Contents(contents);
+		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		auto ptr = contents.AddRefGet();
+		*result = reinterpret_cast<ContentsHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_Release(PageObjectHandle handle)
 {
-	PageObject* obj = reinterpret_cast<PageObject*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-
-	try
-	{
-		LOG_HIGH_OBJECT_SCOPE(obj);
-
-		obj->Release();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
+	return ObjectRelease<PageObject, PageObjectHandle>(handle);
 }

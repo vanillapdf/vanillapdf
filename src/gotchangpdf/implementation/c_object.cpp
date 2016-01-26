@@ -25,37 +25,32 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Type(ObjectHandle handle, 
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_OBJECT_SCOPE(obj);
+	switch (obj->GetType()) {
+	case Object::Type::Array:
+		*result = ObjectType_Array; break;
+	case Object::Type::Boolean:
+		*result = ObjectType_Boolean; break;
+	case Object::Type::Dictionary:
+		*result = ObjectType_Dictionary; break;
+	case Object::Type::Integer:
+		*result = ObjectType_Integer; break;
+	case Object::Type::Name:
+		*result = ObjectType_Name; break;
+	case Object::Type::Null:
+		*result = ObjectType_Null; break;
+	case Object::Type::Real:
+		*result = ObjectType_Real; break;
+	case Object::Type::Stream:
+		*result = ObjectType_Stream; break;
+	case Object::Type::String:
+		*result = ObjectType_String; break;
+	case Object::Type::IndirectReference:
+		*result = ObjectType_IndirectReference; break;
+	default:
+		return GOTCHANG_PDF_ERROR_GENERAL;
+	}
 
-		switch (obj->GetType()) {
-		case Object::Type::Array:
-			*result = ObjectType_Array; break;
-		case Object::Type::Boolean:
-			*result = ObjectType_Boolean; break;
-		case Object::Type::Dictionary:
-			*result = ObjectType_Dictionary; break;
-		case Object::Type::Integer:
-			*result = ObjectType_Integer; break;
-		case Object::Type::Name:
-			*result = ObjectType_Name; break;
-		case Object::Type::Null:
-			*result = ObjectType_Null; break;
-		case Object::Type::Real:
-			*result = ObjectType_Real; break;
-		case Object::Type::Stream:
-			*result = ObjectType_Stream; break;
-		case Object::Type::String:
-			*result = ObjectType_String; break;
-		case Object::Type::IndirectReference:
-			*result = ObjectType_IndirectReference; break;
-		default:
-			return GOTCHANG_PDF_ERROR_GENERAL;
-		}
-
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle handle, out_offset_type result)
@@ -63,15 +58,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle han
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	LOG_WEAK_FILE_SCOPE(obj->GetFile());
 
-	try
-	{
-		LOG_OBJECT_SCOPE(obj);
-
-		*result = obj->GetOffset();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
+	*result = obj->GetOffset();
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Release(ObjectHandle handle)

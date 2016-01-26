@@ -18,16 +18,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryH
 
 	try
 	{
-		LOG_OBJECT_SCOPE(obj);
-		try
-		{
-			auto direct = obj->Find(*name_object);
-			auto base = ObjectUtils::GetObjectBase(direct);
-			auto ptr = base.AddRefGet();
-			*result = reinterpret_cast<ObjectHandle>(ptr);
-			return GOTCHANG_PDF_ERROR_SUCCES;
-		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
+		auto direct = obj->Find(*name_object);
+		auto base = ObjectUtils::GetObjectBase(direct);
+		auto ptr = base.AddRefGet();
+		*result = reinterpret_cast<ObjectHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(DictionaryHandle handle, PDictionaryIteratorHandle result)
@@ -38,16 +34,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(Diction
 
 	try
 	{
-		LOG_OBJECT_SCOPE(obj);
-
-		try
-		{
-			auto begin = DictionaryObject::IteratorPtr(obj->begin());
-			auto ptr = begin.AddRefGet();
-			*result = reinterpret_cast<DictionaryIteratorHandle>(ptr);
-			return GOTCHANG_PDF_ERROR_SUCCES;
-		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
+		auto begin = DictionaryObject::IteratorPtr(obj->begin());
+		auto ptr = begin.AddRefGet();
+		*result = reinterpret_cast<DictionaryIteratorHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Next(
@@ -66,11 +57,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Next(
 GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Release(
 	DictionaryIteratorHandle handle)
 {
-	DictionaryObject::Iterator* iterator = reinterpret_cast<DictionaryObject::Iterator*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
-
-	iterator->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return ObjectRelease<DictionaryObject::Iterator, DictionaryIteratorHandle>(handle);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetKey(
@@ -121,17 +108,13 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(
 
 	try
 	{
-		LOG_OBJECT_SCOPE(dictionary);
-		try
-		{
-			if (dictionary->end() == iterator->Value())
-				*result = GOTCHANG_PDF_FALSE;
-			else
-				*result = GOTCHANG_PDF_TRUE;
+		if (dictionary->end() == iterator->Value())
+			*result = GOTCHANG_PDF_FALSE;
+		else
+			*result = GOTCHANG_PDF_TRUE;
 
-			return GOTCHANG_PDF_ERROR_SUCCES;
-		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Release(DictionaryHandle handle)

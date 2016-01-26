@@ -14,15 +14,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedOb
 
 	try
 	{
-		LOG_OBJECT_SCOPE(obj);
-		try
-		{
-			auto direct = obj->GetReferencedObject();
-			auto ptr = direct.AddRefGet();
-			*result = reinterpret_cast<ObjectHandle>(ptr);
-			return GOTCHANG_PDF_ERROR_SUCCES;
-		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
+		auto direct = obj->GetReferencedObject();
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<ObjectHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_Release(IndirectReferenceHandle handle)
@@ -36,13 +32,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedOb
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_OBJECT_SCOPE(obj);
-
-		*result = obj->GetReferencedObjectNumber();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
+	*result = obj->GetReferencedObjectNumber();
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedGenerationNumber(IndirectReferenceHandle handle, out_integer_type result)
@@ -51,11 +42,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedGe
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_OBJECT_SCOPE(obj);
-
-		*result = obj->GetReferencedGenerationNumber();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
+	*result = obj->GetReferencedGenerationNumber();
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }

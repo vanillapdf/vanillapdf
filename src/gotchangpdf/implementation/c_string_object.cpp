@@ -13,21 +13,16 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_Type(StringHandle ha
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_OBJECT_SCOPE(obj);
+	switch (obj->GetStringType()) {
+	case StringObjectBase::StringType::Literal:
+		*result = StringType_Literal; break;
+	case StringObjectBase::StringType::Hexadecimal:
+		*result = StringType_Hexadecimal; break;
+	default:
+		return GOTCHANG_PDF_ERROR_GENERAL;
+	}
 
-		switch (obj->GetStringType()) {
-		case StringObjectBase::StringType::Literal:
-			*result = StringType_Literal; break;
-		case StringObjectBase::StringType::Hexadecimal:
-			*result = StringType_Hexadecimal; break;
-		default:
-			return GOTCHANG_PDF_ERROR_GENERAL;
-		}
-
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_Release(StringHandle handle)
@@ -53,15 +48,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_Value(Literal
 
 	try
 	{
-		LOG_OBJECT_SCOPE(obj);
-		try
-		{
-			auto buffer = obj->Value();
-			auto ptr = buffer.AddRefGet();
-			*result = reinterpret_cast<BufferHandle>(ptr);
-			return GOTCHANG_PDF_ERROR_SUCCES;
-		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
+		auto buffer = obj->Value();
+		auto ptr = buffer.AddRefGet();
+		*result = reinterpret_cast<BufferHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_Release(LiteralStringHandle handle)
@@ -77,15 +68,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Value(Hex
 
 	try
 	{
-		LOG_OBJECT_SCOPE(obj);
-		try
-		{
-			auto buffer = obj->Value();
-			auto ptr = buffer.AddRefGet();
-			*result = reinterpret_cast<BufferHandle>(ptr);
-			return GOTCHANG_PDF_ERROR_SUCCES;
-		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
+		auto buffer = obj->Value();
+		auto ptr = buffer.AddRefGet();
+		*result = reinterpret_cast<BufferHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Release(HexadecimalStringHandle handle)

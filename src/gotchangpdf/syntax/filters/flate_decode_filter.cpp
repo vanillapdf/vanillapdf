@@ -132,7 +132,7 @@ namespace gotchangpdf
 							}
 							break;
 						default:
-							LOG_ERROR << "Unknown filter type: " << filter;
+							LOG_ERROR_GLOBAL << "Unknown filter type: " << filter;
 							break;
 					}
 

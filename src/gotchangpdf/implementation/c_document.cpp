@@ -15,15 +15,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenNew(string_type file
 
 	try
 	{
-		LOG_SCOPE(filename);
-
 		std::string name(filename);
 		DocumentPtr doc(name);
 		auto ptr = doc.AddRefGet();
 		*result = reinterpret_cast<DocumentHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHandle holder_handle, PDocumentHandle result)
@@ -31,7 +28,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHandle 
 	FileHolder* holder = reinterpret_cast<FileHolder*>(holder_handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	//LOG_SCOPE(file->GetFilename());
 
 	try
 	{
@@ -39,8 +35,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHandle 
 		auto ptr = doc.AddRefGet();
 		*result = reinterpret_cast<DocumentHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandle handle, PCatalogHandle result)
@@ -48,7 +43,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandl
 	Document* document = reinterpret_cast<Document*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	//LOG_SCOPE(file->GetFilename());
 
 	try
 	{
@@ -56,16 +50,10 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandl
 		auto ptr = catalog.AddRefGet();
 		*result = reinterpret_cast<CatalogHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	}
-	CATCH_GOTCHNGPDF_EXCEPTIONS
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_Release(DocumentHandle handle)
 {
-	Document* obj = reinterpret_cast<Document*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	//LOG_WEAK_FILE_SCOPE(obj->GetFile());
-
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return ObjectRelease<Document, DocumentHandle>(handle);
 }

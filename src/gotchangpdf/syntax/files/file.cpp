@@ -25,13 +25,13 @@ namespace gotchangpdf
 		File::File(const std::string& path)
 			: _full_path(path)
 		{
-			LOG_DEBUG << "File constructor";
 			_filename = extract_filename(path);
+			LOG_DEBUG(_filename) << "File constructor";
 		}
 
 		File::~File(void)
 		{
-			LOG_DEBUG << "File destructor";
+			LOG_DEBUG(_filename) << "File destructor";
 
 			if (nullptr != _input)
 			{
@@ -57,7 +57,7 @@ namespace gotchangpdf
 
 		void File::Initialize()
 		{
-			LOG_DEBUG << "Initialize";
+			LOG_DEBUG(_filename) << "Initialize";
 
 			if (_initialized)
 				return;
@@ -111,7 +111,7 @@ namespace gotchangpdf
 		ObjectPtr File::GetIndirectObject(types::uinteger objNumber,
 			types::ushort genNumber)
 		{
-			LOG_DEBUG << "GetIndirectObject " << objNumber << " and " << genNumber;
+			LOG_DEBUG(_filename) << "GetIndirectObject " << objNumber << " and " << genNumber;
 
 			if (!_initialized)
 				throw FileNotInitializedException(_filename);
@@ -133,10 +133,10 @@ namespace gotchangpdf
 				return compressed->GetReference();
 			}
 			case XrefEntryBase::Usage::Null:
-				LOG_ERROR << "Xref entry type is null for object " << objNumber << " " << genNumber;
+				LOG_ERROR(_filename) << "Xref entry type is null for object " << objNumber << " " << genNumber;
 				throw ObjectMissingException(objNumber, genNumber);
 			case XrefEntryBase::Usage::Free:
-				LOG_ERROR << "Xref entry type is free for object " << objNumber << " " << genNumber << " and InUse() returned true";
+				LOG_ERROR(_filename) << "Xref entry type is free for object " << objNumber << " " << genNumber << " and InUse() returned true";
 				assert(!"Current entry is supposed to be InUse(), while it's type is Free");
 				throw ObjectMissingException(objNumber, genNumber);
 			default:

@@ -15,15 +15,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Value(NameHandle handl
 
 	try
 	{
-		LOG_OBJECT_SCOPE(obj);
-		try
-		{
-			auto buffer = obj->Value();
-			auto ptr = buffer.AddRefGet();
-			*result = reinterpret_cast<BufferHandle>(ptr);
-			return GOTCHANG_PDF_ERROR_SUCCES;
-		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
+		auto buffer = obj->Value();
+		auto ptr = buffer.AddRefGet();
+		*result = reinterpret_cast<BufferHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Release(NameHandle handle)

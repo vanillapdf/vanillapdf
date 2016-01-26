@@ -15,10 +15,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_TrailerDictionary(XrefHandle
 	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(xref->GetFile());
-
 		try
 		{
 			auto dict = xref->GetTrailerDictionary();
@@ -26,7 +22,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_TrailerDictionary(XrefHandle
 			*result = reinterpret_cast<DictionaryHandle>(ptr);
 			return GOTCHANG_PDF_ERROR_SUCCES;
 		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_LastXrefOffset(XrefHandle handle, out_offset_type result)
@@ -34,13 +29,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_LastXrefOffset(XrefHandle ha
 	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(xref->GetFile());
-
 		*result = xref->GetLastXrefOffset();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_Size(XrefHandle handle, out_integer_type result)
@@ -49,13 +39,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_Size(XrefHandle handle, out_
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(table);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(table->GetFile());
-
 		*result = table->Size();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_At(XrefHandle handle, integer_type at, PXrefSubsectionHandle result)
@@ -64,10 +49,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_At(XrefHandle handle, intege
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(table);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(table->GetFile());
-
 		try
 		{
 			auto entry = table->At(at);
@@ -75,35 +56,16 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_At(XrefHandle handle, intege
 			*result = reinterpret_cast<XrefSubsectionHandle>(ptr);
 			return GOTCHANG_PDF_ERROR_SUCCES;
 		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_Release(XrefHandle handle)
 {
-	XrefBase* table = reinterpret_cast<XrefBase*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(table);
-
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(table->GetFile());
-
-		table->Release();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
+	return ObjectRelease<XrefBase, XrefHandle>(handle);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle handle)
 {
-	XrefEntryBase* entry = reinterpret_cast<XrefEntryBase*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
-
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
-		entry->Release();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
+	return ObjectRelease<XrefEntryBase, XrefEntryHandle>(handle);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_InUse(XrefEntryHandle handle, out_boolean_type result)
@@ -112,17 +74,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_InUse(XrefEntryHandle h
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
 		if (entry->InUse())
 			*result = GOTCHANG_PDF_TRUE;
 		else
 			*result = GOTCHANG_PDF_FALSE;
 
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Type(XrefEntryHandle handle, PXrefEntryType result)
@@ -130,10 +87,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Type(XrefEntryHandle ha
 	XrefEntryBase* entry = reinterpret_cast<XrefEntryBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
 
 		// I do not use Null entry intentionally - it is only for default construction
 		// It might be something going on
@@ -153,7 +106,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Type(XrefEntryHandle ha
 		}
 
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ObjectNumber(XrefEntryHandle handle, out_uinteger_type result)
@@ -162,13 +114,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ObjectNumber(XrefEntryH
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
 		*result = entry->GetObjectNumber();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_GenerationNumber(XrefEntryHandle handle, out_ushort_type result)
@@ -177,13 +124,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_GenerationNumber(XrefEn
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
 		*result = entry->GetGenerationNumber();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_ObjectNumber(XrefEntryHandle handle, out_uinteger_type result)
@@ -192,13 +134,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_ObjectNumber(XrefEn
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
 		*result = entry->GetObjectNumber();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_GenerationNumber(XrefEntryHandle handle, out_ushort_type result)
@@ -207,13 +144,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_GenerationNumber(Xr
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
 		*result = entry->GetGenerationNumber();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_InUse(XrefFreeEntryHandle handle, out_boolean_type result)
@@ -222,13 +154,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_InUse(XrefFreeEntry
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
 		*result = entry->InUse();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_NextFreeObjectNumber(XrefFreeEntryHandle handle, out_uinteger_type result)
@@ -237,27 +164,13 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_NextFreeObjectNumbe
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
 		*result = entry->GetNextFreeObjectNumber();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_Release(XrefFreeEntryHandle handle)
 {
-	XrefEntryBase* entry = reinterpret_cast<XrefEntryBase*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
-
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
-		entry->Release();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
+	return ObjectRelease<XrefFreeEntry, XrefFreeEntryHandle>(handle);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_ObjectNumber(XrefEntryHandle handle, out_uinteger_type result)
@@ -266,13 +179,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_ObjectNumber(XrefEn
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
 		*result = entry->GetObjectNumber();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_GenerationNumber(XrefEntryHandle handle, out_ushort_type result)
@@ -281,13 +189,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_GenerationNumber(Xr
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
 		*result = entry->GetGenerationNumber();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_Offset(XrefUsedEntryHandle handle, out_offset_type result)
@@ -296,13 +199,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_Offset(XrefUsedEntr
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
 		*result = entry->GetOffset();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_InUse(XrefUsedEntryHandle handle, out_boolean_type result)
@@ -311,27 +209,13 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_InUse(XrefUsedEntry
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
 		*result = entry->InUse();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_Release(XrefUsedEntryHandle handle)
 {
-	XrefUsedEntry* entry = reinterpret_cast<XrefUsedEntry*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
-
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
-		entry->Release();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
+	return ObjectRelease<XrefUsedEntry, XrefUsedEntryHandle>(handle);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectNumber(XrefEntryHandle handle, out_uinteger_type result)
@@ -340,13 +224,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectNumber(
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
 		*result = entry->GetObjectNumber();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GenerationNumber(XrefEntryHandle handle, out_ushort_type result)
@@ -355,13 +234,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GenerationNum
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
 		*result = entry->GetGenerationNumber();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_InUse(XrefCompressedEntryHandle handle, out_boolean_type result)
@@ -370,13 +244,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_InUse(XrefCom
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
 		*result = entry->InUse();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Index(XrefCompressedEntryHandle handle, out_uinteger_type result)
@@ -385,13 +254,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Index(XrefCom
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
 		*result = entry->GetIndex();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectStreamNumber(XrefCompressedEntryHandle handle, out_uinteger_type result)
@@ -400,27 +264,13 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectStreamN
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
 		*result = entry->GetObjectStreamNumber();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Release(XrefCompressedEntryHandle handle)
 {
-	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
-
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
-		entry->Release();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
+	return ObjectRelease<XrefCompressedEntry, XrefCompressedEntryHandle>(handle);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToFreeEntry(XrefEntryHandle handle, PXrefFreeEntryHandle result)
@@ -444,17 +294,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_Reference(XrefUsedE
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
-
 		try {
 			auto direct = entry->GetReference();
 			auto ptr = direct.AddRefGet();
 			*result = reinterpret_cast<ObjectHandle>(ptr);
 			return GOTCHANG_PDF_ERROR_SUCCES;
 		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Reference(XrefCompressedEntryHandle handle, PObjectHandle result)
@@ -462,10 +307,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Reference(Xre
 	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(entry->GetFile());
 
 		try {
 			auto direct = entry->GetReference();
@@ -475,7 +316,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Reference(Xre
 			*result = reinterpret_cast<ObjectHandle>(ptr);
 			return GOTCHANG_PDF_ERROR_SUCCES;
 		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_Index(XrefSubsectionHandle handle, out_uinteger_type result)
@@ -483,13 +323,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_Index(XrefSubsecti
 	XrefSubsection* section = reinterpret_cast<XrefSubsection*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(section);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(section->GetFile());
-
 		*result = section->Index();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_Size(XrefSubsectionHandle handle, out_uinteger_type result)
@@ -497,13 +332,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_Size(XrefSubsectio
 	XrefSubsection* section = reinterpret_cast<XrefSubsection*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(section);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(section->GetFile());
-
 		*result = section->Size();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_At(XrefSubsectionHandle handle, uinteger_type at, PXrefEntryHandle result)
@@ -511,17 +341,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_At(XrefSubsectionH
 	XrefSubsection* section = reinterpret_cast<XrefSubsection*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(section);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(section->GetFile());
-
 		try {
 			auto entry = section->At(at);
 			auto ptr = entry.AddRefGet();
 			*result = reinterpret_cast<XrefEntryHandle>(ptr);
 			return GOTCHANG_PDF_ERROR_SUCCES;
 		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_Release(XrefSubsectionHandle handle)
@@ -529,20 +354,14 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_Release(XrefSubsec
 	XrefSubsection* section = reinterpret_cast<XrefSubsection*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(section);
 
-	try
-	{
-		LOG_WEAK_FILE_SCOPE(section->GetFile());
-
 		section->Release();
 		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_GetValue(XrefChainIteratorHandle handle, PXrefHandle result)
 {
 	XrefChain::Iterator* iterator = reinterpret_cast<XrefChain::Iterator*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
-	//LOG_SCOPE(chain->GetParent()->GetFile()->GetFilename());
 
 	try {
 		auto entry = iterator->Value();
@@ -559,7 +378,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_IsValid(XrefCha
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(chain);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-	//LOG_SCOPE(dictionary->GetFile()->GetFilename());
 
 	try {
 		if (*chain->End() == *iterator)
@@ -584,19 +402,13 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_Next(XrefChainI
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_Release(XrefChainIteratorHandle handle)
 {
-	XrefChain::Iterator* it = reinterpret_cast<XrefChain::Iterator*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(it);
-	//LOG_SCOPE(chain->GetFile()->GetFilename());
-
-	it->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return ObjectRelease<XrefChain::Iterator, XrefChainIteratorHandle>(handle);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChain_Iterator(XrefChainHandle handle, PXrefChainIteratorHandle result)
 {
 	XrefChain* chain = reinterpret_cast<XrefChain*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(chain);
-	//LOG_SCOPE(chain->GetFile()->GetFilename());
 
 	try
 	{
@@ -609,10 +421,5 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChain_Iterator(XrefChainHandl
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChain_Release(XrefChainHandle handle)
 {
-	XrefChain* chain = reinterpret_cast<XrefChain*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(chain);
-	//LOG_SCOPE(chain->GetFile()->GetFilename());
-
-	chain->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return ObjectRelease<XrefChain, XrefChainHandle>(handle);
 }

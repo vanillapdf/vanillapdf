@@ -554,7 +554,7 @@ namespace gotchangpdf
 						break;
 					}
 					default:
-						LOG_ERROR << "Unrecognized data found in xref stream data";
+						LOG_ERROR(_file) << "Unrecognized data found in xref stream data";
 						break;
 					}
 				}

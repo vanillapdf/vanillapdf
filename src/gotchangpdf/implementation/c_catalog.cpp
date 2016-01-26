@@ -16,16 +16,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPages(CatalogHandle ha
 
 	try
 	{
-		LOG_HIGH_OBJECT_SCOPE(obj);
-
-		try
-		{
-			auto pages = obj->Pages();
-			auto ptr = pages.AddRefGet();
-			*result = reinterpret_cast<PageTreeHandle>(ptr);
-			return GOTCHANG_PDF_ERROR_SUCCES;
-		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
+		auto pages = obj->Pages();
+		auto ptr = pages.AddRefGet();
+		*result = reinterpret_cast<PageTreeHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetVersion(CatalogHandle handle, PPDFVersion result)
@@ -36,34 +31,29 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetVersion(CatalogHandle 
 
 	try
 	{
-		LOG_HIGH_OBJECT_SCOPE(obj);
+		switch (obj->Version()) {
+		case Version::PDF10:
+			*result = PDFVersion_10; break;
+		case Version::PDF11:
+			*result = PDFVersion_11; break;
+		case Version::PDF12:
+			*result = PDFVersion_12; break;
+		case Version::PDF13:
+			*result = PDFVersion_13; break;
+		case Version::PDF14:
+			*result = PDFVersion_14; break;
+		case Version::PDF15:
+			*result = PDFVersion_15; break;
+		case Version::PDF16:
+			*result = PDFVersion_16; break;
+		case Version::PDF17:
+			*result = PDFVersion_17; break;
+		default:
+			return GOTCHANG_PDF_ERROR_NOT_SUPPORTED;
+		}
 
-		try
-		{
-			switch (obj->Version()) {
-			case Version::PDF10:
-				*result = PDFVersion_10; break;
-			case Version::PDF11:
-				*result = PDFVersion_11; break;
-			case Version::PDF12:
-				*result = PDFVersion_12; break;
-			case Version::PDF13:
-				*result = PDFVersion_13; break;
-			case Version::PDF14:
-				*result = PDFVersion_14; break;
-			case Version::PDF15:
-				*result = PDFVersion_15; break;
-			case Version::PDF16:
-				*result = PDFVersion_16; break;
-			case Version::PDF17:
-				*result = PDFVersion_17; break;
-			default:
-				return GOTCHANG_PDF_ERROR_NOT_SUPPORTED;
-			}
-
-			return GOTCHANG_PDF_ERROR_SUCCES;
-		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetExtensions(CatalogHandle handle, PDeveloperExtensionsHandle result)
@@ -71,17 +61,14 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetExtensions(CatalogHand
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
 	try
 	{
-		LOG_HIGH_OBJECT_SCOPE(obj);
-		try
-		{
-			auto extensions = obj->Extensions();
-			auto ptr = extensions.AddRefGet();
-			*result = reinterpret_cast<DeveloperExtensionsHandle>(ptr);
-			return GOTCHANG_PDF_ERROR_SUCCES;
-		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
+		auto extensions = obj->Extensions();
+		auto ptr = extensions.AddRefGet();
+		*result = reinterpret_cast<DeveloperExtensionsHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLabels(CatalogHandle handle, PPageLabelsHandle result)
@@ -92,15 +79,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLabels(CatalogHand
 
 	try
 	{
-		LOG_HIGH_OBJECT_SCOPE(obj);
-		try
-		{
-			auto labels = obj->PageLabels();
-			auto ptr = labels.AddRefGet();
-			*result = reinterpret_cast<PageLabelsHandle>(ptr);
-			return GOTCHANG_PDF_ERROR_SUCCES;
-		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
+		auto labels = obj->PageLabels();
+		auto ptr = labels.AddRefGet();
+		*result = reinterpret_cast<PageLabelsHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHandle handle, PPageLayout result)
@@ -111,29 +94,25 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHand
 
 	try
 	{
-		LOG_HIGH_OBJECT_SCOPE(obj);
-		try
-		{
-			switch (obj->PageLayout()) {
-			case semantics::Catalog::PageLayoutType::SinglePage:
-				*result = PageLayout_SinglePage; break;
-			case semantics::Catalog::PageLayoutType::OneColumn:
-				*result = PageLayout_OneColumn; break;
-			case semantics::Catalog::PageLayoutType::TwoColumnLeft:
-				*result = PageLayout_TwoColumnLeft; break;
-			case semantics::Catalog::PageLayoutType::TwoColumnRight:
-				*result = PageLayout_TwoColumnRight; break;
-			case semantics::Catalog::PageLayoutType::TwoPageLeft:
-				*result = PageLayout_TwoPageLeft; break;
-			case semantics::Catalog::PageLayoutType::TwoPageRight:
-				*result = PageLayout_TwoPageRight; break;
-			default:
-				return GOTCHANG_PDF_ERROR_NOT_SUPPORTED;
-			}
+		switch (obj->PageLayout()) {
+		case semantics::Catalog::PageLayoutType::SinglePage:
+			*result = PageLayout_SinglePage; break;
+		case semantics::Catalog::PageLayoutType::OneColumn:
+			*result = PageLayout_OneColumn; break;
+		case semantics::Catalog::PageLayoutType::TwoColumnLeft:
+			*result = PageLayout_TwoColumnLeft; break;
+		case semantics::Catalog::PageLayoutType::TwoColumnRight:
+			*result = PageLayout_TwoColumnRight; break;
+		case semantics::Catalog::PageLayoutType::TwoPageLeft:
+			*result = PageLayout_TwoPageLeft; break;
+		case semantics::Catalog::PageLayoutType::TwoPageRight:
+			*result = PageLayout_TwoPageRight; break;
+		default:
+			return GOTCHANG_PDF_ERROR_NOT_SUPPORTED;
+		}
 
-			return GOTCHANG_PDF_ERROR_SUCCES;
-		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetViewerPreferences(CatalogHandle handle, PViewerPreferencesHandle result)
@@ -144,17 +123,13 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetViewerPreferences(Cata
 
 	try
 	{
-		LOG_HIGH_OBJECT_SCOPE(obj);
-		try
-		{
-			ViewerPreferencesPtr direct;
-			auto contains = obj->ViewerPreferences(direct);
-			if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
-			auto ptr = direct.AddRefGet();
-			*result = reinterpret_cast<ViewerPreferencesHandle>(ptr);
-			return GOTCHANG_PDF_ERROR_SUCCES;
-		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
+		ViewerPreferencesPtr direct;
+		auto contains = obj->ViewerPreferences(direct);
+		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<ViewerPreferencesHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetOutlines(CatalogHandle handle, POutlineHandle result)
@@ -165,29 +140,16 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetOutlines(CatalogHandle
 
 	try
 	{
-		LOG_HIGH_OBJECT_SCOPE(obj);
-		try
-		{
-			OutlinePtr direct;
-			auto contains = obj->Outlines(direct);
-			if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
-			auto ptr = direct.AddRefGet();
-			*result = reinterpret_cast<OutlineHandle>(ptr);
-			return GOTCHANG_PDF_ERROR_SUCCES;
-		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
+		OutlinePtr direct;
+		auto contains = obj->Outlines(direct);
+		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<OutlineHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_Release(CatalogHandle handle)
 {
-	Catalog* obj = reinterpret_cast<Catalog*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-
-	try
-	{
-		LOG_HIGH_OBJECT_SCOPE(obj);
-
-		obj->Release();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
+	return ObjectRelease<Catalog, CatalogHandle>(handle);
 }

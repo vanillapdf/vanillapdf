@@ -13,13 +13,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPageCount(PageTreeHan
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_HIGH_OBJECT_SCOPE(obj);
-
-		*result = obj->PageCount();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
+	*result = obj->PageCount();
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle handle, integer_type at, PPageObjectHandle result)
@@ -30,27 +25,14 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle h
 
 	try
 	{
-		LOG_HIGH_OBJECT_SCOPE(obj);
-		try
-		{
-			auto page = obj->Page(at);
-			auto ptr = page.AddRefGet();
-			*result = reinterpret_cast<PageObjectHandle>(ptr);
-			return GOTCHANG_PDF_ERROR_SUCCES;
-		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
+		auto page = obj->Page(at);
+		auto ptr = page.AddRefGet();
+		*result = reinterpret_cast<PageObjectHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_Release(PageTreeHandle handle)
 {
-	PageTree* obj = reinterpret_cast<PageTree*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-
-	try
-	{
-		LOG_HIGH_OBJECT_SCOPE(obj);
-
-		obj->Release();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
+	return ObjectRelease<PageTree, PageTreeHandle>(handle);
 }

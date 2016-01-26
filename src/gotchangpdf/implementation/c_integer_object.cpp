@@ -13,13 +13,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_Value(IntegerHandle
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		LOG_OBJECT_SCOPE(obj);
-
-		*result = obj->Value();
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_SCOPE_EXCEPTIONS
+	*result = obj->Value();
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_Release(IntegerHandle handle)

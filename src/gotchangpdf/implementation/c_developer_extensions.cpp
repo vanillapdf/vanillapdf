@@ -16,33 +16,29 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensions_GetBaseVersio
 
 	try
 	{
-		LOG_HIGH_OBJECT_SCOPE(obj);
-		try
-		{
-			switch (obj->BaseVersion()) {
-			case Version::PDF10:
-				*result = PDFVersion_10; break;
-			case Version::PDF11:
-				*result = PDFVersion_11; break;
-			case Version::PDF12:
-				*result = PDFVersion_12; break;
-			case Version::PDF13:
-				*result = PDFVersion_13; break;
-			case Version::PDF14:
-				*result = PDFVersion_14; break;
-			case Version::PDF15:
-				*result = PDFVersion_15; break;
-			case Version::PDF16:
-				*result = PDFVersion_16; break;
-			case Version::PDF17:
-				*result = PDFVersion_17; break;
-			default:
-				return GOTCHANG_PDF_ERROR_NOT_SUPPORTED;
-			}
+		switch (obj->BaseVersion()) {
+		case Version::PDF10:
+			*result = PDFVersion_10; break;
+		case Version::PDF11:
+			*result = PDFVersion_11; break;
+		case Version::PDF12:
+			*result = PDFVersion_12; break;
+		case Version::PDF13:
+			*result = PDFVersion_13; break;
+		case Version::PDF14:
+			*result = PDFVersion_14; break;
+		case Version::PDF15:
+			*result = PDFVersion_15; break;
+		case Version::PDF16:
+			*result = PDFVersion_16; break;
+		case Version::PDF17:
+			*result = PDFVersion_17; break;
+		default:
+			return GOTCHANG_PDF_ERROR_NOT_SUPPORTED;
+		}
 
-			return GOTCHANG_PDF_ERROR_SUCCES;
-		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensions_GetExtensionLevel(DeveloperExtensionsHandle handle, PIntegerHandle result)
@@ -53,18 +49,14 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensions_GetExtensionL
 
 	try
 	{
-		LOG_HIGH_OBJECT_SCOPE(obj);
-		try
-		{
-			auto level = obj->ExtensionLevel();
-			auto ptr = level.AddRefGet();
-			*result = reinterpret_cast<IntegerHandle>(ptr);
-			return GOTCHANG_PDF_ERROR_SUCCES;
-		} CATCH_GOTCHNGPDF_EXCEPTIONS
-	} CATCH_SCOPE_EXCEPTIONS
+		auto level = obj->ExtensionLevel();
+		auto ptr = level.AddRefGet();
+		*result = reinterpret_cast<IntegerHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensions_Release(DeveloperExtensionsHandle handle)
 {
-	return HighObjectRelease<DeveloperExtensions, DeveloperExtensionsHandle>(handle);
+	return ObjectRelease<DeveloperExtensions, DeveloperExtensionsHandle>(handle);
 }
