@@ -26,12 +26,12 @@ namespace gotchangpdf
 			: _full_path(path)
 		{
 			_filename = extract_filename(path);
-			LOG_DEBUG(_filename) << "File constructor";
+			LOG_WARNING_GLOBAL << "File constructor " << _filename;
 		}
 
 		File::~File(void)
 		{
-			LOG_DEBUG(_filename) << "File destructor";
+			LOG_WARNING_GLOBAL << "File destructor " << _filename;
 
 			if (nullptr != _input)
 			{
@@ -93,6 +93,10 @@ namespace gotchangpdf
 			} while (true);
 
 			_initialized = true;
+
+			//std::string dest("C:\\Users\\Gotcha\\Documents\\");
+			//dest += _filename;
+			//SaveAs(dest);
 		}
 
 		ObjectPtr File::GetIndirectObject(types::uinteger objNumber,
