@@ -52,7 +52,6 @@ namespace gotchangpdf
 
 			int ch = get();
 			int ahead = peek();
-			Token::Type result_type = Token::Type::UNKNOWN;
 
 			switch (ch)
 			{
@@ -62,28 +61,24 @@ namespace gotchangpdf
 			case WhiteSpace::NUL:
 				goto retry;
 			case EOF:
-				result_type = Token::Type::END_OF_INPUT;
-				goto prepared;
+				return TokenPtr(Token::Type::END_OF_INPUT, chars);
 			case WhiteSpace::LINE_FEED:
 				chars->push_back(WhiteSpace::LINE_FEED);
 
-				result_type = Token::Type::EOL;
-				goto prepared;
+				return TokenPtr(Token::Type::EOL, chars);
 			case WhiteSpace::CARRIAGE_RETURN:
 				chars->push_back(WhiteSpace::CARRIAGE_RETURN);
 				if (ahead == WhiteSpace::LINE_FEED && ignore()) {
 					chars->push_back(WhiteSpace::LINE_FEED);
 				}
 
-				result_type = Token::Type::EOL;
-				goto prepared;
+				return TokenPtr(Token::Type::EOL, chars);
 			case Delimiter::GREATER_THAN_SIGN:
 				if (ahead == Delimiter::GREATER_THAN_SIGN && ignore()) {
 					chars->push_back(Delimiter::GREATER_THAN_SIGN);
 					chars->push_back(Delimiter::GREATER_THAN_SIGN);
 
-					result_type = Token::Type::DICTIONARY_END;
-					goto prepared;
+					return TokenPtr(Token::Type::DICTIONARY_END, chars);
 				}
 
 				throw GeneralException("Unexpected character at offset: " + std::to_string(tellg()));
@@ -92,15 +87,12 @@ namespace gotchangpdf
 					chars->push_back(Delimiter::LESS_THAN_SIGN);
 					chars->push_back(Delimiter::LESS_THAN_SIGN);
 
-					result_type = Token::Type::DICTIONARY_BEGIN;
-					goto prepared;
+					return TokenPtr(Token::Type::DICTIONARY_BEGIN, chars);
 				}
 
 				// empty hexadecimal string
 				if (ahead == Delimiter::GREATER_THAN_SIGN && ignore()) {
-
-					result_type = Token::Type::HEXADECIMAL_STRING;
-					goto prepared;
+					return TokenPtr(Token::Type::HEXADECIMAL_STRING, chars);
 				}
 
 				for (;;) {
@@ -125,16 +117,13 @@ namespace gotchangpdf
 					throw GeneralException("Unexpected character in hexadecimal string " + std::to_string(current));
 				}
 
-				result_type = Token::Type::HEXADECIMAL_STRING;
-				goto prepared;
+				return TokenPtr(Token::Type::HEXADECIMAL_STRING, chars);
 			case Delimiter::LEFT_SQUARE_BRACKET:
 				chars->push_back(Delimiter::LEFT_SQUARE_BRACKET);
-				result_type = Token::Type::ARRAY_BEGIN;
-				goto prepared;
+				return TokenPtr(Token::Type::ARRAY_BEGIN, chars);
 			case Delimiter::RIGHT_SQUARE_BRACKET:
 				chars->push_back(Delimiter::RIGHT_SQUARE_BRACKET);
-				result_type = Token::Type::ARRAY_END;
-				goto prepared;
+				return TokenPtr(Token::Type::ARRAY_END, chars);
 			case Delimiter::SOLIDUS:
 				while (IsRegular(peek())) {
 					auto current = static_cast<char>(get());
@@ -151,8 +140,7 @@ namespace gotchangpdf
 					chars->push_back(current);
 				}
 
-				result_type = Token::Type::NAME_OBJECT;
-				goto prepared;
+				return TokenPtr(Token::Type::NAME_OBJECT, chars);
 			case Delimiter::LEFT_PARENTHESIS:
 			{
 				int nested_count = 0;
@@ -279,15 +267,13 @@ namespace gotchangpdf
 					assert(!"Unrecognized escape sequence");
 				}
 
-				result_type = Token::Type::LITERAL_STRING;
-				goto prepared;
+				return TokenPtr(Token::Type::LITERAL_STRING, chars);
 			}
 			default:
 				if (ch == 'R') {
 					chars->push_back('R');
 
-					result_type = Token::Type::INDIRECT_REFERENCE_MARKER;
-					goto prepared;
+					return TokenPtr(Token::Type::INDIRECT_REFERENCE_MARKER, chars);
 				}
 
 				auto current = SafeConvert<unsigned char>(ch);
@@ -300,8 +286,7 @@ namespace gotchangpdf
 					}
 
 					if (has_dot) {
-						result_type = Token::Type::REAL_OBJECT;
-						goto prepared;
+						return TokenPtr(Token::Type::REAL_OBJECT, chars);
 					}
 
 					if (peek() == '.' && ignore()) {
@@ -311,12 +296,10 @@ namespace gotchangpdf
 							chars->push_back(next);
 						}
 
-						result_type = Token::Type::REAL_OBJECT;
-						goto prepared;
+						return TokenPtr(Token::Type::REAL_OBJECT, chars);
 					}
 
-					result_type = Token::Type::INTEGER_OBJECT;
-					goto prepared;
+					return TokenPtr(Token::Type::INTEGER_OBJECT, chars);
 				}
 
 				chars->push_back(current);
@@ -334,10 +317,7 @@ namespace gotchangpdf
 				}
 			}
 
-			assert(result_type == Token::Type::UNKNOWN);
-			result_type = _dictionary.Find(chars);
-
-		prepared:
+			auto result_type = _dictionary.Find(chars);
 			return TokenPtr(result_type, chars);
 		}
 
