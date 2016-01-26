@@ -38,7 +38,7 @@ namespace gotchangpdf
 
 		struct tm timeinfo;
 		auto err = localtime_s(&timeinfo, &rawtime);
-		assert(err == 0);
+		assert(err == 0); (void)err;
 
 		char buffer[128];
 		strftime(buffer, sizeof(buffer), "%d-%m-%Y %H:%M:%S", &timeinfo);
