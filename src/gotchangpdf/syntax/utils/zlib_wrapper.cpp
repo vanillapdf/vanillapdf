@@ -1,6 +1,7 @@
 #include "precompiled.h"
 #include "zlib_wrapper.h"
-#include "zlib.h"
+
+#include "../../lib/miniz/miniz.c"
 
 #include <cassert>
 
