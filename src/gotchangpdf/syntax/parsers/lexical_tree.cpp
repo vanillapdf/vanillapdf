@@ -43,7 +43,8 @@ namespace gotchangpdf
 			auto cur = _root;
 			auto len = path->size();
 			for (decltype(len) i = 0; i < len; ++i) {
-				cur = cur->childs[path->at(i)];
+				auto ch = path->at(i);
+				cur = cur->childs[static_cast<unsigned char>(ch)];
 				if (!cur) {
 					return std::shared_ptr<Tree::Node>();
 				}
