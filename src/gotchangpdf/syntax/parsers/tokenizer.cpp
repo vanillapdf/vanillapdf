@@ -154,6 +154,8 @@ namespace gotchangpdf
 				result_type = Token::Type::NAME_OBJECT;
 				goto prepared;
 			case Delimiter::LEFT_PARENTHESIS:
+			{
+				int nested_count = 0;
 				for (;;) {
 					int current_meta = get();
 					int next_meta = peek();
@@ -166,8 +168,17 @@ namespace gotchangpdf
 					auto current = SafeConvert<unsigned char>(current_meta);
 					auto next = SafeConvert<unsigned char>(next_meta);
 
+					if (current == Delimiter::LEFT_PARENTHESIS) {
+						nested_count++;
+					}
+
 					if (current == Delimiter::RIGHT_PARENTHESIS) {
-						break;
+						if (0 == nested_count) {
+							break;
+						}
+
+						nested_count--;
+						continue;
 					}
 
 					if (current == '\r') {
@@ -270,6 +281,7 @@ namespace gotchangpdf
 
 				result_type = Token::Type::LITERAL_STRING;
 				goto prepared;
+			}
 			default:
 				if (ch == 'R') {
 					chars->push_back('R');
