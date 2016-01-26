@@ -1,118 +1,120 @@
 #ifndef _LOG_H
 #define _LOG_H
 
-#include <boost/log/core.hpp>
-#include <boost/log/expressions.hpp>
+#include "syntax_fwd.h"
 
-#include <boost/log/sources/global_logger_storage.hpp>
-#include <boost/log/sources/severity_logger.hpp>
-#include <boost/log/sources/record_ostream.hpp>
-
-#include <boost/log/sinks/sync_frontend.hpp>
-#include <boost/log/sinks/text_multifile_backend.hpp>
-
-#include <boost/log/attributes/scoped_attribute.hpp>
-#include <boost/log/utility/setup/common_attributes.hpp>
-#include <boost/log/utility/manipulators/add_value.hpp>
-
-//#include <boost/log/support/date_time.hpp>
+#include <mutex>
+#include <memory>
+#include <map>
 
 namespace gotchangpdf
 {
-	namespace log
+	enum class Severity
 	{
-		namespace logging = boost::log;
-		namespace src = boost::log::sources;
-		namespace sinks = boost::log::sinks;
-		namespace expr = boost::log::expressions;
-		namespace attrs = boost::log::attributes;
+		debug,
+		info,
+		warning,
+		error,
+		fatal
+	};
 
-		enum class Severity
-		{
-			debug,
-			info,
-			warning,
-			error,
-			fatal
-		};
-
-		template <typename CharT, typename TraitsT>
-		std::basic_ostream<CharT, TraitsT>& operator<< (std::basic_ostream<CharT, TraitsT>& strm, const Severity level)
-		{
-			switch (level) {
-			case Severity::debug:
-				strm << "debug"; break;
-			case Severity::info:
-				strm << "info"; break;
-			case Severity::warning:
-				strm << "warning"; break;
-			case Severity::error:
-				strm << "error"; break;
-			case Severity::fatal:
-				strm << "fatal"; break;
-			}
-
-			return strm;
+	template <typename CharT, typename TraitsT>
+	std::basic_ostream<CharT, TraitsT>& operator<< (std::basic_ostream<CharT, TraitsT>& strm, const Severity level)
+	{
+		switch (level) {
+		case Severity::debug:
+			strm << "debug"; break;
+		case Severity::info:
+			strm << "info"; break;
+		case Severity::warning:
+			strm << "warning"; break;
+		case Severity::error:
+			strm << "error"; break;
+		case Severity::fatal:
+			strm << "fatal"; break;
 		}
 
-		void log_formatter(logging::record_view const& rec, logging::formatting_ostream& strm);
-
-		extern const Severity max_level;
-		typedef src::severity_logger_mt<Severity> file_logger_mt;
-		BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT(file_logger, file_logger_mt)
-		{
-			file_logger_mt lg;
-
-			logging::add_common_attributes();
-
-			// Add per file scope
-			auto core = logging::core::get();
-			core->add_global_attribute("Scope", attrs::constant<std::string>("general"));
-			core->set_filter(expr::attr<Severity>("Severity") >= max_level);
-
-			// One log file for every scope
-			auto backend = boost::make_shared<sinks::text_multifile_backend>();
-
-			// Log destination directory
-			auto filename = expr::stream << "log/" << expr::attr<std::string>("Scope") << ".log";
-			auto composer = sinks::file::as_file_name_composer(filename);
-
-			// Set up the file naming pattern
-			backend->set_file_name_composer(composer);
-
-			// Wrap it into the frontend and register in the core.
-			// The backend requires synchronization in the frontend.
-			typedef sinks::synchronous_sink<sinks::text_multifile_backend> sink_t;
-			boost::shared_ptr<sink_t> sink(pdf_new sink_t(backend));
-
-			// Set the formatter
-			sink->set_formatter(&log_formatter);
-			core->add_sink(sink);
-			return lg;
-		}
+		return strm;
 	}
+
+	class OutputWriter
+	{
+	public:
+		template <typename T>
+		friend std::unique_ptr<OutputWriter> operator<<(std::unique_ptr<OutputWriter> strm, const T& value);
+
+	public:
+		OutputWriter(
+			std::shared_ptr<std::mutex> locked_mutex,
+			std::shared_ptr<std::ostream> output_stream,
+			Severity severity,
+			int line,
+			const char * file,
+			const char * function
+			);
+
+		OutputWriter(const OutputWriter&) = delete;
+		OutputWriter(OutputWriter&&) = default;
+		~OutputWriter();
+
+	private:
+		std::shared_ptr<std::mutex> m_mutex;
+		std::shared_ptr<std::ostream> m_output_stream;
+		int m_line;
+		const char * m_file;
+		const char * m_function;
+	};
+
+	template <typename T>
+	std::unique_ptr<OutputWriter> operator<<(std::unique_ptr<OutputWriter> strm, const T& value)
+	{
+		*strm->m_output_stream << value;
+		return strm;
+	}
+
+	template<typename Ch, typename Traits = std::char_traits<Ch> >
+	struct basic_nullbuf : std::basic_streambuf<Ch, Traits> {
+		typedef std::basic_streambuf<Ch, Traits> base_type;
+		typedef typename base_type::int_type int_type;
+		typedef typename base_type::traits_type traits_type;
+
+		virtual int_type overflow(int_type c) {
+			return traits_type::not_eof(c);
+		}
+	};
+
+	class Logger
+	{
+	public:
+		static std::unique_ptr<OutputWriter> GetScopedWriter(Severity severity, int line, const char * scope, const char * file, const char * function);
+		static std::unique_ptr<OutputWriter> GetScopedWriter(Severity severity, int line, const std::weak_ptr<syntax::File>& scope, const char * file, const char * function);
+		static std::unique_ptr<OutputWriter> GetScopedWriter(Severity severity, int line, const std::string& scope, const char * file, const char * function);
+		static std::unique_ptr<OutputWriter> GetGeneralWriter(Severity severity, int line, const char * file, const char * function);
+
+	private:
+		Logger() = default;
+
+		static std::map<const char *, std::shared_ptr<std::mutex>> m_mutexes;
+		static std::mutex m_master;
+		static std::shared_ptr<std::mutex> m_general;
+		static basic_nullbuf<char> m_devnullbuf;
+		static std::shared_ptr<std::ostream> m_devnull;
+		static Severity m_severity;
+	};
 }
 
-//BOOST_LOG_ATTRIBUTE_KEYWORD(line_id, "LineID", unsigned int)
-//BOOST_LOG_ATTRIBUTE_KEYWORD(severity, "Severity", severity_level)
-//BOOST_LOG_ATTRIBUTE_KEYWORD(tag_attr, "Tag", std::string)
+#define __LOG_INTERNAL_HELPER__(Scope, Severity)       gotchangpdf::Logger::GetScopedWriter(Severity, __LINE__, Scope, __FILE__, __FUNCTION__)
 
-#define LOG_SCOPE(name) BOOST_LOG_SCOPED_THREAD_ATTR("Scope", boost::log::attributes::constant<std::string>(name))
-#define __LOG_INTERNAL_HELPER__(Severity)       BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), Severity) \
-  << boost::log::add_value("Line", static_cast<int>(__LINE__)) \
-  << boost::log::add_value("File", __FILE__) \
-  << boost::log::add_value("Function", __FUNCTION__)
+#define LOG_DEBUG(Scope)		__LOG_INTERNAL_HELPER__(Scope, gotchangpdf::Severity::debug)
+#define LOG_INFO(Scope)			__LOG_INTERNAL_HELPER__(Scope, gotchangpdf::Severity::info)
+#define LOG_WARNING(Scope)		__LOG_INTERNAL_HELPER__(Scope, gotchangpdf::Severity::warning)
+#define LOG_ERROR(Scope)		__LOG_INTERNAL_HELPER__(Scope, gotchangpdf::Severity::error)
+#define LOG_FATAL(Scope)		__LOG_INTERNAL_HELPER__(Scope, gotchangpdf::Severity::fatal)
 
-#define LOG_DEBUG       __LOG_INTERNAL_HELPER__(gotchangpdf::log::Severity::debug)
-#define LOG_INFO        __LOG_INTERNAL_HELPER__(gotchangpdf::log::Severity::info)
-#define LOG_WARNING     __LOG_INTERNAL_HELPER__(gotchangpdf::log::Severity::warning)
-#define LOG_ERROR       __LOG_INTERNAL_HELPER__(gotchangpdf::log::Severity::error)
-#define LOG_FATAL       __LOG_INTERNAL_HELPER__(gotchangpdf::log::Severity::fatal)
-
-//#define LOG_DEBUG       BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::debug)
-//#define LOG_INFO        BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::info)
-//#define LOG_WARNING     BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::warning)
-//#define LOG_ERROR       BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::error)
-//#define LOG_FATAL       BOOST_LOG_SEV(gotchangpdf::log::file_logger::get(), gotchangpdf::log::Severity::fatal)
+#define LOG_DEBUG_GLOBAL		__LOG_INTERNAL_HELPER__(nullptr, gotchangpdf::Severity::debug)
+#define LOG_INFO_GLOBAL			__LOG_INTERNAL_HELPER__(nullptr, gotchangpdf::Severity::info)
+#define LOG_WARNING_GLOBAL		__LOG_INTERNAL_HELPER__(nullptr, gotchangpdf::Severity::warning)
+#define LOG_ERROR_GLOBAL		__LOG_INTERNAL_HELPER__(nullptr, gotchangpdf::Severity::error)
+#define LOG_FATAL_GLOBAL		__LOG_INTERNAL_HELPER__(nullptr, gotchangpdf::Severity::fatal)
 
 #endif /* _LOG_H */

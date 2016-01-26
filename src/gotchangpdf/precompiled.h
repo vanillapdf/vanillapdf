@@ -42,9 +42,6 @@
 #include "object_utils.h"
 #include "exception.h"
 #include "constants.h"
-
-// snprintf in boost
-#pragma warning (disable: 4996)
 #include "log.h"
 
 #endif /* _PRECOMPILED_H */
