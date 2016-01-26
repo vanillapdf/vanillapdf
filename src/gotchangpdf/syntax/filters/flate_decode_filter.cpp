@@ -6,17 +6,10 @@
 #include "zlib_wrapper.h"
 #include "raw_stream.h"
 
-#include <boost/iostreams/device/back_inserter.hpp>
-#include <boost/iostreams/filter/zlib.hpp>
-#include <boost/iostreams/filter/gzip.hpp>
-#include <boost/iostreams/filtering_stream.hpp>
-
 namespace gotchangpdf
 {
 	namespace syntax
 	{
-		//namespace io = boost::iostreams;
-
 		BufferPtr FlateDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const
 		{
 			auto stream = src->ToStringStream();
