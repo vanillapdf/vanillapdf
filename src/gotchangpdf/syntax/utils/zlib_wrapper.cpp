@@ -1,7 +1,6 @@
 #include "precompiled.h"
 #include "zlib_wrapper.h"
-
-#include "../../lib/miniz/miniz.c"
+#include "zlib.h"
 
 #include <cassert>
 
@@ -97,7 +96,10 @@ namespace gotchangpdf
 				case Z_NEED_DICT:
 				case Z_DATA_ERROR:
 				case Z_MEM_ERROR:
-					throw GeneralException("Could not decompress data: " + std::string(strm.msg));
+					if (nullptr == strm.msg)
+						throw GeneralException("Could not decompress data");
+					else 
+						throw GeneralException("Could not decompress data: " + std::string(strm.msg));
 				}
 
 				unsigned int have = constant::BUFFER_SIZE - strm.avail_out;
