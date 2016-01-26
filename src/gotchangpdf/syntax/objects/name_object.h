@@ -1,8 +1,10 @@
 #ifndef _NAME_OBJECT_H
 #define _NAME_OBJECT_H
 
+#include "syntax_fwd.h"
 #include "containable.h"
 #include "buffer.h"
+#include "deferred.h"
 
 #include <cstddef>
 
@@ -36,6 +38,21 @@ namespace gotchangpdf
 		public:
 			value_type _value;
 		};
+	}
+
+	inline bool operator==(const Deferred<syntax::NameObject>& left, const Deferred<syntax::NameObject>& right)
+	{
+		return *left == *right;
+	}
+
+	inline bool operator!=(const Deferred<syntax::NameObject>& left, const Deferred<syntax::NameObject>& right)
+	{
+		return *left != *right;
+	}
+
+	inline bool operator<(const Deferred<syntax::NameObject>& left, const Deferred<syntax::NameObject>& right)
+	{
+		return *left < *right;
 	}
 
 	namespace constant

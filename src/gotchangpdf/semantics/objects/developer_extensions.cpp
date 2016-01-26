@@ -11,7 +11,7 @@ namespace gotchangpdf
 	{
 		DeveloperExtensions::DeveloperExtensions(syntax::DictionaryObjectPtr root) : HighLevelObject(root)
 		{
-			if (root->Contains(constant::Name::Type) && *root->FindAs<syntax::NameObjectPtr>(constant::Name::Type) != constant::Name::DeveloperExtensions)
+			if (root->Contains(constant::Name::Type) && root->FindAs<syntax::NameObjectPtr>(constant::Name::Type) != constant::Name::DeveloperExtensions)
 				throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, DeveloperExtensions>(root);
 		}
 

@@ -17,7 +17,7 @@ namespace gotchangpdf
 		PageTreeNode::PageTreeNode(DictionaryObjectPtr obj) :
 			PageNodeBase(obj)
 		{
-			if (!_obj->Contains(Name::Type) || *_obj->FindAs<NameObjectPtr>(Name::Type) != Name::Pages)
+			if (!_obj->Contains(Name::Type) || _obj->FindAs<NameObjectPtr>(Name::Type) != Name::Pages)
 				throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageTreeNode>(obj);
 		}
 

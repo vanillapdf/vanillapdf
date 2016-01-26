@@ -21,9 +21,9 @@ namespace gotchangpdf
 
 			auto type = obj->FindAs<syntax::NameObjectPtr>(Name::Type);
 
-			if (*type == Name::Pages)
+			if (type == Name::Pages)
 				return PageTreeNodePtr(obj);
-			else if (*type == Name::Page)
+			else if (type == Name::Page)
 				return PageObjectPtr(obj);
 			else
 				throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageNodeBase>(obj);

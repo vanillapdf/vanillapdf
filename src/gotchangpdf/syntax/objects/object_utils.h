@@ -62,7 +62,7 @@ namespace gotchangpdf
 					if (nullptr == first_converted || nullptr == second_converted)
 						return false;
 
-					return (*first_converted == *second_converted);
+					return (first_converted->Value() == second_converted->Value());
 				}
 				case Object::Type::Dictionary:
 				{
@@ -106,7 +106,7 @@ namespace gotchangpdf
 					if (nullptr == first_converted || nullptr == second_converted)
 						return false;
 
-					return (*first_converted == *second_converted);
+					return (first_converted->Value() == second_converted->Value());
 				}
 				case Object::Type::Name:
 				{
@@ -117,7 +117,7 @@ namespace gotchangpdf
 					if (nullptr == first_converted || nullptr == second_converted)
 						return false;
 
-					return (*first_converted == *second_converted);
+					return first_converted->Equals(*second_converted);
 				}
 				case Object::Type::Null:
 				{
@@ -139,7 +139,7 @@ namespace gotchangpdf
 					if (nullptr == first_converted || nullptr == second_converted)
 						return false;
 
-					return (*first_converted == *second_converted);
+					return (first_converted->Value() == second_converted->Value());
 				}
 				case Object::Type::Stream:
 				{
@@ -171,7 +171,7 @@ namespace gotchangpdf
 					if (nullptr == first_converted || nullptr == second_converted)
 						return false;
 
-					return (*first_converted == *second_converted);
+					return first_converted->Equals(*second_converted);
 				}
 				default:
 					assert(!"Unknown object type");

@@ -32,16 +32,42 @@ namespace gotchangpdf
 			bool Equals(const IntegerObject& other) const _NOEXCEPT { return _value == other._value; }
 			virtual std::string ToPdf(void) const override { return std::to_string(_value); }
 
-			bool operator==(const IntegerObject& other) const { return Equals(other); }
-			bool operator!=(const IntegerObject& other) const { return !Equals(other); }
-			bool operator<(const IntegerObject& other) const { return _value < other._value; }
-
 		private:
 			value_type _value = 0;
 		};
 
 		IntegerObject SafeAddition(IntegerObject::value_type number, IntegerObject::value_type addend);
 		IntegerObject SafeAddition(const IntegerObject& number, const IntegerObject& addend);
+	}
+
+	inline bool operator==(const syntax::IntegerObject left, syntax::IntegerObject::value_type right)
+	{
+		return left.Value() == right;
+	}
+
+	inline bool operator!=(const syntax::IntegerObject& left, syntax::IntegerObject::value_type right)
+	{
+		return left.Value() != right;
+	}
+
+	inline bool operator<(const syntax::IntegerObject& left, syntax::IntegerObject::value_type right)
+	{
+		return left.Value() < right;
+	}
+
+	inline bool operator==(syntax::IntegerObject::value_type left, const syntax::IntegerObject& right)
+	{
+		return left == right.Value();
+	}
+
+	inline bool operator!=(syntax::IntegerObject::value_type left, const syntax::IntegerObject& right)
+	{
+		return left != right.Value();
+	}
+
+	inline bool operator<(syntax::IntegerObject::value_type left, const syntax::IntegerObject& right)
+	{
+		return left < right.Value();
 	}
 }
 

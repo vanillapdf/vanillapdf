@@ -65,7 +65,7 @@ namespace gotchangpdf
 			syntax::IntegerObjectPtr bits = 8;
 			if (parameters->Contains(constant::Name::BitsPerComponent)) {
 				bits = parameters->FindAs<IntegerObjectPtr>(constant::Name::BitsPerComponent);
-				assert(bits == 1 || bits == 2 || bits == 4 || bits == 8);
+				assert(*bits == 1 || *bits == 2 || *bits == 4 || *bits == 8);
 			}
 
 			IntegerObjectPtr columns = 1;

@@ -11,7 +11,7 @@
 
 namespace gotchangpdf
 {
-	class Buffer : public IUnknown, public std::vector<char>
+	class Buffer : public IUnknown, public ::std::vector<char>
 	{
 	public:
 		using base_type = std::vector<char>;
@@ -36,6 +36,9 @@ namespace gotchangpdf
 
 		virtual ~Buffer() {}
 	};
+
+	inline bool operator==(const Buffer& left, const Buffer& right) { return left.Equals(right); }
+	inline bool operator!=(const Buffer& left, const Buffer& right) { return !left.Equals(right); }
 
 	bool operator==(const char * left, const Buffer& right);
 	bool operator==(const Buffer& left, const char * right);
