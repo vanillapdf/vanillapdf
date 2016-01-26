@@ -42,19 +42,6 @@ namespace gotchangpdf
 			_cache.clear();
 		}
 
-		std::string File::extract_filename(const std::string& filepath)
-		{
-			int pos = filepath.rfind('\\');
-			if (pos == std::string::npos) {
-				pos = filepath.rfind('/');
-				if (pos == std::string::npos) {
-					pos = -1;
-				}
-			}
-
-			return std::string(filepath.begin() + (pos + 1), filepath.end());
-		}
-
 		void File::Initialize()
 		{
 			LOG_DEBUG(_filename) << "Initialize";

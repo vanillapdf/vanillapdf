@@ -42,8 +42,6 @@ namespace gotchangpdf
 			std::string _full_path;
 			std::string _filename;
 
-			std::string extract_filename(const std::string& filepath);
-
 		private:
 			File(const std::string& path);
 		};

@@ -5,6 +5,7 @@
 
 #include <climits>
 #include <type_traits>
+#include <string>
 
 namespace gotchangpdf
 {
@@ -106,6 +107,19 @@ namespace gotchangpdf
 	private:
 		ScopeGuardFactory();
 	};
+
+	inline std::string extract_filename(const std::string& path)
+	{
+		auto pos = path.rfind('\\');
+		if (pos == std::string::npos) {
+			pos = path.rfind('/');
+			if (pos == std::string::npos) {
+				return path;
+			}
+		}
+
+		return std::string(path.begin() + (pos + 1), path.end());
+	}
 
 #define TOKENPASTE(x, y, z) x ## y ## z
 #define TOKENPASTE2(x, y, z) TOKENPASTE(x, y, z)
