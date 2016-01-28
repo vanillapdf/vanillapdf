@@ -166,6 +166,7 @@ namespace gotchangpdf
 						}
 
 						nested_count--;
+						assert(nested_count >= 0);
 						continue;
 					}
 
