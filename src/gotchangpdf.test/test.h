@@ -17,6 +17,10 @@ void print_spaces(int nested);
 error_type process_buffer(BufferHandle buffer, int nested);
 error_type process_version(PDFVersion version, int nested);
 
+/* Files */
+error_type process_file(FileHandle file, int nested);
+error_type process_xref(XrefHandle xref, int nested);
+
 /* Objects */
 error_type process_object(ObjectHandle obj, int nested);
 error_type process_name(NameHandle name, int nested);
@@ -46,9 +50,9 @@ error_type process_content_operation_textshow(ContentOperationTextShowHandle obj
 
 
 /* Documents */
+error_type process_document(DocumentHandle document, int nested);
 error_type process_catalog(CatalogHandle obj, int nested);
 error_type process_page(PageObjectHandle obj, int nested);
-error_type process_xref(XrefHandle xref, int nested);
 error_type process_extensions(DeveloperExtensionsHandle extensions, int nested);
 error_type process_page_labels(PageLabelsHandle labels, integer_type size, int nested);
 error_type process_page_label(PageLabelHandle label, int nested);

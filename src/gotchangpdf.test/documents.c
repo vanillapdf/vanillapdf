@@ -1,5 +1,15 @@
 #include "test.h"
 
+error_type process_document(DocumentHandle document, int nested)
+{
+	CatalogHandle catalog = NULL;
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_GetCatalog(document, &catalog));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_catalog(catalog, 0));
+	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_Release(catalog));
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
 error_type process_content_object(ContentObjectHandle obj, int nested)
 {
 	ContentObjectType type;

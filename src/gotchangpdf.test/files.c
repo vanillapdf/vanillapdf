@@ -1,5 +1,30 @@
 #include "test.h"
 
+error_type process_file(FileHandle file, int nested)
+{
+	XrefChainHandle chain = NULL;
+	XrefChainIteratorHandle chain_iterator = NULL;
+	boolean_type valid = GOTCHANG_PDF_FALSE;
+
+	RETURN_ERROR_IF_NOT_SUCCESS(File_XrefChain(file, &chain));
+	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Iterator(chain, &chain_iterator));
+
+	while (GOTCHANG_PDF_ERROR_SUCCES == XrefChainIterator_IsValid(chain_iterator, chain, &valid)
+		&& GOTCHANG_PDF_TRUE == valid) {
+		XrefHandle xref = NULL;
+
+		RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_GetValue(chain_iterator, &xref));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_xref(xref, 0));
+		RETURN_ERROR_IF_NOT_SUCCESS(Xref_Release(xref));
+		RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_Next(chain_iterator));
+	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_Release(chain_iterator));
+	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Release(chain));
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
 error_type process_xref(XrefHandle xref, int nested)
 {
 	integer_type i = 0, size = 0;

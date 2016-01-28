@@ -2,10 +2,8 @@
 
 int main(int argc, char *argv[])
 {
-	boolean_type valid = GOTCHANG_PDF_FALSE;
 	FileHandle file = NULL;
-	XrefChainHandle chain = NULL;
-	XrefChainIteratorHandle chain_iterator = NULL;
+	DocumentHandle document = NULL;
 
 	if (argc != 2)
 		return GOTCHANG_PDF_ERROR_GENERAL;
@@ -17,33 +15,12 @@ int main(int argc, char *argv[])
 
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Open(argv[1], &file));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file));
-	RETURN_ERROR_IF_NOT_SUCCESS(File_XrefChain(file, &chain));
-	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Iterator(chain, &chain_iterator));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_file(file, 0));
 
-	while (GOTCHANG_PDF_ERROR_SUCCES == XrefChainIterator_IsValid(chain_iterator, chain, &valid)
-		&& GOTCHANG_PDF_TRUE == valid) {
-		XrefHandle xref = NULL;
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenExisting(file, &document));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_document(document, 0));
 
-		RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_GetValue(chain_iterator, &xref));
-
-		RETURN_ERROR_IF_NOT_SUCCESS(process_xref(xref, 0));
-
-		RETURN_ERROR_IF_NOT_SUCCESS(Xref_Release(xref));
-		RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_Next(chain_iterator));
-	}
-
-	{
-		DocumentHandle document = NULL;
-		CatalogHandle catalog = NULL;
-
-		RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenExisting(file, &document));
-		RETURN_ERROR_IF_NOT_SUCCESS(Document_GetCatalog(document, &catalog));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_catalog(catalog, 0));
-		RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));
-	}
-	
-	RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_Release(chain_iterator));
-	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Release(chain));
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
