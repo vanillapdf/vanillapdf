@@ -351,7 +351,6 @@ namespace gotchangpdf
 		{
 			auto current = tellg();
 			if (_token_cached && _last_token_offset == current) {
-				assert(_BADOFF != _advance_position);
 				assert(_BADOFF != _last_token_offset);
 
 				return *_last_token;
