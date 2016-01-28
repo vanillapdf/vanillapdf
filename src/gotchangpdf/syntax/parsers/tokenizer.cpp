@@ -67,7 +67,6 @@ namespace gotchangpdf
 					auto current_meta = get();
 					auto next_meta = peek();
 
-					assert(current_meta != EOF && next_meta != EOF);
 					if (current_meta == EOF || next_meta == EOF) {
 						break;
 					}
