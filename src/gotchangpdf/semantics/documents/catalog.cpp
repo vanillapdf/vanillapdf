@@ -16,7 +16,7 @@ namespace gotchangpdf
 	{
 		Catalog::Catalog(syntax::DictionaryObjectPtr root) : HighLevelObject(root)
 		{
-			if (root->FindAs<syntax::NameObjectPtr>(constant::Name::Type) != constant::Name::Catalog)
+			if (root->Contains(constant::Name::Type) && root->FindAs<syntax::NameObjectPtr>(constant::Name::Type) != constant::Name::Catalog)
 				throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, Catalog>(root);
 		}
 
