@@ -62,6 +62,31 @@ namespace gotchangpdf
 				goto retry;
 			case EOF:
 				return TokenPtr(Token::Type::END_OF_INPUT, chars);
+			case Delimiter::PERCENT_SIGN:
+				for (;;) {
+					auto current_meta = get();
+					auto next_meta = peek();
+
+					assert(current_meta != EOF && next_meta != EOF);
+					if (current_meta == EOF || next_meta == EOF) {
+						break;
+					}
+
+					if (current_meta == '\r' && ignore()) {
+						if (next_meta == '\n') {
+							ignore();
+						}
+
+						break;
+					}
+
+					if (current_meta == '\n') {
+						break;
+					}
+				}
+
+				// We are currently silently ignoring all comments
+				goto retry;
 			case WhiteSpace::LINE_FEED:
 				chars->push_back(WhiteSpace::LINE_FEED);
 
