@@ -17,8 +17,8 @@ namespace gotchangpdf
 			typedef std::streambuf CharacterSourceBuffer;
 
 		public:
-			virtual void read(Buffer& result, types::uinteger len) = 0;
-			virtual BufferPtr read(types::uinteger len) = 0;
+			virtual void read(Buffer& result, size_t len) = 0;
+			virtual BufferPtr read(size_t len) = 0;
 			virtual BufferPtr readline(void) = 0;
 
 			virtual ~BaseStream() = 0;

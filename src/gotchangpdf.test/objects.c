@@ -142,14 +142,14 @@ error_type process_array(ArrayHandle arr, int nested)
 
 error_type process_integer(IntegerHandle integer, int nested)
 {
-	integer_type value = 0;
+	biguint_type value = 0;
 
 	print_spaces(nested);
 	printf("Integer object begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Value(integer, &value));
 	print_spaces(nested + 1);
-	printf("Value: %d\n", value);
+	printf("Value: %llu\n", value);
 
 	print_spaces(nested);
 	printf("Integer object end\n");
@@ -181,7 +181,7 @@ error_type process_boolean(BooleanHandle obj, int nested)
 error_type process_reference(IndirectReferenceHandle reference, int nested)
 {
 	ObjectType type;
-	integer_type obj_num = 0;
+	biguint_type obj_num = 0;
 	integer_type gen_num = 0;
 	ObjectHandle child = NULL;
 	string_type type_name = NULL;
@@ -197,7 +197,7 @@ error_type process_reference(IndirectReferenceHandle reference, int nested)
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(child));
 
 	print_spaces(nested + 1);
-	printf("Object Number: %d\n", obj_num);
+	printf("Object Number: %llu\n", obj_num);
 
 	print_spaces(nested + 1);
 	printf("Generation Number: %d\n", gen_num);

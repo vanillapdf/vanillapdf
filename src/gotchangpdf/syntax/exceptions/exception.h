@@ -83,7 +83,7 @@ namespace gotchangpdf
 		class ObjectMissingException : public ExceptionBase
 		{
 		public:
-			ObjectMissingException(types::uinteger objNumber, types::ushort genNumber);
+			ObjectMissingException(types::big_uint objNumber, types::ushort genNumber);
 		};
 
 		class ConversionException : public ExceptionBase

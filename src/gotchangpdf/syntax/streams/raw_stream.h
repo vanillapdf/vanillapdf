@@ -14,8 +14,8 @@ namespace gotchangpdf
 			Stream(const Stream & other);
 			virtual ~Stream();
 
-			virtual BufferPtr read(types::uinteger len) override;
-			virtual void read(Buffer& result, types::uinteger len) override;
+			virtual BufferPtr read(size_t len) override;
+			virtual void read(Buffer& result, size_t len) override;
 			virtual BufferPtr readline(void) override;
 		};
 	}

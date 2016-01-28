@@ -58,7 +58,7 @@ namespace gotchangpdf
 			IteratorPtr End(void) const { return _list.end(); }
 			void Append(list_type::value_type item) { _list.push_back(item); }
 
-			XrefEntryBasePtr GetXrefEntry(types::uinteger objNumber,
+			XrefEntryBasePtr GetXrefEntry(types::big_uint objNumber,
 				types::ushort genNumber)
 			{
 				for (auto it = _list.begin(); it != _list.end(); it++) {
@@ -69,7 +69,8 @@ namespace gotchangpdf
 						if (objNumber < section->Index() || objNumber >= section->Index() + section->Size())
 							continue;
 
-						auto item = section->At(objNumber - section->Index());
+						auto pos = objNumber - section->Index();
+						auto item = section->At(SafeConvert<size_t>(pos));
 						assert(item->GetObjectNumber() == objNumber);
 						if (item->GetObjectNumber() != objNumber || item->GetGenerationNumber() != genNumber)
 							continue;

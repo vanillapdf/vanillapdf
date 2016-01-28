@@ -72,8 +72,13 @@ namespace gotchangpdf
 			if (*predictor == 2) {
 				throw NotSupportedException("TIFF predictor is currently not supported");
 			} else if (*predictor >= 10) {
-				int bytesPerPixel = (*colors) * (*bits) / 8;
-				int bytesPerRow = ((*colors) * (*columns) * (*bits) + 7) / 8;
+				types::native_int bytesPerPixel = colors->SafeConvert<types::native_int>() * bits->SafeConvert<types::native_int>() / 8;
+				types::native_int bytesPerRow = (
+					colors->SafeConvert<types::native_int>()
+					* columns->SafeConvert<types::native_int>()
+					* bits->SafeConvert<types::native_int>()
+					+ 7
+					) / 8;
 
 				auto tmp = src->ToStringStream();
 				Stream strm(tmp);
@@ -88,29 +93,29 @@ namespace gotchangpdf
 						case 0: //PNG_FILTER_NONE
 							break;
 						case 1: //PNG_FILTER_SUB
-							for (int i = bytesPerPixel; i < bytesPerRow; i++) {
+							for (types::native_int i = bytesPerPixel; i < bytesPerRow; i++) {
 								curr[i] += curr[i - bytesPerPixel];
 							}
 							break;
 						case 2: //PNG_FILTER_UP
-							for (int i = 0; i < bytesPerRow; i++) {
+							for (types::native_int i = 0; i < bytesPerRow; i++) {
 								curr[i] += prior[i];
 							}
 							break;
 						case 3: //PNG_FILTER_AVERAGE
-							for (int i = 0; i < bytesPerPixel; i++) {
+							for (types::native_int i = 0; i < bytesPerPixel; i++) {
 								curr[i] += (prior[i] / 2);
 							}
-							for (int i = bytesPerPixel; i < bytesPerRow; i++) {
+							for (types::native_int i = bytesPerPixel; i < bytesPerRow; i++) {
 								curr[i] += (((curr[i - bytesPerPixel] & 0xff) + (prior[i] & 0xff)) / 2);
 							}
 							break;
 						case 4: //PNG_FILTER_PAETH
-							for (int i = 0; i < bytesPerPixel; i++) {
+							for (types::native_int i = 0; i < bytesPerPixel; i++) {
 								curr[i] += prior[i];
 							}
 
-							for (int i = bytesPerPixel; i < bytesPerRow; i++) {
+							for (types::native_int i = bytesPerPixel; i < bytesPerRow; i++) {
 								uint8_t a = curr[i - bytesPerPixel] & 0xff;
 								uint8_t b = prior[i] & 0xff;
 								uint8_t c = prior[i - bytesPerPixel] & 0xff;

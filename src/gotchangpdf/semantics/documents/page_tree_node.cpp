@@ -21,7 +21,7 @@ namespace gotchangpdf
 				throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageTreeNode>(obj);
 		}
 
-		types::integer PageTreeNode::KidCount(void) const { return _obj->FindAs<IntegerObjectPtr>(Name::Count)->Value(); }
+		IntegerObjectPtr PageTreeNode::KidCount(void) const { return _obj->FindAs<IntegerObjectPtr>(Name::Count); }
 
 		ArrayObjectPtr<PageNodeBasePtr> PageTreeNode::Kids() const
 		{

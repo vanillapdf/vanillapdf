@@ -17,14 +17,14 @@ namespace gotchangpdf
 		Stream::Stream(const Stream & other)
 			: CharacterSource(other.rdbuf()) {}
 
-		BufferPtr Stream::read(types::uinteger len)
+		BufferPtr Stream::read(size_t len)
 		{
 			BufferPtr result(len);
 			CharacterSource::read(result->data(), len);
 			return result;
 		}
 
-		void Stream::read(Buffer& result, types::uinteger len)
+		void Stream::read(Buffer& result, size_t len)
 		{
 			result.resize(len);
 			CharacterSource::read(result.data(), len);

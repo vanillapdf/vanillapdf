@@ -16,7 +16,7 @@ namespace gotchangpdf
 			//PageTree();
 			explicit PageTree(syntax::DictionaryObjectPtr root);
 
-			types::integer PageCount(void) const { return _root->KidCount(); }
+			types::uinteger PageCount(void) const { return _root->KidCount()->SafeConvert<types::uinteger>(); }
 			PageObjectPtr Page(types::integer number) const { return PageInternal(number); }
 			PageObjectPtr operator[](types::integer number) const { return PageInternal(number); }
 

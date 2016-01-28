@@ -43,8 +43,8 @@ namespace gotchangpdf
 			void SetOffset(types::stream_offset offset) _NOEXCEPT { _offset = offset; }
 			types::stream_offset GetOffset() const _NOEXCEPT { return _offset; }
 
-			void SetObjectNumber(types::uinteger number) _NOEXCEPT { _indirect = true; _obj_number = number; }
-			types::uinteger GetObjectNumber() const _NOEXCEPT { return _obj_number; }
+			void SetObjectNumber(types::big_uint number) _NOEXCEPT { _indirect = true; _obj_number = number; }
+			types::big_uint GetObjectNumber() const _NOEXCEPT { return _obj_number; }
 
 			void SetGenerationNumber(types::ushort number) _NOEXCEPT { _gen_number = number; }
 			types::ushort GetGenerationNumber() const _NOEXCEPT { return _gen_number; }
@@ -55,7 +55,7 @@ namespace gotchangpdf
 		protected:
 			std::weak_ptr<File> _file;
 			bool _indirect = false;
-			types::uinteger _obj_number = 0;
+			types::big_uint _obj_number = 0;
 			types::ushort _gen_number = 0;
 			types::stream_offset _offset = std::_BADOFF;
 		};

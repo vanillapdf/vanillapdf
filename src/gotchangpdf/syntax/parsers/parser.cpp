@@ -42,7 +42,7 @@ namespace gotchangpdf
 				assert(token->GetType() == Token::Type::INTEGER_OBJECT && "Expected integer token type");
 
 				auto buffer = token->Value();
-				auto value = std::stoi(buffer->ToString());
+				auto value = std::stoll(buffer->ToString());
 				return IntegerObjectPtr(value);
 			}
 
@@ -52,11 +52,11 @@ namespace gotchangpdf
 
 				auto buffer = token->Value();
 				auto str = buffer->ToString();
-				auto value = std::stof(str);
+				auto value = std::stod(str);
 				auto pos = str.rfind('.');
 				if (-1 != pos) {
 					auto precision = str.size() - pos - 1;
-					auto converted = SafeConvert<unsigned char>(precision);
+					auto converted = SafeConvert<uint32_t>(precision);
 					return RealObjectPtr(value, converted);
 				}
 
@@ -314,11 +314,11 @@ namespace gotchangpdf
 			return result;
 		}
 
-		ObjectStreamHeaders Parser::ReadObjectStreamHeaders(types::integer size)
+		ObjectStreamHeaders Parser::ReadObjectStreamHeaders(size_t size)
 		{
 			ObjectStreamHeaders result;
 			result.reserve(size);
-			for (types::integer i = 0; i < size; ++i) {
+			for (decltype(size) i = 0; i < size; ++i) {
 				auto item = ReadObjectStreamHeader();
 				result.push_back(item);
 			}
@@ -326,7 +326,7 @@ namespace gotchangpdf
 			return result;
 		}
 
-		std::vector<ObjectPtr> Parser::ReadObjectStreamEntries(types::integer first, types::integer size)
+		std::vector<ObjectPtr> Parser::ReadObjectStreamEntries(types::big_uint first, size_t size)
 		{
 			std::vector<ObjectPtr> result;
 			auto headers = ReadObjectStreamHeaders(size);
@@ -417,7 +417,7 @@ namespace gotchangpdf
 
 #pragma region Xref
 
-		XrefEntryBasePtr Parser::ReadTableEntry(types::integer objNumber)
+		XrefEntryBasePtr Parser::ReadTableEntry(types::big_uint objNumber)
 		{
 			auto offset_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 			auto generation_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
@@ -455,7 +455,7 @@ namespace gotchangpdf
 				auto revision_base = ObjectFactory::CreateInteger(revision_base_token);
 				auto size = ObjectFactory::CreateInteger(size_token);
 
-				XrefSubsectionPtr subsection(revision_base->Value(), size->Value());
+				XrefSubsectionPtr subsection(revision_base->Value(), size->SafeConvert<size_t>());
 				for (int i = 0; i < size->Value(); ++i) {
 					auto entry = ReadTableEntry(SafeAddition(revision_base->Value(), i));
 					subsection->Add(entry);
@@ -508,7 +508,7 @@ namespace gotchangpdf
 				auto subsection_index = index->At(i);
 				auto subsection_size = index->At(i + 1);
 
-				XrefSubsectionPtr subsection(subsection_index->Value(), subsection_size->Value());
+				XrefSubsectionPtr subsection(subsection_index->Value(), subsection_size->SafeConvert<size_t>());
 				for (auto idx = 0; idx < *subsection_size; idx++) {
 
 					IntegerObject field1;
@@ -548,7 +548,7 @@ namespace gotchangpdf
 					}
 					case 2:
 					{
-						XrefCompressedEntryPtr entry(*subsection_index + idx, static_cast<types::ushort>(0), field2, field3);
+						XrefCompressedEntryPtr entry(*subsection_index + idx, static_cast<types::ushort>(0), field2, field3.SafeConvert<size_t>());
 						entry->SetFile(_file);
 						subsection->Add(entry);
 						break;

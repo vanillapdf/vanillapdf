@@ -9,6 +9,8 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
+		IntegerObject::IntegerObject(types::native_int value) : _value(value) {}
+		IntegerObject::IntegerObject(types::native_uint value) : _value(value) {}
 		IntegerObject::IntegerObject(value_type value) : _value(value) {}
 		IntegerObject::IntegerObject(const RealObject& value)
 		{
@@ -23,9 +25,27 @@ namespace gotchangpdf
 
 		IntegerObject SafeAddition(IntegerObject::value_type number, IntegerObject::value_type addend)
 		{
-			IntegerObject::value_type_doubled result = number + addend;
-			auto converted = gotchangpdf::SafeConvert<IntegerObject::value_type>(result);
-			return IntegerObject(converted);
+			IntegerObject::value_type result = number + addend;
+
+			if (number < 0) {
+				if (addend < 0) {
+					if (result > number) {
+						std::stringstream ss;
+						ss << "Could not compute sum of " << number << " and " << addend;
+						throw std::out_of_range(ss.str());
+					}
+				}
+
+				return IntegerObject(result);
+			}
+
+			if (result < number) {
+				std::stringstream ss;
+				ss << "Could not compute sum of " << number << " and " << addend;
+				throw std::out_of_range(ss.str());
+			}
+
+			return IntegerObject(result);
 		}
 
 		IntegerObject SafeAddition(const IntegerObject& number, const IntegerObject& addend)

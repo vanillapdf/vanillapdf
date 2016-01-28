@@ -53,8 +53,8 @@ namespace gotchangpdf
 			explicit ReverseStream(CharacterSource & stream, types::stream_size size);
 			virtual ~ReverseStream();
 			
-			virtual void read(Buffer& result, types::uinteger len) override;
-			virtual BufferPtr read(types::uinteger len) override;
+			virtual void read(Buffer& result, size_t len) override;
+			virtual BufferPtr read(size_t len) override;
 			virtual BufferPtr readline(void) override;
 
 		private:

@@ -62,7 +62,7 @@ namespace gotchangpdf
 			stream.seekg(ios_base::beg);
 			stream >> *_header;
 
-			types::integer offset;
+			types::stream_offset offset;
 			{
 				ReverseStream raw_reversed(*_input, file_size);
 				auto reverse_stream = ReverseParser(raw_reversed);
@@ -99,7 +99,7 @@ namespace gotchangpdf
 			//SaveAs(dest);
 		}
 
-		ObjectPtr File::GetIndirectObject(types::uinteger objNumber,
+		ObjectPtr File::GetIndirectObject(types::big_uint objNumber,
 			types::ushort genNumber)
 		{
 			LOG_DEBUG(_filename) << "GetIndirectObject " << objNumber << " and " << genNumber;

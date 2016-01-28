@@ -47,7 +47,7 @@ namespace gotchangpdf
 
 			auto stream = body->ToStringStream();
 			auto parser = Parser(_file, stream);
-			auto stream_entries = parser.ReadObjectStreamEntries(first->Value(), size->Value());
+			auto stream_entries = parser.ReadObjectStreamEntries(first->Value(), size->SafeConvert<size_t>());
 			for (auto stream_entry : stream_entries) {
 				auto object_number = stream_entry->GetObjectNumber();
 				auto stream_entry_xref = chain->GetXrefEntry(object_number, 0);

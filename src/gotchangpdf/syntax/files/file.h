@@ -21,7 +21,7 @@ namespace gotchangpdf
 			void SaveAs(const std::string& path);
 
 			void Initialize(void);
-			ObjectPtr GetIndirectObject(types::uinteger objNumber,
+			ObjectPtr GetIndirectObject(types::big_uint objNumber,
 				types::ushort genNumber);
 
 			XrefChainPtr GetXrefChain(void) const;

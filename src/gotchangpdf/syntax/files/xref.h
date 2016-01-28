@@ -45,12 +45,12 @@ namespace gotchangpdf
 			};
 
 		public:
-			XrefEntryBase(types::uinteger obj_number, types::ushort gen_number)
+			XrefEntryBase(types::big_uint obj_number, types::ushort gen_number)
 				: _obj_number(obj_number), _gen_number(gen_number) {}
 
 		public:
-			types::uinteger GetObjectNumber(void) const _NOEXCEPT { return _obj_number; }
-			void SetObjectNumber(types::uinteger value) _NOEXCEPT { _obj_number = value; }
+			types::big_uint GetObjectNumber(void) const _NOEXCEPT { return _obj_number; }
+			void SetObjectNumber(types::big_uint value) _NOEXCEPT { _obj_number = value; }
 
 			types::ushort GetGenerationNumber(void) const _NOEXCEPT { return _gen_number; }
 			void SetGenerationNumber(types::ushort value) _NOEXCEPT { _gen_number = value; }
@@ -66,7 +66,7 @@ namespace gotchangpdf
 
 		protected:
 			std::weak_ptr<File> _file;
-			types::uinteger _obj_number = 0;
+			types::big_uint _obj_number = 0;
 			types::ushort _gen_number = 0;
 
 		private:
@@ -84,23 +84,23 @@ namespace gotchangpdf
 		class XrefFreeEntry : public XrefEntryBase
 		{
 		public:
-			XrefFreeEntry(types::uinteger obj_number, types::ushort gen_number, types::uinteger next)
+			XrefFreeEntry(types::big_uint obj_number, types::ushort gen_number, types::big_uint next)
 				: XrefEntryBase(obj_number, gen_number), _next(next) {}
 
 		public:
 			virtual Usage GetUsage(void) const _NOEXCEPT override { return XrefEntryBase::Usage::Free; }
 
-			types::uinteger GetNextFreeObjectNumber(void) const _NOEXCEPT { return _next; }
-			void SetNextFreeObjectNumber(types::uinteger value) _NOEXCEPT { _next = value; }
+			types::big_uint GetNextFreeObjectNumber(void) const _NOEXCEPT { return _next; }
+			void SetNextFreeObjectNumber(types::big_uint value) _NOEXCEPT { _next = value; }
 
 		private:
-			types::uinteger _next = 0;
+			types::big_uint _next = 0;
 		};
 
 		class XrefUsedEntry : public XrefEntryBase
 		{
 		public:
-			XrefUsedEntry(types::uinteger obj_number, types::ushort gen_number, types::stream_offset offset)
+			XrefUsedEntry(types::big_uint obj_number, types::ushort gen_number, types::stream_offset offset)
 				: XrefEntryBase(obj_number, gen_number), _offset(offset) {}
 
 		public:
@@ -126,7 +126,7 @@ namespace gotchangpdf
 		class XrefCompressedEntry : public XrefEntryBase
 		{
 		public:
-			XrefCompressedEntry(types::uinteger obj_number, types::ushort gen_number, types::uinteger object_stream_number, types::integer index)
+			XrefCompressedEntry(types::big_uint obj_number, types::ushort gen_number, types::big_uint object_stream_number, types::uinteger index)
 				: XrefEntryBase(obj_number, gen_number), _object_stream_number(object_stream_number), _index(index) {}
 
 		public:
@@ -135,7 +135,7 @@ namespace gotchangpdf
 			ObjectPtr GetReference(void) { Initialize(); return _reference; }
 			void SetReference(ObjectPtr ref) { _reference = ref; }
 
-			types::uinteger GetObjectStreamNumber(void) const _NOEXCEPT { return _object_stream_number; }
+			types::big_uint GetObjectStreamNumber(void) const _NOEXCEPT { return _object_stream_number; }
 			void SetObjectStreamNumber(types::uinteger value) _NOEXCEPT { _object_stream_number = value; }
 
 			types::uinteger GetIndex(void) const _NOEXCEPT { return _index; }
@@ -148,7 +148,7 @@ namespace gotchangpdf
 			void Initialize(void);
 
 			ObjectPtr _reference = NullObject::GetInstance();
-			types::uinteger _object_stream_number = 0;
+			types::big_uint _object_stream_number = 0;
 			types::uinteger _index = 0;
 			bool _initialized = false;
 		};
@@ -157,16 +157,16 @@ namespace gotchangpdf
 		{
 		public:
 			XrefSubsection() = default;
-			XrefSubsection(types::uinteger index, types::uinteger size) : _index(index) { _entries.reserve(size); }
+			XrefSubsection(types::big_uint index, size_t size) : _index(index) { _entries.reserve(size); }
 			void Add(XrefEntryBasePtr entry) { _entries.push_back(entry); }
-			types::uinteger Size(void) const _NOEXCEPT { return _entries.size(); }
-			XrefEntryBasePtr At(types::uinteger at) { return _entries.at(at); }
+			size_t Size(void) const _NOEXCEPT { return _entries.size(); }
+			XrefEntryBasePtr At(size_t at) { return _entries.at(at); }
 			//void SetParent(Xref parent) { _parent = parent; }
 			//Xref GetParent(void) const { return _parent; }
 			void SetFile(std::weak_ptr<File> file) _NOEXCEPT { _file = file; }
 			std::weak_ptr<File> GetFile() const _NOEXCEPT { return _file; }
 
-			types::uinteger Index(void) const
+			types::big_uint Index(void) const
 			{
 				if (_entries.size() > 0) {
 					auto entry = _entries.at(0);
@@ -178,7 +178,7 @@ namespace gotchangpdf
 
 		private:
 			std::weak_ptr<File> _file;
-			types::uinteger _index = 0;
+			types::big_uint _index = 0;
 			std::vector<XrefEntryBasePtr> _entries;
 			//Xref _parent; // TODO parent holding strong ref - cyclic dependecies
 		};

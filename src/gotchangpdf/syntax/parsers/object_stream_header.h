@@ -10,7 +10,7 @@ namespace gotchangpdf
 	namespace syntax
 	{
 		struct ObjectStreamHeader {
-			types::integer object_number;
+			types::big_uint object_number;
 			types::stream_offset offset;
 		};
 

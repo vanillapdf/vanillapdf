@@ -28,7 +28,7 @@ namespace gotchangpdf
 				case PageNodeBase::NodeType::Tree:
 				{
 					auto tree_node = PageNodeUtils::ConvertTo<PageTreeNodePtr>(kid);
-					auto under = tree_node->KidCount();
+					auto under = tree_node->KidCount()->SafeConvert<types::integer>();
 					if (current + under > number)
 					{
 						if (HasTreeChilds(tree_node))

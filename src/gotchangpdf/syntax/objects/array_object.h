@@ -33,11 +33,11 @@ namespace gotchangpdf
 				: ContainableObject(other), _list(list) {}
 
 			virtual Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Array; }
-			types::uinteger Size(void) const _NOEXCEPT { return _list.size(); }
-			const ContainableObjectPtr& operator[](unsigned int i) const { return _list[i]; }
-			ContainableObjectPtr& operator[](unsigned int i) { return _list[i]; }
-			const ContainableObjectPtr& At(unsigned int at) const { return _list.at(at); }
-			ContainableObjectPtr& At(unsigned int at) { return _list.at(at); }
+			size_t Size(void) const _NOEXCEPT { return _list.size(); }
+			const ContainableObjectPtr& operator[](size_t i) const { return _list[i]; }
+			ContainableObjectPtr& operator[](size_t i) { return _list[i]; }
+			const ContainableObjectPtr& At(size_t at) const { return _list.at(at); }
+			ContainableObjectPtr& At(size_t at) { return _list.at(at); }
 
 			// stl compatibility
 			void push_back(const value_type& value) { _list.push_back(value); }
@@ -137,11 +137,11 @@ namespace gotchangpdf
 			}
 
 			MixedArrayObjectPtr Data(void) const { return _list; }
-			types::uinteger Size(void) const { return _list->Size(); }
-			const T operator[](unsigned int i) const { return _conversion((*_list)[i]); }
-			T operator[](unsigned int i) { return _conversion((*_list)[i]); }
-			const T At(unsigned int at) const { return _conversion(_list->At(at)); }
-			T At(unsigned int at) { return _conversion(_list->At(at)); }
+			size_t Size(void) const { return _list->Size(); }
+			const T operator[](size_t i) const { return _conversion((*_list)[i]); }
+			T operator[](size_t i) { return _conversion((*_list)[i]); }
+			const T At(size_t at) const { return _conversion(_list->At(at)); }
+			T At(size_t at) { return _conversion(_list->At(at)); }
 
 			template <typename U>
 			ArrayObjectPtr<U> Convert(std::function<U(const T& obj)> f) const

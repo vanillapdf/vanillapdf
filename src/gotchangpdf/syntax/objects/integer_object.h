@@ -13,10 +13,11 @@ namespace gotchangpdf
 		class IntegerObject : public ContainableObject
 		{
 		public:
-			typedef types::integer value_type;
-			typedef types::double_integer value_type_doubled;
+			typedef int64_t value_type;
 
 			IntegerObject() = default;
+			explicit IntegerObject(types::native_int value);
+			explicit IntegerObject(types::native_uint value);
 			explicit IntegerObject(value_type value);
 			explicit IntegerObject(const RealObject& value);
 			IntegerObject& operator= (value_type value);
@@ -40,32 +41,32 @@ namespace gotchangpdf
 		IntegerObject SafeAddition(const IntegerObject& number, const IntegerObject& addend);
 	}
 
-	inline bool operator==(const syntax::IntegerObject left, syntax::IntegerObject::value_type right)
+	inline bool operator==(const syntax::IntegerObject left, types::native_int right)
 	{
 		return left.Value() == right;
 	}
 
-	inline bool operator!=(const syntax::IntegerObject& left, syntax::IntegerObject::value_type right)
+	inline bool operator!=(const syntax::IntegerObject& left, types::native_int right)
 	{
 		return left.Value() != right;
 	}
 
-	inline bool operator<(const syntax::IntegerObject& left, syntax::IntegerObject::value_type right)
+	inline bool operator<(const syntax::IntegerObject& left, types::native_int right)
 	{
 		return left.Value() < right;
 	}
 
-	inline bool operator==(syntax::IntegerObject::value_type left, const syntax::IntegerObject& right)
+	inline bool operator==(types::native_int left, const syntax::IntegerObject& right)
 	{
 		return left == right.Value();
 	}
 
-	inline bool operator!=(syntax::IntegerObject::value_type left, const syntax::IntegerObject& right)
+	inline bool operator!=(types::native_int left, const syntax::IntegerObject& right)
 	{
 		return left != right.Value();
 	}
 
-	inline bool operator<(syntax::IntegerObject::value_type left, const syntax::IntegerObject& right)
+	inline bool operator<(types::native_int left, const syntax::IntegerObject& right)
 	{
 		return left < right.Value();
 	}

@@ -14,7 +14,7 @@ namespace gotchangpdf
 		public:
 			explicit PageTreeNode(syntax::DictionaryObjectPtr obj);
 
-			types::integer KidCount(void) const;
+			syntax::IntegerObjectPtr KidCount(void) const;
 			syntax::ArrayObjectPtr<PageNodeBasePtr> Kids(void) const;
 
 			virtual NodeType GetNodeType(void) const noexcept override { return NodeType::Tree; }

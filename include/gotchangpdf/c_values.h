@@ -10,8 +10,8 @@ typedef int32_t error_type;
 typedef int8_t boolean_type;
 typedef int8_t* out_boolean_type;
 
-typedef float real_type;
-typedef float* out_real_type;
+typedef double real_type;
+typedef double* out_real_type;
 
 typedef int16_t short_type;
 typedef int16_t* out_short_type;
@@ -33,6 +33,12 @@ typedef int64_t* out_offset_type;
 
 typedef int64_t size_type;
 typedef int64_t* out_size_type;
+
+typedef int64_t bigint_type;
+typedef int64_t* out_bigint_type;
+
+typedef uint64_t biguint_type;
+typedef uint64_t* out_biguint_type;
 
 typedef const char* string_type;
 typedef const char** out_string_type;

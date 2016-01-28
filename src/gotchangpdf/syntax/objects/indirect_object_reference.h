@@ -13,7 +13,7 @@ namespace gotchangpdf
 		public:
 			IndirectObjectReference() = default;
 			explicit IndirectObjectReference(ObjectPtr obj);
-			IndirectObjectReference(types::uinteger obj, types::ushort gen);
+			IndirectObjectReference(types::big_uint obj, types::ushort gen);
 
 			ObjectPtr GetReferencedObject() const;
 			ObjectPtr operator->() const { return GetReferencedObject(); }
@@ -34,11 +34,11 @@ namespace gotchangpdf
 			bool operator!=(const IndirectObjectReference& other) const { return !Equals(other); }
 			bool operator<(const IndirectObjectReference& other) const;
 
-			types::uinteger GetReferencedObjectNumber() const _NOEXCEPT { return _ref_obj; }
+			types::big_uint GetReferencedObjectNumber() const _NOEXCEPT { return _ref_obj; }
 			types::ushort GetReferencedGenerationNumber() const _NOEXCEPT { return _ref_gen; }
 
 		private:
-			types::uinteger _ref_obj = 0;
+			types::big_uint _ref_obj = 0;
 			types::ushort _ref_gen = 0;
 		};
 	}

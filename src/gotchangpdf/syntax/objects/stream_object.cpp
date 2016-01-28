@@ -26,7 +26,7 @@ namespace gotchangpdf
 			input->seekg(_raw_data_offset);
 			SCOPE_GUARD_CAPTURE_VALUES(input->seekg(pos));
 			auto stream = Stream(*input);
-			_body = stream.read(*size);
+			_body = stream.read(size->SafeConvert<size_t>());
 
 			return _body;
 		}

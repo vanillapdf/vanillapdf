@@ -13,7 +13,7 @@ namespace gotchangpdf
 		ReverseParser::ReverseParser(const ReverseParser & other)
 			: ReverseTokenizer(other) {}
 
-		types::integer ReverseParser::ReadLastXrefOffset()
+		types::stream_offset ReverseParser::ReadLastXrefOffset()
 		{
 			ReadTokenWithTypeSkip(Token::Type::REVERSE_END_OF_FILE_MARKER);
 			auto offset_token = ReadTokenWithTypeSkip(Token::Type::REVERSE_INTEGER_OBJECT);
@@ -21,7 +21,7 @@ namespace gotchangpdf
 
 			auto buffer = offset_token->Value();
 			std::reverse(buffer.begin(), buffer.end());
-			auto value = std::stoi(buffer->ToString());
+			auto value = std::stoll(buffer->ToString());
 			return value;
 		}
 

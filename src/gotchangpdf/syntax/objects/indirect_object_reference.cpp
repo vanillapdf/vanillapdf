@@ -15,7 +15,7 @@ namespace gotchangpdf
 			_ref_gen = obj->GetGenerationNumber();
 		}
 
-		IndirectObjectReference::IndirectObjectReference(types::uinteger obj, types::ushort gen) : _ref_obj(obj), _ref_gen(gen) {}
+		IndirectObjectReference::IndirectObjectReference(types::big_uint obj, types::ushort gen) : _ref_obj(obj), _ref_gen(gen) {}
 
 		ObjectPtr IndirectObjectReference::GetReferencedObject() const
 		{

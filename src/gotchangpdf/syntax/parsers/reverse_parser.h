@@ -14,7 +14,7 @@ namespace gotchangpdf
 			ReverseParser(CharacterSource & stream);
 			ReverseParser(const ReverseParser & other);
 
-			types::integer ReadLastXrefOffset();
+			types::stream_offset ReadLastXrefOffset();
 
 		private:
 			TokenPtr ReadTokenWithTypeSkip(Token::Type type);
