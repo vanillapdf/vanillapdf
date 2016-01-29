@@ -198,10 +198,9 @@ namespace gotchangpdf
 
 			std::vector<XrefEntryBasePtr> Entries(void) const
 			{
-				std::vector<XrefEntryBasePtr> result;// (_entries.size());
+				std::vector<XrefEntryBasePtr> result;
 				result.reserve(_entries.size());
 				std::for_each(_entries.begin(), _entries.end(), [&result](const std::pair<Key, XrefEntryBasePtr> pair) { result.push_back(pair.second); });
-				//std::transform(_entries.begin(), _entries.end(), result.begin(), [](const std::pair<Key, XrefEntryBasePtr> pair) { return pair.second; });
 				return result;
 			}
 
@@ -216,7 +215,16 @@ namespace gotchangpdf
 				types::big_uint obj_number = 0;
 				types::ushort gen_number = 0;
 
-				bool operator<(const Key& other) const { return obj_number < other.obj_number; }
+				bool operator<(const Key& other) const
+				{
+					if (obj_number != other.obj_number)
+						return obj_number < other.obj_number;
+
+					if (gen_number != other.gen_number)
+						return gen_number < other.gen_number;
+
+					return false;
+				}
 			};
 
 		protected:
