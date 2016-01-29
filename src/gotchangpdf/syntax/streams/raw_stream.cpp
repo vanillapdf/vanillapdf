@@ -37,7 +37,7 @@ namespace gotchangpdf
 			for (;;) {
 				auto val = get();
 				if (val == std::char_traits<char>::eof()) {
-					throw GeneralException("Readling encountered end of stream");
+					throw GeneralException("Readline encountered end of stream");
 				}
 
 				auto value = SafeConvert<char>(val);
