@@ -71,7 +71,7 @@ namespace gotchangpdf
 						break;
 					}
 
-					if (current_meta == '\r' && ignore()) {
+					if (current_meta == '\r') {
 						if (next_meta == '\n') {
 							ignore();
 						}
