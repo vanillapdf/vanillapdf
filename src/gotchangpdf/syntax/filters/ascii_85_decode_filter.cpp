@@ -23,7 +23,7 @@ namespace gotchangpdf
 				auto meta = src.get();
 				auto next = src.peek();
 
-				if (meta == EOF) {
+				if (meta == std::char_traits<char>::eof()) {
 					throw GeneralException("Unexpected end of file inside stream");
 				}
 

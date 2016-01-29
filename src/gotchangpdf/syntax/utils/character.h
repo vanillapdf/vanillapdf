@@ -67,7 +67,7 @@ namespace gotchangpdf
 			return false;
 		}
 
-		inline bool IsEof(const int c) { return c == EOF; }
+		inline bool IsEof(const int c) { return c == std::char_traits<char>::eof(); }
 		inline bool IsNumeric(const int c) { return (c >= '0' && c <= '9'); }
 		inline bool IsAlpha(const int c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
 		inline bool IsRegular(const int c) { return !IsWhiteSpace(c) && !IsDelimiter(c) && !IsEof(c); }

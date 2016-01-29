@@ -85,7 +85,7 @@ namespace gotchangpdf
 				Buffer curr(bytesPerRow, '\0');
 				Buffer prior(bytesPerRow, '\0');
 
-				while (strm.peek() != EOF) {
+				while (strm.peek() != std::char_traits<char>::eof()) {
 					auto filter = strm.get();
 					strm.read(curr, bytesPerRow);
 

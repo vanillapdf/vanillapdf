@@ -60,14 +60,14 @@ namespace gotchangpdf
 			case WhiteSpace::HORIZONTAL_TAB:
 			case WhiteSpace::NUL:
 				goto retry;
-			case EOF:
+			case std::char_traits<char>::eof():
 				return TokenPtr(Token::Type::END_OF_INPUT, chars);
 			case Delimiter::PERCENT_SIGN:
 				for (;;) {
 					auto current_meta = get();
 					auto next_meta = peek();
 
-					if (current_meta == EOF || next_meta == EOF) {
+					if (current_meta == std::char_traits<char>::eof() || next_meta == std::char_traits<char>::eof()) {
 						break;
 					}
 
@@ -123,8 +123,8 @@ namespace gotchangpdf
 					auto current_meta = get();
 					auto next_meta = peek();
 
-					assert(current_meta != EOF && next_meta != EOF);
-					if (current_meta == EOF || next_meta == EOF) {
+					assert(current_meta != std::char_traits<char>::eof() && next_meta != std::char_traits<char>::eof());
+					if (current_meta == std::char_traits<char>::eof() || next_meta == std::char_traits<char>::eof()) {
 						break;
 					}
 
@@ -172,8 +172,8 @@ namespace gotchangpdf
 					int current_meta = get();
 					int next_meta = peek();
 
-					assert(current_meta != EOF && next_meta != EOF);
-					if (current_meta == EOF || next_meta == EOF) {
+					assert(current_meta != std::char_traits<char>::eof() && next_meta != std::char_traits<char>::eof());
+					if (current_meta == std::char_traits<char>::eof() || next_meta == std::char_traits<char>::eof()) {
 						break;
 					}
 
@@ -267,7 +267,7 @@ namespace gotchangpdf
 						std::stringstream octal;
 						for (int i = 0; i < 3; ++i) {
 							auto numeric_meta = peek();
-							if (EOF == numeric_meta) {
+							if (std::char_traits<char>::eof() == numeric_meta) {
 								break;
 							}
 
@@ -330,7 +330,7 @@ namespace gotchangpdf
 				chars->push_back(current);
 				for (;;) {
 					auto next_meta = peek();
-					if (EOF == next_meta) {
+					if (std::char_traits<char>::eof() == next_meta) {
 						break;
 					}
 

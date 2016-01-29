@@ -26,7 +26,7 @@ namespace gotchangpdf
 			std::string hex_pair;
 			for (decltype(length) i = 0; i < length; ++i) {
 				auto meta = src.get();
-				if (meta == EOF) {
+				if (meta == std::char_traits<char>::eof()) {
 					throw GeneralException("Unexpected end of file inside stream");
 				}
 

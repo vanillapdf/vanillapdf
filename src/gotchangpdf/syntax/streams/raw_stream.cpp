@@ -34,9 +34,11 @@ namespace gotchangpdf
 		{
 			BufferPtr result;
 
-			while (!eof()) {
+			for (;;) {
 				auto val = get();
-				assert(val != std::char_traits<char>::eof());
+				if (val == std::char_traits<char>::eof()) {
+					throw GeneralException("Readling encountered end of stream");
+				}
 
 				auto value = SafeConvert<char>(val);
 

@@ -54,7 +54,7 @@ namespace gotchangpdf
 
 			switch (ch)
 			{
-			case EOF:
+			case std::char_traits<char>::eof():
 				result_type = Token::Type::END_OF_INPUT;
 				goto prepared;
 			case WhiteSpace::LINE_FEED:
@@ -96,7 +96,7 @@ namespace gotchangpdf
 
 				for (;;) {
 					auto next_meta = peek();
-					if (EOF == next_meta) {
+					if (std::char_traits<char>::eof() == next_meta) {
 						break;
 					}
 
