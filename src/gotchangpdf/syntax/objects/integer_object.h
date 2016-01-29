@@ -36,9 +36,6 @@ namespace gotchangpdf
 		private:
 			value_type _value = 0;
 		};
-
-		IntegerObject SafeAddition(IntegerObject::value_type number, IntegerObject::value_type addend);
-		IntegerObject SafeAddition(const IntegerObject& number, const IntegerObject& addend);
 	}
 
 	inline bool operator==(const syntax::IntegerObject left, types::native_int right)

@@ -81,6 +81,32 @@ namespace gotchangpdf
 		};
 	};
 
+	template <typename Result, typename ValueFirst, typename ValueSecond = ValueFirst>
+	Result SafeAddition(ValueFirst number, ValueSecond addend)
+	{
+		Result result = number + addend;
+
+		if (number < 0) {
+			if (addend < 0) {
+				if (result > number) {
+					std::stringstream ss;
+					ss << "Could not compute sum of " << number << " and " << addend;
+					throw std::out_of_range(ss.str());
+				}
+			}
+
+			return result;
+		}
+
+		if (result < number) {
+			std::stringstream ss;
+			ss << "Could not compute sum of " << number << " and " << addend;
+			throw std::out_of_range(ss.str());
+		}
+
+		return result;
+	}
+
 	template <typename FunctionType>
 	class ScopeGuard
 	{
