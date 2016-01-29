@@ -94,7 +94,7 @@ namespace gotchangpdf
 	private:
 		Logger() = default;
 
-		static std::map<const char *, std::shared_ptr<std::mutex>> m_mutexes;
+		static std::map<std::string, std::shared_ptr<std::mutex>> m_mutexes;
 		static std::mutex m_master;
 		static std::shared_ptr<std::mutex> m_general;
 		static basic_nullbuf<char> m_devnullbuf;
