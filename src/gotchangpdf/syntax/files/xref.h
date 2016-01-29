@@ -153,36 +153,6 @@ namespace gotchangpdf
 			bool _initialized = false;
 		};
 
-		class XrefSubsection : public IUnknown
-		{
-		public:
-			XrefSubsection() = default;
-			XrefSubsection(types::big_uint index, size_t size) : _index(index) { _entries.reserve(size); }
-			void Add(XrefEntryBasePtr entry) { _entries.push_back(entry); }
-			size_t Size(void) const _NOEXCEPT { return _entries.size(); }
-			XrefEntryBasePtr At(size_t at) { return _entries.at(at); }
-			//void SetParent(Xref parent) { _parent = parent; }
-			//Xref GetParent(void) const { return _parent; }
-			void SetFile(std::weak_ptr<File> file) _NOEXCEPT { _file = file; }
-			std::weak_ptr<File> GetFile() const _NOEXCEPT { return _file; }
-
-			types::big_uint Index(void) const
-			{
-				if (_entries.size() > 0) {
-					auto entry = _entries.at(0);
-					assert(entry->GetObjectNumber() == _index);
-				}
-
-				return _index;
-			}
-
-		private:
-			std::weak_ptr<File> _file;
-			types::big_uint _index = 0;
-			std::vector<XrefEntryBasePtr> _entries;
-			//Xref _parent; // TODO parent holding strong ref - cyclic dependecies
-		};
-
 		class XrefBase : public IUnknown
 		{
 		public:
@@ -201,16 +171,16 @@ namespace gotchangpdf
 			types::stream_offset GetLastXrefOffset() const _NOEXCEPT { return _last_xref_offset; }
 			void SetLastXrefOffset(types::stream_offset offset) _NOEXCEPT { _last_xref_offset = offset; }
 
-			void Add(XrefSubsectionPtr section) { /*section->SetParent(this);*/ _sections.push_back(section); }
-			types::integer Size(void) const _NOEXCEPT { return _sections.size(); }
-			XrefSubsectionPtr At(types::integer at) { return _sections.at(at); }
+			void Add(XrefEntryBasePtr entry) { _entries.push_back(entry); }
+			size_t Size(void) const _NOEXCEPT { return _entries.size(); }
+			XrefEntryBasePtr At(size_t at) { return _entries.at(at); }
 
 			virtual Type GetType(void) const _NOEXCEPT = 0;
 			virtual ~XrefBase() {};
 
 		protected:
 			std::weak_ptr<File> _file;
-			std::vector<XrefSubsectionPtr> _sections;
+			std::vector<XrefEntryBasePtr> _entries;
 			types::stream_offset _last_xref_offset = std::_BADOFF;
 			DictionaryObjectPtr _trailer_dictionary;
 		};

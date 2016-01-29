@@ -163,10 +163,10 @@ namespace gotchangpdf
 				throw GeneralException("Could not open file");
 
 			auto ver = _header->GetVersion();
-			output << "%%PDF-1." << static_cast<int>(ver) << endl;
-			
+			output << "%PDF-1." << static_cast<int>(ver) << endl;
+
 			auto end = _xref->End();
-			for (auto it = _xref->Begin(); it != end; ++(*it)) {
+			for (auto it = _xref->Begin(); *it != *end; ++(*it)) {
 				auto xref_base = it->Value();
 
 				if (xref_base->GetType() == XrefBase::Type::Stream)
@@ -174,42 +174,45 @@ namespace gotchangpdf
 
 				auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(xref_base);
 				auto table_size = xref_table->Size();
-				for (int i = 0; i < table_size; ++i) {
-					auto subsection = xref_table->At(i);
-					auto subsection_size = subsection->Size();
+				for (decltype(table_size) i = 0; i < table_size; ++i) {
+					auto entry = xref_table->At(i);
 
-					for (decltype(subsection_size) j = 0; j < subsection_size; ++j) {
-						auto entry = subsection->At(j);
+					if (!entry->InUse())
+						continue;
 
-						if (!entry->InUse())
-							continue;
+					auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
+					auto obj = used_entry->GetReference();
+					auto obj_str = obj->ToPdf();
 
-						auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
-						auto obj = used_entry->GetReference();
-						auto obj_str = obj->ToPdf();
+					//TODO: This is kinda hacky
+					// make new xref table for storing modified values
+					auto obj_offset = output.tellg();
+					used_entry->SetOffset(obj_offset);
+					obj->SetOffset(obj_offset);
 
-						//TODO: This is kinda hacky
-						// make new xref table for storing modified values
-						auto obj_offset = output.tellg();
-						used_entry->SetOffset(obj_offset);
-						obj->SetOffset(obj_offset);
-
-						output << obj->GetObjectNumber() << " " << obj->GetGenerationNumber() << " " << "obj" << endl;
-						output << obj_str << endl;
-						output << "endobj" << endl;
-					}
+					output << obj->GetObjectNumber() << " " << obj->GetGenerationNumber() << " " << "obj" << endl;
+					output << obj_str << endl;
+					output << "endobj" << endl;
 				}
 
 				auto last_offset = output.tellg();
 				output << "xref" << endl;
-				for (int i = 0; i < table_size; ++i) {
-					auto subsection = xref_table->At(i);
-					auto subsection_size = subsection->Size();
-					auto subsection_idx = subsection->Index();
+
+				for (decltype(table_size) i = 0; i < table_size; ++i) {
+					auto first = xref_table->At(i);
+					auto subsection_idx = first->GetObjectNumber();
+
+					size_t subsection_size = 0;
+					for (decltype(i) j = i; j < table_size; ++j, ++subsection_size) {
+						auto next_entry = xref_table->At(j);
+						if (next_entry->GetObjectNumber() != gotchangpdf::SafeAddition<types::big_uint>(subsection_idx, j)) {
+							break;
+						}
+					}
 
 					output << subsection_idx << " " << subsection_size << endl;
-					for (decltype(subsection_size) j = 0; j < subsection_size; ++j) {
-						auto entry = subsection->At(j);
+					for (decltype(subsection_size) j = i; j < subsection_size; ++j) {
+						auto entry = xref_table->At(j);
 						if (!entry->InUse()) {
 							output << setfill('0') << setw(10) << 0;
 							output << ' ';
@@ -230,6 +233,8 @@ namespace gotchangpdf
 						output << ' ';
 						output << '\n';
 					}
+
+					i += subsection_size;
 				}
 
 				auto trailer = xref_table->GetTrailerDictionary();

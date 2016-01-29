@@ -454,17 +454,13 @@ namespace gotchangpdf
 				auto revision_base_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 				auto size_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 
-				auto revision_base = ObjectFactory::CreateInteger(revision_base_token);
-				auto size = ObjectFactory::CreateInteger(size_token);
+				auto revision_base = std::stoull(revision_base_token->Value()->ToString());
+				auto size = std::stoull(size_token->Value()->ToString());
 
-				XrefSubsectionPtr subsection(revision_base->Value(), size->SafeConvert<size_t>());
-				for (int i = 0; i < size->Value(); ++i) {
-					auto entry = ReadTableEntry(SafeAddition(revision_base->Value(), i));
-					subsection->Add(entry);
+				for (decltype(size) i = 0; i < size; ++i) {
+					auto entry = ReadTableEntry(SafeAddition<types::big_uint>(revision_base, i));
+					table->Add(entry);
 				}
-
-				subsection->SetFile(_file);
-				table->Add(subsection);
 			}
 
 			ReadTokenWithTypeSkip(Token::Type::TRAILER);
@@ -510,7 +506,6 @@ namespace gotchangpdf
 				auto subsection_index = index->At(i);
 				auto subsection_size = index->At(i + 1);
 
-				XrefSubsectionPtr subsection(subsection_index->Value(), subsection_size->SafeConvert<size_t>());
 				for (auto idx = 0; idx < *subsection_size; idx++) {
 
 					IntegerObject field1;
@@ -538,21 +533,21 @@ namespace gotchangpdf
 					{
 						XrefFreeEntryPtr entry(*subsection_index + idx, field3.SafeConvert<types::ushort>(), field2);
 						entry->SetFile(_file);
-						subsection->Add(entry);
+						result->Add(entry);
 						break;
 					}
 					case 1:
 					{
 						XrefUsedEntryPtr entry(*subsection_index + idx, field3.SafeConvert<types::ushort>(), field2);
 						entry->SetFile(_file);
-						subsection->Add(entry);
+						result->Add(entry);
 						break;
 					}
 					case 2:
 					{
 						XrefCompressedEntryPtr entry(*subsection_index + idx, static_cast<types::ushort>(0), field2, field3.SafeConvert<size_t>());
 						entry->SetFile(_file);
-						subsection->Add(entry);
+						result->Add(entry);
 						break;
 					}
 					default:
@@ -560,9 +555,6 @@ namespace gotchangpdf
 						break;
 					}
 				}
-
-				subsection->SetFile(_file);
-				result->Add(subsection);
 			}
 
 			result->SetFile(_file);

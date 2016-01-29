@@ -43,7 +43,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_Size(XrefHandle handle, out_
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_At(XrefHandle handle, integer_type at, PXrefSubsectionHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_At(XrefHandle handle, integer_type at, PXrefEntryHandle result)
 {
 	XrefBase* table = reinterpret_cast<XrefBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(table);
@@ -53,7 +53,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_At(XrefHandle handle, intege
 	{
 		auto entry = table->At(at);
 		auto ptr = entry.AddRefGet();
-		*result = reinterpret_cast<XrefSubsectionHandle>(ptr);
+		*result = reinterpret_cast<XrefEntryHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -316,46 +316,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Reference(Xre
 		*result = reinterpret_cast<ObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
-}
-
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_Index(XrefSubsectionHandle handle, out_biguint_type result)
-{
-	XrefSubsection* section = reinterpret_cast<XrefSubsection*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(section);
-
-	*result = section->Index();
-	return GOTCHANG_PDF_ERROR_SUCCES;
-}
-
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_Size(XrefSubsectionHandle handle, out_uinteger_type result)
-{
-	XrefSubsection* section = reinterpret_cast<XrefSubsection*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(section);
-
-	*result = section->Size();
-	return GOTCHANG_PDF_ERROR_SUCCES;
-}
-
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_At(XrefSubsectionHandle handle, uinteger_type at, PXrefEntryHandle result)
-{
-	XrefSubsection* section = reinterpret_cast<XrefSubsection*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(section);
-
-	try {
-		auto entry = section->At(at);
-		auto ptr = entry.AddRefGet();
-		*result = reinterpret_cast<XrefEntryHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_GOTCHNGPDF_EXCEPTIONS
-}
-
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefSubsection_Release(XrefSubsectionHandle handle)
-{
-	XrefSubsection* section = reinterpret_cast<XrefSubsection*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(section);
-
-	section->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_GetValue(XrefChainIteratorHandle handle, PXrefHandle result)

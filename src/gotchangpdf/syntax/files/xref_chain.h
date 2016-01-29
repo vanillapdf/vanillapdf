@@ -64,14 +64,10 @@ namespace gotchangpdf
 				for (auto it = _list.begin(); it != _list.end(); it++) {
 					auto xref = (*it);
 
-					for (int i = 0; i < xref->Size(); ++i) {
-						auto section = xref->At(i);
-						if (objNumber < section->Index() || objNumber >= section->Index() + section->Size())
-							continue;
+					auto size = xref->Size();
+					for (decltype(size) i = 0; i < size; ++i) {
+						auto item = xref->At(i);
 
-						auto pos = objNumber - section->Index();
-						auto item = section->At(SafeConvert<size_t>(pos));
-						assert(item->GetObjectNumber() == objNumber);
 						if (item->GetObjectNumber() != objNumber || item->GetGenerationNumber() != genNumber)
 							continue;
 

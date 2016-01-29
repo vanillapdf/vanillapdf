@@ -51,7 +51,6 @@ namespace gotchangpdf
 
 		using HeaderPtr = Deferred<Header>;
 
-		using XrefSubsectionPtr = Deferred<XrefSubsection>;
 		using XrefTablePtr = Deferred<XrefTable>;
 		using XrefStreamPtr = Deferred<XrefStream>;
 
