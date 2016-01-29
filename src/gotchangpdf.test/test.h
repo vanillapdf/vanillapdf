@@ -61,6 +61,7 @@ error_type process_viewer_preferences(ViewerPreferencesHandle preferences, int n
 error_type process_page_range(PageRangeHandle range, int nested);
 error_type proces_nonfullscreen_page_mode(NonFullScreenPageMode page_mode, int nested);
 error_type proces_reading_order(ReadingOrder order, int nested);
+error_type proces_numbering_style(NumberingStyle style, int nested);
 error_type proces_print_scaling(PrintScaling scaling, int nested);
 error_type process_duplex(Duplex duplex, int nested);
 error_type process_outline(OutlineHandle outline, int nested);

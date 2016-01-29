@@ -498,20 +498,20 @@ error_type process_page_label(PageLabelHandle label, int nested)
 	print_spaces(nested);
 	printf("Page label begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(PageLabel_P(label, &p));
-	RETURN_ERROR_IF_NOT_SUCCESS(PageLabel_St(label, &st));
-	RETURN_ERROR_IF_NOT_SUCCESS(PageLabel_S(label, &s));
-
-	print_spaces(nested + 1);
-	printf("Numbering Style: %d\n", s);
-	RETURN_ERROR_IF_NOT_SUCCESS(process_string(p, nested + 1));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(st, nested + 1));
-
-	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(p));
-	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(st));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageLabel_P(label, &p), process_string(p, nested + 1), StringObject_Release(p));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageLabel_St(label, &st), process_integer(st, nested + 1), IntegerObject_Release(st));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(PageLabel_S(label, &s), proces_numbering_style(s, nested + 1));
 
 	print_spaces(nested);
 	printf("Page label end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type proces_numbering_style(NumberingStyle style, int nested)
+{
+	print_spaces(nested + 1);
+	printf("Numbering Style: %d\n", style);
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
