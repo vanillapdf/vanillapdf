@@ -85,9 +85,9 @@ namespace gotchangpdf
 
 			_initialized = true;
 
-			std::string dest("C:\\Users\\Gotcha\\Documents\\");
-			dest += _filename;
-			SaveAs(dest);
+			//std::string dest("C:\\Users\\Gotcha\\Documents\\");
+			//dest += _filename;
+			//SaveAs(dest);
 		}
 
 		void File::ReadXref(types::stream_offset offset)
