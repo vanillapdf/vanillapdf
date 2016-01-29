@@ -42,6 +42,9 @@ namespace gotchangpdf
 			std::string _full_path;
 			std::string _filename;
 
+			types::stream_offset GetLastXrefOffset(types::stream_size file_size);
+			void ReadXref(types::stream_offset offset);
+
 		private:
 			File(const std::string& path);
 		};

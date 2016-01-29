@@ -861,5 +861,80 @@ namespace gotchangpdf
 			return result;
 		}
 
+		XrefBasePtr Parser::FindAllObjects(void)
+		{
+			XrefTablePtr xref;
+
+			seekg(0);
+			while (!eof()) {
+				auto offset_before = tellg();
+
+				auto first_token = ReadToken();
+				if (first_token->GetType() == Token::Type::END_OF_INPUT) {
+					break;
+				}
+
+				if (first_token->GetType() == Token::Type::EOL) {
+					continue;
+				}
+
+				if (first_token->GetType() == Token::Type::TRAILER) {
+					auto trailer_dictionary = ReadDictionary();
+					xref->SetTrailerDictionary(trailer_dictionary);
+					continue;
+				}
+
+				if (first_token->GetType() == Token::Type::START_XREF) {
+					auto xref_offset = ReadInteger();
+					xref->SetLastXrefOffset(xref_offset->Value());
+					continue;
+				}
+
+				if (first_token->GetType() != Token::Type::INTEGER_OBJECT) {
+					if (first_token->GetType() != Token::Type::EOL) {
+						readline();
+					}
+
+					continue;
+				}
+
+				auto gen_number_token = ReadToken();
+				if (gen_number_token->GetType() != Token::Type::INTEGER_OBJECT) {
+					if (gen_number_token->GetType() != Token::Type::EOL) {
+						readline();
+					}
+
+					continue;
+				}
+
+				auto begin_token = ReadToken();
+				if (begin_token->GetType() != Token::Type::INDIRECT_OBJECT_BEGIN) {
+					if (begin_token->GetType() != Token::Type::EOL) {
+						readline();
+					}
+
+					continue;
+				}
+
+				auto obj_number = std::stoull(first_token->Value()->ToString());
+				auto gen_number = std::stoul(gen_number_token->Value()->ToString());
+
+				auto obj = ReadDirectObject();
+				obj->SetObjectNumber(obj_number);
+				obj->SetGenerationNumber(SafeConvert<types::ushort>(gen_number));
+				obj->SetOffset(offset_before);
+				obj->SetFile(_file);
+
+				XrefUsedEntryPtr entry(obj->GetObjectNumber(), obj->GetGenerationNumber(), obj->GetOffset());
+				entry->SetFile(_file);
+				xref->Add(entry);
+
+				auto end_token = ReadTokenSkip();
+				assert(end_token->GetType() == Token::Type::INDIRECT_OBJECT_END);
+			}
+
+			xref->SetFile(_file);
+			return xref;
+		}
 	}
 }

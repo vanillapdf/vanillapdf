@@ -17,6 +17,8 @@ namespace gotchangpdf
 	{
 		using namespace std;
 
+		static const int invalid_xref_offset = -1;
+
 		std::shared_ptr<File> File::Open(const std::string& path)
 		{
 			return std::shared_ptr<File>(new File(path));
@@ -60,13 +62,37 @@ namespace gotchangpdf
 			auto stream = Parser(shared_from_this(), *_input);
 
 			_header = stream.ReadHeader(0);
+			auto offset = GetLastXrefOffset(file_size);
 
-			types::stream_offset offset;
-			{
-				ReverseStream raw_reversed(*_input, file_size);
-				auto reverse_stream = ReverseParser(raw_reversed);
-				offset = reverse_stream.ReadLastXrefOffset();
+			if (invalid_xref_offset == offset) {
+				auto xref = stream.FindAllObjects();
+				_xref->Append(xref);
+				_initialized = true;
+				return;
 			}
+
+			try
+			{
+				ReadXref(offset);
+			}
+			catch (NotSupportedException&) {
+				throw;
+			}
+			catch (...) {
+				auto xref = stream.FindAllObjects();
+				_xref->Append(xref);
+			}
+
+			_initialized = true;
+
+			std::string dest("C:\\Users\\Gotcha\\Documents\\");
+			dest += _filename;
+			SaveAs(dest);
+		}
+
+		void File::ReadXref(types::stream_offset offset)
+		{
+			auto stream = Parser(shared_from_this(), *_input);
 
 			do {
 				auto xref = stream.ReadXref(offset);
@@ -90,12 +116,20 @@ namespace gotchangpdf
 
 				offset = xref->GetTrailerDictionary()->FindAs<IntegerObjectPtr>(constant::Name::Prev)->Value();
 			} while (true);
+		}
 
-			_initialized = true;
-
-			//std::string dest("C:\\Users\\Gotcha\\Documents\\");
-			//dest += _filename;
-			//SaveAs(dest);
+		types::stream_offset File::GetLastXrefOffset(types::stream_size file_size)
+		{
+			try
+			{
+				ReverseStream raw_reversed(*_input, file_size);
+				auto reverse_stream = ReverseParser(raw_reversed);
+				return reverse_stream.ReadLastXrefOffset();
+			}
+			catch (...) {
+				LOG_ERROR(_filename) << "Could not find xref offset, using fallback mechanism";
+				return invalid_xref_offset;
+			}
 		}
 
 		ObjectPtr File::GetIndirectObject(types::big_uint objNumber,
