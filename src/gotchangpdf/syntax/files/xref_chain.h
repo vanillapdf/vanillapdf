@@ -64,15 +64,12 @@ namespace gotchangpdf
 				for (auto it = _list.begin(); it != _list.end(); it++) {
 					auto xref = (*it);
 
-					auto size = xref->Size();
-					for (decltype(size) i = 0; i < size; ++i) {
-						auto item = xref->At(i);
+					if (!xref->Contains(objNumber, genNumber))
+						continue;
 
-						if (item->GetObjectNumber() != objNumber || item->GetGenerationNumber() != genNumber)
-							continue;
-
-						return item;
-					}
+					auto item = xref->Find(objNumber, genNumber);
+					assert(item->GetObjectNumber() == objNumber && item->GetGenerationNumber() == genNumber);
+					return item;
 				}
 
 				throw ObjectMissingException(objNumber, genNumber);

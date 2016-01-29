@@ -171,16 +171,57 @@ namespace gotchangpdf
 			types::stream_offset GetLastXrefOffset() const _NOEXCEPT { return _last_xref_offset; }
 			void SetLastXrefOffset(types::stream_offset offset) _NOEXCEPT { _last_xref_offset = offset; }
 
-			void Add(XrefEntryBasePtr entry) { _entries.push_back(entry); }
+			void Add(XrefEntryBasePtr entry)
+			{
+				Key key(entry->GetObjectNumber(), entry->GetGenerationNumber());
+				_entries[key] = entry;
+			}
+
 			size_t Size(void) const _NOEXCEPT { return _entries.size(); }
-			XrefEntryBasePtr At(size_t at) { return _entries.at(at); }
+			XrefEntryBasePtr Find(types::big_uint obj_number, types::ushort gen_number)
+			{
+				Key key(obj_number, gen_number);
+				auto found = _entries.find(key);
+				if (found == _entries.end()) {
+					throw ObjectMissingException(obj_number, gen_number);
+				}
+
+				return found->second;
+			}
+
+			bool Contains(types::big_uint obj_number, types::ushort gen_number)
+			{
+				Key key(obj_number, gen_number);
+				auto found = _entries.find(key);
+				return (found != _entries.end());
+			}
+
+			std::vector<XrefEntryBasePtr> Entries(void) const
+			{
+				std::vector<XrefEntryBasePtr> result;// (_entries.size());
+				result.reserve(_entries.size());
+				std::for_each(_entries.begin(), _entries.end(), [&result](const std::pair<Key, XrefEntryBasePtr> pair) { result.push_back(pair.second); });
+				//std::transform(_entries.begin(), _entries.end(), result.begin(), [](const std::pair<Key, XrefEntryBasePtr> pair) { return pair.second; });
+				return result;
+			}
 
 			virtual Type GetType(void) const _NOEXCEPT = 0;
 			virtual ~XrefBase() {};
 
 		protected:
+			struct Key
+			{
+				Key() = default;
+				Key(types::big_uint obj, types::ushort gen) : obj_number(obj), gen_number(gen) {}
+				types::big_uint obj_number = 0;
+				types::ushort gen_number = 0;
+
+				bool operator<(const Key& other) const { return obj_number < other.obj_number; }
+			};
+
+		protected:
 			std::weak_ptr<File> _file;
-			std::vector<XrefEntryBasePtr> _entries;
+			std::map<Key, XrefEntryBasePtr> _entries;
 			types::stream_offset _last_xref_offset = std::_BADOFF;
 			DictionaryObjectPtr _trailer_dictionary;
 		};

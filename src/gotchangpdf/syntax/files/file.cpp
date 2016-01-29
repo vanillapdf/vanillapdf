@@ -208,8 +208,9 @@ namespace gotchangpdf
 
 				auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(xref_base);
 				auto table_size = xref_table->Size();
+				auto table_items = xref_table->Entries();
 				for (decltype(table_size) i = 0; i < table_size; ++i) {
-					auto entry = xref_table->At(i);
+					auto entry = table_items[i];
 
 					if (!entry->InUse())
 						continue;
@@ -233,12 +234,12 @@ namespace gotchangpdf
 				output << "xref" << endl;
 
 				for (decltype(table_size) i = 0; i < table_size; ++i) {
-					auto first = xref_table->At(i);
+					auto first = table_items[i];
 					auto subsection_idx = first->GetObjectNumber();
 
 					size_t subsection_size = 0;
 					for (decltype(i) j = i; j < table_size; ++j, ++subsection_size) {
-						auto next_entry = xref_table->At(j);
+						auto next_entry = table_items[j];
 						if (next_entry->GetObjectNumber() != gotchangpdf::SafeAddition<types::big_uint>(subsection_idx, j)) {
 							break;
 						}
@@ -246,7 +247,7 @@ namespace gotchangpdf
 
 					output << subsection_idx << " " << subsection_size << endl;
 					for (decltype(subsection_size) j = i; j < subsection_size; ++j) {
-						auto entry = xref_table->At(j);
+						auto entry = table_items[j];
 						if (!entry->InUse()) {
 							output << setfill('0') << setw(10) << 0;
 							output << ' ';
