@@ -8,6 +8,8 @@
 #include "content_stream_operation_generic.h"
 #include "content_stream_operators.h"
 
+#include <regex>
+
 namespace gotchangpdf
 {
 	namespace syntax
@@ -819,6 +821,53 @@ namespace gotchangpdf
 		}
 
 #pragma endregion
+
+		HeaderPtr Parser::ReadHeader(types::stream_offset offset)
+		{
+			seekg(offset, ios_base::beg);
+			return ReadHeader();
+		}
+
+		HeaderPtr Parser::ReadHeader(void)
+		{
+			HeaderPtr result;
+
+			std::smatch sm;
+			std::regex header_regex("%PDF-1\\.([1-7]).*");
+			std::string line;
+
+			for (;;) {
+				auto data = readline();
+				line = data->ToString();
+
+				if (std::regex_match(line, sm, header_regex))
+					break;
+			}
+
+			switch (stoi(sm[1]))
+			{
+			case 0:
+				result->SetVersion(Version::PDF10); break;
+			case 1:
+				result->SetVersion(Version::PDF11); break;
+			case 2:
+				result->SetVersion(Version::PDF12); break;
+			case 3:
+				result->SetVersion(Version::PDF13); break;
+			case 4:
+				result->SetVersion(Version::PDF14); break;
+			case 5:
+				result->SetVersion(Version::PDF15); break;
+			case 6:
+				result->SetVersion(Version::PDF16); break;
+			case 7:
+				result->SetVersion(Version::PDF17); break;
+			default:
+				assert(!"If happens, error in regular expression");
+			}
+
+			return result;
+		}
 
 	}
 }

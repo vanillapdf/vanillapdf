@@ -44,6 +44,9 @@ namespace gotchangpdf
 			virtual std::vector<ObjectPtr> ReadObjectStreamEntries(types::big_uint first, size_t size) override;
 			virtual std::vector<contents::OperationGenericPtr> ReadContentStreamOperations(void) override;
 
+			HeaderPtr ReadHeader(types::stream_offset offset);
+			HeaderPtr ReadHeader(void);
+
 		private:
 			std::weak_ptr<File> _file;
 

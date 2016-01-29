@@ -157,7 +157,6 @@
     <ClCompile Include="src\gotchangpdf\semantics\utils\semantic_utils.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\exceptions\exception.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\files\file.cpp" />
-    <ClCompile Include="src\gotchangpdf\syntax\files\header.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\files\xref.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\filters\ascii_85_decode_filter.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\filters\ascii_hex_decode_filter.cpp" />

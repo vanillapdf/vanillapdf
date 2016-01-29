@@ -12,10 +12,8 @@ namespace gotchangpdf
 		class Header : public IUnknown
 		{
 		public:
-			friend Stream& operator>> (Stream& s, Header& o);
-
-		public:
-			Version GetVersion(void) const;
+			Version GetVersion(void) const { return _version; }
+			void SetVersion(Version version) { _version = version; }
 
 		private:
 			Version _version;

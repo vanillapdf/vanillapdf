@@ -59,8 +59,7 @@ namespace gotchangpdf
 			auto file_size = _input->tellg();
 			auto stream = Parser(shared_from_this(), *_input);
 
-			stream.seekg(ios_base::beg);
-			stream >> *_header;
+			_header = stream.ReadHeader(0);
 
 			types::stream_offset offset;
 			{
