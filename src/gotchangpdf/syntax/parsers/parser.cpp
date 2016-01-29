@@ -825,7 +825,7 @@ namespace gotchangpdf
 			HeaderPtr result;
 
 			std::smatch sm;
-			std::regex header_regex("%PDF-1\\.([1-7]).*");
+			std::regex header_regex("%PDF-1\\.([0-7]).*");
 			std::string line;
 
 			for (;;) {
