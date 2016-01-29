@@ -44,6 +44,8 @@ namespace gotchangpdf
 			_cache.clear();
 		}
 
+		bool File::IsInitialized(void) const { return _initialized; }
+
 		void File::Initialize()
 		{
 			LOG_DEBUG(_filename) << "Initialize";

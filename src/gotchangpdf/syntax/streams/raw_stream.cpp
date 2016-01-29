@@ -35,27 +35,26 @@ namespace gotchangpdf
 			BufferPtr result;
 
 			for (;;) {
-				auto val = get();
-				if (val == std::char_traits<char>::eof()) {
-					throw GeneralException("Readline encountered end of stream");
+				auto new_line = get();
+				if (new_line == std::char_traits<char>::eof()) {
+					break;
 				}
 
-				auto value = SafeConvert<char>(val);
-
-				if (value == '\r') {
-					int val2 = peek();
-					if (IsInRange<decltype(val2), char>(val2) && (static_cast<char>(val2) == '\n')) {
-						get();
+				if (new_line == '\r') {
+					int line_feed = peek();
+					if (line_feed == '\n') {
+						ignore();
 					}
 
 					break;
 				}
 
-				if (value == '\n') {
+				if (new_line == '\n') {
 					break;
 				}
 
-				result->push_back(value);
+				auto converted = SafeConvert<unsigned char>(new_line);
+				result->push_back(converted);
 			}
 
 			return result;

@@ -5,6 +5,9 @@
 #include "file.h"
 #include "character.h"
 
+#include "reverse_parser.h"
+#include "raw_reverse_stream.h"
+
 #include "content_stream_operation_generic.h"
 #include "content_stream_operators.h"
 
@@ -164,18 +167,92 @@ namespace gotchangpdf
 		ObjectPtr Parser::ReadDictionaryStream()
 		{
 			auto dictionary = ReadDictionary();
-			if (PeekTokenTypeSkip() == Token::Type::STREAM_BEGIN)
-			{
+			if (PeekTokenTypeSkip() == Token::Type::STREAM_BEGIN) {
 				ReadTokenWithTypeSkip(Token::Type::STREAM_BEGIN);
 				ReadTokenWithTypeSkip(Token::Type::EOL);
 				auto stream_offset = tellg();
-				auto length = dictionary->FindAs<IntegerObjectPtr>(constant::Name::Length);
-				seekg(length->Value(), ios_base::cur);
-				ReadTokenWithTypeSkip(Token::Type::STREAM_END);
+
+				do
+				{
+					if (!dictionary->Contains(constant::Name::Length)) {
+						break;
+					}
+
+					auto length_obj = dictionary->Find(constant::Name::Length);
+					if (length_obj->GetType() != Object::Type::Integer) {
+						auto locked_file = _file.lock();
+						if (!locked_file->IsInitialized()) {
+							break;
+						}
+					}
+
+					auto length = ObjectUtils::ConvertTo<IntegerObjectPtr>(length_obj);
+					seekg(length->Value(), ios_base::cur);
+					auto expect_stream_end = ReadTokenSkip();
+					if (expect_stream_end->GetType() != Token::Type::STREAM_END) {
+						break;
+					}
+
+					auto result = StreamObjectPtr(dictionary, stream_offset);
+					result->SetFile(_file);
+					return result;
+				} while (false);
+
+				// Recalculate stream length
+				seekg(stream_offset, ios_base::beg);
+
+				for (;;) {
+					auto offset = tellg();
+					auto data = readline();
+					auto line = data->ToString();
+					auto pos = line.find("endstream");
+
+					if (pos == std::string::npos) {
+						continue;
+					}
+
+					auto end_obj_token = PeekTokenTypeSkip();
+					assert(end_obj_token == Token::Type::INDIRECT_OBJECT_END); (void)end_obj_token;
+
+					seekg(offset.seekpos() - 2);
+					auto new_line1 = get();
+					auto new_line2 = get();
+					if (new_line1 == '\r') {
+						offset -= 1;
+
+						assert(new_line2 == '\n');
+						if (new_line2 == '\n') {
+							offset -= 1;
+						}
+					}
+					else if (new_line2 == '\r' || new_line2 == '\n') {
+						offset -= 1;
+					}
+
+					ReadTokenWithTypeSkip(Token::Type::STREAM_END);
+					auto stream_end_offset = offset.seekpos() + pos;
+					auto computed_length = stream_end_offset - stream_offset;
+					if (!dictionary->Contains(constant::Name::Length)) {
+						dictionary->_list[constant::Name::Length] = IntegerObjectPtr(computed_length);
+						break;
+					}
+
+					auto length_obj = dictionary->Find(constant::Name::Length);
+					if (length_obj->GetType() != Object::Type::Integer) {
+						auto locked_file = _file.lock();
+						if (!locked_file->IsInitialized()) {
+							dictionary->_list[constant::Name::Length] = IntegerObjectPtr(computed_length);
+							break;
+						}
+					}
+
+					auto length = ObjectUtils::ConvertTo<IntegerObjectPtr>(length_obj);
+					*length = computed_length;
+					break;
+				}
 
 				auto result = StreamObjectPtr(dictionary, stream_offset);
 				result->SetFile(_file);
-				result->GetHeader()->SetFile(_file);
 				return result;
 			}
 
@@ -186,8 +263,7 @@ namespace gotchangpdf
 		{
 			MixedArrayObjectPtr result;
 			ReadTokenWithTypeSkip(Token::Type::ARRAY_BEGIN);
-			while (PeekTokenTypeSkip() != Token::Type::ARRAY_END)
-			{
+			while (PeekTokenTypeSkip() != Token::Type::ARRAY_END) {
 				auto val = ReadDirectObject();
 				auto containable_ptr = dynamic_cast<ContainableObject*>(val.get());
 				if (nullptr == containable_ptr)
@@ -885,8 +961,13 @@ namespace gotchangpdf
 				}
 
 				if (first_token->GetType() == Token::Type::START_XREF) {
-					auto xref_offset = ReadInteger();
-					xref->SetLastXrefOffset(xref_offset->Value());
+					auto next_token = PeekTokenSkip();
+					if (next_token->GetType() == Token::Type::INTEGER_OBJECT) {
+						ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
+						auto xref_offset = ObjectFactory::CreateInteger(next_token);
+						xref->SetLastXrefOffset(xref_offset->Value());
+					}
+
 					continue;
 				}
 

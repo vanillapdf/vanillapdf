@@ -34,8 +34,6 @@ namespace gotchangpdf
 		{
 			auto current_offset = tellg();
 			if (_token_cached && _last_token_offset == current_offset) {
-				assert(_BADOFF != _last_token_offset);
-
 				auto result = _last_token;
 
 				seekg(_advance_position);
@@ -351,8 +349,6 @@ namespace gotchangpdf
 		{
 			auto current = tellg();
 			if (_token_cached && _last_token_offset == current) {
-				assert(_BADOFF != _last_token_offset);
-
 				return *_last_token;
 			}
 
@@ -370,7 +366,13 @@ namespace gotchangpdf
 			}
 
 			seekg(_last_token_offset);
-			assert(_last_token_offset == tellg());
+			auto verify_offset = tellg();
+			if (_last_token_offset != verify_offset) {
+				clear();
+			}
+
+			auto second_verify_offset = tellg();
+			assert(_last_token_offset == second_verify_offset);
 
 			return *_last_token;
 		}

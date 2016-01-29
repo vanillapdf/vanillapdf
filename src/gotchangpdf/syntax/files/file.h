@@ -21,6 +21,7 @@ namespace gotchangpdf
 			void SaveAs(const std::string& path);
 
 			void Initialize(void);
+			bool IsInitialized(void) const;
 			ObjectPtr GetIndirectObject(types::big_uint objNumber,
 				types::ushort genNumber);
 
