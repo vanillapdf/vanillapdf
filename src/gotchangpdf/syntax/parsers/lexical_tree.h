@@ -21,7 +21,7 @@ namespace gotchangpdf
 				Node(unsigned char val) : value(val) {}
 				unsigned char value = 0;
 				Token::Type type = Token::Type::UNKNOWN;
-				std::shared_ptr<Node> childs[std::numeric_limits<decltype(value)>::max()];
+				std::shared_ptr<Node> childs[std::numeric_limits<decltype(value)>::max() + 1];
 			};
 
 			std::shared_ptr<Node> _root = std::make_shared<Node>();
