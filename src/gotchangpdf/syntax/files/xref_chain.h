@@ -75,6 +75,18 @@ namespace gotchangpdf
 				throw ObjectMissingException(objNumber, genNumber);
 			}
 
+			bool Contains(types::big_uint objNumber,
+				types::ushort genNumber)
+			{
+				for (auto it = _list.begin(); it != _list.end(); it++) {
+					auto xref = (*it);
+					if (xref->Contains(objNumber, genNumber))
+						return true;
+				}
+
+				return false;
+			}
+
 		private:
 			list_type _list;
 		};

@@ -142,10 +142,13 @@ namespace gotchangpdf
 			if (!_initialized)
 				throw FileNotInitializedException(_filename);
 
+			if (!_xref->Contains(objNumber, genNumber))
+				return NullObject::GetInstance();
+
 			auto item = _xref->GetXrefEntry(objNumber, genNumber);
 
 			if (!item->InUse())
-				throw ObjectMissingException(objNumber, genNumber);
+				return NullObject::GetInstance();
 
 			switch (item->GetUsage()) {
 			case XrefEntryBase::Usage::Used:
@@ -160,11 +163,11 @@ namespace gotchangpdf
 			}
 			case XrefEntryBase::Usage::Null:
 				LOG_ERROR(_filename) << "Xref entry type is null for object " << objNumber << " " << genNumber;
-				throw ObjectMissingException(objNumber, genNumber);
+				return NullObject::GetInstance();
 			case XrefEntryBase::Usage::Free:
 				LOG_ERROR(_filename) << "Xref entry type is free for object " << objNumber << " " << genNumber << " and InUse() returned true";
 				assert(!"Current entry is supposed to be InUse(), while it's type is Free");
-				throw ObjectMissingException(objNumber, genNumber);
+				return NullObject::GetInstance();
 			default:
 				throw GeneralException("Unknown entry type");
 			}
