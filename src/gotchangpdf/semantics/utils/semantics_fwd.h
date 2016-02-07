@@ -49,15 +49,6 @@ namespace gotchangpdf
 		class DeveloperExtensions; using DeveloperExtensionsPtr = Deferred<DeveloperExtensions>;
 		class PageLabel; using PageLabelPtr = Deferred<PageLabel>;
 		class PageLabels; using PageLabelsPtr = Deferred<PageLabels>;
-
-		namespace contents
-		{
-			class ContentObjectBase; using ContentObjectBasePtr = Deferred<ContentObjectBase>;
-			class OperationBeginText; using OperationBeginTextPtr = Deferred<OperationBeginText>;
-			class OperationEndText; using OperationEndTextPtr = Deferred<OperationEndText>;
-			class OperationTextShow; using OperationTextShowPtr = Deferred<OperationTextShow>;
-			class TextObject; using TextObjectPtr = Deferred<TextObject>;
-		}
 	}
 }
 

@@ -121,10 +121,25 @@ namespace gotchangpdf
 
 		namespace contents
 		{
+			// instructions
 			class InstructionBase; using InstructionBasePtr = Deferred<InstructionBase>;
 
+			// basic operations
 			class OperationBase; using OperationBasePtr = Deferred<OperationBase>;
 			class OperationGeneric; using OperationGenericPtr = Deferred<OperationGeneric>;
+
+			// specialized operations
+			class OperationBeginText; using OperationBeginTextPtr = Deferred<OperationBeginText>;
+			class OperationEndText; using OperationEndTextPtr = Deferred<OperationEndText>;
+			class OperationTextShow; using OperationTextShowPtr = Deferred<OperationTextShow>;
+			class OperationBeginInlineImageObject; using OperationBeginInlineImageObjectPtr = Deferred<OperationBeginInlineImageObject>;
+			class OperationBeginInlineImageData; using OperationBeginInlineImageDataPtr = Deferred<OperationBeginInlineImageData>;
+			class OperationEndInlineImageObject; using OperationEndInlineImageObjectPtr = Deferred<OperationEndInlineImageObject>;
+
+			// content objects
+			class ContentObjectBase; using ContentObjectBasePtr = Deferred<ContentObjectBase>;
+			class TextObject; using TextObjectPtr = Deferred<TextObject>;
+			class InlineImageObject; using InlineImageObjectPtr = Deferred<InlineImageObject>;
 
 			class OperatorBase;
 			class UnknownOperator;
