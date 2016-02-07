@@ -1,7 +1,7 @@
 #include "precompiled.h"
 #include "contents.h"
 
-#include "content_utils.h"
+#include "parser.h"
 #include "content_stream_operations.h"
 #include "content_stream_objects.h"
 
@@ -39,52 +39,18 @@ namespace gotchangpdf
 				throw GeneralException("Contents was constructed from unrecognized element: " + _obj->ToString());
 			}
 
-			int final_size = std::accumulate(contents.begin(), contents.end(), 0, [](unsigned int sum, const ContentStreamPtr& stream) { return sum + stream->Operations().size(); });
-			BaseOperationCollection ops;
-			ops.reserve(final_size);
-
+			// We are not using contents.Instructions, because objects can we separated
+			// into multiple content streams
+			std::stringstream ss;
 			for (auto item : contents) {
-				auto operations = item->Operations();
-				auto size = operations.size();
-				for (unsigned int i = 0; i < size; ++i) {
-					auto op = operations.at(i);
-					auto converted = ContentUtils::ConvertGenericOperation(op);
-					ops.push_back(converted);
-				}
+				auto stream_object = item->GetObject();
+				auto body = stream_object->GetBodyDecoded();
+				ss << body->ToString();
 			}
 
-			BaseInstructionCollection result;
-			for (auto it = ops.begin(); it != ops.end(); ++it) {
-				if (ContentUtils::IsType<OperationBeginTextPtr>(*it)) {
-					auto last = std::find_if(it + 1, ops.end(), [it](const decltype(it)::value_type& item) {
-						return ContentUtils::IsType<OperationEndTextPtr>(item);
-					});
-
-					assert(ops.end() != last && "End of current Text Object was not found");
-					if (ops.end() == last) {
-						result.push_back(*it);
-						continue;
-					}
-
-					// Construct the collection
-					BaseOperationCollection text_object_data(it, last);
-					// iterators are inserted [it, last) meaning, ET is not inserted
-
-					// Erase Begin of Text Object, because it is not part of object
-					text_object_data.erase(text_object_data.begin());
-
-					TextObjectPtr text_object(text_object_data);
-					result.push_back(text_object);
-					it = last;
-				}
-				else {
-					// unknown
-					result.push_back(*it);
-				}
-			}
-
-			_instructions = result;
-			return result;
+			auto parser = syntax::Parser(_obj->GetFile(), ss);
+			_instructions = parser.ReadContentStreamInstructions();
+			return _instructions;
 		}
 
 		types::uinteger Contents::GetInstructionsSize(void) const

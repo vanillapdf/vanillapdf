@@ -4,8 +4,6 @@
 #include "semantics_fwd.h"
 #include "high_level_object.h"
 
-#include "content_stream_operation_generic.h"
-
 namespace gotchangpdf
 {
 	namespace semantics
@@ -14,10 +12,10 @@ namespace gotchangpdf
 		{
 		public:
 			explicit ContentStream(syntax::StreamObjectPtr obj);
-			syntax::contents::GenericOperationCollection Operations(void) const;
+			std::vector<syntax::contents::InstructionBasePtr> Instructions(void) const;
 
 		private:
-			mutable syntax::contents::GenericOperationCollection _operations;
+			mutable std::vector<syntax::contents::InstructionBasePtr> _instructions;
 		};
 	}
 }
