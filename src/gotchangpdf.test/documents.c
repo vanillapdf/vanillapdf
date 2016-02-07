@@ -14,6 +14,7 @@ error_type process_content_object(ContentObjectHandle obj, int nested)
 {
 	ContentObjectType type;
 	ContentObjectTextHandle text_object = NULL;
+	ContentObjectInlineImageHandle image_object = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_GetType(obj, &type));
 	switch (type)
@@ -22,11 +23,38 @@ error_type process_content_object(ContentObjectHandle obj, int nested)
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_ToText(obj, &text_object));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_content_object_text(text_object, nested + 1));
 		break;
+	case ContentObjectType_InlineImage:
+		RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_ToInlineImage(obj, &image_object));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_content_object_inline_image(image_object, nested + 1));
+		break;
 	default:
 		print_spaces(nested + 1);
 		printf("Unrecognized content object type\n");
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_content_object_inline_image(ContentObjectInlineImageHandle obj, int nested)
+{
+	DictionaryHandle dictionary = NULL;
+	BufferHandle data = NULL;
+
+	print_spaces(nested);
+	printf("Inline image object begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectInlineImage_GetDictionary(obj, &dictionary));
+	RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectInlineImage_GetData(obj, &data));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(process_dictionary(dictionary, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(data, nested + 1));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Release(dictionary));
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(data));
+
+	print_spaces(nested);
+	printf("Inline image object end\n");
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }

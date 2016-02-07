@@ -1,5 +1,7 @@
 #include "precompiled.h"
 #include "contents.h"
+#include "content_stream_operators.h"
+#include "content_stream_operation_generic.h"
 #include "content_stream_operations.h"
 #include "content_stream_objects.h"
 #include "file.h"
@@ -9,7 +11,6 @@
 
 using namespace gotchangpdf;
 using namespace gotchangpdf::semantics;
-using namespace gotchangpdf::semantics::contents;
 using namespace gotchangpdf::syntax;
 using namespace gotchangpdf::syntax::contents;
 
@@ -96,7 +97,10 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_GetType(ContentObje
 	switch (obj->GetType()) {
 	case ContentObjectBase::Type::TextObject:
 		*result = ContentObjectType_Text; break;
+	case ContentObjectBase::Type::InlineImageObject:
+		*result = ContentObjectType_InlineImage; break;
 	default:
+		assert(!"Unknown enum value");
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
 
@@ -108,6 +112,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_ToText(ContentObjec
 	return SafeObjectConvert<ContentObjectBase, TextObject, ContentObjectHandle, ContentObjectTextHandle>(handle, result);
 }
 
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_ToInlineImage(ContentObjectHandle handle, PContentObjectInlineImageHandle result)
+{
+	return SafeObjectConvert<ContentObjectBase, InlineImageObject, ContentObjectHandle, ContentObjectInlineImageHandle>(handle, result);
+}
+
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_Release(ContentObjectHandle handle)
 {
 	ContentObjectBase* obj = reinterpret_cast<ContentObjectBase*>(handle);
@@ -115,6 +124,38 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_Release(ContentObje
 
 	obj->Release();
 	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetDictionary(ContentObjectInlineImageHandle handle, PDictionaryHandle result)
+{
+	InlineImageObject* obj = reinterpret_cast<InlineImageObject*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto item = obj->GetDictionary();
+		auto ptr = item.AddRefGet();
+		*result = reinterpret_cast<DictionaryHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetData(ContentObjectInlineImageHandle handle, PBufferHandle result)
+{
+	InlineImageObject* obj = reinterpret_cast<InlineImageObject*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto item = obj->GetData();
+		auto ptr = item.AddRefGet();
+		*result = reinterpret_cast<BufferHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationsSize(ContentObjectTextHandle handle, out_integer_type result)
@@ -303,6 +344,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_GetType(ContentO
 	case OperationBase::Type::EndCompatibilitySection:
 		*result = ContentOperationType_EndCompatibilitySection; break;
 	default:
+		assert(!"Unknown enum value");
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
 
@@ -564,6 +606,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_GetType(ContentOp
 	case OperatorBase::Type::EndCompatibilitySection:
 		*result = ContentOperatorType_EndCompatibilitySection; break;
 	default:
+		assert(!"Unknown enum value");
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
 

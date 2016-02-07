@@ -73,6 +73,7 @@ extern "C"
 
 	/* Content objects */
 	DECLARE_OBJECT_HANDLE(ContentObjectText);
+	DECLARE_OBJECT_HANDLE(ContentObjectInlineImage);
 
 	/* Utils */
 	DECLARE_OBJECT_HANDLE(Buffer);
