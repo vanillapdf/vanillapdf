@@ -8,8 +8,11 @@
 #include "reverse_parser.h"
 #include "raw_reverse_stream.h"
 
+#include "content_stream_operations.h"
 #include "content_stream_operation_generic.h"
 #include "content_stream_operators.h"
+#include "content_stream_objects.h"
+#include "content_utils.h"
 
 #include <regex>
 
@@ -658,18 +661,111 @@ namespace gotchangpdf
 
 #pragma region Content streams
 
-		contents::GenericOperationCollection Parser::ReadContentStreamOperations(void)
+		contents::BaseInstructionCollection Parser::ReadContentStreamInstructions(void)
 		{
-			contents::GenericOperationCollection result;
+			contents::BaseInstructionCollection result;
 			while (PeekTokenTypeSkip() != Token::Type::END_OF_INPUT) {
-				auto operation = ReadContentStreamOperation();
+				auto operation = ReadContentStreamInstruction();
 				result.push_back(operation);
 			}
 
 			return result;
 		}
 
-		contents::OperationGenericPtr Parser::ReadContentStreamOperation(void)
+		contents::InlineImageObjectPtr Parser::ReadInlineImageObject(void)
+		{
+			// read dictionary
+			DictionaryObjectPtr image_dictionary;
+
+			for (;;) {
+				auto token_type = PeekTokenTypeSkip();
+				if (token_type == Token::Type::NAME_OBJECT) {
+					auto name = ReadName();
+					auto value = ReadDirectObject();
+
+					if (value->GetType() == Object::Type::Null)
+						continue;
+
+					auto containable_ptr = dynamic_cast<ContainableObject*>(value.get());
+					if (nullptr == containable_ptr)
+						throw ConversionExceptionFactory<ContainableObject>::Construct(value);
+
+					image_dictionary->_list[name] = ContainableObjectPtr(containable_ptr);
+					continue;
+				}
+
+				if (token_type == Token::Type::BEGIN_INLINE_IMAGE_DATA) {
+					break;
+				}
+
+				assert(!"Unknown data in inline image dictionary");
+			}
+
+			// read operation begin image data
+			auto inline_image_data_op = ReadContentStreamOperation();
+			if (inline_image_data_op->GetOperationType() != contents::OperationBase::Type::BeginInlineImageData) {
+				assert(!"Invalid operation after inline image dictionary");
+			}
+
+			// read data
+			BufferPtr data;
+			while (PeekTokenTypeSkip() != Token::Type::END_INLINE_IMAGE_OBJECT) {
+				auto line = readline();
+				data->insert(data->end(), line->begin(), line->end());
+			}
+
+			// read end image object
+			auto end_inline_image_data_op = ReadContentStreamOperation();
+			if (end_inline_image_data_op->GetOperationType() != contents::OperationBase::Type::EndInlineImageObject) {
+				assert(!"Invalid operation after inline image dictionary");
+			}
+
+			return contents::InlineImageObjectPtr(image_dictionary, data);
+		}
+
+		contents::InstructionBasePtr Parser::ReadContentStreamInstruction(void)
+		{
+			auto operation = ReadContentStreamOperation();
+
+			if (operation->GetOperationType() == contents::OperationBase::Type::EndText) {
+				// This seems, that someone is trying to parse content stream,
+				// that is part of multiple streams
+				// Please be sure, that entry source data are all concatenated into
+				// stream and not parsed partially
+				assert(!"Found EndText operation without begin");
+			}
+
+			if (operation->GetOperationType() == contents::OperationBase::Type::BeginInlineImageObject) {
+				return ReadInlineImageObject();
+			}
+
+			if (operation->GetOperationType() == contents::OperationBase::Type::BeginText) {
+				contents::BaseOperationCollection text_operations;
+
+				for (;;) {
+					if (PeekTokenTypeSkip() == Token::Type::END_OF_INPUT) {
+						// This seems, that someone is trying to parse content stream,
+						// that is part of multiple streams
+						// Please be sure, that entry source data are all concatenated into
+						// stream and not parsed partially
+						assert(!"Found BeginText operation without end"); break;
+					}
+
+					auto text_operation = ReadContentStreamOperation();
+					if (text_operation->GetOperationType() == contents::OperationBase::Type::EndText) {
+						break;
+					}
+
+					text_operations.push_back(text_operation);
+				}
+
+				return contents::TextObjectPtr(text_operations);
+			}
+
+			return operation;
+		}
+
+		contents::OperationBasePtr Parser::ReadContentStreamOperation(void)
 		{
 			std::vector<ObjectPtr> operands;
 			while (IsOperand(PeekTokenTypeSkip())) {
@@ -677,164 +773,162 @@ namespace gotchangpdf
 				operands.push_back(operand);
 			}
 
-			auto oper = ReadOperator();
-			return contents::OperationGenericPtr(operands, oper);
+			return ReadOperatorReturnOperation(operands);
 		}
 
-		contents::OperatorBasePtr Parser::ReadOperator()
+		contents::OperationBasePtr Parser::ReadOperatorReturnOperation(const std::vector<ObjectPtr>& operands)
 		{
 			auto token = ReadTokenSkip();
 			switch (token->GetType())
 			{
 			case Token::Type::LINE_WIDTH:
-				return contents::LineWidthOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::LineCapOperatorPtr());
 			case Token::Type::LINE_CAP:
-				return contents::LineCapOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::LineCapOperatorPtr());
 			case Token::Type::LINE_JOIN:
-				return contents::LineJoinOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::LineJoinOperatorPtr());
 			case Token::Type::MITER_LIMIT:
-				return contents::MiterLimitOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::MiterLimitOperatorPtr());
 			case Token::Type::DASH_PATTERN:
-				return contents::DashPatternOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::DashPatternOperatorPtr());
 			case Token::Type::COLOR_RENDERING_INTENT:
-				return contents::ColorRenderingIntentOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::ColorRenderingIntentOperatorPtr());
 			case Token::Type::FLATNESS:
-				return contents::FlatnessOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::FlatnessOperatorPtr());
 			case Token::Type::GRAPHICS_STATE:
-				return contents::GraphicsStateOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::GraphicsStateOperatorPtr());
 			case Token::Type::SAVE_GRAPHICS_STATE:
-				return contents::SaveGraphicsStateOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::SaveGraphicsStateOperatorPtr());
 			case Token::Type::RESTORE_GRAPHIC_STATE:
-				return contents::RestoreGraphicsStateOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::RestoreGraphicsStateOperatorPtr());
 			case Token::Type::TRANSFORMATION_MATRIX:
-				return contents::TransformationMatrixOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::TransformationMatrixOperatorPtr());
 			case Token::Type::BEGIN_SUBPATH:
-				return contents::BeginSubpathOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::BeginSubpathOperatorPtr());
 			case Token::Type::LINE:
-				return contents::LineOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::LineOperatorPtr());
 			case Token::Type::FULL_CURVE:
-				return contents::FullCurveOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::FullCurveOperatorPtr());
 			case Token::Type::FINAL_CURVE:
-				return contents::FinalCurveOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::FinalCurveOperatorPtr());
 			case Token::Type::INITIAL_CURVE:
-				return contents::InitialCurveOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::InitialCurveOperatorPtr());
 			case Token::Type::CLOSE_SUBPATH:
-				return contents::CloseSubpathOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::CloseSubpathOperatorPtr());
 			case Token::Type::RECTANGLE:
-				return contents::RectangleOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::RectangleOperatorPtr());
 			case Token::Type::STROKE:
-				return contents::StrokeOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::StrokeOperatorPtr());
 			case Token::Type::CLOSE_AND_STROKE:
-				return contents::CloseAndStrokeOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::CloseAndStrokeOperatorPtr());
 			case Token::Type::FILL_PATH_NONZERO:
-				return contents::FillPathNonzeroOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::FillPathNonzeroOperatorPtr());
 			case Token::Type::FILL_PATH_COMPATIBILITY:
-				return contents::FillPathCompatibilityOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::FillPathCompatibilityOperatorPtr());
 			case Token::Type::FILL_PATH_EVEN_ODD:
-				return contents::FillPathEvenOddOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::FillPathEvenOddOperatorPtr());
 			case Token::Type::FILL_STROKE_NONZERO:
-				return contents::FillStrokeNonzeroOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::FillStrokeNonzeroOperatorPtr());
 			case Token::Type::FILL_STROKE_EVEN_ODD:
-				return contents::FillStrokeEvenOddOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::FillStrokeEvenOddOperatorPtr());
 			case Token::Type::CLOSE_FILL_STROKE_NONZERO:
-				return contents::CloseFillStrokeNonzeroOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::CloseFillStrokeNonzeroOperatorPtr());
 			case Token::Type::CLOSE_FILL_STROKE_EVEN_ODD:
-				return contents::CloseFillStrokeEvenOddOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::CloseFillStrokeEvenOddOperatorPtr());
 			case Token::Type::END_PATH:
-				return contents::EndPathOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::EndPathOperatorPtr());
 			case Token::Type::CLIP_PATH_NONZERO:
-				return contents::ClipPathNonzeroOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::ClipPathNonzeroOperatorPtr());
 			case Token::Type::CLIP_PATH_EVEN_ODD:
-				return contents::ClipPathEvenOddOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::ClipPathEvenOddOperatorPtr());
 			case Token::Type::BEGIN_TEXT:
-				return contents::BeginTextOperatorPtr();
+				return contents::OperationBeginTextPtr(operands);
 			case Token::Type::END_TEXT:
-				return contents::EndTextOperatorPtr();
+				return contents::OperationEndTextPtr(operands);
 			case Token::Type::CHARACTER_SPACING:
-				return contents::CharacterSpacingOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::CharacterSpacingOperatorPtr());
 			case Token::Type::WORD_SPACING:
-				return contents::WordSpacingOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::WordSpacingOperatorPtr());
 			case Token::Type::HORIZONTAL_SCALING:
-				return contents::HorizontalScalingOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::HorizontalScalingOperatorPtr());
 			case Token::Type::LEADING:
-				return contents::LeadingOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::LeadingOperatorPtr());
 			case Token::Type::TEXT_FONT:
-				return contents::TextFontOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::TextFontOperatorPtr());
 			case Token::Type::TEXT_RENDERING_MODE:
-				return contents::TextRenderingModeOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::TextRenderingModeOperatorPtr());
 			case Token::Type::TEXT_RISE:
-				return contents::TextRiseOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::TextRiseOperatorPtr());
 			case Token::Type::TEXT_TRANSLATE:
-				return contents::TextTranslateOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::TextTranslateOperatorPtr());
 			case Token::Type::TEXT_TRANSLATE_LEADING:
-				return contents::TextTranslateLeadingOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::TextTranslateLeadingOperatorPtr());
 			case Token::Type::TEXT_MATRIX:
-				return contents::TextMatrixOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::TextMatrixOperatorPtr());
 			case Token::Type::TEXT_NEXT_LINE:
-				return contents::TextNextLineOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::TextNextLineOperatorPtr());
 			case Token::Type::TEXT_SHOW:
-				return contents::TextShowOperatorPtr();
+				return contents::OperationTextShowPtr(operands);
 			case Token::Type::TEXT_SHOW_ARRAY:
-				return contents::TextShowArrayOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::TextShowArrayOperatorPtr());
 			case Token::Type::TEXT_NEXT_LINE_SHOW:
-				return contents::TextNextLineShowOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::TextNextLineShowOperatorPtr());
 			case Token::Type::TEXT_NEXT_LINE_SHOW_SPACING:
-				return contents::TextNextLineOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::TextNextLineOperatorPtr());
 			case Token::Type::SET_CHAR_WIDTH:
-				return contents::SetCharWidthOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::SetCharWidthOperatorPtr());
 			case Token::Type::SET_CACHE_DEVICE:
-				return contents::SetCacheDeviceOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::SetCacheDeviceOperatorPtr());
 			case Token::Type::COLOR_SPACE_STROKE:
-				return contents::ColorSpaceStrokeOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::ColorSpaceStrokeOperatorPtr());
 			case Token::Type::COLOR_SPACE_NONSTROKE:
-				return contents::ColorSpaceNonstrokeOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::ColorSpaceNonstrokeOperatorPtr());
 			case Token::Type::SET_COLOR_STROKE:
-				return contents::SetColorStrokeOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::SetColorStrokeOperatorPtr());
 			case Token::Type::SET_COLOR_STROKE_EXTENDED:
-				return contents::SetColorStrokeExtendedOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::SetColorStrokeExtendedOperatorPtr());
 			case Token::Type::SET_COLOR_NONSTROKE:
-				return contents::SetColorNonstrokeOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::SetColorNonstrokeOperatorPtr());
 			case Token::Type::SET_COLOR_NONSTROKE_EXTENDED:
-				return contents::SetColorNonstrokeExtendedOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::SetColorNonstrokeExtendedOperatorPtr());
 			case Token::Type::SET_STROKING_COLOR_SPACE_GRAY:
-				return contents::SetNonstrokingColorSpaceGrayOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::SetNonstrokingColorSpaceGrayOperatorPtr());
 			case Token::Type::SET_NONSTROKING_COLOR_SPACE_GRAY:
-				return contents::SetNonstrokingColorSpaceGrayOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::SetNonstrokingColorSpaceGrayOperatorPtr());
 			case Token::Type::SET_STROKING_COLOR_SPACE_RGB:
-				return contents::SetStrokingColorSpaceRGBOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::SetStrokingColorSpaceRGBOperatorPtr());
 			case Token::Type::SET_NONSTROKING_COLOR_SPACE_RGB:
-				return contents::SetNonstrokingColorSpaceRGBOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::SetNonstrokingColorSpaceRGBOperatorPtr());
 			case Token::Type::SET_STROKING_COLOR_SPACE_CMYK:
-				return contents::SetStrokingColorSpaceCMYKOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::SetStrokingColorSpaceCMYKOperatorPtr());
 			case Token::Type::SET_NONSTROKING_COLOR_SPACE_CMYK:
-				return contents::SetNonstrokingColorSpaceCMYKOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::SetNonstrokingColorSpaceCMYKOperatorPtr());
 			case Token::Type::SHADING_PAINT:
-				return contents::ShadingPaintOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::ShadingPaintOperatorPtr());
 			case Token::Type::BEGIN_INLINE_IMAGE_OBJECT:
-				return contents::BeginInlineImageObjectOperatorPtr();
+				return contents::OperationBeginInlineImageObjectPtr(operands);
 			case Token::Type::BEGIN_INLINE_IMAGE_DATA:
-				throw NotSupportedException("Begin inline image data operator is not yet supported");
-				return contents::BeginInlineImageDataOperatorPtr();
+				return contents::OperationBeginInlineImageDataPtr(operands);
 			case Token::Type::END_INLINE_IMAGE_OBJECT:
-				return contents::EndInlineImageObjectOperatorPtr();
+				return contents::OperationEndInlineImageObjectPtr(operands);
 			case Token::Type::INVOKE_X_OBJECT:
-				return contents::InvokeXObjectOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::InvokeXObjectOperatorPtr());
 			case Token::Type::DEFINE_MARKED_CONTENT_POINT:
-				return contents::DefineMarkedContentPointOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::DefineMarkedContentPointOperatorPtr());
 			case Token::Type::DEFINE_MARKED_CONTENT_POINT_WITH_PROPERTY_LIST:
-				return contents::DefineMarkedContentPointWithPropertyListOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::DefineMarkedContentPointWithPropertyListOperatorPtr());
 			case Token::Type::BEGIN_MARKED_CONTENT_SEQUENCE:
-				return contents::BeginMarkedContentSequenceOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::BeginMarkedContentSequenceOperatorPtr());
 			case Token::Type::BEGIN_MARKED_CONTENT_SEQUENCE_WITH_PROPERTY_LIST:
-				return contents::BeginMarkedContentSequenceWithPropertyListOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::BeginMarkedContentSequenceWithPropertyListOperatorPtr());
 			case Token::Type::END_MARKED_CONTENT_SEQUENCE:
-				return contents::EndMarkedContentSequenceOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::EndMarkedContentSequenceOperatorPtr());
 			case Token::Type::BEGIN_COMPATIBILITY_SECTION:
-				return contents::BeginCompatibilitySectionOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::BeginCompatibilitySectionOperatorPtr());
 			case Token::Type::END_COMPATIBILITY_SECTION:
-				return contents::EndCompatibilitySectionOperatorPtr();
+				return contents::OperationGenericPtr(operands, contents::EndCompatibilitySectionOperatorPtr());
 			default:
-				return contents::UnknownOperatorPtr(token->Value());
+				return contents::OperationGenericPtr(operands, contents::UnknownOperatorPtr(token->Value()));
 			}
 		}
 
