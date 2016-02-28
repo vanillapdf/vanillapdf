@@ -339,6 +339,7 @@ namespace gotchangpdf
 			direct->SetGenerationNumber(gen_number->SafeConvert<types::ushort>());
 			direct->SetOffset(offset);
 			direct->SetFile(_file);
+			direct->SetIndirect(true);
 
 			assert(direct->IsIndirect());
 			return direct;
@@ -708,19 +709,77 @@ namespace gotchangpdf
 			}
 
 			// read data
-			BufferPtr data;
-			while (PeekTokenTypeSkip() != Token::Type::END_INLINE_IMAGE_OBJECT) {
-				auto line = readline();
-				data->insert(data->end(), line->begin(), line->end());
+			BufferPtr image_data;
+
+			int stage = 0;
+			unsigned char stored_whitespace = 0;
+			for (;;) {
+				auto current_meta = get();
+				auto current = SafeConvert<unsigned char>(current_meta);
+
+				if (stage == 0 && IsWhiteSpace(current)) {
+					stage = 1;
+					stored_whitespace = current;
+					continue;
+				}
+
+				if (stage == 1) {
+					if (current == 'E') {
+						stage = 2;
+						continue;
+					}
+
+					if (IsWhiteSpace(current)) {
+						image_data->push_back(stored_whitespace);
+						stored_whitespace = current;
+						continue;
+					}
+
+					// reset stage
+					stage = 0;
+
+					image_data->push_back(stored_whitespace);
+					image_data->push_back(current);
+					continue;
+				}
+
+				if (stage == 2) {
+					if (current == 'I') {
+						stage = 3;
+						continue;
+					}
+
+					// reset stage
+					stage = 0;
+
+					// pop stored data
+					image_data->push_back(stored_whitespace);
+					image_data->push_back('E');
+					image_data->push_back(current);
+					continue;
+				}
+
+				if (stage == 3) {
+					if (IsWhiteSpace(current)) {
+						// verify data
+						break;
+					}
+
+					// reset stage
+					stage = 0;
+
+					// pop stored data
+					image_data->push_back(stored_whitespace);
+					image_data->push_back('E');
+					image_data->push_back('I');
+					image_data->push_back(current);
+					continue;
+				}
+
+				image_data->push_back(current);
 			}
 
-			// read end image object
-			auto end_inline_image_data_op = ReadContentStreamOperation();
-			if (end_inline_image_data_op->GetOperationType() != contents::OperationBase::Type::EndInlineImageObject) {
-				assert(!"Invalid operation after inline image dictionary");
-			}
-
-			return contents::InlineImageObjectPtr(image_dictionary, data);
+			return contents::InlineImageObjectPtr(image_dictionary, image_data);
 		}
 
 		contents::InstructionBasePtr Parser::ReadContentStreamInstruction(void)
