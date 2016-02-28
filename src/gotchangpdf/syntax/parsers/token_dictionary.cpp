@@ -105,7 +105,7 @@ namespace gotchangpdf
 			return _dictionary.TokenType(set);
 		}
 
-#define INSERT_TO_DICTIONARY(name) _dictionary.Insert(BufferPtr(name, sizeof(name)), Token::Type::name)
+#define INSERT_TO_DICTIONARY(name) _dictionary.Insert(BufferPtr(name, sizeof(name) - 1), Token::Type::name)
 
 		void TokenDictionary::Initialize()
 		{

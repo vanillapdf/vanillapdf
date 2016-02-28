@@ -47,7 +47,7 @@ namespace std
 
 #define DECLARE_CONST_NAME(name) \
 	namespace gotchangpdf { namespace constant { namespace Name { \
-	const syntax::NameObjectPtr name(BufferPtr(#name, sizeof(#name))); \
+	const syntax::NameObjectPtr name(BufferPtr(#name, sizeof(#name) - 1)); \
 	} /* Name */ } /* constant */ } /* gotchangpdf */ \
 	const NameHandle NameConstant_##name = reinterpret_cast<NameHandle>(gotchangpdf::constant::Name::##name##.get());
 

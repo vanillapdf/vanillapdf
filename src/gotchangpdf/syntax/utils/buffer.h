@@ -27,7 +27,7 @@ namespace gotchangpdf
 		template <typename T, typename = std::enable_if<sizeof(T) == sizeof(value_type)>>
 		Buffer(const T * chars, int len) : base_type(
 			reinterpret_cast<const value_type *>(&chars[0]),
-			reinterpret_cast<const value_type *>(&chars[len - 1])
+			reinterpret_cast<const value_type *>(&chars[len])
 		) { assert(size() > 0); }
 
 		std::string ToString(void) const { return std::string(begin(), end()); }
