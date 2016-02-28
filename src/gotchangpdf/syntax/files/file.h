@@ -59,6 +59,7 @@ namespace gotchangpdf
 
 			types::stream_offset GetLastXrefOffset(types::stream_size file_size);
 			void ReadXref(types::stream_offset offset);
+			bool CheckPassword(BufferPtr input, BufferPtr document_id, BufferPtr owner_data, BufferPtr user_data, IntegerObjectPtr permissions);
 
 		private:
 			File(const std::string& path);

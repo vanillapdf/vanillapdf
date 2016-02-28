@@ -118,26 +118,41 @@ namespace gotchangpdf
 				return;
 			}
 
-			auto userValue = dict->FindAs<StringObjectPtr>(constant::Name::U);
-			auto ownerValue = dict->FindAs<StringObjectPtr>(constant::Name::O);
+			auto user_value = dict->FindAs<StringObjectPtr>(constant::Name::U);
+			auto owner_value = dict->FindAs<StringObjectPtr>(constant::Name::O);
 			auto permissions = dict->FindAs<IntegerObjectPtr>(constant::Name::P);
 			auto revision = dict->FindAs<IntegerObjectPtr>(constant::Name::R);
 
+			// Pad password with predefined scheme
 			auto padPassword = EncryptionUtils::PadTruncatePassword(password);
 
 			// check owner key
 			BufferPtr password_digest(MD5_DIGEST_LENGTH);
 			MD5((unsigned char*)padPassword->data(), padPassword->size(), (unsigned char*)password_digest->data());
 
-			auto ownerRaw = ownerValue->Value();
-			auto encrypted_owner_data = EncryptionUtils::ComputeRC4(password_digest, 5, ownerRaw);
+			auto encrypted_owner_data = EncryptionUtils::ComputeRC4(password_digest, 5, owner_value->Value());
 
+			// Check if entered password was owner password
+			if (CheckPassword(encrypted_owner_data, id->Value(), owner_value->Value(), user_value->Value(), permissions)) {
+				return;
+			}
+
+			// Check if entered password was user password
+			if (CheckPassword(padPassword, id->Value(), owner_value->Value(), user_value->Value(), permissions)) {
+				return;
+			}
+
+			throw GeneralException("Bad password entered");
+		}
+
+		bool File::CheckPassword(BufferPtr input, BufferPtr document_id, BufferPtr owner_data, BufferPtr user_data, IntegerObjectPtr permissions)
+		{
 			BufferPtr decryption_key_digest(MD5_DIGEST_LENGTH);
 
 			MD5_CTX ctx;
 			MD5_Init(&ctx);
-			MD5_Update(&ctx, encrypted_owner_data->data(), encrypted_owner_data->size());
-			MD5_Update(&ctx, ownerRaw->data(), ownerRaw->size());
+			MD5_Update(&ctx, input->data(), input->size());
+			MD5_Update(&ctx, owner_data->data(), owner_data->size());
 
 			auto permissions_value = permissions->Value();
 			uint32_t permissions_raw = reinterpret_cast<uint32_t&>(permissions_value);
@@ -148,7 +163,7 @@ namespace gotchangpdf
 			permissions_array[3] = (permissions_raw >> 24) & 0xFF;
 
 			MD5_Update(&ctx, permissions_array, sizeof(permissions_array));
-			MD5_Update(&ctx, id->Value()->data(), id->Value()->size());
+			MD5_Update(&ctx, document_id->data(), document_id->size());
 			MD5_Final((unsigned char*)decryption_key_digest->data(), &ctx);
 
 			BufferPtr decryption_key(5);
@@ -157,12 +172,12 @@ namespace gotchangpdf
 			BufferPtr hardcoded_pad(&HARDCODED_PFD_PAD[0], HARDCODED_PFD_PAD_LENGTH);
 			auto compare_data = EncryptionUtils::ComputeRC4(decryption_key, hardcoded_pad);
 
-			if (*compare_data == *userValue->Value()) {
+			if (*compare_data == *user_data) {
 				_decryption_key = decryption_key;
-				return;
+				return true;
 			}
 
-			throw GeneralException("Bad password entered");
+			return false;
 		}
 
 		bool File::IsEncrypted(void) const
@@ -177,7 +192,6 @@ namespace gotchangpdf
 			if (!IsEncrypted()) {
 				return data;
 			}
-
 
 			auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
 			auto dictionary_object_number = encryption_dictionary->GetObjectNumber();
