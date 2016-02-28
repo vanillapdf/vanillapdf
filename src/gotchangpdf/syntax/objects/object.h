@@ -39,14 +39,15 @@ namespace gotchangpdf
 
 		public:
 			bool IsIndirect(void) const _NOEXCEPT { return _indirect; }
+			void SetIndirect(bool indirect) _NOEXCEPT { _indirect = indirect; }
 
 			void SetOffset(types::stream_offset offset) _NOEXCEPT { _offset = offset; }
 			types::stream_offset GetOffset() const _NOEXCEPT { return _offset; }
 
-			void SetObjectNumber(types::big_uint number) _NOEXCEPT { _indirect = true; _obj_number = number; }
+			virtual void SetObjectNumber(types::big_uint number) _NOEXCEPT { _obj_number = number; }
 			types::big_uint GetObjectNumber() const _NOEXCEPT { return _obj_number; }
 
-			void SetGenerationNumber(types::ushort number) _NOEXCEPT { _gen_number = number; }
+			virtual void SetGenerationNumber(types::ushort number) _NOEXCEPT { _gen_number = number; }
 			types::ushort GetGenerationNumber() const _NOEXCEPT { return _gen_number; }
 
 			void SetFile(std::weak_ptr<File> file) _NOEXCEPT { _file = file; }

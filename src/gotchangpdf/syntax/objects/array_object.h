@@ -32,6 +32,28 @@ namespace gotchangpdf
 			MixedArrayObject(const ContainableObject& other, list_type& list)
 				: ContainableObject(other), _list(list) {}
 
+			virtual void SetObjectNumber(types::big_uint number) _NOEXCEPT override
+			{
+				Object::SetObjectNumber(number);
+
+				auto size = _list.size();
+				for (decltype(size) i = 0; i < size; ++i) {
+					auto item = _list[i];
+					item->SetObjectNumber(number);
+				}
+			}
+
+			virtual void SetGenerationNumber(types::ushort number) _NOEXCEPT override
+			{
+				Object::SetGenerationNumber(number);
+
+				auto size = _list.size();
+				for (decltype(size) i = 0; i < size; ++i) {
+					auto item = _list[i];
+					item->SetGenerationNumber(number);
+				}
+			}
+
 			virtual Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Array; }
 			size_t Size(void) const _NOEXCEPT { return _list.size(); }
 			const ContainableObjectPtr& operator[](size_t i) const { return _list[i]; }

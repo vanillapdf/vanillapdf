@@ -85,6 +85,26 @@ namespace gotchangpdf
 			virtual std::string ToPdf(void) const override;
 			virtual Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Dictionary; }
 
+			virtual void SetObjectNumber(types::big_uint number) _NOEXCEPT override
+			{
+				Object::SetObjectNumber(number);
+
+				for (auto it = _list.begin(); it != _list.end(); ++it) {
+					auto item = it->second;
+					item->SetObjectNumber(number);
+				}
+			}
+
+			virtual void SetGenerationNumber(types::ushort number) _NOEXCEPT override
+			{
+				Object::SetGenerationNumber(number);
+
+				for (auto it = _list.begin(); it != _list.end(); ++it) {
+					auto item = it->second;
+					item->SetGenerationNumber(number);
+				}
+			}
+
 			template <typename U>
 			U FindAs(const NameObjectPtr& name) const
 			{
