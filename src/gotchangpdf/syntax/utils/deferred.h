@@ -54,6 +54,8 @@ namespace gotchangpdf
 			return *this;
 		}
 
+		bool empty(void) const { return m_ptr == nullptr; }
+
 		T* get(void) const
 		{
 			return get_internal<std::is_constructible<T>::value>();

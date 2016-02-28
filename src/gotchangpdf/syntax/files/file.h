@@ -21,7 +21,18 @@ namespace gotchangpdf
 			void SaveAs(const std::string& path);
 
 			void Initialize(void);
-			bool IsInitialized(void) const;
+			bool IsEncrypted(void) const;
+			void SetPassword(const Buffer& password);
+			void SetPassword(const std::string& password);
+
+			BufferPtr DecryptData(BufferPtr data,
+				types::big_uint objNumber,
+				types::ushort genNumber) const;
+
+			BufferPtr EncryptData(BufferPtr data,
+				types::big_uint objNumber,
+				types::ushort genNumber) const;
+
 			ObjectPtr GetIndirectObject(types::big_uint objNumber,
 				types::ushort genNumber);
 
@@ -29,6 +40,7 @@ namespace gotchangpdf
 			HeaderPtr GetHeader(void) const;
 
 			std::string GetFilename(void) const { return _filename; }
+			bool IsInitialized(void) const { return _initialized; }
 			std::shared_ptr<FileDevice> GetInputStream(void) const { return _input; }
 
 			~File(void);
@@ -42,6 +54,8 @@ namespace gotchangpdf
 			bool _initialized = false;
 			std::string _full_path;
 			std::string _filename;
+			BufferPtr _decryption_key;
+			ObjectPtr _encryption_dictionary;
 
 			types::stream_offset GetLastXrefOffset(types::stream_size file_size);
 			void ReadXref(types::stream_offset offset);

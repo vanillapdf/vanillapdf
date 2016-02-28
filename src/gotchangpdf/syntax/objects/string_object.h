@@ -35,12 +35,13 @@ namespace gotchangpdf
 
 			virtual StringObjectBase::StringType GetStringType(void) const _NOEXCEPT override { return StringObjectBase::StringType::Hexadecimal; }
 
-			virtual BufferPtr Value() const override { return _value; }
+			virtual BufferPtr Value() const override;
 			virtual std::string ToPdf(void) const override;
 
 			//private:
 		public:
-			BufferPtr _value;
+			BufferPtr _raw_value;
+			mutable BufferPtr _value;
 		};
 
 		class LiteralStringObject : public StringObjectBase
@@ -50,11 +51,12 @@ namespace gotchangpdf
 			explicit LiteralStringObject(BufferPtr value);
 
 			virtual StringObjectBase::StringType GetStringType(void) const _NOEXCEPT override { return StringObjectBase::StringType::Literal; }
-			virtual BufferPtr Value() const override { return _value; }
+			virtual BufferPtr Value() const override;
 			virtual std::string ToPdf(void) const override;
 
 		public:
-			BufferPtr _value;
+			BufferPtr _raw_value;
+			mutable BufferPtr _value;
 		};
 	}
 }

@@ -5,11 +5,14 @@
 #include "parser.h"
 #include "reverse_parser.h"
 #include "exception.h"
+#include "encryption.h"
 
 #include "xref_chain.h"
 #include "header.h"
 
 #include <iomanip>
+
+#include <openssl/md5.h>
 
 namespace gotchangpdf
 {
@@ -43,8 +46,6 @@ namespace gotchangpdf
 
 			_cache.clear();
 		}
-
-		bool File::IsInitialized(void) const { return _initialized; }
 
 		void File::Initialize()
 		{
@@ -86,10 +87,130 @@ namespace gotchangpdf
 			}
 
 			_initialized = true;
+			SetPassword("zmrdacik");
 
 			//std::string dest("C:\\Users\\Gotcha\\Documents\\");
 			//dest += _filename;
 			//SaveAs(dest);
+		}
+
+		void File::SetPassword(const std::string& password)
+		{
+			Buffer buffer(password.begin(), password.end());
+			SetPassword(buffer);
+		}
+
+		void File::SetPassword(const Buffer& password)
+		{
+			if (!IsEncrypted()) {
+				return;
+			}
+
+			auto ids = _xref->Begin()->Value()->GetTrailerDictionary()->FindAs<ArrayObjectPtr<StringObjectPtr>>(constant::Name::ID);
+			auto id = ids->At(0);
+
+			auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
+			auto filter = dict->FindAs<NameObjectPtr>(constant::Name::Filter);
+
+			if (filter != constant::Name::Standard) {
+				return;
+			}
+
+			auto userValue = dict->FindAs<StringObjectPtr>(constant::Name::U);
+			auto ownerValue = dict->FindAs<StringObjectPtr>(constant::Name::O);
+			auto permissions = dict->FindAs<IntegerObjectPtr>(constant::Name::P);
+			auto revision = dict->FindAs<IntegerObjectPtr>(constant::Name::R);
+
+			auto padPassword = EncryptionUtils::PadTruncatePassword(password);
+
+			// check owner key
+			BufferPtr password_digest(MD5_DIGEST_LENGTH);
+			MD5((unsigned char*)padPassword->data(), padPassword->size(), (unsigned char*)password_digest->data());
+
+			auto ownerRaw = ownerValue->Value();
+			auto encrypted_owner_data = EncryptionUtils::ComputeRC4(password_digest, 5, ownerRaw);
+
+			BufferPtr decryption_key_digest(MD5_DIGEST_LENGTH);
+
+			MD5_CTX ctx;
+			MD5_Init(&ctx);
+			MD5_Update(&ctx, encrypted_owner_data->data(), encrypted_owner_data->size());
+			MD5_Update(&ctx, ownerRaw->data(), ownerRaw->size());
+
+			auto permissions_value = permissions->Value();
+			uint32_t permissions_raw = reinterpret_cast<uint32_t&>(permissions_value);
+			uint8_t permissions_array[sizeof(permissions_raw)];
+			permissions_array[0] = permissions_raw & 0xFF;
+			permissions_array[1] = (permissions_raw >> 8) & 0xFF;
+			permissions_array[2] = (permissions_raw >> 16) & 0xFF;
+			permissions_array[3] = (permissions_raw >> 24) & 0xFF;
+
+			MD5_Update(&ctx, permissions_array, sizeof(permissions_array));
+			MD5_Update(&ctx, id->Value()->data(), id->Value()->size());
+			MD5_Final((unsigned char*)decryption_key_digest->data(), &ctx);
+
+			BufferPtr decryption_key(5);
+			std::memcpy(decryption_key->data(), decryption_key_digest->data(), 5);
+
+			BufferPtr hardcoded_pad(&HARDCODED_PFD_PAD[0], HARDCODED_PFD_PAD_LENGTH);
+			auto compare_data = EncryptionUtils::ComputeRC4(decryption_key, hardcoded_pad);
+
+			if (*compare_data == *userValue->Value()) {
+				_decryption_key = decryption_key;
+			}
+		}
+
+		bool File::IsEncrypted(void) const
+		{
+			return !_encryption_dictionary.empty() && _encryption_dictionary != NullObject::GetInstance();
+		}
+
+		BufferPtr File::DecryptData(BufferPtr data,
+			types::big_uint objNumber,
+			types::ushort genNumber) const
+		{
+			if (!IsEncrypted()) {
+				return data;
+			}
+
+
+			auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
+			auto dictionary_object_number = encryption_dictionary->GetObjectNumber();
+			auto dictionary_generation_number = encryption_dictionary->GetGenerationNumber();
+
+			// data inside encryption dictionary are not encrypted
+			if (objNumber == 0 || (dictionary_object_number == objNumber && dictionary_generation_number == genNumber)) {
+				return data;
+			}
+
+			BufferPtr object_key(MD5_DIGEST_LENGTH);
+
+			uint8_t object_info[5];
+			object_info[0] = objNumber & 0xFF;
+			object_info[1] = (objNumber >> 8) & 0xFF;
+			object_info[2] = (objNumber >> 16) & 0xFF;
+			object_info[3] = (genNumber) & 0xFF;
+			object_info[4] = (genNumber >> 8) & 0xFF;
+
+			MD5_CTX ctx;
+			MD5_Init(&ctx);
+			MD5_Update(&ctx, _decryption_key->data(), _decryption_key->size());
+			MD5_Update(&ctx, object_info, sizeof(object_info));
+			MD5_Final((unsigned char*)object_key->data(), &ctx);
+
+			auto key_length = std::min(_decryption_key->size() + 5, 16u);
+			return EncryptionUtils::ComputeRC4(object_key, key_length, data);
+		}
+
+		BufferPtr File::EncryptData(BufferPtr data,
+			types::big_uint objNumber,
+			types::ushort genNumber) const
+		{
+			if (!IsEncrypted())
+				return data;
+
+			// do work
+			return data;
 		}
 
 		void File::ReadXref(types::stream_offset offset)
@@ -101,7 +222,7 @@ namespace gotchangpdf
 				_xref->Append(xref);
 
 				if (xref->GetTrailerDictionary()->Contains(constant::Name::Encrypt)) {
-					throw NotSupportedException("Encrypted files are not yet supported");
+					_encryption_dictionary = xref->GetTrailerDictionary()->Find(constant::Name::Encrypt);
 				}
 
 				if (xref->GetTrailerDictionary()->Contains(constant::Name::XRefStm)) {

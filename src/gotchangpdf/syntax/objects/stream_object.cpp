@@ -26,8 +26,13 @@ namespace gotchangpdf
 			input->seekg(_raw_data_offset);
 			SCOPE_GUARD_CAPTURE_VALUES(input->seekg(pos));
 			auto stream = Stream(*input);
-			_body = stream.read(size->SafeConvert<size_t>());
+			auto body = stream.read(size->SafeConvert<size_t>());
 
+			if (locked_file->IsEncrypted()) {
+				body = locked_file->DecryptData(body, _obj_number, _gen_number);
+			}
+
+			_body = body;
 			return _body;
 		}
 
@@ -44,11 +49,11 @@ namespace gotchangpdf
 			if (!locked_file)
 				throw FileDisposedException();
 
-			auto stream = locked_file->GetInputStream();
-			auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
-			auto pos = stream->tellg();
-			stream->seekg(_raw_data_offset);
-			SCOPE_GUARD_CAPTURE_VALUES(stream->seekg(pos));
+			//auto stream = locked_file->GetInputStream();
+			//auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
+			//auto pos = stream->tellg();
+			//stream->seekg(_raw_data_offset);
+			//SCOPE_GUARD_CAPTURE_VALUES(stream->seekg(pos));
 
 			auto filter_obj = _header->Find(constant::Name::Filter);
 			bool is_filter_name = ObjectUtils::IsType<NameObjectPtr>(filter_obj);
@@ -59,11 +64,13 @@ namespace gotchangpdf
 				auto filter = FilterBase::GetFilterByName(filter_name);
 				if (_header->Contains(constant::Name::DecodeParms)) {
 					auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
-					_body_decoded = filter->Decode(*stream, *size, params);
+					//_body_decoded = filter->Decode(*stream, *size, params);
+					_body_decoded = filter->Decode(GetBody(), params);
 					return _body_decoded;
 				}
 
-				_body_decoded = filter->Decode(*stream, *size);
+				//_body_decoded = filter->Decode(*stream, *size);
+				_body_decoded = filter->Decode(GetBody());
 				return _body_decoded;
 			}
 

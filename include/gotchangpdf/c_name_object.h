@@ -123,6 +123,12 @@ extern "C"
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_Dest;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_C;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_F;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_U;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_O;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_R;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_V;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_ID;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Standard;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_Title;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_Encrypt;
 
