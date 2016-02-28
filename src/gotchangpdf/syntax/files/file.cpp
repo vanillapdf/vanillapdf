@@ -87,7 +87,9 @@ namespace gotchangpdf
 			}
 
 			_initialized = true;
-			SetPassword("zmrdacik");
+
+			// Encrypted documents shall be opened with default empty password
+			SetPassword("");
 
 			//std::string dest("C:\\Users\\Gotcha\\Documents\\");
 			//dest += _filename;
@@ -157,7 +159,10 @@ namespace gotchangpdf
 
 			if (*compare_data == *userValue->Value()) {
 				_decryption_key = decryption_key;
+				return;
 			}
+
+			throw GeneralException("Bad password entered");
 		}
 
 		bool File::IsEncrypted(void) const
@@ -221,10 +226,6 @@ namespace gotchangpdf
 				auto xref = stream.ReadXref(offset);
 				_xref->Append(xref);
 
-				if (xref->GetTrailerDictionary()->Contains(constant::Name::Encrypt)) {
-					_encryption_dictionary = xref->GetTrailerDictionary()->Find(constant::Name::Encrypt);
-				}
-
 				if (xref->GetTrailerDictionary()->Contains(constant::Name::XRefStm)) {
 					auto stm_offset = xref->GetTrailerDictionary()->FindAs<IntegerObjectPtr>(constant::Name::XRefStm)->Value();
 					auto xref_stm = stream.ReadXref(stm_offset);
@@ -239,6 +240,12 @@ namespace gotchangpdf
 
 				offset = xref->GetTrailerDictionary()->FindAs<IntegerObjectPtr>(constant::Name::Prev)->Value();
 			} while (true);
+
+			// After xref informations are parsed, check for encryption
+			auto dictionary = _xref->Begin()->Value()->GetTrailerDictionary();
+			if (dictionary->Contains(constant::Name::Encrypt)) {
+				_encryption_dictionary = dictionary->Find(constant::Name::Encrypt);
+			}
 		}
 
 		types::stream_offset File::GetLastXrefOffset(types::stream_size file_size)
@@ -256,7 +263,7 @@ namespace gotchangpdf
 		}
 
 		ObjectPtr File::GetIndirectObject(types::big_uint objNumber,
-			types::ushort genNumber)
+			types::ushort genNumber) const
 		{
 			LOG_DEBUG(_filename) << "GetIndirectObject " << objNumber << " and " << genNumber;
 

@@ -34,7 +34,7 @@ namespace gotchangpdf
 				types::ushort genNumber) const;
 
 			ObjectPtr GetIndirectObject(types::big_uint objNumber,
-				types::ushort genNumber);
+				types::ushort genNumber) const;
 
 			XrefChainPtr GetXrefChain(void) const;
 			HeaderPtr GetHeader(void) const;
