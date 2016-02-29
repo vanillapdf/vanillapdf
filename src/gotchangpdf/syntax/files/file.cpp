@@ -166,14 +166,11 @@ namespace gotchangpdf
 			MD5_Update(&ctx, document_id->data(), document_id->size());
 			MD5_Final((unsigned char*)decryption_key_digest->data(), &ctx);
 
-			BufferPtr decryption_key(5);
-			std::memcpy(decryption_key->data(), decryption_key_digest->data(), 5);
-
 			BufferPtr hardcoded_pad(&HARDCODED_PFD_PAD[0], HARDCODED_PFD_PAD_LENGTH);
-			auto compare_data = EncryptionUtils::ComputeRC4(decryption_key, hardcoded_pad);
+			auto compare_data = EncryptionUtils::ComputeRC4(decryption_key_digest, 5, hardcoded_pad);
 
-			if (*compare_data == *user_data) {
-				_decryption_key = decryption_key;
+			if (compare_data->Equals(user_data)) {
+				_decryption_key = BufferPtr(decryption_key_digest->begin(), decryption_key_digest->begin() + 5);
 				return true;
 			}
 
