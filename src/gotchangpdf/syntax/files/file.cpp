@@ -88,9 +88,6 @@ namespace gotchangpdf
 
 			_initialized = true;
 
-			// Encrypted documents shall be opened with default empty password
-			SetPassword("");
-
 			//std::string dest("C:\\Users\\Gotcha\\Documents\\");
 			//dest += _filename;
 			//SaveAs(dest);
@@ -184,7 +181,7 @@ namespace gotchangpdf
 
 		BufferPtr File::DecryptData(BufferPtr data,
 			types::big_uint objNumber,
-			types::ushort genNumber) const
+			types::ushort genNumber)
 		{
 			if (!IsEncrypted()) {
 				return data;
@@ -197,6 +194,11 @@ namespace gotchangpdf
 			// data inside encryption dictionary are not encrypted
 			if (objNumber == 0 || (dictionary_object_number == objNumber && dictionary_generation_number == genNumber)) {
 				return data;
+			}
+
+			if (_decryption_key.empty()) {
+				// Encrypted documents shall be opened with default empty password
+				SetPassword("");
 			}
 
 			BufferPtr object_key(MD5_DIGEST_LENGTH);

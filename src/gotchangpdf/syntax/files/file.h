@@ -27,7 +27,7 @@ namespace gotchangpdf
 
 			BufferPtr DecryptData(BufferPtr data,
 				types::big_uint objNumber,
-				types::ushort genNumber) const;
+				types::ushort genNumber);
 
 			BufferPtr EncryptData(BufferPtr data,
 				types::big_uint objNumber,
