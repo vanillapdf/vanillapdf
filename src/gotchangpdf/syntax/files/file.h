@@ -59,12 +59,15 @@ namespace gotchangpdf
 
 			types::stream_offset GetLastXrefOffset(types::stream_size file_size);
 			void ReadXref(types::stream_offset offset);
-			bool CheckPassword(
+
+			bool CheckKey(
 				const Buffer& input,
 				const Buffer& document_id,
 				const Buffer& owner_data,
 				const Buffer& user_data,
 				const IntegerObject& permissions,
+				const IntegerObject& revision,
+				const IntegerObject& key_length,
 				Buffer& decryption_key) const;
 
 		private:

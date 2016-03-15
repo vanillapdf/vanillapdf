@@ -119,6 +119,8 @@ namespace gotchangpdf
 			auto owner_value = dict->FindAs<StringObjectPtr>(constant::Name::O);
 			auto permissions = dict->FindAs<IntegerObjectPtr>(constant::Name::P);
 			auto revision = dict->FindAs<IntegerObjectPtr>(constant::Name::R);
+			auto version = dict->FindAs<IntegerObjectPtr>(constant::Name::V);
+			auto length_bits = dict->FindAs<IntegerObjectPtr>(constant::Name::Length);
 
 			// Pad password with predefined scheme
 			auto padPassword = EncryptionUtils::PadTruncatePassword(password);
@@ -126,18 +128,46 @@ namespace gotchangpdf
 			// check owner key
 			Buffer password_digest(MD5_DIGEST_LENGTH);
 			MD5((unsigned char*)padPassword->data(), padPassword->size(), (unsigned char*)password_digest.data());
-			auto encrypted_owner_data = EncryptionUtils::ComputeRC4(password_digest, 5, owner_value->Value());
+
+			BufferPtr encrypted_owner_data;
+			if (*revision >= 3) {
+				MD5_CTX ctx;
+				Buffer temporary_digest(MD5_DIGEST_LENGTH);
+
+				auto length_bytes = SafeConvert<size_t>(length_bits->Value() / 8);
+				size_t password_length = std::min(length_bytes, password_digest.size());
+				for (int i = 0; i < 50; ++i) {
+					MD5_Init(&ctx);
+					MD5_Update(&ctx, password_digest.data(), password_length);
+					MD5_Final((unsigned char*)temporary_digest.data(), &ctx);
+					std::copy_n(temporary_digest.begin(), password_length, password_digest.begin());
+				}
+
+				auto key = BufferPtr(length_bytes);
+				encrypted_owner_data = BufferPtr(*owner_value->Value());
+
+				for (Buffer::value_type i = 0; i < 20; ++i) {
+					for (decltype(password_length) j = 0; j < password_length; ++j) {
+						key[j] = (password_digest[j] ^ i);
+					}
+
+					encrypted_owner_data = EncryptionUtils::ComputeRC4(key, encrypted_owner_data);
+				}
+			}
+			else {
+				encrypted_owner_data = EncryptionUtils::ComputeRC4(password_digest, 5, owner_value->Value());
+			}
 
 			Buffer decryption_key;
 
 			// Check if entered password was owner password
-			if (CheckPassword(encrypted_owner_data, id->Value(), owner_value->Value(), user_value->Value(), permissions, decryption_key)) {
+			if (CheckKey(encrypted_owner_data, id->Value(), owner_value->Value(), user_value->Value(), permissions, revision, length_bits, decryption_key)) {
 				_decryption_key = decryption_key;
 				return;
 			}
 
 			// Check if entered password was user password
-			if (CheckPassword(padPassword, id->Value(), owner_value->Value(), user_value->Value(), permissions, decryption_key)) {
+			if (CheckKey(padPassword, id->Value(), owner_value->Value(), user_value->Value(), permissions, revision, length_bits, decryption_key)) {
 				_decryption_key = decryption_key;
 				return;
 			}
@@ -145,12 +175,14 @@ namespace gotchangpdf
 			throw GeneralException("Bad password entered");
 		}
 
-		bool File::CheckPassword(
+		bool File::CheckKey(
 			const Buffer& input,
 			const Buffer& document_id,
 			const Buffer& owner_data,
 			const Buffer& user_data,
 			const IntegerObject& permissions,
+			const IntegerObject& revision,
+			const IntegerObject& key_length,
 			Buffer& decryption_key) const
 		{
 			Buffer decryption_key_digest(MD5_DIGEST_LENGTH);
@@ -172,11 +204,46 @@ namespace gotchangpdf
 			MD5_Update(&ctx, document_id.data(), document_id.size());
 			MD5_Final((unsigned char*)decryption_key_digest.data(), &ctx);
 
-			Buffer hardcoded_pad(&HARDCODED_PFD_PAD[0], HARDCODED_PFD_PAD_LENGTH);
-			auto compare_data = EncryptionUtils::ComputeRC4(decryption_key_digest, 5, hardcoded_pad);
+			auto length_bytes = SafeConvert<size_t>(key_length.Value() / 8);
+			size_t decryption_key_length = std::min(length_bytes, decryption_key_digest.size());
 
-			if (compare_data->Equals(user_data)) {
-				decryption_key = Buffer(decryption_key_digest.begin(), decryption_key_digest.begin() + 5);
+			BufferPtr compare_data;
+			if (revision >= 3) {
+				Buffer temporary_digest(MD5_DIGEST_LENGTH);
+				for (int i = 0; i < 50; ++i) {
+					MD5_Init(&ctx);
+					MD5_Update(&ctx, decryption_key_digest.data(), decryption_key_length);
+					MD5_Final((unsigned char*)temporary_digest.data(), &ctx);
+					std::copy_n(temporary_digest.begin(), decryption_key_length, decryption_key_digest.begin());
+				}
+
+				Buffer hardcoded_pad(&HARDCODED_PFD_PAD[0], HARDCODED_PFD_PAD_LENGTH);
+				Buffer key_digest(MD5_DIGEST_LENGTH);
+
+				MD5_Init(&ctx);
+				MD5_Update(&ctx, hardcoded_pad.data(), hardcoded_pad.size());
+				MD5_Update(&ctx, document_id.data(), document_id.size());
+				MD5_Final((unsigned char*)key_digest.data(), &ctx);
+
+				auto key = BufferPtr(length_bytes);
+				compare_data = BufferPtr(key_digest);
+
+				for (Buffer::value_type i = 0; i < 20; ++i) {
+					for (decltype(decryption_key_length) j = 0; j < decryption_key_length; ++j) {
+						key[j] = (decryption_key_digest[j] ^ i);
+					}
+
+					compare_data = EncryptionUtils::ComputeRC4(key, compare_data);
+				}
+			}
+			else {
+				Buffer hardcoded_pad(&HARDCODED_PFD_PAD[0], HARDCODED_PFD_PAD_LENGTH);
+				compare_data = EncryptionUtils::ComputeRC4(decryption_key_digest, 5, hardcoded_pad);
+			}
+
+			int compare_length = (revision >= 3 ? 16 : 32);
+			if (std::equal(compare_data.begin(), compare_data.begin() + compare_length, user_data.begin())) {
+				decryption_key = BufferPtr(decryption_key_digest.begin(), decryption_key_digest.begin() + decryption_key_length);
 				return true;
 			}
 
