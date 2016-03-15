@@ -53,6 +53,11 @@ namespace gotchangpdf
 		return left.Value() < right;
 	}
 
+	inline bool operator>(const syntax::IntegerObject& left, types::native_int right)
+	{
+		return left.Value() > right;
+	}
+
 	inline bool operator==(types::native_int left, const syntax::IntegerObject& right)
 	{
 		return left == right.Value();
@@ -66,6 +71,11 @@ namespace gotchangpdf
 	inline bool operator<(types::native_int left, const syntax::IntegerObject& right)
 	{
 		return left < right.Value();
+	}
+
+	inline bool operator>(types::native_int left, const syntax::IntegerObject& right)
+	{
+		return left > right.Value();
 	}
 }
 
