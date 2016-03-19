@@ -5,6 +5,7 @@
 #include "file_device.h"
 #include "header.h"
 #include "xref_chain.h"
+#include "encryption.h"
 
 #include <memory>
 #include <vector>
@@ -25,11 +26,25 @@ namespace gotchangpdf
 			void SetPassword(const Buffer& password);
 			void SetPassword(const std::string& password);
 
-			BufferPtr DecryptData(BufferPtr data,
+			BufferPtr DecryptStream(const Buffer& data,
 				types::big_uint objNumber,
 				types::ushort genNumber);
 
-			BufferPtr EncryptData(BufferPtr data,
+			BufferPtr DecryptString(const Buffer& data,
+				types::big_uint objNumber,
+				types::ushort genNumber);
+
+			BufferPtr DecryptData(const Buffer& data,
+				types::big_uint objNumber,
+				types::ushort genNumber,
+				const NameObject& filter_name);
+
+			BufferPtr DecryptData(const Buffer& data,
+				types::big_uint objNumber,
+				types::ushort genNumber,
+				EncryptionAlgorithm alg);
+
+			BufferPtr EncryptData(const Buffer& data,
 				types::big_uint objNumber,
 				types::ushort genNumber) const;
 

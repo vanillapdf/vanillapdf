@@ -86,6 +86,12 @@ namespace gotchangpdf
 				_xref->Append(xref);
 			}
 
+			// After xref informations are parsed, check for encryption
+			auto dictionary = _xref->Begin()->Value()->GetTrailerDictionary();
+			if (dictionary->Contains(constant::Name::Encrypt)) {
+				_encryption_dictionary = dictionary->Find(constant::Name::Encrypt);
+			}
+
 			_initialized = true;
 
 			//std::string dest("C:\\Users\\Gotcha\\Documents\\");
@@ -261,7 +267,7 @@ namespace gotchangpdf
 			return !_encryption_dictionary.empty() && _encryption_dictionary != NullObject::GetInstance();
 		}
 
-		BufferPtr File::DecryptData(BufferPtr data,
+		BufferPtr File::DecryptStream(const Buffer& data,
 			types::big_uint objNumber,
 			types::ushort genNumber)
 		{
@@ -270,32 +276,92 @@ namespace gotchangpdf
 			}
 
 			auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
-			auto dictionary_object_number = encryption_dictionary->GetObjectNumber();
-			auto dictionary_generation_number = encryption_dictionary->GetGenerationNumber();
+			auto version = encryption_dictionary->FindAs<IntegerObjectPtr>(constant::Name::V);
 
-			EncryptionAlgorithm alg;
+			if (version == 4) {
+				auto filter_name = encryption_dictionary->FindAs<NameObjectPtr>(constant::Name::StmF);
+				return DecryptData(data, objNumber, genNumber, filter_name);
+			}
+
+			return DecryptData(data, objNumber, genNumber, EncryptionAlgorithm::RC4);
+		}
+
+		BufferPtr File::DecryptString(const Buffer& data,
+			types::big_uint objNumber,
+			types::ushort genNumber)
+		{
+			if (!IsEncrypted()) {
+				return data;
+			}
+
+			auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
+			auto version = encryption_dictionary->FindAs<IntegerObjectPtr>(constant::Name::V);
+
+			if (version == 4) {
+				auto filter_name = encryption_dictionary->FindAs<NameObjectPtr>(constant::Name::StrF);
+				return DecryptData(data, objNumber, genNumber, filter_name);
+			}
+
+			return DecryptData(data, objNumber, genNumber, EncryptionAlgorithm::RC4);
+		}
+
+		BufferPtr File::DecryptData(const Buffer& data,
+			types::big_uint objNumber,
+			types::ushort genNumber,
+			const NameObject& filter_name)
+		{
+			if (!IsEncrypted()) {
+				return data;
+			}
+
+			auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
+			auto version = encryption_dictionary->FindAs<IntegerObjectPtr>(constant::Name::V);
+
 			do
 			{
+				if (version != 4)
+					break;
+
 				if (!encryption_dictionary->Contains(constant::Name::CF))
 					break;
 
-				auto crypt_filter = encryption_dictionary->FindAs<DictionaryObjectPtr>(constant::Name::CF);
-				if (!crypt_filter->Contains(constant::Name::StdCF))
+				auto crypt_filter_dictionary = encryption_dictionary->FindAs<DictionaryObjectPtr>(constant::Name::CF);
+				if (!crypt_filter_dictionary->Contains(constant::Name::StdCF))
 					break;
 
-				auto standard_crypt_filter = crypt_filter->FindAs<DictionaryObjectPtr>(constant::Name::StdCF);
-				if (!standard_crypt_filter->Contains(constant::Name::CFM))
+				auto crypt_filter = crypt_filter_dictionary->FindAs<DictionaryObjectPtr>(filter_name);
+				if (!crypt_filter->Contains(constant::Name::CFM))
 					break;
 
-				auto method = standard_crypt_filter->FindAs<NameObjectPtr>(constant::Name::CFM);
-				if (method == constant::Name::V2) {
-					alg = EncryptionAlgorithm::RC4;
+				auto method = crypt_filter->FindAs<NameObjectPtr>(constant::Name::CFM);
+				if (method == constant::Name::AESV2) {
+					return DecryptData(data, objNumber, genNumber, EncryptionAlgorithm::AES);
 				}
 
-				if (method == constant::Name::AESV2) {
-					alg = EncryptionAlgorithm::AES;
+				if (method == constant::Name::None) {
+					return DecryptData(data, objNumber, genNumber, EncryptionAlgorithm::None);
+				}
+
+				if (method == constant::Name::V2) {
+					return DecryptData(data, objNumber, genNumber, EncryptionAlgorithm::RC4);
 				}
 			} while (false);
+
+			return DecryptData(data, objNumber, genNumber, EncryptionAlgorithm::RC4);
+		}
+
+		BufferPtr File::DecryptData(const Buffer& data,
+			types::big_uint objNumber,
+			types::ushort genNumber,
+			EncryptionAlgorithm alg)
+		{
+			if (!IsEncrypted()) {
+				return data;
+			}
+
+			auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
+			auto dictionary_object_number = encryption_dictionary->GetObjectNumber();
+			auto dictionary_generation_number = encryption_dictionary->GetGenerationNumber();
 
 			// data inside encryption dictionary are not encrypted
 			if (objNumber == 0 || (dictionary_object_number == objNumber && dictionary_generation_number == genNumber)) {
@@ -329,18 +395,20 @@ namespace gotchangpdf
 
 			auto key_length = std::min(_decryption_key->size() + 5, 16u);
 
-			if (alg == EncryptionAlgorithm::AES) {
+			switch (alg)
+			{
+			default:
+			case EncryptionAlgorithm::None:
+				// The application shall not decrypt data but shall direct the input stream to the security handler for decryption.
+				// No clue
+			case EncryptionAlgorithm::RC4:
+				return EncryptionUtils::ComputeRC4(object_key, key_length, data);
+			case EncryptionAlgorithm::AES:
 				return EncryptionUtils::AESDecrypt(object_key, key_length, data);
 			}
-
-			// No clue what is security handler yet
-			if (alg == EncryptionAlgorithm::RC4) {
-			}
-
-			return EncryptionUtils::ComputeRC4(object_key, key_length, data);
 		}
 
-		BufferPtr File::EncryptData(BufferPtr data,
+		BufferPtr File::EncryptData(const Buffer& data,
 			types::big_uint objNumber,
 			types::ushort genNumber) const
 		{
@@ -373,12 +441,6 @@ namespace gotchangpdf
 
 				offset = xref->GetTrailerDictionary()->FindAs<IntegerObjectPtr>(constant::Name::Prev)->Value();
 			} while (true);
-
-			// After xref informations are parsed, check for encryption
-			auto dictionary = _xref->Begin()->Value()->GetTrailerDictionary();
-			if (dictionary->Contains(constant::Name::Encrypt)) {
-				_encryption_dictionary = dictionary->Find(constant::Name::Encrypt);
-			}
 		}
 
 		types::stream_offset File::GetLastXrefOffset(types::stream_size file_size)

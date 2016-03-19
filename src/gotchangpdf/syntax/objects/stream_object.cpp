@@ -9,7 +9,8 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		StreamObject::StreamObject(DictionaryObjectPtr header, types::stream_offset offset) : _header(header), _raw_data_offset(offset) {}
+		StreamObject::StreamObject(DictionaryObjectPtr header, types::stream_offset offset)
+			: _header(header), _raw_data_offset(offset) {}
 
 		BufferPtr StreamObject::GetBody() const
 		{
@@ -28,11 +29,47 @@ namespace gotchangpdf
 			auto stream = Stream(*input);
 			auto body = stream.read(size->SafeConvert<size_t>());
 
-			if (locked_file->IsEncrypted()) {
-				body = locked_file->DecryptData(body, _obj_number, _gen_number);
+			if (!locked_file->IsEncrypted()) {
+				_body = body;
+				return _body;
 			}
 
-			_body = body;
+			if (!_header->Contains(constant::Name::Filter)) {
+				// Stream does not contain crypt filter
+				_body = locked_file->DecryptStream(body, _obj_number, _gen_number);
+				return _body;
+			}
+
+			auto filter_obj = _header->Find(constant::Name::Filter);
+			bool is_filter_name = ObjectUtils::IsType<NameObjectPtr>(filter_obj);
+			bool is_filter_array = ObjectUtils::IsType<ArrayObjectPtr<NameObjectPtr>>(filter_obj);
+
+			if (is_filter_name) {
+				auto filter_name = _header->FindAs<NameObjectPtr>(constant::Name::Filter);
+				if (filter_name == constant::Name::Crypt) {
+					auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
+					auto handler_name = params->FindAs<NameObjectPtr>(constant::Name::Name);
+					_body = locked_file->DecryptData(body, _obj_number, _gen_number, handler_name);
+					return _body;
+				}
+			}
+
+			if (is_filter_array) {
+				auto filter_array = _header->FindAs<ArrayObjectPtr<NameObjectPtr>>(constant::Name::Filter);
+				for (unsigned int i = 0; i < filter_array->Size(); ++i) {
+					auto current_filter = (*filter_array)[i];
+					if (current_filter == constant::Name::Crypt) {
+						assert(i == 0 && "Crypt filter is not first");
+						auto params = _header->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::DecodeParms);
+						auto handler_name = params->At(i)->FindAs<NameObjectPtr>(constant::Name::Name);
+						_body = locked_file->DecryptData(body, _obj_number, _gen_number, handler_name);
+						return _body;
+					}
+				}
+			}
+
+			// Stream does not contain crypt filter
+			_body = locked_file->DecryptStream(body, _obj_number, _gen_number);
 			return _body;
 		}
 
@@ -61,6 +98,11 @@ namespace gotchangpdf
 
 			if (is_filter_name) {
 				auto filter_name = _header->FindAs<NameObjectPtr>(constant::Name::Filter);
+				if (filter_name == constant::Name::Crypt) {
+					_body_decoded = GetBody();
+					return _body_decoded;
+				}
+
 				auto filter = FilterBase::GetFilterByName(filter_name);
 				if (_header->Contains(constant::Name::DecodeParms)) {
 					auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
@@ -87,6 +129,10 @@ namespace gotchangpdf
 				BufferPtr result = GetBody();
 				for (unsigned int i = 0; i < filter_array->Size(); ++i) {
 					auto current_filter = (*filter_array)[i];
+					if (current_filter == constant::Name::Crypt) {
+						continue;
+					}
+
 					auto filter = FilterBase::GetFilterByName(current_filter);
 
 					if (has_params) {

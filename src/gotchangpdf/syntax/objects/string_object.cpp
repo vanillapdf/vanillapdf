@@ -24,7 +24,7 @@ namespace gotchangpdf
 				throw FileDisposedException();
 
 			if (locked_file->IsEncrypted())
-				_value = locked_file->DecryptData(_raw_value, _obj_number, _gen_number);
+				_value = locked_file->DecryptString(_raw_value, _obj_number, _gen_number);
 			else
 				_value = _raw_value;
 
@@ -60,7 +60,7 @@ namespace gotchangpdf
 				throw FileDisposedException();
 
 			if (locked_file->IsEncrypted()) {
-				result = locked_file->DecryptData(result, _obj_number, _gen_number);
+				result = locked_file->DecryptString(result, _obj_number, _gen_number);
 			}
 
 			_value = result;

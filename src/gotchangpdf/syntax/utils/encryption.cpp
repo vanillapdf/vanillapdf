@@ -59,8 +59,8 @@ namespace gotchangpdf
 
 	BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, int key_length, const Buffer& data)
 	{
-		assert(data.size() >= key_length);
-		if (data.size() < key_length) {
+		assert(data.size() >= static_cast<size_t>(key_length));
+		if (data.size() < static_cast<size_t>(key_length)) {
 			throw GeneralException("Cannot find IV for encrypted data");
 		}
 
