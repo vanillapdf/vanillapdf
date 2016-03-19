@@ -120,7 +120,12 @@ namespace gotchangpdf
 			auto permissions = dict->FindAs<IntegerObjectPtr>(constant::Name::P);
 			auto revision = dict->FindAs<IntegerObjectPtr>(constant::Name::R);
 			auto version = dict->FindAs<IntegerObjectPtr>(constant::Name::V);
-			auto length_bits = dict->FindAs<IntegerObjectPtr>(constant::Name::Length);
+
+			IntegerObjectPtr length_bits = 40;
+			if (dict->Contains(constant::Name::Length)) {
+				length_bits = dict->FindAs<IntegerObjectPtr>(constant::Name::Length);
+				assert(length_bits->Value() % 8 == 0 && "Key length is not multiplier of 8");
+			}
 
 			// Pad password with predefined scheme
 			auto padPassword = EncryptionUtils::PadTruncatePassword(password);
@@ -237,6 +242,7 @@ namespace gotchangpdf
 				}
 			}
 			else {
+				assert(key_length.Value() == 40 && "Key length is not 5 bytes for revision <= 3");
 				Buffer hardcoded_pad(&HARDCODED_PFD_PAD[0], HARDCODED_PFD_PAD_LENGTH);
 				compare_data = EncryptionUtils::ComputeRC4(decryption_key_digest, 5, hardcoded_pad);
 			}
@@ -267,6 +273,30 @@ namespace gotchangpdf
 			auto dictionary_object_number = encryption_dictionary->GetObjectNumber();
 			auto dictionary_generation_number = encryption_dictionary->GetGenerationNumber();
 
+			EncryptionAlgorithm alg;
+			do
+			{
+				if (!encryption_dictionary->Contains(constant::Name::CF))
+					break;
+
+				auto crypt_filter = encryption_dictionary->FindAs<DictionaryObjectPtr>(constant::Name::CF);
+				if (!crypt_filter->Contains(constant::Name::StdCF))
+					break;
+
+				auto standard_crypt_filter = crypt_filter->FindAs<DictionaryObjectPtr>(constant::Name::StdCF);
+				if (!standard_crypt_filter->Contains(constant::Name::CFM))
+					break;
+
+				auto method = standard_crypt_filter->FindAs<NameObjectPtr>(constant::Name::CFM);
+				if (method == constant::Name::V2) {
+					alg = EncryptionAlgorithm::RC4;
+				}
+
+				if (method == constant::Name::AESV2) {
+					alg = EncryptionAlgorithm::AES;
+				}
+			} while (false);
+
 			// data inside encryption dictionary are not encrypted
 			if (objNumber == 0 || (dictionary_object_number == objNumber && dictionary_generation_number == genNumber)) {
 				return data;
@@ -290,9 +320,23 @@ namespace gotchangpdf
 			MD5_Init(&ctx);
 			MD5_Update(&ctx, _decryption_key->data(), _decryption_key->size());
 			MD5_Update(&ctx, object_info, sizeof(object_info));
+
+			if (alg == EncryptionAlgorithm::AES) {
+				MD5_Update(&ctx, &AES_ADDITIONAL_SALT[0], AES_ADDITIONAL_SALT_LENGTH);
+			}
+
 			MD5_Final((unsigned char*)object_key->data(), &ctx);
 
 			auto key_length = std::min(_decryption_key->size() + 5, 16u);
+
+			if (alg == EncryptionAlgorithm::AES) {
+				return EncryptionUtils::AESDecrypt(object_key, key_length, data);
+			}
+
+			// No clue what is security handler yet
+			if (alg == EncryptionAlgorithm::RC4) {
+			}
+
 			return EncryptionUtils::ComputeRC4(object_key, key_length, data);
 		}
 

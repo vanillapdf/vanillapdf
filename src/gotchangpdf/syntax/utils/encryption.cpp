@@ -4,6 +4,7 @@
 #include "buffer.h"
 
 #include <openssl/rc4.h>
+#include <openssl/aes.h>
 
 namespace gotchangpdf
 {
@@ -19,7 +20,12 @@ namespace gotchangpdf
 		0x64, 0x53, 0x69, 0x7A
 	};
 
+	const uint8_t AES_ADDITIONAL_SALT[] = {
+		0x73, 0x41, 0x6C, 0x54
+	};
+
 	const int HARDCODED_PFD_PAD_LENGTH = sizeof(HARDCODED_PFD_PAD);
+	const int AES_ADDITIONAL_SALT_LENGTH = sizeof(AES_ADDITIONAL_SALT);
 
 	BufferPtr EncryptionUtils::PadTruncatePassword(const Buffer& password)
 	{
@@ -44,5 +50,27 @@ namespace gotchangpdf
 	BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, const Buffer& data)
 	{
 		return ComputeRC4(key, key.size(), data);
+	}
+
+	BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, const Buffer& data)
+	{
+		return AESDecrypt(key, key.size(), data);
+	}
+
+	BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, int key_length, const Buffer& data)
+	{
+		assert(data.size() >= key_length);
+		if (data.size() < key_length) {
+			throw GeneralException("Cannot find IV for encrypted data");
+		}
+
+		Buffer iv(data.begin(), data.begin() + key_length);
+		BufferPtr result(data.size() - key_length);
+
+		AES_KEY dec_key;
+		AES_set_decrypt_key((unsigned char*)key.data(), key_length * 8, &dec_key);
+		AES_cbc_encrypt((unsigned char*)data.data() + key_length, (unsigned char*)result->data(), data.size() - key_length, &dec_key, (unsigned char*)iv.data(), AES_DECRYPT);
+
+		return result;
 	}
 }

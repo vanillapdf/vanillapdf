@@ -175,6 +175,14 @@ namespace gotchangpdf
 			extern const syntax::NameObjectPtr Standard;
 			extern const syntax::NameObjectPtr Title;
 			extern const syntax::NameObjectPtr Encrypt;
+			extern const syntax::NameObjectPtr CF;
+			extern const syntax::NameObjectPtr StmF;
+			extern const syntax::NameObjectPtr StrF;
+			extern const syntax::NameObjectPtr EFF;
+			extern const syntax::NameObjectPtr CFM;
+			extern const syntax::NameObjectPtr V2;
+			extern const syntax::NameObjectPtr AESV2;
+			extern const syntax::NameObjectPtr StdCF;
 		}
 	}
 }

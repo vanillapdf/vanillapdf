@@ -6,7 +6,16 @@
 namespace gotchangpdf
 {
 	extern const uint8_t HARDCODED_PFD_PAD[];
+	extern const uint8_t AES_ADDITIONAL_SALT[];
 	extern const int HARDCODED_PFD_PAD_LENGTH;
+	extern const int AES_ADDITIONAL_SALT_LENGTH;
+
+	enum class EncryptionAlgorithm
+	{
+		None = 0,
+		RC4,
+		AES
+	};
 
 	class EncryptionUtils
 	{
@@ -14,6 +23,9 @@ namespace gotchangpdf
 		static BufferPtr PadTruncatePassword(const Buffer& password);
 		static BufferPtr ComputeRC4(const Buffer& key, const Buffer& data);
 		static BufferPtr ComputeRC4(const Buffer& key, int key_length, const Buffer& data);
+
+		static BufferPtr AESDecrypt(const Buffer& key, const Buffer& data);
+		static BufferPtr AESDecrypt(const Buffer& key, int key_length, const Buffer& data);
 	};
 }
 
