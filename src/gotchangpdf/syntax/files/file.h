@@ -23,8 +23,8 @@ namespace gotchangpdf
 
 			void Initialize(void);
 			bool IsEncrypted(void) const;
-			void SetPassword(const Buffer& password);
-			void SetPassword(const std::string& password);
+			void SetEncryptionPassword(const Buffer& password);
+			void SetEncryptionPassword(const std::string& password);
 
 			BufferPtr DecryptStream(const Buffer& data,
 				types::big_uint objNumber,
@@ -74,16 +74,6 @@ namespace gotchangpdf
 
 			types::stream_offset GetLastXrefOffset(types::stream_size file_size);
 			void ReadXref(types::stream_offset offset);
-
-			bool CheckKey(
-				const Buffer& input,
-				const Buffer& document_id,
-				const Buffer& owner_data,
-				const Buffer& user_data,
-				const IntegerObject& permissions,
-				const IntegerObject& revision,
-				const IntegerObject& key_length,
-				Buffer& decryption_key) const;
 
 		private:
 			File(const std::string& path);

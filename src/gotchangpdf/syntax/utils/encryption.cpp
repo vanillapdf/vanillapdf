@@ -5,6 +5,8 @@
 
 #include <openssl/rc4.h>
 #include <openssl/aes.h>
+#include <openssl/x509.h>
+#include <openssl/md5.h>
 
 namespace gotchangpdf
 {
@@ -72,5 +74,81 @@ namespace gotchangpdf
 		AES_cbc_encrypt((unsigned char*)data.data() + key_length, (unsigned char*)result->data(), data.size() - key_length, &dec_key, (unsigned char*)iv.data(), AES_DECRYPT);
 
 		return result;
+	}
+
+	bool EncryptionUtils::CheckKey(
+		const Buffer& input,
+		const Buffer& document_id,
+		const Buffer& owner_data,
+		const Buffer& user_data,
+		const syntax::IntegerObject& permissions,
+		const syntax::IntegerObject& revision,
+		const syntax::IntegerObject& key_length,
+		Buffer& decryption_key)
+	{
+		Buffer decryption_key_digest(MD5_DIGEST_LENGTH);
+
+		MD5_CTX ctx;
+		MD5_Init(&ctx);
+		MD5_Update(&ctx, input.data(), input.size());
+		MD5_Update(&ctx, owner_data.data(), owner_data.size());
+
+		auto permissions_value = permissions.Value();
+		uint32_t permissions_raw = reinterpret_cast<uint32_t&>(permissions_value);
+		uint8_t permissions_array[sizeof(permissions_raw)];
+		permissions_array[0] = permissions_raw & 0xFF;
+		permissions_array[1] = (permissions_raw >> 8) & 0xFF;
+		permissions_array[2] = (permissions_raw >> 16) & 0xFF;
+		permissions_array[3] = (permissions_raw >> 24) & 0xFF;
+
+		MD5_Update(&ctx, permissions_array, sizeof(permissions_array));
+		MD5_Update(&ctx, document_id.data(), document_id.size());
+		MD5_Final((unsigned char*)decryption_key_digest.data(), &ctx);
+
+		auto length_bytes = SafeConvert<size_t>(key_length.Value() / 8);
+		size_t decryption_key_length = std::min(length_bytes, decryption_key_digest.size());
+
+		BufferPtr compare_data;
+		if (revision >= 3) {
+			Buffer temporary_digest(MD5_DIGEST_LENGTH);
+			for (int i = 0; i < 50; ++i) {
+				MD5_Init(&ctx);
+				MD5_Update(&ctx, decryption_key_digest.data(), decryption_key_length);
+				MD5_Final((unsigned char*)temporary_digest.data(), &ctx);
+				std::copy_n(temporary_digest.begin(), decryption_key_length, decryption_key_digest.begin());
+			}
+
+			Buffer hardcoded_pad(&HARDCODED_PFD_PAD[0], HARDCODED_PFD_PAD_LENGTH);
+			Buffer key_digest(MD5_DIGEST_LENGTH);
+
+			MD5_Init(&ctx);
+			MD5_Update(&ctx, hardcoded_pad.data(), hardcoded_pad.size());
+			MD5_Update(&ctx, document_id.data(), document_id.size());
+			MD5_Final((unsigned char*)key_digest.data(), &ctx);
+
+			auto key = BufferPtr(length_bytes);
+			compare_data = BufferPtr(key_digest);
+
+			for (Buffer::value_type i = 0; i < 20; ++i) {
+				for (decltype(decryption_key_length) j = 0; j < decryption_key_length; ++j) {
+					key[j] = (decryption_key_digest[j] ^ i);
+				}
+
+				compare_data = EncryptionUtils::ComputeRC4(key, compare_data);
+			}
+		}
+		else {
+			assert(key_length.Value() == 40 && "Key length is not 5 bytes for revision <= 3");
+			Buffer hardcoded_pad(&HARDCODED_PFD_PAD[0], HARDCODED_PFD_PAD_LENGTH);
+			compare_data = EncryptionUtils::ComputeRC4(decryption_key_digest, 5, hardcoded_pad);
+		}
+
+		int compare_length = (revision >= 3 ? 16 : 32);
+		if (std::equal(compare_data.begin(), compare_data.begin() + compare_length, user_data.begin())) {
+			decryption_key = BufferPtr(decryption_key_digest.begin(), decryption_key_digest.begin() + decryption_key_length);
+			return true;
+		}
+
+		return false;
 	}
 }

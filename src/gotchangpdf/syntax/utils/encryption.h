@@ -26,6 +26,17 @@ namespace gotchangpdf
 
 		static BufferPtr AESDecrypt(const Buffer& key, const Buffer& data);
 		static BufferPtr AESDecrypt(const Buffer& key, int key_length, const Buffer& data);
+
+		static bool CheckKey(
+			const Buffer& input,
+			const Buffer& document_id,
+			const Buffer& owner_data,
+			const Buffer& user_data,
+			const syntax::IntegerObject& permissions,
+			const syntax::IntegerObject& revision,
+			const syntax::IntegerObject& key_length,
+			Buffer& decryption_key);
+	};
 	};
 }
 

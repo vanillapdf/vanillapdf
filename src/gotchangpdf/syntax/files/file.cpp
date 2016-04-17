@@ -100,12 +100,14 @@ namespace gotchangpdf
 		}
 
 		void File::SetPassword(const std::string& password)
+
+		void File::SetEncryptionPassword(const std::string& password)
 		{
 			Buffer buffer(password.begin(), password.end());
-			SetPassword(buffer);
+			SetEncryptionPassword(buffer);
 		}
 
-		void File::SetPassword(const Buffer& password)
+		void File::SetEncryptionPassword(const Buffer& password)
 		{
 			if (!IsEncrypted()) {
 				return;
@@ -172,94 +174,18 @@ namespace gotchangpdf
 			Buffer decryption_key;
 
 			// Check if entered password was owner password
-			if (CheckKey(encrypted_owner_data, id->Value(), owner_value->Value(), user_value->Value(), permissions, revision, length_bits, decryption_key)) {
+			if (EncryptionUtils::CheckKey(encrypted_owner_data, id->Value(), owner_value->Value(), user_value->Value(), permissions, revision, length_bits, decryption_key)) {
 				_decryption_key = decryption_key;
 				return;
 			}
 
 			// Check if entered password was user password
-			if (CheckKey(padPassword, id->Value(), owner_value->Value(), user_value->Value(), permissions, revision, length_bits, decryption_key)) {
+			if (EncryptionUtils::CheckKey(padPassword, id->Value(), owner_value->Value(), user_value->Value(), permissions, revision, length_bits, decryption_key)) {
 				_decryption_key = decryption_key;
 				return;
 			}
 
 			throw GeneralException("Bad password entered");
-		}
-
-		bool File::CheckKey(
-			const Buffer& input,
-			const Buffer& document_id,
-			const Buffer& owner_data,
-			const Buffer& user_data,
-			const IntegerObject& permissions,
-			const IntegerObject& revision,
-			const IntegerObject& key_length,
-			Buffer& decryption_key) const
-		{
-			Buffer decryption_key_digest(MD5_DIGEST_LENGTH);
-
-			MD5_CTX ctx;
-			MD5_Init(&ctx);
-			MD5_Update(&ctx, input.data(), input.size());
-			MD5_Update(&ctx, owner_data.data(), owner_data.size());
-
-			auto permissions_value = permissions.Value();
-			uint32_t permissions_raw = reinterpret_cast<uint32_t&>(permissions_value);
-			uint8_t permissions_array[sizeof(permissions_raw)];
-			permissions_array[0] = permissions_raw & 0xFF;
-			permissions_array[1] = (permissions_raw >> 8) & 0xFF;
-			permissions_array[2] = (permissions_raw >> 16) & 0xFF;
-			permissions_array[3] = (permissions_raw >> 24) & 0xFF;
-
-			MD5_Update(&ctx, permissions_array, sizeof(permissions_array));
-			MD5_Update(&ctx, document_id.data(), document_id.size());
-			MD5_Final((unsigned char*)decryption_key_digest.data(), &ctx);
-
-			auto length_bytes = SafeConvert<size_t>(key_length.Value() / 8);
-			size_t decryption_key_length = std::min(length_bytes, decryption_key_digest.size());
-
-			BufferPtr compare_data;
-			if (revision >= 3) {
-				Buffer temporary_digest(MD5_DIGEST_LENGTH);
-				for (int i = 0; i < 50; ++i) {
-					MD5_Init(&ctx);
-					MD5_Update(&ctx, decryption_key_digest.data(), decryption_key_length);
-					MD5_Final((unsigned char*)temporary_digest.data(), &ctx);
-					std::copy_n(temporary_digest.begin(), decryption_key_length, decryption_key_digest.begin());
-				}
-
-				Buffer hardcoded_pad(&HARDCODED_PFD_PAD[0], HARDCODED_PFD_PAD_LENGTH);
-				Buffer key_digest(MD5_DIGEST_LENGTH);
-
-				MD5_Init(&ctx);
-				MD5_Update(&ctx, hardcoded_pad.data(), hardcoded_pad.size());
-				MD5_Update(&ctx, document_id.data(), document_id.size());
-				MD5_Final((unsigned char*)key_digest.data(), &ctx);
-
-				auto key = BufferPtr(length_bytes);
-				compare_data = BufferPtr(key_digest);
-
-				for (Buffer::value_type i = 0; i < 20; ++i) {
-					for (decltype(decryption_key_length) j = 0; j < decryption_key_length; ++j) {
-						key[j] = (decryption_key_digest[j] ^ i);
-					}
-
-					compare_data = EncryptionUtils::ComputeRC4(key, compare_data);
-				}
-			}
-			else {
-				assert(key_length.Value() == 40 && "Key length is not 5 bytes for revision <= 3");
-				Buffer hardcoded_pad(&HARDCODED_PFD_PAD[0], HARDCODED_PFD_PAD_LENGTH);
-				compare_data = EncryptionUtils::ComputeRC4(decryption_key_digest, 5, hardcoded_pad);
-			}
-
-			int compare_length = (revision >= 3 ? 16 : 32);
-			if (std::equal(compare_data.begin(), compare_data.begin() + compare_length, user_data.begin())) {
-				decryption_key = BufferPtr(decryption_key_digest.begin(), decryption_key_digest.begin() + decryption_key_length);
-				return true;
-			}
-
-			return false;
 		}
 
 		bool File::IsEncrypted(void) const
@@ -370,7 +296,7 @@ namespace gotchangpdf
 
 			if (_decryption_key.empty()) {
 				// Encrypted documents shall be opened with default empty password
-				SetPassword("");
+				SetEncryptionPassword("");
 			}
 
 			BufferPtr object_key(MD5_DIGEST_LENGTH);
