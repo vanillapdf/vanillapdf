@@ -19,6 +19,8 @@ namespace gotchangpdf
 	class ExceptionBase;
 	class GeneralException;
 
+	class IEncryptionKey;
+
 	namespace syntax
 	{
 		// Exceptions

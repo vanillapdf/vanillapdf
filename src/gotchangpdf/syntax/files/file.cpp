@@ -99,7 +99,16 @@ namespace gotchangpdf
 			//SaveAs(dest);
 		}
 
-		void File::SetPassword(const std::string& password)
+		void File::SetEncryptionKey(const IEncryptionKey& key)
+		{
+			// Buffer data
+			// foreach recipient
+			  // if recipient.key == key
+			    // data = key.Decrypt(envelopedData)
+
+			// do some hash
+			// _decryption_key = computed hash
+		}
 
 		void File::SetEncryptionPassword(const std::string& password)
 		{

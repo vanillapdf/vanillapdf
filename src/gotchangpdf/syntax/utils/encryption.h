@@ -37,6 +37,12 @@ namespace gotchangpdf
 			const syntax::IntegerObject& key_length,
 			Buffer& decryption_key);
 	};
+
+	class IEncryptionKey
+	{
+	public:
+		virtual BufferPtr Decrypt(const Buffer& data) const = 0;
+		virtual ~IEncryptionKey() = 0;
 	};
 }
 

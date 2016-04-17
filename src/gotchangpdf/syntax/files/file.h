@@ -25,6 +25,7 @@ namespace gotchangpdf
 			bool IsEncrypted(void) const;
 			void SetEncryptionPassword(const Buffer& password);
 			void SetEncryptionPassword(const std::string& password);
+			void SetEncryptionKey(const IEncryptionKey& key);
 
 			BufferPtr DecryptStream(const Buffer& data,
 				types::big_uint objNumber,
