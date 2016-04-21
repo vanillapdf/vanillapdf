@@ -16,7 +16,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObject
 
 	try
 	{
-		ContentsPtr contents;
+		OutputContentsPtr contents;
 		auto contains = obj->Contents(contents);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = contents.AddRefGet();

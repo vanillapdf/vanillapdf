@@ -9,6 +9,11 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
+		ObjectPtr::ObjectPtr() : Deferred<Object>(NullObject::GetInstance())
+		{
+
+		}
+
 		const char* Object::TypeName(Type type)
 		{
 			// TODO this should be a single line solution using preprocessor

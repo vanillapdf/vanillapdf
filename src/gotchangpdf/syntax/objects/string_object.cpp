@@ -13,6 +13,7 @@ namespace gotchangpdf
 	{
 		LiteralStringObject::LiteralStringObject(BufferPtr value) : _raw_value(value) {}
 		HexadecimalStringObject::HexadecimalStringObject(BufferPtr value) : _raw_value(value) {}
+		StringObjectPtr::StringObjectPtr() : Deferred<StringObjectBase>(LiteralStringObjectPtr()) {}
 
 		BufferPtr LiteralStringObject::Value() const
 		{

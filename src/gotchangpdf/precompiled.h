@@ -38,6 +38,7 @@
 
 // Solution
 #include "deferred.h"
+#include "output_pointer.h"
 #include "objects.h"
 #include "object_utils.h"
 #include "exception.h"

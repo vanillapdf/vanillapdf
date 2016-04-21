@@ -20,7 +20,7 @@ namespace gotchangpdf
 		typedef T value_type;
 
 	public:
-		//template <typename = std::enable_if_t<std::is_constructible<T>::value>>
+		template <typename = std::enable_if_t<std::is_constructible<T>::value>>
 		Deferred() : m_ptr(reinterpret_cast<T*>(nullptr)) {}
 
 		Deferred(T* value, bool add_ref) : m_ptr(value) { if (m_ptr && add_ref) m_ptr->AddRef(); }
@@ -121,19 +121,7 @@ namespace gotchangpdf
 		typedef typename T::const_reference const_reference;
 
 	public:
-		//template <typename = std::enable_if_t<std::is_constructible<T>::value>>
-		DeferredContainer() : Deferred() {}
-
-		DeferredContainer(T* value) : Deferred(value) {}
-		DeferredContainer(T* value, bool add_ref) : Deferred(value, add_ref) {}
-		DeferredContainer(const Deferred& rhs) : Deferred(rhs) {}
-		DeferredContainer(Deferred&& rhs) : Deferred(rhs) {}
-
-		template <typename... Parameters, typename = std::enable_if_t<std::is_constructible<T, Parameters...>::value>>
-		DeferredContainer(const Parameters&... p) : Deferred(p...) {}
-
-		template <typename U, typename = std::enable_if_t<std::is_constructible<T, std::initializer_list<U>>::value>>
-		DeferredContainer(std::initializer_list<U> list) : Deferred(list) {}
+		using Deferred<T>::Deferred;
 
 		// Support insertion as if this were itself a container
 		void insert(const iterator& pos, const value_type& value)
@@ -180,19 +168,7 @@ namespace gotchangpdf
 		typedef typename T::reference reference;
 
 	public:
-		//template <typename = std::enable_if_t<std::is_constructible<T>::value>>
-		DeferredIterator() : Deferred() {}
-
-		DeferredIterator(T* value) : Deferred(value) {}
-		DeferredIterator(T* value, bool add_ref) : Deferred(value, add_ref) {}
-		DeferredIterator(const Deferred& rhs) : Deferred(rhs) {}
-		DeferredIterator(Deferred&& rhs) : Deferred(rhs) {}
-
-		template <typename... Parameters, typename = std::enable_if_t<std::is_constructible<T, Parameters...>::value>>
-		DeferredIterator(const Parameters&... p) : Deferred(p...) {}
-
-		template <typename U, typename = std::enable_if_t<std::is_constructible<T, std::initializer_list<U>>::value>>
-		DeferredIterator(std::initializer_list<U> list) : Deferred(list) {}
+		using Deferred<T>::Deferred;
 	};
 
 	// conversion operators

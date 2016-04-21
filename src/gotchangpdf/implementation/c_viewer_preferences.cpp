@@ -296,7 +296,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintPageRan
 
 	try
 	{
-		PageRangePtr direct;
+		OutputPageRangePtr direct;
 		auto contains = obj->PrintPageRange(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();

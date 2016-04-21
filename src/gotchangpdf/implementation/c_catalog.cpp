@@ -123,7 +123,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetViewerPreferences(Cata
 
 	try
 	{
-		ViewerPreferencesPtr direct;
+		OutputViewerPreferencesPtr direct;
 		auto contains = obj->ViewerPreferences(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
@@ -140,7 +140,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetOutlines(CatalogHandle
 
 	try
 	{
-		OutlinePtr direct;
+		OutputOutlinePtr direct;
 		auto contains = obj->Outlines(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();

@@ -124,19 +124,19 @@ namespace gotchangpdf
 			friend class ArrayObject;
 
 		public:
-			template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value && std::is_base_of<Object, T::value_type>::value>>
+			template <typename = std::enable_if_t<(instantiation_of<Deferred, T>::value || std::is_base_of<Object, T::value_type>::value) && std::is_base_of<Object, T::value_type>::value>>
 			ArrayObject() : _conversion([](const ContainableObjectPtr& obj) { return ObjectUtils::ConvertTo<T>(obj); }) {}
 
-			template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value && std::is_base_of<Object, T::value_type>::value>>
+			template <typename = std::enable_if_t<(instantiation_of<Deferred, T>::value || std::is_base_of<Object, T::value_type>::value) && std::is_base_of<Object, T::value_type>::value>>
 			explicit ArrayObject(const MixedArrayObject& other)
 				: _list(other),	_conversion([](const ContainableObjectPtr& obj) { return ObjectUtils::ConvertTo<T>(obj); })
 			{ for (auto item : other) _conversion(item); }
 
-			template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value && std::is_base_of<Object, T::value_type>::value>>
+			template <typename = std::enable_if_t<(instantiation_of<Deferred, T>::value || std::is_base_of<Object, T::value_type>::value) && std::is_base_of<Object, T::value_type>::value>>
 			explicit ArrayObject(const list_type& list) : _conversion([](const ContainableObjectPtr& obj) { return ObjectUtils::ConvertTo<T>(obj); })
 			{ for (auto item : other) _list->push_back(item); }
 
-			template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value && std::is_base_of<Object, T::value_type>::value>>
+			template <typename = std::enable_if_t<(instantiation_of<Deferred, T>::value || std::is_base_of<Object, T::value_type>::value) && std::is_base_of<Object, T::value_type>::value>>
 			explicit ArrayObject(const std::initializer_list<T>& list) : _conversion([](const ContainableObjectPtr& obj) { return ObjectUtils::ConvertTo<T>(obj); })
 			{ for (auto item : list) _list->push_back(item); }
 

@@ -92,7 +92,7 @@ namespace gotchangpdf
 		//	return NamedDestinationsPtr(dests);
 		//}
 
-		bool Catalog::ViewerPreferences(ViewerPreferencesPtr& result) const
+		bool Catalog::ViewerPreferences(OutputViewerPreferencesPtr& result) const
 		{
 			if (!_obj->Contains(constant::Name::ViewerPreferences))
 				return false;
@@ -126,7 +126,7 @@ namespace gotchangpdf
 			return true;
 		}
 
-		bool Catalog::Outlines(OutlinePtr& result) const
+		bool Catalog::Outlines(OutputOutlinePtr& result) const
 		{
 			if (!_obj->Contains(constant::Name::Outlines))
 				return false;

@@ -159,7 +159,7 @@ namespace gotchangpdf
 				if (nullptr == containable_ptr)
 					throw ConversionExceptionFactory<ContainableObject>::Construct(val);
 
-				dictionary->_list[name] = ContainableObjectPtr(containable_ptr);
+				dictionary->Insert(name, ContainableObjectPtr(containable_ptr));
 			}
 
 			ReadTokenWithTypeSkip(Token::Type::DICTIONARY_END);
@@ -236,7 +236,7 @@ namespace gotchangpdf
 					auto stream_end_offset = offset.seekpos() + pos;
 					auto computed_length = stream_end_offset - stream_offset;
 					if (!dictionary->Contains(constant::Name::Length)) {
-						dictionary->_list[constant::Name::Length] = IntegerObjectPtr(computed_length);
+						dictionary->Insert(constant::Name::Length, IntegerObjectPtr(computed_length));
 						break;
 					}
 
@@ -244,7 +244,7 @@ namespace gotchangpdf
 					if (length_obj->GetType() != Object::Type::Integer) {
 						auto locked_file = _file.lock();
 						if (!locked_file->IsInitialized()) {
-							dictionary->_list[constant::Name::Length] = IntegerObjectPtr(computed_length);
+							dictionary->Insert(constant::Name::Length, IntegerObjectPtr(computed_length));
 							break;
 						}
 					}
@@ -691,7 +691,7 @@ namespace gotchangpdf
 					if (nullptr == containable_ptr)
 						throw ConversionExceptionFactory<ContainableObject>::Construct(value);
 
-					image_dictionary->_list[name] = ContainableObjectPtr(containable_ptr);
+					image_dictionary->Insert(name, ContainableObjectPtr(containable_ptr));
 					continue;
 				}
 

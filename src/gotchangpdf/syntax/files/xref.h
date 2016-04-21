@@ -174,7 +174,9 @@ namespace gotchangpdf
 			void Add(XrefEntryBasePtr entry)
 			{
 				Key key(entry->GetObjectNumber(), entry->GetGenerationNumber());
-				_entries[key] = entry;
+				std::pair<Key, XrefEntryBasePtr> pair(key, entry);
+				_entries.insert(pair);
+				//_entries[key] = entry;
 			}
 
 			size_t Size(void) const _NOEXCEPT { return _entries.size(); }

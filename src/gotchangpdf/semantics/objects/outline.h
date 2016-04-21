@@ -59,7 +59,7 @@ namespace gotchangpdf
 
 			OutlineBasePtr Parent(void) const;
 
-			bool Prev(OutlineItemPtr& result) const
+			bool Prev(OutputOutlineItemPtr& result) const
 			{
 				if (!_obj->Contains(constant::Name::Prev))
 					return false;
@@ -69,7 +69,7 @@ namespace gotchangpdf
 				return true;
 			}
 
-			bool Next(OutlineItemPtr& result) const
+			bool Next(OutputOutlineItemPtr& result) const
 			{
 				if (!_obj->Contains(constant::Name::Next))
 					return false;
@@ -79,7 +79,7 @@ namespace gotchangpdf
 				return true;
 			}
 
-			bool First(OutlineItemPtr& result) const
+			bool First(OutputOutlineItemPtr& result) const
 			{
 				if (!_obj->Contains(constant::Name::First))
 					return false;
@@ -89,7 +89,7 @@ namespace gotchangpdf
 				return true;
 			}
 
-			bool Last(OutlineItemPtr& result) const
+			bool Last(OutputOutlineItemPtr& result) const
 			{
 				if (!_obj->Contains(constant::Name::Last))
 					return false;
@@ -128,7 +128,7 @@ namespace gotchangpdf
 			//{
 			//}
 
-			bool Color(OutlineItemColorPtr& result) const
+			bool Color(OutputOutlineItemColorPtr& result) const
 			{
 				if (!_obj->Contains(constant::Name::C))
 					return false;
@@ -138,7 +138,7 @@ namespace gotchangpdf
 				return true;
 			}
 
-			bool Flags(OutlineItemFlagsPtr& result) const
+			bool Flags(OutputOutlineItemFlagsPtr& result) const
 			{
 				if (!_obj->Contains(constant::Name::F))
 					return false;
@@ -155,7 +155,7 @@ namespace gotchangpdf
 			explicit Outline(syntax::DictionaryObjectPtr root) : OutlineBase(root) {}
 			virtual Type OutlineType(void) const noexcept override { return OutlineBase::Type::Outline; }
 
-			bool First(OutlineItemPtr& result) const
+			bool First(OutputOutlineItemPtr& result) const
 			{
 				if (!_obj->Contains(constant::Name::First))
 					return false;
@@ -165,7 +165,7 @@ namespace gotchangpdf
 				return true;
 			}
 
-			bool Last(OutlineItemPtr& result) const
+			bool Last(OutputOutlineItemPtr& result) const
 			{
 				if (!_obj->Contains(constant::Name::Last))
 					return false;

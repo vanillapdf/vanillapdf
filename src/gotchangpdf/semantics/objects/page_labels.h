@@ -74,13 +74,15 @@ namespace gotchangpdf
 		class PageLabels : public HighLevelObject<syntax::DictionaryObjectPtr>
 		{
 		public:
-			explicit PageLabels(const syntax::DictionaryObjectPtr& obj) : HighLevelObject(obj)
-			{
-				_tree = NumberTreePtr<PageLabelPtr>(obj, [](const syntax::ContainableObjectPtr& item) {
-					auto dict = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(item);
-					return PageLabelPtr(dict);
-				});
-			}
+			explicit PageLabels(const syntax::DictionaryObjectPtr& obj)
+				: HighLevelObject(obj),
+				_tree
+				(
+					NumberTreePtr<PageLabelPtr>(obj, [](const syntax::ContainableObjectPtr& item) {
+						auto dict = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(item);
+						return PageLabelPtr(dict);
+					})
+				) {}
 
 			bool Contains(types::uinteger page_number) const { return _tree->Contains(page_number); }
 			PageLabelPtr Find(types::uinteger page_number) const { return _tree->Find(page_number); }

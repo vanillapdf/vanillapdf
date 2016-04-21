@@ -12,6 +12,9 @@ namespace gotchangpdf
 	template <typename T>
 	class DeferredIterator;
 
+	template <typename T>
+	class OutputPointer;
+
 	class Buffer;
 	using BufferPtr = DeferredContainer<Buffer>;
 
@@ -105,8 +108,10 @@ namespace gotchangpdf
 		using DictionaryObjectPtr = Deferred<DictionaryObject>;
 		using MixedArrayObjectPtr = Deferred<MixedArrayObject>;
 
-		using ObjectPtr = Deferred<Object>;
-		using ContainableObjectPtr = Deferred<ContainableObject>;
+		class ObjectPtr;
+		class StringObjectPtr;
+		//using ObjectPtr = Deferred<Object>;
+		using ContainableObjectPtr = Deferred<ContainableObject>; using OutputContainableObjectPtr = OutputPointer<ContainableObjectPtr>;
 		using NameObjectPtr = Deferred<NameObject>;
 		using BooleanObjectPtr = Deferred<BooleanObject>;
 		using IndirectObjectReferencePtr = Deferred<IndirectObjectReference>;
@@ -114,7 +119,6 @@ namespace gotchangpdf
 		using NullObjectPtr = Deferred<NullObject>;
 		using RealObjectPtr = Deferred<RealObject>;
 		using StreamObjectPtr = Deferred<StreamObject>;
-		using StringObjectPtr = Deferred<StringObjectBase>;
 		using LiteralStringObjectPtr = Deferred<LiteralStringObject>;
 		using HexadecimalStringObjectPtr = Deferred<HexadecimalStringObject>;
 

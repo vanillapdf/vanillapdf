@@ -16,7 +16,7 @@ namespace gotchangpdf
 			PageTreeNodePtr Parent(void) const;
 			ResourceDictionaryPtr Resources(void) const;
 			RectanglePtr MediaBox(void) const;
-			bool Contents(ContentsPtr& result) const;
+			bool Contents(OutputContentsPtr& result) const;
 
 			virtual NodeType GetNodeType(void) const noexcept override { return NodeType::Object; }
 		};

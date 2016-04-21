@@ -49,7 +49,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Outline_GetFirst(OutlineHandle ha
 
 	try
 	{
-		OutlineItemPtr direct;
+		OutputOutlineItemPtr direct;
 		auto contains = obj->First(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
@@ -66,7 +66,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Outline_GetLast(OutlineHandle han
 
 	try
 	{
-		OutlineItemPtr direct;
+		OutputOutlineItemPtr direct;
 		auto contains = obj->Last(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
@@ -135,7 +135,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetPrev(OutlineItemHa
 
 	try
 	{
-		OutlineItemPtr direct;
+		OutputOutlineItemPtr direct;
 		auto contains = obj->Prev(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
@@ -152,7 +152,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetNext(OutlineItemHa
 
 	try
 	{
-		OutlineItemPtr direct;
+		OutputOutlineItemPtr direct;
 		auto contains = obj->Next(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
@@ -169,7 +169,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetFirst(OutlineItemH
 
 	try
 	{
-		OutlineItemPtr direct;
+		OutputOutlineItemPtr direct;
 		auto contains = obj->First(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
@@ -186,7 +186,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetLast(OutlineItemHa
 
 	try
 	{
-		OutlineItemPtr direct;
+		OutputOutlineItemPtr direct;
 		auto contains = obj->Last(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
@@ -220,7 +220,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetColor(OutlineItemH
 
 	try
 	{
-		OutlineItemColorPtr direct;
+		OutputOutlineItemColorPtr direct;
 		auto contains = obj->Color(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
@@ -237,7 +237,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetFlags(OutlineItemH
 
 	try
 	{
-		OutlineItemFlagsPtr direct;
+		OutputOutlineItemFlagsPtr direct;
 		auto contains = obj->Flags(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();

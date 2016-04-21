@@ -58,6 +58,15 @@ namespace gotchangpdf
 			BufferPtr _raw_value;
 			mutable BufferPtr _value;
 		};
+
+		class StringObjectPtr : public Deferred<StringObjectBase>
+		{
+		public:
+			using Deferred<StringObjectBase>::Deferred;
+
+		public:
+			StringObjectPtr();
+		};
 	}
 }
 

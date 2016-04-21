@@ -242,7 +242,7 @@ namespace gotchangpdf
 				return true;
 			}
 
-			bool PrintPageRange(PageRangePtr& result) const
+			bool PrintPageRange(OutputPageRangePtr& result) const
 			{
 				if (!_obj->Contains(constant::Name::PrintPageRange))
 					return false;

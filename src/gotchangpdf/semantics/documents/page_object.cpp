@@ -40,15 +40,16 @@ namespace gotchangpdf
 			return RectanglePtr(box);
 		}
 
-		bool PageObject::Contents(ContentsPtr& result) const
+		bool PageObject::Contents(OutputContentsPtr& result) const
 		{
-			ContainableObjectPtr content;
-			auto found = _obj->TryFind(Name::Contents, content);
+			OutputContainableObjectPtr output;
+			auto found = _obj->TryFind(Name::Contents, output);
 
 			// Missing entry, return empty collection
 			if (!found)
 				return false;
 
+			ContainableObjectPtr content = output.GetValue();
 			bool is_null = ObjectUtils::IsType<NullObjectPtr>(content);
 			bool is_ref = ObjectUtils::IsType<StreamObjectPtr>(content);
 			bool is_array = ObjectUtils::IsType<ArrayObjectPtr<StreamObjectPtr>>(content);

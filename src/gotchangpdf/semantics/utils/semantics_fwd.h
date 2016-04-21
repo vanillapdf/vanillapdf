@@ -37,15 +37,15 @@ namespace gotchangpdf
 		class Tree;
 
 		class ContentStream; using ContentStreamPtr = Deferred<ContentStream>;
-		class Contents; using ContentsPtr = Deferred<Contents>;
+		class Contents; using ContentsPtr = Deferred<Contents>; using OutputContentsPtr = OutputPointer<ContentsPtr>;
 
-		class OutlineItemColor; using OutlineItemColorPtr = Deferred<OutlineItemColor>;
-		class OutlineItemFlags; using OutlineItemFlagsPtr = Deferred<OutlineItemFlags>;
+		class OutlineItemColor; using OutlineItemColorPtr = Deferred<OutlineItemColor>; using OutputOutlineItemColorPtr = OutputPointer<OutlineItemColorPtr>;
+		class OutlineItemFlags; using OutlineItemFlagsPtr = Deferred<OutlineItemFlags>; using OutputOutlineItemFlagsPtr = OutputPointer<OutlineItemFlagsPtr>;
 		class OutlineBase; using OutlineBasePtr = Deferred<OutlineBase>;
-		class Outline; using OutlinePtr = Deferred<Outline>;
-		class OutlineItem; using OutlineItemPtr = Deferred<OutlineItem>;
-		class PageRange; using PageRangePtr = Deferred<PageRange>;
-		class ViewerPreferences; using ViewerPreferencesPtr = Deferred<ViewerPreferences>;
+		class Outline; using OutlinePtr = Deferred<Outline>; using OutputOutlinePtr = OutputPointer<OutlinePtr>;
+		class OutlineItem; using OutlineItemPtr = Deferred<OutlineItem>; using OutputOutlineItemPtr = OutputPointer<OutlineItemPtr>;
+		class PageRange; using PageRangePtr = Deferred<PageRange>; using OutputPageRangePtr = OutputPointer<PageRangePtr>;
+		class ViewerPreferences; using ViewerPreferencesPtr = Deferred<ViewerPreferences>; using OutputViewerPreferencesPtr = OutputPointer<ViewerPreferencesPtr>;
 		class DeveloperExtensions; using DeveloperExtensionsPtr = Deferred<DeveloperExtensions>;
 		class PageLabel; using PageLabelPtr = Deferred<PageLabel>;
 		class PageLabels; using PageLabelsPtr = Deferred<PageLabels>;

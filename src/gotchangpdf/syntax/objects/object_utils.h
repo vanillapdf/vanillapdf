@@ -189,6 +189,26 @@ namespace gotchangpdf
 			public:
 				static T Get(const ObjectPtr& obj, bool& result)
 				{
+					return GetInternal<std::is_constructible<T>::value>(obj, result);
+				}
+
+			private:
+				template <bool Constructible>
+				static T GetInternal(const ObjectPtr& obj, bool& result)
+				{
+					auto ptr = obj.get();
+					auto converted = dynamic_cast<typename T::value_type *>(ptr);
+					if (nullptr == converted) {
+						throw ConversionExceptionFactory<typename T::value_type>::Construct(obj);
+					}
+
+					result = true;
+					return T(converted);
+				}
+
+				template <>
+				static T GetInternal<true>(const ObjectPtr& obj, bool& result)
+				{
 					auto ptr = obj.get();
 					auto converted = dynamic_cast<typename T::value_type *>(ptr);
 					if (nullptr == converted) {

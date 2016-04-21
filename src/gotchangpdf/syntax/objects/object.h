@@ -60,6 +60,14 @@ namespace gotchangpdf
 			types::ushort _gen_number = 0;
 			types::stream_offset _offset = std::_BADOFF;
 		};
+
+		class ObjectPtr : public Deferred<Object>
+		{
+			using Deferred<Object>::Deferred;
+
+		public:
+			ObjectPtr();
+		};
 	}
 }
 

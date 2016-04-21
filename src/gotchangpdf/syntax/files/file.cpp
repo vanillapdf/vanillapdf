@@ -6,6 +6,7 @@
 #include "reverse_parser.h"
 #include "exception.h"
 #include "encryption.h"
+#include "string_object.h"
 
 #include "xref_chain.h"
 #include "header.h"

@@ -114,8 +114,9 @@ namespace gotchangpdf
 			
 			std::vector<ContainableObjectPtr> Values() const;
 			ContainableObjectPtr Find(const NameObjectPtr& name) const;
-			bool TryFind(const NameObjectPtr& name, ContainableObjectPtr& result) const;
+			bool TryFind(const NameObjectPtr& name, OutputContainableObjectPtr& result) const;
 			bool Contains(const NameObjectPtr& name) const;
+			bool Insert(const NameObjectPtr& name, const ContainableObjectPtr& value);
 		};
 	}
 }
