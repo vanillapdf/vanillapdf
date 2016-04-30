@@ -151,4 +151,54 @@ namespace gotchangpdf
 
 		return false;
 	}
+
+	BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer& pad_password, const syntax::DictionaryObject& encryption_dictionary)
+	{
+		auto user_value = encryption_dictionary.FindAs<syntax::StringObjectPtr>(constant::Name::U);
+		auto owner_value = encryption_dictionary.FindAs<syntax::StringObjectPtr>(constant::Name::O);
+		auto permissions = encryption_dictionary.FindAs<syntax::IntegerObjectPtr>(constant::Name::P);
+		auto revision = encryption_dictionary.FindAs<syntax::IntegerObjectPtr>(constant::Name::R);
+		auto version = encryption_dictionary.FindAs<syntax::IntegerObjectPtr>(constant::Name::V);
+
+		syntax::IntegerObjectPtr length_bits = 40;
+		if (encryption_dictionary.Contains(constant::Name::Length)) {
+			length_bits = encryption_dictionary.FindAs<syntax::IntegerObjectPtr>(constant::Name::Length);
+			assert(length_bits->Value() % 8 == 0 && "Key length is not multiplier of 8");
+		}
+
+		// check owner key
+		Buffer password_digest(MD5_DIGEST_LENGTH);
+		MD5((unsigned char*)pad_password.data(), pad_password.size(), (unsigned char*)password_digest.data());
+
+		BufferPtr encrypted_owner_data;
+		if (*revision >= 3) {
+			MD5_CTX ctx;
+			Buffer temporary_digest(MD5_DIGEST_LENGTH);
+
+			auto length_bytes = SafeConvert<size_t>(length_bits->Value() / 8);
+			size_t password_length = std::min(length_bytes, password_digest.size());
+			for (int i = 0; i < 50; ++i) {
+				MD5_Init(&ctx);
+				MD5_Update(&ctx, password_digest.data(), password_length);
+				MD5_Final((unsigned char*)temporary_digest.data(), &ctx);
+				std::copy_n(temporary_digest.begin(), password_length, password_digest.begin());
+			}
+
+			auto key = BufferPtr(length_bytes);
+			encrypted_owner_data = BufferPtr(*owner_value->Value());
+
+			for (Buffer::value_type i = 0; i < 20; ++i) {
+				for (decltype(password_length) j = 0; j < password_length; ++j) {
+					key[j] = (password_digest[j] ^ i);
+				}
+
+				encrypted_owner_data = EncryptionUtils::ComputeRC4(key, encrypted_owner_data);
+			}
+		}
+		else {
+			encrypted_owner_data = EncryptionUtils::ComputeRC4(password_digest, 5, owner_value->Value());
+		}
+
+		return encrypted_owner_data;
+	}
 }
