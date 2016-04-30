@@ -45,6 +45,23 @@ namespace std
 	}
 }
 
+namespace gotchangpdf
+{
+	namespace constant
+	{
+		namespace Name
+		{
+			const syntax::NameObjectPtr AdbePkcs7s3(BufferPtr("adbe.pkcs7.s3", sizeof("adbe.pkcs7.s3") - 1));
+			const syntax::NameObjectPtr AdbePkcs7s4(BufferPtr("adbe.pkcs7.s4", sizeof("adbe.pkcs7.s4") - 1));
+			const syntax::NameObjectPtr AdbePkcs7s5(BufferPtr("adbe.pkcs7.s5", sizeof("adbe.pkcs7.s5") - 1));
+		}
+	}
+}
+
+const NameHandle NameConstant_AdbePkcs7s3 = reinterpret_cast<NameHandle>(gotchangpdf::constant::Name::AdbePkcs7s3.get());
+const NameHandle NameConstant_AdbePkcs7s4 = reinterpret_cast<NameHandle>(gotchangpdf::constant::Name::AdbePkcs7s4.get());
+const NameHandle NameConstant_AdbePkcs7s5 = reinterpret_cast<NameHandle>(gotchangpdf::constant::Name::AdbePkcs7s5.get());
+
 #define DECLARE_CONST_NAME(name) \
 	namespace gotchangpdf { namespace constant { namespace Name { \
 	const syntax::NameObjectPtr name(BufferPtr(#name, sizeof(#name) - 1)); \
@@ -178,3 +195,5 @@ DECLARE_CONST_NAME(StdCF);
 DECLARE_CONST_NAME(Crypt);
 DECLARE_CONST_NAME(Identity);
 DECLARE_CONST_NAME(Name);
+DECLARE_CONST_NAME(SubFilter);
+DECLARE_CONST_NAME(Recipients);

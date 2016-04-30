@@ -142,6 +142,11 @@ extern "C"
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_Crypt;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_Identity;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_Name;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_SubFilter;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_AdbePkcs7s3;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_AdbePkcs7s4;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_AdbePkcs7s5;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Recipients;
 
 #ifdef __cplusplus
 };

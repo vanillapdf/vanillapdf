@@ -102,10 +102,25 @@ namespace gotchangpdf
 
 		void File::SetEncryptionKey(const IEncryptionKey& key)
 		{
-			// Buffer data
-			// foreach recipient
-			  // if recipient.key == key
-			    // data = key.Decrypt(envelopedData)
+			auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
+			auto filter = dict->FindAs<NameObjectPtr>(constant::Name::Filter);
+			auto sub_filter = dict->FindAs<NameObjectPtr>(constant::Name::SubFilter);
+			auto recipients = dict->FindAs<ArrayObjectPtr<StringObjectPtr>>(constant::Name::Recipients);
+
+			int standard = 0;
+			if (sub_filter == constant::Name::AdbePkcs7s3) {
+				standard = 3;
+			}
+
+			if (sub_filter == constant::Name::AdbePkcs7s4) {
+				standard = 4;
+			}
+
+			if (sub_filter == constant::Name::AdbePkcs7s5) {
+				standard = 5;
+			}
+
+			auto decrypted_data = EncryptionUtils::DecryptRecipientKey(recipients, key);
 
 			// do some hash
 			// _decryption_key = computed hash

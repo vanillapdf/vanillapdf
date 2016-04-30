@@ -27,7 +27,9 @@ namespace gotchangpdf
 		static BufferPtr AESDecrypt(const Buffer& key, const Buffer& data);
 		static BufferPtr AESDecrypt(const Buffer& key, int key_length, const Buffer& data);
 
+		static BufferPtr DecryptRecipientKey(const syntax::ArrayObject<syntax::StringObjectPtr>& recipients, const IEncryptionKey& key);
 		static BufferPtr ComputeEncryptedOwnerData(const Buffer& pad_password, const syntax::DictionaryObject& encryption_dictionary);
+
 		static bool CheckKey(
 			const Buffer& input,
 			const Buffer& document_id,

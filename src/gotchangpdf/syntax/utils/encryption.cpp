@@ -7,6 +7,9 @@
 #include <openssl/aes.h>
 #include <openssl/x509.h>
 #include <openssl/md5.h>
+#include <openssl/pkcs7.h>
+#include <openssl/objects.h>
+#include <openssl/evp.h>
 
 namespace gotchangpdf
 {
@@ -150,6 +153,60 @@ namespace gotchangpdf
 		}
 
 		return false;
+	}
+
+	BufferPtr EncryptionUtils::DecryptRecipientKey(const syntax::ArrayObject<syntax::StringObjectPtr>& recipients, const IEncryptionKey& key)
+	{
+		Buffer decrypted_data;
+		auto length = recipients.Size();
+		for (decltype(length) i = 0; i < length; ++i) {
+			auto recipient_bytes = recipients.At(i);
+
+			BIO* bio = BIO_new_mem_buf(recipient_bytes->Value()->data(), recipient_bytes->Value()->size());
+			PKCS7* p7 = d2i_PKCS7_bio(bio, nullptr);
+
+			if (!PKCS7_type_is_enveloped(p7)) {
+				continue;
+			}
+
+			PKCS7_ENVELOPE* envelope = p7->d.enveloped;
+
+			auto pkcs7_recipient_count = sk_PKCS7_RECIP_INFO_num(envelope->recipientinfo);
+			for (decltype(pkcs7_recipient_count) j = 0; i < pkcs7_recipient_count; ++j) {
+				PKCS7_RECIP_INFO* pkcs7_recipient = sk_PKCS7_RECIP_INFO_value(envelope->recipientinfo, j);
+
+				if (!pkcs7_recipient->issuer_and_serial->serial) {
+					continue;
+				}
+
+				Buffer encrypted_recipient_key(pkcs7_recipient->enc_key->data, pkcs7_recipient->enc_key->length);
+				BufferPtr decrypted_recipient_key = key.Decrypt(encrypted_recipient_key);
+
+				EVP_CIPHER_CTX *evp_ctx = NULL;
+				const EVP_CIPHER *evp_cipher = EVP_get_cipherbyobj(envelope->enc_data->algorithm->algorithm);
+				BIO* etmp = BIO_new(BIO_f_cipher());
+				BIO_get_cipher_ctx(etmp, &evp_ctx);
+				EVP_CipherInit_ex(evp_ctx, evp_cipher, NULL, NULL, NULL, 0);
+				EVP_CIPHER_asn1_to_param(evp_ctx, envelope->enc_data->algorithm->parameter);
+
+				if (decrypted_recipient_key->size() != EVP_CIPHER_CTX_key_length(evp_ctx)) {
+					/*
+					* Some S/MIME clients don't use the same key and effective key
+					* length. The key length is determined by the size of the
+					* decrypted RSA key.
+					*/
+					EVP_CIPHER_CTX_set_key_length(evp_ctx, decrypted_recipient_key->size());
+				}
+
+				EVP_CipherInit_ex(evp_ctx, NULL, NULL, (unsigned char *)decrypted_recipient_key->data(), NULL, 0);
+
+				BUF_MEM *bptr;
+				BIO_get_mem_ptr(etmp, &bptr);
+				return BufferPtr(bptr->data, bptr->length);
+			}
+		}
+
+		throw GeneralException("Could not find matching certificate");
 	}
 
 	BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer& pad_password, const syntax::DictionaryObject& encryption_dictionary)
