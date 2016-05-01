@@ -14,6 +14,7 @@
 #include <iomanip>
 
 #include <openssl/md5.h>
+#include <openssl/sha.h>
 
 namespace gotchangpdf
 {
@@ -120,10 +121,22 @@ namespace gotchangpdf
 				standard = 5;
 			}
 
-			auto decrypted_data = EncryptionUtils::DecryptRecipientKey(recipients, key);
+			auto enveloped_data = EncryptionUtils::DecryptRecipientKey(recipients, key);
 
-			// do some hash
-			// _decryption_key = computed hash
+			BufferPtr decrypted_key(SHA_DIGEST_LENGTH);
+
+			SHA_CTX ctx;
+			SHA_Init(&ctx);
+			SHA_Update(&ctx, enveloped_data->data(), 20);
+
+			auto length = recipients->Size();
+			for (decltype(length) i = 0; i < length; ++i) {
+				auto recipient = recipients->At(i);
+				SHA_Update(&ctx, recipient->Value()->data(), recipient->Value()->size());
+			}
+
+			SHA_Final((unsigned char*)decrypted_key->data(), &ctx);
+			_decryption_key = decrypted_key;
 		}
 
 		void File::SetEncryptionPassword(const std::string& password)
