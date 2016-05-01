@@ -1,0 +1,23 @@
+#ifndef _PKCS12_KEY_H
+#define _PKCS12_KEY_H
+
+#include "syntax_fwd.h"
+#include "encryption.h"
+
+namespace gotchangpdf
+{
+	class PKCS12Key : public IEncryptionKey
+	{
+	public:
+		explicit PKCS12Key(const Buffer& data);
+		PKCS12Key(const Buffer& data, const Buffer& password);
+		BufferPtr Decrypt(const Buffer& data) const override;
+		bool Equals(const Buffer& issuer, const Buffer& serial) const override;
+
+	private:
+		class PKCS12KeyImpl;
+		std::shared_ptr<PKCS12KeyImpl> m_impl;
+	};
+}
+
+#endif /* _PKCS12_KEY_H */

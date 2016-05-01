@@ -165,6 +165,7 @@ namespace gotchangpdf
 			BIO* bio = BIO_new_mem_buf(recipient_bytes->Value()->data(), recipient_bytes->Value()->size());
 			PKCS7* p7 = d2i_PKCS7_bio(bio, nullptr);
 
+			assert(PKCS7_type_is_enveloped(p7) && "PKCS#7 container is enveloped");
 			if (!PKCS7_type_is_enveloped(p7)) {
 				continue;
 			}
@@ -172,10 +173,15 @@ namespace gotchangpdf
 			PKCS7_ENVELOPE* envelope = p7->d.enveloped;
 
 			auto pkcs7_recipient_count = sk_PKCS7_RECIP_INFO_num(envelope->recipientinfo);
-			for (decltype(pkcs7_recipient_count) j = 0; i < pkcs7_recipient_count; ++j) {
+			for (decltype(pkcs7_recipient_count) j = 0; j < pkcs7_recipient_count; ++j) {
 				PKCS7_RECIP_INFO* pkcs7_recipient = sk_PKCS7_RECIP_INFO_value(envelope->recipientinfo, j);
 
-				if (!pkcs7_recipient->issuer_and_serial->serial) {
+				X509_NAME *issuer = pkcs7_recipient->issuer_and_serial->issuer;
+				ASN1_INTEGER *serial = pkcs7_recipient->issuer_and_serial->serial;
+
+				Buffer issuer_buffer(issuer->bytes->data, issuer->bytes->length);
+				Buffer serial_buffer(serial->data, serial->length);
+				if (!key.Equals(issuer_buffer, serial_buffer)) {
 					continue;
 				}
 
@@ -189,14 +195,14 @@ namespace gotchangpdf
 				EVP_CipherInit_ex(evp_ctx, evp_cipher, NULL, NULL, NULL, 0);
 				EVP_CIPHER_asn1_to_param(evp_ctx, envelope->enc_data->algorithm->parameter);
 
-				if (decrypted_recipient_key->size() != EVP_CIPHER_CTX_key_length(evp_ctx)) {
-					/*
-					* Some S/MIME clients don't use the same key and effective key
-					* length. The key length is determined by the size of the
-					* decrypted RSA key.
-					*/
-					EVP_CIPHER_CTX_set_key_length(evp_ctx, decrypted_recipient_key->size());
-				}
+				//if (decrypted_recipient_key->size() != EVP_CIPHER_CTX_key_length(evp_ctx)) {
+				//	/*
+				//	* Some S/MIME clients don't use the same key and effective key
+				//	* length. The key length is determined by the size of the
+				//	* decrypted RSA key.
+				//	*/
+				//	EVP_CIPHER_CTX_set_key_length(evp_ctx, decrypted_recipient_key->size());
+				//}
 
 				EVP_CipherInit_ex(evp_ctx, NULL, NULL, (unsigned char *)decrypted_recipient_key->data(), NULL, 0);
 

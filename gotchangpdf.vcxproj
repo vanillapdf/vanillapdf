@@ -111,6 +111,7 @@
     <ClInclude Include="src\gotchangpdf\syntax\utils\encryption.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\file_device.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\output_pointer.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\utils\pkcs12_key.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\syntax_fwd.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\log.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\unknown_interface.h" />
@@ -183,6 +184,7 @@
     <ClCompile Include="src\gotchangpdf\syntax\utils\buffer.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\utils\encryption.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\utils\log.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\utils\pkcs12_key.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\utils\zlib_wrapper.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
