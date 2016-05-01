@@ -5,12 +5,6 @@
 #include <openssl/evp.h>
 #include <openssl/engine.h>
 #include <openssl/err.h>
-//#include <openssl/rc4.h>
-//#include <openssl/aes.h>
-//#include <openssl/x509.h>
-//#include <openssl/md5.h>
-//#include <openssl/pkcs7.h>
-//#include <openssl/objects.h>
 
 namespace gotchangpdf
 {
@@ -28,8 +22,6 @@ namespace gotchangpdf
 		PKCS12 *p12 = nullptr;
 		EVP_PKEY *key = nullptr;
 		X509 *cert = nullptr;
-
-		void ProcessSafeBag(PKCS12_SAFEBAG* bag, const Buffer& password);
 	};
 
 	#pragma region Forwards
@@ -55,70 +47,36 @@ namespace gotchangpdf
 	}
 	#pragma endregion
 
+	static std::mutex openssl_lock;
+	static void InitializeOpenSSL()
+	{
+		static bool initialized = false;
+		if (initialized) return;
+
+		std::lock_guard<std::mutex> lock(openssl_lock);
+
+		OpenSSL_add_all_algorithms();
+		OpenSSL_add_all_ciphers();
+		OpenSSL_add_all_digests();
+
+		initialized = true;
+	}
+
 	// Actual implementation
 	PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const Buffer& data) : PKCS12KeyImpl(data, Buffer()) {}
 
 	PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const Buffer& data, const Buffer& password)
 	{
-		OpenSSL_add_all_algorithms();
-		OpenSSL_add_all_ciphers();
-		OpenSSL_add_all_digests();
+		InitializeOpenSSL();
 
 		BIO* bio = BIO_new_mem_buf((void*)data.data(), data.size());
 		p12 = d2i_PKCS12_bio(bio, nullptr);
 		if (nullptr == p12)
-			throw GeneralException("Could not parse PKCS#12");
+			throw GeneralException("Could not parse der structure PKCS#12");
 
-		auto asafes = PKCS12_unpack_authsafes(p12);
-
-		STACK_OF(PKCS12_SAFEBAG) *bags = nullptr;
-		for (int i = 0; i < sk_PKCS7_num(asafes); i++) {
-			auto p7 = sk_PKCS7_value(asafes, i);
-			auto bagnid = OBJ_obj2nid(p7->type);
-			if (bagnid == NID_pkcs7_data) {
-				bags = PKCS12_unpack_p7data(p7);
-			}
-			else if (bagnid == NID_pkcs7_encrypted) {
-				bool enc = PKCS7_type_is_encrypted(p7);
-				bags = PKCS12_unpack_p7encdata(p7, password.data(), password.size());
-				unsigned long err = ERR_get_error();
-				char *msg = ERR_error_string(err, nullptr);
-				int a = 0;
-			}
-
-			PKCS12_SAFEBAG *bag_value = sk_PKCS12_SAFEBAG_value(bags, i);
-			ProcessSafeBag(bag_value, password);
-
-			sk_PKCS12_SAFEBAG_pop_free(bags, PKCS12_SAFEBAG_free);
-			bags = nullptr;
-		}
-	}
-
-	void PKCS12Key::PKCS12KeyImpl::ProcessSafeBag(PKCS12_SAFEBAG* bag, const Buffer& password)
-	{
-		auto nid = M_PKCS12_bag_type(bag);
-
-		if (NID_keyBag == nid) {
-			auto p8 = bag->value.keybag;
-			key = EVP_PKCS82PKEY(p8);
-		}
-
-		if (NID_certBag == nid) {
-
-			//if (PKCS12_SAFEBAG_get0_attr(bag, NID_localKeyID)) {
-			//}
-			if (M_PKCS12_cert_bag_type(bag) != NID_x509Certificate) return;
-			cert = PKCS12_certbag2x509(bag);
-		}
-
-		if (NID_pkcs8ShroudedKeyBag == nid) {
-			auto p8 = PKCS12_decrypt_skey(bag, password.data(), password.size());
-			key = EVP_PKCS82PKEY(p8);
-		}
-
-		if (NID_safeContentsBag == nid) {
-			// TODO
-		}
+		STACK_OF(X509) *additional_certs = NULL;
+		int parsed = PKCS12_parse(p12, password.data(), &key, &cert, &additional_certs);
+		if (1 != parsed) throw GeneralException("Could not parse PKCS#12");
 	}
 
 	BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) const
@@ -132,13 +90,17 @@ namespace gotchangpdf
 
 		BufferPtr output(outlen);
 		EVP_PKEY_decrypt(ctx, (unsigned char *)output->data(), &outlen, (unsigned char *)data.data(), data.size());
+
+		if (output->size() != outlen)
+			output->resize(outlen);
+
 		return output;
 	}
 
 	bool PKCS12Key::PKCS12KeyImpl::Equals(const Buffer& issuer, const Buffer& serial) const
 	{
 		auto issuer_name = cert->cert_info->issuer;
-		auto serial_asn = cert->cert_info->serialNumber;
+		ASN1_INTEGER* serial_asn = cert->cert_info->serialNumber;
 
 		Buffer m_issuer(issuer_name->bytes->data, issuer_name->bytes->length);
 		Buffer m_serial(serial_asn->data, serial_asn->length);
