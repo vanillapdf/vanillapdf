@@ -21,7 +21,9 @@ namespace gotchangpdf
 	private:
 		PKCS12 *p12 = nullptr;
 		EVP_PKEY *key = nullptr;
+		EVP_PKEY_CTX *ctx = nullptr;
 		X509 *cert = nullptr;
+		ENGINE *rsa = nullptr;
 	};
 
 	#pragma region Forwards
@@ -54,6 +56,7 @@ namespace gotchangpdf
 		if (initialized) return;
 
 		std::lock_guard<std::mutex> lock(openssl_lock);
+		if (initialized) return;
 
 		OpenSSL_add_all_algorithms();
 		OpenSSL_add_all_ciphers();
@@ -71,20 +74,20 @@ namespace gotchangpdf
 
 		BIO* bio = BIO_new_mem_buf((void*)data.data(), data.size());
 		p12 = d2i_PKCS12_bio(bio, nullptr);
-		if (nullptr == p12)
-			throw GeneralException("Could not parse der structure PKCS#12");
+		if (nullptr == p12) throw GeneralException("Could not parse der structure PKCS#12");
 
 		STACK_OF(X509) *additional_certs = NULL;
 		int parsed = PKCS12_parse(p12, password.data(), &key, &cert, &additional_certs);
 		if (1 != parsed) throw GeneralException("Could not parse PKCS#12");
+
+		rsa = ENGINE_get_default_RSA();
+		ctx = EVP_PKEY_CTX_new(key, rsa);
+		int initialized = EVP_PKEY_decrypt_init(ctx);
+		if (1 != initialized) throw GeneralException("Could not initialize encryption engine");
 	}
 
 	BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) const
 	{
-		ENGINE *rsa = ENGINE_get_default_RSA();
-		EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new(key, rsa);
-		EVP_PKEY_decrypt_init(ctx);
-
 		size_t outlen = 0;
 		EVP_PKEY_decrypt(ctx, nullptr, &outlen, (unsigned char *)data.data(), data.size());
 
@@ -123,6 +126,16 @@ namespace gotchangpdf
 		if (nullptr != cert) {
 			X509_free(cert);
 			cert = nullptr;
+		}
+
+		if (nullptr != ctx) {
+			EVP_PKEY_CTX_free(ctx);
+			ctx = nullptr;
+		}
+
+		if (nullptr != rsa) {
+			ENGINE_free(rsa);
+			rsa = nullptr;
 		}
 	}
 }
