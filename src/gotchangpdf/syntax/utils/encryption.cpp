@@ -186,14 +186,14 @@ namespace gotchangpdf
 				}
 
 				Buffer encrypted_recipient_key(pkcs7_recipient->enc_key->data, pkcs7_recipient->enc_key->length);
-				BufferPtr decrypted_recipient_key = key.Decrypt(encrypted_recipient_key);
+				Buffer decrypted_recipient_key = key.Decrypt(encrypted_recipient_key);
 
 				EVP_CIPHER_CTX *evp_ctx = NULL;
 				const EVP_CIPHER *evp_cipher = EVP_get_cipherbyobj(envelope->enc_data->algorithm->algorithm);
 				BIO* etmp = BIO_new(BIO_f_cipher());
-				BIO_get_cipher_ctx(etmp, &evp_ctx);
-				EVP_CipherInit_ex(evp_ctx, evp_cipher, NULL, NULL, NULL, 0);
-				EVP_CIPHER_asn1_to_param(evp_ctx, envelope->enc_data->algorithm->parameter);
+				int rv1 = BIO_get_cipher_ctx(etmp, &evp_ctx);
+				int rv2 = EVP_CipherInit_ex(evp_ctx, evp_cipher, NULL, NULL, NULL, 0);
+				int rv3 = EVP_CIPHER_asn1_to_param(evp_ctx, envelope->enc_data->algorithm->parameter);
 
 				//if (decrypted_recipient_key->size() != EVP_CIPHER_CTX_key_length(evp_ctx)) {
 				//	/*
@@ -204,11 +204,20 @@ namespace gotchangpdf
 				//	EVP_CIPHER_CTX_set_key_length(evp_ctx, decrypted_recipient_key->size());
 				//}
 
-				EVP_CipherInit_ex(evp_ctx, NULL, NULL, (unsigned char *)decrypted_recipient_key->data(), NULL, 0);
+				int rv4 = EVP_CipherInit_ex(evp_ctx, NULL, NULL, (unsigned char *)decrypted_recipient_key.data(), NULL, 0);
 
-				BUF_MEM *bptr;
-				BIO_get_mem_ptr(etmp, &bptr);
-				return BufferPtr(bptr->data, bptr->length);
+				auto out = BIO_new_mem_buf(envelope->enc_data->enc_data->data, envelope->enc_data->enc_data->length);
+				BIO_push(etmp, out);
+
+				BufferPtr decrypted_key;
+				Buffer copy_buffer(constant::BUFFER_SIZE);
+				for (;;) {
+					int result = BIO_read(etmp, copy_buffer.data(), copy_buffer.size());
+					if (result <= 0) break;
+					decrypted_key->insert(decrypted_key.end(), copy_buffer.begin(), copy_buffer.begin() + result);
+				}
+
+				return decrypted_key;
 			}
 		}
 
