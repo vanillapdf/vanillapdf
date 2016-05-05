@@ -155,14 +155,36 @@ namespace gotchangpdf
 		return false;
 	}
 
-	BufferPtr EncryptionUtils::DecryptRecipientKey(const syntax::ArrayObject<syntax::StringObjectPtr>& recipients, const IEncryptionKey& key)
+	BufferPtr EncryptionUtils::GetRecipientKey(const syntax::ArrayObject<syntax::StringObjectPtr>& enveloped_data, const syntax::IntegerObject& length_bits, const IEncryptionKey& key)
 	{
-		Buffer decrypted_data;
-		auto length = recipients.Size();
-		for (decltype(length) i = 0; i < length; ++i) {
-			auto recipient_bytes = recipients.At(i);
+		auto decrypted_data = EncryptionUtils::DecryptEnvelopedData(enveloped_data, key);
 
-			BIO* bio = BIO_new_mem_buf(recipient_bytes->Value()->data(), recipient_bytes->Value()->size());
+		Buffer decrypted_key(SHA_DIGEST_LENGTH);
+
+		SHA_CTX ctx;
+		SHA1_Init(&ctx);
+		SHA1_Update(&ctx, decrypted_data->data(), 20);
+
+		auto length = enveloped_data.Size();
+		for (decltype(length) i = 0; i < length; ++i) {
+			auto enveloped_bytes = enveloped_data.At(i);
+			SHA1_Update(&ctx, enveloped_bytes->Value()->data(), enveloped_bytes->Value()->size());
+		}
+
+		SHA1_Final((unsigned char*)decrypted_key.data(), &ctx);
+
+		auto length_bytes = SafeConvert<size_t>(length_bits.Value() / 8);
+		size_t decryption_key_length = std::min(length_bytes, decrypted_key.size());
+		return BufferPtr(decrypted_key.begin(), decrypted_key.begin() + decryption_key_length);
+	}
+
+	BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax::StringObjectPtr>& enveloped_data, const IEncryptionKey& key)
+	{
+		auto length = enveloped_data.Size();
+		for (decltype(length) i = 0; i < length; ++i) {
+			auto enveloped_bytes = enveloped_data.At(i);
+
+			BIO* bio = BIO_new_mem_buf(enveloped_bytes->Value()->data(), enveloped_bytes->Value()->size());
 			PKCS7* p7 = d2i_PKCS7_bio(bio, nullptr);
 
 			assert(PKCS7_type_is_enveloped(p7) && "PKCS#7 container is enveloped");
@@ -209,15 +231,15 @@ namespace gotchangpdf
 				auto out = BIO_new_mem_buf(envelope->enc_data->enc_data->data, envelope->enc_data->enc_data->length);
 				BIO_push(etmp, out);
 
-				BufferPtr decrypted_key;
+				BufferPtr decrypted_data;
 				Buffer copy_buffer(constant::BUFFER_SIZE);
 				for (;;) {
 					int result = BIO_read(etmp, copy_buffer.data(), copy_buffer.size());
 					if (result <= 0) break;
-					decrypted_key->insert(decrypted_key.end(), copy_buffer.begin(), copy_buffer.begin() + result);
+					decrypted_data->insert(decrypted_data.end(), copy_buffer.begin(), copy_buffer.begin() + result);
 				}
 
-				return decrypted_key;
+				return decrypted_data;
 			}
 		}
 

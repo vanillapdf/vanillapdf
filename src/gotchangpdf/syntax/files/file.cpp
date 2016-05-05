@@ -108,6 +108,12 @@ namespace gotchangpdf
 			auto sub_filter = dict->FindAs<NameObjectPtr>(constant::Name::SubFilter);
 			auto recipients = dict->FindAs<ArrayObjectPtr<StringObjectPtr>>(constant::Name::Recipients);
 
+			IntegerObjectPtr length_bits = 40;
+			if (dict->Contains(constant::Name::Length)) {
+				length_bits = dict->FindAs<IntegerObjectPtr>(constant::Name::Length);
+				assert(length_bits->Value() % 8 == 0 && "Key length is not multiplier of 8");
+			}
+
 			int standard = 0;
 			if (sub_filter == constant::Name::AdbePkcs7s3) {
 				standard = 3;
@@ -121,22 +127,7 @@ namespace gotchangpdf
 				standard = 5;
 			}
 
-			auto enveloped_data = EncryptionUtils::DecryptRecipientKey(recipients, key);
-
-			BufferPtr decrypted_key(SHA_DIGEST_LENGTH);
-
-			SHA_CTX ctx;
-			SHA_Init(&ctx);
-			SHA_Update(&ctx, enveloped_data->data(), 20);
-
-			auto length = recipients->Size();
-			for (decltype(length) i = 0; i < length; ++i) {
-				auto recipient = recipients->At(i);
-				SHA_Update(&ctx, recipient->Value()->data(), recipient->Value()->size());
-			}
-
-			SHA_Final((unsigned char*)decrypted_key->data(), &ctx);
-			_decryption_key = decrypted_key;
+			_decryption_key = EncryptionUtils::GetRecipientKey(recipients, length_bits, key);
 		}
 
 		void File::SetEncryptionPassword(const std::string& password)
