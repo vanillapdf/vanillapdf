@@ -62,21 +62,33 @@ namespace gotchangpdf
 		return AESDecrypt(key, key.size(), data);
 	}
 
+	BufferPtr EncryptionUtils::RemoveAESPadding(const Buffer& data)
+	{
+		int bytes = data[data.size() - 1];
+		if (bytes < 0)
+			throw syntax::ConversionExceptionFactory<size_t>::Construct(bytes);
+
+		size_t converted = static_cast<size_t>(bytes);
+		assert(data.size() >= converted);
+		return BufferPtr(data.begin(), data.end() - converted);
+	}
+
 	BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, int key_length, const Buffer& data)
 	{
-		assert(data.size() >= static_cast<size_t>(key_length));
-		if (data.size() < static_cast<size_t>(key_length)) {
+		const int IV_LENGTH = 16;
+		assert(data.size() >= static_cast<size_t>(IV_LENGTH));
+		if (data.size() < static_cast<size_t>(IV_LENGTH)) {
 			throw GeneralException("Cannot find IV for encrypted data");
 		}
 
-		Buffer iv(data.begin(), data.begin() + key_length);
-		BufferPtr result(data.size() - key_length);
+		Buffer iv(data.begin(), data.begin() + IV_LENGTH);
+		BufferPtr result(data.size() - IV_LENGTH);
 
 		AES_KEY dec_key;
 		AES_set_decrypt_key((unsigned char*)key.data(), key_length * 8, &dec_key);
-		AES_cbc_encrypt((unsigned char*)data.data() + key_length, (unsigned char*)result->data(), data.size() - key_length, &dec_key, (unsigned char*)iv.data(), AES_DECRYPT);
+		AES_cbc_encrypt((unsigned char*)data.data() + IV_LENGTH, (unsigned char*)result->data(), data.size() - IV_LENGTH, &dec_key, (unsigned char*)iv.data(), AES_DECRYPT);
 
-		return result;
+		return RemoveAESPadding(result);
 	}
 
 	bool EncryptionUtils::CheckKey(
