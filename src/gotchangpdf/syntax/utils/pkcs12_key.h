@@ -10,6 +10,8 @@ namespace gotchangpdf
 	{
 	public:
 		explicit PKCS12Key(const Buffer& data);
+		explicit PKCS12Key(const std::string& path);
+		PKCS12Key(const std::string& path, const Buffer& password);
 		PKCS12Key(const Buffer& data, const Buffer& password);
 		BufferPtr Decrypt(const Buffer& data) const override;
 		bool Equals(const Buffer& issuer, const Buffer& serial) const override;

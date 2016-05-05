@@ -14,7 +14,6 @@
 #include <iomanip>
 
 #include <openssl/md5.h>
-#include <openssl/sha.h>
 
 namespace gotchangpdf
 {
@@ -294,6 +293,9 @@ namespace gotchangpdf
 			if (_decryption_key.empty()) {
 				// Encrypted documents shall be opened with default empty password
 				SetEncryptionPassword("");
+
+				//PKCS12Key key = PKCS12Key("C:\\Users\\Gotcha\\Documents\\it2u\\cert\\TestUser4.pfx", Buffer("a"));
+				//SetEncryptionKey(key);
 			}
 
 			BufferPtr object_key(MD5_DIGEST_LENGTH);

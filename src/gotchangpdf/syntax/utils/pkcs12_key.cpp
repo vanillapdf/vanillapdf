@@ -1,6 +1,8 @@
 #include "precompiled.h"
 #include "pkcs12_key.h"
 
+#include <fstream>
+
 #include <openssl/pkcs12.h>
 #include <openssl/evp.h>
 #include <openssl/engine.h>
@@ -12,6 +14,8 @@ namespace gotchangpdf
 	{
 	public:
 		explicit PKCS12KeyImpl(const Buffer& data);
+		explicit PKCS12KeyImpl(const std::string& path);
+		PKCS12KeyImpl(const std::string& path, const Buffer& password);
 		PKCS12KeyImpl(const Buffer& data, const Buffer& password);
 		BufferPtr Decrypt(const Buffer& data) const;
 		bool Equals(const Buffer& issuer, const Buffer& serial) const;
@@ -24,6 +28,8 @@ namespace gotchangpdf
 		EVP_PKEY_CTX *ctx = nullptr;
 		X509 *cert = nullptr;
 		ENGINE *rsa = nullptr;
+
+		void Initialize(const Buffer& data, const Buffer& password);
 	};
 
 	#pragma region Forwards
@@ -31,6 +37,16 @@ namespace gotchangpdf
 	PKCS12Key::PKCS12Key(const Buffer& data)
 	{
 		m_impl = std::make_unique<PKCS12KeyImpl>(data);
+	}
+
+	PKCS12Key::PKCS12Key(const std::string& path)
+	{
+		m_impl = std::make_unique<PKCS12KeyImpl>(path);
+	}
+
+	PKCS12Key::PKCS12Key(const std::string& path, const Buffer& password)
+	{
+		m_impl = std::make_unique<PKCS12KeyImpl>(path, password);
 	}
 
 	PKCS12Key::PKCS12Key(const Buffer& data, const Buffer& password)
@@ -66,9 +82,33 @@ namespace gotchangpdf
 	}
 
 	// Actual implementation
+	PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const std::string& path) : PKCS12KeyImpl(path, Buffer()) {}
+	PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const std::string& path, const Buffer& password)
+	{
+		std::ifstream file(path, std::ios::in | std::ios::binary);
+		SCOPE_GUARD_CAPTURE_REFERENCES(file.close());
+
+		Buffer data;
+		char input[constant::BUFFER_SIZE];
+
+		while (!file.eof())
+		{
+			file.read(input, constant::BUFFER_SIZE);
+			auto read = file.gcount();
+			data.insert(data.end(), input, input + read);
+		}
+
+		Initialize(data, password);
+	}
+
 	PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const Buffer& data) : PKCS12KeyImpl(data, Buffer()) {}
 
 	PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const Buffer& data, const Buffer& password)
+	{
+		Initialize(data, password);
+	}
+
+	void PKCS12Key::PKCS12KeyImpl::Initialize(const Buffer& data, const Buffer& password)
 	{
 		InitializeOpenSSL();
 
