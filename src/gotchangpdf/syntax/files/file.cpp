@@ -145,7 +145,11 @@ namespace gotchangpdf
 
 					if (method == constant::Name::AESV3) {
 						algorithm = EncryptionAlgorithm::AES;
-						length_bits = 256;
+
+						if (crypt_filter->Contains(constant::Name::Length)) {
+							length_bits = crypt_filter->FindAs<IntegerObjectPtr>(constant::Name::Length);
+							assert(length_bits->Value() % 8 == 0 && "Key length is not multiplier of 8");
+						}
 					}
 
 					if (method == constant::Name::None) {
@@ -234,7 +238,7 @@ namespace gotchangpdf
 			auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
 			auto version = encryption_dictionary->FindAs<IntegerObjectPtr>(constant::Name::V);
 
-			if (version == 4) {
+			if (version == 4 || version == 5) {
 				auto filter_name = encryption_dictionary->FindAs<NameObjectPtr>(constant::Name::StmF);
 				return DecryptData(data, objNumber, genNumber, filter_name);
 			}
@@ -253,7 +257,7 @@ namespace gotchangpdf
 			auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
 			auto version = encryption_dictionary->FindAs<IntegerObjectPtr>(constant::Name::V);
 
-			if (version == 4) {
+			if (version == 4 || version == 5) {
 				auto filter_name = encryption_dictionary->FindAs<NameObjectPtr>(constant::Name::StrF);
 				return DecryptData(data, objNumber, genNumber, filter_name);
 			}
@@ -275,14 +279,14 @@ namespace gotchangpdf
 
 			do
 			{
-				if (version != 4)
+				if (version != 4 && version != 5)
 					break;
 
 				if (!encryption_dictionary->Contains(constant::Name::CF))
 					break;
 
 				auto crypt_filter_dictionary = encryption_dictionary->FindAs<DictionaryObjectPtr>(constant::Name::CF);
-				if (!crypt_filter_dictionary->Contains(constant::Name::StdCF))
+				if (!crypt_filter_dictionary->Contains(filter_name))
 					break;
 
 				auto crypt_filter = crypt_filter_dictionary->FindAs<DictionaryObjectPtr>(filter_name);
@@ -290,7 +294,7 @@ namespace gotchangpdf
 					break;
 
 				auto method = crypt_filter->FindAs<NameObjectPtr>(constant::Name::CFM);
-				if (method == constant::Name::AESV2) {
+				if (method == constant::Name::AESV2 || method == constant::Name::AESV3) {
 					return DecryptData(data, objNumber, genNumber, EncryptionAlgorithm::AES);
 				}
 
