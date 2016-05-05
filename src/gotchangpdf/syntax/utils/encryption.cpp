@@ -167,23 +167,43 @@ namespace gotchangpdf
 		return false;
 	}
 
-	BufferPtr EncryptionUtils::GetRecipientKey(const syntax::ArrayObject<syntax::StringObjectPtr>& enveloped_data, const syntax::IntegerObject& length_bits, const IEncryptionKey& key)
+	BufferPtr EncryptionUtils::GetRecipientKey
+		(const syntax::ArrayObject<syntax::StringObjectPtr>& enveloped_data,
+			const syntax::IntegerObject& length_bits,
+			EncryptionAlgorithm algorithm,
+			const IEncryptionKey& key)
 	{
 		auto decrypted_data = EncryptionUtils::DecryptEnvelopedData(enveloped_data, key);
 
-		Buffer decrypted_key(SHA_DIGEST_LENGTH);
+		Buffer decrypted_key;
+		if (length_bits == 256 && algorithm == EncryptionAlgorithm::AES) {
+			decrypted_key.resize(SHA256_DIGEST_LENGTH);
+			SHA256_CTX ctx;
+			SHA256_Init(&ctx);
+			SHA256_Update(&ctx, decrypted_data->data(), 20);
 
-		SHA_CTX ctx;
-		SHA1_Init(&ctx);
-		SHA1_Update(&ctx, decrypted_data->data(), 20);
+			auto length = enveloped_data.Size();
+			for (decltype(length) i = 0; i < length; ++i) {
+				auto enveloped_bytes = enveloped_data.At(i);
+				SHA256_Update(&ctx, enveloped_bytes->Value()->data(), enveloped_bytes->Value()->size());
+			}
 
-		auto length = enveloped_data.Size();
-		for (decltype(length) i = 0; i < length; ++i) {
-			auto enveloped_bytes = enveloped_data.At(i);
-			SHA1_Update(&ctx, enveloped_bytes->Value()->data(), enveloped_bytes->Value()->size());
+			SHA256_Final((unsigned char*)decrypted_key.data(), &ctx);
 		}
+		else {
+			decrypted_key.resize(SHA_DIGEST_LENGTH);
+			SHA_CTX ctx;
+			SHA1_Init(&ctx);
+			SHA1_Update(&ctx, decrypted_data->data(), 20);
 
-		SHA1_Final((unsigned char*)decrypted_key.data(), &ctx);
+			auto length = enveloped_data.Size();
+			for (decltype(length) i = 0; i < length; ++i) {
+				auto enveloped_bytes = enveloped_data.At(i);
+				SHA1_Update(&ctx, enveloped_bytes->Value()->data(), enveloped_bytes->Value()->size());
+			}
+
+			SHA1_Final((unsigned char*)decrypted_key.data(), &ctx);
+		}
 
 		auto length_bytes = SafeConvert<size_t>(length_bits.Value() / 8);
 		size_t decryption_key_length = std::min(length_bytes, decrypted_key.size());

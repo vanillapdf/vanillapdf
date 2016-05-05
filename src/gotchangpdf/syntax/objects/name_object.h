@@ -182,6 +182,7 @@ namespace gotchangpdf
 			extern const syntax::NameObjectPtr CFM;
 			extern const syntax::NameObjectPtr V2;
 			extern const syntax::NameObjectPtr AESV2;
+			extern const syntax::NameObjectPtr AESV3;
 			extern const syntax::NameObjectPtr StdCF;
 			extern const syntax::NameObjectPtr Crypt;
 			extern const syntax::NameObjectPtr Identity;
@@ -191,6 +192,7 @@ namespace gotchangpdf
 			extern const syntax::NameObjectPtr AdbePkcs7s4;
 			extern const syntax::NameObjectPtr AdbePkcs7s5;
 			extern const syntax::NameObjectPtr Recipients;
+			extern const syntax::NameObjectPtr DefaultCryptFilter;
 		}
 	}
 }

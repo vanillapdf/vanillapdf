@@ -105,7 +105,9 @@ namespace gotchangpdf
 			auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
 			auto filter = dict->FindAs<NameObjectPtr>(constant::Name::Filter);
 			auto sub_filter = dict->FindAs<NameObjectPtr>(constant::Name::SubFilter);
-			auto recipients = dict->FindAs<ArrayObjectPtr<StringObjectPtr>>(constant::Name::Recipients);
+			EncryptionAlgorithm algorithm = EncryptionAlgorithm::None;
+
+			ArrayObjectPtr<StringObjectPtr> recipients;
 
 			IntegerObjectPtr length_bits = 40;
 			if (dict->Contains(constant::Name::Length)) {
@@ -113,20 +115,52 @@ namespace gotchangpdf
 				assert(length_bits->Value() % 8 == 0 && "Key length is not multiplier of 8");
 			}
 
-			int standard = 0;
 			if (sub_filter == constant::Name::AdbePkcs7s3) {
-				standard = 3;
+				recipients = dict->FindAs<ArrayObjectPtr<StringObjectPtr>>(constant::Name::Recipients);
 			}
 
 			if (sub_filter == constant::Name::AdbePkcs7s4) {
-				standard = 4;
+				recipients = dict->FindAs<ArrayObjectPtr<StringObjectPtr>>(constant::Name::Recipients);
 			}
 
 			if (sub_filter == constant::Name::AdbePkcs7s5) {
-				standard = 5;
+
+				do
+				{
+					if (!dict->Contains(constant::Name::CF))
+						break;
+
+					auto crypt_filter_dictionary = dict->FindAs<DictionaryObjectPtr>(constant::Name::CF);
+					if (!crypt_filter_dictionary->Contains(constant::Name::DefaultCryptFilter))
+						break;
+
+					auto crypt_filter = crypt_filter_dictionary->FindAs<DictionaryObjectPtr>(constant::Name::DefaultCryptFilter);
+					if (!crypt_filter->Contains(constant::Name::CFM))
+						break;
+
+					auto method = crypt_filter->FindAs<NameObjectPtr>(constant::Name::CFM);
+					if (method == constant::Name::AESV2) {
+						algorithm = EncryptionAlgorithm::AES;
+					}
+
+					if (method == constant::Name::AESV3) {
+						algorithm = EncryptionAlgorithm::AES;
+						length_bits = 256;
+					}
+
+					if (method == constant::Name::None) {
+						algorithm = EncryptionAlgorithm::None;
+					}
+
+					if (method == constant::Name::V2) {
+						algorithm = EncryptionAlgorithm::RC4;
+					}
+
+					recipients = crypt_filter->FindAs<ArrayObjectPtr<StringObjectPtr>>(constant::Name::Recipients);
+				} while (false);
 			}
 
-			_decryption_key = EncryptionUtils::GetRecipientKey(recipients, length_bits, key);
+			_decryption_key = EncryptionUtils::GetRecipientKey(recipients, length_bits, algorithm, key);
 		}
 
 		void File::SetEncryptionPassword(const std::string& password)
@@ -296,6 +330,8 @@ namespace gotchangpdf
 
 				//PKCS12Key key = PKCS12Key("C:\\Users\\Gotcha\\Documents\\it2u\\cert\\TestUser4.pfx", Buffer("a"));
 				//SetEncryptionKey(key);
+			if (_decryption_key->size() == 32 && alg == EncryptionAlgorithm::AES) {
+				return EncryptionUtils::AESDecrypt(_decryption_key, 32, data);
 			}
 
 			BufferPtr object_key(MD5_DIGEST_LENGTH);

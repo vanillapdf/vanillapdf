@@ -33,6 +33,7 @@ namespace gotchangpdf
 		static BufferPtr GetRecipientKey(
 			const syntax::ArrayObject<syntax::StringObjectPtr>& recipients,
 			const syntax::IntegerObject& length_bits,
+			EncryptionAlgorithm algorithm,
 			const IEncryptionKey& key);
 
 		static bool CheckKey(
