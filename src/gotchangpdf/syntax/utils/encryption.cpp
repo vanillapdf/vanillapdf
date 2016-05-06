@@ -70,6 +70,13 @@ namespace gotchangpdf
 
 		size_t converted = static_cast<size_t>(bytes);
 		assert(data.size() >= converted);
+
+		// verify PKCS#7 padding
+		// The value of each added byte is the number of bytes that are added, i.e. N bytes, each of value N are added
+		for (auto it = data.end() - converted; it != data.end(); it++) {
+			assert(*it == bytes);
+		}
+
 		return BufferPtr(data.begin(), data.end() - converted);
 	}
 
@@ -216,11 +223,23 @@ namespace gotchangpdf
 		for (decltype(length) i = 0; i < length; ++i) {
 			auto enveloped_bytes = enveloped_data.At(i);
 
-			BIO* bio = BIO_new_mem_buf(enveloped_bytes->Value()->data(), enveloped_bytes->Value()->size());
-			PKCS7* p7 = d2i_PKCS7_bio(bio, nullptr);
+			BIO* enveloped_bytes_bio = BIO_new_mem_buf(enveloped_bytes->Value()->data(), enveloped_bytes->Value()->size());
+			SCOPE_GUARD_CAPTURE_REFERENCES(BIO_free(enveloped_bytes_bio));
+			if (nullptr == enveloped_bytes_bio) {
+				LOG_ERROR_GLOBAL << "Could not create BIO structure from enveloped data";
+				continue;
+			}
 
-			assert(PKCS7_type_is_enveloped(p7) && "PKCS#7 container is enveloped");
+			PKCS7* p7 = d2i_PKCS7_bio(enveloped_bytes_bio, nullptr);
+			SCOPE_GUARD_CAPTURE_REFERENCES(PKCS7_free(p7));
+			if (nullptr == p7) {
+				LOG_ERROR_GLOBAL << "Could not parse PKCS#7 structure from enveloped data";
+				continue;
+			}
+
+			assert(PKCS7_type_is_enveloped(p7) && "PKCS#7 container is not enveloped");
 			if (!PKCS7_type_is_enveloped(p7)) {
+				LOG_ERROR_GLOBAL << "PKCS#7 container is not enveloped";
 				continue;
 			}
 
@@ -242,12 +261,31 @@ namespace gotchangpdf
 				Buffer encrypted_recipient_key(pkcs7_recipient->enc_key->data, pkcs7_recipient->enc_key->length);
 				Buffer decrypted_recipient_key = key.Decrypt(encrypted_recipient_key);
 
-				EVP_CIPHER_CTX *evp_ctx = NULL;
-				const EVP_CIPHER *evp_cipher = EVP_get_cipherbyobj(envelope->enc_data->algorithm->algorithm);
 				BIO* etmp = BIO_new(BIO_f_cipher());
-				int rv1 = BIO_get_cipher_ctx(etmp, &evp_ctx);
-				int rv2 = EVP_CipherInit_ex(evp_ctx, evp_cipher, NULL, NULL, NULL, 0);
-				int rv3 = EVP_CIPHER_asn1_to_param(evp_ctx, envelope->enc_data->algorithm->parameter);
+				SCOPE_GUARD_CAPTURE_REFERENCES(BIO_free(etmp));
+
+				const EVP_CIPHER *evp_cipher = EVP_get_cipherbyobj(envelope->enc_data->algorithm->algorithm);
+				assert(nullptr != evp_cipher && "EVP cipher is null");
+
+				int rv;
+				EVP_CIPHER_CTX *evp_ctx = nullptr;
+				rv = BIO_get_cipher_ctx(etmp, &evp_ctx);
+				if (1 != rv || nullptr == evp_ctx) {
+					LOG_ERROR_GLOBAL << "Could not obtain cipher context";
+					continue;
+				}
+
+				rv = EVP_CipherInit_ex(evp_ctx, evp_cipher, NULL, NULL, NULL, 0);
+				if (1 != rv) {
+					LOG_ERROR_GLOBAL << "Could not initialize cipher";
+					continue;
+				}
+
+				rv = EVP_CIPHER_asn1_to_param(evp_ctx, envelope->enc_data->algorithm->parameter);
+				if (rv <= 0) {
+					LOG_ERROR_GLOBAL << "Could not convert asn1 to parameter";
+					continue;
+				}
 
 				//if (decrypted_recipient_key->size() != EVP_CIPHER_CTX_key_length(evp_ctx)) {
 				//	/*
@@ -258,9 +296,19 @@ namespace gotchangpdf
 				//	EVP_CIPHER_CTX_set_key_length(evp_ctx, decrypted_recipient_key->size());
 				//}
 
-				int rv4 = EVP_CipherInit_ex(evp_ctx, NULL, NULL, (unsigned char *)decrypted_recipient_key.data(), NULL, 0);
+				rv = EVP_CipherInit_ex(evp_ctx, NULL, NULL, (unsigned char *)decrypted_recipient_key.data(), NULL, 0);
+				if (1 != rv) {
+					LOG_ERROR_GLOBAL << "Could not decrypt enveloped data";
+					continue;
+				}
 
 				auto out = BIO_new_mem_buf(envelope->enc_data->enc_data->data, envelope->enc_data->enc_data->length);
+				SCOPE_GUARD_CAPTURE_REFERENCES(BIO_free(out));
+				if (nullptr == out) {
+					LOG_ERROR_GLOBAL << "Could not create BIO structure for decrypted data";
+					continue;
+				}
+
 				BIO_push(etmp, out);
 
 				BufferPtr decrypted_data;

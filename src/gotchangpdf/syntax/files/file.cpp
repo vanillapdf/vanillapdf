@@ -148,7 +148,7 @@ namespace gotchangpdf
 
 						if (crypt_filter->Contains(constant::Name::Length)) {
 							length_bits = crypt_filter->FindAs<IntegerObjectPtr>(constant::Name::Length);
-							assert(length_bits->Value() % 8 == 0 && "Key length is not multiplier of 8");
+							assert(length_bits->Value() == 256 && "AESV3 length is not 256 bits");
 						}
 					}
 
@@ -205,17 +205,13 @@ namespace gotchangpdf
 			BufferPtr padPassword = EncryptionUtils::PadTruncatePassword(password);
 			BufferPtr encrypted_owner_data = EncryptionUtils::ComputeEncryptedOwnerData(padPassword, dict);
 
-			Buffer decryption_key;
-
 			// Check if entered password was owner password
-			if (EncryptionUtils::CheckKey(encrypted_owner_data, id->Value(), owner_value->Value(), user_value->Value(), permissions, revision, length_bits, decryption_key)) {
-				_decryption_key = decryption_key;
+			if (EncryptionUtils::CheckKey(encrypted_owner_data, id->Value(), owner_value->Value(), user_value->Value(), permissions, revision, length_bits, _decryption_key)) {
 				return;
 			}
 
 			// Check if entered password was user password
-			if (EncryptionUtils::CheckKey(padPassword, id->Value(), owner_value->Value(), user_value->Value(), permissions, revision, length_bits, decryption_key)) {
-				_decryption_key = decryption_key;
+			if (EncryptionUtils::CheckKey(padPassword, id->Value(), owner_value->Value(), user_value->Value(), permissions, revision, length_bits, _decryption_key)) {
 				return;
 			}
 
