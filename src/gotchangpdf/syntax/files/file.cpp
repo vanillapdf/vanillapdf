@@ -306,7 +306,7 @@ namespace gotchangpdf
 				}
 			} while (false);
 
-			return DecryptData(data, objNumber, genNumber, EncryptionAlgorithm::RC4);
+			return DecryptData(data, objNumber, genNumber, algorithm);
 		}
 
 		BufferPtr File::DecryptData(const Buffer& data,
