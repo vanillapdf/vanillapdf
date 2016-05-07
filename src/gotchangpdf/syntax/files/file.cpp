@@ -13,7 +13,6 @@
 
 #include <iomanip>
 
-#include <openssl/md5.h>
 
 namespace gotchangpdf
 {
@@ -312,27 +311,7 @@ namespace gotchangpdf
 				return EncryptionUtils::AESDecrypt(_decryption_key, 32, data);
 			}
 
-			BufferPtr object_key(MD5_DIGEST_LENGTH);
-
-			uint8_t object_info[5];
-			object_info[0] = objNumber & 0xFF;
-			object_info[1] = (objNumber >> 8) & 0xFF;
-			object_info[2] = (objNumber >> 16) & 0xFF;
-			object_info[3] = (genNumber) & 0xFF;
-			object_info[4] = (genNumber >> 8) & 0xFF;
-
-			MD5_CTX ctx;
-			MD5_Init(&ctx);
-			MD5_Update(&ctx, _decryption_key->data(), _decryption_key->size());
-			MD5_Update(&ctx, object_info, sizeof(object_info));
-
-			if (alg == EncryptionAlgorithm::AES) {
-				MD5_Update(&ctx, &AES_ADDITIONAL_SALT[0], AES_ADDITIONAL_SALT_LENGTH);
-			}
-
-			MD5_Final((unsigned char*)object_key->data(), &ctx);
-
-			auto key_length = std::min(_decryption_key->size() + 5, 16u);
+			BufferPtr object_key = EncryptionUtils::ComputeObjectKey(_decryption_key, objNumber, genNumber, alg);
 
 			switch (alg)
 			{
@@ -341,9 +320,9 @@ namespace gotchangpdf
 				// The application shall not decrypt data but shall direct the input stream to the security handler for decryption.
 				// No clue
 			case EncryptionAlgorithm::RC4:
-				return EncryptionUtils::ComputeRC4(object_key, key_length, data);
+				return EncryptionUtils::ComputeRC4(object_key, data);
 			case EncryptionAlgorithm::AES:
-				return EncryptionUtils::AESDecrypt(object_key, key_length, data);
+				return EncryptionUtils::AESDecrypt(object_key, data);
 			}
 		}
 
@@ -422,27 +401,7 @@ namespace gotchangpdf
 				return EncryptionUtils::AESEncrypt(_decryption_key, 32, data);
 			}
 
-			BufferPtr object_key(MD5_DIGEST_LENGTH);
-
-			uint8_t object_info[5];
-			object_info[0] = objNumber & 0xFF;
-			object_info[1] = (objNumber >> 8) & 0xFF;
-			object_info[2] = (objNumber >> 16) & 0xFF;
-			object_info[3] = (genNumber)& 0xFF;
-			object_info[4] = (genNumber >> 8) & 0xFF;
-
-			MD5_CTX ctx;
-			MD5_Init(&ctx);
-			MD5_Update(&ctx, _decryption_key->data(), _decryption_key->size());
-			MD5_Update(&ctx, object_info, sizeof(object_info));
-
-			if (alg == EncryptionAlgorithm::AES) {
-				MD5_Update(&ctx, &AES_ADDITIONAL_SALT[0], AES_ADDITIONAL_SALT_LENGTH);
-			}
-
-			MD5_Final((unsigned char*)object_key->data(), &ctx);
-
-			auto key_length = std::min(_decryption_key->size() + 5, 16u);
+			BufferPtr object_key = EncryptionUtils::ComputeObjectKey(_decryption_key, objNumber, genNumber, alg);
 
 			switch (alg)
 			{
@@ -451,9 +410,9 @@ namespace gotchangpdf
 				// The application shall not decrypt data but shall direct the input stream to the security handler for decryption.
 				// No clue
 			case EncryptionAlgorithm::RC4:
-				return EncryptionUtils::ComputeRC4(object_key, key_length, data);
+				return EncryptionUtils::ComputeRC4(object_key, data);
 			case EncryptionAlgorithm::AES:
-				return EncryptionUtils::AESEncrypt(object_key, key_length, data);
+				return EncryptionUtils::AESEncrypt(object_key, data);
 			}
 		}
 

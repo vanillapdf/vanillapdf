@@ -20,6 +20,12 @@ namespace gotchangpdf
 	class EncryptionUtils
 	{
 	public:
+		static BufferPtr ComputeObjectKey(
+			const Buffer& key,
+			types::big_uint objNumber,
+			types::ushort genNumber,
+			EncryptionAlgorithm alg);
+
 		static BufferPtr PadTruncatePassword(const Buffer& password);
 		static BufferPtr ComputeRC4(const Buffer& key, const Buffer& data);
 		static BufferPtr ComputeRC4(const Buffer& key, int key_length, const Buffer& data);

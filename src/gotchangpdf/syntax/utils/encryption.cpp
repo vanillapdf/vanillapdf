@@ -43,6 +43,36 @@ namespace gotchangpdf
 	const size_t AES_CBC_IV_LENGTH = 16;
 	const size_t AES_CBC_BLOCK_SIZE = 16;
 
+	BufferPtr EncryptionUtils::ComputeObjectKey(
+		const Buffer& key,
+		types::big_uint objNumber,
+		types::ushort genNumber,
+		EncryptionAlgorithm alg)
+	{
+		Buffer object_key(MD5_DIGEST_LENGTH);
+
+		uint8_t object_info[5];
+		object_info[0] = objNumber & 0xFF;
+		object_info[1] = (objNumber >> 8) & 0xFF;
+		object_info[2] = (objNumber >> 16) & 0xFF;
+		object_info[3] = (genNumber)& 0xFF;
+		object_info[4] = (genNumber >> 8) & 0xFF;
+
+		MD5_CTX ctx;
+		MD5_Init(&ctx);
+		MD5_Update(&ctx, key.data(), key.size());
+		MD5_Update(&ctx, object_info, sizeof(object_info));
+
+		if (alg == EncryptionAlgorithm::AES) {
+			MD5_Update(&ctx, &AES_ADDITIONAL_SALT[0], AES_ADDITIONAL_SALT_LENGTH);
+		}
+
+		MD5_Final((unsigned char*)object_key.data(), &ctx);
+
+		auto key_length = std::min(key.size() + 5, 16u);
+		return BufferPtr(object_key.begin(), object_key.begin() + key_length);
+	}
+
 	BufferPtr EncryptionUtils::PadTruncatePassword(const Buffer& password)
 	{
 		BufferPtr result(sizeof(HARDCODED_PFD_PAD));
