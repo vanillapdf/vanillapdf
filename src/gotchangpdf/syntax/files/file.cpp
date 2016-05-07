@@ -100,7 +100,7 @@ namespace gotchangpdf
 			//SaveAs(dest);
 		}
 
-		void File::SetEncryptionKey(const IEncryptionKey& key)
+		bool File::SetEncryptionKey(const IEncryptionKey& key)
 		{
 			auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
 			auto filter = dict->FindAs<NameObjectPtr>(constant::Name::Filter);
@@ -164,19 +164,26 @@ namespace gotchangpdf
 				} while (false);
 			}
 
-			_decryption_key = EncryptionUtils::GetRecipientKey(recipients, length_bits, algorithm, key);
+			try
+			{
+				_decryption_key = EncryptionUtils::GetRecipientKey(recipients, length_bits, algorithm, key);
+				return true;
+			}
+			catch (...) {
+				return false;
+			}
 		}
 
-		void File::SetEncryptionPassword(const std::string& password)
+		bool File::SetEncryptionPassword(const std::string& password)
 		{
 			Buffer buffer(password.begin(), password.end());
-			SetEncryptionPassword(buffer);
+			return SetEncryptionPassword(buffer);
 		}
 
-		void File::SetEncryptionPassword(const Buffer& password)
+		bool File::SetEncryptionPassword(const Buffer& password)
 		{
 			if (!IsEncrypted()) {
-				return;
+				return false;
 			}
 
 			auto ids = _xref->Begin()->Value()->GetTrailerDictionary()->FindAs<ArrayObjectPtr<StringObjectPtr>>(constant::Name::ID);
@@ -186,7 +193,7 @@ namespace gotchangpdf
 			auto filter = dict->FindAs<NameObjectPtr>(constant::Name::Filter);
 
 			if (filter != constant::Name::Standard) {
-				return;
+				return false;
 			}
 
 			auto user_value = dict->FindAs<StringObjectPtr>(constant::Name::U);
@@ -207,15 +214,15 @@ namespace gotchangpdf
 
 			// Check if entered password was owner password
 			if (EncryptionUtils::CheckKey(encrypted_owner_data, id->Value(), owner_value->Value(), user_value->Value(), permissions, revision, length_bits, _decryption_key)) {
-				return;
+				return true;
 			}
 
 			// Check if entered password was user password
 			if (EncryptionUtils::CheckKey(padPassword, id->Value(), owner_value->Value(), user_value->Value(), permissions, revision, length_bits, _decryption_key)) {
-				return;
+				return true;
 			}
 
-			throw GeneralException("Bad password entered");
+			return false;
 		}
 
 		bool File::IsEncrypted(void) const
@@ -272,34 +279,30 @@ namespace gotchangpdf
 
 			auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
 			auto version = encryption_dictionary->FindAs<IntegerObjectPtr>(constant::Name::V);
+			EncryptionAlgorithm algorithm = EncryptionAlgorithm::RC4;
 
 			do
 			{
-				if (version != 4 && version != 5)
-					break;
-
-				if (!encryption_dictionary->Contains(constant::Name::CF))
-					break;
+				if (version != 4 && version != 5) break;
+				if (!encryption_dictionary->Contains(constant::Name::CF)) break;
 
 				auto crypt_filter_dictionary = encryption_dictionary->FindAs<DictionaryObjectPtr>(constant::Name::CF);
-				if (!crypt_filter_dictionary->Contains(filter_name))
-					break;
+				if (!crypt_filter_dictionary->Contains(filter_name)) break;
 
 				auto crypt_filter = crypt_filter_dictionary->FindAs<DictionaryObjectPtr>(filter_name);
-				if (!crypt_filter->Contains(constant::Name::CFM))
-					break;
+				if (!crypt_filter->Contains(constant::Name::CFM)) break;
 
 				auto method = crypt_filter->FindAs<NameObjectPtr>(constant::Name::CFM);
 				if (method == constant::Name::AESV2 || method == constant::Name::AESV3) {
-					return DecryptData(data, objNumber, genNumber, EncryptionAlgorithm::AES);
+					algorithm = EncryptionAlgorithm::AES;
 				}
 
 				if (method == constant::Name::None) {
-					return DecryptData(data, objNumber, genNumber, EncryptionAlgorithm::None);
+					algorithm = EncryptionAlgorithm::None;
 				}
 
 				if (method == constant::Name::V2) {
-					return DecryptData(data, objNumber, genNumber, EncryptionAlgorithm::RC4);
+					algorithm = EncryptionAlgorithm::RC4;
 				}
 			} while (false);
 
@@ -330,6 +333,9 @@ namespace gotchangpdf
 
 				//PKCS12Key key = PKCS12Key("C:\\Users\\Gotcha\\Documents\\it2u\\cert\\TestUser4.pfx", Buffer("a"));
 				//SetEncryptionKey(key);
+
+			// AES 256 bits behaves differently
+			// It was not part of the core specification, but it was added in extension
 			if (_decryption_key->size() == 32 && alg == EncryptionAlgorithm::AES) {
 				return EncryptionUtils::AESDecrypt(_decryption_key, 32, data);
 			}
@@ -373,8 +379,9 @@ namespace gotchangpdf
 			types::big_uint objNumber,
 			types::ushort genNumber) const
 		{
-			if (!IsEncrypted())
+			if (!IsEncrypted()) {
 				return data;
+			}
 
 			// do work
 			return data;
