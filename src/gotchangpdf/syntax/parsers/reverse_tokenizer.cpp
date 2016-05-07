@@ -76,7 +76,7 @@ namespace gotchangpdf
 				result_type = Token::Type::REVERSE_EOL;
 				goto prepared;
 			default:
-				auto current = SafeConvert<unsigned char>(ch);
+				auto current = ValueConvertUtils::SafeConvert<unsigned char>(ch);
 				chars->push_back(current);
 
 				if (IsNumeric(current)) {
@@ -100,7 +100,7 @@ namespace gotchangpdf
 						break;
 					}
 
-					auto next = SafeConvert<unsigned char>(next_meta);
+					auto next = ValueConvertUtils::SafeConvert<unsigned char>(next_meta);
 					if (IsWhiteSpace(next))
 						break;
 

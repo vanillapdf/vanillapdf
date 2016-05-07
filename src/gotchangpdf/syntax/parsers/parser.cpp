@@ -64,7 +64,7 @@ namespace gotchangpdf
 				auto pos = str.rfind('.');
 				if (-1 != pos) {
 					auto precision = str.size() - pos - 1;
-					auto converted = SafeConvert<uint32_t>(precision);
+					auto converted = ValueConvertUtils::SafeConvert<uint32_t>(precision);
 					return RealObjectPtr(value, converted);
 				}
 
@@ -715,7 +715,7 @@ namespace gotchangpdf
 			unsigned char stored_whitespace = 0;
 			for (;;) {
 				auto current_meta = get();
-				auto current = SafeConvert<unsigned char>(current_meta);
+				auto current = ValueConvertUtils::SafeConvert<unsigned char>(current_meta);
 
 				if (stage == 0 && IsWhiteSpace(current)) {
 					stage = 1;
@@ -1155,7 +1155,7 @@ namespace gotchangpdf
 
 				auto obj = ReadDirectObject();
 				obj->SetObjectNumber(obj_number);
-				obj->SetGenerationNumber(SafeConvert<types::ushort>(gen_number));
+				obj->SetGenerationNumber(ValueConvertUtils::SafeConvert<types::ushort>(gen_number));
 				obj->SetOffset(offset_before);
 				obj->SetFile(_file);
 

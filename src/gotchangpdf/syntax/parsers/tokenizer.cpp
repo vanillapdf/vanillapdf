@@ -126,7 +126,7 @@ namespace gotchangpdf
 						break;
 					}
 
-					auto current = SafeConvert<unsigned char>(current_meta);
+					auto current = ValueConvertUtils::SafeConvert<unsigned char>(current_meta);
 					if (current == Delimiter::GREATER_THAN_SIGN) {
 						break;
 					}
@@ -153,7 +153,7 @@ namespace gotchangpdf
 						auto values = read(2);
 						auto str = values->ToString();
 						auto val = stoi(str, 0, 16);
-						auto parsed = SafeConvert<unsigned char, int>(val);
+						auto parsed = ValueConvertUtils::SafeConvert<unsigned char, int>(val);
 						char converted = reinterpret_cast<char&>(parsed);
 						chars->push_back(converted);
 						continue;
@@ -175,8 +175,8 @@ namespace gotchangpdf
 						break;
 					}
 
-					auto current = SafeConvert<unsigned char>(current_meta);
-					auto next = SafeConvert<unsigned char>(next_meta);
+					auto current = ValueConvertUtils::SafeConvert<unsigned char>(current_meta);
+					auto next = ValueConvertUtils::SafeConvert<unsigned char>(next_meta);
 
 					if (current == Delimiter::LEFT_PARENTHESIS) {
 						nested_count++;
@@ -269,7 +269,7 @@ namespace gotchangpdf
 								break;
 							}
 
-							auto numeric = SafeConvert<unsigned char>(numeric_meta);
+							auto numeric = ValueConvertUtils::SafeConvert<unsigned char>(numeric_meta);
 							if (IsNumeric(numeric) && ignore()) {
 								octal << numeric;
 							}
@@ -281,7 +281,7 @@ namespace gotchangpdf
 
 						int value = 0;
 						octal >> std::oct >> value;
-						auto converted = SafeConvert<unsigned char, int>(value);
+						auto converted = ValueConvertUtils::SafeConvert<unsigned char, int>(value);
 						char char_converted = reinterpret_cast<char&>(converted);
 						chars->push_back(char_converted);
 						continue;
@@ -299,7 +299,7 @@ namespace gotchangpdf
 					return TokenPtr(Token::Type::INDIRECT_REFERENCE_MARKER, chars);
 				}
 
-				auto current = SafeConvert<unsigned char>(ch);
+				auto current = ValueConvertUtils::SafeConvert<unsigned char>(ch);
 				bool has_dot = (current == '.');
 				if (IsNumeric(current) || (current == '+') || (current == '-') || has_dot) {
 					chars->push_back(current);
@@ -332,7 +332,7 @@ namespace gotchangpdf
 						break;
 					}
 
-					auto next = SafeConvert<unsigned char>(next_meta);
+					auto next = ValueConvertUtils::SafeConvert<unsigned char>(next_meta);
 					if (!IsRegular(next))
 						break;
 

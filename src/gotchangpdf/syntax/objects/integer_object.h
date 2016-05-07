@@ -23,7 +23,7 @@ namespace gotchangpdf
 			IntegerObject& operator= (value_type value);
 
 			template <typename T>
-			T SafeConvert(void) const { return gotchangpdf::SafeConvert<T>(_value); }
+			T SafeConvert(void) const { return ValueConvertUtils::SafeConvert<T>(_value); }
 
 			operator value_type() const _NOEXCEPT { return _value; }
 			value_type Value(void) const _NOEXCEPT { return _value; }

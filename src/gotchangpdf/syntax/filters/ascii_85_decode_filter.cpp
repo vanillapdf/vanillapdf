@@ -27,7 +27,7 @@ namespace gotchangpdf
 					throw GeneralException("Unexpected end of file inside stream");
 				}
 
-				auto ch = SafeConvert<unsigned char>(meta);
+				auto ch = ValueConvertUtils::SafeConvert<unsigned char>(meta);
 
 				// End of sequence
 				if (ch == '~' && next == '>') {

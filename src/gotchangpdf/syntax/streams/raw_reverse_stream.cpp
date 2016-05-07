@@ -62,7 +62,7 @@ namespace gotchangpdf
 
 			auto to_read = put_back ? _buffer.size() - _put_back : _buffer.size();
 			if (_offset - to_read < -_size) {
-				to_read = SafeConvert<decltype(to_read)>(_size + _offset);
+				to_read = ValueConvertUtils::SafeConvert<decltype(to_read)>(_size + _offset);
 				_offset = -_size;
 			}
 			else {
@@ -81,7 +81,7 @@ namespace gotchangpdf
 
 			if (size < to_read) {
 				_base = start - size + 1;
-				std::memmove(_base, _buffer.data(), SafeConvert<size_t>(size));
+				std::memmove(_base, _buffer.data(), ValueConvertUtils::SafeConvert<size_t>(size));
 			}
 
 			// Set buffer pointers

@@ -10,7 +10,7 @@ namespace gotchangpdf
 		{
 			assert(hex_pair.size() == 2);
 			auto val = std::stoi(hex_pair, 0, 16);
-			auto converted = SafeConvert<unsigned char, decltype(val)>(val);
+			auto converted = ValueConvertUtils::SafeConvert<unsigned char, decltype(val)>(val);
 			return reinterpret_cast<char&>(converted);
 		}
 
@@ -30,7 +30,7 @@ namespace gotchangpdf
 					throw GeneralException("Unexpected end of file inside stream");
 				}
 
-				auto ch = SafeConvert<unsigned char>(meta);
+				auto ch = ValueConvertUtils::SafeConvert<unsigned char>(meta);
 
 				// End of data marker
 				if (ch == '>')

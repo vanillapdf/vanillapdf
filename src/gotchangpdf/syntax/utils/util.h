@@ -12,20 +12,73 @@ namespace gotchangpdf
 	template<template<typename...> class X, typename T> struct instantiation_of : public std::false_type {};
 	template<template<typename...> class X, typename... Y> struct instantiation_of<X, X<Y...>> : public std::true_type {};
 
-	template <typename ValueType, typename RangeType>
-	bool IsInRange(ValueType value) _NOEXCEPT {
-		return (value >= std::numeric_limits<RangeType>::min()) &&
-			(value <= std::numeric_limits<RangeType>::max());
-	}
-
-	template <typename DestType, typename SourceType>
-	DestType SafeConvert(SourceType value)
+	class ValueConvertUtils
 	{
-		if (!IsInRange<SourceType, DestType>(value))
-			throw syntax::ConversionExceptionFactory<DestType>::Construct(value);
+	public:
+		template <typename RangeType, typename ValueType>
+		static bool IsInRange(ValueType value) { return Specializator<RangeType, ValueType>::IsInRange(value); }
 
-		return static_cast<DestType>(value);
-	}
+		template <typename RangeType, typename SourceType>
+		static RangeType SafeConvert(SourceType value)
+		{
+			if (!IsInRange<RangeType, SourceType>(value))
+				throw syntax::ConversionExceptionFactory<RangeType>::Construct(value);
+
+			return static_cast<RangeType>(value);
+		}
+
+	private:
+		template <
+			typename RangeType,
+			typename ValueType,
+			bool = (std::is_signed<ValueType>::value ^ std::is_signed<RangeType>::value)
+		>
+		class Specializator
+		{
+		public:
+			static bool IsInRange(ValueType value) noexcept
+			{
+				return (value >= std::numeric_limits<RangeType>::min()) &&
+					(value <= std::numeric_limits<RangeType>::max());
+			}
+		};
+
+		template <
+			typename RangeType,
+			typename ValueType
+		>
+		class Specializator<RangeType, ValueType, true>
+		{
+		public:
+			static bool IsInRange(ValueType value) noexcept
+			{
+				// Template shall provide only types with different singedness
+				assert(std::is_signed<ValueType>::value ^ std::is_signed<RangeType>::value);
+				if (std::is_signed<ValueType>::value) {
+					if (value < 0) {
+						return false;
+					}
+
+					using unsigned_value_type = std::make_unsigned<ValueType>::type;
+					unsigned_value_type unsigned_value = static_cast<unsigned_value_type>(value);
+					return Specializator<RangeType, unsigned_value_type>::IsInRange(unsigned_value);
+				}
+
+				if (std::is_unsigned<ValueType>::value) {
+					using unsigned_range_type = std::make_unsigned<RangeType>::type;
+					RangeType range_max = std::numeric_limits<RangeType>::max();
+
+					// This operation shall be safe
+					// Converting maximum signed value shall be in range of unsigned type of the same size
+					unsigned_range_type unsigned_range_max = static_cast<unsigned_range_type>(range_max);
+					return unsigned_range_max > value;
+				}
+
+				assert(false && "Is in range logic has some flaws");
+				return false;
+			}
+		};
+	};
 
 	template <typename BaseT>
 	class ConvertUtils

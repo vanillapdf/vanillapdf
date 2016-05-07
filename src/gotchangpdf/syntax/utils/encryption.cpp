@@ -127,7 +127,7 @@ namespace gotchangpdf
 		MD5_Update(&ctx, document_id.data(), document_id.size());
 		MD5_Final((unsigned char*)decryption_key_digest.data(), &ctx);
 
-		auto length_bytes = SafeConvert<size_t>(key_length.Value() / 8);
+		auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(key_length.Value() / 8);
 		size_t decryption_key_length = std::min(length_bytes, decryption_key_digest.size());
 
 		BufferPtr compare_data;
@@ -212,7 +212,7 @@ namespace gotchangpdf
 			SHA1_Final((unsigned char*)decrypted_key.data(), &ctx);
 		}
 
-		auto length_bytes = SafeConvert<size_t>(length_bits.Value() / 8);
+		auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(length_bits.Value() / 8);
 		size_t decryption_key_length = std::min(length_bytes, decrypted_key.size());
 		return BufferPtr(decrypted_key.begin(), decrypted_key.begin() + decryption_key_length);
 	}
@@ -349,7 +349,7 @@ namespace gotchangpdf
 			MD5_CTX ctx;
 			Buffer temporary_digest(MD5_DIGEST_LENGTH);
 
-			auto length_bytes = SafeConvert<size_t>(length_bits->Value() / 8);
+			auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(length_bits->Value() / 8);
 			size_t password_length = std::min(length_bytes, password_digest.size());
 			for (int i = 0; i < 50; ++i) {
 				MD5_Init(&ctx);

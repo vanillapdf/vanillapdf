@@ -53,7 +53,7 @@ namespace gotchangpdf
 					break;
 				}
 
-				auto converted = SafeConvert<unsigned char>(new_line);
+				auto converted = ValueConvertUtils::SafeConvert<unsigned char>(new_line);
 				result->push_back(converted);
 			}
 
