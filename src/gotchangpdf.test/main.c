@@ -14,7 +14,6 @@ int main(int argc, char *argv[])
 #endif
 
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Open(argv[1], &file));
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_file(file, 0));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenExisting(file, &document));

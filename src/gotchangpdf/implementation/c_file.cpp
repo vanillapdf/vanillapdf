@@ -86,3 +86,39 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Release(FileHandle handle)
 	holder->Release();
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_IsEncrypted(FileHandle handle, out_boolean_type result)
+{
+	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	auto file = holder->Value();
+	if (!file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
+
+	try
+	{
+		*result = file->IsEncrypted();
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SetEncryptionPassword(FileHandle handle, string_type password, integer_type length)
+{
+	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(password);
+
+	auto file = holder->Value();
+	if (!file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
+
+	try
+	{
+		std::string str(password, length);
+		bool result = file->SetEncryptionPassword(str);
+		if (true == result)
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		else
+			return GOTCHANG_PDF_ERROR_INVALID_PASSWORD;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}

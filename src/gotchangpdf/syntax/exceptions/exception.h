@@ -25,6 +25,7 @@ namespace gotchangpdf
 			FileNotInitialized,
 			ObjectMissing,
 			ParseException,
+			InvalidPassword,
 
 			// semantic
 			OptionalEntryMissing = 0x10000000,
