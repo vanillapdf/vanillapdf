@@ -11,6 +11,14 @@
 #include <openssl/objects.h>
 #include <openssl/evp.h>
 
+// For some interesting reason, openss pulls in windows.h header
+// which defines many unnecessary macros
+#include <openssl/rand.h>
+#undef max
+#undef min
+#undef X509_NAME
+//-----------------------------
+
 namespace gotchangpdf
 {
 	// Hard-coded in PDF specification
@@ -31,6 +39,9 @@ namespace gotchangpdf
 
 	const int HARDCODED_PFD_PAD_LENGTH = sizeof(HARDCODED_PFD_PAD);
 	const int AES_ADDITIONAL_SALT_LENGTH = sizeof(AES_ADDITIONAL_SALT);
+
+	const size_t AES_CBC_IV_LENGTH = 16;
+	const size_t AES_CBC_BLOCK_SIZE = 16;
 
 	BufferPtr EncryptionUtils::PadTruncatePassword(const Buffer& password)
 	{
@@ -62,14 +73,86 @@ namespace gotchangpdf
 		return AESDecrypt(key, key.size(), data);
 	}
 
-	BufferPtr EncryptionUtils::RemoveAESPadding(const Buffer& data)
+	BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, int key_length, const Buffer& data)
 	{
-		int bytes = data[data.size() - 1];
-		if (bytes < 0)
+		assert(data.size() >= static_cast<size_t>(AES_CBC_IV_LENGTH));
+		if (data.size() < static_cast<size_t>(AES_CBC_IV_LENGTH)) {
+			throw GeneralException("Cannot find IV for encrypted data");
+		}
+
+		Buffer iv(data.begin(), data.begin() + AES_CBC_IV_LENGTH);
+		BufferPtr result(data.size() - AES_CBC_IV_LENGTH);
+
+		AES_KEY dec_key;
+		AES_set_decrypt_key((unsigned char*)key.data(), key_length * 8, &dec_key);
+		AES_cbc_encrypt((unsigned char*)data.data() + AES_CBC_IV_LENGTH, (unsigned char*)result->data(), data.size() - AES_CBC_IV_LENGTH, &dec_key, (unsigned char*)iv.data(), AES_DECRYPT);
+
+		return RemovePkcs7Padding(result, AES_CBC_BLOCK_SIZE);
+	}
+
+	BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, const Buffer& data)
+	{
+		return AESEncrypt(key, key.size(), data);
+	}
+
+	BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, int key_length, const Buffer& data)
+	{
+		Buffer iv(AES_CBC_IV_LENGTH);
+
+		// Create IVector.
+		//unsigned char AES_IVector[16] = { 0 };
+		//std::srand(static_cast<int>(time(NULL)));
+		//std::generate(std::begin(AES_IVector), std::end(AES_IVector), std::rand);
+
+		int rv = RAND_bytes((unsigned char*)iv.data(), AES_CBC_IV_LENGTH);
+		if (1 != rv) {
+			throw GeneralException("Could not generate initialization vector for AES");
+		}
+
+		BufferPtr buffer = AddPkcs7Padding(data, AES_CBC_BLOCK_SIZE);
+
+		AES_KEY dec_key;
+		AES_set_decrypt_key((unsigned char*)key.data(), key_length * 8, &dec_key);
+		AES_cbc_encrypt((unsigned char*)data.data(), (unsigned char*)buffer->data(), data.size(), &dec_key, (unsigned char*)iv.data(), AES_ENCRYPT);
+
+		buffer->insert(buffer.begin(), iv.begin(), iv.end());
+		return buffer;
+	}
+
+	BufferPtr EncryptionUtils::AddPkcs7Padding(const Buffer& data, size_t block_size)
+	{
+		size_t remaining = data.size() % block_size;
+		if (0 == remaining) {
+			remaining = block_size;
+		}
+
+		Buffer::value_type converted = ValueConvertUtils::SafeConvert<Buffer::value_type>(remaining);
+
+		BufferPtr result;
+		result->reserve(data.size() + block_size);
+		result->insert(result.begin(), data.begin(), data.end());
+		result->insert(result.end(), remaining, converted);
+
+		return result;
+	}
+
+	BufferPtr EncryptionUtils::RemovePkcs7Padding(const Buffer& data, size_t block_size)
+	{
+		int bytes = data.back();
+		if (bytes < 0) {
 			throw syntax::ConversionExceptionFactory<size_t>::Construct(bytes);
+		}
 
 		size_t converted = static_cast<size_t>(bytes);
 		assert(data.size() >= converted);
+		if (data.size() < converted) {
+			throw GeneralException("Block size is greater than input data");
+		}
+
+		assert(data.size() >= converted);
+		if (converted > block_size) {
+			throw GeneralException("Padding bytes does not correspond to block size");
+		}
 
 		// verify PKCS#7 padding
 		// The value of each added byte is the number of bytes that are added, i.e. N bytes, each of value N are added
@@ -78,24 +161,6 @@ namespace gotchangpdf
 		}
 
 		return BufferPtr(data.begin(), data.end() - converted);
-	}
-
-	BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, int key_length, const Buffer& data)
-	{
-		const int IV_LENGTH = 16;
-		assert(data.size() >= static_cast<size_t>(IV_LENGTH));
-		if (data.size() < static_cast<size_t>(IV_LENGTH)) {
-			throw GeneralException("Cannot find IV for encrypted data");
-		}
-
-		Buffer iv(data.begin(), data.begin() + IV_LENGTH);
-		BufferPtr result(data.size() - IV_LENGTH);
-
-		AES_KEY dec_key;
-		AES_set_decrypt_key((unsigned char*)key.data(), key_length * 8, &dec_key);
-		AES_cbc_encrypt((unsigned char*)data.data() + IV_LENGTH, (unsigned char*)result->data(), data.size() - IV_LENGTH, &dec_key, (unsigned char*)iv.data(), AES_DECRYPT);
-
-		return RemoveAESPadding(result);
 	}
 
 	bool EncryptionUtils::CheckKey(

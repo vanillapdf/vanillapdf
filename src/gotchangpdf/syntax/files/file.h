@@ -45,9 +45,23 @@ namespace gotchangpdf
 				types::ushort genNumber,
 				EncryptionAlgorithm alg);
 
+			BufferPtr EncryptStream(const Buffer& data,
+				types::big_uint objNumber,
+				types::ushort genNumber);
+
+			BufferPtr EncryptString(const Buffer& data,
+				types::big_uint objNumber,
+				types::ushort genNumber);
+
 			BufferPtr EncryptData(const Buffer& data,
 				types::big_uint objNumber,
-				types::ushort genNumber) const;
+				types::ushort genNumber,
+				const NameObject& filter_name);
+
+			BufferPtr EncryptData(const Buffer& data,
+				types::big_uint objNumber,
+				types::ushort genNumber,
+				EncryptionAlgorithm alg) const;
 
 			ObjectPtr GetIndirectObject(types::big_uint objNumber,
 				types::ushort genNumber) const;
@@ -75,6 +89,7 @@ namespace gotchangpdf
 
 			types::stream_offset GetLastXrefOffset(types::stream_size file_size);
 			void ReadXref(types::stream_offset offset);
+			EncryptionAlgorithm GetEncryptionAlgorithmForFilter(const NameObject& filter_name);
 
 		private:
 			File(const std::string& path);

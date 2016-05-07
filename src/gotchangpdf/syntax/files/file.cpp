@@ -277,35 +277,7 @@ namespace gotchangpdf
 				return data;
 			}
 
-			auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
-			auto version = encryption_dictionary->FindAs<IntegerObjectPtr>(constant::Name::V);
-			EncryptionAlgorithm algorithm = EncryptionAlgorithm::RC4;
-
-			do
-			{
-				if (version != 4 && version != 5) break;
-				if (!encryption_dictionary->Contains(constant::Name::CF)) break;
-
-				auto crypt_filter_dictionary = encryption_dictionary->FindAs<DictionaryObjectPtr>(constant::Name::CF);
-				if (!crypt_filter_dictionary->Contains(filter_name)) break;
-
-				auto crypt_filter = crypt_filter_dictionary->FindAs<DictionaryObjectPtr>(filter_name);
-				if (!crypt_filter->Contains(constant::Name::CFM)) break;
-
-				auto method = crypt_filter->FindAs<NameObjectPtr>(constant::Name::CFM);
-				if (method == constant::Name::AESV2 || method == constant::Name::AESV3) {
-					algorithm = EncryptionAlgorithm::AES;
-				}
-
-				if (method == constant::Name::None) {
-					algorithm = EncryptionAlgorithm::None;
-				}
-
-				if (method == constant::Name::V2) {
-					algorithm = EncryptionAlgorithm::RC4;
-				}
-			} while (false);
-
+			EncryptionAlgorithm algorithm = GetEncryptionAlgorithmForFilter(filter_name);
 			return DecryptData(data, objNumber, genNumber, algorithm);
 		}
 
@@ -375,16 +347,147 @@ namespace gotchangpdf
 			}
 		}
 
-		BufferPtr File::EncryptData(const Buffer& data,
+		BufferPtr File::EncryptStream(const Buffer& data,
 			types::big_uint objNumber,
-			types::ushort genNumber) const
+			types::ushort genNumber)
 		{
 			if (!IsEncrypted()) {
 				return data;
 			}
 
-			// do work
-			return data;
+			auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
+			auto version = encryption_dictionary->FindAs<IntegerObjectPtr>(constant::Name::V);
+
+			if (version == 4 || version == 5) {
+				auto filter_name = encryption_dictionary->FindAs<NameObjectPtr>(constant::Name::StmF);
+				return EncryptData(data, objNumber, genNumber, filter_name);
+			}
+
+			return EncryptData(data, objNumber, genNumber, EncryptionAlgorithm::RC4);
+		}
+
+		BufferPtr File::EncryptString(const Buffer& data,
+			types::big_uint objNumber,
+			types::ushort genNumber)
+		{
+			if (!IsEncrypted()) {
+				return data;
+			}
+
+			auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
+			auto version = encryption_dictionary->FindAs<IntegerObjectPtr>(constant::Name::V);
+
+			if (version == 4 || version == 5) {
+				auto filter_name = encryption_dictionary->FindAs<NameObjectPtr>(constant::Name::StrF);
+				return EncryptData(data, objNumber, genNumber, filter_name);
+			}
+
+			return EncryptData(data, objNumber, genNumber, EncryptionAlgorithm::RC4);
+		}
+
+		BufferPtr File::EncryptData(const Buffer& data,
+			types::big_uint objNumber,
+			types::ushort genNumber,
+			const NameObject& filter_name)
+		{
+			if (!IsEncrypted()) {
+				return data;
+			}
+
+			EncryptionAlgorithm algorithm = GetEncryptionAlgorithmForFilter(filter_name);
+			return EncryptData(data, objNumber, genNumber, algorithm);
+		}
+
+		BufferPtr File::EncryptData(const Buffer& data,
+			types::big_uint objNumber,
+			types::ushort genNumber,
+			EncryptionAlgorithm alg) const
+		{
+			if (!IsEncrypted()) {
+				return data;
+			}
+
+			auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
+			auto dictionary_object_number = encryption_dictionary->GetObjectNumber();
+			auto dictionary_generation_number = encryption_dictionary->GetGenerationNumber();
+
+			// data inside encryption dictionary are not encrypted
+			if (objNumber == 0 || (dictionary_object_number == objNumber && dictionary_generation_number == genNumber)) {
+				return data;
+			}
+
+			// AES 256 bits behaves differently
+			// It was not part of the core specification, but it was added in extension
+			if (_decryption_key->size() == 32 && alg == EncryptionAlgorithm::AES) {
+				return EncryptionUtils::AESEncrypt(_decryption_key, 32, data);
+			}
+
+			BufferPtr object_key(MD5_DIGEST_LENGTH);
+
+			uint8_t object_info[5];
+			object_info[0] = objNumber & 0xFF;
+			object_info[1] = (objNumber >> 8) & 0xFF;
+			object_info[2] = (objNumber >> 16) & 0xFF;
+			object_info[3] = (genNumber)& 0xFF;
+			object_info[4] = (genNumber >> 8) & 0xFF;
+
+			MD5_CTX ctx;
+			MD5_Init(&ctx);
+			MD5_Update(&ctx, _decryption_key->data(), _decryption_key->size());
+			MD5_Update(&ctx, object_info, sizeof(object_info));
+
+			if (alg == EncryptionAlgorithm::AES) {
+				MD5_Update(&ctx, &AES_ADDITIONAL_SALT[0], AES_ADDITIONAL_SALT_LENGTH);
+			}
+
+			MD5_Final((unsigned char*)object_key->data(), &ctx);
+
+			auto key_length = std::min(_decryption_key->size() + 5, 16u);
+
+			switch (alg)
+			{
+			default:
+			case EncryptionAlgorithm::None:
+				// The application shall not decrypt data but shall direct the input stream to the security handler for decryption.
+				// No clue
+			case EncryptionAlgorithm::RC4:
+				return EncryptionUtils::ComputeRC4(object_key, key_length, data);
+			case EncryptionAlgorithm::AES:
+				return EncryptionUtils::AESEncrypt(object_key, key_length, data);
+			}
+		}
+
+		EncryptionAlgorithm File::GetEncryptionAlgorithmForFilter(const NameObject& filter_name)
+		{
+			auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
+			auto version = encryption_dictionary->FindAs<IntegerObjectPtr>(constant::Name::V);
+
+			do
+			{
+				if (version != 4 && version != 5) break;
+				if (!encryption_dictionary->Contains(constant::Name::CF)) break;
+
+				auto crypt_filter_dictionary = encryption_dictionary->FindAs<DictionaryObjectPtr>(constant::Name::CF);
+				if (!crypt_filter_dictionary->Contains(filter_name)) break;
+
+				auto crypt_filter = crypt_filter_dictionary->FindAs<DictionaryObjectPtr>(filter_name);
+				if (!crypt_filter->Contains(constant::Name::CFM)) break;
+
+				auto method = crypt_filter->FindAs<NameObjectPtr>(constant::Name::CFM);
+				if (method == constant::Name::AESV2 || method == constant::Name::AESV3) {
+					return EncryptionAlgorithm::AES;
+				}
+
+				if (method == constant::Name::None) {
+					return EncryptionAlgorithm::None;
+				}
+
+				if (method == constant::Name::V2) {
+					return EncryptionAlgorithm::RC4;
+				}
+			} while (false);
+
+			return EncryptionAlgorithm::None;
 		}
 
 		void File::ReadXref(types::stream_offset offset)
