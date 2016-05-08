@@ -122,3 +122,23 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SetEncryptionPassword(FileHa
 			return GOTCHANG_PDF_ERROR_INVALID_PASSWORD;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SetEncryptionKey(FileHandle handle, EncryptionKeyHandle key)
+{
+	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
+	IEncryptionKey* encryption_key = reinterpret_cast<IEncryptionKey*>(key);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(encryption_key);
+
+	auto file = holder->Value();
+	if (!file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
+
+	try
+	{
+		bool result = file->SetEncryptionKey(*encryption_key);
+		if (true == result)
+			return GOTCHANG_PDF_ERROR_SUCCES;
+		else
+			return GOTCHANG_PDF_ERROR_INVALID_PASSWORD;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}

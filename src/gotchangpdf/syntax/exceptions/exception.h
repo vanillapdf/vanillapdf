@@ -18,6 +18,7 @@ namespace gotchangpdf
 			Success = 0,
 			InvalidParameter,
 			NotSupported,
+			UserCancelled,
 
 			// syntax
 			Conversion = 0x00010000,
@@ -58,6 +59,13 @@ namespace gotchangpdf
 	public:
 		explicit NotSupportedException(const char * const & msg);
 		explicit NotSupportedException(const std::string& msg);
+	};
+
+	class UserCancelledException : public ExceptionBase
+	{
+	public:
+		explicit UserCancelledException(const char * const & msg);
+		explicit UserCancelledException(const std::string& msg);
 	};
 
 	namespace syntax

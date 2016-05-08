@@ -57,7 +57,7 @@ namespace gotchangpdf
 			Buffer& decryption_key);
 	};
 
-	class IEncryptionKey
+	class IEncryptionKey : public IUnknown
 	{
 	public:
 		virtual BufferPtr Decrypt(const Buffer& data) const = 0;

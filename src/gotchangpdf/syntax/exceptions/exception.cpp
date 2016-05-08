@@ -14,6 +14,9 @@ namespace gotchangpdf
 	NotSupportedException::NotSupportedException(const char * const & msg) : ExceptionBase(msg, Type::NotSupported) {}
 	NotSupportedException::NotSupportedException(const std::string& msg) : ExceptionBase(msg, Type::NotSupported) {}
 
+	UserCancelledException::UserCancelledException(const char * const & msg) : ExceptionBase(msg, Type::UserCancelled) {}
+	UserCancelledException::UserCancelledException(const std::string& msg) : ExceptionBase(msg, Type::UserCancelled) {}
+
 	namespace syntax
 	{
 		ParseException::ParseException(types::stream_offset offset)
