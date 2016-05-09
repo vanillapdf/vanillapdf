@@ -233,7 +233,7 @@ namespace gotchangpdf
 					}
 
 					ReadTokenWithTypeSkip(Token::Type::STREAM_END);
-					auto stream_end_offset = offset.seekpos() + pos;
+					auto stream_end_offset = (streamoff)offset + pos;
 					auto computed_length = stream_end_offset - stream_offset;
 					if (!dictionary->Contains(constant::Name::Length)) {
 						dictionary->Insert(constant::Name::Length, IntegerObjectPtr(computed_length));
@@ -241,7 +241,7 @@ namespace gotchangpdf
 					}
 
 					auto length_obj = dictionary->Find(constant::Name::Length);
-					if (length_obj->GetType() != Object::Type::Integer) {
+					if (!ObjectUtils::IsType<IntegerObjectPtr>(length_obj)) {
 						auto locked_file = _file.lock();
 						if (!locked_file->IsInitialized()) {
 							dictionary->Insert(constant::Name::Length, IntegerObjectPtr(computed_length));
