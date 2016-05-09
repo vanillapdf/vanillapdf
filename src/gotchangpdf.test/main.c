@@ -15,6 +15,9 @@ int main(int argc, char *argv[])
 	//_CrtSetBreakAlloc(803506);
 #endif
 
+	if (argc < 2)
+		return GOTCHANG_PDF_ERROR_GENERAL;
+
 	if (argc >= 4) {
 		// password
 		if (0 == strcmp(argv[2], "-p")) {
