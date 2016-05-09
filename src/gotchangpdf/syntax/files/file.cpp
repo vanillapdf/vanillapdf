@@ -13,6 +13,7 @@
 
 #include <iomanip>
 
+#include "pkcs12_key.h"
 
 namespace gotchangpdf
 {
@@ -304,6 +305,7 @@ namespace gotchangpdf
 
 				//PKCS12Key key = PKCS12Key("C:\\Users\\Gotcha\\Documents\\it2u\\cert\\TestUser4.pfx", Buffer("a"));
 				//SetEncryptionKey(key);
+			}
 
 			// AES 256 bits behaves differently
 			// It was not part of the core specification, but it was added in extension

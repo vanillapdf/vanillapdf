@@ -77,15 +77,21 @@ private:
 	EqualsFunction m_equals;
 };
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Pkcs12EncryptionKey_CreateFromFile(string_type path, integer_type length, PEncryptionKeyHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Pkcs12EncryptionKey_CreateFromFile(string_type path, string_type password, PEncryptionKeyHandle result)
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(path);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try
 	{
-		std::string str(path, length);
-		Deferred<PKCS12Key> key(str);
+		std::string path_string(path);
+		Buffer password_buffer;
+		if (nullptr != password) {
+			password_buffer = Buffer(password);
+		}
+
+		Deferred<PKCS12Key> key = Deferred<PKCS12Key>(path_string, password_buffer);
+
 		auto ptr = static_cast<IEncryptionKey*>(key.AddRefGet());
 		*result = reinterpret_cast<EncryptionKeyHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;

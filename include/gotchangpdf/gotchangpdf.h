@@ -9,6 +9,7 @@
 /* files */
 #include "c_file.h"
 #include "c_xref.h"
+#include "c_encryption.h"
 
 /* documents */
 #include "c_document.h"

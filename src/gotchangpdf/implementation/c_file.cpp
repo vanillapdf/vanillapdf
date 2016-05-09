@@ -103,7 +103,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_IsEncrypted(FileHandle handl
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SetEncryptionPassword(FileHandle handle, string_type password, integer_type length)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SetEncryptionPassword(FileHandle handle, string_type password)
 {
 	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
@@ -114,7 +114,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SetEncryptionPassword(FileHa
 
 	try
 	{
-		std::string str(password, length);
+		std::string str(password);
 		bool result = file->SetEncryptionPassword(str);
 		if (true == result)
 			return GOTCHANG_PDF_ERROR_SUCCES;

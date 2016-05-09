@@ -12,10 +12,10 @@ extern "C"
 
 	typedef void (*InitializeFunction)(void);
 	typedef void (*CleanupFunction)(void);
-	typedef error_type (*DecryptFunction)(const BufferHandleTag* data, PBufferHandle result);
-	typedef error_type (*EqualsFunction)(const BufferHandleTag* issuer, const BufferHandleTag* serial, out_boolean_type result);
+	typedef error_type (*DecryptFunction)(const struct BufferHandleTag* data, PBufferHandle result);
+	typedef error_type (*EqualsFunction)(const struct BufferHandleTag* issuer, const struct BufferHandleTag* serial, out_boolean_type result);
 
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Pkcs12EncryptionKey_CreateFromFile(string_type path, integer_type length, PEncryptionKeyHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Pkcs12EncryptionKey_CreateFromFile(string_type path, string_type password, PEncryptionKeyHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Pkcs12EncryptionKey_CreateFromBuffer(BufferHandle data, PEncryptionKeyHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION CustomEncryptionKey_Create(InitializeFunction initialize, CleanupFunction cleanup, DecryptFunction decrypt, EqualsFunction equals, PEncryptionKeyHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_Release(EncryptionKeyHandle handle);
