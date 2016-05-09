@@ -6,7 +6,6 @@ error_type process_file(FileHandle file, int nested)
 	XrefChainIteratorHandle chain_iterator = NULL;
 	boolean_type valid = GOTCHANG_PDF_FALSE;
 
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_XrefChain(file, &chain));
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Iterator(chain, &chain_iterator));
 
