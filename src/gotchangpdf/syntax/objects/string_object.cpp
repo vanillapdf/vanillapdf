@@ -71,27 +71,40 @@ namespace gotchangpdf
 		std::string HexadecimalStringObject::ToPdf() const
 		{
 			std::stringstream ss;
-			ss << '<';
 
-			auto size = _value->size();
+			BufferPtr value = Value();
+			auto size = value->size();
 			for (decltype(size) i = 0; i < size; ++i) {
-				auto current = _value[i];
-				int converted = static_cast<int>(current);
-				ss << std::hex << converted;
+				auto current = value[i];
+
+				// Only 2 byte hex representation
+				int converted = static_cast<int>(current & 0xFF);
+				ss << std::hex << std::setfill('0') <<std::setw(2) << converted;
 			}
 
-			ss << '>';
-			return ss.str();
+			auto locked_file = _file.lock();
+			if (!locked_file)
+				throw FileDisposedException();
+
+			std::string str = ss.str();
+			Buffer result = Buffer(str.begin(), str.end());
+			if (locked_file->IsEncrypted()) {
+				result = locked_file->EncryptString(result, _obj_number, _gen_number);
+			}
+
+			result.insert(result.begin(), '<');
+			result.insert(result.end(), '>');
+			return result.ToString();
 		}
 
 		std::string LiteralStringObject::ToPdf() const
 		{
 			std::stringstream ss;
-			ss << '(';
 
-			auto size = _value->size();
+			BufferPtr value = Value();
+			auto size = value->size();
 			for (decltype(size) i = 0; i < size; ++i) {
-				unsigned char current = _value[i];
+				unsigned char current = value[i];
 
 				if (current == '\n') {
 					ss << '\\' << 'n';
@@ -142,8 +155,19 @@ namespace gotchangpdf
 				ss << current;
 			}
 
-			ss << ')';
-			return ss.str();
+			auto locked_file = _file.lock();
+			if (!locked_file)
+				throw FileDisposedException();
+
+			std::string str = ss.str();
+			Buffer result = Buffer(str.begin(), str.end());
+			if (locked_file->IsEncrypted()) {
+				result = locked_file->EncryptString(result, _obj_number, _gen_number);
+			}
+
+			result.insert(result.begin(), '(');
+			result.insert(result.end(), ')');
+			return result.ToString();
 		}
 	}
 }
