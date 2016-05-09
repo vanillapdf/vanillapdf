@@ -31,7 +31,10 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetVersion(CatalogHandle 
 
 	try
 	{
-		switch (obj->Version()) {
+		Version version;
+		auto contains = obj->Version(version);
+		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		switch (version) {
 		case Version::PDF10:
 			*result = PDFVersion_10; break;
 		case Version::PDF11:
@@ -64,7 +67,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetExtensions(CatalogHand
 
 	try
 	{
-		auto extensions = obj->Extensions();
+		OutputDeveloperExtensionsPtr extensions;
+		auto contains = obj->Extensions(extensions);
+		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = extensions.AddRefGet();
 		*result = reinterpret_cast<DeveloperExtensionsHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -79,7 +84,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLabels(CatalogHand
 
 	try
 	{
-		auto labels = obj->PageLabels();
+		OutputPageLabelsPtr labels;
+		auto contains = obj->PageLabels(labels);
+		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = labels.AddRefGet();
 		*result = reinterpret_cast<PageLabelsHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -94,7 +101,10 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHand
 
 	try
 	{
-		switch (obj->PageLayout()) {
+		Catalog::PageLayoutType layout;
+		auto contains = obj->PageLayout(layout);
+		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		switch (layout) {
 		case semantics::Catalog::PageLayoutType::SinglePage:
 			*result = PageLayout_SinglePage; break;
 		case semantics::Catalog::PageLayoutType::OneColumn:

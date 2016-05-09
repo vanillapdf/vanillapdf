@@ -20,21 +20,23 @@ namespace gotchangpdf
 				throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, Catalog>(root);
 		}
 
-		Version Catalog::Version(void) const
+		bool Catalog::Version(gotchangpdf::Version& result) const
 		{
 			if (!_obj->Contains(constant::Name::Version))
-				throw OptionalEntryMissingException(_obj, constant::Name::Version);
+				return false;
 
 			auto ver = _obj->FindAs<syntax::NameObjectPtr>(constant::Name::Version);
-			return SemanticUtils::GetVersionFromName(ver);
+			result = SemanticUtils::GetVersionFromName(ver);
+			return true;
 		}
 
-		DeveloperExtensionsPtr Catalog::Extensions(void) const
+		bool Catalog::Extensions(OutputDeveloperExtensionsPtr& result) const
 		{
 			if (!_obj->Contains(constant::Name::Extensions))
-				throw OptionalEntryMissingException(_obj, constant::Name::Extensions);
+				return false;
 
-			return DeveloperExtensionsPtr(_obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Extensions));
+			result = DeveloperExtensionsPtr(_obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Extensions));
+			return true;
 		}
 
 		PageTreePtr Catalog::Pages(void) const
@@ -43,35 +45,37 @@ namespace gotchangpdf
 			return PageTreePtr(pages);
 		}
 
-		PageLabelsPtr Catalog::PageLabels(void) const
+		bool Catalog::PageLabels(OutputPageLabelsPtr& result) const
 		{
 			if (!_obj->Contains(constant::Name::PageLabels))
-				throw OptionalEntryMissingException(_obj, constant::Name::PageLabels);
+				return false;
 
-			auto labels = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::PageLabels);
-			return PageLabelsPtr(labels);
+			result = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::PageLabels);
+			return true;
 		}
 
-		Catalog::PageLayoutType Catalog::PageLayout(void) const
+		bool Catalog::PageLayout(Catalog::PageLayoutType& result) const
 		{
 			if (!_obj->Contains(constant::Name::PageLayout))
-				throw OptionalEntryMissingException(_obj, constant::Name::PageLayout);
+				return false;
 
 			auto layout = _obj->FindAs<syntax::NameObjectPtr>(constant::Name::PageLayout);
 			if (layout == constant::Name::SinglePage)
-				return PageLayoutType::SinglePage;
+				result = PageLayoutType::SinglePage;
 			else if (layout == constant::Name::OneColumn)
-				return PageLayoutType::OneColumn;
+				result = PageLayoutType::OneColumn;
 			else if (layout == constant::Name::TwoColumnLeft)
-				return PageLayoutType::TwoColumnLeft;
+				result = PageLayoutType::TwoColumnLeft;
 			else if (layout == constant::Name::TwoColumnRight)
-				return PageLayoutType::TwoColumnRight;
+				result = PageLayoutType::TwoColumnRight;
 			else if (layout == constant::Name::TwoPageLeft)
-				return PageLayoutType::TwoPageLeft;
+				result = PageLayoutType::TwoPageLeft;
 			else if (layout == constant::Name::TwoPageRight)
-				return PageLayoutType::TwoPageRight;
+				result = PageLayoutType::TwoPageRight;
 			else
 				throw GeneralException("Unknown value in PageLayout entry: " + layout->ToString());
+
+			return true;
 		}
 
 		//NameDictionaryPtr Catalog::Names(void) const

@@ -11,11 +11,6 @@
 #define RETURN_ERROR_PARAM_VALUE_IF_NULL(var) RETURN_ERROR_IF_NULL(var, GOTCHANG_PDF_ERROR_PARAMETER_VALUE)
 
 #define CATCH_GOTCHNGPDF_EXCEPTIONS \
-	catch (gotchangpdf::semantics::OptionalEntryMissingException& e) \
-	{ \
-		LOG_DEBUG_GLOBAL << e.what(); \
-		return static_cast<error_type>(e.code()); \
-	} \
 	catch (gotchangpdf::ExceptionBase& e) \
 	{ \
 		LOG_ERROR_GLOBAL << e.what(); \

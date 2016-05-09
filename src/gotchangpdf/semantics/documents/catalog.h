@@ -41,10 +41,10 @@ namespace gotchangpdf
 			explicit Catalog(syntax::DictionaryObjectPtr root);
 
 			// optional entries
-			Version Version(void) const;
-			DeveloperExtensionsPtr Extensions(void) const;
-			PageLabelsPtr PageLabels(void) const;
-			PageLayoutType PageLayout(void) const;
+			bool Version(Version& result) const;
+			bool Extensions(OutputDeveloperExtensionsPtr& result) const;
+			bool PageLabels(OutputPageLabelsPtr& result) const;
+			bool PageLayout(PageLayoutType& result) const;
 			bool ViewerPreferences(OutputViewerPreferencesPtr& result) const;
 			bool PageMode(PageModeType& result) const;
 			bool Outlines(OutputOutlinePtr& result) const;

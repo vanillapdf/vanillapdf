@@ -35,25 +35,28 @@ namespace gotchangpdf
 					throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, Catalog>(obj);
 			}
 
-			syntax::StringObjectPtr P(void) const
+			bool P(syntax::StringObjectPtr& result) const
 			{
 				if (!_obj->Contains(constant::Name::P))
-					throw OptionalEntryMissingException(_obj, constant::Name::P);
+					return false;
 
-				return _obj->FindAs<syntax::StringObjectPtr>(constant::Name::P);
+				result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::P);
+				return true;
 			}
-			syntax::IntegerObjectPtr St(void) const
+
+			bool St(syntax::IntegerObjectPtr& result) const
 			{
 				if (!_obj->Contains(constant::Name::St))
-					throw OptionalEntryMissingException(_obj, constant::Name::St);
+					return false;
 
-				return _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::St);
+				result = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::St);
+				return true;
 			}
 
-			NumberingStyle S(void) const
+			bool S(NumberingStyle& result) const
 			{
 				if (!_obj->Contains(constant::Name::S))
-					throw OptionalEntryMissingException(_obj, constant::Name::S);
+					return false;
 
 				auto value = _obj->FindAs<syntax::NameObjectPtr>(constant::Name::S);
 				auto buf = value->Value();
@@ -67,7 +70,8 @@ namespace gotchangpdf
 					&& buf[0] != static_cast<char>(NumberingStyle::LowerLetters))
 					throw GeneralException("Unknown numbering style" + buf->ToString());
 
-				return static_cast<NumberingStyle>(buf[0]);
+				result = static_cast<NumberingStyle>(buf[0]);
+				return true;
 			}
 		};
 
