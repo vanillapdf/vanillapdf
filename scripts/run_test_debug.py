@@ -5,6 +5,12 @@ import datetime
 import os
 import subprocess
 import sys
+import json
+
+PASSWORD_KEY = "password"
+PASSWORD_OPTION = "-p"
+CERTIFICATE_KEY = "certificate"
+CERTIFICATE_OPTION = "-k"
 
 print ('Running test script')
 
@@ -27,6 +33,10 @@ system = platform.system()
 now = datetime.datetime.now()
 logpath = '..\\log\\{}-{}-{}_{}-{}-{}_{}.log'.format(now.day, now.month, now.year, now.hour, now.minute, now.second, system)
 
+encryption_data = ""
+with open('encryption.cfg') as encryption_config:    
+	encryption_data = json.load(encryption_config)
+
 # Open log file
 logfile = open(logpath, 'w')
 FNULL = open(os.devnull, 'w')
@@ -41,8 +51,22 @@ for root, dirs, files in os.walk(testdir):
 		logfile.write("Found test case named {}...  ".format(file))
 		
 		file_path = os.path.join(root, file)
-
-		rv = subprocess.call([path, file_path], stdout=FNULL)
+		is_encrypted = file in encryption_data
+		rv = -1
+		if (is_encrypted):
+			if (PASSWORD_KEY in encryption_data[file]):
+				password = encryption_data[file][PASSWORD_KEY]
+				rv = subprocess.call([path, file_path, PASSWORD_OPTION, password], stdout=FNULL)
+			elif (CERTIFICATE_KEY in encryption_data[file]):
+				key = encryption_data[file][CERTIFICATE_KEY]
+				rv = subprocess.call([path, file_path, CERTIFICATE_OPTION, key], stdout=FNULL)
+			else:
+				print ("Configuration error for file {}".format(file))
+				logfile.write("Configuration error for file {}".format(file))
+				continue
+		else:
+			rv = subprocess.call([path, file_path], stdout=FNULL)
+			
 		if (rv == 0):
 			print ("Passed!")
 			logfile.write("Passed!\n")
