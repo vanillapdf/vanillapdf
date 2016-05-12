@@ -128,12 +128,6 @@ namespace gotchangpdf
 	BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, int key_length, const Buffer& data)
 	{
 		Buffer iv(AES_CBC_IV_LENGTH);
-
-		// Create IVector.
-		//unsigned char AES_IVector[16] = { 0 };
-		//std::srand(static_cast<int>(time(NULL)));
-		//std::generate(std::begin(AES_IVector), std::end(AES_IVector), std::rand);
-
 		int rv = RAND_bytes((unsigned char*)iv.data(), AES_CBC_IV_LENGTH);
 		if (1 != rv) {
 			throw GeneralException("Could not generate initialization vector for AES");
@@ -168,29 +162,35 @@ namespace gotchangpdf
 
 	BufferPtr EncryptionUtils::RemovePkcs7Padding(const Buffer& data, size_t block_size)
 	{
-		int bytes = data.back();
-		if (bytes < 0) {
-			throw syntax::ConversionExceptionFactory<size_t>::Construct(bytes);
-		}
+		do
+		{
+			auto bytes = data.back();
+			size_t converted = static_cast<size_t>(bytes);
+			if (data.size() < converted || converted > block_size) {
+				break;
+			}
 
-		size_t converted = static_cast<size_t>(bytes);
-		assert(data.size() >= converted);
-		if (data.size() < converted) {
-			throw GeneralException("Block size is greater than input data");
-		}
+			// verify PKCS#7 padding
+			// The value of each added byte is the number of bytes that are added, i.e. N bytes, each of value N are added
+			bool padding_error = false;
+			for (auto it = data.end() - converted; it != data.end(); it++) {
+				if (*it != bytes) padding_error = true;
+			}
 
-		assert(data.size() >= converted);
-		if (converted > block_size) {
-			throw GeneralException("Padding bytes does not correspond to block size");
-		}
+			if (padding_error) {
+				break;
+			}
 
-		// verify PKCS#7 padding
-		// The value of each added byte is the number of bytes that are added, i.e. N bytes, each of value N are added
-		for (auto it = data.end() - converted; it != data.end(); it++) {
-			assert(*it == bytes);
-		}
+			return BufferPtr(data.begin(), data.end() - converted);
+		} while (false);
 
-		return BufferPtr(data.begin(), data.end() - converted);
+		// I would really like to be strict about padding,
+		// but in test document "example_128-aes.pdf" there is a signature field
+		// that allocated space with zeroes and did not care about setting proper
+		// pkcs padding. That means, that there is some trash after we decrypt the
+		// signature contents and padding could not be validated
+		LOG_WARNING_GLOBAL << "Pkcs padding is incorrect";
+		return data;
 	}
 
 	bool EncryptionUtils::CheckKey(
