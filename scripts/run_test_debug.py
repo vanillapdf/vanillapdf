@@ -73,18 +73,24 @@ for root, dirs, files in os.walk(testdir):
 		if (is_encrypted):
 			# Authentication using user or owner password
 			if (USER_PASSWORD_KEY in encryption_data[file] or OWNER_PASSWORD_KEY in encryption_data[file]):
+				both_keys = USER_PASSWORD_KEY in encryption_data[file] and OWNER_PASSWORD_KEY in encryption_data[file]
+				
 				# User password
 				if (USER_PASSWORD_KEY in encryption_data[file]):
 					logfile.write(os.linesep)
 					logfile.write("Using user password...  ")
+					print ("Using user password...  ")
 					user_password = encryption_data[file][USER_PASSWORD_KEY]
 					rv = subprocess.call([path, file_path, PASSWORD_OPTION, user_password], stdout=FNULL)
 					process_rv(rv)
 					
 				# Owner password
 				if (OWNER_PASSWORD_KEY in encryption_data[file]):
-					logfile.write(os.linesep)
+					if not (both_keys):
+						logfile.write(os.linesep)
+						
 					logfile.write("Using owner password...  ")
+					print ("Using owner password...  ")
 					owner_password = encryption_data[file][OWNER_PASSWORD_KEY]
 					rv = subprocess.call([path, file_path, PASSWORD_OPTION, owner_password], stdout=FNULL)
 					process_rv(rv)
@@ -95,6 +101,7 @@ for root, dirs, files in os.walk(testdir):
 			if (CERTIFICATE_KEY in encryption_data[file]):
 				logfile.write(os.linesep)
 				logfile.write("Using certificate key...  ")
+				print ("Using certificate key...  ")
 				key = encryption_data[file][CERTIFICATE_KEY]
 				rv = subprocess.call([path, file_path, CERTIFICATE_OPTION, key], stdout=FNULL)
 				process_rv(rv)
