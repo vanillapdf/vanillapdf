@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 	if (is_encrypted == GOTCHANG_PDF_TRUE) {
 		// No password entered
 		if (password == NULL && cert_path == NULL) {
-			return GOTCHANG_PDF_ERROR_INVALID_PASSWORD;
+			// Opening the file with default password
 		}
 
 		if (password != NULL) {
