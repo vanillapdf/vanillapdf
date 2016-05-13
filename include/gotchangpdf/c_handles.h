@@ -67,6 +67,7 @@ extern "C"
 	/* Content operations */
 	DECLARE_OBJECT_HANDLE(ContentOperationGeneric);
 	DECLARE_OBJECT_HANDLE(ContentOperationTextShow);
+	DECLARE_OBJECT_HANDLE(ContentOperationEndText);
 
 	/* Content operators */
 	DECLARE_OBJECT_HANDLE(ContentOperator);
