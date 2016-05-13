@@ -27,6 +27,7 @@ namespace gotchangpdf
 			ObjectMissing,
 			ParseException,
 			InvalidPassword,
+			ZlibDataError,
 
 			// semantic
 			OptionalEntryMissing = 0x10000000,
@@ -74,6 +75,18 @@ namespace gotchangpdf
 		{
 		public:
 			explicit ParseException(types::stream_offset offset);
+		};
+
+		class ZlibDataErrorException : public ExceptionBase
+		{
+		public:
+			explicit ZlibDataErrorException(types::stream_size size);
+			explicit ZlibDataErrorException(types::stream_size size, const std::string& message);
+
+			types::stream_size Size(void) const { return m_size; }
+
+		private:
+			types::stream_size m_size;
 		};
 
 		class FileDisposedException : public ExceptionBase

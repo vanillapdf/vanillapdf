@@ -22,6 +22,10 @@ namespace gotchangpdf
 		ParseException::ParseException(types::stream_offset offset)
 			: ExceptionBase("Could not parse object at offset " + std::to_string(offset), Type::ParseException) {}
 
+		ZlibDataErrorException::ZlibDataErrorException(types::stream_size size) : ZlibDataErrorException(size, std::string()) {}
+		ZlibDataErrorException::ZlibDataErrorException(types::stream_size size, const std::string& message) : m_size(size),
+			ExceptionBase("Zlib encountered corrupted data after " + std::to_string(size) + " bytes. Error: " + message, Type::ZlibDataError) {}
+
 		FileDisposedException::FileDisposedException() : ExceptionBase("Current file has been already disposed", Type::FileDisposed) {}
 
 		FileNotInitializedException::FileNotInitializedException(const char * const & filename)

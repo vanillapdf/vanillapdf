@@ -12,14 +12,12 @@ namespace gotchangpdf
 	{
 		BufferPtr FlateDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const
 		{
-			auto stream = src->ToStringStream();
-			return ZlibWrapper::Deflate(stream, src->size());
+			return ZlibWrapper::Deflate(src);
 		}
 
 		BufferPtr FlateDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters) const
 		{
-			auto stream = src->ToStringStream();
-			auto dest = ZlibWrapper::Inflate(stream, src->size());
+			auto dest = ZlibWrapper::Inflate(src);
 			return ApplyPredictor(dest, parameters);
 		}
 
