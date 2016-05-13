@@ -124,11 +124,9 @@ namespace gotchangpdf
 				unsigned int have = constant::BUFFER_SIZE - strm.avail_out;
 				result->insert(result.end(), out_buffer.begin(), out_buffer.begin() + have);
 			} while (strm.avail_out == 0);
-			assert(strm.avail_in == 0);
 
 			/* done when last data in file processed */
-		} while (flush != Z_FINISH);
-		assert(rv == Z_STREAM_END);
+		} while (rv != Z_STREAM_END);
 
 		return result;
 	}
