@@ -175,15 +175,13 @@ namespace gotchangpdf
 				int nested_count = 0;
 				for (;;) {
 					int current_meta = get();
-					int next_meta = peek();
+					int next = peek();
 
-					assert(current_meta != std::char_traits<char>::eof() && next_meta != std::char_traits<char>::eof());
-					if (current_meta == std::char_traits<char>::eof() || next_meta == std::char_traits<char>::eof()) {
-						break;
+					if (current_meta == std::char_traits<char>::eof()) {
+						throw GeneralException("Improperly terminated literal string sequence: " + chars->ToString());
 					}
 
 					auto current = ValueConvertUtils::SafeConvert<unsigned char>(current_meta);
-					auto next = ValueConvertUtils::SafeConvert<unsigned char>(next_meta);
 
 					if (current == Delimiter::LEFT_PARENTHESIS) {
 						nested_count++;
@@ -210,6 +208,10 @@ namespace gotchangpdf
 
 					if (current != '\\') {
 						chars->push_back(current);
+						continue;
+					}
+
+					if (next == std::char_traits<char>::eof()) {
 						continue;
 					}
 
@@ -294,7 +296,7 @@ namespace gotchangpdf
 						continue;
 					}
 
-					assert(!"Unrecognized escape sequence");
+					continue;
 				}
 
 				return TokenPtr(Token::Type::LITERAL_STRING, chars);
