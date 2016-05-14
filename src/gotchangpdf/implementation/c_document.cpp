@@ -53,6 +53,23 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandl
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetDocumentInfo(DocumentHandle handle, PDocumentInfoHandle result)
+{
+	Document* document = reinterpret_cast<Document*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		OutputDocumentInfoPtr info;
+		bool found = document->GetDocumentInfo(info);
+		if (!found) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		auto ptr = info.AddRefGet();
+		*result = reinterpret_cast<DocumentInfoHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_Release(DocumentHandle handle)
 {
 	return ObjectRelease<Document, DocumentHandle>(handle);

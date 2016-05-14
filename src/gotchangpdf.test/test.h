@@ -54,6 +54,8 @@ error_type process_content_operation_endtext(ContentOperationEndTextHandle obj, 
 /* Documents */
 error_type process_document(DocumentHandle document, int nested);
 error_type process_catalog(CatalogHandle obj, int nested);
+error_type process_document_info(DocumentInfoHandle obj, int nested);
+error_type process_date(DateHandle obj, int nested);
 error_type process_page(PageObjectHandle obj, int nested);
 error_type process_extensions(DeveloperExtensionsHandle extensions, int nested);
 error_type process_extension(DeveloperExtensionHandle extensions, int nested);

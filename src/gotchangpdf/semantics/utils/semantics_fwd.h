@@ -24,7 +24,7 @@ namespace gotchangpdf
 
 		class Document; using DocumentPtr = Deferred<Document>;
 		class Catalog; using CatalogPtr = Deferred<Catalog>;
-		class DocumentInfo; using DocumentInfoPtr = Deferred<DocumentInfo>;
+		class DocumentInfo; using DocumentInfoPtr = Deferred<DocumentInfo>; using OutputDocumentInfoPtr = OutputPointer<DocumentInfoPtr>;
 		class PageNodeBase; using PageNodeBasePtr = Deferred<PageNodeBase>;
 		class PageTree; using PageTreePtr = Deferred<PageTree>;
 		class PageTreeNode; using PageTreeNodePtr = Deferred<PageTreeNode>;

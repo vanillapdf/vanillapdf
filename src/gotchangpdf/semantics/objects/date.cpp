@@ -24,33 +24,43 @@ namespace gotchangpdf
 				"(\\d{2})" // offset hour
 				"'"        // offset separator
 				"(\\d{2})" // offset minutes
-				".*");     // ignore junk
+				"'");     // this apostrophe is not mentioned, but is included in all examples
 
 			std::smatch sm;
 			if (!std::regex_match(str, sm, header_regex))
-				throw GeneralException("Could not parse date: " + str);
+				throw GeneralException("Could not parse datetime: " + str);
 
 			assert(sm.size() == 10);
-			auto year = std::stoi(sm[1]);
-			auto month = std::stoi(sm[2]);
-			auto day = std::stoi(sm[3]);
-			auto hour = std::stoi(sm[4]);
-			auto minute = std::stoi(sm[5]);
-			auto second = std::stoi(sm[6]);
-			auto offset = sm[7];
-			//auto hour_offset = std::stoi(sm[8]);
-			//auto minute_offset = std::stoi(sm[9]);
+			m_year = std::stoi(sm[1]);
+			m_month = std::stoi(sm[2]);
+			m_day = std::stoi(sm[3]);
+			m_hour = std::stoi(sm[4]);
+			m_minute = std::stoi(sm[5]);
+			m_second = std::stoi(sm[6]);
+			m_hour_offset = std::stoi(sm[8]);
+			m_minute_offset = std::stoi(sm[9]);
 
-			tm time;
-			time.tm_year = year - 1900;
-			time.tm_mon = month;
-			time.tm_mday = day;
-			time.tm_hour = hour;
-			time.tm_min = minute;
-			time.tm_sec = second;
-			m_time = mktime(&time);
+			if (sm[7].str() == "+") {
+				m_timezone = TimezoneType::Later;
+			}
+			else if (sm[7].str() == "-") {
+				m_timezone = TimezoneType::Earlier;
+			}
+			else if (sm[7].str() == "Z") {
+				m_timezone = TimezoneType::UTC;
+			}
+			else {
+				assert(false && "Error in regex above");
+				throw GeneralException("Could not parse datetime: " + str);
+			}
+
+			if (m_month < 1 || m_month > 12) throw GeneralException("Month is out of range: " + std::to_string(m_month));
+			if (m_day < 1 || m_day > 31) throw GeneralException("Day is out of range: " + std::to_string(m_day));
+			if (m_hour < 0 || m_hour > 23) throw GeneralException("Hour is out of range: " + std::to_string(m_hour));
+			if (m_minute < 0 || m_minute > 59) throw GeneralException("Minute is out of range: " + std::to_string(m_minute));
+			if (m_second < 0 || m_second > 59) throw GeneralException("Second is out of range: " + std::to_string(m_second));
+			if (m_hour_offset < 0 || m_hour_offset > 23) throw GeneralException("Hour offset is out of range: " + std::to_string(m_hour_offset));
+			if (m_minute_offset < 0 || m_minute_offset > 59) throw GeneralException("Minute offset is out of range: " + std::to_string(m_minute_offset));
 		}
-
-		time_t Date::Value(void) { return m_time; }
 	}
 }

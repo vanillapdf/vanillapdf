@@ -6,6 +6,8 @@
 #include "file.h"
 #include "dictionary_object.h"
 #include "name_object.h"
+#include "document_info.h"
+#include "date.h"
 
 #include <string>
 
@@ -28,13 +30,18 @@ namespace gotchangpdf
 				return Catalog(root);
 			}
 
-			DocumentInfoPtr GetDocumentInfo(void) const
+			bool GetDocumentInfo(OutputDocumentInfoPtr& result) const
 			{
 				auto chain = _holder->Value()->GetXrefChain();
 				auto xref = chain->Begin()->Value();
 				auto dictionary = xref->GetTrailerDictionary();
+
+				if (!dictionary->Contains(constant::Name::Info))
+					return false;
+
 				auto info = dictionary->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Info);
-				return DocumentInfoPtr(info);
+				result = DocumentInfoPtr(info);
+				return true;
 			}
 
 		private:

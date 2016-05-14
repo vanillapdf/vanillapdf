@@ -42,6 +42,7 @@ extern "C"
 	/* Document */
 	DECLARE_OBJECT_HANDLE(Document);
 	DECLARE_OBJECT_HANDLE(Catalog);
+	DECLARE_OBJECT_HANDLE(DocumentInfo);
 	DECLARE_OBJECT_HANDLE(PageTree);
 	DECLARE_OBJECT_HANDLE(PageObject);
 	DECLARE_OBJECT_HANDLE(DeveloperExtensions);
@@ -57,6 +58,9 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(OutlineItem);
 	DECLARE_OBJECT_HANDLE(OutlineItemColor);
 	DECLARE_OBJECT_HANDLE(OutlineItemFlags);
+
+	/* Common data structures */
+	DECLARE_OBJECT_HANDLE(Date);
 	
 	/* Contents */
 	DECLARE_OBJECT_HANDLE(Contents);

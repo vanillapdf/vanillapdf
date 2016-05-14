@@ -27,7 +27,7 @@ namespace gotchangpdf
 		operator T() const { return GetValue(); }
 		T operator*() const { return *GetValue(); }
 
-		template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value>>
+		template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value || std::is_base_of<Deferred<T::value_type>, T>::value>>
 		typename T::value_type* AddRefGet(void)
 		{
 			if (nullptr == m_value)

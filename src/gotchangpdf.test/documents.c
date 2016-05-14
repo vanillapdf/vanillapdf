@@ -3,9 +3,15 @@
 error_type process_document(DocumentHandle document, int nested)
 {
 	CatalogHandle catalog = NULL;
+	DocumentInfoHandle info = NULL;
+
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_GetCatalog(document, &catalog));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_catalog(catalog, 0));
 	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_Release(catalog));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_GetDocumentInfo(document, &info));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_document_info(info, 0));
+	RETURN_ERROR_IF_NOT_SUCCESS(DocumentInfo_Release(info));
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
@@ -388,6 +394,107 @@ error_type process_catalog(CatalogHandle catalog, int nested)
 
 	print_spaces(nested);
 	printf("Document catalog begin\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_document_info(DocumentInfoHandle obj, int nested)
+{
+	StringHandle title = NULL;
+	StringHandle author = NULL;
+	StringHandle subject = NULL;
+	StringHandle keywords = NULL;
+	StringHandle creator = NULL;
+	StringHandle producer = NULL;
+	DateHandle creation_date = NULL;
+	DateHandle modification_date = NULL;
+	NameHandle trapped = NULL;
+
+	print_spaces(nested);
+	printf("Document info begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetTitle(obj, &title),
+		process_string(title, nested + 1),
+		StringObject_Release(title));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetAuthor(obj, &author),
+		process_string(author, nested + 1),
+		StringObject_Release(author));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetSubject(obj, &subject),
+		process_string(subject, nested + 1),
+		StringObject_Release(subject));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetKeywords(obj, &keywords),
+		process_string(keywords, nested + 1),
+		StringObject_Release(keywords));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetCreator(obj, &creator),
+		process_string(creator, nested + 1),
+		StringObject_Release(creator));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetProducer(obj, &producer),
+		process_string(producer, nested + 1),
+		StringObject_Release(producer));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetCreationDate(obj, &creation_date),
+		process_date(creation_date, nested + 1),
+		Date_Release(creation_date));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetModificationDate(obj, &modification_date),
+		process_date(modification_date, nested + 1),
+		Date_Release(modification_date));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetTrapped(obj, &trapped),
+		process_name(trapped, nested + 1),
+		NameObject_Release(trapped));
+
+	print_spaces(nested);
+	printf("Document info end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_date(DateHandle obj, int nested)
+{
+	integer_type year = 0;
+	integer_type month = 0;
+	integer_type day = 0;
+	integer_type hour = 0;
+	integer_type minute = 0;
+	integer_type second = 0;
+	DateTimezoneType timezone;
+	integer_type hour_offset = 0;
+	integer_type minute_offset = 0;
+
+	print_spaces(nested);
+	printf("Date begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Date_GetYear(obj, &year));
+	RETURN_ERROR_IF_NOT_SUCCESS(Date_GetMonth(obj, &month));
+	RETURN_ERROR_IF_NOT_SUCCESS(Date_GetDay(obj, &day));
+	RETURN_ERROR_IF_NOT_SUCCESS(Date_GetHour(obj, &hour));
+	RETURN_ERROR_IF_NOT_SUCCESS(Date_GetMinute(obj, &minute));
+	RETURN_ERROR_IF_NOT_SUCCESS(Date_GetSecond(obj, &second));
+	RETURN_ERROR_IF_NOT_SUCCESS(Date_GetTimezone(obj, &timezone));
+	RETURN_ERROR_IF_NOT_SUCCESS(Date_GetHourOffset(obj, &hour_offset));
+	RETURN_ERROR_IF_NOT_SUCCESS(Date_GetMinuteOffset(obj, &minute_offset));
+
+	print_spaces(nested + 1);
+	if (timezone == DateTimezoneType_UTC) {
+		printf("%04d-%02d-%02d %02d:%02d:%02d\n",
+			year, month, day,
+			hour, minute, second);
+	}
+	else {
+		printf("%04d-%02d-%02d %02d:%02d:%02d %c%02d:%02d\n",
+			year, month, day,
+			hour, minute, second,
+			timezone, hour_offset, minute_offset);
+	}
+
+	print_spaces(nested);
+	printf("Date outline end\n");
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }

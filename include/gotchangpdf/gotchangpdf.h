@@ -13,6 +13,7 @@
 
 /* documents */
 #include "c_document.h"
+#include "c_document_info.h"
 #include "c_catalog.h"
 #include "c_page_tree.h"
 #include "c_page_object.h"
@@ -21,6 +22,10 @@
 #include "c_viewer_preferences.h"
 #include "c_outline.h"
 
+/* common data structures*/
+#include "c_date.h"
+
+/* contents */
 #include "c_contents.h"
 
 /* objects */
