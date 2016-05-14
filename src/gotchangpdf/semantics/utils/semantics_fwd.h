@@ -24,6 +24,7 @@ namespace gotchangpdf
 
 		class Document; using DocumentPtr = Deferred<Document>;
 		class Catalog; using CatalogPtr = Deferred<Catalog>;
+		class DocumentInfo; using DocumentInfoPtr = Deferred<DocumentInfo>;
 		class PageNodeBase; using PageNodeBasePtr = Deferred<PageNodeBase>;
 		class PageTree; using PageTreePtr = Deferred<PageTree>;
 		class PageTreeNode; using PageTreeNodePtr = Deferred<PageTreeNode>;
@@ -32,7 +33,7 @@ namespace gotchangpdf
 		class ResourceDictionary; using ResourceDictionaryPtr = Deferred<ResourceDictionary>;
 
 		class Rectangle; using RectanglePtr = Deferred<Rectangle>;
-		class Date;
+		class Date; using DatePtr = Deferred<Date>; using OutputDatePtr = OutputPointer<DatePtr>;
 		class Rectangle;
 		class Tree;
 

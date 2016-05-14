@@ -193,6 +193,15 @@ namespace gotchangpdf
 			extern const syntax::NameObjectPtr AdbePkcs7s5;
 			extern const syntax::NameObjectPtr Recipients;
 			extern const syntax::NameObjectPtr DefaultCryptFilter;
+			extern const syntax::NameObjectPtr Info;
+			extern const syntax::NameObjectPtr Author;
+			extern const syntax::NameObjectPtr Subject;
+			extern const syntax::NameObjectPtr Keywords;
+			extern const syntax::NameObjectPtr Creator;
+			extern const syntax::NameObjectPtr Producer;
+			extern const syntax::NameObjectPtr CreationDate;
+			extern const syntax::NameObjectPtr ModDate;
+			extern const syntax::NameObjectPtr Trapped;
 		}
 	}
 }

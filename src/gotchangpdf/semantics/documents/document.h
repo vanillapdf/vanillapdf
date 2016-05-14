@@ -28,6 +28,15 @@ namespace gotchangpdf
 				return Catalog(root);
 			}
 
+			DocumentInfoPtr GetDocumentInfo(void) const
+			{
+				auto chain = _holder->Value()->GetXrefChain();
+				auto xref = chain->Begin()->Value();
+				auto dictionary = xref->GetTrailerDictionary();
+				auto info = dictionary->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Info);
+				return DocumentInfoPtr(info);
+			}
+
 		private:
 			syntax::FileHolderPtr _holder;
 		};

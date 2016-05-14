@@ -1,49 +1,25 @@
 #ifndef _DATE_H
 #define _DATE_H
 
-#include "string_object.h"
+#include "semantics_fwd.h"
+#include "high_level_object.h"
 
-// format (D:YYYYMMDDHHmmSSOHH'mm)
+#include <ctime>
 
 namespace gotchangpdf
 {
-	struct Date
+	namespace semantics
 	{
-	public:
-		static void FromString(const LiteralString&);
-		static LiteralString& ToLiteralString();
-
-		enum class UTCRelation : unsigned char
+		class Date : public HighLevelObject<syntax::StringObjectPtr>
 		{
-			equal = 'Z',
-			earlier = '-',
-			later = '+'
+		public:
+			explicit Date(syntax::StringObjectPtr root);
+			time_t Value(void);
+
+
+		private:
+			time_t m_time;
 		};
-
-		int year,
-			month,
-			day,
-			hour,
-			minute,
-			second,
-			offset_hours,
-			offset_minutes;
-
-		UTCRelation relation;
-	};
-
-	void Date::FromString(const LiteralString& str)
-	{
-		// TODO
-		static const char header_fmt[] = "D:%4d%2d%2d%2d%2d%2d%c%2d'%2d";
-		//int result = sscanf_s(resultStr.c_str(), header_fmt, &o._majorVersion, &o._minorVersion);
-	}
-
-	LiteralString& Date::ToLiteralString()
-	{
-		// TODO
-		LiteralString result = LiteralString("D:YYYYMMDDHHmmSSOHH'mm");
-		return result;
 	}
 }
 

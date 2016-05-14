@@ -109,10 +109,10 @@ namespace gotchangpdf
 		using MixedArrayObjectPtr = Deferred<MixedArrayObject>;
 
 		class ObjectPtr;
-		class StringObjectPtr;
+		class StringObjectPtr; using OutputStringObjectPtr = OutputPointer<StringObjectPtr>;
 		//using ObjectPtr = Deferred<Object>;
 		using ContainableObjectPtr = Deferred<ContainableObject>; using OutputContainableObjectPtr = OutputPointer<ContainableObjectPtr>;
-		using NameObjectPtr = Deferred<NameObject>;
+		using NameObjectPtr = Deferred<NameObject>; using OutputNameObjectPtr = OutputPointer<NameObjectPtr>;
 		using BooleanObjectPtr = Deferred<BooleanObject>;
 		using IndirectObjectReferencePtr = Deferred<IndirectObjectReference>;
 		using IntegerObjectPtr = Deferred<IntegerObject>;
