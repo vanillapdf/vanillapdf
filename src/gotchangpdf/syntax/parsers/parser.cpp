@@ -241,9 +241,10 @@ namespace gotchangpdf
 					}
 
 					auto length_obj = dictionary->Find(constant::Name::Length);
-					if (!ObjectUtils::IsType<IntegerObjectPtr>(length_obj)) {
+					if (length_obj->GetType() != Object::Type::Integer) {
 						auto locked_file = _file.lock();
 						if (!locked_file->IsInitialized()) {
+							dictionary->Remove(constant::Name::Length);
 							dictionary->Insert(constant::Name::Length, IntegerObjectPtr(computed_length));
 							break;
 						}

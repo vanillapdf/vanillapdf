@@ -49,6 +49,11 @@ namespace gotchangpdf
 			return true;
 		}
 
+		void DictionaryObject::Remove(const NameObjectPtr& name)
+		{
+			_list.erase(name);
+		}
+
 		bool DictionaryObject::Insert(const NameObjectPtr& name, const ContainableObjectPtr& value)
 		{
 			std::pair<NameObjectPtr, ContainableObjectPtr> pair(name, value);

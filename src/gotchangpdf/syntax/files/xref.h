@@ -175,8 +175,12 @@ namespace gotchangpdf
 			{
 				Key key(entry->GetObjectNumber(), entry->GetGenerationNumber());
 				std::pair<Key, XrefEntryBasePtr> pair(key, entry);
+				auto found = _entries.find(key);
+				if (found != _entries.end()) {
+					_entries.erase(found);
+				}
+
 				_entries.insert(pair);
-				//_entries[key] = entry;
 			}
 
 			size_t Size(void) const _NOEXCEPT { return _entries.size(); }

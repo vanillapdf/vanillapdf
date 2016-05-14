@@ -117,6 +117,7 @@ namespace gotchangpdf
 			bool TryFind(const NameObjectPtr& name, OutputContainableObjectPtr& result) const;
 			bool Contains(const NameObjectPtr& name) const;
 			bool Insert(const NameObjectPtr& name, const ContainableObjectPtr& value);
+			void Remove(const NameObjectPtr& name);
 		};
 	}
 }
