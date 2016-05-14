@@ -6,12 +6,12 @@ error_type process_document(DocumentHandle document, int nested)
 	DocumentInfoHandle info = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_GetCatalog(document, &catalog));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_catalog(catalog, 0));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_catalog(catalog, nested + 1));
 	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_Release(catalog));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Document_GetDocumentInfo(document, &info));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_document_info(info, 0));
-	RETURN_ERROR_IF_NOT_SUCCESS(DocumentInfo_Release(info));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Document_GetDocumentInfo(document, &info),
+		process_document_info(info, nested + 1),
+		DocumentInfo_Release(info));
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
@@ -482,7 +482,7 @@ error_type process_date(DateHandle obj, int nested)
 
 	print_spaces(nested + 1);
 	if (timezone == DateTimezoneType_UTC) {
-		printf("%04d-%02d-%02d %02d:%02d:%02d\n",
+		printf("%04d-%02d-%02d %02d:%02d:%02dZ\n",
 			year, month, day,
 			hour, minute, second);
 	}
