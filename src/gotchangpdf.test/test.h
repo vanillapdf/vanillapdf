@@ -56,6 +56,7 @@ error_type process_document(DocumentHandle document, int nested);
 error_type process_catalog(CatalogHandle obj, int nested);
 error_type process_page(PageObjectHandle obj, int nested);
 error_type process_extensions(DeveloperExtensionsHandle extensions, int nested);
+error_type process_extension(DeveloperExtensionHandle extensions, int nested);
 error_type process_page_labels(PageLabelsHandle labels, integer_type size, int nested);
 error_type process_page_label(PageLabelHandle label, int nested);
 error_type process_page_layout(PageLayout page_layout, int nested);

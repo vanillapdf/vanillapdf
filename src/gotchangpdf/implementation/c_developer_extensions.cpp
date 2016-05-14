@@ -8,9 +8,9 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensions_GetBaseVersion(DeveloperExtensionsHandle handle, PPDFVersion result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtension_GetBaseVersion(DeveloperExtensionHandle handle, PPDFVersion result)
 {
-	DeveloperExtensions* obj = reinterpret_cast<DeveloperExtensions*>(handle);
+	DeveloperExtension* obj = reinterpret_cast<DeveloperExtension*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
@@ -41,9 +41,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensions_GetBaseVersio
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensions_GetExtensionLevel(DeveloperExtensionsHandle handle, PIntegerHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtension_GetExtensionLevel(DeveloperExtensionHandle handle, PIntegerHandle result)
 {
-	DeveloperExtensions* obj = reinterpret_cast<DeveloperExtensions*>(handle);
+	DeveloperExtension* obj = reinterpret_cast<DeveloperExtension*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
@@ -56,7 +56,93 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensions_GetExtensionL
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtension_Release(DeveloperExtensionHandle handle)
+{
+	return ObjectRelease<DeveloperExtension, DeveloperExtensionHandle>(handle);
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensions_Iterator(DeveloperExtensionsHandle handle, PDeveloperExtensionsIteratorHandle result)
+{
+	DeveloperExtensions* obj = reinterpret_cast<DeveloperExtensions*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto it = obj->Begin();
+		auto ptr = it.AddRefGet();
+		*result = reinterpret_cast<DeveloperExtensionsIteratorHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
 GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensions_Release(DeveloperExtensionsHandle handle)
 {
 	return ObjectRelease<DeveloperExtensions, DeveloperExtensionsHandle>(handle);
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetKey(DeveloperExtensionsIteratorHandle handle, PNameHandle result)
+{
+	DeveloperExtensions::Iterator* obj = reinterpret_cast<DeveloperExtensions::Iterator*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto name = obj->First();
+		auto ptr = name.AddRefGet();
+		*result = reinterpret_cast<NameHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetValue(DeveloperExtensionsIteratorHandle handle, PDeveloperExtensionHandle result)
+{
+	DeveloperExtensions::Iterator* obj = reinterpret_cast<DeveloperExtensions::Iterator*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto extension = obj->Second();
+		auto ptr = extension.AddRefGet();
+		*result = reinterpret_cast<DeveloperExtensionHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_IsValid(DeveloperExtensionsIteratorHandle handle, DeveloperExtensionsHandle parent, out_boolean_type result)
+{
+	DeveloperExtensions::Iterator* iterator = reinterpret_cast<DeveloperExtensions::Iterator*>(handle);
+	DeveloperExtensions* dictionary = reinterpret_cast<DeveloperExtensions*>(parent);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(dictionary);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		if (*dictionary->End() == *iterator)
+			*result = GOTCHANG_PDF_FALSE;
+		else
+			*result = GOTCHANG_PDF_TRUE;
+
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_Next(DeveloperExtensionsIteratorHandle handle)
+{
+	DeveloperExtensions::Iterator* obj = reinterpret_cast<DeveloperExtensions::Iterator*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	try
+	{
+		++(*obj);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_Release(DeveloperExtensionsIteratorHandle handle)
+{
+	return ObjectRelease<DeveloperExtensions::Iterator, DeveloperExtensionsIteratorHandle>(handle);
 }

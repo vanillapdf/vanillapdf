@@ -46,6 +46,7 @@ namespace gotchangpdf
 		class OutlineItem; using OutlineItemPtr = Deferred<OutlineItem>; using OutputOutlineItemPtr = OutputPointer<OutlineItemPtr>;
 		class PageRange; using PageRangePtr = Deferred<PageRange>; using OutputPageRangePtr = OutputPointer<PageRangePtr>;
 		class ViewerPreferences; using ViewerPreferencesPtr = Deferred<ViewerPreferences>; using OutputViewerPreferencesPtr = OutputPointer<ViewerPreferencesPtr>;
+		class DeveloperExtension; using DeveloperExtensionPtr = Deferred<DeveloperExtension>; using OutputDeveloperExtensionPtr = OutputPointer<DeveloperExtensionPtr>;
 		class DeveloperExtensions; using DeveloperExtensionsPtr = Deferred<DeveloperExtensions>; using OutputDeveloperExtensionsPtr = OutputPointer<DeveloperExtensionsPtr>;
 		class PageLabel; using PageLabelPtr = Deferred<PageLabel>; using OutputPageLabelPtr = OutputPointer<PageLabelPtr>;
 		class PageLabels; using PageLabelsPtr = Deferred<PageLabels>; using OutputPageLabelsPtr = OutputPointer<PageLabelsPtr>;

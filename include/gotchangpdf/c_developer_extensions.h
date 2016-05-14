@@ -12,9 +12,18 @@ extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensions_GetBaseVersion(DeveloperExtensionsHandle handle, PPDFVersion result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensions_GetExtensionLevel(DeveloperExtensionsHandle handle, PIntegerHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetKey(DeveloperExtensionsIteratorHandle handle, PNameHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetValue(DeveloperExtensionsIteratorHandle handle, PDeveloperExtensionHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_IsValid(DeveloperExtensionsIteratorHandle handle, DeveloperExtensionsHandle parent, out_boolean_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_Next(DeveloperExtensionsIteratorHandle handle);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_Release(DeveloperExtensionsIteratorHandle handle);
+
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensions_Iterator(DeveloperExtensionsHandle handle, PDeveloperExtensionsIteratorHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensions_Release(DeveloperExtensionsHandle handle);
+
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtension_GetBaseVersion(DeveloperExtensionHandle handle, PPDFVersion result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtension_GetExtensionLevel(DeveloperExtensionHandle handle, PIntegerHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtension_Release(DeveloperExtensionHandle handle);
 
 #ifdef __cplusplus
 };

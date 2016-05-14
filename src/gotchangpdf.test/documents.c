@@ -275,14 +275,54 @@ error_type process_page(PageObjectHandle obj, int nested)
 
 error_type process_extensions(DeveloperExtensionsHandle extensions, int nested)
 {
+	boolean_type boolean = GOTCHANG_PDF_FALSE;
+	DeveloperExtensionsIteratorHandle iterator = NULL;
+
+	print_spaces(nested);
+	printf("Developer extensions begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtensions_Iterator(extensions, &iterator));
+	while (GOTCHANG_PDF_ERROR_SUCCES == DeveloperExtensionsIterator_IsValid(iterator, extensions, &boolean)
+		&& GOTCHANG_PDF_TRUE == boolean)
+	{
+		NameHandle key = NULL;
+		DeveloperExtensionHandle value = NULL;
+
+		print_spaces(nested);
+		printf("Pair:\n");
+
+		RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtensionsIterator_GetKey(iterator, &key));
+		RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtensionsIterator_GetValue(iterator, &value));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(process_name(key, nested + 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_extension(value, nested + 1));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(NameObject_Release(key));
+		RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtension_Release(value));
+
+		print_spaces(nested);
+		printf("EndPair\n");
+
+		RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtensionsIterator_Next(iterator));
+	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtensionsIterator_Release(iterator));
+
+	print_spaces(nested);
+	printf("Developer extensions End\n");
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_extension(DeveloperExtensionHandle extension, int nested)
+{
 	IntegerHandle level = NULL;
 	PDFVersion base_version;
 
 	print_spaces(nested);
 	printf("Developer extensions begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtensions_GetBaseVersion(extensions, &base_version));
-	RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtensions_GetExtensionLevel(extensions, &level));
+	RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtension_GetBaseVersion(extension, &base_version));
+	RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtension_GetExtensionLevel(extension, &level));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(process_version(base_version, nested + 1));
 
