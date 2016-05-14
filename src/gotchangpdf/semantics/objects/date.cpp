@@ -20,38 +20,50 @@ namespace gotchangpdf
 				"(\\d{2})" // hour
 				"(\\d{2})" // minute
 				"(\\d{2})" // second
-				"([+-Z])"  // offset type
-				"(\\d{2})" // offset hour
-				"'"        // offset separator
-				"(\\d{2})" // offset minutes
-				"'");     // this apostrophe is not mentioned, but is included in all examples
+
+				"(?:"
+					"(?:"
+						"([+-])"	// offset type
+						"(\\d{2})"	// offset hour
+						"'?"		// offset separator
+						"(\\d{2})"	// offset minutes
+						"'?"		// this apostrophe is not mentioned, but is included in all examples
+					")"
+					"|"
+					"(Z?)"
+				")"
+				);
 
 			std::smatch sm;
 			if (!std::regex_match(str, sm, header_regex))
 				throw GeneralException("Could not parse datetime: " + str);
 
-			assert(sm.size() == 10);
-			m_year = std::stoi(sm[1]);
-			m_month = std::stoi(sm[2]);
-			m_day = std::stoi(sm[3]);
-			m_hour = std::stoi(sm[4]);
-			m_minute = std::stoi(sm[5]);
-			m_second = std::stoi(sm[6]);
-			m_hour_offset = std::stoi(sm[8]);
-			m_minute_offset = std::stoi(sm[9]);
+			auto length = sm.size();
 
-			if (sm[7].str() == "+") {
-				m_timezone = TimezoneType::Later;
-			}
-			else if (sm[7].str() == "-") {
-				m_timezone = TimezoneType::Earlier;
-			}
-			else if (sm[7].str() == "Z") {
+			if (length >= 1 && sm[1].matched) m_year = std::stoi(sm[1]);
+			if (length >= 2 && sm[2].matched) m_month = std::stoi(sm[2]);
+			if (length >= 3 && sm[3].matched) m_day = std::stoi(sm[3]);
+			if (length >= 4 && sm[4].matched) m_hour = std::stoi(sm[4]);
+			if (length >= 5 && sm[5].matched) m_minute = std::stoi(sm[5]);
+			if (length >= 6 && sm[6].matched) m_second = std::stoi(sm[6]);
+			if (length >= 8 && sm[8].matched) m_hour_offset = std::stoi(sm[8]);
+			if (length >= 9 && sm[9].matched) m_minute_offset = std::stoi(sm[9]);
+
+			if (length >= 10 && sm[10].matched) {
 				m_timezone = TimezoneType::UTC;
 			}
-			else {
-				assert(false && "Error in regex above");
-				throw GeneralException("Could not parse datetime: " + str);
+
+			if (length >= 7 && sm[7].matched) {
+				if (sm[7].str() == "+") {
+					m_timezone = TimezoneType::Later;
+				}
+				else if (sm[7].str() == "-") {
+					m_timezone = TimezoneType::Earlier;
+				}
+				else {
+					assert(false && "Error in regular expression above");
+					throw GeneralException("Could not parse datetime: " + str);
+				}
 			}
 
 			if (m_month < 1 || m_month > 12) throw GeneralException("Month is out of range: " + std::to_string(m_month));
