@@ -12,7 +12,7 @@ extern "C"
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetKey(DictionaryIteratorHandle handle, PNameHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetValue(DictionaryIteratorHandle handle, PObjectHandle result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(DictionaryIteratorHandle handle, DictionaryHandle, out_boolean_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(DictionaryIteratorHandle handle, DictionaryHandle parent, out_boolean_type result);
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Next(DictionaryIteratorHandle handle);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Release(DictionaryIteratorHandle handle);
