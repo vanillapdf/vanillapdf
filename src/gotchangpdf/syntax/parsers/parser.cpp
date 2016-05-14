@@ -108,7 +108,7 @@ namespace gotchangpdf
 		{
 			auto integer = ReadInteger();
 
-			auto pos = tellg();
+			auto pos = GetPosition();
 			if (PeekTokenTypeSkip() == Token::Type::INTEGER_OBJECT) {
 				auto ahead = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 				auto gen_number = ObjectFactory::CreateInteger(ahead);
@@ -121,7 +121,7 @@ namespace gotchangpdf
 				}
 
 				// TODO we can peek only one next token, therefore we need to seek back
-				seekg(pos);
+				SetPosition(pos);
 			}
 
 			return integer;
@@ -173,7 +173,7 @@ namespace gotchangpdf
 			if (PeekTokenTypeSkip() == Token::Type::STREAM_BEGIN) {
 				ReadTokenWithTypeSkip(Token::Type::STREAM_BEGIN);
 				ReadTokenWithTypeSkip(Token::Type::EOL);
-				auto stream_offset = tellg();
+				auto stream_offset = GetPosition();
 
 				do
 				{
@@ -205,7 +205,7 @@ namespace gotchangpdf
 				seekg(stream_offset, ios_base::beg);
 
 				for (;;) {
-					auto offset = tellg();
+					auto offset = GetPosition();
 					auto data = readline();
 					auto line = data->ToString();
 					auto pos = line.find("endstream");
@@ -217,7 +217,7 @@ namespace gotchangpdf
 					auto end_obj_token = PeekTokenTypeSkip();
 					assert(end_obj_token == Token::Type::INDIRECT_OBJECT_END); (void)end_obj_token;
 
-					seekg(offset.seekpos() - 2);
+					SetPosition(offset - 2);
 					auto new_line1 = get();
 					auto new_line2 = get();
 					if (new_line1 == '\r') {
@@ -233,7 +233,7 @@ namespace gotchangpdf
 					}
 
 					ReadTokenWithTypeSkip(Token::Type::STREAM_END);
-					auto stream_end_offset = (streamoff)offset + pos;
+					auto stream_end_offset = offset + pos;
 					auto computed_length = stream_end_offset - stream_offset;
 					if (!dictionary->Contains(constant::Name::Length)) {
 						dictionary->Insert(constant::Name::Length, IntegerObjectPtr(computed_length));
@@ -322,7 +322,7 @@ namespace gotchangpdf
 
 		ObjectPtr Parser::ReadIndirectObject(void)
 		{
-			auto offset = tellg();
+			auto offset = GetPosition();
 			auto obj_number_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 			auto gen_number_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 			auto begin_token = ReadTokenWithTypeSkip(Token::Type::INDIRECT_OBJECT_BEGIN);
@@ -353,8 +353,9 @@ namespace gotchangpdf
 
 		ObjectPtr Parser::ReadDirectObject()
 		{
-			auto offset = tellg();
-			switch (PeekTokenTypeSkip())
+			auto offset = GetPosition();
+			auto type = PeekTokenTypeSkip();
+			switch (type)
 			{
 			case Token::Type::DICTIONARY_BEGIN:
 				return ReadDictionaryStream();
@@ -413,7 +414,7 @@ namespace gotchangpdf
 			std::vector<ObjectPtr> result;
 			auto headers = ReadObjectStreamHeaders(size);
 			for (auto header : headers) {
-				seekg(first + header.offset);
+				SetPosition(first + header.offset);
 				auto obj = ReadDirectObject();
 				obj->SetObjectNumber(header.object_number);
 
@@ -431,9 +432,9 @@ namespace gotchangpdf
 
 		ObjectPtr Parser::PeekDirectObject()
 		{
-			auto position = tellg();
+			auto position = GetPosition();
 			auto obj = ReadDirectObject();
-			seekg(position);
+			SetPosition(position);
 
 			return obj;
 		}
@@ -455,7 +456,7 @@ namespace gotchangpdf
 
 		TokenPtr Parser::PeekTokenSkip()
 		{
-			auto position = tellg();
+			auto position = GetPosition();
 			bool rewind = false;
 			for (;;) {
 				auto token = PeekToken();
@@ -466,7 +467,7 @@ namespace gotchangpdf
 				}
 
 				if (rewind) {
-					seekg(position);
+					SetPosition(position);
 				}
 
 				return token;
@@ -481,7 +482,7 @@ namespace gotchangpdf
 
 		TokenPtr Parser::ReadTokenWithTypeSkip(Token::Type type)
 		{
-			auto offset = tellg();
+			auto offset = GetPosition();
 			for (;;) {
 				auto token = ReadToken();
 
@@ -522,7 +523,7 @@ namespace gotchangpdf
 				return result;
 			}
 
-			throw ParseException(tellg());
+			throw ParseException(GetPosition());
 		}
 
 		XrefTablePtr Parser::ReadXrefTable()
@@ -1013,7 +1014,7 @@ namespace gotchangpdf
 
 		ObjectPtr Parser::ReadOperand()
 		{
-			auto offset = tellg();
+			auto offset = GetPosition();
 			switch (PeekTokenTypeSkip())
 			{
 			case Token::Type::DICTIONARY_BEGIN:
@@ -1096,7 +1097,7 @@ namespace gotchangpdf
 
 			seekg(0);
 			while (!eof()) {
-				auto offset_before = tellg();
+				auto offset_before = GetPosition();
 
 				auto first_token = ReadToken();
 				if (first_token->GetType() == Token::Type::END_OF_INPUT) {

@@ -32,11 +32,18 @@ namespace gotchangpdf
 
 		TokenPtr Tokenizer::ReadToken()
 		{
-			auto current_offset = tellg();
+			// When reading past EOF, failbit is set to true
+			// We are aware, that this function might try to read past EOF
+			// instead of checking for EOF before every get
+			// we just clear the flags after we finish
+			SCOPE_GUARD_CAPTURE_REFERENCES(if (eof() && fail()) clear(rdstate() & ~failbit));
+
+			auto current_offset = GetPosition();
 			if (_token_cached && _last_token_offset == current_offset) {
 				auto result = _last_token;
 
-				seekg(_advance_position);
+				SetPosition(_advance_position);
+
 				_last_token_offset = _BADOFF;
 				_advance_position = _BADOFF;
 				_token_cached = false;
@@ -59,7 +66,7 @@ namespace gotchangpdf
 			case WhiteSpace::NUL:
 				goto retry;
 			case std::char_traits<char>::eof():
-				return TokenPtr(Token::Type::END_OF_INPUT, chars);
+				return TokenPtr(Token::Type::END_OF_INPUT);
 			case Delimiter::PERCENT_SIGN:
 				for (;;) {
 					auto current_meta = get();
@@ -347,13 +354,13 @@ namespace gotchangpdf
 		/* Peek need cache */
 		TokenPtr Tokenizer::PeekToken()
 		{
-			auto current = tellg();
+			auto current = GetPosition();
 			if (_token_cached && _last_token_offset == current) {
 				return *_last_token;
 			}
 
 			_last_token = ReadToken();
-			_advance_position = tellg();
+			_advance_position = GetPosition();
 			_last_token_offset = current;
 			_token_cached = true;
 
@@ -361,19 +368,7 @@ namespace gotchangpdf
 				assert(_last_token->GetType() == Token::Type::END_OF_INPUT);
 			}
 
-			if (_BADOFF == _advance_position && eof()) {
-				clear();
-			}
-
-			seekg(_last_token_offset);
-			auto verify_offset = tellg();
-			if (_last_token_offset != verify_offset) {
-				clear();
-			}
-
-			auto second_verify_offset = tellg();
-			assert(_last_token_offset == second_verify_offset);
-
+			SetPosition(_last_token_offset);
 			return *_last_token;
 		}
 

@@ -156,6 +156,34 @@ namespace gotchangpdf
 			return result;
 		}
 
+		types::stream_size ReverseStream::GetPosition()
+		{
+			auto result = eof() ? std::_BADOFF : tellg();
+			assert(!fail());
+			return result;
+		}
+
+		void ReverseStream::SetPosition(types::stream_size pos)
+		{
+			// of badoff is specified, set eof flag
+			if (pos == std::_BADOFF) {
+				clear(eofbit);
+				return;
+			}
+
+			// clear eof
+			if (eof()) {
+				clear(rdstate() & eofbit);
+			}
+
+			// seek to the actual position
+			seekg(pos);
+			assert(!fail() && !eof());
+
+			auto verify_offset = GetPosition();
+			assert(pos == verify_offset);
+		}
+
 		BufferPtr ReverseStream::readline(void)
 		{
 			Buffer result;

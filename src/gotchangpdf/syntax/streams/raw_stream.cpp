@@ -30,6 +30,38 @@ namespace gotchangpdf
 			CharacterSource::read(result.data(), len);
 		}
 
+		types::stream_size Stream::GetPosition()
+		{
+			return eof() ? std::_BADOFF : tellg();
+		}
+
+		void Stream::SetPosition(types::stream_size pos)
+		{
+			// of badoff is specified, set eof flag
+			if (pos == std::_BADOFF) {
+				setstate(eofbit);
+				return;
+			}
+
+			// clear eof
+			if (eof() || fail()) {
+				clear();
+			}
+
+			// seek to the actual position
+			seekg(pos);
+
+			// clear fail flags in case we accessed EOF
+			if (fail()) {
+				clear(rdstate() & failbit);
+			}
+			else {
+				// verify if the position is correct
+				auto verify_offset = GetPosition();
+				assert(pos == verify_offset);
+			}
+		}
+
 		BufferPtr Stream::readline(void)
 		{
 			BufferPtr result;
