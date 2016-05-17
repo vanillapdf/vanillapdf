@@ -33,9 +33,9 @@ namespace gotchangpdf
 			int MinuteOffset(void) const noexcept { return m_minute_offset; }
 
 		private:
-			int m_year = 0;
-			int m_month = 0;
-			int m_day = 0;
+			int m_year = 1900;
+			int m_month = 1;
+			int m_day = 1;
 			int m_hour = 0;
 			int m_minute = 0;
 			int m_second = 0;
