@@ -299,12 +299,16 @@ namespace gotchangpdf
 				return data;
 			}
 
+			// Any strings that are inside streams such as content streams and compressed object streams,
+			// which themselves are encrypted
+			auto object_entry = _xref->GetXrefEntry(objNumber, genNumber);
+			if (object_entry->GetUsage() == XrefEntryBase::Usage::Compressed) {
+				return data;
+			}
+
 			if (_decryption_key.empty()) {
 				// Encrypted documents shall be opened with default empty password
 				SetEncryptionPassword("");
-
-				//PKCS12Key key = PKCS12Key("C:\\Users\\Gotcha\\Documents\\it2u\\cert\\TestUser4.pfx", Buffer("a"));
-				//SetEncryptionKey(key);
 			}
 
 			// AES 256 bits behaves differently
