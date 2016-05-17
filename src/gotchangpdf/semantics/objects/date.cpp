@@ -13,25 +13,21 @@ namespace gotchangpdf
 
 			//(D:YYYYMMDDHHmmSSOHH'mm)
 			std::regex header_regex(
-				"D:" // date header
+				"^(?:D:)?" // date header
 				"(\\d{4})" // year
-				"(\\d{2})" // month
-				"(\\d{2})" // day
-				"(\\d{2})" // hour
-				"(\\d{2})" // minute
-				"(\\d{2})" // second
+				"(\\d$|\\d{2}|$)" // month
+				"(\\d$|\\d{2}|$)" // day
+				"(\\d$|\\d{2}|$)" // hour
+				"(\\d$|\\d{2}|$)" // minute
+				"(\\d$|\\d{2}|$)" // second
 
 				"(?:"
-					"(?:"
-						"([+-])"	// offset type
-						"(\\d{2})"	// offset hour
-						"'?"		// offset separator
-						"(\\d{2})"	// offset minutes
-						"'?"		// this apostrophe is not mentioned, but is included in all examples
-					")"
-					"|"
-					"(Z?)"
-				")"
+					"([Z+-]|$)"		// offset type
+					"(\\d{2}|$)"	// offset hour
+					"'?"			// offset separator
+					"(\\d{2}|$)"	// offset minutes
+					"'?"			// this apostrophe is not mentioned, but is included in all examples
+				")$"
 				);
 
 			std::smatch sm;
@@ -40,21 +36,19 @@ namespace gotchangpdf
 
 			auto length = sm.size();
 
-			if (length >= 1 && sm[1].matched) m_year = std::stoi(sm[1]);
-			if (length >= 2 && sm[2].matched) m_month = std::stoi(sm[2]);
-			if (length >= 3 && sm[3].matched) m_day = std::stoi(sm[3]);
-			if (length >= 4 && sm[4].matched) m_hour = std::stoi(sm[4]);
-			if (length >= 5 && sm[5].matched) m_minute = std::stoi(sm[5]);
-			if (length >= 6 && sm[6].matched) m_second = std::stoi(sm[6]);
-			if (length >= 8 && sm[8].matched) m_hour_offset = std::stoi(sm[8]);
-			if (length >= 9 && sm[9].matched) m_minute_offset = std::stoi(sm[9]);
+			if (length >= 2 && sm[1].matched && sm[1].str().size() > 0) m_year = std::stoi(sm[1]);
+			if (length >= 3 && sm[2].matched && sm[2].str().size() > 0) m_month = std::stoi(sm[2]);
+			if (length >= 4 && sm[3].matched && sm[3].str().size() > 0) m_day = std::stoi(sm[3]);
+			if (length >= 5 && sm[4].matched && sm[4].str().size() > 0) m_hour = std::stoi(sm[4]);
+			if (length >= 6 && sm[5].matched && sm[5].str().size() > 0) m_minute = std::stoi(sm[5]);
+			if (length >= 7 && sm[6].matched && sm[6].str().size() > 0) m_second = std::stoi(sm[6]);
+			if (length >= 9 && sm[8].matched && sm[8].str().size() > 0) m_hour_offset = std::stoi(sm[8]);
+			if (length >= 10 && sm[9].matched && sm[9].str().size() > 0) m_minute_offset = std::stoi(sm[9]);
 
-			if (length >= 10 && sm[10].matched) {
-				m_timezone = TimezoneType::UTC;
-			}
-
-			if (length >= 7 && sm[7].matched) {
-				if (sm[7].str() == "+") {
+			if (length >= 8 && sm[7].matched) {
+				if (sm[7].str() == "Z" || sm[7].str() == "")
+					m_timezone = TimezoneType::UTC;
+				else if (sm[7].str() == "+") {
 					m_timezone = TimezoneType::Later;
 				}
 				else if (sm[7].str() == "-") {
