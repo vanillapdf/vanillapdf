@@ -83,13 +83,40 @@ namespace gotchangpdf
 			return true;
 		}
 
-		bool DocumentInfo::Trapped(syntax::OutputNameObjectPtr& result) const
+		bool DocumentInfo::Trapped(DocumentTrapped& result) const
 		{
 			if (!_obj->Contains(constant::Name::Trapped))
 				return false;
 
-			result = _obj->FindAs<syntax::NameObjectPtr>(constant::Name::Trapped);
-			return true;
+			auto trapped = _obj->Find(constant::Name::Trapped);
+			BufferPtr value;
+			if (syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(trapped)) {
+				auto name = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(trapped);
+				value = name->Value();
+			}
+
+			if (syntax::ObjectUtils::IsType<syntax::StringObjectPtr>(trapped)) {
+				auto string = syntax::ObjectUtils::ConvertTo<syntax::StringObjectPtr>(trapped);
+				value = string->Value();
+			}
+
+			if (*value == *constant::Name::True) {
+				result = DocumentTrapped::True;
+				return true;
+			}
+
+			if (*value == *constant::Name::False) {
+				result = DocumentTrapped::False;
+				return true;
+			}
+
+			if (*value == *constant::Name::Unknown) {
+				result = DocumentTrapped::Unknown;
+				return true;
+			}
+
+			assert(false && "Document trapped is neither of name or string");
+			return false;
 		}
 	}
 }

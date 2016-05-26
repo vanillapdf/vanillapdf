@@ -202,6 +202,9 @@ namespace gotchangpdf
 			extern const syntax::NameObjectPtr CreationDate;
 			extern const syntax::NameObjectPtr ModDate;
 			extern const syntax::NameObjectPtr Trapped;
+			extern const syntax::NameObjectPtr Unknown;
+			extern const syntax::NameObjectPtr True;
+			extern const syntax::NameObjectPtr False;
 		}
 	}
 }

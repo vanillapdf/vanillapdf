@@ -8,6 +8,13 @@ namespace gotchangpdf
 {
 	namespace semantics
 	{
+		enum class DocumentTrapped
+		{
+			Unknown = 0,
+			True,
+			False
+		};
+
 		class DocumentInfo : public HighLevelObject<syntax::DictionaryObjectPtr>
 		{
 		public:
@@ -22,7 +29,7 @@ namespace gotchangpdf
 			bool Producer(syntax::OutputStringObjectPtr& result) const;
 			bool CreationDate(OutputDatePtr& result) const;
 			bool ModificationDate(OutputDatePtr& result) const;
-			bool Trapped(syntax::OutputNameObjectPtr& result) const;
+			bool Trapped(DocumentTrapped& result) const;
 		};
 	}
 }

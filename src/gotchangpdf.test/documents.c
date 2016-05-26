@@ -398,6 +398,14 @@ error_type process_catalog(CatalogHandle catalog, int nested)
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
+error_type process_trapped(DocumentTrapped trapped, int nested)
+{
+	print_spaces(nested);
+	printf("Trapped: %d\n", trapped);
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
 error_type process_document_info(DocumentInfoHandle obj, int nested)
 {
 	StringHandle title = NULL;
@@ -408,7 +416,7 @@ error_type process_document_info(DocumentInfoHandle obj, int nested)
 	StringHandle producer = NULL;
 	DateHandle creation_date = NULL;
 	DateHandle modification_date = NULL;
-	NameHandle trapped = NULL;
+	DocumentTrapped trapped;
 
 	print_spaces(nested);
 	printf("Document info begin\n");
@@ -445,9 +453,8 @@ error_type process_document_info(DocumentInfoHandle obj, int nested)
 		process_date(modification_date, nested + 1),
 		Date_Release(modification_date));
 
-	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetTrapped(obj, &trapped),
-		process_name(trapped, nested + 1),
-		NameObject_Release(trapped));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(DocumentInfo_GetTrapped(obj, &trapped),
+		process_trapped(trapped, nested + 1));
 
 	print_spaces(nested);
 	printf("Document info end\n");

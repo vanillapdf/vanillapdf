@@ -158,6 +158,9 @@ extern "C"
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_CreationDate;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_ModDate;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_Trapped;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Unknown;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_True;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_False;
 
 #ifdef __cplusplus
 };

@@ -144,7 +144,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetModificationDate(
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentInfoHandle handle, PNameHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentInfoHandle handle, PDocumentTrapped result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -152,11 +152,22 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentI
 
 	try
 	{
-		OutputNameObjectPtr trapped;
+		gotchangpdf::semantics::DocumentTrapped trapped;
 		auto contains = obj->Trapped(trapped);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
-		auto ptr = trapped.AddRefGet();
-		*result = reinterpret_cast<NameHandle>(ptr);
+
+		switch (trapped)
+		{
+		case gotchangpdf::semantics::DocumentTrapped::Unknown:
+			*result = DocumentTrapped_Unknown; break;
+		case gotchangpdf::semantics::DocumentTrapped::True:
+			*result = DocumentTrapped_True; break;
+		case gotchangpdf::semantics::DocumentTrapped::False:
+			*result = DocumentTrapped_False; break;
+		default:
+			return GOTCHANG_PDF_ERROR_GENERAL;
+		}
+
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
