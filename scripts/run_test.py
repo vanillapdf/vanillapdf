@@ -6,6 +6,7 @@ import os
 import subprocess
 import sys
 import json
+import unicodedata
 
 USER_PASSWORD_KEY = "user_password"
 OWNER_PASSWORD_KEY = "owner_password"
@@ -24,6 +25,11 @@ def process_rv( rv ):
 		print ("Failed!")
 		logfile.write("Failed!\n")
 		failed_count += 1
+		
+def normalize_string( str ):
+	normalized = unicodedata.normalize('NFC', str)
+	encoded = normalized.encode('utf8')
+	return encoded.decode('latin-1')
 
 #Inform the user that process has started
 print ('Running test script')
@@ -80,7 +86,8 @@ for root, dirs, files in os.walk(testdir):
 					logfile.write(os.linesep)
 					logfile.write("Using user password...  ")
 					print ("Using user password...  ")
-					user_password = encryption_data[file][USER_PASSWORD_KEY]
+					raw_password = encryption_data[file][USER_PASSWORD_KEY]
+					user_password = normalize_string(raw_password)
 					rv = subprocess.call([path, file_path, PASSWORD_OPTION, user_password], stdout=FNULL)
 					process_rv(rv)
 					
@@ -91,7 +98,8 @@ for root, dirs, files in os.walk(testdir):
 						
 					logfile.write("Using owner password...  ")
 					print ("Using owner password...  ")
-					owner_password = encryption_data[file][OWNER_PASSWORD_KEY]
+					raw_password = encryption_data[file][OWNER_PASSWORD_KEY]
+					owner_password = normalize_string(raw_password)
 					rv = subprocess.call([path, file_path, PASSWORD_OPTION, owner_password], stdout=FNULL)
 					process_rv(rv)
 					
