@@ -13,7 +13,6 @@
 
 #include <iomanip>
 
-#include "pkcs12_key.h"
 
 namespace gotchangpdf
 {
