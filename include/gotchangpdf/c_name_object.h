@@ -161,6 +161,7 @@ extern "C"
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_Unknown;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_True;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_False;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_NeedsRendering;
 
 #ifdef __cplusplus
 };

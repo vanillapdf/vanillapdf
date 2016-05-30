@@ -205,6 +205,7 @@ namespace gotchangpdf
 			extern const syntax::NameObjectPtr Unknown;
 			extern const syntax::NameObjectPtr True;
 			extern const syntax::NameObjectPtr False;
+			extern const syntax::NameObjectPtr NeedsRendering;
 		}
 	}
 }
