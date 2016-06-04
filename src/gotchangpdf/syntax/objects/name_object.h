@@ -22,7 +22,7 @@ namespace gotchangpdf
 			explicit NameObject(value_type name) : _value(name) {}
 
 			value_type GetValue() const noexcept { return _value; }
-			void SetValue(value_type value) { _value = value; }
+			void SetValue(value_type value) { _value = value; SetDirty(true); }
 
 			bool operator==(const NameObject& other) const { return Equals(other); }
 			bool operator!=(const NameObject& other) const { return !Equals(other); }

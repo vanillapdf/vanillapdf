@@ -33,29 +33,33 @@ namespace gotchangpdf
 			static const char* TypeName(Type type);
 
 		public:
-			virtual Type GetType(void) const _NOEXCEPT = 0;
+			virtual Type GetType(void) const noexcept = 0;
 			virtual std::string ToString(void) const { return ToPdf(); }
 			virtual std::string ToPdf(void) const = 0;
 
 		public:
-			bool IsIndirect(void) const _NOEXCEPT { return _indirect; }
-			void SetIndirect(bool indirect) _NOEXCEPT { _indirect = indirect; }
+			bool IsIndirect(void) const noexcept { return _indirect; }
+			void SetIndirect(bool indirect) noexcept { _indirect = indirect; }
 
-			void SetOffset(types::stream_offset offset) _NOEXCEPT { _offset = offset; }
-			types::stream_offset GetOffset() const _NOEXCEPT { return _offset; }
+			bool IsDirty(void) const noexcept { return _dirty; }
+			void SetDirty(bool dirty) noexcept { _dirty = dirty; }
 
-			virtual void SetObjectNumber(types::big_uint number) _NOEXCEPT { _obj_number = number; }
-			types::big_uint GetObjectNumber() const _NOEXCEPT { return _obj_number; }
+			void SetOffset(types::stream_offset offset) noexcept { _offset = offset; }
+			types::stream_offset GetOffset() const noexcept { return _offset; }
 
-			virtual void SetGenerationNumber(types::ushort number) _NOEXCEPT { _gen_number = number; }
-			types::ushort GetGenerationNumber() const _NOEXCEPT { return _gen_number; }
+			virtual void SetObjectNumber(types::big_uint number) noexcept { _obj_number = number; }
+			types::big_uint GetObjectNumber() const noexcept { return _obj_number; }
 
-			void SetFile(std::weak_ptr<File> file) _NOEXCEPT { _file = file; }
-			std::weak_ptr<File> GetFile() const _NOEXCEPT { return _file; }
+			virtual void SetGenerationNumber(types::ushort number) noexcept { _gen_number = number; }
+			types::ushort GetGenerationNumber() const noexcept { return _gen_number; }
+
+			void SetFile(std::weak_ptr<File> file) noexcept { _file = file; }
+			std::weak_ptr<File> GetFile() const noexcept { return _file; }
 
 		protected:
 			std::weak_ptr<File> _file;
 			bool _indirect = false;
+			bool _dirty = false;
 			types::big_uint _obj_number = 0;
 			types::ushort _gen_number = 0;
 			types::stream_offset _offset = std::_BADOFF;

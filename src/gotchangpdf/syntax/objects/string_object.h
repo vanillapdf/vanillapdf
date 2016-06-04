@@ -37,7 +37,7 @@ namespace gotchangpdf
 			virtual StringObjectBase::StringType GetStringType(void) const noexcept override { return StringObjectBase::StringType::Hexadecimal; }
 
 			virtual BufferPtr GetValue() const override;
-			virtual void SetValue(BufferPtr value) override { _value = value; }
+			virtual void SetValue(BufferPtr value) override { _value = value; SetDirty(true); }
 			virtual std::string ToPdf(void) const override;
 
 			//private:
@@ -54,7 +54,7 @@ namespace gotchangpdf
 
 			virtual StringObjectBase::StringType GetStringType(void) const noexcept override { return StringObjectBase::StringType::Literal; }
 			virtual BufferPtr GetValue() const override;
-			virtual void SetValue(BufferPtr value) override { _value = value; }
+			virtual void SetValue(BufferPtr value) override { _value = value; SetDirty(true); }
 			virtual std::string ToPdf(void) const override;
 
 		public:

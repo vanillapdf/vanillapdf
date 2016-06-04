@@ -52,6 +52,7 @@ namespace gotchangpdf
 		void DictionaryObject::Remove(const NameObjectPtr& name)
 		{
 			_list.erase(name);
+			SetDirty(true);
 		}
 
 		bool DictionaryObject::Insert(const NameObjectPtr& name, const ContainableObjectPtr& value)
@@ -60,6 +61,7 @@ namespace gotchangpdf
 			auto result = _list.insert(pair);
 
 			//assert(result.second && "Key was already in the dictionary");
+			SetDirty(true);
 			return result.second;
 		}
 

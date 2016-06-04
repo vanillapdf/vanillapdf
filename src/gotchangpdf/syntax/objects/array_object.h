@@ -61,12 +61,12 @@ namespace gotchangpdf
 			const ContainableObjectPtr& At(size_t at) const { return _list.at(at); }
 			ContainableObjectPtr& At(size_t at) { return _list.at(at); }
 
-			void Append(const ContainableObjectPtr& value) { _list.push_back(value); }
-			void Insert(const ContainableObjectPtr& value, size_t at) { _list.insert(_list.begin() + at, value); }
-			void Remove(size_t at) { _list.erase(_list.begin() + at); }
+			void Append(const ContainableObjectPtr& value) { _list.push_back(value); SetDirty(true); }
+			void Insert(const ContainableObjectPtr& value, size_t at) { _list.insert(_list.begin() + at, value); SetDirty(true); }
+			void Remove(size_t at) { _list.erase(_list.begin() + at); SetDirty(true); }
 
 			// stl compatibility
-			void push_back(const value_type& value) { _list.push_back(value); }
+			void push_back(const value_type& value) { _list.push_back(value); SetDirty(true); }
 
 			iterator begin() noexcept { return _list.begin(); }
 			const_iterator begin() const noexcept { return _list.begin(); }

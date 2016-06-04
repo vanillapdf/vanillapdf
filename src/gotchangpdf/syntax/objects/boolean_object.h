@@ -17,7 +17,7 @@ namespace gotchangpdf
 			virtual std::string ToPdf(void) const override { return _value ? "true" : "false"; }
 
 			bool GetValue(void) const noexcept { return _value; }
-			void SetValue(bool value) noexcept { _value = value; }
+			void SetValue(bool value) noexcept { _value = value; SetDirty(true); }
 			operator bool() const noexcept { return _value; }
 
 		private:
