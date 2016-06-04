@@ -20,6 +20,7 @@ namespace gotchangpdf
 		public:
 			static std::shared_ptr<File> Open(const std::string& path);
 			void SaveAs(const std::string& path);
+			void SaveIncremental(const std::string& path);
 
 			void Initialize(void);
 			bool IsEncrypted(void) const;
@@ -90,6 +91,7 @@ namespace gotchangpdf
 			types::stream_offset GetLastXrefOffset(types::stream_size file_size);
 			void ReadXref(types::stream_offset offset);
 			EncryptionAlgorithm GetEncryptionAlgorithmForFilter(const NameObject& filter_name);
+			void WriteXrefTable(std::iostream& output, XrefTablePtr xref_table);
 
 		private:
 			File(const std::string& path);

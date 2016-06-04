@@ -547,6 +547,161 @@ namespace gotchangpdf
 			return _xref;
 		}
 
+		void File::SaveIncremental(const std::string& path)
+		{
+			if (!_initialized)
+				throw FileNotInitializedException(_filename);
+
+			std::fstream output;
+			output.open(path, ios_base::out | ios_base::binary);
+
+			if (!output || !output.good())
+				throw GeneralException("Could not open file");
+
+			// Write original data
+			_input->seekg(0);
+			std::copy(istreambuf_iterator<char>(*_input),
+				istreambuf_iterator<char>(),
+				ostreambuf_iterator<char>(output));
+
+			// Write opening newline
+			output << '\n';
+
+			XrefTablePtr new_table;
+			DictionaryObjectPtr prev_trailer = _xref->Begin()->Value()->GetTrailerDictionary();
+			auto last_xref_offset = _xref->Begin()->Value()->GetOffset();
+			DictionaryObjectPtr new_trailer(*prev_trailer);
+			new_table->SetTrailerDictionary(new_trailer);
+			XrefFreeEntryPtr free_entry(0, (types::ushort)65535);
+			new_table->Add(free_entry);
+
+			auto end = _xref->End();
+			for (auto it = _xref->Begin(); *it != *end; ++(*it)) {
+				auto xref_base = it->Value();
+
+				if (xref_base->GetType() == XrefBase::Type::Stream)
+					continue;
+
+				auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(xref_base);
+				auto table_size = xref_table->Size();
+				auto table_items = xref_table->Entries();
+				for (decltype(table_size) i = 0; i < table_size; ++i) {
+					auto entry = table_items[i];
+
+					if (!entry->InUse())
+						continue;
+
+					auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
+					auto obj = used_entry->GetReference();
+					if (!obj->IsDirty())
+						continue;
+
+					auto generation_number = used_entry->GetGenerationNumber();
+					if (generation_number == std::numeric_limits<decltype(generation_number)>::max()) {
+						throw GeneralException("Maximum generation number reached");
+					}
+
+					auto new_offset = output.tellg();
+					auto new_obj_number = obj->GetObjectNumber();
+					types::ushort new_gen_number = obj->GetGenerationNumber();
+					auto new_str = obj->ToPdf();
+
+					output << new_obj_number << " " << new_gen_number << " " << "obj" << endl;
+					output << new_str << endl;
+					output << "endobj" << endl;
+
+					XrefUsedEntryPtr new_entry(
+						new_obj_number,
+						new_gen_number,
+						new_offset);
+
+					new_table->Add(new_entry);
+				}
+			}
+
+			// Skip table, if there were no dirty entries
+			if (new_table->Size() > 0) {
+				// Seperate table from content
+				output << '\n';
+
+				if (new_trailer->Contains(constant::Name::Prev)) {
+					new_trailer->Remove(constant::Name::Prev);
+				}
+
+				IntegerObjectPtr new_offset(last_xref_offset);
+				new_trailer->Insert(constant::Name::Prev, new_offset);
+
+				// Write the table
+				WriteXrefTable(output, new_table);
+			}
+
+			// Cleanup
+			output.flush();
+			output.close();
+		}
+
+		void File::WriteXrefTable(std::iostream& output, XrefTablePtr xref_table)
+		{
+			auto table_size = xref_table->Size();
+			auto table_items = xref_table->Entries();
+
+			auto last_offset = output.tellg();
+			output << "xref" << endl;
+
+			for (decltype(table_size) i = 0; i < table_size;) {
+				auto first = table_items[i];
+				auto subsection_idx = first->GetObjectNumber();
+
+				size_t subsection_size = 1;
+				for (decltype(i) j = 1; j < table_size - i; ++j, ++subsection_size) {
+					auto next_entry = table_items[i + j];
+					if (next_entry->GetObjectNumber() != gotchangpdf::SafeAddition<types::big_uint>(subsection_idx, j)) {
+						break;
+					}
+				}
+
+				output << subsection_idx << " " << subsection_size << endl;
+				for (decltype(subsection_size) j = 0; j < subsection_size; ++j) {
+					auto entry = table_items[i + j];
+					if (!entry->InUse()) {
+						output << setfill('0') << setw(10) << 0;
+						output << ' ';
+						output << setfill('0') << setw(5) << 65535;
+						output << ' ';
+						output << 'f';
+						output << ' ';
+						output << '\n';
+						continue;
+					}
+
+					auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
+					output << setfill('0') << setw(10) << used_entry->GetOffset();
+					output << ' ';
+					output << setfill('0') << setw(5) << used_entry->GetGenerationNumber();
+					output << ' ';
+					output << 'n';
+					output << ' ';
+					output << '\n';
+				}
+
+				i += subsection_size;
+			}
+
+			auto trailer = xref_table->GetTrailerDictionary();
+			if (trailer->Contains(constant::Name::Size)) {
+				trailer->Remove(constant::Name::Size);
+			}
+
+			IntegerObjectPtr new_size(table_size);
+			trailer->Insert(constant::Name::Size, new_size);
+
+			output << "trailer" << endl;
+			output << trailer->ToPdf() << endl;
+			output << "startxref" << endl;
+			output << last_offset << endl;
+			output << "%%EOF" << endl;
+		}
+
 		// experimental
 		void File::SaveAs(const std::string& path)
 		{
@@ -593,54 +748,11 @@ namespace gotchangpdf
 					output << "endobj" << endl;
 				}
 
-				auto last_offset = output.tellg();
-				output << "xref" << endl;
+				// Seperate table from content
+				output << '\n';
 
-				for (decltype(table_size) i = 0; i < table_size; ++i) {
-					auto first = table_items[i];
-					auto subsection_idx = first->GetObjectNumber();
-
-					size_t subsection_size = 0;
-					for (decltype(i) j = i; j < table_size; ++j, ++subsection_size) {
-						auto next_entry = table_items[j];
-						if (next_entry->GetObjectNumber() != gotchangpdf::SafeAddition<types::big_uint>(subsection_idx, j)) {
-							break;
-						}
-					}
-
-					output << subsection_idx << " " << subsection_size << endl;
-					for (decltype(subsection_size) j = i; j < subsection_size; ++j) {
-						auto entry = table_items[j];
-						if (!entry->InUse()) {
-							output << setfill('0') << setw(10) << 0;
-							output << ' ';
-							output << setfill('0') << setw(10) << 65535;
-							output << ' ';
-							output << 'f';
-							output << ' ';
-							output << '\n';
-							continue;
-						}
-
-						auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
-						output << setfill('0') << setw(10) << used_entry->GetOffset();
-						output << ' ';
-						output << setfill('0') << setw(10) << used_entry->GetGenerationNumber();
-						output << ' ';
-						output << 'n';
-						output << ' ';
-						output << '\n';
-					}
-
-					i += subsection_size;
-				}
-
-				auto trailer = xref_table->GetTrailerDictionary();
-				output << "trailer" << endl;
-				output << trailer->ToPdf() << endl;
-				output << "startxref" << endl;
-				output << last_offset << endl;
-				output << "%%EOF" << endl;
+				// Write the table
+				WriteXrefTable(output, xref_table);
 			}
 
 			output.flush();
