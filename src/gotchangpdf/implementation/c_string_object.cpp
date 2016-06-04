@@ -40,7 +40,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_ToHexadecimal(String
 	return SafeObjectConvert<StringObjectBase, HexadecimalStringObject, StringHandle, HexadecimalStringHandle>(handle, result);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_Value(LiteralStringHandle handle, PBufferHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_GetValue(LiteralStringHandle handle, PBufferHandle result)
 {
 	LiteralStringObject* obj = reinterpret_cast<LiteralStringObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -48,9 +48,23 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_Value(Literal
 
 	try
 	{
-		auto buffer = obj->Value();
+		auto buffer = obj->GetValue();
 		auto ptr = buffer.AddRefGet();
 		*result = reinterpret_cast<BufferHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_SetValue(LiteralStringHandle handle, BufferHandle value)
+{
+	LiteralStringObject* obj = reinterpret_cast<LiteralStringObject*>(handle);
+	Buffer* buffer = reinterpret_cast<Buffer*>(value);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(buffer);
+
+	try
+	{
+		obj->SetValue(buffer);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -60,7 +74,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_Release(Liter
 	return ObjectRelease<LiteralStringObject, LiteralStringHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Value(HexadecimalStringHandle handle, PBufferHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_GetValue(HexadecimalStringHandle handle, PBufferHandle result)
 {
 	HexadecimalStringObject* obj = reinterpret_cast<HexadecimalStringObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -68,9 +82,23 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Value(Hex
 
 	try
 	{
-		auto buffer = obj->Value();
+		auto buffer = obj->GetValue();
 		auto ptr = buffer.AddRefGet();
 		*result = reinterpret_cast<BufferHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_SetValue(HexadecimalStringHandle handle, BufferHandle value)
+{
+	HexadecimalStringObject* obj = reinterpret_cast<HexadecimalStringObject*>(handle);
+	Buffer* buffer = reinterpret_cast<Buffer*>(value);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(buffer);
+
+	try
+	{
+		obj->SetValue(buffer);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }

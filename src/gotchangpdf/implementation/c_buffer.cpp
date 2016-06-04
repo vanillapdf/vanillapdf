@@ -5,24 +5,29 @@
 
 using namespace gotchangpdf;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_GetSize(BufferHandle handle, out_size_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_GetData(BufferHandle handle, out_string_type data, out_size_type size)
 {
 	Buffer* obj = reinterpret_cast<Buffer*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(size);
 
-	*result = obj->size();
+	*data = obj->data();
+	*size = obj->size();
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_GetData(BufferHandle handle, out_string_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_SetData(BufferHandle handle, string_type data, size_type size)
 {
 	Buffer* obj = reinterpret_cast<Buffer*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
 
-	*result = obj->data();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	try
+	{
+		obj->assign(data, data + size);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_Release(BufferHandle handle)

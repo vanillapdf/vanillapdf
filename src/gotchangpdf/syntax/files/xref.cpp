@@ -43,11 +43,11 @@ namespace gotchangpdf
 			auto header = converted->GetHeader();
 			auto size = header->FindAs<IntegerObjectPtr>(constant::Name::N);
 			auto first = header->FindAs<IntegerObjectPtr>(constant::Name::First);
-			auto body = converted->GetBodyDecoded();
+			auto body = converted->GetBody();
 
 			auto stream = body->ToStringStream();
 			auto parser = Parser(_file, stream);
-			auto stream_entries = parser.ReadObjectStreamEntries(first->Value(), size->SafeConvert<size_t>());
+			auto stream_entries = parser.ReadObjectStreamEntries(first->GetValue(), size->SafeConvert<size_t>());
 			for (auto stream_entry : stream_entries) {
 				auto object_number = stream_entry->GetObjectNumber();
 				auto stream_entry_xref = chain->GetXrefEntry(object_number, 0);

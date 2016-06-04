@@ -17,7 +17,7 @@ namespace gotchangpdf
 		public:
 			StreamObject() = default;
 			StreamObject(DictionaryObjectPtr header, types::stream_offset offset);
-			virtual Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Stream; }
+			virtual Object::Type GetType(void) const noexcept override { return Object::Type::Stream; }
 			virtual std::string ToString(void) const override;
 			virtual std::string ToPdf(void) const override;
 
@@ -27,8 +27,9 @@ namespace gotchangpdf
 			types::stream_offset GetDataOffset() const { return _raw_data_offset; }
 			void SetDataOffset(types::stream_offset offset) { _raw_data_offset = offset; }
 
+			BufferPtr GetBodyRaw() const;
 			BufferPtr GetBody() const;
-			BufferPtr GetBodyDecoded() const;
+			void SetBody(BufferPtr value) { _body_decoded = value; }
 
 		private:
 			DictionaryObjectPtr _header;

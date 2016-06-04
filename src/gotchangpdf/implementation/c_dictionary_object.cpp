@@ -117,6 +117,55 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryHandle dictionary_handle, NameHandle str)
+{
+	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(dictionary_handle);
+	NameObject* name = reinterpret_cast<NameObject*>(str);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(dictionary);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(name);
+
+	try
+	{
+		dictionary->Remove(name);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryHandle dictionary_handle, NameHandle str, ObjectHandle value)
+{
+	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(dictionary_handle);
+	NameObject* name = reinterpret_cast<NameObject*>(str);
+	Object* obj = reinterpret_cast<Object*>(value);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(dictionary);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(name);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	try
+	{
+		auto containable_ptr = dynamic_cast<ContainableObject*>(obj);
+		if (nullptr == containable_ptr)
+			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
+
+		dictionary->Insert(name, containable_ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(DictionaryHandle dictionary_handle, NameHandle str, out_boolean_type result)
+{
+	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(dictionary_handle);
+	NameObject* name = reinterpret_cast<NameObject*>(str);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(dictionary);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(name);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		*result = dictionary->Contains(name);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
 GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Release(DictionaryHandle handle)
 {
 	return ObjectRelease<DictionaryObject, DictionaryHandle>(handle);

@@ -10,8 +10,8 @@ extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_GetSize(BufferHandle handle, out_size_type result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_GetData(BufferHandle handle, out_string_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_GetData(BufferHandle handle, out_string_type data, out_size_type size);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_SetData(BufferHandle handle, string_type data, size_type size);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_Release(BufferHandle handle);
 
 #ifdef __cplusplus

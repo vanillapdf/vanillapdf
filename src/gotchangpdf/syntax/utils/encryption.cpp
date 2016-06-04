@@ -210,7 +210,7 @@ namespace gotchangpdf
 		MD5_Update(&ctx, input.data(), input.size());
 		MD5_Update(&ctx, owner_data.data(), owner_data.size());
 
-		auto permissions_value = permissions.Value();
+		auto permissions_value = permissions.GetValue();
 		uint32_t permissions_raw = reinterpret_cast<uint32_t&>(permissions_value);
 		uint8_t permissions_array[sizeof(permissions_raw)];
 		permissions_array[0] = permissions_raw & 0xFF;
@@ -222,7 +222,7 @@ namespace gotchangpdf
 		MD5_Update(&ctx, document_id.data(), document_id.size());
 		MD5_Final((unsigned char*)decryption_key_digest.data(), &ctx);
 
-		auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(key_length.Value() / 8);
+		auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(key_length.GetValue() / 8);
 		size_t decryption_key_length = std::min(length_bytes, decryption_key_digest.size());
 
 		BufferPtr compare_data;
@@ -255,7 +255,7 @@ namespace gotchangpdf
 			}
 		}
 		else {
-			assert(key_length.Value() == 40 && "Key length is not 5 bytes for revision <= 3");
+			assert(key_length.GetValue() == 40 && "Key length is not 5 bytes for revision <= 3");
 			Buffer hardcoded_pad(&HARDCODED_PFD_PAD[0], HARDCODED_PFD_PAD_LENGTH);
 			compare_data = EncryptionUtils::ComputeRC4(decryption_key_digest, 5, hardcoded_pad);
 		}
@@ -287,7 +287,7 @@ namespace gotchangpdf
 			auto length = enveloped_data.Size();
 			for (decltype(length) i = 0; i < length; ++i) {
 				auto enveloped_bytes = enveloped_data.At(i);
-				SHA256_Update(&ctx, enveloped_bytes->Value()->data(), enveloped_bytes->Value()->size());
+				SHA256_Update(&ctx, enveloped_bytes->GetValue()->data(), enveloped_bytes->GetValue()->size());
 			}
 
 			SHA256_Final((unsigned char*)decrypted_key.data(), &ctx);
@@ -301,13 +301,13 @@ namespace gotchangpdf
 			auto length = enveloped_data.Size();
 			for (decltype(length) i = 0; i < length; ++i) {
 				auto enveloped_bytes = enveloped_data.At(i);
-				SHA1_Update(&ctx, enveloped_bytes->Value()->data(), enveloped_bytes->Value()->size());
+				SHA1_Update(&ctx, enveloped_bytes->GetValue()->data(), enveloped_bytes->GetValue()->size());
 			}
 
 			SHA1_Final((unsigned char*)decrypted_key.data(), &ctx);
 		}
 
-		auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(length_bits.Value() / 8);
+		auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(length_bits.GetValue() / 8);
 		size_t decryption_key_length = std::min(length_bytes, decrypted_key.size());
 		return BufferPtr(decrypted_key.begin(), decrypted_key.begin() + decryption_key_length);
 	}
@@ -318,7 +318,7 @@ namespace gotchangpdf
 		for (decltype(length) i = 0; i < length; ++i) {
 			auto enveloped_bytes = enveloped_data.At(i);
 
-			BIO* enveloped_bytes_bio = BIO_new_mem_buf(enveloped_bytes->Value()->data(), enveloped_bytes->Value()->size());
+			BIO* enveloped_bytes_bio = BIO_new_mem_buf(enveloped_bytes->GetValue()->data(), enveloped_bytes->GetValue()->size());
 			SCOPE_GUARD_CAPTURE_REFERENCES(BIO_free(enveloped_bytes_bio));
 			if (nullptr == enveloped_bytes_bio) {
 				LOG_ERROR_GLOBAL << "Could not create BIO structure from enveloped data";
@@ -432,7 +432,7 @@ namespace gotchangpdf
 		syntax::IntegerObjectPtr length_bits = 40;
 		if (encryption_dictionary.Contains(constant::Name::Length)) {
 			length_bits = encryption_dictionary.FindAs<syntax::IntegerObjectPtr>(constant::Name::Length);
-			assert(length_bits->Value() % 8 == 0 && "Key length is not multiplier of 8");
+			assert(length_bits->GetValue() % 8 == 0 && "Key length is not multiplier of 8");
 		}
 
 		// check owner key
@@ -444,7 +444,7 @@ namespace gotchangpdf
 			MD5_CTX ctx;
 			Buffer temporary_digest(MD5_DIGEST_LENGTH);
 
-			auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(length_bits->Value() / 8);
+			auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(length_bits->GetValue() / 8);
 			size_t password_length = std::min(length_bytes, password_digest.size());
 			for (int i = 0; i < 50; ++i) {
 				MD5_Init(&ctx);
@@ -454,7 +454,7 @@ namespace gotchangpdf
 			}
 
 			auto key = BufferPtr(length_bytes);
-			encrypted_owner_data = BufferPtr(*owner_value->Value());
+			encrypted_owner_data = BufferPtr(*owner_value->GetValue());
 
 			for (Buffer::value_type i = 0; i < 20; ++i) {
 				for (decltype(password_length) j = 0; j < password_length; ++j) {
@@ -465,7 +465,7 @@ namespace gotchangpdf
 			}
 		}
 		else {
-			encrypted_owner_data = EncryptionUtils::ComputeRC4(password_digest, 5, owner_value->Value());
+			encrypted_owner_data = EncryptionUtils::ComputeRC4(password_digest, 5, owner_value->GetValue());
 		}
 
 		return encrypted_owner_data;

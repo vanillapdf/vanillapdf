@@ -17,7 +17,7 @@ namespace gotchangpdf
 			else if (name->Equals(constant::Name::ASCIIHexDecode))
 				return ASCIIHexDecodeFilterPtr();
 
-			throw GeneralException("Unknown filter type: " + name->Value()->ToString());
+			throw GeneralException("Unknown filter type: " + name->GetValue()->ToString());
 		}
 	}
 }

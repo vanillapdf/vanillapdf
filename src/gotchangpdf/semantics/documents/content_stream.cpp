@@ -15,7 +15,7 @@ namespace gotchangpdf
 			if (!_instructions.empty())
 				return _instructions;
 
-			auto body = _obj->GetBodyDecoded();
+			auto body = _obj->GetBody();
 			auto strm = body->ToStringStream();
 			auto parser = syntax::Parser(_obj->GetFile(), strm);
 			_instructions = parser.ReadContentStreamInstructions();

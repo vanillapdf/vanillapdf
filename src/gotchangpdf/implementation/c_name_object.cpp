@@ -7,7 +7,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Value(NameHandle handle, PBufferHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_GetValue(NameHandle handle, PBufferHandle result)
 {
 	NameObject* obj = reinterpret_cast<NameObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -15,9 +15,23 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Value(NameHandle handl
 
 	try
 	{
-		auto buffer = obj->Value();
+		auto buffer = obj->GetValue();
 		auto ptr = buffer.AddRefGet();
 		*result = reinterpret_cast<BufferHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_SetValue(NameHandle handle, BufferHandle value)
+{
+	NameObject* obj = reinterpret_cast<NameObject*>(handle);
+	Buffer* buffer = reinterpret_cast<Buffer*>(value);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(buffer);
+
+	try
+	{
+		obj->SetValue(buffer);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }

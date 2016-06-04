@@ -111,7 +111,7 @@ namespace gotchangpdf
 			IntegerObjectPtr length_bits = 40;
 			if (dict->Contains(constant::Name::Length)) {
 				length_bits = dict->FindAs<IntegerObjectPtr>(constant::Name::Length);
-				assert(length_bits->Value() % 8 == 0 && "Key length is not multiplier of 8");
+				assert(length_bits->GetValue() % 8 == 0 && "Key length is not multiplier of 8");
 			}
 
 			if (sub_filter == constant::Name::AdbePkcs7s3) {
@@ -147,7 +147,7 @@ namespace gotchangpdf
 
 						if (crypt_filter->Contains(constant::Name::Length)) {
 							length_bits = crypt_filter->FindAs<IntegerObjectPtr>(constant::Name::Length);
-							assert(length_bits->Value() == 256 && "AESV3 length is not 256 bits");
+							assert(length_bits->GetValue() == 256 && "AESV3 length is not 256 bits");
 						}
 					}
 
@@ -204,7 +204,7 @@ namespace gotchangpdf
 			IntegerObjectPtr length_bits = 40;
 			if (dict->Contains(constant::Name::Length)) {
 				length_bits = dict->FindAs<IntegerObjectPtr>(constant::Name::Length);
-				assert(length_bits->Value() % 8 == 0 && "Key length is not multiplier of 8");
+				assert(length_bits->GetValue() % 8 == 0 && "Key length is not multiplier of 8");
 			}
 
 			// Pad password with predefined scheme
@@ -212,12 +212,12 @@ namespace gotchangpdf
 			BufferPtr encrypted_owner_data = EncryptionUtils::ComputeEncryptedOwnerData(padPassword, dict);
 
 			// Check if entered password was owner password
-			if (EncryptionUtils::CheckKey(encrypted_owner_data, id->Value(), owner_value->Value(), user_value->Value(), permissions, revision, length_bits, _decryption_key)) {
+			if (EncryptionUtils::CheckKey(encrypted_owner_data, id->GetValue(), owner_value->GetValue(), user_value->GetValue(), permissions, revision, length_bits, _decryption_key)) {
 				return true;
 			}
 
 			// Check if entered password was user password
-			if (EncryptionUtils::CheckKey(padPassword, id->Value(), owner_value->Value(), user_value->Value(), permissions, revision, length_bits, _decryption_key)) {
+			if (EncryptionUtils::CheckKey(padPassword, id->GetValue(), owner_value->GetValue(), user_value->GetValue(), permissions, revision, length_bits, _decryption_key)) {
 				return true;
 			}
 
@@ -463,7 +463,7 @@ namespace gotchangpdf
 				_xref->Append(xref);
 
 				if (xref->GetTrailerDictionary()->Contains(constant::Name::XRefStm)) {
-					auto stm_offset = xref->GetTrailerDictionary()->FindAs<IntegerObjectPtr>(constant::Name::XRefStm)->Value();
+					auto stm_offset = xref->GetTrailerDictionary()->FindAs<IntegerObjectPtr>(constant::Name::XRefStm)->GetValue();
 					auto xref_stm = stream.ReadXref(stm_offset);
 
 					assert(!xref_stm->GetTrailerDictionary()->Contains(constant::Name::Prev));
@@ -474,7 +474,7 @@ namespace gotchangpdf
 					break;
 				}
 
-				offset = xref->GetTrailerDictionary()->FindAs<IntegerObjectPtr>(constant::Name::Prev)->Value();
+				offset = xref->GetTrailerDictionary()->FindAs<IntegerObjectPtr>(constant::Name::Prev)->GetValue();
 			} while (true);
 		}
 

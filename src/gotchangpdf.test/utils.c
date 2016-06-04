@@ -18,8 +18,7 @@ error_type process_buffer(BufferHandle buffer, int nested)
 	print_spaces(nested);
 	printf("Buffer begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetSize(buffer, &size));
-	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(buffer, &data));
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(buffer, &data, &size));
 
 	if (size >= SIZE_MAX)
 		return GOTCHANG_PDF_ERROR_GENERAL;

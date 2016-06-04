@@ -21,7 +21,8 @@ namespace gotchangpdf
 			NameObject() = default;
 			explicit NameObject(value_type name) : _value(name) {}
 
-			value_type Value() const _NOEXCEPT { return _value; }
+			value_type GetValue() const noexcept { return _value; }
+			void SetValue(value_type value) { _value = value; }
 
 			bool operator==(const NameObject& other) const { return Equals(other); }
 			bool operator!=(const NameObject& other) const { return !Equals(other); }
@@ -29,11 +30,9 @@ namespace gotchangpdf
 
 			bool Equals(const NameObject& other) const { return _value->Equals(*other._value); }
 
-			virtual Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Name; }
+			virtual Object::Type GetType(void) const noexcept override { return Object::Type::Name; }
 			virtual std::string ToPdf(void) const override { return "/" + ToString(); }
 			virtual std::string ToString(void) const override;
-
-			void SetName(value_type name) { _value = name; }
 
 		public:
 			value_type _value;

@@ -54,20 +54,24 @@ namespace gotchangpdf
 				}
 			}
 
-			virtual Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Array; }
-			size_t Size(void) const _NOEXCEPT { return _list.size(); }
+			virtual Object::Type GetType(void) const noexcept override { return Object::Type::Array; }
+			size_t Size(void) const noexcept { return _list.size(); }
 			const ContainableObjectPtr& operator[](size_t i) const { return _list[i]; }
 			ContainableObjectPtr& operator[](size_t i) { return _list[i]; }
 			const ContainableObjectPtr& At(size_t at) const { return _list.at(at); }
 			ContainableObjectPtr& At(size_t at) { return _list.at(at); }
 
+			void Append(const ContainableObjectPtr& value) { _list.push_back(value); }
+			void Insert(const ContainableObjectPtr& value, size_t at) { _list.insert(_list.begin() + at, value); }
+			void Remove(size_t at) { _list.erase(_list.begin() + at); }
+
 			// stl compatibility
 			void push_back(const value_type& value) { _list.push_back(value); }
 
-			iterator begin() _NOEXCEPT { return _list.begin(); }
-			const_iterator begin() const _NOEXCEPT { return _list.begin(); }
-			iterator end() _NOEXCEPT { return _list.end(); }
-			const_iterator end() const _NOEXCEPT { return _list.end(); }
+			iterator begin() noexcept { return _list.begin(); }
+			const_iterator begin() const noexcept { return _list.begin(); }
+			iterator end() noexcept { return _list.end(); }
+			const_iterator end() const noexcept { return _list.end(); }
 
 			template <typename U>
 			ArrayObjectPtr<U> Convert(std::function<U(const ContainableObjectPtr& obj)> f) const

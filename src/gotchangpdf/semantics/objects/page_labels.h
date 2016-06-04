@@ -59,7 +59,7 @@ namespace gotchangpdf
 					return false;
 
 				auto value = _obj->FindAs<syntax::NameObjectPtr>(constant::Name::S);
-				auto buf = value->Value();
+				auto buf = value->GetValue();
 				if (buf->size() != 1)
 					throw GeneralException("Unknown numbering style" + buf->ToString());
 

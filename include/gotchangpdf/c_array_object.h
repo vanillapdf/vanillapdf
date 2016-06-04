@@ -12,6 +12,9 @@ extern "C"
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayHandle handle, out_integer_type result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayHandle handle, integer_type at, PObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Append(ArrayHandle handle, ObjectHandle value);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Insert(ArrayHandle handle, integer_type at, ObjectHandle value);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayHandle handle, integer_type at);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Release(ArrayHandle handle);
 
 #ifdef __cplusplus

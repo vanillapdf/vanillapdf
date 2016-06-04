@@ -7,17 +7,26 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION RealObject_Value(RealHandle handle, out_real_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION RealObject_GetValue(RealHandle handle, out_real_type result)
 {
 	RealObject* obj = reinterpret_cast<RealObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	*result = obj->Value();
+	*result = obj->GetValue();
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_Release(RealHandle handle)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION RealObject_SetValue(RealHandle handle, real_type value)
+{
+	RealObject* obj = reinterpret_cast<RealObject*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	obj->SetValue(value);
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION RealObject_Release(RealHandle handle)
 {
 	return ObjectRelease<RealObject, RealHandle>(handle);
 }

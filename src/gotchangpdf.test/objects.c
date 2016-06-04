@@ -7,7 +7,7 @@ int process_name(NameHandle name, int nested)
 	print_spaces(nested);
 	printf("Name object begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(NameObject_Value(name, &buffer));
+	RETURN_ERROR_IF_NOT_SUCCESS(NameObject_GetValue(name, &buffer));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(buffer, nested + 1));
 	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(buffer));
 
@@ -24,7 +24,7 @@ int process_lit_string(LiteralStringHandle string, int nested)
 	print_spaces(nested);
 	printf("Literal string begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(LiteralStringObject_Value(string, &buffer));
+	RETURN_ERROR_IF_NOT_SUCCESS(LiteralStringObject_GetValue(string, &buffer));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(buffer, nested + 1));
 	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(buffer));
 
@@ -41,7 +41,7 @@ int process_hex_string(HexadecimalStringHandle string, int nested)
 	print_spaces(nested);
 	printf("Hexadecimal string begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(HexadecimalStringObject_Value(string, &buffer));
+	RETURN_ERROR_IF_NOT_SUCCESS(HexadecimalStringObject_GetValue(string, &buffer));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(buffer, nested + 1));
 	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(buffer));
 
@@ -99,8 +99,8 @@ error_type process_stream(StreamHandle stream, int nested)
 	print_spaces(nested);
 	printf("Stream object begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_Header(stream, &dictionary));
-	RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_BodyRaw(stream, &body));
+	RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_GetHeader(stream, &dictionary));
+	RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_GetBodyRaw(stream, &body));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(process_dictionary(dictionary, nested));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(body, nested));
@@ -147,7 +147,7 @@ error_type process_integer(IntegerHandle integer, int nested)
 	print_spaces(nested);
 	printf("Integer object begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Value(integer, &value));
+	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_GetValue(integer, &value));
 	print_spaces(nested + 1);
 	printf("Value: %llu\n", value);
 
@@ -164,7 +164,7 @@ error_type process_boolean(BooleanHandle obj, int nested)
 	print_spaces(nested);
 	printf("Boolean object begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(BooleanObject_Value(obj, &value));
+	RETURN_ERROR_IF_NOT_SUCCESS(BooleanObject_GetValue(obj, &value));
 
 	print_spaces(nested + 1);
 	if (GOTCHANG_PDF_TRUE == value)
@@ -218,7 +218,7 @@ error_type process_real(RealHandle obj, int nested)
 	print_spaces(nested);
 	printf("Real object begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(RealObject_Value(obj, &value));
+	RETURN_ERROR_IF_NOT_SUCCESS(RealObject_GetValue(obj, &value));
 	print_spaces(nested + 1);
 	printf("Value: %g\n", value);
 

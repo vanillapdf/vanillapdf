@@ -14,7 +14,7 @@ namespace gotchangpdf
 		IntegerObject::IntegerObject(value_type value) : _value(value) {}
 		IntegerObject::IntegerObject(const RealObject& value)
 		{
-			_value = ValueConvertUtils::SafeConvert<value_type>(value.Value());
+			_value = ValueConvertUtils::SafeConvert<value_type>(value.GetValue());
 		}
 
 		IntegerObject& IntegerObject::operator=(value_type value)

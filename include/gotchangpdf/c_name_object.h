@@ -10,7 +10,8 @@ extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Value(NameHandle handle, PBufferHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_GetValue(NameHandle handle, PBufferHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_SetValue(NameHandle handle, BufferHandle value);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Release(NameHandle handle);
 
 	// Constant names

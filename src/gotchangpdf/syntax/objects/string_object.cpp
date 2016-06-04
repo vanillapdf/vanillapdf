@@ -15,7 +15,7 @@ namespace gotchangpdf
 		HexadecimalStringObject::HexadecimalStringObject(BufferPtr value) : _raw_value(value) {}
 		StringObjectPtr::StringObjectPtr() : Deferred<StringObjectBase>(LiteralStringObjectPtr()) {}
 
-		BufferPtr LiteralStringObject::Value() const
+		BufferPtr LiteralStringObject::GetValue() const
 		{
 			if (!_value.empty())
 				return _value;
@@ -32,7 +32,7 @@ namespace gotchangpdf
 			return _value;
 		}
 
-		BufferPtr HexadecimalStringObject::Value() const
+		BufferPtr HexadecimalStringObject::GetValue() const
 		{
 			if (!_value.empty())
 				return _value;
@@ -72,7 +72,7 @@ namespace gotchangpdf
 		{
 			std::stringstream ss;
 
-			BufferPtr value = Value();
+			BufferPtr value = GetValue();
 			auto size = value->size();
 			for (decltype(size) i = 0; i < size; ++i) {
 				auto current = value[i];
@@ -101,7 +101,7 @@ namespace gotchangpdf
 		{
 			std::stringstream ss;
 
-			BufferPtr value = Value();
+			BufferPtr value = GetValue();
 			auto size = value->size();
 			for (decltype(size) i = 0; i < size; ++i) {
 				unsigned char current = value[i];

@@ -10,7 +10,7 @@ namespace gotchangpdf
 	{
 		Version SemanticUtils::GetVersionFromName(const syntax::NameObjectPtr& name)
 		{
-			auto ver_str = name->Value()->ToString();
+			auto ver_str = name->GetValue()->ToString();
 
 			std::smatch sm;
 			std::regex header_regex("([0-9])\\.([0-9])");

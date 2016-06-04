@@ -12,7 +12,7 @@ namespace gotchangpdf
 		StreamObject::StreamObject(DictionaryObjectPtr header, types::stream_offset offset)
 			: _header(header), _raw_data_offset(offset) {}
 
-		BufferPtr StreamObject::GetBody() const
+		BufferPtr StreamObject::GetBodyRaw() const
 		{
 			if (!_body->empty())
 				return _body;
@@ -73,13 +73,13 @@ namespace gotchangpdf
 			return _body;
 		}
 
-		BufferPtr StreamObject::GetBodyDecoded() const
+		BufferPtr StreamObject::GetBody() const
 		{
 			if (!_body_decoded->empty())
 				return _body_decoded;
 
 			if (!_header->Contains(constant::Name::Filter)) {
-				return GetBody();
+				return GetBodyRaw();
 			}
 
 			auto locked_file = _file.lock();
@@ -99,7 +99,7 @@ namespace gotchangpdf
 			if (is_filter_name) {
 				auto filter_name = _header->FindAs<NameObjectPtr>(constant::Name::Filter);
 				if (filter_name == constant::Name::Crypt) {
-					_body_decoded = GetBody();
+					_body_decoded = GetBodyRaw();
 					return _body_decoded;
 				}
 
@@ -107,12 +107,12 @@ namespace gotchangpdf
 				if (_header->Contains(constant::Name::DecodeParms)) {
 					auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
 					//_body_decoded = filter->Decode(*stream, *size, params);
-					_body_decoded = filter->Decode(GetBody(), params);
+					_body_decoded = filter->Decode(GetBodyRaw(), params);
 					return _body_decoded;
 				}
 
 				//_body_decoded = filter->Decode(*stream, *size);
-				_body_decoded = filter->Decode(GetBody());
+				_body_decoded = filter->Decode(GetBodyRaw());
 				return _body_decoded;
 			}
 
@@ -126,7 +126,7 @@ namespace gotchangpdf
 					assert(filter_array->Size() == params->Size());
 				}
 
-				BufferPtr result = GetBody();
+				BufferPtr result = GetBodyRaw();
 				for (unsigned int i = 0; i < filter_array->Size(); ++i) {
 					auto current_filter = (*filter_array)[i];
 					if (current_filter == constant::Name::Crypt) {
@@ -162,7 +162,7 @@ namespace gotchangpdf
 		std::string StreamObject::ToString(void) const
 		{
 			std::stringstream ss;
-			ss << _header->ToString() << "stream: " << GetBody()->size() << std::endl;
+			ss << _header->ToString() << "stream: " << GetBodyRaw()->size() << std::endl;
 			return ss.str();
 		}
 
@@ -171,7 +171,7 @@ namespace gotchangpdf
 			std::stringstream ss;
 			ss << _header->ToPdf() << std::endl;
 			ss << "stream" << std::endl;
-			ss << GetBody()->ToString();
+			ss << GetBodyRaw()->ToString();
 			ss << "endstream";
 			return ss.str();
 		}

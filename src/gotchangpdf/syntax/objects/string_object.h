@@ -18,12 +18,13 @@ namespace gotchangpdf
 				Hexadecimal
 			};
 
-			virtual BufferPtr Value() const = 0;
+			virtual BufferPtr GetValue() const = 0;
+			virtual void SetValue(BufferPtr value) = 0;
 
-			virtual StringType GetStringType(void) const _NOEXCEPT = 0;
-			virtual Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::String; }
+			virtual StringType GetStringType(void) const noexcept = 0;
+			virtual Object::Type GetType(void) const noexcept override { return Object::Type::String; }
 
-			bool Equals(const StringObjectBase& other) const { return Value() == other.Value();	}
+			bool Equals(const StringObjectBase& other) const { return GetValue() == other.GetValue();	}
 			bool operator==(const StringObjectBase& other) const { return Equals(other); }
 		};
 
@@ -33,9 +34,10 @@ namespace gotchangpdf
 			HexadecimalStringObject() = default;
 			explicit HexadecimalStringObject(BufferPtr value);
 
-			virtual StringObjectBase::StringType GetStringType(void) const _NOEXCEPT override { return StringObjectBase::StringType::Hexadecimal; }
+			virtual StringObjectBase::StringType GetStringType(void) const noexcept override { return StringObjectBase::StringType::Hexadecimal; }
 
-			virtual BufferPtr Value() const override;
+			virtual BufferPtr GetValue() const override;
+			virtual void SetValue(BufferPtr value) override { _value = value; }
 			virtual std::string ToPdf(void) const override;
 
 			//private:
@@ -50,8 +52,9 @@ namespace gotchangpdf
 			LiteralStringObject() = default;
 			explicit LiteralStringObject(BufferPtr value);
 
-			virtual StringObjectBase::StringType GetStringType(void) const _NOEXCEPT override { return StringObjectBase::StringType::Literal; }
-			virtual BufferPtr Value() const override;
+			virtual StringObjectBase::StringType GetStringType(void) const noexcept override { return StringObjectBase::StringType::Literal; }
+			virtual BufferPtr GetValue() const override;
+			virtual void SetValue(BufferPtr value) override { _value = value; }
 			virtual std::string ToPdf(void) const override;
 
 		public:

@@ -11,6 +11,7 @@ extern "C"
 #endif
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Open(string_type filename, PFileHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SaveAs(FileHandle handle, string_type filename);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_IsEncrypted(FileHandle handle, out_boolean_type result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SetEncryptionPassword(FileHandle handle, string_type password);

@@ -115,7 +115,7 @@ namespace gotchangpdf
 
 				if (PeekTokenTypeSkip() == Token::Type::INDIRECT_REFERENCE_MARKER) {
 					auto reference_marker = ReadTokenWithTypeSkip(Token::Type::INDIRECT_REFERENCE_MARKER);
-					IndirectObjectReferencePtr result(integer->Value(), gen_number->SafeConvert<types::ushort>());
+					IndirectObjectReferencePtr result(integer->GetValue(), gen_number->SafeConvert<types::ushort>());
 					result->SetFile(_file);
 					return result;
 				}
@@ -190,7 +190,7 @@ namespace gotchangpdf
 					}
 
 					auto length = ObjectUtils::ConvertTo<IntegerObjectPtr>(length_obj);
-					seekg(length->Value(), ios_base::cur);
+					seekg(length->GetValue(), ios_base::cur);
 					auto expect_stream_end = ReadTokenSkip();
 					if (expect_stream_end->GetType() != Token::Type::STREAM_END) {
 						break;
@@ -336,7 +336,7 @@ namespace gotchangpdf
 
 			auto obj_number = ObjectFactory::CreateInteger(obj_number_token);
 			auto gen_number = ObjectFactory::CreateInteger(gen_number_token);
-			direct->SetObjectNumber(obj_number->Value());
+			direct->SetObjectNumber(obj_number->GetValue());
 			direct->SetGenerationNumber(gen_number->SafeConvert<types::ushort>());
 			direct->SetOffset(offset);
 			direct->SetFile(_file);
@@ -393,8 +393,8 @@ namespace gotchangpdf
 			auto obj_number = ObjectFactory::CreateInteger(obj_number_token);
 			auto offset = ObjectFactory::CreateInteger(offset_token);
 
-			result.object_number = obj_number->Value();
-			result.offset = offset->Value();
+			result.object_number = obj_number->GetValue();
+			result.offset = offset->GetValue();
 			return result;
 		}
 
@@ -512,14 +512,14 @@ namespace gotchangpdf
 			auto peeked_token = PeekTokenSkip();
 			if (*peeked_token->Value() == "n") {
 				ReadTokenSkip();
-				XrefUsedEntryPtr result(objNumber, gen_number->SafeConvert<types::ushort>(), offset->Value());
+				XrefUsedEntryPtr result(objNumber, gen_number->SafeConvert<types::ushort>(), offset->GetValue());
 				result->SetFile(_file);
 				return result;
 			}
 
 			if (*peeked_token->Value() == "f") {
 				ReadTokenSkip();
-				XrefFreeEntryPtr result(objNumber, gen_number->SafeConvert<types::ushort>(), offset->Value());
+				XrefFreeEntryPtr result(objNumber, gen_number->SafeConvert<types::ushort>(), offset->GetValue());
 				result->SetFile(_file);
 				return result;
 			}
@@ -575,7 +575,7 @@ namespace gotchangpdf
 			auto index_size = index->Size();
 			assert(index_size % 2 == 0);
 
-			auto body = stream->GetBodyDecoded();
+			auto body = stream->GetBody();
 
 			auto field1_size = fields->At(0);
 			auto field2_size = fields->At(1);
@@ -1120,7 +1120,7 @@ namespace gotchangpdf
 					if (next_token->GetType() == Token::Type::INTEGER_OBJECT) {
 						ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 						auto xref_offset = ObjectFactory::CreateInteger(next_token);
-						xref->SetLastXrefOffset(xref_offset->Value());
+						xref->SetLastXrefOffset(xref_offset->GetValue());
 					}
 
 					continue;

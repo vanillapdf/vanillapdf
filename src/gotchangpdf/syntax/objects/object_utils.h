@@ -62,7 +62,7 @@ namespace gotchangpdf
 					if (nullptr == first_converted || nullptr == second_converted)
 						return false;
 
-					return (first_converted->Value() == second_converted->Value());
+					return (first_converted->GetValue() == second_converted->GetValue());
 				}
 				case Object::Type::Dictionary:
 				{
@@ -106,7 +106,7 @@ namespace gotchangpdf
 					if (nullptr == first_converted || nullptr == second_converted)
 						return false;
 
-					return (first_converted->Value() == second_converted->Value());
+					return (first_converted->GetValue() == second_converted->GetValue());
 				}
 				case Object::Type::Name:
 				{
@@ -139,7 +139,7 @@ namespace gotchangpdf
 					if (nullptr == first_converted || nullptr == second_converted)
 						return false;
 
-					return (first_converted->Value() == second_converted->Value());
+					return (first_converted->GetValue() == second_converted->GetValue());
 				}
 				case Object::Type::Stream:
 				{

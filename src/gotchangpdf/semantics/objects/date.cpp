@@ -9,7 +9,7 @@ namespace gotchangpdf
 	{
 		Date::Date(syntax::StringObjectPtr root) : HighLevelObject(root)
 		{
-			auto str = root->Value()->ToString();
+			auto str = root->GetValue()->ToString();
 
 			//(D:YYYYMMDDHHmmSSOHH'mm)
 			std::regex header_regex(

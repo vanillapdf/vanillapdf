@@ -92,12 +92,12 @@ namespace gotchangpdf
 			BufferPtr value;
 			if (syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(trapped)) {
 				auto name = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(trapped);
-				value = name->Value();
+				value = name->GetValue();
 			}
 
 			if (syntax::ObjectUtils::IsType<syntax::StringObjectPtr>(trapped)) {
 				auto string = syntax::ObjectUtils::ConvertTo<syntax::StringObjectPtr>(trapped);
-				value = string->Value();
+				value = string->GetValue();
 			}
 
 			if (*value == *constant::Name::True) {

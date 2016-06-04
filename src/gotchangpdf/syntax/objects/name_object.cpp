@@ -35,7 +35,7 @@ namespace std
 	size_t hash<gotchangpdf::syntax::NameObject>::operator()(const gotchangpdf::syntax::NameObject& name) const
 	{
 		size_t result = 0;
-		for (auto & val : *name.Value())
+		for (auto & val : *name.GetValue())
 		{
 			std::hash<char> hash_fn;
 			result ^= hash_fn(val);
@@ -211,4 +211,3 @@ DECLARE_CONST_NAME(Trapped);
 DECLARE_CONST_NAME(Unknown);
 DECLARE_CONST_NAME(True);
 DECLARE_CONST_NAME(False);
-DECLARE_CONST_NAME(NeedsRendering);

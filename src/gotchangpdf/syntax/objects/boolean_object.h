@@ -13,11 +13,12 @@ namespace gotchangpdf
 			BooleanObject() = default;
 			explicit BooleanObject(bool value) : _value(value) {}
 
-			virtual Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Boolean; }
+			virtual Object::Type GetType(void) const noexcept override { return Object::Type::Boolean; }
 			virtual std::string ToPdf(void) const override { return _value ? "true" : "false"; }
 
-			bool Value(void) const _NOEXCEPT { return _value; }
-			operator bool() const _NOEXCEPT { return _value; }
+			bool GetValue(void) const noexcept { return _value; }
+			void SetValue(bool value) noexcept { _value = value; }
+			operator bool() const noexcept { return _value; }
 
 		private:
 			bool _value = false;

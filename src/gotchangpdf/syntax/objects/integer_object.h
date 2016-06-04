@@ -25,12 +25,13 @@ namespace gotchangpdf
 			template <typename T>
 			T SafeConvert(void) const { return ValueConvertUtils::SafeConvert<T>(_value); }
 
-			operator value_type() const _NOEXCEPT { return _value; }
-			value_type Value(void) const _NOEXCEPT { return _value; }
+			operator value_type() const noexcept { return _value; }
+			value_type GetValue(void) const noexcept { return _value; }
+			void SetValue(value_type value) noexcept { _value = value; }
 
-			virtual Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Integer; }
+			virtual Object::Type GetType(void) const noexcept override { return Object::Type::Integer; }
 
-			bool Equals(const IntegerObject& other) const _NOEXCEPT { return _value == other._value; }
+			bool Equals(const IntegerObject& other) const noexcept { return _value == other._value; }
 			virtual std::string ToPdf(void) const override { return std::to_string(_value); }
 
 		private:
@@ -40,42 +41,42 @@ namespace gotchangpdf
 
 	inline bool operator==(const syntax::IntegerObject left, types::native_int right)
 	{
-		return left.Value() == right;
+		return left.GetValue() == right;
 	}
 
 	inline bool operator!=(const syntax::IntegerObject& left, types::native_int right)
 	{
-		return left.Value() != right;
+		return left.GetValue() != right;
 	}
 
 	inline bool operator<(const syntax::IntegerObject& left, types::native_int right)
 	{
-		return left.Value() < right;
+		return left.GetValue() < right;
 	}
 
 	inline bool operator>(const syntax::IntegerObject& left, types::native_int right)
 	{
-		return left.Value() > right;
+		return left.GetValue() > right;
 	}
 
 	inline bool operator==(types::native_int left, const syntax::IntegerObject& right)
 	{
-		return left == right.Value();
+		return left == right.GetValue();
 	}
 
 	inline bool operator!=(types::native_int left, const syntax::IntegerObject& right)
 	{
-		return left != right.Value();
+		return left != right.GetValue();
 	}
 
 	inline bool operator<(types::native_int left, const syntax::IntegerObject& right)
 	{
-		return left < right.Value();
+		return left < right.GetValue();
 	}
 
 	inline bool operator>(types::native_int left, const syntax::IntegerObject& right)
 	{
-		return left > right.Value();
+		return left > right.GetValue();
 	}
 }
 
