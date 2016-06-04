@@ -48,7 +48,7 @@ namespace gotchangpdf
 			bool ViewerPreferences(OutputViewerPreferencesPtr& result) const;
 			bool PageMode(PageModeType& result) const;
 			bool Outlines(OutputOutlinePtr& result) const;
-			syntax::BooleanObjectPtr NeedsRendering() const;
+			bool NeedsRendering(syntax::BooleanObjectPtr& result) const;
 
 			// required
 			PageTreePtr Pages(void) const;

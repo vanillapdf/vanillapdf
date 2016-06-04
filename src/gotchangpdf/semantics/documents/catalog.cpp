@@ -78,15 +78,13 @@ namespace gotchangpdf
 			return true;
 		}
 
-		syntax::BooleanObjectPtr Catalog::NeedsRendering() const
+		bool Catalog::NeedsRendering(syntax::BooleanObjectPtr& result) const
 		{
 			if (!_obj->Contains(constant::Name::NeedsRendering))
-			{
-				syntax::BooleanObjectPtr value(false);
-				_obj->Insert(constant::Name::NeedsRendering, value);
-			}
+				return false;
 
-			return _obj->FindAs<syntax::BooleanObjectPtr>(constant::Name::NeedsRendering);
+			result = _obj->FindAs<syntax::BooleanObjectPtr>(constant::Name::NeedsRendering);
+			return true;
 		}
 
 		//NameDictionaryPtr Catalog::Names(void) const
