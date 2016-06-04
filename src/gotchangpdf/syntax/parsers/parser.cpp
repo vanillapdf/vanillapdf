@@ -519,7 +519,7 @@ namespace gotchangpdf
 
 			if (*peeked_token->Value() == "f") {
 				ReadTokenSkip();
-				XrefFreeEntryPtr result(objNumber, gen_number->SafeConvert<types::ushort>(), offset->GetValue());
+				XrefFreeEntryPtr result(objNumber, gen_number->SafeConvert<types::ushort>());
 				result->SetFile(_file);
 				return result;
 			}
@@ -613,7 +613,7 @@ namespace gotchangpdf
 					switch (field1) {
 					case 0:
 					{
-						XrefFreeEntryPtr entry(*subsection_index + idx, field3.SafeConvert<types::ushort>(), field2);
+						XrefFreeEntryPtr entry(*subsection_index + idx, field3.SafeConvert<types::ushort>());
 						entry->SetFile(_file);
 						result->Add(entry);
 						break;
@@ -656,7 +656,9 @@ namespace gotchangpdf
 		XrefBasePtr Parser::ReadXref(types::stream_offset offset)
 		{
 			seekg(offset, ios_base::beg);
-			return ReadXref();
+			XrefBasePtr result = ReadXref();
+			result->SetOffset(offset);
+			return result;
 		}
 
 #pragma endregion
