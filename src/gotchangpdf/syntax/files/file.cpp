@@ -564,8 +564,7 @@ namespace gotchangpdf
 				istreambuf_iterator<char>(),
 				ostreambuf_iterator<char>(output));
 
-			// Write opening newline
-			output << '\n';
+			bool new_entries = false;
 
 			XrefTablePtr new_table;
 			DictionaryObjectPtr prev_trailer = _xref->Begin()->Value()->GetTrailerDictionary();
@@ -606,6 +605,12 @@ namespace gotchangpdf
 					types::ushort new_gen_number = obj->GetGenerationNumber();
 					auto new_str = obj->ToPdf();
 
+					if (!new_entries) {
+						// Write opening newline
+						output << '\n';
+						new_entries = true;
+					}
+
 					output << new_obj_number << " " << new_gen_number << " " << "obj" << endl;
 					output << new_str << endl;
 					output << "endobj" << endl;
@@ -620,7 +625,7 @@ namespace gotchangpdf
 			}
 
 			// Skip table, if there were no dirty entries
-			if (new_table->Size() > 0) {
+			if (new_entries) {
 				// Seperate table from content
 				output << '\n';
 
