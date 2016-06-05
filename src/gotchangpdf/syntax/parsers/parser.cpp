@@ -160,6 +160,8 @@ namespace gotchangpdf
 					throw ConversionExceptionFactory<ContainableObject>::Construct(val);
 
 				dictionary->Insert(name, ContainableObjectPtr(containable_ptr));
+				name->SetInitialized();
+				val->SetInitialized();
 			}
 
 			ReadTokenWithTypeSkip(Token::Type::DICTIONARY_END);
@@ -273,7 +275,8 @@ namespace gotchangpdf
 				if (nullptr == containable_ptr)
 					throw ConversionExceptionFactory<ContainableObject>::Construct(val);
 
-				result->push_back(containable_ptr);
+				result->Append(containable_ptr);
+				val->SetInitialized();
 			}
 
 			ReadTokenWithTypeSkip(Token::Type::ARRAY_END);
@@ -340,7 +343,8 @@ namespace gotchangpdf
 			direct->SetGenerationNumber(gen_number->SafeConvert<types::ushort>());
 			direct->SetOffset(offset);
 			direct->SetFile(_file);
-			direct->SetIndirect(true);
+			direct->SetIndirect();
+			direct->SetInitialized();
 
 			assert(direct->IsIndirect());
 			return direct;
@@ -418,6 +422,7 @@ namespace gotchangpdf
 				SetPosition(first + header.offset);
 				auto obj = ReadDirectObject();
 				obj->SetObjectNumber(header.object_number);
+				obj->SetInitialized();
 
 				result.push_back(obj);
 			}
@@ -547,6 +552,7 @@ namespace gotchangpdf
 
 			ReadTokenWithTypeSkip(Token::Type::TRAILER);
 			auto trailer_dictionary = ReadDirectObjectWithType<DictionaryObjectPtr>();
+			trailer_dictionary->SetInitialized();
 
 			table->SetTrailerDictionary(trailer_dictionary);
 			table->SetFile(_file);
