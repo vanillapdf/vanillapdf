@@ -24,6 +24,9 @@ namespace gotchangpdf
 
 	class IEncryptionKey;
 
+	class IModifyObserver;
+	class IModifyObservable;
+
 	namespace syntax
 	{
 		// Exceptions
