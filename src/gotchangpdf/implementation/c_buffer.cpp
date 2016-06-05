@@ -26,6 +26,10 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_SetData(BufferHandle handl
 	try
 	{
 		obj->assign(data, data + size);
+
+		// TODO: on changed automatic
+		obj->OnChanged();
+
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
