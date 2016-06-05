@@ -74,11 +74,11 @@ namespace gotchangpdf
 			const_iterator end(void) const _NOEXCEPT { return _list.end(); }
 			iterator insert(const_iterator pos, const value_type & value) { return _list.insert(pos, value); }
 
-		public:
+		protected:
 			list_type _list;
 		};
 
-		class DictionaryObject : public DictionaryObjectBase<NameObjectPtr, ContainableObjectPtr>
+		class DictionaryObject : public DictionaryObjectBase<NameObjectPtr, ContainableObjectPtr>, public IModifyObserver
 		{
 		public:
 			virtual std::string ToString(void) const override;
@@ -105,6 +105,8 @@ namespace gotchangpdf
 				}
 			}
 
+			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+
 			template <typename U>
 			U FindAs(const NameObjectPtr& name) const
 			{
@@ -118,6 +120,8 @@ namespace gotchangpdf
 			bool Contains(const NameObjectPtr& name) const;
 			bool Insert(const NameObjectPtr& name, const ContainableObjectPtr& value);
 			void Remove(const NameObjectPtr& name);
+
+			virtual ~DictionaryObject();
 		};
 	}
 }

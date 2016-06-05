@@ -27,7 +27,7 @@ namespace gotchangpdf
 
 			operator value_type() const noexcept { return _value; }
 			value_type GetValue(void) const noexcept { return _value; }
-			void SetValue(value_type value) noexcept { _value = value; SetDirty(true); }
+			void SetValue(value_type value) noexcept { _value = value; OnChanged(); }
 
 			virtual Object::Type GetType(void) const noexcept override { return Object::Type::Integer; }
 

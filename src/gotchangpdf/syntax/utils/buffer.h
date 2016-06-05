@@ -3,6 +3,7 @@
 
 #include "syntax_fwd.h"
 #include "unknown_interface.h"
+#include "modify_observer_interface.h"
 
 #include <vector>
 #include <string>
@@ -11,7 +12,7 @@
 
 namespace gotchangpdf
 {
-	class Buffer : public IUnknown, public ::std::vector<char>
+	class Buffer : public ::std::vector<char>, public IUnknown, public IModifyObservable
 	{
 	public:
 		using base_type = std::vector<char>;

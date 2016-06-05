@@ -14,7 +14,7 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class MixedArrayObject : public ContainableObject
+		class MixedArrayObject : public ContainableObject, public IModifyObserver
 		{
 		public:
 			typedef std::vector<ContainableObjectPtr> list_type;
@@ -27,10 +27,26 @@ namespace gotchangpdf
 
 		public:
 			MixedArrayObject() = default;
-			explicit MixedArrayObject(const list_type& list) : _list(list) {}
-			explicit MixedArrayObject(const std::initializer_list<ContainableObjectPtr>& list) : _list(list) {}
+			explicit MixedArrayObject(const list_type& list) : _list(list)
+			{
+				for (auto item : _list) {
+					item->Subscribe(this);
+				}
+			}
+			explicit MixedArrayObject(const std::initializer_list<ContainableObjectPtr>& list) : _list(list)
+			{
+				for (auto item : _list) {
+					item->Subscribe(this);
+				}
+			}
+
 			MixedArrayObject(const ContainableObject& other, list_type& list)
-				: ContainableObject(other), _list(list) {}
+				: ContainableObject(other), _list(list)
+			{
+				for (auto item : _list) {
+					item->Subscribe(this);
+				}
+			}
 
 			virtual void SetObjectNumber(types::big_uint number) _NOEXCEPT override
 			{
@@ -54,6 +70,8 @@ namespace gotchangpdf
 				}
 			}
 
+			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+
 			virtual Object::Type GetType(void) const noexcept override { return Object::Type::Array; }
 			size_t Size(void) const noexcept { return _list.size(); }
 			const ContainableObjectPtr& operator[](size_t i) const { return _list[i]; }
@@ -61,12 +79,18 @@ namespace gotchangpdf
 			const ContainableObjectPtr& At(size_t at) const { return _list.at(at); }
 			ContainableObjectPtr& At(size_t at) { return _list.at(at); }
 
-			void Append(const ContainableObjectPtr& value) { _list.push_back(value); SetDirty(true); }
-			void Insert(const ContainableObjectPtr& value, size_t at) { _list.insert(_list.begin() + at, value); SetDirty(true); }
-			void Remove(size_t at) { _list.erase(_list.begin() + at); SetDirty(true); }
+			void Append(const ContainableObjectPtr& value) { _list.push_back(value); value->Subscribe(this); OnChanged(); }
+			void Insert(const ContainableObjectPtr& value, size_t at) { _list.insert(_list.begin() + at, value); value->Subscribe(this); OnChanged(); }
+			void Remove(size_t at)
+			{
+				auto item = _list.begin() + at;
+				(*item)->Unsubscribe(this);
+				_list.erase(item);
+				OnChanged();
+			}
 
 			// stl compatibility
-			void push_back(const value_type& value) { _list.push_back(value); SetDirty(true); }
+			void push_back(const value_type& value) { _list.push_back(value); value->Subscribe(this); OnChanged(); }
 
 			iterator begin() noexcept { return _list.begin(); }
 			const_iterator begin() const noexcept { return _list.begin(); }
@@ -107,8 +131,14 @@ namespace gotchangpdf
 				return ss.str();
 			}
 
-			//protected:
-		public:
+			virtual ~MixedArrayObject()
+			{
+				for (auto item : _list) {
+					item->Unsubscribe(this);
+				}
+			}
+
+		protected:
 			list_type _list;
 		};
 

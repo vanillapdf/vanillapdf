@@ -12,7 +12,7 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class StreamObject : public Object
+		class StreamObject : public Object, public IModifyObserver
 		{
 		public:
 			StreamObject() = default;
@@ -21,15 +21,23 @@ namespace gotchangpdf
 			virtual std::string ToString(void) const override;
 			virtual std::string ToPdf(void) const override;
 
+			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+
 			DictionaryObjectPtr GetHeader() const { return _header; }
-			void SetHeader(DictionaryObjectPtr header) { _header = header; }
+			void SetHeader(DictionaryObjectPtr header) { _header->Unsubscribe(this); header->Subscribe(this); _header = header; OnChanged(); }
 
 			types::stream_offset GetDataOffset() const { return _raw_data_offset; }
-			void SetDataOffset(types::stream_offset offset) { _raw_data_offset = offset; }
+			void SetDataOffset(types::stream_offset offset) { _raw_data_offset = offset; OnChanged(); }
 
 			BufferPtr GetBodyRaw() const;
 			BufferPtr GetBody() const;
-			void SetBody(BufferPtr value) { _body_decoded = value; }
+			void SetBody(BufferPtr value) { _body_decoded->Unsubscribe(this); value->Subscribe(this); _body_decoded = value; OnChanged(); }
+
+			virtual ~StreamObject()
+			{
+				_body->Unsubscribe(this);
+				_body_decoded->Unsubscribe(this);
+			}
 
 		private:
 			DictionaryObjectPtr _header;

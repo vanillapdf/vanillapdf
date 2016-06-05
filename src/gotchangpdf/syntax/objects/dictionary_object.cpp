@@ -51,17 +51,26 @@ namespace gotchangpdf
 
 		void DictionaryObject::Remove(const NameObjectPtr& name)
 		{
-			_list.erase(name);
-			SetDirty(true);
+			auto found = _list.find(name);
+			if (found == _list.end()) {
+				return;
+			}
+
+			found->first->Unsubscribe(this);
+			found->second->Unsubscribe(this);
+			_list.erase(found);
+			OnChanged();
 		}
 
 		bool DictionaryObject::Insert(const NameObjectPtr& name, const ContainableObjectPtr& value)
 		{
 			std::pair<NameObjectPtr, ContainableObjectPtr> pair(name, value);
 			auto result = _list.insert(pair);
+			name->Subscribe(this);
+			value->Subscribe(this);
 
 			//assert(result.second && "Key was already in the dictionary");
-			SetDirty(true);
+			OnChanged();
 			return result.second;
 		}
 
@@ -71,6 +80,14 @@ namespace gotchangpdf
 			std::vector<ContainableObjectPtr> result;
 			std::for_each(_list.begin(), _list.end(), [&result](const std::pair<NameObjectPtr, ContainableObjectPtr>& item) {result.push_back(item.second); });
 			return result;
+		}
+
+		DictionaryObject::~DictionaryObject()
+		{
+			for (auto item : _list) {
+				item.first->Unsubscribe(this);
+				item.second->Unsubscribe(this);
+			}
 		}
 	}
 }

@@ -28,36 +28,49 @@ namespace gotchangpdf
 			bool operator==(const StringObjectBase& other) const { return Equals(other); }
 		};
 
-		class HexadecimalStringObject : public StringObjectBase
+		class HexadecimalStringObject : public StringObjectBase, public IModifyObserver
 		{
 		public:
 			HexadecimalStringObject() = default;
 			explicit HexadecimalStringObject(BufferPtr value);
 
+			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+
 			virtual StringObjectBase::StringType GetStringType(void) const noexcept override { return StringObjectBase::StringType::Hexadecimal; }
 
 			virtual BufferPtr GetValue() const override;
-			virtual void SetValue(BufferPtr value) override { _value = value; SetDirty(true); }
+			virtual void SetValue(BufferPtr value) override { _value->Unsubscribe(this); value->Subscribe(this); _value = value; OnChanged(); }
 			virtual std::string ToPdf(void) const override;
 
-			//private:
-		public:
+			virtual ~HexadecimalStringObject()
+			{
+				_value->Unsubscribe(this);
+			}
+
+		private:
 			BufferPtr _raw_value;
 			mutable BufferPtr _value;
 		};
 
-		class LiteralStringObject : public StringObjectBase
+		class LiteralStringObject : public StringObjectBase, public IModifyObserver
 		{
 		public:
 			LiteralStringObject() = default;
 			explicit LiteralStringObject(BufferPtr value);
 
+			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+
 			virtual StringObjectBase::StringType GetStringType(void) const noexcept override { return StringObjectBase::StringType::Literal; }
 			virtual BufferPtr GetValue() const override;
-			virtual void SetValue(BufferPtr value) override { _value = value; SetDirty(true); }
+			virtual void SetValue(BufferPtr value) override { _value->Unsubscribe(this); value->Subscribe(this);  _value = value; OnChanged(); }
 			virtual std::string ToPdf(void) const override;
 
-		public:
+			virtual ~LiteralStringObject()
+			{
+				_value->Unsubscribe(this);
+			}
+
+		private:
 			BufferPtr _raw_value;
 			mutable BufferPtr _value;
 		};

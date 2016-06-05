@@ -4,6 +4,7 @@
 #include "syntax_fwd.h"
 #include "constants.h"
 #include "unknown_interface.h"
+#include "modify_observer_interface.h"
 
 #include <iosfwd>
 #include <memory>
@@ -13,7 +14,7 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class Object : public IUnknown
+		class Object : public IUnknown, public IModifyObservable
 		{
 		public:
 			enum class Type
@@ -38,26 +39,37 @@ namespace gotchangpdf
 			virtual std::string ToPdf(void) const = 0;
 
 		public:
+			bool IsInitialized(void) const noexcept { return _initialized; }
+			void SetInitialized(bool initialized = true) noexcept { _initialized = initialized; }
+
 			bool IsIndirect(void) const noexcept { return _indirect; }
-			void SetIndirect(bool indirect) noexcept { _indirect = indirect; }
+			void SetIndirect(bool indirect = true) noexcept { _indirect = indirect; OnChanged(); }
 
 			bool IsDirty(void) const noexcept { return _dirty; }
-			void SetDirty(bool dirty) noexcept { _dirty = dirty; }
+			void SetDirty(bool dirty = true) noexcept { _dirty = dirty; }
 
-			void SetOffset(types::stream_offset offset) noexcept { _offset = offset; }
+			void SetOffset(types::stream_offset offset) noexcept { _offset = offset; OnChanged(); }
 			types::stream_offset GetOffset() const noexcept { return _offset; }
 
-			virtual void SetObjectNumber(types::big_uint number) noexcept { _obj_number = number; }
+			virtual void SetObjectNumber(types::big_uint number) noexcept { _obj_number = number; OnChanged(); }
 			types::big_uint GetObjectNumber() const noexcept { return _obj_number; }
 
-			virtual void SetGenerationNumber(types::ushort number) noexcept { _gen_number = number; }
+			virtual void SetGenerationNumber(types::ushort number) noexcept { _gen_number = number; OnChanged(); }
 			types::ushort GetGenerationNumber() const noexcept { return _gen_number; }
 
-			void SetFile(std::weak_ptr<File> file) noexcept { _file = file; }
+			void SetFile(std::weak_ptr<File> file) noexcept { _file = file; OnChanged(); }
 			std::weak_ptr<File> GetFile() const noexcept { return _file; }
+
+			virtual void OnChanged() override
+			{
+				if (!_initialized) return;
+				SetDirty();
+				IModifyObservable::OnChanged();
+			}
 
 		protected:
 			std::weak_ptr<File> _file;
+			bool _initialized = false;
 			bool _indirect = false;
 			bool _dirty = false;
 			types::big_uint _obj_number = 0;

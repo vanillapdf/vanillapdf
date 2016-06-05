@@ -12,17 +12,19 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class NameObject : public ContainableObject
+		class NameObject : public ContainableObject, public IModifyObserver
 		{
 		public:
 			typedef BufferPtr value_type;
 
 		public:
 			NameObject() = default;
-			explicit NameObject(value_type name) : _value(name) {}
+			explicit NameObject(value_type name) : _value(name) { _value->Subscribe(this); }
+
+			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
 			value_type GetValue() const noexcept { return _value; }
-			void SetValue(value_type value) { _value = value; SetDirty(true); }
+			void SetValue(value_type value) { _value->Unsubscribe(this); value->Subscribe(this); _value = value; OnChanged(); }
 
 			bool operator==(const NameObject& other) const { return Equals(other); }
 			bool operator!=(const NameObject& other) const { return !Equals(other); }
@@ -34,7 +36,12 @@ namespace gotchangpdf
 			virtual std::string ToPdf(void) const override { return "/" + ToString(); }
 			virtual std::string ToString(void) const override;
 
-		public:
+			virtual ~NameObject()
+			{
+				_value->Unsubscribe(this);
+			}
+
+		private:
 			value_type _value;
 		};
 	}
