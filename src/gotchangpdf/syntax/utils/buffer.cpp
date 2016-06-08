@@ -3,16 +3,19 @@
 
 namespace gotchangpdf
 {
-	Buffer::Buffer(size_type count) : base_type(count) {}
+	Buffer::Buffer(size_type count) : m_data(count) {}
 	Buffer::Buffer(const char * chars) : Buffer(chars, strlen(chars) + 1) {}
-	Buffer::Buffer(const value_type * begin, const value_type * end) : base_type(begin, end) { assert(size() > 0); }
-	Buffer::Buffer(size_type count, const value_type& val) : base_type(count, val) {}
+	Buffer::Buffer(const value_type * begin, const value_type * end) : m_data(begin, end) { assert(m_data.size() > 0); }
+	Buffer::Buffer(size_type count, const value_type& val) : m_data(count, val) {}
 
 	bool Buffer::Equals(const Buffer& other) const
 	{
-		auto my_base = static_cast<const base_type&>(*this);
-		auto other_base = static_cast<const base_type&>(other);
-		return std::operator==(my_base, other_base);
+		return std::operator==(m_data, other.m_data);
+	}
+
+	bool Buffer::LessThan(const Buffer& other) const
+	{
+		return std::operator<(m_data, other.m_data);
 	}
 
 	bool operator==(const char * left, const Buffer& right)
