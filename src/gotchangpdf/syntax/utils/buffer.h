@@ -53,7 +53,6 @@ namespace gotchangpdf
 		reference at(size_t pos) { return m_data.at(pos); }
 		const_reference at(size_type pos) const { return m_data.at(pos); }
 		size_type size(void) const noexcept { return m_data.size(); }
-		iterator insert(const_iterator where, value_type&& val) { return m_data.insert(where, val); }
 		iterator begin(void) noexcept { return m_data.begin(); }
 		const_iterator begin(void) const noexcept { return m_data.begin(); }
 		iterator end(void) noexcept { return m_data.end(); }
@@ -62,25 +61,41 @@ namespace gotchangpdf
 		const_reference front(void) const { return m_data.front(); }
 		reference back(void) { return m_data.back(); }
 		const_reference back(void) const { return m_data.back(); }
-
-		void resize(size_type new_size) { m_data.resize(new_size); }
-		void reserve(size_type count) { m_data.reserve(count); }
-		void push_back(const_reference val) { return m_data.push_back(val); }
-		void push_back(value_type&& val) { return m_data.push_back(val); }
 		reference operator[](size_type pos) { return m_data[pos]; }
 		const_reference operator[](size_type pos) const { return m_data[pos]; }
-		iterator insert(iterator pos, size_type count, const_reference val) { return m_data.insert(pos, count, val); }
+
+		// Modifying operations
+		void resize(size_type new_size) { m_data.resize(new_size); OnChanged(); }
+		void reserve(size_type count) { m_data.reserve(count); OnChanged(); }
+		void push_back(const_reference val) { m_data.push_back(val); OnChanged(); }
+		void push_back(value_type&& val) { m_data.push_back(val); OnChanged(); }
+
+		iterator insert(const_iterator where, value_type&& val)
+		{
+			auto result = m_data.insert(where, val);
+			OnChanged();
+			return result;
+		}
+
+		iterator insert(iterator pos, size_type count, const_reference val)
+		{
+			auto result = m_data.insert(pos, count, val);
+			OnChanged();
+			return result;
+		}
 
 		template <class InputIterator>
 		void assign(InputIterator first, InputIterator last)
 		{
 			m_data.assign(first, last);
+			OnChanged();
 		}
 
 		template <class InputIterator>
 		void insert(iterator position, InputIterator first, InputIterator last)
 		{
 			m_data.insert(position, first, last);
+			OnChanged();
 		}
 
 		virtual ~Buffer() {}
