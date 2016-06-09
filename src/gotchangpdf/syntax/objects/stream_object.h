@@ -15,7 +15,7 @@ namespace gotchangpdf
 		class StreamObject : public Object, public IModifyObserver
 		{
 		public:
-			StreamObject() = default;
+			StreamObject();
 			StreamObject(DictionaryObjectPtr header, types::stream_offset offset);
 			virtual Object::Type GetType(void) const noexcept override { return Object::Type::Stream; }
 			virtual std::string ToString(void) const override;
@@ -31,7 +31,7 @@ namespace gotchangpdf
 
 			BufferPtr GetBodyRaw() const;
 			BufferPtr GetBody() const;
-			void SetBody(BufferPtr value) { _body_decoded->Unsubscribe(this); value->Subscribe(this); _body_decoded = value; OnChanged(); }
+			void SetBody(BufferPtr value) { _body_decoded->assign(value.begin(), value.end()); }
 
 			virtual ~StreamObject()
 			{

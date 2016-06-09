@@ -11,30 +11,36 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		LiteralStringObject::LiteralStringObject(BufferPtr value) : _raw_value(value) {}
-		HexadecimalStringObject::HexadecimalStringObject(BufferPtr value) : _raw_value(value) {}
+		LiteralStringObject::LiteralStringObject() { _value->Subscribe(this); }
+		HexadecimalStringObject::HexadecimalStringObject() { _value->Subscribe(this); }
+		LiteralStringObject::LiteralStringObject(BufferPtr value) : _raw_value(value) { _value->Subscribe(this); }
+		HexadecimalStringObject::HexadecimalStringObject(BufferPtr value) : _raw_value(value) { _value->Subscribe(this); }
 		StringObjectPtr::StringObjectPtr() : Deferred<StringObjectBase>(LiteralStringObjectPtr()) {}
 
 		BufferPtr LiteralStringObject::GetValue() const
 		{
-			if (!_value.empty())
+			if (!_value->empty())
 				return _value;
 
 			auto locked_file = _file.lock();
 			if (!locked_file)
 				throw FileDisposedException();
 
+			BufferPtr new_value;
 			if (locked_file->IsEncrypted())
-				_value = locked_file->DecryptString(_raw_value, _obj_number, _gen_number);
+				new_value = locked_file->DecryptString(_raw_value, _obj_number, _gen_number);
 			else
-				_value = _raw_value;
+				new_value = _raw_value;
 
+			_value->DisableNotifications();
+			_value->assign(new_value.begin(), new_value.end());
+			_value->EnableNotifications();
 			return _value;
 		}
 
 		BufferPtr HexadecimalStringObject::GetValue() const
 		{
-			if (!_value.empty())
+			if (!_value->empty())
 				return _value;
 
 			BufferPtr result;
@@ -64,7 +70,9 @@ namespace gotchangpdf
 				result = locked_file->DecryptString(result, _obj_number, _gen_number);
 			}
 
-			_value = result;
+			_value->DisableNotifications();
+			_value->assign(result.begin(), result.end());
+			_value->EnableNotifications();
 			return _value;
 		}
 

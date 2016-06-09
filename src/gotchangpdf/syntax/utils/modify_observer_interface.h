@@ -36,16 +36,24 @@ namespace gotchangpdf
 
 		virtual void OnChanged()
 		{
+			if (!m_enabled) {
+				return;
+			}
+
 			auto size = m_observers.size();
 			for (decltype(size) i = 0; i < size; ++i) {
 				m_observers[i]->ObserveeChanged(this);
 			}
 		}
 
+		void EnableNotifications(void) { m_enabled = true; }
+		void DisableNotifications(void) { m_enabled = false; }
+
 		virtual ~IModifyObservable() = 0;
 
 	private:
 		std::vector<IModifyObserver*> m_observers;
+		bool m_enabled = true;
 	};
 
 	inline IModifyObservable::~IModifyObservable() {}

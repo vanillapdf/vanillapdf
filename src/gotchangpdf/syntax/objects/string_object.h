@@ -31,7 +31,7 @@ namespace gotchangpdf
 		class HexadecimalStringObject : public StringObjectBase, public IModifyObserver
 		{
 		public:
-			HexadecimalStringObject() = default;
+			HexadecimalStringObject();
 			explicit HexadecimalStringObject(BufferPtr value);
 
 			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
@@ -39,7 +39,7 @@ namespace gotchangpdf
 			virtual StringObjectBase::StringType GetStringType(void) const noexcept override { return StringObjectBase::StringType::Hexadecimal; }
 
 			virtual BufferPtr GetValue() const override;
-			virtual void SetValue(BufferPtr value) override { _value->Unsubscribe(this); value->Subscribe(this); _value = value; OnChanged(); }
+			virtual void SetValue(BufferPtr value) override { _value->assign(value.begin(), value.end()); }
 			virtual std::string ToPdf(void) const override;
 
 			virtual ~HexadecimalStringObject()
@@ -55,14 +55,14 @@ namespace gotchangpdf
 		class LiteralStringObject : public StringObjectBase, public IModifyObserver
 		{
 		public:
-			LiteralStringObject() = default;
+			LiteralStringObject();
 			explicit LiteralStringObject(BufferPtr value);
 
 			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
 			virtual StringObjectBase::StringType GetStringType(void) const noexcept override { return StringObjectBase::StringType::Literal; }
 			virtual BufferPtr GetValue() const override;
-			virtual void SetValue(BufferPtr value) override { _value->Unsubscribe(this); value->Subscribe(this);  _value = value; OnChanged(); }
+			virtual void SetValue(BufferPtr value) override { _value->assign(value.begin(), value.end()); }
 			virtual std::string ToPdf(void) const override;
 
 			virtual ~LiteralStringObject()

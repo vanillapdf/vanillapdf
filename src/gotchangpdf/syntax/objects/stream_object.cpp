@@ -9,18 +9,19 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		// I use const_cast to cast away const-ness in GetBody functions
-		// The reason is that functions are lazy and initiaze data when
-		// they are needed. They must be const, because are called
-		// from ToPdf and ToString, which are const as well.
-		// I does not make any sense, to remove const from ToString and ToPdf
-		// It shall be safe, because no notification shall arrive
-		// before execution leaves current function
+		StreamObject::StreamObject()
+		{
+			_header->Subscribe(this);
+			_body->Subscribe(this);
+			_body_decoded->Subscribe(this);
+		}
 
 		StreamObject::StreamObject(DictionaryObjectPtr header, types::stream_offset offset)
 			: _header(header), _raw_data_offset(offset)
 		{
 			_header->Subscribe(this);
+			_body->Subscribe(this);
+			_body_decoded->Subscribe(this);
 		}
 
 		BufferPtr StreamObject::GetBodyRaw() const
@@ -40,15 +41,18 @@ namespace gotchangpdf
 			auto stream = Stream(*input);
 			auto body = stream.read(size->SafeConvert<size_t>());
 
+			_body->DisableNotifications();
+			SCOPE_GUARD_CAPTURE_REFERENCES(_body->EnableNotifications());
+
 			if (!locked_file->IsEncrypted()) {
-				_body = body;
+				_body->assign(body.begin(), body.end());
 				return _body;
 			}
 
 			if (!_header->Contains(constant::Name::Filter)) {
 				// Stream does not contain crypt filter
-				_body = locked_file->DecryptStream(body, _obj_number, _gen_number);
-				_body->Subscribe(const_cast<StreamObject*>(this));
+				body = locked_file->DecryptStream(body, _obj_number, _gen_number);
+				_body->assign(body.begin(), body.end());
 				return _body;
 			}
 
@@ -61,8 +65,8 @@ namespace gotchangpdf
 				if (filter_name == constant::Name::Crypt) {
 					auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
 					auto handler_name = params->FindAs<NameObjectPtr>(constant::Name::Name);
-					_body = locked_file->DecryptData(body, _obj_number, _gen_number, handler_name);
-					_body->Subscribe(const_cast<StreamObject*>(this));
+					body = locked_file->DecryptData(body, _obj_number, _gen_number, handler_name);
+					_body->assign(body.begin(), body.end());
 					return _body;
 				}
 			}
@@ -75,16 +79,16 @@ namespace gotchangpdf
 						assert(i == 0 && "Crypt filter is not first");
 						auto params = _header->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::DecodeParms);
 						auto handler_name = params->At(i)->FindAs<NameObjectPtr>(constant::Name::Name);
-						_body = locked_file->DecryptData(body, _obj_number, _gen_number, handler_name);
-						_body->Subscribe(const_cast<StreamObject*>(this));
+						body = locked_file->DecryptData(body, _obj_number, _gen_number, handler_name);
+						_body->assign(body.begin(), body.end());
 						return _body;
 					}
 				}
 			}
 
 			// Stream does not contain crypt filter
-			_body = locked_file->DecryptStream(body, _obj_number, _gen_number);
-			_body->Subscribe(const_cast<StreamObject*>(this));
+			body = locked_file->DecryptStream(body, _obj_number, _gen_number);
+			_body->assign(body.begin(), body.end());
 			return _body;
 		}
 
@@ -107,6 +111,9 @@ namespace gotchangpdf
 			//stream->seekg(_raw_data_offset);
 			//SCOPE_GUARD_CAPTURE_VALUES(stream->seekg(pos));
 
+			_body_decoded->DisableNotifications();
+			SCOPE_GUARD_CAPTURE_REFERENCES(_body_decoded->EnableNotifications());
+
 			auto filter_obj = _header->Find(constant::Name::Filter);
 			bool is_filter_name = ObjectUtils::IsType<NameObjectPtr>(filter_obj);
 			bool is_filter_array = ObjectUtils::IsType<ArrayObjectPtr<NameObjectPtr>>(filter_obj);
@@ -114,8 +121,8 @@ namespace gotchangpdf
 			if (is_filter_name) {
 				auto filter_name = _header->FindAs<NameObjectPtr>(constant::Name::Filter);
 				if (filter_name == constant::Name::Crypt) {
-					_body_decoded = GetBodyRaw();
-					_body_decoded->Subscribe(const_cast<StreamObject*>(this));
+					auto body = GetBodyRaw();
+					_body_decoded->assign(body.begin(), body.end());
 					return _body_decoded;
 				}
 
@@ -123,14 +130,14 @@ namespace gotchangpdf
 				if (_header->Contains(constant::Name::DecodeParms)) {
 					auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
 					//_body_decoded = filter->Decode(*stream, *size, params);
-					_body_decoded = filter->Decode(GetBodyRaw(), params);
-					_body_decoded->Subscribe(const_cast<StreamObject*>(this));
+					auto body = filter->Decode(GetBodyRaw(), params);
+					_body_decoded->assign(body.begin(), body.end());
 					return _body_decoded;
 				}
 
 				//_body_decoded = filter->Decode(*stream, *size);
-				_body_decoded = filter->Decode(GetBodyRaw());
-				_body_decoded->Subscribe(const_cast<StreamObject*>(this));
+				auto body = filter->Decode(GetBodyRaw());
+				_body_decoded->assign(body.begin(), body.end());
 				return _body_decoded;
 			}
 
@@ -169,8 +176,7 @@ namespace gotchangpdf
 					result = filter->Decode(result);
 				}
 
-				_body_decoded = result;
-				_body_decoded->Subscribe(const_cast<StreamObject*>(this));
+				_body_decoded->assign(result.begin(), result.end());
 				return _body_decoded;
 			}
 

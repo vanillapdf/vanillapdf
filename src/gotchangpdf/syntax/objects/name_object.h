@@ -18,13 +18,13 @@ namespace gotchangpdf
 			typedef BufferPtr value_type;
 
 		public:
-			NameObject() = default;
+			NameObject() { _value->Subscribe(this); }
 			explicit NameObject(value_type name) : _value(name) { _value->Subscribe(this); }
 
 			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
 			value_type GetValue() const noexcept { return _value; }
-			void SetValue(value_type value) { _value->Unsubscribe(this); value->Subscribe(this); _value = value; OnChanged(); }
+			void SetValue(value_type value) { _value->assign(value.begin(), value.end()); }
 
 			bool operator==(const NameObject& other) const { return Equals(other); }
 			bool operator!=(const NameObject& other) const { return !Equals(other); }
