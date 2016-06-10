@@ -32,9 +32,8 @@ namespace gotchangpdf
 			else
 				new_value = _raw_value;
 
-			_value->DisableNotifications();
 			_value->assign(new_value.begin(), new_value.end());
-			_value->EnableNotifications();
+			_value->SetInitialized();
 			return _value;
 		}
 
@@ -70,9 +69,8 @@ namespace gotchangpdf
 				result = locked_file->DecryptString(result, _obj_number, _gen_number);
 			}
 
-			_value->DisableNotifications();
 			_value->assign(result.begin(), result.end());
-			_value->EnableNotifications();
+			_value->SetInitialized();
 			return _value;
 		}
 

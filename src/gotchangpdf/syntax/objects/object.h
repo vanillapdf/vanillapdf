@@ -39,9 +39,6 @@ namespace gotchangpdf
 			virtual std::string ToPdf(void) const = 0;
 
 		public:
-			bool IsInitialized(void) const noexcept { return _initialized; }
-			void SetInitialized(bool initialized = true) noexcept { _initialized = initialized; }
-
 			bool IsIndirect(void) const noexcept { return _indirect; }
 			void SetIndirect(bool indirect = true) noexcept { _indirect = indirect; OnChanged(); }
 
@@ -62,14 +59,13 @@ namespace gotchangpdf
 
 			virtual void OnChanged() override
 			{
-				if (!_initialized) return;
+				if (!IsInitialized()) return;
 				SetDirty();
 				IModifyObservable::OnChanged();
 			}
 
 		protected:
 			std::weak_ptr<File> _file;
-			bool _initialized = false;
 			bool _indirect = false;
 			bool _dirty = false;
 			types::big_uint _obj_number = 0;

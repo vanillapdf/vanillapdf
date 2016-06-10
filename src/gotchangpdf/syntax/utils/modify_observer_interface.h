@@ -36,7 +36,7 @@ namespace gotchangpdf
 
 		virtual void OnChanged()
 		{
-			if (!m_enabled) {
+			if (!m_initialized) {
 				return;
 			}
 
@@ -46,14 +46,14 @@ namespace gotchangpdf
 			}
 		}
 
-		void EnableNotifications(void) { m_enabled = true; }
-		void DisableNotifications(void) { m_enabled = false; }
+		bool IsInitialized(void) const noexcept { return m_initialized; }
+		void SetInitialized(bool initialized = true) noexcept { m_initialized = initialized; }
 
 		virtual ~IModifyObservable() = 0;
 
 	private:
 		std::vector<IModifyObserver*> m_observers;
-		bool m_enabled = true;
+		bool m_initialized = false;
 	};
 
 	inline IModifyObservable::~IModifyObservable() {}

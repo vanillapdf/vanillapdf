@@ -41,9 +41,6 @@ namespace gotchangpdf
 			auto stream = Stream(*input);
 			auto body = stream.read(size->SafeConvert<size_t>());
 
-			_body->DisableNotifications();
-			SCOPE_GUARD_CAPTURE_REFERENCES(_body->EnableNotifications());
-
 			if (!locked_file->IsEncrypted()) {
 				_body->assign(body.begin(), body.end());
 				return _body;
@@ -53,6 +50,7 @@ namespace gotchangpdf
 				// Stream does not contain crypt filter
 				body = locked_file->DecryptStream(body, _obj_number, _gen_number);
 				_body->assign(body.begin(), body.end());
+				_body->SetInitialized();
 				return _body;
 			}
 
@@ -67,6 +65,7 @@ namespace gotchangpdf
 					auto handler_name = params->FindAs<NameObjectPtr>(constant::Name::Name);
 					body = locked_file->DecryptData(body, _obj_number, _gen_number, handler_name);
 					_body->assign(body.begin(), body.end());
+					_body->SetInitialized();
 					return _body;
 				}
 			}
@@ -81,6 +80,7 @@ namespace gotchangpdf
 						auto handler_name = params->At(i)->FindAs<NameObjectPtr>(constant::Name::Name);
 						body = locked_file->DecryptData(body, _obj_number, _gen_number, handler_name);
 						_body->assign(body.begin(), body.end());
+						_body->SetInitialized();
 						return _body;
 					}
 				}
@@ -89,6 +89,7 @@ namespace gotchangpdf
 			// Stream does not contain crypt filter
 			body = locked_file->DecryptStream(body, _obj_number, _gen_number);
 			_body->assign(body.begin(), body.end());
+			_body->SetInitialized();
 			return _body;
 		}
 
@@ -111,9 +112,6 @@ namespace gotchangpdf
 			//stream->seekg(_raw_data_offset);
 			//SCOPE_GUARD_CAPTURE_VALUES(stream->seekg(pos));
 
-			_body_decoded->DisableNotifications();
-			SCOPE_GUARD_CAPTURE_REFERENCES(_body_decoded->EnableNotifications());
-
 			auto filter_obj = _header->Find(constant::Name::Filter);
 			bool is_filter_name = ObjectUtils::IsType<NameObjectPtr>(filter_obj);
 			bool is_filter_array = ObjectUtils::IsType<ArrayObjectPtr<NameObjectPtr>>(filter_obj);
@@ -123,6 +121,7 @@ namespace gotchangpdf
 				if (filter_name == constant::Name::Crypt) {
 					auto body = GetBodyRaw();
 					_body_decoded->assign(body.begin(), body.end());
+					_body_decoded->SetInitialized();
 					return _body_decoded;
 				}
 
@@ -132,12 +131,14 @@ namespace gotchangpdf
 					//_body_decoded = filter->Decode(*stream, *size, params);
 					auto body = filter->Decode(GetBodyRaw(), params);
 					_body_decoded->assign(body.begin(), body.end());
+					_body_decoded->SetInitialized();
 					return _body_decoded;
 				}
 
 				//_body_decoded = filter->Decode(*stream, *size);
 				auto body = filter->Decode(GetBodyRaw());
 				_body_decoded->assign(body.begin(), body.end());
+				_body_decoded->SetInitialized();
 				return _body_decoded;
 			}
 
@@ -177,6 +178,7 @@ namespace gotchangpdf
 				}
 
 				_body_decoded->assign(result.begin(), result.end());
+				_body_decoded->SetInitialized();
 				return _body_decoded;
 			}
 

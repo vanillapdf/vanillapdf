@@ -19,7 +19,7 @@ namespace gotchangpdf
 
 		public:
 			NameObject() { _value->Subscribe(this); }
-			explicit NameObject(value_type name) : _value(name) { _value->Subscribe(this); }
+			explicit NameObject(value_type name) : _value(name) { _value->Subscribe(this); _value->SetInitialized(); }
 
 			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
