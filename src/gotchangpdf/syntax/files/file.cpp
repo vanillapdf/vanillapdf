@@ -591,8 +591,7 @@ namespace gotchangpdf
 						continue;
 
 					auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
-					auto obj = used_entry->GetReference();
-					if (!obj->IsDirty())
+					if (!used_entry->IsDirty())
 						continue;
 
 					auto generation_number = used_entry->GetGenerationNumber();
@@ -601,8 +600,9 @@ namespace gotchangpdf
 					}
 
 					auto new_offset = output.tellg();
+					auto obj = used_entry->GetReference();
 					auto new_obj_number = obj->GetObjectNumber();
-					types::ushort new_gen_number = obj->GetGenerationNumber();
+					auto new_gen_number = obj->GetGenerationNumber();
 					auto new_str = obj->ToPdf();
 
 					if (!new_entries) {

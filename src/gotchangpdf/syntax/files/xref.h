@@ -94,7 +94,7 @@ namespace gotchangpdf
 			void SetNextFreeObjectNumber(types::ushort value) noexcept { _gen_number = value; }
 		};
 
-		class XrefUsedEntry : public XrefEntryBase
+		class XrefUsedEntry : public XrefEntryBase, public IModifyObserver
 		{
 		public:
 			XrefUsedEntry(types::big_uint obj_number, types::ushort gen_number, types::stream_offset offset)
@@ -104,13 +104,19 @@ namespace gotchangpdf
 			virtual Usage GetUsage(void) const noexcept override{ return XrefEntryBase::Usage::Used; }
 
 			ObjectPtr GetReference(void) { Initialize(); return _reference; }
-			void SetReference(ObjectPtr ref) { _reference = ref; }
+			void SetReference(ObjectPtr ref);
 
 			types::stream_offset GetOffset(void) const noexcept { return _offset; }
 			void SetOffset(types::stream_offset value) noexcept { _offset = value; }
 
-			bool Initialized(void) const { return _initialized; }
-			void SetInitialized(bool value) { _initialized = value; }
+			bool Initialized(void) const noexcept { return _initialized; }
+			void SetInitialized(bool value = true) noexcept { _initialized = value; }
+
+			bool IsDirty(void) const noexcept { return _dirty; }
+			void SetDirty(bool dirty = true) noexcept { _dirty = dirty; }
+
+			virtual void ObserveeChanged(IModifyObservable*) override { SetDirty(); }
+			~XrefUsedEntry() { _reference->Unsubscribe(this); }
 
 		private:
 			void Initialize(void);
@@ -118,9 +124,10 @@ namespace gotchangpdf
 			ObjectPtr _reference = NullObject::GetInstance();
 			types::stream_offset _offset = std::_BADOFF;
 			bool _initialized = false;
+			bool _dirty = false;
 		};
 
-		class XrefCompressedEntry : public XrefEntryBase
+		class XrefCompressedEntry : public XrefEntryBase, public IModifyObserver
 		{
 		public:
 			XrefCompressedEntry(types::big_uint obj_number, types::ushort gen_number, types::big_uint object_stream_number, types::uinteger index)
@@ -130,7 +137,7 @@ namespace gotchangpdf
 			virtual Usage GetUsage(void) const noexcept override { return XrefEntryBase::Usage::Compressed; }
 
 			ObjectPtr GetReference(void) { Initialize(); return _reference; }
-			void SetReference(ObjectPtr ref) { _reference = ref; }
+			void SetReference(ObjectPtr ref);
 
 			types::big_uint GetObjectStreamNumber(void) const noexcept { return _object_stream_number; }
 			void SetObjectStreamNumber(types::uinteger value) noexcept { _object_stream_number = value; }
@@ -138,8 +145,15 @@ namespace gotchangpdf
 			types::uinteger GetIndex(void) const noexcept { return _index; }
 			void SetIndex(types::uinteger value) noexcept { _index = value; }
 
-			bool Initialized(void) const { return _initialized; }
-			void SetInitialized(bool value) { _initialized = value; }
+			bool Initialized(void) const noexcept { return _initialized; }
+			void SetInitialized(bool value = true) noexcept { _initialized = value; }
+
+			bool IsDirty(void) const noexcept { return _dirty; }
+			void SetDirty(bool dirty = true) noexcept { _dirty = dirty; }
+
+			virtual void ObserveeChanged(IModifyObservable*) override { SetDirty(); }
+
+			~XrefCompressedEntry() { _reference->Unsubscribe(this); }
 
 		private:
 			void Initialize(void);
@@ -148,6 +162,7 @@ namespace gotchangpdf
 			types::big_uint _object_stream_number = 0;
 			types::uinteger _index = 0;
 			bool _initialized = false;
+			bool _dirty = false;
 		};
 
 		class XrefBase : public IUnknown

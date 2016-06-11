@@ -51,7 +51,7 @@ namespace gotchangpdf
 
 		virtual ~IModifyObservable() = 0;
 
-	private:
+	protected:
 		std::vector<IModifyObserver*> m_observers;
 		bool m_initialized = false;
 	};

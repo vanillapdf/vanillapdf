@@ -9,6 +9,18 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
+		void XrefUsedEntry::SetReference(ObjectPtr ref)
+		{
+			_reference->Unsubscribe(this);
+			_reference = ref;
+			_reference->Subscribe(this);
+
+			if (_initialized)
+				SetDirty();
+
+			SetInitialized();
+		}
+
 		void XrefUsedEntry::Initialize(void)
 		{
 			if (Initialized())
@@ -25,6 +37,18 @@ namespace gotchangpdf
 			auto object = parser.ReadIndirectObject(_offset);
 			SetReference(object);
 			SetInitialized(true);
+		}
+
+		void XrefCompressedEntry::SetReference(ObjectPtr ref)
+		{
+			_reference->Unsubscribe(this);
+			_reference = ref;
+			_reference->Subscribe(this);
+
+			if (_initialized)
+				SetDirty();
+
+			SetInitialized();
 		}
 
 		void XrefCompressedEntry::Initialize(void)
