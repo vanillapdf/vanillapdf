@@ -93,10 +93,6 @@ namespace gotchangpdf
 			}
 
 			_initialized = true;
-
-			//std::string dest("C:\\Users\\Gotcha\\Documents\\");
-			//dest += _filename;
-			//SaveAs(dest);
 		}
 
 		bool File::SetEncryptionKey(const IEncryptionKey& key)
@@ -547,7 +543,7 @@ namespace gotchangpdf
 			return _xref;
 		}
 
-		void File::SaveIncremental(const std::string& path)
+		void File::SaveIncremental(const std::string& path, XrefBasePtr new_xref)
 		{
 			if (!_initialized)
 				throw FileNotInitializedException(_filename);
@@ -564,85 +560,71 @@ namespace gotchangpdf
 				istreambuf_iterator<char>(),
 				ostreambuf_iterator<char>(output));
 
-			bool new_entries = false;
+			if (new_xref->GetType() == XrefBase::Type::Table) {
+				auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(new_xref);
+				auto table_size = new_xref->Size();
+				auto table_items = new_xref->Entries();
 
-			XrefTablePtr new_table;
-			DictionaryObjectPtr prev_trailer = _xref->Begin()->Value()->GetTrailerDictionary();
-			auto last_xref_offset = _xref->Begin()->Value()->GetOffset();
-			DictionaryObjectPtr new_trailer(*prev_trailer);
-			new_table->SetTrailerDictionary(new_trailer);
-			XrefFreeEntryPtr free_entry(0, (types::ushort)65535);
-			new_table->Add(free_entry);
-
-			auto end = _xref->End();
-			for (auto it = _xref->Begin(); *it != *end; ++(*it)) {
-				auto xref_base = it->Value();
-
-				if (xref_base->GetType() == XrefBase::Type::Stream)
-					continue;
-
-				auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(xref_base);
-				auto table_size = xref_table->Size();
-				auto table_items = xref_table->Entries();
+				bool first = true;
 				for (decltype(table_size) i = 0; i < table_size; ++i) {
 					auto entry = table_items[i];
 
 					if (!entry->InUse())
 						continue;
 
-					auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
-					if (!used_entry->IsDirty())
-						continue;
-
-					auto generation_number = used_entry->GetGenerationNumber();
-					if (generation_number == std::numeric_limits<decltype(generation_number)>::max()) {
-						throw GeneralException("Maximum generation number reached");
-					}
-
-					auto new_offset = output.tellg();
-					auto obj = used_entry->GetReference();
-					auto new_obj_number = obj->GetObjectNumber();
-					auto new_gen_number = obj->GetGenerationNumber();
-					auto new_str = obj->ToPdf();
-
-					if (!new_entries) {
+					if (first) {
 						// Write opening newline
 						output << '\n';
-						new_entries = true;
+						first = false;
 					}
 
-					output << new_obj_number << " " << new_gen_number << " " << "obj" << endl;
-					output << new_str << endl;
-					output << "endobj" << endl;
+					//TODO: This is kinda hacky
+					// make new xref table for storing modified values
+					auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
+					auto obj = used_entry->GetReference();
+					auto obj_offset = output.tellg();
+					used_entry->SetOffset(obj_offset);
+					obj->SetOffset(obj_offset);
 
-					XrefUsedEntryPtr new_entry(
-						new_obj_number,
-						new_gen_number,
-						new_offset);
-
-					new_table->Add(new_entry);
+					WriteObject(output, obj);
 				}
-			}
 
-			// Skip table, if there were no dirty entries
-			if (new_entries) {
 				// Seperate table from content
 				output << '\n';
 
-				if (new_trailer->Contains(constant::Name::Prev)) {
-					new_trailer->Remove(constant::Name::Prev);
-				}
-
-				IntegerObjectPtr new_offset(last_xref_offset);
-				new_trailer->Insert(constant::Name::Prev, new_offset);
-
 				// Write the table
-				WriteXrefTable(output, new_table);
+				WriteXrefTable(output, xref_table);
 			}
+
+			if (new_xref->GetType() == XrefBase::Type::Stream) {
+				auto xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(new_xref);
+				auto stream = xref_stream->GetStreamObject();
+				auto stream_offset = output.tellg();
+
+				WriteObject(output, stream);
+				WriteXrefOffset(output, stream_offset);
+			}
+
+			// Store new xref
+			_xref->Append(new_xref);
 
 			// Cleanup
 			output.flush();
 			output.close();
+		}
+
+		void File::WriteObject(std::iostream& output, const Object& obj)
+		{
+			output << obj.GetObjectNumber() << " " << obj.GetGenerationNumber() << " " << "obj" << endl;
+			output << obj.ToPdf() << endl;
+			output << "endobj" << endl;
+		}
+
+		void File::WriteXrefOffset(std::iostream& output, types::stream_offset offset)
+		{
+			output << "startxref" << endl;
+			output << offset << endl;
+			output << "%%EOF" << endl;
 		}
 
 		void File::WriteXrefTable(std::iostream& output, XrefTablePtr xref_table)
@@ -702,9 +684,7 @@ namespace gotchangpdf
 
 			output << "trailer" << endl;
 			output << trailer->ToPdf() << endl;
-			output << "startxref" << endl;
-			output << last_offset << endl;
-			output << "%%EOF" << endl;
+			WriteXrefOffset(output, last_offset);
 		}
 
 		// experimental
@@ -740,7 +720,6 @@ namespace gotchangpdf
 
 					auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
 					auto obj = used_entry->GetReference();
-					auto obj_str = obj->ToPdf();
 
 					//TODO: This is kinda hacky
 					// make new xref table for storing modified values
@@ -748,9 +727,7 @@ namespace gotchangpdf
 					used_entry->SetOffset(obj_offset);
 					obj->SetOffset(obj_offset);
 
-					output << obj->GetObjectNumber() << " " << obj->GetGenerationNumber() << " " << "obj" << endl;
-					output << obj_str << endl;
-					output << "endobj" << endl;
+					WriteObject(output, obj);
 				}
 
 				// Seperate table from content

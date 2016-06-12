@@ -159,18 +159,20 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SaveAs(FileHandle handle, st
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SaveIncremental(FileHandle handle, string_type filename)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SaveIncremental(FileHandle handle, string_type filename, XrefHandle xref_handle)
 {
 	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
+	XrefBase* xref = reinterpret_cast<XrefBase*>(xref_handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
 
 	auto file = holder->Value();
 	if (!file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
 
 	try
 	{
-		file->SaveIncremental(filename);
+		file->SaveIncremental(filename, xref);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
