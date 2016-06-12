@@ -62,12 +62,16 @@ namespace gotchangpdf
 			void SetFile(std::weak_ptr<File> file) noexcept { _file = file; }
 			std::weak_ptr<File> GetFile() const noexcept { return _file; }
 
+			bool IsDirty(void) const noexcept { return _dirty; }
+			void SetDirty(bool dirty = true) noexcept { _dirty = dirty; }
+
 			virtual ~XrefEntryBase() {};
 
 		protected:
 			std::weak_ptr<File> _file;
 			types::big_uint _obj_number = 0;
 			types::ushort _gen_number = 0;
+			bool _dirty = false;
 
 		private:
 			// Private only for NullEntry
@@ -112,10 +116,13 @@ namespace gotchangpdf
 			bool Initialized(void) const noexcept { return _initialized; }
 			void SetInitialized(bool value = true) noexcept { _initialized = value; }
 
-			bool IsDirty(void) const noexcept { return _dirty; }
-			void SetDirty(bool dirty = true) noexcept { _dirty = dirty; }
+			virtual void ObserveeChanged(IModifyObservable*) override
+			{
+				if (_initialized) {
+					SetDirty();
+				}
+			}
 
-			virtual void ObserveeChanged(IModifyObservable*) override { SetDirty(); }
 			~XrefUsedEntry() { _reference->Unsubscribe(this); }
 
 		private:
@@ -124,7 +131,6 @@ namespace gotchangpdf
 			ObjectPtr _reference = NullObject::GetInstance();
 			types::stream_offset _offset = std::_BADOFF;
 			bool _initialized = false;
-			bool _dirty = false;
 		};
 
 		class XrefCompressedEntry : public XrefEntryBase, public IModifyObserver
@@ -148,10 +154,12 @@ namespace gotchangpdf
 			bool Initialized(void) const noexcept { return _initialized; }
 			void SetInitialized(bool value = true) noexcept { _initialized = value; }
 
-			bool IsDirty(void) const noexcept { return _dirty; }
-			void SetDirty(bool dirty = true) noexcept { _dirty = dirty; }
-
-			virtual void ObserveeChanged(IModifyObservable*) override { SetDirty(); }
+			virtual void ObserveeChanged(IModifyObservable*) override
+			{
+				if (_initialized) {
+					SetDirty();
+				}
+			}
 
 			~XrefCompressedEntry() { _reference->Unsubscribe(this); }
 
@@ -162,7 +170,6 @@ namespace gotchangpdf
 			types::big_uint _object_stream_number = 0;
 			types::uinteger _index = 0;
 			bool _initialized = false;
-			bool _dirty = false;
 		};
 
 		class XrefBase : public IUnknown

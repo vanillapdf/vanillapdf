@@ -15,16 +15,15 @@ namespace gotchangpdf
 			_reference = ref;
 			_reference->Subscribe(this);
 
-			if (_initialized)
+			if (Initialized())
 				SetDirty();
-
-			SetInitialized();
 		}
 
 		void XrefUsedEntry::Initialize(void)
 		{
-			if (Initialized())
+			if (Initialized()) {
 				return;
+			}
 
 			auto locked_file = _file.lock();
 			if (!locked_file)
@@ -36,7 +35,7 @@ namespace gotchangpdf
 			auto parser = Parser(_file, *input);
 			auto object = parser.ReadIndirectObject(_offset);
 			SetReference(object);
-			SetInitialized(true);
+			SetInitialized();
 		}
 
 		void XrefCompressedEntry::SetReference(ObjectPtr ref)
@@ -45,16 +44,15 @@ namespace gotchangpdf
 			_reference = ref;
 			_reference->Subscribe(this);
 
-			if (_initialized)
+			if (Initialized())
 				SetDirty();
-
-			SetInitialized();
 		}
 
 		void XrefCompressedEntry::Initialize(void)
 		{
-			if (_initialized)
+			if (Initialized()) {
 				return;
+			}
 
 			auto locked_file = _file.lock();
 			if (!locked_file)
@@ -83,7 +81,7 @@ namespace gotchangpdf
 
 				auto stream_compressed_entry_xref = XrefUtils::ConvertTo<XrefCompressedEntryPtr>(stream_entry_xref);
 				stream_compressed_entry_xref->SetReference(stream_entry);
-				stream_compressed_entry_xref->SetInitialized(true);
+				stream_compressed_entry_xref->SetInitialized();
 			}
 
 			assert(_initialized);
