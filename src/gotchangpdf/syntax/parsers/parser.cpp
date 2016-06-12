@@ -647,6 +647,7 @@ namespace gotchangpdf
 
 			result->SetFile(_file);
 			result->SetTrailerDictionary(header);
+			result->SetStreamObject(stream);
 			return result;
 		}
 

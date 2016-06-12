@@ -266,6 +266,12 @@ namespace gotchangpdf
 		{
 		public:
 			virtual Type GetType(void) const noexcept override { return XrefBase::Type::Stream; }
+
+			StreamObjectPtr GetStreamObject(void) const { return _stream; }
+			void SetStreamObject(const StreamObject& stream) { _stream = stream; }
+
+		private:
+			StreamObjectPtr _stream;
 		};
 	}
 }
