@@ -158,6 +158,7 @@
     <ClCompile Include="src\gotchangpdf\semantics\documents\catalog.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\documents\contents.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\documents\content_stream.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\documents\document.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\documents\page_node_utils.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\documents\page_object.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\documents\page_tree.cpp" />

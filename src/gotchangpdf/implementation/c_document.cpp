@@ -38,6 +38,32 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHandle 
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_Save(DocumentHandle handle, string_type filename)
+{
+	Document* document = reinterpret_cast<Document*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
+
+	try
+	{
+		document->Save(filename);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_SaveIncremental(DocumentHandle handle, string_type filename)
+{
+	Document* document = reinterpret_cast<Document*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
+
+	try
+	{
+		document->SaveIncremental(filename);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandle handle, PCatalogHandle result)
 {
 	Document* document = reinterpret_cast<Document*>(handle);

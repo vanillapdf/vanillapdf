@@ -18,31 +18,13 @@ namespace gotchangpdf
 		class Document : public IUnknown
 		{
 		public:
-			Document(const std::string& filename) : _holder(filename) { _holder->Value()->Initialize(); }
-			Document(syntax::FileHolderPtr holder) : _holder(holder) { assert(holder->Value()); }
+			Document(const std::string& filename);
+			Document(syntax::FileHolderPtr holder);
 
-			CatalogPtr GetDocumentCatalog(void) const
-			{
-				auto chain = _holder->Value()->GetXrefChain();
-				auto xref = chain->Begin()->Value();
-				auto dictionary = xref->GetTrailerDictionary();
-				auto root = dictionary->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Root);
-				return Catalog(root);
-			}
-
-			bool GetDocumentInfo(OutputDocumentInfoPtr& result) const
-			{
-				auto chain = _holder->Value()->GetXrefChain();
-				auto xref = chain->Begin()->Value();
-				auto dictionary = xref->GetTrailerDictionary();
-
-				if (!dictionary->Contains(constant::Name::Info))
-					return false;
-
-				auto info = dictionary->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Info);
-				result = DocumentInfoPtr(info);
-				return true;
-			}
+			CatalogPtr GetDocumentCatalog(void) const;
+			bool GetDocumentInfo(OutputDocumentInfoPtr& result) const;
+			void Save(const std::string& path);
+			void SaveIncremental(const std::string& path);
 
 		private:
 			syntax::FileHolderPtr _holder;
