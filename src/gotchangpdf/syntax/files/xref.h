@@ -205,8 +205,9 @@ namespace gotchangpdf
 				_entries.insert(pair);
 			}
 
+
 			size_t Size(void) const noexcept { return _entries.size(); }
-			XrefEntryBasePtr Find(types::big_uint obj_number, types::ushort gen_number)
+			XrefEntryBasePtr Find(types::big_uint obj_number, types::ushort gen_number) const
 			{
 				Key key(obj_number, gen_number);
 				auto found = _entries.find(key);
@@ -217,7 +218,7 @@ namespace gotchangpdf
 				return found->second;
 			}
 
-			bool Contains(types::big_uint obj_number, types::ushort gen_number)
+			bool Contains(types::big_uint obj_number, types::ushort gen_number) const
 			{
 				Key key(obj_number, gen_number);
 				auto found = _entries.find(key);
