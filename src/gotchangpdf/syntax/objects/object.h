@@ -59,7 +59,10 @@ namespace gotchangpdf
 
 			virtual void OnChanged() override
 			{
-				if (!m_initialized) return;
+				if (!m_initialized) {
+					return;
+				}
+
 				SetDirty();
 				IModifyObservable::OnChanged();
 			}
