@@ -205,6 +205,17 @@ namespace gotchangpdf
 				_entries.insert(pair);
 			}
 
+			bool Remove(types::big_uint obj_number, types::ushort gen_number)
+			{
+				Key key(obj_number, gen_number);
+				auto found = _entries.find(key);
+				if (found == _entries.end()) {
+					return false;
+				}
+
+				_entries.erase(found);
+				return true;
+			}
 
 			size_t Size(void) const noexcept { return _entries.size(); }
 			XrefEntryBasePtr Find(types::big_uint obj_number, types::ushort gen_number) const
