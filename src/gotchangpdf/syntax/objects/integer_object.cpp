@@ -9,17 +9,19 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		IntegerObject::IntegerObject(types::native_int value) : _value(value) {}
-		IntegerObject::IntegerObject(types::native_uint value) : _value(value) {}
-		IntegerObject::IntegerObject(value_type value) : _value(value) {}
-		IntegerObject::IntegerObject(const RealObject& value)
+		IntegerObject::IntegerObject() { m_value->Subscribe(this); }
+		IntegerObject::IntegerObject(types::native_int value) { m_value->SetIntegerValue(value); m_value->Subscribe(this); }
+		IntegerObject::IntegerObject(types::native_uint value) { m_value->SetIntegerValue(value); m_value->Subscribe(this); }
+		IntegerObject::IntegerObject(value_type value) { m_value->SetIntegerValue(value); m_value->Subscribe(this); }
+		IntegerObject::IntegerObject(const NumericObject& value)
 		{
-			_value = ValueConvertUtils::SafeConvert<value_type>(value.GetValue());
+			m_value = value.GetNumericBackend();
+			m_value->Subscribe(this);
 		}
 
 		IntegerObject& IntegerObject::operator=(value_type value)
 		{
-			_value = value;
+			m_value->SetIntegerValue(value);
 			return *this;
 		}
 	}

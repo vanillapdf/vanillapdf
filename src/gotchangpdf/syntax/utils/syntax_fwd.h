@@ -81,6 +81,10 @@ namespace gotchangpdf
 		class Object;
 		class ContainableObject;
 
+		// Numeric objects
+		class NumericObject;
+		class NumericObjectBackend; using NumericObjectBackendPtr = Deferred<NumericObjectBackend>;
+
 		template <typename KeyT, typename ValueT, typename MapT /*= std::map<KeyT, ValueT>*/>
 		class DictionaryObjectBase;
 

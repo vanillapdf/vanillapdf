@@ -8,27 +8,32 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class RealObject : public ContainableObject
+		class RealObject : public NumericObject, public IModifyObserver
 		{
 		public:
 			typedef types::real value_type;
 
 		public:
-			RealObject() = default;
-			explicit RealObject(types::real value) : _value(value) {}
-			explicit RealObject(types::real value, uint32_t precision) : _value(value), _precision(precision) {}
-			explicit RealObject(const IntegerObject& value) { _value = ValueConvertUtils::SafeConvert<types::real>(value.GetValue()); }
+			RealObject() { m_value->Subscribe(this); }
+			explicit RealObject(types::real value) : m_value(value) { m_value->Subscribe(this); }
+			explicit RealObject(types::real value, uint32_t precision) : m_value(value, precision) { m_value->Subscribe(this); }
+			explicit RealObject(const NumericObject& value)
+			{
+				m_value = value.GetNumericBackend();
+				m_value->Subscribe(this);
+			}
 
 			virtual Object::Type GetType(void) const noexcept override { return Object::Type::Real; }
-			virtual std::string ToPdf(void) const override;
+			virtual std::string ToPdf(void) const override { return m_value->ToString(); }
 
-			operator value_type() const noexcept { return _value; }
-			value_type GetValue(void) const noexcept { return _value; }
-			void SetValue(value_type value) noexcept { _value = value; OnChanged(); }
+			operator value_type() const noexcept { return m_value->GetRealValue(); }
+			value_type GetValue(void) const noexcept { return m_value->GetRealValue(); }
+			void SetValue(value_type value) noexcept { m_value->SetRealValue(value); }
+
+			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
 		private:
-			types::real _value = 0;
-			uint32_t _precision = 0;
+			NumericObjectBackendPtr m_value;
 		};
 	}
 }

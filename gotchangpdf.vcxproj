@@ -83,6 +83,7 @@
     <ClInclude Include="src\gotchangpdf\syntax\objects\integer_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\name_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\null_object.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\numeric_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\objects.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\object_utils.h" />
@@ -179,8 +180,8 @@
     <ClCompile Include="src\gotchangpdf\syntax\objects\indirect_object_reference.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\integer_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\name_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\objects\numeric_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\object.cpp" />
-    <ClCompile Include="src\gotchangpdf\syntax\objects\real_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\stream_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\string_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\parsers\reverse_parser.cpp" />
