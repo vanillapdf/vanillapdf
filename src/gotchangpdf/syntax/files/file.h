@@ -18,12 +18,28 @@ namespace gotchangpdf
 		class File : public std::enable_shared_from_this<File>
 		{
 		public:
+			// Filesystem
 			static std::shared_ptr<File> Open(const std::string& path);
 			void SaveAs(const std::string& path);
 			void SaveIncremental(const std::string& path, XrefBasePtr new_xref);
 
 			void Initialize(void);
+			bool IsInitialized(void) const { return _initialized; }
+
+			ObjectPtr GetIndirectObject(types::big_uint objNumber,
+				types::ushort genNumber) const;
+
+			XrefChainPtr GetXrefChain(void) const;
+			HeaderPtr GetHeader(void) const;
+
+			std::string GetFilename(void) const { return _filename; }
+			std::shared_ptr<FileDevice> GetInputStream(void) const { return _input; }
+
+			// Encryption
 			bool IsEncrypted(void) const;
+			ObjectPtr GetEncryptionDictionary(void) const { return _encryption_dictionary; }
+			void SetEncryptionDictionary(DictionaryObjectPtr object) { _encryption_dictionary = object; }
+
 			bool SetEncryptionPassword(const Buffer& password);
 			bool SetEncryptionPassword(const std::string& password);
 			bool SetEncryptionKey(const IEncryptionKey& key);
@@ -63,16 +79,6 @@ namespace gotchangpdf
 				types::big_uint objNumber,
 				types::ushort genNumber,
 				EncryptionAlgorithm alg) const;
-
-			ObjectPtr GetIndirectObject(types::big_uint objNumber,
-				types::ushort genNumber) const;
-
-			XrefChainPtr GetXrefChain(void) const;
-			HeaderPtr GetHeader(void) const;
-
-			std::string GetFilename(void) const { return _filename; }
-			bool IsInitialized(void) const { return _initialized; }
-			std::shared_ptr<FileDevice> GetInputStream(void) const { return _input; }
 
 			~File(void);
 

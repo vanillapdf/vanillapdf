@@ -41,12 +41,8 @@ namespace gotchangpdf
 		void Document::SaveIncremental(const std::string& path)
 		{
 			XrefChainPtr chain = _holder->Value()->GetXrefChain();
-			XrefBasePtr prev_table = chain->Begin()->Value();
-			DictionaryObjectPtr prev_trailer = prev_table->GetTrailerDictionary();
 
 			XrefTablePtr new_table;
-			DictionaryObjectPtr new_trailer(*prev_trailer);
-			new_table->SetTrailerDictionary(new_trailer);
 			XrefFreeEntryPtr free_entry(0, (types::ushort)65535);
 			new_table->Add(free_entry);
 
@@ -87,17 +83,52 @@ namespace gotchangpdf
 				}
 			}
 
+			// Construct new trailer for latest xref table
+			DictionaryObjectPtr new_trailer;
+
+			// Set size of new entries
+			IntegerObjectPtr new_size(new_table->Size());
+			new_trailer->Insert(constant::Name::Size, new_size);
+
+			XrefBasePtr prev_table = chain->Begin()->Value();
+			auto prev_trailer = prev_table->GetTrailerDictionary();
+
+			// Set document ID
+			if (prev_trailer->Contains(constant::Name::ID)) {
+				ContainableObjectPtr id = prev_trailer->Find(constant::Name::ID);
+				ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(id);
+				new_trailer->Insert(constant::Name::ID, cloned);
+			}
+
+			// Set document Info
+			if (prev_trailer->Contains(constant::Name::Info)) {
+				ContainableObjectPtr id = prev_trailer->Find(constant::Name::Info);
+				ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(id);
+				new_trailer->Insert(constant::Name::Info, cloned);
+			}
+
 			// Skip table, if there were no dirty entries
 			if (new_entries) {
-				if (new_trailer->Contains(constant::Name::Prev)) {
-					new_trailer->Remove(constant::Name::Prev);
-				}
-
 				auto last_xref_offset = prev_table->GetOffset();
 				IntegerObjectPtr new_offset(last_xref_offset);
 				new_trailer->Insert(constant::Name::Prev, new_offset);
 			}
 
+			// Add encryption entry to trailer
+			if (_holder->Value()->IsEncrypted()) {
+				ObjectPtr obj = _holder->Value()->GetEncryptionDictionary();
+
+				if (ObjectUtils::IsType<DictionaryObjectPtr>(obj)) {
+					DictionaryObjectPtr encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(obj);
+					DictionaryObjectPtr cloned = ObjectUtils::Clone<DictionaryObjectPtr>(encryption_dictionary);
+					new_trailer->Insert(constant::Name::Encrypt, encryption_dictionary);
+				}
+			}
+
+			// Set trailer
+			new_table->SetTrailerDictionary(new_trailer);
+
+			// File writer does all the dirty work
 			_holder->Value()->SaveIncremental(path, new_table);
 		}
 	}

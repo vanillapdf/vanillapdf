@@ -97,12 +97,14 @@ namespace gotchangpdf
 
 		bool File::SetEncryptionKey(const IEncryptionKey& key)
 		{
+			if (!IsEncrypted()) {
+				return false;
+			}
+
 			auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
 			auto filter = dict->FindAs<NameObjectPtr>(constant::Name::Filter);
 			auto sub_filter = dict->FindAs<NameObjectPtr>(constant::Name::SubFilter);
 			EncryptionAlgorithm algorithm = EncryptionAlgorithm::None;
-
-			ArrayObjectPtr<StringObjectPtr> recipients;
 
 			IntegerObjectPtr length_bits = 40;
 			if (dict->Contains(constant::Name::Length)) {
@@ -110,6 +112,7 @@ namespace gotchangpdf
 				assert(length_bits->GetValue() % 8 == 0 && "Key length is not multiplier of 8");
 			}
 
+			ArrayObjectPtr<StringObjectPtr> recipients;
 			if (sub_filter == constant::Name::AdbePkcs7s3) {
 				recipients = dict->FindAs<ArrayObjectPtr<StringObjectPtr>>(constant::Name::Recipients);
 			}
@@ -675,12 +678,6 @@ namespace gotchangpdf
 			}
 
 			auto trailer = xref_table->GetTrailerDictionary();
-			if (trailer->Contains(constant::Name::Size)) {
-				trailer->Remove(constant::Name::Size);
-			}
-
-			IntegerObjectPtr new_size(table_size);
-			trailer->Insert(constant::Name::Size, new_size);
 
 			output << "trailer" << endl;
 			output << trailer->ToPdf() << endl;
