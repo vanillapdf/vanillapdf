@@ -26,6 +26,21 @@ namespace gotchangpdf
 			template <typename T>
 			static bool IsType(const ObjectPtr& obj) { return ObjectTypeFunctor<T>::IsType(obj); }
 
+			template <
+				typename T,
+				typename = std::enable_if_t<instantiation_of<Deferred, T>::value || std::is_base_of<Object, T::value_type>::value>>
+			static T Clone(const T& obj)
+			{
+				// Template requirements
+				// T - is instantiation of Deferred
+				// T::value_type is derived from Object
+				// Object implements clone
+				ObjectPtr temp(obj->Clone());
+
+				// Return cloned object converted to required type
+				return ObjectTypeFunctor<T>::Convert(temp);
+			}
+
 			static bool ValueEquals(const ObjectPtr& first, const ObjectPtr& second)
 			{
 				if (first->GetType() != second->GetType())

@@ -57,6 +57,8 @@ namespace gotchangpdf
 			void SetFile(std::weak_ptr<File> file) noexcept { _file = file; OnChanged(); }
 			std::weak_ptr<File> GetFile() const noexcept { return _file; }
 
+			virtual Object* Clone(void) const = 0;
+
 			virtual void OnChanged() override
 			{
 				if (!m_initialized) {

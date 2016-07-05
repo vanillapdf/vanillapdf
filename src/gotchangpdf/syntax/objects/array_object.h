@@ -27,50 +27,16 @@ namespace gotchangpdf
 
 		public:
 			MixedArrayObject() = default;
-			explicit MixedArrayObject(const list_type& list) : _list(list)
-			{
-				for (auto item : _list) {
-					item->Subscribe(this);
-				}
-			}
-			explicit MixedArrayObject(const std::initializer_list<ContainableObjectPtr>& list) : _list(list)
-			{
-				for (auto item : _list) {
-					item->Subscribe(this);
-				}
-			}
+			explicit MixedArrayObject(const list_type& list);
+			explicit MixedArrayObject(const std::initializer_list<ContainableObjectPtr>& list);
+			MixedArrayObject(const ContainableObject& other, list_type& list);
 
-			MixedArrayObject(const ContainableObject& other, list_type& list)
-				: ContainableObject(other), _list(list)
-			{
-				for (auto item : _list) {
-					item->Subscribe(this);
-				}
-			}
+			virtual void SetObjectNumber(types::big_uint number) noexcept override;
+			virtual void SetGenerationNumber(types::ushort number) noexcept override;
 
-			virtual void SetObjectNumber(types::big_uint number) _NOEXCEPT override
-			{
-				Object::SetObjectNumber(number);
+			virtual void ObserveeChanged(IModifyObservable*) override;
 
-				auto size = _list.size();
-				for (decltype(size) i = 0; i < size; ++i) {
-					auto item = _list[i];
-					item->SetObjectNumber(number);
-				}
-			}
-
-			virtual void SetGenerationNumber(types::ushort number) _NOEXCEPT override
-			{
-				Object::SetGenerationNumber(number);
-
-				auto size = _list.size();
-				for (decltype(size) i = 0; i < size; ++i) {
-					auto item = _list[i];
-					item->SetGenerationNumber(number);
-				}
-			}
-
-			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+			virtual Object* Clone(void) const override;
 
 			virtual Object::Type GetType(void) const noexcept override { return Object::Type::Array; }
 			size_t Size(void) const noexcept { return _list.size(); }
@@ -79,18 +45,12 @@ namespace gotchangpdf
 			const ContainableObjectPtr& At(size_t at) const { return _list.at(at); }
 			ContainableObjectPtr& At(size_t at) { return _list.at(at); }
 
-			void Append(const ContainableObjectPtr& value) { _list.push_back(value); value->Subscribe(this); OnChanged(); }
-			void Insert(const ContainableObjectPtr& value, size_t at) { _list.insert(_list.begin() + at, value); value->Subscribe(this); OnChanged(); }
-			void Remove(size_t at)
-			{
-				auto item = _list.begin() + at;
-				(*item)->Unsubscribe(this);
-				_list.erase(item);
-				OnChanged();
-			}
+			void Append(const ContainableObjectPtr& value);
+			void Insert(const ContainableObjectPtr& value, size_t at);
+			void Remove(size_t at);
 
 			// stl compatibility
-			void push_back(const value_type& value) { _list.push_back(value); value->Subscribe(this); OnChanged(); }
+			void push_back(const value_type& value);
 
 			iterator begin() noexcept { return _list.begin(); }
 			const_iterator begin() const noexcept { return _list.begin(); }
@@ -103,40 +63,10 @@ namespace gotchangpdf
 				return ArrayObjectPtr<U>(*this, f);
 			}
 
-			virtual std::string ToString(void) const override
-			{
-				std::stringstream ss;
-				ss << "[";
-				bool first = true;
-				for (auto item : _list) {
-					ss << (first ? "" : " ") << item->ToString();
-					first = false;
-				}
+			virtual std::string ToString(void) const override;
+			virtual std::string ToPdf(void) const override;
 
-				ss << "]";
-				return ss.str();
-			}
-
-			virtual std::string ToPdf(void) const override
-			{
-				std::stringstream ss;
-				ss << "[";
-				bool first = true;
-				for (auto item : _list) {
-					ss << (first ? "" : " ") << item->ToPdf();
-					first = false;
-				}
-
-				ss << "]";
-				return ss.str();
-			}
-
-			virtual ~MixedArrayObject()
-			{
-				for (auto item : _list) {
-					item->Unsubscribe(this);
-				}
-			}
+			virtual ~MixedArrayObject();
 
 		protected:
 			list_type _list;
@@ -158,19 +88,19 @@ namespace gotchangpdf
 			friend class ArrayObject;
 
 		public:
-			template <typename = std::enable_if_t<(instantiation_of<Deferred, T>::value || std::is_base_of<Object, T::value_type>::value) && std::is_base_of<Object, T::value_type>::value>>
+			template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value || std::is_base_of<Object, T::value_type>::value>>
 			ArrayObject() : _conversion([](const ContainableObjectPtr& obj) { return ObjectUtils::ConvertTo<T>(obj); }) {}
 
-			template <typename = std::enable_if_t<(instantiation_of<Deferred, T>::value || std::is_base_of<Object, T::value_type>::value) && std::is_base_of<Object, T::value_type>::value>>
+			template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value || std::is_base_of<Object, T::value_type>::value>>
 			explicit ArrayObject(const MixedArrayObject& other)
 				: _list(other),	_conversion([](const ContainableObjectPtr& obj) { return ObjectUtils::ConvertTo<T>(obj); })
 			{ for (auto item : other) _conversion(item); }
 
-			template <typename = std::enable_if_t<(instantiation_of<Deferred, T>::value || std::is_base_of<Object, T::value_type>::value) && std::is_base_of<Object, T::value_type>::value>>
+			template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value || std::is_base_of<Object, T::value_type>::value>>
 			explicit ArrayObject(const list_type& list) : _conversion([](const ContainableObjectPtr& obj) { return ObjectUtils::ConvertTo<T>(obj); })
 			{ for (auto item : other) _list->push_back(item); }
 
-			template <typename = std::enable_if_t<(instantiation_of<Deferred, T>::value || std::is_base_of<Object, T::value_type>::value) && std::is_base_of<Object, T::value_type>::value>>
+			template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value || std::is_base_of<Object, T::value_type>::value>>
 			explicit ArrayObject(const std::initializer_list<T>& list) : _conversion([](const ContainableObjectPtr& obj) { return ObjectUtils::ConvertTo<T>(obj); })
 			{ for (auto item : list) _list->push_back(item); }
 

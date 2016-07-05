@@ -33,6 +33,8 @@ namespace gotchangpdf
 			BufferPtr GetBody() const;
 			void SetBody(BufferPtr value) { _body_decoded->assign(value.begin(), value.end()); }
 
+			virtual Object* Clone(void) const override;
+
 			virtual ~StreamObject()
 			{
 				_body->Unsubscribe(this);

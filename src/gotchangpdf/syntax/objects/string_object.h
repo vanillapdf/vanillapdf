@@ -42,6 +42,8 @@ namespace gotchangpdf
 			virtual void SetValue(BufferPtr value) override { _value->assign(value.begin(), value.end()); }
 			virtual std::string ToPdf(void) const override;
 
+			virtual Object* Clone(void) const override { return new HexadecimalStringObject(_raw_value->Clone()); }
+
 			virtual ~HexadecimalStringObject()
 			{
 				_value->Unsubscribe(this);
@@ -64,6 +66,8 @@ namespace gotchangpdf
 			virtual BufferPtr GetValue() const override;
 			virtual void SetValue(BufferPtr value) override { _value->assign(value.begin(), value.end()); }
 			virtual std::string ToPdf(void) const override;
+
+			virtual Object* Clone(void) const override { return new LiteralStringObject(_raw_value->Clone()); }
 
 			virtual ~LiteralStringObject()
 			{

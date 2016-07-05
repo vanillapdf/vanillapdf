@@ -20,6 +20,8 @@ namespace gotchangpdf
 			void SetValue(bool value) noexcept { _value = value; OnChanged(); }
 			operator bool() const noexcept { return _value; }
 
+			virtual Object* Clone(void) const override { return new BooleanObject(*this); }
+
 		private:
 			bool _value = false;
 		};

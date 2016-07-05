@@ -37,6 +37,8 @@ namespace gotchangpdf
 			types::big_uint GetReferencedObjectNumber() const _NOEXCEPT { return _ref_obj; }
 			types::ushort GetReferencedGenerationNumber() const _NOEXCEPT { return _ref_gen; }
 
+			virtual Object* Clone(void) const override { return new IndirectObjectReference(*this); }
+
 		private:
 			types::big_uint _ref_obj = 0;
 			types::ushort _ref_gen = 0;

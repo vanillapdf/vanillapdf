@@ -5,6 +5,39 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
+		Object* DictionaryObject::Clone(void) const
+		{
+			DictionaryObjectPtr result;
+			for (auto item : _list)
+			{
+				auto name = ObjectUtils::Clone<NameObjectPtr>(item.first);
+				auto value = ObjectUtils::Clone<ContainableObjectPtr>(item.second);
+				result->Insert(name, value);
+			}
+
+			return result.AddRefGet();
+		}
+
+		void DictionaryObject::SetObjectNumber(types::big_uint number) noexcept
+		{
+			Object::SetObjectNumber(number);
+
+			for (auto it = _list.begin(); it != _list.end(); ++it) {
+				auto item = it->second;
+				item->SetObjectNumber(number);
+			}
+		}
+
+		void DictionaryObject::SetGenerationNumber(types::ushort number) noexcept
+		{
+			Object::SetGenerationNumber(number);
+
+			for (auto it = _list.begin(); it != _list.end(); ++it) {
+				auto item = it->second;
+				item->SetGenerationNumber(number);
+			}
+		}
+
 		std::string DictionaryObject::ToString(void) const
 		{
 			std::stringstream ss;

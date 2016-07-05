@@ -40,7 +40,8 @@ namespace gotchangpdf
 			reinterpret_cast<const value_type *>(&chars[0]),
 			reinterpret_cast<const value_type *>(&chars[len])
 		) { assert(size() > 0); }
-
+		
+		Buffer Clone(void) const { return Buffer(begin(), end()); }
 		std::string ToString(void) const { return std::string(begin(), end()); }
 		std::stringstream ToStringStream(void) const { return std::stringstream(ToString()); }
 		bool Equals(const Buffer& other) const;

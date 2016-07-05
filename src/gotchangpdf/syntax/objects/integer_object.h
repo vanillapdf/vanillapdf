@@ -35,6 +35,8 @@ namespace gotchangpdf
 			virtual std::string ToPdf(void) const override { return m_value->ToString(); }
 
 			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+
+			virtual Object* Clone(void) const override { return new IntegerObject(*this); }
 		};
 	}
 
