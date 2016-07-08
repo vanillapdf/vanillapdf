@@ -36,7 +36,7 @@ namespace gotchangpdf
 
 			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
-			virtual Object* Clone(void) const override { return new IntegerObject(*this); }
+			virtual IntegerObject* Clone(void) const override { return new IntegerObject(m_value->Clone()); }
 		};
 	}
 

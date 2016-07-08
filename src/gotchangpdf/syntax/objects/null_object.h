@@ -20,7 +20,7 @@ namespace gotchangpdf
 			}
 
 			bool Equals(const NullObject&) const { return true; }
-			virtual Object* Clone(void) const override { return new NullObject(*this); }
+			virtual NullObject* Clone(void) const override { return new NullObject(*this); }
 
 			bool operator==(const NullObject& other) const { return Equals(other); }
 			bool operator!=(const NullObject& other) const { return !Equals(other); }

@@ -5,7 +5,7 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		Object* DictionaryObject::Clone(void) const
+		DictionaryObject* DictionaryObject::Clone(void) const
 		{
 			DictionaryObjectPtr result;
 			for (auto item : _list)

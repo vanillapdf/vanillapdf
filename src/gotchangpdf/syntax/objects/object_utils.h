@@ -35,10 +35,7 @@ namespace gotchangpdf
 				// T - is instantiation of Deferred
 				// T::value_type is derived from Object
 				// Object implements clone
-				ObjectPtr temp(obj->Clone());
-
-				// Return cloned object converted to required type
-				return ObjectTypeFunctor<T>::Convert(temp);
+				return obj->Clone();
 			}
 
 			static bool ValueEquals(const ObjectPtr& first, const ObjectPtr& second)

@@ -36,7 +36,7 @@ namespace gotchangpdf
 			virtual std::string ToPdf(void) const override { return "/" + ToString(); }
 			virtual std::string ToString(void) const override;
 
-			virtual Object* Clone(void) const override { return new NameObject(*this); }
+			virtual NameObject* Clone(void) const override { return new NameObject(_value->Clone()); }
 
 			virtual ~NameObject()
 			{

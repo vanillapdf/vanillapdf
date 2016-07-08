@@ -24,7 +24,7 @@ namespace gotchangpdf
 			_body_decoded->Subscribe(this);
 		}
 
-		Object* StreamObject::Clone(void) const
+		StreamObject* StreamObject::Clone(void) const
 		{
 			StreamObjectPtr result(*this);
 			result->SetBody(GetBody());

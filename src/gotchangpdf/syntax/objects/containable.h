@@ -10,6 +10,7 @@ namespace gotchangpdf
 		class ContainableObject : public Object
 		{
 		public:
+			virtual ContainableObject* Clone(void) const = 0;
 			virtual ~ContainableObject() = 0;
 		};
 

@@ -90,7 +90,7 @@ namespace gotchangpdf
 
 			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
-			virtual Object* Clone(void) const override;
+			virtual DictionaryObject* Clone(void) const override;
 
 			template <typename U>
 			U FindAs(const NameObjectPtr& name) const

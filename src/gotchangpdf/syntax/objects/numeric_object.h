@@ -42,6 +42,8 @@ namespace gotchangpdf
 			void SetIntegerValue(int64_t value) noexcept { m_type = Type::Integer; m_int = value; OnChanged(); }
 			void SetRealValue(types::real value) noexcept { m_type = Type::Real; m_real = value; OnChanged(); }
 
+			NumericObjectBackend* Clone(void) const { return new NumericObjectBackend(*this); }
+
 			std::string ToString(void) const;
 
 		private:

@@ -51,7 +51,7 @@ namespace gotchangpdf
 
 		void MixedArrayObject::ObserveeChanged(IModifyObservable*) { OnChanged(); }
 
-		Object* MixedArrayObject::Clone(void) const
+		MixedArrayObject* MixedArrayObject::Clone(void) const
 		{
 			MixedArrayObjectPtr result;
 			for (auto item : _list)
