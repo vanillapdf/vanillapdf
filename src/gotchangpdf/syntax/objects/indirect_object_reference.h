@@ -25,7 +25,7 @@ namespace gotchangpdf
 				return ObjectUtils::ConvertTo<T>(direct);
 			}
 
-			virtual Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::IndirectReference; }
+			virtual Object::Type GetType(void) const noexcept override { return Object::Type::IndirectReference; }
 			virtual std::string ToPdf(void) const override;
 
 			bool Equals(const IndirectObjectReference& other) const;
@@ -34,8 +34,8 @@ namespace gotchangpdf
 			bool operator!=(const IndirectObjectReference& other) const { return !Equals(other); }
 			bool operator<(const IndirectObjectReference& other) const;
 
-			types::big_uint GetReferencedObjectNumber() const _NOEXCEPT { return _ref_obj; }
-			types::ushort GetReferencedGenerationNumber() const _NOEXCEPT { return _ref_gen; }
+			types::big_uint GetReferencedObjectNumber() const noexcept { return _ref_obj; }
+			types::ushort GetReferencedGenerationNumber() const noexcept { return _ref_gen; }
 
 			virtual IndirectObjectReference* Clone(void) const override { return new IndirectObjectReference(*this); }
 
