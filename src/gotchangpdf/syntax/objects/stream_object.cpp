@@ -27,7 +27,8 @@ namespace gotchangpdf
 		StreamObject* StreamObject::Clone(void) const
 		{
 			StreamObjectPtr result(*this);
-			result->SetBody(GetBody());
+			result->SetBody(GetBody()->Clone());
+			result->SetHeader(GetHeader()->Clone());
 			return result.AddRefGet();
 		}
 
