@@ -20,6 +20,7 @@ namespace gotchangpdf
 			explicit IntegerObject(types::native_uint value);
 			explicit IntegerObject(value_type value);
 			explicit IntegerObject(const NumericObject& value);
+			explicit IntegerObject(NumericObjectBackendPtr value);
 			IntegerObject& operator= (value_type value);
 
 			template <typename T>

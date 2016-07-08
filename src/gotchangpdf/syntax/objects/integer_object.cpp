@@ -19,6 +19,12 @@ namespace gotchangpdf
 			m_value->Subscribe(this);
 		}
 
+		IntegerObject::IntegerObject(NumericObjectBackendPtr value)
+		{
+			m_value = value;
+			m_value->Subscribe(this);
+		}
+
 		IntegerObject& IntegerObject::operator=(value_type value)
 		{
 			m_value->SetIntegerValue(value);

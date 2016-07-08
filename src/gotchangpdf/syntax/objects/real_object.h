@@ -23,6 +23,12 @@ namespace gotchangpdf
 				m_value->Subscribe(this);
 			}
 
+			explicit RealObject(NumericObjectBackendPtr value)
+			{
+				m_value = value;
+				m_value->Subscribe(this);
+			}
+
 			virtual Object::Type GetType(void) const noexcept override { return Object::Type::Real; }
 			virtual std::string ToPdf(void) const override { return m_value->ToString(); }
 
