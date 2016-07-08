@@ -27,6 +27,17 @@ namespace gotchangpdf
 			}
 		}
 
+		void MixedArrayObject::SetFile(std::weak_ptr<File> file) noexcept
+		{
+			Object::SetFile(file);
+
+			auto size = _list.size();
+			for (decltype(size) i = 0; i < size; ++i) {
+				auto item = _list[i];
+				item->SetFile(file);
+			}
+		}
+
 		void MixedArrayObject::SetObjectNumber(types::big_uint number) noexcept
 		{
 			Object::SetObjectNumber(number);

@@ -18,6 +18,16 @@ namespace gotchangpdf
 			return result.AddRefGet();
 		}
 
+		void DictionaryObject::SetFile(std::weak_ptr<File> file) noexcept
+		{
+			Object::SetFile(file);
+
+			for (auto it = _list.begin(); it != _list.end(); ++it) {
+				auto item = it->second;
+				item->SetFile(file);
+			}
+		}
+
 		void DictionaryObject::SetObjectNumber(types::big_uint number) noexcept
 		{
 			Object::SetObjectNumber(number);

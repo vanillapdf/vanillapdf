@@ -54,7 +54,7 @@ namespace gotchangpdf
 			virtual void SetGenerationNumber(types::ushort number) noexcept { _gen_number = number; OnChanged(); }
 			types::ushort GetGenerationNumber() const noexcept { return _gen_number; }
 
-			void SetFile(std::weak_ptr<File> file) noexcept { _file = file; OnChanged(); }
+			virtual void SetFile(std::weak_ptr<File> file) noexcept { _file = file; OnChanged(); }
 			std::weak_ptr<File> GetFile() const noexcept { return _file; }
 
 			virtual Object* Clone(void) const = 0;

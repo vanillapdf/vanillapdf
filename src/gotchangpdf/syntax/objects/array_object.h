@@ -31,6 +31,7 @@ namespace gotchangpdf
 			explicit MixedArrayObject(const std::initializer_list<ContainableObjectPtr>& list);
 			MixedArrayObject(const ContainableObject& other, list_type& list);
 
+			virtual void SetFile(std::weak_ptr<File> file) noexcept override;
 			virtual void SetObjectNumber(types::big_uint number) noexcept override;
 			virtual void SetGenerationNumber(types::ushort number) noexcept override;
 

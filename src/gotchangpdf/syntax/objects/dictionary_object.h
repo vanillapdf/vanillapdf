@@ -85,6 +85,7 @@ namespace gotchangpdf
 			virtual std::string ToPdf(void) const override;
 			virtual Object::Type GetType(void) const noexcept override { return Object::Type::Dictionary; }
 
+			virtual void SetFile(std::weak_ptr<File> file) noexcept override;
 			virtual void SetObjectNumber(types::big_uint number) noexcept override;
 			virtual void SetGenerationNumber(types::ushort number) noexcept override;
 
