@@ -20,8 +20,7 @@ namespace gotchangpdf
 		public:
 			// Filesystem
 			static std::shared_ptr<File> Open(const std::string& path);
-			void SaveAs(const std::string& path);
-			void SaveIncremental(const std::string& path, XrefBasePtr new_xref);
+			static std::shared_ptr<File> Create(const std::string& path);
 
 			void Initialize(void);
 			bool IsInitialized(void) const { return _initialized; }
@@ -97,9 +96,6 @@ namespace gotchangpdf
 			types::stream_offset GetLastXrefOffset(types::stream_size file_size);
 			void ReadXref(types::stream_offset offset);
 			EncryptionAlgorithm GetEncryptionAlgorithmForFilter(const NameObject& filter_name);
-			void WriteXrefTable(std::iostream& output, XrefTablePtr xref_table);
-			void WriteXrefOffset(std::iostream& output, types::stream_offset offset);
-			void WriteObject(std::iostream& output, const Object& obj);
 
 		private:
 			File(const std::string& path);
@@ -108,8 +104,13 @@ namespace gotchangpdf
 		class FileHolder : public IUnknown
 		{
 		public:
-			explicit FileHolder(const std::string& path) { _file = File::Open(path); }
-			std::shared_ptr<File> Value() const { return _file; }
+			void Open(const std::string& path) { _file = File::Open(path); }
+			void Create(const std::string& path) { _file = File::Create(path); }
+			std::shared_ptr<File> Value() const
+			{
+				assert(_file.get() != nullptr && "File was not initialized");
+				return _file;
+			}
 
 		private:
 			std::shared_ptr<File> _file;

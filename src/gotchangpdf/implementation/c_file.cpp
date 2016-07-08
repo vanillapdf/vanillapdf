@@ -1,5 +1,6 @@
 #include "precompiled.h"
 #include "file.h"
+#include "file_writer.h"
 #include "xref_chain.h"
 
 #include "c_file.h"
@@ -15,7 +16,23 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Open(string_type filename, P
 
 	try
 	{
-		FileHolderPtr holder(pdf_new FileHolder(filename));
+		FileHolderPtr holder;
+		holder->Open(filename);
+		auto ptr = holder.AddRefGet();
+		*result = reinterpret_cast<FileHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Create(string_type filename, PFileHandle result)
+{
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		FileHolderPtr holder;
+		holder->Create(filename);
 		auto ptr = holder.AddRefGet();
 		*result = reinterpret_cast<FileHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -143,36 +160,66 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SetEncryptionKey(FileHandle 
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SaveAs(FileHandle handle, string_type filename)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Create(PFileWriterHandle result)
 {
-	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
-
-	auto file = holder->Value();
-	if (!file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try
 	{
-		file->SaveAs(filename);
+		FileWriterPtr writer;
+		auto ptr = writer.AddRefGet();
+		*result = reinterpret_cast<FileWriterHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SaveIncremental(FileHandle handle, string_type filename, XrefHandle xref_handle)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Write(FileWriterHandle handle, FileHandle source, FileHandle destination)
 {
-	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
-	XrefBase* xref = reinterpret_cast<XrefBase*>(xref_handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
+	FileWriter* writer = reinterpret_cast<FileWriter*>(handle);
+	FileHolder* source_file_holder = reinterpret_cast<FileHolder*>(source);
+	FileHolder* destination_file_holder = reinterpret_cast<FileHolder*>(destination);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(writer);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(source_file_holder);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(destination_file_holder);
 
-	auto file = holder->Value();
-	if (!file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
+	auto source_file = source_file_holder->Value();
+	auto destination_file = destination_file_holder->Value();
+	if (!source_file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
+	if (!destination_file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
 
 	try
 	{
-		file->SaveIncremental(filename, xref);
+		writer->Write(source_file, destination_file);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_WriteIncremental(FileWriterHandle handle, FileHandle source, FileHandle destination)
+{
+	FileWriter* writer = reinterpret_cast<FileWriter*>(handle);
+	FileHolder* source_file_holder = reinterpret_cast<FileHolder*>(source);
+	FileHolder* destination_file_holder = reinterpret_cast<FileHolder*>(destination);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(writer);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(source_file_holder);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(destination_file_holder);
+
+	auto source_file = source_file_holder->Value();
+	auto destination_file = destination_file_holder->Value();
+	if (!source_file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
+	if (!destination_file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
+
+	try
+	{
+		writer->WriteIncremental(source_file, destination_file);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Release(FileWriterHandle handle)
+{
+	FileWriter* writer = reinterpret_cast<FileWriter*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(writer);
+
+	writer->Release();
+	return GOTCHANG_PDF_ERROR_SUCCES;
 }

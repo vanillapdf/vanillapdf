@@ -11,9 +11,6 @@
 #include "xref_chain.h"
 #include "header.h"
 
-#include <iomanip>
-
-
 namespace gotchangpdf
 {
 	namespace syntax
@@ -25,6 +22,17 @@ namespace gotchangpdf
 		std::shared_ptr<File> File::Open(const std::string& path)
 		{
 			return std::shared_ptr<File>(new File(path));
+		}
+
+		std::shared_ptr<File> File::Create(const std::string& path)
+		{
+			auto result = std::shared_ptr<File>(new File(path));
+			result->_input = make_shared<FileDevice>();
+			result->_input->open(path,
+				ios_base::in | ios_base::out | ios_base::binary | ios::trunc);
+
+			result->_initialized = true;
+			return result;
 		}
 
 		File::File(const std::string& path)
@@ -544,198 +552,6 @@ namespace gotchangpdf
 				throw FileNotInitializedException(_filename);
 
 			return _xref;
-		}
-
-		void File::SaveIncremental(const std::string& path, XrefBasePtr new_xref)
-		{
-			if (!_initialized)
-				throw FileNotInitializedException(_filename);
-
-			std::fstream output;
-			output.open(path, ios_base::out | ios_base::binary);
-
-			if (!output || !output.good())
-				throw GeneralException("Could not open file");
-
-			// Write original data
-			_input->seekg(0);
-			std::copy(istreambuf_iterator<char>(*_input),
-				istreambuf_iterator<char>(),
-				ostreambuf_iterator<char>(output));
-
-			if (new_xref->GetType() == XrefBase::Type::Table) {
-				auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(new_xref);
-				auto table_size = new_xref->Size();
-				auto table_items = new_xref->Entries();
-
-				bool first = true;
-				for (decltype(table_size) i = 0; i < table_size; ++i) {
-					auto entry = table_items[i];
-
-					if (!entry->InUse())
-						continue;
-
-					if (first) {
-						// Write opening newline
-						output << '\n';
-						first = false;
-					}
-
-					//TODO: This is kinda hacky
-					// make new xref table for storing modified values
-					auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
-					auto obj = used_entry->GetReference();
-					auto obj_offset = output.tellg();
-					used_entry->SetOffset(obj_offset);
-					obj->SetOffset(obj_offset);
-
-					WriteObject(output, obj);
-				}
-
-				// Seperate table from content
-				output << '\n';
-
-				// Write the table
-				WriteXrefTable(output, xref_table);
-			}
-
-			if (new_xref->GetType() == XrefBase::Type::Stream) {
-				auto xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(new_xref);
-				auto stream = xref_stream->GetStreamObject();
-				auto stream_offset = output.tellg();
-
-				WriteObject(output, stream);
-				WriteXrefOffset(output, stream_offset);
-			}
-
-			// Store new xref
-			_xref->Append(new_xref);
-
-			// Cleanup
-			output.flush();
-			output.close();
-		}
-
-		void File::WriteObject(std::iostream& output, const Object& obj)
-		{
-			output << obj.GetObjectNumber() << " " << obj.GetGenerationNumber() << " " << "obj" << endl;
-			output << obj.ToPdf() << endl;
-			output << "endobj" << endl;
-		}
-
-		void File::WriteXrefOffset(std::iostream& output, types::stream_offset offset)
-		{
-			output << "startxref" << endl;
-			output << offset << endl;
-			output << "%%EOF" << endl;
-		}
-
-		void File::WriteXrefTable(std::iostream& output, XrefTablePtr xref_table)
-		{
-			auto table_size = xref_table->Size();
-			auto table_items = xref_table->Entries();
-
-			auto last_offset = output.tellg();
-			output << "xref" << endl;
-
-			for (decltype(table_size) i = 0; i < table_size;) {
-				auto first = table_items[i];
-				auto subsection_idx = first->GetObjectNumber();
-
-				size_t subsection_size = 1;
-				for (decltype(i) j = 1; j < table_size - i; ++j, ++subsection_size) {
-					auto next_entry = table_items[i + j];
-					if (next_entry->GetObjectNumber() != gotchangpdf::SafeAddition<types::big_uint>(subsection_idx, j)) {
-						break;
-					}
-				}
-
-				output << subsection_idx << " " << subsection_size << endl;
-				for (decltype(subsection_size) j = 0; j < subsection_size; ++j) {
-					auto entry = table_items[i + j];
-					if (!entry->InUse()) {
-						output << setfill('0') << setw(10) << 0;
-						output << ' ';
-						output << setfill('0') << setw(5) << 65535;
-						output << ' ';
-						output << 'f';
-						output << ' ';
-						output << '\n';
-						continue;
-					}
-
-					auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
-					output << setfill('0') << setw(10) << used_entry->GetOffset();
-					output << ' ';
-					output << setfill('0') << setw(5) << used_entry->GetGenerationNumber();
-					output << ' ';
-					output << 'n';
-					output << ' ';
-					output << '\n';
-				}
-
-				i += subsection_size;
-			}
-
-			auto trailer = xref_table->GetTrailerDictionary();
-
-			output << "trailer" << endl;
-			output << trailer->ToPdf() << endl;
-			WriteXrefOffset(output, last_offset);
-		}
-
-		// experimental
-		void File::SaveAs(const std::string& path)
-		{
-			if (!_initialized)
-				throw FileNotInitializedException(_filename);
-
-			std::fstream output;
-			output.open(path, ios_base::out | ios_base::binary);
-
-			if (!output || !output.good())
-				throw GeneralException("Could not open file");
-
-			auto ver = _header->GetVersion();
-			output << "%PDF-1." << static_cast<int>(ver) << endl;
-
-			auto end = _xref->End();
-			for (auto it = _xref->Begin(); *it != *end; ++(*it)) {
-				auto xref_base = it->Value();
-
-				if (xref_base->GetType() == XrefBase::Type::Stream)
-					continue;
-
-				auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(xref_base);
-				auto table_size = xref_table->Size();
-				auto table_items = xref_table->Entries();
-				for (decltype(table_size) i = 0; i < table_size; ++i) {
-					auto entry = table_items[i];
-
-					if (!entry->InUse())
-						continue;
-
-					auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
-					auto obj = used_entry->GetReference();
-
-					//TODO: This is kinda hacky
-					// make new xref table for storing modified values
-					auto obj_offset = output.tellg();
-					used_entry->SetOffset(obj_offset);
-					obj->SetOffset(obj_offset);
-
-					WriteObject(output, obj);
-				}
-
-				// Seperate table from content
-				output << '\n';
-
-				// Write the table
-				WriteXrefTable(output, xref_table);
-			}
-
-			output.flush();
-			output.close();
 		}
 	}
 }

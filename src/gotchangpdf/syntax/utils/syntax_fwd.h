@@ -42,6 +42,7 @@ namespace gotchangpdf
 
 		// Files
 		class File;
+		class FileWriter; using FileWriterPtr = Deferred<FileWriter>;
 		class FileHolder; using FileHolderPtr = Deferred<FileHolder>;
 		class Header;
 
