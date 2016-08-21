@@ -40,21 +40,21 @@ namespace gotchangpdf
 
 		public:
 			bool IsIndirect(void) const noexcept { return _indirect; }
-			void SetIndirect(bool indirect = true) noexcept { _indirect = indirect; OnChanged(); }
+			void SetIndirect(bool indirect = true) noexcept { _indirect = indirect; }
 
 			bool IsDirty(void) const noexcept { return _dirty; }
 			void SetDirty(bool dirty = true) noexcept { _dirty = dirty; }
 
-			void SetOffset(types::stream_offset offset) noexcept { _offset = offset; OnChanged(); }
+			void SetOffset(types::stream_offset offset) noexcept { _offset = offset; }
 			types::stream_offset GetOffset() const noexcept { return _offset; }
 
-			virtual void SetObjectNumber(types::big_uint number) noexcept { _obj_number = number; OnChanged(); }
+			virtual void SetObjectNumber(types::big_uint number) noexcept { _obj_number = number; }
 			types::big_uint GetObjectNumber() const noexcept { return _obj_number; }
 
-			virtual void SetGenerationNumber(types::ushort number) noexcept { _gen_number = number; OnChanged(); }
+			virtual void SetGenerationNumber(types::ushort number) noexcept { _gen_number = number; }
 			types::ushort GetGenerationNumber() const noexcept { return _gen_number; }
 
-			virtual void SetFile(std::weak_ptr<File> file) noexcept { _file = file; OnChanged(); }
+			virtual void SetFile(std::weak_ptr<File> file) noexcept { _file = file; }
 			std::weak_ptr<File> GetFile() const noexcept { return _file; }
 
 			virtual Object* Clone(void) const = 0;
