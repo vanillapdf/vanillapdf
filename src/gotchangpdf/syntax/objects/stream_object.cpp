@@ -127,8 +127,12 @@ namespace gotchangpdf
 			//SCOPE_GUARD_CAPTURE_VALUES(stream->seekg(pos));
 
 			auto filter_obj = _header->Find(constant::Name::Filter);
+			bool is_filter_null = ObjectUtils::IsType<NullObjectPtr>(filter_obj);
 			bool is_filter_name = ObjectUtils::IsType<NameObjectPtr>(filter_obj);
 			bool is_filter_array = ObjectUtils::IsType<ArrayObjectPtr<NameObjectPtr>>(filter_obj);
+
+			if (is_filter_null)
+				return GetBodyRaw();
 
 			if (is_filter_name) {
 				auto filter_name = _header->FindAs<NameObjectPtr>(constant::Name::Filter);
@@ -200,10 +204,85 @@ namespace gotchangpdf
 			throw GeneralException("Filter is neither name nor array of names");
 		}
 
+		BufferPtr StreamObject::GetBodyEncoded() const
+		{
+			auto locked_file = _file.lock();
+			if (!locked_file)
+				throw FileDisposedException();
+
+			if (!_header->Contains(constant::Name::Filter)) {
+				return GetBody();
+			}
+
+			BufferPtr decoded_body = GetBody();
+			auto filter_obj = _header->Find(constant::Name::Filter);
+			bool is_filter_null = ObjectUtils::IsType<NullObjectPtr>(filter_obj);
+			bool is_filter_name = ObjectUtils::IsType<NameObjectPtr>(filter_obj);
+			bool is_filter_array = ObjectUtils::IsType<ArrayObjectPtr<NameObjectPtr>>(filter_obj);
+
+			if (is_filter_null)
+				return decoded_body;
+
+			if (is_filter_name) {
+				auto filter_name = _header->FindAs<NameObjectPtr>(constant::Name::Filter);
+				if (filter_name == constant::Name::Crypt) {
+					return decoded_body;
+				}
+
+				auto filter = FilterBase::GetFilterByName(filter_name);
+				if (_header->Contains(constant::Name::DecodeParms)) {
+					auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
+					return filter->Encode(decoded_body, params);
+				}
+
+				return filter->Encode(decoded_body);
+			}
+
+			if (is_filter_array) {
+				auto filter_array = _header->FindAs<ArrayObjectPtr<NameObjectPtr>>(constant::Name::Filter);
+
+				MixedArrayObjectPtr params;
+				bool has_params = _header->Contains(constant::Name::DecodeParms);
+				if (has_params) {
+					params = _header->FindAs<MixedArrayObjectPtr>(constant::Name::DecodeParms);
+					assert(filter_array->Size() == params->Size());
+				}
+
+				for (unsigned int i = 0; i < filter_array->Size(); ++i) {
+					auto current_filter = (*filter_array)[i];
+					if (current_filter == constant::Name::Crypt) {
+						continue;
+					}
+
+					auto filter = FilterBase::GetFilterByName(current_filter);
+
+					if (has_params) {
+						auto current_param = (*params)[i];
+						bool is_param_null = ObjectUtils::IsType<NullObjectPtr>(current_param);
+						if (is_param_null) {
+							decoded_body = filter->Encode(decoded_body);
+							continue;
+						}
+
+						auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(current_param);
+						decoded_body = filter->Encode(decoded_body, dict);
+						continue;
+					}
+
+					decoded_body = filter->Encode(decoded_body);
+				}
+
+				return decoded_body;
+			}
+
+			assert(is_filter_name ^ is_filter_array);
+			throw GeneralException("Filter is neither name nor array of names");
+		}
+
 		std::string StreamObject::ToString(void) const
 		{
 			std::stringstream ss;
-			ss << _header->ToString() << "stream: " << GetBodyRaw()->size() << std::endl;
+			ss << _header->ToString() << "stream: " << GetBodyEncoded()->size() << std::endl;
 			return ss.str();
 		}
 
@@ -212,7 +291,7 @@ namespace gotchangpdf
 			std::stringstream ss;
 			ss << _header->ToPdf() << std::endl;
 			ss << "stream" << std::endl;
-			ss << GetBodyRaw()->ToString();
+			ss << GetBodyEncoded()->ToString();
 			ss << "endstream";
 			return ss.str();
 		}

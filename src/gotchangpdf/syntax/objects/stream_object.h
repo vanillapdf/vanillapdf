@@ -31,6 +31,7 @@ namespace gotchangpdf
 
 			BufferPtr GetBodyRaw() const;
 			BufferPtr GetBody() const;
+			BufferPtr GetBodyEncoded() const;
 			void SetBody(BufferPtr value) { _body_decoded->assign(value.begin(), value.end()); }
 
 			virtual StreamObject* Clone(void) const override;
