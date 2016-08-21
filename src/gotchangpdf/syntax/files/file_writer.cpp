@@ -152,8 +152,16 @@ namespace gotchangpdf
 			// Xref base has no default constructor, therefore it is initialized with table
 			XrefBasePtr result = XrefTablePtr();
 
-			if (source->GetType() == XrefBase::Type::Stream)
-				result = XrefStreamPtr();
+			if (source->GetType() == XrefBase::Type::Stream) {
+				auto source_xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(source);
+				auto source_xref_stream_obj = source_xref_stream->GetStreamObject();
+				auto cloned_obj = source_xref_stream_obj->Clone();
+				cloned_obj->SetFile(destination);
+
+				XrefStreamPtr stream;
+				stream->SetStreamObject(*cloned_obj);
+				result = stream;
+			}
 
 			auto table_size = source->Size();
 			auto table_items = source->Entries();
