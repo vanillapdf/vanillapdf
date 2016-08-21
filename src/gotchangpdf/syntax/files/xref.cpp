@@ -97,6 +97,11 @@ namespace gotchangpdf
 				return;
 			}
 
+			RecalculateContent();
+		}
+
+		void XrefStream::RecalculateContent()
+		{
 			auto header = _stream->GetHeader();
 			if (!header->Contains(constant::Name::W)) {
 				throw GeneralException("Stream header does not contain width");

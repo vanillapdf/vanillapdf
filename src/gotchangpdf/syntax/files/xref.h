@@ -256,6 +256,8 @@ namespace gotchangpdf
 				_stream->Subscribe(this);
 			}
 
+			void RecalculateContent();
+
 		private:
 			StreamObjectPtr _stream;
 
