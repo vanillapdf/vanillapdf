@@ -27,8 +27,10 @@ namespace gotchangpdf
 		StreamObject* StreamObject::Clone(void) const
 		{
 			StreamObjectPtr result(*this);
-			result->SetBody(GetBody()->Clone());
-			result->SetHeader(GetHeader()->Clone());
+			result->_body = GetBodyRaw()->Clone();
+			result->_body_decoded = _body_decoded->Clone();
+			result->_header = _header->Clone();
+
 			return result.AddRefGet();
 		}
 
@@ -38,6 +40,17 @@ namespace gotchangpdf
 			_header->SetFile(file);
 		}
 
+		void StreamObject::SetObjectNumber(types::big_uint number) noexcept
+		{
+			Object::SetObjectNumber(number);
+			_header->SetObjectNumber(number);
+		}
+
+		void StreamObject::SetGenerationNumber(types::ushort number) noexcept
+		{
+			Object::SetGenerationNumber(number);
+			_header->SetGenerationNumber(number);
+		}
 
 		void StreamObject::SetInitialized(bool initialized) noexcept
 		{

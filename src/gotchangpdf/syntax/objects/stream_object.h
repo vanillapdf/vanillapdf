@@ -35,7 +35,10 @@ namespace gotchangpdf
 			void SetBody(BufferPtr value) { _body_decoded->assign(value.begin(), value.end()); }
 
 			virtual StreamObject* Clone(void) const override;
+
 			virtual void SetFile(std::weak_ptr<File> file) noexcept override;
+			virtual void SetObjectNumber(types::big_uint number) noexcept override;
+			virtual void SetGenerationNumber(types::ushort number) noexcept override;
 			virtual void SetInitialized(bool initialized = true) noexcept override;
 
 			virtual ~StreamObject()
