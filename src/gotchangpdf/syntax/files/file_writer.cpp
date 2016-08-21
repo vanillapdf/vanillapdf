@@ -111,7 +111,9 @@ namespace gotchangpdf
 			}
 
 			auto length_obj = stream_header->FindAs<IntegerObjectPtr>(constant::Name::Length);
-			length_obj->SetValue(stream_data->size());
+			if (length_obj->GetValue() != stream_data->size()) {
+				length_obj->SetValue(stream_data->size());
+			}
 		}
 
 		void FileWriter::RecalculateStreamsLength(XrefBasePtr source)
