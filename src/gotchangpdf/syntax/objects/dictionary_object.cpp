@@ -7,7 +7,7 @@ namespace gotchangpdf
 	{
 		DictionaryObject* DictionaryObject::Clone(void) const
 		{
-			DictionaryObjectPtr result;
+			std::unique_ptr<DictionaryObject> result(new DictionaryObject());
 			for (auto item : _list)
 			{
 				auto name = ObjectUtils::Clone<NameObjectPtr>(item.first);
@@ -15,7 +15,7 @@ namespace gotchangpdf
 				result->Insert(name, value);
 			}
 
-			return result.AddRefGet();
+			return result.release();
 		}
 
 		void DictionaryObject::SetFile(std::weak_ptr<File> file) noexcept

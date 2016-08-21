@@ -157,7 +157,7 @@ namespace gotchangpdf
 			if (source->GetType() == XrefBase::Type::Stream) {
 				auto source_xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(source);
 				auto source_xref_stream_obj = source_xref_stream->GetStreamObject();
-				auto cloned_obj = source_xref_stream_obj->Clone();
+				auto cloned_obj = ObjectUtils::Clone<StreamObjectPtr>(source_xref_stream_obj);
 				cloned_obj->SetFile(destination);
 
 				XrefStreamPtr stream;

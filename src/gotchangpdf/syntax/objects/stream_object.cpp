@@ -26,12 +26,12 @@ namespace gotchangpdf
 
 		StreamObject* StreamObject::Clone(void) const
 		{
-			StreamObjectPtr result(*this);
+			std::unique_ptr<StreamObject> result(new StreamObject(*this));
 			result->_body = GetBodyRaw()->Clone();
 			result->_body_decoded = _body_decoded->Clone();
 			result->_header = _header->Clone();
 
-			return result.AddRefGet();
+			return result.release();
 		}
 
 		void StreamObject::SetFile(std::weak_ptr<File> file) noexcept

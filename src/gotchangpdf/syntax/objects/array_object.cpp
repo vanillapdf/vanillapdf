@@ -75,14 +75,14 @@ namespace gotchangpdf
 
 		MixedArrayObject* MixedArrayObject::Clone(void) const
 		{
-			MixedArrayObjectPtr result;
+			std::unique_ptr<MixedArrayObject> result(new MixedArrayObject());
 			for (auto item : _list)
 			{
 				auto cloned = ObjectUtils::Clone<ContainableObjectPtr>(item);
 				result->Append(cloned);
 			}
 
-			return result.AddRefGet();
+			return result.release();
 		}
 
 		void MixedArrayObject::Append(const ContainableObjectPtr& value) { _list.push_back(value); value->Subscribe(this); OnChanged(); }
