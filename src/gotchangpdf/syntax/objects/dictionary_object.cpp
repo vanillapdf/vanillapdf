@@ -48,6 +48,16 @@ namespace gotchangpdf
 			}
 		}
 
+		void DictionaryObject::SetInitialized(bool initialized) noexcept
+		{
+			IModifyObservable::SetInitialized(initialized);
+
+			for (auto it = _list.begin(); it != _list.end(); ++it) {
+				auto item = it->second;
+				item->SetInitialized(initialized);
+			}
+		}
+
 		std::string DictionaryObject::ToString(void) const
 		{
 			std::stringstream ss;

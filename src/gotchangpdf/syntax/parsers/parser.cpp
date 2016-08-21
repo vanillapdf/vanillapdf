@@ -160,8 +160,6 @@ namespace gotchangpdf
 					throw ConversionExceptionFactory<ContainableObject>::Construct(val);
 
 				dictionary->Insert(name, ContainableObjectPtr(containable_ptr));
-				name->SetInitialized();
-				val->SetInitialized();
 			}
 
 			ReadTokenWithTypeSkip(Token::Type::DICTIONARY_END);
@@ -276,7 +274,6 @@ namespace gotchangpdf
 					throw ConversionExceptionFactory<ContainableObject>::Construct(val);
 
 				result->Append(containable_ptr);
-				val->SetInitialized();
 			}
 
 			ReadTokenWithTypeSkip(Token::Type::ARRAY_END);

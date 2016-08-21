@@ -36,6 +36,7 @@ namespace gotchangpdf
 
 			virtual StreamObject* Clone(void) const override;
 			virtual void SetFile(std::weak_ptr<File> file) noexcept override;
+			virtual void SetInitialized(bool initialized = true) noexcept override;
 
 			virtual ~StreamObject()
 			{

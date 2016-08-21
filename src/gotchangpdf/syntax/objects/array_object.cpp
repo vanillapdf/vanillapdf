@@ -60,6 +60,17 @@ namespace gotchangpdf
 			}
 		}
 
+		void MixedArrayObject::SetInitialized(bool initialized) noexcept
+		{
+			IModifyObservable::SetInitialized(initialized);
+
+			auto size = _list.size();
+			for (decltype(size) i = 0; i < size; ++i) {
+				auto item = _list[i];
+				item->SetInitialized(initialized);
+			}
+		}
+
 		void MixedArrayObject::ObserveeChanged(IModifyObservable*) { OnChanged(); }
 
 		MixedArrayObject* MixedArrayObject::Clone(void) const

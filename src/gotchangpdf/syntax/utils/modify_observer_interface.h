@@ -47,7 +47,7 @@ namespace gotchangpdf
 		}
 
 		bool IsInitialized(void) const noexcept { return m_initialized; }
-		void SetInitialized(bool initialized = true) noexcept { m_initialized = initialized; }
+		virtual void SetInitialized(bool initialized = true) noexcept { m_initialized = initialized; }
 
 		virtual ~IModifyObservable() = 0;
 

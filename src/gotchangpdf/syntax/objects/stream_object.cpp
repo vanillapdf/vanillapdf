@@ -38,6 +38,13 @@ namespace gotchangpdf
 			_header->SetFile(file);
 		}
 
+
+		void StreamObject::SetInitialized(bool initialized) noexcept
+		{
+			IModifyObservable::SetInitialized(initialized);
+			_header->SetInitialized(initialized);
+		}
+
 		BufferPtr StreamObject::GetBodyRaw() const
 		{
 			if (!_body->empty())
@@ -57,6 +64,7 @@ namespace gotchangpdf
 
 			if (!locked_file->IsEncrypted()) {
 				_body->assign(body.begin(), body.end());
+				_body->SetInitialized();
 				return _body;
 			}
 
