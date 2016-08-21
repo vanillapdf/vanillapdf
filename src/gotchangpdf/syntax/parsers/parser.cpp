@@ -602,7 +602,8 @@ namespace gotchangpdf
 
 					IntegerObject field1;
 					for (int j = 0; j < *field1_size; ++j) {
-						field1 = (field1 << 8) + (*it & 0xff);
+						unsigned char next_value = reinterpret_cast<unsigned char&>(*it);
+						field1 = (field1 << 8) + next_value;
 						it++;
 					}
 
@@ -610,13 +611,15 @@ namespace gotchangpdf
 
 					IntegerObject field2;
 					for (int j = 0; j < *field2_size; ++j) {
-						field2 = (field2 << 8) + (*it & 0xff);
+						unsigned char next_value = reinterpret_cast<unsigned char&>(*it);
+						field2 = (field2 << 8) + next_value;
 						it++;
 					}
 
 					IntegerObject field3;
 					for (int j = 0; j < *field3_size; ++j) {
-						field3 = (field3 << 8) + (*it & 0xff);
+						unsigned char next_value = reinterpret_cast<unsigned char&>(*it);
+						field3 = (field3 << 8) + next_value;
 						it++;
 					}
 
