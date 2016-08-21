@@ -18,8 +18,12 @@ namespace gotchangpdf
 			bool GetRecalculateOffsetFlag(void) const noexcept { return m_recalculate_offset; }
 			void SetRecalculateOffsetFlag(bool flag) noexcept { m_recalculate_offset = flag; }
 
+			bool GetRecalculateStreamSizeFlag(void) const noexcept { return m_recalculate_stream_size; }
+			void SetRecalculateStreamSizeFlag(bool flag) noexcept { m_recalculate_stream_size = flag; }
+
 		private:
-			XrefBasePtr WriteXrefObjects(std::shared_ptr<File> destination, XrefBasePtr source);
+			void WriteXrefObjects(std::shared_ptr<File> destination, XrefBasePtr source);
+			XrefBasePtr FileWriter::CloneXref(std::shared_ptr<File> destination, XrefBasePtr source);
 			XrefBasePtr CreateIncrementalXref(std::shared_ptr<File> source, std::shared_ptr<File> destination);
 			void WriteXref(std::iostream& output, XrefBasePtr xref);
 			void WriteXrefTable(std::iostream& output, XrefTablePtr xref_table);
@@ -27,8 +31,12 @@ namespace gotchangpdf
 			void WriteXrefOffset(std::ostream& output, types::stream_offset offset);
 			void WriteObject(std::ostream& output, const Object& obj);
 
+			void FileWriter::RecalculateStreamLength(ObjectPtr obj);
+			void FileWriter::RecalculateStreamsLength(XrefBasePtr source);
+
 			// flags
 			bool m_recalculate_offset = true;
+			bool m_recalculate_stream_size = true;
 		};
 	}
 }

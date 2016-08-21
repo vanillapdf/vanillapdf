@@ -30,13 +30,24 @@ namespace gotchangpdf
 			auto end = source_xref->End();
 			for (auto it = source_xref->Begin(); *it != *end; ++(*it)) {
 				auto original_xref = it->Value();
-				auto new_xref = WriteXrefObjects(destination, original_xref);
+
+				// Deep clone of original xref
+				auto new_xref = CloneXref(destination, original_xref);
+
+				// Insert cloned table to destination xref chain
+				// NOTE: This is required, so that indirect references are accessible
+				dest_xref->Append(new_xref);
+
+				// Stream length to be adjusted according to calculated size
+				if (m_recalculate_stream_size) {
+					RecalculateStreamsLength(new_xref);
+				}
+
+				// Write all body objects
+				WriteXrefObjects(destination, new_xref);
 
 				// Write xref to output
 				WriteXref(*output, new_xref);
-
-				// Insert cloned table to destination xref chain
-				dest_xref->Append(new_xref);
 			}
 
 			// Cleanup
@@ -60,21 +71,82 @@ namespace gotchangpdf
 			// Get all changed entries
 			auto tmp_xref = CreateIncrementalXref(source, destination);
 
+			// Deep clone of original xref
+			auto new_xref = CloneXref(destination, tmp_xref);
+
+			// Insert cloned table to destination xref chain
+			// NOTE: This is required, so that indirect references are accessible
+			auto dest_xref = destination->GetXrefChain();
+			dest_xref->Append(new_xref);
+
+			// Stream length to be adjusted according to calculated size
+			if (m_recalculate_stream_size) {
+				RecalculateStreamsLength(new_xref);
+			}
+
 			// Write xref objects to output
-			auto new_xref = WriteXrefObjects(destination, tmp_xref);
+			WriteXrefObjects(destination, new_xref);
 
 			// Write xref itself to output
 			WriteXref(*output, new_xref);
-
-			// Insert cloned table to destination xref chain
-			auto dest_xref = destination->GetXrefChain();
-			dest_xref->Append(new_xref);
 
 			// Cleanup
 			output->flush();
 		}
 
-		XrefBasePtr FileWriter::WriteXrefObjects(std::shared_ptr<File> destination, XrefBasePtr source)
+		void FileWriter::RecalculateStreamLength(ObjectPtr obj)
+		{
+			if (!ObjectUtils::IsType<StreamObjectPtr>(obj)) {
+				return;
+			}
+
+			auto stream_obj = ObjectUtils::ConvertTo<StreamObjectPtr>(obj);
+			auto stream_data = stream_obj->GetBodyEncoded();
+			auto stream_header = stream_obj->GetHeader();
+
+			if (!stream_header->Contains(constant::Name::Length)) {
+				IntegerObjectPtr new_length(stream_data->size());
+				stream_header->Insert(constant::Name::Length, new_length);
+				return;
+			}
+
+			auto length_obj = stream_header->FindAs<IntegerObjectPtr>(constant::Name::Length);
+			length_obj->SetValue(stream_data->size());
+		}
+
+		void FileWriter::RecalculateStreamsLength(XrefBasePtr source)
+		{
+			auto table_size = source->Size();
+			auto table_items = source->Entries();
+
+			for (decltype(table_size) i = 0; i < table_size; ++i) {
+				auto entry = table_items[i];
+
+				if (entry->GetUsage() == XrefEntryBase::Usage::Free) {
+					continue;
+				}
+
+				if (entry->GetUsage() == XrefEntryBase::Usage::Used) {
+					auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
+					auto new_obj = used_entry->GetReference();
+					RecalculateStreamLength(new_obj);
+
+					continue;
+				}
+
+				if (entry->GetUsage() == XrefEntryBase::Usage::Compressed) {
+					auto compressed_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(entry);
+					auto new_obj = compressed_entry->GetReference();
+					RecalculateStreamLength(new_obj);
+
+					continue;
+				}
+
+				assert(false && "Uncrecognized entry type");
+			}
+		}
+
+		XrefBasePtr FileWriter::CloneXref(std::shared_ptr<File> destination, XrefBasePtr source)
 		{
 			// Create cloned xref table
 			// Xref base has no default constructor, therefore it is initialized with table
@@ -124,20 +196,11 @@ namespace gotchangpdf
 					new_obj->SetGenerationNumber(new_gen_number);
 					new_obj->SetFile(destination);
 
-					auto output = destination->GetInputStream();
-					if (m_recalculate_offset) {
-						auto new_offset = output->tellg();
-						new_obj->SetOffset(new_offset);
-					}
-
-					// Write new object into destination file
-					WriteObject(*output, new_obj);
-
 					// Create new entry in our cloned table
 					XrefUsedEntryPtr new_entry(
 						new_obj_number,
 						new_gen_number,
-						new_obj->GetOffset());
+						used_entry->GetOffset());
 
 					new_entry->SetFile(destination);
 					new_entry->SetReference(new_obj);
@@ -157,15 +220,6 @@ namespace gotchangpdf
 					new_obj->SetObjectNumber(new_obj_number);
 					new_obj->SetGenerationNumber(new_gen_number);
 					new_obj->SetFile(destination);
-
-					auto output = destination->GetInputStream();
-					if (m_recalculate_offset) {
-						auto new_offset = output->tellg();
-						new_obj->SetOffset(new_offset);
-					}
-
-					// Write new object into destination file
-					WriteObject(*output, new_obj);
 
 					auto new_obj_stream_number = compressed_entry->GetObjectStreamNumber();
 					auto new_index = compressed_entry->GetIndex();
@@ -188,6 +242,53 @@ namespace gotchangpdf
 			}
 
 			return result;
+		}
+
+		void FileWriter::WriteXrefObjects(std::shared_ptr<File> destination, XrefBasePtr source)
+		{
+			auto table_size = source->Size();
+			auto table_items = source->Entries();
+
+			for (decltype(table_size) i = 0; i < table_size; ++i) {
+				auto entry = table_items[i];
+
+				if (entry->GetUsage() == XrefEntryBase::Usage::Free) {
+					continue;
+				}
+
+				if (entry->GetUsage() == XrefEntryBase::Usage::Used) {
+					auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
+					auto new_obj = used_entry->GetReference();
+
+					auto output = destination->GetInputStream();
+					if (m_recalculate_offset) {
+						auto new_offset = output->tellg();
+						new_obj->SetOffset(new_offset);
+						used_entry->SetOffset(new_offset);
+					}
+
+					// Write new object into destination file
+					WriteObject(*output, new_obj);
+					continue;
+				}
+
+				if (entry->GetUsage() == XrefEntryBase::Usage::Compressed) {
+					auto compressed_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(entry);
+					auto new_obj = compressed_entry->GetReference();
+
+					auto output = destination->GetInputStream();
+					if (m_recalculate_offset) {
+						auto new_offset = output->tellg();
+						new_obj->SetOffset(new_offset);
+					}
+
+					// Write new object into destination file
+					WriteObject(*output, new_obj);
+					continue;
+				}
+
+				assert(false && "Uncrecognized entry type");
+			}
 		}
 
 		XrefBasePtr FileWriter::CreateIncrementalXref(std::shared_ptr<File> source, std::shared_ptr<File> destination)
