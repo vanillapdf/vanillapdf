@@ -231,6 +231,11 @@ namespace gotchangpdf
 			if (!locked_file)
 				throw FileDisposedException();
 
+			// Optimization for unchanged streams
+			if (!IsDirty()) {
+				return GetBodyRaw();
+			}
+
 			if (!_header->Contains(constant::Name::Filter)) {
 				return GetBody();
 			}
