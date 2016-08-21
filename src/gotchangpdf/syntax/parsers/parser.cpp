@@ -556,6 +556,7 @@ namespace gotchangpdf
 
 			table->SetTrailerDictionary(trailer_dictionary);
 			table->SetFile(_file);
+			table->SetInitialized();
 			return table;
 		}
 
@@ -655,6 +656,7 @@ namespace gotchangpdf
 			result->SetFile(_file);
 			result->SetTrailerDictionary(header);
 			result->SetStreamObject(stream);
+			result->SetInitialized();
 			return result;
 		}
 

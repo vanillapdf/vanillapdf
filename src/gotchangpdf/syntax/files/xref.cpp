@@ -5,23 +5,27 @@
 #include "xref_chain.h"
 #include "parser.h"
 
+#include <iomanip>
+
 namespace gotchangpdf
 {
 	namespace syntax
 	{
+		using namespace std;
+
 		void XrefUsedEntry::SetReference(ObjectPtr ref)
 		{
 			_reference->Unsubscribe(this);
 			_reference = ref;
 			_reference->Subscribe(this);
 
-			if (Initialized())
+			if (IsInitialized())
 				SetDirty();
 		}
 
 		void XrefUsedEntry::Initialize(void)
 		{
-			if (Initialized()) {
+			if (IsInitialized()) {
 				return;
 			}
 
@@ -44,13 +48,13 @@ namespace gotchangpdf
 			_reference = ref;
 			_reference->Subscribe(this);
 
-			if (Initialized())
+			if (IsInitialized())
 				SetDirty();
 		}
 
 		void XrefCompressedEntry::Initialize(void)
 		{
-			if (Initialized()) {
+			if (IsInitialized()) {
 				return;
 			}
 
@@ -84,7 +88,133 @@ namespace gotchangpdf
 				stream_compressed_entry_xref->SetInitialized();
 			}
 
-			assert(_initialized);
+			assert(m_initialized);
+		}
+
+		void XrefStream::OnEntryChanged()
+		{
+			if (!IsInitialized()) {
+				return;
+			}
+
+			auto header = _stream->GetHeader();
+			if (!header->Contains(constant::Name::W)) {
+				throw GeneralException("Stream header does not contain width");
+			}
+
+			auto fields = header->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::W);
+
+			assert(fields->Size() == 3);
+			if (fields->Size() != 3) {
+				throw GeneralException("Xref stream width does not contain three integers");
+			}
+
+			auto field1_size = fields->At(0);
+			auto field2_size = fields->At(1);
+			auto field3_size = fields->At(2);
+
+			std::stringstream ss;
+			for (auto item : _entries) {
+				auto entry = item.second;
+
+				if (entry->GetUsage() == XrefEntryBase::Usage::Free) {
+					auto free_entry = XrefUtils::ConvertTo<XrefFreeEntryPtr>(entry);
+
+					WriteValue(ss, 0, *field1_size);
+					WriteValue(ss, free_entry->GetNextFreeObjectNumber(), *field2_size);
+					WriteValue(ss, free_entry->GetGenerationNumber(), *field2_size);
+					continue;
+				}
+
+				if (entry->GetUsage() == XrefEntryBase::Usage::Used) {
+					auto used_entry = XrefUtils::ConvertTo<XrefUsedEntryPtr>(entry);
+
+					WriteValue(ss, 1, *field1_size);
+					WriteValue(ss, used_entry->GetOffset(), *field2_size);
+					WriteValue(ss, used_entry->GetGenerationNumber(), *field2_size);
+					continue;
+				}
+
+				if (entry->GetUsage() == XrefEntryBase::Usage::Compressed) {
+					auto compressed_entry = XrefUtils::ConvertTo<XrefCompressedEntryPtr>(entry);
+
+					WriteValue(ss, 2, *field1_size);
+					WriteValue(ss, compressed_entry->GetObjectStreamNumber(), *field2_size);
+					WriteValue(ss, compressed_entry->GetIndex(), *field2_size);
+					continue;
+				}
+
+				assert(false && "Incorrect entry type");
+			}
+
+			auto new_data_string = ss.str();
+			BufferPtr new_data(new_data_string.begin(), new_data_string.end());
+			_stream->SetBody(new_data);
+		}
+
+		void XrefStream::WriteValue(std::ostream& dest, types::big_uint value, int64_t width)
+		{
+			// Writes <value> as a sequence of <width> bytes into <dest>
+			// starting with most significant byte
+			for (decltype(width) i = width - 1; i >= 0; --i) {
+				unsigned char raw_byte = (value >> (i * 8)) & 0xFF;
+				dest << raw_byte;
+			}
+		}
+
+		void XrefBase::Add(XrefEntryBasePtr entry)
+		{
+			Key key(entry->GetObjectNumber(), entry->GetGenerationNumber());
+			std::pair<Key, XrefEntryBasePtr> pair(key, entry);
+			auto found = _entries.find(key);
+			if (found != _entries.end()) {
+				_entries.erase(found);
+			}
+
+			_entries.insert(pair);
+			entry->Subscribe(this);
+			OnEntryChanged();
+		}
+
+		bool XrefBase::Remove(types::big_uint obj_number, types::ushort gen_number)
+		{
+			Key key(obj_number, gen_number);
+			auto found = _entries.find(key);
+			if (found == _entries.end()) {
+				return false;
+			}
+
+			_entries.erase(found);
+			found->second->Unsubscribe(this);
+			OnEntryChanged();
+			return true;
+		}
+
+		size_t XrefBase::Size(void) const noexcept { return _entries.size(); }
+		XrefEntryBasePtr XrefBase::Find(types::big_uint obj_number, types::ushort gen_number) const
+		{
+			Key key(obj_number, gen_number);
+			auto found = _entries.find(key);
+			if (found == _entries.end()) {
+				throw ObjectMissingException(obj_number, gen_number);
+			}
+
+			return found->second;
+		}
+
+		bool XrefBase::Contains(types::big_uint obj_number, types::ushort gen_number) const
+		{
+			Key key(obj_number, gen_number);
+			auto found = _entries.find(key);
+			return (found != _entries.end());
+		}
+
+		std::vector<XrefEntryBasePtr> XrefBase::Entries(void) const
+		{
+			std::vector<XrefEntryBasePtr> result;
+			result.reserve(_entries.size());
+			std::for_each(_entries.begin(), _entries.end(), [&result](const std::pair<Key, XrefEntryBasePtr> pair) { result.push_back(pair.second); });
+			return result;
 		}
 	}
 }
