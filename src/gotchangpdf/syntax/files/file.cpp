@@ -543,7 +543,8 @@ namespace gotchangpdf
 			if (!_initialized)
 				throw FileNotInitializedException(_filename);
 
-			return _header;
+			// I am calling get to initialize object in case it is empty
+			return _header.get();
 		}
 
 		XrefChainPtr File::GetXrefChain(void) const
@@ -551,7 +552,8 @@ namespace gotchangpdf
 			if (!_initialized)
 				throw FileNotInitializedException(_filename);
 
-			return _xref;
+			// I am calling get to initialize object in case it is empty
+			return _xref.get();
 		}
 	}
 }
