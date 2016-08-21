@@ -570,9 +570,13 @@ namespace gotchangpdf
 			auto header = stream->GetHeader();
 
 			auto fields = header->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::W);
-			auto size = header->FindAs<IntegerObjectPtr>(constant::Name::Size);
 
 			assert(fields->Size() == 3);
+			if (fields->Size() != 3) {
+				throw GeneralException("Xref stream width does not contain three integers");
+			}
+
+			auto size = header->FindAs<IntegerObjectPtr>(constant::Name::Size);
 			ArrayObjectPtr<IntegerObjectPtr> index = { IntegerObjectPtr(0), size };
 			if (header->Contains(constant::Name::Index)) {
 				index = header->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::Index);
