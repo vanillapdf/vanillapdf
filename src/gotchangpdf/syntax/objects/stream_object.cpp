@@ -32,6 +32,12 @@ namespace gotchangpdf
 			return result.AddRefGet();
 		}
 
+		void StreamObject::SetFile(std::weak_ptr<File> file) noexcept
+		{
+			Object::SetFile(file);
+			_header->SetFile(file);
+		}
+
 		BufferPtr StreamObject::GetBodyRaw() const
 		{
 			if (!_body->empty())
