@@ -12,6 +12,9 @@ extern "C"
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPageCount(PageTreeHandle handle, out_integer_type result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle handle, integer_type at, PPageObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_InsertPage(PageTreeHandle handle, integer_type at, PageObjectHandle page);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_AppendPage(PageTreeHandle handle, PageObjectHandle page);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_RemovePage(PageTreeHandle handle, integer_type at);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_Release(PageTreeHandle handle);
 
 #ifdef __cplusplus
