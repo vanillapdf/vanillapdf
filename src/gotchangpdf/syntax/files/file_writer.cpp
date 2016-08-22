@@ -513,6 +513,15 @@ namespace gotchangpdf
 
 			auto trailer = xref_table->GetTrailerDictionary();
 
+			if (m_recalculate_xref_size) {
+				if (trailer->Contains(constant::Name::Size)) {
+					auto size = trailer->FindAs<IntegerObjectPtr>(constant::Name::Size);
+					if (size->GetValue() != table_size) {
+						size->SetValue(table_size);
+					}
+				}
+			}
+
 			output << "trailer" << endl;
 			output << trailer->ToPdf() << endl;
 		}

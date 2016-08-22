@@ -21,6 +21,9 @@ namespace gotchangpdf
 			bool GetRecalculateStreamSizeFlag(void) const noexcept { return m_recalculate_stream_size; }
 			void SetRecalculateStreamSizeFlag(bool flag) noexcept { m_recalculate_stream_size = flag; }
 
+			bool GetRecalculateXrefSizeFlag(void) const noexcept { return m_recalculate_xref_size; }
+			void SetRecalculateXrefSizeFlag(bool flag) noexcept { m_recalculate_xref_size = flag; }
+
 		private:
 			void WriteXrefObjects(std::shared_ptr<File> destination, XrefBasePtr source);
 			XrefBasePtr FileWriter::CloneXref(std::shared_ptr<File> destination, XrefBasePtr source);
@@ -37,6 +40,7 @@ namespace gotchangpdf
 			// flags
 			bool m_recalculate_offset = true;
 			bool m_recalculate_stream_size = true;
+			bool m_recalculate_xref_size = true;
 		};
 	}
 }
