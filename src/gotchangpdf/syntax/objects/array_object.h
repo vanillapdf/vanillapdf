@@ -130,6 +130,10 @@ namespace gotchangpdf
 			const T At(size_t at) const { return _conversion(_list->At(at)); }
 			T At(size_t at) { return _conversion(_list->At(at)); }
 
+			void Append(const ContainableObjectPtr& value) { _list->Append(value); }
+			void Insert(const ContainableObjectPtr& value, size_t at) { _list->Insert(value, at); }
+			void Remove(size_t at) { _list->Remove(at); }
+
 			template <typename U>
 			ArrayObjectPtr<U> Convert(std::function<U(const T& obj)> f) const
 			{
