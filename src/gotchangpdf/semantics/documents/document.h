@@ -26,6 +26,8 @@ namespace gotchangpdf
 			void Save(const std::string& path);
 			void SaveIncremental(const std::string& path);
 
+			syntax::FileHolderPtr GetFile() const { return _holder; }
+
 		private:
 			syntax::FileHolderPtr _holder;
 		};
