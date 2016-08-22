@@ -75,5 +75,44 @@ namespace gotchangpdf
 
 			return false;
 		}
+
+		void PageTree::Insert(PageObjectPtr object, types::integer index)
+		{
+			auto raw_obj = object->GetObject();
+			auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::Kids);
+			kids->Insert(IndirectObjectReferencePtr(raw_obj), index);
+
+			UpdateKidsCount(kids->Size());
+		}
+
+		void PageTree::Append(PageObjectPtr object)
+		{
+			auto raw_obj = object->GetObject();
+			auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::Kids);
+			kids->Append(IndirectObjectReferencePtr(raw_obj));
+
+			UpdateKidsCount(kids->Size());
+		}
+
+		void PageTree::Remove(types::integer index)
+		{
+			auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::Kids);
+			kids->Remove(index);
+
+			UpdateKidsCount(kids->Size());
+		}
+
+		void PageTree::UpdateKidsCount(size_t new_size)
+		{
+			if (!_obj->Contains(constant::Name::Count)) {
+				IntegerObjectPtr integer_size(new_size);
+				_obj->Insert(constant::Name::Count, integer_size);
+			}
+
+			auto count = _obj->FindAs<IntegerObjectPtr>(constant::Name::Count);
+			if (count->GetValue() != new_size) {
+				count->SetValue(new_size);
+			}
+		}
 	}
 }
