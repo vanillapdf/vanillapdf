@@ -13,6 +13,9 @@ namespace gotchangpdf
 		public:
 			explicit PageObject(syntax::DictionaryObjectPtr obj);
 
+			static std::unique_ptr<PageObject> Create(DocumentPtr document);
+			static std::unique_ptr<PageObject> Create(syntax::DictionaryObjectPtr obj);
+
 			PageTreeNodePtr Parent(void) const;
 			ResourceDictionaryPtr Resources(void) const;
 			RectanglePtr MediaBox(void) const;
