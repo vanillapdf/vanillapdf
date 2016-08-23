@@ -92,13 +92,7 @@ namespace gotchangpdf
 			auto xref_chain = file->GetXrefChain();
 
 			syntax::DictionaryObjectPtr obj;
-			obj->SetFile(file);
 			obj->Insert(Name::Type, Name::Page);
-			obj->Insert(Name::Contents, IndirectObjectReferencePtr(145, (types::ushort)0));
-			obj->Insert(Name::Parent, IndirectObjectReferencePtr(3, (types::ushort)0));
-
-			syntax::DictionaryObjectPtr resources;
-			obj->Insert(Name::Resources, resources);
 			
 			XrefEntryBasePtr new_entry = xref_chain->AllocateNewEntry();
 			if (XrefUtils::IsType<XrefUsedEntryPtr>(new_entry)) {
@@ -117,6 +111,7 @@ namespace gotchangpdf
 
 			obj->SetObjectNumber(new_entry->GetObjectNumber());
 			obj->SetGenerationNumber(new_entry->GetGenerationNumber());
+			obj->SetFile(file);
 			obj->SetIndirect(true);
 			obj->SetInitialized(true);
 
