@@ -105,6 +105,7 @@ namespace gotchangpdf
 		class ObjectMissingException : public ExceptionBase
 		{
 		public:
+			ObjectMissingException(types::big_uint objNumber);
 			ObjectMissingException(types::big_uint objNumber, types::ushort genNumber);
 		};
 
