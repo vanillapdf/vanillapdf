@@ -181,7 +181,7 @@ namespace gotchangpdf
 			assert(!fail() && !eof());
 
 			auto verify_offset = GetPosition();
-			assert(pos == verify_offset);
+			assert(pos == verify_offset); verify_offset;
 		}
 
 		BufferPtr ReverseStream::readline(void)

@@ -58,7 +58,7 @@ namespace gotchangpdf
 			else {
 				// verify if the position is correct
 				auto verify_offset = GetPosition();
-				assert(pos == verify_offset);
+				assert(pos == verify_offset); verify_offset;
 			}
 		}
 
