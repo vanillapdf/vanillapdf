@@ -76,6 +76,9 @@ error_type process_outline_item(OutlineItemHandle outline, int nested);
 error_type process_outline_item_color(OutlineItemColorHandle obj, int nested);
 error_type process_outline_item_flags(OutlineItemFlagsHandle obj, int nested);
 
+/* Common data structures */
+error_type process_rectangle(RectangleHandle obj, int nested);
+
 #define RETURN_ERROR_IF_NOT_SUCCESS(var) do { error_type __result__ = (var);  if (GOTCHANG_PDF_ERROR_SUCCES != __result__) return __result__; } while(0)
 
 #define RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(eval, call, release) \

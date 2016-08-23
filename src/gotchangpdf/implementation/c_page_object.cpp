@@ -19,7 +19,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObject
 	try
 	{
 		OutputContentsPtr contents;
-		auto contains = obj->Contents(contents);
+		auto contains = obj->GetContents(contents);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = contents.AddRefGet();
 		*result = reinterpret_cast<ContentsHandle>(ptr);
@@ -53,6 +53,52 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_CreateFromObject(Dicti
 		auto page = PageObject::Create(obj);
 		auto ptr = page.release();
 		*result = reinterpret_cast<PageObjectHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetParent(PageObjectHandle handle, PPageTreeHandle result)
+{
+	PageObject* obj = reinterpret_cast<PageObject*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto parent = obj->GetParent();
+		auto ptr = parent.AddRefGet();
+		*result = reinterpret_cast<PageTreeHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetResources(PageObjectHandle handle, PResourceDictionaryHandle result)
+{
+	PageObject* obj = reinterpret_cast<PageObject*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto parent = obj->GetResources();
+		auto ptr = parent.AddRefGet();
+		*result = reinterpret_cast<ResourceDictionaryHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+//GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetAnnotations(PageObjectHandle handle, PContentsHandle result);
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetMediaBox(PageObjectHandle handle, PRectangleHandle result)
+{
+	PageObject* obj = reinterpret_cast<PageObject*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto media_box = obj->GetMediaBox();
+		auto ptr = media_box.AddRefGet();
+		*result = reinterpret_cast<RectangleHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }

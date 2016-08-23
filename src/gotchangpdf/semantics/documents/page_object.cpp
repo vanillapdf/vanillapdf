@@ -24,24 +24,76 @@ namespace gotchangpdf
 				throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageObject>(obj);
 		}
 
-		PageTreeNodePtr PageObject::Parent() const
+		PageTreeNodePtr PageObject::GetParent() const
 		{
-			return PageTreeNodePtr(_obj->FindAs<DictionaryObjectPtr>(Name::Parent));
+			auto parent = _obj->FindAs<DictionaryObjectPtr>(Name::Parent);
+			return PageTreeNodePtr(parent);
 		}
 
-		ResourceDictionaryPtr PageObject::Resources() const
+		void PageObject::SetParent(PageTreeNodePtr parent)
+		{
+			if (_obj->Contains(Name::Parent)) {
+				bool removed = _obj->Remove(Name::Parent);
+				assert(removed && "Unable to remove existing item");
+			}
+
+			_obj->Insert(Name::Parent, parent->GetObject());
+		}
+
+		ResourceDictionaryPtr PageObject::GetResources() const
 		{
 			auto resource = _obj->FindAs<DictionaryObjectPtr>(Name::Resources);
 			return ResourceDictionaryPtr(resource);
 		}
 
-		RectanglePtr PageObject::MediaBox() const
+		void PageObject::SetResources(ResourceDictionaryPtr resources)
+		{
+			if (_obj->Contains(Name::Resources)) {
+				bool removed = _obj->Remove(Name::Resources);
+				assert(removed && "Unable to remove existing item");
+			}
+
+			_obj->Insert(Name::Resources, resources->GetObject());
+		}
+
+		RectanglePtr PageObject::GetMediaBox() const
 		{
 			auto box = _obj->FindAs<MixedArrayObjectPtr>(Name::MediaBox);
 			return RectanglePtr(box);
 		}
 
-		bool PageObject::Contents(OutputContentsPtr& result) const
+		void PageObject::SetMediaBox(RectanglePtr media_box)
+		{
+			if (_obj->Contains(Name::MediaBox)) {
+				bool removed = _obj->Remove(Name::MediaBox);
+				assert(removed && "Unable to remove existing item");
+			}
+
+			_obj->Insert(Name::MediaBox, media_box->GetObject()->Data());
+		}
+
+		//RectanglePtr PageObject::GetAnnotations(void) const
+		//{
+
+		//}
+
+		//void PageObject::SetAnnotations(RectanglePtr annots)
+		//{
+
+		//}
+
+		void PageObject::SetContents(ContentsPtr contents)
+		{
+			if (_obj->Contains(Name::Contents)) {
+				bool removed = _obj->Remove(Name::Contents);
+				assert(removed && "Unable to remove existing item");
+			}
+
+			IndirectObjectReferencePtr contents_ref(contents->GetObject());
+			_obj->Insert(Name::Contents, contents_ref);
+		}
+
+		bool PageObject::GetContents(OutputContentsPtr& result) const
 		{
 			OutputContainableObjectPtr output;
 			auto found = _obj->TryFind(Name::Contents, output);

@@ -262,9 +262,43 @@ error_type process_contents(ContentsHandle obj, int nested)
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
+error_type process_rectangle(RectangleHandle obj, int nested)
+{
+	ContentsHandle contents = NULL;
+	RectangleHandle media_box = NULL;
+	IntegerHandle lower_left_x = NULL;
+	IntegerHandle lower_left_y = NULL;
+	IntegerHandle upper_right_x = NULL;
+	IntegerHandle upper_right_y = NULL;
+
+	print_spaces(nested);
+	printf("Rectangle begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_LowerLeftX(obj, &lower_left_x));
+	RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_LowerLeftY(obj, &lower_left_y));
+	RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_UpperRightX(obj, &upper_right_x));
+	RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_UpperRightY(obj, &upper_right_y));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(lower_left_x, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(lower_left_y, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(upper_right_x, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(upper_right_y, nested + 1));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(lower_left_x));
+	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(lower_left_y));
+	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(upper_right_x));
+	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(upper_right_y));
+
+	print_spaces(nested);
+	printf("Rectangle end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
 error_type process_page(PageObjectHandle obj, int nested)
 {
 	ContentsHandle contents = NULL;
+	RectangleHandle media_box = NULL;
 
 	print_spaces(nested);
 	printf("Page begin\n");
@@ -272,6 +306,10 @@ error_type process_page(PageObjectHandle obj, int nested)
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageObject_GetContents(obj, &contents),
 		process_contents(contents, nested + 1),
 		Contents_Release(contents));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageObject_GetMediaBox(obj, &media_box),
+		process_rectangle(media_box, nested + 1),
+		Rectangle_Release(media_box));
 
 	print_spaces(nested);
 	printf("Page end\n");
