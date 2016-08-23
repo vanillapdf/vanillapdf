@@ -102,17 +102,19 @@ namespace gotchangpdf
 			return true;
 		}
 
-		void DictionaryObject::Remove(const NameObjectPtr& name)
+		bool DictionaryObject::Remove(const NameObjectPtr& name)
 		{
 			auto found = _list.find(name);
 			if (found == _list.end()) {
-				return;
+				return false;
 			}
 
 			found->first->Unsubscribe(this);
 			found->second->Unsubscribe(this);
 			_list.erase(found);
 			OnChanged();
+
+			return true;
 		}
 
 		bool DictionaryObject::Insert(const NameObjectPtr& name, const ContainableObjectPtr& value)
