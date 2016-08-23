@@ -24,6 +24,7 @@
 
 /* common data structures*/
 #include "c_date.h"
+#include "c_rectangle.h"
 
 /* contents */
 #include "c_contents.h"

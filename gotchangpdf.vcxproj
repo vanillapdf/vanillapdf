@@ -33,6 +33,7 @@
     <ClInclude Include="include\gotchangpdf\c_page_object.h" />
     <ClInclude Include="include\gotchangpdf\c_page_tree.h" />
     <ClInclude Include="include\gotchangpdf\c_real_object.h" />
+    <ClInclude Include="include\gotchangpdf\c_rectangle.h" />
     <ClInclude Include="include\gotchangpdf\c_stream_object.h" />
     <ClInclude Include="include\gotchangpdf\c_string_object.h" />
     <ClInclude Include="include\gotchangpdf\c_values.h" />
@@ -147,6 +148,7 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_page_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_page_tree.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_real_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_rectangle.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_stream_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_string_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_values.cpp" />
@@ -169,6 +171,7 @@
     <ClCompile Include="src\gotchangpdf\semantics\objects\developer_extensions.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\document_info.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\outline.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\objects\rectangle.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\utils\semantic_utils.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\exceptions\exception.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\files\file.cpp" />

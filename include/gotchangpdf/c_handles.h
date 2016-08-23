@@ -62,6 +62,7 @@ extern "C"
 
 	/* Common data structures */
 	DECLARE_OBJECT_HANDLE(Date);
+	DECLARE_OBJECT_HANDLE(Rectangle);
 	
 	/* Contents */
 	DECLARE_OBJECT_HANDLE(Contents);
