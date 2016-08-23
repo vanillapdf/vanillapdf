@@ -36,7 +36,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedOb
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedGenerationNumber(IndirectReferenceHandle handle, out_integer_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedGenerationNumber(IndirectReferenceHandle handle, out_ushort_type result)
 {
 	IndirectObjectReference* obj = reinterpret_cast<IndirectObjectReference*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

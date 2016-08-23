@@ -182,7 +182,7 @@ error_type process_reference(IndirectReferenceHandle reference, int nested)
 {
 	ObjectType type;
 	biguint_type obj_num = 0;
-	integer_type gen_num = 0;
+	ushort_type gen_num = 0;
 	ObjectHandle child = NULL;
 	string_type type_name = NULL;
 
