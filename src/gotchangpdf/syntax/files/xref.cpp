@@ -169,22 +169,21 @@ namespace gotchangpdf
 
 		void XrefBase::Add(XrefEntryBasePtr entry)
 		{
-			Key key(entry->GetObjectNumber(), entry->GetGenerationNumber());
-			std::pair<Key, XrefEntryBasePtr> pair(key, entry);
-			auto found = _entries.find(key);
+			types::big_uint obj_number = entry->GetObjectNumber();
+			auto found = _entries.find(obj_number);
 			if (found != _entries.end()) {
 				_entries.erase(found);
 			}
 
+			std::pair<types::big_uint, XrefEntryBasePtr> pair(obj_number, entry);
 			_entries.insert(pair);
 			entry->Subscribe(this);
 			OnEntryChanged();
 		}
 
-		bool XrefBase::Remove(types::big_uint obj_number, types::ushort gen_number)
+		bool XrefBase::Remove(types::big_uint obj_number)
 		{
-			Key key(obj_number, gen_number);
-			auto found = _entries.find(key);
+			auto found = _entries.find(obj_number);
 			if (found == _entries.end()) {
 				return false;
 			}
@@ -196,21 +195,19 @@ namespace gotchangpdf
 		}
 
 		size_t XrefBase::Size(void) const noexcept { return _entries.size(); }
-		XrefEntryBasePtr XrefBase::Find(types::big_uint obj_number, types::ushort gen_number) const
+		XrefEntryBasePtr XrefBase::Find(types::big_uint obj_number) const
 		{
-			Key key(obj_number, gen_number);
-			auto found = _entries.find(key);
+			auto found = _entries.find(obj_number);
 			if (found == _entries.end()) {
-				throw ObjectMissingException(obj_number, gen_number);
+				throw ObjectMissingException(obj_number);
 			}
 
 			return found->second;
 		}
 
-		bool XrefBase::Contains(types::big_uint obj_number, types::ushort gen_number) const
+		bool XrefBase::Contains(types::big_uint obj_number) const
 		{
-			Key key(obj_number, gen_number);
-			auto found = _entries.find(key);
+			auto found = _entries.find(obj_number);
 			return (found != _entries.end());
 		}
 
@@ -218,7 +215,7 @@ namespace gotchangpdf
 		{
 			std::vector<XrefEntryBasePtr> result;
 			result.reserve(_entries.size());
-			std::for_each(_entries.begin(), _entries.end(), [&result](const std::pair<Key, XrefEntryBasePtr> pair) { result.push_back(pair.second); });
+			std::for_each(_entries.begin(), _entries.end(), [&result](const std::pair<types::big_uint, XrefEntryBasePtr> pair) { result.push_back(pair.second); });
 			return result;
 		}
 	}

@@ -58,34 +58,8 @@ namespace gotchangpdf
 			IteratorPtr End(void) const { return _list.end(); }
 			void Append(list_type::value_type item) { _list.push_back(item); }
 
-			XrefEntryBasePtr GetXrefEntry(types::big_uint objNumber,
-				types::ushort genNumber)
-			{
-				for (auto it = _list.begin(); it != _list.end(); it++) {
-					auto xref = (*it);
-
-					if (!xref->Contains(objNumber, genNumber))
-						continue;
-
-					auto item = xref->Find(objNumber, genNumber);
-					assert(item->GetObjectNumber() == objNumber && item->GetGenerationNumber() == genNumber);
-					return item;
-				}
-
-				throw ObjectMissingException(objNumber, genNumber);
-			}
-
-			bool Contains(types::big_uint objNumber,
-				types::ushort genNumber)
-			{
-				for (auto it = _list.begin(); it != _list.end(); it++) {
-					auto xref = (*it);
-					if (xref->Contains(objNumber, genNumber))
-						return true;
-				}
-
-				return false;
-			}
+			XrefEntryBasePtr GetXrefEntry(types::big_uint objNumber, types::ushort genNumber);
+			bool Contains(types::big_uint objNumber, types::ushort genNumber);
 
 		private:
 			list_type _list;

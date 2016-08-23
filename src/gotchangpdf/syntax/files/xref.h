@@ -197,38 +197,18 @@ namespace gotchangpdf
 			void SetLastXrefOffset(types::stream_offset offset) noexcept { _last_xref_offset = offset; }
 
 			void Add(XrefEntryBasePtr entry);
-			bool Remove(types::big_uint obj_number, types::ushort gen_number);
+			bool Remove(types::big_uint obj_number);
 			size_t Size(void) const noexcept;
-			XrefEntryBasePtr Find(types::big_uint obj_number, types::ushort gen_number) const;
-			bool Contains(types::big_uint obj_number, types::ushort gen_number) const;
+			XrefEntryBasePtr Find(types::big_uint obj_number) const;
+			bool Contains(types::big_uint obj_number) const;
 			std::vector<XrefEntryBasePtr> Entries(void) const;
 
 			virtual Type GetType(void) const noexcept = 0;
 			virtual ~XrefBase() {};
 
 		protected:
-			struct Key
-			{
-				Key() = default;
-				Key(types::big_uint obj, types::ushort gen) : obj_number(obj), gen_number(gen) {}
-				types::big_uint obj_number = 0;
-				types::ushort gen_number = 0;
-
-				bool operator<(const Key& other) const
-				{
-					if (obj_number != other.obj_number)
-						return obj_number < other.obj_number;
-
-					if (gen_number != other.gen_number)
-						return gen_number < other.gen_number;
-
-					return false;
-				}
-			};
-
-		protected:
 			std::weak_ptr<File> _file;
-			std::map<Key, XrefEntryBasePtr> _entries;
+			std::map<types::big_uint, XrefEntryBasePtr> _entries;
 			types::stream_offset _last_xref_offset = std::_BADOFF;
 			types::stream_offset _offset = std::_BADOFF;
 			DictionaryObjectPtr _trailer_dictionary;
