@@ -635,6 +635,12 @@ namespace gotchangpdf
 					{
 						XrefUsedEntryPtr entry(obj_number, field3.SafeConvert<types::ushort>(), field2);
 
+						// This case is when XrefStream contains reference to itself
+						if (obj_number == stream->GetObjectNumber() && field3.SafeConvert<types::ushort>() == stream->GetGenerationNumber()) {
+							entry->SetReference(stream);
+							entry->SetInitialized();
+						}
+
 						entry->SetFile(_file);
 						result->Add(entry);
 						break;
