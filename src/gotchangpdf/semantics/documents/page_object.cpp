@@ -50,7 +50,7 @@ namespace gotchangpdf
 		{
 			if (_obj->Contains(Name::Resources)) {
 				bool removed = _obj->Remove(Name::Resources);
-				assert(removed && "Unable to remove existing item");
+				assert(removed && "Unable to remove existing item"); removed;
 			}
 
 			_obj->Insert(Name::Resources, resources->GetObject());
@@ -66,7 +66,7 @@ namespace gotchangpdf
 		{
 			if (_obj->Contains(Name::MediaBox)) {
 				bool removed = _obj->Remove(Name::MediaBox);
-				assert(removed && "Unable to remove existing item");
+				assert(removed && "Unable to remove existing item"); removed;
 			}
 
 			_obj->Insert(Name::MediaBox, media_box->GetObject()->Data());
@@ -86,7 +86,7 @@ namespace gotchangpdf
 		{
 			if (_obj->Contains(Name::Contents)) {
 				bool removed = _obj->Remove(Name::Contents);
-				assert(removed && "Unable to remove existing item");
+				assert(removed && "Unable to remove existing item"); removed;
 			}
 
 			IndirectObjectReferencePtr contents_ref(contents->GetObject());
