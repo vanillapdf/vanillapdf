@@ -63,7 +63,7 @@ namespace gotchangpdf
 			if (!_body->empty())
 				return _body;
 
-			auto locked_file = _file.lock();
+			auto locked_file = m_file.lock();
 			if (!locked_file)
 				throw FileDisposedException();
 
@@ -83,7 +83,7 @@ namespace gotchangpdf
 
 			if (!_header->Contains(constant::Name::Filter)) {
 				// Stream does not contain crypt filter
-				body = locked_file->DecryptStream(body, _obj_number, _gen_number);
+				body = locked_file->DecryptStream(body, m_obj_number, m_gen_number);
 				_body->assign(body.begin(), body.end());
 				_body->SetInitialized();
 				return _body;
@@ -98,7 +98,7 @@ namespace gotchangpdf
 				if (filter_name == constant::Name::Crypt) {
 					auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
 					auto handler_name = params->FindAs<NameObjectPtr>(constant::Name::Name);
-					body = locked_file->DecryptData(body, _obj_number, _gen_number, handler_name);
+					body = locked_file->DecryptData(body, m_obj_number, m_gen_number, handler_name);
 					_body->assign(body.begin(), body.end());
 					_body->SetInitialized();
 					return _body;
@@ -113,7 +113,7 @@ namespace gotchangpdf
 						assert(i == 0 && "Crypt filter is not first");
 						auto params = _header->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::DecodeParms);
 						auto handler_name = params->At(i)->FindAs<NameObjectPtr>(constant::Name::Name);
-						body = locked_file->DecryptData(body, _obj_number, _gen_number, handler_name);
+						body = locked_file->DecryptData(body, m_obj_number, m_gen_number, handler_name);
 						_body->assign(body.begin(), body.end());
 						_body->SetInitialized();
 						return _body;
@@ -122,7 +122,7 @@ namespace gotchangpdf
 			}
 
 			// Stream does not contain crypt filter
-			body = locked_file->DecryptStream(body, _obj_number, _gen_number);
+			body = locked_file->DecryptStream(body, m_obj_number, m_gen_number);
 			_body->assign(body.begin(), body.end());
 			_body->SetInitialized();
 			return _body;
@@ -137,7 +137,7 @@ namespace gotchangpdf
 				return GetBodyRaw();
 			}
 
-			auto locked_file = _file.lock();
+			auto locked_file = m_file.lock();
 			if (!locked_file)
 				throw FileDisposedException();
 
@@ -227,7 +227,7 @@ namespace gotchangpdf
 
 		BufferPtr StreamObject::GetBodyEncoded() const
 		{
-			auto locked_file = _file.lock();
+			auto locked_file = m_file.lock();
 			if (!locked_file)
 				throw FileDisposedException();
 

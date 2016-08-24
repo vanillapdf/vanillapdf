@@ -19,7 +19,7 @@ namespace gotchangpdf
 
 		ObjectPtr IndirectObjectReference::GetReferencedObject() const
 		{
-			auto locked_file = _file.lock();
+			auto locked_file = m_file.lock();
 			if (!locked_file)
 				throw FileDisposedException();
 
@@ -44,7 +44,7 @@ namespace gotchangpdf
 
 		std::string IndirectObjectReference::ToPdf(void) const
 		{
-			return std::to_string(_ref_obj) + " " + std::to_string(_gen_number) + " R";
+			return std::to_string(_ref_obj) + " " + std::to_string(m_gen_number) + " R";
 		}
 	}
 }
