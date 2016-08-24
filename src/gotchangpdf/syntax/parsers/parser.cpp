@@ -1190,6 +1190,7 @@ namespace gotchangpdf
 				obj->SetFile(_file);
 
 				XrefUsedEntryPtr entry(obj->GetObjectNumber(), obj->GetGenerationNumber(), obj->GetOffset());
+				entry->SetReference(obj);
 				entry->SetFile(_file);
 				xref->Add(entry);
 
