@@ -314,7 +314,10 @@ namespace gotchangpdf
 
 			if (_decryption_key.empty()) {
 				// Encrypted documents shall be opened with default empty password
-				SetEncryptionPassword("");
+				bool passed = SetEncryptionPassword("");
+				if (!passed) {
+					throw GeneralException("Invalid password");
+				}
 			}
 
 			// AES 256 bits behaves differently
