@@ -58,6 +58,17 @@ namespace gotchangpdf
 
 		RectanglePtr PageObject::GetMediaBox() const
 		{
+			if (!_obj->Contains(Name::MediaBox)) {
+				auto parent = GetParent();
+				auto parent_dictionary = parent->GetObject();
+				if (!parent_dictionary->Contains(Name::MediaBox)) {
+					throw GeneralException("Media box is missing");
+				}
+
+				auto box = parent_dictionary->FindAs<MixedArrayObjectPtr>(Name::MediaBox);
+				return RectanglePtr(box);
+			}
+
 			auto box = _obj->FindAs<MixedArrayObjectPtr>(Name::MediaBox);
 			return RectanglePtr(box);
 		}
