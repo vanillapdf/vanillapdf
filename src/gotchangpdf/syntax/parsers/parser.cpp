@@ -650,6 +650,8 @@ namespace gotchangpdf
 				}
 			}
 
+			stream->SetEncryptionExempted();
+
 			result->SetFile(_file);
 			result->SetTrailerDictionary(header);
 			result->SetStreamObject(stream);
@@ -670,6 +672,14 @@ namespace gotchangpdf
 		{
 			seekg(offset, ios_base::beg);
 			XrefBasePtr result = ReadXref();
+
+			// ID entries in trailer are exempted from encryption
+			auto trailer_dictionary = result->GetTrailerDictionary();
+			if (trailer_dictionary->Contains(constant::Name::ID)) {
+				auto ids = trailer_dictionary->FindAs<ArrayObjectPtr<StringObjectPtr>>(constant::Name::ID);
+				for (auto id : *ids) id->SetEncryptionExempted();
+			}
+
 			result->SetOffset(offset);
 			return result;
 		}
