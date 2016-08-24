@@ -621,24 +621,27 @@ namespace gotchangpdf
 						it++;
 					}
 
+					types::big_uint obj_number = SafeAddition<types::big_uint, types::big_uint, int>(*subsection_index, idx);
+
 					switch (field1) {
 					case 0:
 					{
-						XrefFreeEntryPtr entry(*subsection_index + idx, field3.SafeConvert<types::ushort>());
+						XrefFreeEntryPtr entry(obj_number, field3.SafeConvert<types::ushort>());
 						entry->SetFile(_file);
 						result->Add(entry);
 						break;
 					}
 					case 1:
 					{
-						XrefUsedEntryPtr entry(*subsection_index + idx, field3.SafeConvert<types::ushort>(), field2);
+						XrefUsedEntryPtr entry(obj_number, field3.SafeConvert<types::ushort>(), field2);
+
 						entry->SetFile(_file);
 						result->Add(entry);
 						break;
 					}
 					case 2:
 					{
-						XrefCompressedEntryPtr entry(*subsection_index + idx, static_cast<types::ushort>(0), field2, field3.SafeConvert<size_t>());
+						XrefCompressedEntryPtr entry(obj_number, static_cast<types::ushort>(0), field2, field3.SafeConvert<size_t>());
 						entry->SetFile(_file);
 						result->Add(entry);
 						break;
