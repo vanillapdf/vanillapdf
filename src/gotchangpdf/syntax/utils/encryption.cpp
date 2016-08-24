@@ -114,7 +114,11 @@ namespace gotchangpdf
 		BufferPtr result(data.size() - AES_CBC_IV_LENGTH);
 
 		AES_KEY dec_key;
-		AES_set_decrypt_key((unsigned char*)key.data(), key_length * 8, &dec_key);
+		int key_set = AES_set_decrypt_key((unsigned char*)key.data(), key_length * 8, &dec_key);
+		if (0 != key_set) {
+			throw GeneralException("Unable to set decryption key");
+		}
+
 		AES_cbc_encrypt((unsigned char*)data.data() + AES_CBC_IV_LENGTH, (unsigned char*)result->data(), data.size() - AES_CBC_IV_LENGTH, &dec_key, (unsigned char*)iv.data(), AES_DECRYPT);
 
 		return RemovePkcs7Padding(result, AES_CBC_BLOCK_SIZE);
@@ -135,9 +139,13 @@ namespace gotchangpdf
 
 		BufferPtr buffer = AddPkcs7Padding(data, AES_CBC_BLOCK_SIZE);
 
-		AES_KEY dec_key;
-		AES_set_decrypt_key((unsigned char*)key.data(), key_length * 8, &dec_key);
-		AES_cbc_encrypt((unsigned char*)data.data(), (unsigned char*)buffer->data(), data.size(), &dec_key, (unsigned char*)iv.data(), AES_ENCRYPT);
+		AES_KEY enc_key;
+		int key_set = AES_set_decrypt_key((unsigned char*)key.data(), key_length * 8, &enc_key);
+		if (0 != key_set) {
+			throw GeneralException("Unable to set encryption key");
+		}
+
+		AES_cbc_encrypt((unsigned char*)data.data(), (unsigned char*)buffer->data(), data.size(), &enc_key, (unsigned char*)iv.data(), AES_ENCRYPT);
 
 		buffer->insert(buffer.begin(), iv.begin(), iv.end());
 		return buffer;
