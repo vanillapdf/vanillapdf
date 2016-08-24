@@ -45,6 +45,8 @@ namespace gotchangpdf
 			bool IsDirty(void) const noexcept { return m_dirty; }
 			void SetDirty(bool dirty = true) noexcept { m_dirty = dirty; }
 
+			bool IsEncryptionExempted() const noexcept { return m_encryption_exempted; }
+			void SetEncryptionExempted(bool exempted = true) { m_encryption_exempted = exempted; }
 
 			void SetOffset(types::stream_offset offset) noexcept { m_offset = offset; }
 			types::stream_offset GetOffset() const noexcept { return m_offset; }
@@ -77,6 +79,7 @@ namespace gotchangpdf
 			types::big_uint m_obj_number = 0;
 			types::ushort m_gen_number = 0;
 			types::stream_offset m_offset = std::_BADOFF;
+			bool m_encryption_exempted = false;
 		};
 
 		class ObjectPtr : public Deferred<Object>

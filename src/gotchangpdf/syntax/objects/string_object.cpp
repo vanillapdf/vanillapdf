@@ -65,8 +65,8 @@ namespace gotchangpdf
 			if (!locked_file)
 				throw FileDisposedException();
 
-			if (locked_file->IsEncrypted()) {
-				result = locked_file->DecryptString(result, _obj_number, _gen_number);
+			if (!m_encryption_exempted && locked_file->IsEncrypted()) {
+				result = locked_file->DecryptString(result, m_obj_number, m_gen_number);
 			}
 
 			_value->assign(result.begin(), result.end());

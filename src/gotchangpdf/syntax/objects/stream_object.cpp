@@ -75,7 +75,7 @@ namespace gotchangpdf
 			auto stream = Stream(*input);
 			auto body = stream.read(size->SafeConvert<size_t>());
 
-			if (!locked_file->IsEncrypted()) {
+			if (m_encryption_exempted || !locked_file->IsEncrypted()) {
 				_body->assign(body.begin(), body.end());
 				_body->SetInitialized();
 				return _body;
