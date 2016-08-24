@@ -172,8 +172,13 @@ namespace gotchangpdf
 	{
 		do
 		{
-			auto bytes = data.back();
-			size_t converted = static_cast<size_t>(bytes);
+			// Empty data are invalid
+			if (data.empty()) {
+				break;
+			}
+
+			char bytes = data.back();
+			unsigned char converted = reinterpret_cast<unsigned char&>(bytes);
 			if (data.size() < converted || converted > block_size) {
 				break;
 			}
@@ -182,7 +187,10 @@ namespace gotchangpdf
 			// The value of each added byte is the number of bytes that are added, i.e. N bytes, each of value N are added
 			bool padding_error = false;
 			for (auto it = data.end() - converted; it != data.end(); it++) {
-				if (*it != bytes) padding_error = true;
+				if (*it != bytes) {
+					padding_error = true;
+					break;
+				}
 			}
 
 			if (padding_error) {
