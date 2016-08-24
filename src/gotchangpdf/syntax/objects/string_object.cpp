@@ -19,7 +19,7 @@ namespace gotchangpdf
 
 		BufferPtr LiteralStringObject::GetValue() const
 		{
-			if (!_value->empty())
+			if (_value->IsInitialized())
 				return _value;
 
 			auto locked_file = m_file.lock();
@@ -39,7 +39,7 @@ namespace gotchangpdf
 
 		BufferPtr HexadecimalStringObject::GetValue() const
 		{
-			if (!_value->empty())
+			if (!_value->IsInitialized())
 				return _value;
 
 			BufferPtr result;
