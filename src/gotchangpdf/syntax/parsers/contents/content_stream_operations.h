@@ -18,7 +18,7 @@ namespace gotchangpdf
 			public:
 				explicit OperationBeginText(const std::vector<ObjectPtr>& operands)
 				{
-					assert(operands.size() == 0);
+					assert(operands.size() == 0); operands;
 				}
 
 				virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::BeginText; }
@@ -29,7 +29,7 @@ namespace gotchangpdf
 			public:
 				explicit OperationEndText(const std::vector<ObjectPtr>& operands)
 				{
-					assert(operands.size() == 0);
+					assert(operands.size() == 0); operands;
 				}
 
 				virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::EndText; }
@@ -67,7 +67,7 @@ namespace gotchangpdf
 			public:
 				explicit OperationBeginInlineImageObject(const std::vector<ObjectPtr>& operands)
 				{
-					assert(operands.size() == 0);
+					assert(operands.size() == 0); operands;
 				}
 
 				virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::BeginInlineImageObject; }
@@ -78,7 +78,7 @@ namespace gotchangpdf
 			public:
 				explicit OperationBeginInlineImageData(const std::vector<ObjectPtr>& operands)
 				{
-					assert(operands.size() == 0);
+					assert(operands.size() == 0); operands;
 				}
 
 				virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::BeginInlineImageData; }
@@ -89,7 +89,7 @@ namespace gotchangpdf
 			public:
 				explicit OperationEndInlineImageObject(const std::vector<ObjectPtr>& operands)
 				{
-					assert(operands.size() == 0);
+					assert(operands.size() == 0); operands;
 				}
 
 				virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::EndInlineImageObject; }

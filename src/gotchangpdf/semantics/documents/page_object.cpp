@@ -34,7 +34,7 @@ namespace gotchangpdf
 		{
 			if (_obj->Contains(Name::Parent)) {
 				bool removed = _obj->Remove(Name::Parent);
-				assert(removed && "Unable to remove existing item");
+				assert(removed && "Unable to remove existing item"); removed;
 			}
 
 			_obj->Insert(Name::Parent, parent->GetObject());
