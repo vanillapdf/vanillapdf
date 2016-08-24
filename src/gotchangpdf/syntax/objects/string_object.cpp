@@ -39,7 +39,7 @@ namespace gotchangpdf
 
 		BufferPtr HexadecimalStringObject::GetValue() const
 		{
-			if (!_value->IsInitialized())
+			if (_value->IsInitialized())
 				return _value;
 
 			BufferPtr result;
