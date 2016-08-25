@@ -32,6 +32,7 @@ namespace gotchangpdf
 				TextObject(contents::BaseOperationCollection ops) : _operations(ops) {}
 
 				virtual Type GetType(void) const noexcept override { return Type::TextObject; }
+				virtual std::string ToPdf() const override;
 
 				types::uinteger GetOperationsSize(void) const { return _operations.size(); }
 				OperationBasePtr GetOperationAt(types::uinteger at) const { return _operations.at(at); }
@@ -47,6 +48,7 @@ namespace gotchangpdf
 					: m_dictionary(dictionary), m_data(data) {}
 
 				virtual Type GetType(void) const noexcept override { return Type::InlineImageObject; }
+				virtual std::string ToPdf() const override;
 
 				DictionaryObjectPtr GetDictionary() const { return m_dictionary; }
 				BufferPtr GetData() const { return m_data; }

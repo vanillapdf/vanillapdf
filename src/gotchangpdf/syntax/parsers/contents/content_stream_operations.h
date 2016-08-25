@@ -16,47 +16,30 @@ namespace gotchangpdf
 			class OperationBeginText : public OperationBase
 			{
 			public:
-				explicit OperationBeginText(const std::vector<ObjectPtr>& operands)
-				{
-					assert(operands.size() == 0); operands;
-				}
+				explicit OperationBeginText(const std::vector<ObjectPtr>& operands);
 
 				virtual Type GetOperationType(void) const noexcept override { return Type::BeginText; }
+				virtual std::string ToPdf() const override;
 			};
 
 			class OperationEndText : public OperationBase
 			{
 			public:
-				explicit OperationEndText(const std::vector<ObjectPtr>& operands)
-				{
-					assert(operands.size() == 0); operands;
-				}
+				explicit OperationEndText(const std::vector<ObjectPtr>& operands);
 
 				virtual Type GetOperationType(void) const noexcept override { return Type::EndText; }
+				virtual std::string ToPdf() const override;
 			};
 
 			class OperationTextShow : public OperationBase
 			{
 			public:
-				explicit OperationTextShow(const std::vector<ObjectPtr>& operands)
-				{
-					if (1 != operands.size()) {
-						assert(!"Text show operation has invalid arguments");
-						return;
-					}
+				explicit OperationTextShow(const std::vector<ObjectPtr>& operands);
 
-					auto item = operands.at(0);
-					if (!syntax::ObjectUtils::IsType<syntax::StringObjectPtr>(item)) {
-						assert(!"Text show operation has invalid arguments");
-						return;
-					}
-
-					_str = syntax::ObjectUtils::ConvertTo<syntax::StringObjectPtr>(item);
-				}
-
-
-				StringObjectPtr Value() const { return _str; }
 				virtual Type GetOperationType(void) const noexcept override { return Type::TextShow; }
+				virtual std::string ToPdf() const override;
+				StringObjectPtr GetValue() const { return _str; }
+				void SetValue(StringObjectPtr value) { _str = value; }
 
 			private:
 				StringObjectPtr _str;
@@ -65,34 +48,25 @@ namespace gotchangpdf
 			class OperationBeginInlineImageObject : public OperationBase
 			{
 			public:
-				explicit OperationBeginInlineImageObject(const std::vector<ObjectPtr>& operands)
-				{
-					assert(operands.size() == 0); operands;
-				}
-
+				explicit OperationBeginInlineImageObject(const std::vector<ObjectPtr>& operands);
 				virtual Type GetOperationType(void) const noexcept override { return Type::BeginInlineImageObject; }
+				virtual std::string ToPdf() const override;
 			};
 
 			class OperationBeginInlineImageData : public OperationBase
 			{
 			public:
-				explicit OperationBeginInlineImageData(const std::vector<ObjectPtr>& operands)
-				{
-					assert(operands.size() == 0); operands;
-				}
-
+				explicit OperationBeginInlineImageData(const std::vector<ObjectPtr>& operands);
 				virtual Type GetOperationType(void) const noexcept override { return Type::BeginInlineImageData; }
+				virtual std::string ToPdf() const override;
 			};
 
 			class OperationEndInlineImageObject : public OperationBase
 			{
 			public:
-				explicit OperationEndInlineImageObject(const std::vector<ObjectPtr>& operands)
-				{
-					assert(operands.size() == 0); operands;
-				}
-
+				explicit OperationEndInlineImageObject(const std::vector<ObjectPtr>& operands);
 				virtual Type GetOperationType(void) const noexcept override { return Type::EndInlineImageObject; }
+				virtual std::string ToPdf() const override;
 			};
 		}
 	}

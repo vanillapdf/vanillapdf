@@ -7,6 +7,7 @@
 #include "constants.h"
 
 #include <vector>
+#include <sstream>
 
 namespace gotchangpdf
 {
@@ -28,6 +29,16 @@ namespace gotchangpdf
 
 				virtual InstructionBase::Type GetInstructionType(void) const noexcept override { return InstructionBase::Type::Operation; }
 				virtual Type GetOperationType(void) const noexcept override { return Type::Generic; }
+				virtual std::string ToPdf() const override
+				{
+					std::stringstream ss;
+					ss << _operator->Value();
+					for (auto operand : _operands) {
+						ss << " " << _operator->Value();
+					}
+
+					return ss.str();
+				}
 
 			private:
 				OperatorBasePtr _operator;
