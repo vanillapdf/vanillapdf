@@ -18,6 +18,8 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_Type(StringHandle handle, PStringType result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_ToLiteral(StringHandle handle, PLiteralStringHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_ToHexadecimal(StringHandle handle, PHexadecimalStringHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_GetValue(StringHandle handle, PBufferHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_SetValue(StringHandle handle, BufferHandle value);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_Release(StringHandle handle);
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_GetValue(LiteralStringHandle handle, PBufferHandle result);
