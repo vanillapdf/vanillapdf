@@ -5,6 +5,7 @@
 #include "page_node.h"
 #include "rectangle.h"
 #include "resource_dictionary.h"
+#include "contents.h"
 
 namespace gotchangpdf
 {
@@ -34,6 +35,9 @@ namespace gotchangpdf
 			void SetContents(ContentsPtr contents);
 
 			virtual NodeType GetNodeType(void) const noexcept override { return NodeType::Object; }
+
+		private:
+			mutable OutputContentsPtr m_contents;
 		};
 	}
 }

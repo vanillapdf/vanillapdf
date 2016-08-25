@@ -106,6 +106,11 @@ namespace gotchangpdf
 
 		bool PageObject::GetContents(OutputContentsPtr& result) const
 		{
+			if (!m_contents.empty()) {
+				result = m_contents;
+				return true;
+			}
+
 			OutputContainableObjectPtr output;
 			auto found = _obj->TryFind(Name::Contents, output);
 
@@ -136,13 +141,17 @@ namespace gotchangpdf
 
 			if (is_ref) {
 				auto data = ObjectUtils::ConvertTo<StreamObjectPtr>(content);
-				result = ContentsPtr(data);
+				ContentsPtr contents = ContentsPtr(data);
+				m_contents = contents;
+				result = contents;
 				return true;
 			}
 
 			if (is_array) {
 				auto data = ObjectUtils::ConvertTo<ArrayObjectPtr<IndirectObjectReferencePtr>>(content);
-				result = ContentsPtr(data);
+				ContentsPtr contents = ContentsPtr(data);
+				m_contents = contents;
+				result = contents;
 				return true;
 			}
 
