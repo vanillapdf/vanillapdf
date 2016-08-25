@@ -17,6 +17,7 @@ namespace gotchangpdf
 
 		Contents::Contents(StreamObjectPtr obj) : HighLevelObject(obj) {}
 		Contents::Contents(ArrayObjectPtr<IndirectObjectReferencePtr> obj) : HighLevelObject(obj->Data()) {}
+		void Contents::ObserveeChanged(IModifyObservable*) { m_dirty = true; }
 
 		BaseInstructionCollection Contents::Instructions(void) const
 		{

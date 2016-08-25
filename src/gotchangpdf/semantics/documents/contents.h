@@ -9,7 +9,7 @@ namespace gotchangpdf
 {
 	namespace semantics
 	{
-		class Contents : public HighLevelObject<syntax::ObjectPtr>
+		class Contents : public HighLevelObject<syntax::ObjectPtr>, public IModifyObserver
 		{
 		public:
 			Contents() = default;
@@ -20,8 +20,14 @@ namespace gotchangpdf
 			types::uinteger GetInstructionsSize(void) const;
 			syntax::contents::InstructionBasePtr GetInstructionAt(types::uinteger at) const;
 
+			virtual void ObserveeChanged(IModifyObservable* observee) override;
+			bool IsDirty() const noexcept { return m_dirty; }
+			void SetDirty(bool dirty) noexcept { m_dirty = dirty; }
+
 		private:
 			mutable syntax::contents::BaseInstructionCollection _instructions;
+
+			bool m_dirty = false;
 		};
 	}
 }
