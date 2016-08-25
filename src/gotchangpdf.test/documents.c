@@ -97,6 +97,7 @@ error_type process_content_operation(ContentOperationHandle obj, int nested)
 	ContentOperationType type;
 	ContentOperationGenericHandle generic_operation = NULL;
 	ContentOperationTextShowHandle text_show_operation = NULL;
+	ContentOperationTextShowArrayHandle text_show_array_operation = NULL;
 	ContentOperationEndTextHandle end_text_operation = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_GetType(obj, &type));
@@ -109,6 +110,10 @@ error_type process_content_operation(ContentOperationHandle obj, int nested)
 	case ContentOperationType_TextShow:
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextShow(obj, &text_show_operation));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_textshow(text_show_operation, nested + 1));
+		break;
+	case ContentOperationType_TextShowArray:
+		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextShowArray(obj, &text_show_array_operation));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_textshowarray(text_show_array_operation, nested + 1));
 		break;
 	case ContentOperationType_EndText:
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToEndText(obj, &end_text_operation));
@@ -163,9 +168,25 @@ error_type process_content_operation_endtext(ContentOperationEndTextHandle obj, 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
+error_type process_content_operation_textshowarray(ContentOperationTextShowArrayHandle obj, int nested)
+{
+	ArrayHandle items_handle = NULL;
+
+	print_spaces(nested);
+	printf("Text show array content operation begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextShowArray_GetValue(obj, &items_handle));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_array(items_handle, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_Release(items_handle));
+
+	print_spaces(nested);
+	printf("Text show array operation end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
 error_type process_content_operation_textshow(ContentOperationTextShowHandle obj, int nested)
 {
-	ContentOperatorHandle oper = NULL;
 	StringHandle str = NULL;
 
 	print_spaces(nested);

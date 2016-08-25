@@ -48,6 +48,7 @@ error_type process_content_object_inline_image(ContentObjectInlineImageHandle ob
 error_type process_content_operator(ContentOperatorHandle obj, int nested);
 error_type process_content_operation_generic(ContentOperationGenericHandle obj, int nested);
 error_type process_content_operation_textshow(ContentOperationTextShowHandle obj, int nested);
+error_type process_content_operation_textshowarray(ContentOperationTextShowArrayHandle obj, int nested);
 error_type process_content_operation_endtext(ContentOperationEndTextHandle obj, int nested);
 
 
