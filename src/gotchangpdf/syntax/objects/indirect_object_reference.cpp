@@ -13,6 +13,7 @@ namespace gotchangpdf
 			assert(obj->IsIndirect());
 			_ref_obj = obj->GetObjectNumber();
 			_ref_gen = obj->GetGenerationNumber();
+			m_file = obj->GetFile();
 		}
 
 		IndirectObjectReference::IndirectObjectReference(types::big_uint obj, types::ushort gen) : _ref_obj(obj), _ref_gen(gen) {}
