@@ -12,40 +12,50 @@ namespace gotchangpdf
 		{
 			OperationBeginText::OperationBeginText(const std::vector<ObjectPtr>& operands)
 			{
-				assert(operands.size() == 0); operands;
+				assert(operands.size() == 0);
+				if (operands.size() != 0)
+					throw GeneralException("Unexpected number of arguments");
 			}
 
 			OperationEndText::OperationEndText(const std::vector<ObjectPtr>& operands)
 			{
-				assert(operands.size() == 0); operands;
+				assert(operands.size() == 0);
+				if (operands.size() != 0)
+					throw GeneralException("Unexpected number of arguments");
 			}
 
 			OperationBeginInlineImageObject::OperationBeginInlineImageObject(const std::vector<ObjectPtr>& operands)
 			{
-				assert(operands.size() == 0); operands;
+				assert(operands.size() == 0);
+				if (operands.size() != 0)
+					throw GeneralException("Unexpected number of arguments");
 			}
 
 			OperationBeginInlineImageData::OperationBeginInlineImageData(const std::vector<ObjectPtr>& operands)
 			{
-				assert(operands.size() == 0); operands;
+				assert(operands.size() == 0);
+				if (operands.size() != 0)
+					throw GeneralException("Unexpected number of arguments");
 			}
 
 			OperationEndInlineImageObject::OperationEndInlineImageObject(const std::vector<ObjectPtr>& operands)
 			{
-				assert(operands.size() == 0); operands;
+				assert(operands.size() == 0);
+				if (operands.size() != 0)
+					throw GeneralException("Unexpected number of arguments");
 			}
 
 			OperationTextShow::OperationTextShow(const std::vector<ObjectPtr>& operands)
 			{
 				if (1 != operands.size()) {
 					assert(!"Text show operation has invalid arguments");
-					return;
+					throw GeneralException("Unexpected number of arguments");
 				}
 
 				auto item = operands.at(0);
 				if (!ObjectUtils::IsType<StringObjectPtr>(item)) {
 					assert(!"Text show operation has invalid arguments");
-					return;
+					throw GeneralException("Unexpected argument type");
 				}
 
 				_str = ObjectUtils::ConvertTo<StringObjectPtr>(item);
@@ -55,7 +65,7 @@ namespace gotchangpdf
 			{
 				if (1 != operands.size()) {
 					assert(!"Text show array operation has invalid arguments");
-					return;
+					throw GeneralException("Unexpected number of arguments");
 				}
 
 				auto operand = operands.at(0);
