@@ -199,6 +199,7 @@ namespace gotchangpdf
 			void Add(XrefEntryBasePtr entry);
 			bool Remove(types::big_uint obj_number);
 			size_t Size(void) const noexcept;
+			XrefEntryBasePtr At(size_t at);
 			XrefEntryBasePtr Find(types::big_uint obj_number) const;
 			bool Contains(types::big_uint obj_number) const;
 			std::vector<XrefEntryBasePtr> Entries(void) const;

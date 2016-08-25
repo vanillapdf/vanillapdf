@@ -51,10 +51,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_At(XrefHandle handle, intege
 
 	try
 	{
-		// TODO copying all items because old interface
-		// Change the interface to iterator
-		auto items = table->Entries();
-		auto entry = items.at(at);
+		auto entry = table->At(at);
 		auto ptr = entry.AddRefGet();
 		*result = reinterpret_cast<XrefEntryHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;

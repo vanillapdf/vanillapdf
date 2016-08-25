@@ -195,6 +195,8 @@ namespace gotchangpdf
 		}
 
 		size_t XrefBase::Size(void) const noexcept { return _entries.size(); }
+		XrefEntryBasePtr XrefBase::At(size_t at) { return _entries.at(at); }
+
 		XrefEntryBasePtr XrefBase::Find(types::big_uint obj_number) const
 		{
 			auto found = _entries.find(obj_number);
