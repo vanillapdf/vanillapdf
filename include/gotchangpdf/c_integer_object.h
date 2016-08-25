@@ -10,7 +10,7 @@ extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetValue(IntegerHandle handle, out_biguint_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetValue(IntegerHandle handle, out_bigint_type result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_SetValue(IntegerHandle handle, biguint_type value);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_Release(IntegerHandle handle);
 

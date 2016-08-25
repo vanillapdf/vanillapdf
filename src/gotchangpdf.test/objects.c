@@ -142,14 +142,14 @@ error_type process_array(ArrayHandle arr, int nested)
 
 error_type process_integer(IntegerHandle integer, int nested)
 {
-	biguint_type value = 0;
+	bigint_type value = 0;
 
 	print_spaces(nested);
 	printf("Integer object begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_GetValue(integer, &value));
 	print_spaces(nested + 1);
-	printf("Value: %llu\n", value);
+	printf("Value: %lld\n", value);
 
 	print_spaces(nested);
 	printf("Integer object end\n");
