@@ -15,6 +15,9 @@ namespace gotchangpdf
 	public:
 		OutputPointer() : m_value(reinterpret_cast<T*>(nullptr)) {}
 
+		void SetValue(const T& value) { m_value = pdf_new T(value); }
+		void SetValue(T&& value) { m_value = pdf_new T(value); }
+
 		T GetValue() const
 		{
 			if (nullptr == m_value)
@@ -23,6 +26,7 @@ namespace gotchangpdf
 			return *m_value;
 		}
 
+		bool empty() const noexcept { return (nullptr == m_value); }
 		operator T() { return GetValue(); }
 		operator T() const { return GetValue(); }
 		T operator*() const { return *GetValue(); }
@@ -42,13 +46,13 @@ namespace gotchangpdf
 
 		OutputPointer& operator=(const T& value)
 		{
-			m_value = pdf_new T(value);
+			SetValue(value);
 			return *this;
 		}
 
 		OutputPointer& operator=(T&& value)
 		{
-			m_value = pdf_new T(value);
+			SetValue(value);
 			return *this;
 		}
 
