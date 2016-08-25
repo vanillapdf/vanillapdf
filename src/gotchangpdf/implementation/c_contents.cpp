@@ -366,6 +366,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShow(Conte
 	return SafeObjectConvert<OperationBase, OperationTextShow, ContentOperationHandle, ContentOperationTextShowHandle>(handle, result);
 }
 
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShowArray(ContentOperationHandle handle, PContentOperationTextShowArrayHandle result)
+{
+	return SafeObjectConvert<OperationBase, OperationTextShowArray, ContentOperationHandle, ContentOperationTextShowArrayHandle>(handle, result);
+}
+
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_Release(ContentOperationHandle handle)
 {
 	OperationBase* obj = reinterpret_cast<OperationBase*>(handle);
@@ -464,6 +469,46 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_GetValue
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_Release(ContentOperationTextShowHandle handle)
 {
 	OperationTextShow* obj = reinterpret_cast<OperationTextShow*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	obj->Release();
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_GetValue(ContentOperationTextShowArrayHandle handle, PArrayHandle result)
+{
+	OperationTextShowArray* obj = reinterpret_cast<OperationTextShowArray*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto value = obj->GetValue();
+		auto ptr = value.AddRefGet();
+		*result = reinterpret_cast<ArrayHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_SetValue(ContentOperationTextShowArrayHandle handle, ArrayHandle data)
+{
+	OperationTextShowArray* obj = reinterpret_cast<OperationTextShowArray*>(handle);
+	MixedArrayObject* str = reinterpret_cast<MixedArrayObject*>(data);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(str);
+
+	try
+	{
+		obj->SetValue(str);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_Release(ContentOperationTextShowArrayHandle handle)
+{
+	OperationTextShowArray* obj = reinterpret_cast<OperationTextShowArray*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
 	obj->Release();

@@ -965,7 +965,7 @@ namespace gotchangpdf
 			case Token::Type::TEXT_SHOW:
 				return contents::OperationTextShowPtr(operands);
 			case Token::Type::TEXT_SHOW_ARRAY:
-				return contents::OperationGenericPtr(operands, contents::TextShowArrayOperatorPtr());
+				return contents::OperationTextShowArrayPtr(operands);
 			case Token::Type::TEXT_NEXT_LINE_SHOW:
 				return contents::OperationGenericPtr(operands, contents::TextNextLineShowOperatorPtr());
 			case Token::Type::TEXT_NEXT_LINE_SHOW_SPACING:

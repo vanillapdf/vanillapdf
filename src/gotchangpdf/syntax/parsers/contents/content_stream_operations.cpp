@@ -43,12 +43,23 @@ namespace gotchangpdf
 				}
 
 				auto item = operands.at(0);
-				if (!syntax::ObjectUtils::IsType<syntax::StringObjectPtr>(item)) {
+				if (!ObjectUtils::IsType<StringObjectPtr>(item)) {
 					assert(!"Text show operation has invalid arguments");
 					return;
 				}
 
-				_str = syntax::ObjectUtils::ConvertTo<syntax::StringObjectPtr>(item);
+				_str = ObjectUtils::ConvertTo<StringObjectPtr>(item);
+			}
+
+			OperationTextShowArray::OperationTextShowArray(const std::vector<ObjectPtr>& operands)
+			{
+				if (1 != operands.size()) {
+					assert(!"Text show array operation has invalid arguments");
+					return;
+				}
+
+				auto operand = operands.at(0);
+				m_items = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(operand);
 			}
 
 			std::string OperationBeginText::ToPdf() const
@@ -73,6 +84,20 @@ namespace gotchangpdf
 				ss << op->Value();
 				ss << " ";
 				ss << _str->ToPdf();
+
+				return ss.str();
+			}
+
+			std::string OperationTextShowArray::ToPdf() const
+			{
+				std::stringstream ss;
+
+				TextShowArrayOperatorPtr op;
+				ss << op->Value();
+
+				for (auto item : *m_items) {
+					ss << " " << item->ToPdf();
+				}
 
 				return ss.str();
 			}

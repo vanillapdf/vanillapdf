@@ -45,6 +45,20 @@ namespace gotchangpdf
 				StringObjectPtr _str;
 			};
 
+			class OperationTextShowArray : public OperationBase
+			{
+			public:
+				explicit OperationTextShowArray(const std::vector<ObjectPtr>& operands);
+
+				virtual Type GetOperationType(void) const noexcept override { return Type::TextShowArray; }
+				virtual std::string ToPdf() const override;
+				MixedArrayObjectPtr GetValue() const { return m_items; }
+				void SetValue(MixedArrayObjectPtr value) { m_items = value; }
+
+			private:
+				MixedArrayObjectPtr m_items;
+			};
+
 			class OperationBeginInlineImageObject : public OperationBase
 			{
 			public:
