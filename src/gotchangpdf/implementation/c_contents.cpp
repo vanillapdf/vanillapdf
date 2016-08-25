@@ -430,7 +430,22 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_Release(C
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_Value(ContentOperationTextShowHandle handle, PStringHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_SetValue(ContentOperationTextShowHandle handle, StringHandle data)
+{
+	OperationTextShow* obj = reinterpret_cast<OperationTextShow*>(handle);
+	StringObjectBase* str = reinterpret_cast<StringObjectBase*>(data);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(str);
+
+	try
+	{
+		obj->SetValue(str);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_GetValue(ContentOperationTextShowHandle handle, PStringHandle result)
 {
 	OperationTextShow* obj = reinterpret_cast<OperationTextShow*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -438,7 +453,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_Value(Co
 
 	try
 	{
-		auto value = obj->Value();
+		auto value = obj->GetValue();
 		auto ptr = value.AddRefGet();
 		*result = reinterpret_cast<StringHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
