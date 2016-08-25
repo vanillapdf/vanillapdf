@@ -113,6 +113,8 @@ namespace gotchangpdf
 	bool operator==(const Buffer& left, const char * right);
 	bool operator!=(const char * left, const Buffer& right);
 	bool operator!=(const Buffer& left, const char * right);
+
+	std::ostream& operator<<(std::ostream& os, const Buffer& value);
 }
 
 #endif /* _BUFFER_H */

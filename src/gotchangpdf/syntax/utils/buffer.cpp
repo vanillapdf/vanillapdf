@@ -41,4 +41,10 @@ namespace gotchangpdf
 		assert(nullptr != right);
 		return (0 != strncmp(right, reinterpret_cast<const char*>(left.data()), left.size()));
 	}
+
+	std::ostream& operator<<(std::ostream& os, const Buffer& value)
+	{
+		os << value.data();
+		return os;
+	}
 }
