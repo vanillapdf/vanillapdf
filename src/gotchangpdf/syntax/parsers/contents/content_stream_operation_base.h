@@ -94,8 +94,8 @@ namespace gotchangpdf
 				};
 
 			public:
-				virtual InstructionBase::Type GetInstructionType(void) const _NOEXCEPT override { return InstructionBase::Type::Operation; }
-				virtual Type GetOperationType(void) const _NOEXCEPT = 0;
+				virtual InstructionBase::Type GetInstructionType(void) const noexcept override { return InstructionBase::Type::Operation; }
+				virtual Type GetOperationType(void) const noexcept = 0;
 			};
 
 			typedef std::vector<OperationBasePtr> BaseOperationCollection;

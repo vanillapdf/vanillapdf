@@ -22,8 +22,8 @@ namespace gotchangpdf
 					InlineImageObject
 				};
 
-				virtual Type GetType(void) const _NOEXCEPT = 0;
-				virtual syntax::contents::InstructionBase::Type GetInstructionType(void) const _NOEXCEPT override { return InstructionBase::Type::Object; }
+				virtual Type GetType(void) const noexcept = 0;
+				virtual syntax::contents::InstructionBase::Type GetInstructionType(void) const noexcept override { return InstructionBase::Type::Object; }
 			};
 
 			class TextObject : public ContentObjectBase
@@ -31,7 +31,7 @@ namespace gotchangpdf
 			public:
 				TextObject(contents::BaseOperationCollection ops) : _operations(ops) {}
 
-				virtual Type GetType(void) const _NOEXCEPT override { return Type::TextObject; }
+				virtual Type GetType(void) const noexcept override { return Type::TextObject; }
 
 				types::uinteger GetOperationsSize(void) const { return _operations.size(); }
 				OperationBasePtr GetOperationAt(types::uinteger at) const { return _operations.at(at); }
@@ -46,7 +46,7 @@ namespace gotchangpdf
 				InlineImageObject(DictionaryObjectPtr dictionary, BufferPtr data)
 					: m_dictionary(dictionary), m_data(data) {}
 
-				virtual Type GetType(void) const _NOEXCEPT override { return Type::InlineImageObject; }
+				virtual Type GetType(void) const noexcept override { return Type::InlineImageObject; }
 
 				DictionaryObjectPtr GetDictionary() const { return m_dictionary; }
 				BufferPtr GetData() const { return m_data; }

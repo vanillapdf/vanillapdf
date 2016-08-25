@@ -21,7 +21,7 @@ namespace gotchangpdf
 					assert(operands.size() == 0); operands;
 				}
 
-				virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::BeginText; }
+				virtual Type GetOperationType(void) const noexcept override { return Type::BeginText; }
 			};
 
 			class OperationEndText : public OperationBase
@@ -32,7 +32,7 @@ namespace gotchangpdf
 					assert(operands.size() == 0); operands;
 				}
 
-				virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::EndText; }
+				virtual Type GetOperationType(void) const noexcept override { return Type::EndText; }
 			};
 
 			class OperationTextShow : public OperationBase
@@ -54,9 +54,9 @@ namespace gotchangpdf
 					_str = syntax::ObjectUtils::ConvertTo<syntax::StringObjectPtr>(item);
 				}
 
-				virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::TextShow; }
 
 				StringObjectPtr Value() const { return _str; }
+				virtual Type GetOperationType(void) const noexcept override { return Type::TextShow; }
 
 			private:
 				StringObjectPtr _str;
@@ -70,7 +70,7 @@ namespace gotchangpdf
 					assert(operands.size() == 0); operands;
 				}
 
-				virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::BeginInlineImageObject; }
+				virtual Type GetOperationType(void) const noexcept override { return Type::BeginInlineImageObject; }
 			};
 
 			class OperationBeginInlineImageData : public OperationBase
@@ -81,7 +81,7 @@ namespace gotchangpdf
 					assert(operands.size() == 0); operands;
 				}
 
-				virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::BeginInlineImageData; }
+				virtual Type GetOperationType(void) const noexcept override { return Type::BeginInlineImageData; }
 			};
 
 			class OperationEndInlineImageObject : public OperationBase
@@ -92,7 +92,7 @@ namespace gotchangpdf
 					assert(operands.size() == 0); operands;
 				}
 
-				virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::EndInlineImageObject; }
+				virtual Type GetOperationType(void) const noexcept override { return Type::EndInlineImageObject; }
 			};
 		}
 	}

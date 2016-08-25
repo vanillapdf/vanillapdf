@@ -21,7 +21,8 @@ namespace gotchangpdf
 					Operation
 				};
 
-				virtual Type GetInstructionType(void) const _NOEXCEPT = 0;
+				virtual Type GetInstructionType(void) const noexcept = 0;
+				virtual std::string ToPdf() const = 0;
 			};
 
 			typedef std::vector<syntax::contents::InstructionBasePtr> BaseInstructionCollection;

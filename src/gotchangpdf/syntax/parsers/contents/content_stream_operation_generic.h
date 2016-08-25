@@ -26,8 +26,8 @@ namespace gotchangpdf
 				types::uinteger GetOperandsSize() const { return _operands.size(); }
 				ObjectPtr GetOperandAt(types::uinteger at) const { return _operands.at(at); }
 
-				virtual InstructionBase::Type GetInstructionType(void) const _NOEXCEPT override { return InstructionBase::Type::Operation; }
-				virtual Type GetOperationType(void) const _NOEXCEPT override { return Type::Generic; }
+				virtual InstructionBase::Type GetInstructionType(void) const noexcept override { return InstructionBase::Type::Operation; }
+				virtual Type GetOperationType(void) const noexcept override { return Type::Generic; }
 
 			private:
 				OperatorBasePtr _operator;
