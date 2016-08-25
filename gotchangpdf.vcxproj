@@ -191,6 +191,8 @@
     <ClCompile Include="src\gotchangpdf\syntax\objects\object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\stream_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\string_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\content_stream_objects.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\content_stream_operations.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\parsers\reverse_parser.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\parsers\reverse_tokenizer.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\parsers\tokenizer.cpp" />
