@@ -171,7 +171,7 @@ error_type process_content_operation_textshow(ContentOperationTextShowHandle obj
 	print_spaces(nested);
 	printf("Text show content operation begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextShow_Value(obj, &str));
+	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextShow_GetValue(obj, &str));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_string(str, nested + 1));
 	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(str));
 
