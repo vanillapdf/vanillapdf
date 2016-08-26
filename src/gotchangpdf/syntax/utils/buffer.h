@@ -24,6 +24,7 @@ namespace gotchangpdf
 		using size_type = base_type::size_type;
 		using reference = base_type::reference;
 		using const_reference = base_type::const_reference;
+		using difference_type = base_type::difference_type;
 
 	public:
 		Buffer() = default;
