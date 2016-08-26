@@ -188,26 +188,18 @@ namespace gotchangpdf
 		{
 			Buffer result;
 
-			char buf[constant::BUFFER_SIZE];
+			Buffer buffer(constant::BUFFER_SIZE);
+			for (;;) {
+				getline(buffer.data(), constant::BUFFER_SIZE);
+				auto read = gcount();
+				if (0 == read) {
+					break;
+				}
 
-			auto begin = &buf[0];
-			auto end = &buf[constant::BUFFER_SIZE - 1];
-
-			getline(buf, constant::BUFFER_SIZE);
-			auto read = gcount();
-
-			while (constant::BUFFER_SIZE == read)
-			{
-				std::reverse(begin, end);
-				result.insert(result.begin(), begin, end);
-				getline(buf, constant::BUFFER_SIZE);
-				read = gcount();
+				auto read_converted = ValueConvertUtils::SafeConvert<Buffer::iterator::difference_type>(read);
+				std::reverse(buffer.begin(), buffer.begin() + read_converted);
+				result.insert(result.begin(), buffer.begin(), buffer.begin() + read_converted);
 			}
-
-			end = &buf[read];
-
-			std::reverse(begin, end);
-			result.insert(result.begin(), begin, end);
 
 			unget();
 

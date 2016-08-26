@@ -89,13 +89,18 @@ namespace gotchangpdf
 		SCOPE_GUARD_CAPTURE_REFERENCES(file.close());
 
 		Buffer data;
-		char input[constant::BUFFER_SIZE];
+		Buffer buffer(constant::BUFFER_SIZE);
 
 		while (!file.eof())
 		{
-			file.read(input, constant::BUFFER_SIZE);
+			file.read(buffer.data(), constant::BUFFER_SIZE);
 			auto read = file.gcount();
-			data.insert(data.end(), input, input + read);
+			if (0 == read) {
+				break;
+			}
+
+			auto read_converted = ValueConvertUtils::SafeConvert<Buffer::iterator::difference_type>(read);
+			data.insert(data.end(), buffer.begin(), buffer.begin() + read_converted);
 		}
 
 		Initialize(data, password);
