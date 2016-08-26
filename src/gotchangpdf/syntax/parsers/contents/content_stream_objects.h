@@ -26,16 +26,20 @@ namespace gotchangpdf
 				virtual syntax::contents::InstructionBase::Type GetInstructionType(void) const noexcept override { return InstructionBase::Type::Object; }
 			};
 
-			class TextObject : public ContentObjectBase
+			class TextObject : public ContentObjectBase, public IModifyObserver
 			{
 			public:
-				TextObject(contents::BaseOperationCollection ops) : _operations(ops) {}
+				TextObject(contents::BaseOperationCollection ops);
 
 				virtual Type GetType(void) const noexcept override { return Type::TextObject; }
 				virtual std::string ToPdf() const override;
 
 				types::uinteger GetOperationsSize(void) const { return _operations.size(); }
 				OperationBasePtr GetOperationAt(types::uinteger at) const { return _operations.at(at); }
+
+				virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+
+				~TextObject();
 
 			private:
 				BaseOperationCollection _operations;

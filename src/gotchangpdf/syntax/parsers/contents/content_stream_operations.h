@@ -31,7 +31,7 @@ namespace gotchangpdf
 				virtual std::string ToPdf() const override;
 			};
 
-			class OperationTextShow : public OperationBase
+			class OperationTextShow : public OperationBase, public IModifyObserver
 			{
 			public:
 				explicit OperationTextShow(const std::vector<ObjectPtr>& operands);
@@ -39,13 +39,17 @@ namespace gotchangpdf
 				virtual Type GetOperationType(void) const noexcept override { return Type::TextShow; }
 				virtual std::string ToPdf() const override;
 				StringObjectPtr GetValue() const { return _str; }
-				void SetValue(StringObjectPtr value) { _str = value; }
+				void SetValue(StringObjectPtr value) { _str = value; OnChanged(); }
+
+				virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+
+				~OperationTextShow();
 
 			private:
 				StringObjectPtr _str;
 			};
 
-			class OperationTextShowArray : public OperationBase
+			class OperationTextShowArray : public OperationBase, public IModifyObserver
 			{
 			public:
 				explicit OperationTextShowArray(const std::vector<ObjectPtr>& operands);
@@ -53,7 +57,11 @@ namespace gotchangpdf
 				virtual Type GetOperationType(void) const noexcept override { return Type::TextShowArray; }
 				virtual std::string ToPdf() const override;
 				MixedArrayObjectPtr GetValue() const { return m_items; }
-				void SetValue(MixedArrayObjectPtr value) { m_items = value; }
+				void SetValue(MixedArrayObjectPtr value) { m_items = value; OnChanged(); }
+
+				virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+
+				~OperationTextShowArray();
 
 			private:
 				MixedArrayObjectPtr m_items;

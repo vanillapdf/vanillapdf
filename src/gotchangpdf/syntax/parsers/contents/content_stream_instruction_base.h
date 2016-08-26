@@ -12,7 +12,7 @@ namespace gotchangpdf
 	{
 		namespace contents
 		{
-			class InstructionBase : public IUnknown
+			class InstructionBase : public IUnknown, public IModifyObservable
 			{
 			public:
 				enum class Type

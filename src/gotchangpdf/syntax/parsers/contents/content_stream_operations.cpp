@@ -59,6 +59,7 @@ namespace gotchangpdf
 				}
 
 				_str = ObjectUtils::ConvertTo<StringObjectPtr>(item);
+				_str->Subscribe(this);
 			}
 
 			OperationTextShowArray::OperationTextShowArray(const std::vector<ObjectPtr>& operands)
@@ -70,6 +71,17 @@ namespace gotchangpdf
 
 				auto operand = operands.at(0);
 				m_items = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(operand);
+				m_items->Subscribe(this);
+			}
+
+			OperationTextShowArray::~OperationTextShowArray()
+			{
+				m_items->Unsubscribe(this);
+			}
+
+			OperationTextShow::~OperationTextShow()
+			{
+				_str->Unsubscribe(this);
 			}
 
 			std::string OperationBeginText::ToPdf() const
