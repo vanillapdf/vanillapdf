@@ -703,6 +703,7 @@ namespace gotchangpdf
 			contents::BaseInstructionCollection result;
 			while (PeekTokenTypeSkip() != Token::Type::END_OF_INPUT) {
 				auto operation = ReadContentStreamInstruction();
+				operation->SetInitialized();
 				result.push_back(operation);
 			}
 
@@ -865,6 +866,7 @@ namespace gotchangpdf
 			std::vector<ObjectPtr> operands;
 			while (IsOperand(PeekTokenTypeSkip())) {
 				auto operand = ReadOperand();
+				operand->SetInitialized();
 				operands.push_back(operand);
 			}
 
