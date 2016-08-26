@@ -12,10 +12,19 @@ namespace gotchangpdf
 
 		//PageTree::PageTree() {}
 
-		PageTree::PageTree(DictionaryObjectPtr root) : HighLevelObject(root), _root(root) {}
+		PageTree::PageTree(DictionaryObjectPtr root) : HighLevelObject(root), _root(root)
+		{
+			auto page_count = PageCount();
+			m_pages.resize(page_count);
+		}
 
 		PageObjectPtr PageTree::PageInternal(types::integer number) const
 		{
+			auto found_page = m_pages.at(number - 1);
+			if (!found_page.empty()) {
+				return found_page;
+			}
+
 			auto node = _root;
 			types::integer current = 1;
 
@@ -38,7 +47,9 @@ namespace gotchangpdf
 						}
 
 						auto result = tree_node->Kids()->At(number - current);
-						return PageNodeUtils::ConvertTo<PageObjectPtr>(result);
+						auto page_object = PageNodeUtils::ConvertTo<PageObjectPtr>(result);
+						m_pages[number - 1] = page_object;
+						return page_object;
 					}
 					else
 					{
@@ -49,8 +60,11 @@ namespace gotchangpdf
 					break;
 				}
 				case PageNodeBase::NodeType::Object:
-					if (current == number)
-						return PageNodeUtils::ConvertTo<PageObjectPtr>(kid);
+					if (current == number) {
+						auto page_object = PageNodeUtils::ConvertTo<PageObjectPtr>(kid);
+						m_pages[number - 1] = page_object;
+						return page_object;
+					}
 					else
 						current++;
 					break;
@@ -83,6 +97,7 @@ namespace gotchangpdf
 			kids->Insert(IndirectObjectReferencePtr(raw_obj), index);
 
 			UpdateKidsCount(kids->Size());
+			m_pages[index - 1] = object;
 		}
 
 		void PageTree::Append(PageObjectPtr object)
@@ -92,6 +107,7 @@ namespace gotchangpdf
 			kids->Append(IndirectObjectReferencePtr(raw_obj));
 
 			UpdateKidsCount(kids->Size());
+			m_pages.push_back(object);
 		}
 
 		void PageTree::Remove(types::integer index)
@@ -100,6 +116,7 @@ namespace gotchangpdf
 			kids->Remove(index);
 
 			UpdateKidsCount(kids->Size());
+			m_pages.erase(m_pages.begin() + index - 1);
 		}
 
 		void PageTree::UpdateKidsCount(size_t new_size)

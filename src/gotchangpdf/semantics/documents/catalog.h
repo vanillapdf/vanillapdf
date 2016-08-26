@@ -52,6 +52,10 @@ namespace gotchangpdf
 
 			// required
 			PageTreePtr Pages(void) const;
+
+		private:
+			// Cache
+			mutable OutputPageTreePtr m_pages;
 		};
 
 	}

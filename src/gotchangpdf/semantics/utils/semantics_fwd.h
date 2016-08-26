@@ -23,12 +23,12 @@ namespace gotchangpdf
 		using NumberTreePtr = Deferred<NumberTree<ValueT>>;
 
 		class Document; using DocumentPtr = Deferred<Document>;
-		class Catalog; using CatalogPtr = Deferred<Catalog>;
+		class Catalog; using CatalogPtr = Deferred<Catalog>; using OutputCatalogPtr = OutputPointer<CatalogPtr>;
 		class DocumentInfo; using DocumentInfoPtr = Deferred<DocumentInfo>; using OutputDocumentInfoPtr = OutputPointer<DocumentInfoPtr>;
 		class PageNodeBase; using PageNodeBasePtr = Deferred<PageNodeBase>;
-		class PageTree; using PageTreePtr = Deferred<PageTree>;
+		class PageTree; using PageTreePtr = Deferred<PageTree>; using OutputPageTreePtr = OutputPointer<PageTreePtr>;
 		class PageTreeNode; using PageTreeNodePtr = Deferred<PageTreeNode>;
-		class PageObject; using PageObjectPtr = Deferred<PageObject>;
+		class PageObject; using PageObjectPtr = Deferred<PageObject>; using OutputPageObjectPtr = OutputPointer<PageObjectPtr>;
 
 		class ResourceDictionary; using ResourceDictionaryPtr = Deferred<ResourceDictionary>;
 

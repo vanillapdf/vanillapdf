@@ -13,15 +13,26 @@ namespace gotchangpdf
 
 		CatalogPtr Document::GetDocumentCatalog(void) const
 		{
+			if (!m_catalog.empty()) {
+				return m_catalog;
+			}
+
 			auto chain = _holder->Value()->GetXrefChain();
 			auto xref = chain->Begin()->Value();
 			auto dictionary = xref->GetTrailerDictionary();
 			auto root = dictionary->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Root);
-			return Catalog(root);
+
+			m_catalog = CatalogPtr(root);
+			return m_catalog;
 		}
 
 		bool Document::GetDocumentInfo(OutputDocumentInfoPtr& result) const
 		{
+			if (!m_info.empty()) {
+				result = m_info;
+				return true;
+			}
+
 			auto chain = _holder->Value()->GetXrefChain();
 			auto xref = chain->Begin()->Value();
 			auto dictionary = xref->GetTrailerDictionary();
@@ -30,7 +41,9 @@ namespace gotchangpdf
 				return false;
 
 			auto info = dictionary->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Info);
-			result = DocumentInfoPtr(info);
+			DocumentInfoPtr doc_info(info);
+			m_info = doc_info;
+			result = doc_info;
 			return true;
 		}
 

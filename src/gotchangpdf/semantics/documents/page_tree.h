@@ -30,6 +30,10 @@ namespace gotchangpdf
 			void UpdateKidsCount(size_t new_size);
 
 			PageTreeNodePtr _root;
+
+		private:
+			// Cache
+			mutable std::vector<OutputPageObjectPtr> m_pages;
 		};
 	}
 }

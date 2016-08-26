@@ -30,6 +30,10 @@ namespace gotchangpdf
 
 		private:
 			syntax::FileHolderPtr _holder;
+
+			// Cache
+			mutable OutputCatalogPtr m_catalog;
+			mutable OutputDocumentInfoPtr m_info;
 		};
 	}
 }
