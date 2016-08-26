@@ -59,7 +59,7 @@ namespace gotchangpdf
 				ss << std::endl;
 				ss << m_data;
 
-				EndTextOperatorPtr ei;
+				EndInlineImageObjectOperatorPtr ei;
 				ss << ei->Value();
 
 				return ss.str();

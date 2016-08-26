@@ -32,10 +32,22 @@ namespace gotchangpdf
 				virtual std::string ToPdf() const override
 				{
 					std::stringstream ss;
-					ss << _operator->Value();
+
+					bool first = true;
 					for (auto operand : _operands) {
-						ss << " " << _operator->Value();
+						if (!first) {
+							ss << " ";
+						}
+
+						ss << operand->ToPdf();
+						first = false;
 					}
+
+					if (!first) {
+						ss << " ";
+					}
+
+					ss << _operator->Value();
 
 					return ss.str();
 				}

@@ -102,10 +102,10 @@ namespace gotchangpdf
 			{
 				std::stringstream ss;
 
-				TextShowOperatorPtr op;
-				ss << op->Value();
-				ss << " ";
 				ss << _str->ToPdf();
+
+				TextShowOperatorPtr op;
+				ss << " " << op->Value();
 
 				return ss.str();
 			}
@@ -114,12 +114,21 @@ namespace gotchangpdf
 			{
 				std::stringstream ss;
 
+				bool first = true;
+				for (auto item : *m_items) {
+					if (!first) {
+						ss << " ";
+					}
+
+					ss << item->ToPdf();
+				}
+
+				if (!first) {
+					ss << " ";
+				}
+
 				TextShowArrayOperatorPtr op;
 				ss << op->Value();
-
-				for (auto item : *m_items) {
-					ss << " " << item->ToPdf();
-				}
 
 				return ss.str();
 			}
