@@ -267,7 +267,8 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y "lib\zlib\zlib1.dll"  "build\$(ProjectName)\$(Configuration)"
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Configuration)\"</Command>
+xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Configuration)\"
+xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.merge\$(Configuration)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='release|Win32'">
@@ -292,7 +293,8 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Co
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y "lib\zlib\zlib1.dll"  "build\$(ProjectName)\$(Configuration)"
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Configuration)\"</Command>
+xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Configuration)\"
+xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.merge\$(Configuration)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
