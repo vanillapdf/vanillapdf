@@ -1,11 +1,11 @@
 #ifndef _OUTPUT_POINTER_H
 #define _OUTPUT_POINTER_H
 
-#include <type_traits>
-
 #include "deferred.h"
 #include "exception.h"
 #include "util.h"
+
+#include <type_traits>
 
 namespace gotchangpdf
 {
@@ -14,7 +14,39 @@ namespace gotchangpdf
 	{
 	public:
 		OutputPointer() : m_value(reinterpret_cast<T*>(nullptr)) {}
+		OutputPointer(T* value) : m_value(value) {}
+		OutputPointer(const T& value) { SetValue(value); }
+		OutputPointer(T&& value) { SetValue(value); }
 
+		OutputPointer(const OutputPointer& other)
+		{
+			if (!other.empty()) {
+				SetValue(other.GetValue());
+			}
+		}
+
+		OutputPointer(OutputPointer&& other)
+		{
+			if (!other.empty()) {
+				SetValue(other.GetValue());
+				other.SetValue(nullptr);
+			}
+		}
+
+		OutputPointer& operator=(const OutputPointer& other)
+		{
+			SetValue(other.GetValue());
+			return *this;
+		}
+
+		OutputPointer& operator=(OutputPointer&& other)
+		{
+			SetValue(other.GetValue());
+			other.SetValue(nullptr);
+			return *this;
+		}
+
+		void SetValue(T* value) { m_value = value; }
 		void SetValue(const T& value) { m_value = pdf_new T(value); }
 		void SetValue(T&& value) { m_value = pdf_new T(value); }
 
