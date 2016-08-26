@@ -120,5 +120,10 @@ int main(int argc, char *argv[])
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Save(document1, "output.pdf"));
 
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document1));
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document2));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file1));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file2));
+
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
