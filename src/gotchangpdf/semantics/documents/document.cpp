@@ -1,6 +1,7 @@
 #include "precompiled.h"
 #include "document.h"
 #include "file_writer.h"
+#include "contents.h"
 
 namespace gotchangpdf
 {
@@ -50,6 +51,37 @@ namespace gotchangpdf
 		void Document::Save(const std::string& path)
 		{
 			auto destination = File::Create(path);
+
+			// On before Save
+			auto catalog = GetDocumentCatalog();
+			auto pages = catalog->Pages();
+			auto page_count = pages->PageCount();
+			for (decltype(page_count) i = 1; i < page_count + 1; ++i) {
+				auto page = pages->Page(i);
+
+				OutputContentsPtr page_contents_ptr;
+				bool has_contents = page->GetContents(page_contents_ptr);
+				if (!has_contents) {
+					continue;
+				}
+
+				ContentsPtr page_contents = page_contents_ptr.GetValue();
+				if (!page_contents->IsDirty()) {
+					continue;
+				}
+
+				std::stringstream ss;
+				for (auto instruction : page_contents->Instructions()) {
+					ss << instruction->ToPdf() << std::endl;
+				}
+
+				auto object = page_contents->GetObject();
+				auto stream_object = ObjectUtils::ConvertTo<StreamObjectPtr>(object);
+
+				std::string string_body = ss.str();
+				BufferPtr new_body(string_body.begin(), string_body.end());
+				stream_object->SetBody(new_body);
+			}
 
 			FileWriter writer;
 			writer.Write(_holder->Value(), destination);
