@@ -44,8 +44,7 @@ namespace gotchangpdf
 			std::stringstream ss;
 			for (auto item : contents) {
 				auto stream_object = item->GetObject();
-				auto body = stream_object->GetBody();
-				ss << body->ToString();
+				ss << stream_object->GetBody();
 			}
 
 			auto parser = syntax::Parser(_obj->GetFile(), ss);
