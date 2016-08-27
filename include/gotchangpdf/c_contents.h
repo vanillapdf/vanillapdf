@@ -194,6 +194,7 @@ extern "C"
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationsSize(ContentObjectTextHandle handle, out_integer_type result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(ContentObjectTextHandle handle, integer_type at, PContentOperationHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_Release(ContentObjectTextHandle handle);
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetDictionary(ContentObjectInlineImageHandle handle, PDictionaryHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetData(ContentObjectInlineImageHandle handle, PBufferHandle result);

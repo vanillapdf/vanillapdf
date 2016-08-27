@@ -44,11 +44,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(Content
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_Release(ContentsHandle handle)
 {
-	Contents* obj = reinterpret_cast<Contents*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return ObjectRelease<Contents, ContentsHandle>(handle);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_GetType(ContentInstructionHandle handle, PContentInstructionType result)
@@ -81,11 +77,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_ToObject(Conte
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_Release(ContentInstructionHandle handle)
 {
-	InstructionBase* obj = reinterpret_cast<InstructionBase*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return ObjectRelease<InstructionBase, ContentInstructionHandle>(handle);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_GetType(ContentObjectHandle handle, PContentObjectType result)
@@ -119,11 +111,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_ToInlineImage(Conte
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_Release(ContentObjectHandle handle)
 {
-	ContentObjectBase* obj = reinterpret_cast<ContentObjectBase*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return ObjectRelease<ContentObjectBase, ContentObjectHandle>(handle);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetDictionary(ContentObjectInlineImageHandle handle, PDictionaryHandle result)
@@ -186,6 +174,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	}
 	CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_Release(ContentObjectTextHandle handle)
+{
+	return ObjectRelease<TextObject, ContentObjectTextHandle>(handle);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_GetType(ContentOperationHandle handle, PContentOperationType result)
