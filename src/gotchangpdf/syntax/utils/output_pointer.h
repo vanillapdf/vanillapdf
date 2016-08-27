@@ -6,6 +6,7 @@
 #include "util.h"
 
 #include <type_traits>
+#include <memory>
 
 namespace gotchangpdf
 {
@@ -27,28 +28,26 @@ namespace gotchangpdf
 
 		OutputPointer(OutputPointer&& other)
 		{
-			if (!other.empty()) {
-				SetValue(other.GetValue());
-				other.SetValue(nullptr);
-			}
+			m_value = std::move(other.m_value);
 		}
 
 		OutputPointer& operator=(const OutputPointer& other)
 		{
-			SetValue(other.GetValue());
+			if (!other.empty()) {
+				SetValue(other.GetValue());
+			}
+
 			return *this;
 		}
 
 		OutputPointer& operator=(OutputPointer&& other)
 		{
-			SetValue(other.GetValue());
-			other.SetValue(nullptr);
+			m_value = std::move(other.m_value);
 			return *this;
 		}
 
-		void SetValue(T* value) { m_value = value; }
-		void SetValue(const T& value) { m_value = pdf_new T(value); }
-		void SetValue(T&& value) { m_value = pdf_new T(value); }
+		void SetValue(const T& value) { m_value.reset(pdf_new T(value)); }
+		void SetValue(T&& value) { m_value.reset(pdf_new T(value)); }
 
 		T GetValue() const
 		{
@@ -88,10 +87,8 @@ namespace gotchangpdf
 			return *this;
 		}
 
-		virtual ~OutputPointer() { if (m_value) delete m_value; }
-
 	private:
-		T* m_value = nullptr;
+		std::unique_ptr<T> m_value = nullptr;
 	};
 }
 
