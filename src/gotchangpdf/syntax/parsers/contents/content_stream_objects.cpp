@@ -52,12 +52,18 @@ namespace gotchangpdf
 				ss << std::endl;
 
 				// Image dictionary
-				ss << m_dictionary->ToPdf();
+				for (auto item : *m_dictionary) {
+					ss << item.first->ToPdf();
+					ss << " ";
+					ss << item.second->ToPdf();
+					ss << std::endl;
+				}
 
 				BeginInlineImageDataOperatorPtr id;
 				ss << id->Value();
 				ss << std::endl;
 				ss << m_data;
+				ss << std::endl;
 
 				EndInlineImageObjectOperatorPtr ei;
 				ss << ei->Value();
