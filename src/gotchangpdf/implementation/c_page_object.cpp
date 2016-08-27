@@ -37,6 +37,10 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_CreateFromDocument(Doc
 	{
 		auto page = PageObject::Create(obj);
 		auto ptr = page.release();
+
+		// Release from unique ptr does not increase internal ref counter
+		ptr->AddRef();
+
 		*result = reinterpret_cast<PageObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
@@ -52,6 +56,10 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_CreateFromObject(Dicti
 	{
 		auto page = PageObject::Create(obj);
 		auto ptr = page.release();
+
+		// Release from unique ptr does not increase internal ref counter
+		ptr->AddRef();
+
 		*result = reinterpret_cast<PageObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
