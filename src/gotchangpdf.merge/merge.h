@@ -13,8 +13,9 @@
 #include <crtdbg.h>
 #endif
 
-error_type process_contents(ContentsHandle page_contents);
-error_type process_content_operation(ContentOperationHandle content_operation);
+error_type process_contents(ContentsHandle page_contents, integer_type page_number);
+error_type process_content_operation(ContentOperationHandle content_operation, integer_type page_number);
+error_type process_string_object(StringHandle string_handle, integer_type page_number);
 
 #define RETURN_ERROR_IF_NOT_SUCCESS(var) do { error_type __result__ = (var);  if (GOTCHANG_PDF_ERROR_SUCCES != __result__) return __result__; } while(0)
 

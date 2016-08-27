@@ -1,6 +1,6 @@
 #include "merge.h"
 
-error_type process_contents(ContentsHandle page_contents)
+error_type process_contents(ContentsHandle page_contents, integer_type page_number)
 {
 	integer_type j = 0;
 	integer_type contents_size = 0;
@@ -37,7 +37,7 @@ error_type process_contents(ContentsHandle page_contents)
 		for (k = 0; k < operations_size; ++k) {
 			ContentOperationHandle content_operation = NULL;
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectText_GetOperationAt(content_text, k, &content_operation));
-			RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation(content_operation));
+			RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation(content_operation, page_number));
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_Release(content_operation));
 		}
 
@@ -47,21 +47,58 @@ error_type process_contents(ContentsHandle page_contents)
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-error_type process_content_operation(ContentOperationHandle content_operation)
+error_type process_string_object(StringHandle string_handle, integer_type page_number)
+{
+	BufferHandle string_buffer = NULL;
+	string_type string_data = NULL;
+	size_type string_size = 0;
+
+	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_GetValue(string_handle, &string_buffer));
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(string_buffer, &string_data, &string_size));
+
+	if (0 != strcmp(string_data, ".page:01234/56789")) {
+		int buffer_size = snprintf(NULL, 0, "%d", page_number);
+
+		assert(buffer_size > 0 && "Could not get page number size");
+		if (buffer_size < 0) {
+			return GOTCHANG_PDF_ERROR_GENERAL;
+		}
+
+		char *page_string = malloc(buffer_size + 1);
+
+		assert(NULL != page_string && "Could not allocate memory");
+		if (NULL == page_string) {
+			return GOTCHANG_PDF_ERROR_GENERAL;
+		}
+
+		int printed_size = snprintf(page_string, buffer_size + 1, "%d", page_number);
+
+		assert(printed_size > 0 && "Could not print page number");
+		if (printed_size < 0) {
+			return GOTCHANG_PDF_ERROR_GENERAL;
+		}
+
+		RETURN_ERROR_IF_NOT_SUCCESS(Buffer_SetData(string_buffer, page_string, buffer_size));
+
+		free(page_string);
+	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(string_buffer));
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_content_operation(ContentOperationHandle content_operation, integer_type page_number)
 {
 	ContentOperationType operation_type;
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_GetType(content_operation, &operation_type));
 	if (operation_type == ContentOperationType_TextShow) {
 		StringHandle text_string = NULL;
-		BufferHandle string_data = NULL;
 		ContentOperationTextShowHandle text_handle = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextShow(content_operation, &text_handle));
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextShow_GetValue(text_handle, &text_string));
-		RETURN_ERROR_IF_NOT_SUCCESS(StringObject_GetValue(text_string, &string_data));
-		RETURN_ERROR_IF_NOT_SUCCESS(Buffer_SetData(string_data, "test", 4));
-
-		RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(string_data));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_string_object(text_string, page_number));
 		RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(text_string));
 	}
 
@@ -79,7 +116,6 @@ error_type process_content_operation(ContentOperationHandle content_operation)
 			ObjectType object_type;
 			ObjectHandle object_handle = NULL;
 			StringHandle string_handle = NULL;
-			BufferHandle string_data = NULL;
 
 			RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_At(text_items, l, &object_handle));
 			RETURN_ERROR_IF_NOT_SUCCESS(Object_Type(object_handle, &object_type));
@@ -89,10 +125,7 @@ error_type process_content_operation(ContentOperationHandle content_operation)
 			}
 
 			RETURN_ERROR_IF_NOT_SUCCESS(Object_ToString(object_handle, &string_handle));
-			RETURN_ERROR_IF_NOT_SUCCESS(StringObject_GetValue(string_handle, &string_data));
-			RETURN_ERROR_IF_NOT_SUCCESS(Buffer_SetData(string_data, "test", 4));
-
-			RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(string_data));
+			RETURN_ERROR_IF_NOT_SUCCESS(process_string_object(string_handle, page_number));
 			RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(string_handle));
 		}
 
@@ -138,18 +171,18 @@ int main(int argc, char *argv[])
 
 	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(tree2, &page_count));
 
-	for (i = 1; i < page_count; ++i) {
+	for (i = 0; i < page_count; ++i) {
 		PageObjectHandle page_object = NULL;
 		ContentsHandle page_contents = NULL;
 
-		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(tree1, i, &page_object));
+		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(tree1, i + 1, &page_object));
 		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_GetContents(page_object, &page_contents));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_contents(page_contents));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_contents(page_contents, i + 1));
 		RETURN_ERROR_IF_NOT_SUCCESS(Contents_Release(page_contents));
 		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(page_object));
 	}
 
-	for (i = 1; i < page_count; ++i) {
+	for (i = 0; i < page_count; ++i) {
 		PageObjectHandle page_object = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_CreateFromDocument(document1, &page_object));
