@@ -16,7 +16,7 @@ namespace gotchangpdf
 			explicit Contents(syntax::StreamObjectPtr obj);
 			explicit Contents(syntax::ArrayObjectPtr<syntax::IndirectObjectReferencePtr> obj);
 
-			syntax::contents::BaseInstructionCollection Instructions(void) const;
+			syntax::contents::BaseInstructionCollectionPtr Instructions(void) const;
 			types::uinteger GetInstructionsSize(void) const;
 			syntax::contents::InstructionBasePtr GetInstructionAt(types::uinteger at) const;
 
@@ -25,7 +25,7 @@ namespace gotchangpdf
 			void SetDirty(bool dirty) noexcept { m_dirty = dirty; }
 
 		private:
-			mutable syntax::contents::BaseInstructionCollection m_instructions;
+			mutable syntax::contents::BaseInstructionCollectionPtr m_instructions;
 
 			bool m_dirty = false;
 		};

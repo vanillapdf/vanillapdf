@@ -22,7 +22,7 @@ namespace gotchangpdf
 			virtual ObjectPtr ReadDirectObject(types::stream_offset offset) = 0;
 
 			virtual std::vector<ObjectPtr> ReadObjectStreamEntries(types::big_uint first, size_t size) = 0;
-			virtual contents::BaseInstructionCollection ReadContentStreamInstructions(void) = 0;
+			virtual contents::BaseInstructionCollectionPtr ReadContentStreamInstructions(void) = 0;
 
 			virtual ~IParser() {}
 		};

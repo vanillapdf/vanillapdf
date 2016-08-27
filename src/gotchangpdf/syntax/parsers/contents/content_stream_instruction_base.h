@@ -35,7 +35,7 @@ namespace gotchangpdf
 
 			inline InstructionBase::~InstructionBase() {}
 
-			class BaseInstructionCollection : public IModifyObserver, public IModifyObservable
+			class BaseInstructionCollection : public IUnknown, public IModifyObserver, public IModifyObservable
 			{
 			public:
 				using data_type = std::vector<InstructionBasePtr>;

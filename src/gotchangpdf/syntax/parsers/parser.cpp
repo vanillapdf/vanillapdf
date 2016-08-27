@@ -698,13 +698,13 @@ namespace gotchangpdf
 
 #pragma region Content streams
 
-		contents::BaseInstructionCollection Parser::ReadContentStreamInstructions(void)
+		contents::BaseInstructionCollectionPtr Parser::ReadContentStreamInstructions(void)
 		{
-			contents::BaseInstructionCollection result;
+			contents::BaseInstructionCollectionPtr result;
 			while (PeekTokenTypeSkip() != Token::Type::END_OF_INPUT) {
 				auto operation = ReadContentStreamInstruction();
 				operation->SetInitialized();
-				result.push_back(operation);
+				result->push_back(operation);
 			}
 
 			return result;

@@ -71,7 +71,7 @@ namespace gotchangpdf
 				}
 
 				std::stringstream ss;
-				for (auto instruction : page_contents->Instructions()) {
+				for (auto instruction : *page_contents->Instructions()) {
 					ss << instruction->ToPdf() << std::endl;
 				}
 
