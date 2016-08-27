@@ -4,7 +4,7 @@
 namespace gotchangpdf
 {
 	Buffer::Buffer(size_type count) : m_data(count) {}
-	Buffer::Buffer(const char * chars) : Buffer(chars, strlen(chars) + 1) {}
+	Buffer::Buffer(const char * chars) : Buffer(chars, strlen(chars)) {}
 	Buffer::Buffer(const value_type * begin, const value_type * end) : m_data(begin, end) { assert(m_data.size() > 0); }
 	Buffer::Buffer(size_type count, const value_type& val) : m_data(count, val) {}
 
@@ -44,7 +44,7 @@ namespace gotchangpdf
 
 	std::ostream& operator<<(std::ostream& os, const Buffer& value)
 	{
-		os << value.data();
+		os.write(value.data(), value.size());
 		return os;
 	}
 }
