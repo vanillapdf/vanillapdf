@@ -56,19 +56,26 @@ namespace gotchangpdf
 	class IUnknown
 	{
 	public:
-		IUnknown() noexcept : m_ref_counter(0) { m_weak_ref = std::make_shared<WeakReferenceCounter>(this); }
-		IUnknown(const IUnknown&) noexcept : m_ref_counter(0) { m_weak_ref = std::make_shared<WeakReferenceCounter>(this); }
-		IUnknown& operator= (const IUnknown&) noexcept { m_weak_ref = std::make_shared<WeakReferenceCounter>(this); return *this; }
+		IUnknown() noexcept : m_ref_counter(0) {}
+		IUnknown(const IUnknown&) noexcept : m_ref_counter(0) {}
+		IUnknown& operator= (const IUnknown&) noexcept { return *this; }
 
 		template <typename T>
-		WeakReference<T> GetWeakReference() { return WeakReference<T>(m_weak_ref); }
+		WeakReference<T> GetWeakReference() const
+		{
+			if (!m_weak_ref) {
+				m_weak_ref = std::make_shared<WeakReferenceCounter>(this);
+			}
+
+			return WeakReference<T>(m_weak_ref);
+		}
 
 		uint32_t UseCount() const noexcept { return m_ref_counter.load(); }
 		void AddRef() noexcept { m_ref_counter++; }
 		void Release() noexcept
 		{
 			if (--m_ref_counter == 0) {
-				m_weak_ref->Deactivate();
+				if (m_weak_ref) m_weak_ref->Deactivate();
 				delete this;
 			}
 		}
@@ -77,7 +84,7 @@ namespace gotchangpdf
 
 	private:
 		std::atomic_uint32_t m_ref_counter = 0;
-		std::shared_ptr<WeakReferenceCounter> m_weak_ref;
+		mutable std::shared_ptr<WeakReferenceCounter> m_weak_ref;
 	};
 
 	inline IUnknown::~IUnknown() {}
