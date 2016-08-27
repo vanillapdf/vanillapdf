@@ -42,7 +42,7 @@ namespace gotchangpdf
 			ObjectPtr PeekDirectObject(void);
 
 			virtual std::vector<ObjectPtr> ReadObjectStreamEntries(types::big_uint first, size_t size) override;
-			virtual std::vector<contents::InstructionBasePtr> ReadContentStreamInstructions(void) override;
+			virtual contents::BaseInstructionCollection ReadContentStreamInstructions(void) override;
 
 			HeaderPtr ReadHeader(types::stream_offset offset);
 			HeaderPtr ReadHeader(void);

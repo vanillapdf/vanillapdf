@@ -4,6 +4,7 @@
 #include "syntax_fwd.h"
 #include "constants.h"
 #include "object_stream_header.h"
+#include "content_stream_instruction_base.h"
 
 #include <vector>
 
@@ -21,7 +22,7 @@ namespace gotchangpdf
 			virtual ObjectPtr ReadDirectObject(types::stream_offset offset) = 0;
 
 			virtual std::vector<ObjectPtr> ReadObjectStreamEntries(types::big_uint first, size_t size) = 0;
-			virtual std::vector<contents::InstructionBasePtr> ReadContentStreamInstructions(void) = 0;
+			virtual contents::BaseInstructionCollection ReadContentStreamInstructions(void) = 0;
 
 			virtual ~IParser() {}
 		};

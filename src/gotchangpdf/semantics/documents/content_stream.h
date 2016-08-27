@@ -3,6 +3,7 @@
 
 #include "semantics_fwd.h"
 #include "high_level_object.h"
+#include "content_stream_instruction_base.h"
 
 namespace gotchangpdf
 {
@@ -12,10 +13,10 @@ namespace gotchangpdf
 		{
 		public:
 			explicit ContentStream(syntax::StreamObjectPtr obj);
-			std::vector<syntax::contents::InstructionBasePtr> Instructions(void) const;
+			syntax::contents::BaseInstructionCollection Instructions(void) const;
 
 		private:
-			mutable std::vector<syntax::contents::InstructionBasePtr> _instructions;
+			mutable syntax::contents::BaseInstructionCollection _instructions;
 		};
 	}
 }
