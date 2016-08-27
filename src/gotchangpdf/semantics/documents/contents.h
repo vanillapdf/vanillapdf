@@ -20,12 +20,12 @@ namespace gotchangpdf
 			types::uinteger GetInstructionsSize(void) const;
 			syntax::contents::InstructionBasePtr GetInstructionAt(types::uinteger at) const;
 
-			virtual void ObserveeChanged(IModifyObservable* observee) override;
+			virtual void ObserveeChanged(IModifyObservable*) override { m_dirty = true; }
 			bool IsDirty() const noexcept { return m_dirty; }
 			void SetDirty(bool dirty) noexcept { m_dirty = dirty; }
 
 		private:
-			mutable syntax::contents::BaseInstructionCollection _instructions;
+			mutable syntax::contents::BaseInstructionCollection m_instructions;
 
 			bool m_dirty = false;
 		};

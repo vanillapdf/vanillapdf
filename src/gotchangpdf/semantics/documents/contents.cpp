@@ -15,14 +15,13 @@ namespace gotchangpdf
 		using namespace syntax::contents;
 		using namespace contents;
 
-		Contents::Contents(StreamObjectPtr obj) : HighLevelObject(obj) {}
-		Contents::Contents(ArrayObjectPtr<IndirectObjectReferencePtr> obj) : HighLevelObject(obj->Data()) {}
-		void Contents::ObserveeChanged(IModifyObservable*) { m_dirty = true; }
+		Contents::Contents(StreamObjectPtr obj) : HighLevelObject(obj) { m_instructions.Subscribe(this); }
+		Contents::Contents(ArrayObjectPtr<IndirectObjectReferencePtr> obj) : HighLevelObject(obj->Data()) { m_instructions.Subscribe(this); }
 
 		BaseInstructionCollection Contents::Instructions(void) const
 		{
-			if (!_instructions.empty())
-				return _instructions;
+			if (m_instructions.IsInitialized())
+				return m_instructions;
 
 			std::vector<ContentStreamPtr> contents;
 			if (ObjectUtils::IsType<StreamObjectPtr>(_obj)) {
@@ -50,22 +49,27 @@ namespace gotchangpdf
 			}
 
 			auto parser = syntax::Parser(_obj->GetFile(), ss);
-			_instructions = parser.ReadContentStreamInstructions();
-			return _instructions;
+			auto instructions = parser.ReadContentStreamInstructions();
+			for (auto instruction : instructions) {
+				m_instructions.push_back(instruction);
+			}
+
+			m_instructions.SetInitialized();
+			return m_instructions;
 		}
 
 		types::uinteger Contents::GetInstructionsSize(void) const
 		{
-			if (!_instructions.empty())
-				return _instructions.size();
+			if (m_instructions.IsInitialized())
+				return m_instructions.size();
 
 			return Instructions().size();
 		}
 
 		InstructionBasePtr Contents::GetInstructionAt(types::uinteger at) const
 		{
-			if (!_instructions.empty())
-				return _instructions.at(at);
+			if (!m_instructions.IsInitialized())
+				return m_instructions.at(at);
 
 			return Instructions().at(at);
 		}
