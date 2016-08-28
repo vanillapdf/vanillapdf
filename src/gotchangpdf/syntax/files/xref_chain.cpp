@@ -35,54 +35,17 @@ namespace gotchangpdf
 
 				auto xref_it = _list.begin();
 				auto xref = *xref_it;
-
-				if (xref->GetType() == XrefBase::Type::Stream) {
-					auto entries = xref->Entries();
-
-					types::big_uint obj_stream_number = 0;
-					types::uinteger highest_index = 0;
-					for (size_t j = 0; j < entries.size(); ++j) {
-						auto item = entries.at(j);
-						assert(item->GetUsage() == XrefEntryBase::Usage::Compressed);
-						if (item->GetUsage() != XrefEntryBase::Usage::Compressed) {
-							continue;
-						}
-
-						auto compressed = XrefUtils::ConvertTo<XrefCompressedEntryPtr>(item);
-
-						assert(obj_stream_number == 0 || obj_stream_number == compressed->GetObjectStreamNumber());
-						obj_stream_number = compressed->GetObjectStreamNumber();
-
-						if (compressed->GetIndex() > highest_index)
-							highest_index = compressed->GetIndex();
+				types::ushort gen_number = 0;
+				if (xref->Contains(i)) {
+					auto item = xref->Find(i);
+					if (item->GetUsage() == XrefEntryBase::Usage::Free) {
+						gen_number = item->GetGenerationNumber() + 1;
 					}
-
-					assert(0 != obj_stream_number && "Invalid object stream number");
-					if (0 == obj_stream_number) {
-						throw GeneralException("Invalid object stream number");
-					}
-
-					types::uinteger obj_index = SafeAddition<types::uinteger>(highest_index, 1);
-					XrefCompressedEntryPtr new_entry(i, static_cast<types::ushort>(0), obj_stream_number, obj_index);
-					xref->Add(new_entry);
-					return new_entry;
 				}
 
-				if (xref->GetType() == XrefBase::Type::Table) {
-					types::ushort gen_number = 0;
-					if (xref->Contains(i)) {
-						auto item = xref->Find(i);
-						if (item->GetUsage() == XrefEntryBase::Usage::Free) {
-							gen_number = item->GetGenerationNumber() + 1;
-						}
-					}
-
-					XrefUsedEntryPtr new_entry(i, gen_number, -1);
-					xref->Add(new_entry);
-					return new_entry;
-				}
-
-				throw GeneralException("Unknown xref type");
+				XrefUsedEntryPtr new_entry(i, gen_number, -1);
+				xref->Add(new_entry);
+				return new_entry;
 			}
 
 			throw GeneralException("Unable to allocate new entry");
