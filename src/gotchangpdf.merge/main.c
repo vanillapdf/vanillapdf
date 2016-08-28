@@ -56,7 +56,7 @@ error_type process_string_object(StringHandle string_handle, integer_type page_n
 	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_GetValue(string_handle, &string_buffer));
 	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(string_buffer, &string_data, &string_size));
 
-	if (0 != strcmp(string_data, ".page:01234/56789")) {
+	if (0 != strncmp(string_data, ".page:01234/56789", string_size)) {
 		int buffer_size = snprintf(NULL, 0, "%d", page_number);
 
 		assert(buffer_size > 0 && "Could not get page number size");
@@ -142,9 +142,7 @@ int main(int argc, char *argv[])
 	DocumentHandle document1 = NULL;
 	DocumentHandle document2 = NULL;
 	CatalogHandle catalog1 = NULL;
-	CatalogHandle catalog2 = NULL;
 	PageTreeHandle tree1 = NULL;
-	PageTreeHandle tree2 = NULL;
 
 	integer_type i = 0;
 	integer_type page_count = 0;
@@ -154,8 +152,8 @@ int main(int argc, char *argv[])
 	//_CrtSetBreakAlloc(803506);
 #endif
 
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Open("test/example.pdf", &file1));
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Open("test/Granizo.pdf", &file2));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Open("test/Report.pdf", &file1));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Open("test/sample.pdf", &file2));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file1));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file2));
@@ -163,13 +161,11 @@ int main(int argc, char *argv[])
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenExisting(file1, &document1));
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenExisting(file2, &document2));
 
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_AppendContent(document1, document2));
+
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_GetCatalog(document1, &catalog1));
-	RETURN_ERROR_IF_NOT_SUCCESS(Document_GetCatalog(document2, &catalog2));
-
 	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_GetPages(catalog1, &tree1));
-	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_GetPages(catalog2, &tree2));
-
-	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(tree2, &page_count));
+	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(tree1, &page_count));
 
 	for (i = 0; i < page_count; ++i) {
 		PageObjectHandle page_object = NULL;
@@ -182,20 +178,18 @@ int main(int argc, char *argv[])
 		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(page_object));
 	}
 
-	for (i = 0; i < page_count; ++i) {
-		PageObjectHandle page_object = NULL;
+	//for (i = 0; i < page_count; ++i) {
+	//	PageObjectHandle page_object = NULL;
 
-		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_CreateFromDocument(document1, &page_object));
-		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_AppendPage(tree1, page_object));
-		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(page_object));
-	}
+	//	RETURN_ERROR_IF_NOT_SUCCESS(PageObject_CreateFromDocument(document1, &page_object));
+	//	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_AppendPage(tree1, page_object));
+	//	RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(page_object));
+	//}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Save(document1, "output.pdf"));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_Release(catalog1));
-	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_Release(catalog2));
 	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_Release(tree1));
-	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_Release(tree2));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document1));
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document2));
