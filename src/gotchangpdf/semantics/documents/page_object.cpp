@@ -37,7 +37,8 @@ namespace gotchangpdf
 				assert(removed && "Unable to remove existing item"); removed;
 			}
 
-			_obj->Insert(Name::Parent, parent->GetObject());
+			IndirectObjectReferencePtr parent_ref(parent->GetObject());
+			_obj->Insert(Name::Parent, parent_ref);
 		}
 
 		ResourceDictionaryPtr PageObject::GetResources() const

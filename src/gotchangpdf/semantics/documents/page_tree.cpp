@@ -95,6 +95,7 @@ namespace gotchangpdf
 			auto raw_obj = object->GetObject();
 			auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::Kids);
 			kids->Insert(IndirectObjectReferencePtr(raw_obj), index);
+			object->SetParent(_root);
 
 			UpdateKidsCount(kids->Size());
 			m_pages[index - 1] = object;
@@ -105,6 +106,7 @@ namespace gotchangpdf
 			auto raw_obj = object->GetObject();
 			auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::Kids);
 			kids->Append(IndirectObjectReferencePtr(raw_obj));
+			object->SetParent(_root);
 
 			UpdateKidsCount(kids->Size());
 			m_pages.push_back(object);
