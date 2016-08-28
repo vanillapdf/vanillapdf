@@ -879,7 +879,7 @@ namespace gotchangpdf
 			switch (token->GetType())
 			{
 			case Token::Type::LINE_WIDTH:
-				return contents::OperationGenericPtr(operands, contents::LineCapOperatorPtr());
+				return contents::OperationGenericPtr(operands, contents::LineWidthOperatorPtr());
 			case Token::Type::LINE_CAP:
 				return contents::OperationGenericPtr(operands, contents::LineCapOperatorPtr());
 			case Token::Type::LINE_JOIN:
@@ -971,7 +971,7 @@ namespace gotchangpdf
 			case Token::Type::TEXT_NEXT_LINE_SHOW:
 				return contents::OperationGenericPtr(operands, contents::TextNextLineShowOperatorPtr());
 			case Token::Type::TEXT_NEXT_LINE_SHOW_SPACING:
-				return contents::OperationGenericPtr(operands, contents::TextNextLineOperatorPtr());
+				return contents::OperationGenericPtr(operands, contents::TextNextLineShowSpacingOperatorPtr());
 			case Token::Type::SET_CHAR_WIDTH:
 				return contents::OperationGenericPtr(operands, contents::SetCharWidthOperatorPtr());
 			case Token::Type::SET_CACHE_DEVICE:
@@ -989,7 +989,7 @@ namespace gotchangpdf
 			case Token::Type::SET_COLOR_NONSTROKE_EXTENDED:
 				return contents::OperationGenericPtr(operands, contents::SetColorNonstrokeExtendedOperatorPtr());
 			case Token::Type::SET_STROKING_COLOR_SPACE_GRAY:
-				return contents::OperationGenericPtr(operands, contents::SetNonstrokingColorSpaceGrayOperatorPtr());
+				return contents::OperationGenericPtr(operands, contents::SetStrokingColorSpaceGrayOperatorPtr());
 			case Token::Type::SET_NONSTROKING_COLOR_SPACE_GRAY:
 				return contents::OperationGenericPtr(operands, contents::SetNonstrokingColorSpaceGrayOperatorPtr());
 			case Token::Type::SET_STROKING_COLOR_SPACE_RGB:
