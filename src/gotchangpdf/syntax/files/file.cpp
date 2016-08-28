@@ -595,9 +595,7 @@ namespace gotchangpdf
 					break;
 				}
 
-				if (!found) {
-					int a = 0;
-				}
+				assert(found && "Found reference which was not copied");
 			}
 
 			if (ObjectUtils::IsType<MixedArrayObjectPtr>(copied)) {
