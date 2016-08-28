@@ -4,8 +4,6 @@
 #include "semantics_fwd.h"
 #include "high_level_object.h"
 
-#include <ctime>
-
 namespace gotchangpdf
 {
 	namespace semantics
