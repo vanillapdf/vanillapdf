@@ -39,6 +39,7 @@ namespace gotchangpdf
 		class ASCII85DecodeFilter; using ASCII85DecodeFilterPtr = Deferred<ASCII85DecodeFilter>;
 		class ASCIIHexDecodeFilter; using ASCIIHexDecodeFilterPtr = Deferred<ASCIIHexDecodeFilter>;
 		class FlateDecodeFilter; using FlateDecodeFilterPtr = Deferred<FlateDecodeFilter>;
+		class DCTDecodeFilter; using DCTDecodeFilterPtr = Deferred<DCTDecodeFilter>;
 
 		// Files
 		class File;

@@ -3,6 +3,7 @@
 #include "flate_decode_filter.h"
 #include "ascii_85_decode_filter.h"
 #include "ascii_hex_decode_filter.h"
+#include "dct_decode_filter.h"
 
 namespace gotchangpdf
 {
@@ -16,6 +17,8 @@ namespace gotchangpdf
 				return ASCII85DecodeFilterPtr();
 			else if (name->Equals(constant::Name::ASCIIHexDecode))
 				return ASCIIHexDecodeFilterPtr();
+			else if (name->Equals(constant::Name::DCTDecode))
+				return DCTDecodeFilterPtr();
 
 			throw GeneralException("Unknown filter type: " + name->GetValue()->ToString());
 		}

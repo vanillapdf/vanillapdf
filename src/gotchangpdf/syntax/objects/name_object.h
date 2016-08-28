@@ -214,6 +214,7 @@ namespace gotchangpdf
 			extern const syntax::NameObjectPtr True;
 			extern const syntax::NameObjectPtr False;
 			extern const syntax::NameObjectPtr NeedsRendering;
+			extern const syntax::NameObjectPtr DCTDecode;
 		}
 	}
 }
