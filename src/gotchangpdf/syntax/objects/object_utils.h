@@ -300,7 +300,7 @@ namespace gotchangpdf
 						throw ConversionExceptionFactory<IndirectObjectReference>::Construct(obj);
 
 					auto found = visited.find(*converted);
-					if (found != visited.end()) {
+					if (found != visited.end() && found->second) {
 						std::stringstream ss;
 						ss << "Cyclic reference was found for " << converted->GetReferencedObjectNumber() << " " << converted->GetReferencedGenerationNumber() << " R";
 						throw GeneralException(ss.str());
