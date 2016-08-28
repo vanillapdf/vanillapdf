@@ -15,6 +15,7 @@ namespace gotchangpdf
 			explicit IndirectObjectReference(ObjectPtr obj);
 			IndirectObjectReference(types::big_uint obj, types::ushort gen);
 
+			void SetReferencedObject(ObjectPtr obj);
 			ObjectPtr GetReferencedObject() const;
 			ObjectPtr operator->() const { return GetReferencedObject(); }
 
@@ -35,7 +36,10 @@ namespace gotchangpdf
 			bool operator<(const IndirectObjectReference& other) const;
 
 			types::big_uint GetReferencedObjectNumber() const noexcept { return _ref_obj; }
+			void SetReferencedObjectNumber(types::big_uint value) noexcept { _ref_obj = value; }
+
 			types::ushort GetReferencedGenerationNumber() const noexcept { return _ref_gen; }
+			void SetReferencedGenerationNumber(types::ushort value) noexcept { _ref_gen = value; }
 
 			virtual IndirectObjectReference* Clone(void) const override { return new IndirectObjectReference(*this); }
 

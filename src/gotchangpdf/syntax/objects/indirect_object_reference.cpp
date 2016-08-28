@@ -10,13 +10,19 @@ namespace gotchangpdf
 	{
 		IndirectObjectReference::IndirectObjectReference(ObjectPtr obj)
 		{
+			SetReferencedObject(obj);
+		}
+
+		IndirectObjectReference::IndirectObjectReference(types::big_uint obj, types::ushort gen)
+			: _ref_obj(obj), _ref_gen(gen) {}
+
+		void IndirectObjectReference::SetReferencedObject(ObjectPtr obj)
+		{
 			assert(obj->IsIndirect());
 			_ref_obj = obj->GetObjectNumber();
 			_ref_gen = obj->GetGenerationNumber();
 			m_file = obj->GetFile();
 		}
-
-		IndirectObjectReference::IndirectObjectReference(types::big_uint obj, types::ushort gen) : _ref_obj(obj), _ref_gen(gen) {}
 
 		ObjectPtr IndirectObjectReference::GetReferencedObject() const
 		{
