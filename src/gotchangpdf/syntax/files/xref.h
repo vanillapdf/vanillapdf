@@ -6,6 +6,7 @@
 #include "constants.h"
 
 #include <vector>
+#include <unordered_map>
 
 namespace gotchangpdf
 {
@@ -209,7 +210,7 @@ namespace gotchangpdf
 
 		protected:
 			std::weak_ptr<File> _file;
-			std::map<types::big_uint, XrefEntryBasePtr> _entries;
+			std::unordered_map<types::big_uint, XrefEntryBasePtr> _entries;
 			types::stream_offset _last_xref_offset = std::_BADOFF;
 			types::stream_offset _offset = std::_BADOFF;
 			DictionaryObjectPtr _trailer_dictionary;

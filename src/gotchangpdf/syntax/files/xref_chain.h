@@ -64,6 +64,8 @@ namespace gotchangpdf
 
 		private:
 			list_type _list;
+
+			types::big_uint m_next_allocation = 0;
 		};
 	}
 }

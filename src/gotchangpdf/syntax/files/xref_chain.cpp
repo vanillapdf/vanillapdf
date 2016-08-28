@@ -7,7 +7,7 @@ namespace gotchangpdf
 	{
 		XrefEntryBasePtr XrefChain::AllocateNewEntry()
 		{
-			for (types::big_uint i = 0; i < std::numeric_limits<types::big_uint>::max(); ++i) {
+			for (types::big_uint i = m_next_allocation; i < std::numeric_limits<types::big_uint>::max(); ++i) {
 
 				bool found = true;
 				for (auto it = _list.begin(); it != _list.end(); it++) {
@@ -45,6 +45,8 @@ namespace gotchangpdf
 
 				XrefUsedEntryPtr new_entry(i, gen_number, -1);
 				xref->Add(new_entry);
+
+				m_next_allocation = i + 1;
 				return new_entry;
 			}
 
