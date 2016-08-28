@@ -34,7 +34,7 @@ namespace gotchangpdf
 			virtual BufferPtr Encode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
 			virtual BufferPtr Decode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
 
-			virtual Type GetType(void) const = 0;
+			virtual Type GetType(void) const noexcept = 0;
 		};
 	}
 }
