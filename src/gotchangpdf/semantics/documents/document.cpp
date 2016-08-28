@@ -94,6 +94,39 @@ namespace gotchangpdf
 			FileWriter writer;
 			writer.WriteIncremental(_holder->Value(), destination);
 		}
+
+		void Document::AppendContent(const Document& other)
+		{
+			auto other_catalog = other.GetDocumentCatalog();
+			auto other_pages = other_catalog->Pages();
+			auto other_page_count = other_pages->PageCount();
+
+			std::vector<ObjectPtr> merge_objects;
+			for (decltype(other_page_count) i = 0; i < other_page_count; ++i) {
+				auto other_page = other_pages->Page(i + 1);
+				auto other_obj = other_page->GetObject();
+				merge_objects.push_back(other_obj);
+			}
+
+			auto file = _holder->Value();
+			auto new_objects = file->DeepCopyObjects(merge_objects);
+
+			for (decltype(other_page_count) i = 0; i < other_page_count; ++i) {
+				auto new_obj = new_objects[i];
+
+				assert(ObjectUtils::IsType<DictionaryObjectPtr>(new_obj) && "Page object is not dictionary");
+				if (!ObjectUtils::IsType<DictionaryObjectPtr>(new_obj)) {
+					continue;
+				}
+
+				auto catalog = GetDocumentCatalog();
+				auto pages = catalog->Pages();
+
+				DictionaryObjectPtr new_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(new_obj);
+				PageObjectPtr new_page(new_dictionary);
+				pages->Append(new_page);
+			}
+		}
 	}
 }
 

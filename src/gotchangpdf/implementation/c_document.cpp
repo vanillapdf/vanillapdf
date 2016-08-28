@@ -100,3 +100,17 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_Release(DocumentHandle h
 {
 	return ObjectRelease<Document, DocumentHandle>(handle);
 }
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_AppendContent(DocumentHandle handle, DocumentHandle source_handle)
+{
+	Document* document = reinterpret_cast<Document*>(handle);
+	Document* source = reinterpret_cast<Document*>(source_handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(source);
+
+	try
+	{
+		document->AppendContent(*source);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}

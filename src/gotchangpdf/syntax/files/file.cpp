@@ -558,5 +558,164 @@ namespace gotchangpdf
 			// I am calling get to initialize object in case it is empty
 			return _xref.get();
 		}
+
+		void File::FixObjectReferences(const std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPtr, bool>& visited, ObjectPtr copied)
+		{
+			auto has_visited = visited.find(copied);
+			if (visited.end() != has_visited && has_visited->second) {
+				// already visited
+				return;
+			}
+
+			// Visit
+			visited[copied] = true;
+
+			if (ObjectUtils::IsType<IndirectObjectReferencePtr>(copied)) {
+				auto copied_ref = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(copied);
+
+				bool found = false;
+				for (auto item : map) {
+					auto original_obj = item.first;
+					if (!original_obj->IsIndirect()) {
+						continue;
+					}
+
+					if (original_obj->GetObjectNumber() != copied_ref->GetReferencedObjectNumber()
+						|| original_obj->GetGenerationNumber() != copied_ref->GetReferencedGenerationNumber()) {
+						continue;
+					}
+
+					auto copied_referenced_obj = item.second;
+					copied_ref->SetReferencedObjectNumber(copied_referenced_obj->GetObjectNumber());
+					copied_ref->SetReferencedGenerationNumber(copied_referenced_obj->GetGenerationNumber());
+
+					FixObjectReferences(map, visited, copied_referenced_obj);
+
+					found = true;
+					break;
+				}
+
+				if (!found) {
+					int a = 0;
+				}
+			}
+
+			if (ObjectUtils::IsType<MixedArrayObjectPtr>(copied)) {
+				auto arr = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(copied);
+				for (auto item : *arr) {
+					FixObjectReferences(map, visited, item);
+				}
+			}
+
+			if (ObjectUtils::IsType<DictionaryObjectPtr>(copied)) {
+				auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(copied);
+				for (auto item : *dict) {
+					FixObjectReferences(map, visited, item.second);
+				}
+			}
+
+			if (ObjectUtils::IsType<StreamObjectPtr>(copied)) {
+				auto stream = ObjectUtils::ConvertTo<StreamObjectPtr>(copied);
+				auto dict = stream->GetHeader();
+				for (auto item : *dict) {
+					FixObjectReferences(map, visited, item.second);
+				}
+			}
+		}
+
+		void File::DeepCopyObject(std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPtr, bool>& visited, ObjectPtr original)
+		{
+			auto found = map.find(original);
+			if (map.end() != found) {
+				// already copied
+				return;
+			}
+
+			auto has_visited = visited.find(original);
+			if (visited.end() != has_visited && has_visited->second) {
+				// already visited
+				return;
+			}
+
+			// Visit
+			visited[original] = true;
+
+			// Copy only indirect objects
+			if (original->IsIndirect()) {
+				ObjectPtr new_obj(original->Clone());
+
+				auto new_entry = _xref->AllocateNewEntry();
+				if (XrefUtils::IsType<XrefUsedEntryPtr>(new_entry)) {
+					auto used_entry = XrefUtils::ConvertTo<XrefUsedEntryPtr>(new_entry);
+
+					new_obj->SetObjectNumber(used_entry->GetObjectNumber());
+					new_obj->SetGenerationNumber(used_entry->GetGenerationNumber());
+
+					used_entry->SetReference(new_obj);
+					used_entry->SetInitialized();
+				}
+
+				new_obj->SetFile(shared_from_this());
+				new_obj->SetIndirect();
+				new_obj->SetInitialized();
+
+				auto pair = std::pair<ObjectPtr, ObjectPtr>(original, new_obj);
+				map.insert(pair);
+			}
+
+			if (ObjectUtils::IsType<IndirectObjectReferencePtr>(original)) {
+				auto ref = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(original);
+				auto referenced_obj = ref->GetReferencedObject();
+				DeepCopyObject(map, visited, referenced_obj);
+			}
+
+			if (ObjectUtils::IsType<MixedArrayObjectPtr>(original)) {
+				auto arr = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(original);
+				for (auto item : *arr) {
+					DeepCopyObject(map, visited, item);
+				}
+			}
+
+			if (ObjectUtils::IsType<DictionaryObjectPtr>(original)) {
+				auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(original);
+				for (auto item : *dict) {
+					DeepCopyObject(map, visited, item.second);
+				}
+			}
+
+			if (ObjectUtils::IsType<StreamObjectPtr>(original)) {
+				auto stream = ObjectUtils::ConvertTo<StreamObjectPtr>(original);
+				auto dict = stream->GetHeader();
+				for (auto item : *dict) {
+					DeepCopyObject(map, visited, item.second);
+				}
+			}
+		}
+
+		std::vector<ObjectPtr> File::DeepCopyObjects(const std::vector<ObjectPtr>& objects)
+		{
+			// Original to copied mapping
+			std::map<ObjectPtr, ObjectPtr> map;
+
+			std::map<ObjectPtr, bool> copy_visited;
+			for (auto obj : objects) {
+				DeepCopyObject(map, copy_visited, obj);
+			}
+
+			// Fix references
+			std::map<ObjectPtr, bool> ref_visited;
+			for (auto check : map) {
+				FixObjectReferences(map, ref_visited, check.second);
+			}
+
+			std::vector<ObjectPtr> result;
+			for (auto item : objects) {
+				auto found = map.find(item);
+				assert(found != map.end());
+				result.push_back(found->second);
+			}
+
+			return result;
+		}
 	}
 }

@@ -28,6 +28,8 @@ namespace gotchangpdf
 
 			syntax::FileHolderPtr GetFile() const { return _holder; }
 
+			void AppendContent(const Document& other);
+
 		private:
 			syntax::FileHolderPtr _holder;
 

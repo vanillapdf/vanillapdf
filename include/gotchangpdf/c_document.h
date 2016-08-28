@@ -16,6 +16,9 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_SaveIncremental(DocumentHandle handle, string_type filename);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandle handle, PCatalogHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetDocumentInfo(DocumentHandle handle, PDocumentInfoHandle result);
+
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_AppendContent(DocumentHandle handle, DocumentHandle source);
+
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_Release(DocumentHandle handle);
 
 #ifdef __cplusplus

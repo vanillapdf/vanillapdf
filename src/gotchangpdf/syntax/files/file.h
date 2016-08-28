@@ -22,6 +22,10 @@ namespace gotchangpdf
 			static std::shared_ptr<File> Open(const std::string& path);
 			static std::shared_ptr<File> Create(const std::string& path);
 
+			std::vector<ObjectPtr> DeepCopyObjects(const std::vector<ObjectPtr>& objects);
+			void DeepCopyObject(std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPtr, bool>& visited, ObjectPtr original);
+			void FixObjectReferences(const std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPtr, bool>& visited, ObjectPtr copied);
+
 			void Initialize(void);
 			bool IsInitialized(void) const { return _initialized; }
 
