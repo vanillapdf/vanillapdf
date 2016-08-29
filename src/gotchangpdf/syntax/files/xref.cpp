@@ -218,6 +218,15 @@ namespace gotchangpdf
 			std::vector<XrefEntryBasePtr> result;
 			result.reserve(_entries.size());
 			std::for_each(_entries.begin(), _entries.end(), [&result](const std::pair<types::big_uint, XrefEntryBasePtr> pair) { result.push_back(pair.second); });
+
+			// Since we moved to unordered map, sort is required
+			std::sort(
+				result.begin(),
+				result.end(),
+				[](const XrefEntryBasePtr& left, const XrefEntryBasePtr& right) {
+				return left->GetObjectNumber() < right->GetObjectNumber();
+			});
+
 			return result;
 		}
 	}
