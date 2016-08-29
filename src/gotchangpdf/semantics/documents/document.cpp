@@ -121,6 +121,10 @@ namespace gotchangpdf
 
 		void Document::AppendContent(const Document& other)
 		{
+			auto original_catalog = GetDocumentCatalog();
+			auto original_pages = original_catalog->Pages();
+			auto original_page_count = original_pages->PageCount();
+
 			auto other_catalog = other.GetDocumentCatalog();
 			auto other_pages = other_catalog->Pages();
 			auto other_page_count = other_pages->PageCount();
@@ -143,12 +147,78 @@ namespace gotchangpdf
 					continue;
 				}
 
-				auto catalog = GetDocumentCatalog();
-				auto pages = catalog->Pages();
-
 				DictionaryObjectPtr new_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(new_obj);
 				PageObjectPtr new_page(new_dictionary);
-				pages->Append(new_page);
+
+				OutputPageAnnotationsPtr annots_ptr;
+				bool has_annots = new_page->GetAnnotations(annots_ptr);
+				if (has_annots) {
+					auto annots = annots_ptr.GetValue();
+					auto annots_size = annots->Size();
+					for (decltype(annots_size) j = 0; j < annots_size; ++j) {
+						auto annotation = annots->At(j);
+						auto raw_annotation = annotation->GetObject();
+
+						// Ignore annotations without destination
+						if (!raw_annotation->Contains(constant::Name::Dest)) {
+							continue;
+						}
+
+						auto destination_obj = raw_annotation->Find(constant::Name::Dest);
+
+						// we care only for named destinations
+						if (!ObjectUtils::IsType<NameObjectPtr>(destination_obj)) {
+							continue;
+						}
+
+						auto destination_name = ObjectUtils::ConvertTo<NameObjectPtr>(destination_obj);
+
+						OutputNamedDestinationsPtr oritinal_destinations_ptr;
+						bool has_original_destinations = original_catalog->Destinations(oritinal_destinations_ptr);
+						if (!has_original_destinations) {
+							break;
+						}
+
+						auto original_destinations = oritinal_destinations_ptr.GetValue();
+						bool original_contains = original_destinations->Contains(destination_name);
+						if (original_contains) {
+							continue;
+						}
+
+						// Found unreferenced named destination
+
+						OutputNamedDestinationsPtr other_destinations_ptr;
+						bool has_other_destinations = other_catalog->Destinations(other_destinations_ptr);
+						if (!has_other_destinations) {
+							break;
+						}
+
+						auto other_destinations = other_destinations_ptr.GetValue();
+						bool other_contains = other_destinations->Contains(destination_name);
+						if (!other_contains) {
+							// This is really interesting
+							continue;
+						}
+
+						auto other_destination = other_destinations->Find(destination_name);
+						auto other_destination_obj = other_destination->GetObject();
+
+						std::vector<ObjectPtr> other_destination_vector { other_destination_obj };
+						auto cloned_destination_vector = file->DeepCopyObjects(other_destination_vector);
+						assert(1 == cloned_destination_vector.size() && "Incorrect deep copy size");
+						auto cloned_destination_obj = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(cloned_destination_vector[0]);
+
+						auto cloned_destination = DestinationBase::Create(cloned_destination_obj);
+						auto cloned_destination_page = cloned_destination->GetPageNumber();
+
+						// Increment referring page number by number of pages from original document
+						cloned_destination_page->SetValue(cloned_destination_page->GetValue() + original_page_count);
+
+						original_destinations->Insert(destination_name, cloned_destination);
+					}
+				}
+
+				original_pages->Append(new_page);
 			}
 		}
 	}

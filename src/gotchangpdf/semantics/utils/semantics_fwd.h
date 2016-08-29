@@ -53,7 +53,7 @@ namespace gotchangpdf
 		class PageLabels; using PageLabelsPtr = Deferred<PageLabels>; using OutputPageLabelsPtr = OutputPointer<PageLabelsPtr>;
 
 		// Destinations
-		class DestinationBase; using DestinationPtr = Deferred<DestinationBase>;
+		class DestinationBase; using DestinationPtr = Deferred<DestinationBase>; using OutputDestinationPtr = OutputPointer<DestinationPtr>;
 		class XYZDestination; using XYZDestinationPtr = Deferred<XYZDestination>;
 		class FitDestination; using FitDestinationPtr = Deferred<FitDestination>;
 		class FitHorizontalDestination; using FitHorizontalDestinationPtr = Deferred<FitHorizontalDestination>;
