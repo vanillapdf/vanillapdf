@@ -76,7 +76,31 @@ namespace gotchangpdf
 				}
 
 				auto object = page_contents->GetObject();
-				auto stream_object = ObjectUtils::ConvertTo<StreamObjectPtr>(object);
+
+				StreamObjectPtr stream_object;
+				if (ObjectUtils::IsType<StreamObjectPtr>(object)) {
+					stream_object = ObjectUtils::ConvertTo<StreamObjectPtr>(object);
+				}
+
+				if (ObjectUtils::IsType<ArrayObjectPtr<StreamObjectPtr>>(object)) {
+					auto stream_array = ObjectUtils::ConvertTo<ArrayObjectPtr<StreamObjectPtr>>(object);
+					auto stream_array_size = stream_array->Size();
+
+					assert(0 != stream_array_size && "Content stream array is empty");
+					if (0 == stream_array_size) {
+						throw GeneralException("Content stream array is empty");
+					}
+
+					for (decltype(stream_array_size) j = 0; j < stream_array_size; ++j) {
+						auto referenced_stram = stream_array->At(j);
+
+						// TODO divide output into multiple streams
+						BufferPtr empty_body;
+						referenced_stram->SetBody(empty_body);
+					}
+
+					stream_object = stream_array->At(0);
+				}
 
 				std::string string_body = ss.str();
 				BufferPtr new_body(string_body.begin(), string_body.end());
