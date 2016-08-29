@@ -105,7 +105,7 @@ namespace gotchangpdf
 			ContainableObjectPtr Find(const NameObjectPtr& name) const;
 			bool TryFind(const NameObjectPtr& name, OutputContainableObjectPtr& result) const;
 			bool Contains(const NameObjectPtr& name) const;
-			bool Insert(const NameObjectPtr& name, const ContainableObjectPtr& value);
+			void Insert(const NameObjectPtr& name, const ContainableObjectPtr& value);
 			bool Remove(const NameObjectPtr& name);
 
 			virtual ~DictionaryObject();

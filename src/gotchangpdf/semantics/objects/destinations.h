@@ -87,8 +87,9 @@ namespace gotchangpdf
 		public:
 			explicit NamedDestinations(syntax::DictionaryObjectPtr root);
 
-			bool Contains(syntax::NameObjectPtr& name) const;
-			DestinationPtr Find(syntax::NameObjectPtr& name) const;
+			void Insert(const syntax::NameObject& name, DestinationPtr value);
+			bool Contains(const syntax::NameObject& name) const;
+			DestinationPtr Find(const syntax::NameObject& name) const;
 		};
 	}
 }

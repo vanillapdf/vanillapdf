@@ -117,7 +117,7 @@ namespace gotchangpdf
 			return true;
 		}
 
-		bool DictionaryObject::Insert(const NameObjectPtr& name, const ContainableObjectPtr& value)
+		void DictionaryObject::Insert(const NameObjectPtr& name, const ContainableObjectPtr& value)
 		{
 			std::pair<NameObjectPtr, ContainableObjectPtr> pair(name, value);
 			auto result = _list.insert(pair);
@@ -126,7 +126,6 @@ namespace gotchangpdf
 
 			//assert(result.second && "Key was already in the dictionary");
 			OnChanged();
-			return result.second;
 		}
 
 		bool DictionaryObject::Contains(const NameObjectPtr & name) const { return (_list.find(name) != _list.end()); }

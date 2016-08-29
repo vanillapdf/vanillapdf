@@ -68,8 +68,8 @@ namespace gotchangpdf
 
 			bool TryFind(const syntax::NameObjectPtr& name, OutputDeveloperExtensionPtr& result) const;
 			bool Contains(const syntax::NameObjectPtr& name) const;
-			bool Insert(const syntax::NameObjectPtr& name, const DeveloperExtension& value);
-			void Remove(const syntax::NameObjectPtr& name);
+			void Insert(const syntax::NameObjectPtr& name, const DeveloperExtension& value);
+			bool Remove(const syntax::NameObjectPtr& name);
 			IteratorPtr Begin(void) const;
 			IteratorPtr End(void) const;
 		};

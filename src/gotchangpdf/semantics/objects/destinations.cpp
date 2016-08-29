@@ -81,15 +81,26 @@ namespace gotchangpdf
 			return syntax::ObjectUtils::ConvertTo<syntax::IntegerObjectPtr>(_obj->At(0));
 		}
 
-		bool NamedDestinations::Contains(syntax::NameObjectPtr& name) const
+		bool NamedDestinations::Contains(const syntax::NameObject& name) const
 		{
 			return _obj->Contains(name);
 		}
 
-		DestinationPtr NamedDestinations::Find(syntax::NameObjectPtr& name) const
+		DestinationPtr NamedDestinations::Find(const syntax::NameObject& name) const
 		{
 			syntax::MixedArrayObjectPtr found = _obj->FindAs<syntax::MixedArrayObjectPtr>(name);
 			return DestinationBase::Create(found);
+		}
+
+		void NamedDestinations::Insert(const syntax::NameObject& name, DestinationPtr value)
+		{
+			if (_obj->Contains(name)) {
+				bool removed = _obj->Remove(name);
+				assert(removed && "Unable to remove existing item"); removed;
+			}
+
+			syntax::IndirectObjectReferencePtr reference(value->GetObject());
+			_obj->Insert(name, reference);
 		}
 	}
 }

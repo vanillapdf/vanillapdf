@@ -37,14 +37,14 @@ namespace gotchangpdf
 			return _obj->Contains(name);
 		}
 
-		bool DeveloperExtensions::Insert(const syntax::NameObjectPtr& name, const DeveloperExtension& value)
+		void DeveloperExtensions::Insert(const syntax::NameObjectPtr& name, const DeveloperExtension& value)
 		{
-			return _obj->Insert(name, value.GetObject());
+			_obj->Insert(name, value.GetObject());
 		}
 
-		void DeveloperExtensions::Remove(const syntax::NameObjectPtr& name)
+		bool DeveloperExtensions::Remove(const syntax::NameObjectPtr& name)
 		{
-			_obj->Remove(name);
+			return _obj->Remove(name);
 		}
 
 		DeveloperExtensions::IteratorPtr DeveloperExtensions::Begin(void) const
