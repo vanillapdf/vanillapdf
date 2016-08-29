@@ -76,6 +76,8 @@ error_type process_outline_base(OutlineBaseHandle outline, int nested);
 error_type process_outline_item(OutlineItemHandle outline, int nested);
 error_type process_outline_item_color(OutlineItemColorHandle obj, int nested);
 error_type process_outline_item_flags(OutlineItemFlagsHandle obj, int nested);
+error_type process_named_destinations(NamedDestinationsHandle obj, int nested);
+error_type process_destination(DestinationHandle obj, int nested);
 
 /* Common data structures */
 error_type process_rectangle(RectangleHandle obj, int nested);

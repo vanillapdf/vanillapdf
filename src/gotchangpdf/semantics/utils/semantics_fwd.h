@@ -51,6 +51,18 @@ namespace gotchangpdf
 		class DeveloperExtensions; using DeveloperExtensionsPtr = Deferred<DeveloperExtensions>; using OutputDeveloperExtensionsPtr = OutputPointer<DeveloperExtensionsPtr>;
 		class PageLabel; using PageLabelPtr = Deferred<PageLabel>; using OutputPageLabelPtr = OutputPointer<PageLabelPtr>;
 		class PageLabels; using PageLabelsPtr = Deferred<PageLabels>; using OutputPageLabelsPtr = OutputPointer<PageLabelsPtr>;
+
+		// Destinations
+		class DestinationBase; using DestinationPtr = Deferred<DestinationBase>;
+		class XYZDestination; using XYZDestinationPtr = Deferred<XYZDestination>;
+		class FitDestination; using FitDestinationPtr = Deferred<FitDestination>;
+		class FitHorizontalDestination; using FitHorizontalDestinationPtr = Deferred<FitHorizontalDestination>;
+		class FitVerticalDestination; using FitVerticalDestinationPtr = Deferred<FitVerticalDestination>;
+		class FitRectangleDestination; using FitRectangleDestinationPtr = Deferred<FitRectangleDestination>;
+		class FitBoundingBoxDestination; using FitBoundingBoxDestinationPtr = Deferred<FitBoundingBoxDestination>;
+		class FitBoundingBoxHorizontalDestination; using FitBoundingBoxHorizontalDestinationPtr = Deferred<FitBoundingBoxHorizontalDestination>;
+		class FitBoundingBoxVerticalDestination; using FitBoundingBoxVerticalDestinationPtr = Deferred<FitBoundingBoxVerticalDestination>;
+		class NamedDestinations; using NamedDestinationsPtr = Deferred<NamedDestinations>; using OutputNamedDestinationsPtr = OutputPointer<NamedDestinationsPtr>;
 	}
 }
 

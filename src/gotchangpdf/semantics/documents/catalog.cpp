@@ -9,6 +9,7 @@
 #include "semantic_exceptions.h"
 #include "semantic_utils.h"
 #include "outline.h"
+#include "destinations.h"
 
 namespace gotchangpdf
 {
@@ -101,14 +102,15 @@ namespace gotchangpdf
 		//	return NameDictionaryPtr(names);
 		//}
 
-		//NamedDestinationsPtr Catalog::Dests(void) const
-		//{
-		//	if (!_obj->Contains(constant::Name::Dests))
-		//		throw OptionalEntryMissingException(_obj, constant::Name::Dests);
+		bool Catalog::Destinations(OutputNamedDestinationsPtr& result) const
+		{
+			if (!_obj->Contains(constant::Name::Dests))
+				return false;
 
-		//	auto dests = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Dests);
-		//	return NamedDestinationsPtr(dests);
-		//}
+			auto dests = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Dests);
+			result = NamedDestinationsPtr(dests);
+			return true;
+		}
 
 		bool Catalog::ViewerPreferences(OutputViewerPreferencesPtr& result) const
 		{

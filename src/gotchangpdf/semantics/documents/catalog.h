@@ -9,6 +9,7 @@
 #include "page_labels.h"
 #include "viewer_preferences.h"
 #include "outline.h"
+#include "destinations.h"
 
 namespace gotchangpdf
 {
@@ -49,6 +50,7 @@ namespace gotchangpdf
 			bool PageMode(PageModeType& result) const;
 			bool Outlines(OutputOutlinePtr& result) const;
 			bool NeedsRendering(syntax::BooleanObjectPtr& result) const;
+			bool Destinations(OutputNamedDestinationsPtr& result) const;
 
 			// required
 			PageTreePtr Pages(void) const;

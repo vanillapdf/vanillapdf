@@ -17,6 +17,7 @@
     <ClInclude Include="include\gotchangpdf\c_catalog.h" />
     <ClInclude Include="include\gotchangpdf\c_contents.h" />
     <ClInclude Include="include\gotchangpdf\c_date.h" />
+    <ClInclude Include="include\gotchangpdf\c_destinations.h" />
     <ClInclude Include="include\gotchangpdf\c_developer_extensions.h" />
     <ClInclude Include="include\gotchangpdf\c_dictionary_object.h" />
     <ClInclude Include="include\gotchangpdf\c_document.h" />
@@ -135,6 +136,7 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_catalog.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_contents.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_date.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_destinations.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_developer_extensions.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_dictionary_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_document.cpp" />
@@ -169,6 +171,7 @@
     <ClCompile Include="src\gotchangpdf\semantics\documents\page_tree.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\documents\page_tree_node.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\date.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\objects\destinations.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\developer_extensions.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\document_info.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\outline.cpp" />

@@ -60,6 +60,8 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(OutlineItemColor);
 	DECLARE_OBJECT_HANDLE(OutlineItemFlags);
 	DECLARE_OBJECT_HANDLE(ResourceDictionary);
+	DECLARE_OBJECT_HANDLE(NamedDestinations);
+	DECLARE_OBJECT_HANDLE(Destination);
 
 	/* Common data structures */
 	DECLARE_OBJECT_HANDLE(Date);

@@ -1,0 +1,67 @@
+#include "precompiled.h"
+#include "destinations.h"
+
+#include "c_destinations.h"
+#include "c_helper.h"
+
+using namespace gotchangpdf;
+using namespace gotchangpdf::syntax;
+using namespace gotchangpdf::semantics;
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Destination_GetPageNumber(DestinationHandle handle, PIntegerHandle result)
+{
+	DestinationBase* obj = reinterpret_cast<DestinationBase*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto direct = obj->GetPageNumber();
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<IntegerHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Destination_Release(DestinationHandle handle)
+{
+	return ObjectRelease<DestinationBase, DestinationHandle>(handle);
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDestinationsHandle handle, NameHandle name_handle, out_boolean_type result)
+{
+	NamedDestinations* obj = reinterpret_cast<NamedDestinations*>(handle);
+	NameObject* name = reinterpret_cast<NameObject*>(name_handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(name);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		NameObjectPtr name_ptr(name);
+		*result = obj->Contains(name_ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Find(NamedDestinationsHandle handle, NameHandle name_handle, PDestinationHandle result)
+{
+	NamedDestinations* obj = reinterpret_cast<NamedDestinations*>(handle);
+	NameObject* name = reinterpret_cast<NameObject*>(name_handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(name);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		NameObjectPtr name_ptr(name);
+		auto direct = obj->Find(name_ptr);
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<DestinationHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Release(NamedDestinationsHandle handle)
+{
+	return ObjectRelease<NamedDestinations, NamedDestinationsHandle>(handle);
+}

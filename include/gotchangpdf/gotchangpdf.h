@@ -21,6 +21,7 @@
 #include "c_page_labels.h"
 #include "c_viewer_preferences.h"
 #include "c_outline.h"
+#include "c_destinations.h"
 
 /* common data structures*/
 #include "c_date.h"

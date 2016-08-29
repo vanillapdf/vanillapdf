@@ -404,6 +404,34 @@ error_type process_extension(DeveloperExtensionHandle extension, int nested)
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
+error_type process_named_destinations(NamedDestinationsHandle obj, int nested)
+{
+	print_spaces(nested);
+	printf("Named destinations begin\n");
+
+	print_spaces(nested);
+	printf("Named destinations end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_destination(DestinationHandle obj, int nested)
+{
+	IntegerHandle page_number = NULL;
+
+	print_spaces(nested);
+	printf("Destination begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Destination_GetPageNumber(obj, &page_number));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(page_number, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(page_number));
+
+	print_spaces(nested);
+	printf("Destination end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
 error_type process_catalog(CatalogHandle catalog, int nested)
 {
 	integer_type i = 0;
@@ -415,6 +443,7 @@ error_type process_catalog(CatalogHandle catalog, int nested)
 	OutlineHandle outlines = NULL;
 	PDFVersion version;
 	PageLayout page_layout;
+	NamedDestinationsHandle named_destinations = NULL;
 
 	print_spaces(nested);
 	printf("Document catalog begin\n");
@@ -439,6 +468,10 @@ error_type process_catalog(CatalogHandle catalog, int nested)
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Catalog_GetOutlines(catalog, &outlines),
 		process_outline(outlines, nested + 1),
 		Outline_Release(outlines));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Catalog_GetDestinations(catalog, &named_destinations),
+		process_named_destinations(named_destinations, nested + 1),
+		NamedDestinations_Release(named_destinations));
 
 	for (i = 1; i <= size; ++i)
 	{
@@ -560,7 +593,7 @@ error_type process_date(DateHandle obj, int nested)
 	}
 
 	print_spaces(nested);
-	printf("Date outline end\n");
+	printf("Date end\n");
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
