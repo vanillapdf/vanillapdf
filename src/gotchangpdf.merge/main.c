@@ -56,7 +56,7 @@ error_type process_string_object(StringHandle string_handle, integer_type page_n
 	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_GetValue(string_handle, &string_buffer));
 	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(string_buffer, &string_data, &string_size));
 
-	if (0 != strncmp(string_data, ".page:01234/56789", string_size)) {
+	if (0 == strncmp(string_data, ".page:01234/56789", string_size)) {
 		int buffer_size = snprintf(NULL, 0, "%d", page_number);
 
 		assert(buffer_size > 0 && "Could not get page number size");
@@ -135,14 +135,23 @@ error_type process_content_operation(ContentOperationHandle content_operation, i
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
+void print_help()
+{
+	printf("Usage: -s [source file] -d [destination file] -f [array of merged files]");
+}
+
 int main(int argc, char *argv[])
 {
-	FileHandle file1 = NULL;
-	FileHandle file2 = NULL;
-	DocumentHandle document1 = NULL;
-	DocumentHandle document2 = NULL;
-	CatalogHandle catalog1 = NULL;
-	PageTreeHandle tree1 = NULL;
+	const int MERGE_FILES_START_INDEX = 6;
+
+	const char *source_file = NULL;
+	const char *destination_file = NULL;
+	int merge_files_count = 0;
+
+	FileHandle file = NULL;
+	DocumentHandle document = NULL;
+	CatalogHandle catalog = NULL;
+	PageTreeHandle tree = NULL;
 
 	integer_type i = 0;
 	integer_type page_count = 0;
@@ -152,49 +161,70 @@ int main(int argc, char *argv[])
 	//_CrtSetBreakAlloc(803506);
 #endif
 
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Open("test/Report.pdf", &file1));
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Open("test/sample.pdf", &file2));
+	if (argc < 7) {
+		print_help();
+		return GOTCHANG_PDF_ERROR_GENERAL;
+	}
 
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file1));
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file2));
+	if (0 != strcmp(argv[1], "-s")) {
+		print_help();
+		return GOTCHANG_PDF_ERROR_GENERAL;
+	}
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenExisting(file1, &document1));
-	RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenExisting(file2, &document2));
+	if (0 != strcmp(argv[3], "-d")) {
+		print_help();
+		return GOTCHANG_PDF_ERROR_GENERAL;
+	}
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Document_AppendContent(document1, document2));
+	if (0 != strcmp(argv[5], "-f")) {
+		print_help();
+		return GOTCHANG_PDF_ERROR_GENERAL;
+	}
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Document_GetCatalog(document1, &catalog1));
-	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_GetPages(catalog1, &tree1));
-	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(tree1, &page_count));
+	source_file = argv[2];
+	destination_file = argv[4];
+	merge_files_count = argc - MERGE_FILES_START_INDEX;
+
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Open(source_file, &file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file));
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenExisting(file, &document));
+
+	for (i = 0; i < merge_files_count; ++i) {
+		FileHandle other_file = NULL;
+		DocumentHandle other_document = NULL;
+
+		RETURN_ERROR_IF_NOT_SUCCESS(File_Open(argv[MERGE_FILES_START_INDEX + i], &other_file));
+		RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(other_file));
+		RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenExisting(other_file, &other_document));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(Document_AppendContent(document, other_document));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(other_document));
+		RETURN_ERROR_IF_NOT_SUCCESS(File_Release(other_file));
+	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_GetCatalog(document, &catalog));
+	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_GetPages(catalog, &tree));
+	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(tree, &page_count));
 
 	for (i = 0; i < page_count; ++i) {
 		PageObjectHandle page_object = NULL;
 		ContentsHandle page_contents = NULL;
 
-		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(tree1, i + 1, &page_object));
+		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(tree, i + 1, &page_object));
 		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_GetContents(page_object, &page_contents));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_contents(page_contents, i + 1));
 		RETURN_ERROR_IF_NOT_SUCCESS(Contents_Release(page_contents));
 		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(page_object));
 	}
 
-	//for (i = 0; i < page_count; ++i) {
-	//	PageObjectHandle page_object = NULL;
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_Save(document, destination_file));
 
-	//	RETURN_ERROR_IF_NOT_SUCCESS(PageObject_CreateFromDocument(document1, &page_object));
-	//	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_AppendPage(tree1, page_object));
-	//	RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(page_object));
-	//}
+	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_Release(catalog));
+	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_Release(tree));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Document_Save(document1, "output.pdf"));
-
-	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_Release(catalog1));
-	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_Release(tree1));
-
-	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document1));
-	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document2));
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file1));
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file2));
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }

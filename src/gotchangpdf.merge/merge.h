@@ -13,6 +13,8 @@
 #include <crtdbg.h>
 #endif
 
+void print_help();
+
 error_type process_contents(ContentsHandle page_contents, integer_type page_number);
 error_type process_content_operation(ContentOperationHandle content_operation, integer_type page_number);
 error_type process_string_object(StringHandle string_handle, integer_type page_number);
