@@ -45,6 +45,8 @@ namespace gotchangpdf
 
 		private:
 			value_type _value;
+
+			std::string GetHexadecimalNotation(char ch) const;
 		};
 	}
 

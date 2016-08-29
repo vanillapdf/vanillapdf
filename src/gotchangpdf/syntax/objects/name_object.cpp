@@ -2,23 +2,45 @@
 #include "name_object.h"
 #include "c_name_object.h"
 
+#include "character.h"
+
 namespace gotchangpdf
 {
 	namespace syntax
 	{
+		std::string NameObject::GetHexadecimalNotation(char ch) const
+		{
+			std::stringstream ss;
+			int converted = static_cast<int>(ch);
+			ss << '#';
+			ss << std::hex << converted;
+
+			return ss.str();
+		}
+
 		std::string NameObject::ToString(void) const
 		{
 			std::stringstream ss;
 			auto size = _value->size();
 			for (decltype(size) i = 0; i < size; ++i) {
 				auto current = _value[i];
+
+				if ('#' == current) {
+					ss << GetHexadecimalNotation(current);
+					continue;
+				}
+
+				if (!IsRegular(current)) {
+					ss << GetHexadecimalNotation(current);
+					continue;
+				}
+
 				if (current < '!' || current > '~') {
 					/* Regular characters that are outside the range
 					EXCLAMATION MARK(21h) (!) to TILDE (7Eh) (~)
 					should be written using the hexadecimal notation */
-					int converted = static_cast<int>(current);
-					ss << '#';
-					ss << std::hex << converted;
+
+					ss << GetHexadecimalNotation(current);
 					continue;
 				}
 
