@@ -63,6 +63,11 @@ namespace gotchangpdf
 		class FitBoundingBoxHorizontalDestination; using FitBoundingBoxHorizontalDestinationPtr = Deferred<FitBoundingBoxHorizontalDestination>;
 		class FitBoundingBoxVerticalDestination; using FitBoundingBoxVerticalDestinationPtr = Deferred<FitBoundingBoxVerticalDestination>;
 		class NamedDestinations; using NamedDestinationsPtr = Deferred<NamedDestinations>; using OutputNamedDestinationsPtr = OutputPointer<NamedDestinationsPtr>;
+
+		// Annotations
+		class AnnotationBase; using AnnotationPtr = Deferred<AnnotationBase>;
+		class LinkAnnotation; using LinkAnnotationPtr = Deferred<LinkAnnotation>;
+		class PageAnnotations; using PageAnnotationsPtr = Deferred<PageAnnotations>; using OutputPageAnnotationsPtr = OutputPointer<PageAnnotationsPtr>;
 	}
 }
 

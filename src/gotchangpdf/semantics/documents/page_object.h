@@ -28,8 +28,8 @@ namespace gotchangpdf
 			RectanglePtr GetMediaBox(void) const;
 			void SetMediaBox(RectanglePtr);
 
-			//RectanglePtr GetAnnotations(void) const;
-			//void SetAnnotations(RectanglePtr annots);
+			bool GetAnnotations(OutputPageAnnotationsPtr& result) const;
+			void SetAnnotations(PageAnnotationsPtr annots);
 
 			bool GetContents(OutputContentsPtr& result) const;
 			void SetContents(ContentsPtr contents);

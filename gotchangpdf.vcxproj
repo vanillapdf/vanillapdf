@@ -55,6 +55,7 @@
     <ClInclude Include="src\gotchangpdf\semantics\documents\page_tree.h" />
     <ClInclude Include="src\gotchangpdf\semantics\documents\page_tree_node.h" />
     <ClInclude Include="src\gotchangpdf\semantics\documents\resource_dictionary.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\objects\annotations.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\date.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\destinations.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\developer_extensions.h" />
@@ -171,6 +172,7 @@
     <ClCompile Include="src\gotchangpdf\semantics\documents\page_object.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\documents\page_tree.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\documents\page_tree_node.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\objects\annotations.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\date.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\destinations.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\developer_extensions.cpp" />

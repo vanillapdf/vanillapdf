@@ -223,6 +223,10 @@ namespace gotchangpdf
 			extern const syntax::NameObjectPtr FitB;
 			extern const syntax::NameObjectPtr FitBH;
 			extern const syntax::NameObjectPtr FitBV;
+			extern const syntax::NameObjectPtr Subtype;
+			extern const syntax::NameObjectPtr Annot;
+			extern const syntax::NameObjectPtr Annots;
+			extern const syntax::NameObjectPtr Link;
 		}
 	}
 }

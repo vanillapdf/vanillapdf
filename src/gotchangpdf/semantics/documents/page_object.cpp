@@ -9,6 +9,7 @@
 #include "integer_object.h"
 #include "semantic_exceptions.h"
 #include "document.h"
+#include "annotations.h"
 
 namespace gotchangpdf
 {
@@ -84,15 +85,25 @@ namespace gotchangpdf
 			_obj->Insert(Name::MediaBox, media_box->GetObject()->Data());
 		}
 
-		//RectanglePtr PageObject::GetAnnotations(void) const
-		//{
+		bool PageObject::GetAnnotations(OutputPageAnnotationsPtr& result) const
+		{
+			if (!_obj->Contains(constant::Name::Annots))
+				return false;
 
-		//}
+			auto annots = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Annots);
+			result = PageAnnotationsPtr(annots);
+			return true;
+		}
 
-		//void PageObject::SetAnnotations(RectanglePtr annots)
-		//{
+		void PageObject::SetAnnotations(PageAnnotationsPtr annots)
+		{
+			if (_obj->Contains(Name::Annots)) {
+				bool removed = _obj->Remove(Name::Annots);
+				assert(removed && "Unable to remove existing item"); removed;
+			}
 
-		//}
+			_obj->Insert(Name::Annots, annots->GetObject());
+		}
 
 		void PageObject::SetContents(ContentsPtr contents)
 		{

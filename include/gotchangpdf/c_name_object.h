@@ -172,6 +172,10 @@ extern "C"
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_FitB;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_FitBH;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_FitBV;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Subtype;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Annot;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Annots;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Link;
 
 #ifdef __cplusplus
 };
