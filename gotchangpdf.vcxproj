@@ -272,6 +272,7 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y "lib\zlib\zlib1.dll"  "build\$(ProjectName)\$(Configuration)"
+xcopy /Y "lib\openssl\bin\libeay32.dll"  "build\$(ProjectName)\$(Configuration)"
 xcopy /Y "lib\libjpeg\bin\jpeg62.dll"  "build\$(ProjectName)\$(Configuration)"
 xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Configuration)\"
 xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.merge\$(Configuration)\"</Command>
@@ -299,6 +300,7 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.merge\$(C
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y "lib\zlib\zlib1.dll"  "build\$(ProjectName)\$(Configuration)"
+xcopy /Y "lib\openssl\bin\libeay32.dll"  "build\$(ProjectName)\$(Configuration)"
 xcopy /Y "lib\libjpeg\bin\jpeg62.dll"  "build\$(ProjectName)\$(Configuration)"
 xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Configuration)\"
 xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.merge\$(Configuration)\"</Command>
