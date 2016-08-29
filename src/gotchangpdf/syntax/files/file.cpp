@@ -31,6 +31,9 @@ namespace gotchangpdf
 			result->_input->open(path,
 				ios_base::in | ios_base::out | ios_base::binary | ios::trunc);
 
+			if (!result->_input || !result->_input->good())
+				throw GeneralException("Could not open file");
+
 			result->_initialized = true;
 			return result;
 		}
