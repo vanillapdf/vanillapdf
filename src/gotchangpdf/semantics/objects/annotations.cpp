@@ -77,8 +77,32 @@ namespace gotchangpdf
 
 			auto dest_obj = _obj->Find(constant::Name::Dest);
 			if (syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(dest_obj)) {
-				// TODO search in name tree for mapping
-				assert(false);
+				auto document_ref = GetDocument();
+
+				assert(!document_ref.IsEmpty() && "Document reference was not set");
+				if (!document_ref.IsActive()) {
+					return false;
+				}
+
+				DocumentPtr document = document_ref.GetReference();
+				auto catalog = document->GetDocumentCatalog();
+
+				OutputNamedDestinationsPtr destinations_ptr;
+				bool has_destinations = catalog->Destinations(destinations_ptr);
+				if (has_destinations) {
+					return false;
+				}
+
+				auto destinations = destinations_ptr.GetValue();
+
+				auto destination_name = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(dest_obj);
+
+				assert(destinations->Contains(destination_name) && "Referenced destination does not exist");
+				if (!destinations->Contains(destination_name)) {
+					return false;
+				}
+
+				result = destinations->Find(destination_name);
 				return true;
 			}
 
