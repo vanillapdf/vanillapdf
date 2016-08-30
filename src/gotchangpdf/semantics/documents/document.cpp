@@ -2,6 +2,7 @@
 #include "document.h"
 #include "file_writer.h"
 #include "contents.h"
+#include "annotations.h"
 
 namespace gotchangpdf
 {
@@ -12,7 +13,7 @@ namespace gotchangpdf
 		Document::Document(const std::string& filename) { _holder->Open(filename); _holder->Value()->Initialize(); }
 		Document::Document(syntax::FileHolderPtr holder) : _holder(holder) { assert(holder->Value()); }
 
-		CatalogPtr Document::GetDocumentCatalog(void) const
+		CatalogPtr Document::GetDocumentCatalog(void)
 		{
 			if (!m_catalog.empty()) {
 				return m_catalog;
@@ -23,11 +24,14 @@ namespace gotchangpdf
 			auto dictionary = xref->GetTrailerDictionary();
 			auto root = dictionary->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Root);
 
-			m_catalog = CatalogPtr(root);
+			auto catalog = CatalogPtr(root);
+			catalog->SetDocument(GetWeakReference<Document>());
+
+			m_catalog = catalog;
 			return m_catalog;
 		}
 
-		bool Document::GetDocumentInfo(OutputDocumentInfoPtr& result) const
+		bool Document::GetDocumentInfo(OutputDocumentInfoPtr& result)
 		{
 			if (!m_info.empty()) {
 				result = m_info;
@@ -43,6 +47,8 @@ namespace gotchangpdf
 
 			auto info = dictionary->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Info);
 			DocumentInfoPtr doc_info(info);
+			doc_info->SetDocument(GetWeakReference<Document>());
+
 			m_info = doc_info;
 			result = doc_info;
 			return true;
@@ -119,13 +125,13 @@ namespace gotchangpdf
 			writer.WriteIncremental(_holder->Value(), destination);
 		}
 
-		void Document::AppendContent(const Document& other)
+		void Document::AppendContent(DocumentPtr other)
 		{
 			auto original_catalog = GetDocumentCatalog();
 			auto original_pages = original_catalog->Pages();
 			auto original_page_count = original_pages->PageCount();
 
-			auto other_catalog = other.GetDocumentCatalog();
+			auto other_catalog = other->GetDocumentCatalog();
 			auto other_pages = other_catalog->Pages();
 			auto other_page_count = other_pages->PageCount();
 
@@ -213,7 +219,7 @@ namespace gotchangpdf
 
 						// Create only shallow copies
 						auto cloned_destination_obj = file->ShallowCopyObject(other_destination_obj);
-						auto cloned_destination = DestinationBase::Create(cloned_destination_obj);
+						auto cloned_destination = DestinationBase::Create(cloned_destination_obj, GetWeakReference<Document>());
 						auto cloned_destination_page = cloned_destination->GetPage();
 
 						if (ObjectUtils::IsType<IndirectObjectReferencePtr>(cloned_destination_page)) {

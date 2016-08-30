@@ -21,14 +21,14 @@ namespace gotchangpdf
 			Document(const std::string& filename);
 			Document(syntax::FileHolderPtr holder);
 
-			CatalogPtr GetDocumentCatalog(void) const;
-			bool GetDocumentInfo(OutputDocumentInfoPtr& result) const;
+			CatalogPtr GetDocumentCatalog(void);
+			bool GetDocumentInfo(OutputDocumentInfoPtr& result);
 			void Save(const std::string& path);
 			void SaveIncremental(const std::string& path);
 
 			syntax::FileHolderPtr GetFile() const { return _holder; }
 
-			void AppendContent(const Document& other);
+			void AppendContent(DocumentPtr other);
 
 		private:
 			syntax::FileHolderPtr _holder;

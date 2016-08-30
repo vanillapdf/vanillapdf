@@ -7,7 +7,7 @@ namespace gotchangpdf
 {
 	namespace semantics
 	{
-		PageNodeBasePtr CreatePageNode(syntax::DictionaryObjectPtr obj);
+		PageNodeBasePtr CreatePageNode(syntax::DictionaryObjectPtr obj, WeakReference<Document> doc);
 
 		class PageNodeUtils
 		{

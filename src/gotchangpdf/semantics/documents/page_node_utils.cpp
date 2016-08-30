@@ -14,19 +14,26 @@ namespace gotchangpdf
 	{
 		using namespace constant;
 
-		PageNodeBasePtr CreatePageNode(syntax::DictionaryObjectPtr obj)
+		PageNodeBasePtr CreatePageNode(syntax::DictionaryObjectPtr obj, WeakReference<Document> doc)
 		{
 			if (!obj->Contains(Name::Type))
 				throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageNodeBase>(obj);
 
 			auto type = obj->FindAs<syntax::NameObjectPtr>(Name::Type);
 
-			if (type == Name::Pages)
-				return PageTreeNodePtr(obj);
-			else if (type == Name::Page)
-				return PageObjectPtr(obj);
-			else
-				throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageNodeBase>(obj);
+			if (type == Name::Pages) {
+				auto result = PageTreeNodePtr(obj);
+				result->SetDocument(doc);
+				return result;
+			}
+
+			if (type == Name::Page) {
+				auto result = PageObjectPtr(obj);
+				result->SetDocument(doc);
+				return result;
+			}
+
+			throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageNodeBase>(obj);
 		}
 	}
 }

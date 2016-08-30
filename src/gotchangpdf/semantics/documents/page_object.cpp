@@ -90,8 +90,11 @@ namespace gotchangpdf
 			if (!_obj->Contains(constant::Name::Annots))
 				return false;
 
-			auto annots = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Annots);
-			result = PageAnnotationsPtr(annots);
+			auto annots_obj = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Annots);
+			auto annots = PageAnnotationsPtr(annots_obj);
+			annots->SetDocument(GetDocument());
+
+			result = annots;
 			return true;
 		}
 

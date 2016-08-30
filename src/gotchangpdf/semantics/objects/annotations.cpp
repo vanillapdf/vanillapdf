@@ -1,6 +1,7 @@
 #include "precompiled.h"
 #include "annotations.h"
 #include "destinations.h"
+#include "document.h"
 
 #include "exception.h"
 #include "semantic_exceptions.h"
@@ -26,10 +27,10 @@ namespace gotchangpdf
 			}
 
 			auto dict = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(obj);
-			return AnnotationBase::Create(dict);
+			return AnnotationBase::Create(dict, GetDocument());
 		}
 
-		AnnotationBase* AnnotationBase::Create(syntax::DictionaryObjectPtr root)
+		AnnotationBase* AnnotationBase::Create(syntax::DictionaryObjectPtr root, WeakReference<Document> doc)
 		{
 			if (!root->Contains(constant::Name::Type)) {
 				throw GeneralException("Dictionary does not contain type");
@@ -58,7 +59,9 @@ namespace gotchangpdf
 			}
 
 			if (subtype == constant::Name::Link) {
-				return new LinkAnnotation(root);
+				std::unique_ptr<LinkAnnotation> result = std::make_unique<LinkAnnotation>(root);
+				result->SetDocument(doc);
+				return result.release();
 			}
 
 			throw GeneralException("Unknown annotation subtype");
@@ -79,7 +82,7 @@ namespace gotchangpdf
 
 			if (syntax::ObjectUtils::IsType<syntax::MixedArrayObjectPtr>(dest_obj)) {
 				auto array_obj = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(dest_obj);
-				result = DestinationBase::Create(array_obj);
+				result = DestinationBase::Create(array_obj, GetDocument());
 				return true;
 			}
 

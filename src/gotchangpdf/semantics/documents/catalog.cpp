@@ -36,7 +36,10 @@ namespace gotchangpdf
 			if (!_obj->Contains(constant::Name::Extensions))
 				return false;
 
-			result = DeveloperExtensionsPtr(_obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Extensions));
+			auto extensions = DeveloperExtensionsPtr(_obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Extensions));
+			extensions->SetDocument(GetDocument());
+
+			result = extensions;
 			return true;
 		}
 
@@ -47,7 +50,10 @@ namespace gotchangpdf
 			}
 
 			auto pages_obj = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Pages);
-			m_pages = PageTreePtr(pages_obj);
+			auto pages = PageTreePtr(pages_obj);
+			pages->SetDocument(GetDocument());
+
+			m_pages = pages;
 			return m_pages;
 		}
 
@@ -108,7 +114,10 @@ namespace gotchangpdf
 				return false;
 
 			auto dests = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Dests);
-			result = NamedDestinationsPtr(dests);
+			auto named_dests = NamedDestinationsPtr(dests);
+			named_dests->SetDocument(GetDocument());
+
+			result = named_dests;
 			return true;
 		}
 
@@ -118,7 +127,10 @@ namespace gotchangpdf
 				return false;
 
 			auto prefs = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::ViewerPreferences);
-			result = ViewerPreferencesPtr(prefs);
+			auto viewer_prefs = ViewerPreferencesPtr(prefs);
+			viewer_prefs->SetDocument(GetDocument());
+
+			result = viewer_prefs;
 			return true;
 		}
 
@@ -151,8 +163,11 @@ namespace gotchangpdf
 			if (!_obj->Contains(constant::Name::Outlines))
 				return false;
 
-			auto outlines = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Outlines);
-			result = OutlinePtr(outlines);
+			auto outline_obj = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Outlines);
+			auto outlines = OutlinePtr(outline_obj);
+			outlines->SetDocument(GetDocument());
+
+			result = outlines;
 			return true;
 		}
 	}

@@ -110,7 +110,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_AppendContent(DocumentHa
 
 	try
 	{
-		document->AppendContent(*source);
+		document->AppendContent(source);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
