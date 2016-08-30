@@ -139,6 +139,7 @@ namespace gotchangpdf
 			auto file = _holder->Value();
 			auto new_objects = file->DeepCopyObjects(merge_objects);
 
+			// First merge all page objects
 			for (decltype(other_page_count) i = 0; i < other_page_count; ++i) {
 				auto new_obj = new_objects[i];
 
@@ -149,6 +150,13 @@ namespace gotchangpdf
 
 				DictionaryObjectPtr new_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(new_obj);
 				PageObjectPtr new_page(new_dictionary);
+				original_pages->Append(new_page);
+			}
+
+			// Fix missing named destinations
+			auto merged_pages_count = original_pages->PageCount();
+			for (decltype(other_page_count) i = original_page_count; i < merged_pages_count; ++i) {
+				auto new_page = original_pages->Page(i + 1);
 
 				OutputPageAnnotationsPtr annots_ptr;
 				bool has_annots = new_page->GetAnnotations(annots_ptr);
@@ -203,22 +211,47 @@ namespace gotchangpdf
 						auto other_destination = other_destinations->Find(destination_name);
 						auto other_destination_obj = other_destination->GetObject();
 
-						std::vector<ObjectPtr> other_destination_vector { other_destination_obj };
-						auto cloned_destination_vector = file->DeepCopyObjects(other_destination_vector);
-						assert(1 == cloned_destination_vector.size() && "Incorrect deep copy size");
-						auto cloned_destination_obj = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(cloned_destination_vector[0]);
-
+						// Create only shallow copies
+						auto cloned_destination_obj = file->ShallowCopyObject(other_destination_obj);
 						auto cloned_destination = DestinationBase::Create(cloned_destination_obj);
-						auto cloned_destination_page = cloned_destination->GetPageNumber();
+						auto cloned_destination_page = cloned_destination->GetPage();
 
-						// Increment referring page number by number of pages from original document
-						cloned_destination_page->SetValue(cloned_destination_page->GetValue() + original_page_count);
+						if (ObjectUtils::IsType<IndirectObjectReferencePtr>(cloned_destination_page)) {
+							auto cloned_page_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(cloned_destination_page);
+
+							// Find matching object for the other file and fix
+							bool found = false;
+							for (decltype(other_page_count) k = 0; k < other_page_count; ++k) {
+								auto other_page = other_pages->Page(k + 1);
+								auto other_obj = other_page->GetObject();
+
+								if (other_obj->GetObjectNumber() != cloned_page_reference->GetReferencedObjectNumber()
+									|| other_obj->GetGenerationNumber() != cloned_page_reference->GetReferencedGenerationNumber()) {
+									continue;
+								}
+
+								// k + 1 is page index in the other file
+								// we need to fix reference to point to object original_page_count + k + 1
+
+								auto new_referenced_page = original_pages->Page(original_page_count + k + 1);
+								auto new_referenced_obj = new_referenced_page->GetObject();
+								cloned_page_reference->SetReferencedObject(new_referenced_obj);
+								found = true;
+								break;
+							}
+
+							assert(found && "Referenced object could not be found in the other file");
+						}
+
+						if (ObjectUtils::IsType<IntegerObjectPtr>(cloned_destination_page)) {
+							// Increment referring page number by number of pages from original document
+							auto cloned_page_index = ObjectUtils::ConvertTo<IntegerObjectPtr>(cloned_destination_page);
+							cloned_page_index->SetValue(cloned_page_index->GetValue() + original_page_count);
+						}
 
 						original_destinations->Insert(destination_name, cloned_destination);
 					}
 				}
-
-				original_pages->Append(new_page);
 			}
 		}
 	}
