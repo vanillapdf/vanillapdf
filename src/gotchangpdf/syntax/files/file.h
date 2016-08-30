@@ -24,6 +24,8 @@ namespace gotchangpdf
 
 			std::vector<ObjectPtr> DeepCopyObjects(const std::vector<ObjectPtr>& objects);
 			void DeepCopyObject(std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPtr, bool>& visited, ObjectPtr original);
+			void ShallowCopyObject(std::map<ObjectPtr, ObjectPtr>& map, ObjectPtr original);
+			ObjectPtr ShallowCopyObject(ObjectPtr original);
 			void FixObjectReferences(const std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPtr, bool>& visited, ObjectPtr copied);
 
 			void Initialize(void);

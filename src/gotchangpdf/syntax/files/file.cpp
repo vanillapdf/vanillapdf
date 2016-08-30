@@ -624,7 +624,7 @@ namespace gotchangpdf
 			}
 		}
 
-		void File::DeepCopyObject(std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPtr, bool>& visited, ObjectPtr original)
+		void File::ShallowCopyObject(std::map<ObjectPtr, ObjectPtr>& map, ObjectPtr original)
 		{
 			auto found = map.find(original);
 			if (map.end() != found) {
@@ -632,6 +632,41 @@ namespace gotchangpdf
 				return;
 			}
 
+			// Copy only indirect objects
+			if (original->IsIndirect()) {
+				auto new_obj = ShallowCopyObject(original);
+
+				auto pair = std::pair<ObjectPtr, ObjectPtr>(original, new_obj);
+				map.insert(pair);
+			}
+		}
+
+		ObjectPtr File::ShallowCopyObject(ObjectPtr original)
+		{
+			ObjectPtr new_obj(original->Clone());
+
+			if (original->IsIndirect()) {
+				auto new_entry = _xref->AllocateNewEntry();
+				if (XrefUtils::IsType<XrefUsedEntryPtr>(new_entry)) {
+					auto used_entry = XrefUtils::ConvertTo<XrefUsedEntryPtr>(new_entry);
+
+					new_obj->SetObjectNumber(used_entry->GetObjectNumber());
+					new_obj->SetGenerationNumber(used_entry->GetGenerationNumber());
+					new_obj->SetIndirect();
+
+					used_entry->SetReference(new_obj);
+					used_entry->SetInitialized();
+				}
+			}
+
+			new_obj->SetFile(shared_from_this());
+			new_obj->SetInitialized();
+
+			return new_obj;
+		}
+
+		void File::DeepCopyObject(std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPtr, bool>& visited, ObjectPtr original)
+		{
 			auto has_visited = visited.find(original);
 			if (visited.end() != has_visited && has_visited->second) {
 				// already visited
@@ -641,28 +676,7 @@ namespace gotchangpdf
 			// Visit
 			visited[original] = true;
 
-			// Copy only indirect objects
-			if (original->IsIndirect()) {
-				ObjectPtr new_obj(original->Clone());
-
-				auto new_entry = _xref->AllocateNewEntry();
-				if (XrefUtils::IsType<XrefUsedEntryPtr>(new_entry)) {
-					auto used_entry = XrefUtils::ConvertTo<XrefUsedEntryPtr>(new_entry);
-
-					new_obj->SetObjectNumber(used_entry->GetObjectNumber());
-					new_obj->SetGenerationNumber(used_entry->GetGenerationNumber());
-
-					used_entry->SetReference(new_obj);
-					used_entry->SetInitialized();
-				}
-
-				new_obj->SetFile(shared_from_this());
-				new_obj->SetIndirect();
-				new_obj->SetInitialized();
-
-				auto pair = std::pair<ObjectPtr, ObjectPtr>(original, new_obj);
-				map.insert(pair);
-			}
+			ShallowCopyObject(map, original);
 
 			if (ObjectUtils::IsType<IndirectObjectReferencePtr>(original)) {
 				auto ref = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(original);
