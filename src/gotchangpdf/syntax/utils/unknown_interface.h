@@ -29,8 +29,11 @@ namespace gotchangpdf
 	class WeakReference
 	{
 	public:
-		static_assert(std::is_base_of<IUnknown, T>::value,
-			"WeakReference<T>: T must be derived from IUnknown");
+		// I actually cannot include Document in High level object
+		// because HLO is required in Document dependencies
+		// creating cycle. Therefore I have to disable this check
+		// static_assert(std::is_base_of<IUnknown, T>::value,
+		//	 "WeakReference<T>: T must be derived from IUnknown");
 
 	public:
 		WeakReference() = default;
@@ -41,12 +44,24 @@ namespace gotchangpdf
 		}
 
 		bool IsEmpty() const noexcept { return (nullptr == m_ptr); }
-		bool IsActive() const { return m_ptr ? m_ptr->IsActive() : false; }
+		bool IsActive() const noexcept { return m_ptr ? m_ptr->IsActive() : false; }
 
 		T* GetReference() const
 		{
+			if (!IsActive()) {
+				throw GeneralException("Object has been already disposed");
+			}
+
 			assert(m_ptr && "Referenced pointer is empty");
 			return m_ptr ? static_cast<T*>(m_ptr->GetReference()) : nullptr;
+		}
+
+		// The reason why value cannot be const is
+		// because GetWeakReference cannot be const
+		WeakReference& operator=(T& value)
+		{
+			*this = value.GetWeakReference<T>();
+			return *this;
 		}
 
 	private:
@@ -60,8 +75,13 @@ namespace gotchangpdf
 		IUnknown(const IUnknown&) noexcept : m_ref_counter(0) {}
 		IUnknown& operator= (const IUnknown&) noexcept { return *this; }
 
+		// GetWeakReference cannot be const, because
+		// it creates WeakReferenceCounter on demand.
+		// Otherwise WeakReferenceCounter would be allocated
+		// in constructor even for objects
+		// that do not have any weak references
 		template <typename T>
-		WeakReference<T> GetWeakReference() const
+		WeakReference<T> GetWeakReference()
 		{
 			if (!m_weak_ref) {
 				m_weak_ref = std::make_shared<WeakReferenceCounter>(this);
@@ -84,7 +104,7 @@ namespace gotchangpdf
 
 	private:
 		std::atomic_uint32_t m_ref_counter = 0;
-		mutable std::shared_ptr<WeakReferenceCounter> m_weak_ref;
+		std::shared_ptr<WeakReferenceCounter> m_weak_ref;
 	};
 
 	inline IUnknown::~IUnknown() {}
