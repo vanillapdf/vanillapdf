@@ -51,7 +51,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_At(XrefHandle handle, intege
 
 	try
 	{
-		auto entry = table->At(at);
+		// TODO update interface to iterator
+		auto entries = table->Entries();
+		auto entry = entries.at(at);
 		auto ptr = entry.AddRefGet();
 		*result = reinterpret_cast<XrefEntryHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
