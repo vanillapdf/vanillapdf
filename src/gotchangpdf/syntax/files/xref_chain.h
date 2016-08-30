@@ -60,7 +60,7 @@ namespace gotchangpdf
 
 			XrefEntryBasePtr AllocateNewEntry();
 			XrefEntryBasePtr GetXrefEntry(types::big_uint objNumber, types::ushort genNumber);
-			bool Contains(types::big_uint objNumber, types::ushort genNumber);
+			bool Contains(types::big_uint objNumber, types::ushort genNumber) const;
 
 		private:
 			list_type _list;
