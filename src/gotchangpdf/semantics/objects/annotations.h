@@ -15,6 +15,7 @@ namespace gotchangpdf
 
 			static AnnotationBase* Create(syntax::DictionaryObjectPtr root, WeakReference<Document> doc);
 
+			virtual AnnotationBase::Type GetType() const noexcept = 0;
 			virtual ~AnnotationBase() = 0;
 		};
 
@@ -22,6 +23,7 @@ namespace gotchangpdf
 		{
 		public:
 			explicit LinkAnnotation(syntax::DictionaryObjectPtr root);
+			virtual AnnotationBase::Type GetType() const noexcept override;
 
 			bool Destination(OutputDestinationPtr& result) const;
 		};

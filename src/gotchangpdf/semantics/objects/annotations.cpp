@@ -16,6 +16,8 @@ namespace gotchangpdf
 		PageAnnotations::PageAnnotations(syntax::MixedArrayObjectPtr root) : HighLevelObject(root) {}
 		AnnotationBase::~AnnotationBase() {}
 
+		AnnotationBase::Type LinkAnnotation::GetType() const noexcept { return Type::Link; }
+
 		types::uinteger PageAnnotations::Size() const { return _obj->Size(); }
 		AnnotationPtr PageAnnotations::At(types::uinteger index) const
 		{
