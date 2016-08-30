@@ -11,6 +11,37 @@ namespace gotchangpdf
 		class AnnotationBase : public HighLevelObject<syntax::DictionaryObjectPtr>
 		{
 		public:
+			enum Type
+			{
+				Text = 0,
+				Link,
+				FreeText,
+				Line,
+				Square,
+				Circle,
+				Polygon,
+				PolyLine,
+				Highlight,
+				Underline,
+				Squiggly,
+				StrikeOut,
+				RubberStamp,
+				Caret,
+				Ink,
+				Popup,
+				FileAttachment,
+				Sound,
+				Movie,
+				Widget,
+				Screen,
+				PrinterMark,
+				TrapNetwork,
+				Watermark,
+				TripleD,
+				Redact
+			};
+
+		public:
 			explicit AnnotationBase(syntax::DictionaryObjectPtr root);
 
 			static AnnotationBase* Create(syntax::DictionaryObjectPtr root, WeakReference<Document> doc);
