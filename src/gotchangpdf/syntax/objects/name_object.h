@@ -229,6 +229,7 @@ namespace gotchangpdf
 			extern const syntax::NameObjectPtr Annot;
 			extern const syntax::NameObjectPtr Annots;
 			extern const syntax::NameObjectPtr Link;
+			extern const syntax::NameObjectPtr D;
 		}
 	}
 }

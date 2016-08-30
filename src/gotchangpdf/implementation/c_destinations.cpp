@@ -8,7 +8,7 @@ using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Destination_GetPageNumber(DestinationHandle handle, PIntegerHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Destination_GetPageNumber(DestinationHandle handle, PObjectHandle result)
 {
 	DestinationBase* obj = reinterpret_cast<DestinationBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -16,9 +16,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Destination_GetPageNumber(Destina
 
 	try
 	{
-		auto direct = obj->GetPageNumber();
+		auto direct = obj->GetPage();
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<IntegerHandle>(ptr);
+		*result = reinterpret_cast<ObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }

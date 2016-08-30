@@ -417,14 +417,14 @@ error_type process_named_destinations(NamedDestinationsHandle obj, int nested)
 
 error_type process_destination(DestinationHandle obj, int nested)
 {
-	IntegerHandle page_number = NULL;
+	ObjectHandle page = NULL;
 
 	print_spaces(nested);
 	printf("Destination begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Destination_GetPageNumber(obj, &page_number));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(page_number, nested + 1));
-	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(page_number));
+	RETURN_ERROR_IF_NOT_SUCCESS(Destination_GetPageNumber(obj, &page));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_object(page, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(page));
 
 	print_spaces(nested);
 	printf("Destination end\n");

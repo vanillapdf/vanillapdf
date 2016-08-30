@@ -10,7 +10,7 @@ namespace gotchangpdf
 {
 	namespace semantics
 	{
-		class DestinationBase : public HighLevelObject<syntax::MixedArrayObjectPtr>
+		class DestinationBase : public HighLevelObject<syntax::ObjectPtr>
 		{
 		public:
 			enum Type
@@ -27,9 +27,15 @@ namespace gotchangpdf
 
 		public:
 			explicit DestinationBase(syntax::MixedArrayObjectPtr root);
-			static DestinationBase* Create(syntax::MixedArrayObjectPtr root);
+			explicit DestinationBase(syntax::DictionaryObjectPtr root);
 
-			syntax::IntegerObjectPtr GetPageNumber() const;
+			static DestinationBase* Create(syntax::MixedArrayObjectPtr root);
+			static DestinationBase* Create(syntax::DictionaryObjectPtr root);
+			static DestinationBase* Create(syntax::ObjectPtr root);
+
+			syntax::ObjectPtr GetPage() const;
+			bool HasAttribute(const syntax::NameObject& name) const;
+			syntax::ObjectPtr GetAttribute(const syntax::NameObject& name) const;
 
 			virtual ~DestinationBase() = 0;
 		};
@@ -38,48 +44,56 @@ namespace gotchangpdf
 		{
 		public:
 			explicit XYZDestination(syntax::MixedArrayObjectPtr root);
+			explicit XYZDestination(syntax::DictionaryObjectPtr root);
 		};
 
 		class FitDestination : public DestinationBase
 		{
 		public:
 			explicit FitDestination(syntax::MixedArrayObjectPtr root);
+			explicit FitDestination(syntax::DictionaryObjectPtr root);
 		};
 
 		class FitHorizontalDestination : public DestinationBase
 		{
 		public:
 			explicit FitHorizontalDestination(syntax::MixedArrayObjectPtr root);
+			explicit FitHorizontalDestination(syntax::DictionaryObjectPtr root);
 		};
 
 		class FitVerticalDestination : public DestinationBase
 		{
 		public:
 			explicit FitVerticalDestination(syntax::MixedArrayObjectPtr root);
+			explicit FitVerticalDestination(syntax::DictionaryObjectPtr root);
 		};
 
 		class FitRectangleDestination : public DestinationBase
 		{
 		public:
 			explicit FitRectangleDestination(syntax::MixedArrayObjectPtr root);
+			explicit FitRectangleDestination(syntax::DictionaryObjectPtr root);
 		};
 
 		class FitBoundingBoxDestination : public DestinationBase
 		{
 		public:
 			explicit FitBoundingBoxDestination(syntax::MixedArrayObjectPtr root);
+			explicit FitBoundingBoxDestination(syntax::DictionaryObjectPtr root);
 		};
 
 		class FitBoundingBoxHorizontalDestination : public DestinationBase
 		{
 		public:
 			explicit FitBoundingBoxHorizontalDestination(syntax::MixedArrayObjectPtr root);
+			explicit FitBoundingBoxHorizontalDestination(syntax::DictionaryObjectPtr root);
 		};
 
 		class FitBoundingBoxVerticalDestination : public DestinationBase
 		{
 		public:
 			explicit FitBoundingBoxVerticalDestination(syntax::MixedArrayObjectPtr root);
+			explicit FitBoundingBoxVerticalDestination(syntax::DictionaryObjectPtr root);
 		};
 
 		class NamedDestinations : public HighLevelObject<syntax::DictionaryObjectPtr>

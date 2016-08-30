@@ -24,7 +24,7 @@ extern "C"
 		DestinationType_FitBoundingBoxVertical,
 	} DestinationType, *PDestinationType;
 
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Destination_GetPageNumber(DestinationHandle handle, PIntegerHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Destination_GetPageNumber(DestinationHandle handle, PObjectHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Destination_Release(DestinationHandle handle);
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDestinationsHandle handle, NameHandle name, out_boolean_type result);
