@@ -190,6 +190,8 @@ namespace gotchangpdf
 						OutputNamedDestinationsPtr oritinal_destinations_ptr;
 						bool has_original_destinations = original_catalog->Destinations(oritinal_destinations_ptr);
 						if (!has_original_destinations) {
+							// TODO we need to create named destination tree
+							assert(false && "Construct named destination tree");
 							break;
 						}
 
@@ -204,13 +206,14 @@ namespace gotchangpdf
 						OutputNamedDestinationsPtr other_destinations_ptr;
 						bool has_other_destinations = other_catalog->Destinations(other_destinations_ptr);
 						if (!has_other_destinations) {
+							assert(false && "Found named destination but catalog does not have destinations tree");
 							break;
 						}
 
 						auto other_destinations = other_destinations_ptr.GetValue();
 						bool other_contains = other_destinations->Contains(destination_name);
 						if (!other_contains) {
-							// This is really interesting
+							assert(false && "Found named destination but catalog does not have corresponding entry");
 							continue;
 						}
 
