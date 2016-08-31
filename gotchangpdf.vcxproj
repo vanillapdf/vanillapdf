@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\gotchangpdf\c_annotations.h" />
     <ClInclude Include="include\gotchangpdf\c_array_object.h" />
     <ClInclude Include="include\gotchangpdf\c_boolean_object.h" />
     <ClInclude Include="include\gotchangpdf\c_buffer.h" />
@@ -132,6 +133,7 @@
     <ClInclude Include="src\gotchangpdf\syntax\utils\zlib_wrapper.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\gotchangpdf\implementation\c_annotations.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_array_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_boolean_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_buffer.cpp" />

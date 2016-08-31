@@ -15,7 +15,7 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObjectHandle handle, PContentsHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetParent(PageObjectHandle handle, PPageTreeHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetResources(PageObjectHandle handle, PResourceDictionaryHandle result);
-	//GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetAnnotations(PageObjectHandle handle, PContentsHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetAnnotations(PageObjectHandle handle, PPageAnnotationsHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetMediaBox(PageObjectHandle handle, PRectangleHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_Release(PageObjectHandle handle);
 

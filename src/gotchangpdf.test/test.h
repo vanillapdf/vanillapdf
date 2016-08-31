@@ -78,6 +78,9 @@ error_type process_outline_item_color(OutlineItemColorHandle obj, int nested);
 error_type process_outline_item_flags(OutlineItemFlagsHandle obj, int nested);
 error_type process_named_destinations(NamedDestinationsHandle obj, int nested);
 error_type process_destination(DestinationHandle obj, int nested);
+error_type process_page_annotations(PageAnnotationsHandle obj, int nested);
+error_type process_annotation(AnnotationHandle obj, int nested);
+error_type process_link_annotation(LinkAnnotationHandle obj, int nested);
 
 /* Common data structures */
 error_type process_rectangle(RectangleHandle obj, int nested);

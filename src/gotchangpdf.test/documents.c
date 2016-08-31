@@ -316,10 +316,79 @@ error_type process_rectangle(RectangleHandle obj, int nested)
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
+error_type process_link_annotation(LinkAnnotationHandle obj, int nested)
+{
+	DestinationHandle destination = NULL;
+
+	print_spaces(nested);
+	printf("Link annotation begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(LinkAnnotation_GetDestination(obj, &destination),
+		process_destination(destination, nested + 1),
+		Destination_Release(destination));
+
+	print_spaces(nested);
+	printf("Link annotation end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_annotation(AnnotationHandle obj, int nested)
+{
+	AnnotationType type;
+	LinkAnnotationHandle link_annotation = NULL;
+
+	print_spaces(nested);
+	printf("Annotation begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Annotation_GetType(obj, &type));
+
+	switch (type) {
+	case AnnotationType_Link:
+		RETURN_ERROR_IF_NOT_SUCCESS(Annotation_ToLink(obj, &link_annotation));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_link_annotation(link_annotation, nested + 1));
+		break;
+	default:
+		print_spaces(nested + 1);
+		printf("Unrecognized annotation type\n");
+		return GOTCHANG_PDF_ERROR_GENERAL;
+	}
+
+	print_spaces(nested);
+	printf("Annotation end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_page_annotations(PageAnnotationsHandle obj, int nested)
+{
+	size_type annotation_count = 0;
+	size_type i = 0;
+
+	print_spaces(nested);
+	printf("Page annotations begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(PageAnnotations_Size(obj, &annotation_count));
+
+	for (i = 0; i < annotation_count; ++i) {
+		AnnotationHandle annotation = NULL;
+
+		RETURN_ERROR_IF_NOT_SUCCESS(PageAnnotations_At(obj, i, &annotation));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_annotation(annotation, nested + 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(Annotation_Release(annotation));
+	}
+
+	print_spaces(nested);
+	printf("Page annotations end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
 error_type process_page(PageObjectHandle obj, int nested)
 {
 	ContentsHandle contents = NULL;
 	RectangleHandle media_box = NULL;
+	PageAnnotationsHandle annotations = NULL;
 
 	print_spaces(nested);
 	printf("Page begin\n");
@@ -331,6 +400,10 @@ error_type process_page(PageObjectHandle obj, int nested)
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageObject_GetMediaBox(obj, &media_box),
 		process_rectangle(media_box, nested + 1),
 		Rectangle_Release(media_box));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageObject_GetAnnotations(obj, &annotations),
+		process_page_annotations(annotations, nested + 1),
+		PageAnnotations_Release(annotations));
 
 	print_spaces(nested);
 	printf("Page end\n");

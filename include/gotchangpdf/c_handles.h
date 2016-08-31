@@ -62,6 +62,9 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(ResourceDictionary);
 	DECLARE_OBJECT_HANDLE(NamedDestinations);
 	DECLARE_OBJECT_HANDLE(Destination);
+	DECLARE_OBJECT_HANDLE(PageAnnotations);
+	DECLARE_OBJECT_HANDLE(Annotation);
+	DECLARE_OBJECT_HANDLE(LinkAnnotation);
 
 	/* Common data structures */
 	DECLARE_OBJECT_HANDLE(Date);

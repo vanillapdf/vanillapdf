@@ -6,6 +6,7 @@
 #include "rectangle.h"
 #include "resource_dictionary.h"
 #include "contents.h"
+#include "annotations.h"
 
 namespace gotchangpdf
 {

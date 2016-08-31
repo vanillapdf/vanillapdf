@@ -22,6 +22,7 @@
 #include "c_viewer_preferences.h"
 #include "c_outline.h"
 #include "c_destinations.h"
+#include "c_annotations.h"
 
 /* common data structures*/
 #include "c_date.h"

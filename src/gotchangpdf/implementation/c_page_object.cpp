@@ -95,7 +95,23 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetResources(PageObjec
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-//GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetAnnotations(PageObjectHandle handle, PContentsHandle result);
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetAnnotations(PageObjectHandle handle, PPageAnnotationsHandle result)
+{
+	PageObject* obj = reinterpret_cast<PageObject*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		OutputPageAnnotationsPtr annots;
+		bool contains = obj->GetAnnotations(annots);
+		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		auto ptr = annots.AddRefGet();
+		*result = reinterpret_cast<PageAnnotationsHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
 GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetMediaBox(PageObjectHandle handle, PRectangleHandle result)
 {
 	PageObject* obj = reinterpret_cast<PageObject*>(handle);
