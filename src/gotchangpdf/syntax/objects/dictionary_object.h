@@ -70,8 +70,8 @@ namespace gotchangpdf
 			using IteratorPtr = DeferredIterator<Iterator>;
 
 			// std container
-			const_iterator begin(void) const _NOEXCEPT { return _list.begin(); }
-			const_iterator end(void) const _NOEXCEPT { return _list.end(); }
+			const_iterator begin(void) const noexcept { return _list.begin(); }
+			const_iterator end(void) const noexcept { return _list.end(); }
 			iterator insert(const_iterator pos, const value_type & value) { return _list.insert(pos, value); }
 
 		protected:
