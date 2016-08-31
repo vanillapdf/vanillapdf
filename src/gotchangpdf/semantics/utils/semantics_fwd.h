@@ -51,6 +51,7 @@ namespace gotchangpdf
 		class DeveloperExtensions; using DeveloperExtensionsPtr = Deferred<DeveloperExtensions>; using OutputDeveloperExtensionsPtr = OutputPointer<DeveloperExtensionsPtr>;
 		class PageLabel; using PageLabelPtr = Deferred<PageLabel>; using OutputPageLabelPtr = OutputPointer<PageLabelPtr>;
 		class PageLabels; using PageLabelsPtr = Deferred<PageLabels>; using OutputPageLabelsPtr = OutputPointer<PageLabelsPtr>;
+		class NameDictionary; using NameDictionaryPtr = Deferred<NameDictionary>; using OutputNameDictionaryPtr = OutputPointer<NameDictionaryPtr>;
 
 		// Destinations
 		class DestinationBase; using DestinationPtr = Deferred<DestinationBase>; using OutputDestinationPtr = OutputPointer<DestinationPtr>;

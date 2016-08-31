@@ -10,6 +10,7 @@
 #include "semantic_utils.h"
 #include "outline.h"
 #include "destinations.h"
+#include "name_dictionary.h"
 
 namespace gotchangpdf
 {
@@ -99,14 +100,18 @@ namespace gotchangpdf
 			return true;
 		}
 
-		//NameDictionaryPtr Catalog::Names(void) const
-		//{
-		//	if (!_obj->Contains(constant::Name::Names))
-		//		throw OptionalEntryMissingException(_obj, constant::Name::Names);
+		bool Catalog::Names(OutputNameDictionaryPtr& result) const
+		{
+			if (!_obj->Contains(constant::Name::Names))
+				return false;
 
-		//	auto names = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Names);
-		//	return NameDictionaryPtr(names);
-		//}
+			auto names = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Names);
+			NameDictionaryPtr dictionary(names);
+			dictionary->SetDocument(GetDocument());
+
+			result = dictionary;
+			return true;
+		}
 
 		bool Catalog::Destinations(OutputNamedDestinationsPtr& result) const
 		{
