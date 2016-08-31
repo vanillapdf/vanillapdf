@@ -89,7 +89,7 @@ namespace gotchangpdf
 
 				OutputNamedDestinationsPtr destinations_ptr;
 				bool has_destinations = catalog->Destinations(destinations_ptr);
-				if (has_destinations) {
+				if (!has_destinations) {
 					return false;
 				}
 
