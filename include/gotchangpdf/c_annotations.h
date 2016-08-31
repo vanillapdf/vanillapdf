@@ -39,7 +39,7 @@ extern "C"
 		AnnotationType_TrapNetwork,
 		AnnotationType_Watermark,
 		AnnotationType_TripleD,
-		AnnotationType_Redact,
+		AnnotationType_Redaction,
 	} AnnotationType, *PAnnotationType;
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Annotation_GetType(AnnotationHandle handle, PAnnotationType result);

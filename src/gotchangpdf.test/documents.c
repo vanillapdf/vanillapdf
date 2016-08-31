@@ -348,6 +348,36 @@ error_type process_annotation(AnnotationHandle obj, int nested)
 		RETURN_ERROR_IF_NOT_SUCCESS(Annotation_ToLink(obj, &link_annotation));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_link_annotation(link_annotation, nested + 1));
 		break;
+
+	case AnnotationType_Text:
+	case AnnotationType_FreeText:
+	case AnnotationType_Line:
+	case AnnotationType_Square:
+	case AnnotationType_Circle:
+	case AnnotationType_Polygon:
+	case AnnotationType_PolyLine:
+	case AnnotationType_Highlight:
+	case AnnotationType_Underline:
+	case AnnotationType_Squiggly:
+	case AnnotationType_StrikeOut:
+	case AnnotationType_RubberStamp:
+	case AnnotationType_Caret:
+	case AnnotationType_Ink:
+	case AnnotationType_Popup:
+	case AnnotationType_FileAttachment:
+	case AnnotationType_Sound:
+	case AnnotationType_Movie:
+	case AnnotationType_Widget:
+	case AnnotationType_Screen:
+	case AnnotationType_PrinterMark:
+	case AnnotationType_TrapNetwork:
+	case AnnotationType_Watermark:
+	case AnnotationType_TripleD:
+	case AnnotationType_Redaction:
+		print_spaces(nested + 1);
+		printf("Type: %d\n", type);
+		break;
+
 	default:
 		print_spaces(nested + 1);
 		printf("Unrecognized annotation type\n");

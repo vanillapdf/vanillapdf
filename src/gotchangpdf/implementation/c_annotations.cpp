@@ -65,8 +65,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Annotation_GetType(AnnotationHand
 		*result = AnnotationType_Watermark; break;
 	case AnnotationBase::Type::TripleD:
 		*result = AnnotationType_TripleD; break;
-	case AnnotationBase::Type::Redact:
-		*result = AnnotationType_Redact; break;
+	case AnnotationBase::Type::Redaction:
+		*result = AnnotationType_Redaction; break;
 	default:
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}

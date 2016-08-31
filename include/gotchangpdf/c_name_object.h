@@ -177,6 +177,32 @@ extern "C"
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_Annots;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_Link;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_D;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Text;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_FreeText;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Line;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Square;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Circle;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Polygon;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_PolyLine;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Highlight;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Underline;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Squiggly;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_StrikeOut;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_RubberStamp;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Caret;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Ink;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Popup;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_FileAttachment;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Sound;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Movie;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Widget;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Screen;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_PrinterMark;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_TrapNetwork;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Watermark;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_TripleD;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Redact;
+
 
 #ifdef __cplusplus
 };

@@ -230,6 +230,31 @@ namespace gotchangpdf
 			extern const syntax::NameObjectPtr Annots;
 			extern const syntax::NameObjectPtr Link;
 			extern const syntax::NameObjectPtr D;
+			extern const syntax::NameObjectPtr Text;
+			extern const syntax::NameObjectPtr FreeText;
+			extern const syntax::NameObjectPtr Line;
+			extern const syntax::NameObjectPtr Square;
+			extern const syntax::NameObjectPtr Circle;
+			extern const syntax::NameObjectPtr Polygon;
+			extern const syntax::NameObjectPtr PolyLine;
+			extern const syntax::NameObjectPtr Highlight;
+			extern const syntax::NameObjectPtr Underline;
+			extern const syntax::NameObjectPtr Squiggly;
+			extern const syntax::NameObjectPtr StrikeOut;
+			extern const syntax::NameObjectPtr RubberStamp;
+			extern const syntax::NameObjectPtr Caret;
+			extern const syntax::NameObjectPtr Ink;
+			extern const syntax::NameObjectPtr Popup;
+			extern const syntax::NameObjectPtr FileAttachment;
+			extern const syntax::NameObjectPtr Sound;
+			extern const syntax::NameObjectPtr Movie;
+			extern const syntax::NameObjectPtr Widget;
+			extern const syntax::NameObjectPtr Screen;
+			extern const syntax::NameObjectPtr PrinterMark;
+			extern const syntax::NameObjectPtr TrapNetwork;
+			extern const syntax::NameObjectPtr Watermark;
+			extern const syntax::NameObjectPtr TripleD;
+			extern const syntax::NameObjectPtr Redact;
 		}
 	}
 }
