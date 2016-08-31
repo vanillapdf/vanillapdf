@@ -26,6 +26,7 @@ namespace gotchangpdf
 
 			bool Equals(const StringObjectBase& other) const { return GetValue() == other.GetValue();	}
 			bool operator==(const StringObjectBase& other) const { return Equals(other); }
+			bool operator<(const StringObjectBase& other) const { return GetValue() < other.GetValue(); }
 		};
 
 		class HexadecimalStringObject : public StringObjectBase, public IModifyObserver
@@ -87,6 +88,16 @@ namespace gotchangpdf
 		public:
 			StringObjectPtr();
 		};
+
+		inline bool operator==(const Deferred<syntax::StringObjectBase>& left, const Deferred<syntax::StringObjectBase>& right)
+		{
+			return *left == *right;
+		}
+
+		inline bool operator<(const Deferred<syntax::StringObjectBase>& left, const Deferred<syntax::StringObjectBase>& right)
+		{
+			return *left < *right;
+		}
 	}
 }
 
