@@ -1,5 +1,6 @@
 #include "precompiled.h"
 #include "destinations.h"
+#include "document.h"
 
 #include "exception.h"
 #include "semantic_exceptions.h"
@@ -76,7 +77,6 @@ namespace gotchangpdf
 			}
 
 			if (type == constant::Name::Fit) {
-				return new FitDestination(root);
 				auto result = std::make_unique<FitDestination>(root);
 				result->SetDocument(doc);
 				return result.release();
