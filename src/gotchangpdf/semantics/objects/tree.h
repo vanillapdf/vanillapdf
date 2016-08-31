@@ -138,7 +138,8 @@ namespace gotchangpdf
 				{
 					auto root = ConvertUtils<TreeNodeBasePtr>::ConvertTo<TreeNodeRootPtr>(node);
 					if (root->HasKids()) {
-						for (auto item : *root->Kids()) {
+						auto kids = root->Kids();
+						for (auto item : *kids) {
 							if (ContainsInternal(item, key))
 								return true;
 						}
@@ -196,7 +197,8 @@ namespace gotchangpdf
 				{
 					auto root = ConvertUtils<TreeNodeBasePtr>::ConvertTo<TreeNodeRootPtr>(node);
 					if (root->HasKids()) {
-						for (auto item : *root->Kids()) {
+						auto kids = root->Kids();
+						for (auto item : *kids) {
 							if (ContainsInternal(item, key))
 								return FindInternal(item, key);
 						}
