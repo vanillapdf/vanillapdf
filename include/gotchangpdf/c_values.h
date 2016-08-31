@@ -31,8 +31,8 @@ typedef uint16_t* out_ushort_type;
 typedef int64_t offset_type;
 typedef int64_t* out_offset_type;
 
-typedef int64_t size_type;
-typedef int64_t* out_size_type;
+typedef size_t size_type;
+typedef size_t* out_size_type;
 
 typedef int64_t bigint_type;
 typedef int64_t* out_bigint_type;
@@ -42,9 +42,6 @@ typedef uint64_t* out_biguint_type;
 
 typedef const char* string_type;
 typedef const char** out_string_type;
-
-typedef size_t string_size_type;
-typedef size_t* out_string_size_type;
 
 #ifdef __cplusplus
 extern "C"

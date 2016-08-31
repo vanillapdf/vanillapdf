@@ -51,7 +51,7 @@ error_type process_string_object(StringHandle string_handle, integer_type page_n
 {
 	BufferHandle string_buffer = NULL;
 	string_type string_data = NULL;
-	string_size_type string_size = 0;
+	size_type string_size = 0;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_GetValue(string_handle, &string_buffer));
 	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(string_buffer, &string_data, &string_size));

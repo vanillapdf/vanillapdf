@@ -11,7 +11,7 @@ error_type process_buffer(BufferHandle buffer, int nested)
 {
 	string_type data = NULL;
 	char* local_string = NULL;
-	string_size_type size = 0;
+	size_type size = 0;
 	size_t size_converted = 0;
 	size_t print_size = 0;
 
