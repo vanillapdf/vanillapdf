@@ -85,31 +85,31 @@ namespace gotchangpdf
 
 		AnnotationBase* AnnotationBase::Create(syntax::DictionaryObjectPtr root, WeakReference<Document> doc)
 		{
-			if (!root->Contains(constant::Name::Type)) {
-				throw GeneralException("Dictionary does not contain type");
+			// Verify type, if it is included
+			if (root->Contains(constant::Name::Type)) {
+				syntax::ObjectPtr type_obj = root->Find(constant::Name::Type);
+				if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(type_obj)) {
+					throw GeneralException("Invalid annotation type");
+				}
+
+				syntax::NameObjectPtr type = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(type_obj);
+
+				if (type != constant::Name::Annot) {
+					throw GeneralException("Invalid annotation type");
+				}
 			}
 
 			if (!root->Contains(constant::Name::Subtype)) {
 				throw GeneralException("Dictionary does not contain subtype");
 			}
 
-			syntax::ObjectPtr type_obj = root->Find(constant::Name::Type);
 			syntax::ObjectPtr subtype_obj = root->Find(constant::Name::Subtype);
-
-			if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(type_obj)) {
-				throw GeneralException("Invalid annotation type");
-			}
 
 			if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(subtype_obj)) {
 				throw GeneralException("Invalid annotation subtype");
 			}
 
-			syntax::NameObjectPtr type = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(type_obj);
 			syntax::NameObjectPtr subtype = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(subtype_obj);
-
-			if (type != constant::Name::Annot) {
-				throw GeneralException("Invalid annotation type");
-			}
 
 			if (subtype == constant::Name::Text) {
 				auto result = std::make_unique<TextAnnotation>(root);
