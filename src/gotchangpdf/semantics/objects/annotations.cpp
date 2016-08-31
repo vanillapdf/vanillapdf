@@ -2,6 +2,7 @@
 #include "annotations.h"
 #include "destinations.h"
 #include "document.h"
+#include "name_dictionary.h"
 
 #include "exception.h"
 #include "semantic_exceptions.h"
@@ -283,6 +284,37 @@ namespace gotchangpdf
 			if (syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(dest_obj)) {
 				auto dict_obj = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(dest_obj);
 				result = DestinationBase::Create(dict_obj, GetDocument());
+				return true;
+			}
+
+			if (syntax::ObjectUtils::IsType<syntax::StringObjectPtr>(dest_obj)) {
+				auto document_ref = GetDocument();
+
+				assert(!document_ref.IsEmpty() && "Document reference was not set");
+				if (!document_ref.IsActive()) {
+					return false;
+				}
+
+				DocumentPtr document = document_ref.GetReference();
+				auto catalog = document->GetDocumentCatalog();
+
+				OutputNameDictionaryPtr name_dictionary_ptr;
+				bool has_dictionary = catalog->Names(name_dictionary_ptr);
+				if (!has_dictionary) {
+					return false;
+				}
+
+				auto name_dictionary = name_dictionary_ptr.GetValue();
+				auto destinations = name_dictionary->Dests();
+
+				auto destination_name = syntax::ObjectUtils::ConvertTo<syntax::StringObjectPtr>(dest_obj);
+
+				assert(destinations->Contains(destination_name) && "Referenced destination does not exist");
+				if (!destinations->Contains(destination_name)) {
+					return false;
+				}
+
+				result = destinations->Find(destination_name);
 				return true;
 			}
 
