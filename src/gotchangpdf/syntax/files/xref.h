@@ -174,6 +174,50 @@ namespace gotchangpdf
 		class XrefBase : public IUnknown, public IModifyObserver
 		{
 		public:
+			using map_type = std::unordered_map<types::big_uint, XrefEntryBasePtr>;
+
+		public:
+			class Iterator : public IUnknown
+			{
+			public:
+				typedef map_type::const_iterator::value_type value_type;
+				typedef map_type::const_iterator::difference_type difference_type;
+				typedef map_type::const_iterator::pointer pointer;
+				typedef map_type::const_iterator::reference reference;
+				typedef map_type::const_iterator::iterator_category iterator_category;
+
+			public:
+				Iterator() = default;
+				Iterator(map_type::const_iterator it) : _it(it) {}
+
+				const Iterator& operator++()
+				{
+					++_it;
+					return *this;
+				}
+
+				const Iterator operator++(int)
+				{
+					Iterator temp(_it);
+					++_it;
+					return temp;
+				}
+
+				map_type::key_type Key() const { return _it->first; }
+				map_type::mapped_type Value() const { return _it->second; }
+
+				bool operator==(const Iterator& other) const
+				{
+					return _it == other._it;
+				}
+
+			private:
+				map_type::const_iterator _it;
+			};
+
+			using IteratorPtr = DeferredIterator<Iterator>;
+
+		public:
 			enum class Type
 			{
 				Table = 0,
@@ -197,10 +241,12 @@ namespace gotchangpdf
 			types::stream_offset GetLastXrefOffset() const noexcept { return _last_xref_offset; }
 			void SetLastXrefOffset(types::stream_offset offset) noexcept { _last_xref_offset = offset; }
 
+			IteratorPtr Begin(void) const noexcept { return _entries.begin(); }
+			IteratorPtr End(void) const noexcept { return _entries.end(); }
+
 			void Add(XrefEntryBasePtr entry);
 			bool Remove(types::big_uint obj_number);
 			size_t Size(void) const noexcept;
-			XrefEntryBasePtr At(size_t at);
 			XrefEntryBasePtr Find(types::big_uint obj_number) const;
 			bool Contains(types::big_uint obj_number) const;
 			std::vector<XrefEntryBasePtr> Entries(void) const;
@@ -210,7 +256,7 @@ namespace gotchangpdf
 
 		protected:
 			std::weak_ptr<File> _file;
-			std::unordered_map<types::big_uint, XrefEntryBasePtr> _entries;
+			map_type _entries;
 			types::stream_offset _last_xref_offset = std::_BADOFF;
 			types::stream_offset _offset = std::_BADOFF;
 			DictionaryObjectPtr _trailer_dictionary;

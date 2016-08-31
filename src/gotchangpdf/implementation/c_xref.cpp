@@ -14,6 +14,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_TrailerDictionary(XrefHandle
 {
 	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try
 	{
@@ -28,36 +29,73 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_LastXrefOffset(XrefHandle ha
 {
 	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	*result = xref->GetLastXrefOffset();
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_Size(XrefHandle handle, out_integer_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_Iterator(XrefHandle handle, PXrefIteratorHandle result)
 {
-	XrefBase* table = reinterpret_cast<XrefBase*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(table);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-	*result = table->Size();
-	return GOTCHANG_PDF_ERROR_SUCCES;
-}
-
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_At(XrefHandle handle, integer_type at, PXrefEntryHandle result)
-{
-	XrefBase* table = reinterpret_cast<XrefBase*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(table);
+	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try
 	{
-		// TODO update interface to iterator
-		auto entries = table->Entries();
-		auto entry = entries.at(at);
+		auto begin = xref->Begin();
+		auto ptr = begin.AddRefGet();
+		*result = reinterpret_cast<XrefIteratorHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefIterator_GetValue(XrefIteratorHandle handle, PXrefEntryHandle result)
+{
+	XrefBase::Iterator* iterator = reinterpret_cast<XrefBase::Iterator*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto entry = iterator->Value();
 		auto ptr = entry.AddRefGet();
 		*result = reinterpret_cast<XrefEntryHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefIterator_IsValid(XrefIteratorHandle handle, XrefHandle xref_handle, out_boolean_type result)
+{
+	XrefBase::Iterator* iterator = reinterpret_cast<XrefBase::Iterator*>(handle);
+	XrefBase* xref = reinterpret_cast<XrefBase*>(xref_handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		if (*xref->End() == *iterator)
+			*result = GOTCHANG_PDF_FALSE;
+		else
+			*result = GOTCHANG_PDF_TRUE;
+
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefIterator_Next(XrefIteratorHandle handle)
+{
+	XrefBase::Iterator* iterator = reinterpret_cast<XrefBase::Iterator*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
+
+	try {
+		++(*iterator);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefIterator_Release(XrefIteratorHandle handle)
+{
+	return ObjectRelease<XrefBase::Iterator, XrefIteratorHandle>(handle);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_Release(XrefHandle handle)
@@ -324,6 +362,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_GetValue(XrefCh
 {
 	XrefChain::Iterator* iterator = reinterpret_cast<XrefChain::Iterator*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try {
 		auto entry = iterator->Value();
@@ -371,6 +410,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChain_Iterator(XrefChainHandl
 {
 	XrefChain* chain = reinterpret_cast<XrefChain*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(chain);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try
 	{

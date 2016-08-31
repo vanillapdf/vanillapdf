@@ -27,11 +27,14 @@ error_type process_file(FileHandle file, int nested)
 
 error_type process_xref(XrefHandle xref, int nested)
 {
-	integer_type i = 0, size = 0;
+	XrefIteratorHandle xref_iterator = NULL;
+	boolean_type valid = GOTCHANG_PDF_FALSE;
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Xref_Size(xref, &size));
+	RETURN_ERROR_IF_NOT_SUCCESS(Xref_Iterator(xref, &xref_iterator));
 
-	for (i = 0; i < size; ++i) {
+	while (GOTCHANG_PDF_ERROR_SUCCES == XrefIterator_IsValid(xref_iterator, xref, &valid)
+		&& GOTCHANG_PDF_TRUE == valid) {
+
 		XrefEntryType type;
 		XrefEntryHandle entry = NULL;
 		ObjectHandle obj = NULL;
@@ -39,7 +42,7 @@ error_type process_xref(XrefHandle xref, int nested)
 		XrefCompressedEntryHandle compressed_entry = NULL;
 		XrefUsedEntryHandle used_entry = NULL;
 
-		RETURN_ERROR_IF_NOT_SUCCESS(Xref_At(xref, i, &entry));
+		RETURN_ERROR_IF_NOT_SUCCESS(XrefIterator_GetValue(xref_iterator, &entry));
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_Type(entry, &type));
 
 		switch (type) {
@@ -61,14 +64,16 @@ error_type process_xref(XrefHandle xref, int nested)
 		case XrefEntryNull:
 			printf("Missing xref entry\n");
 			return GOTCHANG_PDF_ERROR_GENERAL;
-			break;
 		default:
 			printf("Unknown xref entry type\n");
 			return GOTCHANG_PDF_ERROR_GENERAL;
 		}
 
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_Release(entry));
+		RETURN_ERROR_IF_NOT_SUCCESS(XrefIterator_Next(xref_iterator));
 	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(XrefIterator_Release(xref_iterator));
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
