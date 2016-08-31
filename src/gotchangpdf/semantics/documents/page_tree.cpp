@@ -12,10 +12,23 @@ namespace gotchangpdf
 
 		//PageTree::PageTree() {}
 
-		PageTree::PageTree(DictionaryObjectPtr root) : HighLevelObject(root), _root(root)
+		PageTree::PageTree(DictionaryObjectPtr root) : HighLevelObject(root)
 		{
 			auto page_count = PageCount();
 			m_pages.resize(page_count);
+		}
+
+		types::uinteger PageTree::PageCount(void) const
+		{
+			auto root = PageTreeNodePtr(_obj);
+			auto result = root->KidCount()->SafeConvert<types::uinteger>();
+
+			if (_obj->Contains(constant::Name::Count)) {
+				auto count_obj = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::Count);
+				assert(count_obj->GetValue() == result);
+			}
+
+			return result;
 		}
 
 		PageObjectPtr PageTree::PageInternal(types::integer number) const
@@ -25,7 +38,10 @@ namespace gotchangpdf
 				return found_page;
 			}
 
-			auto node = _root;
+			auto root = PageTreeNodePtr(_obj);
+			root->SetDocument(GetDocument());
+
+			auto node = root;
 			types::integer current = 1;
 
 		dive:
@@ -95,7 +111,7 @@ namespace gotchangpdf
 			auto raw_obj = object->GetObject();
 			auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::Kids);
 			kids->Insert(IndirectObjectReferencePtr(raw_obj), index);
-			object->SetParent(_root);
+			object->SetParent(PageTreeNodePtr(_obj));
 			object->SetDocument(GetDocument());
 
 			UpdateKidsCount(kids->Size());
@@ -107,7 +123,7 @@ namespace gotchangpdf
 			auto raw_obj = object->GetObject();
 			auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::Kids);
 			kids->Append(IndirectObjectReferencePtr(raw_obj));
-			object->SetParent(_root);
+			object->SetParent(PageTreeNodePtr(_obj));
 			object->SetDocument(GetDocument());
 
 			UpdateKidsCount(kids->Size());
