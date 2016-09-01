@@ -159,6 +159,18 @@ namespace gotchangpdf
 				original_pages->Append(new_page);
 			}
 
+			/// Gather basic properties
+
+			OutputNamedDestinationsPtr original_destinations_ptr;
+			OutputNameDictionaryPtr original_name_dictionary_ptr;
+			OutputNamedDestinationsPtr other_destinations_ptr;
+			OutputNameDictionaryPtr other_name_dictionary_ptr;
+
+			bool has_original_destinations = original_catalog->Destinations(original_destinations_ptr);
+			bool has_original_name_dictionary = original_catalog->Names(original_name_dictionary_ptr);
+			bool has_other_destinations = other_catalog->Destinations(other_destinations_ptr);
+			bool has_other_name_dictionary = other_catalog->Names(other_name_dictionary_ptr);
+
 			// Fix missing named destinations
 			auto merged_pages_count = original_pages->PageCount();
 			for (decltype(other_page_count) i = original_page_count; i < merged_pages_count; ++i) {
@@ -166,45 +178,49 @@ namespace gotchangpdf
 
 				OutputPageAnnotationsPtr annots_ptr;
 				bool has_annots = new_page->GetAnnotations(annots_ptr);
-				if (has_annots) {
-					auto annots = annots_ptr.GetValue();
-					auto annots_size = annots->Size();
-					for (decltype(annots_size) j = 0; j < annots_size; ++j) {
-						auto annotation = annots->At(j);
-						auto raw_annotation = annotation->GetObject();
+				if (!has_annots) {
+					continue;
+				}
 
-						// Ignore annotations without destination
-						if (!raw_annotation->Contains(constant::Name::Dest)) {
-							continue;
-						}
+				auto annots = annots_ptr.GetValue();
+				auto annots_size = annots->Size();
+				for (decltype(annots_size) j = 0; j < annots_size; ++j) {
+					auto annotation = annots->At(j);
+					auto raw_annotation = annotation->GetObject();
 
-						auto destination_obj = raw_annotation->Find(constant::Name::Dest);
+					// Ignore annotations without destination
+					if (!raw_annotation->Contains(constant::Name::Dest)) {
+						continue;
+					}
 
-						// we care only for named destinations
-						if (!ObjectUtils::IsType<NameObjectPtr>(destination_obj)) {
-							continue;
-						}
+					auto destination_obj = raw_annotation->Find(constant::Name::Dest);
+					bool is_destination_name = ObjectUtils::IsType<NameObjectPtr>(destination_obj);
+					bool is_destination_string = ObjectUtils::IsType<StringObjectPtr>(destination_obj);
 
+					// We care only for names and strings
+					if (!is_destination_name && !is_destination_name) {
+						continue;
+					}
+
+					DestinationPtr other_destination;
+					if (is_destination_name) {
 						auto destination_name = ObjectUtils::ConvertTo<NameObjectPtr>(destination_obj);
 
-						OutputNamedDestinationsPtr oritinal_destinations_ptr;
-						bool has_original_destinations = original_catalog->Destinations(oritinal_destinations_ptr);
 						if (!has_original_destinations) {
 							// TODO we need to create named destination tree
 							assert(false && "Construct named destination tree");
 							break;
 						}
 
-						auto original_destinations = oritinal_destinations_ptr.GetValue();
+						auto original_destinations = original_destinations_ptr.GetValue();
 						bool original_contains = original_destinations->Contains(destination_name);
 						if (original_contains) {
+							// TODO this can also means that there is a name conflict
 							continue;
 						}
 
 						// Found unreferenced named destination
 
-						OutputNamedDestinationsPtr other_destinations_ptr;
-						bool has_other_destinations = other_catalog->Destinations(other_destinations_ptr);
 						if (!has_other_destinations) {
 							assert(false && "Found named destination but catalog does not have destinations tree");
 							break;
@@ -218,47 +234,113 @@ namespace gotchangpdf
 						}
 
 						auto other_destination = other_destinations->Find(destination_name);
-						auto other_destination_obj = other_destination->GetObject();
+					}
 
-						// Create only shallow copies
-						auto cloned_destination_obj = file->ShallowCopyObject(other_destination_obj);
-						auto cloned_destination = DestinationBase::Create(cloned_destination_obj, GetWeakReference<Document>());
-						auto cloned_destination_page = cloned_destination->GetPage();
+					if (is_destination_string) {
+						auto destination_string = ObjectUtils::ConvertTo<StringObjectPtr>(destination_obj);
 
-						if (ObjectUtils::IsType<IndirectObjectReferencePtr>(cloned_destination_page)) {
-							auto cloned_page_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(cloned_destination_page);
+						if (!has_original_name_dictionary) {
+							// TODO we need to create named destination tree
+							assert(false && "Construct named destination tree");
+							break;
+						}
 
-							// Find matching object for the other file and fix
-							bool found = false;
-							for (decltype(other_page_count) k = 0; k < other_page_count; ++k) {
-								auto other_page = other_pages->Page(k + 1);
-								auto other_obj = other_page->GetObject();
+						auto original_name_dictionary = original_name_dictionary_ptr.GetValue();
 
-								if (other_obj->GetObjectNumber() != cloned_page_reference->GetReferencedObjectNumber()
-									|| other_obj->GetGenerationNumber() != cloned_page_reference->GetReferencedGenerationNumber()) {
-									continue;
-								}
+						OutputNameTreePtr<DestinationPtr> original_destinations_ptr;
+						bool original_has_destinations = original_name_dictionary->Dests(original_destinations_ptr);
+						if (!original_has_destinations) {
+							assert(false && "Construct named destination tree");
+							break;
+						}
 
-								// k + 1 is page index in the other file
-								// we need to fix reference to point to object original_page_count + k + 1
+						auto original_destinations = original_destinations_ptr.GetValue();
+						bool original_contains = original_destinations->Contains(destination_string);
+						if (original_contains) {
+							// TODO this can also means that there is a name conflict
+							continue;
+						}
 
-								auto new_referenced_page = original_pages->Page(original_page_count + k + 1);
-								auto new_referenced_obj = new_referenced_page->GetObject();
-								cloned_page_reference->SetReferencedObject(new_referenced_obj);
-								found = true;
-								break;
+						// Found unreferenced named destination
+
+						if (!has_other_name_dictionary) {
+							assert(false && "Found named destination but catalog does not have names tree");
+							break;
+						}
+
+						auto other_name_dictionary = other_name_dictionary_ptr.GetValue();
+
+						OutputNameTreePtr<DestinationPtr> other_destinations_ptr;
+						bool has_other_destinations = other_name_dictionary->Dests(other_destinations_ptr);
+						if (!has_other_destinations) {
+							assert(false && "Found named destination but names tree does not have destinations");
+							break;
+						}
+
+						auto other_destinations = other_destinations_ptr.GetValue();
+						bool other_contains = other_destinations->Contains(destination_string);
+						if (!other_contains) {
+							assert(false && "Found named destination but name tree does not have corresponding entry");
+							continue;
+						}
+
+						auto other_destination = other_destinations->Find(destination_string);
+					}
+
+					auto other_destination_obj = other_destination->GetObject();
+
+					// Create only shallow copies
+					auto cloned_destination_obj = file->ShallowCopyObject(other_destination_obj);
+					auto cloned_destination = DestinationBase::Create(cloned_destination_obj, GetWeakReference<Document>());
+					auto cloned_destination_page = cloned_destination->GetPage();
+
+					if (ObjectUtils::IsType<IndirectObjectReferencePtr>(cloned_destination_page)) {
+						auto cloned_page_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(cloned_destination_page);
+
+						// Find matching object for the other file and fix
+						bool found = false;
+						for (decltype(other_page_count) k = 0; k < other_page_count; ++k) {
+							auto other_page = other_pages->Page(k + 1);
+							auto other_obj = other_page->GetObject();
+
+							if (other_obj->GetObjectNumber() != cloned_page_reference->GetReferencedObjectNumber()
+								|| other_obj->GetGenerationNumber() != cloned_page_reference->GetReferencedGenerationNumber()) {
+								continue;
 							}
 
-							assert(found && "Referenced object could not be found in the other file");
+							// k + 1 is page index in the other file
+							// we need to fix reference to point to object original_page_count + k + 1
+
+							auto new_referenced_page = original_pages->Page(original_page_count + k + 1);
+							auto new_referenced_obj = new_referenced_page->GetObject();
+							cloned_page_reference->SetReferencedObject(new_referenced_obj);
+							found = true;
+							break;
 						}
 
-						if (ObjectUtils::IsType<IntegerObjectPtr>(cloned_destination_page)) {
-							// Increment referring page number by number of pages from original document
-							auto cloned_page_index = ObjectUtils::ConvertTo<IntegerObjectPtr>(cloned_destination_page);
-							cloned_page_index->SetValue(cloned_page_index->GetValue() + original_page_count);
-						}
+						assert(found && "Referenced object could not be found in the other file");
+					}
 
+					if (ObjectUtils::IsType<IntegerObjectPtr>(cloned_destination_page)) {
+						// Increment referring page number by number of pages from original document
+						auto cloned_page_index = ObjectUtils::ConvertTo<IntegerObjectPtr>(cloned_destination_page);
+						cloned_page_index->SetValue(cloned_page_index->GetValue() + original_page_count);
+					}
+
+					if (is_destination_name) {
+						assert(has_original_destinations);
+						auto original_destinations = original_destinations_ptr.GetValue();
+						auto destination_name = ObjectUtils::ConvertTo<NameObjectPtr>(destination_obj);
 						original_destinations->Insert(destination_name, cloned_destination);
+					}
+
+					if (is_destination_string) {
+						assert(has_original_name_dictionary);
+						auto original_name_dictionary = original_name_dictionary_ptr.GetValue();
+						auto destination_string = ObjectUtils::ConvertTo<StringObjectPtr>(destination_obj);
+
+						// TODO name trees does not support insert yet
+						//original_name_dictionary->Insert(destination_string, cloned_destination);
 					}
 				}
 			}
