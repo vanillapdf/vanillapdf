@@ -14,15 +14,21 @@ namespace gotchangpdf
 		{
 		public:
 			explicit NameDictionary(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
-			NameTreePtr<DestinationPtr> Dests(void) const
+
+			bool Dests(OutputNameTreePtr<DestinationPtr>& result) const
 			{
+				if (!_obj->Contains(constant::Name::Dests)) {
+					return false;
+				}
+
 				auto dict = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Dests);
 				NameTreePtr<DestinationPtr> tree(
 					dict, [this](const syntax::ContainableObjectPtr& obj) {
 					return DestinationBase::Create(obj, GetDocument());
 				});
 
-				return tree;
+				result = tree;
+				return true;
 			}
 
 			//NameTreePtr AP(void) const;

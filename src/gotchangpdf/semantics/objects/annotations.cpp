@@ -305,8 +305,14 @@ namespace gotchangpdf
 				}
 
 				auto name_dictionary = name_dictionary_ptr.GetValue();
-				auto destinations = name_dictionary->Dests();
 
+				OutputNameTreePtr<DestinationPtr> destinations_ptr;
+				bool contains = name_dictionary->Dests(destinations_ptr);
+				if (!contains) {
+					return false;
+				}
+
+				auto destinations = destinations_ptr.GetValue();
 				auto destination_name = syntax::ObjectUtils::ConvertTo<syntax::StringObjectPtr>(dest_obj);
 
 				assert(destinations->Contains(destination_name) && "Referenced destination does not exist");

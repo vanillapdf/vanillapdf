@@ -14,8 +14,12 @@ namespace gotchangpdf
 
 		template <typename ValueT>
 		class NameTree;
+
 		template <typename ValueT>
 		using NameTreePtr = Deferred<NameTree<ValueT>>;
+
+		template <typename ValueT>
+		using OutputNameTreePtr = OutputPointer<NameTreePtr<ValueT>>;
 
 		template <typename ValueT>
 		class NumberTree;
