@@ -125,6 +125,81 @@ namespace gotchangpdf
 			writer.WriteIncremental(_holder->Value(), destination);
 		}
 
+		OutputNamedDestinationsPtr Document::CreateNamedDestinations(CatalogPtr catalog)
+		{
+			auto file = _holder->Value();
+			auto chain = file->GetXrefChain();
+			auto entry = chain->AllocateNewEntry();
+
+			DictionaryObjectPtr raw_dictionary;
+			raw_dictionary->SetObjectNumber(entry->GetObjectNumber());
+			raw_dictionary->SetGenerationNumber(entry->GetGenerationNumber());
+			raw_dictionary->SetFile(file);
+			raw_dictionary->SetIndirect();
+			raw_dictionary->SetInitialized();
+			entry->SetReference(raw_dictionary);
+			entry->SetInitialized();
+
+			auto raw_catalog = catalog->GetObject();
+
+			IndirectObjectReferencePtr ref(raw_dictionary);
+			raw_catalog->Insert(constant::Name::Dests, ref);
+
+			NamedDestinationsPtr result(raw_dictionary);
+			return result;
+		}
+
+		OutputNameDictionaryPtr Document::CreateNameDictionary(CatalogPtr catalog)
+		{
+			auto file = _holder->Value();
+			auto chain = file->GetXrefChain();
+			auto entry = chain->AllocateNewEntry();
+
+			DictionaryObjectPtr raw_dictionary;
+			raw_dictionary->SetObjectNumber(entry->GetObjectNumber());
+			raw_dictionary->SetGenerationNumber(entry->GetGenerationNumber());
+			raw_dictionary->SetFile(file);
+			raw_dictionary->SetIndirect();
+			raw_dictionary->SetInitialized();
+			entry->SetReference(raw_dictionary);
+			entry->SetInitialized();
+
+			auto raw_catalog = catalog->GetObject();
+
+			IndirectObjectReferencePtr ref(raw_dictionary);
+			raw_catalog->Insert(constant::Name::Names, ref);
+
+			NameDictionaryPtr result(raw_dictionary);
+			return result;
+		}
+
+		OutputNameTreePtr<DestinationPtr> Document::CreateNameTreeDestinations(NameDictionaryPtr dictionary)
+		{
+			auto file = _holder->Value();
+			auto chain = file->GetXrefChain();
+			auto entry = chain->AllocateNewEntry();
+
+			DictionaryObjectPtr raw_dictionary;
+			raw_dictionary->SetObjectNumber(entry->GetObjectNumber());
+			raw_dictionary->SetGenerationNumber(entry->GetGenerationNumber());
+			raw_dictionary->SetFile(file);
+			raw_dictionary->SetIndirect();
+			raw_dictionary->SetInitialized();
+			entry->SetReference(raw_dictionary);
+			entry->SetInitialized();
+
+			auto name_dictionary = dictionary->GetObject();
+
+			IndirectObjectReferencePtr ref(raw_dictionary);
+			name_dictionary->Insert(constant::Name::Dests, ref);
+
+			OutputNameTreePtr<DestinationPtr> result;
+			auto found_destinations = dictionary->Dests(result);
+			assert(found_destinations);
+
+			return result;
+		}
+
 		void Document::AppendContent(DocumentPtr other)
 		{
 			auto original_catalog = GetDocumentCatalog();
@@ -198,18 +273,19 @@ namespace gotchangpdf
 					bool is_destination_string = ObjectUtils::IsType<StringObjectPtr>(destination_obj);
 
 					// We care only for names and strings
-					if (!is_destination_name && !is_destination_name) {
+					if (!is_destination_name && !is_destination_string) {
 						continue;
 					}
 
-					DestinationPtr other_destination;
+					OutputDestinationPtr other_destination_ptr;
 					if (is_destination_name) {
 						auto destination_name = ObjectUtils::ConvertTo<NameObjectPtr>(destination_obj);
 
 						if (!has_original_destinations) {
-							// TODO we need to create named destination tree
-							assert(false && "Construct named destination tree");
-							break;
+							original_destinations_ptr = CreateNamedDestinations(original_catalog);
+							assert(!original_destinations_ptr.empty() && "CreateNamedDestinations returned empty result");
+
+							has_original_destinations = true;
 						}
 
 						auto original_destinations = original_destinations_ptr.GetValue();
@@ -233,29 +309,30 @@ namespace gotchangpdf
 							continue;
 						}
 
-						auto other_destination = other_destinations->Find(destination_name);
+						other_destination_ptr = other_destinations->Find(destination_name);
 					}
 
 					if (is_destination_string) {
 						auto destination_string = ObjectUtils::ConvertTo<StringObjectPtr>(destination_obj);
 
 						if (!has_original_name_dictionary) {
-							// TODO we need to create named destination tree
-							assert(false && "Construct named destination tree");
-							break;
+							original_name_dictionary_ptr = CreateNameDictionary(original_catalog);
+							assert(!original_name_dictionary_ptr.empty() && "CreateNameDictionary returned empty result");
+
+							has_original_name_dictionary = true;
 						}
 
 						auto original_name_dictionary = original_name_dictionary_ptr.GetValue();
 
-						OutputNameTreePtr<DestinationPtr> original_destinations_ptr;
-						bool original_has_destinations = original_name_dictionary->Dests(original_destinations_ptr);
-						if (!original_has_destinations) {
-							assert(false && "Construct named destination tree");
-							break;
+						OutputNameTreePtr<DestinationPtr> original_string_destinations_ptr;
+						bool original_has_string_destinations = original_name_dictionary->Dests(original_string_destinations_ptr);
+						if (!original_has_string_destinations) {
+							original_string_destinations_ptr = CreateNameTreeDestinations(original_name_dictionary);
+							assert(!original_string_destinations_ptr.empty() && "CreateNameTreeDestinations returned empty result");
 						}
 
-						auto original_destinations = original_destinations_ptr.GetValue();
-						bool original_contains = original_destinations->Contains(destination_string);
+						auto original_string_destinations = original_string_destinations_ptr.GetValue();
+						bool original_contains = original_string_destinations->Contains(destination_string);
 						if (original_contains) {
 							// TODO this can also means that there is a name conflict
 							continue;
@@ -270,23 +347,29 @@ namespace gotchangpdf
 
 						auto other_name_dictionary = other_name_dictionary_ptr.GetValue();
 
-						OutputNameTreePtr<DestinationPtr> other_destinations_ptr;
-						bool has_other_destinations = other_name_dictionary->Dests(other_destinations_ptr);
-						if (!has_other_destinations) {
+						OutputNameTreePtr<DestinationPtr> other_string_destinations_ptr;
+						bool has_other_string_destinations = other_name_dictionary->Dests(other_string_destinations_ptr);
+						if (!has_other_string_destinations) {
 							assert(false && "Found named destination but names tree does not have destinations");
 							break;
 						}
 
-						auto other_destinations = other_destinations_ptr.GetValue();
-						bool other_contains = other_destinations->Contains(destination_string);
+						auto other_string_destinations = other_string_destinations_ptr.GetValue();
+						bool other_contains = other_string_destinations->Contains(destination_string);
 						if (!other_contains) {
 							assert(false && "Found named destination but name tree does not have corresponding entry");
 							continue;
 						}
 
-						auto other_destination = other_destinations->Find(destination_string);
+						other_destination_ptr = other_string_destinations->Find(destination_string);
 					}
 
+					assert(!other_destination_ptr.empty() && "Should not happen");
+					if (other_destination_ptr.empty()) {
+						continue;
+					}
+
+					auto other_destination = other_destination_ptr.GetValue();
 					auto other_destination_obj = other_destination->GetObject();
 
 					// Create only shallow copies
@@ -339,8 +422,15 @@ namespace gotchangpdf
 						auto original_name_dictionary = original_name_dictionary_ptr.GetValue();
 						auto destination_string = ObjectUtils::ConvertTo<StringObjectPtr>(destination_obj);
 
-						// TODO name trees does not support insert yet
-						//original_name_dictionary->Insert(destination_string, cloned_destination);
+						OutputNameTreePtr<DestinationPtr> original_string_destinations_ptr;
+						bool has_original_string_destinations = original_name_dictionary->Dests(original_string_destinations_ptr);
+						if (!has_original_string_destinations) {
+							assert(false && "Found named destination but names tree does not have destinations");
+							continue;
+						}
+
+						auto original_string_destinations = original_string_destinations_ptr.GetValue();
+						original_string_destinations->Insert(destination_string, cloned_destination);
 					}
 				}
 			}
