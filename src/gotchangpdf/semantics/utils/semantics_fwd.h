@@ -9,8 +9,14 @@ namespace gotchangpdf
 	{
 		template <typename KeyT, typename ValueT>
 		class TreeBase;
+
 		template <typename KeyT, typename ValueT>
 		using TreeBasePtr = Deferred<TreeBase<KeyT, ValueT>>;
+
+		class TreeNodeBase; using TreeNodeBasePtr = Deferred<TreeNodeBase>;
+		class TreeNodeRoot; using TreeNodeRootPtr = Deferred<TreeNodeRoot>;
+		class TreeNodeIntermediate; using TreeNodeIntermediatePtr = Deferred<TreeNodeIntermediate>;
+		class TreeNodeLeaf; using TreeNodeLeafPtr = Deferred<TreeNodeLeaf>;
 
 		template <typename ValueT>
 		class NameTree;
