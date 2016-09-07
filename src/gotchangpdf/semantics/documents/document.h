@@ -36,6 +36,10 @@ namespace gotchangpdf
 			// Cache
 			mutable OutputCatalogPtr m_catalog;
 			mutable OutputDocumentInfoPtr m_info;
+
+			OutputNamedDestinationsPtr CreateNamedDestinations(CatalogPtr catalog);
+			OutputNameDictionaryPtr CreateNameDictionary(CatalogPtr catalog);
+			OutputNameTreePtr<DestinationPtr> CreateNameTreeDestinations(NameDictionaryPtr dictionary);
 		};
 	}
 }
