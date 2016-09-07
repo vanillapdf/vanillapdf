@@ -58,7 +58,7 @@ namespace gotchangpdf
 			IteratorPtr End(void) const { return _list.end(); }
 			void Append(list_type::value_type item) { _list.push_back(item); }
 
-			XrefEntryBasePtr AllocateNewEntry();
+			XrefUsedEntryBasePtr AllocateNewEntry();
 			XrefEntryBasePtr GetXrefEntry(types::big_uint objNumber, types::ushort genNumber);
 			bool Contains(types::big_uint objNumber, types::ushort genNumber) const;
 

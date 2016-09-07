@@ -99,17 +99,27 @@ namespace gotchangpdf
 			void SetNextFreeObjectNumber(types::big_uint value) noexcept { _obj_number = value; OnChanged(); }
 		};
 
-		class XrefUsedEntry : public XrefEntryBase, public IModifyObserver
+		class XrefUsedEntryBase : public XrefEntryBase
+		{
+		public:
+			using XrefEntryBase::XrefEntryBase;
+
+		public:
+			virtual ObjectPtr GetReference(void) = 0;
+			virtual void SetReference(ObjectPtr ref) = 0;
+		};
+
+		class XrefUsedEntry : public XrefUsedEntryBase, public IModifyObserver
 		{
 		public:
 			XrefUsedEntry(types::big_uint obj_number, types::ushort gen_number, types::stream_offset offset)
-				: XrefEntryBase(obj_number, gen_number), _offset(offset) {}
+				: XrefUsedEntryBase(obj_number, gen_number), _offset(offset) {}
 
 		public:
 			virtual Usage GetUsage(void) const noexcept override{ return XrefEntryBase::Usage::Used; }
 
-			ObjectPtr GetReference(void) { Initialize(); return _reference; }
-			void SetReference(ObjectPtr ref);
+			virtual ObjectPtr GetReference(void) override { Initialize(); return _reference; }
+			virtual void SetReference(ObjectPtr ref) override;
 
 			types::stream_offset GetOffset(void) const noexcept { return _offset; }
 			void SetOffset(types::stream_offset value) noexcept { _offset = value; OnChanged(); }
@@ -133,17 +143,17 @@ namespace gotchangpdf
 			types::stream_offset _offset = std::_BADOFF;
 		};
 
-		class XrefCompressedEntry : public XrefEntryBase, public IModifyObserver
+		class XrefCompressedEntry : public XrefUsedEntryBase, public IModifyObserver
 		{
 		public:
 			XrefCompressedEntry(types::big_uint obj_number, types::ushort gen_number, types::big_uint object_stream_number, types::uinteger index)
-				: XrefEntryBase(obj_number, gen_number), _object_stream_number(object_stream_number), _index(index) {}
+				: XrefUsedEntryBase(obj_number, gen_number), _object_stream_number(object_stream_number), _index(index) {}
 
 		public:
 			virtual Usage GetUsage(void) const noexcept override { return XrefEntryBase::Usage::Compressed; }
 
-			ObjectPtr GetReference(void) { Initialize(); return _reference; }
-			void SetReference(ObjectPtr ref);
+			virtual ObjectPtr GetReference(void) override { Initialize(); return _reference; }
+			virtual void SetReference(ObjectPtr ref) override;
 
 			types::big_uint GetObjectStreamNumber(void) const noexcept { return _object_stream_number; }
 			void SetObjectStreamNumber(types::uinteger value) noexcept { _object_stream_number = value; OnChanged(); }

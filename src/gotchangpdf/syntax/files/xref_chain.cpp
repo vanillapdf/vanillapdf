@@ -5,7 +5,7 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		XrefEntryBasePtr XrefChain::AllocateNewEntry()
+		XrefUsedEntryBasePtr XrefChain::AllocateNewEntry()
 		{
 			for (types::big_uint i = m_next_allocation; i < std::numeric_limits<types::big_uint>::max(); ++i) {
 
