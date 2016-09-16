@@ -202,7 +202,7 @@ extern "C"
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_Watermark;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_TripleD;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_Redact;
-
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_XRef;
 
 #ifdef __cplusplus
 };

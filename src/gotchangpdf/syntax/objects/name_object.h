@@ -255,6 +255,7 @@ namespace gotchangpdf
 			extern const syntax::NameObjectPtr Watermark;
 			extern const syntax::NameObjectPtr TripleD;
 			extern const syntax::NameObjectPtr Redact;
+			extern const syntax::NameObjectPtr XRef;
 		}
 	}
 }
