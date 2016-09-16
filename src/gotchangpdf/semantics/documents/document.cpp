@@ -3,6 +3,7 @@
 #include "file_writer.h"
 #include "contents.h"
 #include "annotations.h"
+#include "name_dictionary.h"
 
 namespace gotchangpdf
 {
