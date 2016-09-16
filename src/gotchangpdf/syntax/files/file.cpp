@@ -17,8 +17,6 @@ namespace gotchangpdf
 	{
 		using namespace std;
 
-		static const int invalid_xref_offset = -1;
-
 		std::shared_ptr<File> File::Open(const std::string& path)
 		{
 			return std::shared_ptr<File>(new File(path));
@@ -67,40 +65,65 @@ namespace gotchangpdf
 
 			_input = make_shared<FileDevice>();
 			_input->open(_full_path,
-				ios_base::in | ios_base::out | ios_base::binary | ios::ate);
+				ios::in | ios::binary | ios::ate);
 
 			if (!_input || !_input->good())
 				throw GeneralException("Could not open file");
 
+			// Opening the stream with ate option
 			auto file_size = _input->tellg();
+			
 			auto stream = Parser(shared_from_this(), *_input);
 
 			_header = stream.ReadHeader(0);
-			auto offset = GetLastXrefOffset(file_size);
-
-			if (invalid_xref_offset == offset) {
-				auto xref = stream.FindAllObjects();
-				_xref->Append(xref);
-				_initialized = true;
-				return;
-			}
 
 			try
 			{
+				auto offset = GetLastXrefOffset(file_size);
 				ReadXref(offset);
 			}
 			catch (NotSupportedException&) {
 				throw;
 			}
-			catch (...) {
-				auto xref = stream.FindAllObjects();
-				_xref->Append(xref);
+			catch (ExceptionBase&) {
+				LOG_ERROR(_filename) << "Could not parse xref chain, using fallback mechanism";
+
+				_xref = stream.FindAllObjects();
 			}
 
 			// After xref informations are parsed, check for encryption
-			auto dictionary = _xref->Begin()->Value()->GetTrailerDictionary();
-			if (dictionary->Contains(constant::Name::Encrypt)) {
-				_encryption_dictionary = dictionary->Find(constant::Name::Encrypt);
+			auto last_trailer_dictionary = _xref->Begin()->Value()->GetTrailerDictionary();
+			if (last_trailer_dictionary->Contains(constant::Name::Encrypt)) {
+				_encryption_dictionary = last_trailer_dictionary->Find(constant::Name::Encrypt);
+
+				if (ObjectUtils::IsType<IndirectObjectReferencePtr>(_encryption_dictionary)) {
+					auto reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(_encryption_dictionary);
+					auto obj_number = reference->GetReferencedObjectNumber();
+					auto gen_number = reference->GetReferencedGenerationNumber();
+
+					_encryption_dictionary = GetIndirectObjectInternal(obj_number, gen_number);
+				}
+
+				// Encryption dictionary itself is not encrypted
+				_encryption_dictionary->SetEncryptionExempted();
+			}
+
+			// ID entries in trailer are exempted from encryption
+			for (auto xref : *_xref) {
+				auto trailer_dictionary = xref->GetTrailerDictionary();
+
+				if (trailer_dictionary->Contains(constant::Name::ID)) {
+					auto ids = trailer_dictionary->Find(constant::Name::ID);
+					assert(!ObjectUtils::IsType<IndirectObjectReferencePtr>(ids) && "Document ID is indirect reference");
+
+					// I have found document, that have document ID as a single integer "77777777777777777" issue5599.pdf.
+					// Adobe acrobat can open this document without any notifications,
+					// therefore following requirement from specification 7.5.5 is considered invalid:
+					// "An array of two byte-strings constituting a file identifier"
+					//assert(ObjectUtils::IsType<ArrayObjectPtr<StringObjectPtr>>(ids) && "Document ID is not array of strings");
+
+					ids->SetEncryptionExempted();
+				}
 			}
 
 			_initialized = true;
@@ -295,6 +318,12 @@ namespace gotchangpdf
 			types::ushort genNumber,
 			EncryptionAlgorithm alg)
 		{
+			// Object number zero is most probably invalid
+			// I'd like to see the document where object number zero
+			// is encrypted, because it most probably violates many
+			// rules and assertions I already have
+			assert(objNumber != 0);
+
 			if (!IsEncrypted()) {
 				return data;
 			}
@@ -303,14 +332,30 @@ namespace gotchangpdf
 			auto dictionary_object_number = encryption_dictionary->GetObjectNumber();
 			auto dictionary_generation_number = encryption_dictionary->GetGenerationNumber();
 
+			// The idea behind this was originally check whether we are dealing with
+			// encryption dictionary based on object and generation number.
+			// However, encryption dictionary does not have to be indirect object
+			// therefore I have created SetEncryptionExempted property, which shall
+			// prohibit any decryption on such objects. If this triggers
+			// error in encryption exemption most probably occurred
+			assert(!(dictionary_object_number == objNumber
+				&& dictionary_generation_number == genNumber)
+				&& "Encryption dictionary shall be exempted from encryption");
+
 			// data inside encryption dictionary are not encrypted
-			if (objNumber == 0 || (dictionary_object_number == objNumber && dictionary_generation_number == genNumber)) {
+			if ((dictionary_object_number == objNumber && dictionary_generation_number == genNumber)) {
 				return data;
 			}
 
+			// Same idea as above. SetEncryptionExempted shall be used for every
+			// compressed object and there should not by any call trying to decrypt
+			// compressed objects. They are contained in streams which themselves are compressed
+			auto object_entry = _xref->GetXrefEntry(objNumber, genNumber);
+			assert(object_entry->GetUsage() != XrefEntryBase::Usage::Compressed
+				&& "Compressed objects shall be exempted from encryption");
+
 			// Any strings that are inside streams such as content streams and compressed object streams,
 			// which themselves are encrypted
-			auto object_entry = _xref->GetXrefEntry(objNumber, genNumber);
 			if (object_entry->GetUsage() == XrefEntryBase::Usage::Compressed) {
 				return data;
 			}
@@ -471,47 +516,58 @@ namespace gotchangpdf
 		{
 			auto stream = Parser(shared_from_this(), *_input);
 
-			do {
+			for (;;) {
 				auto xref = stream.ReadXref(offset);
 				_xref->Append(xref);
 
-				if (xref->GetTrailerDictionary()->Contains(constant::Name::XRefStm)) {
+				auto trailer_dictionary = xref->GetTrailerDictionary();
+				if (!trailer_dictionary->Contains(constant::Name::Prev)) {
+					break;
+				}
+
+				auto prev = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::Prev);
+				offset = prev->GetValue();
+			}
+
+			std::vector<XrefBasePtr> additional_xref;
+			for (auto& xref : *_xref) {
+				auto trailer_dictionary = xref->GetTrailerDictionary();
+				if (trailer_dictionary->Contains(constant::Name::XRefStm)) {
 					auto stm_offset = xref->GetTrailerDictionary()->FindAs<IntegerObjectPtr>(constant::Name::XRefStm)->GetValue();
 					auto xref_stm = stream.ReadXref(stm_offset);
 
 					assert(!xref_stm->GetTrailerDictionary()->Contains(constant::Name::Prev));
-					_xref->Append(xref_stm);
+					additional_xref.push_back(xref_stm);
 				}
+			}
 
-				if (!xref->GetTrailerDictionary()->Contains(constant::Name::Prev)) {
-					break;
-				}
-
-				offset = xref->GetTrailerDictionary()->FindAs<IntegerObjectPtr>(constant::Name::Prev)->GetValue();
-			} while (true);
+			for (auto new_xref : additional_xref) {
+				_xref->Append(new_xref);
+			}
 		}
 
 		types::stream_offset File::GetLastXrefOffset(types::stream_size file_size)
 		{
-			try
-			{
-				ReverseStream raw_reversed(*_input, file_size);
-				auto reverse_stream = ReverseParser(raw_reversed);
-				return reverse_stream.ReadLastXrefOffset();
-			}
-			catch (...) {
-				LOG_ERROR(_filename) << "Could not find xref offset, using fallback mechanism";
-				return invalid_xref_offset;
-			}
+			ReverseStream raw_reversed(*_input, file_size);
+			auto reverse_stream = ReverseParser(raw_reversed);
+			return reverse_stream.ReadLastXrefOffset();
 		}
 
-		ObjectPtr File::GetIndirectObject(types::big_uint objNumber,
+		ObjectPtr File::GetIndirectObject(
+			types::big_uint objNumber,
+			types::ushort genNumber) const
+		{
+			if (!_initialized)
+				throw FileNotInitializedException(_filename);
+
+			return GetIndirectObjectInternal(objNumber, genNumber);
+		}
+
+		ObjectPtr File::GetIndirectObjectInternal(
+			types::big_uint objNumber,
 			types::ushort genNumber) const
 		{
 			LOG_DEBUG(_filename) << "GetIndirectObject " << objNumber << " and " << genNumber;
-
-			if (!_initialized)
-				throw FileNotInitializedException(_filename);
 
 			if (!_xref->Contains(objNumber, genNumber))
 				return NullObject::GetInstance();
@@ -546,18 +602,12 @@ namespace gotchangpdf
 
 		HeaderPtr File::GetHeader(void) const
 		{
-			if (!_initialized)
-				throw FileNotInitializedException(_filename);
-
 			// I am calling get to initialize object in case it is empty
 			return _header.get();
 		}
 
 		XrefChainPtr File::GetXrefChain(void) const
 		{
-			if (!_initialized)
-				throw FileNotInitializedException(_filename);
-
 			// I am calling get to initialize object in case it is empty
 			return _xref.get();
 		}

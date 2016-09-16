@@ -31,7 +31,8 @@ namespace gotchangpdf
 			void Initialize(void);
 			bool IsInitialized(void) const { return _initialized; }
 
-			ObjectPtr GetIndirectObject(types::big_uint objNumber,
+			ObjectPtr GetIndirectObject(
+				types::big_uint objNumber,
 				types::ushort genNumber) const;
 
 			XrefChainPtr GetXrefChain(void) const;
@@ -102,6 +103,10 @@ namespace gotchangpdf
 			types::stream_offset GetLastXrefOffset(types::stream_size file_size);
 			void ReadXref(types::stream_offset offset);
 			EncryptionAlgorithm GetEncryptionAlgorithmForFilter(const NameObject& filter_name);
+
+			ObjectPtr GetIndirectObjectInternal(
+				types::big_uint objNumber,
+				types::ushort genNumber) const;
 
 		private:
 			File(const std::string& path);

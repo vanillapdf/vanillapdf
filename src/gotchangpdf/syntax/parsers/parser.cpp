@@ -714,14 +714,6 @@ namespace gotchangpdf
 		{
 			seekg(offset, ios_base::beg);
 			XrefBasePtr result = ReadXref();
-
-			// ID entries in trailer are exempted from encryption
-			auto trailer_dictionary = result->GetTrailerDictionary();
-			if (trailer_dictionary->Contains(constant::Name::ID)) {
-				auto ids = trailer_dictionary->FindAs<ArrayObjectPtr<StringObjectPtr>>(constant::Name::ID);
-				for (auto id : *ids) id->SetEncryptionExempted();
-			}
-
 			result->SetOffset(offset);
 			return result;
 		}
@@ -899,6 +891,7 @@ namespace gotchangpdf
 			std::vector<ObjectPtr> operands;
 			while (IsOperand(PeekTokenTypeSkip())) {
 				auto operand = ReadOperand();
+				operand->SetEncryptionExempted();
 				operand->SetInitialized();
 				operands.push_back(operand);
 			}
@@ -1161,8 +1154,10 @@ namespace gotchangpdf
 			return result;
 		}
 
-		XrefBasePtr Parser::FindAllObjects(void)
+		XrefChainPtr Parser::FindAllObjects(void)
 		{
+			XrefChainPtr result;
+
 			XrefTablePtr xref;
 
 			seekg(0);
@@ -1180,6 +1175,7 @@ namespace gotchangpdf
 
 				if (first_token->GetType() == Token::Type::TRAILER) {
 					auto trailer_dictionary = ReadDictionary();
+					trailer_dictionary->SetInitialized();
 					xref->SetTrailerDictionary(trailer_dictionary);
 					continue;
 				}
@@ -1222,25 +1218,39 @@ namespace gotchangpdf
 				}
 
 				auto obj_number = std::stoull(first_token->Value()->ToString());
-				auto gen_number = std::stoul(gen_number_token->Value()->ToString());
+				auto gen_number_ul = std::stoul(gen_number_token->Value()->ToString());
+				auto gen_number = ValueConvertUtils::SafeConvert<types::ushort>(gen_number_ul);
 
 				auto obj = ReadDirectObject();
-				obj->SetObjectNumber(obj_number);
-				obj->SetGenerationNumber(ValueConvertUtils::SafeConvert<types::ushort>(gen_number));
 				obj->SetOffset(offset_before);
 				obj->SetFile(_file);
 
-				XrefUsedEntryPtr entry(obj->GetObjectNumber(), obj->GetGenerationNumber(), obj->GetOffset());
+				XrefUsedEntryPtr entry(obj_number, gen_number, obj->GetOffset());
 				entry->SetReference(obj);
 				entry->SetFile(_file);
 				xref->Add(entry);
+
+				// Check if read object is Xref stream
+				if (ObjectUtils::IsType<StreamObjectPtr>(obj)) {
+					auto stream = ObjectUtils::ConvertTo<StreamObjectPtr>(obj);
+					auto stream_header = stream->GetHeader();
+					if (stream_header->Contains(constant::Name::Type)) {
+						auto stream_type = stream_header->FindAs<NameObjectPtr>(constant::Name::Type);
+
+						if (constant::Name::XRef == stream_type) {
+							auto xref_stream = ParseXrefStream(stream, obj_number, gen_number);
+							result->Append(xref_stream);
+						}
+					}
+				}
 
 				auto end_token = ReadTokenSkip();
 				assert(end_token->GetType() == Token::Type::INDIRECT_OBJECT_END);
 			}
 
 			xref->SetFile(_file);
-			return xref;
+			result->Append(xref);
+			return result;
 		}
 	}
 }

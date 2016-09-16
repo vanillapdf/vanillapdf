@@ -47,7 +47,7 @@ namespace gotchangpdf
 			HeaderPtr ReadHeader(types::stream_offset offset);
 			HeaderPtr ReadHeader(void);
 
-			XrefBasePtr FindAllObjects(void);
+			XrefChainPtr FindAllObjects(void);
 
 		private:
 			std::weak_ptr<File> _file;
