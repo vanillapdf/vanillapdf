@@ -181,26 +181,13 @@ namespace gotchangpdf
 			syntax::DictionaryObjectPtr obj;
 			obj->Insert(Name::Type, Name::Page);
 			
-			XrefEntryBasePtr new_entry = xref_chain->AllocateNewEntry();
-			if (XrefUtils::IsType<XrefUsedEntryPtr>(new_entry)) {
-				auto used_entry = XrefUtils::ConvertTo<XrefUsedEntryPtr>(new_entry);
-				used_entry->SetReference(obj);
-				used_entry->SetFile(file);
-				used_entry->SetInitialized(true);
-			}
+			XrefUsedEntryBasePtr new_entry = xref_chain->AllocateNewEntry();
+			new_entry->SetReference(obj);
+			new_entry->SetFile(file);
+			new_entry->SetInitialized();
 
-			if (XrefUtils::IsType<XrefCompressedEntryPtr>(new_entry)) {
-				auto compressed_entry = XrefUtils::ConvertTo<XrefCompressedEntryPtr>(new_entry);
-				compressed_entry->SetReference(obj);
-				compressed_entry->SetFile(file);
-				compressed_entry->SetInitialized(true);
-			}
-
-			obj->SetObjectNumber(new_entry->GetObjectNumber());
-			obj->SetGenerationNumber(new_entry->GetGenerationNumber());
 			obj->SetFile(file);
-			obj->SetIndirect(true);
-			obj->SetInitialized(true);
+			obj->SetInitialized();
 
 			return std::make_unique<PageObject>(obj);
 		}
