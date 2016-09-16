@@ -134,7 +134,7 @@ namespace gotchangpdf
 		using HexadecimalStringObjectPtr = Deferred<HexadecimalStringObject>;
 
 		// Parsers
-		struct ObjectStreamHeader;
+		struct ObjectStreamEntry;
 
 		namespace contents
 		{

@@ -75,8 +75,10 @@ namespace gotchangpdf
 			auto parser = Parser(_file, stream);
 			auto stream_entries = parser.ReadObjectStreamEntries(first->GetValue(), size->SafeConvert<size_t>());
 			for (auto stream_entry : stream_entries) {
-				auto object_number = stream_entry->GetObjectNumber();
-				auto stream_entry_xref = chain->GetXrefEntry(object_number, 0);
+				auto entry_object_number = stream_entry.object_number;
+				auto entry_object = stream_entry.object;
+
+				auto stream_entry_xref = chain->GetXrefEntry(entry_object_number, 0);
 
 				assert(stream_entry_xref->GetUsage() == XrefEntryBase::Usage::Compressed && "Stream entry has different usage than Compressed");
 				if (stream_entry_xref->GetUsage() != XrefEntryBase::Usage::Compressed) {
@@ -84,7 +86,7 @@ namespace gotchangpdf
 				}
 
 				auto stream_compressed_entry_xref = XrefUtils::ConvertTo<XrefCompressedEntryPtr>(stream_entry_xref);
-				stream_compressed_entry_xref->SetReference(stream_entry);
+				stream_compressed_entry_xref->SetReference(entry_object);
 				stream_compressed_entry_xref->SetInitialized();
 			}
 

@@ -384,9 +384,9 @@ namespace gotchangpdf
 			}
 		}
 
-		ObjectStreamHeader Parser::ReadObjectStreamHeader()
+		ObjectStreamEntry Parser::ReadObjectStreamHeader()
 		{
-			ObjectStreamHeader result;
+			ObjectStreamEntry result;
 
 			auto obj_number_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 			auto offset_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
@@ -399,9 +399,9 @@ namespace gotchangpdf
 			return result;
 		}
 
-		ObjectStreamHeaders Parser::ReadObjectStreamHeaders(size_t size)
+		ObjectStreamEntries Parser::ReadObjectStreamHeaders(size_t size)
 		{
-			ObjectStreamHeaders result;
+			ObjectStreamEntries result;
 			result.reserve(size);
 			for (decltype(size) i = 0; i < size; ++i) {
 				auto item = ReadObjectStreamHeader();
@@ -411,20 +411,22 @@ namespace gotchangpdf
 			return result;
 		}
 
-		std::vector<ObjectPtr> Parser::ReadObjectStreamEntries(types::big_uint first, size_t size)
+		ObjectStreamEntries Parser::ReadObjectStreamEntries(types::big_uint first, size_t size)
 		{
-			std::vector<ObjectPtr> result;
-			auto headers = ReadObjectStreamHeaders(size);
-			for (auto header : headers) {
-				SetPosition(first + header.offset);
+			auto entries = ReadObjectStreamHeaders(size);
+			for (auto& entry : entries) {
+				SetPosition(first + entry.offset);
 				auto obj = ReadDirectObject();
-				obj->SetObjectNumber(header.object_number);
+
+				// Objects within streams shall not be encrypted
+				// because streams themselves are encrypted
+				obj->SetEncryptionExempted();
 				obj->SetInitialized();
 
-				result.push_back(obj);
+				entry.object = obj;
 			}
 
-			return result;
+			return entries;
 		}
 
 		ObjectPtr Parser::ReadDirectObject(types::stream_offset offset)
