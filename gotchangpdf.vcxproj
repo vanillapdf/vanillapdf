@@ -109,7 +109,7 @@
     <ClInclude Include="src\gotchangpdf\syntax\parsers\reverse_tokenizer.h" />
     <ClInclude Include="src\gotchangpdf\syntax\parsers\tokenizer.h" />
     <ClInclude Include="src\gotchangpdf\syntax\parsers\lexical_tree.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\parsers\object_stream_header.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\object_stream_entry.h" />
     <ClInclude Include="src\gotchangpdf\syntax\parsers\parser.h" />
     <ClInclude Include="src\gotchangpdf\syntax\parsers\token.h" />
     <ClInclude Include="src\gotchangpdf\syntax\parsers\token_dictionary.h" />
