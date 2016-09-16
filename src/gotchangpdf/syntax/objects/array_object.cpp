@@ -66,18 +66,38 @@ namespace gotchangpdf
 			return result.release();
 		}
 
-		void MixedArrayObject::Append(const ContainableObjectPtr& value) { _list.push_back(value); value->Subscribe(this); OnChanged(); }
-		void MixedArrayObject::Insert(const ContainableObjectPtr& value, size_t at) { _list.insert(_list.begin() + at, value); value->Subscribe(this); OnChanged(); }
+		void MixedArrayObject::Append(const ContainableObjectPtr& value)
+		{
+			_list.push_back(value);
+			value->SetOwner(GetWeakReference<Object>());
+			value->Subscribe(this);
+			OnChanged();
+		}
+
+		void MixedArrayObject::Insert(const ContainableObjectPtr& value, size_t at)
+		{
+			_list.insert(_list.begin() + at, value);
+			value->SetOwner(GetWeakReference<Object>());
+			value->Subscribe(this);
+			OnChanged();
+		}
+
 		void MixedArrayObject::Remove(size_t at)
 		{
 			auto item = _list.begin() + at;
+			(*item)->ClearOwner();
 			(*item)->Unsubscribe(this);
 			_list.erase(item);
 			OnChanged();
 		}
 
 		// stl compatibility
-		void MixedArrayObject::push_back(const value_type& value) { _list.push_back(value); value->Subscribe(this); OnChanged(); }
+		void MixedArrayObject::push_back(const value_type& value)
+		{
+			_list.push_back(value);
+			value->Subscribe(this);
+			OnChanged();
+		}
 
 		std::string MixedArrayObject::ToString(void) const
 		{
