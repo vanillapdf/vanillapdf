@@ -321,7 +321,7 @@ namespace gotchangpdf
 			return result;
 		}
 
-		ObjectPtr Parser::ReadIndirectObject(void)
+		ObjectPtr Parser::ReadIndirectObject(types::big_uint& obj_number, types::ushort& gen_number)
 		{
 			auto offset = GetPosition();
 			auto obj_number_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
@@ -334,23 +334,21 @@ namespace gotchangpdf
 			if (!locked_file)
 				throw FileDisposedException();
 
-			auto obj_number = ObjectFactory::CreateInteger(obj_number_token);
-			auto gen_number = ObjectFactory::CreateInteger(gen_number_token);
-			direct->SetObjectNumber(obj_number->GetValue());
-			direct->SetGenerationNumber(gen_number->SafeConvert<types::ushort>());
+			auto obj_number_value = ObjectFactory::CreateInteger(obj_number_token);
+			auto gen_number_value = ObjectFactory::CreateInteger(gen_number_token);
+			obj_number = obj_number_value->GetValue();
+			gen_number = gen_number_value->SafeConvert<types::ushort>();
+
 			direct->SetOffset(offset);
 			direct->SetFile(_file);
-			direct->SetIndirect();
 			direct->SetInitialized();
-
-			assert(direct->IsIndirect());
 			return direct;
 		}
 
-		ObjectPtr Parser::ReadIndirectObject(types::stream_offset offset)
+		ObjectPtr Parser::ReadIndirectObject(types::stream_offset offset, types::big_uint& obj_number, types::ushort& gen_number)
 		{
 			seekg(offset, ios_base::beg);
-			return ReadIndirectObject();
+			return ReadIndirectObject(obj_number, gen_number);
 		}
 
 		ObjectPtr Parser::ReadDirectObject()

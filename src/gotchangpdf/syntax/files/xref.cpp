@@ -41,7 +41,13 @@ namespace gotchangpdf
 			auto rewind_pos = input->tellg();
 			SCOPE_GUARD_CAPTURE_VALUES(input->seekg(rewind_pos));
 			auto parser = Parser(_file, *input);
-			auto object = parser.ReadIndirectObject(_offset);
+
+			types::big_uint obj_number = 0;
+			types::ushort gen_number = 0;
+			auto object = parser.ReadIndirectObject(_offset, obj_number, gen_number);
+			assert(_obj_number == obj_number);
+			assert(_gen_number == gen_number);
+
 			SetReference(object);
 			SetInitialized();
 		}
