@@ -5,6 +5,7 @@
 
 void JPegErrorExit(j_common_ptr ptr)
 {
+	ptr;
 	char buffer[JMSG_LENGTH_MAX];
 
 	/* Create the message */
@@ -15,28 +16,30 @@ void JPegErrorExit(j_common_ptr ptr)
 
 void JPegErrorOutput(j_common_ptr ptr, int val)
 {
+	ptr; val;
 	char buffer[JMSG_LENGTH_MAX];
 	(*ptr->err->format_message) (ptr, buffer);
 }
 
 void init_source(j_decompress_ptr ptr)
 {
-	int a = 0;
+	ptr;
 }
 
 boolean fill_input_buffer(j_decompress_ptr ptr)
 {
+	ptr;
 	return TRUE;
 }
 
 void skip_input_data(j_decompress_ptr ptr, long num_bytes)
 {
-	int a = 0;
+	ptr; num_bytes;
 }
 
 void term_source(j_decompress_ptr ptr)
 {
-	int a = 0;
+	ptr;
 }
 
 namespace gotchangpdf
@@ -93,6 +96,7 @@ namespace gotchangpdf
 			while (jpeg.output_scanline < jpeg.output_height)
 			{
 				int lines = jpeg_read_scanlines(&jpeg, pBuffer, 1);
+				assert(1 == lines); lines;
 				if (iComponents == 4)
 				{
 					for (unsigned int i = 0, c = 0; i < jpeg.output_width; i++, c += 4)

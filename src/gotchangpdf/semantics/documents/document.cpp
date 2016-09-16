@@ -186,7 +186,7 @@ namespace gotchangpdf
 
 			OutputNameTreePtr<DestinationPtr> result;
 			auto found_destinations = dictionary->Dests(result);
-			assert(found_destinations);
+			assert(found_destinations); found_destinations;
 
 			return result;
 		}

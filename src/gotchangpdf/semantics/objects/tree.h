@@ -182,7 +182,7 @@ namespace gotchangpdf
 
 			if (_root->HasValues()) {
 				bool removed = _obj->Remove(GetValueName());
-				assert(removed);
+				assert(removed); removed;
 			}
 		}
 
