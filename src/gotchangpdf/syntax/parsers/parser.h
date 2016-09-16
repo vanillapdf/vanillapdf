@@ -57,8 +57,8 @@ namespace gotchangpdf
 			Token::Type PeekTokenTypeSkip();
 			TokenPtr ReadTokenWithTypeSkip(Token::Type type);
 
-			ObjectStreamHeaders ReadObjectStreamHeaders(size_t size);
-			ObjectStreamHeader ReadObjectStreamHeader();
+			ObjectStreamEntries ReadObjectStreamHeaders(size_t size);
+			ObjectStreamEntry ReadObjectStreamHeader();
 			XrefEntryBasePtr ReadTableEntry(types::big_uint objNumber);
 			XrefTablePtr ReadXrefTable();
 			XrefStreamPtr ReadXrefStream();
