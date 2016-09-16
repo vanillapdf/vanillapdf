@@ -18,11 +18,15 @@ namespace gotchangpdf
 
 		void IndirectObjectReference::SetReferencedObject(ObjectPtr obj) const
 		{
-			// Allow only references to indirect objects
-			assert(obj->IsIndirect());
+			// Reference shall be indirect object or null
+			bool indirect_or_null = (obj->IsIndirect() || ObjectUtils::IsType<NullObjectPtr>(obj));
+			assert(indirect_or_null && "Referenced object is neither indirect nor null");
 
-			m_reference_object_number = obj->GetObjectNumber();
-			m_reference_generation_number = obj->GetGenerationNumber();
+			if (obj->IsIndirect()) {
+				m_reference_object_number = obj->GetObjectNumber();
+				m_reference_generation_number = obj->GetGenerationNumber();
+			}
+
 			m_reference = obj;
 		}
 
