@@ -43,6 +43,7 @@ namespace gotchangpdf
 			assert(nullptr != static_cast<T*>(m_ptr->GetReference()));
 		}
 
+		void Reset() noexcept { m_ptr.reset(); }
 		bool IsEmpty() const noexcept { return (nullptr == m_ptr); }
 		bool IsActive() const noexcept { return m_ptr ? m_ptr->IsActive() : false; }
 
