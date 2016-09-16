@@ -202,8 +202,6 @@ namespace gotchangpdf
 					auto new_obj = ObjectUtils::Clone<ObjectPtr>(original_obj);
 
 					// Set new object offset in the destination file
-					new_obj->SetObjectNumber(new_obj_number);
-					new_obj->SetGenerationNumber(new_gen_number);
 					new_obj->SetFile(destination);
 
 					// Create new entry in our cloned table
@@ -227,8 +225,6 @@ namespace gotchangpdf
 					auto new_obj = ObjectUtils::Clone<ObjectPtr>(original_obj);
 
 					// Set new object offset in the destination file
-					new_obj->SetObjectNumber(new_obj_number);
-					new_obj->SetGenerationNumber(new_gen_number);
 					new_obj->SetFile(destination);
 
 					auto new_obj_stream_number = compressed_entry->GetObjectStreamNumber();

@@ -8,6 +8,7 @@ namespace gotchangpdf
 		MixedArrayObject::MixedArrayObject(const list_type& list) : _list(list)
 		{
 			for (auto item : _list) {
+				item->SetOwner(GetWeakReference<Object>());
 				item->Subscribe(this);
 			}
 		}
@@ -15,6 +16,7 @@ namespace gotchangpdf
 		MixedArrayObject::MixedArrayObject(const std::initializer_list<ContainableObjectPtr>& list) : _list(list)
 		{
 			for (auto item : _list) {
+				item->SetOwner(GetWeakReference<Object>());
 				item->Subscribe(this);
 			}
 		}
@@ -23,6 +25,7 @@ namespace gotchangpdf
 			: ContainableObject(other), _list(list)
 		{
 			for (auto item : _list) {
+				item->SetOwner(GetWeakReference<Object>());
 				item->Subscribe(this);
 			}
 		}
@@ -35,28 +38,6 @@ namespace gotchangpdf
 			for (decltype(size) i = 0; i < size; ++i) {
 				auto item = _list[i];
 				item->SetFile(file);
-			}
-		}
-
-		void MixedArrayObject::SetObjectNumber(types::big_uint number) noexcept
-		{
-			Object::SetObjectNumber(number);
-
-			auto size = _list.size();
-			for (decltype(size) i = 0; i < size; ++i) {
-				auto item = _list[i];
-				item->SetObjectNumber(number);
-			}
-		}
-
-		void MixedArrayObject::SetGenerationNumber(types::ushort number) noexcept
-		{
-			Object::SetGenerationNumber(number);
-
-			auto size = _list.size();
-			for (decltype(size) i = 0; i < size; ++i) {
-				auto item = _list[i];
-				item->SetGenerationNumber(number);
 			}
 		}
 

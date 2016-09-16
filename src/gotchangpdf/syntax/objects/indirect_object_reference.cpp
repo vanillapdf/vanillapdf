@@ -14,44 +14,69 @@ namespace gotchangpdf
 		}
 
 		IndirectObjectReference::IndirectObjectReference(types::big_uint obj, types::ushort gen)
-			: _ref_obj(obj), _ref_gen(gen) {}
+			: m_reference_object_number(obj), m_reference_generation_number(gen) {}
 
-		void IndirectObjectReference::SetReferencedObject(ObjectPtr obj)
+		void IndirectObjectReference::SetReferencedObject(ObjectPtr obj) const
 		{
+			// Allow only references to indirect objects
 			assert(obj->IsIndirect());
-			_ref_obj = obj->GetObjectNumber();
-			_ref_gen = obj->GetGenerationNumber();
-			m_file = obj->GetFile();
+
+			m_reference_object_number = obj->GetObjectNumber();
+			m_reference_generation_number = obj->GetGenerationNumber();
+			m_reference = obj;
 		}
 
 		ObjectPtr IndirectObjectReference::GetReferencedObject() const
 		{
+			if (IsReferenceInitialized()) {
+				return m_reference.GetReference();
+			}
+
 			auto locked_file = m_file.lock();
 			if (!locked_file)
 				throw FileDisposedException();
 
-			return locked_file->GetIndirectObject(_ref_obj, _ref_gen);
+			auto new_reference = locked_file->GetIndirectObject(
+				m_reference_object_number,
+				m_reference_generation_number);
+
+			SetReferencedObject(new_reference);
+			return new_reference;
 		}
 
 		bool IndirectObjectReference::Equals(const IndirectObjectReference& other) const
 		{
-			return _ref_obj == other._ref_obj && _ref_gen == other._ref_gen;
+			auto object_number = GetReferencedObjectNumber();
+			auto other_object_number = other.GetReferencedObjectNumber();
+			auto generation_number = GetReferencedGenerationNumber();
+			auto other_generation_number = GetReferencedGenerationNumber();
+
+			bool object_numbers_equals = (object_number == other_object_number);
+			bool generation_numbers_equals = (generation_number == other_generation_number);
+
+			return (object_numbers_equals && generation_numbers_equals);
 		}
 
 		bool IndirectObjectReference::operator<(const IndirectObjectReference& other) const
 		{
-			if (_ref_obj != other._ref_obj)
-				return _ref_obj < other._ref_obj;
+			auto object_number = GetReferencedObjectNumber();
+			auto other_object_number = other.GetReferencedObjectNumber();
+			if (object_number != other_object_number)
+				return object_number < other_object_number;
 
-			if (_ref_gen != other._ref_gen)
-				return _ref_gen < other._ref_gen;
+			auto generation_number = GetReferencedGenerationNumber();
+			auto other_generation_number = GetReferencedGenerationNumber();
+			if (generation_number != other_generation_number)
+				return generation_number < other_generation_number;
 
 			return false;
 		}
 
 		std::string IndirectObjectReference::ToPdf(void) const
 		{
-			return std::to_string(_ref_obj) + " " + std::to_string(m_gen_number) + " R";
+			auto object_number = GetReferencedObjectNumber();
+			auto generation_number = GetReferencedGenerationNumber();
+			return std::to_string(object_number) + " " + std::to_string(generation_number) + " R";
 		}
 	}
 }

@@ -28,26 +28,6 @@ namespace gotchangpdf
 			}
 		}
 
-		void DictionaryObject::SetObjectNumber(types::big_uint number) noexcept
-		{
-			Object::SetObjectNumber(number);
-
-			for (auto it = _list.begin(); it != _list.end(); ++it) {
-				auto item = it->second;
-				item->SetObjectNumber(number);
-			}
-		}
-
-		void DictionaryObject::SetGenerationNumber(types::ushort number) noexcept
-		{
-			Object::SetGenerationNumber(number);
-
-			for (auto it = _list.begin(); it != _list.end(); ++it) {
-				auto item = it->second;
-				item->SetGenerationNumber(number);
-			}
-		}
-
 		void DictionaryObject::SetInitialized(bool initialized) noexcept
 		{
 			IModifyObservable::SetInitialized(initialized);
@@ -109,6 +89,8 @@ namespace gotchangpdf
 				return false;
 			}
 
+			found->first->ClearOwner();
+			found->second->ClearOwner();
 			found->first->Unsubscribe(this);
 			found->second->Unsubscribe(this);
 			_list.erase(found);
@@ -121,6 +103,9 @@ namespace gotchangpdf
 		{
 			std::pair<NameObjectPtr, ContainableObjectPtr> pair(name, value);
 			auto result = _list.insert(pair);
+			name->SetOwner(GetWeakReference<Object>());
+			value->SetOwner(GetWeakReference<Object>());
+
 			name->Subscribe(this);
 			value->Subscribe(this);
 

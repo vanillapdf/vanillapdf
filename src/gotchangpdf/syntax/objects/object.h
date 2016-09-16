@@ -39,47 +39,40 @@ namespace gotchangpdf
 			virtual std::string ToPdf(void) const = 0;
 
 		public:
-			bool IsIndirect(void) const noexcept { return m_indirect; }
-			void SetIndirect(bool indirect = true) noexcept { m_indirect = indirect; }
+			bool IsIndirect(void) const noexcept;
+			void SetXrefEntry(XrefEntryBasePtr entry);
+			void ClearXrefEntry();
 
 			bool IsDirty(void) const noexcept { return m_dirty; }
 			void SetDirty(bool dirty = true) noexcept { m_dirty = dirty; }
 
-			bool IsEncryptionExempted() const noexcept { return m_encryption_exempted; }
+			bool IsEncryptionExempted() const noexcept;
 			void SetEncryptionExempted(bool exempted = true) { m_encryption_exempted = exempted; }
 
 			void SetOffset(types::stream_offset offset) noexcept { m_offset = offset; }
 			types::stream_offset GetOffset() const noexcept { return m_offset; }
 
-			virtual void SetObjectNumber(types::big_uint number) noexcept { m_obj_number = number; }
-			types::big_uint GetObjectNumber() const noexcept { return m_obj_number; }
+			types::big_uint GetObjectNumber() const;
+			types::ushort GetGenerationNumber() const;
 
-			virtual void SetGenerationNumber(types::ushort number) noexcept { m_gen_number = number; }
-			types::ushort GetGenerationNumber() const noexcept { return m_gen_number; }
+			void SetOwner(WeakReference<Object> owner) noexcept { m_owner = owner; }
+			WeakReference<Object> GetOwner() const noexcept { return m_owner; }
+			void ClearOwner() noexcept { m_owner.Reset(); }
+			bool HasOwner() const noexcept;
 
 			virtual void SetFile(std::weak_ptr<File> file) noexcept { m_file = file; }
 			std::weak_ptr<File> GetFile() const noexcept { return m_file; }
 
 			virtual Object* Clone(void) const = 0;
-
-			virtual void OnChanged() override
-			{
-				if (!m_initialized) {
-					return;
-				}
-
-				SetDirty();
-				IModifyObservable::OnChanged();
-			}
+			virtual void OnChanged() override;
 
 		protected:
 			std::weak_ptr<File> m_file;
-			bool m_indirect = false;
 			bool m_dirty = false;
-			types::big_uint m_obj_number = 0;
-			types::ushort m_gen_number = 0;
 			types::stream_offset m_offset = std::_BADOFF;
 			bool m_encryption_exempted = false;
+			WeakReference<XrefEntryBase> m_entry;
+			WeakReference<Object> m_owner;
 		};
 
 		class ObjectPtr : public Deferred<Object>

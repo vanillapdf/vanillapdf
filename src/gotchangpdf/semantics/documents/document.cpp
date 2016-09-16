@@ -132,10 +132,7 @@ namespace gotchangpdf
 			auto entry = chain->AllocateNewEntry();
 
 			DictionaryObjectPtr raw_dictionary;
-			raw_dictionary->SetObjectNumber(entry->GetObjectNumber());
-			raw_dictionary->SetGenerationNumber(entry->GetGenerationNumber());
 			raw_dictionary->SetFile(file);
-			raw_dictionary->SetIndirect();
 			raw_dictionary->SetInitialized();
 			entry->SetReference(raw_dictionary);
 			entry->SetInitialized();
@@ -156,10 +153,7 @@ namespace gotchangpdf
 			auto entry = chain->AllocateNewEntry();
 
 			DictionaryObjectPtr raw_dictionary;
-			raw_dictionary->SetObjectNumber(entry->GetObjectNumber());
-			raw_dictionary->SetGenerationNumber(entry->GetGenerationNumber());
 			raw_dictionary->SetFile(file);
-			raw_dictionary->SetIndirect();
 			raw_dictionary->SetInitialized();
 			entry->SetReference(raw_dictionary);
 			entry->SetInitialized();
@@ -180,10 +174,7 @@ namespace gotchangpdf
 			auto entry = chain->AllocateNewEntry();
 
 			DictionaryObjectPtr raw_dictionary;
-			raw_dictionary->SetObjectNumber(entry->GetObjectNumber());
-			raw_dictionary->SetGenerationNumber(entry->GetGenerationNumber());
 			raw_dictionary->SetFile(file);
-			raw_dictionary->SetIndirect();
 			raw_dictionary->SetInitialized();
 			entry->SetReference(raw_dictionary);
 			entry->SetInitialized();

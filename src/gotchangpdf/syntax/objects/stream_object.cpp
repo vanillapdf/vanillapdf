@@ -11,6 +11,7 @@ namespace gotchangpdf
 	{
 		StreamObject::StreamObject()
 		{
+			_header->SetOwner(GetWeakReference<Object>());
 			_header->Subscribe(this);
 			_body->Subscribe(this);
 			_body_decoded->Subscribe(this);
@@ -19,6 +20,7 @@ namespace gotchangpdf
 		StreamObject::StreamObject(DictionaryObjectPtr header, types::stream_offset offset)
 			: _header(header), _raw_data_offset(offset)
 		{
+			_header->SetOwner(GetWeakReference<Object>());
 			_header->Subscribe(this);
 			_body->Subscribe(this);
 			_body_decoded->Subscribe(this);
@@ -38,18 +40,6 @@ namespace gotchangpdf
 		{
 			Object::SetFile(file);
 			_header->SetFile(file);
-		}
-
-		void StreamObject::SetObjectNumber(types::big_uint number) noexcept
-		{
-			Object::SetObjectNumber(number);
-			_header->SetObjectNumber(number);
-		}
-
-		void StreamObject::SetGenerationNumber(types::ushort number) noexcept
-		{
-			Object::SetGenerationNumber(number);
-			_header->SetGenerationNumber(number);
 		}
 
 		void StreamObject::SetInitialized(bool initialized) noexcept
@@ -75,7 +65,7 @@ namespace gotchangpdf
 			auto stream = Stream(*input);
 			auto body = stream.read(size->SafeConvert<size_t>());
 
-			if (m_encryption_exempted || !locked_file->IsEncrypted()) {
+			if (IsEncryptionExempted() || !locked_file->IsEncrypted()) {
 				_body->assign(body.begin(), body.end());
 				_body->SetInitialized();
 				return _body;
@@ -83,7 +73,7 @@ namespace gotchangpdf
 
 			if (!_header->Contains(constant::Name::Filter)) {
 				// Stream does not contain crypt filter
-				body = locked_file->DecryptStream(body, m_obj_number, m_gen_number);
+				body = locked_file->DecryptStream(body, GetObjectNumber(), GetGenerationNumber());
 				_body->assign(body.begin(), body.end());
 				_body->SetInitialized();
 				return _body;
@@ -98,7 +88,7 @@ namespace gotchangpdf
 				if (filter_name == constant::Name::Crypt) {
 					auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
 					auto handler_name = params->FindAs<NameObjectPtr>(constant::Name::Name);
-					body = locked_file->DecryptData(body, m_obj_number, m_gen_number, handler_name);
+					body = locked_file->DecryptData(body, GetObjectNumber(), GetGenerationNumber(), handler_name);
 					_body->assign(body.begin(), body.end());
 					_body->SetInitialized();
 					return _body;
@@ -113,7 +103,7 @@ namespace gotchangpdf
 						assert(i == 0 && "Crypt filter is not first");
 						auto params = _header->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::DecodeParms);
 						auto handler_name = params->At(i)->FindAs<NameObjectPtr>(constant::Name::Name);
-						body = locked_file->DecryptData(body, m_obj_number, m_gen_number, handler_name);
+						body = locked_file->DecryptData(body, GetObjectNumber(), GetGenerationNumber(), handler_name);
 						_body->assign(body.begin(), body.end());
 						_body->SetInitialized();
 						return _body;
@@ -122,7 +112,7 @@ namespace gotchangpdf
 			}
 
 			// Stream does not contain crypt filter
-			body = locked_file->DecryptStream(body, m_obj_number, m_gen_number);
+			body = locked_file->DecryptStream(body, GetObjectNumber(), GetGenerationNumber());
 			_body->assign(body.begin(), body.end());
 			_body->SetInitialized();
 			return _body;

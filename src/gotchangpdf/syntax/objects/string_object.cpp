@@ -27,8 +27,8 @@ namespace gotchangpdf
 				throw FileDisposedException();
 
 			BufferPtr new_value;
-			if (!m_encryption_exempted && locked_file->IsEncrypted())
-				new_value = locked_file->DecryptString(_raw_value, m_obj_number, m_gen_number);
+			if (!IsEncryptionExempted() && locked_file->IsEncrypted())
+				new_value = locked_file->DecryptString(_raw_value, GetObjectNumber(), GetGenerationNumber());
 			else
 				new_value = _raw_value;
 
@@ -65,8 +65,8 @@ namespace gotchangpdf
 			if (!locked_file)
 				throw FileDisposedException();
 
-			if (!m_encryption_exempted && locked_file->IsEncrypted()) {
-				result = locked_file->DecryptString(result, m_obj_number, m_gen_number);
+			if (!IsEncryptionExempted() && locked_file->IsEncrypted()) {
+				result = locked_file->DecryptString(result, GetObjectNumber(), GetGenerationNumber());
 			}
 
 			_value->assign(result.begin(), result.end());
@@ -95,7 +95,7 @@ namespace gotchangpdf
 			std::string str = ss.str();
 			Buffer result = Buffer(str.begin(), str.end());
 			if (locked_file->IsEncrypted()) {
-				result = locked_file->EncryptString(result, m_obj_number, m_gen_number);
+				result = locked_file->EncryptString(result, GetObjectNumber(), GetGenerationNumber());
 			}
 
 			result.insert(result.begin(), '<');
@@ -168,7 +168,7 @@ namespace gotchangpdf
 			std::string str = ss.str();
 			Buffer result = Buffer(str.begin(), str.end());
 			if (locked_file->IsEncrypted()) {
-				result = locked_file->EncryptString(result, m_obj_number, m_gen_number);
+				result = locked_file->EncryptString(result, GetObjectNumber(), GetGenerationNumber());
 			}
 
 			result.insert(result.begin(), '(');

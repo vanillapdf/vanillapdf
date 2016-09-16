@@ -15,7 +15,7 @@ namespace gotchangpdf
 			explicit IndirectObjectReference(ObjectPtr obj);
 			IndirectObjectReference(types::big_uint obj, types::ushort gen);
 
-			void SetReferencedObject(ObjectPtr obj);
+			void SetReferencedObject(ObjectPtr obj) const;
 			ObjectPtr GetReferencedObject() const;
 			ObjectPtr operator->() const { return GetReferencedObject(); }
 
@@ -35,17 +35,32 @@ namespace gotchangpdf
 			bool operator!=(const IndirectObjectReference& other) const { return !Equals(other); }
 			bool operator<(const IndirectObjectReference& other) const;
 
-			types::big_uint GetReferencedObjectNumber() const noexcept { return _ref_obj; }
-			void SetReferencedObjectNumber(types::big_uint value) noexcept { _ref_obj = value; }
+			types::big_uint GetReferencedObjectNumber() const noexcept { return m_reference_object_number; }
+			types::ushort GetReferencedGenerationNumber() const noexcept { return m_reference_generation_number; }
 
-			types::ushort GetReferencedGenerationNumber() const noexcept { return _ref_gen; }
-			void SetReferencedGenerationNumber(types::ushort value) noexcept { _ref_gen = value; }
+			void SetReferencedObjectNumber(types::big_uint value) noexcept
+			{
+				m_reference_object_number = value;
+				m_reference.Reset();
+			}
+
+			void SetReferencedGenerationNumber(types::ushort value) noexcept
+			{
+				m_reference_generation_number = value;
+				m_reference.Reset();
+			}
+
+			bool IsReferenceInitialized(void) const noexcept
+			{
+				return !m_reference.IsEmpty() && m_reference.IsActive();
+			}
 
 			virtual IndirectObjectReference* Clone(void) const override { return new IndirectObjectReference(*this); }
 
 		private:
-			types::big_uint _ref_obj = 0;
-			types::ushort _ref_gen = 0;
+			mutable types::big_uint m_reference_object_number = 0;
+			mutable types::ushort m_reference_generation_number = 0;
+			mutable WeakReference<Object> m_reference;
 		};
 	}
 }

@@ -649,11 +649,6 @@ namespace gotchangpdf
 				auto new_entry = _xref->AllocateNewEntry();
 				if (XrefUtils::IsType<XrefUsedEntryPtr>(new_entry)) {
 					auto used_entry = XrefUtils::ConvertTo<XrefUsedEntryPtr>(new_entry);
-
-					new_obj->SetObjectNumber(used_entry->GetObjectNumber());
-					new_obj->SetGenerationNumber(used_entry->GetGenerationNumber());
-					new_obj->SetIndirect();
-
 					used_entry->SetReference(new_obj);
 					used_entry->SetInitialized();
 				}
