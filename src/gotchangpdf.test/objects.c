@@ -233,6 +233,7 @@ error_type process_null(NullHandle obj, int nested)
 	print_spaces(nested);
 	printf("Null object begin\n");
 
+	print_spaces(nested + 1);
 	printf("Value: null\n");
 
 	print_spaces(nested);
