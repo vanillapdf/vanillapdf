@@ -557,12 +557,12 @@ namespace gotchangpdf
 			return table;
 		}
 
-		XrefStreamPtr Parser::ReadXrefStream()
+		XrefStreamPtr Parser::ParseXrefStream(
+			StreamObjectPtr stream,
+			types::big_uint stream_obj_number,
+			types::ushort stream_gen_number)
 		{
 			XrefStreamPtr result;
-
-			auto indirect = ReadIndirectObject();
-			auto stream = ObjectUtils::ConvertTo<StreamObjectPtr>(indirect);
 
 			// Get stream object data
 			auto header = stream->GetHeader();
@@ -588,6 +588,8 @@ namespace gotchangpdf
 			auto field1_size = fields->At(0);
 			auto field2_size = fields->At(1);
 			auto field3_size = fields->At(2);
+
+			bool contains_self = false;
 
 			// Iterate over entries
 			auto it = body.begin();
@@ -623,40 +625,62 @@ namespace gotchangpdf
 
 					types::big_uint obj_number = SafeAddition<types::big_uint, types::big_uint, int>(*subsection_index, idx);
 
-					switch (field1) {
-					case 0:
-					{
+					if (0 == field1) {
 						XrefFreeEntryPtr entry(obj_number, field3.SafeConvert<types::ushort>());
 						entry->SetFile(_file);
 						result->Add(entry);
-						break;
+						continue;
 					}
-					case 1:
-					{
+
+					if (1 == field1) {
 						XrefUsedEntryPtr entry(obj_number, field3.SafeConvert<types::ushort>(), field2);
 
 						// This case is when XrefStream contains reference to itself
-						if (obj_number == stream->GetObjectNumber() && field3.SafeConvert<types::ushort>() == stream->GetGenerationNumber()) {
+						if (obj_number == stream_obj_number && field3.SafeConvert<types::ushort>() == stream_gen_number) {
 							entry->SetReference(stream);
 							entry->SetInitialized();
+							contains_self = true;
 						}
 
 						entry->SetFile(_file);
 						result->Add(entry);
-						break;
+						continue;
 					}
-					case 2:
-					{
+
+					if (2 == field1) {
 						XrefCompressedEntryPtr entry(obj_number, static_cast<types::ushort>(0), field2, field3.SafeConvert<size_t>());
 						entry->SetFile(_file);
 						result->Add(entry);
-						break;
+						continue;
 					}
-					default:
-						LOG_ERROR(_file) << "Unrecognized data found in xref stream data";
-						break;
-					}
+
+					throw GeneralException("Unknown entry type");
 				}
+			}
+
+			// If stream does not contain entry for itself
+			if (!contains_self) {
+				auto locked_file = _file.lock();
+				if (!locked_file)
+					throw FileDisposedException();
+
+				auto chain = locked_file->GetXrefChain();
+
+				if (!chain->Contains(stream_obj_number, stream_gen_number)) {
+					assert(false && "Where is stream entry stored?");
+					throw GeneralException("Could not find xref stream object entry");
+				}
+
+				auto entry = chain->GetXrefEntry(stream_obj_number, stream_gen_number);
+
+				if (!XrefUtils::IsType<XrefUsedEntryPtr>(entry)) {
+					assert(false && "How could this be entry of different type");
+					throw GeneralException("Xref entry has incorrect type");
+				}
+
+				auto used_entry = XrefUtils::ConvertTo<XrefUsedEntryPtr>(entry);
+				used_entry->SetReference(stream);
+				used_entry->SetInitialized();
 			}
 
 			stream->SetEncryptionExempted();
@@ -666,6 +690,15 @@ namespace gotchangpdf
 			result->SetStreamObject(stream);
 			result->SetInitialized();
 			return result;
+		}
+
+		XrefStreamPtr Parser::ReadXrefStream()
+		{
+			types::big_uint stream_obj_number = 0;
+			types::ushort stream_gen_number = 0;
+			auto indirect = ReadIndirectObject(stream_obj_number, stream_gen_number);
+			auto stream = ObjectUtils::ConvertTo<StreamObjectPtr>(indirect);
+			return ParseXrefStream(stream, stream_obj_number, stream_gen_number);
 		}
 
 		XrefBasePtr Parser::ReadXref(void)

@@ -62,6 +62,10 @@ namespace gotchangpdf
 			XrefEntryBasePtr ReadTableEntry(types::big_uint objNumber);
 			XrefTablePtr ReadXrefTable();
 			XrefStreamPtr ReadXrefStream();
+			XrefStreamPtr ParseXrefStream(
+				StreamObjectPtr stream,
+				types::big_uint stream_obj_number,
+				types::ushort stream_gen_number);
 
 			BooleanObjectPtr ReadFalse();
 			BooleanObjectPtr ReadTrue();
