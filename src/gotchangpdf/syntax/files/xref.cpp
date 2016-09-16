@@ -16,8 +16,12 @@ namespace gotchangpdf
 		void XrefUsedEntry::SetReference(ObjectPtr ref)
 		{
 			_reference->Unsubscribe(this);
+			_reference->ClearXrefEntry();
+
 			_reference = ref;
+
 			_reference->Subscribe(this);
+			_reference->SetXrefEntry(this);
 
 			if (IsInitialized())
 				SetDirty();
@@ -45,8 +49,12 @@ namespace gotchangpdf
 		void XrefCompressedEntry::SetReference(ObjectPtr ref)
 		{
 			_reference->Unsubscribe(this);
+			_reference->ClearXrefEntry();
+
 			_reference = ref;
+
 			_reference->Subscribe(this);
+			_reference->SetXrefEntry(this);
 
 			if (IsInitialized())
 				SetDirty();
