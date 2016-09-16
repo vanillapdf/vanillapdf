@@ -54,6 +54,10 @@ namespace gotchangpdf
 			using IteratorPtr = DeferredIterator<Iterator>;
 
 		public:
+			// stl compatibility
+			list_type::const_iterator begin() const { return _list.begin(); }
+			list_type::const_iterator end(void) const { return _list.end(); }
+
 			IteratorPtr Begin() const { return _list.begin(); }
 			IteratorPtr End(void) const { return _list.end(); }
 			void Append(list_type::value_type item) { _list.push_back(item); }
