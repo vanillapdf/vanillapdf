@@ -113,11 +113,19 @@ namespace gotchangpdf
 			OnChanged();
 		}
 
-		bool DictionaryObject::Contains(const NameObjectPtr & name) const { return (_list.find(name) != _list.end()); }
+		bool DictionaryObject::Contains(const NameObjectPtr & name) const
+		{
+			return (_list.find(name) != _list.end());
+		}
+
 		std::vector<ContainableObjectPtr> DictionaryObject::Values() const
 		{
 			std::vector<ContainableObjectPtr> result;
-			std::for_each(_list.begin(), _list.end(), [&result](const std::pair<NameObjectPtr, ContainableObjectPtr>& item) {result.push_back(item.second); });
+			std::for_each(_list.begin(), _list.end(),
+				[&result](const std::pair<NameObjectPtr, ContainableObjectPtr>& item) {
+				result.push_back(item.second);
+			});
+
 			return result;
 		}
 
