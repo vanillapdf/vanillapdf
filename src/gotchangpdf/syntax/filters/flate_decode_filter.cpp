@@ -12,7 +12,8 @@ namespace gotchangpdf
 	{
 		BufferPtr FlateDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const
 		{
-			return ZlibWrapper::Deflate(src);
+			auto result = ZlibWrapper::Deflate(src);
+			return ApplyPredictor(result, parameters);
 		}
 
 		BufferPtr FlateDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters) const
@@ -23,7 +24,8 @@ namespace gotchangpdf
 
 		BufferPtr FlateDecodeFilter::Encode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters) const
 		{
-			return ZlibWrapper::Deflate(src, length);
+			auto result = ZlibWrapper::Deflate(src, length);
+			return ApplyPredictor(result, parameters);
 		}
 
 		BufferPtr FlateDecodeFilter::Decode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters) const
