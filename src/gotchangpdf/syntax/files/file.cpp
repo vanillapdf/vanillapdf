@@ -697,11 +697,8 @@ namespace gotchangpdf
 
 			if (original->IsIndirect()) {
 				auto new_entry = _xref->AllocateNewEntry();
-				if (XrefUtils::IsType<XrefUsedEntryPtr>(new_entry)) {
-					auto used_entry = XrefUtils::ConvertTo<XrefUsedEntryPtr>(new_entry);
-					used_entry->SetReference(new_obj);
-					used_entry->SetInitialized();
-				}
+				new_entry->SetReference(new_obj);
+				new_entry->SetInitialized();
 			}
 
 			new_obj->SetFile(shared_from_this());
