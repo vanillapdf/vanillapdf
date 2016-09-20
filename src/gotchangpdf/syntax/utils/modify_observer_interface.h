@@ -24,14 +24,16 @@ namespace gotchangpdf
 			m_observers.push_back(observer);
 		}
 
-		void Unsubscribe(IModifyObserver* observer)
+		bool Unsubscribe(IModifyObserver* observer)
 		{
 			for (auto it = m_observers.begin(); it != m_observers.end(); ++it) {
 				if (observer == *it) {
 					m_observers.erase(it);
-					break;
+					return true;
 				}
 			}
+
+			return false;
 		}
 
 		virtual void OnChanged()

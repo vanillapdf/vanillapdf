@@ -26,12 +26,28 @@ namespace gotchangpdf
 			_body_decoded->Subscribe(this);
 		}
 
+		StreamObject::~StreamObject()
+		{
+			_header->Unsubscribe(this);
+			_body->Unsubscribe(this);
+			_body_decoded->Unsubscribe(this);
+		}
+
 		StreamObject* StreamObject::Clone(void) const
 		{
 			std::unique_ptr<StreamObject> result(new StreamObject(*this));
 			result->_body = GetBodyRaw()->Clone();
 			result->_body_decoded = _body_decoded->Clone();
 			result->_header = _header->Clone();
+
+			result->_body->Subscribe(result.get());
+			result->_body_decoded->Subscribe(result.get());
+			result->_header->Subscribe(result.get());
+
+			result->_body->SetInitialized();
+			result->_body_decoded->SetInitialized();
+			result->_header->SetInitialized();
+			result->SetInitialized();
 
 			return result.release();
 		}

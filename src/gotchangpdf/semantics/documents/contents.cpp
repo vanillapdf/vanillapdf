@@ -15,8 +15,21 @@ namespace gotchangpdf
 		using namespace syntax::contents;
 		using namespace contents;
 
-		Contents::Contents(StreamObjectPtr obj) : HighLevelObject(obj) { m_instructions->Subscribe(this); }
-		Contents::Contents(ArrayObjectPtr<IndirectObjectReferencePtr> obj) : HighLevelObject(obj->Data()) { m_instructions->Subscribe(this); }
+		Contents::Contents(StreamObjectPtr obj) : HighLevelObject(obj)
+		{
+			m_instructions->Subscribe(this);
+		}
+
+		Contents::Contents(ArrayObjectPtr<IndirectObjectReferencePtr> obj)
+			: HighLevelObject(obj->Data())
+		{
+			m_instructions->Subscribe(this);
+		}
+
+		Contents::~Contents()
+		{
+			m_instructions->Unsubscribe(this);
+		}
 
 		BaseInstructionCollectionPtr Contents::Instructions(void) const
 		{

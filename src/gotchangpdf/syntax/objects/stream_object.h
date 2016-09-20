@@ -39,11 +39,7 @@ namespace gotchangpdf
 			virtual void SetFile(std::weak_ptr<File> file) noexcept override;
 			virtual void SetInitialized(bool initialized = true) noexcept override;
 
-			virtual ~StreamObject()
-			{
-				_body->Unsubscribe(this);
-				_body_decoded->Unsubscribe(this);
-			}
+			virtual ~StreamObject();
 
 		private:
 			DictionaryObjectPtr _header;

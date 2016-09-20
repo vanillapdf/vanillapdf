@@ -15,6 +15,7 @@ namespace gotchangpdf
 			Contents() = default;
 			explicit Contents(syntax::StreamObjectPtr obj);
 			explicit Contents(syntax::ArrayObjectPtr<syntax::IndirectObjectReferencePtr> obj);
+			~Contents();
 
 			syntax::contents::BaseInstructionCollectionPtr Instructions(void) const;
 			types::uinteger GetInstructionsSize(void) const;
