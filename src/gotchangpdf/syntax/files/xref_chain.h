@@ -61,6 +61,8 @@ namespace gotchangpdf
 			IteratorPtr Begin() const { return _list.begin(); }
 			IteratorPtr End(void) const { return _list.end(); }
 			void Append(list_type::value_type item) { _list.push_back(item); }
+			void Prepend(list_type::value_type item) { _list.push_front(item); }
+			void Reverse(void) { _list.reverse(); }
 
 			XrefUsedEntryBasePtr AllocateNewEntry();
 			XrefEntryBasePtr GetXrefEntry(types::big_uint objNumber, types::ushort genNumber);

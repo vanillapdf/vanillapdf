@@ -13,6 +13,18 @@ namespace gotchangpdf
 	{
 		using namespace std;
 
+		XrefStream::~XrefStream()
+		{
+			_stream->Unsubscribe(this);
+		}
+
+		XrefBase::~XrefBase()
+		{
+			for (auto item : _entries) {
+				item.second->Unsubscribe(this);
+			}
+		}
+
 		void XrefUsedEntry::SetReference(ObjectPtr ref)
 		{
 			_reference->Unsubscribe(this);
@@ -107,17 +119,23 @@ namespace gotchangpdf
 			assert(m_initialized);
 		}
 
-		void XrefStream::OnEntryChanged()
+		void XrefBase::ObserveeChanged(IModifyObservable*)
 		{
-			if (!IsInitialized()) {
-				return;
+			if (m_initialized) {
+				SetDirty();
 			}
 
-			RecalculateContent();
+			// Notify observers
+			OnChanged();
 		}
 
 		void XrefStream::RecalculateContent()
 		{
+			// Recalculate only for changed streams
+			if (!m_dirty) {
+				return;
+			}
+
 			auto header = _stream->GetHeader();
 			if (!header->Contains(constant::Name::W)) {
 				throw GeneralException("Stream header does not contain width");
@@ -194,7 +212,7 @@ namespace gotchangpdf
 			std::pair<types::big_uint, XrefEntryBasePtr> pair(obj_number, entry);
 			_entries.insert(pair);
 			entry->Subscribe(this);
-			OnEntryChanged();
+			OnChanged();
 		}
 
 		bool XrefBase::Remove(types::big_uint obj_number)
@@ -206,7 +224,7 @@ namespace gotchangpdf
 
 			_entries.erase(found);
 			found->second->Unsubscribe(this);
-			OnEntryChanged();
+			OnChanged();
 			return true;
 		}
 

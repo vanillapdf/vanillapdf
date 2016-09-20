@@ -30,7 +30,6 @@ namespace gotchangpdf
 			XrefBasePtr CreateIncrementalXref(std::shared_ptr<File> source, std::shared_ptr<File> destination);
 			void WriteXref(std::iostream& output, XrefBasePtr xref);
 			void WriteXrefTable(std::iostream& output, XrefTablePtr xref_table);
-			void WriteXrefStream(std::iostream& output, XrefStreamPtr xref_stream);
 			void WriteXrefOffset(std::ostream& output, types::stream_offset offset);
 			void WriteObject(std::ostream& output, const Object& obj);
 

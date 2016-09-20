@@ -181,7 +181,7 @@ namespace gotchangpdf
 			types::uinteger _index = 0;
 		};
 
-		class XrefBase : public IUnknown, public IModifyObserver
+		class XrefBase : public IUnknown, public IModifyObserver, public IModifyObservable
 		{
 		public:
 			using map_type = std::unordered_map<types::big_uint, XrefEntryBasePtr>;
@@ -237,7 +237,7 @@ namespace gotchangpdf
 			bool IsInitialized(void) const noexcept { return m_initialized; }
 			void SetInitialized(bool initialized = true) noexcept { m_initialized = initialized; }
 
-			virtual void ObserveeChanged(IModifyObservable*) override { OnEntryChanged(); }
+			virtual void ObserveeChanged(IModifyObservable*) override;
 
 			void SetFile(std::weak_ptr<File>file) noexcept { _file = file; }
 			std::weak_ptr<File> GetFile() const noexcept { return _file; }
@@ -251,6 +251,9 @@ namespace gotchangpdf
 			types::stream_offset GetLastXrefOffset() const noexcept { return _last_xref_offset; }
 			void SetLastXrefOffset(types::stream_offset offset) noexcept { _last_xref_offset = offset; }
 
+			bool IsDirty(void) const noexcept { return m_dirty; }
+			void SetDirty(bool dirty = true) noexcept { m_dirty = dirty; }
+
 			IteratorPtr Begin(void) const noexcept { return _entries.begin(); }
 			IteratorPtr End(void) const noexcept { return _entries.end(); }
 
@@ -262,7 +265,7 @@ namespace gotchangpdf
 			std::vector<XrefEntryBasePtr> Entries(void) const;
 
 			virtual Type GetType(void) const noexcept = 0;
-			virtual ~XrefBase() {};
+			virtual ~XrefBase();
 
 		protected:
 			std::weak_ptr<File> _file;
@@ -271,8 +274,7 @@ namespace gotchangpdf
 			types::stream_offset _offset = std::_BADOFF;
 			DictionaryObjectPtr _trailer_dictionary;
 			bool m_initialized = false;
-
-			virtual void OnEntryChanged() {}
+			bool m_dirty = false;
 		};
 
 		class XrefTable : public XrefBase
@@ -287,20 +289,24 @@ namespace gotchangpdf
 			virtual Type GetType(void) const noexcept override { return XrefBase::Type::Stream; }
 
 			StreamObjectPtr GetStreamObject(void) const { return _stream; }
-			void SetStreamObject(const StreamObject& stream)
+			void SetStreamObject(StreamObjectPtr stream)
 			{
 				_stream->Unsubscribe(this);
 				_stream = stream;
 				_stream->Subscribe(this);
+
+				auto stream_header = stream->GetHeader();
+				SetTrailerDictionary(stream_header);
 			}
 
 			void RecalculateContent();
+
+			~XrefStream();
 
 		private:
 			StreamObjectPtr _stream;
 
 			void WriteValue(std::ostream& dest, types::big_uint value, int64_t width);
-			virtual void OnEntryChanged() override;
 		};
 	}
 }

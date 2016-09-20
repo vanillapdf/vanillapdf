@@ -27,9 +27,9 @@ namespace gotchangpdf
 
 			auto source_xref = source->GetXrefChain();
 			auto dest_xref = destination->GetXrefChain();
-			auto end = source_xref->End();
-			for (auto it = source_xref->Begin(); *it != *end; ++(*it)) {
-				auto original_xref = it->Value();
+			auto source_end = source_xref->end();
+			for (auto it = source_xref->begin(); it != source_end; ++it) {
+				auto original_xref = *it;
 
 				// Deep clone of original xref
 				auto new_xref = CloneXref(destination, original_xref);
@@ -37,10 +37,82 @@ namespace gotchangpdf
 				// Insert cloned table to destination xref chain
 				// NOTE: This is required, so that indirect references are accessible
 				dest_xref->Append(new_xref);
+			}
+
+			auto source_iterator = source_xref->begin();
+			for (auto dest_iterator = dest_xref->begin(); dest_iterator != dest_xref->end(); ++dest_iterator, ++source_iterator) {
+				auto original_xref = *source_iterator;
+				auto new_xref = *dest_iterator;
+
+				// Xref streams content needs to be recalculated
+				if (new_xref->GetType() != XrefBase::Type::Stream) {
+					continue;
+				}
+
+				auto source_xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(original_xref);
+				auto dest_xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(new_xref);
+
+				auto stream_obj = source_xref_stream->GetStreamObject();
+				auto stream_object_number = stream_obj->GetObjectNumber();
+				auto stream_generation_number = stream_obj->GetGenerationNumber();
+
+				assert(dest_xref->Contains(stream_object_number, stream_generation_number)
+					&& "Xref stream reference was not found in cloned xref");
+
+				// Get cloned stream based on same object and generation number from cloned xref
+				auto new_stream_entry = dest_xref->GetXrefEntry(stream_object_number, stream_generation_number);
+				auto new_stream_used_entry = XrefUtils::ConvertTo<XrefUsedEntryBasePtr>(new_stream_entry);
+				auto new_stream_obj = new_stream_used_entry->GetReference();
+				auto new_stream = ObjectUtils::ConvertTo<StreamObjectPtr>(new_stream_obj);
+
+				// Fix stream object reference and recalculate stream content
+				dest_xref_stream->SetStreamObject(new_stream);
+				dest_xref_stream->RecalculateContent();
+			}
+
+			// All xref entries are stored in reversed order than it is written to file
+			dest_xref->Reverse();
+
+			bool first_xref = true;
+			auto last_xref_iterator = dest_xref->begin();
+			for (auto it = dest_xref->begin(); it != dest_xref->end(); ++it) {
+				auto new_xref = *it;
+
+				if (!first_xref) {
+					auto prev_xref = *last_xref_iterator;
+					auto prev_xref_offset = prev_xref->GetLastXrefOffset();
+
+					auto trailer_dictionary = new_xref->GetTrailerDictionary();
+					if (!trailer_dictionary->Contains(constant::Name::Prev)) {
+						IntegerObjectPtr xref_offset(prev_xref_offset);
+						trailer_dictionary->Insert(constant::Name::Prev, xref_offset);
+					}
+
+					// Fix prev entry for all following trailers
+					auto prev = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::Prev);
+					prev->SetValue(prev_xref_offset);
+
+					last_xref_iterator++;
+				}
 
 				// Stream length to be adjusted according to calculated size
 				if (m_recalculate_stream_size) {
 					RecalculateStreamsLength(new_xref);
+				}
+
+				if (m_recalculate_xref_size) {
+					auto xref_size = new_xref->Size();
+					auto trailer_dictionary = new_xref->GetTrailerDictionary();
+
+					if (!trailer_dictionary->Contains(constant::Name::Size)) {
+						IntegerObjectPtr xref_size_obj(xref_size);
+						trailer_dictionary->Insert(constant::Name::Size, xref_size_obj);
+					}
+
+					auto size = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::Size);
+					if (size->GetValue() != xref_size) {
+						size->SetValue(xref_size);
+					}
 				}
 
 				// Write all body objects
@@ -48,6 +120,8 @@ namespace gotchangpdf
 
 				// Write xref to output
 				WriteXref(*output, new_xref);
+
+				first_xref = false;
 			}
 
 			// Cleanup
@@ -155,14 +229,7 @@ namespace gotchangpdf
 			XrefBasePtr result = XrefTablePtr();
 
 			if (source->GetType() == XrefBase::Type::Stream) {
-				auto source_xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(source);
-				auto source_xref_stream_obj = source_xref_stream->GetStreamObject();
-				auto cloned_obj = ObjectUtils::Clone<StreamObjectPtr>(source_xref_stream_obj);
-				cloned_obj->SetFile(destination);
-
-				XrefStreamPtr stream;
-				stream->SetStreamObject(*cloned_obj);
-				result = stream;
+				result = XrefStreamPtr();
 			}
 
 			auto table_size = source->Size();
@@ -444,16 +511,19 @@ namespace gotchangpdf
 
 			if (xref->GetType() == XrefBase::Type::Stream) {
 				auto xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(xref);
-				auto stream_offset = output.tellg();
-				WriteXrefStream(output, xref_stream);
+				auto stream_obj = xref_stream->GetStreamObject();
+				auto stream_offset = stream_obj->GetOffset();
+
+				if (m_recalculate_offset) {
+					xref_stream->SetLastXrefOffset(stream_offset);
+				}
+
+				// Xref streams shall be referenced either from themselves
+				// or from a different xref. Therefore it is not needed to
+				// serialize them in any fashion
+
 				WriteXrefOffset(output, stream_offset);
 			}
-		}
-
-		void FileWriter::WriteXrefStream(std::iostream& output, XrefStreamPtr xref_stream)
-		{
-			auto stream = xref_stream->GetStreamObject();
-			WriteObject(output, stream);
 		}
 
 		void FileWriter::WriteXrefTable(std::iostream& output, XrefTablePtr xref_table)
@@ -508,16 +578,6 @@ namespace gotchangpdf
 			}
 
 			auto trailer = xref_table->GetTrailerDictionary();
-
-			if (m_recalculate_xref_size) {
-				if (trailer->Contains(constant::Name::Size)) {
-					auto size = trailer->FindAs<IntegerObjectPtr>(constant::Name::Size);
-					if (size->GetValue() != table_size) {
-						size->SetValue(table_size);
-					}
-				}
-			}
-
 			output << "trailer" << endl;
 			output << trailer->ToPdf() << endl;
 		}
