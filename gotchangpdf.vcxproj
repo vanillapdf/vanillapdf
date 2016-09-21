@@ -215,6 +215,7 @@
     <ClCompile Include="src\gotchangpdf\syntax\utils\buffer.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\utils\encryption.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\utils\log.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\utils\modify_observer_interface.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\utils\pkcs12_key.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\utils\zlib_wrapper.cpp" />
   </ItemGroup>

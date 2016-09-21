@@ -19,34 +19,16 @@ namespace gotchangpdf
 	class IModifyObservable
 	{
 	public:
-		void Subscribe(IModifyObserver* observer)
-		{
-			m_observers.push_back(observer);
-		}
+		IModifyObservable() = default;
+		IModifyObservable(const IModifyObservable& other);
+		IModifyObservable& operator=(const IModifyObservable& other);
+		IModifyObservable(IModifyObservable&& other) = default;
+		IModifyObservable& operator=(IModifyObservable&& other) = default;
 
-		bool Unsubscribe(IModifyObserver* observer)
-		{
-			for (auto it = m_observers.begin(); it != m_observers.end(); ++it) {
-				if (observer == *it) {
-					m_observers.erase(it);
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		virtual void OnChanged()
-		{
-			if (!m_initialized) {
-				return;
-			}
-
-			auto size = m_observers.size();
-			for (decltype(size) i = 0; i < size; ++i) {
-				m_observers[i]->ObserveeChanged(this);
-			}
-		}
+	public:
+		void Subscribe(IModifyObserver* observer);
+		bool Unsubscribe(IModifyObserver* observer);
+		virtual void OnChanged();
 
 		bool IsInitialized(void) const noexcept { return m_initialized; }
 		virtual void SetInitialized(bool initialized = true) noexcept { m_initialized = initialized; }
@@ -57,9 +39,6 @@ namespace gotchangpdf
 		std::vector<IModifyObserver*> m_observers;
 		bool m_initialized = false;
 	};
-
-	inline IModifyObservable::~IModifyObservable() {}
-	inline IModifyObserver::~IModifyObserver() {}
 }
 
 #endif /* _MODIFY_OBSERVER_INTERFACE_H */
