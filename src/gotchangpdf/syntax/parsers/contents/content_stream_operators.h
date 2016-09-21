@@ -95,7 +95,6 @@ namespace gotchangpdf
 
 				virtual Type GetType(void) const noexcept = 0;
 				virtual BufferPtr Value(void) const = 0;
-				virtual ~OperatorBase() {};
 			};
 
 			// Unknown operator from compatibility section

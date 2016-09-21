@@ -12,8 +12,6 @@ namespace gotchangpdf
 		Stream::Stream(CharacterSource & stream)
 			: CharacterSource(stream.rdbuf()) {}
 
-		Stream::~Stream() {}
-
 		Stream::Stream(const Stream & other)
 			: CharacterSource(other.rdbuf()) {}
 

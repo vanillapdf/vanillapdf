@@ -28,6 +28,7 @@ namespace gotchangpdf
 
 	public:
 		Buffer() = default;
+
 		explicit Buffer(size_type count);
 		explicit Buffer(const char * chars);
 		Buffer(const value_type * begin, const value_type * end);
@@ -99,8 +100,6 @@ namespace gotchangpdf
 			m_data.insert(position, first, last);
 			OnChanged();
 		}
-
-		virtual ~Buffer() {}
 
 	private:
 		std::vector<char> m_data;

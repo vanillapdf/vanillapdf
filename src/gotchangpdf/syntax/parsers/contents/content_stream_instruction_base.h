@@ -21,19 +21,9 @@ namespace gotchangpdf
 					Operation
 				};
 
-				InstructionBase() = default;
-				InstructionBase(const InstructionBase&) = default;
-				InstructionBase& operator=(const InstructionBase&) = default;
-
-				InstructionBase(InstructionBase&&) = default;
-				InstructionBase& operator=(InstructionBase&&) = default;
-
 				virtual Type GetInstructionType(void) const noexcept = 0;
 				virtual std::string ToPdf() const = 0;
-				virtual ~InstructionBase() = 0;
 			};
-
-			inline InstructionBase::~InstructionBase() {}
 
 			class BaseInstructionCollection : public IUnknown, public IModifyObserver, public IModifyObservable
 			{
@@ -48,6 +38,14 @@ namespace gotchangpdf
 				using reference = data_type::reference;
 				using const_reference = data_type::const_reference;
 				using difference_type = data_type::difference_type;
+
+			public:
+				BaseInstructionCollection() = default;
+				BaseInstructionCollection(const BaseInstructionCollection&) = default;
+				BaseInstructionCollection& operator=(const BaseInstructionCollection&) = default;
+
+				BaseInstructionCollection(BaseInstructionCollection&&) = default;
+				BaseInstructionCollection& operator=(BaseInstructionCollection&&) = default;
 
 			public:
 				virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }

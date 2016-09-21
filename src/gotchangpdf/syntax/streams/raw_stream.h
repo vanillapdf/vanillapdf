@@ -12,7 +12,6 @@ namespace gotchangpdf
 		public:
 			explicit Stream(CharacterSource & stream);
 			Stream(const Stream & other);
-			virtual ~Stream();
 
 			virtual BufferPtr read(size_t len) override;
 			virtual void read(Buffer& result, size_t len) override;

@@ -62,7 +62,6 @@ namespace gotchangpdf
 	public:
 		virtual BufferPtr Decrypt(const Buffer& data) const = 0;
 		virtual bool Equals(const Buffer& issuer, const Buffer& serial) const = 0;
-		virtual ~IEncryptionKey() {};
 	};
 }
 

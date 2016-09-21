@@ -23,10 +23,8 @@ namespace gotchangpdf
 			virtual types::stream_size GetPosition() = 0;
 			virtual void SetPosition(types::stream_size pos) = 0;
 
-			virtual ~BaseStream() = 0;
+			virtual ~BaseStream() {};
 		};
-
-		inline BaseStream::~BaseStream() {}
 	}
 }
 
