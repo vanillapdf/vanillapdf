@@ -31,12 +31,20 @@ namespace gotchangpdf
 		template <
 			typename RangeType,
 			typename ValueType,
-			bool = (std::is_signed<ValueType>::value ^ std::is_signed<RangeType>::value)
+
+			// This is to enable specialization for same and different singedness
+			bool = (std::is_signed<ValueType>::value ^ std::is_signed<RangeType>::value),
+
+			// I had to divide logic for different singedness furthermore, because
+			// while the compiler sees a body where I do compare signed and unsigned
+			// even when the logic does not allow control flow to execute the comparison,
+			// the compiler warning was issued
+			bool = (std::is_signed<ValueType>::value)
 		>
 		class Specializator
 		{
 		public:
-			static bool IsInRange(ValueType value) noexcept
+			static bool IsInRange(ValueType value)
 			{
 				return (value >= std::numeric_limits<RangeType>::min()) &&
 					(value <= std::numeric_limits<RangeType>::max());
@@ -47,35 +55,43 @@ namespace gotchangpdf
 			typename RangeType,
 			typename ValueType
 		>
-		class Specializator<RangeType, ValueType, true>
+		class Specializator<RangeType, ValueType, true, true>
 		{
 		public:
-			static bool IsInRange(ValueType value) noexcept
+			static_assert(std::is_signed<ValueType>::value, "Value type shall be signed");
+
+		public:
+			static bool IsInRange(ValueType value)
 			{
-				// Template shall provide only types with different singedness
-				assert(std::is_signed<ValueType>::value ^ std::is_signed<RangeType>::value);
-				if (std::is_signed<ValueType>::value) {
-					if (value < 0) {
-						return false;
-					}
-
-					using unsigned_value_type = std::make_unsigned<ValueType>::type;
-					unsigned_value_type unsigned_value = static_cast<unsigned_value_type>(value);
-					return Specializator<RangeType, unsigned_value_type>::IsInRange(unsigned_value);
+				if (value < 0) {
+					return false;
 				}
 
-				if (std::is_unsigned<ValueType>::value) {
-					using unsigned_range_type = std::make_unsigned<RangeType>::type;
-					RangeType range_max = std::numeric_limits<RangeType>::max();
+				using unsigned_value_type = std::make_unsigned<ValueType>::type;
+				unsigned_value_type unsigned_value = static_cast<unsigned_value_type>(value);
+				return Specializator<RangeType, unsigned_value_type>::IsInRange(unsigned_value);
+			}
+		};
 
-					// This operation shall be safe
-					// Converting maximum signed value shall be in range of unsigned type of the same size
-					unsigned_range_type unsigned_range_max = static_cast<unsigned_range_type>(range_max);
-					return unsigned_range_max > value;
-				}
+		template <
+			typename RangeType,
+			typename ValueType
+		>
+		class Specializator<RangeType, ValueType, true, false>
+		{
+		public:
+			static_assert(std::is_signed<RangeType>::value, "Range type shall be signed");
 
-				assert(false && "Is in range logic has some flaws");
-				return false;
+		public:
+			static bool IsInRange(ValueType value)
+			{
+				using unsigned_range_type = std::make_unsigned<RangeType>::type;
+				RangeType range_max = std::numeric_limits<RangeType>::max();
+
+				// This operation shall be safe
+				// Converting maximum signed value shall be in range of unsigned type of the same size
+				unsigned_range_type unsigned_range_max = static_cast<unsigned_range_type>(range_max);
+				return unsigned_range_max > value;
 			}
 		};
 	};
