@@ -537,7 +537,8 @@ namespace gotchangpdf
 					auto stm_offset = stm_offset_obj->GetIntegerValue();
 					auto xref_stm = stream.ReadXref(stm_offset);
 
-					assert(!trailer_dictionary->Contains(constant::Name::Prev));
+					auto xref_stm_trailer = xref_stm->GetTrailerDictionary();
+					assert(!xref_stm_trailer->Contains(constant::Name::Prev));
 					additional_xref.push_back(xref_stm);
 				}
 			}
