@@ -9,39 +9,47 @@ namespace gotchangpdf
 		{
 			for (types::big_uint i = m_next_allocation; i < std::numeric_limits<types::big_uint>::max(); ++i) {
 
-				bool found = true;
+				size_t eligible = 0;
 				for (auto it = _list.begin(); it != _list.end(); it++) {
 					auto xref = (*it);
 
 					if (!xref->Contains(i)) {
+						eligible++;
 						continue;
 					}
 
 					auto item = xref->Find(i);
 					if (item->GetUsage() != XrefEntryBase::Usage::Free) {
-						found = false;
-						break;
+						continue;
 					}
 
+					// Disable free entries with max generation number
 					if (item->GetGenerationNumber() == std::numeric_limits<types::ushort>::max()) {
-						found = false;
-						break;
+						continue;
 					}
+
+					// TODO: I've tried reusing free entries in xref streams
+					// but somehow it didn't worked. This would require
+					// deleteing unused free entries and replacing them
+					// is creating new pdf file or creating additional xref
+					// for these new entries
+					//eligible++;
 				}
 
-				if (!found) {
+				if (eligible != _list.size()) {
 					continue;
 				}
 
 				auto xref_it = _list.begin();
 				auto xref = *xref_it;
 				types::ushort gen_number = 0;
-				if (xref->Contains(i)) {
-					auto item = xref->Find(i);
-					if (item->GetUsage() == XrefEntryBase::Usage::Free) {
-						gen_number = item->GetGenerationNumber() + 1;
-					}
-				}
+
+				//if (xref->Contains(i)) {
+				//	auto item = xref->Find(i);
+				//	if (item->GetUsage() == XrefEntryBase::Usage::Free) {
+				//		gen_number = item->GetGenerationNumber() + 1;
+				//	}
+				//}
 
 				XrefUsedEntryPtr new_entry(i, gen_number, -1);
 				xref->Add(new_entry);
