@@ -14,33 +14,22 @@ namespace gotchangpdf
 		class NumericObjectBackend : public IUnknown, public IModifyObservable
 		{
 		public:
-			NumericObjectBackend() = default;
-			NumericObjectBackend(types::native_int value) : m_type(Type::Integer), m_int(value) {}
-			NumericObjectBackend(types::native_uint value) : m_type(Type::Integer), m_int(value) {}
-			NumericObjectBackend(int64_t value) : m_type(Type::Integer), m_int(value) {}
+			NumericObjectBackend() : m_type(Type::SignedInteger), m_int(0) {}
+			NumericObjectBackend(types::native_int value) : m_type(Type::SignedInteger), m_int(value) {}
+			NumericObjectBackend(types::native_uint value) : m_type(Type::UnsignedInteger), m_uint(value) {}
+			NumericObjectBackend(types::big_int value) : m_type(Type::SignedInteger), m_int(value) {}
 			NumericObjectBackend(types::real value) : m_type(Type::Real), m_real(value) {}
 			NumericObjectBackend(types::real value, uint32_t precision) : m_type(Type::Real), m_real(value), m_precision(precision) {}
-			NumericObjectBackend& operator= (int64_t value) { m_type = Type::Integer; m_int = value; return *this; }
+			NumericObjectBackend& operator= (types::big_int value) { m_type = Type::SignedInteger; m_int = value; return *this; }
 			NumericObjectBackend& operator= (types::real value) { m_type = Type::Real; m_real = value; return *this; }
 
-			int64_t GetIntegerValue(void) const noexcept
-			{
-				if (m_type == Type::Integer)
-					return m_int;
+			types::big_int GetIntegerValue(void) const;
+			types::big_uint GetUnsignedIntegerValue(void) const;
+			types::real GetRealValue(void) const;
 
-				return ValueConvertUtils::SafeConvert<int64_t>(m_real);
-			}
-
-			types::real GetRealValue(void) const noexcept
-			{
-				if (m_type == Type::Real)
-					return m_real;
-
-				return ValueConvertUtils::SafeConvert<types::real>(m_int);
-			}
-
-			void SetIntegerValue(int64_t value) noexcept { m_type = Type::Integer; m_int = value; OnChanged(); }
-			void SetRealValue(types::real value) noexcept { m_type = Type::Real; m_real = value; OnChanged(); }
+			void SetIntegerValue(types::big_int value);
+			void SetUnsignedIntegerValue(types::big_uint value);
+			void SetRealValue(types::real value);
 
 			NumericObjectBackend* Clone(void) const { return new NumericObjectBackend(*this); }
 
@@ -48,20 +37,26 @@ namespace gotchangpdf
 
 		private:
 			std::string IntegerString(void) const;
+			std::string UnsignedIntegerString(void) const;
 			std::string RealString(void) const;
 
 		private:
 			enum class Type
 			{
-				Integer,
+				SignedInteger,
+				UnsignedInteger,
 				Real
 			};
 
 		private:
-			Type m_type = Type::Integer;
-			int64_t m_int = 0;
-			types::real m_real = 0;
+			Type m_type = Type::SignedInteger;
 			uint32_t m_precision = 0;
+
+			union {
+				types::big_int m_int;
+				types::big_uint m_uint;
+				types::real m_real;
+			};
 		};
 
 		class NumericObject : public ContainableObject

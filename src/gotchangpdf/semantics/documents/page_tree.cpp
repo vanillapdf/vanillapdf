@@ -25,7 +25,7 @@ namespace gotchangpdf
 
 			if (_obj->Contains(constant::Name::Count)) {
 				auto count_obj = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::Count);
-				assert(count_obj->GetValue() == result);
+				assert(count_obj->GetIntegerValue() == result);
 			}
 
 			return result;
@@ -147,7 +147,7 @@ namespace gotchangpdf
 			}
 
 			auto count = _obj->FindAs<IntegerObjectPtr>(constant::Name::Count);
-			if (count->GetValue() != new_size) {
+			if (count->GetIntegerValue() != new_size) {
 				count->SetValue(new_size);
 			}
 		}

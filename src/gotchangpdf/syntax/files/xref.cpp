@@ -99,7 +99,7 @@ namespace gotchangpdf
 
 			auto stream = body->ToStringStream();
 			auto parser = Parser(_file, stream);
-			auto stream_entries = parser.ReadObjectStreamEntries(first->GetValue(), size->SafeConvert<size_t>());
+			auto stream_entries = parser.ReadObjectStreamEntries(first->GetUnsignedIntegerValue(), size->SafeConvert<size_t>());
 			for (auto stream_entry : stream_entries) {
 				auto entry_object_number = stream_entry.object_number;
 				auto entry_object = stream_entry.object;

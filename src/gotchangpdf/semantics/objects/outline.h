@@ -28,8 +28,8 @@ namespace gotchangpdf
 		public:
 			explicit OutlineItemFlags(syntax::IntegerObjectPtr value) : HighLevelObject(value) {}
 
-			bool Italic(void) const noexcept { return (_obj->GetValue() & 0x01) != 0; }
-			bool Bold(void) const noexcept { return (_obj->GetValue() & 0x02) != 0; }
+			bool Italic(void) const noexcept { return (_obj->GetIntegerValue() & 0x01) != 0; }
+			bool Bold(void) const noexcept { return (_obj->GetIntegerValue() & 0x02) != 0; }
 		};
 
 		class OutlineBase : public HighLevelObject<syntax::DictionaryObjectPtr>

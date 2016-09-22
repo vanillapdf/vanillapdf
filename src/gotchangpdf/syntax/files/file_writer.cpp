@@ -110,7 +110,7 @@ namespace gotchangpdf
 					}
 
 					auto size = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::Size);
-					if (size->GetValue() != xref_size) {
+					if (size->GetIntegerValue() != xref_size) {
 						size->SetValue(xref_size);
 					}
 				}
@@ -185,7 +185,7 @@ namespace gotchangpdf
 			}
 
 			auto length_obj = stream_header->FindAs<IntegerObjectPtr>(constant::Name::Length);
-			if (length_obj->GetValue() != stream_data->size()) {
+			if (length_obj->GetIntegerValue() != stream_data->size()) {
 				length_obj->SetValue(stream_data->size());
 			}
 		}

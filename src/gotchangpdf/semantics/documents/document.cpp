@@ -399,7 +399,7 @@ namespace gotchangpdf
 					if (ObjectUtils::IsType<IntegerObjectPtr>(cloned_destination_page)) {
 						// Increment referring page number by number of pages from original document
 						auto cloned_page_index = ObjectUtils::ConvertTo<IntegerObjectPtr>(cloned_destination_page);
-						cloned_page_index->SetValue(cloned_page_index->GetValue() + original_page_count);
+						cloned_page_index->SetValue(cloned_page_index->GetIntegerValue() + original_page_count);
 					}
 
 					if (is_destination_name) {

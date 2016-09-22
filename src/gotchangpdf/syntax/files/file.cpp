@@ -143,7 +143,7 @@ namespace gotchangpdf
 			IntegerObjectPtr length_bits = 40;
 			if (dict->Contains(constant::Name::Length)) {
 				length_bits = dict->FindAs<IntegerObjectPtr>(constant::Name::Length);
-				assert(length_bits->GetValue() % 8 == 0 && "Key length is not multiplier of 8");
+				assert(length_bits->GetIntegerValue() % 8 == 0 && "Key length is not multiplier of 8");
 			}
 
 			ArrayObjectPtr<StringObjectPtr> recipients;
@@ -180,7 +180,7 @@ namespace gotchangpdf
 
 						if (crypt_filter->Contains(constant::Name::Length)) {
 							length_bits = crypt_filter->FindAs<IntegerObjectPtr>(constant::Name::Length);
-							assert(length_bits->GetValue() == 256 && "AESV3 length is not 256 bits");
+							assert(length_bits->GetIntegerValue() == 256 && "AESV3 length is not 256 bits");
 						}
 					}
 
@@ -237,7 +237,7 @@ namespace gotchangpdf
 			IntegerObjectPtr length_bits = 40;
 			if (dict->Contains(constant::Name::Length)) {
 				length_bits = dict->FindAs<IntegerObjectPtr>(constant::Name::Length);
-				assert(length_bits->GetValue() % 8 == 0 && "Key length is not multiplier of 8");
+				assert(length_bits->GetIntegerValue() % 8 == 0 && "Key length is not multiplier of 8");
 			}
 
 			// Pad password with predefined scheme
@@ -526,17 +526,18 @@ namespace gotchangpdf
 				}
 
 				auto prev = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::Prev);
-				offset = prev->GetValue();
+				offset = prev->GetIntegerValue();
 			}
 
 			std::vector<XrefBasePtr> additional_xref;
 			for (auto& xref : *_xref) {
 				auto trailer_dictionary = xref->GetTrailerDictionary();
 				if (trailer_dictionary->Contains(constant::Name::XRefStm)) {
-					auto stm_offset = xref->GetTrailerDictionary()->FindAs<IntegerObjectPtr>(constant::Name::XRefStm)->GetValue();
+					auto stm_offset_obj = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::XRefStm);
+					auto stm_offset = stm_offset_obj->GetIntegerValue();
 					auto xref_stm = stream.ReadXref(stm_offset);
 
-					assert(!xref_stm->GetTrailerDictionary()->Contains(constant::Name::Prev));
+					assert(!trailer_dictionary->Contains(constant::Name::Prev));
 					additional_xref.push_back(xref_stm);
 				}
 			}

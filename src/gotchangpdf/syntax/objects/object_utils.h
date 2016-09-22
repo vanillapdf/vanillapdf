@@ -118,7 +118,7 @@ namespace gotchangpdf
 					if (nullptr == first_converted || nullptr == second_converted)
 						return false;
 
-					return (first_converted->GetValue() == second_converted->GetValue());
+					return (first_converted->Equals(*second_converted));
 				}
 				case Object::Type::Name:
 				{
