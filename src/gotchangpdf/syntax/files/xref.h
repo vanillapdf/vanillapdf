@@ -66,6 +66,8 @@ namespace gotchangpdf
 			bool IsDirty(void) const noexcept { return _dirty; }
 			void SetDirty(bool dirty = true) noexcept { _dirty = dirty; }
 
+			bool operator<(const XrefEntryBase& other) const;
+
 			virtual ~XrefEntryBase() {};
 
 		protected:
@@ -308,6 +310,11 @@ namespace gotchangpdf
 
 			void WriteValue(std::ostream& dest, types::big_uint value, int64_t width);
 		};
+
+		inline bool operator<(const Deferred<syntax::XrefEntryBase>& left, const Deferred<syntax::XrefEntryBase>& right)
+		{
+			return *left < *right;
+		}
 	}
 }
 

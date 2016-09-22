@@ -65,9 +65,8 @@ namespace gotchangpdf
 				auto new_stream_obj = new_stream_used_entry->GetReference();
 				auto new_stream = ObjectUtils::ConvertTo<StreamObjectPtr>(new_stream_obj);
 
-				// Fix stream object reference and recalculate stream content
+				// Fix stream object reference
 				dest_xref_stream->SetStreamObject(new_stream);
-				dest_xref_stream->RecalculateContent();
 			}
 
 			// All xref entries are stored in reversed order than it is written to file
@@ -241,6 +240,7 @@ namespace gotchangpdf
 
 			result->SetTrailerDictionary(new_trailer);
 			result->SetOffset(source->GetOffset());
+			result->SetDirty(source->IsDirty());
 
 			// TODO mayble also recalculate?
 			result->SetLastXrefOffset(source->GetLastXrefOffset());
@@ -314,6 +314,7 @@ namespace gotchangpdf
 				assert(false && "Uncrecognized entry type");
 			}
 
+			result->SetInitialized();
 			return result;
 		}
 
@@ -325,42 +326,28 @@ namespace gotchangpdf
 			for (decltype(table_size) i = 0; i < table_size; ++i) {
 				auto entry = table_items[i];
 
+				if (source->GetType() == XrefBase::Type::Stream) {
+					auto xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(source);
+					auto stream_obj = xref_stream->GetStreamObject();
+
+					// Skip xref stream object in this serialization
+					// Xref stream object itself must be written after all objects have
+					// been serialized, so that it's contents can be recalculated
+					// with correct offsets to each object
+					if (stream_obj->GetObjectNumber() == entry->GetObjectNumber()
+						&& stream_obj->GetGenerationNumber() == entry->GetGenerationNumber()) {
+						continue;
+					}
+				}
+
 				if (entry->GetUsage() == XrefEntryBase::Usage::Free) {
 					continue;
 				}
 
-				if (entry->GetUsage() == XrefEntryBase::Usage::Used) {
-					auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
-					auto new_obj = used_entry->GetReference();
-
-					auto output = destination->GetInputStream();
-					if (m_recalculate_offset) {
-						auto new_offset = output->tellg();
-						new_obj->SetOffset(new_offset);
-						used_entry->SetOffset(new_offset);
-					}
-
-					// Write new object into destination file
-					WriteObject(*output, new_obj);
-					continue;
-				}
-
-				if (entry->GetUsage() == XrefEntryBase::Usage::Compressed) {
-					auto compressed_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(entry);
-					auto new_obj = compressed_entry->GetReference();
-
-					auto output = destination->GetInputStream();
-					if (m_recalculate_offset) {
-						auto new_offset = output->tellg();
-						new_obj->SetOffset(new_offset);
-					}
-
-					// Write new object into destination file
-					WriteObject(*output, new_obj);
-					continue;
-				}
-
-				assert(false && "Uncrecognized entry type");
+				auto used_entry = XrefUtils::ConvertTo<XrefUsedEntryBasePtr>(entry);
+				auto output = destination->GetInputStream();
+				WriteEntry(*output, used_entry);
+				continue;
 			}
 		}
 
@@ -480,14 +467,35 @@ namespace gotchangpdf
 			return new_table;
 		}
 
-		void FileWriter::WriteObject(std::ostream& output, const Object& obj)
+		void FileWriter::WriteEntry(std::iostream& output, XrefUsedEntryBasePtr entry)
 		{
-			output << obj.GetObjectNumber() << " " << obj.GetGenerationNumber() << " " << "obj" << endl;
-			output << obj.ToPdf() << endl;
+			auto obj = entry->GetReference();
+
+			if (m_recalculate_offset) {
+				if (XrefUtils::IsType<XrefUsedEntryPtr>(entry)) {
+					auto used_entry = XrefUtils::ConvertTo<XrefUsedEntryPtr>(entry);
+
+					auto new_offset = output.tellg();
+					used_entry->SetOffset(new_offset);
+				}
+			}
+
+			WriteObject(output, obj);
+		}
+
+		void FileWriter::WriteObject(std::iostream& output, ObjectPtr obj)
+		{
+			if (m_recalculate_offset) {
+				auto new_offset = output.tellg();
+				obj->SetOffset(new_offset);
+			}
+
+			output << obj->GetObjectNumber() << " " << obj->GetGenerationNumber() << " " << "obj" << endl;
+			output << obj->ToPdf() << endl;
 			output << "endobj" << endl;
 		}
 
-		void FileWriter::WriteXrefOffset(std::ostream& output, types::stream_offset offset)
+		void FileWriter::WriteXrefOffset(std::iostream& output, types::stream_offset offset)
 		{
 			output << "startxref" << endl;
 			output << offset << endl;
@@ -512,17 +520,20 @@ namespace gotchangpdf
 			if (xref->GetType() == XrefBase::Type::Stream) {
 				auto xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(xref);
 				auto stream_obj = xref_stream->GetStreamObject();
-				auto stream_offset = stream_obj->GetOffset();
+
+				// After all other objects have been written, we need
+				// to recalculate contents of xref stream
+				xref_stream->RecalculateContent();
+				RecalculateStreamLength(stream_obj);
+
+				WriteObject(output, stream_obj);
 
 				if (m_recalculate_offset) {
+					auto stream_offset = stream_obj->GetOffset();
 					xref_stream->SetLastXrefOffset(stream_offset);
 				}
 
-				// Xref streams shall be referenced either from themselves
-				// or from a different xref. Therefore it is not needed to
-				// serialize them in any fashion
-
-				WriteXrefOffset(output, stream_offset);
+				WriteXrefOffset(output, xref_stream->GetLastXrefOffset());
 			}
 		}
 

@@ -25,6 +25,17 @@ namespace gotchangpdf
 			}
 		}
 
+		bool XrefEntryBase::operator<(const XrefEntryBase& other) const
+		{
+			if (_obj_number != other._obj_number)
+				return _obj_number < other._obj_number;
+
+			if (_gen_number != other._gen_number)
+				return _gen_number < other._gen_number;
+
+			return false;
+		}
+
 		void XrefUsedEntry::SetReference(ObjectPtr ref)
 		{
 			_reference->Unsubscribe(this);
@@ -152,16 +163,41 @@ namespace gotchangpdf
 			auto field2_size = fields->At(1);
 			auto field3_size = fields->At(2);
 
+			auto sorted_entries = Entries();
+			std::sort(sorted_entries.begin(), sorted_entries.end());
+
+			ArrayObjectPtr<IntegerObjectPtr> subsections;
+			types::big_uint section_index = 0;
+			types::big_uint section_size = 0;
+			types::big_uint prev_number = 0;
+
 			std::stringstream ss;
-			for (auto item : _entries) {
-				auto entry = item.second;
+			for (auto entry : sorted_entries) {
+				types::big_uint current_number = entry->GetObjectNumber();
+
+				if (section_size != 0) {
+					auto continuous_number = SafeAddition<types::big_uint>(prev_number, 1);
+					if (current_number != continuous_number) {
+						IntegerObjectPtr section_index_obj(section_index);
+						IntegerObjectPtr section_length_obj(section_size);
+						subsections->Append(section_index_obj);
+						subsections->Append(section_length_obj);
+
+						section_index = current_number;
+						section_size = 0;
+					}
+				}
+
+				// Store number of previous object
+				prev_number = current_number;
+				section_size++;
 
 				if (entry->GetUsage() == XrefEntryBase::Usage::Free) {
 					auto free_entry = XrefUtils::ConvertTo<XrefFreeEntryPtr>(entry);
 
 					WriteValue(ss, 0, *field1_size);
 					WriteValue(ss, free_entry->GetNextFreeObjectNumber(), *field2_size);
-					WriteValue(ss, free_entry->GetGenerationNumber(), *field2_size);
+					WriteValue(ss, free_entry->GetGenerationNumber(), *field3_size);
 					continue;
 				}
 
@@ -170,7 +206,7 @@ namespace gotchangpdf
 
 					WriteValue(ss, 1, *field1_size);
 					WriteValue(ss, used_entry->GetOffset(), *field2_size);
-					WriteValue(ss, used_entry->GetGenerationNumber(), *field2_size);
+					WriteValue(ss, used_entry->GetGenerationNumber(), *field3_size);
 					continue;
 				}
 
@@ -179,11 +215,31 @@ namespace gotchangpdf
 
 					WriteValue(ss, 2, *field1_size);
 					WriteValue(ss, compressed_entry->GetObjectStreamNumber(), *field2_size);
-					WriteValue(ss, compressed_entry->GetIndex(), *field2_size);
+					WriteValue(ss, compressed_entry->GetIndex(), *field3_size);
 					continue;
 				}
 
 				assert(false && "Incorrect entry type");
+			}
+
+			// Insert last remaining section
+			IntegerObjectPtr section_index_obj(section_index);
+			IntegerObjectPtr section_length_obj(section_size);
+			subsections->Append(section_index_obj);
+			subsections->Append(section_length_obj);
+
+			if (header->Contains(constant::Name::Index)) {
+				bool removed = header->Remove(constant::Name::Index);
+				assert(removed); removed;
+			}
+
+			// Insert subsection info
+			header->Insert(constant::Name::Index, subsections->Data());
+
+			// TODO unable to encode prediction algorithms
+			// so I just have to remove them
+			if (header->Contains(constant::Name::DecodeParms)) {
+				header->Remove(constant::Name::DecodeParms);
 			}
 
 			auto new_data_string = ss.str();
