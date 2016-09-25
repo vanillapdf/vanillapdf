@@ -27,11 +27,18 @@ namespace gotchangpdf
 		class TreeBase : public HighLevelObject<syntax::DictionaryObjectPtr>, public IValueNameProvider
 		{
 		public:
+			using map_type = std::map<KeyT, syntax::ContainableObjectPtr>;
+
+		public:
 			TreeBase(const syntax::DictionaryObjectPtr& obj);
 			bool IsInitialized() const;
 			void Initialize() const;
 			void RemoveAllChilds();
 			void Rebuild();
+
+			// stl compatibility
+			typename map_type::const_iterator begin() const;
+			typename map_type::const_iterator end() const;
 
 		protected:
 			bool Contains(const KeyT& key) const;
@@ -41,7 +48,7 @@ namespace gotchangpdf
 
 		private:
 			TreeNodeRootPtr _root;
-			mutable std::map<KeyT, syntax::ContainableObjectPtr> m_map;
+			mutable map_type m_map;
 			mutable bool m_initialized = false;
 
 			void InsertPairsToMap(std::map<KeyT, syntax::ContainableObjectPtr>& map, const syntax::MixedArrayObjectPtr values) const;
@@ -157,7 +164,24 @@ namespace gotchangpdf
 			: HighLevelObject(obj), _root(this, obj) {}
 
 		template <typename KeyT, typename ValueT>
-		bool TreeBase<KeyT, ValueT>::IsInitialized() const { return m_initialized; }
+		typename TreeBase<KeyT, ValueT>::map_type::const_iterator TreeBase<KeyT, ValueT>::begin() const
+		{
+			Initialize();
+			return m_map.begin();
+		}
+
+		template <typename KeyT, typename ValueT>
+		typename TreeBase<KeyT, ValueT>::map_type::const_iterator TreeBase<KeyT, ValueT>::end() const
+		{
+			Initialize();
+			return m_map.end();
+		}
+
+		template <typename KeyT, typename ValueT>
+		bool TreeBase<KeyT, ValueT>::IsInitialized() const
+		{
+			return m_initialized;
+		}
 
 		template <typename KeyT, typename ValueT>
 		void TreeBase<KeyT, ValueT>::Initialize() const
