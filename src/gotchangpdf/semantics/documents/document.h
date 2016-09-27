@@ -40,6 +40,8 @@ namespace gotchangpdf
 			OutputNamedDestinationsPtr CreateNamedDestinations(CatalogPtr catalog);
 			OutputNameDictionaryPtr CreateNameDictionary(CatalogPtr catalog);
 			OutputNameTreePtr<DestinationPtr> CreateNameTreeDestinations(NameDictionaryPtr dictionary);
+
+			void FixDestinationPage(DocumentPtr other, syntax::ObjectPtr page);
 		};
 	}
 }
