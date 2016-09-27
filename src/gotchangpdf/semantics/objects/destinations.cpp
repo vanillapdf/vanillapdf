@@ -30,8 +30,16 @@ namespace gotchangpdf
 		FitBoundingBoxHorizontalDestination::FitBoundingBoxHorizontalDestination(syntax::DictionaryObjectPtr root) : DestinationBase(root) {}
 		FitBoundingBoxVerticalDestination::FitBoundingBoxVerticalDestination(syntax::DictionaryObjectPtr root) : DestinationBase(root) {}
 
+		DestinationBase::Type XYZDestination::GetType() const noexcept { return DestinationBase::Type::XYZ; }
+		DestinationBase::Type FitDestination::GetType() const noexcept { return DestinationBase::Type::Fit; }
+		DestinationBase::Type FitHorizontalDestination::GetType() const noexcept { return DestinationBase::Type::FitHorizontal; }
+		DestinationBase::Type FitVerticalDestination::GetType() const noexcept { return DestinationBase::Type::FitVertical; }
+		DestinationBase::Type FitRectangleDestination::GetType() const noexcept { return DestinationBase::Type::FitRectangle; }
+		DestinationBase::Type FitBoundingBoxDestination::GetType() const noexcept { return DestinationBase::Type::FitBoundingBox; }
+		DestinationBase::Type FitBoundingBoxHorizontalDestination::GetType() const noexcept { return DestinationBase::Type::FitBoundingBoxHorizontal; }
+		DestinationBase::Type FitBoundingBoxVerticalDestination::GetType() const noexcept { return DestinationBase::Type::FitBoundingBoxVertical; }
+
 		NamedDestinations::NamedDestinations(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
-		DestinationBase::~DestinationBase() {}
 
 		DestinationBase* DestinationBase::Create(syntax::ObjectPtr root, WeakReference<Document> doc)
 		{
