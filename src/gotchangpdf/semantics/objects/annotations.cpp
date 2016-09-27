@@ -4,10 +4,6 @@
 #include "document.h"
 #include "name_dictionary.h"
 
-#include "exception.h"
-#include "semantic_exceptions.h"
-#include "semantic_utils.h"
-
 namespace gotchangpdf
 {
 	namespace semantics
@@ -40,7 +36,6 @@ namespace gotchangpdf
 		TripleDAnnotation::TripleDAnnotation(syntax::DictionaryObjectPtr root) : AnnotationBase(root) {}
 		RedactionAnnotation::RedactionAnnotation(syntax::DictionaryObjectPtr root) : AnnotationBase(root) {}
 		PageAnnotations::PageAnnotations(syntax::MixedArrayObjectPtr root) : HighLevelObject(root) {}
-		AnnotationBase::~AnnotationBase() {}
 
 		AnnotationBase::Type TextAnnotation::GetType() const noexcept { return Type::Text; }
 		AnnotationBase::Type LinkAnnotation::GetType() const noexcept { return Type::Link; }
