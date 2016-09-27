@@ -57,10 +57,12 @@
     <ClInclude Include="src\gotchangpdf\semantics\documents\page_tree_node.h" />
     <ClInclude Include="src\gotchangpdf\semantics\documents\resource_dictionary.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\annotations.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\objects\character_map.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\date.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\destinations.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\developer_extensions.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\document_info.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\objects\font.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\outline.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\high_level_object.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\name_dictionary.h" />
@@ -174,11 +176,14 @@
     <ClCompile Include="src\gotchangpdf\semantics\documents\page_object.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\documents\page_tree.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\documents\page_tree_node.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\documents\resource_dictionary.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\annotations.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\objects\character_map.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\date.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\destinations.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\developer_extensions.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\document_info.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\objects\font.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\outline.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\rectangle.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\utils\semantic_utils.cpp" />

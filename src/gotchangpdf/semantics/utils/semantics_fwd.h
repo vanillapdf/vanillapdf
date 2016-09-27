@@ -79,6 +79,16 @@ namespace gotchangpdf
 		class AnnotationBase; using AnnotationPtr = Deferred<AnnotationBase>;
 		class LinkAnnotation; using LinkAnnotationPtr = Deferred<LinkAnnotation>;
 		class PageAnnotations; using PageAnnotationsPtr = Deferred<PageAnnotations>; using OutputPageAnnotationsPtr = OutputPointer<PageAnnotationsPtr>;
+
+		// Fonts
+		class FontMap; using FontMapPtr = Deferred<FontMap>; using OutputFontMapPtr = OutputPointer<FontMapPtr>;
+		class FontBase; using FontPtr = Deferred<FontBase>; using OutputFontPtr = OutputPointer<FontPtr>;
+		class CompositeFont; using CompositeFontPtr = Deferred<CompositeFont>;
+
+		// Character maps
+		class CharacterMapBase; using CharacterMapBasePtr = Deferred<CharacterMapBase>;
+		class EmbeddedCharacterMap; using EmbeddedCharacterMapPtr = Deferred<EmbeddedCharacterMap>;
+		class UnicodeCharacterMap; using UnicodeCharacterMapPtr = Deferred<UnicodeCharacterMap>; using OuputUnicodeCharacterMapPtr = OutputPointer<UnicodeCharacterMapPtr>;
 	}
 }
 

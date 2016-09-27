@@ -3,6 +3,7 @@
 
 #include "semantics_fwd.h"
 #include "high_level_object.h"
+#include "font.h"
 
 namespace gotchangpdf
 {
@@ -11,11 +12,10 @@ namespace gotchangpdf
 		class ResourceDictionary : public HighLevelObject<syntax::DictionaryObjectPtr>
 		{
 		public:
-			//PageObject();
-			explicit ResourceDictionary(syntax::DictionaryObjectPtr obj) : HighLevelObject(obj) {}
+			explicit ResourceDictionary(syntax::DictionaryObjectPtr obj);
 
-			//ObjectReferenceWrapper<IndirectObjectReference> Parent(void) const { return _parent; }
-			//ObjectReferenceWrapper<DictionaryObject> Resources(void) const { return _resources; }
+			// Optional
+			bool Font(OutputFontMapPtr& result) const;
 		};
 	}
 }

@@ -256,6 +256,9 @@ namespace gotchangpdf
 			extern const syntax::NameObjectPtr TripleD;
 			extern const syntax::NameObjectPtr Redact;
 			extern const syntax::NameObjectPtr XRef;
+			extern const syntax::NameObjectPtr Font;
+			extern const syntax::NameObjectPtr Type0;
+			extern const syntax::NameObjectPtr ToUnicode;
 		}
 	}
 }
