@@ -307,6 +307,12 @@ namespace gotchangpdf
 					auto destination_name = destination.first;
 					auto destination_value = destination.second;
 
+					// Check for name conflicts
+					assert(!original_destinations->Contains(destination_name) && "Name conflict");
+					if (original_destinations->Contains(destination_name)) {
+						throw NotSupportedException("Merge of conflicting names is not yet supported");
+					}
+
 					// Derefence destination in case it is indirect reference
 					if (ObjectUtils::IsType<IndirectObjectReferencePtr>(destination_value)) {
 						auto destination_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(destination_value);
@@ -350,6 +356,12 @@ namespace gotchangpdf
 					for (auto destination : *other_string_destination) {
 						auto destination_key = destination.first;
 						auto destination_value = destination.second;
+
+						// Check for name conflicts
+						assert(!original_string_destinations->Contains(destination_key) && "Name conflict");
+						if (original_string_destinations->Contains(destination_key)) {
+							throw NotSupportedException("Merge of conflicting names is not yet supported");
+						}
 
 						// Derefence destination in case it is indirect reference
 						if (ObjectUtils::IsType<IndirectObjectReferencePtr>(destination_value)) {
