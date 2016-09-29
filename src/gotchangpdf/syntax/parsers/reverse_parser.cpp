@@ -10,9 +10,6 @@ namespace gotchangpdf
 		ReverseParser::ReverseParser(CharacterSource & stream)
 			: ReverseTokenizer(stream) {}
 
-		ReverseParser::ReverseParser(const ReverseParser & other)
-			: ReverseTokenizer(other) {}
-
 		types::stream_offset ReverseParser::ReadLastXrefOffset()
 		{
 			ReadTokenWithTypeSkip(Token::Type::REVERSE_END_OF_FILE_MARKER);

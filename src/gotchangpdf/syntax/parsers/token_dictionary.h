@@ -8,15 +8,34 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class TokenDictionary
+		class TokenDictionaryBase
 		{
 		public:
-			void Initialize();
+			virtual ~TokenDictionaryBase();
+			virtual void Initialize() = 0;
 			Token::Type Find(BufferPtr set);
 
-		private:
-			bool _initialized = false;
-			Tree _dictionary;
+		protected:
+			bool m_initialized = false;
+			Tree m_dictionary;
+		};
+
+		class ParserTokenDictionary : public TokenDictionaryBase
+		{
+		public:
+			virtual void Initialize() override;
+		};
+
+		class ReverseParserTokenDictionary : public TokenDictionaryBase
+		{
+		public:
+			virtual void Initialize() override;
+		};
+
+		class ContentStreamTokenDictionary : public ParserTokenDictionary
+		{
+		public:
+			virtual void Initialize() override;
 		};
 	}
 }

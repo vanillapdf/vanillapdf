@@ -78,7 +78,7 @@ namespace gotchangpdf
 			auto pos = input->tellg();
 			input->seekg(_raw_data_offset);
 			SCOPE_GUARD_CAPTURE_VALUES(input->seekg(pos));
-			auto stream = Stream(*input);
+			Stream stream(*input);
 			auto body = stream.read(size->SafeConvert<size_t>());
 
 			if (IsEncryptionExempted() || !locked_file->IsEncrypted()) {

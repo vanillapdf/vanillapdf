@@ -14,18 +14,19 @@ namespace gotchangpdf
 		{
 		public:
 			explicit Tokenizer(CharacterSource & s);
-			Tokenizer(const Tokenizer & other);
 
 			TokenPtr ReadToken(void);
 			TokenPtr PeekToken(void);
 			TokenPtr ReadTokenWithType(Token::Type type);
 			Token::Type PeekTokenType(void);
 
+		protected:
+			std::unique_ptr<TokenDictionaryBase> _dictionary;
+
 		private:
 			TokenPtr _last_token;
 			types::stream_offset _last_token_offset, _advance_position;
 			bool _token_cached = false;
-			TokenDictionary _dictionary;
 		};
 	}
 }

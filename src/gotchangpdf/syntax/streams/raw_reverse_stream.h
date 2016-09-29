@@ -64,7 +64,6 @@ namespace gotchangpdf
 			{
 			public:
 				explicit ReverseBuf(CharacterSource & s, types::stream_size size);
-				~ReverseBuf();
 
 				virtual pos_type seekoff(off_type,
 					ios_base::seekdir,

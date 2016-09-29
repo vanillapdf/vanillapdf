@@ -5,10 +5,13 @@
 #include <cassert>
 #include <algorithm>
 
+#define INSERT_TO_DICTIONARY(name) m_dictionary.Insert(BufferPtr(name, sizeof(name) - 1), Token::Type::name)
+
 namespace gotchangpdf
 {
 	namespace syntax
 	{
+		// parser tokens
 		static const char STREAM_BEGIN[] = "stream";
 		static const char STREAM_END[] = "endstream";
 		static const char INDIRECT_OBJECT_BEGIN[] = "obj";
@@ -99,18 +102,19 @@ namespace gotchangpdf
 		static const char BEGIN_COMPATIBILITY_SECTION[] = "BX";
 		static const char END_COMPATIBILITY_SECTION[] = "EX";
 
-		Token::Type TokenDictionary::Find(BufferPtr set)
+		TokenDictionaryBase::~TokenDictionaryBase() {}
+
+		Token::Type TokenDictionaryBase::Find(BufferPtr set)
 		{
 			Initialize();
-			return _dictionary.TokenType(set);
+			return m_dictionary.TokenType(set);
 		}
 
-#define INSERT_TO_DICTIONARY(name) _dictionary.Insert(BufferPtr(name, sizeof(name) - 1), Token::Type::name)
-
-		void TokenDictionary::Initialize()
+		void ParserTokenDictionary::Initialize()
 		{
-			if (_initialized)
+			if (m_initialized) {
 				return;
+			}
 
 			INSERT_TO_DICTIONARY(STREAM_BEGIN);
 			INSERT_TO_DICTIONARY(STREAM_END);
@@ -123,9 +127,27 @@ namespace gotchangpdf
 			INSERT_TO_DICTIONARY(TRUE_VALUE);
 			INSERT_TO_DICTIONARY(FALSE_VALUE);
 
-			// reverse tokens
+			m_initialized = true;
+		}
+
+		void ReverseParserTokenDictionary::Initialize()
+		{
+			if (m_initialized) {
+				return;
+			}
+
 			INSERT_TO_DICTIONARY(REVERSE_END_OF_FILE_MARKER);
 			INSERT_TO_DICTIONARY(REVERSE_START_XREF);
+
+			m_initialized = true;
+		}
+
+
+		void ContentStreamTokenDictionary::Initialize()
+		{
+			if (m_initialized) {
+				return;
+			}
 
 			// content streams
 			INSERT_TO_DICTIONARY(LINE_WIDTH);
@@ -202,7 +224,7 @@ namespace gotchangpdf
 			INSERT_TO_DICTIONARY(BEGIN_COMPATIBILITY_SECTION);
 			INSERT_TO_DICTIONARY(END_COMPATIBILITY_SECTION);
 
-			_initialized = true;
+			ParserTokenDictionary::Initialize();
 		}
 	}
 }

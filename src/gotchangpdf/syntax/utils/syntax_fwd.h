@@ -74,6 +74,10 @@ namespace gotchangpdf
 		using XrefCompressedEntryPtr = Deferred<XrefCompressedEntry>;
 
 		class Token; using TokenPtr = Deferred<Token>;
+		class TokenDictionaryBase;
+		class ParserTokenDictionary;
+		class ReverseParserTokenDictionary;
+		class ContentStreamTokenDictionary;
 
 		// Streams
 		class BaseStream;

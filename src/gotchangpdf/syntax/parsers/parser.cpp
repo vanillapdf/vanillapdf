@@ -22,13 +22,24 @@ namespace gotchangpdf
 	{
 #pragma region Objects
 
-		Parser::Parser(std::weak_ptr<File> file, CharacterSource & stream)
+		ParserBase::ParserBase(std::weak_ptr<File> file, CharacterSource & stream)
 			: Tokenizer(stream), _file(file) {}
 
-		Parser::Parser(const Parser & other)
-			: Tokenizer(other), _file(other._file) {}
+		Parser::Parser(std::weak_ptr<File> file, CharacterSource & stream)
+			: ParserBase(file, stream)
+		{
+			_dictionary = std::make_unique<ParserTokenDictionary>();
+			_dictionary->Initialize();
+		}
 
-		std::weak_ptr<File> Parser::GetFile(void) const { return _file; }
+		ContentStreamParser::ContentStreamParser(std::weak_ptr<File> file, CharacterSource & stream)
+			: ParserBase(file, stream)
+		{
+			_dictionary = std::make_unique<ContentStreamTokenDictionary>();
+			_dictionary->Initialize();
+		}
+
+		std::weak_ptr<File> ParserBase::GetFile(void) const { return _file; }
 
 		class ObjectFactory
 		{
@@ -96,7 +107,7 @@ namespace gotchangpdf
 			}
 		};
 
-		IntegerObjectPtr Parser::ReadInteger()
+		IntegerObjectPtr ParserBase::ReadInteger()
 		{
 			auto token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 			auto result = ObjectFactory::CreateInteger(token);
@@ -104,7 +115,7 @@ namespace gotchangpdf
 			return result;
 		}
 
-		ObjectPtr Parser::ReadIntegerReference()
+		ObjectPtr ParserBase::ReadIndirectReference()
 		{
 			auto integer = ReadInteger();
 
@@ -127,7 +138,7 @@ namespace gotchangpdf
 			return integer;
 		}
 
-		RealObjectPtr Parser::ReadReal()
+		RealObjectPtr ParserBase::ReadReal()
 		{
 			auto token = ReadTokenWithTypeSkip(Token::Type::REAL_OBJECT);
 			auto result = ObjectFactory::CreateReal(token);
@@ -135,7 +146,7 @@ namespace gotchangpdf
 			return result;
 		}
 
-		NullObjectPtr Parser::ReadNull()
+		NullObjectPtr ParserBase::ReadNull()
 		{
 			ReadTokenWithTypeSkip(Token::Type::NULL_OBJECT);
 			auto result = NullObject::GetInstance();
@@ -143,7 +154,7 @@ namespace gotchangpdf
 			return result;
 		}
 
-		DictionaryObjectPtr Parser::ReadDictionary()
+		DictionaryObjectPtr ParserBase::ReadDictionary()
 		{
 			DictionaryObjectPtr dictionary;
 			ReadTokenWithTypeSkip(Token::Type::DICTIONARY_BEGIN);
@@ -167,7 +178,7 @@ namespace gotchangpdf
 			return dictionary;
 		}
 
-		ObjectPtr Parser::ReadDictionaryStream()
+		ObjectPtr ParserBase::ReadDictionaryStream()
 		{
 			auto dictionary = ReadDictionary();
 			if (PeekTokenTypeSkip() == Token::Type::STREAM_BEGIN) {
@@ -263,7 +274,7 @@ namespace gotchangpdf
 			return dictionary;
 		}
 
-		MixedArrayObjectPtr Parser::ReadArray()
+		MixedArrayObjectPtr ParserBase::ReadArray()
 		{
 			MixedArrayObjectPtr result;
 			ReadTokenWithTypeSkip(Token::Type::ARRAY_BEGIN);
@@ -281,7 +292,7 @@ namespace gotchangpdf
 			return result;
 		}
 
-		NameObjectPtr Parser::ReadName()
+		NameObjectPtr ParserBase::ReadName()
 		{
 			auto token = ReadTokenWithTypeSkip(Token::Type::NAME_OBJECT);
 			auto result = ObjectFactory::CreateName(token);
@@ -289,7 +300,7 @@ namespace gotchangpdf
 			return result;
 		}
 
-		LiteralStringObjectPtr Parser::ReadLiteralString()
+		LiteralStringObjectPtr ParserBase::ReadLiteralString()
 		{
 			auto token = ReadTokenWithTypeSkip(Token::Type::LITERAL_STRING);
 			auto result = ObjectFactory::CreateLitString(token);
@@ -297,7 +308,7 @@ namespace gotchangpdf
 			return result;
 		}
 
-		HexadecimalStringObjectPtr Parser::ReadHexadecimalString()
+		HexadecimalStringObjectPtr ParserBase::ReadHexadecimalString()
 		{
 			auto token = ReadTokenWithTypeSkip(Token::Type::HEXADECIMAL_STRING);
 			auto result = ObjectFactory::CreateHexString(token);
@@ -305,7 +316,7 @@ namespace gotchangpdf
 			return result;
 		}
 
-		BooleanObjectPtr Parser::ReadTrue()
+		BooleanObjectPtr ParserBase::ReadTrue()
 		{
 			auto token = ReadTokenWithTypeSkip(Token::Type::TRUE_VALUE);
 			auto result = ObjectFactory::CreateBoolean(token);
@@ -313,7 +324,7 @@ namespace gotchangpdf
 			return result;
 		}
 
-		BooleanObjectPtr Parser::ReadFalse()
+		BooleanObjectPtr ParserBase::ReadFalse()
 		{
 			auto token = ReadTokenWithTypeSkip(Token::Type::FALSE_VALUE);
 			auto result = ObjectFactory::CreateBoolean(token);
@@ -351,7 +362,7 @@ namespace gotchangpdf
 			return ReadIndirectObject(obj_number, gen_number);
 		}
 
-		ObjectPtr Parser::ReadDirectObject()
+		ObjectPtr ParserBase::ReadDirectObject()
 		{
 			auto offset = GetPosition();
 			auto type = PeekTokenTypeSkip();
@@ -360,7 +371,7 @@ namespace gotchangpdf
 			case Token::Type::DICTIONARY_BEGIN:
 				return ReadDictionaryStream();
 			case Token::Type::INTEGER_OBJECT:
-				return ReadIntegerReference();
+				return ReadIndirectReference();
 			case Token::Type::ARRAY_BEGIN:
 				return ReadArray();
 			case Token::Type::NAME_OBJECT:
@@ -427,13 +438,13 @@ namespace gotchangpdf
 			return entries;
 		}
 
-		ObjectPtr Parser::ReadDirectObject(types::stream_offset offset)
+		ObjectPtr ParserBase::ReadDirectObject(types::stream_offset offset)
 		{
 			seekg(offset, ios_base::beg);
 			return ReadDirectObject();
 		}
 
-		ObjectPtr Parser::PeekDirectObject()
+		ObjectPtr ParserBase::PeekDirectObject()
 		{
 			auto position = GetPosition();
 			auto obj = ReadDirectObject();
@@ -446,7 +457,7 @@ namespace gotchangpdf
 
 #pragma region Tokens
 
-		TokenPtr Parser::ReadTokenSkip()
+		TokenPtr ParserBase::ReadTokenSkip()
 		{
 			for (;;) {
 				auto token = ReadToken();
@@ -457,7 +468,7 @@ namespace gotchangpdf
 			}
 		}
 
-		TokenPtr Parser::PeekTokenSkip()
+		TokenPtr ParserBase::PeekTokenSkip()
 		{
 			auto position = GetPosition();
 			bool rewind = false;
@@ -477,13 +488,13 @@ namespace gotchangpdf
 			}
 		}
 
-		Token::Type Parser::PeekTokenTypeSkip()
+		Token::Type ParserBase::PeekTokenTypeSkip()
 		{
 			auto token = PeekTokenSkip();
 			return token->GetType();
 		}
 
-		TokenPtr Parser::ReadTokenWithTypeSkip(Token::Type type)
+		TokenPtr ParserBase::ReadTokenWithTypeSkip(Token::Type type)
 		{
 			auto offset = GetPosition();
 			for (;;) {
@@ -723,7 +734,7 @@ namespace gotchangpdf
 
 #pragma region Content streams
 
-		contents::BaseInstructionCollectionPtr Parser::ReadContentStreamInstructions(void)
+		contents::BaseInstructionCollectionPtr ContentStreamParser::ReadContentStreamInstructions(void)
 		{
 			contents::BaseInstructionCollectionPtr result;
 			while (PeekTokenTypeSkip() != Token::Type::END_OF_INPUT) {
@@ -735,7 +746,7 @@ namespace gotchangpdf
 			return result;
 		}
 
-		contents::InlineImageObjectPtr Parser::ReadInlineImageObject(void)
+		contents::InlineImageObjectPtr ContentStreamParser::ReadInlineImageObject(void)
 		{
 			// read dictionary
 			DictionaryObjectPtr image_dictionary;
@@ -844,7 +855,7 @@ namespace gotchangpdf
 			return contents::InlineImageObjectPtr(image_dictionary, image_data);
 		}
 
-		contents::InstructionBasePtr Parser::ReadContentStreamInstruction(void)
+		contents::InstructionBasePtr ContentStreamParser::ReadContentStreamInstruction(void)
 		{
 			auto operation = ReadContentStreamOperation();
 
@@ -886,7 +897,7 @@ namespace gotchangpdf
 			return operation;
 		}
 
-		contents::OperationBasePtr Parser::ReadContentStreamOperation(void)
+		contents::OperationBasePtr ContentStreamParser::ReadContentStreamOperation(void)
 		{
 			std::vector<ObjectPtr> operands;
 			while (IsOperand(PeekTokenTypeSkip())) {
@@ -899,7 +910,7 @@ namespace gotchangpdf
 			return ReadOperatorReturnOperation(operands);
 		}
 
-		contents::OperationBasePtr Parser::ReadOperatorReturnOperation(const std::vector<ObjectPtr>& operands)
+		contents::OperationBasePtr ContentStreamParser::ReadOperatorReturnOperation(const std::vector<ObjectPtr>& operands)
 		{
 			auto token = ReadTokenSkip();
 			switch (token->GetType())
@@ -1055,7 +1066,7 @@ namespace gotchangpdf
 			}
 		}
 
-		bool Parser::IsOperand(Token::Type type)
+		bool ContentStreamParser::IsOperand(Token::Type type)
 		{
 			switch (type)
 			{
@@ -1075,7 +1086,7 @@ namespace gotchangpdf
 			return false;
 		}
 
-		ObjectPtr Parser::ReadOperand()
+		ObjectPtr ContentStreamParser::ReadOperand()
 		{
 			auto offset = GetPosition();
 			switch (PeekTokenTypeSkip())

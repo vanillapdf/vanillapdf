@@ -30,11 +30,6 @@ namespace gotchangpdf
 			setg(end, end, end);
 		}
 
-		ReverseStream::ReverseBuf::~ReverseBuf()
-		{
-			//pubsync();
-		}
-
 		int ReverseStream::ReverseBuf::sync()
 		{
 			//cout << s << ": " << str(); str("");  return !cout;

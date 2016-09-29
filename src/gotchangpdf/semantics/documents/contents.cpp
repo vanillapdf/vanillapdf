@@ -60,7 +60,7 @@ namespace gotchangpdf
 				ss << stream_object->GetBody();
 			}
 
-			auto parser = syntax::Parser(_obj->GetFile(), ss);
+			syntax::ContentStreamParser parser(_obj->GetFile(), ss);
 			auto instructions = parser.ReadContentStreamInstructions();
 			for (auto instruction : *instructions) {
 				m_instructions->push_back(instruction);

@@ -17,7 +17,7 @@ namespace gotchangpdf
 
 			auto body = _obj->GetBody();
 			auto strm = body->ToStringStream();
-			auto parser = syntax::Parser(_obj->GetFile(), strm);
+			syntax::ContentStreamParser parser(_obj->GetFile(), strm);
 			_instructions = parser.ReadContentStreamInstructions();
 			return _instructions;
 		}

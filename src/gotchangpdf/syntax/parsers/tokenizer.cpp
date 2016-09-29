@@ -22,13 +22,7 @@ namespace gotchangpdf
 			_last_token_offset(_BADOFF),
 			_advance_position(_BADOFF)
 		{
-			_dictionary.Initialize();
 		}
-
-		Tokenizer::Tokenizer(const Tokenizer &other)
-			: Stream(other), _last_token_offset(other._last_token_offset),
-			_advance_position(other._advance_position),
-			_dictionary(other._dictionary) {}
 
 		TokenPtr Tokenizer::ReadToken()
 		{
@@ -349,7 +343,7 @@ namespace gotchangpdf
 				}
 			}
 
-			auto result_type = _dictionary.Find(chars);
+			auto result_type = _dictionary->Find(chars);
 			return TokenPtr(result_type, chars);
 		}
 

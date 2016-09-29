@@ -23,11 +23,6 @@ namespace gotchangpdf
 			_dictionary.Initialize();
 		}
 
-		ReverseTokenizer::ReverseTokenizer(const ReverseTokenizer &other)
-			: Stream(other), _last_token_offset(other._last_token_offset),
-			_advance_position(other._advance_position),
-			_dictionary(other._dictionary) {}
-
 		TokenPtr ReverseTokenizer::ReadToken()
 		{
 			// When reading past EOF, failbit is set to true

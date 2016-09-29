@@ -73,8 +73,7 @@ namespace gotchangpdf
 			// Opening the stream with ate option
 			auto file_size = _input->tellg();
 			
-			auto stream = Parser(shared_from_this(), *_input);
-
+			Parser stream(shared_from_this(), *_input);
 			_header = stream.ReadHeader(0);
 
 			try
@@ -514,7 +513,7 @@ namespace gotchangpdf
 
 		void File::ReadXref(types::stream_offset offset)
 		{
-			auto stream = Parser(shared_from_this(), *_input);
+			Parser stream(shared_from_this(), *_input);
 
 			for (;;) {
 				auto xref = stream.ReadXref(offset);

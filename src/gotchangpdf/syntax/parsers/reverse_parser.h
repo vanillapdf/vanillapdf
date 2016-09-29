@@ -3,12 +3,13 @@
 
 #include "syntax_fwd.h"
 #include "reverse_tokenizer.h"
+#include "parser_interface.h"
 
 namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class ReverseParser : public ReverseTokenizer
+		class ReverseParser : public ReverseTokenizer, public IReverseParser
 		{
 		public:
 			ReverseParser(CharacterSource & stream);

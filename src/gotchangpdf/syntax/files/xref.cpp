@@ -63,7 +63,7 @@ namespace gotchangpdf
 			auto input = locked_file->GetInputStream();
 			auto rewind_pos = input->tellg();
 			SCOPE_GUARD_CAPTURE_VALUES(input->seekg(rewind_pos));
-			auto parser = Parser(_file, *input);
+			Parser parser(_file, *input);
 
 			types::big_uint obj_number = 0;
 			types::ushort gen_number = 0;
@@ -109,7 +109,7 @@ namespace gotchangpdf
 			auto body = converted->GetBody();
 
 			auto stream = body->ToStringStream();
-			auto parser = Parser(_file, stream);
+			Parser parser(_file, stream);
 			auto stream_entries = parser.ReadObjectStreamEntries(first->GetUnsignedIntegerValue(), size->SafeConvert<size_t>());
 			for (auto stream_entry : stream_entries) {
 				auto entry_object_number = stream_entry.object_number;

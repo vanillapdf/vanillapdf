@@ -18,13 +18,25 @@ namespace gotchangpdf
 			virtual XrefBasePtr ReadXref(void) = 0;
 			virtual XrefBasePtr ReadXref(types::stream_offset offset) = 0;
 
-			virtual ObjectPtr ReadDirectObject(void) = 0;
-			virtual ObjectPtr ReadDirectObject(types::stream_offset offset) = 0;
-
 			virtual ObjectStreamEntries ReadObjectStreamEntries(types::big_uint first, size_t size) = 0;
-			virtual contents::BaseInstructionCollectionPtr ReadContentStreamInstructions(void) = 0;
 
 			virtual ~IParser() {}
+		};
+
+		class IReverseParser
+		{
+		public:
+			virtual types::stream_offset ReadLastXrefOffset() = 0;
+
+			virtual ~IReverseParser() {}
+		};
+
+		class IContentStreamParser
+		{
+		public:
+			virtual contents::BaseInstructionCollectionPtr ReadContentStreamInstructions(void) = 0;
+
+			virtual ~IContentStreamParser() {}
 		};
 	}
 }

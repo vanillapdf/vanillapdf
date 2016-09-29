@@ -14,7 +14,6 @@ namespace gotchangpdf
 		{
 		public:
 			explicit ReverseTokenizer(CharacterSource & s);
-			ReverseTokenizer(const ReverseTokenizer & other);
 
 			TokenPtr ReadToken(void);
 			TokenPtr PeekToken(void);
@@ -25,7 +24,7 @@ namespace gotchangpdf
 			TokenPtr _last_token;
 			types::stream_offset _last_token_offset, _advance_position;
 			bool _token_cached = false;
-			TokenDictionary _dictionary;
+			ReverseParserTokenDictionary _dictionary;
 		};
 	}
 }

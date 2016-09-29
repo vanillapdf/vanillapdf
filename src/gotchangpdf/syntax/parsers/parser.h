@@ -10,12 +10,14 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		class Parser : public Tokenizer, public IParser
+		class ParserBase : public Tokenizer
 		{
 		public:
-			Parser(std::weak_ptr<File> file, CharacterSource & stream);
-			Parser(const Parser & other);
-			std::weak_ptr<File> GetFile(void) const;
+			ParserBase(std::weak_ptr<File> file, CharacterSource & stream);
+
+			ObjectPtr ReadDirectObject(void);
+			ObjectPtr ReadDirectObject(types::stream_offset offset);
+			ObjectPtr PeekDirectObject(void);
 
 			template<typename T>
 			T ReadDirectObjectWithType(types::stream_offset offset)
@@ -31,46 +33,10 @@ namespace gotchangpdf
 				return ObjectUtils::ConvertTo<T>(direct);
 			}
 
-			virtual XrefBasePtr ReadXref(void) override;
-			virtual XrefBasePtr ReadXref(types::stream_offset offset) override;
-
-			ObjectPtr ReadIndirectObject(types::big_uint& obj_number, types::ushort& gen_number);
-			ObjectPtr ReadIndirectObject(types::stream_offset offset, types::big_uint& obj_number, types::ushort& gen_number);
-
-			virtual ObjectPtr ReadDirectObject(void) override;
-			virtual ObjectPtr ReadDirectObject(types::stream_offset offset) override;
-			ObjectPtr PeekDirectObject(void);
-
-			virtual ObjectStreamEntries ReadObjectStreamEntries(types::big_uint first, size_t size) override;
-			virtual contents::BaseInstructionCollectionPtr ReadContentStreamInstructions(void) override;
-
-			HeaderPtr ReadHeader(types::stream_offset offset);
-			HeaderPtr ReadHeader(void);
-
-			XrefChainPtr FindAllObjects(void);
-
-		private:
-			std::weak_ptr<File> _file;
-
-			TokenPtr ReadTokenSkip();
-			TokenPtr PeekTokenSkip();
-			Token::Type PeekTokenTypeSkip();
-			TokenPtr ReadTokenWithTypeSkip(Token::Type type);
-
-			ObjectStreamEntries ReadObjectStreamHeaders(size_t size);
-			ObjectStreamEntry ReadObjectStreamHeader();
-			XrefEntryBasePtr ReadTableEntry(types::big_uint objNumber);
-			XrefTablePtr ReadXrefTable();
-			XrefStreamPtr ReadXrefStream();
-			XrefStreamPtr ParseXrefStream(
-				StreamObjectPtr stream,
-				types::big_uint stream_obj_number,
-				types::ushort stream_gen_number);
-
 			BooleanObjectPtr ReadFalse();
 			BooleanObjectPtr ReadTrue();
 			IntegerObjectPtr ReadInteger();
-			ObjectPtr ReadIntegerReference();
+			ObjectPtr ReadIndirectReference();
 			RealObjectPtr ReadReal();
 			NullObjectPtr ReadNull();
 			DictionaryObjectPtr ReadDictionary();
@@ -80,6 +46,54 @@ namespace gotchangpdf
 			LiteralStringObjectPtr ReadLiteralString();
 			HexadecimalStringObjectPtr ReadHexadecimalString();
 
+			TokenPtr ReadTokenSkip();
+			TokenPtr PeekTokenSkip();
+			Token::Type PeekTokenTypeSkip();
+			TokenPtr ReadTokenWithTypeSkip(Token::Type type);
+
+			std::weak_ptr<File> GetFile(void) const;
+
+		protected:
+			std::weak_ptr<File> _file;
+		};
+
+		class Parser : public ParserBase, public IParser
+		{
+		public:
+			Parser(std::weak_ptr<File> file, CharacterSource & stream);
+
+			virtual XrefBasePtr ReadXref(void) override;
+			virtual XrefBasePtr ReadXref(types::stream_offset offset) override;
+
+			ObjectPtr ReadIndirectObject(types::big_uint& obj_number, types::ushort& gen_number);
+			ObjectPtr ReadIndirectObject(types::stream_offset offset, types::big_uint& obj_number, types::ushort& gen_number);
+
+			virtual ObjectStreamEntries ReadObjectStreamEntries(types::big_uint first, size_t size) override;
+
+			HeaderPtr ReadHeader(types::stream_offset offset);
+			HeaderPtr ReadHeader(void);
+
+			XrefChainPtr FindAllObjects(void);
+
+		private:
+			ObjectStreamEntries ReadObjectStreamHeaders(size_t size);
+			ObjectStreamEntry ReadObjectStreamHeader();
+			XrefEntryBasePtr ReadTableEntry(types::big_uint objNumber);
+			XrefTablePtr ReadXrefTable();
+			XrefStreamPtr ReadXrefStream();
+			XrefStreamPtr ParseXrefStream(
+				StreamObjectPtr stream,
+				types::big_uint stream_obj_number,
+				types::ushort stream_gen_number);
+		};
+
+		class ContentStreamParser : public ParserBase, public IContentStreamParser
+		{
+		public:
+			ContentStreamParser(std::weak_ptr<File> file, CharacterSource & stream);
+			virtual contents::BaseInstructionCollectionPtr ReadContentStreamInstructions(void) override;
+
+		private:
 			contents::InstructionBasePtr ReadContentStreamInstruction(void);
 			contents::OperationBasePtr ReadContentStreamOperation(void);
 			bool IsOperand(Token::Type type);
