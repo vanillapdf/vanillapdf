@@ -74,7 +74,13 @@ namespace gotchangpdf
 				virtual Type GetOperationType(void) const noexcept override { return Type::TextShow; }
 				virtual std::string ToPdf() const override;
 				StringObjectPtr GetValue() const { return _str; }
-				void SetValue(StringObjectPtr value) { _str = value; OnChanged(); }
+				void SetValue(StringObjectPtr value)
+				{
+					_str->Unsubscribe(this);
+					_str = value;
+					_str->Subscribe(this);
+					OnChanged();
+				}
 
 				virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
@@ -92,7 +98,13 @@ namespace gotchangpdf
 				virtual Type GetOperationType(void) const noexcept override { return Type::TextShowArray; }
 				virtual std::string ToPdf() const override;
 				MixedArrayObjectPtr GetValue() const { return m_items; }
-				void SetValue(MixedArrayObjectPtr value) { m_items = value; OnChanged(); }
+				void SetValue(MixedArrayObjectPtr value)
+				{
+					m_items->Unsubscribe(this);
+					m_items = value;
+					m_items->Subscribe(this);
+					OnChanged();
+				}
 
 				virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
