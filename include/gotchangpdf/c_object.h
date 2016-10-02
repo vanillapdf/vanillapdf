@@ -10,7 +10,6 @@ extern "C"
 {
 #endif
 
-	// TODO i have no idea how export enum without clone
 	typedef enum {
 		ObjectType_Null = 0,
 		ObjectType_Array,
