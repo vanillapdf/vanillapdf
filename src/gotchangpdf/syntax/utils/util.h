@@ -67,7 +67,7 @@ namespace gotchangpdf
 					return false;
 				}
 
-				using unsigned_value_type = std::make_unsigned<ValueType>::type;
+				using unsigned_value_type = std::make_unsigned_t<ValueType>;
 				unsigned_value_type unsigned_value = static_cast<unsigned_value_type>(value);
 				return Specializator<RangeType, unsigned_value_type>::IsInRange(unsigned_value);
 			}
@@ -85,7 +85,7 @@ namespace gotchangpdf
 		public:
 			static bool IsInRange(ValueType value)
 			{
-				using unsigned_range_type = std::make_unsigned<RangeType>::type;
+				using unsigned_range_type = std::make_unsigned_t<RangeType>;
 				RangeType range_max = std::numeric_limits<RangeType>::max();
 
 				// This operation shall be safe
