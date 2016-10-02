@@ -73,6 +73,13 @@ namespace gotchangpdf
 		void push_back(const_reference val) { m_data.push_back(val); OnChanged(); }
 		void push_back(value_type&& val) { m_data.push_back(val); OnChanged(); }
 
+		iterator insert(const_iterator where, const value_type& val)
+		{
+			auto result = m_data.insert(where, val);
+			OnChanged();
+			return result;
+		}
+
 		iterator insert(const_iterator where, value_type&& val)
 		{
 			auto result = m_data.insert(where, val);
