@@ -366,11 +366,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShowArray(
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_Release(ContentOperationHandle handle)
 {
-	OperationBase* obj = reinterpret_cast<OperationBase*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return ObjectRelease<OperationBase, ContentOperationHandle>(handle);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperator(ContentOperationGenericHandle handle, PContentOperatorHandle result)
@@ -461,11 +457,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_GetValue
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_Release(ContentOperationTextShowHandle handle)
 {
-	OperationTextShow* obj = reinterpret_cast<OperationTextShow*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return ObjectRelease<OperationTextShow, ContentOperationTextShowHandle>(handle);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_GetValue(ContentOperationTextShowArrayHandle handle, PArrayHandle result)
@@ -501,11 +493,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_Set
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_Release(ContentOperationTextShowArrayHandle handle)
 {
-	OperationTextShowArray* obj = reinterpret_cast<OperationTextShowArray*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return ObjectRelease<OperationTextShowArray, ContentOperationTextShowArrayHandle>(handle);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_GetType(ContentOperatorHandle handle, PContentOperatorType result)
@@ -689,9 +677,5 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_GetValue(ContentO
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_Release(ContentOperatorHandle handle)
 {
-	OperatorBase* obj = reinterpret_cast<OperatorBase*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return ObjectRelease<OperatorBase, ContentOperatorHandle>(handle);
 }
