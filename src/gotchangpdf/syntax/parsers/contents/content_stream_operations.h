@@ -31,6 +31,41 @@ namespace gotchangpdf
 				virtual std::string ToPdf() const override;
 			};
 
+			class OperationTextFont : public OperationBase, public IModifyObserver
+			{
+			public:
+				explicit OperationTextFont(const std::vector<ObjectPtr>& operands);
+
+				virtual Type GetOperationType(void) const noexcept override { return Type::TextFont; }
+				virtual std::string ToPdf() const override;
+				NameObjectPtr GetName() const { return m_font; }
+				IntegerObjectPtr GetScale() const { return m_scale; }
+
+				void SetName(NameObjectPtr value)
+				{
+					m_font->Unsubscribe(this);
+					m_font = value;
+					m_font->Subscribe(this);
+					OnChanged();
+				}
+
+				void SetScale(IntegerObjectPtr value)
+				{
+					m_scale->Unsubscribe(this);
+					m_scale = value;
+					m_scale->Subscribe(this);
+					OnChanged();
+				}
+
+				virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+
+				~OperationTextFont();
+
+			private:
+				NameObjectPtr m_font;
+				IntegerObjectPtr m_scale;
+			};
+
 			class OperationTextShow : public OperationBase, public IModifyObserver
 			{
 			public:

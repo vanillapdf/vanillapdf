@@ -23,8 +23,14 @@
 #include "c_outline.h"
 #include "c_destinations.h"
 #include "c_annotations.h"
+#include "c_resource_dictionary.h"
 
-/* common data structures*/
+/* fonts */
+#include "c_font.h"
+#include "c_font_map.h"
+#include "c_character_map.h"
+
+/* common data structures */
 #include "c_date.h"
 #include "c_rectangle.h"
 

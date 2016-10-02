@@ -5,6 +5,7 @@
 #include "constants.h"
 #include "object_stream_entry.h"
 #include "content_stream_instruction_base.h"
+#include "character_map_data.h"
 
 #include <vector>
 
@@ -37,6 +38,14 @@ namespace gotchangpdf
 			virtual contents::BaseInstructionCollectionPtr ReadContentStreamInstructions(void) = 0;
 
 			virtual ~IContentStreamParser() {}
+		};
+
+		class ICharacterMapParser
+		{
+		public:
+			virtual CharacterMapData ReadCharacterMapData(void) = 0;
+
+			virtual ~ICharacterMapParser() {}
 		};
 	}
 }

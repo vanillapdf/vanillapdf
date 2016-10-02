@@ -153,6 +153,7 @@ namespace gotchangpdf
 			// specialized operations
 			class OperationBeginText; using OperationBeginTextPtr = Deferred<OperationBeginText>;
 			class OperationEndText; using OperationEndTextPtr = Deferred<OperationEndText>;
+			class OperationTextFont; using OperationTextFontPtr = Deferred<OperationTextFont>;
 			class OperationTextShow; using OperationTextShowPtr = Deferred<OperationTextShow>;
 			class OperationTextShowArray; using OperationTextShowArrayPtr = Deferred<OperationTextShowArray>;
 			class OperationBeginInlineImageObject; using OperationBeginInlineImageObjectPtr = Deferred<OperationBeginInlineImageObject>;

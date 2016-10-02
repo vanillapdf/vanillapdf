@@ -354,6 +354,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToEndText(Conten
 	return SafeObjectConvert<OperationBase, OperationEndText, ContentOperationHandle, ContentOperationEndTextHandle>(handle, result);
 }
 
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToTextFont(ContentOperationHandle handle, PContentOperationTextFontHandle result)
+{
+	return SafeObjectConvert<OperationBase, OperationTextFont, ContentOperationHandle, ContentOperationTextFontHandle>(handle, result);
+}
+
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShow(ContentOperationHandle handle, PContentOperationTextShowHandle result)
 {
 	return SafeObjectConvert<OperationBase, OperationTextShow, ContentOperationHandle, ContentOperationTextShowHandle>(handle, result);
@@ -417,11 +422,74 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperan
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_Release(ContentOperationGenericHandle handle)
 {
-	OperationGeneric* obj = reinterpret_cast<OperationGeneric*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	return ObjectRelease<OperationGeneric, ContentOperationGenericHandle>(handle);
+}
 
-	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetScale(ContentOperationTextFontHandle handle, PIntegerHandle result)
+{
+	OperationTextFont* obj = reinterpret_cast<OperationTextFont*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto value = obj->GetScale();
+		auto ptr = value.AddRefGet();
+		*result = reinterpret_cast<IntegerHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextFont_SetScale(ContentOperationTextFontHandle handle, IntegerHandle data)
+{
+	OperationTextFont* obj = reinterpret_cast<OperationTextFont*>(handle);
+	IntegerObject* name = reinterpret_cast<IntegerObject*>(data);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(name);
+
+	try
+	{
+		obj->SetScale(name);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetName(ContentOperationTextFontHandle handle, PNameHandle result)
+{
+	OperationTextFont* obj = reinterpret_cast<OperationTextFont*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto value = obj->GetName();
+		auto ptr = value.AddRefGet();
+		*result = reinterpret_cast<NameHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextFont_SetName(ContentOperationTextFontHandle handle, NameHandle data)
+{
+	OperationTextFont* obj = reinterpret_cast<OperationTextFont*>(handle);
+	NameObject* name = reinterpret_cast<NameObject*>(data);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(name);
+
+	try
+	{
+		obj->SetName(name);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	}
+	CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextFont_Release(ContentOperationTextFontHandle handle)
+{
+	return ObjectRelease<OperationTextFont, ContentOperationTextFontHandle>(handle);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_SetValue(ContentOperationTextShowHandle handle, StringHandle data)

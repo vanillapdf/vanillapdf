@@ -27,6 +27,23 @@ namespace gotchangpdf
 		static const char REVERSE_END_OF_FILE_MARKER[] = "FOE%%";
 		static const char REVERSE_START_XREF[] = "ferxtrats";
 
+		// character map
+		static const char BLOCK_BEGIN[] = "begin";
+		static const char BLOCK_END[] = "end";
+		static const char FIND_RESOURCE[] = "findresource";
+		static const char DICTIONARY[] = "dict";
+		static const char BEGIN_CMAP[] = "begincmap";
+		static const char END_CMAP[] = "endcmap";
+		static const char BEGIN_CODE_SPACE_RANGE[] = "begincodespacerange";
+		static const char END_CODE_SPACE_RANGE[] = "endcodespacerange";
+		static const char BEGIN_BASE_FONT_RANGE[] = "beginbfrange";
+		static const char END_BASE_FONT_RANGE[] = "endbfrange";
+		static const char DEFINITION[] = "def";
+		static const char CMAP_NAME[] = "CMapName";
+		static const char CURRENT_DICTIONARY[] = "currentdict";
+		static const char DEFINE_RESOURCE[] = "defineresource";
+		static const char STACK_POP[] = "pop";
+
 		// content streams
 		static const char LINE_WIDTH[] = "w";
 		static const char LINE_CAP[] = "J";
@@ -142,6 +159,30 @@ namespace gotchangpdf
 			m_initialized = true;
 		}
 
+		void CharacterMapTokenDictionary::Initialize()
+		{
+			if (m_initialized) {
+				return;
+			}
+
+			INSERT_TO_DICTIONARY(BLOCK_BEGIN);
+			INSERT_TO_DICTIONARY(BLOCK_END);
+			INSERT_TO_DICTIONARY(FIND_RESOURCE);
+			INSERT_TO_DICTIONARY(DICTIONARY);
+			INSERT_TO_DICTIONARY(BEGIN_CMAP);
+			INSERT_TO_DICTIONARY(END_CMAP);
+			INSERT_TO_DICTIONARY(BEGIN_CODE_SPACE_RANGE);
+			INSERT_TO_DICTIONARY(END_CODE_SPACE_RANGE);
+			INSERT_TO_DICTIONARY(BEGIN_BASE_FONT_RANGE);
+			INSERT_TO_DICTIONARY(END_BASE_FONT_RANGE);
+			INSERT_TO_DICTIONARY(DEFINITION);
+			INSERT_TO_DICTIONARY(CMAP_NAME);
+			INSERT_TO_DICTIONARY(CURRENT_DICTIONARY);
+			INSERT_TO_DICTIONARY(DEFINE_RESOURCE);
+			INSERT_TO_DICTIONARY(STACK_POP);
+
+			ParserTokenDictionary::Initialize();
+		}
 
 		void ContentStreamTokenDictionary::Initialize()
 		{

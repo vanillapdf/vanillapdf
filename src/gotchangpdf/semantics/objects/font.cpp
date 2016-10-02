@@ -7,8 +7,12 @@ namespace gotchangpdf
 	{
 		FontMap::FontMap(syntax::DictionaryObjectPtr obj) : HighLevelObject(obj) {}
 		FontBase::FontBase(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
+		Type1Font::Type1Font(syntax::DictionaryObjectPtr root) : FontBase(root) {}
+		Type3Font::Type3Font(syntax::DictionaryObjectPtr root) : FontBase(root) {}
 		CompositeFont::CompositeFont(syntax::DictionaryObjectPtr root) : FontBase(root) {}
 
+		FontBase::Type Type1Font::GetType() const noexcept { return Type::Type1; }
+		FontBase::Type Type3Font::GetType() const noexcept { return Type::Type3; }
 		FontBase::Type CompositeFont::GetType() const noexcept { return Type::Composite; }
 
 		bool FontMap::Contains(syntax::NameObjectPtr name) const
@@ -56,6 +60,18 @@ namespace gotchangpdf
 				return result.release();
 			}
 
+			if (subtype == constant::Name::Type1) {
+				auto result = std::make_unique<Type1Font>(root);
+				result->SetDocument(doc);
+				return result.release();
+			}
+
+			if (subtype == constant::Name::Type3) {
+				auto result = std::make_unique<Type3Font>(root);
+				result->SetDocument(doc);
+				return result.release();
+			}
+
 			throw GeneralException("Unknown font subtype");
 		}
 
@@ -66,7 +82,7 @@ namespace gotchangpdf
 			}
 
 			auto stream = _obj->FindAs<syntax::StreamObjectPtr>(constant::Name::ToUnicode);
-			*result = UnicodeCharacterMapPtr(stream);
+			result = UnicodeCharacterMapPtr(stream);
 			return true;
 		}
 	}

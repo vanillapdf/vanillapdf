@@ -14,7 +14,7 @@ namespace gotchangpdf
 			}
 
 			auto dict = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Font);
-			*result = FontMapPtr(dict);
+			result = FontMapPtr(dict);
 			return true;
 		}
 	}

@@ -24,6 +24,30 @@ namespace gotchangpdf
 					throw GeneralException("Unexpected number of arguments");
 			}
 
+			OperationTextFont::OperationTextFont(const std::vector<ObjectPtr>& operands)
+			{
+				assert(operands.size() == 2);
+				if (operands.size() != 2)
+					throw GeneralException("Unexpected number of arguments");
+
+				auto name = operands.at(0);
+				auto scale = operands.at(1);
+				if (!ObjectUtils::IsType<NameObjectPtr>(name)) {
+					assert(!"Text font operation has invalid arguments");
+					throw GeneralException("Unexpected argument type");
+				}
+
+				if (!ObjectUtils::IsType<IntegerObjectPtr>(scale)) {
+					assert(!"Text font operation has invalid arguments");
+					throw GeneralException("Unexpected argument type");
+				}
+
+				m_font = ObjectUtils::ConvertTo<NameObjectPtr>(name);
+				m_scale = ObjectUtils::ConvertTo<IntegerObjectPtr>(scale);
+				m_font->Subscribe(this);
+				m_scale->Subscribe(this);
+			}
+
 			OperationBeginInlineImageObject::OperationBeginInlineImageObject(const std::vector<ObjectPtr>& operands)
 			{
 				assert(operands.size() == 0);
@@ -84,6 +108,12 @@ namespace gotchangpdf
 				_str->Unsubscribe(this);
 			}
 
+			OperationTextFont::~OperationTextFont()
+			{
+				m_font->Unsubscribe(this);
+				m_scale->Unsubscribe(this);
+			}
+
 			std::string OperationBeginText::ToPdf() const
 			{
 				BeginTextOperatorPtr op;
@@ -116,6 +146,18 @@ namespace gotchangpdf
 
 				TextShowArrayOperatorPtr op;
 				ss << m_items->ToPdf();
+				ss << " ";
+				ss << op->Value();
+
+				return ss.str();
+			}
+
+			std::string OperationTextFont::ToPdf() const
+			{
+				std::stringstream ss;
+
+				TextFontOperatorPtr op;
+				ss << m_font->ToPdf();
 				ss << " ";
 				ss << op->Value();
 

@@ -67,6 +67,14 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(Annotation);
 	DECLARE_OBJECT_HANDLE(LinkAnnotation);
 
+	/* Fonts */
+	DECLARE_OBJECT_HANDLE(Font);
+	DECLARE_OBJECT_HANDLE(CompositeFont);
+	DECLARE_OBJECT_HANDLE(FontMap);
+	DECLARE_OBJECT_HANDLE(CharacterMap);
+	DECLARE_OBJECT_HANDLE(EmbeddedCharacterMap);
+	DECLARE_OBJECT_HANDLE(UnicodeCharacterMap);
+
 	/* Common data structures */
 	DECLARE_OBJECT_HANDLE(Date);
 	DECLARE_OBJECT_HANDLE(Rectangle);
@@ -81,6 +89,7 @@ extern "C"
 
 	/* Content operations */
 	DECLARE_OBJECT_HANDLE(ContentOperationGeneric);
+	DECLARE_OBJECT_HANDLE(ContentOperationTextFont);
 	DECLARE_OBJECT_HANDLE(ContentOperationTextShow);
 	DECLARE_OBJECT_HANDLE(ContentOperationTextShowArray);
 	DECLARE_OBJECT_HANDLE(ContentOperationEndText);

@@ -283,6 +283,34 @@ error_type process_contents(ContentsHandle obj, int nested)
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
+error_type process_font_map(FontMapHandle obj, int nested)
+{
+	print_spaces(nested);
+	printf("Font map begin\n");
+
+	print_spaces(nested);
+	printf("Font map end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
+error_type process_resource_dictionary(ResourceDictionaryHandle obj, int nested)
+{
+	FontMapHandle font_map = NULL;
+
+	print_spaces(nested);
+	printf("Resource dictionary begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ResourceDictionary_GetFontMap(obj, &font_map),
+		process_font_map(font_map, nested + 1),
+		FontMap_Release(font_map));
+
+	print_spaces(nested);
+	printf("Resource dictionary end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
 error_type process_rectangle(RectangleHandle obj, int nested)
 {
 	ContentsHandle contents = NULL;
@@ -419,6 +447,7 @@ error_type process_page(PageObjectHandle obj, int nested)
 	ContentsHandle contents = NULL;
 	RectangleHandle media_box = NULL;
 	PageAnnotationsHandle annotations = NULL;
+	ResourceDictionaryHandle page_resources = NULL;
 
 	print_spaces(nested);
 	printf("Page begin\n");
@@ -434,6 +463,10 @@ error_type process_page(PageObjectHandle obj, int nested)
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageObject_GetAnnotations(obj, &annotations),
 		process_page_annotations(annotations, nested + 1),
 		PageAnnotations_Release(annotations));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageObject_GetResources(obj, &page_resources),
+		process_resource_dictionary(page_resources, nested + 1),
+		ResourceDictionary_Release(page_resources));
 
 	print_spaces(nested);
 	printf("Page end\n");

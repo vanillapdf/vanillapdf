@@ -101,6 +101,13 @@ namespace gotchangpdf
 			contents::OperationBasePtr ReadOperatorReturnOperation(const std::vector<ObjectPtr>& operands);
 			contents::InlineImageObjectPtr ReadInlineImageObject(void);
 		};
+
+		class CharacterMapParser : public ParserBase, public ICharacterMapParser
+		{
+		public:
+			CharacterMapParser(std::weak_ptr<File> file, CharacterSource & stream);
+			virtual CharacterMapData ReadCharacterMapData(void) override;
+		};
 	}
 }
 

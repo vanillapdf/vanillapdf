@@ -23,7 +23,9 @@ namespace gotchangpdf
 		public:
 			enum Type
 			{
-				Composite
+				Composite = 0,
+				Type1,
+				Type3
 			};
 
 		public:
@@ -31,6 +33,20 @@ namespace gotchangpdf
 			static FontBase* Create(syntax::DictionaryObjectPtr root, WeakReference<Document> doc);
 
 			virtual Type GetType() const noexcept = 0;
+		};
+
+		class Type1Font : public FontBase
+		{
+		public:
+			explicit Type1Font(syntax::DictionaryObjectPtr root);
+			virtual Type GetType() const noexcept override;
+		};
+
+		class Type3Font : public FontBase
+		{
+		public:
+			explicit Type3Font(syntax::DictionaryObjectPtr root);
+			virtual Type GetType() const noexcept override;
 		};
 
 		class CompositeFont : public FontBase

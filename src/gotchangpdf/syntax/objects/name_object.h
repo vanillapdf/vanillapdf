@@ -258,7 +258,16 @@ namespace gotchangpdf
 			extern const syntax::NameObjectPtr XRef;
 			extern const syntax::NameObjectPtr Font;
 			extern const syntax::NameObjectPtr Type0;
+			extern const syntax::NameObjectPtr Type1;
+			extern const syntax::NameObjectPtr Type3;
 			extern const syntax::NameObjectPtr ToUnicode;
+			extern const syntax::NameObjectPtr CIDSystemInfo;
+			extern const syntax::NameObjectPtr CMapName;
+			extern const syntax::NameObjectPtr CMapType;
+			extern const syntax::NameObjectPtr CMap;
+			extern const syntax::NameObjectPtr Registry;
+			extern const syntax::NameObjectPtr Ordering;
+			extern const syntax::NameObjectPtr Supplement;
 		}
 	}
 }

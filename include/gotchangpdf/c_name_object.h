@@ -205,7 +205,16 @@ extern "C"
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_XRef;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_Font;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_Type0;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Type1;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Type3;
 	GOTCHANG_PDF_API extern const NameHandle NameConstant_ToUnicode;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_CIDSystemInfo;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_CMapName;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_CMapType;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_CMap;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Registry;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Ordering;
+	GOTCHANG_PDF_API extern const NameHandle NameConstant_Supplement;
 
 #ifdef __cplusplus
 };

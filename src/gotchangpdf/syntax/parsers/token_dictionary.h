@@ -37,6 +37,12 @@ namespace gotchangpdf
 		public:
 			virtual void Initialize() override;
 		};
+
+		class CharacterMapTokenDictionary : public ParserTokenDictionary
+		{
+		public:
+			virtual void Initialize() override;
+		};
 	}
 }
 

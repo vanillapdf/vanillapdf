@@ -39,6 +39,13 @@ namespace gotchangpdf
 			_dictionary->Initialize();
 		}
 
+		CharacterMapParser::CharacterMapParser(std::weak_ptr<File> file, CharacterSource & stream)
+			: ParserBase(file, stream)
+		{
+			_dictionary = std::make_unique<CharacterMapTokenDictionary>();
+			_dictionary->Initialize();
+		}
+
 		std::weak_ptr<File> ParserBase::GetFile(void) const { return _file; }
 
 		class ObjectFactory
@@ -988,7 +995,7 @@ namespace gotchangpdf
 			case Token::Type::LEADING:
 				return contents::OperationGenericPtr(operands, contents::LeadingOperatorPtr());
 			case Token::Type::TEXT_FONT:
-				return contents::OperationGenericPtr(operands, contents::TextFontOperatorPtr());
+				return contents::OperationTextFontPtr(operands);
 			case Token::Type::TEXT_RENDERING_MODE:
 				return contents::OperationGenericPtr(operands, contents::TextRenderingModeOperatorPtr());
 			case Token::Type::TEXT_RISE:
@@ -1262,6 +1269,79 @@ namespace gotchangpdf
 			xref->SetFile(_file);
 			result->Append(xref);
 			return result;
+		}
+
+		CharacterMapData CharacterMapParser::ReadCharacterMapData(void)
+		{
+			CharacterMapData result;
+
+			for (;;) {
+				auto token = ReadTokenSkip();
+				auto ahead = PeekTokenSkip();
+
+				if (token->GetType() == Token::Type::END_OF_INPUT) {
+					return result;
+				}
+
+				if (token->GetType() == Token::Type::INTEGER_OBJECT) {
+					if (ahead->GetType() == Token::Type::BEGIN_CODE_SPACE_RANGE) {
+						ReadTokenWithTypeSkip(Token::Type::BEGIN_CODE_SPACE_RANGE);
+
+						auto count = ObjectFactory::CreateInteger(token);
+						for (int i = 0; i < count->GetIntegerValue(); ++i) {
+							CodeSpaceRange range;
+							range.Begin = ReadHexadecimalString();
+							range.End = ReadHexadecimalString();
+
+							result.CodeSpaceRanges.push_back(range);
+						}
+
+						ReadTokenWithTypeSkip(Token::Type::END_CODE_SPACE_RANGE);
+					}
+
+					if (ahead->GetType() == Token::Type::BEGIN_BASE_FONT_RANGE) {
+						ReadTokenWithTypeSkip(Token::Type::BEGIN_BASE_FONT_RANGE);
+
+						auto count = ObjectFactory::CreateInteger(token);
+						for (int i = 0; i < count->GetIntegerValue(); ++i) {
+							auto low = ReadHexadecimalString();
+							auto high = ReadHexadecimalString();
+							auto dest = ReadDirectObject();
+
+							BaseFontRange range;
+							range.SetRangeLow(low);
+							range.SetRangeHigh(high);
+							range.SetDestination(dest);
+
+							result.BaseFontRanges.push_back(range);
+						}
+
+						ReadTokenWithTypeSkip(Token::Type::END_BASE_FONT_RANGE);
+					}
+				}
+
+				if (token->GetType() == Token::Type::NAME_OBJECT) {
+					auto name = ObjectFactory::CreateName(token);
+
+					if (name == constant::Name::CIDSystemInfo) {
+						DictionaryObjectPtr system_info = ReadDictionary();
+						result.SystemInfo.Registry = system_info->FindAs<StringObjectPtr>(constant::Name::Registry);
+						result.SystemInfo.Ordering = system_info->FindAs<StringObjectPtr>(constant::Name::Ordering);
+						result.SystemInfo.Supplement = system_info->FindAs<IntegerObjectPtr>(constant::Name::Supplement);
+						ReadTokenWithTypeSkip(Token::Type::DEFINITION);
+					}
+
+					if (name == constant::Name::CMapName) {
+						result.CMapName = ReadName();
+						ReadTokenWithTypeSkip(Token::Type::DEFINITION);
+					}
+
+					if (name == constant::Name::CMapType) {
+						result.CMapType = ReadInteger();
+						ReadTokenWithTypeSkip(Token::Type::DEFINITION);
+					}
+				}
+			}
 		}
 	}
 }

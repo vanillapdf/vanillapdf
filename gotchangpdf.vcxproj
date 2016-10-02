@@ -16,6 +16,7 @@
     <ClInclude Include="include\gotchangpdf\c_boolean_object.h" />
     <ClInclude Include="include\gotchangpdf\c_buffer.h" />
     <ClInclude Include="include\gotchangpdf\c_catalog.h" />
+    <ClInclude Include="include\gotchangpdf\c_character_map.h" />
     <ClInclude Include="include\gotchangpdf\c_contents.h" />
     <ClInclude Include="include\gotchangpdf\c_date.h" />
     <ClInclude Include="include\gotchangpdf\c_destinations.h" />
@@ -25,6 +26,8 @@
     <ClInclude Include="include\gotchangpdf\c_document_info.h" />
     <ClInclude Include="include\gotchangpdf\c_export.h" />
     <ClInclude Include="include\gotchangpdf\c_file.h" />
+    <ClInclude Include="include\gotchangpdf\c_font.h" />
+    <ClInclude Include="include\gotchangpdf\c_font_map.h" />
     <ClInclude Include="include\gotchangpdf\c_handles.h" />
     <ClInclude Include="include\gotchangpdf\c_indirect_object_reference.h" />
     <ClInclude Include="include\gotchangpdf\c_integer_object.h" />
@@ -44,6 +47,7 @@
     <ClInclude Include="include\gotchangpdf\c_encryption.h" />
     <ClInclude Include="include\gotchangpdf\gotchangpdf.h" />
     <ClInclude Include="include\gotchangpdf\c_viewer_preferences.h" />
+    <ClInclude Include="include\gotchangpdf\c_resource_dictionary.h" />
     <ClInclude Include="src\gotchangpdf\implementation\c_helper.h" />
     <ClInclude Include="src\gotchangpdf\precompiled.h" />
     <ClInclude Include="src\gotchangpdf\semantics\documents\catalog.h" />
@@ -99,6 +103,7 @@
     <ClInclude Include="src\gotchangpdf\syntax\objects\real_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\stream_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\string_object.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\character_map_data.h" />
     <ClInclude Include="src\gotchangpdf\syntax\parsers\contents\content_stream_objects.h" />
     <ClInclude Include="src\gotchangpdf\syntax\parsers\contents\content_stream_operations.h" />
     <ClInclude Include="src\gotchangpdf\syntax\parsers\contents\content_stream_operation_base.h" />
@@ -140,6 +145,7 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_boolean_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_buffer.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_catalog.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_character_map.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_contents.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_date.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_destinations.cpp" />
@@ -148,6 +154,8 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_document.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_encryption.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_file.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_font.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_font_map.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_indirect_object_reference.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_integer_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_name_object.cpp" />
@@ -158,6 +166,7 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_page_tree.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_real_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_rectangle.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_resource_dictionary.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_stream_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_string_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_values.cpp" />
@@ -206,6 +215,7 @@
     <ClCompile Include="src\gotchangpdf\syntax\objects\object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\stream_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\string_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\character_map_data.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\content_stream_objects.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\parsers\contents\content_stream_operations.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\parsers\reverse_parser.cpp" />

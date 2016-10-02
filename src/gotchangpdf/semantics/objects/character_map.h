@@ -3,6 +3,7 @@
 
 #include "semantics_fwd.h"
 #include "high_level_object.h"
+#include "character_map_data.h"
 
 namespace gotchangpdf
 {
@@ -36,6 +37,13 @@ namespace gotchangpdf
 		public:
 			explicit UnicodeCharacterMap(syntax::StreamObjectPtr root);
 			virtual Type GetType() const noexcept override;
+			BufferPtr GetMappedValue(BufferPtr key) const;
+
+		private:
+			mutable syntax::CharacterMapData m_data;
+			mutable bool m_initialized = false;
+
+			void Initialize() const;
 		};
 	}
 }

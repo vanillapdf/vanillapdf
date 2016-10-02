@@ -1,5 +1,8 @@
 #include "merge.h"
 
+static PageObjectHandle current_page_object = NULL;
+static UnicodeCharacterMapHandle current_unicode_map = NULL;
+
 error_type process_contents(ContentsHandle page_contents, integer_type page_number)
 {
 	integer_type j = 0;
@@ -44,17 +47,29 @@ error_type process_contents(ContentsHandle page_contents, integer_type page_numb
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_Release(content_object));
 	}
 
+	if (current_unicode_map != NULL) {
+		RETURN_ERROR_IF_NOT_SUCCESS(UnicodeCharacterMap_Release(current_unicode_map));
+		current_unicode_map = NULL;
+	}
+
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
 error_type process_string_object(StringHandle string_handle, integer_type page_number)
 {
+	BufferHandle mapped_value = NULL;
 	BufferHandle string_buffer = NULL;
 	string_type string_data = NULL;
 	size_type string_size = 0;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_GetValue(string_handle, &string_buffer));
-	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(string_buffer, &string_data, &string_size));
+
+	if (NULL == current_unicode_map) {
+		RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(string_buffer, &string_data, &string_size));
+	} else {
+		RETURN_ERROR_IF_NOT_SUCCESS(UnicodeCharacterMap_GetMappedValue(current_unicode_map, string_buffer, &mapped_value));
+		RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(mapped_value, &string_data, &string_size));
+	}
 
 	if (0 == strncmp(string_data, ".page:01234/56789", string_size)) {
 		int buffer_size = snprintf(NULL, 0, "%d", page_number);
@@ -85,6 +100,10 @@ error_type process_string_object(StringHandle string_handle, integer_type page_n
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(string_buffer));
 
+	if (NULL != mapped_value) {
+		RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(mapped_value));
+	}
+
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
@@ -92,6 +111,39 @@ error_type process_content_operation(ContentOperationHandle content_operation, i
 {
 	ContentOperationType operation_type;
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_GetType(content_operation, &operation_type));
+	if (operation_type == ContentOperationType_TextFont) {
+		FontType font_type;
+		FontHandle font = NULL;
+		FontMapHandle font_map = NULL;
+		ResourceDictionaryHandle page_resources = NULL;
+		NameHandle font_name = NULL;
+		ContentOperationTextFontHandle text_font = NULL;
+
+		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextFont(content_operation, &text_font));
+		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextFont_GetName(text_font, &font_name));
+		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_GetResources(current_page_object, &page_resources));
+		RETURN_ERROR_IF_NOT_SUCCESS(ResourceDictionary_GetFontMap(page_resources, &font_map));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(FontMap_Find(font_map, font_name, &font));
+		RETURN_ERROR_IF_NOT_SUCCESS(Font_Type(font, &font_type));
+		if (font_type == FontType_Composite) {
+			CompositeFontHandle composite_font = NULL;
+
+			if (NULL != current_unicode_map) {
+				RETURN_ERROR_IF_NOT_SUCCESS(UnicodeCharacterMap_Release(current_unicode_map));
+				current_unicode_map = NULL;
+			}
+
+			RETURN_ERROR_IF_NOT_SUCCESS(Font_ToComposite(font, &composite_font));
+			RETURN_ERROR_IF_NOT_SUCCESS(CompositeFont_GetUnicodeMap(composite_font, &current_unicode_map));
+		}
+
+		RETURN_ERROR_IF_NOT_SUCCESS(Font_Release(font));
+		RETURN_ERROR_IF_NOT_SUCCESS(FontMap_Release(font_map));
+		RETURN_ERROR_IF_NOT_SUCCESS(ResourceDictionary_Release(page_resources));
+		RETURN_ERROR_IF_NOT_SUCCESS(NameObject_Release(font_name));
+	}
+
 	if (operation_type == ContentOperationType_TextShow) {
 		StringHandle text_string = NULL;
 		ContentOperationTextShowHandle text_handle = NULL;
@@ -208,14 +260,16 @@ int main(int argc, char *argv[])
 	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(tree, &page_count));
 
 	for (i = 0; i < page_count; ++i) {
-		PageObjectHandle page_object = NULL;
 		ContentsHandle page_contents = NULL;
 
-		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(tree, i + 1, &page_object));
-		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_GetContents(page_object, &page_contents));
+		current_page_object = NULL;
+		current_unicode_map = NULL;
+
+		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(tree, i + 1, &current_page_object));
+		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_GetContents(current_page_object, &page_contents));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_contents(page_contents, i + 1));
 		RETURN_ERROR_IF_NOT_SUCCESS(Contents_Release(page_contents));
-		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(page_object));
+		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(current_page_object));
 	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Save(document, destination_file));
