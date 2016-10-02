@@ -13,8 +13,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetValue(IntegerHan
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	*result = obj->GetIntegerValue();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	try
+	{
+		*result = obj->GetIntegerValue();
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_SetValue(IntegerHandle handle, bigint_type value)
@@ -22,8 +25,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_SetValue(IntegerHan
 	IntegerObject* obj = reinterpret_cast<IntegerObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
-	obj->SetValue(value);
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	try
+	{
+		obj->SetValue(value);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_Release(IntegerHandle handle)
