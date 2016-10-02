@@ -32,9 +32,9 @@ namespace gotchangpdf
 			virtual Object::Type GetType(void) const noexcept override { return Object::Type::Real; }
 			virtual std::string ToPdf(void) const override { return m_value->ToString(); }
 
-			operator value_type() const noexcept { return m_value->GetRealValue(); }
-			value_type GetValue(void) const noexcept { return m_value->GetRealValue(); }
-			void SetValue(value_type value) noexcept { m_value->SetRealValue(value); }
+			operator value_type() const { return m_value->GetRealValue(); }
+			value_type GetValue(void) const { return m_value->GetRealValue(); }
+			void SetValue(value_type value) { m_value->SetRealValue(value); }
 
 			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
