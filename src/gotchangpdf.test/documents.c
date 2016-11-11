@@ -97,6 +97,7 @@ error_type process_content_operation(ContentOperationHandle obj, int nested)
 	ContentOperationType type;
 	ContentOperationGenericHandle generic_operation = NULL;
 	ContentOperationTextShowHandle text_show_operation = NULL;
+	ContentOperationTextFontHandle text_font_operation = NULL;
 	ContentOperationTextShowArrayHandle text_show_array_operation = NULL;
 	ContentOperationEndTextHandle end_text_operation = NULL;
 
@@ -110,6 +111,10 @@ error_type process_content_operation(ContentOperationHandle obj, int nested)
 	case ContentOperationType_TextShow:
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextShow(obj, &text_show_operation));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_textshow(text_show_operation, nested + 1));
+		break;
+	case ContentOperationType_TextFont:
+		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextFont(obj, &text_font_operation));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_textfont(text_font_operation, nested + 1));
 		break;
 	case ContentOperationType_TextShowArray:
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextShowArray(obj, &text_show_array_operation));
@@ -173,7 +178,7 @@ error_type process_content_operation_textshowarray(ContentOperationTextShowArray
 	ArrayHandle items_handle = NULL;
 
 	print_spaces(nested);
-	printf("Text show array content operation begin\n");
+	printf("Text show array operation begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextShowArray_GetValue(obj, &items_handle));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_array(items_handle, nested + 1));
@@ -185,12 +190,33 @@ error_type process_content_operation_textshowarray(ContentOperationTextShowArray
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
+error_type process_content_operation_textfont(ContentOperationTextFontHandle obj, int nested)
+{
+	NameHandle font_name = NULL;
+	IntegerHandle font_scale = NULL;
+
+	print_spaces(nested);
+	printf("Text font operation begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextFont_GetName(obj, &font_name));
+	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextFont_GetScale(obj, &font_scale));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_name(font_name, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(font_scale, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(NameObject_Release(font_name));
+	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(font_scale));
+
+	print_spaces(nested);
+	printf("Text font operation end\n");
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
 error_type process_content_operation_textshow(ContentOperationTextShowHandle obj, int nested)
 {
 	StringHandle str = NULL;
 
 	print_spaces(nested);
-	printf("Text show content operation begin\n");
+	printf("Text show operation begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextShow_GetValue(obj, &str));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_string(str, nested + 1));
