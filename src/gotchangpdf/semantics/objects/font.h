@@ -30,7 +30,7 @@ namespace gotchangpdf
 
 		public:
 			explicit FontBase(syntax::DictionaryObjectPtr root);
-			static FontBase* Create(syntax::DictionaryObjectPtr root, WeakReference<Document> doc);
+			static FontBase* Create(syntax::DictionaryObjectPtr root);
 
 			virtual Type GetType() const noexcept = 0;
 		};

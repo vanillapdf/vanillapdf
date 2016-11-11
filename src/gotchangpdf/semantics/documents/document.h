@@ -20,6 +20,7 @@ namespace gotchangpdf
 		public:
 			Document(const std::string& filename);
 			Document(syntax::FileHolderPtr holder);
+			~Document();
 
 			CatalogPtr GetDocumentCatalog(void);
 			bool GetDocumentInfo(OutputDocumentInfoPtr& result);

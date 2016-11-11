@@ -14,7 +14,7 @@ namespace gotchangpdf
 	{
 		using namespace constant;
 
-		PageNodeBasePtr CreatePageNode(syntax::DictionaryObjectPtr obj, WeakReference<Document> doc)
+		PageNodeBasePtr CreatePageNode(syntax::DictionaryObjectPtr obj)
 		{
 			if (!obj->Contains(Name::Type))
 				throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageNodeBase>(obj);
@@ -23,13 +23,11 @@ namespace gotchangpdf
 
 			if (type == Name::Pages) {
 				auto result = PageTreeNodePtr(obj);
-				result->SetDocument(doc);
 				return result;
 			}
 
 			if (type == Name::Page) {
 				auto result = PageObjectPtr(obj);
-				result->SetDocument(doc);
 				return result;
 			}
 

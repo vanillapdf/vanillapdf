@@ -17,7 +17,6 @@ namespace gotchangpdf
 		{
 			// TODO
 			auto result = std::make_unique<UnicodeCharacterMap>(root);
-			result->SetDocument(doc);
 			return result.release();
 		}
 

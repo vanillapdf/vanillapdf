@@ -29,9 +29,9 @@ namespace gotchangpdf
 			explicit DestinationBase(syntax::MixedArrayObjectPtr root);
 			explicit DestinationBase(syntax::DictionaryObjectPtr root);
 
-			static DestinationBase* Create(syntax::MixedArrayObjectPtr root, WeakReference<Document> doc);
-			static DestinationBase* Create(syntax::DictionaryObjectPtr root, WeakReference<Document> doc);
-			static DestinationBase* Create(syntax::ObjectPtr root, WeakReference<Document> doc);
+			static DestinationBase* Create(syntax::MixedArrayObjectPtr root);
+			static DestinationBase* Create(syntax::DictionaryObjectPtr root);
+			static DestinationBase* Create(syntax::ObjectPtr root);
 
 			syntax::ObjectPtr GetPage() const;
 			bool HasAttribute(const syntax::NameObject& name) const;

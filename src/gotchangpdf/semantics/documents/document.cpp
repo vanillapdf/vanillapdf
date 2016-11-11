@@ -4,6 +4,7 @@
 #include "contents.h"
 #include "annotations.h"
 #include "name_dictionary.h"
+#include "semantic_utils.h"
 
 namespace gotchangpdf
 {
@@ -11,8 +12,29 @@ namespace gotchangpdf
 	{
 		using namespace syntax;
 
-		Document::Document(const std::string& filename) { _holder->Open(filename); _holder->Value()->Initialize(); }
-		Document::Document(syntax::FileHolderPtr holder) : _holder(holder) { assert(holder->Value()); }
+		Document::Document(const std::string& filename)
+		{
+			_holder->Open(filename);
+			_holder->Value()->Initialize();
+
+			DocumentPtr temp(this, false);
+			SemanticUtils::AddDocumentMapping(_holder->Value() , temp->GetWeakReference<Document>());
+			temp.detach();
+		}
+
+		Document::Document(syntax::FileHolderPtr holder) : _holder(holder)
+		{
+			assert(holder->Value());
+
+			DocumentPtr temp(this, false);
+			SemanticUtils::AddDocumentMapping(_holder->Value(), temp->GetWeakReference<Document>());
+			temp.detach();
+		}
+
+		Document::~Document()
+		{
+			SemanticUtils::ReleaseMapping(_holder->Value());
+		}
 
 		CatalogPtr Document::GetDocumentCatalog(void)
 		{
@@ -26,8 +48,6 @@ namespace gotchangpdf
 			auto root = dictionary->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Root);
 
 			auto catalog = CatalogPtr(root);
-			catalog->SetDocument(GetWeakReference<Document>());
-
 			m_catalog = catalog;
 			return m_catalog;
 		}
@@ -48,8 +68,6 @@ namespace gotchangpdf
 
 			auto info = dictionary->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Info);
 			DocumentInfoPtr doc_info(info);
-			doc_info->SetDocument(GetWeakReference<Document>());
-
 			m_info = doc_info;
 			result = doc_info;
 			return true;
@@ -321,7 +339,7 @@ namespace gotchangpdf
 
 					// Create only shallow copies
 					auto cloned_destination_obj = file->ShallowCopyObject(destination_value);
-					auto cloned_destination = DestinationBase::Create(cloned_destination_obj, GetWeakReference<Document>());
+					auto cloned_destination = DestinationBase::Create(cloned_destination_obj);
 					auto cloned_destination_page = cloned_destination->GetPage();
 
 					FixDestinationPage(other, cloned_destination_page);
@@ -371,7 +389,7 @@ namespace gotchangpdf
 
 						// Create only shallow copies
 						auto cloned_destination_obj = file->ShallowCopyObject(destination_value);
-						auto cloned_destination = DestinationBase::Create(cloned_destination_obj, GetWeakReference<Document>());
+						auto cloned_destination = DestinationBase::Create(cloned_destination_obj);
 						auto cloned_destination_page = cloned_destination->GetPage();
 
 						FixDestinationPage(other, cloned_destination_page);

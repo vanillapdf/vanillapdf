@@ -15,9 +15,6 @@ namespace gotchangpdf
 			explicit HighLevelObject(const T& obj) : _obj(obj) {}
 			T GetObject(void) const { return _obj; }
 
-			WeakReference<Document> GetDocument() const { return _document; }
-			void SetDocument(WeakReference<Document> document) { _document = document; }
-
 		protected:
 			T _obj;
 

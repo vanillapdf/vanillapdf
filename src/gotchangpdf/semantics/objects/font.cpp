@@ -23,10 +23,10 @@ namespace gotchangpdf
 		FontPtr FontMap::Find(syntax::NameObjectPtr name) const
 		{
 			auto dict = _obj->FindAs<syntax::DictionaryObjectPtr>(name);
-			return FontBase::Create(dict, GetDocument());
+			return FontBase::Create(dict);
 		}
 
-		FontBase* FontBase::Create(syntax::DictionaryObjectPtr root, WeakReference<Document> doc)
+		FontBase* FontBase::Create(syntax::DictionaryObjectPtr root)
 		{
 			// Verify type, if it is included
 			if (root->Contains(constant::Name::Type)) {
@@ -56,19 +56,16 @@ namespace gotchangpdf
 
 			if (subtype == constant::Name::Type0) {
 				auto result = std::make_unique<CompositeFont>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Type1) {
 				auto result = std::make_unique<Type1Font>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Type3) {
 				auto result = std::make_unique<Type3Font>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 

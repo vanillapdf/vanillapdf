@@ -41,22 +41,22 @@ namespace gotchangpdf
 
 		NamedDestinations::NamedDestinations(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
 
-		DestinationBase* DestinationBase::Create(syntax::ObjectPtr root, WeakReference<Document> doc)
+		DestinationBase* DestinationBase::Create(syntax::ObjectPtr root)
 		{
 			if (syntax::ObjectUtils::IsType<syntax::MixedArrayObjectPtr>(root)) {
 				auto arr = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(root);
-				return Create(arr, doc);
+				return Create(arr);
 			}
 
 			if (syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(root)) {
 				auto dict = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(root);
-				return Create(dict, doc);
+				return Create(dict);
 			}
 
 			throw GeneralException("Invalid object type");
 		}
 
-		DestinationBase* DestinationBase::Create(syntax::MixedArrayObjectPtr root, WeakReference<Document> doc)
+		DestinationBase* DestinationBase::Create(syntax::MixedArrayObjectPtr root)
 		{
 			if (root->Size() < 2) {
 				throw GeneralException("Invalid destination array");
@@ -80,56 +80,48 @@ namespace gotchangpdf
 
 			if (type == constant::Name::XYZ) {
 				auto result = std::make_unique<XYZDestination>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (type == constant::Name::Fit) {
 				auto result = std::make_unique<FitDestination>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitH) {
 				auto result = std::make_unique<FitHorizontalDestination>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitV) {
 				auto result = std::make_unique<FitVerticalDestination>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitR) {
 				auto result = std::make_unique<FitRectangleDestination>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitB) {
 				auto result = std::make_unique<FitBoundingBoxDestination>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitBH) {
 				auto result = std::make_unique<FitBoundingBoxHorizontalDestination>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitBV) {
 				auto result = std::make_unique<FitBoundingBoxVerticalDestination>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			throw GeneralException("Unknown destination type");
 		}
 
-		DestinationBase* DestinationBase::Create(syntax::DictionaryObjectPtr root, WeakReference<Document> doc)
+		DestinationBase* DestinationBase::Create(syntax::DictionaryObjectPtr root)
 		{
 			if (!root->Contains(constant::Name::D)) {
 				throw GeneralException("Invalid destination dictionary");
@@ -159,50 +151,42 @@ namespace gotchangpdf
 
 			if (type == constant::Name::XYZ) {
 				auto result = std::make_unique<XYZDestination>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (type == constant::Name::Fit) {
 				auto result = std::make_unique<FitDestination>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitH) {
 
 				auto result = std::make_unique<FitHorizontalDestination>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitV) {
 				auto result = std::make_unique<FitVerticalDestination>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitR) {
 				auto result = std::make_unique<FitRectangleDestination>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitB) {
 				auto result = std::make_unique<FitBoundingBoxDestination>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitBH) {
 				auto result = std::make_unique<FitBoundingBoxHorizontalDestination>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitBV) {
 				auto result = std::make_unique<FitBoundingBoxVerticalDestination>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
@@ -256,12 +240,12 @@ namespace gotchangpdf
 			auto found_obj = _obj->Find(name);
 			if (syntax::ObjectUtils::IsType<syntax::MixedArrayObjectPtr>(found_obj)) {
 				syntax::MixedArrayObjectPtr found_array = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(found_obj);
-				return DestinationBase::Create(found_array, GetDocument());
+				return DestinationBase::Create(found_array);
 			}
 
 			if (syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(found_obj)) {
 				syntax::DictionaryObjectPtr found_dictionary = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(found_obj);
-				return DestinationBase::Create(found_dictionary, GetDocument());
+				return DestinationBase::Create(found_dictionary);
 			}
 
 			throw GeneralException("Unable to find entry");

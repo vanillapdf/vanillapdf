@@ -92,8 +92,6 @@ namespace gotchangpdf
 
 			auto annots_obj = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Annots);
 			auto annots = PageAnnotationsPtr(annots_obj);
-			annots->SetDocument(GetDocument());
-
 			result = annots;
 			return true;
 		}

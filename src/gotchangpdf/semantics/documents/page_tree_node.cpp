@@ -26,7 +26,7 @@ namespace gotchangpdf
 		ArrayObjectPtr<PageNodeBasePtr> PageTreeNode::Kids() const
 		{
 			auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(Name::Kids);
-			return kids->Convert<PageNodeBasePtr>([this](const DictionaryObjectPtr& obj) { return CreatePageNode(obj, GetDocument()); });
+			return kids->Convert<PageNodeBasePtr>([this](const DictionaryObjectPtr& obj) { return CreatePageNode(obj); });
 		}
 	}
 }

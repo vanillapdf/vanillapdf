@@ -24,7 +24,7 @@ namespace gotchangpdf
 				auto dict = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Dests);
 				NameTreePtr<DestinationPtr> tree(
 					dict, [this](const syntax::ContainableObjectPtr& obj) {
-					return DestinationBase::Create(obj, GetDocument());
+					return DestinationBase::Create(obj);
 				});
 
 				result = tree;

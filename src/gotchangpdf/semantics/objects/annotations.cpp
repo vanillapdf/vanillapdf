@@ -3,6 +3,7 @@
 #include "destinations.h"
 #include "document.h"
 #include "name_dictionary.h"
+#include "semantic_utils.h"
 
 namespace gotchangpdf
 {
@@ -75,10 +76,10 @@ namespace gotchangpdf
 			}
 
 			auto dict = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(obj);
-			return AnnotationBase::Create(dict, GetDocument());
+			return AnnotationBase::Create(dict);
 		}
 
-		AnnotationBase* AnnotationBase::Create(syntax::DictionaryObjectPtr root, WeakReference<Document> doc)
+		AnnotationBase* AnnotationBase::Create(syntax::DictionaryObjectPtr root)
 		{
 			// Verify type, if it is included
 			if (root->Contains(constant::Name::Type)) {
@@ -108,155 +109,129 @@ namespace gotchangpdf
 
 			if (subtype == constant::Name::Text) {
 				auto result = std::make_unique<TextAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Link) {
 				auto result = std::make_unique<LinkAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::FreeText) {
 				auto result = std::make_unique<FreeTextAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Line) {
 				auto result = std::make_unique<LineAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 			if (subtype == constant::Name::Square) {
 				auto result = std::make_unique<SquareAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Circle) {
 				auto result = std::make_unique<CircleAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 			if (subtype == constant::Name::Polygon) {
 				auto result = std::make_unique<PolygonAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::PolyLine) {
 				auto result = std::make_unique<PolyLineAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Highlight) {
 				auto result = std::make_unique<HighlightAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Underline) {
 				auto result = std::make_unique<UnderlineAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Squiggly) {
 				auto result = std::make_unique<SquigglyAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::StrikeOut) {
 				auto result = std::make_unique<StrikeOutAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::RubberStamp) {
 				auto result = std::make_unique<RubberStampAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Caret) {
 				auto result = std::make_unique<CaretAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Ink) {
 				auto result = std::make_unique<InkAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Popup) {
 				auto result = std::make_unique<PopupAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::FileAttachment) {
 				auto result = std::make_unique<FileAttachmentAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Sound) {
 				auto result = std::make_unique<SoundAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Movie) {
 				auto result = std::make_unique<MovieAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Widget) {
 				auto result = std::make_unique<WidgetAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Screen) {
 				auto result = std::make_unique<ScreenAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::PrinterMark) {
 				auto result = std::make_unique<PrinterMarkAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::TrapNetwork) {
 				auto result = std::make_unique<TrapNetworkAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Watermark) {
 				auto result = std::make_unique<WatermarkAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::TripleD) {
 				auto result = std::make_unique<TripleDAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Redact) {
 				auto result = std::make_unique<RedactionAnnotation>(root);
-				result->SetDocument(doc);
 				return result.release();
 			}
 
@@ -272,18 +247,18 @@ namespace gotchangpdf
 			auto dest_obj = _obj->Find(constant::Name::Dest);
 			if (syntax::ObjectUtils::IsType<syntax::MixedArrayObjectPtr>(dest_obj)) {
 				auto array_obj = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(dest_obj);
-				result = DestinationBase::Create(array_obj, GetDocument());
+				result = DestinationBase::Create(array_obj);
 				return true;
 			}
 
 			if (syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(dest_obj)) {
 				auto dict_obj = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(dest_obj);
-				result = DestinationBase::Create(dict_obj, GetDocument());
+				result = DestinationBase::Create(dict_obj);
 				return true;
 			}
 
 			if (syntax::ObjectUtils::IsType<syntax::StringObjectPtr>(dest_obj)) {
-				auto document_ref = GetDocument();
+				auto document_ref = SemanticUtils::GetMappedDocument(_obj->GetFile());
 
 				assert(!document_ref.IsEmpty() && "Document reference was not set");
 				if (!document_ref.IsActive()) {
@@ -320,7 +295,7 @@ namespace gotchangpdf
 			}
 
 			if (syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(dest_obj)) {
-				auto document_ref = GetDocument();
+				auto document_ref = SemanticUtils::GetMappedDocument(_obj->GetFile());
 
 				assert(!document_ref.IsEmpty() && "Document reference was not set");
 				if (!document_ref.IsActive()) {

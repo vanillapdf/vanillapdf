@@ -44,7 +44,7 @@ namespace gotchangpdf
 
 		public:
 			explicit AnnotationBase(syntax::DictionaryObjectPtr root);
-			static AnnotationBase* Create(syntax::DictionaryObjectPtr root, WeakReference<Document> doc);
+			static AnnotationBase* Create(syntax::DictionaryObjectPtr root);
 
 			virtual AnnotationBase::Type GetType() const noexcept = 0;
 		};
