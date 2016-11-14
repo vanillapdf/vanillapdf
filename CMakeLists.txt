@@ -1,44 +1,35 @@
 # Require minimum CMAKE version
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+cmake_minimum_required(VERSION 2.6)
 
 # Define main project
-PROJECT(gotchangpdf)
+project(gotchangpdf)
 
-INCLUDE_DIRECTORIES(include)
-INCLUDE_DIRECTORIES(src/gotchangpdf)
-INCLUDE_DIRECTORIES(src/gotchangpdf/implementation)
-INCLUDE_DIRECTORIES(src/gotchangpdf/semantics/documents)
-INCLUDE_DIRECTORIES(src/gotchangpdf/semantics/objects)
-INCLUDE_DIRECTORIES(src/gotchangpdf/semantics/utils)
+include_directories("include")
+include_directories("include/gotchangpdf")
 
-INCLUDE_DIRECTORIES(src/gotchangpdf/syntax/exceptions)
-INCLUDE_DIRECTORIES(src/gotchangpdf/syntax/files)
-INCLUDE_DIRECTORIES(src/gotchangpdf/syntax/filters)
-INCLUDE_DIRECTORIES(src/gotchangpdf/syntax/objects)
-INCLUDE_DIRECTORIES(src/gotchangpdf/syntax/parsers)
-INCLUDE_DIRECTORIES(src/gotchangpdf/syntax/parsers/contents)
-INCLUDE_DIRECTORIES(src/gotchangpdf/syntax/streams)
-INCLUDE_DIRECTORIES(src/gotchangpdf/syntax/utils)
+include_directories(src/gotchangpdf)
+include_directories(src/gotchangpdf/implementation)
+include_directories(src/gotchangpdf/semantics/documents)
+include_directories(src/gotchangpdf/semantics/objects)
+include_directories(src/gotchangpdf/semantics/utils)
 
-message("test message")
-message(${CMAKE_BUILD_TYPE})
+include_directories(src/gotchangpdf/syntax/exceptions)
+include_directories(src/gotchangpdf/syntax/files)
+include_directories(src/gotchangpdf/syntax/filters)
+include_directories(src/gotchangpdf/syntax/objects)
+include_directories(src/gotchangpdf/syntax/parsers)
+include_directories(src/gotchangpdf/syntax/parsers/contents)
+include_directories(src/gotchangpdf/syntax/streams)
+include_directories(src/gotchangpdf/syntax/utils)
 
-IF(CMAKE_BUILD_TYPE MATCHES DEBUG)
-    message("debug mode")
-	add_definitions(-DDEBUG)
-ENDIF(CMAKE_BUILD_TYPE MATCHES DEBUG)
+set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "-DRELEASE")
 
-IF(CMAKE_BUILD_TYPE MATCHES RELEASE)
-    message("release mode")
-	add_definitions(-DRELEASE)
-	add_definitions(-DNDEBUG)
-ENDIF(CMAKE_BUILD_TYPE MATCHES RELEASE)
-
-SET(GOTCHANGPDF_PRECOMPILED_SOURCE
+set(GOTCHANGPDF_PRECOMPILED_SOURCE
 	src/gotchangpdf/precompiled.cpp
 )
 
-SET(GOTCHANGPDF_C_IMPLEMENTATION_SOURCES
+set(GOTCHANGPDF_C_IMPLEMENTATION_SOURCES
 	src/gotchangpdf/implementation/c_annotations.cpp
 	src/gotchangpdf/implementation/c_array_object.cpp
 	src/gotchangpdf/implementation/c_boolean_object.cpp
@@ -74,7 +65,7 @@ SET(GOTCHANGPDF_C_IMPLEMENTATION_SOURCES
 	src/gotchangpdf/implementation/c_xref.cpp
 )
 
-SET(GOTCHANGPDF_SEMANTICS_SOURCES
+set(GOTCHANGPDF_SEMANTICS_SOURCES
 	src/gotchangpdf/semantics/documents/catalog.cpp
 	src/gotchangpdf/semantics/documents/content_stream.cpp
 	src/gotchangpdf/semantics/documents/contents.cpp
@@ -96,7 +87,7 @@ SET(GOTCHANGPDF_SEMANTICS_SOURCES
 	src/gotchangpdf/semantics/utils/semantic_utils.cpp
 )
 
-SET(GOTCHANGPDF_SYNTAX_SOURCES
+set(GOTCHANGPDF_SYNTAX_SOURCES
 	src/gotchangpdf/syntax/exceptions/exception.cpp
 	
 	src/gotchangpdf/syntax/files/file.cpp
@@ -143,47 +134,47 @@ SET(GOTCHANGPDF_SYNTAX_SOURCES
 	src/gotchangpdf/syntax/utils/zlib_wrapper.cpp
 )
 
-SET(INCLUDE_HEADERS
-	include/gotchangpdf/c_annotations.h
-	include/gotchangpdf/c_array_object.h
-	include/gotchangpdf/c_boolean_object.h
-	include/gotchangpdf/c_buffer.h
-	include/gotchangpdf/c_catalog.h
-	include/gotchangpdf/c_character_map.h
-	include/gotchangpdf/c_contents.h
-	include/gotchangpdf/c_date.h
-	include/gotchangpdf/c_destinations.h
-	include/gotchangpdf/c_developer_extensions.h
-	include/gotchangpdf/c_dictionary_object.h
-	include/gotchangpdf/c_document.h
-	include/gotchangpdf/c_document_info.h
-	include/gotchangpdf/c_encryption.h
-	include/gotchangpdf/c_export.h
-	include/gotchangpdf/c_file.h
-	include/gotchangpdf/c_font.h
-	include/gotchangpdf/c_font_map.h
-	include/gotchangpdf/c_handles.h
-	include/gotchangpdf/c_indirect_object_reference.h
-	include/gotchangpdf/c_integer_object.h
-	include/gotchangpdf/c_name_object.h
-	include/gotchangpdf/c_object.h
-	include/gotchangpdf/c_outline.h
-	include/gotchangpdf/c_page_labels.h
-	include/gotchangpdf/c_page_object.h
-	include/gotchangpdf/c_page_tree.h
-	include/gotchangpdf/c_real_object.h
-	include/gotchangpdf/c_rectangle.h
-	include/gotchangpdf/c_resource_dictionary.h
-	include/gotchangpdf/c_stream_object.h
-	include/gotchangpdf/c_string_object.h
-	include/gotchangpdf/c_values.h
-	include/gotchangpdf/c_version.h
-	include/gotchangpdf/c_viewer_preferences.h
-	include/gotchangpdf/c_xref.h
-	include/gotchangpdf/gotchangpdf.h
+set(INCLUDE_HEADERS
+	"include/gotchangpdf/c_annotations.h"
+	"include/gotchangpdf/c_array_object.h"
+	"include/gotchangpdf/c_boolean_object.h"
+	"include/gotchangpdf/c_buffer.h"
+	"include/gotchangpdf/c_catalog.h"
+	"include/gotchangpdf/c_character_map.h"
+	"include/gotchangpdf/c_contents.h"
+	"include/gotchangpdf/c_date.h"
+	"include/gotchangpdf/c_destinations.h"
+	"include/gotchangpdf/c_developer_extensions.h"
+	"include/gotchangpdf/c_dictionary_object.h"
+	"include/gotchangpdf/c_document.h"
+	"include/gotchangpdf/c_document_info.h"
+	"include/gotchangpdf/c_encryption.h"
+	"include/gotchangpdf/c_export.h"
+	"include/gotchangpdf/c_file.h"
+	"include/gotchangpdf/c_font.h"
+	"include/gotchangpdf/c_font_map.h"
+	"include/gotchangpdf/c_handles.h"
+	"include/gotchangpdf/c_indirect_object_reference.h"
+	"include/gotchangpdf/c_integer_object.h"
+	"include/gotchangpdf/c_name_object.h"
+	"include/gotchangpdf/c_object.h"
+	"include/gotchangpdf/c_outline.h"
+	"include/gotchangpdf/c_page_labels.h"
+	"include/gotchangpdf/c_page_object.h"
+	"include/gotchangpdf/c_page_tree.h"
+	"include/gotchangpdf/c_real_object.h"
+	"include/gotchangpdf/c_rectangle.h"
+	"include/gotchangpdf/c_resource_dictionary.h"
+	"include/gotchangpdf/c_stream_object.h"
+	"include/gotchangpdf/c_string_object.h"
+	"include/gotchangpdf/c_values.h"
+	"include/gotchangpdf/c_version.h"
+	"include/gotchangpdf/c_viewer_preferences.h"
+	"include/gotchangpdf/c_xref.h"
+	"include/gotchangpdf/gotchangpdf.h"
 )
 
-SET(SEMANTICS_HEADERS
+set(SEMANTICS_HEADERS
 	src/gotchangpdf/semantics/documents/catalog.h
 	src/gotchangpdf/semantics/documents/content_stream.h
 	src/gotchangpdf/semantics/documents/contents.h
@@ -215,7 +206,7 @@ SET(SEMANTICS_HEADERS
 	src/gotchangpdf/semantics/utils/semantics_fwd.h
 )
 
-SET(SYNTAX_HEADERS
+set(SYNTAX_HEADERS
 	src/gotchangpdf/syntax/exceptions/exception.h
 	
 	src/gotchangpdf/syntax/files/file.h
@@ -286,48 +277,48 @@ SET(SYNTAX_HEADERS
 	src/gotchangpdf/syntax/utils/zlib_wrapper.h
 )
 
-SET(IMPLEMENTATION_HELPER_HEADER
+set(IMPLEMENTATION_HELPER_HEADER
 	src/gotchangpdf/implementation/helper.h
 )
 
-SET(PRECOMPILED_HEADER
+set(PRECOMPILED_HEADER
 	src/gotchangpdf/precompiled.h
 )
 
-SOURCE_GROUP("Header Files" FILES
+source_group("Header Files" FILES
 	${PRECOMPILED_HEADER}
 )
 
-SOURCE_GROUP("Header Files\\include" FILES
+source_group("Header Files\\include" FILES
 	${INCLUDE_HEADERS}
 )
 
-SOURCE_GROUP("Header Files\\semantics" FILES
+source_group("Header Files\\semantics" FILES
 	${SEMANTICS_HEADERS}
 )
 
-SOURCE_GROUP("Header Files\\syntax" FILES
+source_group("Header Files\\syntax" FILES
 	${SYNTAX_HEADERS}
 )
 
-SOURCE_GROUP("Source Files\\implementation" FILES
+source_group("Source Files\\implementation" FILES
 	${GOTCHANGPDF_C_IMPLEMENTATION_SOURCES}
 	${IMPLEMENTATION_HELPER_HEADER}
 )
 
-SOURCE_GROUP("Source Files\\syntax" FILES
+source_group("Source Files\\syntax" FILES
 	${GOTCHANGPDF_SYNTAX_SOURCES}
 )
 
-SOURCE_GROUP("Source Files\\semantics" FILES
+source_group("Source Files\\semantics" FILES
 	${GOTCHANGPDF_SEMANTICS_SOURCES}
 )
 
-INSTALL(FILES ${INCLUDE_HEADERS}
+install(FILES ${INCLUDE_HEADERS}
   DESTINATION "include\\gotchangpdf"
 )
 
-add_library(gotchangpdf
+add_library(gotchangpdf SHARED
 	${GOTCHANGPDF_C_IMPLEMENTATION_SOURCES}
 	${GOTCHANGPDF_SEMANTICS_SOURCES}
 	${GOTCHANGPDF_SYNTAX_SOURCES}
@@ -337,3 +328,32 @@ add_library(gotchangpdf
 	${SEMANTICS_HEADERS}
 	${SYNTAX_HEADERS}
 )
+
+find_package (openssl REQUIRED)
+find_package (zlib)
+find_package (jpeg)
+
+SET(GOTCHANGPDF_LIBS kernel32 user32 gdi32 winspool comdlg32 advapi32 shell32 ole32 oleaut32 uuid odbc32 odbccp32)
+
+if (OPENSSL_FOUND)
+	include_directories(${OPENSSL_INCLUDE_DIR})
+	set (GOTCHANGPDF_LIBS ${OPENSSL_LIBRARIES} ${GOTCHANGPDF_LIBS})
+	
+	message("OpenSSL ${OPENSSL_VERSION} was found in ${OPENSSL_ROOT_DIR}")
+endif (OPENSSL_FOUND)
+
+if (ZLIB_FOUND)
+	include_directories(${ZLIB_INCLUDE_DIRS})
+	set (GOTCHANGPDF_LIBS ${ZLIB_LIBRARIES} ${GOTCHANGPDF_LIBS})
+	
+	message("Zlib ${ZLIB_VERSION_STRING} was found in ${ZLIB_LIBRARIES}")
+endif (ZLIB_FOUND)
+
+if (JPEG_FOUND)
+	include_directories(${JPEG_INCLUDE_DIR})
+	set (GOTCHANGPDF_LIBS ${JPEG_LIBRARIES} ${GOTCHANGPDF_LIBS})
+	
+	message("Jpeg library was found")
+endif (JPEG_FOUND)
+
+target_link_libraries (gotchangpdf ${GOTCHANGPDF_LIBS})
