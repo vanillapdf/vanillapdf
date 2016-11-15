@@ -339,21 +339,21 @@ if (OPENSSL_FOUND)
 	include_directories(${OPENSSL_INCLUDE_DIR})
 	set (GOTCHANGPDF_LIBS ${OPENSSL_LIBRARIES} ${GOTCHANGPDF_LIBS})
 	
-	message("OpenSSL ${OPENSSL_VERSION} was found in ${OPENSSL_ROOT_DIR}")
+	message(STATUS "OpenSSL ${OPENSSL_VERSION} was found in ${OPENSSL_ROOT_DIR}")
 endif (OPENSSL_FOUND)
 
 if (ZLIB_FOUND)
 	include_directories(${ZLIB_INCLUDE_DIRS})
 	set (GOTCHANGPDF_LIBS ${ZLIB_LIBRARIES} ${GOTCHANGPDF_LIBS})
 	
-	message("Zlib ${ZLIB_VERSION_STRING} was found in ${ZLIB_LIBRARIES}")
+	message(STATUS "Zlib ${ZLIB_VERSION_STRING} was found in ${ZLIB_LIBRARIES}")
 endif (ZLIB_FOUND)
 
 if (JPEG_FOUND)
 	include_directories(${JPEG_INCLUDE_DIR})
 	set (GOTCHANGPDF_LIBS ${JPEG_LIBRARIES} ${GOTCHANGPDF_LIBS})
 	
-	message("Jpeg library was found")
+	message(STATUS "Jpeg library was found")
 endif (JPEG_FOUND)
 
 target_link_libraries (gotchangpdf ${GOTCHANGPDF_LIBS})
