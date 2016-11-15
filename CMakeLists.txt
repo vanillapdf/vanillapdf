@@ -22,8 +22,14 @@ include_directories(src/gotchangpdf/syntax/parsers/contents)
 include_directories(src/gotchangpdf/syntax/streams)
 include_directories(src/gotchangpdf/syntax/utils)
 
-set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG")
-set(CMAKE_CXX_FLAGS_RELEASE "-DRELEASE")
+# TODO Support also static library configuration
+# Global compilation definitions
+add_definitions("-DPROJECT_CONFIGURATION_DLL")
+add_definitions("-DPDF_EXPORTS")
+
+# Local compilation definitions
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DRELEASE")
 
 set(GOTCHANGPDF_PRECOMPILED_SOURCE
 	src/gotchangpdf/precompiled.cpp
