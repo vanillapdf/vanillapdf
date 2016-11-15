@@ -335,8 +335,6 @@ add_library(gotchangpdf SHARED
 	${SYNTAX_HEADERS}
 )
 
-
-SET(GOTCHANGPDF_LIBS kernel32 user32 gdi32 winspool comdlg32 advapi32 shell32 ole32 oleaut32 uuid odbc32 odbccp32)
 find_package(openssl REQUIRED)
 find_package(zlib)
 find_package(jpeg)
