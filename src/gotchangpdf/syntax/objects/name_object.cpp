@@ -1,6 +1,6 @@
 #include "precompiled.h"
 #include "name_object.h"
-#include "c_name_object.h"
+#include "gotchangpdf/c_name_object.h"
 
 #include "character.h"
 

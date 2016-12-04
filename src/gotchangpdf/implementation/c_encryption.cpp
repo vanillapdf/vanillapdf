@@ -2,7 +2,7 @@
 #include "encryption.h"
 #include "pkcs12_key.h"
 
-#include "c_encryption.h"
+#include "gotchangpdf/c_encryption.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

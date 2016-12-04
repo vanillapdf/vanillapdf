@@ -1,7 +1,7 @@
 #include "precompiled.h"
 #include "annotations.h"
 
-#include "c_annotations.h"
+#include "gotchangpdf/c_annotations.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

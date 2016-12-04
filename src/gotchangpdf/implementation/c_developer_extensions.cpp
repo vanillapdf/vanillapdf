@@ -2,7 +2,7 @@
 #include "developer_extensions.h"
 #include "file.h"
 
-#include "c_developer_extensions.h"
+#include "gotchangpdf/c_developer_extensions.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

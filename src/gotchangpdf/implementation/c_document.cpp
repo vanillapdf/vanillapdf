@@ -1,7 +1,7 @@
 #include "precompiled.h"
 #include "document.h"
 
-#include "c_document.h"
+#include "gotchangpdf/c_document.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

@@ -2,7 +2,7 @@
 #include "document_info.h"
 #include "date.h"
 
-#include "c_document_info.h"
+#include "gotchangpdf/c_document_info.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf::syntax;

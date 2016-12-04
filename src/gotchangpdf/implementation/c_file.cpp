@@ -3,7 +3,7 @@
 #include "file_writer.h"
 #include "xref_chain.h"
 
-#include "c_file.h"
+#include "gotchangpdf/c_file.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

@@ -1,7 +1,7 @@
 #include "precompiled.h"
 #include "character_map.h"
 
-#include "c_character_map.h"
+#include "gotchangpdf/c_character_map.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

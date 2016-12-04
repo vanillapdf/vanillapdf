@@ -1,7 +1,7 @@
 #include "precompiled.h"
 #include "font.h"
 
-#include "c_font_map.h"
+#include "gotchangpdf/c_font_map.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

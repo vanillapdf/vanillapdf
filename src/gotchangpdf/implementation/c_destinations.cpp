@@ -1,7 +1,7 @@
 #include "precompiled.h"
 #include "destinations.h"
 
-#include "c_destinations.h"
+#include "gotchangpdf/c_destinations.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

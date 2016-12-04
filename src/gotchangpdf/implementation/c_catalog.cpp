@@ -2,7 +2,7 @@
 #include "catalog.h"
 #include "file.h"
 
-#include "c_catalog.h"
+#include "gotchangpdf/c_catalog.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

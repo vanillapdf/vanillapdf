@@ -2,7 +2,7 @@
 #include "page_tree.h"
 #include "file.h"
 
-#include "c_page_tree.h"
+#include "gotchangpdf/c_page_tree.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf::semantics;

@@ -1,7 +1,7 @@
 #include "precompiled.h"
 #include "resource_dictionary.h"
 
-#include "c_resource_dictionary.h"
+#include "gotchangpdf/c_resource_dictionary.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

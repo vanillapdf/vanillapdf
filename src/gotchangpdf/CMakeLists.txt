@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 2.6)
 project(gotchangpdf CXX)
 
 include_directories("${CMAKE_SOURCE_DIR}/include")
-include_directories("${CMAKE_SOURCE_DIR}/include/gotchangpdf")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 

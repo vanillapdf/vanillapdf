@@ -3,8 +3,8 @@
 #include "xref_chain.h"
 #include "file.h"
 
-#include "c_xref.h"
-#include "c_values.h"
+#include "gotchangpdf/c_xref.h"
+#include "gotchangpdf/c_values.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

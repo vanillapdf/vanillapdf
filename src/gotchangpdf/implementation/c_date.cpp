@@ -1,7 +1,7 @@
 #include "precompiled.h"
 #include "date.h"
 
-#include "c_date.h"
+#include "gotchangpdf/c_date.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf::syntax;

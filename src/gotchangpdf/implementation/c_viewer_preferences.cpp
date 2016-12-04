@@ -2,7 +2,7 @@
 #include "viewer_preferences.h"
 #include "file.h"
 
-#include "c_viewer_preferences.h"
+#include "gotchangpdf/c_viewer_preferences.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

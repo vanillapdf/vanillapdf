@@ -2,7 +2,7 @@
 #include "outline.h"
 #include "file.h"
 
-#include "c_outline.h"
+#include "gotchangpdf/c_outline.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

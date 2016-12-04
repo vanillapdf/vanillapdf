@@ -1,8 +1,8 @@
 #include "precompiled.h"
 #include "file.h"
 
-#include "c_dictionary_object.h"
-#include "c_values.h"
+#include "gotchangpdf/c_dictionary_object.h"
+#include "gotchangpdf/c_values.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

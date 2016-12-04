@@ -4,7 +4,7 @@
 #include "file.h"
 #include "document.h"
 
-#include "c_page_object.h"
+#include "gotchangpdf/c_page_object.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

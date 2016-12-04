@@ -2,7 +2,7 @@
 #include "page_labels.h"
 #include "file.h"
 
-#include "c_page_labels.h"
+#include "gotchangpdf/c_page_labels.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

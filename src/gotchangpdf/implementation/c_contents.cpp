@@ -6,7 +6,7 @@
 #include "content_stream_objects.h"
 #include "file.h"
 
-#include "c_contents.h"
+#include "gotchangpdf/c_contents.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

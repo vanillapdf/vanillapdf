@@ -269,17 +269,21 @@
     <OutDir>build\$(ProjectName)\$(Configuration)\</OutDir>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
+    <IncludePath>C:\Program Files %28x86%29\OpenSSL-Win32\include;C:\Program Files %28x86%29\GnuWin32\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\OpenSSL-Win32\lib\VC;C:\Program Files %28x86%29\GnuWin32\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release|Win32'">
     <IntDir>obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>build\$(ProjectName)\$(Configuration)\</OutDir>
+    <IncludePath>C:\Program Files %28x86%29\OpenSSL-Win32\include;C:\Program Files %28x86%29\GnuWin32\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\OpenSSL-Win32\lib\VC;C:\Program Files %28x86%29\GnuWin32\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\syntax;src\gotchangpdf\syntax\exceptions;src\gotchangpdf\syntax\files;src\gotchangpdf\syntax\objects;src\gotchangpdf\syntax\parsers;src\gotchangpdf\syntax\parsers\contents;src\gotchangpdf\syntax\streams;src\gotchangpdf\syntax\filters;src\gotchangpdf\syntax\utils;src\gotchangpdf\semantics;src\gotchangpdf\semantics\objects;src\gotchangpdf\semantics\documents;src\gotchangpdf\semantics\utils;include\gotchangpdf;lib\zlib;lib\openssl\include;lib\libjpeg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\syntax;src\gotchangpdf\syntax\exceptions;src\gotchangpdf\syntax\files;src\gotchangpdf\syntax\objects;src\gotchangpdf\syntax\parsers;src\gotchangpdf\syntax\parsers\contents;src\gotchangpdf\syntax\streams;src\gotchangpdf\syntax\filters;src\gotchangpdf\syntax\utils;src\gotchangpdf\semantics;src\gotchangpdf\semantics\objects;src\gotchangpdf\semantics\documents;src\gotchangpdf\semantics\utils;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
@@ -288,15 +292,12 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>zdll.lib;jpeg.lib;libeay32MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>lib\zlib;lib\openssl\lib;lib\libjpeg\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>zlib.lib;jpeg.lib;libeay32MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "lib\zlib\zlib1.dll"  "build\$(ProjectName)\$(Configuration)"
-xcopy /Y "lib\openssl\bin\libeay32.dll"  "build\$(ProjectName)\$(Configuration)"
-xcopy /Y "lib\libjpeg\bin\jpeg62.dll"  "build\$(ProjectName)\$(Configuration)"
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Configuration)\"
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.merge\$(Configuration)\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='release|Win32'">
@@ -307,7 +308,7 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.merge\$(C
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;RELEASE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\syntax;src\gotchangpdf\syntax\exceptions;src\gotchangpdf\syntax\files;src\gotchangpdf\syntax\objects;src\gotchangpdf\syntax\parsers;src\gotchangpdf\syntax\parsers\contents;src\gotchangpdf\syntax\streams;src\gotchangpdf\syntax\filters;src\gotchangpdf\syntax\utils;src\gotchangpdf\semantics;src\gotchangpdf\semantics\objects;src\gotchangpdf\semantics\documents;src\gotchangpdf\semantics\utils;include\gotchangpdf;lib\zlib;lib\openssl\include;lib\libjpeg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\syntax;src\gotchangpdf\syntax\exceptions;src\gotchangpdf\syntax\files;src\gotchangpdf\syntax\objects;src\gotchangpdf\syntax\parsers;src\gotchangpdf\syntax\parsers\contents;src\gotchangpdf\syntax\streams;src\gotchangpdf\syntax\filters;src\gotchangpdf\syntax\utils;src\gotchangpdf\semantics;src\gotchangpdf\semantics\objects;src\gotchangpdf\semantics\documents;src\gotchangpdf\semantics\utils;include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalOptions>/Zm512 %(AdditionalOptions)</AdditionalOptions>
@@ -316,15 +317,12 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.merge\$(C
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>zdll.lib;jpeg.lib;libeay32MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>lib\zlib;lib\openssl\lib;lib\libjpeg\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>zlib.lib;jpeg.lib;libeay32MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "lib\zlib\zlib1.dll"  "build\$(ProjectName)\$(Configuration)"
-xcopy /Y "lib\openssl\bin\libeay32.dll"  "build\$(ProjectName)\$(Configuration)"
-xcopy /Y "lib\libjpeg\bin\jpeg62.dll"  "build\$(ProjectName)\$(Configuration)"
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.test\$(Configuration)\"
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.merge\$(Configuration)\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

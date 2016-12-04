@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-#include "c_buffer.h"
+#include "gotchangpdf/c_buffer.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

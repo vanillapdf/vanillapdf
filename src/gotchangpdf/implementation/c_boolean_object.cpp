@@ -1,7 +1,7 @@
 #include "precompiled.h"
 #include "file.h"
 
-#include "c_boolean_object.h"
+#include "gotchangpdf/c_boolean_object.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;

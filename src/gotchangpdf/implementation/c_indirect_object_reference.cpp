@@ -1,7 +1,7 @@
 #include "precompiled.h"
 #include "file.h"
 
-#include "c_indirect_object_reference.h"
+#include "gotchangpdf/c_indirect_object_reference.h"
 #include "c_helper.h"
 
 using namespace gotchangpdf;
