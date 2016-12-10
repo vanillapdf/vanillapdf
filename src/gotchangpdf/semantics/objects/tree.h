@@ -22,6 +22,56 @@ namespace gotchangpdf
 			virtual syntax::NameObjectPtr GetValueName(void) const = 0;
 			virtual ~IValueNameProvider() {}
 		};
+		class TreeNodeBase : public HighLevelObject<syntax::DictionaryObjectPtr>
+		{
+		public:
+			enum class TreeNodeType
+			{
+				Root,
+				Intermediate,
+				Leaf
+			};
+
+			explicit TreeNodeBase(const IValueNameProvider* parent, const syntax::DictionaryObjectPtr& obj);
+			virtual TreeNodeType NodeType(void) const noexcept = 0;
+			static TreeNodeBasePtr Create(const IValueNameProvider* parent, const syntax::DictionaryObjectPtr obj);
+			virtual ~TreeNodeBase();
+
+		protected:
+			const IValueNameProvider* _parent;
+		};
+
+		class TreeNodeRoot : public TreeNodeBase
+		{
+		public:
+			explicit TreeNodeRoot(const IValueNameProvider* parent, const syntax::DictionaryObjectPtr& obj);
+			virtual TreeNodeType NodeType(void) const noexcept override;
+
+			bool HasValues(void) const;
+			bool HasKids(void) const;
+			syntax::ArrayObjectPtr<TreeNodeBasePtr> Kids(void) const;
+			syntax::MixedArrayObjectPtr Values(void) const;
+		};
+
+		class TreeNodeIntermediate : public TreeNodeBase
+		{
+		public:
+			explicit TreeNodeIntermediate(const IValueNameProvider* parent, const syntax::DictionaryObjectPtr& obj);
+			virtual TreeNodeType NodeType(void) const noexcept override;
+
+			syntax::ArrayObjectPtr<TreeNodeBasePtr> Kids(void) const;
+			syntax::MixedArrayObjectPtr Limits(void) const;
+		};
+
+		class TreeNodeLeaf : public TreeNodeBase
+		{
+		public:
+			explicit TreeNodeLeaf(const IValueNameProvider* parent, const syntax::DictionaryObjectPtr& obj);
+			virtual TreeNodeType NodeType(void) const noexcept override;
+
+			syntax::MixedArrayObjectPtr Limits(void) const;
+			syntax::MixedArrayObjectPtr Values(void) const;
+		};
 
 		template <typename KeyT, typename ValueT>
 		class TreeBase : public HighLevelObject<syntax::DictionaryObjectPtr>, public IValueNameProvider
@@ -100,57 +150,6 @@ namespace gotchangpdf
 
 		private:
 			std::function<ValueT(const syntax::ContainableObjectPtr&)> _conversion;
-		};
-
-		class TreeNodeBase : public HighLevelObject<syntax::DictionaryObjectPtr>
-		{
-		public:
-			enum class TreeNodeType
-			{
-				Root,
-				Intermediate,
-				Leaf
-			};
-
-			explicit TreeNodeBase(const IValueNameProvider* parent, const syntax::DictionaryObjectPtr& obj);
-			virtual TreeNodeType NodeType(void) const noexcept = 0;
-			static TreeNodeBasePtr Create(const IValueNameProvider* parent, const syntax::DictionaryObjectPtr obj);
-			virtual ~TreeNodeBase();
-
-		protected:
-			const IValueNameProvider* _parent;
-		};
-
-		class TreeNodeRoot : public TreeNodeBase
-		{
-		public:
-			explicit TreeNodeRoot(const IValueNameProvider* parent, const syntax::DictionaryObjectPtr& obj);
-			virtual TreeNodeType NodeType(void) const noexcept override;
-
-			bool HasValues(void) const;
-			bool HasKids(void) const;
-			syntax::ArrayObjectPtr<TreeNodeBasePtr> Kids(void) const;
-			syntax::MixedArrayObjectPtr Values(void) const;
-		};
-
-		class TreeNodeIntermediate : public TreeNodeBase
-		{
-		public:
-			explicit TreeNodeIntermediate(const IValueNameProvider* parent, const syntax::DictionaryObjectPtr& obj);
-			virtual TreeNodeType NodeType(void) const noexcept override;
-
-			syntax::ArrayObjectPtr<TreeNodeBasePtr> Kids(void) const;
-			syntax::MixedArrayObjectPtr Limits(void) const;
-		};
-
-		class TreeNodeLeaf : public TreeNodeBase
-		{
-		public:
-			explicit TreeNodeLeaf(const IValueNameProvider* parent, const syntax::DictionaryObjectPtr& obj);
-			virtual TreeNodeType NodeType(void) const noexcept override;
-
-			syntax::MixedArrayObjectPtr Limits(void) const;
-			syntax::MixedArrayObjectPtr Values(void) const;
 		};
 
 		/****************************************************************************************************************************************/

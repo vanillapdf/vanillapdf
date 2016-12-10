@@ -1,56 +1,64 @@
 #ifndef _DEFERRED_H
 #define _DEFERRED_H
 
+#include <type_traits>
 #include <initializer_list>
+#include <utility>
+#include <functional>
 #include <cassert>
 
 namespace gotchangpdf
 {
 	/*!
-	* \class Deferred
-	* \brief Deferred construction container for AST nodes.
+	* \class DeferredWrapperBase
+	* \brief DeferredWrapperBase construction container for AST nodes.
 	*
 	* This class is used to speed up the construction of the AST. The construction of the node is only done when an access to the data is issued.
 	* This code has been taken from the Eddi Compiler project (https://github.com/wichtounet/eddic/) and has been adapted a little.
 	*/
 	template <typename T>
-	class Deferred
+	class DeferredWrapperBase
 	{
 	public:
 		typedef T value_type;
 
 	public:
-		template <typename = std::enable_if_t<std::is_constructible<T>::value>>
-		Deferred() : m_ptr(reinterpret_cast<T*>(nullptr)) {}
+		template <typename = typename std::enable_if<std::is_default_constructible<T>::value>::type>
+		DeferredWrapperBase() : m_ptr(reinterpret_cast<T*>(nullptr)) {}
 
-		Deferred(T* value, bool add_ref) : m_ptr(value) { if (m_ptr && add_ref) m_ptr->AddRef(); }
+		DeferredWrapperBase(T* value, bool add_ref) : m_ptr(value)
+		{
+			if (m_ptr && add_ref) {
+				m_ptr->AddRef();
+			}
+		}
 
-		Deferred(T* value) : Deferred(value, true) {}
-		Deferred(const Deferred& rhs) : Deferred(rhs.m_ptr, true) {}
-		Deferred(Deferred&& rhs) : Deferred(rhs.m_ptr, false) { rhs.m_ptr = nullptr; }
+		DeferredWrapperBase(T* value) : DeferredWrapperBase(value, true) {}
+		DeferredWrapperBase(const DeferredWrapperBase& rhs) : DeferredWrapperBase(rhs.m_ptr, true) {}
+		DeferredWrapperBase(DeferredWrapperBase&& rhs) : DeferredWrapperBase(rhs.m_ptr, false) { rhs.m_ptr = nullptr; }
 
-		template <typename U, typename = std::enable_if_t<std::is_convertible<U*, T*>::value>>
-		Deferred(const Deferred<U>& rhs) : Deferred(rhs.get(), true) {}
+		template <typename U, typename = typename std::enable_if<std::is_convertible<U*, T*>::value>::type>
+		DeferredWrapperBase(const DeferredWrapperBase<U>& rhs) : DeferredWrapperBase(rhs.get(), true) {}
 
-		template <typename... Parameters, typename = std::enable_if_t<std::is_constructible<T, Parameters...>::value>>
-		Deferred(const Parameters&... p) : Deferred(pdf_new T(p...), true) {}
+		template <typename... Parameters, typename = typename std::enable_if<std::is_constructible<T, Parameters...>::value>::type>
+		DeferredWrapperBase(const Parameters&... p) : DeferredWrapperBase(pdf_new T(p...), true) {}
 
-		template <typename U, typename = std::enable_if_t<std::is_constructible<T, std::initializer_list<U>>::value>>
-		Deferred(std::initializer_list<U> list) : Deferred(pdf_new T(list), true) {}
+		template <typename U, typename = typename std::enable_if<std::is_constructible<T, std::initializer_list<U>>::value>::type>
+		DeferredWrapperBase(std::initializer_list<U> list) : DeferredWrapperBase(pdf_new T(list), true) {}
 
 		operator T&() { return *get(); }
 		operator T&() const { return *get(); }
 		//operator bool() const { return Contents; }
 
-		Deferred& operator=(const Deferred& rhs)
+		DeferredWrapperBase& operator=(const DeferredWrapperBase& rhs)
 		{
-			Deferred(rhs).swap(*this);
+			DeferredWrapperBase(rhs).swap(*this);
 			return *this;
 		}
 
-		Deferred& operator=(Deferred&& rhs)
+		DeferredWrapperBase& operator=(DeferredWrapperBase&& rhs)
 		{
-			Deferred(std::move(rhs)).swap(*this);
+			DeferredWrapperBase(std::move(rhs)).swap(*this);
 			return *this;
 		}
 
@@ -58,33 +66,11 @@ namespace gotchangpdf
 
 		T* get(void) const
 		{
-			return get_internal<std::is_constructible<T>::value>();
+			return get_internal();
 		}
 
-		template <bool Constructible>
-		T* get_internal(void) const
-		{
-			assert(m_ptr);
-			if (!m_ptr) {
-				return nullptr;
-			}
-
-			return m_ptr;
-		}
-
-		template <>
-		T* get_internal<true>(void) const
-		{
-			if (!m_ptr) {
-				m_ptr = pdf_new T();
-				m_ptr->AddRef();
-			}
-
-			return m_ptr;
-		}
-
-		void reset() { Deferred().swap(*this); }
-		void reset(T* rhs) { Deferred(rhs).swap(*this); }
+		void reset() { DeferredWrapperBase().swap(*this); }
+		void reset(T* rhs) { DeferredWrapperBase(rhs).swap(*this); }
 		T* detach()
 		{
 			T* result = get();
@@ -96,17 +82,86 @@ namespace gotchangpdf
 		T* operator->() const { return get(); }
 		T* AddRefGet(void) { return detach(); }
 
-		void swap(Deferred& rhs) noexcept
+		void swap(DeferredWrapperBase& rhs) noexcept
 		{
 			T* tmp = m_ptr;
 			m_ptr = rhs.m_ptr;
 			rhs.m_ptr = tmp;
 		}
 
-		virtual ~Deferred() { if (m_ptr) m_ptr->Release(); }
+		virtual ~DeferredWrapperBase()
+		{
+			if (m_ptr) {
+				m_ptr->Release();
+			}
+		}
 
-	private:
+	protected:
+
+		// C++11 14.7.3/16: In an explicit specialization declaration
+		// for a member of a class template or a member template that
+		// appears in namespace scope, the member template and some of
+		// its enclosing class templates may remain unspecialized,
+		// except that the declaration shall not explicitly specialize
+		// a class member template if its enclosing class templates
+		// are not explicitly specialized as well.
+
+		// Visual studio supports member function template specialization
+		// inside class, but unfortunately gcc does not.
+
+		// I was not able to move get_internal template specialization
+		// because I needed enclosing class remain unspecialized.
+		// Therefore I moved template specialization to wrapping class
+		// named DeferredWrapper which does specialize on
+		// depending type using std::is_is_default_constructible<T>
+		virtual T* get_internal() const { return m_ptr; }
 		mutable T* m_ptr = nullptr;
+	};
+
+	template <
+		typename T,
+		bool constructible
+	>
+	class DeferredWrapper : public DeferredWrapperBase<T>
+	{
+	public:
+		using DeferredWrapperBase<T>::DeferredWrapperBase;
+
+	protected:
+		virtual T* get_internal(void) const override
+		{
+			assert(DeferredWrapperBase<T>::m_ptr);
+			if (!DeferredWrapperBase<T>::m_ptr) {
+				return nullptr;
+			}
+
+			return DeferredWrapperBase<T>::m_ptr;
+		}
+	};
+
+	template <typename T>
+	class DeferredWrapper<T, true> : public DeferredWrapperBase<T>
+	{
+	public:
+		using DeferredWrapperBase<T>::DeferredWrapperBase;
+
+	protected:
+		virtual T* get_internal(void) const override
+		{
+			if (!DeferredWrapperBase<T>::m_ptr) {
+				DeferredWrapperBase<T>::m_ptr = pdf_new T();
+				DeferredWrapperBase<T>::m_ptr->AddRef();
+			}
+
+			return DeferredWrapperBase<T>::m_ptr;
+		}
+	};
+
+	template <typename T>
+	class Deferred : public DeferredWrapper<T, std::is_default_constructible<T>::value>
+	{
+	public:
+		using DeferredWrapper<T, std::is_default_constructible<T>::value>::DeferredWrapper;
 	};
 
 	template <typename T>
@@ -126,35 +181,35 @@ namespace gotchangpdf
 		// Support insertion as if this were itself a container
 		void insert(const iterator& pos, const value_type& value)
 		{
-			get()->insert(pos, value);
+			Deferred<T>::get()->insert(pos, value);
 		}
 
 		// Retrieve a starting iterator as if this were itself a container
 		iterator begin()
 		{
-			return get()->begin();
+			return Deferred<T>::get()->begin();
 		}
 
 		// Retrieve an ending iterator as if this were itself a container
 		iterator end()
 		{
-			return get()->end();
+			return Deferred<T>::get()->end();
 		}
 
 		// Check if the wrapped container is empty
 		bool empty() const
 		{
-			return get()->empty();
+			return Deferred<T>::get()->empty();
 		}
 
 		const_reference operator[](size_type i) const
 		{
-			return get()->operator[](i);
+			return Deferred<T>::get()->operator[](i);
 		}
 
 		reference operator[](size_type i)
 		{
-			return get()->operator[](i);
+			return Deferred<T>::get()->operator[](i);
 		}
 	};
 
