@@ -27,13 +27,13 @@ namespace gotchangpdf
 
 		types::stream_size Stream::GetPosition()
 		{
-			return eof() ? std::_BADOFF : tellg();
+			return eof() ? constant::BAD_OFFSET : tellg();
 		}
 
 		void Stream::SetPosition(types::stream_size pos)
 		{
 			// of badoff is specified, set eof flag
-			if (pos == std::_BADOFF) {
+			if (pos == constant::BAD_OFFSET) {
 				setstate(eofbit);
 				return;
 			}

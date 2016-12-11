@@ -15,12 +15,10 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		using std::_BADOFF;
-
 		Tokenizer::Tokenizer(CharacterSource & stream)
 			: Stream(stream),
-			_last_token_offset(_BADOFF),
-			_advance_position(_BADOFF)
+			_last_token_offset(constant::BAD_OFFSET),
+			_advance_position(constant::BAD_OFFSET)
 		{
 		}
 
@@ -38,8 +36,8 @@ namespace gotchangpdf
 
 				SetPosition(_advance_position);
 
-				_last_token_offset = _BADOFF;
-				_advance_position = _BADOFF;
+				_last_token_offset = constant::BAD_OFFSET;
+				_advance_position = constant::BAD_OFFSET;
 				_token_cached = false;
 
 				return *result;
@@ -360,7 +358,7 @@ namespace gotchangpdf
 			_last_token_offset = current;
 			_token_cached = true;
 
-			if (_BADOFF == _advance_position && _BADOFF == _last_token_offset) {
+			if (constant::BAD_OFFSET == _advance_position && constant::BAD_OFFSET == _last_token_offset) {
 				assert(_last_token->GetType() == Token::Type::END_OF_INPUT);
 			}
 

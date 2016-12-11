@@ -43,7 +43,7 @@ namespace gotchangpdf
 
 		private:
 			DictionaryObjectPtr _header;
-			types::stream_offset _raw_data_offset = std::_BADOFF;
+			types::stream_offset _raw_data_offset = constant::BAD_OFFSET;
 
 			mutable BufferPtr _body;
 			mutable BufferPtr _body_decoded;

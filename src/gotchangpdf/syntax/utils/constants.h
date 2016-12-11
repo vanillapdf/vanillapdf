@@ -8,6 +8,7 @@ namespace gotchangpdf
 	namespace constant
 	{
 		const int BUFFER_SIZE = 16384;
+		const int BAD_OFFSET = -1;
 	}
 
 	namespace types

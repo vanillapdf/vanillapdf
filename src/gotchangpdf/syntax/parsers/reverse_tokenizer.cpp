@@ -13,12 +13,10 @@ namespace gotchangpdf
 {
 	namespace syntax
 	{
-		using std::_BADOFF;
-
 		ReverseTokenizer::ReverseTokenizer(CharacterSource & stream)
 			: Stream(stream),
-			_last_token_offset(_BADOFF),
-			_advance_position(_BADOFF)
+			_last_token_offset(constant::BAD_OFFSET),
+			_advance_position(constant::BAD_OFFSET)
 		{
 			_dictionary.Initialize();
 		}
@@ -33,13 +31,13 @@ namespace gotchangpdf
 
 			auto current_offset = GetPosition();
 			if (_token_cached && _last_token_offset == current_offset) {
-				assert(_BADOFF != _last_token_offset);
+				assert(constant::BAD_OFFSET != _last_token_offset);
 
 				auto result = _last_token;
 
 				SetPosition(_advance_position);
-				_last_token_offset = _BADOFF;
-				_advance_position = _BADOFF;
+				_last_token_offset = constant::BAD_OFFSET;
+				_advance_position = constant::BAD_OFFSET;
 				_token_cached = false;
 
 				return *result;
@@ -121,8 +119,8 @@ namespace gotchangpdf
 		{
 			auto current = GetPosition();
 			if (_token_cached && _last_token_offset == current) {
-				assert(_BADOFF != _advance_position);
-				assert(_BADOFF != _last_token_offset);
+				assert(constant::BAD_OFFSET != _advance_position);
+				assert(constant::BAD_OFFSET != _last_token_offset);
 
 				return *_last_token;
 			}
@@ -132,7 +130,7 @@ namespace gotchangpdf
 			_last_token_offset = current;
 			_token_cached = true;
 
-			if (_BADOFF == _advance_position && _BADOFF == _last_token_offset) {
+			if (constant::BAD_OFFSET == _advance_position && constant::BAD_OFFSET == _last_token_offset) {
 				assert(_last_token->GetType() == Token::Type::END_OF_INPUT);
 			}
 

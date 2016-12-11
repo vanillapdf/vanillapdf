@@ -120,7 +120,7 @@ namespace gotchangpdf
 				&& (mode & ios_base::out) == 0)
 				offset += (off_type)(eback() - gptr());
 			else if (dir != ios_base::beg)
-				offset = _BADOFF;
+				offset = constant::BAD_OFFSET;
 
 			return (pos_type(offset));
 		}
@@ -153,7 +153,7 @@ namespace gotchangpdf
 
 		types::stream_size ReverseStream::GetPosition()
 		{
-			auto result = eof() ? std::_BADOFF : tellg();
+			auto result = eof() ? constant::BAD_OFFSET : tellg();
 			assert(!fail());
 			return result;
 		}
@@ -161,7 +161,7 @@ namespace gotchangpdf
 		void ReverseStream::SetPosition(types::stream_size pos)
 		{
 			// of badoff is specified, set eof flag
-			if (pos == std::_BADOFF) {
+			if (pos == constant::BAD_OFFSET) {
 				clear(eofbit);
 				return;
 			}

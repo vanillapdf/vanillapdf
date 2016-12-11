@@ -142,7 +142,7 @@ namespace gotchangpdf
 			void Initialize(void);
 
 			ObjectPtr _reference = NullObject::GetInstance();
-			types::stream_offset _offset = std::_BADOFF;
+			types::stream_offset _offset = constant::BAD_OFFSET;
 		};
 
 		class XrefCompressedEntry : public XrefUsedEntryBase, public IModifyObserver
@@ -272,8 +272,8 @@ namespace gotchangpdf
 		protected:
 			std::weak_ptr<File> _file;
 			map_type _entries;
-			types::stream_offset _last_xref_offset = std::_BADOFF;
-			types::stream_offset _offset = std::_BADOFF;
+			types::stream_offset _last_xref_offset = constant::BAD_OFFSET;
+			types::stream_offset _offset = constant::BAD_OFFSET;
 			DictionaryObjectPtr _trailer_dictionary;
 			bool m_initialized = false;
 			bool m_dirty = false;

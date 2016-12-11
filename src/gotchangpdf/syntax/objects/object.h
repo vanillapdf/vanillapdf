@@ -69,7 +69,7 @@ namespace gotchangpdf
 		protected:
 			std::weak_ptr<File> m_file;
 			bool m_dirty = false;
-			types::stream_offset m_offset = std::_BADOFF;
+			types::stream_offset m_offset = constant::BAD_OFFSET;
 			bool m_encryption_exempted = false;
 			WeakReference<XrefEntryBase> m_entry;
 			WeakReference<Object> m_owner;
