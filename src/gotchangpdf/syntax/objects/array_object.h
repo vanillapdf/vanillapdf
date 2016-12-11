@@ -77,6 +77,11 @@ namespace gotchangpdf
 		class ArrayObject : public IUnknown
 		{
 		public:
+			static_assert(instantiation_of<Deferred, T>::value ||
+				std::is_base_of<Object, typename T::value_type>::value,
+				"Array object requires template parameter to be either Deferred instance or derived from Object");
+
+		public:
 			typedef std::vector<T> list_type;
 			typedef typename list_type::value_type value_type;
 			typedef typename list_type::iterator iterator;
@@ -89,18 +94,14 @@ namespace gotchangpdf
 			friend class ArrayObject;
 
 		public:
-			template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value || std::is_base_of<Object, T::value_type>::value>>
 			ArrayObject() : _conversion([](const ContainableObjectPtr& obj) { return ObjectUtils::ConvertTo<T>(obj); }) {}
 
-			template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value || std::is_base_of<Object, T::value_type>::value>>
 			explicit ArrayObject(MixedArrayObjectPtr other)
 				: _list(other),	_conversion([](const ContainableObjectPtr& obj) { return ObjectUtils::ConvertTo<T>(obj); }) {}
 
-			template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value || std::is_base_of<Object, T::value_type>::value>>
 			explicit ArrayObject(const list_type& list) : _conversion([](const ContainableObjectPtr& obj) { return ObjectUtils::ConvertTo<T>(obj); })
 			{ for (auto item : list) _list->push_back(item); }
 
-			template <typename = std::enable_if_t<instantiation_of<Deferred, T>::value || std::is_base_of<Object, T::value_type>::value>>
 			explicit ArrayObject(const std::initializer_list<T>& list) : _conversion([](const ContainableObjectPtr& obj) { return ObjectUtils::ConvertTo<T>(obj); })
 			{ for (auto item : list) _list->push_back(item); }
 
