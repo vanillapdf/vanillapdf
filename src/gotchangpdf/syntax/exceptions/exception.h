@@ -159,9 +159,11 @@ namespace gotchangpdf
 			class Constructor<SourceT, true>
 			{
 			public:
-				template <typename = std::enable_if_t<std::is_integral<SourceT>::value>,
-					typename = std::enable_if_t<std::is_integral<DestT>::value >>
-					static ConversionException Construct(const SourceT& value)
+				template <
+					typename = typename std::enable_if<std::is_integral<SourceT>::value>::type,
+					typename = typename std::enable_if<std::is_integral<DestT>::value>::type
+				>
+				static ConversionException Construct(const SourceT& value)
 				{
 					std::string msg("Could not convert value " + std::to_string(value) + " of type " + typeid(SourceT).name() + " to type " + typeid(DestT).name());
 					return ConversionException(msg);

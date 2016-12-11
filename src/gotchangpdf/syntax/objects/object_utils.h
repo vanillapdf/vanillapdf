@@ -17,7 +17,10 @@ namespace gotchangpdf
 		class ObjectUtils
 		{
 		public:
-			template <typename T, typename = std::enable_if_t<std::is_base_of<Object, T>::value>>
+			template <
+				typename T,
+				typename = typename std::enable_if<std::is_base_of<Object, T>::value>::type
+			>
 			static ObjectPtr GetObjectBase(const Deferred<T>& obj) { return static_cast<Object*>(obj.get()); }
 
 			template <typename T>
@@ -28,7 +31,9 @@ namespace gotchangpdf
 
 			template <
 				typename T,
-				typename = std::enable_if_t<instantiation_of<Deferred, T>::value || std::is_base_of<Object, T::value_type>::value>>
+				typename = typename std::enable_if<instantiation_of<Deferred, T>::value ||
+				std::is_base_of<Object, typename T::value_type>::value>::type
+			>
 			static T Clone(const T& obj)
 			{
 				// Template requirements
