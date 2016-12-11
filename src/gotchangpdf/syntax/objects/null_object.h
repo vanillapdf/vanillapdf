@@ -10,7 +10,7 @@ namespace gotchangpdf
 		class NullObject : public ContainableObject
 		{
 		public:
-			virtual Object::Type GetType(void) const _NOEXCEPT override { return Object::Type::Null; }
+			virtual Object::Type GetType(void) const noexcept override { return Object::Type::Null; }
 			virtual std::string ToPdf(void) const override { return "null"; }
 
 			static NullObjectPtr GetInstance(void)
