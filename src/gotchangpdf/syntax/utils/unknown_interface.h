@@ -21,7 +21,7 @@ namespace gotchangpdf
 		IUnknown* GetReference() const noexcept { return m_reference; }
 
 	private:
-		std::atomic_bool m_active = true;
+		std::atomic<bool> m_active;
 		IUnknown* m_reference;
 	};
 
@@ -104,7 +104,7 @@ namespace gotchangpdf
 		virtual ~IUnknown() = 0;
 
 	private:
-		std::atomic_uint32_t m_ref_counter = 0;
+		std::atomic<uint32_t> m_ref_counter;
 		std::shared_ptr<WeakReferenceCounter> m_weak_ref;
 	};
 
