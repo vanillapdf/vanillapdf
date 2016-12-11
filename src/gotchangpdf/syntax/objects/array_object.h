@@ -85,6 +85,7 @@ namespace gotchangpdf
 			typedef typename list_type::reference reference;
 			typedef typename list_type::const_reference const_reference;
 
+			template <typename U>
 			friend class ArrayObject;
 
 		public:
