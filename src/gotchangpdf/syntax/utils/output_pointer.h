@@ -14,7 +14,7 @@ namespace gotchangpdf
 	class OutputPointer
 	{
 	public:
-		OutputPointer() : m_value(reinterpret_cast<T*>(nullptr)) {}
+		OutputPointer() : m_value(nullptr) {}
 		OutputPointer(T* value) : m_value(value) {}
 		OutputPointer(const T& value) { SetValue(value); }
 		OutputPointer(T&& value) { SetValue(value); }

@@ -24,7 +24,7 @@ namespace gotchangpdf
 
 	public:
 		template <typename = typename std::enable_if<std::is_default_constructible<T>::value>::type>
-		DeferredWrapperBase() : m_ptr(reinterpret_cast<T*>(nullptr)) {}
+		DeferredWrapperBase() : m_ptr(nullptr) {}
 
 		DeferredWrapperBase(T* value, bool add_ref) : m_ptr(value)
 		{
