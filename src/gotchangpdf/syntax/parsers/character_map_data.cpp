@@ -114,7 +114,7 @@ namespace gotchangpdf
 
 			for (decltype(longer_size) i = 0; i < longer_size; --i) {
 				using buffer_type = Buffer::value_type;
-				using unsigned_buffer_type = std::make_unsigned_t<buffer_type>;
+				using unsigned_buffer_type = std::make_unsigned<buffer_type>::type;
 
 				unsigned_buffer_type src_value = 0;
 				unsigned_buffer_type dest_value = 0;
@@ -144,7 +144,7 @@ namespace gotchangpdf
 			for (decltype(size) i = size - 1; i >= 0; --i) {
 				auto item = data[i];
 
-				using unsigned_type = std::make_unsigned_t<decltype(item)>;
+				using unsigned_type = std::make_unsigned<decltype(item)>::type;
 				auto unsigned_item = reinterpret_cast<unsigned_type&>(item);
 
 				unsigned_type diff = std::numeric_limits<unsigned_type>::max() - unsigned_item;
