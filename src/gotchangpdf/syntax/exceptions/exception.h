@@ -38,14 +38,15 @@ namespace gotchangpdf
 		};
 
 	public:
-		ExceptionBase(const std::string& msg, Type type);
-		ExceptionBase(const char * const & msg, Type type);
+		ExceptionBase(const std::string& msg);
+		ExceptionBase(const char * const & msg);
 
-		virtual Type code() const { return _type; }
+		virtual const char * what() const noexcept override;
+		virtual Type code() const noexcept = 0;
 		virtual ~ExceptionBase() = 0;
 
-	protected:
-		Type _type = Type::General;
+	private:
+		std::string m_msg;
 	};
 
 	class GeneralException : public ExceptionBase
@@ -53,6 +54,7 @@ namespace gotchangpdf
 	public:
 		explicit GeneralException(const char * const & msg);
 		explicit GeneralException(const std::string& msg);
+		virtual Type code() const noexcept { return Type::General; }
 	};
 
 	class NotSupportedException : public ExceptionBase
@@ -60,6 +62,7 @@ namespace gotchangpdf
 	public:
 		explicit NotSupportedException(const char * const & msg);
 		explicit NotSupportedException(const std::string& msg);
+		virtual Type code() const noexcept { return Type::NotSupported; }
 	};
 
 	class UserCancelledException : public ExceptionBase
@@ -67,6 +70,7 @@ namespace gotchangpdf
 	public:
 		explicit UserCancelledException(const char * const & msg);
 		explicit UserCancelledException(const std::string& msg);
+		virtual Type code() const noexcept { return Type::UserCancelled; }
 	};
 
 	class ConversionException : public ExceptionBase
@@ -74,6 +78,7 @@ namespace gotchangpdf
 	public:
 		explicit ConversionException(const char * const & msg);
 		explicit ConversionException(const std::string& msg);
+		virtual Type code() const noexcept { return Type::Conversion; }
 	};
 
 	template <typename DestT>
@@ -137,6 +142,7 @@ namespace gotchangpdf
 		{
 		public:
 			explicit ParseException(types::stream_offset offset);
+			virtual Type code() const noexcept { return Type::ParseException; }
 		};
 
 		class ZlibDataErrorException : public ExceptionBase
@@ -144,6 +150,7 @@ namespace gotchangpdf
 		public:
 			explicit ZlibDataErrorException(types::stream_size size);
 			explicit ZlibDataErrorException(types::stream_size size, const std::string& message);
+			virtual Type code() const noexcept { return Type::ZlibDataError; }
 
 			types::stream_size Size(void) const { return m_size; }
 
@@ -155,6 +162,7 @@ namespace gotchangpdf
 		{
 		public:
 			FileDisposedException();
+			virtual Type code() const noexcept { return Type::FileDisposed; }
 		};
 
 		class FileNotInitializedException : public ExceptionBase
@@ -162,6 +170,7 @@ namespace gotchangpdf
 		public:
 			explicit FileNotInitializedException(const char * const & filename);
 			explicit FileNotInitializedException(const std::string& filename);
+			virtual Type code() const noexcept { return Type::FileNotInitialized; }
 		};
 
 		class ObjectMissingException : public ExceptionBase
@@ -169,6 +178,7 @@ namespace gotchangpdf
 		public:
 			ObjectMissingException(types::big_uint objNumber);
 			ObjectMissingException(types::big_uint objNumber, types::ushort genNumber);
+			virtual Type code() const noexcept { return Type::ObjectMissing; }
 		};
 	}
 }

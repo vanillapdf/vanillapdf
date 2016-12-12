@@ -10,8 +10,9 @@ namespace gotchangpdf
 		class SemanticContextException : public ExceptionBase
 		{
 		public:
-			explicit SemanticContextException(const char * const & msg) : ExceptionBase(msg, Type::SemanticContext) {}
-			explicit SemanticContextException(const std::string& msg) : ExceptionBase(msg, Type::SemanticContext) {}
+			explicit SemanticContextException(const char * const & msg) : ExceptionBase(msg) {}
+			explicit SemanticContextException(const std::string& msg) : ExceptionBase(msg) {}
+			virtual Type code() const noexcept { return Type::SemanticContext; }
 		};
 
 		class SemanticContextExceptionFactory
