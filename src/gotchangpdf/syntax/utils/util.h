@@ -23,7 +23,7 @@ namespace gotchangpdf
 		static RangeType SafeConvert(SourceType value)
 		{
 			if (!IsInRange<RangeType, SourceType>(value))
-				throw syntax::ConversionExceptionFactory<RangeType>::Construct(value);
+				throw ConversionExceptionFactory<RangeType>::Construct(value);
 
 			return static_cast<RangeType>(value);
 		}
@@ -116,7 +116,7 @@ namespace gotchangpdf
 			{
 				auto converted = dynamic_cast<T>(obj);
 				if (nullptr == converted)
-					throw syntax::ConversionExceptionFactory<T>::Construct(obj);
+					throw ConversionExceptionFactory<T>::Construct(obj);
 
 				return converted;
 			}
@@ -137,7 +137,7 @@ namespace gotchangpdf
 				auto ptr = obj.get();
 				auto converted = dynamic_cast<T*>(ptr);
 				if (nullptr == converted)
-					throw syntax::ConversionExceptionFactory<T>::Construct(obj);
+					throw ConversionExceptionFactory<T>::Construct(obj);
 
 				return Deferred<T>(converted);
 			}

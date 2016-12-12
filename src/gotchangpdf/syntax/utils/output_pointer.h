@@ -73,7 +73,7 @@ namespace gotchangpdf
 
 			auto converted = dynamic_cast<typename T::value_type *>(m_value->AddRefGet());
 			if (nullptr == m_value)
-				throw syntax::ConversionExceptionFactory<Deferred<typename T::value_type>>::Construct(m_value);
+				throw ConversionExceptionFactory<Deferred<typename T::value_type>>::Construct(m_value);
 
 			return converted;
 		}

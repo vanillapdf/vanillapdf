@@ -21,6 +21,7 @@ namespace gotchangpdf
 	// Exceptions
 	class ExceptionBase;
 	class GeneralException;
+	class ConversionException;
 
 	class IEncryptionKey;
 
@@ -30,7 +31,6 @@ namespace gotchangpdf
 	namespace syntax
 	{
 		// Exceptions
-		class ConversionException;
 		class FileDisposedException;
 		class InvalidObjectTypeException;
 

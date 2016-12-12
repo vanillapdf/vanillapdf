@@ -69,6 +69,68 @@ namespace gotchangpdf
 		explicit UserCancelledException(const std::string& msg);
 	};
 
+	class ConversionException : public ExceptionBase
+	{
+	public:
+		explicit ConversionException(const char * const & msg);
+		explicit ConversionException(const std::string& msg);
+	};
+
+	template <typename DestT>
+	class ConversionExceptionFactory
+	{
+	public:
+		template <typename SourceT>
+		static ConversionException Construct(const SourceT& obj) { return Constructor<SourceT>::Construct(obj); }
+
+	private:
+		template <typename SourceT, bool = std::is_integral<SourceT>::value && std::is_integral<DestT>::value>
+		class Constructor
+		{
+		};
+
+		template <typename SourceT>
+		class Constructor<SourceT, false>
+		{
+		public:
+			static ConversionException Construct(const SourceT&)
+			{
+				std::string source_name(typeid(SourceT).name());
+				std::string dest_name(typeid(DestT).name());
+				std::string msg("Could not convert object of type " + source_name + " to type " + dest_name);
+				return ConversionException(msg);
+			}
+		};
+
+		template <typename SourceT>
+		class Constructor<Deferred<SourceT>, false>
+		{
+		public:
+			static ConversionException Construct(const Deferred<SourceT>& obj)
+			{
+				auto ptr = obj.get();
+				std::string source_name = (nullptr == ptr ? "nullptr" : typeid(*ptr).name());
+				std::string msg("Could not convert object of type " + source_name + " to type " + typeid(DestT).name());
+				return ConversionException(msg);
+			}
+		};
+
+		template <typename SourceT>
+		class Constructor<SourceT, true>
+		{
+		public:
+			template <
+				typename = typename std::enable_if<std::is_integral<SourceT>::value>::type,
+				typename = typename std::enable_if<std::is_integral<DestT>::value>::type
+			>
+				static ConversionException Construct(const SourceT& value)
+			{
+				std::string msg("Could not convert value " + std::to_string(value) + " of type " + typeid(SourceT).name() + " to type " + typeid(DestT).name());
+				return ConversionException(msg);
+			}
+		};
+	};
+
 	namespace syntax
 	{
 		class ParseException : public ExceptionBase
@@ -107,68 +169,6 @@ namespace gotchangpdf
 		public:
 			ObjectMissingException(types::big_uint objNumber);
 			ObjectMissingException(types::big_uint objNumber, types::ushort genNumber);
-		};
-
-		class ConversionException : public ExceptionBase
-		{
-		public:
-			explicit ConversionException(const char * const & msg);
-			explicit ConversionException(const std::string& msg);
-		};
-
-		template <typename DestT>
-		class ConversionExceptionFactory
-		{
-		public:
-			template <typename SourceT>
-			static ConversionException Construct(const SourceT& obj) { return Constructor<SourceT>::Construct(obj); }
-
-		private:
-			template <typename SourceT, bool = std::is_integral<SourceT>::value && std::is_integral<DestT>::value>
-			class Constructor
-			{
-			};
-
-			template <typename SourceT>
-			class Constructor<SourceT, false>
-			{
-			public:
-				static ConversionException Construct(const SourceT&)
-				{
-					std::string source_name(typeid(SourceT).name());
-					std::string dest_name(typeid(DestT).name());
-					std::string msg("Could not convert object of type " + source_name + " to type " + dest_name);
-					return ConversionException(msg);
-				}
-			};
-
-			template <typename SourceT>
-			class Constructor<Deferred<SourceT>, false>
-			{
-			public:
-				static ConversionException Construct(const Deferred<SourceT>& obj)
-				{
-					auto ptr = obj.get();
-					std::string source_name = (nullptr == ptr ? "nullptr" : typeid(*ptr).name());
-					std::string msg("Could not convert object of type " + source_name + " to type " + typeid(DestT).name());
-					return ConversionException(msg);
-				}
-			};
-
-			template <typename SourceT>
-			class Constructor<SourceT, true>
-			{
-			public:
-				template <
-					typename = typename std::enable_if<std::is_integral<SourceT>::value>::type,
-					typename = typename std::enable_if<std::is_integral<DestT>::value>::type
-				>
-				static ConversionException Construct(const SourceT& value)
-				{
-					std::string msg("Could not convert value " + std::to_string(value) + " of type " + typeid(SourceT).name() + " to type " + typeid(DestT).name());
-					return ConversionException(msg);
-				}
-			};
 		};
 	}
 }

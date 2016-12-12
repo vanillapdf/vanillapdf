@@ -17,6 +17,9 @@ namespace gotchangpdf
 	UserCancelledException::UserCancelledException(const char * const & msg) : ExceptionBase(msg, Type::UserCancelled) {}
 	UserCancelledException::UserCancelledException(const std::string& msg) : ExceptionBase(msg, Type::UserCancelled) {}
 
+	ConversionException::ConversionException(const char * const & msg) : ExceptionBase(msg, Type::Conversion) {}
+	ConversionException::ConversionException(const std::string& msg) : ExceptionBase(msg, Type::Conversion) {}
+
 	namespace syntax
 	{
 		ParseException::ParseException(types::stream_offset offset)
@@ -38,9 +41,6 @@ namespace gotchangpdf
 
 		ObjectMissingException::ObjectMissingException(types::big_uint objNumber, types::ushort genNumber)
 			: ExceptionBase("Object " + std::to_string(objNumber) + " " + std::to_string(genNumber) + " is missing", Type::ObjectMissing) {}
-
-		ConversionException::ConversionException(const char * const & msg) : ExceptionBase(msg, Type::Conversion) {}
-		ConversionException::ConversionException(const std::string& msg) : ExceptionBase(msg, Type::Conversion) {}
 	}
 }
 
