@@ -94,6 +94,7 @@
     <ClInclude Include="src\gotchangpdf\syntax\objects\dictionary_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\indirect_object_reference.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\integer_object.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\objects\mixed_array_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\name_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\null_object.h" />
     <ClInclude Include="src\gotchangpdf\syntax\objects\numeric_object.h" />
@@ -213,6 +214,7 @@
     <ClCompile Include="src\gotchangpdf\syntax\objects\name_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\numeric_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\object.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\objects\object_utils.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\stream_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\string_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\parsers\character_map_data.cpp" />

@@ -13,6 +13,7 @@
 #include "real_object.h"
 #include "string_object.h"
 #include "indirect_object_reference.h"
+#include "mixed_array_object.h"
 
 // recursive
 #include "array_object.h"
