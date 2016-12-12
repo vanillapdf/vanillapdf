@@ -3,9 +3,10 @@
 
 #include "exception.h"
 
-#include <climits>
+#include <limits>
 #include <type_traits>
 #include <string>
+#include <sstream>
 
 namespace gotchangpdf
 {
@@ -67,7 +68,7 @@ namespace gotchangpdf
 					return false;
 				}
 
-				using unsigned_value_type = std::make_unsigned_t<ValueType>;
+				using unsigned_value_type = typename std::make_unsigned<ValueType>::type;
 				unsigned_value_type unsigned_value = static_cast<unsigned_value_type>(value);
 				return Specializator<RangeType, unsigned_value_type>::IsInRange(unsigned_value);
 			}
@@ -85,7 +86,7 @@ namespace gotchangpdf
 		public:
 			static bool IsInRange(ValueType value)
 			{
-				using unsigned_range_type = std::make_unsigned_t<RangeType>;
+				using unsigned_range_type = typename std::make_unsigned<RangeType>::type;
 				RangeType range_max = std::numeric_limits<RangeType>::max();
 
 				// This operation shall be safe
@@ -113,7 +114,7 @@ namespace gotchangpdf
 		public:
 			static T ConvertTo(const BaseT& obj)
 			{
-				auto converted = dynamic_cast<typename T>(obj);
+				auto converted = dynamic_cast<T>(obj);
 				if (nullptr == converted)
 					throw syntax::ConversionExceptionFactory<T>::Construct(obj);
 
@@ -122,7 +123,7 @@ namespace gotchangpdf
 
 			static bool IsType(const BaseT& obj)
 			{
-				auto converted = dynamic_cast<typename T>(obj);
+				auto converted = dynamic_cast<T>(obj);
 				return (nullptr != converted);
 			}
 		};
@@ -134,7 +135,7 @@ namespace gotchangpdf
 			static Deferred<T> ConvertTo(const BaseT& obj)
 			{
 				auto ptr = obj.get();
-				auto converted = dynamic_cast<typename T *>(ptr);
+				auto converted = dynamic_cast<T*>(ptr);
 				if (nullptr == converted)
 					throw syntax::ConversionExceptionFactory<T>::Construct(obj);
 
@@ -144,7 +145,7 @@ namespace gotchangpdf
 			static bool IsType(const BaseT& obj)
 			{
 				auto ptr = obj.get();
-				auto converted = dynamic_cast<typename T *>(ptr);
+				auto converted = dynamic_cast<T*>(ptr);
 				return (nullptr != converted);
 			}
 		};
