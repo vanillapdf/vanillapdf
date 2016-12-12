@@ -1,6 +1,7 @@
 #include "precompiled.h"
 #include "dct_decode_filter.h"
 
+#include <cstring>
 #include <jpeglib.h>
 
 void JPegErrorExit(j_common_ptr ptr)
@@ -120,7 +121,7 @@ namespace gotchangpdf
 
 				if (iComponents == 1)
 				{
-					memcpy(buffer->data(), pBuffer[0], jpeg.output_width);
+					std::memcpy(buffer->data(), pBuffer[0], jpeg.output_width);
 				}
 				else
 				{
