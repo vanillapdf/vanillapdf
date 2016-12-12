@@ -32,7 +32,7 @@ namespace gotchangpdf
 			explicit PageLabel(syntax::DictionaryObjectPtr obj) : HighLevelObject(obj)
 			{
 				if (_obj->Contains(constant::Name::Type) && _obj->FindAs<syntax::NameObjectPtr>(constant::Name::Type) != constant::Name::PageLabel)
-					throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, Catalog>(obj);
+					throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageLabel>(obj);
 			}
 
 			bool P(syntax::StringObjectPtr& result) const
