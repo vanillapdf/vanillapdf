@@ -187,12 +187,12 @@ namespace gotchangpdf
 			obj->SetFile(file);
 			obj->SetInitialized();
 
-			return std::make_unique<PageObject>(obj);
+			return make_unique<PageObject>(obj);
 		}
 
 		std::unique_ptr<PageObject> PageObject::Create(syntax::DictionaryObjectPtr obj)
 		{
-			return std::make_unique<PageObject>(obj);
+			return make_unique<PageObject>(obj);
 		}
 	}
 }

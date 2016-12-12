@@ -1,6 +1,7 @@
 #include "precompiled.h"
 #include "log.h"
 #include "file.h"
+#include "util.h"
 
 #include <fstream>
 #include <chrono>
@@ -87,7 +88,7 @@ namespace gotchangpdf
 	{
 		if (severity < m_severity) {
 			auto fake_mutex = std::shared_ptr<std::mutex>(nullptr);
-			return std::make_unique<OutputWriter>(fake_mutex, m_devnull, severity, line, file, function);
+			return make_unique<OutputWriter>(fake_mutex, m_devnull, severity, line, file, function);
 		}
 
 		auto output_stream = std::make_shared<std::ofstream>();
@@ -95,11 +96,11 @@ namespace gotchangpdf
 		if (!output_stream->good()) {
 			assert(!"Problem opening general log file");
 			auto fake_mutex = std::shared_ptr<std::mutex>(nullptr);
-			return std::make_unique<OutputWriter>(fake_mutex, m_devnull, severity, line, file, function);
+			return make_unique<OutputWriter>(fake_mutex, m_devnull, severity, line, file, function);
 		}
 
 		m_general->lock();
-		return std::make_unique<OutputWriter>(m_general, output_stream, severity, line, file, function);
+		return make_unique<OutputWriter>(m_general, output_stream, severity, line, file, function);
 	}
 
 	std::unique_ptr<OutputWriter> Logger::GetScopedWriter(Severity severity, int line, const std::weak_ptr<syntax::File>& scope, const char * file, const char * function)
@@ -114,7 +115,7 @@ namespace gotchangpdf
 	{
 		if (severity < m_severity) {
 			auto fake_mutex = std::shared_ptr<std::mutex>(nullptr);
-			return std::make_unique<OutputWriter>(fake_mutex, m_devnull, severity, line, file, function);
+			return make_unique<OutputWriter>(fake_mutex, m_devnull, severity, line, file, function);
 		}
 
 		if (scope.empty() || (scope == general_failure_filename)) {
@@ -143,7 +144,7 @@ namespace gotchangpdf
 		}
 
 		scoped_mutex->lock();
-		return std::make_unique<OutputWriter>(scoped_mutex, output_stream, severity, line, file, function);
+		return make_unique<OutputWriter>(scoped_mutex, output_stream, severity, line, file, function);
 	}
 
 	std::unique_ptr<OutputWriter> Logger::GetScopedWriter(Severity severity, int line, const char * scope, const char * file, const char * function)

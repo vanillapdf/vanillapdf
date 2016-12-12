@@ -36,22 +36,22 @@ namespace gotchangpdf
 	// Forwards to implementation
 	PKCS12Key::PKCS12Key(const Buffer& data)
 	{
-		m_impl = std::make_unique<PKCS12KeyImpl>(data);
+		m_impl = make_unique<PKCS12KeyImpl>(data);
 	}
 
 	PKCS12Key::PKCS12Key(const std::string& path)
 	{
-		m_impl = std::make_unique<PKCS12KeyImpl>(path);
+		m_impl = make_unique<PKCS12KeyImpl>(path);
 	}
 
 	PKCS12Key::PKCS12Key(const std::string& path, const Buffer& password)
 	{
-		m_impl = std::make_unique<PKCS12KeyImpl>(path, password);
+		m_impl = make_unique<PKCS12KeyImpl>(path, password);
 	}
 
 	PKCS12Key::PKCS12Key(const Buffer& data, const Buffer& password)
 	{
-		m_impl = std::make_unique<PKCS12KeyImpl>(data, password);
+		m_impl = make_unique<PKCS12KeyImpl>(data, password);
 	}
 
 	BufferPtr PKCS12Key::Decrypt(const Buffer& data) const

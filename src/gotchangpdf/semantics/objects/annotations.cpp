@@ -108,130 +108,130 @@ namespace gotchangpdf
 			syntax::NameObjectPtr subtype = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(subtype_obj);
 
 			if (subtype == constant::Name::Text) {
-				auto result = std::make_unique<TextAnnotation>(root);
+				auto result = make_unique<TextAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Link) {
-				auto result = std::make_unique<LinkAnnotation>(root);
+				auto result = make_unique<LinkAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::FreeText) {
-				auto result = std::make_unique<FreeTextAnnotation>(root);
+				auto result = make_unique<FreeTextAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Line) {
-				auto result = std::make_unique<LineAnnotation>(root);
+				auto result = make_unique<LineAnnotation>(root);
 				return result.release();
 			}
 			if (subtype == constant::Name::Square) {
-				auto result = std::make_unique<SquareAnnotation>(root);
+				auto result = make_unique<SquareAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Circle) {
-				auto result = std::make_unique<CircleAnnotation>(root);
+				auto result = make_unique<CircleAnnotation>(root);
 				return result.release();
 			}
 			if (subtype == constant::Name::Polygon) {
-				auto result = std::make_unique<PolygonAnnotation>(root);
+				auto result = make_unique<PolygonAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::PolyLine) {
-				auto result = std::make_unique<PolyLineAnnotation>(root);
+				auto result = make_unique<PolyLineAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Highlight) {
-				auto result = std::make_unique<HighlightAnnotation>(root);
+				auto result = make_unique<HighlightAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Underline) {
-				auto result = std::make_unique<UnderlineAnnotation>(root);
+				auto result = make_unique<UnderlineAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Squiggly) {
-				auto result = std::make_unique<SquigglyAnnotation>(root);
+				auto result = make_unique<SquigglyAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::StrikeOut) {
-				auto result = std::make_unique<StrikeOutAnnotation>(root);
+				auto result = make_unique<StrikeOutAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::RubberStamp) {
-				auto result = std::make_unique<RubberStampAnnotation>(root);
+				auto result = make_unique<RubberStampAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Caret) {
-				auto result = std::make_unique<CaretAnnotation>(root);
+				auto result = make_unique<CaretAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Ink) {
-				auto result = std::make_unique<InkAnnotation>(root);
+				auto result = make_unique<InkAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Popup) {
-				auto result = std::make_unique<PopupAnnotation>(root);
+				auto result = make_unique<PopupAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::FileAttachment) {
-				auto result = std::make_unique<FileAttachmentAnnotation>(root);
+				auto result = make_unique<FileAttachmentAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Sound) {
-				auto result = std::make_unique<SoundAnnotation>(root);
+				auto result = make_unique<SoundAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Movie) {
-				auto result = std::make_unique<MovieAnnotation>(root);
+				auto result = make_unique<MovieAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Widget) {
-				auto result = std::make_unique<WidgetAnnotation>(root);
+				auto result = make_unique<WidgetAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Screen) {
-				auto result = std::make_unique<ScreenAnnotation>(root);
+				auto result = make_unique<ScreenAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::PrinterMark) {
-				auto result = std::make_unique<PrinterMarkAnnotation>(root);
+				auto result = make_unique<PrinterMarkAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::TrapNetwork) {
-				auto result = std::make_unique<TrapNetworkAnnotation>(root);
+				auto result = make_unique<TrapNetworkAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Watermark) {
-				auto result = std::make_unique<WatermarkAnnotation>(root);
+				auto result = make_unique<WatermarkAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::TripleD) {
-				auto result = std::make_unique<TripleDAnnotation>(root);
+				auto result = make_unique<TripleDAnnotation>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Redact) {
-				auto result = std::make_unique<RedactionAnnotation>(root);
+				auto result = make_unique<RedactionAnnotation>(root);
 				return result.release();
 			}
 

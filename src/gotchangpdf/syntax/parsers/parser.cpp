@@ -28,21 +28,21 @@ namespace gotchangpdf
 		Parser::Parser(std::weak_ptr<File> file, CharacterSource & stream)
 			: ParserBase(file, stream)
 		{
-			_dictionary = std::make_unique<ParserTokenDictionary>();
+			_dictionary = make_unique<ParserTokenDictionary>();
 			_dictionary->Initialize();
 		}
 
 		ContentStreamParser::ContentStreamParser(std::weak_ptr<File> file, CharacterSource & stream)
 			: ParserBase(file, stream)
 		{
-			_dictionary = std::make_unique<ContentStreamTokenDictionary>();
+			_dictionary = make_unique<ContentStreamTokenDictionary>();
 			_dictionary->Initialize();
 		}
 
 		CharacterMapParser::CharacterMapParser(std::weak_ptr<File> file, CharacterSource & stream)
 			: ParserBase(file, stream)
 		{
-			_dictionary = std::make_unique<CharacterMapTokenDictionary>();
+			_dictionary = make_unique<CharacterMapTokenDictionary>();
 			_dictionary->Initialize();
 		}
 

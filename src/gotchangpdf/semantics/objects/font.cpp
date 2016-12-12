@@ -55,17 +55,17 @@ namespace gotchangpdf
 			syntax::NameObjectPtr subtype = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(subtype_obj);
 
 			if (subtype == constant::Name::Type0) {
-				auto result = std::make_unique<CompositeFont>(root);
+				auto result = make_unique<CompositeFont>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Type1) {
-				auto result = std::make_unique<Type1Font>(root);
+				auto result = make_unique<Type1Font>(root);
 				return result.release();
 			}
 
 			if (subtype == constant::Name::Type3) {
-				auto result = std::make_unique<Type3Font>(root);
+				auto result = make_unique<Type3Font>(root);
 				return result.release();
 			}
 

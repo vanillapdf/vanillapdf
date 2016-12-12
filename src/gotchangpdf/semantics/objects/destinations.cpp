@@ -79,42 +79,42 @@ namespace gotchangpdf
 			syntax::NameObjectPtr type = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(type_obj);
 
 			if (type == constant::Name::XYZ) {
-				auto result = std::make_unique<XYZDestination>(root);
+				auto result = make_unique<XYZDestination>(root);
 				return result.release();
 			}
 
 			if (type == constant::Name::Fit) {
-				auto result = std::make_unique<FitDestination>(root);
+				auto result = make_unique<FitDestination>(root);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitH) {
-				auto result = std::make_unique<FitHorizontalDestination>(root);
+				auto result = make_unique<FitHorizontalDestination>(root);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitV) {
-				auto result = std::make_unique<FitVerticalDestination>(root);
+				auto result = make_unique<FitVerticalDestination>(root);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitR) {
-				auto result = std::make_unique<FitRectangleDestination>(root);
+				auto result = make_unique<FitRectangleDestination>(root);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitB) {
-				auto result = std::make_unique<FitBoundingBoxDestination>(root);
+				auto result = make_unique<FitBoundingBoxDestination>(root);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitBH) {
-				auto result = std::make_unique<FitBoundingBoxHorizontalDestination>(root);
+				auto result = make_unique<FitBoundingBoxHorizontalDestination>(root);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitBV) {
-				auto result = std::make_unique<FitBoundingBoxVerticalDestination>(root);
+				auto result = make_unique<FitBoundingBoxVerticalDestination>(root);
 				return result.release();
 			}
 
@@ -150,43 +150,42 @@ namespace gotchangpdf
 			syntax::NameObjectPtr type = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(type_obj);
 
 			if (type == constant::Name::XYZ) {
-				auto result = std::make_unique<XYZDestination>(root);
+				auto result = make_unique<XYZDestination>(root);
 				return result.release();
 			}
 
 			if (type == constant::Name::Fit) {
-				auto result = std::make_unique<FitDestination>(root);
+				auto result = make_unique<FitDestination>(root);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitH) {
-
-				auto result = std::make_unique<FitHorizontalDestination>(root);
+				auto result = make_unique<FitHorizontalDestination>(root);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitV) {
-				auto result = std::make_unique<FitVerticalDestination>(root);
+				auto result = make_unique<FitVerticalDestination>(root);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitR) {
-				auto result = std::make_unique<FitRectangleDestination>(root);
+				auto result = make_unique<FitRectangleDestination>(root);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitB) {
-				auto result = std::make_unique<FitBoundingBoxDestination>(root);
+				auto result = make_unique<FitBoundingBoxDestination>(root);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitBH) {
-				auto result = std::make_unique<FitBoundingBoxHorizontalDestination>(root);
+				auto result = make_unique<FitBoundingBoxHorizontalDestination>(root);
 				return result.release();
 			}
 
 			if (type == constant::Name::FitBV) {
-				auto result = std::make_unique<FitBoundingBoxVerticalDestination>(root);
+				auto result = make_unique<FitBoundingBoxVerticalDestination>(root);
 				return result.release();
 			}
 
