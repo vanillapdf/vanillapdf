@@ -88,7 +88,7 @@ const NameHandle NameConstant_AdbePkcs7s5 = reinterpret_cast<NameHandle>(gotchan
 	namespace gotchangpdf { namespace constant { namespace Name { \
 	const syntax::NameObjectPtr name(BufferPtr(#name, sizeof(#name) - 1)); \
 	} /* Name */ } /* constant */ } /* gotchangpdf */ \
-	const NameHandle NameConstant_##name = reinterpret_cast<NameHandle>(gotchangpdf::constant::Name::##name##.get());
+	const NameHandle NameConstant_##name = reinterpret_cast<NameHandle>(gotchangpdf::constant::Name::name.get());
 
 DECLARE_CONST_NAME(AA);
 DECLARE_CONST_NAME(ASCII85Decode);
