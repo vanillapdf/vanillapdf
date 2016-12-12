@@ -422,7 +422,7 @@ namespace gotchangpdf
 			int size = values->Size();
 			for (int i = 0; i + 1 < size; i += 2) {
 				if (syntax::ObjectUtils::ValueEquals(values->At(i), key)) {
-					return _conversion(values->At(i + 1));
+					return values->At(i + 1);
 				}
 			}
 
