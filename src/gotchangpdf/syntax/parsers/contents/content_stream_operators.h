@@ -111,11 +111,12 @@ namespace gotchangpdf
 				BufferPtr _data;
 			};
 
+#define COLON :
 #define GENERIC_OPERATOR_DEFINITION(Name, Val) \
 class Name##Operator : public OperatorBase \
 { \
 public: \
-	virtual Type GetType(void) const noexcept { return Type::##Name; } \
+	virtual Type GetType(void) const noexcept { return Type::Name; } \
 	virtual BufferPtr Value(void) const override { return BufferPtr(Val); } \
 };
 
