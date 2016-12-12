@@ -61,7 +61,7 @@ namespace gotchangpdf
 		// because GetWeakReference cannot be const
 		WeakReference& operator=(T& value)
 		{
-			*this = value.GetWeakReference<T>();
+			*this = value.template GetWeakReference<T>();
 			return *this;
 		}
 
