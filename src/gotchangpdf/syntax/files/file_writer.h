@@ -26,7 +26,7 @@ namespace gotchangpdf
 
 		private:
 			void WriteXrefObjects(std::shared_ptr<File> destination, XrefBasePtr source);
-			XrefBasePtr FileWriter::CloneXref(std::shared_ptr<File> destination, XrefBasePtr source);
+			XrefBasePtr CloneXref(std::shared_ptr<File> destination, XrefBasePtr source);
 			XrefBasePtr CreateIncrementalXref(std::shared_ptr<File> source, std::shared_ptr<File> destination);
 			void WriteXref(std::iostream& output, XrefBasePtr xref);
 			void WriteXrefTable(std::iostream& output, XrefTablePtr xref_table);
@@ -34,8 +34,8 @@ namespace gotchangpdf
 			void WriteEntry(std::iostream& output, XrefUsedEntryBasePtr entry);
 			void WriteObject(std::iostream& output, ObjectPtr obj);
 
-			void FileWriter::RecalculateStreamLength(ObjectPtr obj);
-			void FileWriter::RecalculateStreamsLength(XrefBasePtr source);
+			void RecalculateStreamLength(ObjectPtr obj);
+			void RecalculateStreamsLength(XrefBasePtr source);
 
 			// flags
 			bool m_recalculate_offset = true;
