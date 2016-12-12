@@ -487,7 +487,7 @@ namespace gotchangpdf
 		inline NameTree<ValueT>::NameTree(
 			const syntax::DictionaryObjectPtr& obj,
 			std::function<ValueT(const syntax::ContainableObjectPtr&)> convertor)
-			: TreeBase(obj), _conversion(convertor) {}
+			: TreeBase<syntax::StringObjectPtr, ValueT>(obj), _conversion(convertor) {}
 
 		template <typename ValueT>
 		inline syntax::NameObjectPtr NameTree<ValueT>::GetValueName(void) const
@@ -530,7 +530,7 @@ namespace gotchangpdf
 		inline NumberTree<ValueT>::NumberTree(
 			const syntax::DictionaryObjectPtr& obj,
 			std::function<ValueT(const syntax::ContainableObjectPtr&)> convertor)
-			: TreeBase(obj), _conversion(convertor) {}
+			: TreeBase<syntax::IntegerObjectPtr, ValueT>(obj), _conversion(convertor) {}
 
 		template <typename ValueT>
 		inline syntax::NameObjectPtr NumberTree<ValueT>::GetValueName(void) const
