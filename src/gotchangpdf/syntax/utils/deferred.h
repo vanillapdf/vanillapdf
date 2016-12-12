@@ -23,8 +23,25 @@ namespace gotchangpdf
 		typedef T value_type;
 
 	public:
-		template <typename = typename std::enable_if<std::is_default_constructible<T>::value>::type>
-		DeferredWrapperBase() : m_ptr(nullptr) {}
+		template <
+			// Lets have a talk about SFINAE
+			// SFINAE only works for deduced template arguments.
+			// Because class template type T does not participate
+			// in deduction and is specified by user.
+			// Therefore I create a new unspecified type U
+			// with default value of type T.
+			// New type U is now "deduced" and can perform SFINAE
+
+			// NOTE: I believe you cannot specify template arguments for
+			// constructors. If you can, make sure user did not pass any
+			// arguments overriding our defaulted type U.
+			// Example: template<typename... Dummy, typename U = T>
+			typename U = T,
+			typename = typename std::enable_if<std::is_default_constructible<U>::value>::type
+		>
+		DeferredWrapperBase() : m_ptr(nullptr)
+		{
+		}
 
 		DeferredWrapperBase(T* value, bool add_ref) : m_ptr(value)
 		{
