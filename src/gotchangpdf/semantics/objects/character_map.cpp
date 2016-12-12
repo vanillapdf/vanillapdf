@@ -16,7 +16,7 @@ namespace gotchangpdf
 		CharacterMapBase* CharacterMapBase::Create(syntax::StreamObjectPtr root, WeakReference<Document> doc)
 		{
 			// TODO
-			auto result = std::make_unique<UnicodeCharacterMap>(root);
+			auto result = make_unique<UnicodeCharacterMap>(root);
 			return result.release();
 		}
 
