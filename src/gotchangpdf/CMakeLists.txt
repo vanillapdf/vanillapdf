@@ -108,6 +108,7 @@ set(GOTCHANGPDF_SYNTAX_SOURCES
 	syntax/objects/object.cpp
 	syntax/objects/stream_object.cpp
 	syntax/objects/string_object.cpp
+	syntax/objects/object_utils.cpp
 	
 	syntax/parsers/character_map_data.cpp
 	syntax/parsers/lexical_tree.cpp
@@ -180,6 +181,7 @@ set(SYNTAX_HEADERS
 	syntax/filters/flate_decode_filter.h
 	
 	syntax/objects/array_object.h
+	syntax/objects/mixed_array_object.h
 	syntax/objects/boolean_object.h
 	syntax/objects/containable.h
 	syntax/objects/dictionary_object.h
