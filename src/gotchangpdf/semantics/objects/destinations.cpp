@@ -205,7 +205,7 @@ namespace gotchangpdf
 		syntax::ObjectPtr DestinationBase::GetAttribute(const syntax::NameObject& name) const
 		{
 			if (!syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(_obj)) {
-				return false;
+				return syntax::NullObjectPtr();
 			}
 
 			auto dict = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(_obj);
