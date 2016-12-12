@@ -2,6 +2,7 @@
 #define _PAGE_NODE_UTILS_H
 
 #include "semantics_fwd.h"
+#include "exception.h"
 
 namespace gotchangpdf
 {
