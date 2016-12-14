@@ -6,6 +6,7 @@
 #include "util.h"
 
 #include <cassert>
+#include <cstring>
 
 namespace gotchangpdf
 {
@@ -92,7 +93,7 @@ namespace gotchangpdf
 
 			// We need post decrement, which is not available
 			auto current = *gptr();
-			_Gndec();
+			gbump(-1);
 			return traits_type::to_int_type(current);
 		}
 
@@ -101,7 +102,10 @@ namespace gotchangpdf
 			if (gptr() == eback() || (ch != traits_type::eof() && ch != gptr()[-1]))
 				return traits_type::eof();
 
-			return traits_type::to_int_type(*_Gninc());
+			// Advance single character
+			gbump(1);
+
+			return traits_type::to_int_type(*gptr());
 		}
 
 		streamsize ReverseStream::ReverseBuf::showmanyc()
