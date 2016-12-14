@@ -7,6 +7,7 @@
 #include <chrono>
 #include <iomanip>
 #include <memory>
+#include <thread>
 
 namespace gotchangpdf
 {
@@ -34,19 +35,8 @@ namespace gotchangpdf
 		m_file(file),
 		m_function(function)
 	{
-		std::chrono::system_clock::time_point today = std::chrono::system_clock::now();
-		auto rawtime = std::chrono::system_clock::to_time_t(today);
-
-		struct tm timeinfo;
-		auto err = localtime_s(&timeinfo, &rawtime);
-		assert(err == 0); (void)err;
-
-		char buffer[128];
-		strftime(buffer, sizeof(buffer), "%d-%m-%Y %H:%M:%S", &timeinfo);
-		std::string date(buffer);
-
 		*m_output_stream << '[';
-		*m_output_stream << date;
+		*m_output_stream << GetLocalTime();
 		*m_output_stream << ']';
 		*m_output_stream << ' ';
 		*m_output_stream << '(';
@@ -58,6 +48,29 @@ namespace gotchangpdf
 		*m_output_stream << '>';
 		*m_output_stream << ':';
 		*m_output_stream << ' ';
+	}
+
+	std::string OutputWriter::GetLocalTime() const
+	{
+		// localtime function may not be thread-safe
+		static std::mutex m_chrono;
+
+		std::chrono::system_clock::time_point today = std::chrono::system_clock::now();
+		auto rawtime = std::chrono::system_clock::to_time_t(today);
+
+		std::lock_guard<std::mutex> locker(m_chrono);
+		auto timeinfo = std::localtime(&rawtime);
+		if (timeinfo == nullptr) {
+			throw GeneralException("Could not get current time");
+		}
+
+		char buffer[128];
+		size_t result = strftime(buffer, sizeof(buffer), "%d-%m-%Y %H:%M:%S", timeinfo);
+		if (result == 0) {
+			throw GeneralException("Could not convert localtime to string");
+		}
+
+		return std::string(buffer);
 	}
 
 	OutputWriter::~OutputWriter()
