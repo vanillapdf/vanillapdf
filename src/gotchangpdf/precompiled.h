@@ -18,6 +18,14 @@
 // Do while false
 #pragma warning (disable: 4127)
 
+#if defined(_MSC_VER)
+	// MSVC warns using standard library
+	// function localtime and it recommends
+	// using non-standard localtime_s.
+	// That's just SILLY!
+	#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 /*---------------------------------------------------*/
 
 // Memory leak tracking
