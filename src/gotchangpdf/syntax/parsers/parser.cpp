@@ -68,7 +68,7 @@ namespace gotchangpdf
 				assert(token->GetType() == Token::Type::INTEGER_OBJECT && "Expected integer token type");
 
 				auto buffer = token->Value();
-				auto value = std::stoll(buffer->ToString());
+				types::big_int value = std::stoll(buffer->ToString());
 				return IntegerObjectPtr(value);
 			}
 

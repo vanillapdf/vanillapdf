@@ -153,9 +153,13 @@ namespace gotchangpdf
 
 		types::stream_size ReverseStream::GetPosition()
 		{
-			auto result = eof() ? constant::BAD_OFFSET : tellg();
 			assert(!fail());
-			return result;
+
+			if (eof()) {
+				return constant::BAD_OFFSET;
+			}
+
+			return tellg();
 		}
 
 		void ReverseStream::SetPosition(types::stream_size pos)

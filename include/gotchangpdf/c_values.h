@@ -4,6 +4,7 @@
 #include "c_export.h"
 
 #include <stdint.h>
+#include <stddef.h>
 
 typedef int32_t error_type;
 

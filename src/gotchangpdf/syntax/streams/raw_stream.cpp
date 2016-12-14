@@ -27,7 +27,13 @@ namespace gotchangpdf
 
 		types::stream_size Stream::GetPosition()
 		{
-			return eof() ? constant::BAD_OFFSET : tellg();
+			assert(!fail());
+
+			if (eof()) {
+				return constant::BAD_OFFSET;
+			}
+
+			return tellg();
 		}
 
 		void Stream::SetPosition(types::stream_size pos)
