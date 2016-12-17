@@ -60,6 +60,7 @@ extern "C"
 	GOTCHANG_PDF_API extern const error_type GOTCHANG_PDF_ERROR_GENERAL;
 
 	// syntax errors
+	GOTCHANG_PDF_API extern const error_type GOTCHANG_PDF_ERROR_CONVERSION;
 	GOTCHANG_PDF_API extern const error_type GOTCHANG_PDF_ERROR_FILE_DISPOSED;
 	GOTCHANG_PDF_API extern const error_type GOTCHANG_PDF_ERROR_FILE_NOT_INITIALIZED;
 	GOTCHANG_PDF_API extern const error_type GOTCHANG_PDF_ERROR_OBJECT_MISSING;

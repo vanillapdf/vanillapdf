@@ -14,6 +14,7 @@ GOTCHANG_PDF_API const error_type GOTCHANG_PDF_ERROR_NOT_SUPPORTED		= static_cas
 GOTCHANG_PDF_API const error_type GOTCHANG_PDF_ERROR_GENERAL			= static_cast<error_type>(gotchangpdf::ExceptionBase::Type::General);
 
 // syntax errors
+GOTCHANG_PDF_API const error_type GOTCHANG_PDF_ERROR_CONVERSION				= static_cast<error_type>(gotchangpdf::ExceptionBase::Type::Conversion);
 GOTCHANG_PDF_API const error_type GOTCHANG_PDF_ERROR_FILE_DISPOSED			= static_cast<error_type>(gotchangpdf::ExceptionBase::Type::FileDisposed);
 GOTCHANG_PDF_API const error_type GOTCHANG_PDF_ERROR_FILE_NOT_INITIALIZED	= static_cast<error_type>(gotchangpdf::ExceptionBase::Type::FileNotInitialized);
 GOTCHANG_PDF_API const error_type GOTCHANG_PDF_ERROR_OBJECT_MISSING			= static_cast<error_type>(gotchangpdf::ExceptionBase::Type::ObjectMissing);
