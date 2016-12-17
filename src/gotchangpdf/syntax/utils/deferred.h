@@ -97,7 +97,15 @@ namespace gotchangpdf
 
 		T& operator*() const { return *get(); }
 		T* operator->() const { return get(); }
-		T* AddRefGet(void) { return detach(); }
+		T* AddRefGet(void)
+		{
+			T* result = get();
+
+			// Require IUnknown to be present
+			result->AddRef();
+
+			return result;
+		}
 
 		void swap(DeferredWrapperBase& rhs) noexcept
 		{
