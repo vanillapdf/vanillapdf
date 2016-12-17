@@ -1,5 +1,9 @@
 #include "merge.h"
 
+const int GOTCHANG_PDF_MERGE_ERROR_SUCCESS = 0;
+const int GOTCHANG_PDF_MERGE_ERROR_INVALID_PARAMETERS = 1;
+const int GOTCHANG_PDF_MERGE_ERROR_FAILURE = 255;
+
 static PageObjectHandle current_page_object = NULL;
 static UnicodeCharacterMapHandle current_unicode_map = NULL;
 
@@ -52,7 +56,7 @@ error_type process_contents(ContentsHandle page_contents, integer_type page_numb
 		current_unicode_map = NULL;
 	}
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_MERGE_ERROR_SUCCESS;
 }
 
 error_type process_string_object(StringHandle string_handle, integer_type page_number)
@@ -104,7 +108,7 @@ error_type process_string_object(StringHandle string_handle, integer_type page_n
 		RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(mapped_value));
 	}
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_MERGE_ERROR_SUCCESS;
 }
 
 error_type process_content_operation(ContentOperationHandle content_operation, integer_type page_number)
@@ -184,7 +188,7 @@ error_type process_content_operation(ContentOperationHandle content_operation, i
 		RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_Release(text_items));
 	}
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_MERGE_ERROR_SUCCESS;
 }
 
 void print_help()
@@ -215,22 +219,22 @@ int main(int argc, char *argv[])
 
 	if (argc < 7) {
 		print_help();
-		return GOTCHANG_PDF_ERROR_GENERAL;
+		return GOTCHANG_PDF_MERGE_ERROR_INVALID_PARAMETERS;
 	}
 
 	if (0 != strcmp(argv[1], "-s")) {
 		print_help();
-		return GOTCHANG_PDF_ERROR_GENERAL;
+		return GOTCHANG_PDF_MERGE_ERROR_INVALID_PARAMETERS;
 	}
 
 	if (0 != strcmp(argv[3], "-d")) {
 		print_help();
-		return GOTCHANG_PDF_ERROR_GENERAL;
+		return GOTCHANG_PDF_MERGE_ERROR_INVALID_PARAMETERS;
 	}
 
 	if (0 != strcmp(argv[5], "-f")) {
 		print_help();
-		return GOTCHANG_PDF_ERROR_GENERAL;
+		return GOTCHANG_PDF_MERGE_ERROR_INVALID_PARAMETERS;
 	}
 
 	source_file = argv[2];
@@ -280,5 +284,5 @@ int main(int argc, char *argv[])
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_MERGE_ERROR_SUCCESS;
 }

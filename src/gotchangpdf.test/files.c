@@ -22,7 +22,7 @@ error_type process_file(FileHandle file, int nested)
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_Release(chain_iterator));
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Release(chain));
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
 error_type process_xref(XrefHandle xref, int nested)
@@ -63,10 +63,10 @@ error_type process_xref(XrefHandle xref, int nested)
 			break;
 		case XrefEntryNull:
 			printf("Missing xref entry\n");
-			return GOTCHANG_PDF_ERROR_GENERAL;
+			return GOTCHANG_PDF_TEST_ERROR_FAILURE;
 		default:
 			printf("Unknown xref entry type\n");
-			return GOTCHANG_PDF_ERROR_GENERAL;
+			return GOTCHANG_PDF_TEST_ERROR_FAILURE;
 		}
 
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_Release(entry));
@@ -75,5 +75,5 @@ error_type process_xref(XrefHandle xref, int nested)
 
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefIterator_Release(xref_iterator));
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }

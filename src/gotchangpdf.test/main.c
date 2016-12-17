@@ -1,5 +1,20 @@
 #include "test.h"
 
+// I have used error code from library calls
+// to forward them as exit status from application
+// as well. Unfortunately, linux does not
+// support exit status greater than 255.
+
+// When a program exits, it can return to the parent process
+// a small amount of information about the cause of termination,
+// using the exit status. This is a value between 0 and 255 that
+// the exiting process passes as an argument to exit.
+
+// Therefore on library failures this application
+// only returns GOTCHANG_PDF_TEST_ERROR_FAILURE
+// and any additional informations have to be
+// extracted from library logging facility
+
 int main(int argc, char *argv[])
 {
 	FileHandle file = NULL;
@@ -15,8 +30,9 @@ int main(int argc, char *argv[])
 	//_CrtSetBreakAlloc(803506);
 #endif
 
-	if (argc < 2)
-		return GOTCHANG_PDF_ERROR_GENERAL;
+	if (argc < 2) {
+		return GOTCHANG_PDF_TEST_ERROR_INVALID_PARAMETERS;
+	}
 
 	if (argc >= 4) {
 		// password
@@ -31,7 +47,7 @@ int main(int argc, char *argv[])
 			}
 		}
 		else {
-			return GOTCHANG_PDF_ERROR_GENERAL;
+			return GOTCHANG_PDF_TEST_ERROR_INVALID_PARAMETERS;
 		}
 	}
 
@@ -57,7 +73,7 @@ int main(int argc, char *argv[])
 	else {
 		// Password for un-encrypted file
 		if (password != NULL || cert_path != NULL) {
-			return GOTCHANG_PDF_ERROR_INVALID_PASSWORD;
+			return GOTCHANG_PDF_TEST_ERROR_INVALID_PASSWORD;
 		}
 	}
 
@@ -72,5 +88,5 @@ int main(int argc, char *argv[])
 	if (NULL != encryption_key)
 		RETURN_ERROR_IF_NOT_SUCCESS(EncryptionKey_Release(encryption_key));
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }

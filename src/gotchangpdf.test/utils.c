@@ -1,5 +1,10 @@
 #include "test.h"
 
+const int GOTCHANG_PDF_TEST_ERROR_SUCCESS = 0;
+const int GOTCHANG_PDF_TEST_ERROR_INVALID_PASSWORD = 1;
+const int GOTCHANG_PDF_TEST_ERROR_INVALID_PARAMETERS = 2;
+const int GOTCHANG_PDF_TEST_ERROR_FAILURE = 255;
+
 void print_spaces(int nested)
 {
 	int i;
@@ -20,15 +25,19 @@ error_type process_buffer(BufferHandle buffer, int nested)
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(buffer, &data, &size));
 
-	if (size >= SIZE_MAX)
-		return GOTCHANG_PDF_ERROR_GENERAL;
+	if (size >= SIZE_MAX) {
+		printf("Buffer size is too big: %ld bytes\n", size);
+		return GOTCHANG_PDF_TEST_ERROR_FAILURE;
+	}
 
 	size_converted = (size_type)size;
 	print_size = size_converted > 20 ? 10 : size_converted;
 
 	local_string = (char*)calloc(sizeof(char), print_size + 1);
-	if (NULL == local_string)
-		return GOTCHANG_PDF_ERROR_GENERAL;
+	if (NULL == local_string) {
+		printf("Could not allocate memory: %ld bytes\n", print_size + 1);
+		return GOTCHANG_PDF_TEST_ERROR_FAILURE;
+	}
 
 	memcpy(local_string, data, print_size);
 
@@ -42,7 +51,7 @@ error_type process_buffer(BufferHandle buffer, int nested)
 	print_spaces(nested);
 	printf("Buffer end\n");
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
 error_type process_version(PDFVersion version, int nested)
@@ -50,5 +59,5 @@ error_type process_version(PDFVersion version, int nested)
 	print_spaces(nested);
 	printf("PDF Version: 1.%d \n", version);
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }

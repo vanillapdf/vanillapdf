@@ -14,7 +14,7 @@ int process_name(NameHandle name, int nested)
 	print_spaces(nested);
 	printf("Name object end\n");
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
 int process_lit_string(LiteralStringHandle string, int nested)
@@ -31,7 +31,7 @@ int process_lit_string(LiteralStringHandle string, int nested)
 	print_spaces(nested);
 	printf("Literal string end\n");
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
 int process_hex_string(HexadecimalStringHandle string, int nested)
@@ -48,7 +48,7 @@ int process_hex_string(HexadecimalStringHandle string, int nested)
 	print_spaces(nested);
 	printf("Hexadecimal string end\n");
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
 int process_dictionary(DictionaryHandle dictionary, int nested)
@@ -87,8 +87,9 @@ int process_dictionary(DictionaryHandle dictionary, int nested)
 	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_Release(iterator));
 
 	print_spaces(nested);
-	printf("Dictionary End\n");
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	printf("Dictionary end\n");
+
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
 error_type process_stream(StreamHandle stream, int nested)
@@ -111,7 +112,7 @@ error_type process_stream(StreamHandle stream, int nested)
 	print_spaces(nested);
 	printf("Stream object end\n");
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
 error_type process_array(ArrayHandle arr, int nested)
@@ -137,7 +138,7 @@ error_type process_array(ArrayHandle arr, int nested)
 	print_spaces(nested);
 	printf("Array end\n");
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
 error_type process_integer(IntegerHandle integer, int nested)
@@ -156,7 +157,7 @@ error_type process_integer(IntegerHandle integer, int nested)
 	print_spaces(nested);
 	printf("Integer object end\n");
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
 error_type process_boolean(BooleanHandle obj, int nested)
@@ -177,7 +178,7 @@ error_type process_boolean(BooleanHandle obj, int nested)
 	print_spaces(nested);
 	printf("Boolean object end\n");
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
 error_type process_reference(IndirectReferenceHandle reference, int nested)
@@ -198,9 +199,8 @@ error_type process_reference(IndirectReferenceHandle reference, int nested)
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_TypeName(type, &type_name));
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(child));
 
-	unsigned long long obj_num_converted = obj_num;
-
 	print_spaces(nested + 1);
+	unsigned long long obj_num_converted = obj_num;
 	printf("Object Number: %llu\n", obj_num_converted);
 
 	print_spaces(nested + 1);
@@ -212,7 +212,7 @@ error_type process_reference(IndirectReferenceHandle reference, int nested)
 	print_spaces(nested);
 	printf("Indirect reference end\n");
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
 error_type process_real(RealHandle obj, int nested)
@@ -229,7 +229,7 @@ error_type process_real(RealHandle obj, int nested)
 	print_spaces(nested);
 	printf("Real object end\n");
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
 error_type process_null(NullHandle obj, int nested)
@@ -243,7 +243,7 @@ error_type process_null(NullHandle obj, int nested)
 	print_spaces(nested);
 	printf("Null object end\n");
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
 int process_string(StringHandle obj, int nested)
@@ -267,10 +267,10 @@ int process_string(StringHandle obj, int nested)
 	default:
 		print_spaces(nested);
 		printf("Unknown string type\n");
-		return GOTCHANG_PDF_ERROR_GENERAL;
+		return GOTCHANG_PDF_TEST_ERROR_FAILURE;
 	}
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
 int process_object(ObjectHandle obj, int nested)
@@ -335,8 +335,8 @@ int process_object(ObjectHandle obj, int nested)
 	default:
 		print_spaces(nested);
 		printf("Unknown object type\n");
-		return GOTCHANG_PDF_ERROR_GENERAL;
+		return GOTCHANG_PDF_TEST_ERROR_FAILURE;
 	}
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
