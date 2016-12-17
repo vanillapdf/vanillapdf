@@ -20,15 +20,29 @@ namespace gotchangpdf
 	{
 		using namespace std;
 
-		ReverseStream::ReverseBuf::ReverseBuf(CharacterSource & s, types::stream_size size)
-			: _source(s), _size(size),
-			_offset(0),
-			_put_back(constant::REVERSE_BUFFER_PUTBACK_SIZE),
-			_buffer(constant::REVERSE_BUFFER_SIZE + _put_back),
-			_base(_buffer.data())
+		ReverseStream::ReverseStream(CharacterSource & stream, types::stream_size size)
+			: CharacterSource(pdf_new ReverseBuf(stream, size)) {}
+
+		ReverseStream::~ReverseStream()
 		{
-			char *end = &_buffer.front() + _buffer.size();
-			setg(end, end, end);
+			delete CharacterSource::rdbuf();
+		}
+
+		ReverseStream::ReverseBuf::ReverseBuf(CharacterSource & s, types::stream_size size)
+			: _source(s), _size(size), _offset(0),
+			_put_back(constant::REVERSE_BUFFER_PUTBACK_SIZE),
+			_buffer(constant::REVERSE_BUFFER_SIZE + _put_back)
+		{
+			// Moved here from initialization list
+			// because the it was dependent on buffer
+			// initialization and the order was
+			// not guaranteed
+			_base = _buffer.data();
+
+			// Set last char as begin as well, because we currently have no
+			// characters in our buffer
+			char *begin = _buffer.data() + _buffer.size() - 1;
+			setg(begin, begin, begin);
 		}
 
 		int ReverseStream::ReverseBuf::sync()
@@ -39,8 +53,10 @@ namespace gotchangpdf
 
 		ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::underflow()
 		{
-			if (gptr() > egptr()) // buffer not exhausted
+			// buffer not exhausted
+			if (gptr() > egptr()) {
 				return traits_type::to_int_type(*gptr());
+			}
 
 			char *start = _buffer.data() + _buffer.size() - 1;
 
@@ -72,8 +88,9 @@ namespace gotchangpdf
 			assert(!_source.fail());
 
 			auto size = _source.gcount();
-			if (size <= 0)
+			if (size <= 0) {
 				return traits_type::eof();
+			}
 
 			if (size < to_read) {
 				_base = start - size + 1;
@@ -88,24 +105,30 @@ namespace gotchangpdf
 
 		ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::uflow()
 		{
-			if (gptr() == egptr())
-				return traits_type::eof();
+			auto result = underflow();
 
-			// We need post decrement, which is not available
-			auto current = *gptr();
+			// If underflow failed return immediately
+			if (traits_type::eq_int_type(result, traits_type::eof())) {
+				return traits_type::eof();
+			}
+
+			// Advance the input pointer
 			gbump(-1);
-			return traits_type::to_int_type(current);
+
+			// Return underflow result
+			return result;
 		}
 
 		ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::pbackfail(int_type ch)
 		{
-			if (gptr() == eback() || (ch != traits_type::eof() && ch != gptr()[-1]))
+			if (gptr() == eback() || (ch != traits_type::eof() && ch != gptr()[-1])) {
 				return traits_type::eof();
+			}
 
 			// Advance single character
-			gbump(1);
-
-			return traits_type::to_int_type(*gptr());
+			auto result = snextc();
+			assert(result != traits_type::eof() && "Unexpected eof");
+			return result;
 		}
 
 		streamsize ReverseStream::ReverseBuf::showmanyc()
@@ -126,21 +149,18 @@ namespace gotchangpdf
 			else if (dir != ios_base::beg)
 				offset = constant::BAD_OFFSET;
 
-			return (pos_type(offset));
+			return offset;
 		}
 
 		ReverseStream::ReverseBuf::pos_type ReverseStream::ReverseBuf::seekpos(pos_type ptr,
 			ios_base::openmode)
 		{
-			streamoff offset = (streamoff)ptr;
-			gbump((int)(eback() - gptr() + offset));
+			pos_type offset = eback() - gptr() + ptr;
+			int converted = ValueConvertUtils::SafeConvert<int, pos_type>(offset);
+			gbump(converted);
 
-			return (streampos(offset));
+			return ptr;
 		}
-
-		ReverseStream::ReverseStream(CharacterSource & stream, types::stream_size size) : CharacterSource(pdf_new ReverseBuf(stream, size)) {}
-
-		ReverseStream::~ReverseStream() { delete CharacterSource::rdbuf(); }
 
 		void ReverseStream::read(Buffer& result, size_t len)
 		{
