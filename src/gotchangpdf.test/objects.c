@@ -149,7 +149,9 @@ error_type process_integer(IntegerHandle integer, int nested)
 
 	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_GetValue(integer, &value));
 	print_spaces(nested + 1);
-	printf("Value: %lld\n", value);
+
+	long long converted = value;
+	printf("Value: %lld\n", converted);
 
 	print_spaces(nested);
 	printf("Integer object end\n");
@@ -196,8 +198,10 @@ error_type process_reference(IndirectReferenceHandle reference, int nested)
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_TypeName(type, &type_name));
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(child));
 
+	unsigned long long obj_num_converted = obj_num;
+
 	print_spaces(nested + 1);
-	printf("Object Number: %llu\n", obj_num);
+	printf("Object Number: %llu\n", obj_num_converted);
 
 	print_spaces(nested + 1);
 	printf("Generation Number: %d\n", gen_num);
