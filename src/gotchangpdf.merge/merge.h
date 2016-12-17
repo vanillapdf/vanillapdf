@@ -9,8 +9,8 @@
 #include <assert.h>
 
 #if defined(DEBUG) && defined(_MSC_VER)
-#define _CRTDBG_MAP_ALLOC
-#include <crtdbg.h>
+	#define _CRTDBG_MAP_ALLOC
+	#include <crtdbg.h>
 #endif
 
 void print_help();

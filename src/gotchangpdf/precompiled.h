@@ -30,12 +30,22 @@
 
 // Memory leak tracking
 #if defined(DEBUG)
-	#define _CRTDBG_MAP_ALLOC
-	#include <crtdbg.h>
 
-	#ifndef pdf_new
-		#define pdf_new new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+	#if defined(_MSC_VER)
+		#define _CRTDBG_MAP_ALLOC
+		#include <crtdbg.h>
+
+		// This only works with VC++
+		#ifndef pdf_new
+			#define pdf_new new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+		#endif
 	#endif
+
+	// TODO create allocation tracking function for other platforms
+	#ifndef pdf_new
+		#define pdf_new new
+	#endif
+
 #elif defined(RELEASE)
 	#ifndef pdf_new
 		#define pdf_new new
