@@ -35,7 +35,14 @@ namespace gotchangpdf
 					continue;
 
 				std::stringstream ss;
-				ss << "Could not find token type " << static_cast<int>(type) << " at offset " << offset;
+				ss << "Could not find token type ";
+				ss << static_cast<int>(type);
+				ss << " at offset ";
+				ss << offset;
+				ss << ", instead token type ";
+				ss << static_cast<int>(token->GetType());
+				ss << " was found";
+
 				throw GeneralException(ss.str());
 			}
 		}

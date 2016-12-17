@@ -84,8 +84,9 @@ namespace gotchangpdf
 			catch (NotSupportedException&) {
 				throw;
 			}
-			catch (ExceptionBase&) {
+			catch (ExceptionBase& e) {
 				LOG_ERROR(_filename) << "Could not parse xref chain, using fallback mechanism";
+				LOG_ERROR(_filename) << "Reason: " << e.what();
 
 				_xref = stream.FindAllObjects();
 			}
