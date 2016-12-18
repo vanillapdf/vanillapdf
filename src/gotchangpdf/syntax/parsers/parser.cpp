@@ -1133,21 +1133,22 @@ namespace gotchangpdf
 
 		HeaderPtr Parser::ReadHeader(void)
 		{
-			HeaderPtr result;
-
-			std::smatch sm;
-			std::regex header_regex("%PDF-1\\.([0-7]).*");
-			std::string line;
+			int parsed_version = 0;
 
 			for (;;) {
 				auto data = readline();
-				line = data->ToString();
+				std::string line = data->ToString();
 
-				if (std::regex_match(line, sm, header_regex))
+				std::smatch sm;
+				std::regex header_regex("%PDF-1\\.([0-7]).*");
+				if (std::regex_match(line, sm, header_regex)) {
+					parsed_version = stoi(sm[1]);
 					break;
+				}
 			}
 
-			switch (stoi(sm[1]))
+			HeaderPtr result;
+			switch (parsed_version)
 			{
 			case 0:
 				result->SetVersion(Version::PDF10); break;

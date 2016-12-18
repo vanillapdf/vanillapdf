@@ -12,7 +12,7 @@ namespace gotchangpdf
 		class Header : public IUnknown
 		{
 		public:
-			Version GetVersion(void) const { return _version; }
+			Version GetVersion(void) const noexcept { return _version; }
 			void SetVersion(Version version) { _version = version; }
 
 		private:
