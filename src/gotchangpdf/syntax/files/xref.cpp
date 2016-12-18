@@ -127,7 +127,19 @@ namespace gotchangpdf
 				stream_compressed_entry_xref->SetInitialized();
 			}
 
-			assert(m_initialized);
+			if (!m_initialized) {
+				auto scope = locked_file->GetFilename();
+				LOG_WARNING(scope) <<
+					"Compressed entry number " <<
+					std::to_string(GetObjectNumber()) <<
+					" " <<
+					GetGenerationNumber()
+					<< " was supposed to be found in object stream number "
+					<< GetObjectStreamNumber()
+					<< " but was not found";
+
+				LOG_WARNING(scope) << "Treating as NULL reference";
+			}
 		}
 
 		void XrefBase::ObserveeChanged(IModifyObservable*)
