@@ -11,27 +11,27 @@ namespace gotchangpdf
 {
 	enum class Severity
 	{
-		debug,
-		info,
-		warning,
-		error,
-		fatal
+		Debug,
+		Info,
+		Warning,
+		Error,
+		Fatal
 	};
 
 	template <typename CharT, typename TraitsT>
 	std::basic_ostream<CharT, TraitsT>& operator<< (std::basic_ostream<CharT, TraitsT>& strm, const Severity level)
 	{
 		switch (level) {
-		case Severity::debug:
-			strm << "debug"; break;
-		case Severity::info:
-			strm << "info"; break;
-		case Severity::warning:
-			strm << "warning"; break;
-		case Severity::error:
-			strm << "error"; break;
-		case Severity::fatal:
-			strm << "fatal"; break;
+		case Severity::Debug:
+			strm << "Debug"; break;
+		case Severity::Info:
+			strm << "Info"; break;
+		case Severity::Warning:
+			strm << "Warning"; break;
+		case Severity::Error:
+			strm << "Error"; break;
+		case Severity::Fatal:
+			strm << "Fatal"; break;
 		}
 
 		return strm;
@@ -88,35 +88,50 @@ namespace gotchangpdf
 	class Logger
 	{
 	public:
-		static std::unique_ptr<OutputWriter> GetScopedWriter(Severity severity, int line, const char * scope, const char * file, const char * function);
-		static std::unique_ptr<OutputWriter> GetScopedWriter(Severity severity, int line, const std::weak_ptr<syntax::File>& scope, const char * file, const char * function);
-		static std::unique_ptr<OutputWriter> GetScopedWriter(Severity severity, int line, const std::string& scope, const char * file, const char * function);
-		static std::unique_ptr<OutputWriter> GetGeneralWriter(Severity severity, int line, const char * file, const char * function);
+		static std::shared_ptr<Logger> GetInstance(void);
+
+	public:
+		std::unique_ptr<OutputWriter> GetScopedWriter(Severity severity, int line, const char * scope, const char * file, const char * function);
+		std::unique_ptr<OutputWriter> GetScopedWriter(Severity severity, int line, const std::weak_ptr<syntax::File>& scope, const char * file, const char * function);
+		std::unique_ptr<OutputWriter> GetScopedWriter(Severity severity, int line, const std::string& scope, const char * file, const char * function);
+		std::unique_ptr<OutputWriter> GetGeneralWriter(Severity severity, int line, const char * file, const char * function);
+
+		bool IsEnabled(void) const noexcept { return m_enabled; }
+		void SetEnabled(bool enabled = true) noexcept { m_enabled = enabled; }
+
+		Severity GetSeverity(void) const noexcept { return m_severity; }
+		void SetSeverity(Severity severity) noexcept { m_severity = severity; }
 
 	private:
-		Logger() = default;
+		Logger();
 
-		static std::map<std::string, std::shared_ptr<std::mutex>> m_mutexes;
-		static std::mutex m_master;
-		static std::shared_ptr<std::mutex> m_general;
-		static basic_nullbuf<char> m_devnullbuf;
-		static std::shared_ptr<std::ostream> m_devnull;
-		static Severity m_severity;
+		// Singleton
+		static std::shared_ptr<Logger> m_instance;
+
+		std::map<std::string, std::shared_ptr<std::mutex>> m_mutexes;
+		std::mutex m_master;
+		std::shared_ptr<std::mutex> m_general;
+		basic_nullbuf<char> m_devnullbuf;
+		std::shared_ptr<std::ostream> m_devnull;
+		Severity m_severity;
+		bool m_enabled;
+
+		std::unique_ptr<OutputWriter> GetDevNull(Severity severity, int line, const char * file, const char * function);
 	};
 }
 
-#define __LOG_INTERNAL_HELPER__(Scope, Severity)       gotchangpdf::Logger::GetScopedWriter(Severity, __LINE__, Scope, __FILE__, __FUNCTION__)
+#define __LOG_INTERNAL_HELPER__(Scope, Severity)       gotchangpdf::Logger::GetInstance()->GetScopedWriter(Severity, __LINE__, Scope, __FILE__, __FUNCTION__)
 
-#define LOG_DEBUG(Scope)		__LOG_INTERNAL_HELPER__(Scope, gotchangpdf::Severity::debug)
-#define LOG_INFO(Scope)			__LOG_INTERNAL_HELPER__(Scope, gotchangpdf::Severity::info)
-#define LOG_WARNING(Scope)		__LOG_INTERNAL_HELPER__(Scope, gotchangpdf::Severity::warning)
-#define LOG_ERROR(Scope)		__LOG_INTERNAL_HELPER__(Scope, gotchangpdf::Severity::error)
-#define LOG_FATAL(Scope)		__LOG_INTERNAL_HELPER__(Scope, gotchangpdf::Severity::fatal)
+#define LOG_DEBUG(Scope)		__LOG_INTERNAL_HELPER__(Scope, gotchangpdf::Severity::Debug)
+#define LOG_INFO(Scope)			__LOG_INTERNAL_HELPER__(Scope, gotchangpdf::Severity::Info)
+#define LOG_WARNING(Scope)		__LOG_INTERNAL_HELPER__(Scope, gotchangpdf::Severity::Warning)
+#define LOG_ERROR(Scope)		__LOG_INTERNAL_HELPER__(Scope, gotchangpdf::Severity::Error)
+#define LOG_FATAL(Scope)		__LOG_INTERNAL_HELPER__(Scope, gotchangpdf::Severity::Fatal)
 
-#define LOG_DEBUG_GLOBAL		__LOG_INTERNAL_HELPER__(nullptr, gotchangpdf::Severity::debug)
-#define LOG_INFO_GLOBAL			__LOG_INTERNAL_HELPER__(nullptr, gotchangpdf::Severity::info)
-#define LOG_WARNING_GLOBAL		__LOG_INTERNAL_HELPER__(nullptr, gotchangpdf::Severity::warning)
-#define LOG_ERROR_GLOBAL		__LOG_INTERNAL_HELPER__(nullptr, gotchangpdf::Severity::error)
-#define LOG_FATAL_GLOBAL		__LOG_INTERNAL_HELPER__(nullptr, gotchangpdf::Severity::fatal)
+#define LOG_DEBUG_GLOBAL		__LOG_INTERNAL_HELPER__(nullptr, gotchangpdf::Severity::Debug)
+#define LOG_INFO_GLOBAL			__LOG_INTERNAL_HELPER__(nullptr, gotchangpdf::Severity::Info)
+#define LOG_WARNING_GLOBAL		__LOG_INTERNAL_HELPER__(nullptr, gotchangpdf::Severity::Warning)
+#define LOG_ERROR_GLOBAL		__LOG_INTERNAL_HELPER__(nullptr, gotchangpdf::Severity::Error)
+#define LOG_FATAL_GLOBAL		__LOG_INTERNAL_HELPER__(nullptr, gotchangpdf::Severity::Fatal)
 
 #endif /* _LOG_H */

@@ -50,5 +50,6 @@
 #include "c_object.h"
 
 #include "c_buffer.h"
+#include "c_logging.h"
 
 #endif /* _GOTCHANGPDF_H */

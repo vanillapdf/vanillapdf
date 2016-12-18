@@ -24,6 +24,8 @@ int main(int argc, char *argv[])
 	string_type cert_password = NULL;
 	EncryptionKeyHandle encryption_key = NULL;
 	boolean_type is_encrypted = GOTCHANG_PDF_FALSE;
+	boolean_type logging_enabled = GOTCHANG_PDF_FALSE;
+	LoggingSeverity logging_severity;
 
 #if (defined(DEBUG) && defined(_MSC_VER))
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -50,6 +52,15 @@ int main(int argc, char *argv[])
 			return GOTCHANG_PDF_TEST_ERROR_INVALID_PARAMETERS;
 		}
 	}
+
+	// I don't have easy idea how to verify disabled
+	// logging or different severity, so just test API
+	RETURN_ERROR_IF_NOT_SUCCESS(Logging_GetEnabled(&logging_enabled));
+	RETURN_ERROR_IF_NOT_SUCCESS(Logging_SetDisabled());
+	RETURN_ERROR_IF_NOT_SUCCESS(Logging_SetEnabled());
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Logging_GetSeverity(&logging_severity));
+	RETURN_ERROR_IF_NOT_SUCCESS(Logging_SetSeverity(logging_severity));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Open(argv[1], &file));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file));

@@ -13,14 +13,30 @@ namespace gotchangpdf
 {
 	static const char general_failure_filename[] = "general.log";
 
-	Severity Logger::m_severity = Severity::warning;
+	// Initialize empty instance property
+	std::shared_ptr<Logger> Logger::m_instance;
 
-	std::mutex Logger::m_master;
-	std::shared_ptr<std::mutex> Logger::m_general = std::make_shared<std::mutex>();
-	std::map<std::string, std::shared_ptr<std::mutex>> Logger::m_mutexes;
+	std::shared_ptr<Logger> Logger::GetInstance(void)
+	{
+		if (m_instance) {
+			return m_instance;
+		}
 
-	basic_nullbuf<char> Logger::m_devnullbuf;
-	std::shared_ptr<std::ostream> Logger::m_devnull = std::make_shared<std::ostream>(&Logger::m_devnullbuf);
+		static std::mutex instance_mutex;
+		std::lock_guard<std::mutex> locker(instance_mutex);
+		if (!m_instance) {
+			m_instance = std::shared_ptr<Logger>(new Logger());
+		}
+
+		return m_instance;
+	}
+
+	Logger::Logger()
+	{
+		m_severity = Severity::Warning;
+		m_general = std::make_shared<std::mutex>();
+		m_devnull = std::make_shared<std::ostream>(&m_devnullbuf);
+	}
 
 	OutputWriter::OutputWriter(
 		std::shared_ptr<std::mutex> locked_mutex,
@@ -90,26 +106,39 @@ namespace gotchangpdf
 			*m_output_stream << std::endl;
 
 			m_output_stream->flush();
-			if (m_mutex) m_mutex->unlock();
+
+			// All output writers except /dev/null
+			// shall have a mutex
+			if (m_mutex) {
+				m_mutex->unlock();
+			}
 		}
 		catch (...) {
 			assert(!"Exception in logging destructor");
 		}
 	}
 
+	std::unique_ptr<OutputWriter> Logger::GetDevNull(Severity severity, int line, const char * file, const char * function)
+	{
+		auto fake_mutex = std::shared_ptr<std::mutex>(nullptr);
+		return make_unique<OutputWriter>(fake_mutex, m_devnull, severity, line, file, function);
+	}
+
 	std::unique_ptr<OutputWriter> Logger::GetGeneralWriter(Severity severity, int line, const char * file, const char * function)
 	{
+		if (!m_enabled) {
+			return GetDevNull(severity, line, file, function);
+		}
+
 		if (severity < m_severity) {
-			auto fake_mutex = std::shared_ptr<std::mutex>(nullptr);
-			return make_unique<OutputWriter>(fake_mutex, m_devnull, severity, line, file, function);
+			return GetDevNull(severity, line, file, function);
 		}
 
 		auto output_stream = std::make_shared<std::ofstream>();
 		output_stream->open(general_failure_filename, std::ios::app);
 		if (!output_stream->good()) {
 			assert(!"Problem opening general log file");
-			auto fake_mutex = std::shared_ptr<std::mutex>(nullptr);
-			return make_unique<OutputWriter>(fake_mutex, m_devnull, severity, line, file, function);
+			return GetDevNull(severity, line, file, function);
 		}
 
 		m_general->lock();
@@ -126,9 +155,12 @@ namespace gotchangpdf
 
 	std::unique_ptr<OutputWriter> Logger::GetScopedWriter(Severity severity, int line, const std::string& scope, const char * file, const char * function)
 	{
+		if (!m_enabled) {
+			return GetDevNull(severity, line, file, function);
+		}
+
 		if (severity < m_severity) {
-			auto fake_mutex = std::shared_ptr<std::mutex>(nullptr);
-			return make_unique<OutputWriter>(fake_mutex, m_devnull, severity, line, file, function);
+			return GetDevNull(severity, line, file, function);
 		}
 
 		if (scope.empty() || (scope == general_failure_filename)) {
