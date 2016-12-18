@@ -38,7 +38,7 @@ namespace gotchangpdf
 		Buffer(InputIterator first, InputIterator last) : m_data(first, last) {}
 
 		template <typename T, typename = std::enable_if<sizeof(T) == sizeof(value_type)>>
-		Buffer(const T * chars, int len) : m_data(
+		Buffer(const T * chars, size_type len) : m_data(
 			reinterpret_cast<const value_type *>(&chars[0]),
 			reinterpret_cast<const value_type *>(&chars[len])
 		) { assert(size() > 0); }

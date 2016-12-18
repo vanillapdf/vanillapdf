@@ -69,7 +69,7 @@ namespace gotchangpdf
 
 		MD5_Final((unsigned char*)object_key.data(), &ctx);
 
-		auto key_length = std::min(key.size() + 5UL, 16UL);
+		auto key_length = std::min<size_t>(key.size() + 5, 16);
 		return BufferPtr(object_key.begin(), object_key.begin() + key_length);
 	}
 
