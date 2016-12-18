@@ -3,10 +3,14 @@
 
 #include <fstream>
 
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 #include <openssl/pkcs12.h>
 #include <openssl/evp.h>
 #include <openssl/engine.h>
 #include <openssl/err.h>
+
+#endif
 
 namespace gotchangpdf
 {
@@ -22,12 +26,16 @@ namespace gotchangpdf
 
 		~PKCS12KeyImpl();
 
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 	private:
 		PKCS12 *p12 = nullptr;
 		EVP_PKEY *key = nullptr;
 		EVP_PKEY_CTX *ctx = nullptr;
 		X509 *cert = nullptr;
 		ENGINE *rsa = nullptr;
+
+#endif
 
 		void Initialize(const Buffer& data, const Buffer& password);
 	};
@@ -65,14 +73,20 @@ namespace gotchangpdf
 	}
 	#pragma endregion
 
-	static std::mutex openssl_lock;
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 	static void InitializeOpenSSL()
 	{
 		static bool initialized = false;
-		if (initialized) return;
+		if (initialized) {
+			return;
+		}
 
+		static std::mutex openssl_lock;
 		std::lock_guard<std::mutex> lock(openssl_lock);
-		if (initialized) return;
+		if (initialized) {
+			return;
+		}
 
 		OpenSSL_add_all_algorithms();
 		OpenSSL_add_all_ciphers();
@@ -80,6 +94,8 @@ namespace gotchangpdf
 
 		initialized = true;
 	}
+
+#endif
 
 	// Actual implementation
 	PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const std::string& path) : PKCS12KeyImpl(path, Buffer()) {}
@@ -115,6 +131,9 @@ namespace gotchangpdf
 
 	void PKCS12Key::PKCS12KeyImpl::Initialize(const Buffer& data, const Buffer& password)
 	{
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 		InitializeOpenSSL();
 
 		BIO* bio = BIO_new_mem_buf((void*)data.data(), data.size());
@@ -128,11 +147,23 @@ namespace gotchangpdf
 		rsa = ENGINE_get_default_RSA();
 		ctx = EVP_PKEY_CTX_new(key, rsa);
 		int initialized = EVP_PKEY_decrypt_init(ctx);
-		if (1 != initialized) throw GeneralException("Could not initialize encryption engine");
+		if (1 != initialized) {
+			throw GeneralException("Could not initialize encryption engine");
+		}
+
+#else
+
+		throw NotSupportedException("This library was compiled without OpenSSL support");
+
+#endif
+
 	}
 
 	BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) const
 	{
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 		size_t outlen = 0;
 		EVP_PKEY_decrypt(ctx, nullptr, &outlen, (unsigned char *)data.data(), data.size());
 
@@ -143,10 +174,20 @@ namespace gotchangpdf
 			output->resize(outlen);
 
 		return output;
+
+#else
+
+		throw NotSupportedException("This library was compiled without OpenSSL support");
+
+#endif
+
 	}
 
 	bool PKCS12Key::PKCS12KeyImpl::Equals(const Buffer& issuer, const Buffer& serial) const
 	{
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 		auto issuer_name = cert->cert_info->issuer;
 		ASN1_INTEGER* serial_asn = cert->cert_info->serialNumber;
 
@@ -154,10 +195,20 @@ namespace gotchangpdf
 		Buffer m_serial(serial_asn->data, serial_asn->length);
 
 		return m_issuer.Equals(issuer) && m_serial.Equals(serial);
+
+#else
+
+		throw NotSupportedException("This library was compiled without OpenSSL support");
+
+#endif
+
 	}
 
 	PKCS12Key::PKCS12KeyImpl::~PKCS12KeyImpl()
 	{
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 		if (nullptr != p12) {
 			PKCS12_free(p12);
 			p12 = nullptr;
@@ -182,5 +233,8 @@ namespace gotchangpdf
 			ENGINE_free(rsa);
 			rsa = nullptr;
 		}
+
+#endif
+
 	}
 }

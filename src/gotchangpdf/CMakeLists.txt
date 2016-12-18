@@ -21,8 +21,6 @@ include_directories(syntax/parsers/contents)
 include_directories(syntax/streams)
 include_directories(syntax/utils)
 
-add_definitions("-DPDF_EXPORTS")
-
 set(GOTCHANGPDF_PRECOMPILED_SOURCE
 	precompiled.cpp
 )
@@ -344,13 +342,16 @@ target_compile_features(gotchangpdf PRIVATE
 	cxx_strong_enums
 )
 
-find_package(OpenSSL REQUIRED)
+add_definitions("-DGOTCHANG_PDF_EXPORTS")
+
+find_package(OpenSSL)
 find_package(ZLIB)
 find_package(JPEG)
 
 if (OPENSSL_FOUND)
 	include_directories(${OPENSSL_INCLUDE_DIR})
 	set(GOTCHANGPDF_LIBS ${OPENSSL_LIBRARIES} ${GOTCHANGPDF_LIBS})
+	add_definitions("-DGOTCHANG_PDF_HAVE_OPENSSL")
 	
 	message(STATUS "OpenSSL ${OPENSSL_VERSION} was found in ${OPENSSL_ROOT_DIR}")
 endif (OPENSSL_FOUND)
@@ -358,6 +359,7 @@ endif (OPENSSL_FOUND)
 if (ZLIB_FOUND)
 	include_directories(${ZLIB_INCLUDE_DIRS})
 	set(GOTCHANGPDF_LIBS ${ZLIB_LIBRARIES} ${GOTCHANGPDF_LIBS})
+	add_definitions("-DGOTCHANG_PDF_HAVE_ZLIB")
 	
 	message(STATUS "Zlib ${ZLIB_VERSION_STRING} was found in ${ZLIB_LIBRARIES}")
 endif (ZLIB_FOUND)
@@ -365,6 +367,7 @@ endif (ZLIB_FOUND)
 if (JPEG_FOUND)
 	include_directories(${JPEG_INCLUDE_DIR})
 	set(GOTCHANGPDF_LIBS ${JPEG_LIBRARIES} ${GOTCHANGPDF_LIBS})
+	add_definitions("-DGOTCHANG_PDF_HAVE_JPEG")
 	
 	message(STATUS "JPEG library was found")
 endif (JPEG_FOUND)

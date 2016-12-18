@@ -9,7 +9,7 @@ SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 
 # TODO Support also static library configuration
 # Global compilation definitions
-add_definitions("-DPROJECT_CONFIGURATION_DLL")
+add_definitions("-DGOTCHANG_PDF_CONFIGURATION_DLL")
 
 # Local compilation definitions
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")

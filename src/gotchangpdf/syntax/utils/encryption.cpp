@@ -3,6 +3,8 @@
 
 #include "buffer.h"
 
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 #include <openssl/rc4.h>
 #include <openssl/aes.h>
 #include <openssl/x509.h>
@@ -18,6 +20,8 @@
 #undef min
 #undef X509_NAME
 //-----------------------------
+
+#endif
 
 namespace gotchangpdf
 {
@@ -42,6 +46,8 @@ namespace gotchangpdf
 
 	const size_t AES_CBC_IV_LENGTH = 16;
 	const size_t AES_CBC_BLOCK_SIZE = 16;
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 
 	BufferPtr EncryptionUtils::ComputeObjectKey(
 		const Buffer& key,
@@ -73,6 +79,8 @@ namespace gotchangpdf
 		return BufferPtr(object_key.begin(), object_key.begin() + key_length);
 	}
 
+#endif
+
 	BufferPtr EncryptionUtils::PadTruncatePassword(const Buffer& password)
 	{
 		BufferPtr result(sizeof(HARDCODED_PFD_PAD));
@@ -81,6 +89,8 @@ namespace gotchangpdf
 		std::copy_n(std::begin(HARDCODED_PFD_PAD), sizeof(HARDCODED_PFD_PAD) - password.size(), result.begin() + password.size());
 		return result;
 	}
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 
 	BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, int key_length, const Buffer& data)
 	{
@@ -93,6 +103,8 @@ namespace gotchangpdf
 		return result;
 	}
 
+#endif
+
 	BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, const Buffer& data)
 	{
 		return ComputeRC4(key, key.size(), data);
@@ -102,6 +114,8 @@ namespace gotchangpdf
 	{
 		return AESDecrypt(key, key.size(), data);
 	}
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 
 	BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, int key_length, const Buffer& data)
 	{
@@ -124,10 +138,14 @@ namespace gotchangpdf
 		return RemovePkcs7Padding(result, AES_CBC_BLOCK_SIZE);
 	}
 
+#endif
+
 	BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, const Buffer& data)
 	{
 		return AESEncrypt(key, key.size(), data);
 	}
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 
 	BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, int key_length, const Buffer& data)
 	{
@@ -150,6 +168,8 @@ namespace gotchangpdf
 		buffer->insert(buffer.begin(), iv.begin(), iv.end());
 		return buffer;
 	}
+
+#endif
 
 	BufferPtr EncryptionUtils::AddPkcs7Padding(const Buffer& data, size_t block_size)
 	{
@@ -208,6 +228,8 @@ namespace gotchangpdf
 		LOG_WARNING_GLOBAL << "Pkcs padding is incorrect";
 		return data;
 	}
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 
 	bool EncryptionUtils::CheckKey(
 		const Buffer& input,
@@ -285,6 +307,10 @@ namespace gotchangpdf
 		return false;
 	}
 
+#endif
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 	BufferPtr EncryptionUtils::GetRecipientKey
 		(const syntax::ArrayObject<syntax::StringObjectPtr>& enveloped_data,
 			const syntax::IntegerObject& length_bits,
@@ -327,6 +353,10 @@ namespace gotchangpdf
 		size_t decryption_key_length = std::min(length_bytes, decrypted_key.size());
 		return BufferPtr(decrypted_key.begin(), decrypted_key.begin() + decryption_key_length);
 	}
+
+#endif
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 
 	BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax::StringObjectPtr>& enveloped_data, const IEncryptionKey& key)
 	{
@@ -437,6 +467,10 @@ namespace gotchangpdf
 		throw GeneralException("Could not find matching certificate");
 	}
 
+#endif
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 	BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer& pad_password, const syntax::DictionaryObject& encryption_dictionary)
 	{
 		auto user_value = encryption_dictionary.FindAs<syntax::StringObjectPtr>(constant::Name::U);
@@ -486,4 +520,67 @@ namespace gotchangpdf
 
 		return encrypted_owner_data;
 	}
+
+#endif
+
+#if !defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
+	BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax::StringObjectPtr>&, const IEncryptionKey&)
+	{
+		throw NotSupportedException("This library was compiled without OpenSSL support");
+	}
+
+	BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer&, const syntax::DictionaryObject&)
+	{
+		throw NotSupportedException("This library was compiled without OpenSSL support");
+	}
+
+	BufferPtr EncryptionUtils::GetRecipientKey
+		(const syntax::ArrayObject<syntax::StringObjectPtr>&,
+			const syntax::IntegerObject&,
+			EncryptionAlgorithm,
+			const IEncryptionKey&)
+	{
+		throw NotSupportedException("This library was compiled without OpenSSL support");
+	}
+
+	bool EncryptionUtils::CheckKey(
+		const Buffer&,
+		const Buffer&,
+		const Buffer&,
+		const Buffer&,
+		const syntax::IntegerObject&,
+		const syntax::IntegerObject&,
+		const syntax::IntegerObject&,
+		Buffer&)
+	{
+		throw NotSupportedException("This library was compiled without OpenSSL support");
+	}
+
+	BufferPtr EncryptionUtils::AESEncrypt(const Buffer&, int, const Buffer&)
+	{
+		throw NotSupportedException("This library was compiled without OpenSSL support");
+	}
+
+	BufferPtr EncryptionUtils::AESDecrypt(const Buffer&, int, const Buffer&)
+	{
+		throw NotSupportedException("This library was compiled without OpenSSL support");
+	}
+
+	BufferPtr EncryptionUtils::ComputeRC4(const Buffer&, int, const Buffer&)
+	{
+		throw NotSupportedException("This library was compiled without OpenSSL support");
+	}
+
+	BufferPtr EncryptionUtils::ComputeObjectKey(
+		const Buffer&,
+		types::big_uint,
+		types::ushort,
+		EncryptionAlgorithm)
+	{
+		throw NotSupportedException("This library was compiled without OpenSSL support");
+	}
+
+#endif
+
 }

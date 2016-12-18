@@ -3,8 +3,8 @@
 
 #define CALLING_CONVENTION __cdecl
 
-#ifdef PROJECT_CONFIGURATION_DLL
-	#ifdef PDF_EXPORTS
+#if defined(GOTCHANG_PDF_CONFIGURATION_DLL) && defined(_MSC_VER)
+	#if defined(GOTCHANG_PDF_EXPORTS)
 		#define GOTCHANG_PDF_API __declspec(dllexport)
 	#else
 		#define GOTCHANG_PDF_API __declspec(dllimport)

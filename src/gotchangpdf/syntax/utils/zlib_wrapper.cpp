@@ -1,11 +1,17 @@
 #include "precompiled.h"
 #include "zlib_wrapper.h"
-#include "zlib.h"
+
+#if defined(GOTCHANG_PDF_HAVE_ZLIB)
+#include <zlib.h>
+#endif
 
 #include <cassert>
 
 namespace gotchangpdf
 {
+
+#if defined(GOTCHANG_PDF_HAVE_ZLIB)
+
 	static BufferPtr Inflate(std::istream& input, types::stream_size length, types::stream_size errors_after)
 	{
 		int rv = 0;
@@ -80,10 +86,21 @@ namespace gotchangpdf
 		return result;
 	}
 
+#else
+
+	static BufferPtr Inflate(std::istream&, types::stream_size, types::stream_size)
+	{
+		throw NotSupportedException("This library is compiled without zlib support");
+	}
+
+#endif
+
 	static BufferPtr Inflate(std::istream& input, types::stream_size length)
 	{
 		return Inflate(input, length, length);
 	}
+
+#if defined(GOTCHANG_PDF_HAVE_ZLIB)
 
 	static BufferPtr Deflate(std::istream& input, types::stream_size length)
 	{
@@ -130,6 +147,15 @@ namespace gotchangpdf
 
 		return result;
 	}
+
+#else
+
+	static BufferPtr Deflate(std::istream&, types::stream_size)
+	{
+		throw NotSupportedException("This library is compiled without zlib support");
+	}
+
+#endif
 
 	BufferPtr ZlibWrapper::Deflate(std::istream& input, types::stream_size length)
 	{

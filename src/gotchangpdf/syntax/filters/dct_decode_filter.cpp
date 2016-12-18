@@ -2,6 +2,8 @@
 #include "dct_decode_filter.h"
 
 #include <cstring>
+
+#if defined(GOTCHANG_PDF_HAVE_JPEG)
 #include <jpeglib.h>
 
 void JPegErrorExit(j_common_ptr ptr)
@@ -43,6 +45,8 @@ void term_source(j_decompress_ptr ptr)
 	ptr;
 }
 
+#endif
+
 namespace gotchangpdf
 {
 	namespace syntax
@@ -51,6 +55,8 @@ namespace gotchangpdf
 		{
 			throw NotSupportedException("DCTDecodeFilter encoding is not supported");
 		}
+
+#if defined(GOTCHANG_PDF_HAVE_JPEG)
 
 		BufferPtr DCTDecodeFilter::Decode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */) const
 		{
@@ -136,6 +142,15 @@ namespace gotchangpdf
 
 			return result;
 		}
+
+#else
+
+		BufferPtr DCTDecodeFilter::Decode(std::istream&, types::stream_size, DictionaryObjectPtr) const
+		{
+			throw NotSupportedException("This library was compiled without JPEG support");
+		}
+
+#endif
 
 		BufferPtr DCTDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const
 		{

@@ -328,7 +328,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\syntax;src\gotchangpdf\syntax\exceptions;src\gotchangpdf\syntax\files;src\gotchangpdf\syntax\objects;src\gotchangpdf\syntax\parsers;src\gotchangpdf\syntax\parsers\contents;src\gotchangpdf\syntax\streams;src\gotchangpdf\syntax\filters;src\gotchangpdf\syntax\utils;src\gotchangpdf\semantics;src\gotchangpdf\semantics\objects;src\gotchangpdf\semantics\documents;src\gotchangpdf\semantics\utils;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GOTCHANG_PDF_CONFIGURATION_DLL;GOTCHANG_PDF_EXPORTS;GOTCHANG_PDF_HAVE_ZLIB;GOTCHANG_PDF_HAVE_JPEG;GOTCHANG_PDF_HAVE_OPENSSL;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalOptions>/Zm512 %(AdditionalOptions)</AdditionalOptions>
@@ -351,7 +351,7 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.merge\$(C
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\syntax;src\gotchangpdf\syntax\exceptions;src\gotchangpdf\syntax\files;src\gotchangpdf\syntax\objects;src\gotchangpdf\syntax\parsers;src\gotchangpdf\syntax\parsers\contents;src\gotchangpdf\syntax\streams;src\gotchangpdf\syntax\filters;src\gotchangpdf\syntax\utils;src\gotchangpdf\semantics;src\gotchangpdf\semantics\objects;src\gotchangpdf\semantics\documents;src\gotchangpdf\semantics\utils;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GOTCHANG_PDF_CONFIGURATION_DLL;GOTCHANG_PDF_EXPORTS;GOTCHANG_PDF_HAVE_ZLIB;GOTCHANG_PDF_HAVE_JPEG;GOTCHANG_PDF_HAVE_OPENSSL;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalOptions>/Zm512 %(AdditionalOptions)</AdditionalOptions>
@@ -375,7 +375,7 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.merge\$(C
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;RELEASE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GOTCHANG_PDF_CONFIGURATION_DLL;GOTCHANG_PDF_EXPORTS;GOTCHANG_PDF_HAVE_ZLIB;GOTCHANG_PDF_HAVE_JPEG;GOTCHANG_PDF_HAVE_OPENSSL;RELEASE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\syntax;src\gotchangpdf\syntax\exceptions;src\gotchangpdf\syntax\files;src\gotchangpdf\syntax\objects;src\gotchangpdf\syntax\parsers;src\gotchangpdf\syntax\parsers\contents;src\gotchangpdf\syntax\streams;src\gotchangpdf\syntax\filters;src\gotchangpdf\syntax\utils;src\gotchangpdf\semantics;src\gotchangpdf\semantics\objects;src\gotchangpdf\semantics\documents;src\gotchangpdf\semantics\utils;include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
@@ -401,7 +401,7 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.merge\$(C
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>PROJECT_CONFIGURATION_DLL;PDF_EXPORTS;RELEASE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GOTCHANG_PDF_CONFIGURATION_DLL;GOTCHANG_PDF_EXPORTS;GOTCHANG_PDF_HAVE_ZLIB;GOTCHANG_PDF_HAVE_JPEG;GOTCHANG_PDF_HAVE_OPENSSL;RELEASE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src\gotchangpdf;src\gotchangpdf\syntax;src\gotchangpdf\syntax\exceptions;src\gotchangpdf\syntax\files;src\gotchangpdf\syntax\objects;src\gotchangpdf\syntax\parsers;src\gotchangpdf\syntax\parsers\contents;src\gotchangpdf\syntax\streams;src\gotchangpdf\syntax\filters;src\gotchangpdf\syntax\utils;src\gotchangpdf\semantics;src\gotchangpdf\semantics\objects;src\gotchangpdf\semantics\documents;src\gotchangpdf\semantics\utils;include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
