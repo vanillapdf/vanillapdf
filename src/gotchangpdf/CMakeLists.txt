@@ -47,6 +47,7 @@ set(GOTCHANGPDF_C_IMPLEMENTATION_SOURCES
 	implementation/c_font_map.cpp
 	implementation/c_indirect_object_reference.cpp
 	implementation/c_integer_object.cpp
+	implementation/c_logging.cpp
 	implementation/c_name_object.cpp
 	implementation/c_object.cpp
 	implementation/c_outline.cpp
@@ -259,6 +260,7 @@ set(INCLUDE_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_handles.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_indirect_object_reference.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_integer_object.h"
+	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_logging.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_name_object.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_object.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_outline.h"
