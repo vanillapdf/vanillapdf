@@ -57,8 +57,8 @@
 // Solution
 #include "deferred.h"
 #include "output_pointer.h"
-#include "objects.h"
 #include "object_utils.h"
+#include "objects.h"
 #include "exception.h"
 #include "constants.h"
 #include "log.h"
