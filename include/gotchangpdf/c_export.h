@@ -1,7 +1,13 @@
 #ifndef _C_EXPORT_H
 #define _C_EXPORT_H
 
-#define CALLING_CONVENTION __cdecl
+#if defined(_MSC_VER) && defined(_M_IX86)
+	#define CALLING_CONVENTION __cdecl
+#elif defined(__GNUC__) && defined(__i386)
+	#define CALLING_CONVENTION __attribute__ ((cdecl))
+#else
+	#define CALLING_CONVENTION
+#endif
 
 #if defined(GOTCHANG_PDF_CONFIGURATION_DLL) && defined(_MSC_VER)
 	#if defined(GOTCHANG_PDF_EXPORTS)
