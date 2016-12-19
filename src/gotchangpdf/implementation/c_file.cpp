@@ -73,7 +73,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle,
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
-	FileHandle handle, uinteger_type objNumber, ushort_type genNumber, PObjectHandle result)
+	FileHandle handle, biguint_type objNumber, ushort_type genNumber, PObjectHandle result)
 {
 	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);

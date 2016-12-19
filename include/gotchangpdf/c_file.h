@@ -17,7 +17,7 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SetEncryptionPassword(FileHandle handle, string_type password);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SetEncryptionKey(FileHandle handle, EncryptionKeyHandle key);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle, PXrefChainHandle result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(FileHandle handle, uinteger_type objNumber, ushort_type genNumber, PObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(FileHandle handle, biguint_type objNumber, ushort_type genNumber, PObjectHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Release(FileHandle handle);
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Create(PFileWriterHandle result);
