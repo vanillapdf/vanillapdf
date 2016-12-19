@@ -259,7 +259,11 @@ namespace gotchangpdf
 
 		bool File::IsEncrypted(void) const
 		{
-			return !_encryption_dictionary.empty() && _encryption_dictionary != NullObject::GetInstance();
+			if (!IsInitialized()) {
+				throw FileNotInitializedException(_filename);
+			}
+
+			return (!_encryption_dictionary.empty() && _encryption_dictionary != NullObject::GetInstance());
 		}
 
 		BufferPtr File::DecryptStream(const Buffer& data,
