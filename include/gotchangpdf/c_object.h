@@ -10,7 +10,13 @@ extern "C"
 {
 #endif
 
-	typedef enum {
+	/**
+	* \addtogroup Objects
+	* @{
+	*/
+
+	typedef enum
+	{
 		ObjectType_Null = 0,
 		ObjectType_Array,
 		ObjectType_Boolean,
@@ -26,6 +32,14 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Type(ObjectHandle handle, PObjectType result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_TypeName(ObjectType type, out_string_type result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle handle, out_offset_type result);
+
+	/**
+	* \brief Decrement the internal reference counter.
+	*
+	* All objects available via API implements some sort of IUnknown
+	* interface. When the internal counter reaches zero the object
+	* is deleted.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Release(ObjectHandle handle);
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToArray(ObjectHandle handle, PArrayHandle result);
@@ -38,6 +52,8 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToNull(ObjectHandle handle, PNullHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToName(ObjectHandle handle, PNameHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle handle, PStringHandle result);
+
+	/** @} */
 
 #ifdef __cplusplus
 };

@@ -52,4 +52,18 @@
 #include "c_buffer.h"
 #include "c_logging.h"
 
+/**
+* \defgroup GotchangPDF Gotchang PDF public API
+* \brief Yeah
+*
+* @{
+*/
+
+/** @} */
+
+/**
+* \mainpage
+* That's it
+*/
+
 #endif /* _GOTCHANGPDF_H */

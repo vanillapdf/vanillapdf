@@ -10,7 +10,8 @@ extern "C"
 {
 #endif
 
-	typedef enum {
+	typedef enum
+	{
 		CharacterMapType_Embedded = 0,
 		CharacterMapType_Unicode
 	} CharacterMapType, *PCharacterMapType;

@@ -10,11 +10,20 @@ extern "C"
 {
 #endif
 
+	/**
+	* \addtogroup DictionaryObject
+	* @{
+	*/
+
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetKey(DictionaryIteratorHandle handle, PNameHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetValue(DictionaryIteratorHandle handle, PObjectHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(DictionaryIteratorHandle handle, DictionaryHandle parent, out_boolean_type result);
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Next(DictionaryIteratorHandle handle);
+
+	/**
+	* \see Object_Release()
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Release(DictionaryIteratorHandle handle);
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryHandle handle, NameHandle str, PObjectHandle result);
@@ -22,7 +31,13 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(DictionaryHandle handle, PDictionaryIteratorHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryHandle handle, NameHandle str);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryHandle handle, NameHandle str, ObjectHandle value);
+
+	/**
+	* \see Object_Release()
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Release(DictionaryHandle handle);
+
+	/** @} */
 
 #ifdef __cplusplus
 };

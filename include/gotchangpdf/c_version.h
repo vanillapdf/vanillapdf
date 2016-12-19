@@ -10,7 +10,8 @@ extern "C"
 {
 #endif
 
-	typedef enum PDFVersionTag {
+	typedef enum
+	{
 		PDFVersion_10 = 0,
 		PDFVersion_11 = 1,
 		PDFVersion_12 = 2,

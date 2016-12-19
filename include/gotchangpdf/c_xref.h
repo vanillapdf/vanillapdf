@@ -10,8 +10,9 @@ extern "C"
 {
 #endif
 
-	typedef enum {
-		XrefEntryNull,
+	typedef enum
+	{
+		XrefEntryNull = 0,
 		XrefEntryFree,
 		XrefEntryUsed,
 		XrefEntryCompressed

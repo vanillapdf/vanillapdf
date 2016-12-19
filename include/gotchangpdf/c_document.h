@@ -10,6 +10,14 @@ extern "C"
 {
 #endif
 
+	/**
+	* \defgroup Document Document
+	* \ingroup GotchangPDF
+	* \brief TODO
+	*
+	* @{
+	*/
+
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenNew(string_type filename, PDocumentHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHandle holder, PDocumentHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_Save(DocumentHandle handle, string_type filename);
@@ -20,6 +28,8 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_AppendContent(DocumentHandle handle, DocumentHandle source);
 
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_Release(DocumentHandle handle);
+
+	/** @} */
 
 #ifdef __cplusplus
 };
