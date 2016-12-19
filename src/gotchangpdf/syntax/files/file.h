@@ -29,7 +29,7 @@ namespace gotchangpdf
 			void FixObjectReferences(const std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPtr, bool>& visited, ObjectPtr copied);
 
 			void Initialize(void);
-			bool IsInitialized(void) const { return _initialized; }
+			bool IsInitialized(void) const noexcept { return _initialized; }
 
 			ObjectPtr GetIndirectObject(
 				types::big_uint objNumber,
