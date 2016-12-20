@@ -10,11 +10,6 @@ extern "C"
 {
 #endif
 
-	/**
-	* \addtogroup StreamObject
-	* @{
-	*/
-
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetHeader(StreamHandle handle, PDictionaryHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_SetHeader(StreamHandle handle, DictionaryHandle value);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBodyRaw(StreamHandle handle, PBufferHandle result);
@@ -22,11 +17,10 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_SetBody(StreamHandle handle, BufferHandle value);
 
 	/**
+	* \memberof StreamObject
 	* \see Object_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_Release(StreamHandle handle);
-
-	/** @} */
 
 #ifdef __cplusplus
 };

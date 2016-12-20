@@ -10,11 +10,6 @@ extern "C"
 {
 #endif
 
-	/**
-	* \addtogroup StringObject
-	* @{
-	*/
-
 	typedef enum
 	{
 		StringType_Literal = 0,
@@ -28,6 +23,7 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_SetValue(StringHandle handle, BufferHandle value);
 
 	/**
+	* \memberof StringObject
 	* \see Object_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_Release(StringHandle handle);
@@ -36,6 +32,7 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_SetValue(LiteralStringHandle handle, BufferHandle value);
 
 	/**
+	* \memberof LiteralStringObject
 	* \see Object_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_Release(LiteralStringHandle handle);
@@ -44,11 +41,10 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_SetValue(HexadecimalStringHandle handle, BufferHandle value);
 
 	/**
+	* \memberof HexadecimalStringObject
 	* \see Object_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Release(HexadecimalStringHandle handle);
-
-	/** @} */
 
 #ifdef __cplusplus
 };

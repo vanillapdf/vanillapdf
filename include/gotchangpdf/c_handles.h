@@ -9,7 +9,7 @@
 typedef struct x##HandleTag *x##Handle; \
 /** \brief Pointer to x##Handle.
 */ \
-typedef struct x##Handle *P##x##Handle
+typedef x##Handle *P##x##Handle
 
 #ifdef __cplusplus
 extern "C"
@@ -28,176 +28,102 @@ extern "C"
 	* \defgroup Objects Objects
 	* \ingroup Files
 	* \brief Classes used as syntactic parsing tokens.
-	*
 	* @{
 	*/
 
 	/**
-	* \brief Opaque pointer for accessing derived types
+	* \class Object
+	* \brief Base class for syntactic tokens
 	*/
 	DECLARE_OBJECT_HANDLE(Object);
 
-	/** @} */
-
 	/**
-	* \defgroup ArrayObject Array object
-	* \ingroup Objects
+	* \class ArrayObject
+	* \extends Object
 	* \brief Represents array of mixed type elements.
-	*
-	* @{
-	*/
-
-	/**
-	* \brief Opaque pointer for accessing internal object.
 	*/
 	DECLARE_OBJECT_HANDLE(Array);
 
-	/** @} */
-
 	/**
-	* \defgroup BooleanObject Boolean object
-	* \ingroup Objects
+	* \class BooleanObject
+	* \extends Object
 	* \brief Represents boolean type
-	*
-	* @{
-	*/
-
-	/**
-	* \brief Opaque pointer for accessing internal object.
 	*/
 	DECLARE_OBJECT_HANDLE(Boolean);
 
-	/** @} */
-
 	/**
-	* \defgroup NameObject Name object
-	* \ingroup Objects
+	* \class NameObject
+	* \extends Object
 	* \brief Represents unique name references in document.
-	*
-	* @{
-	*/
-
-	/**
-	* \brief Opaque pointer for accessing internal object.
 	*/
 	DECLARE_OBJECT_HANDLE(Name);
 
-	/** @} */
-
 	/**
-	* \defgroup NullObject Null object
-	* \ingroup Objects
-	* \brief Used as missing value
-	*
-	* @{
-	*/
-
-	/**
-	* \brief Opaque pointer for accessing internal object.
+	* \class NullObject
+	* \extends Object
+	* \brief Used as missing value.
 	*/
 	DECLARE_OBJECT_HANDLE(Null);
 
-	/** @} */
-
 	/**
-	* \defgroup RealObject Real object
-	* \ingroup Objects
-	* \brief Represents floating point numbers
-	*
-	* @{
-	*/
-
-	/**
-	* \brief Opaque pointer for accessing internal object.
+	* \class RealObject
+	* \extends Object
+	* \brief Represents floating point numbers.
 	*/
 	DECLARE_OBJECT_HANDLE(Real);
 
-	/** @} */
-
 	/**
-	* \defgroup IntegerObject Integer object
-	* \ingroup Objects
+	* \class IntegerObject
+	* \extends Object
 	* \brief Represents integer values
-	*
-	* @{
-	*/
-
-	/**
-	* \brief Opaque pointer for accessing internal object.
 	*/
 	DECLARE_OBJECT_HANDLE(Integer);
 
-	/** @} */
-
 	/**
-	* \defgroup StreamObject Stream object
-	* \ingroup Objects
-	* \brief Represents compressed data inside document
-	*
-	* @{
-	*/
-
-	/**
-	* \brief Opaque pointer for accessing internal object.
+	* \class StreamObject
+	* \extends Object
+	* \brief Represents compressed data inside document.
 	*/
 	DECLARE_OBJECT_HANDLE(Stream);
 
-	/** @} */
-
 	/**
-	* \defgroup StringObject String object
-	* \ingroup Objects
-	* \brief Reprsents human readable text
-	*
-	* @{
-	*/
-
-	/**
-	* \brief Opaque pointer for accessing internal object.
+	* \class StringObject
+	* \extends Object
+	* \brief Reprsents human readable text.
 	*/
 	DECLARE_OBJECT_HANDLE(String);
 
 	/**
+	* \class HexadecimalStringObject
+	* \extends StringObject
 	* \brief Text stored in hexadecimal notation.
 	*/
 	DECLARE_OBJECT_HANDLE(HexadecimalString);
 
 	/**
+	* \class LiteralStringObject
+	* \extends StringObject
 	* \brief Text stored in raw format.
 	*/
 	DECLARE_OBJECT_HANDLE(LiteralString);
 
-	/** @} */
-
 	/**
-	* \defgroup IndirectReferenceObject Indirect reference object
-	* \ingroup Objects
+	* \class IndirectReferenceObject
+	* \extends Object
 	* \brief Represents reference to other object
-	*
-	* @{
-	*/
-
-	/**
-	* \brief Opaque pointer for accessing internal object.
 	*/
 	DECLARE_OBJECT_HANDLE(IndirectReference);
 
-	/** @} */
-
 	/**
-	* \defgroup DictionaryObject Dictionary object
-	* \ingroup Objects
-	* \brief Represents key-value map
-	*
-	* @{
-	*/
-
-	/**
-	* \brief Opaque pointer for accessing internal object.
+	* \class DictionaryObject
+	* \extends Object
+	* \brief Represents key-value map.
 	*/
 	DECLARE_OBJECT_HANDLE(Dictionary);
 
 	/**
+	* \class DictionaryObjectIterator
+	* \memberof DictionaryObject
 	* \brief Used for accessing Dictionary elements
 	* through iterator interface.
 	*/

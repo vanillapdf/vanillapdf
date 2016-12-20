@@ -10,11 +10,6 @@ extern "C"
 {
 #endif
 
-	/**
-	* \addtogroup ArrayObject
-	* @{
-	*/
-
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayHandle handle, out_integer_type result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayHandle handle, integer_type at, PObjectHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Append(ArrayHandle handle, ObjectHandle value);
@@ -22,11 +17,10 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayHandle handle, integer_type at);
 
 	/**
+	* \memberof ArrayObject
 	* \see Object_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Release(ArrayHandle handle);
-
-	/** @} */
 
 #ifdef __cplusplus
 };

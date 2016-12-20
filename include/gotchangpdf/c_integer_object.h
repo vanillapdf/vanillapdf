@@ -10,20 +10,14 @@ extern "C"
 {
 #endif
 
-	/**
-	* \addtogroup IntegerObject
-	* @{
-	*/
-
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetValue(IntegerHandle handle, out_bigint_type result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_SetValue(IntegerHandle handle, bigint_type value);
 
 	/**
+	* \memberof IntegerObject
 	* \see Object_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_Release(IntegerHandle handle);
-
-	/** @} */
 
 #ifdef __cplusplus
 };

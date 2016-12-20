@@ -43,8 +43,7 @@ extern "C"
 	* \brief
 	* Determine if file is encrypted.
 	*
-	* File must be initialized before trying to call this function,
-	* otherwise GOTCHANG_PDF_ERROR_FILE_NOT_INITIALIZED will be returned.
+	* If the file was not initialized returns false.
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_IsEncrypted(FileHandle handle, out_boolean_type result);
 

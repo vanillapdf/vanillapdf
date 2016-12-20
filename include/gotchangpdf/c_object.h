@@ -10,11 +10,6 @@ extern "C"
 {
 #endif
 
-	/**
-	* \addtogroup Objects
-	* @{
-	*/
-
 	typedef enum
 	{
 		ObjectType_Null = 0,
@@ -34,6 +29,7 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle handle, out_offset_type result);
 
 	/**
+	* \memberof Object
 	* \brief Decrement the internal reference counter.
 	*
 	* All objects available via API implements some sort of IUnknown
@@ -52,8 +48,6 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToNull(ObjectHandle handle, PNullHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToName(ObjectHandle handle, PNameHandle result);
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle handle, PStringHandle result);
-
-	/** @} */
 
 #ifdef __cplusplus
 };

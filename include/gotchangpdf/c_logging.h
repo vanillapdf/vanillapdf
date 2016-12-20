@@ -10,19 +10,82 @@ extern "C"
 {
 #endif
 
+	/**
+	* \file c_logging.h
+	* All functions that control library logging configuration
+	*/
+
+	/**
+	* \class Logging
+	* \brief Library logging facility
+	*/
+
+	/**
+	* \brief Available severity settings
+	*/
 	typedef enum
 	{
+		/**
+		* \brief Most verbose setting includes all available informations
+		*/
 		LoggingSeverity_Debug = 0,
-		LoggingSeverity_Info,
-		LoggingSeverity_Warning,
-		LoggingSeverity_Error,
-		LoggingSeverity_Fatal
-	} LoggingSeverity, *PLoggingSeverity;
 
+		/**
+		* \brief Include detailed, but much less verbose output
+		*/
+		LoggingSeverity_Info,
+
+		/**
+		* \brief Include only potentially dangerous informations
+		*/
+		LoggingSeverity_Warning,
+
+		/**
+		* \brief Include only program and input errors
+		*/
+		LoggingSeverity_Error,
+
+		/**
+		* \brief Include only fatal problems, that disallow program to
+		* continue operating and will be shut down
+		*/
+		LoggingSeverity_Fatal
+	} LoggingSeverity;
+
+	/**
+	* \brief Pointer to LoggingSeverity
+	*/
+	typedef LoggingSeverity *PLoggingSeverity;
+
+
+	/**
+	* \memberof Logging
+	* \brief Determine if logging is enabled in current library instance
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_GetEnabled(out_boolean_type result);
+
+	/**
+	* \memberof Logging
+	* \brief Enable logging for current library instance
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_SetEnabled(void);
+
+	/**
+	* \memberof Logging
+	* \brief Disable logging for current library instance
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_SetDisabled(void);
+
+	/**
+	* \memberof Logging
+	* \brief Get actual logging severity
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_GetSeverity(PLoggingSeverity level);
+
+	/**
+	* \memberof Logging
+	* \brief Set new logging severity
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_SetSeverity(LoggingSeverity level);
 
 #ifdef __cplusplus
