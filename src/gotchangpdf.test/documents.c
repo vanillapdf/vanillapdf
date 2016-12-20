@@ -644,7 +644,6 @@ error_type process_catalog(CatalogHandle catalog, int nested)
 	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_Release(pages));
-	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_Release(catalog));
 
 	print_spaces(nested);
 	printf("Document catalog end\n");
