@@ -44,7 +44,7 @@ error_type process_content_object(ContentObjectHandle obj, int nested)
 
 error_type process_content_object_inline_image(ContentObjectInlineImageHandle obj, int nested)
 {
-	DictionaryHandle dictionary = NULL;
+	DictionaryObjectHandle dictionary = NULL;
 	BufferHandle data = NULL;
 
 	print_spaces(nested);
@@ -175,7 +175,7 @@ error_type process_content_operation_endtext(ContentOperationEndTextHandle obj, 
 
 error_type process_content_operation_textshowarray(ContentOperationTextShowArrayHandle obj, int nested)
 {
-	ArrayHandle items_handle = NULL;
+	ArrayObjectHandle items_handle = NULL;
 
 	print_spaces(nested);
 	printf("Text show array operation begin\n");
@@ -192,8 +192,8 @@ error_type process_content_operation_textshowarray(ContentOperationTextShowArray
 
 error_type process_content_operation_textfont(ContentOperationTextFontHandle obj, int nested)
 {
-	NameHandle font_name = NULL;
-	IntegerHandle font_scale = NULL;
+	NameObjectHandle font_name = NULL;
+	IntegerObjectHandle font_scale = NULL;
 
 	print_spaces(nested);
 	printf("Text font operation begin\n");
@@ -213,7 +213,7 @@ error_type process_content_operation_textfont(ContentOperationTextFontHandle obj
 
 error_type process_content_operation_textshow(ContentOperationTextShowHandle obj, int nested)
 {
-	StringHandle str = NULL;
+	StringObjectHandle str = NULL;
 
 	print_spaces(nested);
 	printf("Text show operation begin\n");
@@ -341,10 +341,10 @@ error_type process_rectangle(RectangleHandle obj, int nested)
 {
 	ContentsHandle contents = NULL;
 	RectangleHandle media_box = NULL;
-	IntegerHandle lower_left_x = NULL;
-	IntegerHandle lower_left_y = NULL;
-	IntegerHandle upper_right_x = NULL;
-	IntegerHandle upper_right_y = NULL;
+	IntegerObjectHandle lower_left_x = NULL;
+	IntegerObjectHandle lower_left_y = NULL;
+	IntegerObjectHandle upper_right_x = NULL;
+	IntegerObjectHandle upper_right_y = NULL;
 
 	print_spaces(nested);
 	printf("Rectangle begin\n");
@@ -512,7 +512,7 @@ error_type process_extensions(DeveloperExtensionsHandle extensions, int nested)
 	while (GOTCHANG_PDF_TEST_ERROR_SUCCESS == DeveloperExtensionsIterator_IsValid(iterator, extensions, &boolean)
 		&& GOTCHANG_PDF_TRUE == boolean)
 	{
-		NameHandle key = NULL;
+		NameObjectHandle key = NULL;
 		DeveloperExtensionHandle value = NULL;
 
 		print_spaces(nested);
@@ -542,7 +542,7 @@ error_type process_extensions(DeveloperExtensionsHandle extensions, int nested)
 
 error_type process_extension(DeveloperExtensionHandle extension, int nested)
 {
-	IntegerHandle level = NULL;
+	IntegerObjectHandle level = NULL;
 	PDFVersion base_version;
 
 	print_spaces(nested);
@@ -661,12 +661,12 @@ error_type process_trapped(DocumentTrapped trapped, int nested)
 
 error_type process_document_info(DocumentInfoHandle obj, int nested)
 {
-	StringHandle title = NULL;
-	StringHandle author = NULL;
-	StringHandle subject = NULL;
-	StringHandle keywords = NULL;
-	StringHandle creator = NULL;
-	StringHandle producer = NULL;
+	StringObjectHandle title = NULL;
+	StringObjectHandle author = NULL;
+	StringObjectHandle subject = NULL;
+	StringObjectHandle keywords = NULL;
+	StringObjectHandle creator = NULL;
+	StringObjectHandle producer = NULL;
 	DateHandle creation_date = NULL;
 	DateHandle modification_date = NULL;
 	DocumentTrapped trapped;
@@ -763,7 +763,7 @@ error_type process_outline(OutlineHandle outline, int nested)
 {
 	OutlineItemHandle first = NULL;
 	OutlineItemHandle last = NULL;
-	IntegerHandle count = NULL;
+	IntegerObjectHandle count = NULL;
 
 	print_spaces(nested);
 	printf("Document outline begin\n");
@@ -793,8 +793,8 @@ error_type process_outline_item(OutlineItemHandle outline, int nested)
 	OutlineItemHandle last = NULL;
 	OutlineItemHandle next = NULL;
 	OutlineItemHandle prev = NULL;
-	IntegerHandle count = NULL;
-	StringHandle title = NULL;
+	IntegerObjectHandle count = NULL;
+	StringObjectHandle title = NULL;
 	OutlineItemColorHandle color = NULL;
 	OutlineItemFlagsHandle flags = NULL;
 
@@ -863,9 +863,9 @@ error_type process_outline_base(OutlineBaseHandle outline, int nested)
 
 error_type process_outline_item_color(OutlineItemColorHandle obj, int nested)
 {
-	IntegerHandle red = NULL;
-	IntegerHandle green = NULL;
-	IntegerHandle blue = NULL;
+	IntegerObjectHandle red = NULL;
+	IntegerObjectHandle green = NULL;
+	IntegerObjectHandle blue = NULL;
 
 	print_spaces(nested);
 	printf("Outline item color begin\n");
@@ -939,8 +939,8 @@ error_type process_page_labels(PageLabelsHandle labels, integer_type size, int n
 
 error_type process_page_label(PageLabelHandle label, int nested)
 {
-	StringHandle p = NULL;
-	IntegerHandle st = NULL;
+	StringObjectHandle p = NULL;
+	IntegerObjectHandle st = NULL;
 	NumberingStyle s;
 
 	print_spaces(nested);
@@ -978,9 +978,9 @@ error_type process_viewer_preferences(ViewerPreferencesHandle preferences, int n
 	PrintScaling print_scaling;
 	NonFullScreenPageMode page_mode;
 	ReadingOrder reading_order;
-	BooleanHandle boolean = NULL;
-	NameHandle name = NULL;
-	IntegerHandle integer = NULL;
+	BooleanObjectHandle boolean = NULL;
+	NameObjectHandle name = NULL;
+	IntegerObjectHandle integer = NULL;
 	PageRangeHandle page_range = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetHideToolbar(preferences, &boolean), process_boolean(boolean, nested + 1), BooleanObject_Release(boolean));
@@ -1017,8 +1017,8 @@ error_type process_page_range(PageRangeHandle range, int nested)
 	for (i = 1; i <= size; ++i)
 	{
 		PageSubRangeHandle sub_range = NULL;
-		IntegerHandle first_page = NULL;
-		IntegerHandle last_page = NULL;
+		IntegerObjectHandle first_page = NULL;
+		IntegerObjectHandle last_page = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(PageRange_GetSubrange(range, i, &sub_range));
 		RETURN_ERROR_IF_NOT_SUCCESS(PageSubRange_GetFirstPage(sub_range, &first_page));
 		RETURN_ERROR_IF_NOT_SUCCESS(PageSubRange_GetLastPage(sub_range, &last_page));

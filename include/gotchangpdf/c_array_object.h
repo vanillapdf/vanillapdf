@@ -10,17 +10,17 @@ extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayHandle handle, out_integer_type result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayHandle handle, integer_type at, PObjectHandle result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Append(ArrayHandle handle, ObjectHandle value);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Insert(ArrayHandle handle, integer_type at, ObjectHandle value);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayHandle handle, integer_type at);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle handle, out_integer_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle handle, integer_type at, PObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Append(ArrayObjectHandle handle, ObjectHandle value);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Insert(ArrayObjectHandle handle, integer_type at, ObjectHandle value);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayObjectHandle handle, integer_type at);
 
 	/**
-	* \memberof ArrayObject
+	* \memberof ArrayObjectHandle
 	* \see Object_Release()
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Release(ArrayHandle handle);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Release(ArrayObjectHandle handle);
 
 #ifdef __cplusplus
 };

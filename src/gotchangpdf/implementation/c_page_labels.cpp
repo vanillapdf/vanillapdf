@@ -45,7 +45,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_Release(PageLabelsHand
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_P(PageLabelHandle handle, PStringHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_P(PageLabelHandle handle, PStringObjectHandle result)
 {
 	PageLabel* obj = reinterpret_cast<PageLabel*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -56,12 +56,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_P(PageLabelHandle handl
 		auto contains = obj->P(p);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = p.AddRefGet();
-		*result = reinterpret_cast<StringHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_St(PageLabelHandle handle, PIntegerHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_St(PageLabelHandle handle, PIntegerObjectHandle result)
 {
 	PageLabel* obj = reinterpret_cast<PageLabel*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -72,7 +72,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_St(PageLabelHandle hand
 		auto contains = obj->St(st);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = st.AddRefGet();
-		*result = reinterpret_cast<IntegerHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }

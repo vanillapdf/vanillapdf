@@ -75,7 +75,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Outline_GetLast(OutlineHandle han
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Outline_GetCount(OutlineHandle handle, PIntegerHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Outline_GetCount(OutlineHandle handle, PIntegerObjectHandle result)
 {
 	Outline* obj = reinterpret_cast<Outline*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -87,7 +87,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Outline_GetCount(OutlineHandle ha
 		auto contains = obj->Count(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<IntegerHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -97,7 +97,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Outline_Release(OutlineHandle han
 	return ObjectRelease<Outline, OutlineHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetTitle(OutlineItemHandle handle, PStringHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetTitle(OutlineItemHandle handle, PStringObjectHandle result)
 {
 	OutlineItem* obj = reinterpret_cast<OutlineItem*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -107,7 +107,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetTitle(OutlineItemH
 	{
 		auto value = obj->Title();
 		auto ptr = value.AddRefGet();
-		*result = reinterpret_cast<StringHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -195,7 +195,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetLast(OutlineItemHa
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetCount(OutlineItemHandle handle, PIntegerHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetCount(OutlineItemHandle handle, PIntegerObjectHandle result)
 {
 	OutlineItem* obj = reinterpret_cast<OutlineItem*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -207,7 +207,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetCount(OutlineItemH
 		auto contains = obj->Count(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<IntegerHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -251,7 +251,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_Release(OutlineItemHa
 	return ObjectRelease<OutlineItem, OutlineItemHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemColor_GetRed(OutlineItemColorHandle handle, PIntegerHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemColor_GetRed(OutlineItemColorHandle handle, PIntegerObjectHandle result)
 {
 	OutlineItemColor* obj = reinterpret_cast<OutlineItemColor*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -261,12 +261,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemColor_GetRed(OutlineIt
 	{
 		auto value = obj->Red();
 		auto ptr = value.AddRefGet();
-		*result = reinterpret_cast<IntegerHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemColor_GetGreen(OutlineItemColorHandle handle, PIntegerHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemColor_GetGreen(OutlineItemColorHandle handle, PIntegerObjectHandle result)
 {
 	OutlineItemColor* obj = reinterpret_cast<OutlineItemColor*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -276,12 +276,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemColor_GetGreen(Outline
 	{
 		auto value = obj->Green();
 		auto ptr = value.AddRefGet();
-		*result = reinterpret_cast<IntegerHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemColor_GetBlue(OutlineItemColorHandle handle, PIntegerHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemColor_GetBlue(OutlineItemColorHandle handle, PIntegerObjectHandle result)
 {
 	OutlineItemColor* obj = reinterpret_cast<OutlineItemColor*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -291,7 +291,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemColor_GetBlue(OutlineI
 	{
 		auto value = obj->Blue();
 		auto ptr = value.AddRefGet();
-		*result = reinterpret_cast<IntegerHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }

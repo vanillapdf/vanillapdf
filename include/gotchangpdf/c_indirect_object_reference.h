@@ -10,15 +10,15 @@ extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObjectNumber(IndirectReferenceHandle handle, out_biguint_type result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedGenerationNumber(IndirectReferenceHandle handle, out_ushort_type result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObject(IndirectReferenceHandle handle, PObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObjectNumber(IndirectObjectReferenceHandle handle, out_biguint_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedGenerationNumber(IndirectObjectReferenceHandle handle, out_ushort_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObject(IndirectObjectReferenceHandle handle, PObjectHandle result);
 
 	/**
-	* \memberof IndirectReferenceObject
+	* \memberof IndirectObjectReferenceHandle
 	* \see Object_Release()
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_Release(IndirectReferenceHandle handle);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_Release(IndirectObjectReferenceHandle handle);
 
 #ifdef __cplusplus
 };

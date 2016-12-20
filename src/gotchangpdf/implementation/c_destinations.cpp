@@ -28,7 +28,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Destination_Release(DestinationHa
 	return ObjectRelease<DestinationBase, DestinationHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDestinationsHandle handle, NameHandle name_handle, out_boolean_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDestinationsHandle handle, NameObjectHandle name_handle, out_boolean_type result)
 {
 	NamedDestinations* obj = reinterpret_cast<NamedDestinations*>(handle);
 	NameObject* name = reinterpret_cast<NameObject*>(name_handle);
@@ -44,7 +44,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedD
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Find(NamedDestinationsHandle handle, NameHandle name_handle, PDestinationHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Find(NamedDestinationsHandle handle, NameObjectHandle name_handle, PDestinationHandle result)
 {
 	NamedDestinations* obj = reinterpret_cast<NamedDestinations*>(handle);
 	NameObject* name = reinterpret_cast<NameObject*>(name_handle);

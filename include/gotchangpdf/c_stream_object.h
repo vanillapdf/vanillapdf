@@ -10,17 +10,17 @@ extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetHeader(StreamHandle handle, PDictionaryHandle result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_SetHeader(StreamHandle handle, DictionaryHandle value);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBodyRaw(StreamHandle handle, PBufferHandle result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBody(StreamHandle handle, PBufferHandle result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_SetBody(StreamHandle handle, BufferHandle value);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetHeader(StreamObjectHandle handle, PDictionaryObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_SetHeader(StreamObjectHandle handle, DictionaryObjectHandle value);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBodyRaw(StreamObjectHandle handle, PBufferHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBody(StreamObjectHandle handle, PBufferHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_SetBody(StreamObjectHandle handle, BufferHandle value);
 
 	/**
 	* \memberof StreamObject
 	* \see Object_Release()
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_Release(StreamHandle handle);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_Release(StreamObjectHandle handle);
 
 #ifdef __cplusplus
 };

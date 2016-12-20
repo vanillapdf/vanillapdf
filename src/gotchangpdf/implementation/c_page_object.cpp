@@ -46,7 +46,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_CreateFromDocument(Doc
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_CreateFromObject(DictionaryHandle handle, PPageObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_CreateFromObject(DictionaryObjectHandle handle, PPageObjectHandle result)
 {
 	syntax::DictionaryObject* obj = reinterpret_cast<syntax::DictionaryObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

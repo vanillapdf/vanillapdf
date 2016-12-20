@@ -80,15 +80,15 @@ namespace gotchangpdf
 	}
 }
 
-const NameHandle NameConstant_AdbePkcs7s3 = reinterpret_cast<NameHandle>(gotchangpdf::constant::Name::AdbePkcs7s3.get());
-const NameHandle NameConstant_AdbePkcs7s4 = reinterpret_cast<NameHandle>(gotchangpdf::constant::Name::AdbePkcs7s4.get());
-const NameHandle NameConstant_AdbePkcs7s5 = reinterpret_cast<NameHandle>(gotchangpdf::constant::Name::AdbePkcs7s5.get());
+const NameObjectHandle NameConstant_AdbePkcs7s3 = reinterpret_cast<NameObjectHandle>(gotchangpdf::constant::Name::AdbePkcs7s3.get());
+const NameObjectHandle NameConstant_AdbePkcs7s4 = reinterpret_cast<NameObjectHandle>(gotchangpdf::constant::Name::AdbePkcs7s4.get());
+const NameObjectHandle NameConstant_AdbePkcs7s5 = reinterpret_cast<NameObjectHandle>(gotchangpdf::constant::Name::AdbePkcs7s5.get());
 
 #define DECLARE_CONST_NAME(name) \
 	namespace gotchangpdf { namespace constant { namespace Name { \
 	const syntax::NameObjectPtr name(BufferPtr(#name, sizeof(#name) - 1)); \
 	} /* Name */ } /* constant */ } /* gotchangpdf */ \
-	const NameHandle NameConstant_##name = reinterpret_cast<NameHandle>(gotchangpdf::constant::Name::name.get());
+	const NameObjectHandle NameConstant_##name = reinterpret_cast<NameObjectHandle>(gotchangpdf::constant::Name::name.get());
 
 DECLARE_CONST_NAME(AA);
 DECLARE_CONST_NAME(ASCII85Decode);

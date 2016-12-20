@@ -68,52 +68,52 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Release(ObjectHandle handl
 	return ObjectRelease<Object, ObjectHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToArray(ObjectHandle handle, PArrayHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToArray(ObjectHandle handle, PArrayObjectHandle result)
 {
-	return SafeObjectConvert<Object, MixedArrayObject, ObjectHandle, ArrayHandle>(handle, result);
+	return SafeObjectConvert<Object, MixedArrayObject, ObjectHandle, ArrayObjectHandle>(handle, result);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToDictionary(ObjectHandle handle, PDictionaryHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToDictionary(ObjectHandle handle, PDictionaryObjectHandle result)
 {
-	return SafeObjectConvert<Object, DictionaryObject, ObjectHandle, DictionaryHandle>(handle, result);
+	return SafeObjectConvert<Object, DictionaryObject, ObjectHandle, DictionaryObjectHandle>(handle, result);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToStream(ObjectHandle handle, PStreamHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToStream(ObjectHandle handle, PStreamObjectHandle result)
 {
-	return SafeObjectConvert<Object, StreamObject, ObjectHandle, StreamHandle>(handle, result);
+	return SafeObjectConvert<Object, StreamObject, ObjectHandle, StreamObjectHandle>(handle, result);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToIndirectReference(ObjectHandle handle, PIndirectReferenceHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToIndirectReference(ObjectHandle handle, PIndirectObjectReferenceHandle result)
 {
-	return SafeObjectConvert<Object, IndirectObjectReference, ObjectHandle, IndirectReferenceHandle>(handle, result);
+	return SafeObjectConvert<Object, IndirectObjectReference, ObjectHandle, IndirectObjectReferenceHandle>(handle, result);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToInteger(ObjectHandle handle, PIntegerHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToInteger(ObjectHandle handle, PIntegerObjectHandle result)
 {
-	return SafeObjectConvert<Object, IntegerObject, ObjectHandle, IntegerHandle>(handle, result);
+	return SafeObjectConvert<Object, IntegerObject, ObjectHandle, IntegerObjectHandle>(handle, result);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToName(ObjectHandle handle, PNameHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToName(ObjectHandle handle, PNameObjectHandle result)
 {
-	return SafeObjectConvert<Object, NameObject, ObjectHandle, NameHandle>(handle, result);
+	return SafeObjectConvert<Object, NameObject, ObjectHandle, NameObjectHandle>(handle, result);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToBoolean(ObjectHandle handle, PBooleanHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToBoolean(ObjectHandle handle, PBooleanObjectHandle result)
 {
-	return SafeObjectConvert<Object, BooleanObject, ObjectHandle, BooleanHandle>(handle, result);
+	return SafeObjectConvert<Object, BooleanObject, ObjectHandle, BooleanObjectHandle>(handle, result);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToReal(ObjectHandle handle, PRealHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToReal(ObjectHandle handle, PRealObjectHandle result)
 {
-	return SafeObjectConvert<Object, RealObject, ObjectHandle, RealHandle>(handle, result);
+	return SafeObjectConvert<Object, RealObject, ObjectHandle, RealObjectHandle>(handle, result);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToNull(ObjectHandle handle, PNullHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToNull(ObjectHandle handle, PNullObjectHandle result)
 {
-	return SafeObjectConvert<Object, NullObject, ObjectHandle, NullHandle>(handle, result);
+	return SafeObjectConvert<Object, NullObject, ObjectHandle, NullObjectHandle>(handle, result);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle handle, PStringHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle handle, PStringObjectHandle result)
 {
-	return SafeObjectConvert<Object, StringObjectBase, ObjectHandle, StringHandle>(handle, result);
+	return SafeObjectConvert<Object, StringObjectBase, ObjectHandle, StringObjectHandle>(handle, result);
 }

@@ -59,7 +59,7 @@ error_type process_contents(ContentsHandle page_contents, integer_type page_numb
 	return GOTCHANG_PDF_MERGE_ERROR_SUCCESS;
 }
 
-error_type process_string_object(StringHandle string_handle, integer_type page_number)
+error_type process_string_object(StringObjectHandle string_handle, integer_type page_number)
 {
 	BufferHandle mapped_value = NULL;
 	BufferHandle string_buffer = NULL;
@@ -120,7 +120,7 @@ error_type process_content_operation(ContentOperationHandle content_operation, i
 		FontHandle font = NULL;
 		FontMapHandle font_map = NULL;
 		ResourceDictionaryHandle page_resources = NULL;
-		NameHandle font_name = NULL;
+		NameObjectHandle font_name = NULL;
 		ContentOperationTextFontHandle text_font = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextFont(content_operation, &text_font));
@@ -149,7 +149,7 @@ error_type process_content_operation(ContentOperationHandle content_operation, i
 	}
 
 	if (operation_type == ContentOperationType_TextShow) {
-		StringHandle text_string = NULL;
+		StringObjectHandle text_string = NULL;
 		ContentOperationTextShowHandle text_handle = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextShow(content_operation, &text_handle));
@@ -161,7 +161,7 @@ error_type process_content_operation(ContentOperationHandle content_operation, i
 	if (operation_type == ContentOperationType_TextShowArray) {
 		integer_type l = 0;
 		integer_type items_size = 0;
-		ArrayHandle text_items = NULL;
+		ArrayObjectHandle text_items = NULL;
 		ContentOperationTextShowArrayHandle text_handle = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextShowArray(content_operation, &text_handle));
@@ -171,7 +171,7 @@ error_type process_content_operation(ContentOperationHandle content_operation, i
 		for (l = 0; l < items_size; ++l) {
 			ObjectType object_type;
 			ObjectHandle object_handle = NULL;
-			StringHandle string_handle = NULL;
+			StringObjectHandle string_handle = NULL;
 
 			RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_At(text_items, l, &object_handle));
 			RETURN_ERROR_IF_NOT_SUCCESS(Object_Type(object_handle, &object_type));

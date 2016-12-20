@@ -7,7 +7,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanHandle handle, out_boolean_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanObjectHandle handle, out_boolean_type result)
 {
 	BooleanObject* obj = reinterpret_cast<BooleanObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -17,7 +17,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanHan
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_SetValue(BooleanHandle handle, boolean_type value)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_SetValue(BooleanObjectHandle handle, boolean_type value)
 {
 	BooleanObject* obj = reinterpret_cast<BooleanObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -32,7 +32,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_SetValue(BooleanHan
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_Release(BooleanHandle handle)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_Release(BooleanObjectHandle handle)
 {
-	return ObjectRelease<BooleanObject, BooleanHandle>(handle);
+	return ObjectRelease<BooleanObject, BooleanObjectHandle>(handle);
 }

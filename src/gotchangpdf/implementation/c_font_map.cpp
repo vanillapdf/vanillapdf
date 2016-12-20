@@ -8,7 +8,7 @@ using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION FontMap_Contains(FontMapHandle handle, NameHandle name_handle, out_boolean_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION FontMap_Contains(FontMapHandle handle, NameObjectHandle name_handle, out_boolean_type result)
 {
 	FontMap* obj = reinterpret_cast<FontMap*>(handle);
 	NameObject* name = reinterpret_cast<NameObject*>(name_handle);
@@ -23,7 +23,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION FontMap_Contains(FontMapHandle ha
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle handle, NameHandle name_handle, PFontHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle handle, NameObjectHandle name_handle, PFontHandle result)
 {
 	FontMap* obj = reinterpret_cast<FontMap*>(handle);
 	NameObject* name = reinterpret_cast<NameObject*>(name_handle);

@@ -10,14 +10,14 @@ extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetValue(IntegerHandle handle, out_bigint_type result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_SetValue(IntegerHandle handle, bigint_type value);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetValue(IntegerObjectHandle handle, out_bigint_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_SetValue(IntegerObjectHandle handle, bigint_type value);
 
 	/**
-	* \memberof IntegerObject
+	* \memberof IntegerObjectHandle
 	* \see Object_Release()
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_Release(IntegerHandle handle);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_Release(IntegerObjectHandle handle);
 
 #ifdef __cplusplus
 };

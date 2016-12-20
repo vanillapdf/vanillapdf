@@ -7,7 +7,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetHeader(StreamHandle handle, PDictionaryHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetHeader(StreamObjectHandle handle, PDictionaryObjectHandle result)
 {
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -17,12 +17,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetHeader(StreamHand
 	{
 		auto header = obj->GetHeader();
 		auto ptr = header.AddRefGet();
-		*result = reinterpret_cast<DictionaryHandle>(ptr);
+		*result = reinterpret_cast<DictionaryObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_SetHeader(StreamHandle handle, DictionaryHandle value)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_SetHeader(StreamObjectHandle handle, DictionaryObjectHandle value)
 {
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	DictionaryObject* header = reinterpret_cast<DictionaryObject*>(value);
@@ -36,7 +36,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_SetHeader(StreamHand
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBody(StreamHandle handle, PBufferHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBody(StreamObjectHandle handle, PBufferHandle result)
 {
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -51,7 +51,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBody(StreamHandle
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBodyRaw(StreamHandle handle, PBufferHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBodyRaw(StreamObjectHandle handle, PBufferHandle result)
 {
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -66,7 +66,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBodyRaw(StreamHan
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_SetBody(StreamHandle handle, BufferHandle value)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_SetBody(StreamObjectHandle handle, BufferHandle value)
 {
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	Buffer* buffer = reinterpret_cast<Buffer*>(value);
@@ -80,7 +80,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_SetBody(StreamHandle
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_Release(StreamHandle handle)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_Release(StreamObjectHandle handle)
 {
-	return ObjectRelease<StreamObject, StreamHandle>(handle);
+	return ObjectRelease<StreamObject, StreamObjectHandle>(handle);
 }

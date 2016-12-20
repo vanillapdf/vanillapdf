@@ -10,7 +10,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_TrailerDictionary(XrefHandle handle, PDictionaryHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_TrailerDictionary(XrefHandle handle, PDictionaryObjectHandle result)
 {
 	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
@@ -20,7 +20,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_TrailerDictionary(XrefHandle
 	{
 		auto dict = xref->GetTrailerDictionary();
 		auto ptr = dict.AddRefGet();
-		*result = reinterpret_cast<DictionaryHandle>(ptr);
+		*result = reinterpret_cast<DictionaryObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }

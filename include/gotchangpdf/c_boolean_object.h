@@ -10,14 +10,14 @@ extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanHandle handle, out_boolean_type result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_SetValue(BooleanHandle handle, boolean_type value);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanObjectHandle handle, out_boolean_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_SetValue(BooleanObjectHandle handle, boolean_type value);
 
 	/**
-	* \memberof BooleanObject
+	* \memberof BooleanObjectHandle
 	* \see Object_Release()
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_Release(BooleanHandle handle);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_Release(BooleanObjectHandle handle);
 
 
 #ifdef __cplusplus

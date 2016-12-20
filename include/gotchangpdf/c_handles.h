@@ -32,102 +32,102 @@ extern "C"
 	*/
 
 	/**
-	* \class Object
+	* \class ObjectHandle
 	* \brief Base class for syntactic tokens
 	*/
 	DECLARE_OBJECT_HANDLE(Object);
 
 	/**
-	* \class ArrayObject
-	* \extends Object
+	* \class ArrayObjectHandle
+	* \extends ObjectHandle
 	* \brief Represents array of mixed type elements.
 	*/
-	DECLARE_OBJECT_HANDLE(Array);
+	DECLARE_OBJECT_HANDLE(ArrayObject);
 
 	/**
-	* \class BooleanObject
-	* \extends Object
+	* \class BooleanObjectHandle
+	* \extends ObjectHandle
 	* \brief Represents boolean type
 	*/
-	DECLARE_OBJECT_HANDLE(Boolean);
+	DECLARE_OBJECT_HANDLE(BooleanObject);
 
 	/**
-	* \class NameObject
-	* \extends Object
+	* \class NameObjectHandle
+	* \extends ObjectHandle
 	* \brief Represents unique name references in document.
 	*/
-	DECLARE_OBJECT_HANDLE(Name);
+	DECLARE_OBJECT_HANDLE(NameObject);
 
 	/**
-	* \class NullObject
-	* \extends Object
+	* \class NullObjectHandle
+	* \extends ObjectHandle
 	* \brief Used as missing value.
 	*/
-	DECLARE_OBJECT_HANDLE(Null);
+	DECLARE_OBJECT_HANDLE(NullObject);
 
 	/**
-	* \class RealObject
-	* \extends Object
+	* \class RealObjectHandle
+	* \extends ObjectHandle
 	* \brief Represents floating point numbers.
 	*/
-	DECLARE_OBJECT_HANDLE(Real);
+	DECLARE_OBJECT_HANDLE(RealObject);
 
 	/**
-	* \class IntegerObject
-	* \extends Object
+	* \class IntegerObjectHandle
+	* \extends ObjectHandle
 	* \brief Represents integer values
 	*/
-	DECLARE_OBJECT_HANDLE(Integer);
+	DECLARE_OBJECT_HANDLE(IntegerObject);
 
 	/**
-	* \class StreamObject
-	* \extends Object
+	* \class StreamObjectHandle
+	* \extends ObjectHandle
 	* \brief Represents compressed data inside document.
 	*/
-	DECLARE_OBJECT_HANDLE(Stream);
+	DECLARE_OBJECT_HANDLE(StreamObject);
 
 	/**
-	* \class StringObject
-	* \extends Object
+	* \class StringObjectHandle
+	* \extends ObjectHandle
 	* \brief Reprsents human readable text.
 	*/
-	DECLARE_OBJECT_HANDLE(String);
+	DECLARE_OBJECT_HANDLE(StringObject);
 
 	/**
-	* \class HexadecimalStringObject
-	* \extends StringObject
+	* \class HexadecimalStringObjectHandle
+	* \extends StringObjectHandle
 	* \brief Text stored in hexadecimal notation.
 	*/
-	DECLARE_OBJECT_HANDLE(HexadecimalString);
+	DECLARE_OBJECT_HANDLE(HexadecimalStringObject);
 
 	/**
-	* \class LiteralStringObject
-	* \extends StringObject
+	* \class LiteralStringObjectHandle
+	* \extends StringObjectHandle
 	* \brief Text stored in raw format.
 	*/
-	DECLARE_OBJECT_HANDLE(LiteralString);
+	DECLARE_OBJECT_HANDLE(LiteralStringObject);
 
 	/**
-	* \class IndirectReferenceObject
-	* \extends Object
+	* \class IndirectObjectReferenceHandle
+	* \extends ObjectHandle
 	* \brief Represents reference to other object
 	*/
-	DECLARE_OBJECT_HANDLE(IndirectReference);
+	DECLARE_OBJECT_HANDLE(IndirectObjectReference);
 
 	/**
-	* \class DictionaryObject
-	* \extends Object
+	* \class DictionaryObjectHandle
+	* \extends ObjectHandle
 	* \brief Represents key-value map.
 	*/
-	DECLARE_OBJECT_HANDLE(Dictionary);
+	DECLARE_OBJECT_HANDLE(DictionaryObject);
 
 	/**
-	* \class DictionaryObjectIterator
-	* \memberof DictionaryObject
+	* \class DictionaryObjectIteratorHandle
+	* \memberof DictionaryObjectHandle
 	* \brief Used for accessing Dictionary elements
 	* through iterator interface.
 	*/
-	DECLARE_OBJECT_HANDLE(DictionaryIterator);
+	DECLARE_OBJECT_HANDLE(DictionaryObjectIterator);
 
 	/** @} */
 
@@ -144,11 +144,13 @@ extern "C"
 	*/
 
 	/**
+	* \class FileHandle
 	* \brief Represents file access handle
 	*/
 	DECLARE_OBJECT_HANDLE(File);
 
 	/**
+	* \class FileWriterHandle
 	* \brief Implements serialization of Files to destination stream
 	*/
 	DECLARE_OBJECT_HANDLE(FileWriter);

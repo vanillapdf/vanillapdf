@@ -8,7 +8,7 @@
 using namespace gotchangpdf::syntax;
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitle(DocumentInfoHandle handle, PStringHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitle(DocumentInfoHandle handle, PStringObjectHandle result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -20,12 +20,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitle(DocumentInf
 		auto contains = obj->Title(title);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = title.AddRefGet();
-		*result = reinterpret_cast<StringHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthor(DocumentInfoHandle handle, PStringHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthor(DocumentInfoHandle handle, PStringObjectHandle result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -37,12 +37,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthor(DocumentIn
 		auto contains = obj->Author(author);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = author.AddRefGet();
-		*result = reinterpret_cast<StringHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubject(DocumentInfoHandle handle, PStringHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubject(DocumentInfoHandle handle, PStringObjectHandle result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -54,12 +54,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubject(DocumentI
 		auto contains = obj->Subject(subject);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = subject.AddRefGet();
-		*result = reinterpret_cast<StringHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywords(DocumentInfoHandle handle, PStringHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywords(DocumentInfoHandle handle, PStringObjectHandle result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -71,12 +71,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywords(Document
 		auto contains = obj->Keywords(keywords);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = keywords.AddRefGet();
-		*result = reinterpret_cast<StringHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreator(DocumentInfoHandle handle, PStringHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreator(DocumentInfoHandle handle, PStringObjectHandle result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -88,12 +88,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreator(DocumentI
 		auto contains = obj->Creator(creator);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = creator.AddRefGet();
-		*result = reinterpret_cast<StringHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducer(DocumentInfoHandle handle, PStringHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducer(DocumentInfoHandle handle, PStringObjectHandle result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -105,7 +105,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducer(Document
 		auto contains = obj->Producer(producer);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = producer.AddRefGet();
-		*result = reinterpret_cast<StringHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }

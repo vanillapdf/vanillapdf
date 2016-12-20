@@ -7,7 +7,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetValue(IntegerHandle handle, out_bigint_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetValue(IntegerObjectHandle handle, out_bigint_type result)
 {
 	IntegerObject* obj = reinterpret_cast<IntegerObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -20,7 +20,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetValue(IntegerHan
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_SetValue(IntegerHandle handle, bigint_type value)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_SetValue(IntegerObjectHandle handle, bigint_type value)
 {
 	IntegerObject* obj = reinterpret_cast<IntegerObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -32,7 +32,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_SetValue(IntegerHan
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_Release(IntegerHandle handle)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_Release(IntegerObjectHandle handle)
 {
-	return ObjectRelease<IntegerObject, IntegerHandle>(handle);
+	return ObjectRelease<IntegerObject, IntegerObjectHandle>(handle);
 }

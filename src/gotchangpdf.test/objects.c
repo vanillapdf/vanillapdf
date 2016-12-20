@@ -1,6 +1,6 @@
 #include "test.h"
 
-int process_name(NameHandle name, int nested)
+int process_name(NameObjectHandle name, int nested)
 {
 	BufferHandle buffer = NULL;
 
@@ -17,7 +17,7 @@ int process_name(NameHandle name, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-int process_lit_string(LiteralStringHandle string, int nested)
+int process_lit_string(LiteralStringObjectHandle string, int nested)
 {
 	BufferHandle buffer = NULL;
 
@@ -34,7 +34,7 @@ int process_lit_string(LiteralStringHandle string, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-int process_hex_string(HexadecimalStringHandle string, int nested)
+int process_hex_string(HexadecimalStringObjectHandle string, int nested)
 {
 	BufferHandle buffer = NULL;
 
@@ -51,10 +51,10 @@ int process_hex_string(HexadecimalStringHandle string, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-int process_dictionary(DictionaryHandle dictionary, int nested)
+int process_dictionary(DictionaryObjectHandle dictionary, int nested)
 {
 	boolean_type boolean = GOTCHANG_PDF_FALSE;
-	DictionaryIteratorHandle iterator = NULL;
+	DictionaryObjectIteratorHandle iterator = NULL;
 
 	print_spaces(nested);
 	printf("Dictionary begin\n");
@@ -63,7 +63,7 @@ int process_dictionary(DictionaryHandle dictionary, int nested)
 	while (GOTCHANG_PDF_ERROR_SUCCES == DictionaryObjectIterator_IsValid(iterator, dictionary, &boolean)
 		&& GOTCHANG_PDF_TRUE == boolean)
 	{
-		NameHandle key = NULL;
+		NameObjectHandle key = NULL;
 		ObjectHandle value = NULL;
 
 		print_spaces(nested);
@@ -92,10 +92,10 @@ int process_dictionary(DictionaryHandle dictionary, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_stream(StreamHandle stream, int nested)
+error_type process_stream(StreamObjectHandle stream, int nested)
 {
 	BufferHandle body = NULL;
-	DictionaryHandle dictionary = NULL;
+	DictionaryObjectHandle dictionary = NULL;
 
 	print_spaces(nested);
 	printf("Stream object begin\n");
@@ -115,7 +115,7 @@ error_type process_stream(StreamHandle stream, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_array(ArrayHandle arr, int nested)
+error_type process_array(ArrayObjectHandle arr, int nested)
 {
 	integer_type i = 0;
 	integer_type size = 0;
@@ -141,7 +141,7 @@ error_type process_array(ArrayHandle arr, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_integer(IntegerHandle integer, int nested)
+error_type process_integer(IntegerObjectHandle integer, int nested)
 {
 	bigint_type value = 0;
 
@@ -160,7 +160,7 @@ error_type process_integer(IntegerHandle integer, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_boolean(BooleanHandle obj, int nested)
+error_type process_boolean(BooleanObjectHandle obj, int nested)
 {
 	boolean_type value = GOTCHANG_PDF_FALSE;
 
@@ -181,7 +181,7 @@ error_type process_boolean(BooleanHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_reference(IndirectReferenceHandle reference, int nested)
+error_type process_reference(IndirectObjectReferenceHandle reference, int nested)
 {
 	ObjectType type;
 	biguint_type obj_num = 0;
@@ -215,7 +215,7 @@ error_type process_reference(IndirectReferenceHandle reference, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_real(RealHandle obj, int nested)
+error_type process_real(RealObjectHandle obj, int nested)
 {
 	real_type value = 0;
 
@@ -232,7 +232,7 @@ error_type process_real(RealHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_null(NullHandle obj, int nested)
+error_type process_null(NullObjectHandle obj, int nested)
 {
 	print_spaces(nested);
 	printf("Null object begin\n");
@@ -246,11 +246,11 @@ error_type process_null(NullHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-int process_string(StringHandle obj, int nested)
+int process_string(StringObjectHandle obj, int nested)
 {
 	StringType type;
-	LiteralStringHandle literal_str = NULL;
-	HexadecimalStringHandle hexadecimal_str = NULL;
+	LiteralStringObjectHandle literal_str = NULL;
+	HexadecimalStringObjectHandle hexadecimal_str = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Type(obj, &type));
 
@@ -276,17 +276,17 @@ int process_string(StringHandle obj, int nested)
 int process_object(ObjectHandle obj, int nested)
 {
 	ObjectType type;
-	RealHandle real = NULL;
-	BooleanHandle boolean = NULL;
-	NullHandle null_object = NULL;
-	IndirectReferenceHandle indirect_reference = NULL;
-	ArrayHandle arr = NULL;
-	IntegerHandle integer = NULL;
-	StreamHandle stream = NULL;
-	NameHandle name = NULL;
+	RealObjectHandle real = NULL;
+	BooleanObjectHandle boolean = NULL;
+	NullObjectHandle null_object = NULL;
+	IndirectObjectReferenceHandle indirect_reference = NULL;
+	ArrayObjectHandle arr = NULL;
+	IntegerObjectHandle integer = NULL;
+	StreamObjectHandle stream = NULL;
+	NameObjectHandle name = NULL;
 	ObjectHandle child = NULL;
-	DictionaryHandle dictionary = NULL;
-	StringHandle string = NULL;
+	DictionaryObjectHandle dictionary = NULL;
+	StringObjectHandle string = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_Type(obj, &type));
 

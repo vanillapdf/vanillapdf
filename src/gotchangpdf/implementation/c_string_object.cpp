@@ -7,7 +7,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_Type(StringHandle handle, PStringType result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_Type(StringObjectHandle handle, PStringType result)
 {
 	StringObjectBase* obj = reinterpret_cast<StringObjectBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -25,22 +25,22 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_Type(StringHandle ha
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_Release(StringHandle handle)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_Release(StringObjectHandle handle)
 {
-	return ObjectRelease<StringObjectBase, StringHandle>(handle);
+	return ObjectRelease<StringObjectBase, StringObjectHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_ToLiteral(StringHandle handle, PLiteralStringHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_ToLiteral(StringObjectHandle handle, PLiteralStringObjectHandle result)
 {
-	return SafeObjectConvert<StringObjectBase, LiteralStringObject, StringHandle, LiteralStringHandle>(handle, result);
+	return SafeObjectConvert<StringObjectBase, LiteralStringObject, StringObjectHandle, LiteralStringObjectHandle>(handle, result);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_ToHexadecimal(StringHandle handle, PHexadecimalStringHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_ToHexadecimal(StringObjectHandle handle, PHexadecimalStringObjectHandle result)
 {
-	return SafeObjectConvert<StringObjectBase, HexadecimalStringObject, StringHandle, HexadecimalStringHandle>(handle, result);
+	return SafeObjectConvert<StringObjectBase, HexadecimalStringObject, StringObjectHandle, HexadecimalStringObjectHandle>(handle, result);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_GetValue(StringHandle handle, PBufferHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_GetValue(StringObjectHandle handle, PBufferHandle result)
 {
 	StringObjectBase* obj = reinterpret_cast<StringObjectBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -55,7 +55,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_GetValue(StringHandl
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_SetValue(StringHandle handle, BufferHandle value)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_SetValue(StringObjectHandle handle, BufferHandle value)
 {
 	StringObjectBase* obj = reinterpret_cast<StringObjectBase*>(handle);
 	Buffer* buffer = reinterpret_cast<Buffer*>(value);
@@ -69,7 +69,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_SetValue(StringHandl
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_GetValue(LiteralStringHandle handle, PBufferHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_GetValue(LiteralStringObjectHandle handle, PBufferHandle result)
 {
 	LiteralStringObject* obj = reinterpret_cast<LiteralStringObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -84,7 +84,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_GetValue(Lite
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_SetValue(LiteralStringHandle handle, BufferHandle value)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_SetValue(LiteralStringObjectHandle handle, BufferHandle value)
 {
 	LiteralStringObject* obj = reinterpret_cast<LiteralStringObject*>(handle);
 	Buffer* buffer = reinterpret_cast<Buffer*>(value);
@@ -98,12 +98,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_SetValue(Lite
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_Release(LiteralStringHandle handle)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_Release(LiteralStringObjectHandle handle)
 {
-	return ObjectRelease<LiteralStringObject, LiteralStringHandle>(handle);
+	return ObjectRelease<LiteralStringObject, LiteralStringObjectHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_GetValue(HexadecimalStringHandle handle, PBufferHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_GetValue(HexadecimalStringObjectHandle handle, PBufferHandle result)
 {
 	HexadecimalStringObject* obj = reinterpret_cast<HexadecimalStringObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -118,7 +118,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_GetValue(
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_SetValue(HexadecimalStringHandle handle, BufferHandle value)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_SetValue(HexadecimalStringObjectHandle handle, BufferHandle value)
 {
 	HexadecimalStringObject* obj = reinterpret_cast<HexadecimalStringObject*>(handle);
 	Buffer* buffer = reinterpret_cast<Buffer*>(value);
@@ -132,7 +132,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_SetValue(
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Release(HexadecimalStringHandle handle)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Release(HexadecimalStringObjectHandle handle)
 {
-	return ObjectRelease<HexadecimalStringObject, HexadecimalStringHandle>(handle);
+	return ObjectRelease<HexadecimalStringObject, HexadecimalStringObjectHandle>(handle);
 }

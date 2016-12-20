@@ -8,7 +8,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideToolbar(ViewerPreferencesHandle handle, PBooleanHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideToolbar(ViewerPreferencesHandle handle, PBooleanObjectHandle result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -20,12 +20,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideToolbar(
 		auto contains = obj->HideToolbar(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<BooleanHandle>(ptr);
+		*result = reinterpret_cast<BooleanObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideMenubar(ViewerPreferencesHandle handle, PBooleanHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideMenubar(ViewerPreferencesHandle handle, PBooleanObjectHandle result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -37,12 +37,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideMenubar(
 		auto contains = obj->HideMenubar(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<BooleanHandle>(ptr);
+		*result = reinterpret_cast<BooleanObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideWindowUI(ViewerPreferencesHandle handle, PBooleanHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideWindowUI(ViewerPreferencesHandle handle, PBooleanObjectHandle result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -54,12 +54,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideWindowUI
 		auto contains = obj->HideWindowUI(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<BooleanHandle>(ptr);
+		*result = reinterpret_cast<BooleanObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetFitWindow(ViewerPreferencesHandle handle, PBooleanHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetFitWindow(ViewerPreferencesHandle handle, PBooleanObjectHandle result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -71,12 +71,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetFitWindow(Vi
 		auto contains = obj->FitWindow(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<BooleanHandle>(ptr);
+		*result = reinterpret_cast<BooleanObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDisplayDocTitle(ViewerPreferencesHandle handle, PBooleanHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDisplayDocTitle(ViewerPreferencesHandle handle, PBooleanObjectHandle result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -88,7 +88,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDisplayDocTi
 		auto contains = obj->DisplayDocTitle(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<BooleanHandle>(ptr);
+		*result = reinterpret_cast<BooleanObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -149,7 +149,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDirection(Vi
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewArea(ViewerPreferencesHandle handle, PNameHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewArea(ViewerPreferencesHandle handle, PNameObjectHandle result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -161,12 +161,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewArea(Vie
 		auto contains = obj->ViewArea(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<NameHandle>(ptr);
+		*result = reinterpret_cast<NameObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewClip(ViewerPreferencesHandle handle, PNameHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewClip(ViewerPreferencesHandle handle, PNameObjectHandle result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -178,12 +178,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewClip(Vie
 		auto contains = obj->ViewClip(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<NameHandle>(ptr);
+		*result = reinterpret_cast<NameObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintArea(ViewerPreferencesHandle handle, PNameHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintArea(ViewerPreferencesHandle handle, PNameObjectHandle result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -195,12 +195,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintArea(Vi
 		auto contains = obj->PrintArea(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<NameHandle>(ptr);
+		*result = reinterpret_cast<NameObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintClip(ViewerPreferencesHandle handle, PNameHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintClip(ViewerPreferencesHandle handle, PNameObjectHandle result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -212,7 +212,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintClip(Vi
 		auto contains = obj->PrintClip(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<NameHandle>(ptr);
+		*result = reinterpret_cast<NameObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -271,7 +271,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDuplex(Viewe
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPickTrayByPDFSize(ViewerPreferencesHandle handle, PBooleanHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPickTrayByPDFSize(ViewerPreferencesHandle handle, PBooleanObjectHandle result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -283,7 +283,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPickTrayByPD
 		auto contains = obj->PickTrayByPDFSize(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<BooleanHandle>(ptr);
+		*result = reinterpret_cast<BooleanObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -305,7 +305,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintPageRan
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNumCopies(ViewerPreferencesHandle handle, PIntegerHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNumCopies(ViewerPreferencesHandle handle, PIntegerObjectHandle result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -317,7 +317,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNumCopies(Vi
 		auto contains = obj->NumCopies(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<IntegerHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -355,7 +355,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSubrange(PageRangeHa
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageSubRange_GetFirstPage(PageSubRangeHandle handle, PIntegerHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageSubRange_GetFirstPage(PageSubRangeHandle handle, PIntegerObjectHandle result)
 {
 	PageRange::SubRange* obj = reinterpret_cast<PageRange::SubRange*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -365,12 +365,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageSubRange_GetFirstPage(PageSub
 	{
 		auto direct = obj->FirstPage();
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<IntegerHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageSubRange_GetLastPage(PageSubRangeHandle handle, PIntegerHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageSubRange_GetLastPage(PageSubRangeHandle handle, PIntegerObjectHandle result)
 {
 	PageRange::SubRange* obj = reinterpret_cast<PageRange::SubRange*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -380,7 +380,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageSubRange_GetLastPage(PageSubR
 	{
 		auto direct = obj->LastPage();
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<IntegerHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }

@@ -28,19 +28,19 @@ error_type process_xref(XrefHandle xref, int nested);
 
 /* Objects */
 error_type process_object(ObjectHandle obj, int nested);
-error_type process_name(NameHandle name, int nested);
-error_type process_array(ArrayHandle arr, int nested);
-error_type process_integer(IntegerHandle integer, int nested);
-error_type process_boolean(BooleanHandle boolean, int nested);
-error_type process_reference(IndirectReferenceHandle reference, int nested);
-error_type process_real(RealHandle real, int nested);
-error_type process_null(NullHandle obj, int nested);
-error_type process_string(StringHandle string, int nested);
-error_type process_dictionary(DictionaryHandle dictionary, int nested);
-error_type process_stream(StreamHandle stream, int nested);
+error_type process_name(NameObjectHandle name, int nested);
+error_type process_array(ArrayObjectHandle arr, int nested);
+error_type process_integer(IntegerObjectHandle integer, int nested);
+error_type process_boolean(BooleanObjectHandle boolean, int nested);
+error_type process_reference(IndirectObjectReferenceHandle reference, int nested);
+error_type process_real(RealObjectHandle real, int nested);
+error_type process_null(NullObjectHandle obj, int nested);
+error_type process_string(StringObjectHandle string, int nested);
+error_type process_dictionary(DictionaryObjectHandle dictionary, int nested);
+error_type process_stream(StreamObjectHandle stream, int nested);
 
-error_type process_lit_string(LiteralStringHandle string, int nested);
-error_type process_hex_string(HexadecimalStringHandle string, int nested);
+error_type process_lit_string(LiteralStringObjectHandle string, int nested);
+error_type process_hex_string(HexadecimalStringObjectHandle string, int nested);
 
 /* Contents */
 error_type process_content_instruction(ContentInstructionHandle obj, int nested);
