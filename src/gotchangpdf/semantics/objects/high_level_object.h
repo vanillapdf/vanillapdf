@@ -17,8 +17,6 @@ namespace gotchangpdf
 
 		protected:
 			T _obj;
-
-			WeakReference<Document> _document;
 		};
 	}
 }
