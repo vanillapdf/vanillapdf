@@ -259,10 +259,7 @@ namespace gotchangpdf
 
 		bool File::IsEncrypted(void) const
 		{
-			if (!IsInitialized()) {
-				throw FileNotInitializedException(_filename);
-			}
-
+			// Returns false if wasn't initialized
 			return (!_encryption_dictionary.empty() && _encryption_dictionary != NullObject::GetInstance());
 		}
 
