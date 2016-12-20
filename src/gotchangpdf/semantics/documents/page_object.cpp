@@ -120,7 +120,7 @@ namespace gotchangpdf
 		bool PageObject::GetContents(OutputContentsPtr& result) const
 		{
 			if (!m_contents.empty()) {
-				result = m_contents;
+				result = m_contents.GetValue();
 				return true;
 			}
 

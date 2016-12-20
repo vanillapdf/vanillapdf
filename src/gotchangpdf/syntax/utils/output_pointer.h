@@ -3,6 +3,8 @@
 
 #include "deferred.h"
 #include "exception.h"
+#include "unknown_interface.h"
+#include "object.h"
 #include "util.h"
 
 #include <type_traits>
@@ -14,37 +16,20 @@ namespace gotchangpdf
 	class OutputPointer
 	{
 	public:
-		OutputPointer() : m_value(nullptr) {}
+		static_assert(instantiation_of<Deferred, T>::value ||
+			std::is_base_of<syntax::Object, typename T::value_type>::value,
+			"Output pointer requires template parameter to be either Deferred instance or derived from Object");
+
+	public:
+		OutputPointer() = default;
+		OutputPointer(const OutputPointer& other) = default;
+		OutputPointer(OutputPointer&& other) = default;
+		OutputPointer& operator=(const OutputPointer& other) = default;
+		OutputPointer& operator=(OutputPointer&& other) = default;
+
 		OutputPointer(T* value) : m_value(value) {}
 		OutputPointer(const T& value) { SetValue(value); }
 		OutputPointer(T&& value) { SetValue(value); }
-
-		OutputPointer(const OutputPointer& other)
-		{
-			if (!other.empty()) {
-				SetValue(other.GetValue());
-			}
-		}
-
-		OutputPointer(OutputPointer&& other)
-		{
-			m_value = std::move(other.m_value);
-		}
-
-		OutputPointer& operator=(const OutputPointer& other)
-		{
-			if (!other.empty()) {
-				SetValue(other.GetValue());
-			}
-
-			return *this;
-		}
-
-		OutputPointer& operator=(OutputPointer&& other)
-		{
-			m_value = std::move(other.m_value);
-			return *this;
-		}
 
 		void SetValue(const T& value) { m_value.reset(pdf_new T(value)); }
 		void SetValue(T&& value) { m_value.reset(pdf_new T(value)); }
@@ -62,16 +47,12 @@ namespace gotchangpdf
 		operator T() const { return GetValue(); }
 		T operator*() const { return *GetValue(); }
 
-		template <
-			typename = typename std::enable_if<instantiation_of<Deferred, T>::value ||
-			std::is_base_of<Deferred<typename T::value_type>, T>::value>::type
-		>
 		typename T::value_type* AddRefGet(void)
 		{
 			if (nullptr == m_value)
 				throw GeneralException("Uninitialized pointer");
 
-			auto converted = dynamic_cast<typename T::value_type *>(m_value->AddRefGet());
+			auto converted = static_cast<typename T::value_type *>(m_value->AddRefGet());
 			if (nullptr == m_value)
 				throw ConversionExceptionFactory<Deferred<typename T::value_type>>::Construct(m_value);
 

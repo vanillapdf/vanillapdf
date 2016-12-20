@@ -55,7 +55,7 @@ namespace gotchangpdf
 		bool Document::GetDocumentInfo(OutputDocumentInfoPtr& result)
 		{
 			if (!m_info.empty()) {
-				result = m_info;
+				result = m_info.GetValue();
 				return true;
 			}
 

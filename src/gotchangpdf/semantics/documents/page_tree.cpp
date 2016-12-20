@@ -33,7 +33,7 @@ namespace gotchangpdf
 
 		PageObjectPtr PageTree::PageInternal(types::integer number) const
 		{
-			auto found_page = m_pages.at(number - 1);
+			auto& found_page = m_pages.at(number - 1);
 			if (!found_page.empty()) {
 				return found_page;
 			}
