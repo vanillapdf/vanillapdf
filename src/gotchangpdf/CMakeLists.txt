@@ -354,6 +354,8 @@ if (OPENSSL_FOUND)
 	add_definitions("-DGOTCHANG_PDF_HAVE_OPENSSL")
 	
 	message(STATUS "OpenSSL ${OPENSSL_VERSION} was found in ${OPENSSL_ROOT_DIR}")
+else (OPENSSL_FOUND)
+	message(WARNING "Compiling without OpenSSL support. Work with encrypted document will be prohibited")
 endif (OPENSSL_FOUND)
 
 if (ZLIB_FOUND)
@@ -362,6 +364,8 @@ if (ZLIB_FOUND)
 	add_definitions("-DGOTCHANG_PDF_HAVE_ZLIB")
 	
 	message(STATUS "Zlib ${ZLIB_VERSION_STRING} was found in ${ZLIB_LIBRARIES}")
+else (ZLIB_FOUND)
+	message(WARNING "Compiling without ZLIB support. Deflate compression will become unavailable")
 endif (ZLIB_FOUND)
 
 if (JPEG_FOUND)
@@ -370,6 +374,8 @@ if (JPEG_FOUND)
 	add_definitions("-DGOTCHANG_PDF_HAVE_JPEG")
 	
 	message(STATUS "JPEG library was found")
+else (JPEG_FOUND)
+	message(WARNING "Compiling without JPEG support. JPEG compression will become unavailable")
 endif (JPEG_FOUND)
 
 target_link_libraries(gotchangpdf ${GOTCHANGPDF_LIBS})
