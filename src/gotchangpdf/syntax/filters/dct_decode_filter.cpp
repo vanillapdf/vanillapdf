@@ -56,10 +56,11 @@ namespace gotchangpdf
 			throw NotSupportedException("DCTDecodeFilter encoding is not supported");
 		}
 
-#if defined(GOTCHANG_PDF_HAVE_JPEG)
-
 		BufferPtr DCTDecodeFilter::Decode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */) const
 		{
+
+#if defined(GOTCHANG_PDF_HAVE_JPEG)
+
 			BufferPtr result;
 
 			jpeg_decompress_struct jpeg;
@@ -141,16 +142,13 @@ namespace gotchangpdf
 			jpeg_destroy_decompress(&jpeg);
 
 			return result;
-		}
 
 #else
-
-		BufferPtr DCTDecodeFilter::Decode(std::istream&, types::stream_size, DictionaryObjectPtr) const
-		{
+			(void)src; (void)length;
 			throw NotSupportedException("This library was compiled without JPEG support");
-		}
-
 #endif
+
+		}
 
 		BufferPtr DCTDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const
 		{

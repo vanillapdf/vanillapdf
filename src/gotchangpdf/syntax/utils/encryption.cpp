@@ -3,6 +3,7 @@
 
 #include "buffer.h"
 
+#undef GOTCHANG_PDF_HAVE_OPENSSL
 #if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 
 #include <openssl/rc4.h>
@@ -47,14 +48,15 @@ namespace gotchangpdf
 	const size_t AES_CBC_IV_LENGTH = 16;
 	const size_t AES_CBC_BLOCK_SIZE = 16;
 
-#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
-
 	BufferPtr EncryptionUtils::ComputeObjectKey(
 		const Buffer& key,
 		types::big_uint objNumber,
 		types::ushort genNumber,
 		EncryptionAlgorithm alg)
 	{
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 		Buffer object_key(MD5_DIGEST_LENGTH);
 
 		uint8_t object_info[5];
@@ -77,9 +79,13 @@ namespace gotchangpdf
 
 		auto key_length = std::min<size_t>(key.size() + 5, 16);
 		return BufferPtr(object_key.begin(), object_key.begin() + key_length);
-	}
 
+#else
+		(void)key; (void)objNumber; (void)genNumber; (void)alg;
+		throw NotSupportedException("This library was compiled without OpenSSL support");
 #endif
+
+	}
 
 	BufferPtr EncryptionUtils::PadTruncatePassword(const Buffer& password)
 	{
@@ -90,10 +96,11 @@ namespace gotchangpdf
 		return result;
 	}
 
-#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
-
 	BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, int key_length, const Buffer& data)
 	{
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 		BufferPtr result(data.size());
 
 		RC4_KEY rc_key;
@@ -101,9 +108,13 @@ namespace gotchangpdf
 		RC4(&rc_key, data.size(), (unsigned char*)data.data(), (unsigned char*)result->data());
 
 		return result;
-	}
 
+#else
+		(void)key; (void)key_length; (void)data;
+		throw NotSupportedException("This library was compiled without OpenSSL support");
 #endif
+
+	}
 
 	BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, const Buffer& data)
 	{
@@ -115,10 +126,11 @@ namespace gotchangpdf
 		return AESDecrypt(key, key.size(), data);
 	}
 
-#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
-
 	BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, int key_length, const Buffer& data)
 	{
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 		assert(data.size() >= static_cast<size_t>(AES_CBC_IV_LENGTH));
 		if (data.size() < static_cast<size_t>(AES_CBC_IV_LENGTH)) {
 			throw GeneralException("Cannot find IV for encrypted data");
@@ -136,19 +148,24 @@ namespace gotchangpdf
 		AES_cbc_encrypt((unsigned char*)data.data() + AES_CBC_IV_LENGTH, (unsigned char*)result->data(), data.size() - AES_CBC_IV_LENGTH, &dec_key, (unsigned char*)iv.data(), AES_DECRYPT);
 
 		return RemovePkcs7Padding(result, AES_CBC_BLOCK_SIZE);
-	}
 
+#else
+		(void)key; (void)key_length; (void)data;
+		throw NotSupportedException("This library was compiled without OpenSSL support");
 #endif
+
+	}
 
 	BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, const Buffer& data)
 	{
 		return AESEncrypt(key, key.size(), data);
 	}
 
-#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
-
 	BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, int key_length, const Buffer& data)
 	{
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 		Buffer iv(AES_CBC_IV_LENGTH);
 		int rv = RAND_bytes((unsigned char*)iv.data(), AES_CBC_IV_LENGTH);
 		if (1 != rv) {
@@ -167,9 +184,13 @@ namespace gotchangpdf
 
 		buffer->insert(buffer.begin(), iv.begin(), iv.end());
 		return buffer;
-	}
 
+#else
+		(void)key; (void)key_length; (void)data;
+		throw NotSupportedException("This library was compiled without OpenSSL support");
 #endif
+
+	}
 
 	BufferPtr EncryptionUtils::AddPkcs7Padding(const Buffer& data, size_t block_size)
 	{
@@ -229,8 +250,6 @@ namespace gotchangpdf
 		return data;
 	}
 
-#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
-
 	bool EncryptionUtils::CheckKey(
 		const Buffer& input,
 		const Buffer& document_id,
@@ -241,6 +260,9 @@ namespace gotchangpdf
 		const syntax::IntegerObject& key_length,
 		Buffer& decryption_key)
 	{
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 		Buffer decryption_key_digest(MD5_DIGEST_LENGTH);
 
 		MD5_CTX ctx;
@@ -305,11 +327,15 @@ namespace gotchangpdf
 		}
 
 		return false;
-	}
 
+#else
+		(void)input; (void)document_id; (void)owner_data;
+		(void)user_data; (void)permissions; (void)revision;
+		(void)key_length; (void)decryption_key;
+		throw NotSupportedException("This library was compiled without OpenSSL support");
 #endif
 
-#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+	}
 
 	BufferPtr EncryptionUtils::GetRecipientKey
 		(const syntax::ArrayObject<syntax::StringObjectPtr>& enveloped_data,
@@ -317,6 +343,9 @@ namespace gotchangpdf
 			EncryptionAlgorithm algorithm,
 			const IEncryptionKey& key)
 	{
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 		auto decrypted_data = EncryptionUtils::DecryptEnvelopedData(enveloped_data, key);
 
 		Buffer decrypted_key;
@@ -352,14 +381,19 @@ namespace gotchangpdf
 		auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(length_bits.GetIntegerValue() / 8);
 		size_t decryption_key_length = std::min(length_bytes, decrypted_key.size());
 		return BufferPtr(decrypted_key.begin(), decrypted_key.begin() + decryption_key_length);
-	}
 
+#else
+		(void)enveloped_data; (void)length_bits; (void)algorithm; (void)key;
+		throw NotSupportedException("This library was compiled without OpenSSL support");
 #endif
 
-#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+	}
 
 	BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax::StringObjectPtr>& enveloped_data, const IEncryptionKey& key)
 	{
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 		auto length = enveloped_data.Size();
 		for (decltype(length) i = 0; i < length; ++i) {
 			auto enveloped_bytes = enveloped_data.At(i);
@@ -465,14 +499,19 @@ namespace gotchangpdf
 		}
 
 		throw GeneralException("Could not find matching certificate");
-	}
 
+#else
+		(void)enveloped_data; (void)key;
+		throw NotSupportedException("This library was compiled without OpenSSL support");
 #endif
 
-#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+	}
 
 	BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer& pad_password, const syntax::DictionaryObject& encryption_dictionary)
 	{
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 		auto user_value = encryption_dictionary.FindAs<syntax::StringObjectPtr>(constant::Name::U);
 		auto owner_value = encryption_dictionary.FindAs<syntax::StringObjectPtr>(constant::Name::O);
 		auto permissions = encryption_dictionary.FindAs<syntax::IntegerObjectPtr>(constant::Name::P);
@@ -519,68 +558,11 @@ namespace gotchangpdf
 		}
 
 		return encrypted_owner_data;
-	}
 
+#else
+		(void)pad_password; (void)encryption_dictionary;
+		throw NotSupportedException("This library was compiled without OpenSSL support");
 #endif
 
-#if !defined(GOTCHANG_PDF_HAVE_OPENSSL)
-
-	BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax::StringObjectPtr>&, const IEncryptionKey&)
-	{
-		throw NotSupportedException("This library was compiled without OpenSSL support");
 	}
-
-	BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer&, const syntax::DictionaryObject&)
-	{
-		throw NotSupportedException("This library was compiled without OpenSSL support");
-	}
-
-	BufferPtr EncryptionUtils::GetRecipientKey
-		(const syntax::ArrayObject<syntax::StringObjectPtr>&,
-			const syntax::IntegerObject&,
-			EncryptionAlgorithm,
-			const IEncryptionKey&)
-	{
-		throw NotSupportedException("This library was compiled without OpenSSL support");
-	}
-
-	bool EncryptionUtils::CheckKey(
-		const Buffer&,
-		const Buffer&,
-		const Buffer&,
-		const Buffer&,
-		const syntax::IntegerObject&,
-		const syntax::IntegerObject&,
-		const syntax::IntegerObject&,
-		Buffer&)
-	{
-		throw NotSupportedException("This library was compiled without OpenSSL support");
-	}
-
-	BufferPtr EncryptionUtils::AESEncrypt(const Buffer&, int, const Buffer&)
-	{
-		throw NotSupportedException("This library was compiled without OpenSSL support");
-	}
-
-	BufferPtr EncryptionUtils::AESDecrypt(const Buffer&, int, const Buffer&)
-	{
-		throw NotSupportedException("This library was compiled without OpenSSL support");
-	}
-
-	BufferPtr EncryptionUtils::ComputeRC4(const Buffer&, int, const Buffer&)
-	{
-		throw NotSupportedException("This library was compiled without OpenSSL support");
-	}
-
-	BufferPtr EncryptionUtils::ComputeObjectKey(
-		const Buffer&,
-		types::big_uint,
-		types::ushort,
-		EncryptionAlgorithm)
-	{
-		throw NotSupportedException("This library was compiled without OpenSSL support");
-	}
-
-#endif
-
 }

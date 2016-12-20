@@ -9,11 +9,11 @@
 
 namespace gotchangpdf
 {
+	static BufferPtr Inflate(std::istream& input, types::stream_size length, types::stream_size errors_after)
+	{
 
 #if defined(GOTCHANG_PDF_HAVE_ZLIB)
 
-	static BufferPtr Inflate(std::istream& input, types::stream_size length, types::stream_size errors_after)
-	{
 		int rv = 0;
 		z_stream strm = { 0 };
 		BufferPtr result;
@@ -84,26 +84,24 @@ namespace gotchangpdf
 		} while (rv != Z_STREAM_END);
 		
 		return result;
-	}
 
 #else
-
-	static BufferPtr Inflate(std::istream&, types::stream_size, types::stream_size)
-	{
+		(void)input; (void)length; (void)errors_after;
 		throw NotSupportedException("This library is compiled without zlib support");
-	}
-
 #endif
+
+	}
 
 	static BufferPtr Inflate(std::istream& input, types::stream_size length)
 	{
 		return Inflate(input, length, length);
 	}
 
-#if defined(GOTCHANG_PDF_HAVE_ZLIB)
-
 	static BufferPtr Deflate(std::istream& input, types::stream_size length)
 	{
+
+#if defined(GOTCHANG_PDF_HAVE_ZLIB)
+
 		int rv = 0;
 		int flush = Z_NO_FLUSH;
 		z_stream strm = { 0 };
@@ -146,16 +144,13 @@ namespace gotchangpdf
 		} while (rv != Z_STREAM_END);
 
 		return result;
-	}
 
 #else
-
-	static BufferPtr Deflate(std::istream&, types::stream_size)
-	{
+		(void)input; (void)length;
 		throw NotSupportedException("This library is compiled without zlib support");
-	}
-
 #endif
+
+	}
 
 	BufferPtr ZlibWrapper::Deflate(std::istream& input, types::stream_size length)
 	{

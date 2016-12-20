@@ -3,6 +3,7 @@
 
 #include <fstream>
 
+#undef GOTCHANG_PDF_HAVE_OPENSSL
 #if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 
 #include <openssl/pkcs12.h>
@@ -152,7 +153,7 @@ namespace gotchangpdf
 		}
 
 #else
-
+		(void)data; (void)password;
 		throw NotSupportedException("This library was compiled without OpenSSL support");
 
 #endif
@@ -177,6 +178,7 @@ namespace gotchangpdf
 
 #else
 
+		(void)data;
 		throw NotSupportedException("This library was compiled without OpenSSL support");
 
 #endif
@@ -198,6 +200,7 @@ namespace gotchangpdf
 
 #else
 
+		(void)issuer; (void)serial;
 		throw NotSupportedException("This library was compiled without OpenSSL support");
 
 #endif
