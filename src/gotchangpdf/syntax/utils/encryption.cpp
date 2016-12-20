@@ -3,7 +3,6 @@
 
 #include "buffer.h"
 
-#undef GOTCHANG_PDF_HAVE_OPENSSL
 #if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 
 #include <openssl/rc4.h>
