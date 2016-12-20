@@ -1,6 +1,7 @@
 #ifndef _UNKNOWN_INTERFACE_H
 #define _UNKNOWN_INTERFACE_H
 
+#include <memory>
 #include <atomic>
 
 namespace gotchangpdf
@@ -106,6 +107,18 @@ namespace gotchangpdf
 	private:
 		std::atomic<uint32_t> m_ref_counter;
 		std::shared_ptr<WeakReferenceCounter> m_weak_ref;
+	};
+
+	template<typename T>
+	class IUnknownDeleter
+	{
+		static_assert(std::is_base_of<IUnknown, T>::value,
+			"Only types derived from IUnknown are supported");
+
+		void operator()(T* ptr) const noexcept
+		{
+			ptr->Release();
+		}
 	};
 
 	inline IUnknown::~IUnknown() {}
