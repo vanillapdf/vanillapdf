@@ -10,7 +10,20 @@ extern "C"
 {
 #endif
 
+	/** \file c_real_object.h
+	* This file contains contains class definitions for RealObjectHandle
+	*/
+
+	/**
+	* \brief Return objects contained real value
+	* \memberof RealObjectHandle
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION RealObject_GetValue(RealObjectHandle handle, out_real_type result);
+
+	/**
+	* \brief Set objects new real value
+	* \memberof RealObjectHandle
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION RealObject_SetValue(RealObjectHandle handle, real_type value);
 
 	/**

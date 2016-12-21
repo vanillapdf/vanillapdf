@@ -55,6 +55,7 @@ extern "C"
 	* \class NameObjectHandle
 	* \extends ObjectHandle
 	* \brief Represents unique name references in document.
+	* \see NameConstants
 	*/
 	DECLARE_OBJECT_HANDLE(NameObject);
 

@@ -10,7 +10,20 @@ extern "C"
 {
 #endif
 
+	/** \file c_name_object.h
+	* This file contains contains class definitions for NameObjectHandle
+	*/
+
+	/**
+	* \brief Get names binary representation
+	* \memberof NameObjectHandle
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_GetValue(NameObjectHandle handle, PBufferHandle result);
+
+	/**
+	* \brief Set names new value
+	* \memberof NameObjectHandle
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_SetValue(NameObjectHandle handle, BufferHandle value);
 
 	/**
@@ -19,7 +32,12 @@ extern "C"
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Release(NameObjectHandle handle);
 
-	// Constant names
+	/**
+	* \defgroup NameConstants Name constants
+	* \ingroup Objects
+	* \brief Often used name constant definitions
+	* @{
+	*/
 
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_AA;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_ASCII85Decode;
