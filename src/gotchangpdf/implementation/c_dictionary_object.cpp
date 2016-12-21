@@ -8,10 +8,10 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, NameObjectHandle name, PObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, NameObjectHandle key, PObjectHandle result)
 {
 	DictionaryObject* obj = reinterpret_cast<DictionaryObject*>(handle);
-	NameObject* name_object = reinterpret_cast<NameObject*>(name);
+	NameObject* name_object = reinterpret_cast<NameObject*>(key);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(name_object);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -117,10 +117,10 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryObjectHandle dictionary_handle, NameObjectHandle str)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryObjectHandle dictionary_handle, NameObjectHandle key)
 {
 	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(dictionary_handle);
-	NameObject* name = reinterpret_cast<NameObject*>(str);
+	NameObject* name = reinterpret_cast<NameObject*>(key);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(dictionary);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(name);
 
@@ -131,10 +131,10 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(Dictionar
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryObjectHandle dictionary_handle, NameObjectHandle str, ObjectHandle value)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryObjectHandle dictionary_handle, NameObjectHandle key, ObjectHandle value)
 {
 	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(dictionary_handle);
-	NameObject* name = reinterpret_cast<NameObject*>(str);
+	NameObject* name = reinterpret_cast<NameObject*>(key);
 	Object* obj = reinterpret_cast<Object*>(value);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(dictionary);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(name);
@@ -151,10 +151,10 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(Dictionar
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(DictionaryObjectHandle dictionary_handle, NameObjectHandle str, out_boolean_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(DictionaryObjectHandle dictionary_handle, NameObjectHandle key, out_boolean_type result)
 {
 	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(dictionary_handle);
-	NameObject* name = reinterpret_cast<NameObject*>(str);
+	NameObject* name = reinterpret_cast<NameObject*>(key);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(dictionary);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(name);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);

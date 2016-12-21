@@ -22,14 +22,15 @@ extern "C"
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Release(DictionaryObjectIteratorHandle handle);
 
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, NameObjectHandle str, PObjectHandle result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(DictionaryObjectHandle handle, NameObjectHandle str, out_boolean_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, NameObjectHandle key, PObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(DictionaryObjectHandle handle, NameObjectHandle key, out_boolean_type result);
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(DictionaryObjectHandle handle, PDictionaryObjectIteratorHandle result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryObjectHandle handle, NameObjectHandle str);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryObjectHandle handle, NameObjectHandle str, ObjectHandle value);
 
 	/**
 	* \memberof DictionaryObject
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryObjectHandle handle, NameObjectHandle key);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryObjectHandle handle, NameObjectHandle key, ObjectHandle value);
 	* \see Object_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Release(DictionaryObjectHandle handle);
