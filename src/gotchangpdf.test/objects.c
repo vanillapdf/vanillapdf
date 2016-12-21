@@ -148,7 +148,7 @@ error_type process_integer(IntegerObjectHandle integer, int nested)
 	print_spaces(nested);
 	printf("Integer object begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_GetValue(integer, &value));
+	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_GetIntegerValue(integer, &value));
 	print_spaces(nested + 1);
 
 	long long converted = value;
