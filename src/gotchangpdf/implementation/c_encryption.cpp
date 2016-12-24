@@ -15,23 +15,30 @@ public:
 		InitializeFunction initialize,
 		CleanupFunction cleanup,
 		DecryptFunction decrypt,
-		EqualsFunction equals
+		ContainsFunction contains
 		) : m_init(initialize),
 		m_cleanup(cleanup),
 		m_decrypt(decrypt),
-		m_equals(equals)
+		m_contains(contains)
 	{
-		if (nullptr != m_init) m_init();
+		// These are only assertions, because those parameters shall be handled
+		// at the function call level.
+		// RETURN_ERROR_PARAM_VALUE_IF_NULL(initialize);
+		// If any of the parameters is nullptr, the function will crash
+		// on its invocation.
+
+		assert(initialize != nullptr && "Invalid initialization pointer");
+		assert(cleanup != nullptr && "Invalid cleanup pointer");
+		assert(decrypt != nullptr && "Invalid decrypt pointer");
+		assert(contains != nullptr && "Invalid contains pointer");
+
+		m_init();
 	}
 
 	virtual BufferPtr Decrypt(const Buffer& data) const override
 	{
-		BufferPtr result;
 		auto input_ptr = reinterpret_cast<const BufferHandleTag*>(&data);
-		auto output_ptr = reinterpret_cast<BufferHandle>(result.get());
-		if (nullptr == m_decrypt) {
-			throw GeneralException("Decryption function not initialized");
-		}
+		BufferHandle output_ptr = nullptr;
 
 		error_type rv = m_decrypt(input_ptr, &output_ptr);
 		if (GOTCHANG_PDF_ERROR_SUCCES != rv) {
@@ -40,6 +47,13 @@ public:
 			throw UserCancelledException(ss.str());
 		}
 
+		if (output_ptr == nullptr) {
+			std::stringstream ss;
+			ss << "Custom key decrypt operation succeeded, but did not fill the decrypted data pointer";
+			throw UserCancelledException(ss.str());
+		}
+
+		Buffer *result = reinterpret_cast<Buffer*>(output_ptr);
 		return result;
 	}
 
@@ -48,11 +62,8 @@ public:
 		auto input_issuer = reinterpret_cast<const BufferHandleTag*>(&issuer);
 		auto input_serial = reinterpret_cast<const BufferHandleTag*>(&serial);
 		boolean_type result = false;
-		if (nullptr == m_equals) {
-			throw GeneralException("Equals function not initialized");
-		}
 
-		error_type rv = m_equals(input_issuer, input_serial, &result);
+		error_type rv = m_contains(input_issuer, input_serial, &result);
 		if (GOTCHANG_PDF_ERROR_SUCCES != rv) {
 			std::stringstream ss;
 			ss << "Custom key equals operation returned: " << rv;
@@ -67,17 +78,17 @@ public:
 
 	~CustomEncryptionKey()
 	{
-		if (nullptr != m_cleanup) m_cleanup();
+		m_cleanup();
 	}
 
 private:
 	InitializeFunction m_init;
 	CleanupFunction m_cleanup;
 	DecryptFunction m_decrypt;
-	EqualsFunction m_equals;
+	ContainsFunction m_contains;
 };
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Pkcs12EncryptionKey_CreateFromFile(string_type path, string_type password, PEncryptionKeyHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_CreateFromPkcs12File(string_type path, string_type password, PEncryptionKeyHandle result)
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(path);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -98,28 +109,44 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Pkcs12EncryptionKey_CreateFromFil
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Pkcs12EncryptionKey_CreateFromBuffer(BufferHandle data, PEncryptionKeyHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_CreateFromPkcs12Buffer(BufferHandle data, string_type password, PEncryptionKeyHandle result)
 {
-	Buffer* buffer = reinterpret_cast<Buffer*>(data);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(buffer);
+	Buffer* buffer_ptr = reinterpret_cast<Buffer*>(data);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(buffer_ptr);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try
 	{
-		Deferred<PKCS12Key> key(*buffer);
+		Buffer password_buffer;
+		if (nullptr != password) {
+			password_buffer = Buffer(password);
+		}
+
+		BufferPtr data_buffer(buffer_ptr);
+		Deferred<PKCS12Key> key(data_buffer, password_buffer);
 		auto ptr = static_cast<IEncryptionKey*>(key.AddRefGet());
 		*result = reinterpret_cast<EncryptionKeyHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION CustomEncryptionKey_Create(InitializeFunction initialize, CleanupFunction cleanup, DecryptFunction decrypt, EqualsFunction equals, PEncryptionKeyHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_CreateCustom(
+	InitializeFunction initialize,
+	CleanupFunction cleanup,
+	DecryptFunction decrypt,
+	ContainsFunction contains,
+	PEncryptionKeyHandle result
+	)
 {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(initialize);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(cleanup);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(decrypt);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(contains);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try
 	{
-		Deferred<CustomEncryptionKey> key(initialize, cleanup, decrypt, equals);
+		Deferred<CustomEncryptionKey> key(initialize, cleanup, decrypt, contains);
 		auto ptr = static_cast<IEncryptionKey*>(key.AddRefGet());
 		*result = reinterpret_cast<EncryptionKeyHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -128,8 +155,5 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION CustomEncryptionKey_Create(Initia
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_Release(EncryptionKeyHandle handle)
 {
-	IEncryptionKey* key = reinterpret_cast<IEncryptionKey*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(key);
-	key->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return ObjectRelease<IEncryptionKey, EncryptionKeyHandle>(handle);
 }

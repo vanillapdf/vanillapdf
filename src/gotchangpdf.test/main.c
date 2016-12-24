@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 		}
 
 		if (cert_path != NULL) {
-			RETURN_ERROR_IF_NOT_SUCCESS(Pkcs12EncryptionKey_CreateFromFile(cert_path, cert_password, &encryption_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(EncryptionKey_CreateFromPkcs12File(cert_path, cert_password, &encryption_key));
 			RETURN_ERROR_IF_NOT_SUCCESS(File_SetEncryptionKey(file, encryption_key));
 		}
 	}

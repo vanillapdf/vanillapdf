@@ -168,6 +168,7 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(XrefChainIterator);
 
 	/**
+	* \class EncryptionKeyHandle
 	* \brief Represents encryption key other than password
 	*/
 	DECLARE_OBJECT_HANDLE(EncryptionKey);
