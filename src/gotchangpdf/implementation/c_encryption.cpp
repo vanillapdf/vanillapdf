@@ -43,7 +43,7 @@ public:
 		return result;
 	}
 
-	virtual bool Equals(const Buffer& issuer, const Buffer& serial) const override
+	virtual bool ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const override
 	{
 		auto input_issuer = reinterpret_cast<const BufferHandleTag*>(&issuer);
 		auto input_serial = reinterpret_cast<const BufferHandleTag*>(&serial);

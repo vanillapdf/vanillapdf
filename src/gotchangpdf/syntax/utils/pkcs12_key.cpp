@@ -22,7 +22,7 @@ namespace gotchangpdf
 		PKCS12KeyImpl(const std::string& path, const Buffer& password);
 		PKCS12KeyImpl(const Buffer& data, const Buffer& password);
 		BufferPtr Decrypt(const Buffer& data) const;
-		bool Equals(const Buffer& issuer, const Buffer& serial) const;
+		bool ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const;
 
 		~PKCS12KeyImpl();
 
@@ -67,9 +67,9 @@ namespace gotchangpdf
 		return m_impl->Decrypt(data);
 	}
 
-	bool PKCS12Key::Equals(const Buffer& issuer, const Buffer& serial) const
+	bool PKCS12Key::ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const
 	{
-		return m_impl->Equals(issuer, serial);
+		return m_impl->ContainsPrivateKey(issuer, serial);
 	}
 	#pragma endregion
 
@@ -184,7 +184,7 @@ namespace gotchangpdf
 
 	}
 
-	bool PKCS12Key::PKCS12KeyImpl::Equals(const Buffer& issuer, const Buffer& serial) const
+	bool PKCS12Key::PKCS12KeyImpl::ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const
 	{
 
 #if defined(GOTCHANG_PDF_HAVE_OPENSSL)

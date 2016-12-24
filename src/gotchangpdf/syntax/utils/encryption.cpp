@@ -428,7 +428,7 @@ namespace gotchangpdf
 
 				Buffer issuer_buffer(issuer->bytes->data, issuer->bytes->length);
 				Buffer serial_buffer(serial->data, serial->length);
-				if (!key.Equals(issuer_buffer, serial_buffer)) {
+				if (!key.ContainsPrivateKey(issuer_buffer, serial_buffer)) {
 					continue;
 				}
 

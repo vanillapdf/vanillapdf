@@ -14,7 +14,7 @@ namespace gotchangpdf
 		PKCS12Key(const std::string& path, const Buffer& password);
 		PKCS12Key(const Buffer& data, const Buffer& password);
 		BufferPtr Decrypt(const Buffer& data) const override;
-		bool Equals(const Buffer& issuer, const Buffer& serial) const override;
+		bool ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const override;
 
 	private:
 		class PKCS12KeyImpl;
