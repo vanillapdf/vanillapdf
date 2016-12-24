@@ -11,7 +11,7 @@ extern "C"
 #endif
 
 	/** \file c_string_object.h
-	* This file contains contains class definitions for StringObjectHandle
+	* This file contains class definitions for StringObjectHandle
 	*/
 
 	/**

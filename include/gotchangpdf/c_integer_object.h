@@ -11,7 +11,7 @@ extern "C"
 #endif
 
 	/** \file c_integer_object.h
-	* This file contains contains class definitions for IntegerObjectHandle
+	* This file contains class definitions for IntegerObjectHandle
 	*/
 
 	/**

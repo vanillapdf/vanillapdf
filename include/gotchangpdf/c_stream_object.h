@@ -11,7 +11,7 @@ extern "C"
 #endif
 
 	/** \file c_stream_object.h
-	* This file contains contains class definitions for StreamObjectHandle
+	* This file contains class definitions for StreamObjectHandle
 	*/
 
 	/**

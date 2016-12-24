@@ -11,7 +11,7 @@ extern "C"
 #endif
 
 	/** \file c_boolean_object.h
-	* This file contains contains class definitions for BooleanObjectHandle
+	* This file contains class definitions for BooleanObjectHandle
 	*/
 
 	/**

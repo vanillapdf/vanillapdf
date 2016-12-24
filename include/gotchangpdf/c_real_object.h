@@ -11,7 +11,7 @@ extern "C"
 #endif
 
 	/** \file c_real_object.h
-	* This file contains contains class definitions for RealObjectHandle
+	* This file contains class definitions for RealObjectHandle
 	*/
 
 	/**

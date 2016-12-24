@@ -11,7 +11,7 @@ extern "C"
 #endif
 
 	/** \file c_dictionary_object.h
-	* This file contains contains class definitions for DictionaryObjectHandle
+	* This file contains class definitions for DictionaryObjectHandle
 	*/
 
 	/**

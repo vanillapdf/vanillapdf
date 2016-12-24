@@ -11,7 +11,7 @@ extern "C"
 #endif
 
 	/** \file c_name_object.h
-	* This file contains contains class definitions for NameObjectHandle
+	* This file contains class definitions for NameObjectHandle
 	*/
 
 	/**

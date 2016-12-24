@@ -11,7 +11,7 @@ extern "C"
 #endif
 
 	/** \file c_indirect_object_reference.h
-	* This file contains contains class definitions for IndirectObjectReferenceHandle
+	* This file contains class definitions for IndirectObjectReferenceHandle
 	*/
 
 	/**
