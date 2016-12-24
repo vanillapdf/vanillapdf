@@ -34,7 +34,7 @@ extern "C"
 
 	/**
 	* \defgroup NameConstants Name constants
-	* \ingroup Objects
+	* \ingroup Files
 	* \brief Often used name constant definitions
 	* @{
 	*/
