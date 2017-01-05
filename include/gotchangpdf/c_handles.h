@@ -20,6 +20,12 @@ extern "C"
 	* This file contains all type definitions returned by the library API.
 	*/
 
+	/**
+	* \class IUnknownHandle
+	* \brief Base class for reference counting
+	*/
+	DECLARE_OBJECT_HANDLE(IUnknown);
+
 	#pragma region Syntax
 
 	#pragma region Objects
@@ -33,6 +39,7 @@ extern "C"
 
 	/**
 	* \class ObjectHandle
+	* \extends IUnknownHandle
 	* \brief Base class for syntactic tokens
 	*/
 	DECLARE_OBJECT_HANDLE(Object);
@@ -146,29 +153,93 @@ extern "C"
 
 	/**
 	* \class FileHandle
+	* \extends IUnknownHandle
 	* \brief Represents file access handle
 	*/
 	DECLARE_OBJECT_HANDLE(File);
 
 	/**
 	* \class FileWriterHandle
+	* \extends IUnknownHandle
 	* \brief Implements serialization of Files to destination stream
 	*/
 	DECLARE_OBJECT_HANDLE(FileWriter);
 
-	/** @} */
-
-	DECLARE_OBJECT_HANDLE(XrefEntry);
-	DECLARE_OBJECT_HANDLE(XrefFreeEntry);
-	DECLARE_OBJECT_HANDLE(XrefUsedEntry);
-	DECLARE_OBJECT_HANDLE(XrefCompressedEntry);
+	/**
+	* \class XrefHandle
+	* \extends IUnknownHandle
+	* \brief Represents either cross-reference table or stream
+	*/
 	DECLARE_OBJECT_HANDLE(Xref);
+
+	/**
+	* \class XrefIteratorHandle
+	* \extends IUnknownHandle
+	* \brief Represents pointer to cross-reference entry collection
+	*
+	* This method is useful for iterating over whole entry collecion.
+	* \see XrefIterator_Next
+	* \see XrefIterator_GetValue
+	*/
 	DECLARE_OBJECT_HANDLE(XrefIterator);
+
+	/**
+	* \class XrefEntryHandle
+	* \extends IUnknownHandle
+	* \brief Represents base entry type within XrefHandle
+	*/
+	DECLARE_OBJECT_HANDLE(XrefEntry);
+
+	/**
+	* \class XrefFreeEntryHandle
+	* \extends IUnknownHandle
+	* \brief Represents free entry within XrefHandle
+	*
+	* Free entry means, that this object is not used in the document.
+	* It can be reused in new cross-reference section.
+	*/
+	DECLARE_OBJECT_HANDLE(XrefFreeEntry);
+
+	/**
+	* \class XrefUsedEntryHandle
+	* \extends IUnknownHandle
+	* \brief Represents used entry within XrefHandle
+	*/
+	DECLARE_OBJECT_HANDLE(XrefUsedEntry);
+
+	/**
+	* \class XrefCompressedEntryHandle
+	* \extends IUnknownHandle
+	* \brief Represents compressed entry within XrefHandle
+	*
+	* Compressed entry means that the object is located within (7.5.7 Object streams) compressed object stream.
+	* This entry type can be only found in cross-reference streams.
+	*/
+	DECLARE_OBJECT_HANDLE(XrefCompressedEntry);
+
+	/**
+	* \class XrefChainHandle
+	* \extends IUnknownHandle
+	* \brief Represents collection of XrefHandle
+	*/
 	DECLARE_OBJECT_HANDLE(XrefChain);
+
+	/**
+	* \class XrefChainIteratorHandle
+	* \extends IUnknownHandle
+	* \brief Represents pointer to cross-reference collection
+	*
+	* This method is useful for iterating over whole entry collecion.
+	* \see XrefChainIterator_Next
+	* \see XrefChainIterator_GetValue
+	*/
 	DECLARE_OBJECT_HANDLE(XrefChainIterator);
+
+	/** @} */
 
 	/**
 	* \class EncryptionKeyHandle
+	* \extends IUnknownHandle
 	* \brief Represents encryption key other than password
 	*/
 	DECLARE_OBJECT_HANDLE(EncryptionKey);
@@ -203,6 +274,7 @@ extern "C"
 
 	/**
 	* \class BufferHandle
+	* \extends IUnknownHandle
 	* \brief Represents memory stored data
 	*/
 	DECLARE_OBJECT_HANDLE(Buffer);
@@ -259,6 +331,7 @@ extern "C"
 
 	/**
 	* \class RectangleHandle
+	* \extends IUnknownHandle
 	* \brief Represents rectangle in 2D space
 	*/
 	DECLARE_OBJECT_HANDLE(Rectangle);

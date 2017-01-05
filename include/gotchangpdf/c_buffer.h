@@ -30,7 +30,7 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_SetData(BufferHandle handle, string_type data, size_type size);
 
 	/**
-	* \see Object_Release()
+	* \copydoc IUnknown_Release
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_Release(BufferHandle handle);
 

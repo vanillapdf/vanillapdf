@@ -40,7 +40,7 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_UpperRightY(RectangleHandle handle, PIntegerObjectHandle result);
 
 	/**
-	* \see Object_Release()
+	* \copydoc IUnknown_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_Release(RectangleHandle handle);
 

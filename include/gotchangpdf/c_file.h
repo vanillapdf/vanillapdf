@@ -73,7 +73,7 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(FileHandle handle, biguint_type objNumber, ushort_type genNumber, PObjectHandle result);
 
 	/**
-	* \see Object_Release()
+	* \copydoc IUnknown_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Release(FileHandle handle);
 
@@ -105,7 +105,7 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_WriteIncremental(FileWriterHandle handle, FileHandle source, FileHandle destination);
 
 	/**
-	* \see Object_Release()
+	* \copydoc IUnknown_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Release(FileWriterHandle handle);
 

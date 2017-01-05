@@ -81,7 +81,7 @@ extern "C"
 	);
 
 	/**
-	* \see Object_Release()
+	* \copydoc IUnknown_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_Release(EncryptionKeyHandle handle);
 
