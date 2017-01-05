@@ -15,23 +15,26 @@ extern "C"
 	*/
 
 	/**
-	* \brief Return current boolean value
 	* \memberof BooleanObjectHandle
+	* @{
+	*/
+
+	/**
+	* \brief Return current boolean value
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanObjectHandle handle, out_boolean_type result);
 
 	/**
 	* \brief Set new boolean value
-	* \memberof BooleanObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_SetValue(BooleanObjectHandle handle, boolean_type value);
 
 	/**
-	* \memberof BooleanObjectHandle
-	* \see Object_Release()
+	* \copydoc Object_Release
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_Release(BooleanObjectHandle handle);
 
+	/** @} */
 
 #ifdef __cplusplus
 };

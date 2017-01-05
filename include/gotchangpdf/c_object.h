@@ -86,92 +86,82 @@ extern "C"
 	typedef ObjectType *PObjectType;
 
 	/**
-	* \brief Get derived type from current object
 	* \memberof ObjectHandle
+	* @{
+	*/
+
+	/**
+	* \brief Get derived type from current object
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Type(ObjectHandle handle, PObjectType result);
 
 	/**
 	* \brief Get string representation of object type
-	* \memberof ObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_TypeName(ObjectType type, out_string_type result);
 
 	/**
 	* \brief Get input file offset where this object was found
-	* \memberof ObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle handle, out_offset_type result);
 
 	/**
-	* \memberof ObjectHandle
-	* \brief Decrement the internal reference counter.
-	*
-	* All objects available via API implements some sort of IUnknown
-	* interface. When the internal counter reaches zero the object
-	* is deleted.
+	* \copydoc IUnknown_Release
+	* \see IUnknown_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Release(ObjectHandle handle);
 
 	/**
 	* \brief Reinterpret current object as ArrayObjectHandle
-	* \memberof ObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToArray(ObjectHandle handle, PArrayObjectHandle result);
 
 	/**
 	* \brief Reinterpret current object as StreamObjectHandle
-	* \memberof ObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToStream(ObjectHandle handle, PStreamObjectHandle result);
 
 	/**
 	* \brief Reinterpret current object as DictionaryObjectHandle
-	* \memberof ObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToDictionary(ObjectHandle handle, PDictionaryObjectHandle result);
 
 	/**
 	* \brief Reinterpret current object as IndirectObjectReferenceHandle
-	* \memberof ObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToIndirectReference(ObjectHandle handle, PIndirectObjectReferenceHandle result);
 
 	/**
 	* \brief Reinterpret current object as IntegerObjectHandle
-	* \memberof ObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToInteger(ObjectHandle handle, PIntegerObjectHandle result);
 
 	/**
 	* \brief Reinterpret current object as BooleanObjectHandle
-	* \memberof ObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToBoolean(ObjectHandle handle, PBooleanObjectHandle result);
 
 	/**
 	* \brief Reinterpret current object as RealObjectHandle
-	* \memberof ObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToReal(ObjectHandle handle, PRealObjectHandle result);
 
 	/**
 	* \brief Reinterpret current object as NullObjectHandle
-	* \memberof ObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToNull(ObjectHandle handle, PNullObjectHandle result);
 
 	/**
 	* \brief Reinterpret current object as NameObjectHandle
-	* \memberof ObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToName(ObjectHandle handle, PNameObjectHandle result);
 
 	/**
 	* \brief Reinterpret current object as StringObjectHandle
-	* \memberof ObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle handle, PStringObjectHandle result);
+
+	/** @} */
 
 #ifdef __cplusplus
 };

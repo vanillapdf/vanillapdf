@@ -15,8 +15,12 @@ extern "C"
 	*/
 
 	/**
-	* \brief Get key at iterator position
 	* \memberof DictionaryObjectIteratorHandle
+	* @{
+	*/
+
+	/**
+	* \brief Get key at iterator position
 	*
 	* Ensure the iterator is valid.
 	* \see DictionaryObjectIterator_IsValid()
@@ -25,7 +29,6 @@ extern "C"
 
 	/**
 	* \brief Get value at iterator position
-	* \memberof DictionaryObjectIteratorHandle
 	*
 	* Ensure the iterator is valid.
 	* \see DictionaryObjectIterator_IsValid()
@@ -34,7 +37,6 @@ extern "C"
 
 	/**
 	* \brief Determine if current position is valid
-	* \memberof DictionaryObjectIteratorHandle
 	*
 	* Invalid position may mean that iterator moved past the end of the collection, as well as the collection was modified.
 	*
@@ -44,7 +46,6 @@ extern "C"
 
 	/**
 	* \brief Advances iterator to the next position
-	* \memberof DictionaryObjectIteratorHandle
 	*
 	* Ensure the iterator is valid.
 	* \see DictionaryObjectIterator_IsValid()
@@ -52,20 +53,24 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Next(DictionaryObjectIteratorHandle handle);
 
 	/**
-	* \memberof DictionaryObjectIteratorHandle
-	* \see Object_Release()
+	* \copydoc IUnknown_Release
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Release(DictionaryObjectIteratorHandle handle);
 
+	/** @} */
+
+	/**
+	* \memberof DictionaryObjectHandle
+	* @{
+	*/
+
 	/**
 	* \brief Find mapped value for key \p key
-	* \memberof DictionaryObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, NameObjectHandle key, PObjectHandle result);
 
 	/**
 	* \brief Determine if collection contains \p key
-	* \memberof DictionaryObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(DictionaryObjectHandle handle, NameObjectHandle key, out_boolean_type result);
 
@@ -73,27 +78,25 @@ extern "C"
 	* \brief Get collection iterator for enumerating all entries
 	*
 	* Modifying collection may invalidate this handle.
-	* \memberof DictionaryObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(DictionaryObjectHandle handle, PDictionaryObjectIteratorHandle result);
 
 	/**
 	* \brief Remove key-value pair from collection
-	* \memberof DictionaryObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryObjectHandle handle, NameObjectHandle key);
 
 	/**
 	* \brief Insert new key-value pair into collection
-	* \memberof DictionaryObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryObjectHandle handle, NameObjectHandle key, ObjectHandle value);
 
 	/**
-	* \memberof DictionaryObjectHandle
-	* \see Object_Release()
+	* \copydoc Object_Release
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Release(DictionaryObjectHandle handle);
+
+	/** @} */
 
 #ifdef __cplusplus
 };

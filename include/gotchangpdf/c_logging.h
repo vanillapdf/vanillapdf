@@ -16,11 +16,6 @@ extern "C"
 	*/
 
 	/**
-	* \class Logging
-	* \brief Library logging facility
-	*/
-
-	/**
 	* \brief Available severity settings
 	*/
 	typedef enum
@@ -57,36 +52,38 @@ extern "C"
 	*/
 	typedef LoggingSeverity *PLoggingSeverity;
 
+	/**
+	* \class Logging
+	* \brief Library logging facility
+	* @{
+	*/
 
 	/**
-	* \memberof Logging
 	* \brief Determine if logging is enabled in current library instance
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_GetEnabled(out_boolean_type result);
 
 	/**
-	* \memberof Logging
 	* \brief Enable logging for current library instance
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_SetEnabled(void);
 
 	/**
-	* \memberof Logging
 	* \brief Disable logging for current library instance
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_SetDisabled(void);
 
 	/**
-	* \memberof Logging
 	* \brief Get actual logging severity
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_GetSeverity(PLoggingSeverity level);
 
 	/**
-	* \memberof Logging
 	* \brief Set new logging severity
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_SetSeverity(LoggingSeverity level);
+
+	/** @} */
 
 #ifdef __cplusplus
 };

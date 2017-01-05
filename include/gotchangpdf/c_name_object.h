@@ -15,22 +15,26 @@ extern "C"
 	*/
 
 	/**
-	* \brief Get names binary representation
 	* \memberof NameObjectHandle
+	* @{
+	*/
+
+	/**
+	* \brief Get names binary representation
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_GetValue(NameObjectHandle handle, PBufferHandle result);
 
 	/**
 	* \brief Set names new value
-	* \memberof NameObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_SetValue(NameObjectHandle handle, BufferHandle value);
 
 	/**
-	* \memberof NameObjectHandle
-	* \see Object_Release()
+	* \copydoc Object_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Release(NameObjectHandle handle);
+
+	/** @} */
 
 	/**
 	* \defgroup NameConstants Name constants

@@ -10,33 +10,37 @@ extern "C"
 {
 #endif
 
-	/** \file c_indirect_object_reference.h
+	/**
+	* \file c_indirect_object_reference.h
 	* This file contains class definitions for IndirectObjectReferenceHandle
 	*/
 
 	/**
-	* \brief Return object number of referenced object
 	* \memberof IndirectObjectReferenceHandle
+	* @{
+	*/
+
+	/**
+	* \brief Return object number of referenced object
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObjectNumber(IndirectObjectReferenceHandle handle, out_biguint_type result);
 
 	/**
 	* \brief Return generation number of referenced object
-	* \memberof IndirectObjectReferenceHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedGenerationNumber(IndirectObjectReferenceHandle handle, out_ushort_type result);
 
 	/**
 	* \brief Return object handle to referenced object
-	* \memberof IndirectObjectReferenceHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObject(IndirectObjectReferenceHandle handle, PObjectHandle result);
 
 	/**
-	* \memberof IndirectObjectReferenceHandle
-	* \see Object_Release()
+	* \copydoc Object_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_Release(IndirectObjectReferenceHandle handle);
+
+	/** @} */
 
 #ifdef __cplusplus
 };

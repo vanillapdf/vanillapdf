@@ -10,7 +10,8 @@ extern "C"
 {
 #endif
 
-	/** \file c_string_object.h
+	/**
+	* \file c_string_object.h
 	* This file contains class definitions for StringObjectHandle
 	*/
 
@@ -38,76 +39,85 @@ extern "C"
 	typedef StringType *PStringType;
 
 	/**
-	* \brief Get derived type from current string
 	* \memberof StringObjectHandle
+	* @{
+	*/
+
+	/**
+	* \brief Get derived type from current string
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_Type(StringObjectHandle handle, PStringType result);
 
 	/**
 	* \brief Reinterpret current object as LiteralStringObjectHandle
-	* \memberof StringObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_ToLiteral(StringObjectHandle handle, PLiteralStringObjectHandle result);
 
 	/**
 	* \brief Reinterpret current object as HexadecimalStringObjectHandle
-	* \memberof StringObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_ToHexadecimal(StringObjectHandle handle, PHexadecimalStringObjectHandle result);
 
 	/**
 	* \brief Get strings current value
-	* \memberof StringObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_GetValue(StringObjectHandle handle, PBufferHandle result);
 
 	/**
 	* \brief Set strings new value
-	* \memberof StringObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_SetValue(StringObjectHandle handle, BufferHandle value);
 
 	/**
-	* \memberof StringObjectHandle
-	* \see Object_Release()
+	* \copydoc Object_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_Release(StringObjectHandle handle);
 
+	/** @} */
+
+	/**
+	* \memberof LiteralStringObjectHandle
+	* @{
+	*/
+
 	/**
 	* \brief Get strings current value
-	* \memberof LiteralStringObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_GetValue(LiteralStringObjectHandle handle, PBufferHandle result);
 
 	/**
 	* \brief Set strings new value
-	* \memberof LiteralStringObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_SetValue(LiteralStringObjectHandle handle, BufferHandle value);
 
 	/**
-	* \memberof LiteralStringObjectHandle
-	* \see Object_Release()
+	* \copydoc StringObject_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_Release(LiteralStringObjectHandle handle);
 
+	/** @} */
+
+	/**
+	* \memberof HexadecimalStringObjectHandle
+	* @{
+	*/
+
 	/**
 	* \brief Get strings current value
-	* \memberof HexadecimalStringObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_GetValue(HexadecimalStringObjectHandle handle, PBufferHandle result);
 
 	/**
 	* \brief Set strings new value
-	* \memberof HexadecimalStringObjectHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_SetValue(HexadecimalStringObjectHandle handle, BufferHandle value);
 
 	/**
-	* \memberof HexadecimalStringObjectHandle
-	* \see Object_Release()
+	* \copydoc StringObject_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Release(HexadecimalStringObjectHandle handle);
+
+	/** @} */
 
 #ifdef __cplusplus
 };
