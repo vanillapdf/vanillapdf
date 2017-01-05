@@ -10,52 +10,50 @@ extern "C"
 {
 #endif
 
+	/** \file c_file.h
+	* This file contains class definitions for FileHandle
+	*/
+
 	/**
-	* \addtogroup Files
+	* \memberof FileHandle
 	* @{
 	*/
 
 	/**
-	* \brief
-	* Opens a file for reading.
+	* \brief Opens a file for reading.
 	*
 	* The file must exist.
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Open(string_type filename, PFileHandle result);
 
 	/**
-	* \brief
-	* Creates a file for writing.
+	* \brief Creates a file for writing.
 	*
 	* Truncates the contents if it already exists.
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Create(string_type filename, PFileHandle result);
 
 	/**
-	* \brief
-	* Perform basic intialization.
+	* \brief Perform basic intialization.
 	*
 	* Read xref tables, determine if file is encrypted.
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle);
 
 	/**
-	* \brief
-	* Determine if file is encrypted.
+	* \brief Determine if file is encrypted.
 	*
 	* If the file was not initialized returns false.
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_IsEncrypted(FileHandle handle, out_boolean_type result);
 
 	/**
-	* \brief
-	* Set encryption password.
+	* \brief Set encryption password.
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SetEncryptionPassword(FileHandle handle, string_type password);
 
 	/**
-	* \brief
-	* Set files encryption key
+	* \brief Set files encryption key
 	*
 	* This is most often certificate.
 	* \see EncryptionKeyHandle
@@ -63,16 +61,14 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SetEncryptionKey(FileHandle handle, EncryptionKeyHandle key);
 
 	/**
-	* \brief
-	* Get chain of xref tables for iteration
+	* \brief Get chain of xref tables for iteration
 	* \see XrefChainHandle
 	* \see XrefChainIterator
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle, PXrefChainHandle result);
 
 	/**
-	* \brief
-	* Find exact object within all xref tables
+	* \brief Find exact object within all xref tables
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(FileHandle handle, biguint_type objNumber, ushort_type genNumber, PObjectHandle result);
 
@@ -81,8 +77,31 @@ extern "C"
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Release(FileHandle handle);
 
+	/** @} */
+
+	/**
+	* \memberof FileWriterHandle
+	* @{
+	*/
+
+	/**
+	* \brief Create new FileWriter instance
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Create(PFileWriterHandle result);
+
+	/**
+	* \brief Save file state into new destination
+	*
+	* Destination file will be overwritten if it exists.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Write(FileWriterHandle handle, FileHandle source, FileHandle destination);
+
+	/**
+	* \brief Save file state into new destination and create new section for all modifications done by user
+	*
+	* This method creates a new section with all modified objects.
+	* Whole file content preceeding new section will be preserved.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_WriteIncremental(FileWriterHandle handle, FileHandle source, FileHandle destination);
 
 	/**
