@@ -49,6 +49,7 @@
 #include "c_name_object.h"
 #include "c_object.h"
 
+#include "c_unknown_interface.h"
 #include "c_buffer.h"
 #include "c_logging.h"
 

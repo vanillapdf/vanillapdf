@@ -57,6 +57,7 @@ set(GOTCHANGPDF_C_IMPLEMENTATION_SOURCES
 	implementation/c_resource_dictionary.cpp
 	implementation/c_stream_object.cpp
 	implementation/c_string_object.cpp
+	implementation/c_unknown_interface.cpp
 	implementation/c_values.cpp
 	implementation/c_viewer_preferences.cpp
 	implementation/c_xref.cpp
@@ -270,6 +271,7 @@ set(INCLUDE_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_resource_dictionary.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_stream_object.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_string_object.h"
+	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_unknown_interface.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_values.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_version.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_viewer_preferences.h"

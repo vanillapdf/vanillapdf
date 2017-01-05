@@ -50,6 +50,7 @@
     <ClInclude Include="include\gotchangpdf\c_stream_object.h" />
     <ClInclude Include="include\gotchangpdf\c_string_object.h" />
     <ClInclude Include="include\gotchangpdf\c_logging.h" />
+    <ClInclude Include="include\gotchangpdf\c_unknown_interface.h" />
     <ClInclude Include="include\gotchangpdf\c_values.h" />
     <ClInclude Include="include\gotchangpdf\c_version.h" />
     <ClInclude Include="include\gotchangpdf\c_xref.h" />
@@ -181,6 +182,7 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_resource_dictionary.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_stream_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_string_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_unknown_interface.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_values.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_viewer_preferences.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_xref.cpp" />
