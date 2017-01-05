@@ -63,12 +63,26 @@ extern "C"
 	* @{
 	*/
 
+	/**
+	* \brief Get cross-reference table meta-data dictionary
+	*
+	* For cross-reference tables it is the trailer dictionary after all entries.
+	* For cross-reference streams it is the streams dictionary.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_TrailerDictionary(XrefHandle handle, PDictionaryObjectHandle result);
+
+	/**
+	* \brief Get byte offset in the decoded stream from the beginning of the file to the beginning of the xref keyword in the last cross-reference section.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_LastXrefOffset(XrefHandle handle, out_offset_type result);
+
+	/**
+	* \brief Get cross-reference entry iterator
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_Iterator(XrefHandle handle, PXrefIteratorHandle result);
 
 	/**
-	* \see IUnknown_Release()
+	* \copydoc IUnknown_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_Release(XrefHandle handle);
 
@@ -79,12 +93,23 @@ extern "C"
 	* @{
 	*/
 
+	/**
+	* \brief Get cross-reference entry from current iterator position
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefIterator_GetValue(XrefIteratorHandle handle, PXrefEntryHandle result);
+
+	/**
+	* \brief Determine if the current iterator position is valid
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefIterator_IsValid(XrefIteratorHandle handle, XrefHandle xref, out_boolean_type result);
+
+	/**
+	* \brief Advance iterator to the next position
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefIterator_Next(XrefIteratorHandle handle);
 
 	/**
-	* \see IUnknown_Release()
+	* \copydoc IUnknown_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefIterator_Release(XrefIteratorHandle handle);
 
@@ -95,10 +120,13 @@ extern "C"
 	* @{
 	*/
 
+	/**
+	* \brief Get cross-reference iterator
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChain_Iterator(XrefChainHandle handle, PXrefChainIteratorHandle result);
 
 	/**
-	* \see IUnknown_Release()
+	* \copydoc IUnknown_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChain_Release(XrefChainHandle handle);
 
@@ -109,12 +137,23 @@ extern "C"
 	* @{
 	*/
 
+	/**
+	* \brief Get cross-reference section from current iterator position
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_GetValue(XrefChainIteratorHandle handle, PXrefHandle result);
+
+	/**
+	* \brief Determine if the current iterator position is valid
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_IsValid(XrefChainIteratorHandle handle, XrefChainHandle chain, out_boolean_type result);
+
+	/**
+	* \brief Advance iterator to the next position
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_Next(XrefChainIteratorHandle handle);
 
 	/**
-	* \see IUnknown_Release()
+	* \copydoc IUnknown_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_Release(XrefChainIteratorHandle handle);
 
@@ -125,18 +164,44 @@ extern "C"
 	* @{
 	*/
 
+	/**
+	* \brief Get entry type
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Type(XrefEntryHandle handle, PXrefEntryType result);
+
+	/**
+	* \brief Get entry object number
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ObjectNumber(XrefEntryHandle handle, out_biguint_type result);
+
+	/**
+	* \brief Get entry generation number
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_GenerationNumber(XrefEntryHandle handle, out_ushort_type result);
+
+	/**
+	* \brief Quick check, if the entry is used or compressed
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_InUse(XrefEntryHandle handle, out_boolean_type result);
 
 	/**
-	* \see IUnknown_Release()
+	* \copydoc IUnknown_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle handle);
 
+	/**
+	* \brief Reinterpret entry as XrefFreeEntryHandle
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToFreeEntry(XrefEntryHandle handle, PXrefFreeEntryHandle result);
+
+	/**
+	* \brief Reinterpret entry as XrefUsedEntryHandle
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToUsedEntry(XrefEntryHandle handle, PXrefUsedEntryHandle result);
+
+	/**
+	* \brief Reinterpret entry as XrefCompressedEntryHandle
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToCompressedEntry(XrefEntryHandle handle, PXrefCompressedEntryHandle result);
 
 	/** @} */
@@ -146,13 +211,28 @@ extern "C"
 	* @{
 	*/
 
+	/**
+	* \copydoc XrefEntryHandle::XrefEntry_ObjectNumber
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_ObjectNumber(XrefEntryHandle handle, out_biguint_type result);
+
+	/**
+	* \copydoc XrefEntryHandle::XrefEntry_GenerationNumber
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_GenerationNumber(XrefEntryHandle handle, out_ushort_type result);
+
+	/**
+	* \copydoc XrefEntryHandle::XrefEntry_InUse
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_InUse(XrefFreeEntryHandle handle, out_boolean_type result);
+
+	/**
+	* \brief Object number of the next free object
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_NextFreeObjectNumber(XrefFreeEntryHandle handle, out_biguint_type result);
 
 	/**
-	* \see IUnknown_Release()
+	* \copydoc IUnknown_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_Release(XrefFreeEntryHandle handle);
 
@@ -163,14 +243,33 @@ extern "C"
 	* @{
 	*/
 
+	/**
+	* \copydoc XrefEntryHandle::XrefEntry_ObjectNumber
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_ObjectNumber(XrefEntryHandle handle, out_biguint_type result);
+
+	/**
+	* \copydoc XrefEntryHandle::XrefEntry_GenerationNumber
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_GenerationNumber(XrefEntryHandle handle, out_ushort_type result);
+
+	/**
+	* \brief Number of bytes from the beginning of the file to the beginning of the referenced object.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_Offset(XrefUsedEntryHandle handle, out_offset_type result);
+
+	/**
+	* \copydoc XrefEntryHandle::XrefEntry_InUse
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_InUse(XrefUsedEntryHandle handle, out_boolean_type result);
+
+	/**
+	* \brief Get reference to the object represented by this entry
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_Reference(XrefUsedEntryHandle handle, PObjectHandle result);
 
 	/**
-	* \see IUnknown_Release()
+	* \copydoc IUnknown_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_Release(XrefUsedEntryHandle handle);
 
@@ -181,15 +280,39 @@ extern "C"
 	* @{
 	*/
 
+	/**
+	* \copydoc XrefEntryHandle::XrefEntry_ObjectNumber
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectNumber(XrefEntryHandle handle, out_biguint_type result);
+
+	/**
+	* \copydoc XrefEntryHandle::XrefEntry_GenerationNumber
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GenerationNumber(XrefEntryHandle handle, out_ushort_type result);
+
+	/**
+	* \copydoc XrefEntryHandle::XrefEntry_InUse
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_InUse(XrefCompressedEntryHandle handle, out_boolean_type result);
+
+	/**
+	* \brief Get reference to the object represented by this entry
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Reference(XrefCompressedEntryHandle handle, PObjectHandle result);
+
+	/**
+	* \brief The index of this object within the object stream.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Index(XrefCompressedEntryHandle handle, out_uinteger_type result);
+
+	/**
+	* \brief The object number of the object stream in which this object is stored.
+	* (The generation number of the object stream shall be implicitly 0.)
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectStreamNumber(XrefCompressedEntryHandle handle, out_biguint_type result);
 
 	/**
-	* \see IUnknown_Release()
+	* \copydoc IUnknown_Release()
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Release(XrefCompressedEntryHandle handle);
 
