@@ -192,8 +192,8 @@ extern "C"
 
 	/**
 	* \class XrefFreeEntryHandle
-	* \extends IUnknownHandle
-	* \brief Represents free entry within XrefHandle
+	* \extends XrefEntryHandle
+	* \brief Represents free entry within cross-reference section.
 	*
 	* Free entry means, that this object is not used in the document.
 	* It can be reused in new cross-reference section.
@@ -202,15 +202,15 @@ extern "C"
 
 	/**
 	* \class XrefUsedEntryHandle
-	* \extends IUnknownHandle
-	* \brief Represents used entry within XrefHandle
+	* \extends XrefEntryHandle
+	* \brief Represents used entry within cross-reference section.
 	*/
 	DECLARE_OBJECT_HANDLE(XrefUsedEntry);
 
 	/**
 	* \class XrefCompressedEntryHandle
-	* \extends IUnknownHandle
-	* \brief Represents compressed entry within XrefHandle
+	* \extends XrefEntryHandle
+	* \brief Represents compressed entry within cross-reference section.
 	*
 	* Compressed entry means that the object is located within (7.5.7 Object streams) compressed object stream.
 	* This entry type can be only found in cross-reference streams.
