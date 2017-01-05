@@ -213,6 +213,13 @@ extern "C"
 
 	#pragma region Documents
 
+	/**
+	* \defgroup Documents Documents
+	* \ingroup GotchangPDF
+	* \brief Classes representing document's properties
+	* @{
+	*/
+
 	/* Document */
 	DECLARE_OBJECT_HANDLE(Document);
 	DECLARE_OBJECT_HANDLE(Catalog);
@@ -249,10 +256,17 @@ extern "C"
 
 	/* Common data structures */
 	DECLARE_OBJECT_HANDLE(Date);
+
+	/**
+	* \class RectangleHandle
+	* \brief Represents rectangle in 2D space
+	*/
 	DECLARE_OBJECT_HANDLE(Rectangle);
 	
 	/* Contents */
 	DECLARE_OBJECT_HANDLE(Contents);
+
+	/** @} */
 
 	#pragma endregion
 
