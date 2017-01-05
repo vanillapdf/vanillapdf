@@ -134,13 +134,13 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Type(XrefEntryHandle ha
 
 	switch (entry->GetUsage()) {
 	case XrefEntryBase::Usage::Free:
-		*result = XrefEntryFree; break;
+		*result = XrefEntryType_Free; break;
 	case XrefEntryBase::Usage::Used:
-		*result = XrefEntryUsed; break;
+		*result = XrefEntryType_Used; break;
 	case XrefEntryBase::Usage::Compressed:
-		*result = XrefEntryCompressed; break;
+		*result = XrefEntryType_Compressed; break;
 	case XrefEntryBase::Usage::Null:
-		*result = XrefEntryNull; break;
+		*result = XrefEntryType_Null; break;
 	default:
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}

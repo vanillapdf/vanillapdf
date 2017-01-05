@@ -46,22 +46,22 @@ error_type process_xref(XrefHandle xref, int nested)
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_Type(entry, &type));
 
 		switch (type) {
-		case XrefEntryFree:
+		case XrefEntryType_Free:
 			RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_ToFreeEntry(entry, &free_entry));
 			break;
-		case XrefEntryUsed:
+		case XrefEntryType_Used:
 			RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_ToUsedEntry(entry, &used_entry));
 			RETURN_ERROR_IF_NOT_SUCCESS(XrefUsedEntry_Reference(used_entry, &obj));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_object(obj, nested + 1));
 			RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));
 			break;
-		case XrefEntryCompressed:
+		case XrefEntryType_Compressed:
 			RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_ToCompressedEntry(entry, &compressed_entry));
 			RETURN_ERROR_IF_NOT_SUCCESS(XrefCompressedEntry_Reference(compressed_entry, &obj));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_object(obj, nested + 1));
 			RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));
 			break;
-		case XrefEntryNull:
+		case XrefEntryType_Null:
 			printf("Missing xref entry\n");
 			return GOTCHANG_PDF_TEST_ERROR_FAILURE;
 		default:
