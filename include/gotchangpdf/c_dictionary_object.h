@@ -53,7 +53,7 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Next(DictionaryObjectIteratorHandle handle);
 
 	/**
-	* \copydoc IUnknown_Release
+	* \copydoc IUnknownHandle::IUnknown_Release
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Release(DictionaryObjectIteratorHandle handle);
 
