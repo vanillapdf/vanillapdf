@@ -201,6 +201,10 @@ extern "C"
 
 	#pragma region Utils
 
+	/**
+	* \class BufferHandle
+	* \brief Represents memory stored data
+	*/
 	DECLARE_OBJECT_HANDLE(Buffer);
 
 	#pragma endregion

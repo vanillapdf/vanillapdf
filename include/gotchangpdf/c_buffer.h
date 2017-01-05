@@ -10,9 +10,31 @@ extern "C"
 {
 #endif
 
+	/** \file c_buffer.h
+	* This file contains class definitions for BufferHandle
+	*/
+
+	/**
+	* \memberof BufferHandle
+	* @{
+	*/
+
+	/**
+	* \brief Get data content from buffer
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_GetData(BufferHandle handle, out_string_type data, out_size_type size);
+
+	/**
+	* \brief Set new data content
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_SetData(BufferHandle handle, string_type data, size_type size);
+
+	/**
+	* \see Object_Release()
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_Release(BufferHandle handle);
+
+	/** @} */
 
 #ifdef __cplusplus
 };
