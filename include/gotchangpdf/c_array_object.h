@@ -10,7 +10,8 @@ extern "C"
 {
 #endif
 
-	/** \file c_array_object.h
+	/**
+	* \file c_array_object.h
 	* This file contains class definitions for ArrayObjectHandle
 	*/
 

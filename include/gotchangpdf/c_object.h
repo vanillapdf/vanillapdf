@@ -10,7 +10,8 @@ extern "C"
 {
 #endif
 
-	/** \file c_object.h
+	/**
+	* \file c_object.h
 	* This file contains contains class definitions for ObjectHandle
 	*/
 
