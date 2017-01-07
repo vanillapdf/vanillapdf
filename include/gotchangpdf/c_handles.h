@@ -327,6 +327,12 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(UnicodeCharacterMap);
 
 	/* Common data structures */
+
+	/**
+	* \class DateHandle
+	* \extends IUnknownHandle
+	* \brief Represents a reference to a particular day represented within a calendar system
+	*/
 	DECLARE_OBJECT_HANDLE(Date);
 
 	/**
