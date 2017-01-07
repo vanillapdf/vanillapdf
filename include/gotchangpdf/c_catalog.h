@@ -5,7 +5,7 @@
 #include "c_handles.h"
 #include "c_values.h"
 
-#include "c_version.h"
+#include "c_pdf_version.h"
 
 #ifdef __cplusplus
 extern "C"

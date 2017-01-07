@@ -5,6 +5,7 @@
 #include "c_export.h"
 #include "c_values.h"
 #include "c_handles.h"
+#include "c_pdf_version.h"
 
 /* files */
 #include "c_file.h"
