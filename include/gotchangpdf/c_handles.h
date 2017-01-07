@@ -298,6 +298,12 @@ extern "C"
 	* \brief Represents high-level file access handle
 	*/
 	DECLARE_OBJECT_HANDLE(Document);
+
+	/**
+	* \class CatalogHandle
+	* \extends IUnknownHandle
+	* \brief The root of a document's object hierarchy
+	*/
 	DECLARE_OBJECT_HANDLE(Catalog);
 	DECLARE_OBJECT_HANDLE(DocumentInfo);
 	DECLARE_OBJECT_HANDLE(PageTree);
