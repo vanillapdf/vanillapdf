@@ -10,7 +10,8 @@ extern "C"
 {
 #endif
 
-	typedef enum {
+	typedef enum
+	{
 		FontType_Composite = 0,
 		FontType_Type1,
 		FontType_Type3
