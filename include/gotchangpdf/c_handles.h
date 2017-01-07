@@ -292,7 +292,11 @@ extern "C"
 	* @{
 	*/
 
-	/* Document */
+	/**
+	* \class DocumentHandle
+	* \extends IUnknownHandle
+	* \brief Represents high-level file access handle
+	*/
 	DECLARE_OBJECT_HANDLE(Document);
 	DECLARE_OBJECT_HANDLE(Catalog);
 	DECLARE_OBJECT_HANDLE(DocumentInfo);
