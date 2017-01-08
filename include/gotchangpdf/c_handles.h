@@ -345,6 +345,16 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(OutlineItem);
 	DECLARE_OBJECT_HANDLE(OutlineItemColor);
 	DECLARE_OBJECT_HANDLE(OutlineItemFlags);
+
+	/**
+	* \class ResourceDictionaryHandle
+	* \extends IUnknownHandle
+	* \brief
+	* A content stream's named resources shall be defined
+	* by a resource dictionary, which shall enumerate the
+	* named resources needed by the operators in the
+	* content stream and the names by which they can be referred to.
+	*/
 	DECLARE_OBJECT_HANDLE(ResourceDictionary);
 	DECLARE_OBJECT_HANDLE(NamedDestinations);
 	DECLARE_OBJECT_HANDLE(Destination);

@@ -10,8 +10,28 @@ extern "C"
 {
 #endif
 
+	/**
+	* \file c_resource_dictionary.h
+	* This file contains class definitions for ResourceDictionaryHandle
+	*/
+
+	/**
+	* \memberof ResourceDictionaryHandle
+	* @{
+	*/
+
+	/**
+	* \brief
+	* A dictionary that maps resource names to font dictionaries.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ResourceDictionary_GetFontMap(ResourceDictionaryHandle handle, PFontMapHandle result);
+
+	/**
+	* \copydoc IUnknown_Release
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ResourceDictionary_Release(ResourceDictionaryHandle handle);
+
+	/** @} */
 
 #ifdef __cplusplus
 };
