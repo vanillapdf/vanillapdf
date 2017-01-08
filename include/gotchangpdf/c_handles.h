@@ -356,7 +356,30 @@ extern "C"
 	* content stream and the names by which they can be referred to.
 	*/
 	DECLARE_OBJECT_HANDLE(ResourceDictionary);
+
+	/**
+	* \class NamedDestinationsHandle
+	* \extends IUnknownHandle
+	* \brief
+	* A name tree mapping name strings
+	* to destinations (see 12.3.2.3, "Named Destinations").
+	*/
 	DECLARE_OBJECT_HANDLE(NamedDestinations);
+
+	/**
+	* \class DestinationHandle
+	* \extends IUnknownHandle
+	* \brief
+	* A destination defines a particular view of a document.
+	*
+	* Consisting of the following items:
+	*
+	* - The page of the document that shall be displayed.
+	*
+	* - The location of the document window on that page.
+	*
+	* - The magnification (zoom) factor.
+	*/
 	DECLARE_OBJECT_HANDLE(Destination);
 	DECLARE_OBJECT_HANDLE(PageAnnotations);
 	DECLARE_OBJECT_HANDLE(Annotation);
