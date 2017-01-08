@@ -305,6 +305,12 @@ extern "C"
 	* \brief The root of a document's object hierarchy
 	*/
 	DECLARE_OBJECT_HANDLE(Catalog);
+
+	/**
+	* \class DocumentInfoHandle
+	* \extends IUnknownHandle
+	* \brief Metadata for the document
+	*/
 	DECLARE_OBJECT_HANDLE(DocumentInfo);
 	DECLARE_OBJECT_HANDLE(PageTree);
 	DECLARE_OBJECT_HANDLE(PageObject);
