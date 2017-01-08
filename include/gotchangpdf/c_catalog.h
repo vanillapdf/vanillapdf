@@ -18,7 +18,7 @@ extern "C"
 	*/
 
 	/**
-	* \brief Represents page layout types
+	* \brief Page layout which shall be used when the document is opened.
 	*/
 	typedef enum
 	{
@@ -74,7 +74,7 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLabels(CatalogHandle handle, PPageLabelsHandle result);
 
 	/**
-	* \brief Page layout which shall be used when the document is opened.
+	* \copydoc PageLayout
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHandle handle, PPageLayout result);
 
