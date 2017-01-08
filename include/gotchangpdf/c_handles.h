@@ -312,6 +312,15 @@ extern "C"
 	* \brief Metadata for the document
 	*/
 	DECLARE_OBJECT_HANDLE(DocumentInfo);
+
+	/**
+	* \class PageTreeHandle
+	* \extends IUnknownHandle
+	* \brief
+	* The pages of a document are accessed through a structure
+	* known as the page tree, which defines the ordering
+	* of pages in the document.
+	*/
 	DECLARE_OBJECT_HANDLE(PageTree);
 	DECLARE_OBJECT_HANDLE(PageObject);
 	DECLARE_OBJECT_HANDLE(DeveloperExtensions);
