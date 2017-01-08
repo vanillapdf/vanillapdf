@@ -322,6 +322,15 @@ extern "C"
 	* of pages in the document.
 	*/
 	DECLARE_OBJECT_HANDLE(PageTree);
+
+	/**
+	* \class PageObjectHandle
+	* \extends IUnknownHandle
+	* \brief
+	* The leaves of the page tree are page objects,
+	* each of which is a dictionary specifying the
+	* attributes of a single page of the document.
+	*/
 	DECLARE_OBJECT_HANDLE(PageObject);
 	DECLARE_OBJECT_HANDLE(DeveloperExtensions);
 	DECLARE_OBJECT_HANDLE(DeveloperExtensionsIterator);
