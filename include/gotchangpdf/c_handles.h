@@ -381,8 +381,35 @@ extern "C"
 	* - The magnification (zoom) factor.
 	*/
 	DECLARE_OBJECT_HANDLE(Destination);
+
+	/**
+	* \class PageAnnotationsHandle
+	* \extends IUnknownHandle
+	* \brief
+	* An array of annotation dictionaries that shall contain indirect
+	* references to all annotations associated with
+	* the page (see 12.5, "Annotations").
+	*/
 	DECLARE_OBJECT_HANDLE(PageAnnotations);
+
+	/**
+	* \class AnnotationHandle
+	* \extends IUnknownHandle
+	* \brief
+	* An annotation associates an object such as a note, sound, or movie
+	* with a location on a page of a PDF document, or provides a way to
+	* interact with the user by means of the mouse and keyboard.
+	*/
 	DECLARE_OBJECT_HANDLE(Annotation);
+
+	/**
+	* \class LinkAnnotationHandle
+	* \extends AnnotationHandle
+	* \brief
+	* A link annotation represents either a hypertext link to a destination
+	* elsewhere in the document (see 12.3.2, "Destinations") or an action
+	* to be performed (12.6, "Actions").
+	*/
 	DECLARE_OBJECT_HANDLE(LinkAnnotation);
 
 	/* Fonts */
