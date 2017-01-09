@@ -35,7 +35,7 @@ namespace gotchangpdf
 					throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageLabel>(obj);
 			}
 
-			bool P(syntax::StringObjectPtr& result) const
+			bool Prefix(syntax::StringObjectPtr& result) const
 			{
 				if (!_obj->Contains(constant::Name::P))
 					return false;
@@ -44,7 +44,7 @@ namespace gotchangpdf
 				return true;
 			}
 
-			bool St(syntax::IntegerObjectPtr& result) const
+			bool Start(syntax::IntegerObjectPtr& result) const
 			{
 				if (!_obj->Contains(constant::Name::St))
 					return false;
@@ -53,7 +53,7 @@ namespace gotchangpdf
 				return true;
 			}
 
-			bool S(NumberingStyle& result) const
+			bool Style(NumberingStyle& result) const
 			{
 				if (!_obj->Contains(constant::Name::S))
 					return false;

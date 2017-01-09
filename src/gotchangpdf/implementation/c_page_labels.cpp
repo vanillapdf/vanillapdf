@@ -45,39 +45,39 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_Release(PageLabelsHand
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_P(PageLabelHandle handle, PStringObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Prefix(PageLabelHandle handle, PStringObjectHandle result)
 {
 	PageLabel* obj = reinterpret_cast<PageLabel*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
 	try
 	{
-		syntax::StringObjectPtr p;
-		auto contains = obj->P(p);
+		syntax::StringObjectPtr prefix;
+		auto contains = obj->Prefix(prefix);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
-		auto ptr = p.AddRefGet();
+		auto ptr = prefix.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_St(PageLabelHandle handle, PIntegerObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Start(PageLabelHandle handle, PIntegerObjectHandle result)
 {
 	PageLabel* obj = reinterpret_cast<PageLabel*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
 	try
 	{
-		syntax::IntegerObjectPtr st;
-		auto contains = obj->St(st);
+		syntax::IntegerObjectPtr start;
+		auto contains = obj->Start(start);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
-		auto ptr = st.AddRefGet();
+		auto ptr = start.AddRefGet();
 		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_S(PageLabelHandle handle, PNumberingStyle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Style(PageLabelHandle handle, PNumberingStyle result)
 {
 	PageLabel* obj = reinterpret_cast<PageLabel*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -85,7 +85,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_S(PageLabelHandle handl
 	try
 	{
 		PageLabel::NumberingStyle style;
-		auto contains = obj->S(style);
+		auto contains = obj->Style(style);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		switch (style) {
 		case PageLabel::NumberingStyle::Decimal:

@@ -366,7 +366,24 @@ extern "C"
 	* \see DeveloperExtensionsHandle
 	*/
 	DECLARE_OBJECT_HANDLE(DeveloperExtension);
+
+	/**
+	* \class PageLabelsHandle
+	* \extends IUnknownHandle
+	* \brief
+	* Collection of PageLabelHandle
+	* \see CatalogHandle
+	*/
 	DECLARE_OBJECT_HANDLE(PageLabels);
+
+	/**
+	* \class PageLabelHandle
+	* \extends IUnknownHandle
+	* \brief
+	* Page labels are used for numbering or otherwise identifying
+	* individual pages (see 12.4.2, "Page Labels").
+	* \see PageLabelsHandle
+	*/
 	DECLARE_OBJECT_HANDLE(PageLabel);
 	DECLARE_OBJECT_HANDLE(ViewerPreferences);
 	DECLARE_OBJECT_HANDLE(PageRange);

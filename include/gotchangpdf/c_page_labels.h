@@ -10,23 +10,110 @@ extern "C"
 {
 #endif
 
+	/**
+	* \file c_page_labels.h
+	* This file contains class definitions for
+	* PageLabelsHandle and PageLabelHandle.
+	*/
+
+	/**
+	* \brief Numbering style types.
+	*/
 	typedef enum
 	{
+		/**
+		* \brief Decimal arabic numerals.
+		*/
 		NumberingStyle_Decimal = 0,
-		NumberingStyle_UpperRoman,
-		NumberingStyle_LowerRoman,
-		NumberingStyle_UpperLetters,
-		NumberingStyle_LowerLetters
-	} NumberingStyle, *PNumberingStyle;
 
+		/**
+		* \brief Uppercase roman numerals.
+		*/
+		NumberingStyle_UpperRoman,
+
+		/**
+		* \brief Lowercase roman numerals.
+		*/
+		NumberingStyle_LowerRoman,
+
+		/**
+		* \brief
+		* Uppercase letters
+		* (A to Z for the first 26 pages,
+		* AA to ZZ for the next 26, and so on).
+		*/
+		NumberingStyle_UpperLetters,
+
+		/**
+		* \brief
+		* Lowercase letters
+		* (a to z for the first 26 pages,
+		* aa to zz for the next 26, and so on).
+		*/
+		NumberingStyle_LowerLetters
+	} NumberingStyle;
+
+	/**
+	* \brief Pointer to NumberingStyle
+	*/
+	typedef NumberingStyle *PNumberingStyle;
+
+	/**
+	* \memberof PageLabelsHandle
+	* @{
+	*/
+
+	/**
+	* \brief
+	* Detemines if collection contains
+	* label for page number \p page_number.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_Contains(PageLabelsHandle handle, integer_type page_number, out_boolean_type result);
+
+	/**
+	* \brief
+	* Get page label for page number \p page_number.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_At(PageLabelsHandle handle, integer_type page_number, PPageLabelHandle result);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_Release(PageLabelsHandle handle);
 
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_P(PageLabelHandle handle, PStringObjectHandle result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_St(PageLabelHandle handle, PIntegerObjectHandle result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_S(PageLabelHandle handle, PNumberingStyle result);
+	/** @} */
+
+	/**
+	* \memberof PageLabelHandle
+	* @{
+	*/
+
+	/**
+	* \brief The label prefix for page labels in this range.
+	*/
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Prefix(PageLabelHandle handle, PStringObjectHandle result);
+
+	/**
+	* \brief
+	* The value of the numeric portion for the first page label in the range.
+	*/
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Start(PageLabelHandle handle, PIntegerObjectHandle result);
+
+	/**
+	* \brief
+	* The numbering style that shall be used for
+	* the numeric portion of each page label.
+	*/
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Style(PageLabelHandle handle, PNumberingStyle result);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Release(PageLabelHandle handle);
+
+	/** @} */
 
 #ifdef __cplusplus
 };

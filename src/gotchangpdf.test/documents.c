@@ -946,9 +946,9 @@ error_type process_page_label(PageLabelHandle label, int nested)
 	print_spaces(nested);
 	printf("Page label begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageLabel_P(label, &p), process_string(p, nested + 1), StringObject_Release(p));
-	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageLabel_St(label, &st), process_integer(st, nested + 1), IntegerObject_Release(st));
-	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(PageLabel_S(label, &s), proces_numbering_style(s, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageLabel_Prefix(label, &p), process_string(p, nested + 1), StringObject_Release(p));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageLabel_Start(label, &st), process_integer(st, nested + 1), IntegerObject_Release(st));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(PageLabel_Style(label, &s), proces_numbering_style(s, nested + 1));
 
 	print_spaces(nested);
 	printf("Page label end\n");
