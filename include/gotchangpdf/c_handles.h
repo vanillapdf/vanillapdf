@@ -336,8 +336,35 @@ extern "C"
 	* \see PageTreeHandle
 	*/
 	DECLARE_OBJECT_HANDLE(PageObject);
+
+	/**
+	* \class DeveloperExtensionsHandle
+	* \extends IUnknownHandle
+	* \brief
+	* The extensions dictionary, an entry in the document's catalog dictionary,
+	* if present, shall contain one or more entries identifying
+	* developer-defined extensions to the ISO 32000-1 Standard.
+	* \see CatalogHandle
+	*/
 	DECLARE_OBJECT_HANDLE(DeveloperExtensions);
+
+	/**
+	* \class DeveloperExtensionsIteratorHandle
+	* \extends IUnknownHandle
+	* \brief
+	* Iterator concept allowing to traverse over
+	* DeveloperExtensionsHandle collection.
+	* \see DeveloperExtensionsHandle
+	*/
 	DECLARE_OBJECT_HANDLE(DeveloperExtensionsIterator);
+
+	/**
+	* \class DeveloperExtensionHandle
+	* \extends IUnknownHandle
+	* \brief
+	* Single item within DeveloperExtensionsHandle collection.
+	* \see DeveloperExtensionsHandle
+	*/
 	DECLARE_OBJECT_HANDLE(DeveloperExtension);
 	DECLARE_OBJECT_HANDLE(PageLabels);
 	DECLARE_OBJECT_HANDLE(PageLabel);
