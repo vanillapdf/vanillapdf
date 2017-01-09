@@ -92,7 +92,7 @@ extern "C"
 	*/
 
 	/**
-	* \brief Get derived type from current object
+	* \brief Get derived type of current object
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Type(ObjectHandle handle, PObjectType result);
 
