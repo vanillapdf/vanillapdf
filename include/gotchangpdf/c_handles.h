@@ -464,7 +464,23 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(LinkAnnotation);
 
 	/* Fonts */
+
+	/**
+	* \class FontHandle
+	* \extends IUnknownHandle
+	* \brief
+	* A base class for all derived fonts.
+	* \see FontMapHandle
+	*/
 	DECLARE_OBJECT_HANDLE(Font);
+
+	/**
+	* \class CompositeFontHandle
+	* \extends FontHandle
+	* \brief
+	* A font composed of glyphs from a descendant
+	* CIDFont (see 9.7, "Composite Fonts").
+	*/
 	DECLARE_OBJECT_HANDLE(CompositeFont);
 	DECLARE_OBJECT_HANDLE(FontMap);
 	DECLARE_OBJECT_HANDLE(CharacterMap);
