@@ -10,7 +10,8 @@ extern "C"
 {
 #endif
 
-	/** \file c_dictionary_object.h
+	/**
+	* \file c_dictionary_object.h
 	* This file contains class definitions for DictionaryObjectHandle
 	*/
 
@@ -23,7 +24,7 @@ extern "C"
 	* \brief Get key at iterator position
 	*
 	* Ensure the iterator is valid.
-	* \see DictionaryObjectIterator_IsValid()
+	* \see ::DictionaryObjectIterator_IsValid
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetKey(DictionaryObjectIteratorHandle handle, PNameObjectHandle result);
 
@@ -31,7 +32,7 @@ extern "C"
 	* \brief Get value at iterator position
 	*
 	* Ensure the iterator is valid.
-	* \see DictionaryObjectIterator_IsValid()
+	* \see ::DictionaryObjectIterator_IsValid
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetValue(DictionaryObjectIteratorHandle handle, PObjectHandle result);
 
@@ -48,7 +49,7 @@ extern "C"
 	* \brief Advances iterator to the next position
 	*
 	* Ensure the iterator is valid.
-	* \see DictionaryObjectIterator_IsValid()
+	* \see ::DictionaryObjectIterator_IsValid
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Next(DictionaryObjectIteratorHandle handle);
 
