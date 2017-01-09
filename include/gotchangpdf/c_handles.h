@@ -303,6 +303,7 @@ extern "C"
 	* \class CatalogHandle
 	* \extends IUnknownHandle
 	* \brief The root of a document's object hierarchy
+	* \see DocumentHandle
 	*/
 	DECLARE_OBJECT_HANDLE(Catalog);
 
@@ -310,6 +311,7 @@ extern "C"
 	* \class DocumentInfoHandle
 	* \extends IUnknownHandle
 	* \brief Metadata for the document
+	* \see DocumentHandle
 	*/
 	DECLARE_OBJECT_HANDLE(DocumentInfo);
 
@@ -320,6 +322,7 @@ extern "C"
 	* The pages of a document are accessed through a structure
 	* known as the page tree, which defines the ordering
 	* of pages in the document.
+	* \see CatalogHandle
 	*/
 	DECLARE_OBJECT_HANDLE(PageTree);
 
@@ -330,6 +333,7 @@ extern "C"
 	* The leaves of the page tree are page objects,
 	* each of which is a dictionary specifying the
 	* attributes of a single page of the document.
+	* \see PageTreeHandle
 	*/
 	DECLARE_OBJECT_HANDLE(PageObject);
 	DECLARE_OBJECT_HANDLE(DeveloperExtensions);
@@ -354,6 +358,7 @@ extern "C"
 	* by a resource dictionary, which shall enumerate the
 	* named resources needed by the operators in the
 	* content stream and the names by which they can be referred to.
+	* \see PageObjectHandle
 	*/
 	DECLARE_OBJECT_HANDLE(ResourceDictionary);
 
@@ -389,6 +394,7 @@ extern "C"
 	* An array of annotation dictionaries that shall contain indirect
 	* references to all annotations associated with
 	* the page (see 12.5, "Annotations").
+	* \see PageObjectHandle
 	*/
 	DECLARE_OBJECT_HANDLE(PageAnnotations);
 
@@ -399,6 +405,7 @@ extern "C"
 	* An annotation associates an object such as a note, sound, or movie
 	* with a location on a page of a PDF document, or provides a way to
 	* interact with the user by means of the mouse and keyboard.
+	* \see PageAnnotationsHandle
 	*/
 	DECLARE_OBJECT_HANDLE(Annotation);
 
