@@ -10,7 +10,8 @@ extern "C"
 {
 #endif
 
-	/** \file c_file.h
+	/**
+	* \file c_file.h
 	* This file contains class definitions for FileHandle
 	*/
 
