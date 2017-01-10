@@ -385,8 +385,33 @@ extern "C"
 	* \see PageLabelsHandle
 	*/
 	DECLARE_OBJECT_HANDLE(PageLabel);
+
+	/**
+	* \class ViewerPreferencesHandle
+	* \extends IUnknownHandle
+	* \brief
+	* Controlling the way the document shall
+	* be presented on the screen or in print.
+	* \see CatalogHandle
+	*/
 	DECLARE_OBJECT_HANDLE(ViewerPreferences);
+
+	/**
+	* \class PageRangeHandle
+	* \extends IUnknownHandle
+	* \brief
+	* Collection of PageSubRangeHandle
+	* \see ViewerPreferencesHandle
+	*/
 	DECLARE_OBJECT_HANDLE(PageRange);
+
+	/**
+	* \class PageSubRangeHandle
+	* \extends IUnknownHandle
+	* \brief
+	* Specifies first and last page number of defined range
+	* \see PageRangeHandle
+	*/
 	DECLARE_OBJECT_HANDLE(PageSubRange);
 	DECLARE_OBJECT_HANDLE(OutlineBase);
 	DECLARE_OBJECT_HANDLE(Outline);
