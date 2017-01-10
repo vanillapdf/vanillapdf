@@ -221,16 +221,22 @@ namespace gotchangpdf
 					return false;
 
 				auto name = _obj->FindAs<syntax::NameObjectPtr>(constant::Name::Duplex);
-				if (name == constant::Name::UseNone)
+				if (name == constant::Name::Simplex) {
 					result = DuplexType::Simplex;
-				else if (name == constant::Name::DuplexFlipShortEdge)
-					result = DuplexType::DuplexFlipShortEdge;
-				else if (name == constant::Name::DuplexFlipLongEdge)
-					result = DuplexType::DuplexFlipLongEdge;
-				else
-					throw GeneralException("Unknown duplex: " + name->ToString());
+					return true;
+				}
 
-				return true;
+				if (name == constant::Name::DuplexFlipShortEdge) {
+					result = DuplexType::DuplexFlipShortEdge;
+					return true;
+				}
+
+				if (name == constant::Name::DuplexFlipLongEdge) {
+					result = DuplexType::DuplexFlipLongEdge;
+					return true;
+				}
+
+				throw GeneralException("Unknown duplex: " + name->ToString());
 			}
 
 			bool PickTrayByPDFSize(syntax::BooleanObjectPtr& result) const
