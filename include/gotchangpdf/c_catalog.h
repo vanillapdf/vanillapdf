@@ -119,6 +119,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
+	* \see IUnknown_Release
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_Release(CatalogHandle handle);
 
