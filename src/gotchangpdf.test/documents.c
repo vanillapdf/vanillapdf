@@ -987,6 +987,7 @@ error_type process_viewer_preferences(ViewerPreferencesHandle preferences, int n
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetHideMenubar(preferences, &boolean), process_boolean(boolean, nested + 1), BooleanObject_Release(boolean));
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetHideWindowUI(preferences, &boolean), process_boolean(boolean, nested + 1), BooleanObject_Release(boolean));
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetFitWindow(preferences, &boolean), process_boolean(boolean, nested + 1), BooleanObject_Release(boolean));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetCenterWindow(preferences, &boolean), process_boolean(boolean, nested + 1), BooleanObject_Release(boolean));
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetDisplayDocTitle(preferences, &boolean), process_boolean(boolean, nested + 1), BooleanObject_Release(boolean));
 
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(ViewerPreferences_GetNonFullScreenPageMode(preferences, &page_mode), proces_nonfullscreen_page_mode(page_mode, nested + 1));

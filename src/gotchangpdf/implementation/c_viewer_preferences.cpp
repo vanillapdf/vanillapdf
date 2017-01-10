@@ -76,6 +76,23 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetFitWindow(Vi
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetCenterWindow(ViewerPreferencesHandle handle, PBooleanObjectHandle result)
+{
+	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		syntax::BooleanObjectPtr direct;
+		auto contains = obj->CenterWindow(direct);
+		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<BooleanObjectHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDisplayDocTitle(ViewerPreferencesHandle handle, PBooleanObjectHandle result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
