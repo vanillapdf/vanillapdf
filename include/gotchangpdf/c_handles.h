@@ -21,8 +21,6 @@ extern "C"
 	* This file contains all type definitions returned by the library API.
 	*/
 
-	DECLARE_OBJECT_HANDLE(IUnknown);
-
 	#pragma region Syntax
 
 	#pragma region Objects
@@ -45,8 +43,6 @@ extern "C"
 	#pragma endregion
 
 	#pragma region Files
-
-
 
 	DECLARE_OBJECT_HANDLE(File);
 	DECLARE_OBJECT_HANDLE(FileWriter);
@@ -91,6 +87,7 @@ extern "C"
 	#pragma region Utils
 
 	DECLARE_OBJECT_HANDLE(Buffer);
+	DECLARE_OBJECT_HANDLE(IUnknown);
 
 	#pragma endregion
 
