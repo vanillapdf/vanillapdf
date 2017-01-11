@@ -174,7 +174,7 @@ error_type process_content_operation(ContentOperationHandle content_operation, i
 			StringObjectHandle string_handle = NULL;
 
 			RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_At(text_items, l, &object_handle));
-			RETURN_ERROR_IF_NOT_SUCCESS(Object_Type(object_handle, &object_type));
+			RETURN_ERROR_IF_NOT_SUCCESS(Object_GetType(object_handle, &object_type));
 			if (object_type != ObjectType_String) {
 				RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(object_handle));
 				continue;

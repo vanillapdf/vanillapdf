@@ -195,7 +195,7 @@ error_type process_reference(IndirectObjectReferenceHandle reference, int nested
 	RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedObjectNumber(reference, &obj_num));
 	RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedGenerationNumber(reference, &gen_num));
 	RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedObject(reference, &child));
-	RETURN_ERROR_IF_NOT_SUCCESS(Object_Type(child, &type));
+	RETURN_ERROR_IF_NOT_SUCCESS(Object_GetType(child, &type));
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_TypeName(type, &type_name));
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(child));
 
@@ -288,7 +288,7 @@ int process_object(ObjectHandle obj, int nested)
 	DictionaryObjectHandle dictionary = NULL;
 	StringObjectHandle string = NULL;
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Object_Type(obj, &type));
+	RETURN_ERROR_IF_NOT_SUCCESS(Object_GetType(obj, &type));
 
 	switch (type)
 	{

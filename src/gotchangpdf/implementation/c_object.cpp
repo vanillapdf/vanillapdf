@@ -19,7 +19,7 @@ GOTCHANG_PDF_API error_type Object_TypeName(ObjectType type, out_string_type res
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Type(ObjectHandle handle, PObjectType result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_GetType(ObjectHandle handle, PObjectType result)
 {
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
