@@ -16,7 +16,7 @@ extern "C"
 	*/
 
 	/**
-	* \memberof OutlineBaseHandle
+	* \memberof FontMapHandle
 	* @{
 	*/
 
