@@ -10,9 +10,33 @@ extern "C"
 {
 #endif
 
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION FontMap_Contains(FontMapHandle handle, NameObjectHandle name_handle, out_boolean_type result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle handle, NameObjectHandle name_handle, PFontHandle result);
+	/**
+	* \file c_font_map.h
+	* This file contains contains class definitions for FontMapHandle
+	*/
+
+	/**
+	* \memberof OutlineBaseHandle
+	* @{
+	*/
+
+	/**
+	* \brief Determine if collection contains key \p name_handle
+	*/
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION FontMap_Contains(FontMapHandle handle, NameObjectHandle key_handle, out_boolean_type result);
+
+	/**
+	* \brief Find mapped value for key \p name_handle
+	*/
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle handle, NameObjectHandle key_handle, PFontHandle result);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION FontMap_Release(FontMapHandle handle);
+
+	/** @} */
 
 #ifdef __cplusplus
 };

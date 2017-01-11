@@ -550,6 +550,15 @@ extern "C"
 	* CIDFont (see 9.7, "Composite Fonts").
 	*/
 	DECLARE_OBJECT_HANDLE(CompositeFont);
+
+	/**
+	* \class FontMapHandle
+	* \extends IUnknownHandle
+	* \brief
+	* A dictionary that maps resource names to font dictionaries.
+	* \see FontHandle
+	* \see ResourceDictionaryHandle
+	*/
 	DECLARE_OBJECT_HANDLE(FontMap);
 	DECLARE_OBJECT_HANDLE(CharacterMap);
 	DECLARE_OBJECT_HANDLE(EmbeddedCharacterMap);
