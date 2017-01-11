@@ -16,6 +16,12 @@ extern "C"
 	*/
 
 	/**
+	* \class Logging
+	* \ingroup GotchangPDF
+	* \brief Library logging facility
+	*/
+
+	/**
 	* \brief Available severity settings
 	*/
 	typedef enum
@@ -53,9 +59,7 @@ extern "C"
 	typedef LoggingSeverity *PLoggingSeverity;
 
 	/**
-	* \class Logging
-	* \ingroup GotchangPDF
-	* \brief Library logging facility
+	* \memberof Logging
 	* @{
 	*/
 
