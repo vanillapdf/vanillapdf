@@ -560,8 +560,32 @@ extern "C"
 	* \see ResourceDictionaryHandle
 	*/
 	DECLARE_OBJECT_HANDLE(FontMap);
+
+	/**
+	* \class CharacterMapHandle
+	* \extends IUnknownHandle
+	* \brief
+	* A CMap shall specify the mapping from
+	* character codes to character selectors.
+	*/
 	DECLARE_OBJECT_HANDLE(CharacterMap);
+
+	/**
+	* \class EmbeddedCharacterMapHandle
+	* \extends CharacterMapHandle
+	* \brief
+	* For character encodings that are not predefined,
+	* the PDF file shall contain a stream that defines the CMap.
+	*/
 	DECLARE_OBJECT_HANDLE(EmbeddedCharacterMap);
+
+	/**
+	* \class UnicodeCharacterMapHandle
+	* \extends CharacterMapHandle
+	* \brief
+	* The Unicode standard defines a system for numbering all
+	* of the common characters used in a large number of languages.
+	*/
 	DECLARE_OBJECT_HANDLE(UnicodeCharacterMap);
 
 	/* Common data structures */
