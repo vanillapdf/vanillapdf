@@ -16,6 +16,13 @@ extern "C"
 	*/
 
 	/**
+	* \class ObjectHandle
+	* \extends IUnknownHandle
+	* \ingroup Objects
+	* \brief Base class for syntactic tokens
+	*/
+
+	/**
 	* \brief Available types of objects.
 	*/
 	typedef enum

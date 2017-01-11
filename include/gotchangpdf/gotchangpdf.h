@@ -64,6 +64,34 @@
 /** @} */
 
 /**
+* \defgroup Documents Documents
+* \ingroup GotchangPDF
+* \brief Classes representing document's properties
+* @{
+*/
+
+/** @} */
+
+/**
+* \defgroup Files Files
+* \ingroup GotchangPDF
+* \brief Low-level file access.
+*
+* @{
+*/
+
+/** @} */
+
+/**
+* \defgroup Objects Objects
+* \ingroup Files
+* \brief Classes used as syntactic parsing tokens.
+* @{
+*/
+
+/** @} */
+
+/**
 * \mainpage
 * That's it
 */

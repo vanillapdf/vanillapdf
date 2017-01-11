@@ -16,6 +16,13 @@ extern "C"
 	*/
 
 	/**
+	* \class IndirectObjectReferenceHandle
+	* \extends ObjectHandle
+	* \ingroup Objects
+	* \brief Represents reference to other object
+	*/
+
+	/**
 	* \memberof IndirectObjectReferenceHandle
 	* @{
 	*/

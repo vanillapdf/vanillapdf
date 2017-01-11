@@ -47,6 +47,7 @@ set(GOTCHANGPDF_C_IMPLEMENTATION_SOURCES
 	implementation/c_integer_object.cpp
 	implementation/c_logging.cpp
 	implementation/c_name_object.cpp
+	implementation/c_null_object.cpp
 	implementation/c_object.cpp
 	implementation/c_outline.cpp
 	implementation/c_page_labels.cpp
@@ -261,6 +262,7 @@ set(INCLUDE_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_integer_object.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_logging.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_name_object.h"
+	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_null_object.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_object.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_outline.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_page_labels.h"

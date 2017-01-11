@@ -16,6 +16,20 @@ extern "C"
 	*/
 
 	/**
+	* \class DictionaryObjectHandle
+	* \extends ObjectHandle
+	* \ingroup Objects
+	* \brief Represents key-value map.
+	*/
+
+	/**
+	* \class DictionaryObjectIteratorHandle
+	* \memberof DictionaryObjectHandle
+	* \brief Used for accessing Dictionary elements
+	* through iterator interface.
+	*/
+
+	/**
 	* \memberof DictionaryObjectIteratorHandle
 	* @{
 	*/

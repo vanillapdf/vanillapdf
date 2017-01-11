@@ -16,6 +16,13 @@ extern "C"
 	*/
 
 	/**
+	* \class IntegerObjectHandle
+	* \extends ObjectHandle
+	* \ingroup Objects
+	* \brief Represents integer values
+	*/
+
+	/**
 	* \memberof IntegerObjectHandle
 	* @{
 	*/

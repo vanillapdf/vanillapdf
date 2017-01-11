@@ -16,6 +16,34 @@ extern "C"
 	*/
 
 	/**
+	* \class ViewerPreferencesHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief
+	* Controlling the way the document shall
+	* be presented on the screen or in print.
+	* \see CatalogHandle
+	*/
+
+	/**
+	* \class PageRangeHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief
+	* Collection of PageSubRangeHandle
+	* \see ViewerPreferencesHandle
+	*/
+
+	/**
+	* \class PageSubRangeHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief
+	* Specifies first and last page number of defined range
+	* \see PageRangeHandle
+	*/
+
+	/**
 	* \brief
 	* The document's page mode, specifying how to display
 	* the document on exiting full-screen mode.

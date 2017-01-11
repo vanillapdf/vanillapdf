@@ -16,6 +16,17 @@ extern "C"
 	*/
 
 	/**
+	* \class PageObjectHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief
+	* The leaves of the page tree are page objects,
+	* each of which is a dictionary specifying the
+	* attributes of a single page of the document.
+	* \see PageTreeHandle
+	*/
+
+	/**
 	* \memberof PageObjectHandle
 	* @{
 	*/

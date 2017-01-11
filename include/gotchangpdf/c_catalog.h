@@ -18,6 +18,14 @@ extern "C"
 	*/
 
 	/**
+	* \class CatalogHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief The root of a document's object hierarchy
+	* \see DocumentHandle
+	*/
+
+	/**
 	* \brief Page layout which shall be used when the document is opened.
 	*/
 	typedef enum

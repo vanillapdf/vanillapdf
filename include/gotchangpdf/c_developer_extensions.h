@@ -14,10 +14,37 @@ extern "C"
 
 	/**
 	* \file c_developer_extensions.h
-	* This file contains class definitions for
-	* DeveloperExtensionsHandle
-	* DeveloperExtensionHandle
-	* DeveloperExtensionsIteratorHandle.
+	* This file contains class definitions for developer extensions.
+	*/
+
+	/**
+	* \class DeveloperExtensionsHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief
+	* The extensions dictionary, an entry in the document's catalog dictionary,
+	* if present, shall contain one or more entries identifying
+	* developer-defined extensions to the ISO 32000-1 Standard.
+	* \see CatalogHandle
+	*/
+
+	/**
+	* \class DeveloperExtensionsIteratorHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief
+	* Iterator concept allowing to traverse over
+	* DeveloperExtensionsHandle collection.
+	* \see DeveloperExtensionsHandle
+	*/
+
+	/**
+	* \class DeveloperExtensionHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief
+	* Single item within DeveloperExtensionsHandle collection.
+	* \see DeveloperExtensionsHandle
 	*/
 
 	/**

@@ -10,8 +10,16 @@ extern "C"
 {
 #endif
 
-	/** \file c_boolean_object.h
+	/**
+	* \file c_boolean_object.h
 	* This file contains class definitions for BooleanObjectHandle
+	*/
+
+	/**
+	* \class BooleanObjectHandle
+	* \extends ObjectHandle
+	* \ingroup Objects
+	* \brief Represents boolean type
 	*/
 
 	/**

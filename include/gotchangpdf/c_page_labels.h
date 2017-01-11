@@ -17,6 +17,25 @@ extern "C"
 	*/
 
 	/**
+	* \class PageLabelsHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief
+	* Collection of PageLabelHandle
+	* \see CatalogHandle
+	*/
+
+	/**
+	* \class PageLabelHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief
+	* Page labels are used for numbering or otherwise identifying
+	* individual pages (see 12.4.2, "Page Labels").
+	* \see PageLabelsHandle
+	*/
+
+	/**
 	* \brief Numbering style types.
 	*/
 	typedef enum

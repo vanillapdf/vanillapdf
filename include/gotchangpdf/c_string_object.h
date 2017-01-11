@@ -16,6 +16,27 @@ extern "C"
 	*/
 
 	/**
+	* \class StringObjectHandle
+	* \extends ObjectHandle
+	* \ingroup Objects
+	* \brief Reprsents human readable text.
+	*/
+
+	/**
+	* \class HexadecimalStringObjectHandle
+	* \extends StringObjectHandle
+	* \ingroup Objects
+	* \brief Text stored in hexadecimal notation.
+	*/
+
+	/**
+	* \class LiteralStringObjectHandle
+	* \extends StringObjectHandle
+	* \ingroup Objects
+	* \brief Text stored in raw format.
+	*/
+
+	/**
 	* \brief Available types of strings.
 	*/
 	typedef enum

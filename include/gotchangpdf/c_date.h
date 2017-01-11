@@ -15,6 +15,13 @@ extern "C"
 	* This file contains class definitions for DateHandle
 	*/
 
+	/**
+	* \class DateHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief Represents a reference to a particular day represented within a calendar system
+	*/
+
 	typedef enum
 	{
 		/**

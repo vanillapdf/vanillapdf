@@ -16,6 +16,13 @@ extern "C"
 	*/
 
 	/**
+	* \class ArrayObjectHandle
+	* \extends ObjectHandle
+	* \ingroup Objects
+	* \brief Represents array of mixed type elements.
+	*/
+
+	/**
 	* \memberof ArrayObjectHandle
 	* @{
 	*/

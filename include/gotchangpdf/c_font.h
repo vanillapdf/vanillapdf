@@ -17,6 +17,24 @@ extern "C"
 	*/
 
 	/**
+	* \class FontHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief
+	* A base class for all derived fonts.
+	* \see FontMapHandle
+	*/
+
+	/**
+	* \class CompositeFontHandle
+	* \extends FontHandle
+	* \ingroup Documents
+	* \brief
+	* A font composed of glyphs from a descendant
+	* CIDFont (see 9.7, "Composite Fonts").
+	*/
+
+	/**
 	* \brief Types of fonts
 	*/
 	typedef enum

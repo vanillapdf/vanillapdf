@@ -16,6 +16,14 @@ extern "C"
 	*/
 
 	/**
+	* \class DocumentInfoHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief Metadata for the document
+	* \see DocumentHandle
+	*/
+
+	/**
 	* \brief
 	* Indication whether the document has been modified to include
 	* trapping information (see 14.11.6, "Trapping Support")

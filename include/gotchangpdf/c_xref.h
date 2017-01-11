@@ -16,6 +16,76 @@ extern "C"
 	*/
 
 	/**
+	* \class XrefHandle
+	* \extends IUnknownHandle
+	* \ingroup Files
+	* \brief Represents either cross-reference table or stream
+	*/
+
+	/**
+	* \class XrefIteratorHandle
+	* \extends IUnknownHandle
+	* \ingroup Files
+	* \brief Represents pointer to cross-reference entry collection
+	*
+	* This method is useful for iterating over whole entry collecion.
+	* \see XrefIterator_Next
+	* \see XrefIterator_GetValue
+	*/
+
+	/**
+	* \class XrefEntryHandle
+	* \extends IUnknownHandle
+	* \ingroup Files
+	* \brief Represents base entry type within XrefHandle
+	*/
+
+	/**
+	* \class XrefFreeEntryHandle
+	* \extends XrefEntryHandle
+	* \ingroup Files
+	* \brief Represents free entry within cross-reference section.
+	*
+	* Free entry means, that this object is not used in the document.
+	* It can be reused in new cross-reference section.
+	*/
+
+	/**
+	* \class XrefUsedEntryHandle
+	* \extends XrefEntryHandle
+	* \ingroup Files
+	* \brief Represents used entry within cross-reference section.
+	*/
+
+	/**
+	* \class XrefCompressedEntryHandle
+	* \extends XrefEntryHandle
+	* \ingroup Files
+	* \brief Represents compressed entry within cross-reference section.
+	*
+	* Compressed entry means that the object is located within (7.5.7 Object streams) compressed object stream.
+	* This entry type can be only found in cross-reference streams.
+	*/
+
+	/**
+	* \class XrefChainHandle
+	* \extends IUnknownHandle
+	* \ingroup Files
+	* \brief Represents collection of XrefHandle
+	*/
+
+	/**
+	* \class XrefChainIteratorHandle
+	* \extends IUnknownHandle
+	* \ingroup Files
+	* \brief Represents pointer to cross-reference collection
+	*
+	* This method is useful for iterating over whole entry collecion.
+	* \see XrefChainIterator_Next
+	* \see XrefChainIterator_GetValue
+	*/
+
+	/**
 	* \brief Required for conversion to derived types.
 	*/
 	typedef enum

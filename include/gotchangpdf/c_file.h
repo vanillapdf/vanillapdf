@@ -16,6 +16,20 @@ extern "C"
 	*/
 
 	/**
+	* \class FileHandle
+	* \extends IUnknownHandle
+	* \ingroup Files
+	* \brief Represents file access handle
+	*/
+
+	/**
+	* \class FileWriterHandle
+	* \extends IUnknownHandle
+	* \ingroup Files
+	* \brief Implements serialization of Files to destination stream
+	*/
+
+	/**
 	* \memberof FileHandle
 	* @{
 	*/

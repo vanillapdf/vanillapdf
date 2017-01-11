@@ -16,6 +16,31 @@ extern "C"
 	*/
 
 	/**
+	* \class DestinationHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief
+	* A destination defines a particular view of a document.
+	*
+	* Consisting of the following items:
+	*
+	* - The page of the document that shall be displayed.
+	*
+	* - The location of the document window on that page.
+	*
+	* - The magnification (zoom) factor.
+	*/
+
+	/**
+	* \class NamedDestinationsHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief
+	* A name tree mapping name strings
+	* to destinations (see 12.3.2.3, "Named Destinations").
+	*/
+
+	/**
 	* \brief Available destination types.
 	*/
 	typedef enum

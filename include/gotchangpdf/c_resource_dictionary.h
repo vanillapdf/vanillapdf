@@ -16,6 +16,18 @@ extern "C"
 	*/
 
 	/**
+	* \class ResourceDictionaryHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief
+	* A content stream's named resources shall be defined
+	* by a resource dictionary, which shall enumerate the
+	* named resources needed by the operators in the
+	* content stream and the names by which they can be referred to.
+	* \see PageObjectHandle
+	*/
+
+	/**
 	* \memberof ResourceDictionaryHandle
 	* @{
 	*/

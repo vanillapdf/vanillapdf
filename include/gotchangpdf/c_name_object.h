@@ -10,8 +10,17 @@ extern "C"
 {
 #endif
 
-	/** \file c_name_object.h
+	/**
+	* \file c_name_object.h
 	* This file contains class definitions for NameObjectHandle
+	*/
+
+	/**
+	* \class NameObjectHandle
+	* \extends ObjectHandle
+	* \ingroup Objects
+	* \brief Represents unique name references in document.
+	* \see NameConstants
 	*/
 
 	/**

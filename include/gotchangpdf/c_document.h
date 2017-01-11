@@ -16,6 +16,13 @@ extern "C"
 	*/
 
 	/**
+	* \class DocumentHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief Represents high-level file access handle
+	*/
+
+	/**
 	* \memberof DocumentHandle
 	* @{
 	*/

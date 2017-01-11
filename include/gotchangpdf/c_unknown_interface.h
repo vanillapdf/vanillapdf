@@ -16,6 +16,12 @@ extern "C"
 	*/
 
 	/**
+	* \class IUnknownHandle
+	* \ingroup GotchangPDF
+	* \brief Base class for reference counting
+	*/
+
+	/**
 	* \memberof IUnknownHandle
 	* @{
 	*/

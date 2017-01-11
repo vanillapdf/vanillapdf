@@ -10,8 +10,15 @@ extern "C"
 {
 #endif
 
-	/** \file c_encryption.h
+	/**
+	* \file c_encryption.h
 	* This file contains file encryption utilities
+	*/
+
+	/**
+	* \class EncryptionKeyHandle
+	* \extends IUnknownHandle
+	* \brief Represents encryption key other than password
 	*/
 
 	/**

@@ -54,6 +54,7 @@ extern "C"
 
 	/**
 	* \class Logging
+	* \ingroup GotchangPDF
 	* \brief Library logging facility
 	* @{
 	*/

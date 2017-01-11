@@ -16,6 +16,33 @@ extern "C"
 	*/
 
 	/**
+	* \class CharacterMapHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief
+	* A CMap shall specify the mapping from
+	* character codes to character selectors.
+	*/
+
+	/**
+	* \class EmbeddedCharacterMapHandle
+	* \extends CharacterMapHandle
+	* \ingroup Documents
+	* \brief
+	* For character encodings that are not predefined,
+	* the PDF file shall contain a stream that defines the CMap.
+	*/
+
+	/**
+	* \class UnicodeCharacterMapHandle
+	* \extends CharacterMapHandle
+	* \ingroup Documents
+	* \brief
+	* The Unicode standard defines a system for numbering all
+	* of the common characters used in a large number of languages.
+	*/
+
+	/**
 	* \brief Available types of character maps.
 	*/
 	typedef enum

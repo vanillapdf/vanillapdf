@@ -16,6 +16,53 @@ extern "C"
 	*/
 
 	/**
+	* \class OutlineBaseHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief
+	* Base class for document outlines
+	* \see CatalogHandle
+	*/
+
+	/**
+	* \class OutlineHandle
+	* \extends OutlineBaseHandle
+	* \ingroup Documents
+	* \brief
+	* The root of a document's outline hierarchy
+	* \see CatalogHandle
+	*/
+
+	/**
+	* \class OutlineItemHandle
+	* \extends OutlineBaseHandle
+	* \ingroup Documents
+	* \brief
+	* Child element within tree-structured hierarchy of outline items
+	* \see CatalogHandle
+	*/
+
+	/**
+	* \class OutlineItemColorHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief
+	* Representing the components in the DeviceRGB colour
+	* space of the colour that shall be used for the outline entry's text.
+	* \see OutlineItemHandle
+	*/
+
+	/**
+	* \class OutlineItemFlagsHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief
+	* A set of flags specifying style characteristics
+	* for displaying the outline item's text
+	* \see OutlineItemHandle
+	*/
+
+	/**
 	* \brief Available types of outlines.
 	*/
 	typedef enum

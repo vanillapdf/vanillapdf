@@ -15,6 +15,13 @@ extern "C"
 	*/
 
 	/**
+	* \class RectangleHandle
+	* \extends IUnknownHandle
+	* \ingroup Documents
+	* \brief Represents rectangle in 2D space
+	*/
+
+	/**
 	* \memberof RectangleHandle
 	* @{
 	*/

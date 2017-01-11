@@ -16,6 +16,13 @@ extern "C"
 	*/
 
 	/**
+	* \class RealObjectHandle
+	* \extends ObjectHandle
+	* \ingroup Objects
+	* \brief Represents floating point numbers.
+	*/
+
+	/**
 	* \memberof RealObjectHandle
 	* @{
 	*/
