@@ -18,6 +18,7 @@ extern "C"
 	/**
 	* \class EncryptionKeyHandle
 	* \extends IUnknownHandle
+	* \ingroup Files
 	* \brief Represents encryption key other than password
 	*/
 
@@ -88,7 +89,8 @@ extern "C"
 	);
 
 	/**
-	* \copydoc IUnknown_Release()
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_Release(EncryptionKeyHandle handle);
 
