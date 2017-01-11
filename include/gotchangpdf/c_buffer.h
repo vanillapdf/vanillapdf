@@ -11,7 +11,7 @@ extern "C"
 #endif
 
 	/**
-	\file c_buffer.h
+	* \file c_buffer.h
 	* This file contains class definitions for BufferHandle
 	*/
 
