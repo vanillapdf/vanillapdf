@@ -204,12 +204,12 @@ extern "C"
 	*/
 
 	/**
-	* \brief Determine if the outline item shall be displayed in italic
+	* \brief Determine if the outline item shall be displayed in \a italic
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsItalic(OutlineItemFlagsHandle handle, out_boolean_type result);
 
 	/**
-	* \brief Determine if the outline item shall be displayed in bold
+	* \brief Determine if the outline item shall be displayed in \b bold
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsBold(OutlineItemFlagsHandle handle, out_boolean_type result);
 
