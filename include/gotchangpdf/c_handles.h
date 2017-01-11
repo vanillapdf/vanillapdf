@@ -16,7 +16,8 @@ extern "C"
 {
 #endif
 
-	/** \file c_handles.h
+	/**
+	* \file c_handles.h
 	* This file contains all type definitions returned by the library API.
 	*/
 
@@ -413,10 +414,52 @@ extern "C"
 	* \see PageRangeHandle
 	*/
 	DECLARE_OBJECT_HANDLE(PageSubRange);
+
+	/**
+	* \class OutlineBaseHandle
+	* \extends IUnknownHandle
+	* \brief
+	* Base class for document outlines
+	* \see CatalogHandle
+	*/
 	DECLARE_OBJECT_HANDLE(OutlineBase);
+
+	/**
+	* \class OutlineHandle
+	* \extends OutlineBaseHandle
+	* \brief
+	* The root of a document's outline hierarchy
+	* \see CatalogHandle
+	*/
 	DECLARE_OBJECT_HANDLE(Outline);
+
+	/**
+	* \class OutlineItemHandle
+	* \extends OutlineBaseHandle
+	* \brief
+	* Child element within tree-structured hierarchy of outline items
+	* \see CatalogHandle
+	*/
 	DECLARE_OBJECT_HANDLE(OutlineItem);
+
+	/**
+	* \class OutlineItemColorHandle
+	* \extends IUnknownHandle
+	* \brief
+	* Representing the components in the DeviceRGB colour
+	* space of the colour that shall be used for the outline entry's text.
+	* \see OutlineItemHandle
+	*/
 	DECLARE_OBJECT_HANDLE(OutlineItemColor);
+
+	/**
+	* \class OutlineItemFlagsHandle
+	* \extends IUnknownHandle
+	* \brief
+	* A set of flags specifying style characteristics
+	* for displaying the outline item's text
+	* \see OutlineItemHandle
+	*/
 	DECLARE_OBJECT_HANDLE(OutlineItemFlags);
 
 	/**
