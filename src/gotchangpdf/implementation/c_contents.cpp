@@ -146,6 +146,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetData(
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_Release(ContentObjectInlineImageHandle handle)
+{
+	return ObjectRelease<InlineImageObject, ContentObjectInlineImageHandle>(handle);
+}
+
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationsSize(ContentObjectTextHandle handle, out_integer_type result)
 {
 	TextObject* obj = reinterpret_cast<TextObject*>(handle);

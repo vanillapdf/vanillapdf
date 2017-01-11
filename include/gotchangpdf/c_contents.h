@@ -10,8 +10,116 @@ extern "C"
 {
 #endif
 
+	/**
+	* \file c_contents.h
+	* This file contains class definitions for working with compressed page contents
+	*/
+
+	/**
+	* \defgroup Contents Contents
+	* \ingroup Documents
+	* \brief Class definitions for working with compressed page contents
+	*/
+
+	/**
+	* \class ContentsHandle
+	* \extends IUnknownHandle
+	* \ingroup Contents
+	* \brief
+	* A content stream is a PDF stream object whose data consists of
+	* a sequence of instructions describing the graphical elements
+	* to be painted on a page.
+	* \see PageObjectHandle
+	*/
+
+	/**
+	* \class ContentInstructionHandle
+	* \extends IUnknownHandle
+	* \ingroup Contents
+	* \brief Base class for all content objects and operations.
+	*/
+
+	/**
+	* \class ContentObjectHandle
+	* \extends ContentInstructionHandle
+	* \ingroup Contents
+	* \brief Composed non-atomic content object
+	*/
+
+	/**
+	* \class ContentObjectTextHandle
+	* \extends ContentObjectHandle
+	* \ingroup Contents
+	* \brief
+	* A PDF text object consists of operators that may show text strings,
+	* move the text position, and set text state and certain other parameters.
+	*/
+
+	/**
+	* \class ContentObjectInlineImageHandle
+	* \extends ContentObjectHandle
+	* \ingroup Contents
+	* \brief
+	* As an alternative to the image XObjects described in 8.9.5,
+	* "Image Dictionaries", a sampled image may be specified in
+	* the form of an inline image.
+	*/
+
+	/**
+	* \class ContentOperationHandle
+	* \extends ContentInstructionHandle
+	* \ingroup Contents
+	* \brief Atomic content operation.
+	*/
+
+	/**
+	* \class ContentOperationGenericHandle
+	* \extends ContentOperationHandle
+	* \ingroup Contents
+	* \brief Unresolved operation often containing unknown operator.
+	*/
+
+	/**
+	* \class ContentOperationTextShowHandle
+	* \extends ContentOperationHandle
+	* \ingroup Contents
+	* \brief Show a text string.
+	*/
+
+	/**
+	* \class ContentOperationTextShowArrayHandle
+	* \extends ContentOperationHandle
+	* \ingroup Contents
+	* \brief
+	* Show one or more text strings,
+	* allowing individual glyph positioning.
+	*/
+
+	/**
+	* \class ContentOperationTextFontHandle
+	* \extends ContentOperationHandle
+	* \ingroup Contents
+	* \brief Set the text font and the text font size.
+	*/
+
+	/**
+	* \class ContentOperatorHandle
+	* \extends IUnknownHandle
+	* \ingroup Contents
+	* \brief
+	* An operator is a PDF keyword specifying some action
+	* that shall be performed, such as painting a graphical
+	* shape on the page.
+	*/
+
+	/**
+	* \brief Available content operator types
+	*/
 	typedef enum
 	{
+		/**
+		* \brief Unknown operator
+		*/
 		ContentOperatorType_Unknown = 0,
 		ContentOperatorType_LineWidth,
 		ContentOperatorType_LineCap,
@@ -49,6 +157,11 @@ extern "C"
 		ContentOperatorType_WordSpacing,
 		ContentOperatorType_HorizontalScaling,
 		ContentOperatorType_Leading,
+
+		/**
+		* \copydoc ContentOperationTextFontHandle
+		* \see ContentOperationTextFontHandle
+		*/
 		ContentOperatorType_TextFont,
 		ContentOperatorType_TextRenderingMode,
 		ContentOperatorType_TextRise,
@@ -56,7 +169,17 @@ extern "C"
 		ContentOperatorType_TextTranslateLeading,
 		ContentOperatorType_TextMatrix,
 		ContentOperatorType_TextNextLine,
+
+		/**
+		* \copydoc ContentOperationTextShowHandle
+		* \see ContentOperationTextShowHandle
+		*/
 		ContentOperatorType_TextShow,
+
+		/**
+		* \copydoc ContentOperationTextShowArrayHandle
+		* \see ContentOperationTextShowArrayHandle
+		*/
 		ContentOperatorType_TextShowArray,
 		ContentOperatorType_TextNextLineShow,
 		ContentOperatorType_TextNextLineShowSpacing,
@@ -86,10 +209,23 @@ extern "C"
 		ContentOperatorType_EndMarkedContentSequence,
 		ContentOperatorType_BeginCompatibilitySection,
 		ContentOperatorType_EndCompatibilitySection
-	} ContentOperatorType, *PContentOperatorType;
+	} ContentOperatorType;
 
+	/**
+	* \brief Pointer to ContentOperatorType
+	*/
+	typedef ContentOperatorType *PContentOperatorType;
+
+
+	/**
+	* \brief Available content operation types
+	*/
 	typedef enum
 	{
+		/**
+		* \copydoc ContentOperationGenericHandle
+		* \see ContentOperationGenericHandle
+		*/
 		ContentOperationType_Generic = 0,
 		ContentOperationType_LineWidth,
 		ContentOperationType_LineCap,
@@ -127,6 +263,11 @@ extern "C"
 		ContentOperationType_WordSpacing,
 		ContentOperationType_HorizontalScaling,
 		ContentOperationType_Leading,
+
+		/**
+		* \copydoc ContentOperationTextFontHandle
+		* \see ContentOperationTextFontHandle
+		*/
 		ContentOperationType_TextFont,
 		ContentOperationType_TextRenderingMode,
 		ContentOperationType_TextRise,
@@ -134,7 +275,17 @@ extern "C"
 		ContentOperationType_TextTranslateLeading,
 		ContentOperationType_TextMatrix,
 		ContentOperationType_TextNextLine,
+
+		/**
+		* \copydoc ContentOperationTextShowHandle
+		* \see ContentOperationTextShowHandle
+		*/
 		ContentOperationType_TextShow,
+
+		/**
+		* \copydoc ContentOperationTextShowArrayHandle
+		* \see ContentOperationTextShowArrayHandle
+		*/
 		ContentOperationType_TextShowArray,
 		ContentOperationType_TextNextLineShow,
 		ContentOperationType_TextNextLineShowSpacing,
@@ -164,71 +315,374 @@ extern "C"
 		ContentOperationType_EndMarkedContentSequence,
 		ContentOperationType_BeginCompatibilitySection,
 		ContentOperationType_EndCompatibilitySection
-	} ContentOperationType, *PContentOperationType;
+	} ContentOperationType;
 
+	/**
+	* \brief Pointer to ContentOperationType
+	*/
+	typedef ContentOperationType *PContentOperationType;
+
+	/**
+	* \brief Available content object types
+	*/
 	typedef enum
 	{
+		/**
+		* \copydoc ContentObjectTextHandle
+		* \see ContentObjectTextHandle
+		*/
 		ContentObjectType_Text,
-		ContentObjectType_InlineImage
-	} ContentObjectType, *PContentObjectType;
 
+		/**
+		* \copydoc ContentObjectInlineImageHandle
+		* \see ContentObjectInlineImageHandle
+		*/
+		ContentObjectType_InlineImage
+	} ContentObjectType;
+
+	/**
+	* \brief Pointer to ContentObjectType
+	*/
+	typedef ContentObjectType *PContentObjectType;
+
+
+	/**
+	* \brief Available content instruction types
+	*/
 	typedef enum
 	{
+		/**
+		* \copydoc ContentOperationHandle
+		* \see ContentOperationHandle
+		*/
 		ContentInstructionType_Operation,
-		ContentInstructionType_Object
-	} ContentInstructionType, *PContentInstructionType;
 
+		/**
+		* \copydoc ContentObjectHandle
+		* \see ContentObjectHandle
+		*/
+		ContentInstructionType_Object
+	} ContentInstructionType;
+
+	/**
+	* \brief Pointer to ContentInstructionType
+	*/
+	typedef ContentInstructionType *PContentInstructionType;
+
+	/**
+	* \memberof ContentsHandle
+	* @{
+	*/
+
+	/**
+	* \brief Return size of a collection
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionsSize(ContentsHandle handle, out_integer_type result);
+
+	/**
+	* \brief Get instruction at location \p at
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(ContentsHandle handle, integer_type at, PContentInstructionHandle result);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_Release(ContentsHandle handle);
 
+	/** @} */
+
+	/**
+	* \memberof ContentInstructionHandle
+	* @{
+	*/
+
+	/**
+	* \brief Get derived type of current object
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_GetType(ContentInstructionHandle handle, PContentInstructionType result);
+
+	/**
+	* \brief Reinterpret current object as ContentOperationHandle
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_ToOperation(ContentInstructionHandle handle, PContentOperationHandle result);
+
+	/**
+	* \brief Reinterpret current object as ContentObjectHandle
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_ToObject(ContentInstructionHandle handle, PContentObjectHandle result);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_Release(ContentInstructionHandle handle);
 
+	/** @} */
+
+	/**
+	* \memberof ContentObjectHandle
+	* @{
+	*/
+
+	/**
+	* \brief Get derived type of current object
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_GetType(ContentObjectHandle handle, PContentObjectType result);
+
+	/**
+	* \brief Reinterpret current object as ContentObjectTextHandle
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_ToText(ContentObjectHandle handle, PContentObjectTextHandle result);
+
+	/**
+	* \brief Reinterpret current object as ContentObjectInlineImageHandle
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_ToInlineImage(ContentObjectHandle handle, PContentObjectInlineImageHandle result);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_Release(ContentObjectHandle handle);
 
+	/** @} */
+
+	/**
+	* \memberof ContentObjectTextHandle
+	* @{
+	*/
+
+	/**
+	* \brief Return size of a collection
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationsSize(ContentObjectTextHandle handle, out_integer_type result);
+
+	/**
+	* \brief Get operation at location \p at
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(ContentObjectTextHandle handle, integer_type at, PContentOperationHandle result);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_Release(ContentObjectTextHandle handle);
 
+	/** @} */
+
+	/**
+	* \memberof ContentObjectInlineImageHandle
+	* @{
+	*/
+
+	/**
+	* \brief Get meta-data dictionary for inline image
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetDictionary(ContentObjectInlineImageHandle handle, PDictionaryObjectHandle result);
+
+	/**
+	* \brief Get raw image data
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetData(ContentObjectInlineImageHandle handle, PBufferHandle result);
 
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_Release(ContentObjectInlineImageHandle handle);
+
+	/** @} */
+
+	/**
+	* \memberof ContentOperationHandle
+	* @{
+	*/
+
+	/**
+	* \brief Get derived type of current object
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_GetType(ContentOperationHandle handle, PContentOperationType result);
+
+	/**
+	* \brief Reinterpret current object as ContentOperationGenericHandle
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToGeneric(ContentOperationHandle handle, PContentOperationGenericHandle result);
+
+	/**
+	* \brief Reinterpret current object as ContentOperationTextFontHandle
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToTextFont(ContentOperationHandle handle, PContentOperationTextFontHandle result);
+
+	/**
+	* \brief Reinterpret current object as ContentOperationTextShowHandle
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShow(ContentOperationHandle handle, PContentOperationTextShowHandle result);
+
+	/**
+	* \brief Reinterpret current object as ContentOperationTextShowArrayHandle
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShowArray(ContentOperationHandle handle, PContentOperationTextShowArrayHandle result);
+
+	/**
+	* \brief Reinterpret current object as ContentOperationEndTextHandle
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToEndText(ContentOperationHandle handle, PContentOperationEndTextHandle result);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_Release(ContentOperationHandle handle);
 
+	/** @} */
+
+	/**
+	* \memberof ContentOperationGenericHandle
+	* @{
+	*/
+
+	/**
+	* \brief Get operator from unknown operation
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperator(ContentOperationGenericHandle handle, PContentOperatorHandle result);
+
+	/**
+	* \brief Get number of operands belonging to the operator
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandsSize(ContentOperationGenericHandle handle, out_integer_type result);
+
+	/**
+	* \brief Get operand at location \p at
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandAt(ContentOperationGenericHandle handle, integer_type at, PObjectHandle result);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_Release(ContentOperationGenericHandle handle);
 
+	/** @} */
+
+	/**
+	* \memberof ContentOperationTextShowHandle
+	* @{
+	*/
+
+	/**
+	* \brief A text string to be shown.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_GetValue(ContentOperationTextShowHandle handle, PStringObjectHandle result);
+
+	/**
+	* \brief Set a new text string to be shown.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_SetValue(ContentOperationTextShowHandle handle, StringObjectHandle data);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_Release(ContentOperationTextShowHandle handle);
 
+	/** @} */
+
+	/**
+	* \memberof ContentOperationTextShowArrayHandle
+	* @{
+	*/
+
+
+	/**
+	* \brief One or more text strings to be shown.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_GetValue(ContentOperationTextShowArrayHandle handle, PArrayObjectHandle result);
+
+	/**
+	* \brief Set new text strings to be shown.
+	*
+	* Each element of array shall be either a string or a number.
+	*
+	* If the element is a string, this operator shall show the string.
+	*
+	* If it is a number, the operator shall adjust the text position by that amount.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_SetValue(ContentOperationTextShowArrayHandle handle, ArrayObjectHandle data);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_Release(ContentOperationTextShowArrayHandle handle);
 
+	/** @} */
+
+	/**
+	* \memberof ContentOperationTextFontHandle
+	* @{
+	*/
+
+	/**
+	* \brief Get name of the font to be set.
+	*
+	* Font shall be the name of a font resource in the Font
+	* subdictionary of the current resource dictionary.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetName(ContentOperationTextFontHandle handle, PNameObjectHandle result);
+
+	/**
+	* \brief Set new font name.
+	*
+	* Font shall be the name of a font resource in the Font
+	* subdictionary of the current resource dictionary.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextFont_SetName(ContentOperationTextFontHandle handle, NameObjectHandle data);
+
+	/**
+	* \brief Get current font scaling.
+	*
+	* Scale shall be a number representing a scale factor.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetScale(ContentOperationTextFontHandle handle, PIntegerObjectHandle result);
+
+	/**
+	* \brief Set new font scaling.
+	*
+	* Scale shall be a number representing a scale factor.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextFont_SetScale(ContentOperationTextFontHandle handle, IntegerObjectHandle data);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextFont_Release(ContentOperationTextFontHandle handle);
 
+	/** @} */
+
+	/**
+	* \memberof ContentOperatorHandle
+	* @{
+	*/
+
+	/**
+	* \brief Get derived type of current object
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_GetType(ContentOperatorHandle handle, PContentOperatorType result);
+
+	/**
+	* \brief Get byte representation of content operator
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_GetValue(ContentOperatorHandle handle, PBufferHandle result);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_Release(ContentOperatorHandle handle);
+
+	/** @} */
 
 #ifdef __cplusplus
 };
