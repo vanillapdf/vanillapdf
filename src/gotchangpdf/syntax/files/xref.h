@@ -68,8 +68,6 @@ namespace gotchangpdf
 
 			bool operator<(const XrefEntryBase& other) const;
 
-			virtual ~XrefEntryBase() {};
-
 		protected:
 			std::weak_ptr<File> _file;
 			types::big_uint _obj_number = 0;

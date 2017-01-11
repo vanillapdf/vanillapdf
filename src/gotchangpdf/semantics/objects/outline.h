@@ -43,7 +43,6 @@ namespace gotchangpdf
 
 			explicit OutlineBase(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
 			virtual Type OutlineType(void) const noexcept = 0;
-			virtual ~OutlineBase() {}
 		};
 
 		class OutlineItem : public OutlineBase

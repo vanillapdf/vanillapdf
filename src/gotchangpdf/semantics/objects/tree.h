@@ -22,6 +22,7 @@ namespace gotchangpdf
 			virtual syntax::NameObjectPtr GetValueName(void) const = 0;
 			virtual ~IValueNameProvider() {}
 		};
+
 		class TreeNodeBase : public HighLevelObject<syntax::DictionaryObjectPtr>
 		{
 		public:
@@ -35,7 +36,6 @@ namespace gotchangpdf
 			explicit TreeNodeBase(const IValueNameProvider* parent, const syntax::DictionaryObjectPtr& obj);
 			virtual TreeNodeType NodeType(void) const noexcept = 0;
 			static TreeNodeBasePtr Create(const IValueNameProvider* parent, const syntax::DictionaryObjectPtr obj);
-			virtual ~TreeNodeBase();
 
 		protected:
 			const IValueNameProvider* _parent;
@@ -575,8 +575,6 @@ namespace gotchangpdf
 			const IValueNameProvider* parent,
 			const syntax::DictionaryObjectPtr& obj)
 			: HighLevelObject(obj), _parent(parent) {}
-
-		inline TreeNodeBase::~TreeNodeBase() {}
 
 		inline TreeNodeBasePtr TreeNodeBase::Create(
 			const IValueNameProvider* parent,
