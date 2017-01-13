@@ -16,6 +16,7 @@
 extern const int GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 extern const int GOTCHANG_PDF_TEST_ERROR_INVALID_PASSWORD;
 extern const int GOTCHANG_PDF_TEST_ERROR_INVALID_PARAMETERS;
+extern const int GOTCHANG_PDF_TEST_ERROR_LOGGING_ENABLED;
 extern const int GOTCHANG_PDF_TEST_ERROR_FAILURE;
 
 void print_spaces(int nested);

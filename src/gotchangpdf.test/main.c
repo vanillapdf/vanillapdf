@@ -56,7 +56,11 @@ int main(int argc, char *argv[])
 	// I don't have easy idea how to verify disabled
 	// logging or different severity, so just test API
 	RETURN_ERROR_IF_NOT_SUCCESS(Logging_GetEnabled(&logging_enabled));
-	RETURN_ERROR_IF_NOT_SUCCESS(Logging_SetDisabled());
+
+	if (logging_enabled != GOTCHANG_PDF_RV_FALSE) {
+		return GOTCHANG_PDF_TEST_ERROR_LOGGING_ENABLED;
+	}
+
 	RETURN_ERROR_IF_NOT_SUCCESS(Logging_SetEnabled());
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Logging_GetSeverity(&logging_severity));
