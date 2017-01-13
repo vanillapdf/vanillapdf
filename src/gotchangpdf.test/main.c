@@ -23,8 +23,8 @@ int main(int argc, char *argv[])
 	string_type cert_path = NULL;
 	string_type cert_password = NULL;
 	EncryptionKeyHandle encryption_key = NULL;
-	boolean_type is_encrypted = GOTCHANG_PDF_FALSE;
-	boolean_type logging_enabled = GOTCHANG_PDF_FALSE;
+	boolean_type is_encrypted = GOTCHANG_PDF_RV_FALSE;
+	boolean_type logging_enabled = GOTCHANG_PDF_RV_FALSE;
 	LoggingSeverity logging_severity;
 
 #if (defined(DEBUG) && defined(_MSC_VER))
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_IsEncrypted(file, &is_encrypted));
 
-	if (is_encrypted == GOTCHANG_PDF_TRUE) {
+	if (is_encrypted == GOTCHANG_PDF_RV_TRUE) {
 		// No password entered
 		if (password == NULL && cert_path == NULL) {
 			// Opening the file with default password

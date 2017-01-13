@@ -70,7 +70,7 @@ public:
 			throw UserCancelledException(ss.str());
 		}
 
-		if (GOTCHANG_PDF_TRUE == result)
+		if (GOTCHANG_PDF_RV_TRUE == result)
 			return true;
 		else
 			return false;

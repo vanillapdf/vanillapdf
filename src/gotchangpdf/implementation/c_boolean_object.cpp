@@ -22,9 +22,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_SetValue(BooleanObj
 	BooleanObject* obj = reinterpret_cast<BooleanObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
-	if (value == GOTCHANG_PDF_TRUE)
+	if (value == GOTCHANG_PDF_RV_TRUE)
 		obj->SetValue(true);
-	else if (value == GOTCHANG_PDF_FALSE)
+	else if (value == GOTCHANG_PDF_RV_FALSE)
 		obj->SetValue(false);
 	else
 		return GOTCHANG_PDF_ERROR_GENERAL;
