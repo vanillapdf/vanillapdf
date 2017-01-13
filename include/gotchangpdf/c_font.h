@@ -20,10 +20,14 @@ extern "C"
 	* \class FontHandle
 	* \extends IUnknownHandle
 	* \ingroup Fonts
-	* \brief \copybrief Fonts
+	* \brief
+	* A font shall be represented in PDF as a dictionary specifying
+	* the type of font, its PostScript name, its encoding,
+	* and information that can be used to provide a substitute
+	* when the font program is not available.
 	*
-	* Optionally, the font program may be embedded as
-	* a stream object in the PDF file.
+	* This is a direct reference to a PDF specification,
+	* section 9.5, "Introduction to Font Data Structures".
 	* \see FontMapHandle
 	*/
 

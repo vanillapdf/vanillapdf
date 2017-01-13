@@ -121,13 +121,7 @@
 * \defgroup Fonts Fonts
 * \ingroup Documents
 * \brief
-* A font shall be represented in PDF as a dictionary specifying
-* the type of font, its PostScript name, its encoding,
-* and information that can be used to provide a substitute
-* when the font program is not available.
-*
-* This is a direct reference to a PDF specification,
-* section 9.5, "Introduction to Font Data Structures".
+* A PDF representation of standard fonts.
 */
 
 /**
