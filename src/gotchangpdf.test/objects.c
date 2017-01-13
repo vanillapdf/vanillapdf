@@ -53,7 +53,7 @@ int process_hex_string(HexadecimalStringObjectHandle string, int nested)
 
 int process_dictionary(DictionaryObjectHandle dictionary, int nested)
 {
-	boolean_type boolean = GOTCHANG_PDF_FALSE;
+	boolean_type boolean = GOTCHANG_PDF_RV_FALSE;
 	DictionaryObjectIteratorHandle iterator = NULL;
 
 	print_spaces(nested);
@@ -61,7 +61,7 @@ int process_dictionary(DictionaryObjectHandle dictionary, int nested)
 
 	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Iterator(dictionary, &iterator));
 	while (GOTCHANG_PDF_ERROR_SUCCES == DictionaryObjectIterator_IsValid(iterator, dictionary, &boolean)
-		&& GOTCHANG_PDF_TRUE == boolean)
+		&& GOTCHANG_PDF_RV_TRUE == boolean)
 	{
 		NameObjectHandle key = NULL;
 		ObjectHandle value = NULL;
@@ -162,7 +162,7 @@ error_type process_integer(IntegerObjectHandle integer, int nested)
 
 error_type process_boolean(BooleanObjectHandle obj, int nested)
 {
-	boolean_type value = GOTCHANG_PDF_FALSE;
+	boolean_type value = GOTCHANG_PDF_RV_FALSE;
 
 	print_spaces(nested);
 	printf("Boolean object begin\n");
@@ -170,7 +170,7 @@ error_type process_boolean(BooleanObjectHandle obj, int nested)
 	RETURN_ERROR_IF_NOT_SUCCESS(BooleanObject_GetValue(obj, &value));
 
 	print_spaces(nested + 1);
-	if (GOTCHANG_PDF_TRUE == value)
+	if (GOTCHANG_PDF_RV_TRUE == value)
 		printf("Value: true\n");
 	else
 		printf("Value: false\n");

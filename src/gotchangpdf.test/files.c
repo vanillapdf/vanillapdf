@@ -4,13 +4,13 @@ error_type process_file(FileHandle file, int nested)
 {
 	XrefChainHandle chain = NULL;
 	XrefChainIteratorHandle chain_iterator = NULL;
-	boolean_type valid = GOTCHANG_PDF_FALSE;
+	boolean_type valid = GOTCHANG_PDF_RV_FALSE;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(File_XrefChain(file, &chain));
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Iterator(chain, &chain_iterator));
 
 	while (GOTCHANG_PDF_ERROR_SUCCES == XrefChainIterator_IsValid(chain_iterator, chain, &valid)
-		&& GOTCHANG_PDF_TRUE == valid) {
+		&& GOTCHANG_PDF_RV_TRUE == valid) {
 		XrefHandle xref = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_GetValue(chain_iterator, &xref));
@@ -28,12 +28,12 @@ error_type process_file(FileHandle file, int nested)
 error_type process_xref(XrefHandle xref, int nested)
 {
 	XrefIteratorHandle xref_iterator = NULL;
-	boolean_type valid = GOTCHANG_PDF_FALSE;
+	boolean_type valid = GOTCHANG_PDF_RV_FALSE;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Xref_Iterator(xref, &xref_iterator));
 
 	while (GOTCHANG_PDF_ERROR_SUCCES == XrefIterator_IsValid(xref_iterator, xref, &valid)
-		&& GOTCHANG_PDF_TRUE == valid) {
+		&& GOTCHANG_PDF_RV_TRUE == valid) {
 
 		XrefEntryType type;
 		XrefEntryHandle entry = NULL;

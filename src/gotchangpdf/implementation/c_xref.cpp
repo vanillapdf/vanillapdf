@@ -74,9 +74,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefIterator_IsValid(XrefIterator
 
 	try {
 		if (*xref->End() == *iterator)
-			*result = GOTCHANG_PDF_FALSE;
+			*result = GOTCHANG_PDF_RV_FALSE;
 		else
-			*result = GOTCHANG_PDF_TRUE;
+			*result = GOTCHANG_PDF_RV_TRUE;
 
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
@@ -115,9 +115,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_InUse(XrefEntryHandle h
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	if (entry->InUse())
-		*result = GOTCHANG_PDF_TRUE;
+		*result = GOTCHANG_PDF_RV_TRUE;
 	else
-		*result = GOTCHANG_PDF_FALSE;
+		*result = GOTCHANG_PDF_RV_FALSE;
 
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
@@ -382,9 +382,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_IsValid(XrefCha
 
 	try {
 		if (*chain->End() == *iterator)
-			*result = GOTCHANG_PDF_FALSE;
+			*result = GOTCHANG_PDF_RV_FALSE;
 		else
-			*result = GOTCHANG_PDF_TRUE;
+			*result = GOTCHANG_PDF_RV_TRUE;
 
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS

@@ -502,7 +502,7 @@ error_type process_page(PageObjectHandle obj, int nested)
 
 error_type process_extensions(DeveloperExtensionsHandle extensions, int nested)
 {
-	boolean_type boolean = GOTCHANG_PDF_FALSE;
+	boolean_type boolean = GOTCHANG_PDF_RV_FALSE;
 	DeveloperExtensionsIteratorHandle iterator = NULL;
 
 	print_spaces(nested);
@@ -510,7 +510,7 @@ error_type process_extensions(DeveloperExtensionsHandle extensions, int nested)
 
 	RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtensions_Iterator(extensions, &iterator));
 	while (GOTCHANG_PDF_TEST_ERROR_SUCCESS == DeveloperExtensionsIterator_IsValid(iterator, extensions, &boolean)
-		&& GOTCHANG_PDF_TRUE == boolean)
+		&& GOTCHANG_PDF_RV_TRUE == boolean)
 	{
 		NameObjectHandle key = NULL;
 		DeveloperExtensionHandle value = NULL;
@@ -890,8 +890,8 @@ error_type process_outline_item_color(OutlineItemColorHandle obj, int nested)
 
 error_type process_outline_item_flags(OutlineItemFlagsHandle obj, int nested)
 {
-	boolean_type is_italic = GOTCHANG_PDF_FALSE;
-	boolean_type is_bold = GOTCHANG_PDF_FALSE;
+	boolean_type is_italic = GOTCHANG_PDF_RV_FALSE;
+	boolean_type is_bold = GOTCHANG_PDF_RV_FALSE;
 
 	print_spaces(nested);
 	printf("Outline item flags begin\n");
@@ -920,10 +920,10 @@ error_type process_page_labels(PageLabelsHandle labels, integer_type size, int n
 
 	for (i = 1; i <= size; ++i)
 	{
-		boolean_type contains = GOTCHANG_PDF_FALSE;
+		boolean_type contains = GOTCHANG_PDF_RV_FALSE;
 		PageLabelHandle label = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(PageLabels_Contains(labels, i, &contains));
-		if (GOTCHANG_PDF_TRUE != contains)
+		if (GOTCHANG_PDF_RV_TRUE != contains)
 			continue;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(PageLabels_At(labels, i, &label));
