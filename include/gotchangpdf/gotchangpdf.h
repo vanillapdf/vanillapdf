@@ -193,8 +193,12 @@
 * if desired, however it is __not recommended__):
 * - OpenSSL (<https://www.openssl.org/>) - used for encrypted files
 * - Zlib (<http://www.zlib.net/>) - used for compressed ::StreamObjectHandle
-* - libjpeg (<http://libjpeg.sourceforge.net/>) - used for JPEG images (I would call this one really optinal, but I do not support it)
+* - libjpeg (<http://libjpeg.sourceforge.net/>) - used for JPEG images
+* (I would call this one really optinal, but I do not support it)
 *
+* There are build scripts provided in CMake (<https://cmake.org/>) framework.
+* Currently, the library dependencies are not copied to the destination folder.
+* Please, do this step manually if you are trying to build from source.
 * ______
 *
 * High-level document interface
@@ -239,6 +243,8 @@
 * ------------------------
 *
 * Some other features that are available can be found in \ref Utils.
+*
+* To pick off most useful one, I would say have a look at ::Logging.
 */
 
 #endif /* _GOTCHANGPDF_H */
