@@ -203,8 +203,8 @@
 * In order to provide a built library, I'd rather loose
 * all of the C++ API benefits and provide only __C API__.
 *
-* It has three dependent libraries which can be
-* disabled if desired (however not __recommended__):
+* It has three dependent libraries (which can be disabled
+* if desired, however it is __not recommended__):
 * - OpenSSL (<https://www.openssl.org/>) - used for encrypted files
 * - Zlib (<http://www.zlib.net/>) - used for compressed ::StreamObjectHandle
 * - libjpeg (<http://libjpeg.sourceforge.net/>) - used for JPEG images (I would call this one really optinal, but I do not support it)
@@ -233,13 +233,13 @@
 * In case you find high-level interface insufficient, take a look at \ref Files.
 *
 * You might want to start with ::FileHandle,
-* which is the low-level counterpart for the DocumentHandle.
+* which is the low-level counterpart of the DocumentHandle.
 *
-* The file is basically composed of file's header, body and trailer.
-* - Header is basically just a statement about
+* The file is basically composed of file's header, body and trailer:
+* - __Header__ is basically just a statement about
 *   the PDF version this file is referring to
-* - Body is just a sequence of \ref Objects described in ::XrefHandle
-* - The trailer contains the ::XrefHandle itself,
+* - __Body__ is just a sequence of \ref Objects described in ::XrefHandle
+* - The __trailer__ contains the ::XrefHandle itself,
 *   with the bytes offset to start of the last cross-reference section.
 *
 * When the file has been incrementally updated,
