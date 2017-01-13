@@ -39,6 +39,7 @@
     <ClInclude Include="include\gotchangpdf\c_handles.h" />
     <ClInclude Include="include\gotchangpdf\c_indirect_object_reference.h" />
     <ClInclude Include="include\gotchangpdf\c_integer_object.h" />
+    <ClInclude Include="include\gotchangpdf\c_library_info.h" />
     <ClInclude Include="include\gotchangpdf\c_name_object.h" />
     <ClInclude Include="include\gotchangpdf\c_null_object.h" />
     <ClInclude Include="include\gotchangpdf\c_object.h" />
@@ -141,6 +142,7 @@
     <ClInclude Include="src\gotchangpdf\syntax\utils\deferred.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\encryption.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\file_device.h" />
+    <ClInclude Include="src\gotchangpdf\syntax\utils\library_info.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\modify_observer_interface.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\output_pointer.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\pkcs12_key.h" />
@@ -171,6 +173,7 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_font_map.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_indirect_object_reference.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_integer_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_library_info.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_logging.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_name_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_null_object.cpp" />
@@ -248,6 +251,7 @@
     <ClCompile Include="src\gotchangpdf\syntax\streams\raw_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\utils\buffer.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\utils\encryption.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\utils\library_info.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\utils\log.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\utils\modify_observer_interface.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\utils\pkcs12_key.cpp" />

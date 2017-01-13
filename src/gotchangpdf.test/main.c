@@ -26,6 +26,10 @@ int main(int argc, char *argv[])
 	boolean_type is_encrypted = GOTCHANG_PDF_RV_FALSE;
 	boolean_type logging_enabled = GOTCHANG_PDF_RV_FALSE;
 	LoggingSeverity logging_severity;
+	integer_type library_version_major = 0;
+	integer_type library_version_minor = 0;
+	integer_type library_version_patch = 0;
+	string_type library_author = NULL;
 
 #if (defined(DEBUG) && defined(_MSC_VER))
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -52,6 +56,18 @@ int main(int argc, char *argv[])
 			return GOTCHANG_PDF_TEST_ERROR_INVALID_PARAMETERS;
 		}
 	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetVersionMajor(&library_version_major));
+	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetVersionMinor(&library_version_minor));
+	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetVersionPatch(&library_version_patch));
+	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetAuthor(&library_author));
+
+	printf("Library gotchangpdf %d.%d.%d by %s\n",
+		library_version_major,
+		library_version_minor,
+		library_version_patch,
+		library_author
+	);
 
 	// I don't have easy idea how to verify disabled
 	// logging or different severity, so just test API

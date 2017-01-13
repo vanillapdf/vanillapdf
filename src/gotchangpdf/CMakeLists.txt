@@ -45,6 +45,7 @@ set(GOTCHANGPDF_C_IMPLEMENTATION_SOURCES
 	implementation/c_font_map.cpp
 	implementation/c_indirect_object_reference.cpp
 	implementation/c_integer_object.cpp
+	implementation/c_library_info.cpp
 	implementation/c_logging.cpp
 	implementation/c_name_object.cpp
 	implementation/c_null_object.cpp
@@ -128,6 +129,7 @@ set(GOTCHANGPDF_SYNTAX_SOURCES
 	
 	syntax/utils/buffer.cpp
 	syntax/utils/encryption.cpp
+	syntax/utils/library_info.cpp
 	syntax/utils/log.cpp
 	syntax/utils/modify_observer_interface.cpp
 	syntax/utils/pkcs12_key.cpp
@@ -227,6 +229,7 @@ set(SYNTAX_HEADERS
 	syntax/utils/deferred.h
 	syntax/utils/encryption.h
 	syntax/utils/file_device.h
+	syntax/utils/library_info.h
 	syntax/utils/log.h
 	syntax/utils/modify_observer_interface.h
 	syntax/utils/output_pointer.h
@@ -260,6 +263,7 @@ set(INCLUDE_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_handles.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_indirect_object_reference.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_integer_object.h"
+	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_library_info.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_logging.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_name_object.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_null_object.h"
@@ -347,6 +351,9 @@ target_compile_features(gotchangpdf PRIVATE
 )
 
 add_definitions("-DGOTCHANG_PDF_EXPORTS")
+add_definitions("-DGOTCHANG_PDF_VERSION_MAJOR=0")
+add_definitions("-DGOTCHANG_PDF_VERSION_MINOR=0")
+add_definitions("-DGOTCHANG_PDF_VERSION_PATCH=1")
 
 find_package(OpenSSL)
 find_package(ZLIB)
