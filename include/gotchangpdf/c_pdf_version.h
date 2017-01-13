@@ -1,5 +1,5 @@
-#ifndef _C_VERSION_H
-#define _C_VERSION_H
+#ifndef _C_PDF_VERSION_H
+#define _C_PDF_VERSION_H
 
 #include "c_export.h"
 #include "c_handles.h"
@@ -70,4 +70,4 @@ extern "C"
 };
 #endif
 
-#endif /* _C_VERSION_H */
+#endif /* _C_PDF_VERSION_H */
