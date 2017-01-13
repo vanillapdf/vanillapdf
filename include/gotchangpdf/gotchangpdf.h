@@ -188,7 +188,25 @@
 
 /**
 * \mainpage
-* This manual documents whole gotchangpdf C API.
+* This manual documents whole gotchangpdf __C API__.
+*
+* The library is writted in standard C++ (currently 14)
+* and can be compiled using
+* Visual studio
+* and
+* GCC (tested on Ubuntu 16.04) as well.
+*
+* Reason, why I have chosen the __C API__ is
+* rooted in the incompatibility of the C++ ABI between compilers.
+*
+* In order to provide a built library, I'd rather loose
+* all of the C++ API benefits and provide only __C API__.
+*
+* It has three dependent libraries which can be
+* disabled if desired (however not __recommended__):
+* - OpenSSL (<https://www.openssl.org/>) - used for encrypted files
+* - Zlib (<http://www.zlib.net/>) - used for compressed ::StreamObjectHandle
+* - libjpeg (<http://libjpeg.sourceforge.net/>) - used for JPEG images (I would call this one really optinal, but I do not support it)
 *
 * ______
 *
