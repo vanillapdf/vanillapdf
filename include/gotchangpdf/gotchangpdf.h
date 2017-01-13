@@ -174,20 +174,6 @@
 */
 
 /**
-* \defgroup Logging Logging
-* \ingroup Utils
-* \brief
-* The library can provide some additional debug and error messages.
-* 
-* For some debugging tasks it might be vital to turn on library's
-* debugging feature. The default behavior is that it creates a
-* log file for each file, where you can find some additional informations
-* based on the log level.
-*
-* This feature is disabled by default. 
-*/
-
-/**
 * \mainpage
 * This manual documents whole gotchangpdf __C API__.
 *

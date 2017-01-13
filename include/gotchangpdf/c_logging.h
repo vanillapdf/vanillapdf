@@ -17,12 +17,20 @@ extern "C"
 
 	/**
 	* \class Logging
-	* \ingroup Logging
+	* \ingroup Utils
 	* \brief
+	* The library can provide some additional debug and error messages.
+	*
 	* This class controls the logging switch
 	* which enables and disables the logging entirely.
 	* Additionally, the verbosity of the logging output
 	* can be adjusted as well.
+	*
+	* The default behavior is that it creates a
+	* log file for each file, where you can find some additional informations
+	* based on the log level.
+	*
+	* This feature is disabled by default.
 	*/
 
 	/**
