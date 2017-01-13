@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class FontMapHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup Fonts
 	* \brief
 	* A dictionary that maps resource names to font dictionaries.
 	* \see FontHandle

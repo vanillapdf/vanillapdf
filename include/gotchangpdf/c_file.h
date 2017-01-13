@@ -19,7 +19,10 @@ extern "C"
 	* \class FileHandle
 	* \extends IUnknownHandle
 	* \ingroup Files
-	* \brief Represents file access handle
+	* \brief Represents low-level file access handle.
+	*
+	* This is a direct reference to a PDF specification,
+	* section 7.5, "File Structure".
 	*/
 
 	/**

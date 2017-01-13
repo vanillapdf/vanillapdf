@@ -10,14 +10,15 @@ extern "C"
 {
 #endif
 
-	/** \file c_rectangle.h
+	/**
+	* \file c_rectangle.h
 	* This file contains class definitions for RectangleHandle
 	*/
 
 	/**
 	* \class RectangleHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup CommonDataStructures
 	* \brief Represents rectangle in 2D space
 	*/
 
@@ -47,7 +48,8 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_UpperRightY(RectangleHandle handle, PIntegerObjectHandle result);
 
 	/**
-	* \copydoc IUnknown_Release()
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_Release(RectangleHandle handle);
 

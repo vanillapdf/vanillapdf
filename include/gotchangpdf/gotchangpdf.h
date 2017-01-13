@@ -1,11 +1,14 @@
 #ifndef _GOTCHANGPDF_H
 #define _GOTCHANGPDF_H
 
-/* utils */
+/* export rules */
 #include "c_export.h"
+
+/* return values */
 #include "c_values.h"
+
+/* forward declarations */
 #include "c_handles.h"
-#include "c_pdf_version.h"
 
 /* files */
 #include "c_file.h"
@@ -39,6 +42,7 @@
 #include "c_contents.h"
 
 /* objects */
+#include "c_object.h"
 #include "c_array_object.h"
 #include "c_boolean_object.h"
 #include "c_real_object.h"
@@ -48,52 +52,188 @@
 #include "c_indirect_object_reference.h"
 #include "c_integer_object.h"
 #include "c_name_object.h"
-#include "c_object.h"
 
+/* utils */
 #include "c_unknown_interface.h"
 #include "c_buffer.h"
 #include "c_logging.h"
+#include "c_pdf_version.h"
 
 /**
-* \defgroup GotchangPDF Gotchang PDF public API
-* \brief Yeah
+* \defgroup Documents High-level document interface
+* \brief
+* Classes representing document's properties.
 *
-* @{
-*/
-
-/** @} */
-
-/**
-* \defgroup Documents Documents
-* \ingroup GotchangPDF
-* \brief Classes representing document's properties
-* @{
-*/
-
-/** @} */
-
-/**
-* \defgroup Files Files
-* \ingroup GotchangPDF
-* \brief Low-level file access.
+* All functions in this interface shall provide semantic
+* correctness for a file. Meaning that no operation
+* that is explicitly prohibited by a PDF specification
+* is allowed.
 *
-* @{
+* As this task is fairly large, not all operations
+* and properties are yet exposed. If you find any
+* important task, that cannot be done:
+* - Please let me know (<mailto:jur.zikmund@gmail.com>)
+* - Try to use \ref Files to complete the task
 */
 
-/** @} */
+/**
+* \defgroup Files Low-level file interface
+* \brief
+* Accessing file thourgh list of objects such as
+* ArrayObjectHandle or DictionaryObjectHandle.
+*
+* An in-depth knowledge about PDF file format is strongly
+* recommended as many functions are a direct reference
+* to a PDF specification.
+*
+* It's primary use is for missing or misbehaving functionality
+* in the \ref Documents.
+*
+* This interface shall provide syntactic correctness
+* for a file. However, the user is responsible for
+* the semantic correctness.
+*
+* It allows you to create files, that are syntactically
+* correct, but are \b invalid in terms of PDF document
+* semantics.
+*/
+
+/**
+* \defgroup CommonDataStructures Common data structures
+* \ingroup Documents
+* \brief
+* General-purpose data structures that are built from the basic
+* object types described in \ref Objects.
+*
+* This is a direct reference to a PDF specification,
+* section 7.9, "Common Data Structures".
+*/
+
+/**
+* \defgroup Fonts Fonts
+* \ingroup Documents
+* \brief
+* A font shall be represented in PDF as a dictionary specifying
+* the type of font, its PostScript name, its encoding,
+* and information that can be used to provide a substitute
+* when the font program is not available.
+*
+* This is a direct reference to a PDF specification,
+* section 9.5, "Introduction to Font Data Structures".
+*/
+
+/**
+* \defgroup Contents Page contents
+* \ingroup Documents
+* \brief
+* Content streams are the primary means for describing
+* the appearance of pages and other graphical elements.
+*
+* A content stream depends on information
+* contained in an associated resource dictionary.
+* These two objects form a self-contained entity.
+*
+* This is a direct reference to a PDF specification,
+* section 7.8, "Content Streams and Resources".
+*/
 
 /**
 * \defgroup Objects Objects
 * \ingroup Files
-* \brief Classes used as syntactic parsing tokens.
-* @{
+* \brief
+* Basic object types from which a whole PDF file is composed.
+*
+* This is a direct reference to a PDF specification,
+* section 7.3, "Objects".
 */
 
-/** @} */
+/**
+* \defgroup Xref Cross-reference tables and streams
+* \ingroup Files
+* \brief
+* The cross-reference table contains information that permits random
+* access to indirect objects within the file so that the entire file
+* need not be read to locate any particular object.
+*
+* Cross-reference streams provide the following advantages:
+* - A more compact representation of cross-reference information
+* - The ability to access compressed objects that are stored in object
+*   streams (see 7.5.7, "Object Streams") and to allow new cross-reference
+*   entry types to be added in the future
+*
+* This is a direct reference to a PDF specification,
+* section 7.5.4, "Cross-Reference Table" and
+* section 7.5.8, "Cross-Reference Streams".
+*/
+
+/**
+* \defgroup Utils Utilities
+* \brief
+* Additional features that does not correspond directly with PDF.
+*/
+
+/**
+* \defgroup Logging Logging
+* \ingroup Utils
+* \brief
+* The library can provide some additional debug and error messages.
+* 
+* For some debugging tasks it might be vital to turn on library's
+* debugging feature. The default behavior is that it creates a
+* log file for each file, where you can find some additional informations
+* based on the log level.
+*
+* This feature is disabled by default. 
+*/
 
 /**
 * \mainpage
-* That's it
+* This manual documents whole gotchangpdf C API.
+*
+* ______
+*
+* High-level document interface
+* ------------------------
+*
+* For the majority of the tasks prefer using \ref Documents whener possible.
+* Most of these functions could be used without
+* an in-depth knowledge about the PDF file format.
+*
+* The base entity for should be ::DocumentHandle,
+* which represents the file in terms of the high-level interface.
+*
+* Document's pages are contained in so-called ::CatalogHandle.
+*
+* These classes shall provide a root for your research.
+*
+* ______
+*
+* Low-level file interface
+* ------------------------
+*
+* In case you find high-level interface insufficient, take a look at \ref Files.
+*
+* You might want to start with ::FileHandle,
+* which is the low-level counterpart for the DocumentHandle.
+*
+* The file is basically composed of file's header, body and trailer.
+* - Header is basically just a statement about
+*   the PDF version this file is referring to
+* - Body is just a sequence of \ref Objects described in ::XrefHandle
+* - The trailer contains the ::XrefHandle itself,
+*   with the bytes offset to start of the last cross-reference section.
+*
+* When the file has been incrementally updated,
+* there may be multiple cross-reference sections.
+* For details about this topic please visit section
+* 7.5.6 "Incremental Updates" of the PDF specification.
+*
+* ______
+*
+* Utilities
+* ------------------------
+*
+* Some other features that are available can be found in \ref Utils.
 */
 
 #endif /* _GOTCHANGPDF_H */

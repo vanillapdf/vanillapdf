@@ -16,12 +16,6 @@ extern "C"
 	*/
 
 	/**
-	* \defgroup Contents Contents
-	* \ingroup Documents
-	* \brief Class definitions for working with compressed page contents
-	*/
-
-	/**
 	* \class ContentsHandle
 	* \extends IUnknownHandle
 	* \ingroup Contents

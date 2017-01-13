@@ -19,16 +19,18 @@ extern "C"
 	/**
 	* \class FontHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
-	* \brief
-	* A base class for all derived fonts.
+	* \ingroup Fonts
+	* \brief \copybrief Fonts
+	*
+	* Optionally, the font program may be embedded as
+	* a stream object in the PDF file.
 	* \see FontMapHandle
 	*/
 
 	/**
 	* \class CompositeFontHandle
 	* \extends FontHandle
-	* \ingroup Documents
+	* \ingroup Fonts
 	* \brief
 	* A font composed of glyphs from a descendant
 	* CIDFont (see 9.7, "Composite Fonts").

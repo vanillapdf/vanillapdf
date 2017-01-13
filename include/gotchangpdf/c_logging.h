@@ -17,8 +17,12 @@ extern "C"
 
 	/**
 	* \class Logging
-	* \ingroup GotchangPDF
-	* \brief Library logging facility
+	* \ingroup Logging
+	* \brief
+	* This class controls the logging switch
+	* which enables and disables the logging entirely.
+	* Additionally, the verbosity of the logging output
+	* can be adjusted as well.
 	*/
 
 	/**
