@@ -194,7 +194,7 @@
 * - OpenSSL (<https://www.openssl.org/>) - used for encrypted files
 * - Zlib (<http://www.zlib.net/>) - used for compressed ::StreamObjectHandle
 * - libjpeg (<http://libjpeg.sourceforge.net/>) - used for JPEG images
-* (I would call this one really optinal, but I do not support it)
+* (I would call this one really optinal, but I do not support disabling it)
 *
 * There are build scripts provided in CMake (<https://cmake.org/>) framework.
 * Currently, the library dependencies are not copied to the destination folder.
