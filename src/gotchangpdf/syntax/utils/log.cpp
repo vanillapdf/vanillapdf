@@ -33,6 +33,7 @@ namespace gotchangpdf
 
 	Logger::Logger()
 	{
+		m_enabled = false;
 		m_severity = Severity::Warning;
 		m_general = std::make_shared<std::mutex>();
 		m_devnull = std::make_shared<std::ostream>(&m_devnullbuf);
