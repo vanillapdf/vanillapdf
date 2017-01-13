@@ -11,7 +11,7 @@ extern "C"
 #endif
 
 	/**
-	* \file c_outlines.h
+	* \file c_outline.h
 	* This file contains contains class definitions for document outlines
 	*/
 

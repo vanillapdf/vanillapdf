@@ -1,6 +1,12 @@
 #ifndef _C_EXPORT_H
 #define _C_EXPORT_H
 
+/**
+* \file c_export.h
+* This file contains macro declarations for importing
+* and exporting symbols from library boundaries.
+*/
+
 #if defined(_MSC_VER) && defined(_M_IX86)
 	#define CALLING_CONVENTION __cdecl
 #elif defined(__GNUC__) && defined(__i386)
