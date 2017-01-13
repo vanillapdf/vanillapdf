@@ -60,6 +60,7 @@
     <ClInclude Include="include\gotchangpdf\c_gotchangpdf_api.h" />
     <ClInclude Include="include\gotchangpdf\c_viewer_preferences.h" />
     <ClInclude Include="include\gotchangpdf\c_resource_dictionary.h" />
+    <ClInclude Include="include\unistd.h" />
     <ClInclude Include="src\gotchangpdf\implementation\c_helper.h" />
     <ClInclude Include="src\gotchangpdf\precompiled.h" />
     <ClInclude Include="src\gotchangpdf\semantics\documents\catalog.h" />
