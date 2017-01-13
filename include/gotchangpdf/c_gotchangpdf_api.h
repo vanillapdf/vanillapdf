@@ -1,5 +1,12 @@
-#ifndef _GOTCHANGPDF_H
-#define _GOTCHANGPDF_H
+#ifndef _C_GOTCHANGPDF_API_H
+#define _C_GOTCHANGPDF_API_H
+
+/**
+* \file c_gotchangpdf_api.h
+* This file contains the entire available API merged in to single file.
+*
+* Additionaly it is a host for all the documentation group declarations.
+*/
 
 /* export rules */
 #include "c_export.h"
@@ -247,4 +254,4 @@
 * To pick off most useful one, I would say have a look at ::Logging.
 */
 
-#endif /* _GOTCHANGPDF_H */
+#endif /* _C_GOTCHANGPDF_API_H */

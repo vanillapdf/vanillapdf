@@ -57,7 +57,7 @@
     <ClInclude Include="include\gotchangpdf\c_pdf_version.h" />
     <ClInclude Include="include\gotchangpdf\c_xref.h" />
     <ClInclude Include="include\gotchangpdf\c_encryption.h" />
-    <ClInclude Include="include\gotchangpdf\gotchangpdf.h" />
+    <ClInclude Include="include\gotchangpdf\c_gotchangpdf_api.h" />
     <ClInclude Include="include\gotchangpdf\c_viewer_preferences.h" />
     <ClInclude Include="include\gotchangpdf\c_resource_dictionary.h" />
     <ClInclude Include="src\gotchangpdf\implementation\c_helper.h" />

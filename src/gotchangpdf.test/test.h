@@ -1,7 +1,7 @@
 #ifndef _GOTCHANGPDF_TEST_H
 #define _GOTCHANGPDF_TEST_H
 
-#include "gotchangpdf/gotchangpdf.h"
+#include "gotchangpdf/c_gotchangpdf_api.h"
 
 #include <stdio.h>
 #include <stdlib.h> 
