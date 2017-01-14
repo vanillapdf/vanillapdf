@@ -1,9 +1,9 @@
 #ifndef _XREF_CHAIN_H
 #define _XREF_CHAIN_H
 
-#include "syntax_fwd.h"
-#include "deferred.h"
-#include "xref.h"
+#include "syntax/utils/syntax_fwd.h"
+#include "utils/deferred.h"
+#include "syntax/files/xref.h"
 
 #include <list>
 

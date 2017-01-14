@@ -1,7 +1,7 @@
 #include "precompiled.h"
-#include "xref.h"
-#include "xref_chain.h"
-#include "file.h"
+#include "syntax/files/xref.h"
+#include "syntax/files/xref_chain.h"
+#include "syntax/files/file.h"
 
 #include "gotchangpdf/c_xref.h"
 #include "gotchangpdf/c_values.h"

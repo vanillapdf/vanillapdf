@@ -1,9 +1,11 @@
 #include "precompiled.h"
-#include "annotations.h"
-#include "destinations.h"
-#include "document.h"
-#include "name_dictionary.h"
-#include "semantic_utils.h"
+
+#include "semantics/objects/annotations.h"
+#include "semantics/objects/destinations.h"
+#include "semantics/objects/document.h"
+#include "semantics/objects/name_dictionary.h"
+
+#include "semantics/utils/semantic_utils.h"
 
 namespace gotchangpdf
 {

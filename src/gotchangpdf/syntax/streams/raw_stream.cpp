@@ -1,9 +1,8 @@
 #include "precompiled.h"
-#include "raw_stream.h"
+#include "syntax/streams/raw_stream.h"
 
-#include "exception.h"
-#include "constants.h"
-#include "util.h"
+#include "utils/constants.h"
+#include "utils/util.h"
 
 namespace gotchangpdf
 {

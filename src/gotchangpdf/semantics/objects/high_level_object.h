@@ -1,8 +1,8 @@
 #ifndef _HIGH_LEVEL_OBJECT_H
 #define _HIGH_LEVEL_OBJECT_H
 
-#include "semantics_fwd.h"
-#include "object.h"
+#include "utils/unknown_interface.h"
+//#include "syntax/objects/object.h"
 
 namespace gotchangpdf
 {

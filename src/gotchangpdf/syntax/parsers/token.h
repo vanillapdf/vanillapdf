@@ -1,8 +1,9 @@
 #ifndef _TOKEN_H
 #define _TOKEN_H
 
-#include "syntax_fwd.h"
-#include "buffer.h"
+#include "syntax/utils/syntax_fwd.h"
+
+#include "utils/buffer.h"
 
 namespace gotchangpdf
 {

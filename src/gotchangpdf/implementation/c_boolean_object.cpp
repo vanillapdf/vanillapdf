@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#include "file.h"
+#include "syntax/files/file.h"
 
 #include "gotchangpdf/c_boolean_object.h"
 #include "c_helper.h"

@@ -1,9 +1,10 @@
 #ifndef _CHARACTER_MAP_DATA_H
 #define _CHARACTER_MAP_DATA_H
 
-#include "constants.h"
-#include "objects.h"
-#include "object_utils.h"
+#include "utils/constants.h"
+
+#include "syntax/objects/objects.h"
+#include "syntax/utils/object_utils.h"
 
 #include <vector>
 

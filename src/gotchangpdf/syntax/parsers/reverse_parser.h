@@ -1,9 +1,9 @@
 #ifndef _REVERSE_PARSER_H
 #define _REVERSE_PARSER_H
 
-#include "syntax_fwd.h"
-#include "reverse_tokenizer.h"
-#include "parser_interface.h"
+#include "syntax/utils/syntax_fwd.h"
+#include "syntax/parsers/reverse_tokenizer.h"
+#include "syntax/parsers/parser_interface.h"
 
 namespace gotchangpdf
 {

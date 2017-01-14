@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#include "file.h"
+#include "syntax/files/file.h"
 
 #include "gotchangpdf/c_dictionary_object.h"
 #include "gotchangpdf/c_values.h"

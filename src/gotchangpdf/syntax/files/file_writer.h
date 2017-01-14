@@ -1,7 +1,7 @@
 #ifndef _FILE_WRITER_H
 #define _FILE_WRITER_H
 
-#include "syntax_fwd.h"
+#include "syntax/utils/syntax_fwd.h"
 
 #include <memory>
 

@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#include "log.h"
+#include "utils/log.h"
 
 #include "gotchangpdf/c_logging.h"
 #include "c_helper.h"

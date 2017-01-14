@@ -1,9 +1,9 @@
 #ifndef _HEADER_H
 #define _HEADER_H
 
-#include "syntax_fwd.h"
-#include "unknown_interface.h"
-#include "version.h"
+#include "syntax/utils/syntax_fwd.h"
+#include "utils/unknown_interface.h"
+#include "utils/pdf_version.h"
 
 namespace gotchangpdf
 {

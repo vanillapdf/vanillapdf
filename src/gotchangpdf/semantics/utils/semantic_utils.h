@@ -1,10 +1,12 @@
 #ifndef _SEMANTIC_UTILS_H
 #define _SEMANTIC_UTILS_H
 
-#include "semantics_fwd.h"
-#include "document.h"
-#include "version.h"
-#include "name_object.h"
+#include "semantics/utils/semantics_fwd.h"
+#include "semantics/objects/document.h"
+
+#include "syntax/objects/name_object.h"
+
+#include "utils/pdf_version.h"
 
 namespace gotchangpdf
 {

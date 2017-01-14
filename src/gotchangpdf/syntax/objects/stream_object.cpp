@@ -1,9 +1,11 @@
 #include "precompiled.h"
 #include "stream_object.h"
 
-#include "file.h"
-#include "raw_stream.h"
-#include "filter.h"
+#include "syntax/files/file.h"
+#include "syntax/streams/raw_stream.h"
+#include "syntax/filters/filter.h"
+
+#include "syntax/exceptions/syntax_exceptions.h"
 
 namespace gotchangpdf
 {

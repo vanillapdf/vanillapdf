@@ -1,10 +1,10 @@
 #ifndef _INTEGER_OBJECT_H
 #define _INTEGER_OBJECT_H
 
-#include "syntax_fwd.h"
-#include "util.h"
+#include "syntax/utils/syntax_fwd.h"
+#include "syntax/objects/numeric_object.h"
 
-#include "numeric_object.h"
+#include "utils/util.h"
 
 namespace gotchangpdf
 {

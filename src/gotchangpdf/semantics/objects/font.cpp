@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#include "font.h"
+#include "semantics/objects/font.h"
 
 namespace gotchangpdf
 {

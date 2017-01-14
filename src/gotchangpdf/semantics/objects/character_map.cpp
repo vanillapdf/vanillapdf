@@ -1,6 +1,6 @@
 #include "precompiled.h"
-#include "character_map.h"
-#include "parser.h"
+#include "semantics/objects/character_map.h"
+#include "syntax/parsers/parser.h"
 
 namespace gotchangpdf
 {

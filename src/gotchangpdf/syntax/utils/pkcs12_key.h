@@ -1,8 +1,8 @@
 #ifndef _PKCS12_KEY_H
 #define _PKCS12_KEY_H
 
-#include "syntax_fwd.h"
-#include "encryption.h"
+#include "syntax/utils/syntax_fwd.h"
+#include "syntax/utils/encryption.h"
 
 namespace gotchangpdf
 {

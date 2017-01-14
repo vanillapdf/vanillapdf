@@ -1,7 +1,7 @@
 #ifndef _BOOLEAN_OBJECT_H
 #define _BOOLEAN_OBJECT_H
 
-#include "object.h"
+#include "syntax/objects/containable.h"
 
 namespace gotchangpdf
 {

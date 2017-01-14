@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#include "array_object.h"
+#include "syntax/objects/array_object.h"
 
 namespace gotchangpdf
 {

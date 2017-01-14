@@ -1,6 +1,6 @@
 #include "precompiled.h"
-#include "encryption.h"
-#include "pkcs12_key.h"
+#include "syntax/utils/encryption.h"
+#include "syntax/utils/pkcs12_key.h"
 
 #include "gotchangpdf/c_encryption.h"
 #include "c_helper.h"

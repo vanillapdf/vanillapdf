@@ -1,11 +1,12 @@
 #ifndef _OUTPUT_POINTER_H
 #define _OUTPUT_POINTER_H
 
-#include "deferred.h"
-#include "exception.h"
-#include "unknown_interface.h"
-#include "object.h"
-#include "util.h"
+#include "utils/deferred.h"
+#include "utils/unknown_interface.h"
+#include "utils/util.h"
+
+#include "syntax/exceptions/syntax_exceptions.h"
+#include "syntax/objects/object.h"
 
 #include <type_traits>
 #include <memory>

@@ -1,11 +1,12 @@
 #ifndef _PARSER_INTERFACE_H
 #define _PARSER_INTERFACE_H
 
-#include "syntax_fwd.h"
-#include "constants.h"
-#include "object_stream_entry.h"
-#include "content_stream_instruction_base.h"
-#include "character_map_data.h"
+#include "syntax/utils/syntax_fwd.h"
+
+#include "syntax/parsers/object_stream_entry.h"
+#include "syntax/parsers/character_map_data.h"
+
+#include "utils/constants.h"
 
 #include <vector>
 
@@ -30,14 +31,6 @@ namespace gotchangpdf
 			virtual types::stream_offset ReadLastXrefOffset() = 0;
 
 			virtual ~IReverseParser() {}
-		};
-
-		class IContentStreamParser
-		{
-		public:
-			virtual contents::BaseInstructionCollectionPtr ReadContentStreamInstructions(void) = 0;
-
-			virtual ~IContentStreamParser() {}
 		};
 
 		class ICharacterMapParser

@@ -1,10 +1,9 @@
 #include "precompiled.h"
-#include "destinations.h"
-#include "document.h"
+#include "semantics/objects/destinations.h"
+#include "semantics/objects/document.h"
 
-#include "exception.h"
-#include "semantic_exceptions.h"
-#include "semantic_utils.h"
+#include "semantics/utils/semantic_exceptions.h"
+#include "semantics/utils/semantic_utils.h"
 
 namespace gotchangpdf
 {

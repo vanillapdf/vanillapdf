@@ -1,8 +1,8 @@
 #include "precompiled.h"
-#include "name_object.h"
+#include "syntax/objects/name_object.h"
 #include "gotchangpdf/c_name_object.h"
 
-#include "character.h"
+#include "utils/character.h"
 
 namespace gotchangpdf
 {

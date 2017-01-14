@@ -1,6 +1,6 @@
 #include "precompiled.h"
-#include "token_dictionary.h"
-#include "exception.h"
+
+#include "syntax/parsers/token_dictionary.h"
 
 #include <cassert>
 #include <algorithm>

@@ -1,7 +1,7 @@
 #ifndef _SEMANTIC_EXCEPTIONS_H
 #define _SEMANTIC_EXCEPTIONS_H
 
-#include "exception.h"
+#include "utils/exceptions.h"
 
 namespace gotchangpdf
 {

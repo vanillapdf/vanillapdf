@@ -1,9 +1,11 @@
 #include "precompiled.h"
-#include "xref.h"
+#include "syntax/files/xref.h"
 
-#include "file.h"
-#include "xref_chain.h"
-#include "parser.h"
+#include "syntax/files/file.h"
+#include "syntax/files/xref_chain.h"
+#include "syntax/parsers/parser.h"
+
+#include "syntax/exceptions/syntax_exceptions.h"
 
 #include <iomanip>
 

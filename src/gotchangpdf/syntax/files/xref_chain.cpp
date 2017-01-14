@@ -1,5 +1,8 @@
 #include "precompiled.h"
-#include "xref_chain.h"
+
+#include "syntax/files/xref_chain.h"
+
+#include "syntax/exceptions/syntax_exceptions.h"
 
 namespace gotchangpdf
 {

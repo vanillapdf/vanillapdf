@@ -1,10 +1,10 @@
 #ifndef _FILTER_H
 #define _FILTER_H
 
-#include "syntax_fwd.h"
+#include "syntax/utils/syntax_fwd.h"
 
-#include "deferred.h"
-#include "dictionary_object.h"
+#include "utils/deferred.h"
+#include "syntax/objects/dictionary_object.h"
 
 namespace gotchangpdf
 {

@@ -1,7 +1,10 @@
 #include "precompiled.h"
-#include "file_writer.h"
-#include "file.h"
-#include "xref.h"
+
+#include "syntax/files/file_writer.h"
+#include "syntax/files/file.h"
+#include "syntax/files/xref.h"
+
+#include "syntax/exceptions/syntax_exceptions.h"
 
 #include <fstream>
 #include <iomanip>

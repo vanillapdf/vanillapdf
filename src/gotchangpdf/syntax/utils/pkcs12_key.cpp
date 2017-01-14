@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#include "pkcs12_key.h"
+#include "syntax/utils/pkcs12_key.h"
 
 #include <fstream>
 

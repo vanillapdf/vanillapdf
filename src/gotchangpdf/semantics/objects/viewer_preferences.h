@@ -1,10 +1,10 @@
 #ifndef _VIEWER_PREFERENCES_H
 #define _VIEWER_PREFERENCES_H
 
-#include "semantics_fwd.h"
-#include "high_level_object.h"
-#include "dictionary_object.h"
-#include "array_object.h"
+#include "semantics/utils/semantics_fwd.h"
+#include "semantics/objects/high_level_object.h"
+#include "syntax/objects/dictionary_object.h"
+#include "syntax/objects/array_object.h"
 
 namespace gotchangpdf
 {

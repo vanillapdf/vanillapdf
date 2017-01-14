@@ -1,7 +1,9 @@
 #ifndef _LEXICAL_TREE_H
 #define _LEXICAL_TREE_H
 
-#include "token.h"
+#include "syntax/parsers/token.h"
+
+#include <limits>
 
 namespace gotchangpdf
 {

@@ -1,9 +1,8 @@
 #ifndef _NUMERIC_OBJECT_H
 #define _NUMERIC_OBJECT_H
 
-#include "syntax_fwd.h"
-#include "constants.h"
-#include "containable.h"
+#include "syntax/utils/syntax_fwd.h"
+#include "syntax/objects/containable.h"
 
 #include <string>
 

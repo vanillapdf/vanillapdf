@@ -1,8 +1,10 @@
 #include "precompiled.h"
-#include "indirect_object_reference.h"
 
-#include "file.h"
-#include "objects.h"
+#include "syntax/objects/indirect_object_reference.h"
+
+#include "syntax/files/file.h"
+
+#include "syntax/exceptions/syntax_exceptions.h"
 
 namespace gotchangpdf
 {

@@ -1,6 +1,6 @@
 #include "precompiled.h"
-#include "viewer_preferences.h"
-#include "file.h"
+#include "semantics/objects/viewer_preferences.h"
+#include "syntax/files/file.h"
 
 #include "gotchangpdf/c_viewer_preferences.h"
 #include "c_helper.h"

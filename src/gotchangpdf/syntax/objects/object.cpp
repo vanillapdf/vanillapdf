@@ -1,8 +1,8 @@
 #include "precompiled.h"
-#include "object.h"
-#include "xref.h"
+#include "syntax/objects/object.h"
+#include "syntax/files/xref.h"
 
-#include "exception.h"
+#include "syntax/exceptions/syntax_exceptions.h"
 
 #include <cassert>
 

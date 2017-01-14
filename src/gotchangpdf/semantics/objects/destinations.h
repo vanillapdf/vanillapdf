@@ -1,10 +1,10 @@
 #ifndef _DESTINATIONS_H
 #define _DESTINATIONS_H
 
-#include "semantics_fwd.h"
-#include "high_level_object.h"
+#include "semantics/utils/semantics_fwd.h"
+#include "semantics/objects/high_level_object.h"
 
-#include "dictionary_object.h"
+#include "syntax/objects/dictionary_object.h"
 
 namespace gotchangpdf
 {

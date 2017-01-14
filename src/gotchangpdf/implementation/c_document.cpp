@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#include "document.h"
+#include "semantics/objects/document.h"
 
 #include "gotchangpdf/c_document.h"
 #include "c_helper.h"

@@ -1,9 +1,9 @@
 #ifndef _DEVELOPER_EXTENSIONS_H
 #define _DEVELOPER_EXTENSIONS_H
 
-#include "semantics_fwd.h"
-#include "high_level_object.h"
-#include "version.h"
+#include "semantics/utils/semantics_fwd.h"
+#include "semantics/objects/high_level_object.h"
+#include "utils/pdf_version.h"
 
 namespace gotchangpdf
 {

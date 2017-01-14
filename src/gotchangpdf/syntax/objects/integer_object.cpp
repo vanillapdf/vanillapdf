@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#include "integer_object.h"
+#include "syntax/objects/integer_object.h"
 #include "real_object.h"
 
 #include <cassert>

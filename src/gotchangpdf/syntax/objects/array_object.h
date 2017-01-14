@@ -1,8 +1,8 @@
 #ifndef _ARRAY_OBJECT_H
 #define _ARRAY_OBJECT_H
 
-#include "syntax_fwd.h"
-#include "mixed_array_object.h"
+//#include "syntax/utils/syntax_fwd.h"
+#include "syntax/objects/mixed_array_object.h"
 
 #include <algorithm>
 #include <functional>

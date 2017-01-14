@@ -1,16 +1,17 @@
 #ifndef _PAGE_LABEL_H
 #define _PAGE_LABEL_H
 
-#include "semantics_fwd.h"
-#include "high_level_object.h"
-#include "semantic_exceptions.h"
+#include "semantics/utils/semantics_fwd.h"
+#include "semantics/utils/semantic_exceptions.h"
 
-#include "object_utils.h"
-#include "dictionary_object.h"
-#include "integer_object.h"
-#include "name_object.h"
-#include "string_object.h"
-#include "tree.h"
+#include "semantics/objects/high_level_object.h"
+#include "semantics/objects/tree.h"
+
+#include "syntax/utils/object_utils.h"
+#include "syntax/objects/dictionary_object.h"
+#include "syntax/objects/integer_object.h"
+#include "syntax/objects/name_object.h"
+#include "syntax/objects/string_object.h"
 
 namespace gotchangpdf
 {

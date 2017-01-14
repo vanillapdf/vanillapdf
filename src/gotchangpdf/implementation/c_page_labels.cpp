@@ -1,6 +1,6 @@
 #include "precompiled.h"
-#include "page_labels.h"
-#include "file.h"
+#include "semantics/objects/page_labels.h"
+#include "syntax/files/file.h"
 
 #include "gotchangpdf/c_page_labels.h"
 #include "c_helper.h"

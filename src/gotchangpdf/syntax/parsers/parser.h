@@ -1,10 +1,11 @@
 #ifndef _PARSER_H
 #define _PARSER_H
 
-#include "syntax_fwd.h"
-#include "parser_interface.h"
-#include "xref.h"
-#include "tokenizer.h"
+#include "syntax/utils/syntax_fwd.h"
+#include "syntax/parsers/parser_interface.h"
+#include "syntax/parsers/tokenizer.h"
+
+#include "syntax/files/xref.h"
 
 namespace gotchangpdf
 {
@@ -85,21 +86,6 @@ namespace gotchangpdf
 				StreamObjectPtr stream,
 				types::big_uint stream_obj_number,
 				types::ushort stream_gen_number);
-		};
-
-		class ContentStreamParser : public ParserBase, public IContentStreamParser
-		{
-		public:
-			ContentStreamParser(std::weak_ptr<File> file, CharacterSource & stream);
-			virtual contents::BaseInstructionCollectionPtr ReadContentStreamInstructions(void) override;
-
-		private:
-			contents::InstructionBasePtr ReadContentStreamInstruction(void);
-			contents::OperationBasePtr ReadContentStreamOperation(void);
-			bool IsOperand(Token::Type type);
-			ObjectPtr ReadOperand();
-			contents::OperationBasePtr ReadOperatorReturnOperation(const std::vector<ObjectPtr>& operands);
-			contents::InlineImageObjectPtr ReadInlineImageObject(void);
 		};
 
 		class CharacterMapParser : public ParserBase, public ICharacterMapParser

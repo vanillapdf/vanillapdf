@@ -1,15 +1,15 @@
 #include "precompiled.h"
-#include "file.h"
+#include "syntax/files/file.h"
 
-#include "raw_reverse_stream.h"
-#include "parser.h"
-#include "reverse_parser.h"
-#include "exception.h"
-#include "encryption.h"
-#include "string_object.h"
+#include "syntax/streams/raw_reverse_stream.h"
+#include "syntax/parsers/parser.h"
+#include "syntax/parsers/reverse_parser.h"
+#include "syntax/exceptions/syntax_exceptions.h"
+#include "syntax/utils/encryption.h"
+#include "syntax/objects/string_object.h"
 
-#include "xref_chain.h"
-#include "header.h"
+#include "syntax/files/xref_chain.h"
+#include "syntax/files/header.h"
 
 namespace gotchangpdf
 {
@@ -25,7 +25,7 @@ namespace gotchangpdf
 		std::shared_ptr<File> File::Create(const std::string& path)
 		{
 			auto result = std::shared_ptr<File>(new File(path));
-			result->_input = make_shared<FileDevice>();
+			result->_input = make_shared<std::fstream>();
 			result->_input->open(path,
 				ios_base::in | ios_base::out | ios_base::binary | ios::trunc);
 
@@ -63,7 +63,7 @@ namespace gotchangpdf
 			if (_initialized)
 				return;
 
-			_input = make_shared<FileDevice>();
+			_input = make_shared<std::fstream>();
 			_input->open(_full_path,
 				ios::in | ios::binary | ios::ate);
 

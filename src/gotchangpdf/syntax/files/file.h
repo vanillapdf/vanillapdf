@@ -1,15 +1,15 @@
 #ifndef _FILE_H
 #define _FILE_H
 
-#include "syntax_fwd.h"
-#include "file_device.h"
-#include "header.h"
-#include "xref_chain.h"
-#include "encryption.h"
+#include "syntax/utils/syntax_fwd.h"
+#include "syntax/files/header.h"
+#include "syntax/files/xref_chain.h"
+#include "syntax/utils/encryption.h"
 
 #include <memory>
 #include <vector>
 #include <string>
+#include <fstream>
 
 namespace gotchangpdf
 {
@@ -39,7 +39,7 @@ namespace gotchangpdf
 			HeaderPtr GetHeader(void) const;
 
 			std::string GetFilename(void) const { return _filename; }
-			std::shared_ptr<FileDevice> GetInputStream(void) const { return _input; }
+			std::shared_ptr<std::fstream> GetInputStream(void) const { return _input; }
 
 			// Encryption
 			bool IsEncrypted(void) const;
@@ -89,7 +89,7 @@ namespace gotchangpdf
 			~File(void);
 
 		private:
-			std::shared_ptr<FileDevice> _input;
+			std::shared_ptr<std::fstream> _input;
 			HeaderPtr _header;
 			XrefChainPtr _xref;
 			std::vector<ObjectPtr> _cache;

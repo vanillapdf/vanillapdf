@@ -1,8 +1,7 @@
 #ifndef _CONTAINABLE_H
 #define _CONTAINABLE_H
 
-#include "syntax_fwd.h"
-#include "object.h"
+#include "syntax/objects/object.h"
 
 namespace gotchangpdf
 {

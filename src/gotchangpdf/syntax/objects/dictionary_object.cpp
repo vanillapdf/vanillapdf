@@ -1,5 +1,7 @@
 #include "precompiled.h"
-#include "dictionary_object.h"
+
+#include "syntax/objects/dictionary_object.h"
+#include "syntax/utils/output_pointer.h"
 
 namespace gotchangpdf
 {

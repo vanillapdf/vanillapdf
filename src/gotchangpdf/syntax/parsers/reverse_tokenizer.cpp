@@ -1,9 +1,8 @@
 #include "precompiled.h"
 
-#include "reverse_tokenizer.h"
-#include "exception.h"
-#include "character.h"
-#include "util.h"
+#include "syntax/parsers/reverse_tokenizer.h"
+#include "utils/character.h"
+#include "utils/util.h"
 
 #include <cassert>
 #include <algorithm>

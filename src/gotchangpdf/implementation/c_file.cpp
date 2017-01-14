@@ -1,7 +1,7 @@
 #include "precompiled.h"
-#include "file.h"
-#include "file_writer.h"
-#include "xref_chain.h"
+#include "syntax/files/file.h"
+#include "syntax/files/file_writer.h"
+#include "syntax/files/xref_chain.h"
 
 #include "gotchangpdf/c_file.h"
 #include "c_helper.h"

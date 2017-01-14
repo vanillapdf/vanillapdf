@@ -4,22 +4,7 @@ cmake_minimum_required(VERSION 2.6)
 project(gotchangpdf CXX)
 
 include_directories("${CMAKE_SOURCE_DIR}/include")
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
-include_directories(implementation)
-include_directories(semantics/documents)
-include_directories(semantics/objects)
-include_directories(semantics/utils)
-                    
-include_directories(syntax/exceptions)
-include_directories(syntax/files)
-include_directories(syntax/filters)
-include_directories(syntax/objects)
-include_directories(syntax/parsers)
-include_directories(syntax/parsers/contents)
-include_directories(syntax/streams)
-include_directories(syntax/utils)
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(GOTCHANGPDF_PRECOMPILED_SOURCE
 	precompiled.cpp
@@ -65,16 +50,22 @@ set(GOTCHANGPDF_C_IMPLEMENTATION_SOURCES
 	implementation/c_xref.cpp
 )
 
+set(GOTCHANGPDF_CONTENTS_SOURCES
+	contents/content_stream_objects.cpp
+	contents/content_stream_operations.cpp
+	contents/content_stream_parser.cpp
+)
+
 set(GOTCHANGPDF_SEMANTICS_SOURCES
-	semantics/documents/catalog.cpp
-	semantics/documents/content_stream.cpp
-	semantics/documents/contents.cpp
-	semantics/documents/document.cpp
-	semantics/documents/page_node_utils.cpp
-	semantics/documents/page_object.cpp
-	semantics/documents/page_tree.cpp
-	semantics/documents/page_tree_node.cpp
-	semantics/documents/resource_dictionary.cpp
+	semantics/objects/catalog.cpp
+	semantics/objects/content_stream.cpp
+	semantics/objects/contents.cpp
+	semantics/objects/document.cpp
+	semantics/objects/page_node_utils.cpp
+	semantics/objects/page_object.cpp
+	semantics/objects/page_tree.cpp
+	semantics/objects/page_tree_node.cpp
+	semantics/objects/resource_dictionary.cpp
 	semantics/objects/annotations.cpp
 	semantics/objects/character_map.cpp
 	semantics/objects/date.cpp
@@ -88,7 +79,7 @@ set(GOTCHANGPDF_SEMANTICS_SOURCES
 )
 
 set(GOTCHANGPDF_SYNTAX_SOURCES
-	syntax/exceptions/exception.cpp
+	syntax/exceptions/syntax_exceptions.cpp
 	
 	syntax/files/file.cpp
 	syntax/files/file_writer.cpp
@@ -110,7 +101,6 @@ set(GOTCHANGPDF_SYNTAX_SOURCES
 	syntax/objects/object.cpp
 	syntax/objects/stream_object.cpp
 	syntax/objects/string_object.cpp
-	syntax/objects/object_utils.cpp
 	
 	syntax/parsers/character_map_data.cpp
 	syntax/parsers/lexical_tree.cpp
@@ -121,32 +111,46 @@ set(GOTCHANGPDF_SYNTAX_SOURCES
 	syntax/parsers/token_dictionary.cpp
 	syntax/parsers/tokenizer.cpp
 	
-	syntax/parsers/contents/content_stream_objects.cpp
-	syntax/parsers/contents/content_stream_operations.cpp
-	
 	syntax/streams/raw_reverse_stream.cpp
 	syntax/streams/raw_stream.cpp
 	
-	syntax/utils/buffer.cpp
 	syntax/utils/encryption.cpp
-	syntax/utils/library_info.cpp
-	syntax/utils/log.cpp
-	syntax/utils/modify_observer_interface.cpp
 	syntax/utils/pkcs12_key.cpp
-	syntax/utils/zlib_wrapper.cpp
+	syntax/utils/object_utils.cpp
 )
 
-set(SEMANTICS_HEADERS
-	semantics/documents/catalog.h
-	semantics/documents/content_stream.h
-	semantics/documents/contents.h
-	semantics/documents/document.h
-	semantics/documents/page_node.h
-	semantics/documents/page_node_utils.h
-	semantics/documents/page_object.h
-	semantics/documents/page_tree.h
-	semantics/documents/page_tree_node.h
-	semantics/documents/resource_dictionary.h
+set(GOTCHANGPDF_UTILS_SOURCES
+	utils/buffer.cpp
+	utils/exceptions.cpp
+	utils/library_info.cpp
+	utils/log.cpp
+	utils/modify_observer_interface.cpp
+	utils/zlib_wrapper.cpp
+)
+
+set(GOTCHANGPDF_CONTENTS_HEADERS
+	contents/content_fwd.h
+	contents/content_stream_instruction_base.h
+	contents/content_stream_objects.h
+	contents/content_stream_operation_base.h
+	contents/content_stream_operation_generic.h
+	contents/content_stream_operations.h
+	contents/content_stream_operators.h
+	contents/content_stream_parser.h
+	contents/content_utils.h
+)
+
+set(GOTCHANGPDF_SEMANTICS_HEADERS
+	semantics/objects/catalog.h
+	semantics/objects/content_stream.h
+	semantics/objects/contents.h
+	semantics/objects/document.h
+	semantics/objects/page_node.h
+	semantics/objects/page_node_utils.h
+	semantics/objects/page_object.h
+	semantics/objects/page_tree.h
+	semantics/objects/page_tree_node.h
+	semantics/objects/resource_dictionary.h
 	
 	semantics/objects/annotations.h
 	semantics/objects/character_map.h
@@ -168,8 +172,8 @@ set(SEMANTICS_HEADERS
 	semantics/utils/semantics_fwd.h
 )
 
-set(SYNTAX_HEADERS
-	syntax/exceptions/exception.h
+set(GOTCHANGPDF_SYNTAX_HEADERS
+	syntax/exceptions/syntax_exceptions.h
 	
 	syntax/files/file.h
 	syntax/files/file_writer.h
@@ -194,7 +198,6 @@ set(SYNTAX_HEADERS
 	syntax/objects/null_object.h
 	syntax/objects/numeric_object.h
 	syntax/objects/object.h
-	syntax/objects/object_utils.h
 	syntax/objects/objects.h
 	syntax/objects/real_object.h
 	syntax/objects/stream_object.h
@@ -211,37 +214,35 @@ set(SYNTAX_HEADERS
 	syntax/parsers/token_dictionary.h
 	syntax/parsers/tokenizer.h
 	
-	syntax/parsers/contents/content_stream_instruction_base.h
-	syntax/parsers/contents/content_stream_objects.h
-	syntax/parsers/contents/content_stream_operation_base.h
-	syntax/parsers/contents/content_stream_operation_generic.h
-	syntax/parsers/contents/content_stream_operations.h
-	syntax/parsers/contents/content_stream_operators.h
-	syntax/parsers/contents/content_utils.h
-	
 	syntax/streams/raw_base_stream.h
 	syntax/streams/raw_reverse_stream.h
 	syntax/streams/raw_stream.h
 	
-	syntax/utils/buffer.h
-	syntax/utils/character.h
-	syntax/utils/constants.h
-	syntax/utils/deferred.h
 	syntax/utils/encryption.h
-	syntax/utils/file_device.h
-	syntax/utils/library_info.h
-	syntax/utils/log.h
-	syntax/utils/modify_observer_interface.h
 	syntax/utils/output_pointer.h
 	syntax/utils/pkcs12_key.h
 	syntax/utils/syntax_fwd.h
-	syntax/utils/unknown_interface.h
-	syntax/utils/util.h
-	syntax/utils/version.h
-	syntax/utils/zlib_wrapper.h
+	syntax/utils/object_utils.h
 )
 
-set(INCLUDE_HEADERS
+set(GOTCHANGPDF_UTILS_HEADERS
+	utils/buffer.h
+	utils/character.h
+	utils/constants.h
+	utils/deferred.h
+	utils/exceptions.h
+	utils/file_device.h
+	utils/library_info.h
+	utils/log.h
+	utils/modify_observer_interface.h
+	utils/pdf_version.h
+	utils/unknown_interface.h
+	utils/util.h
+	utils/utils_fwd.h
+	utils/zlib_wrapper.h
+)
+
+set(GOTCHANGPDF_INCLUDE_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_annotations.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_array_object.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_boolean_object.h"
@@ -282,36 +283,53 @@ set(INCLUDE_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_values.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_viewer_preferences.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_xref.h"
-	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/gotchangpdf.h"
+	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_gotchangpdf_api.h"
 )
 
-set(IMPLEMENTATION_HELPER_HEADER
+set(GOTCHANGPDF_IMPLEMENTATION_HELPER_HEADER
 	implementation/helper.h
 )
 
-set(PRECOMPILED_HEADER
+set(GOTCHANGPDF_ADDITIONAL_HEADERS
+	"${CMAKE_SOURCE_DIR}/include/unistd.h"
+)
+
+set(GOTCHANGPDF_PRECOMPILED_HEADER
 	precompiled.h
 )
 
 source_group("Header Files" FILES
-	${PRECOMPILED_HEADER}
+	${GOTCHANGPDF_PRECOMPILED_HEADER}
+	${GOTCHANGPDF_ADDITIONAL_HEADERS}
 )
 
 source_group("Header Files\\include" FILES
-	${INCLUDE_HEADERS}
+	${GOTCHANGPDF_INCLUDE_HEADERS}
+)
+
+source_group("Header Files\\contents" FILES
+	${GOTCHANGPDF_CONTENTS_HEADERS}
 )
 
 source_group("Header Files\\semantics" FILES
-	${SEMANTICS_HEADERS}
+	${GOTCHANGPDF_SEMANTICS_HEADERS}
 )
 
 source_group("Header Files\\syntax" FILES
-	${SYNTAX_HEADERS}
+	${GOTCHANGPDF_SYNTAX_HEADERS}
+)
+
+source_group("Header Files\\utils" FILES
+	${GOTCHANGPDF_UTILS_HEADERS}
 )
 
 source_group("Source Files\\implementation" FILES
 	${GOTCHANGPDF_C_IMPLEMENTATION_SOURCES}
-	${IMPLEMENTATION_HELPER_HEADER}
+	${GOTCHANGPDF_IMPLEMENTATION_HELPER_HEADER}
+)
+
+source_group("Source Files\\contents" FILES
+	${GOTCHANGPDF_CONTENTS_SOURCES}
 )
 
 source_group("Source Files\\syntax" FILES
@@ -320,6 +338,10 @@ source_group("Source Files\\syntax" FILES
 
 source_group("Source Files\\semantics" FILES
 	${GOTCHANGPDF_SEMANTICS_SOURCES}
+)
+
+source_group("Source Files\\utils" FILES
+	${GOTCHANGPDF_UTILS_SOURCES}
 )
 
 install(FILES ${INCLUDE_HEADERS}
@@ -331,10 +353,18 @@ add_library(gotchangpdf SHARED
 	${GOTCHANGPDF_SEMANTICS_SOURCES}
 	${GOTCHANGPDF_SYNTAX_SOURCES}
 	${GOTCHANGPDF_PRECOMPILED_SOURCE}
-	${PRECOMPILED_HEADER}
-	${INCLUDE_HEADERS}
-	${SEMANTICS_HEADERS}
-	${SYNTAX_HEADERS}
+	${GOTCHANGPDF_PRECOMPILED_HEADER}
+	${GOTCHANGPDF_INCLUDE_HEADERS}
+	${GOTCHANGPDF_SEMANTICS_HEADERS}
+	${GOTCHANGPDF_SYNTAX_HEADERS}
+	
+	${GOTCHANGPDF_CONTENTS_HEADERS}
+	${GOTCHANGPDF_CONTENTS_SOURCES}
+	
+	${GOTCHANGPDF_UTILS_HEADERS}
+	${GOTCHANGPDF_UTILS_SOURCES}
+	
+	${GOTCHANGPDF_ADDITIONAL_HEADERS}
 )
 
 target_compile_features(gotchangpdf PRIVATE

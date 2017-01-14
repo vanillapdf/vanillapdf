@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#include "destinations.h"
+#include "semantics/objects/destinations.h"
 
 #include "gotchangpdf/c_destinations.h"
 #include "c_helper.h"

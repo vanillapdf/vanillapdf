@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#include "library_info.h"
+#include "utils/library_info.h"
 
 #include "gotchangpdf/c_library_info.h"
 #include "c_helper.h"

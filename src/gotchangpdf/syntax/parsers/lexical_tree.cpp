@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#include "lexical_tree.h"
+#include "syntax/parsers/lexical_tree.h"
 
 namespace gotchangpdf
 {

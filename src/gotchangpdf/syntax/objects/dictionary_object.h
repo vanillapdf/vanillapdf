@@ -1,10 +1,10 @@
 #ifndef _DICTIONARY_OBJECT_H
 #define _DICTIONARY_OBJECT_H
 
-#include "syntax_fwd.h"
-#include "object.h"
-#include "exception.h"
-#include "containable.h"
+#include "syntax/objects/object.h"
+#include "syntax/objects/containable.h"
+
+#include "syntax/utils/syntax_fwd.h"
 
 #include <map>
 #include <vector>

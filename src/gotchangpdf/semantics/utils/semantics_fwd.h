@@ -1,7 +1,10 @@
 #ifndef _SEMANTICS_FWD_H
 #define _SEMANTICS_FWD_H
 
-#include "syntax_fwd.h"
+#include "utils/deferred.h"
+
+#include "syntax/utils/syntax_fwd.h"
+#include "syntax/utils/output_pointer.h"
 
 namespace gotchangpdf
 {

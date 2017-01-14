@@ -1,9 +1,8 @@
 #ifndef _C_HELPER_H
 #define _C_HELPER_H
 
-#include "exception.h"
-#include "semantic_exceptions.h"
-#include "log.h"
+#include "semantics/utils/semantic_exceptions.h"
+#include "utils/log.h"
 
 #include "gotchangpdf/c_values.h"
 

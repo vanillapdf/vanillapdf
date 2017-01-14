@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#include "filter.h"
+#include "syntax/filters/filter.h"
 #include "flate_decode_filter.h"
 #include "ascii_85_decode_filter.h"
 #include "ascii_hex_decode_filter.h"

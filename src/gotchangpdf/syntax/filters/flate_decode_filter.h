@@ -1,7 +1,7 @@
 #ifndef _FLATE_DECODE_FILTER_H
 #define _FLATE_DECODE_FILTER_H
 
-#include "filter.h"
+#include "syntax/filters/filter.h"
 
 namespace gotchangpdf
 {

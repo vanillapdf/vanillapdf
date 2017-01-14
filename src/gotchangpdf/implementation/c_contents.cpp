@@ -1,10 +1,12 @@
 #include "precompiled.h"
-#include "contents.h"
-#include "content_stream_operators.h"
-#include "content_stream_operation_generic.h"
-#include "content_stream_operations.h"
-#include "content_stream_objects.h"
-#include "file.h"
+#include "semantics/objects/contents.h"
+
+#include "contents/content_stream_operators.h"
+#include "contents/content_stream_operation_generic.h"
+#include "contents/content_stream_operations.h"
+#include "contents/content_stream_objects.h"
+
+#include "syntax/files/file.h"
 
 #include "gotchangpdf/c_contents.h"
 #include "c_helper.h"
@@ -12,7 +14,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::semantics;
 using namespace gotchangpdf::syntax;
-using namespace gotchangpdf::syntax::contents;
+using namespace gotchangpdf::contents;
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionsSize(ContentsHandle handle, integer_type* result)
 {

@@ -1,7 +1,7 @@
 #ifndef _RECTANGLE_H
 #define _RECTANGLE_H
 
-#include "high_level_object.h"
+#include "semantics/objects/high_level_object.h"
 
 namespace gotchangpdf
 {

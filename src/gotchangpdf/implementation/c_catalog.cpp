@@ -1,6 +1,6 @@
 #include "precompiled.h"
-#include "catalog.h"
-#include "file.h"
+#include "semantics/objects/catalog.h"
+#include "syntax/files/file.h"
 
 #include "gotchangpdf/c_catalog.h"
 #include "c_helper.h"

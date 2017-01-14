@@ -1,6 +1,6 @@
 #include "precompiled.h"
-#include "page_tree.h"
-#include "file.h"
+#include "semantics/objects/page_tree.h"
+#include "syntax/files/file.h"
 
 #include "gotchangpdf/c_page_tree.h"
 #include "c_helper.h"

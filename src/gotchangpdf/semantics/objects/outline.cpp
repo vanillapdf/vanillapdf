@@ -1,9 +1,5 @@
 #include "precompiled.h"
-#include "outline.h"
-
-#include "exception.h"
-#include "semantic_exceptions.h"
-#include "semantic_utils.h"
+#include "semantics/objects/outline.h"
 
 namespace gotchangpdf
 {

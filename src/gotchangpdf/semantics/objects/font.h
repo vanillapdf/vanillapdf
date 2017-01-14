@@ -1,10 +1,11 @@
 #ifndef _FONT_H
 #define _FONT_H
 
-#include "semantics_fwd.h"
-#include "high_level_object.h"
-#include "dictionary_object.h"
-#include "character_map.h"
+#include "semantics/utils/semantics_fwd.h"
+#include "semantics/objects/high_level_object.h"
+#include "semantics/objects/character_map.h"
+
+#include "syntax/objects/dictionary_object.h"
 
 namespace gotchangpdf
 {

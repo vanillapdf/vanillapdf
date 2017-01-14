@@ -1,6 +1,6 @@
 #include "precompiled.h"
 #include "ascii_85_decode_filter.h"
-#include "character.h"
+#include "utils/character.h"
 
 namespace gotchangpdf
 {

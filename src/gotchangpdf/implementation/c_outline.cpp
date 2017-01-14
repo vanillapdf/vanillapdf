@@ -1,6 +1,6 @@
 #include "precompiled.h"
-#include "outline.h"
-#include "file.h"
+#include "semantics/objects/outline.h"
+#include "syntax/files/file.h"
 
 #include "gotchangpdf/c_outline.h"
 #include "c_helper.h"

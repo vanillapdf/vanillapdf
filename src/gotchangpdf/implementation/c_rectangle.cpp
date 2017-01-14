@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#include "rectangle.h"
+#include "semantics/objects/rectangle.h"
 
 #include "gotchangpdf/c_rectangle.h"
 #include "c_helper.h"

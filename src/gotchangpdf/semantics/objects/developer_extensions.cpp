@@ -1,9 +1,8 @@
 #include "precompiled.h"
-#include "developer_extensions.h"
+#include "semantics/objects/developer_extensions.h"
 
-#include "exception.h"
-#include "semantic_exceptions.h"
-#include "semantic_utils.h"
+#include "semantics/utils/semantic_exceptions.h"
+#include "semantics/utils/semantic_utils.h"
 
 namespace gotchangpdf
 {

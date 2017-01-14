@@ -1,7 +1,7 @@
 #include "precompiled.h"
 #include "gotchangpdf/c_values.h"
 
-#include "exception.h"
+#include "utils/exceptions.h"
 
 // boolean values
 GOTCHANG_PDF_API const boolean_type GOTCHANG_PDF_RV_FALSE	= false;

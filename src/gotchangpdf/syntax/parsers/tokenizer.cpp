@@ -1,11 +1,10 @@
 #include "precompiled.h"
 
-#include "tokenizer.h"
-#include "exception.h"
-#include "constants.h"
-#include "token_dictionary.h"
-#include "character.h"
-#include "util.h"
+#include "syntax/parsers/tokenizer.h"
+
+#include "utils/constants.h"
+#include "utils/character.h"
+#include "utils/util.h"
 
 #include <cassert>
 #include <algorithm>

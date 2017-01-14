@@ -1,7 +1,8 @@
 #ifndef _NULL_OBJECT_H
 #define _NULL_OBJECT_H
 
-#include "containable.h"
+#include "syntax/utils/syntax_fwd.h"
+#include "syntax/objects/containable.h"
 
 namespace gotchangpdf
 {

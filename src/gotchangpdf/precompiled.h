@@ -55,12 +55,13 @@
 #endif
 
 // Solution
-#include "deferred.h"
-#include "output_pointer.h"
-#include "object_utils.h"
-#include "objects.h"
-#include "exception.h"
-#include "constants.h"
-#include "log.h"
+#include "utils/deferred.h"
+#include "utils/constants.h"
+#include "utils/exceptions.h"
+#include "utils/log.h"
+
+#include "syntax/utils/object_utils.h"
+
+#include "syntax/objects/objects.h"
 
 #endif /* _PRECOMPILED_H */

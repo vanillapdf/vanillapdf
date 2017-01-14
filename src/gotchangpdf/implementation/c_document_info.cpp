@@ -1,6 +1,6 @@
 #include "precompiled.h"
-#include "document_info.h"
-#include "date.h"
+#include "semantics/objects/document_info.h"
+#include "semantics/objects/date.h"
 
 #include "gotchangpdf/c_document_info.h"
 #include "c_helper.h"

@@ -1,7 +1,6 @@
 #include "precompiled.h"
-#include "reverse_parser.h"
-#include "exception.h"
-#include "token.h"
+
+#include "syntax/parsers/reverse_parser.h"
 
 namespace gotchangpdf
 {

@@ -1,8 +1,8 @@
 #ifndef _RAW_BASE_STREAM_H
 #define _RAW_BASE_STREAM_H
 
-#include "syntax_fwd.h"
-#include "buffer.h"
+#include "syntax/utils/syntax_fwd.h"
+#include "utils/buffer.h"
 
 #include <istream>
 

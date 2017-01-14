@@ -1,12 +1,12 @@
 #ifndef _OBJECT_H
 #define _OBJECT_H
 
-#include "syntax_fwd.h"
-#include "constants.h"
-#include "unknown_interface.h"
-#include "modify_observer_interface.h"
+#include "syntax/utils/syntax_fwd.h"
 
-#include <iosfwd>
+#include "utils/constants.h"
+#include "utils/unknown_interface.h"
+#include "utils/modify_observer_interface.h"
+
 #include <memory>
 #include <string>
 

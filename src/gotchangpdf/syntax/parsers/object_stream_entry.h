@@ -1,8 +1,8 @@
 #ifndef _OBJECT_STREAM_ENTRY_H
 #define _OBJECT_STREAM_ENTRY_H
 
-#include "constants.h"
-#include "object.h"
+#include "utils/constants.h"
+#include "syntax/objects/object.h"
 
 #include <vector>
 

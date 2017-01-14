@@ -1,13 +1,13 @@
 #ifndef OUTLINE_H
 #define OUTLINE_H
 
-#include "semantics_fwd.h"
-#include "high_level_object.h"
+#include "semantics/utils/semantics_fwd.h"
+#include "semantics/objects/high_level_object.h"
 
-#include "name_object.h"
-#include "dictionary_object.h"
-#include "array_object.h"
-#include "integer_object.h"
+#include "syntax/objects/name_object.h"
+#include "syntax/objects/dictionary_object.h"
+#include "syntax/objects/array_object.h"
+#include "syntax/objects/integer_object.h"
 
 namespace gotchangpdf
 {

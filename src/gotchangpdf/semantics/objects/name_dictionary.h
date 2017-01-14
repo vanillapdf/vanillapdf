@@ -1,9 +1,9 @@
 #ifndef _NAME_DICTIONARY_H
 #define _NAME_DICTIONARY_H
 
-#include "semantics_fwd.h"
-#include "high_level_object.h"
-#include "destinations.h"
+#include "semantics/utils/semantics_fwd.h"
+#include "semantics/objects/high_level_object.h"
+#include "semantics/objects/destinations.h"
 #include "tree.h"
 
 namespace gotchangpdf

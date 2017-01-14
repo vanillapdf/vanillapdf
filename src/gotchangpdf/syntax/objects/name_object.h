@@ -1,10 +1,11 @@
 #ifndef _NAME_OBJECT_H
 #define _NAME_OBJECT_H
 
-#include "syntax_fwd.h"
-#include "containable.h"
-#include "buffer.h"
-#include "deferred.h"
+#include "syntax/utils/syntax_fwd.h"
+#include "syntax/objects/containable.h"
+
+#include "utils/buffer.h"
+#include "utils/deferred.h"
 
 #include <cstddef>
 

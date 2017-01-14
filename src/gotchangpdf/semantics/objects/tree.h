@@ -1,16 +1,16 @@
 #ifndef _TREE_H
 #define _TREE_H
 
-#include "semantics_fwd.h"
-#include "high_level_object.h"
-#include "dictionary_object.h"
-#include "string_object.h"
-#include "containable.h"
+#include "semantics/utils/semantics_fwd.h"
+#include "semantics/objects/high_level_object.h"
+#include "syntax/objects/dictionary_object.h"
+#include "syntax/objects/string_object.h"
+#include "syntax/objects/containable.h"
 
-#include "name_object.h"
-#include "array_object.h"
-#include "object_utils.h"
-#include "util.h"
+#include "syntax/objects/name_object.h"
+#include "syntax/objects/array_object.h"
+#include "syntax/utils/object_utils.h"
+#include "utils/util.h"
 
 namespace gotchangpdf
 {

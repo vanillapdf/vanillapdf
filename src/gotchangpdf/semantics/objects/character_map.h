@@ -1,9 +1,10 @@
 #ifndef _CHARACTER_MAP_H
 #define _CHARACTER_MAP_H
 
-#include "semantics_fwd.h"
-#include "high_level_object.h"
-#include "character_map_data.h"
+#include "semantics/utils/semantics_fwd.h"
+#include "semantics/objects/high_level_object.h"
+
+#include "syntax/parsers/character_map_data.h"
 
 namespace gotchangpdf
 {

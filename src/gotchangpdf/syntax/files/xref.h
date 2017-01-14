@@ -1,9 +1,9 @@
 #ifndef _XREF_H
 #define _XREF_H
 
-#include "syntax_fwd.h"
-#include "unknown_interface.h"
-#include "constants.h"
+#include "syntax/utils/syntax_fwd.h"
+#include "utils/unknown_interface.h"
+#include "utils/constants.h"
 
 #include <vector>
 #include <unordered_map>

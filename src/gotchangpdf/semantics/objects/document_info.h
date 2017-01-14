@@ -1,8 +1,8 @@
 #ifndef _DOCUMENT_INFO_H
 #define _DOCUMENT_INFO_H
 
-#include "semantics_fwd.h"
-#include "high_level_object.h"
+#include "semantics/utils/semantics_fwd.h"
+#include "semantics/objects/high_level_object.h"
 
 namespace gotchangpdf
 {

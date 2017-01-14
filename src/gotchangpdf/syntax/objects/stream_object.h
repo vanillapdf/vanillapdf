@@ -1,12 +1,11 @@
 #ifndef _STREAM_OBJECT_H
 #define _STREAM_OBJECT_H
 
-#include "syntax_fwd.h"
-#include "object.h"
-#include "buffer.h"
-#include "dictionary_object.h"
+#include "syntax/utils/syntax_fwd.h"
+#include "syntax/objects/object.h"
+#include "syntax/objects/dictionary_object.h"
 
-#include <iosfwd>
+#include "utils/buffer.h"
 
 namespace gotchangpdf
 {

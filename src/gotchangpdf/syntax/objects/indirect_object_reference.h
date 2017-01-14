@@ -1,8 +1,8 @@
 #ifndef _INDIRECT_OBJECT_REFERENCE_H
 #define _INDIRECT_OBJECT_REFERENCE_H
 
-#include "syntax_fwd.h"
-#include "containable.h"
+#include "syntax/utils/syntax_fwd.h"
+#include "syntax/objects/containable.h"
 
 namespace gotchangpdf
 {

@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#include "annotations.h"
+#include "semantics/objects/annotations.h"
 
 #include "gotchangpdf/c_annotations.h"
 #include "c_helper.h"

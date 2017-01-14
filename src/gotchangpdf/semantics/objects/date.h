@@ -1,8 +1,8 @@
 #ifndef _DATE_H
 #define _DATE_H
 
-#include "semantics_fwd.h"
-#include "high_level_object.h"
+#include "semantics/utils/semantics_fwd.h"
+#include "semantics/objects/high_level_object.h"
 
 namespace gotchangpdf
 {
