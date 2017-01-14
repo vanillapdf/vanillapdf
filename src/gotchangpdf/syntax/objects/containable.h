@@ -3,16 +3,15 @@
 
 #include "syntax/objects/object.h"
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		class ContainableObject : public Object
-		{
-		public:
-			virtual ContainableObject* Clone(void) const = 0;
-		};
-	}
-}
+namespace gotchangpdf {
+namespace syntax {
+
+class ContainableObject : public Object {
+public:
+	virtual ContainableObject* Clone(void) const = 0;
+};
+
+} // syntax
+} // gotchangpdf
 
 #endif /* _CONTAINABLE_H */

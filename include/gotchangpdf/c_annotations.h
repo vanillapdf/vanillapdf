@@ -51,8 +51,7 @@ extern "C"
 	* \brief
 	* Required for conversion to derived types.
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* A text annotation represents a "sticky note" attached to a point in
 		* the PDF document.

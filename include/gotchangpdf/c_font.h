@@ -40,8 +40,7 @@ extern "C"
 	/**
 	* \brief Types of fonts
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \copydoc CompositeFontHandle
 		* \see CompositeFontHandle

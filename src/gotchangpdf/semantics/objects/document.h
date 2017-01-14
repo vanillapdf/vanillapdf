@@ -11,40 +11,39 @@
 
 #include <string>
 
-namespace gotchangpdf
-{
-	namespace semantics
-	{
-		class Document : public IUnknown
-		{
-		public:
-			Document(const std::string& filename);
-			Document(syntax::FileHolderPtr holder);
-			~Document();
+namespace gotchangpdf {
+namespace semantics {
 
-			CatalogPtr GetDocumentCatalog(void);
-			bool GetDocumentInfo(OutputDocumentInfoPtr& result);
-			void Save(const std::string& path);
-			void SaveIncremental(const std::string& path);
+class Document : public IUnknown {
+public:
+	Document(const std::string& filename);
+	Document(syntax::FileHolderPtr holder);
+	~Document();
 
-			syntax::FileHolderPtr GetFile() const { return _holder; }
+	CatalogPtr GetDocumentCatalog(void);
+	bool GetDocumentInfo(OutputDocumentInfoPtr& result);
+	void Save(const std::string& path);
+	void SaveIncremental(const std::string& path);
 
-			void AppendContent(DocumentPtr other);
+	syntax::FileHolderPtr GetFile() const { return _holder; }
 
-		private:
-			syntax::FileHolderPtr _holder;
+	void AppendContent(DocumentPtr other);
 
-			// Cache
-			mutable OutputCatalogPtr m_catalog;
-			mutable OutputDocumentInfoPtr m_info;
+private:
+	syntax::FileHolderPtr _holder;
 
-			OutputNamedDestinationsPtr CreateNamedDestinations(CatalogPtr catalog);
-			OutputNameDictionaryPtr CreateNameDictionary(CatalogPtr catalog);
-			OutputNameTreePtr<DestinationPtr> CreateNameTreeDestinations(NameDictionaryPtr dictionary);
+	// Cache
+	mutable OutputCatalogPtr m_catalog;
+	mutable OutputDocumentInfoPtr m_info;
 
-			void FixDestinationPage(DocumentPtr other, syntax::ObjectPtr page);
-		};
-	}
-}
+	OutputNamedDestinationsPtr CreateNamedDestinations(CatalogPtr catalog);
+	OutputNameDictionaryPtr CreateNameDictionary(CatalogPtr catalog);
+	OutputNameTreePtr<DestinationPtr> CreateNameTreeDestinations(NameDictionaryPtr dictionary);
+
+	void FixDestinationPage(DocumentPtr other, syntax::ObjectPtr page);
+};
+
+} // semantics
+} // gotchangpdf
 
 #endif /* _DOCUMENT_H */

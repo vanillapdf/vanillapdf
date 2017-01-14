@@ -5,66 +5,66 @@
 
 #include "utils/buffer.h"
 
-namespace gotchangpdf
-{
-	extern const uint8_t HARDCODED_PFD_PAD[];
-	extern const uint8_t AES_ADDITIONAL_SALT[];
-	extern const int HARDCODED_PFD_PAD_LENGTH;
-	extern const int AES_ADDITIONAL_SALT_LENGTH;
+namespace gotchangpdf {
+namespace syntax {
 
-	enum class EncryptionAlgorithm
-	{
-		None = 0,
-		RC4,
-		AES
-	};
+extern const uint8_t HARDCODED_PFD_PAD[];
+extern const uint8_t AES_ADDITIONAL_SALT[];
+extern const int HARDCODED_PFD_PAD_LENGTH;
+extern const int AES_ADDITIONAL_SALT_LENGTH;
 
-	class EncryptionUtils
-	{
-	public:
-		static BufferPtr ComputeObjectKey(
-			const Buffer& key,
-			types::big_uint objNumber,
-			types::ushort genNumber,
-			EncryptionAlgorithm alg);
+enum class EncryptionAlgorithm {
+	None = 0,
+	RC4,
+	AES
+};
 
-		static BufferPtr PadTruncatePassword(const Buffer& password);
-		static BufferPtr ComputeRC4(const Buffer& key, const Buffer& data);
-		static BufferPtr ComputeRC4(const Buffer& key, int key_length, const Buffer& data);
+class EncryptionUtils {
+public:
+	static BufferPtr ComputeObjectKey(
+		const Buffer& key,
+		types::big_uint objNumber,
+		types::ushort genNumber,
+		EncryptionAlgorithm alg);
 
-		static BufferPtr AESDecrypt(const Buffer& key, const Buffer& data);
-		static BufferPtr AESDecrypt(const Buffer& key, int key_length, const Buffer& data);
-		static BufferPtr AESEncrypt(const Buffer& key, const Buffer& data);
-		static BufferPtr AESEncrypt(const Buffer& key, int key_length, const Buffer& data);
+	static BufferPtr PadTruncatePassword(const Buffer& password);
+	static BufferPtr ComputeRC4(const Buffer& key, const Buffer& data);
+	static BufferPtr ComputeRC4(const Buffer& key, int key_length, const Buffer& data);
 
-		static BufferPtr AddPkcs7Padding(const Buffer& data, size_t block_size);
-		static BufferPtr RemovePkcs7Padding(const Buffer& data, size_t block_size);
+	static BufferPtr AESDecrypt(const Buffer& key, const Buffer& data);
+	static BufferPtr AESDecrypt(const Buffer& key, int key_length, const Buffer& data);
+	static BufferPtr AESEncrypt(const Buffer& key, const Buffer& data);
+	static BufferPtr AESEncrypt(const Buffer& key, int key_length, const Buffer& data);
 
-		static BufferPtr DecryptEnvelopedData(const syntax::ArrayObject<syntax::StringObjectPtr>& recipients, const IEncryptionKey& key);
-		static BufferPtr ComputeEncryptedOwnerData(const Buffer& pad_password, const syntax::DictionaryObject& encryption_dictionary);
-		static BufferPtr GetRecipientKey(
-			const syntax::ArrayObject<syntax::StringObjectPtr>& recipients,
-			const syntax::IntegerObject& length_bits,
-			EncryptionAlgorithm algorithm,
-			const IEncryptionKey& key);
+	static BufferPtr AddPkcs7Padding(const Buffer& data, size_t block_size);
+	static BufferPtr RemovePkcs7Padding(const Buffer& data, size_t block_size);
 
-		static bool CheckKey(
-			const Buffer& input,
-			const Buffer& document_id,
-			const Buffer& owner_data,
-			const Buffer& user_data,
-			const syntax::IntegerObject& permissions,
-			const syntax::IntegerObject& revision,
-			const syntax::IntegerObject& key_length,
-			Buffer& decryption_key);
-	};
+	static BufferPtr DecryptEnvelopedData(const syntax::ArrayObject<syntax::StringObjectPtr>& recipients, const IEncryptionKey& key);
+	static BufferPtr ComputeEncryptedOwnerData(const Buffer& pad_password, const syntax::DictionaryObject& encryption_dictionary);
+	static BufferPtr GetRecipientKey(
+		const syntax::ArrayObject<syntax::StringObjectPtr>& recipients,
+		const syntax::IntegerObject& length_bits,
+		EncryptionAlgorithm algorithm,
+		const IEncryptionKey& key);
 
-	class IEncryptionKey : public IUnknown
-	{
-	public:
-		virtual BufferPtr Decrypt(const Buffer& data) const = 0;
-		virtual bool ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const = 0;
-	};
-}
+	static bool CheckKey(
+		const Buffer& input,
+		const Buffer& document_id,
+		const Buffer& owner_data,
+		const Buffer& user_data,
+		const syntax::IntegerObject& permissions,
+		const syntax::IntegerObject& revision,
+		const syntax::IntegerObject& key_length,
+		Buffer& decryption_key);
+};
+
+class IEncryptionKey : public IUnknown {
+public:
+	virtual BufferPtr Decrypt(const Buffer& data) const = 0;
+	virtual bool ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const = 0;
+};
+
+} // syntax
+} // gotchangpdf
 
 #endif /* _ENCRYPTION_H */

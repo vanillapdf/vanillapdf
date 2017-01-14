@@ -3,22 +3,21 @@
 
 #include "syntax/filters/filter.h"
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		class DCTDecodeFilter : public FilterBase
-		{
-		public:
-			virtual Type GetType(void) const noexcept override { return FilterBase::Type::DCTDecode; }
+namespace gotchangpdf {
+namespace syntax {
 
-			virtual BufferPtr Encode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const override;
-			virtual BufferPtr Decode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const override;
+class DCTDecodeFilter : public FilterBase {
+public:
+	virtual Type GetType(void) const noexcept override { return FilterBase::Type::DCTDecode; }
 
-			virtual BufferPtr Encode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const override;
-			virtual BufferPtr Decode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const override;
-		};
-	}
-}
+	virtual BufferPtr Encode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const override;
+	virtual BufferPtr Decode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const override;
+
+	virtual BufferPtr Encode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const override;
+	virtual BufferPtr Decode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const override;
+};
+
+} // syntax
+} // gotchangpdf
 
 #endif /* _FLATE_DECODE_FILTER_H */

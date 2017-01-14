@@ -5,20 +5,19 @@
 #include "utils/unknown_interface.h"
 #include "utils/pdf_version.h"
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		class Header : public IUnknown
-		{
-		public:
-			Version GetVersion(void) const noexcept { return _version; }
-			void SetVersion(Version version) { _version = version; }
+namespace gotchangpdf {
+namespace syntax {
 
-		private:
-			Version _version;
-		};
-	}
-}
+class Header : public IUnknown {
+public:
+	Version GetVersion(void) const noexcept { return _version; }
+	void SetVersion(Version version) { _version = version; }
+
+private:
+	Version _version;
+};
+
+} // syntax
+} // gotchangpdf
 
 #endif /* _HEADER_H */

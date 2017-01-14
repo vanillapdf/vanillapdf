@@ -7,47 +7,46 @@
 
 #include "utils/buffer.h"
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		class StreamObject : public Object, public IModifyObserver
-		{
-		public:
-			StreamObject();
-			StreamObject(DictionaryObjectPtr header, types::stream_offset offset);
-			virtual Object::Type GetType(void) const noexcept override { return Object::Type::Stream; }
-			virtual std::string ToString(void) const override;
-			virtual std::string ToPdf(void) const override;
+namespace gotchangpdf {
+namespace syntax {
 
-			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+class StreamObject : public Object, public IModifyObserver {
+public:
+	StreamObject();
+	StreamObject(DictionaryObjectPtr header, types::stream_offset offset);
+	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Stream; }
+	virtual std::string ToString(void) const override;
+	virtual std::string ToPdf(void) const override;
 
-			DictionaryObjectPtr GetHeader() const { return _header; }
-			void SetHeader(DictionaryObjectPtr header) { _header->Unsubscribe(this); header->Subscribe(this); _header = header; OnChanged(); }
+	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
-			types::stream_offset GetDataOffset() const { return _raw_data_offset; }
-			void SetDataOffset(types::stream_offset offset) { _raw_data_offset = offset; OnChanged(); }
+	DictionaryObjectPtr GetHeader() const { return _header; }
+	void SetHeader(DictionaryObjectPtr header) { _header->Unsubscribe(this); header->Subscribe(this); _header = header; OnChanged(); }
 
-			BufferPtr GetBodyRaw() const;
-			BufferPtr GetBody() const;
-			BufferPtr GetBodyEncoded() const;
-			void SetBody(BufferPtr value) { _body_decoded->assign(value.begin(), value.end()); }
+	types::stream_offset GetDataOffset() const { return _raw_data_offset; }
+	void SetDataOffset(types::stream_offset offset) { _raw_data_offset = offset; OnChanged(); }
 
-			virtual StreamObject* Clone(void) const override;
+	BufferPtr GetBodyRaw() const;
+	BufferPtr GetBody() const;
+	BufferPtr GetBodyEncoded() const;
+	void SetBody(BufferPtr value) { _body_decoded->assign(value.begin(), value.end()); }
 
-			virtual void SetFile(std::weak_ptr<File> file) noexcept override;
-			virtual void SetInitialized(bool initialized = true) noexcept override;
+	virtual StreamObject* Clone(void) const override;
 
-			virtual ~StreamObject();
+	virtual void SetFile(std::weak_ptr<File> file) noexcept override;
+	virtual void SetInitialized(bool initialized = true) noexcept override;
 
-		private:
-			DictionaryObjectPtr _header;
-			types::stream_offset _raw_data_offset = constant::BAD_OFFSET;
+	virtual ~StreamObject();
 
-			mutable BufferPtr _body;
-			mutable BufferPtr _body_decoded;
-		};
-	}
-}
+private:
+	DictionaryObjectPtr _header;
+	types::stream_offset _raw_data_offset = constant::BAD_OFFSET;
+
+	mutable BufferPtr _body;
+	mutable BufferPtr _body_decoded;
+};
+
+} // syntax
+} // gotchangpdf
 
 #endif /* _STREAM_OBJECT_H */

@@ -18,8 +18,7 @@ extern "C"
 	/**
 	* \brief Range of available PDF versions
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \brief PDF version 1.0
 		*/

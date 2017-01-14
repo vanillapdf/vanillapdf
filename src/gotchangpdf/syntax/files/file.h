@@ -11,122 +11,119 @@
 #include <string>
 #include <fstream>
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		class File : public std::enable_shared_from_this<File>
-		{
-		public:
-			// Filesystem
-			static std::shared_ptr<File> Open(const std::string& path);
-			static std::shared_ptr<File> Create(const std::string& path);
+namespace gotchangpdf {
+namespace syntax {
 
-			std::vector<ObjectPtr> DeepCopyObjects(const std::vector<ObjectPtr>& objects);
-			void DeepCopyObject(std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPtr, bool>& visited, ObjectPtr original);
-			void ShallowCopyObject(std::map<ObjectPtr, ObjectPtr>& map, ObjectPtr original);
-			ObjectPtr ShallowCopyObject(ObjectPtr original);
-			void FixObjectReferences(const std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPtr, bool>& visited, ObjectPtr copied);
+class File : public std::enable_shared_from_this<File> {
+public:
+	// Filesystem
+	static std::shared_ptr<File> Open(const std::string& path);
+	static std::shared_ptr<File> Create(const std::string& path);
 
-			void Initialize(void);
-			bool IsInitialized(void) const noexcept { return _initialized; }
+	std::vector<ObjectPtr> DeepCopyObjects(const std::vector<ObjectPtr>& objects);
+	void DeepCopyObject(std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPtr, bool>& visited, ObjectPtr original);
+	void ShallowCopyObject(std::map<ObjectPtr, ObjectPtr>& map, ObjectPtr original);
+	ObjectPtr ShallowCopyObject(ObjectPtr original);
+	void FixObjectReferences(const std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPtr, bool>& visited, ObjectPtr copied);
 
-			ObjectPtr GetIndirectObject(
-				types::big_uint objNumber,
-				types::ushort genNumber) const;
+	void Initialize(void);
+	bool IsInitialized(void) const noexcept { return _initialized; }
 
-			XrefChainPtr GetXrefChain(void) const;
-			HeaderPtr GetHeader(void) const;
+	ObjectPtr GetIndirectObject(
+		types::big_uint objNumber,
+		types::ushort genNumber) const;
 
-			std::string GetFilename(void) const { return _filename; }
-			std::shared_ptr<std::fstream> GetInputStream(void) const { return _input; }
+	XrefChainPtr GetXrefChain(void) const;
+	HeaderPtr GetHeader(void) const;
 
-			// Encryption
-			bool IsEncrypted(void) const;
-			ObjectPtr GetEncryptionDictionary(void) const { return _encryption_dictionary; }
-			void SetEncryptionDictionary(DictionaryObjectPtr object) { _encryption_dictionary = object; }
+	std::string GetFilename(void) const { return _filename; }
+	std::shared_ptr<std::fstream> GetInputStream(void) const { return _input; }
 
-			bool SetEncryptionPassword(const Buffer& password);
-			bool SetEncryptionPassword(const std::string& password);
-			bool SetEncryptionKey(const IEncryptionKey& key);
+	// Encryption
+	bool IsEncrypted(void) const;
+	ObjectPtr GetEncryptionDictionary(void) const { return _encryption_dictionary; }
+	void SetEncryptionDictionary(DictionaryObjectPtr object) { _encryption_dictionary = object; }
 
-			BufferPtr DecryptStream(const Buffer& data,
-				types::big_uint objNumber,
-				types::ushort genNumber);
+	bool SetEncryptionPassword(const Buffer& password);
+	bool SetEncryptionPassword(const std::string& password);
+	bool SetEncryptionKey(const IEncryptionKey& key);
 
-			BufferPtr DecryptString(const Buffer& data,
-				types::big_uint objNumber,
-				types::ushort genNumber);
+	BufferPtr DecryptStream(const Buffer& data,
+		types::big_uint objNumber,
+		types::ushort genNumber);
 
-			BufferPtr DecryptData(const Buffer& data,
-				types::big_uint objNumber,
-				types::ushort genNumber,
-				const NameObject& filter_name);
+	BufferPtr DecryptString(const Buffer& data,
+		types::big_uint objNumber,
+		types::ushort genNumber);
 
-			BufferPtr DecryptData(const Buffer& data,
-				types::big_uint objNumber,
-				types::ushort genNumber,
-				EncryptionAlgorithm alg);
+	BufferPtr DecryptData(const Buffer& data,
+		types::big_uint objNumber,
+		types::ushort genNumber,
+		const NameObject& filter_name);
 
-			BufferPtr EncryptStream(const Buffer& data,
-				types::big_uint objNumber,
-				types::ushort genNumber);
+	BufferPtr DecryptData(const Buffer& data,
+		types::big_uint objNumber,
+		types::ushort genNumber,
+		EncryptionAlgorithm alg);
 
-			BufferPtr EncryptString(const Buffer& data,
-				types::big_uint objNumber,
-				types::ushort genNumber);
+	BufferPtr EncryptStream(const Buffer& data,
+		types::big_uint objNumber,
+		types::ushort genNumber);
 
-			BufferPtr EncryptData(const Buffer& data,
-				types::big_uint objNumber,
-				types::ushort genNumber,
-				const NameObject& filter_name);
+	BufferPtr EncryptString(const Buffer& data,
+		types::big_uint objNumber,
+		types::ushort genNumber);
 
-			BufferPtr EncryptData(const Buffer& data,
-				types::big_uint objNumber,
-				types::ushort genNumber,
-				EncryptionAlgorithm alg) const;
+	BufferPtr EncryptData(const Buffer& data,
+		types::big_uint objNumber,
+		types::ushort genNumber,
+		const NameObject& filter_name);
 
-			~File(void);
+	BufferPtr EncryptData(const Buffer& data,
+		types::big_uint objNumber,
+		types::ushort genNumber,
+		EncryptionAlgorithm alg) const;
 
-		private:
-			std::shared_ptr<std::fstream> _input;
-			HeaderPtr _header;
-			XrefChainPtr _xref;
-			std::vector<ObjectPtr> _cache;
+	~File(void);
 
-			bool _initialized = false;
-			std::string _full_path;
-			std::string _filename;
-			BufferPtr _decryption_key;
-			ObjectPtr _encryption_dictionary;
+private:
+	std::shared_ptr<std::fstream> _input;
+	HeaderPtr _header;
+	XrefChainPtr _xref;
+	std::vector<ObjectPtr> _cache;
 
-			types::stream_offset GetLastXrefOffset(types::stream_size file_size);
-			void ReadXref(types::stream_offset offset);
-			EncryptionAlgorithm GetEncryptionAlgorithmForFilter(const NameObject& filter_name);
+	bool _initialized = false;
+	std::string _full_path;
+	std::string _filename;
+	BufferPtr _decryption_key;
+	ObjectPtr _encryption_dictionary;
 
-			ObjectPtr GetIndirectObjectInternal(
-				types::big_uint objNumber,
-				types::ushort genNumber) const;
+	types::stream_offset GetLastXrefOffset(types::stream_size file_size);
+	void ReadXref(types::stream_offset offset);
+	EncryptionAlgorithm GetEncryptionAlgorithmForFilter(const NameObject& filter_name);
 
-		private:
-			File(const std::string& path);
-		};
+	ObjectPtr GetIndirectObjectInternal(
+		types::big_uint objNumber,
+		types::ushort genNumber) const;
 
-		class FileHolder : public IUnknown
-		{
-		public:
-			void Open(const std::string& path) { _file = File::Open(path); }
-			void Create(const std::string& path) { _file = File::Create(path); }
-			std::shared_ptr<File> Value() const
-			{
-				assert(_file.get() != nullptr && "File was not initialized");
-				return _file;
-			}
+private:
+	File(const std::string& path);
+};
 
-		private:
-			std::shared_ptr<File> _file;
-		};
+class FileHolder : public IUnknown {
+public:
+	void Open(const std::string& path) { _file = File::Open(path); }
+	void Create(const std::string& path) { _file = File::Create(path); }
+	std::shared_ptr<File> Value() const {
+		assert(_file.get() != nullptr && "File was not initialized");
+		return _file;
 	}
-}
+
+private:
+	std::shared_ptr<File> _file;
+};
+
+} // syntax
+} // gotchangpdf
 
 #endif /* _FILE_H */

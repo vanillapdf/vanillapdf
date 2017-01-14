@@ -28,8 +28,7 @@ extern "C"
 	/**
 	* \brief Page layout which shall be used when the document is opened.
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \brief Display one page at a time
 		*/

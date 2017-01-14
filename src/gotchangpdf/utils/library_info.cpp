@@ -14,28 +14,25 @@
 	#define GOTCHANG_PDF_VERSION_PATCH 0
 #endif 
 
-namespace gotchangpdf
-{
-	int LibraryInfo::MajorVersion() noexcept
-	{
-		const int MAJOR_VERSION = GOTCHANG_PDF_VERSION_MAJOR;
-		return MAJOR_VERSION;
-	}
+namespace gotchangpdf {
 
-	int LibraryInfo::MinorVersion() noexcept
-	{
-		const int MINOR_VERSION = GOTCHANG_PDF_VERSION_MINOR;
-		return MINOR_VERSION;
-	}
-
-	int LibraryInfo::PatchVersion() noexcept
-	{
-		const int PATCH_VERSION = GOTCHANG_PDF_VERSION_PATCH;
-		return PATCH_VERSION;
-	}
-
-	const char * LibraryInfo::Author() noexcept
-	{
-		return "Juraj Zikmund";
-	}
+int LibraryInfo::MajorVersion() noexcept {
+	const int MAJOR_VERSION = GOTCHANG_PDF_VERSION_MAJOR;
+	return MAJOR_VERSION;
 }
+
+int LibraryInfo::MinorVersion() noexcept {
+	const int MINOR_VERSION = GOTCHANG_PDF_VERSION_MINOR;
+	return MINOR_VERSION;
+}
+
+int LibraryInfo::PatchVersion() noexcept {
+	const int PATCH_VERSION = GOTCHANG_PDF_VERSION_PATCH;
+	return PATCH_VERSION;
+}
+
+const char * LibraryInfo::Author() noexcept {
+	return "Juraj Zikmund";
+}
+
+} // gotchangpdf

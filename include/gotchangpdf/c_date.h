@@ -22,8 +22,7 @@ extern "C"
 	* \brief Represents a reference to a particular day represented within a calendar system
 	*/
 
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \brief Signifies that local time is equal to UT.
 		*/

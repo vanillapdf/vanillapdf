@@ -6,20 +6,20 @@
 
 #include <iosfwd>
 
-namespace gotchangpdf
-{
-	class ZlibWrapper
-	{
-	public:
-		static BufferPtr Deflate(const Buffer& input);
-		static BufferPtr Inflate(const Buffer& input);
+namespace gotchangpdf {
 
-		static BufferPtr Deflate(std::istream& input, types::stream_size length);
-		static BufferPtr Inflate(std::istream& input, types::stream_size length);
+class ZlibWrapper {
+public:
+	static BufferPtr Deflate(const Buffer& input);
+	static BufferPtr Inflate(const Buffer& input);
 
-	private:
-		ZlibWrapper() = default;
-	};
-}
+	static BufferPtr Deflate(std::istream& input, types::stream_size length);
+	static BufferPtr Inflate(std::istream& input, types::stream_size length);
+
+private:
+	ZlibWrapper() = default;
+};
+
+} // gotchangpdf
 
 #endif /* _ZLIB_WRAPPER_H */

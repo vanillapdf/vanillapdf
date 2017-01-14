@@ -5,98 +5,96 @@
 
 #include <vector>
 
-namespace gotchangpdf
-{
-	namespace contents
-	{
-		class OperationBase : public InstructionBase
-		{
-		public:
-			enum class Type
-			{
-				Generic = 0,
-				LineWidth,
-				LineCap,
-				LineJoin,
-				MiterLimit,
-				DashPattern,
-				ColorRenderingIntent,
-				Flatness,
-				GraphicsState,
-				SaveGraphicsState,
-				RestoreGraphicsState,
-				TransformationMatrix,
-				BeginSubpath,
-				Line,
-				FullCurve,
-				FinalCurve,
-				InitialCurve,
-				CloseSubpath,
-				Rectangle,
-				Stroke,
-				CloseAndStroke,
-				FillPathNonzero,
-				FillPathCompatibility,
-				FillPathEvenOdd,
-				FillStrokeNonzero,
-				FillStrokeEvenOdd,
-				CloseFillStrokeNonzero,
-				CloseFillStrokeEvenOdd,
-				EndPath,
-				ClipPathNonzero,
-				ClipPathEvenOdd,
-				BeginText,
-				EndText,
-				CharacterSpacing,
-				WordSpacing,
-				HorizontalScaling,
-				Leading,
-				TextFont,
-				TextRenderingMode,
-				TextRise,
-				TextTranslate,
-				TextTranslateLeading,
-				TextMatrix,
-				TextNextLine,
-				TextShow,
-				TextShowArray,
-				TextNextLineShow,
-				TextNextLineShowSpacing,
-				SetCharWidth,
-				SetCacheDevice,
-				ColorSpaceStroke,
-				ColorSpaceNonstroke,
-				SetColorStroke,
-				SetColorStrokeExtended,
-				SetColorNonstroke,
-				SetColorNonstrokeExtended,
-				SetStrokingColorSpaceGray,
-				SetNonstrokingColorSpaceGray,
-				SetStrokingColorSpaceRGB,
-				SetNonstrokingColorSpaceRGB,
-				SetStrokingColorSpaceCMYK,
-				SetNonstrokingColorSpaceCMYK,
-				ShadingPaint,
-				BeginInlineImageObject,
-				BeginInlineImageData,
-				EndInlineImageObject,
-				InvokeXObject,
-				DefineMarkedContentPoint,
-				DefineMarkedContentPointWithPropertyList,
-				BeginMarkedContentSequence,
-				BeginMarkedContentSequenceWithPropertyList,
-				EndMarkedContentSequence,
-				BeginCompatibilitySection,
-				EndCompatibilitySection
-			};
+namespace gotchangpdf {
+namespace contents {
 
-		public:
-			virtual InstructionBase::Type GetInstructionType(void) const noexcept override { return InstructionBase::Type::Operation; }
-			virtual Type GetOperationType(void) const noexcept = 0;
-		};
+class OperationBase : public InstructionBase {
+public:
+	enum class Type {
+		Generic = 0,
+		LineWidth,
+		LineCap,
+		LineJoin,
+		MiterLimit,
+		DashPattern,
+		ColorRenderingIntent,
+		Flatness,
+		GraphicsState,
+		SaveGraphicsState,
+		RestoreGraphicsState,
+		TransformationMatrix,
+		BeginSubpath,
+		Line,
+		FullCurve,
+		FinalCurve,
+		InitialCurve,
+		CloseSubpath,
+		Rectangle,
+		Stroke,
+		CloseAndStroke,
+		FillPathNonzero,
+		FillPathCompatibility,
+		FillPathEvenOdd,
+		FillStrokeNonzero,
+		FillStrokeEvenOdd,
+		CloseFillStrokeNonzero,
+		CloseFillStrokeEvenOdd,
+		EndPath,
+		ClipPathNonzero,
+		ClipPathEvenOdd,
+		BeginText,
+		EndText,
+		CharacterSpacing,
+		WordSpacing,
+		HorizontalScaling,
+		Leading,
+		TextFont,
+		TextRenderingMode,
+		TextRise,
+		TextTranslate,
+		TextTranslateLeading,
+		TextMatrix,
+		TextNextLine,
+		TextShow,
+		TextShowArray,
+		TextNextLineShow,
+		TextNextLineShowSpacing,
+		SetCharWidth,
+		SetCacheDevice,
+		ColorSpaceStroke,
+		ColorSpaceNonstroke,
+		SetColorStroke,
+		SetColorStrokeExtended,
+		SetColorNonstroke,
+		SetColorNonstrokeExtended,
+		SetStrokingColorSpaceGray,
+		SetNonstrokingColorSpaceGray,
+		SetStrokingColorSpaceRGB,
+		SetNonstrokingColorSpaceRGB,
+		SetStrokingColorSpaceCMYK,
+		SetNonstrokingColorSpaceCMYK,
+		ShadingPaint,
+		BeginInlineImageObject,
+		BeginInlineImageData,
+		EndInlineImageObject,
+		InvokeXObject,
+		DefineMarkedContentPoint,
+		DefineMarkedContentPointWithPropertyList,
+		BeginMarkedContentSequence,
+		BeginMarkedContentSequenceWithPropertyList,
+		EndMarkedContentSequence,
+		BeginCompatibilitySection,
+		EndCompatibilitySection
+	};
 
-		typedef std::vector<OperationBasePtr> BaseOperationCollection;
-	}
-}
+public:
+	virtual InstructionBase::Type GetInstructionType(void) const noexcept override { return InstructionBase::Type::Operation; }
+	virtual Type GetOperationType(void) const noexcept = 0;
+};
+
+typedef std::vector<OperationBasePtr> BaseOperationCollection;
+
+} // contents
+} // gotchangpdf
 
 #endif /* _CONTENT_STREAM_OPERATION_BASE_H */

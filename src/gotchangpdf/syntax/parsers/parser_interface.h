@@ -10,37 +10,34 @@
 
 #include <vector>
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		class IParser
-		{
-		public:
-			virtual XrefBasePtr ReadXref(void) = 0;
-			virtual XrefBasePtr ReadXref(types::stream_offset offset) = 0;
+namespace gotchangpdf {
+namespace syntax {
 
-			virtual ObjectStreamEntries ReadObjectStreamEntries(types::big_uint first, size_t size) = 0;
+class IParser {
+public:
+	virtual XrefBasePtr ReadXref(void) = 0;
+	virtual XrefBasePtr ReadXref(types::stream_offset offset) = 0;
 
-			virtual ~IParser() {}
-		};
+	virtual ObjectStreamEntries ReadObjectStreamEntries(types::big_uint first, size_t size) = 0;
 
-		class IReverseParser
-		{
-		public:
-			virtual types::stream_offset ReadLastXrefOffset() = 0;
+	virtual ~IParser() {}
+};
 
-			virtual ~IReverseParser() {}
-		};
+class IReverseParser {
+public:
+	virtual types::stream_offset ReadLastXrefOffset() = 0;
 
-		class ICharacterMapParser
-		{
-		public:
-			virtual CharacterMapData ReadCharacterMapData(void) = 0;
+	virtual ~IReverseParser() {}
+};
 
-			virtual ~ICharacterMapParser() {}
-		};
-	}
-}
+class ICharacterMapParser {
+public:
+	virtual CharacterMapData ReadCharacterMapData(void) = 0;
+
+	virtual ~ICharacterMapParser() {}
+};
+
+} // syntax
+} // gotchangpdf
 
 #endif /* _PARSER_INTERFACE_H */

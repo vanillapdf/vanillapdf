@@ -8,39 +8,38 @@
 #include "semantics/objects/contents.h"
 #include "semantics/objects/annotations.h"
 
-namespace gotchangpdf
-{
-	namespace semantics
-	{
-		class PageObject : public PageNodeBase
-		{
-		public:
-			explicit PageObject(syntax::DictionaryObjectPtr obj);
+namespace gotchangpdf {
+namespace semantics {
 
-			static std::unique_ptr<PageObject> Create(DocumentPtr document);
-			static std::unique_ptr<PageObject> Create(syntax::DictionaryObjectPtr obj);
+class PageObject : public PageNodeBase {
+public:
+	explicit PageObject(syntax::DictionaryObjectPtr obj);
 
-			PageTreeNodePtr GetParent(void) const;
-			void SetParent(PageTreeNodePtr parent);
+	static std::unique_ptr<PageObject> Create(DocumentPtr document);
+	static std::unique_ptr<PageObject> Create(syntax::DictionaryObjectPtr obj);
 
-			ResourceDictionaryPtr GetResources(void) const;
-			void SetResources(ResourceDictionaryPtr resources);
+	PageTreeNodePtr GetParent(void) const;
+	void SetParent(PageTreeNodePtr parent);
 
-			RectanglePtr GetMediaBox(void) const;
-			void SetMediaBox(RectanglePtr);
+	ResourceDictionaryPtr GetResources(void) const;
+	void SetResources(ResourceDictionaryPtr resources);
 
-			bool GetAnnotations(OutputPageAnnotationsPtr& result) const;
-			void SetAnnotations(PageAnnotationsPtr annots);
+	RectanglePtr GetMediaBox(void) const;
+	void SetMediaBox(RectanglePtr);
 
-			bool GetContents(OutputContentsPtr& result) const;
-			void SetContents(ContentsPtr contents);
+	bool GetAnnotations(OutputPageAnnotationsPtr& result) const;
+	void SetAnnotations(PageAnnotationsPtr annots);
 
-			virtual NodeType GetNodeType(void) const noexcept override { return NodeType::Object; }
+	bool GetContents(OutputContentsPtr& result) const;
+	void SetContents(ContentsPtr contents);
 
-		private:
-			mutable OutputContentsPtr m_contents;
-		};
-	}
-}
+	virtual NodeType GetNodeType(void) const noexcept override { return NodeType::Object; }
+
+private:
+	mutable OutputContentsPtr m_contents;
+};
+
+} // semantics
+} // gotchangpdf
 
 #endif /* _PAGE_H */

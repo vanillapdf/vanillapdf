@@ -3,10 +3,8 @@
 
 #include "raw_base_stream.h"
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
+namespace gotchangpdf {
+namespace syntax {
 
 #ifdef _MSC_VER
 		/* http://connect.microsoft.com/VisualStudio/feedback/details/733720/ */
@@ -44,57 +42,56 @@ namespace gotchangpdf
 #pragma warning (disable : 4250)
 #endif
 
-		class ReverseStream : public BaseStream::CharacterSource, public BaseStream
-		{
-		public:
-			friend class ReverseBuf;
+class ReverseStream : public BaseStream::CharacterSource, public BaseStream {
+public:
+	friend class ReverseBuf;
 
-		public:
-			explicit ReverseStream(CharacterSource & stream, types::stream_size size);
-			virtual ~ReverseStream();
-			
-			virtual void read(Buffer& result, size_t len) override;
-			virtual BufferPtr read(size_t len) override;
-			virtual BufferPtr readline(void) override;
-			virtual types::stream_size GetPosition() override;
-			virtual void SetPosition(types::stream_size pos) override;
+public:
+	explicit ReverseStream(CharacterSource & stream, types::stream_size size);
+	virtual ~ReverseStream();
 
-		private:
-			class ReverseBuf : public BaseStream::CharacterSourceBuffer
-			{
-			public:
-				explicit ReverseBuf(CharacterSource & s, types::stream_size size);
+	virtual void read(Buffer& result, size_t len) override;
+	virtual BufferPtr read(size_t len) override;
+	virtual BufferPtr readline(void) override;
+	virtual types::stream_size GetPosition() override;
+	virtual void SetPosition(types::stream_size pos) override;
 
-				virtual pos_type seekoff(off_type,
-					ios_base::seekdir,
-					ios_base::openmode = ios_base::in | ios_base::out) override;
+private:
+	class ReverseBuf : public BaseStream::CharacterSourceBuffer {
+	public:
+		explicit ReverseBuf(CharacterSource & s, types::stream_size size);
 
-				virtual pos_type seekpos(pos_type,
-					ios_base::openmode = ios_base::in | ios_base::out) override;
+		virtual pos_type seekoff(off_type,
+			ios_base::seekdir,
+			ios_base::openmode = ios_base::in | ios_base::out) override;
 
-			public:
-				int sync();
-				virtual int_type underflow() override;
-				virtual int_type uflow() override;
-				virtual int_type pbackfail(int_type ch) override;
-				virtual std::streamsize showmanyc() override;
+		virtual pos_type seekpos(pos_type,
+			ios_base::openmode = ios_base::in | ios_base::out) override;
 
-			private:
-				CharacterSource & _source;
-				types::stream_offset _offset;
-				types::stream_size _size;
-				const std::size_t _put_back;
-				char *_base;
+	public:
+		int sync();
+		virtual int_type underflow() override;
+		virtual int_type uflow() override;
+		virtual int_type pbackfail(int_type ch) override;
+		virtual std::streamsize showmanyc() override;
 
-			private:
-				Buffer _buffer;
-			};
-		};
-	}
+	private:
+		CharacterSource & _source;
+		types::stream_offset _offset;
+		types::stream_size _size;
+		const std::size_t _put_back;
+		char *_base;
+
+	private:
+		Buffer _buffer;
+	};
+};
 
 #ifdef _MSC_VER
 #pragma warning (pop)
 #endif
-}
+
+} // syntax
+} // gotchangpdf
 
 #endif /* _RAW_REVERSE_STREAM_H */

@@ -11,59 +11,56 @@
 
 #include <vector>
 
-namespace gotchangpdf
-{
-	namespace contents
-	{
-		class ContentObjectBase : public InstructionBase
-		{
-		public:
-			enum class Type
-			{
-				TextObject,
-				InlineImageObject
-			};
+namespace gotchangpdf {
+namespace contents {
 
-			virtual Type GetType(void) const noexcept = 0;
-			virtual InstructionBase::Type GetInstructionType(void) const noexcept override { return InstructionBase::Type::Object; }
-		};
+class ContentObjectBase : public InstructionBase {
+public:
+	enum class Type {
+		TextObject,
+		InlineImageObject
+	};
 
-		class TextObject : public ContentObjectBase, public IModifyObserver
-		{
-		public:
-			TextObject(BaseOperationCollection ops);
+	virtual Type GetType(void) const noexcept = 0;
+	virtual InstructionBase::Type GetInstructionType(void) const noexcept override { return InstructionBase::Type::Object; }
+};
 
-			virtual Type GetType(void) const noexcept override { return Type::TextObject; }
-			virtual std::string ToPdf() const override;
+class TextObject : public ContentObjectBase, public IModifyObserver {
+public:
+	TextObject(BaseOperationCollection ops);
 
-			types::uinteger GetOperationsSize(void) const { return _operations.size(); }
-			OperationBasePtr GetOperationAt(types::uinteger at) const { return _operations.at(at); }
+	virtual Type GetType(void) const noexcept override { return Type::TextObject; }
+	virtual std::string ToPdf() const override;
 
-			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+	types::uinteger GetOperationsSize(void) const { return _operations.size(); }
+	OperationBasePtr GetOperationAt(types::uinteger at) const { return _operations.at(at); }
 
-			~TextObject();
+	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
-		private:
-			BaseOperationCollection _operations;
-		};
+	~TextObject();
 
-		class InlineImageObject : public ContentObjectBase
-		{
-		public:
-			InlineImageObject(syntax::DictionaryObjectPtr dictionary, BufferPtr data)
-				: m_dictionary(dictionary), m_data(data) {}
+private:
+	BaseOperationCollection _operations;
+};
 
-			virtual Type GetType(void) const noexcept override { return Type::InlineImageObject; }
-			virtual std::string ToPdf() const override;
-
-			syntax::DictionaryObjectPtr GetDictionary() const { return m_dictionary; }
-			BufferPtr GetData() const { return m_data; }
-
-		private:
-			syntax::DictionaryObjectPtr m_dictionary;
-			BufferPtr m_data;
-		};
+class InlineImageObject : public ContentObjectBase {
+public:
+	InlineImageObject(syntax::DictionaryObjectPtr dictionary, BufferPtr data)
+		: m_dictionary(dictionary), m_data(data) {
 	}
-}
+
+	virtual Type GetType(void) const noexcept override { return Type::InlineImageObject; }
+	virtual std::string ToPdf() const override;
+
+	syntax::DictionaryObjectPtr GetDictionary() const { return m_dictionary; }
+	BufferPtr GetData() const { return m_data; }
+
+private:
+	syntax::DictionaryObjectPtr m_dictionary;
+	BufferPtr m_data;
+};
+
+} // contents
+} // gotchangpdf
 
 #endif /* _CONTENT_STREAM_OBJECTS_H */

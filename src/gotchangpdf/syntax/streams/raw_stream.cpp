@@ -4,92 +4,87 @@
 #include "utils/constants.h"
 #include "utils/util.h"
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		Stream::Stream(CharacterSource & stream)
-			: CharacterSource(stream.rdbuf()) {}
+namespace gotchangpdf {
+namespace syntax {
 
-		BufferPtr Stream::read(size_t len)
-		{
-			BufferPtr result(len);
-			CharacterSource::read(result->data(), len);
-			return result;
-		}
+Stream::Stream(CharacterSource & stream)
+	: CharacterSource(stream.rdbuf()) {
+}
 
-		void Stream::read(Buffer& result, size_t len)
-		{
-			result.resize(len);
-			CharacterSource::read(result.data(), len);
-		}
+BufferPtr Stream::read(size_t len) {
+	BufferPtr result(len);
+	CharacterSource::read(result->data(), len);
+	return result;
+}
 
-		types::stream_size Stream::GetPosition()
-		{
-			assert(!fail());
+void Stream::read(Buffer& result, size_t len) {
+	result.resize(len);
+	CharacterSource::read(result.data(), len);
+}
 
-			if (eof()) {
-				return constant::BAD_OFFSET;
-			}
+types::stream_size Stream::GetPosition() {
+	assert(!fail());
 
-			return tellg();
-		}
+	if (eof()) {
+		return constant::BAD_OFFSET;
+	}
 
-		void Stream::SetPosition(types::stream_size pos)
-		{
-			// of badoff is specified, set eof flag
-			if (pos == constant::BAD_OFFSET) {
-				setstate(eofbit);
-				return;
-			}
+	return tellg();
+}
 
-			// clear eof
-			if (eof() || fail()) {
-				clear();
-			}
+void Stream::SetPosition(types::stream_size pos) {
+	// of badoff is specified, set eof flag
+	if (pos == constant::BAD_OFFSET) {
+		setstate(eofbit);
+		return;
+	}
 
-			// seek to the actual position
-			seekg(pos);
+	// clear eof
+	if (eof() || fail()) {
+		clear();
+	}
 
-			// clear fail flags in case we accessed EOF
-			if (fail()) {
-				clear(rdstate() & failbit);
-			}
-			else {
-				// verify if the position is correct
-				auto verify_offset = GetPosition();
-				assert(pos == verify_offset); verify_offset;
-			}
-		}
+	// seek to the actual position
+	seekg(pos);
 
-		BufferPtr Stream::readline(void)
-		{
-			BufferPtr result;
-
-			for (;;) {
-				auto new_line = get();
-				if (new_line == std::char_traits<char>::eof()) {
-					break;
-				}
-
-				if (new_line == '\r') {
-					int line_feed = peek();
-					if (line_feed == '\n') {
-						ignore();
-					}
-
-					break;
-				}
-
-				if (new_line == '\n') {
-					break;
-				}
-
-				auto converted = ValueConvertUtils::SafeConvert<unsigned char>(new_line);
-				result->push_back(converted);
-			}
-
-			return result;
-		}
+	// clear fail flags in case we accessed EOF
+	if (fail()) {
+		clear(rdstate() & failbit);
+	} else {
+		// verify if the position is correct
+		auto verify_offset = GetPosition();
+		assert(pos == verify_offset); verify_offset;
 	}
 }
+
+BufferPtr Stream::readline(void) {
+	BufferPtr result;
+
+	for (;;) {
+		auto new_line = get();
+		if (new_line == std::char_traits<char>::eof()) {
+			break;
+		}
+
+		if (new_line == '\r') {
+			int line_feed = peek();
+			if (line_feed == '\n') {
+				ignore();
+			}
+
+			break;
+		}
+
+		if (new_line == '\n') {
+			break;
+		}
+
+		auto converted = ValueConvertUtils::SafeConvert<unsigned char>(new_line);
+		result->push_back(converted);
+	}
+
+	return result;
+}
+
+} // syntax
+} // gotchangpdf

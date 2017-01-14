@@ -5,46 +5,41 @@
 
 #include "syntax/parsers/lexical_tree.h"
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		class TokenDictionaryBase
-		{
-		public:
-			virtual ~TokenDictionaryBase();
-			virtual void Initialize() = 0;
-			Token::Type Find(BufferPtr set);
+namespace gotchangpdf {
+namespace syntax {
 
-		protected:
-			bool m_initialized = false;
-			Tree m_dictionary;
-		};
+class TokenDictionaryBase {
+public:
+	virtual ~TokenDictionaryBase();
+	virtual void Initialize() = 0;
+	Token::Type Find(BufferPtr set);
 
-		class ParserTokenDictionary : public TokenDictionaryBase
-		{
-		public:
-			virtual void Initialize() override;
-		};
+protected:
+	bool m_initialized = false;
+	Tree m_dictionary;
+};
 
-		class ReverseParserTokenDictionary : public TokenDictionaryBase
-		{
-		public:
-			virtual void Initialize() override;
-		};
+class ParserTokenDictionary : public TokenDictionaryBase {
+public:
+	virtual void Initialize() override;
+};
 
-		class ContentStreamTokenDictionary : public ParserTokenDictionary
-		{
-		public:
-			virtual void Initialize() override;
-		};
+class ReverseParserTokenDictionary : public TokenDictionaryBase {
+public:
+	virtual void Initialize() override;
+};
 
-		class CharacterMapTokenDictionary : public ParserTokenDictionary
-		{
-		public:
-			virtual void Initialize() override;
-		};
-	}
-}
+class ContentStreamTokenDictionary : public ParserTokenDictionary {
+public:
+	virtual void Initialize() override;
+};
+
+class CharacterMapTokenDictionary : public ParserTokenDictionary {
+public:
+	virtual void Initialize() override;
+};
+
+} // syntax
+} // gotchangpdf
 
 #endif /* _LEXICAL_TOKEN_DICTIONARY_H */

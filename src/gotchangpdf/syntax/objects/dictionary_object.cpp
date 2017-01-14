@@ -3,140 +3,127 @@
 #include "syntax/objects/dictionary_object.h"
 #include "syntax/utils/output_pointer.h"
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		DictionaryObject* DictionaryObject::Clone(void) const
-		{
-			std::unique_ptr<DictionaryObject> result(new DictionaryObject());
-			for (auto item : _list)
-			{
-				auto name = ObjectUtils::Clone<NameObjectPtr>(item.first);
-				auto value = ObjectUtils::Clone<ContainableObjectPtr>(item.second);
-				result->Insert(name, value);
-			}
+namespace gotchangpdf {
+namespace syntax {
 
-			return result.release();
-		}
+DictionaryObject* DictionaryObject::Clone(void) const {
+	std::unique_ptr<DictionaryObject> result(new DictionaryObject());
+	for (auto item : _list) {
+		auto name = ObjectUtils::Clone<NameObjectPtr>(item.first);
+		auto value = ObjectUtils::Clone<ContainableObjectPtr>(item.second);
+		result->Insert(name, value);
+	}
 
-		void DictionaryObject::SetFile(std::weak_ptr<File> file) noexcept
-		{
-			Object::SetFile(file);
+	return result.release();
+}
 
-			for (auto it = _list.begin(); it != _list.end(); ++it) {
-				auto item = it->second;
-				item->SetFile(file);
-			}
-		}
+void DictionaryObject::SetFile(std::weak_ptr<File> file) noexcept {
+	Object::SetFile(file);
 
-		void DictionaryObject::SetInitialized(bool initialized) noexcept
-		{
-			IModifyObservable::SetInitialized(initialized);
-
-			for (auto it = _list.begin(); it != _list.end(); ++it) {
-				auto item = it->second;
-				item->SetInitialized(initialized);
-			}
-		}
-
-		std::string DictionaryObject::ToString(void) const
-		{
-			std::stringstream ss;
-			ss << "<<" << std::endl;
-			for (auto item : _list) {
-				ss << item.first->ToString() << " " << item.second->ToString() << std::endl;
-			}
-			ss << ">>";
-			return ss.str();
-		}
-
-		std::string DictionaryObject::ToPdf(void) const
-		{
-			std::stringstream ss;
-			ss << "<<";
-			bool first = true;
-			for (auto item : _list) {
-				ss << (first ? "" : " ") << item.first->ToPdf() << " " << item.second->ToPdf();
-				first = false;
-			}
-			ss << ">>";
-			return ss.str();
-		}
-
-		ContainableObjectPtr DictionaryObject::Find(const NameObjectPtr & name) const
-		{
-			auto result = _list.find(name);
-			if (result == _list.end()) {
-				throw GeneralException("Item with name " + name->ToString() + " was not found in dictionary");
-			}
-
-			return result->second;
-		}
-
-		bool DictionaryObject::TryFind(const NameObjectPtr & name, OutputContainableObjectPtr& result) const
-		{
-			auto item = _list.find(name);
-			if (item == _list.end())
-				return false;
-
-			result = item->second;
-			return true;
-		}
-
-		bool DictionaryObject::Remove(const NameObjectPtr& name)
-		{
-			auto found = _list.find(name);
-			if (found == _list.end()) {
-				return false;
-			}
-
-			found->first->ClearOwner();
-			found->second->ClearOwner();
-			found->first->Unsubscribe(this);
-			found->second->Unsubscribe(this);
-			_list.erase(found);
-			OnChanged();
-
-			return true;
-		}
-
-		void DictionaryObject::Insert(const NameObjectPtr& name, const ContainableObjectPtr& value)
-		{
-			std::pair<NameObjectPtr, ContainableObjectPtr> pair(name, value);
-			auto result = _list.insert(pair);
-			name->SetOwner(GetWeakReference<Object>());
-			value->SetOwner(GetWeakReference<Object>());
-
-			name->Subscribe(this);
-			value->Subscribe(this);
-
-			//assert(result.second && "Key was already in the dictionary");
-			OnChanged();
-		}
-
-		bool DictionaryObject::Contains(const NameObjectPtr & name) const
-		{
-			return (_list.find(name) != _list.end());
-		}
-
-		std::vector<ContainableObjectPtr> DictionaryObject::Values() const
-		{
-			std::vector<ContainableObjectPtr> result;
-			std::for_each(_list.begin(), _list.end(),
-				[&result](const std::pair<NameObjectPtr, ContainableObjectPtr>& item) {
-				result.push_back(item.second);
-			});
-
-			return result;
-		}
-
-		DictionaryObject::~DictionaryObject()
-		{
-			for (auto item : _list) {
-				item.first->Unsubscribe(this);
-				item.second->Unsubscribe(this);
-			}
-		}
+	for (auto it = _list.begin(); it != _list.end(); ++it) {
+		auto item = it->second;
+		item->SetFile(file);
 	}
 }
+
+void DictionaryObject::SetInitialized(bool initialized) noexcept {
+	IModifyObservable::SetInitialized(initialized);
+
+	for (auto it = _list.begin(); it != _list.end(); ++it) {
+		auto item = it->second;
+		item->SetInitialized(initialized);
+	}
+}
+
+std::string DictionaryObject::ToString(void) const {
+	std::stringstream ss;
+	ss << "<<" << std::endl;
+	for (auto item : _list) {
+		ss << item.first->ToString() << " " << item.second->ToString() << std::endl;
+	}
+	ss << ">>";
+	return ss.str();
+}
+
+std::string DictionaryObject::ToPdf(void) const {
+	std::stringstream ss;
+	ss << "<<";
+	bool first = true;
+	for (auto item : _list) {
+		ss << (first ? "" : " ") << item.first->ToPdf() << " " << item.second->ToPdf();
+		first = false;
+	}
+	ss << ">>";
+	return ss.str();
+}
+
+ContainableObjectPtr DictionaryObject::Find(const NameObjectPtr & name) const {
+	auto result = _list.find(name);
+	if (result == _list.end()) {
+		throw GeneralException("Item with name " + name->ToString() + " was not found in dictionary");
+	}
+
+	return result->second;
+}
+
+bool DictionaryObject::TryFind(const NameObjectPtr & name, OutputContainableObjectPtr& result) const {
+	auto item = _list.find(name);
+	if (item == _list.end())
+		return false;
+
+	result = item->second;
+	return true;
+}
+
+bool DictionaryObject::Remove(const NameObjectPtr& name) {
+	auto found = _list.find(name);
+	if (found == _list.end()) {
+		return false;
+	}
+
+	found->first->ClearOwner();
+	found->second->ClearOwner();
+	found->first->Unsubscribe(this);
+	found->second->Unsubscribe(this);
+	_list.erase(found);
+	OnChanged();
+
+	return true;
+}
+
+void DictionaryObject::Insert(const NameObjectPtr& name, const ContainableObjectPtr& value) {
+	std::pair<NameObjectPtr, ContainableObjectPtr> pair(name, value);
+	auto result = _list.insert(pair);
+	name->SetOwner(GetWeakReference<Object>());
+	value->SetOwner(GetWeakReference<Object>());
+
+	name->Subscribe(this);
+	value->Subscribe(this);
+
+	//assert(result.second && "Key was already in the dictionary");
+	OnChanged();
+}
+
+bool DictionaryObject::Contains(const NameObjectPtr & name) const {
+	return (_list.find(name) != _list.end());
+}
+
+std::vector<ContainableObjectPtr> DictionaryObject::Values() const {
+	std::vector<ContainableObjectPtr> result;
+	std::for_each(_list.begin(), _list.end(),
+		[&result](const std::pair<NameObjectPtr, ContainableObjectPtr>& item) {
+		result.push_back(item.second);
+	});
+
+	return result;
+}
+
+DictionaryObject::~DictionaryObject() {
+	for (auto item : _list) {
+		item.first->Unsubscribe(this);
+		item.second->Unsubscribe(this);
+	}
+}
+
+} // syntax
+} // gotchangpdf

@@ -3,31 +3,32 @@
 
 #include <cstdint>
 
-namespace gotchangpdf
-{
-	namespace constant
-	{
-		const int BUFFER_SIZE = 16384;
-		const int BAD_OFFSET = -1;
-	}
+namespace gotchangpdf {
+namespace constant {
 
-	namespace types
-	{
-		typedef int native_int;
-		typedef unsigned int native_uint;
+const int BUFFER_SIZE = 16384;
+const int BAD_OFFSET = -1;
 
-		typedef uint16_t ushort;
-		typedef int32_t integer;
-		typedef uint32_t uinteger;
+} // constant
 
-		typedef int64_t big_int;
-		typedef uint64_t big_uint;
+namespace types {
 
-		typedef int64_t stream_offset;
-		typedef int64_t stream_size;
+typedef int native_int;
+typedef unsigned int native_uint;
 
-		typedef double real;
-	}
-}
+typedef uint16_t ushort;
+typedef int32_t integer;
+typedef uint32_t uinteger;
+
+typedef int64_t big_int;
+typedef uint64_t big_uint;
+
+typedef int64_t stream_offset;
+typedef int64_t stream_size;
+
+typedef double real;
+
+} // types
+} // gotchangpdf
 
 #endif /* _CONSTANTS_H */

@@ -45,8 +45,7 @@ extern "C"
 	/**
 	* \brief Available types of character maps.
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \copybrief EmbeddedCharacterMapHandle
 		* \see EmbeddedCharacterMapHandle

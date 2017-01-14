@@ -5,33 +5,31 @@
 
 #include "contents/content_stream_instruction_base.h"
 
-namespace gotchangpdf
-{
-	namespace contents
-	{
-		class IContentStreamParser
-		{
-		public:
-			virtual BaseInstructionCollectionPtr ReadContentStreamInstructions(void) = 0;
+namespace gotchangpdf {
+namespace contents {
 
-			virtual ~IContentStreamParser() {}
-		};
+class IContentStreamParser {
+public:
+	virtual BaseInstructionCollectionPtr ReadContentStreamInstructions(void) = 0;
 
-		class ContentStreamParser : public syntax::ParserBase, public IContentStreamParser
-		{
-		public:
-			ContentStreamParser(std::weak_ptr<syntax::File> file, CharacterSource & stream);
-			virtual BaseInstructionCollectionPtr ReadContentStreamInstructions(void) override;
+	virtual ~IContentStreamParser() {}
+};
 
-		private:
-			InstructionBasePtr ReadContentStreamInstruction(void);
-			OperationBasePtr ReadContentStreamOperation(void);
-			bool IsOperand(syntax::Token::Type type);
-			syntax::ObjectPtr ReadOperand();
-			OperationBasePtr ReadOperatorReturnOperation(const std::vector<syntax::ObjectPtr>& operands);
-			InlineImageObjectPtr ReadInlineImageObject(void);
-		};
-	}
-}
+class ContentStreamParser : public syntax::ParserBase, public IContentStreamParser {
+public:
+	ContentStreamParser(std::weak_ptr<syntax::File> file, CharacterSource & stream);
+	virtual BaseInstructionCollectionPtr ReadContentStreamInstructions(void) override;
+
+private:
+	InstructionBasePtr ReadContentStreamInstruction(void);
+	OperationBasePtr ReadContentStreamOperation(void);
+	bool IsOperand(syntax::Token::Type type);
+	syntax::ObjectPtr ReadOperand();
+	OperationBasePtr ReadOperatorReturnOperation(const std::vector<syntax::ObjectPtr>& operands);
+	InlineImageObjectPtr ReadInlineImageObject(void);
+};
+
+} // contents
+} // gotchangpdf
 
 #endif /* _CONTENT_STREAM_PARSER_H */

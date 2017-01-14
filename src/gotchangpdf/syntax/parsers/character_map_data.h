@@ -8,59 +8,55 @@
 
 #include <vector>
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		class BaseFontRange
-		{
-		public:
-			HexadecimalStringObjectPtr GetRangeLow() const { return m_low; }
-			void SetRangeLow(HexadecimalStringObjectPtr low) { m_low = low; }
+namespace gotchangpdf {
+namespace syntax {
 
-			HexadecimalStringObjectPtr GetRangeHigh() const { return m_high; }
-			void SetRangeHigh(HexadecimalStringObjectPtr high) { m_high = high; }
+class BaseFontRange {
+public:
+	HexadecimalStringObjectPtr GetRangeLow() const { return m_low; }
+	void SetRangeLow(HexadecimalStringObjectPtr low) { m_low = low; }
 
-			ObjectPtr GetDestination() const { return m_dest; }
-			void SetDestination(ObjectPtr dest) { m_dest = dest; }
+	HexadecimalStringObjectPtr GetRangeHigh() const { return m_high; }
+	void SetRangeHigh(HexadecimalStringObjectPtr high) { m_high = high; }
 
-			bool Contains(BufferPtr key) const;
-			BufferPtr GetMappedValue(BufferPtr key) const;
+	ObjectPtr GetDestination() const { return m_dest; }
+	void SetDestination(ObjectPtr dest) { m_dest = dest; }
 
-		private:
-			HexadecimalStringObjectPtr m_low;
-			HexadecimalStringObjectPtr m_high;
-			ObjectPtr m_dest;
+	bool Contains(BufferPtr key) const;
+	BufferPtr GetMappedValue(BufferPtr key) const;
 
-			bool ValueEqualLessThan(BufferPtr source, BufferPtr dest) const;
-			BufferPtr Increment(BufferPtr data, types::native_uint count) const;
-			types::integer Difference(BufferPtr source, BufferPtr dest) const;
-			uint8_t Difference(uint8_t source, uint8_t dest, bool& borrow) const;
-		};
+private:
+	HexadecimalStringObjectPtr m_low;
+	HexadecimalStringObjectPtr m_high;
+	ObjectPtr m_dest;
 
-		struct CodeSpaceRange
-		{
-			HexadecimalStringObjectPtr Begin;
-			HexadecimalStringObjectPtr End;
-		};
+	bool ValueEqualLessThan(BufferPtr source, BufferPtr dest) const;
+	BufferPtr Increment(BufferPtr data, types::native_uint count) const;
+	types::integer Difference(BufferPtr source, BufferPtr dest) const;
+	uint8_t Difference(uint8_t source, uint8_t dest, bool& borrow) const;
+};
 
-		struct CIDSystemInfo
-		{
-			StringObjectPtr Registry;
-			StringObjectPtr Ordering;
-			IntegerObjectPtr Supplement;
-		};
+struct CodeSpaceRange {
+	HexadecimalStringObjectPtr Begin;
+	HexadecimalStringObjectPtr End;
+};
 
-		struct CharacterMapData
-		{
-			CIDSystemInfo SystemInfo;
-			NameObjectPtr CMapName;
-			IntegerObjectPtr CMapType;
+struct CIDSystemInfo {
+	StringObjectPtr Registry;
+	StringObjectPtr Ordering;
+	IntegerObjectPtr Supplement;
+};
 
-			std::vector<CodeSpaceRange> CodeSpaceRanges;
-			std::vector<BaseFontRange> BaseFontRanges;
-		};
-	}
-}
+struct CharacterMapData {
+	CIDSystemInfo SystemInfo;
+	NameObjectPtr CMapName;
+	IntegerObjectPtr CMapType;
+
+	std::vector<CodeSpaceRange> CodeSpaceRanges;
+	std::vector<BaseFontRange> BaseFontRanges;
+};
+
+} // syntax
+} // gotchangpdf
 
 #endif /* _CHARACTER_MAP_DATA_H */

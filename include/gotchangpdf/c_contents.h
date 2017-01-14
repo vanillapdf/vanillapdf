@@ -109,8 +109,7 @@ extern "C"
 	/**
 	* \brief Available content operator types
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \brief Unknown operator
 		*/
@@ -214,8 +213,7 @@ extern "C"
 	/**
 	* \brief Available content operation types
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \copydoc ContentOperationGenericHandle
 		* \see ContentOperationGenericHandle
@@ -319,8 +317,7 @@ extern "C"
 	/**
 	* \brief Available content object types
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \copydoc ContentObjectTextHandle
 		* \see ContentObjectTextHandle
@@ -343,8 +340,7 @@ extern "C"
 	/**
 	* \brief Available content instruction types
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \copydoc ContentOperationHandle
 		* \see ContentOperationHandle

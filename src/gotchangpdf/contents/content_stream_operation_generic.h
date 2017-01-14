@@ -9,54 +9,53 @@
 #include <vector>
 #include <sstream>
 
-namespace gotchangpdf
-{
-	namespace contents
-	{
-		class OperationGeneric : public OperationBase
-		{
-		public:
-			OperationGeneric() = default;
-			OperationGeneric(std::vector<syntax::ObjectPtr> operands, OperatorBasePtr oper) :
-				_operator(oper), _operands(operands) {}
-			OperatorBasePtr GetOperator() const { return _operator; }
-			std::vector<syntax::ObjectPtr> GetOperands() const { return _operands; }
+namespace gotchangpdf {
+namespace contents {
 
-			types::uinteger GetOperandsSize() const { return _operands.size(); }
-			syntax::ObjectPtr GetOperandAt(types::uinteger at) const { return _operands.at(at); }
+class OperationGeneric : public OperationBase {
+public:
+	OperationGeneric() = default;
+	OperationGeneric(std::vector<syntax::ObjectPtr> operands, OperatorBasePtr oper) :
+		_operator(oper), _operands(operands) {
+	}
+	OperatorBasePtr GetOperator() const { return _operator; }
+	std::vector<syntax::ObjectPtr> GetOperands() const { return _operands; }
 
-			virtual InstructionBase::Type GetInstructionType(void) const noexcept override { return InstructionBase::Type::Operation; }
-			virtual Type GetOperationType(void) const noexcept override { return Type::Generic; }
-			virtual std::string ToPdf() const override
-			{
-				std::stringstream ss;
+	types::uinteger GetOperandsSize() const { return _operands.size(); }
+	syntax::ObjectPtr GetOperandAt(types::uinteger at) const { return _operands.at(at); }
 
-				bool first = true;
-				for (auto operand : _operands) {
-					if (!first) {
-						ss << " ";
-					}
+	virtual InstructionBase::Type GetInstructionType(void) const noexcept override { return InstructionBase::Type::Operation; }
+	virtual Type GetOperationType(void) const noexcept override { return Type::Generic; }
+	virtual std::string ToPdf() const override {
+		std::stringstream ss;
 
-					ss << operand->ToPdf();
-					first = false;
-				}
-
-				if (!first) {
-					ss << " ";
-				}
-
-				ss << _operator->Value();
-
-				return ss.str();
+		bool first = true;
+		for (auto operand : _operands) {
+			if (!first) {
+				ss << " ";
 			}
 
-		private:
-			OperatorBasePtr _operator;
-			std::vector<syntax::ObjectPtr> _operands;
-		};
+			ss << operand->ToPdf();
+			first = false;
+		}
 
-		typedef std::vector<OperationGenericPtr> GenericOperationCollection;
+		if (!first) {
+			ss << " ";
+		}
+
+		ss << _operator->Value();
+
+		return ss.str();
 	}
-}
+
+private:
+	OperatorBasePtr _operator;
+	std::vector<syntax::ObjectPtr> _operands;
+};
+
+typedef std::vector<OperationGenericPtr> GenericOperationCollection;
+
+} // contents
+} // gotchangpdf
 
 #endif /* _CONTENT_STREAM_OPERATION_GENERIC_H */

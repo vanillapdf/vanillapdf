@@ -3,40 +3,37 @@
 
 #include "syntax/utils/syntax_fwd.h"
 
-#include "utils/deferred.h"
 #include "syntax/objects/dictionary_object.h"
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		class FilterBase : public IUnknown
-		{
-		public:
-			enum class Type : unsigned char
-			{
-				ASCIIHexDecode,
-				ASCII85Decode,
-				LZWDecode,
-				FlateDecode,
-				RunLengthDecode,
-				CCITTFaxDecode,
-				JBIG2Decode,
-				DCTDecode,
-				JPXDecode
-			};
+namespace gotchangpdf {
+namespace syntax {
 
-			static FilterBasePtr GetFilterByName(const NameObjectPtr name);
+class FilterBase : public IUnknown {
+public:
+	enum class Type : unsigned char {
+		ASCIIHexDecode,
+		ASCII85Decode,
+		LZWDecode,
+		FlateDecode,
+		RunLengthDecode,
+		CCITTFaxDecode,
+		JBIG2Decode,
+		DCTDecode,
+		JPXDecode
+	};
 
-			virtual BufferPtr Encode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
-			virtual BufferPtr Decode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
+	static FilterBasePtr GetFilterByName(const NameObjectPtr name);
 
-			virtual BufferPtr Encode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
-			virtual BufferPtr Decode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
+	virtual BufferPtr Encode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
+	virtual BufferPtr Decode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
 
-			virtual Type GetType(void) const noexcept = 0;
-		};
-	}
-}
+	virtual BufferPtr Encode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
+	virtual BufferPtr Decode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
+
+	virtual Type GetType(void) const noexcept = 0;
+};
+
+} // syntax
+} // gotchangpdf
 
 #endif /* _FILTER_H */

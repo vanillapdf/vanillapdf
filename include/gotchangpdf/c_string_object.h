@@ -39,8 +39,7 @@ extern "C"
 	/**
 	* \brief Available types of strings.
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \copybrief LiteralStringObjectHandle
 		* \see LiteralStringObjectHandle

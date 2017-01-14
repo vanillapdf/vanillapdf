@@ -2,48 +2,47 @@
 
 #include "syntax/parsers/reverse_parser.h"
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		ReverseParser::ReverseParser(CharacterSource & stream)
-			: ReverseTokenizer(stream) {}
+namespace gotchangpdf {
+namespace syntax {
 
-		types::stream_offset ReverseParser::ReadLastXrefOffset()
-		{
-			ReadTokenWithTypeSkip(Token::Type::REVERSE_END_OF_FILE_MARKER);
-			auto offset_token = ReadTokenWithTypeSkip(Token::Type::REVERSE_INTEGER_OBJECT);
-			ReadTokenWithTypeSkip(Token::Type::REVERSE_START_XREF);
+ReverseParser::ReverseParser(CharacterSource & stream)
+	: ReverseTokenizer(stream) {
+}
 
-			auto buffer = offset_token->Value();
-			std::reverse(buffer.begin(), buffer.end());
-			auto value = std::stoll(buffer->ToString());
-			return value;
-		}
+types::stream_offset ReverseParser::ReadLastXrefOffset() {
+	ReadTokenWithTypeSkip(Token::Type::REVERSE_END_OF_FILE_MARKER);
+	auto offset_token = ReadTokenWithTypeSkip(Token::Type::REVERSE_INTEGER_OBJECT);
+	ReadTokenWithTypeSkip(Token::Type::REVERSE_START_XREF);
 
-		TokenPtr ReverseParser::ReadTokenWithTypeSkip(Token::Type type)
-		{
-			auto offset = tellg();
-			for (;;) {
-				auto token = ReadToken();
+	auto buffer = offset_token->Value();
+	std::reverse(buffer.begin(), buffer.end());
+	auto value = std::stoll(buffer->ToString());
+	return value;
+}
 
-				if (token->GetType() == type)
-					return token;
+TokenPtr ReverseParser::ReadTokenWithTypeSkip(Token::Type type) {
+	auto offset = tellg();
+	for (;;) {
+		auto token = ReadToken();
 
-				if (token->GetType() == Token::Type::REVERSE_EOL)
-					continue;
+		if (token->GetType() == type)
+			return token;
 
-				std::stringstream ss;
-				ss << "Could not find token type ";
-				ss << static_cast<int>(type);
-				ss << " at offset ";
-				ss << offset;
-				ss << ", instead token type ";
-				ss << static_cast<int>(token->GetType());
-				ss << " was found";
+		if (token->GetType() == Token::Type::REVERSE_EOL)
+			continue;
 
-				throw GeneralException(ss.str());
-			}
-		}
+		std::stringstream ss;
+		ss << "Could not find token type ";
+		ss << static_cast<int>(type);
+		ss << " at offset ";
+		ss << offset;
+		ss << ", instead token type ";
+		ss << static_cast<int>(token->GetType());
+		ss << " was found";
+
+		throw GeneralException(ss.str());
 	}
 }
+
+} // syntax
+} // gotchangpdf

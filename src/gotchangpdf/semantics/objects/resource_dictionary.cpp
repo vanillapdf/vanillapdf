@@ -1,21 +1,20 @@
 #include "precompiled.h"
 #include "semantics/objects/resource_dictionary.h"
 
-namespace gotchangpdf
-{
-	namespace semantics
-	{
-		ResourceDictionary::ResourceDictionary(syntax::DictionaryObjectPtr obj) : HighLevelObject(obj) {}
+namespace gotchangpdf {
+namespace semantics {
 
-		bool ResourceDictionary::Font(OutputFontMapPtr& result) const
-		{
-			if (!_obj->Contains(constant::Name::Font)) {
-				return false;
-			}
+ResourceDictionary::ResourceDictionary(syntax::DictionaryObjectPtr obj) : HighLevelObject(obj) {}
 
-			auto dict = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Font);
-			result = FontMapPtr(dict);
-			return true;
-		}
+bool ResourceDictionary::Font(OutputFontMapPtr& result) const {
+	if (!_obj->Contains(constant::Name::Font)) {
+		return false;
 	}
+
+	auto dict = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Font);
+	result = FontMapPtr(dict);
+	return true;
 }
+
+} // semantics
+} // gotchangpdf

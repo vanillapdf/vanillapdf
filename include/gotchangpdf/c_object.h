@@ -25,8 +25,7 @@ extern "C"
 	/**
 	* \brief Available types of objects.
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \copybrief NullObjectHandle
 		* \see NullObjectHandle

@@ -6,47 +6,43 @@
 
 #include "syntax/parsers/character_map_data.h"
 
-namespace gotchangpdf
-{
-	namespace semantics
-	{
-		class CharacterMapBase : public HighLevelObject<syntax::StreamObjectPtr>
-		{
-		public:
-			enum Type
-			{
-				Embedded,
-				Unicode
-			};
+namespace gotchangpdf {
+namespace semantics {
 
-		public:
-			explicit CharacterMapBase(syntax::StreamObjectPtr root);
-			virtual Type GetType() const noexcept = 0;
+class CharacterMapBase : public HighLevelObject<syntax::StreamObjectPtr> {
+public:
+	enum Type {
+		Embedded,
+		Unicode
+	};
 
-			static CharacterMapBase* Create(syntax::StreamObjectPtr root, WeakReference<Document> doc);
-		};
+public:
+	explicit CharacterMapBase(syntax::StreamObjectPtr root);
+	virtual Type GetType() const noexcept = 0;
 
-		class EmbeddedCharacterMap : public CharacterMapBase
-		{
-		public:
-			explicit EmbeddedCharacterMap(syntax::StreamObjectPtr root);
-			virtual Type GetType() const noexcept override;
-		};
+	static CharacterMapBase* Create(syntax::StreamObjectPtr root, WeakReference<Document> doc);
+};
 
-		class UnicodeCharacterMap : public CharacterMapBase
-		{
-		public:
-			explicit UnicodeCharacterMap(syntax::StreamObjectPtr root);
-			virtual Type GetType() const noexcept override;
-			BufferPtr GetMappedValue(BufferPtr key) const;
+class EmbeddedCharacterMap : public CharacterMapBase {
+public:
+	explicit EmbeddedCharacterMap(syntax::StreamObjectPtr root);
+	virtual Type GetType() const noexcept override;
+};
 
-		private:
-			mutable syntax::CharacterMapData m_data;
-			mutable bool m_initialized = false;
+class UnicodeCharacterMap : public CharacterMapBase {
+public:
+	explicit UnicodeCharacterMap(syntax::StreamObjectPtr root);
+	virtual Type GetType() const noexcept override;
+	BufferPtr GetMappedValue(BufferPtr key) const;
 
-			void Initialize() const;
-		};
-	}
-}
+private:
+	mutable syntax::CharacterMapData m_data;
+	mutable bool m_initialized = false;
+
+	void Initialize() const;
+};
+
+} // semantics
+} // gotchangpdf
 
 #endif /* _CHARACTER_MAP_H */

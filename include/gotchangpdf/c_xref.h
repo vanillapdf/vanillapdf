@@ -88,8 +88,7 @@ extern "C"
 	/**
 	* \brief Required for conversion to derived types.
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \brief This type is not actually used.
 		*

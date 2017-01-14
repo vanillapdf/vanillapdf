@@ -7,73 +7,69 @@
 
 #include <list>
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		class XrefChain : public IUnknown
-		{
-		public:
-			using list_type = std::list<XrefBasePtr>;
+namespace gotchangpdf {
+namespace syntax {
 
-		public:
-			class Iterator : public IUnknown
-			{
-			public:
-				typedef list_type::const_iterator::value_type value_type;
-				typedef list_type::const_iterator::difference_type difference_type;
-				typedef list_type::const_iterator::pointer pointer;
-				typedef list_type::const_iterator::reference reference;
+class XrefChain : public IUnknown {
+public:
+	using list_type = std::list<XrefBasePtr>;
 
-			public:
-				Iterator() = default;
-				Iterator(list_type::const_iterator it) : _it(it) {}
+public:
+	class Iterator : public IUnknown {
+	public:
+		typedef list_type::const_iterator::value_type value_type;
+		typedef list_type::const_iterator::difference_type difference_type;
+		typedef list_type::const_iterator::pointer pointer;
+		typedef list_type::const_iterator::reference reference;
 
-				const Iterator& operator++()
-				{
-					++_it;
-					return *this;
-				}
+	public:
+		Iterator() = default;
+		Iterator(list_type::const_iterator it) : _it(it) {}
 
-				const Iterator operator++(int)
-				{
-					Iterator temp(_it);
-					++_it;
-					return temp;
-				}
+		const Iterator& operator++() {
+			++_it;
+			return *this;
+		}
 
-				list_type::value_type Value() const { return *_it; }
+		const Iterator operator++(int) {
+			Iterator temp(_it);
+			++_it;
+			return temp;
+		}
 
-				bool operator==(const Iterator& other) const { return _it == other._it; }
-				bool operator!=(const Iterator& other) const { return _it != other._it; }
+		list_type::value_type Value() const { return *_it; }
 
-			private:
-				list_type::const_iterator _it;
-			};
+		bool operator==(const Iterator& other) const { return _it == other._it; }
+		bool operator!=(const Iterator& other) const { return _it != other._it; }
 
-			using IteratorPtr = DeferredIterator<Iterator>;
+	private:
+		list_type::const_iterator _it;
+	};
 
-		public:
-			// stl compatibility
-			list_type::const_iterator begin() const { return _list.begin(); }
-			list_type::const_iterator end(void) const { return _list.end(); }
+	using IteratorPtr = DeferredIterator<Iterator>;
 
-			IteratorPtr Begin() const { return _list.begin(); }
-			IteratorPtr End(void) const { return _list.end(); }
-			void Append(list_type::value_type item) { _list.push_back(item); }
-			void Prepend(list_type::value_type item) { _list.push_front(item); }
-			void Reverse(void) { _list.reverse(); }
+public:
+	// stl compatibility
+	list_type::const_iterator begin() const { return _list.begin(); }
+	list_type::const_iterator end(void) const { return _list.end(); }
 
-			XrefUsedEntryBasePtr AllocateNewEntry();
-			XrefEntryBasePtr GetXrefEntry(types::big_uint objNumber, types::ushort genNumber);
-			bool Contains(types::big_uint objNumber, types::ushort genNumber) const;
+	IteratorPtr Begin() const { return _list.begin(); }
+	IteratorPtr End(void) const { return _list.end(); }
+	void Append(list_type::value_type item) { _list.push_back(item); }
+	void Prepend(list_type::value_type item) { _list.push_front(item); }
+	void Reverse(void) { _list.reverse(); }
 
-		private:
-			list_type _list;
+	XrefUsedEntryBasePtr AllocateNewEntry();
+	XrefEntryBasePtr GetXrefEntry(types::big_uint objNumber, types::ushort genNumber);
+	bool Contains(types::big_uint objNumber, types::ushort genNumber) const;
 
-			types::big_uint m_next_allocation = 0;
-		};
-	}
-}
+private:
+	list_type _list;
+
+	types::big_uint m_next_allocation = 0;
+};
+
+} // syntax
+} // gotchangpdf
 
 #endif /* _XREF_CHAIN_H */

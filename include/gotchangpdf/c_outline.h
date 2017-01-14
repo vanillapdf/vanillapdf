@@ -65,8 +65,7 @@ extern "C"
 	/**
 	* \brief Available types of outlines.
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \brief Object is type OutlineHandle
 		*/

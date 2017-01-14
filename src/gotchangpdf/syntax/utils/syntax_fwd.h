@@ -4,120 +4,125 @@
 #include "utils/utils_fwd.h"
 #include "utils/deferred.h"
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		// Exceptions
-		class FileDisposedException;
-		class InvalidObjectTypeException;
+namespace gotchangpdf {
+namespace syntax {
 
-		// Filters
-		class FilterBase; using FilterBasePtr = Deferred<FilterBase>;		
-		class ASCII85DecodeFilter; using ASCII85DecodeFilterPtr = Deferred<ASCII85DecodeFilter>;
-		class ASCIIHexDecodeFilter; using ASCIIHexDecodeFilterPtr = Deferred<ASCIIHexDecodeFilter>;
-		class FlateDecodeFilter; using FlateDecodeFilterPtr = Deferred<FlateDecodeFilter>;
-		class DCTDecodeFilter; using DCTDecodeFilterPtr = Deferred<DCTDecodeFilter>;
+template <typename T>
+class OutputPointer;
 
-		// Files
-		class File;
-		class FileWriter; using FileWriterPtr = Deferred<FileWriter>;
-		class FileHolder; using FileHolderPtr = Deferred<FileHolder>;
-		class Header;
+class IEncryptionKey;
 
-		class XrefBase; using XrefBasePtr = Deferred<XrefBase>;
-		class XrefSubsection;
-		class XrefTable;
-		class XrefStream;
-		class XrefChain;
+	// Exceptions
+class FileDisposedException;
+class InvalidObjectTypeException;
 
-		class XrefEntryBase;
-		class XrefUsedEntryBase;
-		class XrefNullEntry;
-		class XrefUsedEntry;
-		class XrefFreeEntry;
-		class XrefCompressedEntry;
+// Filters
+class FilterBase; using FilterBasePtr = Deferred<FilterBase>;
+class ASCII85DecodeFilter; using ASCII85DecodeFilterPtr = Deferred<ASCII85DecodeFilter>;
+class ASCIIHexDecodeFilter; using ASCIIHexDecodeFilterPtr = Deferred<ASCIIHexDecodeFilter>;
+class FlateDecodeFilter; using FlateDecodeFilterPtr = Deferred<FlateDecodeFilter>;
+class DCTDecodeFilter; using DCTDecodeFilterPtr = Deferred<DCTDecodeFilter>;
 
-		using HeaderPtr = Deferred<Header>;
+// Files
+class File;
+class FileWriter; using FileWriterPtr = Deferred<FileWriter>;
+class FileHolder; using FileHolderPtr = Deferred<FileHolder>;
+class Header;
 
-		using XrefTablePtr = Deferred<XrefTable>;
-		using XrefStreamPtr = Deferred<XrefStream>;
+class XrefBase; using XrefBasePtr = Deferred<XrefBase>;
+class XrefSubsection;
+class XrefTable;
+class XrefStream;
+class XrefChain;
 
-		using XrefChainPtr = Deferred<XrefChain>;
-		using XrefEntryBasePtr = Deferred<XrefEntryBase>;
-		using XrefUsedEntryBasePtr = Deferred<XrefUsedEntryBase>;
-		using XrefNullEntryPtr = Deferred<XrefNullEntry>;
-		using XrefFreeEntryPtr = Deferred<XrefFreeEntry>;
-		using XrefUsedEntryPtr = Deferred<XrefUsedEntry>;
-		using XrefCompressedEntryPtr = Deferred<XrefCompressedEntry>;
+class XrefEntryBase;
+class XrefUsedEntryBase;
+class XrefNullEntry;
+class XrefUsedEntry;
+class XrefFreeEntry;
+class XrefCompressedEntry;
 
-		class Token; using TokenPtr = Deferred<Token>;
-		class TokenDictionaryBase;
-		class ParserTokenDictionary;
-		class ReverseParserTokenDictionary;
-		class ContentStreamTokenDictionary;
+using HeaderPtr = Deferred<Header>;
 
-		// Streams
-		class BaseStream;
-		class Stream;
-		class ReverseStream;
+using XrefTablePtr = Deferred<XrefTable>;
+using XrefStreamPtr = Deferred<XrefStream>;
 
-		// Objects
-		class ObjectUtils;
-		class Object;
-		class ContainableObject;
+using XrefChainPtr = Deferred<XrefChain>;
+using XrefEntryBasePtr = Deferred<XrefEntryBase>;
+using XrefUsedEntryBasePtr = Deferred<XrefUsedEntryBase>;
+using XrefNullEntryPtr = Deferred<XrefNullEntry>;
+using XrefFreeEntryPtr = Deferred<XrefFreeEntry>;
+using XrefUsedEntryPtr = Deferred<XrefUsedEntry>;
+using XrefCompressedEntryPtr = Deferred<XrefCompressedEntry>;
 
-		// Numeric objects
-		class NumericObject;
-		class NumericObjectBackend; using NumericObjectBackendPtr = Deferred<NumericObjectBackend>;
+class Token; using TokenPtr = Deferred<Token>;
+class TokenDictionaryBase;
+class ParserTokenDictionary;
+class ReverseParserTokenDictionary;
+class ContentStreamTokenDictionary;
 
-		template <typename KeyT, typename ValueT, typename MapT /*= std::map<KeyT, ValueT>*/>
-		class DictionaryObjectBase;
+// Streams
+class BaseStream;
+class Stream;
+class ReverseStream;
 
-		template <typename T>
-		class ArrayObject;
+// Objects
+class ObjectUtils;
+class Object;
+class ContainableObject;
 
-		class MixedArrayObject;
-		class BooleanObject;
-		class DictionaryObject;
-		class IndirectObjectReference;
-		class IntegerObject;
-		class NameObject;
-		class NullObject;
-		class NumericObject;
-		class Object;
-		class RealObject;
-		class StreamObject;
-		class StringObjectBase;
-		class HexadecimalStringObject;
-		class LiteralStringObject;
+// Numeric objects
+class NumericObject;
+class NumericObjectBackend; using NumericObjectBackendPtr = Deferred<NumericObjectBackend>;
 
-		template <typename T>
-		using ArrayObjectPtr = Deferred<ArrayObject<T>>;
+template <typename KeyT, typename ValueT, typename MapT /*= std::map<KeyT, ValueT>*/>
+class DictionaryObjectBase;
 
-		template <typename KeyT, typename ValueT, typename MapT /*= std::map<KeyT, ValueT>*/>
-		using DictionaryObjectBasePtr = Deferred<DictionaryObjectBase<KeyT, ValueT, MapT>>;
+template <typename T>
+class ArrayObject;
 
-		using DictionaryObjectPtr = Deferred<DictionaryObject>;
-		using MixedArrayObjectPtr = Deferred<MixedArrayObject>;
+class MixedArrayObject;
+class BooleanObject;
+class DictionaryObject;
+class IndirectObjectReference;
+class IntegerObject;
+class NameObject;
+class NullObject;
+class NumericObject;
+class Object;
+class RealObject;
+class StreamObject;
+class StringObjectBase;
+class HexadecimalStringObject;
+class LiteralStringObject;
 
-		class ObjectPtr;
-		class StringObjectPtr; using OutputStringObjectPtr = OutputPointer<StringObjectPtr>;
-		//using ObjectPtr = Deferred<Object>;
-		using ContainableObjectPtr = Deferred<ContainableObject>; using OutputContainableObjectPtr = OutputPointer<ContainableObjectPtr>;
-		using NameObjectPtr = Deferred<NameObject>; using OutputNameObjectPtr = OutputPointer<NameObjectPtr>;
-		using BooleanObjectPtr = Deferred<BooleanObject>;
-		using IndirectObjectReferencePtr = Deferred<IndirectObjectReference>;
-		using IntegerObjectPtr = Deferred<IntegerObject>;
-		using NullObjectPtr = Deferred<NullObject>;
-		using RealObjectPtr = Deferred<RealObject>;
-		using StreamObjectPtr = Deferred<StreamObject>;
-		using LiteralStringObjectPtr = Deferred<LiteralStringObject>;
-		using HexadecimalStringObjectPtr = Deferred<HexadecimalStringObject>;
+template <typename T>
+using ArrayObjectPtr = Deferred<ArrayObject<T>>;
 
-		// Parsers
-		struct ObjectStreamEntry;
-	}
-}
+template <typename KeyT, typename ValueT, typename MapT /*= std::map<KeyT, ValueT>*/>
+using DictionaryObjectBasePtr = Deferred<DictionaryObjectBase<KeyT, ValueT, MapT>>;
+
+using DictionaryObjectPtr = Deferred<DictionaryObject>;
+using MixedArrayObjectPtr = Deferred<MixedArrayObject>;
+
+class ObjectPtr;
+class StringObjectPtr; using OutputStringObjectPtr = OutputPointer<StringObjectPtr>;
+//using ObjectPtr = Deferred<Object>;
+using ContainableObjectPtr = Deferred<ContainableObject>; using OutputContainableObjectPtr = OutputPointer<ContainableObjectPtr>;
+using NameObjectPtr = Deferred<NameObject>; using OutputNameObjectPtr = OutputPointer<NameObjectPtr>;
+using BooleanObjectPtr = Deferred<BooleanObject>;
+using IndirectObjectReferencePtr = Deferred<IndirectObjectReference>;
+using IntegerObjectPtr = Deferred<IntegerObject>;
+using NullObjectPtr = Deferred<NullObject>;
+using RealObjectPtr = Deferred<RealObject>;
+using StreamObjectPtr = Deferred<StreamObject>;
+using LiteralStringObjectPtr = Deferred<LiteralStringObject>;
+using HexadecimalStringObjectPtr = Deferred<HexadecimalStringObject>;
+
+// Parsers
+struct ObjectStreamEntry;
+
+} // syntax
+} // gotchangpdf
 
 #endif /* _SYNTAX_FWD_H */

@@ -6,19 +6,18 @@
 
 #include <vector>
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		struct ObjectStreamEntry
-		{
-			types::big_uint object_number;
-			types::stream_offset offset;
-			ObjectPtr object;
-		};
+namespace gotchangpdf {
+namespace syntax {
 
-		using ObjectStreamEntries = std::vector<ObjectStreamEntry>;
-	}
-}
+struct ObjectStreamEntry {
+	types::big_uint object_number;
+	types::stream_offset offset;
+	ObjectPtr object;
+};
+
+using ObjectStreamEntries = std::vector<ObjectStreamEntry>;
+
+} // syntax
+} // gotchangpdf
 
 #endif /* _OBJECT_STREAM_ENTRY_H */

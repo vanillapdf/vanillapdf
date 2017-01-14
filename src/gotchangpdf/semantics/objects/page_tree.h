@@ -7,34 +7,33 @@
 #include "semantics/objects/page_tree_node.h"
 #include "semantics/objects/page_object.h"
 
-namespace gotchangpdf
-{
-	namespace semantics
-	{
-		class PageTree : public HighLevelObject<syntax::DictionaryObjectPtr>
-		{
-		public:
-			//PageTree();
-			explicit PageTree(syntax::DictionaryObjectPtr root);
+namespace gotchangpdf {
+namespace semantics {
 
-			types::uinteger PageCount(void) const;
-			PageObjectPtr Page(types::integer number) const { return PageInternal(number); }
-			PageObjectPtr operator[](types::integer number) const { return PageInternal(number); }
+class PageTree : public HighLevelObject<syntax::DictionaryObjectPtr> {
+public:
+	//PageTree();
+	explicit PageTree(syntax::DictionaryObjectPtr root);
 
-			void Insert(PageObjectPtr object, types::integer index);
-			void Append(PageObjectPtr object);
-			void Remove(types::integer index);
+	types::uinteger PageCount(void) const;
+	PageObjectPtr Page(types::integer number) const { return PageInternal(number); }
+	PageObjectPtr operator[](types::integer number) const { return PageInternal(number); }
 
-		private:
-			PageObjectPtr PageInternal(types::integer number) const;
-			bool HasTreeChilds(PageTreeNodePtr node) const;
-			void UpdateKidsCount(size_t new_size);
+	void Insert(PageObjectPtr object, types::integer index);
+	void Append(PageObjectPtr object);
+	void Remove(types::integer index);
 
-		private:
-			// Cache
-			mutable std::vector<OutputPageObjectPtr> m_pages;
-		};
-	}
-}
+private:
+	PageObjectPtr PageInternal(types::integer number) const;
+	bool HasTreeChilds(PageTreeNodePtr node) const;
+	void UpdateKidsCount(size_t new_size);
+
+private:
+	// Cache
+	mutable std::vector<OutputPageObjectPtr> m_pages;
+};
+
+} // semantics
+} // gotchangpdf
 
 #endif /* _PAGE_TREE_H */

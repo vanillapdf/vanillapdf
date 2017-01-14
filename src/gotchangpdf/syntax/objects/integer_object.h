@@ -6,90 +6,81 @@
 
 #include "utils/util.h"
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		class IntegerObject : public NumericObject, public IModifyObserver
-		{
-		public:
-			IntegerObject();
-			explicit IntegerObject(types::native_int value);
-			explicit IntegerObject(types::native_uint value);
-			explicit IntegerObject(types::big_int value);
-			explicit IntegerObject(types::big_uint value);
-			explicit IntegerObject(const NumericObject& value);
-			explicit IntegerObject(NumericObjectBackendPtr value);
+namespace gotchangpdf {
+namespace syntax {
 
-			IntegerObject& operator= (types::native_int value);
-			IntegerObject& operator= (types::native_uint value);
-			IntegerObject& operator= (types::big_int value);
-			IntegerObject& operator= (types::big_uint value);
+class IntegerObject : public NumericObject, public IModifyObserver {
+public:
+	IntegerObject();
+	explicit IntegerObject(types::native_int value);
+	explicit IntegerObject(types::native_uint value);
+	explicit IntegerObject(types::big_int value);
+	explicit IntegerObject(types::big_uint value);
+	explicit IntegerObject(const NumericObject& value);
+	explicit IntegerObject(NumericObjectBackendPtr value);
 
-			template <typename T>
-			T SafeConvert(void) const { return ValueConvertUtils::SafeConvert<T>(m_value->GetIntegerValue()); }
+	IntegerObject& operator= (types::native_int value);
+	IntegerObject& operator= (types::native_uint value);
+	IntegerObject& operator= (types::big_int value);
+	IntegerObject& operator= (types::big_uint value);
 
-			operator types::big_int() const { return m_value->GetIntegerValue(); }
-			types::big_int GetIntegerValue(void) const { return m_value->GetIntegerValue(); }
-			types::big_uint GetUnsignedIntegerValue(void) const { return m_value->GetUnsignedIntegerValue(); }
-			types::real GetRealValue(void) const { return m_value->GetRealValue(); }
+	template <typename T>
+	T SafeConvert(void) const { return ValueConvertUtils::SafeConvert<T>(m_value->GetIntegerValue()); }
 
-			void SetValue(types::native_int value) { m_value->SetIntegerValue(value); OnChanged(); }
-			void SetValue(types::native_uint value) { m_value->SetUnsignedIntegerValue(value); OnChanged(); }
-			void SetValue(types::big_int value) { m_value->SetIntegerValue(value); OnChanged(); }
-			void SetValue(types::big_uint value) { m_value->SetUnsignedIntegerValue(value); OnChanged(); }
-			void SetValue(types::real value) { m_value->SetRealValue(value); OnChanged(); }
+	operator types::big_int() const { return m_value->GetIntegerValue(); }
+	types::big_int GetIntegerValue(void) const { return m_value->GetIntegerValue(); }
+	types::big_uint GetUnsignedIntegerValue(void) const { return m_value->GetUnsignedIntegerValue(); }
+	types::real GetRealValue(void) const { return m_value->GetRealValue(); }
 
-			virtual Object::Type GetType(void) const noexcept override { return Object::Type::Integer; }
+	void SetValue(types::native_int value) { m_value->SetIntegerValue(value); OnChanged(); }
+	void SetValue(types::native_uint value) { m_value->SetUnsignedIntegerValue(value); OnChanged(); }
+	void SetValue(types::big_int value) { m_value->SetIntegerValue(value); OnChanged(); }
+	void SetValue(types::big_uint value) { m_value->SetUnsignedIntegerValue(value); OnChanged(); }
+	void SetValue(types::real value) { m_value->SetRealValue(value); OnChanged(); }
 
-			bool Equals(const IntegerObject& other) const noexcept { return m_value == other.m_value; }
-			virtual std::string ToPdf(void) const override { return m_value->ToString(); }
+	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Integer; }
 
-			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+	bool Equals(const IntegerObject& other) const noexcept { return m_value == other.m_value; }
+	virtual std::string ToPdf(void) const override { return m_value->ToString(); }
 
-			virtual IntegerObject* Clone(void) const override { return new IntegerObject(m_value->Clone()); }
-		};
-	}
+	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
-	inline bool operator==(const syntax::IntegerObject left, types::native_int right)
-	{
-		return left.GetIntegerValue() == right;
-	}
+	virtual IntegerObject* Clone(void) const override { return new IntegerObject(m_value->Clone()); }
+};
+} // syntax
 
-	inline bool operator!=(const syntax::IntegerObject& left, types::native_int right)
-	{
-		return left.GetIntegerValue() != right;
-	}
-
-	inline bool operator<(const syntax::IntegerObject& left, types::native_int right)
-	{
-		return left.GetIntegerValue() < right;
-	}
-
-	inline bool operator>(const syntax::IntegerObject& left, types::native_int right)
-	{
-		return left.GetIntegerValue() > right;
-	}
-
-	inline bool operator==(types::native_int left, const syntax::IntegerObject& right)
-	{
-		return left == right.GetIntegerValue();
-	}
-
-	inline bool operator!=(types::native_int left, const syntax::IntegerObject& right)
-	{
-		return left != right.GetIntegerValue();
-	}
-
-	inline bool operator<(types::native_int left, const syntax::IntegerObject& right)
-	{
-		return left < right.GetIntegerValue();
-	}
-
-	inline bool operator>(types::native_int left, const syntax::IntegerObject& right)
-	{
-		return left > right.GetIntegerValue();
-	}
+inline bool operator==(const syntax::IntegerObject left, types::native_int right) {
+	return left.GetIntegerValue() == right;
 }
+
+inline bool operator!=(const syntax::IntegerObject& left, types::native_int right) {
+	return left.GetIntegerValue() != right;
+}
+
+inline bool operator<(const syntax::IntegerObject& left, types::native_int right) {
+	return left.GetIntegerValue() < right;
+}
+
+inline bool operator>(const syntax::IntegerObject& left, types::native_int right) {
+	return left.GetIntegerValue() > right;
+}
+
+inline bool operator==(types::native_int left, const syntax::IntegerObject& right) {
+	return left == right.GetIntegerValue();
+}
+
+inline bool operator!=(types::native_int left, const syntax::IntegerObject& right) {
+	return left != right.GetIntegerValue();
+}
+
+inline bool operator<(types::native_int left, const syntax::IntegerObject& right) {
+	return left < right.GetIntegerValue();
+}
+
+inline bool operator>(types::native_int left, const syntax::IntegerObject& right) {
+	return left > right.GetIntegerValue();
+}
+
+} // gotchangpdf
 
 #endif /* _INTEGER_OBJECT_H */

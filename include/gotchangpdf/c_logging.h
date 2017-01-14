@@ -36,8 +36,7 @@ extern "C"
 	/**
 	* \brief Available severity settings
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \brief Most verbose setting includes all available informations
 		*/

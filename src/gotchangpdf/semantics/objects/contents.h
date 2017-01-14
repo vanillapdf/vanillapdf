@@ -5,32 +5,31 @@
 #include "semantics/objects/content_stream.h"
 #include "contents/content_stream_instruction_base.h"
 
-namespace gotchangpdf
-{
-	namespace semantics
-	{
-		class Contents : public HighLevelObject<syntax::ObjectPtr>, public IModifyObserver
-		{
-		public:
-			Contents() = default;
-			explicit Contents(syntax::StreamObjectPtr obj);
-			explicit Contents(syntax::ArrayObjectPtr<syntax::IndirectObjectReferencePtr> obj);
-			~Contents();
+namespace gotchangpdf {
+namespace semantics {
 
-			contents::BaseInstructionCollectionPtr Instructions(void) const;
-			types::uinteger GetInstructionsSize(void) const;
-			contents::InstructionBasePtr GetInstructionAt(types::uinteger at) const;
+class Contents : public HighLevelObject<syntax::ObjectPtr>, public IModifyObserver {
+public:
+	Contents() = default;
+	explicit Contents(syntax::StreamObjectPtr obj);
+	explicit Contents(syntax::ArrayObjectPtr<syntax::IndirectObjectReferencePtr> obj);
+	~Contents();
 
-			virtual void ObserveeChanged(IModifyObservable*) override { m_dirty = true; }
-			bool IsDirty() const noexcept { return m_dirty; }
-			void SetDirty(bool dirty) noexcept { m_dirty = dirty; }
+	contents::BaseInstructionCollectionPtr Instructions(void) const;
+	types::uinteger GetInstructionsSize(void) const;
+	contents::InstructionBasePtr GetInstructionAt(types::uinteger at) const;
 
-		private:
-			mutable contents::BaseInstructionCollectionPtr m_instructions;
+	virtual void ObserveeChanged(IModifyObservable*) override { m_dirty = true; }
+	bool IsDirty() const noexcept { return m_dirty; }
+	void SetDirty(bool dirty) noexcept { m_dirty = dirty; }
 
-			bool m_dirty = false;
-		};
-	}
-}
+private:
+	mutable contents::BaseInstructionCollectionPtr m_instructions;
+
+	bool m_dirty = false;
+};
+
+} // semantics
+} // gotchangpdf
 
 #endif /* _CONTENTS_H */

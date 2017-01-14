@@ -6,26 +6,25 @@
 
 #include <istream>
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		class BaseStream
-		{
-		public:
-			typedef std::istream CharacterSource;
-			typedef std::streambuf CharacterSourceBuffer;
+namespace gotchangpdf {
+namespace syntax {
 
-		public:
-			virtual void read(Buffer& result, size_t len) = 0;
-			virtual BufferPtr read(size_t len) = 0;
-			virtual BufferPtr readline(void) = 0;
-			virtual types::stream_size GetPosition() = 0;
-			virtual void SetPosition(types::stream_size pos) = 0;
+class BaseStream {
+public:
+	typedef std::istream CharacterSource;
+	typedef std::streambuf CharacterSourceBuffer;
 
-			virtual ~BaseStream() {};
-		};
-	}
-}
+public:
+	virtual void read(Buffer& result, size_t len) = 0;
+	virtual BufferPtr read(size_t len) = 0;
+	virtual BufferPtr readline(void) = 0;
+	virtual types::stream_size GetPosition() = 0;
+	virtual void SetPosition(types::stream_size pos) = 0;
+
+	virtual ~BaseStream() {};
+};
+
+} // syntax
+} // gotchangpdf
 
 #endif /* _RAW_BASE_STREAM_H */

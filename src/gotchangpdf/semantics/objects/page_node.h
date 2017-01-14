@@ -4,24 +4,22 @@
 #include "semantics/utils/semantics_fwd.h"
 #include "semantics/objects/high_level_object.h"
 
-namespace gotchangpdf
-{
-	namespace semantics
-	{
-		class PageNodeBase : public HighLevelObject<syntax::DictionaryObjectPtr>
-		{
-		public:
-			enum class NodeType
-			{
-				Tree,
-				Object
-			};
+namespace gotchangpdf {
+namespace semantics {
 
-			explicit PageNodeBase(syntax::DictionaryObjectPtr obj) : HighLevelObject(obj) {}
+class PageNodeBase : public HighLevelObject<syntax::DictionaryObjectPtr> {
+public:
+	enum class NodeType {
+		Tree,
+		Object
+	};
 
-			virtual NodeType GetNodeType(void) const noexcept = 0;
-		};
-	}
-}
+	explicit PageNodeBase(syntax::DictionaryObjectPtr obj) : HighLevelObject(obj) {}
+
+	virtual NodeType GetNodeType(void) const noexcept = 0;
+};
+
+} // semantics
+} // gotchangpdf
 
 #endif /* _PAGE_NODE_H */

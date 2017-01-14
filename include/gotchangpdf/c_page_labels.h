@@ -38,8 +38,7 @@ extern "C"
 	/**
 	* \brief Numbering style types.
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \brief Decimal arabic numerals.
 		*/

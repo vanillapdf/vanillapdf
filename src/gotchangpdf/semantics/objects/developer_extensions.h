@@ -5,75 +5,69 @@
 #include "semantics/objects/high_level_object.h"
 #include "utils/pdf_version.h"
 
-namespace gotchangpdf
-{
-	namespace semantics
-	{
-		class DeveloperExtension : public HighLevelObject<syntax::DictionaryObjectPtr>
-		{
-		public:
-			DeveloperExtension(syntax::DictionaryObjectPtr root);
-			Version BaseVersion(void) const;
-			syntax::IntegerObjectPtr ExtensionLevel(void) const;
-		};
+namespace gotchangpdf {
+namespace semantics {
 
-		class DeveloperExtensions : public HighLevelObject<syntax::DictionaryObjectPtr>
-		{
-		public:
-			class Iterator : public IUnknown
-			{
-			public:
-				typedef syntax::DictionaryObject::const_iterator IteratorT;
+class DeveloperExtension : public HighLevelObject<syntax::DictionaryObjectPtr> {
+public:
+	DeveloperExtension(syntax::DictionaryObjectPtr root);
+	Version BaseVersion(void) const;
+	syntax::IntegerObjectPtr ExtensionLevel(void) const;
+};
 
-				typedef IteratorT::value_type value_type;
-				typedef IteratorT::difference_type difference_type;
-				typedef IteratorT::pointer pointer;
-				typedef IteratorT::reference reference;
-				typedef IteratorT::iterator_category iterator_category;
+class DeveloperExtensions : public HighLevelObject<syntax::DictionaryObjectPtr> {
+public:
+	class Iterator : public IUnknown {
+	public:
+		typedef syntax::DictionaryObject::const_iterator IteratorT;
 
-			public:
-				Iterator() = default;
-				Iterator(IteratorT it) : _it(it) {}
+		typedef IteratorT::value_type value_type;
+		typedef IteratorT::difference_type difference_type;
+		typedef IteratorT::pointer pointer;
+		typedef IteratorT::reference reference;
+		typedef IteratorT::iterator_category iterator_category;
 
-				const Iterator& operator++()
-				{
-					++_it;
-					return *this;
-				}
+	public:
+		Iterator() = default;
+		Iterator(IteratorT it) : _it(it) {}
 
-				const Iterator operator++(int)
-				{
-					Iterator temp(_it);
-					++_it;
-					return temp;
-				}
+		const Iterator& operator++() {
+			++_it;
+			return *this;
+		}
 
-				syntax::NameObjectPtr First() const { return _it->first; }
-				DeveloperExtensionPtr Second() const;
-				IteratorT Value() const { return _it; }
+		const Iterator operator++(int) {
+			Iterator temp(_it);
+			++_it;
+			return temp;
+		}
 
-				bool operator==(const Iterator& other) const
-				{
-					return _it == other._it;
-				}
+		syntax::NameObjectPtr First() const { return _it->first; }
+		DeveloperExtensionPtr Second() const;
+		IteratorT Value() const { return _it; }
 
-			private:
-				IteratorT _it;
-			};
+		bool operator==(const Iterator& other) const {
+			return _it == other._it;
+		}
 
-			using IteratorPtr = DeferredIterator<Iterator>;
+	private:
+		IteratorT _it;
+	};
 
-		public:
-			explicit DeveloperExtensions(syntax::DictionaryObjectPtr root);
+	using IteratorPtr = DeferredIterator<Iterator>;
 
-			bool TryFind(const syntax::NameObjectPtr& name, OutputDeveloperExtensionPtr& result) const;
-			bool Contains(const syntax::NameObjectPtr& name) const;
-			void Insert(const syntax::NameObjectPtr& name, const DeveloperExtension& value);
-			bool Remove(const syntax::NameObjectPtr& name);
-			IteratorPtr Begin(void) const;
-			IteratorPtr End(void) const;
-		};
-	}
-}
+public:
+	explicit DeveloperExtensions(syntax::DictionaryObjectPtr root);
+
+	bool TryFind(const syntax::NameObjectPtr& name, OutputDeveloperExtensionPtr& result) const;
+	bool Contains(const syntax::NameObjectPtr& name) const;
+	void Insert(const syntax::NameObjectPtr& name, const DeveloperExtension& value);
+	bool Remove(const syntax::NameObjectPtr& name);
+	IteratorPtr Begin(void) const;
+	IteratorPtr End(void) const;
+};
+
+} // semantics
+} // gotchangpdf
 
 #endif /* _DEVELOPER_EXTENSIONS_H */

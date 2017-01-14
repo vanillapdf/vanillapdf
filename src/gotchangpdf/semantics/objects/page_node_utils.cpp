@@ -8,31 +8,27 @@
 #include "semantics/objects/page_object.h"
 #include "semantics/utils/semantic_exceptions.h"
 
-namespace gotchangpdf
-{
-	namespace semantics
-	{
-		using namespace constant;
+namespace gotchangpdf {
+namespace semantics {
 
-		PageNodeBasePtr CreatePageNode(syntax::DictionaryObjectPtr obj)
-		{
-			if (!obj->Contains(Name::Type))
-				throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageNodeBase>(obj);
+PageNodeBasePtr CreatePageNode(syntax::DictionaryObjectPtr obj) {
+	if (!obj->Contains(constant::Name::Type))
+		throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageNodeBase>(obj);
 
-			auto type = obj->FindAs<syntax::NameObjectPtr>(Name::Type);
+	auto type = obj->FindAs<syntax::NameObjectPtr>(constant::Name::Type);
 
-			if (type == Name::Pages) {
-				auto result = PageTreeNodePtr(obj);
-				return result;
-			}
-
-			if (type == Name::Page) {
-				auto result = PageObjectPtr(obj);
-				return result;
-			}
-
-			throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageNodeBase>(obj);
-		}
+	if (type == constant::Name::Pages) {
+		auto result = PageTreeNodePtr(obj);
+		return result;
 	}
+
+	if (type == constant::Name::Page) {
+		auto result = PageObjectPtr(obj);
+		return result;
+	}
+
+	throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageNodeBase>(obj);
 }
 
+} // semantics
+} // gotchangpdf

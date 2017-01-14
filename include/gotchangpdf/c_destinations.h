@@ -43,8 +43,7 @@ extern "C"
 	/**
 	* \brief Available destination types.
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \brief
 		* Display the page designated by page, with the coordinates

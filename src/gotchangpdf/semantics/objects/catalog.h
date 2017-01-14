@@ -13,57 +13,53 @@
 
 #include "utils/pdf_version.h"
 
-namespace gotchangpdf
-{
-	namespace semantics
-	{
-		class Catalog : public HighLevelObject<syntax::DictionaryObjectPtr>
-		{
-		public:
-			enum class PageLayoutType
-			{
-				SinglePage = 0,
-				OneColumn,
-				TwoColumnLeft,
-				TwoColumnRight,
-				TwoPageLeft,
-				TwoPageRight
-			};
+namespace gotchangpdf {
+namespace semantics {
 
-			enum class PageModeType
-			{
-				UseNone = 0,
-				UseOutlines,
-				UseThumbs,
-				FullScreen,
-				UseOC,
-				UseAttachments
-			};
+class Catalog : public HighLevelObject<syntax::DictionaryObjectPtr> {
+public:
+	enum class PageLayoutType {
+		SinglePage = 0,
+		OneColumn,
+		TwoColumnLeft,
+		TwoColumnRight,
+		TwoPageLeft,
+		TwoPageRight
+	};
 
-		public:
-			explicit Catalog(syntax::DictionaryObjectPtr root);
+	enum class PageModeType {
+		UseNone = 0,
+		UseOutlines,
+		UseThumbs,
+		FullScreen,
+		UseOC,
+		UseAttachments
+	};
 
-			// optional entries
-			bool Version(Version& result) const;
-			bool Extensions(OutputDeveloperExtensionsPtr& result) const;
-			bool PageLabels(OutputPageLabelsPtr& result) const;
-			bool PageLayout(PageLayoutType& result) const;
-			bool ViewerPreferences(OutputViewerPreferencesPtr& result) const;
-			bool PageMode(PageModeType& result) const;
-			bool Outlines(OutputOutlinePtr& result) const;
-			bool NeedsRendering(syntax::BooleanObjectPtr& result) const;
-			bool Destinations(OutputNamedDestinationsPtr& result) const;
-			bool Names(OutputNameDictionaryPtr& result) const;
+public:
+	explicit Catalog(syntax::DictionaryObjectPtr root);
 
-			// required
-			PageTreePtr Pages(void) const;
+	// optional entries
+	bool Version(Version& result) const;
+	bool Extensions(OutputDeveloperExtensionsPtr& result) const;
+	bool PageLabels(OutputPageLabelsPtr& result) const;
+	bool PageLayout(PageLayoutType& result) const;
+	bool ViewerPreferences(OutputViewerPreferencesPtr& result) const;
+	bool PageMode(PageModeType& result) const;
+	bool Outlines(OutputOutlinePtr& result) const;
+	bool NeedsRendering(syntax::BooleanObjectPtr& result) const;
+	bool Destinations(OutputNamedDestinationsPtr& result) const;
+	bool Names(OutputNameDictionaryPtr& result) const;
 
-		private:
-			// Cache
-			mutable OutputPageTreePtr m_pages;
-		};
+	// required
+	PageTreePtr Pages(void) const;
 
-	}
-}
+private:
+	// Cache
+	mutable OutputPageTreePtr m_pages;
+};
+
+} // semantics
+} // gotchangpdf
 
 #endif /* _CATALOG_H */

@@ -4,81 +4,76 @@
 
 #include "utils/character.h"
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		std::string NameObject::GetHexadecimalNotation(char ch) const
-		{
-			std::stringstream ss;
-			int converted = static_cast<int>(ch);
-			ss << '#';
-			ss << std::hex << converted;
+namespace gotchangpdf {
+namespace syntax {
 
-			return ss.str();
-		}
+std::string NameObject::GetHexadecimalNotation(char ch) const {
+	std::stringstream ss;
+	int converted = static_cast<int>(ch);
+	ss << '#';
+	ss << std::hex << converted;
 
-		std::string NameObject::ToString(void) const
-		{
-			std::stringstream ss;
-			auto size = _value->size();
-			for (decltype(size) i = 0; i < size; ++i) {
-				auto current = _value[i];
-
-				if ('#' == current) {
-					ss << GetHexadecimalNotation(current);
-					continue;
-				}
-
-				if (!IsRegular(current)) {
-					ss << GetHexadecimalNotation(current);
-					continue;
-				}
-
-				if (current < '!' || current > '~') {
-					/* Regular characters that are outside the range
-					EXCLAMATION MARK(21h) (!) to TILDE (7Eh) (~)
-					should be written using the hexadecimal notation */
-
-					ss << GetHexadecimalNotation(current);
-					continue;
-				}
-
-				ss << current;
-			}
-
-			return ss.str();
-		}
-	}
+	return ss.str();
 }
 
-namespace std
-{
-	size_t hash<gotchangpdf::syntax::NameObject>::operator()(const gotchangpdf::syntax::NameObject& name) const
-	{
-		size_t result = 0;
-		for (auto & val : *name.GetValue())
-		{
-			std::hash<char> hash_fn;
-			result ^= hash_fn(val);
+std::string NameObject::ToString(void) const {
+	std::stringstream ss;
+	auto size = _value->size();
+	for (decltype(size) i = 0; i < size; ++i) {
+		auto current = _value[i];
+
+		if ('#' == current) {
+			ss << GetHexadecimalNotation(current);
+			continue;
 		}
 
-		return result;
+		if (!IsRegular(current)) {
+			ss << GetHexadecimalNotation(current);
+			continue;
+		}
+
+		if (current < '!' || current > '~') {
+			/* Regular characters that are outside the range
+			EXCLAMATION MARK(21h) (!) to TILDE (7Eh) (~)
+			should be written using the hexadecimal notation */
+
+			ss << GetHexadecimalNotation(current);
+			continue;
+		}
+
+		ss << current;
 	}
+
+	return ss.str();
 }
 
-namespace gotchangpdf
-{
-	namespace constant
-	{
-		namespace Name
-		{
-			const syntax::NameObjectPtr AdbePkcs7s3(BufferPtr("adbe.pkcs7.s3", sizeof("adbe.pkcs7.s3") - 1));
-			const syntax::NameObjectPtr AdbePkcs7s4(BufferPtr("adbe.pkcs7.s4", sizeof("adbe.pkcs7.s4") - 1));
-			const syntax::NameObjectPtr AdbePkcs7s5(BufferPtr("adbe.pkcs7.s5", sizeof("adbe.pkcs7.s5") - 1));
-		}
+} // syntax
+} // gotchangpdf
+
+namespace std {
+size_t hash<gotchangpdf::syntax::NameObject>::operator()(const gotchangpdf::syntax::NameObject& name) const {
+	size_t result = 0;
+	for (auto & val : *name.GetValue()) {
+		std::hash<char> hash_fn;
+		result ^= hash_fn(val);
 	}
+
+	return result;
 }
+
+} // std
+
+namespace gotchangpdf {
+namespace constant {
+namespace Name {
+
+const syntax::NameObjectPtr AdbePkcs7s3(BufferPtr("adbe.pkcs7.s3", sizeof("adbe.pkcs7.s3") - 1));
+const syntax::NameObjectPtr AdbePkcs7s4(BufferPtr("adbe.pkcs7.s4", sizeof("adbe.pkcs7.s4") - 1));
+const syntax::NameObjectPtr AdbePkcs7s5(BufferPtr("adbe.pkcs7.s5", sizeof("adbe.pkcs7.s5") - 1));
+
+} // Name
+} // constant
+} //gotchangpdf
 
 const NameObjectHandle NameConstant_AdbePkcs7s3 = reinterpret_cast<NameObjectHandle>(gotchangpdf::constant::Name::AdbePkcs7s3.get());
 const NameObjectHandle NameConstant_AdbePkcs7s4 = reinterpret_cast<NameObjectHandle>(gotchangpdf::constant::Name::AdbePkcs7s4.get());

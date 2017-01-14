@@ -28,8 +28,7 @@ extern "C"
 	* Indication whether the document has been modified to include
 	* trapping information (see 14.11.6, "Trapping Support")
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \brief
 		* Either it is unknown whether the document has been trapped

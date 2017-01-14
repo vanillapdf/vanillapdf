@@ -48,8 +48,7 @@ extern "C"
 	* The document's page mode, specifying how to display
 	* the document on exiting full-screen mode.
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \brief Neither document outline nor thumbnail images visible
 		*/
@@ -74,8 +73,7 @@ extern "C"
 	/**
 	* \brief The predominant reading order for text.
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \brief Left to right
 		*/
@@ -94,8 +92,7 @@ extern "C"
 	* The page scaling option that shall be selected when
 	* a print dialog is displayed for this document.
 	*/
-	typedef enum PrintScaling
-	{
+	typedef enum PrintScaling {
 		/**
 		* \brief
 		* Indicates the conforming reader's default print scaling
@@ -113,8 +110,7 @@ extern "C"
 	* The paper handling option that shall be used
 	* when printing the file from the print dialog.
 	*/
-	typedef enum
-	{
+	typedef enum {
 		/**
 		* \brief Print single-sided
 		*/

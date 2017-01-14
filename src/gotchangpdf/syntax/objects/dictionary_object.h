@@ -9,106 +9,99 @@
 #include <map>
 #include <vector>
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		template <typename KeyT, typename ValueT, typename MapT = std::map<KeyT, ValueT>>
-		class DictionaryObjectBase : public ContainableObject
-		{
-		public:
-			//typedef std::unordered_map<NameObjectPtr, ContainableObject, std::hash<NameObjectPtr>> list_type;
-			typedef MapT list_type;
+namespace gotchangpdf {
+namespace syntax {
 
-			typedef typename list_type::value_type value_type;
-			typedef typename list_type::iterator iterator;
-			typedef typename list_type::const_iterator const_iterator;
-			typedef typename list_type::size_type size_type;
-			typedef typename list_type::reference reference;
-			typedef typename list_type::const_reference const_reference;
+template <typename KeyT, typename ValueT, typename MapT = std::map<KeyT, ValueT>>
+class DictionaryObjectBase : public ContainableObject {
+public:
+	//typedef std::unordered_map<NameObjectPtr, ContainableObject, std::hash<NameObjectPtr>> list_type;
+	typedef MapT list_type;
 
-		public:
-			class Iterator : public IUnknown
-			{
-			public:
-				typedef typename const_iterator::value_type value_type;
-				typedef typename const_iterator::difference_type difference_type;
-				typedef typename const_iterator::pointer pointer;
-				typedef typename const_iterator::reference reference;
-				typedef typename const_iterator::iterator_category iterator_category;
+	typedef typename list_type::value_type value_type;
+	typedef typename list_type::iterator iterator;
+	typedef typename list_type::const_iterator const_iterator;
+	typedef typename list_type::size_type size_type;
+	typedef typename list_type::reference reference;
+	typedef typename list_type::const_reference const_reference;
 
-			public:
-				Iterator() = default;
-				Iterator(const_iterator it) : _it(it) {}
+public:
+	class Iterator : public IUnknown {
+	public:
+		typedef typename const_iterator::value_type value_type;
+		typedef typename const_iterator::difference_type difference_type;
+		typedef typename const_iterator::pointer pointer;
+		typedef typename const_iterator::reference reference;
+		typedef typename const_iterator::iterator_category iterator_category;
 
-				const Iterator& operator++()
-				{
-					++_it;
-					return *this;
-				}
+	public:
+		Iterator() = default;
+		Iterator(const_iterator it) : _it(it) {}
 
-				const Iterator operator++(int)
-				{
-					Iterator temp(_it);
-					++_it;
-					return temp;
-				}
+		const Iterator& operator++() {
+			++_it;
+			return *this;
+		}
 
-				KeyT First() const { return _it->first; }
-				ValueT Second() const { return _it->second; }
-				const_iterator Value() const { return _it; }
+		const Iterator operator++(int) {
+			Iterator temp(_it);
+			++_it;
+			return temp;
+		}
 
-				bool operator==(const Iterator& other) const
-				{
-					return _it == other._it;
-				}
+		KeyT First() const { return _it->first; }
+		ValueT Second() const { return _it->second; }
+		const_iterator Value() const { return _it; }
 
-			private:
-				const_iterator _it;
-			};
+		bool operator==(const Iterator& other) const {
+			return _it == other._it;
+		}
 
-			using IteratorPtr = DeferredIterator<Iterator>;
+	private:
+		const_iterator _it;
+	};
 
-			// std container
-			const_iterator begin(void) const noexcept { return _list.begin(); }
-			const_iterator end(void) const noexcept { return _list.end(); }
-			iterator insert(const_iterator pos, const value_type & value) { return _list.insert(pos, value); }
+	using IteratorPtr = DeferredIterator<Iterator>;
 
-		protected:
-			list_type _list;
-		};
+	// std container
+	const_iterator begin(void) const noexcept { return _list.begin(); }
+	const_iterator end(void) const noexcept { return _list.end(); }
+	iterator insert(const_iterator pos, const value_type & value) { return _list.insert(pos, value); }
 
-		class DictionaryObject : public DictionaryObjectBase<NameObjectPtr, ContainableObjectPtr>, public IModifyObserver
-		{
-		public:
-			virtual std::string ToString(void) const override;
-			virtual std::string ToPdf(void) const override;
-			virtual Object::Type GetType(void) const noexcept override { return Object::Type::Dictionary; }
+protected:
+	list_type _list;
+};
 
-			virtual void SetFile(std::weak_ptr<File> file) noexcept override;
-			virtual void SetInitialized(bool initialized = true) noexcept override;
+class DictionaryObject : public DictionaryObjectBase<NameObjectPtr, ContainableObjectPtr>, public IModifyObserver {
+public:
+	virtual std::string ToString(void) const override;
+	virtual std::string ToPdf(void) const override;
+	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Dictionary; }
 
-			virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+	virtual void SetFile(std::weak_ptr<File> file) noexcept override;
+	virtual void SetInitialized(bool initialized = true) noexcept override;
 
-			virtual DictionaryObject* Clone(void) const override;
+	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
-			template <typename U>
-			U FindAs(const NameObjectPtr& name) const
-			{
-				auto result = Find(name);
-				return ObjectUtils::ConvertTo<U>(result);
-			}
-			
-			std::vector<ContainableObjectPtr> Values() const;
-			ContainableObjectPtr Find(const NameObjectPtr& name) const;
-			bool TryFind(const NameObjectPtr& name, OutputContainableObjectPtr& result) const;
-			bool Contains(const NameObjectPtr& name) const;
-			void Insert(const NameObjectPtr& name, const ContainableObjectPtr& value);
-			bool Remove(const NameObjectPtr& name);
+	virtual DictionaryObject* Clone(void) const override;
 
-			virtual ~DictionaryObject();
-		};
+	template <typename U>
+	U FindAs(const NameObjectPtr& name) const {
+		auto result = Find(name);
+		return ObjectUtils::ConvertTo<U>(result);
 	}
-}
+
+	std::vector<ContainableObjectPtr> Values() const;
+	ContainableObjectPtr Find(const NameObjectPtr& name) const;
+	bool TryFind(const NameObjectPtr& name, OutputContainableObjectPtr& result) const;
+	bool Contains(const NameObjectPtr& name) const;
+	void Insert(const NameObjectPtr& name, const ContainableObjectPtr& value);
+	bool Remove(const NameObjectPtr& name);
+
+	virtual ~DictionaryObject();
+};
+
+} // syntax
+} // gotchangpdf
 
 #endif /* _DICTIONARY_OBJECT_H */

@@ -3,40 +3,36 @@
 
 #include "utils/exceptions.h"
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		class ParseException : public ExceptionBase
-		{
-		public:
-			explicit ParseException(types::stream_offset offset);
-			virtual Type code() const noexcept { return Type::ParseException; }
-		};
+namespace gotchangpdf {
+namespace syntax {
 
-		class FileDisposedException : public ExceptionBase
-		{
-		public:
-			FileDisposedException();
-			virtual Type code() const noexcept { return Type::FileDisposed; }
-		};
+class ParseException : public ExceptionBase {
+public:
+	explicit ParseException(types::stream_offset offset);
+	virtual Type code() const noexcept { return Type::ParseException; }
+};
 
-		class FileNotInitializedException : public ExceptionBase
-		{
-		public:
-			explicit FileNotInitializedException(const char * const & filename);
-			explicit FileNotInitializedException(const std::string& filename);
-			virtual Type code() const noexcept { return Type::FileNotInitialized; }
-		};
+class FileDisposedException : public ExceptionBase {
+public:
+	FileDisposedException();
+	virtual Type code() const noexcept { return Type::FileDisposed; }
+};
 
-		class ObjectMissingException : public ExceptionBase
-		{
-		public:
-			ObjectMissingException(types::big_uint objNumber);
-			ObjectMissingException(types::big_uint objNumber, types::ushort genNumber);
-			virtual Type code() const noexcept { return Type::ObjectMissing; }
-		};
-	}
-}
+class FileNotInitializedException : public ExceptionBase {
+public:
+	explicit FileNotInitializedException(const char * const & filename);
+	explicit FileNotInitializedException(const std::string& filename);
+	virtual Type code() const noexcept { return Type::FileNotInitialized; }
+};
+
+class ObjectMissingException : public ExceptionBase {
+public:
+	ObjectMissingException(types::big_uint objNumber);
+	ObjectMissingException(types::big_uint objNumber, types::ushort genNumber);
+	virtual Type code() const noexcept { return Type::ObjectMissing; }
+};
+
+} // syntax
+} // gotchangpdf
 
 #endif /* _SYNTAX_EXCEPTIONS_H */

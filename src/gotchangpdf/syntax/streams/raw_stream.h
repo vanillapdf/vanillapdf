@@ -3,22 +3,21 @@
 
 #include "raw_base_stream.h"
 
-namespace gotchangpdf
-{
-	namespace syntax
-	{
-		class Stream : public BaseStream::CharacterSource, public BaseStream
-		{
-		public:
-			explicit Stream(CharacterSource & stream);
+namespace gotchangpdf {
+namespace syntax {
 
-			virtual BufferPtr read(size_t len) override;
-			virtual void read(Buffer& result, size_t len) override;
-			virtual BufferPtr readline(void) override;
-			virtual types::stream_size GetPosition() override;
-			virtual void SetPosition(types::stream_size pos) override;
-		};
-	}
-}
+class Stream : public BaseStream::CharacterSource, public BaseStream {
+public:
+	explicit Stream(CharacterSource & stream);
+
+	virtual BufferPtr read(size_t len) override;
+	virtual void read(Buffer& result, size_t len) override;
+	virtual BufferPtr readline(void) override;
+	virtual types::stream_size GetPosition() override;
+	virtual void SetPosition(types::stream_size pos) override;
+};
+
+} // syntax
+} // gotchangpdf
 
 #endif /* _RAW_STREAM_H*/
