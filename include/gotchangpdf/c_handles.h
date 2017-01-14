@@ -15,7 +15,8 @@ extern "C"
 
 	/**
 	* \file c_handles.h
-	* This file contains all type definitions returned by the library API.
+	* This file contains all type forward
+	* declarations returned by the library API.
 	*/
 
 	#pragma region Syntax

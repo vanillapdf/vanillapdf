@@ -72,10 +72,16 @@
 * \brief
 * Classes representing document's properties.
 *
+* The base entity for should be ::DocumentHandle,
+* which represents the file in terms of the high-level interface.
+*
+* Document's pages are contained in so-called ::CatalogHandle.
+*
+* These classes shall provide a root for your research.
+*
 * All functions in this interface shall provide semantic
-* correctness for a file. Meaning that no operation
-* that is explicitly prohibited by a PDF specification
-* is allowed.
+* correctness for a file. Meaning that all functions
+* shall behave as defined in the standard.
 *
 * As this task is fairly large, not all operations
 * and properties are yet exposed. If you find any
@@ -93,6 +99,9 @@
 * An in-depth knowledge about PDF file format is strongly
 * recommended as many functions are a direct reference
 * to a PDF specification.
+*
+* You might want to start with ::FileHandle,
+* which is the low-level counterpart of the DocumentHandle.
 *
 * It's primary use is for missing or misbehaving functionality
 * in the \ref Documents.
@@ -121,7 +130,9 @@
 * \defgroup Fonts Fonts
 * \ingroup Documents
 * \brief
-* A PDF representation of standard fonts.
+* Group of font related classes and functions.
+*
+* FontHandle represents a base class for all derived font types.
 */
 
 /**
@@ -206,37 +217,17 @@
 * ------------------------
 *
 * For the majority of the tasks prefer using \ref Documents whener possible.
+*
 * Most of these functions could be used without
 * an in-depth knowledge about the PDF file format.
-*
-* The base entity for should be ::DocumentHandle,
-* which represents the file in terms of the high-level interface.
-*
-* Document's pages are contained in so-called ::CatalogHandle.
-*
-* These classes shall provide a root for your research.
 *
 * ______
 *
 * Low-level file interface
 * ------------------------
 *
-* In case you find high-level interface insufficient, take a look at \ref Files.
-*
-* You might want to start with ::FileHandle,
-* which is the low-level counterpart of the DocumentHandle.
-*
-* The file is basically composed of file's header, body and trailer:
-* - __Header__ is basically just a statement about
-*   the PDF version this file is referring to
-* - __Body__ is just a sequence of \ref Objects described in ::XrefHandle
-* - The __trailer__ contains the ::XrefHandle itself,
-*   with the bytes offset to start of the last cross-reference section.
-*
-* When the file has been incrementally updated,
-* there may be multiple cross-reference sections.
-* For details about this topic please visit section
-* 7.5.6 "Incremental Updates" of the PDF specification.
+* In case you find high-level interface
+* insufficient, take a look at \ref Files.
 *
 * ______
 *

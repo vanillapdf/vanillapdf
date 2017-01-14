@@ -30,7 +30,7 @@ extern "C"
 	* log file for each file, where you can find some additional informations
 	* based on the log level.
 	*
-	* This feature is disabled by default.
+	* This feature is __disabled__ by default.
 	*/
 
 	/**

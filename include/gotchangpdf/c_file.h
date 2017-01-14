@@ -23,6 +23,18 @@ extern "C"
 	*
 	* This is a direct reference to a PDF specification,
 	* section 7.5, "File Structure".
+	*
+	* The file is basically composed of:
+	* - __Header__ is basically just a statement about
+	*   the PDF version this file is referring to
+	* - __Body__ is just a sequence of \ref Objects described in ::XrefHandle
+	* - The __trailer__ contains the ::XrefHandle itself,
+	*   with the bytes offset to start of the last cross-reference section.
+	*
+	* When the file has been incrementally updated,
+	* there may be multiple cross-reference sections.
+	* For details about this topic please visit section
+	* 7.5.6 "Incremental Updates" of the PDF specification.
 	*/
 
 	/**

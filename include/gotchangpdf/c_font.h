@@ -21,10 +21,7 @@ extern "C"
 	* \extends IUnknownHandle
 	* \ingroup Fonts
 	* \brief
-	* A font shall be represented in PDF as a dictionary specifying
-	* the type of font, its PostScript name, its encoding,
-	* and information that can be used to provide a substitute
-	* when the font program is not available.
+	* A PDF representation of a basic font structure.
 	*
 	* This is a direct reference to a PDF specification,
 	* section 9.5, "Introduction to Font Data Structures".
