@@ -231,7 +231,6 @@ set(GOTCHANGPDF_UTILS_HEADERS
 	utils/constants.h
 	utils/deferred.h
 	utils/exceptions.h
-	utils/file_device.h
 	utils/library_info.h
 	utils/log.h
 	utils/modify_observer_interface.h
