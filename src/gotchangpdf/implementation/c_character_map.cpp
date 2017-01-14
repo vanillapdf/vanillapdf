@@ -31,12 +31,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION CharacterMap_Release(CharacterMap
 	return ObjectRelease<CharacterMapBase, CharacterMapHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION CharacterMap_ToUnicode(CharacterMapHandle handle, PUnicodeCharacterMapHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION CharacterMap_ToUnicode(CharacterMapHandle handle, UnicodeCharacterMapHandle* result)
 {
 	return SafeObjectConvert<CharacterMapBase, UnicodeCharacterMap, CharacterMapHandle, UnicodeCharacterMapHandle>(handle, result);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION CharacterMap_ToEmbedded(CharacterMapHandle handle, PEmbeddedCharacterMapHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION CharacterMap_ToEmbedded(CharacterMapHandle handle, EmbeddedCharacterMapHandle* result)
 {
 	return SafeObjectConvert<CharacterMapBase, EmbeddedCharacterMap, CharacterMapHandle, EmbeddedCharacterMapHandle>(handle, result);
 }
@@ -44,7 +44,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION CharacterMap_ToEmbedded(Character
 GOTCHANG_PDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_GetMappedValue(
 	UnicodeCharacterMapHandle handle,
 	BufferHandle key_handle,
-	PBufferHandle result)
+	BufferHandle* result)
 {
 	UnicodeCharacterMap* obj = reinterpret_cast<UnicodeCharacterMap*>(handle);
 	Buffer* key = reinterpret_cast<Buffer*>(key_handle);

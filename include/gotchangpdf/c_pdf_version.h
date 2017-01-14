@@ -61,11 +61,6 @@ extern "C"
 		PDFVersion_17 = 7
 	} PDFVersion;
 
-	/**
-	* \brief Pointer to PDFVersion
-	*/
-	typedef PDFVersion *PPDFVersion;
-
 #ifdef __cplusplus
 };
 #endif

@@ -79,11 +79,6 @@ extern "C"
 	} OutlineType;
 
 	/**
-	* \brief Pointer to OutlineType
-	*/
-	typedef OutlineType *POutlineType;
-
-	/**
 	* \memberof OutlineBaseHandle
 	* @{
 	*/
@@ -91,17 +86,17 @@ extern "C"
 	/**
 	* \brief Get derived type of current object
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineBase_GetType(OutlineBaseHandle handle, POutlineType result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineBase_GetType(OutlineBaseHandle handle, OutlineType* result);
 
 	/**
 	* \brief Reinterpret current object as OutlineHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineBase_ToOutline(OutlineBaseHandle handle, POutlineHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineBase_ToOutline(OutlineBaseHandle handle, OutlineHandle* result);
 
 	/**
 	* \brief Reinterpret current object as OutlineItemHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineBase_ToOutlineItem(OutlineBaseHandle handle, POutlineItemHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineBase_ToOutlineItem(OutlineBaseHandle handle, OutlineItemHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -121,14 +116,14 @@ extern "C"
 	* An outline item dictionary representing
 	* the first top-level item in the outline.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Outline_GetFirst(OutlineHandle handle, POutlineItemHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Outline_GetFirst(OutlineHandle handle, OutlineItemHandle* result);
 
 	/**
 	* \brief
 	* An outline item dictionary representing
 	* the last top-level item in the outline.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Outline_GetLast(OutlineHandle handle, POutlineItemHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Outline_GetLast(OutlineHandle handle, OutlineItemHandle* result);
 
 	/**
 	* \brief
@@ -138,7 +133,7 @@ extern "C"
 	*
 	* This entry shall be omitted if there are no open outline items.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Outline_GetCount(OutlineHandle handle, PIntegerObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Outline_GetCount(OutlineHandle handle, IntegerObjectHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -157,57 +152,57 @@ extern "C"
 	* \brief
 	* The text that shall be displayed on the screen for this item.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetTitle(OutlineItemHandle handle, PStringObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetTitle(OutlineItemHandle handle, StringObjectHandle* result);
 
 	/**
 	* \brief
 	* The parent of this item in the outline hierarchy.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetParent(OutlineItemHandle handle, POutlineBaseHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetParent(OutlineItemHandle handle, OutlineBaseHandle* result);
 
 	/**
 	* \brief
 	* The previous item at this outline level.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetPrev(OutlineItemHandle handle, POutlineItemHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetPrev(OutlineItemHandle handle, OutlineItemHandle* result);
 
 	/**
 	* \brief
 	* The next item at this outline level.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetNext(OutlineItemHandle handle, POutlineItemHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetNext(OutlineItemHandle handle, OutlineItemHandle* result);
 
 	/**
 	* \brief
 	* The first of this item's immediate children in the outline hierarchy.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetFirst(OutlineItemHandle handle, POutlineItemHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetFirst(OutlineItemHandle handle, OutlineItemHandle* result);
 
 	/**
 	* \brief
 	* The last of this item's immediate children in the outline hierarchy.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetLast(OutlineItemHandle handle, POutlineItemHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetLast(OutlineItemHandle handle, OutlineItemHandle* result);
 
 	/**
 	* \brief
 	* Sum of the number of visible descendent outline items at all levels.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetCount(OutlineItemHandle handle, PIntegerObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetCount(OutlineItemHandle handle, IntegerObjectHandle* result);
 
-	//GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetDestinations(OutlineItemHandle handle, PIntegerObjectHandle result);
-	//GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetActions(OutlineItemHandle handle, PIntegerObjectHandle result);
-	//GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetStructureElement(OutlineItemHandle handle, PIntegerObjectHandle result);
+	//GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetDestinations(OutlineItemHandle handle, IntegerObjectHandle* result);
+	//GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetActions(OutlineItemHandle handle, IntegerObjectHandle* result);
+	//GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetStructureElement(OutlineItemHandle handle, IntegerObjectHandle* result);
 
 	/**
 	* \brief \copybrief OutlineItemColorHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetColor(OutlineItemHandle handle, POutlineItemColorHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetColor(OutlineItemHandle handle, OutlineItemColorHandle* result);
 
 	/**
 	* \brief \copybrief OutlineItemFlagsHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetFlags(OutlineItemHandle handle, POutlineItemFlagsHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetFlags(OutlineItemHandle handle, OutlineItemFlagsHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -225,17 +220,17 @@ extern "C"
 	/**
 	* \brief Get \b red component of defined RGB color
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemColor_GetRed(OutlineItemColorHandle handle, PIntegerObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemColor_GetRed(OutlineItemColorHandle handle, IntegerObjectHandle* result);
 
 	/**
 	* \brief Get \b green component of defined RGB color
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemColor_GetGreen(OutlineItemColorHandle handle, PIntegerObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemColor_GetGreen(OutlineItemColorHandle handle, IntegerObjectHandle* result);
 
 	/**
 	* \brief Get \b blue component of defined RGB color
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemColor_GetBlue(OutlineItemColorHandle handle, PIntegerObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemColor_GetBlue(OutlineItemColorHandle handle, IntegerObjectHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -253,12 +248,12 @@ extern "C"
 	/**
 	* \brief Determine if the outline item shall be displayed in \a italic
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsItalic(OutlineItemFlagsHandle handle, out_boolean_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsItalic(OutlineItemFlagsHandle handle, boolean_type* result);
 
 	/**
 	* \brief Determine if the outline item shall be displayed in \b bold
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsBold(OutlineItemFlagsHandle handle, out_boolean_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsBold(OutlineItemFlagsHandle handle, boolean_type* result);
 
 	/**
 	* \copydoc IUnknown_Release

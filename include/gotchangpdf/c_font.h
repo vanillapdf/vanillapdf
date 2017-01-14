@@ -67,11 +67,6 @@ extern "C"
 	} FontType;
 
 	/**
-	* \brief Pointer to FontType
-	*/
-	typedef FontType *PFontType;
-
-	/**
 	* \memberof FontHandle
 	* @{
 	*/
@@ -79,12 +74,12 @@ extern "C"
 	/**
 	* \brief Get derived type of current object.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Font_Type(FontHandle handle, PFontType result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Font_Type(FontHandle handle, FontType* result);
 
 	/**
 	* \brief Reinterpret current object as CompositeFontHandle.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Font_ToComposite(FontHandle handle, PCompositeFontHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Font_ToComposite(FontHandle handle, CompositeFontHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -104,7 +99,7 @@ extern "C"
 	* A stream containing a CMap file that maps character codes
 	* to Unicode values (see 9.10, "Extraction of Text Content").
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION CompositeFont_GetUnicodeMap(CompositeFontHandle handle, PUnicodeCharacterMapHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION CompositeFont_GetUnicodeMap(CompositeFontHandle handle, UnicodeCharacterMapHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release

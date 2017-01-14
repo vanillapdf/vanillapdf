@@ -371,12 +371,12 @@ extern "C"
 	/**
 	* \brief Return size of a collection
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionsSize(ContentsHandle handle, out_integer_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionsSize(ContentsHandle handle, integer_type* result);
 
 	/**
 	* \brief Get instruction at location \p at
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(ContentsHandle handle, integer_type at, PContentInstructionHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(ContentsHandle handle, integer_type at, ContentInstructionHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -399,12 +399,12 @@ extern "C"
 	/**
 	* \brief Reinterpret current object as ContentOperationHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_ToOperation(ContentInstructionHandle handle, PContentOperationHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_ToOperation(ContentInstructionHandle handle, ContentOperationHandle* result);
 
 	/**
 	* \brief Reinterpret current object as ContentObjectHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_ToObject(ContentInstructionHandle handle, PContentObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_ToObject(ContentInstructionHandle handle, ContentObjectHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -427,12 +427,12 @@ extern "C"
 	/**
 	* \brief Reinterpret current object as ContentObjectTextHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_ToText(ContentObjectHandle handle, PContentObjectTextHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_ToText(ContentObjectHandle handle, ContentObjectTextHandle* result);
 
 	/**
 	* \brief Reinterpret current object as ContentObjectInlineImageHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_ToInlineImage(ContentObjectHandle handle, PContentObjectInlineImageHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_ToInlineImage(ContentObjectHandle handle, ContentObjectInlineImageHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -450,12 +450,12 @@ extern "C"
 	/**
 	* \brief Return size of a collection
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationsSize(ContentObjectTextHandle handle, out_integer_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationsSize(ContentObjectTextHandle handle, integer_type* result);
 
 	/**
 	* \brief Get operation at location \p at
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(ContentObjectTextHandle handle, integer_type at, PContentOperationHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(ContentObjectTextHandle handle, integer_type at, ContentOperationHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -473,12 +473,12 @@ extern "C"
 	/**
 	* \brief Get meta-data dictionary for inline image
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetDictionary(ContentObjectInlineImageHandle handle, PDictionaryObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetDictionary(ContentObjectInlineImageHandle handle, DictionaryObjectHandle* result);
 
 	/**
 	* \brief Get raw image data
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetData(ContentObjectInlineImageHandle handle, PBufferHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetData(ContentObjectInlineImageHandle handle, BufferHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -501,27 +501,27 @@ extern "C"
 	/**
 	* \brief Reinterpret current object as ContentOperationGenericHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToGeneric(ContentOperationHandle handle, PContentOperationGenericHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToGeneric(ContentOperationHandle handle, ContentOperationGenericHandle* result);
 
 	/**
 	* \brief Reinterpret current object as ContentOperationTextFontHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToTextFont(ContentOperationHandle handle, PContentOperationTextFontHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToTextFont(ContentOperationHandle handle, ContentOperationTextFontHandle* result);
 
 	/**
 	* \brief Reinterpret current object as ContentOperationTextShowHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShow(ContentOperationHandle handle, PContentOperationTextShowHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShow(ContentOperationHandle handle, ContentOperationTextShowHandle* result);
 
 	/**
 	* \brief Reinterpret current object as ContentOperationTextShowArrayHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShowArray(ContentOperationHandle handle, PContentOperationTextShowArrayHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShowArray(ContentOperationHandle handle, ContentOperationTextShowArrayHandle* result);
 
 	/**
 	* \brief Reinterpret current object as ContentOperationEndTextHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToEndText(ContentOperationHandle handle, PContentOperationEndTextHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToEndText(ContentOperationHandle handle, ContentOperationEndTextHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -539,17 +539,17 @@ extern "C"
 	/**
 	* \brief Get operator from unknown operation
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperator(ContentOperationGenericHandle handle, PContentOperatorHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperator(ContentOperationGenericHandle handle, ContentOperatorHandle* result);
 
 	/**
 	* \brief Get number of operands belonging to the operator
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandsSize(ContentOperationGenericHandle handle, out_integer_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandsSize(ContentOperationGenericHandle handle, integer_type* result);
 
 	/**
 	* \brief Get operand at location \p at
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandAt(ContentOperationGenericHandle handle, integer_type at, PObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandAt(ContentOperationGenericHandle handle, integer_type at, ObjectHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -567,7 +567,7 @@ extern "C"
 	/**
 	* \brief A text string to be shown.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_GetValue(ContentOperationTextShowHandle handle, PStringObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_GetValue(ContentOperationTextShowHandle handle, StringObjectHandle* result);
 
 	/**
 	* \brief Set a new text string to be shown.
@@ -591,7 +591,7 @@ extern "C"
 	/**
 	* \brief One or more text strings to be shown.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_GetValue(ContentOperationTextShowArrayHandle handle, PArrayObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_GetValue(ContentOperationTextShowArrayHandle handle, ArrayObjectHandle* result);
 
 	/**
 	* \brief Set new text strings to be shown.
@@ -623,7 +623,7 @@ extern "C"
 	* Font shall be the name of a font resource in the Font
 	* subdictionary of the current resource dictionary.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetName(ContentOperationTextFontHandle handle, PNameObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetName(ContentOperationTextFontHandle handle, NameObjectHandle* result);
 
 	/**
 	* \brief Set new font name.
@@ -638,7 +638,7 @@ extern "C"
 	*
 	* Scale shall be a number representing a scale factor.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetScale(ContentOperationTextFontHandle handle, PIntegerObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetScale(ContentOperationTextFontHandle handle, IntegerObjectHandle* result);
 
 	/**
 	* \brief Set new font scaling.
@@ -668,7 +668,7 @@ extern "C"
 	/**
 	* \brief Get byte representation of content operator
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_GetValue(ContentOperatorHandle handle, PBufferHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_GetValue(ContentOperatorHandle handle, BufferHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release

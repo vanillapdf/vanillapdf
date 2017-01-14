@@ -7,7 +7,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetHeader(StreamObjectHandle handle, PDictionaryObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetHeader(StreamObjectHandle handle, DictionaryObjectHandle* result)
 {
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -36,7 +36,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_SetHeader(StreamObje
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBody(StreamObjectHandle handle, PBufferHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBody(StreamObjectHandle handle, BufferHandle* result)
 {
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -51,7 +51,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBody(StreamObject
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBodyRaw(StreamObjectHandle handle, PBufferHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBodyRaw(StreamObjectHandle handle, BufferHandle* result)
 {
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

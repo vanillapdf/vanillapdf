@@ -6,7 +6,7 @@
 
 using namespace gotchangpdf;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_GetEnabled(out_boolean_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_GetEnabled(boolean_type* result)
 {
 	*result = Logger::GetInstance()->IsEnabled();
 	return GOTCHANG_PDF_ERROR_SUCCES;
@@ -24,7 +24,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_SetDisabled(void)
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_GetSeverity(PLoggingSeverity level)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_GetSeverity(LoggingSeverity* level)
 {
 	auto result = Logger::GetInstance()->GetSeverity();
 	switch (result)

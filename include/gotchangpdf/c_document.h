@@ -30,12 +30,12 @@ extern "C"
 	/**
 	* \brief Opens a new document for read access
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenNew(string_type filename, PDocumentHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenNew(string_type filename, DocumentHandle* result);
 
 	/**
 	* \brief Opens a document for read access using the already existing file handle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHandle holder, PDocumentHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHandle holder, DocumentHandle* result);
 
 	/**
 	* \copydoc FileWriterHandle::FileWriter_Write
@@ -50,12 +50,12 @@ extern "C"
 	/**
 	* \brief Get document's catalog property
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandle handle, PCatalogHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandle handle, CatalogHandle* result);
 
 	/**
 	* \brief Get detailed document metadata
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetDocumentInfo(DocumentHandle handle, PDocumentInfoHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetDocumentInfo(DocumentHandle handle, DocumentInfoHandle* result);
 
 	/**
 	* \brief Append another document's contents at the end of the file.

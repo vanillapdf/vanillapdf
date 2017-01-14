@@ -8,7 +8,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, NameObjectHandle key, PObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, NameObjectHandle key, ObjectHandle* result)
 {
 	DictionaryObject* obj = reinterpret_cast<DictionaryObject*>(handle);
 	NameObject* name_object = reinterpret_cast<NameObject*>(key);
@@ -26,7 +26,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryO
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(DictionaryObjectHandle handle, PDictionaryObjectIteratorHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(DictionaryObjectHandle handle, DictionaryObjectIteratorHandle* result)
 {
 	DictionaryObject* obj = reinterpret_cast<DictionaryObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -62,7 +62,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Release(
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetKey(
 	DictionaryObjectIteratorHandle handle,
-	PNameObjectHandle result)
+	NameObjectHandle* result)
 {
 	DictionaryObject::Iterator* iterator = reinterpret_cast<DictionaryObject::Iterator*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
@@ -79,7 +79,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetKey(
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetValue(
 	DictionaryObjectIteratorHandle handle,
-	PObjectHandle result)
+	ObjectHandle* result)
 {
 	DictionaryObject::Iterator* iterator = reinterpret_cast<DictionaryObject::Iterator*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
@@ -98,7 +98,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetValue
 GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(
 	DictionaryObjectIteratorHandle iterator_handle,
 	DictionaryObjectHandle dictionary_handle,
-	out_boolean_type result)
+	boolean_type* result)
 {
 	DictionaryObject::Iterator* iterator = reinterpret_cast<DictionaryObject::Iterator*>(iterator_handle);
 	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(dictionary_handle);
@@ -151,7 +151,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(Dictionar
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(DictionaryObjectHandle dictionary_handle, NameObjectHandle key, out_boolean_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(DictionaryObjectHandle dictionary_handle, NameObjectHandle key, boolean_type* result)
 {
 	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(dictionary_handle);
 	NameObject* name = reinterpret_cast<NameObject*>(key);

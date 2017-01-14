@@ -36,7 +36,7 @@ extern "C"
 	* \brief
 	* A dictionary that maps resource names to font dictionaries.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ResourceDictionary_GetFontMap(ResourceDictionaryHandle handle, PFontMapHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ResourceDictionary_GetFontMap(ResourceDictionaryHandle handle, FontMapHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release

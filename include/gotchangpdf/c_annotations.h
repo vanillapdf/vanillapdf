@@ -219,11 +219,6 @@ extern "C"
 	} AnnotationType;
 
 	/**
-	* \brief Pointer to AnnotationType
-	*/
-	typedef AnnotationType *PAnnotationType;
-
-	/**
 	* \memberof AnnotationHandle
 	* @{
 	*/
@@ -235,12 +230,12 @@ extern "C"
 	* \param handle a handle received from page ::PageAnnotations_At
 	* \param result a pointer to variable will be filled with annotation type, otherwise unchanged
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Annotation_GetType(AnnotationHandle handle, PAnnotationType result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Annotation_GetType(AnnotationHandle handle, AnnotationType* result);
 
 	/**
 	* \brief Reinterpret current object as LinkAnnotationHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Annotation_ToLink(AnnotationHandle handle, PLinkAnnotationHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Annotation_ToLink(AnnotationHandle handle, LinkAnnotationHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -257,7 +252,7 @@ extern "C"
 	/**
 	* \brief A destination that shall be displayed when the annotation is activated
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION LinkAnnotation_GetDestination(LinkAnnotationHandle handle, PDestinationHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION LinkAnnotation_GetDestination(LinkAnnotationHandle handle, DestinationHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -274,7 +269,7 @@ extern "C"
 	/**
 	* \brief Get size of annotation array
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageAnnotations_Size(PageAnnotationsHandle handle, out_size_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageAnnotations_Size(PageAnnotationsHandle handle, size_type* result);
 
 	/**
 	* \brief
@@ -284,7 +279,7 @@ extern "C"
 	* \param result a pointer to variable will be filled with handle to
 	* annotation internal structure, otherwise unchanged
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageAnnotations_At(PageAnnotationsHandle handle, size_type at, PAnnotationHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageAnnotations_At(PageAnnotationsHandle handle, size_type at, AnnotationHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release

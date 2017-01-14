@@ -32,7 +32,7 @@ extern "C"
 	*
 	* A change in the library major version indicates backward incompatibility.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION LibraryInfo_GetVersionMajor(out_integer_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION LibraryInfo_GetVersionMajor(integer_type* result);
 
 	/**
 	* \brief Get library minor version
@@ -40,7 +40,7 @@ extern "C"
 	* A change in the library minor version indicates
 	* backward compatibility, while some new features were added.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION LibraryInfo_GetVersionMinor(out_integer_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION LibraryInfo_GetVersionMinor(integer_type* result);
 
 	/**
 	* \brief Get library patch version
@@ -48,12 +48,12 @@ extern "C"
 	* A change in the library minor version
 	* indicates no interface changes, only bugfixes.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION LibraryInfo_GetVersionPatch(out_integer_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION LibraryInfo_GetVersionPatch(integer_type* result);
 
 	/**
 	* \brief Get library author name
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION LibraryInfo_GetAuthor(out_string_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION LibraryInfo_GetAuthor(string_type* result);
 
 	/** @} */
 

@@ -42,14 +42,14 @@ extern "C"
 	*
 	* The file must exist.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Open(string_type filename, PFileHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Open(string_type filename, FileHandle* result);
 
 	/**
 	* \brief Creates a file for writing.
 	*
 	* Truncates the contents if it already exists.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Create(string_type filename, PFileHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Create(string_type filename, FileHandle* result);
 
 	/**
 	* \brief Perform basic intialization.
@@ -63,7 +63,7 @@ extern "C"
 	*
 	* If the file was not initialized returns false.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_IsEncrypted(FileHandle handle, out_boolean_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_IsEncrypted(FileHandle handle, boolean_type* result);
 
 	/**
 	* \brief Set encryption password.
@@ -83,12 +83,12 @@ extern "C"
 	* \see XrefChainHandle
 	* \see XrefChainIterator
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle, PXrefChainHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle, XrefChainHandle* result);
 
 	/**
 	* \brief Find exact object within all xref tables
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(FileHandle handle, biguint_type objNumber, ushort_type genNumber, PObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(FileHandle handle, biguint_type objNumber, ushort_type genNumber, ObjectHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release()
@@ -105,7 +105,7 @@ extern "C"
 	/**
 	* \brief Create new FileWriter instance
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Create(PFileWriterHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Create(FileWriterHandle* result);
 
 	/**
 	* \brief Save file state into new destination

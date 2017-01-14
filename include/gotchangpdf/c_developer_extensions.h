@@ -58,7 +58,7 @@ extern "C"
 	* Ensure the iterator is valid.
 	* \see ::DeveloperExtensionsIterator_IsValid
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetKey(DeveloperExtensionsIteratorHandle handle, PNameObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetKey(DeveloperExtensionsIteratorHandle handle, NameObjectHandle* result);
 
 	/**
 	* \brief Get value at iterator position
@@ -66,7 +66,7 @@ extern "C"
 	* Ensure the iterator is valid.
 	* \see ::DeveloperExtensionsIterator_IsValid
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetValue(DeveloperExtensionsIteratorHandle handle, PDeveloperExtensionHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetValue(DeveloperExtensionsIteratorHandle handle, DeveloperExtensionHandle* result);
 
 	/**
 	* \brief Determine if current position is valid
@@ -75,7 +75,7 @@ extern "C"
 	*
 	* Any other operation except \b THIS will fail on invalid iterator.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_IsValid(DeveloperExtensionsIteratorHandle handle, DeveloperExtensionsHandle parent, out_boolean_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_IsValid(DeveloperExtensionsIteratorHandle handle, DeveloperExtensionsHandle parent, boolean_type* result);
 
 	/**
 	* \brief Advances iterator to the next position
@@ -102,7 +102,7 @@ extern "C"
 	*
 	* Modifying collection may invalidate this handle.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensions_Iterator(DeveloperExtensionsHandle handle, PDeveloperExtensionsIteratorHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensions_Iterator(DeveloperExtensionsHandle handle, DeveloperExtensionsIteratorHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -119,7 +119,7 @@ extern "C"
 	/**
 	* \brief The name of the PDF version to which this extension applies.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtension_GetBaseVersion(DeveloperExtensionHandle handle, PPDFVersion result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtension_GetBaseVersion(DeveloperExtensionHandle handle, PDFVersion* result);
 
 	/**
 	* \brief
@@ -130,7 +130,7 @@ extern "C"
 	* BaseVersion the extension level numbers assigned by that
 	* developer shall increase over time.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtension_GetExtensionLevel(DeveloperExtensionHandle handle, PIntegerObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtension_GetExtensionLevel(DeveloperExtensionHandle handle, IntegerObjectHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release

@@ -651,7 +651,7 @@ error_type process_catalog(CatalogHandle catalog, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_trapped(DocumentTrapped trapped, int nested)
+error_type process_trapped(DocumentTrappedType trapped, int nested)
 {
 	print_spaces(nested);
 	printf("Trapped: %d\n", trapped);
@@ -669,7 +669,7 @@ error_type process_document_info(DocumentInfoHandle obj, int nested)
 	StringObjectHandle producer = NULL;
 	DateHandle creation_date = NULL;
 	DateHandle modification_date = NULL;
-	DocumentTrapped trapped;
+	DocumentTrappedType trapped;
 
 	print_spaces(nested);
 	printf("Document info begin\n");

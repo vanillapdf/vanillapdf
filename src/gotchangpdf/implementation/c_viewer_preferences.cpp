@@ -8,7 +8,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideToolbar(ViewerPreferencesHandle handle, PBooleanObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideToolbar(ViewerPreferencesHandle handle, BooleanObjectHandle* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -25,7 +25,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideToolbar(
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideMenubar(ViewerPreferencesHandle handle, PBooleanObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideMenubar(ViewerPreferencesHandle handle, BooleanObjectHandle* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -42,7 +42,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideMenubar(
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideWindowUI(ViewerPreferencesHandle handle, PBooleanObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideWindowUI(ViewerPreferencesHandle handle, BooleanObjectHandle* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -59,7 +59,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideWindowUI
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetFitWindow(ViewerPreferencesHandle handle, PBooleanObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetFitWindow(ViewerPreferencesHandle handle, BooleanObjectHandle* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -76,7 +76,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetFitWindow(Vi
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetCenterWindow(ViewerPreferencesHandle handle, PBooleanObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetCenterWindow(ViewerPreferencesHandle handle, BooleanObjectHandle* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -93,7 +93,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetCenterWindow
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDisplayDocTitle(ViewerPreferencesHandle handle, PBooleanObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDisplayDocTitle(ViewerPreferencesHandle handle, BooleanObjectHandle* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -110,7 +110,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDisplayDocTi
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNonFullScreenPageMode(ViewerPreferencesHandle handle, PNonFullScreenPageMode result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNonFullScreenPageMode(ViewerPreferencesHandle handle, NonFullScreenPageMode* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -140,7 +140,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNonFullScree
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDirection(ViewerPreferencesHandle handle, PReadingOrder result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDirection(ViewerPreferencesHandle handle, ReadingOrder* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -166,7 +166,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDirection(Vi
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewArea(ViewerPreferencesHandle handle, PNameObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewArea(ViewerPreferencesHandle handle, NameObjectHandle* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -183,7 +183,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewArea(Vie
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewClip(ViewerPreferencesHandle handle, PNameObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewClip(ViewerPreferencesHandle handle, NameObjectHandle* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -200,7 +200,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewClip(Vie
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintArea(ViewerPreferencesHandle handle, PNameObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintArea(ViewerPreferencesHandle handle, NameObjectHandle* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -217,7 +217,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintArea(Vi
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintClip(ViewerPreferencesHandle handle, PNameObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintClip(ViewerPreferencesHandle handle, NameObjectHandle* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -234,7 +234,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintClip(Vi
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintScaling(ViewerPreferencesHandle handle, PPrintScaling result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintScaling(ViewerPreferencesHandle handle, PrintScaling* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -260,7 +260,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintScaling
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDuplex(ViewerPreferencesHandle handle, PDuplex result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDuplex(ViewerPreferencesHandle handle, Duplex* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -288,7 +288,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDuplex(Viewe
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPickTrayByPDFSize(ViewerPreferencesHandle handle, PBooleanObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPickTrayByPDFSize(ViewerPreferencesHandle handle, BooleanObjectHandle* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -305,7 +305,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPickTrayByPD
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintPageRange(ViewerPreferencesHandle handle, PPageRangeHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintPageRange(ViewerPreferencesHandle handle, PageRangeHandle* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -322,7 +322,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintPageRan
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNumCopies(ViewerPreferencesHandle handle, PIntegerObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNumCopies(ViewerPreferencesHandle handle, IntegerObjectHandle* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -344,7 +344,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_Release(ViewerP
 	return ObjectRelease<ViewerPreferences, ViewerPreferencesHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSize(PageRangeHandle handle, out_integer_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSize(PageRangeHandle handle, integer_type* result)
 {
 	PageRange* obj = reinterpret_cast<PageRange*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -357,7 +357,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSize(PageRangeHandle
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSubrange(PageRangeHandle handle, integer_type at, PPageSubRangeHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSubrange(PageRangeHandle handle, integer_type at, PageSubRangeHandle* result)
 {
 	PageRange* obj = reinterpret_cast<PageRange*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -372,7 +372,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSubrange(PageRangeHa
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageSubRange_GetFirstPage(PageSubRangeHandle handle, PIntegerObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageSubRange_GetFirstPage(PageSubRangeHandle handle, IntegerObjectHandle* result)
 {
 	PageRange::SubRange* obj = reinterpret_cast<PageRange::SubRange*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -387,7 +387,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageSubRange_GetFirstPage(PageSub
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageSubRange_GetLastPage(PageSubRangeHandle handle, PIntegerObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageSubRange_GetLastPage(PageSubRangeHandle handle, IntegerObjectHandle* result)
 {
 	PageRange::SubRange* obj = reinterpret_cast<PageRange::SubRange*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

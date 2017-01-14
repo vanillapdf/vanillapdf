@@ -5,7 +5,7 @@
 
 using namespace gotchangpdf;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_GetData(BufferHandle handle, out_string_type data, out_size_type size)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Buffer_GetData(BufferHandle handle, string_type* data, size_type* size)
 {
 	Buffer* obj = reinterpret_cast<Buffer*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

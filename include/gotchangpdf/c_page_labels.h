@@ -73,11 +73,6 @@ extern "C"
 	} NumberingStyle;
 
 	/**
-	* \brief Pointer to NumberingStyle
-	*/
-	typedef NumberingStyle *PNumberingStyle;
-
-	/**
 	* \memberof PageLabelsHandle
 	* @{
 	*/
@@ -87,13 +82,13 @@ extern "C"
 	* Detemines if collection contains
 	* label for page number \p page_number.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_Contains(PageLabelsHandle handle, integer_type page_number, out_boolean_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_Contains(PageLabelsHandle handle, integer_type page_number, boolean_type* result);
 
 	/**
 	* \brief
 	* Get page label for page number \p page_number.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_At(PageLabelsHandle handle, integer_type page_number, PPageLabelHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_At(PageLabelsHandle handle, integer_type page_number, PageLabelHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -111,20 +106,20 @@ extern "C"
 	/**
 	* \brief The label prefix for page labels in this range.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Prefix(PageLabelHandle handle, PStringObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Prefix(PageLabelHandle handle, StringObjectHandle* result);
 
 	/**
 	* \brief
 	* The value of the numeric portion for the first page label in the range.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Start(PageLabelHandle handle, PIntegerObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Start(PageLabelHandle handle, IntegerObjectHandle* result);
 
 	/**
 	* \brief
 	* The numbering style that shall be used for
 	* the numeric portion of each page label.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Style(PageLabelHandle handle, PNumberingStyle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Style(PageLabelHandle handle, NumberingStyle* result);
 
 	/**
 	* \copydoc IUnknown_Release

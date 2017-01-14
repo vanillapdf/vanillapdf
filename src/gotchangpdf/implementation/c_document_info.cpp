@@ -8,7 +8,7 @@
 using namespace gotchangpdf::syntax;
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitle(DocumentInfoHandle handle, PStringObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitle(DocumentInfoHandle handle, StringObjectHandle* result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -25,7 +25,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitle(DocumentInf
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthor(DocumentInfoHandle handle, PStringObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthor(DocumentInfoHandle handle, StringObjectHandle* result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -42,7 +42,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthor(DocumentIn
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubject(DocumentInfoHandle handle, PStringObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubject(DocumentInfoHandle handle, StringObjectHandle* result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -59,7 +59,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubject(DocumentI
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywords(DocumentInfoHandle handle, PStringObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywords(DocumentInfoHandle handle, StringObjectHandle* result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -76,7 +76,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywords(Document
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreator(DocumentInfoHandle handle, PStringObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreator(DocumentInfoHandle handle, StringObjectHandle* result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -93,7 +93,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreator(DocumentI
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducer(DocumentInfoHandle handle, PStringObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducer(DocumentInfoHandle handle, StringObjectHandle* result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -110,7 +110,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducer(Document
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreationDate(DocumentInfoHandle handle, PDateHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreationDate(DocumentInfoHandle handle, DateHandle* result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -127,7 +127,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreationDate(Docu
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetModificationDate(DocumentInfoHandle handle, PDateHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetModificationDate(DocumentInfoHandle handle, DateHandle* result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -144,7 +144,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetModificationDate(
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentInfoHandle handle, PDocumentTrapped result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentInfoHandle handle, DocumentTrappedType* result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -159,11 +159,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentI
 		switch (trapped)
 		{
 		case gotchangpdf::semantics::DocumentTrapped::Unknown:
-			*result = DocumentTrapped_Unknown; break;
+			*result = DocumentTrappedType_Unknown; break;
 		case gotchangpdf::semantics::DocumentTrapped::True:
-			*result = DocumentTrapped_True; break;
+			*result = DocumentTrappedType_True; break;
 		case gotchangpdf::semantics::DocumentTrapped::False:
-			*result = DocumentTrapped_False; break;
+			*result = DocumentTrappedType_False; break;
 		default:
 			return GOTCHANG_PDF_ERROR_GENERAL;
 		}

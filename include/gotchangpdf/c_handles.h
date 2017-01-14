@@ -6,10 +6,7 @@
 * Declares opaque pointer to struct allocated by library.
 */
 #define DECLARE_OBJECT_HANDLE(x) \
-typedef struct x##HandleTag *x##Handle; \
-/** \brief Pointer to x##Handle.
-*/ \
-typedef x##Handle *P##x##Handle
+typedef struct x##HandleTag *x##Handle;
 
 #ifdef __cplusplus
 extern "C"

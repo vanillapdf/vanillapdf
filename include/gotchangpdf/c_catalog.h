@@ -62,11 +62,6 @@ extern "C"
 	} PageLayout;
 
 	/**
-	* \brief Pointer to PageLayout
-	*/
-	typedef PageLayout *PPageLayout;
-
-	/**
 	* \memberof CatalogHandle
 	* @{
 	*/
@@ -74,17 +69,17 @@ extern "C"
 	/**
 	* \brief The root of the document's page tree (see 7.7.3, "Page Tree").
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPages(CatalogHandle handle, PPageTreeHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPages(CatalogHandle handle, PageTreeHandle* result);
 
 	/**
 	* \brief A number tree defining the page labelling for the document (see 12.4.2, "Page Labels").
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLabels(CatalogHandle handle, PPageLabelsHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLabels(CatalogHandle handle, PageLabelsHandle* result);
 
 	/**
 	* \copydoc PageLayout
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHandle handle, PPageLayout result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHandle handle, PageLayout* result);
 
 	/**
 	* \brief
@@ -94,7 +89,7 @@ extern "C"
 	* If the header specifies a later version, or if this entry is absent,
 	* the document shall conform to the version specified in the header.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetVersion(CatalogHandle handle, PPDFVersion result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetVersion(CatalogHandle handle, PDFVersion* result);
 
 	/**
 	* \brief
@@ -103,7 +98,7 @@ extern "C"
 	*
 	* 7.12, "Extensions Dictionary", describes this dictionary and how it shall be used.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetExtensions(CatalogHandle handle, PDeveloperExtensionsHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetExtensions(CatalogHandle handle, DeveloperExtensionsHandle* result);
 
 	/**
 	* \brief The way the document shall be displayed on the screen.
@@ -111,19 +106,19 @@ extern "C"
 	* If this entry is absent, conforming readers shall use their own current
 	* user preference settings.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetViewerPreferences(CatalogHandle handle, PViewerPreferencesHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetViewerPreferences(CatalogHandle handle, ViewerPreferencesHandle* result);
 
 	/**
 	* \brief Root of the document's outline hierarchy (see 12.3.3, "Document Outline").
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetOutlines(CatalogHandle handle, POutlineHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetOutlines(CatalogHandle handle, OutlineHandle* result);
 
 	/**
 	* \brief
 	* A dictionary of names and corresponding destinations
 	* (see 12.3.2.3, "Named Destinations").
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetDestinations(CatalogHandle handle, PNamedDestinationsHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetDestinations(CatalogHandle handle, NamedDestinationsHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release

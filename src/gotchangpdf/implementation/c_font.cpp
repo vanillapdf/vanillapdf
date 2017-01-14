@@ -8,7 +8,7 @@ using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Font_Type(FontHandle handle, PFontType result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Font_Type(FontHandle handle, FontType* result)
 {
 	FontBase* obj = reinterpret_cast<FontBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -33,12 +33,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Font_Release(FontHandle handle)
 	return ObjectRelease<FontBase, FontHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Font_ToComposite(FontHandle handle, PCompositeFontHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Font_ToComposite(FontHandle handle, CompositeFontHandle* result)
 {
 	return SafeObjectConvert<FontBase, CompositeFont, FontHandle, CompositeFontHandle>(handle, result);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION CompositeFont_GetUnicodeMap(CompositeFontHandle handle, PUnicodeCharacterMapHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION CompositeFont_GetUnicodeMap(CompositeFontHandle handle, UnicodeCharacterMapHandle* result)
 {
 	CompositeFont* obj = reinterpret_cast<CompositeFont*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

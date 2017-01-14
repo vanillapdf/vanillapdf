@@ -72,11 +72,6 @@ extern "C"
 	} NonFullScreenPageMode;
 
 	/**
-	* \brief Pointer to NonFullScreenPageMode
-	*/
-	typedef NonFullScreenPageMode *PNonFullScreenPageMode;
-
-	/**
 	* \brief The predominant reading order for text.
 	*/
 	typedef enum
@@ -93,11 +88,6 @@ extern "C"
 		*/
 		ReadingOrder_RightToLeft
 	} ReadingOrder;
-
-	/**
-	* \brief Pointer to ReadingOrder
-	*/
-	typedef ReadingOrder *PReadingOrder;
 
 	/**
 	* \brief
@@ -117,11 +107,6 @@ extern "C"
 		*/
 		PrintScaling_None
 	} PrintScaling;
-
-	/**
-	* \brief Pointer to PrintScaling
-	*/
-	typedef PrintScaling *PPrintScaling;
 
 	/**
 	* \brief
@@ -147,11 +132,6 @@ extern "C"
 	} Duplex;
 
 	/**
-	* \brief Pointer to Duplex
-	*/
-	typedef Duplex *PDuplex;
-
-	/**
 	* \memberof ViewerPreferencesHandle
 	* @{
 	*/
@@ -161,14 +141,14 @@ extern "C"
 	* A flag specifying whether to hide the conforming reader's
 	* tool bars when the document is active.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideToolbar(ViewerPreferencesHandle handle, PBooleanObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideToolbar(ViewerPreferencesHandle handle, BooleanObjectHandle* result);
 
 	/**
 	* \brief
 	* A flag specifying whether to hide the conforming reader's
 	* menu bar when the document is active.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideMenubar(ViewerPreferencesHandle handle, PBooleanObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideMenubar(ViewerPreferencesHandle handle, BooleanObjectHandle* result);
 
 	/**
 	* \brief
@@ -176,21 +156,21 @@ extern "C"
 	* in the document's window (such as scroll bars and navigation controls),
 	* leaving only the document's contents displayed.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideWindowUI(ViewerPreferencesHandle handle, PBooleanObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideWindowUI(ViewerPreferencesHandle handle, BooleanObjectHandle* result);
 
 	/**
 	* \brief
 	* A flag specifying whether to resize the document's
 	* window to fit the size of the first displayed page.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetFitWindow(ViewerPreferencesHandle handle, PBooleanObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetFitWindow(ViewerPreferencesHandle handle, BooleanObjectHandle* result);
 
 	/**
 	* \brief
 	* A flag specifying whether to position the document's
 	* window in the center of the screen.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetCenterWindow(ViewerPreferencesHandle handle, PBooleanObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetCenterWindow(ViewerPreferencesHandle handle, BooleanObjectHandle* result);
 
 	/**
 	* \brief
@@ -201,76 +181,76 @@ extern "C"
 	* If false, the title bar should instead display
 	* the name of the PDF file containing the document.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDisplayDocTitle(ViewerPreferencesHandle handle, PBooleanObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDisplayDocTitle(ViewerPreferencesHandle handle, BooleanObjectHandle* result);
 
 	/**
 	* \copydoc ::NonFullScreenPageMode
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNonFullScreenPageMode(ViewerPreferencesHandle handle, PNonFullScreenPageMode result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNonFullScreenPageMode(ViewerPreferencesHandle handle, NonFullScreenPageMode* result);
 
 	/**
 	* \copydoc ::ReadingOrder
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDirection(ViewerPreferencesHandle handle, PReadingOrder result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDirection(ViewerPreferencesHandle handle, ReadingOrder* result);
 
 	/**
 	* \brief
 	* The name of the page boundary representing the area of a page that
 	* shall be displayed when viewing the document on the screen.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewArea(ViewerPreferencesHandle handle, PNameObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewArea(ViewerPreferencesHandle handle, NameObjectHandle* result);
 
 	/**
 	* \brief
 	* The name of the page boundary to which the contents of a page shall
 	* be clipped when viewing the document on the screen.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewClip(ViewerPreferencesHandle handle, PNameObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewClip(ViewerPreferencesHandle handle, NameObjectHandle* result);
 
 	/**
 	* \brief
 	* The name of the page boundary representing the area of a page that shall
 	* be rendered when printing the document.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintArea(ViewerPreferencesHandle handle, PNameObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintArea(ViewerPreferencesHandle handle, NameObjectHandle* result);
 
 	/**
 	* \brief
 	* The name of the page boundary to which the contents of a page shall be
 	* clipped when printing the document.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintClip(ViewerPreferencesHandle handle, PNameObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintClip(ViewerPreferencesHandle handle, NameObjectHandle* result);
 
 	/**
 	* \copydoc ::PrintScaling
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintScaling(ViewerPreferencesHandle handle, PPrintScaling result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintScaling(ViewerPreferencesHandle handle, PrintScaling* result);
 
 	/**
 	* \copydoc ::Duplex
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDuplex(ViewerPreferencesHandle handle, PDuplex result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDuplex(ViewerPreferencesHandle handle, Duplex* result);
 
 	/**
 	* \brief
 	* A flag specifying whether the PDF page size
 	* shall be used to select the input paper tray.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPickTrayByPDFSize(ViewerPreferencesHandle handle, PBooleanObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPickTrayByPDFSize(ViewerPreferencesHandle handle, BooleanObjectHandle* result);
 
 	/**
 	* \brief
 	* The page numbers used to initialize the print
 	* dialog box when the file is printed.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintPageRange(ViewerPreferencesHandle handle, PPageRangeHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintPageRange(ViewerPreferencesHandle handle, PageRangeHandle* result);
 
 	/**
 	* \brief
 	* The number of copies that shall be printed when
 	* the print dialog is opened for this file.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNumCopies(ViewerPreferencesHandle handle, PIntegerObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNumCopies(ViewerPreferencesHandle handle, IntegerObjectHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -288,12 +268,12 @@ extern "C"
 	/**
 	* \brief Get size of the collections
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSize(PageRangeHandle handle, out_integer_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSize(PageRangeHandle handle, integer_type* result);
 
 	/**
 	* \brief Get sub-range at index \p at
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSubrange(PageRangeHandle handle, integer_type at, PPageSubRangeHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSubrange(PageRangeHandle handle, integer_type at, PageSubRangeHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -311,12 +291,12 @@ extern "C"
 	/**
 	* \brief Get the index of first last page in the sub-range
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageSubRange_GetFirstPage(PageSubRangeHandle handle, PIntegerObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageSubRange_GetFirstPage(PageSubRangeHandle handle, IntegerObjectHandle* result);
 
 	/**
 	* \brief Get the index of last last page in the sub-range
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageSubRange_GetLastPage(PageSubRangeHandle handle, PIntegerObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageSubRange_GetLastPage(PageSubRangeHandle handle, IntegerObjectHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release

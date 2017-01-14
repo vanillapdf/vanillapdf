@@ -10,7 +10,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObjectHandle handle, PContentsHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObjectHandle handle, ContentsHandle* result)
 {
 	PageObject* obj = reinterpret_cast<PageObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -27,7 +27,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObject
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_CreateFromDocument(DocumentHandle handle, PPageObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_CreateFromDocument(DocumentHandle handle, PageObjectHandle* result)
 {
 	Document* obj = reinterpret_cast<Document*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -46,7 +46,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_CreateFromDocument(Doc
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_CreateFromObject(DictionaryObjectHandle handle, PPageObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_CreateFromObject(DictionaryObjectHandle handle, PageObjectHandle* result)
 {
 	syntax::DictionaryObject* obj = reinterpret_cast<syntax::DictionaryObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -65,7 +65,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_CreateFromObject(Dicti
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetParent(PageObjectHandle handle, PPageTreeHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetParent(PageObjectHandle handle, PageTreeHandle* result)
 {
 	PageObject* obj = reinterpret_cast<PageObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -80,7 +80,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetParent(PageObjectHa
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetResources(PageObjectHandle handle, PResourceDictionaryHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetResources(PageObjectHandle handle, ResourceDictionaryHandle* result)
 {
 	PageObject* obj = reinterpret_cast<PageObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -95,7 +95,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetResources(PageObjec
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetAnnotations(PageObjectHandle handle, PPageAnnotationsHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetAnnotations(PageObjectHandle handle, PageAnnotationsHandle* result)
 {
 	PageObject* obj = reinterpret_cast<PageObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -112,7 +112,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetAnnotations(PageObj
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetMediaBox(PageObjectHandle handle, PRectangleHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetMediaBox(PageObjectHandle handle, RectangleHandle* result)
 {
 	PageObject* obj = reinterpret_cast<PageObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

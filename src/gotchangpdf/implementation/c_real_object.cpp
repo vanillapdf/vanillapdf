@@ -7,7 +7,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION RealObject_GetValue(RealObjectHandle handle, out_real_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION RealObject_GetValue(RealObjectHandle handle, real_type* result)
 {
 	RealObject* obj = reinterpret_cast<RealObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

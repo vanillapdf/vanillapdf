@@ -89,11 +89,6 @@ extern "C"
 	} ObjectType;
 
 	/**
-	* \brief Pointer to ObjectType
-	*/
-	typedef ObjectType *PObjectType;
-
-	/**
 	* \memberof ObjectHandle
 	* @{
 	*/
@@ -101,17 +96,17 @@ extern "C"
 	/**
 	* \brief Get derived type of current object
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_GetType(ObjectHandle handle, PObjectType result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_GetType(ObjectHandle handle, ObjectType* result);
 
 	/**
 	* \brief Get string representation of object type
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_TypeName(ObjectType type, out_string_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_TypeName(ObjectType type, string_type* result);
 
 	/**
 	* \brief Get input file offset where this object was found
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle handle, out_offset_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle handle, offset_type* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -122,52 +117,52 @@ extern "C"
 	/**
 	* \brief Reinterpret current object as ArrayObjectHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToArray(ObjectHandle handle, PArrayObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToArray(ObjectHandle handle, ArrayObjectHandle* result);
 
 	/**
 	* \brief Reinterpret current object as StreamObjectHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToStream(ObjectHandle handle, PStreamObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToStream(ObjectHandle handle, StreamObjectHandle* result);
 
 	/**
 	* \brief Reinterpret current object as DictionaryObjectHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToDictionary(ObjectHandle handle, PDictionaryObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToDictionary(ObjectHandle handle, DictionaryObjectHandle* result);
 
 	/**
 	* \brief Reinterpret current object as IndirectObjectReferenceHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToIndirectReference(ObjectHandle handle, PIndirectObjectReferenceHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToIndirectReference(ObjectHandle handle, IndirectObjectReferenceHandle* result);
 
 	/**
 	* \brief Reinterpret current object as IntegerObjectHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToInteger(ObjectHandle handle, PIntegerObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToInteger(ObjectHandle handle, IntegerObjectHandle* result);
 
 	/**
 	* \brief Reinterpret current object as BooleanObjectHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToBoolean(ObjectHandle handle, PBooleanObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToBoolean(ObjectHandle handle, BooleanObjectHandle* result);
 
 	/**
 	* \brief Reinterpret current object as RealObjectHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToReal(ObjectHandle handle, PRealObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToReal(ObjectHandle handle, RealObjectHandle* result);
 
 	/**
 	* \brief Reinterpret current object as NullObjectHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToNull(ObjectHandle handle, PNullObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToNull(ObjectHandle handle, NullObjectHandle* result);
 
 	/**
 	* \brief Reinterpret current object as NameObjectHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToName(ObjectHandle handle, PNameObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToName(ObjectHandle handle, NameObjectHandle* result);
 
 	/**
 	* \brief Reinterpret current object as StringObjectHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle handle, PStringObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle handle, StringObjectHandle* result);
 
 	/** @} */
 

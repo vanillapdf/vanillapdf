@@ -30,7 +30,7 @@ extern "C"
 	/**
 	* \brief Return streams header dictionary
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetHeader(StreamObjectHandle handle, PDictionaryObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetHeader(StreamObjectHandle handle, DictionaryObjectHandle* result);
 
 	/**
 	* \brief Set new streams header dictionary
@@ -42,12 +42,12 @@ extern "C"
 	*
 	* This function is useful when the library does not understand the stream content.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBodyRaw(StreamObjectHandle handle, PBufferHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBodyRaw(StreamObjectHandle handle, BufferHandle* result);
 
 	/**
 	* \brief Get decompressed stream content
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBody(StreamObjectHandle handle, PBufferHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBody(StreamObjectHandle handle, BufferHandle* result);
 
 	/**
 	* \brief Set new stream content

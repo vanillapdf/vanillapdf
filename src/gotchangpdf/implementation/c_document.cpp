@@ -8,7 +8,7 @@ using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenNew(string_type filename, PDocumentHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenNew(string_type filename, DocumentHandle* result)
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -23,7 +23,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenNew(string_type file
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHandle holder_handle, PDocumentHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHandle holder_handle, DocumentHandle* result)
 {
 	FileHolder* holder = reinterpret_cast<FileHolder*>(holder_handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
@@ -64,7 +64,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_SaveIncremental(Document
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandle handle, PCatalogHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandle handle, CatalogHandle* result)
 {
 	Document* document = reinterpret_cast<Document*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
@@ -79,7 +79,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandl
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetDocumentInfo(DocumentHandle handle, PDocumentInfoHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetDocumentInfo(DocumentHandle handle, DocumentInfoHandle* result)
 {
 	Document* document = reinterpret_cast<Document*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(document);

@@ -88,7 +88,7 @@ private:
 	ContainsFunction m_contains;
 };
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_CreateFromPkcs12File(string_type path, string_type password, PEncryptionKeyHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_CreateFromPkcs12File(string_type path, string_type password, EncryptionKeyHandle* result)
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(path);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -109,7 +109,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_CreateFromPkcs12Fil
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_CreateFromPkcs12Buffer(BufferHandle data, string_type password, PEncryptionKeyHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_CreateFromPkcs12Buffer(BufferHandle data, string_type password, EncryptionKeyHandle* result)
 {
 	Buffer* buffer_ptr = reinterpret_cast<Buffer*>(data);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(buffer_ptr);
@@ -135,7 +135,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_CreateCustom(
 	CleanupFunction cleanup,
 	DecryptFunction decrypt,
 	ContainsFunction contains,
-	PEncryptionKeyHandle result
+	EncryptionKeyHandle* result
 	)
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(initialize);

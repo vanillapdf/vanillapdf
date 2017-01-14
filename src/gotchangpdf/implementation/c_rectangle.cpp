@@ -7,7 +7,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_LowerLeftX(RectangleHandle handle, PIntegerObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_LowerLeftX(RectangleHandle handle, IntegerObjectHandle* result)
 {
 	Rectangle* obj = reinterpret_cast<Rectangle*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -22,7 +22,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_LowerLeftX(RectangleHan
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_LowerLeftY(RectangleHandle handle, PIntegerObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_LowerLeftY(RectangleHandle handle, IntegerObjectHandle* result)
 {
 	Rectangle* obj = reinterpret_cast<Rectangle*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -37,7 +37,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_LowerLeftY(RectangleHan
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_UpperRightX(RectangleHandle handle, PIntegerObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_UpperRightX(RectangleHandle handle, IntegerObjectHandle* result)
 {
 	Rectangle* obj = reinterpret_cast<Rectangle*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -52,7 +52,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_UpperRightX(RectangleHa
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_UpperRightY(RectangleHandle handle, PIntegerObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_UpperRightY(RectangleHandle handle, IntegerObjectHandle* result)
 {
 	Rectangle* obj = reinterpret_cast<Rectangle*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

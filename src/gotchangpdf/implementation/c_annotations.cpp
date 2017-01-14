@@ -8,7 +8,7 @@ using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Annotation_GetType(AnnotationHandle handle, PAnnotationType result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Annotation_GetType(AnnotationHandle handle, AnnotationType* result)
 {
 	AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -74,7 +74,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Annotation_GetType(AnnotationHand
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Annotation_ToLink(AnnotationHandle handle, PLinkAnnotationHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Annotation_ToLink(AnnotationHandle handle, LinkAnnotationHandle* result)
 {
 	return SafeObjectConvert<AnnotationBase, LinkAnnotation, AnnotationHandle, LinkAnnotationHandle>(handle, result);
 }
@@ -84,7 +84,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Annotation_Release(AnnotationHand
 	return ObjectRelease<AnnotationBase, AnnotationHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION LinkAnnotation_GetDestination(LinkAnnotationHandle handle, PDestinationHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION LinkAnnotation_GetDestination(LinkAnnotationHandle handle, DestinationHandle* result)
 {
 	LinkAnnotation* obj = reinterpret_cast<LinkAnnotation*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -106,7 +106,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION LinkAnnotation_Release(LinkAnnota
 	return ObjectRelease<LinkAnnotation, LinkAnnotationHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageAnnotations_Size(PageAnnotationsHandle handle, out_size_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageAnnotations_Size(PageAnnotationsHandle handle, size_type* result)
 {
 	PageAnnotations* obj = reinterpret_cast<PageAnnotations*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -119,7 +119,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageAnnotations_Size(PageAnnotati
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageAnnotations_At(PageAnnotationsHandle handle, size_type at, PAnnotationHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageAnnotations_At(PageAnnotationsHandle handle, size_type at, AnnotationHandle* result)
 {
 	PageAnnotations* obj = reinterpret_cast<PageAnnotations*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

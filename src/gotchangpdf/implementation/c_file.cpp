@@ -9,7 +9,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Open(string_type filename, PFileHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Open(string_type filename, FileHandle* result)
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -24,7 +24,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Open(string_type filename, P
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Create(string_type filename, PFileHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Create(string_type filename, FileHandle* result)
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -54,7 +54,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle, PXrefChainHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle, XrefChainHandle* result)
 {
 	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
@@ -73,7 +73,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle,
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
-	FileHandle handle, biguint_type objNumber, ushort_type genNumber, PObjectHandle result)
+	FileHandle handle, biguint_type objNumber, ushort_type genNumber, ObjectHandle* result)
 {
 	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
@@ -104,7 +104,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Release(FileHandle handle)
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION File_IsEncrypted(FileHandle handle, out_boolean_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION File_IsEncrypted(FileHandle handle, boolean_type* result)
 {
 	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
@@ -160,7 +160,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SetEncryptionKey(FileHandle 
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Create(PFileWriterHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Create(FileWriterHandle* result)
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 

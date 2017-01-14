@@ -66,11 +66,6 @@ extern "C"
 	} LoggingSeverity;
 
 	/**
-	* \brief Pointer to LoggingSeverity
-	*/
-	typedef LoggingSeverity *PLoggingSeverity;
-
-	/**
 	* \memberof Logging
 	* @{
 	*/
@@ -78,7 +73,7 @@ extern "C"
 	/**
 	* \brief Determine if logging is enabled in current library instance
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_GetEnabled(out_boolean_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_GetEnabled(boolean_type* result);
 
 	/**
 	* \brief Enable logging for current library instance
@@ -93,7 +88,7 @@ extern "C"
 	/**
 	* \brief Get actual logging severity
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_GetSeverity(PLoggingSeverity level);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_GetSeverity(LoggingSeverity* level);
 
 	/**
 	* \brief Set new logging severity

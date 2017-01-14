@@ -8,7 +8,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPages(CatalogHandle handle, PPageTreeHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPages(CatalogHandle handle, PageTreeHandle* result)
 {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -23,7 +23,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPages(CatalogHandle ha
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetVersion(CatalogHandle handle, PPDFVersion result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetVersion(CatalogHandle handle, PDFVersion* result)
 {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -59,7 +59,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetVersion(CatalogHandle 
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetExtensions(CatalogHandle handle, PDeveloperExtensionsHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetExtensions(CatalogHandle handle, DeveloperExtensionsHandle* result)
 {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -76,7 +76,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetExtensions(CatalogHand
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLabels(CatalogHandle handle, PPageLabelsHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLabels(CatalogHandle handle, PageLabelsHandle* result)
 {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -93,7 +93,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLabels(CatalogHand
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHandle handle, PPageLayout result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHandle handle, PageLayout* result)
 {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -125,7 +125,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHand
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetViewerPreferences(CatalogHandle handle, PViewerPreferencesHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetViewerPreferences(CatalogHandle handle, ViewerPreferencesHandle* result)
 {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -142,7 +142,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetViewerPreferences(Cata
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetOutlines(CatalogHandle handle, POutlineHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetOutlines(CatalogHandle handle, OutlineHandle* result)
 {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -159,7 +159,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetOutlines(CatalogHandle
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetDestinations(CatalogHandle handle, PNamedDestinationsHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetDestinations(CatalogHandle handle, NamedDestinationsHandle* result)
 {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

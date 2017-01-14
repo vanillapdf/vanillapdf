@@ -30,22 +30,22 @@ extern "C"
 	/**
 	* \brief Get X-coordinate of lower-left corner
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_LowerLeftX(RectangleHandle handle, PIntegerObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_LowerLeftX(RectangleHandle handle, IntegerObjectHandle* result);
 
 	/**
 	* \brief Get Y-coordinate of lower-left corner
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_LowerLeftY(RectangleHandle handle, PIntegerObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_LowerLeftY(RectangleHandle handle, IntegerObjectHandle* result);
 
 	/**
 	* \brief Get X-coordinate of upper-right corner
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_UpperRightX(RectangleHandle handle, PIntegerObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_UpperRightX(RectangleHandle handle, IntegerObjectHandle* result);
 
 	/**
 	* \brief Get Y-coordinate of upper-right corner
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_UpperRightY(RectangleHandle handle, PIntegerObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_UpperRightY(RectangleHandle handle, IntegerObjectHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release

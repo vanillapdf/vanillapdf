@@ -7,7 +7,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetIntegerValue(IntegerObjectHandle handle, out_bigint_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetIntegerValue(IntegerObjectHandle handle, bigint_type* result)
 {
 	IntegerObject* obj = reinterpret_cast<IntegerObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -20,7 +20,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetIntegerValue(Int
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetUnsignedIntegerValue(IntegerObjectHandle handle, out_biguint_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetUnsignedIntegerValue(IntegerObjectHandle handle, biguint_type* result)
 {
 	IntegerObject* obj = reinterpret_cast<IntegerObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

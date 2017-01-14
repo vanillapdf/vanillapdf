@@ -30,12 +30,12 @@ extern "C"
 	/**
 	* \brief Return objects contained integer value
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetIntegerValue(IntegerObjectHandle handle, out_bigint_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetIntegerValue(IntegerObjectHandle handle, bigint_type* result);
 
 	/**
 	* \brief Return objects contained unsigned integer value
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetUnsignedIntegerValue(IntegerObjectHandle handle, out_biguint_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetUnsignedIntegerValue(IntegerObjectHandle handle, biguint_type* result);
 
 	/**
 	* \brief Set objects new integer value

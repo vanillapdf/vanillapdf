@@ -7,7 +7,7 @@
 
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPageCount(PageTreeHandle handle, out_integer_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPageCount(PageTreeHandle handle, integer_type* result)
 {
 	PageTree* obj = reinterpret_cast<PageTree*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -17,7 +17,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPageCount(PageTreeHan
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle handle, integer_type at, PPageObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle handle, integer_type at, PageObjectHandle* result)
 {
 	PageTree* obj = reinterpret_cast<PageTree*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

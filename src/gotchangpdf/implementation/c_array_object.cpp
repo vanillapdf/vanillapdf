@@ -7,7 +7,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle handle, integer_type at, PObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle handle, integer_type at, ObjectHandle* result)
 {
 	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -23,7 +23,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle 
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle handle, out_integer_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle handle, integer_type* result)
 {
 	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

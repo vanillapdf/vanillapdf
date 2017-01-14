@@ -7,7 +7,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ResourceDictionary_GetFontMap(ResourceDictionaryHandle handle, PFontMapHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ResourceDictionary_GetFontMap(ResourceDictionaryHandle handle, FontMapHandle* result)
 {
 	ResourceDictionary* obj = reinterpret_cast<ResourceDictionary*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

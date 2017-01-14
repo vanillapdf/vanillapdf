@@ -31,7 +31,7 @@ extern "C"
 	/**
 	* \brief Get names binary representation
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_GetValue(NameObjectHandle handle, PBufferHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_GetValue(NameObjectHandle handle, BufferHandle* result);
 
 	/**
 	* \brief Set names new value

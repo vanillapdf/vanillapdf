@@ -34,12 +34,12 @@ extern "C"
 	/**
 	* \brief Get total number of pages in current document.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPageCount(PageTreeHandle handle, out_integer_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPageCount(PageTreeHandle handle, integer_type* result);
 
 	/**
 	* \brief Get page at index \p at.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle handle, integer_type at, PPageObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle handle, integer_type at, PageObjectHandle* result);
 
 	/**
 	* \brief Insert new page at index \p at.

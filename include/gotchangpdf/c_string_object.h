@@ -55,11 +55,6 @@ extern "C"
 	} StringType;
 
 	/**
-	* \brief Pointer to StringType
-	*/
-	typedef StringType *PStringType;
-
-	/**
 	* \memberof StringObjectHandle
 	* @{
 	*/
@@ -67,22 +62,22 @@ extern "C"
 	/**
 	* \brief Get derived type from current string
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_Type(StringObjectHandle handle, PStringType result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_Type(StringObjectHandle handle, StringType* result);
 
 	/**
 	* \brief Reinterpret current object as LiteralStringObjectHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_ToLiteral(StringObjectHandle handle, PLiteralStringObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_ToLiteral(StringObjectHandle handle, LiteralStringObjectHandle* result);
 
 	/**
 	* \brief Reinterpret current object as HexadecimalStringObjectHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_ToHexadecimal(StringObjectHandle handle, PHexadecimalStringObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_ToHexadecimal(StringObjectHandle handle, HexadecimalStringObjectHandle* result);
 
 	/**
 	* \brief Get strings current value
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_GetValue(StringObjectHandle handle, PBufferHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_GetValue(StringObjectHandle handle, BufferHandle* result);
 
 	/**
 	* \brief Set strings new value
@@ -104,7 +99,7 @@ extern "C"
 	/**
 	* \brief Get strings current value
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_GetValue(LiteralStringObjectHandle handle, PBufferHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_GetValue(LiteralStringObjectHandle handle, BufferHandle* result);
 
 	/**
 	* \brief Set strings new value
@@ -126,7 +121,7 @@ extern "C"
 	/**
 	* \brief Get strings current value
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_GetValue(HexadecimalStringObjectHandle handle, PBufferHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_GetValue(HexadecimalStringObjectHandle handle, BufferHandle* result);
 
 	/**
 	* \brief Set strings new value

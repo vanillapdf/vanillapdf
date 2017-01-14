@@ -30,7 +30,7 @@ extern "C"
 	/**
 	* \brief Return objects contained real value
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION RealObject_GetValue(RealObjectHandle handle, out_real_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION RealObject_GetValue(RealObjectHandle handle, real_type* result);
 
 	/**
 	* \brief Set objects new real value

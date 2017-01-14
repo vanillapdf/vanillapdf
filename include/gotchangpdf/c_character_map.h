@@ -78,12 +78,12 @@ extern "C"
 	/**
 	* \brief Reinterpret current object as UnicodeCharacterMapHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION CharacterMap_ToUnicode(CharacterMapHandle handle, PUnicodeCharacterMapHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION CharacterMap_ToUnicode(CharacterMapHandle handle, UnicodeCharacterMapHandle* result);
 
 	/**
 	* \brief Reinterpret current object as EmbeddedCharacterMapHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION CharacterMap_ToEmbedded(CharacterMapHandle handle, PEmbeddedCharacterMapHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION CharacterMap_ToEmbedded(CharacterMapHandle handle, EmbeddedCharacterMapHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -104,7 +104,7 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_GetMappedValue(
 		UnicodeCharacterMapHandle handle,
 		BufferHandle key_handle,
-		PBufferHandle result);
+		BufferHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release

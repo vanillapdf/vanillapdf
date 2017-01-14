@@ -30,7 +30,7 @@ extern "C"
 	/**
 	* \brief Return current boolean value
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanObjectHandle handle, out_boolean_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanObjectHandle handle, boolean_type* result);
 
 	/**
 	* \brief Set new boolean value

@@ -30,12 +30,12 @@ extern "C"
 	/**
 	* \brief Return size of an array
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle handle, out_integer_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle handle, integer_type* result);
 
 	/**
 	* \brief Get element at location \p at
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle handle, integer_type at, PObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle handle, integer_type at, ObjectHandle* result);
 
 	/**
 	* \brief Insert new element at the end of the array

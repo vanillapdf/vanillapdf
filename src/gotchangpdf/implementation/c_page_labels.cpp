@@ -8,7 +8,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_Contains(PageLabelsHandle handle, integer_type page_number, out_boolean_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_Contains(PageLabelsHandle handle, integer_type page_number, boolean_type* result)
 {
 	PageLabels* obj = reinterpret_cast<PageLabels*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -21,7 +21,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_Contains(PageLabelsHan
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_At(PageLabelsHandle handle, integer_type page_number, PPageLabelHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_At(PageLabelsHandle handle, integer_type page_number, PageLabelHandle* result)
 {
 	PageLabels* obj = reinterpret_cast<PageLabels*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -45,7 +45,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_Release(PageLabelsHand
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Prefix(PageLabelHandle handle, PStringObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Prefix(PageLabelHandle handle, StringObjectHandle* result)
 {
 	PageLabel* obj = reinterpret_cast<PageLabel*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -61,7 +61,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Prefix(PageLabelHandle 
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Start(PageLabelHandle handle, PIntegerObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Start(PageLabelHandle handle, IntegerObjectHandle* result)
 {
 	PageLabel* obj = reinterpret_cast<PageLabel*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -77,7 +77,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Start(PageLabelHandle h
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Style(PageLabelHandle handle, PNumberingStyle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Style(PageLabelHandle handle, NumberingStyle* result)
 {
 	PageLabel* obj = reinterpret_cast<PageLabel*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

@@ -7,7 +7,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanObjectHandle handle, out_boolean_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanObjectHandle handle, boolean_type* result)
 {
 	BooleanObject* obj = reinterpret_cast<BooleanObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

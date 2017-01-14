@@ -10,7 +10,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_TrailerDictionary(XrefHandle handle, PDictionaryObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_TrailerDictionary(XrefHandle handle, DictionaryObjectHandle* result)
 {
 	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
@@ -25,7 +25,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_TrailerDictionary(XrefHandle
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_LastXrefOffset(XrefHandle handle, out_offset_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_LastXrefOffset(XrefHandle handle, offset_type* result)
 {
 	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
@@ -35,7 +35,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_LastXrefOffset(XrefHandle ha
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_Iterator(XrefHandle handle, PXrefIteratorHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_Iterator(XrefHandle handle, XrefIteratorHandle* result)
 {
 	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
@@ -50,7 +50,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Xref_Iterator(XrefHandle handle, 
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefIterator_GetValue(XrefIteratorHandle handle, PXrefEntryHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefIterator_GetValue(XrefIteratorHandle handle, XrefEntryHandle* result)
 {
 	XrefBase::Iterator* iterator = reinterpret_cast<XrefBase::Iterator*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
@@ -64,7 +64,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefIterator_GetValue(XrefIterato
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefIterator_IsValid(XrefIteratorHandle handle, XrefHandle xref_handle, out_boolean_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefIterator_IsValid(XrefIteratorHandle handle, XrefHandle xref_handle, boolean_type* result)
 {
 	XrefBase::Iterator* iterator = reinterpret_cast<XrefBase::Iterator*>(handle);
 	XrefBase* xref = reinterpret_cast<XrefBase*>(xref_handle);
@@ -108,7 +108,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle
 	return ObjectRelease<XrefEntryBase, XrefEntryHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_InUse(XrefEntryHandle handle, out_boolean_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_InUse(XrefEntryHandle handle, boolean_type* result)
 {
 	XrefEntryBase* entry = reinterpret_cast<XrefEntryBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -122,7 +122,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_InUse(XrefEntryHandle h
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Type(XrefEntryHandle handle, PXrefEntryType result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Type(XrefEntryHandle handle, XrefEntryType* result)
 {
 	XrefEntryBase* entry = reinterpret_cast<XrefEntryBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -148,7 +148,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_Type(XrefEntryHandle ha
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ObjectNumber(XrefEntryHandle handle, out_biguint_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ObjectNumber(XrefEntryHandle handle, biguint_type* result)
 {
 	XrefEntryBase* entry = reinterpret_cast<XrefEntryBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -158,7 +158,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ObjectNumber(XrefEntryH
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_GenerationNumber(XrefEntryHandle handle, out_ushort_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_GenerationNumber(XrefEntryHandle handle, ushort_type* result)
 {
 	XrefEntryBase* entry = reinterpret_cast<XrefEntryBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -168,7 +168,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_GenerationNumber(XrefEn
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_ObjectNumber(XrefEntryHandle handle, out_biguint_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_ObjectNumber(XrefEntryHandle handle, biguint_type* result)
 {
 	XrefFreeEntry* entry = reinterpret_cast<XrefFreeEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -178,7 +178,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_ObjectNumber(XrefEn
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_GenerationNumber(XrefEntryHandle handle, out_ushort_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_GenerationNumber(XrefEntryHandle handle, ushort_type* result)
 {
 	XrefFreeEntry* entry = reinterpret_cast<XrefFreeEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -188,7 +188,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_GenerationNumber(Xr
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_InUse(XrefFreeEntryHandle handle, out_boolean_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_InUse(XrefFreeEntryHandle handle, boolean_type* result)
 {
 	XrefFreeEntry* entry = reinterpret_cast<XrefFreeEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -198,7 +198,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_InUse(XrefFreeEntry
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_NextFreeObjectNumber(XrefFreeEntryHandle handle, out_biguint_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_NextFreeObjectNumber(XrefFreeEntryHandle handle, biguint_type* result)
 {
 	XrefFreeEntry* entry = reinterpret_cast<XrefFreeEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -213,7 +213,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefFreeEntry_Release(XrefFreeEnt
 	return ObjectRelease<XrefFreeEntry, XrefFreeEntryHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_ObjectNumber(XrefEntryHandle handle, out_biguint_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_ObjectNumber(XrefEntryHandle handle, biguint_type* result)
 {
 	XrefUsedEntry* entry = reinterpret_cast<XrefUsedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -223,7 +223,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_ObjectNumber(XrefEn
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_GenerationNumber(XrefEntryHandle handle, out_ushort_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_GenerationNumber(XrefEntryHandle handle, ushort_type* result)
 {
 	XrefUsedEntry* entry = reinterpret_cast<XrefUsedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -233,7 +233,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_GenerationNumber(Xr
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_Offset(XrefUsedEntryHandle handle, out_offset_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_Offset(XrefUsedEntryHandle handle, offset_type* result)
 {
 	XrefUsedEntry* entry = reinterpret_cast<XrefUsedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -243,7 +243,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_Offset(XrefUsedEntr
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_InUse(XrefUsedEntryHandle handle, out_boolean_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_InUse(XrefUsedEntryHandle handle, boolean_type* result)
 {
 	XrefUsedEntry* entry = reinterpret_cast<XrefUsedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -258,7 +258,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_Release(XrefUsedEnt
 	return ObjectRelease<XrefUsedEntry, XrefUsedEntryHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectNumber(XrefEntryHandle handle, out_biguint_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectNumber(XrefEntryHandle handle, biguint_type* result)
 {
 	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -268,7 +268,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectNumber(
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GenerationNumber(XrefEntryHandle handle, out_ushort_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GenerationNumber(XrefEntryHandle handle, ushort_type* result)
 {
 	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -278,7 +278,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GenerationNum
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_InUse(XrefCompressedEntryHandle handle, out_boolean_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_InUse(XrefCompressedEntryHandle handle, boolean_type* result)
 {
 	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -288,7 +288,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_InUse(XrefCom
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Index(XrefCompressedEntryHandle handle, out_uinteger_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Index(XrefCompressedEntryHandle handle, uinteger_type* result)
 {
 	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -298,7 +298,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Index(XrefCom
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectStreamNumber(XrefCompressedEntryHandle handle, out_biguint_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectStreamNumber(XrefCompressedEntryHandle handle, biguint_type* result)
 {
 	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -313,22 +313,22 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Release(XrefC
 	return ObjectRelease<XrefCompressedEntry, XrefCompressedEntryHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToFreeEntry(XrefEntryHandle handle, PXrefFreeEntryHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToFreeEntry(XrefEntryHandle handle, XrefFreeEntryHandle* result)
 {
 	return SafeObjectConvert<XrefEntryBase, XrefFreeEntry, XrefEntryHandle, XrefFreeEntryHandle>(handle, result);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToUsedEntry(XrefEntryHandle handle, PXrefUsedEntryHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToUsedEntry(XrefEntryHandle handle, XrefUsedEntryHandle* result)
 {
 	return SafeObjectConvert<XrefEntryBase, XrefUsedEntry, XrefEntryHandle, XrefUsedEntryHandle>(handle, result);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToCompressedEntry(XrefEntryHandle handle, PXrefCompressedEntryHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefEntry_ToCompressedEntry(XrefEntryHandle handle, XrefCompressedEntryHandle* result)
 {
 	return SafeObjectConvert<XrefEntryBase, XrefCompressedEntry, XrefEntryHandle, XrefCompressedEntryHandle>(handle, result);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_Reference(XrefUsedEntryHandle handle, PObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_Reference(XrefUsedEntryHandle handle, ObjectHandle* result)
 {
 	XrefUsedEntry* entry = reinterpret_cast<XrefUsedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -342,7 +342,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefUsedEntry_Reference(XrefUsedE
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Reference(XrefCompressedEntryHandle handle, PObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Reference(XrefCompressedEntryHandle handle, ObjectHandle* result)
 {
 	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -358,7 +358,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Reference(Xre
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_GetValue(XrefChainIteratorHandle handle, PXrefHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_GetValue(XrefChainIteratorHandle handle, XrefHandle* result)
 {
 	XrefChain::Iterator* iterator = reinterpret_cast<XrefChain::Iterator*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
@@ -372,7 +372,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_GetValue(XrefCh
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_IsValid(XrefChainIteratorHandle handle, XrefChainHandle chain_handle, out_boolean_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_IsValid(XrefChainIteratorHandle handle, XrefChainHandle chain_handle, boolean_type* result)
 {
 	XrefChain::Iterator* iterator = reinterpret_cast<XrefChain::Iterator*>(handle);
 	XrefChain* chain = reinterpret_cast<XrefChain*>(chain_handle);
@@ -406,7 +406,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChainIterator_Release(XrefCha
 	return ObjectRelease<XrefChain::Iterator, XrefChainIteratorHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChain_Iterator(XrefChainHandle handle, PXrefChainIteratorHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefChain_Iterator(XrefChainHandle handle, XrefChainIteratorHandle* result)
 {
 	XrefChain* chain = reinterpret_cast<XrefChain*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(chain);

@@ -7,7 +7,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObject(IndirectObjectReferenceHandle handle, PObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObject(IndirectObjectReferenceHandle handle, ObjectHandle* result)
 {
 	IndirectObjectReference* obj = reinterpret_cast<IndirectObjectReference*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -26,7 +26,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_Release(Indirec
 	return ObjectRelease<IndirectObjectReference, IndirectObjectReferenceHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObjectNumber(IndirectObjectReferenceHandle handle, out_biguint_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObjectNumber(IndirectObjectReferenceHandle handle, biguint_type* result)
 {
 	IndirectObjectReference* obj = reinterpret_cast<IndirectObjectReference*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -36,7 +36,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedOb
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedGenerationNumber(IndirectObjectReferenceHandle handle, out_ushort_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedGenerationNumber(IndirectObjectReferenceHandle handle, ushort_type* result)
 {
 	IndirectObjectReference* obj = reinterpret_cast<IndirectObjectReference*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

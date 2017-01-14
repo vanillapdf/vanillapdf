@@ -128,11 +128,6 @@ extern "C"
 	} DestinationType;
 
 	/**
-	* \brief Pointer to DestinationType
-	*/
-	typedef DestinationType *PDestinationType;
-
-	/**
 	* \memberof DestinationHandle
 	* @{
 	*/
@@ -149,7 +144,7 @@ extern "C"
 	* PageObjectHandle representing the destination page.
 	* \see PageTreeHandle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Destination_GetPageNumber(DestinationHandle handle, PObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Destination_GetPageNumber(DestinationHandle handle, ObjectHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -166,7 +161,7 @@ extern "C"
 	/**
 	* \brief Determine if current map contains \p name.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDestinationsHandle handle, NameObjectHandle name, out_boolean_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDestinationsHandle handle, NameObjectHandle name, boolean_type* result);
 
 	/**
 	* \brief Find mapped value for key \p name.
@@ -176,7 +171,7 @@ extern "C"
 	* This function throws internal exception on failure,
 	* which may render it slower.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Find(NamedDestinationsHandle handle, NameObjectHandle name, PDestinationHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Find(NamedDestinationsHandle handle, NameObjectHandle name, DestinationHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release

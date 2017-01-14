@@ -8,7 +8,7 @@ using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Destination_GetPageNumber(DestinationHandle handle, PObjectHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Destination_GetPageNumber(DestinationHandle handle, ObjectHandle* result)
 {
 	DestinationBase* obj = reinterpret_cast<DestinationBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -28,7 +28,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Destination_Release(DestinationHa
 	return ObjectRelease<DestinationBase, DestinationHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDestinationsHandle handle, NameObjectHandle name_handle, out_boolean_type result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDestinationsHandle handle, NameObjectHandle name_handle, boolean_type* result)
 {
 	NamedDestinations* obj = reinterpret_cast<NamedDestinations*>(handle);
 	NameObject* name = reinterpret_cast<NameObject*>(name_handle);
@@ -44,7 +44,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedD
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Find(NamedDestinationsHandle handle, NameObjectHandle name_handle, PDestinationHandle result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Find(NamedDestinationsHandle handle, NameObjectHandle name_handle, DestinationHandle* result)
 {
 	NamedDestinations* obj = reinterpret_cast<NamedDestinations*>(handle);
 	NameObject* name = reinterpret_cast<NameObject*>(name_handle);

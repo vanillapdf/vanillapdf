@@ -40,7 +40,7 @@ extern "C"
 	* Ensure the iterator is valid.
 	* \see ::DictionaryObjectIterator_IsValid
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetKey(DictionaryObjectIteratorHandle handle, PNameObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetKey(DictionaryObjectIteratorHandle handle, NameObjectHandle* result);
 
 	/**
 	* \brief Get value at iterator position
@@ -48,7 +48,7 @@ extern "C"
 	* Ensure the iterator is valid.
 	* \see ::DictionaryObjectIterator_IsValid
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetValue(DictionaryObjectIteratorHandle handle, PObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetValue(DictionaryObjectIteratorHandle handle, ObjectHandle* result);
 
 	/**
 	* \brief Determine if current position is valid
@@ -57,7 +57,7 @@ extern "C"
 	*
 	* Any other operation except \b THIS will fail on invalid iterator.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(DictionaryObjectIteratorHandle handle, DictionaryObjectHandle parent, out_boolean_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(DictionaryObjectIteratorHandle handle, DictionaryObjectHandle parent, boolean_type* result);
 
 	/**
 	* \brief Advances iterator to the next position
@@ -82,19 +82,19 @@ extern "C"
 	/**
 	* \brief Find mapped value for key \p key
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, NameObjectHandle key, PObjectHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, NameObjectHandle key, ObjectHandle* result);
 
 	/**
 	* \brief Determine if collection contains \p key
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(DictionaryObjectHandle handle, NameObjectHandle key, out_boolean_type result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(DictionaryObjectHandle handle, NameObjectHandle key, boolean_type* result);
 
 	/**
 	* \brief Get collection iterator for enumerating all entries
 	*
 	* Modifying collection may invalidate this handle.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(DictionaryObjectHandle handle, PDictionaryObjectIteratorHandle result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(DictionaryObjectHandle handle, DictionaryObjectIteratorHandle* result);
 
 	/**
 	* \brief Remove key-value pair from collection
