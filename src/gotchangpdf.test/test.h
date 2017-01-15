@@ -58,12 +58,10 @@ error_type process_content_operation_textfont(ContentOperationTextFontHandle obj
 error_type process_content_operation_textshowarray(ContentOperationTextShowArrayHandle obj, int nested);
 error_type process_content_operation_endtext(ContentOperationEndTextHandle obj, int nested);
 
-
 /* Documents */
 error_type process_document(DocumentHandle document, int nested);
 error_type process_catalog(CatalogHandle obj, int nested);
 error_type process_document_info(DocumentInfoHandle obj, int nested);
-error_type process_date(DateHandle obj, int nested);
 error_type process_trapped(DocumentTrappedType trapped, int nested);
 error_type process_page(PageObjectHandle obj, int nested);
 error_type process_extensions(DeveloperExtensionsHandle extensions, int nested);
@@ -93,6 +91,7 @@ error_type process_font_map(FontMapHandle obj, int nested);
 
 /* Common data structures */
 error_type process_rectangle(RectangleHandle obj, int nested);
+error_type process_date(DateHandle obj, int nested);
 
 #define RETURN_ERROR_IF_NOT_SUCCESS(fn) \
 do { \
