@@ -6,15 +6,14 @@ const int GOTCHANG_PDF_TEST_ERROR_INVALID_PARAMETERS = 2;
 const int GOTCHANG_PDF_TEST_ERROR_LOGGING_ENABLED = 3;
 const int GOTCHANG_PDF_TEST_ERROR_FAILURE = 255;
 
-void print_spaces(int nested)
-{
+void print_spaces(int nested) {
 	int i;
-	for (i = 0; i < nested; ++i)
+	for (i = 0; i < nested; ++i) {
 		printf("  ");
+	}
 }
 
-error_type process_buffer(BufferHandle buffer, int nested)
-{
+error_type process_buffer(BufferHandle buffer, int nested) {
 	string_type data = NULL;
 	char* local_string = NULL;
 	size_type size = 0;
@@ -31,10 +30,10 @@ error_type process_buffer(BufferHandle buffer, int nested)
 		return GOTCHANG_PDF_TEST_ERROR_FAILURE;
 	}
 
-	size_converted = (size_type)size;
+	size_converted = (size_type) size;
 	print_size = size_converted > 20 ? 10 : size_converted;
 
-	local_string = (char*)calloc(sizeof(char), print_size + 1);
+	local_string = (char*) calloc(sizeof(char), print_size + 1);
 	if (NULL == local_string) {
 		printf("Could not allocate memory: %ld bytes\n", print_size + 1);
 		return GOTCHANG_PDF_TEST_ERROR_FAILURE;
@@ -55,8 +54,7 @@ error_type process_buffer(BufferHandle buffer, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_version(PDFVersion version, int nested)
-{
+error_type process_version(PDFVersion version, int nested) {
 	print_spaces(nested);
 	printf("PDF Version: 1.%d \n", version);
 

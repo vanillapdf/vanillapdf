@@ -15,8 +15,7 @@
 // and any additional informations have to be
 // extracted from library logging facility
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 	FileHandle file = NULL;
 	DocumentHandle document = NULL;
 	string_type password = NULL;
@@ -51,8 +50,7 @@ int main(int argc, char *argv[])
 			if (argc >= 5) {
 				cert_password = argv[4];
 			}
-		}
-		else {
+		} else {
 			return GOTCHANG_PDF_TEST_ERROR_INVALID_PARAMETERS;
 		}
 	}
@@ -67,10 +65,10 @@ int main(int argc, char *argv[])
 		library_version_minor,
 		library_version_patch,
 		library_author
-	);
+		);
 
-	// I don't have easy idea how to verify disabled
-	// logging or different severity, so just test API
+		// I don't have easy idea how to verify disabled
+		// logging or different severity, so just test API
 	RETURN_ERROR_IF_NOT_SUCCESS(Logging_GetEnabled(&logging_enabled));
 
 	if (logging_enabled != GOTCHANG_PDF_RV_FALSE) {
@@ -100,8 +98,7 @@ int main(int argc, char *argv[])
 			RETURN_ERROR_IF_NOT_SUCCESS(EncryptionKey_CreateFromPkcs12File(cert_path, cert_password, &encryption_key));
 			RETURN_ERROR_IF_NOT_SUCCESS(File_SetEncryptionKey(file, encryption_key));
 		}
-	}
-	else {
+	} else {
 		// Password for un-encrypted file
 		if (password != NULL || cert_path != NULL) {
 			return GOTCHANG_PDF_TEST_ERROR_INVALID_PASSWORD;

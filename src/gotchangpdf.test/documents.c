@@ -1,7 +1,6 @@
 #include "test.h"
 
-error_type process_document(DocumentHandle document, int nested)
-{
+error_type process_document(DocumentHandle document, int nested) {
 	CatalogHandle catalog = NULL;
 	DocumentInfoHandle info = NULL;
 
@@ -16,34 +15,31 @@ error_type process_document(DocumentHandle document, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_object(ContentObjectHandle obj, int nested)
-{
+error_type process_content_object(ContentObjectHandle obj, int nested) {
 	ContentObjectType type;
 	ContentObjectTextHandle text_object = NULL;
 	ContentObjectInlineImageHandle image_object = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_GetType(obj, &type));
-	switch (type)
-	{
-	case ContentObjectType_Text:
-		RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_ToText(obj, &text_object));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_content_object_text(text_object, nested + 1));
-		break;
-	case ContentObjectType_InlineImage:
-		RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_ToInlineImage(obj, &image_object));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_content_object_inline_image(image_object, nested + 1));
-		break;
-	default:
-		print_spaces(nested + 1);
-		printf("Unrecognized content object type\n");
-		return GOTCHANG_PDF_TEST_ERROR_FAILURE;
+	switch (type) {
+		case ContentObjectType_Text:
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_ToText(obj, &text_object));
+			RETURN_ERROR_IF_NOT_SUCCESS(process_content_object_text(text_object, nested + 1));
+			break;
+		case ContentObjectType_InlineImage:
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_ToInlineImage(obj, &image_object));
+			RETURN_ERROR_IF_NOT_SUCCESS(process_content_object_inline_image(image_object, nested + 1));
+			break;
+		default:
+			print_spaces(nested + 1);
+			printf("Unrecognized content object type\n");
+			return GOTCHANG_PDF_TEST_ERROR_FAILURE;
 	}
 
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_object_inline_image(ContentObjectInlineImageHandle obj, int nested)
-{
+error_type process_content_object_inline_image(ContentObjectInlineImageHandle obj, int nested) {
 	DictionaryObjectHandle dictionary = NULL;
 	BufferHandle data = NULL;
 
@@ -65,8 +61,7 @@ error_type process_content_object_inline_image(ContentObjectInlineImageHandle ob
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_object_text(ContentObjectTextHandle obj, int nested)
-{
+error_type process_content_object_text(ContentObjectTextHandle obj, int nested) {
 	integer_type i = 0;
 	integer_type size = 0;
 
@@ -78,8 +73,7 @@ error_type process_content_object_text(ContentObjectTextHandle obj, int nested)
 	print_spaces(nested + 1);
 	printf("Operations: %d\n", size);
 
-	for (i = 0; i < size; ++i)
-	{
+	for (i = 0; i < size; ++i) {
 		ContentOperationHandle operation = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectText_GetOperationAt(obj, i, &operation));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation(operation, nested + 1));
@@ -92,8 +86,7 @@ error_type process_content_object_text(ContentObjectTextHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_operation(ContentOperationHandle obj, int nested)
-{
+error_type process_content_operation(ContentOperationHandle obj, int nested) {
 	ContentOperationType type;
 	ContentOperationGenericHandle generic_operation = NULL;
 	ContentOperationTextShowHandle text_show_operation = NULL;
@@ -102,39 +95,37 @@ error_type process_content_operation(ContentOperationHandle obj, int nested)
 	ContentOperationEndTextHandle end_text_operation = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_GetType(obj, &type));
-	switch (type)
-	{
-	case ContentOperationType_Generic:
-		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToGeneric(obj, &generic_operation));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_generic(generic_operation, nested + 1));
-		break;
-	case ContentOperationType_TextShow:
-		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextShow(obj, &text_show_operation));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_textshow(text_show_operation, nested + 1));
-		break;
-	case ContentOperationType_TextFont:
-		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextFont(obj, &text_font_operation));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_textfont(text_font_operation, nested + 1));
-		break;
-	case ContentOperationType_TextShowArray:
-		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextShowArray(obj, &text_show_array_operation));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_textshowarray(text_show_array_operation, nested + 1));
-		break;
-	case ContentOperationType_EndText:
-		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToEndText(obj, &end_text_operation));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_endtext(end_text_operation, nested + 1));
-		break;
-	default:
-		print_spaces(nested + 1);
-		printf("Unrecognized content operation type\n");
-		return GOTCHANG_PDF_TEST_ERROR_FAILURE;
+	switch (type) {
+		case ContentOperationType_Generic:
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToGeneric(obj, &generic_operation));
+			RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_generic(generic_operation, nested + 1));
+			break;
+		case ContentOperationType_TextShow:
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextShow(obj, &text_show_operation));
+			RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_textshow(text_show_operation, nested + 1));
+			break;
+		case ContentOperationType_TextFont:
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextFont(obj, &text_font_operation));
+			RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_textfont(text_font_operation, nested + 1));
+			break;
+		case ContentOperationType_TextShowArray:
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextShowArray(obj, &text_show_array_operation));
+			RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_textshowarray(text_show_array_operation, nested + 1));
+			break;
+		case ContentOperationType_EndText:
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToEndText(obj, &end_text_operation));
+			RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_endtext(end_text_operation, nested + 1));
+			break;
+		default:
+			print_spaces(nested + 1);
+			printf("Unrecognized content operation type\n");
+			return GOTCHANG_PDF_TEST_ERROR_FAILURE;
 	}
 
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_operation_generic(ContentOperationGenericHandle obj, int nested)
-{
+error_type process_content_operation_generic(ContentOperationGenericHandle obj, int nested) {
 	integer_type i = 0;
 	integer_type size = 0;
 	ContentOperatorHandle oper = NULL;
@@ -151,8 +142,7 @@ error_type process_content_operation_generic(ContentOperationGenericHandle obj, 
 	print_spaces(nested + 1);
 	printf("Operands: %d\n", size);
 
-	for (i = 0; i < size; ++i)
-	{
+	for (i = 0; i < size; ++i) {
 		ObjectHandle operand = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationGeneric_GetOperandAt(obj, i, &operand));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_object(operand, nested + 1));
@@ -165,16 +155,14 @@ error_type process_content_operation_generic(ContentOperationGenericHandle obj, 
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_operation_endtext(ContentOperationEndTextHandle obj, int nested)
-{
+error_type process_content_operation_endtext(ContentOperationEndTextHandle obj, int nested) {
 	print_spaces(nested);
 	printf("Content operation: ET\n");
 
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_operation_textshowarray(ContentOperationTextShowArrayHandle obj, int nested)
-{
+error_type process_content_operation_textshowarray(ContentOperationTextShowArrayHandle obj, int nested) {
 	ArrayObjectHandle items_handle = NULL;
 
 	print_spaces(nested);
@@ -190,8 +178,7 @@ error_type process_content_operation_textshowarray(ContentOperationTextShowArray
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_operation_textfont(ContentOperationTextFontHandle obj, int nested)
-{
+error_type process_content_operation_textfont(ContentOperationTextFontHandle obj, int nested) {
 	NameObjectHandle font_name = NULL;
 	IntegerObjectHandle font_scale = NULL;
 
@@ -211,8 +198,7 @@ error_type process_content_operation_textfont(ContentOperationTextFontHandle obj
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_operation_textshow(ContentOperationTextShowHandle obj, int nested)
-{
+error_type process_content_operation_textshow(ContentOperationTextShowHandle obj, int nested) {
 	StringObjectHandle str = NULL;
 
 	print_spaces(nested);
@@ -228,8 +214,7 @@ error_type process_content_operation_textshow(ContentOperationTextShowHandle obj
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_operator(ContentOperatorHandle obj, int nested)
-{
+error_type process_content_operator(ContentOperatorHandle obj, int nested) {
 	ContentOperatorType type;
 	BufferHandle buffer = NULL;
 
@@ -251,8 +236,7 @@ error_type process_content_operator(ContentOperatorHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_instruction(ContentInstructionHandle obj, int nested)
-{
+error_type process_content_instruction(ContentInstructionHandle obj, int nested) {
 	ContentInstructionType type;
 	ContentObjectHandle object_handle = NULL;
 	ContentOperationHandle operation_handle = NULL;
@@ -261,20 +245,19 @@ error_type process_content_instruction(ContentInstructionHandle obj, int nested)
 	printf("Content instruction\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_GetType(obj, &type));
-	switch (type)
-	{
-	case ContentInstructionType_Object:
-		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_ToObject(obj, &object_handle));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_content_object(object_handle, nested + 1));
-		break;
-	case ContentInstructionType_Operation:
-		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_ToOperation(obj, &operation_handle));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation(operation_handle, nested + 1));
-		break;
-	default:
-		print_spaces(nested + 1);
-		printf("Unrecognized content instruction type\n");
-		return GOTCHANG_PDF_TEST_ERROR_FAILURE;
+	switch (type) {
+		case ContentInstructionType_Object:
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_ToObject(obj, &object_handle));
+			RETURN_ERROR_IF_NOT_SUCCESS(process_content_object(object_handle, nested + 1));
+			break;
+		case ContentInstructionType_Operation:
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_ToOperation(obj, &operation_handle));
+			RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation(operation_handle, nested + 1));
+			break;
+		default:
+			print_spaces(nested + 1);
+			printf("Unrecognized content instruction type\n");
+			return GOTCHANG_PDF_TEST_ERROR_FAILURE;
 	}
 
 	print_spaces(nested);
@@ -283,8 +266,7 @@ error_type process_content_instruction(ContentInstructionHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_contents(ContentsHandle obj, int nested)
-{
+error_type process_contents(ContentsHandle obj, int nested) {
 	integer_type i = 0;
 	integer_type size = 0;
 
@@ -309,8 +291,7 @@ error_type process_contents(ContentsHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_font_map(FontMapHandle obj, int nested)
-{
+error_type process_font_map(FontMapHandle obj, int nested) {
 	print_spaces(nested);
 	printf("Font map begin\n");
 
@@ -320,8 +301,7 @@ error_type process_font_map(FontMapHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_resource_dictionary(ResourceDictionaryHandle obj, int nested)
-{
+error_type process_resource_dictionary(ResourceDictionaryHandle obj, int nested) {
 	FontMapHandle font_map = NULL;
 
 	print_spaces(nested);
@@ -337,8 +317,7 @@ error_type process_resource_dictionary(ResourceDictionaryHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_rectangle(RectangleHandle obj, int nested)
-{
+error_type process_rectangle(RectangleHandle obj, int nested) {
 	ContentsHandle contents = NULL;
 	RectangleHandle media_box = NULL;
 	IntegerObjectHandle lower_left_x = NULL;
@@ -370,8 +349,7 @@ error_type process_rectangle(RectangleHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_link_annotation(LinkAnnotationHandle obj, int nested)
-{
+error_type process_link_annotation(LinkAnnotationHandle obj, int nested) {
 	DestinationHandle destination = NULL;
 
 	print_spaces(nested);
@@ -387,8 +365,7 @@ error_type process_link_annotation(LinkAnnotationHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_annotation(AnnotationHandle obj, int nested)
-{
+error_type process_annotation(AnnotationHandle obj, int nested) {
 	AnnotationType type;
 	LinkAnnotationHandle link_annotation = NULL;
 
@@ -398,44 +375,44 @@ error_type process_annotation(AnnotationHandle obj, int nested)
 	RETURN_ERROR_IF_NOT_SUCCESS(Annotation_GetType(obj, &type));
 
 	switch (type) {
-	case AnnotationType_Link:
-		RETURN_ERROR_IF_NOT_SUCCESS(Annotation_ToLink(obj, &link_annotation));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_link_annotation(link_annotation, nested + 1));
-		break;
+		case AnnotationType_Link:
+			RETURN_ERROR_IF_NOT_SUCCESS(Annotation_ToLink(obj, &link_annotation));
+			RETURN_ERROR_IF_NOT_SUCCESS(process_link_annotation(link_annotation, nested + 1));
+			break;
 
-	case AnnotationType_Text:
-	case AnnotationType_FreeText:
-	case AnnotationType_Line:
-	case AnnotationType_Square:
-	case AnnotationType_Circle:
-	case AnnotationType_Polygon:
-	case AnnotationType_PolyLine:
-	case AnnotationType_Highlight:
-	case AnnotationType_Underline:
-	case AnnotationType_Squiggly:
-	case AnnotationType_StrikeOut:
-	case AnnotationType_RubberStamp:
-	case AnnotationType_Caret:
-	case AnnotationType_Ink:
-	case AnnotationType_Popup:
-	case AnnotationType_FileAttachment:
-	case AnnotationType_Sound:
-	case AnnotationType_Movie:
-	case AnnotationType_Widget:
-	case AnnotationType_Screen:
-	case AnnotationType_PrinterMark:
-	case AnnotationType_TrapNetwork:
-	case AnnotationType_Watermark:
-	case AnnotationType_TripleD:
-	case AnnotationType_Redaction:
-		print_spaces(nested + 1);
-		printf("Type: %d\n", type);
-		break;
+		case AnnotationType_Text:
+		case AnnotationType_FreeText:
+		case AnnotationType_Line:
+		case AnnotationType_Square:
+		case AnnotationType_Circle:
+		case AnnotationType_Polygon:
+		case AnnotationType_PolyLine:
+		case AnnotationType_Highlight:
+		case AnnotationType_Underline:
+		case AnnotationType_Squiggly:
+		case AnnotationType_StrikeOut:
+		case AnnotationType_RubberStamp:
+		case AnnotationType_Caret:
+		case AnnotationType_Ink:
+		case AnnotationType_Popup:
+		case AnnotationType_FileAttachment:
+		case AnnotationType_Sound:
+		case AnnotationType_Movie:
+		case AnnotationType_Widget:
+		case AnnotationType_Screen:
+		case AnnotationType_PrinterMark:
+		case AnnotationType_TrapNetwork:
+		case AnnotationType_Watermark:
+		case AnnotationType_TripleD:
+		case AnnotationType_Redaction:
+			print_spaces(nested + 1);
+			printf("Type: %d\n", type);
+			break;
 
-	default:
-		print_spaces(nested + 1);
-		printf("Unrecognized annotation type\n");
-		return GOTCHANG_PDF_TEST_ERROR_FAILURE;
+		default:
+			print_spaces(nested + 1);
+			printf("Unrecognized annotation type\n");
+			return GOTCHANG_PDF_TEST_ERROR_FAILURE;
 	}
 
 	print_spaces(nested);
@@ -444,8 +421,7 @@ error_type process_annotation(AnnotationHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_page_annotations(PageAnnotationsHandle obj, int nested)
-{
+error_type process_page_annotations(PageAnnotationsHandle obj, int nested) {
 	size_type annotation_count = 0;
 	size_type i = 0;
 
@@ -468,8 +444,7 @@ error_type process_page_annotations(PageAnnotationsHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_page(PageObjectHandle obj, int nested)
-{
+error_type process_page(PageObjectHandle obj, int nested) {
 	ContentsHandle contents = NULL;
 	RectangleHandle media_box = NULL;
 	PageAnnotationsHandle annotations = NULL;
@@ -500,8 +475,7 @@ error_type process_page(PageObjectHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_extensions(DeveloperExtensionsHandle extensions, int nested)
-{
+error_type process_extensions(DeveloperExtensionsHandle extensions, int nested) {
 	boolean_type boolean = GOTCHANG_PDF_RV_FALSE;
 	DeveloperExtensionsIteratorHandle iterator = NULL;
 
@@ -510,8 +484,7 @@ error_type process_extensions(DeveloperExtensionsHandle extensions, int nested)
 
 	RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtensions_Iterator(extensions, &iterator));
 	while (GOTCHANG_PDF_TEST_ERROR_SUCCESS == DeveloperExtensionsIterator_IsValid(iterator, extensions, &boolean)
-		&& GOTCHANG_PDF_RV_TRUE == boolean)
-	{
+		&& GOTCHANG_PDF_RV_TRUE == boolean) {
 		NameObjectHandle key = NULL;
 		DeveloperExtensionHandle value = NULL;
 
@@ -540,8 +513,7 @@ error_type process_extensions(DeveloperExtensionsHandle extensions, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_extension(DeveloperExtensionHandle extension, int nested)
-{
+error_type process_extension(DeveloperExtensionHandle extension, int nested) {
 	IntegerObjectHandle level = NULL;
 	PDFVersion base_version;
 
@@ -566,8 +538,7 @@ error_type process_extension(DeveloperExtensionHandle extension, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_named_destinations(NamedDestinationsHandle obj, int nested)
-{
+error_type process_named_destinations(NamedDestinationsHandle obj, int nested) {
 	print_spaces(nested);
 	printf("Named destinations begin\n");
 
@@ -577,8 +548,7 @@ error_type process_named_destinations(NamedDestinationsHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_destination(DestinationHandle obj, int nested)
-{
+error_type process_destination(DestinationHandle obj, int nested) {
 	ObjectHandle page = NULL;
 
 	print_spaces(nested);
@@ -594,8 +564,7 @@ error_type process_destination(DestinationHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_catalog(CatalogHandle catalog, int nested)
-{
+error_type process_catalog(CatalogHandle catalog, int nested) {
 	integer_type i = 0;
 	integer_type size = 0;
 	PageTreeHandle pages = NULL;
@@ -635,8 +604,7 @@ error_type process_catalog(CatalogHandle catalog, int nested)
 		process_named_destinations(named_destinations, nested + 1),
 		NamedDestinations_Release(named_destinations));
 
-	for (i = 1; i <= size; ++i)
-	{
+	for (i = 1; i <= size; ++i) {
 		PageObjectHandle page = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(pages, i, &page));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_page(page, nested + 1));
@@ -651,16 +619,14 @@ error_type process_catalog(CatalogHandle catalog, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_trapped(DocumentTrappedType trapped, int nested)
-{
+error_type process_trapped(DocumentTrappedType trapped, int nested) {
 	print_spaces(nested);
 	printf("Trapped: %d\n", trapped);
 
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_document_info(DocumentInfoHandle obj, int nested)
-{
+error_type process_document_info(DocumentInfoHandle obj, int nested) {
 	StringObjectHandle title = NULL;
 	StringObjectHandle author = NULL;
 	StringObjectHandle subject = NULL;
@@ -715,8 +681,7 @@ error_type process_document_info(DocumentInfoHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_date(DateHandle obj, int nested)
-{
+error_type process_date(DateHandle obj, int nested) {
 	integer_type year = 0;
 	integer_type month = 0;
 	integer_type day = 0;
@@ -745,8 +710,7 @@ error_type process_date(DateHandle obj, int nested)
 		printf("%04d-%02d-%02d %02d:%02d:%02dZ\n",
 			year, month, day,
 			hour, minute, second);
-	}
-	else {
+	} else {
 		printf("%04d-%02d-%02d %02d:%02d:%02d %c%02d:%02d\n",
 			year, month, day,
 			hour, minute, second,
@@ -759,8 +723,7 @@ error_type process_date(DateHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_outline(OutlineHandle outline, int nested)
-{
+error_type process_outline(OutlineHandle outline, int nested) {
 	OutlineItemHandle first = NULL;
 	OutlineItemHandle last = NULL;
 	IntegerObjectHandle count = NULL;
@@ -786,8 +749,7 @@ error_type process_outline(OutlineHandle outline, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_outline_item(OutlineItemHandle outline, int nested)
-{
+error_type process_outline_item(OutlineItemHandle outline, int nested) {
 	OutlineBaseHandle parent = NULL;
 	OutlineItemHandle first = NULL;
 	OutlineItemHandle last = NULL;
@@ -843,8 +805,7 @@ error_type process_outline_item(OutlineItemHandle outline, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_outline_base(OutlineBaseHandle outline, int nested)
-{
+error_type process_outline_base(OutlineBaseHandle outline, int nested) {
 	OutlineType type;
 
 	print_spaces(nested);
@@ -861,8 +822,7 @@ error_type process_outline_base(OutlineBaseHandle outline, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_outline_item_color(OutlineItemColorHandle obj, int nested)
-{
+error_type process_outline_item_color(OutlineItemColorHandle obj, int nested) {
 	IntegerObjectHandle red = NULL;
 	IntegerObjectHandle green = NULL;
 	IntegerObjectHandle blue = NULL;
@@ -888,8 +848,7 @@ error_type process_outline_item_color(OutlineItemColorHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_outline_item_flags(OutlineItemFlagsHandle obj, int nested)
-{
+error_type process_outline_item_flags(OutlineItemFlagsHandle obj, int nested) {
 	boolean_type is_italic = GOTCHANG_PDF_RV_FALSE;
 	boolean_type is_bold = GOTCHANG_PDF_RV_FALSE;
 
@@ -911,15 +870,13 @@ error_type process_outline_item_flags(OutlineItemFlagsHandle obj, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_page_labels(PageLabelsHandle labels, integer_type size, int nested)
-{
+error_type process_page_labels(PageLabelsHandle labels, integer_type size, int nested) {
 	integer_type i = 0;
 
 	print_spaces(nested);
 	printf("Page labels begin\n");
 
-	for (i = 1; i <= size; ++i)
-	{
+	for (i = 1; i <= size; ++i) {
 		boolean_type contains = GOTCHANG_PDF_RV_FALSE;
 		PageLabelHandle label = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(PageLabels_Contains(labels, i, &contains));
@@ -937,8 +894,7 @@ error_type process_page_labels(PageLabelsHandle labels, integer_type size, int n
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_page_label(PageLabelHandle label, int nested)
-{
+error_type process_page_label(PageLabelHandle label, int nested) {
 	StringObjectHandle p = NULL;
 	IntegerObjectHandle st = NULL;
 	NumberingStyle s;
@@ -956,24 +912,21 @@ error_type process_page_label(PageLabelHandle label, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type proces_numbering_style(NumberingStyle style, int nested)
-{
+error_type proces_numbering_style(NumberingStyle style, int nested) {
 	print_spaces(nested + 1);
 	printf("Numbering Style: %d\n", style);
 
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_page_layout(PageLayout page_layout, int nested)
-{
+error_type process_page_layout(PageLayout page_layout, int nested) {
 	print_spaces(nested);
 	printf("Page layout: %d\n", page_layout);
 
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_viewer_preferences(ViewerPreferencesHandle preferences, int nested)
-{
+error_type process_viewer_preferences(ViewerPreferencesHandle preferences, int nested) {
 	Duplex duplex;
 	PrintScaling print_scaling;
 	NonFullScreenPageMode page_mode;
@@ -1008,15 +961,13 @@ error_type process_viewer_preferences(ViewerPreferencesHandle preferences, int n
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_page_range(PageRangeHandle range, int nested)
-{
+error_type process_page_range(PageRangeHandle range, int nested) {
 	integer_type i = 0;
 	integer_type size = 0;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(PageRange_GetSize(range, &size));
 
-	for (i = 1; i <= size; ++i)
-	{
+	for (i = 1; i <= size; ++i) {
 		PageSubRangeHandle sub_range = NULL;
 		IntegerObjectHandle first_page = NULL;
 		IntegerObjectHandle last_page = NULL;
@@ -1035,32 +986,28 @@ error_type process_page_range(PageRangeHandle range, int nested)
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type proces_nonfullscreen_page_mode(NonFullScreenPageMode page_mode, int nested)
-{
+error_type proces_nonfullscreen_page_mode(NonFullScreenPageMode page_mode, int nested) {
 	print_spaces(nested);
 	printf("Non-FullScreen page Mode: %d\n", page_mode);
 
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type proces_reading_order(ReadingOrder order, int nested)
-{
+error_type proces_reading_order(ReadingOrder order, int nested) {
 	print_spaces(nested);
 	printf("Reading order: %d\n", order);
 
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type proces_print_scaling(PrintScaling scaling, int nested)
-{
+error_type proces_print_scaling(PrintScaling scaling, int nested) {
 	print_spaces(nested);
 	printf("Print scaling: %d\n", scaling);
 
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_duplex(Duplex duplex, int nested)
-{
+error_type process_duplex(Duplex duplex, int nested) {
 	print_spaces(nested);
 	printf("Duplex: %d\n", duplex);
 

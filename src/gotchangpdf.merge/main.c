@@ -7,8 +7,7 @@ const int GOTCHANG_PDF_MERGE_ERROR_FAILURE = 255;
 static PageObjectHandle current_page_object = NULL;
 static UnicodeCharacterMapHandle current_unicode_map = NULL;
 
-error_type process_contents(ContentsHandle page_contents, integer_type page_number)
-{
+error_type process_contents(ContentsHandle page_contents, integer_type page_number) {
 	integer_type j = 0;
 	integer_type contents_size = 0;
 	RectangleHandle media_box = NULL;
@@ -59,8 +58,7 @@ error_type process_contents(ContentsHandle page_contents, integer_type page_numb
 	return GOTCHANG_PDF_MERGE_ERROR_SUCCESS;
 }
 
-error_type process_string_object(StringObjectHandle string_handle, integer_type page_number)
-{
+error_type process_string_object(StringObjectHandle string_handle, integer_type page_number) {
 	BufferHandle mapped_value = NULL;
 	BufferHandle string_buffer = NULL;
 	string_type string_data = NULL;
@@ -111,8 +109,7 @@ error_type process_string_object(StringObjectHandle string_handle, integer_type 
 	return GOTCHANG_PDF_MERGE_ERROR_SUCCESS;
 }
 
-error_type process_content_operation(ContentOperationHandle content_operation, integer_type page_number)
-{
+error_type process_content_operation(ContentOperationHandle content_operation, integer_type page_number) {
 	ContentOperationType operation_type;
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_GetType(content_operation, &operation_type));
 	if (operation_type == ContentOperationType_TextFont) {
@@ -191,13 +188,11 @@ error_type process_content_operation(ContentOperationHandle content_operation, i
 	return GOTCHANG_PDF_MERGE_ERROR_SUCCESS;
 }
 
-void print_help()
-{
+void print_help() {
 	printf("Usage: -s [source file] -d [destination file] -f [array of merged files]");
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 	const int MERGE_FILES_START_INDEX = 6;
 
 	const char *source_file = NULL;
