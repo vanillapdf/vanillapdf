@@ -25,7 +25,7 @@ XrefUsedEntryBasePtr XrefChain::AllocateNewEntry() {
 			}
 
 			// Disable free entries with max generation number
-			if (item->GetGenerationNumber() == std::numeric_limits<types::ushort>::max()) {
+			if (item->GetGenerationNumber() == constant::MAX_GENERATION_NUMBER) {
 				continue;
 			}
 

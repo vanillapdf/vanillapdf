@@ -4,13 +4,6 @@
 #include <cstdint>
 
 namespace gotchangpdf {
-namespace constant {
-
-const int BUFFER_SIZE = 16384;
-const int BAD_OFFSET = -1;
-
-} // constant
-
 namespace types {
 
 typedef int native_int;
@@ -29,6 +22,14 @@ typedef int64_t stream_size;
 typedef double real;
 
 } // types
+
+namespace constant {
+
+const int BUFFER_SIZE = 16384;
+const int BAD_OFFSET = -1;
+const types::ushort MAX_GENERATION_NUMBER = 65535;
+
+} // constant
 } // gotchangpdf
 
 #endif /* _CONSTANTS_H */
