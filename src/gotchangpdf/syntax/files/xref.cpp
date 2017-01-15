@@ -283,7 +283,10 @@ bool XrefBase::Remove(types::big_uint obj_number) {
 	return true;
 }
 
-size_t XrefBase::Size(void) const noexcept { return _entries.size(); }
+size_t XrefBase::Size(void) const noexcept {
+	return _entries.size();
+}
+
 XrefEntryBasePtr XrefBase::Find(types::big_uint obj_number) const {
 	auto found = _entries.find(obj_number);
 	if (found == _entries.end()) {
