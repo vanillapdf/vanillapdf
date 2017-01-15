@@ -92,7 +92,7 @@ extern "C"
 	* The page scaling option that shall be selected when
 	* a print dialog is displayed for this document.
 	*/
-	typedef enum PrintScaling {
+	typedef enum {
 		/**
 		* \brief
 		* Indicates the conforming reader's default print scaling
