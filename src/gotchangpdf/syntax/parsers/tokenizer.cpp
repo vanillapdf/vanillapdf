@@ -257,31 +257,32 @@ retry:
 					continue;
 				}
 
-				if (IsNumeric(next)) {
-					std::stringstream octal;
-					for (int i = 0; i < 3; ++i) {
-						auto numeric_meta = peek();
-						if (std::char_traits<char>::eof() == numeric_meta) {
-							break;
-						}
-
-						auto numeric = ValueConvertUtils::SafeConvert<unsigned char>(numeric_meta);
-						if (IsNumeric(numeric) && ignore()) {
-							octal << numeric;
-						} else {
-							assert(!"Found invalid value in octal representation inside literal string");
-							throw GeneralException("Expected octal value inside literal string: " + octal.str());
-						}
-					}
-
-					int value = 0;
-					octal >> std::oct >> value;
-					auto converted = ValueConvertUtils::SafeConvert<unsigned char, int>(value);
-					char char_converted = reinterpret_cast<char&>(converted);
-					chars->push_back(char_converted);
+				if (!IsNumeric(next)) {
 					continue;
 				}
 
+				std::stringstream octal;
+				for (int i = 0; i < 3; ++i) {
+					auto numeric_meta = peek();
+					if (std::char_traits<char>::eof() == numeric_meta) {
+						break;
+					}
+
+					auto numeric = ValueConvertUtils::SafeConvert<unsigned char>(numeric_meta);
+					if (IsNumeric(numeric) && ignore()) {
+						octal << numeric;
+						continue;
+					}
+
+					assert(!"Found invalid value in octal representation inside literal string");
+					throw GeneralException("Expected octal value inside literal string: " + octal.str());
+				}
+
+				int value = 0;
+				octal >> std::oct >> value;
+				auto converted = ValueConvertUtils::SafeConvert<unsigned char, int>(value);
+				char char_converted = reinterpret_cast<char&>(converted);
+				chars->push_back(char_converted);
 				continue;
 			}
 

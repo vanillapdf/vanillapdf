@@ -66,84 +66,83 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(std::istream& src, types::stream_siz
 
 	if (*predictor == 2) {
 		throw NotSupportedException("TIFF predictor is currently not supported");
-	} else if (*predictor >= 10) {
-		types::native_int bytesPerPixel = colors->SafeConvert<types::native_int>() * bits->SafeConvert<types::native_int>() / 8;
-		types::native_int bytesPerRow = (
-			colors->SafeConvert<types::native_int>()
-			* columns->SafeConvert<types::native_int>()
-			* bits->SafeConvert<types::native_int>()
-			+ 7
-			) / 8;
-
-		BufferPtr result;
-		Stream strm(src);
-		Buffer curr(bytesPerRow, '\0');
-		Buffer prior(bytesPerRow, '\0');
-
-		while (strm.peek() != std::char_traits<char>::eof()) {
-			auto filter = strm.get();
-			strm.read(curr, bytesPerRow);
-
-			switch (filter) {
-				case 0: //PNG_FILTER_NONE
-					break;
-				case 1: //PNG_FILTER_SUB
-					for (types::native_int i = bytesPerPixel; i < bytesPerRow; i++) {
-						curr[i] += curr[i - bytesPerPixel];
-					}
-					break;
-				case 2: //PNG_FILTER_UP
-					for (types::native_int i = 0; i < bytesPerRow; i++) {
-						curr[i] += prior[i];
-					}
-					break;
-				case 3: //PNG_FILTER_AVERAGE
-					for (types::native_int i = 0; i < bytesPerPixel; i++) {
-						curr[i] += (prior[i] / 2);
-					}
-					for (types::native_int i = bytesPerPixel; i < bytesPerRow; i++) {
-						curr[i] += (((curr[i - bytesPerPixel] & 0xff) + (prior[i] & 0xff)) / 2);
-					}
-					break;
-				case 4: //PNG_FILTER_PAETH
-					for (types::native_int i = 0; i < bytesPerPixel; i++) {
-						curr[i] += prior[i];
-					}
-
-					for (types::native_int i = bytesPerPixel; i < bytesPerRow; i++) {
-						uint8_t a = curr[i - bytesPerPixel] & 0xff;
-						uint8_t b = prior[i] & 0xff;
-						uint8_t c = prior[i - bytesPerPixel] & 0xff;
-
-						int p = a + b - c;
-						int pa = std::abs(p - a);
-						int pb = std::abs(p - b);
-						int pc = std::abs(p - c);
-
-						uint8_t ret;
-						if ((pa <= pb) && (pa <= pc)) {
-							ret = a;
-						} else if (pb <= pc) {
-							ret = b;
-						} else {
-							ret = c;
-						}
-						curr[i] += ret;
-					}
-					break;
-				default:
-					LOG_ERROR_GLOBAL << "Unknown filter type: " << filter;
-					break;
-			}
-
-			result->insert(result.end(), curr.begin(), curr.end());
-			std::swap(curr, prior);
-		}
-
-		return result;
+	} else if (*predictor < 10) {
+		throw GeneralException("Unknown predictor type");
 	}
 
-	throw GeneralException("Unknown predictor type");
+	types::native_int colors_int = colors->SafeConvert<types::native_int>();
+	types::native_int columns_int = columns->SafeConvert<types::native_int>();
+	types::native_int bits_int = bits->SafeConvert<types::native_int>();
+
+	types::native_int bytesPerPixel = colors_int * bits_int / 8;
+	types::native_int bytesPerRow = (colors_int * columns_int * bits_int + 7) / 8;
+
+	BufferPtr result;
+	Stream strm(src);
+	Buffer curr(bytesPerRow, '\0');
+	Buffer prior(bytesPerRow, '\0');
+
+	while (strm.peek() != std::char_traits<char>::eof()) {
+		auto filter = strm.get();
+		strm.read(curr, bytesPerRow);
+
+		switch (filter) {
+			case 0: //PNG_FILTER_NONE
+				break;
+			case 1: //PNG_FILTER_SUB
+				for (types::native_int i = bytesPerPixel; i < bytesPerRow; i++) {
+					curr[i] += curr[i - bytesPerPixel];
+				}
+				break;
+			case 2: //PNG_FILTER_UP
+				for (types::native_int i = 0; i < bytesPerRow; i++) {
+					curr[i] += prior[i];
+				}
+				break;
+			case 3: //PNG_FILTER_AVERAGE
+				for (types::native_int i = 0; i < bytesPerPixel; i++) {
+					curr[i] += (prior[i] / 2);
+				}
+				for (types::native_int i = bytesPerPixel; i < bytesPerRow; i++) {
+					curr[i] += (((curr[i - bytesPerPixel] & 0xff) + (prior[i] & 0xff)) / 2);
+				}
+				break;
+			case 4: //PNG_FILTER_PAETH
+				for (types::native_int i = 0; i < bytesPerPixel; i++) {
+					curr[i] += prior[i];
+				}
+
+				for (types::native_int i = bytesPerPixel; i < bytesPerRow; i++) {
+					uint8_t a = curr[i - bytesPerPixel] & 0xff;
+					uint8_t b = prior[i] & 0xff;
+					uint8_t c = prior[i - bytesPerPixel] & 0xff;
+
+					int p = a + b - c;
+					int pa = std::abs(p - a);
+					int pb = std::abs(p - b);
+					int pc = std::abs(p - c);
+
+					uint8_t ret;
+					if ((pa <= pb) && (pa <= pc)) {
+						ret = a;
+					} else if (pb <= pc) {
+						ret = b;
+					} else {
+						ret = c;
+					}
+					curr[i] += ret;
+				}
+				break;
+			default:
+				LOG_ERROR_GLOBAL << "Unknown filter type: " << filter;
+				break;
+		}
+
+		result->insert(result.end(), curr.begin(), curr.end());
+		std::swap(curr, prior);
+	}
+
+	return result;
 }
 
 } // syntax
