@@ -22,6 +22,9 @@ extern "C"
 	* \brief Represents a reference to a particular day represented within a calendar system
 	*/
 
+	/**
+	* \brief Relationship of local time to Universal Time (UT).
+	*/
 	typedef enum {
 		/**
 		* \brief Signifies that local time is equal to UT.
@@ -75,9 +78,7 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetSecond(DateHandle handle, integer_type* result);
 
 	/**
-	* \brief
-	* Get timezone represented by this object.
-	* Relationship of local time to Universal Time (UT).
+	* \brief \copybrief DateTimezoneType
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetTimezone(DateHandle handle, DateTimezoneType* result);
 
