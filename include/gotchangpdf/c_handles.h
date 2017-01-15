@@ -1,13 +1,6 @@
 #ifndef _C_HANDLES_H
 #define _C_HANDLES_H
 
-/**
-* \def DECLARE_OBJECT_HANDLE(x)
-* Declares opaque pointer to struct allocated by library.
-*/
-#define DECLARE_OBJECT_HANDLE(x) \
-typedef struct x##HandleTag *x##Handle;
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -17,7 +10,19 @@ extern "C"
 	* \file c_handles.h
 	* This file contains all type forward
 	* declarations returned by the library API.
+	*
+	* They are __intentionally hidden__, because they
+	* have no meaning in terms of documentation.
 	*/
+
+	/** \cond FORWARD_DECLARATIONS */
+
+	/**
+	* \def DECLARE_OBJECT_HANDLE(x)
+	* Declares opaque pointer to struct allocated by library.
+	*/
+	#define DECLARE_OBJECT_HANDLE(x) \
+	typedef struct x##HandleTag *x##Handle;
 
 	#pragma region Syntax
 
@@ -147,6 +152,8 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(Contents);
 
 	#pragma endregion
+
+	/** \endcond FORWARD_DECLARATIONS */
 
 #ifdef __cplusplus
 };
