@@ -16,8 +16,9 @@ using namespace std;
 
 // experimental
 void FileWriter::Write(const std::shared_ptr<File> source, std::shared_ptr<File> destination) {
-	if (!source->IsInitialized())
+	if (!source->IsInitialized()) {
 		throw FileNotInitializedException(source->GetFilename());
+	}
 
 	auto input = source->GetInputStream();
 	auto output = destination->GetInputStream();
@@ -129,8 +130,9 @@ void FileWriter::Write(const std::shared_ptr<File> source, std::shared_ptr<File>
 }
 
 void FileWriter::WriteIncremental(const std::shared_ptr<File> source, std::shared_ptr<File> destination) {
-	if (!source->IsInitialized())
+	if (!source->IsInitialized()) {
 		throw FileNotInitializedException(source->GetFilename());
+	}
 
 	auto input = source->GetInputStream();
 	auto output = destination->GetInputStream();
@@ -140,6 +142,9 @@ void FileWriter::WriteIncremental(const std::shared_ptr<File> source, std::share
 	std::copy(istreambuf_iterator<char>(*input),
 		istreambuf_iterator<char>(),
 		ostreambuf_iterator<char>(*output));
+
+	// Make an extra newline before starting new xref section
+	*output << endl;
 
 	// Get all changed entries
 	auto tmp_xref = CreateIncrementalXref(source, destination);
@@ -348,27 +353,31 @@ void FileWriter::WriteXrefObjects(std::shared_ptr<File> destination, XrefBasePtr
 }
 
 XrefBasePtr FileWriter::CreateIncrementalXref(std::shared_ptr<File> source, std::shared_ptr<File> destination) {
-	XrefChainPtr chain = source->GetXrefChain();
+	XrefFreeEntryPtr free_list_head_entry(0, constant::MAX_GENERATION_NUMBER);
+	free_list_head_entry->SetFile(source);
 
 	XrefTablePtr new_table;
-	XrefFreeEntryPtr free_entry(0, (types::ushort)65535);
-	free_entry->SetFile(source);
-	new_table->Add(free_entry);
+	new_table->Add(free_list_head_entry);
 
 	bool new_entries = false;
+	auto chain = source->GetXrefChain();
 	auto end = chain->End();
 	for (auto it = chain->Begin(); *it != *end; ++(*it)) {
 		auto xref = it->Value();
+
 		auto table_size = xref->Size();
 		auto table_items = xref->Entries();
 		for (decltype(table_size) i = 0; i < table_size; ++i) {
 			auto entry = table_items[i];
 
-			if (!entry->InUse())
+			if (!entry->IsDirty()) {
 				continue;
+			}
 
-			if (!entry->IsDirty())
-				continue;
+			// At least one dirty entry was found
+			// meaning that a new xref section will
+			// be created
+			new_entries = true;
 
 			auto new_obj_number = entry->GetObjectNumber();
 			auto new_gen_number = entry->GetGenerationNumber();
@@ -409,6 +418,19 @@ XrefBasePtr FileWriter::CreateIncrementalXref(std::shared_ptr<File> source, std:
 				continue;
 			}
 
+			if (entry->GetUsage() == XrefEntryBase::Usage::Free) {
+				auto free_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefFreeEntryPtr>(entry);
+
+				XrefFreeEntryPtr new_entry(
+					new_obj_number,
+					new_gen_number);
+
+				new_entry->SetFile(source);
+				new_entry->SetInitialized();
+				new_table->Add(new_entry);
+				continue;
+			}
+
 			assert(false && "Uncrecognized entry type");
 		}
 	}
@@ -436,6 +458,13 @@ XrefBasePtr FileWriter::CreateIncrementalXref(std::shared_ptr<File> source, std:
 		ContainableObjectPtr id = prev_trailer->Find(constant::Name::Info);
 		ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(id);
 		new_trailer->Insert(constant::Name::Info, cloned);
+	}
+
+	// Set document Root
+	if (prev_trailer->Contains(constant::Name::Root)) {
+		ContainableObjectPtr id = prev_trailer->Find(constant::Name::Root);
+		ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(id);
+		new_trailer->Insert(constant::Name::Root, cloned);
 	}
 
 	// Skip table, if there were no dirty entries
@@ -555,9 +584,11 @@ void FileWriter::WriteXrefTable(std::iostream& output, XrefTablePtr xref_table) 
 		for (decltype(subsection_size) j = 0; j < subsection_size; ++j) {
 			auto entry = table_items[i + j];
 			if (!entry->InUse()) {
-				output << setfill('0') << setw(10) << 0;
+				auto free_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefFreeEntryPtr>(entry);
+
+				output << setfill('0') << setw(10) << free_entry->GetNextFreeObjectNumber();
 				output << ' ';
-				output << setfill('0') << setw(5) << 65535;
+				output << setfill('0') << setw(5) << free_entry->GetGenerationNumber();
 				output << ' ';
 				output << 'f';
 				output << ' ';
