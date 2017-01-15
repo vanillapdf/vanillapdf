@@ -1013,3 +1013,39 @@ error_type process_duplex(Duplex duplex, int nested) {
 
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
+
+error_type process_document_save(DocumentHandle document, int nested) {
+	integer_type i = 0;
+	integer_type size = 0;
+	CatalogHandle catalog = NULL;
+	PageTreeHandle pages = NULL;
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_GetCatalog(document, &catalog));
+	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_GetPages(catalog, &pages));
+	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(pages, &size));
+
+	for (i = 1; i <= size; ++i) {
+		error_type rv = GOTCHANG_PDF_ERROR_GENERAL;
+		PageObjectHandle page = NULL;
+		RectangleHandle media_box = NULL;
+		IntegerObjectHandle lower_left_x = NULL;
+
+		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(pages, i, &page));
+		rv = PageObject_GetMediaBox(page, &media_box);
+		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(page));
+
+		if (rv != GOTCHANG_PDF_ERROR_SUCCES) {
+			continue;
+		}
+
+		RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_LowerLeftX(media_box, &lower_left_x));
+		RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_SetIntegerValue(lower_left_x, 147));
+		RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(lower_left_x));
+		RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_Release(media_box));
+	}
+	
+	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_Release(catalog));
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_SaveIncremental(document, "output.pdf"));
+
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
+}
