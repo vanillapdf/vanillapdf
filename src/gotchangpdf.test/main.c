@@ -109,6 +109,7 @@ int main(int argc, char *argv[]) {
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenExisting(file, &document));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_document(document, 0));
+	//RETURN_ERROR_IF_NOT_SUCCESS(process_document_save(document, 0));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));

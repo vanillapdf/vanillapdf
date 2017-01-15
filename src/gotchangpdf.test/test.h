@@ -93,6 +93,9 @@ error_type process_font_map(FontMapHandle obj, int nested);
 error_type process_rectangle(RectangleHandle obj, int nested);
 error_type process_date(DateHandle obj, int nested);
 
+/* Test document save */
+error_type process_document_save(DocumentHandle document, int nested);
+
 #define RETURN_ERROR_IF_NOT_SUCCESS(fn) \
 do { \
 	error_type __result__ = (fn); \
