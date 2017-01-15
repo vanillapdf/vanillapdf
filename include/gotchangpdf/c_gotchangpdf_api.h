@@ -180,6 +180,18 @@
 */
 
 /**
+* \defgroup NameConstants Name constants
+* \ingroup Files
+* \brief
+* Often used name constant definitions.
+*
+* These are especially useful in conjuction with the \ref Files.
+*
+* It allow to search PDF contents without the need to create
+* a name for every property that the PDF already defines.
+*/
+
+/**
 * \defgroup Utils Utilities
 * \brief
 * Additional features that does not correspond directly with PDF.

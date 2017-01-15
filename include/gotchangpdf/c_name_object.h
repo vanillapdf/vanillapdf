@@ -39,46 +39,76 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_SetValue(NameObjectHandle handle, BufferHandle value);
 
 	/**
-	* \copydoc Object_Release()
+	* \copydoc Object_Release
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_Release(NameObjectHandle handle);
 
 	/** @} */
 
 	/**
-	* \defgroup NameConstants Name constants
-	* \ingroup Files
-	* \brief Often used name constant definitions
+	* \addtogroup NameConstants
 	* @{
 	*/
 
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_AA;
+
+	/**
+	* \brief Represents ASCII85Decode filter, see 7.4.3.
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_ASCII85Decode;
+
+	/**
+	* \brief Represents ASCIIHexDecode filter, see 7.4.2.
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_ASCIIHexDecode;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_AcroForm;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_BaseVersion;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_BitsPerComponent;
+
+	/**
+	* \brief Represents type for ::CatalogHandle
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Catalog;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Collection;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Colors;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Columns;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Container;
+
+	/**
+	* \brief Represents page ::ContentsHandle
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Contents;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Count;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_DecodeParms;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Dests;
+
+	/**
+	* \brief Represents document ::DeveloperExensionsHandle
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_DeveloperExtensions;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_EarlyChange;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Extends;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_ExtensionLevel;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Extensions;
+
+	/**
+	* \brief Name for expressing compression filters
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Filter;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_First;
+
+	/**
+	* \brief Represents FlateDecode filter, see 7.4.4.
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_FlateDecode;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Index;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Kids;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Lang;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Legal;
+
+	/**
+	* \brief Usually represents length of a ::StreamObjectHandle.
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Length;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Limits;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_MediaBox;
@@ -92,12 +122,33 @@ extern "C"
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_OpenAction;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Outlines;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_OutputIntents;
+
+	/**
+	* \brief Represents ::PageLabelHandle property.
+	* \see PageLabel_Prefix
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_P;
+
+	/**
+	* \brief Represents type for ::PageObjectHandle.
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Page;
+
+	/**
+	* \brief Represents type for ::PageLabelHandle.
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_PageLabel;
+
+	/**
+	* \brief Represents type for ::PageLabelsHandle.
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_PageLabels;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_PageLayout;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_PageMode;
+
+	/**
+	* \brief Represents catalog ::PageTreeHandle.
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Pages;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Parent;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Perms;
@@ -106,8 +157,22 @@ extern "C"
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Prev;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Requirements;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Resources;
+
+	/**
+	* \brief Represents ::CatalogHandle entry in document's dictionary.
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Root;
+
+	/**
+	* \brief Represents ::PageLabelHandle property.
+	* \see PageLabel_Style
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_S;
+
+	/**
+	* \brief Represents ::PageLabelHandle property.
+	* \see PageLabel_Start
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_St;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Size;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_SinglePage;
@@ -122,26 +187,116 @@ extern "C"
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Type;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_URI;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Version;
+
+	/**
+	* \brief Represents document ::ViewerPreferencesHandle.
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_ViewerPreferences;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_W;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_XRefStm;
+
+	/**
+	* \brief Represents ::ViewerPreferencesHandle property.
+	* \see ViewerPreferences_GetHideToolbar
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_HideToolbar;
+
+	/**
+	* \brief Represents ::ViewerPreferencesHandle property.
+	* \see ViewerPreferences_GetHideMenubar
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_HideMenubar;
+
+	/**
+	* \brief Represents ::ViewerPreferencesHandle property.
+	* \see ViewerPreferences_GetHideWindowUI
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_HideWindowUI;
+
+	/**
+	* \brief Represents ::ViewerPreferencesHandle property.
+	* \see ViewerPreferences_GetFitWindow
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_FitWindow;
+
+	/**
+	* \brief Represents ::ViewerPreferencesHandle property.
+	* \see ViewerPreferences_GetCenterWindow
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_CenterWindow;
+
+	/**
+	* \brief Represents ::ViewerPreferencesHandle property.
+	* \see ViewerPreferences_GetDisplayDocTitle
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_DisplayDocTitle;
+
+	/**
+	* \brief Represents ::ViewerPreferencesHandle property.
+	* \see ViewerPreferences_GetNonFullScreenPageMode
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_NonFullScreenPageMode;
+
+	/**
+	* \brief Represents ::ViewerPreferencesHandle property.
+	* \see ViewerPreferences_GetDirection
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Direction;
+
+	/**
+	* \brief Represents ::ViewerPreferencesHandle property.
+	* \see ViewerPreferences_GetViewArea
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_ViewArea;
+
+	/**
+	* \brief Represents ::ViewerPreferencesHandle property.
+	* \see ViewerPreferences_GetViewClip
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_ViewClip;
+
+	/**
+	* \brief Represents ::ViewerPreferencesHandle property.
+	* \see ViewerPreferences_GetPrintArea
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_PrintArea;
+
+	/**
+	* \brief Represents ::ViewerPreferencesHandle property.
+	* \see ViewerPreferences_GetPrintClip
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_PrintClip;
+
+	/**
+	* \brief Represents ::ViewerPreferencesHandle property.
+	* \see ViewerPreferences_GetPrintScaling
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_PrintScaling;
+
+	/**
+	* \brief Represents ::ViewerPreferencesHandle property.
+	* \see ViewerPreferences_GetDuplex
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Duplex;
+
+	/**
+	* \brief Represents ::ViewerPreferencesHandle property.
+	* \see ViewerPreferences_GetPickTrayByPDFSize
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_PickTrayByPDFSize;
+
+	/**
+	* \brief Represents ::ViewerPreferencesHandle property.
+	* \see ViewerPreferences_GetPrintPageRange
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_PrintPageRange;
+
+	/**
+	* \brief Represents ::ViewerPreferencesHandle property.
+	* \see ViewerPreferences_GetNumCopies
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_NumCopies;
+
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_UseNone;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_UseOutlines;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_UseThumbs;
@@ -211,6 +366,10 @@ extern "C"
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Subtype;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Annot;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Annots;
+
+	/**
+	* \brief Represents type for ::LinkAnnotationHandle.
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Link;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_D;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Text;
@@ -239,10 +398,23 @@ extern "C"
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_TripleD;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Redact;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_XRef;
+
+	/**
+	* \brief Represents type for ::FontHandle.
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Font;
+
+	/**
+	* \brief Represents type for ::CompositeFontHandle.
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Type0;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Type1;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Type3;
+
+	/**
+	* \brief Represents ::CharacterMapHandle property.
+	* \see CharacterMap_ToUnicode
+	*/
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_ToUnicode;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_CIDSystemInfo;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_CMapName;
