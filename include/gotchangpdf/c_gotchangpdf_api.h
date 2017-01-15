@@ -186,6 +186,31 @@
 */
 
 /**
+* \defgroup Types Types
+* \brief
+* Defines some general-purpose types used throughout the interface.
+*/
+
+/**
+* \defgroup BooleanTypes Boolean types
+* \ingroup Types
+* \brief
+* Defines boolean type with its possible values.
+*/
+
+/**
+* \defgroup ErrorTypes Error types
+* \ingroup Types
+* \brief
+* Defines a type and ranges of possible return values from whole API.
+*
+* Please refer to these variables when checking for function return values
+* instead of any other constants (such as 0).
+*
+* Whole possible range of return values is described in this module.
+*/
+
+/**
 * \mainpage
 * This manual documents whole gotchangpdf __C API__.
 *
