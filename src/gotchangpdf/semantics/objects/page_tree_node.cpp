@@ -19,7 +19,9 @@ PageTreeNode::PageTreeNode(DictionaryObjectPtr obj) :
 		throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageTreeNode>(obj);
 }
 
-IntegerObjectPtr PageTreeNode::KidCount(void) const { return _obj->FindAs<IntegerObjectPtr>(Name::Count); }
+IntegerObjectPtr PageTreeNode::KidCount(void) const {
+	return _obj->FindAs<IntegerObjectPtr>(Name::Count);
+}
 
 ArrayObjectPtr<PageNodeBasePtr> PageTreeNode::Kids() const {
 	auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(Name::Kids);
