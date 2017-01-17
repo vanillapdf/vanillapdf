@@ -52,8 +52,9 @@ static BufferPtr Inflate(std::istream& input, types::stream_size length, types::
 
 		input.read(reinterpret_cast<char *>(in_buffer.data()), read_size);
 		auto read = input.gcount();
-		if (read == 0)
+		if (read == 0) {
 			break;
+		}
 
 		read_total += read;
 		strm.avail_in = static_cast<uInt>(read);
@@ -64,20 +65,30 @@ static BufferPtr Inflate(std::istream& input, types::stream_size length, types::
 			strm.avail_out = constant::BUFFER_SIZE;
 			strm.next_out = out_buffer.data();
 			rv = inflate(&strm, Z_NO_FLUSH);
+
 			assert(rv != Z_STREAM_ERROR);
-			switch (rv) {
-				case Z_DATA_ERROR:
-					if (expect_errors) return result;
-					if (nullptr == strm.msg)
-						throw ZlibDataErrorException(result->size());
-					else
-						throw ZlibDataErrorException(result->size(), std::string(strm.msg));
-				case Z_NEED_DICT:
-				case Z_MEM_ERROR:
-					if (nullptr == strm.msg)
-						throw GeneralException("Could not decompress data");
-					else
-						throw GeneralException("Could not decompress data: " + std::string(strm.msg));
+			if (rv == Z_STREAM_ERROR) {
+				throw ZlibDataErrorException(result->size(), "Stream structure is inconsistent");
+			}
+
+			if (rv == Z_DATA_ERROR) {
+				if (expect_errors) {
+					return result;
+				}
+
+				if (nullptr != strm.msg) {
+					throw ZlibDataErrorException(result->size(), std::string(strm.msg));
+				}
+
+				throw ZlibDataErrorException(result->size());
+			}
+
+			if (rv == Z_NEED_DICT || rv == Z_MEM_ERROR) {
+				if (nullptr != strm.msg) {
+					throw GeneralException("Could not decompress data: " + std::string(strm.msg));
+				}
+
+				throw GeneralException("Could not decompress data");
 			}
 
 			unsigned int have = constant::BUFFER_SIZE - strm.avail_out;
@@ -137,7 +148,12 @@ static BufferPtr Deflate(std::istream& input, types::stream_size length) {
 			strm.avail_out = constant::BUFFER_SIZE;
 			strm.next_out = out_buffer.data();
 			rv = deflate(&strm, flush);
+
 			assert(rv != Z_STREAM_ERROR);
+			if (rv == Z_STREAM_ERROR) {
+				throw ZlibDataErrorException(result->size(), "Stream structure is inconsistent");
+			}
+
 			unsigned int have = constant::BUFFER_SIZE - strm.avail_out;
 			result->insert(result.end(), out_buffer.begin(), out_buffer.begin() + have);
 		} while (strm.avail_out == 0);
