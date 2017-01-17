@@ -60,3 +60,47 @@ error_type process_version(PDFVersion version, int nested) {
 
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
+
+error_type process_logging() {
+	boolean_type logging_enabled = GOTCHANG_PDF_RV_TRUE;
+	LoggingSeverity logging_severity;
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Logging_GetEnabled(&logging_enabled));
+
+	if (logging_enabled != GOTCHANG_PDF_RV_FALSE) {
+		return GOTCHANG_PDF_TEST_ERROR_LOGGING_ENABLED;
+	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Logging_SetEnabled());
+	RETURN_ERROR_IF_NOT_SUCCESS(Logging_GetEnabled(&logging_enabled));
+
+	if (logging_enabled != GOTCHANG_PDF_RV_TRUE) {
+		return GOTCHANG_PDF_TEST_ERROR_LOGGING_ENABLED;
+	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Logging_GetSeverity(&logging_severity));
+	RETURN_ERROR_IF_NOT_SUCCESS(Logging_SetSeverity(logging_severity));
+
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_library_info() {
+	string_type library_author = NULL;
+	integer_type library_version_major = 0;
+	integer_type library_version_minor = 0;
+	integer_type library_version_patch = 0;
+
+	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetVersionMajor(&library_version_major));
+	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetVersionMinor(&library_version_minor));
+	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetVersionPatch(&library_version_patch));
+	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetAuthor(&library_author));
+
+	printf("Library gotchangpdf %d.%d.%d by %s\n",
+		library_version_major,
+		library_version_minor,
+		library_version_patch,
+		library_author
+	);
+
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
+}
