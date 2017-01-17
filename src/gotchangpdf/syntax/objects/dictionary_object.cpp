@@ -125,5 +125,31 @@ DictionaryObject::~DictionaryObject() {
 	}
 }
 
+bool DictionaryObject::Equals(ObjectPtr other) const {
+	if (!ObjectUtils::IsType<DictionaryObjectPtr>(other)) {
+		return false;
+	}
+
+	auto other_obj = ObjectUtils::ConvertTo<DictionaryObjectPtr>(other);
+
+	auto first_vals = Values();
+	auto second_vals = other_obj->Values();
+	auto first_vals_size = first_vals.size();
+	auto second_vals_size = second_vals.size();
+	if (first_vals_size != second_vals_size) {
+		return false;
+	}
+
+	for (unsigned int i = 0; i < second_vals_size; ++i) {
+		auto first_obj = first_vals[i];
+		auto second_obj = second_vals[i];
+		if (!first_obj->Equals(second_obj)) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 } // syntax
 } // gotchangpdf

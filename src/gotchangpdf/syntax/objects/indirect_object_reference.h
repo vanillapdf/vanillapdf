@@ -26,6 +26,7 @@ public:
 	virtual std::string ToPdf(void) const override;
 
 	bool Equals(const IndirectObjectReference& other) const;
+	virtual bool Equals(ObjectPtr other) const override;
 
 	bool operator==(const IndirectObjectReference& other) const { return Equals(other); }
 	bool operator!=(const IndirectObjectReference& other) const { return !Equals(other); }

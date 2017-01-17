@@ -32,6 +32,7 @@ public:
 	void SetBody(BufferPtr value) { _body_decoded->assign(value.begin(), value.end()); }
 
 	virtual StreamObject* Clone(void) const override;
+	virtual bool Equals(ObjectPtr other) const override;
 
 	virtual void SetFile(std::weak_ptr<File> file) noexcept override;
 	virtual void SetInitialized(bool initialized = true) noexcept override;

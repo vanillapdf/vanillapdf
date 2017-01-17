@@ -12,33 +12,46 @@ public:
 	typedef types::real value_type;
 
 public:
-	RealObject() { m_value->Subscribe(this); }
-	explicit RealObject(types::real value) : m_value(value) { m_value->Subscribe(this); }
-	explicit RealObject(types::real value, uint32_t precision) : m_value(value, precision) { m_value->Subscribe(this); }
-	explicit RealObject(const NumericObject& value) {
-		m_value = value.GetNumericBackend();
-		m_value->Subscribe(this);
-	}
+	RealObject();
+	explicit RealObject(types::real value);
+	explicit RealObject(types::real value, uint32_t precision);
+	explicit RealObject(const NumericObject& value);
+	explicit RealObject(NumericObjectBackendPtr value);
 
-	explicit RealObject(NumericObjectBackendPtr value) {
-		m_value = value;
-		m_value->Subscribe(this);
-	}
+	virtual Object::Type GetType(void) const noexcept override;
+	virtual std::string ToPdf(void) const override;
 
-	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Real; }
-	virtual std::string ToPdf(void) const override { return m_value->ToString(); }
+	operator value_type() const;
+	value_type GetValue(void) const;
+	void SetValue(value_type value);
 
-	operator value_type() const { return m_value->GetRealValue(); }
-	value_type GetValue(void) const { return m_value->GetRealValue(); }
-	void SetValue(value_type value) { m_value->SetRealValue(value); }
-
-	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
-
-	virtual RealObject* Clone(void) const override { return new RealObject(m_value->Clone()); }
+	virtual void ObserveeChanged(IModifyObservable*) override;
+	virtual RealObject* Clone(void) const override;
+	virtual bool Equals(ObjectPtr other) const override;
 
 private:
 	NumericObjectBackendPtr m_value;
 };
+
+inline Object::Type RealObject::GetType(void) const noexcept {
+	return Object::Type::Real;
+}
+
+inline std::string RealObject::ToPdf(void) const {
+	return m_value->ToString();
+}
+
+inline RealObject::operator RealObject::value_type() const {
+	return m_value->GetRealValue();
+}
+
+inline RealObject::value_type RealObject::GetValue(void) const {
+	return m_value->GetRealValue();
+}
+
+inline void RealObject::SetValue(value_type value) {
+	m_value->SetRealValue(value);
+}
 
 } // syntax
 } // gotchangpdf

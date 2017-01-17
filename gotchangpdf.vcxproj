@@ -234,13 +234,16 @@
     <ClCompile Include="src\gotchangpdf\syntax\filters\dct_decode_filter.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\filters\filter.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\filters\flate_decode_filter.cpp" />
-    <ClCompile Include="src\gotchangpdf\syntax\objects\array_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\objects\boolean_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\objects\mixed_array_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\dictionary_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\indirect_object_reference.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\integer_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\name_object.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\objects\null_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\numeric_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\object.cpp" />
+    <ClCompile Include="src\gotchangpdf\syntax\objects\real_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\stream_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\objects\string_object.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\parsers\character_map_data.cpp" />
@@ -254,7 +257,6 @@
     <ClCompile Include="src\gotchangpdf\syntax\streams\raw_reverse_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\streams\raw_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\utils\encryption.cpp" />
-    <ClCompile Include="src\gotchangpdf\syntax\utils\object_utils.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\utils\pkcs12_key.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\buffer.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\exceptions.cpp" />

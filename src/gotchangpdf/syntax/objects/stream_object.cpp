@@ -318,5 +318,27 @@ std::string StreamObject::ToPdf(void) const {
 	return ss.str();
 }
 
+bool StreamObject::Equals(ObjectPtr other) const {
+	if (!ObjectUtils::IsType<StreamObjectPtr>(other)) {
+		return false;
+	}
+
+	auto other_obj = ObjectUtils::ConvertTo<StreamObjectPtr>(other);
+
+	auto first_header = GetHeader();
+	auto second_header = other_obj->GetHeader();
+	if (!first_header->Equals(second_header)) {
+		return false;
+	}
+
+	auto first_body = GetBody();
+	auto second_body = other_obj->GetBody();
+	if (first_body != second_body) {
+		return false;
+	}
+
+	return true;
+}
+
 } // syntax
 } // gotchangpdf

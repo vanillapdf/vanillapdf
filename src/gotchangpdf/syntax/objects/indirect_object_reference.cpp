@@ -79,5 +79,14 @@ std::string IndirectObjectReference::ToPdf(void) const {
 	return std::to_string(object_number) + " " + std::to_string(generation_number) + " R";
 }
 
+bool IndirectObjectReference::Equals(ObjectPtr other) const {
+	if (!ObjectUtils::IsType<IndirectObjectReferencePtr>(other)) {
+		return false;
+	}
+
+	auto other_obj = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(other);
+	return Equals(*other_obj);
+}
+
 } // syntax
 } // gotchangpdf

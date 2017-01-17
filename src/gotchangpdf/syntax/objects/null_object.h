@@ -17,7 +17,9 @@ public:
 		return instance;
 	}
 
-	bool Equals(const NullObject&) const { return true; }
+	bool Equals(const NullObject& other) const;
+	virtual bool Equals(ObjectPtr other) const override;
+
 	virtual NullObject* Clone(void) const override { return new NullObject(*this); }
 
 	bool operator==(const NullObject& other) const { return Equals(other); }

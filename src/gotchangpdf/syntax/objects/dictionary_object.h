@@ -84,6 +84,7 @@ public:
 	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
 	virtual DictionaryObject* Clone(void) const override;
+	virtual bool Equals(ObjectPtr other) const override;
 
 	template <typename U>
 	U FindAs(const NameObjectPtr& name) const {

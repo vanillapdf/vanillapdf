@@ -31,6 +31,7 @@ public:
 	virtual void ObserveeChanged(IModifyObservable*) override;
 
 	virtual MixedArrayObject* Clone(void) const override;
+	virtual bool Equals(ObjectPtr other) const override;
 
 	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Array; }
 	size_t Size(void) const noexcept { return _list.size(); }

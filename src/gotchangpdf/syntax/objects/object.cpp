@@ -113,5 +113,10 @@ const char* Object::TypeName(Type type) {
 	}
 }
 
+bool Object::Identity(ObjectPtr other) const {
+	auto other_ptr = other.get();
+	return (this == other_ptr);
+}
+
 } // syntax
 } // gotchangpdf

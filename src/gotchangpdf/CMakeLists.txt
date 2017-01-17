@@ -92,13 +92,16 @@ set(GOTCHANGPDF_SYNTAX_SOURCES
 	syntax/filters/filter.cpp
 	syntax/filters/flate_decode_filter.cpp
 	
-	syntax/objects/array_object.cpp
+	syntax/objects/boolean_object.cpp
 	syntax/objects/dictionary_object.cpp
 	syntax/objects/indirect_object_reference.cpp
 	syntax/objects/integer_object.cpp
+	syntax/objects/mixed_array_object.cpp
 	syntax/objects/name_object.cpp
+	syntax/objects/null_object.cpp
 	syntax/objects/numeric_object.cpp
 	syntax/objects/object.cpp
+	syntax/objects/real_object.cpp
 	syntax/objects/stream_object.cpp
 	syntax/objects/string_object.cpp
 	
@@ -116,7 +119,6 @@ set(GOTCHANGPDF_SYNTAX_SOURCES
 	
 	syntax/utils/encryption.cpp
 	syntax/utils/pkcs12_key.cpp
-	syntax/utils/object_utils.cpp
 )
 
 set(GOTCHANGPDF_UTILS_SOURCES

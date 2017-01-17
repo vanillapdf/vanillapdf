@@ -25,11 +25,10 @@ template <
 >
 class ConversionHelperBase {
 public:
-	static T Get(const ObjectPtr& obj, bool& result) {
-		auto ptr = obj.get();
+	static T Get(Object* ptr, bool& result) {
 		auto converted = dynamic_cast<typename T::value_type *>(ptr);
 		if (nullptr == converted) {
-			throw ConversionExceptionFactory<typename T::value_type>::Construct(obj);
+			throw ConversionExceptionFactory<typename T::value_type>::Construct(ptr);
 		}
 
 		result = true;
@@ -42,8 +41,7 @@ template <
 >
 class ConversionHelperBase<T, true> {
 public:
-	static T Get(const ObjectPtr& obj, bool& result) {
-		auto ptr = obj.get();
+	static T Get(Object* ptr, bool& result) {
 		auto converted = dynamic_cast<typename T::value_type *>(ptr);
 		if (nullptr == converted) {
 			result = false;
@@ -62,8 +60,7 @@ class ConversionHelper : public ConversionHelperBase<T, std::is_constructible<T>
 template <>
 class ConversionHelper<IntegerObjectPtr> {
 public:
-	static IntegerObjectPtr Get(const ObjectPtr& obj, bool& result) {
-		auto ptr = obj.get();
+	static IntegerObjectPtr Get(Object* ptr, bool& result) {
 		auto int_converted = dynamic_cast<IntegerObject *>(ptr);
 		auto real_converted = dynamic_cast<RealObject *>(ptr);
 
@@ -85,8 +82,7 @@ public:
 template <>
 class ConversionHelper<RealObjectPtr> {
 public:
-	static RealObjectPtr Get(const ObjectPtr& obj, bool& result) {
-		auto ptr = obj.get();
+	static RealObjectPtr Get(Object* ptr, bool& result) {
 		auto int_converted = dynamic_cast<IntegerObject *>(ptr);
 		auto real_converted = dynamic_cast<RealObject *>(ptr);
 
@@ -112,16 +108,16 @@ public:
 template <typename T>
 class DereferenceHelper {
 public:
-	static T Get(const ObjectPtr& obj, std::map<IndirectObjectReference, bool>& visited, bool& result) {
-		auto ptr = obj.get();
+	static T Get(Object* ptr, std::map<IndirectObjectReference, bool>& visited, bool& result) {
 		bool is_ref = (ptr->GetType() == Object::Type::IndirectReference);
 		if (!is_ref) {
-			return ConversionHelper<T>::Get(obj, result);
+			return ConversionHelper<T>::Get(ptr, result);
 		}
 
 		auto converted = dynamic_cast<IndirectObjectReference*>(ptr);
-		if (nullptr == converted)
-			throw ConversionExceptionFactory<IndirectObjectReference>::Construct(obj);
+		if (nullptr == converted) {
+			throw ConversionExceptionFactory<IndirectObjectReference>::Construct(ptr);
+		}
 
 		auto found = visited.find(*converted);
 		if (found != visited.end() && found->second) {
@@ -133,7 +129,8 @@ public:
 		visited[*converted] = true;
 
 		auto direct = converted->GetReferencedObject();
-		return Get(direct, visited, result);
+		auto direct_ptr = direct.get();
+		return Get(direct_ptr, visited, result);
 	}
 };
 
@@ -144,19 +141,20 @@ public:
 template <typename T>
 class ObjectTypeFunctor {
 public:
-	static bool IsType(const ObjectPtr& obj) {
+	static bool IsType(Object* obj) {
 		std::map<IndirectObjectReference, bool> visited;
 		bool passed = false;
 		auto result = DereferenceHelper<T>::Get(obj, visited, passed);
 		return passed;
 	}
 
-	static T Convert(const ObjectPtr& obj) {
+	static T Convert(Object* obj) {
 		std::map<IndirectObjectReference, bool> visited;
 		bool passed = false;
 		auto result = DereferenceHelper<T>::Get(obj, visited, passed);
-		if (!passed)
+		if (!passed) {
 			throw ConversionExceptionFactory<T>::Construct(obj);
+		}
 
 		return result;
 	}
@@ -165,17 +163,16 @@ public:
 template <>
 class ObjectTypeFunctor<IndirectObjectReferencePtr> {
 public:
-	static bool IsType(const ObjectPtr& obj) {
-		auto ptr = obj.get();
+	static bool IsType(Object* ptr) {
 		auto converted = dynamic_cast<IndirectObjectReference*>(ptr);
 		return (nullptr != converted);
 	}
 
-	static IndirectObjectReferencePtr Convert(const ObjectPtr& obj) {
-		auto ptr = obj.get();
+	static IndirectObjectReferencePtr Convert(Object* ptr) {
 		auto converted = dynamic_cast<IndirectObjectReference*>(ptr);
-		if (nullptr == converted)
-			throw ConversionExceptionFactory<IndirectObjectReference>::Construct(obj);
+		if (nullptr == converted) {
+			throw ConversionExceptionFactory<IndirectObjectReference>::Construct(ptr);
+		}
 
 		return IndirectObjectReferencePtr(converted);
 	}
@@ -184,32 +181,36 @@ public:
 template <typename T>
 class ObjectTypeFunctor<ArrayObjectPtr<T>> {
 public:
-	static bool IsType(const ObjectPtr& obj) {
+	static bool IsType(Object* obj) {
 		bool found = false;
 		std::map<IndirectObjectReference, bool> visited;
 		DereferenceHelper<ArrayObjectPtr<T>>::Get(obj, visited, found);
-		if (found)
+		if (found) {
 			return true;
+		}
 
 		bool is_array = ObjectTypeFunctor<MixedArrayObjectPtr>::IsType(obj);
-		if (!is_array)
+		if (!is_array) {
 			return false;
+		}
 
 		auto mixed = ObjectTypeFunctor<MixedArrayObjectPtr>::Convert(obj);
 		for (auto& item : *mixed) {
-			if (!ObjectTypeFunctor<T>::IsType(item))
+			if (!ObjectTypeFunctor<T>::IsType(item.get())) {
 				return false;
+			}
 		}
 
 		return true;
 	}
 
-	static ArrayObjectPtr<T> Convert(const ObjectPtr& obj) {
+	static ArrayObjectPtr<T> Convert(Object* obj) {
 		bool found = false;
 		std::map<IndirectObjectReference, bool> visited;
 		auto converted = DereferenceHelper<ArrayObjectPtr<T>>::Get(obj, visited, found);
-		if (found)
+		if (found) {
 			return converted;
+		}
 
 		auto mixed = ObjectTypeFunctor<MixedArrayObjectPtr>::Convert(obj);
 		return ArrayObjectPtr<T>(mixed);
@@ -224,13 +225,32 @@ public:
 		typename T,
 		typename = typename std::enable_if<std::is_base_of<Object, T>::value>::type
 	>
-		static ObjectPtr GetObjectBase(const Deferred<T>& obj) { return static_cast<Object*>(obj.get()); }
+		static ObjectPtr GetObjectBase(Deferred<T> obj) {
+		auto object_ptr = obj.get();
+		return static_cast<Object*>(object_ptr);
+	}
 
 	template <typename T>
-	static T ConvertTo(const ObjectPtr& obj) { return ObjectTypeFunctor<T>::Convert(obj); }
+	static T ConvertTo(ObjectPtr obj) {
+		auto object_ptr = obj.get();
+		return ObjectTypeFunctor<T>::Convert(object_ptr);
+	}
 
 	template <typename T>
-	static bool IsType(const ObjectPtr& obj) { return ObjectTypeFunctor<T>::IsType(obj); }
+	static T ConvertTo(Object* obj) {
+		return ObjectTypeFunctor<T>::Convert(obj);
+	}
+
+	template <typename T>
+	static bool IsType(ObjectPtr obj) {
+		auto object_ptr = obj.get();
+		return ObjectTypeFunctor<T>::IsType(object_ptr);
+	}
+
+	template <typename T>
+	static bool IsType(Object* obj) {
+		return ObjectTypeFunctor<T>::IsType(obj);
+	}
 
 	template <
 		typename T,
@@ -244,8 +264,6 @@ public:
 		// Object implements clone
 		return T(obj->Clone());
 	}
-
-	static bool ValueEquals(const ObjectPtr& first, const ObjectPtr& second);
 };
 
 } // syntax

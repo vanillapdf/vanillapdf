@@ -47,6 +47,15 @@ std::string NameObject::ToString(void) const {
 	return ss.str();
 }
 
+bool NameObject::Equals(ObjectPtr other) const {
+	if (!ObjectUtils::IsType<NameObjectPtr>(other)) {
+		return false;
+	}
+
+	auto other_obj = ObjectUtils::ConvertTo<NameObjectPtr>(other);
+	return Equals(*other_obj);
+}
+
 } // syntax
 } // gotchangpdf
 

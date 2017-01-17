@@ -9,7 +9,6 @@
 
 #include "syntax/objects/name_object.h"
 #include "syntax/objects/array_object.h"
-#include "syntax/utils/object_utils.h"
 #include "utils/util.h"
 
 namespace gotchangpdf {
@@ -341,7 +340,7 @@ template <typename KeyT, typename ValueT>
 bool TreeBase<KeyT, ValueT>::ContainsInternal(const syntax::MixedArrayObjectPtr values, const KeyT& key) const {
 	int size = values->Size();
 	for (int i = 0; i + 1 < size; i += 2) {
-		if (syntax::ObjectUtils::ValueEquals(values->At(i), key)) {
+		if (values->At(i)->Equals(key)) {
 			return true;
 		}
 	}
@@ -397,7 +396,7 @@ template <typename KeyT, typename ValueT>
 ValueT TreeBase<KeyT, ValueT>::FindInternal(const syntax::MixedArrayObjectPtr values, const KeyT& key) const {
 	int size = values->Size();
 	for (int i = 0; i + 1 < size; i += 2) {
-		if (syntax::ObjectUtils::ValueEquals(values->At(i), key)) {
+		if (values->At(i)->Equals(key)) {
 			return values->At(i + 1);
 		}
 	}

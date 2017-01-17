@@ -18,6 +18,15 @@ LiteralStringObject::LiteralStringObject(BufferPtr value) : _raw_value(value) { 
 HexadecimalStringObject::HexadecimalStringObject(BufferPtr value) : _raw_value(value) { _value->Subscribe(this); }
 StringObjectPtr::StringObjectPtr() : Deferred<StringObjectBase>(LiteralStringObjectPtr()) {}
 
+bool StringObjectBase::Equals(ObjectPtr other) const {
+	if (!ObjectUtils::IsType<StringObjectPtr>(other)) {
+		return false;
+	}
+
+	auto other_obj = ObjectUtils::ConvertTo<StringObjectPtr>(other);
+	return Equals(*other_obj);
+}
+
 BufferPtr LiteralStringObject::GetValue() const {
 	if (_value->IsInitialized())
 		return _value;

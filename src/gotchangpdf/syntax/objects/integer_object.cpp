@@ -44,5 +44,14 @@ IntegerObject& IntegerObject::operator=(types::big_uint value) {
 	return *this;
 }
 
+bool IntegerObject::Equals(ObjectPtr other) const {
+	if (!ObjectUtils::IsType<IntegerObjectPtr>(other)) {
+		return false;
+	}
+
+	auto other_obj = ObjectUtils::ConvertTo<IntegerObjectPtr>(other);
+	return Equals(*other_obj);
+}
+
 } // syntax
 } // gotchangpdf

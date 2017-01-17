@@ -1,5 +1,6 @@
 #include "precompiled.h"
-#include "syntax/objects/array_object.h"
+
+#include "syntax/objects/mixed_array_object.h"
 
 namespace gotchangpdf {
 namespace syntax {
@@ -117,6 +118,30 @@ MixedArrayObject::~MixedArrayObject() {
 	for (auto item : _list) {
 		item->Unsubscribe(this);
 	}
+}
+
+bool MixedArrayObject::Equals(ObjectPtr other) const {
+	if (!ObjectUtils::IsType<MixedArrayObjectPtr>(other)) {
+		return false;
+	}
+
+	auto other_obj = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(other);
+
+	auto first_size = Size();
+	auto second_size = other_obj->Size();
+	if (first_size != second_size) {
+		return false;
+	}
+
+	for (unsigned int i = 0; i < first_size; ++i) {
+		auto first_obj = At(i);
+		auto second_obj = other_obj->At(i);
+		if (!first_obj->Equals(second_obj)) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 } // syntax

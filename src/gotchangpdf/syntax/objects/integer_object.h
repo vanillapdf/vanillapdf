@@ -40,12 +40,13 @@ public:
 
 	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Integer; }
 
-	bool Equals(const IntegerObject& other) const noexcept { return m_value == other.m_value; }
+	bool Equals(const IntegerObject& other) const noexcept { return GetIntegerValue() == other.GetIntegerValue(); }
 	virtual std::string ToPdf(void) const override { return m_value->ToString(); }
 
 	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
 	virtual IntegerObject* Clone(void) const override { return new IntegerObject(m_value->Clone()); }
+	virtual bool Equals(ObjectPtr other) const override;
 };
 } // syntax
 

@@ -25,11 +25,12 @@ public:
 	value_type GetValue() const noexcept { return _value; }
 	void SetValue(value_type value) { _value->assign(value.begin(), value.end()); }
 
-	bool operator==(const NameObject& other) const { return Equals(other); }
-	bool operator!=(const NameObject& other) const { return !Equals(other); }
-	bool operator<(const NameObject& other) const { return *_value < *other._value; }
+	bool operator==(NameObjectPtr other) const { return Equals(other); }
+	bool operator!=(NameObjectPtr other) const { return !Equals(other); }
+	bool operator<(NameObjectPtr other) const { return *_value < *other->_value; }
 
-	bool Equals(const NameObject& other) const { return _value->Equals(*other._value); }
+	bool Equals(NameObjectPtr other) const { return _value->Equals(other->_value); }
+	virtual bool Equals(ObjectPtr other) const override;
 
 	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Name; }
 	virtual std::string ToPdf(void) const override { return "/" + ToString(); }

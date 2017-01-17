@@ -60,7 +60,11 @@ public:
 	virtual void SetFile(std::weak_ptr<File> file) noexcept { m_file = file; }
 	std::weak_ptr<File> GetFile() const noexcept { return m_file; }
 
+	bool Identity(ObjectPtr other) const;
+
+	virtual bool Equals(ObjectPtr other) const = 0;
 	virtual Object* Clone(void) const = 0;
+
 	virtual void OnChanged() override;
 
 protected:
