@@ -12,19 +12,19 @@ namespace semantics {
 
 class PageTree : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
-	//PageTree();
 	explicit PageTree(syntax::DictionaryObjectPtr root);
 
 	types::uinteger PageCount(void) const;
-	PageObjectPtr Page(types::integer number) const { return PageInternal(number); }
-	PageObjectPtr operator[](types::integer number) const { return PageInternal(number); }
+	PageObjectPtr Page(types::integer page_number) const { return GetCachedPage(page_number); }
+	PageObjectPtr operator[](types::integer page_number) const { return GetCachedPage(page_number); }
 
 	void Insert(PageObjectPtr object, types::integer index);
 	void Append(PageObjectPtr object);
 	void Remove(types::integer index);
 
 private:
-	PageObjectPtr PageInternal(types::integer number) const;
+	PageObjectPtr GetCachedPage(types::integer page_number) const;
+	PageObjectPtr PageInternal(PageTreeNodePtr node, types::integer page_number, types::integer& processed) const;
 	bool HasTreeChilds(PageTreeNodePtr node) const;
 	void UpdateKidsCount(size_t new_size);
 
