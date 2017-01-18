@@ -82,7 +82,9 @@
     <ClInclude Include="src\gotchangpdf\semantics\objects\developer_extensions.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\document.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\document_info.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\objects\fields.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\font.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\objects\interactive_forms.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\outline.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\high_level_object.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\name_dictionary.h" />
@@ -215,7 +217,9 @@
     <ClCompile Include="src\gotchangpdf\semantics\objects\developer_extensions.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\document.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\document_info.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\objects\fields.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\font.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\objects\interactive_forms.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\name_dictionary.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\outline.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\page_node_utils.cpp" />

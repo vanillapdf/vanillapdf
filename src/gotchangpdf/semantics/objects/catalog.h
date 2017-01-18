@@ -50,6 +50,7 @@ public:
 	bool NeedsRendering(syntax::BooleanObjectPtr& result) const;
 	bool Destinations(OutputNamedDestinationsPtr& result) const;
 	bool Names(OutputNameDictionaryPtr& result) const;
+	bool AcroForm(OutputNameDictionaryPtr& result) const;
 
 	// required
 	PageTreePtr Pages(void) const;

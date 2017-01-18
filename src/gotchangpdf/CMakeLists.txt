@@ -75,6 +75,10 @@ set(GOTCHANGPDF_SEMANTICS_SOURCES
 	semantics/objects/font.cpp
 	semantics/objects/outline.cpp
 	semantics/objects/rectangle.cpp
+	semantics/objects/name_dictionary.cpp
+	semantics/objects/fields.cpp
+	semantics/objects/interactive_forms.cpp
+	
 	semantics/utils/semantic_utils.cpp
 )
 
@@ -160,7 +164,9 @@ set(GOTCHANGPDF_SEMANTICS_HEADERS
 	semantics/objects/destinations.h
 	semantics/objects/developer_extensions.h
 	semantics/objects/document_info.h
+	semantics/objects/fields.h
 	semantics/objects/font.h
+	semantics/objects/interactive_forms.h
 	semantics/objects/high_level_object.h
 	semantics/objects/name_dictionary.h
 	semantics/objects/outline.h

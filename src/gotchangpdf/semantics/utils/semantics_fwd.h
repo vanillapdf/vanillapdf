@@ -94,6 +94,13 @@ class CharacterMapBase; using CharacterMapBasePtr = Deferred<CharacterMapBase>;
 class EmbeddedCharacterMap; using EmbeddedCharacterMapPtr = Deferred<EmbeddedCharacterMap>;
 class UnicodeCharacterMap; using UnicodeCharacterMapPtr = Deferred<UnicodeCharacterMap>; using OuputUnicodeCharacterMapPtr = OutputPointer<UnicodeCharacterMapPtr>;
 
+// Fields
+class Field; using FieldPtr = Deferred<Field>;
+class ButtonField; using ButtonFieldPtr = Deferred<ButtonField>;
+class TextField; using TextFieldPtr = Deferred<TextField>;
+class ChoiceField; using ChoiceFieldPtr = Deferred<ChoiceField>;
+class SignatureField; using SignatureFieldPtr = Deferred<SignatureField>;
+
 } // semantics
 } // gotchangpdf
 

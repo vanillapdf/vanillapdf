@@ -264,6 +264,13 @@ extern const syntax::NameObjectPtr CMap;
 extern const syntax::NameObjectPtr Registry;
 extern const syntax::NameObjectPtr Ordering;
 extern const syntax::NameObjectPtr Supplement;
+extern const syntax::NameObjectPtr FT;
+extern const syntax::NameObjectPtr Btn;
+extern const syntax::NameObjectPtr Tx;
+extern const syntax::NameObjectPtr Ch;
+extern const syntax::NameObjectPtr Sig;
+extern const syntax::NameObjectPtr Fields;
+
 } // Constant
 } // Name
 } // gotchangpdf

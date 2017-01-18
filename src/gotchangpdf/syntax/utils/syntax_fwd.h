@@ -102,7 +102,7 @@ using ArrayObjectPtr = Deferred<ArrayObject<T>>;
 template <typename KeyT, typename ValueT, typename MapT /*= std::map<KeyT, ValueT>*/>
 using DictionaryObjectBasePtr = Deferred<DictionaryObjectBase<KeyT, ValueT, MapT>>;
 
-using DictionaryObjectPtr = Deferred<DictionaryObject>;
+using DictionaryObjectPtr = Deferred<DictionaryObject>; using OutputDictionaryObjectPtr = OutputPointer<DictionaryObjectPtr>;
 using MixedArrayObjectPtr = Deferred<MixedArrayObject>;
 
 class ObjectPtr;
