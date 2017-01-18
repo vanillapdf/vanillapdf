@@ -216,6 +216,7 @@
     <ClCompile Include="src\gotchangpdf\semantics\objects\document.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\document_info.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\font.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\objects\name_dictionary.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\outline.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\page_node_utils.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\page_object.cpp" />
