@@ -17,18 +17,9 @@ UnicodeCharacterMap::UnicodeCharacterMap(syntax::StreamObjectPtr root)
 	: CharacterMapBase(root) {
 }
 
-CharacterMapBase::Type EmbeddedCharacterMap::GetType() const noexcept {
-	return Type::Embedded;
-}
-
-CharacterMapBase::Type UnicodeCharacterMap::GetType() const noexcept {
-	return Type::Unicode;
-}
-
-CharacterMapBase* CharacterMapBase::Create(syntax::StreamObjectPtr root, WeakReference<Document> doc) {
+std::unique_ptr<CharacterMapBase> CharacterMapBase::Create(syntax::StreamObjectPtr root, WeakReference<Document> doc) {
 	// TODO
-	auto result = make_unique<UnicodeCharacterMap>(root);
-	return result.release();
+	return make_unique<UnicodeCharacterMap>(root);
 }
 
 void UnicodeCharacterMap::Initialize() const {

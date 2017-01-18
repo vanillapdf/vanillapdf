@@ -18,7 +18,7 @@ public:
 
 public:
 	explicit CharacterMapBase(syntax::StreamObjectPtr root);
-	virtual Type GetType() const noexcept = 0;
+	virtual CharacterMapBase::Type GetType() const noexcept = 0;
 
 	static std::unique_ptr<CharacterMapBase> Create(syntax::StreamObjectPtr root, WeakReference<Document> doc);
 };
@@ -26,13 +26,13 @@ public:
 class EmbeddedCharacterMap : public CharacterMapBase {
 public:
 	explicit EmbeddedCharacterMap(syntax::StreamObjectPtr root);
-	virtual Type GetType() const noexcept override;
+	virtual CharacterMapBase::Type GetType() const noexcept override;
 };
 
 class UnicodeCharacterMap : public CharacterMapBase {
 public:
 	explicit UnicodeCharacterMap(syntax::StreamObjectPtr root);
-	virtual Type GetType() const noexcept override;
+	virtual CharacterMapBase::Type GetType() const noexcept override;
 	BufferPtr GetMappedValue(BufferPtr key) const;
 
 private:
@@ -41,6 +41,14 @@ private:
 
 	void Initialize() const;
 };
+
+inline CharacterMapBase::Type EmbeddedCharacterMap::GetType() const noexcept {
+	return Type::Embedded;
+}
+
+inline CharacterMapBase::Type UnicodeCharacterMap::GetType() const noexcept {
+	return Type::Unicode;
+}
 
 } // semantics
 } // gotchangpdf

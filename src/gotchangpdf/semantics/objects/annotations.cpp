@@ -66,7 +66,10 @@ AnnotationBase::Type WatermarkAnnotation::GetType() const noexcept { return Type
 AnnotationBase::Type TripleDAnnotation::GetType() const noexcept { return Type::TripleD; }
 AnnotationBase::Type RedactionAnnotation::GetType() const noexcept { return Type::Redaction; }
 
-types::uinteger PageAnnotations::Size() const { return _obj->Size(); }
+types::uinteger PageAnnotations::Size() const {
+	return _obj->Size();
+}
+
 AnnotationPtr PageAnnotations::At(types::uinteger index) const {
 	auto obj = _obj->At(index);
 

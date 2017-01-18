@@ -43,7 +43,7 @@ public:
 
 	void Reset() noexcept { m_ptr.reset(); }
 	bool IsEmpty() const noexcept { return (nullptr == m_ptr); }
-	bool IsActive() const noexcept { return m_ptr ? m_ptr->IsActive() : false; }
+	bool IsActive() const noexcept { return (m_ptr ? m_ptr->IsActive() : false); }
 
 	T* GetReference() const {
 		if (!IsActive()) {
@@ -51,7 +51,7 @@ public:
 		}
 
 		assert(m_ptr && "Referenced pointer is empty");
-		return m_ptr ? static_cast<T*>(m_ptr->GetReference()) : nullptr;
+		return (m_ptr ? static_cast<T*>(m_ptr->GetReference()) : nullptr);
 	}
 
 	// The reason why value cannot be const is
@@ -85,11 +85,20 @@ public:
 		return WeakReference<T>(m_weak_ref);
 	}
 
-	uint32_t UseCount() const noexcept { return m_ref_counter.load(); }
-	void AddRef() noexcept { m_ref_counter++; }
+	uint32_t UseCount() const noexcept {
+		return m_ref_counter.load();
+	}
+
+	void AddRef() noexcept {
+		m_ref_counter++;
+	}
+
 	void Release() noexcept {
 		if (--m_ref_counter == 0) {
-			if (m_weak_ref) m_weak_ref->Deactivate();
+			if (m_weak_ref) {
+				m_weak_ref->Deactivate();
+			}
+
 			delete this;
 		}
 	}
