@@ -26,9 +26,9 @@ public:
 	explicit DestinationBase(syntax::MixedArrayObjectPtr root);
 	explicit DestinationBase(syntax::DictionaryObjectPtr root);
 
-	static DestinationBase* Create(syntax::MixedArrayObjectPtr root);
-	static DestinationBase* Create(syntax::DictionaryObjectPtr root);
-	static DestinationBase* Create(syntax::ObjectPtr root);
+	static std::unique_ptr<DestinationBase> Create(syntax::MixedArrayObjectPtr root);
+	static std::unique_ptr<DestinationBase> Create(syntax::DictionaryObjectPtr root);
+	static std::unique_ptr<DestinationBase> Create(syntax::ObjectPtr root);
 
 	syntax::ObjectPtr GetPage() const;
 	bool HasAttribute(const syntax::NameObject& name) const;

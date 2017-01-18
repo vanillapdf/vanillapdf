@@ -41,7 +41,7 @@ public:
 
 public:
 	explicit AnnotationBase(syntax::DictionaryObjectPtr root);
-	static AnnotationBase* Create(syntax::DictionaryObjectPtr root);
+	static std::unique_ptr<AnnotationBase> Create(syntax::DictionaryObjectPtr root);
 
 	virtual AnnotationBase::Type GetType() const noexcept = 0;
 };

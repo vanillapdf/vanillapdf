@@ -326,7 +326,9 @@ void Document::AppendContent(DocumentPtr other) {
 
 			// Create only shallow copies
 			auto cloned_destination_obj = file->ShallowCopyObject(destination_value);
-			auto cloned_destination = DestinationBase::Create(cloned_destination_obj);
+			auto cloned_destination_unique_ptr = DestinationBase::Create(cloned_destination_obj);
+			auto cloned_destination_raw_ptr = cloned_destination_unique_ptr.release();
+			auto cloned_destination = DestinationPtr(cloned_destination_raw_ptr);
 			auto cloned_destination_page = cloned_destination->GetPage();
 
 			FixDestinationPage(other, cloned_destination_page);
@@ -376,7 +378,9 @@ void Document::AppendContent(DocumentPtr other) {
 
 				// Create only shallow copies
 				auto cloned_destination_obj = file->ShallowCopyObject(destination_value);
-				auto cloned_destination = DestinationBase::Create(cloned_destination_obj);
+				auto cloned_destination_unique_ptr = DestinationBase::Create(cloned_destination_obj);
+				auto cloned_destination_raw_ptr = cloned_destination_unique_ptr.release();
+				auto cloned_destination = DestinationPtr(cloned_destination_raw_ptr);
 				auto cloned_destination_page = cloned_destination->GetPage();
 
 				FixDestinationPage(other, cloned_destination_page);

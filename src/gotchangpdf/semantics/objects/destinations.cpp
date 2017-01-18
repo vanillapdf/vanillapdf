@@ -39,7 +39,7 @@ DestinationBase::Type FitBoundingBoxVerticalDestination::GetType() const noexcep
 
 NamedDestinations::NamedDestinations(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
 
-DestinationBase* DestinationBase::Create(syntax::ObjectPtr root) {
+std::unique_ptr<DestinationBase> DestinationBase::Create(syntax::ObjectPtr root) {
 	if (syntax::ObjectUtils::IsType<syntax::MixedArrayObjectPtr>(root)) {
 		auto arr = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(root);
 		return Create(arr);
@@ -53,7 +53,7 @@ DestinationBase* DestinationBase::Create(syntax::ObjectPtr root) {
 	throw GeneralException("Invalid object type");
 }
 
-DestinationBase* DestinationBase::Create(syntax::MixedArrayObjectPtr root) {
+std::unique_ptr<DestinationBase> DestinationBase::Create(syntax::MixedArrayObjectPtr root) {
 	if (root->Size() < 2) {
 		throw GeneralException("Invalid destination array");
 	}
@@ -75,49 +75,41 @@ DestinationBase* DestinationBase::Create(syntax::MixedArrayObjectPtr root) {
 	syntax::NameObjectPtr type = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(type_obj);
 
 	if (type == constant::Name::XYZ) {
-		auto result = make_unique<XYZDestination>(root);
-		return result.release();
+		return make_unique<XYZDestination>(root);
 	}
 
 	if (type == constant::Name::Fit) {
-		auto result = make_unique<FitDestination>(root);
-		return result.release();
+		return make_unique<FitDestination>(root);
 	}
 
 	if (type == constant::Name::FitH) {
-		auto result = make_unique<FitHorizontalDestination>(root);
-		return result.release();
+		return make_unique<FitHorizontalDestination>(root);
 	}
 
 	if (type == constant::Name::FitV) {
-		auto result = make_unique<FitVerticalDestination>(root);
-		return result.release();
+		return make_unique<FitVerticalDestination>(root);
 	}
 
 	if (type == constant::Name::FitR) {
-		auto result = make_unique<FitRectangleDestination>(root);
-		return result.release();
+		return make_unique<FitRectangleDestination>(root);
 	}
 
 	if (type == constant::Name::FitB) {
-		auto result = make_unique<FitBoundingBoxDestination>(root);
-		return result.release();
+		return make_unique<FitBoundingBoxDestination>(root);
 	}
 
 	if (type == constant::Name::FitBH) {
-		auto result = make_unique<FitBoundingBoxHorizontalDestination>(root);
-		return result.release();
+		return make_unique<FitBoundingBoxHorizontalDestination>(root);
 	}
 
 	if (type == constant::Name::FitBV) {
-		auto result = make_unique<FitBoundingBoxVerticalDestination>(root);
-		return result.release();
+		return make_unique<FitBoundingBoxVerticalDestination>(root);
 	}
 
 	throw GeneralException("Unknown destination type");
 }
 
-DestinationBase* DestinationBase::Create(syntax::DictionaryObjectPtr root) {
+std::unique_ptr<DestinationBase> DestinationBase::Create(syntax::DictionaryObjectPtr root) {
 	if (!root->Contains(constant::Name::D)) {
 		throw GeneralException("Invalid destination dictionary");
 	}
@@ -145,43 +137,35 @@ DestinationBase* DestinationBase::Create(syntax::DictionaryObjectPtr root) {
 	syntax::NameObjectPtr type = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(type_obj);
 
 	if (type == constant::Name::XYZ) {
-		auto result = make_unique<XYZDestination>(root);
-		return result.release();
+		return make_unique<XYZDestination>(root);
 	}
 
 	if (type == constant::Name::Fit) {
-		auto result = make_unique<FitDestination>(root);
-		return result.release();
+		return make_unique<FitDestination>(root);
 	}
 
 	if (type == constant::Name::FitH) {
-		auto result = make_unique<FitHorizontalDestination>(root);
-		return result.release();
+		return make_unique<FitHorizontalDestination>(root);
 	}
 
 	if (type == constant::Name::FitV) {
-		auto result = make_unique<FitVerticalDestination>(root);
-		return result.release();
+		return make_unique<FitVerticalDestination>(root);
 	}
 
 	if (type == constant::Name::FitR) {
-		auto result = make_unique<FitRectangleDestination>(root);
-		return result.release();
+		return make_unique<FitRectangleDestination>(root);
 	}
 
 	if (type == constant::Name::FitB) {
-		auto result = make_unique<FitBoundingBoxDestination>(root);
-		return result.release();
+		return make_unique<FitBoundingBoxDestination>(root);
 	}
 
 	if (type == constant::Name::FitBH) {
-		auto result = make_unique<FitBoundingBoxHorizontalDestination>(root);
-		return result.release();
+		return make_unique<FitBoundingBoxHorizontalDestination>(root);
 	}
 
 	if (type == constant::Name::FitBV) {
-		auto result = make_unique<FitBoundingBoxVerticalDestination>(root);
-		return result.release();
+		return make_unique<FitBoundingBoxVerticalDestination>(root);
 	}
 
 	throw GeneralException("Unknown destination type");
@@ -228,13 +212,17 @@ bool NamedDestinations::Contains(const syntax::NameObject& name) const {
 DestinationPtr NamedDestinations::Find(const syntax::NameObject& name) const {
 	auto found_obj = _obj->Find(name);
 	if (syntax::ObjectUtils::IsType<syntax::MixedArrayObjectPtr>(found_obj)) {
-		syntax::MixedArrayObjectPtr found_array = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(found_obj);
-		return DestinationBase::Create(found_array);
+		auto found_array = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(found_obj);
+		auto destination = DestinationBase::Create(found_array);
+		auto raw_ptr = destination.release();
+		return DestinationPtr(raw_ptr);
 	}
 
 	if (syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(found_obj)) {
-		syntax::DictionaryObjectPtr found_dictionary = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(found_obj);
-		return DestinationBase::Create(found_dictionary);
+		auto found_dictionary = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(found_obj);
+		auto destination = DestinationBase::Create(found_dictionary);
+		auto raw_ptr = destination.release();
+		return DestinationPtr(raw_ptr);
 	}
 
 	throw GeneralException("Unable to find entry");

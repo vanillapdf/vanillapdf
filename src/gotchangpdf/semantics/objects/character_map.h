@@ -20,7 +20,7 @@ public:
 	explicit CharacterMapBase(syntax::StreamObjectPtr root);
 	virtual Type GetType() const noexcept = 0;
 
-	static CharacterMapBase* Create(syntax::StreamObjectPtr root, WeakReference<Document> doc);
+	static std::unique_ptr<CharacterMapBase> Create(syntax::StreamObjectPtr root, WeakReference<Document> doc);
 };
 
 class EmbeddedCharacterMap : public CharacterMapBase {

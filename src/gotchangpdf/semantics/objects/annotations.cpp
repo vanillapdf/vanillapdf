@@ -76,10 +76,12 @@ AnnotationPtr PageAnnotations::At(types::uinteger index) const {
 	}
 
 	auto dict = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(obj);
-	return AnnotationBase::Create(dict);
+	auto unique = AnnotationBase::Create(dict);
+	auto raw_ptr = unique.release();
+	return AnnotationPtr(raw_ptr);
 }
 
-AnnotationBase* AnnotationBase::Create(syntax::DictionaryObjectPtr root) {
+std::unique_ptr<AnnotationBase> AnnotationBase::Create(syntax::DictionaryObjectPtr root) {
 	// Verify type, if it is included
 	if (root->Contains(constant::Name::Type)) {
 		syntax::ObjectPtr type_obj = root->Find(constant::Name::Type);
@@ -107,132 +109,106 @@ AnnotationBase* AnnotationBase::Create(syntax::DictionaryObjectPtr root) {
 	syntax::NameObjectPtr subtype = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(subtype_obj);
 
 	if (subtype == constant::Name::Text) {
-		auto result = make_unique<TextAnnotation>(root);
-		return result.release();
+		return make_unique<TextAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::Link) {
-		auto result = make_unique<LinkAnnotation>(root);
-		return result.release();
+		return make_unique<LinkAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::FreeText) {
-		auto result = make_unique<FreeTextAnnotation>(root);
-		return result.release();
+		return make_unique<FreeTextAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::Line) {
-		auto result = make_unique<LineAnnotation>(root);
-		return result.release();
+		return make_unique<LineAnnotation>(root);
 	}
 	if (subtype == constant::Name::Square) {
-		auto result = make_unique<SquareAnnotation>(root);
-		return result.release();
+		return make_unique<SquareAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::Circle) {
-		auto result = make_unique<CircleAnnotation>(root);
-		return result.release();
+		return make_unique<CircleAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::Polygon) {
-		auto result = make_unique<PolygonAnnotation>(root);
-		return result.release();
+		return make_unique<PolygonAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::PolyLine) {
-		auto result = make_unique<PolyLineAnnotation>(root);
-		return result.release();
+		return make_unique<PolyLineAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::Highlight) {
-		auto result = make_unique<HighlightAnnotation>(root);
-		return result.release();
+		return make_unique<HighlightAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::Underline) {
-		auto result = make_unique<UnderlineAnnotation>(root);
-		return result.release();
+		return make_unique<UnderlineAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::Squiggly) {
-		auto result = make_unique<SquigglyAnnotation>(root);
-		return result.release();
+		return make_unique<SquigglyAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::StrikeOut) {
-		auto result = make_unique<StrikeOutAnnotation>(root);
-		return result.release();
+		return make_unique<StrikeOutAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::RubberStamp) {
-		auto result = make_unique<RubberStampAnnotation>(root);
-		return result.release();
+		return make_unique<RubberStampAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::Caret) {
-		auto result = make_unique<CaretAnnotation>(root);
-		return result.release();
+		return make_unique<CaretAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::Ink) {
-		auto result = make_unique<InkAnnotation>(root);
-		return result.release();
+		return make_unique<InkAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::Popup) {
-		auto result = make_unique<PopupAnnotation>(root);
-		return result.release();
+		return make_unique<PopupAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::FileAttachment) {
-		auto result = make_unique<FileAttachmentAnnotation>(root);
-		return result.release();
+		return make_unique<FileAttachmentAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::Sound) {
-		auto result = make_unique<SoundAnnotation>(root);
-		return result.release();
+		return make_unique<SoundAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::Movie) {
-		auto result = make_unique<MovieAnnotation>(root);
-		return result.release();
+		return make_unique<MovieAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::Widget) {
-		auto result = make_unique<WidgetAnnotation>(root);
-		return result.release();
+		return make_unique<WidgetAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::Screen) {
-		auto result = make_unique<ScreenAnnotation>(root);
-		return result.release();
+		return make_unique<ScreenAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::PrinterMark) {
-		auto result = make_unique<PrinterMarkAnnotation>(root);
-		return result.release();
+		return make_unique<PrinterMarkAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::TrapNetwork) {
-		auto result = make_unique<TrapNetworkAnnotation>(root);
-		return result.release();
+		return make_unique<TrapNetworkAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::Watermark) {
-		auto result = make_unique<WatermarkAnnotation>(root);
-		return result.release();
+		return make_unique<WatermarkAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::TripleD) {
-		auto result = make_unique<TripleDAnnotation>(root);
-		return result.release();
+		return make_unique<TripleDAnnotation>(root);
 	}
 
 	if (subtype == constant::Name::Redact) {
-		auto result = make_unique<RedactionAnnotation>(root);
-		return result.release();
+		return make_unique<RedactionAnnotation>(root);
 	}
 
 	throw GeneralException("Unknown annotation subtype");
@@ -246,13 +222,15 @@ bool LinkAnnotation::Destination(OutputDestinationPtr& result) const {
 	auto dest_obj = _obj->Find(constant::Name::Dest);
 	if (syntax::ObjectUtils::IsType<syntax::MixedArrayObjectPtr>(dest_obj)) {
 		auto array_obj = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(dest_obj);
-		result = DestinationBase::Create(array_obj);
+		auto destination = DestinationBase::Create(array_obj);
+		result = destination.release();
 		return true;
 	}
 
 	if (syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(dest_obj)) {
 		auto dict_obj = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(dest_obj);
-		result = DestinationBase::Create(dict_obj);
+		auto destination = DestinationBase::Create(dict_obj);
+		result = destination.release();
 		return true;
 	}
 

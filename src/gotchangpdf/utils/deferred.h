@@ -38,18 +38,17 @@ public:
 		typename U = T,
 		typename = typename std::enable_if<std::is_default_constructible<U>::value>::type
 	>
-		DeferredWrapperBase() : m_ptr(nullptr) {
-	}
+	DeferredWrapperBase() : m_ptr(nullptr) noexcept {}
 
-	DeferredWrapperBase(T* value, bool add_ref) : m_ptr(value) {
+	DeferredWrapperBase(T* value, bool add_ref) : m_ptr(value) noexcept {
 		if (m_ptr && add_ref) {
 			m_ptr->AddRef();
 		}
 	}
 
-	DeferredWrapperBase(T* value) : DeferredWrapperBase(value, true) {}
-	DeferredWrapperBase(const DeferredWrapperBase& rhs) : DeferredWrapperBase(rhs.m_ptr, true) {}
-	DeferredWrapperBase(DeferredWrapperBase&& rhs) : DeferredWrapperBase(rhs.m_ptr, false) { rhs.m_ptr = nullptr; }
+	DeferredWrapperBase(T* value) : DeferredWrapperBase(value, true) noexcept {}
+	DeferredWrapperBase(const DeferredWrapperBase& rhs) : DeferredWrapperBase(rhs.m_ptr, true) noexcept {}
+	DeferredWrapperBase(DeferredWrapperBase&& rhs) : DeferredWrapperBase(rhs.m_ptr, false) noexcept { rhs.m_ptr = nullptr; }
 
 	template <typename U, typename = typename std::enable_if<std::is_convertible<U*, T*>::value>::type>
 	DeferredWrapperBase(const DeferredWrapperBase<U>& rhs) : DeferredWrapperBase(rhs.get(), true) {}
@@ -62,7 +61,6 @@ public:
 
 	operator T&() { return *get(); }
 	operator T&() const { return *get(); }
-	//operator bool() const { return Contents; }
 
 	DeferredWrapperBase& operator=(const DeferredWrapperBase& rhs) {
 		DeferredWrapperBase(rhs).swap(*this);

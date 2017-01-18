@@ -11,22 +11,9 @@ namespace semantics {
 
 class NameDictionary : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
-	explicit NameDictionary(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
+	explicit NameDictionary(syntax::DictionaryObjectPtr root);
 
-	bool Dests(OutputNameTreePtr<DestinationPtr>& result) const {
-		if (!_obj->Contains(constant::Name::Dests)) {
-			return false;
-		}
-
-		auto dict = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Dests);
-		NameTreePtr<DestinationPtr> tree(
-			dict, [this](const syntax::ContainableObjectPtr& obj) {
-			return DestinationBase::Create(obj);
-		});
-
-		result = tree;
-		return true;
-	}
+	bool Dests(OutputNameTreePtr<DestinationPtr>& result) const;
 
 	//NameTreePtr AP(void) const;
 	//NameTreePtr JavaScript(void) const;
@@ -36,6 +23,9 @@ public:
 	//NameTreePtr URLS(void) const;
 	//NameTreePtr EmbeddedFiles(void) const;
 	//NameTreePtr Renditions(void) const;
+
+private:
+	static DestinationPtr DestinationConversionFunction(const syntax::ContainableObjectPtr& obj);
 };
 
 } // semantics
