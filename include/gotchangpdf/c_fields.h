@@ -125,6 +125,13 @@ extern "C"
 	*/
 
 	/**
+	* \brief
+	* Return type of field.
+	* Result can be used to convert to derived type.
+	*/
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Field_GetType(FieldHandle handle, FieldType* result);
+
+	/**
 	* \brief Reinterpret current object as ButtonFieldHandle.
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Field_ToButton(FieldHandle handle, ButtonFieldHandle* result);

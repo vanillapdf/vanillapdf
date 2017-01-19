@@ -7,6 +7,27 @@
 
 using namespace gotchangpdf::semantics;
 
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Field_GetType(FieldHandle handle, FieldType* result) {
+	Field* obj = reinterpret_cast<Field*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	switch (obj->GetType()) {
+		case Field::Type::Button:
+			*result = FieldType_Button; break;
+		case Field::Type::Text:
+			*result = FieldType_Text; break;
+		case Field::Type::Choice:
+			*result = FieldType_Choice; break;
+		case Field::Type::Signature:
+			*result = FieldType_Signature; break;
+		default:
+			return GOTCHANG_PDF_ERROR_GENERAL;
+	}
+
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}
+
 GOTCHANG_PDF_API error_type CALLING_CONVENTION FieldCollection_Size(FieldCollectionHandle handle, size_type* result) {
 	FieldCollection* collection = reinterpret_cast<FieldCollection*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(collection);
