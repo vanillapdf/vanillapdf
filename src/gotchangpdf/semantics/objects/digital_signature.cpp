@@ -10,7 +10,7 @@ DigitalSignature::DigitalSignature(syntax::DictionaryObjectPtr root) : HighLevel
 ByteRangeCollection::ByteRangeCollection(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> obj) : HighLevelObject(obj) {
 	assert(obj->Size() % 2 == 0);
 	if (obj->Size() % 2 != 0) {
-		throw SemanticContextExceptionFactory::Construct<syntax::ArrayObject<syntax::IntegerObjectPtr>, PageRange>(obj);
+		throw SemanticContextExceptionFactory::Construct<syntax::ArrayObject<syntax::IntegerObjectPtr>, ByteRangeCollection>(obj);
 	}
 }
 
