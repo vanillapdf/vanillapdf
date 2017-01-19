@@ -18,7 +18,7 @@ std::unique_ptr<Field> Field::Create(syntax::DictionaryObjectPtr root) {
 		throw GeneralException("Dictionary does not contain field type");
 	}
 
-	syntax::ObjectPtr type_obj = root->Find(constant::Name::Subtype);
+	syntax::ObjectPtr type_obj = root->Find(constant::Name::FT);
 	if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(type_obj)) {
 		throw GeneralException("Invalid field type");
 	}
