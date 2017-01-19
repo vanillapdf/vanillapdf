@@ -575,6 +575,7 @@ error_type process_catalog(CatalogHandle catalog, int nested) {
 	PDFVersion version;
 	PageLayout page_layout;
 	NamedDestinationsHandle named_destinations = NULL;
+	InteractiveFormHandle interactive_form = NULL;
 
 	print_spaces(nested);
 	printf("Document catalog begin\n");
@@ -603,6 +604,10 @@ error_type process_catalog(CatalogHandle catalog, int nested) {
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Catalog_GetDestinations(catalog, &named_destinations),
 		process_named_destinations(named_destinations, nested + 1),
 		NamedDestinations_Release(named_destinations));
+
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Catalog_GetAcroForm(catalog, &interactive_form),
+		process_interactive_form(interactive_form, nested + 1),
+		InteractiveForm_Release(interactive_form));
 
 	for (i = 1; i <= size; ++i) {
 		PageObjectHandle page = NULL;
@@ -1046,6 +1051,189 @@ error_type process_document_save(DocumentHandle document, int nested) {
 	
 	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_Release(catalog));
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_SaveIncremental(document, "output.pdf"));
+
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_interactive_form(InteractiveFormHandle obj, int nested) {
+	FieldCollectionHandle fields = NULL;
+
+	print_spaces(nested);
+	printf("Interactive form begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(InteractiveForm_GetFields(obj, &fields));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_field_collection(fields, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(FieldCollection_Release(fields));
+
+	print_spaces(nested);
+	printf("Interactive form end\n");
+
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_field_collection(FieldCollectionHandle obj, int nested) {
+	integer_type i = 0;
+	integer_type size = 0;
+
+	print_spaces(nested);
+	printf("Field collection begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(FieldCollection_Size(obj, &size));
+
+	print_spaces(nested);
+	printf("Size: %d\n", size);
+
+	for (i = 1; i <= size; ++i) {
+		FieldHandle field = NULL;
+
+		RETURN_ERROR_IF_NOT_SUCCESS(FieldCollection_At(obj, i, &field));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_field(field, nested + 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(Field_Release(field));
+	}
+
+	print_spaces(nested);
+	printf("Field collection end\n");
+
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_field(FieldHandle obj, int nested) {
+	FieldType type;
+	SignatureFieldHandle signature_field = NULL;
+
+	print_spaces(nested);
+	printf("Field begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Field_GetType(obj, &type));
+
+	switch (type) {
+		case FieldType_Signature:
+			RETURN_ERROR_IF_NOT_SUCCESS(Field_ToSignature(obj, &signature_field));
+			RETURN_ERROR_IF_NOT_SUCCESS(process_signature_field(signature_field, nested + 1));
+			break;
+
+		case FieldType_Button:
+		case FieldType_Text:
+		case FieldType_Choice:
+			print_spaces(nested + 1);
+			printf("Type: %d\n", type);
+			break;
+
+		default:
+			print_spaces(nested + 1);
+			printf("Unrecognized annotation type\n");
+			return GOTCHANG_PDF_TEST_ERROR_FAILURE;
+	}
+
+	print_spaces(nested);
+	printf("Field end\n");
+
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_signature_field(SignatureFieldHandle obj, int nested) {
+	DigitalSignatureHandle digital_signature = NULL;
+
+	RETURN_ERROR_IF_NOT_SUCCESS(SignatureField_GetValue(obj, &digital_signature));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_digital_signature(digital_signature, nested));
+	RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignature_Release(digital_signature));
+
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_digital_signature(DigitalSignatureHandle obj, int nested) {
+	StringObjectHandle contact_info = NULL;
+	StringObjectHandle name = NULL;
+	StringObjectHandle reason = NULL;
+	StringObjectHandle location = NULL;
+	IntegerObjectHandle revision = NULL;
+	StringObjectHandle certificate = NULL;
+	ByteRangeCollectionHandle byte_range = NULL;
+	HexadecimalStringObjectHandle contents = NULL;
+	DateHandle date = NULL;
+
+	RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignature_GetContactInfo(obj, &contact_info));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_string(contact_info, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(contact_info));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignature_GetName(obj, &name));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_string(name, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(name));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignature_GetLocation(obj, &location));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_string(location, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(location));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignature_GetReason(obj, &reason));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_string(reason, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(reason));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignature_GetContactInfo(obj, &contact_info));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_string(contact_info, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(contact_info));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignature_GetCertificate(obj, &certificate));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_string(certificate, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(certificate));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignature_GetContents(obj, &contents));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_hex_string(contents, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(HexadecimalStringObject_Release(contents));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignature_GetDate(obj, &date));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_date(date, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(Date_Release(date));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignature_GetByteRange(obj, &byte_range));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_byte_range_collection(byte_range, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(ByteRangeCollection_Release(byte_range));
+
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_byte_range_collection(ByteRangeCollectionHandle obj, int nested) {
+	integer_type i = 0;
+	integer_type size = 0;
+
+	print_spaces(nested);
+	printf("Byte range collection begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(ByteRangeCollection_Size(obj, &size));
+
+	print_spaces(nested);
+	printf("Size: %d\n", size);
+
+	for (i = 1; i <= size; ++i) {
+		ByteRangeHandle range = NULL;
+
+		RETURN_ERROR_IF_NOT_SUCCESS(ByteRangeCollection_At(obj, i, &range));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_byte_range(range, nested + 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(ByteRange_Release(range));
+	}
+
+	print_spaces(nested);
+	printf("Byte range collection end\n");
+
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_byte_range(ByteRangeHandle obj, int nested) {
+	IntegerObjectHandle offset = NULL;
+	IntegerObjectHandle length = NULL;
+
+	print_spaces(nested);
+	printf("Byte range begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(ByteRange_GetOffset(obj, &offset));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(offset, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(offset));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(ByteRange_GetLength(obj, &length));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(length, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(length));
+
+	print_spaces(nested);
+	printf("Byte range end\n");
 
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
