@@ -176,6 +176,21 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetDestinations(CatalogHa
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetAcroForm(CatalogHandle handle, InteractiveFormHandle* result) {
+	Catalog* obj = reinterpret_cast<Catalog*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		OuputInteractiveFormPtr direct;
+		auto contains = obj->AcroForm(direct);
+		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<InteractiveFormHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_Release(CatalogHandle handle)
 {
 	return ObjectRelease<Catalog, CatalogHandle>(handle);

@@ -1,0 +1,204 @@
+#include "precompiled.h"
+
+#include "semantics/objects/digital_signature.h"
+
+#include "gotchangpdf/c_digital_signature.h"
+#include "c_helper.h"
+
+using namespace gotchangpdf::syntax;
+using namespace gotchangpdf::semantics;
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetContactInfo(DigitalSignatureHandle handle, StringObjectHandle* result) {
+	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		OutputStringObjectPtr direct;
+		bool contains = signature->ContactInfo(direct);
+		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<StringObjectHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetReason(DigitalSignatureHandle handle, StringObjectHandle* result) {
+	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		OutputStringObjectPtr direct;
+		bool contains = signature->Reason(direct);
+		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<StringObjectHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetLocation(DigitalSignatureHandle handle, StringObjectHandle* result) {
+	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		OutputStringObjectPtr direct;
+		bool contains = signature->Location(direct);
+		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<StringObjectHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetDate(DigitalSignatureHandle handle, DateHandle* result) {
+	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		OutputDatePtr direct;
+		bool contains = signature->Date(direct);
+		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<DateHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetName(DigitalSignatureHandle handle, StringObjectHandle* result) {
+	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		OutputStringObjectPtr direct;
+		bool contains = signature->Name(direct);
+		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<StringObjectHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetRevision(DigitalSignatureHandle handle, IntegerObjectHandle* result) {
+	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		OutputIntegerObjectPtr direct;
+		bool contains = signature->Revision(direct);
+		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetCertificate(DigitalSignatureHandle handle, StringObjectHandle* result) {
+	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		OutputStringObjectPtr direct;
+		bool contains = signature->Certificate(direct);
+		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<StringObjectHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetContents(DigitalSignatureHandle handle, HexadecimalStringObjectHandle* result) {
+	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto direct = signature->Contents();
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<HexadecimalStringObjectHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(DigitalSignatureHandle handle, ByteRangesHandle* result) {
+	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		OuputByteRangesPtr direct;
+		bool contains = signature->ByteRange(direct);
+		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<ByteRangesHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRange_GetOffset(ByteRangeHandle handle, IntegerObjectHandle* result) {
+	ByteRange* range = reinterpret_cast<ByteRange*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(range);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto direct = range->ByteOffset();
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRange_GetLength(ByteRangeHandle handle, IntegerObjectHandle* result) {
+	ByteRange* range = reinterpret_cast<ByteRange*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(range);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto direct = range->Length();
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRanges_Size(ByteRangesHandle handle, size_type* result) {
+	ByteRanges* collection = reinterpret_cast<ByteRanges*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(collection);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		*result = collection->Size();
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRanges_At(ByteRangesHandle handle, size_type at, ByteRangeHandle* result) {
+	ByteRanges* collection = reinterpret_cast<ByteRanges*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(collection);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto direct = collection->At(at);
+		auto ptr = direct.AddRefGet();
+		*result = reinterpret_cast<ByteRangeHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRange_Release(ByteRangeHandle handle) {
+	return ObjectRelease<ByteRange, ByteRangeHandle>(handle);
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRanges_Release(ByteRangesHandle handle) {
+	return ObjectRelease<ByteRanges, ByteRangesHandle>(handle);
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_Release(DigitalSignatureHandle handle) {
+	return ObjectRelease<DigitalSignature, DigitalSignatureHandle>(handle);
+}

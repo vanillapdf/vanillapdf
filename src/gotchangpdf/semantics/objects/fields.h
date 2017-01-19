@@ -8,6 +8,13 @@
 namespace gotchangpdf {
 namespace semantics {
 
+class FieldCollection : public HighLevelObject<syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr>> {
+public:
+	FieldCollection(syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> root);
+	types::uinteger Size() const;
+	FieldPtr At(types::uinteger index) const;
+};
+
 class Field : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
 	enum Type {
@@ -47,7 +54,7 @@ public:
 	explicit SignatureField(syntax::DictionaryObjectPtr root);
 	virtual Field::Type GetType() const noexcept { return Field::Type::Signature; }
 
-	bool Value(OuputDigitalSignaturePtr result) const;
+	bool Value(OuputDigitalSignaturePtr& result) const;
 };
 
 } // semantics

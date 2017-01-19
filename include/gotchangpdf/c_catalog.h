@@ -120,6 +120,13 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetDestinations(CatalogHandle handle, NamedDestinationsHandle* result);
 
 	/**
+	* \brief
+	* The document's interactive form
+	* (see 12.7, "Interactive Forms").
+	*/
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetAcroForm(CatalogHandle handle, InteractiveFormHandle* result);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see IUnknown_Release
 	*/

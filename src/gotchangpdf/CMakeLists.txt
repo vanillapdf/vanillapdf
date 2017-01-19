@@ -22,14 +22,17 @@ set(GOTCHANGPDF_C_IMPLEMENTATION_SOURCES
 	implementation/c_destinations.cpp
 	implementation/c_developer_extensions.cpp
 	implementation/c_dictionary_object.cpp
+	implementation/c_digital_signature.cpp
 	implementation/c_document.cpp
 	implementation/c_document_info.cpp
 	implementation/c_encryption.cpp
+	implementation/c_fields.cpp
 	implementation/c_file.cpp
 	implementation/c_font.cpp
 	implementation/c_font_map.cpp
 	implementation/c_indirect_object_reference.cpp
 	implementation/c_integer_object.cpp
+	implementation/c_interactive_forms.cpp
 	implementation/c_library_info.cpp
 	implementation/c_logging.cpp
 	implementation/c_name_object.cpp
@@ -266,16 +269,19 @@ set(GOTCHANGPDF_INCLUDE_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_destinations.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_developer_extensions.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_dictionary_object.h"
+	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_digital_signature.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_document.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_document_info.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_encryption.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_export.h"
+	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_fields.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_file.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_font.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_font_map.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_handles.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_indirect_object_reference.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_integer_object.h"
+	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_interactive_forms.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_library_info.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_logging.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_name_object.h"

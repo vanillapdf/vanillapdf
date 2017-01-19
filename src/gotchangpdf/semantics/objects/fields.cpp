@@ -10,6 +10,7 @@ ButtonField::ButtonField(syntax::DictionaryObjectPtr root) : Field(root) {}
 TextField::TextField(syntax::DictionaryObjectPtr root) : Field(root) {}
 ChoiceField::ChoiceField(syntax::DictionaryObjectPtr root) : Field(root) {}
 SignatureField::SignatureField(syntax::DictionaryObjectPtr root) : Field(root) {}
+FieldCollection::FieldCollection(syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> root) : HighLevelObject(root) {}
 
 std::unique_ptr<Field> Field::Create(syntax::DictionaryObjectPtr root) {
 	if (!root->Contains(constant::Name::FT)) {
@@ -43,7 +44,7 @@ std::unique_ptr<Field> Field::Create(syntax::DictionaryObjectPtr root) {
 	throw GeneralException("Unknown field type");
 }
 
-bool SignatureField::Value(OuputDigitalSignaturePtr result) const {
+bool SignatureField::Value(OuputDigitalSignaturePtr& result) const {
 	if (!_obj->Contains(constant::Name::V)) {
 		return false;
 	}
@@ -52,6 +53,17 @@ bool SignatureField::Value(OuputDigitalSignaturePtr result) const {
 	auto digital_signature = DigitalSignaturePtr(value_obj);
 	result = digital_signature;
 	return true;
+}
+
+types::uinteger FieldCollection::Size() const {
+	return _obj->Size();
+}
+
+FieldPtr FieldCollection::At(types::uinteger index) const {
+	auto obj = _obj->At(index);
+	auto unique = Field::Create(obj);
+	auto raw_ptr = unique.release();
+	return FieldPtr(raw_ptr);
 }
 
 } // semantics
