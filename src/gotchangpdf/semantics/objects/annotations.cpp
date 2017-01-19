@@ -39,33 +39,6 @@ TripleDAnnotation::TripleDAnnotation(syntax::DictionaryObjectPtr root) : Annotat
 RedactionAnnotation::RedactionAnnotation(syntax::DictionaryObjectPtr root) : AnnotationBase(root) {}
 PageAnnotations::PageAnnotations(syntax::MixedArrayObjectPtr root) : HighLevelObject(root) {}
 
-AnnotationBase::Type TextAnnotation::GetType() const noexcept { return Type::Text; }
-AnnotationBase::Type LinkAnnotation::GetType() const noexcept { return Type::Link; }
-AnnotationBase::Type FreeTextAnnotation::GetType() const noexcept { return Type::FreeText; }
-AnnotationBase::Type LineAnnotation::GetType() const noexcept { return Type::Line; }
-AnnotationBase::Type SquareAnnotation::GetType() const noexcept { return Type::Square; }
-AnnotationBase::Type CircleAnnotation::GetType() const noexcept { return Type::Circle; }
-AnnotationBase::Type PolygonAnnotation::GetType() const noexcept { return Type::Polygon; }
-AnnotationBase::Type PolyLineAnnotation::GetType() const noexcept { return Type::PolyLine; }
-AnnotationBase::Type HighlightAnnotation::GetType() const noexcept { return Type::Highlight; }
-AnnotationBase::Type UnderlineAnnotation::GetType() const noexcept { return Type::Underline; }
-AnnotationBase::Type SquigglyAnnotation::GetType() const noexcept { return Type::Squiggly; }
-AnnotationBase::Type StrikeOutAnnotation::GetType() const noexcept { return Type::StrikeOut; }
-AnnotationBase::Type RubberStampAnnotation::GetType() const noexcept { return Type::RubberStamp; }
-AnnotationBase::Type CaretAnnotation::GetType() const noexcept { return Type::Caret; }
-AnnotationBase::Type InkAnnotation::GetType() const noexcept { return Type::Ink; }
-AnnotationBase::Type PopupAnnotation::GetType() const noexcept { return Type::Popup; }
-AnnotationBase::Type FileAttachmentAnnotation::GetType() const noexcept { return Type::FileAttachment; }
-AnnotationBase::Type SoundAnnotation::GetType() const noexcept { return Type::Sound; }
-AnnotationBase::Type MovieAnnotation::GetType() const noexcept { return Type::Movie; }
-AnnotationBase::Type WidgetAnnotation::GetType() const noexcept { return Type::Widget; }
-AnnotationBase::Type ScreenAnnotation::GetType() const noexcept { return Type::Screen; }
-AnnotationBase::Type PrinterMarkAnnotation::GetType() const noexcept { return Type::PrinterMark; }
-AnnotationBase::Type TrapNetworkAnnotation::GetType() const noexcept { return Type::TrapNetwork; }
-AnnotationBase::Type WatermarkAnnotation::GetType() const noexcept { return Type::Watermark; }
-AnnotationBase::Type TripleDAnnotation::GetType() const noexcept { return Type::TripleD; }
-AnnotationBase::Type RedactionAnnotation::GetType() const noexcept { return Type::Redaction; }
-
 types::uinteger PageAnnotations::Size() const {
 	return _obj->Size();
 }

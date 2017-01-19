@@ -2,7 +2,9 @@
 #define _INTERACTIVE_FORMS_H
 
 #include "semantics/utils/semantics_fwd.h"
+
 #include "semantics/objects/high_level_object.h"
+#include "semantics/objects/fields.h"
 
 namespace gotchangpdf {
 namespace semantics {

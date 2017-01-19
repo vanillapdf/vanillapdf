@@ -74,10 +74,12 @@ set(GOTCHANGPDF_SEMANTICS_SOURCES
 	semantics/objects/document_info.cpp
 	semantics/objects/font.cpp
 	semantics/objects/outline.cpp
+	semantics/objects/page_labels.cpp
 	semantics/objects/rectangle.cpp
 	semantics/objects/name_dictionary.cpp
 	semantics/objects/fields.cpp
 	semantics/objects/interactive_forms.cpp
+	semantics/objects/viewer_preferences.cpp
 	
 	semantics/utils/semantic_utils.cpp
 )

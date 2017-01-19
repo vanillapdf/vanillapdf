@@ -222,12 +222,14 @@
     <ClCompile Include="src\gotchangpdf\semantics\objects\interactive_forms.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\name_dictionary.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\outline.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\objects\page_labels.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\page_node_utils.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\page_object.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\page_tree.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\page_tree_node.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\rectangle.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\resource_dictionary.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\objects\viewer_preferences.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\utils\semantic_utils.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\exceptions\syntax_exceptions.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\files\file.cpp" />

@@ -79,6 +79,10 @@ public:
 	void Insert(const ContainableObjectPtr& value, size_t at) { _list->Insert(value, at); }
 	void Remove(size_t at) { _list->Remove(at); }
 
+	std::string ToString(void) const {
+		return _list->ToString();
+	}
+
 	template <typename U>
 	ArrayObjectPtr<U> Convert(std::function<U(const T& obj)> f) const {
 		return ArrayObjectPtr<U>(*this, f);

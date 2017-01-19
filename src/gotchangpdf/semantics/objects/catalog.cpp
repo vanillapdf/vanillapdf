@@ -16,13 +16,18 @@ namespace gotchangpdf {
 namespace semantics {
 
 Catalog::Catalog(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {
-	if (root->Contains(constant::Name::Type) && root->FindAs<syntax::NameObjectPtr>(constant::Name::Type) != constant::Name::Catalog)
-		throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, Catalog>(root);
+	if (root->Contains(constant::Name::Type)) {
+		auto type = root->FindAs<syntax::NameObjectPtr>(constant::Name::Type);
+		if (type != constant::Name::Catalog) {
+			throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, Catalog>(root);
+		}
+	}
 }
 
 bool Catalog::Version(gotchangpdf::Version& result) const {
-	if (!_obj->Contains(constant::Name::Version))
+	if (!_obj->Contains(constant::Name::Version)) {
 		return false;
+	}
 
 	auto ver = _obj->FindAs<syntax::NameObjectPtr>(constant::Name::Version);
 	result = SemanticUtils::GetVersionFromName(ver);
@@ -30,8 +35,9 @@ bool Catalog::Version(gotchangpdf::Version& result) const {
 }
 
 bool Catalog::Extensions(OutputDeveloperExtensionsPtr& result) const {
-	if (!_obj->Contains(constant::Name::Extensions))
+	if (!_obj->Contains(constant::Name::Extensions)) {
 		return false;
+	}
 
 	auto extensions = DeveloperExtensionsPtr(_obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Extensions));
 	result = extensions;
@@ -50,47 +56,52 @@ PageTreePtr Catalog::Pages(void) const {
 }
 
 bool Catalog::PageLabels(OutputPageLabelsPtr& result) const {
-	if (!_obj->Contains(constant::Name::PageLabels))
+	if (!_obj->Contains(constant::Name::PageLabels)) {
 		return false;
+	}
 
 	result = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::PageLabels);
 	return true;
 }
 
 bool Catalog::PageLayout(Catalog::PageLayoutType& result) const {
-	if (!_obj->Contains(constant::Name::PageLayout))
+	if (!_obj->Contains(constant::Name::PageLayout)) {
 		return false;
+	}
 
 	auto layout = _obj->FindAs<syntax::NameObjectPtr>(constant::Name::PageLayout);
-	if (layout == constant::Name::SinglePage)
+	if (layout == constant::Name::SinglePage) {
 		result = PageLayoutType::SinglePage;
-	else if (layout == constant::Name::OneColumn)
+	} else if (layout == constant::Name::OneColumn) {
 		result = PageLayoutType::OneColumn;
-	else if (layout == constant::Name::TwoColumnLeft)
+	} else if (layout == constant::Name::TwoColumnLeft) {
 		result = PageLayoutType::TwoColumnLeft;
-	else if (layout == constant::Name::TwoColumnRight)
+	} else if (layout == constant::Name::TwoColumnRight) {
 		result = PageLayoutType::TwoColumnRight;
-	else if (layout == constant::Name::TwoPageLeft)
+	} else if (layout == constant::Name::TwoPageLeft) {
 		result = PageLayoutType::TwoPageLeft;
-	else if (layout == constant::Name::TwoPageRight)
+	} else if (layout == constant::Name::TwoPageRight) {
 		result = PageLayoutType::TwoPageRight;
-	else
+	} else {
 		throw GeneralException("Unknown value in PageLayout entry: " + layout->ToString());
+	}
 
 	return true;
 }
 
 bool Catalog::NeedsRendering(syntax::BooleanObjectPtr& result) const {
-	if (!_obj->Contains(constant::Name::NeedsRendering))
+	if (!_obj->Contains(constant::Name::NeedsRendering)) {
 		return false;
+	}
 
 	result = _obj->FindAs<syntax::BooleanObjectPtr>(constant::Name::NeedsRendering);
 	return true;
 }
 
 bool Catalog::Names(OutputNameDictionaryPtr& result) const {
-	if (!_obj->Contains(constant::Name::Names))
+	if (!_obj->Contains(constant::Name::Names)) {
 		return false;
+	}
 
 	auto names = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Names);
 	NameDictionaryPtr dictionary(names);
@@ -99,8 +110,9 @@ bool Catalog::Names(OutputNameDictionaryPtr& result) const {
 }
 
 bool Catalog::Destinations(OutputNamedDestinationsPtr& result) const {
-	if (!_obj->Contains(constant::Name::Dests))
+	if (!_obj->Contains(constant::Name::Dests)) {
 		return false;
+	}
 
 	auto dests = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Dests);
 	auto named_dests = NamedDestinationsPtr(dests);
@@ -109,8 +121,9 @@ bool Catalog::Destinations(OutputNamedDestinationsPtr& result) const {
 }
 
 bool Catalog::ViewerPreferences(OutputViewerPreferencesPtr& result) const {
-	if (!_obj->Contains(constant::Name::ViewerPreferences))
+	if (!_obj->Contains(constant::Name::ViewerPreferences)) {
 		return false;
+	}
 
 	auto prefs = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::ViewerPreferences);
 	auto viewer_prefs = ViewerPreferencesPtr(prefs);
@@ -119,31 +132,34 @@ bool Catalog::ViewerPreferences(OutputViewerPreferencesPtr& result) const {
 }
 
 bool Catalog::PageMode(PageModeType& result) const {
-	if (!_obj->Contains(constant::Name::PageMode))
+	if (!_obj->Contains(constant::Name::PageMode)) {
 		return false;
+	}
 
 	auto page_mode = _obj->FindAs<syntax::NameObjectPtr>(constant::Name::PageMode);
-	if (page_mode == constant::Name::UseNone)
+	if (page_mode == constant::Name::UseNone) {
 		result = PageModeType::UseNone;
-	else if (page_mode == constant::Name::UseOutlines)
+	} else if (page_mode == constant::Name::UseOutlines) {
 		result = PageModeType::UseOutlines;
-	else if (page_mode == constant::Name::UseThumbs)
+	} else if (page_mode == constant::Name::UseThumbs) {
 		result = PageModeType::UseThumbs;
-	else if (page_mode == constant::Name::FullScreen)
+	} else if (page_mode == constant::Name::FullScreen) {
 		result = PageModeType::FullScreen;
-	else if (page_mode == constant::Name::UseOC)
+	} else if (page_mode == constant::Name::UseOC) {
 		result = PageModeType::UseOC;
-	else if (page_mode == constant::Name::UseAttachments)
+	} else if (page_mode == constant::Name::UseAttachments) {
 		result = PageModeType::UseAttachments;
-	else
+	} else {
 		throw GeneralException("Unknown page mode type: " + page_mode->ToString());
+	}
 
 	return true;
 }
 
 bool Catalog::Outlines(OutputOutlinePtr& result) const {
-	if (!_obj->Contains(constant::Name::Outlines))
+	if (!_obj->Contains(constant::Name::Outlines)) {
 		return false;
+	}
 
 	auto outline_obj = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Outlines);
 	auto outlines = OutlinePtr(outline_obj);

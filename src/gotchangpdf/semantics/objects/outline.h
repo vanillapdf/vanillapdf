@@ -14,19 +14,19 @@ namespace semantics {
 
 class OutlineItemColor : public HighLevelObject<syntax::ArrayObjectPtr<syntax::RealObjectPtr>> {
 public:
-	explicit OutlineItemColor(syntax::ArrayObjectPtr<syntax::RealObjectPtr> rgb) : HighLevelObject(rgb) { assert(rgb->Size() == 3); }
+	explicit OutlineItemColor(syntax::ArrayObjectPtr<syntax::RealObjectPtr> rgb);
 
-	syntax::RealObjectPtr Red(void) const { return _obj->At(0); }
-	syntax::RealObjectPtr Green(void) const { return _obj->At(1); }
-	syntax::RealObjectPtr Blue(void) const { return _obj->At(2); }
+	syntax::RealObjectPtr Red(void) const;
+	syntax::RealObjectPtr Green(void) const;
+	syntax::RealObjectPtr Blue(void) const;
 };
 
 class OutlineItemFlags : public HighLevelObject<syntax::IntegerObjectPtr> {
 public:
-	explicit OutlineItemFlags(syntax::IntegerObjectPtr value) : HighLevelObject(value) {}
+	explicit OutlineItemFlags(syntax::IntegerObjectPtr value);
 
-	bool Italic(void) const noexcept { return (_obj->GetIntegerValue() & 0x01) != 0; }
-	bool Bold(void) const noexcept { return (_obj->GetIntegerValue() & 0x02) != 0; }
+	bool Italic(void) const;
+	bool Bold(void) const;
 };
 
 class OutlineBase : public HighLevelObject<syntax::DictionaryObjectPtr> {
@@ -36,64 +36,22 @@ public:
 		Item
 	};
 
-	explicit OutlineBase(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
+	explicit OutlineBase(syntax::DictionaryObjectPtr root);
 	virtual Type OutlineType(void) const noexcept = 0;
 };
 
 class OutlineItem : public OutlineBase {
 public:
-	explicit OutlineItem(syntax::DictionaryObjectPtr root) : OutlineBase(root) {}
-	virtual Type OutlineType(void) const noexcept override { return OutlineBase::Type::Item; }
+	explicit OutlineItem(syntax::DictionaryObjectPtr root);
+	virtual Type OutlineType(void) const noexcept override;
 
-	syntax::StringObjectPtr Title(void) const {
-		return _obj->FindAs<syntax::StringObjectPtr>(constant::Name::Title);
-	}
-
+	syntax::StringObjectPtr Title(void) const;
 	OutlineBasePtr Parent(void) const;
-
-	bool Prev(OutputOutlineItemPtr& result) const {
-		if (!_obj->Contains(constant::Name::Prev))
-			return false;
-
-		auto item = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Prev);
-		result = OutlineItemPtr(item);
-		return true;
-	}
-
-	bool Next(OutputOutlineItemPtr& result) const {
-		if (!_obj->Contains(constant::Name::Next))
-			return false;
-
-		auto item = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Next);
-		result = OutlineItemPtr(item);
-		return true;
-	}
-
-	bool First(OutputOutlineItemPtr& result) const {
-		if (!_obj->Contains(constant::Name::First))
-			return false;
-
-		auto item = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::First);
-		result = OutlineItemPtr(item);
-		return true;
-	}
-
-	bool Last(OutputOutlineItemPtr& result) const {
-		if (!_obj->Contains(constant::Name::Last))
-			return false;
-
-		auto item = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Last);
-		result = OutlineItemPtr(item);
-		return true;
-	}
-
-	bool Count(syntax::IntegerObjectPtr& result) const {
-		if (!_obj->Contains(constant::Name::Count))
-			return false;
-
-		result = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::Count);
-		return true;
-	}
+	bool Prev(OutputOutlineItemPtr& result) const;
+	bool Next(OutputOutlineItemPtr& result) const;
+	bool First(OutputOutlineItemPtr& result) const;
+	bool Last(OutputOutlineItemPtr& result) const;
+	bool Count(syntax::IntegerObjectPtr& result) const;
 
 	//TODO destinations
 	//bool Destination(syntax::ObjectPtr& result) const
@@ -115,56 +73,27 @@ public:
 	//{
 	//}
 
-	bool Color(OutputOutlineItemColorPtr& result) const {
-		if (!_obj->Contains(constant::Name::C))
-			return false;
-
-		auto color = _obj->FindAs<syntax::ArrayObjectPtr<syntax::RealObjectPtr>>(constant::Name::C);
-		result = OutlineItemColorPtr(color);
-		return true;
-	}
-
-	bool Flags(OutputOutlineItemFlagsPtr& result) const {
-		if (!_obj->Contains(constant::Name::F))
-			return false;
-
-		auto flags = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::F);
-		result = OutlineItemFlagsPtr(flags);
-		return true;
-	}
+	bool Color(OutputOutlineItemColorPtr& result) const;
+	bool Flags(OutputOutlineItemFlagsPtr& result) const;
 };
 
 class Outline : public OutlineBase {
 public:
-	explicit Outline(syntax::DictionaryObjectPtr root) : OutlineBase(root) {}
-	virtual Type OutlineType(void) const noexcept override { return OutlineBase::Type::Outline; }
+	explicit Outline(syntax::DictionaryObjectPtr root);
+	virtual Type OutlineType(void) const noexcept override;
 
-	bool First(OutputOutlineItemPtr& result) const {
-		if (!_obj->Contains(constant::Name::First))
-			return false;
-
-		auto item = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::First);
-		result = OutlineItemPtr(item);
-		return true;
-	}
-
-	bool Last(OutputOutlineItemPtr& result) const {
-		if (!_obj->Contains(constant::Name::Last))
-			return false;
-
-		auto item = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Last);
-		result = OutlineItemPtr(item);
-		return true;
-	}
-
-	bool Count(syntax::IntegerObjectPtr& result) const {
-		if (!_obj->Contains(constant::Name::Count))
-			return false;
-
-		result = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::Count);
-		return true;
-	}
+	bool First(OutputOutlineItemPtr& result) const;
+	bool Last(OutputOutlineItemPtr& result) const;
+	bool Count(syntax::IntegerObjectPtr& result) const;
 };
+
+inline OutlineBase::Type OutlineItem::OutlineType(void) const noexcept {
+	return OutlineBase::Type::Item;
+}
+
+inline OutlineBase::Type Outline::OutlineType(void) const noexcept {
+	return OutlineBase::Type::Outline;
+}
 
 } // semantics
 } // gotchangpdf

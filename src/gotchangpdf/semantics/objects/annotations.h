@@ -212,6 +212,33 @@ public:
 	AnnotationPtr At(types::uinteger index) const;
 };
 
+inline AnnotationBase::Type TextAnnotation::GetType() const noexcept { return Type::Text; }
+inline AnnotationBase::Type LinkAnnotation::GetType() const noexcept { return Type::Link; }
+inline AnnotationBase::Type FreeTextAnnotation::GetType() const noexcept { return Type::FreeText; }
+inline AnnotationBase::Type LineAnnotation::GetType() const noexcept { return Type::Line; }
+inline AnnotationBase::Type SquareAnnotation::GetType() const noexcept { return Type::Square; }
+inline AnnotationBase::Type CircleAnnotation::GetType() const noexcept { return Type::Circle; }
+inline AnnotationBase::Type PolygonAnnotation::GetType() const noexcept { return Type::Polygon; }
+inline AnnotationBase::Type PolyLineAnnotation::GetType() const noexcept { return Type::PolyLine; }
+inline AnnotationBase::Type HighlightAnnotation::GetType() const noexcept { return Type::Highlight; }
+inline AnnotationBase::Type UnderlineAnnotation::GetType() const noexcept { return Type::Underline; }
+inline AnnotationBase::Type SquigglyAnnotation::GetType() const noexcept { return Type::Squiggly; }
+inline AnnotationBase::Type StrikeOutAnnotation::GetType() const noexcept { return Type::StrikeOut; }
+inline AnnotationBase::Type RubberStampAnnotation::GetType() const noexcept { return Type::RubberStamp; }
+inline AnnotationBase::Type CaretAnnotation::GetType() const noexcept { return Type::Caret; }
+inline AnnotationBase::Type InkAnnotation::GetType() const noexcept { return Type::Ink; }
+inline AnnotationBase::Type PopupAnnotation::GetType() const noexcept { return Type::Popup; }
+inline AnnotationBase::Type FileAttachmentAnnotation::GetType() const noexcept { return Type::FileAttachment; }
+inline AnnotationBase::Type SoundAnnotation::GetType() const noexcept { return Type::Sound; }
+inline AnnotationBase::Type MovieAnnotation::GetType() const noexcept { return Type::Movie; }
+inline AnnotationBase::Type WidgetAnnotation::GetType() const noexcept { return Type::Widget; }
+inline AnnotationBase::Type ScreenAnnotation::GetType() const noexcept { return Type::Screen; }
+inline AnnotationBase::Type PrinterMarkAnnotation::GetType() const noexcept { return Type::PrinterMark; }
+inline AnnotationBase::Type TrapNetworkAnnotation::GetType() const noexcept { return Type::TrapNetwork; }
+inline AnnotationBase::Type WatermarkAnnotation::GetType() const noexcept { return Type::Watermark; }
+inline AnnotationBase::Type TripleDAnnotation::GetType() const noexcept { return Type::TripleD; }
+inline AnnotationBase::Type RedactionAnnotation::GetType() const noexcept { return Type::Redaction; }
+
 } // semantics
 } // gotchangpdf
 

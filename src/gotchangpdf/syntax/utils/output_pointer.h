@@ -36,8 +36,9 @@ public:
 	void SetValue(T&& value) { m_value.reset(pdf_new T(value)); }
 
 	T GetValue() const {
-		if (nullptr == m_value)
+		if (nullptr == m_value) {
 			throw GeneralException("Uninitialized pointer");
+		}
 
 		return *m_value;
 	}
@@ -48,12 +49,14 @@ public:
 	T operator*() const { return *GetValue(); }
 
 	typename T::value_type* AddRefGet(void) {
-		if (nullptr == m_value)
+		if (nullptr == m_value) {
 			throw GeneralException("Uninitialized pointer");
+		}
 
 		auto converted = static_cast<typename T::value_type *>(m_value->AddRefGet());
-		if (nullptr == m_value)
+		if (nullptr == m_value) {
 			throw ConversionExceptionFactory<Deferred<typename T::value_type>>::Construct(m_value);
+		}
 
 		return converted;
 	}
