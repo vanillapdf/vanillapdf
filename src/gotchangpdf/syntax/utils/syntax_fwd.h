@@ -10,6 +10,9 @@ namespace syntax {
 template <typename T>
 class OutputPointer;
 
+template <typename T>
+class DeferredArray;
+
 class IEncryptionKey;
 
 	// Exceptions
@@ -97,7 +100,7 @@ class HexadecimalStringObject;
 class LiteralStringObject;
 
 template <typename T>
-using ArrayObjectPtr = Deferred<ArrayObject<T>>;
+using ArrayObjectPtr = DeferredArray<T>;
 
 template <typename KeyT, typename ValueT, typename MapT /*= std::map<KeyT, ValueT>*/>
 using DictionaryObjectBasePtr = Deferred<DictionaryObjectBase<KeyT, ValueT, MapT>>;

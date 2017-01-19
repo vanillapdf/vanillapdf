@@ -10,6 +10,20 @@
 namespace gotchangpdf {
 namespace syntax {
 
+template <typename T>
+class DeferredArray : public Deferred<ArrayObject<T>> {
+public:
+	using Deferred<ArrayObject<T>>::Deferred;
+
+	operator MixedArrayObjectPtr() {
+		return Deferred<ArrayObject<T>>::get()->Data();
+	}
+
+	operator ContainableObjectPtr() {
+		return Deferred<ArrayObject<T>>::get()->Data();
+	}
+};
+
 // This class shall act as a front-end above mixed array
 template <typename T>
 class ArrayObject : public IUnknown {
