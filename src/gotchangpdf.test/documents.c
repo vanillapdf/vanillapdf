@@ -1137,7 +1137,7 @@ error_type process_field(FieldHandle obj, int nested) {
 
 		default:
 			print_spaces(nested + 1);
-			printf("Unrecognized annotation type\n");
+			printf("Unrecognized field type\n");
 			return GOTCHANG_PDF_TEST_ERROR_FAILURE;
 	}
 
