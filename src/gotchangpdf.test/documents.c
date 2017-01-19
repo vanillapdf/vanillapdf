@@ -716,10 +716,26 @@ error_type process_date(DateHandle obj, int nested) {
 			year, month, day,
 			hour, minute, second);
 	} else {
+		boolean_type timezone_set = GOTCHANG_PDF_RV_FALSE;
+		char timezone_character;
+		if (timezone == DateTimezoneType_Later) {
+			timezone_character = '+';
+			timezone_set = GOTCHANG_PDF_RV_TRUE;
+		}
+
+		if (timezone == DateTimezoneType_Earlier) {
+			timezone_character = '-';
+			timezone_set = GOTCHANG_PDF_RV_TRUE;
+		}
+
+		if (timezone_set != GOTCHANG_PDF_RV_TRUE) {
+			return GOTCHANG_PDF_TEST_ERROR_FAILURE;
+		}
+
 		printf("%04d-%02d-%02d %02d:%02d:%02d %c%02d:%02d\n",
 			year, month, day,
 			hour, minute, second,
-			timezone, hour_offset, minute_offset);
+			timezone_character, hour_offset, minute_offset);
 	}
 
 	print_spaces(nested);
