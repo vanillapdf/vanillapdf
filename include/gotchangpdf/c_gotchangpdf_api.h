@@ -35,6 +35,9 @@
 #include "c_destinations.h"
 #include "c_annotations.h"
 #include "c_resource_dictionary.h"
+#include "c_interactive_forms.h"
+#include "c_fields.h"
+#include "c_digital_signature.h"
 
 /* fonts */
 #include "c_font.h"
