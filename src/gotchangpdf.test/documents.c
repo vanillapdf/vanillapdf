@@ -1088,8 +1088,8 @@ error_type process_interactive_form(InteractiveFormHandle obj, int nested) {
 }
 
 error_type process_field_collection(FieldCollectionHandle obj, int nested) {
-	integer_type i = 0;
-	integer_type size = 0;
+	size_type i = 0;
+	size_type size = 0;
 
 	print_spaces(nested);
 	printf("Field collection begin\n");
@@ -1097,7 +1097,9 @@ error_type process_field_collection(FieldCollectionHandle obj, int nested) {
 	RETURN_ERROR_IF_NOT_SUCCESS(FieldCollection_Size(obj, &size));
 
 	print_spaces(nested);
-	printf("Size: %d\n", size);
+
+	unsigned int converted_size = size;
+	printf("Size: %d\n", converted_size);
 
 	for (i = 0; i < size; ++i) {
 		FieldHandle field = NULL;
@@ -1208,8 +1210,8 @@ error_type process_digital_signature(DigitalSignatureHandle obj, int nested) {
 }
 
 error_type process_byte_range_collection(ByteRangeCollectionHandle obj, int nested) {
-	integer_type i = 0;
-	integer_type size = 0;
+	size_type i = 0;
+	size_type size = 0;
 
 	print_spaces(nested);
 	printf("Byte range collection begin\n");
@@ -1217,7 +1219,9 @@ error_type process_byte_range_collection(ByteRangeCollectionHandle obj, int nest
 	RETURN_ERROR_IF_NOT_SUCCESS(ByteRangeCollection_Size(obj, &size));
 
 	print_spaces(nested);
-	printf("Size: %d\n", size);
+
+	unsigned int converted_size = size;
+	printf("Size: %d\n", converted_size);
 
 	for (i = 0; i < size; ++i) {
 		ByteRangeHandle range = NULL;
