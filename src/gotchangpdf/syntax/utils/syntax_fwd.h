@@ -112,7 +112,7 @@ using ContainableObjectPtr = Deferred<ContainableObject>; using OutputContainabl
 using NameObjectPtr = Deferred<NameObject>; using OutputNameObjectPtr = OutputPointer<NameObjectPtr>;
 using BooleanObjectPtr = Deferred<BooleanObject>;
 using IndirectObjectReferencePtr = Deferred<IndirectObjectReference>;
-using IntegerObjectPtr = Deferred<IntegerObject>;
+using IntegerObjectPtr = Deferred<IntegerObject>; using OutputIntegerObjectPtr = OutputPointer<IntegerObjectPtr>;
 using NullObjectPtr = Deferred<NullObject>;
 using RealObjectPtr = Deferred<RealObject>;
 using StreamObjectPtr = Deferred<StreamObject>;

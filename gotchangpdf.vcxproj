@@ -80,6 +80,7 @@
     <ClInclude Include="src\gotchangpdf\semantics\objects\date.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\destinations.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\developer_extensions.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\objects\digital_signature.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\document.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\document_info.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\fields.h" />
@@ -215,6 +216,7 @@
     <ClCompile Include="src\gotchangpdf\semantics\objects\date.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\destinations.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\developer_extensions.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\objects\digital_signature.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\document.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\document_info.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\fields.cpp" />

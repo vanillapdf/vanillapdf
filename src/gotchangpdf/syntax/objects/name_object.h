@@ -270,6 +270,12 @@ extern const syntax::NameObjectPtr Tx;
 extern const syntax::NameObjectPtr Ch;
 extern const syntax::NameObjectPtr Sig;
 extern const syntax::NameObjectPtr Fields;
+extern const syntax::NameObjectPtr ByteRange;
+extern const syntax::NameObjectPtr Reason;
+extern const syntax::NameObjectPtr Location;
+extern const syntax::NameObjectPtr M;
+extern const syntax::NameObjectPtr ContactInfo;
+extern const syntax::NameObjectPtr Cert;
 
 } // Constant
 } // Name

@@ -43,13 +43,14 @@ std::unique_ptr<Field> Field::Create(syntax::DictionaryObjectPtr root) {
 	throw GeneralException("Unknown field type");
 }
 
-bool SignatureField::Value(syntax::OutputDictionaryObjectPtr result) const {
+bool SignatureField::Value(OuputDigitalSignaturePtr result) const {
 	if (!_obj->Contains(constant::Name::V)) {
 		return false;
 	}
 
 	auto value_obj = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::V);
-	result = value_obj;
+	auto digital_signature = DigitalSignaturePtr(value_obj);
+	result = digital_signature;
 	return true;
 }
 

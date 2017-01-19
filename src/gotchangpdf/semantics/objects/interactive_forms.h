@@ -14,6 +14,9 @@ public:
 	explicit InteractiveForm(syntax::DictionaryObjectPtr root);
 
 	syntax::ArrayObjectPtr<FieldPtr> Fields(void) const;
+
+private:
+	static FieldPtr ConversionFunction(const syntax::DictionaryObjectPtr& obj);
 };
 
 } // semantics

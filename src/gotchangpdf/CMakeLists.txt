@@ -66,11 +66,13 @@ set(GOTCHANGPDF_SEMANTICS_SOURCES
 	semantics/objects/page_tree.cpp
 	semantics/objects/page_tree_node.cpp
 	semantics/objects/resource_dictionary.cpp
+	
 	semantics/objects/annotations.cpp
 	semantics/objects/character_map.cpp
 	semantics/objects/date.cpp
 	semantics/objects/destinations.cpp
 	semantics/objects/developer_extensions.cpp
+	semantics/objects/digital_signature.cpp
 	semantics/objects/document_info.cpp
 	semantics/objects/font.cpp
 	semantics/objects/outline.cpp
@@ -165,6 +167,7 @@ set(GOTCHANGPDF_SEMANTICS_HEADERS
 	semantics/objects/date.h
 	semantics/objects/destinations.h
 	semantics/objects/developer_extensions.h
+	semantics/objects/digital_signature.h
 	semantics/objects/document_info.h
 	semantics/objects/fields.h
 	semantics/objects/font.h

@@ -167,5 +167,16 @@ bool Catalog::Outlines(OutputOutlinePtr& result) const {
 	return true;
 }
 
+bool Catalog::AcroForm(OuputInteractiveFormPtr& result) const {
+	if (!_obj->Contains(constant::Name::AcroForm)) {
+		return false;
+	}
+
+	auto form_obj = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::AcroForm);
+	auto interactive_form = InteractiveFormPtr(form_obj);
+	result = interactive_form;
+	return true;
+}
+
 } // semantics
 } // gotchangpdf

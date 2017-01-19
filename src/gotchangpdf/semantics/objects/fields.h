@@ -3,6 +3,7 @@
 
 #include "semantics/utils/semantics_fwd.h"
 #include "semantics/objects/high_level_object.h"
+#include "semantics/objects/digital_signature.h"
 
 namespace gotchangpdf {
 namespace semantics {
@@ -46,7 +47,7 @@ public:
 	explicit SignatureField(syntax::DictionaryObjectPtr root);
 	virtual Field::Type GetType() const noexcept { return Field::Type::Signature; }
 
-	bool Value(syntax::OutputDictionaryObjectPtr result) const;
+	bool Value(OuputDigitalSignaturePtr result) const;
 };
 
 } // semantics

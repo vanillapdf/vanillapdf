@@ -10,6 +10,7 @@
 #include "semantics/objects/viewer_preferences.h"
 #include "semantics/objects/outline.h"
 #include "semantics/objects/destinations.h"
+#include "semantics/objects/interactive_forms.h"
 
 #include "utils/pdf_version.h"
 
@@ -50,7 +51,7 @@ public:
 	bool NeedsRendering(syntax::BooleanObjectPtr& result) const;
 	bool Destinations(OutputNamedDestinationsPtr& result) const;
 	bool Names(OutputNameDictionaryPtr& result) const;
-	bool AcroForm(OutputNameDictionaryPtr& result) const;
+	bool AcroForm(OuputInteractiveFormPtr& result) const;
 
 	// required
 	PageTreePtr Pages(void) const;

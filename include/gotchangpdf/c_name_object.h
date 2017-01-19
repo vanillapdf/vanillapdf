@@ -533,6 +533,12 @@ extern "C"
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Ch;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Sig;
 	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Fields;
+	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_ByteRange;
+	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Reason;
+	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Location;
+	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_M;
+	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_ContactInfo;
+	GOTCHANG_PDF_API extern const NameObjectHandle NameConstant_Cert;
 
 	/** @} */
 
