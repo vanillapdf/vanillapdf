@@ -126,17 +126,17 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetContents(Digi
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(DigitalSignatureHandle handle, ByteRangesHandle* result) {
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(DigitalSignatureHandle handle, ByteRangeCollectionHandle* result) {
 	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try {
-		OuputByteRangesPtr direct;
+		OuputByteRangeCollectionPtr direct;
 		bool contains = signature->ByteRange(direct);
 		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<ByteRangesHandle>(ptr);
+		*result = reinterpret_cast<ByteRangeCollectionHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -167,8 +167,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRange_GetLength(ByteRangeHand
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRanges_Size(ByteRangesHandle handle, size_type* result) {
-	ByteRanges* collection = reinterpret_cast<ByteRanges*>(handle);
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRangeCollection_Size(ByteRangeCollectionHandle handle, size_type* result) {
+	ByteRangeCollection* collection = reinterpret_cast<ByteRangeCollection*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(collection);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
@@ -178,8 +178,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRanges_Size(ByteRangesHandle 
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRanges_At(ByteRangesHandle handle, size_type at, ByteRangeHandle* result) {
-	ByteRanges* collection = reinterpret_cast<ByteRanges*>(handle);
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRangeCollection_At(ByteRangeCollectionHandle handle, size_type at, ByteRangeHandle* result) {
+	ByteRangeCollection* collection = reinterpret_cast<ByteRangeCollection*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(collection);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
@@ -195,8 +195,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRange_Release(ByteRangeHandle
 	return ObjectRelease<ByteRange, ByteRangeHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRanges_Release(ByteRangesHandle handle) {
-	return ObjectRelease<ByteRanges, ByteRangesHandle>(handle);
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRangeCollection_Release(ByteRangeCollectionHandle handle) {
+	return ObjectRelease<ByteRangeCollection, ByteRangeCollectionHandle>(handle);
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_Release(DigitalSignatureHandle handle) {

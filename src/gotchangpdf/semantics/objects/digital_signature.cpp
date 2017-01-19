@@ -7,7 +7,7 @@ namespace gotchangpdf {
 namespace semantics {
 
 DigitalSignature::DigitalSignature(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
-ByteRanges::ByteRanges(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> obj) : HighLevelObject(obj) {
+ByteRangeCollection::ByteRangeCollection(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> obj) : HighLevelObject(obj) {
 	assert(obj->Size() % 2 == 0);
 	if (obj->Size() % 2 != 0) {
 		throw SemanticContextExceptionFactory::Construct<syntax::ArrayObject<syntax::IntegerObjectPtr>, PageRange>(obj);
@@ -26,11 +26,11 @@ syntax::IntegerObjectPtr ByteRange::Length(void) const {
 	return m_length;
 }
 
-types::uinteger ByteRanges::Size(void) const {
+types::uinteger ByteRangeCollection::Size(void) const {
 	return _obj->Size() / 2;
 }
 
-ByteRangePtr ByteRanges::At(types::uinteger at) const {
+ByteRangePtr ByteRangeCollection::At(types::uinteger at) const {
 	return ByteRangePtr(_obj->At(at), _obj->At(at + 1));
 }
 
@@ -42,13 +42,13 @@ syntax::NameObjectPtr DigitalSignature::Filter() {
 	return _obj->FindAs<syntax::NameObjectPtr>(constant::Name::Filter);
 }
 
-bool DigitalSignature::ByteRange(OuputByteRangesPtr& result) {
+bool DigitalSignature::ByteRange(OuputByteRangeCollectionPtr& result) {
 	if (!_obj->Contains(constant::Name::ByteRange)) {
 		return false;
 	}
 
 	auto ranges_array = _obj->FindAs<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>>(constant::Name::ByteRange);
-	auto ranges_obj = ByteRangesPtr(ranges_array);
+	auto ranges_obj = ByteRangeCollectionPtr(ranges_array);
 	result = ranges_obj;
 	return true;
 }

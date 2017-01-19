@@ -136,7 +136,7 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(InteractiveForm);
 
 	DECLARE_OBJECT_HANDLE(DigitalSignature);
-	DECLARE_OBJECT_HANDLE(ByteRanges);
+	DECLARE_OBJECT_HANDLE(ByteRangeCollection);
 	DECLARE_OBJECT_HANDLE(ByteRange);
 
 	DECLARE_OBJECT_HANDLE(Field);

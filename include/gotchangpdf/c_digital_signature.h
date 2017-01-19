@@ -23,7 +23,7 @@ extern "C"
 	*/
 
 	/**
-	* \class ByteRangesHandle
+	* \class ByteRangeCollectionHandle
 	* \extends IUnknownHandle
 	* \ingroup Documents
 	* \brief Represents a collection of ByteRangeHandle
@@ -118,7 +118,7 @@ extern "C"
 	* Multiple discontiguous byte ranges shall be used to describe
 	* a digest that does not include the signature value (theContents entry) itself.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(DigitalSignatureHandle handle, ByteRangesHandle* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(DigitalSignatureHandle handle, ByteRangeCollectionHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -129,26 +129,26 @@ extern "C"
 	/** @} */
 
 	/**
-	* \memberof ByteRangesHandle
+	* \memberof ByteRangeCollectionHandle
 	* @{
 	*/
 
 	/**
 	* \brief Get size of byte range collection
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRanges_Size(ByteRangesHandle handle, size_type* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRangeCollection_Size(ByteRangeCollectionHandle handle, size_type* result);
 
 	/**
 	* \brief
 	* Get single byte range from array at specific position
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRanges_At(ByteRangesHandle handle, size_type at, ByteRangeHandle* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRangeCollection_At(ByteRangeCollectionHandle handle, size_type at, ByteRangeHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see IUnknown_Release
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRanges_Release(ByteRangesHandle handle);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRangeCollection_Release(ByteRangeCollectionHandle handle);
 
 	/** @} */
 

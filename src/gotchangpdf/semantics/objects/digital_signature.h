@@ -21,9 +21,9 @@ private:
 	syntax::IntegerObjectPtr m_length;
 };
 
-class ByteRanges : public HighLevelObject<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>> {
+class ByteRangeCollection : public HighLevelObject<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>> {
 public:
-	explicit ByteRanges(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> obj);
+	explicit ByteRangeCollection(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> obj);
 
 	types::uinteger Size(void) const;
 	ByteRangePtr At(types::uinteger at) const;
@@ -36,7 +36,7 @@ public:
 	syntax::HexadecimalStringObjectPtr Contents();
 	syntax::NameObjectPtr Filter();
 
-	bool ByteRange(OuputByteRangesPtr& result);
+	bool ByteRange(OuputByteRangeCollectionPtr& result);
 	bool Reason(syntax::OutputStringObjectPtr& result);
 	bool Location(syntax::OutputStringObjectPtr& result);
 	bool ContactInfo(syntax::OutputStringObjectPtr& result);

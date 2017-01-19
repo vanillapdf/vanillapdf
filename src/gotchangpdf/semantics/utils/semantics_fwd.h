@@ -105,7 +105,7 @@ class SignatureField; using SignatureFieldPtr = Deferred<SignatureField>;
 // Digital signatures
 class DigitalSignature; using DigitalSignaturePtr = Deferred<DigitalSignature>; using OuputDigitalSignaturePtr = OutputPointer<DigitalSignaturePtr>;
 class ByteRange; using ByteRangePtr = Deferred<ByteRange>;
-class ByteRanges; using ByteRangesPtr = Deferred<ByteRanges>; using OuputByteRangesPtr = OutputPointer<ByteRangesPtr>;
+class ByteRangeCollection; using ByteRangeCollectionPtr = Deferred<ByteRangeCollection>; using OuputByteRangeCollectionPtr = OutputPointer<ByteRangeCollectionPtr>;
 
 // Interactive forms
 class InteractiveForm; using InteractiveFormPtr = Deferred<InteractiveForm>; using OuputInteractiveFormPtr = OutputPointer<InteractiveFormPtr>;
