@@ -1168,41 +1168,41 @@ error_type process_digital_signature(DigitalSignatureHandle obj, int nested) {
 	HexadecimalStringObjectHandle contents = NULL;
 	DateHandle date = NULL;
 
-	RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignature_GetContactInfo(obj, &contact_info));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_string(contact_info, nested + 1));
-	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(contact_info));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetContactInfo(obj, &contact_info),
+	process_string(contact_info, nested + 1),
+	StringObject_Release(contact_info));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignature_GetName(obj, &name));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_string(name, nested + 1));
-	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(name));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetName(obj, &name),
+	process_string(name, nested + 1),
+	StringObject_Release(name));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignature_GetLocation(obj, &location));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_string(location, nested + 1));
-	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(location));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetLocation(obj, &location),
+	process_string(location, nested + 1),
+	StringObject_Release(location));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignature_GetReason(obj, &reason));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_string(reason, nested + 1));
-	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(reason));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetReason(obj, &reason),
+	process_string(reason, nested + 1),
+	StringObject_Release(reason));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignature_GetContactInfo(obj, &contact_info));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_string(contact_info, nested + 1));
-	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(contact_info));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetContactInfo(obj, &contact_info),
+	process_string(contact_info, nested + 1),
+	StringObject_Release(contact_info));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignature_GetCertificate(obj, &certificate));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_string(certificate, nested + 1));
-	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(certificate));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetCertificate(obj, &certificate),
+	process_string(certificate, nested + 1),
+	StringObject_Release(certificate));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignature_GetContents(obj, &contents));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_hex_string(contents, nested + 1));
-	RETURN_ERROR_IF_NOT_SUCCESS(HexadecimalStringObject_Release(contents));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetContents(obj, &contents),
+	process_hex_string(contents, nested + 1),
+	HexadecimalStringObject_Release(contents));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignature_GetDate(obj, &date));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_date(date, nested + 1));
-	RETURN_ERROR_IF_NOT_SUCCESS(Date_Release(date));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetDate(obj, &date),
+	process_date(date, nested + 1),
+	Date_Release(date));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignature_GetByteRange(obj, &byte_range));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_byte_range_collection(byte_range, nested + 1));
-	RETURN_ERROR_IF_NOT_SUCCESS(ByteRangeCollection_Release(byte_range));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetByteRange(obj, &byte_range),
+	process_byte_range_collection(byte_range, nested + 1),
+	ByteRangeCollection_Release(byte_range));
 
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
