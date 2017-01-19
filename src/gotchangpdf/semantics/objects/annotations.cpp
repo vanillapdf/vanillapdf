@@ -37,7 +37,7 @@ TrapNetworkAnnotation::TrapNetworkAnnotation(syntax::DictionaryObjectPtr root) :
 WatermarkAnnotation::WatermarkAnnotation(syntax::DictionaryObjectPtr root) : AnnotationBase(root) {}
 TripleDAnnotation::TripleDAnnotation(syntax::DictionaryObjectPtr root) : AnnotationBase(root) {}
 RedactionAnnotation::RedactionAnnotation(syntax::DictionaryObjectPtr root) : AnnotationBase(root) {}
-PageAnnotations::PageAnnotations(syntax::MixedArrayObjectPtr root) : HighLevelObject(root) {}
+PageAnnotations::PageAnnotations(syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> root) : HighLevelObject(root) {}
 
 types::uinteger PageAnnotations::Size() const {
 	return _obj->Size();
@@ -45,14 +45,7 @@ types::uinteger PageAnnotations::Size() const {
 
 AnnotationPtr PageAnnotations::At(types::uinteger index) const {
 	auto obj = _obj->At(index);
-
-	assert(syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(obj) && "Linked annotation is not dictionary");
-	if (!syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(obj)) {
-		throw GeneralException("Invalid annotation reference");
-	}
-
-	auto dict = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(obj);
-	auto unique = AnnotationBase::Create(dict);
+	auto unique = AnnotationBase::Create(obj);
 	auto raw_ptr = unique.release();
 	return AnnotationPtr(raw_ptr);
 }

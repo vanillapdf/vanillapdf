@@ -205,9 +205,9 @@ public:
 };
 
 
-class PageAnnotations : public HighLevelObject<syntax::MixedArrayObjectPtr> {
+class PageAnnotations : public HighLevelObject<syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr>> {
 public:
-	PageAnnotations(syntax::MixedArrayObjectPtr root);
+	PageAnnotations(syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> root);
 	types::uinteger Size() const;
 	AnnotationPtr At(types::uinteger index) const;
 };
