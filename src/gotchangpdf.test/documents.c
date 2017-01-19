@@ -1099,7 +1099,7 @@ error_type process_field_collection(FieldCollectionHandle obj, int nested) {
 	print_spaces(nested);
 	printf("Size: %d\n", size);
 
-	for (i = 1; i <= size; ++i) {
+	for (i = 0; i < size; ++i) {
 		FieldHandle field = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(FieldCollection_At(obj, i, &field));
@@ -1219,7 +1219,7 @@ error_type process_byte_range_collection(ByteRangeCollectionHandle obj, int nest
 	print_spaces(nested);
 	printf("Size: %d\n", size);
 
-	for (i = 1; i <= size; ++i) {
+	for (i = 0; i < size; ++i) {
 		ByteRangeHandle range = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(ByteRangeCollection_At(obj, i, &range));
