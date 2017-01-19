@@ -18,8 +18,9 @@ using namespace constant;
 using namespace syntax;
 
 PageObject::PageObject(DictionaryObjectPtr obj) : PageNodeBase(obj)	{
-	if (_obj->FindAs<NameObjectPtr>(Name::Type) != Name::Page)
+	if (_obj->FindAs<NameObjectPtr>(Name::Type) != Name::Page) {
 		throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageObject>(obj);
+	}
 }
 
 PageTreeNodePtr PageObject::GetParent() const {
@@ -77,8 +78,9 @@ void PageObject::SetMediaBox(RectanglePtr media_box) {
 }
 
 bool PageObject::GetAnnotations(OutputPageAnnotationsPtr& result) const {
-	if (!_obj->Contains(constant::Name::Annots))
+	if (!_obj->Contains(constant::Name::Annots)) {
 		return false;
+	}
 
 	auto annots_obj = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Annots);
 	auto annots = PageAnnotationsPtr(annots_obj);
@@ -115,8 +117,9 @@ bool PageObject::GetContents(OutputContentsPtr& result) const {
 	auto found = _obj->TryFind(Name::Contents, output);
 
 	// Missing entry, return empty collection
-	if (!found)
+	if (!found) {
 		return false;
+	}
 
 	ContainableObjectPtr content = output.GetValue();
 	bool is_null = ObjectUtils::IsType<NullObjectPtr>(content);
