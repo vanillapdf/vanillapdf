@@ -20,8 +20,11 @@ extern "C"
 	* \extends IUnknownHandle
 	* \ingroup Documents
 	* \brief
-	* An interactive form (PDF 1.2)—sometimes referred to as an AcroForm—is
+	* An interactive form (PDF 1.2) - sometimes referred to as an AcroForm - is
 	* a collection of fields for gathering information interactively from the user.
+	*
+	* This object is a direct reference to PDF specification.
+	* See 12.7, "Interactive Forms".
 	*/
 
 	/**
@@ -29,6 +32,10 @@ extern "C"
 	* @{
 	*/
 
+	/**
+	* \brief
+	* An array of references to the document's root fields.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION InteractiveForm_GetFields(InteractiveFormHandle handle, FieldCollectionHandle* result);
 
 	/**

@@ -203,6 +203,11 @@ extern "C"
 	* @{
 	*/
 
+	/**
+	* \brief
+	* A signature dictionary containing the signature and
+	* specifying various attributes of the signature field.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION SignatureField_GetValue(SignatureFieldHandle handle, DigitalSignatureHandle* result);
 
 	/**
