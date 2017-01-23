@@ -13,11 +13,11 @@ ObjectPtr::ObjectPtr() : Deferred<Object>(NullObject::GetInstance()) {
 }
 
 bool Object::IsIndirect(void) const noexcept {
-	return !m_entry.IsEmpty() && m_entry.IsActive();
+	return (!m_entry.IsEmpty() && m_entry.IsActive());
 }
 
 void Object::SetXrefEntry(XrefEntryBasePtr entry) {
-	m_entry = entry->GetWeakReference<XrefEntryBase>();
+	m_entry = entry;
 }
 
 void Object::ClearXrefEntry() {

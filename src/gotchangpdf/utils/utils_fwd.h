@@ -23,6 +23,12 @@ class ConversionException;
 class IModifyObserver;
 class IModifyObservable;
 
+class IUnknown;
+class WeakReferenceCounter;
+
+template <typename T>
+class WeakReference;
+
 } // gotchangpdf
 
 #endif /* _UTILS_FWD_H */

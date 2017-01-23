@@ -27,9 +27,8 @@ class FlateDecodeFilter; using FlateDecodeFilterPtr = Deferred<FlateDecodeFilter
 class DCTDecodeFilter; using DCTDecodeFilterPtr = Deferred<DCTDecodeFilter>;
 
 // Files
-class File;
+class File; using FilePtr = Deferred<File>;
 class FileWriter; using FileWriterPtr = Deferred<FileWriter>;
-class FileHolder; using FileHolderPtr = Deferred<FileHolder>;
 class Header;
 
 class XrefBase; using XrefBasePtr = Deferred<XrefBase>;

@@ -17,7 +17,7 @@ namespace semantics {
 class Document : public IUnknown {
 public:
 	Document(const std::string& filename);
-	Document(syntax::FileHolderPtr holder);
+	Document(syntax::FilePtr holder);
 	~Document();
 
 	CatalogPtr GetDocumentCatalog(void);
@@ -25,12 +25,12 @@ public:
 	void Save(const std::string& path);
 	void SaveIncremental(const std::string& path);
 
-	syntax::FileHolderPtr GetFile() const { return _holder; }
+	syntax::FilePtr GetFile() const;
 
 	void AppendContent(DocumentPtr other);
 
 private:
-	syntax::FileHolderPtr _holder;
+	syntax::FilePtr m_holder;
 
 	// Cache
 	mutable OutputCatalogPtr m_catalog;

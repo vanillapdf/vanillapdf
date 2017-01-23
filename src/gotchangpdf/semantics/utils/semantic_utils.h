@@ -14,9 +14,9 @@ namespace semantics {
 class SemanticUtils {
 public:
 	static Version GetVersionFromName(const syntax::NameObjectPtr& name);
-	static WeakReference<Document> GetMappedDocument(std::weak_ptr<syntax::File> file);
-	static void AddDocumentMapping(std::weak_ptr<syntax::File> file, WeakReference<Document> value);
-	static void ReleaseMapping(std::weak_ptr<syntax::File> file);
+	static WeakReference<Document> GetMappedDocument(WeakReference<syntax::File> file);
+	static void AddDocumentMapping(WeakReference<syntax::File> file, WeakReference<Document> value);
+	static void ReleaseMapping(WeakReference<syntax::File> file);
 };
 
 } // semantics

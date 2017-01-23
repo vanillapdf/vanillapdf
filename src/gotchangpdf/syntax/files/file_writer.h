@@ -10,8 +10,8 @@ namespace syntax {
 
 class FileWriter : public IUnknown {
 public:
-	void Write(const std::shared_ptr<File> source, std::shared_ptr<File> destination);
-	void WriteIncremental(const std::shared_ptr<File> source, std::shared_ptr<File> destination);
+	void Write(const FilePtr source, FilePtr destination);
+	void WriteIncremental(const FilePtr source, FilePtr destination);
 
 	bool GetRecalculateOffsetFlag(void) const noexcept { return m_recalculate_offset; }
 	void SetRecalculateOffsetFlag(bool flag) noexcept { m_recalculate_offset = flag; }
@@ -23,9 +23,9 @@ public:
 	void SetRecalculateXrefSizeFlag(bool flag) noexcept { m_recalculate_xref_size = flag; }
 
 private:
-	void WriteXrefObjects(std::shared_ptr<File> destination, XrefBasePtr source);
-	XrefBasePtr CloneXref(std::shared_ptr<File> destination, XrefBasePtr source);
-	XrefBasePtr CreateIncrementalXref(std::shared_ptr<File> source, std::shared_ptr<File> destination);
+	void WriteXrefObjects(FilePtr destination, XrefBasePtr source);
+	XrefBasePtr CloneXref(FilePtr destination, XrefBasePtr source);
+	XrefBasePtr CreateIncrementalXref(FilePtr source, FilePtr destination);
 	void WriteXref(std::iostream& output, XrefBasePtr xref);
 	void WriteXrefTable(std::iostream& output, XrefTablePtr xref_table);
 	void WriteXrefOffset(std::iostream& output, types::stream_offset offset);

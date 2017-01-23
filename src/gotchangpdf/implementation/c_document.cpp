@@ -25,13 +25,13 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenNew(string_type file
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHandle holder_handle, DocumentHandle* result)
 {
-	FileHolder* holder = reinterpret_cast<FileHolder*>(holder_handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
+	File* file = reinterpret_cast<File*>(holder_handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try
 	{
-		DocumentPtr doc(holder);
+		DocumentPtr doc(file);
 		auto ptr = doc.AddRefGet();
 		*result = reinterpret_cast<DocumentHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;

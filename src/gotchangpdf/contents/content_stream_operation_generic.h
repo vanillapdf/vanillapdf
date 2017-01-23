@@ -7,7 +7,6 @@
 #include "utils/constants.h"
 
 #include <vector>
-#include <sstream>
 
 namespace gotchangpdf {
 namespace contents {
@@ -15,38 +14,17 @@ namespace contents {
 class OperationGeneric : public OperationBase {
 public:
 	OperationGeneric() = default;
-	OperationGeneric(std::vector<syntax::ObjectPtr> operands, OperatorBasePtr oper) :
-		_operator(oper), _operands(operands) {
-	}
-	OperatorBasePtr GetOperator() const { return _operator; }
-	std::vector<syntax::ObjectPtr> GetOperands() const { return _operands; }
+	OperationGeneric(std::vector<syntax::ObjectPtr> operands, OperatorBasePtr oper);
 
-	types::uinteger GetOperandsSize() const { return _operands.size(); }
-	syntax::ObjectPtr GetOperandAt(types::uinteger at) const { return _operands.at(at); }
+	OperatorBasePtr GetOperator() const;
+	std::vector<syntax::ObjectPtr> GetOperands() const;
 
-	virtual InstructionBase::Type GetInstructionType(void) const noexcept override { return InstructionBase::Type::Operation; }
-	virtual Type GetOperationType(void) const noexcept override { return Type::Generic; }
-	virtual std::string ToPdf() const override {
-		std::stringstream ss;
+	types::uinteger GetOperandsSize() const;
+	syntax::ObjectPtr GetOperandAt(types::uinteger at) const;
 
-		bool first = true;
-		for (auto operand : _operands) {
-			if (!first) {
-				ss << " ";
-			}
-
-			ss << operand->ToPdf();
-			first = false;
-		}
-
-		if (!first) {
-			ss << " ";
-		}
-
-		ss << _operator->Value();
-
-		return ss.str();
-	}
+	virtual InstructionBase::Type GetInstructionType(void) const noexcept override;
+	virtual OperationBase::Type GetOperationType(void) const noexcept override;
+	virtual std::string ToPdf() const override;
 
 private:
 	OperatorBasePtr _operator;
@@ -54,6 +32,14 @@ private:
 };
 
 typedef std::vector<OperationGenericPtr> GenericOperationCollection;
+
+inline InstructionBase::Type OperationGeneric::GetInstructionType(void) const noexcept {
+	return InstructionBase::Type::Operation;
+}
+
+inline OperationBase::Type OperationGeneric::GetOperationType(void) const noexcept {
+	return OperationBase::Type::Generic;
+}
 
 } // contents
 } // gotchangpdf

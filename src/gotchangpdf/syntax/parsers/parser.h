@@ -12,7 +12,7 @@ namespace syntax {
 
 class ParserBase : public Tokenizer {
 public:
-	ParserBase(std::weak_ptr<File> file, CharacterSource & stream);
+	ParserBase(WeakReference<File> file, CharacterSource & stream);
 
 	ObjectPtr ReadDirectObject(void);
 	ObjectPtr ReadDirectObject(types::stream_offset offset);
@@ -48,15 +48,15 @@ public:
 	Token::Type PeekTokenTypeSkip();
 	TokenPtr ReadTokenWithTypeSkip(Token::Type type);
 
-	std::weak_ptr<File> GetFile(void) const;
+	WeakReference<File> GetFile(void) const;
 
 protected:
-	std::weak_ptr<File> _file;
+	WeakReference<File> _file;
 };
 
 class Parser : public ParserBase, public IParser {
 public:
-	Parser(std::weak_ptr<File> file, CharacterSource & stream);
+	Parser(WeakReference<File> file, CharacterSource & stream);
 
 	virtual XrefBasePtr ReadXref(void) override;
 	virtual XrefBasePtr ReadXref(types::stream_offset offset) override;
@@ -85,7 +85,7 @@ private:
 
 class CharacterMapParser : public ParserBase, public ICharacterMapParser {
 public:
-	CharacterMapParser(std::weak_ptr<File> file, CharacterSource & stream);
+	CharacterMapParser(WeakReference<File> file, CharacterSource & stream);
 	virtual CharacterMapData ReadCharacterMapData(void) override;
 };
 

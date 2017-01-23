@@ -16,7 +16,7 @@ namespace contents {
 
 using namespace syntax;
 
-ContentStreamParser::ContentStreamParser(std::weak_ptr<File> file, CharacterSource & stream)
+ContentStreamParser::ContentStreamParser(WeakReference<File> file, CharacterSource & stream)
 	: ParserBase(file, stream) {
 	_dictionary = make_unique<ContentStreamTokenDictionary>();
 	_dictionary->Initialize();

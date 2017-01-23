@@ -162,7 +162,7 @@ bool PageObject::GetContents(OutputContentsPtr& result) const {
 }
 
 std::unique_ptr<PageObject> PageObject::Create(DocumentPtr document) {
-	auto file = document->GetFile()->Value();
+	auto file = document->GetFile();
 	auto xref_chain = file->GetXrefChain();
 
 	syntax::DictionaryObjectPtr obj;

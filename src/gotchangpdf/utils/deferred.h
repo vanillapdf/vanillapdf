@@ -1,6 +1,8 @@
 #ifndef _DEFERRED_H
 #define _DEFERRED_H
 
+#include "utils_fwd.h"
+
 #include <type_traits>
 #include <initializer_list>
 #include <utility>
@@ -61,6 +63,14 @@ public:
 
 	operator T&() { return *get(); }
 	operator T&() const { return *get(); }
+	T& operator*() const { return *get(); }
+	T* operator->() const { return get(); }
+
+	template <typename = typename std::enable_if<std::is_base_of<IUnknown, T>::value>::type>
+	WeakReference<T> GetWeakReference() { return get()->template GetWeakReference<T>(); }
+
+	template <typename = typename std::enable_if<std::is_base_of<IUnknown, T>::value>::type>
+	operator WeakReference<T>() { return GetWeakReference(); }
 
 	DeferredWrapperBase& operator=(const DeferredWrapperBase& rhs) {
 		DeferredWrapperBase(rhs).swap(*this);
@@ -72,22 +82,28 @@ public:
 		return *this;
 	}
 
-	bool empty(void) const { return m_ptr == nullptr; }
+	bool empty(void) const {
+		return m_ptr == nullptr;
+	}
 
 	T* get(void) const {
 		return get_internal();
 	}
 
-	void reset() { DeferredWrapperBase().swap(*this); }
-	void reset(T* rhs) { DeferredWrapperBase(rhs).swap(*this); }
+	void reset() {
+		DeferredWrapperBase().swap(*this);
+	}
+
+	void reset(T* rhs) {
+		DeferredWrapperBase(rhs).swap(*this);
+	}
+
 	T* detach() {
 		T* result = get();
 		m_ptr = nullptr;
 		return result;
 	}
 
-	T& operator*() const { return *get(); }
-	T* operator->() const { return get(); }
 	T* AddRefGet(void) {
 		T* result = get();
 

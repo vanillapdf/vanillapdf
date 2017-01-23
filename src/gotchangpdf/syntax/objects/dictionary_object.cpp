@@ -17,7 +17,7 @@ DictionaryObject* DictionaryObject::Clone(void) const {
 	return result.release();
 }
 
-void DictionaryObject::SetFile(std::weak_ptr<File> file) noexcept {
+void DictionaryObject::SetFile(WeakReference<File> file) noexcept {
 	Object::SetFile(file);
 
 	for (auto it = _list.begin(); it != _list.end(); ++it) {

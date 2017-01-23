@@ -4,6 +4,8 @@
 #include "semantics/utils/semantics_fwd.h"
 #include "semantics/utils/semantic_exceptions.h"
 
+#include "semantics/objects/page_node.h"
+
 namespace gotchangpdf {
 namespace semantics {
 
@@ -15,8 +17,9 @@ public:
 	static T ConvertTo(const PageNodeBasePtr& obj) {
 		auto ptr = obj.get();
 		auto converted = dynamic_cast<typename T::value_type *>(ptr);
-		if (nullptr == converted)
+		if (nullptr == converted) {
 			throw ConversionExceptionFactory<T>::Construct(obj);
+		}
 
 		return T(converted);
 	}

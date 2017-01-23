@@ -14,11 +14,11 @@
 namespace gotchangpdf {
 namespace syntax {
 
-class File : public std::enable_shared_from_this<File> {
+class File : public IUnknown {
 public:
 	// Filesystem
-	static std::shared_ptr<File> Open(const std::string& path);
-	static std::shared_ptr<File> Create(const std::string& path);
+	static FilePtr Open(const std::string& path);
+	static FilePtr Create(const std::string& path);
 
 	std::vector<ObjectPtr> DeepCopyObjects(const std::vector<ObjectPtr>& objects);
 	void DeepCopyObject(std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPtr, bool>& visited, ObjectPtr original);
@@ -108,19 +108,6 @@ private:
 
 private:
 	File(const std::string& path);
-};
-
-class FileHolder : public IUnknown {
-public:
-	void Open(const std::string& path) { _file = File::Open(path); }
-	void Create(const std::string& path) { _file = File::Create(path); }
-	std::shared_ptr<File> Value() const {
-		assert(_file.get() != nullptr && "File was not initialized");
-		return _file;
-	}
-
-private:
-	std::shared_ptr<File> _file;
 };
 
 } // syntax

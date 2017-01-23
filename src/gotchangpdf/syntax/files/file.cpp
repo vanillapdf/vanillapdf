@@ -9,17 +9,18 @@
 #include "syntax/objects/string_object.h"
 
 #include "syntax/files/xref_chain.h"
+#include "syntax/files/xref_utils.h"
 #include "syntax/files/header.h"
 
 namespace gotchangpdf {
 namespace syntax {
 
-std::shared_ptr<File> File::Open(const std::string& path) {
-	return std::shared_ptr<File>(new File(path));
+FilePtr File::Open(const std::string& path) {
+	return FilePtr(new File(path));
 }
 
-std::shared_ptr<File> File::Create(const std::string& path) {
-	auto result = std::shared_ptr<File>(new File(path));
+FilePtr File::Create(const std::string& path) {
+	FilePtr result(new File(path));
 	result->_input = std::make_shared<std::fstream>();
 	result->_input->open(path,
 		std::ios_base::in |
@@ -71,7 +72,7 @@ void File::Initialize() {
 	// Opening the stream with ate option
 	auto file_size = _input->tellg();
 
-	Parser stream(shared_from_this(), *_input);
+	Parser stream(GetWeakReference<File>(), *_input);
 	_header = stream.ReadHeader(0);
 
 	try {
@@ -490,7 +491,7 @@ EncryptionAlgorithm File::GetEncryptionAlgorithmForFilter(const NameObject& filt
 }
 
 void File::ReadXref(types::stream_offset offset) {
-	Parser stream(shared_from_this(), *_input);
+	Parser stream(GetWeakReference<File>(), *_input);
 
 	for (;;) {
 		auto xref = stream.ReadXref(offset);
@@ -671,7 +672,7 @@ ObjectPtr File::ShallowCopyObject(ObjectPtr original) {
 		new_entry->SetInitialized();
 	}
 
-	new_obj->SetFile(shared_from_this());
+	new_obj->SetFile(GetWeakReference<File>());
 	new_obj->SetInitialized();
 
 	return new_obj;

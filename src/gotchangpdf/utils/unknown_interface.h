@@ -10,15 +10,15 @@ class IUnknown;
 
 class WeakReferenceCounter {
 public:
-	WeakReferenceCounter(IUnknown* ptr) noexcept : m_active(true), m_reference(ptr) { assert(nullptr != ptr); }
+	WeakReferenceCounter(IUnknown* ptr) noexcept;
 	WeakReferenceCounter(const WeakReferenceCounter&) = delete;
 	WeakReferenceCounter(WeakReferenceCounter&&) = delete;
 	WeakReferenceCounter& operator= (const WeakReferenceCounter&) = delete;
 	WeakReferenceCounter& operator= (WeakReferenceCounter&&) = delete;
 
-	bool IsActive() const noexcept { return m_active.load(); }
-	void Deactivate() noexcept { m_active = false; }
-	IUnknown* GetReference() const noexcept { return m_reference; }
+	bool IsActive() const noexcept;
+	void Deactivate() noexcept;
+	IUnknown* GetReference() const noexcept;
 
 private:
 	std::atomic<bool> m_active;
@@ -41,25 +41,34 @@ public:
 		assert(nullptr != static_cast<T*>(m_ptr->GetReference()));
 	}
 
-	void Reset() noexcept { m_ptr.reset(); }
-	bool IsEmpty() const noexcept { return (nullptr == m_ptr); }
-	bool IsActive() const noexcept { return (m_ptr ? m_ptr->IsActive() : false); }
+	void Reset() noexcept {
+		m_ptr.reset();
+	}
 
-	T* GetReference() const {
+	bool IsEmpty() const noexcept {
+		return (nullptr == m_ptr);
+	}
+
+	bool IsActive() const noexcept {
+		return (m_ptr ? m_ptr->IsActive() : false);
+	}
+
+	Deferred<T> GetReference() const {
 		if (!IsActive()) {
 			throw GeneralException("Object has been already disposed");
 		}
 
 		assert(m_ptr && "Referenced pointer is empty");
-		return (m_ptr ? static_cast<T*>(m_ptr->GetReference()) : nullptr);
+		auto result = (m_ptr ? static_cast<T*>(m_ptr->GetReference()) : nullptr);
+		return Deferred<T>(result);
 	}
 
-	// The reason why value cannot be const is
-	// because GetWeakReference cannot be const
-	WeakReference& operator=(T& value) {
-		*this = value.template GetWeakReference<T>();
-		return *this;
-	}
+	//// The reason why value cannot be const is
+	//// because GetWeakReference cannot be const
+	//WeakReference& operator=(T& value) {
+	//	*this = value.template GetWeakReference<T>();
+	//	return *this;
+	//}
 
 private:
 	std::shared_ptr<WeakReferenceCounter> m_ptr;
@@ -67,9 +76,9 @@ private:
 
 class IUnknown {
 public:
-	IUnknown() noexcept : m_ref_counter(0) {}
-	IUnknown(const IUnknown&) noexcept : m_ref_counter(0) {}
-	IUnknown& operator= (const IUnknown&) noexcept { return *this; }
+	IUnknown() noexcept;
+	IUnknown(const IUnknown&) noexcept;
+	IUnknown& operator= (const IUnknown&) noexcept;
 
 	// GetWeakReference cannot be const, because
 	// it creates WeakReferenceCounter on demand.
@@ -85,23 +94,10 @@ public:
 		return WeakReference<T>(m_weak_ref);
 	}
 
-	uint32_t UseCount() const noexcept {
-		return m_ref_counter.load();
-	}
+	uint32_t UseCount() const noexcept;
 
-	void AddRef() noexcept {
-		m_ref_counter++;
-	}
-
-	void Release() noexcept {
-		if (--m_ref_counter == 0) {
-			if (m_weak_ref) {
-				m_weak_ref->Deactivate();
-			}
-
-			delete this;
-		}
-	}
+	void AddRef() noexcept;
+	void Release() noexcept;
 
 	virtual ~IUnknown() = 0;
 

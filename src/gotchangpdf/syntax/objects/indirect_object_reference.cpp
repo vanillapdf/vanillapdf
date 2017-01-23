@@ -35,10 +35,11 @@ ObjectPtr IndirectObjectReference::GetReferencedObject() const {
 		return m_reference.GetReference();
 	}
 
-	auto locked_file = m_file.lock();
-	if (!locked_file)
+	if (!m_file.IsActive()) {
 		throw FileDisposedException();
+	}
 
+	auto locked_file = m_file.GetReference();
 	auto new_reference = locked_file->GetIndirectObject(
 		m_reference_object_number,
 		m_reference_generation_number);

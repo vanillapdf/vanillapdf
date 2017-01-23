@@ -25,7 +25,7 @@ public:
 	explicit MixedArrayObject(const std::initializer_list<ContainableObjectPtr>& list);
 	MixedArrayObject(const ContainableObject& other, list_type& list);
 
-	virtual void SetFile(std::weak_ptr<File> file) noexcept override;
+	virtual void SetFile(WeakReference<File> file) noexcept override;
 	virtual void SetInitialized(bool initialized = true) noexcept override;
 
 	virtual void ObserveeChanged(IModifyObservable*) override;

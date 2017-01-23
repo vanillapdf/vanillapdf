@@ -46,38 +46,42 @@ document_map_ptr_type GetDocumentMapInstance() {
 	return document_map;
 }
 
-WeakReference<Document> SemanticUtils::GetMappedDocument(std::weak_ptr<syntax::File> file) {
-	auto shared = file.lock();
-	if (!shared) {
+WeakReference<Document> SemanticUtils::GetMappedDocument(WeakReference<syntax::File> file) {
+	if (!file.IsActive()) {
 		throw syntax::FileDisposedException();
 	}
 
 	std::lock_guard<std::mutex> locker(document_map_lock);
 	auto document_map = GetDocumentMapInstance();
+
+	auto shared = file.GetReference();
 	auto weak_ref = (*document_map)[shared.get()];
 	assert(weak_ref.IsActive() && !weak_ref.IsEmpty());
+
 	return weak_ref;
 }
 
-void SemanticUtils::AddDocumentMapping(std::weak_ptr<syntax::File> file, WeakReference<Document> value) {
-	auto shared = file.lock();
-	if (!shared) {
+void SemanticUtils::AddDocumentMapping(WeakReference<syntax::File> file, WeakReference<Document> value) {
+	if (!file.IsActive()) {
 		throw syntax::FileDisposedException();
 	}
 
 	std::lock_guard<std::mutex> locker(document_map_lock);
 	auto document_map = GetDocumentMapInstance();
+
+	auto shared = file.GetReference();
 	(*document_map)[shared.get()] = value;
 }
 
-void SemanticUtils::ReleaseMapping(std::weak_ptr<syntax::File> file) {
-	auto shared = file.lock();
-	if (!shared) {
+void SemanticUtils::ReleaseMapping(WeakReference<syntax::File> file) {
+	if (!file.IsActive()) {
 		throw syntax::FileDisposedException();
 	}
 
 	std::lock_guard<std::mutex> locker(document_map_lock);
 	auto document_map = GetDocumentMapInstance();
+
+	auto shared = file.GetReference();
 	document_map->erase(shared.get());
 }
 

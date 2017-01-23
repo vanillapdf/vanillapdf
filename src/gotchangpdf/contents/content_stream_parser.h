@@ -17,7 +17,7 @@ public:
 
 class ContentStreamParser : public syntax::ParserBase, public IContentStreamParser {
 public:
-	ContentStreamParser(std::weak_ptr<syntax::File> file, CharacterSource & stream);
+	ContentStreamParser(WeakReference<syntax::File> file, CharacterSource & stream);
 	virtual BaseInstructionCollectionPtr ReadContentStreamInstructions(void) override;
 
 private:

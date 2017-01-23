@@ -57,8 +57,8 @@ public:
 	void ClearOwner() noexcept { m_owner.Reset(); }
 	bool HasOwner() const noexcept;
 
-	virtual void SetFile(std::weak_ptr<File> file) noexcept { m_file = file; }
-	std::weak_ptr<File> GetFile() const noexcept { return m_file; }
+	virtual void SetFile(WeakReference<File> file) noexcept { m_file = file; }
+	WeakReference<File> GetFile() const noexcept { return m_file; }
 
 	bool Identity(ObjectPtr other) const;
 
@@ -68,7 +68,7 @@ public:
 	virtual void OnChanged() override;
 
 protected:
-	std::weak_ptr<File> m_file;
+	WeakReference<File> m_file;
 	bool m_dirty = false;
 	types::stream_offset m_offset = constant::BAD_OFFSET;
 	bool m_encryption_exempted = false;

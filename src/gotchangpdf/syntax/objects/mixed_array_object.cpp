@@ -27,7 +27,7 @@ MixedArrayObject::MixedArrayObject(const ContainableObject& other, list_type& li
 	}
 }
 
-void MixedArrayObject::SetFile(std::weak_ptr<File> file) noexcept {
+void MixedArrayObject::SetFile(WeakReference<File> file) noexcept {
 	Object::SetFile(file);
 
 	auto size = _list.size();

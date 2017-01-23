@@ -11,26 +11,6 @@
 namespace gotchangpdf {
 namespace syntax {
 
-class XrefUtils {
-public:
-	template <typename T>
-	static T ConvertTo(const XrefEntryBasePtr& obj) {
-		auto ptr = obj.get();
-		auto converted = dynamic_cast<typename T::value_type *>(ptr);
-		if (nullptr == converted)
-			throw ConversionExceptionFactory<T>::Construct(obj);
-
-		return T(converted);
-	}
-
-	template <typename T>
-	static bool IsType(const XrefEntryBasePtr& obj) {
-		auto ptr = obj.get();
-		auto converted = dynamic_cast<typename T::value_type *>(ptr);
-		return (nullptr != converted);
-	}
-};
-
 class XrefEntryBase : public IUnknown, public IModifyObservable {
 public:
 	enum class Usage {
@@ -56,8 +36,8 @@ public:
 
 	bool InUse(void) const noexcept { return GetUsage() == Usage::Compressed || GetUsage() == Usage::Used; }
 
-	void SetFile(std::weak_ptr<File> file) noexcept { _file = file; }
-	std::weak_ptr<File> GetFile() const noexcept { return _file; }
+	void SetFile(WeakReference<File> file) noexcept { _file = file; }
+	WeakReference<File> GetFile() const noexcept { return _file; }
 
 	bool IsDirty(void) const noexcept { return _dirty; }
 	void SetDirty(bool dirty = true) noexcept { _dirty = dirty; }
@@ -65,7 +45,7 @@ public:
 	bool operator<(const XrefEntryBase& other) const;
 
 protected:
-	std::weak_ptr<File> _file;
+	WeakReference<File> _file;
 	types::big_uint _obj_number = 0;
 	types::ushort _gen_number = 0;
 	bool _dirty = false;
@@ -225,8 +205,8 @@ public:
 
 	virtual void ObserveeChanged(IModifyObservable*) override;
 
-	void SetFile(std::weak_ptr<File>file) noexcept { _file = file; }
-	std::weak_ptr<File> GetFile() const noexcept { return _file; }
+	void SetFile(WeakReference<File>file) noexcept { _file = file; }
+	WeakReference<File> GetFile() const noexcept { return _file; }
 
 	DictionaryObjectPtr GetTrailerDictionary(void) const { return _trailer_dictionary; }
 	void SetTrailerDictionary(DictionaryObjectPtr dictionary) { _trailer_dictionary = dictionary; }
@@ -254,7 +234,7 @@ public:
 	virtual ~XrefBase();
 
 protected:
-	std::weak_ptr<File> _file;
+	WeakReference<File> _file;
 	map_type _entries;
 	types::stream_offset _last_xref_offset = constant::BAD_OFFSET;
 	types::stream_offset _offset = constant::BAD_OFFSET;

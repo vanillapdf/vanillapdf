@@ -3,6 +3,7 @@
 
 #include "syntax/files/file.h"
 #include "syntax/files/xref_chain.h"
+#include "syntax/files/xref_utils.h"
 #include "syntax/parsers/parser.h"
 
 #include "syntax/exceptions/syntax_exceptions.h"
@@ -41,8 +42,9 @@ void XrefUsedEntry::SetReference(ObjectPtr ref) {
 	_reference->Subscribe(this);
 	_reference->SetXrefEntry(this);
 
-	if (IsInitialized())
+	if (IsInitialized()) {
 		SetDirty();
+	}
 }
 
 void XrefUsedEntry::Initialize(void) {
@@ -50,10 +52,11 @@ void XrefUsedEntry::Initialize(void) {
 		return;
 	}
 
-	auto locked_file = _file.lock();
-	if (!locked_file)
+	if (!_file.IsActive()) {
 		throw FileDisposedException();
+	}
 
+	auto locked_file = _file.GetReference();
 	auto input = locked_file->GetInputStream();
 	auto rewind_pos = input->tellg();
 	SCOPE_GUARD_CAPTURE_VALUES(input->seekg(rewind_pos));
@@ -78,8 +81,9 @@ void XrefCompressedEntry::SetReference(ObjectPtr ref) {
 	_reference->Subscribe(this);
 	_reference->SetXrefEntry(this);
 
-	if (IsInitialized())
+	if (IsInitialized()) {
 		SetDirty();
+	}
 }
 
 void XrefCompressedEntry::Initialize(void) {
@@ -87,10 +91,11 @@ void XrefCompressedEntry::Initialize(void) {
 		return;
 	}
 
-	auto locked_file = _file.lock();
-	if (!locked_file)
+	if (!_file.IsActive()) {
 		throw FileDisposedException();
+	}
 
+	auto locked_file = _file.GetReference();
 	auto chain = locked_file->GetXrefChain();
 	auto stm = locked_file->GetIndirectObject(_object_stream_number, 0);
 

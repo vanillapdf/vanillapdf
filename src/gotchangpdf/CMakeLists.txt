@@ -57,6 +57,7 @@ set(GOTCHANGPDF_CONTENTS_SOURCES
 	contents/content_stream_objects.cpp
 	contents/content_stream_operations.cpp
 	contents/content_stream_parser.cpp
+	contents/content_stream_operation_generic.cpp
 )
 
 set(GOTCHANGPDF_SEMANTICS_SOURCES
@@ -138,6 +139,7 @@ set(GOTCHANGPDF_UTILS_SOURCES
 	utils/library_info.cpp
 	utils/log.cpp
 	utils/modify_observer_interface.cpp
+	utils/unknown_interface.cpp
 	utils/zlib_wrapper.cpp
 )
 
@@ -195,6 +197,7 @@ set(GOTCHANGPDF_SYNTAX_HEADERS
 	syntax/files/file_writer.h
 	syntax/files/header.h
 	syntax/files/xref.h
+	syntax/files/xref_utils.h
 	syntax/files/xref_chain.h
 	
 	syntax/filters/ascii_85_decode_filter.h

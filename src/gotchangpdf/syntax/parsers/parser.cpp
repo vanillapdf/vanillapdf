@@ -3,6 +3,7 @@
 #include "syntax/parsers/parser.h"
 #include "syntax/parsers/token.h"
 #include "syntax/files/file.h"
+#include "syntax/files/xref_utils.h"
 
 #include "syntax/parsers/reverse_parser.h"
 #include "syntax/streams/raw_reverse_stream.h"
@@ -18,23 +19,23 @@ namespace syntax {
 
 #pragma region Objects
 
-ParserBase::ParserBase(std::weak_ptr<File> file, CharacterSource & stream)
+ParserBase::ParserBase(WeakReference<File> file, CharacterSource & stream)
 	: Tokenizer(stream), _file(file) {
 }
 
-Parser::Parser(std::weak_ptr<File> file, CharacterSource & stream)
+Parser::Parser(WeakReference<File> file, CharacterSource & stream)
 	: ParserBase(file, stream) {
 	_dictionary = make_unique<ParserTokenDictionary>();
 	_dictionary->Initialize();
 }
 
-CharacterMapParser::CharacterMapParser(std::weak_ptr<File> file, CharacterSource & stream)
+CharacterMapParser::CharacterMapParser(WeakReference<File> file, CharacterSource & stream)
 	: ParserBase(file, stream) {
 	_dictionary = make_unique<CharacterMapTokenDictionary>();
 	_dictionary->Initialize();
 }
 
-std::weak_ptr<File> ParserBase::GetFile(void) const { return _file; }
+WeakReference<File> ParserBase::GetFile(void) const { return _file; }
 
 class ObjectFactory {
 public:
@@ -174,7 +175,7 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 
 			auto length_obj = dictionary->Find(constant::Name::Length);
 			if (length_obj->GetType() != Object::Type::Integer) {
-				auto locked_file = _file.lock();
+				auto locked_file = _file.GetReference();
 				if (!locked_file->IsInitialized()) {
 					break;
 				}
@@ -232,7 +233,7 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 
 			auto length_obj = dictionary->Find(constant::Name::Length);
 			if (length_obj->GetType() != Object::Type::Integer) {
-				auto locked_file = _file.lock();
+				auto locked_file = _file.GetReference();
 				if (!locked_file->IsInitialized()) {
 					dictionary->Remove(constant::Name::Length);
 					dictionary->Insert(constant::Name::Length, IntegerObjectPtr(computed_length));
@@ -312,10 +313,6 @@ ObjectPtr Parser::ReadIndirectObject(types::big_uint& obj_number, types::ushort&
 	auto begin_token = ReadTokenWithTypeSkip(Token::Type::INDIRECT_OBJECT_BEGIN);
 	auto direct = ReadDirectObject();
 	auto end_token = ReadTokenWithTypeSkip(Token::Type::INDIRECT_OBJECT_END);
-
-	auto locked_file = _file.lock();
-	if (!locked_file)
-		throw FileDisposedException();
 
 	auto obj_number_value = ObjectFactory::CreateInteger(obj_number_token);
 	auto gen_number_value = ObjectFactory::CreateInteger(gen_number_token);
@@ -628,10 +625,11 @@ XrefStreamPtr Parser::ParseXrefStream(
 
 	// If stream does not contain entry for itself
 	if (!contains_self) {
-		auto locked_file = _file.lock();
-		if (!locked_file)
+		if (!_file.IsActive()) {
 			throw FileDisposedException();
+		}
 
+		auto locked_file = _file.GetReference();
 		auto chain = locked_file->GetXrefChain();
 
 		if (!chain->Contains(stream_obj_number, stream_gen_number)) {

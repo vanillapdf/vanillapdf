@@ -16,9 +16,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Open(string_type filename, F
 
 	try
 	{
-		FileHolderPtr holder;
-		holder->Open(filename);
-		auto ptr = holder.AddRefGet();
+		FilePtr file = File::Open(filename);
+		auto ptr = file.AddRefGet();
 		*result = reinterpret_cast<FileHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
@@ -31,9 +30,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Create(string_type filename,
 
 	try
 	{
-		FileHolderPtr holder;
-		holder->Create(filename);
-		auto ptr = holder.AddRefGet();
+		FilePtr file = File::Create(filename);
+		auto ptr = file.AddRefGet();
 		*result = reinterpret_cast<FileHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
@@ -41,11 +39,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Create(string_type filename,
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle)
 {
-	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
-
-	auto file = holder->Value();
-	if (!file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
+	File* file = reinterpret_cast<File*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
 
 	try
 	{
@@ -56,12 +51,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle, XrefChainHandle* result)
 {
-	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
+	File* file = reinterpret_cast<File*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-	auto file = holder->Value();
-	if (!file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
 
 	try
 	{
@@ -75,12 +67,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle,
 GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
 	FileHandle handle, biguint_type objNumber, ushort_type genNumber, ObjectHandle* result)
 {
-	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
+	File* file = reinterpret_cast<File*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-	auto file = holder->Value();
-	if (!file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
 
 	try
 	{
@@ -94,24 +83,19 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Release(FileHandle handle)
 {
-	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
+	File* file = reinterpret_cast<File*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
 
-	auto file = holder->Value();
-	if (!file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
-
-	holder->Release();
+	file->Release();
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION File_IsEncrypted(FileHandle handle, boolean_type* result)
 {
-	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	File* file = reinterpret_cast<File*>(handle);
 
-	auto file = holder->Value();
-	if (!file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try
 	{
@@ -122,12 +106,10 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_IsEncrypted(FileHandle handl
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SetEncryptionPassword(FileHandle handle, string_type password)
 {
-	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(password);
+	File* file = reinterpret_cast<File*>(handle);
 
-	auto file = holder->Value();
-	if (!file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(password);
 
 	try
 	{
@@ -142,13 +124,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SetEncryptionPassword(FileHa
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SetEncryptionKey(FileHandle handle, EncryptionKeyHandle key)
 {
-	FileHolder* holder = reinterpret_cast<FileHolder*>(handle);
+	File* file = reinterpret_cast<File*>(handle);
 	IEncryptionKey* encryption_key = reinterpret_cast<IEncryptionKey*>(key);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(holder);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(encryption_key);
 
-	auto file = holder->Value();
-	if (!file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
 
 	try
 	{
@@ -176,16 +157,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Create(FileWriterHandl
 GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Write(FileWriterHandle handle, FileHandle source, FileHandle destination)
 {
 	FileWriter* writer = reinterpret_cast<FileWriter*>(handle);
-	FileHolder* source_file_holder = reinterpret_cast<FileHolder*>(source);
-	FileHolder* destination_file_holder = reinterpret_cast<FileHolder*>(destination);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(writer);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(source_file_holder);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(destination_file_holder);
+	File* source_file = reinterpret_cast<File*>(source);
+	File* destination_file = reinterpret_cast<File*>(destination);
 
-	auto source_file = source_file_holder->Value();
-	auto destination_file = destination_file_holder->Value();
-	if (!source_file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
-	if (!destination_file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(writer);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(source_file);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(destination_file);
 
 	try
 	{
@@ -197,16 +174,11 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Write(FileWriterHandle
 GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_WriteIncremental(FileWriterHandle handle, FileHandle source, FileHandle destination)
 {
 	FileWriter* writer = reinterpret_cast<FileWriter*>(handle);
-	FileHolder* source_file_holder = reinterpret_cast<FileHolder*>(source);
-	FileHolder* destination_file_holder = reinterpret_cast<FileHolder*>(destination);
+	File* source_file = reinterpret_cast<File*>(source);
+	File* destination_file = reinterpret_cast<File*>(destination);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(writer);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(source_file_holder);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(destination_file_holder);
-
-	auto source_file = source_file_holder->Value();
-	auto destination_file = destination_file_holder->Value();
-	if (!source_file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
-	if (!destination_file) return GOTCHANG_PDF_ERROR_FILE_DISPOSED;
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(source_file);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(destination_file);
 
 	try
 	{

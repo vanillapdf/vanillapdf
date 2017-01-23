@@ -11,25 +11,22 @@ namespace semantics {
 
 using namespace syntax;
 
-Document::Document(const std::string& filename) {
-	_holder->Open(filename);
-	_holder->Value()->Initialize();
+Document::Document(const std::string& filename) : m_holder(File::Open(filename)) {
+	m_holder->Initialize();
 
-	DocumentPtr temp(this, false);
-	SemanticUtils::AddDocumentMapping(_holder->Value(), temp->GetWeakReference<Document>());
-	temp.detach();
+	SemanticUtils::AddDocumentMapping(m_holder, GetWeakReference<Document>());
 }
 
-Document::Document(syntax::FileHolderPtr holder) : _holder(holder) {
-	assert(holder->Value());
+Document::Document(syntax::FilePtr holder) : m_holder(holder) {
+	SemanticUtils::AddDocumentMapping(m_holder, GetWeakReference<Document>());
+}
 
-	DocumentPtr temp(this, false);
-	SemanticUtils::AddDocumentMapping(_holder->Value(), temp->GetWeakReference<Document>());
-	temp.detach();
+syntax::FilePtr Document::GetFile() const {
+	return m_holder;
 }
 
 Document::~Document() {
-	SemanticUtils::ReleaseMapping(_holder->Value());
+	SemanticUtils::ReleaseMapping(m_holder->GetWeakReference<syntax::File>());
 }
 
 CatalogPtr Document::GetDocumentCatalog(void) {
@@ -37,7 +34,7 @@ CatalogPtr Document::GetDocumentCatalog(void) {
 		return m_catalog;
 	}
 
-	auto chain = _holder->Value()->GetXrefChain();
+	auto chain = m_holder->GetXrefChain();
 	auto xref = chain->Begin()->Value();
 	auto dictionary = xref->GetTrailerDictionary();
 	auto root = dictionary->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Root);
@@ -53,7 +50,7 @@ bool Document::GetDocumentInfo(OutputDocumentInfoPtr& result) {
 		return true;
 	}
 
-	auto chain = _holder->Value()->GetXrefChain();
+	auto chain = m_holder->GetXrefChain();
 	auto xref = chain->Begin()->Value();
 	auto dictionary = xref->GetTrailerDictionary();
 
@@ -126,23 +123,22 @@ void Document::Save(const std::string& path) {
 	}
 
 	FileWriter writer;
-	writer.Write(_holder->Value(), destination);
+	writer.Write(m_holder, destination);
 }
 
 void Document::SaveIncremental(const std::string& path) {
 	auto destination = File::Create(path);
 
 	FileWriter writer;
-	writer.WriteIncremental(_holder->Value(), destination);
+	writer.WriteIncremental(m_holder, destination);
 }
 
 OutputNamedDestinationsPtr Document::CreateNamedDestinations(CatalogPtr catalog) {
-	auto file = _holder->Value();
-	auto chain = file->GetXrefChain();
+	auto chain = m_holder->GetXrefChain();
 	auto entry = chain->AllocateNewEntry();
 
 	DictionaryObjectPtr raw_dictionary;
-	raw_dictionary->SetFile(file);
+	raw_dictionary->SetFile(m_holder);
 	raw_dictionary->SetInitialized();
 	entry->SetReference(raw_dictionary);
 	entry->SetInitialized();
@@ -157,12 +153,11 @@ OutputNamedDestinationsPtr Document::CreateNamedDestinations(CatalogPtr catalog)
 }
 
 OutputNameDictionaryPtr Document::CreateNameDictionary(CatalogPtr catalog) {
-	auto file = _holder->Value();
-	auto chain = file->GetXrefChain();
+	auto chain = m_holder->GetXrefChain();
 	auto entry = chain->AllocateNewEntry();
 
 	DictionaryObjectPtr raw_dictionary;
-	raw_dictionary->SetFile(file);
+	raw_dictionary->SetFile(m_holder);
 	raw_dictionary->SetInitialized();
 	entry->SetReference(raw_dictionary);
 	entry->SetInitialized();
@@ -177,12 +172,11 @@ OutputNameDictionaryPtr Document::CreateNameDictionary(CatalogPtr catalog) {
 }
 
 OutputNameTreePtr<DestinationPtr> Document::CreateNameTreeDestinations(NameDictionaryPtr dictionary) {
-	auto file = _holder->Value();
-	auto chain = file->GetXrefChain();
+	auto chain = m_holder->GetXrefChain();
 	auto entry = chain->AllocateNewEntry();
 
 	DictionaryObjectPtr raw_dictionary;
-	raw_dictionary->SetFile(file);
+	raw_dictionary->SetFile(m_holder);
 	raw_dictionary->SetInitialized();
 	entry->SetReference(raw_dictionary);
 	entry->SetInitialized();
@@ -267,8 +261,7 @@ void Document::AppendContent(DocumentPtr other) {
 		merge_objects.push_back(other_obj);
 	}
 
-	auto file = _holder->Value();
-	auto new_objects = file->DeepCopyObjects(merge_objects);
+	auto new_objects = m_holder->DeepCopyObjects(merge_objects);
 
 	// First merge all page objects
 	for (decltype(other_page_count) i = 0; i < other_page_count; ++i) {
@@ -325,7 +318,7 @@ void Document::AppendContent(DocumentPtr other) {
 			}
 
 			// Create only shallow copies
-			auto cloned_destination_obj = file->ShallowCopyObject(destination_value);
+			auto cloned_destination_obj = m_holder->ShallowCopyObject(destination_value);
 			auto cloned_destination_unique_ptr = DestinationBase::Create(cloned_destination_obj);
 			auto cloned_destination_raw_ptr = cloned_destination_unique_ptr.release();
 			auto cloned_destination = DestinationPtr(cloned_destination_raw_ptr);
@@ -377,7 +370,7 @@ void Document::AppendContent(DocumentPtr other) {
 				}
 
 				// Create only shallow copies
-				auto cloned_destination_obj = file->ShallowCopyObject(destination_value);
+				auto cloned_destination_obj = m_holder->ShallowCopyObject(destination_value);
 				auto cloned_destination_unique_ptr = DestinationBase::Create(cloned_destination_obj);
 				auto cloned_destination_raw_ptr = cloned_destination_unique_ptr.release();
 				auto cloned_destination = DestinationPtr(cloned_destination_raw_ptr);

@@ -3,6 +3,7 @@
 #include "syntax/files/file_writer.h"
 #include "syntax/files/file.h"
 #include "syntax/files/xref.h"
+#include "syntax/files/xref_utils.h"
 
 #include "syntax/exceptions/syntax_exceptions.h"
 
@@ -15,7 +16,7 @@ namespace syntax {
 using namespace std;
 
 // experimental
-void FileWriter::Write(const std::shared_ptr<File> source, std::shared_ptr<File> destination) {
+void FileWriter::Write(const FilePtr source, FilePtr destination) {
 	if (!source->IsInitialized()) {
 		throw FileNotInitializedException(source->GetFilename());
 	}
@@ -129,7 +130,7 @@ void FileWriter::Write(const std::shared_ptr<File> source, std::shared_ptr<File>
 	output->flush();
 }
 
-void FileWriter::WriteIncremental(const std::shared_ptr<File> source, std::shared_ptr<File> destination) {
+void FileWriter::WriteIncremental(const FilePtr source, FilePtr destination) {
 	if (!source->IsInitialized()) {
 		throw FileNotInitializedException(source->GetFilename());
 	}
@@ -224,7 +225,7 @@ void FileWriter::RecalculateStreamsLength(XrefBasePtr source) {
 	}
 }
 
-XrefBasePtr FileWriter::CloneXref(std::shared_ptr<File> destination, XrefBasePtr source) {
+XrefBasePtr FileWriter::CloneXref(FilePtr destination, XrefBasePtr source) {
 	// Create cloned xref table
 	// Xref base has no default constructor, therefore it is initialized with table
 	XrefBasePtr result = XrefTablePtr();
@@ -320,7 +321,7 @@ XrefBasePtr FileWriter::CloneXref(std::shared_ptr<File> destination, XrefBasePtr
 	return result;
 }
 
-void FileWriter::WriteXrefObjects(std::shared_ptr<File> destination, XrefBasePtr source) {
+void FileWriter::WriteXrefObjects(FilePtr destination, XrefBasePtr source) {
 	auto table_size = source->Size();
 	auto table_items = source->Entries();
 
@@ -352,7 +353,7 @@ void FileWriter::WriteXrefObjects(std::shared_ptr<File> destination, XrefBasePtr
 	}
 }
 
-XrefBasePtr FileWriter::CreateIncrementalXref(std::shared_ptr<File> source, std::shared_ptr<File> destination) {
+XrefBasePtr FileWriter::CreateIncrementalXref(FilePtr source, FilePtr destination) {
 	XrefFreeEntryPtr free_list_head_entry(0, constant::MAX_GENERATION_NUMBER);
 	free_list_head_entry->SetFile(source);
 

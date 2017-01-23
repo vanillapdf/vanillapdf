@@ -49,7 +49,7 @@ StreamObject* StreamObject::Clone(void) const {
 	return result.release();
 }
 
-void StreamObject::SetFile(std::weak_ptr<File> file) noexcept {
+void StreamObject::SetFile(WeakReference<File> file) noexcept {
 	Object::SetFile(file);
 	_header->SetFile(file);
 }
@@ -60,13 +60,15 @@ void StreamObject::SetInitialized(bool initialized) noexcept {
 }
 
 BufferPtr StreamObject::GetBodyRaw() const {
-	if (!_body->empty())
+	if (!_body->empty()) {
 		return _body;
+	}
 
-	auto locked_file = m_file.lock();
-	if (!locked_file)
+	if (!m_file.IsActive()) {
 		throw FileDisposedException();
+	}
 
+	auto locked_file = m_file.GetReference();
 	auto input = locked_file->GetInputStream();
 	auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
 	auto pos = input->tellg();
@@ -136,10 +138,6 @@ BufferPtr StreamObject::GetBody() const {
 		return GetBodyRaw();
 	}
 
-	auto locked_file = m_file.lock();
-	if (!locked_file)
-		throw FileDisposedException();
-
 	//auto stream = locked_file->GetInputStream();
 	//auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
 	//auto pos = stream->tellg();
@@ -151,8 +149,9 @@ BufferPtr StreamObject::GetBody() const {
 	bool is_filter_name = ObjectUtils::IsType<NameObjectPtr>(filter_obj);
 	bool is_filter_array = ObjectUtils::IsType<ArrayObjectPtr<NameObjectPtr>>(filter_obj);
 
-	if (is_filter_null)
+	if (is_filter_null) {
 		return GetBodyRaw();
+	}
 
 	if (is_filter_name) {
 		auto filter_name = _header->FindAs<NameObjectPtr>(constant::Name::Filter);
@@ -225,10 +224,6 @@ BufferPtr StreamObject::GetBody() const {
 }
 
 BufferPtr StreamObject::GetBodyEncoded() const {
-	auto locked_file = m_file.lock();
-	if (!locked_file)
-		throw FileDisposedException();
-
 	// Optimization for unchanged streams
 	if (!IsDirty()) {
 		return GetBodyRaw();
@@ -244,8 +239,9 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 	bool is_filter_name = ObjectUtils::IsType<NameObjectPtr>(filter_obj);
 	bool is_filter_array = ObjectUtils::IsType<ArrayObjectPtr<NameObjectPtr>>(filter_obj);
 
-	if (is_filter_null)
+	if (is_filter_null) {
 		return decoded_body;
+	}
 
 	if (is_filter_name) {
 		auto filter_name = _header->FindAs<NameObjectPtr>(constant::Name::Filter);
