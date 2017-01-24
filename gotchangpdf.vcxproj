@@ -239,6 +239,7 @@
     <ClCompile Include="src\gotchangpdf\semantics\objects\page_tree_node.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\rectangle.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\resource_dictionary.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\objects\tree.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\viewer_preferences.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\utils\semantic_utils.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\exceptions\syntax_exceptions.cpp" />

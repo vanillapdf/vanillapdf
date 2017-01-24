@@ -82,6 +82,7 @@ set(GOTCHANGPDF_SEMANTICS_SOURCES
 	semantics/objects/outline.cpp
 	semantics/objects/page_labels.cpp
 	semantics/objects/rectangle.cpp
+	semantics/objects/tree.cpp
 	semantics/objects/name_dictionary.cpp
 	semantics/objects/fields.cpp
 	semantics/objects/interactive_forms.cpp
