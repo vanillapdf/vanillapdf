@@ -62,7 +62,7 @@ bool NameObject::Equals(ObjectPtr other) const {
 namespace std {
 size_t hash<gotchangpdf::syntax::NameObject>::operator()(const gotchangpdf::syntax::NameObject& name) const {
 	size_t result = 0;
-	for (auto & val : *name.GetValue()) {
+	for (auto & val : name.GetValue()) {
 		std::hash<char> hash_fn;
 		result ^= hash_fn(val);
 	}

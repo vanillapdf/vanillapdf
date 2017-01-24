@@ -211,8 +211,16 @@ public:
 		return Deferred<T>::get()->begin();
 	}
 
+	const_iterator begin() const {
+		return Deferred<T>::get()->begin();
+	}
+
 	// Retrieve an ending iterator as if this were itself a container
 	iterator end() {
+		return Deferred<T>::get()->end();
+	}
+
+	const_iterator end() const {
 		return Deferred<T>::get()->end();
 	}
 

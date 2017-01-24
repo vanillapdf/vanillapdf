@@ -15,7 +15,7 @@ template <typename KeyT, typename ValueT>
 class TreeBase;
 
 template <typename KeyT, typename ValueT>
-using TreeBasePtr = Deferred<TreeBase<KeyT, ValueT>>;
+using TreeBasePtr = DeferredContainer<TreeBase<KeyT, ValueT>>;
 
 class TreeNodeBase; using TreeNodeBasePtr = Deferred<TreeNodeBase>;
 class TreeNodeRoot; using TreeNodeRootPtr = Deferred<TreeNodeRoot>;
@@ -26,7 +26,7 @@ template <typename ValueT>
 class NameTree;
 
 template <typename ValueT>
-using NameTreePtr = Deferred<NameTree<ValueT>>;
+using NameTreePtr = DeferredContainer<NameTree<ValueT>>;
 
 template <typename ValueT>
 using OutputNameTreePtr = OutputPointer<NameTreePtr<ValueT>>;
@@ -34,7 +34,7 @@ using OutputNameTreePtr = OutputPointer<NameTreePtr<ValueT>>;
 template <typename ValueT>
 class NumberTree;
 template <typename ValueT>
-using NumberTreePtr = Deferred<NumberTree<ValueT>>;
+using NumberTreePtr = DeferredContainer<NumberTree<ValueT>>;
 
 class Document; using DocumentPtr = Deferred<Document>;
 class Catalog; using CatalogPtr = Deferred<Catalog>; using OutputCatalogPtr = OutputPointer<CatalogPtr>;

@@ -49,7 +49,7 @@ using HeaderPtr = Deferred<Header>;
 using XrefTablePtr = Deferred<XrefTable>;
 using XrefStreamPtr = Deferred<XrefStream>;
 
-using XrefChainPtr = Deferred<XrefChain>;
+using XrefChainPtr = DeferredContainer<XrefChain>;
 using XrefEntryBasePtr = Deferred<XrefEntryBase>;
 using XrefUsedEntryBasePtr = Deferred<XrefUsedEntryBase>;
 using XrefNullEntryPtr = Deferred<XrefNullEntry>;
@@ -83,6 +83,9 @@ class DictionaryObjectBase;
 template <typename T>
 class ArrayObject;
 
+template <typename T>
+class ArrayObjectIterator;
+
 class MixedArrayObject;
 class BooleanObject;
 class DictionaryObject;
@@ -98,15 +101,14 @@ class StringObjectBase;
 class HexadecimalStringObject;
 class LiteralStringObject;
 
-
 template <typename T>
 using ArrayObjectPtr = DeferredArrayObject<T>;
 
 template <typename KeyT, typename ValueT, typename MapT /*= std::map<KeyT, ValueT>*/>
-using DictionaryObjectBasePtr = Deferred<DictionaryObjectBase<KeyT, ValueT, MapT>>;
+using DictionaryObjectBasePtr = DeferredContainer<DictionaryObjectBase<KeyT, ValueT, MapT>>;
 
-using DictionaryObjectPtr = Deferred<DictionaryObject>; using OutputDictionaryObjectPtr = OutputPointer<DictionaryObjectPtr>;
-using MixedArrayObjectPtr = Deferred<MixedArrayObject>;
+using DictionaryObjectPtr = DeferredContainer<DictionaryObject>; using OutputDictionaryObjectPtr = OutputPointer<DictionaryObjectPtr>;
+using MixedArrayObjectPtr = DeferredContainer<MixedArrayObject>;
 
 class ObjectPtr;
 class StringObjectPtr; using OutputStringObjectPtr = OutputPointer<StringObjectPtr>;

@@ -86,7 +86,7 @@ void Document::Save(const std::string& path) {
 		}
 
 		std::stringstream ss;
-		for (auto instruction : *page_contents->Instructions()) {
+		for (auto instruction : page_contents->Instructions()) {
 			ss << instruction->ToPdf() << std::endl;
 		}
 
@@ -301,7 +301,7 @@ void Document::AppendContent(DocumentPtr other) {
 		NamedDestinationsPtr other_destinations = other_destinations_ptr.GetValue();
 
 		auto other_destinations_obj = other_destinations->GetObject();
-		for (auto destination : *other_destinations_obj) {
+		for (auto destination : other_destinations_obj) {
 			auto destination_name = destination.first;
 			auto destination_value = destination.second;
 
@@ -353,7 +353,7 @@ void Document::AppendContent(DocumentPtr other) {
 			auto original_string_destinations = original_string_destinations_ptr.GetValue();
 			auto other_string_destination = other_string_destinations_ptr.GetValue();
 
-			for (auto destination : *other_string_destination) {
+			for (auto destination : other_string_destination) {
 				auto destination_key = destination.first;
 				auto destination_value = destination.second;
 

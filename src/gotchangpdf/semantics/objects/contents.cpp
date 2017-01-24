@@ -37,7 +37,7 @@ BaseInstructionCollectionPtr Contents::Instructions(void) const {
 		contents.push_back(converted);
 	} else if (ObjectUtils::IsType<ArrayObjectPtr<IndirectObjectReferencePtr>>(_obj)) {
 		auto converted = ObjectUtils::ConvertTo<ArrayObjectPtr<IndirectObjectReferencePtr>>(_obj);
-		for (auto ref : *converted) {
+		for (auto ref : converted) {
 			auto item = ref->GetReferencedObjectAs<StreamObjectPtr>();
 			contents.push_back(item);
 		}
@@ -55,7 +55,7 @@ BaseInstructionCollectionPtr Contents::Instructions(void) const {
 
 	contents::ContentStreamParser parser(_obj->GetFile(), ss);
 	auto instructions = parser.ReadContentStreamInstructions();
-	for (auto instruction : *instructions) {
+	for (auto instruction : instructions) {
 		m_instructions->push_back(instruction);
 	}
 

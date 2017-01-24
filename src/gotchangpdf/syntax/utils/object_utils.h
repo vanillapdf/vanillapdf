@@ -195,7 +195,7 @@ public:
 		}
 
 		auto mixed = ObjectTypeFunctor<MixedArrayObjectPtr>::Convert(obj);
-		for (auto& item : *mixed) {
+		for (auto& item : mixed) {
 			if (!ObjectTypeFunctor<T>::IsType(item.get())) {
 				return false;
 			}

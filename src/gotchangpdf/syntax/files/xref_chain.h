@@ -14,6 +14,13 @@ class XrefChain : public IUnknown {
 public:
 	using list_type = std::list<XrefBasePtr>;
 
+	typedef typename list_type::value_type value_type;
+	typedef typename list_type::iterator iterator;
+	typedef typename list_type::const_iterator const_iterator;
+	typedef typename list_type::size_type size_type;
+	typedef typename list_type::reference reference;
+	typedef typename list_type::const_reference const_reference;
+
 public:
 	class Iterator : public IUnknown {
 	public:
@@ -50,13 +57,16 @@ public:
 
 public:
 	// stl compatibility
-	list_type::const_iterator begin() const { return _list.begin(); }
-	list_type::const_iterator end(void) const { return _list.end(); }
+	iterator begin() { return _list.begin(); }
+	const_iterator begin() const { return _list.begin(); }
+
+	iterator end(void) { return _list.end(); }
+	const_iterator end(void) const { return _list.end(); }
 
 	IteratorPtr Begin() const { return _list.begin(); }
 	IteratorPtr End(void) const { return _list.end(); }
-	void Append(list_type::value_type item) { _list.push_back(item); }
-	void Prepend(list_type::value_type item) { _list.push_front(item); }
+	void Append(value_type item) { _list.push_back(item); }
+	void Prepend(value_type item) { _list.push_front(item); }
 	void Reverse(void) { _list.reverse(); }
 
 	XrefUsedEntryBasePtr AllocateNewEntry();

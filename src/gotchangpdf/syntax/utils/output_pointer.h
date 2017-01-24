@@ -17,7 +17,10 @@ namespace syntax {
 template <typename T>
 class OutputPointer {
 public:
-	static_assert(instantiation_of<Deferred, T>::value ||
+	static_assert(
+		instantiation_of<Deferred, T>::value ||
+		instantiation_of<DeferredContainer, T>::value ||
+		instantiation_of<DeferredIterator, T>::value ||
 		std::is_base_of<syntax::Object, typename T::deferred_ptr_type>::value,
 		"Output pointer requires template parameter to be either Deferred instance or derived from Object");
 

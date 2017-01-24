@@ -70,6 +70,13 @@ class TreeBase : public HighLevelObject<syntax::DictionaryObjectPtr>, public IVa
 public:
 	using map_type = std::map<KeyT, syntax::ContainableObjectPtr>;
 
+	typedef typename map_type::value_type value_type;
+	typedef typename map_type::iterator iterator;
+	typedef typename map_type::const_iterator const_iterator;
+	typedef typename map_type::size_type size_type;
+	typedef typename map_type::reference reference;
+	typedef typename map_type::const_reference const_reference;
+
 public:
 	TreeBase(const syntax::DictionaryObjectPtr& obj);
 	bool IsInitialized() const;
@@ -78,8 +85,11 @@ public:
 	void Rebuild();
 
 	// stl compatibility
-	typename map_type::const_iterator begin() const;
-	typename map_type::const_iterator end() const;
+	iterator begin();
+	const_iterator begin() const;
+
+	iterator end();
+	const_iterator end() const;
 
 protected:
 	bool Contains(const KeyT& key) const;
@@ -153,13 +163,25 @@ TreeBase<KeyT, ValueT>::TreeBase(const syntax::DictionaryObjectPtr& obj)
 }
 
 template <typename KeyT, typename ValueT>
-typename TreeBase<KeyT, ValueT>::map_type::const_iterator TreeBase<KeyT, ValueT>::begin() const {
+typename TreeBase<KeyT, ValueT>::iterator TreeBase<KeyT, ValueT>::begin() {
 	Initialize();
 	return m_map.begin();
 }
 
 template <typename KeyT, typename ValueT>
-typename TreeBase<KeyT, ValueT>::map_type::const_iterator TreeBase<KeyT, ValueT>::end() const {
+typename TreeBase<KeyT, ValueT>::const_iterator TreeBase<KeyT, ValueT>::begin() const {
+	Initialize();
+	return m_map.begin();
+}
+
+template <typename KeyT, typename ValueT>
+typename TreeBase<KeyT, ValueT>::iterator TreeBase<KeyT, ValueT>::end() {
+	Initialize();
+	return m_map.end();
+}
+
+template <typename KeyT, typename ValueT>
+typename TreeBase<KeyT, ValueT>::const_iterator TreeBase<KeyT, ValueT>::end() const {
 	Initialize();
 	return m_map.end();
 }
@@ -183,7 +205,7 @@ template <typename KeyT, typename ValueT>
 void TreeBase<KeyT, ValueT>::RemoveAllChilds() {
 	if (_root->HasKids()) {
 		auto kids = _root->Kids();
-		for (auto kid : *kids) {
+		for (auto kid : kids) {
 			// TODO release kid obj from file
 		}
 	}
@@ -300,7 +322,7 @@ std::map<KeyT, syntax::ContainableObjectPtr> TreeBase<KeyT, ValueT>::GetAllKeys(
 		auto root = ConvertUtils<TreeNodeBasePtr>::ConvertTo<TreeNodeRootPtr>(node);
 		if (root->HasKids()) {
 			auto kids = root->Kids();
-			for (auto kid : *kids) {
+			for (auto kid : kids) {
 				auto kid_map = GetAllKeys(kid);
 				result_map.insert(kid_map.begin(), kid_map.end());
 			}
@@ -317,7 +339,7 @@ std::map<KeyT, syntax::ContainableObjectPtr> TreeBase<KeyT, ValueT>::GetAllKeys(
 	if (node_type == TreeNodeBase::TreeNodeType::Intermediate) {
 		auto intermediate = ConvertUtils<TreeNodeBasePtr>::ConvertTo<TreeNodeIntermediatePtr>(node);
 		auto kids = intermediate->Kids();
-		for (auto kid : *kids) {
+		for (auto kid : kids) {
 			auto kid_map = GetAllKeys(kid);
 			result_map.insert(kid_map.begin(), kid_map.end());
 		}
@@ -357,7 +379,7 @@ bool TreeBase<KeyT, ValueT>::ContainsInternal(const TreeNodeBasePtr node, const 
 			auto kids = root->Kids();
 
 			bool contains = false;
-			for (auto item : *kids) {
+			for (auto item : kids) {
 				contains |= ContainsInternal(item, key);
 			}
 
@@ -411,9 +433,10 @@ ValueT TreeBase<KeyT, ValueT>::FindInternal(const TreeNodeBasePtr node, const Ke
 		auto root = ConvertUtils<TreeNodeBasePtr>::ConvertTo<TreeNodeRootPtr>(node);
 		if (root->HasKids()) {
 			auto kids = root->Kids();
-			for (auto item : *kids) {
-				if (ContainsInternal(item, key))
+			for (auto item : kids) {
+				if (ContainsInternal(item, key)) {
 					return FindInternal(item, key);
+				}
 			}
 
 			throw GeneralException("Tree node does not contain required item");
@@ -428,7 +451,7 @@ ValueT TreeBase<KeyT, ValueT>::FindInternal(const TreeNodeBasePtr node, const Ke
 
 	if (node_type == TreeNodeBase::TreeNodeType::Intermediate) {
 		auto intermediate = ConvertUtils<TreeNodeBasePtr>::ConvertTo<TreeNodeIntermediatePtr>(node);
-		for (auto item : *intermediate->Kids()) {
+		for (auto item : intermediate->Kids()) {
 			if (ContainsInternal(item, key)) {
 				return FindInternal(item, key);
 			}

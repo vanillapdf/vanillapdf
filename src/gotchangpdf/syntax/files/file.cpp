@@ -105,7 +105,7 @@ void File::Initialize() {
 	}
 
 	// ID entries in trailer are exempted from encryption
-	for (auto xref : *_xref) {
+	for (auto xref : _xref) {
 		auto trailer_dictionary = xref->GetTrailerDictionary();
 
 		if (trailer_dictionary->Contains(constant::Name::ID)) {
@@ -507,7 +507,7 @@ void File::ReadXref(types::stream_offset offset) {
 	}
 
 	std::vector<XrefBasePtr> additional_xref;
-	for (auto& xref : *_xref) {
+	for (auto& xref : _xref) {
 		auto trailer_dictionary = xref->GetTrailerDictionary();
 		if (trailer_dictionary->Contains(constant::Name::XRefStm)) {
 			auto stm_offset_obj = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::XRefStm);
@@ -626,14 +626,14 @@ void File::FixObjectReferences(const std::map<ObjectPtr, ObjectPtr>& map, std::m
 
 	if (ObjectUtils::IsType<MixedArrayObjectPtr>(copied)) {
 		auto arr = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(copied);
-		for (auto item : *arr) {
+		for (auto item : arr) {
 			FixObjectReferences(map, visited, item);
 		}
 	}
 
 	if (ObjectUtils::IsType<DictionaryObjectPtr>(copied)) {
 		auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(copied);
-		for (auto item : *dict) {
+		for (auto item : dict) {
 			FixObjectReferences(map, visited, item.second);
 		}
 	}
@@ -641,7 +641,7 @@ void File::FixObjectReferences(const std::map<ObjectPtr, ObjectPtr>& map, std::m
 	if (ObjectUtils::IsType<StreamObjectPtr>(copied)) {
 		auto stream = ObjectUtils::ConvertTo<StreamObjectPtr>(copied);
 		auto dict = stream->GetHeader();
-		for (auto item : *dict) {
+		for (auto item : dict) {
 			FixObjectReferences(map, visited, item.second);
 		}
 	}
@@ -698,14 +698,14 @@ void File::DeepCopyObject(std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPt
 
 	if (ObjectUtils::IsType<MixedArrayObjectPtr>(original)) {
 		auto arr = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(original);
-		for (auto item : *arr) {
+		for (auto item : arr) {
 			DeepCopyObject(map, visited, item);
 		}
 	}
 
 	if (ObjectUtils::IsType<DictionaryObjectPtr>(original)) {
 		auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(original);
-		for (auto item : *dict) {
+		for (auto item : dict) {
 			DeepCopyObject(map, visited, item.second);
 		}
 	}
@@ -713,7 +713,7 @@ void File::DeepCopyObject(std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPt
 	if (ObjectUtils::IsType<StreamObjectPtr>(original)) {
 		auto stream = ObjectUtils::ConvertTo<StreamObjectPtr>(original);
 		auto dict = stream->GetHeader();
-		for (auto item : *dict) {
+		for (auto item : dict) {
 			DeepCopyObject(map, visited, item.second);
 		}
 	}

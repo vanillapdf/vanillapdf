@@ -64,8 +64,12 @@ public:
 	using IteratorPtr = DeferredIterator<Iterator>;
 
 	// std container
-	const_iterator begin(void) const noexcept { return _list.begin(); }
-	const_iterator end(void) const noexcept { return _list.end(); }
+	iterator begin(void) { return _list.begin(); }
+	const_iterator begin(void) const { return _list.begin(); }
+
+	iterator end(void) { return _list.end(); }
+	const_iterator end(void) const { return _list.end(); }
+
 	iterator insert(const_iterator pos, const value_type & value) { return _list.insert(pos, value); }
 
 protected:

@@ -9,7 +9,7 @@ namespace contents {
 
 	// instructions
 class InstructionBase; using InstructionBasePtr = Deferred<InstructionBase>;
-class BaseInstructionCollection; using BaseInstructionCollectionPtr = Deferred<BaseInstructionCollection>;
+class BaseInstructionCollection; using BaseInstructionCollectionPtr = DeferredContainer<BaseInstructionCollection>;
 
 // basic operations
 class OperationBase; using OperationBasePtr = Deferred<OperationBase>;
