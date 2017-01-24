@@ -26,9 +26,9 @@ template <
 class ConversionHelperBase {
 public:
 	static T Get(Object* ptr, bool& result) {
-		auto converted = dynamic_cast<typename T::value_type *>(ptr);
+		auto converted = dynamic_cast<typename T::deferred_ptr_type *>(ptr);
 		if (nullptr == converted) {
-			throw ConversionExceptionFactory<typename T::value_type>::Construct(ptr);
+			throw ConversionExceptionFactory<typename T::deferred_ptr_type>::Construct(ptr);
 		}
 
 		result = true;
@@ -42,7 +42,7 @@ template <
 class ConversionHelperBase<T, true> {
 public:
 	static T Get(Object* ptr, bool& result) {
-		auto converted = dynamic_cast<typename T::value_type *>(ptr);
+		auto converted = dynamic_cast<typename T::deferred_ptr_type *>(ptr);
 		if (nullptr == converted) {
 			result = false;
 			return T();
@@ -255,7 +255,7 @@ public:
 	template <
 		typename T,
 		typename = typename std::enable_if<instantiation_of<Deferred, T>::value ||
-		std::is_base_of<Object, typename T::value_type>::value>::type
+		std::is_base_of<Object, typename T::deferred_ptr_type>::value>::type
 	>
 		static T Clone(const T& obj) {
 		// Template requirements

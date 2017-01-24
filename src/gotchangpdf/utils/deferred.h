@@ -21,7 +21,7 @@ namespace gotchangpdf {
 template <typename T>
 class DeferredWrapperBase {
 public:
-	typedef T value_type;
+	typedef T deferred_ptr_type;
 
 public:
 	template <

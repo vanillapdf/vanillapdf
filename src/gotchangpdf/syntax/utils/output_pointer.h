@@ -18,7 +18,7 @@ template <typename T>
 class OutputPointer {
 public:
 	static_assert(instantiation_of<Deferred, T>::value ||
-		std::is_base_of<syntax::Object, typename T::value_type>::value,
+		std::is_base_of<syntax::Object, typename T::deferred_ptr_type>::value,
 		"Output pointer requires template parameter to be either Deferred instance or derived from Object");
 
 public:
@@ -48,17 +48,12 @@ public:
 	operator T() const { return GetValue(); }
 	T operator*() const { return *GetValue(); }
 
-	typename T::value_type* AddRefGet(void) {
+	auto AddRefGet(void) -> typename std::result_of<decltype(&T::AddRefGet)(T)>::type {
 		if (nullptr == m_value) {
 			throw GeneralException("Uninitialized pointer");
 		}
 
-		auto converted = static_cast<typename T::value_type *>(m_value->AddRefGet());
-		if (nullptr == m_value) {
-			throw ConversionExceptionFactory<Deferred<typename T::value_type>>::Construct(m_value);
-		}
-
-		return converted;
+		return m_value->AddRefGet();
 	}
 
 	OutputPointer& operator=(const T& value) {

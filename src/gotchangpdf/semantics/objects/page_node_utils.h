@@ -16,7 +16,7 @@ public:
 	template <typename T>
 	static T ConvertTo(const PageNodeBasePtr& obj) {
 		auto ptr = obj.get();
-		auto converted = dynamic_cast<typename T::value_type *>(ptr);
+		auto converted = dynamic_cast<typename T::deferred_ptr_type *>(ptr);
 		if (nullptr == converted) {
 			throw ConversionExceptionFactory<T>::Construct(obj);
 		}
@@ -27,7 +27,7 @@ public:
 	template <typename T>
 	static bool IsType(const PageNodeBasePtr& obj) {
 		auto ptr = obj.get();
-		auto converted = dynamic_cast<typename T::value_type *>(ptr);
+		auto converted = dynamic_cast<typename T::deferred_ptr_type *>(ptr);
 		return (nullptr != converted);
 	}
 };

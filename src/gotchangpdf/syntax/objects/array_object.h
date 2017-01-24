@@ -29,7 +29,7 @@ template <typename T>
 class ArrayObject : public IUnknown {
 public:
 	static_assert(instantiation_of<Deferred, T>::value ||
-		std::is_base_of<Object, typename T::value_type>::value,
+		std::is_base_of<Object, typename T::deferred_ptr_type>::value,
 		"Array object requires template parameter to be either Deferred instance or derived from Object");
 
 public:
