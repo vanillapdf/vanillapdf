@@ -11,16 +11,16 @@ namespace gotchangpdf {
 namespace syntax {
 
 template <typename T>
-class DeferredArray : public Deferred<ArrayObject<T>> {
+class DeferredArrayObject : public DeferredContainer<ArrayObject<T>> {
 public:
-	using Deferred<ArrayObject<T>>::Deferred;
+	using DeferredContainer<ArrayObject<T>>::DeferredContainer;
 
 	operator MixedArrayObjectPtr() {
-		return Deferred<ArrayObject<T>>::get()->Data();
+		return DeferredContainer<ArrayObject<T>>::get()->Data();
 	}
 
 	operator ContainableObjectPtr() {
-		return Deferred<ArrayObject<T>>::get()->Data();
+		return DeferredContainer<ArrayObject<T>>::get()->Data();
 	}
 };
 

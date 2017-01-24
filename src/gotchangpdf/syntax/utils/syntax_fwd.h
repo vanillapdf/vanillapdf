@@ -11,7 +11,7 @@ template <typename T>
 class OutputPointer;
 
 template <typename T>
-class DeferredArray;
+class DeferredArrayObject;
 
 class IEncryptionKey;
 
@@ -98,8 +98,9 @@ class StringObjectBase;
 class HexadecimalStringObject;
 class LiteralStringObject;
 
+
 template <typename T>
-using ArrayObjectPtr = DeferredArray<T>;
+using ArrayObjectPtr = DeferredArrayObject<T>;
 
 template <typename KeyT, typename ValueT, typename MapT /*= std::map<KeyT, ValueT>*/>
 using DictionaryObjectBasePtr = Deferred<DictionaryObjectBase<KeyT, ValueT, MapT>>;
