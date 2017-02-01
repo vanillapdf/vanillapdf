@@ -17,10 +17,24 @@ IModifyObservable& IModifyObservable::operator=(const IModifyObservable&) {
 }
 
 void IModifyObservable::Subscribe(IModifyObserver* observer) {
-	m_observers.push_back(observer);
+	auto weak_ref = observer->GetWeakReference<IModifyObserver>();
+	Subscribe(weak_ref);
 }
 
 bool IModifyObservable::Unsubscribe(IModifyObserver* observer) {
+	auto weak_ref = observer->GetWeakReference<IModifyObserver>();
+	return Unsubscribe(weak_ref);
+}
+
+void IModifyObservable::Subscribe(WeakReference<IModifyObserver> observer) {
+	// Remove all deactivated observers
+	std::remove_if(m_observers.begin(), m_observers.end(), IsReferenceDeactivated);
+
+	// Insert new observer
+	m_observers.push_back(observer);
+}
+
+bool IModifyObservable::Unsubscribe(WeakReference<IModifyObserver> observer) {
 	for (auto it = m_observers.begin(); it != m_observers.end(); ++it) {
 		if (observer == *it) {
 			m_observers.erase(it);
@@ -32,14 +46,36 @@ bool IModifyObservable::Unsubscribe(IModifyObserver* observer) {
 }
 
 void IModifyObservable::OnChanged() {
+	// Skip for uninitialized objects
 	if (!m_initialized) {
 		return;
 	}
 
-	auto size = m_observers.size();
-	for (decltype(size) i = 0; i < size; ++i) {
-		m_observers[i]->ObserveeChanged(this);
+	// This iteration does not increment iterator in the loop
+	for (auto current = m_observers.begin(); current != m_observers.end();) {
+
+		// Remove deactivated elements
+		if (!current->IsActive()) {
+
+			// Erase will return next iterator
+			current = m_observers.erase(current);
+			continue;
+		}
+
+		// Get our notification observer
+		auto observer = current->GetReference();
+
+		// Send the notification
+		observer->ObserveeChanged(this);
+
+		// We increment iterator here, so there is no special handling
+		// for erasing the deactivated elements
+		current++;
 	}
+}
+
+bool IModifyObservable::IsReferenceDeactivated(const WeakReference<IModifyObserver>& ref) {
+	return !ref.IsActive();
 }
 
 } // gotchangpdf
