@@ -12,11 +12,32 @@
 namespace gotchangpdf {
 namespace syntax {
 
-LiteralStringObject::LiteralStringObject() { _value->Subscribe(this); }
-HexadecimalStringObject::HexadecimalStringObject() { _value->Subscribe(this); }
-LiteralStringObject::LiteralStringObject(BufferPtr value) : _raw_value(value) { _value->Subscribe(this); }
-HexadecimalStringObject::HexadecimalStringObject(BufferPtr value) : _raw_value(value) { _value->Subscribe(this); }
-StringObjectPtr::StringObjectPtr() : Deferred<StringObjectBase>(LiteralStringObjectPtr()) {}
+LiteralStringObject::LiteralStringObject() {
+	_value->Subscribe(this);
+}
+
+HexadecimalStringObject::HexadecimalStringObject() {
+	_value->Subscribe(this);
+}
+
+LiteralStringObject::LiteralStringObject(BufferPtr value) : _raw_value(value) {
+	_value->Subscribe(this);
+}
+
+HexadecimalStringObject::HexadecimalStringObject(BufferPtr value) : _raw_value(value) {
+	_value->Subscribe(this);
+}
+
+StringObjectPtr::StringObjectPtr() : Deferred<StringObjectBase>(LiteralStringObjectPtr()) {
+}
+
+HexadecimalStringObject::~HexadecimalStringObject() {
+	_value->Unsubscribe(this);
+}
+
+LiteralStringObject::~LiteralStringObject() {
+	_value->Unsubscribe(this);
+}
 
 bool StringObjectBase::Equals(ObjectPtr other) const {
 	if (!ObjectUtils::IsType<StringObjectPtr>(other)) {

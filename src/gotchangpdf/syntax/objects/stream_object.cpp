@@ -31,6 +31,38 @@ StreamObject::~StreamObject() {
 	_body_decoded->Unsubscribe(this);
 }
 
+void StreamObject::ObserveeChanged(IModifyObservable*) {
+	OnChanged();
+}
+
+DictionaryObjectPtr StreamObject::GetHeader() const {
+	return _header;
+}
+
+void StreamObject::SetHeader(DictionaryObjectPtr header) {
+	_header->Unsubscribe(this);
+	header->Subscribe(this);
+	_header = header;
+	OnChanged();
+}
+
+void StreamObject::SetBody(BufferPtr value) {
+	_body_decoded->assign(value.begin(), value.end());
+}
+
+types::stream_offset StreamObject::GetDataOffset() const {
+	return _raw_data_offset;
+}
+
+void StreamObject::SetDataOffset(types::stream_offset offset) {
+	_raw_data_offset = offset;
+	OnChanged();
+}
+
+Object::Type StreamObject::GetType(void) const noexcept {
+	return Object::Type::Stream;
+}
+
 StreamObject* StreamObject::Clone(void) const {
 	std::unique_ptr<StreamObject> result(new StreamObject(*this));
 	result->_body = GetBodyRaw()->Clone();

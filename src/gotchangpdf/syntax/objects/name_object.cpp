@@ -7,6 +7,68 @@
 namespace gotchangpdf {
 namespace syntax {
 
+NameObject::NameObject() {
+	_value->Subscribe(this);
+}
+
+NameObject::NameObject(BufferPtr name) : _value(name) {
+	_value->Subscribe(this);
+	_value->SetInitialized();
+}
+
+void NameObject::ObserveeChanged(IModifyObservable*) {
+	OnChanged();
+}
+
+BufferPtr NameObject::GetValue() const noexcept {
+	return _value;
+}
+
+void NameObject::SetValue(BufferPtr value) {
+	_value->assign(value.begin(), value.end());
+}
+
+bool NameObject::operator==(NameObjectPtr other) const {
+	return Equals(other);
+}
+
+bool NameObject::operator!=(NameObjectPtr other) const {
+	return !Equals(other);
+}
+
+bool NameObject::operator<(NameObjectPtr other) const {
+	return *_value < *other->_value;
+}
+
+bool NameObject::Equals(NameObjectPtr other) const {
+	return _value->Equals(other->_value);
+}
+
+bool NameObject::Equals(ObjectPtr other) const {
+	if (!ObjectUtils::IsType<NameObjectPtr>(other)) {
+		return false;
+	}
+
+	auto other_obj = ObjectUtils::ConvertTo<NameObjectPtr>(other);
+	return Equals(*other_obj);
+}
+
+Object::Type NameObject::GetType(void) const noexcept {
+	return Object::Type::Name;
+}
+
+std::string NameObject::ToPdf(void) const {
+	return "/" + ToString();
+}
+
+NameObject* NameObject::Clone(void) const {
+	return new NameObject(_value->Clone());
+}
+
+NameObject::~NameObject() {
+	_value->Unsubscribe(this);
+}
+
 std::string NameObject::GetHexadecimalNotation(char ch) const {
 	std::stringstream ss;
 	int converted = static_cast<int>(ch);
@@ -45,15 +107,6 @@ std::string NameObject::ToString(void) const {
 	}
 
 	return ss.str();
-}
-
-bool NameObject::Equals(ObjectPtr other) const {
-	if (!ObjectUtils::IsType<NameObjectPtr>(other)) {
-		return false;
-	}
-
-	auto other_obj = ObjectUtils::ConvertTo<NameObjectPtr>(other);
-	return Equals(*other_obj);
 }
 
 } // syntax

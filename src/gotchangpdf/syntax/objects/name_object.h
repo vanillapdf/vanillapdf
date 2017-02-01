@@ -14,36 +14,30 @@ namespace syntax {
 
 class NameObject : public ContainableObject, public IModifyObserver {
 public:
-	typedef BufferPtr value_type;
+	NameObject();
+	explicit NameObject(BufferPtr name);
+	virtual ~NameObject();
 
-public:
-	NameObject() { _value->Subscribe(this); }
-	explicit NameObject(value_type name) : _value(name) { _value->Subscribe(this); _value->SetInitialized(); }
+	virtual void ObserveeChanged(IModifyObservable*) override;
 
-	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+	BufferPtr GetValue() const noexcept;
+	void SetValue(BufferPtr value);
 
-	value_type GetValue() const noexcept { return _value; }
-	void SetValue(value_type value) { _value->assign(value.begin(), value.end()); }
+	bool operator==(NameObjectPtr other) const;
+	bool operator!=(NameObjectPtr other) const;
+	bool operator<(NameObjectPtr other) const;
 
-	bool operator==(NameObjectPtr other) const { return Equals(other); }
-	bool operator!=(NameObjectPtr other) const { return !Equals(other); }
-	bool operator<(NameObjectPtr other) const { return *_value < *other->_value; }
-
-	bool Equals(NameObjectPtr other) const { return _value->Equals(other->_value); }
+	bool Equals(NameObjectPtr other) const;
 	virtual bool Equals(ObjectPtr other) const override;
 
-	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Name; }
-	virtual std::string ToPdf(void) const override { return "/" + ToString(); }
+	virtual Object::Type GetType(void) const noexcept override;
+	virtual std::string ToPdf(void) const override;
 	virtual std::string ToString(void) const override;
 
-	virtual NameObject* Clone(void) const override { return new NameObject(_value->Clone()); }
-
-	virtual ~NameObject() {
-		_value->Unsubscribe(this);
-	}
+	virtual NameObject* Clone(void) const override;
 
 private:
-	value_type _value;
+	BufferPtr _value;
 
 	std::string GetHexadecimalNotation(char ch) const;
 };

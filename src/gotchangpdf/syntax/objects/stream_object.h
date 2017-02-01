@@ -14,22 +14,22 @@ class StreamObject : public Object, public IModifyObserver {
 public:
 	StreamObject();
 	StreamObject(DictionaryObjectPtr header, types::stream_offset offset);
-	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Stream; }
+	virtual Object::Type GetType(void) const noexcept override;
 	virtual std::string ToString(void) const override;
 	virtual std::string ToPdf(void) const override;
 
-	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+	virtual void ObserveeChanged(IModifyObservable* observee) override;
 
-	DictionaryObjectPtr GetHeader() const { return _header; }
-	void SetHeader(DictionaryObjectPtr header) { _header->Unsubscribe(this); header->Subscribe(this); _header = header; OnChanged(); }
+	DictionaryObjectPtr GetHeader() const;
+	void SetHeader(DictionaryObjectPtr header);
 
-	types::stream_offset GetDataOffset() const { return _raw_data_offset; }
-	void SetDataOffset(types::stream_offset offset) { _raw_data_offset = offset; OnChanged(); }
+	types::stream_offset GetDataOffset() const;
+	void SetDataOffset(types::stream_offset offset);
 
 	BufferPtr GetBodyRaw() const;
 	BufferPtr GetBody() const;
 	BufferPtr GetBodyEncoded() const;
-	void SetBody(BufferPtr value) { _body_decoded->assign(value.begin(), value.end()); }
+	void SetBody(BufferPtr value);
 
 	virtual StreamObject* Clone(void) const override;
 	virtual bool Equals(ObjectPtr other) const override;

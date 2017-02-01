@@ -43,9 +43,7 @@ public:
 
 	virtual HexadecimalStringObject* Clone(void) const override { return new HexadecimalStringObject(_raw_value->Clone()); }
 
-	virtual ~HexadecimalStringObject() {
-		_value->Unsubscribe(this);
-	}
+	virtual ~HexadecimalStringObject();
 
 private:
 	BufferPtr _raw_value;
@@ -66,9 +64,7 @@ public:
 
 	virtual LiteralStringObject* Clone(void) const override { return new LiteralStringObject(_raw_value->Clone()); }
 
-	virtual ~LiteralStringObject() {
-		_value->Unsubscribe(this);
-	}
+	virtual ~LiteralStringObject();
 
 private:
 	BufferPtr _raw_value;
