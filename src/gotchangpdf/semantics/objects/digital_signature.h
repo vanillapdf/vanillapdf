@@ -9,7 +9,7 @@
 namespace gotchangpdf {
 namespace semantics {
 
-class ByteRange : public IUnknown {
+class ByteRange : public virtual IUnknown, public IWeakReferenceable<ByteRange> {
 public:
 	explicit ByteRange(syntax::IntegerObjectPtr byte_offset, syntax::IntegerObjectPtr length);
 

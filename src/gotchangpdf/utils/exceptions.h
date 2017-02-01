@@ -6,6 +6,7 @@
 
 #include <exception>
 #include <string>
+#include <typeinfo>
 
 namespace gotchangpdf {
 

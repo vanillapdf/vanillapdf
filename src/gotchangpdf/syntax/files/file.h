@@ -14,7 +14,7 @@
 namespace gotchangpdf {
 namespace syntax {
 
-class File : public IUnknown {
+class File : public virtual IUnknown, public IWeakReferenceable<File> {
 public:
 	// Filesystem
 	static FilePtr Open(const std::string& path);

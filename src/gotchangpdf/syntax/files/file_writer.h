@@ -8,7 +8,7 @@
 namespace gotchangpdf {
 namespace syntax {
 
-class FileWriter : public IUnknown {
+class FileWriter : public virtual IUnknown, public IWeakReferenceable<FileWriter> {
 public:
 	void Write(const FilePtr source, FilePtr destination);
 	void WriteIncremental(const FilePtr source, FilePtr destination);

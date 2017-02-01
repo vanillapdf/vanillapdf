@@ -2,6 +2,7 @@
 #define _DEFERRED_H
 
 #include "utils_fwd.h"
+#include "unknown_interface.h"
 
 #include <type_traits>
 #include <initializer_list>
@@ -66,11 +67,19 @@ public:
 	T& operator*() const { return *get(); }
 	T* operator->() const { return get(); }
 
-	template <typename = typename std::enable_if<std::is_base_of<IUnknown, T>::value>::type>
-	WeakReference<T> GetWeakReference() { return get()->template GetWeakReference<T>(); }
+	template <
+		// Thank you C++ gods, that I have to declare even more fake arguments
+		typename U = T, // again SFINAE only on deduced arguments
+		typename = typename std::enable_if<std::is_base_of<IWeakReferenceable<U>, T>::value>::type
+	>
+	WeakReference<U> GetWeakReference() { return get()->template GetWeakReference<U>(); }
 
-	template <typename = typename std::enable_if<std::is_base_of<IUnknown, T>::value>::type>
-	operator WeakReference<T>() { return GetWeakReference(); }
+	template <
+		// Thank you C++ gods, that I have to declare even more fake arguments
+		typename U = T, // again SFINAE only on deduced arguments
+		typename = typename std::enable_if<std::is_base_of<IWeakReferenceable<U>, T>::value>::type
+	>
+	operator WeakReference<U>() { return GetWeakReference<U>(); }
 
 	DeferredWrapperBase& operator=(const DeferredWrapperBase& rhs) {
 		DeferredWrapperBase(rhs).swap(*this);

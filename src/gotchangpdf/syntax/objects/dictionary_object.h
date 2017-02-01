@@ -26,7 +26,7 @@ public:
 	typedef typename list_type::const_reference const_reference;
 
 public:
-	class Iterator : public IUnknown {
+	class Iterator : public virtual IUnknown, public IWeakReferenceable {
 	public:
 		typedef typename const_iterator::value_type value_type;
 		typedef typename const_iterator::difference_type difference_type;

@@ -10,7 +10,7 @@
 namespace gotchangpdf {
 namespace syntax {
 
-class XrefChain : public IUnknown {
+class XrefChain : public virtual IUnknown, public IWeakReferenceable<XrefChain> {
 public:
 	using list_type = std::list<XrefBasePtr>;
 
@@ -22,7 +22,7 @@ public:
 	typedef typename list_type::const_reference const_reference;
 
 public:
-	class Iterator : public IUnknown {
+	class Iterator : public virtual IUnknown, public IWeakReferenceable<Iterator> {
 	public:
 		typedef list_type::const_iterator::value_type value_type;
 		typedef list_type::const_iterator::difference_type difference_type;

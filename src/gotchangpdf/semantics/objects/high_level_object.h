@@ -7,7 +7,7 @@ namespace gotchangpdf {
 namespace semantics {
 
 template <typename T>
-class HighLevelObject : public IUnknown {
+class HighLevelObject : public virtual IUnknown, public IWeakReferenceable<HighLevelObject<T>> {
 public:
 	explicit HighLevelObject(const T& obj) : _obj(obj) {}
 	T GetObject(void) const { return _obj; }

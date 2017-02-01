@@ -11,7 +11,7 @@
 
 namespace gotchangpdf {
 
-class Buffer : public IUnknown, public IModifyObservable {
+class Buffer : public virtual IUnknown, public IWeakReferenceable<Buffer>, public IModifyObservable {
 public:
 	using base_type = std::vector<char>;
 

@@ -6,9 +6,7 @@
 
 namespace gotchangpdf {
 
-WeakReferenceCounter::WeakReferenceCounter(IUnknown* ptr) noexcept
-	: m_active(true), m_reference(ptr) {
-	assert(nullptr != ptr);
+WeakReferenceCounter::WeakReferenceCounter() noexcept : m_active(true) {
 }
 
 bool WeakReferenceCounter::IsActive() const noexcept {
@@ -19,9 +17,7 @@ void WeakReferenceCounter::Deactivate() noexcept {
 	m_active = false;
 }
 
-IUnknown* WeakReferenceCounter::GetReference() const noexcept {
-	return m_reference;
-}
+IUnknown::~IUnknown() {}
 
 IUnknown::IUnknown() noexcept : m_ref_counter(0) {
 }
@@ -43,10 +39,6 @@ void IUnknown::AddRef() noexcept {
 
 void IUnknown::Release() noexcept {
 	if (--m_ref_counter == 0) {
-		if (m_weak_ref) {
-			m_weak_ref->Deactivate();
-		}
-
 		delete this;
 	}
 }

@@ -11,7 +11,7 @@ namespace gotchangpdf {
 namespace syntax {
 
 StreamObject::StreamObject() {
-	_header->SetOwner(GetWeakReference<Object>());
+	_header->SetOwner(Object::GetWeakReference());
 	_header->Subscribe(this);
 	_body->Subscribe(this);
 	_body_decoded->Subscribe(this);
@@ -19,7 +19,7 @@ StreamObject::StreamObject() {
 
 StreamObject::StreamObject(DictionaryObjectPtr header, types::stream_offset offset)
 	: _header(header), _raw_data_offset(offset) {
-	_header->SetOwner(GetWeakReference<Object>());
+	_header->SetOwner(Object::GetWeakReference());
 	_header->Subscribe(this);
 	_body->Subscribe(this);
 	_body_decoded->Subscribe(this);

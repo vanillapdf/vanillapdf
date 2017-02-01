@@ -9,7 +9,7 @@
 namespace gotchangpdf {
 namespace syntax {
 
-class NumericObjectBackend : public IUnknown, public IModifyObservable {
+class NumericObjectBackend : public virtual IUnknown, public IWeakReferenceable<NumericObjectBackend>, public IModifyObservable {
 public:
 	NumericObjectBackend() : m_type(Type::SignedInteger), m_int(0) {}
 	NumericObjectBackend(types::native_int value) : m_type(Type::SignedInteger), m_int(value) {}

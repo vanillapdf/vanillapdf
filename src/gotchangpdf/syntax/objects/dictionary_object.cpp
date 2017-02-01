@@ -94,8 +94,8 @@ bool DictionaryObject::Remove(const NameObjectPtr& name) {
 void DictionaryObject::Insert(const NameObjectPtr& name, const ContainableObjectPtr& value) {
 	std::pair<NameObjectPtr, ContainableObjectPtr> pair(name, value);
 	auto result = _list.insert(pair);
-	name->SetOwner(GetWeakReference<Object>());
-	value->SetOwner(GetWeakReference<Object>());
+	name->SetOwner(Object::GetWeakReference());
+	value->SetOwner(Object::GetWeakReference());
 
 	name->Subscribe(this);
 	value->Subscribe(this);

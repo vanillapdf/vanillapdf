@@ -7,14 +7,14 @@ namespace syntax {
 
 MixedArrayObject::MixedArrayObject(const list_type& list) : _list(list) {
 	for (auto item : _list) {
-		item->SetOwner(GetWeakReference<Object>());
+		item->SetOwner(Object::GetWeakReference());
 		item->Subscribe(this);
 	}
 }
 
 MixedArrayObject::MixedArrayObject(const std::initializer_list<ContainableObjectPtr>& list) : _list(list) {
 	for (auto item : _list) {
-		item->SetOwner(GetWeakReference<Object>());
+		item->SetOwner(Object::GetWeakReference());
 		item->Subscribe(this);
 	}
 }
@@ -22,7 +22,7 @@ MixedArrayObject::MixedArrayObject(const std::initializer_list<ContainableObject
 MixedArrayObject::MixedArrayObject(const ContainableObject& other, list_type& list)
 	: ContainableObject(other), _list(list) {
 	for (auto item : _list) {
-		item->SetOwner(GetWeakReference<Object>());
+		item->SetOwner(Object::GetWeakReference());
 		item->Subscribe(this);
 	}
 }
@@ -61,14 +61,14 @@ MixedArrayObject* MixedArrayObject::Clone(void) const {
 
 void MixedArrayObject::Append(const ContainableObjectPtr& value) {
 	_list.push_back(value);
-	value->SetOwner(GetWeakReference<Object>());
+	value->SetOwner(Object::GetWeakReference());
 	value->Subscribe(this);
 	OnChanged();
 }
 
 void MixedArrayObject::Insert(const ContainableObjectPtr& value, size_t at) {
 	_list.insert(_list.begin() + at, value);
-	value->SetOwner(GetWeakReference<Object>());
+	value->SetOwner(Object::GetWeakReference());
 	value->Subscribe(this);
 	OnChanged();
 }

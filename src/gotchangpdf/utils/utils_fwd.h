@@ -29,6 +29,9 @@ class WeakReferenceCounter;
 template <typename T>
 class WeakReference;
 
+template <typename T>
+class IWeakReferenceable;
+
 } // gotchangpdf
 
 #endif /* _UTILS_FWD_H */

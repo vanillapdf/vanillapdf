@@ -11,7 +11,7 @@
 namespace gotchangpdf {
 namespace syntax {
 
-class XrefEntryBase : public IUnknown, public IModifyObservable {
+class XrefEntryBase : public virtual IUnknown, public IWeakReferenceable<XrefEntryBase>, public IModifyObservable {
 public:
 	enum class Usage {
 		Null = 0,
@@ -153,12 +153,12 @@ private:
 	types::uinteger _index = 0;
 };
 
-class XrefBase : public IUnknown, public IModifyObserver, public IModifyObservable {
+class XrefBase : public virtual IUnknown, public IModifyObserver, public IModifyObservable {
 public:
 	using map_type = std::unordered_map<types::big_uint, XrefEntryBasePtr>;
 
 public:
-	class Iterator : public IUnknown {
+	class Iterator : public virtual IUnknown, public IWeakReferenceable {
 	public:
 		typedef map_type::const_iterator::value_type value_type;
 		typedef map_type::const_iterator::difference_type difference_type;

@@ -10,7 +10,7 @@
 namespace gotchangpdf {
 namespace contents {
 
-class OperatorBase : public IUnknown {
+class OperatorBase : public virtual IUnknown, public IWeakReferenceable<OperationBase> {
 public:
 	enum class Type {
 		Unknown = 0,

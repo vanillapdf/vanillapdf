@@ -17,7 +17,7 @@ public:
 
 class DeveloperExtensions : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
-	class Iterator : public IUnknown {
+	class Iterator : public virtual IUnknown, public IWeakReferenceable {
 	public:
 		typedef syntax::DictionaryObject::const_iterator IteratorT;
 

@@ -8,7 +8,7 @@
 namespace gotchangpdf {
 namespace syntax {
 
-class Header : public IUnknown {
+class Header : public virtual IUnknown, public IWeakReferenceable<Header> {
 public:
 	Version GetVersion(void) const noexcept { return _version; }
 	void SetVersion(Version version) { _version = version; }

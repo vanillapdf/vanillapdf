@@ -8,7 +8,7 @@
 namespace gotchangpdf {
 namespace syntax {
 
-class Token : public IUnknown {
+class Token : public virtual IUnknown, public IWeakReferenceable<Token> {
 public:
 	enum class Type : unsigned char {
 		UNKNOWN = 0,

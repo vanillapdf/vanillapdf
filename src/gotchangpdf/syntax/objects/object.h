@@ -13,7 +13,7 @@
 namespace gotchangpdf {
 namespace syntax {
 
-class Object : public IUnknown, public IModifyObservable {
+class Object : public virtual IUnknown, public IWeakReferenceable<Object>, public IModifyObservable {
 public:
 	enum class Type {
 		Null = 0,

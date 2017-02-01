@@ -10,7 +10,7 @@
 namespace gotchangpdf {
 namespace contents {
 
-class InstructionBase : public IUnknown, public IModifyObservable {
+class InstructionBase : public virtual IUnknown, public IWeakReferenceable<InstructionBase>, public IModifyObservable {
 public:
 	enum class Type {
 		Object,
@@ -21,7 +21,7 @@ public:
 	virtual std::string ToPdf() const = 0;
 };
 
-class BaseInstructionCollection : public IUnknown, public IModifyObserver, public IModifyObservable {
+class BaseInstructionCollection : public virtual IUnknown, public IModifyObserver, public IModifyObservable {
 public:
 	using data_type = std::vector<InstructionBasePtr>;
 

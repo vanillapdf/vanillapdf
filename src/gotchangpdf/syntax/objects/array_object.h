@@ -25,7 +25,7 @@ public:
 };
 
 template <typename T>
-class ArrayObjectIterator : public IUnknown, public std::iterator<std::input_iterator_tag, T> {
+class ArrayObjectIterator : public virtual IUnknown, public std::iterator<std::input_iterator_tag, T> {
 public:
 	ArrayObjectIterator(std::function<T(const ContainableObjectPtr& obj)> conversion);
 	ArrayObjectIterator(typename MixedArrayObject::iterator it, const std::function<T(const ContainableObjectPtr& obj)>& conversion);
@@ -45,7 +45,7 @@ private:
 
 // This class shall act as a front-end above mixed array
 template <typename T>
-class ArrayObject : public IUnknown {
+class ArrayObject : public virtual IUnknown, public IWeakReferenceable<ArrayObject<T>> {
 public:
 	static_assert(instantiation_of<Deferred, T>::value ||
 		std::is_base_of<Object, typename T::deferred_ptr_type>::value,

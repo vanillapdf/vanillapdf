@@ -8,7 +8,7 @@
 namespace gotchangpdf {
 namespace syntax {
 
-class FilterBase : public IUnknown {
+class FilterBase : public virtual IUnknown, public IWeakReferenceable<FilterBase> {
 public:
 	enum class Type : unsigned char {
 		ASCIIHexDecode,

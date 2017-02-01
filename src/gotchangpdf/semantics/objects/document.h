@@ -14,7 +14,7 @@
 namespace gotchangpdf {
 namespace semantics {
 
-class Document : public IUnknown {
+class Document : public virtual IUnknown, public IWeakReferenceable<Document> {
 public:
 	Document(const std::string& filename);
 	Document(syntax::FilePtr holder);
