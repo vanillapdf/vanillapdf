@@ -24,11 +24,13 @@ XrefBase::~XrefBase() {
 }
 
 bool XrefEntryBase::operator<(const XrefEntryBase& other) const {
-	if (_obj_number != other._obj_number)
+	if (_obj_number != other._obj_number) {
 		return _obj_number < other._obj_number;
+	}
 
-	if (_gen_number != other._gen_number)
+	if (_gen_number != other._gen_number) {
 		return _gen_number < other._gen_number;
+	}
 
 	return false;
 }
