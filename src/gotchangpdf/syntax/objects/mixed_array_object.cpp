@@ -73,12 +73,18 @@ void MixedArrayObject::Insert(ContainableObjectPtr value, size_t at) {
 	OnChanged();
 }
 
-void MixedArrayObject::Remove(size_t at) {
+bool MixedArrayObject::Remove(size_t at) {
 	auto item = _list.begin() + at;
+	if (item == _list.end()) {
+		return false;
+	}
+
 	(*item)->ClearOwner();
 	(*item)->Unsubscribe(this);
 	_list.erase(item);
 	OnChanged();
+
+	return true;
 }
 
 // stl compatibility

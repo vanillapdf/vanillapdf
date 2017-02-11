@@ -40,9 +40,9 @@ public:
 	const ContainableObjectPtr& At(size_t at) const { return _list.at(at); }
 	ContainableObjectPtr& At(size_t at) { return _list.at(at); }
 
-	void Remove(size_t at);
 	void Append(ContainableObjectPtr value);
 	void Insert(ContainableObjectPtr value, size_t at);
+	bool Remove(size_t at);
 
 	// stl compatibility
 	void push_back(ContainableObjectPtr value);
