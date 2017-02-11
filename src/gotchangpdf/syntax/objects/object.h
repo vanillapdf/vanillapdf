@@ -44,7 +44,7 @@ public:
 	void SetDirty(bool dirty = true) noexcept { m_dirty = dirty; }
 
 	bool IsEncryptionExempted() const noexcept;
-	void SetEncryptionExempted(bool exempted = true) { m_encryption_exempted = exempted; }
+	void SetEncryptionExempted(bool exempted = true) noexcept { m_encryption_exempted = exempted; }
 
 	void SetOffset(types::stream_offset offset) noexcept { m_offset = offset; }
 	types::stream_offset GetOffset() const noexcept { return m_offset; }
