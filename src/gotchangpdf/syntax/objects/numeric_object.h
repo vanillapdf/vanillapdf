@@ -11,14 +11,14 @@ namespace syntax {
 
 class NumericObjectBackend : public virtual IUnknown, public IWeakReferenceable<NumericObjectBackend>, public IModifyObservable {
 public:
-	NumericObjectBackend() : m_type(Type::SignedInteger), m_int(0) {}
-	NumericObjectBackend(types::native_int value) : m_type(Type::SignedInteger), m_int(value) {}
-	NumericObjectBackend(types::native_uint value) : m_type(Type::UnsignedInteger), m_uint(value) {}
-	NumericObjectBackend(types::big_int value) : m_type(Type::SignedInteger), m_int(value) {}
-	NumericObjectBackend(types::real value) : m_type(Type::Real), m_real(value) {}
-	NumericObjectBackend(types::real value, uint32_t precision) : m_type(Type::Real), m_real(value), m_precision(precision) {}
-	NumericObjectBackend& operator= (types::big_int value) { m_type = Type::SignedInteger; m_int = value; return *this; }
-	NumericObjectBackend& operator= (types::real value) { m_type = Type::Real; m_real = value; return *this; }
+	NumericObjectBackend();
+	NumericObjectBackend(types::native_int value);
+	NumericObjectBackend(types::native_uint value);
+	NumericObjectBackend(types::big_int value);
+	NumericObjectBackend(types::real value);
+	NumericObjectBackend(types::real value, uint32_t precision);
+	NumericObjectBackend& operator= (types::big_int value);
+	NumericObjectBackend& operator= (types::real value);
 
 	types::big_int GetIntegerValue(void) const;
 	types::big_uint GetUnsignedIntegerValue(void) const;
@@ -27,8 +27,9 @@ public:
 	void SetIntegerValue(types::big_int value);
 	void SetUnsignedIntegerValue(types::big_uint value);
 	void SetRealValue(types::real value);
+	void SetRealPrecision(uint32_t precision);
 
-	NumericObjectBackend* Clone(void) const { return new NumericObjectBackend(*this); }
+	NumericObjectBackend* Clone(void) const;
 
 	std::string ToString(void) const;
 
@@ -57,7 +58,9 @@ private:
 
 class NumericObject : public ContainableObject {
 public:
-	NumericObjectBackendPtr GetNumericBackend(void) const { return m_value; }
+	NumericObjectBackendPtr GetNumericBackend(void) const {
+		return m_value;
+	}
 
 protected:
 	NumericObjectBackendPtr m_value;

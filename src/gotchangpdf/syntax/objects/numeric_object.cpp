@@ -7,6 +7,49 @@
 namespace gotchangpdf {
 namespace syntax {
 
+NumericObjectBackend::NumericObjectBackend()
+	: m_type(Type::SignedInteger), m_int(0) {
+}
+
+NumericObjectBackend::NumericObjectBackend(types::native_int value)
+	: m_type(Type::SignedInteger), m_int(value) {
+}
+
+NumericObjectBackend::NumericObjectBackend(types::native_uint value)
+	: m_type(Type::UnsignedInteger), m_uint(value) {
+}
+
+NumericObjectBackend::NumericObjectBackend(types::big_int value)
+	: m_type(Type::SignedInteger), m_int(value) {
+}
+NumericObjectBackend::NumericObjectBackend(types::real value)
+	: m_type(Type::Real), m_real(value) {
+}
+
+NumericObjectBackend::NumericObjectBackend(types::real value, uint32_t precision)
+	: m_type(Type::Real), m_real(value), m_precision(precision) {
+}
+
+NumericObjectBackend& NumericObjectBackend::operator= (types::big_int value) {
+	m_type = Type::SignedInteger;
+	m_int = value;
+	return *this;
+}
+
+NumericObjectBackend& NumericObjectBackend::operator= (types::real value) {
+	m_type = Type::Real;
+	m_real = value;
+	return *this;
+}
+
+void NumericObjectBackend::SetRealPrecision(uint32_t precision) {
+	m_precision = precision;
+}
+
+NumericObjectBackend* NumericObjectBackend::Clone(void) const {
+	return new NumericObjectBackend(*this);
+}
+
 void NumericObjectBackend::SetIntegerValue(types::big_int value) {
 	if (Type::SignedInteger == m_type && m_int == value) {
 		return;

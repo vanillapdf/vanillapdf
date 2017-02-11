@@ -17,6 +17,7 @@ public:
 	explicit RealObject(types::real value, uint32_t precision);
 	explicit RealObject(const NumericObject& value);
 	explicit RealObject(NumericObjectBackendPtr value);
+	~RealObject();
 
 	virtual Object::Type GetType(void) const noexcept override;
 	virtual std::string ToPdf(void) const override;
@@ -28,9 +29,6 @@ public:
 	virtual void ObserveeChanged(IModifyObservable*) override;
 	virtual RealObject* Clone(void) const override;
 	virtual bool Equals(ObjectPtr other) const override;
-
-private:
-	NumericObjectBackendPtr m_value;
 };
 
 inline Object::Type RealObject::GetType(void) const noexcept {

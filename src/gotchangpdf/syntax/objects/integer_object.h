@@ -18,6 +18,7 @@ public:
 	explicit IntegerObject(types::big_uint value);
 	explicit IntegerObject(const NumericObject& value);
 	explicit IntegerObject(NumericObjectBackendPtr value);
+	~IntegerObject();
 
 	IntegerObject& operator= (types::native_int value);
 	IntegerObject& operator= (types::native_uint value);

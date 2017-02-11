@@ -9,11 +9,18 @@ RealObject::RealObject() {
 	m_value->Subscribe(this);
 }
 
-RealObject::RealObject(types::real value) : m_value(value) {
+RealObject::~RealObject() {
+	m_value->Unsubscribe(this);
+}
+
+RealObject::RealObject(types::real value) {
+	m_value->SetRealValue(value);
 	m_value->Subscribe(this);
 }
 
-RealObject::RealObject(types::real value, uint32_t precision) : m_value(value, precision) {
+RealObject::RealObject(types::real value, uint32_t precision) {
+	m_value->SetRealValue(value);
+	m_value->SetRealPrecision(precision);
 	m_value->Subscribe(this);
 }
 RealObject::RealObject(const NumericObject& value) {
