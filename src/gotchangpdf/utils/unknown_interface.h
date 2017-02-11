@@ -173,7 +173,7 @@ public:
 	template <typename U>
 	WeakReference<U> GetWeakReference() {
 		if (!m_weak_ref) {
-			m_weak_ref = make_unique<WeakReferenceCounter>();
+			m_weak_ref = std::make_shared<WeakReferenceCounter>();
 		}
 
 		T* converted = static_cast<U*>(this);
