@@ -28,34 +28,32 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Destination_Release(DestinationHa
 	return ObjectRelease<DestinationBase, DestinationHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDestinationsHandle handle, NameObjectHandle name_handle, boolean_type* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDestinationsHandle handle, const struct NameObjectHandleTag* name_handle, boolean_type* result)
 {
 	NamedDestinations* obj = reinterpret_cast<NamedDestinations*>(handle);
-	NameObject* name = reinterpret_cast<NameObject*>(name_handle);
+	const NameObject* name = reinterpret_cast<const NameObject*>(name_handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(name);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try
 	{
-		NameObjectPtr name_ptr(name);
-		*result = obj->Contains(name_ptr);
+		*result = obj->Contains(*name);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Find(NamedDestinationsHandle handle, NameObjectHandle name_handle, DestinationHandle* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Find(NamedDestinationsHandle handle, const struct NameObjectHandleTag* name_handle, DestinationHandle* result)
 {
 	NamedDestinations* obj = reinterpret_cast<NamedDestinations*>(handle);
-	NameObject* name = reinterpret_cast<NameObject*>(name_handle);
+	const NameObject* name = reinterpret_cast<const NameObject*>(name_handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(name);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try
 	{
-		NameObjectPtr name_ptr(name);
-		auto direct = obj->Find(name_ptr);
+		auto direct = obj->Find(*name);
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<DestinationHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;

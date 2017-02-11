@@ -33,12 +33,12 @@ extern "C"
 	/**
 	* \brief Determine if collection contains key \p name_handle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION FontMap_Contains(FontMapHandle handle, NameObjectHandle key_handle, boolean_type* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION FontMap_Contains(FontMapHandle handle, const struct NameObjectHandleTag* key_handle, boolean_type* result);
 
 	/**
 	* \brief Find mapped value for key \p name_handle
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle handle, NameObjectHandle key_handle, FontHandle* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle handle, const struct NameObjectHandleTag* key_handle, FontHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release

@@ -72,7 +72,7 @@ public:
 	ArrayObject(const MixedArrayObject& other, std::function<T(const ContainableObjectPtr& obj)> conversion);
 
 	template <typename U>
-	ArrayObject(const ArrayObject<U>& other, std::function<T(const U& obj)> new_conversion);
+	ArrayObject(ArrayObject<U> other, std::function<T(const U& obj)> new_conversion);
 
 	MixedArrayObjectPtr Data(void) const;
 	size_t Size(void) const;
@@ -92,9 +92,9 @@ public:
 
 	// stl compatibility
 	ArrayObjectIterator<T> begin();
-	ArrayObjectIterator<T> begin() const;
+	const ArrayObjectIterator<T> begin() const;
 	ArrayObjectIterator<T> end();
-	ArrayObjectIterator<T> end() const;
+	const ArrayObjectIterator<T> end() const;
 
 private:
 	MixedArrayObjectPtr _list;
@@ -192,7 +192,7 @@ ArrayObject<T>::ArrayObject(const MixedArrayObject& other, std::function<T(const
 
 template <typename T>
 template <typename U>
-ArrayObject<T>::ArrayObject(const ArrayObject<U>& other, std::function<T(const U& obj)> new_conversion) {
+ArrayObject<T>::ArrayObject(ArrayObject<U> other, std::function<T(const U& obj)> new_conversion) {
 	auto other_conversion = other._conversion;
 	_conversion = [other_conversion, new_conversion](const ContainableObjectPtr& obj) { return new_conversion(other_conversion(obj)); };
 	for (auto item : other) {
@@ -241,7 +241,9 @@ void ArrayObject<T>::Insert(const ContainableObjectPtr& value, size_t at) {
 }
 
 template <typename T>
-void ArrayObject<T>::Remove(size_t at) { _list->Remove(at); }
+void ArrayObject<T>::Remove(size_t at) {
+	_list->Remove(at);
+}
 
 template <typename T>
 std::string ArrayObject<T>::ToString(void) const {
@@ -260,7 +262,7 @@ ArrayObjectIterator<T> ArrayObject<T>::begin() {
 }
 
 template <typename T>
-ArrayObjectIterator<T> ArrayObject<T>::begin() const {
+const ArrayObjectIterator<T> ArrayObject<T>::begin() const {
 	return ArrayObjectIterator<T>(_list->begin(), _conversion);
 }
 
@@ -270,7 +272,7 @@ ArrayObjectIterator<T> ArrayObject<T>::end() {
 }
 
 template <typename T>
-ArrayObjectIterator<T> ArrayObject<T>::end() const {
+const ArrayObjectIterator<T> ArrayObject<T>::end() const {
 	return ArrayObjectIterator<T>(_list->end(), _conversion);
 }
 

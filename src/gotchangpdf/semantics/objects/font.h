@@ -13,8 +13,8 @@ namespace semantics {
 class FontMap : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
 	explicit FontMap(syntax::DictionaryObjectPtr obj);
-	bool Contains(syntax::NameObjectPtr name) const;
-	FontPtr Find(syntax::NameObjectPtr name) const;
+	bool Contains(const syntax::NameObject& name) const;
+	FontPtr Find(const syntax::NameObject& name) const;
 };
 
 class FontBase : public HighLevelObject<syntax::DictionaryObjectPtr> {

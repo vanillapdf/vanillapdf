@@ -91,17 +91,17 @@ public:
 	virtual bool Equals(ObjectPtr other) const override;
 
 	template <typename U>
-	U FindAs(const NameObjectPtr& name) const {
+	U FindAs(const NameObject& name) const {
 		auto result = Find(name);
 		return ObjectUtils::ConvertTo<U>(result);
 	}
 
 	std::vector<ContainableObjectPtr> Values() const;
-	ContainableObjectPtr Find(const NameObjectPtr& name) const;
-	bool TryFind(const NameObjectPtr& name, OutputContainableObjectPtr& result) const;
-	bool Contains(const NameObjectPtr& name) const;
-	void Insert(const NameObjectPtr& name, const ContainableObjectPtr& value);
-	bool Remove(const NameObjectPtr& name);
+	ContainableObjectPtr Find(const NameObject& name) const;
+	bool TryFind(const NameObject& name, OutputContainableObjectPtr& result) const;
+	bool Contains(const NameObject& name) const;
+	void Insert(NameObjectPtr name, ContainableObjectPtr value);
+	bool Remove(const NameObject& name);
 
 	virtual ~DictionaryObject();
 };

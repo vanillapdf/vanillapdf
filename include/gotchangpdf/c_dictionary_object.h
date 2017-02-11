@@ -82,12 +82,12 @@ extern "C"
 	/**
 	* \brief Find mapped value for key \p key
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, NameObjectHandle key, ObjectHandle* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, const struct NameObjectHandleTag* key, ObjectHandle* result);
 
 	/**
 	* \brief Determine if collection contains \p key
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(DictionaryObjectHandle handle, NameObjectHandle key, boolean_type* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(DictionaryObjectHandle handle, const struct NameObjectHandleTag* key, boolean_type* result);
 
 	/**
 	* \brief Get collection iterator for enumerating all entries
@@ -99,7 +99,7 @@ extern "C"
 	/**
 	* \brief Remove key-value pair from collection
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryObjectHandle handle, NameObjectHandle key);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryObjectHandle handle, const struct NameObjectHandleTag* key);
 
 	/**
 	* \brief Insert new key-value pair into collection

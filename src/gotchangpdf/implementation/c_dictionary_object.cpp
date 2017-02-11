@@ -8,10 +8,10 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, NameObjectHandle key, ObjectHandle* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, const struct NameObjectHandleTag* key, ObjectHandle* result)
 {
 	DictionaryObject* obj = reinterpret_cast<DictionaryObject*>(handle);
-	NameObject* name_object = reinterpret_cast<NameObject*>(key);
+	const NameObject* name_object = reinterpret_cast<const NameObject*>(key);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(name_object);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -117,16 +117,16 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryObjectHandle dictionary_handle, NameObjectHandle key)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryObjectHandle dictionary_handle, const struct NameObjectHandleTag* key)
 {
 	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(dictionary_handle);
-	NameObject* name = reinterpret_cast<NameObject*>(key);
+	const NameObject* name = reinterpret_cast<const NameObject*>(key);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(dictionary);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(name);
 
 	try
 	{
-		dictionary->Remove(name);
+		dictionary->Remove(*name);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -151,17 +151,17 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(Dictionar
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(DictionaryObjectHandle dictionary_handle, NameObjectHandle key, boolean_type* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(DictionaryObjectHandle dictionary_handle, const struct NameObjectHandleTag* key, boolean_type* result)
 {
 	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(dictionary_handle);
-	NameObject* name = reinterpret_cast<NameObject*>(key);
+	const NameObject* name = reinterpret_cast<const NameObject*>(key);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(dictionary);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(name);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try
 	{
-		*result = dictionary->Contains(name);
+		*result = dictionary->Contains(*name);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }

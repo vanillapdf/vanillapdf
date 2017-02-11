@@ -70,7 +70,7 @@ public:
 	void Reverse(void) { _list.reverse(); }
 
 	XrefUsedEntryBasePtr AllocateNewEntry();
-	XrefEntryBasePtr GetXrefEntry(types::big_uint objNumber, types::ushort genNumber);
+	XrefEntryBasePtr GetXrefEntry(types::big_uint objNumber, types::ushort genNumber) const;
 	bool Contains(types::big_uint objNumber, types::ushort genNumber) const;
 
 private:

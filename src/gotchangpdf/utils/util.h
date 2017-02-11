@@ -104,7 +104,7 @@ private:
 	template <typename T>
 	class Specializator {
 	public:
-		static T ConvertTo(const BaseT& obj) {
+		static T ConvertTo(BaseT obj) {
 			auto converted = dynamic_cast<T>(obj);
 			if (nullptr == converted)
 				throw ConversionExceptionFactory<T>::Construct(obj);
@@ -121,7 +121,7 @@ private:
 	template <typename T>
 	class Specializator<Deferred<T>> {
 	public:
-		static Deferred<T> ConvertTo(const BaseT& obj) {
+		static Deferred<T> ConvertTo(BaseT obj) {
 			auto ptr = obj.get();
 			auto converted = dynamic_cast<T*>(ptr);
 			if (nullptr == converted)

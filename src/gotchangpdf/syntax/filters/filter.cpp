@@ -8,17 +8,18 @@
 namespace gotchangpdf {
 namespace syntax {
 
-FilterBasePtr FilterBase::GetFilterByName(const NameObjectPtr name) {
-	if (name->Equals(constant::Name::FlateDecode))
+FilterBasePtr FilterBase::GetFilterByName(const NameObject& name) {
+	if (name.Equals(constant::Name::FlateDecode)) {
 		return FlateDecodeFilterPtr();
-	else if (name->Equals(constant::Name::ASCII85Decode))
+	} else if (name.Equals(constant::Name::ASCII85Decode)) {
 		return ASCII85DecodeFilterPtr();
-	else if (name->Equals(constant::Name::ASCIIHexDecode))
+	} else if (name.Equals(constant::Name::ASCIIHexDecode)) {
 		return ASCIIHexDecodeFilterPtr();
-	else if (name->Equals(constant::Name::DCTDecode))
+	} else if (name.Equals(constant::Name::DCTDecode)) {
 		return DCTDecodeFilterPtr();
+	}
 
-	throw GeneralException("Unknown filter type: " + name->GetValue()->ToString());
+	throw GeneralException("Unknown filter type: " + name.GetValue()->ToString());
 }
 
 } // syntax

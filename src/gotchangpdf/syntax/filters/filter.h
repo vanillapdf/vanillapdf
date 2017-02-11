@@ -22,7 +22,7 @@ public:
 		JPXDecode
 	};
 
-	static FilterBasePtr GetFilterByName(const NameObjectPtr name);
+	static FilterBasePtr GetFilterByName(const NameObject& name);
 
 	virtual BufferPtr Encode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
 	virtual BufferPtr Decode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;

@@ -24,6 +24,9 @@ class DeferredWrapperBase {
 public:
 	typedef T deferred_ptr_type;
 
+	template <typename U>
+	friend class DeferredWrapperBase;
+
 public:
 	template <
 		// Lets have a talk about SFINAE
@@ -51,35 +54,64 @@ public:
 
 	DeferredWrapperBase(T* value) noexcept : DeferredWrapperBase(value, true) {}
 	DeferredWrapperBase(const DeferredWrapperBase& rhs) noexcept : DeferredWrapperBase(rhs.m_ptr, true) {}
-	DeferredWrapperBase(DeferredWrapperBase&& rhs) noexcept : DeferredWrapperBase(rhs.m_ptr, false) { rhs.m_ptr = nullptr; }
+	DeferredWrapperBase(DeferredWrapperBase&& rhs) noexcept : DeferredWrapperBase(rhs.m_ptr, false) {
+		rhs.m_ptr = nullptr;
+	}
 
-	template <typename U, typename = typename std::enable_if<std::is_convertible<U*, T*>::value>::type>
-	DeferredWrapperBase(const DeferredWrapperBase<U>& rhs) : DeferredWrapperBase(rhs.get(), true) {}
+	// This constructor is a bit tricky.
+	// I was not able to force the compiler to use
+	// this function with the parameters being non-const.
+	// Unfortunately, I need this conversion to be present.
+	// Therefore I am forced to cast away the constness
+	// because (I believe) all parameters are non-const
+	// in their scope. I don't have any way to verify
+	// this statement.
+	template <
+		typename U,
+		typename = typename std::enable_if<std::is_convertible<U*, T*>::value>::type
+	>
+	DeferredWrapperBase(const DeferredWrapperBase<U>& rhs) : DeferredWrapperBase(const_cast<U*>(rhs.get()), true) {}
 
-	template <typename... Parameters, typename = typename std::enable_if<std::is_constructible<T, Parameters...>::value>::type>
+	template <
+		typename U,
+		typename = typename std::enable_if<std::is_convertible<U*, T*>::value>::type
+	>
+	DeferredWrapperBase(DeferredWrapperBase<U>&& rhs) : DeferredWrapperBase(const_cast<U*>(rhs.get()), false) {
+		rhs.m_ptr = nullptr;
+	}
+
+	template <typename... Parameters, typename = typename std::enable_if<std::is_constructible<T, const Parameters&...>::value>::type>
 	DeferredWrapperBase(const Parameters&... p) : DeferredWrapperBase(pdf_new T(p...), true) {}
 
 	template <typename U, typename = typename std::enable_if<std::is_constructible<T, std::initializer_list<U>>::value>::type>
 	DeferredWrapperBase(std::initializer_list<U> list) : DeferredWrapperBase(pdf_new T(list), true) {}
 
 	operator T&() { return *get(); }
-	operator T&() const { return *get(); }
-	T& operator*() const { return *get(); }
-	T* operator->() const { return get(); }
+	operator const T&() const { return *get(); }
+
+	T& operator*() { return *get(); }
+	const T& operator*() const { return *get(); }
+
+	T* operator->() { return get(); }
+	const T* operator->() const { return get(); }
 
 	template <
 		// Thank you C++ gods, that I have to declare even more fake arguments
 		typename U = T, // again SFINAE only on deduced arguments
 		typename = typename std::enable_if<std::is_base_of<IWeakReferenceable<U>, T>::value>::type
 	>
-	WeakReference<U> GetWeakReference() { return get()->template GetWeakReference<U>(); }
+	WeakReference<U> GetWeakReference() {
+		return get()->template GetWeakReference<U>();
+	}
 
 	template <
 		// Thank you C++ gods, that I have to declare even more fake arguments
 		typename U = T, // again SFINAE only on deduced arguments
 		typename = typename std::enable_if<std::is_base_of<IWeakReferenceable<U>, T>::value>::type
 	>
-	operator WeakReference<U>() { return GetWeakReference<U>(); }
+	operator WeakReference<U>() {
+		return GetWeakReference<U>();
+	}
 
 	DeferredWrapperBase& operator=(const DeferredWrapperBase& rhs) {
 		DeferredWrapperBase(rhs).swap(*this);
@@ -92,10 +124,14 @@ public:
 	}
 
 	bool empty(void) const {
-		return m_ptr == nullptr;
+		return (m_ptr == nullptr);
 	}
 
-	T* get(void) const {
+	T* get(void) {
+		return get_internal();
+	}
+
+	const T* get(void) const {
 		return get_internal();
 	}
 
@@ -330,7 +366,7 @@ inline bool operator!=(std::nullptr_t, const Deferred<T>& right) noexcept {
 
 template <typename T>
 inline bool operator<(const Deferred<T>& left, const Deferred<T>& right) {
-	return std::less<T*>()(left.get(), right.get());
+	return std::less<const T*>()(left.get(), right.get());
 }
 
 // swap

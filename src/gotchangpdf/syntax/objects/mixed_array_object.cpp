@@ -59,14 +59,14 @@ MixedArrayObject* MixedArrayObject::Clone(void) const {
 	return result.release();
 }
 
-void MixedArrayObject::Append(const ContainableObjectPtr& value) {
+void MixedArrayObject::Append(ContainableObjectPtr value) {
 	_list.push_back(value);
 	value->SetOwner(Object::GetWeakReference());
 	value->Subscribe(this);
 	OnChanged();
 }
 
-void MixedArrayObject::Insert(const ContainableObjectPtr& value, size_t at) {
+void MixedArrayObject::Insert(ContainableObjectPtr value, size_t at) {
 	_list.insert(_list.begin() + at, value);
 	value->SetOwner(Object::GetWeakReference());
 	value->Subscribe(this);
@@ -82,7 +82,7 @@ void MixedArrayObject::Remove(size_t at) {
 }
 
 // stl compatibility
-void MixedArrayObject::push_back(const value_type& value) {
+void MixedArrayObject::push_back(ContainableObjectPtr value) {
 	_list.push_back(value);
 	value->Subscribe(this);
 	OnChanged();

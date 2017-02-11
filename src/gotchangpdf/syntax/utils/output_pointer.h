@@ -70,7 +70,9 @@ public:
 	}
 
 private:
-	std::unique_ptr<T> m_value = nullptr;
+	// Switched to shared pointer because
+	// unique pointer is missing copy constructor
+	std::shared_ptr<T> m_value = nullptr;
 };
 
 } // syntax

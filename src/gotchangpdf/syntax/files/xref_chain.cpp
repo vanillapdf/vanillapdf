@@ -62,8 +62,7 @@ XrefUsedEntryBasePtr XrefChain::AllocateNewEntry() {
 	throw GeneralException("Unable to allocate new entry");
 }
 
-XrefEntryBasePtr XrefChain::GetXrefEntry(types::big_uint objNumber,
-	types::ushort genNumber) {
+XrefEntryBasePtr XrefChain::GetXrefEntry(types::big_uint objNumber, types::ushort genNumber) const {
 	for (auto it = _list.begin(); it != _list.end(); it++) {
 		auto xref = (*it);
 

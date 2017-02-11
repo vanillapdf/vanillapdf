@@ -14,11 +14,11 @@ FontBase::Type Type1Font::GetType() const noexcept { return Type::Type1; }
 FontBase::Type Type3Font::GetType() const noexcept { return Type::Type3; }
 FontBase::Type CompositeFont::GetType() const noexcept { return Type::Composite; }
 
-bool FontMap::Contains(syntax::NameObjectPtr name) const {
+bool FontMap::Contains(const syntax::NameObject& name) const {
 	return _obj->Contains(name);
 }
 
-FontPtr FontMap::Find(syntax::NameObjectPtr name) const {
+FontPtr FontMap::Find(const syntax::NameObject& name) const {
 	auto dict = _obj->FindAs<syntax::DictionaryObjectPtr>(name);
 	return FontBase::Create(dict);
 }

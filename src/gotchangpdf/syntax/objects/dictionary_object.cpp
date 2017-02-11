@@ -41,6 +41,7 @@ std::string DictionaryObject::ToString(void) const {
 	for (auto item : _list) {
 		ss << item.first->ToString() << " " << item.second->ToString() << std::endl;
 	}
+
 	ss << ">>";
 	return ss.str();
 }
@@ -57,42 +58,46 @@ std::string DictionaryObject::ToPdf(void) const {
 	return ss.str();
 }
 
-ContainableObjectPtr DictionaryObject::Find(const NameObjectPtr & name) const {
+ContainableObjectPtr DictionaryObject::Find(const NameObject& name) const {
 	auto result = _list.find(name);
 	if (result == _list.end()) {
-		throw GeneralException("Item with name " + name->ToString() + " was not found in dictionary");
+		throw GeneralException("Item with name " + name.ToString() + " was not found in dictionary");
 	}
 
 	return result->second;
 }
 
-bool DictionaryObject::TryFind(const NameObjectPtr & name, OutputContainableObjectPtr& result) const {
+bool DictionaryObject::TryFind(const NameObject& name, OutputContainableObjectPtr& result) const {
 	auto item = _list.find(name);
-	if (item == _list.end())
+	if (item == _list.end()) {
 		return false;
+	}
 
 	result = item->second;
 	return true;
 }
 
-bool DictionaryObject::Remove(const NameObjectPtr& name) {
+bool DictionaryObject::Remove(const NameObject& name) {
 	auto found = _list.find(name);
 	if (found == _list.end()) {
 		return false;
 	}
 
-	found->first->ClearOwner();
-	found->second->ClearOwner();
-	found->first->Unsubscribe(this);
-	found->second->Unsubscribe(this);
+	auto found_key = found->first;
+	auto found_value = found->second;
+
+	found_key->ClearOwner();
+	found_value->ClearOwner();
+	found_key->Unsubscribe(this);
+	found_value->Unsubscribe(this);
 	_list.erase(found);
 	OnChanged();
 
 	return true;
 }
 
-void DictionaryObject::Insert(const NameObjectPtr& name, const ContainableObjectPtr& value) {
-	std::pair<NameObjectPtr, ContainableObjectPtr> pair(name, value);
+void DictionaryObject::Insert(NameObjectPtr name, ContainableObjectPtr value) {
+	std::pair<const NameObjectPtr, ContainableObjectPtr> pair(name, value);
 	auto result = _list.insert(pair);
 	name->SetOwner(Object::GetWeakReference());
 	value->SetOwner(Object::GetWeakReference());
@@ -104,7 +109,7 @@ void DictionaryObject::Insert(const NameObjectPtr& name, const ContainableObject
 	OnChanged();
 }
 
-bool DictionaryObject::Contains(const NameObjectPtr & name) const {
+bool DictionaryObject::Contains(const NameObject& name) const {
 	return (_list.find(name) != _list.end());
 }
 

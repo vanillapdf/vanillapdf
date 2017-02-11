@@ -16,7 +16,7 @@ namespace syntax {
 using namespace std;
 
 // experimental
-void FileWriter::Write(const FilePtr source, FilePtr destination) {
+void FileWriter::Write(FilePtr source, FilePtr destination) {
 	if (!source->IsInitialized()) {
 		throw FileNotInitializedException(source->GetFilename());
 	}
@@ -130,7 +130,7 @@ void FileWriter::Write(const FilePtr source, FilePtr destination) {
 	output->flush();
 }
 
-void FileWriter::WriteIncremental(const FilePtr source, FilePtr destination) {
+void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
 	if (!source->IsInitialized()) {
 		throw FileNotInitializedException(source->GetFilename());
 	}

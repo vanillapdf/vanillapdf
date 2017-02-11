@@ -33,8 +33,8 @@ public:
 		types::big_uint objNumber,
 		types::ushort genNumber) const;
 
-	XrefChainPtr GetXrefChain(void) const;
-	HeaderPtr GetHeader(void) const;
+	XrefChainPtr GetXrefChain(void);
+	HeaderPtr GetHeader(void);
 
 	std::string GetFilename(void) const { return _filename; }
 	std::shared_ptr<std::fstream> GetInputStream(void) const { return _input; }

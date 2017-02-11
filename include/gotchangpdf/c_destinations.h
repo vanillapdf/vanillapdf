@@ -160,7 +160,7 @@ extern "C"
 	/**
 	* \brief Determine if current map contains \p name.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDestinationsHandle handle, NameObjectHandle name, boolean_type* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDestinationsHandle handle, const struct NameObjectHandleTag* name, boolean_type* result);
 
 	/**
 	* \brief Find mapped value for key \p name.
@@ -170,7 +170,7 @@ extern "C"
 	* This function throws internal exception on failure,
 	* which may render it slower.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Find(NamedDestinationsHandle handle, NameObjectHandle name, DestinationHandle* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Find(NamedDestinationsHandle handle, const struct NameObjectHandleTag* name, DestinationHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release

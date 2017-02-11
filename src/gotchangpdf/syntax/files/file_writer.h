@@ -10,8 +10,8 @@ namespace syntax {
 
 class FileWriter : public virtual IUnknown, public IWeakReferenceable<FileWriter> {
 public:
-	void Write(const FilePtr source, FilePtr destination);
-	void WriteIncremental(const FilePtr source, FilePtr destination);
+	void Write(FilePtr source, FilePtr destination);
+	void WriteIncremental(FilePtr source, FilePtr destination);
 
 	bool GetRecalculateOffsetFlag(void) const noexcept { return m_recalculate_offset; }
 	void SetRecalculateOffsetFlag(bool flag) noexcept { m_recalculate_offset = flag; }
