@@ -66,12 +66,14 @@ XrefEntryBasePtr XrefChain::GetXrefEntry(types::big_uint objNumber, types::ushor
 	for (auto it = _list.begin(); it != _list.end(); it++) {
 		auto xref = (*it);
 
-		if (!xref->Contains(objNumber))
+		if (!xref->Contains(objNumber)) {
 			continue;
+		}
 
 		auto item = xref->Find(objNumber);
-		if (item->GetGenerationNumber() != genNumber)
+		if (item->GetGenerationNumber() != genNumber) {
 			continue;
+		}
 
 		assert(item->GetObjectNumber() == objNumber && item->GetGenerationNumber() == genNumber);
 		return item;
@@ -89,8 +91,9 @@ bool XrefChain::Contains(types::big_uint objNumber,
 		}
 
 		auto item = xref->Find(objNumber);
-		if (item->GetGenerationNumber() != genNumber)
+		if (item->GetGenerationNumber() != genNumber) {
 			continue;
+		}
 
 		assert(item->GetObjectNumber() == objNumber && item->GetGenerationNumber() == genNumber);
 		return true;

@@ -545,13 +545,15 @@ ObjectPtr File::GetIndirectObjectInternal(
 	types::ushort genNumber) const {
 	LOG_DEBUG(_filename) << "GetIndirectObject " << objNumber << " and " << genNumber;
 
-	if (!_xref->Contains(objNumber, genNumber))
+	if (!_xref->Contains(objNumber, genNumber)) {
 		return NullObject::GetInstance();
+	}
 
 	auto item = _xref->GetXrefEntry(objNumber, genNumber);
 
-	if (!item->InUse())
+	if (!item->InUse()) {
 		return NullObject::GetInstance();
+	}
 
 	switch (item->GetUsage()) {
 		case XrefEntryBase::Usage::Used:

@@ -86,8 +86,9 @@ int main(int argc, char *argv[]) {
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));
 
-	if (NULL != encryption_key)
+	if (NULL != encryption_key) {
 		RETURN_ERROR_IF_NOT_SUCCESS(EncryptionKey_Release(encryption_key));
+	}
 
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
