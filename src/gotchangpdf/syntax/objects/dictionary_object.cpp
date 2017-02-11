@@ -83,6 +83,10 @@ bool DictionaryObject::Remove(const NameObject& name) {
 		return false;
 	}
 
+	// The trick here is that assignment
+	// creates a non-const copy.
+	// Be careful to preserve
+	// the object state
 	auto found_key = found->first;
 	auto found_value = found->second;
 
@@ -125,8 +129,16 @@ std::vector<ContainableObjectPtr> DictionaryObject::Values() const {
 
 DictionaryObject::~DictionaryObject() {
 	for (auto item : _list) {
-		item.first->Unsubscribe(this);
-		item.second->Unsubscribe(this);
+
+		// The trick here is that assignment
+		// creates a non-const copy.
+		// Be careful to preserve
+		// the object state
+		auto item_key = item.first;
+		auto item_value = item.second;
+
+		item_key->Unsubscribe(this);
+		item_value->Unsubscribe(this);
 	}
 }
 
