@@ -64,8 +64,7 @@ public:
 
 	// Modifying operations
 	void reserve(size_type count) { m_data.reserve(count); OnChanged(); }
-	void push_back(const_reference val) { m_data.push_back(val); val->Subscribe(this); OnChanged(); }
-	void push_back(value_type&& val) { m_data.push_back(val); val->Subscribe(this); OnChanged(); }
+	void push_back(InstructionBasePtr val) { m_data.push_back(val); val->Subscribe(this); OnChanged(); }
 
 	~BaseInstructionCollection() {
 		for (auto item : m_data)
