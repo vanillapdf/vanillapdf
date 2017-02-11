@@ -4,7 +4,13 @@
 
 namespace gotchangpdf {
 
-IModifyObservable::~IModifyObservable() {}
+IModifyObservable::~IModifyObservable() {
+
+	// Check if all references are active
+	// All deactivated references shall remove themselves
+	std::for_each(m_observers.begin(), m_observers.end(), CheckReferenceActive);
+}
+
 IModifyObserver::~IModifyObserver() {}
 
 IModifyObservable::IModifyObservable(const IModifyObservable&) {
@@ -27,10 +33,6 @@ bool IModifyObservable::Unsubscribe(IModifyObserver* observer) {
 }
 
 void IModifyObservable::Subscribe(WeakReference<IModifyObserver> observer) {
-	// Remove all deactivated observers
-	std::remove_if(m_observers.begin(), m_observers.end(), IsReferenceDeactivated);
-
-	// Insert new observer
 	m_observers.push_back(observer);
 }
 
@@ -55,7 +57,7 @@ void IModifyObservable::OnChanged() {
 	for (auto current = m_observers.begin(); current != m_observers.end();) {
 
 		// Remove deactivated elements
-		if (!current->IsActive()) {
+		if (!CheckReferenceActive(*current)) {
 
 			// Erase will return next iterator
 			current = m_observers.erase(current);
@@ -74,8 +76,15 @@ void IModifyObservable::OnChanged() {
 	}
 }
 
-bool IModifyObservable::IsReferenceDeactivated(const WeakReference<IModifyObserver>& ref) {
-	return !ref.IsActive();
+bool IModifyObservable::CheckReferenceActive(const WeakReference<IModifyObserver>& ref) {
+
+	// All references shall unsubscribe properly from the notifications
+	assert(ref.IsActive() && "Found deactivated reference");
+	if (!ref.IsActive()) {
+		LOG_ERROR_GLOBAL << "Found deactivated reference";
+	}
+
+	return ref.IsActive();
 }
 
 } // gotchangpdf

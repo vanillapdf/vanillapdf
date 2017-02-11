@@ -45,7 +45,7 @@ protected:
 	bool m_initialized = false;
 
 private:
-	static bool IsReferenceDeactivated(const WeakReference<IModifyObserver>& ref);
+	static bool CheckReferenceActive(const WeakReference<IModifyObserver>& ref);
 };
 
 } // gotchangpdf
