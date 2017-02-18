@@ -64,9 +64,12 @@ class ReverseParserTokenDictionary;
 class ContentStreamTokenDictionary;
 
 // Streams
-class BaseStream;
-class Stream;
-class ReverseStream;
+class IInputStream; using IInputStreamPtr = Deferred<IInputStream>;
+class InputStream; using InputStreamPtr = Deferred<InputStream>;
+class InputReverseStream; using InputReverseStreamPtr = Deferred<InputReverseStream>;
+
+class IOutputStream; using IOutputStreamPtr = Deferred<IOutputStream>;
+class OutputStream; using OutputStreamPtr = Deferred<OutputStream>;
 
 // Objects
 class ObjectUtils;

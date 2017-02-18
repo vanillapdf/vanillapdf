@@ -16,7 +16,7 @@ namespace contents {
 
 using namespace syntax;
 
-ContentStreamParser::ContentStreamParser(WeakReference<File> file, CharacterSource & stream)
+ContentStreamParser::ContentStreamParser(WeakReference<File> file, IInputStreamPtr stream)
 	: ParserBase(file, stream) {
 	_dictionary = make_unique<ContentStreamTokenDictionary>();
 	_dictionary->Initialize();
@@ -73,7 +73,7 @@ InlineImageObjectPtr ContentStreamParser::ReadInlineImageObject(void) {
 	int stage = 0;
 	unsigned char stored_whitespace = 0;
 	for (;;) {
-		auto current_meta = get();
+		auto current_meta = m_stream->Get();
 		auto current = ValueConvertUtils::SafeConvert<unsigned char>(current_meta);
 
 		if (stage == 0 && IsWhiteSpace(current)) {
@@ -367,7 +367,7 @@ bool ContentStreamParser::IsOperand(Token::Type type) {
 }
 
 ObjectPtr ContentStreamParser::ReadOperand() {
-	auto offset = GetPosition();
+	auto offset = m_stream->GetPosition();
 	switch (PeekTokenTypeSkip()) {
 		case Token::Type::DICTIONARY_BEGIN:
 			return ReadDictionary();

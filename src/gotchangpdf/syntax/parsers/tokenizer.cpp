@@ -13,24 +13,18 @@
 namespace gotchangpdf {
 namespace syntax {
 
-Tokenizer::Tokenizer(CharacterSource & stream)
-	: Stream(stream),
+Tokenizer::Tokenizer(IInputStreamPtr stream)
+	: m_stream(stream),
 	_last_token_offset(constant::BAD_OFFSET),
 	_advance_position(constant::BAD_OFFSET) {
 }
 
 TokenPtr Tokenizer::ReadToken() {
-	// When reading past EOF, failbit is set to true
-	// We are aware, that this function might try to read past EOF
-	// instead of checking for EOF before every get
-	// we just clear the flags after we finish
-	SCOPE_GUARD_CAPTURE_REFERENCES(if (eof() && fail()) clear(rdstate() & ~failbit));
-
-	auto current_offset = GetPosition();
+	auto current_offset = m_stream->GetPosition();
 	if (_token_cached && _last_token_offset == current_offset) {
 		auto result = _last_token;
 
-		SetPosition(_advance_position);
+		m_stream->SetPosition(_advance_position);
 
 		_last_token_offset = constant::BAD_OFFSET;
 		_advance_position = constant::BAD_OFFSET;
@@ -40,39 +34,50 @@ TokenPtr Tokenizer::ReadToken() {
 	}
 
 	for (;;) {
-		int ch = get();
-		int ahead = peek();
+		if (m_stream->Eof()) {
+			return TokenPtr(Token::Type::END_OF_INPUT);
+		}
+
+		// Test if the next character is EOF
+		int peek_test = m_stream->Peek();
+		if (peek_test == std::char_traits<char>::eof()) {
+			return TokenPtr(Token::Type::END_OF_INPUT);
+		}
+
+		int ch = m_stream->Get();
 
 		switch (ch) {
-			case WhiteSpace::SPACE:
-			case WhiteSpace::FORM_FEED:
-			case WhiteSpace::HORIZONTAL_TAB:
-			case WhiteSpace::NUL:
+			case static_cast<int>(WhiteSpace::SPACE):
+			case static_cast<int>(WhiteSpace::FORM_FEED):
+			case static_cast<int>(WhiteSpace::HORIZONTAL_TAB):
+			case static_cast<int>(WhiteSpace::NUL):
 				continue;
-			case std::char_traits<char>::eof():
-				return TokenPtr(Token::Type::END_OF_INPUT);
-			case Delimiter::PERCENT_SIGN:
+			case static_cast<int>(Delimiter::PERCENT_SIGN):
 				// We are currently silently ignoring all comments
 				ReadComment();
 				continue;
-			case WhiteSpace::LINE_FEED:
+			case static_cast<int>(WhiteSpace::LINE_FEED):
 			{
 				BufferPtr chars;
 				chars->push_back(WhiteSpace::LINE_FEED);
 				return TokenPtr(Token::Type::EOL, chars);
 			}
-			case WhiteSpace::CARRIAGE_RETURN:
+			case static_cast<int>(WhiteSpace::CARRIAGE_RETURN):
 			{
 				BufferPtr chars;
 				chars->push_back(WhiteSpace::CARRIAGE_RETURN);
-				if (ahead == WhiteSpace::LINE_FEED && ignore()) {
+
+				int line_feed = m_stream->Peek();
+				if (line_feed == WhiteSpace::LINE_FEED && m_stream->Ignore()) {
 					chars->push_back(WhiteSpace::LINE_FEED);
 				}
 
 				return TokenPtr(Token::Type::EOL, chars);
 			}
-			case Delimiter::GREATER_THAN_SIGN:
-				if (ahead == Delimiter::GREATER_THAN_SIGN && ignore()) {
+			case static_cast<int>(Delimiter::GREATER_THAN_SIGN):
+			{
+				int sign = m_stream->Peek();
+				if (sign == Delimiter::GREATER_THAN_SIGN && m_stream->Ignore()) {
 					BufferPtr chars;
 
 					chars->push_back(Delimiter::GREATER_THAN_SIGN);
@@ -80,9 +85,12 @@ TokenPtr Tokenizer::ReadToken() {
 					return TokenPtr(Token::Type::DICTIONARY_END, chars);
 				}
 
-				throw GeneralException("Unexpected character at offset: " + std::to_string(tellg()));
-			case Delimiter::LESS_THAN_SIGN:
-				if (ahead == Delimiter::LESS_THAN_SIGN && ignore()) {
+				throw GeneralException("Unexpected character at offset: " + std::to_string(m_stream->GetPosition()));
+			}
+			case static_cast<int>(Delimiter::LESS_THAN_SIGN):
+			{
+				int sign = m_stream->Peek();
+				if (sign == Delimiter::LESS_THAN_SIGN && m_stream->Ignore()) {
 					BufferPtr chars;
 
 					chars->push_back(Delimiter::LESS_THAN_SIGN);
@@ -91,28 +99,29 @@ TokenPtr Tokenizer::ReadToken() {
 				}
 
 				// empty hexadecimal string
-				if (ahead == Delimiter::GREATER_THAN_SIGN && ignore()) {
+				if (sign == Delimiter::GREATER_THAN_SIGN && m_stream->Ignore()) {
 					return TokenPtr(Token::Type::HEXADECIMAL_STRING);
 				}
 
 				return ReadHexadecimalString();
-			case Delimiter::LEFT_SQUARE_BRACKET:
+			}
+			case static_cast<int>(Delimiter::LEFT_SQUARE_BRACKET):
 			{
 				BufferPtr chars;
 
 				chars->push_back(Delimiter::LEFT_SQUARE_BRACKET);
 				return TokenPtr(Token::Type::ARRAY_BEGIN, chars);
 			}
-			case Delimiter::RIGHT_SQUARE_BRACKET:
+			case static_cast<int>(Delimiter::RIGHT_SQUARE_BRACKET):
 			{
 				BufferPtr chars;
 
 				chars->push_back(Delimiter::RIGHT_SQUARE_BRACKET);
 				return TokenPtr(Token::Type::ARRAY_END, chars);
 			}
-			case Delimiter::SOLIDUS:
+			case static_cast<int>(Delimiter::SOLIDUS):
 				return ReadName();
-			case Delimiter::LEFT_PARENTHESIS:
+			case static_cast<int>(Delimiter::LEFT_PARENTHESIS):
 				return ReadLiteralString();
 		}
 
@@ -129,8 +138,8 @@ TokenPtr Tokenizer::ReadToken() {
 			BufferPtr chars;
 
 			chars->push_back(current);
-			while (IsNumeric(peek())) {
-				auto numeric = static_cast<char>(get());
+			while (IsNumeric(m_stream->Peek())) {
+				auto numeric = static_cast<char>(m_stream->Get());
 				chars->push_back(numeric);
 			}
 
@@ -138,7 +147,7 @@ TokenPtr Tokenizer::ReadToken() {
 				return TokenPtr(Token::Type::REAL_OBJECT, chars);
 			}
 
-			if (peek() != '.') {
+			if (m_stream->Eof() || m_stream->Peek() != '.') {
 				return TokenPtr(Token::Type::INTEGER_OBJECT, chars);
 			}
 
@@ -146,10 +155,10 @@ TokenPtr Tokenizer::ReadToken() {
 			chars->push_back('.');
 
 			// Consume it
-			ignore();
+			m_stream->Ignore();
 
-			while (IsNumeric(peek())) {
-				auto next = static_cast<char>(get());
+			while (IsNumeric(m_stream->Peek())) {
+				auto next = static_cast<char>(m_stream->Get());
 				chars->push_back(next);
 			}
 
@@ -162,7 +171,11 @@ TokenPtr Tokenizer::ReadToken() {
 		chars->push_back(current);
 
 		for (;;) {
-			auto next_meta = peek();
+			if (m_stream->Eof()) {
+				break;
+			}
+
+			auto next_meta = m_stream->Peek();
 
 			// Terminate at the end of the stream
 			if (std::char_traits<char>::eof() == next_meta) {
@@ -180,7 +193,7 @@ TokenPtr Tokenizer::ReadToken() {
 			chars->push_back(next);
 
 			// Ignore the input, because we used peek and not get
-			ignore();
+			m_stream->Ignore();
 		}
 
 		auto result_type = _dictionary->Find(chars);
@@ -192,16 +205,16 @@ TokenPtr Tokenizer::ReadComment(void) {
 	// Comments are currently discarded
 
 	for (;;) {
-		auto current_meta = get();
-		auto next_meta = peek();
-
-		if (current_meta == std::char_traits<char>::eof() || next_meta == std::char_traits<char>::eof()) {
+		auto eof_test = m_stream->Peek();
+		if (eof_test == std::char_traits<char>::eof()) {
 			break;
 		}
 
+		auto current_meta = m_stream->Get();
 		if (current_meta == '\r') {
-			if (next_meta == '\n') {
-				ignore();
+			auto line_feed = m_stream->Peek();
+			if (line_feed == '\n') {
+				m_stream->Ignore();
 			}
 
 			break;
@@ -219,14 +232,12 @@ TokenPtr Tokenizer::ReadHexadecimalString(void) {
 	BufferPtr chars;
 
 	for (;;) {
-		auto current_meta = get();
-		auto next_meta = peek();
-
-		assert(current_meta != std::char_traits<char>::eof() && next_meta != std::char_traits<char>::eof());
-		if (current_meta == std::char_traits<char>::eof() || next_meta == std::char_traits<char>::eof()) {
+		auto eof_test = m_stream->Peek();
+		if (eof_test == std::char_traits<char>::eof()) {
 			break;
 		}
 
+		auto current_meta = m_stream->Get();
 		auto current = ValueConvertUtils::SafeConvert<unsigned char>(current_meta);
 		if (current == Delimiter::GREATER_THAN_SIGN) {
 			break;
@@ -246,10 +257,10 @@ TokenPtr Tokenizer::ReadHexadecimalString(void) {
 TokenPtr Tokenizer::ReadName(void) {
 	BufferPtr chars;
 
-	while (IsRegular(peek())) {
-		auto current = static_cast<char>(get());
+	while (IsRegular(m_stream->Peek())) {
+		auto current = static_cast<char>(m_stream->Get());
 		if (current == '#') {
-			auto values = read(2);
+			auto values = m_stream->Read(2);
 			auto str = values->ToString();
 			auto val = stoi(str, 0, 16);
 			auto parsed = ValueConvertUtils::SafeConvert<unsigned char, int>(val);
@@ -269,13 +280,12 @@ TokenPtr Tokenizer::ReadLiteralString(void)	{
 
 	int nested_count = 0;
 	for (;;) {
-		int current_meta = get();
-		int next = peek();
-
-		if (current_meta == std::char_traits<char>::eof()) {
+		auto eof_test = m_stream->Peek();
+		if (eof_test == std::char_traits<char>::eof()) {
 			throw GeneralException("Improperly terminated literal string sequence: " + chars->ToString());
 		}
 
+		int current_meta = m_stream->Get();
 		auto current = ValueConvertUtils::SafeConvert<unsigned char>(current_meta);
 
 		if (current == Delimiter::LEFT_PARENTHESIS) {
@@ -293,8 +303,9 @@ TokenPtr Tokenizer::ReadLiteralString(void)	{
 		}
 
 		if (current == '\r') {
-			if (next == '\n') {
-				ignore();
+			auto line_feed = m_stream->Peek();
+			if (line_feed == '\n') {
+				m_stream->Ignore();
 			}
 
 			chars->push_back(WhiteSpace::LINE_FEED);
@@ -306,62 +317,63 @@ TokenPtr Tokenizer::ReadLiteralString(void)	{
 			continue;
 		}
 
+		auto next = m_stream->Peek();
 		if (next == std::char_traits<char>::eof()) {
 			continue;
 		}
 
 		// escaped characters
-		if (next == 'r' && ignore()) {
+		if (next == 'r' && m_stream->Ignore()) {
 			chars->push_back('\r');
 			continue;
 		}
 
-		if (next == 'f' && ignore()) {
+		if (next == 'f' && m_stream->Ignore()) {
 			chars->push_back('\f');
 			continue;
 		}
 
-		if (next == 't' && ignore()) {
+		if (next == 't' && m_stream->Ignore()) {
 			chars->push_back('\t');
 			continue;
 		}
 
-		if (next == 'n' && ignore()) {
+		if (next == 'n' && m_stream->Ignore()) {
 			chars->push_back('\n');
 			continue;
 		}
 
-		if (next == 'b' && ignore()) {
+		if (next == 'b' && m_stream->Ignore()) {
 			chars->push_back('\b');
 			continue;
 		}
 
-		if (next == '(' && ignore()) {
+		if (next == '(' && m_stream->Ignore()) {
 			chars->push_back('(');
 			continue;
 		}
 
-		if (next == ')' && ignore()) {
+		if (next == ')' && m_stream->Ignore()) {
 			chars->push_back(')');
 			continue;
 		}
 
-		if (next == '\\' && ignore()) {
+		if (next == '\\' && m_stream->Ignore()) {
 			chars->push_back('\\');
 			continue;
 		}
 
 		// Backslash at the EOL shall be disregarded
-		if (next == '\r' && ignore()) {
-			if (peek() == '\n') {
-				ignore();
+		if (next == '\r' && m_stream->Ignore()) {
+			if (m_stream->Peek() == '\n') {
+				m_stream->Ignore();
 			}
 
 			continue;
 		}
 
 		// Backslash at the EOL shall be disregarded
-		if (next == '\n' && ignore()) {
+		if (next == '\n' && m_stream->Ignore()) {
 			continue;
 		}
 
@@ -371,13 +383,13 @@ TokenPtr Tokenizer::ReadLiteralString(void)	{
 
 		std::stringstream octal;
 		for (int i = 0; i < 3; ++i) {
-			auto numeric_meta = peek();
+			auto numeric_meta = m_stream->Peek();
 			if (std::char_traits<char>::eof() == numeric_meta) {
 				break;
 			}
 
 			auto numeric = ValueConvertUtils::SafeConvert<unsigned char>(numeric_meta);
-			if (IsNumeric(numeric) && ignore()) {
+			if (IsNumeric(numeric) && m_stream->Ignore()) {
 				octal << numeric;
 				continue;
 			}
@@ -399,13 +411,13 @@ TokenPtr Tokenizer::ReadLiteralString(void)	{
 
 /* Peek need cache */
 TokenPtr Tokenizer::PeekToken() {
-	auto current = GetPosition();
+	auto current = m_stream->GetPosition();
 	if (_token_cached && _last_token_offset == current) {
 		return *_last_token;
 	}
 
 	_last_token = ReadToken();
-	_advance_position = GetPosition();
+	_advance_position = m_stream->GetPosition();
 	_last_token_offset = current;
 	_token_cached = true;
 
@@ -413,7 +425,7 @@ TokenPtr Tokenizer::PeekToken() {
 		assert(_last_token->GetType() == Token::Type::END_OF_INPUT);
 	}
 
-	SetPosition(_last_token_offset);
+	m_stream->SetPosition(_last_token_offset);
 	return *_last_token;
 }
 

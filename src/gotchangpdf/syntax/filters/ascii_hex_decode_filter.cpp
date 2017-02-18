@@ -66,12 +66,12 @@ BufferPtr ASCIIHexDecodeFilter::Decode(std::istream& src, types::stream_size len
 
 BufferPtr ASCIIHexDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const {
 	auto stream = src->ToStringStream();
-	return Encode(stream, src->size());
+	return Encode(*stream, src->size());
 }
 
 BufferPtr ASCIIHexDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters) const {
 	auto stream = src->ToStringStream();
-	return Decode(stream, src->size());
+	return Decode(*stream, src->size());
 }
 
 } // syntax

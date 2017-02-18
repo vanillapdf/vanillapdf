@@ -186,12 +186,12 @@ BufferPtr ZlibWrapper::Inflate(std::istream& input, types::stream_size length) {
 
 BufferPtr ZlibWrapper::Deflate(const Buffer& input) {
 	auto stream = input.ToStringStream();
-	return Deflate(stream, input.size());
+	return Deflate(*stream, input.size());
 }
 
 BufferPtr ZlibWrapper::Inflate(const Buffer& input) {
 	auto stream = input.ToStringStream();
-	return Inflate(stream, input.size());
+	return Inflate(*stream, input.size());
 }
 
 } // gotchangpdf

@@ -6,6 +6,8 @@
 #include "contents/content_stream_operations.h"
 #include "contents/content_stream_objects.h"
 
+#include "syntax/streams/input_stream.h"
+
 #include <numeric>
 
 namespace gotchangpdf {
@@ -47,13 +49,14 @@ BaseInstructionCollectionPtr Contents::Instructions(void) const {
 
 	// We are not using contents.Instructions, because objects can we separated
 	// into multiple content streams
-	std::stringstream ss;
+	auto ss = std::make_shared<std::stringstream>();
 	for (auto item : contents) {
 		auto stream_object = item->GetObject();
-		ss << stream_object->GetBody();
+		*ss << stream_object->GetBody();
 	}
 
-	contents::ContentStreamParser parser(_obj->GetFile(), ss);
+	syntax::InputStreamPtr input_stream(ss);
+	contents::ContentStreamParser parser(_obj->GetFile(), input_stream);
 	auto instructions = parser.ReadContentStreamInstructions();
 	for (auto instruction : instructions) {
 		m_instructions->push_back(instruction);

@@ -11,27 +11,21 @@
 namespace gotchangpdf {
 namespace syntax {
 
-ReverseTokenizer::ReverseTokenizer(CharacterSource & stream)
-	: Stream(stream),
+ReverseTokenizer::ReverseTokenizer(IInputStreamPtr stream)
+	: m_stream(stream),
 	_last_token_offset(constant::BAD_OFFSET),
 	_advance_position(constant::BAD_OFFSET) {
 	_dictionary.Initialize();
 }
 
 TokenPtr ReverseTokenizer::ReadToken() {
-	// When reading past EOF, failbit is set to true
-	// We are aware, that this function might try to read past EOF
-	// instead of checking for EOF before every get
-	// we just clear the flags after we finish
-	SCOPE_GUARD_CAPTURE_REFERENCES(if (eof() && fail()) clear(rdstate() & ~failbit));
-
-	auto current_offset = GetPosition();
+	auto current_offset = m_stream->GetPosition();
 	if (_token_cached && _last_token_offset == current_offset) {
 		assert(constant::BAD_OFFSET != _last_token_offset);
 
 		auto result = _last_token;
 
-		SetPosition(_advance_position);
+		m_stream->SetPosition(_advance_position);
 		_last_token_offset = constant::BAD_OFFSET;
 		_advance_position = constant::BAD_OFFSET;
 		_token_cached = false;
@@ -39,79 +33,88 @@ TokenPtr ReverseTokenizer::ReadToken() {
 		return *result;
 	}
 
-	BufferPtr chars;
+	for (;;) {
 
-retry:
+		if (m_stream->Eof()) {
+			return TokenPtr(Token::Type::END_OF_INPUT);
+		}
 
-	int ch = get();
-	int ahead = peek();
-	Token::Type result_type = Token::Type::UNKNOWN;
+		// Test if the next character is EOF
+		int peek_test = m_stream->Peek();
+		if (peek_test == std::char_traits<char>::eof()) {
+			return TokenPtr(Token::Type::END_OF_INPUT);
+		}
 
-	switch (ch) {
-		case std::char_traits<char>::eof():
-			result_type = Token::Type::END_OF_INPUT;
-			goto prepared;
-		case WhiteSpace::LINE_FEED:
-			chars->push_back(WhiteSpace::LINE_FEED);
-			if (ahead == WhiteSpace::CARRIAGE_RETURN && ignore()) {
+		int ch = m_stream->Get();
+
+		switch (ch) {
+			case static_cast<int>(WhiteSpace::LINE_FEED):
+			{
+				BufferPtr chars;
+				chars->push_back(WhiteSpace::LINE_FEED);
+
+				int carriage_return = m_stream->Peek();
+				if (carriage_return == WhiteSpace::CARRIAGE_RETURN && m_stream->Ignore()) {
+					chars->push_back(WhiteSpace::CARRIAGE_RETURN);
+				}
+
+				return TokenPtr(Token::Type::REVERSE_EOL, chars);
+			}
+			case static_cast<int>(WhiteSpace::SPACE):
+			case static_cast<int>(WhiteSpace::FORM_FEED):
+			case static_cast<int>(WhiteSpace::HORIZONTAL_TAB):
+			case static_cast<int>(WhiteSpace::NUL):
+				continue;
+			case static_cast<int>(WhiteSpace::CARRIAGE_RETURN):
+			{
+				BufferPtr chars;
 				chars->push_back(WhiteSpace::CARRIAGE_RETURN);
+				return TokenPtr(Token::Type::REVERSE_EOL, chars);
+			}
+		}
+
+		auto current = ValueConvertUtils::SafeConvert<unsigned char>(ch);
+
+		BufferPtr chars;
+		chars->push_back(current);
+
+		if (IsNumeric(current)) {
+			while (IsNumeric(m_stream->Peek())) {
+				auto numeric = static_cast<unsigned char>(m_stream->Get());
+				chars->push_back(numeric);
 			}
 
-			result_type = Token::Type::REVERSE_EOL;
-			goto prepared;
-		case WhiteSpace::SPACE:
-		case WhiteSpace::FORM_FEED:
-		case WhiteSpace::HORIZONTAL_TAB:
-		case WhiteSpace::NUL:
-			goto retry;
-		case WhiteSpace::CARRIAGE_RETURN:
-			chars->push_back(WhiteSpace::CARRIAGE_RETURN);
-
-			result_type = Token::Type::REVERSE_EOL;
-			goto prepared;
-		default:
-			auto current = ValueConvertUtils::SafeConvert<unsigned char>(ch);
-			chars->push_back(current);
-
-			if (IsNumeric(current)) {
-				while (IsNumeric(peek())) {
-					auto numeric = static_cast<unsigned char>(get());
-					chars->push_back(numeric);
-				}
-
-				while ((peek() == '+') || (peek() == '-')) {
-					auto next = static_cast<unsigned char>(get());
-					chars->push_back(next);
-				}
-
-				result_type = Token::Type::REVERSE_INTEGER_OBJECT;
-				goto prepared;
+			while ((m_stream->Peek() == '+') || (m_stream->Peek() == '-')) {
+				auto next = static_cast<unsigned char>(m_stream->Get());
+				chars->push_back(next);
 			}
 
-			for (;;) {
-				auto next_meta = peek();
-				if (std::char_traits<char>::eof() == next_meta) {
-					break;
-				}
+			return TokenPtr(Token::Type::REVERSE_INTEGER_OBJECT, chars);
+		}
 
-				auto next = ValueConvertUtils::SafeConvert<unsigned char>(next_meta);
-				if (IsWhiteSpace(next))
-					break;
-
-				chars->push_back(next); ignore();
+		for (;;) {
+			auto next_meta = m_stream->Peek();
+			if (std::char_traits<char>::eof() == next_meta) {
+				break;
 			}
-	}
 
-	assert(result_type == Token::Type::UNKNOWN);
-	result_type = _dictionary.Find(chars);
+			auto next = ValueConvertUtils::SafeConvert<unsigned char>(next_meta);
+			if (IsWhiteSpace(next)) {
+				break;
+			}
 
-prepared:
-	return TokenPtr(result_type, chars);
+			chars->push_back(next);
+			m_stream->Ignore();
+		}
+
+		auto result_type = _dictionary.Find(chars);
+		return TokenPtr(result_type, chars);
+	};
 }
 
 /* Peek need cache */
 TokenPtr ReverseTokenizer::PeekToken() {
-	auto current = GetPosition();
+	auto current = m_stream->GetPosition();
 	if (_token_cached && _last_token_offset == current) {
 		assert(constant::BAD_OFFSET != _advance_position);
 		assert(constant::BAD_OFFSET != _last_token_offset);
@@ -120,7 +123,7 @@ TokenPtr ReverseTokenizer::PeekToken() {
 	}
 
 	_last_token = ReadToken();
-	_advance_position = GetPosition();
+	_advance_position = m_stream->GetPosition();
 	_last_token_offset = current;
 	_token_cached = true;
 
@@ -128,14 +131,15 @@ TokenPtr ReverseTokenizer::PeekToken() {
 		assert(_last_token->GetType() == Token::Type::END_OF_INPUT);
 	}
 
-	SetPosition(_last_token_offset);
+	m_stream->SetPosition(_last_token_offset);
 	return *_last_token;
 }
 
 TokenPtr ReverseTokenizer::ReadTokenWithType(Token::Type type) {
 	auto current_type = PeekTokenType();
-	if (current_type != type)
+	if (current_type != type) {
 		throw GeneralException("Unexpected token type");
+	}
 
 	return ReadToken();
 }

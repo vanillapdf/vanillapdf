@@ -6,6 +6,9 @@
 #include "syntax/files/xref_chain.h"
 #include "syntax/utils/encryption.h"
 
+#include "syntax/streams/input_stream_interface.h"
+#include "syntax/streams/output_stream_interface.h"
+
 #include <memory>
 #include <vector>
 #include <string>
@@ -37,7 +40,8 @@ public:
 	HeaderPtr GetHeader(void);
 
 	std::string GetFilename(void) const { return _filename; }
-	std::shared_ptr<std::fstream> GetInputStream(void) const { return _input; }
+	IInputStreamPtr GetInputStream(void);
+	IOutputStreamPtr GetOutputStream(void);
 
 	// Encryption
 	bool IsEncrypted(void) const;

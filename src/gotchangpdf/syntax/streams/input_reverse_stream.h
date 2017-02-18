@@ -1,7 +1,7 @@
-#ifndef _RAW_REVERSE_STREAM_H
-#define _RAW_REVERSE_STREAM_H
+#ifndef _INPUT_REVERSE_STREAM_H
+#define _INPUT_REVERSE_STREAM_H
 
-#include "raw_base_stream.h"
+#include "syntax/streams/input_stream_interface.h"
 
 namespace gotchangpdf {
 namespace syntax {
@@ -42,31 +42,38 @@ namespace syntax {
 #pragma warning (disable : 4250)
 #endif
 
-class ReverseStream : public BaseStream::CharacterSource, public BaseStream {
+class InputReverseStream : public IInputStream {
 public:
 	friend class ReverseBuf;
 
 public:
-	explicit ReverseStream(CharacterSource & stream, types::stream_size size);
-	virtual ~ReverseStream();
+	explicit InputReverseStream(std::shared_ptr<std::istream> stream, types::stream_size size);
 
-	virtual void read(Buffer& result, size_t len) override;
-	virtual BufferPtr read(size_t len) override;
-	virtual BufferPtr readline(void) override;
+	virtual void Read(Buffer& result, size_t len) override;
+	virtual BufferPtr Read(size_t len) override;
+	virtual BufferPtr Readline(void) override;
 	virtual types::stream_size GetPosition() override;
 	virtual void SetPosition(types::stream_size pos) override;
+	virtual void SetPosition(types::stream_size pos, std::ios_base::seekdir way) override;
+
+	virtual bool Eof(void) const override;
+	virtual InputReverseStream& Ignore(void) override;
+	virtual int Get(void) override;
+	virtual int Peek(void) override;
+
+	virtual operator bool(void) const override;
 
 private:
-	class ReverseBuf : public BaseStream::CharacterSourceBuffer {
+	class ReverseBuf : public std::streambuf {
 	public:
-		explicit ReverseBuf(CharacterSource & s, types::stream_size size);
+		explicit ReverseBuf(std::shared_ptr<std::istream> stream, types::stream_size size);
 
 		virtual pos_type seekoff(off_type,
-			ios_base::seekdir,
-			ios_base::openmode = ios_base::in | ios_base::out) override;
+			std::ios_base::seekdir,
+			std::ios_base::openmode = std::ios_base::in | std::ios_base::out) override;
 
 		virtual pos_type seekpos(pos_type,
-			ios_base::openmode = ios_base::in | ios_base::out) override;
+			std::ios_base::openmode = std::ios_base::in | std::ios_base::out) override;
 
 	public:
 		int sync();
@@ -76,7 +83,7 @@ private:
 		virtual std::streamsize showmanyc() override;
 
 	private:
-		CharacterSource & _source;
+		std::shared_ptr<std::istream> m_stream;
 		types::stream_offset _offset;
 		types::stream_size _size;
 		const std::size_t _put_back;
@@ -85,6 +92,10 @@ private:
 	private:
 		Buffer _buffer;
 	};
+
+protected:
+	std::unique_ptr<std::istream> m_stream;
+	std::unique_ptr<ReverseBuf> m_buffer;
 };
 
 #ifdef _MSC_VER
@@ -94,4 +105,4 @@ private:
 } // syntax
 } // gotchangpdf
 
-#endif /* _RAW_REVERSE_STREAM_H */
+#endif /* _INPUT_REVERSE_STREAM_H */

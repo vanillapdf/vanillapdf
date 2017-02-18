@@ -17,7 +17,7 @@ public:
 	virtual BufferPtr Decode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const override;
 
 	BufferPtr ApplyPredictor(BufferPtr src, DictionaryObjectPtr parameters) const;
-	BufferPtr ApplyPredictor(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters) const;
+	BufferPtr ApplyPredictor(std::shared_ptr<std::istream> src, types::stream_size length, DictionaryObjectPtr parameters) const;
 };
 
 } // syntax

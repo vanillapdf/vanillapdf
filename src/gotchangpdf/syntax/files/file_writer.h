@@ -26,11 +26,16 @@ private:
 	void WriteXrefObjects(FilePtr destination, XrefBasePtr source);
 	XrefBasePtr CloneXref(FilePtr destination, XrefBasePtr source);
 	XrefBasePtr CreateIncrementalXref(FilePtr source, FilePtr destination);
-	void WriteXref(std::iostream& output, XrefBasePtr xref);
-	void WriteXrefTable(std::iostream& output, XrefTablePtr xref_table);
-	void WriteXrefOffset(std::iostream& output, types::stream_offset offset);
-	void WriteEntry(std::iostream& output, XrefUsedEntryBasePtr entry);
-	void WriteObject(std::iostream& output, ObjectPtr obj);
+	void WriteXref(IOutputStreamPtr output, XrefBasePtr xref);
+	void WriteXrefTable(IOutputStreamPtr output, XrefTablePtr xref_table);
+	void WriteXrefOffset(IOutputStreamPtr output, types::stream_offset offset);
+	void WriteEntry(IOutputStreamPtr output, XrefUsedEntryBasePtr entry);
+	void WriteObject(IOutputStreamPtr output, ObjectPtr obj);
+
+	static void CopyStreamContent(IInputStreamPtr source, IOutputStreamPtr destination);
+	static std::string GetFormattedOffset(types::stream_offset offset);
+	static std::string GetFormattedGenerationNumber(types::ushort generation_number);
+	static std::string GetFormattedObjectNumber(types::big_uint generation_number);
 
 	void RecalculateStreamLength(ObjectPtr obj);
 	void RecalculateStreamsLength(XrefBasePtr source);

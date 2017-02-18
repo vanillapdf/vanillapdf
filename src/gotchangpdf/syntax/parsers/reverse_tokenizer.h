@@ -1,7 +1,7 @@
 #ifndef _REVERSE_TOKENIZER_H
 #define _REVERSE_TOKENIZER_H
 
-#include "syntax/streams/raw_stream.h"
+#include "syntax/streams/input_stream_interface.h"
 
 #include "syntax/parsers/token.h"
 #include "syntax/parsers/token_dictionary.h"
@@ -11,14 +11,17 @@
 namespace gotchangpdf {
 namespace syntax {
 
-class ReverseTokenizer : public Stream {
+class ReverseTokenizer {
 public:
-	explicit ReverseTokenizer(CharacterSource & s);
+	explicit ReverseTokenizer(IInputStreamPtr stream);
 
 	TokenPtr ReadToken(void);
 	TokenPtr PeekToken(void);
 	TokenPtr ReadTokenWithType(Token::Type type);
 	Token::Type PeekTokenType(void);
+
+protected:
+	IInputStreamPtr m_stream;
 
 private:
 	TokenPtr _last_token;

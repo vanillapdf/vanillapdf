@@ -10,7 +10,7 @@ namespace syntax {
 
 class ReverseParser : public ReverseTokenizer, public IReverseParser {
 public:
-	ReverseParser(CharacterSource & stream);
+	ReverseParser(IInputStreamPtr stream);
 	ReverseParser(const ReverseParser & other);
 
 	types::stream_offset ReadLastXrefOffset();

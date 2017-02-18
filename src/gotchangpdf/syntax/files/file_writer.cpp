@@ -1,5 +1,7 @@
 #include "precompiled.h"
 
+#include "utils/character.h"
+
 #include "syntax/files/file_writer.h"
 #include "syntax/files/file.h"
 #include "syntax/files/xref.h"
@@ -22,11 +24,15 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 	}
 
 	auto input = source->GetInputStream();
-	auto output = destination->GetInputStream();
+	auto output = destination->GetOutputStream();
+	//std::ostream output;
 
 	auto header = source->GetHeader();
 	auto ver = header->GetVersion();
-	*output << "%PDF-1." << static_cast<int>(ver) << endl;
+
+	output->Write("%PDF-1.");
+	output->Write(static_cast<int>(ver));
+	output->Write(WhiteSpace::LINE_FEED);
 
 	auto source_xref = source->GetXrefChain();
 	auto dest_xref = destination->GetXrefChain();
@@ -121,13 +127,13 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 		WriteXrefObjects(destination, new_xref);
 
 		// Write xref to output
-		WriteXref(*output, new_xref);
+		WriteXref(output, new_xref);
 
 		first_xref = false;
 	}
 
 	// Cleanup
-	output->flush();
+	output->Flush();
 }
 
 void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
@@ -136,16 +142,13 @@ void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
 	}
 
 	auto input = source->GetInputStream();
-	auto output = destination->GetInputStream();
+	auto output = destination->GetOutputStream();
 
 	// Write original data
-	input->seekg(0);
-	std::copy(istreambuf_iterator<char>(*input),
-		istreambuf_iterator<char>(),
-		ostreambuf_iterator<char>(*output));
+	CopyStreamContent(input, output);
 
 	// Make an extra newline before starting new xref section
-	*output << endl;
+	output->Write(WhiteSpace::LINE_FEED);
 
 	// Get all changed entries
 	auto tmp_xref = CreateIncrementalXref(source, destination);
@@ -167,10 +170,10 @@ void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
 	WriteXrefObjects(destination, new_xref);
 
 	// Write xref itself to output
-	WriteXref(*output, new_xref);
+	WriteXref(output, new_xref);
 
 	// Cleanup
-	output->flush();
+	output->Flush();
 }
 
 void FileWriter::RecalculateStreamLength(ObjectPtr obj) {
@@ -347,8 +350,8 @@ void FileWriter::WriteXrefObjects(FilePtr destination, XrefBasePtr source) {
 		}
 
 		auto used_entry = XrefUtils::ConvertTo<XrefUsedEntryBasePtr>(entry);
-		auto output = destination->GetInputStream();
-		WriteEntry(*output, used_entry);
+		auto output = destination->GetOutputStream();
+		WriteEntry(output, used_entry);
 		continue;
 	}
 }
@@ -492,14 +495,14 @@ XrefBasePtr FileWriter::CreateIncrementalXref(FilePtr source, FilePtr destinatio
 	return new_table;
 }
 
-void FileWriter::WriteEntry(std::iostream& output, XrefUsedEntryBasePtr entry) {
+void FileWriter::WriteEntry(IOutputStreamPtr output, XrefUsedEntryBasePtr entry) {
 	auto obj = entry->GetReference();
 
 	if (m_recalculate_offset) {
 		if (XrefUtils::IsType<XrefUsedEntryPtr>(entry)) {
 			auto used_entry = XrefUtils::ConvertTo<XrefUsedEntryPtr>(entry);
 
-			auto new_offset = output.tellg();
+			auto new_offset = output->GetOutputPosition();
 			used_entry->SetOffset(new_offset);
 		}
 	}
@@ -507,31 +510,41 @@ void FileWriter::WriteEntry(std::iostream& output, XrefUsedEntryBasePtr entry) {
 	WriteObject(output, obj);
 }
 
-void FileWriter::WriteObject(std::iostream& output, ObjectPtr obj) {
+void FileWriter::WriteObject(IOutputStreamPtr output, ObjectPtr obj) {
 	if (m_recalculate_offset) {
-		auto new_offset = output.tellg();
+		auto new_offset = output->GetOutputPosition();
 		obj->SetOffset(new_offset);
 	}
 
-	output << obj->GetObjectNumber() << " " << obj->GetGenerationNumber() << " " << "obj" << endl;
-	output << obj->ToPdf() << endl;
-	output << "endobj" << endl;
+	output->Write(obj->GetObjectNumber());
+	output->Write(WhiteSpace::SPACE);
+	output->Write(obj->GetGenerationNumber());
+	output->Write(WhiteSpace::SPACE);
+	output->Write("obj");
+	output->Write(WhiteSpace::LINE_FEED);
+	output->Write(obj->ToPdf());
+	output->Write(WhiteSpace::LINE_FEED);
+	output->Write("endobj");
+	output->Write(WhiteSpace::LINE_FEED);
 }
 
-void FileWriter::WriteXrefOffset(std::iostream& output, types::stream_offset offset) {
-	output << "startxref" << endl;
-	output << offset << endl;
-	output << "%%EOF" << endl;
+void FileWriter::WriteXrefOffset(IOutputStreamPtr output, types::stream_offset offset) {
+	output->Write("startxref");
+	output->Write(WhiteSpace::LINE_FEED);
+	output->Write(offset);
+	output->Write(WhiteSpace::LINE_FEED);
+	output->Write("%%EOF");
+	output->Write(WhiteSpace::LINE_FEED);
 }
 
-void FileWriter::WriteXref(std::iostream& output, XrefBasePtr xref) {
+void FileWriter::WriteXref(IOutputStreamPtr output, XrefBasePtr xref) {
 	if (xref->GetType() == XrefBase::Type::Table) {
 
 		// Convert to xref table
 		auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(xref);
 
 		// Seperate table from content
-		output << '\n';
+		output << WhiteSpace::LINE_FEED;
 
 		// Write the table
 		WriteXrefTable(output, xref_table);
@@ -558,16 +571,17 @@ void FileWriter::WriteXref(std::iostream& output, XrefBasePtr xref) {
 	}
 }
 
-void FileWriter::WriteXrefTable(std::iostream& output, XrefTablePtr xref_table) {
+void FileWriter::WriteXrefTable(IOutputStreamPtr output, XrefTablePtr xref_table) {
 	if (m_recalculate_offset) {
-		auto offset = output.tellg();
+		auto offset = output->GetOutputPosition();
 		xref_table->SetLastXrefOffset(offset);
 	}
 
 	auto table_size = xref_table->Size();
 	auto table_items = xref_table->Entries();
 
-	output << "xref" << endl;
+	output->Write("xref");
+	output->Write(WhiteSpace::LINE_FEED);
 
 	for (decltype(table_size) i = 0; i < table_size;) {
 		auto first = table_items[i];
@@ -581,38 +595,87 @@ void FileWriter::WriteXrefTable(std::iostream& output, XrefTablePtr xref_table) 
 			}
 		}
 
-		output << subsection_idx << " " << subsection_size << endl;
+		output->Write(subsection_idx);
+		output->Write(WhiteSpace::SPACE);
+		output->Write(subsection_size);
+		output->Write(WhiteSpace::LINE_FEED);
+
 		for (decltype(subsection_size) j = 0; j < subsection_size; ++j) {
 			auto entry = table_items[i + j];
 			if (!entry->InUse()) {
 				auto free_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefFreeEntryPtr>(entry);
+				auto formatted_object_number = GetFormattedObjectNumber(free_entry->GetNextFreeObjectNumber());
+				auto formatted_generation_number = GetFormattedGenerationNumber(free_entry->GetGenerationNumber());
 
-				output << setfill('0') << setw(10) << free_entry->GetNextFreeObjectNumber();
-				output << ' ';
-				output << setfill('0') << setw(5) << free_entry->GetGenerationNumber();
-				output << ' ';
-				output << 'f';
-				output << ' ';
-				output << '\n';
+				output->Write(formatted_object_number);
+				output->Write(WhiteSpace::SPACE);
+				output->Write(formatted_generation_number);
+				output->Write(WhiteSpace::SPACE);
+				output->Write('f');
+				output->Write(WhiteSpace::SPACE);
+				output->Write(WhiteSpace::LINE_FEED);
 				continue;
 			}
 
 			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
-			output << setfill('0') << setw(10) << used_entry->GetOffset();
-			output << ' ';
-			output << setfill('0') << setw(5) << used_entry->GetGenerationNumber();
-			output << ' ';
-			output << 'n';
-			output << ' ';
-			output << '\n';
+			auto formatted_offset = GetFormattedOffset(used_entry->GetOffset());
+			auto formatted_generation_number = GetFormattedGenerationNumber(used_entry->GetGenerationNumber());
+
+			output->Write(formatted_offset);
+			output->Write(WhiteSpace::SPACE);
+			output->Write(formatted_generation_number);
+			output->Write(WhiteSpace::SPACE);
+			output->Write('n');
+			output->Write(WhiteSpace::SPACE);
+			output->Write(WhiteSpace::LINE_FEED);
 		}
 
 		i += subsection_size;
 	}
 
 	auto trailer = xref_table->GetTrailerDictionary();
-	output << "trailer" << endl;
-	output << trailer->ToPdf() << endl;
+
+	output->Write("trailer");
+	output->Write(WhiteSpace::LINE_FEED);
+	output->Write(trailer->ToPdf());
+	output->Write(WhiteSpace::LINE_FEED);
+}
+
+std::string FileWriter::GetFormattedOffset(types::stream_offset offset) {
+	std::stringstream ss;
+	ss << setfill('0') << setw(10) << offset;
+	return ss.str();
+}
+
+std::string FileWriter::GetFormattedGenerationNumber(types::ushort generation_number) {
+	std::stringstream ss;
+	ss << setfill('0') << setw(5) << generation_number;
+	return ss.str();
+}
+
+std::string FileWriter::GetFormattedObjectNumber(types::big_uint object_number) {
+	std::stringstream ss;
+	ss << setfill('0') << setw(10) << object_number;
+	return ss.str();
+}
+
+void FileWriter::CopyStreamContent(IInputStreamPtr source, IOutputStreamPtr destination) {
+	// Determine the source file size
+	source->SetPosition(0, std::ios::end);
+	auto source_size_raw = source->GetPosition();
+	auto source_size = ValueConvertUtils::SafeConvert<size_t>(source_size_raw);
+
+	// Reset the positions
+	source->SetPosition(0);
+	destination->SetOutputPosition(0);
+
+	// Block copy to destination
+	Buffer buffer(constant::BUFFER_SIZE);
+	for (size_t block_size = 0; source_size != 0; source_size -= block_size) {
+		block_size = std::min<size_t>(source_size, constant::BUFFER_SIZE);
+		source->Read(buffer, block_size);
+		destination->Write(buffer, block_size);
+	}
 }
 
 } // syntax

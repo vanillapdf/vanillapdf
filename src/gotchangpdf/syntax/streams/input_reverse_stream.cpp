@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#include "syntax/streams/raw_reverse_stream.h"
+#include "syntax/streams/input_reverse_stream.h"
 
 #include "utils/constants.h"
 #include "utils/util.h"
@@ -17,16 +17,13 @@ const int REVERSE_BUFFER_PUTBACK_SIZE = 16;
 
 namespace syntax {
 
-ReverseStream::ReverseStream(CharacterSource & stream, types::stream_size size)
-	: CharacterSource(pdf_new ReverseBuf(stream, size)) {
+InputReverseStream::InputReverseStream(std::shared_ptr<std::istream> stream, types::stream_size size) {
+	m_buffer = std::unique_ptr<ReverseBuf>(pdf_new ReverseBuf(stream, size));
+	m_stream = std::unique_ptr<std::istream>(pdf_new std::istream(m_buffer.get()));
 }
 
-ReverseStream::~ReverseStream() {
-	delete CharacterSource::rdbuf();
-}
-
-ReverseStream::ReverseBuf::ReverseBuf(CharacterSource & s, types::stream_size size)
-	: _source(s), _size(size), _offset(0),
+InputReverseStream::ReverseBuf::ReverseBuf(std::shared_ptr<std::istream> stream, types::stream_size size)
+	: m_stream(stream), _size(size), _offset(0),
 	_put_back(constant::REVERSE_BUFFER_PUTBACK_SIZE),
 	_buffer(constant::REVERSE_BUFFER_SIZE + _put_back) {
 	// Moved here from initialization list
@@ -41,12 +38,12 @@ ReverseStream::ReverseBuf::ReverseBuf(CharacterSource & s, types::stream_size si
 	setg(begin, begin, begin);
 }
 
-int ReverseStream::ReverseBuf::sync() {
+int InputReverseStream::ReverseBuf::sync() {
 	//cout << s << ": " << str(); str("");  return !cout;
 	return 0;
 }
 
-ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::underflow() {
+InputReverseStream::ReverseBuf::int_type InputReverseStream::ReverseBuf::underflow() {
 	// buffer not exhausted
 	if (gptr() > egptr()) {
 		return traits_type::to_int_type(*gptr());
@@ -74,13 +71,13 @@ ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::underflow() {
 		_offset -= to_read;
 	}
 
-	_source.seekg(_offset, std::ios::end);
-	_source.read(_buffer.data(), to_read);
+	m_stream->seekg(_offset, std::ios::end);
+	m_stream->read(_buffer.data(), to_read);
 	_base = _buffer.data();
 
-	assert(!_source.fail());
+	assert(!m_stream->fail());
 
-	auto size = _source.gcount();
+	auto size = m_stream->gcount();
 	if (size <= 0) {
 		return traits_type::eof();
 	}
@@ -96,7 +93,7 @@ ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::underflow() {
 	return traits_type::to_int_type(*gptr());
 }
 
-ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::uflow() {
+InputReverseStream::ReverseBuf::int_type InputReverseStream::ReverseBuf::uflow() {
 	auto result = underflow();
 
 	// If underflow failed return immediately
@@ -111,7 +108,7 @@ ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::uflow() {
 	return result;
 }
 
-ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::pbackfail(int_type ch) {
+InputReverseStream::ReverseBuf::int_type InputReverseStream::ReverseBuf::pbackfail(int_type ch) {
 	if (gptr() == eback() || (ch != traits_type::eof() && ch != gptr()[-1])) {
 		return traits_type::eof();
 	}
@@ -122,27 +119,27 @@ ReverseStream::ReverseBuf::int_type ReverseStream::ReverseBuf::pbackfail(int_typ
 	return result;
 }
 
-std::streamsize ReverseStream::ReverseBuf::showmanyc() {
+std::streamsize InputReverseStream::ReverseBuf::showmanyc() {
 	assert(std::less_equal<const char *>()(egptr(), gptr()));
 	return gptr() - egptr();
 }
 
-ReverseStream::ReverseBuf::pos_type ReverseStream::ReverseBuf::seekoff(off_type offset,
-	ios_base::seekdir dir,
-	ios_base::openmode mode) {
-	if (dir == ios_base::end)
+InputReverseStream::ReverseBuf::pos_type InputReverseStream::ReverseBuf::seekoff(off_type offset,
+	std::ios_base::seekdir dir,
+	std::ios_base::openmode mode) {
+	if (dir == std::ios_base::end)
 		offset += (off_type) (egptr());
-	else if (dir == ios_base::cur
-		&& (mode & ios_base::out) == 0)
+	else if (dir == std::ios_base::cur
+		&& (mode & std::ios_base::out) == 0)
 		offset += (off_type) (eback() - gptr());
-	else if (dir != ios_base::beg)
+	else if (dir != std::ios_base::beg)
 		offset = constant::BAD_OFFSET;
 
 	return offset;
 }
 
-ReverseStream::ReverseBuf::pos_type ReverseStream::ReverseBuf::seekpos(pos_type ptr,
-	ios_base::openmode) {
+InputReverseStream::ReverseBuf::pos_type InputReverseStream::ReverseBuf::seekpos(pos_type ptr,
+	std::ios_base::openmode) {
 	pos_type offset = eback() - gptr() + ptr;
 	int converted = ValueConvertUtils::SafeConvert<int, pos_type>(offset);
 	gbump(converted);
@@ -150,54 +147,68 @@ ReverseStream::ReverseBuf::pos_type ReverseStream::ReverseBuf::seekpos(pos_type 
 	return ptr;
 }
 
-void ReverseStream::read(Buffer& result, size_t len) {
+void InputReverseStream::Read(Buffer& result, size_t len) {
 	result.resize(len);
-	CharacterSource::read(result.data(), len);
+	m_stream->read(result.data(), len);
 }
 
-BufferPtr ReverseStream::read(size_t len) {
+BufferPtr InputReverseStream::Read(size_t len) {
 	BufferPtr result(len);
-	CharacterSource::read(result->data(), len);
+	m_stream->read(result->data(), len);
 	return result;
 }
 
-types::stream_size ReverseStream::GetPosition() {
-	assert(!fail());
+types::stream_size InputReverseStream::GetPosition() {
+	assert(!m_stream->fail());
 
-	if (eof()) {
+	if (m_stream->eof()) {
 		return constant::BAD_OFFSET;
 	}
 
-	return tellg();
+	return m_stream->tellg();
 }
 
-void ReverseStream::SetPosition(types::stream_size pos) {
+void InputReverseStream::SetPosition(types::stream_size pos) {
+	SetPosition(pos, std::ios_base::beg);
+}
+
+void InputReverseStream::SetPosition(types::stream_size pos, std::ios_base::seekdir way) {
+	auto initial_offset = GetPosition();
+
 	// of badoff is specified, set eof flag
 	if (pos == constant::BAD_OFFSET) {
-		clear(eofbit);
+		m_stream->clear(m_stream->eofbit);
 		return;
 	}
 
 	// clear eof
-	if (eof()) {
-		clear(rdstate() & eofbit);
+	if (m_stream->eof()) {
+		m_stream->clear(m_stream->rdstate() & m_stream->eofbit);
 	}
 
 	// seek to the actual position
-	seekg(pos);
-	assert(!fail() && !eof());
+	m_stream->seekg(pos, way);
+	assert(!m_stream->fail() && !m_stream->eof());
 
 	auto verify_offset = GetPosition();
-	assert(pos == verify_offset); verify_offset;
+	if (way == std::ios_base::beg) {
+		// verify if the position is correct
+		assert(pos == verify_offset); verify_offset;
+	}
+
+	if (way == std::ios_base::cur) {
+		// verify if the position is correct
+		assert(initial_offset + pos == verify_offset); verify_offset;
+	}
 }
 
-BufferPtr ReverseStream::readline(void) {
+BufferPtr InputReverseStream::Readline(void) {
 	Buffer result;
 
 	Buffer buffer(constant::BUFFER_SIZE);
 	for (;;) {
-		getline(buffer.data(), constant::BUFFER_SIZE);
-		auto read = gcount();
+		m_stream->getline(buffer.data(), constant::BUFFER_SIZE);
+		auto read = m_stream->gcount();
 		if (0 == read) {
 			break;
 		}
@@ -207,9 +218,35 @@ BufferPtr ReverseStream::readline(void) {
 		result.insert(result.begin(), buffer.begin(), buffer.begin() + read_converted);
 	}
 
-	unget();
+	m_stream->unget();
 
 	return result;
+}
+
+bool InputReverseStream::Eof(void) const {
+	assert(!m_stream->fail());
+	return m_stream->eof();
+}
+
+InputReverseStream& InputReverseStream::Ignore(void) {
+	assert(!m_stream->fail());
+	m_stream->ignore();
+	return *this;
+}
+
+int InputReverseStream::Get(void) {
+	assert(!m_stream->fail());
+	return m_stream->get();
+}
+
+int InputReverseStream::Peek(void) {
+	assert(!m_stream->fail());
+	return m_stream->peek();
+}
+
+InputReverseStream::operator bool(void) const {
+	assert(!m_stream->fail());
+	return m_stream->operator bool();
 }
 
 } // syntax

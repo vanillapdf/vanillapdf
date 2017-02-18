@@ -1,7 +1,7 @@
 #ifndef _TOKENIZER_H
 #define _TOKENIZER_H
 
-#include "syntax/streams/raw_stream.h"
+#include "syntax/streams/input_stream_interface.h"
 
 #include "syntax/parsers/token.h"
 #include "syntax/parsers/token_dictionary.h"
@@ -11,9 +11,9 @@
 namespace gotchangpdf {
 namespace syntax {
 
-class Tokenizer : public Stream {
+class Tokenizer {
 public:
-	explicit Tokenizer(CharacterSource & s);
+	explicit Tokenizer(IInputStreamPtr stream);
 
 	TokenPtr ReadToken(void);
 	TokenPtr PeekToken(void);
@@ -22,6 +22,7 @@ public:
 
 protected:
 	std::unique_ptr<TokenDictionaryBase> _dictionary;
+	IInputStreamPtr m_stream;
 
 private:
 	TokenPtr _last_token;

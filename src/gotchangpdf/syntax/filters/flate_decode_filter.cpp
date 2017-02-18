@@ -3,7 +3,7 @@
 
 #include "utils/constants.h"
 #include "utils/zlib_wrapper.h"
-#include "syntax/streams/raw_stream.h"
+#include "syntax/streams/input_stream.h"
 
 namespace gotchangpdf {
 namespace syntax {
@@ -31,7 +31,7 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(BufferPtr src, DictionaryObjectPtr p
 	return ApplyPredictor(stream, src->size(), parameters);
 }
 
-BufferPtr FlateDecodeFilter::ApplyPredictor(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters) const {
+BufferPtr FlateDecodeFilter::ApplyPredictor(std::shared_ptr<std::istream> src, types::stream_size length, DictionaryObjectPtr parameters) const {
 	IntegerObjectPtr predictor = 1;
 	if (parameters->Contains(constant::Name::Predictor)) {
 		predictor = parameters->FindAs<IntegerObjectPtr>(constant::Name::Predictor);
@@ -41,7 +41,7 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(std::istream& src, types::stream_siz
 	// No prediction was used
 	if (predictor == 1) {
 		auto length_converted = ValueConvertUtils::SafeConvert<size_t>(length);
-		return Stream(src).read(length_converted);
+		return InputStream(src).Read(length_converted);
 	}
 
 	IntegerObjectPtr colors = 1;
@@ -78,13 +78,13 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(std::istream& src, types::stream_siz
 	types::native_int bytesPerRow = (colors_int * columns_int * bits_int + 7) / 8;
 
 	BufferPtr result;
-	Stream strm(src);
+	InputStream strm(src);
 	Buffer curr(bytesPerRow, '\0');
 	Buffer prior(bytesPerRow, '\0');
 
-	while (strm.peek() != std::char_traits<char>::eof()) {
-		auto filter = strm.get();
-		strm.read(curr, bytesPerRow);
+	while (strm.Peek() != std::char_traits<char>::eof()) {
+		auto filter = strm.Get();
+		strm.Read(curr, bytesPerRow);
 
 		switch (filter) {
 			case 0: //PNG_FILTER_NONE

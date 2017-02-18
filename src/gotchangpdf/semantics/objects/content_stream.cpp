@@ -5,6 +5,8 @@
 #include "contents/content_stream_parser.h"
 #include "contents/content_stream_operation_base.h"
 
+#include "syntax/streams/input_stream.h"
+
 namespace gotchangpdf {
 namespace semantics {
 
@@ -16,7 +18,9 @@ contents::BaseInstructionCollection ContentStream::Instructions(void) const {
 
 	auto body = _obj->GetBody();
 	auto strm = body->ToStringStream();
-	contents::ContentStreamParser parser(_obj->GetFile(), strm);
+
+	syntax::InputStreamPtr input_stream(strm);
+	contents::ContentStreamParser parser(_obj->GetFile(), input_stream);
 	_instructions = parser.ReadContentStreamInstructions();
 	return _instructions;
 }

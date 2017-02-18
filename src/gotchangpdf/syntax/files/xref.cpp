@@ -5,6 +5,7 @@
 #include "syntax/files/xref_chain.h"
 #include "syntax/files/xref_utils.h"
 #include "syntax/parsers/parser.h"
+#include "syntax/streams/input_stream.h"
 
 #include "syntax/exceptions/syntax_exceptions.h"
 
@@ -60,9 +61,17 @@ void XrefUsedEntry::Initialize(void) {
 
 	auto locked_file = _file.GetReference();
 	auto input = locked_file->GetInputStream();
-	auto rewind_pos = input->tellg();
-	SCOPE_GUARD_CAPTURE_VALUES(input->seekg(rewind_pos));
-	Parser parser(_file, *input);
+	auto rewind_pos = input->GetPosition();
+
+	// We want to capture input by value, because it might be out of scope
+	// In order to call non-const method we have to tag the lambda mutable
+	auto cleanup_lambda = [input, rewind_pos]() mutable {
+		input->SetPosition(rewind_pos);
+	};
+
+	SCOPE_GUARD(cleanup_lambda);
+
+	Parser parser(_file, input);
 
 	types::big_uint obj_number = 0;
 	types::ushort gen_number = 0;
@@ -108,7 +117,9 @@ void XrefCompressedEntry::Initialize(void) {
 	auto body = converted->GetBody();
 
 	auto stream = body->ToStringStream();
-	Parser parser(_file, stream);
+
+	InputStreamPtr input_stream(stream);
+	Parser parser(_file, input_stream);
 	auto stream_entries = parser.ReadObjectStreamEntries(first->GetUnsignedIntegerValue(), size->SafeConvert<size_t>());
 	for (auto stream_entry : stream_entries) {
 		auto entry_object_number = stream_entry.object_number;

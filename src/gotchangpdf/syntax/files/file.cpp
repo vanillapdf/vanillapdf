@@ -1,16 +1,18 @@
 #include "precompiled.h"
-#include "syntax/files/file.h"
 
-#include "syntax/streams/raw_reverse_stream.h"
+#include "syntax/files/file.h"
+#include "syntax/files/xref_chain.h"
+#include "syntax/files/xref_utils.h"
+#include "syntax/files/header.h"
+
+#include "syntax/streams/input_reverse_stream.h"
+#include "syntax/streams/input_stream.h"
+#include "syntax/streams/output_stream.h"
+
 #include "syntax/parsers/parser.h"
 #include "syntax/parsers/reverse_parser.h"
 #include "syntax/exceptions/syntax_exceptions.h"
 #include "syntax/utils/encryption.h"
-#include "syntax/objects/string_object.h"
-
-#include "syntax/files/xref_chain.h"
-#include "syntax/files/xref_utils.h"
-#include "syntax/files/header.h"
 
 namespace gotchangpdf {
 namespace syntax {
@@ -21,7 +23,8 @@ FilePtr File::Open(const std::string& path) {
 
 FilePtr File::Create(const std::string& path) {
 	FilePtr result(new File(path));
-	result->_input = std::make_shared<std::fstream>();
+
+	result->_input = std::make_shared<std::fstream>();;
 	result->_input->open(path,
 		std::ios_base::in |
 		std::ios_base::out |
@@ -29,8 +32,9 @@ FilePtr File::Create(const std::string& path) {
 		std::ios::trunc
 	);
 
-	if (!result->_input || !result->_input->good())
+	if (!result->_input || !result->_input->good()) {
 		throw GeneralException("Could not open file");
+	}
 
 	result->_initialized = true;
 	return result;
@@ -66,13 +70,15 @@ void File::Initialize() {
 		std::ios::ate
 	);
 
-	if (!_input || !_input->good())
+	if (!_input || !_input->good()) {
 		throw GeneralException("Could not open file");
+	}
 
 	// Opening the stream with ate option
 	auto file_size = _input->tellg();
 
-	Parser stream(GetWeakReference<File>(), *_input);
+	InputStreamPtr input_stream(_input);
+	Parser stream(GetWeakReference<File>(), input_stream);
 	_header = stream.ReadHeader(0);
 
 	try {
@@ -491,7 +497,8 @@ EncryptionAlgorithm File::GetEncryptionAlgorithmForFilter(const NameObject& filt
 }
 
 void File::ReadXref(types::stream_offset offset) {
-	Parser stream(GetWeakReference<File>(), *_input);
+	InputStreamPtr input_stream(_input);
+	Parser stream(GetWeakReference<File>(), input_stream);
 
 	for (;;) {
 		auto xref = stream.ReadXref(offset);
@@ -526,7 +533,7 @@ void File::ReadXref(types::stream_offset offset) {
 }
 
 types::stream_offset File::GetLastXrefOffset(types::stream_size file_size) {
-	ReverseStream raw_reversed(*_input, file_size);
+	InputReverseStreamPtr raw_reversed(_input, file_size);
 	auto reverse_stream = ReverseParser(raw_reversed);
 	return reverse_stream.ReadLastXrefOffset();
 }
@@ -744,6 +751,14 @@ std::vector<ObjectPtr> File::DeepCopyObjects(const std::vector<ObjectPtr>& objec
 	}
 
 	return result;
+}
+
+IInputStreamPtr File::GetInputStream(void) {
+	return InputStreamPtr(_input);
+}
+
+IOutputStreamPtr File::GetOutputStream(void) {
+	return OutputStreamPtr(_input);
 }
 
 } // syntax

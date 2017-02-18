@@ -127,8 +127,9 @@ set(GOTCHANGPDF_SYNTAX_SOURCES
 	syntax/parsers/token_dictionary.cpp
 	syntax/parsers/tokenizer.cpp
 	
-	syntax/streams/raw_reverse_stream.cpp
-	syntax/streams/raw_stream.cpp
+	syntax/streams/input_reverse_stream.cpp
+	syntax/streams/input_stream.cpp
+	syntax/streams/output_stream.cpp
 	
 	syntax/utils/encryption.cpp
 	syntax/utils/pkcs12_key.cpp
@@ -234,9 +235,12 @@ set(GOTCHANGPDF_SYNTAX_HEADERS
 	syntax/parsers/token_dictionary.h
 	syntax/parsers/tokenizer.h
 	
-	syntax/streams/raw_base_stream.h
-	syntax/streams/raw_reverse_stream.h
-	syntax/streams/raw_stream.h
+	syntax/streams/input_stream_interface.h
+	syntax/streams/input_reverse_stream.h
+	syntax/streams/input_stream.h
+	
+	syntax/streams/output_stream_interface.h
+	syntax/streams/output_stream.h
 	
 	syntax/utils/encryption.h
 	syntax/utils/output_pointer.h

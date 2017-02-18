@@ -90,12 +90,12 @@ BufferPtr ASCII85DecodeFilter::Decode(std::istream& src, types::stream_size leng
 
 BufferPtr ASCII85DecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const {
 	auto stream = src->ToStringStream();
-	return Encode(stream, src->size());
+	return Encode(*stream, src->size());
 }
 
 BufferPtr ASCII85DecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters) const {
 	auto stream = src->ToStringStream();
-	return Decode(stream, src->size());
+	return Decode(*stream, src->size());
 }
 
 } // syntax

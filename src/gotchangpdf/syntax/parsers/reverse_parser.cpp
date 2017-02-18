@@ -5,7 +5,7 @@
 namespace gotchangpdf {
 namespace syntax {
 
-ReverseParser::ReverseParser(CharacterSource & stream)
+ReverseParser::ReverseParser(IInputStreamPtr stream)
 	: ReverseTokenizer(stream) {
 }
 
@@ -21,7 +21,7 @@ types::stream_offset ReverseParser::ReadLastXrefOffset() {
 }
 
 TokenPtr ReverseParser::ReadTokenWithTypeSkip(Token::Type type) {
-	auto offset = tellg();
+	auto offset = m_stream->GetPosition();
 	for (;;) {
 		auto token = ReadToken();
 

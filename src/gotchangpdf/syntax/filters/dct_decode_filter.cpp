@@ -135,12 +135,12 @@ BufferPtr DCTDecodeFilter::Decode(std::istream& src, types::stream_size length, 
 
 BufferPtr DCTDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const {
 	auto stream = src->ToStringStream();
-	return Encode(stream, src->size());
+	return Encode(*stream, src->size());
 }
 
 BufferPtr DCTDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters) const {
 	auto stream = src->ToStringStream();
-	return Decode(stream, src->size());
+	return Decode(*stream, src->size());
 }
 
 } // syntax

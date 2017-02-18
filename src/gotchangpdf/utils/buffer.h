@@ -3,6 +3,7 @@
 
 #include "utils/unknown_interface.h"
 #include "utils/modify_observer_interface.h"
+#include "utils/character.h"
 
 #include <vector>
 #include <string>
@@ -45,7 +46,7 @@ public:
 
 	Buffer Clone(void) const { return Buffer(begin(), end()); }
 	std::string ToString(void) const { return std::string(begin(), end()); }
-	std::stringstream ToStringStream(void) const { return std::stringstream(ToString()); }
+	std::shared_ptr<std::stringstream> ToStringStream(void) const;
 	bool Equals(const Buffer& other) const;
 	bool LessThan(const Buffer& other) const;
 
@@ -72,6 +73,8 @@ public:
 	void reserve(size_type count) { m_data.reserve(count); OnChanged(); }
 	void push_back(const_reference val) { m_data.push_back(val); OnChanged(); }
 	void push_back(value_type&& val) { m_data.push_back(val); OnChanged(); }
+	void push_back(WhiteSpace val) { push_back(static_cast<char>(val)); }
+	void push_back(Delimiter val) { push_back(static_cast<char>(val)); }
 
 	iterator insert(const_iterator where, const value_type& val) {
 		auto result = m_data.insert(where, val);

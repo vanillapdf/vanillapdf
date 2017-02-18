@@ -11,6 +11,10 @@ Buffer::Buffer(const char * chars) : Buffer(chars, std::strlen(chars)) {}
 Buffer::Buffer(const value_type * begin, const value_type * end) : m_data(begin, end) { assert(m_data.size() > 0); }
 Buffer::Buffer(size_type count, const value_type& val) : m_data(count, val) {}
 
+std::shared_ptr<std::stringstream> Buffer::ToStringStream(void) const {
+	return std::make_shared<std::stringstream>(ToString());
+}
+
 bool Buffer::Equals(const Buffer& other) const {
 	return std::operator==(m_data, other.m_data);
 }

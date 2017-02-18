@@ -1,6 +1,8 @@
 #include "precompiled.h"
+
 #include "semantics/objects/character_map.h"
 #include "syntax/parsers/parser.h"
+#include "syntax/streams/input_stream.h"
 
 namespace gotchangpdf {
 namespace semantics {
@@ -29,7 +31,9 @@ void UnicodeCharacterMap::Initialize() const {
 
 	auto body = _obj->GetBody();
 	auto body_stream = body->ToStringStream();
-	syntax::CharacterMapParser parser(_obj->GetFile(), body_stream);
+
+	syntax::InputStreamPtr input_stream(body_stream);
+	syntax::CharacterMapParser parser(_obj->GetFile(), input_stream);
 	m_data = parser.ReadCharacterMapData();
 	m_initialized = true;
 }
