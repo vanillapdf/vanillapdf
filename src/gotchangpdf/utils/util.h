@@ -166,13 +166,30 @@ Result SafeAddition(ValueFirst number, ValueSecond addend) {
 template <typename FunctionType>
 class ScopeGuard {
 public:
-	explicit ScopeGuard(FunctionType deleter) : _deleter(deleter) {}
+	explicit ScopeGuard(FunctionType deleter) : _deleter(deleter) {
+	}
+
 	ScopeGuard(const ScopeGuard& other) = delete;
 	ScopeGuard& operator=(const ScopeGuard& other) = delete;
-	ScopeGuard(ScopeGuard&& other) : _deleter(std::move(other._deleter)) { other.Release(); }
-	ScopeGuard& operator=(ScopeGuard&& other) { _deleter = std::move(other._deleter); other.Release(); return *this; }
-	void Release() { _released = true; }
-	~ScopeGuard() { if (!_released) _deleter(); }
+	ScopeGuard(ScopeGuard&& other) : _deleter(other._deleter) {
+		other.Release();
+	}
+
+	ScopeGuard& operator=(ScopeGuard&& other) {
+		_deleter = other._deleter;
+		other.Release();
+		return *this;
+	}
+
+	void Release() {
+		_released = true;
+	}
+
+	~ScopeGuard() {
+		if (!_released) {
+			_deleter();
+		}
+	}
 
 private:
 	bool _released = false;
@@ -182,7 +199,9 @@ private:
 class ScopeGuardFactory {
 public:
 	template <typename FunctionType>
-	static ScopeGuard<FunctionType> CreateGuard(FunctionType&& f) { return ScopeGuard<FunctionType>(std::forward<FunctionType>(f)); }
+	static ScopeGuard<FunctionType> CreateGuard(FunctionType&& f) {
+		return ScopeGuard<FunctionType>(std::forward<FunctionType>(f));
+	}
 
 private:
 	ScopeGuardFactory();
