@@ -111,7 +111,6 @@
     <ClInclude Include="src\gotchangpdf\syntax\files\header.h" />
     <ClInclude Include="src\gotchangpdf\syntax\files\xref.h" />
     <ClInclude Include="src\gotchangpdf\syntax\files\xref_chain.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\files\xref_utils.h" />
     <ClInclude Include="src\gotchangpdf\syntax\filters\ascii_85_decode_filter.h" />
     <ClInclude Include="src\gotchangpdf\syntax\filters\ascii_hex_decode_filter.h" />
     <ClInclude Include="src\gotchangpdf\syntax\filters\dct_decode_filter.h" />
