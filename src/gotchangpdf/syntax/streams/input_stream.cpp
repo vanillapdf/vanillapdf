@@ -64,7 +64,9 @@ void InputStream::SetPosition(types::stream_size pos, std::ios_base::seekdir way
 
 		if (way == std::ios_base::cur) {
 			// verify if the position is correct
-			assert(initial_offset + pos == verify_offset); verify_offset;
+			assert(initial_offset + pos == verify_offset);
+			verify_offset;
+			initial_offset;
 		}
 	}
 }
