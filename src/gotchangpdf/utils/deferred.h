@@ -136,7 +136,13 @@ public:
 	}
 
 	void reset() {
-		DeferredWrapperBase().swap(*this);
+
+		// Release existing resource
+		if (m_ptr) {
+			m_ptr->Release();
+		}
+
+		m_ptr = nullptr;
 	}
 
 	void reset(T* rhs) {

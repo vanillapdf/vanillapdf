@@ -3,12 +3,13 @@
 
 #include "semantics/utils/semantics_fwd.h"
 #include "semantics/objects/high_level_object.h"
+
+#include "syntax/files/xref.h"
 #include "syntax/objects/dictionary_object.h"
 #include "syntax/objects/string_object.h"
-#include "syntax/objects/containable.h"
-
 #include "syntax/objects/name_object.h"
 #include "syntax/objects/array_object.h"
+
 #include "utils/util.h"
 
 namespace gotchangpdf {
@@ -82,6 +83,7 @@ public:
 	bool IsInitialized() const;
 	void Initialize() const;
 	void RemoveAllChilds();
+	void ReleaseNode(TreeNodeBasePtr node);
 	void Rebuild();
 
 	// stl compatibility
@@ -202,11 +204,45 @@ void TreeBase<KeyT, ValueT>::Initialize() const {
 }
 
 template <typename KeyT, typename ValueT>
+void TreeBase<KeyT, ValueT>::ReleaseNode(TreeNodeBasePtr node) {
+	if (node->NodeType() == TreeNodeBase::TreeNodeType::Leaf) {
+		auto leaf = ConvertUtils<TreeNodeBasePtr>::ConvertTo <TreeNodeLeafPtr> (node);
+
+		auto leaf_obj = leaf->GetObject();
+		assert(leaf_obj->IsIndirect() && "Tree kids shall be indirect");
+
+		auto weak_leaf_xref = leaf_obj->GetXrefEntry();
+		if (weak_leaf_xref.IsActive() && !weak_leaf_xref.IsEmpty()) {
+			auto leaf_xref = weak_leaf_xref.GetReference();
+			leaf_xref->ReleaseReference(true);
+		}
+	}
+
+	if (node->NodeType() == TreeNodeBase::TreeNodeType::Intermediate) {
+		auto intermediate = ConvertUtils<TreeNodeBasePtr>::ConvertTo<TreeNodeIntermediatePtr>(node);
+
+		auto kids = intermediate->Kids();
+		for (auto kid : kids) {
+			ReleaseNode(kid);
+		}
+
+		auto intermediate_obj = intermediate->GetObject();
+		assert(intermediate_obj->IsIndirect() && "Tree kids shall be indirect");
+
+		auto weak_intermediate_xref = intermediate_obj->GetXrefEntry();
+		if (weak_intermediate_xref.IsActive() && !weak_intermediate_xref.IsEmpty()) {
+			auto intermediate_xref = weak_intermediate_xref.GetReference();
+			intermediate_xref->ReleaseReference(true);
+		}
+	}
+}
+
+template <typename KeyT, typename ValueT>
 void TreeBase<KeyT, ValueT>::RemoveAllChilds() {
 	if (_root->HasKids()) {
 		auto kids = _root->Kids();
 		for (auto kid : kids) {
-			// TODO release kid obj from file
+			ReleaseNode(kid);
 		}
 	}
 

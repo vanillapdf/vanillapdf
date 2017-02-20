@@ -3,7 +3,6 @@
 
 #include "syntax/files/file.h"
 #include "syntax/files/xref_chain.h"
-#include "syntax/files/xref_utils.h"
 #include "syntax/parsers/parser.h"
 #include "syntax/streams/input_stream.h"
 
@@ -14,6 +13,30 @@
 namespace gotchangpdf {
 namespace syntax {
 
+XrefEntryBase::XrefEntryBase(types::big_uint obj_number, types::ushort gen_number)
+	: _obj_number(obj_number), _gen_number(gen_number) {
+}
+
+XrefFreeEntry::XrefFreeEntry(types::big_uint obj_number, types::ushort gen_number)
+	: XrefEntryBase(obj_number, gen_number) {
+}
+
+XrefUsedEntry::XrefUsedEntry(types::big_uint obj_number, types::ushort gen_number, types::stream_offset offset)
+	: XrefUsedEntryBase(obj_number, gen_number), _offset(offset) {
+	_reference.reset();
+}
+
+XrefCompressedEntry::XrefCompressedEntry(
+	types::big_uint obj_number,
+	types::ushort gen_number,
+	types::big_uint object_stream_number,
+	types::uinteger index)
+	: XrefUsedEntryBase(obj_number, gen_number),
+	_object_stream_number(object_stream_number),
+	_index(index) {
+	_reference.reset();
+}
+
 XrefStream::~XrefStream() {
 	_stream->Unsubscribe(this);
 }
@@ -22,6 +45,19 @@ XrefBase::~XrefBase() {
 	for (auto item : _entries) {
 		item.second->Unsubscribe(this);
 	}
+}
+
+XrefUsedEntryBase::~XrefUsedEntryBase() {
+	ReleaseReference(false);
+}
+
+void XrefUsedEntryBase::ObserveeChanged(IModifyObservable*) {
+	if (m_initialized) {
+		SetDirty();
+	}
+
+	// Notify observers
+	OnChanged();
 }
 
 bool XrefEntryBase::operator<(const XrefEntryBase& other) const {
@@ -36,11 +72,18 @@ bool XrefEntryBase::operator<(const XrefEntryBase& other) const {
 	return false;
 }
 
-void XrefUsedEntry::SetReference(ObjectPtr ref) {
-	_reference->Unsubscribe(this);
-	_reference->ClearXrefEntry();
+void XrefUsedEntryBase::SetReference(ObjectPtr ref) {
+	auto weak_ref_xref = ref->GetXrefEntry();
+
+	if (weak_ref_xref.IsActive() && !weak_ref_xref.IsEmpty()) {
+		auto ref_xref = weak_ref_xref.GetReference();
+		assert(ref_xref == this && "Reference another owner");
+	}
+
+	ReleaseReference(true);
 
 	_reference = ref;
+	m_used = true;
 
 	_reference->Subscribe(this);
 	_reference->SetXrefEntry(this);
@@ -48,6 +91,47 @@ void XrefUsedEntry::SetReference(ObjectPtr ref) {
 	if (IsInitialized()) {
 		SetDirty();
 	}
+}
+
+ObjectPtr XrefUsedEntryBase::GetReference(void) {
+	Initialize();
+
+	if (!InUse()) {
+		return NullObject::GetInstance();
+	}
+
+	return _reference;
+}
+
+bool XrefUsedEntryBase::InUse(void) const noexcept {
+	if (!m_used) {
+		assert(_reference.empty() && "Unused entry contains reference");
+	}
+
+	return m_used;
+}
+
+void XrefUsedEntryBase::ReleaseReference(bool check_object_xref) {
+	// Unused entries have nothing to release
+	if (!InUse()) {
+		return;
+	}
+
+	bool unsubscribed = _reference->Unsubscribe(this);
+	assert(unsubscribed && "Could not unsubscribe"); unsubscribed;
+
+	if (check_object_xref) {
+		auto weak_ref_entry = _reference->GetXrefEntry();
+		if (weak_ref_entry.IsActive() && !weak_ref_entry.IsEmpty()) {
+			auto ref_entry = weak_ref_entry.GetReference();
+			assert(ref_entry == this && "Reference entry has changed");
+		}
+
+		_reference->ClearXrefEntry(false);
+	}
+
+	_reference.reset();
+	m_used = false;
 }
 
 void XrefUsedEntry::Initialize(void) {
@@ -81,20 +165,6 @@ void XrefUsedEntry::Initialize(void) {
 
 	SetReference(object);
 	SetInitialized();
-}
-
-void XrefCompressedEntry::SetReference(ObjectPtr ref) {
-	_reference->Unsubscribe(this);
-	_reference->ClearXrefEntry();
-
-	_reference = ref;
-
-	_reference->Subscribe(this);
-	_reference->SetXrefEntry(this);
-
-	if (IsInitialized()) {
-		SetDirty();
-	}
 }
 
 void XrefCompressedEntry::Initialize(void) {
@@ -132,7 +202,7 @@ void XrefCompressedEntry::Initialize(void) {
 			continue;
 		}
 
-		auto stream_compressed_entry_xref = XrefUtils::ConvertTo<XrefCompressedEntryPtr>(stream_entry_xref);
+		auto stream_compressed_entry_xref = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(stream_entry_xref);
 		stream_compressed_entry_xref->SetReference(entry_object);
 		stream_compressed_entry_xref->SetInitialized();
 	}
@@ -213,7 +283,7 @@ void XrefStream::RecalculateContent() {
 		section_size++;
 
 		if (entry->GetUsage() == XrefEntryBase::Usage::Free) {
-			auto free_entry = XrefUtils::ConvertTo<XrefFreeEntryPtr>(entry);
+			auto free_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefFreeEntryPtr>(entry);
 
 			WriteValue(ss, 0, *field1_size);
 			WriteValue(ss, free_entry->GetNextFreeObjectNumber(), *field2_size);
@@ -222,7 +292,7 @@ void XrefStream::RecalculateContent() {
 		}
 
 		if (entry->GetUsage() == XrefEntryBase::Usage::Used) {
-			auto used_entry = XrefUtils::ConvertTo<XrefUsedEntryPtr>(entry);
+			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
 
 			WriteValue(ss, 1, *field1_size);
 			WriteValue(ss, used_entry->GetOffset(), *field2_size);
@@ -231,7 +301,7 @@ void XrefStream::RecalculateContent() {
 		}
 
 		if (entry->GetUsage() == XrefEntryBase::Usage::Compressed) {
-			auto compressed_entry = XrefUtils::ConvertTo<XrefCompressedEntryPtr>(entry);
+			auto compressed_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(entry);
 
 			WriteValue(ss, 2, *field1_size);
 			WriteValue(ss, compressed_entry->GetObjectStreamNumber(), *field2_size);

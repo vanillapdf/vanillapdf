@@ -37,8 +37,9 @@ public:
 
 public:
 	bool IsIndirect(void) const noexcept;
-	void SetXrefEntry(XrefEntryBasePtr entry);
-	void ClearXrefEntry();
+	void SetXrefEntry(XrefUsedEntryBasePtr entry);
+	WeakReference<XrefUsedEntryBase> GetXrefEntry() const;
+	void ClearXrefEntry(bool check_xref_reference);
 
 	bool IsDirty(void) const noexcept { return m_dirty; }
 	void SetDirty(bool dirty = true) noexcept { m_dirty = dirty; }
@@ -72,7 +73,7 @@ protected:
 	bool m_dirty = false;
 	types::stream_offset m_offset = constant::BAD_OFFSET;
 	bool m_encryption_exempted = false;
-	WeakReference<XrefEntryBase> m_entry;
+	WeakReference<XrefUsedEntryBase> m_entry;
 	WeakReference<Object> m_owner;
 };
 

@@ -2,7 +2,6 @@
 
 #include "syntax/files/file.h"
 #include "syntax/files/xref_chain.h"
-#include "syntax/files/xref_utils.h"
 #include "syntax/files/header.h"
 
 #include "syntax/streams/input_reverse_stream.h"
@@ -60,8 +59,9 @@ File::~File(void) {
 void File::Initialize() {
 	LOG_DEBUG(_filename) << "Initialize";
 
-	if (_initialized)
+	if (_initialized) {
 		return;
+	}
 
 	_input = std::make_shared<std::fstream>();
 	_input->open(_full_path,
@@ -541,8 +541,9 @@ types::stream_offset File::GetLastXrefOffset(types::stream_size file_size) {
 ObjectPtr File::GetIndirectObject(
 	types::big_uint objNumber,
 	types::ushort genNumber) const {
-	if (!_initialized)
+	if (!_initialized) {
 		throw FileNotInitializedException(_filename);
+	}
 
 	return GetIndirectObjectInternal(objNumber, genNumber);
 }
@@ -558,27 +559,20 @@ ObjectPtr File::GetIndirectObjectInternal(
 
 	auto item = _xref->GetXrefEntry(objNumber, genNumber);
 
-	if (!item->InUse()) {
-		return NullObject::GetInstance();
-	}
-
 	switch (item->GetUsage()) {
 		case XrefEntryBase::Usage::Used:
 		{
-			auto used = XrefUtils::ConvertTo<XrefUsedEntryPtr>(item);
+			auto used = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(item);
 			return used->GetReference();
 		}
 		case XrefEntryBase::Usage::Compressed:
 		{
-			auto compressed = XrefUtils::ConvertTo<XrefCompressedEntryPtr>(item);
+			auto compressed = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(item);
 			return compressed->GetReference();
 		}
 		case XrefEntryBase::Usage::Null:
 			LOG_ERROR(_filename) << "Xref entry type is null for object " << objNumber << " " << genNumber;
-			return NullObject::GetInstance();
 		case XrefEntryBase::Usage::Free:
-			LOG_ERROR(_filename) << "Xref entry type is free for object " << objNumber << " " << genNumber << " and InUse() returned true";
-			assert(!"Current entry is supposed to be InUse(), while it's type is Free");
 			return NullObject::GetInstance();
 		default:
 			throw GeneralException("Unknown entry type");

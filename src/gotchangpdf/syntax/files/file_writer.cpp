@@ -5,7 +5,6 @@
 #include "syntax/files/file_writer.h"
 #include "syntax/files/file.h"
 #include "syntax/files/xref.h"
-#include "syntax/files/xref_utils.h"
 
 #include "syntax/exceptions/syntax_exceptions.h"
 
@@ -70,7 +69,7 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 
 		// Get cloned stream based on same object and generation number from cloned xref
 		auto new_stream_entry = dest_xref->GetXrefEntry(stream_object_number, stream_generation_number);
-		auto new_stream_used_entry = XrefUtils::ConvertTo<XrefUsedEntryBasePtr>(new_stream_entry);
+		auto new_stream_used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(new_stream_entry);
 		auto new_stream_obj = new_stream_used_entry->GetReference();
 		auto new_stream = ObjectUtils::ConvertTo<StreamObjectPtr>(new_stream_obj);
 
@@ -349,7 +348,13 @@ void FileWriter::WriteXrefObjects(FilePtr destination, XrefBasePtr source) {
 			continue;
 		}
 
-		auto used_entry = XrefUtils::ConvertTo<XrefUsedEntryBasePtr>(entry);
+		auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(entry);
+
+		// Some used entries can be released, but they were not compacted
+		if (!used_entry->InUse()) {
+			continue;
+		}
+
 		auto output = destination->GetOutputStream();
 		WriteEntry(output, used_entry);
 		continue;
@@ -388,6 +393,12 @@ XrefBasePtr FileWriter::CreateIncrementalXref(FilePtr source, FilePtr destinatio
 
 			if (entry->GetUsage() == XrefEntryBase::Usage::Used) {
 				auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
+
+				// Entry was release
+				if (used_entry->InUse()) {
+					continue;
+				}
+
 				auto obj = used_entry->GetReference();
 				auto new_offset = used_entry->GetOffset();
 
@@ -499,8 +510,8 @@ void FileWriter::WriteEntry(IOutputStreamPtr output, XrefUsedEntryBasePtr entry)
 	auto obj = entry->GetReference();
 
 	if (m_recalculate_offset) {
-		if (XrefUtils::IsType<XrefUsedEntryPtr>(entry)) {
-			auto used_entry = XrefUtils::ConvertTo<XrefUsedEntryPtr>(entry);
+		if (ConvertUtils<XrefUsedEntryBasePtr>::IsType<XrefUsedEntryPtr>(entry)) {
+			auto used_entry = ConvertUtils<XrefUsedEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
 
 			auto new_offset = output->GetOutputPosition();
 			used_entry->SetOffset(new_offset);
@@ -602,7 +613,9 @@ void FileWriter::WriteXrefTable(IOutputStreamPtr output, XrefTablePtr xref_table
 
 		for (decltype(subsection_size) j = 0; j < subsection_size; ++j) {
 			auto entry = table_items[i + j];
-			if (!entry->InUse()) {
+
+			// Write free entry
+			if (ConvertUtils<XrefEntryBasePtr>::IsType<XrefFreeEntryPtr>(entry)) {
 				auto free_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefFreeEntryPtr>(entry);
 				auto formatted_object_number = GetFormattedObjectNumber(free_entry->GetNextFreeObjectNumber());
 				auto formatted_generation_number = GetFormattedGenerationNumber(free_entry->GetGenerationNumber());
@@ -617,17 +630,26 @@ void FileWriter::WriteXrefTable(IOutputStreamPtr output, XrefTablePtr xref_table
 				continue;
 			}
 
-			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
-			auto formatted_offset = GetFormattedOffset(used_entry->GetOffset());
-			auto formatted_generation_number = GetFormattedGenerationNumber(used_entry->GetGenerationNumber());
+			if (ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(entry)) {
+				auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
 
-			output->Write(formatted_offset);
-			output->Write(WhiteSpace::SPACE);
-			output->Write(formatted_generation_number);
-			output->Write(WhiteSpace::SPACE);
-			output->Write('n');
-			output->Write(WhiteSpace::SPACE);
-			output->Write(WhiteSpace::LINE_FEED);
+				// Entry was released
+				if (!used_entry->InUse()) {
+					continue;
+				}
+
+				auto formatted_offset = GetFormattedOffset(used_entry->GetOffset());
+				auto formatted_generation_number = GetFormattedGenerationNumber(used_entry->GetGenerationNumber());
+
+				output->Write(formatted_offset);
+				output->Write(WhiteSpace::SPACE);
+				output->Write(formatted_generation_number);
+				output->Write(WhiteSpace::SPACE);
+				output->Write('n');
+				output->Write(WhiteSpace::SPACE);
+				output->Write(WhiteSpace::LINE_FEED);
+				continue;
+			}
 		}
 
 		i += subsection_size;

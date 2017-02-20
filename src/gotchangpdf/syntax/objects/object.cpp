@@ -16,11 +16,27 @@ bool Object::IsIndirect(void) const noexcept {
 	return (!m_entry.IsEmpty() && m_entry.IsActive());
 }
 
-void Object::SetXrefEntry(XrefEntryBasePtr entry) {
-	m_entry = entry;
+void Object::SetXrefEntry(XrefUsedEntryBasePtr entry) {
+	// I have call explicit conversion to weak reference,
+	// because it could be either XrefEntryBase or XrefUsedEntryBase
+	m_entry = entry->IWeakReferenceable<XrefUsedEntryBase>::GetWeakReference();
 }
 
-void Object::ClearXrefEntry() {
+WeakReference<XrefUsedEntryBase> Object::GetXrefEntry() const {
+	return m_entry;
+}
+
+void Object::ClearXrefEntry(bool check_xref_reference) {
+	if (check_xref_reference && !m_entry.IsEmpty() && m_entry.IsActive()) {
+
+		// Verify that the entry refers to this object
+		auto entry = m_entry.GetReference();
+		if (entry->InUse()) {
+			assert(entry->GetReference() == this && "Reference entry has changed");
+			entry->ReleaseReference(false);
+		}
+	}
+
 	m_entry.Reset();
 }
 

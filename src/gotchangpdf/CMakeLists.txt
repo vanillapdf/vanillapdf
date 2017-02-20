@@ -199,7 +199,6 @@ set(GOTCHANGPDF_SYNTAX_HEADERS
 	syntax/files/file_writer.h
 	syntax/files/header.h
 	syntax/files/xref.h
-	syntax/files/xref_utils.h
 	syntax/files/xref_chain.h
 	
 	syntax/filters/ascii_85_decode_filter.h

@@ -95,44 +95,32 @@ template <typename BaseT>
 class ConvertUtils {
 public:
 	template <typename T>
-	static T ConvertTo(const BaseT& obj) { return Specializator<T>::ConvertTo(obj); }
+	static T ConvertTo(BaseT obj) {
+		return Specializator<T>::ConvertTo(obj);
+	}
 
 	template <typename T>
-	static bool IsType(const BaseT& obj) { return Specializator<T>::IsType(obj); }
+	static bool IsType(BaseT obj) {
+		return Specializator<T>::IsType(obj);
+	}
 
 private:
 	template <typename T>
 	class Specializator {
 	public:
 		static T ConvertTo(BaseT obj) {
-			auto converted = dynamic_cast<T>(obj);
-			if (nullptr == converted)
+			auto ptr = obj.get();
+			auto converted = dynamic_cast<typename T::deferred_ptr_type *>(ptr);
+			if (nullptr == converted) {
 				throw ConversionExceptionFactory<T>::Construct(obj);
+			}
 
 			return converted;
 		}
 
-		static bool IsType(const BaseT& obj) {
-			auto converted = dynamic_cast<T>(obj);
-			return (nullptr != converted);
-		}
-	};
-
-	template <typename T>
-	class Specializator<Deferred<T>> {
-	public:
-		static Deferred<T> ConvertTo(BaseT obj) {
+		static bool IsType(BaseT obj) {
 			auto ptr = obj.get();
-			auto converted = dynamic_cast<T*>(ptr);
-			if (nullptr == converted)
-				throw ConversionExceptionFactory<T>::Construct(obj);
-
-			return Deferred<T>(converted);
-		}
-
-		static bool IsType(const BaseT& obj) {
-			auto ptr = obj.get();
-			auto converted = dynamic_cast<T*>(ptr);
+			auto converted = dynamic_cast<typename T::deferred_ptr_type *>(ptr);
 			return (nullptr != converted);
 		}
 	};

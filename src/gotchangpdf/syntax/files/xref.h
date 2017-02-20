@@ -21,9 +21,7 @@ public:
 	};
 
 public:
-	XrefEntryBase(types::big_uint obj_number, types::ushort gen_number)
-		: _obj_number(obj_number), _gen_number(gen_number) {
-	}
+	XrefEntryBase(types::big_uint obj_number, types::ushort gen_number);
 
 public:
 	types::big_uint GetObjectNumber(void) const noexcept { return _obj_number; }
@@ -34,7 +32,7 @@ public:
 
 	virtual Usage GetUsage(void) const noexcept = 0;
 
-	bool InUse(void) const noexcept { return GetUsage() == Usage::Compressed || GetUsage() == Usage::Used; }
+	virtual bool InUse(void) const noexcept = 0;
 
 	void SetFile(WeakReference<File> file) noexcept { _file = file; }
 	WeakReference<File> GetFile() const noexcept { return _file; }
@@ -58,75 +56,73 @@ private:
 
 class XrefNullEntry : public XrefEntryBase {
 public:
-	virtual Usage GetUsage(void) const noexcept override { return XrefEntryBase::Usage::Null; }
+	virtual Usage GetUsage(void) const noexcept override {
+		return XrefEntryBase::Usage::Null;
+	}
+
+	virtual bool InUse(void) const noexcept {
+		return false;
+	}
 };
 
 class XrefFreeEntry : public XrefEntryBase {
 public:
-	XrefFreeEntry(types::big_uint obj_number, types::ushort gen_number)
-		: XrefEntryBase(obj_number, gen_number) {
-	}
+	XrefFreeEntry(types::big_uint obj_number, types::ushort gen_number);
 
 public:
 	virtual Usage GetUsage(void) const noexcept override { return XrefEntryBase::Usage::Free; }
 
 	types::big_uint GetNextFreeObjectNumber(void) const noexcept { return _obj_number; }
 	void SetNextFreeObjectNumber(types::big_uint value) noexcept { _obj_number = value; OnChanged(); }
+
+	virtual bool InUse(void) const noexcept {
+		return false;
+	}
 };
 
-class XrefUsedEntryBase : public XrefEntryBase {
+class XrefUsedEntryBase : public XrefEntryBase, public IWeakReferenceable<XrefUsedEntryBase>, public IModifyObserver {
 public:
 	using XrefEntryBase::XrefEntryBase;
 
 public:
-	virtual ObjectPtr GetReference(void) = 0;
-	virtual void SetReference(ObjectPtr ref) = 0;
+	virtual ObjectPtr GetReference(void);
+	virtual void SetReference(ObjectPtr ref);
+	virtual void ReleaseReference(bool check_object_xref);
+
+	virtual void ObserveeChanged(IModifyObservable*) override;
+	virtual bool InUse(void) const noexcept override;
+
+	~XrefUsedEntryBase();
+
+protected:
+	// TODO rework used flag as std::optional
+	bool m_used = false;
+	ObjectPtr _reference;
+
+	virtual void Initialize(void) = 0;
 };
 
-class XrefUsedEntry : public XrefUsedEntryBase, public IModifyObserver {
+class XrefUsedEntry : public XrefUsedEntryBase {
 public:
-	XrefUsedEntry(types::big_uint obj_number, types::ushort gen_number, types::stream_offset offset)
-		: XrefUsedEntryBase(obj_number, gen_number), _offset(offset) {
-	}
+	XrefUsedEntry(types::big_uint obj_number, types::ushort gen_number, types::stream_offset offset);
 
 public:
 	virtual Usage GetUsage(void) const noexcept override { return XrefEntryBase::Usage::Used; }
 
-	virtual ObjectPtr GetReference(void) override { Initialize(); return _reference; }
-	virtual void SetReference(ObjectPtr ref) override;
-
 	types::stream_offset GetOffset(void) const noexcept { return _offset; }
 	void SetOffset(types::stream_offset value) noexcept { _offset = value; OnChanged(); }
 
-	virtual void ObserveeChanged(IModifyObservable*) override {
-		if (m_initialized) {
-			SetDirty();
-		}
-
-		// Notify observers
-		OnChanged();
-	}
-
-	~XrefUsedEntry() { _reference->Unsubscribe(this); }
-
 private:
-	void Initialize(void);
-
-	ObjectPtr _reference = NullObject::GetInstance();
+	virtual void Initialize(void) override;
 	types::stream_offset _offset = constant::BAD_OFFSET;
 };
 
-class XrefCompressedEntry : public XrefUsedEntryBase, public IModifyObserver {
+class XrefCompressedEntry : public XrefUsedEntryBase {
 public:
-	XrefCompressedEntry(types::big_uint obj_number, types::ushort gen_number, types::big_uint object_stream_number, types::uinteger index)
-		: XrefUsedEntryBase(obj_number, gen_number), _object_stream_number(object_stream_number), _index(index) {
-	}
+	XrefCompressedEntry(types::big_uint obj_number, types::ushort gen_number, types::big_uint object_stream_number, types::uinteger index);
 
 public:
 	virtual Usage GetUsage(void) const noexcept override { return XrefEntryBase::Usage::Compressed; }
-
-	virtual ObjectPtr GetReference(void) override { Initialize(); return _reference; }
-	virtual void SetReference(ObjectPtr ref) override;
 
 	types::big_uint GetObjectStreamNumber(void) const noexcept { return _object_stream_number; }
 	void SetObjectStreamNumber(types::uinteger value) noexcept { _object_stream_number = value; OnChanged(); }
@@ -134,21 +130,9 @@ public:
 	types::uinteger GetIndex(void) const noexcept { return _index; }
 	void SetIndex(types::uinteger value) noexcept { _index = value; OnChanged(); }
 
-	virtual void ObserveeChanged(IModifyObservable*) override {
-		if (m_initialized) {
-			SetDirty();
-		}
-
-		// Notify observers
-		OnChanged();
-	}
-
-	~XrefCompressedEntry() { _reference->Unsubscribe(this); }
-
 private:
-	void Initialize(void);
+	virtual void Initialize(void) override;
 
-	ObjectPtr _reference = NullObject::GetInstance();
 	types::big_uint _object_stream_number = 0;
 	types::uinteger _index = 0;
 };

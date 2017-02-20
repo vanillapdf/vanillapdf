@@ -12,10 +12,7 @@ public:
 	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Null; }
 	virtual std::string ToPdf(void) const override { return "null"; }
 
-	static NullObjectPtr GetInstance(void) {
-		static NullObjectPtr instance = NullObjectPtr(pdf_new NullObject());
-		return instance;
-	}
+	static NullObjectPtr GetInstance(void);
 
 	bool Equals(const NullObject& other) const;
 	virtual bool Equals(ObjectPtr other) const override;

@@ -102,5 +102,28 @@ bool XrefChain::Contains(types::big_uint objNumber,
 	return false;
 }
 
+bool XrefChain::ReleaseEntry(XrefUsedEntryBasePtr entry) {
+
+	for (auto xref : _list) {
+		auto object_number = entry->GetObjectNumber();
+
+		if (!xref->Contains(object_number)) {
+			continue;
+		}
+
+		auto item = xref->Find(object_number);
+		if (item->GetGenerationNumber() != entry->GetGenerationNumber()) {
+			continue;
+		}
+
+		bool removed = xref->Remove(object_number);
+		assert(removed && "Could not remove the xref entry");
+
+		return removed;
+	}
+
+	return false;
+}
+
 } // syntax
 } // gotchangpdf

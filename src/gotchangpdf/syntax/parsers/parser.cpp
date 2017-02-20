@@ -3,7 +3,6 @@
 #include "syntax/parsers/parser.h"
 #include "syntax/parsers/token.h"
 #include "syntax/files/file.h"
-#include "syntax/files/xref_utils.h"
 
 #include "syntax/parsers/reverse_parser.h"
 #include "syntax/streams/input_reverse_stream.h"
@@ -639,12 +638,12 @@ XrefStreamPtr Parser::ParseXrefStream(
 
 		auto entry = chain->GetXrefEntry(stream_obj_number, stream_gen_number);
 
-		if (!XrefUtils::IsType<XrefUsedEntryPtr>(entry)) {
+		if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(entry)) {
 			assert(false && "How could this be entry of different type");
 			throw GeneralException("Xref entry has incorrect type");
 		}
 
-		auto used_entry = XrefUtils::ConvertTo<XrefUsedEntryPtr>(entry);
+		auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
 		used_entry->SetReference(stream);
 		used_entry->SetInitialized();
 	}
@@ -797,10 +796,12 @@ XrefChainPtr Parser::FindAllObjects(void) {
 		auto obj = ReadDirectObject();
 		obj->SetOffset(offset_before);
 		obj->SetFile(_file);
+		obj->SetInitialized();
 
 		XrefUsedEntryPtr entry(obj_number, gen_number, obj->GetOffset());
 		entry->SetReference(obj);
 		entry->SetFile(_file);
+		entry->SetInitialized();
 		xref->Add(entry);
 
 		// Check if read object is Xref stream

@@ -26,7 +26,7 @@ syntax::FilePtr Document::GetFile() const {
 }
 
 Document::~Document() {
-	SemanticUtils::ReleaseMapping(m_holder->GetWeakReference<syntax::File>());
+	SemanticUtils::ReleaseMapping(m_holder);
 }
 
 CatalogPtr Document::GetDocumentCatalog(void) {
@@ -54,8 +54,9 @@ bool Document::GetDocumentInfo(OutputDocumentInfoPtr& result) {
 	auto xref = chain->Begin()->Value();
 	auto dictionary = xref->GetTrailerDictionary();
 
-	if (!dictionary->Contains(constant::Name::Info))
+	if (!dictionary->Contains(constant::Name::Info)) {
 		return false;
+	}
 
 	auto info = dictionary->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Info);
 	DocumentInfoPtr doc_info(info);

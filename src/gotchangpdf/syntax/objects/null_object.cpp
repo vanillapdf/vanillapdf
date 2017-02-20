@@ -21,5 +21,10 @@ bool NullObject::Equals(const NullObject&) const {
 	return true;
 }
 
+NullObjectPtr NullObject::GetInstance(void) {
+	static NullObjectPtr instance = NullObjectPtr(pdf_new NullObject());
+	return instance;
+}
+
 } // syntax
 } // gotchangpdf
