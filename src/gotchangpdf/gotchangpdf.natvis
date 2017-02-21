@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+   <Type Name="Object">
+     <DisplayString>Object: {m_dirty}</DisplayString>
+     <Expand>
+       <Item Name="Dirty">m_dirty</Item>
+       <Item Name="Encryption Exempted">m_encryption_exempted</Item>
+     </Expand>
+   </Type>
+   <Type Name="gotchangpdf::syntax::MixedArrayObject">
+     <DisplayString>MixedArrayObject: {_list._Mypair._Myval2._Mylast - _list._Mypair._Myval2._Myfirst}</DisplayString>
+     <Expand>
+       <ArrayItems>
+         <Size>_list._Mypair._Myval2._Mylast - _list._Mypair._Myval2._Myfirst</Size>
+         <ValuePointer>_list._Mypair._Myval2._Myfirst</ValuePointer>
+       </ArrayItems>
+     </Expand>
+   </Type>
+
+   <Type Name="gotchangpdf::syntax::HexadecimalStringObject">
+     <DisplayString>&lt;{_raw_value}&gt;</DisplayString>
+   </Type>
+
+   <Type Name="gotchangpdf::syntax::LiteralStringObject">
+     <DisplayString>({_raw_value})</DisplayString>
+   </Type>
+
+   <Type Name="gotchangpdf::syntax::NumericObjectBackend">
+     <DisplayString Condition="m_type == gotchangpdf::syntax::NumericObjectBackend::Type::SignedInteger">{m_int}</DisplayString>
+     <DisplayString Condition="m_type == gotchangpdf::syntax::NumericObjectBackend::Type::UnsignedInteger">{m_uint}</DisplayString>
+     <DisplayString Condition="m_type == gotchangpdf::syntax::NumericObjectBackend::Type::Real">{m_real}</DisplayString>
+   </Type>
+
+   <Type Name="gotchangpdf::syntax::NullObject">
+     <DisplayString>Null object</DisplayString>
+   </Type>
+
+   <Type Name="gotchangpdf::syntax::RealObject">
+     <DisplayString>{m_value}</DisplayString>
+   </Type>
+
+   <Type Name="gotchangpdf::syntax::IntegerObject">
+     <DisplayString>{m_value}</DisplayString>
+   </Type>
+
+   <Type Name="gotchangpdf::syntax::IndirectObjectReference">
+     <DisplayString>{m_reference_object_number} {m_reference_generation_number} R</DisplayString>
+     <Expand>
+       <Item Name="Reference" Condition="m_reference.m_counter._Ptr != nullptr &amp;&amp; m_reference.m_ptr != nullptr">m_reference</Item>
+     </Expand>
+   </Type>
+
+   <Type Name="gotchangpdf::syntax::BooleanObject">
+     <DisplayString>{m_value}</DisplayString>
+   </Type>
+
+   <Type Name="gotchangpdf::syntax::NameObject">
+     <DisplayString>{_value}</DisplayString>
+   </Type>
+
+   <Type Name="gotchangpdf::syntax::DictionaryObjectBase&lt;*,*&gt;">
+     <DisplayString>Dictionary object (size: {_list._Mypair._Myval2._Myval2._Mysize})</DisplayString>
+     <Expand>
+       <TreeItems>
+         <Size>_list._Mypair._Myval2._Myval2._Mysize</Size>
+         <HeadPointer>_list._Mypair._Myval2._Myval2._Myhead->_Parent</HeadPointer>
+         <LeftPointer>_Left</LeftPointer>
+         <RightPointer>_Right</RightPointer>
+         <ValueNode Condition="!(_Isnil)">_Myval</ValueNode>
+       </TreeItems>
+     </Expand>
+   </Type>
+
+   <Type Name="gotchangpdf::syntax::StreamObject">
+     <DisplayString>Stream object</DisplayString>
+     <Expand>
+       <Item Name="Header" >_header</Item>
+       <Item Name="Data offset" >_raw_data_offset</Item>
+     </Expand>
+   </Type>
+
+   <Type Name="gotchangpdf::syntax::XrefUsedEntry">
+     <DisplayString>Used entry: {_obj_number} {_gen_number} {_offset}</DisplayString>
+     <Expand>
+       <Item Name="Object number" >_obj_number</Item>
+       <Item Name="Generation number" >_gen_number</Item>
+       <Item Name="Offset" >_offset</Item>
+     </Expand>
+   </Type>
+
+   <Type Name="gotchangpdf::syntax::XrefCompressedEntry">
+     <DisplayString>Compressed entry: {_obj_number} {_gen_number}</DisplayString>
+     <Expand>
+       <Item Name="Object number" >_obj_number</Item>
+       <Item Name="Generation number" >_gen_number</Item>
+       <Item Name="Object stream number" >_object_stream_number</Item>
+       <Item Name="Object stream index" >_index</Item>
+     </Expand>
+   </Type>
+
+   <!-- VC 2015 -->
+   <Type Name="gotchangpdf::Deferred&lt;*&gt;">
+     <DisplayString Condition="m_ptr == nullptr">Empty</DisplayString>
+     <DisplayString>{*m_ptr}</DisplayString>
+     <Expand>
+       <Item Name="Value">*m_ptr</Item>
+     </Expand>
+   </Type>
+
+   <Type Name="gotchangpdf::Buffer">
+     <DisplayString>{m_data._Mypair._Myval2._Myfirst,[m_data._Mypair._Myval2._Mylast - m_data._Mypair._Myval2._Myfirst]sb}</DisplayString>
+     <StringView>m_data._Mypair._Myval2._Myfirst,[m_data._Mypair._Myval2._Mylast - m_data._Mypair._Myval2._Myfirst]sb</StringView>
+   </Type>
+ </AutoVisualizer>
