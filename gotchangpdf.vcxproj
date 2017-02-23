@@ -159,6 +159,7 @@
     <ClInclude Include="src\gotchangpdf\utils\library_info.h" />
     <ClInclude Include="src\gotchangpdf\utils\log.h" />
     <ClInclude Include="src\gotchangpdf\utils\modify_observer_interface.h" />
+    <ClInclude Include="src\gotchangpdf\utils\observable_interface.h" />
     <ClInclude Include="src\gotchangpdf\utils\stack_allocator.h" />
     <ClInclude Include="src\gotchangpdf\utils\unknown_interface.h" />
     <ClInclude Include="src\gotchangpdf\utils\util.h" />

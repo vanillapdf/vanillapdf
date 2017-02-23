@@ -256,6 +256,7 @@ set(GOTCHANGPDF_UTILS_HEADERS
 	utils/exceptions.h
 	utils/library_info.h
 	utils/log.h
+	utils/observable_interface.h
 	utils/modify_observer_interface.h
 	utils/pdf_version.h
 	utils/unknown_interface.h

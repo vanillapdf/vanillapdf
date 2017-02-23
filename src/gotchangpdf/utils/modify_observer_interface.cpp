@@ -22,31 +22,6 @@ IModifyObservable& IModifyObservable::operator=(const IModifyObservable&) {
 	return *this;
 }
 
-void IModifyObservable::Subscribe(IModifyObserver* observer) {
-	auto weak_ref = observer->GetWeakReference<IModifyObserver>();
-	Subscribe(weak_ref);
-}
-
-bool IModifyObservable::Unsubscribe(IModifyObserver* observer) {
-	auto weak_ref = observer->GetWeakReference<IModifyObserver>();
-	return Unsubscribe(weak_ref);
-}
-
-void IModifyObservable::Subscribe(WeakReference<IModifyObserver> observer) {
-	m_observers.push_back(observer);
-}
-
-bool IModifyObservable::Unsubscribe(WeakReference<IModifyObserver> observer) {
-	for (auto it = m_observers.begin(); it != m_observers.end(); ++it) {
-		if (observer == *it) {
-			m_observers.erase(it);
-			return true;
-		}
-	}
-
-	return false;
-}
-
 void IModifyObservable::OnChanged() {
 	// Skip for uninitialized objects
 	if (!m_initialized) {

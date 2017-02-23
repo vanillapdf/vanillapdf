@@ -1,9 +1,8 @@
 #ifndef _MODIFY_OBSERVER_INTERFACE_H
 #define _MODIFY_OBSERVER_INTERFACE_H
 
+#include "utils/observable_interface.h"
 #include "utils/unknown_interface.h"
-
-#include <vector>
 
 namespace gotchangpdf {
 
@@ -13,7 +12,7 @@ public:
 	virtual ~IModifyObserver() = 0;
 };
 
-class IModifyObservable {
+class IModifyObservable : public IObservable<IModifyObserver> {
 public:
 	IModifyObservable() = default;
 	IModifyObservable(const IModifyObservable& other);
@@ -22,12 +21,6 @@ public:
 	IModifyObservable& operator=(IModifyObservable&& other) = default;
 
 public:
-	void Subscribe(WeakReference<IModifyObserver> observer);
-	bool Unsubscribe(WeakReference<IModifyObserver> observer);
-
-	void Subscribe(IModifyObserver* observer);
-	bool Unsubscribe(IModifyObserver* observer);
-
 	virtual void OnChanged();
 
 	bool IsInitialized(void) const noexcept {
@@ -41,7 +34,6 @@ public:
 	virtual ~IModifyObservable() = 0;
 
 protected:
-	std::vector<WeakReference<IModifyObserver>> m_observers;
 	bool m_initialized = false;
 
 private:
