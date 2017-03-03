@@ -62,7 +62,12 @@ std::string NameObject::ToPdf(void) const {
 }
 
 NameObject* NameObject::Clone(void) const {
-	return new NameObject(_value->Clone());
+	NameObjectPtr result;
+
+	result->SetValue(_value->Clone());
+	result->SetFile(m_file);
+
+	return result.detach();
 }
 
 NameObject::~NameObject() {

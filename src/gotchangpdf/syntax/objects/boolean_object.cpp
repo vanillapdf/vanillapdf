@@ -5,6 +5,22 @@
 namespace gotchangpdf {
 namespace syntax {
 
+BooleanObject::BooleanObject(bool value) : m_value(value) {
+}
+
+bool BooleanObject::GetValue(void) const noexcept {
+	return m_value;
+}
+
+void BooleanObject::SetValue(bool value) {
+	m_value = value;
+	OnChanged();
+}
+
+BooleanObject::operator bool() const noexcept {
+	return m_value;
+}
+
 bool BooleanObject::Equals(ObjectPtr other) const {
 	if (!ObjectUtils::IsType<BooleanObjectPtr>(other)) {
 		return false;
@@ -12,6 +28,19 @@ bool BooleanObject::Equals(ObjectPtr other) const {
 
 	auto other_obj = ObjectUtils::ConvertTo<BooleanObjectPtr>(other);
 	return (GetValue() == other_obj->GetValue());
+}
+
+std::string BooleanObject::ToPdf(void) const {
+	return m_value ? "true" : "false";
+}
+
+BooleanObject* BooleanObject::Clone(void) const {
+	BooleanObjectPtr result;
+
+	result->SetFile(m_file);
+	result->SetValue(m_value);
+
+	return result.detach();
 }
 
 } // syntax

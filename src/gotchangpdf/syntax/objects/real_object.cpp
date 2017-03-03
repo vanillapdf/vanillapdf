@@ -38,7 +38,9 @@ void RealObject::ObserveeChanged(IModifyObservable*) {
 }
 
 RealObject* RealObject::Clone(void) const {
-	return new RealObject(m_value->Clone());
+	NumericObjectBackendPtr new_value(m_value->Clone());
+	RealObjectPtr result(new_value);
+	return result.detach();
 }
 
 bool RealObject::Equals(const ObjectPtr other) const {

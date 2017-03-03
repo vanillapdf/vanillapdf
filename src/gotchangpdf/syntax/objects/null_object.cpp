@@ -26,5 +26,17 @@ NullObjectPtr NullObject::GetInstance(void) {
 	return instance;
 }
 
+std::string NullObject::ToPdf(void) const {
+	return "null";
+}
+
+NullObject* NullObject::Clone(void) const {
+	NullObjectPtr result;
+
+	result->SetFile(m_file);
+
+	return result.detach();
+}
+
 } // syntax
 } // gotchangpdf

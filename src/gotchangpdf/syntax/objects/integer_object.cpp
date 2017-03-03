@@ -75,5 +75,11 @@ bool IntegerObject::Equals(ObjectPtr other) const {
 	return Equals(*other_obj);
 }
 
+IntegerObject* IntegerObject::Clone(void) const {
+	NumericObjectBackendPtr new_value(m_value->Clone());
+	IntegerObjectPtr result(new_value);
+	return result.detach();
+}
+
 } // syntax
 } // gotchangpdf

@@ -63,7 +63,10 @@ Object::Type StreamObject::GetType(void) const noexcept {
 }
 
 StreamObject* StreamObject::Clone(void) const {
-	std::unique_ptr<StreamObject> result(new StreamObject(*this));
+	StreamObjectPtr result;
+
+	result->SetFile(m_file);
+
 	result->_body = GetBodyRaw()->Clone();
 	result->_body_decoded = _body_decoded->Clone();
 	result->_header = _header->Clone();
@@ -77,7 +80,7 @@ StreamObject* StreamObject::Clone(void) const {
 	result->_header->SetInitialized();
 	result->SetInitialized();
 
-	return result.release();
+	return result.detach();
 }
 
 void StreamObject::SetFile(WeakReference<File> file) noexcept {

@@ -49,7 +49,7 @@ public:
 		return !m_reference.IsEmpty() && m_reference.IsActive();
 	}
 
-	virtual IndirectObjectReference* Clone(void) const override { return new IndirectObjectReference(*this); }
+	virtual IndirectObjectReference* Clone(void) const override;
 
 private:
 	mutable types::big_uint m_reference_object_number = 0;

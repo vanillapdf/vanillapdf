@@ -39,6 +39,18 @@ LiteralStringObject::~LiteralStringObject() {
 	_value->Unsubscribe(this);
 }
 
+HexadecimalStringObject* HexadecimalStringObject::Clone(void) const {
+	Buffer new_value = _raw_value->Clone();
+	HexadecimalStringObjectPtr result(new_value);
+	return result.detach();
+}
+
+LiteralStringObject* LiteralStringObject::Clone(void) const {
+	Buffer new_value = _raw_value->Clone();
+	LiteralStringObjectPtr result(new_value);
+	return result.detach();
+}
+
 bool StringObjectBase::Equals(ObjectPtr other) const {
 	if (!ObjectUtils::IsType<StringObjectPtr>(other)) {
 		return false;

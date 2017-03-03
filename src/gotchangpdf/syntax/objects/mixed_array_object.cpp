@@ -50,13 +50,16 @@ void MixedArrayObject::SetInitialized(bool initialized) noexcept {
 void MixedArrayObject::ObserveeChanged(IModifyObservable*) { OnChanged(); }
 
 MixedArrayObject* MixedArrayObject::Clone(void) const {
-	std::unique_ptr<MixedArrayObject> result(new MixedArrayObject());
+	MixedArrayObjectPtr result;
+
+	result->SetFile(m_file);
+
 	for (auto item : _list) {
 		auto cloned = ObjectUtils::Clone<ContainableObjectPtr>(item);
 		result->Append(cloned);
 	}
 
-	return result.release();
+	return result.detach();
 }
 
 void MixedArrayObject::Append(ContainableObjectPtr value) {

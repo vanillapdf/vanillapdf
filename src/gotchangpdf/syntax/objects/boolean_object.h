@@ -9,16 +9,16 @@ namespace syntax {
 class BooleanObject : public ContainableObject {
 public:
 	BooleanObject() = default;
-	explicit BooleanObject(bool value) : m_value(value) {}
+	explicit BooleanObject(bool value);
 
 	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Boolean; }
-	virtual std::string ToPdf(void) const override { return m_value ? "true" : "false"; }
+	virtual std::string ToPdf(void) const override;
 
-	bool GetValue(void) const noexcept { return m_value; }
-	void SetValue(bool value) noexcept { m_value = value; OnChanged(); }
-	operator bool() const noexcept { return m_value; }
+	bool GetValue(void) const noexcept;
+	void SetValue(bool value);
+	operator bool() const noexcept;
 
-	virtual BooleanObject* Clone(void) const override { return new BooleanObject(*this); }
+	virtual BooleanObject* Clone(void) const override;
 	virtual bool Equals(ObjectPtr other) const override;
 
 private:

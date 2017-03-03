@@ -89,5 +89,15 @@ bool IndirectObjectReference::Equals(ObjectPtr other) const {
 	return Equals(*other_obj);
 }
 
+IndirectObjectReference* IndirectObjectReference::Clone(void) const {
+	IndirectObjectReferencePtr result;
+
+	result->SetFile(m_file);
+	result->SetReferencedObjectNumber(m_reference_object_number);
+	result->SetReferencedGenerationNumber(m_reference_generation_number);
+
+	return result.detach();
+}
+
 } // syntax
 } // gotchangpdf

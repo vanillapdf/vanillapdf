@@ -7,14 +7,17 @@ namespace gotchangpdf {
 namespace syntax {
 
 DictionaryObject* DictionaryObject::Clone(void) const {
-	std::unique_ptr<DictionaryObject> result(new DictionaryObject());
+	DictionaryObjectPtr result;
+
+	result->SetFile(m_file);
+
 	for (auto item : _list) {
 		auto name = ObjectUtils::Clone<NameObjectPtr>(item.first);
 		auto value = ObjectUtils::Clone<ContainableObjectPtr>(item.second);
 		result->Insert(name, value);
 	}
 
-	return result.release();
+	return result.detach();
 }
 
 void DictionaryObject::SetFile(WeakReference<File> file) noexcept {

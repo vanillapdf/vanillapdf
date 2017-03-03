@@ -10,14 +10,14 @@ namespace syntax {
 class NullObject : public ContainableObject {
 public:
 	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Null; }
-	virtual std::string ToPdf(void) const override { return "null"; }
+	virtual std::string ToPdf(void) const override;
 
 	static NullObjectPtr GetInstance(void);
 
 	bool Equals(const NullObject& other) const;
 	virtual bool Equals(ObjectPtr other) const override;
 
-	virtual NullObject* Clone(void) const override { return new NullObject(*this); }
+	virtual NullObject* Clone(void) const override;
 
 	bool operator==(const NullObject& other) const { return Equals(other); }
 	bool operator!=(const NullObject& other) const { return !Equals(other); }

@@ -46,7 +46,7 @@ public:
 
 	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
-	virtual IntegerObject* Clone(void) const override { return new IntegerObject(m_value->Clone()); }
+	virtual IntegerObject* Clone(void) const override;
 	virtual bool Equals(ObjectPtr other) const override;
 };
 } // syntax
