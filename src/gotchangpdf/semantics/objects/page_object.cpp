@@ -1,15 +1,16 @@
 #include "precompiled.h"
-#include "semantics/objects/page_object.h"
 
+#include "semantics/objects/page_object.h"
 #include "semantics/objects/page_tree_node.h"
 #include "semantics/objects/resource_dictionary.h"
 #include "semantics/objects/contents.h"
 #include "semantics/objects/rectangle.h"
-#include "syntax/objects/name_object.h"
-#include "syntax/objects/integer_object.h"
 #include "semantics/utils/semantic_exceptions.h"
 #include "semantics/objects/document.h"
 #include "semantics/objects/annotations.h"
+
+#include "syntax/objects/name_object.h"
+#include "syntax/objects/integer_object.h"
 
 namespace gotchangpdf {
 namespace semantics {
@@ -21,21 +22,6 @@ PageObject::PageObject(DictionaryObjectPtr obj) : PageNodeBase(obj)	{
 	if (_obj->FindAs<NameObjectPtr>(Name::Type) != Name::Page) {
 		throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageObject>(obj);
 	}
-}
-
-PageTreeNodePtr PageObject::GetParent() const {
-	auto parent = _obj->FindAs<DictionaryObjectPtr>(Name::Parent);
-	return PageTreeNodePtr(parent);
-}
-
-void PageObject::SetParent(PageTreeNodePtr parent) {
-	if (_obj->Contains(Name::Parent)) {
-		bool removed = _obj->Remove(Name::Parent);
-		assert(removed && "Unable to remove existing item"); removed;
-	}
-
-	IndirectObjectReferencePtr parent_ref(parent->GetObject());
-	_obj->Insert(Name::Parent, parent_ref);
 }
 
 ResourceDictionaryPtr PageObject::GetResources() const {

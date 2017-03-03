@@ -93,8 +93,7 @@
     <ClInclude Include="src\gotchangpdf\semantics\objects\high_level_object.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\name_dictionary.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\page_labels.h" />
-    <ClInclude Include="src\gotchangpdf\semantics\objects\page_node.h" />
-    <ClInclude Include="src\gotchangpdf\semantics\objects\page_node_utils.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\objects\page_node_base.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\page_object.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\page_tree.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\page_tree_node.h" />
@@ -236,7 +235,7 @@
     <ClCompile Include="src\gotchangpdf\semantics\objects\name_dictionary.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\outline.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\page_labels.cpp" />
-    <ClCompile Include="src\gotchangpdf\semantics\objects\page_node_utils.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\objects\page_node_base.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\page_object.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\page_tree.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\page_tree_node.cpp" />

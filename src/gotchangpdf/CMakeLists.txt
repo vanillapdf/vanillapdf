@@ -65,7 +65,6 @@ set(GOTCHANGPDF_SEMANTICS_SOURCES
 	semantics/objects/content_stream.cpp
 	semantics/objects/contents.cpp
 	semantics/objects/document.cpp
-	semantics/objects/page_node_utils.cpp
 	semantics/objects/page_object.cpp
 	semantics/objects/page_tree.cpp
 	semantics/objects/page_tree_node.cpp
@@ -87,6 +86,7 @@ set(GOTCHANGPDF_SEMANTICS_SOURCES
 	semantics/objects/fields.cpp
 	semantics/objects/interactive_forms.cpp
 	semantics/objects/viewer_preferences.cpp
+	semantics/objects/page_node_base.cpp
 	
 	semantics/utils/semantic_utils.cpp
 )
@@ -162,8 +162,7 @@ set(GOTCHANGPDF_SEMANTICS_HEADERS
 	semantics/objects/content_stream.h
 	semantics/objects/contents.h
 	semantics/objects/document.h
-	semantics/objects/page_node.h
-	semantics/objects/page_node_utils.h
+	semantics/objects/page_node_base.h
 	semantics/objects/page_object.h
 	semantics/objects/page_tree.h
 	semantics/objects/page_tree_node.h

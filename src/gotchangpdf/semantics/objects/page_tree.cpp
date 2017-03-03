@@ -52,7 +52,7 @@ PageObjectPtr PageTree::PageInternal(PageTreeNodePtr node, types::integer page_n
 		auto kid = kids->At(i);
 
 		if (kid->GetNodeType() == PageNodeBase::NodeType::Tree) {
-			auto tree_node = PageNodeUtils::ConvertTo<PageTreeNodePtr>(kid);
+			auto tree_node = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageTreeNodePtr>(kid);
 			auto kid_count = tree_node->KidCount()->SafeConvert<types::integer>();
 			if (processed + kid_count <= page_number) {
 				processed += kid_count;
@@ -64,7 +64,7 @@ PageObjectPtr PageTree::PageInternal(PageTreeNodePtr node, types::integer page_n
 			}
 
 			auto result = tree_node->Kids()->At(page_number - processed);
-			auto page_object = PageNodeUtils::ConvertTo<PageObjectPtr>(result);
+			auto page_object = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageObjectPtr>(result);
 			m_pages[page_number - 1] = page_object;
 			return page_object;
 		}
@@ -77,7 +77,7 @@ PageObjectPtr PageTree::PageInternal(PageTreeNodePtr node, types::integer page_n
 				continue;
 			}
 
-			auto page_object = PageNodeUtils::ConvertTo<PageObjectPtr>(kid);
+			auto page_object = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageObjectPtr>(kid);
 			m_pages[page_number - 1] = page_object;
 			return page_object;
 		}

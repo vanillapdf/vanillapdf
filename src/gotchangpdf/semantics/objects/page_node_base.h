@@ -14,9 +14,16 @@ public:
 		Object
 	};
 
-	explicit PageNodeBase(syntax::DictionaryObjectPtr obj) : HighLevelObject(obj) {}
+	explicit PageNodeBase(syntax::DictionaryObjectPtr obj);
+	PageNodeBasePtr GetPageRoot();
+
+	bool HasParent(void) const;
+	PageNodeBasePtr GetParent(void) const;
+	void SetParent(PageNodeBasePtr parent);
 
 	virtual NodeType GetNodeType(void) const noexcept = 0;
+
+	static PageNodeBasePtr CreatePageNode(syntax::DictionaryObjectPtr obj);
 };
 
 } // semantics

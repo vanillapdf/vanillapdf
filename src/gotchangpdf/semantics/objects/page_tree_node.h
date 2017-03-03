@@ -2,8 +2,7 @@
 #define _PAGE_TREE_NODE_H
 
 #include "semantics/utils/semantics_fwd.h"
-#include "page_node.h"
-#include "page_node_utils.h"
+#include "semantics/objects/page_node_base.h"
 
 namespace gotchangpdf {
 namespace semantics {
