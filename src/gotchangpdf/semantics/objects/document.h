@@ -3,11 +3,13 @@
 
 #include "semantics/utils/semantics_fwd.h"
 #include "semantics/objects/catalog.h"
-#include "syntax/files/file.h"
-#include "syntax/objects/dictionary_object.h"
-#include "syntax/objects/name_object.h"
 #include "semantics/objects/document_info.h"
 #include "semantics/objects/date.h"
+
+#include "syntax/files/file.h"
+
+#include "syntax/objects/dictionary_object.h"
+#include "syntax/objects/name_object.h"
 
 #include <string>
 
@@ -27,7 +29,10 @@ public:
 
 	syntax::FilePtr GetFile() const;
 
-	void AppendContent(DocumentPtr other);
+	void AppendDocument(DocumentPtr other);
+	void AppendPage(PageObjectPtr page);
+
+	void Sign();
 
 private:
 	syntax::FilePtr m_holder;
@@ -36,11 +41,16 @@ private:
 	mutable OutputCatalogPtr m_catalog;
 	mutable OutputDocumentInfoPtr m_info;
 
-	OutputNamedDestinationsPtr CreateNamedDestinations(CatalogPtr catalog);
+	OutputNamedDestinationsPtr CreateNameDestinations(CatalogPtr catalog);
 	OutputNameDictionaryPtr CreateNameDictionary(CatalogPtr catalog);
-	OutputNameTreePtr<DestinationPtr> CreateNameTreeDestinations(NameDictionaryPtr dictionary);
+	OutputNameTreePtr<DestinationPtr> CreateStringDestinations(NameDictionaryPtr dictionary);
 
-	void FixDestinationPage(DocumentPtr other, syntax::ObjectPtr page);
+	void MergeNameDestinations(NamedDestinationsPtr destinations, types::uinteger merged_pages_count);
+	void MergeStringDestinations(NameTreePtr<DestinationPtr> destinations, types::uinteger merged_pages_count);
+	void AppendStringDestination(syntax::StringObjectPtr key, DestinationPtr value, types::uinteger merged_pages_count);
+	void AppendNameDestination(syntax::NameObjectPtr key, DestinationPtr value, types::uinteger merged_pages_count);
+
+	void FixDestinationPage(DestinationPtr other_destination, syntax::ObjectPtr cloned_page, types::uinteger merged_pages_count);
 };
 
 } // semantics

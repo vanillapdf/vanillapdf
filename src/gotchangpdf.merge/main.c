@@ -248,7 +248,7 @@ int main(int argc, char *argv[]) {
 		RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(other_file));
 		RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenExisting(other_file, &other_document));
 
-		RETURN_ERROR_IF_NOT_SUCCESS(Document_AppendContent(document, other_document));
+		RETURN_ERROR_IF_NOT_SUCCESS(Document_AppendDocument(document, other_document));
 
 		RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(other_document));
 		RETURN_ERROR_IF_NOT_SUCCESS(File_Release(other_file));

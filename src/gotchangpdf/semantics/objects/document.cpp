@@ -134,7 +134,7 @@ void Document::SaveIncremental(const std::string& path) {
 	writer.WriteIncremental(m_holder, destination);
 }
 
-OutputNamedDestinationsPtr Document::CreateNamedDestinations(CatalogPtr catalog) {
+OutputNamedDestinationsPtr Document::CreateNameDestinations(CatalogPtr catalog) {
 	auto chain = m_holder->GetXrefChain();
 	auto entry = chain->AllocateNewEntry();
 
@@ -172,7 +172,7 @@ OutputNameDictionaryPtr Document::CreateNameDictionary(CatalogPtr catalog) {
 	return result;
 }
 
-OutputNameTreePtr<DestinationPtr> Document::CreateNameTreeDestinations(NameDictionaryPtr dictionary) {
+OutputNameTreePtr<DestinationPtr> Document::CreateStringDestinations(NameDictionaryPtr dictionary) {
 	auto chain = m_holder->GetXrefChain();
 	auto entry = chain->AllocateNewEntry();
 
@@ -194,31 +194,46 @@ OutputNameTreePtr<DestinationPtr> Document::CreateNameTreeDestinations(NameDicti
 	return result;
 }
 
-void Document::FixDestinationPage(DocumentPtr other, ObjectPtr page) {
-	assert(ObjectUtils::IsType<IndirectObjectReferencePtr>(page)
-		|| ObjectUtils::IsType<IntegerObjectPtr>(page));
-	if (!ObjectUtils::IsType<IndirectObjectReferencePtr>(page)
-		&& !ObjectUtils::IsType<IntegerObjectPtr>(page)) {
-		throw GeneralException("Unknown object type");
+void Document::FixDestinationPage(DestinationPtr other_destination, ObjectPtr cloned_page, types::uinteger merged_pages_count) {
+	auto other_destination_obj = other_destination->GetObject();
+	auto other_weak_file = other_destination_obj->GetFile();
+
+	// Other file should not be 
+	if (other_weak_file.IsActive() && other_weak_file.IsEmpty()) {
+		auto other_file = other_weak_file.GetReference();
+
+		// We should not fix page from the source document
+		// Probably just return, instead of searching for references?
+		assert(other_file != m_holder);
 	}
 
-	auto other_catalog = other->GetDocumentCatalog();
-	auto other_pages = other_catalog->Pages();
-	auto other_page_count = other_pages->PageCount();
+	assert(ObjectUtils::IsType<IndirectObjectReferencePtr>(cloned_page)
+		|| ObjectUtils::IsType<IntegerObjectPtr>(cloned_page));
+	if (!ObjectUtils::IsType<IndirectObjectReferencePtr>(cloned_page)
+		&& !ObjectUtils::IsType<IntegerObjectPtr>(cloned_page)) {
+		throw GeneralException("Unknown object type");
+	}
 
 	auto original_catalog = GetDocumentCatalog();
 	auto original_pages = original_catalog->Pages();
 	auto original_page_count_after_merge = original_pages->PageCount();
 
 	// This function is called after document pages have been merged
-	auto original_page_count = original_page_count_after_merge - other_page_count;
+	auto original_page_count = original_page_count_after_merge - merged_pages_count;
 
-	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(page)) {
-		auto cloned_page_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(page);
+	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(cloned_page)) {
+		auto cloned_page_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(cloned_page);
+		auto other_page_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(other_destination_obj);
+
+		auto other_page_dictionary = other_page_reference->GetReferencedObjectAs<syntax::DictionaryObjectPtr>();
+		auto other_page_node = PageNodeBase::CreatePageNode(other_page_dictionary);
+		auto other_root_node = other_page_node->GetPageRoot();
+		auto other_root_node_obj = other_root_node->GetObject();
+		auto other_pages = PageTreePtr(other_root_node_obj);
 
 		// Find matching object for the other file and fix
 		bool found = false;
-		for (decltype(other_page_count) k = 0; k < other_page_count; ++k) {
+		for (decltype(merged_pages_count) k = 0; k < merged_pages_count; ++k) {
 			auto other_page = other_pages->Page(k + 1);
 			auto other_obj = other_page->GetObject();
 
@@ -240,14 +255,14 @@ void Document::FixDestinationPage(DocumentPtr other, ObjectPtr page) {
 		assert(found && "Referenced object could not be found in the other file");
 	}
 
-	if (ObjectUtils::IsType<IntegerObjectPtr>(page)) {
+	if (ObjectUtils::IsType<IntegerObjectPtr>(cloned_page)) {
 		// Increment referring page number by number of pages from original document
-		auto cloned_page_index = ObjectUtils::ConvertTo<IntegerObjectPtr>(page);
+		auto cloned_page_index = ObjectUtils::ConvertTo<IntegerObjectPtr>(cloned_page);
 		cloned_page_index->SetValue(cloned_page_index->GetIntegerValue() + original_page_count);
 	}
 }
 
-void Document::AppendContent(DocumentPtr other) {
+void Document::AppendDocument(DocumentPtr other) {
 	auto original_catalog = GetDocumentCatalog();
 	auto original_pages = original_catalog->Pages();
 
@@ -280,55 +295,15 @@ void Document::AppendContent(DocumentPtr other) {
 
 	/// Gather basic properties
 
-	OutputNamedDestinationsPtr original_destinations_ptr;
-	OutputNameDictionaryPtr original_name_dictionary_ptr;
 	OutputNamedDestinationsPtr other_destinations_ptr;
 	OutputNameDictionaryPtr other_name_dictionary_ptr;
 
-	bool has_original_destinations = original_catalog->Destinations(original_destinations_ptr);
-	bool has_original_name_dictionary = original_catalog->Names(original_name_dictionary_ptr);
 	bool has_other_destinations = other_catalog->Destinations(other_destinations_ptr);
 	bool has_other_name_dictionary = other_catalog->Names(other_name_dictionary_ptr);
 
 	if (has_other_destinations) {
-
-		// Create missing destination objects
-		if (!has_original_destinations) {
-			original_destinations_ptr = CreateNamedDestinations(original_catalog);
-			assert(!original_destinations_ptr.empty() && "CreateNamedDestinations returned empty result");
-		}
-
-		NamedDestinationsPtr original_destinations = original_destinations_ptr.GetValue();
 		NamedDestinationsPtr other_destinations = other_destinations_ptr.GetValue();
-
-		auto other_destinations_obj = other_destinations->GetObject();
-		for (auto destination : other_destinations_obj) {
-			auto destination_name = destination.first;
-			auto destination_value = destination.second;
-
-			// Check for name conflicts
-			assert(!original_destinations->Contains(destination_name) && "Name conflict");
-			if (original_destinations->Contains(destination_name)) {
-				throw NotSupportedException("Merge of conflicting names is not yet supported");
-			}
-
-			// Derefence destination in case it is indirect reference
-			if (ObjectUtils::IsType<IndirectObjectReferencePtr>(destination_value)) {
-				auto destination_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(destination_value);
-				destination_value = destination_reference->GetReferencedObjectAs<ContainableObjectPtr>();
-			}
-
-			// Create only shallow copies
-			auto cloned_destination_obj = m_holder->ShallowCopyObject(destination_value);
-			auto cloned_destination_unique_ptr = DestinationBase::Create(cloned_destination_obj);
-			auto cloned_destination_raw_ptr = cloned_destination_unique_ptr.release();
-			auto cloned_destination = DestinationPtr(cloned_destination_raw_ptr);
-			auto cloned_destination_page = cloned_destination->GetPage();
-
-			FixDestinationPage(other, cloned_destination_page);
-
-			original_destinations->Insert(destination_name, cloned_destination);
-		}
+		MergeNameDestinations(other_destinations, other_page_count);
 	}
 
 	if (has_other_name_dictionary) {
@@ -337,52 +312,156 @@ void Document::AppendContent(DocumentPtr other) {
 		OutputNameTreePtr<DestinationPtr> other_string_destinations_ptr;
 		bool other_has_string_destinations = other_name_dictionary->Dests(other_string_destinations_ptr);
 		if (other_has_string_destinations) {
-			if (!has_original_name_dictionary) {
-				original_name_dictionary_ptr = CreateNameDictionary(original_catalog);
-				assert(!original_name_dictionary_ptr.empty() && "CreateNameDictionary returned empty result");
-			}
-
-			NameDictionaryPtr original_name_dictionary = original_name_dictionary_ptr.GetValue();
-
-			OutputNameTreePtr<DestinationPtr> original_string_destinations_ptr;
-			bool original_has_string_destinations = original_name_dictionary->Dests(original_string_destinations_ptr);
-			if (!original_has_string_destinations) {
-				original_string_destinations_ptr = CreateNameTreeDestinations(original_name_dictionary);
-				assert(!original_string_destinations_ptr.empty() && "CreateNameTreeDestinations returned empty result");
-			}
-
-			auto original_string_destinations = original_string_destinations_ptr.GetValue();
-			auto other_string_destination = other_string_destinations_ptr.GetValue();
-
-			for (auto destination : other_string_destination) {
-				auto destination_key = destination.first;
-				auto destination_value = destination.second;
-
-				// Check for name conflicts
-				assert(!original_string_destinations->Contains(destination_key) && "Name conflict");
-				if (original_string_destinations->Contains(destination_key)) {
-					throw NotSupportedException("Merge of conflicting names is not yet supported");
-				}
-
-				// Derefence destination in case it is indirect reference
-				if (ObjectUtils::IsType<IndirectObjectReferencePtr>(destination_value)) {
-					auto destination_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(destination_value);
-					destination_value = destination_reference->GetReferencedObjectAs<ContainableObjectPtr>();
-				}
-
-				// Create only shallow copies
-				auto cloned_destination_obj = m_holder->ShallowCopyObject(destination_value);
-				auto cloned_destination_unique_ptr = DestinationBase::Create(cloned_destination_obj);
-				auto cloned_destination_raw_ptr = cloned_destination_unique_ptr.release();
-				auto cloned_destination = DestinationPtr(cloned_destination_raw_ptr);
-				auto cloned_destination_page = cloned_destination->GetPage();
-
-				FixDestinationPage(other, cloned_destination_page);
-
-				original_string_destinations->Insert(destination_key, cloned_destination);
-			}
+			auto other_string_destinations = other_string_destinations_ptr.GetValue();
+			MergeStringDestinations(other_string_destinations, other_page_count);
 		}
 	}
+}
+
+void Document::MergeNameDestinations(NamedDestinationsPtr destinations, types::uinteger merged_pages_count) {
+	for (auto destination : destinations) {
+		auto destination_name = destination.first;
+		auto destination_value = destination.second;
+
+		AppendNameDestination(destination_name, destination_value, merged_pages_count);
+	}
+}
+
+void Document::MergeStringDestinations(NameTreePtr<DestinationPtr> destinations, types::uinteger merged_pages_count) {
+	for (auto destination : destinations) {
+		auto destination_key = destination.first;
+		auto destination_value = destination.second;
+
+		AppendStringDestination(destination_key, destination_value, merged_pages_count);
+	}
+}
+
+void Document::AppendStringDestination(StringObjectPtr key, DestinationPtr value, types::uinteger merged_pages_count) {
+	auto original_catalog = GetDocumentCatalog();
+
+	OutputNameDictionaryPtr original_name_dictionary_ptr;
+	bool has_original_name_dictionary = original_catalog->Names(original_name_dictionary_ptr);
+
+	if (!has_original_name_dictionary) {
+		original_name_dictionary_ptr = CreateNameDictionary(original_catalog);
+		assert(!original_name_dictionary_ptr.empty() && "CreateNameDictionary returned empty result");
+	}
+
+	NameDictionaryPtr original_name_dictionary = original_name_dictionary_ptr.GetValue();
+
+	OutputNameTreePtr<DestinationPtr> original_string_destinations_ptr;
+	bool original_has_string_destinations = original_name_dictionary->Dests(original_string_destinations_ptr);
+	if (!original_has_string_destinations) {
+		original_string_destinations_ptr = CreateStringDestinations(original_name_dictionary);
+		assert(!original_string_destinations_ptr.empty() && "CreateNameTreeDestinations returned empty result");
+	}
+
+	// Check for name conflicts
+	auto original_string_destinations = original_string_destinations_ptr.GetValue();
+	assert(!original_string_destinations->Contains(key) && "Name conflict");
+	if (original_string_destinations->Contains(key)) {
+		throw NotSupportedException("Merge of conflicting names is not yet supported");
+	}
+
+	// Derefence destination in case it is indirect reference
+	auto value_object = value->GetObject();
+	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(value_object)) {
+		auto destination_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(value_object);
+		value_object = destination_reference->GetReferencedObjectAs<ContainableObjectPtr>();
+	}
+
+	// Create only shallow copies
+	auto cloned_destination_obj = m_holder->ShallowCopyObject(value_object);
+	auto cloned_destination_unique_ptr = DestinationBase::Create(cloned_destination_obj);
+	auto cloned_destination_raw_ptr = cloned_destination_unique_ptr.release();
+	auto cloned_destination = DestinationPtr(cloned_destination_raw_ptr);
+	auto cloned_destination_page = cloned_destination->GetPage();
+
+	FixDestinationPage(value, cloned_destination_page, merged_pages_count);
+
+	original_string_destinations->Insert(key, cloned_destination);
+}
+
+void Document::AppendNameDestination(NameObjectPtr key, DestinationPtr value, types::uinteger merged_pages_count) {
+	auto original_catalog = GetDocumentCatalog();
+
+	OutputNamedDestinationsPtr original_destinations_ptr;
+	bool has_original_destinations = original_catalog->Destinations(original_destinations_ptr);
+
+	// Create missing destination objects
+	if (!has_original_destinations) {
+		original_destinations_ptr = CreateNameDestinations(original_catalog);
+		assert(!original_destinations_ptr.empty() && "CreateNamedDestinations returned empty result");
+	}
+
+	// Check for name conflicts
+	NamedDestinationsPtr original_destinations = original_destinations_ptr.GetValue();
+	assert(!original_destinations->Contains(key) && "Name conflict");
+	if (original_destinations->Contains(key)) {
+		throw NotSupportedException("Merge of conflicting names is not yet supported");
+	}
+
+	// Derefence destination in case it is indirect reference
+	auto value_object = value->GetObject();
+	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(value_object)) {
+		auto destination_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(value_object);
+		value_object = destination_reference->GetReferencedObjectAs<ContainableObjectPtr>();
+	}
+
+	// Create only shallow copies
+	auto cloned_destination_obj = m_holder->ShallowCopyObject(value_object);
+	auto cloned_destination_unique_ptr = DestinationBase::Create(cloned_destination_obj);
+	auto cloned_destination_raw_ptr = cloned_destination_unique_ptr.release();
+	auto cloned_destination = DestinationPtr(cloned_destination_raw_ptr);
+	auto cloned_destination_page = cloned_destination->GetPage();
+
+	FixDestinationPage(value, cloned_destination_page, merged_pages_count);
+
+	original_destinations->Insert(key, cloned_destination);
+}
+
+void Document::AppendPage(PageObjectPtr page) {
+
+}
+
+void Document::Sign() {
+	// Create new signature dictionary
+	DictionaryObjectPtr signature_dictionary;
+	signature_dictionary->Insert(constant::Name::Type, NameObjectPtr("Sig"));
+	signature_dictionary->Insert(constant::Name::Cert, HexadecimalStringObjectPtr("\x1\x0"));
+	signature_dictionary->Insert(constant::Name::Name, LiteralStringObjectPtr("Jurko"));
+	signature_dictionary->Insert(constant::Name::Location, LiteralStringObjectPtr("Here"));
+	signature_dictionary->Insert(constant::Name::Reason, LiteralStringObjectPtr("I agree"));
+
+	// Leave byte ranges empty for now
+	ArrayObjectPtr<IntegerObjectPtr> byte_ranges;
+	byte_ranges->Append(IntegerObjectPtr());
+	byte_ranges->Append(IntegerObjectPtr());
+
+	signature_dictionary->Insert(constant::Name::ByteRange, byte_ranges);
+
+	// Create new signature field
+	DictionaryObjectPtr signature_field;
+	signature_field->Insert(constant::Name::FT, NameObjectPtr("Sig"));
+	signature_field->Insert(constant::Name::V, signature_dictionary);
+
+	auto chain = m_holder->GetXrefChain();
+	auto new_entry = chain->AllocateNewEntry();
+	new_entry->SetReference(signature_field);
+
+	auto catalog = GetDocumentCatalog();
+
+	OuputInteractiveFormPtr interactive_form_ptr;
+	bool has_interactive_form = catalog->AcroForm(interactive_form_ptr);
+	if (!has_interactive_form) {
+		assert(!"TODO");
+	}
+
+	auto interactive_form = interactive_form_ptr.GetValue();
+	auto fields = interactive_form->Fields();
+	auto fields_obj = fields->GetObject();
+
+	fields_obj->Append(IndirectObjectReferencePtr(signature_field));
 }
 
 } // semantics

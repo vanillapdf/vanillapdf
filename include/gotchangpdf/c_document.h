@@ -66,7 +66,7 @@ extern "C"
 	*
 	* The last step fixes link annotations, which can be referenced by page number.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_AppendContent(DocumentHandle handle, DocumentHandle source);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_AppendDocument(DocumentHandle handle, DocumentHandle source);
 
 	/**
 	* \copydoc IUnknown_Release
