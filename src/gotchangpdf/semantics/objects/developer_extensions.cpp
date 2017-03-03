@@ -8,9 +8,10 @@ namespace gotchangpdf {
 namespace semantics {
 
 DeveloperExtensionPtr DeveloperExtensions::Iterator::Second() const {
-	auto containable = _it->second;
-	if (!syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(containable))
+	auto containable = BaseIterator<syntax::DictionaryObject::const_iterator>::m_it->second;
+	if (!syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(containable)) {
 		throw GeneralException("Developer extension value is not dictionary");
+	}
 
 	auto converted = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(containable);
 	return DeveloperExtensionPtr(converted);

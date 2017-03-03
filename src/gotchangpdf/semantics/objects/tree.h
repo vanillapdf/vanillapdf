@@ -86,18 +86,18 @@ public:
 	void ReleaseNode(TreeNodeBasePtr node);
 	void Rebuild();
 
+protected:
+	bool Contains(const KeyT& key) const;
+	syntax::ContainableObjectPtr Find(const KeyT& key) const;
+	void Insert(const KeyT& key, syntax::ContainableObjectPtr value);
+	bool Remove(const KeyT& key);
+
 	// stl compatibility
 	iterator begin();
 	const_iterator begin() const;
 
 	iterator end();
 	const_iterator end() const;
-
-protected:
-	bool Contains(const KeyT& key) const;
-	syntax::ContainableObjectPtr Find(const KeyT& key) const;
-	void Insert(const KeyT& key, syntax::ContainableObjectPtr value);
-	bool Remove(const KeyT& key);
 
 private:
 	TreeNodeRootPtr _root;
@@ -116,10 +116,49 @@ template <typename ValueT>
 class NameTree : public TreeBase<syntax::StringObjectPtr, ValueT> {
 public:
 	using base_type = TreeBase<syntax::StringObjectPtr, ValueT>;
+	using conversion_type = std::function<ValueT(const syntax::ContainableObjectPtr&)>;
+
+	class Iterator : public BaseIterator<typename base_type::map_type::const_iterator> {
+	public:
+		using base_iterator = typename base_type::map_type::const_iterator;
+		using base_iterator_type = BaseIterator<base_iterator>;
+
+	public:
+		Iterator(base_iterator it, conversion_type convertor)
+			: base_iterator_type(it), _conversion(convertor) {
+		}
+
+		const Iterator& operator++() {
+			++base_iterator_type::m_it;
+			return *this;
+		}
+
+		const Iterator operator++(int) {
+			Iterator temp(base_iterator_type::m_it);
+			++base_iterator_type::m_it;
+			return temp;
+		}
+
+		std::pair<syntax::StringObjectPtr, ValueT> operator*() {
+			auto first = base_iterator_type::m_it->first;
+			auto second = _conversion(base_iterator_type::m_it->second);
+			return std::pair<syntax::StringObjectPtr, ValueT>(first, second);
+		}
+
+	private:
+		std::function<ValueT(const syntax::ContainableObjectPtr&)> _conversion;
+	};
 
 public:
-	NameTree(
-		const syntax::DictionaryObjectPtr& obj,
+	typedef ValueT value_type;
+	typedef Iterator iterator;
+	typedef Iterator const_iterator;
+	typedef typename base_type::size_type size_type;
+	typedef typename base_type::reference reference;
+	typedef typename base_type::const_reference const_reference;
+
+public:
+	NameTree(syntax::DictionaryObjectPtr obj,
 		std::function<ValueT(const syntax::ContainableObjectPtr&)> convertor);
 
 	virtual syntax::NameObjectPtr GetValueName(void) const override;
@@ -127,6 +166,23 @@ public:
 	ValueT Find(const syntax::StringObjectPtr& key) const;
 	void Insert(const syntax::StringObjectPtr& key, ValueT value);
 	bool Remove(const syntax::StringObjectPtr& key);
+
+	// stl compatibility
+	iterator begin() {
+		return Iterator(base_type::begin(), _conversion);
+	}
+
+	const_iterator begin() const {
+		return Iterator(base_type::begin(), _conversion);
+	}
+
+	iterator end() {
+		return Iterator(base_type::end(), _conversion);
+	}
+
+	const_iterator end() const {
+		return Iterator(base_type::end(), _conversion);
+	}
 
 private:
 	std::function<ValueT(const syntax::ContainableObjectPtr&)> _conversion;
@@ -138,8 +194,7 @@ public:
 	using base_type = TreeBase<syntax::IntegerObjectPtr, ValueT>;
 
 public:
-	NumberTree(
-		const syntax::DictionaryObjectPtr& obj,
+	NumberTree(syntax::DictionaryObjectPtr obj,
 		std::function<ValueT(const syntax::ContainableObjectPtr&)> convertor
 		);
 
@@ -518,7 +573,7 @@ ValueT TreeBase<KeyT, ValueT>::FindInternal(const TreeNodeBasePtr node, const Ke
 
 template <typename ValueT>
 inline NameTree<ValueT>::NameTree(
-	const syntax::DictionaryObjectPtr& obj,
+	syntax::DictionaryObjectPtr obj,
 	std::function<ValueT(const syntax::ContainableObjectPtr&)> convertor)
 	: TreeBase<syntax::StringObjectPtr, ValueT>(obj), _conversion(convertor) {}
 
@@ -556,7 +611,7 @@ inline bool NameTree<ValueT>::Remove(const syntax::StringObjectPtr& key) {
 
 template <typename ValueT>
 inline NumberTree<ValueT>::NumberTree(
-	const syntax::DictionaryObjectPtr& obj,
+	syntax::DictionaryObjectPtr obj,
 	std::function<ValueT(const syntax::ContainableObjectPtr&)> convertor)
 	: TreeBase<syntax::IntegerObjectPtr, ValueT>(obj), _conversion(convertor) {}
 

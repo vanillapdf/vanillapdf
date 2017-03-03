@@ -108,10 +108,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(
 
 	try
 	{
-		if (dictionary->end() == iterator->Value())
+		if (dictionary->end() == iterator->RawIterator()) {
 			*result = GOTCHANG_PDF_RV_FALSE;
-		else
+		}
+		else {
 			*result = GOTCHANG_PDF_RV_TRUE;
+		}
 
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS

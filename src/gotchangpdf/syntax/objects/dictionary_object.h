@@ -5,6 +5,7 @@
 #include "syntax/objects/containable.h"
 
 #include "syntax/utils/syntax_fwd.h"
+#include "utils/base_iterator.h"
 
 #include <map>
 #include <vector>
@@ -26,39 +27,28 @@ public:
 	typedef typename list_type::const_reference const_reference;
 
 public:
-	class Iterator : public virtual IUnknown, public IWeakReferenceable {
+	class Iterator : public BaseIterator<const_iterator>, public IWeakReferenceable {
 	public:
-		typedef typename const_iterator::value_type value_type;
-		typedef typename const_iterator::difference_type difference_type;
-		typedef typename const_iterator::pointer pointer;
-		typedef typename const_iterator::reference reference;
-		typedef typename const_iterator::iterator_category iterator_category;
-
-	public:
-		Iterator() = default;
-		Iterator(const_iterator it) : _it(it) {}
+		using BaseIterator<const_iterator>::BaseIterator;
 
 		const Iterator& operator++() {
-			++_it;
+			++BaseIterator<const_iterator>::m_it;
 			return *this;
 		}
 
 		const Iterator operator++(int) {
-			Iterator temp(_it);
-			++_it;
+			Iterator temp(BaseIterator<const_iterator>::m_it);
+			++BaseIterator<const_iterator>::m_it;
 			return temp;
 		}
 
-		KeyT First() const { return _it->first; }
-		ValueT Second() const { return _it->second; }
-		const_iterator Value() const { return _it; }
-
-		bool operator==(const Iterator& other) const {
-			return _it == other._it;
+		KeyT First() const {
+			return BaseIterator<const_iterator>::m_it->first;
 		}
 
-	private:
-		const_iterator _it;
+		ValueT Second() const {
+			return BaseIterator<const_iterator>::m_it->second;
+		}
 	};
 
 	using IteratorPtr = DeferredIterator<Iterator>;

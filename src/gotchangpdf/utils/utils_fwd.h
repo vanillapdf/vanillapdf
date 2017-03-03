@@ -32,6 +32,9 @@ class WeakReference;
 template <typename T>
 class IWeakReferenceable;
 
+template <typename T>
+class BaseIterator;
+
 } // gotchangpdf
 
 #endif /* _UTILS_FWD_H */

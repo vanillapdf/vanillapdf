@@ -17,41 +17,27 @@ public:
 
 class DeveloperExtensions : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
-	class Iterator : public virtual IUnknown, public IWeakReferenceable {
+	class Iterator : public BaseIterator<syntax::DictionaryObject::const_iterator>, public IWeakReferenceable {
 	public:
+		using BaseIterator<syntax::DictionaryObject::const_iterator>::BaseIterator;
 		typedef syntax::DictionaryObject::const_iterator IteratorT;
 
-		typedef IteratorT::value_type value_type;
-		typedef IteratorT::difference_type difference_type;
-		typedef IteratorT::pointer pointer;
-		typedef IteratorT::reference reference;
-		typedef IteratorT::iterator_category iterator_category;
-
-	public:
-		Iterator() = default;
-		Iterator(IteratorT it) : _it(it) {}
-
 		const Iterator& operator++() {
-			++_it;
+			++BaseIterator<syntax::DictionaryObject::const_iterator>::m_it;
 			return *this;
 		}
 
 		const Iterator operator++(int) {
-			Iterator temp(_it);
-			++_it;
+			Iterator temp(BaseIterator<syntax::DictionaryObject::const_iterator>::m_it);
+			++BaseIterator<syntax::DictionaryObject::const_iterator>::m_it;
 			return temp;
 		}
 
-		syntax::NameObjectPtr First() const { return _it->first; }
-		DeveloperExtensionPtr Second() const;
-		IteratorT Value() const { return _it; }
-
-		bool operator==(const Iterator& other) const {
-			return _it == other._it;
+		syntax::NameObjectPtr First() const {
+			return BaseIterator<syntax::DictionaryObject::const_iterator>::m_it->first;
 		}
 
-	private:
-		IteratorT _it;
+		DeveloperExtensionPtr Second() const;
 	};
 
 	using IteratorPtr = DeferredIterator<Iterator>;

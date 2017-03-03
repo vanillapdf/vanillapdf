@@ -22,35 +22,20 @@ public:
 	typedef typename list_type::const_reference const_reference;
 
 public:
-	class Iterator : public virtual IUnknown, public IWeakReferenceable<Iterator> {
+	class Iterator : public BaseIterator<list_type::const_iterator>, public IWeakReferenceable<Iterator> {
 	public:
-		typedef list_type::const_iterator::value_type value_type;
-		typedef list_type::const_iterator::difference_type difference_type;
-		typedef list_type::const_iterator::pointer pointer;
-		typedef list_type::const_iterator::reference reference;
-
-	public:
-		Iterator() = default;
-		Iterator(list_type::const_iterator it) : _it(it) {}
+		using BaseIterator<list_type::const_iterator>::BaseIterator;
 
 		const Iterator& operator++() {
-			++_it;
+			++BaseIterator<list_type::const_iterator>::m_it;
 			return *this;
 		}
 
 		const Iterator operator++(int) {
-			Iterator temp(_it);
-			++_it;
+			Iterator temp(BaseIterator<list_type::const_iterator>::m_it);
+			++BaseIterator<list_type::const_iterator>::m_it;
 			return temp;
 		}
-
-		list_type::value_type Value() const { return *_it; }
-
-		bool operator==(const Iterator& other) const { return _it == other._it; }
-		bool operator!=(const Iterator& other) const { return _it != other._it; }
-
-	private:
-		list_type::const_iterator _it;
 	};
 
 	using IteratorPtr = DeferredIterator<Iterator>;

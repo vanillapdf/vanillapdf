@@ -142,38 +142,28 @@ public:
 	using map_type = std::unordered_map<types::big_uint, XrefEntryBasePtr>;
 
 public:
-	class Iterator : public virtual IUnknown, public IWeakReferenceable {
+	class Iterator : public BaseIterator<map_type::const_iterator>, public IWeakReferenceable {
 	public:
-		typedef map_type::const_iterator::value_type value_type;
-		typedef map_type::const_iterator::difference_type difference_type;
-		typedef map_type::const_iterator::pointer pointer;
-		typedef map_type::const_iterator::reference reference;
-		typedef map_type::const_iterator::iterator_category iterator_category;
-
-	public:
-		Iterator() = default;
-		Iterator(map_type::const_iterator it) : _it(it) {}
+		using BaseIterator<map_type::const_iterator>::BaseIterator;
 
 		const Iterator& operator++() {
-			++_it;
+			++BaseIterator<map_type::const_iterator>::m_it;
 			return *this;
 		}
 
 		const Iterator operator++(int) {
-			Iterator temp(_it);
-			++_it;
+			Iterator temp(BaseIterator<map_type::const_iterator>::m_it);
+			++BaseIterator<map_type::const_iterator>::m_it;
 			return temp;
 		}
 
-		map_type::key_type Key() const { return _it->first; }
-		map_type::mapped_type Value() const { return _it->second; }
-
-		bool operator==(const Iterator& other) const {
-			return _it == other._it;
+		map_type::key_type Key() const {
+			return BaseIterator<map_type::const_iterator>::m_it->first;
 		}
 
-	private:
-		map_type::const_iterator _it;
+		map_type::mapped_type Mapped() const {
+			return BaseIterator<map_type::const_iterator>::m_it->second;
+		}
 	};
 
 	using IteratorPtr = DeferredIterator<Iterator>;

@@ -57,7 +57,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefIterator_GetValue(XrefIterato
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try {
-		auto entry = iterator->Value();
+		auto entry = iterator->Mapped();
 		auto ptr = entry.AddRefGet();
 		*result = reinterpret_cast<XrefEntryHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;

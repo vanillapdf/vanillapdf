@@ -249,6 +249,7 @@ set(GOTCHANGPDF_SYNTAX_HEADERS
 )
 
 set(GOTCHANGPDF_UTILS_HEADERS
+	utils/base_iterator.h
 	utils/buffer.h
 	utils/character.h
 	utils/constants.h

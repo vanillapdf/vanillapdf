@@ -95,11 +95,68 @@ public:
 
 class NamedDestinations : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
+	class Iterator : public BaseIterator<syntax::DictionaryObjectPtr::const_iterator> {
+	public:
+		using BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::BaseIterator;
+
+	public:
+		const Iterator& operator++() {
+			++BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_it;
+			return *this;
+		}
+
+		const Iterator operator++(int) {
+			Iterator temp(BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_it);
+			++BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_it;
+			return temp;
+		}
+
+		std::pair<syntax::NameObjectPtr, DestinationPtr> operator*() {
+			return std::pair<syntax::NameObjectPtr, DestinationPtr>(First(), Second());
+		}
+
+		syntax::NameObjectPtr First() const {
+			return BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_it->first;
+		}
+
+		DestinationPtr Second() const {
+			auto containable = BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_it->second;
+			auto new_destination = DestinationBase::Create(containable);
+			return DestinationPtr(new_destination.release());
+		}
+	};
+
+public:
+	typedef typename std::pair<syntax::NameObjectPtr, DestinationPtr> value_type;
+	typedef Iterator iterator;
+	typedef Iterator const_iterator;
+	typedef typename syntax::DictionaryObjectPtr::size_type size_type;
+	typedef typename syntax::DictionaryObjectPtr::reference reference;
+	typedef typename syntax::DictionaryObjectPtr::const_reference const_reference;
+
+public:
 	explicit NamedDestinations(syntax::DictionaryObjectPtr root);
 
 	void Insert(const syntax::NameObject& name, DestinationPtr value);
 	bool Contains(const syntax::NameObject& name) const;
 	DestinationPtr Find(const syntax::NameObject& name) const;
+
+	// stl compatibility
+	iterator begin() {
+		return Iterator(_obj->begin());
+	}
+
+	const_iterator begin() const {
+		return Iterator(_obj->begin());
+	}
+
+	iterator end() {
+		return Iterator(_obj->end());
+	}
+
+	const_iterator end() const {
+		return Iterator(_obj->end());
+	}
 };
 
 } // semantics

@@ -77,7 +77,7 @@ class FitRectangleDestination; using FitRectangleDestinationPtr = Deferred<FitRe
 class FitBoundingBoxDestination; using FitBoundingBoxDestinationPtr = Deferred<FitBoundingBoxDestination>;
 class FitBoundingBoxHorizontalDestination; using FitBoundingBoxHorizontalDestinationPtr = Deferred<FitBoundingBoxHorizontalDestination>;
 class FitBoundingBoxVerticalDestination; using FitBoundingBoxVerticalDestinationPtr = Deferred<FitBoundingBoxVerticalDestination>;
-class NamedDestinations; using NamedDestinationsPtr = Deferred<NamedDestinations>; using OutputNamedDestinationsPtr = OutputPointer<NamedDestinationsPtr>;
+class NamedDestinations; using NamedDestinationsPtr = DeferredContainer<NamedDestinations>; using OutputNamedDestinationsPtr = OutputPointer<NamedDestinationsPtr>;
 
 // Annotations
 class AnnotationBase; using AnnotationPtr = Deferred<AnnotationBase>;

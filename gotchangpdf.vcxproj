@@ -156,6 +156,7 @@
     <ClInclude Include="src\gotchangpdf\utils\constants.h" />
     <ClInclude Include="src\gotchangpdf\utils\deferred.h" />
     <ClInclude Include="src\gotchangpdf\utils\exceptions.h" />
+    <ClInclude Include="src\gotchangpdf\utils\base_iterator.h" />
     <ClInclude Include="src\gotchangpdf\utils\library_info.h" />
     <ClInclude Include="src\gotchangpdf\utils\log.h" />
     <ClInclude Include="src\gotchangpdf\utils\modify_observer_interface.h" />
