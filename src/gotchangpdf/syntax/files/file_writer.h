@@ -2,13 +2,60 @@
 #define _FILE_WRITER_H
 
 #include "syntax/utils/syntax_fwd.h"
+#include "syntax/files/file.h"
 
 #include <memory>
 
 namespace gotchangpdf {
 namespace syntax {
 
-class FileWriter : public virtual IUnknown, public IWeakReferenceable<FileWriter> {
+class IFileWriterObserver : public virtual IUnknown, public IWeakReferenceable<IFileWriterObserver> {
+public:
+	virtual void OnInitializing(IInputStreamPtr input, IOutputStreamPtr output) {}
+	virtual void OnFinalizing() {}
+
+	virtual void OnBeforeObjectWrite(ObjectPtr ptr) {}
+	virtual void OnAfterObjectWrite(ObjectPtr ptr) {}
+
+	virtual void OnBeforeObjectOffsetRecalculation(ObjectPtr ptr) {}
+	virtual void OnAfterObjectOffsetRecalculation(ObjectPtr ptr) {}
+
+	virtual void OnBeforeEntryOffsetRecalculation(XrefUsedEntryBasePtr ptr) {}
+	virtual void OnAfterEntryOffsetRecalculation(XrefUsedEntryBasePtr ptr) {}
+
+	virtual ~IFileWriterObserver() = 0;
+};
+
+class IFileWriterObservable : public virtual IUnknown, public IObservable<IFileWriterObserver> {
+public:
+	virtual void Initializing(IInputStreamPtr input, IOutputStreamPtr output) {
+		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+			Invoke(*current, &IFileWriterObserver::OnInitializing, input, output);
+		}
+	}
+
+	virtual void Finalizing() {
+		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+			Invoke(*current, &IFileWriterObserver::OnFinalizing);
+		}
+	}
+
+	virtual ~IFileWriterObservable() = 0;
+
+private:
+	template <typename... Args>
+	void Invoke(WeakReference<IFileWriterObserver> weak_observer, void (IFileWriterObserver:: *method)(Args...), Args... args) {
+		if (weak_observer.IsActive() && !weak_observer.IsEmpty()) {
+			auto observer = weak_observer.GetReference();
+			auto raw_observer = observer.get();
+
+			// Call (method) on observer with args
+			(raw_observer->*method)(args...);
+		}
+	}
+};
+
+class FileWriter : public virtual IUnknown {
 public:
 	void Write(FilePtr source, FilePtr destination);
 	void WriteIncremental(FilePtr source, FilePtr destination);
