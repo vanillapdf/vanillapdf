@@ -222,8 +222,10 @@ void Document::FixDestinationPage(DestinationPtr other_destination, ObjectPtr cl
 	auto original_page_count = original_page_count_after_merge - merged_pages_count;
 
 	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(cloned_page)) {
+		auto other_page_obj = other_destination->GetPage();
+
 		auto cloned_page_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(cloned_page);
-		auto other_page_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(other_destination_obj);
+		auto other_page_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(other_page_obj);
 
 		auto other_page_dictionary = other_page_reference->GetReferencedObjectAs<syntax::DictionaryObjectPtr>();
 		auto other_page_node = PageNodeBase::CreatePageNode(other_page_dictionary);
