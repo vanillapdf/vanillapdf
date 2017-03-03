@@ -23,7 +23,7 @@ FilePtr File::Open(const std::string& path) {
 FilePtr File::Create(const std::string& path) {
 	FilePtr result(new File(path));
 
-	result->_input = std::make_shared<std::fstream>();;
+	result->_input = std::make_shared<std::fstream>();
 	result->_input->open(path,
 		std::ios_base::in |
 		std::ios_base::out |

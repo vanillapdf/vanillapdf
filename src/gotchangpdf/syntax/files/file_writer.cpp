@@ -24,7 +24,6 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 
 	auto input = source->GetInputStream();
 	auto output = destination->GetOutputStream();
-	//std::ostream output;
 
 	auto header = source->GetHeader();
 	auto ver = header->GetVersion();
