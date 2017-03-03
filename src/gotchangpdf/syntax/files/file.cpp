@@ -755,5 +755,28 @@ IOutputStreamPtr File::GetOutputStream(void) {
 	return OutputStreamPtr(_input);
 }
 
+BufferPtr File::GetByteRange(types::stream_size begin, size_t length) const {
+	if (!_initialized) {
+		throw FileNotInitializedException(_filename);
+	}
+
+	InputStream stream(_input);
+	stream.SetPosition(begin);
+	return stream.Read(length);
+}
+
+IInputStreamPtr File::GetByteRangeStream(types::stream_size begin, size_t length) const {
+	if (!_initialized) {
+		throw FileNotInitializedException(_filename);
+	}
+
+	// Avoid huge allocation and use filtering stream buffer
+	InputStream stream(_input);
+	stream.SetPosition(begin);
+	auto buffer = stream.Read(length);
+	auto ss = buffer->ToStringStream();
+	return InputStreamPtr(ss);
+}
+
 } // syntax
 } // gotchangpdf

@@ -23,6 +23,9 @@ public:
 	static FilePtr Open(const std::string& path);
 	static FilePtr Create(const std::string& path);
 
+	BufferPtr GetByteRange(types::stream_size begin, size_t length) const;
+	IInputStreamPtr GetByteRangeStream(types::stream_size begin, size_t length) const;
+
 	std::vector<ObjectPtr> DeepCopyObjects(const std::vector<ObjectPtr>& objects);
 	void DeepCopyObject(std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPtr, bool>& visited, ObjectPtr original);
 	void ShallowCopyObject(std::map<ObjectPtr, ObjectPtr>& map, ObjectPtr original);
