@@ -61,8 +61,9 @@ bool StringObjectBase::Equals(ObjectPtr other) const {
 }
 
 BufferPtr LiteralStringObject::GetValue() const {
-	if (_value->IsInitialized())
+	if (_value->IsInitialized()) {
 		return _value;
+	}
 
 	if (!m_file.IsActive()) {
 		throw FileDisposedException();
@@ -71,10 +72,12 @@ BufferPtr LiteralStringObject::GetValue() const {
 	auto locked_file = m_file.GetReference();
 
 	BufferPtr new_value;
-	if (!IsEncryptionExempted() && locked_file->IsEncrypted())
+	if (!IsEncryptionExempted() && locked_file->IsEncrypted()) {
 		new_value = locked_file->DecryptString(_raw_value, GetObjectNumber(), GetGenerationNumber());
-	else
+	}
+	else {
 		new_value = _raw_value;
+	}
 
 	_value->assign(new_value.begin(), new_value.end());
 	_value->SetInitialized();
@@ -82,8 +85,9 @@ BufferPtr LiteralStringObject::GetValue() const {
 }
 
 BufferPtr HexadecimalStringObject::GetValue() const {
-	if (_value->IsInitialized())
+	if (_value->IsInitialized()) {
 		return _value;
+	}
 
 	BufferPtr result;
 	auto hexadecimal = _raw_value->ToString();
