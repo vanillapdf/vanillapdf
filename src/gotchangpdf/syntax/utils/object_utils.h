@@ -257,7 +257,7 @@ public:
 		typename = typename std::enable_if<instantiation_of<Deferred, T>::value ||
 		std::is_base_of<Object, typename T::deferred_ptr_type>::value>::type
 	>
-		static T Clone(const T& obj) {
+		static T Clone(T obj) {
 		// Template requirements
 		// T - is instantiation of Deferred
 		// T::value_type is derived from Object
