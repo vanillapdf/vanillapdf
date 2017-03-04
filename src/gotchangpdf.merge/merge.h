@@ -30,6 +30,7 @@ do { \
 	{ \
 		printf("Function call \"%s\" has failed with result %d { %s:%d }\n", \
 		#fn, __result__, __FILE__, __LINE__); \
+		assert(!"Operation failed"); \
 		return GOTCHANG_PDF_MERGE_ERROR_FAILURE; \
 	} \
 } while(0)
@@ -48,6 +49,7 @@ do { \
 	} \
 	else \
 	{ \
+		assert(!"Operation failed"); \
 		return GOTCHANG_PDF_MERGE_ERROR_FAILURE; \
 	} \
 } while(0)
