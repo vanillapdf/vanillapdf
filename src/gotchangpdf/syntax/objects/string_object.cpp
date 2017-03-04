@@ -41,13 +41,13 @@ LiteralStringObject::~LiteralStringObject() {
 
 HexadecimalStringObject* HexadecimalStringObject::Clone(void) const {
 	Buffer new_value = _raw_value->Clone();
-	HexadecimalStringObjectPtr result(pdf_new HexadecimalStringObject(), false);
+	HexadecimalStringObjectPtr result(pdf_new HexadecimalStringObject(new_value), false);
 	return result.detach();
 }
 
 LiteralStringObject* LiteralStringObject::Clone(void) const {
 	Buffer new_value = _raw_value->Clone();
-	LiteralStringObjectPtr result(pdf_new LiteralStringObject(), false);
+	LiteralStringObjectPtr result(pdf_new LiteralStringObject(new_value), false);
 	return result.detach();
 }
 
