@@ -85,6 +85,11 @@ public:
 };
 
 } // syntax
+
+bool operator==(const syntax::ObjectPtr& left, const syntax::ObjectPtr& right);
+bool operator!=(const syntax::ObjectPtr& left, const syntax::ObjectPtr& right);
+bool operator<(const syntax::ObjectPtr& left, const syntax::ObjectPtr& right);
+
 } // gotchangpdf
 
 #endif /* _OBJECT_H */

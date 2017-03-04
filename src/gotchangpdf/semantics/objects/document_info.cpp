@@ -88,17 +88,17 @@ bool DocumentInfo::Trapped(DocumentTrapped& result) const {
 		value = string->GetValue();
 	}
 
-	if (*value == *constant::Name::True) {
+	if (value == constant::Name::True.GetValue()) {
 		result = DocumentTrapped::True;
 		return true;
 	}
 
-	if (*value == *constant::Name::False) {
+	if (*value == constant::Name::False.GetValue()) {
 		result = DocumentTrapped::False;
 		return true;
 	}
 
-	if (*value == *constant::Name::Unknown) {
+	if (*value == constant::Name::Unknown.GetValue()) {
 		result = DocumentTrapped::Unknown;
 		return true;
 	}

@@ -42,7 +42,7 @@ std::string DictionaryObject::ToString(void) const {
 	std::stringstream ss;
 	ss << "<<" << std::endl;
 	for (auto item : _list) {
-		ss << item.first->ToString() << " " << item.second->ToString() << std::endl;
+		ss << item.first.ToString() << " " << item.second->ToString() << std::endl;
 	}
 
 	ss << ">>";
@@ -54,7 +54,7 @@ std::string DictionaryObject::ToPdf(void) const {
 	ss << "<<";
 	bool first = true;
 	for (auto item : _list) {
-		ss << (first ? "" : " ") << item.first->ToPdf() << " " << item.second->ToPdf();
+		ss << (first ? "" : " ") << item.first.ToPdf() << " " << item.second->ToPdf();
 		first = false;
 	}
 	ss << ">>";
@@ -93,9 +93,9 @@ bool DictionaryObject::Remove(const NameObject& name) {
 	auto found_key = found->first;
 	auto found_value = found->second;
 
-	found_key->ClearOwner();
+	found_key.ClearOwner();
 	found_value->ClearOwner();
-	found_key->Unsubscribe(this);
+	found_key.Unsubscribe(this);
 	found_value->Unsubscribe(this);
 	_list.erase(found);
 	OnChanged();
@@ -140,7 +140,7 @@ DictionaryObject::~DictionaryObject() {
 		auto item_key = item.first;
 		auto item_value = item.second;
 
-		item_key->Unsubscribe(this);
+		item_key.Unsubscribe(this);
 		item_value->Unsubscribe(this);
 	}
 }

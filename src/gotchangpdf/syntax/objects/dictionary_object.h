@@ -66,7 +66,7 @@ protected:
 	list_type _list;
 };
 
-class DictionaryObject : public DictionaryObjectBase<NameObjectPtr, ContainableObjectPtr>, public IModifyObserver {
+class DictionaryObject : public DictionaryObjectBase<const NameObject, ContainableObjectPtr>, public IModifyObserver {
 public:
 	virtual std::string ToString(void) const override;
 	virtual std::string ToPdf(void) const override;

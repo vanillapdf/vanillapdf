@@ -45,6 +45,11 @@ private:
 };
 
 } // semantics
+
+bool operator==(const semantics::PageLabelPtr& left, const semantics::PageLabelPtr& right);
+bool operator!=(const semantics::PageLabelPtr& left, const semantics::PageLabelPtr& right);
+bool operator<(const semantics::PageLabelPtr& left, const semantics::PageLabelPtr& right);
+
 } // gotchangpdf
 
 #endif /* _PAGE_LABEL_H */

@@ -52,7 +52,21 @@ public:
 		}
 	}
 
-	DeferredWrapperBase(T* value) noexcept : DeferredWrapperBase(value, true) {}
+	// This constructor is a bit tricky.
+	// There are cases, where a boolean false is implicitly converted
+	// to nullptr according to specification.
+
+	// 3.9.1 Fundamental types[basic.fundamental]
+	// Values of type bool are either true or false
+	// [Note:There are no signed, unsigned, short, or long bool types or values.— end note]
+	// Values of type bool participate in integral promotions(4.5).
+
+	// There is no need to specify nullptr - use the default constructor
+	// I am not able to check the value statically
+	DeferredWrapperBase(T* value) noexcept : DeferredWrapperBase(value, true) {
+		assert(value != nullptr);
+	}
+
 	DeferredWrapperBase(const DeferredWrapperBase& rhs) noexcept : DeferredWrapperBase(rhs.m_ptr, true) {}
 	DeferredWrapperBase(DeferredWrapperBase&& rhs) noexcept : DeferredWrapperBase(rhs.m_ptr, false) {
 		rhs.m_ptr = nullptr;
@@ -304,7 +318,7 @@ public:
 // conversion operators
 
 template<class T, class U>
-Deferred<T> static_pointer_cast(const Deferred<U>& p) {
+Deferred<T> static_pointer_cast(Deferred<U>& p) {
 	return static_cast<T*>(p.get());
 }
 
@@ -314,21 +328,11 @@ Deferred<T> const_pointer_cast(const Deferred<U>& p) {
 }
 
 template<class T, class U>
-Deferred<T> dynamic_pointer_cast(const Deferred<U>& p) {
+Deferred<T> dynamic_pointer_cast(Deferred<U>& p) {
 	return dynamic_cast<T*>(p.get());
 }
 
 // comparison operators
-
-template <typename T, typename U>
-inline bool operator==(const Deferred<T>& left, const Deferred<U>& right) {
-	return (left.get() == right.get());
-}
-
-template <typename T, typename U>
-inline bool operator!=(const Deferred<T>& left, const Deferred<U>& right) {
-	return (left.get() != right.get());
-}
 
 template <typename T, typename U>
 inline bool operator==(const Deferred<T>& left, U* right) {
@@ -368,11 +372,6 @@ inline bool operator!=(const Deferred<T>& left, std::nullptr_t) noexcept {
 template <typename T>
 inline bool operator!=(std::nullptr_t, const Deferred<T>& right) noexcept {
 	return (nullptr != right.get());
-}
-
-template <typename T>
-inline bool operator<(const Deferred<T>& left, const Deferred<T>& right) {
-	return std::less<const T*>()(left.get(), right.get());
 }
 
 // swap

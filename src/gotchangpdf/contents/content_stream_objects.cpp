@@ -48,7 +48,7 @@ std::string InlineImageObject::ToPdf() const {
 
 	// Image dictionary
 	for (auto item : m_dictionary) {
-		ss << item.first->ToPdf();
+		ss << item.first.ToPdf();
 		ss << " ";
 		ss << item.second->ToPdf();
 		ss << std::endl;

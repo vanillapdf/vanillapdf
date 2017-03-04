@@ -78,4 +78,17 @@ PageLabelPtr PageLabels::ConvertFunction(const syntax::ContainableObjectPtr& ite
 }
 
 } // semantics
+
+bool operator==(const semantics::PageLabelPtr& left, const semantics::PageLabelPtr& right) {
+	return (left.get() == right.get());
+}
+
+bool operator!=(const semantics::PageLabelPtr& left, const semantics::PageLabelPtr& right) {
+	return (left.get() != right.get());
+}
+
+bool operator<(const semantics::PageLabelPtr& left, const semantics::PageLabelPtr& right) {
+	return (left.get() < right.get());
+}
+
 } // gotchangpdf

@@ -204,7 +204,7 @@ void Document::FixDestinationPage(DestinationPtr other_destination, ObjectPtr cl
 
 		// We should not fix page from the source document
 		// Probably just return, instead of searching for references?
-		assert(other_file != m_holder);
+		assert(other_file.get() != m_holder.get());
 	}
 
 	assert(ObjectUtils::IsType<IndirectObjectReferencePtr>(cloned_page)

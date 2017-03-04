@@ -152,7 +152,7 @@ std::unique_ptr<PageObject> PageObject::Create(DocumentPtr document) {
 	auto xref_chain = file->GetXrefChain();
 
 	syntax::DictionaryObjectPtr obj;
-	obj->Insert(Name::Type, Name::Page);
+	obj->Insert(Name::Type, Name::Page.Clone());
 
 	XrefUsedEntryBasePtr new_entry = xref_chain->AllocateNewEntry();
 	new_entry->SetReference(obj);

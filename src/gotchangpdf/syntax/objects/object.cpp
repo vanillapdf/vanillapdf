@@ -32,7 +32,7 @@ void Object::ClearXrefEntry(bool check_xref_reference) {
 		// Verify that the entry refers to this object
 		auto entry = m_entry.GetReference();
 		if (entry->InUse()) {
-			assert(entry->GetReference() == this && "Reference entry has changed");
+			assert(entry->GetReference()->Identity(this) && "Reference entry has changed");
 			entry->ReleaseReference(false);
 		}
 	}
@@ -135,4 +135,17 @@ bool Object::Identity(ObjectPtr other) const {
 }
 
 } // syntax
+
+bool operator==(const syntax::ObjectPtr& left, const syntax::ObjectPtr& right) {
+	return left->Equals(right);
+}
+
+bool operator!=(const syntax::ObjectPtr& left, const syntax::ObjectPtr& right) {
+	return !left->Equals(right);
+}
+
+bool operator<(const syntax::ObjectPtr& left, const syntax::ObjectPtr& right) {
+	return (left.get() < right.get());
+}
+
 } // gotchangpdf

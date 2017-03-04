@@ -114,10 +114,6 @@ inline bool operator==(const Buffer& left, const Buffer& right) { return left.Eq
 inline bool operator!=(const Buffer& left, const Buffer& right) { return !left.Equals(right); }
 inline bool operator<(const Buffer& left, const Buffer& right) { return left.LessThan(right); }
 
-inline bool operator==(const Deferred<Buffer>& left, const Deferred<Buffer>& right) { return left->Equals(right); }
-inline bool operator!=(const Deferred<Buffer>& left, const Deferred<Buffer>& right) { return !left->Equals(right); }
-inline bool operator<(const Deferred<Buffer>& left, const Deferred<Buffer>& right) { return left->LessThan(right); }
-
 bool operator==(const char * left, const Buffer& right);
 bool operator==(const Buffer& left, const char * right);
 bool operator!=(const char * left, const Buffer& right);
