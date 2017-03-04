@@ -47,7 +47,7 @@ void NumericObjectBackend::SetRealPrecision(uint32_t precision) {
 }
 
 NumericObjectBackend* NumericObjectBackend::Clone(void) const {
-	return new NumericObjectBackend(*this);
+	return pdf_new NumericObjectBackend(*this);
 }
 
 void NumericObjectBackend::SetIntegerValue(types::big_int value) {

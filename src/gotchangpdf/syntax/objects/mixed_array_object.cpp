@@ -50,7 +50,7 @@ void MixedArrayObject::SetInitialized(bool initialized) noexcept {
 void MixedArrayObject::ObserveeChanged(IModifyObservable*) { OnChanged(); }
 
 MixedArrayObject* MixedArrayObject::Clone(void) const {
-	MixedArrayObjectPtr result;
+	MixedArrayObjectPtr result(pdf_new MixedArrayObject(), false);
 
 	result->SetFile(m_file);
 

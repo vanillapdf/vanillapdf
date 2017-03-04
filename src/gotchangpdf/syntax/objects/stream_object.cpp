@@ -63,7 +63,7 @@ Object::Type StreamObject::GetType(void) const noexcept {
 }
 
 StreamObject* StreamObject::Clone(void) const {
-	StreamObjectPtr result;
+	StreamObjectPtr result(pdf_new StreamObject(), false);
 
 	result->SetFile(m_file);
 

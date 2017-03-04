@@ -35,7 +35,7 @@ std::string BooleanObject::ToPdf(void) const {
 }
 
 BooleanObject* BooleanObject::Clone(void) const {
-	BooleanObjectPtr result;
+	BooleanObjectPtr result(pdf_new BooleanObject(), false);
 
 	result->SetFile(m_file);
 	result->SetValue(m_value);

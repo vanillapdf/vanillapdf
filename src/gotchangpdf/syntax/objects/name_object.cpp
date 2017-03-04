@@ -50,7 +50,7 @@ std::string NameObject::ToPdf(void) const {
 }
 
 NameObject* NameObject::Clone(void) const {
-	NameObjectPtr result;
+	NameObjectPtr result(pdf_new NameObject(), false);
 
 	result->SetValue(_value->Clone());
 	result->SetFile(m_file);

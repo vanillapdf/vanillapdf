@@ -31,7 +31,7 @@ std::string NullObject::ToPdf(void) const {
 }
 
 NullObject* NullObject::Clone(void) const {
-	NullObjectPtr result;
+	NullObjectPtr result(pdf_new NullObject(), false);
 
 	result->SetFile(m_file);
 

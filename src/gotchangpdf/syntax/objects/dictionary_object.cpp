@@ -7,7 +7,7 @@ namespace gotchangpdf {
 namespace syntax {
 
 DictionaryObject* DictionaryObject::Clone(void) const {
-	DictionaryObjectPtr result;
+	DictionaryObjectPtr result(pdf_new DictionaryObject(), false);
 
 	result->SetFile(m_file);
 

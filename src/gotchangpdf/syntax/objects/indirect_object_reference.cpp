@@ -90,7 +90,7 @@ bool IndirectObjectReference::Equals(ObjectPtr other) const {
 }
 
 IndirectObjectReference* IndirectObjectReference::Clone(void) const {
-	IndirectObjectReferencePtr result;
+	IndirectObjectReferencePtr result(pdf_new IndirectObjectReference(), false);
 
 	result->SetFile(m_file);
 	result->SetReferencedObjectNumber(m_reference_object_number);
