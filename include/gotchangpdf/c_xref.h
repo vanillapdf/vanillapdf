@@ -367,7 +367,7 @@ extern "C"
 	/**
 	* \brief The index of this object within the object stream.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Index(XrefCompressedEntryHandle handle, uinteger_type* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Index(XrefCompressedEntryHandle handle, size_type* result);
 
 	/**
 	* \brief The object number of the object stream in which this object is stored.

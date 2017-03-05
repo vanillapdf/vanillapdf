@@ -39,11 +39,11 @@ TripleDAnnotation::TripleDAnnotation(syntax::DictionaryObjectPtr root) : Annotat
 RedactionAnnotation::RedactionAnnotation(syntax::DictionaryObjectPtr root) : AnnotationBase(root) {}
 PageAnnotations::PageAnnotations(syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> root) : HighLevelObject(root) {}
 
-types::uinteger PageAnnotations::Size() const {
+types::size_type PageAnnotations::Size() const {
 	return _obj->Size();
 }
 
-AnnotationPtr PageAnnotations::At(types::uinteger index) const {
+AnnotationPtr PageAnnotations::At(types::size_type index) const {
 	auto obj = _obj->At(index);
 	auto unique = AnnotationBase::Create(obj);
 	auto raw_ptr = unique.release();

@@ -66,17 +66,19 @@ BaseInstructionCollectionPtr Contents::Instructions(void) const {
 	return m_instructions;
 }
 
-types::uinteger Contents::GetInstructionsSize(void) const {
-	if (m_instructions->IsInitialized())
+types::size_type Contents::GetInstructionsSize(void) const {
+	if (m_instructions->IsInitialized()) {
 		return m_instructions->size();
+	}
 
 	Instructions();
 	return m_instructions->size();
 }
 
-InstructionBasePtr Contents::GetInstructionAt(types::uinteger at) const {
-	if (!m_instructions->IsInitialized())
+InstructionBasePtr Contents::GetInstructionAt(types::size_type at) const {
+	if (!m_instructions->IsInitialized()) {
 		return m_instructions->at(at);
+	}
 
 	Instructions();
 	return m_instructions->at(at);

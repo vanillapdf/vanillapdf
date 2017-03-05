@@ -26,11 +26,11 @@ syntax::IntegerObjectPtr PageRange::SubRange::LastPage(void) const {
 	return _last_page;
 }
 
-types::uinteger PageRange::Size(void) const {
+types::size_type PageRange::Size(void) const {
 	return _obj->Size() / 2;
 }
 
-PageRange::SubRangePtr PageRange::At(types::uinteger at) const {
+PageRange::SubRangePtr PageRange::At(types::size_type at) const {
 	return SubRangePtr(_obj->At(at), _obj->At(at + 1));
 }
 

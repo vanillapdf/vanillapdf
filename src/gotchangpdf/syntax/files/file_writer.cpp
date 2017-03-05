@@ -116,7 +116,7 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 			}
 
 			auto size = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::Size);
-			if (size->GetIntegerValue() != xref_size) {
+			if (size->GetUnsignedIntegerValue() != xref_size) {
 				size->SetValue(xref_size);
 			}
 		}
@@ -190,7 +190,7 @@ void FileWriter::RecalculateStreamLength(ObjectPtr obj) {
 	}
 
 	auto length_obj = stream_header->FindAs<IntegerObjectPtr>(constant::Name::Length);
-	if (length_obj->GetIntegerValue() != stream_data->size()) {
+	if (length_obj->GetUnsignedIntegerValue() != stream_data->size()) {
 		length_obj->SetValue(stream_data->size());
 	}
 }

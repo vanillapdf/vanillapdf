@@ -30,12 +30,12 @@ extern "C"
 	/**
 	* \brief Return size of an array
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle handle, integer_type* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle handle, size_type* result);
 
 	/**
 	* \brief Get element at location \p at
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle handle, integer_type at, ObjectHandle* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle handle, size_type at, ObjectHandle* result);
 
 	/**
 	* \brief Insert new element at the end of the array
@@ -45,12 +45,12 @@ extern "C"
 	/**
 	* \brief Insert new element at location \p at
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Insert(ArrayObjectHandle handle, integer_type at, ObjectHandle value);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Insert(ArrayObjectHandle handle, size_type at, ObjectHandle value);
 
 	/**
 	* \brief Remove element from location \p at
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayObjectHandle handle, integer_type at);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayObjectHandle handle, size_type at);
 
 	/**
 	* \copydoc Object_Release

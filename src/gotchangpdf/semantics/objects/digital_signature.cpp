@@ -26,11 +26,11 @@ syntax::IntegerObjectPtr ByteRange::Length(void) const {
 	return m_length;
 }
 
-types::uinteger ByteRangeCollection::Size(void) const {
+types::size_type ByteRangeCollection::Size(void) const {
 	return _obj->Size() / 2;
 }
 
-ByteRangePtr ByteRangeCollection::At(types::uinteger at) const {
+ByteRangePtr ByteRangeCollection::At(types::size_type at) const {
 	return ByteRangePtr(_obj->At(at), _obj->At(at + 1));
 }
 

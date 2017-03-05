@@ -2,6 +2,7 @@
 #define _CONSTANTS_H
 
 #include <cstdint>
+#include <cstddef>
 
 namespace gotchangpdf {
 namespace types {
@@ -21,12 +22,14 @@ typedef int64_t stream_size;
 
 typedef double real;
 
+typedef std::size_t size_type;
+
 } // types
 
 namespace constant {
 
 const int BUFFER_SIZE = 16384;
-const int BAD_OFFSET = -1;
+const types::stream_offset BAD_OFFSET = -1;
 const types::ushort MAX_GENERATION_NUMBER = 65535;
 
 } // constant

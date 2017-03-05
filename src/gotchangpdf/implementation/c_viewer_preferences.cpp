@@ -344,7 +344,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ViewerPreferences_Release(ViewerP
 	return ObjectRelease<ViewerPreferences, ViewerPreferencesHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSize(PageRangeHandle handle, integer_type* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSize(PageRangeHandle handle, size_type* result)
 {
 	PageRange* obj = reinterpret_cast<PageRange*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -357,7 +357,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSize(PageRangeHandle
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSubrange(PageRangeHandle handle, integer_type at, PageSubRangeHandle* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSubrange(PageRangeHandle handle, size_type at, PageSubRangeHandle* result)
 {
 	PageRange* obj = reinterpret_cast<PageRange*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

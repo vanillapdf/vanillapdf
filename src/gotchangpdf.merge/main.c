@@ -8,15 +8,15 @@ static PageObjectHandle current_page_object = NULL;
 static UnicodeCharacterMapHandle current_unicode_map = NULL;
 
 error_type process_contents(ContentsHandle page_contents, integer_type page_number) {
-	integer_type j = 0;
-	integer_type contents_size = 0;
+	size_type j = 0;
+	size_type contents_size = 0;
 	RectangleHandle media_box = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Contents_GetInstructionsSize(page_contents, &contents_size));
 
 	for (j = 0; j < contents_size; ++j) {
-		integer_type k = 0;
-		integer_type operations_size = 0;
+		size_type k = 0;
+		size_type operations_size = 0;
 		ContentInstructionType instruction_type;
 		ContentObjectType object_type;
 		ContentInstructionHandle content_instruction = NULL;
@@ -156,8 +156,8 @@ error_type process_content_operation(ContentOperationHandle content_operation, i
 	}
 
 	if (operation_type == ContentOperationType_TextShowArray) {
-		integer_type l = 0;
-		integer_type items_size = 0;
+		size_type l = 0;
+		size_type items_size = 0;
 		ArrayObjectHandle text_items = NULL;
 		ContentOperationTextShowArrayHandle text_handle = NULL;
 
@@ -271,10 +271,10 @@ int main(int argc, char *argv[]) {
 		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(current_page_object));
 	}
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Document_Save(document, destination_file));
-
 	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_Release(catalog));
 	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_Release(tree));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_Save(document, destination_file));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));

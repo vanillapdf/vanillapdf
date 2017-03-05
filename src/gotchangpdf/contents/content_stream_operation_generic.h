@@ -19,8 +19,8 @@ public:
 	OperatorBasePtr GetOperator() const;
 	std::vector<syntax::ObjectPtr> GetOperands() const;
 
-	types::uinteger GetOperandsSize() const;
-	syntax::ObjectPtr GetOperandAt(types::uinteger at) const;
+	types::size_type GetOperandsSize() const;
+	syntax::ObjectPtr GetOperandAt(types::size_type at) const;
 
 	virtual InstructionBase::Type GetInstructionType(void) const noexcept override;
 	virtual OperationBase::Type GetOperationType(void) const noexcept override;

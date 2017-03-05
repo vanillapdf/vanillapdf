@@ -11,11 +11,21 @@ OperationGeneric::OperationGeneric(std::vector<syntax::ObjectPtr> operands, Oper
 	: _operator(oper), _operands(operands) {
 }
 
-OperatorBasePtr OperationGeneric::GetOperator() const { return _operator; }
-std::vector<syntax::ObjectPtr> OperationGeneric::GetOperands() const { return _operands; }
+OperatorBasePtr OperationGeneric::GetOperator() const {
+	return _operator;
+}
 
-types::uinteger OperationGeneric::GetOperandsSize() const { return _operands.size(); }
-syntax::ObjectPtr OperationGeneric::GetOperandAt(types::uinteger at) const { return _operands.at(at); }
+std::vector<syntax::ObjectPtr> OperationGeneric::GetOperands() const {
+	return _operands;
+}
+
+types::size_type OperationGeneric::GetOperandsSize() const {
+	return _operands.size();
+}
+
+syntax::ObjectPtr OperationGeneric::GetOperandAt(types::size_type at) const {
+	return _operands.at(at);
+}
 
 std::string OperationGeneric::ToPdf() const {
 	std::stringstream ss;

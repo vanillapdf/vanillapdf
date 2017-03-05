@@ -3,8 +3,8 @@
 
 #include "utils/exceptions.h"
 
+#include <cassert>
 #include <limits>
-#include <type_traits>
 #include <string>
 #include <sstream>
 #include <memory>
@@ -18,12 +18,15 @@ template<template<typename...> class X, typename... Y> struct instantiation_of<X
 class ValueConvertUtils {
 public:
 	template <typename RangeType, typename ValueType>
-	static bool IsInRange(ValueType value) { return Specializator<RangeType, ValueType>::IsInRange(value); }
+	static bool IsInRange(ValueType value) {
+		return Specializator<RangeType, ValueType>::IsInRange(value);
+	}
 
 	template <typename RangeType, typename SourceType>
 	static RangeType SafeConvert(SourceType value) {
-		if (!IsInRange<RangeType, SourceType>(value))
+		if (!IsInRange<RangeType, SourceType>(value)) {
 			throw ConversionExceptionFactory<RangeType>::Construct(value);
+		}
 
 		return static_cast<RangeType>(value);
 	}
@@ -147,6 +150,38 @@ Result SafeAddition(ValueFirst number, ValueSecond addend) {
 		ss << "Could not compute sum of " << number << " and " << addend;
 		throw std::out_of_range(ss.str());
 	}
+
+	return result;
+}
+
+template <typename ResultType, typename ValueType>
+ResultType SafeMultiply(ValueType number, ValueType multiplier) {
+	// Special case
+	if (multiplier == 0) {
+		return 0;
+	}
+
+	// We need to unite singedness of all operands
+	auto converted_number = ValueConvertUtils::SafeConvert<ResultType>(number);
+	auto converted_multiplier = ValueConvertUtils::SafeConvert<ResultType>(multiplier);
+
+	// If the maximum representable number divided by one of the operands
+	// would result in number greater than the operand means,
+	// that the multiply operation would overflow.
+	if ((std::numeric_limits<ResultType>::max() / converted_multiplier) < converted_number) {
+		std::stringstream ss;
+		ss << "Could not multiply " << converted_number << " by " << converted_multiplier << ". The operation would overflow";
+		throw std::overflow_error(ss.str());
+	}
+
+	// Compute the result
+	ResultType result = (converted_number * converted_multiplier);
+
+	// Validate the result
+	assert(result > converted_number);
+	assert(result > converted_multiplier);
+	assert((result / converted_number) == converted_multiplier);
+	assert((result / converted_multiplier) == converted_number);
 
 	return result;
 }

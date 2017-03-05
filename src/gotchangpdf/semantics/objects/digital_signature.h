@@ -25,8 +25,8 @@ class ByteRangeCollection : public HighLevelObject<syntax::ArrayObjectPtr<syntax
 public:
 	explicit ByteRangeCollection(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> obj);
 
-	types::uinteger Size(void) const;
-	ByteRangePtr At(types::uinteger at) const;
+	types::size_type Size(void) const;
+	ByteRangePtr At(types::size_type at) const;
 };
 
 class DigitalSignature : public HighLevelObject<syntax::DictionaryObjectPtr> {

@@ -264,12 +264,12 @@ extern "C"
 	/**
 	* \brief Get size of the collections
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSize(PageRangeHandle handle, integer_type* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSize(PageRangeHandle handle, size_type* result);
 
 	/**
 	* \brief Get sub-range at index \p at
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSubrange(PageRangeHandle handle, integer_type at, PageSubRangeHandle* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageRange_GetSubrange(PageRangeHandle handle, size_type at, PageSubRangeHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release

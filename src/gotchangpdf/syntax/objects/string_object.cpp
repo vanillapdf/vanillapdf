@@ -91,8 +91,8 @@ BufferPtr HexadecimalStringObject::GetValue() const {
 
 	BufferPtr result;
 	auto hexadecimal = _raw_value->ToString();
-	unsigned int len = (hexadecimal.length() / 2);
-	for (unsigned int i = 0; i < len; ++i) {
+	auto len = (hexadecimal.length() / 2);
+	for (decltype(len) i = 0; i < len; ++i) {
 		int val = stoi(hexadecimal.substr(i * 2, 2), 0, 16);
 		auto parsed = ValueConvertUtils::SafeConvert<unsigned char, int>(val);
 		char converted = reinterpret_cast<char&>(parsed);

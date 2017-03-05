@@ -208,8 +208,8 @@ public:
 class PageAnnotations : public HighLevelObject<syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr>> {
 public:
 	PageAnnotations(syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> root);
-	types::uinteger Size() const;
-	AnnotationPtr At(types::uinteger index) const;
+	types::size_type Size() const;
+	AnnotationPtr At(types::size_type index) const;
 };
 
 inline AnnotationBase::Type TextAnnotation::GetType() const noexcept { return Type::Text; }

@@ -110,8 +110,8 @@ error_type process_stream(StreamObjectHandle stream, int nested) {
 }
 
 error_type process_array(ArrayObjectHandle arr, int nested) {
-	integer_type i = 0;
-	integer_type size = 0;
+	size_type i = 0;
+	size_type size = 0;
 
 	print_spaces(nested);
 	printf("Array begin\n");

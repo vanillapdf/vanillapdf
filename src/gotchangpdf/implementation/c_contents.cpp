@@ -16,7 +16,7 @@ using namespace gotchangpdf::semantics;
 using namespace gotchangpdf::syntax;
 using namespace gotchangpdf::contents;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionsSize(ContentsHandle handle, integer_type* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionsSize(ContentsHandle handle, size_type* result)
 {
 	Contents* obj = reinterpret_cast<Contents*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -29,7 +29,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionsSize(Cont
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(ContentsHandle handle, integer_type at, ContentInstructionHandle* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(ContentsHandle handle, size_type at, ContentInstructionHandle* result)
 {
 	Contents* obj = reinterpret_cast<Contents*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -153,7 +153,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_Release(
 	return ObjectRelease<InlineImageObject, ContentObjectInlineImageHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationsSize(ContentObjectTextHandle handle, integer_type* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationsSize(ContentObjectTextHandle handle, size_type* result)
 {
 	TextObject* obj = reinterpret_cast<TextObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -167,7 +167,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationsSi
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(ContentObjectTextHandle handle, integer_type at, ContentOperationHandle* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(ContentObjectTextHandle handle, size_type at, ContentOperationHandle* result)
 {
 	TextObject* obj = reinterpret_cast<TextObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -397,7 +397,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperat
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandsSize(ContentOperationGenericHandle handle, integer_type* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandsSize(ContentOperationGenericHandle handle, size_type* result)
 {
 	OperationGeneric* obj = reinterpret_cast<OperationGeneric*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -411,7 +411,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperan
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandAt(ContentOperationGenericHandle handle, integer_type at, ObjectHandle* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandAt(ContentOperationGenericHandle handle, size_type at, ObjectHandle* result)
 {
 	OperationGeneric* obj = reinterpret_cast<OperationGeneric*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

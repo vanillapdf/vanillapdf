@@ -10,8 +10,8 @@
 namespace gotchangpdf {
 namespace constant {
 
-const int REVERSE_BUFFER_SIZE = 2048; // seek with 4096 fails for some reason
-const int REVERSE_BUFFER_PUTBACK_SIZE = 16;
+const types::size_type REVERSE_BUFFER_SIZE = 2048; // seek with 4096 fails for some reason
+const types::size_type REVERSE_BUFFER_PUTBACK_SIZE = 16;
 
 } // constant
 
@@ -63,9 +63,17 @@ InputReverseStream::ReverseBuf::int_type InputReverseStream::ReverseBuf::underfl
 	// start is now the start of the buffer, proper.
 	// Read from fptr_ in to the provided buffer
 
-	auto to_read = put_back ? _buffer.size() - _put_back : _buffer.size();
+	std::streamsize to_read;
+	if (put_back) {
+		assert(_buffer.size() > _put_back);
+		auto subtracted = _buffer.size() - _put_back;
+		to_read = ValueConvertUtils::SafeConvert<decltype(to_read)>(subtracted);
+	} else {
+		to_read = ValueConvertUtils::SafeConvert<decltype(to_read)>(_buffer.size());
+	}
+
 	if (_offset - to_read < -_size) {
-		to_read = ValueConvertUtils::SafeConvert<decltype(to_read)>(_size + _offset);
+		to_read = SafeAddition<decltype(to_read)>(_size, _offset);
 		_offset = -_size;
 	} else {
 		_offset -= to_read;

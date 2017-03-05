@@ -7,7 +7,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle handle, integer_type at, ObjectHandle* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle handle, size_type at, ObjectHandle* result)
 {
 	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -23,7 +23,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle 
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle handle, integer_type* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle handle, size_type* result)
 {
 	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -51,7 +51,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Append(ArrayObjectHan
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Insert(ArrayObjectHandle handle, integer_type at, ObjectHandle value)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Insert(ArrayObjectHandle handle, size_type at, ObjectHandle value)
 {
 	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
 	Object* data = reinterpret_cast<Object*>(value);
@@ -69,7 +69,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Insert(ArrayObjectHan
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayObjectHandle handle, integer_type at)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayObjectHandle handle, size_type at)
 {
 	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

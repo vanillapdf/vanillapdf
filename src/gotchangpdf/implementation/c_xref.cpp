@@ -288,7 +288,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_InUse(XrefCom
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Index(XrefCompressedEntryHandle handle, uinteger_type* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Index(XrefCompressedEntryHandle handle, size_type* result)
 {
 	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);

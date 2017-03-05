@@ -11,8 +11,8 @@ namespace semantics {
 class FieldCollection : public HighLevelObject<syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr>> {
 public:
 	FieldCollection(syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> root);
-	types::uinteger Size() const;
-	FieldPtr At(types::uinteger index) const;
+	types::size_type Size() const;
+	FieldPtr At(types::size_type index) const;
 };
 
 class Field : public HighLevelObject<syntax::DictionaryObjectPtr> {

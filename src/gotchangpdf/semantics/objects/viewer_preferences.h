@@ -29,8 +29,8 @@ public:
 public:
 	explicit PageRange(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> obj);
 
-	types::uinteger Size(void) const;
-	SubRangePtr At(types::uinteger at) const;
+	types::size_type Size(void) const;
+	SubRangePtr At(types::size_type at) const;
 };
 
 class ViewerPreferences : public HighLevelObject<syntax::DictionaryObjectPtr> {

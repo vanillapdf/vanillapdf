@@ -62,8 +62,8 @@ error_type process_content_object_inline_image(ContentObjectInlineImageHandle ob
 }
 
 error_type process_content_object_text(ContentObjectTextHandle obj, int nested) {
-	integer_type i = 0;
-	integer_type size = 0;
+	size_type i = 0;
+	size_type size = 0;
 
 	print_spaces(nested);
 	printf("Text object begin\n");
@@ -71,7 +71,8 @@ error_type process_content_object_text(ContentObjectTextHandle obj, int nested) 
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectText_GetOperationsSize(obj, &size));
 
 	print_spaces(nested + 1);
-	printf("Operations: %d\n", size);
+	unsigned long long converted_size = size;
+	printf("Operations: %llu\n", converted_size);
 
 	for (i = 0; i < size; ++i) {
 		ContentOperationHandle operation = NULL;
@@ -126,8 +127,8 @@ error_type process_content_operation(ContentOperationHandle obj, int nested) {
 }
 
 error_type process_content_operation_generic(ContentOperationGenericHandle obj, int nested) {
-	integer_type i = 0;
-	integer_type size = 0;
+	size_type i = 0;
+	size_type size = 0;
 	ContentOperatorHandle oper = NULL;
 
 	print_spaces(nested);
@@ -140,7 +141,8 @@ error_type process_content_operation_generic(ContentOperationGenericHandle obj, 
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationGeneric_GetOperandsSize(obj, &size));
 
 	print_spaces(nested + 1);
-	printf("Operands: %d\n", size);
+	unsigned long long converted_size = size;
+	printf("Operands: %llu\n", converted_size);
 
 	for (i = 0; i < size; ++i) {
 		ObjectHandle operand = NULL;
@@ -267,8 +269,8 @@ error_type process_content_instruction(ContentInstructionHandle obj, int nested)
 }
 
 error_type process_contents(ContentsHandle obj, int nested) {
-	integer_type i = 0;
-	integer_type size = 0;
+	size_type i = 0;
+	size_type size = 0;
 
 	print_spaces(nested);
 	printf("Contents begin\n");
@@ -276,7 +278,8 @@ error_type process_contents(ContentsHandle obj, int nested) {
 	RETURN_ERROR_IF_NOT_SUCCESS(Contents_GetInstructionsSize(obj, &size));
 
 	print_spaces(nested + 1);
-	printf("Size: %d\n", size);
+	unsigned long long converted_size = size;
+	printf("Size: %llu\n", converted_size);
 
 	for (i = 0; i < size; ++i) {
 		ContentInstructionHandle instruction = NULL;
@@ -984,8 +987,8 @@ error_type process_viewer_preferences(ViewerPreferencesHandle preferences, int n
 }
 
 error_type process_page_range(PageRangeHandle range, int nested) {
-	integer_type i = 0;
-	integer_type size = 0;
+	size_type i = 0;
+	size_type size = 0;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(PageRange_GetSize(range, &size));
 

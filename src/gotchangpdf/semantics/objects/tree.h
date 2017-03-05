@@ -389,8 +389,8 @@ bool TreeBase<KeyT, ValueT>::Remove(const KeyT& key) {
 
 template <typename KeyT, typename ValueT>
 void TreeBase<KeyT, ValueT>::InsertPairsToMap(std::map<KeyT, syntax::ContainableObjectPtr>& map, const syntax::MixedArrayObjectPtr values) const {
-	int size = values->Size();
-	for (int i = 0; i + 1 < size; i += 2) {
+	auto size = values->Size();
+	for (decltype(size) i = 0; i + 1 < size; i += 2) {
 		auto key_obj = values->At(i);
 		auto value_obj = values->At(i + 1);
 

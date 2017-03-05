@@ -29,12 +29,12 @@ public:
 
 	static BufferPtr PadTruncatePassword(const Buffer& password);
 	static BufferPtr ComputeRC4(const Buffer& key, const Buffer& data);
-	static BufferPtr ComputeRC4(const Buffer& key, int key_length, const Buffer& data);
+	static BufferPtr ComputeRC4(const Buffer& key, types::size_type key_length, const Buffer& data);
 
 	static BufferPtr AESDecrypt(const Buffer& key, const Buffer& data);
-	static BufferPtr AESDecrypt(const Buffer& key, int key_length, const Buffer& data);
+	static BufferPtr AESDecrypt(const Buffer& key, types::size_type key_length, const Buffer& data);
 	static BufferPtr AESEncrypt(const Buffer& key, const Buffer& data);
-	static BufferPtr AESEncrypt(const Buffer& key, int key_length, const Buffer& data);
+	static BufferPtr AESEncrypt(const Buffer& key, types::size_type key_length, const Buffer& data);
 
 	static BufferPtr AddPkcs7Padding(const Buffer& data, size_t block_size);
 	static BufferPtr RemovePkcs7Padding(const Buffer& data, size_t block_size);

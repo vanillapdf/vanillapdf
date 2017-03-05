@@ -86,7 +86,7 @@ private:
 		std::shared_ptr<std::istream> m_stream;
 		types::stream_offset _offset;
 		types::stream_size _size;
-		const std::size_t _put_back;
+		types::size_type _put_back;
 		char *_base;
 
 	private:

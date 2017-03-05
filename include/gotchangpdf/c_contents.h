@@ -367,12 +367,12 @@ extern "C"
 	/**
 	* \brief Return size of a collection
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionsSize(ContentsHandle handle, integer_type* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionsSize(ContentsHandle handle, size_type* result);
 
 	/**
 	* \brief Get instruction at location \p at
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(ContentsHandle handle, integer_type at, ContentInstructionHandle* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(ContentsHandle handle, size_type at, ContentInstructionHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -446,12 +446,12 @@ extern "C"
 	/**
 	* \brief Return size of a collection
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationsSize(ContentObjectTextHandle handle, integer_type* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationsSize(ContentObjectTextHandle handle, size_type* result);
 
 	/**
 	* \brief Get operation at location \p at
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(ContentObjectTextHandle handle, integer_type at, ContentOperationHandle* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(ContentObjectTextHandle handle, size_type at, ContentOperationHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -540,12 +540,12 @@ extern "C"
 	/**
 	* \brief Get number of operands belonging to the operator
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandsSize(ContentOperationGenericHandle handle, integer_type* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandsSize(ContentOperationGenericHandle handle, size_type* result);
 
 	/**
 	* \brief Get operand at location \p at
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandAt(ContentOperationGenericHandle handle, integer_type at, ObjectHandle* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandAt(ContentOperationGenericHandle handle, size_type at, ObjectHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release

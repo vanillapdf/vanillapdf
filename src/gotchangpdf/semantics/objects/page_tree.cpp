@@ -133,7 +133,7 @@ void PageTree::UpdateKidsCount(size_t new_size) {
 	}
 
 	auto count = _obj->FindAs<IntegerObjectPtr>(constant::Name::Count);
-	if (count->GetIntegerValue() != new_size) {
+	if (count->GetUnsignedIntegerValue() != new_size) {
 		count->SetValue(new_size);
 	}
 }

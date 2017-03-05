@@ -125,13 +125,20 @@ void PKCS12Key::PKCS12KeyImpl::Initialize(const Buffer& data, const Buffer& pass
 
 	InitializeOpenSSL();
 
-	BIO* bio = BIO_new_mem_buf((void*) data.data(), data.size());
+	void* buffer_data = const_cast<char *>(data.data());
+	int buffer_length = ValueConvertUtils::SafeConvert<int>(data.size());
+
+	BIO* bio = BIO_new_mem_buf(buffer_data, buffer_length);
 	p12 = d2i_PKCS12_bio(bio, nullptr);
-	if (nullptr == p12) throw GeneralException("Could not parse der structure PKCS#12");
+	if (nullptr == p12) {
+		throw GeneralException("Could not parse der structure PKCS#12");
+	}
 
 	STACK_OF(X509) *additional_certs = NULL;
 	int parsed = PKCS12_parse(p12, password.data(), &key, &cert, &additional_certs);
-	if (1 != parsed) throw GeneralException("Could not parse PKCS#12");
+	if (1 != parsed) {
+		throw GeneralException("Could not parse PKCS#12");
+	}
 
 	rsa = ENGINE_get_default_RSA();
 	ctx = EVP_PKEY_CTX_new(key, rsa);

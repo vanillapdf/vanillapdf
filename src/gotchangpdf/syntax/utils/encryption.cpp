@@ -45,8 +45,8 @@ const uint8_t AES_ADDITIONAL_SALT[] = {
 const int HARDCODED_PFD_PAD_LENGTH = sizeof(HARDCODED_PFD_PAD);
 const int AES_ADDITIONAL_SALT_LENGTH = sizeof(AES_ADDITIONAL_SALT);
 
-const size_t AES_CBC_IV_LENGTH = 16;
-const size_t AES_CBC_BLOCK_SIZE = 16;
+const types::size_type AES_CBC_IV_LENGTH = 16;
+const types::size_type AES_CBC_BLOCK_SIZE = 16;
 
 BufferPtr EncryptionUtils::ComputeObjectKey(
 	const Buffer& key,
@@ -94,14 +94,14 @@ BufferPtr EncryptionUtils::PadTruncatePassword(const Buffer& password) {
 	return result;
 }
 
-BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, int key_length, const Buffer& data) {
+BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, types::size_type key_length, const Buffer& data) {
 
 #if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 
 	BufferPtr result(data.size());
 
 	RC4_KEY rc_key;
-	RC4_set_key(&rc_key, key_length, (unsigned char*) key.data());
+	RC4_set_key(&rc_key, ValueConvertUtils::SafeConvert<int>(key_length), (unsigned char*) key.data());
 	RC4(&rc_key, data.size(), (unsigned char*) data.data(), (unsigned char*) result->data());
 
 	return result;
@@ -121,7 +121,7 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, const Buffer& data) {
 	return AESDecrypt(key, key.size(), data);
 }
 
-BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, int key_length, const Buffer& data) {
+BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_length, const Buffer& data) {
 
 #if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 
@@ -133,8 +133,14 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, int key_length, const B
 	Buffer iv(data.begin(), data.begin() + AES_CBC_IV_LENGTH);
 	BufferPtr result(data.size() - AES_CBC_IV_LENGTH);
 
+	using decrypt_key_type = unsigned char;
+	const decrypt_key_type* key_data = reinterpret_cast<const decrypt_key_type*>(key.data());
+
+	auto decrypt_key_type_size = std::numeric_limits<decrypt_key_type>::digits;
+	int key_length_bits = SafeMultiply<int>(key_length, ValueConvertUtils::SafeConvert<decltype(key_length)>(decrypt_key_type_size));
+
 	AES_KEY dec_key;
-	int key_set = AES_set_decrypt_key((unsigned char*) key.data(), key_length * 8, &dec_key);
+	int key_set = AES_set_decrypt_key(key_data, key_length_bits, &dec_key);
 	if (0 != key_set) {
 		throw GeneralException("Unable to set decryption key");
 	}
@@ -154,7 +160,7 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, const Buffer& data) {
 	return AESEncrypt(key, key.size(), data);
 }
 
-BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, int key_length, const Buffer& data) {
+BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_length, const Buffer& data) {
 
 #if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 
@@ -166,8 +172,14 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, int key_length, const B
 
 	BufferPtr buffer = AddPkcs7Padding(data, AES_CBC_BLOCK_SIZE);
 
+	using decrypt_key_type = unsigned char;
+	const decrypt_key_type* key_data = reinterpret_cast<const decrypt_key_type*>(key.data());
+
+	auto decrypt_key_type_size = std::numeric_limits<decrypt_key_type>::digits;
+	int key_length_bits = SafeMultiply<int>(key_length, ValueConvertUtils::SafeConvert<decltype(key_length)>(decrypt_key_type_size));
+
 	AES_KEY enc_key;
-	int key_set = AES_set_decrypt_key((unsigned char*) key.data(), key_length * 8, &enc_key);
+	int key_set = AES_set_decrypt_key(key_data, key_length_bits, &enc_key);
 	if (0 != key_set) {
 		throw GeneralException("Unable to set encryption key");
 	}
@@ -382,7 +394,10 @@ BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax
 	for (decltype(length) i = 0; i < length; ++i) {
 		auto enveloped_bytes = enveloped_data.At(i);
 
-		BIO* enveloped_bytes_bio = BIO_new_mem_buf(enveloped_bytes->GetValue()->data(), enveloped_bytes->GetValue()->size());
+		auto enveloped_bytes_data = enveloped_bytes->GetValue()->data();
+		auto enveloped_bytes_size = enveloped_bytes->GetValue()->size();
+
+		BIO* enveloped_bytes_bio = BIO_new_mem_buf(enveloped_bytes_data, ValueConvertUtils::SafeConvert<int>(enveloped_bytes_size));
 		SCOPE_GUARD_CAPTURE_REFERENCES(BIO_free(enveloped_bytes_bio));
 		if (nullptr == enveloped_bytes_bio) {
 			LOG_ERROR_GLOBAL << "Could not create BIO structure from enveloped data";
@@ -473,8 +488,14 @@ BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax
 			BufferPtr decrypted_data;
 			Buffer copy_buffer(constant::BUFFER_SIZE);
 			for (;;) {
-				int result = BIO_read(etmp, copy_buffer.data(), copy_buffer.size());
-				if (result <= 0) break;
+				void* data = copy_buffer.data();
+				int data_length = ValueConvertUtils::SafeConvert<int>(copy_buffer.size());
+
+				int result = BIO_read(etmp, data, data_length);
+				if (result <= 0) {
+					break;
+				}
+
 				decrypted_data->insert(decrypted_data.end(), copy_buffer.begin(), copy_buffer.begin() + result);
 			}
 

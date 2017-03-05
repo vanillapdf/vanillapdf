@@ -119,22 +119,22 @@ private:
 
 class XrefCompressedEntry : public XrefUsedEntryBase {
 public:
-	XrefCompressedEntry(types::big_uint obj_number, types::ushort gen_number, types::big_uint object_stream_number, types::uinteger index);
+	XrefCompressedEntry(types::big_uint obj_number, types::ushort gen_number, types::big_uint object_stream_number, types::size_type index);
 
 public:
 	virtual Usage GetUsage(void) const noexcept override { return XrefEntryBase::Usage::Compressed; }
 
 	types::big_uint GetObjectStreamNumber(void) const noexcept { return _object_stream_number; }
-	void SetObjectStreamNumber(types::uinteger value) noexcept { _object_stream_number = value; OnChanged(); }
+	void SetObjectStreamNumber(types::big_uint value) noexcept { _object_stream_number = value; OnChanged(); }
 
-	types::uinteger GetIndex(void) const noexcept { return _index; }
-	void SetIndex(types::uinteger value) noexcept { _index = value; OnChanged(); }
+	types::size_type GetIndex(void) const noexcept { return _index; }
+	void SetIndex(types::size_type value) noexcept { _index = value; OnChanged(); }
 
 private:
 	virtual void Initialize(void) override;
 
 	types::big_uint _object_stream_number = 0;
-	types::uinteger _index = 0;
+	types::size_type _index = 0;
 };
 
 class XrefBase : public virtual IUnknown, public IModifyObserver, public IModifyObservable {

@@ -55,11 +55,11 @@ bool SignatureField::Value(OuputDigitalSignaturePtr& result) const {
 	return true;
 }
 
-types::uinteger FieldCollection::Size() const {
+types::size_type FieldCollection::Size() const {
 	return _obj->Size();
 }
 
-FieldPtr FieldCollection::At(types::uinteger index) const {
+FieldPtr FieldCollection::At(types::size_type index) const {
 	auto obj = _obj->At(index);
 	auto unique = Field::Create(obj);
 	auto raw_ptr = unique.release();

@@ -30,7 +30,7 @@ XrefCompressedEntry::XrefCompressedEntry(
 	types::big_uint obj_number,
 	types::ushort gen_number,
 	types::big_uint object_stream_number,
-	types::uinteger index)
+	types::size_type index)
 	: XrefUsedEntryBase(obj_number, gen_number),
 	_object_stream_number(object_stream_number),
 	_index(index) {

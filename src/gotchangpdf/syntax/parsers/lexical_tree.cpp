@@ -6,8 +6,8 @@ namespace syntax {
 
 void Tree::Insert(BufferPtr path, Token::Type type) {
 	auto cur = _root;
-	int len = path->size();
-	for (int i = 0; i < len; ++i) {
+	auto len = path->size();
+	for (decltype(len) i = 0; i < len; ++i) {
 		char ch = path->at(i);
 		char converted = static_cast<unsigned char>(ch);
 		if (!cur->childs[converted]) {
