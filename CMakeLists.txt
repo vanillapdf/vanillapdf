@@ -20,3 +20,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DRELEASE")
 add_subdirectory(src/gotchangpdf)
 add_subdirectory(src/gotchangpdf.test)
 add_subdirectory(src/gotchangpdf.merge)
+
+# All dependent libraries
+add_subdirectory(lib)

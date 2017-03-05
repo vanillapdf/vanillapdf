@@ -39,3 +39,10 @@ if (CMAKE_COMPILER_IS_GNUCC)
 endif (CMAKE_COMPILER_IS_GNUCC)
 
 target_link_libraries(gotchangpdf.merge ${GOTCHANGPDF_MERGE_LIBS})
+
+add_custom_command(
+	TARGET gotchangpdf.merge POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+	$<TARGET_FILE:gotchangpdf>
+	$<TARGET_FILE_DIR:gotchangpdf.merge>
+)

@@ -4,8 +4,7 @@ cmake_minimum_required(VERSION 2.6)
 project(gotchangpdf.test)
 
 include_directories("${CMAKE_SOURCE_DIR}/include")
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(GOTCHANGPDF_TEST_SOURCES
 	documents.c
@@ -43,3 +42,10 @@ if (CMAKE_COMPILER_IS_GNUCC)
 endif (CMAKE_COMPILER_IS_GNUCC)
 
 target_link_libraries(gotchangpdf.test ${GOTCHANGPDF_TEST_LIBS})
+
+add_custom_command(
+	TARGET gotchangpdf.test POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+	$<TARGET_FILE:gotchangpdf>
+	$<TARGET_FILE_DIR:gotchangpdf.test>
+)
