@@ -119,7 +119,9 @@ error_type process_array(ArrayObjectHandle arr, int nested) {
 	RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_Size(arr, &size));
 
 	print_spaces(nested + 1);
-	printf("Size: %d\n", size);
+	unsigned long long converted_size = size;
+	printf("Size: %llu\n", converted_size);
+
 	for (i = 0; i < size; ++i) {
 		ObjectHandle item = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_At(arr, i, &item));
