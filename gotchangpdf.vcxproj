@@ -351,8 +351,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug|x64'">
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <IncludePath>C:\Program Files %28x86%29\OpenSSL-Win32\include;C:\Program Files %28x86%29\GnuWin32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files %28x86%29\OpenSSL-Win32\lib\VC;C:\Program Files %28x86%29\GnuWin32\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files\OpenSSL-Win64\include;C:\Program Files %28x86%29\GnuWin32\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\OpenSSL-Win64\lib\VC;C:\Program Files %28x86%29\GnuWin32\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release|Win32'">
     <IntDir>obj\$(ProjectName)\$(Configuration)\</IntDir>
@@ -373,8 +373,11 @@
       <PreprocessorDefinitions>GOTCHANG_PDF_CONFIGURATION_DLL;GOTCHANG_PDF_EXPORTS;GOTCHANG_PDF_HAVE_ZLIB;GOTCHANG_PDF_HAVE_JPEG;GOTCHANG_PDF_HAVE_OPENSSL;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
-      <AdditionalOptions>/Zm512 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>
+      </AdditionalOptions>
       <EnablePREfast>false</EnablePREfast>
+      <MultiProcessorCompilation>
+      </MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -396,12 +399,15 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.merge\$(C
       <PreprocessorDefinitions>GOTCHANG_PDF_CONFIGURATION_DLL;GOTCHANG_PDF_EXPORTS;GOTCHANG_PDF_HAVE_ZLIB;GOTCHANG_PDF_HAVE_JPEG;GOTCHANG_PDF_HAVE_OPENSSL;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
-      <AdditionalOptions>/Zm512 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>
+      </AdditionalOptions>
       <EnablePREfast>false</EnablePREfast>
+      <MultiProcessorCompilation>
+      </MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>zlib.lib;jpeg.lib;libeay32MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>zlib.lib;jpeg.lib;libcrypto64MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -421,7 +427,10 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.merge\$(C
       <AdditionalIncludeDirectories>src\gotchangpdf;include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
-      <AdditionalOptions>/Zm512 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <MultiProcessorCompilation>
+      </MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -447,13 +456,16 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.merge\$(C
       <AdditionalIncludeDirectories>src\gotchangpdf;include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
-      <AdditionalOptions>/Zm512 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <MultiProcessorCompilation>
+      </MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>zlib.lib;jpeg.lib;libeay32MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>zlib.lib;jpeg.lib;libcrypto64MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
