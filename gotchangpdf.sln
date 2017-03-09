@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gotchangpdf", "gotchangpdf.vcxproj", "{9AF81955-0B8C-4778-9F93-3ED8285D3D49}"
 EndProject
@@ -22,16 +22,20 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{9AF81955-0B8C-4778-9F93-3ED8285D3D49}.debug|Win32.ActiveCfg = debug|Win32
 		{9AF81955-0B8C-4778-9F93-3ED8285D3D49}.debug|Win32.Build.0 = debug|Win32
-		{9AF81955-0B8C-4778-9F93-3ED8285D3D49}.debug|x64.ActiveCfg = debug|Win32
+		{9AF81955-0B8C-4778-9F93-3ED8285D3D49}.debug|x64.ActiveCfg = debug|x64
+		{9AF81955-0B8C-4778-9F93-3ED8285D3D49}.debug|x64.Build.0 = debug|x64
 		{9AF81955-0B8C-4778-9F93-3ED8285D3D49}.release|Win32.ActiveCfg = release|Win32
 		{9AF81955-0B8C-4778-9F93-3ED8285D3D49}.release|Win32.Build.0 = release|Win32
-		{9AF81955-0B8C-4778-9F93-3ED8285D3D49}.release|x64.ActiveCfg = release|Win32
+		{9AF81955-0B8C-4778-9F93-3ED8285D3D49}.release|x64.ActiveCfg = release|x64
+		{9AF81955-0B8C-4778-9F93-3ED8285D3D49}.release|x64.Build.0 = release|x64
 		{FE84B8DB-924F-4029-849F-D1729F8A040B}.debug|Win32.ActiveCfg = debug|Win32
 		{FE84B8DB-924F-4029-849F-D1729F8A040B}.debug|Win32.Build.0 = debug|Win32
-		{FE84B8DB-924F-4029-849F-D1729F8A040B}.debug|x64.ActiveCfg = debug|Win32
+		{FE84B8DB-924F-4029-849F-D1729F8A040B}.debug|x64.ActiveCfg = debug|x64
+		{FE84B8DB-924F-4029-849F-D1729F8A040B}.debug|x64.Build.0 = debug|x64
 		{FE84B8DB-924F-4029-849F-D1729F8A040B}.release|Win32.ActiveCfg = release|Win32
 		{FE84B8DB-924F-4029-849F-D1729F8A040B}.release|Win32.Build.0 = release|Win32
-		{FE84B8DB-924F-4029-849F-D1729F8A040B}.release|x64.ActiveCfg = release|Win32
+		{FE84B8DB-924F-4029-849F-D1729F8A040B}.release|x64.ActiveCfg = release|x64
+		{FE84B8DB-924F-4029-849F-D1729F8A040B}.release|x64.Build.0 = release|x64
 		{35B9171A-DB34-4CA3-A620-2D74A800448E}.debug|Win32.ActiveCfg = debug|Win32
 		{35B9171A-DB34-4CA3-A620-2D74A800448E}.debug|Win32.Build.0 = debug|Win32
 		{35B9171A-DB34-4CA3-A620-2D74A800448E}.debug|x64.ActiveCfg = debug|x64
