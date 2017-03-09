@@ -183,12 +183,21 @@ bool PKCS12Key::PKCS12KeyImpl::ContainsPrivateKey(const Buffer& issuer, const Bu
 
 #if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 
-	auto issuer_name = cert->cert_info->issuer;
-	ASN1_INTEGER* serial_asn = cert->cert_info->serialNumber;
+	// X509_NAME is conflicting with some windows headers
+	auto issuer_name = X509_get_issuer_name(cert);
+	ASN1_INTEGER* serial_asn = X509_get_serialNumber(cert);
 
-	Buffer m_issuer(issuer_name->bytes->data, issuer_name->bytes->length);
+	// Convert issuer to null terminated string
+	char* oneline = X509_NAME_oneline(issuer_name, nullptr, 0);
+	SCOPE_GUARD([oneline]() {OPENSSL_free(oneline); });
+
+	if (oneline == nullptr) {
+		LOG_ERROR_GLOBAL << "Could not print issuer to buffer";
+		return false;
+	}
+
+	Buffer m_issuer(oneline);
 	Buffer m_serial(serial_asn->data, serial_asn->length);
-
 	return m_issuer.Equals(issuer) && m_serial.Equals(serial);
 
 #else

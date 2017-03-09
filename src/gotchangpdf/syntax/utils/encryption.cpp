@@ -426,7 +426,16 @@ BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax
 			X509_NAME *issuer = pkcs7_recipient->issuer_and_serial->issuer;
 			ASN1_INTEGER *serial = pkcs7_recipient->issuer_and_serial->serial;
 
-			Buffer issuer_buffer(issuer->bytes->data, issuer->bytes->length);
+			// Convert issuer to null terminated string
+			char* oneline = X509_NAME_oneline(issuer, nullptr, 0);
+			SCOPE_GUARD([oneline]() {OPENSSL_free(oneline); });
+
+			if (oneline == nullptr) {
+				LOG_ERROR_GLOBAL << "Could not print issuer to buffer";
+				continue;
+			}
+
+			Buffer issuer_buffer(oneline);
 			Buffer serial_buffer(serial->data, serial->length);
 			if (!key.ContainsPrivateKey(issuer_buffer, serial_buffer)) {
 				continue;
