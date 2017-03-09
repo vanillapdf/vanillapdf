@@ -408,9 +408,9 @@ target_compile_features(gotchangpdf PRIVATE
 )
 
 add_definitions("-DGOTCHANG_PDF_EXPORTS")
-add_definitions("-DGOTCHANG_PDF_VERSION_MAJOR=0")
-add_definitions("-DGOTCHANG_PDF_VERSION_MINOR=0")
-add_definitions("-DGOTCHANG_PDF_VERSION_PATCH=1")
+add_definitions("-DGOTCHANG_PDF_VERSION_MAJOR=${GOTCHANG_PDF_VERSION_MAJOR}")
+add_definitions("-DGOTCHANG_PDF_VERSION_MINOR=${GOTCHANG_PDF_VERSION_MINOR}")
+add_definitions("-DGOTCHANG_PDF_VERSION_PATCH=${GOTCHANG_PDF_VERSION_PATCH}")
 
 find_package(OpenSSL)
 find_package(JPEG)

@@ -17,6 +17,10 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -DRELEASE")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DRELEASE")
 
+set(GOTCHANG_PDF_VERSION_MAJOR 0)
+set(GOTCHANG_PDF_VERSION_MINOR 0)
+set(GOTCHANG_PDF_VERSION_PATCH 1)
+
 add_subdirectory(src/gotchangpdf)
 add_subdirectory(src/gotchangpdf.test)
 add_subdirectory(src/gotchangpdf.merge)
