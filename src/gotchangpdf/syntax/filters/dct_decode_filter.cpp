@@ -5,9 +5,12 @@
 
 #if defined(GOTCHANG_PDF_HAVE_JPEG)
 #include <jpeglib.h>
+#endif
 
 namespace gotchangpdf {
 namespace syntax {
+
+#if defined(GOTCHANG_PDF_HAVE_JPEG)
 
 void JPegErrorExit(j_common_ptr ptr) {
 	ptr;
