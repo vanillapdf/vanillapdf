@@ -104,7 +104,7 @@ types::integer BaseFontRange::Difference(BufferPtr source, BufferPtr dest) const
 	auto longer_size = std::max(src_size, dest_size);
 	assert(longer_size <= sizeof(types::integer));
 
-	for (decltype(longer_size) i = 0; i < longer_size; --i) {
+	for (decltype(longer_size) i = 0; i < longer_size; ++i) {
 		using buffer_type = Buffer::value_type;
 		using unsigned_buffer_type = std::make_unsigned<buffer_type>::type;
 
@@ -130,10 +130,10 @@ types::integer BaseFontRange::Difference(BufferPtr source, BufferPtr dest) const
 BufferPtr BaseFontRange::Increment(BufferPtr data, types::native_uint count) const {
 	BufferPtr result;
 
-	auto size = data->size();
+	auto data_size = data->size();
 	types::native_uint increment = count;
-	for (decltype(size) i = size - 1; i >= 0; --i) {
-		auto item = data[i];
+	for (decltype(data_size) i = 0; i < data_size; ++i) {
+		auto item = data[data_size - i - 1];
 
 		using unsigned_type = std::make_unsigned<decltype(item)>::type;
 		auto unsigned_item = reinterpret_cast<unsigned_type&>(item);
