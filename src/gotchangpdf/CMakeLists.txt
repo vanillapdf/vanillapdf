@@ -375,6 +375,15 @@ install(FILES ${INCLUDE_HEADERS}
   DESTINATION "include\\gotchangpdf"
 )
 
+set(GOTCHANGPDF_ALL_SOURCES
+	${GOTCHANGPDF_C_IMPLEMENTATION_SOURCES}
+	${GOTCHANGPDF_SEMANTICS_SOURCES}
+	${GOTCHANGPDF_SYNTAX_SOURCES}
+	
+	${GOTCHANGPDF_CONTENTS_SOURCES}
+	${GOTCHANGPDF_UTILS_SOURCES}
+)
+
 add_library(gotchangpdf SHARED
 	${GOTCHANGPDF_C_IMPLEMENTATION_SOURCES}
 	${GOTCHANGPDF_SEMANTICS_SOURCES}
@@ -393,6 +402,19 @@ add_library(gotchangpdf SHARED
 	
 	${GOTCHANGPDF_ADDITIONAL_HEADERS}
 )
+
+# Add precompiled header optimization
+if(MSVC)
+	get_filename_component(PrecompiledBasename ${GOTCHANGPDF_PRECOMPILED_HEADER} NAME_WE)
+	set(PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${PrecompiledBasename}.pch")
+
+	set_source_files_properties(${GOTCHANGPDF_PRECOMPILED_SOURCE}
+								PROPERTIES COMPILE_FLAGS "/Yc\"${GOTCHANGPDF_PRECOMPILED_HEADER}\" /Fp\"${PrecompiledBinary}\""
+										   OBJECT_OUTPUTS "${PrecompiledBinary}")
+	set_source_files_properties(${GOTCHANGPDF_ALL_SOURCES}
+								PROPERTIES COMPILE_FLAGS "/Yu\"${GOTCHANGPDF_PRECOMPILED_HEADER}\" /FI\"${GOTCHANGPDF_PRECOMPILED_HEADER}\" /Fp\"${PrecompiledBinary}\""
+										   OBJECT_DEPENDS "${PrecompiledBinary}")
+endif(MSVC)
 
 target_compile_features(gotchangpdf PRIVATE
 	cxx_decltype
