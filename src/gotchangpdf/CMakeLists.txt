@@ -462,7 +462,7 @@ if (JPEG_FOUND)
 	
 	message(STATUS "JPEG library was found")
 else (JPEG_FOUND)
-	message(WARNING "Compiling without JPEG support. JPEG compression will become unavailable")
+	message(STATUS "Compiling without JPEG support. JPEG compression will become unavailable")
 endif (JPEG_FOUND)
 
 # zlib is now included in sources
