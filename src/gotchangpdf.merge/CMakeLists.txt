@@ -51,3 +51,10 @@ add_custom_command(
 	$<TARGET_FILE:gotchangpdf>
 	$<TARGET_FILE_DIR:gotchangpdf.merge>
 )
+
+add_custom_command(
+	TARGET gotchangpdf.merge POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+	$<TARGET_FILE:zlib>
+	$<TARGET_FILE_DIR:gotchangpdf.test>
+)
