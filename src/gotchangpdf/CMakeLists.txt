@@ -325,6 +325,15 @@ set(GOTCHANGPDF_PRECOMPILED_HEADER
 	precompiled.h
 )
 
+set(GOTCHANGPDF_RESOURCE_FILES
+  gotchangpdf.natvis
+  resources.rc
+)
+
+source_group("Resource Files" FILES
+	${GOTCHANGPDF_RESOURCE_FILES}
+)
+
 source_group("Header Files" FILES
 	${GOTCHANGPDF_PRECOMPILED_HEADER}
 	${GOTCHANGPDF_ADDITIONAL_HEADERS}
@@ -401,6 +410,8 @@ add_library(gotchangpdf SHARED
 	${GOTCHANGPDF_UTILS_SOURCES}
 	
 	${GOTCHANGPDF_ADDITIONAL_HEADERS}
+	
+	${GOTCHANGPDF_RESOURCE_FILES}
 )
 
 # Add precompiled header optimization
