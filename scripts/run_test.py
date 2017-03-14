@@ -37,9 +37,9 @@ print ('Running test script')
 # Use default release configuration
 path = ""
 if (len(sys.argv) < 2 or sys.argv[1] == "release"):
-	path = '..\\build\\gotchangpdf.test\\release\\gotchangpdf.test.exe'
+	path = '..\\build\\x86\\src\\gotchangpdf.test\\Release\\gotchangpdf.test.exe'
 elif sys.argv[1] == "debug":
-	path = '..\\build\\gotchangpdf.test\\debug\\gotchangpdf.test.exe'
+	path = '..\\build\\x86\\src\\gotchangpdf.test\\Debug\\gotchangpdf.test.exe'
 else:
 	print ("Incorrect mode was specified (debug/release)")
 	sys.exit(1)

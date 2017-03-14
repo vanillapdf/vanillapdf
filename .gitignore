@@ -1,14 +1,6 @@
 #Build files
 /build/
-/cmake_build/
-/obj/
-/ipch/
-*.suo
-*.sdf
-*.opensdf
-*.user
-*.filters
-*.opendb
+/lib/
 
 #Test files
 !/test/*.pdf
