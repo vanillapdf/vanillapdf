@@ -8,6 +8,7 @@ public:
 	static int MajorVersion() noexcept;
 	static int MinorVersion() noexcept;
 	static int PatchVersion() noexcept;
+	static int BuildVersion() noexcept;
 	static const char * Author() noexcept;
 
 private:

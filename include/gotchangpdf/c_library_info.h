@@ -51,6 +51,14 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION LibraryInfo_GetVersionPatch(integer_type* result);
 
 	/**
+	* \brief Get library build version
+	*
+	* A change in the library build version
+	* should not affect any kind of functionality.
+	*/
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION LibraryInfo_GetVersionPatch(integer_type* result);
+
+	/**
 	* \brief Get library author name
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION LibraryInfo_GetAuthor(string_type* result);

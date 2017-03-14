@@ -89,16 +89,19 @@ error_type process_library_info() {
 	integer_type library_version_major = 0;
 	integer_type library_version_minor = 0;
 	integer_type library_version_patch = 0;
+	integer_type library_version_build = 0;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetVersionMajor(&library_version_major));
 	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetVersionMinor(&library_version_minor));
 	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetVersionPatch(&library_version_patch));
+	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetVersionPatch(&library_version_build));
 	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetAuthor(&library_author));
 
-	printf("Library gotchangpdf %d.%d.%d by %s\n",
+	printf("Library gotchangpdf %d.%d.%d.%d by %s\n",
 		library_version_major,
 		library_version_minor,
 		library_version_patch,
+		library_version_build,
 		library_author
 	);
 

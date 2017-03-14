@@ -12,6 +12,10 @@
 
 #ifndef GOTCHANG_PDF_VERSION_PATCH
 	#define GOTCHANG_PDF_VERSION_PATCH 0
+#endif
+
+#ifndef GOTCHANG_PDF_VERSION_BUILD
+#define GOTCHANG_PDF_VERSION_BUILD 0
 #endif 
 
 namespace gotchangpdf {
@@ -29,6 +33,11 @@ int LibraryInfo::MinorVersion() noexcept {
 int LibraryInfo::PatchVersion() noexcept {
 	const int PATCH_VERSION = GOTCHANG_PDF_VERSION_PATCH;
 	return PATCH_VERSION;
+}
+
+int LibraryInfo::BuildVersion() noexcept {
+	const int BUILD_VERSION = GOTCHANG_PDF_VERSION_BUILD;
+	return BUILD_VERSION;
 }
 
 const char * LibraryInfo::Author() noexcept {
