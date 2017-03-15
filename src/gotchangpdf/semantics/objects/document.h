@@ -30,7 +30,7 @@ public:
 	syntax::FilePtr GetFile() const;
 
 	void AppendDocument(DocumentPtr other);
-	void AppendPage(PageObjectPtr page);
+	void AppendPage(DocumentPtr other, PageObjectPtr other_page);
 
 	void Sign();
 
@@ -45,12 +45,13 @@ private:
 	OutputNameDictionaryPtr CreateNameDictionary(CatalogPtr catalog);
 	OutputNameTreePtr<DestinationPtr> CreateStringDestinations(NameDictionaryPtr dictionary);
 
-	void MergeNameDestinations(NamedDestinationsPtr destinations, types::uinteger merged_pages_count);
-	void MergeStringDestinations(NameTreePtr<DestinationPtr> destinations, types::uinteger merged_pages_count);
-	void AppendStringDestination(syntax::StringObjectPtr key, DestinationPtr value, types::uinteger merged_pages_count);
-	void AppendNameDestination(syntax::NameObjectPtr key, DestinationPtr value, types::uinteger merged_pages_count);
+	void MergePageDestinations(DocumentPtr other, PageObjectPtr other_page, PageObjectPtr merged_page);
+	void MergeNameDestinations(NamedDestinationsPtr destinations, PageObjectPtr other_page, PageObjectPtr merged_page);
+	void MergeStringDestinations(NameTreePtr<DestinationPtr> destinations, PageObjectPtr other_page, PageObjectPtr merged_page);
+	void AppendStringDestination(syntax::StringObjectPtr key, DestinationPtr value, PageObjectPtr other_page, PageObjectPtr merged_page);
+	void AppendNameDestination(syntax::NameObjectPtr key, DestinationPtr value, PageObjectPtr other_page, PageObjectPtr merged_page);
 
-	void FixDestinationPage(DestinationPtr other_destination, syntax::ObjectPtr cloned_page, types::uinteger merged_pages_count);
+	void FixDestinationPage(syntax::ObjectPtr cloned_page, PageObjectPtr other_page, PageObjectPtr merged_page);
 };
 
 } // semantics
