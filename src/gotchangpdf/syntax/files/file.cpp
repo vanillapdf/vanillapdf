@@ -722,6 +722,11 @@ void File::DeepCopyObject(std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPt
 	}
 }
 
+std::vector<ObjectPtr> File::DeepCopyObject(ObjectPtr object) {
+	std::vector<ObjectPtr> objects { object };
+	return DeepCopyObjects(objects);
+}
+
 std::vector<ObjectPtr> File::DeepCopyObjects(const std::vector<ObjectPtr>& objects) {
 	// Original to copied mapping
 	std::map<ObjectPtr, ObjectPtr> map;
