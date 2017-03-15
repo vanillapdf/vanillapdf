@@ -260,16 +260,53 @@ void Document::AppendDocument(DocumentPtr other) {
 	}
 }
 
+bool Document::IsDestinationReferencingPage(DestinationPtr destination, PageObjectPtr page) {
+	auto destionation_page_object = destination->GetPage();
+	auto other_page_dictionary = page->GetObject();
+
+	assert(ObjectUtils::IsType<IndirectObjectReferencePtr>(destionation_page_object)
+		|| ObjectUtils::IsType<IntegerObjectPtr>(destionation_page_object));
+	if (!ObjectUtils::IsType<IndirectObjectReferencePtr>(destionation_page_object)
+		&& !ObjectUtils::IsType<IntegerObjectPtr>(destionation_page_object)) {
+		throw GeneralException("Unknown object type");
+	}
+
+	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(destionation_page_object)) {
+		auto cloned_page_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(destionation_page_object);
+		auto destination_page_dictionary = cloned_page_reference->GetReferencedObjectAs<DictionaryObjectPtr>();
+
+		if (!destination_page_dictionary->Identity(other_page_dictionary)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	if (ObjectUtils::IsType<IntegerObjectPtr>(destionation_page_object)) {
+		auto cloned_page_index = ObjectUtils::ConvertTo<IntegerObjectPtr>(destionation_page_object);
+
+		auto other_root_node = page->GetPageRoot();
+		auto other_root_node_obj = other_root_node->GetObject();
+		auto other_pages = PageTreePtr(other_root_node_obj);
+
+		auto index_converted = cloned_page_index->SafeConvert<types::integer>();
+		auto check_page = other_pages->Page(index_converted);
+		auto check_page_object = check_page->GetObject();
+
+		if (!check_page_object->Identity(other_page_dictionary)) {
+			return false;
+		}
+
+		return true;
+	}
+}
+
 void Document::MergeNameDestinations(NamedDestinationsPtr destinations, PageObjectPtr other_page, PageObjectPtr merged_page) {
 	for (auto destination : destinations) {
 		auto destination_name = destination.first;
 		auto destination_value = destination.second;
 
-		auto referenced_page_object = destination_value->GetPage();
-		auto other_page_object = other_page->GetObject();
-
-		// Merge only destinations, that reference the other page
-		if (!referenced_page_object->Identity(other_page_object)) {
+		if (!IsDestinationReferencingPage(destination_value, other_page)) {
 			continue;
 		}
 
@@ -282,39 +319,8 @@ void Document::MergeStringDestinations(NameTreePtr<DestinationPtr> destinations,
 		auto destination_key = destination.first;
 		auto destination_value = destination.second;
 
-		auto destionation_page_object = destination_value->GetPage();
-		auto other_page_dictionary = other_page->GetObject();
-
-		assert(ObjectUtils::IsType<IndirectObjectReferencePtr>(destionation_page_object)
-			|| ObjectUtils::IsType<IntegerObjectPtr>(destionation_page_object));
-		if (!ObjectUtils::IsType<IndirectObjectReferencePtr>(destionation_page_object)
-			&& !ObjectUtils::IsType<IntegerObjectPtr>(destionation_page_object)) {
-			throw GeneralException("Unknown object type");
-		}
-
-		if (ObjectUtils::IsType<IndirectObjectReferencePtr>(destionation_page_object)) {
-			auto cloned_page_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(destionation_page_object);
-			auto destination_page_dictionary = cloned_page_reference->GetReferencedObjectAs<DictionaryObjectPtr>();
-
-			if (!destination_page_dictionary->Identity(other_page_dictionary)) {
-				continue;
-			}
-		}
-
-		if (ObjectUtils::IsType<IntegerObjectPtr>(destionation_page_object)) {
-			auto cloned_page_index = ObjectUtils::ConvertTo<IntegerObjectPtr>(destionation_page_object);
-
-			auto other_root_node = other_page->GetPageRoot();
-			auto other_root_node_obj = other_root_node->GetObject();
-			auto other_pages = PageTreePtr(other_root_node_obj);
-
-			auto index_converted = cloned_page_index->SafeConvert<types::integer>();
-			auto check_page = other_pages->Page(index_converted);
-			auto check_page_object = check_page->GetObject();
-
-			if (!check_page_object->Identity(other_page_dictionary)) {
-				continue;
-			}
+		if (!IsDestinationReferencingPage(destination_value, other_page)) {
+			continue;
 		}
 
 		AppendStringDestination(destination_key, destination_value, other_page, merged_page);

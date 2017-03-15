@@ -52,6 +52,7 @@ private:
 	void AppendNameDestination(syntax::NameObjectPtr key, DestinationPtr value, PageObjectPtr other_page, PageObjectPtr merged_page);
 
 	void FixDestinationPage(syntax::ObjectPtr cloned_page, PageObjectPtr other_page, PageObjectPtr merged_page);
+	bool IsDestinationReferencingPage(DestinationPtr destination, PageObjectPtr page);
 };
 
 } // semantics
