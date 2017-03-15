@@ -13,9 +13,9 @@ PageTree::PageTree(DictionaryObjectPtr root) : HighLevelObject(root) {
 	m_pages.resize(page_count);
 }
 
-types::uinteger PageTree::PageCount(void) const {
+types::integer PageTree::PageCount(void) const {
 	auto root = PageTreeNodePtr(_obj);
-	auto result = root->KidCount()->SafeConvert<types::uinteger>();
+	auto result = root->KidCount()->SafeConvert<types::integer>();
 
 	if (_obj->Contains(constant::Name::Count)) {
 		auto count_obj = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::Count);

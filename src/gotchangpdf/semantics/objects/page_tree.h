@@ -14,7 +14,7 @@ class PageTree : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
 	explicit PageTree(syntax::DictionaryObjectPtr root);
 
-	types::uinteger PageCount(void) const;
+	types::integer PageCount(void) const;
 	PageObjectPtr Page(types::integer page_number) const { return GetCachedPage(page_number); }
 	PageObjectPtr operator[](types::integer page_number) const { return GetCachedPage(page_number); }
 
