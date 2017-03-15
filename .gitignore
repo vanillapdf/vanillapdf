@@ -4,12 +4,15 @@
 /cmake_build/
 /obj/
 /ipch/
+/.vs/
+
 *.suo
 *.sdf
 *.opensdf
 *.user
 *.filters
 *.opendb
+*.VC.db
 
 #Test files
 !/test/*.pdf
