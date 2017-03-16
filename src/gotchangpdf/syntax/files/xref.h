@@ -140,6 +140,12 @@ private:
 class XrefBase : public virtual IUnknown, public IModifyObserver, public IModifyObservable {
 public:
 	using map_type = std::unordered_map<types::big_uint, XrefEntryBasePtr>;
+	typedef map_type::value_type value_type;
+	typedef map_type::iterator iterator;
+	typedef map_type::const_iterator const_iterator;
+	typedef map_type::size_type size_type;
+	typedef map_type::reference reference;
+	typedef map_type::const_reference const_reference;
 
 public:
 	class Iterator : public BaseIterator<map_type::const_iterator>, public IWeakReferenceable {
@@ -206,6 +212,13 @@ public:
 
 	virtual Type GetType(void) const noexcept = 0;
 	virtual ~XrefBase();
+
+	// stl compatibility
+	iterator begin();
+	const_iterator begin() const;
+
+	iterator end();
+	const_iterator end() const;
 
 protected:
 	WeakReference<File> _file;

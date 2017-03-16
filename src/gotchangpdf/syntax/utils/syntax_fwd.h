@@ -31,7 +31,7 @@ class File; using FilePtr = Deferred<File>;
 class FileWriter; using FileWriterPtr = Deferred<FileWriter>;
 class Header;
 
-class XrefBase; using XrefBasePtr = Deferred<XrefBase>;
+class XrefBase; using XrefBasePtr = DeferredContainer<XrefBase>;
 class XrefSubsection;
 class XrefTable;
 class XrefStream;
@@ -46,8 +46,8 @@ class XrefCompressedEntry;
 
 using HeaderPtr = Deferred<Header>;
 
-using XrefTablePtr = Deferred<XrefTable>;
-using XrefStreamPtr = Deferred<XrefStream>;
+using XrefTablePtr = DeferredContainer<XrefTable>;
+using XrefStreamPtr = DeferredContainer<XrefStream>;
 
 using XrefChainPtr = DeferredContainer<XrefChain>;
 using XrefEntryBasePtr = Deferred<XrefEntryBase>;

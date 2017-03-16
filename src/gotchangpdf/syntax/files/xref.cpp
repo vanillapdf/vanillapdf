@@ -413,5 +413,21 @@ std::vector<XrefEntryBasePtr> XrefBase::Entries(void) const {
 	return result;
 }
 
+XrefBase::iterator XrefBase::begin() {
+	return _entries.begin();
+}
+
+XrefBase::const_iterator XrefBase::begin() const {
+	return _entries.begin();
+}
+
+XrefBase::iterator XrefBase::end() {
+	return _entries.end();
+}
+
+XrefBase::const_iterator XrefBase::end() const {
+	return _entries.end();
+}
+
 } // syntax
 } // gotchangpdf
