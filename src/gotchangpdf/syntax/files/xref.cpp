@@ -365,8 +365,16 @@ bool XrefBase::Remove(types::big_uint obj_number) {
 		return false;
 	}
 
+	// Store the item reference
+	auto backup_item = found->second;
+
+	// Erase the entry
 	_entries.erase(found);
-	found->second->Unsubscribe(this);
+
+	// Access the backed up item
+	// After erase the "found" is no longer available
+	backup_item->Unsubscribe(this);
+
 	OnChanged();
 	return true;
 }

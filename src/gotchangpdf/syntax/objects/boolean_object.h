@@ -18,6 +18,7 @@ public:
 	void SetValue(bool value);
 	operator bool() const noexcept;
 
+	virtual size_t Hash() const override;
 	virtual BooleanObject* Clone(void) const override;
 	virtual bool Equals(ObjectPtr other) const override;
 

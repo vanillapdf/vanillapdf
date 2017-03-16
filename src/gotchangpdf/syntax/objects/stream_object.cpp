@@ -355,6 +355,11 @@ std::string StreamObject::ToPdf(void) const {
 	return ss.str();
 }
 
+size_t StreamObject::Hash() const {
+	auto decoded_body = GetBody();
+	return _header->Hash() ^ decoded_body->Hash();
+}
+
 bool StreamObject::Equals(ObjectPtr other) const {
 	if (!ObjectUtils::IsType<StreamObjectPtr>(other)) {
 		return false;

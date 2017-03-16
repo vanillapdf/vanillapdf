@@ -26,6 +26,7 @@ public:
 	bool operator<(const StringObjectBase& other) const { return GetValue() < other.GetValue(); }
 
 	virtual bool Equals(ObjectPtr other) const override;
+	virtual size_t Hash() const override;
 };
 
 class HexadecimalStringObject : public StringObjectBase, public IModifyObserver {

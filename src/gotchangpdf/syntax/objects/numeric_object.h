@@ -29,6 +29,7 @@ public:
 	void SetRealValue(types::real value);
 	void SetRealPrecision(uint32_t precision);
 
+	size_t Hash() const;
 	NumericObjectBackend* Clone(void) const;
 
 	std::string ToString(void) const;
@@ -61,6 +62,8 @@ public:
 	NumericObjectBackendPtr GetNumericBackend(void) const {
 		return m_value;
 	}
+
+	virtual size_t Hash() const override;
 
 protected:
 	NumericObjectBackendPtr m_value;

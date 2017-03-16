@@ -44,6 +44,7 @@ public:
 		assert(size() > 0);
 	}
 
+	size_t Hash() const;
 	Buffer Clone(void) const { return Buffer(begin(), end()); }
 	std::string ToString(void) const { return std::string(begin(), end()); }
 	std::shared_ptr<std::stringstream> ToStringStream(void) const;

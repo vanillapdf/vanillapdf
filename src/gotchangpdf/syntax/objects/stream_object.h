@@ -31,6 +31,7 @@ public:
 	BufferPtr GetBodyEncoded() const;
 	void SetBody(BufferPtr value);
 
+	virtual size_t Hash() const override;
 	virtual StreamObject* Clone(void) const override;
 	virtual bool Equals(ObjectPtr other) const override;
 

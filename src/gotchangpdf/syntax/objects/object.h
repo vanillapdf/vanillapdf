@@ -63,6 +63,7 @@ public:
 
 	bool Identity(ObjectPtr other) const;
 
+	virtual size_t Hash() const = 0;
 	virtual bool Equals(ObjectPtr other) const = 0;
 	virtual Object* Clone(void) const = 0;
 
@@ -91,5 +92,15 @@ bool operator!=(const syntax::ObjectPtr& left, const syntax::ObjectPtr& right);
 bool operator<(const syntax::ObjectPtr& left, const syntax::ObjectPtr& right);
 
 } // gotchangpdf
+
+namespace std {
+
+template <> struct hash<gotchangpdf::syntax::ObjectPtr> {
+	size_t operator()(const gotchangpdf::syntax::ObjectPtr& x) const {
+		return x->Hash();
+	}
+};
+
+} // std
 
 #endif /* _OBJECT_H */

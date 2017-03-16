@@ -17,6 +17,12 @@ IndirectObjectReference::IndirectObjectReference(types::big_uint obj, types::ush
 	: m_reference_object_number(obj), m_reference_generation_number(gen) {
 }
 
+size_t IndirectObjectReference::Hash() const {
+	std::hash<decltype(m_reference_object_number)> obj_hasher;
+	std::hash<decltype(m_reference_generation_number)> gen_hasher;
+	return obj_hasher(m_reference_object_number) ^ gen_hasher(m_reference_generation_number);
+}
+
 void IndirectObjectReference::SetReferencedObject(ObjectPtr obj) const {
 	// Reference shall be indirect object or null
 	bool indirect_or_null = (obj->IsIndirect() || ObjectUtils::IsType<NullObjectPtr>(obj));

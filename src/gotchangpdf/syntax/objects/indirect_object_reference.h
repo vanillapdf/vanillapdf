@@ -49,6 +49,7 @@ public:
 		return !m_reference.IsEmpty() && m_reference.IsActive();
 	}
 
+	virtual size_t Hash() const override;
 	virtual IndirectObjectReference* Clone(void) const override;
 
 private:

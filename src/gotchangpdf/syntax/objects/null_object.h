@@ -14,6 +14,7 @@ public:
 
 	static NullObjectPtr GetInstance(void);
 
+	virtual size_t Hash() const override;
 	bool Equals(const NullObject& other) const;
 	virtual bool Equals(ObjectPtr other) const override;
 

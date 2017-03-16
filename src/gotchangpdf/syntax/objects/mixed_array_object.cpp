@@ -129,6 +129,15 @@ MixedArrayObject::~MixedArrayObject() {
 	}
 }
 
+size_t MixedArrayObject::Hash() const {
+	size_t result = 0;
+	for (auto item : _list) {
+		result ^= item->Hash();
+	}
+
+	return result;
+}
+
 bool MixedArrayObject::Equals(ObjectPtr other) const {
 	if (!ObjectUtils::IsType<MixedArrayObjectPtr>(other)) {
 		return false;

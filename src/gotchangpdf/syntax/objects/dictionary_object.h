@@ -77,6 +77,7 @@ public:
 
 	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
+	virtual size_t Hash() const override;
 	virtual DictionaryObject* Clone(void) const override;
 	virtual bool Equals(ObjectPtr other) const override;
 

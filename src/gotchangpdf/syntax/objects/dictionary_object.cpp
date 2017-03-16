@@ -145,6 +145,16 @@ DictionaryObject::~DictionaryObject() {
 	}
 }
 
+size_t DictionaryObject::Hash() const {
+	size_t result = 0;
+	for (auto item : _list) {
+		result ^= item.first.Hash();
+		result ^= item.second->Hash();
+	}
+
+	return result;
+}
+
 bool DictionaryObject::Equals(ObjectPtr other) const {
 	if (!ObjectUtils::IsType<DictionaryObjectPtr>(other)) {
 		return false;

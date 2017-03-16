@@ -30,6 +30,7 @@ public:
 
 	virtual void ObserveeChanged(IModifyObservable*) override;
 
+	virtual size_t Hash() const override;
 	virtual MixedArrayObject* Clone(void) const override;
 	virtual bool Equals(ObjectPtr other) const override;
 

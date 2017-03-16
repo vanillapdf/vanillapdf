@@ -163,5 +163,29 @@ std::string NumericObjectBackend::ToString(void) const {
 	throw GeneralException("Unknown numeric type");
 }
 
+size_t NumericObjectBackend::Hash() const {
+	if (m_type == Type::Real) {
+		std::hash<decltype(m_real)> hasher;
+		return hasher(m_real);
+	}
+
+	if (m_type == Type::SignedInteger) {
+		std::hash<decltype(m_int)> hasher;
+		return hasher(m_int);
+	}
+
+	if (m_type == Type::UnsignedInteger) {
+		std::hash<decltype(m_uint)> hasher;
+		return hasher(m_uint);
+	}
+
+	assert(false && "Unknown numeric type");
+	throw GeneralException("Unknown numeric type");
+}
+
+size_t NumericObject::Hash() const {
+	return m_value->Hash();
+}
+
 } // syntax
 } // gotchangpdf

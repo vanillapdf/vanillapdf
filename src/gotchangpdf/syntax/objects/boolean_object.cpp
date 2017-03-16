@@ -21,6 +21,11 @@ BooleanObject::operator bool() const noexcept {
 	return m_value;
 }
 
+size_t BooleanObject::Hash() const {
+	std::hash<decltype(m_value)> hasher;
+	return hasher(m_value);
+}
+
 bool BooleanObject::Equals(ObjectPtr other) const {
 	if (!ObjectUtils::IsType<BooleanObjectPtr>(other)) {
 		return false;

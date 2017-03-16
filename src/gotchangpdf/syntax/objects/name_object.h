@@ -30,6 +30,7 @@ public:
 	virtual std::string ToPdf(void) const override;
 	virtual std::string ToString(void) const override;
 
+	virtual size_t Hash() const override;
 	virtual NameObject* Clone(void) const override;
 
 private:

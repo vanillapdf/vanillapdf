@@ -39,6 +39,11 @@ LiteralStringObject::~LiteralStringObject() {
 	_value->Unsubscribe(this);
 }
 
+size_t StringObjectBase::Hash() const {
+	auto value = GetValue();
+	return value->Hash();
+}
+
 HexadecimalStringObject* HexadecimalStringObject::Clone(void) const {
 	Buffer new_value = _raw_value->Clone();
 	HexadecimalStringObjectPtr result(pdf_new HexadecimalStringObject(new_value), false);
