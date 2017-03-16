@@ -9,6 +9,7 @@
 #include "syntax/exceptions/syntax_exceptions.h"
 
 #include <fstream>
+#include <unordered_set>
 #include <iomanip>
 
 namespace gotchangpdf {
