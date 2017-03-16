@@ -266,6 +266,7 @@ XrefBasePtr FileWriter::CloneXref(FilePtr destination, XrefBasePtr source) {
 	result->SetTrailerDictionary(new_trailer);
 	result->SetOffset(source->GetOffset());
 	result->SetDirty(source->IsDirty());
+	result->SetFile(source->GetFile());
 
 	// TODO mayble also recalculate?
 	result->SetLastXrefOffset(source->GetLastXrefOffset());
@@ -726,8 +727,17 @@ void FileWriter::SquashXref(XrefChainPtr xref) {
 		return;
 	}
 
+	// Clone original table trailer
+	auto last_xref = *xref->begin();
+	auto last_trailer = last_xref->GetTrailerDictionary();
+	auto new_trailer = ObjectUtils::Clone<DictionaryObjectPtr>(last_trailer);
+	new_trailer->SetFile(last_xref->GetFile());
+
 	// Merge all items into single table
 	XrefTablePtr new_table;
+	new_table->SetTrailerDictionary(new_trailer);
+	new_table->SetFile(last_xref->GetFile());
+
 	for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
 		auto current = *iterator;
 
