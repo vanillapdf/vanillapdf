@@ -79,6 +79,26 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 	// All xref entries are stored in reversed order than it is written to file
 	dest_xref->Reverse();
 
+	// Compress and optimize here
+
+	// Stage: Squash xref chain into single element
+	SquashXref(dest_xref);
+
+	// Stage: Remove unreferenced objects
+	RemoveUnreferencedObjects(dest_xref);
+
+	// Stage: Search for duplicit direct objects and create indirect objects
+	ExtractDuplicitDirectObjects(dest_xref);
+
+	// Stage: Remove duplicit indirect objects
+	RemoveDuplicitIndirectObjects(dest_xref);
+
+	// Stage: Create object streams
+	CompressObjects(dest_xref);
+
+	// Stage: Compress xref
+	CompressXref(dest_xref);
+
 	bool first_xref = true;
 	auto last_xref_iterator = dest_xref->begin();
 	for (auto it = dest_xref->begin(); it != dest_xref->end(); ++it) {
@@ -696,6 +716,147 @@ void FileWriter::CopyStreamContent(IInputStreamPtr source, IOutputStreamPtr dest
 		block_size = std::min<size_t>(source_size, constant::BUFFER_SIZE);
 		source->Read(buffer, block_size);
 		destination->Write(buffer, block_size);
+	}
+}
+
+void FileWriter::SquashXref(XrefChainPtr xref) {
+	// Disabled feature
+	if (!m_squash_xref) {
+		return;
+	}
+
+	// Merge all items into single table
+	XrefTablePtr new_table;
+	for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
+		auto current = *iterator;
+
+		// All conflicts are overwritten
+		for (auto item : current) {
+			new_table->Add(item.second);
+		}
+	}
+
+	// Release all other xrefs
+	xref->Clear();
+
+	// Insert merged one
+	xref->Append(new_table);
+}
+
+void FileWriter::RemoveUnreferencedObjects(XrefChainPtr xref) {
+	// Disabled feature
+	if (!m_remove_unreferenced) {
+		return;
+	}
+}
+
+void FileWriter::ExtractDuplicitDirectObjects(XrefChainPtr xref) {
+	// Disabled feature
+	if (!m_extract_duplicit_direct_objects) {
+		return;
+	}
+}
+
+void FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
+	// Disabled feature
+	if (!m_remove_duplicit_indirect_objects) {
+		return;
+	}
+
+	std::unordered_multiset<ObjectPtr> unique_set;
+	std::unordered_multimap<ObjectPtr, ObjectPtr> duplicit_list;
+
+	// Find all duplicit indirect objects
+	for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
+		auto current = *iterator;
+
+		for (auto item : current) {
+			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(item.second)) {
+				continue;
+			}
+
+			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(item.second);
+			auto object = used_entry->GetReference();
+
+			auto found = unique_set.find(object);
+			if (found == unique_set.end()) {
+				unique_set.insert(object);
+				continue;
+			}
+
+			auto duplicit_item = std::make_pair(object, *found);
+			duplicit_list.insert(duplicit_item);
+		}
+	}
+
+	// Remove all duplicit items from file
+	for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
+		auto current = *iterator;
+
+		for (auto item : current) {
+			auto entry = item.second;
+
+			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(item.second)) {
+				continue;
+			}
+
+			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(item.second);
+			auto object = used_entry->GetReference();
+
+			RedirectReferences(object, duplicit_list);
+		}
+	}
+
+	// Release all duplicit items
+	for (auto item : duplicit_list) {
+		auto duplicit_item = item.first;
+		auto duplicit_xref_weak = duplicit_item->GetXrefEntry();
+		auto duplicit_xref = duplicit_xref_weak.GetReference();
+
+		bool released = xref->ReleaseEntry(duplicit_xref);
+		assert(released && "Could not release xref entry");
+	}
+}
+
+void FileWriter::CompressObjects(XrefChainPtr xref) {
+	// Disabled feature
+	if (!m_compress_objects) {
+		return;
+	}
+}
+
+void FileWriter::CompressXref(XrefChainPtr xref) {
+	// Disabled feature
+	if (!m_compress_xref) {
+		return;
+	}
+}
+
+void FileWriter::RedirectReferences(ObjectPtr source, const std::unordered_multimap<ObjectPtr, ObjectPtr>& duplicit_items) {
+	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(source)) {
+		auto source_ref = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(source);
+		auto referenced_object = source_ref->GetReferencedObject();
+
+		auto found = duplicit_items.find(referenced_object);
+		if (found != duplicit_items.end()) {
+			source_ref->SetReferencedObject(found->second);
+		}
+	} else if (ObjectUtils::IsType<MixedArrayObjectPtr>(source)) {
+		auto arr = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(source);
+		for (auto item : arr) {
+			RedirectReferences(item, duplicit_items);
+		}
+	} else if (ObjectUtils::IsType<DictionaryObjectPtr>(source)) {
+		auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(source);
+		for (auto item : dict) {
+			RedirectReferences(item.second, duplicit_items);
+		}
+	} else if (ObjectUtils::IsType<StreamObjectPtr>(source)) {
+		auto stream = ObjectUtils::ConvertTo<StreamObjectPtr>(source);
+		auto dict = stream->GetHeader();
+		for (auto item : dict) {
+			RedirectReferences(item.second, duplicit_items);
+		}
 	}
 }
 
