@@ -299,6 +299,13 @@ bool Document::IsDestinationReferencingPage(DestinationPtr destination, PageObje
 
 		return true;
 	}
+
+	// We should not reach this point
+	// In case the object is neither reference nor integer
+	// we close with an exception. The other cases are
+	// treate separately.
+	assert(!"I believe this code should not happen");
+	return false;
 }
 
 void Document::MergeNameDestinations(NamedDestinationsPtr destinations, PageObjectPtr other_page, PageObjectPtr merged_page) {
