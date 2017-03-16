@@ -261,18 +261,18 @@ void Document::AppendDocument(DocumentPtr other) {
 }
 
 bool Document::IsDestinationReferencingPage(DestinationPtr destination, PageObjectPtr page) {
-	auto destionation_page_object = destination->GetPage();
+	auto destination_page_object = destination->GetPage();
 	auto other_page_dictionary = page->GetObject();
 
-	assert(ObjectUtils::IsType<IndirectObjectReferencePtr>(destionation_page_object)
-		|| ObjectUtils::IsType<IntegerObjectPtr>(destionation_page_object));
-	if (!ObjectUtils::IsType<IndirectObjectReferencePtr>(destionation_page_object)
-		&& !ObjectUtils::IsType<IntegerObjectPtr>(destionation_page_object)) {
+	assert(ObjectUtils::IsType<IndirectObjectReferencePtr>(destination_page_object)
+		|| ObjectUtils::IsType<IntegerObjectPtr>(destination_page_object));
+	if (!ObjectUtils::IsType<IndirectObjectReferencePtr>(destination_page_object)
+		&& !ObjectUtils::IsType<IntegerObjectPtr>(destination_page_object)) {
 		throw GeneralException("Unknown object type");
 	}
 
-	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(destionation_page_object)) {
-		auto cloned_page_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(destionation_page_object);
+	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(destination_page_object)) {
+		auto cloned_page_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(destination_page_object);
 		auto destination_page_dictionary = cloned_page_reference->GetReferencedObjectAs<DictionaryObjectPtr>();
 
 		if (!destination_page_dictionary->Identity(other_page_dictionary)) {
@@ -282,8 +282,8 @@ bool Document::IsDestinationReferencingPage(DestinationPtr destination, PageObje
 		return true;
 	}
 
-	if (ObjectUtils::IsType<IntegerObjectPtr>(destionation_page_object)) {
-		auto cloned_page_index = ObjectUtils::ConvertTo<IntegerObjectPtr>(destionation_page_object);
+	if (ObjectUtils::IsType<IntegerObjectPtr>(destination_page_object)) {
+		auto cloned_page_index = ObjectUtils::ConvertTo<IntegerObjectPtr>(destination_page_object);
 
 		auto other_root_node = page->GetPageRoot();
 		auto other_root_node_obj = other_root_node->GetObject();
