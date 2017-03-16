@@ -53,6 +53,7 @@ public:
 	void Append(value_type item) { _list.push_back(item); }
 	void Prepend(value_type item) { _list.push_front(item); }
 	void Reverse(void) { _list.reverse(); }
+	void Clear(void) { _list.clear(); }
 
 	XrefUsedEntryBasePtr AllocateNewEntry();
 	bool ReleaseEntry(XrefUsedEntryBasePtr entry);
