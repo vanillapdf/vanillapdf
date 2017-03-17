@@ -356,8 +356,8 @@ std::string StreamObject::ToPdf(void) const {
 }
 
 size_t StreamObject::Hash() const {
-	auto decoded_body = GetBody();
-	return _header->Hash() ^ decoded_body->Hash();
+	auto encoded_body = GetBodyEncoded();
+	return _header->Hash() ^ encoded_body->Hash();
 }
 
 bool StreamObject::Equals(ObjectPtr other) const {
@@ -373,8 +373,8 @@ bool StreamObject::Equals(ObjectPtr other) const {
 		return false;
 	}
 
-	auto first_body = GetBody();
-	auto second_body = other_obj->GetBody();
+	auto first_body = GetBodyEncoded();
+	auto second_body = other_obj->GetBodyEncoded();
 	if (first_body != second_body) {
 		return false;
 	}
