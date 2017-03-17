@@ -423,8 +423,17 @@ void Document::AppendPage(DocumentPtr other, PageObjectPtr other_page) {
 	auto original_pages = original_catalog->Pages();
 
 	auto page_object = other_page->GetObject();
-	auto new_objects = m_holder->DeepCopyObject(page_object);
 
+	// Optimization
+	// The page object contains the reference to his parent - page tree
+	// By calling deep copy we copy all pages, becauce of the parent reference
+	// The trick is to remove parent before deep copy
+	if (page_object->Contains(constant::Name::Parent)) {
+		bool removed = page_object->Remove(constant::Name::Parent);
+		assert(removed && "Could not remove parent"); removed;
+	}
+
+	auto new_objects = m_holder->DeepCopyObject(page_object);
 	auto new_page_object = new_objects[0];
 
 	assert(ObjectUtils::IsType<DictionaryObjectPtr>(new_page_object) && "Page object is not dictionary");
@@ -436,6 +445,7 @@ void Document::AppendPage(DocumentPtr other, PageObjectPtr other_page) {
 	PageObjectPtr new_page(new_dictionary);
 
 	// Insert into our page tree
+	// The parent we removed in optimization will be set inside
 	original_pages->Append(new_page);
 
 	MergePageDestinations(other, other_page, new_page);
