@@ -61,6 +61,7 @@ public:
 	const_iterator end(void) const { return _list.end(); }
 
 	iterator insert(const_iterator pos, const value_type & value) { return _list.insert(pos, value); }
+	size_type size() const { return _list.size(); }
 
 protected:
 	list_type _list;
@@ -87,7 +88,6 @@ public:
 		return ObjectUtils::ConvertTo<U>(result);
 	}
 
-	std::vector<ContainableObjectPtr> Values() const;
 	ContainableObjectPtr Find(const NameObject& name) const;
 	bool TryFind(const NameObject& name, OutputContainableObjectPtr& result) const;
 	bool Contains(const NameObject& name) const;

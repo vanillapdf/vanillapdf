@@ -120,16 +120,6 @@ bool DictionaryObject::Contains(const NameObject& name) const {
 	return (_list.find(name) != _list.end());
 }
 
-std::vector<ContainableObjectPtr> DictionaryObject::Values() const {
-	std::vector<ContainableObjectPtr> result;
-	std::for_each(_list.begin(), _list.end(),
-		[&result](const std::pair<NameObjectPtr, ContainableObjectPtr>& item) {
-		result.push_back(item.second);
-	});
-
-	return result;
-}
-
 DictionaryObject::~DictionaryObject() {
 	for (auto item : _list) {
 
@@ -162,18 +152,30 @@ bool DictionaryObject::Equals(ObjectPtr other) const {
 
 	auto other_obj = ObjectUtils::ConvertTo<DictionaryObjectPtr>(other);
 
-	auto first_vals = Values();
-	auto second_vals = other_obj->Values();
-	auto first_vals_size = first_vals.size();
-	auto second_vals_size = second_vals.size();
-	if (first_vals_size != second_vals_size) {
+	auto first_size = size();
+	auto second_size = other_obj->size();
+	if (first_size != second_size) {
 		return false;
 	}
 
-	for (unsigned int i = 0; i < second_vals_size; ++i) {
-		auto first_obj = first_vals[i];
-		auto second_obj = second_vals[i];
-		if (!first_obj->Equals(second_obj)) {
+	auto this_iterator = _list.begin();
+	auto other_iterator = other_obj.begin();
+
+	for (; this_iterator != _list.end(); this_iterator++, other_iterator++) {
+		auto this_pair = *this_iterator;
+		auto other_pair = *other_iterator;
+
+		auto this_name = this_pair.first;
+		auto other_name = other_pair.first;
+
+		if (!this_name.Equals(other_name)) {
+			return false;
+		}
+
+		auto this_value = this_pair.second;
+		auto other_value = other_pair.second;
+
+		if (!this_value->Equals(other_value)) {
 			return false;
 		}
 	}
