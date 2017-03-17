@@ -17,10 +17,66 @@ IndirectObjectReference::IndirectObjectReference(types::big_uint obj, types::ush
 	: m_reference_object_number(obj), m_reference_generation_number(gen) {
 }
 
+//bool IndirectObjectReference::IsCyclicReference(ObjectPtr object, std::map<ObjectPtr, bool>& visited) const {
+//	// We have found the cycle
+//	if (Identity(object)) {
+//		return true;
+//	}
+//
+//	bool already_visited = visited[object];
+//	if (already_visited) {
+//		return false;
+//	}
+//
+//	// Mark current object as visited
+//	visited[object] = true;
+//
+//	//if (ObjectUtils::IsType<IndirectObjectReferencePtr>(object)) {
+//	//	return false;
+//	//}
+//
+//	if (ObjectUtils::IsType<DictionaryObjectPtr>(object)) {
+//		auto referenced_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(object);
+//		for (auto item : referenced_dictionary) {
+//			if (IsCyclicReference(item.second, visited)) {
+//				return true;
+//			}
+//		}
+//
+//		return false;
+//	}
+//
+//	if (ObjectUtils::IsType<MixedArrayObjectPtr>(object)) {
+//		auto referenced_array = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(object);
+//		for (auto item : referenced_array) {
+//			if (IsCyclicReference(item, visited)) {
+//				return true;
+//			}
+//		}
+//
+//		return false;
+//	}
+//
+//	return false;
+//}
+
 size_t IndirectObjectReference::Hash() const {
 	std::hash<decltype(m_reference_object_number)> obj_hasher;
 	std::hash<decltype(m_reference_generation_number)> gen_hasher;
 	return obj_hasher(m_reference_object_number) ^ gen_hasher(m_reference_generation_number);
+
+	//auto referenced_object = GetReferencedObject();
+
+	// Special case, when this is a reference to object
+	// which contains the reference itself
+	//std::map<ObjectPtr, bool> visited;
+	//if (IsCyclicReference(referenced_object, visited)) {
+
+	//	// Has with value 0 should be ignored
+	//	return 0;
+	//}
+
+	//return referenced_object->Hash();
 }
 
 void IndirectObjectReference::SetReferencedObject(ObjectPtr obj) const {

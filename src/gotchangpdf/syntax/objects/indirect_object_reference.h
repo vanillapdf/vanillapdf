@@ -57,6 +57,8 @@ private:
 	mutable types::ushort m_reference_generation_number = 0;
 	mutable WeakReference<Object> m_reference;
 
+	//bool IsCyclicReference(ObjectPtr object, std::map<ObjectPtr, bool>& visited) const;
+
 	template <
 		typename T,
 
