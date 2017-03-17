@@ -17,6 +17,36 @@ IndirectObjectReference::IndirectObjectReference(types::big_uint obj, types::ush
 	: m_reference_object_number(obj), m_reference_generation_number(gen) {
 }
 
+types::big_uint IndirectObjectReference::GetReferencedObjectNumber() const {
+	if (IsReferenceInitialized()) {
+		auto referenced_object = GetReferencedObject();
+		return referenced_object->GetObjectNumber();
+	}
+
+	// Use the backup number for uninitialized references
+	return m_reference_object_number;
+}
+
+types::ushort IndirectObjectReference::GetReferencedGenerationNumber() const {
+	if (IsReferenceInitialized()) {
+		auto referenced_object = GetReferencedObject();
+		return referenced_object->GetGenerationNumber();
+	}
+
+	// Use the backup number for uninitialized references
+	return m_reference_generation_number;
+}
+
+void IndirectObjectReference::SetReferencedObjectNumber(types::big_uint value) noexcept {
+	m_reference_object_number = value;
+	m_reference.Reset();
+}
+
+void IndirectObjectReference::SetReferencedGenerationNumber(types::ushort value) noexcept {
+	m_reference_generation_number = value;
+	m_reference.Reset();
+}
+
 //bool IndirectObjectReference::IsCyclicReference(ObjectPtr object, std::map<ObjectPtr, bool>& visited) const {
 //	// We have found the cycle
 //	if (Identity(object)) {
@@ -61,9 +91,13 @@ IndirectObjectReference::IndirectObjectReference(types::big_uint obj, types::ush
 //}
 
 size_t IndirectObjectReference::Hash() const {
-	std::hash<decltype(m_reference_object_number)> obj_hasher;
-	std::hash<decltype(m_reference_generation_number)> gen_hasher;
-	return obj_hasher(m_reference_object_number) ^ gen_hasher(m_reference_generation_number);
+
+	auto object_number = GetReferencedObjectNumber();
+	auto generation_number = GetReferencedGenerationNumber();
+
+	std::hash<decltype(object_number)> obj_hasher;
+	std::hash<decltype(generation_number)> gen_hasher;
+	return obj_hasher(object_number) ^ gen_hasher(generation_number);
 
 	//auto referenced_object = GetReferencedObject();
 
@@ -114,7 +148,7 @@ bool IndirectObjectReference::Equals(const IndirectObjectReference& other) const
 	auto object_number = GetReferencedObjectNumber();
 	auto other_object_number = other.GetReferencedObjectNumber();
 	auto generation_number = GetReferencedGenerationNumber();
-	auto other_generation_number = GetReferencedGenerationNumber();
+	auto other_generation_number = other.GetReferencedGenerationNumber();
 
 	bool object_numbers_equals = (object_number == other_object_number);
 	bool generation_numbers_equals = (generation_number == other_generation_number);
@@ -125,13 +159,15 @@ bool IndirectObjectReference::Equals(const IndirectObjectReference& other) const
 bool IndirectObjectReference::operator<(const IndirectObjectReference& other) const {
 	auto object_number = GetReferencedObjectNumber();
 	auto other_object_number = other.GetReferencedObjectNumber();
-	if (object_number != other_object_number)
+	if (object_number != other_object_number) {
 		return object_number < other_object_number;
+	}
 
 	auto generation_number = GetReferencedGenerationNumber();
-	auto other_generation_number = GetReferencedGenerationNumber();
-	if (generation_number != other_generation_number)
+	auto other_generation_number = other.GetReferencedGenerationNumber();
+	if (generation_number != other_generation_number) {
 		return generation_number < other_generation_number;
+	}
 
 	return false;
 }
@@ -154,9 +190,12 @@ bool IndirectObjectReference::Equals(ObjectPtr other) const {
 IndirectObjectReference* IndirectObjectReference::Clone(void) const {
 	IndirectObjectReferencePtr result(pdf_new IndirectObjectReference(), false);
 
+	auto object_number = GetReferencedObjectNumber();
+	auto generation_number = GetReferencedGenerationNumber();
+
 	result->SetFile(m_file);
-	result->SetReferencedObjectNumber(m_reference_object_number);
-	result->SetReferencedGenerationNumber(m_reference_generation_number);
+	result->SetReferencedObjectNumber(object_number);
+	result->SetReferencedGenerationNumber(generation_number);
 
 	return result.detach();
 }
