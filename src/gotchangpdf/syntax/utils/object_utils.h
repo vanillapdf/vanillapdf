@@ -142,16 +142,33 @@ template <typename T>
 class ObjectTypeFunctor {
 public:
 	static bool IsType(Object* obj) {
-		std::map<IndirectObjectReference, bool> visited;
 		bool passed = false;
-		auto result = DereferenceHelper<T>::Get(obj, visited, passed);
+		bool is_ref = (obj->GetType() == Object::Type::IndirectReference);
+		if (is_ref) {
+			std::map<IndirectObjectReference, bool> visited;
+			auto result = DereferenceHelper<T>::Get(obj, visited, passed);
+			return passed;
+		}
+
+		auto result = ConversionHelper<T>::Get(obj, passed);
 		return passed;
 	}
 
 	static T Convert(Object* obj) {
-		std::map<IndirectObjectReference, bool> visited;
 		bool passed = false;
-		auto result = DereferenceHelper<T>::Get(obj, visited, passed);
+		bool is_ref = (obj->GetType() == Object::Type::IndirectReference);
+		if (is_ref) {
+			std::map<IndirectObjectReference, bool> visited;
+			auto result = DereferenceHelper<T>::Get(obj, visited, passed);
+
+			if (!passed) {
+				throw ConversionExceptionFactory<T>::Construct(obj);
+			}
+
+			return result;
+		}
+
+		auto result = ConversionHelper<T>::Get(obj, passed);
 		if (!passed) {
 			throw ConversionExceptionFactory<T>::Construct(obj);
 		}
@@ -182,11 +199,14 @@ template <typename T>
 class ObjectTypeFunctor<ArrayObjectPtr<T>> {
 public:
 	static bool IsType(Object* obj) {
-		bool found = false;
-		std::map<IndirectObjectReference, bool> visited;
-		DereferenceHelper<ArrayObjectPtr<T>>::Get(obj, visited, found);
-		if (found) {
-			return true;
+		bool is_ref = (obj->GetType() == Object::Type::IndirectReference);
+		if (is_ref) {
+			bool found = false;
+			std::map<IndirectObjectReference, bool> visited;
+			auto converted = DereferenceHelper<ArrayObjectPtr<T>>::Get(obj, visited, found);
+			if (found) {
+				return true;
+			}
 		}
 
 		bool is_array = ObjectTypeFunctor<MixedArrayObjectPtr>::IsType(obj);
@@ -205,11 +225,14 @@ public:
 	}
 
 	static ArrayObjectPtr<T> Convert(Object* obj) {
-		bool found = false;
-		std::map<IndirectObjectReference, bool> visited;
-		auto converted = DereferenceHelper<ArrayObjectPtr<T>>::Get(obj, visited, found);
-		if (found) {
-			return converted;
+		bool is_ref = (obj->GetType() == Object::Type::IndirectReference);
+		if (is_ref) {
+			bool found = false;
+			std::map<IndirectObjectReference, bool> visited;
+			auto converted = DereferenceHelper<ArrayObjectPtr<T>>::Get(obj, visited, found);
+			if (found) {
+				return converted;
+			}
 		}
 
 		auto mixed = ObjectTypeFunctor<MixedArrayObjectPtr>::Convert(obj);
