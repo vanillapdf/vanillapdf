@@ -92,7 +92,14 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 	ExtractDuplicitDirectObjects(dest_xref);
 
 	// Stage: Remove duplicit indirect objects
-	RemoveDuplicitIndirectObjects(dest_xref);
+	for (;;) {
+
+		// Repeat until no duplicit items are found
+		bool found = RemoveDuplicitIndirectObjects(dest_xref);
+		if (!found) {
+			break;
+		}
+	}
 
 	// Stage: Create object streams
 	CompressObjects(dest_xref);
@@ -768,10 +775,10 @@ void FileWriter::ExtractDuplicitDirectObjects(XrefChainPtr xref) {
 	}
 }
 
-void FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
+bool FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
 	// Disabled feature
 	if (!m_remove_duplicit_indirect_objects) {
-		return;
+		return false;
 	}
 
 	std::unordered_multiset<ObjectPtr> unique_set;
@@ -825,8 +832,11 @@ void FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
 		auto duplicit_xref = duplicit_xref_weak.GetReference();
 
 		bool released = xref->ReleaseEntry(duplicit_xref);
-		assert(released && "Could not release xref entry");
+		assert(released && "Could not release xref entry"); released;
 	}
+
+	// Return true, if there was at least one duplicit item
+	return (duplicit_list.size() != 0);
 }
 
 void FileWriter::CompressObjects(XrefChainPtr xref) {

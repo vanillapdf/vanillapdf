@@ -108,7 +108,7 @@ private:
 	void SquashXref(XrefChainPtr xref);
 	void RemoveUnreferencedObjects(XrefChainPtr xref);
 	void ExtractDuplicitDirectObjects(XrefChainPtr xref);
-	void RemoveDuplicitIndirectObjects(XrefChainPtr xref);
+	bool RemoveDuplicitIndirectObjects(XrefChainPtr xref);
 	void CompressObjects(XrefChainPtr xref);
 	void CompressXref(XrefChainPtr xref);
 
