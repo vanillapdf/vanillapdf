@@ -429,5 +429,9 @@ XrefBase::const_iterator XrefBase::end() const {
 	return _entries.end();
 }
 
+XrefBase::iterator XrefBase::erase(const_iterator pos) {
+	return _entries.erase(pos);
+}
+
 } // syntax
 } // gotchangpdf

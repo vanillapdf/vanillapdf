@@ -220,6 +220,8 @@ public:
 	iterator end();
 	const_iterator end() const;
 
+	iterator erase(const_iterator pos);
+
 protected:
 	WeakReference<File> _file;
 	map_type _entries;
