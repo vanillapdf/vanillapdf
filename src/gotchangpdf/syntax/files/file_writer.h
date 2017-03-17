@@ -69,8 +69,8 @@ public:
 	bool GetRecalculateXrefSizeFlag(void) const noexcept { return m_recalculate_xref_size; }
 	void SetRecalculateXrefSizeFlag(bool flag) noexcept { m_recalculate_xref_size = flag; }
 
-	bool GetSquashXrefFlag(void) const noexcept { return m_squash_xref; }
-	void SetSquashXrefFlag(bool flag) noexcept { m_squash_xref = flag; }
+	bool GetMergeXrefsFlag(void) const noexcept { return m_merge_xrefs; }
+	void SetMergeXrefsFlag(bool flag) noexcept { m_merge_xrefs = flag; }
 
 	bool GetRemoveDuplicitIndirectObjectsFlag(void) const noexcept { return m_remove_duplicit_indirect_objects; }
 	void SetRemoveDuplicitIndirectObjectsFlag(bool flag) noexcept { m_remove_duplicit_indirect_objects = flag; }
@@ -86,6 +86,12 @@ public:
 
 	bool GetRemoveUnreferencedObjectsFlag(void) const noexcept { return m_remove_unreferenced; }
 	void SetRemoveUnreferencedObjectsFlag(bool flag) noexcept { m_remove_unreferenced = flag; }
+
+	bool GetSquashTableSpaceFlag(void) const noexcept { return m_squash_table_space; }
+	void SetSquashTableSpaceFlag(bool flag) noexcept { m_squash_table_space = flag; }
+
+	bool GetRemoveFreedObjectsFlag(void) const noexcept { return m_remove_freed; }
+	void SetRemoveFreedObjectsFlag(bool flag) noexcept { m_remove_freed = flag; }
 
 private:
 	void WriteXrefObjects(FilePtr destination, XrefBasePtr source);
@@ -105,13 +111,16 @@ private:
 	void RecalculateStreamLength(ObjectPtr obj);
 	void RecalculateStreamsLength(XrefBasePtr source);
 
-	void SquashXref(XrefChainPtr xref);
+	void RemoveFreedObjects(XrefChainPtr xref);
+	void MergeXrefs(XrefChainPtr xref);
 	void RemoveUnreferencedObjects(XrefChainPtr xref);
 	void ExtractDuplicitDirectObjects(XrefChainPtr xref);
 	bool RemoveDuplicitIndirectObjects(XrefChainPtr xref);
 	void CompressObjects(XrefChainPtr xref);
+	void SquashTableSpace(XrefChainPtr xref);
 	void CompressXref(XrefChainPtr xref);
 
+	void InitializeReferences(ObjectPtr source);
 	void RedirectReferences(ObjectPtr source, const std::unordered_multimap<ObjectPtr, ObjectPtr>& duplicit_items);
 
 	// flags
@@ -120,11 +129,13 @@ private:
 	bool m_recalculate_xref_size = true;
 
 	// Compress and optimize flags
-	bool m_squash_xref = true;
+	bool m_merge_xrefs = true;
+	bool m_remove_freed = true;
 	bool m_remove_unreferenced = true;
 	bool m_extract_duplicit_direct_objects = true;
 	bool m_remove_duplicit_indirect_objects = true;
 	bool m_compress_objects = true;
+	bool m_squash_table_space = true;
 	bool m_compress_xref = true;
 };
 

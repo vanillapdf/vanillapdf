@@ -82,8 +82,11 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 
 	// Compress and optimize here
 
+	// Stage: Remove objects that were freed
+	RemoveFreedObjects(dest_xref);
+
 	// Stage: Squash xref chain into single element
-	SquashXref(dest_xref);
+	MergeXrefs(dest_xref);
 
 	// Stage: Remove unreferenced objects
 	RemoveUnreferencedObjects(dest_xref);
@@ -103,6 +106,9 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 
 	// Stage: Create object streams
 	CompressObjects(dest_xref);
+
+	// Stage: Close the object number gaps
+	SquashTableSpace(dest_xref);
 
 	// Stage: Compress xref
 	CompressXref(dest_xref);
@@ -728,9 +734,40 @@ void FileWriter::CopyStreamContent(IInputStreamPtr source, IOutputStreamPtr dest
 	}
 }
 
-void FileWriter::SquashXref(XrefChainPtr xref) {
+void FileWriter::RemoveFreedObjects(XrefChainPtr xref) {
 	// Disabled feature
-	if (!m_squash_xref) {
+	if (!m_remove_freed) {
+		return;
+	}
+
+	// Iterate over all tables
+	for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
+		auto current_xref = *iterator;
+
+		// Ignore first entry - it represents the free item linked list
+		auto sorted_entries = current_xref->Entries();
+		sorted_entries.erase(sorted_entries.begin());
+
+		// For each xref entry
+		for (auto entry_iterator = sorted_entries.begin(); entry_iterator != sorted_entries.end(); ) {
+			auto current_entry = *entry_iterator;
+			if (current_entry->InUse()) {
+				entry_iterator++;
+				continue;
+			}
+
+			// Remove if not used
+			bool removed = current_xref->Remove(current_entry->GetObjectNumber());
+			assert(removed && "Could not release xref entry"); removed;
+
+			entry_iterator = sorted_entries.erase(entry_iterator);
+		}
+	}
+}
+
+void FileWriter::MergeXrefs(XrefChainPtr xref) {
+	// Disabled feature
+	if (!m_merge_xrefs) {
 		return;
 	}
 
@@ -846,10 +883,80 @@ void FileWriter::CompressObjects(XrefChainPtr xref) {
 	}
 }
 
+void FileWriter::SquashTableSpace(XrefChainPtr xref) {
+	// Disabled feature
+	if (!m_squash_table_space) {
+		return;
+	}
+
+	// Force the indirect reference initialization
+	for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
+		auto current_xref = *iterator;
+
+		for (auto item : current_xref) {
+			auto entry = item.second;
+
+			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(item.second)) {
+				continue;
+			}
+
+			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(item.second);
+			auto object = used_entry->GetReference();
+
+			// Calling this we force the reference initialization
+			// Indirect references will point to their objects
+			// Referenced objects keep reference to XrefEntry
+			// After changing XrefEntry object number no additional
+			// work should be needed.
+			InitializeReferences(object);
+		}
+	}
+
+	types::big_uint current_object_number = 0;
+	for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
+		auto current_xref = *iterator;
+
+		auto sorted_entries = current_xref->Entries();
+		for (auto entry : sorted_entries) {
+			auto original_object_number = entry->GetObjectNumber();
+			auto new_object_number = current_object_number;
+
+			if (original_object_number != new_object_number) {
+				entry->SetObjectNumber(current_object_number);
+			}
+
+			current_object_number++;
+		}
+	}
+}
+
 void FileWriter::CompressXref(XrefChainPtr xref) {
 	// Disabled feature
 	if (!m_compress_xref) {
 		return;
+	}
+}
+
+void FileWriter::InitializeReferences(ObjectPtr source) {
+	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(source)) {
+		auto source_ref = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(source);
+
+		// This is the initialization
+		auto referenced_object = source_ref->GetReferencedObject();
+	} else if (ObjectUtils::IsType<MixedArrayObjectPtr>(source)) {
+		auto arr = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(source);
+		for (auto item : arr) {
+			InitializeReferences(item);
+		}
+	} else if (ObjectUtils::IsType<DictionaryObjectPtr>(source)) {
+		auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(source);
+		for (auto item : dict) {
+			InitializeReferences(item.second);
+		}
+	} else if (ObjectUtils::IsType<StreamObjectPtr>(source)) {
+		auto stream = ObjectUtils::ConvertTo<StreamObjectPtr>(source);
+		auto dict = stream->GetHeader();
+		InitializeReferences(dict);
 	}
 }
 
@@ -875,9 +982,7 @@ void FileWriter::RedirectReferences(ObjectPtr source, const std::unordered_multi
 	} else if (ObjectUtils::IsType<StreamObjectPtr>(source)) {
 		auto stream = ObjectUtils::ConvertTo<StreamObjectPtr>(source);
 		auto dict = stream->GetHeader();
-		for (auto item : dict) {
-			RedirectReferences(item.second, duplicit_items);
-		}
+		RedirectReferences(dict, duplicit_items);
 	}
 }
 
