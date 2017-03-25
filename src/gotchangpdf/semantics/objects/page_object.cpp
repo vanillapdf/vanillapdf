@@ -26,7 +26,7 @@ PageObject::PageObject(DictionaryObjectPtr obj) : PageNodeBase(obj)	{
 
 ResourceDictionaryPtr PageObject::GetResources() const {
 	auto resource = _obj->FindAs<DictionaryObjectPtr>(Name::Resources);
-	return ResourceDictionaryPtr(resource);
+	return make_deferred<ResourceDictionary>(resource);
 }
 
 void PageObject::SetResources(ResourceDictionaryPtr resources) {
@@ -46,12 +46,12 @@ RectanglePtr PageObject::GetMediaBox() const {
 			throw GeneralException("Media box is missing");
 		}
 
-		auto box = parent_dictionary->FindAs<MixedArrayObjectPtr>(Name::MediaBox);
-		return RectanglePtr(box);
+		auto box = parent_dictionary->FindAs<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>>(Name::MediaBox);
+		return make_deferred<Rectangle>(box);
 	}
 
-	auto box = _obj->FindAs<MixedArrayObjectPtr>(Name::MediaBox);
-	return RectanglePtr(box);
+	auto box = _obj->FindAs<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>>(Name::MediaBox);
+	return make_deferred<Rectangle>(box);
 }
 
 void PageObject::SetMediaBox(RectanglePtr media_box) {
@@ -68,8 +68,8 @@ bool PageObject::GetAnnotations(OutputPageAnnotationsPtr& result) const {
 		return false;
 	}
 
-	auto annots_obj = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Annots);
-	auto annots = PageAnnotationsPtr(annots_obj);
+	auto annots_obj = _obj->FindAs<syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr>>(constant::Name::Annots);
+	auto annots = make_deferred<PageAnnotations>(annots_obj);
 	result = annots;
 	return true;
 }
@@ -89,7 +89,7 @@ void PageObject::SetContents(ContentsPtr contents) {
 		assert(removed && "Unable to remove existing item"); removed;
 	}
 
-	IndirectObjectReferencePtr contents_ref(contents->GetObject());
+	IndirectObjectReferencePtr contents_ref = make_deferred<IndirectObjectReference>(contents->GetObject());
 	_obj->Insert(Name::Contents, contents_ref);
 }
 
@@ -130,7 +130,7 @@ bool PageObject::GetContents(OutputContentsPtr& result) const {
 
 	if (is_ref) {
 		auto data = ObjectUtils::ConvertTo<StreamObjectPtr>(content);
-		ContentsPtr contents = ContentsPtr(data);
+		ContentsPtr contents = make_deferred<Contents>(data);
 		m_contents = contents;
 		result = contents;
 		return true;
@@ -138,7 +138,7 @@ bool PageObject::GetContents(OutputContentsPtr& result) const {
 
 	if (is_array) {
 		auto data = ObjectUtils::ConvertTo<ArrayObjectPtr<IndirectObjectReferencePtr>>(content);
-		ContentsPtr contents = ContentsPtr(data);
+		ContentsPtr contents = make_deferred<Contents>(data);
 		m_contents = contents;
 		result = contents;
 		return true;

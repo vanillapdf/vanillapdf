@@ -34,7 +34,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(Diction
 
 	try
 	{
-		auto begin = DictionaryObject::IteratorPtr(obj->begin());
+		auto begin = make_deferred<DictionaryObject::Iterator>(obj->begin());
 		auto ptr = begin.AddRefGet();
 		*result = reinterpret_cast<DictionaryObjectIteratorHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;

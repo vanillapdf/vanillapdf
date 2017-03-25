@@ -1,0 +1,236 @@
+#include "precompiled.h"
+#include "syntax/files/xref_entry.h"
+
+#include "syntax/files/file.h"
+#include "syntax/parsers/parser.h"
+#include "syntax/streams/input_stream.h"
+
+#include "syntax/exceptions/syntax_exceptions.h"
+
+namespace gotchangpdf {
+namespace syntax {
+
+XrefEntryBase::XrefEntryBase(types::big_uint obj_number, types::ushort gen_number)
+	: _obj_number(obj_number), _gen_number(gen_number) {
+}
+
+XrefFreeEntry::XrefFreeEntry(types::big_uint obj_number, types::ushort gen_number)
+	: XrefFreeEntry(obj_number, gen_number, 0) {
+}
+
+XrefFreeEntry::XrefFreeEntry(types::big_uint obj_number, types::ushort gen_number, types::big_uint next_free_object)
+	: XrefEntryBase(obj_number, gen_number), m_next_free_object(next_free_object) {
+}
+
+XrefUsedEntry::XrefUsedEntry(types::big_uint obj_number, types::ushort gen_number)
+	: XrefUsedEntry(obj_number, gen_number, constant::BAD_OFFSET) {
+}
+
+XrefUsedEntry::XrefUsedEntry(types::big_uint obj_number, types::ushort gen_number, types::stream_offset offset)
+	: XrefUsedEntryBase(obj_number, gen_number), _offset(offset) {
+	_reference.reset();
+}
+
+XrefCompressedEntry::XrefCompressedEntry(types::big_uint obj_number, types::ushort gen_number)
+	: XrefCompressedEntry(obj_number, gen_number, 0, 0) {
+}
+
+XrefCompressedEntry::XrefCompressedEntry(
+	types::big_uint obj_number,
+	types::ushort gen_number,
+	types::big_uint object_stream_number,
+	types::size_type index)
+	: XrefUsedEntryBase(obj_number, gen_number),
+	_object_stream_number(object_stream_number),
+	_index(index) {
+	_reference.reset();
+}
+
+XrefUsedEntryBase::~XrefUsedEntryBase() {
+	ReleaseReference(false);
+}
+
+void XrefUsedEntryBase::ObserveeChanged(IModifyObservable*) {
+	if (m_initialized) {
+		SetDirty();
+	}
+
+	// Notify observers
+	OnChanged();
+}
+
+bool XrefEntryBase::operator==(const XrefEntryBase& other) const {
+	return (_obj_number == other._obj_number);
+}
+
+bool XrefEntryBase::operator!=(const XrefEntryBase& other) const {
+	return (_obj_number != other._obj_number);
+}
+
+bool XrefEntryBase::operator<(const XrefEntryBase& other) const {
+	return (_obj_number < other._obj_number);
+}
+
+void XrefUsedEntryBase::SetReference(ObjectPtr ref) {
+	auto weak_ref_xref = ref->GetXrefEntry();
+
+	if (weak_ref_xref.IsActive() && !weak_ref_xref.IsEmpty()) {
+		auto ref_xref = weak_ref_xref.GetReference();
+		assert(ref_xref == this && "Reference another owner");
+	}
+
+	ReleaseReference(true);
+
+	_reference = ref;
+	m_used = true;
+
+	_reference->Subscribe(this);
+	_reference->SetXrefEntry(this);
+
+	if (IsInitialized()) {
+		SetDirty();
+	}
+}
+
+ObjectPtr XrefUsedEntryBase::GetReference(void) {
+	Initialize();
+
+	if (!InUse()) {
+		return NullObject::GetInstance();
+	}
+
+	return _reference;
+}
+
+bool XrefUsedEntryBase::InUse(void) const noexcept {
+	if (!m_used) {
+		assert(_reference.empty() && "Unused entry contains reference");
+	}
+
+	return m_used;
+}
+
+void XrefUsedEntryBase::ReleaseReference(bool check_object_xref) {
+	// Unused entries have nothing to release
+	if (!InUse()) {
+		return;
+	}
+
+	bool unsubscribed = _reference->Unsubscribe(this);
+	assert(unsubscribed && "Could not unsubscribe"); unsubscribed;
+
+	if (check_object_xref) {
+		auto weak_ref_entry = _reference->GetXrefEntry();
+		if (weak_ref_entry.IsActive() && !weak_ref_entry.IsEmpty()) {
+			auto ref_entry = weak_ref_entry.GetReference();
+			assert(ref_entry == this && "Reference entry has changed");
+		}
+
+		_reference->ClearXrefEntry(false);
+	}
+
+	_reference.reset();
+	m_used = false;
+}
+
+void XrefUsedEntry::Initialize(void) {
+	if (IsInitialized()) {
+		return;
+	}
+
+	if (!_file.IsActive()) {
+		throw FileDisposedException();
+	}
+
+	auto locked_file = _file.GetReference();
+	auto input = locked_file->GetInputStream();
+	auto rewind_pos = input->GetPosition();
+
+	// We want to capture input by value, because it might be out of scope
+	// In order to call non-const method we have to tag the lambda mutable
+	auto cleanup_lambda = [input, rewind_pos]() mutable {
+		input->SetPosition(rewind_pos);
+	};
+
+	SCOPE_GUARD(cleanup_lambda);
+
+	Parser parser(_file, input);
+
+	types::big_uint obj_number = 0;
+	types::ushort gen_number = 0;
+	auto object = parser.ReadIndirectObject(_offset, obj_number, gen_number);
+	assert(_obj_number == obj_number);
+	assert(_gen_number == gen_number);
+
+	SetReference(object);
+	SetInitialized();
+}
+
+void XrefCompressedEntry::Initialize(void) {
+	if (IsInitialized()) {
+		return;
+	}
+
+	if (!_file.IsActive()) {
+		throw FileDisposedException();
+	}
+
+	auto locked_file = _file.GetReference();
+	auto chain = locked_file->GetXrefChain();
+	auto stm = locked_file->GetIndirectObject(_object_stream_number, 0);
+
+	auto converted = ObjectUtils::ConvertTo<StreamObjectPtr>(stm);
+	auto header = converted->GetHeader();
+	auto size = header->FindAs<IntegerObjectPtr>(constant::Name::N);
+	auto first = header->FindAs<IntegerObjectPtr>(constant::Name::First);
+	auto body = converted->GetBody();
+
+	auto stream = body->ToStringStream();
+
+	InputStreamPtr input_stream = make_deferred<InputStream>(stream);
+	Parser parser(_file, input_stream);
+	auto stream_entries = parser.ReadObjectStreamEntries(first->GetUnsignedIntegerValue(), size->SafeConvert<size_t>());
+	for (auto stream_entry : stream_entries) {
+		auto entry_object_number = stream_entry.object_number;
+		auto entry_object = stream_entry.object;
+
+		auto stream_entry_xref = chain->GetXrefEntry(entry_object_number, 0);
+
+		assert(stream_entry_xref->GetUsage() == XrefEntryBase::Usage::Compressed && "Stream entry has different usage than Compressed");
+		if (stream_entry_xref->GetUsage() != XrefEntryBase::Usage::Compressed) {
+			continue;
+		}
+
+		auto stream_compressed_entry_xref = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(stream_entry_xref);
+		stream_compressed_entry_xref->SetReference(entry_object);
+		stream_compressed_entry_xref->SetInitialized();
+	}
+
+	if (!m_initialized) {
+		auto scope = locked_file->GetFilename();
+		LOG_WARNING(scope) <<
+			"Compressed entry number " <<
+			std::to_string(GetObjectNumber()) <<
+			" " <<
+			GetGenerationNumber()
+			<< " was supposed to be found in object stream number "
+			<< GetObjectStreamNumber()
+			<< " but was not found";
+
+		LOG_WARNING(scope) << "Treating as NULL reference";
+	}
+}
+
+} // syntax
+} // gotchangpdf
+
+namespace std {
+
+size_t hash<gotchangpdf::syntax::XrefEntryBasePtr>::operator()(const gotchangpdf::syntax::XrefEntryBasePtr& entry) const {
+	auto object_number = entry->GetObjectNumber();
+
+	std::hash<decltype(object_number)> hasher;
+	return hasher(object_number);
+}
+
+} // std

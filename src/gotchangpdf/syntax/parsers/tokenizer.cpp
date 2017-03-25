@@ -30,18 +30,18 @@ TokenPtr Tokenizer::ReadToken() {
 		_advance_position = constant::BAD_OFFSET;
 		_token_cached = false;
 
-		return *result;
+		return result;
 	}
 
 	for (;;) {
 		if (m_stream->Eof()) {
-			return TokenPtr(Token::Type::END_OF_INPUT);
+			return make_deferred<Token>(Token::Type::END_OF_INPUT);
 		}
 
 		// Test if the next character is EOF
 		int peek_test = m_stream->Peek();
 		if (peek_test == std::char_traits<char>::eof()) {
-			return TokenPtr(Token::Type::END_OF_INPUT);
+			return make_deferred<Token>(Token::Type::END_OF_INPUT);
 		}
 
 		int ch = m_stream->Get();
@@ -60,7 +60,7 @@ TokenPtr Tokenizer::ReadToken() {
 			{
 				BufferPtr chars;
 				chars->push_back(WhiteSpace::LINE_FEED);
-				return TokenPtr(Token::Type::EOL, chars);
+				return make_deferred<Token>(Token::Type::EOL, chars);
 			}
 			case static_cast<int>(WhiteSpace::CARRIAGE_RETURN):
 			{
@@ -72,7 +72,7 @@ TokenPtr Tokenizer::ReadToken() {
 					chars->push_back(WhiteSpace::LINE_FEED);
 				}
 
-				return TokenPtr(Token::Type::EOL, chars);
+				return make_deferred<Token>(Token::Type::EOL, chars);
 			}
 			case static_cast<int>(Delimiter::GREATER_THAN_SIGN):
 			{
@@ -82,7 +82,7 @@ TokenPtr Tokenizer::ReadToken() {
 
 					chars->push_back(Delimiter::GREATER_THAN_SIGN);
 					chars->push_back(Delimiter::GREATER_THAN_SIGN);
-					return TokenPtr(Token::Type::DICTIONARY_END, chars);
+					return make_deferred<Token>(Token::Type::DICTIONARY_END, chars);
 				}
 
 				throw GeneralException("Unexpected character at offset: " + std::to_string(m_stream->GetPosition()));
@@ -95,12 +95,12 @@ TokenPtr Tokenizer::ReadToken() {
 
 					chars->push_back(Delimiter::LESS_THAN_SIGN);
 					chars->push_back(Delimiter::LESS_THAN_SIGN);
-					return TokenPtr(Token::Type::DICTIONARY_BEGIN, chars);
+					return make_deferred<Token>(Token::Type::DICTIONARY_BEGIN, chars);
 				}
 
 				// empty hexadecimal string
 				if (sign == Delimiter::GREATER_THAN_SIGN && m_stream->Ignore()) {
-					return TokenPtr(Token::Type::HEXADECIMAL_STRING);
+					return make_deferred<Token>(Token::Type::HEXADECIMAL_STRING);
 				}
 
 				return ReadHexadecimalString();
@@ -110,14 +110,14 @@ TokenPtr Tokenizer::ReadToken() {
 				BufferPtr chars;
 
 				chars->push_back(Delimiter::LEFT_SQUARE_BRACKET);
-				return TokenPtr(Token::Type::ARRAY_BEGIN, chars);
+				return make_deferred<Token>(Token::Type::ARRAY_BEGIN, chars);
 			}
 			case static_cast<int>(Delimiter::RIGHT_SQUARE_BRACKET):
 			{
 				BufferPtr chars;
 
 				chars->push_back(Delimiter::RIGHT_SQUARE_BRACKET);
-				return TokenPtr(Token::Type::ARRAY_END, chars);
+				return make_deferred<Token>(Token::Type::ARRAY_END, chars);
 			}
 			case static_cast<int>(Delimiter::SOLIDUS):
 				return ReadName();
@@ -129,7 +129,7 @@ TokenPtr Tokenizer::ReadToken() {
 			BufferPtr chars;
 
 			chars->push_back('R');
-			return TokenPtr(Token::Type::INDIRECT_REFERENCE_MARKER, chars);
+			return make_deferred<Token>(Token::Type::INDIRECT_REFERENCE_MARKER, chars);
 		}
 
 		auto current = ValueConvertUtils::SafeConvert<unsigned char>(ch);
@@ -144,11 +144,11 @@ TokenPtr Tokenizer::ReadToken() {
 			}
 
 			if (has_dot) {
-				return TokenPtr(Token::Type::REAL_OBJECT, chars);
+				return make_deferred<Token>(Token::Type::REAL_OBJECT, chars);
 			}
 
 			if (m_stream->Eof() || m_stream->Peek() != '.') {
-				return TokenPtr(Token::Type::INTEGER_OBJECT, chars);
+				return make_deferred<Token>(Token::Type::INTEGER_OBJECT, chars);
 			}
 
 			// The next character is dot
@@ -162,7 +162,7 @@ TokenPtr Tokenizer::ReadToken() {
 				chars->push_back(next);
 			}
 
-			return TokenPtr(Token::Type::REAL_OBJECT, chars);
+			return make_deferred<Token>(Token::Type::REAL_OBJECT, chars);
 		}
 
 		BufferPtr chars;
@@ -197,7 +197,7 @@ TokenPtr Tokenizer::ReadToken() {
 		}
 
 		auto result_type = _dictionary->Find(chars);
-		return TokenPtr(result_type, chars);
+		return make_deferred<Token>(result_type, chars);
 	};
 }
 
@@ -251,7 +251,7 @@ TokenPtr Tokenizer::ReadHexadecimalString(void) {
 		throw GeneralException("Unexpected character in hexadecimal string " + std::to_string(current));
 	}
 
-	return TokenPtr(Token::Type::HEXADECIMAL_STRING, chars);
+	return make_deferred<Token>(Token::Type::HEXADECIMAL_STRING, chars);
 }
 
 TokenPtr Tokenizer::ReadName(void) {
@@ -272,7 +272,7 @@ TokenPtr Tokenizer::ReadName(void) {
 		chars->push_back(current);
 	}
 
-	return TokenPtr(Token::Type::NAME_OBJECT, chars);
+	return make_deferred<Token>(Token::Type::NAME_OBJECT, chars);
 }
 
 TokenPtr Tokenizer::ReadLiteralString(void)	{
@@ -406,14 +406,14 @@ TokenPtr Tokenizer::ReadLiteralString(void)	{
 		continue;
 	}
 
-	return TokenPtr(Token::Type::LITERAL_STRING, chars);
+	return make_deferred<Token>(Token::Type::LITERAL_STRING, chars);
 }
 
 /* Peek need cache */
 TokenPtr Tokenizer::PeekToken() {
 	auto current = m_stream->GetPosition();
 	if (_token_cached && _last_token_offset == current) {
-		return *_last_token;
+		return _last_token;
 	}
 
 	_last_token = ReadToken();
@@ -426,7 +426,7 @@ TokenPtr Tokenizer::PeekToken() {
 	}
 
 	m_stream->SetPosition(_last_token_offset);
-	return *_last_token;
+	return _last_token;
 }
 
 TokenPtr Tokenizer::ReadTokenWithType(Token::Type type) {

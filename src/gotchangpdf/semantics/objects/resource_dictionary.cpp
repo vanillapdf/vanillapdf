@@ -12,7 +12,7 @@ bool ResourceDictionary::Font(OutputFontMapPtr& result) const {
 	}
 
 	auto dict = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Font);
-	result = FontMapPtr(dict);
+	result = make_deferred<FontMap>(dict);
 	return true;
 }
 

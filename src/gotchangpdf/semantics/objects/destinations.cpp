@@ -236,7 +236,7 @@ void NamedDestinations::Insert(const syntax::NameObject& name, DestinationPtr va
 
 	auto raw_obj = value->GetObject();
 	if (raw_obj->IsIndirect()) {
-		syntax::IndirectObjectReferencePtr reference(raw_obj);
+		syntax::IndirectObjectReferencePtr reference = make_deferred<syntax::IndirectObjectReference>(raw_obj);
 		_obj->Insert(name, reference);
 	} else {
 		auto containable = syntax::ObjectUtils::ConvertTo<syntax::ContainableObjectPtr>(raw_obj);

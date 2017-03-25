@@ -67,7 +67,7 @@ protected:
 	list_type _list;
 };
 
-class DictionaryObject : public DictionaryObjectBase<const NameObject, ContainableObjectPtr>, public IModifyObserver {
+class DictionaryObject : public DictionaryObjectBase<NameObjectPtr, ContainableObjectPtr>, public IModifyObserver {
 public:
 	virtual std::string ToString(void) const override;
 	virtual std::string ToPdf(void) const override;
@@ -88,10 +88,19 @@ public:
 		return ObjectUtils::ConvertTo<U>(result);
 	}
 
+	ContainableObjectPtr Find(const NameObjectPtr name) const;
 	ContainableObjectPtr Find(const NameObject& name) const;
+
+	bool TryFind(const NameObjectPtr name, OutputContainableObjectPtr& result) const;
 	bool TryFind(const NameObject& name, OutputContainableObjectPtr& result) const;
+
+	bool Contains(const NameObjectPtr name) const;
 	bool Contains(const NameObject& name) const;
+
 	void Insert(NameObjectPtr name, ContainableObjectPtr value);
+	void Insert(const NameObject& name, ContainableObjectPtr value);
+
+	bool Remove(const NameObjectPtr name);
 	bool Remove(const NameObject& name);
 
 	virtual ~DictionaryObject();

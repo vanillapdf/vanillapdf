@@ -31,7 +31,7 @@ types::size_type ByteRangeCollection::Size(void) const {
 }
 
 ByteRangePtr ByteRangeCollection::At(types::size_type at) const {
-	return ByteRangePtr(_obj->At(at), _obj->At(at + 1));
+	return make_deferred<ByteRange>(_obj->At(at), _obj->At(at + 1));
 }
 
 syntax::HexadecimalStringObjectPtr DigitalSignature::Contents() {
@@ -48,7 +48,7 @@ bool DigitalSignature::ByteRange(OuputByteRangeCollectionPtr& result) {
 	}
 
 	auto ranges_array = _obj->FindAs<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>>(constant::Name::ByteRange);
-	auto ranges_obj = ByteRangeCollectionPtr(ranges_array);
+	auto ranges_obj = make_deferred<ByteRangeCollection>(ranges_array);
 	result = ranges_obj;
 	return true;
 }
@@ -86,7 +86,7 @@ bool DigitalSignature::Date(OutputDatePtr& result) {
 	}
 
 	auto date_string = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::M);
-	auto date_obj = DatePtr(date_string);
+	auto date_obj = make_deferred<semantics::Date>(date_string);
 	result = date_obj;
 	return true;
 }

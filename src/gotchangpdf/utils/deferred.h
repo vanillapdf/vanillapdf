@@ -94,9 +94,6 @@ public:
 		rhs.m_ptr = nullptr;
 	}
 
-	template <typename... Parameters, typename = typename std::enable_if<std::is_constructible<T, const Parameters&...>::value>::type>
-	DeferredWrapperBase(const Parameters&... p) : DeferredWrapperBase(pdf_new T(p...), true) {}
-
 	template <typename U, typename = typename std::enable_if<std::is_constructible<T, std::initializer_list<U>>::value>::type>
 	DeferredWrapperBase(std::initializer_list<U> list) : DeferredWrapperBase(pdf_new T(list), true) {}
 
@@ -378,6 +375,11 @@ inline bool operator!=(std::nullptr_t, const Deferred<T>& right) noexcept {
 template <typename T>
 void swap(Deferred<T>& lhs, Deferred<T>& rhs) {
 	lhs.swap(rhs);
+}
+
+template<typename T, typename... Parameters>
+Deferred<T> make_deferred(Parameters&&... p) {
+	return (Deferred<T>(pdf_new T(std::forward<Parameters>(p)...)));
 }
 
 } // gotchangpdf

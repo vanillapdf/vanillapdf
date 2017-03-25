@@ -9,7 +9,7 @@ InteractiveForm::InteractiveForm(syntax::DictionaryObjectPtr root) : HighLevelOb
 
 FieldCollectionPtr InteractiveForm::Fields(void) const {
 	auto fields = _obj->FindAs<syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr>>(constant::Name::Fields);
-	return FieldCollectionPtr(fields);
+	return make_deferred<FieldCollection>(fields);
 }
 
 } // semantics

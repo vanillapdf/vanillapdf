@@ -67,7 +67,8 @@ bool DocumentInfo::CreationDate(OutputDatePtr& result) const {
 		return false;
 	}
 
-	result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::CreationDate);
+	auto date_string = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::CreationDate);
+	result = make_deferred<Date>(date_string);
 	return true;
 }
 
@@ -75,7 +76,8 @@ bool DocumentInfo::ModificationDate(OutputDatePtr& result) const {
 	if (!_obj->Contains(constant::Name::ModDate))
 		return false;
 
-	result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::ModDate);
+	auto date_string = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::ModDate);
+	result = make_deferred<Date>(date_string);
 	return true;
 }
 

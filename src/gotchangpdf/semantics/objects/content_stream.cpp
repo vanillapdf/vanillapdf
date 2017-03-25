@@ -19,7 +19,7 @@ contents::BaseInstructionCollection ContentStream::Instructions(void) const {
 	auto body = _obj->GetBody();
 	auto strm = body->ToStringStream();
 
-	syntax::InputStreamPtr input_stream(strm);
+	syntax::InputStreamPtr input_stream = make_deferred<syntax::InputStream>(strm);
 	contents::ContentStreamParser parser(_obj->GetFile(), input_stream);
 	_instructions = parser.ReadContentStreamInstructions();
 	return _instructions;

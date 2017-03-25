@@ -45,7 +45,7 @@ public:
 	}
 
 	size_t Hash() const;
-	Buffer Clone(void) const { return Buffer(begin(), end()); }
+	BufferPtr Clone(void) const { return make_deferred<Buffer>(begin(), end()); }
 	std::string ToString(void) const { return std::string(begin(), end()); }
 	std::shared_ptr<std::stringstream> ToStringStream(void) const;
 	bool Equals(const Buffer& other) const;

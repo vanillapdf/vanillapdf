@@ -33,6 +33,7 @@ class HexadecimalStringObject : public StringObjectBase, public IModifyObserver 
 public:
 	HexadecimalStringObject();
 	explicit HexadecimalStringObject(BufferPtr value);
+	explicit HexadecimalStringObject(const char * chars);
 
 	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
@@ -55,6 +56,7 @@ class LiteralStringObject : public StringObjectBase, public IModifyObserver {
 public:
 	LiteralStringObject();
 	explicit LiteralStringObject(BufferPtr value);
+	explicit LiteralStringObject(const char * chars);
 
 	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 

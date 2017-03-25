@@ -39,7 +39,7 @@ CatalogPtr Document::GetDocumentCatalog(void) {
 	auto dictionary = xref->GetTrailerDictionary();
 	auto root = dictionary->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Root);
 
-	auto catalog = CatalogPtr(root);
+	auto catalog = make_deferred<Catalog>(root);
 	m_catalog = catalog;
 	return m_catalog;
 }
@@ -59,7 +59,7 @@ bool Document::GetDocumentInfo(OutputDocumentInfoPtr& result) {
 	}
 
 	auto info = dictionary->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Info);
-	DocumentInfoPtr doc_info(info);
+	DocumentInfoPtr doc_info = make_deferred<DocumentInfo>(info);
 	m_info = doc_info;
 	result = doc_info;
 	return true;
@@ -119,7 +119,7 @@ void Document::Save(const std::string& path) {
 		}
 
 		std::string string_body = ss.str();
-		BufferPtr new_body(string_body.begin(), string_body.end());
+		BufferPtr new_body = make_deferred<Buffer>(string_body.begin(), string_body.end());
 		stream_object->SetBody(new_body);
 	}
 
@@ -146,10 +146,10 @@ OutputNamedDestinationsPtr Document::CreateNameDestinations(CatalogPtr catalog) 
 
 	auto raw_catalog = catalog->GetObject();
 
-	IndirectObjectReferencePtr ref(raw_dictionary);
+	IndirectObjectReferencePtr ref = make_deferred<IndirectObjectReference>(raw_dictionary);
 	raw_catalog->Insert(constant::Name::Dests, ref);
 
-	NamedDestinationsPtr result(raw_dictionary);
+	NamedDestinationsPtr result = make_deferred<NamedDestinations>(raw_dictionary);
 	return result;
 }
 
@@ -165,10 +165,10 @@ OutputNameDictionaryPtr Document::CreateNameDictionary(CatalogPtr catalog) {
 
 	auto raw_catalog = catalog->GetObject();
 
-	IndirectObjectReferencePtr ref(raw_dictionary);
+	IndirectObjectReferencePtr ref = make_deferred<IndirectObjectReference>(raw_dictionary);
 	raw_catalog->Insert(constant::Name::Names, ref);
 
-	NameDictionaryPtr result(raw_dictionary);
+	NameDictionaryPtr result = make_deferred<NameDictionary>(raw_dictionary);
 	return result;
 }
 
@@ -184,7 +184,7 @@ OutputNameTreePtr<DestinationPtr> Document::CreateStringDestinations(NameDiction
 
 	auto name_dictionary = dictionary->GetObject();
 
-	IndirectObjectReferencePtr ref(raw_dictionary);
+	IndirectObjectReferencePtr ref = make_deferred<IndirectObjectReference>(raw_dictionary);
 	name_dictionary->Insert(constant::Name::Dests, ref);
 
 	OutputNameTreePtr<DestinationPtr> result;
@@ -287,7 +287,7 @@ bool Document::IsDestinationReferencingPage(DestinationPtr destination, PageObje
 
 		auto other_root_node = page->GetPageRoot();
 		auto other_root_node_obj = other_root_node->GetObject();
-		auto other_pages = PageTreePtr(other_root_node_obj);
+		auto other_pages = make_deferred<PageTree>(other_root_node_obj);
 
 		auto index_converted = cloned_page_index->SafeConvert<types::integer>();
 		auto check_page = other_pages->Page(index_converted);
@@ -442,7 +442,7 @@ void Document::AppendPage(DocumentPtr other, PageObjectPtr other_page) {
 	}
 
 	DictionaryObjectPtr new_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(new_page_object);
-	PageObjectPtr new_page(new_dictionary);
+	PageObjectPtr new_page = make_deferred<PageObject>(new_dictionary);
 
 	// Insert into our page tree
 	// The parent we removed in optimization will be set inside
@@ -480,11 +480,11 @@ void Document::MergePageDestinations(DocumentPtr other, PageObjectPtr other_page
 void Document::Sign() {
 	// Create new signature dictionary
 	DictionaryObjectPtr signature_dictionary;
-	signature_dictionary->Insert(constant::Name::Type, NameObjectPtr("Sig"));
-	signature_dictionary->Insert(constant::Name::Cert, HexadecimalStringObjectPtr("\x1\x0"));
-	signature_dictionary->Insert(constant::Name::Name, LiteralStringObjectPtr("Jurko"));
-	signature_dictionary->Insert(constant::Name::Location, LiteralStringObjectPtr("Here"));
-	signature_dictionary->Insert(constant::Name::Reason, LiteralStringObjectPtr("I agree"));
+	signature_dictionary->Insert(constant::Name::Type, make_deferred<NameObject>("Sig"));
+	signature_dictionary->Insert(constant::Name::Cert, make_deferred<HexadecimalStringObject>("0A2F"));
+	signature_dictionary->Insert(constant::Name::Name, make_deferred<LiteralStringObject>("Jurko"));
+	signature_dictionary->Insert(constant::Name::Location, make_deferred<LiteralStringObject>("Here"));
+	signature_dictionary->Insert(constant::Name::Reason, make_deferred<LiteralStringObject>("I agree"));
 
 	// Leave byte ranges empty for now
 	ArrayObjectPtr<IntegerObjectPtr> byte_ranges;
@@ -495,7 +495,7 @@ void Document::Sign() {
 
 	// Create new signature field
 	DictionaryObjectPtr signature_field;
-	signature_field->Insert(constant::Name::FT, NameObjectPtr("Sig"));
+	signature_field->Insert(constant::Name::FT, make_deferred<NameObject>("Sig"));
 	signature_field->Insert(constant::Name::V, signature_dictionary);
 
 	auto chain = m_holder->GetXrefChain();
@@ -514,7 +514,7 @@ void Document::Sign() {
 	auto fields = interactive_form->Fields();
 	auto fields_obj = fields->GetObject();
 
-	fields_obj->Append(IndirectObjectReferencePtr(signature_field));
+	fields_obj->Append(signature_field);
 }
 
 } // semantics

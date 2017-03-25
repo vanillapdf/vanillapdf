@@ -162,7 +162,7 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) const {
 	size_t outlen = 0;
 	EVP_PKEY_decrypt(ctx, nullptr, &outlen, (unsigned char *) data.data(), data.size());
 
-	BufferPtr output(outlen);
+	BufferPtr output = make_deferred<Buffer>(outlen);
 	EVP_PKEY_decrypt(ctx, (unsigned char *) output->data(), &outlen, (unsigned char *) data.data(), data.size());
 
 	if (output->size() != outlen)

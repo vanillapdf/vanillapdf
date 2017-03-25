@@ -20,8 +20,16 @@ HexadecimalStringObject::HexadecimalStringObject() {
 	_value->Subscribe(this);
 }
 
+LiteralStringObject::LiteralStringObject(const char * value)
+	: LiteralStringObject(make_deferred<Buffer>(value)) {
+}
+
 LiteralStringObject::LiteralStringObject(BufferPtr value) : _raw_value(value) {
 	_value->Subscribe(this);
+}
+
+HexadecimalStringObject::HexadecimalStringObject(const char * value)
+	: HexadecimalStringObject(make_deferred<Buffer>(value)) {
 }
 
 HexadecimalStringObject::HexadecimalStringObject(BufferPtr value) : _raw_value(value) {
@@ -45,13 +53,13 @@ size_t StringObjectBase::Hash() const {
 }
 
 HexadecimalStringObject* HexadecimalStringObject::Clone(void) const {
-	Buffer new_value = _raw_value->Clone();
+	BufferPtr new_value = _raw_value->Clone();
 	HexadecimalStringObjectPtr result(pdf_new HexadecimalStringObject(new_value), false);
 	return result.detach();
 }
 
 LiteralStringObject* LiteralStringObject::Clone(void) const {
-	Buffer new_value = _raw_value->Clone();
+	BufferPtr new_value = _raw_value->Clone();
 	LiteralStringObjectPtr result(pdf_new LiteralStringObject(new_value), false);
 	return result.detach();
 }

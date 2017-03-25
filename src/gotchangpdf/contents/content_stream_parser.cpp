@@ -138,7 +138,7 @@ InlineImageObjectPtr ContentStreamParser::ReadInlineImageObject(void) {
 		image_data->push_back(current);
 	}
 
-	return InlineImageObjectPtr(image_dictionary, image_data);
+	return make_deferred<InlineImageObject>(image_dictionary, image_data);
 }
 
 InstructionBasePtr ContentStreamParser::ReadContentStreamInstruction(void) {
@@ -176,7 +176,7 @@ InstructionBasePtr ContentStreamParser::ReadContentStreamInstruction(void) {
 			text_operations.push_back(text_operation);
 		}
 
-		return TextObjectPtr(text_operations);
+		return make_deferred<TextObject>(text_operations);
 	}
 
 	return operation;
@@ -198,153 +198,153 @@ OperationBasePtr ContentStreamParser::ReadOperatorReturnOperation(const std::vec
 	auto token = ReadTokenSkip();
 	switch (token->GetType()) {
 		case Token::Type::LINE_WIDTH:
-			return OperationGenericPtr(operands, LineWidthOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, LineWidthOperatorPtr());
 		case Token::Type::LINE_CAP:
-			return OperationGenericPtr(operands, LineCapOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, LineCapOperatorPtr());
 		case Token::Type::LINE_JOIN:
-			return OperationGenericPtr(operands, LineJoinOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, LineJoinOperatorPtr());
 		case Token::Type::MITER_LIMIT:
-			return OperationGenericPtr(operands, MiterLimitOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, MiterLimitOperatorPtr());
 		case Token::Type::DASH_PATTERN:
-			return OperationGenericPtr(operands, DashPatternOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, DashPatternOperatorPtr());
 		case Token::Type::COLOR_RENDERING_INTENT:
-			return OperationGenericPtr(operands, ColorRenderingIntentOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, ColorRenderingIntentOperatorPtr());
 		case Token::Type::FLATNESS:
-			return OperationGenericPtr(operands, FlatnessOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, FlatnessOperatorPtr());
 		case Token::Type::GRAPHICS_STATE:
-			return OperationGenericPtr(operands, GraphicsStateOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, GraphicsStateOperatorPtr());
 		case Token::Type::SAVE_GRAPHICS_STATE:
-			return OperationGenericPtr(operands, SaveGraphicsStateOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, SaveGraphicsStateOperatorPtr());
 		case Token::Type::RESTORE_GRAPHIC_STATE:
-			return OperationGenericPtr(operands, RestoreGraphicsStateOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, RestoreGraphicsStateOperatorPtr());
 		case Token::Type::TRANSFORMATION_MATRIX:
-			return OperationGenericPtr(operands, TransformationMatrixOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, TransformationMatrixOperatorPtr());
 		case Token::Type::BEGIN_SUBPATH:
-			return OperationGenericPtr(operands, BeginSubpathOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, BeginSubpathOperatorPtr());
 		case Token::Type::LINE:
-			return OperationGenericPtr(operands, LineOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, LineOperatorPtr());
 		case Token::Type::FULL_CURVE:
-			return OperationGenericPtr(operands, FullCurveOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, FullCurveOperatorPtr());
 		case Token::Type::FINAL_CURVE:
-			return OperationGenericPtr(operands, FinalCurveOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, FinalCurveOperatorPtr());
 		case Token::Type::INITIAL_CURVE:
-			return OperationGenericPtr(operands, InitialCurveOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, InitialCurveOperatorPtr());
 		case Token::Type::CLOSE_SUBPATH:
-			return OperationGenericPtr(operands, CloseSubpathOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, CloseSubpathOperatorPtr());
 		case Token::Type::RECTANGLE:
-			return OperationGenericPtr(operands, RectangleOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, RectangleOperatorPtr());
 		case Token::Type::STROKE:
-			return OperationGenericPtr(operands, StrokeOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, StrokeOperatorPtr());
 		case Token::Type::CLOSE_AND_STROKE:
-			return OperationGenericPtr(operands, CloseAndStrokeOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, CloseAndStrokeOperatorPtr());
 		case Token::Type::FILL_PATH_NONZERO:
-			return OperationGenericPtr(operands, FillPathNonzeroOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, FillPathNonzeroOperatorPtr());
 		case Token::Type::FILL_PATH_COMPATIBILITY:
-			return OperationGenericPtr(operands, FillPathCompatibilityOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, FillPathCompatibilityOperatorPtr());
 		case Token::Type::FILL_PATH_EVEN_ODD:
-			return OperationGenericPtr(operands, FillPathEvenOddOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, FillPathEvenOddOperatorPtr());
 		case Token::Type::FILL_STROKE_NONZERO:
-			return OperationGenericPtr(operands, FillStrokeNonzeroOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, FillStrokeNonzeroOperatorPtr());
 		case Token::Type::FILL_STROKE_EVEN_ODD:
-			return OperationGenericPtr(operands, FillStrokeEvenOddOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, FillStrokeEvenOddOperatorPtr());
 		case Token::Type::CLOSE_FILL_STROKE_NONZERO:
-			return OperationGenericPtr(operands, CloseFillStrokeNonzeroOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, CloseFillStrokeNonzeroOperatorPtr());
 		case Token::Type::CLOSE_FILL_STROKE_EVEN_ODD:
-			return OperationGenericPtr(operands, CloseFillStrokeEvenOddOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, CloseFillStrokeEvenOddOperatorPtr());
 		case Token::Type::END_PATH:
-			return OperationGenericPtr(operands, EndPathOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, EndPathOperatorPtr());
 		case Token::Type::CLIP_PATH_NONZERO:
-			return OperationGenericPtr(operands, ClipPathNonzeroOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, ClipPathNonzeroOperatorPtr());
 		case Token::Type::CLIP_PATH_EVEN_ODD:
-			return OperationGenericPtr(operands, ClipPathEvenOddOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, ClipPathEvenOddOperatorPtr());
 		case Token::Type::BEGIN_TEXT:
-			return OperationBeginTextPtr(operands);
+			return make_deferred<OperationBeginText>(operands);
 		case Token::Type::END_TEXT:
-			return OperationEndTextPtr(operands);
+			return make_deferred<OperationEndText>(operands);
 		case Token::Type::CHARACTER_SPACING:
-			return OperationGenericPtr(operands, CharacterSpacingOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, CharacterSpacingOperatorPtr());
 		case Token::Type::WORD_SPACING:
-			return OperationGenericPtr(operands, WordSpacingOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, WordSpacingOperatorPtr());
 		case Token::Type::HORIZONTAL_SCALING:
-			return OperationGenericPtr(operands, HorizontalScalingOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, HorizontalScalingOperatorPtr());
 		case Token::Type::LEADING:
-			return OperationGenericPtr(operands, LeadingOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, LeadingOperatorPtr());
 		case Token::Type::TEXT_FONT:
-			return OperationTextFontPtr(operands);
+			return make_deferred<OperationTextFont>(operands);
 		case Token::Type::TEXT_RENDERING_MODE:
-			return OperationGenericPtr(operands, TextRenderingModeOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, TextRenderingModeOperatorPtr());
 		case Token::Type::TEXT_RISE:
-			return OperationGenericPtr(operands, TextRiseOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, TextRiseOperatorPtr());
 		case Token::Type::TEXT_TRANSLATE:
-			return OperationGenericPtr(operands, TextTranslateOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, TextTranslateOperatorPtr());
 		case Token::Type::TEXT_TRANSLATE_LEADING:
-			return OperationGenericPtr(operands, TextTranslateLeadingOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, TextTranslateLeadingOperatorPtr());
 		case Token::Type::TEXT_MATRIX:
-			return OperationGenericPtr(operands, TextMatrixOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, TextMatrixOperatorPtr());
 		case Token::Type::TEXT_NEXT_LINE:
-			return OperationGenericPtr(operands, TextNextLineOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, TextNextLineOperatorPtr());
 		case Token::Type::TEXT_SHOW:
-			return OperationTextShowPtr(operands);
+			return make_deferred<OperationTextShow>(operands);
 		case Token::Type::TEXT_SHOW_ARRAY:
-			return OperationTextShowArrayPtr(operands);
+			return make_deferred<OperationTextShowArray>(operands);
 		case Token::Type::TEXT_NEXT_LINE_SHOW:
-			return OperationGenericPtr(operands, TextNextLineShowOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, TextNextLineShowOperatorPtr());
 		case Token::Type::TEXT_NEXT_LINE_SHOW_SPACING:
-			return OperationGenericPtr(operands, TextNextLineShowSpacingOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, TextNextLineShowSpacingOperatorPtr());
 		case Token::Type::SET_CHAR_WIDTH:
-			return OperationGenericPtr(operands, SetCharWidthOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, SetCharWidthOperatorPtr());
 		case Token::Type::SET_CACHE_DEVICE:
-			return OperationGenericPtr(operands, SetCacheDeviceOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, SetCacheDeviceOperatorPtr());
 		case Token::Type::COLOR_SPACE_STROKE:
-			return OperationGenericPtr(operands, ColorSpaceStrokeOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, ColorSpaceStrokeOperatorPtr());
 		case Token::Type::COLOR_SPACE_NONSTROKE:
-			return OperationGenericPtr(operands, ColorSpaceNonstrokeOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, ColorSpaceNonstrokeOperatorPtr());
 		case Token::Type::SET_COLOR_STROKE:
-			return OperationGenericPtr(operands, SetColorStrokeOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, SetColorStrokeOperatorPtr());
 		case Token::Type::SET_COLOR_STROKE_EXTENDED:
-			return OperationGenericPtr(operands, SetColorStrokeExtendedOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, SetColorStrokeExtendedOperatorPtr());
 		case Token::Type::SET_COLOR_NONSTROKE:
-			return OperationGenericPtr(operands, SetColorNonstrokeOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, SetColorNonstrokeOperatorPtr());
 		case Token::Type::SET_COLOR_NONSTROKE_EXTENDED:
-			return OperationGenericPtr(operands, SetColorNonstrokeExtendedOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, SetColorNonstrokeExtendedOperatorPtr());
 		case Token::Type::SET_STROKING_COLOR_SPACE_GRAY:
-			return OperationGenericPtr(operands, SetStrokingColorSpaceGrayOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, SetStrokingColorSpaceGrayOperatorPtr());
 		case Token::Type::SET_NONSTROKING_COLOR_SPACE_GRAY:
-			return OperationGenericPtr(operands, SetNonstrokingColorSpaceGrayOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, SetNonstrokingColorSpaceGrayOperatorPtr());
 		case Token::Type::SET_STROKING_COLOR_SPACE_RGB:
-			return OperationGenericPtr(operands, SetStrokingColorSpaceRGBOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, SetStrokingColorSpaceRGBOperatorPtr());
 		case Token::Type::SET_NONSTROKING_COLOR_SPACE_RGB:
-			return OperationGenericPtr(operands, SetNonstrokingColorSpaceRGBOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, SetNonstrokingColorSpaceRGBOperatorPtr());
 		case Token::Type::SET_STROKING_COLOR_SPACE_CMYK:
-			return OperationGenericPtr(operands, SetStrokingColorSpaceCMYKOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, SetStrokingColorSpaceCMYKOperatorPtr());
 		case Token::Type::SET_NONSTROKING_COLOR_SPACE_CMYK:
-			return OperationGenericPtr(operands, SetNonstrokingColorSpaceCMYKOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, SetNonstrokingColorSpaceCMYKOperatorPtr());
 		case Token::Type::SHADING_PAINT:
-			return OperationGenericPtr(operands, ShadingPaintOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, ShadingPaintOperatorPtr());
 		case Token::Type::BEGIN_INLINE_IMAGE_OBJECT:
-			return OperationBeginInlineImageObjectPtr(operands);
+			return make_deferred<OperationBeginInlineImageObject>(operands);
 		case Token::Type::BEGIN_INLINE_IMAGE_DATA:
-			return OperationBeginInlineImageDataPtr(operands);
+			return make_deferred<OperationBeginInlineImageData>(operands);
 		case Token::Type::END_INLINE_IMAGE_OBJECT:
-			return OperationEndInlineImageObjectPtr(operands);
+			return make_deferred<OperationEndInlineImageObject>(operands);
 		case Token::Type::INVOKE_X_OBJECT:
-			return OperationGenericPtr(operands, InvokeXObjectOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, InvokeXObjectOperatorPtr());
 		case Token::Type::DEFINE_MARKED_CONTENT_POINT:
-			return OperationGenericPtr(operands, DefineMarkedContentPointOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, DefineMarkedContentPointOperatorPtr());
 		case Token::Type::DEFINE_MARKED_CONTENT_POINT_WITH_PROPERTY_LIST:
-			return OperationGenericPtr(operands, DefineMarkedContentPointWithPropertyListOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, DefineMarkedContentPointWithPropertyListOperatorPtr());
 		case Token::Type::BEGIN_MARKED_CONTENT_SEQUENCE:
-			return OperationGenericPtr(operands, BeginMarkedContentSequenceOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, BeginMarkedContentSequenceOperatorPtr());
 		case Token::Type::BEGIN_MARKED_CONTENT_SEQUENCE_WITH_PROPERTY_LIST:
-			return OperationGenericPtr(operands, BeginMarkedContentSequenceWithPropertyListOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, BeginMarkedContentSequenceWithPropertyListOperatorPtr());
 		case Token::Type::END_MARKED_CONTENT_SEQUENCE:
-			return OperationGenericPtr(operands, EndMarkedContentSequenceOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, EndMarkedContentSequenceOperatorPtr());
 		case Token::Type::BEGIN_COMPATIBILITY_SECTION:
-			return OperationGenericPtr(operands, BeginCompatibilitySectionOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, BeginCompatibilitySectionOperatorPtr());
 		case Token::Type::END_COMPATIBILITY_SECTION:
-			return OperationGenericPtr(operands, EndCompatibilitySectionOperatorPtr());
+			return make_deferred<OperationGeneric>(operands, EndCompatibilitySectionOperatorPtr());
 		default:
-			return OperationGenericPtr(operands, UnknownOperatorPtr(token->Value()));
+			return make_deferred<OperationGeneric>(operands, make_deferred<UnknownOperator>(token->Value()));
 	}
 }
 

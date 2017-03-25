@@ -36,12 +36,14 @@ BaseInstructionCollectionPtr Contents::Instructions(void) const {
 	std::vector<ContentStreamPtr> contents;
 	if (ObjectUtils::IsType<StreamObjectPtr>(_obj)) {
 		auto converted = ObjectUtils::ConvertTo<StreamObjectPtr>(_obj);
-		contents.push_back(converted);
+		auto content_stream = make_deferred<ContentStream>(converted);
+		contents.push_back(content_stream);
 	} else if (ObjectUtils::IsType<ArrayObjectPtr<IndirectObjectReferencePtr>>(_obj)) {
 		auto converted = ObjectUtils::ConvertTo<ArrayObjectPtr<IndirectObjectReferencePtr>>(_obj);
 		for (auto ref : converted) {
-			auto item = ref->GetReferencedObjectAs<StreamObjectPtr>();
-			contents.push_back(item);
+			auto stream = ref->GetReferencedObjectAs<StreamObjectPtr>();
+			auto content_stream = make_deferred<ContentStream>(stream);
+			contents.push_back(content_stream);
 		}
 	} else {
 		throw GeneralException("Contents was constructed from unrecognized element: " + _obj->ToString());
@@ -55,7 +57,7 @@ BaseInstructionCollectionPtr Contents::Instructions(void) const {
 		*ss << stream_object->GetBody();
 	}
 
-	syntax::InputStreamPtr input_stream(ss);
+	syntax::InputStreamPtr input_stream = make_deferred<syntax::InputStream>(ss);
 	contents::ContentStreamParser parser(_obj->GetFile(), input_stream);
 	auto instructions = parser.ReadContentStreamInstructions();
 	for (auto instruction : instructions) {

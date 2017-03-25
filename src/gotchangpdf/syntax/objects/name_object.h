@@ -16,6 +16,7 @@ class NameObject : public ContainableObject, public IModifyObserver {
 public:
 	NameObject();
 	explicit NameObject(BufferPtr name);
+	explicit NameObject(const char * chars);
 	virtual ~NameObject();
 
 	virtual void ObserveeChanged(IModifyObservable*) override;
@@ -44,6 +45,10 @@ private:
 bool operator==(const syntax::NameObject& left, const syntax::NameObject& right);
 bool operator!=(const syntax::NameObject& left, const syntax::NameObject& right);
 bool operator<(const syntax::NameObject& left, const syntax::NameObject& right);
+
+bool operator==(const Deferred<syntax::NameObject>& left, const Deferred<syntax::NameObject>& right);
+bool operator!=(const Deferred<syntax::NameObject>& left, const Deferred<syntax::NameObject>& right);
+bool operator<(const Deferred<syntax::NameObject>& left, const Deferred<syntax::NameObject>& right);
 
 namespace constant {
 namespace Name {

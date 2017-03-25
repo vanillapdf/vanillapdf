@@ -39,7 +39,7 @@ bool Catalog::Extensions(OutputDeveloperExtensionsPtr& result) const {
 		return false;
 	}
 
-	auto extensions = DeveloperExtensionsPtr(_obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Extensions));
+	auto extensions = make_deferred<DeveloperExtensions>(_obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Extensions));
 	result = extensions;
 	return true;
 }
@@ -50,7 +50,7 @@ PageTreePtr Catalog::Pages(void) const {
 	}
 
 	auto pages_obj = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Pages);
-	auto pages = PageTreePtr(pages_obj);
+	auto pages = make_deferred<PageTree>(pages_obj);
 	m_pages = pages;
 	return m_pages;
 }
@@ -60,7 +60,8 @@ bool Catalog::PageLabels(OutputPageLabelsPtr& result) const {
 		return false;
 	}
 
-	result = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::PageLabels);
+	auto labels_dictionary = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::PageLabels);
+	result = make_deferred<semantics::PageLabels>(labels_dictionary);
 	return true;
 }
 
@@ -104,7 +105,7 @@ bool Catalog::Names(OutputNameDictionaryPtr& result) const {
 	}
 
 	auto names = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Names);
-	NameDictionaryPtr dictionary(names);
+	NameDictionaryPtr dictionary = make_deferred<NameDictionary>(names);
 	result = dictionary;
 	return true;
 }
@@ -115,7 +116,7 @@ bool Catalog::Destinations(OutputNamedDestinationsPtr& result) const {
 	}
 
 	auto dests = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Dests);
-	auto named_dests = NamedDestinationsPtr(dests);
+	auto named_dests = make_deferred<NamedDestinations>(dests);
 	result = named_dests;
 	return true;
 }
@@ -126,7 +127,7 @@ bool Catalog::ViewerPreferences(OutputViewerPreferencesPtr& result) const {
 	}
 
 	auto prefs = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::ViewerPreferences);
-	auto viewer_prefs = ViewerPreferencesPtr(prefs);
+	auto viewer_prefs = make_deferred<semantics::ViewerPreferences>(prefs);
 	result = viewer_prefs;
 	return true;
 }
@@ -162,7 +163,7 @@ bool Catalog::Outlines(OutputOutlinePtr& result) const {
 	}
 
 	auto outline_obj = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Outlines);
-	auto outlines = OutlinePtr(outline_obj);
+	auto outlines = make_deferred<Outline>(outline_obj);
 	result = outlines;
 	return true;
 }
@@ -173,7 +174,7 @@ bool Catalog::AcroForm(OuputInteractiveFormPtr& result) const {
 	}
 
 	auto form_obj = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::AcroForm);
-	auto interactive_form = InteractiveFormPtr(form_obj);
+	auto interactive_form = make_deferred<InteractiveForm>(form_obj);
 	result = interactive_form;
 	return true;
 }

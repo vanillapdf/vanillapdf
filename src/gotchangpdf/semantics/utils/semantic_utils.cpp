@@ -3,6 +3,7 @@
 #include "semantics/utils/semantic_utils.h"
 
 #include <regex>
+#include <unordered_map>
 
 namespace gotchangpdf {
 namespace semantics {

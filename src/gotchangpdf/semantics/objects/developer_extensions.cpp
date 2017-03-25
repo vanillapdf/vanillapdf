@@ -14,7 +14,7 @@ DeveloperExtensionPtr DeveloperExtensions::Iterator::Second() const {
 	}
 
 	auto converted = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(containable);
-	return DeveloperExtensionPtr(converted);
+	return make_deferred<DeveloperExtension>(converted);
 }
 
 DeveloperExtensions::DeveloperExtensions(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
@@ -22,10 +22,16 @@ DeveloperExtensions::DeveloperExtensions(syntax::DictionaryObjectPtr root) : Hig
 bool DeveloperExtensions::TryFind(const syntax::NameObjectPtr& name, OutputDeveloperExtensionPtr& result) const {
 	syntax::OutputContainableObjectPtr containable;
 	bool found = _obj->TryFind(name, containable);
-	if (!found) return false;
-	if (!syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(containable.GetValue())) return false;
+	if (!found) {
+		return false;
+	}
+
+	if (!syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(containable.GetValue())) {
+		return false;
+	}
+
 	auto converted = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(containable.GetValue());
-	result = DeveloperExtensionPtr(converted);
+	result = make_deferred<DeveloperExtension>(converted);
 	return true;
 }
 
@@ -42,11 +48,11 @@ bool DeveloperExtensions::Remove(const syntax::NameObjectPtr& name) {
 }
 
 DeveloperExtensions::IteratorPtr DeveloperExtensions::Begin(void) const {
-	return _obj->begin();
+	return make_deferred<DeveloperExtensions::Iterator>(_obj->begin());
 }
 
 DeveloperExtensions::IteratorPtr DeveloperExtensions::End(void) const {
-	return _obj->end();
+	return make_deferred<DeveloperExtensions::Iterator>(_obj->end());
 }
 
 DeveloperExtension::DeveloperExtension(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {

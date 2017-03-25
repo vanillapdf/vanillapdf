@@ -161,7 +161,7 @@ void InputReverseStream::Read(Buffer& result, size_t len) {
 }
 
 BufferPtr InputReverseStream::Read(size_t len) {
-	BufferPtr result(len);
+	BufferPtr result = make_deferred<Buffer>(len);
 	m_stream->read(result->data(), len);
 	return result;
 }
@@ -214,7 +214,7 @@ void InputReverseStream::SetPosition(types::stream_size pos, std::ios_base::seek
 }
 
 BufferPtr InputReverseStream::Readline(void) {
-	Buffer result;
+	BufferPtr result;
 
 	Buffer buffer(constant::BUFFER_SIZE);
 	for (;;) {
@@ -226,7 +226,7 @@ BufferPtr InputReverseStream::Readline(void) {
 
 		auto read_converted = ValueConvertUtils::SafeConvert<Buffer::iterator::difference_type>(read);
 		std::reverse(buffer.begin(), buffer.begin() + read_converted);
-		result.insert(result.begin(), buffer.begin(), buffer.begin() + read_converted);
+		result->insert(result.begin(), buffer.begin(), buffer.begin() + read_converted);
 	}
 
 	m_stream->unget();

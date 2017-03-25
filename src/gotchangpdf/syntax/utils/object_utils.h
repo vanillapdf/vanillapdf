@@ -71,7 +71,7 @@ public:
 
 		if (real_converted) {
 			result = true;
-			return IntegerObjectPtr(*real_converted);
+			return make_deferred<IntegerObject>(*real_converted);
 		}
 
 		result = false;
@@ -88,7 +88,7 @@ public:
 
 		if (int_converted) {
 			result = true;
-			return RealObjectPtr(*int_converted);
+			return make_deferred<RealObject>(*int_converted);
 		}
 
 		if (real_converted) {
@@ -236,7 +236,7 @@ public:
 		}
 
 		auto mixed = ObjectTypeFunctor<MixedArrayObjectPtr>::Convert(obj);
-		return ArrayObjectPtr<T>(mixed);
+		return make_deferred<ArrayObject<T>>(mixed);
 	}
 };
 
@@ -280,12 +280,12 @@ public:
 		typename = typename std::enable_if<instantiation_of<Deferred, T>::value ||
 		std::is_base_of<Object, typename T::deferred_ptr_type>::value>::type
 	>
-		static T Clone(T obj) {
+		static T Clone(const typename T::deferred_ptr_type& obj) {
 		// Template requirements
 		// T - is instantiation of Deferred
 		// T::value_type is derived from Object
 		// Object implements clone
-		return T(obj->Clone());
+		return T(obj.Clone());
 	}
 };
 

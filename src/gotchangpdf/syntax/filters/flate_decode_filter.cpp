@@ -32,7 +32,7 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(BufferPtr src, DictionaryObjectPtr p
 }
 
 BufferPtr FlateDecodeFilter::ApplyPredictor(std::shared_ptr<std::istream> src, types::stream_size length, DictionaryObjectPtr parameters) const {
-	IntegerObjectPtr predictor = 1;
+	IntegerObjectPtr predictor = make_deferred<IntegerObject>(1);
 	if (parameters->Contains(constant::Name::Predictor)) {
 		predictor = parameters->FindAs<IntegerObjectPtr>(constant::Name::Predictor);
 		assert(*predictor == 1 || *predictor == 2 || (*predictor >= 10 && *predictor <= 15));
@@ -44,23 +44,23 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(std::shared_ptr<std::istream> src, t
 		return InputStream(src).Read(length_converted);
 	}
 
-	IntegerObjectPtr colors = 1;
+	IntegerObjectPtr colors = make_deferred<IntegerObject>(1);
 	if (parameters->Contains(constant::Name::Colors)) {
 		colors = parameters->FindAs<IntegerObjectPtr>(constant::Name::Colors);
 		assert(*colors >= 1);
 	}
 
-	syntax::IntegerObjectPtr bits = 8;
+	syntax::IntegerObjectPtr bits = make_deferred<IntegerObject>(8);
 	if (parameters->Contains(constant::Name::BitsPerComponent)) {
 		bits = parameters->FindAs<IntegerObjectPtr>(constant::Name::BitsPerComponent);
 		assert(*bits == 1 || *bits == 2 || *bits == 4 || *bits == 8);
 	}
 
-	IntegerObjectPtr columns = 1;
+	IntegerObjectPtr columns = make_deferred<IntegerObject>(1);
 	if (parameters->Contains(constant::Name::Columns))
 		columns = parameters->FindAs<IntegerObjectPtr>(constant::Name::Columns);
 
-	IntegerObjectPtr change = 1;
+	IntegerObjectPtr change = make_deferred<IntegerObject>(1);
 	if (parameters->Contains(constant::Name::EarlyChange))
 		change = parameters->FindAs<IntegerObjectPtr>(constant::Name::EarlyChange);
 

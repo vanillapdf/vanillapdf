@@ -98,6 +98,7 @@ set(GOTCHANGPDF_SYNTAX_SOURCES
 	syntax/files/file.cpp
 	syntax/files/file_writer.cpp
 	syntax/files/xref.cpp
+	syntax/files/xref_entry.cpp
 	syntax/files/xref_chain.cpp
 	
 	syntax/filters/ascii_85_decode_filter.cpp
@@ -199,6 +200,7 @@ set(GOTCHANGPDF_SYNTAX_HEADERS
 	syntax/files/file_writer.h
 	syntax/files/header.h
 	syntax/files/xref.h
+	syntax/files/xref_entry.h
 	syntax/files/xref_chain.h
 	
 	syntax/filters/ascii_85_decode_filter.h

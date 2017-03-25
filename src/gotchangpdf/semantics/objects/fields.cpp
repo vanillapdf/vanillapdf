@@ -50,7 +50,7 @@ bool SignatureField::Value(OuputDigitalSignaturePtr& result) const {
 	}
 
 	auto value_obj = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::V);
-	auto digital_signature = DigitalSignaturePtr(value_obj);
+	auto digital_signature = make_deferred<DigitalSignature>(value_obj);
 	result = digital_signature;
 	return true;
 }

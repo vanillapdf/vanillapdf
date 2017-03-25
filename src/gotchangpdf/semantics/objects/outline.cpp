@@ -25,7 +25,7 @@ syntax::StringObjectPtr OutlineItem::Title(void) const {
 
 OutlineBasePtr OutlineItem::Parent(void) const {
 	auto parent = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Parent);
-	return OutlinePtr(parent);
+	return make_deferred<Outline>(parent);
 }
 
 bool OutlineItem::Prev(OutputOutlineItemPtr& result) const {
@@ -34,7 +34,7 @@ bool OutlineItem::Prev(OutputOutlineItemPtr& result) const {
 	}
 
 	auto item = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Prev);
-	result = OutlineItemPtr(item);
+	result = make_deferred<OutlineItem>(item);
 	return true;
 }
 
@@ -44,7 +44,7 @@ bool OutlineItem::Next(OutputOutlineItemPtr& result) const {
 	}
 
 	auto item = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Next);
-	result = OutlineItemPtr(item);
+	result = make_deferred<OutlineItem>(item);
 	return true;
 }
 
@@ -54,7 +54,7 @@ bool OutlineItem::First(OutputOutlineItemPtr& result) const {
 	}
 
 	auto item = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::First);
-	result = OutlineItemPtr(item);
+	result = make_deferred<OutlineItem>(item);
 	return true;
 }
 
@@ -64,7 +64,7 @@ bool OutlineItem::Last(OutputOutlineItemPtr& result) const {
 	}
 
 	auto item = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Last);
-	result = OutlineItemPtr(item);
+	result = make_deferred<OutlineItem>(item);
 	return true;
 }
 
@@ -83,7 +83,7 @@ bool OutlineItem::Color(OutputOutlineItemColorPtr& result) const {
 	}
 
 	auto color = _obj->FindAs<syntax::ArrayObjectPtr<syntax::RealObjectPtr>>(constant::Name::C);
-	result = OutlineItemColorPtr(color);
+	result = make_deferred<OutlineItemColor>(color);
 	return true;
 }
 
@@ -93,7 +93,7 @@ bool OutlineItem::Flags(OutputOutlineItemFlagsPtr& result) const {
 	}
 
 	auto flags = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::F);
-	result = OutlineItemFlagsPtr(flags);
+	result = make_deferred<OutlineItemFlags>(flags);
 	return true;
 }
 
@@ -103,7 +103,7 @@ bool Outline::First(OutputOutlineItemPtr& result) const {
 	}
 
 	auto item = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::First);
-	result = OutlineItemPtr(item);
+	result = make_deferred<OutlineItem>(item);
 	return true;
 }
 
@@ -113,7 +113,7 @@ bool Outline::Last(OutputOutlineItemPtr& result) const {
 	}
 
 	auto item = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Last);
-	result = OutlineItemPtr(item);
+	result = make_deferred<OutlineItem>(item);
 	return true;
 }
 

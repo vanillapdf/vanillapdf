@@ -49,6 +49,7 @@ public:
 	virtual IntegerObject* Clone(void) const override;
 	virtual bool Equals(ObjectPtr other) const override;
 };
+
 } // syntax
 
 inline bool operator==(const syntax::IntegerObject left, types::native_int right) {

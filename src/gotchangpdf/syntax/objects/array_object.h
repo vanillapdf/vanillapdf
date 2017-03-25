@@ -81,8 +81,8 @@ public:
 	const T At(size_t at) const;
 	T At(size_t at);
 
-	void Append(const ContainableObjectPtr& value);
-	void Insert(const ContainableObjectPtr& value, size_t at);
+	void Append(const T& value);
+	void Insert(const T& value, size_t at);
 	void Remove(size_t at);
 
 	std::string ToString(void) const;
@@ -231,12 +231,12 @@ T ArrayObject<T>::At(size_t at) {
 }
 
 template <typename T>
-void ArrayObject<T>::Append(const ContainableObjectPtr& value) {
+void ArrayObject<T>::Append(const T& value) {
 	_list->Append(value);
 }
 
 template <typename T>
-void ArrayObject<T>::Insert(const ContainableObjectPtr& value, size_t at) {
+void ArrayObject<T>::Insert(const T& value, size_t at) {
 	_list->Insert(value, at);
 }
 
@@ -253,7 +253,7 @@ std::string ArrayObject<T>::ToString(void) const {
 template <typename T>
 template <typename U>
 ArrayObjectPtr<U> ArrayObject<T>::Convert(std::function<U(const T& obj)> f) const {
-	return ArrayObjectPtr<U>(*this, f);
+	return make_deferred<ArrayObject<U>>(*this, f);
 }
 
 template <typename T>

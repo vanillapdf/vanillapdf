@@ -14,7 +14,7 @@ PageTree::PageTree(DictionaryObjectPtr root) : HighLevelObject(root) {
 }
 
 types::integer PageTree::PageCount(void) const {
-	auto root = PageTreeNodePtr(_obj);
+	auto root = make_deferred<PageTreeNode>(_obj);
 	auto result = root->KidCount()->SafeConvert<types::integer>();
 
 	if (_obj->Contains(constant::Name::Count)) {
@@ -39,7 +39,7 @@ PageObjectPtr PageTree::GetCachedPage(types::integer page_number) const {
 		}
 	}
 
-	auto root = PageTreeNodePtr(_obj);
+	auto root = make_deferred<PageTreeNode>(_obj);
 	types::integer pages_processed = 1;
 
 	return PageInternal(root, page_number, pages_processed);
@@ -101,8 +101,8 @@ bool PageTree::HasTreeChilds(PageTreeNodePtr node) const {
 void PageTree::Insert(PageObjectPtr object, types::integer index) {
 	auto raw_obj = object->GetObject();
 	auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::Kids);
-	kids->Insert(IndirectObjectReferencePtr(raw_obj), index);
-	object->SetParent(PageTreeNodePtr(_obj));
+	kids->Insert(raw_obj, index);
+	object->SetParent(make_deferred<PageTreeNode>(_obj));
 
 	UpdateKidsCount(kids->Size());
 	m_pages[index - 1] = object;
@@ -111,8 +111,8 @@ void PageTree::Insert(PageObjectPtr object, types::integer index) {
 void PageTree::Append(PageObjectPtr object) {
 	auto raw_obj = object->GetObject();
 	auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::Kids);
-	kids->Append(IndirectObjectReferencePtr(raw_obj));
-	object->SetParent(PageTreeNodePtr(_obj));
+	kids->Append(raw_obj);
+	object->SetParent(make_deferred<PageTreeNode>(_obj));
 
 	UpdateKidsCount(kids->Size());
 	m_pages.push_back(object);
@@ -128,7 +128,7 @@ void PageTree::Remove(types::integer index) {
 
 void PageTree::UpdateKidsCount(size_t new_size) {
 	if (!_obj->Contains(constant::Name::Count)) {
-		IntegerObjectPtr integer_size(new_size);
+		IntegerObjectPtr integer_size = make_deferred<IntegerObject>(new_size);
 		_obj->Insert(constant::Name::Count, integer_size);
 	}
 

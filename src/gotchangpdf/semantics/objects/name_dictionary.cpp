@@ -13,7 +13,7 @@ bool NameDictionary::Dests(OutputNameTreePtr<DestinationPtr>& result) const {
 	}
 
 	auto dict = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Dests);
-	NameTreePtr<DestinationPtr> tree(dict, &DestinationConversionFunction);
+	NameTreePtr<DestinationPtr> tree = make_deferred<NameTree<DestinationPtr>>(dict, &DestinationConversionFunction);
 
 	result = tree;
 	return true;

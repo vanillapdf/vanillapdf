@@ -16,7 +16,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenNew(string_type file
 	try
 	{
 		std::string name(filename);
-		DocumentPtr doc(name);
+		DocumentPtr doc = make_deferred<Document>(name);
 		auto ptr = doc.AddRefGet();
 		*result = reinterpret_cast<DocumentHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -31,7 +31,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHandle 
 
 	try
 	{
-		DocumentPtr doc(file);
+		DocumentPtr doc = make_deferred<Document>(file);
 		auto ptr = doc.AddRefGet();
 		*result = reinterpret_cast<DocumentHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;

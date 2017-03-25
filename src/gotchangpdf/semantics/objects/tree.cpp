@@ -13,27 +13,27 @@ namespace semantics {
 
 TreeNodeBase::TreeNodeBase(
 	const IValueNameProvider* parent,
-	const syntax::DictionaryObjectPtr& obj)
+	syntax::DictionaryObjectPtr obj)
 	: HighLevelObject(obj), _parent(parent) {
 }
 
 TreeNodeBasePtr TreeNodeBase::Create(
 	const IValueNameProvider* parent,
-	const syntax::DictionaryObjectPtr obj) {
+	syntax::DictionaryObjectPtr obj) {
 	bool kids = obj->Contains(constant::Name::Kids);
 	bool limits = obj->Contains(constant::Name::Limits);
 	bool names = obj->Contains(constant::Name::Names);
 
 	if (kids && !limits && !names) {
-		return TreeNodeRootPtr(parent, obj);
+		return make_deferred<TreeNodeRoot>(parent, obj);
 	}
 
 	if (kids && limits && !names) {
-		return TreeNodeIntermediatePtr(parent, obj);
+		return make_deferred<TreeNodeIntermediate>(parent, obj);
 	}
 
 	if (!kids && limits && names) {
-		return TreeNodeLeafPtr(parent, obj);
+		return make_deferred<TreeNodeLeaf>(parent, obj);
 	}
 
 	throw GeneralException("Unknown tree node: " + obj->ToString());
@@ -45,7 +45,7 @@ TreeNodeBasePtr TreeNodeBase::Create(
 
 TreeNodeRoot::TreeNodeRoot(
 	const IValueNameProvider* parent,
-	const syntax::DictionaryObjectPtr& obj)
+	syntax::DictionaryObjectPtr obj)
 	: TreeNodeBase(parent, obj) {
 }
 

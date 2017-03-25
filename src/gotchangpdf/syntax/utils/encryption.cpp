@@ -77,7 +77,7 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
 	MD5_Final((unsigned char*) object_key.data(), &ctx);
 
 	auto key_length = std::min<size_t>(key.size() + 5, 16);
-	return BufferPtr(object_key.begin(), object_key.begin() + key_length);
+	return make_deferred<Buffer>(object_key.begin(), object_key.begin() + key_length);
 
 #else
 	(void) key; (void) objNumber; (void) genNumber; (void) alg;
@@ -87,7 +87,7 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
 }
 
 BufferPtr EncryptionUtils::PadTruncatePassword(const Buffer& password) {
-	BufferPtr result(sizeof(HARDCODED_PFD_PAD));
+	BufferPtr result = make_deferred<Buffer>(sizeof(HARDCODED_PFD_PAD));
 	//result->reserve(sizeof(pad));
 	std::copy_n(password.begin(), std::min(password.size(), sizeof(HARDCODED_PFD_PAD)), result.begin());
 	std::copy_n(std::begin(HARDCODED_PFD_PAD), sizeof(HARDCODED_PFD_PAD) - password.size(), result.begin() + password.size());
@@ -98,7 +98,7 @@ BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, types::size_type key_le
 
 #if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 
-	BufferPtr result(data.size());
+	BufferPtr result = make_deferred<Buffer>(data.size());
 
 	RC4_KEY rc_key;
 	RC4_set_key(&rc_key, ValueConvertUtils::SafeConvert<int>(key_length), (unsigned char*) key.data());
@@ -131,7 +131,7 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
 	}
 
 	Buffer iv(data.begin(), data.begin() + AES_CBC_IV_LENGTH);
-	BufferPtr result(data.size() - AES_CBC_IV_LENGTH);
+	BufferPtr result = make_deferred<Buffer>(data.size() - AES_CBC_IV_LENGTH);
 
 	using decrypt_key_type = unsigned char;
 	const decrypt_key_type* key_data = reinterpret_cast<const decrypt_key_type*>(key.data());
@@ -239,7 +239,7 @@ BufferPtr EncryptionUtils::RemovePkcs7Padding(const Buffer& data, size_t block_s
 			break;
 		}
 
-		return BufferPtr(data.begin(), data.end() - converted);
+		return make_deferred<Buffer>(data.begin(), data.end() - converted);
 	} while (false);
 
 	// I would really like to be strict about padding,
@@ -248,7 +248,7 @@ BufferPtr EncryptionUtils::RemovePkcs7Padding(const Buffer& data, size_t block_s
 	// pkcs padding. That means, that there is some trash after we decrypt the
 	// signature contents and padding could not be validated
 	LOG_WARNING_GLOBAL << "Pkcs padding is incorrect";
-	return data;
+	return make_deferred<Buffer>(data);
 }
 
 bool EncryptionUtils::CheckKey(
@@ -303,8 +303,8 @@ bool EncryptionUtils::CheckKey(
 		MD5_Update(&ctx, document_id.data(), document_id.size());
 		MD5_Final((unsigned char*) key_digest.data(), &ctx);
 
-		auto key = BufferPtr(length_bytes);
-		compare_data = BufferPtr(key_digest);
+		BufferPtr key = make_deferred<Buffer>(length_bytes);
+		compare_data = make_deferred<Buffer>(key_digest);
 
 		for (Buffer::value_type i = 0; i < 20; ++i) {
 			for (decltype(decryption_key_length) j = 0; j < decryption_key_length; ++j) {
@@ -321,7 +321,7 @@ bool EncryptionUtils::CheckKey(
 
 	int compare_length = (revision >= 3 ? 16 : 32);
 	if (std::equal(compare_data.begin(), compare_data.begin() + compare_length, user_data.begin())) {
-		decryption_key = BufferPtr(decryption_key_digest.begin(), decryption_key_digest.begin() + decryption_key_length);
+		decryption_key = make_deferred<Buffer>(decryption_key_digest.begin(), decryption_key_digest.begin() + decryption_key_length);
 		return true;
 	}
 
@@ -377,7 +377,7 @@ BufferPtr EncryptionUtils::GetRecipientKey
 
 	auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(length_bits.GetIntegerValue() / 8);
 	size_t decryption_key_length = std::min(length_bytes, decrypted_key.size());
-	return BufferPtr(decrypted_key.begin(), decrypted_key.begin() + decryption_key_length);
+	return make_deferred<Buffer>(decrypted_key.begin(), decrypted_key.begin() + decryption_key_length);
 
 #else
 	(void) enveloped_data; (void) length_bits; (void) algorithm; (void) key;
@@ -531,7 +531,7 @@ BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer& pad_password,
 	auto revision = encryption_dictionary.FindAs<syntax::IntegerObjectPtr>(constant::Name::R);
 	auto version = encryption_dictionary.FindAs<syntax::IntegerObjectPtr>(constant::Name::V);
 
-	syntax::IntegerObjectPtr length_bits = 40;
+	syntax::IntegerObjectPtr length_bits = make_deferred<IntegerObject>(40);
 	if (encryption_dictionary.Contains(constant::Name::Length)) {
 		length_bits = encryption_dictionary.FindAs<syntax::IntegerObjectPtr>(constant::Name::Length);
 		assert(length_bits->GetIntegerValue() % 8 == 0 && "Key length is not multiplier of 8");
@@ -555,8 +555,8 @@ BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer& pad_password,
 			std::copy_n(temporary_digest.begin(), password_length, password_digest.begin());
 		}
 
-		auto key = BufferPtr(length_bytes);
-		encrypted_owner_data = BufferPtr(*owner_value->GetValue());
+		BufferPtr key = make_deferred<Buffer>(length_bytes);
+		encrypted_owner_data = make_deferred<Buffer>(*owner_value->GetValue());
 
 		for (Buffer::value_type i = 0; i < 20; ++i) {
 			for (decltype(password_length) j = 0; j < password_length; ++j) {

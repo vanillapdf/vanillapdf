@@ -17,7 +17,7 @@ namespace semantics {
 
 class IValueNameProvider {
 public:
-	virtual syntax::NameObjectPtr GetValueName(void) const = 0;
+	virtual const syntax::NameObject& GetValueName(void) const = 0;
 	virtual ~IValueNameProvider() {}
 };
 
@@ -29,9 +29,9 @@ public:
 		Leaf
 	};
 
-	explicit TreeNodeBase(const IValueNameProvider* parent, const syntax::DictionaryObjectPtr& obj);
+	explicit TreeNodeBase(const IValueNameProvider* parent, syntax::DictionaryObjectPtr obj);
 	virtual TreeNodeType NodeType(void) const noexcept = 0;
-	static TreeNodeBasePtr Create(const IValueNameProvider* parent, const syntax::DictionaryObjectPtr obj);
+	static TreeNodeBasePtr Create(const IValueNameProvider* parent, syntax::DictionaryObjectPtr obj);
 
 protected:
 	const IValueNameProvider* _parent;
@@ -39,7 +39,7 @@ protected:
 
 class TreeNodeRoot : public TreeNodeBase {
 public:
-	explicit TreeNodeRoot(const IValueNameProvider* parent, const syntax::DictionaryObjectPtr& obj);
+	explicit TreeNodeRoot(const IValueNameProvider* parent, syntax::DictionaryObjectPtr obj);
 	virtual TreeNodeType NodeType(void) const noexcept override;
 
 	bool HasValues(void) const;
@@ -79,7 +79,7 @@ public:
 	typedef typename map_type::const_reference const_reference;
 
 public:
-	TreeBase(const syntax::DictionaryObjectPtr& obj);
+	TreeBase(syntax::DictionaryObjectPtr obj);
 	bool IsInitialized() const;
 	void Initialize() const;
 	void RemoveAllChilds();
@@ -161,7 +161,7 @@ public:
 	NameTree(syntax::DictionaryObjectPtr obj,
 		std::function<ValueT(const syntax::ContainableObjectPtr&)> convertor);
 
-	virtual syntax::NameObjectPtr GetValueName(void) const override;
+	virtual const syntax::NameObject& GetValueName(void) const override;
 	bool Contains(const syntax::StringObjectPtr& key) const;
 	ValueT Find(const syntax::StringObjectPtr& key) const;
 	void Insert(const syntax::StringObjectPtr& key, ValueT value);
@@ -198,7 +198,7 @@ public:
 		std::function<ValueT(const syntax::ContainableObjectPtr&)> convertor
 		);
 
-	virtual syntax::NameObjectPtr GetValueName(void) const override;
+	virtual const syntax::NameObject& GetValueName(void) const override;
 	bool Contains(const syntax::IntegerObjectPtr& key) const;
 	ValueT Find(const syntax::IntegerObjectPtr& key) const;
 	void Insert(const syntax::IntegerObjectPtr& key, ValueT value);
@@ -215,8 +215,8 @@ private:
 #pragma region Tree base
 
 template <typename KeyT, typename ValueT>
-TreeBase<KeyT, ValueT>::TreeBase(const syntax::DictionaryObjectPtr& obj)
-	: HighLevelObject(obj), _root(this, obj) {
+TreeBase<KeyT, ValueT>::TreeBase(syntax::DictionaryObjectPtr obj)
+	: HighLevelObject(obj), _root(make_deferred<TreeNodeRoot>(this, obj)) {
 }
 
 template <typename KeyT, typename ValueT>
@@ -578,7 +578,7 @@ inline NameTree<ValueT>::NameTree(
 	: TreeBase<syntax::StringObjectPtr, ValueT>(obj), _conversion(convertor) {}
 
 template <typename ValueT>
-inline syntax::NameObjectPtr NameTree<ValueT>::GetValueName(void) const {
+inline const syntax::NameObject& NameTree<ValueT>::GetValueName(void) const {
 	return constant::Name::Names;
 }
 
@@ -596,7 +596,7 @@ template <typename ValueT>
 inline void NameTree<ValueT>::Insert(const syntax::StringObjectPtr& key, ValueT value) {
 	auto raw_object = value->GetObject();
 
-	syntax::IndirectObjectReferencePtr reference(raw_object);
+	syntax::IndirectObjectReferencePtr reference = make_deferred<syntax::IndirectObjectReference>(raw_object);
 	base_type::Insert(key, reference);
 }
 
@@ -616,7 +616,7 @@ inline NumberTree<ValueT>::NumberTree(
 	: TreeBase<syntax::IntegerObjectPtr, ValueT>(obj), _conversion(convertor) {}
 
 template <typename ValueT>
-inline syntax::NameObjectPtr NumberTree<ValueT>::GetValueName(void) const {
+inline const syntax::NameObject& NumberTree<ValueT>::GetValueName(void) const {
 	return constant::Name::Nums;
 }
 

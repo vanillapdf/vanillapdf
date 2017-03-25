@@ -40,10 +40,10 @@ class ObjectFactory {
 public:
 	static BooleanObjectPtr CreateBoolean(TokenPtr token) {
 		if (token->GetType() == Token::Type::TRUE_VALUE)
-			return BooleanObjectPtr(true);
+			return make_deferred<BooleanObject>(true);
 
 		if (token->GetType() == Token::Type::FALSE_VALUE)
-			return BooleanObjectPtr(false);
+			return make_deferred<BooleanObject>(false);
 
 		assert(!"Expected boolean token type");
 		throw GeneralException("Expected boolean token type");
@@ -54,7 +54,7 @@ public:
 
 		auto buffer = token->Value();
 		types::big_int value = std::stoll(buffer->ToString());
-		return IntegerObjectPtr(value);
+		return make_deferred<IntegerObject>(value);
 	}
 
 	static RealObjectPtr CreateReal(TokenPtr token) {
@@ -67,31 +67,31 @@ public:
 		if (-1 != pos) {
 			auto precision = str.size() - pos - 1;
 			auto converted = ValueConvertUtils::SafeConvert<uint32_t>(precision);
-			return RealObjectPtr(value, converted);
+			return make_deferred<RealObject>(value, converted);
 		}
 
-		return RealObjectPtr(value);
+		return make_deferred<RealObject>(value);
 	}
 
 	static NameObjectPtr CreateName(TokenPtr token) {
 		assert(token->GetType() == Token::Type::NAME_OBJECT && "Expected name token type");
 
 		auto buffer = token->Value();
-		return NameObjectPtr(buffer);
+		return make_deferred<NameObject>(buffer);
 	}
 
 	static HexadecimalStringObjectPtr CreateHexString(TokenPtr token) {
 		assert(token->GetType() == Token::Type::HEXADECIMAL_STRING && "Expected hexadecimal string token type");
 
 		auto buffer = token->Value();
-		return HexadecimalStringObjectPtr(buffer);
+		return make_deferred<HexadecimalStringObject>(buffer);
 	}
 
 	static LiteralStringObjectPtr CreateLitString(TokenPtr token) {
 		assert(token->GetType() == Token::Type::LITERAL_STRING && "Expected literal string token type");
 
 		auto buffer = token->Value();
-		return LiteralStringObjectPtr(buffer);
+		return make_deferred<LiteralStringObject>(buffer);
 	}
 };
 
@@ -112,7 +112,7 @@ ObjectPtr ParserBase::ReadIndirectReference() {
 
 		if (PeekTokenTypeSkip() == Token::Type::INDIRECT_REFERENCE_MARKER) {
 			auto reference_marker = ReadTokenWithTypeSkip(Token::Type::INDIRECT_REFERENCE_MARKER);
-			IndirectObjectReferencePtr result(integer->GetUnsignedIntegerValue(), gen_number->SafeConvert<types::ushort>());
+			IndirectObjectReferencePtr result = make_deferred<IndirectObjectReference>(integer->GetUnsignedIntegerValue(), gen_number->SafeConvert<types::ushort>());
 			result->SetFile(_file);
 			return result;
 		}
@@ -145,12 +145,14 @@ DictionaryObjectPtr ParserBase::ReadDictionary() {
 		auto name = ReadDirectObjectWithType<NameObjectPtr>();
 		auto val = ReadDirectObject();
 
-		if (val->GetType() == Object::Type::Null)
+		if (val->GetType() == Object::Type::Null) {
 			continue;
+		}
 
 		auto containable_ptr = dynamic_cast<ContainableObject*>(val.get());
-		if (nullptr == containable_ptr)
+		if (nullptr == containable_ptr) {
 			throw ConversionExceptionFactory<ContainableObject>::Construct(val);
+		}
 
 		dictionary->Insert(name, ContainableObjectPtr(containable_ptr));
 	}
@@ -187,7 +189,7 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 				break;
 			}
 
-			auto result = StreamObjectPtr(dictionary, stream_offset);
+			auto result = make_deferred<StreamObject>(dictionary, stream_offset);
 			result->SetFile(_file);
 			return result;
 		} while (false);
@@ -226,7 +228,7 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 			auto stream_end_offset = offset + pos;
 			auto computed_length = stream_end_offset - stream_offset;
 			if (!dictionary->Contains(constant::Name::Length)) {
-				dictionary->Insert(constant::Name::Length, IntegerObjectPtr(computed_length));
+				dictionary->Insert(constant::Name::Length, make_deferred<IntegerObject>(computed_length));
 				break;
 			}
 
@@ -235,7 +237,7 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 				auto locked_file = _file.GetReference();
 				if (!locked_file->IsInitialized()) {
 					dictionary->Remove(constant::Name::Length);
-					dictionary->Insert(constant::Name::Length, IntegerObjectPtr(computed_length));
+					dictionary->Insert(constant::Name::Length, make_deferred<IntegerObject>(computed_length));
 					break;
 				}
 			}
@@ -245,7 +247,7 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 			break;
 		}
 
-		auto result = StreamObjectPtr(dictionary, stream_offset);
+		auto result = make_deferred<StreamObject>(dictionary, stream_offset);
 		result->SetFile(_file);
 		return result;
 	}
@@ -259,8 +261,9 @@ MixedArrayObjectPtr ParserBase::ReadArray() {
 	while (PeekTokenTypeSkip() != Token::Type::ARRAY_END) {
 		auto val = ReadDirectObject();
 		auto containable_ptr = dynamic_cast<ContainableObject*>(val.get());
-		if (nullptr == containable_ptr)
+		if (nullptr == containable_ptr) {
 			throw ConversionExceptionFactory<ContainableObject>::Construct(val);
+		}
 
 		result->Append(containable_ptr);
 	}
@@ -480,14 +483,14 @@ XrefEntryBasePtr Parser::ReadTableEntry(types::big_uint objNumber) {
 	auto peeked_token = PeekTokenSkip();
 	if (*peeked_token->Value() == "n") {
 		ReadTokenSkip();
-		XrefUsedEntryPtr result(objNumber, gen_number->SafeConvert<types::ushort>(), offset->GetIntegerValue());
+		XrefUsedEntryPtr result = make_deferred<XrefUsedEntry>(objNumber, gen_number->SafeConvert<types::ushort>(), offset->GetIntegerValue());
 		result->SetFile(_file);
 		return result;
 	}
 
 	if (*peeked_token->Value() == "f") {
 		ReadTokenSkip();
-		XrefFreeEntryPtr result(objNumber, gen_number->SafeConvert<types::ushort>());
+		XrefFreeEntryPtr result = make_deferred<XrefFreeEntry>(objNumber, gen_number->SafeConvert<types::ushort>());
 		result->SetFile(_file);
 		return result;
 	}
@@ -539,7 +542,7 @@ XrefStreamPtr Parser::ParseXrefStream(
 	}
 
 	auto size = header->FindAs<IntegerObjectPtr>(constant::Name::Size);
-	ArrayObjectPtr<IntegerObjectPtr> index = { IntegerObjectPtr(0), size };
+	ArrayObjectPtr<IntegerObjectPtr> index = { make_deferred<IntegerObject>(0), size };
 	if (header->Contains(constant::Name::Index)) {
 		index = header->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::Index);
 	}
@@ -590,14 +593,14 @@ XrefStreamPtr Parser::ParseXrefStream(
 			types::big_uint obj_number = SafeAddition<types::big_uint, types::big_uint, int>(*subsection_index, idx);
 
 			if (0 == field1) {
-				XrefFreeEntryPtr entry(obj_number, field3.SafeConvert<types::ushort>());
+				XrefFreeEntryPtr entry = make_deferred<XrefFreeEntry>(obj_number, field3.SafeConvert<types::ushort>());
 				entry->SetFile(_file);
 				result->Add(entry);
 				continue;
 			}
 
 			if (1 == field1) {
-				XrefUsedEntryPtr entry(obj_number, field3.SafeConvert<types::ushort>(), field2);
+				XrefUsedEntryPtr entry = make_deferred<XrefUsedEntry>(obj_number, field3.SafeConvert<types::ushort>(), field2);
 
 				// This case is when XrefStream contains reference to itself
 				if (obj_number == stream_obj_number && field3.SafeConvert<types::ushort>() == stream_gen_number) {
@@ -612,7 +615,7 @@ XrefStreamPtr Parser::ParseXrefStream(
 			}
 
 			if (2 == field1) {
-				XrefCompressedEntryPtr entry(obj_number, static_cast<types::ushort>(0), field2, field3.SafeConvert<size_t>());
+				XrefCompressedEntryPtr entry = make_deferred<XrefCompressedEntry>(obj_number, static_cast<types::ushort>(0), field2, field3.SafeConvert<size_t>());
 				entry->SetFile(_file);
 				result->Add(entry);
 				continue;
@@ -798,7 +801,7 @@ XrefChainPtr Parser::FindAllObjects(void) {
 		obj->SetFile(_file);
 		obj->SetInitialized();
 
-		XrefUsedEntryPtr entry(obj_number, gen_number, obj->GetOffset());
+		XrefUsedEntryPtr entry = make_deferred<XrefUsedEntry>(obj_number, gen_number, obj->GetOffset());
 		entry->SetReference(obj);
 		entry->SetFile(_file);
 		entry->SetInitialized();

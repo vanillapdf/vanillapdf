@@ -31,7 +31,7 @@ types::size_type PageRange::Size(void) const {
 }
 
 PageRange::SubRangePtr PageRange::At(types::size_type at) const {
-	return SubRangePtr(_obj->At(at), _obj->At(at + 1));
+	return make_deferred<SubRange>(_obj->At(at), _obj->At(at + 1));
 }
 
 bool ViewerPreferences::HideToolbar(syntax::BooleanObjectPtr& result) const {
@@ -218,7 +218,7 @@ bool ViewerPreferences::PrintPageRange(OutputPageRangePtr& result) const {
 	}
 
 	auto range = _obj->FindAs<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>>(constant::Name::PrintPageRange);
-	result = PageRangePtr(range);
+	result = make_deferred<PageRange>(range);
 	return true;
 }
 

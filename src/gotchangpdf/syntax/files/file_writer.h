@@ -5,6 +5,7 @@
 #include "syntax/files/file.h"
 
 #include <memory>
+#include <unordered_map>
 
 namespace gotchangpdf {
 namespace syntax {

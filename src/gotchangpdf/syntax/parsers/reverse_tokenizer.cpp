@@ -30,19 +30,19 @@ TokenPtr ReverseTokenizer::ReadToken() {
 		_advance_position = constant::BAD_OFFSET;
 		_token_cached = false;
 
-		return *result;
+		return result;
 	}
 
 	for (;;) {
 
 		if (m_stream->Eof()) {
-			return TokenPtr(Token::Type::END_OF_INPUT);
+			return make_deferred<Token>(Token::Type::END_OF_INPUT);
 		}
 
 		// Test if the next character is EOF
 		int peek_test = m_stream->Peek();
 		if (peek_test == std::char_traits<char>::eof()) {
-			return TokenPtr(Token::Type::END_OF_INPUT);
+			return make_deferred<Token>(Token::Type::END_OF_INPUT);
 		}
 
 		int ch = m_stream->Get();
@@ -58,7 +58,7 @@ TokenPtr ReverseTokenizer::ReadToken() {
 					chars->push_back(WhiteSpace::CARRIAGE_RETURN);
 				}
 
-				return TokenPtr(Token::Type::REVERSE_EOL, chars);
+				return make_deferred<Token>(Token::Type::REVERSE_EOL, chars);
 			}
 			case static_cast<int>(WhiteSpace::SPACE):
 			case static_cast<int>(WhiteSpace::FORM_FEED):
@@ -69,7 +69,7 @@ TokenPtr ReverseTokenizer::ReadToken() {
 			{
 				BufferPtr chars;
 				chars->push_back(WhiteSpace::CARRIAGE_RETURN);
-				return TokenPtr(Token::Type::REVERSE_EOL, chars);
+				return make_deferred<Token>(Token::Type::REVERSE_EOL, chars);
 			}
 		}
 
@@ -89,7 +89,7 @@ TokenPtr ReverseTokenizer::ReadToken() {
 				chars->push_back(next);
 			}
 
-			return TokenPtr(Token::Type::REVERSE_INTEGER_OBJECT, chars);
+			return make_deferred<Token>(Token::Type::REVERSE_INTEGER_OBJECT, chars);
 		}
 
 		for (;;) {
@@ -108,7 +108,7 @@ TokenPtr ReverseTokenizer::ReadToken() {
 		}
 
 		auto result_type = _dictionary.Find(chars);
-		return TokenPtr(result_type, chars);
+		return make_deferred<Token>(result_type, chars);
 	};
 }
 
@@ -119,7 +119,7 @@ TokenPtr ReverseTokenizer::PeekToken() {
 		assert(constant::BAD_OFFSET != _advance_position);
 		assert(constant::BAD_OFFSET != _last_token_offset);
 
-		return *_last_token;
+		return _last_token;
 	}
 
 	_last_token = ReadToken();
@@ -132,7 +132,7 @@ TokenPtr ReverseTokenizer::PeekToken() {
 	}
 
 	m_stream->SetPosition(_last_token_offset);
-	return *_last_token;
+	return _last_token;
 }
 
 TokenPtr ReverseTokenizer::ReadTokenWithType(Token::Type type) {

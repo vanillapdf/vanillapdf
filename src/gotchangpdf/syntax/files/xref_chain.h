@@ -48,8 +48,8 @@ public:
 	iterator end(void) { return _list.end(); }
 	const_iterator end(void) const { return _list.end(); }
 
-	IteratorPtr Begin() const { return _list.begin(); }
-	IteratorPtr End(void) const { return _list.end(); }
+	IteratorPtr Begin() const { return make_deferred<Iterator>(_list.begin()); }
+	IteratorPtr End(void) const { return make_deferred<Iterator>(_list.end()); }
 	void Append(value_type item) { _list.push_back(item); }
 	void Prepend(value_type item) { _list.push_front(item); }
 	void Reverse(void) { _list.reverse(); }

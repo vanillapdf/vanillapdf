@@ -77,7 +77,7 @@ void File::Initialize() {
 	// Opening the stream with ate option
 	auto file_size = _input->tellg();
 
-	InputStreamPtr input_stream(_input);
+	InputStreamPtr input_stream = make_deferred<InputStream>(_input);
 	Parser stream(GetWeakReference<File>(), input_stream);
 	_header = stream.ReadHeader(0);
 
@@ -141,7 +141,7 @@ bool File::SetEncryptionKey(const IEncryptionKey& key) {
 	auto sub_filter = dict->FindAs<NameObjectPtr>(constant::Name::SubFilter);
 	EncryptionAlgorithm algorithm = EncryptionAlgorithm::None;
 
-	IntegerObjectPtr length_bits = 40;
+	IntegerObjectPtr length_bits = make_deferred<IntegerObject>(40);
 	if (dict->Contains(constant::Name::Length)) {
 		length_bits = dict->FindAs<IntegerObjectPtr>(constant::Name::Length);
 		assert(length_bits->GetIntegerValue() % 8 == 0 && "Key length is not multiplier of 8");
@@ -230,7 +230,7 @@ bool File::SetEncryptionPassword(const Buffer& password) {
 	auto revision = dict->FindAs<IntegerObjectPtr>(constant::Name::R);
 	auto version = dict->FindAs<IntegerObjectPtr>(constant::Name::V);
 
-	IntegerObjectPtr length_bits = 40;
+	IntegerObjectPtr length_bits = make_deferred<IntegerObject>(40);
 	if (dict->Contains(constant::Name::Length)) {
 		length_bits = dict->FindAs<IntegerObjectPtr>(constant::Name::Length);
 		assert(length_bits->GetIntegerValue() % 8 == 0 && "Key length is not multiplier of 8");
@@ -262,7 +262,7 @@ BufferPtr File::DecryptStream(const Buffer& data,
 	types::big_uint objNumber,
 	types::ushort genNumber) {
 	if (!IsEncrypted()) {
-		return data;
+		return make_deferred<Buffer>(data);
 	}
 
 	auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
@@ -280,7 +280,7 @@ BufferPtr File::DecryptString(const Buffer& data,
 	types::big_uint objNumber,
 	types::ushort genNumber) {
 	if (!IsEncrypted()) {
-		return data;
+		return make_deferred<Buffer>(data);
 	}
 
 	auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
@@ -299,7 +299,7 @@ BufferPtr File::DecryptData(const Buffer& data,
 	types::ushort genNumber,
 	const NameObject& filter_name) {
 	if (!IsEncrypted()) {
-		return data;
+		return make_deferred<Buffer>(data);
 	}
 
 	EncryptionAlgorithm algorithm = GetEncryptionAlgorithmForFilter(filter_name);
@@ -317,7 +317,7 @@ BufferPtr File::DecryptData(const Buffer& data,
 	assert(objNumber != 0);
 
 	if (!IsEncrypted()) {
-		return data;
+		return make_deferred<Buffer>(data);
 	}
 
 	auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
@@ -336,7 +336,7 @@ BufferPtr File::DecryptData(const Buffer& data,
 
 	// data inside encryption dictionary are not encrypted
 	if ((dictionary_object_number == objNumber && dictionary_generation_number == genNumber)) {
-		return data;
+		return make_deferred<Buffer>(data);
 	}
 
 	// Same idea as above. SetEncryptionExempted shall be used for every
@@ -349,7 +349,7 @@ BufferPtr File::DecryptData(const Buffer& data,
 	// Any strings that are inside streams such as content streams and compressed object streams,
 	// which themselves are encrypted
 	if (object_entry->GetUsage() == XrefEntryBase::Usage::Compressed) {
-		return data;
+		return make_deferred<Buffer>(data);
 	}
 
 	if (_decryption_key.empty()) {
@@ -384,7 +384,7 @@ BufferPtr File::EncryptStream(const Buffer& data,
 	types::big_uint objNumber,
 	types::ushort genNumber) {
 	if (!IsEncrypted()) {
-		return data;
+		return make_deferred<Buffer>(data);
 	}
 
 	auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
@@ -402,7 +402,7 @@ BufferPtr File::EncryptString(const Buffer& data,
 	types::big_uint objNumber,
 	types::ushort genNumber) {
 	if (!IsEncrypted()) {
-		return data;
+		return make_deferred<Buffer>(data);
 	}
 
 	auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
@@ -421,7 +421,7 @@ BufferPtr File::EncryptData(const Buffer& data,
 	types::ushort genNumber,
 	const NameObject& filter_name) {
 	if (!IsEncrypted()) {
-		return data;
+		return make_deferred<Buffer>(data);
 	}
 
 	EncryptionAlgorithm algorithm = GetEncryptionAlgorithmForFilter(filter_name);
@@ -433,7 +433,7 @@ BufferPtr File::EncryptData(const Buffer& data,
 	types::ushort genNumber,
 	EncryptionAlgorithm alg) const {
 	if (!IsEncrypted()) {
-		return data;
+		return make_deferred<Buffer>(data);
 	}
 
 	auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
@@ -442,7 +442,7 @@ BufferPtr File::EncryptData(const Buffer& data,
 
 	// data inside encryption dictionary are not encrypted
 	if (objNumber == 0 || (dictionary_object_number == objNumber && dictionary_generation_number == genNumber)) {
-		return data;
+		return make_deferred<Buffer>(data);
 	}
 
 	// AES 256 bits behaves differently
@@ -497,7 +497,7 @@ EncryptionAlgorithm File::GetEncryptionAlgorithmForFilter(const NameObject& filt
 }
 
 void File::ReadXref(types::stream_offset offset) {
-	InputStreamPtr input_stream(_input);
+	InputStreamPtr input_stream = make_deferred<InputStream>(_input);
 	Parser stream(GetWeakReference<File>(), input_stream);
 
 	for (;;) {
@@ -533,7 +533,7 @@ void File::ReadXref(types::stream_offset offset) {
 }
 
 types::stream_offset File::GetLastXrefOffset(types::stream_size file_size) {
-	InputReverseStreamPtr raw_reversed(_input, file_size);
+	InputReverseStreamPtr raw_reversed = make_deferred<InputReverseStream>(_input, file_size);
 	auto reverse_stream = ReverseParser(raw_reversed);
 	return reverse_stream.ReadLastXrefOffset();
 }
@@ -753,11 +753,11 @@ std::vector<ObjectPtr> File::DeepCopyObjects(const std::vector<ObjectPtr>& objec
 }
 
 IInputStreamPtr File::GetInputStream(void) {
-	return InputStreamPtr(_input);
+	return make_deferred<InputStream>(_input);
 }
 
 IOutputStreamPtr File::GetOutputStream(void) {
-	return OutputStreamPtr(_input);
+	return make_deferred<OutputStream>(_input);
 }
 
 BufferPtr File::GetByteRange(types::stream_size begin, size_t length) const {
@@ -780,7 +780,7 @@ IInputStreamPtr File::GetByteRangeStream(types::stream_size begin, size_t length
 	stream.SetPosition(begin);
 	auto buffer = stream.Read(length);
 	auto ss = buffer->ToStringStream();
-	return InputStreamPtr(ss);
+	return make_deferred<InputStream>(ss);
 }
 
 } // syntax

@@ -27,7 +27,7 @@ bool PageNodeBase::HasParent(void) const {
 
 PageNodeBasePtr PageNodeBase::GetParent() const {
 	auto parent = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Parent);
-	return PageTreeNodePtr(parent);
+	return make_deferred<PageTreeNode>(parent);
 }
 
 void PageNodeBase::SetParent(PageNodeBasePtr parent) {
@@ -36,7 +36,7 @@ void PageNodeBase::SetParent(PageNodeBasePtr parent) {
 		assert(removed && "Unable to remove existing item"); removed;
 	}
 
-	syntax::IndirectObjectReferencePtr parent_ref(parent->GetObject());
+	syntax::IndirectObjectReferencePtr parent_ref = make_deferred<syntax::IndirectObjectReference>(parent->GetObject());
 	_obj->Insert(constant::Name::Parent, parent_ref);
 }
 
@@ -47,12 +47,12 @@ PageNodeBasePtr PageNodeBase::CreatePageNode(syntax::DictionaryObjectPtr obj) {
 	auto type = obj->FindAs<syntax::NameObjectPtr>(constant::Name::Type);
 
 	if (type == constant::Name::Pages) {
-		auto result = PageTreeNodePtr(obj);
+		auto result = make_deferred<PageTreeNode>(obj);
 		return result;
 	}
 
 	if (type == constant::Name::Page) {
-		auto result = PageObjectPtr(obj);
+		auto result = make_deferred<PageObject>(obj);
 		return result;
 	}
 

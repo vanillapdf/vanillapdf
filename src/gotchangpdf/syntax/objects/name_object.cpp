@@ -11,6 +11,10 @@ NameObject::NameObject() {
 	_value->Subscribe(this);
 }
 
+NameObject::NameObject(const char * value)
+	: NameObject(make_deferred<Buffer>(value)) {
+}
+
 NameObject::NameObject(BufferPtr name) : _value(name) {
 	_value->Subscribe(this);
 	_value->SetInitialized();
@@ -120,6 +124,18 @@ bool operator<(const syntax::NameObject& left, const syntax::NameObject& right) 
 	return (left.GetValue() < right.GetValue());
 }
 
+bool operator==(const Deferred<syntax::NameObject>& left, const Deferred<syntax::NameObject>& right) {
+	return (*left == *right);
+}
+
+bool operator!=(const Deferred<syntax::NameObject>& left, const Deferred<syntax::NameObject>& right) {
+	return (*left != *right);
+}
+
+bool operator<(const Deferred<syntax::NameObject>& left, const Deferred<syntax::NameObject>& right) {
+	return (*left < *right);
+}
+
 } // gotchangpdf
 
 namespace std {
@@ -139,9 +155,9 @@ namespace gotchangpdf {
 namespace constant {
 namespace Name {
 
-const syntax::NameObject AdbePkcs7s3(BufferPtr("adbe.pkcs7.s3", sizeof("adbe.pkcs7.s3") - 1));
-const syntax::NameObject AdbePkcs7s4(BufferPtr("adbe.pkcs7.s4", sizeof("adbe.pkcs7.s4") - 1));
-const syntax::NameObject AdbePkcs7s5(BufferPtr("adbe.pkcs7.s5", sizeof("adbe.pkcs7.s5") - 1));
+const syntax::NameObject AdbePkcs7s3(make_deferred<Buffer>("adbe.pkcs7.s3", sizeof("adbe.pkcs7.s3") - 1));
+const syntax::NameObject AdbePkcs7s4(make_deferred<Buffer>("adbe.pkcs7.s4", sizeof("adbe.pkcs7.s4") - 1));
+const syntax::NameObject AdbePkcs7s5(make_deferred<Buffer>("adbe.pkcs7.s5", sizeof("adbe.pkcs7.s5") - 1));
 
 } // Name
 } // constant
@@ -153,7 +169,7 @@ const NameObjectHandleTag* NameConstant_AdbePkcs7s5 = reinterpret_cast<const Nam
 
 #define DECLARE_CONST_NAME(name) \
 	namespace gotchangpdf { namespace constant { namespace Name { \
-	const syntax::NameObject name(BufferPtr(#name, sizeof(#name) - 1)); \
+	const syntax::NameObject name(make_deferred<Buffer>(#name, sizeof(#name) - 1)); \
 	} /* Name */ } /* constant */ } /* gotchangpdf */ \
 	const NameObjectHandleTag* NameConstant_##name = reinterpret_cast<const NameObjectHandleTag*>(&gotchangpdf::constant::Name::name);
 

@@ -101,7 +101,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_CreateFromPkcs12Fil
 			password_buffer = Buffer(password);
 		}
 
-		Deferred<PKCS12Key> key = Deferred<PKCS12Key>(path_string, password_buffer);
+		Deferred<PKCS12Key> key = make_deferred<PKCS12Key>(path_string, password_buffer);
 
 		auto ptr = static_cast<IEncryptionKey*>(key.AddRefGet());
 		*result = reinterpret_cast<EncryptionKeyHandle>(ptr);
@@ -123,7 +123,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_CreateFromPkcs12Buf
 		}
 
 		BufferPtr data_buffer(buffer_ptr);
-		Deferred<PKCS12Key> key(data_buffer, password_buffer);
+		Deferred<PKCS12Key> key = make_deferred<PKCS12Key>(data_buffer, password_buffer);
 		auto ptr = static_cast<IEncryptionKey*>(key.AddRefGet());
 		*result = reinterpret_cast<EncryptionKeyHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -146,7 +146,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_CreateCustom(
 
 	try
 	{
-		Deferred<CustomEncryptionKey> key(initialize, cleanup, decrypt, contains);
+		Deferred<CustomEncryptionKey> key = make_deferred<CustomEncryptionKey>(initialize, cleanup, decrypt, contains);
 		auto ptr = static_cast<IEncryptionKey*>(key.AddRefGet());
 		*result = reinterpret_cast<EncryptionKeyHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;

@@ -52,7 +52,7 @@ XrefUsedEntryBasePtr XrefChain::AllocateNewEntry() {
 		//	}
 		//}
 
-		XrefUsedEntryPtr new_entry(i, gen_number, -1);
+		XrefUsedEntryPtr new_entry = make_deferred<XrefUsedEntry>(i, gen_number, -1);
 		xref->Add(new_entry);
 
 		m_next_allocation = i + 1;
@@ -104,7 +104,7 @@ bool XrefChain::Contains(types::big_uint objNumber,
 
 bool XrefChain::ReleaseEntry(XrefUsedEntryBasePtr entry) {
 
-	for (auto xref : _list) {
+	for (auto& xref : _list) {
 		auto object_number = entry->GetObjectNumber();
 
 		if (!xref->Contains(object_number)) {
@@ -116,7 +116,7 @@ bool XrefChain::ReleaseEntry(XrefUsedEntryBasePtr entry) {
 			continue;
 		}
 
-		bool removed = xref->Remove(object_number);
+		bool removed = xref->Remove(entry);
 		assert(removed && "Could not remove the xref entry");
 
 		return removed;

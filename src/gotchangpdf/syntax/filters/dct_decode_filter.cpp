@@ -77,7 +77,7 @@ BufferPtr DCTDecodeFilter::Decode(std::istream& src, types::stream_size length, 
 	jpeg.src->resync_to_restart = jpeg_resync_to_restart; /* use default method */
 	jpeg.src->term_source = term_source;
 
-	BufferPtr input(static_cast<size_t>(length));
+	BufferPtr input = make_deferred<Buffer>(static_cast<size_t>(length));
 	src.read(input->data(), length);
 
 	jpeg.src->next_input_byte = reinterpret_cast<unsigned char*>(input->data());

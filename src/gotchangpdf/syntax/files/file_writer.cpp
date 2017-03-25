@@ -124,7 +124,7 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 
 			auto trailer_dictionary = new_xref->GetTrailerDictionary();
 			if (!trailer_dictionary->Contains(constant::Name::Prev)) {
-				IntegerObjectPtr xref_offset(prev_xref_offset);
+				IntegerObjectPtr xref_offset = make_deferred<IntegerObject>(prev_xref_offset);
 				trailer_dictionary->Insert(constant::Name::Prev, xref_offset);
 			}
 
@@ -145,7 +145,7 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 			auto trailer_dictionary = new_xref->GetTrailerDictionary();
 
 			if (!trailer_dictionary->Contains(constant::Name::Size)) {
-				IntegerObjectPtr xref_size_obj(xref_size);
+				IntegerObjectPtr xref_size_obj = make_deferred<IntegerObject>(xref_size);
 				trailer_dictionary->Insert(constant::Name::Size, xref_size_obj);
 			}
 
@@ -218,7 +218,7 @@ void FileWriter::RecalculateStreamLength(ObjectPtr obj) {
 	auto stream_header = stream_obj->GetHeader();
 
 	if (!stream_header->Contains(constant::Name::Length)) {
-		IntegerObjectPtr new_length(stream_data->size());
+		IntegerObjectPtr new_length = make_deferred<IntegerObject>(stream_data->size());
 		stream_header->Insert(constant::Name::Length, new_length);
 		return;
 	}
@@ -291,7 +291,7 @@ XrefBasePtr FileWriter::CloneXref(FilePtr destination, XrefBasePtr source) {
 		auto new_gen_number = entry->GetGenerationNumber();
 
 		if (entry->GetUsage() == XrefEntryBase::Usage::Free) {
-			XrefFreeEntryPtr new_entry(
+			XrefFreeEntryPtr new_entry = make_deferred<XrefFreeEntry>(
 				new_obj_number,
 				new_gen_number);
 
@@ -311,7 +311,7 @@ XrefBasePtr FileWriter::CloneXref(FilePtr destination, XrefBasePtr source) {
 			new_obj->SetFile(destination);
 
 			// Create new entry in our cloned table
-			XrefUsedEntryPtr new_entry(
+			XrefUsedEntryPtr new_entry = make_deferred<XrefUsedEntry>(
 				new_obj_number,
 				new_gen_number,
 				used_entry->GetOffset());
@@ -337,7 +337,7 @@ XrefBasePtr FileWriter::CloneXref(FilePtr destination, XrefBasePtr source) {
 			auto new_index = compressed_entry->GetIndex();
 
 			// Create new entry in our cloned table
-			XrefCompressedEntryPtr new_entry(
+			XrefCompressedEntryPtr new_entry = make_deferred<XrefCompressedEntry>(
 				new_obj_number,
 				new_gen_number,
 				new_obj_stream_number,
@@ -436,7 +436,7 @@ XrefBasePtr FileWriter::CreateIncrementalXref(FilePtr source, FilePtr destinatio
 				auto obj = used_entry->GetReference();
 				auto new_offset = used_entry->GetOffset();
 
-				XrefUsedEntryPtr new_entry(
+				XrefUsedEntryPtr new_entry = make_deferred<XrefUsedEntry>(
 					new_obj_number,
 					new_gen_number,
 					new_offset);
@@ -454,7 +454,7 @@ XrefBasePtr FileWriter::CreateIncrementalXref(FilePtr source, FilePtr destinatio
 				auto new_obj_stream_number = compressed_entry->GetObjectStreamNumber();
 				auto new_index = compressed_entry->GetIndex();
 
-				XrefCompressedEntryPtr new_entry(
+				XrefCompressedEntryPtr new_entry = make_deferred<XrefCompressedEntry>(
 					new_obj_number,
 					new_gen_number,
 					new_obj_stream_number,
@@ -470,7 +470,7 @@ XrefBasePtr FileWriter::CreateIncrementalXref(FilePtr source, FilePtr destinatio
 			if (entry->GetUsage() == XrefEntryBase::Usage::Free) {
 				auto free_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefFreeEntryPtr>(entry);
 
-				XrefFreeEntryPtr new_entry(
+				XrefFreeEntryPtr new_entry = make_deferred<XrefFreeEntry>(
 					new_obj_number,
 					new_gen_number);
 
@@ -489,7 +489,7 @@ XrefBasePtr FileWriter::CreateIncrementalXref(FilePtr source, FilePtr destinatio
 	new_trailer->SetFile(destination);
 
 	// Set size of new entries
-	IntegerObjectPtr new_size(new_table->Size());
+	IntegerObjectPtr new_size = make_deferred<IntegerObject>(new_table->Size());
 	new_trailer->Insert(constant::Name::Size, new_size);
 
 	XrefBasePtr prev_table = chain->Begin()->Value();
@@ -519,7 +519,7 @@ XrefBasePtr FileWriter::CreateIncrementalXref(FilePtr source, FilePtr destinatio
 	// Skip table, if there were no dirty entries
 	if (new_entries) {
 		auto last_xref_offset = prev_table->GetOffset();
-		IntegerObjectPtr new_offset(last_xref_offset);
+		IntegerObjectPtr new_offset = make_deferred<IntegerObject>(last_xref_offset);
 		new_trailer->Insert(constant::Name::Prev, new_offset);
 	}
 
@@ -757,7 +757,7 @@ void FileWriter::RemoveFreedObjects(XrefChainPtr xref) {
 			}
 
 			// Remove if not used
-			bool removed = current_xref->Remove(current_entry->GetObjectNumber());
+			bool removed = current_xref->Remove(current_entry);
 			assert(removed && "Could not release xref entry"); removed;
 
 			entry_iterator = sorted_entries.erase(entry_iterator);
@@ -787,7 +787,7 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
 
 		// All conflicts are overwritten
 		for (auto item : current) {
-			new_table->Add(item.second);
+			new_table->Add(item);
 		}
 	}
 
@@ -826,11 +826,11 @@ bool FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
 		auto current = *iterator;
 
 		for (auto item : current) {
-			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(item.second)) {
+			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(item)) {
 				continue;
 			}
 
-			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(item.second);
+			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(item);
 			auto object = used_entry->GetReference();
 
 			auto found = unique_set.find(object);
@@ -849,13 +849,11 @@ bool FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
 		auto current = *iterator;
 
 		for (auto item : current) {
-			auto entry = item.second;
-
-			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(item.second)) {
+			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(item)) {
 				continue;
 			}
 
-			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(item.second);
+			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(item);
 			auto object = used_entry->GetReference();
 
 			RedirectReferences(object, duplicit_list);
@@ -894,13 +892,11 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
 		auto current_xref = *iterator;
 
 		for (auto item : current_xref) {
-			auto entry = item.second;
-
-			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(item.second)) {
+			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(item)) {
 				continue;
 			}
 
-			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(item.second);
+			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(item);
 			auto object = used_entry->GetReference();
 
 			// Calling this we force the reference initialization
@@ -917,15 +913,76 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
 		auto current_xref = *iterator;
 
 		auto sorted_entries = current_xref->Entries();
-		for (auto entry : sorted_entries) {
+		for (auto it = sorted_entries.begin(); it != sorted_entries.end(); ++it, ++current_object_number) {
+			auto entry = *it;
+
 			auto original_object_number = entry->GetObjectNumber();
 			auto new_object_number = current_object_number;
 
 			if (original_object_number != new_object_number) {
-				entry->SetObjectNumber(current_object_number);
-			}
+				if (ConvertUtils<XrefEntryBasePtr>::IsType<XrefFreeEntryPtr>(entry)) {
+					auto free_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefFreeEntryPtr>(entry);
 
-			current_object_number++;
+					auto generation_number = free_entry->GetGenerationNumber();
+					auto next_free_object = free_entry->GetNextFreeObjectNumber();
+
+					XrefFreeEntryPtr new_entry = make_deferred<XrefFreeEntry>(
+						current_object_number,
+						generation_number,
+						next_free_object);
+
+					new_entry->SetFile(entry->GetFile());
+					new_entry->SetInitialized();
+
+					current_xref->Remove(entry);
+					current_xref->Add(new_entry);
+					continue;
+				}
+
+				if (ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(entry)) {
+					auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
+
+					auto generation_number = used_entry->GetGenerationNumber();
+					auto offset = used_entry->GetOffset();
+					auto referenced_object = used_entry->GetReference();
+
+					XrefUsedEntryPtr new_entry = make_deferred<XrefUsedEntry>(
+						current_object_number,
+						generation_number,
+						offset);
+
+					new_entry->SetFile(entry->GetFile());
+					new_entry->SetReference(referenced_object);
+					new_entry->SetInitialized();
+
+					current_xref->Remove(entry);
+					current_xref->Add(new_entry);
+					continue;
+				}
+
+				if (ConvertUtils<XrefEntryBasePtr>::IsType<XrefCompressedEntryPtr>(entry)) {
+					auto compressed_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(entry);
+
+					auto generation_number = compressed_entry->GetGenerationNumber();
+					auto object_stream_number = compressed_entry->GetObjectStreamNumber();
+					auto index = compressed_entry->GetIndex();
+
+					XrefCompressedEntryPtr new_entry = make_deferred<XrefCompressedEntry>(
+						current_object_number,
+						generation_number,
+						object_stream_number,
+						index);
+
+					new_entry->SetFile(entry->GetFile());
+					new_entry->SetInitialized();
+
+					current_xref->Remove(entry);
+					current_xref->Add(new_entry);
+					continue;
+				}
+
+				assert(!"Unknown entry type");
+			}
 		}
 	}
 }

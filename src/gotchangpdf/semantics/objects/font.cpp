@@ -74,7 +74,7 @@ bool CompositeFont::ToUnicode(OuputUnicodeCharacterMapPtr& result) const {
 	}
 
 	auto stream = _obj->FindAs<syntax::StreamObjectPtr>(constant::Name::ToUnicode);
-	result = UnicodeCharacterMapPtr(stream);
+	result = make_deferred<UnicodeCharacterMap>(stream);
 	return true;
 }
 
