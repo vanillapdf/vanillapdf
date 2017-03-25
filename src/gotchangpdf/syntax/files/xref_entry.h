@@ -105,7 +105,7 @@ public:
 public:
 	virtual ObjectPtr GetReference(void);
 	virtual void SetReference(ObjectPtr ref);
-	virtual void ReleaseReference(bool check_object_xref);
+	virtual void ReleaseReference(bool check_object_xref = true);
 
 	virtual void ObserveeChanged(IModifyObservable*) override;
 	virtual bool InUse(void) const noexcept override;

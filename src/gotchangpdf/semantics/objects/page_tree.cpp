@@ -91,39 +91,42 @@ bool PageTree::HasTreeChilds(PageTreeNodePtr node) const {
 	auto count = kids->Size();;
 	for (decltype(count) i = 0; i < count; ++i) {
 		auto kid = kids->At(i);
-		if (kid->GetNodeType() == PageNodeBase::NodeType::Tree)
+		if (kid->GetNodeType() == PageNodeBase::NodeType::Tree) {
 			return true;
+		}
 	}
 
 	return false;
 }
 
-void PageTree::Insert(PageObjectPtr object, types::integer index) {
+void PageTree::Insert(PageObjectPtr object, types::integer page_index) {
+	auto array_index = page_index - 1;
+
 	auto raw_obj = object->GetObject();
-	auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::Kids);
-	kids->Insert(raw_obj, index);
+	auto kids = _obj->FindAs<ArrayObjectPtr<IndirectObjectReferencePtr>>(constant::Name::Kids);
+	kids->Insert(make_deferred<IndirectObjectReference>(raw_obj), array_index);
 	object->SetParent(make_deferred<PageTreeNode>(_obj));
 
 	UpdateKidsCount(kids->Size());
-	m_pages[index - 1] = object;
+	m_pages.insert(m_pages.begin() + array_index, object);
 }
 
 void PageTree::Append(PageObjectPtr object) {
-	auto raw_obj = object->GetObject();
-	auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::Kids);
-	kids->Append(raw_obj);
-	object->SetParent(make_deferred<PageTreeNode>(_obj));
+	auto kids = _obj->FindAs<ArrayObjectPtr<IndirectObjectReferencePtr>>(constant::Name::Kids);
 
-	UpdateKidsCount(kids->Size());
-	m_pages.push_back(object);
+	// Insert at the end of kids array
+	Insert(object, kids->Size() + 1);
 }
 
-void PageTree::Remove(types::integer index) {
-	auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::Kids);
-	kids->Remove(index);
+void PageTree::Remove(types::integer page_index) {
+	auto array_index = page_index - 1;
+
+	auto kids = _obj->FindAs<ArrayObjectPtr<IndirectObjectReferencePtr>>(constant::Name::Kids);
+	bool removed = kids->Remove(array_index);
+	assert(removed && "Could not remove page"); removed;
 
 	UpdateKidsCount(kids->Size());
-	m_pages.erase(m_pages.begin() + index - 1);
+	m_pages.erase(m_pages.begin() + array_index);
 }
 
 void PageTree::UpdateKidsCount(size_t new_size) {

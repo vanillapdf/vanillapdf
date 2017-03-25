@@ -951,6 +951,9 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
 						generation_number,
 						offset);
 
+					// Release the old entry before assigning the new one
+					used_entry->ReleaseReference();
+
 					new_entry->SetFile(entry->GetFile());
 					new_entry->SetReference(referenced_object);
 					new_entry->SetInitialized();
@@ -966,6 +969,7 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
 					auto generation_number = compressed_entry->GetGenerationNumber();
 					auto object_stream_number = compressed_entry->GetObjectStreamNumber();
 					auto index = compressed_entry->GetIndex();
+					auto referenced_object = compressed_entry->GetReference();
 
 					XrefCompressedEntryPtr new_entry = make_deferred<XrefCompressedEntry>(
 						current_object_number,
@@ -973,7 +977,11 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
 						object_stream_number,
 						index);
 
+					// Release the old entry before assigning the new one
+					compressed_entry->ReleaseReference();
+
 					new_entry->SetFile(entry->GetFile());
+					new_entry->SetReference(referenced_object);
 					new_entry->SetInitialized();
 
 					current_xref->Remove(entry);

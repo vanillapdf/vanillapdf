@@ -18,9 +18,9 @@ public:
 	PageObjectPtr Page(types::integer page_number) const { return GetCachedPage(page_number); }
 	PageObjectPtr operator[](types::integer page_number) const { return GetCachedPage(page_number); }
 
-	void Insert(PageObjectPtr object, types::integer index);
+	void Insert(PageObjectPtr object, types::integer page_index);
 	void Append(PageObjectPtr object);
-	void Remove(types::integer index);
+	void Remove(types::integer page_index);
 
 private:
 	PageObjectPtr GetCachedPage(types::integer page_number) const;

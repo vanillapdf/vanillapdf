@@ -13,7 +13,18 @@ ObjectPtr::ObjectPtr() : Deferred<Object>(NullObject::GetInstance()) {
 }
 
 bool Object::IsIndirect(void) const noexcept {
-	return (!m_entry.IsEmpty() && m_entry.IsActive());
+	bool is_indirect = (!m_entry.IsEmpty() && m_entry.IsActive());
+	if (is_indirect) {
+
+		// Verify that the entry refers to this object
+		auto entry = m_entry.GetReference();
+		if (entry->InUse()) {
+			bool identity = Identity(entry->GetReference());
+			assert(identity && "Indirect entry does not reference to this object");
+		}
+	}
+
+	return is_indirect;
 }
 
 void Object::SetXrefEntry(XrefUsedEntryBasePtr entry) {

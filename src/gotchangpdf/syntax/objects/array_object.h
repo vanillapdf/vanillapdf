@@ -83,7 +83,7 @@ public:
 
 	void Append(const T& value);
 	void Insert(const T& value, size_t at);
-	void Remove(size_t at);
+	bool Remove(size_t at);
 
 	std::string ToString(void) const;
 
@@ -241,8 +241,8 @@ void ArrayObject<T>::Insert(const T& value, size_t at) {
 }
 
 template <typename T>
-void ArrayObject<T>::Remove(size_t at) {
-	_list->Remove(at);
+bool ArrayObject<T>::Remove(size_t at) {
+	return _list->Remove(at);
 }
 
 template <typename T>
