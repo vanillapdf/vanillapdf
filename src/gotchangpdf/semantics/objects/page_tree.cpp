@@ -15,14 +15,29 @@ PageTree::PageTree(DictionaryObjectPtr root) : HighLevelObject(root) {
 
 types::integer PageTree::PageCount(void) const {
 	auto root = make_deferred<PageTreeNode>(_obj);
-	auto result = root->KidCount()->SafeConvert<types::integer>();
+	return root->KidCount()->SafeConvert<types::integer>();
+}
 
-	if (_obj->Contains(constant::Name::Count)) {
-		auto count_obj = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::Count);
-		assert(count_obj->GetIntegerValue() == result);
+types::integer PageTree::PageCount(PageNodeBasePtr node) {
+	if (node->GetNodeType() == PageNodeBase::NodeType::Tree) {
+		auto tree_node = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageTreeNodePtr>(node);
+		auto result = tree_node->KidCount();
+
+		types::integer verify = 0;
+		auto kids = tree_node->Kids();
+		for (auto kid : kids) {
+			verify += PageCount(kid);
+		}
+
+		assert(result == verify && "Kid count does not match");
 	}
 
-	return result;
+	// Single page for objects
+	if (node->GetNodeType() == PageNodeBase::NodeType::Object) {
+		return 1;
+	}
+
+	throw GeneralException("Unknown page object type");
 }
 
 PageObjectPtr PageTree::GetCachedPage(types::integer page_number) const {
@@ -107,7 +122,7 @@ void PageTree::Insert(PageObjectPtr object, types::integer page_index) {
 	kids->Insert(make_deferred<IndirectObjectReference>(raw_obj), array_index);
 	object->SetParent(make_deferred<PageTreeNode>(_obj));
 
-	UpdateKidsCount(kids->Size());
+	UpdateKidsCount();
 	m_pages.insert(m_pages.begin() + array_index, object);
 }
 
@@ -125,20 +140,42 @@ void PageTree::Remove(types::integer page_index) {
 	bool removed = kids->Remove(array_index);
 	assert(removed && "Could not remove page"); removed;
 
-	UpdateKidsCount(kids->Size());
+	UpdateKidsCount();
 	m_pages.erase(m_pages.begin() + array_index);
 }
 
-void PageTree::UpdateKidsCount(size_t new_size) {
-	if (!_obj->Contains(constant::Name::Count)) {
-		IntegerObjectPtr integer_size = make_deferred<IntegerObject>(new_size);
-		_obj->Insert(constant::Name::Count, integer_size);
+void PageTree::UpdateKidsCount() {
+	auto root = make_deferred<PageTreeNode>(_obj);
+	UpdateKidsCount(root);
+}
+
+types::integer PageTree::UpdateKidsCount(PageNodeBasePtr node) {
+
+	// Do nothing for page objects
+	if (node->GetNodeType() == PageNodeBase::NodeType::Object) {
+		return 1;
 	}
 
-	auto count = _obj->FindAs<IntegerObjectPtr>(constant::Name::Count);
-	if (count->GetUnsignedIntegerValue() != new_size) {
-		count->SetValue(new_size);
+	if (node->GetNodeType() == PageNodeBase::NodeType::Tree) {
+		auto tree_node = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageTreeNodePtr>(node);
+		auto tree_node_object = tree_node->GetObject();
+		auto result = tree_node_object->FindAs<IntegerObjectPtr>(constant::Name::Count);
+
+		types::integer verify = 0;
+		auto kids = tree_node->Kids();
+		for (auto kid : kids) {
+			verify += UpdateKidsCount(kid);
+		}
+
+		// Update the kid count
+		if (result != verify) {
+			result->SetValue(verify);
+		}
+
+		return verify;
 	}
+
+	throw GeneralException("Unknown page object type");
 }
 
 } // semantics

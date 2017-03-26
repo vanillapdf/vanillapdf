@@ -26,7 +26,10 @@ private:
 	PageObjectPtr GetCachedPage(types::integer page_number) const;
 	PageObjectPtr PageInternal(PageTreeNodePtr node, types::integer page_number, types::integer& processed) const;
 	bool HasTreeChilds(PageTreeNodePtr node) const;
-	void UpdateKidsCount(size_t new_size);
+	types::integer PageCount(PageNodeBasePtr node);
+	void UpdateKidsCount();
+
+	static types::integer UpdateKidsCount(PageNodeBasePtr node);
 
 private:
 	// Cache

@@ -27,7 +27,11 @@ IntegerObjectPtr PageTreeNode::KidCount(void) const {
 
 ArrayObjectPtr<PageNodeBasePtr> PageTreeNode::Kids() const {
 	auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(Name::Kids);
-	return kids->Convert<PageNodeBasePtr>([this](const DictionaryObjectPtr& obj) { return CreatePageNode(obj); });
+	return kids->Convert<PageNodeBasePtr>(ConvertFunction);
+}
+
+PageNodeBasePtr PageTreeNode::ConvertFunction(DictionaryObjectPtr obj) {
+	return CreatePageNode(obj);
 }
 
 } // semantics

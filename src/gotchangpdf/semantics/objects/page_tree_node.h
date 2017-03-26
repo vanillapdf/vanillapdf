@@ -15,6 +15,9 @@ public:
 	syntax::ArrayObjectPtr<PageNodeBasePtr> Kids(void) const;
 
 	virtual NodeType GetNodeType(void) const noexcept override { return NodeType::Tree; }
+
+private:
+	static PageNodeBasePtr ConvertFunction(syntax::DictionaryObjectPtr obj);
 };
 
 } // semantics
