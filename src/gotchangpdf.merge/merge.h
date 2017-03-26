@@ -19,10 +19,6 @@ extern const int GOTCHANG_PDF_MERGE_ERROR_FAILURE;
 
 void print_help();
 
-error_type process_contents(ContentsHandle page_contents, integer_type page_number);
-error_type process_content_operation(ContentOperationHandle content_operation, integer_type page_number);
-error_type process_string_object(StringObjectHandle string_handle, integer_type page_number);
-
 #define RETURN_ERROR_IF_NOT_SUCCESS(fn) \
 do { \
 	error_type __result__ = (fn); \
