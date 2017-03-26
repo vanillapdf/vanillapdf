@@ -81,37 +81,7 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 	dest_xref->Reverse();
 
 	// Compress and optimize here
-
-	// Stage: Remove objects that were freed
-	RemoveFreedObjects(dest_xref);
-
-	// Stage: Squash xref chain into single element
-	MergeXrefs(dest_xref);
-
-	// Stage: Remove unreferenced objects
-	RemoveUnreferencedObjects(dest_xref);
-
-	// Stage: Search for duplicit direct objects and create indirect objects
-	ExtractDuplicitDirectObjects(dest_xref);
-
-	// Stage: Remove duplicit indirect objects
-	for (;;) {
-
-		// Repeat until no duplicit items are found
-		bool found = RemoveDuplicitIndirectObjects(dest_xref);
-		if (!found) {
-			break;
-		}
-	}
-
-	// Stage: Create object streams
-	CompressObjects(dest_xref);
-
-	// Stage: Close the object number gaps
-	SquashTableSpace(dest_xref);
-
-	// Stage: Compress xref
-	CompressXref(dest_xref);
+	CompressAndOptimize(dest_xref);
 
 	bool first_xref = true;
 	auto last_xref_iterator = dest_xref->begin();
@@ -133,6 +103,11 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 			prev->SetValue(prev_xref_offset);
 
 			last_xref_iterator++;
+		}
+
+		// Object stream contents has to be adjusted separately
+		if (m_recalculate_object_stream_content) {
+			RecalculateObjectStreamContent(new_xref);
 		}
 
 		// Stream length to be adjusted according to calculated size
@@ -208,6 +183,141 @@ void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
 	output->Flush();
 }
 
+void FileWriter::RecalculateObjectStreamContent(XrefBasePtr source) {
+	// Only matters for xref streams
+	if (!ConvertUtils<XrefBasePtr>::IsType<XrefStreamPtr>(source)) {
+		return;
+	}
+
+	// Convert to stream
+	auto xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(source);
+
+	// Store array of objects for every object stream
+	std::unordered_map<types::big_uint, std::vector<XrefCompressedEntryPtr>> object_stream_map;
+
+	for (auto entry : source) {
+
+		// Ignore non-compressed entries
+		if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefCompressedEntryPtr>(entry)) {
+			continue;
+		}
+
+		// Convert to compressed entry
+		auto compressed_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(entry);
+
+		// Obtain required informations
+		auto object_stream_number = compressed_entry->GetObjectStreamNumber();
+
+		// Insert compressed object into map
+		object_stream_map[object_stream_number].push_back(compressed_entry);
+	}
+
+	// After all entries have been acquired we begin with the recalculation
+	for (auto pair : object_stream_map) {
+		auto object_stream_number = pair.first;
+		auto entries = pair.second;
+
+		// TODO This may not work in some cases
+		// Rework using xref chain, to find the object stream number?
+		auto object_stream_entry = source->Find(object_stream_number);
+		if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(object_stream_entry)) {
+			continue;
+		}
+
+		auto object_stream_used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(object_stream_entry);
+		auto object_stream_object = object_stream_used_entry->GetReference();
+
+		// This can be caused by invalid source file or programming error as well
+		// Let me know, if you find a document with this condition
+		bool is_stream = ObjectUtils::IsType<StreamObjectPtr>(object_stream_object);
+		assert(is_stream && "Object stream has incorrect type");
+		if (!is_stream) {
+			continue;
+		}
+
+		auto object_stream = ObjectUtils::ConvertTo<StreamObjectPtr>(object_stream_object);
+
+		// Sort compressed entries by index
+		auto sorting_predicate = [](const XrefCompressedEntryPtr& left, const XrefCompressedEntryPtr& right) {
+			return left->GetIndex() < right->GetIndex();
+		};
+
+		std::sort(entries.begin(), entries.end(), sorting_predicate);
+
+		// Verify there are no gaps
+		types::size_type current_verify_index = 0;
+		for (auto it = entries.begin(); it != entries.end(); ++it, ++current_verify_index) {
+			auto entry = *it;
+
+			// How to fix this?
+			auto entry_index = entry->GetIndex();
+			assert(current_verify_index == entry_index && "Entry index is invalid"); entry_index;
+		}
+
+		// Initialize output streams
+		std::stringstream header_stream;
+		std::stringstream data_stream;
+
+		// Reset counting indexes
+		types::stream_offset current_offset = 0;
+
+		// Store flag only for first entries
+		bool first = true;
+
+		for (auto it = entries.begin(); it != entries.end(); ++it) {
+			auto entry = *it;
+
+			auto entry_object = entry->GetReference();
+			auto entry_object_string = entry_object->ToPdf();
+
+			// Write index with offset into header stream
+			if (!first) {
+				header_stream << ' ';
+			}
+
+			header_stream << entry_object->GetObjectNumber();
+			header_stream << ' ';
+			header_stream << current_offset;
+
+			// Write whole object into data stream
+			if (!first) {
+				data_stream << ' ';
+			}
+
+			data_stream << entry_object_string;
+
+			// Advance counters
+			current_offset += entry_object_string.size() + 1;
+
+			first = false;
+		}
+
+		auto header_string = header_stream.str();
+		auto data_string = data_stream.str();
+
+		// Merge header with data
+		BufferPtr new_body;
+		new_body->reserve(header_string.size() + data_string.size() + 1);
+		new_body->insert(new_body.end(), header_string.begin(), header_string.end());
+		new_body->insert(new_body.end(), ' ');
+		new_body->insert(new_body.end(), data_string.begin(), data_string.end());
+
+		// Store recalculated data
+		object_stream->SetBody(new_body);
+
+		// Update stream metadata
+		auto header = object_stream->GetHeader();
+
+		IntegerObjectPtr new_count = make_deferred<IntegerObject>(entries.size());
+		header->Remove(constant::Name::N);
+		header->Insert(constant::Name::N, new_count);
+
+		IntegerObjectPtr new_offset = make_deferred<IntegerObject>(header_string.size() + 1);
+		header->Remove(constant::Name::First);
+		header->Insert(constant::Name::First, new_offset);
+	}
+}
+
 void FileWriter::RecalculateStreamLength(ObjectPtr obj) {
 	if (!ObjectUtils::IsType<StreamObjectPtr>(obj)) {
 		return;
@@ -230,12 +340,9 @@ void FileWriter::RecalculateStreamLength(ObjectPtr obj) {
 }
 
 void FileWriter::RecalculateStreamsLength(XrefBasePtr source) {
-	auto table_size = source->Size();
-	auto table_items = source->Entries();
 
-	for (decltype(table_size) i = 0; i < table_size; ++i) {
-		auto entry = table_items[i];
-
+	// Iteration may be unordered, but I don't really care
+	for (auto entry : source) {
 		if (entry->GetUsage() == XrefEntryBase::Usage::Free) {
 			continue;
 		}
@@ -732,6 +839,39 @@ void FileWriter::CopyStreamContent(IInputStreamPtr source, IOutputStreamPtr dest
 		source->Read(buffer, block_size);
 		destination->Write(buffer, block_size);
 	}
+}
+
+void FileWriter::CompressAndOptimize(XrefChainPtr xref) {
+	// Stage: Remove objects that were freed
+	RemoveFreedObjects(xref);
+
+	// Stage: Squash xref chain into single element
+	MergeXrefs(xref);
+
+	// Stage: Remove unreferenced objects
+	RemoveUnreferencedObjects(xref);
+
+	// Stage: Search for duplicit direct objects and create indirect objects
+	ExtractDuplicitDirectObjects(xref);
+
+	// Stage: Remove duplicit indirect objects
+	for (;;) {
+
+		// Repeat until no duplicit items are found
+		bool found = RemoveDuplicitIndirectObjects(xref);
+		if (!found) {
+			break;
+		}
+	}
+
+	// Stage: Create object streams
+	CompressObjects(xref);
+
+	// Stage: Close the object number gaps
+	SquashTableSpace(xref);
+
+	// Stage: Compress xref
+	CompressXref(xref);
 }
 
 void FileWriter::RemoveFreedObjects(XrefChainPtr xref) {

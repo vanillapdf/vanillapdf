@@ -70,6 +70,9 @@ public:
 	bool GetRecalculateXrefSizeFlag(void) const noexcept { return m_recalculate_xref_size; }
 	void SetRecalculateXrefSizeFlag(bool flag) noexcept { m_recalculate_xref_size = flag; }
 
+	bool GetRecalculateObjectStreamContentFlag(void) const noexcept { return m_recalculate_object_stream_content; }
+	void SetRecalculateObjectStreamContentFlag(bool flag) noexcept { m_recalculate_object_stream_content = flag; }
+
 	bool GetMergeXrefsFlag(void) const noexcept { return m_merge_xrefs; }
 	void SetMergeXrefsFlag(bool flag) noexcept { m_merge_xrefs = flag; }
 
@@ -111,7 +114,9 @@ private:
 
 	void RecalculateStreamLength(ObjectPtr obj);
 	void RecalculateStreamsLength(XrefBasePtr source);
+	void RecalculateObjectStreamContent(XrefBasePtr source);
 
+	void CompressAndOptimize(XrefChainPtr xref);
 	void RemoveFreedObjects(XrefChainPtr xref);
 	void MergeXrefs(XrefChainPtr xref);
 	void RemoveUnreferencedObjects(XrefChainPtr xref);
@@ -128,6 +133,7 @@ private:
 	bool m_recalculate_offset = true;
 	bool m_recalculate_stream_size = true;
 	bool m_recalculate_xref_size = true;
+	bool m_recalculate_object_stream_content = true;
 
 	// Compress and optimize flags
 	bool m_merge_xrefs = true;
