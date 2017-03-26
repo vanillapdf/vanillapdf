@@ -97,8 +97,8 @@ public:
 	bool Contains(const NameObjectPtr name) const;
 	bool Contains(const NameObject& name) const;
 
-	void Insert(NameObjectPtr name, ContainableObjectPtr value);
-	void Insert(const NameObject& name, ContainableObjectPtr value);
+	bool Insert(NameObjectPtr name, ContainableObjectPtr value);
+	bool Insert(const NameObject& name, ContainableObjectPtr value);
 
 	bool Remove(const NameObjectPtr name);
 	bool Remove(const NameObject& name);

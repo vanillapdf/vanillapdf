@@ -118,14 +118,18 @@ bool DictionaryObject::Remove(const NameObjectPtr name) {
 	return true;
 }
 
-void DictionaryObject::Insert(const NameObject& name, ContainableObjectPtr value) {
+bool DictionaryObject::Insert(const NameObject& name, ContainableObjectPtr value) {
 	NameObjectPtr temp = make_deferred<NameObject>(name);
-	Insert(temp, value);
+	return Insert(temp, value);
 }
 
-void DictionaryObject::Insert(NameObjectPtr name, ContainableObjectPtr value) {
+bool DictionaryObject::Insert(NameObjectPtr name, ContainableObjectPtr value) {
 	auto pair = std::make_pair(name, value);
 	auto result = _list.insert(pair);
+	if (result.second == false) {
+		return false;
+	}
+
 	name->SetOwner(Object::GetWeakReference());
 	value->SetOwner(Object::GetWeakReference());
 
@@ -134,6 +138,8 @@ void DictionaryObject::Insert(NameObjectPtr name, ContainableObjectPtr value) {
 
 	//assert(result.second && "Key was already in the dictionary");
 	OnChanged();
+
+	return true;
 }
 
 bool DictionaryObject::Contains(const NameObject& name) const {
