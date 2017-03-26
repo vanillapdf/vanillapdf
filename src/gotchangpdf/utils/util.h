@@ -48,7 +48,7 @@ private:
 	class Specializator {
 	public:
 		static bool IsInRange(ValueType value) {
-			return (value >= std::numeric_limits<RangeType>::min()) &&
+			return (value >= std::numeric_limits<RangeType>::lowest()) &&
 				(value <= std::numeric_limits<RangeType>::max());
 		}
 	};
