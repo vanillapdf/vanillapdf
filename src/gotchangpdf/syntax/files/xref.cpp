@@ -148,6 +148,7 @@ void XrefTable::Add(XrefEntryBasePtr entry) {
 
 	// Xref table can only stored free and used entries
 	assert(is_free || is_used && "Adding invalid entry type to xref table");
+	is_free; is_used;
 
 	// Perform the addition
 	XrefBase::Add(entry);

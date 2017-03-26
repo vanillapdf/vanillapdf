@@ -20,7 +20,7 @@ bool Object::IsIndirect(void) const noexcept {
 		auto entry = m_entry.GetReference();
 		if (entry->InUse()) {
 			bool identity = Identity(entry->GetReference());
-			assert(identity && "Indirect entry does not reference to this object");
+			assert(identity && "Indirect entry does not reference to this object"); identity;
 		}
 	}
 
