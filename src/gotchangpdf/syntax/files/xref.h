@@ -45,9 +45,6 @@ public:
 		Stream
 	};
 
-	//bool IsInitialized(void) const noexcept { return m_initialized; }
-	//void SetInitialized(bool initialized = true) noexcept { m_initialized = initialized; }
-
 	virtual void ObserveeChanged(IModifyObservable*) override;
 
 	void SetFile(WeakReference<File>file) noexcept { _file = file; }
@@ -68,7 +65,7 @@ public:
 	IteratorPtr Begin(void) const noexcept { return make_deferred<Iterator>(_entries.begin()); }
 	IteratorPtr End(void) const noexcept { return make_deferred<Iterator>(_entries.end()); }
 
-	void Add(XrefEntryBasePtr entry);
+	virtual void Add(XrefEntryBasePtr entry);
 	bool Remove(XrefEntryBasePtr entry);
 	size_t Size(void) const noexcept;
 	XrefEntryBasePtr Find(types::big_uint obj_number) const;
@@ -93,20 +90,28 @@ protected:
 	types::stream_offset _last_xref_offset = constant::BAD_OFFSET;
 	types::stream_offset _offset = constant::BAD_OFFSET;
 	DictionaryObjectPtr _trailer_dictionary;
-	//bool m_initialized = false;
 	bool m_dirty = false;
 };
 
 class XrefTable : public XrefBase {
 public:
-	virtual Type GetType(void) const noexcept override { return XrefBase::Type::Table; }
+	virtual Type GetType(void) const noexcept override {
+		return XrefBase::Type::Table;
+	}
+
+	virtual void Add(XrefEntryBasePtr entry) override;
 };
 
 class XrefStream : public XrefBase {
 public:
-	virtual Type GetType(void) const noexcept override { return XrefBase::Type::Stream; }
+	virtual Type GetType(void) const noexcept override {
+		return XrefBase::Type::Stream;
+	}
 
-	StreamObjectPtr GetStreamObject(void) const { return _stream; }
+	StreamObjectPtr GetStreamObject(void) const {
+		return _stream;
+	}
+
 	void SetStreamObject(StreamObjectPtr stream) {
 		_stream->Unsubscribe(this);
 		_stream = stream;

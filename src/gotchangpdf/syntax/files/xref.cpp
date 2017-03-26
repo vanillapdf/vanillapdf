@@ -142,6 +142,17 @@ void XrefStream::WriteValue(std::ostream& dest, types::big_uint value, int64_t w
 	}
 }
 
+void XrefTable::Add(XrefEntryBasePtr entry) {
+	bool is_free = ConvertUtils<XrefEntryBasePtr>::IsType<XrefFreeEntryPtr>(entry);
+	bool is_used = ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(entry);
+
+	// Xref table can only stored free and used entries
+	assert(is_free || is_used && "Adding invalid entry type to xref table");
+
+	// Perform the addition
+	XrefBase::Add(entry);
+}
+
 void XrefBase::Add(XrefEntryBasePtr entry) {
 	auto found = _entries.find(entry);
 	if (found != _entries.end()) {
