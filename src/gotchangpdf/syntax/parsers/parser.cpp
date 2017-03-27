@@ -593,7 +593,7 @@ XrefStreamPtr Parser::ParseXrefStream(
 			types::big_uint obj_number = SafeAddition<types::big_uint, types::big_uint, int>(*subsection_index, idx);
 
 			if (0 == field1) {
-				XrefFreeEntryPtr entry = make_deferred<XrefFreeEntry>(obj_number, field3.SafeConvert<types::ushort>());
+				XrefFreeEntryPtr entry = make_deferred<XrefFreeEntry>(obj_number, field3.SafeConvert<types::ushort>(), field2);
 				entry->SetFile(_file);
 				result->Add(entry);
 				continue;
