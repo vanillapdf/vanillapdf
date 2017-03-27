@@ -119,6 +119,16 @@ bool XrefChain::ReleaseEntry(XrefUsedEntryBasePtr entry) {
 		bool removed = xref->Remove(entry);
 		assert(removed && "Could not remove the xref entry");
 
+		if (removed) {
+			// Adobe acrobat has problems with gaps inside xref streams
+			// I wasn't able to find out why, so lets be nice and insert
+			// a fresh free entry as a placeholder for the item that is missing
+
+			// TODO maybe set next free object number?
+			XrefFreeEntryPtr freed_entry = make_deferred<XrefFreeEntry>(entry->GetObjectNumber(), 0);
+			xref->Add(freed_entry);
+		}
+
 		return removed;
 	}
 
