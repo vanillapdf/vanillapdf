@@ -127,7 +127,7 @@ private:
 	void CompressXref(XrefChainPtr xref);
 
 	void InitializeReferences(ObjectPtr source);
-	void RedirectReferences(ObjectPtr source, const std::unordered_multimap<ObjectPtr, ObjectPtr>& duplicit_items);
+	void RedirectReferences(ObjectPtr source, const std::unordered_map<ObjectPtr, ObjectPtr>& duplicit_items);
 
 	// flags
 	bool m_recalculate_offset = true;

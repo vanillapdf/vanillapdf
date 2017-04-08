@@ -958,8 +958,8 @@ bool FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
 		return false;
 	}
 
-	std::unordered_multiset<ObjectPtr> unique_set;
-	std::unordered_multimap<ObjectPtr, ObjectPtr> duplicit_list;
+	std::unordered_set<ObjectPtr> unique_set;
+	std::unordered_map<ObjectPtr, ObjectPtr> duplicit_list;
 
 	// Find all duplicit indirect objects
 	for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
@@ -976,15 +976,17 @@ bool FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
 			auto object = used_entry->GetReference();
 
 			// Check if object is already in our unique list
-			auto found = unique_set.find(object);
-			if (found == unique_set.end()) {
-				unique_set.insert(object);
-				continue;
-			}
+			auto inserted = unique_set.insert(object);
 
-			// In other case add to duplicit list
-			auto duplicit_item = std::make_pair(object, *found);
-			duplicit_list.insert(duplicit_item);
+			// New item was already in the set
+			if (!inserted.second) {
+
+				// In other case add to duplicit list
+				auto duplicit_item = std::make_pair(object, *inserted.first);
+
+				// The item may already be in the list, but we don't care
+				auto duplicit_insert = duplicit_list.insert(duplicit_item);
+			}
 		}
 	}
 
@@ -1213,7 +1215,7 @@ void FileWriter::InitializeReferences(ObjectPtr source) {
 	}
 }
 
-void FileWriter::RedirectReferences(ObjectPtr source, const std::unordered_multimap<ObjectPtr, ObjectPtr>& duplicit_items) {
+void FileWriter::RedirectReferences(ObjectPtr source, const std::unordered_map<ObjectPtr, ObjectPtr>& duplicit_items) {
 	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(source)) {
 		auto source_ref = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(source);
 		auto referenced_object = source_ref->GetReferencedObject();
