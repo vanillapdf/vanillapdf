@@ -1082,11 +1082,13 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
 		auto current_xref = *iterator;
 
 		for (auto item : current_xref) {
-			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(item)) {
+
+			// Initialize used and compressed entries as well
+			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(item)) {
 				continue;
 			}
 
-			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(item);
+			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(item);
 			auto object = used_entry->GetReference();
 
 			// Calling this we force the reference initialization
@@ -1097,6 +1099,9 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
 			InitializeReferences(object);
 		}
 	}
+
+	// Maps the old object number to the updated ones
+	std::unordered_map<types::big_uint, types::big_uint> squash_object_map;
 
 	types::big_uint current_object_number = 0;
 	for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
@@ -1109,78 +1114,122 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
 			auto original_object_number = entry->GetObjectNumber();
 			auto new_object_number = current_object_number;
 
-			if (original_object_number != new_object_number) {
-				if (ConvertUtils<XrefEntryBasePtr>::IsType<XrefFreeEntryPtr>(entry)) {
-					auto free_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefFreeEntryPtr>(entry);
-
-					auto generation_number = free_entry->GetGenerationNumber();
-					auto next_free_object = free_entry->GetNextFreeObjectNumber();
-
-					XrefFreeEntryPtr new_entry = make_deferred<XrefFreeEntry>(
-						current_object_number,
-						generation_number,
-						next_free_object);
-
-					new_entry->SetFile(entry->GetFile());
-					new_entry->SetInitialized();
-
-					current_xref->Remove(entry);
-					current_xref->Add(new_entry);
-					continue;
-				}
-
-				if (ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(entry)) {
-					auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
-
-					auto generation_number = used_entry->GetGenerationNumber();
-					auto offset = used_entry->GetOffset();
-					auto referenced_object = used_entry->GetReference();
-
-					XrefUsedEntryPtr new_entry = make_deferred<XrefUsedEntry>(
-						current_object_number,
-						generation_number,
-						offset);
-
-					// Release the old entry before assigning the new one
-					used_entry->ReleaseReference();
-
-					new_entry->SetFile(entry->GetFile());
-					new_entry->SetReference(referenced_object);
-					new_entry->SetInitialized();
-
-					current_xref->Remove(entry);
-					current_xref->Add(new_entry);
-					continue;
-				}
-
-				if (ConvertUtils<XrefEntryBasePtr>::IsType<XrefCompressedEntryPtr>(entry)) {
-					auto compressed_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(entry);
-
-					auto generation_number = compressed_entry->GetGenerationNumber();
-					auto object_stream_number = compressed_entry->GetObjectStreamNumber();
-					auto index = compressed_entry->GetIndex();
-					auto referenced_object = compressed_entry->GetReference();
-
-					XrefCompressedEntryPtr new_entry = make_deferred<XrefCompressedEntry>(
-						current_object_number,
-						generation_number,
-						object_stream_number,
-						index);
-
-					// Release the old entry before assigning the new one
-					compressed_entry->ReleaseReference();
-
-					new_entry->SetFile(entry->GetFile());
-					new_entry->SetReference(referenced_object);
-					new_entry->SetInitialized();
-
-					current_xref->Remove(entry);
-					current_xref->Add(new_entry);
-					continue;
-				}
-
-				assert(!"Unknown entry type");
+			if (original_object_number == new_object_number) {
+				continue;
 			}
+
+			// Store the object mapping for later object number fixups
+			auto remapped_object = std::make_pair(original_object_number, new_object_number);
+			auto inserted = squash_object_map.insert(remapped_object);
+			assert(inserted.second && "Could not insert object mapping");
+
+			if (ConvertUtils<XrefEntryBasePtr>::IsType<XrefFreeEntryPtr>(entry)) {
+				auto free_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefFreeEntryPtr>(entry);
+
+				auto generation_number = free_entry->GetGenerationNumber();
+				auto next_free_object = free_entry->GetNextFreeObjectNumber();
+
+				XrefFreeEntryPtr new_entry = make_deferred<XrefFreeEntry>(
+					current_object_number,
+					generation_number,
+					next_free_object);
+
+				new_entry->SetFile(entry->GetFile());
+				new_entry->SetInitialized();
+
+				bool removed = current_xref->Remove(entry);
+				assert(removed && "Could not release xref entry"); removed;
+
+				current_xref->Add(new_entry);
+				continue;
+			}
+
+			if (ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(entry)) {
+				auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
+
+				auto generation_number = used_entry->GetGenerationNumber();
+				auto offset = used_entry->GetOffset();
+				auto referenced_object = used_entry->GetReference();
+
+				XrefUsedEntryPtr new_entry = make_deferred<XrefUsedEntry>(
+					current_object_number,
+					generation_number,
+					offset);
+
+				// Release the old entry before assigning the new one
+				used_entry->ReleaseReference();
+
+				new_entry->SetFile(entry->GetFile());
+				new_entry->SetReference(referenced_object);
+				new_entry->SetInitialized();
+
+				bool removed = current_xref->Remove(entry);
+				assert(removed && "Could not release xref entry"); removed;
+
+				current_xref->Add(new_entry);
+				continue;
+			}
+
+			if (ConvertUtils<XrefEntryBasePtr>::IsType<XrefCompressedEntryPtr>(entry)) {
+				auto compressed_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(entry);
+
+				auto generation_number = compressed_entry->GetGenerationNumber();
+				auto object_stream_number = compressed_entry->GetObjectStreamNumber();
+				auto index = compressed_entry->GetIndex();
+				auto referenced_object = compressed_entry->GetReference();
+
+				XrefCompressedEntryPtr new_entry = make_deferred<XrefCompressedEntry>(
+					current_object_number,
+					generation_number,
+					object_stream_number,
+					index);
+
+				// Release the old entry before assigning the new one
+				compressed_entry->ReleaseReference();
+
+				new_entry->SetFile(entry->GetFile());
+				new_entry->SetReference(referenced_object);
+				new_entry->SetInitialized();
+
+				bool removed = current_xref->Remove(entry);
+				assert(removed && "Could not release xref entry"); removed;
+
+				current_xref->Add(new_entry);
+				continue;
+			}
+
+			assert(!"Unknown entry type");
+		}
+	}
+
+	// Fix object stream numbers for compressed xref entries
+	// We need to fix these after all objects have been moved
+	for (auto& item : xref) {
+
+		// For every xref_
+		for (auto& xref_entry : item) {
+
+			// Accept only compressed entries
+			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefCompressedEntryPtr>(xref_entry)) {
+				continue;
+			}
+
+			// Convert to compressed entry
+			auto compressed_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(xref_entry);
+
+			// Get the old object stream number
+			auto old_object_stream_number = compressed_entry->GetObjectStreamNumber();
+
+			// Find the mapped value
+			auto new_object_stream_number = squash_object_map.find(old_object_stream_number);
+
+			// Object stream was not remapped
+			if (new_object_stream_number == squash_object_map.end()) {
+				continue;
+			}
+
+			// Set the new object stream number
+			compressed_entry->SetObjectStreamNumber(new_object_stream_number->second);
 		}
 	}
 }
