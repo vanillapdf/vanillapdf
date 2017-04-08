@@ -966,6 +966,8 @@ bool FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
 		auto current = *iterator;
 
 		for (auto item : current) {
+
+			// Accept either used and compressed entries
 			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(item)) {
 				continue;
 			}
@@ -973,30 +975,76 @@ bool FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
 			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(item);
 			auto object = used_entry->GetReference();
 
+			// Check if object is already in our unique list
 			auto found = unique_set.find(object);
 			if (found == unique_set.end()) {
 				unique_set.insert(object);
 				continue;
 			}
 
+			// In other case add to duplicit list
 			auto duplicit_item = std::make_pair(object, *found);
 			duplicit_list.insert(duplicit_item);
 		}
 	}
 
-	// Remove all duplicit items from file
+	// Skip redirection, if there were no duplicities
+	if (duplicit_list.size() == 0) {
+		return false;
+	}
+
+	// Redirect all references to chosen unique item
 	for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
 		auto current = *iterator;
 
 		for (auto item : current) {
-			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(item)) {
+
+			// Accept either used and compressed entries
+			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(item)) {
 				continue;
 			}
 
-			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(item);
-			auto object = used_entry->GetReference();
+			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(item);
 
+			// Redirect the referenced object
+			auto object = used_entry->GetReference();
 			RedirectReferences(object, duplicit_list);
+
+			// Handle compressed entry separately
+			// Compressed entries have stored object number of the object stream
+			// the reference is contained in. We have to redirect this reference.
+			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefCompressedEntryPtr>(item)) {
+				continue;
+			}
+
+			auto compressed_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(item);
+			auto original_object_stream_number = compressed_entry->GetObjectStreamNumber();
+			auto original_object_stream_entry = xref->GetXrefEntry(original_object_stream_number, 0);
+
+			// I believe that this should be true, but lets check, whether the entry is used
+			// It is possible, that this won't work for some documents.
+			// The reason may be, that there are more objects with the same ID and the xref chain is confused.
+			bool is_used = ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(original_object_stream_entry);
+			assert(is_used && "Xref entry is not in use");
+
+			if (!is_used) {
+				continue;
+			}
+
+			auto original_object_stream_used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(original_object_stream_entry);
+			auto original_object_stream = original_object_stream_used_entry->GetReference();
+
+			auto destination_object_iterator = duplicit_list.find(original_object_stream);
+			if (destination_object_iterator == duplicit_list.end()) {
+				continue;
+			}
+
+			// Remove this assertion after verifying this code really works
+			assert(!"The code behind this point is not tested");
+
+			auto destination_object = destination_object_iterator->second;
+			auto destination_object_number = destination_object->GetObjectNumber();
+			compressed_entry->SetObjectStreamNumber(destination_object_number);
 		}
 	}
 
