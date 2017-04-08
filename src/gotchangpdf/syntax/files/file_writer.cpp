@@ -23,6 +23,12 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 		throw FileNotInitializedException(source->GetFilename());
 	}
 
+	std::string reason;
+	bool valid_configuration = ValidateConfiguration(source, reason);
+	if (!valid_configuration) {
+		throw GeneralException(reason);
+	}
+
 	auto input = source->GetInputStream();
 	auto output = destination->GetOutputStream();
 
@@ -181,6 +187,27 @@ void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
 
 	// Cleanup
 	output->Flush();
+}
+
+bool FileWriter::ValidateConfiguration(FilePtr source, std::string& reason) const {
+	auto source_xref_chain = source->GetXrefChain();
+
+	// Removing freed objects creates gaps in 
+	if (m_remove_freed && !m_squash_table_space) {
+		for (auto& xref : source_xref_chain) {
+			if (ConvertUtils<XrefBasePtr>::IsType<XrefStreamPtr>(xref)) {
+
+				std::stringstream ss;
+				ss << "Flag squash table space is disabled, while the source file contains cross-reference streams." << std::endl;
+				ss << "Either disable also flag remove freed objects, or enable squashing table space.";
+
+				reason = ss.str();
+				return false;
+			}
+		}
+	}
+
+	return true;
 }
 
 void FileWriter::RecalculateObjectStreamContent(XrefBasePtr source) {
