@@ -125,7 +125,7 @@ bool XrefChain::ReleaseEntry(XrefUsedEntryBasePtr entry) {
 			// a fresh free entry as a placeholder for the item that is missing
 
 			// TODO maybe set next free object number?
-			XrefFreeEntryPtr freed_entry = make_deferred<XrefFreeEntry>(entry->GetObjectNumber(), 0);
+			XrefFreeEntryPtr freed_entry = make_deferred<XrefFreeEntry>(entry->GetObjectNumber(), static_cast<types::ushort>(0));
 			xref->Add(freed_entry);
 		}
 
