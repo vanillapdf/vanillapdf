@@ -58,6 +58,8 @@ private:
 
 class FileWriter : public virtual IUnknown {
 public:
+	bool ValidateConfiguration(FilePtr source, std::string& reason) const;
+
 	void Write(FilePtr source, FilePtr destination);
 	void WriteIncremental(FilePtr source, FilePtr destination);
 
