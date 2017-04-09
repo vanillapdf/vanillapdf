@@ -123,6 +123,7 @@ private:
 	void MergeXrefs(XrefChainPtr xref);
 	void RemoveUnreferencedObjects(XrefChainPtr xref);
 	void ExtractDuplicitDirectObjects(XrefChainPtr xref);
+	void RemoveAllDuplicitIndirectObjects(XrefChainPtr xref);
 	bool RemoveDuplicitIndirectObjects(XrefChainPtr xref);
 	void CompressObjects(XrefChainPtr xref);
 	void SquashTableSpace(XrefChainPtr xref);

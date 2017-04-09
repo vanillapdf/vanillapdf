@@ -869,9 +869,6 @@ void FileWriter::CopyStreamContent(IInputStreamPtr source, IOutputStreamPtr dest
 }
 
 void FileWriter::CompressAndOptimize(XrefChainPtr xref) {
-	// Stage: Remove objects that were freed
-	RemoveFreedObjects(xref);
-
 	// Stage: Squash xref chain into single element
 	MergeXrefs(xref);
 
@@ -882,17 +879,13 @@ void FileWriter::CompressAndOptimize(XrefChainPtr xref) {
 	ExtractDuplicitDirectObjects(xref);
 
 	// Stage: Remove duplicit indirect objects
-	for (;;) {
-
-		// Repeat until no duplicit items are found
-		bool found = RemoveDuplicitIndirectObjects(xref);
-		if (!found) {
-			break;
-		}
-	}
+	RemoveAllDuplicitIndirectObjects(xref);
 
 	// Stage: Create object streams
 	CompressObjects(xref);
+
+	// Stage: Remove objects that were freed
+	RemoveFreedObjects(xref);
 
 	// Stage: Close the object number gaps
 	SquashTableSpace(xref);
@@ -916,18 +909,15 @@ void FileWriter::RemoveFreedObjects(XrefChainPtr xref) {
 		sorted_entries.erase(sorted_entries.begin());
 
 		// For each xref entry
-		for (auto entry_iterator = sorted_entries.begin(); entry_iterator != sorted_entries.end(); ) {
+		for (auto entry_iterator = sorted_entries.begin(); entry_iterator != sorted_entries.end(); ++entry_iterator) {
 			auto current_entry = *entry_iterator;
 			if (current_entry->InUse()) {
-				entry_iterator++;
 				continue;
 			}
 
 			// Remove if not used
 			bool removed = current_xref->Remove(current_entry);
 			assert(removed && "Could not release xref entry"); removed;
-
-			entry_iterator = sorted_entries.erase(entry_iterator);
 		}
 	}
 }
@@ -938,23 +928,55 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
 		return;
 	}
 
+	// Merge all items into single table
+	XrefBasePtr new_xref = XrefTablePtr();
+
+	// If the chain contains xref stream, switch to merged xref to stream as well
+	for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
+		auto current = *iterator;
+
+		// Xref streams needs to be handled differenty.
+		// They may contain compressed entries,
+		// that cannot be stored int the table
+		if (ConvertUtils<XrefBasePtr>::IsType<XrefStreamPtr>(current)) {
+			auto last_xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(current);
+			auto last_xref_stream_object = last_xref_stream->GetStreamObject();
+
+			// TODO
+			// I am reusing existing stream object
+			// It could cause some side-effects in the future,
+			// so take a deeper look at the problems, that may arise.
+			XrefStreamPtr new_xref_stream;
+			new_xref_stream->SetStreamObject(last_xref_stream_object);
+
+			new_xref = new_xref_stream;
+
+			break;
+		}
+	}
+
 	// Clone original table trailer
 	auto last_xref = *xref->begin();
+
+	// Get the correct trailer dictionary
 	auto last_trailer = last_xref->GetTrailerDictionary();
+
+	// The trailer should be correctly duplicated in the CloneXref method
 	auto new_trailer = ObjectUtils::Clone<DictionaryObjectPtr>(last_trailer);
 	new_trailer->SetFile(last_xref->GetFile());
 
-	// Merge all items into single table
-	XrefTablePtr new_table;
-	new_table->SetTrailerDictionary(new_trailer);
-	new_table->SetFile(last_xref->GetFile());
+	// Set the trailer dictionary, that matches the one at the end of the file
+	new_xref->SetTrailerDictionary(new_trailer);
+	new_xref->SetFile(last_xref->GetFile());
+	new_xref->SetInitialized();
 
+	// Merge all xref entries into freshly created one
 	for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
 		auto current = *iterator;
 
 		// All conflicts are overwritten
 		for (auto item : current) {
-			new_table->Add(item);
+			new_xref->Add(item);
 		}
 	}
 
@@ -962,7 +984,7 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
 	xref->Clear();
 
 	// Insert merged one
-	xref->Append(new_table);
+	xref->Append(new_xref);
 }
 
 void FileWriter::RemoveUnreferencedObjects(XrefChainPtr xref) {
@@ -976,6 +998,22 @@ void FileWriter::ExtractDuplicitDirectObjects(XrefChainPtr xref) {
 	// Disabled feature
 	if (!m_extract_duplicit_direct_objects) {
 		return;
+	}
+}
+
+void FileWriter::RemoveAllDuplicitIndirectObjects(XrefChainPtr xref) {
+	// Disabled feature
+	if (!m_remove_duplicit_indirect_objects) {
+		return;
+	}
+
+	for (;;) {
+
+		// Repeat until no duplicit items are found
+		bool found = RemoveDuplicitIndirectObjects(xref);
+		if (!found) {
+			break;
+		}
 	}
 }
 
