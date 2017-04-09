@@ -46,6 +46,7 @@ public:
 	};
 
 	virtual void ObserveeChanged(IModifyObservable*) override;
+	virtual void OnChanged() override;
 
 	void SetFile(WeakReference<File>file) noexcept { _file = file; }
 	WeakReference<File> GetFile() const noexcept { return _file; }

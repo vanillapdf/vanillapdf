@@ -17,12 +17,15 @@ XrefBase::~XrefBase() {
 	}
 }
 
-void XrefBase::ObserveeChanged(IModifyObservable*) {
+void XrefBase::OnChanged() {
 	if (m_initialized) {
 		SetDirty();
 	}
 
-	// Notify observers
+	IModifyObservable::OnChanged();
+}
+
+void XrefBase::ObserveeChanged(IModifyObservable*) {
 	OnChanged();
 }
 
