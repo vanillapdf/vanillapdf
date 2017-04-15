@@ -27,6 +27,9 @@ public:
 	template <typename U>
 	friend class DeferredWrapperBase;
 
+	// Check whether T is defined class
+	static_assert(has_destructor<T>::value, "Incomplete type is not allowed");
+
 public:
 	template <
 		// Lets have a talk about SFINAE
@@ -379,6 +382,10 @@ void swap(Deferred<T>& lhs, Deferred<T>& rhs) {
 
 template<typename T, typename... Parameters>
 Deferred<T> make_deferred(Parameters&&... p) {
+
+	// Check whether T is defined class
+	static_assert(has_destructor<T>::value, "Incomplete type is not allowed");
+
 	return (Deferred<T>(pdf_new T(std::forward<Parameters>(p)...)));
 }
 
