@@ -28,7 +28,7 @@ public:
 	friend class DeferredWrapperBase;
 
 	// Check whether T is defined class
-	static_assert(has_destructor<T>::value, "Incomplete type is not allowed");
+	static_assert(is_defined<T>::value, "Incomplete type is not allowed");
 
 public:
 	template <
@@ -246,11 +246,36 @@ protected:
 		return DeferredWrapperBase<T>::m_ptr;
 	}
 };
+template <typename T, bool defined>
+class DeferredHandleUndefined {
+
+	// I often find some insane error like:
+	// "SerializationOverrideAttribute': an undefined class is not allowed as an argument to compiler intrinsic type trait '__is_constructible"
+	// or even
+	// Cannot convert argument 1 from 'SerializationOverrideAttributePtr' to 'Deferred<IAttribute>'
+	// With the stack trace of multiple monitors, I am not able to easily solve the problem.
+	// The problem is most of the time class being undefined.
+	// Finally, the solution is ugly, but it works.
+	// I had to trick the compiler to show only my error message and suppress the other errors.
+	// It is done by using another class as a template specialization, which triggers the
+	// compilation error without any additional mess.
+
+public:
+	// This error means that your is not defined.
+	// You probably forgotten to include header file.
+	static_assert(is_defined<T>::value, "Incomplete type is not allowed. Did You forgot to include header file?");
+};
 
 template <typename T>
-class Deferred : public DeferredWrapper<T, std::is_default_constructible<T>::value> {
+class DeferredHandleUndefined<T, true> : public DeferredWrapper<T, std::is_default_constructible<T>::value> {
 public:
 	using DeferredWrapper<T, std::is_default_constructible<T>::value>::DeferredWrapper;
+};
+
+template <typename T>
+class Deferred : public DeferredHandleUndefined<T, is_defined<T>::value> {
+public:
+	using DeferredHandleUndefined<T, is_defined<T>::value>::DeferredHandleUndefined;
 };
 
 template <typename T>
@@ -384,7 +409,7 @@ template<typename T, typename... Parameters>
 Deferred<T> make_deferred(Parameters&&... p) {
 
 	// Check whether T is defined class
-	static_assert(has_destructor<T>::value, "Incomplete type is not allowed");
+	static_assert(is_defined<T>::value, "Incomplete type is not allowed");
 
 	return (Deferred<T>(pdf_new T(std::forward<Parameters>(p)...)));
 }
