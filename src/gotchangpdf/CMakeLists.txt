@@ -138,6 +138,7 @@ set(GOTCHANGPDF_SYNTAX_SOURCES
 )
 
 set(GOTCHANGPDF_UTILS_SOURCES
+	utils/attribute_interface.cpp
 	utils/buffer.cpp
 	utils/exceptions.cpp
 	utils/library_info.cpp
@@ -251,6 +252,7 @@ set(GOTCHANGPDF_SYNTAX_HEADERS
 )
 
 set(GOTCHANGPDF_UTILS_HEADERS
+	utils/attribute_interface.h
 	utils/base_iterator.h
 	utils/buffer.h
 	utils/character.h

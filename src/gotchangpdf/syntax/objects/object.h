@@ -5,6 +5,7 @@
 
 #include "utils/constants.h"
 #include "utils/unknown_interface.h"
+#include "utils/attribute_interface.h"
 #include "utils/modify_observer_interface.h"
 
 #include <memory>
@@ -61,6 +62,11 @@ public:
 	virtual void SetFile(WeakReference<File> file) noexcept { m_file = file; }
 	WeakReference<File> GetFile() const noexcept { return m_file; }
 
+	void AddAttribute(IAttributePtr attribute);
+	bool RemoveAttribute(IAttributePtr attribute);
+	bool ContainsAttribute(IAttribute::Type type) const;
+	IAttributePtr GetAttribute(IAttribute::Type type);
+
 	bool Identity(ObjectPtr other) const;
 
 	virtual size_t Hash() const = 0;
@@ -76,6 +82,8 @@ protected:
 	bool m_encryption_exempted = false;
 	WeakReference<XrefUsedEntryBase> m_entry;
 	WeakReference<Object> m_owner;
+
+	AttributeList m_attributes;
 };
 
 class ObjectPtr : public Deferred<Object> {

@@ -145,6 +145,21 @@ bool Object::Identity(ObjectPtr other) const {
 	return (this == other_ptr);
 }
 
+void Object::AddAttribute(IAttributePtr attribute) {
+	m_attributes.Add(attribute);
+}
+bool Object::RemoveAttribute(IAttributePtr attribute) {
+	return m_attributes.Remove(attribute);
+}
+
+bool Object::ContainsAttribute(IAttribute::Type type) const {
+	return m_attributes.Contains(type);
+}
+
+IAttributePtr Object::GetAttribute(IAttribute::Type type) {
+	return m_attributes.Get(type);
+}
+
 } // syntax
 
 bool operator==(const syntax::ObjectPtr& left, const syntax::ObjectPtr& right) {

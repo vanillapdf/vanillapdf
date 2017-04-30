@@ -1,9 +1,14 @@
 #include "precompiled.h"
-#include "semantics/objects/document.h"
+
+
 #include "syntax/files/file_writer.h"
+#include "syntax/utils/serialization_override_attribute.h"
+
+#include "semantics/objects/document.h"
 #include "semantics/objects/contents.h"
 #include "semantics/objects/annotations.h"
 #include "semantics/objects/name_dictionary.h"
+
 #include "semantics/utils/semantic_utils.h"
 
 namespace gotchangpdf {
@@ -478,6 +483,7 @@ void Document::MergePageDestinations(DocumentPtr other, PageObjectPtr other_page
 }
 
 void Document::Sign() {
+
 	// Create new signature dictionary
 	DictionaryObjectPtr signature_dictionary;
 	signature_dictionary->Insert(constant::Name::Type, make_deferred<NameObject>("Sig"));
@@ -486,12 +492,24 @@ void Document::Sign() {
 	signature_dictionary->Insert(constant::Name::Location, make_deferred<LiteralStringObject>("Here"));
 	signature_dictionary->Insert(constant::Name::Reason, make_deferred<LiteralStringObject>("I agree"));
 
+	// TODO hardcoded value
+	std::string byte_range_value(20, ' ');
+	SerializationOverrideAttributePtr byte_range_attribute = make_deferred<SerializationOverrideAttribute>(byte_range_value);
+
 	// Leave byte ranges empty for now
 	ArrayObjectPtr<IntegerObjectPtr> byte_ranges;
 	byte_ranges->Append(IntegerObjectPtr());
 	byte_ranges->Append(IntegerObjectPtr());
+	byte_ranges->AddAttribute(byte_range_attribute);
+
+	// TODO hardcoded value
+	std::string contents_value(1024, '0');
+	SerializationOverrideAttributePtr contents_attribute = make_deferred<SerializationOverrideAttribute>(contents_value);
+	HexadecimalStringObjectPtr signature_contents = make_deferred<HexadecimalStringObject>();
+	signature_contents->AddAttribute(contents_attribute);
 
 	signature_dictionary->Insert(constant::Name::ByteRange, byte_ranges);
+	signature_dictionary->Insert(constant::Name::Contents, signature_contents);
 
 	// Create new signature field
 	DictionaryObjectPtr signature_field;
@@ -515,6 +533,18 @@ void Document::Sign() {
 	auto fields_obj = fields->GetObject();
 
 	fields_obj->Append(signature_field);
+}
+
+void Document::OnBeforeOutputFlush(IOutputStreamPtr output) {
+	// if document has signing queued
+
+	// Calculate and update byte ranges
+	// Signing queue should have pointer to signature byte range
+	// Get offset, seek, write
+
+	// Calculate and update document signature
+	// Signing queue should have pointer to signature contents
+	// Get offset, seek, write
 }
 
 } // semantics

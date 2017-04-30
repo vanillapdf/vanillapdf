@@ -15,7 +15,10 @@ class DeferredArrayObject;
 
 class IEncryptionKey;
 
-	// Exceptions
+// Attributes
+class SerializationOverrideAttribute; using SerializationOverrideAttributePtr = Deferred<SerializationOverrideAttribute>;
+
+// Exceptions
 class FileDisposedException;
 class InvalidObjectTypeException;
 

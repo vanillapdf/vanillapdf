@@ -7,6 +7,7 @@
 #include "semantics/objects/date.h"
 
 #include "syntax/files/file.h"
+#include "syntax/files/file_writer.h"
 
 #include "syntax/objects/dictionary_object.h"
 #include "syntax/objects/name_object.h"
@@ -16,7 +17,7 @@
 namespace gotchangpdf {
 namespace semantics {
 
-class Document : public virtual IUnknown, public IWeakReferenceable<Document> {
+class Document : public virtual IUnknown, public IWeakReferenceable<Document> /*, public IFileWriterObserver*/ {
 public:
 	Document(const std::string& filename);
 	Document(syntax::FilePtr holder);
@@ -53,6 +54,8 @@ private:
 
 	void FixDestinationPage(syntax::ObjectPtr cloned_page, PageObjectPtr other_page, PageObjectPtr merged_page);
 	bool IsDestinationReferencingPage(DestinationPtr destination, PageObjectPtr page);
+
+	void OnBeforeOutputFlush(syntax::IOutputStreamPtr output) /*override*/;
 };
 
 } // semantics

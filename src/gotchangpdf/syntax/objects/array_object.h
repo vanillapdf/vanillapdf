@@ -81,6 +81,11 @@ public:
 	const T At(size_t at) const;
 	T At(size_t at);
 
+	void AddAttribute(IAttributePtr attribute);
+	bool RemoveAttribute(IAttributePtr attribute);
+	bool ContainsAttribute(IAttribute::Type type) const;
+	IAttributePtr GetAttribute(IAttribute::Type type);
+
 	void Append(const T& value);
 	void Insert(const T& value, size_t at);
 	bool Remove(size_t at);
@@ -198,6 +203,26 @@ ArrayObject<T>::ArrayObject(ArrayObject<U> other, std::function<T(const U& obj)>
 	for (auto item : other) {
 		_list->push_back(item);
 	}
+}
+
+template <typename T>
+void ArrayObject<T>::AddAttribute(IAttributePtr attribute) {
+	_list->AddAttribute(attribute);
+}
+
+template <typename T>
+bool ArrayObject<T>::RemoveAttribute(IAttributePtr attribute) {
+	return _list->RemoveAttribute(attribute);
+}
+
+template <typename T>
+bool ArrayObject<T>::ContainsAttribute(IAttribute::Type type) const {
+	return _list->ContainsAttribute(type);
+}
+
+template <typename T>
+IAttributePtr ArrayObject<T>::GetAttribute(IAttribute::Type type) {
+	return _list->GetAttribute(type);
 }
 
 template <typename T>

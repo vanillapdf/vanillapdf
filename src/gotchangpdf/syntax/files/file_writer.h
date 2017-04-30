@@ -24,6 +24,9 @@ public:
 	virtual void OnBeforeEntryOffsetRecalculation(XrefUsedEntryBasePtr ptr) {}
 	virtual void OnAfterEntryOffsetRecalculation(XrefUsedEntryBasePtr ptr) {}
 
+	virtual void OnBeforeOutputFlush(IOutputStreamPtr output) {}
+	virtual void OnAfterOutputFlush(IOutputStreamPtr output) {}
+
 	virtual ~IFileWriterObserver() = 0;
 };
 
@@ -38,6 +41,18 @@ public:
 	virtual void Finalizing() {
 		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
 			Invoke(*current, &IFileWriterObserver::OnFinalizing);
+		}
+	}
+
+	virtual void BeforeOutputFlush(IOutputStreamPtr output) {
+		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+			Invoke(*current, &IFileWriterObserver::OnBeforeOutputFlush, output);
+		}
+	}
+
+	virtual void AfterOutputFlush(IOutputStreamPtr output) {
+		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+			Invoke(*current, &IFileWriterObserver::OnAfterOutputFlush, output);
 		}
 	}
 

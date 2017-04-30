@@ -6,6 +6,8 @@
 #include "syntax/files/file.h"
 #include "syntax/files/xref.h"
 
+#include "syntax/utils/serialization_override_attribute.h"
+
 #include "syntax/exceptions/syntax_exceptions.h"
 
 #include <fstream>
@@ -693,6 +695,24 @@ void FileWriter::WriteObject(IOutputStreamPtr output, ObjectPtr obj) {
 	if (m_recalculate_offset) {
 		auto new_offset = output->GetOutputPosition();
 		obj->SetOffset(new_offset);
+	}
+
+	// If the object contains attribute, that controls it's serialization
+	if (obj->ContainsAttribute(IAttribute::Type::SerializationOverride)) {
+
+		// This was first introduced with the digital signatures support
+		// Whole file first has to be written, and at the end the byte range
+		// and signature value will be updated. Since we don't know the values
+		// we can either write the file multiple times OR we leave some space
+		// for the the values, when we later update them.
+
+		auto base_attribute = obj->GetAttribute(IAttribute::Type::SerializationOverride);
+		auto override_attribute = ConvertUtils<decltype(base_attribute)>::ConvertTo<SerializationOverrideAttributePtr>(base_attribute);
+		auto override_value = override_attribute->GetValue();
+
+		// User the overriden value
+		output->Write(override_value);
+		return;
 	}
 
 	output->Write(obj->GetObjectNumber());
