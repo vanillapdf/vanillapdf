@@ -65,14 +65,14 @@ error_type process_logging() {
 	boolean_type logging_enabled = GOTCHANG_PDF_RV_TRUE;
 	LoggingSeverity logging_severity;
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Logging_GetEnabled(&logging_enabled));
+	RETURN_ERROR_IF_NOT_SUCCESS(Logging_IsEnabled(&logging_enabled));
 
 	if (logging_enabled != GOTCHANG_PDF_RV_FALSE) {
 		return GOTCHANG_PDF_TEST_ERROR_LOGGING_ENABLED;
 	}
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Logging_SetEnabled());
-	RETURN_ERROR_IF_NOT_SUCCESS(Logging_GetEnabled(&logging_enabled));
+	RETURN_ERROR_IF_NOT_SUCCESS(Logging_Enable());
+	RETURN_ERROR_IF_NOT_SUCCESS(Logging_IsEnabled(&logging_enabled));
 
 	if (logging_enabled != GOTCHANG_PDF_RV_TRUE) {
 		return GOTCHANG_PDF_TEST_ERROR_LOGGING_ENABLED;

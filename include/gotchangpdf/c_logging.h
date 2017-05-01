@@ -72,17 +72,17 @@ extern "C"
 	/**
 	* \brief Determine if logging is enabled in current library instance
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_GetEnabled(boolean_type* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_IsEnabled(boolean_type* result);
 
 	/**
 	* \brief Enable logging for current library instance
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_SetEnabled(void);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_Enable(void);
 
 	/**
 	* \brief Disable logging for current library instance
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_SetDisabled(void);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_Disable(void);
 
 	/**
 	* \brief Get actual logging severity

@@ -6,19 +6,19 @@
 
 using namespace gotchangpdf;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_GetEnabled(boolean_type* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_IsEnabled(boolean_type* result)
 {
 	*result = Logger::GetInstance()->IsEnabled();
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_SetEnabled(void)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_Enable(void)
 {
 	Logger::GetInstance()->SetEnabled(true);
 	return GOTCHANG_PDF_ERROR_SUCCES;
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_SetDisabled(void)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_Disable(void)
 {
 	Logger::GetInstance()->SetEnabled(false);
 	return GOTCHANG_PDF_ERROR_SUCCES;
