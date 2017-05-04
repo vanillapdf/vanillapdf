@@ -1,8 +1,8 @@
 #ifndef _C_HELPER_H
 #define _C_HELPER_H
 
-#include "semantics/utils/semantic_exceptions.h"
 #include "utils/log.h"
+#include "utils/errors.h"
 
 #include "gotchangpdf/c_values.h"
 
@@ -13,16 +13,22 @@
 	catch (gotchangpdf::ExceptionBase& e) \
 	{ \
 		LOG_ERROR_GLOBAL << e.what(); \
-		return static_cast<error_type>(e.code()); \
+		error_type code = static_cast<error_type>(e.code()); \
+		gotchangpdf::Errors::SetLastError(code); \
+		gotchangpdf::Errors::SetLastErrorMessage(e.what()); \
+		return code; \
 	} \
 	catch (std::exception& e) \
 	{ \
 		LOG_ERROR_GLOBAL << e.what(); \
+		gotchangpdf::Errors::SetLastError(GOTCHANG_PDF_ERROR_GENERAL); \
+		gotchangpdf::Errors::SetLastErrorMessage(e.what()); \
 		return GOTCHANG_PDF_ERROR_GENERAL; \
 	} \
 	catch (...) \
 	{ \
 		LOG_ERROR_GLOBAL << "Caught unknown exception"; \
+		gotchangpdf::Errors::SetLastError(GOTCHANG_PDF_ERROR_GENERAL); \
 		return GOTCHANG_PDF_ERROR_GENERAL; \
 	}
 

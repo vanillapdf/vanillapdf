@@ -19,10 +19,10 @@ namespace gotchangpdf.net
             public static IUnknownReleaseDelgate IUnknown_Release = LibraryInstance.GetFunction<IUnknownReleaseDelgate>("IUnknown_Release");
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate int IUnknownAddRefDelgate(IntPtr handle);
+            public delegate UInt32 IUnknownAddRefDelgate(IntPtr handle);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate int IUnknownReleaseDelgate(IntPtr handle);
+            public delegate UInt32 IUnknownReleaseDelgate(IntPtr handle);
         }
     }
 }

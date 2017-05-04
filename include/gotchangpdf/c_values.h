@@ -16,7 +16,7 @@
 * \brief
 * This is return value type of all API functions.
 */
-typedef int32_t error_type;
+typedef uint32_t error_type;
 
 /**
 * \ingroup BooleanTypes

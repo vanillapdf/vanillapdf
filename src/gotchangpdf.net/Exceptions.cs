@@ -4,9 +4,9 @@ namespace gotchangpdf.net
 {
     public abstract class BaseException : Exception
     {
-        public int ErrorCode { get; protected set; }
+        public UInt32 ErrorCode { get; protected set; }
 
-        public BaseException(int errorCode)
+        public BaseException(UInt32 errorCode)
         {
             ErrorCode = errorCode;
         }
@@ -16,11 +16,11 @@ namespace gotchangpdf.net
     {
         public static ParameterValueException Create()
         {
-            int code = ReturnValues.ERROR_PARAMETER_VALUE;
+            UInt32 code = ReturnValues.ERROR_PARAMETER_VALUE;
             return new ParameterValueException(code);
         }
 
-        private ParameterValueException(int errorCode) : base(errorCode)
+        private ParameterValueException(UInt32 errorCode) : base(errorCode)
         {
         }
     }
@@ -29,11 +29,11 @@ namespace gotchangpdf.net
     {
         public static NotSupportedException Create()
         {
-            int code = ReturnValues.ERROR_NOT_SUPPORTED;
+            UInt32 code = ReturnValues.ERROR_NOT_SUPPORTED;
             return new NotSupportedException(code);
         }
 
-        private NotSupportedException(int errorCode) : base(errorCode)
+        private NotSupportedException(UInt32 errorCode) : base(errorCode)
         {
         }
     }
@@ -42,11 +42,11 @@ namespace gotchangpdf.net
     {
         public static GeneralException Create()
         {
-            int code = ReturnValues.ERROR_GENERAL;
+            UInt32 code = ReturnValues.ERROR_GENERAL;
             return new GeneralException(code);
         }
 
-        private GeneralException(int errorCode) : base(errorCode)
+        private GeneralException(UInt32 errorCode) : base(errorCode)
         {
         }
     }
@@ -55,11 +55,11 @@ namespace gotchangpdf.net
     {
         public static ConversionException Create()
         {
-            int code = ReturnValues.ERROR_CONVERSION;
+            UInt32 code = ReturnValues.ERROR_CONVERSION;
             return new ConversionException(code);
         }
 
-        private ConversionException(int errorCode) : base(errorCode)
+        private ConversionException(UInt32 errorCode) : base(errorCode)
         {
         }
     }
@@ -68,11 +68,11 @@ namespace gotchangpdf.net
     {
         public static FileDisposedException Create()
         {
-            int code = ReturnValues.ERROR_FILE_DISPOSED;
+            UInt32 code = ReturnValues.ERROR_FILE_DISPOSED;
             return new FileDisposedException(code);
         }
 
-        private FileDisposedException(int errorCode) : base(errorCode)
+        private FileDisposedException(UInt32 errorCode) : base(errorCode)
         {
         }
     }
@@ -81,11 +81,11 @@ namespace gotchangpdf.net
     {
         public static FileNotInitializedException Create()
         {
-            int code = ReturnValues.ERROR_FILE_NOT_INITIALIZED;
+            UInt32 code = ReturnValues.ERROR_FILE_NOT_INITIALIZED;
             return new FileNotInitializedException(code);
         }
 
-        private FileNotInitializedException(int errorCode) : base(errorCode)
+        private FileNotInitializedException(UInt32 errorCode) : base(errorCode)
         {
         }
     }
@@ -94,11 +94,11 @@ namespace gotchangpdf.net
     {
         public static ObjectMissingException Create()
         {
-            int code = ReturnValues.ERROR_OBJECT_MISSING;
+            UInt32 code = ReturnValues.ERROR_OBJECT_MISSING;
             return new ObjectMissingException(code);
         }
 
-        private ObjectMissingException(int errorCode) : base(errorCode)
+        private ObjectMissingException(UInt32 errorCode) : base(errorCode)
         {
         }
     }
@@ -107,11 +107,11 @@ namespace gotchangpdf.net
     {
         public static InvalidPasswordException Create()
         {
-            int code = ReturnValues.ERROR_INVALID_PASSWORD;
+            UInt32 code = ReturnValues.ERROR_INVALID_PASSWORD;
             return new InvalidPasswordException(code);
         }
 
-        private InvalidPasswordException(int errorCode) : base(errorCode)
+        private InvalidPasswordException(UInt32 errorCode) : base(errorCode)
         {
         }
     }
@@ -120,11 +120,11 @@ namespace gotchangpdf.net
     {
         public static OptionalEntryMissingException Create()
         {
-            int code = ReturnValues.ERROR_OPTIONAL_ENTRY_MISSING;
+            UInt32 code = ReturnValues.ERROR_OPTIONAL_ENTRY_MISSING;
             return new OptionalEntryMissingException(code);
         }
 
-        private OptionalEntryMissingException(int errorCode) : base(errorCode)
+        private OptionalEntryMissingException(UInt32 errorCode) : base(errorCode)
         {
         }
     }

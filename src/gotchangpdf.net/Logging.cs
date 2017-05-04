@@ -16,7 +16,7 @@ namespace gotchangpdf.net
 
         public static bool IsEnabled()
         {
-            int result = NativeMethods.Logging_IsEnabled(out bool enabled);
+            UInt32 result = NativeMethods.Logging_IsEnabled(out bool enabled);
             if (result != ReturnValues.ERROR_SUCCES) {
                 throw new Exception("Could not initialize file");
             }
@@ -26,7 +26,7 @@ namespace gotchangpdf.net
 
         public static void Enable()
         {
-            int result = NativeMethods.Logging_Enable();
+            UInt32 result = NativeMethods.Logging_Enable();
             if (result != ReturnValues.ERROR_SUCCES) {
                 throw new Exception("Could not enable logging");
             }
@@ -34,7 +34,7 @@ namespace gotchangpdf.net
 
         public static void Disable()
         {
-            int result = NativeMethods.Logging_Disable();
+            UInt32 result = NativeMethods.Logging_Disable();
             if (result != ReturnValues.ERROR_SUCCES) {
                 throw new Exception("Could not disable logging");
             }
@@ -49,19 +49,19 @@ namespace gotchangpdf.net
             public static LoggingSetSeverityDelgate Logging_SetSeverity = LibraryInstance.GetFunction<LoggingSetSeverityDelgate>("Logging_SetSeverity");
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate int LoggingIsEnabledDelgate(out bool result);
+            public delegate UInt32 LoggingIsEnabledDelgate(out bool result);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate int LoggingEnableDelgate();
+            public delegate UInt32 LoggingEnableDelgate();
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate int LoggingDisableDelgate();
+            public delegate UInt32 LoggingDisableDelgate();
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate int LoggingGetSeverityDelgate(out Severity severity);
+            public delegate UInt32 LoggingGetSeverityDelgate(out Severity severity);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate int LoggingSetSeverityDelgate(Severity severity);
+            public delegate UInt32 LoggingSetSeverityDelgate(Severity severity);
         }
     }
 }

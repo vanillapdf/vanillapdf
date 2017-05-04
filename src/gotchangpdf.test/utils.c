@@ -107,3 +107,29 @@ error_type process_library_info() {
 
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
+
+error_type print_last_error() {
+	char* message = NULL;
+	error_type error = 0;
+	size_type length = 0;
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Errors_GetLastError(&error));
+	RETURN_ERROR_IF_NOT_SUCCESS(Errors_GetLastErrorMessageLength(&length));
+
+	if (length >= SIZE_MAX) {
+		printf("Buffer size is too big: %ld bytes\n", length);
+		return GOTCHANG_PDF_TEST_ERROR_FAILURE;
+	}
+
+	message = (char*) calloc(sizeof(char), length + 1);
+	if (NULL == message) {
+		printf("Could not allocate memory: %ld bytes\n", length + 1);
+		return GOTCHANG_PDF_TEST_ERROR_FAILURE;
+	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Errors_GetLastErrorMessage(message, length));
+
+	printf("Error %d: %s\n", error, message);
+
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
+}

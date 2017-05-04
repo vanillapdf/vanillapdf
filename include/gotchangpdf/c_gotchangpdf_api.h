@@ -69,6 +69,7 @@
 #include "c_logging.h"
 #include "c_pdf_version.h"
 #include "c_library_info.h"
+#include "c_errors.h"
 
 /**
 * \defgroup Documents High-level document interface

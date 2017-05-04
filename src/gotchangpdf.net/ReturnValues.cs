@@ -90,16 +90,16 @@ namespace gotchangpdf.net
             throw new Exception("Unknown return value");
         }
 
-        public static int ERROR_SUCCES = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_SUCCES);
-        public static int ERROR_PARAMETER_VALUE = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_PARAMETER_VALUE);
-        public static int ERROR_NOT_SUPPORTED = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_NOT_SUPPORTED);
-        public static int ERROR_GENERAL = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_GENERAL);
-        public static int ERROR_CONVERSION = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_CONVERSION);
-        public static int ERROR_FILE_DISPOSED = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_FILE_DISPOSED);
-        public static int ERROR_FILE_NOT_INITIALIZED = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_FILE_NOT_INITIALIZED);
-        public static int ERROR_OBJECT_MISSING = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_OBJECT_MISSING);
-        public static int ERROR_INVALID_PASSWORD = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_INVALID_PASSWORD);
-        public static int ERROR_OPTIONAL_ENTRY_MISSING = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING);
+        public static UInt32 ERROR_SUCCES = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_SUCCES);
+        public static UInt32 ERROR_PARAMETER_VALUE = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_PARAMETER_VALUE);
+        public static UInt32 ERROR_NOT_SUPPORTED = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_NOT_SUPPORTED);
+        public static UInt32 ERROR_GENERAL = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_GENERAL);
+        public static UInt32 ERROR_CONVERSION = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_CONVERSION);
+        public static UInt32 ERROR_FILE_DISPOSED = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_FILE_DISPOSED);
+        public static UInt32 ERROR_FILE_NOT_INITIALIZED = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_FILE_NOT_INITIALIZED);
+        public static UInt32 ERROR_OBJECT_MISSING = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_OBJECT_MISSING);
+        public static UInt32 ERROR_INVALID_PASSWORD = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_INVALID_PASSWORD);
+        public static UInt32 ERROR_OPTIONAL_ENTRY_MISSING = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING);
 
         private const string GOTCHANG_PDF_ERROR_SUCCES = "GOTCHANG_PDF_ERROR_SUCCES";
         private const string GOTCHANG_PDF_ERROR_PARAMETER_VALUE = "GOTCHANG_PDF_ERROR_PARAMETER_VALUE";

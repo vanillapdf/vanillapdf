@@ -20,6 +20,8 @@ extern const int GOTCHANG_PDF_TEST_ERROR_LOGGING_ENABLED;
 extern const int GOTCHANG_PDF_TEST_ERROR_FAILURE;
 
 void print_spaces(int nested);
+error_type print_last_error();
+
 error_type process_buffer(BufferHandle buffer, int nested);
 error_type process_version(PDFVersion version, int nested);
 error_type process_library_info();
@@ -112,6 +114,7 @@ do { \
 	{ \
 		printf("Function call \"%s\" has failed with result %d { %s:%d }\n", \
 		#fn, __result__, __FILE__, __LINE__); \
+		print_last_error(); \
 		assert(!"Operation failed"); \
 		return GOTCHANG_PDF_TEST_ERROR_FAILURE; \
 	} \
@@ -131,6 +134,9 @@ do { \
 	} \
 	else \
 	{ \
+		printf("Function call \"%s\" has failed with result %d { %s:%d }\n", \
+		#eval, __result__, __FILE__, __LINE__); \
+		print_last_error(); \
 		assert(!"Operation failed"); \
 		return GOTCHANG_PDF_TEST_ERROR_FAILURE; \
 	} \

@@ -27,6 +27,7 @@ set(GOTCHANGPDF_C_IMPLEMENTATION_SOURCES
 	implementation/c_document.cpp
 	implementation/c_document_info.cpp
 	implementation/c_encryption.cpp
+	implementation/c_errors.cpp
 	implementation/c_fields.cpp
 	implementation/c_file.cpp
 	implementation/c_font.cpp
@@ -140,6 +141,7 @@ set(GOTCHANGPDF_SYNTAX_SOURCES
 set(GOTCHANGPDF_UTILS_SOURCES
 	utils/attribute_interface.cpp
 	utils/buffer.cpp
+	utils/errors.cpp
 	utils/exceptions.cpp
 	utils/library_info.cpp
 	utils/log.cpp
@@ -258,6 +260,7 @@ set(GOTCHANGPDF_UTILS_HEADERS
 	utils/character.h
 	utils/constants.h
 	utils/deferred.h
+	utils/errors.h
 	utils/exceptions.h
 	utils/library_info.h
 	utils/log.h
@@ -286,6 +289,7 @@ set(GOTCHANGPDF_INCLUDE_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_document.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_document_info.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_encryption.h"
+	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_errors.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_export.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_fields.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_file.h"

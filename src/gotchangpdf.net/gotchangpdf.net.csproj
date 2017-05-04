@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Document.cs" />
+    <Compile Include="Errors.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="File.cs" />
     <Compile Include="IUnknown.cs" />

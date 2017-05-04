@@ -45,6 +45,8 @@ do { \
 	} \
 	else \
 	{ \
+		printf("Function call \"%s\" has failed with result %d { %s:%d }\n", \
+		#eval, __result__, __FILE__, __LINE__); \
 		assert(!"Operation failed"); \
 		return GOTCHANG_PDF_MERGE_ERROR_FAILURE; \
 	} \

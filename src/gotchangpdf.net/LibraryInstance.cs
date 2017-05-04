@@ -85,14 +85,21 @@ namespace gotchangpdf.net
             return Marshal.GetDelegateForFunctionPointer<T>(procAddress);
         }
 
-        public static int GetConstant(string constantName)
+        public static UInt32 GetConstant(string constantName)
         {
             IntPtr constantAddress = GetProcAddress(Handle, constantName);
             if (constantAddress == IntPtr.Zero) {
                 throw new Exception($"Could not find procedure {constantName}");
             }
 
-            return Marshal.ReadInt32(constantAddress);
+            byte[] bytes = new byte[4];
+            for (int i = 0; i < 4; ++i) {
+                bytes[i] = Marshal.ReadByte(constantAddress, i);
+            }
+
+            //int value = Marshal.ReadInt32(constantAddress);
+            //byte[] bytes = BitConverter.get
+            return BitConverter.ToUInt32(bytes, 0);
         }
 
         [DllImport("kernel32.dll", SetLastError = true)]

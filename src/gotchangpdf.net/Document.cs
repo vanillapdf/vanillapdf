@@ -14,7 +14,7 @@ namespace gotchangpdf.net
 
         public static Document OpenNew(string filename)
         {
-            int result = NativeMethods.Document_OpenNew(filename, out IntPtr handle);
+            UInt32 result = NativeMethods.Document_OpenNew(filename, out IntPtr handle);
             if (result != ReturnValues.ERROR_SUCCES) {
                 throw new Exception("Could not open new document");
             }
@@ -24,7 +24,7 @@ namespace gotchangpdf.net
 
         public static Document OpenExisting(File file)
         {
-            int result = NativeMethods.Document_OpenExisting(file.Handle, out IntPtr handle);
+            UInt32 result = NativeMethods.Document_OpenExisting(file.Handle, out IntPtr handle);
             if (result != ReturnValues.ERROR_SUCCES) {
                 throw new Exception("Could not open existing document");
             }
@@ -34,7 +34,7 @@ namespace gotchangpdf.net
 
         public void AppendDocument(Document source)
         {
-            int result = NativeMethods.Document_AppendDocument(Handle, source.Handle);
+            UInt32 result = NativeMethods.Document_AppendDocument(Handle, source.Handle);
             if (result != ReturnValues.ERROR_SUCCES) {
                 throw new Exception("Could not append document");
             }
@@ -42,7 +42,7 @@ namespace gotchangpdf.net
 
         public void Save(string filename)
         {
-            int result = NativeMethods.Document_Save(Handle, filename);
+            UInt32 result = NativeMethods.Document_Save(Handle, filename);
             if (result != ReturnValues.ERROR_SUCCES) {
                 throw new Exception("Could not save document");
             }
@@ -51,7 +51,7 @@ namespace gotchangpdf.net
         protected override void Dispose(bool disposing)
         {
             if (Handle != IntPtr.Zero) {
-                int result = NativeMethods.Document_Release(Handle);
+                UInt32 result = NativeMethods.Document_Release(Handle);
                 if (result != ReturnValues.ERROR_SUCCES) {
                     throw new Exception("Could not release document");
                 }
@@ -69,19 +69,19 @@ namespace gotchangpdf.net
             public static DocumentReleaseDelgate Document_Release = LibraryInstance.GetFunction<DocumentReleaseDelgate>("Document_Release");
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate int DocumentOpenNewDelgate(string filename, out IntPtr handle);
+            public delegate UInt32 DocumentOpenNewDelgate(string filename, out IntPtr handle);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate int DocumentOpenExistingDelgate(IntPtr file, out IntPtr handle);
+            public delegate UInt32 DocumentOpenExistingDelgate(IntPtr file, out IntPtr handle);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate int DocumentAppendDocumentDelgate(IntPtr handle, IntPtr source);
+            public delegate UInt32 DocumentAppendDocumentDelgate(IntPtr handle, IntPtr source);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate int DocumentSaveDelgate(IntPtr handle, string filename);
+            public delegate UInt32 DocumentSaveDelgate(IntPtr handle, string filename);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate int DocumentReleaseDelgate(IntPtr handle);
+            public delegate UInt32 DocumentReleaseDelgate(IntPtr handle);
         }
     }
 }

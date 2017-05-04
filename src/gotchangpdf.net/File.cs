@@ -14,7 +14,7 @@ namespace gotchangpdf.net
 
         public static File Open(string filename)
         {
-            int result = NativeMethods.File_Open(filename, out IntPtr handle);
+            UInt32 result = NativeMethods.File_Open(filename, out IntPtr handle);
             if (result != ReturnValues.ERROR_SUCCES) {
                 throw new Exception("Could not open file");
             }
@@ -24,7 +24,7 @@ namespace gotchangpdf.net
 
         public static File Create(string filename)
         {
-            int result = NativeMethods.File_Open(filename, out IntPtr handle);
+            UInt32 result = NativeMethods.File_Open(filename, out IntPtr handle);
             if (result != ReturnValues.ERROR_SUCCES) {
                 throw new Exception("Could not create file");
             }
@@ -34,7 +34,7 @@ namespace gotchangpdf.net
 
         public void Initialize()
         {
-            int result = NativeMethods.File_Initialize(Handle);
+            UInt32 result = NativeMethods.File_Initialize(Handle);
             if (result != ReturnValues.ERROR_SUCCES) {
                 throw new Exception("Could not initialize file");
             }
@@ -43,7 +43,7 @@ namespace gotchangpdf.net
         protected override void Dispose(bool disposing)
         {
             if (Handle != IntPtr.Zero) {
-                int result = NativeMethods.File_Release(Handle);
+                UInt32 result = NativeMethods.File_Release(Handle);
                 if (result != ReturnValues.ERROR_SUCCES) {
                     throw new Exception("Could not release document");
                 }
@@ -60,16 +60,16 @@ namespace gotchangpdf.net
             public static FileReleaseDelgate File_Release = LibraryInstance.GetFunction<FileReleaseDelgate>("File_Release");
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate int FileOpenDelgate(string filename, out IntPtr handle);
+            public delegate UInt32 FileOpenDelgate(string filename, out IntPtr handle);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate int FileCreateDelgate(string filename, out IntPtr handle);
+            public delegate UInt32 FileCreateDelgate(string filename, out IntPtr handle);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate int FileInitializeDelgate(IntPtr handle);
+            public delegate UInt32 FileInitializeDelgate(IntPtr handle);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate int FileReleaseDelgate(IntPtr handle);
+            public delegate UInt32 FileReleaseDelgate(IntPtr handle);
         }
     }
 }

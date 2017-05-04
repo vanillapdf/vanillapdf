@@ -12,7 +12,7 @@ namespace gotchangpdf {
 
 class ExceptionBase : public std::exception {
 public:
-	enum class Type : unsigned int {
+	enum class Type : uint32_t {
 		// global
 		Success = 0,
 		InvalidParameter,

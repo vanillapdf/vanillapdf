@@ -33,6 +33,7 @@
     <ClInclude Include="include\gotchangpdf\c_digital_signature.h" />
     <ClInclude Include="include\gotchangpdf\c_document.h" />
     <ClInclude Include="include\gotchangpdf\c_document_info.h" />
+    <ClInclude Include="include\gotchangpdf\c_errors.h" />
     <ClInclude Include="include\gotchangpdf\c_export.h" />
     <ClInclude Include="include\gotchangpdf\c_fields.h" />
     <ClInclude Include="include\gotchangpdf\c_file.h" />
@@ -158,6 +159,7 @@
     <ClInclude Include="src\gotchangpdf\utils\character.h" />
     <ClInclude Include="src\gotchangpdf\utils\constants.h" />
     <ClInclude Include="src\gotchangpdf\utils\deferred.h" />
+    <ClInclude Include="src\gotchangpdf\utils\errors.h" />
     <ClInclude Include="src\gotchangpdf\utils\exceptions.h" />
     <ClInclude Include="src\gotchangpdf\utils\base_iterator.h" />
     <ClInclude Include="src\gotchangpdf\utils\library_info.h" />
@@ -190,6 +192,7 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_digital_signature.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_document.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_encryption.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_errors.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_fields.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_file.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_font.cpp" />
@@ -286,6 +289,7 @@
     <ClCompile Include="src\gotchangpdf\syntax\utils\pkcs12_key.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\attribute_interface.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\buffer.cpp" />
+    <ClCompile Include="src\gotchangpdf\utils\errors.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\exceptions.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\library_info.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\log.cpp" />

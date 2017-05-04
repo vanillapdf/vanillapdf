@@ -1,6 +1,6 @@
 #include "test.h"
 
-int process_name(NameObjectHandle name, int nested) {
+error_type process_name(NameObjectHandle name, int nested) {
 	BufferHandle buffer = NULL;
 
 	print_spaces(nested);
@@ -16,7 +16,7 @@ int process_name(NameObjectHandle name, int nested) {
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-int process_lit_string(LiteralStringObjectHandle string, int nested) {
+error_type process_lit_string(LiteralStringObjectHandle string, int nested) {
 	BufferHandle buffer = NULL;
 
 	print_spaces(nested);
@@ -32,7 +32,7 @@ int process_lit_string(LiteralStringObjectHandle string, int nested) {
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-int process_hex_string(HexadecimalStringObjectHandle string, int nested) {
+error_type process_hex_string(HexadecimalStringObjectHandle string, int nested) {
 	BufferHandle buffer = NULL;
 
 	print_spaces(nested);
@@ -48,7 +48,7 @@ int process_hex_string(HexadecimalStringObjectHandle string, int nested) {
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-int process_dictionary(DictionaryObjectHandle dictionary, int nested) {
+error_type process_dictionary(DictionaryObjectHandle dictionary, int nested) {
 	boolean_type boolean = GOTCHANG_PDF_RV_FALSE;
 	DictionaryObjectIteratorHandle iterator = NULL;
 
@@ -235,7 +235,7 @@ error_type process_null(NullObjectHandle obj, int nested) {
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-int process_string(StringObjectHandle obj, int nested) {
+error_type process_string(StringObjectHandle obj, int nested) {
 	StringType type;
 	LiteralStringObjectHandle literal_str = NULL;
 	HexadecimalStringObjectHandle hexadecimal_str = NULL;
@@ -260,7 +260,7 @@ int process_string(StringObjectHandle obj, int nested) {
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-int process_object(ObjectHandle obj, int nested) {
+error_type process_object(ObjectHandle obj, int nested) {
 	ObjectType type;
 	RealObjectHandle real = NULL;
 	BooleanObjectHandle boolean = NULL;
