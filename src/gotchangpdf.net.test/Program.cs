@@ -8,11 +8,16 @@ namespace gotchangpdf.net.test
         {
             Logging.Enable();
 
-            File file = File.Open(args[0]);
-            file.Initialize();
+            using (Document document = Document.OpenNew(args[0])) {
 
-            Document doc = Document.OpenExisting(file);
-            doc.Save("example.pdf");
+                for (int i = 1; i < args.Length; ++i) {
+                    using (Document other_document = Document.OpenNew(args[i])) {
+                        document.AppendDocument(other_document);
+                    }
+                }
+
+                document.Save("example.pdf");
+            }
         }
     }
 }
