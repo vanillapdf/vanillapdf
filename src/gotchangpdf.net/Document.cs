@@ -32,6 +32,14 @@ namespace gotchangpdf.net
             return new Document(handle);
         }
 
+        public void AppendDocument(Document source)
+        {
+            int result = NativeMethods.Document_AppendDocument(Handle, source.Handle);
+            if (result != ReturnValues.ERROR_SUCCES) {
+                throw new Exception("Could not append document");
+            }
+        }
+
         public void Save(string filename)
         {
             int result = NativeMethods.Document_Save(Handle, filename);
@@ -56,6 +64,7 @@ namespace gotchangpdf.net
         {
             public static DocumentOpenNewDelgate Document_OpenNew = LibraryInstance.GetFunction<DocumentOpenNewDelgate>("Document_OpenNew");
             public static DocumentOpenExistingDelgate Document_OpenExisting = LibraryInstance.GetFunction<DocumentOpenExistingDelgate>("Document_OpenExisting");
+            public static DocumentAppendDocumentDelgate Document_AppendDocument = LibraryInstance.GetFunction<DocumentAppendDocumentDelgate>("Document_AppendDocument");
             public static DocumentSaveDelgate Document_Save = LibraryInstance.GetFunction<DocumentSaveDelgate>("Document_Save");
             public static DocumentReleaseDelgate Document_Release = LibraryInstance.GetFunction<DocumentReleaseDelgate>("Document_Release");
 
@@ -64,6 +73,9 @@ namespace gotchangpdf.net
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             public delegate int DocumentOpenExistingDelgate(IntPtr file, out IntPtr handle);
+
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            public delegate int DocumentAppendDocumentDelgate(IntPtr handle, IntPtr source);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             public delegate int DocumentSaveDelgate(IntPtr handle, string filename);
