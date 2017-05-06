@@ -33,12 +33,12 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Errors_GetLastError(error_type* result);
 
 	/**
-	* \brief Obtain length of the additional error message
+	* \brief Obtain length of the additional error message including the trailing NULL character
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Errors_GetLastErrorMessageLength(size_type* size);
 
 	/**
-	* \brief Obtain the additional text message about the last error
+	* \brief Obtain the additional NULL terminated text message about the last error
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Errors_GetLastErrorMessage(char* data, size_type size);
 
