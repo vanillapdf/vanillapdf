@@ -115,17 +115,4 @@ namespace gotchangpdf.net
         {
         }
     }
-
-    public class OptionalEntryMissingException : BaseException
-    {
-        public static OptionalEntryMissingException Create()
-        {
-            UInt32 code = ReturnValues.ERROR_OPTIONAL_ENTRY_MISSING;
-            return new OptionalEntryMissingException(code);
-        }
-
-        private OptionalEntryMissingException(UInt32 errorCode) : base(errorCode)
-        {
-        }
-    }
 }

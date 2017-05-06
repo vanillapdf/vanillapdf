@@ -60,7 +60,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION SignatureField_GetValue(Signature
 	try {
 		OuputDigitalSignaturePtr direct;
 		bool contains = field->Value(direct);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<DigitalSignatureHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;

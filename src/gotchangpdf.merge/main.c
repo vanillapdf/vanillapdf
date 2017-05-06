@@ -15,7 +15,6 @@ int main(int argc, char *argv[]) {
 	const char *destination_file = NULL;
 	int merge_files_count = 0;
 
-	FileHandle file = NULL;
 	DocumentHandle document = NULL;
 	CatalogHandle catalog = NULL;
 	PageTreeHandle tree = NULL;
@@ -52,28 +51,18 @@ int main(int argc, char *argv[]) {
 	destination_file = argv[4];
 	merge_files_count = argc - MERGE_FILES_START_INDEX;
 
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Open(source_file, &file));
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file));
-	RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenExisting(file, &document));
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_Open(source_file, &document));
 
 	for (i = 0; i < merge_files_count; ++i) {
-		FileHandle other_file = NULL;
 		DocumentHandle other_document = NULL;
 
-		RETURN_ERROR_IF_NOT_SUCCESS(File_Open(argv[MERGE_FILES_START_INDEX + i], &other_file));
-		RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(other_file));
-		RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenExisting(other_file, &other_document));
-
+		RETURN_ERROR_IF_NOT_SUCCESS(Document_Open(argv[MERGE_FILES_START_INDEX + i], &other_document));
 		RETURN_ERROR_IF_NOT_SUCCESS(Document_AppendDocument(document, other_document));
-
 		RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(other_document));
-		RETURN_ERROR_IF_NOT_SUCCESS(File_Release(other_file));
 	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Save(document, destination_file));
-
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));
 
 	return GOTCHANG_PDF_MERGE_ERROR_SUCCESS;
 }

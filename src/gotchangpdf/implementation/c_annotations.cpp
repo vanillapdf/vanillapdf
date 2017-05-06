@@ -94,7 +94,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION LinkAnnotation_GetDestination(Lin
 	{
 		OutputDestinationPtr destination;
 		bool contains = obj->Destination(destination);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = destination.AddRefGet();
 		*result = reinterpret_cast<DestinationHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;

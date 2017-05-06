@@ -948,6 +948,11 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
 		return;
 	}
 
+	// Nothing to do
+	if (xref->Empty()) {
+		return;
+	}
+
 	// Merge all items into single table
 	XrefBasePtr new_xref = XrefTablePtr();
 

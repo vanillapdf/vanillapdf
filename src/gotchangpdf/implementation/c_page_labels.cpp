@@ -54,7 +54,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Prefix(PageLabelHandle 
 	{
 		syntax::StringObjectPtr prefix;
 		auto contains = obj->Prefix(prefix);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = prefix.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -70,7 +70,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Start(PageLabelHandle h
 	{
 		syntax::IntegerObjectPtr start;
 		auto contains = obj->Start(start);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = start.AddRefGet();
 		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -86,7 +86,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabel_Style(PageLabelHandle h
 	{
 		PageLabel::NumberingStyle style;
 		auto contains = obj->Style(style);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		switch (style) {
 		case PageLabel::NumberingStyle::Decimal:
 			*result = NumberingStyle_Decimal; break;

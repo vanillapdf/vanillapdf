@@ -17,11 +17,11 @@ namespace gotchangpdf {
 namespace syntax {
 
 FilePtr File::Open(const std::string& path) {
-	return FilePtr(new File(path));
+	return FilePtr(pdf_new File(path));
 }
 
 FilePtr File::Create(const std::string& path) {
-	FilePtr result(new File(path));
+	FilePtr result(pdf_new File(path));
 
 	result->_input = std::make_shared<std::fstream>();
 	result->_input->open(path,
@@ -579,14 +579,18 @@ ObjectPtr File::GetIndirectObjectInternal(
 	}
 }
 
-HeaderPtr File::GetHeader(void) {
+HeaderPtr File::GetHeader(void) const {
 	// I am calling get to initialize object in case it is empty
-	return _header.get();
+	_header.get();
+
+	return _header;
 }
 
-XrefChainPtr File::GetXrefChain(void) {
+XrefChainPtr File::GetXrefChain(void) const {
 	// I am calling get to initialize object in case it is empty
-	return _xref.get();
+	_xref.get();
+
+	return _xref;
 }
 
 void File::FixObjectReferences(const std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPtr, bool>& visited, ObjectPtr copied) {

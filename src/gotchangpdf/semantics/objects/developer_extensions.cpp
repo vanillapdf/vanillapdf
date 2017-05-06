@@ -26,11 +26,11 @@ bool DeveloperExtensions::TryFind(const syntax::NameObjectPtr& name, OutputDevel
 		return false;
 	}
 
-	if (!syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(containable.GetValue())) {
+	if (!syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(*containable)) {
 		return false;
 	}
 
-	auto converted = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(containable.GetValue());
+	auto converted = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(*containable);
 	result = make_deferred<DeveloperExtension>(converted);
 	return true;
 }

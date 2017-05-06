@@ -40,7 +40,7 @@ public:
 public:
 	explicit Catalog(syntax::DictionaryObjectPtr root);
 
-	// optional entries
+	bool Pages(OutputPageTreePtr& result) const;
 	bool Version(Version& result) const;
 	bool Extensions(OutputDeveloperExtensionsPtr& result) const;
 	bool PageLabels(OutputPageLabelsPtr& result) const;
@@ -52,13 +52,6 @@ public:
 	bool Destinations(OutputNamedDestinationsPtr& result) const;
 	bool Names(OutputNameDictionaryPtr& result) const;
 	bool AcroForm(OuputInteractiveFormPtr& result) const;
-
-	// required
-	PageTreePtr Pages(void) const;
-
-private:
-	// Cache
-	mutable OutputPageTreePtr m_pages;
 };
 
 } // semantics

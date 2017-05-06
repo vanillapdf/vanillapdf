@@ -16,7 +16,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetContactInfo(D
 	try {
 		OutputStringObjectPtr direct;
 		bool contains = signature->ContactInfo(direct);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -31,7 +31,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetReason(Digita
 	try {
 		OutputStringObjectPtr direct;
 		bool contains = signature->Reason(direct);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -46,7 +46,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetLocation(Digi
 	try {
 		OutputStringObjectPtr direct;
 		bool contains = signature->Location(direct);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -61,7 +61,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetDate(DigitalS
 	try {
 		OutputDatePtr direct;
 		bool contains = signature->Date(direct);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<DateHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -76,7 +76,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetName(DigitalS
 	try {
 		OutputStringObjectPtr direct;
 		bool contains = signature->Name(direct);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -91,7 +91,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetRevision(Digi
 	try {
 		OutputIntegerObjectPtr direct;
 		bool contains = signature->Revision(direct);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -106,7 +106,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetCertificate(D
 	try {
 		OutputStringObjectPtr direct;
 		bool contains = signature->Certificate(direct);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -134,7 +134,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(Dig
 	try {
 		OuputByteRangeCollectionPtr direct;
 		bool contains = signature->ByteRange(direct);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<ByteRangeCollectionHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;

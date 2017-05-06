@@ -8,7 +8,7 @@ using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenNew(string_type filename, DocumentHandle* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_Open(string_type filename, DocumentHandle* result)
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -16,14 +16,27 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenNew(string_type file
 	try
 	{
 		std::string name(filename);
-		DocumentPtr doc = make_deferred<Document>(name);
+		DocumentPtr doc = Document::Open(name);
 		auto ptr = doc.AddRefGet();
 		*result = reinterpret_cast<DocumentHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHandle holder_handle, DocumentHandle* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_Create(string_type filename, DocumentHandle* result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		std::string name(filename);
+		DocumentPtr doc = Document::Create(name);
+		auto ptr = doc.AddRefGet();
+		*result = reinterpret_cast<DocumentHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenFile(FileHandle holder_handle, DocumentHandle* result)
 {
 	File* file = reinterpret_cast<File*>(holder_handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
@@ -31,7 +44,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHandle 
 
 	try
 	{
-		DocumentPtr doc = make_deferred<Document>(file);
+		DocumentPtr doc = Document::OpenFile(file);
 		auto ptr = doc.AddRefGet();
 		*result = reinterpret_cast<DocumentHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -72,7 +85,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandl
 
 	try
 	{
-		auto catalog = document->GetDocumentCatalog();
+		OutputCatalogPtr catalog;
+		bool found = document->GetDocumentCatalog(catalog);
+		if (!found) {
+			return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
+		}
+
 		auto ptr = catalog.AddRefGet();
 		*result = reinterpret_cast<CatalogHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -89,7 +107,10 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetDocumentInfo(Document
 	{
 		OutputDocumentInfoPtr info;
 		bool found = document->GetDocumentInfo(info);
-		if (!found) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!found) {
+			return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
+		}
+
 		auto ptr = info.AddRefGet();
 		*result = reinterpret_cast<DocumentInfoHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;

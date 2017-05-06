@@ -184,13 +184,6 @@ extern "C"
 
 	// semantic errors
 
-	/**
-	* \brief
-	* In case an entry is marked as optional,
-	* this is the return value to indicate that it is missing.
-	*/
-	GOTCHANG_PDF_API extern const error_type GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
-
 	/** @} */
 
 #ifdef __cplusplus

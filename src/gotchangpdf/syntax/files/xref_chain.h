@@ -54,6 +54,8 @@ public:
 	void Prepend(value_type item) { _list.push_front(item); }
 	void Reverse(void) { _list.reverse(); }
 	void Clear(void) { _list.clear(); }
+	size_t Size(void) const { return _list.size(); }
+	bool Empty(void) const { return _list.empty(); }
 
 	XrefUsedEntryBasePtr AllocateNewEntry();
 	bool ReleaseEntry(XrefUsedEntryBasePtr entry);

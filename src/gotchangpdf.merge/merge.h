@@ -39,7 +39,7 @@ do { \
 		RETURN_ERROR_IF_NOT_SUCCESS(call); \
 		RETURN_ERROR_IF_NOT_SUCCESS(release); \
 	} \
-	else if (GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING == __result__) \
+	else if (GOTCHANG_PDF_ERROR_OBJECT_MISSING == __result__) \
 	{ \
 		/* Do nothing */ \
 	} \

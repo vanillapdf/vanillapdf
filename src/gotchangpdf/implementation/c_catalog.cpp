@@ -16,7 +16,12 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPages(CatalogHandle ha
 
 	try
 	{
-		auto pages = obj->Pages();
+		OutputPageTreePtr pages;
+		bool found = obj->Pages(pages);
+		if (!found) {
+			return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
+		}
+
 		auto ptr = pages.AddRefGet();
 		*result = reinterpret_cast<PageTreeHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -33,7 +38,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetVersion(CatalogHandle 
 	{
 		Version version;
 		auto contains = obj->Version(version);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		switch (version) {
 		case Version::PDF10:
 			*result = PDFVersion_10; break;
@@ -69,7 +74,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetExtensions(CatalogHand
 	{
 		OutputDeveloperExtensionsPtr extensions;
 		auto contains = obj->Extensions(extensions);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = extensions.AddRefGet();
 		*result = reinterpret_cast<DeveloperExtensionsHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -86,7 +91,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLabels(CatalogHand
 	{
 		OutputPageLabelsPtr labels;
 		auto contains = obj->PageLabels(labels);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = labels.AddRefGet();
 		*result = reinterpret_cast<PageLabelsHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -103,7 +108,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHand
 	{
 		Catalog::PageLayoutType layout;
 		auto contains = obj->PageLayout(layout);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		switch (layout) {
 		case semantics::Catalog::PageLayoutType::SinglePage:
 			*result = PageLayout_SinglePage; break;
@@ -135,7 +140,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetViewerPreferences(Cata
 	{
 		OutputViewerPreferencesPtr direct;
 		auto contains = obj->ViewerPreferences(direct);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<ViewerPreferencesHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -152,7 +157,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetOutlines(CatalogHandle
 	{
 		OutputOutlinePtr direct;
 		auto contains = obj->Outlines(direct);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<OutlineHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -169,7 +174,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetDestinations(CatalogHa
 	{
 		OutputNamedDestinationsPtr direct;
 		auto contains = obj->Destinations(direct);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<NamedDestinationsHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -184,7 +189,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetAcroForm(CatalogHandle
 	try {
 		OuputInteractiveFormPtr direct;
 		auto contains = obj->AcroForm(direct);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<InteractiveFormHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;

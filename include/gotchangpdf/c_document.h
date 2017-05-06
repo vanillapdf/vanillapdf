@@ -28,14 +28,19 @@ extern "C"
 	*/
 
 	/**
-	* \brief Opens a new document for read access
+	* \brief Opens a new document
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenNew(string_type filename, DocumentHandle* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_Open(string_type filename, DocumentHandle* result);
 
 	/**
-	* \brief Opens a document for read access using the already existing file handle
+	* \brief Creates a new document
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenExisting(FileHandle holder, DocumentHandle* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_Create(string_type filename, DocumentHandle* result);
+
+	/**
+	* \brief Opens a document using already existing file handle
+	*/
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenFile(FileHandle holder, DocumentHandle* result);
 
 	/**
 	* \copydoc FileWriterHandle::FileWriter_Write

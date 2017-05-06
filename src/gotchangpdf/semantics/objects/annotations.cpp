@@ -212,23 +212,25 @@ bool LinkAnnotation::Destination(OutputDestinationPtr& result) const {
 		}
 
 		DocumentPtr document = document_ref.GetReference();
-		auto catalog = document->GetDocumentCatalog();
 
-		OutputNameDictionaryPtr name_dictionary_ptr;
-		bool has_dictionary = catalog->Names(name_dictionary_ptr);
+		OutputCatalogPtr catalog_ptr;
+		bool has_catalog = document->GetDocumentCatalog(catalog_ptr);
+		if (!has_catalog) {
+			return false;
+		}
+
+		OutputNameDictionaryPtr name_dictionary;
+		bool has_dictionary = catalog_ptr->Names(name_dictionary);
 		if (!has_dictionary) {
 			return false;
 		}
 
-		auto name_dictionary = name_dictionary_ptr.GetValue();
-
-		OutputNameTreePtr<DestinationPtr> destinations_ptr;
-		bool contains = name_dictionary->Dests(destinations_ptr);
+		OutputNameTreePtr<DestinationPtr> destinations;
+		bool contains = name_dictionary->Dests(destinations);
 		if (!contains) {
 			return false;
 		}
 
-		auto destinations = destinations_ptr.GetValue();
 		auto destination_name = syntax::ObjectUtils::ConvertTo<syntax::StringObjectPtr>(dest_obj);
 
 		assert(destinations->Contains(destination_name) && "Referenced destination does not exist");
@@ -249,15 +251,18 @@ bool LinkAnnotation::Destination(OutputDestinationPtr& result) const {
 		}
 
 		DocumentPtr document = document_ref.GetReference();
-		auto catalog = document->GetDocumentCatalog();
 
-		OutputNamedDestinationsPtr destinations_ptr;
-		bool has_destinations = catalog->Destinations(destinations_ptr);
-		if (!has_destinations) {
+		OutputCatalogPtr catalog;
+		bool has_catalog = document->GetDocumentCatalog(catalog);
+		if (!has_catalog) {
 			return false;
 		}
 
-		auto destinations = destinations_ptr.GetValue();
+		OutputNamedDestinationsPtr destinations;
+		bool has_destinations = catalog->Destinations(destinations);
+		if (!has_destinations) {
+			return false;
+		}
 
 		auto destination_name = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(dest_obj);
 

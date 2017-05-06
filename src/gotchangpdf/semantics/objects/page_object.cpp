@@ -99,18 +99,17 @@ bool PageObject::GetContents(OutputContentsPtr& result) const {
 		return true;
 	}
 
-	OutputContainableObjectPtr output;
-	auto found = _obj->TryFind(Name::Contents, output);
+	OutputContainableObjectPtr content;
+	auto found = _obj->TryFind(Name::Contents, content);
 
 	// Missing entry, return empty collection
 	if (!found) {
 		return false;
 	}
 
-	ContainableObjectPtr content = output.GetValue();
-	bool is_null = ObjectUtils::IsType<NullObjectPtr>(content);
-	bool is_ref = ObjectUtils::IsType<StreamObjectPtr>(content);
-	bool is_array = ObjectUtils::IsType<ArrayObjectPtr<StreamObjectPtr>>(content);
+	bool is_null = ObjectUtils::IsType<NullObjectPtr>(*content);
+	bool is_ref = ObjectUtils::IsType<StreamObjectPtr>(*content);
+	bool is_array = ObjectUtils::IsType<ArrayObjectPtr<StreamObjectPtr>>(*content);
 
 	// Missing entry, return empty collection
 	if (is_null) {
@@ -129,7 +128,7 @@ bool PageObject::GetContents(OutputContentsPtr& result) const {
 	}
 
 	if (is_ref) {
-		auto data = ObjectUtils::ConvertTo<StreamObjectPtr>(content);
+		auto data = ObjectUtils::ConvertTo<StreamObjectPtr>(*content);
 		ContentsPtr contents = make_deferred<Contents>(data);
 		m_contents = contents;
 		result = contents;
@@ -137,7 +136,7 @@ bool PageObject::GetContents(OutputContentsPtr& result) const {
 	}
 
 	if (is_array) {
-		auto data = ObjectUtils::ConvertTo<ArrayObjectPtr<IndirectObjectReferencePtr>>(content);
+		auto data = ObjectUtils::ConvertTo<ArrayObjectPtr<IndirectObjectReferencePtr>>(*content);
 		ContentsPtr contents = make_deferred<Contents>(data);
 		m_contents = contents;
 		result = contents;

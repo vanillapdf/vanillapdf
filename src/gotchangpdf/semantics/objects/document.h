@@ -19,12 +19,15 @@ namespace semantics {
 
 class Document : public virtual IUnknown, public IWeakReferenceable<Document> /*, public IFileWriterObserver*/ {
 public:
-	Document(const std::string& filename);
-	Document(syntax::FilePtr holder);
+	static DocumentPtr Open(const std::string& path);
+	static DocumentPtr Create(const std::string& path);
+	static DocumentPtr OpenFile(syntax::FilePtr holder);
+
 	~Document();
 
-	CatalogPtr GetDocumentCatalog(void);
-	bool GetDocumentInfo(OutputDocumentInfoPtr& result);
+	bool GetDocumentCatalog(OutputCatalogPtr& result) const;
+	bool GetDocumentInfo(OutputDocumentInfoPtr& result) const;
+
 	void Save(const std::string& path);
 	void SaveIncremental(const std::string& path);
 
@@ -38,13 +41,12 @@ public:
 private:
 	syntax::FilePtr m_holder;
 
-	// Cache
-	mutable OutputCatalogPtr m_catalog;
-	mutable OutputDocumentInfoPtr m_info;
-
-	OutputNamedDestinationsPtr CreateNameDestinations(CatalogPtr catalog);
-	OutputNameDictionaryPtr CreateNameDictionary(CatalogPtr catalog);
-	OutputNameTreePtr<DestinationPtr> CreateStringDestinations(NameDictionaryPtr dictionary);
+	CatalogPtr CreateCatalog();
+	PageTreePtr CreatePageTree(CatalogPtr catalog);
+	NamedDestinationsPtr CreateNameDestinations(CatalogPtr catalog);
+	NameDictionaryPtr CreateNameDictionary(CatalogPtr catalog);
+	InteractiveFormPtr CreateAcroForm(CatalogPtr catalog);
+	NameTreePtr<DestinationPtr> CreateStringDestinations(NameDictionaryPtr dictionary);
 
 	void MergePageDestinations(DocumentPtr other, PageObjectPtr other_page, PageObjectPtr merged_page);
 	void MergeNameDestinations(NamedDestinationsPtr destinations, PageObjectPtr other_page, PageObjectPtr merged_page);
@@ -56,6 +58,11 @@ private:
 	bool IsDestinationReferencingPage(DestinationPtr destination, PageObjectPtr page);
 
 	void OnBeforeOutputFlush(syntax::IOutputStreamPtr output) /*override*/;
+
+	void RecalculatePageContents();
+
+private:
+	Document(syntax::FilePtr holder);
 };
 
 } // semantics

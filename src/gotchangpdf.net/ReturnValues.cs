@@ -42,10 +42,6 @@ namespace gotchangpdf.net
                 return GOTCHANG_PDF_ERROR_INVALID_PASSWORD;
             }
 
-            if (value == ERROR_OPTIONAL_ENTRY_MISSING) {
-                return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
-            }
-
             throw new Exception("Unknown return value");
         }
 
@@ -83,10 +79,6 @@ namespace gotchangpdf.net
                 return InvalidPasswordException.Create();
             }
 
-            if (value == ERROR_OPTIONAL_ENTRY_MISSING) {
-                return OptionalEntryMissingException.Create();
-            }
-
             throw new Exception("Unknown return value");
         }
 
@@ -99,7 +91,6 @@ namespace gotchangpdf.net
         public static UInt32 ERROR_FILE_NOT_INITIALIZED = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_FILE_NOT_INITIALIZED);
         public static UInt32 ERROR_OBJECT_MISSING = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_OBJECT_MISSING);
         public static UInt32 ERROR_INVALID_PASSWORD = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_INVALID_PASSWORD);
-        public static UInt32 ERROR_OPTIONAL_ENTRY_MISSING = LibraryInstance.GetConstant(GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING);
 
         private const string GOTCHANG_PDF_ERROR_SUCCES = "GOTCHANG_PDF_ERROR_SUCCES";
         private const string GOTCHANG_PDF_ERROR_PARAMETER_VALUE = "GOTCHANG_PDF_ERROR_PARAMETER_VALUE";
@@ -110,6 +101,5 @@ namespace gotchangpdf.net
         private const string GOTCHANG_PDF_ERROR_FILE_NOT_INITIALIZED = "GOTCHANG_PDF_ERROR_FILE_NOT_INITIALIZED";
         private const string GOTCHANG_PDF_ERROR_OBJECT_MISSING = "GOTCHANG_PDF_ERROR_OBJECT_MISSING";
         private const string GOTCHANG_PDF_ERROR_INVALID_PASSWORD = "GOTCHANG_PDF_ERROR_INVALID_PASSWORD";
-        private const string GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING = "GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING";
     }
 }

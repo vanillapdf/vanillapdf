@@ -76,6 +76,14 @@ public:
 	XrefFreeEntry(types::big_uint obj_number, types::ushort gen_number);
 	XrefFreeEntry(types::big_uint obj_number, types::ushort gen_number, types::big_uint next_free_object);
 
+	static XrefFreeEntryPtr Create(types::big_uint obj_number, types::ushort gen_number) {
+		return make_deferred<XrefFreeEntry>(obj_number, gen_number);
+	}
+
+	static XrefFreeEntryPtr Create(types::big_uint obj_number, types::ushort gen_number, types::big_uint next_free_object) {
+		return make_deferred<XrefFreeEntry>(obj_number, gen_number, next_free_object);
+	}
+
 public:
 	virtual Usage GetUsage(void) const noexcept override {
 		return XrefEntryBase::Usage::Free;

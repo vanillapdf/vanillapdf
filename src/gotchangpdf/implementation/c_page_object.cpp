@@ -20,7 +20,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObject
 	{
 		OutputContentsPtr contents;
 		auto contains = obj->GetContents(contents);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = contents.AddRefGet();
 		*result = reinterpret_cast<ContentsHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -105,7 +105,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageObject_GetAnnotations(PageObj
 	{
 		OutputPageAnnotationsPtr annots;
 		bool contains = obj->GetAnnotations(annots);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = annots.AddRefGet();
 		*result = reinterpret_cast<PageAnnotationsHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;

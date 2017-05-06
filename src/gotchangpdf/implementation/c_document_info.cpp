@@ -18,7 +18,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitle(DocumentInf
 	{
 		OutputStringObjectPtr title;
 		auto contains = obj->Title(title);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = title.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -35,7 +35,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthor(DocumentIn
 	{
 		OutputStringObjectPtr author;
 		auto contains = obj->Author(author);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = author.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -52,7 +52,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubject(DocumentI
 	{
 		OutputStringObjectPtr subject;
 		auto contains = obj->Subject(subject);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = subject.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -69,7 +69,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywords(Document
 	{
 		OutputStringObjectPtr keywords;
 		auto contains = obj->Keywords(keywords);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = keywords.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -86,7 +86,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreator(DocumentI
 	{
 		OutputStringObjectPtr creator;
 		auto contains = obj->Creator(creator);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = creator.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -103,7 +103,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducer(Document
 	{
 		OutputStringObjectPtr producer;
 		auto contains = obj->Producer(producer);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = producer.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -120,7 +120,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreationDate(Docu
 	{
 		OutputDatePtr date;
 		auto contains = obj->CreationDate(date);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = date.AddRefGet();
 		*result = reinterpret_cast<DateHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -137,7 +137,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetModificationDate(
 	{
 		OutputDatePtr date;
 		auto contains = obj->ModificationDate(date);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = date.AddRefGet();
 		*result = reinterpret_cast<DateHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -154,7 +154,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentI
 	{
 		gotchangpdf::semantics::DocumentTrapped trapped;
 		auto contains = obj->Trapped(trapped);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 
 		switch (trapped)
 		{

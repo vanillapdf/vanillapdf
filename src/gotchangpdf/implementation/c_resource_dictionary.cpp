@@ -17,7 +17,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ResourceDictionary_GetFontMap(Res
 	{
 		OutputFontMapPtr font;
 		bool contains = obj->Font(font);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = font.AddRefGet();
 		*result = reinterpret_cast<FontMapHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;

@@ -16,10 +16,32 @@ namespace semantics {
 
 using namespace syntax;
 
-Document::Document(const std::string& filename) : m_holder(File::Open(filename)) {
-	m_holder->Initialize();
+DocumentPtr Document::Open(const std::string& path) {
+	FilePtr file = File::Open(path);
+	file->Initialize();
 
-	SemanticUtils::AddDocumentMapping(m_holder, GetWeakReference<Document>());
+	return DocumentPtr(pdf_new Document(file));
+}
+
+DocumentPtr Document::Create(const std::string& path) {
+	FilePtr file = File::Create(path);
+
+	HeaderPtr header = file->GetHeader();
+	header->SetVersion(Version::PDF17);
+
+	XrefFreeEntryPtr initial_entry = XrefFreeEntry::Create(0, constant::MAX_GENERATION_NUMBER);
+
+	XrefTablePtr xref_table;
+	xref_table->Add(initial_entry);
+
+	XrefChainPtr chain = file->GetXrefChain();
+	chain->Append(xref_table);
+
+	return DocumentPtr(pdf_new Document(file));
+}
+
+DocumentPtr Document::OpenFile(syntax::FilePtr holder) {
+	return DocumentPtr(pdf_new Document(holder));
 }
 
 Document::Document(syntax::FilePtr holder) : m_holder(holder) {
@@ -34,27 +56,25 @@ Document::~Document() {
 	SemanticUtils::ReleaseMapping(m_holder);
 }
 
-CatalogPtr Document::GetDocumentCatalog(void) {
-	if (!m_catalog.empty()) {
-		return m_catalog;
+bool Document::GetDocumentCatalog(OutputCatalogPtr& result) const {
+	auto chain = m_holder->GetXrefChain();
+	if (chain->Empty()) {
+		return false;
 	}
 
-	auto chain = m_holder->GetXrefChain();
 	auto xref = chain->Begin()->Value();
 	auto dictionary = xref->GetTrailerDictionary();
-	auto root = dictionary->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Root);
 
-	auto catalog = make_deferred<Catalog>(root);
-	m_catalog = catalog;
-	return m_catalog;
-}
-
-bool Document::GetDocumentInfo(OutputDocumentInfoPtr& result) {
-	if (!m_info.empty()) {
-		result = m_info.GetValue();
-		return true;
+	if (!dictionary->Contains(constant::Name::Root)) {
+		return false;
 	}
 
+	auto root = dictionary->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Root);
+	result = make_deferred<Catalog>(root);
+	return true;
+}
+
+bool Document::GetDocumentInfo(OutputDocumentInfoPtr& result) const {
 	auto chain = m_holder->GetXrefChain();
 	auto xref = chain->Begin()->Value();
 	auto dictionary = xref->GetTrailerDictionary();
@@ -64,29 +84,36 @@ bool Document::GetDocumentInfo(OutputDocumentInfoPtr& result) {
 	}
 
 	auto info = dictionary->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Info);
-	DocumentInfoPtr doc_info = make_deferred<DocumentInfo>(info);
-	m_info = doc_info;
-	result = doc_info;
+	result = make_deferred<DocumentInfo>(info);
 	return true;
 }
 
-void Document::Save(const std::string& path) {
-	auto destination = File::Create(path);
+void Document::RecalculatePageContents() {
 
 	// On before Save
-	auto catalog = GetDocumentCatalog();
-	auto pages = catalog->Pages();
+
+	OutputCatalogPtr catalog_ptr;
+	bool has_catalog = GetDocumentCatalog(catalog_ptr);
+	if (!has_catalog) {
+		return;
+	}
+
+	OutputPageTreePtr pages;
+	bool has_pages = catalog_ptr->Pages(pages);
+	if (!has_pages) {
+		return;
+	}
+
 	auto page_count = pages->PageCount();
 	for (decltype(page_count) i = 1; i < page_count + 1; ++i) {
 		auto page = pages->Page(i);
 
-		OutputContentsPtr page_contents_ptr;
-		bool has_contents = page->GetContents(page_contents_ptr);
+		OutputContentsPtr page_contents;
+		bool has_contents = page->GetContents(page_contents);
 		if (!has_contents) {
 			continue;
 		}
 
-		ContentsPtr page_contents = page_contents_ptr.GetValue();
 		if (!page_contents->IsDirty()) {
 			continue;
 		}
@@ -127,19 +154,58 @@ void Document::Save(const std::string& path) {
 		BufferPtr new_body = make_deferred<Buffer>(string_body.begin(), string_body.end());
 		stream_object->SetBody(new_body);
 	}
+}
+
+void Document::Save(const std::string& path) {
+	RecalculatePageContents();
+
+	FilePtr destination = File::Create(path);
 
 	FileWriter writer;
 	writer.Write(m_holder, destination);
 }
 
 void Document::SaveIncremental(const std::string& path) {
-	auto destination = File::Create(path);
+	RecalculatePageContents();
+
+	FilePtr destination = File::Create(path);
 
 	FileWriter writer;
 	writer.WriteIncremental(m_holder, destination);
 }
 
-OutputNamedDestinationsPtr Document::CreateNameDestinations(CatalogPtr catalog) {
+CatalogPtr Document::CreateCatalog() {
+	auto chain = m_holder->GetXrefChain();
+	auto entry = chain->AllocateNewEntry();
+
+	DictionaryObjectPtr raw_dictionary;
+	raw_dictionary->SetFile(m_holder);
+	raw_dictionary->SetInitialized();
+	entry->SetReference(raw_dictionary);
+	entry->SetInitialized();
+
+	return make_deferred<Catalog>(raw_dictionary);
+}
+
+PageTreePtr Document::CreatePageTree(CatalogPtr catalog) {
+	auto chain = m_holder->GetXrefChain();
+	auto entry = chain->AllocateNewEntry();
+
+	DictionaryObjectPtr raw_dictionary;
+	raw_dictionary->SetFile(m_holder);
+	raw_dictionary->SetInitialized();
+	entry->SetReference(raw_dictionary);
+	entry->SetInitialized();
+
+	auto raw_catalog = catalog->GetObject();
+
+	IndirectObjectReferencePtr ref = make_deferred<IndirectObjectReference>(raw_dictionary);
+	raw_catalog->Insert(constant::Name::Pages, ref);
+
+	return make_deferred<PageTree>(raw_dictionary);
+}
+
+NamedDestinationsPtr Document::CreateNameDestinations(CatalogPtr catalog) {
 	auto chain = m_holder->GetXrefChain();
 	auto entry = chain->AllocateNewEntry();
 
@@ -154,11 +220,10 @@ OutputNamedDestinationsPtr Document::CreateNameDestinations(CatalogPtr catalog) 
 	IndirectObjectReferencePtr ref = make_deferred<IndirectObjectReference>(raw_dictionary);
 	raw_catalog->Insert(constant::Name::Dests, ref);
 
-	NamedDestinationsPtr result = make_deferred<NamedDestinations>(raw_dictionary);
-	return result;
+	return make_deferred<NamedDestinations>(raw_dictionary);
 }
 
-OutputNameDictionaryPtr Document::CreateNameDictionary(CatalogPtr catalog) {
+NameDictionaryPtr Document::CreateNameDictionary(CatalogPtr catalog) {
 	auto chain = m_holder->GetXrefChain();
 	auto entry = chain->AllocateNewEntry();
 
@@ -173,11 +238,28 @@ OutputNameDictionaryPtr Document::CreateNameDictionary(CatalogPtr catalog) {
 	IndirectObjectReferencePtr ref = make_deferred<IndirectObjectReference>(raw_dictionary);
 	raw_catalog->Insert(constant::Name::Names, ref);
 
-	NameDictionaryPtr result = make_deferred<NameDictionary>(raw_dictionary);
-	return result;
+	return make_deferred<NameDictionary>(raw_dictionary);
 }
 
-OutputNameTreePtr<DestinationPtr> Document::CreateStringDestinations(NameDictionaryPtr dictionary) {
+InteractiveFormPtr Document::CreateAcroForm(CatalogPtr catalog) {
+	auto chain = m_holder->GetXrefChain();
+	auto entry = chain->AllocateNewEntry();
+
+	DictionaryObjectPtr raw_dictionary;
+	raw_dictionary->SetFile(m_holder);
+	raw_dictionary->SetInitialized();
+	entry->SetReference(raw_dictionary);
+	entry->SetInitialized();
+
+	auto raw_catalog = catalog->GetObject();
+
+	IndirectObjectReferencePtr ref = make_deferred<IndirectObjectReference>(raw_dictionary);
+	raw_catalog->Insert(constant::Name::AcroForm, ref);
+
+	return make_deferred<InteractiveForm>(raw_dictionary);
+}
+
+NameTreePtr<DestinationPtr> Document::CreateStringDestinations(NameDictionaryPtr dictionary) {
 	auto chain = m_holder->GetXrefChain();
 	auto entry = chain->AllocateNewEntry();
 
@@ -219,8 +301,18 @@ void Document::FixDestinationPage(ObjectPtr cloned_page, PageObjectPtr other_pag
 		throw GeneralException("Unknown object type");
 	}
 
-	auto original_catalog = GetDocumentCatalog();
-	auto original_pages = original_catalog->Pages();
+	OutputCatalogPtr original_catalog;
+	bool has_original_catalog = GetDocumentCatalog(original_catalog);
+	if (!has_original_catalog) {
+		assert(!"TODO");
+	}
+
+	OutputPageTreePtr original_pages;
+	bool has_original_pages = original_catalog->Pages(original_pages);
+	if (!has_original_pages) {
+		assert(!"TODO");
+	}
+
 	auto original_page_count = original_pages->PageCount();
 
 	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(cloned_page)) {
@@ -252,8 +344,19 @@ void Document::FixDestinationPage(ObjectPtr cloned_page, PageObjectPtr other_pag
 }
 
 void Document::AppendDocument(DocumentPtr other) {
-	auto other_catalog = other->GetDocumentCatalog();
-	auto other_pages = other_catalog->Pages();
+
+	OutputCatalogPtr other_catalog;
+	bool has_other_catalog = other->GetDocumentCatalog(other_catalog);
+	if (has_other_catalog) {
+		return;
+	}
+
+	OutputPageTreePtr other_pages;
+	bool has_other_pages = other_catalog->Pages(other_pages);
+	if (!has_other_pages) {
+		return;
+	}
+
 	auto other_page_count = other_pages->PageCount();
 
 	std::vector<ObjectPtr> merge_objects;
@@ -340,27 +443,29 @@ void Document::MergeStringDestinations(NameTreePtr<DestinationPtr> destinations,
 }
 
 void Document::AppendStringDestination(StringObjectPtr key, DestinationPtr value, PageObjectPtr other_page, PageObjectPtr merged_page) {
-	auto original_catalog = GetDocumentCatalog();
-
-	OutputNameDictionaryPtr original_name_dictionary_ptr;
-	bool has_original_name_dictionary = original_catalog->Names(original_name_dictionary_ptr);
-
-	if (!has_original_name_dictionary) {
-		original_name_dictionary_ptr = CreateNameDictionary(original_catalog);
-		assert(!original_name_dictionary_ptr.empty() && "CreateNameDictionary returned empty result");
+	OutputCatalogPtr original_catalog;
+	bool has_original_catalog = GetDocumentCatalog(original_catalog);
+	if (!has_original_catalog) {
+		original_catalog = CreateCatalog();
+		assert(!original_catalog.empty() && "CreateCatalog returned empty result");
 	}
 
-	NameDictionaryPtr original_name_dictionary = original_name_dictionary_ptr.GetValue();
+	OutputNameDictionaryPtr original_name_dictionary;
+	bool has_original_name_dictionary = original_catalog->Names(original_name_dictionary);
 
-	OutputNameTreePtr<DestinationPtr> original_string_destinations_ptr;
-	bool original_has_string_destinations = original_name_dictionary->Dests(original_string_destinations_ptr);
+	if (!has_original_name_dictionary) {
+		original_name_dictionary = CreateNameDictionary(original_catalog);
+		assert(!original_name_dictionary.empty() && "CreateNameDictionary returned empty result");
+	}
+
+	OutputNameTreePtr<DestinationPtr> original_string_destinations;
+	bool original_has_string_destinations = original_name_dictionary->Dests(original_string_destinations);
 	if (!original_has_string_destinations) {
-		original_string_destinations_ptr = CreateStringDestinations(original_name_dictionary);
-		assert(!original_string_destinations_ptr.empty() && "CreateNameTreeDestinations returned empty result");
+		original_string_destinations = CreateStringDestinations(original_name_dictionary);
+		assert(!original_string_destinations.empty() && "CreateNameTreeDestinations returned empty result");
 	}
 
 	// Check for name conflicts
-	auto original_string_destinations = original_string_destinations_ptr.GetValue();
 	assert(!original_string_destinations->Contains(key) && "Name conflict");
 	if (original_string_destinations->Contains(key)) {
 		throw NotSupportedException("Merge of conflicting names is not yet supported");
@@ -386,19 +491,23 @@ void Document::AppendStringDestination(StringObjectPtr key, DestinationPtr value
 }
 
 void Document::AppendNameDestination(NameObjectPtr key, DestinationPtr value, PageObjectPtr other_page, PageObjectPtr merged_page) {
-	auto original_catalog = GetDocumentCatalog();
+	OutputCatalogPtr original_catalog;
+	bool has_catalog = GetDocumentCatalog(original_catalog);
+	if (!has_catalog) {
+		original_catalog = CreateCatalog();
+		assert(!original_catalog.empty() && "CreateCatalog returned empty result");
+	}
 
-	OutputNamedDestinationsPtr original_destinations_ptr;
-	bool has_original_destinations = original_catalog->Destinations(original_destinations_ptr);
+	OutputNamedDestinationsPtr original_destinations;
+	bool has_original_destinations = original_catalog->Destinations(original_destinations);
 
 	// Create missing destination objects
 	if (!has_original_destinations) {
-		original_destinations_ptr = CreateNameDestinations(original_catalog);
-		assert(!original_destinations_ptr.empty() && "CreateNamedDestinations returned empty result");
+		original_destinations = CreateNameDestinations(original_catalog);
+		assert(!original_destinations.empty() && "CreateNamedDestinations returned empty result");
 	}
 
 	// Check for name conflicts
-	NamedDestinationsPtr original_destinations = original_destinations_ptr.GetValue();
 	assert(!original_destinations->Contains(key) && "Name conflict");
 	if (original_destinations->Contains(key)) {
 		throw NotSupportedException("Merge of conflicting names is not yet supported");
@@ -424,8 +533,19 @@ void Document::AppendNameDestination(NameObjectPtr key, DestinationPtr value, Pa
 }
 
 void Document::AppendPage(DocumentPtr other, PageObjectPtr other_page) {
-	auto original_catalog = GetDocumentCatalog();
-	auto original_pages = original_catalog->Pages();
+	OutputCatalogPtr original_catalog;
+	bool has_catalog = GetDocumentCatalog(original_catalog);
+	if (!has_catalog) {
+		original_catalog = CreateCatalog();
+		assert(!original_catalog.empty() && "CreateCatalog returned empty result");
+	}
+
+	OutputPageTreePtr original_pages;
+	bool has_pages = original_catalog->Pages(original_pages);
+	if (!has_pages) {
+		original_pages = CreatePageTree(original_catalog);
+		assert(!original_pages.empty() && "CreatePageTree returned empty result");
+	}
 
 	auto page_object = other_page->GetObject();
 
@@ -457,26 +577,26 @@ void Document::AppendPage(DocumentPtr other, PageObjectPtr other_page) {
 }
 
 void Document::MergePageDestinations(DocumentPtr other, PageObjectPtr other_page, PageObjectPtr merged_page) {
-	auto other_catalog = other->GetDocumentCatalog();
+	OutputCatalogPtr other_catalog;
+	bool has_other_catalog = other->GetDocumentCatalog(other_catalog);
+	if (!has_other_catalog) {
+		return;
+	}
 
-	OutputNamedDestinationsPtr other_destinations_ptr;
-	OutputNameDictionaryPtr other_name_dictionary_ptr;
+	OutputNamedDestinationsPtr other_destinations;
+	OutputNameDictionaryPtr other_name_dictionary;
 
-	bool has_other_destinations = other_catalog->Destinations(other_destinations_ptr);
-	bool has_other_name_dictionary = other_catalog->Names(other_name_dictionary_ptr);
+	bool has_other_destinations = other_catalog->Destinations(other_destinations);
+	bool has_other_name_dictionary = other_catalog->Names(other_name_dictionary);
 
 	if (has_other_destinations) {
-		NamedDestinationsPtr other_destinations = other_destinations_ptr.GetValue();
 		MergeNameDestinations(other_destinations, other_page, merged_page);
 	}
 
 	if (has_other_name_dictionary) {
-		NameDictionaryPtr other_name_dictionary = other_name_dictionary_ptr.GetValue();
-
-		OutputNameTreePtr<DestinationPtr> other_string_destinations_ptr;
-		bool other_has_string_destinations = other_name_dictionary->Dests(other_string_destinations_ptr);
+		OutputNameTreePtr<DestinationPtr> other_string_destinations;
+		bool other_has_string_destinations = other_name_dictionary->Dests(other_string_destinations);
 		if (other_has_string_destinations) {
-			NameTreePtr<DestinationPtr> other_string_destinations = other_string_destinations_ptr.GetValue();
 			MergeStringDestinations(other_string_destinations, other_page, merged_page);
 		}
 	}
@@ -520,15 +640,20 @@ void Document::Sign() {
 	auto new_entry = chain->AllocateNewEntry();
 	new_entry->SetReference(signature_field);
 
-	auto catalog = GetDocumentCatalog();
-
-	OuputInteractiveFormPtr interactive_form_ptr;
-	bool has_interactive_form = catalog->AcroForm(interactive_form_ptr);
-	if (!has_interactive_form) {
-		assert(!"TODO");
+	OutputCatalogPtr catalog;
+	bool has_catalog = GetDocumentCatalog(catalog);
+	if (!has_catalog) {
+		catalog = CreateCatalog();
+		assert(!catalog.empty() && "CreateCatalog returned empty result");
 	}
 
-	auto interactive_form = interactive_form_ptr.GetValue();
+	OuputInteractiveFormPtr interactive_form;
+	bool has_interactive_form = catalog->AcroForm(interactive_form);
+	if (!has_interactive_form) {
+		interactive_form = CreateAcroForm(catalog);
+		assert(!interactive_form.empty() && "CreateAcroForm returned empty result");
+	}
+
 	auto fields = interactive_form->Fields();
 	auto fields_obj = fields->GetObject();
 

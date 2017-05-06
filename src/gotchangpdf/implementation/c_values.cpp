@@ -21,4 +21,3 @@ GOTCHANG_PDF_API const error_type GOTCHANG_PDF_ERROR_OBJECT_MISSING			= static_c
 GOTCHANG_PDF_API const error_type GOTCHANG_PDF_ERROR_INVALID_PASSWORD		= static_cast<error_type>(gotchangpdf::ExceptionBase::Type::InvalidPassword);
 
 // semantic errors
-GOTCHANG_PDF_API const error_type GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING = static_cast<error_type>(gotchangpdf::ExceptionBase::Type::OptionalEntryMissing);

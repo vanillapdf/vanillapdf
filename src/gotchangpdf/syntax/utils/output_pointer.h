@@ -38,25 +38,27 @@ public:
 	void SetValue(const T& value) { m_value.reset(pdf_new T(value)); }
 	void SetValue(T&& value) { m_value.reset(pdf_new T(value)); }
 
-	T GetValue() const {
-		if (nullptr == m_value) {
+	T* GetValue() const {
+		if (m_value == nullptr) {
 			throw GeneralException("Uninitialized pointer");
 		}
 
-		return *m_value;
+		return m_value.get();
 	}
 
 	bool empty() const noexcept { return (nullptr == m_value); }
-	operator T() { return GetValue(); }
-	operator T() const { return GetValue(); }
-	T operator*() const { return *GetValue(); }
+	operator T&() { return *GetValue(); }
+	operator const T&() const { return *GetValue(); }
+
+	T& operator*() { return *GetValue(); }
+	const T& operator*() const { return *GetValue(); }
+
+	T& operator->() { return *GetValue(); }
+	const T& operator->() const { return *GetValue(); }
 
 	auto AddRefGet(void) -> typename std::result_of<decltype(&T::AddRefGet)(T)>::type {
-		if (nullptr == m_value) {
-			throw GeneralException("Uninitialized pointer");
-		}
-
-		return m_value->AddRefGet();
+		auto value = GetValue();
+		return value->AddRefGet();
 	}
 
 	OutputPointer& operator=(const T& value) {

@@ -48,7 +48,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION CompositeFont_GetUnicodeMap(Compo
 	{
 		OuputUnicodeCharacterMapPtr map;
 		bool contains = obj->ToUnicode(map);
-		if (!contains) return GOTCHANG_PDF_ERROR_OPTIONAL_ENTRY_MISSING;
+		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = map.AddRefGet();
 		*result = reinterpret_cast<UnicodeCharacterMapHandle>(ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
