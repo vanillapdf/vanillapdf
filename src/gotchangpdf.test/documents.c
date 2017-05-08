@@ -696,7 +696,7 @@ error_type process_date(DateHandle obj, int nested) {
 	integer_type hour = 0;
 	integer_type minute = 0;
 	integer_type second = 0;
-	DateTimezoneType timezone;
+	TimezoneType timezone;
 	integer_type hour_offset = 0;
 	integer_type minute_offset = 0;
 
@@ -714,19 +714,19 @@ error_type process_date(DateHandle obj, int nested) {
 	RETURN_ERROR_IF_NOT_SUCCESS(Date_GetMinuteOffset(obj, &minute_offset));
 
 	print_spaces(nested + 1);
-	if (timezone == DateTimezoneType_UTC) {
+	if (timezone == TimezoneType_UTC) {
 		printf("%04d-%02d-%02d %02d:%02d:%02dZ\n",
 			year, month, day,
 			hour, minute, second);
 	} else {
 		boolean_type timezone_set = GOTCHANG_PDF_RV_FALSE;
 		char timezone_character;
-		if (timezone == DateTimezoneType_Later) {
+		if (timezone == TimezoneType_Later) {
 			timezone_character = '+';
 			timezone_set = GOTCHANG_PDF_RV_TRUE;
 		}
 
-		if (timezone == DateTimezoneType_Earlier) {
+		if (timezone == TimezoneType_Earlier) {
 			timezone_character = '-';
 			timezone_set = GOTCHANG_PDF_RV_TRUE;
 		}

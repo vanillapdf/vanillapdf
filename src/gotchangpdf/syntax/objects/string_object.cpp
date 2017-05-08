@@ -24,11 +24,19 @@ LiteralStringObject::LiteralStringObject(const char * value)
 	: LiteralStringObject(make_deferred<Buffer>(value)) {
 }
 
+LiteralStringObject::LiteralStringObject(std::string value)
+	: LiteralStringObject(make_deferred<Buffer>(value)) {
+}
+
 LiteralStringObject::LiteralStringObject(BufferPtr value) : _raw_value(value) {
 	_value->Subscribe(this);
 }
 
 HexadecimalStringObject::HexadecimalStringObject(const char * value)
+	: HexadecimalStringObject(make_deferred<Buffer>(value)) {
+}
+
+HexadecimalStringObject::HexadecimalStringObject(std::string value)
 	: HexadecimalStringObject(make_deferred<Buffer>(value)) {
 }
 
@@ -78,18 +86,17 @@ BufferPtr LiteralStringObject::GetValue() const {
 		return _value;
 	}
 
-	if (!m_file.IsActive()) {
-		throw FileDisposedException();
-	}
+	BufferPtr new_value = _raw_value;
+	if (!m_file.IsEmpty()) {
+		if (!m_file.IsActive()) {
+			throw FileDisposedException();
+		}
 
-	auto locked_file = m_file.GetReference();
+		auto locked_file = m_file.GetReference();
 
-	BufferPtr new_value;
-	if (!IsEncryptionExempted() && locked_file->IsEncrypted()) {
-		new_value = locked_file->DecryptString(_raw_value, GetObjectNumber(), GetGenerationNumber());
-	}
-	else {
-		new_value = _raw_value;
+		if (!IsEncryptionExempted() && locked_file->IsEncrypted()) {
+			new_value = locked_file->DecryptString(_raw_value, GetObjectNumber(), GetGenerationNumber());
+		}
 	}
 
 	_value->assign(new_value.begin(), new_value.end());
@@ -121,13 +128,15 @@ BufferPtr HexadecimalStringObject::GetValue() const {
 		result->push_back(converted);
 	}
 
-	if (!m_file.IsActive()) {
-		throw FileDisposedException();
-	}
+	if (!m_file.IsEmpty()) {
+		if (!m_file.IsActive()) {
+			throw FileDisposedException();
+		}
 
-	auto locked_file = m_file.GetReference();
-	if (!IsEncryptionExempted() && locked_file->IsEncrypted()) {
-		result = locked_file->DecryptString(result, GetObjectNumber(), GetGenerationNumber());
+		auto locked_file = m_file.GetReference();
+		if (!IsEncryptionExempted() && locked_file->IsEncrypted()) {
+			result = locked_file->DecryptString(result, GetObjectNumber(), GetGenerationNumber());
+		}
 	}
 
 	_value->assign(result.begin(), result.end());

@@ -34,6 +34,7 @@ public:
 	HexadecimalStringObject();
 	explicit HexadecimalStringObject(BufferPtr value);
 	explicit HexadecimalStringObject(const char * chars);
+	explicit HexadecimalStringObject(std::string value);
 
 	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
@@ -57,6 +58,7 @@ public:
 	LiteralStringObject();
 	explicit LiteralStringObject(BufferPtr value);
 	explicit LiteralStringObject(const char * chars);
+	explicit LiteralStringObject(std::string value);
 
 	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 

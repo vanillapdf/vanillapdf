@@ -146,6 +146,7 @@ set(GOTCHANGPDF_UTILS_SOURCES
 	utils/library_info.cpp
 	utils/log.cpp
 	utils/modify_observer_interface.cpp
+	utils/time_utils.cpp
 	utils/unknown_interface.cpp
 	utils/zlib_wrapper.cpp
 )
@@ -267,6 +268,8 @@ set(GOTCHANGPDF_UTILS_HEADERS
 	utils/observable_interface.h
 	utils/modify_observer_interface.h
 	utils/pdf_version.h
+	utils/stack_allocator.h
+	utils/time_utils.h
 	utils/unknown_interface.h
 	utils/util.h
 	utils/utils_fwd.h

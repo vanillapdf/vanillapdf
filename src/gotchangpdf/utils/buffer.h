@@ -30,6 +30,7 @@ public:
 
 	explicit Buffer(size_type count);
 	explicit Buffer(const char * chars);
+	explicit Buffer(std::string data);
 	Buffer(const value_type * begin, const value_type * end);
 	Buffer(size_type count, const value_type& val);
 

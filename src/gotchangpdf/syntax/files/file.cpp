@@ -580,16 +580,10 @@ ObjectPtr File::GetIndirectObjectInternal(
 }
 
 HeaderPtr File::GetHeader(void) const {
-	// I am calling get to initialize object in case it is empty
-	_header.get();
-
 	return _header;
 }
 
 XrefChainPtr File::GetXrefChain(void) const {
-	// I am calling get to initialize object in case it is empty
-	_xref.get();
-
 	return _xref;
 }
 

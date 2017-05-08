@@ -70,8 +70,13 @@ public:
 		assert(value != nullptr);
 	}
 
-	DeferredWrapperBase(const DeferredWrapperBase& rhs) noexcept : DeferredWrapperBase(rhs.m_ptr, true) {}
-	DeferredWrapperBase(DeferredWrapperBase&& rhs) noexcept : DeferredWrapperBase(rhs.m_ptr, false) {
+	// I wanted to ensure that the original value is initialized before calling
+	// the copy constructor. Unfortunately, I was not able to call the "get" method
+	// because that would return constant pointer. The "get_internal" does the same
+	// but returns non-const pointer.
+	DeferredWrapperBase(const DeferredWrapperBase& rhs) noexcept : DeferredWrapperBase(rhs.get_internal(), true) {
+	}
+
 		rhs.m_ptr = nullptr;
 	}
 

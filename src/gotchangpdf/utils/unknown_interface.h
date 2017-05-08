@@ -101,7 +101,7 @@ private:
 	// I have found this solution to suit the best.
 
 	std::shared_ptr<WeakReferenceCounter> m_counter;
-	T* m_ptr;
+	T* m_ptr = nullptr;
 };
 
 class IUnknown {

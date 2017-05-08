@@ -167,6 +167,7 @@
     <ClInclude Include="src\gotchangpdf\utils\modify_observer_interface.h" />
     <ClInclude Include="src\gotchangpdf\utils\observable_interface.h" />
     <ClInclude Include="src\gotchangpdf\utils\stack_allocator.h" />
+    <ClInclude Include="src\gotchangpdf\utils\time_utils.h" />
     <ClInclude Include="src\gotchangpdf\utils\unknown_interface.h" />
     <ClInclude Include="src\gotchangpdf\utils\util.h" />
     <ClInclude Include="src\gotchangpdf\utils\utils_fwd.h" />
@@ -294,6 +295,7 @@
     <ClCompile Include="src\gotchangpdf\utils\library_info.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\log.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\modify_observer_interface.cpp" />
+    <ClCompile Include="src\gotchangpdf\utils\time_utils.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\unknown_interface.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\zlib_wrapper.cpp" />
   </ItemGroup>

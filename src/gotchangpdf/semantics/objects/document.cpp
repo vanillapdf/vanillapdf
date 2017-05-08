@@ -37,7 +37,18 @@ DocumentPtr Document::Create(const std::string& path) {
 	XrefChainPtr chain = file->GetXrefChain();
 	chain->Append(xref_table);
 
-	return DocumentPtr(pdf_new Document(file));
+	DocumentPtr document = DocumentPtr(pdf_new Document(file));
+	document->CreateCatalog();
+
+	DocumentInfoPtr document_info = document->CreateDocumentInfo();
+
+	LiteralStringObjectPtr procuder = make_deferred<LiteralStringObject>("I am the producer");
+	document_info->SetProducer(procuder);
+
+	DatePtr creation_date = Date::GetCurrentDate();
+	document_info->SetCreationDate(creation_date);
+
+	return document;
 }
 
 DocumentPtr Document::OpenFile(syntax::FilePtr holder) {
@@ -179,12 +190,41 @@ CatalogPtr Document::CreateCatalog() {
 	auto entry = chain->AllocateNewEntry();
 
 	DictionaryObjectPtr raw_dictionary;
+
+	NameObjectPtr catalog = make_deferred<NameObject>(constant::Name::Catalog);
+	raw_dictionary->Insert(constant::Name::Type, catalog);
+
 	raw_dictionary->SetFile(m_holder);
 	raw_dictionary->SetInitialized();
 	entry->SetReference(raw_dictionary);
 	entry->SetInitialized();
 
+	auto xref = chain->Begin()->Value();
+	auto trailer_dictionary = xref->GetTrailerDictionary();
+
+	IndirectObjectReferencePtr ref = make_deferred<IndirectObjectReference>(raw_dictionary);
+	trailer_dictionary->Insert(constant::Name::Root, ref);
+
 	return make_deferred<Catalog>(raw_dictionary);
+}
+
+DocumentInfoPtr Document::CreateDocumentInfo() {
+	auto chain = m_holder->GetXrefChain();
+	auto entry = chain->AllocateNewEntry();
+
+	DictionaryObjectPtr raw_dictionary;
+	raw_dictionary->SetFile(m_holder);
+	raw_dictionary->SetInitialized();
+	entry->SetReference(raw_dictionary);
+	entry->SetInitialized();
+
+	auto xref = chain->Begin()->Value();
+	auto trailer_dictionary = xref->GetTrailerDictionary();
+
+	IndirectObjectReferencePtr ref = make_deferred<IndirectObjectReference>(raw_dictionary);
+	trailer_dictionary->Insert(constant::Name::Info, ref);
+
+	return make_deferred<DocumentInfo>(raw_dictionary);
 }
 
 PageTreePtr Document::CreatePageTree(CatalogPtr catalog) {

@@ -29,18 +29,18 @@ extern "C"
 		/**
 		* \brief Signifies that local time is equal to UT.
 		*/
-		DateTimezoneType_UTC = 0,
+		TimezoneType_UTC = 0,
 
 		/**
 		* \brief Signifies that local time is later than UT.
 		*/
-		DateTimezoneType_Later,
+		TimezoneType_Later,
 
 		/**
 		* \brief Signifies that local time is earlier than UT.
 		*/
-		DateTimezoneType_Earlier
-	} DateTimezoneType;
+		TimezoneType_Earlier
+	} TimezoneType;
 
 	/**
 	* \memberof DateHandle
@@ -80,7 +80,7 @@ extern "C"
 	/**
 	* \brief \copybrief DateTimezoneType
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetTimezone(DateHandle handle, DateTimezoneType* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetTimezone(DateHandle handle, TimezoneType* result);
 
 	/**
 	* \brief Get hour offset represented by this object. Range of values (0-23)

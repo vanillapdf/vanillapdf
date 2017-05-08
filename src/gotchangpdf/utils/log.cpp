@@ -2,16 +2,16 @@
 
 #include "utils/log.h"
 #include "utils/util.h"
+#include "utils/time_utils.h"
 
 #include <fstream>
-#include <chrono>
 #include <iomanip>
-#include <memory>
 #include <thread>
 
 namespace gotchangpdf {
 
 static const char general_failure_filename[] = "general.log";
+static const char date_format[] = "%d-%m-%Y %H:%M:%S";
 
 // Initialize empty instance property
 std::shared_ptr<Logger> Logger::m_instance;
@@ -50,7 +50,7 @@ OutputWriter::OutputWriter(
 	m_file(file),
 	m_function(function) {
 	*m_output_stream << '[';
-	*m_output_stream << GetLocalTime();
+	*m_output_stream << TimeUtils::GetCurrentTimeString(date_format);
 	*m_output_stream << ']';
 	*m_output_stream << ' ';
 	*m_output_stream << '(';
@@ -62,28 +62,6 @@ OutputWriter::OutputWriter(
 	*m_output_stream << '>';
 	*m_output_stream << ':';
 	*m_output_stream << ' ';
-}
-
-std::string OutputWriter::GetLocalTime() const {
-	// localtime function may not be thread-safe
-	static std::mutex m_chrono;
-
-	std::chrono::system_clock::time_point today = std::chrono::system_clock::now();
-	auto rawtime = std::chrono::system_clock::to_time_t(today);
-
-	std::lock_guard<std::mutex> locker(m_chrono);
-	auto timeinfo = std::localtime(&rawtime);
-	if (timeinfo == nullptr) {
-		throw GeneralException("Could not get current time");
-	}
-
-	char buffer[128];
-	size_t result = strftime(buffer, sizeof(buffer), "%d-%m-%Y %H:%M:%S", timeinfo);
-	if (result == 0) {
-		throw GeneralException("Could not convert localtime to string");
-	}
-
-	return std::string(buffer);
 }
 
 OutputWriter::~OutputWriter() {

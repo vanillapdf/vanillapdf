@@ -1,7 +1,11 @@
 #include "precompiled.h"
+
 #include "semantics/objects/date.h"
 
+#include "utils/time_utils.h"
+
 #include <regex>
+#include <iomanip>
 
 namespace gotchangpdf {
 namespace semantics {
@@ -29,8 +33,9 @@ Date::Date(syntax::StringObjectPtr root) : HighLevelObject(root) {
 		);
 
 	std::smatch sm;
-	if (!std::regex_match(str, sm, header_regex))
+	if (!std::regex_match(str, sm, header_regex)) {
 		throw GeneralException("Could not parse datetime: " + str);
+	}
 
 	auto length = sm.size();
 
@@ -44,12 +49,12 @@ Date::Date(syntax::StringObjectPtr root) : HighLevelObject(root) {
 	if (length >= 10 && sm[9].matched && sm[9].str().size() > 0) m_minute_offset = std::stoi(sm[9]);
 
 	if (length >= 8 && sm[7].matched) {
-		if (sm[7].str() == "Z" || sm[7].str() == "")
-			m_timezone = TimezoneType::UTC;
-		else if (sm[7].str() == "+") {
-			m_timezone = TimezoneType::Later;
+		if (sm[7].str() == "Z" || sm[7].str() == "") {
+			m_timezone = Timezone::UTC;
+		} else if (sm[7].str() == "+") {
+			m_timezone = Timezone::Later;
 		} else if (sm[7].str() == "-") {
-			m_timezone = TimezoneType::Earlier;
+			m_timezone = Timezone::Earlier;
 		} else {
 			assert(false && "Error in regular expression above");
 			throw GeneralException("Could not parse datetime: " + str);
@@ -63,6 +68,43 @@ Date::Date(syntax::StringObjectPtr root) : HighLevelObject(root) {
 	if (m_second < 0 || m_second > 59) throw GeneralException("Second is out of range: " + std::to_string(m_second));
 	if (m_hour_offset < 0 || m_hour_offset > 23) throw GeneralException("Hour offset is out of range: " + std::to_string(m_hour_offset));
 	if (m_minute_offset < 0 || m_minute_offset > 59) throw GeneralException("Minute offset is out of range: " + std::to_string(m_minute_offset));
+}
+
+DatePtr Date::GetCurrentDate() {
+	TimeInfo local_time = TimeUtils::GetCurrentTime();
+
+	std::stringstream ss;
+	ss << "D:";
+	ss << std::setw(4) << std::setfill('0') << local_time.GetYear();
+	ss << std::setw(2) << std::setfill('0') << local_time.GetMonth();
+	ss << std::setw(2) << std::setfill('0') << local_time.GetDay();
+	ss << std::setw(2) << std::setfill('0') << local_time.GetHour();
+	ss << std::setw(2) << std::setfill('0') << local_time.GetMinute();
+	ss << std::setw(2) << std::setfill('0') << local_time.GetSecond();
+
+	Timezone timezone = local_time.GetTimezone();
+	if (timezone == Timezone::UTC) {
+		ss << "Z";
+	} else if (timezone == Timezone::Earlier) {
+		ss << "-";
+	} else if (timezone == Timezone::Later) {
+		ss << "+";
+	} else {
+		throw GeneralException("Unknown timezone type");
+	}
+
+	if (timezone == Timezone::Earlier || timezone == Timezone::Later) {
+		ss << std::setw(2) << std::setfill('0') << local_time.GetHourOffset();
+		ss << '\'';
+		ss << std::setw(2) << std::setfill('0') << local_time.GetMinuteOffset();
+		ss << '\'';
+	}
+
+	std::string formatted_time = ss.str();
+
+	syntax::LiteralStringObjectPtr current_time_string = make_deferred<syntax::LiteralStringObject>(formatted_time);
+
+	return make_deferred<Date>(current_time_string);
 }
 
 } // semantics

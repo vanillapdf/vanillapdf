@@ -27,6 +27,16 @@ public:
 	bool CreationDate(OutputDatePtr& result) const;
 	bool ModificationDate(OutputDatePtr& result) const;
 	bool Trapped(DocumentTrapped& result) const;
+
+	void SetTitle(syntax::StringObjectPtr value);
+	void SetAuthor(syntax::StringObjectPtr value);
+	void SetSubject(syntax::StringObjectPtr value);
+	void SetKeywords(syntax::StringObjectPtr value);
+	void SetCreator(syntax::StringObjectPtr value);
+	void SetProducer(syntax::StringObjectPtr value);
+	void SetCreationDate(DatePtr value);
+	void SetModificationDate(DatePtr value);
+	void SetTrapped(DocumentTrapped value);
 };
 
 } // semantics

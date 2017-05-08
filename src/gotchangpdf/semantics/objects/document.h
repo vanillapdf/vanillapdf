@@ -42,6 +42,7 @@ private:
 	syntax::FilePtr m_holder;
 
 	CatalogPtr CreateCatalog();
+	DocumentInfoPtr CreateDocumentInfo();
 	PageTreePtr CreatePageTree(CatalogPtr catalog);
 	NamedDestinationsPtr CreateNameDestinations(CatalogPtr catalog);
 	NameDictionaryPtr CreateNameDictionary(CatalogPtr catalog);

@@ -59,8 +59,6 @@ private:
 	int m_line;
 	const char * m_file;
 	const char * m_function;
-
-	std::string GetLocalTime() const;
 };
 
 template <typename T>

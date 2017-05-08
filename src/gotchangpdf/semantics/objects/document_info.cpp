@@ -73,8 +73,9 @@ bool DocumentInfo::CreationDate(OutputDatePtr& result) const {
 }
 
 bool DocumentInfo::ModificationDate(OutputDatePtr& result) const {
-	if (!_obj->Contains(constant::Name::ModDate))
+	if (!_obj->Contains(constant::Name::ModDate)) {
 		return false;
+	}
 
 	auto date_string = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::ModDate);
 	result = make_deferred<Date>(date_string);
@@ -103,18 +104,71 @@ bool DocumentInfo::Trapped(DocumentTrapped& result) const {
 		return true;
 	}
 
-	if (*value == constant::Name::False.GetValue()) {
+	if (value == constant::Name::False.GetValue()) {
 		result = DocumentTrapped::False;
 		return true;
 	}
 
-	if (*value == constant::Name::Unknown.GetValue()) {
+	if (value == constant::Name::Unknown.GetValue()) {
 		result = DocumentTrapped::Unknown;
 		return true;
 	}
 
 	assert(false && "Document trapped is neither of name or string");
 	return false;
+}
+
+void DocumentInfo::SetTitle(syntax::StringObjectPtr value) {
+	_obj->Insert(constant::Name::Title, value);
+}
+
+void DocumentInfo::SetAuthor(syntax::StringObjectPtr value) {
+	_obj->Insert(constant::Name::Author, value);
+}
+
+void DocumentInfo::SetSubject(syntax::StringObjectPtr value) {
+	_obj->Insert(constant::Name::Subject, value);
+}
+
+void DocumentInfo::SetKeywords(syntax::StringObjectPtr value) {
+	_obj->Insert(constant::Name::Keywords, value);
+}
+
+void DocumentInfo::SetCreator(syntax::StringObjectPtr value) {
+	_obj->Insert(constant::Name::Creator, value);
+}
+
+void DocumentInfo::SetProducer(syntax::StringObjectPtr value) {
+	_obj->Insert(constant::Name::Producer, value);
+}
+
+void DocumentInfo::SetCreationDate(DatePtr value) {
+	_obj->Insert(constant::Name::CreationDate, value->GetObject());
+}
+
+void DocumentInfo::SetModificationDate(DatePtr value) {
+	_obj->Insert(constant::Name::ModDate, value->GetObject());
+}
+
+void DocumentInfo::SetTrapped(DocumentTrapped value) {
+
+	syntax::NameObjectPtr name;
+
+	switch (value) {
+		case DocumentTrapped::Unknown:
+			name = syntax::ObjectUtils::Clone<syntax::NameObjectPtr>(constant::Name::Unknown);
+			break;
+		case DocumentTrapped::True:
+			name = syntax::ObjectUtils::Clone<syntax::NameObjectPtr>(constant::Name::True);
+			break;
+		case DocumentTrapped::False:
+			name = syntax::ObjectUtils::Clone<syntax::NameObjectPtr>(constant::Name::False);
+			break;
+		default:
+			throw GeneralException("Unknown trapped type");
+	}
+
+	_obj->Insert(constant::Name::Trapped, name);
 }
 
 } // semantics
