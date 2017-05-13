@@ -18,7 +18,7 @@ namespace gotchangpdf.net
         {
             UInt32 result = NativeMethods.Logging_IsEnabled(out bool enabled);
             if (result != ReturnValues.ERROR_SUCCES) {
-                throw new Exception("Could not initialize file");
+                throw Errors.GetLastErrorException();
             }
 
             return enabled;
@@ -28,7 +28,7 @@ namespace gotchangpdf.net
         {
             UInt32 result = NativeMethods.Logging_Enable();
             if (result != ReturnValues.ERROR_SUCCES) {
-                throw new Exception("Could not enable logging");
+                throw Errors.GetLastErrorException();
             }
         }
 
@@ -36,7 +36,7 @@ namespace gotchangpdf.net
         {
             UInt32 result = NativeMethods.Logging_Disable();
             if (result != ReturnValues.ERROR_SUCCES) {
-                throw new Exception("Could not disable logging");
+                throw Errors.GetLastErrorException();
             }
         }
 

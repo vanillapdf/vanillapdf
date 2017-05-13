@@ -16,7 +16,7 @@ namespace gotchangpdf.net
         {
             UInt32 result = NativeMethods.File_Open(filename, out IntPtr handle);
             if (result != ReturnValues.ERROR_SUCCES) {
-                throw new Exception("Could not open file");
+                throw Errors.GetLastErrorException();
             }
 
             return new File(handle);
@@ -26,7 +26,7 @@ namespace gotchangpdf.net
         {
             UInt32 result = NativeMethods.File_Open(filename, out IntPtr handle);
             if (result != ReturnValues.ERROR_SUCCES) {
-                throw new Exception("Could not create file");
+                throw Errors.GetLastErrorException();
             }
 
             return new File(handle);
@@ -36,7 +36,7 @@ namespace gotchangpdf.net
         {
             UInt32 result = NativeMethods.File_Initialize(Handle);
             if (result != ReturnValues.ERROR_SUCCES) {
-                throw new Exception("Could not initialize file");
+                throw Errors.GetLastErrorException();
             }
         }
 
@@ -45,7 +45,7 @@ namespace gotchangpdf.net
             if (Handle != IntPtr.Zero) {
                 UInt32 result = NativeMethods.File_Release(Handle);
                 if (result != ReturnValues.ERROR_SUCCES) {
-                    throw new Exception("Could not release document");
+                    throw Errors.GetLastErrorException();
                 }
 
                 Handle = IntPtr.Zero;

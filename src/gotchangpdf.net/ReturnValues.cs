@@ -4,7 +4,7 @@ namespace gotchangpdf.net
 {
     public static class ReturnValues
     {
-        public static string GetValueName(int value)
+        public static string GetValueName(uint value)
         {
             if (value == ERROR_SUCCES) {
                 return GOTCHANG_PDF_ERROR_SUCCES;
@@ -40,43 +40,6 @@ namespace gotchangpdf.net
 
             if (value == ERROR_INVALID_PASSWORD) {
                 return GOTCHANG_PDF_ERROR_INVALID_PASSWORD;
-            }
-
-            throw new Exception("Unknown return value");
-        }
-
-        public static BaseException GetException(int value)
-        {
-            if (value == ERROR_PARAMETER_VALUE) {
-                return ParameterValueException.Create();
-            }
-
-            if (value == ERROR_NOT_SUPPORTED) {
-                return NotSupportedException.Create();
-            }
-
-            if (value == ERROR_GENERAL) {
-                return GeneralException.Create();
-            }
-
-            if (value == ERROR_CONVERSION) {
-                return ConversionException.Create();
-            }
-
-            if (value == ERROR_FILE_DISPOSED) {
-                return FileDisposedException.Create();
-            }
-
-            if (value == ERROR_FILE_NOT_INITIALIZED) {
-                return FileNotInitializedException.Create();
-            }
-
-            if (value == ERROR_OBJECT_MISSING) {
-                return ObjectMissingException.Create();
-            }
-
-            if (value == ERROR_INVALID_PASSWORD) {
-                return InvalidPasswordException.Create();
             }
 
             throw new Exception("Unknown return value");

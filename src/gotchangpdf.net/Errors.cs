@@ -34,6 +34,14 @@ namespace gotchangpdf.net
             return sb.ToString();
         }
 
+        public static BaseException GetLastErrorException()
+        {
+            uint value = GetLastError();
+            string message = GetLastErrorMessage();
+
+            return BaseException.GetException(value, message);
+        }
+
         private static class NativeMethods
         {
             public static ErrorsGetLastErrorDelgate Errors_GetLastError = LibraryInstance.GetFunction<ErrorsGetLastErrorDelgate>("Errors_GetLastError");
