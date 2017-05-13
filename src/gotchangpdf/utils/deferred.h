@@ -77,6 +77,7 @@ public:
 	DeferredWrapperBase(const DeferredWrapperBase& rhs) noexcept : DeferredWrapperBase(rhs.get_internal(), true) {
 	}
 
+	DeferredWrapperBase(DeferredWrapperBase&& rhs) noexcept : DeferredWrapperBase(rhs.m_ptr, false) {
 		rhs.m_ptr = nullptr;
 	}
 
@@ -92,13 +93,13 @@ public:
 		typename U,
 		typename = typename std::enable_if<std::is_convertible<U*, T*>::value>::type
 	>
-	DeferredWrapperBase(const DeferredWrapperBase<U>& rhs) : DeferredWrapperBase(const_cast<U*>(rhs.get()), true) {}
+	DeferredWrapperBase(const DeferredWrapperBase<U>& rhs) : DeferredWrapperBase(rhs.get_internal(), true) {}
 
 	template <
 		typename U,
 		typename = typename std::enable_if<std::is_convertible<U*, T*>::value>::type
 	>
-	DeferredWrapperBase(DeferredWrapperBase<U>&& rhs) : DeferredWrapperBase(const_cast<U*>(rhs.get()), false) {
+	DeferredWrapperBase(DeferredWrapperBase<U>&& rhs) : DeferredWrapperBase(rhs.get_internal(), false) {
 		rhs.m_ptr = nullptr;
 	}
 
