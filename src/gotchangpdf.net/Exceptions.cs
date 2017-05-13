@@ -12,7 +12,7 @@ namespace gotchangpdf.net
             ErrorCode = errorCode;
         }
 
-        public static BaseException GetException(uint value, string errorMessage)
+        public static BaseException GetException(uint value, string errorMessage = null)
         {
             if (value == ReturnValues.ERROR_PARAMETER_VALUE) {
                 return ParameterValueException.Create(errorMessage);

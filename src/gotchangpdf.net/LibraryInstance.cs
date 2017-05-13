@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace gotchangpdf.net

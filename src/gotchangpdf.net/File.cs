@@ -7,7 +7,7 @@ namespace gotchangpdf.net
     {
         internal IntPtr Handle { get; private set; }
 
-        private File(IntPtr handle)
+        internal File(IntPtr handle)
         {
             Handle = handle;
         }

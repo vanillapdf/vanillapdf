@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Catalog.cs" />
     <Compile Include="Document.cs" />
     <Compile Include="Errors.cs" />
     <Compile Include="Exceptions.cs" />
@@ -48,6 +49,9 @@
     <Compile Include="IUnknown.cs" />
     <Compile Include="LibraryInstance.cs" />
     <Compile Include="Logging.cs" />
+    <Compile Include="PageObject.cs" />
+    <Compile Include="PageTree.cs" />
+    <Compile Include="PDFVersion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReturnValues.cs" />
   </ItemGroup>

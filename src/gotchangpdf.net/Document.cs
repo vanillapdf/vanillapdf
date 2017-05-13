@@ -7,7 +7,7 @@ namespace gotchangpdf.net
     {
         internal IntPtr Handle { get; private set; }
 
-        private Document(IntPtr handle)
+        internal Document(IntPtr handle)
         {
             Handle = handle;
         }
@@ -40,6 +40,16 @@ namespace gotchangpdf.net
             }
         }
 
+        public Catalog GetCatalog()
+        {
+            UInt32 result = NativeMethods.Document_GetCatalog(Handle, out IntPtr catalog);
+            if (result != ReturnValues.ERROR_SUCCES) {
+                throw Errors.GetLastErrorException();
+            }
+
+            return new Catalog(catalog);
+        }
+
         public void Save(string filename)
         {
             UInt32 result = NativeMethods.Document_Save(Handle, filename);
@@ -65,6 +75,7 @@ namespace gotchangpdf.net
             public static DocumentOpenNewDelgate Document_OpenNew = LibraryInstance.GetFunction<DocumentOpenNewDelgate>("Document_OpenNew");
             public static DocumentOpenExistingDelgate Document_OpenExisting = LibraryInstance.GetFunction<DocumentOpenExistingDelgate>("Document_OpenExisting");
             public static DocumentAppendDocumentDelgate Document_AppendDocument = LibraryInstance.GetFunction<DocumentAppendDocumentDelgate>("Document_AppendDocument");
+            public static DocumentGetCatalogDelgate Document_GetCatalog = LibraryInstance.GetFunction<DocumentGetCatalogDelgate>("Document_GetCatalog");
             public static DocumentSaveDelgate Document_Save = LibraryInstance.GetFunction<DocumentSaveDelgate>("Document_Save");
             public static DocumentReleaseDelgate Document_Release = LibraryInstance.GetFunction<DocumentReleaseDelgate>("Document_Release");
 
@@ -76,6 +87,9 @@ namespace gotchangpdf.net
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             public delegate UInt32 DocumentAppendDocumentDelgate(IntPtr handle, IntPtr source);
+
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            public delegate UInt32 DocumentGetCatalogDelgate(IntPtr handle, out IntPtr catalog);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             public delegate UInt32 DocumentSaveDelgate(IntPtr handle, string filename);
