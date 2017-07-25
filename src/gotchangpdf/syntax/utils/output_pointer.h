@@ -5,7 +5,6 @@
 #include "utils/unknown_interface.h"
 #include "utils/util.h"
 
-#include "syntax/exceptions/syntax_exceptions.h"
 #include "syntax/objects/object.h"
 
 #include <type_traits>

@@ -1,5 +1,7 @@
 #include "precompiled.h"
 
+#include "syntax/exceptions/syntax_exceptions.h"
+
 #include "semantics/utils/semantic_utils.h"
 
 #include <regex>
