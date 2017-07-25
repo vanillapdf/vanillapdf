@@ -19,6 +19,9 @@ namespace syntax {
 
 using namespace std;
 
+IFileWriterObserver::~IFileWriterObserver() {}
+IFileWriterObservable::~IFileWriterObservable() {}
+
 // experimental
 void FileWriter::Write(FilePtr source, FilePtr destination) {
 	if (!source->IsInitialized()) {
