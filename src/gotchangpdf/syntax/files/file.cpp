@@ -764,7 +764,7 @@ BufferPtr File::GetByteRange(types::stream_size begin, size_t length) const {
 	}
 
 	InputStream stream(_input);
-	stream.SetPosition(begin);
+	stream.SetInputPosition(begin);
 	return stream.Read(length);
 }
 
@@ -775,7 +775,7 @@ IInputStreamPtr File::GetByteRangeStream(types::stream_size begin, size_t length
 
 	// Avoid huge allocation and use filtering stream buffer
 	InputStream stream(_input);
-	stream.SetPosition(begin);
+	stream.SetInputPosition(begin);
 	auto buffer = stream.Read(length);
 	auto ss = buffer->ToStringStream();
 	return make_deferred<InputStream>(ss);

@@ -166,7 +166,7 @@ BufferPtr InputReverseStream::Read(size_t len) {
 	return result;
 }
 
-types::stream_size InputReverseStream::GetPosition() {
+types::stream_size InputReverseStream::GetInputPosition() {
 	assert(!m_stream->fail());
 
 	if (m_stream->eof()) {
@@ -176,12 +176,12 @@ types::stream_size InputReverseStream::GetPosition() {
 	return m_stream->tellg();
 }
 
-void InputReverseStream::SetPosition(types::stream_size pos) {
-	SetPosition(pos, std::ios_base::beg);
+void InputReverseStream::SetInputPosition(types::stream_size pos) {
+	SetInputPosition(pos, std::ios_base::beg);
 }
 
-void InputReverseStream::SetPosition(types::stream_size pos, std::ios_base::seekdir way) {
-	auto initial_offset = GetPosition();
+void InputReverseStream::SetInputPosition(types::stream_size pos, std::ios_base::seekdir way) {
+	auto initial_offset = GetInputPosition();
 
 	// of badoff is specified, set eof flag
 	if (pos == constant::BAD_OFFSET) {
@@ -198,7 +198,7 @@ void InputReverseStream::SetPosition(types::stream_size pos, std::ios_base::seek
 	m_stream->seekg(pos, way);
 	assert(!m_stream->fail() && !m_stream->eof());
 
-	auto verify_offset = GetPosition();
+	auto verify_offset = GetInputPosition();
 	if (way == std::ios_base::beg) {
 		// verify if the position is correct
 		assert(pos == verify_offset);

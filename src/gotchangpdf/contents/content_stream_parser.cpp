@@ -367,7 +367,7 @@ bool ContentStreamParser::IsOperand(Token::Type type) {
 }
 
 ObjectPtr ContentStreamParser::ReadOperand() {
-	auto offset = m_stream->GetPosition();
+	auto offset = m_stream->GetInputPosition();
 	switch (PeekTokenTypeSkip()) {
 		case Token::Type::DICTIONARY_BEGIN:
 			return ReadDictionary();

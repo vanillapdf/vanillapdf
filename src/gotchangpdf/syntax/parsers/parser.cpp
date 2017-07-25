@@ -105,7 +105,7 @@ IntegerObjectPtr ParserBase::ReadInteger() {
 ObjectPtr ParserBase::ReadIndirectReference() {
 	auto integer = ReadInteger();
 
-	auto pos = m_stream->GetPosition();
+	auto pos = m_stream->GetInputPosition();
 	if (PeekTokenTypeSkip() == Token::Type::INTEGER_OBJECT) {
 		auto ahead = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 		auto gen_number = ObjectFactory::CreateInteger(ahead);
@@ -118,7 +118,7 @@ ObjectPtr ParserBase::ReadIndirectReference() {
 		}
 
 		// TODO we can peek only one next token, therefore we need to seek back
-		m_stream->SetPosition(pos);
+		m_stream->SetInputPosition(pos);
 	}
 
 	return integer;
@@ -167,7 +167,7 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 	if (PeekTokenTypeSkip() == Token::Type::STREAM_BEGIN) {
 		ReadTokenWithTypeSkip(Token::Type::STREAM_BEGIN);
 		ReadTokenWithTypeSkip(Token::Type::EOL);
-		auto stream_offset = m_stream->GetPosition();
+		auto stream_offset = m_stream->GetInputPosition();
 
 		do {
 			if (!dictionary->Contains(constant::Name::Length)) {
@@ -183,7 +183,7 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 			}
 
 			auto length = ObjectUtils::ConvertTo<IntegerObjectPtr>(length_obj);
-			m_stream->SetPosition(length->GetIntegerValue(), std::ios_base::cur);
+			m_stream->SetInputPosition(length->GetIntegerValue(), std::ios_base::cur);
 			auto expect_stream_end = ReadTokenSkip();
 			if (expect_stream_end->GetType() != Token::Type::STREAM_END) {
 				break;
@@ -195,10 +195,10 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 		} while (false);
 
 		// Recalculate stream length
-		m_stream->SetPosition(stream_offset, std::ios_base::beg);
+		m_stream->SetInputPosition(stream_offset, std::ios_base::beg);
 
 		for (;;) {
-			auto offset = m_stream->GetPosition();
+			auto offset = m_stream->GetInputPosition();
 			auto data = m_stream->Readline();
 			auto line = data->ToString();
 			auto pos = line.find("endstream");
@@ -210,7 +210,7 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 			auto end_obj_token = PeekTokenTypeSkip();
 			assert(end_obj_token == Token::Type::INDIRECT_OBJECT_END); (void) end_obj_token;
 
-			m_stream->SetPosition(offset - 2);
+			m_stream->SetInputPosition(offset - 2);
 			auto new_line1 = m_stream->Get();
 			auto new_line2 = m_stream->Get();
 			if (new_line1 == '\r') {
@@ -309,7 +309,7 @@ BooleanObjectPtr ParserBase::ReadFalse() {
 }
 
 ObjectPtr Parser::ReadIndirectObject(types::big_uint& obj_number, types::ushort& gen_number) {
-	auto offset = m_stream->GetPosition();
+	auto offset = m_stream->GetInputPosition();
 	auto obj_number_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 	auto gen_number_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 	auto begin_token = ReadTokenWithTypeSkip(Token::Type::INDIRECT_OBJECT_BEGIN);
@@ -328,12 +328,12 @@ ObjectPtr Parser::ReadIndirectObject(types::big_uint& obj_number, types::ushort&
 }
 
 ObjectPtr Parser::ReadIndirectObject(types::stream_offset offset, types::big_uint& obj_number, types::ushort& gen_number) {
-	m_stream->SetPosition(offset, std::ios_base::beg);
+	m_stream->SetInputPosition(offset, std::ios_base::beg);
 	return ReadIndirectObject(obj_number, gen_number);
 }
 
 ObjectPtr ParserBase::ReadDirectObject() {
-	auto offset = m_stream->GetPosition();
+	auto offset = m_stream->GetInputPosition();
 	auto type = PeekTokenTypeSkip();
 	switch (type) {
 		case Token::Type::DICTIONARY_BEGIN:
@@ -389,7 +389,7 @@ ObjectStreamEntries Parser::ReadObjectStreamHeaders(size_t size) {
 ObjectStreamEntries Parser::ReadObjectStreamEntries(types::big_uint first, size_t size) {
 	auto entries = ReadObjectStreamHeaders(size);
 	for (auto& entry : entries) {
-		m_stream->SetPosition(first + entry.offset);
+		m_stream->SetInputPosition(first + entry.offset);
 		auto obj = ReadDirectObject();
 
 		// Objects within streams shall not be encrypted
@@ -404,14 +404,14 @@ ObjectStreamEntries Parser::ReadObjectStreamEntries(types::big_uint first, size_
 }
 
 ObjectPtr ParserBase::ReadDirectObject(types::stream_offset offset) {
-	m_stream->SetPosition(offset, std::ios_base::beg);
+	m_stream->SetInputPosition(offset, std::ios_base::beg);
 	return ReadDirectObject();
 }
 
 ObjectPtr ParserBase::PeekDirectObject() {
-	auto position = m_stream->GetPosition();
+	auto position = m_stream->GetInputPosition();
 	auto obj = ReadDirectObject();
-	m_stream->SetPosition(position);
+	m_stream->SetInputPosition(position);
 
 	return obj;
 }
@@ -431,7 +431,7 @@ TokenPtr ParserBase::ReadTokenSkip() {
 }
 
 TokenPtr ParserBase::PeekTokenSkip() {
-	auto position = m_stream->GetPosition();
+	auto position = m_stream->GetInputPosition();
 	bool rewind = false;
 	for (;;) {
 		auto token = PeekToken();
@@ -442,7 +442,7 @@ TokenPtr ParserBase::PeekTokenSkip() {
 		}
 
 		if (rewind) {
-			m_stream->SetPosition(position);
+			m_stream->SetInputPosition(position);
 		}
 
 		return token;
@@ -455,7 +455,7 @@ Token::Type ParserBase::PeekTokenTypeSkip() {
 }
 
 TokenPtr ParserBase::ReadTokenWithTypeSkip(Token::Type type) {
-	auto offset = m_stream->GetPosition();
+	auto offset = m_stream->GetInputPosition();
 	for (;;) {
 		auto token = ReadToken();
 
@@ -495,7 +495,7 @@ XrefEntryBasePtr Parser::ReadTableEntry(types::big_uint objNumber) {
 		return result;
 	}
 
-	throw ParseException(m_stream->GetPosition());
+	throw ParseException(m_stream->GetInputPosition());
 }
 
 XrefTablePtr Parser::ReadXrefTable() {
@@ -677,7 +677,7 @@ XrefBasePtr Parser::ReadXref(void) {
 }
 
 XrefBasePtr Parser::ReadXref(types::stream_offset offset) {
-	m_stream->SetPosition(offset, std::ios_base::beg);
+	m_stream->SetInputPosition(offset, std::ios_base::beg);
 	XrefBasePtr result = ReadXref();
 	result->SetOffset(offset);
 	return result;
@@ -686,7 +686,7 @@ XrefBasePtr Parser::ReadXref(types::stream_offset offset) {
 #pragma endregion
 
 HeaderPtr Parser::ReadHeader(types::stream_offset offset) {
-	m_stream->SetPosition(offset, std::ios_base::beg);
+	m_stream->SetInputPosition(offset, std::ios_base::beg);
 	return ReadHeader();
 }
 
@@ -735,9 +735,9 @@ XrefChainPtr Parser::FindAllObjects(void) {
 
 	XrefTablePtr xref;
 
-	m_stream->SetPosition(0);
+	m_stream->SetInputPosition(0);
 	while (!m_stream->Eof()) {
-		auto offset_before = m_stream->GetPosition();
+		auto offset_before = m_stream->GetInputPosition();
 
 		auto first_token = ReadToken();
 		if (first_token->GetType() == Token::Type::END_OF_INPUT) {

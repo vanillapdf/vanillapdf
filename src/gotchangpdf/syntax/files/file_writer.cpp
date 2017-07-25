@@ -874,12 +874,12 @@ std::string FileWriter::GetFormattedObjectNumber(types::big_uint object_number) 
 
 void FileWriter::CopyStreamContent(IInputStreamPtr source, IOutputStreamPtr destination) {
 	// Determine the source file size
-	source->SetPosition(0, std::ios::end);
-	auto source_size_raw = source->GetPosition();
+	source->SetInputPosition(0, std::ios::end);
+	auto source_size_raw = source->GetInputPosition();
 	auto source_size = ValueConvertUtils::SafeConvert<size_t>(source_size_raw);
 
 	// Reset the positions
-	source->SetPosition(0);
+	source->SetInputPosition(0);
 	destination->SetOutputPosition(0);
 
 	// Block copy to destination

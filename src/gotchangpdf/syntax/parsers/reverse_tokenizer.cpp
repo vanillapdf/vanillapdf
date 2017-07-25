@@ -19,13 +19,13 @@ ReverseTokenizer::ReverseTokenizer(IInputStreamPtr stream)
 }
 
 TokenPtr ReverseTokenizer::ReadToken() {
-	auto current_offset = m_stream->GetPosition();
+	auto current_offset = m_stream->GetInputPosition();
 	if (_token_cached && _last_token_offset == current_offset) {
 		assert(constant::BAD_OFFSET != _last_token_offset);
 
 		auto result = _last_token;
 
-		m_stream->SetPosition(_advance_position);
+		m_stream->SetInputPosition(_advance_position);
 		_last_token_offset = constant::BAD_OFFSET;
 		_advance_position = constant::BAD_OFFSET;
 		_token_cached = false;
@@ -114,7 +114,7 @@ TokenPtr ReverseTokenizer::ReadToken() {
 
 /* Peek need cache */
 TokenPtr ReverseTokenizer::PeekToken() {
-	auto current = m_stream->GetPosition();
+	auto current = m_stream->GetInputPosition();
 	if (_token_cached && _last_token_offset == current) {
 		assert(constant::BAD_OFFSET != _advance_position);
 		assert(constant::BAD_OFFSET != _last_token_offset);
@@ -123,7 +123,7 @@ TokenPtr ReverseTokenizer::PeekToken() {
 	}
 
 	_last_token = ReadToken();
-	_advance_position = m_stream->GetPosition();
+	_advance_position = m_stream->GetInputPosition();
 	_last_token_offset = current;
 	_token_cached = true;
 
@@ -131,7 +131,7 @@ TokenPtr ReverseTokenizer::PeekToken() {
 		assert(_last_token->GetType() == Token::Type::END_OF_INPUT);
 	}
 
-	m_stream->SetPosition(_last_token_offset);
+	m_stream->SetInputPosition(_last_token_offset);
 	return _last_token;
 }
 

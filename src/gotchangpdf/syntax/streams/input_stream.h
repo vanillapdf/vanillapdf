@@ -13,9 +13,9 @@ public:
 	virtual BufferPtr Read(size_t len) override;
 	virtual void Read(Buffer& result, size_t len) override;
 	virtual BufferPtr Readline(void) override;
-	virtual types::stream_size GetPosition() override;
-	virtual void SetPosition(types::stream_size pos) override;
-	virtual void SetPosition(types::stream_size pos, std::ios_base::seekdir way) override;
+	virtual types::stream_size GetInputPosition() override;
+	virtual void SetInputPosition(types::stream_size pos) override;
+	virtual void SetInputPosition(types::stream_size pos, std::ios_base::seekdir way) override;
 
 	virtual bool Eof(void) const override;
 	virtual InputStream& Ignore(void) override;

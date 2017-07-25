@@ -20,11 +20,11 @@ Tokenizer::Tokenizer(IInputStreamPtr stream)
 }
 
 TokenPtr Tokenizer::ReadToken() {
-	auto current_offset = m_stream->GetPosition();
+	auto current_offset = m_stream->GetInputPosition();
 	if (_token_cached && _last_token_offset == current_offset) {
 		auto result = _last_token;
 
-		m_stream->SetPosition(_advance_position);
+		m_stream->SetInputPosition(_advance_position);
 
 		_last_token_offset = constant::BAD_OFFSET;
 		_advance_position = constant::BAD_OFFSET;
@@ -85,7 +85,7 @@ TokenPtr Tokenizer::ReadToken() {
 					return make_deferred<Token>(Token::Type::DICTIONARY_END, chars);
 				}
 
-				throw GeneralException("Unexpected character at offset: " + std::to_string(m_stream->GetPosition()));
+				throw GeneralException("Unexpected character at offset: " + std::to_string(m_stream->GetInputPosition()));
 			}
 			case static_cast<int>(Delimiter::LESS_THAN_SIGN):
 			{
@@ -411,13 +411,13 @@ TokenPtr Tokenizer::ReadLiteralString(void)	{
 
 /* Peek need cache */
 TokenPtr Tokenizer::PeekToken() {
-	auto current = m_stream->GetPosition();
+	auto current = m_stream->GetInputPosition();
 	if (_token_cached && _last_token_offset == current) {
 		return _last_token;
 	}
 
 	_last_token = ReadToken();
-	_advance_position = m_stream->GetPosition();
+	_advance_position = m_stream->GetInputPosition();
 	_last_token_offset = current;
 	_token_cached = true;
 
@@ -425,7 +425,7 @@ TokenPtr Tokenizer::PeekToken() {
 		assert(_last_token->GetType() == Token::Type::END_OF_INPUT);
 	}
 
-	m_stream->SetPosition(_last_token_offset);
+	m_stream->SetInputPosition(_last_token_offset);
 	return _last_token;
 }
 

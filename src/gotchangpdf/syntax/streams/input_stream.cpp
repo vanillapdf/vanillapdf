@@ -25,7 +25,7 @@ void InputStream::Read(Buffer& result, size_t len) {
 	m_stream->read(result.data(), len);
 }
 
-types::stream_size InputStream::GetPosition() {
+types::stream_size InputStream::GetInputPosition() {
 	assert(!m_stream->fail());
 
 	if (m_stream->eof()) {
@@ -35,8 +35,8 @@ types::stream_size InputStream::GetPosition() {
 	return m_stream->tellg();
 }
 
-void InputStream::SetPosition(types::stream_size pos, std::ios_base::seekdir way) {
-	auto initial_offset = GetPosition();
+void InputStream::SetInputPosition(types::stream_size pos, std::ios_base::seekdir way) {
+	auto initial_offset = GetInputPosition();
 
 	// of badoff is specified, set eof flag
 	if (pos == constant::BAD_OFFSET) {
@@ -56,7 +56,7 @@ void InputStream::SetPosition(types::stream_size pos, std::ios_base::seekdir way
 	if (m_stream->fail()) {
 		m_stream->clear(m_stream->rdstate() & m_stream->failbit);
 	} else {
-		auto verify_offset = GetPosition();
+		auto verify_offset = GetInputPosition();
 		if (way == std::ios_base::beg) {
 			// verify if the position is correct
 			assert(pos == verify_offset); verify_offset;
@@ -71,8 +71,8 @@ void InputStream::SetPosition(types::stream_size pos, std::ios_base::seekdir way
 	}
 }
 
-void InputStream::SetPosition(types::stream_size pos) {
-	SetPosition(pos, std::ios_base::beg);
+void InputStream::SetInputPosition(types::stream_size pos) {
+	SetInputPosition(pos, std::ios_base::beg);
 }
 
 BufferPtr InputStream::Readline(void) {

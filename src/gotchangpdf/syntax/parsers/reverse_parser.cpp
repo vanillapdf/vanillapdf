@@ -21,7 +21,7 @@ types::stream_offset ReverseParser::ReadLastXrefOffset() {
 }
 
 TokenPtr ReverseParser::ReadTokenWithTypeSkip(Token::Type type) {
-	auto offset = m_stream->GetPosition();
+	auto offset = m_stream->GetInputPosition();
 	for (;;) {
 		auto token = ReadToken();
 

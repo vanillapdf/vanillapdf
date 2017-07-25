@@ -105,13 +105,13 @@ BufferPtr StreamObject::GetBodyRaw() const {
 	auto locked_file = m_file.GetReference();
 	auto input = locked_file->GetInputStream();
 	auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
-	auto pos = input->GetPosition();
-	input->SetPosition(_raw_data_offset);
+	auto pos = input->GetInputPosition();
+	input->SetInputPosition(_raw_data_offset);
 
 	// We want to capture input by value, because it might be out of scope
 	// In order to call non-const method we have to tag the lambda mutable
 	auto cleanup_lambda = [input, pos]() mutable {
-		input->SetPosition(pos);
+		input->SetInputPosition(pos);
 	};
 
 	SCOPE_GUARD(cleanup_lambda);
