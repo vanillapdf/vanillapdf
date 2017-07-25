@@ -42,8 +42,8 @@ DocumentPtr Document::Create(const std::string& path) {
 
 	DocumentInfoPtr document_info = document->CreateDocumentInfo();
 
-	LiteralStringObjectPtr procuder = make_deferred<LiteralStringObject>("I am the producer");
-	document_info->SetProducer(procuder);
+	LiteralStringObjectPtr producer = make_deferred<LiteralStringObject>("I am the producer");
+	document_info->SetProducer(producer);
 
 	DatePtr creation_date = Date::GetCurrentDate();
 	document_info->SetCreationDate(creation_date);
