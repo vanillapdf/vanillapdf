@@ -40,6 +40,9 @@ class IAttribute;
 class IAttributePtr;
 class AttributeList;
 
+class IEncryptionKey;
+class ISigningKey;
+
 } // gotchangpdf
 
 #endif /* _UTILS_FWD_H */

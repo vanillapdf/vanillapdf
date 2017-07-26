@@ -4,6 +4,7 @@
 #include "syntax/utils/syntax_fwd.h"
 
 #include "utils/buffer.h"
+#include "utils/encryption_key_interface.h"
 
 namespace gotchangpdf {
 namespace syntax {
@@ -56,12 +57,6 @@ public:
 		const syntax::IntegerObject& revision,
 		const syntax::IntegerObject& key_length,
 		Buffer& decryption_key);
-};
-
-class IEncryptionKey : public virtual IUnknown, public IWeakReferenceable<IEncryptionKey> {
-public:
-	virtual BufferPtr Decrypt(const Buffer& data) const = 0;
-	virtual bool ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const = 0;
 };
 
 } // syntax

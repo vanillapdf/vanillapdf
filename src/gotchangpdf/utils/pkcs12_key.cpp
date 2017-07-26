@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#include "syntax/utils/pkcs12_key.h"
+#include "utils/pkcs12_key.h"
 
 #include <fstream>
 
@@ -9,11 +9,11 @@
 #include <openssl/evp.h>
 #include <openssl/engine.h>
 #include <openssl/err.h>
+#include <openssl/rsa.h>
 
 #endif
 
 namespace gotchangpdf {
-namespace syntax {
 
 class PKCS12Key::PKCS12KeyImpl {
 public:
@@ -21,8 +21,16 @@ public:
 	explicit PKCS12KeyImpl(const std::string& path);
 	PKCS12KeyImpl(const std::string& path, const Buffer& password);
 	PKCS12KeyImpl(const Buffer& data, const Buffer& password);
+
+	// IEncryptionKey
 	BufferPtr Decrypt(const Buffer& data) const;
 	bool ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const;
+
+	// ISigningKey
+	BufferPtr Sign(const Buffer& data, MessageDigestAlgorithm algorithm) const;
+
+	// This is only a helper method and may be moved in the future
+	static const EVP_MD* GetAlgorithm(MessageDigestAlgorithm algorithm);
 
 	~PKCS12KeyImpl();
 
@@ -65,6 +73,11 @@ BufferPtr PKCS12Key::Decrypt(const Buffer& data) const {
 bool PKCS12Key::ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const {
 	return m_impl->ContainsPrivateKey(issuer, serial);
 }
+
+BufferPtr PKCS12Key::Sign(const Buffer& data, MessageDigestAlgorithm algorithm) const {
+	return m_impl->Sign(data, algorithm);
+}
+
 #pragma endregion
 
 #if defined(GOTCHANG_PDF_HAVE_OPENSSL)
@@ -209,6 +222,146 @@ bool PKCS12Key::PKCS12KeyImpl::ContainsPrivateKey(const Buffer& issuer, const Bu
 
 }
 
+BufferPtr PKCS12Key::PKCS12KeyImpl::Sign(const Buffer& data, MessageDigestAlgorithm algorithm) const {
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
+	EVP_MD_CTX signing_context;
+	EVP_MD_CTX_init(&signing_context);
+
+	auto message_digest = GetAlgorithm(algorithm);
+
+	int initialized = EVP_DigestSignInit(&signing_context, nullptr, message_digest, nullptr, key);
+	if (initialized != 1) {
+		throw GeneralException("Could not initialize signing context");
+	}
+
+	// We want to capture input by value, because it might be out of scope
+	// In order to call non-const method we have to tag the lambda mutable
+	auto cleanup_lambda = [signing_context]() mutable {
+		int cleaned = EVP_MD_CTX_cleanup(&signing_context);
+
+		assert(cleaned == 1 && "Could not clean signing context");
+
+		// This is a special case, because we are executing this code in
+		// destructor of scope guard. In case it gets executed, because
+		// of an exception, there is a risk of undefined behavior,
+		// when another exception is thrown. We just carefully ignore logging.
+		if (cleaned != 1 && !std::uncaught_exception()) {
+			LOG_ERROR_GLOBAL << "Could not clean signing context";
+		}
+	};
+
+	SCOPE_GUARD(cleanup_lambda);
+
+	int updated = EVP_DigestSignUpdate(&signing_context, data.data(), data.size());
+	if (updated != 1) {
+		throw GeneralException("Could not update signing context");
+	}
+
+	size_t length = 0;
+	int finalized = EVP_DigestSignFinal(&signing_context, nullptr, &length);
+	if (finalized != 1) {
+		throw GeneralException("Could not get signing digest length");
+	}
+
+	BufferPtr result = make_deferred<Buffer>(length);
+	int digested = EVP_DigestSignFinal(&signing_context, (unsigned char *) result->data(), &length);
+	if (digested != 1) {
+		throw GeneralException("Could not read signing digest");
+	}
+
+	return result;
+
+#else
+
+	(void) data; (void) algorithm;
+	throw NotSupportedException("This library was compiled without OpenSSL support");
+
+#endif
+
+}
+
+const EVP_MD* PKCS12Key::PKCS12KeyImpl::GetAlgorithm(MessageDigestAlgorithm algorithm) {
+	if (algorithm == MessageDigestAlgorithm::None) {
+		throw GeneralException("No message digest algorithm was selected");
+	}
+
+	if (algorithm == MessageDigestAlgorithm::MDNULL) {
+		return EVP_md_null();
+	}
+
+	if (algorithm == MessageDigestAlgorithm::MD2) {
+	#ifndef OPENSSL_NO_MD2
+		return EVP_md2();
+	#else
+		throw NotSupportedException("OpenSSL was compiled without MD2 message digest support");
+	#endif
+	}
+
+	if (algorithm == MessageDigestAlgorithm::MD4) {
+		return EVP_md4();
+	}
+
+	if (algorithm == MessageDigestAlgorithm::MD5) {
+		return EVP_md5();
+	}
+
+	if (algorithm == MessageDigestAlgorithm::SHA) {
+		return EVP_sha();
+	}
+
+	if (algorithm == MessageDigestAlgorithm::SHA1) {
+		return EVP_sha1();
+	}
+
+	if (algorithm == MessageDigestAlgorithm::DSS) {
+		return EVP_dss();
+	}
+
+	if (algorithm == MessageDigestAlgorithm::DSS1) {
+		return EVP_dss1();
+	}
+
+	if (algorithm == MessageDigestAlgorithm::ECDSA) {
+		return EVP_ecdsa();
+	}
+
+	if (algorithm == MessageDigestAlgorithm::SHA224) {
+		return EVP_sha224();
+	}
+
+	if (algorithm == MessageDigestAlgorithm::SHA256) {
+		return EVP_sha256();
+	}
+
+	if (algorithm == MessageDigestAlgorithm::SHA384) {
+		return EVP_sha384();
+	}
+
+	if (algorithm == MessageDigestAlgorithm::SHA512) {
+		return EVP_sha512();
+	}
+
+	if (algorithm == MessageDigestAlgorithm::MDC2) {
+	#ifndef OPENSSL_NO_MDC2
+		return EVP_mdc2();
+	#else
+		throw NotSupportedException("OpenSSL was compiled without MDC2 message digest support");
+	#endif
+	}
+
+	if (algorithm == MessageDigestAlgorithm::RIPEMD160) {
+		return EVP_ripemd160();
+	}
+
+	if (algorithm == MessageDigestAlgorithm::WHIRLPOOL) {
+		return EVP_whirlpool();
+	}
+
+	throw GeneralException("Unknown message digest algorithm");
+}
+
 PKCS12Key::PKCS12KeyImpl::~PKCS12KeyImpl() {
 
 #if defined(GOTCHANG_PDF_HAVE_OPENSSL)
@@ -242,5 +395,4 @@ PKCS12Key::PKCS12KeyImpl::~PKCS12KeyImpl() {
 
 }
 
-} // syntax
 } // gotchangpdf

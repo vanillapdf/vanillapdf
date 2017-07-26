@@ -13,8 +13,6 @@ class OutputPointer;
 template <typename T>
 class DeferredArrayObject;
 
-class IEncryptionKey;
-
 // Attributes
 class SerializationOverrideAttribute; using SerializationOverrideAttributePtr = Deferred<SerializationOverrideAttribute>;
 

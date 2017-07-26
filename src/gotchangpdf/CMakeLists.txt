@@ -135,7 +135,6 @@ set(GOTCHANGPDF_SYNTAX_SOURCES
 	syntax/streams/output_stream.cpp
 	
 	syntax/utils/encryption.cpp
-	syntax/utils/pkcs12_key.cpp
 )
 
 set(GOTCHANGPDF_UTILS_SOURCES
@@ -146,6 +145,7 @@ set(GOTCHANGPDF_UTILS_SOURCES
 	utils/library_info.cpp
 	utils/log.cpp
 	utils/modify_observer_interface.cpp
+	utils/pkcs12_key.cpp
 	utils/time_utils.cpp
 	utils/unknown_interface.cpp
 	utils/zlib_wrapper.cpp
@@ -249,7 +249,6 @@ set(GOTCHANGPDF_SYNTAX_HEADERS
 	
 	syntax/utils/encryption.h
 	syntax/utils/output_pointer.h
-	syntax/utils/pkcs12_key.h
 	syntax/utils/syntax_fwd.h
 	syntax/utils/object_utils.h
 )
@@ -268,6 +267,7 @@ set(GOTCHANGPDF_UTILS_HEADERS
 	utils/observable_interface.h
 	utils/modify_observer_interface.h
 	utils/pdf_version.h
+	utils/pkcs12_key.h
 	utils/stack_allocator.h
 	utils/time_utils.h
 	utils/unknown_interface.h
