@@ -40,13 +40,13 @@ public:
 	static BufferPtr AddPkcs7Padding(const Buffer& data, size_t block_size);
 	static BufferPtr RemovePkcs7Padding(const Buffer& data, size_t block_size);
 
-	static BufferPtr DecryptEnvelopedData(const syntax::ArrayObject<syntax::StringObjectPtr>& recipients, const IEncryptionKey& key);
+	static BufferPtr DecryptEnvelopedData(const syntax::ArrayObject<syntax::StringObjectPtr>& recipients, IEncryptionKey& key);
 	static BufferPtr ComputeEncryptedOwnerData(const Buffer& pad_password, const syntax::DictionaryObject& encryption_dictionary);
 	static BufferPtr GetRecipientKey(
 		const syntax::ArrayObject<syntax::StringObjectPtr>& recipients,
 		const syntax::IntegerObject& length_bits,
 		EncryptionAlgorithm algorithm,
-		const IEncryptionKey& key);
+		IEncryptionKey& key);
 
 	static bool CheckKey(
 		const Buffer& input,

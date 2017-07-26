@@ -131,7 +131,7 @@ void File::Initialize() {
 	_initialized = true;
 }
 
-bool File::SetEncryptionKey(const IEncryptionKey& key) {
+bool File::SetEncryptionKey(IEncryptionKey& key) {
 	if (!IsEncrypted()) {
 		return false;
 	}

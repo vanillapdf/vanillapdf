@@ -151,7 +151,6 @@
     <ClInclude Include="src\gotchangpdf\syntax\utils\encryption.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\object_utils.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\output_pointer.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\utils\pkcs12_key.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\serialization_override_attribute.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\syntax_fwd.h" />
     <ClInclude Include="src\gotchangpdf\utils\attribute_interface.h" />
@@ -159,6 +158,8 @@
     <ClInclude Include="src\gotchangpdf\utils\character.h" />
     <ClInclude Include="src\gotchangpdf\utils\constants.h" />
     <ClInclude Include="src\gotchangpdf\utils\deferred.h" />
+    <ClInclude Include="src\gotchangpdf\utils\encryption_key_interface.h" />
+    <ClInclude Include="src\gotchangpdf\utils\message_digest_algorithm.h" />
     <ClInclude Include="src\gotchangpdf\utils\errors.h" />
     <ClInclude Include="src\gotchangpdf\utils\exceptions.h" />
     <ClInclude Include="src\gotchangpdf\utils\base_iterator.h" />
@@ -166,6 +167,8 @@
     <ClInclude Include="src\gotchangpdf\utils\log.h" />
     <ClInclude Include="src\gotchangpdf\utils\modify_observer_interface.h" />
     <ClInclude Include="src\gotchangpdf\utils\observable_interface.h" />
+    <ClInclude Include="src\gotchangpdf\utils\pkcs12_key.h" />
+    <ClInclude Include="src\gotchangpdf\utils\signing_key_interface.h" />
     <ClInclude Include="src\gotchangpdf\utils\stack_allocator.h" />
     <ClInclude Include="src\gotchangpdf\utils\time_utils.h" />
     <ClInclude Include="src\gotchangpdf\utils\unknown_interface.h" />
@@ -287,7 +290,6 @@
     <ClCompile Include="src\gotchangpdf\syntax\streams\input_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\streams\output_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\utils\encryption.cpp" />
-    <ClCompile Include="src\gotchangpdf\syntax\utils\pkcs12_key.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\attribute_interface.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\buffer.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\errors.cpp" />
@@ -295,6 +297,7 @@
     <ClCompile Include="src\gotchangpdf\utils\library_info.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\log.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\modify_observer_interface.cpp" />
+    <ClCompile Include="src\gotchangpdf\utils\pkcs12_key.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\time_utils.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\unknown_interface.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\zlib_wrapper.cpp" />

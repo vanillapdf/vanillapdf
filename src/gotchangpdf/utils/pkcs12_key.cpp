@@ -23,11 +23,13 @@ public:
 	PKCS12KeyImpl(const Buffer& data, const Buffer& password);
 
 	// IEncryptionKey
-	BufferPtr Decrypt(const Buffer& data) const;
+	BufferPtr Decrypt(const Buffer& data);
 	bool ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const;
 
 	// ISigningKey
-	BufferPtr Sign(const Buffer& data, MessageDigestAlgorithm algorithm) const;
+	void SignInitialize(MessageDigestAlgorithm algorithm);
+	void SignUpdate(const Buffer& data);
+	BufferPtr SignFinal();
 
 	// This is only a helper method and may be moved in the future
 	static const EVP_MD* GetAlgorithm(MessageDigestAlgorithm algorithm);
@@ -39,16 +41,19 @@ public:
 private:
 	PKCS12 *p12 = nullptr;
 	EVP_PKEY *key = nullptr;
-	EVP_PKEY_CTX *ctx = nullptr;
+	EVP_PKEY_CTX *encryption_context = nullptr;
 	X509 *cert = nullptr;
 	ENGINE *rsa = nullptr;
 
+	EVP_MD_CTX *signing_context = nullptr;
+
 #endif
 
-	void Initialize(const Buffer& data, const Buffer& password);
+	void Load(const Buffer& data, const Buffer& password);
 };
 
 #pragma region Forwards
+
 // Forwards to implementation
 PKCS12Key::PKCS12Key(const Buffer& data) {
 	m_impl = make_unique<PKCS12KeyImpl>(data);
@@ -66,7 +71,7 @@ PKCS12Key::PKCS12Key(const Buffer& data, const Buffer& password) {
 	m_impl = make_unique<PKCS12KeyImpl>(data, password);
 }
 
-BufferPtr PKCS12Key::Decrypt(const Buffer& data) const {
+BufferPtr PKCS12Key::Decrypt(const Buffer& data) {
 	return m_impl->Decrypt(data);
 }
 
@@ -74,8 +79,16 @@ bool PKCS12Key::ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) c
 	return m_impl->ContainsPrivateKey(issuer, serial);
 }
 
-BufferPtr PKCS12Key::Sign(const Buffer& data, MessageDigestAlgorithm algorithm) const {
-	return m_impl->Sign(data, algorithm);
+void PKCS12Key::SignInitialize(MessageDigestAlgorithm algorithm) {
+	return m_impl->SignInitialize(algorithm);
+}
+
+void PKCS12Key::SignUpdate(const Buffer& data) {
+	return m_impl->SignUpdate(data);
+}
+
+BufferPtr PKCS12Key::SignFinal() {
+	return m_impl->SignFinal();
 }
 
 #pragma endregion
@@ -123,18 +136,16 @@ PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const std::string& path, const Buffer& p
 		data.insert(data.end(), buffer.begin(), buffer.begin() + read_converted);
 	}
 
-	Initialize(data, password);
+	Load(data, password);
 }
 
 PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const Buffer& data) : PKCS12KeyImpl(data, Buffer()) {}
 
 PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const Buffer& data, const Buffer& password) {
-	Initialize(data, password);
+	Load(data, password);
 }
 
-void PKCS12Key::PKCS12KeyImpl::Initialize(const Buffer& data, const Buffer& password) {
-
-#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, const Buffer& password) {
 
 	InitializeOpenSSL();
 
@@ -152,34 +163,36 @@ void PKCS12Key::PKCS12KeyImpl::Initialize(const Buffer& data, const Buffer& pass
 	if (1 != parsed) {
 		throw GeneralException("Could not parse PKCS#12");
 	}
+}
 
-	rsa = ENGINE_get_default_RSA();
-	ctx = EVP_PKEY_CTX_new(key, rsa);
-	int initialized = EVP_PKEY_decrypt_init(ctx);
+BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
+	if (rsa == nullptr) {
+		rsa = ENGINE_get_default_RSA();
+	}
+
+	if (encryption_context == nullptr) {
+		encryption_context = EVP_PKEY_CTX_new(key, rsa);
+	}
+
+	int initialized = EVP_PKEY_decrypt_init(encryption_context);
 	if (1 != initialized) {
 		throw GeneralException("Could not initialize encryption engine");
 	}
 
-#else
-	(void) data; (void) password;
-	throw NotSupportedException("This library was compiled without OpenSSL support");
-
-#endif
-
-}
-
-BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) const {
-
-#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
-
 	size_t outlen = 0;
-	EVP_PKEY_decrypt(ctx, nullptr, &outlen, (unsigned char *) data.data(), data.size());
+	int has_length = EVP_PKEY_decrypt(encryption_context, nullptr, &outlen, (unsigned char *) data.data(), data.size());
+	if (has_length != 1) {
+		throw GeneralException("Could not get decrypt message length");
+	}
 
 	BufferPtr output = make_deferred<Buffer>(outlen);
-	EVP_PKEY_decrypt(ctx, (unsigned char *) output->data(), &outlen, (unsigned char *) data.data(), data.size());
-
-	if (output->size() != outlen)
-		output->resize(outlen);
+	int decrypted = EVP_PKEY_decrypt(encryption_context, (unsigned char *) output->data(), &outlen, (unsigned char *) data.data(), data.size());
+	if (decrypted != 1) {
+		throw GeneralException("Could not get decrypt message");
+	}
 
 	return output;
 
@@ -222,51 +235,60 @@ bool PKCS12Key::PKCS12KeyImpl::ContainsPrivateKey(const Buffer& issuer, const Bu
 
 }
 
-BufferPtr PKCS12Key::PKCS12KeyImpl::Sign(const Buffer& data, MessageDigestAlgorithm algorithm) const {
+void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) {
 
 #if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 
-	EVP_MD_CTX signing_context;
-	EVP_MD_CTX_init(&signing_context);
+	if (signing_context == nullptr) {
+		signing_context = EVP_MD_CTX_create();
+	}
 
 	auto message_digest = GetAlgorithm(algorithm);
 
-	int initialized = EVP_DigestSignInit(&signing_context, nullptr, message_digest, nullptr, key);
+	int initialized = EVP_DigestSignInit(signing_context, nullptr, message_digest, nullptr, key);
 	if (initialized != 1) {
 		throw GeneralException("Could not initialize signing context");
 	}
 
-	// We want to capture input by value, because it might be out of scope
-	// In order to call non-const method we have to tag the lambda mutable
-	auto cleanup_lambda = [signing_context]() mutable {
-		int cleaned = EVP_MD_CTX_cleanup(&signing_context);
+#else
 
-		assert(cleaned == 1 && "Could not clean signing context");
+	(void) algorithm;
+	throw NotSupportedException("This library was compiled without OpenSSL support");
 
-		// This is a special case, because we are executing this code in
-		// destructor of scope guard. In case it gets executed, because
-		// of an exception, there is a risk of undefined behavior,
-		// when another exception is thrown. We just carefully ignore logging.
-		if (cleaned != 1 && !std::uncaught_exception()) {
-			LOG_ERROR_GLOBAL << "Could not clean signing context";
-		}
-	};
+#endif
 
-	SCOPE_GUARD(cleanup_lambda);
+}
 
-	int updated = EVP_DigestSignUpdate(&signing_context, data.data(), data.size());
+void PKCS12Key::PKCS12KeyImpl::SignUpdate(const Buffer& data) {
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
+	int updated = EVP_DigestSignUpdate(signing_context, data.data(), data.size());
 	if (updated != 1) {
 		throw GeneralException("Could not update signing context");
 	}
 
+#else
+
+	(void) data;
+	throw NotSupportedException("This library was compiled without OpenSSL support");
+
+#endif
+
+}
+
+BufferPtr PKCS12Key::PKCS12KeyImpl::SignFinal() {
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 	size_t length = 0;
-	int finalized = EVP_DigestSignFinal(&signing_context, nullptr, &length);
+	int finalized = EVP_DigestSignFinal(signing_context, nullptr, &length);
 	if (finalized != 1) {
 		throw GeneralException("Could not get signing digest length");
 	}
 
 	BufferPtr result = make_deferred<Buffer>(length);
-	int digested = EVP_DigestSignFinal(&signing_context, (unsigned char *) result->data(), &length);
+	int digested = EVP_DigestSignFinal(signing_context, (unsigned char *) result->data(), &length);
 	if (digested != 1) {
 		throw GeneralException("Could not read signing digest");
 	}
@@ -275,7 +297,6 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::Sign(const Buffer& data, MessageDigestAlgori
 
 #else
 
-	(void) data; (void) algorithm;
 	throw NotSupportedException("This library was compiled without OpenSSL support");
 
 #endif
@@ -283,6 +304,9 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::Sign(const Buffer& data, MessageDigestAlgori
 }
 
 const EVP_MD* PKCS12Key::PKCS12KeyImpl::GetAlgorithm(MessageDigestAlgorithm algorithm) {
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
 	if (algorithm == MessageDigestAlgorithm::None) {
 		throw GeneralException("No message digest algorithm was selected");
 	}
@@ -360,6 +384,14 @@ const EVP_MD* PKCS12Key::PKCS12KeyImpl::GetAlgorithm(MessageDigestAlgorithm algo
 	}
 
 	throw GeneralException("Unknown message digest algorithm");
+
+#else
+
+	(void) algorithm;
+	throw NotSupportedException("This library was compiled without OpenSSL support");
+
+#endif
+
 }
 
 PKCS12Key::PKCS12KeyImpl::~PKCS12KeyImpl() {
@@ -381,14 +413,19 @@ PKCS12Key::PKCS12KeyImpl::~PKCS12KeyImpl() {
 		cert = nullptr;
 	}
 
-	if (nullptr != ctx) {
-		EVP_PKEY_CTX_free(ctx);
-		ctx = nullptr;
+	if (nullptr != encryption_context) {
+		EVP_PKEY_CTX_free(encryption_context);
+		encryption_context = nullptr;
 	}
 
 	if (nullptr != rsa) {
 		ENGINE_free(rsa);
 		rsa = nullptr;
+	}
+
+	if (nullptr != signing_context) {
+		EVP_MD_CTX_destroy(signing_context);
+		signing_context = nullptr;
 	}
 
 #endif

@@ -15,11 +15,13 @@ public:
 	PKCS12Key(const Buffer& data, const Buffer& password);
 
 	// IEncryptionKey
-	BufferPtr Decrypt(const Buffer& data) const override;
+	BufferPtr Decrypt(const Buffer& data) override;
 	bool ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const override;
 
 	// ISigningKey
-	BufferPtr Sign(const Buffer& data, MessageDigestAlgorithm algorithm) const override;
+	void SignInitialize(MessageDigestAlgorithm algorithm) override;
+	void SignUpdate(const Buffer& data) override;
+	BufferPtr SignFinal() override;
 
 private:
 	class PKCS12KeyImpl;

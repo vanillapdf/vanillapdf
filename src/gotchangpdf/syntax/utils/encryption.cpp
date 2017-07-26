@@ -338,7 +338,7 @@ BufferPtr EncryptionUtils::GetRecipientKey
 (const syntax::ArrayObject<syntax::StringObjectPtr>& enveloped_data,
 	const syntax::IntegerObject& length_bits,
 	EncryptionAlgorithm algorithm,
-	const IEncryptionKey& key) {
+	IEncryptionKey& key) {
 
 #if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 
@@ -384,7 +384,7 @@ BufferPtr EncryptionUtils::GetRecipientKey
 
 }
 
-BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax::StringObjectPtr>& enveloped_data, const IEncryptionKey& key) {
+BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax::StringObjectPtr>& enveloped_data, IEncryptionKey& key) {
 
 #if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 

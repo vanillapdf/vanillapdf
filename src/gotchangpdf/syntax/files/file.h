@@ -54,7 +54,7 @@ public:
 
 	bool SetEncryptionPassword(const Buffer& password);
 	bool SetEncryptionPassword(const std::string& password);
-	bool SetEncryptionKey(const IEncryptionKey& key);
+	bool SetEncryptionKey(IEncryptionKey& key);
 
 	BufferPtr DecryptStream(const Buffer& data,
 		types::big_uint objNumber,

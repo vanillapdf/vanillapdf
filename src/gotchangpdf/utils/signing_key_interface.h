@@ -9,7 +9,9 @@ namespace gotchangpdf {
 
 class ISigningKey : public virtual IUnknown, public IWeakReferenceable<ISigningKey> {
 public:
-	virtual BufferPtr Sign(const Buffer& data, MessageDigestAlgorithm algorithm) const = 0;
+	virtual void SignInitialize(MessageDigestAlgorithm algorithm) = 0;
+	virtual void SignUpdate(const Buffer& data) = 0;
+	virtual BufferPtr SignFinal() = 0;
 };
 
 } // gotchangpdf

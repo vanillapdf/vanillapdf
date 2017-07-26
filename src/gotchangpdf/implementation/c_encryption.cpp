@@ -35,7 +35,7 @@ public:
 		m_init();
 	}
 
-	virtual BufferPtr Decrypt(const Buffer& data) const override
+	virtual BufferPtr Decrypt(const Buffer& data) override
 	{
 		auto input_ptr = reinterpret_cast<const BufferHandleTag*>(&data);
 		BufferHandle output_ptr = nullptr;
