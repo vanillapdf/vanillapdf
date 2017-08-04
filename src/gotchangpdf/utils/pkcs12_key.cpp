@@ -149,7 +149,9 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, const Buffer& password) 
 
 	InitializeOpenSSL();
 
-	auto buffer_data = static_cast<const void *>(data.data());
+	// The const cast seems to be unnecessary, but on my linux VM
+	// with OpenSSL 1.0.1f method BIO_new_mem_buf takes only void*
+	auto buffer_data = const_cast<char *>(data.data());
 	int buffer_length = ValueConvertUtils::SafeConvert<int>(data.size());
 
 	BIO* bio = BIO_new_mem_buf(buffer_data, buffer_length);
