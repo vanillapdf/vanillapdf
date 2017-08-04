@@ -72,6 +72,9 @@ class InputReverseStream; using InputReverseStreamPtr = Deferred<InputReverseStr
 class IOutputStream; using IOutputStreamPtr = Deferred<IOutputStream>;
 class OutputStream; using OutputStreamPtr = Deferred<OutputStream>;
 
+class IInputOutputStream; using IInputOutputStreamPtr = Deferred<IInputOutputStream>;
+class InputOutputStream; using InputOutputStreamPtr = Deferred<InputOutputStream>;
+
 // Objects
 class ObjectUtils;
 class Object;

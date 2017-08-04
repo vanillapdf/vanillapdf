@@ -12,7 +12,7 @@ namespace syntax {
 
 class IFileWriterObserver : public virtual IUnknown, public IWeakReferenceable<IFileWriterObserver> {
 public:
-	virtual void OnInitializing(IInputStreamPtr input, IOutputStreamPtr output) {}
+	virtual void OnInitializing(IInputStreamPtr input, IInputOutputStreamPtr output) {}
 	virtual void OnFinalizing() {}
 
 	virtual void OnBeforeObjectWrite(ObjectPtr ptr) {}
@@ -24,15 +24,15 @@ public:
 	virtual void OnBeforeEntryOffsetRecalculation(XrefUsedEntryBasePtr ptr) {}
 	virtual void OnAfterEntryOffsetRecalculation(XrefUsedEntryBasePtr ptr) {}
 
-	virtual void OnBeforeOutputFlush(IOutputStreamPtr output) {}
-	virtual void OnAfterOutputFlush(IOutputStreamPtr output) {}
+	virtual void OnBeforeOutputFlush(IInputOutputStreamPtr output) {}
+	virtual void OnAfterOutputFlush(IInputOutputStreamPtr output) {}
 
 	virtual ~IFileWriterObserver() = 0;
 };
 
 class IFileWriterObservable : public virtual IUnknown, public IObservable<IFileWriterObserver> {
 public:
-	virtual void Initializing(IInputStreamPtr input, IOutputStreamPtr output) {
+	virtual void Initializing(IInputStreamPtr input, IInputOutputStreamPtr output) {
 		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
 			Invoke(*current, &IFileWriterObserver::OnInitializing, input, output);
 		}
@@ -44,13 +44,13 @@ public:
 		}
 	}
 
-	virtual void BeforeOutputFlush(IOutputStreamPtr output) {
+	virtual void BeforeOutputFlush(IInputOutputStreamPtr output) {
 		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
 			Invoke(*current, &IFileWriterObserver::OnBeforeOutputFlush, output);
 		}
 	}
 
-	virtual void AfterOutputFlush(IOutputStreamPtr output) {
+	virtual void AfterOutputFlush(IInputOutputStreamPtr output) {
 		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
 			Invoke(*current, &IFileWriterObserver::OnAfterOutputFlush, output);
 		}
@@ -71,7 +71,7 @@ private:
 	}
 };
 
-class FileWriter : public virtual IUnknown {
+class FileWriter : public virtual IUnknown, public IFileWriterObservable {
 public:
 	bool ValidateConfiguration(FilePtr source, std::string& reason) const;
 

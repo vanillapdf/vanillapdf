@@ -1,0 +1,41 @@
+#ifndef _INPUT_OUTPUT_STREAM_H
+#define _INPUT_OUTPUT_STREAM_H
+
+#include "syntax/streams/input_output_stream_interface.h"
+#include "syntax/streams/input_stream.h"
+#include "syntax/streams/output_stream.h"
+
+namespace gotchangpdf {
+namespace syntax {
+
+#if defined(_MSC_VER)
+
+	// Visual studio triggers warning about dominance:
+	// "warning C4250: 'InputOutputStream': inherits 'InputStream::Read' via dominance"
+
+	// https://stackoverflow.com/questions/6864550/c-inheritance-via-dominance-warning
+
+	// While IInputStream and IOutputStream is already implemented and propagated via dominance.
+	// Other compilers do not trigger any warning and I also believe it's harmless.
+
+	#pragma warning (push)
+	#pragma warning (disable : 4250)
+#endif
+
+class InputOutputStream : public IInputOutputStream, public InputStream, public OutputStream {
+public:
+	InputOutputStream(std::shared_ptr<std::iostream> stream);
+};
+
+InputOutputStream::InputOutputStream(std::shared_ptr<std::iostream> stream) : InputStream(stream), OutputStream(stream) {
+
+}
+
+#if defined(_MSC_VER)
+	#pragma warning (pop)
+#endif
+
+} // syntax
+} // gotchangpdf
+
+#endif /* _INPUT_OUTPUT_STREAM_H */

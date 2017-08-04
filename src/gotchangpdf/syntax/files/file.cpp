@@ -7,6 +7,7 @@
 #include "syntax/streams/input_reverse_stream.h"
 #include "syntax/streams/input_stream.h"
 #include "syntax/streams/output_stream.h"
+#include "syntax/streams/input_output_stream.h"
 
 #include "syntax/parsers/parser.h"
 #include "syntax/parsers/reverse_parser.h"
@@ -756,6 +757,10 @@ IInputStreamPtr File::GetInputStream(void) {
 
 IOutputStreamPtr File::GetOutputStream(void) {
 	return make_deferred<OutputStream>(_input);
+}
+
+IInputOutputStreamPtr File::GetInputOutputStream(void) {
+	return make_deferred<InputOutputStream>(_input);
 }
 
 BufferPtr File::GetByteRange(types::stream_size begin, size_t length) const {

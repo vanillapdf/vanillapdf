@@ -8,6 +8,7 @@
 
 #include "syntax/streams/input_stream_interface.h"
 #include "syntax/streams/output_stream_interface.h"
+#include "syntax/streams/input_output_stream_interface.h"
 
 #include <memory>
 #include <vector>
@@ -46,6 +47,7 @@ public:
 	std::string GetFilename(void) const { return _filename; }
 	IInputStreamPtr GetInputStream(void);
 	IOutputStreamPtr GetOutputStream(void);
+	IInputOutputStreamPtr GetInputOutputStream(void);
 
 	// Encryption
 	bool IsEncrypted(void) const;

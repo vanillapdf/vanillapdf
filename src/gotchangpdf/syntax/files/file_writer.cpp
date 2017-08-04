@@ -35,7 +35,7 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 	}
 
 	auto input = source->GetInputStream();
-	auto output = destination->GetOutputStream();
+	auto output = destination->GetInputOutputStream();
 
 	auto header = source->GetHeader();
 	auto ver = header->GetVersion();
@@ -160,7 +160,7 @@ void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
 	}
 
 	auto input = source->GetInputStream();
-	auto output = destination->GetOutputStream();
+	auto output = destination->GetInputOutputStream();
 
 	// Write original data
 	CopyStreamContent(input, output);

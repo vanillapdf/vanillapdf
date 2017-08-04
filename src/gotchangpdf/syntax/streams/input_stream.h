@@ -6,7 +6,7 @@
 namespace gotchangpdf {
 namespace syntax {
 
-class InputStream : public IInputStream {
+class InputStream : public virtual IInputStream {
 public:
 	explicit InputStream(std::shared_ptr<std::istream> stream);
 
