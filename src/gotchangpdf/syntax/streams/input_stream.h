@@ -11,7 +11,7 @@ public:
 	explicit InputStream(std::shared_ptr<std::istream> stream);
 
 	virtual BufferPtr Read(size_t len) override;
-	virtual void Read(Buffer& result, size_t len) override;
+	virtual types::stream_size Read(Buffer& result, size_t len) override;
 	virtual BufferPtr Readline(void) override;
 	virtual types::stream_size GetInputPosition() override;
 	virtual void SetInputPosition(types::stream_size pos) override;

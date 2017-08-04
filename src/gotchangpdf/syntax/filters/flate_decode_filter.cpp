@@ -8,6 +8,15 @@
 namespace gotchangpdf {
 namespace syntax {
 
+// https://www.w3.org/TR/PNG-Filters.html
+enum PNGFilterTypes {
+	None = 0,
+	Sub = 1,
+	Up = 2,
+	Average = 3,
+	Paeth = 4
+};
+
 BufferPtr FlateDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const {
 	return ZlibWrapper::Deflate(src);
 }
@@ -57,12 +66,14 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(std::shared_ptr<std::istream> src, t
 	}
 
 	IntegerObjectPtr columns = make_deferred<IntegerObject>(1);
-	if (parameters->Contains(constant::Name::Columns))
+	if (parameters->Contains(constant::Name::Columns)) {
 		columns = parameters->FindAs<IntegerObjectPtr>(constant::Name::Columns);
+	}
 
 	IntegerObjectPtr change = make_deferred<IntegerObject>(1);
-	if (parameters->Contains(constant::Name::EarlyChange))
+	if (parameters->Contains(constant::Name::EarlyChange)) {
 		change = parameters->FindAs<IntegerObjectPtr>(constant::Name::EarlyChange);
+	}
 
 	if (*predictor == 2) {
 		throw NotSupportedException("TIFF predictor is currently not supported");
@@ -70,76 +81,105 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(std::shared_ptr<std::istream> src, t
 		throw GeneralException("Unknown predictor type");
 	}
 
-	types::native_int colors_int = colors->SafeConvert<types::native_int>();
-	types::native_int columns_int = columns->SafeConvert<types::native_int>();
-	types::native_int bits_int = bits->SafeConvert<types::native_int>();
+	uint32_t colors_int = colors->SafeConvert<uint32_t>();
+	uint32_t columns_int = columns->SafeConvert<uint32_t>();
+	uint32_t bits_int = bits->SafeConvert<uint32_t>();
 
-	types::native_int bytesPerPixel = colors_int * bits_int / 8;
-	types::native_int bytesPerRow = (colors_int * columns_int * bits_int + 7) / 8;
+	// Division should be safe?
+	uint32_t bytes_per_pixel = SafeMultiply<uint32_t>(colors_int, bits_int) / 8;
+
+	uint32_t colors_columns = SafeMultiply<uint32_t>(colors_int, columns_int);
+	uint32_t colors_columns_bits = SafeMultiply<uint32_t>(colors_columns, bits_int);
+	uint32_t bytes_per_row = SafeAddition<uint32_t>(colors_columns_bits, 7) / 8;
 
 	BufferPtr result;
 	InputStream strm(src);
-	Buffer curr(bytesPerRow, '\0');
-	Buffer prior(bytesPerRow, '\0');
+	Buffer current(bytes_per_row);
+	Buffer prior(bytes_per_row);
 
 	while (strm.Peek() != std::char_traits<char>::eof()) {
 		auto filter = strm.Get();
-		strm.Read(curr, bytesPerRow);
+		auto read = strm.Read(current, bytes_per_row);
+
+		assert(read == bytes_per_row);
+		if (read != bytes_per_row) {
+			throw GeneralException("Corrupted deflate compressed data");
+		}
 
 		switch (filter) {
-			case 0: //PNG_FILTER_NONE
+			case PNGFilterTypes::None:
 				break;
-			case 1: //PNG_FILTER_SUB
-				for (types::native_int i = bytesPerPixel; i < bytesPerRow; i++) {
-					curr[i] += curr[i - bytesPerPixel];
-				}
-				break;
-			case 2: //PNG_FILTER_UP
-				for (types::native_int i = 0; i < bytesPerRow; i++) {
-					curr[i] += prior[i];
-				}
-				break;
-			case 3: //PNG_FILTER_AVERAGE
-				for (types::native_int i = 0; i < bytesPerPixel; i++) {
-					curr[i] += (prior[i] / 2);
-				}
-				for (types::native_int i = bytesPerPixel; i < bytesPerRow; i++) {
-					curr[i] += (((curr[i - bytesPerPixel] & 0xff) + (prior[i] & 0xff)) / 2);
-				}
-				break;
-			case 4: //PNG_FILTER_PAETH
-				for (types::native_int i = 0; i < bytesPerPixel; i++) {
-					curr[i] += prior[i];
+			case PNGFilterTypes::Sub:
+				assert(bytes_per_row <= current.size());
+				for (uint32_t i = 0; (bytes_per_pixel + i) < bytes_per_row; i++) {
+					current[bytes_per_pixel + i] += current[i];
 				}
 
-				for (types::native_int i = bytesPerPixel; i < bytesPerRow; i++) {
-					uint8_t a = curr[i - bytesPerPixel] & 0xff;
-					uint8_t b = prior[i] & 0xff;
-					uint8_t c = prior[i - bytesPerPixel] & 0xff;
+				break;
+			case PNGFilterTypes::Up:
+				assert(bytes_per_row <= prior.size());
+				assert(bytes_per_row <= current.size());
+				for (uint32_t i = 0; i < bytes_per_row; i++) {
+					current[i] += prior[i];
+				}
 
-					int p = a + b - c;
-					int pa = std::abs(p - a);
-					int pb = std::abs(p - b);
-					int pc = std::abs(p - c);
+				break;
+			case PNGFilterTypes::Average:
+				assert(bytes_per_pixel <= prior.size());
+				assert(bytes_per_pixel <= current.size());
+				for (uint32_t i = 0; i < bytes_per_pixel; i++) {
+					current[i] += (prior[i] / 2);
+				}
 
-					uint8_t ret;
+				assert(bytes_per_row <= prior.size());
+				assert(bytes_per_row <= current.size());
+				for (uint32_t i = 0; (bytes_per_pixel + i) < bytes_per_row; i++) {
+					char current_byte = current[i] & 0xFF;
+					char prior_byte = prior[bytes_per_pixel + i] & 0xFF;
+					char value = SafeAddition<char>(current_byte, prior_byte) / 2;
+					current[i] += value;
+				}
+
+				break;
+			case PNGFilterTypes::Paeth:
+				assert(bytes_per_pixel <= prior.size());
+				assert(bytes_per_pixel <= current.size());
+				for (uint32_t i = 0; i < bytes_per_pixel; i++) {
+					current[i] += prior[i];
+				}
+
+				assert(bytes_per_row <= prior.size());
+				assert(bytes_per_row <= current.size());
+				for (uint32_t i = 0; (bytes_per_pixel + i) < bytes_per_row; i++) {
+					uint8_t a = current[i] & 0xFF;
+					uint8_t b = prior[bytes_per_pixel + i] & 0xFF;
+					uint8_t c = prior[i] & 0xFF;
+
+					int32_t p = a + b - c;
+					int32_t pa = std::abs(p - a);
+					int32_t pb = std::abs(p - b);
+					int32_t pc = std::abs(p - c);
+
+					uint8_t value;
 					if ((pa <= pb) && (pa <= pc)) {
-						ret = a;
+						value = a;
 					} else if (pb <= pc) {
-						ret = b;
+						value = b;
 					} else {
-						ret = c;
+						value = c;
 					}
-					curr[i] += ret;
+
+					current[i] += value;
 				}
+
 				break;
 			default:
 				LOG_ERROR_GLOBAL << "Unknown filter type: " << filter;
 				break;
 		}
 
-		result->insert(result.end(), curr.begin(), curr.end());
-		std::swap(curr, prior);
+		result->insert(result.end(), current.begin(), current.end());
+		prior.assign(current.begin(), current.end());
 	}
 
 	return result;

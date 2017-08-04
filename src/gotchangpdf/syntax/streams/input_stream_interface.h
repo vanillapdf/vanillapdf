@@ -9,7 +9,7 @@ namespace syntax {
 
 class IInputStream : public virtual IUnknown {
 public:
-	virtual void Read(Buffer& result, size_t len) = 0;
+	virtual types::stream_size Read(Buffer& result, size_t len) = 0;
 	virtual BufferPtr Read(size_t len) = 0;
 	virtual BufferPtr Readline(void) = 0;
 	virtual types::stream_size GetInputPosition() = 0;

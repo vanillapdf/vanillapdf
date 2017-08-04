@@ -16,13 +16,14 @@ BufferPtr InputStream::Read(size_t len) {
 	return result;
 }
 
-void InputStream::Read(Buffer& result, size_t len) {
+types::stream_size InputStream::Read(Buffer& result, size_t len) {
 	assert(result.size() >= len);
 	if (result.size() < len) {
 		result.resize(len);
 	}
 
 	m_stream->read(result.data(), len);
+	return m_stream->gcount();
 }
 
 types::stream_size InputStream::GetInputPosition() {

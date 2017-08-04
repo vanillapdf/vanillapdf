@@ -155,9 +155,14 @@ InputReverseStream::ReverseBuf::pos_type InputReverseStream::ReverseBuf::seekpos
 	return ptr;
 }
 
-void InputReverseStream::Read(Buffer& result, size_t len) {
-	result.resize(len);
+types::stream_size InputReverseStream::Read(Buffer& result, size_t len) {
+	assert(result.size() >= len);
+	if (result.size() < len) {
+		result.resize(len);
+	}
+
 	m_stream->read(result.data(), len);
+	return m_stream->gcount();
 }
 
 BufferPtr InputReverseStream::Read(size_t len) {
