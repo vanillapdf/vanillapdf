@@ -149,7 +149,7 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, const Buffer& password) 
 
 	InitializeOpenSSL();
 
-	void* buffer_data = const_cast<char *>(data.data());
+	auto buffer_data = static_cast<const void *>(data.data());
 	int buffer_length = ValueConvertUtils::SafeConvert<int>(data.size());
 
 	BIO* bio = BIO_new_mem_buf(buffer_data, buffer_length);
