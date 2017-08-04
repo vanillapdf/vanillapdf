@@ -195,8 +195,8 @@ ResultType SafeMultiply(ValueType number, ValueType multiplier) {
 	ResultType result = (converted_number * converted_multiplier);
 
 	// Validate the result
-	assert(result > converted_number);
-	assert(result > converted_multiplier);
+	assert(result >= converted_number);
+	assert(result >= converted_multiplier);
 	assert((result / converted_number) == converted_multiplier);
 	assert((result / converted_multiplier) == converted_number);
 
