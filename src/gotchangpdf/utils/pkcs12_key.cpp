@@ -1,5 +1,7 @@
 #include "precompiled.h"
+
 #include "utils/pkcs12_key.h"
+#include "utils/streams/input_stream.h"
 
 #include <fstream>
 
@@ -29,6 +31,7 @@ public:
 	// ISigningKey
 	void SignInitialize(MessageDigestAlgorithm algorithm);
 	void SignUpdate(const Buffer& data);
+	void SignUpdate(IInputStreamPtr data, types::stream_size length);
 	BufferPtr SignFinal();
 
 	// This is only a helper method and may be moved in the future
@@ -85,6 +88,10 @@ void PKCS12Key::SignInitialize(MessageDigestAlgorithm algorithm) {
 
 void PKCS12Key::SignUpdate(const Buffer& data) {
 	return m_impl->SignUpdate(data);
+}
+
+void PKCS12Key::SignUpdate(IInputStreamPtr data, types::stream_size length) {
+	return m_impl->SignUpdate(data, length);
 }
 
 BufferPtr PKCS12Key::SignFinal() {
@@ -262,12 +269,35 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
 }
 
 void PKCS12Key::PKCS12KeyImpl::SignUpdate(const Buffer& data) {
+	auto string_stream = data.ToStringStream();
+
+	InputStreamPtr stream = make_deferred<InputStream>(string_stream);
+	SignUpdate(stream, data.size());
+}
+
+void PKCS12Key::PKCS12KeyImpl::SignUpdate(IInputStreamPtr data, types::stream_size length) {
 
 #if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 
-	int updated = EVP_DigestSignUpdate(signing_context, data.data(), data.size());
-	if (updated != 1) {
-		throw GeneralException("Could not update signing context");
+	types::stream_size read_total = 0;
+
+	Buffer buffer(constant::BUFFER_SIZE);
+	for (;;) {
+		if (read_total == length) {
+			break;
+		}
+
+		types::stream_size block_size = std::min<types::stream_size>(length - read_total, constant::BUFFER_SIZE);
+		size_t block_size_converted = ValueConvertUtils::SafeConvert<size_t>(block_size);
+		types::stream_size read = data->Read(buffer, block_size_converted);
+		size_t read_converted = ValueConvertUtils::SafeConvert<size_t>(read);
+
+		int updated = EVP_DigestSignUpdate(signing_context, buffer.data(), read_converted);
+		if (updated != 1) {
+			throw GeneralException("Could not update signing context");
+		}
+
+		read_total = read_total + read;
 	}
 
 #else

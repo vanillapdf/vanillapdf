@@ -21,6 +21,7 @@ public:
 	// ISigningKey
 	void SignInitialize(MessageDigestAlgorithm algorithm) override;
 	void SignUpdate(const Buffer& data) override;
+	void SignUpdate(IInputStreamPtr data, types::stream_size length) override;
 	BufferPtr SignFinal() override;
 
 private:

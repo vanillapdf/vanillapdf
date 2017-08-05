@@ -5,12 +5,15 @@
 #include "utils/buffer.h"
 #include "utils/message_digest_algorithm.h"
 
+#include "utils/streams/input_stream_interface.h"
+
 namespace gotchangpdf {
 
 class ISigningKey : public virtual IUnknown, public IWeakReferenceable<ISigningKey> {
 public:
 	virtual void SignInitialize(MessageDigestAlgorithm algorithm) = 0;
 	virtual void SignUpdate(const Buffer& data) = 0;
+	virtual void SignUpdate(IInputStreamPtr data, types::stream_size length) = 0;
 	virtual BufferPtr SignFinal() = 0;
 };
 
