@@ -267,7 +267,7 @@ class DeferredHandleUndefined {
 	// compilation error without any additional mess.
 
 public:
-	// This error means that your is not defined.
+	// This error means that your type is not defined.
 	// You probably forgotten to include header file.
 	static_assert(is_defined<T>::value, "Incomplete type is not allowed. Did You forgot to include header file?");
 };
