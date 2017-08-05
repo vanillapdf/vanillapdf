@@ -1,12 +1,11 @@
 #ifndef _TOKENIZER_H
 #define _TOKENIZER_H
 
-#include "syntax/streams/input_stream_interface.h"
-
 #include "syntax/parsers/token.h"
 #include "syntax/parsers/token_dictionary.h"
 
 #include "utils/constants.h"
+#include "utils/streams/input_stream_interface.h"
 
 namespace gotchangpdf {
 namespace syntax {

@@ -5,7 +5,6 @@
 #include "utils/buffer.h"
 
 namespace gotchangpdf {
-namespace syntax {
 
 class IInputStream : public virtual IUnknown {
 public:
@@ -26,7 +25,6 @@ public:
 	virtual ~IInputStream() {};
 };
 
-} // syntax
 } // gotchangpdf
 
 #endif /* _INPUT_STREAM_INTERFACE_H */

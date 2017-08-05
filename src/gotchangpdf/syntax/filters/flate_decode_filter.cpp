@@ -3,7 +3,7 @@
 
 #include "utils/constants.h"
 #include "utils/zlib_wrapper.h"
-#include "syntax/streams/input_stream.h"
+#include "utils/streams/input_stream.h"
 
 namespace gotchangpdf {
 namespace syntax {

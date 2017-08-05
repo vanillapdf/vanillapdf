@@ -1,11 +1,11 @@
 #include "precompiled.h"
-#include "syntax/streams/input_stream.h"
+
+#include "utils/streams/input_stream.h"
 
 #include "utils/constants.h"
 #include "utils/util.h"
 
 namespace gotchangpdf {
-namespace syntax {
 
 InputStream::InputStream(std::shared_ptr<std::istream> stream) : m_stream(stream) {
 }
@@ -137,5 +137,4 @@ InputStream::operator bool(void) const {
 	return m_stream->operator bool();
 }
 
-} // syntax
 } // gotchangpdf

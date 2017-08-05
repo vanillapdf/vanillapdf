@@ -2,7 +2,7 @@
 
 #include "semantics/objects/character_map.h"
 #include "syntax/parsers/parser.h"
-#include "syntax/streams/input_stream.h"
+#include "utils/streams/input_stream.h"
 
 namespace gotchangpdf {
 namespace semantics {
@@ -32,7 +32,7 @@ void UnicodeCharacterMap::Initialize() const {
 	auto body = _obj->GetBody();
 	auto body_stream = body->ToStringStream();
 
-	syntax::InputStreamPtr input_stream = make_deferred<syntax::InputStream>(body_stream);
+	InputStreamPtr input_stream = make_deferred<InputStream>(body_stream);
 	syntax::CharacterMapParser parser(_obj->GetFile(), input_stream);
 	m_data = parser.ReadCharacterMapData();
 	m_initialized = true;

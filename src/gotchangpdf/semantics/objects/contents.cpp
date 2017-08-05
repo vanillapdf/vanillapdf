@@ -6,7 +6,7 @@
 #include "contents/content_stream_operations.h"
 #include "contents/content_stream_objects.h"
 
-#include "syntax/streams/input_stream.h"
+#include "utils/streams/input_stream.h"
 
 #include <numeric>
 
@@ -57,7 +57,7 @@ BaseInstructionCollectionPtr Contents::Instructions(void) const {
 		*ss << stream_object->GetBody();
 	}
 
-	syntax::InputStreamPtr input_stream = make_deferred<syntax::InputStream>(ss);
+	InputStreamPtr input_stream = make_deferred<InputStream>(ss);
 	contents::ContentStreamParser parser(_obj->GetFile(), input_stream);
 	auto instructions = parser.ReadContentStreamInstructions();
 	for (auto instruction : instructions) {

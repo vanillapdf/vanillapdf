@@ -6,9 +6,9 @@
 #include "syntax/files/xref_chain.h"
 #include "syntax/utils/encryption.h"
 
-#include "syntax/streams/input_stream_interface.h"
-#include "syntax/streams/output_stream_interface.h"
-#include "syntax/streams/input_output_stream_interface.h"
+#include "utils/streams/input_stream_interface.h"
+#include "utils/streams/output_stream_interface.h"
+#include "utils/streams/input_output_stream_interface.h"
 
 #include <memory>
 #include <vector>

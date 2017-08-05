@@ -1,11 +1,11 @@
 #include "precompiled.h"
-#include "syntax/streams/output_stream.h"
+
+#include "utils/streams/output_stream.h"
 
 #include "utils/constants.h"
 #include "utils/util.h"
 
 namespace gotchangpdf {
-namespace syntax {
 
 OutputStream::OutputStream(std::shared_ptr<std::ostream> stream) : m_stream(stream) {
 
@@ -71,5 +71,4 @@ void OutputStream::SetOutputPosition(types::stream_size pos, std::ios_base::seek
 	m_stream->seekp(pos, way);
 }
 
-} // syntax
 } // gotchangpdf

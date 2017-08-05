@@ -130,10 +130,6 @@ set(GOTCHANGPDF_SYNTAX_SOURCES
 	syntax/parsers/token_dictionary.cpp
 	syntax/parsers/tokenizer.cpp
 	
-	syntax/streams/input_reverse_stream.cpp
-	syntax/streams/input_stream.cpp
-	syntax/streams/output_stream.cpp
-	
 	syntax/utils/encryption.cpp
 )
 
@@ -149,6 +145,10 @@ set(GOTCHANGPDF_UTILS_SOURCES
 	utils/time_utils.cpp
 	utils/unknown_interface.cpp
 	utils/zlib_wrapper.cpp
+	
+	utils/streams/input_reverse_stream.cpp
+	utils/streams/input_stream.cpp
+	utils/streams/output_stream.cpp
 )
 
 set(GOTCHANGPDF_CONTENTS_HEADERS
@@ -240,13 +240,6 @@ set(GOTCHANGPDF_SYNTAX_HEADERS
 	syntax/parsers/token_dictionary.h
 	syntax/parsers/tokenizer.h
 	
-	syntax/streams/input_stream_interface.h
-	syntax/streams/input_reverse_stream.h
-	syntax/streams/input_stream.h
-	
-	syntax/streams/output_stream_interface.h
-	syntax/streams/output_stream.h
-	
 	syntax/utils/encryption.h
 	syntax/utils/output_pointer.h
 	syntax/utils/syntax_fwd.h
@@ -274,6 +267,16 @@ set(GOTCHANGPDF_UTILS_HEADERS
 	utils/util.h
 	utils/utils_fwd.h
 	utils/zlib_wrapper.h
+	
+	utils/streams/input_stream_interface.h
+	utils/streams/input_reverse_stream.h
+	utils/streams/input_stream.h
+	
+	utils/streams/output_stream_interface.h
+	utils/streams/output_stream.h
+	
+	utils/streams/input_output_stream_interface.h
+	utils/streams/input_output_stream.h
 )
 
 set(GOTCHANGPDF_INCLUDE_HEADERS

@@ -8,7 +8,6 @@
 #include <memory>
 
 namespace gotchangpdf {
-namespace syntax {
 
 class RangedStreamBuffer : public std::streambuf {
 public:
@@ -96,7 +95,6 @@ private:
 	types::stream_size m_size;
 };
 
-} // syntax
 } // gotchangpdf
 
 #endif /* _RANGED_STREAM_BUFFER_H*/

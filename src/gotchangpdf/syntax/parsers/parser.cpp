@@ -1,15 +1,14 @@
 #include "precompiled.h"
 
-#include "syntax/parsers/parser.h"
-#include "syntax/parsers/token.h"
 #include "syntax/files/file.h"
 
+#include "syntax/parsers/parser.h"
+#include "syntax/parsers/token.h"
 #include "syntax/parsers/reverse_parser.h"
-#include "syntax/streams/input_reverse_stream.h"
-
 #include "syntax/exceptions/syntax_exceptions.h"
 
 #include "utils/character.h"
+#include "utils/streams/input_reverse_stream.h"
 
 #include <regex>
 

@@ -6,7 +6,6 @@
 #include "utils/character.h"
 
 namespace gotchangpdf {
-namespace syntax {
 
 class IOutputStream : public virtual IUnknown {
 public:
@@ -80,7 +79,6 @@ inline IOutputStream& operator<<(IOutputStream& os, uint64_t value) {
 	return os;
 }
 
-} // syntax
 } // gotchangpdf
 
 #endif /* _OUTPUT_STREAM_INTERFACE_H */

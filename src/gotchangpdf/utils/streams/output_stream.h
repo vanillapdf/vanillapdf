@@ -1,10 +1,9 @@
 #ifndef _OUTPUT_STREAM_H
 #define _OUTPUT_STREAM_H
 
-#include "syntax/streams/output_stream_interface.h"
+#include "utils/streams/output_stream_interface.h"
 
 namespace gotchangpdf {
-namespace syntax {
 
 class OutputStream : public virtual IOutputStream {
 public:
@@ -31,7 +30,6 @@ protected:
 	std::shared_ptr<std::ostream> m_stream;
 };
 
-} // syntax
 } // gotchangpdf
 
 #endif /* _OUTPUT_STREAM_H*/

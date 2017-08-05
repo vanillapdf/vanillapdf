@@ -1,12 +1,11 @@
 #ifndef _INPUT_OUTPUT_STREAM_H
 #define _INPUT_OUTPUT_STREAM_H
 
-#include "syntax/streams/input_output_stream_interface.h"
-#include "syntax/streams/input_stream.h"
-#include "syntax/streams/output_stream.h"
+#include "utils/streams/input_output_stream_interface.h"
+#include "utils/streams/input_stream.h"
+#include "utils/streams/output_stream.h"
 
 namespace gotchangpdf {
-namespace syntax {
 
 #if defined(_MSC_VER)
 
@@ -35,7 +34,6 @@ InputOutputStream::InputOutputStream(std::shared_ptr<std::iostream> stream) : In
 	#pragma warning (pop)
 #endif
 
-} // syntax
 } // gotchangpdf
 
 #endif /* _INPUT_OUTPUT_STREAM_H */

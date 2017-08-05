@@ -1,10 +1,9 @@
 #ifndef _INPUT_STREAM_H
 #define _INPUT_STREAM_H
 
-#include "syntax/streams/input_stream_interface.h"
+#include "utils/streams/input_stream_interface.h"
 
 namespace gotchangpdf {
-namespace syntax {
 
 class InputStream : public virtual IInputStream {
 public:
@@ -28,7 +27,6 @@ protected:
 	std::shared_ptr<std::istream> m_stream;
 };
 
-} // syntax
 } // gotchangpdf
 
 #endif /* _INPUT_STREAM_H*/

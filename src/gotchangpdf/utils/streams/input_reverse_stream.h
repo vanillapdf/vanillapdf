@@ -1,10 +1,9 @@
 #ifndef _INPUT_REVERSE_STREAM_H
 #define _INPUT_REVERSE_STREAM_H
 
-#include "syntax/streams/input_stream_interface.h"
+#include "utils/streams/input_stream_interface.h"
 
 namespace gotchangpdf {
-namespace syntax {
 
 #ifdef _MSC_VER
 		/* http://connect.microsoft.com/VisualStudio/feedback/details/733720/ */
@@ -102,7 +101,6 @@ protected:
 #pragma warning (pop)
 #endif
 
-} // syntax
 } // gotchangpdf
 
 #endif /* _INPUT_REVERSE_STREAM_H */

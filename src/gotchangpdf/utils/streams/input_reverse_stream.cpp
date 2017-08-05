@@ -1,6 +1,6 @@
 #include "precompiled.h"
-#include "syntax/streams/input_reverse_stream.h"
 
+#include "utils/streams/input_reverse_stream.h"
 #include "utils/constants.h"
 #include "utils/util.h"
 
@@ -14,8 +14,6 @@ const types::size_type REVERSE_BUFFER_SIZE = 2048; // seek with 4096 fails for s
 const types::size_type REVERSE_BUFFER_PUTBACK_SIZE = 16;
 
 } // constant
-
-namespace syntax {
 
 InputReverseStream::InputReverseStream(std::shared_ptr<std::istream> stream, types::stream_size size) {
 	m_buffer = std::unique_ptr<ReverseBuf>(pdf_new ReverseBuf(stream, size));
@@ -265,5 +263,4 @@ InputReverseStream::operator bool(void) const {
 	return m_stream->operator bool();
 }
 
-} // syntax
 } // gotchangpdf

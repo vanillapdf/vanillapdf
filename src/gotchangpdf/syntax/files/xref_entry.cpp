@@ -3,9 +3,9 @@
 
 #include "syntax/files/file.h"
 #include "syntax/parsers/parser.h"
-#include "syntax/streams/input_stream.h"
-
 #include "syntax/exceptions/syntax_exceptions.h"
+
+#include "utils/streams/input_stream.h"
 
 namespace gotchangpdf {
 namespace syntax {

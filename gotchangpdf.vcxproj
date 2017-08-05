@@ -142,12 +142,6 @@
     <ClInclude Include="src\gotchangpdf\syntax\parsers\parser.h" />
     <ClInclude Include="src\gotchangpdf\syntax\parsers\token.h" />
     <ClInclude Include="src\gotchangpdf\syntax\parsers\token_dictionary.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\streams\input_reverse_stream.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\streams\input_stream.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\streams\input_stream_interface.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\streams\output_stream.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\streams\output_stream_interface.h" />
-    <ClInclude Include="src\gotchangpdf\syntax\streams\ranged_stream_buffer.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\encryption.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\object_utils.h" />
     <ClInclude Include="src\gotchangpdf\syntax\utils\output_pointer.h" />
@@ -170,6 +164,14 @@
     <ClInclude Include="src\gotchangpdf\utils\pkcs12_key.h" />
     <ClInclude Include="src\gotchangpdf\utils\signing_key_interface.h" />
     <ClInclude Include="src\gotchangpdf\utils\stack_allocator.h" />
+    <ClInclude Include="src\gotchangpdf\utils\streams\input_output_stream.h" />
+    <ClInclude Include="src\gotchangpdf\utils\streams\input_output_stream_interface.h" />
+    <ClInclude Include="src\gotchangpdf\utils\streams\input_reverse_stream.h" />
+    <ClInclude Include="src\gotchangpdf\utils\streams\input_stream.h" />
+    <ClInclude Include="src\gotchangpdf\utils\streams\input_stream_interface.h" />
+    <ClInclude Include="src\gotchangpdf\utils\streams\output_stream.h" />
+    <ClInclude Include="src\gotchangpdf\utils\streams\output_stream_interface.h" />
+    <ClInclude Include="src\gotchangpdf\utils\streams\ranged_stream_buffer.h" />
     <ClInclude Include="src\gotchangpdf\utils\time_utils.h" />
     <ClInclude Include="src\gotchangpdf\utils\unknown_interface.h" />
     <ClInclude Include="src\gotchangpdf\utils\util.h" />
@@ -286,9 +288,6 @@
     <ClCompile Include="src\gotchangpdf\syntax\parsers\parser.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\parsers\token.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\parsers\token_dictionary.cpp" />
-    <ClCompile Include="src\gotchangpdf\syntax\streams\input_reverse_stream.cpp" />
-    <ClCompile Include="src\gotchangpdf\syntax\streams\input_stream.cpp" />
-    <ClCompile Include="src\gotchangpdf\syntax\streams\output_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\utils\encryption.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\attribute_interface.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\buffer.cpp" />
@@ -298,6 +297,9 @@
     <ClCompile Include="src\gotchangpdf\utils\log.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\modify_observer_interface.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\pkcs12_key.cpp" />
+    <ClCompile Include="src\gotchangpdf\utils\streams\input_reverse_stream.cpp" />
+    <ClCompile Include="src\gotchangpdf\utils\streams\input_stream.cpp" />
+    <ClCompile Include="src\gotchangpdf\utils\streams\output_stream.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\time_utils.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\unknown_interface.cpp" />
     <ClCompile Include="src\gotchangpdf\utils\zlib_wrapper.cpp" />
