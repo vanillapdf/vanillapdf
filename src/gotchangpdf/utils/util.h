@@ -174,7 +174,7 @@ Result SafeAddition(ValueFirst number, ValueSecond addend) {
 template <typename ResultType, typename ValueType>
 ResultType SafeMultiply(ValueType number, ValueType multiplier) {
 	// Special case
-	if (multiplier == 0) {
+	if (number == 0 || multiplier == 0) {
 		return 0;
 	}
 
@@ -195,10 +195,13 @@ ResultType SafeMultiply(ValueType number, ValueType multiplier) {
 	ResultType result = (converted_number * converted_multiplier);
 
 	// Validate the result
-	assert(result >= converted_number);
-	assert(result >= converted_multiplier);
-	assert((result / converted_number) == converted_multiplier);
-	assert((result / converted_multiplier) == converted_number);
+	if (converted_number != 0) {
+		assert((result / converted_number) == converted_multiplier);
+	}
+
+	if (converted_multiplier != 0) {
+		assert((result / converted_multiplier) == converted_number);
+	}
 
 	return result;
 }
