@@ -22,6 +22,14 @@ public:
 	operator ContainableObjectPtr() {
 		return DeferredContainer<ArrayObject<T>>::get()->Data();
 	}
+
+	const T operator[](size_t i) const {
+		return DeferredContainer<ArrayObject<T>>::get()->operator[](i);
+	}
+
+	T operator[](size_t i) {
+		return DeferredContainer<ArrayObject<T>>::get()->operator[](i);
+	}
 };
 
 template <typename T>
