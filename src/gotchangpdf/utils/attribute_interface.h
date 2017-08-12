@@ -47,6 +47,12 @@ public:
 	IAttributePtr Get(IAttribute::Type type);
 	void Clear();
 
+	template <typename T>
+	T GetAs(IAttribute::Type type) {
+		IAttributePtr attribute = Get(type);
+		return ConvertUtils<IAttributePtr>::ConvertTo<T>(attribute);
+	}
+
 	// STL compatibility
 	iterator begin() noexcept;
 	const_iterator begin() const noexcept;

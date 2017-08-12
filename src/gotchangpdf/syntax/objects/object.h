@@ -67,6 +67,11 @@ public:
 	bool ContainsAttribute(IAttribute::Type type) const;
 	IAttributePtr GetAttribute(IAttribute::Type type);
 
+	template <typename T>
+	T GetAttributeAs(IAttribute::Type type) {
+		return m_attributes.GetAs<T>(type);
+	}
+
 	bool Identity(ObjectPtr other) const;
 
 	virtual size_t Hash() const = 0;
