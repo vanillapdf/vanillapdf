@@ -42,8 +42,9 @@ error_type SafeObjectConvert(SourceHandleT from, DestHandleT* result) noexcept
 	try
 	{
 		DestT* converted = dynamic_cast<DestT*>(obj);
-		if (nullptr == converted)
+		if (nullptr == converted) {
 			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
+		}
 
 		*result = reinterpret_cast<DestHandleT>(converted);
 		return GOTCHANG_PDF_ERROR_SUCCES;
