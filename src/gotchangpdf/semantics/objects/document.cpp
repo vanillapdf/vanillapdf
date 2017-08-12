@@ -642,7 +642,7 @@ void Document::MergePageDestinations(DocumentPtr other, PageObjectPtr other_page
 	}
 }
 
-void Document::Sign(const std::string& path, SigningOptionsPtr options) {
+void Document::Sign(const std::string& path, DocumentSignatureSettingsPtr options) {
 
 	OutputPointer<ISigningKeyPtr> key;
 	OutputPointer<syntax::HexadecimalStringObjectPtr> certificate;

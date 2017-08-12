@@ -12,10 +12,10 @@ class CustomEncryptionKey : public IEncryptionKey
 {
 public:
 	CustomEncryptionKey(
-		InitializeFunction initialize,
-		CleanupFunction cleanup,
-		DecryptFunction decrypt,
-		ContainsFunction contains
+		EncryptionKeyInitializeFunction initialize,
+		EncryptionKeyCleanupFunction cleanup,
+		EncryptionKeyDecryptFunction decrypt,
+		EncryptionKeyContainsFunction contains
 		) : m_init(initialize),
 		m_cleanup(cleanup),
 		m_decrypt(decrypt),
@@ -82,59 +82,17 @@ public:
 	}
 
 private:
-	InitializeFunction m_init;
-	CleanupFunction m_cleanup;
-	DecryptFunction m_decrypt;
-	ContainsFunction m_contains;
+	EncryptionKeyInitializeFunction m_init;
+	EncryptionKeyCleanupFunction m_cleanup;
+	EncryptionKeyDecryptFunction m_decrypt;
+	EncryptionKeyContainsFunction m_contains;
 };
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_CreateFromPkcs12File(string_type path, string_type password, EncryptionKeyHandle* result)
-{
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(path);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-	try
-	{
-		std::string path_string(path);
-		Buffer password_buffer;
-		if (nullptr != password) {
-			password_buffer = Buffer(password);
-		}
-
-		Deferred<PKCS12Key> key = make_deferred<PKCS12Key>(path_string, password_buffer);
-
-		auto ptr = static_cast<IEncryptionKey*>(key.AddRefGet());
-		*result = reinterpret_cast<EncryptionKeyHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_GOTCHNGPDF_EXCEPTIONS
-}
-
-GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_CreateFromPkcs12Buffer(BufferHandle data, string_type password, EncryptionKeyHandle* result)
-{
-	Buffer* buffer_ptr = reinterpret_cast<Buffer*>(data);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(buffer_ptr);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-	try
-	{
-		Buffer password_buffer;
-		if (nullptr != password) {
-			password_buffer = Buffer(password);
-		}
-
-		BufferPtr data_buffer(buffer_ptr);
-		Deferred<PKCS12Key> key = make_deferred<PKCS12Key>(data_buffer, password_buffer);
-		auto ptr = static_cast<IEncryptionKey*>(key.AddRefGet());
-		*result = reinterpret_cast<EncryptionKeyHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
-	} CATCH_GOTCHNGPDF_EXCEPTIONS
-}
-
 GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_CreateCustom(
-	InitializeFunction initialize,
-	CleanupFunction cleanup,
-	DecryptFunction decrypt,
-	ContainsFunction contains,
+	EncryptionKeyInitializeFunction initialize,
+	EncryptionKeyCleanupFunction cleanup,
+	EncryptionKeyDecryptFunction decrypt,
+	EncryptionKeyContainsFunction contains,
 	EncryptionKeyHandle* result
 	)
 {

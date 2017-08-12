@@ -2,6 +2,7 @@
 #define _DOCUMENT_H
 
 #include "semantics/utils/semantics_fwd.h"
+#include "semantics/utils/document_signature_settings.h"
 
 #include "semantics/objects/catalog.h"
 #include "semantics/objects/document_info.h"
@@ -37,7 +38,7 @@ public:
 	void AppendDocument(DocumentPtr other);
 	void AppendPage(DocumentPtr other, PageObjectPtr other_page);
 
-	void Sign(const std::string& path, SigningOptionsPtr options);
+	void Sign(const std::string& path, DocumentSignatureSettingsPtr options);
 
 private:
 	syntax::FilePtr m_holder;

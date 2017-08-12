@@ -25,6 +25,7 @@
 /* documents */
 #include "c_document.h"
 #include "c_document_info.h"
+#include "c_document_signature_settings.h"
 #include "c_catalog.h"
 #include "c_page_tree.h"
 #include "c_page_object.h"
@@ -38,6 +39,7 @@
 #include "c_interactive_forms.h"
 #include "c_fields.h"
 #include "c_digital_signature.h"
+#include "c_message_digest_algorithm.h"
 
 /* fonts */
 #include "c_font.h"
@@ -70,6 +72,8 @@
 #include "c_pdf_version.h"
 #include "c_library_info.h"
 #include "c_errors.h"
+#include "c_pkcs12_key.h"
+#include "c_signing_key.h"
 
 /**
 * \defgroup Documents High-level document interface

@@ -26,6 +26,7 @@ set(GOTCHANGPDF_C_IMPLEMENTATION_SOURCES
 	implementation/c_digital_signature.cpp
 	implementation/c_document.cpp
 	implementation/c_document_info.cpp
+	implementation/c_document_signature_settings.cpp
 	implementation/c_encryption.cpp
 	implementation/c_errors.cpp
 	implementation/c_fields.cpp
@@ -44,9 +45,11 @@ set(GOTCHANGPDF_C_IMPLEMENTATION_SOURCES
 	implementation/c_page_labels.cpp
 	implementation/c_page_object.cpp
 	implementation/c_page_tree.cpp
+	implementation/c_pkcs12_key.cpp
 	implementation/c_real_object.cpp
 	implementation/c_rectangle.cpp
 	implementation/c_resource_dictionary.cpp
+	implementation/c_signing_key.cpp
 	implementation/c_stream_object.cpp
 	implementation/c_string_object.cpp
 	implementation/c_unknown_interface.cpp
@@ -91,6 +94,7 @@ set(GOTCHANGPDF_SEMANTICS_SOURCES
 	semantics/objects/page_node_base.cpp
 	
 	semantics/utils/document_signer.cpp
+	semantics/utils/document_signature_settings.cpp
 	semantics/utils/semantic_utils.cpp
 )
 
@@ -194,6 +198,7 @@ set(GOTCHANGPDF_SEMANTICS_HEADERS
 	semantics/objects/viewer_preferences.h
 	
 	semantics/utils/document_signer.h
+	semantics/utils/document_signature_settings.h
 	semantics/utils/semantic_exceptions.h
 	semantics/utils/semantic_utils.h
 	semantics/utils/semantics_fwd.h
@@ -296,6 +301,7 @@ set(GOTCHANGPDF_INCLUDE_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_digital_signature.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_document.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_document_info.h"
+	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_document_signature_settings.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_encryption.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_errors.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_export.h"
@@ -309,6 +315,7 @@ set(GOTCHANGPDF_INCLUDE_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_interactive_forms.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_library_info.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_logging.h"
+	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_message_digest_algorithm.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_name_object.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_null_object.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_object.h"
@@ -317,9 +324,11 @@ set(GOTCHANGPDF_INCLUDE_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_page_object.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_page_tree.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_pdf_version.h"
+	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_pkcs12_key.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_real_object.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_rectangle.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_resource_dictionary.h"
+	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_signing_key.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_stream_object.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_string_object.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_unknown_interface.h"

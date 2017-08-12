@@ -34,7 +34,7 @@ extern "C"
 	* return error code in the decrypt function itself.
 	* \see DecryptFunction
 	*/
-	typedef void (*InitializeFunction)(void);
+	typedef void (*EncryptionKeyInitializeFunction)(void);
 
 	/**
 	* \brief Cleanup all dependencies after the decryption process has finished
@@ -42,7 +42,7 @@ extern "C"
 	* This function is called when the last reference to the
 	* EncryptionKeyHandle has been disposed.
 	*/
-	typedef void (*CleanupFunction)(void);
+	typedef void (*EncryptionKeyCleanupFunction)(void);
 
 	/**
 	* \brief User provided function used for decrypting data
@@ -51,7 +51,7 @@ extern "C"
 	* \param data a pointer to source buffer containing the PKCS#7 encrypted data
 	* \param result an output pointer which has to be set with the decrypted data on success. Otherwise leave unchanged.
 	*/
-	typedef error_type (*DecryptFunction)(const struct BufferHandleTag* data, BufferHandle* result);
+	typedef error_type (*EncryptionKeyDecryptFunction)(const struct BufferHandleTag* data, BufferHandle* result);
 
 	/**
 	* \brief Function used to determine whether the private key for certificate issued by \p issuer with \p serial is present
@@ -59,32 +59,16 @@ extern "C"
 	* \param issuer a pointer to ASN.1 structure containning the certificate serial
 	* \param result a pointer to boolean. Set to true, if the private key for \p issuer and \p serial is present. Otherwise set to false.
 	*/
-	typedef error_type (*ContainsFunction)(const struct BufferHandleTag* issuer, const struct BufferHandleTag* serial, boolean_type* result);
-
-	/**
-	* \brief Uses PKCS#12 standard format to provide encryption keys
-	* \param path a string path to file containing the PKCS#12 data structure
-	* \param password a protection password to the data structure. If there is no password use NULL.
-	* \param result a pointer to library allocated EncryptionKeyHandle
-	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_CreateFromPkcs12File(string_type path, string_type password, EncryptionKeyHandle* result);
-
-	/**
-	* \brief Uses PKCS#12 standard format to provide encryption keys
-	* \param data a buffer containing PKCS#12 structure with the decryption keys
-	* \param password a protection password to the data structure. If there is no password use NULL.
-	* \param result a pointer to library allocated EncryptionKeyHandle
-	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_CreateFromPkcs12Buffer(BufferHandle data, string_type password, EncryptionKeyHandle* result);
+	typedef error_type (*EncryptionKeyContainsFunction)(const struct BufferHandleTag* issuer, const struct BufferHandleTag* serial, boolean_type* result);
 
 	/**
 	* \brief Creates a custom EncryptionKeyHandle to provide custom decrypt operation
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_CreateCustom(
-		InitializeFunction initialize,
-		CleanupFunction cleanup,
-		DecryptFunction decrypt,
-		ContainsFunction contains,
+		EncryptionKeyInitializeFunction initialize,
+		EncryptionKeyCleanupFunction cleanup,
+		EncryptionKeyDecryptFunction decrypt,
+		EncryptionKeyContainsFunction contains,
 		EncryptionKeyHandle* result
 	);
 

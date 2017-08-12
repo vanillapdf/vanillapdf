@@ -59,8 +59,6 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(XrefChain);
 	DECLARE_OBJECT_HANDLE(XrefChainIterator);
 
-	DECLARE_OBJECT_HANDLE(EncryptionKey);
-
 	#pragma endregion
 
 	#pragma region Contents
@@ -91,6 +89,10 @@ extern "C"
 
 	DECLARE_OBJECT_HANDLE(Buffer);
 	DECLARE_OBJECT_HANDLE(IUnknown);
+
+	DECLARE_OBJECT_HANDLE(SigningKey);
+	DECLARE_OBJECT_HANDLE(EncryptionKey);
+	DECLARE_OBJECT_HANDLE(PKCS12Key);
 
 	#pragma endregion
 
@@ -145,6 +147,9 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(TextField);
 	DECLARE_OBJECT_HANDLE(ChoiceField);
 	DECLARE_OBJECT_HANDLE(SignatureField);
+
+	DECLARE_OBJECT_HANDLE(DocumentSigner);
+	DECLARE_OBJECT_HANDLE(DocumentSignatureSettings);
 
 	/* Fonts */
 

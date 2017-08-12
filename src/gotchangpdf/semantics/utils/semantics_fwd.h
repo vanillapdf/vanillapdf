@@ -112,7 +112,7 @@ class InteractiveForm; using InteractiveFormPtr = Deferred<InteractiveForm>; usi
 
 // Utils
 class DocumentSigner; using DocumentSignerPtr = Deferred<DocumentSigner>;
-class SigningOptions; using SigningOptionsPtr = Deferred<SigningOptions>;
+class DocumentSignatureSettings; using DocumentSignatureSettingsPtr = Deferred<DocumentSignatureSettings>;
 
 } // semantics
 } // gotchangpdf

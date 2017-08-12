@@ -33,6 +33,7 @@
     <ClInclude Include="include\gotchangpdf\c_digital_signature.h" />
     <ClInclude Include="include\gotchangpdf\c_document.h" />
     <ClInclude Include="include\gotchangpdf\c_document_info.h" />
+    <ClInclude Include="include\gotchangpdf\c_document_signature_settings.h" />
     <ClInclude Include="include\gotchangpdf\c_errors.h" />
     <ClInclude Include="include\gotchangpdf\c_export.h" />
     <ClInclude Include="include\gotchangpdf\c_fields.h" />
@@ -44,6 +45,7 @@
     <ClInclude Include="include\gotchangpdf\c_integer_object.h" />
     <ClInclude Include="include\gotchangpdf\c_interactive_forms.h" />
     <ClInclude Include="include\gotchangpdf\c_library_info.h" />
+    <ClInclude Include="include\gotchangpdf\c_message_digest_algorithm.h" />
     <ClInclude Include="include\gotchangpdf\c_name_object.h" />
     <ClInclude Include="include\gotchangpdf\c_null_object.h" />
     <ClInclude Include="include\gotchangpdf\c_object.h" />
@@ -51,8 +53,10 @@
     <ClInclude Include="include\gotchangpdf\c_page_labels.h" />
     <ClInclude Include="include\gotchangpdf\c_page_object.h" />
     <ClInclude Include="include\gotchangpdf\c_page_tree.h" />
+    <ClInclude Include="include\gotchangpdf\c_pkcs12_key.h" />
     <ClInclude Include="include\gotchangpdf\c_real_object.h" />
     <ClInclude Include="include\gotchangpdf\c_rectangle.h" />
+    <ClInclude Include="include\gotchangpdf\c_signing_key.h" />
     <ClInclude Include="include\gotchangpdf\c_stream_object.h" />
     <ClInclude Include="include\gotchangpdf\c_string_object.h" />
     <ClInclude Include="include\gotchangpdf\c_logging.h" />
@@ -102,6 +106,7 @@
     <ClInclude Include="src\gotchangpdf\semantics\objects\tree.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\rectangle.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\viewer_preferences.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\utils\document_signature_settings.h" />
     <ClInclude Include="src\gotchangpdf\semantics\utils\document_signer.h" />
     <ClInclude Include="src\gotchangpdf\semantics\utils\semantics_fwd.h" />
     <ClInclude Include="src\gotchangpdf\semantics\utils\semantic_exceptions.h" />
@@ -198,6 +203,7 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_dictionary_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_digital_signature.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_document.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_document_signature_settings.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_encryption.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_errors.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_fields.cpp" />
@@ -216,9 +222,11 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_page_labels.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_page_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_page_tree.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_pkcs12_key.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_real_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_rectangle.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_resource_dictionary.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_signing_key.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_stream_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_string_object.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_unknown_interface.cpp" />
@@ -257,6 +265,7 @@
     <ClCompile Include="src\gotchangpdf\semantics\objects\resource_dictionary.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\tree.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\viewer_preferences.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\utils\document_signature_settings.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\utils\document_signer.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\utils\semantic_utils.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\exceptions\syntax_exceptions.cpp" />

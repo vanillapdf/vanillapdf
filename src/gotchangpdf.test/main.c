@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
 	string_type password = NULL;
 	string_type cert_path = NULL;
 	string_type cert_password = NULL;
-	EncryptionKeyHandle encryption_key = NULL;
+	PKCS12KeyHandle pkcs12_key = NULL;
 	boolean_type is_encrypted = GOTCHANG_PDF_RV_FALSE;
 
 #if (defined(DEBUG) && defined(_MSC_VER))
@@ -67,7 +67,9 @@ int main(int argc, char *argv[]) {
 		}
 
 		if (cert_path != NULL) {
-			RETURN_ERROR_IF_NOT_SUCCESS(EncryptionKey_CreateFromPkcs12File(cert_path, cert_password, &encryption_key));
+			EncryptionKeyHandle encryption_key = NULL;
+			RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_CreateFromFile(cert_path, cert_password, &pkcs12_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_ToEncryptionKey(pkcs12_key, &encryption_key));
 			RETURN_ERROR_IF_NOT_SUCCESS(File_SetEncryptionKey(file, encryption_key));
 		}
 	} else {
@@ -86,8 +88,8 @@ int main(int argc, char *argv[]) {
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));
 
-	if (NULL != encryption_key) {
-		RETURN_ERROR_IF_NOT_SUCCESS(EncryptionKey_Release(encryption_key));
+	if (NULL != pkcs12_key) {
+		RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_Release(pkcs12_key));
 	}
 
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
