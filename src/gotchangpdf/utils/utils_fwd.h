@@ -40,8 +40,9 @@ class IAttribute;
 class IAttributePtr;
 class AttributeList;
 
-class IEncryptionKey;
-class ISigningKey;
+class IEncryptionKey; using IEncryptionKeyPtr = Deferred<IEncryptionKey>;
+class ISigningKey; using ISigningKeyPtr = Deferred<ISigningKey>;
+class PKCS12Key; using PKCS12KeyPtr = Deferred<PKCS12Key>;
 
 // Streams
 class IInputStream; using IInputStreamPtr = Deferred<IInputStream>;

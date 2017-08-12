@@ -102,6 +102,7 @@
     <ClInclude Include="src\gotchangpdf\semantics\objects\tree.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\rectangle.h" />
     <ClInclude Include="src\gotchangpdf\semantics\objects\viewer_preferences.h" />
+    <ClInclude Include="src\gotchangpdf\semantics\utils\document_signer.h" />
     <ClInclude Include="src\gotchangpdf\semantics\utils\semantics_fwd.h" />
     <ClInclude Include="src\gotchangpdf\semantics\utils\semantic_exceptions.h" />
     <ClInclude Include="src\gotchangpdf\semantics\utils\semantic_utils.h" />
@@ -256,6 +257,7 @@
     <ClCompile Include="src\gotchangpdf\semantics\objects\resource_dictionary.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\tree.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\objects\viewer_preferences.cpp" />
+    <ClCompile Include="src\gotchangpdf\semantics\utils\document_signer.cpp" />
     <ClCompile Include="src\gotchangpdf\semantics\utils\semantic_utils.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\exceptions\syntax_exceptions.cpp" />
     <ClCompile Include="src\gotchangpdf\syntax\files\file.cpp" />

@@ -110,6 +110,10 @@ class ByteRangeCollection; using ByteRangeCollectionPtr = Deferred<ByteRangeColl
 // Interactive forms
 class InteractiveForm; using InteractiveFormPtr = Deferred<InteractiveForm>; using OuputInteractiveFormPtr = OutputPointer<InteractiveFormPtr>;
 
+// Utils
+class DocumentSigner; using DocumentSignerPtr = Deferred<DocumentSigner>;
+class SigningOptions; using SigningOptionsPtr = Deferred<SigningOptions>;
+
 } // semantics
 } // gotchangpdf
 

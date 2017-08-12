@@ -1,6 +1,5 @@
 #include "precompiled.h"
 
-
 #include "syntax/files/file_writer.h"
 #include "syntax/utils/serialization_override_attribute.h"
 
@@ -10,6 +9,7 @@
 #include "semantics/objects/name_dictionary.h"
 
 #include "semantics/utils/semantic_utils.h"
+#include "semantics/utils/document_signer.h"
 
 namespace gotchangpdf {
 namespace semantics {
@@ -642,15 +642,45 @@ void Document::MergePageDestinations(DocumentPtr other, PageObjectPtr other_page
 	}
 }
 
-void Document::Sign() {
+void Document::Sign(const std::string& path, SigningOptionsPtr options) {
+
+	OutputPointer<ISigningKeyPtr> key;
+	OutputPointer<syntax::HexadecimalStringObjectPtr> certificate;
+	OutputPointer<syntax::LiteralStringObjectPtr> name;
+	OutputPointer<syntax::LiteralStringObjectPtr> location;
+	OutputPointer<syntax::LiteralStringObjectPtr> reason;
+
+	bool has_key = options->GetSigningKey(key);
+	bool has_certificate = options->GetCertificate(certificate);
+	bool has_name = options->GetName(name);
+	bool has_location = options->GetLocation(location);
+	bool has_reason = options->GetReason(reason);
+
+	auto digest = options->GetDigest();
+
+	if (!has_key) {
+		throw GeneralException("Signing key is not set");
+	}
 
 	// Create new signature dictionary
 	DictionaryObjectPtr signature_dictionary;
 	signature_dictionary->Insert(constant::Name::Type, make_deferred<NameObject>("Sig"));
-	signature_dictionary->Insert(constant::Name::Cert, make_deferred<HexadecimalStringObject>("0A2F"));
-	signature_dictionary->Insert(constant::Name::Name, make_deferred<LiteralStringObject>("Jurko"));
-	signature_dictionary->Insert(constant::Name::Location, make_deferred<LiteralStringObject>("Here"));
-	signature_dictionary->Insert(constant::Name::Reason, make_deferred<LiteralStringObject>("I agree"));
+
+	if (has_certificate) {
+		signature_dictionary->Insert(constant::Name::Cert, *certificate);
+	}
+
+	if (has_name) {
+		signature_dictionary->Insert(constant::Name::Name, *name);
+	}
+
+	if (has_location) {
+		signature_dictionary->Insert(constant::Name::Location, *location);
+	}
+
+	if (has_reason) {
+		signature_dictionary->Insert(constant::Name::Reason, *reason);
+	}
 
 	// TODO hardcoded value
 	std::string byte_range_value(20, ' ');
@@ -658,8 +688,6 @@ void Document::Sign() {
 
 	// Leave byte ranges empty for now
 	ArrayObjectPtr<IntegerObjectPtr> byte_ranges;
-	byte_ranges->Append(IntegerObjectPtr());
-	byte_ranges->Append(IntegerObjectPtr());
 	byte_ranges->AddAttribute(byte_range_attribute);
 
 	// TODO hardcoded value
@@ -698,18 +726,13 @@ void Document::Sign() {
 	auto fields_obj = fields->GetObject();
 
 	fields_obj->Append(signature_field);
-}
 
-void Document::OnBeforeOutputFlush(IOutputStreamPtr output) {
-	// if document has signing queued
+	DocumentSignerPtr signer = make_deferred<DocumentSigner>(key, digest, signature_dictionary);
+	FilePtr destination = File::Create(path);
 
-	// Calculate and update byte ranges
-	// Signing queue should have pointer to signature byte range
-	// Get offset, seek, write
-
-	// Calculate and update document signature
-	// Signing queue should have pointer to signature contents
-	// Get offset, seek, write
+	FileWriter writer;
+	writer.Subscribe(signer);
+	writer.WriteIncremental(m_holder, destination);
 }
 
 } // semantics

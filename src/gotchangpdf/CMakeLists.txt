@@ -90,6 +90,7 @@ set(GOTCHANGPDF_SEMANTICS_SOURCES
 	semantics/objects/viewer_preferences.cpp
 	semantics/objects/page_node_base.cpp
 	
+	semantics/utils/document_signer.cpp
 	semantics/utils/semantic_utils.cpp
 )
 
@@ -192,6 +193,7 @@ set(GOTCHANGPDF_SEMANTICS_HEADERS
 	semantics/objects/tree.h
 	semantics/objects/viewer_preferences.h
 	
+	semantics/utils/document_signer.h
 	semantics/utils/semantic_exceptions.h
 	semantics/utils/semantic_utils.h
 	semantics/utils/semantics_fwd.h

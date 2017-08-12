@@ -2,22 +2,23 @@
 #define _DOCUMENT_H
 
 #include "semantics/utils/semantics_fwd.h"
+
 #include "semantics/objects/catalog.h"
 #include "semantics/objects/document_info.h"
 #include "semantics/objects/date.h"
 
 #include "syntax/files/file.h"
-#include "syntax/files/file_writer.h"
 
 #include "syntax/objects/dictionary_object.h"
 #include "syntax/objects/name_object.h"
+
 
 #include <string>
 
 namespace gotchangpdf {
 namespace semantics {
 
-class Document : public virtual IUnknown, public IWeakReferenceable<Document> /*, public IFileWriterObserver*/ {
+class Document : public virtual IUnknown, public IWeakReferenceable<Document> {
 public:
 	static DocumentPtr Open(const std::string& path);
 	static DocumentPtr Create(const std::string& path);
@@ -36,7 +37,7 @@ public:
 	void AppendDocument(DocumentPtr other);
 	void AppendPage(DocumentPtr other, PageObjectPtr other_page);
 
-	void Sign();
+	void Sign(const std::string& path, SigningOptionsPtr options);
 
 private:
 	syntax::FilePtr m_holder;
@@ -57,8 +58,6 @@ private:
 
 	void FixDestinationPage(syntax::ObjectPtr cloned_page, PageObjectPtr other_page, PageObjectPtr merged_page);
 	bool IsDestinationReferencingPage(DestinationPtr destination, PageObjectPtr page);
-
-	void OnBeforeOutputFlush(syntax::IOutputStreamPtr output) /*override*/;
 
 	void RecalculatePageContents();
 
