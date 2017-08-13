@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class EncryptionKeyHandle
 	* \extends IUnknownHandle
-	* \ingroup Files
+	* \ingroup Utils
 	* \brief Represents encryption key other than password
 	*/
 
@@ -47,7 +47,7 @@ extern "C"
 	/**
 	* \brief User provided function used for decrypting data
 	*
-	* This function is only called when ::ContainsFunction sets the result to true.
+	* This function is only called when ::EncryptionKeyContainsFunction sets the result to true.
 	* \param data a pointer to source buffer containing the PKCS#7 encrypted data
 	* \param result an output pointer which has to be set with the decrypted data on success. Otherwise leave unchanged.
 	*/

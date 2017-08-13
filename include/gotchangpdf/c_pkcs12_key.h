@@ -17,9 +17,12 @@ extern "C"
 
 	/**
 	* \class PKCS12KeyHandle
-	* \extends IUnknownHandle
-	* \ingroup Files
-	* \brief TODO
+	* \implements EncryptionKeyHandle
+	* \implements SigningKeyHandle
+	* \ingroup Utils
+	* \brief PKCS#12 container is often used in cryptography to store asymmetric key pair
+	*
+	* It can used for encryption/decryption and signing as well.
 	*/
 
 	/**
@@ -28,18 +31,18 @@ extern "C"
 	*/
 
 	/**
-	* \brief Uses PKCS#12 standard format to provide encryption keys
+	* \brief Uses PKCS#12 standard format to access asymmetric keys
 	* \param path a string path to file containing the PKCS#12 data structure
 	* \param password a protection password to the data structure. If there is no password use NULL.
-	* \param result a pointer to library allocated EncryptionKeyHandle
+	* \param result a pointer to library allocated PKCS12KeyHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION PKCS12Key_CreateFromFile(string_type path, string_type password, PKCS12KeyHandle* result);
 
 	/**
-	* \brief Uses PKCS#12 standard format to provide encryption keys
-	* \param data a buffer containing PKCS#12 structure with the decryption keys
+	* \brief Uses PKCS#12 standard format to access asymmetric keys
+	* \param data a buffer containing PKCS#12 data structure
 	* \param password a protection password to the data structure. If there is no password use NULL.
-	* \param result a pointer to library allocated EncryptionKeyHandle
+	* \param result a pointer to library allocated PKCS12KeyHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION PKCS12Key_CreateFromBuffer(BufferHandle data, string_type password, PKCS12KeyHandle* result);
 
