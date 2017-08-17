@@ -22,8 +22,8 @@ extern "C"
 	* \class DocumentSignatureSettingsHandle
 	* \extends IUnknownHandle
 	* \ingroup Documents
-	* \brief TODO
-	* \see DocumentHandle
+	* \brief Group of settings controlling document's digital signature
+	* \see DigitalSignatureHandle
 	*/
 
 	/**
@@ -31,24 +31,68 @@ extern "C"
 	* @{
 	*/
 
+	/**
+	* \brief Message digest algorithm for calculation hash of the data to be signed
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetDigest(DocumentSignatureSettingsHandle handle, MessageDigestAlgorithmType* result);
+
+	/**
+	* \brief \copybrief DocumentSignatureSettings_GetDigest
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetDigest(DocumentSignatureSettingsHandle handle, MessageDigestAlgorithmType value);
 
+	/**
+	* \brief Get handle to key used for calculating document signature value
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetSigningKey(DocumentSignatureSettingsHandle handle, SigningKeyHandle* result);
+
+	/**
+	* \brief \copybrief DocumentSignatureSettings_GetSigningKey
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetSigningKey(DocumentSignatureSettingsHandle handle, SigningKeyHandle value);
 
+	/**
+	* \brief Set the name of the person or authority signing the document.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetName(DocumentSignatureSettingsHandle handle, LiteralStringObjectHandle* result);
+
+	/**
+	* \brief \copybrief DocumentSignatureSettings_GetName
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetName(DocumentSignatureSettingsHandle handle, LiteralStringObjectHandle value);
 
+	/**
+	* \brief Get the CPU host name or physical location of the signing.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetLocation(DocumentSignatureSettingsHandle handle, LiteralStringObjectHandle* result);
+
+	/**
+	* \brief \copybrief DocumentSignatureSettings_GetLocation
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetLocation(DocumentSignatureSettingsHandle handle, LiteralStringObjectHandle value);
 
+	/**
+	* \brief Set the reason for the signing, such as (I agree...).
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetReason(DocumentSignatureSettingsHandle handle, LiteralStringObjectHandle* result);
+
+	/**
+	* \brief \copybrief DocumentSignatureSettings_GetReason
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetReason(DocumentSignatureSettingsHandle handle, LiteralStringObjectHandle value);
 
+	/**
+	* \brief
+	* An array of byte strings that shall represent the X.509 certificate chain
+	* used when signing and verifying signatures that use public-key cryptography,
+	* or a byte string if the chain has only one entry.
+	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetCertificate(DocumentSignatureSettingsHandle handle, HexadecimalStringObjectHandle* result);
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetCertificate(DocumentSignatureSettingsHandle handle, HexadecimalStringObjectHandle value);
 
+	/**
+	* \brief \copybrief DocumentSignatureSettings_GetCertificate
+	*/
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetCertificate(DocumentSignatureSettingsHandle handle, HexadecimalStringObjectHandle value);
 
 	/**
 	* \copydoc IUnknown_Release
