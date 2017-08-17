@@ -7,7 +7,6 @@ namespace gotchangpdf.net
 {
     internal static class LibraryInstance
     {
-        private const string PATH_ENVIRONMENT_VARIABLE = "Path";
         private const string X86_LIBRARY_PATH = "x86\\gotchangpdf.dll";
         private const string X64_LIBRARY_PATH = "x64\\gotchangpdf.dll";
 
