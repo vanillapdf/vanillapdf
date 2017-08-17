@@ -78,7 +78,7 @@ extern "C"
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetSecond(DateHandle handle, integer_type* result);
 
 	/**
-	* \brief \copybrief DateTimezoneType
+	* \brief \copybrief TimezoneType
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetTimezone(DateHandle handle, TimezoneType* result);
 
