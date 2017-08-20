@@ -46,12 +46,12 @@
 		#define pdf_new new
 	#endif
 
-#elif defined(RELEASE)
+#else
+	// Ignore memory tracking in non-debug modes
+
 	#ifndef pdf_new
 		#define pdf_new new
 	#endif
-#else
-	#error Unknown project configuration
 #endif
 
 // Solution
