@@ -1,0 +1,59 @@
+/*!
+\page build Build
+\tableofcontents
+
+\section dependencies Project dependencies
+
+<p><b>CMake</b></p>
+This project uses CMake (<https://cmake.org/>) framework as a cross-platform build tool.<br />
+Latest version is available at <https://cmake.org/download/>.
+
+<p><b>OpenSSL</b></p>
+Building OpenSSL from source is out of scope of this guide.<br />
+For detailed information about build process visit <a href="https://wiki.openssl.org/index.php/Compilation_and_Installation">wiki</a>.<br />
+You can find pre-built binaries <a href="https://wiki.openssl.org/index.php/Binaries">here</a>.
+
+<p><b>zlib</b></p>
+zlib uses CMake as well and it is included by default in the standard build process.
+
+<p><b>libjpeg</b></p>
+Building libjpeg from source is out of scope of this guide.<br />
+You can find pre-built binaries <a href="http://gnuwin32.sourceforge.net/packages/jpeg.htm">here</a>.
+______
+\section build_win Compiling from source on Windows
+______
+\section build_unix Compiling from source on UNIX
+
+<ol>
+<li>Installing dependencies</li>
+\code
+sudo apt-get install cmake
+sudo apt-get install libjpeg-dev
+sudo apt-get install libssl-dev
+\endcode
+
+<li>Unpack the archive, unless you already have done that:</li>
+\code
+unzip gotchangpdf-master.zip	# uncompress the archive
+\endcode
+
+<li>Create a build directory (for instance inside the source tree)</li>
+\code
+cd gotchangpdf-master
+mkdir build
+cd build
+\endcode
+
+<li>Run cmake with the makefile generator</li>
+\code
+cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+\endcode
+
+<li>Compile the program by running make:</li>
+\code
+make
+\endcode
+
+</ol>
+
+*/

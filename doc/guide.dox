@@ -1,0 +1,10 @@
+/*! 
+\page guide Guide
+
+The first part forms a user manual:
+<ul>
+<li>Section \ref build discusses how to 
+      <a href="http://www.doxygen.org/download.html">download</a>, compile and install
+                     doxygen for your platform.
+</ul>
+*/
