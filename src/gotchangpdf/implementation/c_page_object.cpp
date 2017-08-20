@@ -1,8 +1,10 @@
 #include "precompiled.h"
+
 #include "semantics/objects/page_object.h"
 #include "semantics/objects/contents.h"
-#include "syntax/files/file.h"
 #include "semantics/objects/document.h"
+
+#include "syntax/files/file.h"
 
 #include "gotchangpdf/c_page_object.h"
 #include "c_helper.h"

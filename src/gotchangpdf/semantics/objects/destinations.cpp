@@ -1,6 +1,6 @@
 #include "precompiled.h"
+
 #include "semantics/objects/destinations.h"
-#include "semantics/objects/document.h"
 
 #include "semantics/utils/semantic_exceptions.h"
 #include "semantics/utils/semantic_utils.h"

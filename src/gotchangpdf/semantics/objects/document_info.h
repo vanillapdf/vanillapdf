@@ -2,7 +2,9 @@
 #define _DOCUMENT_INFO_H
 
 #include "semantics/utils/semantics_fwd.h"
+
 #include "semantics/objects/high_level_object.h"
+#include "semantics/objects/date.h"
 
 namespace gotchangpdf {
 namespace semantics {

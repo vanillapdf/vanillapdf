@@ -14,6 +14,8 @@
 #include "utils/streams/output_stream.h"
 #include "utils/streams/input_output_stream.h"
 
+#include <fstream>
+
 namespace gotchangpdf {
 namespace syntax {
 

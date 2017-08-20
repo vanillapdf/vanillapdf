@@ -19,7 +19,7 @@ public:
 
 class FontBase : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
-	enum Type {
+	enum class Type {
 		Composite = 0,
 		Type1,
 		Type3

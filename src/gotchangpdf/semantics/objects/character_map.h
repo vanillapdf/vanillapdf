@@ -11,7 +11,7 @@ namespace semantics {
 
 class CharacterMapBase : public HighLevelObject<syntax::StreamObjectPtr> {
 public:
-	enum Type {
+	enum class Type {
 		Embedded,
 		Unicode
 	};

@@ -2,9 +2,10 @@
 #define _FILE_H
 
 #include "syntax/utils/syntax_fwd.h"
+#include "syntax/utils/encryption.h"
+
 #include "syntax/files/header.h"
 #include "syntax/files/xref_chain.h"
-#include "syntax/utils/encryption.h"
 
 #include "utils/streams/input_stream_interface.h"
 #include "utils/streams/output_stream_interface.h"
@@ -13,7 +14,7 @@
 #include <memory>
 #include <vector>
 #include <string>
-#include <fstream>
+#include <iosfwd>
 
 namespace gotchangpdf {
 namespace syntax {
