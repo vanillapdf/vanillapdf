@@ -1,5 +1,6 @@
 #include "precompiled.h"
 
+#include "utils/util.h"
 #include "utils/pkcs12_key.h"
 #include "utils/streams/input_stream.h"
 

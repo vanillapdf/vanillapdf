@@ -4,6 +4,8 @@
 
 #include "syntax/utils/serialization_override_attribute.h"
 
+#include "utils/math_utils.h"
+
 namespace gotchangpdf {
 namespace semantics {
 

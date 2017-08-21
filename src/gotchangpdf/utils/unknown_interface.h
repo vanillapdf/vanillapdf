@@ -1,8 +1,6 @@
 #ifndef _UNKNOWN_INTERFACE_H
 #define _UNKNOWN_INTERFACE_H
 
-#include "utils/util.h"
-
 #include <memory>
 #include <atomic>
 #include <cassert>

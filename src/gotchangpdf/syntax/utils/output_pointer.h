@@ -3,7 +3,6 @@
 
 #include "utils/deferred.h"
 #include "utils/unknown_interface.h"
-#include "utils/util.h"
 
 #include "syntax/objects/object.h"
 

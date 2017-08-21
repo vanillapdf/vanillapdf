@@ -159,8 +159,10 @@
     <ClInclude Include="src\gotchangpdf\utils\buffer.h" />
     <ClInclude Include="src\gotchangpdf\utils\character.h" />
     <ClInclude Include="src\gotchangpdf\utils\constants.h" />
+    <ClInclude Include="src\gotchangpdf\utils\conversion_utils.h" />
     <ClInclude Include="src\gotchangpdf\utils\deferred.h" />
     <ClInclude Include="src\gotchangpdf\utils\encryption_key_interface.h" />
+    <ClInclude Include="src\gotchangpdf\utils\math_utils.h" />
     <ClInclude Include="src\gotchangpdf\utils\message_digest_algorithm.h" />
     <ClInclude Include="src\gotchangpdf\utils\errors.h" />
     <ClInclude Include="src\gotchangpdf\utils\exceptions.h" />
@@ -169,6 +171,7 @@
     <ClInclude Include="src\gotchangpdf\utils\log.h" />
     <ClInclude Include="src\gotchangpdf\utils\modify_observer_interface.h" />
     <ClInclude Include="src\gotchangpdf\utils\observable_interface.h" />
+    <ClInclude Include="src\gotchangpdf\utils\other_utils.h" />
     <ClInclude Include="src\gotchangpdf\utils\pkcs12_key.h" />
     <ClInclude Include="src\gotchangpdf\utils\signing_key_interface.h" />
     <ClInclude Include="src\gotchangpdf\utils\stack_allocator.h" />
@@ -180,6 +183,7 @@
     <ClInclude Include="src\gotchangpdf\utils\streams\output_stream.h" />
     <ClInclude Include="src\gotchangpdf\utils\streams\output_stream_interface.h" />
     <ClInclude Include="src\gotchangpdf\utils\streams\ranged_stream_buffer.h" />
+    <ClInclude Include="src\gotchangpdf\utils\template_utils.h" />
     <ClInclude Include="src\gotchangpdf\utils\time_utils.h" />
     <ClInclude Include="src\gotchangpdf\utils\unknown_interface.h" />
     <ClInclude Include="src\gotchangpdf\utils\util.h" />

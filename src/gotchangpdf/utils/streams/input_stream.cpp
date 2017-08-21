@@ -3,7 +3,6 @@
 #include "utils/streams/input_stream.h"
 
 #include "utils/constants.h"
-#include "utils/util.h"
 
 namespace gotchangpdf {
 

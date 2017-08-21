@@ -14,6 +14,8 @@
 #include "utils/streams/output_stream.h"
 #include "utils/streams/input_output_stream.h"
 
+#include "utils/other_utils.h"
+
 #include <fstream>
 
 namespace gotchangpdf {
@@ -44,7 +46,7 @@ FilePtr File::Create(const std::string& path) {
 
 File::File(const std::string& path)
 	: _full_path(path) {
-	_filename = extract_filename(path);
+	_filename = ExtractFilename(path);
 	LOG_WARNING_GLOBAL << "File constructor " << _filename;
 }
 

@@ -1,5 +1,8 @@
 #include "precompiled.h"
-#include "character_map_data.h"
+
+#include "syntax/parsers/character_map_data.h"
+
+#include "utils/math_utils.h"
 
 namespace gotchangpdf {
 namespace syntax {

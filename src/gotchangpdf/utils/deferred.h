@@ -2,6 +2,7 @@
 #define _DEFERRED_H
 
 #include "utils/utils_fwd.h"
+#include "utils/template_utils.h"
 #include "utils/unknown_interface.h"
 
 #include <type_traits>

@@ -8,6 +8,8 @@
 #include "syntax/exceptions/syntax_exceptions.h"
 
 #include "utils/character.h"
+#include "utils/math_utils.h"
+
 #include "utils/streams/input_reverse_stream.h"
 
 #include <regex>

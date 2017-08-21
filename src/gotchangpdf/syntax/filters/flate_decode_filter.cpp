@@ -1,8 +1,11 @@
 #include "precompiled.h"
-#include "flate_decode_filter.h"
+
+#include "syntax/filters/flate_decode_filter.h"
 
 #include "utils/constants.h"
 #include "utils/zlib_wrapper.h"
+#include "utils/math_utils.h"
+
 #include "utils/streams/input_stream.h"
 
 namespace gotchangpdf {

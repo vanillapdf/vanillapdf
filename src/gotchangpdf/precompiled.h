@@ -59,6 +59,7 @@
 #include "utils/constants.h"
 #include "utils/exceptions.h"
 #include "utils/log.h"
+#include "utils/util.h"
 
 #include "syntax/utils/object_utils.h"
 

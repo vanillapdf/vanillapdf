@@ -2,7 +2,8 @@
 
 #include "utils/streams/input_reverse_stream.h"
 #include "utils/constants.h"
-#include "utils/util.h"
+#include "utils/math_utils.h"
+#include "utils/conversion_utils.h"
 
 #include <cassert>
 #include <cstring>

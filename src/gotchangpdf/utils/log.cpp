@@ -1,8 +1,8 @@
 #include "precompiled.h"
 
 #include "utils/log.h"
-#include "utils/util.h"
 #include "utils/time_utils.h"
+#include "utils/other_utils.h"
 
 #include <fstream>
 #include <iomanip>
@@ -69,7 +69,7 @@ OutputWriter::~OutputWriter() {
 		*m_output_stream << ' ';
 		*m_output_stream << '{';
 		*m_output_stream << ' ';
-		*m_output_stream << extract_filename(m_file);
+		*m_output_stream << ExtractFilename(m_file);
 		*m_output_stream << ':';
 		*m_output_stream << std::dec << m_line;
 		*m_output_stream << " in ";

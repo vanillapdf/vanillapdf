@@ -1,4 +1,7 @@
 #include "precompiled.h"
+
+#include "utils/math_utils.h"
+
 #include "syntax/utils/encryption.h"
 
 #if defined(GOTCHANG_PDF_HAVE_OPENSSL)

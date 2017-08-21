@@ -1,14 +1,14 @@
 #include "precompiled.h"
 
 #include "utils/character.h"
+#include "utils/math_utils.h"
 
 #include "syntax/files/file_writer.h"
 #include "syntax/files/file.h"
 #include "syntax/files/xref.h"
 
-#include "syntax/utils/serialization_override_attribute.h"
-
 #include "syntax/exceptions/syntax_exceptions.h"
+#include "syntax/utils/serialization_override_attribute.h"
 
 #include <fstream>
 #include <unordered_set>

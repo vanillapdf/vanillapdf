@@ -262,16 +262,21 @@ set(GOTCHANGPDF_UTILS_HEADERS
 	utils/buffer.h
 	utils/character.h
 	utils/constants.h
+	utils/conversion_utils.h
 	utils/deferred.h
 	utils/errors.h
 	utils/exceptions.h
 	utils/library_info.h
 	utils/log.h
-	utils/observable_interface.h
+	utils/math_utils.h
+	utils/message_digest_algorithm.h
 	utils/modify_observer_interface.h
+	utils/observable_interface.h
+	utils/other_utils.h
 	utils/pdf_version.h
 	utils/pkcs12_key.h
 	utils/stack_allocator.h
+	utils/template_utils.h
 	utils/time_utils.h
 	utils/unknown_interface.h
 	utils/util.h

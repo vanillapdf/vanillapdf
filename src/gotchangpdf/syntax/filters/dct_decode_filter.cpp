@@ -1,5 +1,8 @@
 #include "precompiled.h"
-#include "dct_decode_filter.h"
+
+#include "syntax/filters/dct_decode_filter.h"
+
+#include "utils/math_utils.h"
 
 #include <cstring>
 
