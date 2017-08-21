@@ -1,4 +1,5 @@
 #include "precompiled.h"
+
 #include "syntax/files/file.h"
 #include "syntax/files/file_writer.h"
 #include "syntax/files/xref_chain.h"

@@ -3,7 +3,7 @@
 
 #include "syntax/utils/syntax_fwd.h"
 #include "contents/content_stream_operation_base.h"
-#include "contents/content_stream_operators.h"
+#include "contents/content_stream_operator_base.h"
 #include "utils/constants.h"
 
 #include <vector>

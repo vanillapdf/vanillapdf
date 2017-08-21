@@ -164,6 +164,7 @@ set(GOTCHANGPDF_CONTENTS_HEADERS
 	contents/content_stream_operation_base.h
 	contents/content_stream_operation_generic.h
 	contents/content_stream_operations.h
+	contents/content_stream_operator_base.h
 	contents/content_stream_operators.h
 	contents/content_stream_parser.h
 	contents/content_utils.h

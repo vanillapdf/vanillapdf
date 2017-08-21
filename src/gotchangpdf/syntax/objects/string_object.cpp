@@ -1,9 +1,10 @@
 #include "precompiled.h"
-#include "syntax/objects/string_object.h"
-#include "utils/character.h"
-#include "syntax/files/file.h"
 
+#include "syntax/files/file.h"
+#include "syntax/objects/string_object.h"
 #include "syntax/exceptions/syntax_exceptions.h"
+
+#include "utils/character.h"
 
 #include <cassert>
 #include <cctype>

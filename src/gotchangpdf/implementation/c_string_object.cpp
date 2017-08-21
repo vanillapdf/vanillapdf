@@ -1,5 +1,6 @@
 #include "precompiled.h"
-#include "syntax/files/file.h"
+
+#include "syntax/objects/string_object.h"
 
 #include "gotchangpdf/c_string_object.h"
 #include "c_helper.h"

@@ -1,12 +1,10 @@
 #include "precompiled.h"
 #include "semantics/objects/contents.h"
 
-#include "contents/content_stream_operators.h"
+#include "contents/content_stream_operator_base.h"
 #include "contents/content_stream_operation_generic.h"
 #include "contents/content_stream_operations.h"
 #include "contents/content_stream_objects.h"
-
-#include "syntax/files/file.h"
 
 #include "gotchangpdf/c_contents.h"
 #include "c_helper.h"

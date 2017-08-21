@@ -1,5 +1,6 @@
 #include "precompiled.h"
-#include "syntax/files/file.h"
+
+#include "syntax/objects/indirect_object_reference.h"
 
 #include "gotchangpdf/c_indirect_object_reference.h"
 #include "c_helper.h"

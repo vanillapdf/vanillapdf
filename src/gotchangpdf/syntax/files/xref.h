@@ -2,7 +2,6 @@
 #define _XREF_H
 
 #include "syntax/utils/syntax_fwd.h"
-
 #include "syntax/files/xref_entry.h"
 
 #include <unordered_set>

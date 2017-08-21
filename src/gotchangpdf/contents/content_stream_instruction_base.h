@@ -4,6 +4,7 @@
 #include "contents/content_fwd.h"
 
 #include "utils/unknown_interface.h"
+#include "utils/modify_observer_interface.h"
 
 #include <vector>
 
