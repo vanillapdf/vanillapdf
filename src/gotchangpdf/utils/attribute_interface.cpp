@@ -28,8 +28,10 @@ bool operator!=(const Deferred<IAttribute>& left, const Deferred<IAttribute>& ri
 namespace std {
 
 size_t hash<gotchangpdf::IAttribute::Type>::operator()(gotchangpdf::IAttribute::Type attribute) const {
-	std::hash<gotchangpdf::IAttribute::Type> hasher;
-	return hasher(attribute);
+	size_t converted = static_cast<size_t>(attribute);
+
+	std::hash<size_t> hasher;
+	return hasher(converted);
 }
 
 } // std
