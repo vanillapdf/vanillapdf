@@ -413,10 +413,6 @@ source_group("Source Files\\utils" FILES
 	${GOTCHANGPDF_UTILS_SOURCES}
 )
 
-install(FILES ${INCLUDE_HEADERS}
-  DESTINATION "include\\gotchangpdf"
-)
-
 set(GOTCHANGPDF_ALL_SOURCES
 	${GOTCHANGPDF_C_IMPLEMENTATION_SOURCES}
 	${GOTCHANGPDF_SEMANTICS_SOURCES}
@@ -522,3 +518,11 @@ add_custom_command(
 )
 
 target_link_libraries(gotchangpdf ${GOTCHANGPDF_LIBS})
+
+install(TARGETS gotchangpdf
+  DESTINATION lib
+)
+
+install(FILES ${INCLUDE_HEADERS}
+  DESTINATION "include\\gotchangpdf"
+)
