@@ -9,12 +9,12 @@ void Tree::Insert(BufferPtr path, Token::Type type) {
 	auto len = path->size();
 	for (decltype(len) i = 0; i < len; ++i) {
 		char ch = path->at(i);
-		char converted = static_cast<unsigned char>(ch);
+		auto converted = static_cast<unsigned char>(ch);
 		if (!cur->childs[converted]) {
 			cur->childs[converted] = std::make_shared<Node>(converted);
 		}
 
-		cur = cur->childs[path->at(i)];
+		cur = cur->childs[converted];
 	}
 
 	cur->type = type;
@@ -30,8 +30,9 @@ bool Tree::PathExists(BufferPtr path) {
 
 Token::Type Tree::TokenType(BufferPtr path) {
 	auto found = NodeAtPath(path);
-	if (!found)
+	if (!found) {
 		return Token::Type::UNKNOWN;
+	}
 
 	return found->type;
 }
