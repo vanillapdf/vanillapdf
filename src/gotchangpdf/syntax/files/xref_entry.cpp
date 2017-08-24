@@ -117,7 +117,7 @@ void XrefUsedEntryBase::ReleaseReference(bool check_object_xref) {
 	}
 
 	bool unsubscribed = _reference->Unsubscribe(this);
-	assert(unsubscribed && "Could not unsubscribe"); unsubscribed;
+	assert(unsubscribed && "Could not unsubscribe"); UNUSED(unsubscribed);
 
 	if (check_object_xref) {
 		auto weak_ref_entry = _reference->GetXrefEntry();

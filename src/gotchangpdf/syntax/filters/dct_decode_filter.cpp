@@ -30,11 +30,11 @@ void output_message(j_common_ptr ptr) {
 }
 
 void init_source(j_decompress_ptr ptr) {
-	ptr;
+	UNUSED(ptr);
 }
 
 boolean fill_input_buffer(j_decompress_ptr ptr) {
-	ptr;
+	UNUSED(ptr);
 
 	assert(!"This method is not handled");
 	LOG_ERROR_GLOBAL << "JPEG decompression failure. Please report this issue";
@@ -43,14 +43,14 @@ boolean fill_input_buffer(j_decompress_ptr ptr) {
 }
 
 void skip_input_data(j_decompress_ptr ptr, long num_bytes) {
-	ptr; num_bytes;
+	UNUSED(ptr); UNUSED(num_bytes);
 
 	assert(!"This method is not handled");
 	LOG_ERROR_GLOBAL << "JPEG decompression failure. Please report this issue";
 }
 
 void term_source(j_decompress_ptr ptr) {
-	ptr;
+	UNUSED(ptr);
 }
 
 #endif
@@ -117,7 +117,7 @@ BufferPtr DCTDecodeFilter::Decode(std::istream& src, types::stream_size length, 
 
 	while (jpeg.output_scanline < jpeg.output_height) {
 		JDIMENSION lines = jpeg_read_scanlines(&jpeg, jpeg_buffer, 1);
-		assert(1 == lines); lines;
+		assert(1 == lines); UNUSED(lines);
 
 		if (jpeg.output_components == 4) {
 			for (uint32_t i = 0; i < jpeg.output_width; i++) {

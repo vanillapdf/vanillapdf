@@ -32,7 +32,7 @@ ResourceDictionaryPtr PageObject::GetResources() const {
 void PageObject::SetResources(ResourceDictionaryPtr resources) {
 	if (_obj->Contains(Name::Resources)) {
 		bool removed = _obj->Remove(Name::Resources);
-		assert(removed && "Unable to remove existing item"); removed;
+		assert(removed && "Unable to remove existing item"); UNUSED(removed);
 	}
 
 	_obj->Insert(Name::Resources, resources->GetObject());
@@ -57,7 +57,7 @@ RectanglePtr PageObject::GetMediaBox() const {
 void PageObject::SetMediaBox(RectanglePtr media_box) {
 	if (_obj->Contains(Name::MediaBox)) {
 		bool removed = _obj->Remove(Name::MediaBox);
-		assert(removed && "Unable to remove existing item"); removed;
+		assert(removed && "Unable to remove existing item"); UNUSED(removed);
 	}
 
 	_obj->Insert(Name::MediaBox, media_box->GetObject()->Data());
@@ -77,7 +77,7 @@ bool PageObject::GetAnnotations(OutputPageAnnotationsPtr& result) const {
 void PageObject::SetAnnotations(PageAnnotationsPtr annots) {
 	if (_obj->Contains(Name::Annots)) {
 		bool removed = _obj->Remove(Name::Annots);
-		assert(removed && "Unable to remove existing item"); removed;
+		assert(removed && "Unable to remove existing item"); UNUSED(removed);
 	}
 
 	_obj->Insert(Name::Annots, annots->GetObject());
@@ -86,7 +86,7 @@ void PageObject::SetAnnotations(PageAnnotationsPtr annots) {
 void PageObject::SetContents(ContentsPtr contents) {
 	if (_obj->Contains(Name::Contents)) {
 		bool removed = _obj->Remove(Name::Contents);
-		assert(removed && "Unable to remove existing item"); removed;
+		assert(removed && "Unable to remove existing item"); UNUSED(removed);
 	}
 
 	IndirectObjectReferencePtr contents_ref = make_deferred<IndirectObjectReference>(contents->GetObject());

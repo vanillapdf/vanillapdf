@@ -304,7 +304,7 @@ void TreeBase<KeyT, ValueT>::RemoveAllChilds() {
 
 	if (_root->HasValues()) {
 		bool removed = _obj->Remove(GetValueName());
-		assert(removed); removed;
+		assert(removed); UNUSED(removed);
 	}
 }
 

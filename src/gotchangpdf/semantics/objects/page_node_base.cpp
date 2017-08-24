@@ -33,7 +33,7 @@ PageNodeBasePtr PageNodeBase::GetParent() const {
 void PageNodeBase::SetParent(PageNodeBasePtr parent) {
 	if (_obj->Contains(constant::Name::Parent)) {
 		bool removed = _obj->Remove(constant::Name::Parent);
-		assert(removed && "Unable to remove existing item"); removed;
+		assert(removed && "Unable to remove existing item"); UNUSED(removed);
 	}
 
 	syntax::IndirectObjectReferencePtr parent_ref = make_deferred<syntax::IndirectObjectReference>(parent->GetObject());

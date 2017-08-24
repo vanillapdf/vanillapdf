@@ -283,7 +283,7 @@ void FileWriter::RecalculateObjectStreamContent(XrefBasePtr source) {
 
 			// How to fix this?
 			auto entry_index = entry->GetIndex();
-			assert(current_verify_index == entry_index && "Entry index is invalid"); entry_index;
+			assert(current_verify_index == entry_index && "Entry index is invalid"); UNUSED(entry_index);
 		}
 
 		// Initialize output streams
@@ -947,7 +947,7 @@ void FileWriter::RemoveFreedObjects(XrefChainPtr xref) {
 
 			// Remove if not used
 			bool removed = current_xref->Remove(current_entry);
-			assert(removed && "Could not release xref entry"); removed;
+			assert(removed && "Could not release xref entry"); UNUSED(removed);
 		}
 	}
 }
@@ -1085,7 +1085,7 @@ bool FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
 				auto duplicit_item = std::make_pair(object, *inserted.first);
 
 				// The item may already be in the list, but we don't care
-				auto duplicit_insert = duplicit_list.insert(duplicit_item);
+				duplicit_list.insert(duplicit_item);
 			}
 		}
 	}
@@ -1157,7 +1157,7 @@ bool FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
 		auto duplicit_xref = duplicit_xref_weak.GetReference();
 
 		bool released = xref->ReleaseEntry(duplicit_xref);
-		assert(released && "Could not release xref entry"); released;
+		assert(released && "Could not release xref entry"); UNUSED(released);
 	}
 
 	// Return true, if there was at least one duplicit item
@@ -1238,7 +1238,7 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
 				new_entry->SetInitialized();
 
 				bool removed = current_xref->Remove(entry);
-				assert(removed && "Could not release xref entry"); removed;
+				assert(removed && "Could not release xref entry"); UNUSED(removed);
 
 				current_xref->Add(new_entry);
 				continue;
@@ -1264,7 +1264,7 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
 				new_entry->SetInitialized();
 
 				bool removed = current_xref->Remove(entry);
-				assert(removed && "Could not release xref entry"); removed;
+				assert(removed && "Could not release xref entry"); UNUSED(removed);
 
 				current_xref->Add(new_entry);
 				continue;
@@ -1292,7 +1292,7 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
 				new_entry->SetInitialized();
 
 				bool removed = current_xref->Remove(entry);
-				assert(removed && "Could not release xref entry"); removed;
+				assert(removed && "Could not release xref entry"); UNUSED(removed);
 
 				current_xref->Add(new_entry);
 				continue;

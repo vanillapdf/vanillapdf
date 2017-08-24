@@ -86,6 +86,10 @@ make_unique(Args&&...) = delete;
 using std::make_unique;
 #endif
 
+// Some variables are only used for assertion purposes
+// They need to be marked as unused, so they don't produce a compilation warning
+#define UNUSED(x) (void)(x)
+
 #define TOKENPASTE(x, y, z) x ## y ## z
 #define TOKENPASTE2(x, y, z) TOKENPASTE(x, y, z)
 #define SCOPE_GUARD(deleter_function) auto TOKENPASTE2(__scope_guard_, __LINE__, __) = ScopeGuardFactory::CreateGuard(deleter_function);

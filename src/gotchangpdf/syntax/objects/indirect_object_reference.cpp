@@ -116,7 +116,7 @@ size_t IndirectObjectReference::Hash() const {
 void IndirectObjectReference::SetReferencedObject(ObjectPtr obj) const {
 	// Reference shall be indirect object or null
 	bool indirect_or_null = (obj->IsIndirect() || ObjectUtils::IsType<NullObjectPtr>(obj));
-	assert(indirect_or_null && "Referenced object is neither indirect nor null"); indirect_or_null;
+	assert(indirect_or_null && "Referenced object is neither indirect nor null"); UNUSED(indirect_or_null);
 
 	if (obj->IsIndirect()) {
 		m_reference_object_number = obj->GetObjectNumber();

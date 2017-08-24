@@ -206,15 +206,15 @@ void InputReverseStream::SetInputPosition(types::stream_size pos, std::ios_base:
 	if (way == std::ios_base::beg) {
 		// verify if the position is correct
 		assert(pos == verify_offset);
-		verify_offset;
 	}
 
 	if (way == std::ios_base::cur) {
 		// verify if the position is correct
 		assert(initial_offset + pos == verify_offset);
-		verify_offset;
-		initial_offset;
 	}
+
+	UNUSED(verify_offset);
+	UNUSED(initial_offset);
 }
 
 BufferPtr InputReverseStream::Readline(void) {

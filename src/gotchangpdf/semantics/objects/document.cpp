@@ -316,7 +316,7 @@ NameTreePtr<DestinationPtr> Document::CreateStringDestinations(NameDictionaryPtr
 
 	OutputNameTreePtr<DestinationPtr> result;
 	auto found_destinations = dictionary->Dests(result);
-	assert(found_destinations); found_destinations;
+	assert(found_destinations); UNUSED(found_destinations);
 
 	return result;
 }
@@ -595,7 +595,7 @@ void Document::AppendPage(DocumentPtr other, PageObjectPtr other_page) {
 	// The trick is to remove parent before deep copy
 	if (page_object->Contains(constant::Name::Parent)) {
 		bool removed = page_object->Remove(constant::Name::Parent);
-		assert(removed && "Could not remove parent"); removed;
+		assert(removed && "Could not remove parent"); UNUSED(removed);
 	}
 
 	auto new_objects = m_holder->DeepCopyObject(page_object);

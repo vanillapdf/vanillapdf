@@ -231,7 +231,7 @@ DestinationPtr NamedDestinations::Find(const syntax::NameObject& name) const {
 void NamedDestinations::Insert(const syntax::NameObject& name, DestinationPtr value) {
 	if (_obj->Contains(name)) {
 		bool removed = _obj->Remove(name);
-		assert(removed && "Unable to remove existing item"); removed;
+		assert(removed && "Unable to remove existing item"); UNUSED(removed);
 	}
 
 	auto raw_obj = value->GetObject();

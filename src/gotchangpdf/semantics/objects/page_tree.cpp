@@ -140,7 +140,7 @@ void PageTree::Remove(types::size_type page_index) {
 
 	auto kids = _obj->FindAs<ArrayObjectPtr<IndirectObjectReferencePtr>>(constant::Name::Kids);
 	bool removed = kids->Remove(array_index);
-	assert(removed && "Could not remove page"); removed;
+	assert(removed && "Could not remove page"); UNUSED(removed);
 
 	UpdateKidsCount();
 	m_pages.erase(m_pages.begin() + array_index);

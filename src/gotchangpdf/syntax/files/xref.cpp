@@ -119,7 +119,7 @@ void XrefStream::RecalculateContent() {
 
 	if (header->Contains(constant::Name::Index)) {
 		bool removed = header->Remove(constant::Name::Index);
-		assert(removed); removed;
+		assert(removed); UNUSED(removed);
 	}
 
 	// Insert subsection info
@@ -129,7 +129,7 @@ void XrefStream::RecalculateContent() {
 	// so I just have to remove them
 	if (header->Contains(constant::Name::DecodeParms)) {
 		bool removed = header->Remove(constant::Name::DecodeParms);
-		assert(removed && "Could not remove item from dictionary"); removed;
+		assert(removed && "Could not remove item from dictionary"); UNUSED(removed);
 	}
 
 	auto new_data_string = ss.str();
@@ -151,8 +151,8 @@ void XrefTable::Add(XrefEntryBasePtr entry) {
 	bool is_used = ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(entry);
 
 	// Xref table can only stored free and used entries
-	assert(is_free || is_used && "Adding invalid entry type to xref table");
-	is_free; is_used;
+	assert((is_free || is_used) && "Adding invalid entry type to xref table");
+	UNUSED(is_free); UNUSED(is_used);
 
 	// Perform the addition
 	XrefBase::Add(entry);
