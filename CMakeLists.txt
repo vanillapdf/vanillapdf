@@ -29,11 +29,38 @@ set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} -DRELEASE")
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} -DRELEASE")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -DRELEASE")
 
+if(CMAKE_COMPILER_IS_GNUCXX)
+
+	# Enable maximum warning level
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+	
+	# GCC warns on pragma region directive, which is only IDE feature
+	# It could be solved with #ifdef only for MSVC
+	# All other pragmas are only for suppressing specific warnings on MSVC
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
+	
+	# Variables in constructors should be initialized in order
+	# they were declared. I prefer initializing variables
+	# in order they make sense and are declared as constructor parameters.
+	# This should be harmless unless you take at least a little care.
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder")
+	
+endif(CMAKE_COMPILER_IS_GNUCXX)
+
+if(MSVC)
+
+	# Enable maximum warning level
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+	
+endif(MSVC)
+
+# Set production version
 set(GOTCHANG_PDF_VERSION_MAJOR 0)
 set(GOTCHANG_PDF_VERSION_MINOR 0)
 set(GOTCHANG_PDF_VERSION_PATCH 1)
 set(GOTCHANG_PDF_VERSION_BUILD 0)
 
+# Include source directories
 add_subdirectory(src/gotchangpdf)
 add_subdirectory(src/gotchangpdf.test)
 add_subdirectory(src/gotchangpdf.merge)
