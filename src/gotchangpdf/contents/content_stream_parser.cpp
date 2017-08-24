@@ -361,9 +361,9 @@ bool ContentStreamParser::IsOperand(Token::Type type) {
 		case Token::Type::FALSE_VALUE:
 		case Token::Type::NULL_OBJECT:
 			return true;
+		default:
+			return false;
 	}
-
-	return false;
 }
 
 ObjectPtr ContentStreamParser::ReadOperand() {
