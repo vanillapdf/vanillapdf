@@ -31,6 +31,7 @@ types::size_type PageTree::PageCount(PageNodeBasePtr node) {
 		}
 
 		assert(result_value == verify && "Kid count does not match");
+		return result_value;
 	}
 
 	// Single page for objects
