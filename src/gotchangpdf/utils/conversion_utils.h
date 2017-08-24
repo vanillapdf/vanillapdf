@@ -40,6 +40,15 @@ private:
 		class Specializator {
 		public:
 			static bool IsInRange(ValueType value) {
+
+				// TODO I believe this code should be optimized away
+				// in cases when it is evaluated to false at compile time.
+				// Not quite sure how to verify this hypothesis.
+				// It could be otherwise rewritten as another ugly template parameter.
+				if (std::is_same<RangeType, ValueType>::value) {
+					return true;
+				}
+
 				return (value >= std::numeric_limits<RangeType>::lowest()) &&
 					(value <= std::numeric_limits<RangeType>::max());
 			}
