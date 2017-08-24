@@ -45,29 +45,9 @@ extern "C"
 		MessageDigestAlgorithmType_MD5,
 
 		/**
-		* \brief Original version of the 160-bit hash function published in 1993 under the name "SHA".
-		*/
-		MessageDigestAlgorithmType_SHA,
-
-		/**
 		* \brief A 160-bit hash function which resembles the earlier MD5 algorithm.
 		*/
 		MessageDigestAlgorithmType_SHA1,
-
-		/**
-		* \brief SHA digest algorithm but using DSS (DSA) for the signature algorithm.
-		*/
-		MessageDigestAlgorithmType_DSS,
-
-		/**
-		* \brief SHA1 digest algorithm but using DSS (DSA) for the signature algorithm.
-		*/
-		MessageDigestAlgorithmType_DSS1,
-
-		/**
-		* \brief Elliptic Curve Digital Signature Algorithm(ECDSA) offers a variant of the Digital Signature Algorithm(DSA) which uses elliptic curve cryptography.
-		*/
-		MessageDigestAlgorithmType_ECDSA,
 
 		/**
 		* \brief SHA-2 (Secure Hash Algorithm 2) is a set of cryptographic hash functions designed by the United States National Security Agency (NSA).

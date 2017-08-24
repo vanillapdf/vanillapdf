@@ -46,16 +46,8 @@ public:
 				algorithm_type = MessageDigestAlgorithmType_MD4; break;
 			case MessageDigestAlgorithm::MD5:
 				algorithm_type = MessageDigestAlgorithmType_MD5; break;
-			case MessageDigestAlgorithm::SHA:
-				algorithm_type = MessageDigestAlgorithmType_SHA; break;
 			case MessageDigestAlgorithm::SHA1:
 				algorithm_type = MessageDigestAlgorithmType_SHA1; break;
-			case MessageDigestAlgorithm::DSS:
-				algorithm_type = MessageDigestAlgorithmType_DSS; break;
-			case MessageDigestAlgorithm::DSS1:
-				algorithm_type = MessageDigestAlgorithmType_DSS1; break;
-			case MessageDigestAlgorithm::ECDSA:
-				algorithm_type = MessageDigestAlgorithmType_ECDSA; break;
 			case MessageDigestAlgorithm::SHA224:
 				algorithm_type = MessageDigestAlgorithmType_SHA224; break;
 			case MessageDigestAlgorithm::SHA256:

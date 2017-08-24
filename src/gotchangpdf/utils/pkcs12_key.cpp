@@ -364,24 +364,8 @@ const EVP_MD* PKCS12Key::PKCS12KeyImpl::GetAlgorithm(MessageDigestAlgorithm algo
 		return EVP_md5();
 	}
 
-	if (algorithm == MessageDigestAlgorithm::SHA) {
-		return EVP_sha();
-	}
-
 	if (algorithm == MessageDigestAlgorithm::SHA1) {
 		return EVP_sha1();
-	}
-
-	if (algorithm == MessageDigestAlgorithm::DSS) {
-		return EVP_dss();
-	}
-
-	if (algorithm == MessageDigestAlgorithm::DSS1) {
-		return EVP_dss1();
-	}
-
-	if (algorithm == MessageDigestAlgorithm::ECDSA) {
-		return EVP_ecdsa();
 	}
 
 	if (algorithm == MessageDigestAlgorithm::SHA224) {

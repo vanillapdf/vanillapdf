@@ -26,16 +26,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetDige
 				*result = MessageDigestAlgorithmType_MD4; break;
 			case MessageDigestAlgorithm::MD5:
 				*result = MessageDigestAlgorithmType_MD5; break;
-			case MessageDigestAlgorithm::SHA:
-				*result = MessageDigestAlgorithmType_SHA; break;
 			case MessageDigestAlgorithm::SHA1:
 				*result = MessageDigestAlgorithmType_SHA1; break;
-			case MessageDigestAlgorithm::DSS:
-				*result = MessageDigestAlgorithmType_DSS; break;
-			case MessageDigestAlgorithm::DSS1:
-				*result = MessageDigestAlgorithmType_DSS1; break;
-			case MessageDigestAlgorithm::ECDSA:
-				*result = MessageDigestAlgorithmType_ECDSA; break;
 			case MessageDigestAlgorithm::SHA224:
 				*result = MessageDigestAlgorithmType_SHA224; break;
 			case MessageDigestAlgorithm::SHA256:
@@ -75,16 +67,8 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetDige
 				algorithm = MessageDigestAlgorithm::MD4; break;
 			case MessageDigestAlgorithmType_MD5:
 				algorithm = MessageDigestAlgorithm::MD5; break;
-			case MessageDigestAlgorithmType_SHA:
-				algorithm = MessageDigestAlgorithm::SHA; break;
 			case MessageDigestAlgorithmType_SHA1:
 				algorithm = MessageDigestAlgorithm::SHA1; break;
-			case MessageDigestAlgorithmType_DSS:
-				algorithm = MessageDigestAlgorithm::DSS; break;
-			case MessageDigestAlgorithmType_DSS1:
-				algorithm = MessageDigestAlgorithm::DSS1; break;
-			case MessageDigestAlgorithmType_ECDSA:
-				algorithm = MessageDigestAlgorithm::ECDSA; break;
 			case MessageDigestAlgorithmType_SHA224:
 				algorithm = MessageDigestAlgorithm::SHA224; break;
 			case MessageDigestAlgorithmType_SHA256:
