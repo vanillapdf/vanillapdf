@@ -65,7 +65,7 @@ public:
 		auto str = buffer->ToString();
 		auto value = std::stod(str);
 		auto pos = str.rfind('.');
-		if (-1 != pos) {
+		if (pos != std::string::npos) {
 			auto precision = str.size() - pos - 1;
 			auto converted = ValueConvertUtils::SafeConvert<uint32_t>(precision);
 			return make_deferred<RealObject>(value, converted);
