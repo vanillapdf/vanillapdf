@@ -54,7 +54,7 @@ InputReverseStream::ReverseBuf::int_type InputReverseStream::ReverseBuf::underfl
 	if (egptr() == _base) // true when this isn't the first fill
 	{
 		// Make arrangements for putback characters
-		std::memmove(_buffer.data() + _buffer.size() - _put_back, _base, _put_back);
+		std::memmove(_buffer.data() + _buffer.size() - _put_back, _base, ValueConvertUtils::SafeConvert<size_t>(_put_back));
 		start -= _put_back - 1;
 		put_back = true;
 	}
@@ -154,7 +154,7 @@ InputReverseStream::ReverseBuf::pos_type InputReverseStream::ReverseBuf::seekpos
 	return ptr;
 }
 
-types::stream_size InputReverseStream::Read(Buffer& result, size_t len) {
+types::stream_size InputReverseStream::Read(Buffer& result, types::size_type len) {
 	assert(result.size() >= len);
 	if (result.size() < len) {
 		result.resize(len);
@@ -164,7 +164,7 @@ types::stream_size InputReverseStream::Read(Buffer& result, size_t len) {
 	return m_stream->gcount();
 }
 
-BufferPtr InputReverseStream::Read(size_t len) {
+BufferPtr InputReverseStream::Read(types::size_type len) {
 	BufferPtr result = make_deferred<Buffer>(len);
 	m_stream->read(result->data(), len);
 	return result;

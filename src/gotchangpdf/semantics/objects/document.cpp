@@ -437,7 +437,7 @@ bool Document::IsDestinationReferencingPage(DestinationPtr destination, PageObje
 		auto other_root_node_obj = other_root_node->GetObject();
 		auto other_pages = make_deferred<PageTree>(other_root_node_obj);
 
-		auto index_converted = cloned_page_index->SafeConvert<types::integer>();
+		auto index_converted = cloned_page_index->SafeConvert<types::size_type>();
 		auto check_page = other_pages->Page(index_converted);
 		auto check_page_object = check_page->GetObject();
 

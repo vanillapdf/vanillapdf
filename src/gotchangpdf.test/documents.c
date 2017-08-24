@@ -568,8 +568,8 @@ error_type process_destination(DestinationHandle obj, int nested) {
 }
 
 error_type process_catalog(CatalogHandle catalog, int nested) {
-	integer_type i = 0;
-	integer_type size = 0;
+	size_type i = 0;
+	size_type size = 0;
 	PageTreeHandle pages = NULL;
 	DeveloperExtensionsHandle extensions = NULL;
 	PageLabelsHandle page_labels = NULL;
@@ -894,8 +894,8 @@ error_type process_outline_item_flags(OutlineItemFlagsHandle obj, int nested) {
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_page_labels(PageLabelsHandle labels, integer_type size, int nested) {
-	integer_type i = 0;
+error_type process_page_labels(PageLabelsHandle labels, size_type size, int nested) {
+	size_type i = 0;
 
 	print_spaces(nested);
 	printf("Page labels begin\n");
@@ -1071,8 +1071,8 @@ error_type process_field_collection(FieldCollectionHandle obj, int nested) {
 
 	print_spaces(nested);
 
-	unsigned int converted_size = size;
-	printf("Size: %d\n", converted_size);
+	unsigned long long converted_size = size;
+	printf("Size: %llu\n", converted_size);
 
 	for (i = 0; i < size; ++i) {
 		FieldHandle field = NULL;
@@ -1193,8 +1193,8 @@ error_type process_byte_range_collection(ByteRangeCollectionHandle obj, int nest
 
 	print_spaces(nested);
 
-	unsigned int converted_size = size;
-	printf("Size: %d\n", converted_size);
+	unsigned long long converted_size = size;
+	printf("Size: %llu\n", converted_size);
 
 	for (i = 0; i < size; ++i) {
 		ByteRangeHandle range = NULL;

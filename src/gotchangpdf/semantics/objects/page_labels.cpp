@@ -64,12 +64,12 @@ PageLabels::PageLabels(const syntax::DictionaryObjectPtr& obj)
 	_tree(make_deferred<NumberTree<PageLabelPtr>>(obj, &ConvertFunction)) {
 }
 
-bool PageLabels::Contains(types::integer page_number) const {
+bool PageLabels::Contains(types::size_type page_number) const {
 	syntax::IntegerObjectPtr value = make_deferred<syntax::IntegerObject>(page_number);
 	return _tree->Contains(value);
 }
 
-PageLabelPtr PageLabels::Find(types::integer page_number) const {
+PageLabelPtr PageLabels::Find(types::size_type page_number) const {
 	syntax::IntegerObjectPtr value = make_deferred<syntax::IntegerObject>(page_number);
 	return _tree->Find(value);
 }

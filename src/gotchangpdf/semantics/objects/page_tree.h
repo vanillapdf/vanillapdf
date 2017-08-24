@@ -14,26 +14,26 @@ class PageTree : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
 	explicit PageTree(syntax::DictionaryObjectPtr root);
 
-	types::integer PageCount(void) const;
-	PageObjectPtr Page(types::integer page_number) const { return GetCachedPage(page_number); }
-	PageObjectPtr operator[](types::integer page_number) const { return GetCachedPage(page_number); }
+	types::size_type PageCount(void) const;
+	PageObjectPtr Page(types::size_type page_number) const { return GetCachedPage(page_number); }
+	PageObjectPtr operator[](types::size_type page_number) const { return GetCachedPage(page_number); }
 
-	void Insert(PageObjectPtr object, types::integer page_index);
+	void Insert(PageObjectPtr object, types::size_type page_index);
 	void Append(PageObjectPtr object);
-	void Remove(types::integer page_index);
+	void Remove(types::size_type page_index);
 
 private:
-	PageObjectPtr GetCachedPage(types::integer page_number) const;
-	PageObjectPtr PageInternal(PageTreeNodePtr node, types::integer page_number, types::integer& processed) const;
+	PageObjectPtr GetCachedPage(types::size_type page_number) const;
+	PageObjectPtr PageInternal(PageTreeNodePtr node, types::size_type page_number, types::size_type& processed) const;
 	bool HasTreeChilds(PageTreeNodePtr node) const;
-	types::integer PageCount(PageNodeBasePtr node);
+	types::size_type PageCount(PageNodeBasePtr node);
 	void UpdateKidsCount();
 
-	static types::integer UpdateKidsCount(PageNodeBasePtr node);
+	static types::size_type UpdateKidsCount(PageNodeBasePtr node);
 
 private:
 	// Cache
-	mutable std::vector<OutputPageObjectPtr> m_pages;
+	mutable CustomSizeVector<OutputPageObjectPtr> m_pages;
 };
 
 } // semantics

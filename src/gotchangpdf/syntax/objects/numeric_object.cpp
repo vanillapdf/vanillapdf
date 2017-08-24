@@ -11,11 +11,11 @@ NumericObjectBackend::NumericObjectBackend()
 	: m_type(Type::SignedInteger), m_int(0) {
 }
 
-NumericObjectBackend::NumericObjectBackend(types::native_int value)
+NumericObjectBackend::NumericObjectBackend(int32_t value)
 	: m_type(Type::SignedInteger), m_int(value) {
 }
 
-NumericObjectBackend::NumericObjectBackend(types::native_uint value)
+NumericObjectBackend::NumericObjectBackend(uint32_t value)
 	: m_type(Type::UnsignedInteger), m_uint(value) {
 }
 

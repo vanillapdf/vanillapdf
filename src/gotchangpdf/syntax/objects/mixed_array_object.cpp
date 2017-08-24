@@ -69,14 +69,14 @@ void MixedArrayObject::Append(ContainableObjectPtr value) {
 	OnChanged();
 }
 
-void MixedArrayObject::Insert(ContainableObjectPtr value, size_t at) {
+void MixedArrayObject::Insert(ContainableObjectPtr value, size_type at) {
 	_list.insert(_list.begin() + at, value);
 	value->SetOwner(Object::GetWeakReference());
 	value->Subscribe(this);
 	OnChanged();
 }
 
-bool MixedArrayObject::Remove(size_t at) {
+bool MixedArrayObject::Remove(size_type at) {
 	auto item = _list.begin() + at;
 	if (item == _list.end()) {
 		return false;

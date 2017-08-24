@@ -35,8 +35,8 @@ class PageLabels : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
 	explicit PageLabels(const syntax::DictionaryObjectPtr& obj);
 
-	bool Contains(types::integer page_number) const;
-	PageLabelPtr Find(types::integer page_number) const;
+	bool Contains(types::size_type page_number) const;
+	PageLabelPtr Find(types::size_type page_number) const;
 
 private:
 	NumberTreePtr<PageLabelPtr> _tree;

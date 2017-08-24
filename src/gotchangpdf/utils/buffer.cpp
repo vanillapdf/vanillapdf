@@ -38,22 +38,22 @@ bool Buffer::LessThan(const Buffer& other) const {
 
 bool operator==(const char * left, const Buffer& right) {
 	assert(nullptr != left);
-	return (0 == std::strncmp(left, reinterpret_cast<const char*>(right.data()), right.size()));
+	return (0 == std::strncmp(left, reinterpret_cast<const char*>(right.data()), right.std_size()));
 }
 
 bool operator==(const Buffer& left, const char * right) {
 	assert(nullptr != right);
-	return (0 == std::strncmp(right, reinterpret_cast<const char*>(left.data()), left.size()));
+	return (0 == std::strncmp(right, reinterpret_cast<const char*>(left.data()), left.std_size()));
 }
 
 bool operator!=(const char * left, const Buffer& right) {
 	assert(nullptr != left);
-	return (0 != std::strncmp(left, reinterpret_cast<const char*>(right.data()), right.size()));
+	return (0 != std::strncmp(left, reinterpret_cast<const char*>(right.data()), right.std_size()));
 }
 
 bool operator!=(const Buffer& left, const char * right) {
 	assert(nullptr != right);
-	return (0 != std::strncmp(right, reinterpret_cast<const char*>(left.data()), left.size()));
+	return (0 != std::strncmp(right, reinterpret_cast<const char*>(left.data()), left.std_size()));
 }
 
 std::ostream& operator<<(std::ostream& os, const Buffer& value) {

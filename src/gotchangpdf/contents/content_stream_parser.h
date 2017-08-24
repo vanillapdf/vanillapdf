@@ -25,7 +25,7 @@ private:
 	OperationBasePtr ReadContentStreamOperation(void);
 	bool IsOperand(syntax::Token::Type type);
 	syntax::ObjectPtr ReadOperand();
-	OperationBasePtr ReadOperatorReturnOperation(const std::vector<syntax::ObjectPtr>& operands);
+	OperationBasePtr ReadOperatorReturnOperation(const CustomSizeVector<syntax::ObjectPtr>& operands);
 	InlineImageObjectPtr ReadInlineImageObject(void);
 };
 

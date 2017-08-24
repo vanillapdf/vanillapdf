@@ -7,7 +7,7 @@
 
 namespace gotchangpdf {
 
-#if defined(_MSC_VER)
+#if defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
 
 	// Visual studio triggers warning about dominance:
 	// "warning C4250: 'InputOutputStream': inherits 'InputStream::Read' via dominance"
@@ -19,7 +19,8 @@ namespace gotchangpdf {
 
 	#pragma warning (push)
 	#pragma warning (disable : 4250)
-#endif
+
+#endif /* COMPILER_MICROSOFT_VISUAL_STUDIO */
 
 class InputOutputStream : public IInputOutputStream, public InputStream, public OutputStream {
 public:
@@ -30,9 +31,9 @@ InputOutputStream::InputOutputStream(std::shared_ptr<std::iostream> stream) : In
 
 }
 
-#if defined(_MSC_VER)
+#if defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
 	#pragma warning (pop)
-#endif
+#endif /* COMPILER_MICROSOFT_VISUAL_STUDIO */
 
 } // gotchangpdf
 

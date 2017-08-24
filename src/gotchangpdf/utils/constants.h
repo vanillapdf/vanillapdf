@@ -1,28 +1,21 @@
 #ifndef _CONSTANTS_H
 #define _CONSTANTS_H
 
-#include <cstdint>
-#include <cstddef>
+#include "gotchangpdf/c_types.h"
 
 namespace gotchangpdf {
 namespace types {
 
-typedef int native_int;
-typedef unsigned int native_uint;
+// Forward type definitions from C API
+typedef ::real_type real;
+typedef ::ushort_type ushort;
+typedef ::size_type size_type;
+typedef ::bigint_type big_int;
+typedef ::biguint_type big_uint;
 
-typedef uint16_t ushort;
-typedef int32_t integer;
-typedef uint32_t uinteger;
-
-typedef int64_t big_int;
-typedef uint64_t big_uint;
-
+// Custom internal types
 typedef int64_t stream_offset;
 typedef int64_t stream_size;
-
-typedef double real;
-
-typedef std::size_t size_type;
 
 } // types
 

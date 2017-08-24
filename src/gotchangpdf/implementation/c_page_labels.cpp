@@ -8,7 +8,7 @@
 using namespace gotchangpdf;
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_Contains(PageLabelsHandle handle, integer_type page_number, boolean_type* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_Contains(PageLabelsHandle handle, size_type page_number, boolean_type* result)
 {
 	PageLabels* obj = reinterpret_cast<PageLabels*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -21,7 +21,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_Contains(PageLabelsHan
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_At(PageLabelsHandle handle, integer_type page_number, PageLabelHandle* result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_At(PageLabelsHandle handle, size_type page_number, PageLabelHandle* result)
 {
 	PageLabels* obj = reinterpret_cast<PageLabels*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

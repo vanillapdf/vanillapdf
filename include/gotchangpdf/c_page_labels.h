@@ -81,13 +81,13 @@ extern "C"
 	* Detemines if collection contains
 	* label for page number \p page_number.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_Contains(PageLabelsHandle handle, integer_type page_number, boolean_type* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_Contains(PageLabelsHandle handle, size_type page_number, boolean_type* result);
 
 	/**
 	* \brief
 	* Get page label for page number \p page_number.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_At(PageLabelsHandle handle, integer_type page_number, PageLabelHandle* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageLabels_At(PageLabelsHandle handle, size_type page_number, PageLabelHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release

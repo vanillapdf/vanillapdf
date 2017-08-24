@@ -767,7 +767,7 @@ IInputOutputStreamPtr File::GetInputOutputStream(void) {
 	return make_deferred<InputOutputStream>(_input);
 }
 
-BufferPtr File::GetByteRange(types::stream_size begin, size_t length) const {
+BufferPtr File::GetByteRange(types::stream_size begin, types::size_type length) const {
 	if (!_initialized) {
 		throw FileNotInitializedException(_filename);
 	}
@@ -777,7 +777,7 @@ BufferPtr File::GetByteRange(types::stream_size begin, size_t length) const {
 	return stream.Read(length);
 }
 
-IInputStreamPtr File::GetByteRangeStream(types::stream_size begin, size_t length) const {
+IInputStreamPtr File::GetByteRangeStream(types::stream_size begin, types::size_type length) const {
 	if (!_initialized) {
 		throw FileNotInitializedException(_filename);
 	}

@@ -789,7 +789,7 @@ void FileWriter::WriteXrefTable(IOutputStreamPtr output, XrefTablePtr xref_table
 		auto first = table_items[i];
 		auto subsection_idx = first->GetObjectNumber();
 
-		size_t subsection_size = 1;
+		types::size_type subsection_size = 1;
 		for (decltype(i) j = 1; j < table_size - i; ++j, ++subsection_size) {
 			auto next_entry = table_items[i + j];
 			if (next_entry->GetObjectNumber() != gotchangpdf::SafeAddition<types::big_uint>(subsection_idx, j)) {
@@ -875,8 +875,7 @@ std::string FileWriter::GetFormattedObjectNumber(types::big_uint object_number) 
 void FileWriter::CopyStreamContent(IInputStreamPtr source, IOutputStreamPtr destination) {
 	// Determine the source file size
 	source->SetInputPosition(0, std::ios::end);
-	auto source_size_raw = source->GetInputPosition();
-	auto source_size = ValueConvertUtils::SafeConvert<size_t>(source_size_raw);
+	auto source_size = source->GetInputPosition();
 
 	// Reset the positions
 	source->SetInputPosition(0);
@@ -884,10 +883,18 @@ void FileWriter::CopyStreamContent(IInputStreamPtr source, IOutputStreamPtr dest
 
 	// Block copy to destination
 	Buffer buffer(constant::BUFFER_SIZE);
-	for (size_t block_size = 0; source_size != 0; source_size -= block_size) {
-		block_size = std::min<size_t>(source_size, constant::BUFFER_SIZE);
-		source->Read(buffer, block_size);
-		destination->Write(buffer, block_size);
+	for (;;) {
+		if (source_size == 0) {
+			break;
+		}
+
+		decltype(source_size) block_size = std::min<decltype(source_size)>(source_size, constant::BUFFER_SIZE);
+		types::size_type block_size_converted = ValueConvertUtils::SafeConvert<types::size_type>(block_size);
+
+		source->Read(buffer, block_size_converted);
+		destination->Write(buffer, block_size_converted);
+
+		source_size -= block_size_converted;
 	}
 }
 

@@ -20,6 +20,7 @@ public:
 	typedef typename list_type::size_type size_type;
 	typedef typename list_type::reference reference;
 	typedef typename list_type::const_reference const_reference;
+	typedef typename list_type::difference_type difference_type;
 
 public:
 	class Iterator : public BaseIterator<list_type::const_iterator>, public IWeakReferenceable<Iterator> {
@@ -54,7 +55,7 @@ public:
 	void Prepend(value_type item) { _list.push_front(item); }
 	void Reverse(void) { _list.reverse(); }
 	void Clear(void) { _list.clear(); }
-	size_t Size(void) const { return _list.size(); }
+	types::size_type Size(void) const { return _list.size(); }
 	bool Empty(void) const { return _list.empty(); }
 
 	XrefUsedEntryBasePtr AllocateNewEntry();

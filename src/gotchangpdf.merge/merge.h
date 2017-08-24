@@ -8,10 +8,10 @@
 #include <string.h>
 #include <assert.h>
 
-#if defined(DEBUG) && defined(_MSC_VER)
+#if defined(DEBUG) && defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
 	#define _CRTDBG_MAP_ALLOC
 	#include <crtdbg.h>
-#endif
+#endif /* DEBUG && COMPILER_MICROSOFT_VISUAL_STUDIO */
 
 extern const int GOTCHANG_PDF_MERGE_ERROR_SUCCESS;
 extern const int GOTCHANG_PDF_MERGE_ERROR_INVALID_PARAMETERS;

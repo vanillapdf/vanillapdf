@@ -52,7 +52,7 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(std::shared_ptr<std::istream> src, t
 
 	// No prediction was used
 	if (predictor == 1) {
-		auto length_converted = ValueConvertUtils::SafeConvert<size_t>(length);
+		auto length_converted = ValueConvertUtils::SafeConvert<types::size_type>(length);
 		return InputStream(src).Read(length_converted);
 	}
 

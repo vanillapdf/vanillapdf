@@ -13,23 +13,24 @@ PageTree::PageTree(DictionaryObjectPtr root) : HighLevelObject(root) {
 	m_pages.resize(page_count);
 }
 
-types::integer PageTree::PageCount(void) const {
+types::size_type PageTree::PageCount(void) const {
 	auto root = make_deferred<PageTreeNode>(_obj);
-	return root->KidCount()->SafeConvert<types::integer>();
+	return root->KidCount()->SafeConvert<types::size_type>();
 }
 
-types::integer PageTree::PageCount(PageNodeBasePtr node) {
+types::size_type PageTree::PageCount(PageNodeBasePtr node) {
 	if (node->GetNodeType() == PageNodeBase::NodeType::Tree) {
 		auto tree_node = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageTreeNodePtr>(node);
-		auto result = tree_node->KidCount();
+		auto result_obj = tree_node->KidCount();
+		auto result_value = result_obj->SafeConvert<types::size_type>();
 
-		types::integer verify = 0;
+		types::size_type verify = 0;
 		auto kids = tree_node->Kids();
 		for (auto kid : kids) {
 			verify += PageCount(kid);
 		}
 
-		assert(result == verify && "Kid count does not match");
+		assert(result_value == verify && "Kid count does not match");
 	}
 
 	// Single page for objects
@@ -40,7 +41,7 @@ types::integer PageTree::PageCount(PageNodeBasePtr node) {
 	throw GeneralException("Unknown page object type");
 }
 
-PageObjectPtr PageTree::GetCachedPage(types::integer page_number) const {
+PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
 	if (page_number < 1) {
 		throw GeneralException("Invalid page number: " + page_number);
 	}
@@ -55,12 +56,12 @@ PageObjectPtr PageTree::GetCachedPage(types::integer page_number) const {
 	}
 
 	auto root = make_deferred<PageTreeNode>(_obj);
-	types::integer pages_processed = 1;
+	types::size_type pages_processed = 1;
 
 	return PageInternal(root, page_number, pages_processed);
 }
 
-PageObjectPtr PageTree::PageInternal(PageTreeNodePtr node, types::integer page_number, types::integer& processed) const {
+PageObjectPtr PageTree::PageInternal(PageTreeNodePtr node, types::size_type page_number, types::size_type& processed) const {
 	auto kids = node->Kids();
 	auto count = kids->Size();
 	for (decltype(count) i = 0; i < count; ++i) {
@@ -68,7 +69,7 @@ PageObjectPtr PageTree::PageInternal(PageTreeNodePtr node, types::integer page_n
 
 		if (kid->GetNodeType() == PageNodeBase::NodeType::Tree) {
 			auto tree_node = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageTreeNodePtr>(kid);
-			auto kid_count = tree_node->KidCount()->SafeConvert<types::integer>();
+			auto kid_count = tree_node->KidCount()->SafeConvert<types::size_type>();
 			if (processed + kid_count <= page_number) {
 				processed += kid_count;
 				continue;
@@ -114,7 +115,7 @@ bool PageTree::HasTreeChilds(PageTreeNodePtr node) const {
 	return false;
 }
 
-void PageTree::Insert(PageObjectPtr object, types::integer page_index) {
+void PageTree::Insert(PageObjectPtr object, types::size_type page_index) {
 	auto array_index = page_index - 1;
 
 	auto raw_obj = object->GetObject();
@@ -133,7 +134,7 @@ void PageTree::Append(PageObjectPtr object) {
 	Insert(object, kids->Size() + 1);
 }
 
-void PageTree::Remove(types::integer page_index) {
+void PageTree::Remove(types::size_type page_index) {
 	auto array_index = page_index - 1;
 
 	auto kids = _obj->FindAs<ArrayObjectPtr<IndirectObjectReferencePtr>>(constant::Name::Kids);
@@ -149,7 +150,7 @@ void PageTree::UpdateKidsCount() {
 	UpdateKidsCount(root);
 }
 
-types::integer PageTree::UpdateKidsCount(PageNodeBasePtr node) {
+types::size_type PageTree::UpdateKidsCount(PageNodeBasePtr node) {
 
 	// Do nothing for page objects
 	if (node->GetNodeType() == PageNodeBase::NodeType::Object) {
@@ -159,17 +160,18 @@ types::integer PageTree::UpdateKidsCount(PageNodeBasePtr node) {
 	if (node->GetNodeType() == PageNodeBase::NodeType::Tree) {
 		auto tree_node = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageTreeNodePtr>(node);
 		auto tree_node_object = tree_node->GetObject();
-		auto result = tree_node_object->FindAs<IntegerObjectPtr>(constant::Name::Count);
+		auto kid_count = tree_node_object->FindAs<IntegerObjectPtr>(constant::Name::Count);
+		auto kid_count_value = kid_count->SafeConvert<types::size_type>();
 
-		types::integer verify = 0;
+		types::size_type verify = 0;
 		auto kids = tree_node->Kids();
 		for (auto kid : kids) {
 			verify += UpdateKidsCount(kid);
 		}
 
 		// Update the kid count
-		if (result != verify) {
-			result->SetValue(verify);
+		if (kid_count_value != verify) {
+			kid_count->SetValue(verify);
 		}
 
 		return verify;

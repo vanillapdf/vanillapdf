@@ -14,10 +14,10 @@ namespace contents {
 class OperationGeneric : public OperationBase {
 public:
 	OperationGeneric() = default;
-	OperationGeneric(std::vector<syntax::ObjectPtr> operands, OperatorBasePtr oper);
+	OperationGeneric(CustomSizeVector<syntax::ObjectPtr> operands, OperatorBasePtr oper);
 
 	OperatorBasePtr GetOperator() const;
-	std::vector<syntax::ObjectPtr> GetOperands() const;
+	CustomSizeVector<syntax::ObjectPtr> GetOperands() const;
 
 	types::size_type GetOperandsSize() const;
 	syntax::ObjectPtr GetOperandAt(types::size_type at) const;
@@ -28,10 +28,10 @@ public:
 
 private:
 	OperatorBasePtr _operator;
-	std::vector<syntax::ObjectPtr> _operands;
+	CustomSizeVector<syntax::ObjectPtr> _operands;
 };
 
-typedef std::vector<OperationGenericPtr> GenericOperationCollection;
+typedef CustomSizeVector<OperationGenericPtr> GenericOperationCollection;
 
 inline InstructionBase::Type OperationGeneric::GetInstructionType(void) const noexcept {
 	return InstructionBase::Type::Operation;

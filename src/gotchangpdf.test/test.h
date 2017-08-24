@@ -8,10 +8,10 @@
 #include <string.h>
 #include <assert.h>
 
-#if defined(DEBUG) && defined(_MSC_VER)
+#if defined(DEBUG) && defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
 	#define _CRTDBG_MAP_ALLOC
 	#include <crtdbg.h>
-#endif
+#endif /* DEBUG && COMPILER_MICROSOFT_VISUAL_STUDIO */
 
 extern const int GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 extern const int GOTCHANG_PDF_TEST_ERROR_INVALID_PASSWORD;
@@ -70,7 +70,7 @@ error_type process_trapped(DocumentTrappedType trapped, int nested);
 error_type process_page(PageObjectHandle obj, int nested);
 error_type process_extensions(DeveloperExtensionsHandle extensions, int nested);
 error_type process_extension(DeveloperExtensionHandle extensions, int nested);
-error_type process_page_labels(PageLabelsHandle labels, integer_type size, int nested);
+error_type process_page_labels(PageLabelsHandle labels, size_type size, int nested);
 error_type process_page_label(PageLabelHandle label, int nested);
 error_type process_page_layout(PageLayout page_layout, int nested);
 error_type process_viewer_preferences(ViewerPreferencesHandle preferences, int nested);

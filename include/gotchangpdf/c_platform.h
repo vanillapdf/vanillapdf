@@ -1,0 +1,31 @@
+#ifndef _C_PLATFORM_H
+#define _C_PLATFORM_H
+
+/**
+* \file c_platform.h
+* This file contains macro declarations about current platform and compiler.
+*/
+
+#if defined(_MSC_VER)
+	#define COMPILER_MICROSOFT_VISUAL_STUDIO
+#endif /* _MSC_VER */
+
+// Check windows
+#if defined(_WIN64)
+	#define ENVIRONMENT_64_BIT
+#endif /* _WIN64 */
+
+// Check GCC
+#if (__GNUC__)
+	#define COMPILER_GCC
+
+	#if (__x86_64__ || __ppc64__)
+		#define ENVIRONMENT_64_BIT
+	#endif /* __x86_64__ || __ppc64__ */
+#endif /* __GNUC__ */
+
+#if !defined(ENVIRONMENT_64_BIT)
+	#define ENVIRONMENT_32_BIT
+#endif /* ENVIRONMENT_64_BIT */
+
+#endif /* _C_PLATFORM_H */

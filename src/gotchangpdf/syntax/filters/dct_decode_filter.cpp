@@ -109,7 +109,7 @@ BufferPtr DCTDecodeFilter::Decode(std::istream& src, types::stream_size length, 
 		throw GeneralException("Could not start jpeg decompression");
 	}
 
-	size_t row_bytes = SafeMultiply<size_t, JDIMENSION>(jpeg.output_width, jpeg.output_components);
+	JDIMENSION row_bytes = SafeMultiply<JDIMENSION, JDIMENSION>(jpeg.output_width, jpeg.output_components);
 	JSAMPARRAY jpeg_buffer = (*jpeg.mem->alloc_sarray)(reinterpret_cast<j_common_ptr>(&jpeg), JPOOL_IMAGE, row_bytes, 1);
 
 	BufferPtr result;

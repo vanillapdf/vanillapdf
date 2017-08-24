@@ -23,11 +23,11 @@ public:
 		return DeferredContainer<ArrayObject<T>>::get()->Data();
 	}
 
-	const T operator[](size_t i) const {
+	const T operator[](size_type i) const {
 		return DeferredContainer<ArrayObject<T>>::get()->operator[](i);
 	}
 
-	T operator[](size_t i) {
+	T operator[](size_type i) {
 		return DeferredContainer<ArrayObject<T>>::get()->operator[](i);
 	}
 };
@@ -67,6 +67,7 @@ public:
 	typedef typename list_type::size_type size_type;
 	typedef typename list_type::reference reference;
 	typedef typename list_type::const_reference const_reference;
+	typedef typename list_type::difference_type difference_type;
 
 	template <typename U>
 	friend class ArrayObject;
@@ -83,11 +84,11 @@ public:
 	ArrayObject(ArrayObject<U> other, std::function<T(const U& obj)> new_conversion);
 
 	MixedArrayObjectPtr Data(void) const;
-	size_t Size(void) const;
-	const T operator[](size_t i) const;
-	T operator[](size_t i);
-	const T At(size_t at) const;
-	T At(size_t at);
+	size_type Size(void) const;
+	const T operator[](size_type i) const;
+	T operator[](size_type i);
+	const T At(size_type at) const;
+	T At(size_type at);
 
 	void AddAttribute(IAttributePtr attribute);
 	bool RemoveAttribute(IAttributePtr attribute);
@@ -95,8 +96,8 @@ public:
 	IAttributePtr GetAttribute(IAttribute::Type type);
 
 	void Append(const T& value);
-	void Insert(const T& value, size_t at);
-	bool Remove(size_t at);
+	void Insert(const T& value, size_type at);
+	bool Remove(size_type at);
 
 	std::string ToString(void) const;
 
@@ -239,27 +240,27 @@ MixedArrayObjectPtr ArrayObject<T>::Data(void) const {
 }
 
 template <typename T>
-size_t ArrayObject<T>::Size(void) const {
+size_type ArrayObject<T>::Size(void) const {
 	return _list->Size();
 }
 
 template <typename T>
-const T ArrayObject<T>::operator[](size_t i) const {
+const T ArrayObject<T>::operator[](size_type i) const {
 	return _conversion((*_list)[i]);
 }
 
 template <typename T>
-T ArrayObject<T>::operator[](size_t i) {
+T ArrayObject<T>::operator[](size_type i) {
 	return _conversion((*_list)[i]);
 }
 
 template <typename T>
-const T ArrayObject<T>::At(size_t at) const {
+const T ArrayObject<T>::At(size_type at) const {
 	return _conversion(_list->At(at));
 }
 
 template <typename T>
-T ArrayObject<T>::At(size_t at) {
+T ArrayObject<T>::At(size_type at) {
 	return _conversion(_list->At(at));
 }
 
@@ -269,12 +270,12 @@ void ArrayObject<T>::Append(const T& value) {
 }
 
 template <typename T>
-void ArrayObject<T>::Insert(const T& value, size_t at) {
+void ArrayObject<T>::Insert(const T& value, size_type at) {
 	_list->Insert(value, at);
 }
 
 template <typename T>
-bool ArrayObject<T>::Remove(size_t at) {
+bool ArrayObject<T>::Remove(size_type at) {
 	return _list->Remove(at);
 }
 

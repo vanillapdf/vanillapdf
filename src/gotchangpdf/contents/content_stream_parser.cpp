@@ -183,7 +183,7 @@ InstructionBasePtr ContentStreamParser::ReadContentStreamInstruction(void) {
 }
 
 OperationBasePtr ContentStreamParser::ReadContentStreamOperation(void) {
-	std::vector<ObjectPtr> operands;
+	CustomSizeVector<syntax::ObjectPtr> operands;
 	while (IsOperand(PeekTokenTypeSkip())) {
 		auto operand = ReadOperand();
 		operand->SetEncryptionExempted();
@@ -194,7 +194,7 @@ OperationBasePtr ContentStreamParser::ReadContentStreamOperation(void) {
 	return ReadOperatorReturnOperation(operands);
 }
 
-OperationBasePtr ContentStreamParser::ReadOperatorReturnOperation(const std::vector<ObjectPtr>& operands) {
+OperationBasePtr ContentStreamParser::ReadOperatorReturnOperation(const CustomSizeVector<syntax::ObjectPtr>& operands) {
 	auto token = ReadTokenSkip();
 	switch (token->GetType()) {
 		case Token::Type::LINE_WIDTH:

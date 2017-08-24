@@ -1,23 +1,24 @@
 #ifndef _MIXED_ARRAY_OBJECT_H
 #define _MIXED_ARRAY_OBJECT_H
 
+#include "utils/custom_size_vector.h"
+
 #include "syntax/utils/syntax_fwd.h"
 #include "syntax/objects/containable.h"
-
-#include <vector>
 
 namespace gotchangpdf {
 namespace syntax {
 
 class MixedArrayObject : public ContainableObject, public IModifyObserver {
 public:
-	typedef std::vector<ContainableObjectPtr> list_type;
+	typedef CustomSizeVector<ContainableObjectPtr> list_type;
 	typedef list_type::value_type value_type;
+	typedef list_type::size_type size_type;
 	typedef list_type::iterator iterator;
 	typedef list_type::const_iterator const_iterator;
-	typedef list_type::size_type size_type;
 	typedef list_type::reference reference;
 	typedef list_type::const_reference const_reference;
+	typedef list_type::difference_type difference_type;
 
 public:
 	MixedArrayObject() = default;
@@ -35,15 +36,15 @@ public:
 	virtual bool Equals(ObjectPtr other) const override;
 
 	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Array; }
-	size_t Size(void) const noexcept { return _list.size(); }
-	const ContainableObjectPtr& operator[](size_t i) const { return _list[i]; }
-	ContainableObjectPtr& operator[](size_t i) { return _list[i]; }
-	const ContainableObjectPtr& At(size_t at) const { return _list.at(at); }
-	ContainableObjectPtr& At(size_t at) { return _list.at(at); }
+	size_type Size(void) const noexcept { return _list.size(); }
+	const ContainableObjectPtr& operator[](size_type i) const { return _list[i]; }
+	ContainableObjectPtr& operator[](size_type i) { return _list[i]; }
+	const ContainableObjectPtr& At(size_type at) const { return _list.at(at); }
+	ContainableObjectPtr& At(size_type at) { return _list.at(at); }
 
 	void Append(ContainableObjectPtr value);
-	void Insert(ContainableObjectPtr value, size_t at);
-	bool Remove(size_t at);
+	void Insert(ContainableObjectPtr value, size_type at);
+	bool Remove(size_type at);
 
 	// stl compatibility
 	void push_back(ContainableObjectPtr value);

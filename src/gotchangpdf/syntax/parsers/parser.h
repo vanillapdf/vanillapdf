@@ -64,7 +64,7 @@ public:
 	ObjectPtr ReadIndirectObject(types::big_uint& obj_number, types::ushort& gen_number);
 	ObjectPtr ReadIndirectObject(types::stream_offset offset, types::big_uint& obj_number, types::ushort& gen_number);
 
-	virtual ObjectStreamEntries ReadObjectStreamEntries(types::big_uint first, size_t size) override;
+	virtual ObjectStreamEntries ReadObjectStreamEntries(types::big_uint first, types::size_type size) override;
 
 	HeaderPtr ReadHeader(types::stream_offset offset);
 	HeaderPtr ReadHeader(void);
@@ -72,7 +72,7 @@ public:
 	XrefChainPtr FindAllObjects(void);
 
 private:
-	ObjectStreamEntries ReadObjectStreamHeaders(size_t size);
+	ObjectStreamEntries ReadObjectStreamHeaders(types::size_type size);
 	ObjectStreamEntry ReadObjectStreamHeader();
 	XrefEntryBasePtr ReadTableEntry(types::big_uint objNumber);
 	XrefTablePtr ReadXrefTable();

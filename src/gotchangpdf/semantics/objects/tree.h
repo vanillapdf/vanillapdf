@@ -77,6 +77,7 @@ public:
 	typedef typename map_type::size_type size_type;
 	typedef typename map_type::reference reference;
 	typedef typename map_type::const_reference const_reference;
+	typedef typename map_type::difference_type difference_type;
 
 public:
 	TreeBase(syntax::DictionaryObjectPtr obj);

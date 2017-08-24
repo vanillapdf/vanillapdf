@@ -25,8 +25,8 @@ public:
 	static FilePtr Open(const std::string& path);
 	static FilePtr Create(const std::string& path);
 
-	BufferPtr GetByteRange(types::stream_size begin, size_t length) const;
-	IInputStreamPtr GetByteRangeStream(types::stream_size begin, size_t length) const;
+	BufferPtr GetByteRange(types::stream_size begin, types::size_type length) const;
+	IInputStreamPtr GetByteRangeStream(types::stream_size begin, types::size_type length) const;
 
 	std::vector<ObjectPtr> DeepCopyObject(ObjectPtr object);
 	std::vector<ObjectPtr> DeepCopyObjects(const std::vector<ObjectPtr>& objects);

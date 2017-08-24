@@ -294,6 +294,7 @@ public:
 	typedef typename T::size_type size_type;
 	typedef typename T::reference reference;
 	typedef typename T::const_reference const_reference;
+	typedef typename T::difference_type difference_type;
 
 public:
 	using Deferred<T>::Deferred;

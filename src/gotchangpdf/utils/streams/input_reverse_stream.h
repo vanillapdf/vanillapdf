@@ -5,7 +5,7 @@
 
 namespace gotchangpdf {
 
-#ifdef _MSC_VER
+#if defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
 		/* http://connect.microsoft.com/VisualStudio/feedback/details/733720/ */
 
 		/*
@@ -39,7 +39,7 @@ namespace gotchangpdf {
 		*/
 #pragma warning (push)
 #pragma warning (disable : 4250)
-#endif
+#endif /* COMPILER_MICROSOFT_VISUAL_STUDIO */
 
 class InputReverseStream : public IInputStream {
 public:
@@ -48,8 +48,8 @@ public:
 public:
 	explicit InputReverseStream(std::shared_ptr<std::istream> stream, types::stream_size size);
 
-	virtual types::stream_size Read(Buffer& result, size_t len) override;
-	virtual BufferPtr Read(size_t len) override;
+	virtual types::stream_size Read(Buffer& result, types::size_type len) override;
+	virtual BufferPtr Read(types::size_type len) override;
 	virtual BufferPtr Readline(void) override;
 	virtual types::stream_size GetInputPosition() override;
 	virtual void SetInputPosition(types::stream_size pos) override;
@@ -97,9 +97,9 @@ protected:
 	std::unique_ptr<ReverseBuf> m_buffer;
 };
 
-#ifdef _MSC_VER
-#pragma warning (pop)
-#endif
+#if defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
+	#pragma warning (pop)
+#endif /* COMPILER_MICROSOFT_VISUAL_STUDIO */
 
 } // gotchangpdf
 

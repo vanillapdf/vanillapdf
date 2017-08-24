@@ -12,8 +12,8 @@ namespace syntax {
 class NumericObjectBackend : public virtual IUnknown, public IWeakReferenceable<NumericObjectBackend>, public IModifyObservable {
 public:
 	NumericObjectBackend();
-	NumericObjectBackend(types::native_int value);
-	NumericObjectBackend(types::native_uint value);
+	NumericObjectBackend(int32_t value);
+	NumericObjectBackend(uint32_t value);
 	NumericObjectBackend(types::big_int value);
 	NumericObjectBackend(types::real value);
 	NumericObjectBackend(types::real value, uint32_t precision);

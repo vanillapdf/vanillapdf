@@ -97,15 +97,15 @@ uint8_t BaseFontRange::Difference(uint8_t source, uint8_t dest, bool& borrow) co
 	return result;
 }
 
-types::integer BaseFontRange::Difference(BufferPtr source, BufferPtr dest) const {
-	types::integer result = 0;
+uint32_t BaseFontRange::Difference(BufferPtr source, BufferPtr dest) const {
+	uint32_t result = 0;
 	bool borrow = false;
 
 	auto src_size = source->size();
 	auto dest_size = dest->size();
 
 	auto longer_size = std::max(src_size, dest_size);
-	assert(longer_size <= sizeof(types::integer));
+	assert(longer_size <= sizeof(result));
 
 	for (decltype(longer_size) i = 0; i < longer_size; ++i) {
 		using buffer_type = Buffer::value_type;
@@ -130,11 +130,11 @@ types::integer BaseFontRange::Difference(BufferPtr source, BufferPtr dest) const
 	return result;
 }
 
-BufferPtr BaseFontRange::Increment(BufferPtr data, types::native_uint count) const {
+BufferPtr BaseFontRange::Increment(BufferPtr data, uint32_t count) const {
 	BufferPtr result;
 
 	auto data_size = data->size();
-	types::native_uint increment = count;
+	uint32_t increment = count;
 	for (decltype(data_size) i = 0; i < data_size; ++i) {
 		auto item = data[data_size - i - 1];
 
@@ -145,11 +145,11 @@ BufferPtr BaseFontRange::Increment(BufferPtr data, types::native_uint count) con
 
 		unsigned_type new_value;
 		if (diff > increment) {
-			types::native_uint int_value = SafeAddition<types::native_uint>(unsigned_item, increment);
+			uint32_t int_value = SafeAddition<uint32_t>(unsigned_item, increment);
 			new_value = ValueConvertUtils::SafeConvert<unsigned_type>(int_value);
 			increment = 0;
 		} else {
-			types::native_uint int_value = increment - diff;
+			uint32_t int_value = increment - diff;
 			new_value = ValueConvertUtils::SafeConvert<unsigned_type>(int_value);
 			increment = 1;
 		}

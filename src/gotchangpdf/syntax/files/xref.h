@@ -12,12 +12,14 @@ namespace syntax {
 class XrefBase : public virtual IUnknown, public IModifyObserver, public IModifyObservable {
 public:
 	using map_type = std::unordered_set<XrefEntryBasePtr>;
+
 	typedef map_type::value_type value_type;
 	typedef map_type::iterator iterator;
 	typedef map_type::const_iterator const_iterator;
 	typedef map_type::size_type size_type;
 	typedef map_type::reference reference;
 	typedef map_type::const_reference const_reference;
+	typedef map_type::difference_type difference_type;
 
 public:
 	class Iterator : public BaseIterator<map_type::const_iterator>, public IWeakReferenceable {
@@ -67,10 +69,10 @@ public:
 
 	virtual void Add(XrefEntryBasePtr entry);
 	bool Remove(XrefEntryBasePtr entry);
-	size_t Size(void) const noexcept;
+	types::size_type Size(void) const noexcept;
 	XrefEntryBasePtr Find(types::big_uint obj_number) const;
 	bool Contains(types::big_uint obj_number) const;
-	std::vector<XrefEntryBasePtr> Entries(void) const;
+	CustomSizeVector<XrefEntryBasePtr> Entries(void) const;
 
 	virtual Type GetType(void) const noexcept = 0;
 	virtual ~XrefBase();

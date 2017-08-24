@@ -1,84 +1,13 @@
-#ifndef _VALUES_H
-#define _VALUES_H
+#ifndef _C_VALUES_H
+#define _C_VALUES_H
 
 #include "c_export.h"
-
-#include <stdint.h>
-#include <stddef.h>
+#include "c_types.h"
 
 /**
 * \file c_values.h
 * This file contains types and constants used as parameters or return values.
 */
-
-/**
-* \ingroup ErrorTypes
-* \brief
-* This is return value type of all API functions.
-*/
-typedef uint32_t error_type;
-
-/**
-* \ingroup BooleanTypes
-* \brief
-* Boolean type supported in C
-*/
-typedef int8_t boolean_type;
-
-/**
-* \ingroup Types
-* \brief
-* Floating point values
-*/
-typedef double real_type;
-
-/**
-* \ingroup Types
-* \brief 16-bit unsigned integer
-*/
-typedef uint16_t ushort_type;
-
-/**
-* \ingroup Types
-* \brief 32-bit signed integer
-*/
-typedef int32_t integer_type;
-
-/**
-* \ingroup Types
-* \brief 32-bit unsigned integer
-*/
-typedef uint32_t uinteger_type;
-
-/**
-* \ingroup Types
-* \brief Offset type compatible with standard IO
-*/
-typedef int64_t offset_type;
-
-/**
-* \ingroup Types
-* \brief Size type defined in standard library
-*/
-typedef size_t size_type;
-
-/**
-* \ingroup Types
-* \brief 64-bit signed integer type
-*/
-typedef int64_t bigint_type;
-
-/**
-* \ingroup Types
-* \brief 64-bit unsigned integer type
-*/
-typedef uint64_t biguint_type;
-
-/**
-* \ingroup Types
-* \brief C-Style string
-*/
-typedef const char* string_type;
 
 #ifdef __cplusplus
 extern "C"
@@ -190,4 +119,4 @@ extern "C"
 };
 #endif
 
-#endif /* _VALUES_H */
+#endif /* _C_VALUES_H */

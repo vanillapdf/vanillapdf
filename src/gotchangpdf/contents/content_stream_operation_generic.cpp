@@ -7,7 +7,7 @@
 namespace gotchangpdf {
 namespace contents {
 
-OperationGeneric::OperationGeneric(std::vector<syntax::ObjectPtr> operands, OperatorBasePtr oper)
+OperationGeneric::OperationGeneric(CustomSizeVector<syntax::ObjectPtr> operands, OperatorBasePtr oper)
 	: _operator(oper), _operands(operands) {
 }
 
@@ -15,7 +15,7 @@ OperatorBasePtr OperationGeneric::GetOperator() const {
 	return _operator;
 }
 
-std::vector<syntax::ObjectPtr> OperationGeneric::GetOperands() const {
+CustomSizeVector<syntax::ObjectPtr> OperationGeneric::GetOperands() const {
 	return _operands;
 }
 

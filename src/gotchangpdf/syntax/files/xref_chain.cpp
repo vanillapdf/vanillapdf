@@ -10,7 +10,7 @@ namespace syntax {
 XrefUsedEntryBasePtr XrefChain::AllocateNewEntry() {
 	for (types::big_uint i = m_next_allocation; i < std::numeric_limits<types::big_uint>::max(); ++i) {
 
-		size_t eligible = 0;
+		types::size_type eligible = 0;
 		for (auto it = _list.begin(); it != _list.end(); it++) {
 			auto xref = (*it);
 

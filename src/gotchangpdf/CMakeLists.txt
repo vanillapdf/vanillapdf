@@ -263,6 +263,8 @@ set(GOTCHANGPDF_UTILS_HEADERS
 	utils/character.h
 	utils/constants.h
 	utils/conversion_utils.h
+	utils/custom_size_allocator.h
+	utils/custom_size_vector.h
 	utils/deferred.h
 	utils/errors.h
 	utils/exceptions.h
@@ -333,12 +335,14 @@ set(GOTCHANGPDF_INCLUDE_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_page_tree.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_pdf_version.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_pkcs12_key.h"
+	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_platform.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_real_object.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_rectangle.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_resource_dictionary.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_signing_key.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_stream_object.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_string_object.h"
+	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_types.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_unknown_interface.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_values.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_viewer_preferences.h"

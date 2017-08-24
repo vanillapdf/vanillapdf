@@ -31,8 +31,8 @@ private:
 	ObjectPtr m_dest;
 
 	bool ValueEqualLessThan(BufferPtr source, BufferPtr dest) const;
-	BufferPtr Increment(BufferPtr data, types::native_uint count) const;
-	types::integer Difference(BufferPtr source, BufferPtr dest) const;
+	BufferPtr Increment(BufferPtr data, uint32_t count) const;
+	uint32_t Difference(BufferPtr source, BufferPtr dest) const;
 	uint8_t Difference(uint8_t source, uint8_t dest, bool& borrow) const;
 };
 

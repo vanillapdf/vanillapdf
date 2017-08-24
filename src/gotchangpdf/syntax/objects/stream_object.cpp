@@ -116,7 +116,7 @@ BufferPtr StreamObject::GetBodyRaw() const {
 
 	SCOPE_GUARD(cleanup_lambda);
 
-	auto body = input->Read(size->SafeConvert<size_t>());
+	auto body = input->Read(size->SafeConvert<types::size_type>());
 
 	if (IsEncryptionExempted() || !locked_file->IsEncrypted()) {
 		_body->assign(body.begin(), body.end());

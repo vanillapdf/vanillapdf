@@ -18,7 +18,7 @@ public:
 	virtual XrefBasePtr ReadXref(void) = 0;
 	virtual XrefBasePtr ReadXref(types::stream_offset offset) = 0;
 
-	virtual ObjectStreamEntries ReadObjectStreamEntries(types::big_uint first, size_t size) = 0;
+	virtual ObjectStreamEntries ReadObjectStreamEntries(types::big_uint first, types::size_type size) = 0;
 
 	virtual ~IParser() {}
 };

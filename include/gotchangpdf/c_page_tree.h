@@ -34,12 +34,12 @@ extern "C"
 	/**
 	* \brief Get total number of pages in current document.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPageCount(PageTreeHandle handle, integer_type* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPageCount(PageTreeHandle handle, size_type* result);
 
 	/**
 	* \brief Get page at index \p at.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle handle, integer_type at, PageObjectHandle* result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle handle, size_type at, PageObjectHandle* result);
 
 	/**
 	* \brief Insert new page at index \p at.
@@ -48,7 +48,7 @@ extern "C"
 	* element \p at the specified position,
 	* effectively increasing the container by one.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_InsertPage(PageTreeHandle handle, integer_type at, PageObjectHandle page);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_InsertPage(PageTreeHandle handle, size_type at, PageObjectHandle page);
 
 	/**
 	* \brief
@@ -62,7 +62,7 @@ extern "C"
 	*
 	* This effectively reduces the container size by one.
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_RemovePage(PageTreeHandle handle, integer_type at);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_RemovePage(PageTreeHandle handle, size_type at);
 
 	/**
 	* \copydoc IUnknown_Release

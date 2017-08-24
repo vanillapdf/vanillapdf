@@ -24,13 +24,13 @@ public:
 
 class BaseInstructionCollection : public virtual IUnknown, public IModifyObserver, public IModifyObservable {
 public:
-	using data_type = std::vector<InstructionBasePtr>;
+	using data_type = CustomSizeVector<InstructionBasePtr>;
 
 public:
 	using value_type = data_type::value_type;
+	using size_type = data_type::size_type;
 	using iterator = data_type::iterator;
 	using const_iterator = data_type::const_iterator;
-	using size_type = data_type::size_type;
 	using reference = data_type::reference;
 	using const_reference = data_type::const_reference;
 	using difference_type = data_type::difference_type;
@@ -49,7 +49,7 @@ public:
 public:
 	// stl compatibility
 	bool empty(void) const noexcept { return m_data.empty(); }
-	reference at(size_t pos) { return m_data.at(pos); }
+	reference at(types::size_type pos) { return m_data.at(pos); }
 	const_reference at(size_type pos) const { return m_data.at(pos); }
 	size_type size(void) const noexcept { return m_data.size(); }
 	iterator begin(void) noexcept { return m_data.begin(); }

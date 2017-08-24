@@ -376,7 +376,7 @@ ObjectStreamEntry Parser::ReadObjectStreamHeader() {
 	return result;
 }
 
-ObjectStreamEntries Parser::ReadObjectStreamHeaders(size_t size) {
+ObjectStreamEntries Parser::ReadObjectStreamHeaders(types::size_type size) {
 	ObjectStreamEntries result;
 	result.reserve(size);
 	for (decltype(size) i = 0; i < size; ++i) {
@@ -387,7 +387,7 @@ ObjectStreamEntries Parser::ReadObjectStreamHeaders(size_t size) {
 	return result;
 }
 
-ObjectStreamEntries Parser::ReadObjectStreamEntries(types::big_uint first, size_t size) {
+ObjectStreamEntries Parser::ReadObjectStreamEntries(types::big_uint first, types::size_type size) {
 	auto entries = ReadObjectStreamHeaders(size);
 	for (auto& entry : entries) {
 		m_stream->SetInputPosition(first + entry.offset);
@@ -616,7 +616,7 @@ XrefStreamPtr Parser::ParseXrefStream(
 			}
 
 			if (2 == field1) {
-				XrefCompressedEntryPtr entry = make_deferred<XrefCompressedEntry>(obj_number, static_cast<types::ushort>(0), field2, field3.SafeConvert<size_t>());
+				XrefCompressedEntryPtr entry = make_deferred<XrefCompressedEntry>(obj_number, static_cast<types::ushort>(0), field2, field3.SafeConvert<types::size_type>());
 				entry->SetFile(_file);
 				result->Add(entry);
 				continue;

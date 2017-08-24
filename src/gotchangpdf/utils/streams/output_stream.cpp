@@ -14,7 +14,7 @@ void OutputStream::Write(const Buffer& data) {
 	m_stream->write(data.data(), data.size());
 }
 
-void OutputStream::Write(const Buffer& data, size_t size) {
+void OutputStream::Write(const Buffer& data, types::size_type size) {
 	m_stream->write(data.data(), size);
 }
 

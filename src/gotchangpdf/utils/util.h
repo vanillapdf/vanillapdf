@@ -49,7 +49,7 @@ private:
 	ScopeGuardFactory();
 };
 
-#if (__cplusplus < 201402L) && !defined(_MSC_VER)
+#if (__cplusplus < 201402L) && !defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
 	// Use custom implementation if not
 	// supporting c++14
 

@@ -193,13 +193,13 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
 	}
 
 	size_t outlen = 0;
-	int has_length = EVP_PKEY_decrypt(encryption_context, nullptr, &outlen, (unsigned char *) data.data(), data.size());
+	int has_length = EVP_PKEY_decrypt(encryption_context, nullptr, &outlen, (unsigned char *) data.data(), data.std_size());
 	if (has_length != 1) {
 		throw GeneralException("Could not get decrypt message length");
 	}
 
 	BufferPtr output = make_deferred<Buffer>(outlen);
-	int decrypted = EVP_PKEY_decrypt(encryption_context, (unsigned char *) output->data(), &outlen, (unsigned char *) data.data(), data.size());
+	int decrypted = EVP_PKEY_decrypt(encryption_context, (unsigned char *) output->data(), &outlen, (unsigned char *) data.data(), data.std_size());
 	if (decrypted != 1) {
 		throw GeneralException("Could not get decrypt message");
 	}
@@ -289,7 +289,7 @@ void PKCS12Key::PKCS12KeyImpl::SignUpdate(IInputStreamPtr data, types::stream_si
 		}
 
 		types::stream_size block_size = std::min<types::stream_size>(length - read_total, constant::BUFFER_SIZE);
-		size_t block_size_converted = ValueConvertUtils::SafeConvert<size_t>(block_size);
+		types::size_type block_size_converted = ValueConvertUtils::SafeConvert<types::size_type>(block_size);
 		types::stream_size read = data->Read(buffer, block_size_converted);
 		size_t read_converted = ValueConvertUtils::SafeConvert<size_t>(read);
 

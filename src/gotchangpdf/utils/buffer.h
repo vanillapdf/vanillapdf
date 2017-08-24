@@ -1,11 +1,11 @@
 #ifndef _BUFFER_H
 #define _BUFFER_H
 
-#include "utils/unknown_interface.h"
-#include "utils/modify_observer_interface.h"
 #include "utils/character.h"
+#include "utils/unknown_interface.h"
+#include "utils/custom_size_vector.h"
+#include "utils/modify_observer_interface.h"
 
-#include <vector>
 #include <string>
 #include <ostream>
 #include <cassert>
@@ -14,16 +14,19 @@ namespace gotchangpdf {
 
 class Buffer : public virtual IUnknown, public IWeakReferenceable<Buffer>, public IModifyObservable {
 public:
-	using base_type = std::vector<char>;
+	using storage_type = CustomSizeVector<char>;
 
 public:
-	using value_type = base_type::value_type;
-	using iterator = base_type::iterator;
-	using const_iterator = base_type::const_iterator;
-	using size_type = base_type::size_type;
-	using reference = base_type::reference;
-	using const_reference = base_type::const_reference;
-	using difference_type = base_type::difference_type;
+	using value_type = storage_type::value_type;
+	using iterator = storage_type::iterator;
+	using size_type = storage_type::size_type;
+	using const_iterator = storage_type::const_iterator;
+	using reference = storage_type::reference;
+	using const_reference = storage_type::const_reference;
+	using difference_type = storage_type::difference_type;
+
+	static_assert(sizeof(size_t) <= sizeof(storage_type::size_type), "Buffer size type is too small");
+	static_assert(std::is_unsigned<storage_type::size_type>::value, "Buffer size type should be unsigned");
 
 public:
 	Buffer() = default;
@@ -56,7 +59,7 @@ public:
 	bool empty(void) const noexcept { return m_data.empty(); }
 	value_type * data(void) noexcept { return m_data.data(); }
 	const value_type * data(void) const noexcept { return m_data.data(); }
-	reference at(size_t pos) { return m_data.at(pos); }
+	reference at(size_type pos) { return m_data.at(pos); }
 	const_reference at(size_type pos) const { return m_data.at(pos); }
 	size_type size(void) const noexcept { return m_data.size(); }
 	iterator begin(void) noexcept { return m_data.begin(); }
@@ -69,6 +72,10 @@ public:
 	const_reference back(void) const { return m_data.back(); }
 	reference operator[](size_type pos) { return m_data[pos]; }
 	const_reference operator[](size_type pos) const { return m_data[pos]; }
+
+	// size_type might not be of type size_t
+	// size_t is often needed from other standard functions
+	size_t std_size(void) const { return ValueConvertUtils::SafeConvert<size_t>(m_data.size()); }
 
 	// Modifying operations
 	void resize(size_type new_size) { m_data.resize(new_size); OnChanged(); }
@@ -109,7 +116,7 @@ public:
 	}
 
 private:
-	std::vector<char> m_data;
+	storage_type m_data;
 };
 
 inline bool operator==(const Buffer& left, const Buffer& right) { return left.Equals(right); }

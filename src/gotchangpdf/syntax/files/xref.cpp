@@ -189,7 +189,7 @@ bool XrefBase::Remove(XrefEntryBasePtr entry) {
 	return true;
 }
 
-size_t XrefBase::Size(void) const noexcept {
+types::size_type XrefBase::Size(void) const noexcept {
 	return _entries.size();
 }
 
@@ -211,8 +211,8 @@ bool XrefBase::Contains(types::big_uint obj_number) const {
 	return (found != _entries.end());
 }
 
-std::vector<XrefEntryBasePtr> XrefBase::Entries(void) const {
-	std::vector<XrefEntryBasePtr> result;
+CustomSizeVector<XrefEntryBasePtr> XrefBase::Entries(void) const {
+	CustomSizeVector<XrefEntryBasePtr> result;
 	result.reserve(_entries.size());
 	std::for_each(_entries.begin(), _entries.end(), [&result](const XrefEntryBasePtr& item) { result.push_back(item); });
 

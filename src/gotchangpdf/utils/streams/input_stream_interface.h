@@ -8,8 +8,8 @@ namespace gotchangpdf {
 
 class IInputStream : public virtual IUnknown {
 public:
-	virtual types::stream_size Read(Buffer& result, size_t len) = 0;
-	virtual BufferPtr Read(size_t len) = 0;
+	virtual types::stream_size Read(Buffer& result, types::size_type len) = 0;
+	virtual BufferPtr Read(types::size_type len) = 0;
 	virtual BufferPtr Readline(void) = 0;
 	virtual types::stream_size GetInputPosition() = 0;
 	virtual void SetInputPosition(types::stream_size pos) = 0;

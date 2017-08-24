@@ -54,12 +54,14 @@
     <ClInclude Include="include\gotchangpdf\c_page_object.h" />
     <ClInclude Include="include\gotchangpdf\c_page_tree.h" />
     <ClInclude Include="include\gotchangpdf\c_pkcs12_key.h" />
+    <ClInclude Include="include\gotchangpdf\c_platform.h" />
     <ClInclude Include="include\gotchangpdf\c_real_object.h" />
     <ClInclude Include="include\gotchangpdf\c_rectangle.h" />
     <ClInclude Include="include\gotchangpdf\c_signing_key.h" />
     <ClInclude Include="include\gotchangpdf\c_stream_object.h" />
     <ClInclude Include="include\gotchangpdf\c_string_object.h" />
     <ClInclude Include="include\gotchangpdf\c_logging.h" />
+    <ClInclude Include="include\gotchangpdf\c_types.h" />
     <ClInclude Include="include\gotchangpdf\c_unknown_interface.h" />
     <ClInclude Include="include\gotchangpdf\c_values.h" />
     <ClInclude Include="include\gotchangpdf\c_pdf_version.h" />
@@ -160,6 +162,8 @@
     <ClInclude Include="src\gotchangpdf\utils\character.h" />
     <ClInclude Include="src\gotchangpdf\utils\constants.h" />
     <ClInclude Include="src\gotchangpdf\utils\conversion_utils.h" />
+    <ClInclude Include="src\gotchangpdf\utils\custom_size_allocator.h" />
+    <ClInclude Include="src\gotchangpdf\utils\custom_size_vector.h" />
     <ClInclude Include="src\gotchangpdf\utils\deferred.h" />
     <ClInclude Include="src\gotchangpdf\utils\encryption_key_interface.h" />
     <ClInclude Include="src\gotchangpdf\utils\math_utils.h" />

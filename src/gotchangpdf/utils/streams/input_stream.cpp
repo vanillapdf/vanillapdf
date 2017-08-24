@@ -9,13 +9,13 @@ namespace gotchangpdf {
 InputStream::InputStream(std::shared_ptr<std::istream> stream) : m_stream(stream) {
 }
 
-BufferPtr InputStream::Read(size_t len) {
+BufferPtr InputStream::Read(types::size_type len) {
 	BufferPtr result = make_deferred<Buffer>(len);
 	m_stream->read(result->data(), len);
 	return result;
 }
 
-types::stream_size InputStream::Read(Buffer& result, size_t len) {
+types::stream_size InputStream::Read(Buffer& result, types::size_type len) {
 	assert(result.size() >= len);
 	if (result.size() < len) {
 		result.resize(len);

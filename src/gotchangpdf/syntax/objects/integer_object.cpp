@@ -16,12 +16,12 @@ IntegerObject::~IntegerObject() {
 	m_value->Unsubscribe(this);
 }
 
-IntegerObject::IntegerObject(types::native_int value) {
+IntegerObject::IntegerObject(int32_t value) {
 	m_value->SetIntegerValue(value);
 	m_value->Subscribe(this);
 }
 
-IntegerObject::IntegerObject(types::native_uint value) {
+IntegerObject::IntegerObject(uint32_t value) {
 	m_value->SetUnsignedIntegerValue(value);
 	m_value->Subscribe(this);
 }
@@ -46,12 +46,12 @@ IntegerObject::IntegerObject(NumericObjectBackendPtr value) {
 	m_value->Subscribe(this);
 }
 
-IntegerObject& IntegerObject::operator=(types::native_int value) {
+IntegerObject& IntegerObject::operator=(int32_t value) {
 	m_value->SetIntegerValue(value);
 	return *this;
 }
 
-IntegerObject& IntegerObject::operator=(types::native_uint value) {
+IntegerObject& IntegerObject::operator=(uint32_t value) {
 	m_value->SetUnsignedIntegerValue(value);
 	return *this;
 }

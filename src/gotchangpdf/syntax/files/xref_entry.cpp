@@ -189,7 +189,7 @@ void XrefCompressedEntry::Initialize(void) {
 
 	InputStreamPtr input_stream = make_deferred<InputStream>(stream);
 	Parser parser(_file, input_stream);
-	auto stream_entries = parser.ReadObjectStreamEntries(first->GetUnsignedIntegerValue(), size->SafeConvert<size_t>());
+	auto stream_entries = parser.ReadObjectStreamEntries(first->GetUnsignedIntegerValue(), size->SafeConvert<types::size_type>());
 	for (auto stream_entry : stream_entries) {
 		auto entry_object_number = stream_entry.object_number;
 		auto entry_object = stream_entry.object;

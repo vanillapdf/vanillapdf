@@ -55,6 +55,13 @@ class OutputStream; using OutputStreamPtr = Deferred<OutputStream>;
 class IInputOutputStream; using IInputOutputStreamPtr = Deferred<IInputOutputStream>;
 class InputOutputStream; using InputOutputStreamPtr = Deferred<InputOutputStream>;
 
+// STD wrappers
+template <typename T, typename size_type_template>
+class CustomSizeAllocator;
+
+template <typename T, typename size_type_template>
+class CustomSizeVector;
+
 } // gotchangpdf
 
 #endif /* _UTILS_FWD_H */

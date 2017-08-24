@@ -22,10 +22,10 @@ int main(int argc, char *argv[]) {
 	integer_type i = 0;
 	integer_type page_count = 0;
 
-#if (defined(DEBUG) && defined(_MSC_VER))
+#if (defined(DEBUG) && defined(COMPILER_MICROSOFT_VISUAL_STUDIO))
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//_CrtSetBreakAlloc(803506);
-#endif
+#endif /* DEBUG && COMPILER_MICROSOFT_VISUAL_STUDIO */
 
 	if (argc < 7) {
 		print_help();

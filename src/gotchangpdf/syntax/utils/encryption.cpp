@@ -68,7 +68,7 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
 
 	MD5_CTX ctx;
 	MD5_Init(&ctx);
-	MD5_Update(&ctx, key.data(), key.size());
+	MD5_Update(&ctx, key.data(), key.std_size());
 	MD5_Update(&ctx, object_info, sizeof(object_info));
 
 	if (alg == EncryptionAlgorithm::AES) {
@@ -77,7 +77,7 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
 
 	MD5_Final((unsigned char*) object_key.data(), &ctx);
 
-	auto key_length = std::min<size_t>(key.size() + 5, 16);
+	types::size_type key_length = std::min<types::size_type>(key.size() + 5, 16);
 	return make_deferred<Buffer>(object_key.begin(), object_key.begin() + key_length);
 
 #else
@@ -90,7 +90,7 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
 BufferPtr EncryptionUtils::PadTruncatePassword(const Buffer& password) {
 	BufferPtr result = make_deferred<Buffer>(sizeof(HARDCODED_PFD_PAD));
 	//result->reserve(sizeof(pad));
-	std::copy_n(password.begin(), std::min(password.size(), sizeof(HARDCODED_PFD_PAD)), result.begin());
+	std::copy_n(password.begin(), std::min<types::size_type>(password.size(), sizeof(HARDCODED_PFD_PAD)), result.begin());
 	std::copy_n(std::begin(HARDCODED_PFD_PAD), sizeof(HARDCODED_PFD_PAD) - password.size(), result.begin() + password.size());
 	return result;
 }
@@ -103,7 +103,7 @@ BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, types::size_type key_le
 
 	RC4_KEY rc_key;
 	RC4_set_key(&rc_key, ValueConvertUtils::SafeConvert<int>(key_length), (unsigned char*) key.data());
-	RC4(&rc_key, data.size(), (unsigned char*) data.data(), (unsigned char*) result->data());
+	RC4(&rc_key, data.std_size(), (unsigned char*) data.data(), (unsigned char*) result->data());
 
 	return result;
 
@@ -146,7 +146,7 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
 		throw GeneralException("Unable to set decryption key");
 	}
 
-	AES_cbc_encrypt((unsigned char*) data.data() + AES_CBC_IV_LENGTH, (unsigned char*) result->data(), data.size() - AES_CBC_IV_LENGTH, &dec_key, (unsigned char*) iv.data(), AES_DECRYPT);
+	AES_cbc_encrypt((unsigned char*) data.data() + AES_CBC_IV_LENGTH, (unsigned char*) result->data(), data.std_size() - AES_CBC_IV_LENGTH, &dec_key, (unsigned char*) iv.data(), AES_DECRYPT);
 
 	return RemovePkcs7Padding(result, AES_CBC_BLOCK_SIZE);
 
@@ -185,7 +185,7 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
 		throw GeneralException("Unable to set encryption key");
 	}
 
-	AES_cbc_encrypt((unsigned char*) data.data(), (unsigned char*) buffer->data(), data.size(), &enc_key, (unsigned char*) iv.data(), AES_ENCRYPT);
+	AES_cbc_encrypt((unsigned char*) data.data(), (unsigned char*) buffer->data(), data.std_size(), &enc_key, (unsigned char*) iv.data(), AES_ENCRYPT);
 
 	buffer->insert(buffer.begin(), iv.begin(), iv.end());
 	return buffer;
@@ -197,8 +197,8 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
 
 }
 
-BufferPtr EncryptionUtils::AddPkcs7Padding(const Buffer& data, size_t block_size) {
-	size_t remaining = data.size() % block_size;
+BufferPtr EncryptionUtils::AddPkcs7Padding(const Buffer& data, types::size_type block_size) {
+	types::size_type remaining = data.size() % block_size;
 	if (0 == remaining) {
 		remaining = block_size;
 	}
@@ -213,7 +213,7 @@ BufferPtr EncryptionUtils::AddPkcs7Padding(const Buffer& data, size_t block_size
 	return result;
 }
 
-BufferPtr EncryptionUtils::RemovePkcs7Padding(const Buffer& data, size_t block_size) {
+BufferPtr EncryptionUtils::RemovePkcs7Padding(const Buffer& data, types::size_type block_size) {
 	do {
 		// Empty data are invalid
 		if (data.empty()) {
@@ -268,8 +268,8 @@ bool EncryptionUtils::CheckKey(
 
 	MD5_CTX ctx;
 	MD5_Init(&ctx);
-	MD5_Update(&ctx, input.data(), input.size());
-	MD5_Update(&ctx, owner_data.data(), owner_data.size());
+	MD5_Update(&ctx, input.data(), input.std_size());
+	MD5_Update(&ctx, owner_data.data(), owner_data.std_size());
 
 	auto permissions_value = permissions.GetIntegerValue();
 	uint32_t permissions_raw = reinterpret_cast<uint32_t&>(permissions_value);
@@ -280,11 +280,11 @@ bool EncryptionUtils::CheckKey(
 	permissions_array[3] = (permissions_raw >> 24) & 0xFF;
 
 	MD5_Update(&ctx, permissions_array, sizeof(permissions_array));
-	MD5_Update(&ctx, document_id.data(), document_id.size());
+	MD5_Update(&ctx, document_id.data(), document_id.std_size());
 	MD5_Final((unsigned char*) decryption_key_digest.data(), &ctx);
 
 	auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(key_length.GetIntegerValue() / 8);
-	size_t decryption_key_length = std::min(length_bytes, decryption_key_digest.size());
+	size_t decryption_key_length = std::min(length_bytes, decryption_key_digest.std_size());
 
 	BufferPtr compare_data;
 	if (revision >= 3) {
@@ -300,8 +300,8 @@ bool EncryptionUtils::CheckKey(
 		Buffer key_digest(MD5_DIGEST_LENGTH);
 
 		MD5_Init(&ctx);
-		MD5_Update(&ctx, hardcoded_pad.data(), hardcoded_pad.size());
-		MD5_Update(&ctx, document_id.data(), document_id.size());
+		MD5_Update(&ctx, hardcoded_pad.data(), hardcoded_pad.std_size());
+		MD5_Update(&ctx, document_id.data(), document_id.std_size());
 		MD5_Final((unsigned char*) key_digest.data(), &ctx);
 
 		BufferPtr key = make_deferred<Buffer>(length_bytes);
@@ -357,7 +357,7 @@ BufferPtr EncryptionUtils::GetRecipientKey
 		auto length = enveloped_data.Size();
 		for (decltype(length) i = 0; i < length; ++i) {
 			auto enveloped_bytes = enveloped_data.At(i);
-			SHA256_Update(&ctx, enveloped_bytes->GetValue()->data(), enveloped_bytes->GetValue()->size());
+			SHA256_Update(&ctx, enveloped_bytes->GetValue()->data(), enveloped_bytes->GetValue()->std_size());
 		}
 
 		SHA256_Final((unsigned char*) decrypted_key.data(), &ctx);
@@ -370,14 +370,14 @@ BufferPtr EncryptionUtils::GetRecipientKey
 		auto length = enveloped_data.Size();
 		for (decltype(length) i = 0; i < length; ++i) {
 			auto enveloped_bytes = enveloped_data.At(i);
-			SHA1_Update(&ctx, enveloped_bytes->GetValue()->data(), enveloped_bytes->GetValue()->size());
+			SHA1_Update(&ctx, enveloped_bytes->GetValue()->data(), enveloped_bytes->GetValue()->std_size());
 		}
 
 		SHA1_Final((unsigned char*) decrypted_key.data(), &ctx);
 	}
 
-	auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(length_bits.GetIntegerValue() / 8);
-	size_t decryption_key_length = std::min(length_bytes, decrypted_key.size());
+	auto length_bytes = ValueConvertUtils::SafeConvert<types::size_type>(length_bits.GetIntegerValue() / 8);
+	types::size_type decryption_key_length = std::min(length_bytes, decrypted_key.size());
 	return make_deferred<Buffer>(decrypted_key.begin(), decrypted_key.begin() + decryption_key_length);
 
 #else
@@ -540,7 +540,7 @@ BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer& pad_password,
 
 	// check owner key
 	Buffer password_digest(MD5_DIGEST_LENGTH);
-	MD5((unsigned char*) pad_password.data(), pad_password.size(), (unsigned char*) password_digest.data());
+	MD5((unsigned char*) pad_password.data(), pad_password.std_size(), (unsigned char*) password_digest.data());
 
 	BufferPtr encrypted_owner_data;
 	if (*revision >= 3) {
@@ -548,7 +548,7 @@ BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer& pad_password,
 		Buffer temporary_digest(MD5_DIGEST_LENGTH);
 
 		auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(length_bits->GetIntegerValue() / 8);
-		size_t password_length = std::min(length_bytes, password_digest.size());
+		auto password_length = std::min(length_bytes, password_digest.std_size());
 		for (int i = 0; i < 50; ++i) {
 			MD5_Init(&ctx);
 			MD5_Update(&ctx, password_digest.data(), password_length);

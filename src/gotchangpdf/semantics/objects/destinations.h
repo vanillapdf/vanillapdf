@@ -133,6 +133,7 @@ public:
 	typedef typename syntax::DictionaryObjectPtr::size_type size_type;
 	typedef typename syntax::DictionaryObjectPtr::reference reference;
 	typedef typename syntax::DictionaryObjectPtr::const_reference const_reference;
+	typedef typename syntax::DictionaryObjectPtr::difference_type difference_type;
 
 public:
 	explicit NamedDestinations(syntax::DictionaryObjectPtr root);

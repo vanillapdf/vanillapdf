@@ -25,6 +25,7 @@ public:
 	typedef typename list_type::size_type size_type;
 	typedef typename list_type::reference reference;
 	typedef typename list_type::const_reference const_reference;
+	typedef typename list_type::difference_type difference_type;
 
 public:
 	class Iterator : public BaseIterator<const_iterator>, public IWeakReferenceable {

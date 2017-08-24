@@ -10,7 +10,7 @@ public:
 	explicit OutputStream(std::shared_ptr<std::ostream> stream);
 
 	virtual void Write(const Buffer& data) override;
-	virtual void Write(const Buffer& data, size_t size) override;
+	virtual void Write(const Buffer& data, types::size_type size) override;
 	virtual void Write(const std::string& data) override;
 	virtual void Write(const char* str) override;
 	virtual void Write(char value) override;
