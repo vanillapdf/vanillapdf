@@ -144,18 +144,19 @@ DictionaryObjectPtr ParserBase::ReadDictionary() {
 	ReadTokenWithTypeSkip(Token::Type::DICTIONARY_BEGIN);
 	while (PeekTokenTypeSkip() != Token::Type::DICTIONARY_END) {
 		auto name = ReadDirectObjectWithType<NameObjectPtr>();
-		auto val = ReadDirectObject();
+		auto direct = ReadDirectObject();
 
-		if (val->GetType() == Object::Type::Null) {
+		if (direct->GetType() == Object::Type::Null) {
 			continue;
 		}
 
-		auto containable_ptr = dynamic_cast<ContainableObject*>(val.get());
-		if (nullptr == containable_ptr) {
-			throw ConversionExceptionFactory<ContainableObject>::Construct(val);
-		}
+		// Watch out! I am intentionally using ConvertUtils because
+		// object utils was trying to dereference object references.
+		// We just need cast the item without any other fancy mechanisms.
+		//auto containable = ObjectUtils::ConvertTo<ContainableObjectPtr>(direct);
 
-		dictionary->Insert(name, ContainableObjectPtr(containable_ptr));
+		auto containable = ConvertUtils<ObjectPtr>::ConvertTo<ContainableObjectPtr>(direct);
+		dictionary->Insert(name, containable);
 	}
 
 	ReadTokenWithTypeSkip(Token::Type::DICTIONARY_END);
@@ -261,7 +262,12 @@ MixedArrayObjectPtr ParserBase::ReadArray() {
 	ReadTokenWithTypeSkip(Token::Type::ARRAY_BEGIN);
 	while (PeekTokenTypeSkip() != Token::Type::ARRAY_END) {
 		auto direct = ReadDirectObject();
-		auto containable = ObjectUtils::ConvertTo<ContainableObjectPtr>(direct);
+		auto containable = ConvertUtils<ObjectPtr>::ConvertTo<ContainableObjectPtr>(direct);
+
+		// Watch out! I am intentionally using ConvertUtils because
+		// object utils was trying to dereference object references.
+		// We just need cast the item without any other fancy mechanisms.
+		//auto containable = ObjectUtils::ConvertTo<ContainableObjectPtr>(direct);
 
 		result->Append(containable);
 	}
