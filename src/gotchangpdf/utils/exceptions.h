@@ -37,8 +37,8 @@ public:
 	};
 
 public:
-	ExceptionBase(const std::string& msg);
-	ExceptionBase(const char * const & msg);
+	explicit ExceptionBase(const std::string& msg);
+	explicit ExceptionBase(const char * const & msg);
 
 	virtual const char * what() const noexcept override;
 	virtual Type code() const noexcept = 0;

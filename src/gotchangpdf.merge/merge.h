@@ -24,7 +24,7 @@ do { \
 	error_type __result__ = (fn); \
 	if (GOTCHANG_PDF_ERROR_SUCCES != __result__) \
 	{ \
-		printf("Function call \"%s\" has failed with result %d { %s:%d }\n", \
+		printf("Function call \"%s\" has failed with result %u { %s:%d }\n", \
 		#fn, __result__, __FILE__, __LINE__); \
 		assert(!"Operation failed"); \
 		return GOTCHANG_PDF_MERGE_ERROR_FAILURE; \
@@ -45,7 +45,7 @@ do { \
 	} \
 	else \
 	{ \
-		printf("Function call \"%s\" has failed with result %d { %s:%d }\n", \
+		printf("Function call \"%s\" has failed with result %u { %s:%d }\n", \
 		#eval, __result__, __FILE__, __LINE__); \
 		assert(!"Operation failed"); \
 		return GOTCHANG_PDF_MERGE_ERROR_FAILURE; \

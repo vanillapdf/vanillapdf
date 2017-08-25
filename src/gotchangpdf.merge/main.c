@@ -16,11 +16,8 @@ int main(int argc, char *argv[]) {
 	int merge_files_count = 0;
 
 	DocumentHandle document = NULL;
-	CatalogHandle catalog = NULL;
-	PageTreeHandle tree = NULL;
 
 	integer_type i = 0;
-	integer_type page_count = 0;
 
 #if (defined(DEBUG) && defined(COMPILER_MICROSOFT_VISUAL_STUDIO))
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);

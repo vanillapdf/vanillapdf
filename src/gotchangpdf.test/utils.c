@@ -27,7 +27,7 @@ error_type process_buffer(BufferHandle buffer, int nested) {
 
 	if (size >= SIZE_MAX) {
 		unsigned long long size_long_long = size;
-		printf("Buffer size is too big: %lld bytes\n", size_long_long);
+		printf("Buffer size is too big: %llu bytes\n", size_long_long);
 		return GOTCHANG_PDF_TEST_ERROR_FAILURE;
 	}
 
@@ -37,14 +37,14 @@ error_type process_buffer(BufferHandle buffer, int nested) {
 	local_string = (char*) calloc(sizeof(char), print_size + 1);
 	if (NULL == local_string) {
 		unsigned long long print_size_converted = print_size;
-		printf("Could not allocate memory: %lld bytes\n", print_size_converted + 1);
+		printf("Could not allocate memory: %llu bytes\n", print_size_converted + 1);
 		return GOTCHANG_PDF_TEST_ERROR_FAILURE;
 	}
 
 	memcpy(local_string, data, print_size);
 
 	print_spaces(nested + 1);
-	printf("Size: %lld\n", size_converted);
+	printf("Size: %llu\n", size_converted);
 	print_spaces(nested + 1);
 	printf("Data: %s\n", local_string);
 
@@ -120,20 +120,20 @@ error_type print_last_error() {
 
 	if (length >= SIZE_MAX) {
 		unsigned long long length_converted = length;
-		printf("Buffer size is too big: %lld bytes\n", length_converted);
+		printf("Buffer size is too big: %llu bytes\n", length_converted);
 		return GOTCHANG_PDF_TEST_ERROR_FAILURE;
 	}
 
 	message = (char*) calloc(sizeof(char), length + 1);
 	if (NULL == message) {
 		unsigned long long length_converted = length;
-		printf("Could not allocate memory: %lld bytes\n", length_converted + 1);
+		printf("Could not allocate memory: %llu bytes\n", length_converted + 1);
 		return GOTCHANG_PDF_TEST_ERROR_FAILURE;
 	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Errors_GetLastErrorMessage(message, length));
 
-	printf("Error %d: %s\n", error, message);
+	printf("Error %u: %s\n", error, message);
 
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }

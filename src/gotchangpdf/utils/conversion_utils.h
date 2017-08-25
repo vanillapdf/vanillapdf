@@ -119,7 +119,7 @@ private:
 				throw ConversionExceptionFactory<T>::Construct(obj);
 			}
 
-			return converted;
+			return T(converted);
 		}
 
 		static bool IsType(BaseT obj) {

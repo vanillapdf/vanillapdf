@@ -399,7 +399,6 @@ void Document::AppendDocument(DocumentPtr other) {
 
 	auto other_page_count = other_pages->PageCount();
 
-	std::vector<ObjectPtr> merge_objects;
 	for (decltype(other_page_count) i = 0; i < other_page_count; ++i) {
 		auto other_page = other_pages->Page(i + 1);
 

@@ -44,8 +44,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Append(ArrayObjectHan
 	try
 	{
 		auto containable_ptr = dynamic_cast<ContainableObject*>(data);
-		if (nullptr == containable_ptr)
+		if (nullptr == containable_ptr) {
 			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
+		}
 
 		obj->Append(containable_ptr);
 		return GOTCHANG_PDF_ERROR_SUCCES;
@@ -62,8 +63,9 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Insert(ArrayObjectHan
 	try
 	{
 		auto containable_ptr = dynamic_cast<ContainableObject*>(data);
-		if (nullptr == containable_ptr)
+		if (nullptr == containable_ptr) {
 			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
+		}
 
 		obj->Insert(containable_ptr, at);
 		return GOTCHANG_PDF_ERROR_SUCCES;

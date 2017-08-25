@@ -260,13 +260,10 @@ MixedArrayObjectPtr ParserBase::ReadArray() {
 	MixedArrayObjectPtr result;
 	ReadTokenWithTypeSkip(Token::Type::ARRAY_BEGIN);
 	while (PeekTokenTypeSkip() != Token::Type::ARRAY_END) {
-		auto val = ReadDirectObject();
-		auto containable_ptr = dynamic_cast<ContainableObject*>(val.get());
-		if (nullptr == containable_ptr) {
-			throw ConversionExceptionFactory<ContainableObject>::Construct(val);
-		}
+		auto direct = ReadDirectObject();
+		auto containable = ObjectUtils::ConvertTo<ContainableObjectPtr>(direct);
 
-		result->Append(containable_ptr);
+		result->Append(containable);
 	}
 
 	ReadTokenWithTypeSkip(Token::Type::ARRAY_END);
