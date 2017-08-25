@@ -527,6 +527,6 @@ install(TARGETS gotchangpdf
   DESTINATION lib
 )
 
-install(FILES ${INCLUDE_HEADERS}
+install(FILES ${GOTCHANGPDF_INCLUDE_HEADERS}
   DESTINATION "include\\gotchangpdf"
 )
