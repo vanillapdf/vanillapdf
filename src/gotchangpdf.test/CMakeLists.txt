@@ -54,10 +54,3 @@ add_custom_command(
 	$<TARGET_FILE:gotchangpdf>
 	$<TARGET_FILE_DIR:gotchangpdf.test>
 )
-
-add_custom_command(
-	TARGET gotchangpdf.test POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different
-	$<TARGET_FILE:zlib>
-	$<TARGET_FILE_DIR:gotchangpdf.test>
-)

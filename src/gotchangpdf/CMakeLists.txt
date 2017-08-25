@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 2.6)
 project(gotchangpdf CXX)
 
 include_directories("${CMAKE_SOURCE_DIR}/include")
-include_directories("${CMAKE_SOURCE_DIR}/lib/zlib")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(GOTCHANGPDF_PRECOMPILED_SOURCE
@@ -480,6 +479,7 @@ add_definitions("-DGOTCHANG_PDF_VERSION_PATCH=${GOTCHANG_PDF_VERSION_PATCH}")
 add_definitions("-DGOTCHANG_PDF_VERSION_BUILD=${GOTCHANG_PDF_VERSION_BUILD}")
 
 find_package(OpenSSL)
+find_package(ZLIB)
 find_package(JPEG)
 
 if (OPENSSL_FOUND)
@@ -487,7 +487,7 @@ if (OPENSSL_FOUND)
 	set(GOTCHANGPDF_LIBS ${OPENSSL_LIBRARIES} ${GOTCHANGPDF_LIBS})
 	add_definitions("-DGOTCHANG_PDF_HAVE_OPENSSL")
 	
-	message(STATUS "OpenSSL ${OPENSSL_VERSION} was found in ${OPENSSL_ROOT_DIR}")
+	message(STATUS "OpenSSL ${OPENSSL_VERSION} was found")
 else (OPENSSL_FOUND)
 	message(WARNING "Compiling without OpenSSL support. Work with encrypted document will be prohibited")
 endif (OPENSSL_FOUND)
@@ -510,16 +510,22 @@ else (JPEG_FOUND)
 	message(STATUS "Compiling without JPEG support. JPEG compression will become unavailable")
 endif (JPEG_FOUND)
 
-# zlib is now included in sources
-set(GOTCHANGPDF_LIBS zlib ${GOTCHANGPDF_LIBS})
-add_definitions("-DGOTCHANG_PDF_HAVE_ZLIB")
+if (ZLIB_FOUND)
+	include_directories(${ZLIB_INCLUDE_DIRS})
+	set(GOTCHANGPDF_LIBS ${ZLIB_LIBRARIES} ${GOTCHANGPDF_LIBS})
+	add_definitions("-DGOTCHANG_PDF_HAVE_ZLIB")
 
-add_custom_command(
-	TARGET gotchangpdf POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different
-	$<TARGET_FILE:zlib>
-	$<TARGET_FILE_DIR:gotchangpdf>
-)
+	# add_custom_command(
+		# TARGET gotchangpdf POST_BUILD
+		# COMMAND ${CMAKE_COMMAND} -E copy_if_different
+		# ${ZLIB_LIBRARIES}
+		# $<TARGET_FILE_DIR:gotchangpdf>
+	# )
+
+	message(STATUS "zlib ${ZLIB_VERSION_STRING} was found")
+else (ZLIB_FOUND)
+	message(STATUS "Compiling without zlib support. zlib decompression will become unavailable")
+endif (ZLIB_FOUND)
 
 target_link_libraries(gotchangpdf ${GOTCHANGPDF_LIBS})
 
