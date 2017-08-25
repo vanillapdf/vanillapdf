@@ -1,11 +1,14 @@
-#Build files
+# Build files
 /build/
 /lib/
-/cmake_build/
 /obj/
 /ipch/
 /.vs/
 
+# VS packages
+/packages/
+
+# Visual studio specific
 *.suo
 *.sdf
 *.opensdf
@@ -14,9 +17,9 @@
 *.opendb
 *.VC.db
 
-#Test files
+# Test files
 !/test/*.pdf
 
-#Log files
+# Log files
 /log/**/*.log
 /scripts/**/*.log
