@@ -1,0 +1,57 @@
+#include "precompiled.h"
+
+#include "syntax/files/file_writer.h"
+
+#include "gotchangpdf/c_file_writer.h"
+#include "c_helper.h"
+
+using namespace gotchangpdf;
+using namespace gotchangpdf::syntax;
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Create(FileWriterHandle* result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		FileWriterPtr writer;
+		auto ptr = writer.AddRefGet();
+		*result = reinterpret_cast<FileWriterHandle>(ptr);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Write(FileWriterHandle handle, FileHandle source, FileHandle destination) {
+	FileWriter* writer = reinterpret_cast<FileWriter*>(handle);
+	File* source_file = reinterpret_cast<File*>(source);
+	File* destination_file = reinterpret_cast<File*>(destination);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(writer);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(source_file);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(destination_file);
+
+	try {
+		writer->Write(source_file, destination_file);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_WriteIncremental(FileWriterHandle handle, FileHandle source, FileHandle destination) {
+	FileWriter* writer = reinterpret_cast<FileWriter*>(handle);
+	File* source_file = reinterpret_cast<File*>(source);
+	File* destination_file = reinterpret_cast<File*>(destination);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(writer);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(source_file);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(destination_file);
+
+	try {
+		writer->WriteIncremental(source_file, destination_file);
+		return GOTCHANG_PDF_ERROR_SUCCES;
+	} CATCH_GOTCHNGPDF_EXCEPTIONS
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Release(FileWriterHandle handle) {
+	FileWriter* writer = reinterpret_cast<FileWriter*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(writer);
+
+	writer->Release();
+	return GOTCHANG_PDF_ERROR_SUCCES;
+}

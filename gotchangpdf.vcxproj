@@ -38,6 +38,7 @@
     <ClInclude Include="include\gotchangpdf\c_export.h" />
     <ClInclude Include="include\gotchangpdf\c_fields.h" />
     <ClInclude Include="include\gotchangpdf\c_file.h" />
+    <ClInclude Include="include\gotchangpdf\c_file_writer.h" />
     <ClInclude Include="include\gotchangpdf\c_font.h" />
     <ClInclude Include="include\gotchangpdf\c_font_map.h" />
     <ClInclude Include="include\gotchangpdf\c_handles.h" />
@@ -218,6 +219,7 @@
     <ClCompile Include="src\gotchangpdf\implementation\c_errors.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_fields.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_file.cpp" />
+    <ClCompile Include="src\gotchangpdf\implementation\c_file_writer.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_font.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_font_map.cpp" />
     <ClCompile Include="src\gotchangpdf\implementation\c_indirect_object_reference.cpp" />

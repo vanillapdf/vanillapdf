@@ -30,6 +30,7 @@ set(GOTCHANGPDF_C_IMPLEMENTATION_SOURCES
 	implementation/c_errors.cpp
 	implementation/c_fields.cpp
 	implementation/c_file.cpp
+	implementation/c_file_writer.cpp
 	implementation/c_font.cpp
 	implementation/c_font_map.cpp
 	implementation/c_indirect_object_reference.cpp
@@ -316,6 +317,7 @@ set(GOTCHANGPDF_INCLUDE_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_export.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_fields.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_file.h"
+	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_file_writer.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_font.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_font_map.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_handles.h"
