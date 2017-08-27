@@ -36,9 +36,11 @@ set(GOTCHANGPDF_TEST_LIBS
 )
 
 if (CMAKE_COMPILER_IS_GNUCC)
+
 	# C executables does not have access to c++ standard library by default
 	# We need to explicitly pull dependencies
 	set(GOTCHANGPDF_TEST_LIBS ${GOTCHANGPDF_TEST_LIBS} -lstdc++)
+
 endif (CMAKE_COMPILER_IS_GNUCC)
 
 add_definitions("-DGOTCHANG_PDF_TEST_VERSION_MAJOR=${GOTCHANG_PDF_VERSION_MAJOR}")
@@ -47,10 +49,3 @@ add_definitions("-DGOTCHANG_PDF_TEST_VERSION_PATCH=${GOTCHANG_PDF_VERSION_PATCH}
 add_definitions("-DGOTCHANG_PDF_TEST_VERSION_BUILD=${GOTCHANG_PDF_VERSION_BUILD}")
 
 target_link_libraries(gotchangpdf.test ${GOTCHANGPDF_TEST_LIBS})
-
-add_custom_command(
-	TARGET gotchangpdf.test POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different
-	$<TARGET_FILE:gotchangpdf>
-	$<TARGET_FILE_DIR:gotchangpdf.test>
-)
