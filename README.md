@@ -1,14 +1,14 @@
 # GotchangPDF
 
-** Cross-platform toolkit for creating and manipulating existing PDF documents **
+**Cross-platform toolkit for creating and manipulating existing PDF documents**
 
 ## API Documentation
 
-Please enjoy exploring the extensive summary about ** Application Programming Interface ** on our [website](https://gotchangpdf.com/doc/index.html).
+Please enjoy exploring the extensive summary about **Application Programming Interface** on our [website](https://gotchangpdf.com/doc/index.html).
 
 ## FAQ
 
-TODO Answer some useful questions
+**TODO Answer some useful questions**
 
 ## Contributing
 
@@ -21,7 +21,7 @@ For detailed guide on how to contribute visit [here](CONTRIBUTING.md).
 Copyright &copy; 2013-2017 by 
 [Juraj Zikmund](mailto:jur.zikmund@gmail.com).
 
-TODO Proprietary license summary
+**TODO Proprietary license summary**
 
 See the [our license](LICENSE.md) for more details.
 

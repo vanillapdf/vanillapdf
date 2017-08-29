@@ -4,7 +4,7 @@ First of all, thank you for your interest in GotchangPDF! We'd love to accept yo
 
 ## How to report a bug
 
-TODO public issue tracker - Wordpress forum?
+**TODO public issue tracker - Wordpress forum?**
 
 Create a new thread at the "public issue tracker".
 If you are already a customer with paid support,
@@ -31,7 +31,7 @@ send me an [e-mail](mailto:jur.zikmund@gmail.com).
 
 ## Pull requests
 
-TODO Contributor License Agreement
+**TODO Contributor License Agreement**
 
 Before contemplating having a "substantial code contribution" please discuss it with the team.
 
