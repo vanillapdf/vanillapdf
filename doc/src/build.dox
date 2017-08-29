@@ -1,0 +1,117 @@
+/*!
+\page build Build
+\tableofcontents
+
+\section dependencies Project dependencies
+
+<p><b>CMake</b></p>
+This project uses CMake (<https://cmake.org/>) framework as a cross-platform build tool.<br>
+Latest version is available at <https://cmake.org/download/>.
+
+<p><b>OpenSSL</b></p>
+Building OpenSSL from source is out of scope of this guide.<br />
+For detailed information about build process visit <a href="https://www.openssl.org/">OpenSSL official page</a>.<br>
+You can find pre-built binaries <a href="https://wiki.openssl.org/index.php/Binaries">here</a>.
+
+<p><b>zlib</b></p>
+Building zlib from source is out of scope of this guide.<br />
+For detailed information about build process visit <a href="https://zlib.net/">zlib official page</a>.<br>
+You can find pre-built binaries <a href="http://gnuwin32.sourceforge.net/packages/zlib.htm">here</a>.
+
+<p><b>libjpeg</b></p>
+Building libjpeg from source is out of scope of this guide.<br>
+For detailed information about build process visit <a href="http://libjpeg.sourceforge.net/">libjpeg official page</a>.<br>
+You can find pre-built binaries <a href="http://gnuwin32.sourceforge.net/packages/jpeg.htm">here</a>.
+
+\section build_win Compiling from source on Windows
+
+Alternatively, you can compile library \ref build_unix "the UNIX way" using 
+<a href="https://en.wikipedia.org/wiki/Cygwin">Cygwin</a> or <a href="http://www.mingw.org/">MinGW</a>.
+
+Download source tarball and put it somewhere (e.g. use <code>c:\\tools</code>)
+
+Now start a visual studio native command shell (for either x86 or x64) and type
+
+\code
+cd c:\tools
+tar zxvf gotchangpdf-x.y.z.src.tar.gz
+\endcode
+
+to unpack the sources (you can obtain \c tar from e.g. http://gnuwin32.sourceforge.net/packages.html).
+Alternatively you can use an unpack program, like 7-Zip (see http://www.7-zip.org)
+or use the build in unpack feature of modern Windows systems).
+
+Now your environment is setup to generate the required project files for \c gotchangpdf.
+
+cd into the \c gotchangpdf-x.y.z directory, create and cd to a build directory
+
+\code
+mkdir build
+cd build
+cmake -G "Visual Studio 12 2013" ..
+\endcode
+
+\section install_win Installing the binaries on Windows
+
+Gotchangpdf comes as a self-installing archive, so installation is extremely simple.
+Just follow the dialogs.
+
+\section build_unix Compiling from source on UNIX
+
+<ol>
+<li>Installing dependencies</li>
+\code
+sudo apt-get install cmake
+sudo apt-get install libjpeg-dev
+sudo apt-get install libssl-dev
+sudo apt-get install zlib1g-dev
+\endcode
+
+<li>Unpack the archive, unless you already have done that:</li>
+\code
+unzip gotchangpdf-master.zip	# uncompress the archive
+\endcode
+
+<li>Create a build directory:</li>
+\code
+cd gotchangpdf-master
+mkdir build
+cd build
+\endcode
+
+<li>Run CMake with the makefile generator:</li>
+\code
+cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+\endcode
+
+<li>Compile the program by running make:</li>
+\code
+make
+\endcode
+
+<li>Verify the library sanity:</li>
+\code
+cd ../scripts
+python run_test.py		# executable path is broken
+All tests have finished successfully
+\endcode
+
+</ol>
+
+\section install_unix Installing the binaries on UNIX
+
+After the compilation of the source code or downloading the binary distribution for UNIX, type:
+
+\code
+make install
+\endcode
+
+Binaries are installed into the directory <code>\<prefix\>/bin</code>.
+
+<code>\<prefix\></code> defaults to <code>/usr/local</code> but can be changed with 
+the `--prefix` option of the configure script. 
+
+If you have a RPM or DEB package, then please follow the 
+standard installation procedure that is required for these packages. 
+
+*/

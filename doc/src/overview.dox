@@ -1,0 +1,33 @@
+/*! 
+\page overview Overview
+\tableofcontents
+
+The first part forms a user manual:
+
+<ul>
+<li>Section \ref build discusses how to download, compile and install gotchangpdf for your platform.
+</ul>
+
+The second part forms a reference manual:
+
+<ul>
+<li>Section \ref features presents an overview of what gotchangpdf can do.
+</ul>
+
+The third part provides information for developers:
+
+<ul>
+<li>Section \ref architecture gives a global overview of how gotchangpdf is internally structured.
+</ul>
+
+<h2>License</h2>
+
+Copyright &copy; 2013-2017 by 
+[Juraj Zikmund](mailto:jur.zikmund@gmail.com).
+
+TODO Proprietary license summary
+
+Documents produced by gotchangpdf are derivative works derived from the
+input used in their production; they are not affected by this license.
+
+*/

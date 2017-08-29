@@ -1,0 +1,52 @@
+/*!
+\page architecture Architecture
+\tableofcontents
+
+\section lib_interface Library interface
+
+C interface
+error codes
+Handles
+
+\section exceptions Exceptions
+
+Uses exceptions only internally
+Catches all of them at the C interface and reports error codes
+
+\section object_ownership Object ownership
+
+Reference counting
+Always release object when received via output parameter
+
+\section layer_overview Layer model overview
+
+Syntax layer
+Semantics layer
+
+\section file_layer Syntactic file layer
+
+IO Streams
+Tokens
+Objects
+Cross-reference tables
+
+\section document_layer Semantic document layer
+
+Catalog
+Pages
+
+\section contents_layer Page contents
+
+Content instructions
+
+\section function_callbacks Function callbacks
+
+\ref SigningKeyHandle
+
+\section dependencies Dependencies
+
+OpenSSL
+libjpeg
+zlib
+
+*/
