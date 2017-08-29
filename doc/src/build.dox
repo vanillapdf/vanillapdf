@@ -2,7 +2,7 @@
 \page build Build
 \tableofcontents
 
-\section dependencies Project dependencies
+\section build_deps Project dependencies
 
 <p><b>CMake</b></p>
 This project uses CMake (<https://cmake.org/>) framework as a cross-platform build tool.<br>

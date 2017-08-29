@@ -43,7 +43,7 @@ Content instructions
 
 \ref SigningKeyHandle
 
-\section dependencies Dependencies
+\section arch_deps Dependencies
 
 OpenSSL
 libjpeg
