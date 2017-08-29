@@ -45,6 +45,10 @@ extern "C"
 
 	/** @} */
 
+	// This command suppresses warning for undocumented members
+	// Name constants does not have a context-less meaning
+	//! \{
+
 	/**
 	* \addtogroup NameConstants
 	* @{
@@ -541,6 +545,9 @@ extern "C"
 	GOTCHANG_PDF_API extern const struct NameObjectHandleTag* NameConstant_Cert;
 
 	/** @} */
+
+	// This command ends suppress warning for undocumented members
+	//! \}
 
 #ifdef __cplusplus
 };
