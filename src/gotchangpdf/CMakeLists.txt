@@ -448,6 +448,10 @@ add_library(gotchangpdf SHARED
 	${GOTCHANGPDF_RESOURCE_FILES}
 )
 
+set_target_properties(gotchangpdf PROPERTIES
+  PUBLIC_HEADER "${GOTCHANGPDF_INCLUDE_HEADERS}"
+)
+
 # Add precompiled header optimization
 if(MSVC)
 	get_filename_component(PrecompiledBasename ${GOTCHANGPDF_PRECOMPILED_HEADER} NAME_WE)
@@ -531,10 +535,70 @@ endif (ZLIB_FOUND)
 
 target_link_libraries(gotchangpdf ${GOTCHANGPDF_LIBS})
 
+# Place for install targets
+
+# System libs such as msvcp and vcruntime
+include(InstallRequiredSystemLibraries)
+
+# Project install targets
 install(TARGETS gotchangpdf
-  DESTINATION lib
+	RUNTIME DESTINATION bin
+	LIBRARY DESTINATION lib
+	ARCHIVE DESTINATION lib
+	PUBLIC_HEADER DESTINATION "include\\gotchangpdf"
 )
 
-install(FILES ${GOTCHANGPDF_INCLUDE_HEADERS}
-  DESTINATION "include\\gotchangpdf"
-)
+# Install dependent libraries on windows
+if(WIN32)
+
+	# OpenSSL dependent libraries
+	if (OPENSSL_FOUND)
+		# TODO search module for binaries
+		set(OPENSSL_CRYPTO_BINARY_DEBUG CACHE FILEPATH "")
+		set(OPENSSL_CRYPTO_BINARY_RELEASE CACHE FILEPATH "")
+
+		# Set current configuration binary file
+		if (CONFIG:debug)
+			set(OPENSSL_CRYPTO_BINARY ${OPENSSL_CRYPTO_BINARY_DEBUG})
+		else(CONFIG:debug)
+			set(OPENSSL_CRYPTO_BINARY ${OPENSSL_CRYPTO_BINARY_RELEASE})
+		endif(CONFIG:debug)
+		
+		# Install dependency into output package
+		install(FILES ${OPENSSL_CRYPTO_BINARY} DESTINATION bin)
+	endif (OPENSSL_FOUND)
+
+	# libjpeg dependent libraries
+	if (JPEG_FOUND)
+		# TODO search module for binaries
+		set(JPEG_BINARY_DEBUG CACHE FILEPATH "")
+		set(JPEG_BINARY_RELEASE CACHE FILEPATH "")
+
+		# Set current configuration binary file
+		if (CONFIG:debug)
+			set(JPEG_BINARY ${JPEG_BINARY_DEBUG})
+		else(CONFIG:debug)
+			set(JPEG_BINARY ${JPEG_BINARY_RELEASE})
+		endif(CONFIG:debug)
+		
+		# Install dependency into output package
+		install(FILES ${JPEG_BINARY} DESTINATION bin)
+	endif (JPEG_FOUND)
+
+	# zlib dependent libraries
+	if (ZLIB_FOUND)
+		# TODO search module for binaries
+		set(ZLIB_BINARY_DEBUG CACHE FILEPATH "")
+		set(ZLIB_BINARY_RELEASE CACHE FILEPATH "")
+		
+		# Set current configuration binary file
+		if (CONFIG:debug)
+			set(ZLIB_BINARY ${ZLIB_BINARY_DEBUG})
+		else(CONFIG:debug)
+			set(ZLIB_BINARY ${ZLIB_BINARY_RELEASE})
+		endif(CONFIG:debug)
+		
+		# Install dependency into output package
+		install(FILES ${ZLIB_BINARY} DESTINATION bin)
+	endif (ZLIB_FOUND)
+endif(WIN32)
