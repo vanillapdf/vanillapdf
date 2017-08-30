@@ -1,7 +1,7 @@
 # Require minimum CMAKE version
 cmake_minimum_required(VERSION 2.6)
 
-project(gotchangpdf.test)
+project(gotchangpdf.test LANGUAGES C)
 
 include_directories("${CMAKE_SOURCE_DIR}/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
