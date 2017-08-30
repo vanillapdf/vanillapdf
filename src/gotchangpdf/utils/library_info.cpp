@@ -15,7 +15,7 @@
 #endif
 
 #ifndef GOTCHANG_PDF_VERSION_BUILD
-#define GOTCHANG_PDF_VERSION_BUILD 0
+	#define GOTCHANG_PDF_VERSION_BUILD 0
 #endif 
 
 namespace gotchangpdf {
