@@ -13,7 +13,6 @@
 *.sdf
 *.opensdf
 *.user
-*.filters
 *.opendb
 *.VC.db
 

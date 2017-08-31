@@ -1,0 +1,1013 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\include">
+      <UniqueIdentifier>{bb6d11bc-8da0-40f1-aa3d-1d357b4f1f53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\syntax">
+      <UniqueIdentifier>{bf692f3c-0320-436e-b74f-f012a9d10f93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\semantics">
+      <UniqueIdentifier>{d6ffae27-7c89-4847-a141-5295c25d4f09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\syntax\exceptions">
+      <UniqueIdentifier>{872fc8c6-9fb8-43b7-a409-f5af8544de32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\syntax\files">
+      <UniqueIdentifier>{ba8e24fe-fe31-48b4-a4a2-dabd1104ab2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\syntax\objects">
+      <UniqueIdentifier>{88a47164-eb77-4776-baee-309eadbc1006}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\syntax\parsers">
+      <UniqueIdentifier>{5016d372-65b5-47e4-8ac6-a442fd6c0a8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\syntax\utils">
+      <UniqueIdentifier>{874140be-df35-4551-b070-ba85adee9f80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\implementation">
+      <UniqueIdentifier>{1f94a98e-5dee-4897-b9d0-5b357c32e5dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\syntax">
+      <UniqueIdentifier>{5924c3ab-cd3b-4134-befa-4915268b931a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\semantics">
+      <UniqueIdentifier>{76883a4b-15b2-48b0-a1f9-7956676a5b86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\syntax\exceptions">
+      <UniqueIdentifier>{c81ac2ff-9c88-4e4c-a972-7ee155c9bcad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\syntax\files">
+      <UniqueIdentifier>{eaffc562-9ac2-42c5-a6c3-9849d5a1f1de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\syntax\utils">
+      <UniqueIdentifier>{5f9309a6-f945-4e9d-9eaf-3786af546b26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\syntax\parsers">
+      <UniqueIdentifier>{70029730-6afb-4c3b-8ad7-597fb0d8cd93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\syntax\objects">
+      <UniqueIdentifier>{02b6c0f0-da69-411d-8a1c-6a771c18911e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\semantics\objects">
+      <UniqueIdentifier>{47f0ff24-bdf2-4365-9ee8-628304b9e544}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\syntax\filters">
+      <UniqueIdentifier>{32917dc7-cb7f-4c5b-9d7e-0c919436538f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\syntax\filters">
+      <UniqueIdentifier>{6f7b287a-015b-4cbf-b7bb-72e66dbcb7c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\semantics\utils">
+      <UniqueIdentifier>{6c462ca1-e4d4-44af-bbb2-78335942b844}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\semantics\utils">
+      <UniqueIdentifier>{332f4604-ef23-4247-b55b-35cf5cf34185}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\contents">
+      <UniqueIdentifier>{d8e31038-53bd-4cd0-a8d9-a17ad6c2a182}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\utils">
+      <UniqueIdentifier>{77b4541e-7883-4685-94d4-a8168c6bd834}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utils">
+      <UniqueIdentifier>{e7bfcc4d-db58-45e6-a46a-63907181bab2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\contents">
+      <UniqueIdentifier>{d29c8a82-531f-44e7-baa4-d136f6d8730d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\utils\streams">
+      <UniqueIdentifier>{d27a1e3a-6421-405c-801d-f55602bbb212}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utils\streams">
+      <UniqueIdentifier>{9be969c5-0504-4507-97d0-d52d89513136}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\semantics\objects">
+      <UniqueIdentifier>{5e795049-31b5-41ac-8f92-21f28a2f472a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\gotchangpdf\contents\content_fwd.h">
+      <Filter>Header Files\contents</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\contents\content_stream_instruction_base.h">
+      <Filter>Header Files\contents</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\contents\content_stream_objects.h">
+      <Filter>Header Files\contents</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\contents\content_stream_operation_base.h">
+      <Filter>Header Files\contents</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\contents\content_stream_operation_generic.h">
+      <Filter>Header Files\contents</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\contents\content_stream_operations.h">
+      <Filter>Header Files\contents</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\contents\content_stream_operator_base.h">
+      <Filter>Header Files\contents</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\contents\content_stream_operators.h">
+      <Filter>Header Files\contents</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\contents\content_stream_parser.h">
+      <Filter>Header Files\contents</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\contents\content_utils.h">
+      <Filter>Header Files\contents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_annotations.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_array_object.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_boolean_object.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_buffer.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_catalog.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_character_map.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_contents.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_date.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_destinations.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_developer_extensions.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_dictionary_object.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_digital_signature.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_document.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_document_info.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_document_signature_settings.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_encryption.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_errors.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_export.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_fields.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_file.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_file_writer.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_font.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_font_map.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_gotchangpdf_api.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_handles.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_indirect_object_reference.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_integer_object.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_interactive_forms.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_library_info.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_logging.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_message_digest_algorithm.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_name_object.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_null_object.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_object.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_outline.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_page_labels.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_page_object.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_page_tree.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_pdf_version.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_pkcs12_key.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_platform.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_real_object.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_rectangle.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_resource_dictionary.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_signing_key.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_stream_object.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_string_object.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_types.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_unknown_interface.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_values.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_viewer_preferences.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gotchangpdf\c_xref.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\implementation\c_helper.h">
+      <Filter>Source Files\implementation</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\annotations.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\catalog.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\character_map.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\content_stream.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\contents.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\date.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\destinations.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\developer_extensions.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\digital_signature.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\document.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\document_info.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\fields.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\font.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\high_level_object.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\interactive_forms.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\name_dictionary.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\outline.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\page_labels.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\page_node_base.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\page_object.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\page_tree.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\page_tree_node.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\rectangle.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\resource_dictionary.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\tree.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\objects\viewer_preferences.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\utils\document_signature_settings.h">
+      <Filter>Header Files\semantics\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\utils\document_signer.h">
+      <Filter>Header Files\semantics\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\utils\semantic_exceptions.h">
+      <Filter>Header Files\semantics\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\utils\semantic_utils.h">
+      <Filter>Header Files\semantics\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\semantics\utils\semantics_fwd.h">
+      <Filter>Header Files\semantics\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\exceptions\syntax_exceptions.h">
+      <Filter>Header Files\syntax\exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\files\file.h">
+      <Filter>Header Files\syntax\files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\files\file_writer.h">
+      <Filter>Header Files\syntax\files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\files\header.h">
+      <Filter>Header Files\syntax\files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\files\xref.h">
+      <Filter>Header Files\syntax\files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\files\xref_chain.h">
+      <Filter>Header Files\syntax\files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\files\xref_entry.h">
+      <Filter>Header Files\syntax\files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\filters\ascii_85_decode_filter.h">
+      <Filter>Header Files\syntax\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\filters\ascii_hex_decode_filter.h">
+      <Filter>Header Files\syntax\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\filters\dct_decode_filter.h">
+      <Filter>Header Files\syntax\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\filters\filter.h">
+      <Filter>Header Files\syntax\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\filters\flate_decode_filter.h">
+      <Filter>Header Files\syntax\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\objects\array_object.h">
+      <Filter>Header Files\syntax\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\objects\boolean_object.h">
+      <Filter>Header Files\syntax\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\objects\containable.h">
+      <Filter>Header Files\syntax\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\objects\dictionary_object.h">
+      <Filter>Header Files\syntax\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\objects\indirect_object_reference.h">
+      <Filter>Header Files\syntax\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\objects\integer_object.h">
+      <Filter>Header Files\syntax\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\objects\mixed_array_object.h">
+      <Filter>Header Files\syntax\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\objects\name_object.h">
+      <Filter>Header Files\syntax\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\objects\null_object.h">
+      <Filter>Header Files\syntax\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\objects\numeric_object.h">
+      <Filter>Header Files\syntax\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\objects\object.h">
+      <Filter>Header Files\syntax\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\objects\objects.h">
+      <Filter>Header Files\syntax\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\objects\real_object.h">
+      <Filter>Header Files\syntax\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\objects\stream_object.h">
+      <Filter>Header Files\syntax\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\objects\string_object.h">
+      <Filter>Header Files\syntax\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\character_map_data.h">
+      <Filter>Header Files\syntax\parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\lexical_tree.h">
+      <Filter>Header Files\syntax\parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\object_stream_entry.h">
+      <Filter>Header Files\syntax\parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\parser.h">
+      <Filter>Header Files\syntax\parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\parser_interface.h">
+      <Filter>Header Files\syntax\parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\reverse_parser.h">
+      <Filter>Header Files\syntax\parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\reverse_tokenizer.h">
+      <Filter>Header Files\syntax\parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\token.h">
+      <Filter>Header Files\syntax\parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\token_dictionary.h">
+      <Filter>Header Files\syntax\parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\parsers\tokenizer.h">
+      <Filter>Header Files\syntax\parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\utils\encryption.h">
+      <Filter>Header Files\syntax\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\utils\object_utils.h">
+      <Filter>Header Files\syntax\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\utils\output_pointer.h">
+      <Filter>Header Files\syntax\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\utils\serialization_override_attribute.h">
+      <Filter>Header Files\syntax\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\syntax\utils\syntax_fwd.h">
+      <Filter>Header Files\syntax\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\attribute_interface.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\attribute_list.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\base_iterator.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\buffer.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\character.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\constants.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\conversion_utils.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\custom_size_allocator.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\custom_size_vector.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\deferred.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\encryption_key_interface.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\errors.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\exceptions.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\library_info.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\log.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\math_utils.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\message_digest_algorithm.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\modify_observer_interface.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\observable_interface.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\other_utils.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\pdf_version.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\pkcs12_key.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\signing_key_interface.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\stack_allocator.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\template_utils.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\time_utils.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\unknown_interface.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\util.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\utils_fwd.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\zlib_wrapper.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\streams\input_output_stream.h">
+      <Filter>Header Files\utils\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\streams\input_output_stream_interface.h">
+      <Filter>Header Files\utils\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\streams\input_reverse_stream.h">
+      <Filter>Header Files\utils\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\streams\input_stream.h">
+      <Filter>Header Files\utils\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\streams\input_stream_interface.h">
+      <Filter>Header Files\utils\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\streams\output_stream.h">
+      <Filter>Header Files\utils\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\streams\output_stream_interface.h">
+      <Filter>Header Files\utils\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\utils\streams\ranged_stream_buffer.h">
+      <Filter>Header Files\utils\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gotchangpdf\precompiled.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unistd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\gotchangpdf\contents\content_stream_objects.cpp">
+      <Filter>Source Files\contents</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\contents\content_stream_operation_generic.cpp">
+      <Filter>Source Files\contents</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\contents\content_stream_operations.cpp">
+      <Filter>Source Files\contents</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\contents\content_stream_parser.cpp">
+      <Filter>Source Files\contents</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_annotations.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_array_object.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_boolean_object.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_buffer.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_catalog.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_character_map.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_contents.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_date.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_destinations.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_developer_extensions.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_dictionary_object.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_digital_signature.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_document.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_document_info.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_document_signature_settings.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_encryption.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_errors.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_fields.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_file.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_file_writer.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_font.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_font_map.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_indirect_object_reference.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_integer_object.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_interactive_forms.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_library_info.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_logging.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_name_object.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_null_object.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_object.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_outline.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_page_labels.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_page_object.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_page_tree.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_pkcs12_key.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_real_object.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_rectangle.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_resource_dictionary.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_signing_key.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_stream_object.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_string_object.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_unknown_interface.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_values.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_viewer_preferences.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\implementation\c_xref.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\annotations.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\catalog.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\character_map.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\content_stream.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\contents.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\date.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\destinations.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\developer_extensions.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\digital_signature.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\document.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\document_info.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\fields.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\font.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\interactive_forms.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\name_dictionary.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\outline.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\page_labels.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\page_node_base.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\page_object.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\page_tree.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\page_tree_node.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\rectangle.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\resource_dictionary.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\tree.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\objects\viewer_preferences.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\utils\document_signature_settings.cpp">
+      <Filter>Source Files\semantics\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\utils\document_signer.cpp">
+      <Filter>Source Files\semantics\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\semantics\utils\semantic_utils.cpp">
+      <Filter>Source Files\semantics\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\exceptions\syntax_exceptions.cpp">
+      <Filter>Source Files\syntax\exceptions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\files\file.cpp">
+      <Filter>Source Files\syntax\files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\files\file_writer.cpp">
+      <Filter>Source Files\syntax\files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\files\xref.cpp">
+      <Filter>Source Files\syntax\files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\files\xref_chain.cpp">
+      <Filter>Source Files\syntax\files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\files\xref_entry.cpp">
+      <Filter>Source Files\syntax\files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\filters\ascii_85_decode_filter.cpp">
+      <Filter>Source Files\syntax\filters</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\filters\ascii_hex_decode_filter.cpp">
+      <Filter>Source Files\syntax\filters</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\filters\dct_decode_filter.cpp">
+      <Filter>Source Files\syntax\filters</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\filters\filter.cpp">
+      <Filter>Source Files\syntax\filters</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\filters\flate_decode_filter.cpp">
+      <Filter>Source Files\syntax\filters</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\objects\boolean_object.cpp">
+      <Filter>Source Files\syntax\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\objects\dictionary_object.cpp">
+      <Filter>Source Files\syntax\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\objects\indirect_object_reference.cpp">
+      <Filter>Source Files\syntax\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\objects\integer_object.cpp">
+      <Filter>Source Files\syntax\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\objects\mixed_array_object.cpp">
+      <Filter>Source Files\syntax\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\objects\name_object.cpp">
+      <Filter>Source Files\syntax\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\objects\null_object.cpp">
+      <Filter>Source Files\syntax\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\objects\numeric_object.cpp">
+      <Filter>Source Files\syntax\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\objects\object.cpp">
+      <Filter>Source Files\syntax\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\objects\real_object.cpp">
+      <Filter>Source Files\syntax\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\objects\stream_object.cpp">
+      <Filter>Source Files\syntax\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\objects\string_object.cpp">
+      <Filter>Source Files\syntax\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\character_map_data.cpp">
+      <Filter>Source Files\syntax\parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\lexical_tree.cpp">
+      <Filter>Source Files\syntax\parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\parser.cpp">
+      <Filter>Source Files\syntax\parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\reverse_parser.cpp">
+      <Filter>Source Files\syntax\parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\reverse_tokenizer.cpp">
+      <Filter>Source Files\syntax\parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\token.cpp">
+      <Filter>Source Files\syntax\parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\token_dictionary.cpp">
+      <Filter>Source Files\syntax\parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\parsers\tokenizer.cpp">
+      <Filter>Source Files\syntax\parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\syntax\utils\encryption.cpp">
+      <Filter>Source Files\syntax\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\utils\streams\input_reverse_stream.cpp">
+      <Filter>Source Files\utils\streams</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\utils\streams\input_stream.cpp">
+      <Filter>Source Files\utils\streams</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\utils\streams\output_stream.cpp">
+      <Filter>Source Files\utils\streams</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\utils\attribute_interface.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\utils\attribute_list.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\utils\buffer.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\utils\errors.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\utils\exceptions.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\utils\library_info.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\utils\log.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\utils\modify_observer_interface.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\utils\pkcs12_key.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\utils\time_utils.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\utils\unknown_interface.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\utils\zlib_wrapper.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gotchangpdf\precompiled.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="src\gotchangpdf\gotchangpdf.natvis">
+      <Filter>Resource Files</Filter>
+    </Natvis>
+  </ItemGroup>
+</Project>
