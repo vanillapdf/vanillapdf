@@ -91,9 +91,13 @@ make
 
 <li>Verify the library sanity:</li>
 \code
-cd ../scripts
-python run_test.py		# executable path is broken
-All tests have finished successfully
+make test
+\endcode
+
+With the expected output:
+\code
+100% tests passed, 0 tests failed out of 241
+Total Test time (real) = 113.72 sec
 \endcode
 
 </ol>
