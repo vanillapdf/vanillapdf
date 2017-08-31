@@ -15,24 +15,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\gotchangpdf.test\main.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gotchangpdf.test\objects.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gotchangpdf.test\documents.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gotchangpdf.test\files.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gotchangpdf.test\utils.c">
+    <ClCompile Include="..\src\gotchangpdf.merge\main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\gotchangpdf.test\test.h">
+    <ClInclude Include="..\src\gotchangpdf.merge\merge.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

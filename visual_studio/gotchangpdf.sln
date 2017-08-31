@@ -12,9 +12,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gotchangpdf.merge", "gotcha
 		{9AF81955-0B8C-4778-9F93-3ED8285D3D49} = {9AF81955-0B8C-4778-9F93-3ED8285D3D49}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gotchangpdf.net", "src\gotchangpdf.net\gotchangpdf.net.csproj", "{A42B54B2-D79C-479B-83A5-066B53C0F3F4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gotchangpdf.net", "..\src\gotchangpdf.net\gotchangpdf.net.csproj", "{A42B54B2-D79C-479B-83A5-066B53C0F3F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gotchangpdf.net.test", "src\gotchangpdf.net.test\gotchangpdf.net.test.csproj", "{41D649DF-1CF9-4329-B89C-7276CA714B97}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gotchangpdf.net.test", "..\src\gotchangpdf.net.test\gotchangpdf.net.test.csproj", "{41D649DF-1CF9-4329-B89C-7276CA714B97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

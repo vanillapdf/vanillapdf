@@ -1,6 +1,10 @@
 # Build files
-/bin/
+/build/
 /obj/
+/.vs/
+
+# VS packages
+/packages/
 
 # Visual studio specific
 *.user

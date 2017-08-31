@@ -1,3 +1,6 @@
-#Build files
+# Build files
 /bin/
 /obj/
+
+# Visual studio specific
+*.user

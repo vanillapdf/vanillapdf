@@ -1,24 +1,9 @@
 # Build files
 /build/
 /lib/
-/obj/
-/ipch/
-/.vs/
-
-# VS packages
-/packages/
-
-# Visual studio specific
-*.suo
-*.sdf
-*.opensdf
-*.user
-*.opendb
-*.VC.db
 
 # Test files
 !/test/*.pdf
 
 # Log files
-/log/**/*.log
-/scripts/**/*.log
+*.log
