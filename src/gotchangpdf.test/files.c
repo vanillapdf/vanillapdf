@@ -13,7 +13,7 @@ error_type process_file(FileHandle file, int nested) {
 		XrefHandle xref = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_GetValue(chain_iterator, &xref));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_xref(xref, 0));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_xref(xref, nested));
 		RETURN_ERROR_IF_NOT_SUCCESS(Xref_Release(xref));
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_Next(chain_iterator));
 	}
