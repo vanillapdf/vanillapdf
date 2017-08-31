@@ -56,7 +56,7 @@ error_type process_dictionary(DictionaryObjectHandle dictionary, int nested) {
 	printf("Dictionary begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Iterator(dictionary, &iterator));
-	while (GOTCHANG_PDF_ERROR_SUCCES == DictionaryObjectIterator_IsValid(iterator, dictionary, &boolean)
+	while (GOTCHANG_PDF_ERROR_SUCCESS == DictionaryObjectIterator_IsValid(iterator, dictionary, &boolean)
 		&& GOTCHANG_PDF_RV_TRUE == boolean) {
 		NameObjectHandle key = NULL;
 		ObjectHandle value = NULL;

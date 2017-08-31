@@ -12,7 +12,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Errors_GetLastError(error_type* r
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	*result = Errors::GetLastError();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Errors_GetLastErrorMessageLength(size_type* size) {
@@ -21,7 +21,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Errors_GetLastErrorMessageLength(
 	try {
 		std::string message = Errors::GetLastErrorMessage();
 		*size = message.size() + 1;
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -41,6 +41,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Errors_GetLastErrorMessage(char* 
 		
 		std::memcpy(data, message.c_str(), message_size);
 
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }

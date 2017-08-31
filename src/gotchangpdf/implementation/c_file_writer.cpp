@@ -15,7 +15,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Create(FileWriterHandl
 		FileWriterPtr writer;
 		auto ptr = writer.AddRefGet();
 		*result = reinterpret_cast<FileWriterHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -30,7 +30,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Write(FileWriterHandle
 
 	try {
 		writer->Write(source_file, destination_file);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -44,7 +44,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_WriteIncremental(FileW
 
 	try {
 		writer->WriteIncremental(source_file, destination_file);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -53,5 +53,5 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION FileWriter_Release(FileWriterHand
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(writer);
 
 	writer->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }

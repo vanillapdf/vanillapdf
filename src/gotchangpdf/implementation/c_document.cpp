@@ -19,7 +19,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_Open(string_type filenam
 		DocumentPtr doc = Document::Open(name);
 		auto ptr = doc.AddRefGet();
 		*result = reinterpret_cast<DocumentHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -32,7 +32,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_Create(string_type filen
 		DocumentPtr doc = Document::Create(name);
 		auto ptr = doc.AddRefGet();
 		*result = reinterpret_cast<DocumentHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -47,7 +47,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_OpenFile(FileHandle hold
 		DocumentPtr doc = Document::OpenFile(file);
 		auto ptr = doc.AddRefGet();
 		*result = reinterpret_cast<DocumentHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -60,7 +60,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_Save(DocumentHandle hand
 	try
 	{
 		document->Save(filename);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -73,7 +73,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_SaveIncremental(Document
 	try
 	{
 		document->SaveIncremental(filename);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -93,7 +93,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandl
 
 		auto ptr = catalog.AddRefGet();
 		*result = reinterpret_cast<CatalogHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -113,7 +113,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_GetDocumentInfo(Document
 
 		auto ptr = info.AddRefGet();
 		*result = reinterpret_cast<DocumentInfoHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -132,6 +132,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Document_AppendDocument(DocumentH
 	try
 	{
 		document->AppendDocument(source);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }

@@ -486,7 +486,7 @@ error_type process_extensions(DeveloperExtensionsHandle extensions, int nested) 
 	printf("Developer extensions begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtensions_Iterator(extensions, &iterator));
-	while (GOTCHANG_PDF_TEST_ERROR_SUCCESS == DeveloperExtensionsIterator_IsValid(iterator, extensions, &boolean)
+	while (GOTCHANG_PDF_ERROR_SUCCESS == DeveloperExtensionsIterator_IsValid(iterator, extensions, &boolean)
 		&& GOTCHANG_PDF_RV_TRUE == boolean) {
 		NameObjectHandle key = NULL;
 		DeveloperExtensionHandle value = NULL;

@@ -19,7 +19,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_GetValue(const struct 
 		auto buffer = obj->GetValue();
 		auto ptr = buffer.AddRefGet();
 		*result = reinterpret_cast<BufferHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -33,7 +33,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION NameObject_SetValue(NameObjectHan
 	try
 	{
 		obj->SetValue(buffer);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

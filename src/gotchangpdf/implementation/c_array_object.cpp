@@ -20,7 +20,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle 
 		auto base = ObjectUtils::GetObjectBase(direct);
 		auto ptr = base.AddRefGet();
 		*result = reinterpret_cast<ObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -31,7 +31,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandl
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	*result = obj->Size();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Append(ArrayObjectHandle handle, ObjectHandle value)
@@ -49,7 +49,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Append(ArrayObjectHan
 		}
 
 		obj->Append(containable_ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -68,7 +68,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Insert(ArrayObjectHan
 		}
 
 		obj->Insert(containable_ptr, at);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -80,7 +80,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayObjectHan
 	try
 	{
 		obj->Remove(at);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

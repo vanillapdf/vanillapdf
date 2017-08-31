@@ -22,7 +22,7 @@ void print_help();
 #define RETURN_ERROR_IF_NOT_SUCCESS(fn) \
 do { \
 	error_type __result__ = (fn); \
-	if (GOTCHANG_PDF_ERROR_SUCCES != __result__) \
+	if (GOTCHANG_PDF_ERROR_SUCCESS != __result__) \
 	{ \
 		printf("Function call \"%s\" has failed with result %u { %s:%d }\n", \
 		#fn, __result__, __FILE__, __LINE__); \
@@ -34,7 +34,7 @@ do { \
 #define RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(eval, call, release) \
 do { \
 	error_type __result__ = (eval); \
-	if (GOTCHANG_PDF_ERROR_SUCCES == __result__) \
+	if (GOTCHANG_PDF_ERROR_SUCCESS == __result__) \
 	{ \
 		RETURN_ERROR_IF_NOT_SUCCESS(call); \
 		RETURN_ERROR_IF_NOT_SUCCESS(release); \
@@ -53,6 +53,6 @@ do { \
 } while(0)
 
 #define RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(eval, call) \
-RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(eval, call, GOTCHANG_PDF_ERROR_SUCCES)
+RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(eval, call, GOTCHANG_PDF_ERROR_SUCCESS)
 
 #endif /* _GOTCHANGPDF_MERGE_H */

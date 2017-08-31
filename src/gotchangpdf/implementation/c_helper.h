@@ -47,7 +47,7 @@ error_type SafeObjectConvert(SourceHandleT from, DestHandleT* result) noexcept
 		}
 
 		*result = reinterpret_cast<DestHandleT>(converted);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -58,7 +58,7 @@ error_type ObjectRelease(HandleT handle) noexcept
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
 	obj->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 

@@ -72,7 +72,7 @@ public:
 	virtual void SignUpdate(const Buffer& data) {
 		auto input_ptr = reinterpret_cast<const BufferHandleTag*>(&data);
 		error_type rv = m_update(input_ptr);
-		if (GOTCHANG_PDF_ERROR_SUCCES != rv) {
+		if (GOTCHANG_PDF_ERROR_SUCCESS != rv) {
 			std::stringstream ss;
 			ss << "Custom key sign update operation returned: " << rv;
 			throw UserCancelledException(ss.str());
@@ -88,7 +88,7 @@ public:
 		BufferHandle output_ptr = nullptr;
 
 		error_type rv = m_final(&output_ptr);
-		if (GOTCHANG_PDF_ERROR_SUCCES != rv) {
+		if (GOTCHANG_PDF_ERROR_SUCCESS != rv) {
 			std::stringstream ss;
 			ss << "Custom key sign final operation returned: " << rv;
 			throw UserCancelledException(ss.str());
@@ -132,7 +132,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION SigningKey_CreateCustom(
 		Deferred<CustomSigningKey> key = make_deferred<CustomSigningKey>(sign_init, sign_update, sign_final, sign_cleanup);
 		auto ptr = static_cast<ISigningKey*>(key.AddRefGet());
 		*result = reinterpret_cast<SigningKeyHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

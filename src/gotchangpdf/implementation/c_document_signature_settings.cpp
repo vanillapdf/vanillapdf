@@ -46,7 +46,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetDige
 				return GOTCHANG_PDF_ERROR_GENERAL;
 		}
 
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -88,7 +88,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetDige
 		}
 
 		obj->SetDigest(algorithm);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -106,7 +106,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetSign
 
 		auto ptr = key.AddRefGet();
 		*result = reinterpret_cast<SigningKeyHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -118,7 +118,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetSign
 
 	try {
 		obj->SetSigningKey(key);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -136,7 +136,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetName
 
 		auto ptr = name.AddRefGet();
 		*result = reinterpret_cast<LiteralStringObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -148,7 +148,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetName
 
 	try {
 		obj->SetName(name);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -166,7 +166,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetLoca
 
 		auto ptr = location.AddRefGet();
 		*result = reinterpret_cast<LiteralStringObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -178,7 +178,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetLoca
 
 	try {
 		obj->SetLocation(location);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -196,7 +196,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetReas
 
 		auto ptr = reason.AddRefGet();
 		*result = reinterpret_cast<LiteralStringObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -208,7 +208,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetReas
 
 	try {
 		obj->SetReason(reason);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -226,7 +226,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetCert
 
 		auto ptr = certificate.AddRefGet();
 		*result = reinterpret_cast<HexadecimalStringObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -238,7 +238,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetCert
 
 	try {
 		obj->SetCertificate(certificate);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

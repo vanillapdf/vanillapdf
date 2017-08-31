@@ -19,7 +19,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Open(string_type filename, F
 		FilePtr file = File::Open(filename);
 		auto ptr = file.AddRefGet();
 		*result = reinterpret_cast<FileHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -33,7 +33,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Create(string_type filename,
 		FilePtr file = File::Create(filename);
 		auto ptr = file.AddRefGet();
 		*result = reinterpret_cast<FileHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -45,7 +45,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle
 	try
 	{
 		file->Initialize();
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -60,7 +60,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle,
 		auto chain = file->GetXrefChain();
 		auto ptr = chain.AddRefGet();
 		*result = reinterpret_cast<XrefChainHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -77,7 +77,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
 		auto ptr = item.AddRefGet();
 
 		*result = reinterpret_cast<ObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -87,7 +87,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_Release(FileHandle handle)
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
 
 	file->Release();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION File_IsEncrypted(FileHandle handle, boolean_type* result)
@@ -100,7 +100,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_IsEncrypted(FileHandle handl
 	try
 	{
 		*result = file->IsEncrypted();
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -116,7 +116,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SetEncryptionPassword(FileHa
 		std::string str(password);
 		bool result = file->SetEncryptionPassword(str);
 		if (true == result) {
-			return GOTCHANG_PDF_ERROR_SUCCES;
+			return GOTCHANG_PDF_ERROR_SUCCESS;
 		}
 		else {
 			return GOTCHANG_PDF_ERROR_INVALID_PASSWORD;
@@ -137,7 +137,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION File_SetEncryptionKey(FileHandle 
 	{
 		bool result = file->SetEncryptionKey(*encryption_key);
 		if (true == result) {
-			return GOTCHANG_PDF_ERROR_SUCCES;
+			return GOTCHANG_PDF_ERROR_SUCCESS;
 		}
 		else {
 			return GOTCHANG_PDF_ERROR_INVALID_PASSWORD;

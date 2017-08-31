@@ -23,7 +23,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionsSize(Cont
 	try
 	{
 		*result = obj->GetInstructionsSize();
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -38,7 +38,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(Content
 		auto instruction = obj->GetInstructionAt(at);
 		auto base = instruction.AddRefGet();
 		*result = reinterpret_cast<ContentInstructionHandle>(base);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -62,7 +62,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_GetType(Conten
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_ToOperation(ContentInstructionHandle handle, ContentOperationHandle* result)
@@ -96,7 +96,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_GetType(ContentObje
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObject_ToText(ContentObjectHandle handle, ContentObjectTextHandle* result)
@@ -125,7 +125,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetDicti
 		auto item = obj->GetDictionary();
 		auto ptr = item.AddRefGet();
 		*result = reinterpret_cast<DictionaryObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	}
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -141,7 +141,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetData(
 		auto item = obj->GetData();
 		auto ptr = item.AddRefGet();
 		*result = reinterpret_cast<BufferHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	}
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -160,7 +160,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationsSi
 	try
 	{
 		*result = obj->GetOperationsSize();
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	}
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -176,7 +176,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(
 		auto item = obj->GetOperationAt(at);
 		auto ptr = item.AddRefGet();
 		*result = reinterpret_cast<ContentOperationHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	}
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -346,7 +346,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_GetType(ContentO
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToGeneric(ContentOperationHandle handle, ContentOperationGenericHandle* result)
@@ -390,7 +390,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperat
 		auto oper = obj->GetOperator();
 		auto base = oper.AddRefGet();
 		*result = reinterpret_cast<ContentOperatorHandle>(base);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	}
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -404,7 +404,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperan
 	try
 	{
 		*result = obj->GetOperandsSize();
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	}
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -420,7 +420,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperan
 		auto item = obj->GetOperandAt(at);
 		auto ptr = item.AddRefGet();
 		*result = reinterpret_cast<ObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	}
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -441,7 +441,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetScale
 		auto value = obj->GetScale();
 		auto ptr = value.AddRefGet();
 		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	}
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -456,7 +456,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextFont_SetScale
 	try
 	{
 		obj->SetScale(name);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	}
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -472,7 +472,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetName(
 		auto value = obj->GetName();
 		auto ptr = value.AddRefGet();
 		*result = reinterpret_cast<NameObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	}
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -487,7 +487,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextFont_SetName(
 	try
 	{
 		obj->SetName(name);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	}
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -507,7 +507,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_SetValue
 	try
 	{
 		obj->SetValue(str);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	}
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -523,7 +523,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShow_GetValue
 		auto value = obj->GetValue();
 		auto ptr = value.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	}
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -544,7 +544,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_Get
 		auto value = obj->GetValue();
 		auto ptr = value.AddRefGet();
 		*result = reinterpret_cast<ArrayObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	}
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -559,7 +559,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_Set
 	try
 	{
 		obj->SetValue(str);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	}
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -729,7 +729,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_GetType(ContentOp
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_GetValue(ContentOperatorHandle handle, BufferHandle* result)
@@ -743,7 +743,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_GetValue(ContentO
 		auto buffer = obj->Value();
 		auto ptr = buffer.AddRefGet();
 		*result = reinterpret_cast<BufferHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	}
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }

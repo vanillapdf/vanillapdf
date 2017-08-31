@@ -15,7 +15,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanObj
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	*result = obj->GetValue();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_SetValue(BooleanObjectHandle handle, boolean_type value)
@@ -30,7 +30,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_SetValue(BooleanObj
 	else
 		return GOTCHANG_PDF_ERROR_GENERAL;
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION BooleanObject_Release(BooleanObjectHandle handle)

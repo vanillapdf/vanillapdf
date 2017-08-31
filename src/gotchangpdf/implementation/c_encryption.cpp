@@ -41,7 +41,7 @@ public:
 		BufferHandle output_ptr = nullptr;
 
 		error_type rv = m_decrypt(input_ptr, &output_ptr);
-		if (GOTCHANG_PDF_ERROR_SUCCES != rv) {
+		if (GOTCHANG_PDF_ERROR_SUCCESS != rv) {
 			std::stringstream ss;
 			ss << "Custom key decrypt operation returned: " << rv;
 			throw UserCancelledException(ss.str());
@@ -64,7 +64,7 @@ public:
 		boolean_type result = false;
 
 		error_type rv = m_contains(input_issuer, input_serial, &result);
-		if (GOTCHANG_PDF_ERROR_SUCCES != rv) {
+		if (GOTCHANG_PDF_ERROR_SUCCESS != rv) {
 			std::stringstream ss;
 			ss << "Custom key equals operation returned: " << rv;
 			throw UserCancelledException(ss.str());
@@ -107,7 +107,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION EncryptionKey_CreateCustom(
 		Deferred<CustomEncryptionKey> key = make_deferred<CustomEncryptionKey>(initialize, cleanup, decrypt, contains);
 		auto ptr = static_cast<IEncryptionKey*>(key.AddRefGet());
 		*result = reinterpret_cast<EncryptionKeyHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

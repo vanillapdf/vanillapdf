@@ -17,7 +17,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetIntegerValue(Int
 	try
 	{
 		*result = obj->GetIntegerValue();
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -30,7 +30,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_GetUnsignedIntegerV
 	try
 	{
 		*result = obj->GetUnsignedIntegerValue();
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -42,7 +42,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_SetIntegerValue(Int
 	try
 	{
 		obj->SetValue(value);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -54,7 +54,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IntegerObject_SetUnsignedIntegerV
 	try
 	{
 		obj->SetValue(value);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

@@ -17,7 +17,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION RealObject_GetValue(RealObjectHan
 	try
 	{
 		*result = obj->GetValue();
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -29,7 +29,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION RealObject_SetValue(RealObjectHan
 	try
 	{
 		obj->SetValue(value);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

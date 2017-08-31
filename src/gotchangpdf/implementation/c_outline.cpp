@@ -23,7 +23,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineBase_GetType(OutlineBaseHa
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineBase_ToOutline(OutlineBaseHandle handle, OutlineHandle* result)
@@ -54,7 +54,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Outline_GetFirst(OutlineHandle ha
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<OutlineItemHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -71,7 +71,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Outline_GetLast(OutlineHandle han
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<OutlineItemHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -88,7 +88,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Outline_GetCount(OutlineHandle ha
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -108,7 +108,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetTitle(OutlineItemH
 		auto value = obj->Title();
 		auto ptr = value.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -123,7 +123,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetParent(OutlineItem
 		auto value = obj->Parent();
 		auto ptr = value.AddRefGet();
 		*result = reinterpret_cast<OutlineBaseHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -140,7 +140,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetPrev(OutlineItemHa
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<OutlineItemHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -157,7 +157,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetNext(OutlineItemHa
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<OutlineItemHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -174,7 +174,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetFirst(OutlineItemH
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<OutlineItemHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -191,7 +191,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetLast(OutlineItemHa
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<OutlineItemHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -208,7 +208,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetCount(OutlineItemH
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -225,7 +225,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetColor(OutlineItemH
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<OutlineItemColorHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -242,7 +242,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItem_GetFlags(OutlineItemH
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<OutlineItemFlagsHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -262,7 +262,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemColor_GetRed(OutlineIt
 		auto value = obj->Red();
 		auto ptr = value.AddRefGet();
 		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -277,7 +277,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemColor_GetGreen(Outline
 		auto value = obj->Green();
 		auto ptr = value.AddRefGet();
 		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -292,7 +292,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemColor_GetBlue(OutlineI
 		auto value = obj->Blue();
 		auto ptr = value.AddRefGet();
 		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -308,7 +308,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsItalic(Outline
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	*result = obj->Italic();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsBold(OutlineItemFlagsHandle handle, boolean_type* result)
@@ -318,7 +318,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsBold(OutlineIt
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	*result = obj->Bold();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION OutlineItemFlags_Release(OutlineItemFlagsHandle handle)

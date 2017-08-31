@@ -23,7 +23,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_Type(StringObjectHan
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_Release(StringObjectHandle handle)
@@ -52,7 +52,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_GetValue(StringObjec
 		auto buffer = obj->GetValue();
 		auto ptr = buffer.AddRefGet();
 		*result = reinterpret_cast<BufferHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -66,7 +66,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StringObject_SetValue(StringObjec
 	try
 	{
 		obj->SetValue(buffer);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -81,7 +81,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_GetValue(Lite
 		auto buffer = obj->GetValue();
 		auto ptr = buffer.AddRefGet();
 		*result = reinterpret_cast<BufferHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -95,7 +95,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION LiteralStringObject_SetValue(Lite
 	try
 	{
 		obj->SetValue(buffer);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -115,7 +115,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_GetValue(
 		auto buffer = obj->GetValue();
 		auto ptr = buffer.AddRefGet();
 		*result = reinterpret_cast<BufferHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -129,7 +129,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION HexadecimalStringObject_SetValue(
 	try
 	{
 		obj->SetValue(buffer);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

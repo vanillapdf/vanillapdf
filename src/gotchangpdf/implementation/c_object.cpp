@@ -15,7 +15,7 @@ GOTCHANG_PDF_API error_type Object_TypeName(ObjectType type, string_type* result
 	{
 		auto value = static_cast<Object::Type>(type);
 		*result = Object::TypeName(value);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	}
 	CATCH_GOTCHNGPDF_EXCEPTIONS
 }
@@ -51,7 +51,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_GetType(ObjectHandle handl
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle handle, offset_type* result)
@@ -61,7 +61,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle han
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	*result = obj->GetOffset();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Object_Release(ObjectHandle handle)

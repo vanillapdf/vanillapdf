@@ -22,7 +22,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PKCS12Key_CreateFromFile(string_t
 		Deferred<PKCS12Key> key = make_deferred<PKCS12Key>(path_string, password_buffer);
 		auto ptr = key.AddRefGet();
 		*result = reinterpret_cast<PKCS12KeyHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -41,7 +41,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PKCS12Key_CreateFromBuffer(Buffer
 		Deferred<PKCS12Key> key = make_deferred<PKCS12Key>(data_buffer, password_buffer);
 		auto ptr = key.AddRefGet();
 		*result = reinterpret_cast<PKCS12KeyHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

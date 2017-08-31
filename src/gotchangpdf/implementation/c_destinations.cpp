@@ -19,7 +19,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Destination_GetPageNumber(Destina
 		auto direct = obj->GetPage();
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<ObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -39,7 +39,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedD
 	try
 	{
 		*result = obj->Contains(*name);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -56,7 +56,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Find(NamedDesti
 		auto direct = obj->Find(*name);
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<DestinationHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 GOTCHANG_PDF_API error_type CALLING_CONVENTION NamedDestinations_Release(NamedDestinationsHandle handle)

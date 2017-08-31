@@ -24,7 +24,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPages(CatalogHandle ha
 
 		auto ptr = pages.AddRefGet();
 		*result = reinterpret_cast<PageTreeHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -60,7 +60,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetVersion(CatalogHandle 
 			return GOTCHANG_PDF_ERROR_NOT_SUPPORTED;
 		}
 
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -77,7 +77,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetExtensions(CatalogHand
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = extensions.AddRefGet();
 		*result = reinterpret_cast<DeveloperExtensionsHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -94,7 +94,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLabels(CatalogHand
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = labels.AddRefGet();
 		*result = reinterpret_cast<PageLabelsHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -126,7 +126,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHand
 			return GOTCHANG_PDF_ERROR_NOT_SUPPORTED;
 		}
 
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -143,7 +143,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetViewerPreferences(Cata
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<ViewerPreferencesHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -160,7 +160,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetOutlines(CatalogHandle
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<OutlineHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -177,7 +177,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetDestinations(CatalogHa
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<NamedDestinationsHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -192,7 +192,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Catalog_GetAcroForm(CatalogHandle
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<InteractiveFormHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

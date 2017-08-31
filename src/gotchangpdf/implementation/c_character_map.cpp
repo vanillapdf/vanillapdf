@@ -23,7 +23,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION CharacterMap_GetType(CharacterMap
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION CharacterMap_Release(CharacterMapHandle handle)
@@ -57,7 +57,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_GetMappedValu
 		auto direct = obj->GetMappedValue(key);
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<BufferHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

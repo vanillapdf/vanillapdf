@@ -9,19 +9,19 @@ using namespace gotchangpdf;
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_IsEnabled(boolean_type* result)
 {
 	*result = Logger::GetInstance()->IsEnabled();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_Enable(void)
 {
 	Logger::GetInstance()->SetEnabled(true);
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_Disable(void)
 {
 	Logger::GetInstance()->SetEnabled(false);
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_GetSeverity(LoggingSeverity* level)
@@ -43,7 +43,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_GetSeverity(LoggingSeveri
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_SetSeverity(LoggingSeverity level)
@@ -66,5 +66,5 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_SetSeverity(LoggingSeveri
 	}
 
 	Logger::GetInstance()->SetSeverity(converted);
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }

@@ -14,7 +14,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPageCount(PageTreeHan
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	*result = obj->PageCount();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle handle, size_type at, PageObjectHandle* result)
@@ -28,7 +28,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle h
 		auto page = obj->Page(at);
 		auto ptr = page.AddRefGet();
 		*result = reinterpret_cast<PageObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -42,7 +42,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_InsertPage(PageTreeHandl
 	try
 	{
 		obj->Insert(page, at);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -56,7 +56,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_AppendPage(PageTreeHandl
 	try
 	{
 		obj->Append(page);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -68,7 +68,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageTree_RemovePage(PageTreeHandl
 	try
 	{
 		obj->Remove(at);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

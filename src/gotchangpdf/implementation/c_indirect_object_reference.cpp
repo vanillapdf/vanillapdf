@@ -18,7 +18,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedOb
 		auto direct = obj->GetReferencedObject();
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<ObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -34,7 +34,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedOb
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	*result = obj->GetReferencedObjectNumber();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedGenerationNumber(IndirectObjectReferenceHandle handle, ushort_type* result)
@@ -44,5 +44,5 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedGe
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	*result = obj->GetReferencedGenerationNumber();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }

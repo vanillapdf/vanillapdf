@@ -50,7 +50,7 @@ extern "C"
 	* \brief
 	* Indicates that the operation completed successfully.
 	*/
-	GOTCHANG_PDF_API extern const error_type GOTCHANG_PDF_ERROR_SUCCES;
+	GOTCHANG_PDF_API extern const error_type GOTCHANG_PDF_ERROR_SUCCESS;
 
 	/**
 	* \brief

@@ -19,7 +19,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetHeader(StreamObje
 		auto header = obj->GetHeader();
 		auto ptr = header.AddRefGet();
 		*result = reinterpret_cast<DictionaryObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -33,7 +33,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_SetHeader(StreamObje
 	try
 	{
 		obj->SetHeader(header);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -48,7 +48,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBody(StreamObject
 		auto header = obj->GetBody();
 		auto ptr = header.AddRefGet();
 		*result = reinterpret_cast<BufferHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -63,7 +63,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_GetBodyRaw(StreamObj
 		auto body = obj->GetBodyRaw();
 		auto ptr = body.AddRefGet();
 		*result = reinterpret_cast<BufferHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -77,7 +77,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION StreamObject_SetBody(StreamObject
 	try
 	{
 		obj->SetBody(buffer);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

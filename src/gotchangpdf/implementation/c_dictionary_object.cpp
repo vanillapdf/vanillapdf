@@ -23,7 +23,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryO
 		auto base = ObjectUtils::GetObjectBase(direct);
 		auto ptr = base.AddRefGet();
 		*result = reinterpret_cast<ObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -38,7 +38,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(Diction
 		auto begin = make_deferred<DictionaryObject::Iterator>(obj->begin());
 		auto ptr = begin.AddRefGet();
 		*result = reinterpret_cast<DictionaryObjectIteratorHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -51,7 +51,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Next(
 	try
 	{
 		++(*iterator);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -74,7 +74,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetKey(
 		NameObjectPtr name = iterator->First();
 		NameObject* ptr = name.AddRefGet();
 		*result = reinterpret_cast<NameObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -92,7 +92,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetValue
 		auto base = ObjectUtils::GetObjectBase(direct);
 		auto ptr = base.AddRefGet();
 		*result = reinterpret_cast<ObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -116,7 +116,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(
 			*result = GOTCHANG_PDF_RV_TRUE;
 		}
 
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -130,7 +130,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(Dictionar
 	try
 	{
 		dictionary->Remove(*name);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -150,7 +150,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(Dictionar
 			return GOTCHANG_PDF_ERROR_PARAMETER_VALUE;
 
 		dictionary->Insert(name, containable_ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -165,7 +165,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(Diction
 	try
 	{
 		*result = dictionary->Contains(*name);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

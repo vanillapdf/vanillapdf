@@ -71,7 +71,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Annotation_GetType(AnnotationHand
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Annotation_ToLink(AnnotationHandle handle, LinkAnnotationHandle* result)
@@ -97,7 +97,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION LinkAnnotation_GetDestination(Lin
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = destination.AddRefGet();
 		*result = reinterpret_cast<DestinationHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -115,7 +115,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageAnnotations_Size(PageAnnotati
 	try
 	{
 		*result = obj->Size();
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -130,7 +130,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION PageAnnotations_At(PageAnnotation
 		auto direct = obj->At(at);
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<AnnotationHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

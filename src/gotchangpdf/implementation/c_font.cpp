@@ -25,7 +25,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Font_Type(FontHandle handle, Font
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Font_Release(FontHandle handle)
@@ -51,7 +51,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION CompositeFont_GetUnicodeMap(Compo
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = map.AddRefGet();
 		*result = reinterpret_cast<UnicodeCharacterMapHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

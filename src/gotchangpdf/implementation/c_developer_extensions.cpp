@@ -37,7 +37,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtension_GetBaseVersion
 			return GOTCHANG_PDF_ERROR_NOT_SUPPORTED;
 		}
 
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -52,7 +52,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtension_GetExtensionLe
 		auto level = obj->ExtensionLevel();
 		auto ptr = level.AddRefGet();
 		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -72,7 +72,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensions_Iterator(Deve
 		auto it = obj->Begin();
 		auto ptr = it.AddRefGet();
 		*result = reinterpret_cast<DeveloperExtensionsIteratorHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -92,7 +92,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetKe
 		auto name = obj->First();
 		auto ptr = name.AddRefGet();
 		*result = reinterpret_cast<NameObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -107,7 +107,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetVa
 		auto extension = obj->Second();
 		auto ptr = extension.AddRefGet();
 		*result = reinterpret_cast<DeveloperExtensionHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -126,7 +126,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_IsVal
 		else
 			*result = GOTCHANG_PDF_RV_TRUE;
 
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -138,7 +138,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_Next(
 	try
 	{
 		++(*obj);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

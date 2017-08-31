@@ -19,7 +19,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetContactInfo(D
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -34,7 +34,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetReason(Digita
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -49,7 +49,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetLocation(Digi
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -64,7 +64,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetDate(DigitalS
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<DateHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -79,7 +79,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetName(DigitalS
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -94,7 +94,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetRevision(Digi
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -109,7 +109,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetCertificate(D
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<StringObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -122,7 +122,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetContents(Digi
 		auto direct = signature->Contents();
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<HexadecimalStringObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -137,7 +137,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(Dig
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<ByteRangeCollectionHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -150,7 +150,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRange_GetOffset(ByteRangeHand
 		auto direct = range->ByteOffset();
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -163,7 +163,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRange_GetLength(ByteRangeHand
 		auto direct = range->Length();
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -174,7 +174,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRangeCollection_Size(ByteRang
 
 	try {
 		*result = collection->Size();
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -187,7 +187,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ByteRangeCollection_At(ByteRangeC
 		auto direct = collection->At(at);
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<ByteRangeHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

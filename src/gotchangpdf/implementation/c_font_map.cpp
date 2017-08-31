@@ -19,7 +19,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION FontMap_Contains(FontMapHandle ha
 	try
 	{
 		*result = obj->Contains(*key);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -36,7 +36,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle handle
 		auto direct = obj->Find(*key);
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<FontHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

@@ -12,7 +12,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION IUnknown_AddRef(IUnknownHandle ha
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
 	obj->AddRef();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION IUnknown_Release(IUnknownHandle handle)

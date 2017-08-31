@@ -16,7 +16,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION InteractiveForm_GetFields(Interac
 		auto fields = form->Fields();
 		auto ptr = fields.AddRefGet();
 		*result = reinterpret_cast<FieldCollectionHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

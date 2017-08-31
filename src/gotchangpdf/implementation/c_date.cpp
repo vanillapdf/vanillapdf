@@ -14,7 +14,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetYear(DateHandle handle, i
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	*result = obj->GetYear();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetMonth(DateHandle handle, integer_type* result)
@@ -24,7 +24,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetMonth(DateHandle handle, 
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	*result = obj->GetMonth();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetDay(DateHandle handle, integer_type* result)
@@ -34,7 +34,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetDay(DateHandle handle, in
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	*result = obj->GetDay();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetHour(DateHandle handle, integer_type* result)
@@ -44,7 +44,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetHour(DateHandle handle, i
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	*result = obj->GetHour();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetMinute(DateHandle handle, integer_type* result)
@@ -54,7 +54,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetMinute(DateHandle handle,
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	*result = obj->GetMinute();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetSecond(DateHandle handle, integer_type* result)
@@ -64,7 +64,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetSecond(DateHandle handle,
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	*result = obj->GetSecond();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetTimezone(DateHandle handle, TimezoneType* result)
@@ -84,7 +84,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetTimezone(DateHandle handl
 	default:
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetHourOffset(DateHandle handle, integer_type* result)
@@ -94,7 +94,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetHourOffset(DateHandle han
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	*result = obj->GetHourOffset();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetMinuteOffset(DateHandle handle, integer_type* result)
@@ -104,7 +104,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_GetMinuteOffset(DateHandle h
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	*result = obj->GetMinuteOffset();
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Date_Release(DateHandle handle)

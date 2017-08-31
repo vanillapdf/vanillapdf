@@ -25,7 +25,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Field_GetType(FieldHandle handle,
 			return GOTCHANG_PDF_ERROR_GENERAL;
 	}
 
-	return GOTCHANG_PDF_ERROR_SUCCES;
+	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION FieldCollection_Size(FieldCollectionHandle handle, size_type* result) {
@@ -35,7 +35,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION FieldCollection_Size(FieldCollect
 
 	try {
 		*result = collection->Size();
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -48,7 +48,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION FieldCollection_At(FieldCollectio
 		auto direct = collection->At(at);
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<FieldHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -63,7 +63,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION SignatureField_GetValue(Signature
 		if (!contains) return GOTCHANG_PDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<DigitalSignatureHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 

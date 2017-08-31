@@ -18,7 +18,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_LowerLeftX(RectangleHan
 		auto direct = obj->LowerLeftX();
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -33,7 +33,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_LowerLeftY(RectangleHan
 		auto direct = obj->LowerLeftY();
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -48,7 +48,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_UpperRightX(RectangleHa
 		auto direct = obj->UpperRightX();
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
@@ -63,7 +63,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Rectangle_UpperRightY(RectangleHa
 		auto direct = obj->UpperRightY();
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
-		return GOTCHANG_PDF_ERROR_SUCCES;
+		return GOTCHANG_PDF_ERROR_SUCCESS;
 	} CATCH_GOTCHNGPDF_EXCEPTIONS
 }
 
