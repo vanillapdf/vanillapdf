@@ -726,19 +726,13 @@ error_type process_date(DateHandle obj, int nested) {
 			year, month, day,
 			hour, minute, second);
 	} else {
-		boolean_type timezone_set = GOTCHANG_PDF_RV_FALSE;
 		char timezone_character;
 		if (timezone == TimezoneType_Later) {
 			timezone_character = '+';
-			timezone_set = GOTCHANG_PDF_RV_TRUE;
-		}
-
-		if (timezone == TimezoneType_Earlier) {
+		} else if (timezone == TimezoneType_Earlier) {
 			timezone_character = '-';
-			timezone_set = GOTCHANG_PDF_RV_TRUE;
-		}
-
-		if (timezone_set != GOTCHANG_PDF_RV_TRUE) {
+		} else {
+			printf("Timezone is neither UTC, Earlier nor later\n");
 			return GOTCHANG_PDF_TEST_ERROR_FAILURE;
 		}
 
