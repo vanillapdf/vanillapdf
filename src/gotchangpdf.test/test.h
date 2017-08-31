@@ -107,6 +107,9 @@ error_type process_date(DateHandle obj, int nested);
 /* Test document save */
 error_type process_document_save(DocumentHandle document, int nested);
 
+// Some parameters to functions are unused
+#define UNUSED(x) (void)(x)
+
 #define RETURN_ERROR_IF_NOT_SUCCESS(fn) \
 do { \
 	error_type __result__ = (fn); \

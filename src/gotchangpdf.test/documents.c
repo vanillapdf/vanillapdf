@@ -161,6 +161,9 @@ error_type process_content_operation_endtext(ContentOperationEndTextHandle obj, 
 	print_spaces(nested);
 	printf("Content operation: ET\n");
 
+	// This object has no more properties
+	UNUSED(obj);
+
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
@@ -298,6 +301,9 @@ error_type process_font_map(FontMapHandle obj, int nested) {
 	print_spaces(nested);
 	printf("Font map begin\n");
 
+	// TODO font map properties
+	UNUSED(obj);
+
 	print_spaces(nested);
 	printf("Font map end\n");
 
@@ -321,8 +327,6 @@ error_type process_resource_dictionary(ResourceDictionaryHandle obj, int nested)
 }
 
 error_type process_rectangle(RectangleHandle obj, int nested) {
-	ContentsHandle contents = NULL;
-	RectangleHandle media_box = NULL;
 	IntegerObjectHandle lower_left_x = NULL;
 	IntegerObjectHandle lower_left_y = NULL;
 	IntegerObjectHandle upper_right_x = NULL;
@@ -544,6 +548,9 @@ error_type process_extension(DeveloperExtensionHandle extension, int nested) {
 error_type process_named_destinations(NamedDestinationsHandle obj, int nested) {
 	print_spaces(nested);
 	printf("Named destinations begin\n");
+
+	// TODO Name destinations needs iterator
+	UNUSED(obj);
 
 	print_spaces(nested);
 	printf("Named destinations end\n");
@@ -1041,6 +1048,10 @@ error_type process_duplex(Duplex duplex, int nested) {
 
 error_type process_document_save(DocumentHandle document, int nested) {
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Save(document, "output.pdf"));
+
+	// Generic function parameter nested is not needed in this case
+	UNUSED(nested);
+
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 

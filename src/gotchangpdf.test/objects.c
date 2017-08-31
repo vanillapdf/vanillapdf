@@ -223,6 +223,10 @@ error_type process_real(RealObjectHandle obj, int nested) {
 }
 
 error_type process_null(NullObjectHandle obj, int nested) {
+
+	// Null object does not have any properties
+	UNUSED(obj);
+
 	print_spaces(nested);
 	printf("Null object begin\n");
 
@@ -270,7 +274,6 @@ error_type process_object(ObjectHandle obj, int nested) {
 	IntegerObjectHandle integer = NULL;
 	StreamObjectHandle stream = NULL;
 	NameObjectHandle name = NULL;
-	ObjectHandle child = NULL;
 	DictionaryObjectHandle dictionary = NULL;
 	StringObjectHandle string = NULL;
 
