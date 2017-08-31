@@ -52,6 +52,8 @@ public:
 	bool Destinations(OutputNamedDestinationsPtr& result) const;
 	bool Names(OutputNameDictionaryPtr& result) const;
 	bool AcroForm(OuputInteractiveFormPtr& result) const;
+
+	PageTreePtr CreatePages();
 };
 
 } // semantics

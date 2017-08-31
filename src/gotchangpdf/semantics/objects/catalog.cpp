@@ -15,6 +15,8 @@
 namespace gotchangpdf {
 namespace semantics {
 
+using namespace syntax;
+
 Catalog::Catalog(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {
 	if (root->Contains(constant::Name::Type)) {
 		auto type = root->FindAs<syntax::NameObjectPtr>(constant::Name::Type);
@@ -176,6 +178,31 @@ bool Catalog::AcroForm(OuputInteractiveFormPtr& result) const {
 	auto interactive_form = make_deferred<InteractiveForm>(form_obj);
 	result = interactive_form;
 	return true;
+}
+
+PageTreePtr Catalog::CreatePages() {
+	auto weak_file = _obj->GetFile();
+	auto file = weak_file.GetReference();
+	auto chain = file->GetXrefChain();
+	auto entry = chain->AllocateNewEntry();
+
+	DictionaryObjectPtr raw_dictionary;
+
+	NameObjectPtr object_type = make_deferred<NameObject>(constant::Name::Pages);
+	IntegerObjectPtr kid_count = make_deferred<IntegerObject>(0);
+
+	raw_dictionary->Insert(constant::Name::Type, object_type);
+	raw_dictionary->Insert(constant::Name::Count, kid_count);
+
+	raw_dictionary->SetFile(file);
+	raw_dictionary->SetInitialized();
+	entry->SetReference(raw_dictionary);
+	entry->SetInitialized();
+
+	IndirectObjectReferencePtr ref = make_deferred<IndirectObjectReference>(raw_dictionary);
+	_obj->Insert(constant::Name::Pages, ref);
+
+	return make_deferred<PageTree>(raw_dictionary);
 }
 
 } // semantics

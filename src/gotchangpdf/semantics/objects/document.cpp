@@ -38,7 +38,8 @@ DocumentPtr Document::Create(const std::string& path) {
 	chain->Append(xref_table);
 
 	DocumentPtr document = DocumentPtr(pdf_new Document(file));
-	document->CreateCatalog();
+	CatalogPtr catalog = document->CreateCatalog();
+	catalog->CreatePages();
 
 	DocumentInfoPtr document_info = document->CreateDocumentInfo();
 
