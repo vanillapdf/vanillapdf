@@ -804,9 +804,12 @@ error_type process_outline_item(OutlineItemHandle outline, int nested) {
 		process_outline_item(last, nested + 1),
 		OutlineItem_Release(last));
 
-	//RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(OutlineItem_GetPrev(outline, &prev),
-	//	process_outline_item(prev, nested + 1),
-	//	OutlineItem_Release(prev));
+	// Prevent endless cycles and test previous without more processing
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(OutlineItem_GetPrev(outline, &prev),
+		// This is a little trick, it just passes trough the macro
+		// We intentionally do not want to process this item
+		GOTCHANG_PDF_ERROR_SUCCESS,
+		OutlineItem_Release(prev));
 
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(OutlineItem_GetNext(outline, &next),
 		process_outline_item(next, nested + 1),
