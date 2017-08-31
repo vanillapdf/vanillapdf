@@ -80,6 +80,13 @@ error_type process_logging() {
 		return GOTCHANG_PDF_TEST_ERROR_LOGGING_ENABLED;
 	}
 
+	RETURN_ERROR_IF_NOT_SUCCESS(Logging_Disable());
+	RETURN_ERROR_IF_NOT_SUCCESS(Logging_IsEnabled(&logging_enabled));
+
+	if (logging_enabled != GOTCHANG_PDF_RV_FALSE) {
+		return GOTCHANG_PDF_TEST_ERROR_LOGGING_ENABLED;
+	}
+
 	RETURN_ERROR_IF_NOT_SUCCESS(Logging_GetSeverity(&logging_severity));
 	RETURN_ERROR_IF_NOT_SUCCESS(Logging_SetSeverity(logging_severity));
 
