@@ -7,13 +7,18 @@ project(gotchangpdf)
 # Allow tests to be run
 enable_testing()
 
+# Prefer files in CMAKE_MODULE_PATH over shipped ones in module directory
+# In the future, they may possibly add conflicting search modules
+# so let's be cautious and prevent it!
+# cmake_policy(SET CMP0017 NEW) # https://cmake.org/cmake/help/v3.0/policy/CMP0017.html
+
 # Turn on the ability to create folders to organize projects (.vcproj)
 # It creates "CMakePredefinedTargets" folder by default and adds CMake
 # defined projects like INSTALL.vcproj and ZERO_CHECK.vcproj
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # We can setup custom modules to search for third party dependencies
-# SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
+# set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # TODO Support also static library configuration
 # Global compilation definitions
