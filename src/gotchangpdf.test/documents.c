@@ -1164,9 +1164,9 @@ error_type process_digital_signature(DigitalSignatureHandle obj, int nested) {
 	process_string(reason, nested + 1),
 	StringObject_Release(reason));
 
-	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetContactInfo(obj, &contact_info),
-	process_string(contact_info, nested + 1),
-	StringObject_Release(contact_info));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetRevision(obj, &revision),
+	process_integer(revision, nested + 1),
+	IntegerObject_Release(revision));
 
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetCertificate(obj, &certificate),
 	process_string(certificate, nested + 1),
