@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
-import platform
-import datetime
+import ntpath
 import os
+import io
 import subprocess
 import sys
 import json
@@ -14,125 +14,68 @@ PASSWORD_OPTION = "-p"
 CERTIFICATE_KEY = "certificate"
 CERTIFICATE_OPTION = "-k"
 
-failed_count = 0;
-def process_rv( rv ):
-	global failed_count
-	
-	if (rv == 0):
-		print ("Passed!")
-		logfile.write("Passed!\n")
-	else:
-		print ("Failed!")
-		logfile.write("Failed!\n")
-		failed_count += 1
-		
 def normalize_string( str ):
 	normalized = unicodedata.normalize('NFC', str)
 	encoded = normalized.encode('utf8')
 	return encoded.decode('latin-1')
 
-#Inform the user that process has started
-print ('Running test script')
-
-# Use default release configuration
-path = ""
-if (len(sys.argv) < 2 or sys.argv[1] == "release"):
-	path = '../build/gotchangpdf.test/release/gotchangpdf.test.exe'
-elif sys.argv[1] == "debug":
-	path = '../build/gotchangpdf.test/debug/gotchangpdf.test.exe'
-else:
-	print ("Incorrect mode was specified (debug/release)")
+if (len(sys.argv) < 4):
+	print ("Incorrect number of arguments!")
+	print ("Usage: executable_path encryption_config test_file_path")
 	sys.exit(1)
 
-# All of the test files shall be in the test folder
-testdir = '../test/'
-
-system = platform.system()
-now = datetime.datetime.now()
-logpath = '..\\log\\{}-{}-{}_{}-{}-{}_{}.log'.format(now.day, now.month, now.year, now.hour, now.minute, now.second, system)
+rv = -1
+executable_path = sys.argv[1]
+encryption_config_path = sys.argv[2]
+encryption_config_dir = os.path.dirname(encryption_config_path)
+test_file_path = sys.argv[3]
+test_filename = ntpath.basename(test_file_path)
 
 # Open the settings for encrypted files
 encryption_data = ""
-with open('encryption.cfg') as encryption_config:    
+with io.open(encryption_config_path, encoding='utf8') as encryption_config:
 	encryption_data = json.load(encryption_config)
 
-# Open log file
-logfile = open(logpath, 'w')
+# Create devnull for output of test case
 FNULL = open(os.devnull, 'w')
 
-# Enumerate all test files
-for root, dirs, files in os.walk(testdir):
-	for file in files:
-		# Skip files that does not end with .pdf
-		if not file.endswith(".pdf"):
-			continue
-			
-		print ("Found test case named {}...  ".format(file))
-		logfile.write("Found test case named {}...  ".format(file))
-		
-		# Calculate full file path
-		file_path = os.path.join(root, file)
-		is_encrypted = file in encryption_data
-		rv = -1
-		
-		# Check if filename is in our encrypted configuration file
-		if (is_encrypted):
-			# Authentication using user or owner password
-			if (USER_PASSWORD_KEY in encryption_data[file] or OWNER_PASSWORD_KEY in encryption_data[file]):
-				both_keys = USER_PASSWORD_KEY in encryption_data[file] and OWNER_PASSWORD_KEY in encryption_data[file]
-				
-				# User password
-				if (USER_PASSWORD_KEY in encryption_data[file]):
-					logfile.write(os.linesep)
-					logfile.write("Using user password...  ")
-					print ("Using user password...  ")
-					raw_password = encryption_data[file][USER_PASSWORD_KEY]
-					user_password = normalize_string(raw_password)
-					rv = subprocess.call([path, file_path, PASSWORD_OPTION, user_password], stdout=FNULL)
-					process_rv(rv)
-					
-				# Owner password
-				if (OWNER_PASSWORD_KEY in encryption_data[file]):
-					if not (both_keys):
-						logfile.write(os.linesep)
-						
-					logfile.write("Using owner password...  ")
-					print ("Using owner password...  ")
-					raw_password = encryption_data[file][OWNER_PASSWORD_KEY]
-					owner_password = normalize_string(raw_password)
-					rv = subprocess.call([path, file_path, PASSWORD_OPTION, owner_password], stdout=FNULL)
-					process_rv(rv)
-					
-				continue
-					
-			# Authentication using certificate
-			if (CERTIFICATE_KEY in encryption_data[file]):
-				logfile.write(os.linesep)
-				logfile.write("Using certificate key...  ")
-				print ("Using certificate key...  ")
-				key = encryption_data[file][CERTIFICATE_KEY]
-				rv = subprocess.call([path, file_path, CERTIFICATE_OPTION, key], stdout=FNULL)
-				process_rv(rv)
-				continue;
-				
-			print ("Configuration error for file {}".format(file))
-			logfile.write("Configuration error for file {}".format(file))
-			continue
-			
-		# Run test with default behavior
-		rv = subprocess.call([path, file_path], stdout=FNULL)
-		process_rv(rv)
-	
-# Log if everything has finished successfully
-if (failed_count == 0):
-	print ("All tests have finished successfully");
-	logfile.write("All tests have finished successfully")
-else:
-	print ("{} test scenarios failed".format(failed_count));
-	logfile.write("{} test scenarios failed".format(failed_count))
-			
-# Cleanup
-logfile.close()
+# Determine if the file is encrypted
+is_encrypted = test_filename in encryption_data
 
-# Return success
-sys.exit(0)
+# Check if filename is in our encrypted configuration file
+if (is_encrypted):
+	# Authentication using user or owner password
+	if (USER_PASSWORD_KEY in encryption_data[test_filename] or OWNER_PASSWORD_KEY in encryption_data[test_filename]):
+		# User password
+		if (USER_PASSWORD_KEY in encryption_data[test_filename]):
+			raw_password = encryption_data[test_filename][USER_PASSWORD_KEY]
+			user_password = normalize_string(raw_password)
+			rv = subprocess.call([executable_path, test_file_path, PASSWORD_OPTION, user_password], stdout=FNULL)
+			if (rv != 0):
+				sys.exit(rv)
+			
+		# Owner password
+		if (OWNER_PASSWORD_KEY in encryption_data[test_filename]):
+			raw_password = encryption_data[test_filename][OWNER_PASSWORD_KEY]
+			owner_password = normalize_string(raw_password)
+			rv = subprocess.call([executable_path, test_file_path, PASSWORD_OPTION, owner_password], stdout=FNULL)
+			if (rv != 0):
+				sys.exit(rv)
+			
+		sys.exit(rv)
+
+	# Authentication using certificate
+	if (CERTIFICATE_KEY in encryption_data[test_filename]):
+		key = encryption_data[test_filename][CERTIFICATE_KEY]
+		
+		# Key may address a file local to the encryption config
+		full_key_path = os.path.join(encryption_config_dir, key)
+		rv = subprocess.call([executable_path, test_file_path, CERTIFICATE_OPTION, full_key_path], stdout=FNULL)
+		sys.exit(rv)
+
+	# Configuration error
+	sys.exit(1)
+
+# Run test with default behavior
+rv = subprocess.call([executable_path, test_file_path], stdout=FNULL)
+sys.exit(rv)

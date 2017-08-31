@@ -49,3 +49,24 @@ add_definitions("-DGOTCHANG_PDF_TEST_VERSION_PATCH=${GOTCHANG_PDF_VERSION_PATCH}
 add_definitions("-DGOTCHANG_PDF_TEST_VERSION_BUILD=${GOTCHANG_PDF_VERSION_BUILD}")
 
 target_link_libraries(gotchangpdf.test ${GOTCHANGPDF_TEST_LIBS})
+
+# Run tests
+include(FindPythonInterp)
+
+# Case insensitive
+file(GLOB_RECURSE TEST_FILES "${CMAKE_SOURCE_DIR}/test/*.[Pp][Dd][Ff]")
+
+foreach(TEST_FILE ${TEST_FILES})
+	# Get filename from full path
+	get_filename_component(TEST_FILENAME ${TEST_FILE} NAME)
+
+	# Add every test file as separate entry
+	add_test(
+		NAME ${TEST_FILENAME}							# test name same with file name
+		COMMAND ${PYTHON_EXECUTABLE}					# reference to python executable
+		"${CMAKE_SOURCE_DIR}/scripts/run_test.py"		# path to run_test python script
+		"$<TARGET_FILE:gotchangpdf.test>"				# destination of the test executable
+		"${CMAKE_SOURCE_DIR}/scripts/encryption.cfg"	# path to configuration file for encrypted files
+		"${TEST_FILE}"									# destination of the source file
+	)
+endforeach(TEST_FILE)
