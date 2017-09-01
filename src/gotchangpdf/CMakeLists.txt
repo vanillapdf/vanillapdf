@@ -503,14 +503,6 @@ if (JPEG_FOUND)
 	set(GOTCHANGPDF_LIBS ${JPEG_LIBRARIES} ${GOTCHANGPDF_LIBS})
 	add_definitions("-DGOTCHANG_PDF_HAVE_JPEG")
 
-	# I don't have easy way to search for JPEG binary
-	# add_custom_command(
-		# TARGET gotchangpdf POST_BUILD
-		# COMMAND ${CMAKE_COMMAND} -E copy_if_different
-		# ${JPEG_LIBRARIES}
-		# $<TARGET_FILE_DIR:gotchangpdf>
-	# )
-	
 	message(STATUS "JPEG library was found")
 else (JPEG_FOUND)
 	message(STATUS "Compiling without JPEG support. JPEG compression will become unavailable")
@@ -520,13 +512,6 @@ if (ZLIB_FOUND)
 	include_directories(${ZLIB_INCLUDE_DIRS})
 	set(GOTCHANGPDF_LIBS ${ZLIB_LIBRARIES} ${GOTCHANGPDF_LIBS})
 	add_definitions("-DGOTCHANG_PDF_HAVE_ZLIB")
-
-	# add_custom_command(
-		# TARGET gotchangpdf POST_BUILD
-		# COMMAND ${CMAKE_COMMAND} -E copy_if_different
-		# ${ZLIB_LIBRARIES}
-		# $<TARGET_FILE_DIR:gotchangpdf>
-	# )
 
 	message(STATUS "zlib ${ZLIB_VERSION_STRING} was found")
 else (ZLIB_FOUND)
