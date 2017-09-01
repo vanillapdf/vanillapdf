@@ -12,6 +12,9 @@ project(gotchangpdf)
 # We can setup custom modules to search for third party dependencies
 # set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
+# Package management
+include(cmake/packaging.cmake)
+include(CPack)
 
 # Allow tests to be run
 include(cmake/build_name.cmake)
