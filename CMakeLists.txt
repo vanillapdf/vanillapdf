@@ -38,6 +38,12 @@ set(GOTCHANG_PDF_VERSION_MINOR 0)
 set(GOTCHANG_PDF_VERSION_PATCH 1)
 set(GOTCHANG_PDF_VERSION_BUILD 0)
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING
+      "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
+      FORCE)
+endif(NOT CMAKE_BUILD_TYPE)
+
 # Include source directories
 add_subdirectory(src/gotchangpdf)
 add_subdirectory(src/gotchangpdf.test)
