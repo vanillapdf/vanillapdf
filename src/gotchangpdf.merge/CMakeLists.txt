@@ -27,6 +27,16 @@ add_executable(gotchangpdf.merge
 	${GOTCHANGPDF_MERGE_SOURCES}
 )
 
+if(WIN32)
+	# Copy DLL dependencies on windows to our build directory
+	add_custom_command(
+		TARGET gotchangpdf.merge POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		$<TARGET_FILE_DIR:gotchangpdf>
+		$<TARGET_FILE_DIR:gotchangpdf.merge>
+	)
+endif(WIN32)
+
 set(GOTCHANGPDF_MERGE_LIBS
 	gotchangpdf
 )

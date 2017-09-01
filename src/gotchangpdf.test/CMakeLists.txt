@@ -31,6 +31,16 @@ add_executable(gotchangpdf.test
 	${GOTCHANGPDF_TEST_SOURCES}
 )
 
+if(WIN32)
+	# Copy DLL dependencies on windows to our build directory
+	add_custom_command(
+		TARGET gotchangpdf.test POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		$<TARGET_FILE_DIR:gotchangpdf>
+		$<TARGET_FILE_DIR:gotchangpdf.test>
+	)
+endif(WIN32)
+
 set(GOTCHANGPDF_TEST_LIBS
 	gotchangpdf
 )
