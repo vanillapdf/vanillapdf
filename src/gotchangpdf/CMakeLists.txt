@@ -484,6 +484,17 @@ add_definitions("-DGOTCHANG_PDF_VERSION_MINOR=${GOTCHANG_PDF_VERSION_MINOR}")
 add_definitions("-DGOTCHANG_PDF_VERSION_PATCH=${GOTCHANG_PDF_VERSION_PATCH}")
 add_definitions("-DGOTCHANG_PDF_VERSION_BUILD=${GOTCHANG_PDF_VERSION_BUILD}")
 
+if(WIN32)
+
+	# TODO packaged openSSL build uses older VC compiler
+	# also it requires multiple additional dependencies such as winsock
+	
+	# Try to use static libraries on windows as they have to be shipped
+	#set(OPENSSL_USE_STATIC_LIBS TRUE)
+	#set(OPENSSL_MSVC_STATIC_RT TRUE)
+
+endif(WIN32)
+
 find_package(OpenSSL)
 find_package(ZLIB)
 find_package(JPEG)
@@ -521,9 +532,6 @@ endif (ZLIB_FOUND)
 target_link_libraries(gotchangpdf ${GOTCHANGPDF_LIBS})
 
 # Place for install targets
-
-# System libs such as msvcp and vcruntime
-include(InstallRequiredSystemLibraries)
 
 # Project install targets
 install(TARGETS gotchangpdf
