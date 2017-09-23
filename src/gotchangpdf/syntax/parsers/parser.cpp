@@ -695,43 +695,43 @@ HeaderPtr Parser::ReadHeader(types::stream_offset offset) {
 }
 
 HeaderPtr Parser::ReadHeader(void) {
-	int parsed_version = 0;
-
-	for (;;) {
+	while (!m_stream->Eof()) {
 		auto data = m_stream->Readline();
 		std::string line = data->ToString();
 
 		std::smatch sm;
 		std::regex header_regex("%PDF-1\\.([0-7]).*");
-		if (std::regex_match(line, sm, header_regex)) {
-			parsed_version = stoi(sm[1]);
-			break;
+		if (!std::regex_match(line, sm, header_regex)) {
+			continue;
 		}
+
+		HeaderPtr result;
+		int parsed_version = stoi(sm[1]);
+		switch (parsed_version) {
+			case 0:
+				result->SetVersion(Version::PDF10); break;
+			case 1:
+				result->SetVersion(Version::PDF11); break;
+			case 2:
+				result->SetVersion(Version::PDF12); break;
+			case 3:
+				result->SetVersion(Version::PDF13); break;
+			case 4:
+				result->SetVersion(Version::PDF14); break;
+			case 5:
+				result->SetVersion(Version::PDF15); break;
+			case 6:
+				result->SetVersion(Version::PDF16); break;
+			case 7:
+				result->SetVersion(Version::PDF17); break;
+			default:
+				assert(!"If happens, error in regular expression");
+		}
+
+		return result;
 	}
 
-	HeaderPtr result;
-	switch (parsed_version) {
-		case 0:
-			result->SetVersion(Version::PDF10); break;
-		case 1:
-			result->SetVersion(Version::PDF11); break;
-		case 2:
-			result->SetVersion(Version::PDF12); break;
-		case 3:
-			result->SetVersion(Version::PDF13); break;
-		case 4:
-			result->SetVersion(Version::PDF14); break;
-		case 5:
-			result->SetVersion(Version::PDF15); break;
-		case 6:
-			result->SetVersion(Version::PDF16); break;
-		case 7:
-			result->SetVersion(Version::PDF17); break;
-		default:
-			assert(!"If happens, error in regular expression");
-	}
-
-	return result;
+	throw GeneralException("Could not find PDF header");
 }
 
 XrefChainPtr Parser::FindAllObjects(void) {

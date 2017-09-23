@@ -79,6 +79,18 @@ void InputStream::SetInputPosition(types::stream_size pos) {
 BufferPtr InputStream::Readline(void) {
 	BufferPtr result;
 
+	bool stream_failed = m_stream->fail();
+	assert(!stream_failed && "Stream is in failed state");
+	if (stream_failed) {
+		throw GeneralException("Stream is in failed state");
+	}
+
+	bool stream_eof = m_stream->eof();
+	assert(!stream_eof && "Stream reached eof");
+	if (stream_eof) {
+		throw GeneralException("Stream reached eof");
+	}
+
 	for (;;) {
 		auto eof_test = m_stream->peek();
 		if (eof_test == std::char_traits<char>::eof()) {
