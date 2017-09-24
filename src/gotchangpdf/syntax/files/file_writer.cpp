@@ -1221,7 +1221,7 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
 			// Store the object mapping for later object number fixups
 			auto remapped_object = std::make_pair(original_object_number, new_object_number);
 			auto inserted = squash_object_map.insert(remapped_object);
-			assert(inserted.second && "Could not insert object mapping");
+			assert(inserted.second && "Could not insert object mapping"); UNUSED(inserted);
 
 			if (ConvertUtils<XrefEntryBasePtr>::IsType<XrefFreeEntryPtr>(entry)) {
 				auto free_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefFreeEntryPtr>(entry);

@@ -627,7 +627,7 @@ void File::FixObjectReferences(const std::map<ObjectPtr, ObjectPtr>& map, std::m
 			break;
 		}
 
-		assert(found && "Found reference which was not copied");
+		assert(found && "Found reference which was not copied"); UNUSED(found);
 	}
 
 	if (ObjectUtils::IsType<MixedArrayObjectPtr>(copied)) {
