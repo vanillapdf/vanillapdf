@@ -1,5 +1,23 @@
 # Require minimum CMAKE version
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.4)
+
+# Minimum version is 2.8.4 due to Cygwin warning:
+
+	# CMake no longer defines WIN32 on Cygwin!
+
+	# (1) If you are just trying to build this project, ignore this warning or
+	# quiet it by setting CMAKE_LEGACY_CYGWIN_WIN32=0 in your environment or in
+	# the CMake cache.  If later configuration or build errors occur then this
+	# project may have been written under the assumption that Cygwin is WIN32.
+	# In that case, set CMAKE_LEGACY_CYGWIN_WIN32=1 instead.
+
+	# (2) If you are developing this project, add the line
+
+	  # set(CMAKE_LEGACY_CYGWIN_WIN32 0) # Remove when CMake >= 2.8.4 is required
+
+	# at the top of your top-level CMakeLists.txt file or set the minimum
+	# required version of CMake to 2.8.4 or higher.  Then teach your project to
+	# build on Cygwin without WIN32.
 
 # Define main solution
 project(gotchangpdf)
