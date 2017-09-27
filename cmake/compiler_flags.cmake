@@ -30,7 +30,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 	# in order they make sense and are declared as constructor parameters.
 	# This should be harmless unless you take at least a little care.
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder")
-	
+
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 if(MSVC)
@@ -38,11 +38,7 @@ if(MSVC)
 	# Enable maximum warning level
 	set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} /W4")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
-
-endif(MSVC)
-
-if(WIN32)
-
+	
 	# We want to statically link most of the things on Windows
 	# as it is hell to deploy multiple binaries alongside
 	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd")
@@ -57,4 +53,4 @@ if(WIN32)
 	set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} /MT")
 	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /MT")
 
-endif(WIN32)
+endif(MSVC)
