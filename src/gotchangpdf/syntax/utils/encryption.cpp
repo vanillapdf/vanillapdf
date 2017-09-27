@@ -272,12 +272,12 @@ bool EncryptionUtils::CheckKey(
 	MD5_Update(&ctx, owner_data.data(), owner_data.std_size());
 
 	auto permissions_value = permissions.GetIntegerValue();
-	uint32_t permissions_raw = reinterpret_cast<uint32_t&>(permissions_value);
+	int32_t permissions_raw = ValueConvertUtils::SafeConvert<int32_t>(permissions_value);
 	uint8_t permissions_array[sizeof(permissions_raw)];
-	permissions_array[0] = permissions_raw & 0xFF;
-	permissions_array[1] = (permissions_raw >> 8) & 0xFF;
-	permissions_array[2] = (permissions_raw >> 16) & 0xFF;
-	permissions_array[3] = (permissions_raw >> 24) & 0xFF;
+
+	for (size_t i = 0; i < sizeof(permissions_raw); ++i) {
+		permissions_array[i] = (permissions_raw >> (i * 8)) & 0xFF;
+	}
 
 	MD5_Update(&ctx, permissions_array, sizeof(permissions_array));
 	MD5_Update(&ctx, document_id.data(), document_id.std_size());
