@@ -5,6 +5,7 @@
 #include "semantics/utils/semantic_utils.h"
 
 #include <regex>
+#include <mutex>
 #include <unordered_map>
 
 namespace gotchangpdf {

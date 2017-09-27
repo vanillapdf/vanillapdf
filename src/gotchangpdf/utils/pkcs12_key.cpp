@@ -5,6 +5,7 @@
 #include "utils/streams/input_stream.h"
 
 #include <fstream>
+#include <mutex>
 
 #if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 

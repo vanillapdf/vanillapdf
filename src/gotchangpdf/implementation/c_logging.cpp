@@ -8,25 +8,25 @@ using namespace gotchangpdf;
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_IsEnabled(boolean_type* result)
 {
-	*result = Logger::GetInstance()->IsEnabled();
+	*result = LogManager::GetLoggerInstance()->IsEnabled();
 	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_Enable(void)
 {
-	Logger::GetInstance()->SetEnabled(true);
+	LogManager::GetLoggerInstance()->SetEnabled(true);
 	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_Disable(void)
 {
-	Logger::GetInstance()->SetEnabled(false);
+	LogManager::GetLoggerInstance()->SetEnabled(false);
 	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
 
 GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_GetSeverity(LoggingSeverity* level)
 {
-	auto result = Logger::GetInstance()->GetSeverity();
+	auto result = LogManager::GetLoggerInstance()->GetSeverity();
 	switch (result)
 	{
 	case gotchangpdf::Severity::Debug:
@@ -65,6 +65,6 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Logging_SetSeverity(LoggingSeveri
 		return GOTCHANG_PDF_ERROR_GENERAL;
 	}
 
-	Logger::GetInstance()->SetSeverity(converted);
+	LogManager::GetLoggerInstance()->SetSeverity(converted);
 	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
