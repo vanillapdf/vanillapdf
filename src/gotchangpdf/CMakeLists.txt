@@ -475,11 +475,23 @@ target_compile_features(gotchangpdf PRIVATE
 	cxx_strong_enums
 )
 
-add_definitions("-DGOTCHANG_PDF_EXPORTS")
-add_definitions("-DGOTCHANG_PDF_VERSION_MAJOR=${GOTCHANG_PDF_VERSION_MAJOR}")
-add_definitions("-DGOTCHANG_PDF_VERSION_MINOR=${GOTCHANG_PDF_VERSION_MINOR}")
-add_definitions("-DGOTCHANG_PDF_VERSION_PATCH=${GOTCHANG_PDF_VERSION_PATCH}")
-add_definitions("-DGOTCHANG_PDF_VERSION_BUILD=${GOTCHANG_PDF_VERSION_BUILD}")
+# Specify that library should export functions
+add_definitions(-DGOTCHANG_PDF_EXPORTS)
+
+# Specify version identificators
+add_definitions(-DGOTCHANG_PDF_VERSION_MAJOR=${GOTCHANG_PDF_VERSION_MAJOR})
+add_definitions(-DGOTCHANG_PDF_VERSION_MINOR=${GOTCHANG_PDF_VERSION_MINOR})
+add_definitions(-DGOTCHANG_PDF_VERSION_PATCH=${GOTCHANG_PDF_VERSION_PATCH})
+add_definitions(-DGOTCHANG_PDF_VERSION_BUILD=${GOTCHANG_PDF_VERSION_BUILD})
+
+# Specify build time identificators
+string(TIMESTAMP GOTCHANG_PDF_BUILD_DAY		"%d" UTC)
+string(TIMESTAMP GOTCHANG_PDF_BUILD_MONTH	"%m" UTC)
+string(TIMESTAMP GOTCHANG_PDF_BUILD_YEAR	"%Y" UTC)
+
+add_definitions(-DGOTCHANG_PDF_BUILD_DAY=${GOTCHANG_PDF_BUILD_DAY})
+add_definitions(-DGOTCHANG_PDF_BUILD_MONTH=${GOTCHANG_PDF_BUILD_MONTH})
+add_definitions(-DGOTCHANG_PDF_BUILD_YEAR=${GOTCHANG_PDF_BUILD_YEAR})
 
 if(WIN32)
 
@@ -499,7 +511,7 @@ find_package(JPEG)
 if (OPENSSL_FOUND)
 	include_directories(${OPENSSL_INCLUDE_DIR})
 	set(GOTCHANGPDF_LIBS ${OPENSSL_LIBRARIES} ${GOTCHANGPDF_LIBS})
-	add_definitions("-DGOTCHANG_PDF_HAVE_OPENSSL")
+	add_definitions(-DGOTCHANG_PDF_HAVE_OPENSSL)
 	
 	message(STATUS "OpenSSL ${OPENSSL_VERSION} was found")
 else (OPENSSL_FOUND)
@@ -509,7 +521,7 @@ endif (OPENSSL_FOUND)
 if (JPEG_FOUND)
 	include_directories(${JPEG_INCLUDE_DIR})
 	set(GOTCHANGPDF_LIBS ${JPEG_LIBRARIES} ${GOTCHANGPDF_LIBS})
-	add_definitions("-DGOTCHANG_PDF_HAVE_JPEG")
+	add_definitions(-DGOTCHANG_PDF_HAVE_JPEG)
 
 	message(STATUS "JPEG library was found")
 else (JPEG_FOUND)
@@ -519,7 +531,7 @@ endif (JPEG_FOUND)
 if (ZLIB_FOUND)
 	include_directories(${ZLIB_INCLUDE_DIRS})
 	set(GOTCHANGPDF_LIBS ${ZLIB_LIBRARIES} ${GOTCHANGPDF_LIBS})
-	add_definitions("-DGOTCHANG_PDF_HAVE_ZLIB")
+	add_definitions(-DGOTCHANG_PDF_HAVE_ZLIB)
 
 	message(STATUS "zlib ${ZLIB_VERSION_STRING} was found")
 else (ZLIB_FOUND)

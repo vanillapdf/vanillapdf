@@ -29,3 +29,18 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION LibraryInfo_GetAuthor(string_type
 	*result = LibraryInfo::Author();
 	return GOTCHANG_PDF_ERROR_SUCCESS;
 }
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION LibraryInfo_GetBuildDay(integer_type* result) {
+	*result = LibraryInfo::BuildDay();
+	return GOTCHANG_PDF_ERROR_SUCCESS;
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION LibraryInfo_GetBuildMonth(integer_type* result) {
+	*result = LibraryInfo::BuildMonth();
+	return GOTCHANG_PDF_ERROR_SUCCESS;
+}
+
+GOTCHANG_PDF_API error_type CALLING_CONVENTION LibraryInfo_GetBuildYear(integer_type* result) {
+	*result = LibraryInfo::BuildYear();
+	return GOTCHANG_PDF_ERROR_SUCCESS;
+}

@@ -11,6 +11,10 @@ public:
 	static int BuildVersion() noexcept;
 	static const char * Author() noexcept;
 
+	static int BuildDay() noexcept;
+	static int BuildMonth() noexcept;
+	static int BuildYear() noexcept;
+
 private:
 	LibraryInfo() = default;
 };

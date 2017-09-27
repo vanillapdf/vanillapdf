@@ -63,6 +63,21 @@ extern "C"
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION LibraryInfo_GetAuthor(string_type* result);
 
+	/**
+	* \brief Get day of month, when the library was built
+	*/
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION LibraryInfo_GetBuildDay(integer_type* result);
+
+	/**
+	* \brief Get month of the year, when the library was built
+	*/
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION LibraryInfo_GetBuildMonth(integer_type* result);
+
+	/**
+	* \brief Get year, when the library was built
+	*/
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION LibraryInfo_GetBuildYear(integer_type* result);
+
 	/** @} */
 
 #ifdef __cplusplus

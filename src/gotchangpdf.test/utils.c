@@ -94,11 +94,20 @@ error_type process_logging() {
 }
 
 error_type process_library_info() {
+
+	// Misc
 	string_type library_author = NULL;
+
+	// Version info
 	integer_type library_version_major = 0;
 	integer_type library_version_minor = 0;
 	integer_type library_version_patch = 0;
 	integer_type library_version_build = 0;
+
+	// Build time infor
+	integer_type library_build_day = 0;
+	integer_type library_build_month = 0;
+	integer_type library_build_year = 0;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetVersionMajor(&library_version_major));
 	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetVersionMinor(&library_version_minor));
@@ -106,12 +115,22 @@ error_type process_library_info() {
 	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetVersionPatch(&library_version_build));
 	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetAuthor(&library_author));
 
+	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetBuildDay(&library_build_day));
+	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetBuildMonth(&library_build_month));
+	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetBuildYear(&library_build_year));
+
 	printf("Library gotchangpdf %d.%d.%d.%d by %s\n",
 		library_version_major,
 		library_version_minor,
 		library_version_patch,
 		library_version_build,
 		library_author
+	);
+
+	printf("Built on %d.%d.%d\n",
+		library_build_day,
+		library_build_month,
+		library_build_year
 	);
 
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;

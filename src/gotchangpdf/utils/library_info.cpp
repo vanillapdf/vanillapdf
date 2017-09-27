@@ -4,19 +4,31 @@
 
 #ifndef GOTCHANG_PDF_VERSION_MAJOR
 	#define GOTCHANG_PDF_VERSION_MAJOR 0
-#endif
+#endif /* GOTCHANG_PDF_VERSION_MAJOR */
 
 #ifndef GOTCHANG_PDF_VERSION_MINOR
 	#define GOTCHANG_PDF_VERSION_MINOR 0
-#endif
+#endif /* GOTCHANG_PDF_VERSION_MINOR */
 
 #ifndef GOTCHANG_PDF_VERSION_PATCH
 	#define GOTCHANG_PDF_VERSION_PATCH 0
-#endif
+#endif /* GOTCHANG_PDF_VERSION_PATCH */
 
 #ifndef GOTCHANG_PDF_VERSION_BUILD
 	#define GOTCHANG_PDF_VERSION_BUILD 0
-#endif 
+#endif /* GOTCHANG_PDF_VERSION_BUILD */
+
+#ifndef GOTCHANG_PDF_BUILD_DAY
+	#define GOTCHANG_PDF_BUILD_DAY 1
+#endif /* GOTCHANG_PDF_BUILD_DAY */
+
+#ifndef GOTCHANG_PDF_BUILD_MONTH
+	#define GOTCHANG_PDF_BUILD_MONTH 1
+#endif /* GOTCHANG_PDF_BUILD_MONTH */
+
+#ifndef GOTCHANG_PDF_BUILD_YEAR
+	#define GOTCHANG_PDF_BUILD_YEAR 1970
+#endif /* GOTCHANG_PDF_BUILD_YEAR */
 
 namespace gotchangpdf {
 
@@ -42,6 +54,21 @@ int LibraryInfo::BuildVersion() noexcept {
 
 const char * LibraryInfo::Author() noexcept {
 	return "Juraj Zikmund";
+}
+
+int LibraryInfo::BuildDay() noexcept {
+	const int BUILD_DAY = GOTCHANG_PDF_BUILD_DAY;
+	return BUILD_DAY;
+}
+
+int LibraryInfo::BuildMonth() noexcept {
+	const int BUILD_MONTH = GOTCHANG_PDF_BUILD_MONTH;
+	return BUILD_MONTH;
+}
+
+int LibraryInfo::BuildYear() noexcept {
+	const int BUILD_YEAR = GOTCHANG_PDF_BUILD_YEAR;
+	return BUILD_YEAR;
 }
 
 } // gotchangpdf
