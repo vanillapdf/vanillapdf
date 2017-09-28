@@ -55,11 +55,11 @@ void term_source(j_decompress_ptr ptr) {
 
 #endif
 
-BufferPtr DCTDecodeFilter::Encode(std::istream&, types::stream_size, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */) const {
+BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr, types::stream_size, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */) const {
 	throw NotSupportedException("DCTDecodeFilter encoding is not supported");
 }
 
-BufferPtr DCTDecodeFilter::Decode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */) const {
+BufferPtr DCTDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */) const {
 
 #if defined(GOTCHANG_PDF_HAVE_JPEG)
 
@@ -94,9 +94,9 @@ BufferPtr DCTDecodeFilter::Decode(std::istream& src, types::stream_size length, 
 	size_t length_converted = ValueConvertUtils::SafeConvert<size_t>(length);
 
 	BufferPtr input = make_deferred<Buffer>(length_converted);
-	src.read(input->data(), length_converted);
+	src->Read(input, length_converted);
 
-	jpeg.src->next_input_byte = reinterpret_cast<unsigned char*>(input->data());
+	jpeg.src->next_input_byte = reinterpret_cast<uint8_t *>(input->data());
 	jpeg.src->bytes_in_buffer = length_converted;
 
 	int header = jpeg_read_header(&jpeg, TRUE);
@@ -162,13 +162,13 @@ BufferPtr DCTDecodeFilter::Decode(std::istream& src, types::stream_size length, 
 }
 
 BufferPtr DCTDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const {
-	auto stream = src->ToStringStream();
-	return Encode(*stream, src->size());
+	auto stream = src->ToInputStream();
+	return Encode(stream, src->size());
 }
 
 BufferPtr DCTDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters) const {
-	auto stream = src->ToStringStream();
-	return Decode(*stream, src->size());
+	auto stream = src->ToInputStream();
+	return Decode(stream, src->size());
 }
 
 } // syntax

@@ -2,9 +2,12 @@
 #define _BUFFER_H
 
 #include "utils/character.h"
+#include "utils/conversion_utils.h"
 #include "utils/unknown_interface.h"
 #include "utils/custom_size_vector.h"
 #include "utils/modify_observer_interface.h"
+
+#include "utils/streams/input_stream_interface.h"
 
 #include <string>
 #include <ostream>
@@ -31,16 +34,27 @@ public:
 public:
 	Buffer() = default;
 
-	explicit Buffer(size_type count);
 	explicit Buffer(const char * chars);
 	explicit Buffer(std::string data);
 	Buffer(const value_type * begin, const value_type * end);
 	Buffer(size_type count, const value_type& val);
 
-	template <class InputIterator>
+	template <
+		typename T,
+		typename = typename std::enable_if<std::is_integral<T>::value>::type
+	>
+	Buffer(T count) {
+		auto count_converted = ValueConvertUtils::SafeConvert<uint32_t>(count);
+		m_data.resize(count_converted);
+	}
+
+	template <typename InputIterator>
 	Buffer(InputIterator first, InputIterator last) : m_data(first, last) {}
 
-	template <typename T, typename = std::enable_if<sizeof(T) == sizeof(value_type)>>
+	template <
+		typename T,
+		typename = typename std::enable_if<sizeof(T) == sizeof(value_type)>
+	>
 	Buffer(const T * chars, size_type len) : m_data(
 		reinterpret_cast<const value_type *>(&chars[0]),
 		reinterpret_cast<const value_type *>(&chars[len])
@@ -51,7 +65,7 @@ public:
 	size_t Hash() const;
 	BufferPtr Clone(void) const { return make_deferred<Buffer>(begin(), end()); }
 	std::string ToString(void) const { return std::string(begin(), end()); }
-	std::shared_ptr<std::stringstream> ToStringStream(void) const;
+	IInputStreamPtr ToInputStream(void) const;
 	bool Equals(const Buffer& other) const;
 	bool LessThan(const Buffer& other) const;
 

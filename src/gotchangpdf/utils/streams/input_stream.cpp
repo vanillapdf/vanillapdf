@@ -9,19 +9,21 @@ namespace gotchangpdf {
 InputStream::InputStream(std::shared_ptr<std::istream> stream) : m_stream(stream) {
 }
 
-BufferPtr InputStream::Read(types::size_type len) {
+BufferPtr InputStream::Read(types::stream_size len) {
 	BufferPtr result = make_deferred<Buffer>(len);
 	m_stream->read(result->data(), len);
 	return result;
 }
 
-types::stream_size InputStream::Read(Buffer& result, types::size_type len) {
-	assert(result.size() >= len);
-	if (result.size() < len) {
-		result.resize(len);
+types::stream_size InputStream::Read(Buffer& result, types::stream_size len) {
+	auto length_converted = ValueConvertUtils::SafeConvert<types::size_type>(len);
+
+	assert(result.size() >= length_converted);
+	if (result.size() < length_converted) {
+		result.resize(length_converted);
 	}
 
-	m_stream->read(result.data(), len);
+	m_stream->read(result.data(), length_converted);
 	return m_stream->gcount();
 }
 
@@ -38,7 +40,7 @@ types::stream_size InputStream::GetInputPosition() {
 void InputStream::SetInputPosition(types::stream_size pos, std::ios_base::seekdir way) {
 	auto initial_offset = GetInputPosition();
 
-	// of badoff is specified, set eof flag
+	// if badoff is specified, set eof flag
 	if (pos == constant::BAD_OFFSET) {
 		m_stream->setstate(m_stream->eofbit);
 		return;

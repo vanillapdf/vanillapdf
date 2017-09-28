@@ -6,8 +6,6 @@
 #include "utils/zlib_wrapper.h"
 #include "utils/math_utils.h"
 
-#include "utils/streams/input_stream.h"
-
 namespace gotchangpdf {
 namespace syntax {
 
@@ -29,21 +27,21 @@ BufferPtr FlateDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameter
 	return ApplyPredictor(dest, parameters);
 }
 
-BufferPtr FlateDecodeFilter::Encode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters) const {
+BufferPtr FlateDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters) const {
 	return ZlibWrapper::Deflate(src, length);
 }
 
-BufferPtr FlateDecodeFilter::Decode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters) const {
+BufferPtr FlateDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters) const {
 	auto dest = ZlibWrapper::Inflate(src, length);
 	return ApplyPredictor(dest, parameters);
 }
 
 BufferPtr FlateDecodeFilter::ApplyPredictor(BufferPtr src, DictionaryObjectPtr parameters) const {
-	auto stream = src->ToStringStream();
+	auto stream = src->ToInputStream();
 	return ApplyPredictor(stream, src->size(), parameters);
 }
 
-BufferPtr FlateDecodeFilter::ApplyPredictor(std::shared_ptr<std::istream> src, types::stream_size length, DictionaryObjectPtr parameters) const {
+BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters) const {
 	IntegerObjectPtr predictor = make_deferred<IntegerObject>(1);
 	if (parameters->Contains(constant::Name::Predictor)) {
 		predictor = parameters->FindAs<IntegerObjectPtr>(constant::Name::Predictor);
@@ -53,7 +51,7 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(std::shared_ptr<std::istream> src, t
 	// No prediction was used
 	if (predictor == 1) {
 		auto length_converted = ValueConvertUtils::SafeConvert<types::size_type>(length);
-		return InputStream(src).Read(length_converted);
+		return src->Read(length_converted);
 	}
 
 	IntegerObjectPtr colors = make_deferred<IntegerObject>(1);
@@ -96,13 +94,12 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(std::shared_ptr<std::istream> src, t
 	uint32_t bytes_per_row = SafeAddition<uint32_t>(colors_columns_bits, 7) / 8;
 
 	BufferPtr result;
-	InputStream strm(src);
 	Buffer current(bytes_per_row);
 	Buffer prior(bytes_per_row);
 
-	while (strm.Peek() != std::char_traits<char>::eof()) {
-		auto filter = strm.Get();
-		auto read = strm.Read(current, bytes_per_row);
+	while (src->Peek() != std::char_traits<char>::eof()) {
+		auto filter = src->Get();
+		auto read = src->Read(current, bytes_per_row);
 
 		assert(read == bytes_per_row);
 		if (read != bytes_per_row) {

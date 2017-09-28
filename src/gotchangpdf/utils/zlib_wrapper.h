@@ -4,7 +4,7 @@
 #include "utils/utils_fwd.h"
 #include "utils/constants.h"
 
-#include <iosfwd>
+#include "utils/streams/input_stream_interface.h"
 
 namespace gotchangpdf {
 
@@ -13,8 +13,8 @@ public:
 	static BufferPtr Deflate(const Buffer& input);
 	static BufferPtr Inflate(const Buffer& input);
 
-	static BufferPtr Deflate(std::istream& input, types::stream_size length);
-	static BufferPtr Inflate(std::istream& input, types::stream_size length);
+	static BufferPtr Deflate(IInputStreamPtr input, types::stream_size length);
+	static BufferPtr Inflate(IInputStreamPtr input, types::stream_size length);
 
 private:
 	ZlibWrapper() = default;

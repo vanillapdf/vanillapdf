@@ -786,8 +786,7 @@ IInputStreamPtr File::GetByteRangeStream(types::stream_size begin, types::size_t
 	InputStream stream(_input);
 	stream.SetInputPosition(begin);
 	auto buffer = stream.Read(length);
-	auto ss = buffer->ToStringStream();
-	return make_deferred<InputStream>(ss);
+	return buffer->ToInputStream();
 }
 
 } // syntax

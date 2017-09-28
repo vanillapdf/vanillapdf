@@ -15,7 +15,7 @@
 
 namespace gotchangpdf {
 
-static BufferPtr Inflate(std::istream& input, types::stream_size length, types::stream_size errors_after) {
+static BufferPtr Inflate(IInputStreamPtr input, types::stream_size length, types::stream_size errors_after) {
 
 #if defined(GOTCHANG_PDF_HAVE_ZLIB)
 
@@ -24,8 +24,8 @@ static BufferPtr Inflate(std::istream& input, types::stream_size length, types::
 	BufferPtr result;
 	types::stream_size read_total = 0;
 	bool expect_errors = (length != errors_after);
-	std::vector<uint8_t> in_buffer(constant::BUFFER_SIZE);
-	std::vector<uint8_t> out_buffer(constant::BUFFER_SIZE);
+	Buffer in_buffer(constant::BUFFER_SIZE);
+	Buffer out_buffer(constant::BUFFER_SIZE);
 
 	/* allocate inflate state */
 	strm.zalloc = Z_NULL;
@@ -50,20 +50,19 @@ static BufferPtr Inflate(std::istream& input, types::stream_size length, types::
 			read_size = std::min(length - read_total, static_cast<types::stream_size>(in_buffer.size()));
 		}
 
-		input.read(reinterpret_cast<char *>(in_buffer.data()), read_size);
-		auto read = input.gcount();
+		auto read = input->Read(in_buffer, read_size);
 		if (read == 0) {
 			break;
 		}
 
 		read_total += read;
 		strm.avail_in = static_cast<uInt>(read);
-		strm.next_in = in_buffer.data();
+		strm.next_in = reinterpret_cast<uint8_t *>(in_buffer.data());
 
 		/* run inflate() on input until output buffer not full */
 		do {
 			strm.avail_out = constant::BUFFER_SIZE;
-			strm.next_out = out_buffer.data();
+			strm.next_out = reinterpret_cast<uint8_t *>(out_buffer.data());
 			rv = inflate(&strm, Z_NO_FLUSH);
 
 			assert(rv != Z_STREAM_ERROR);
@@ -107,11 +106,11 @@ static BufferPtr Inflate(std::istream& input, types::stream_size length, types::
 
 }
 
-static BufferPtr Inflate(std::istream& input, types::stream_size length) {
+static BufferPtr Inflate(IInputStreamPtr input, types::stream_size length) {
 	return Inflate(input, length, length);
 }
 
-static BufferPtr Deflate(std::istream& input, types::stream_size length) {
+static BufferPtr Deflate(IInputStreamPtr input, types::stream_size length) {
 
 #if defined(GOTCHANG_PDF_HAVE_ZLIB)
 
@@ -119,8 +118,8 @@ static BufferPtr Deflate(std::istream& input, types::stream_size length) {
 	int flush = Z_NO_FLUSH;
 	z_stream strm = { 0 };
 	BufferPtr result;
-	std::vector<uint8_t> in_buffer(constant::BUFFER_SIZE);
-	std::vector<uint8_t> out_buffer(constant::BUFFER_SIZE);
+	Buffer in_buffer(constant::BUFFER_SIZE);
+	Buffer out_buffer(constant::BUFFER_SIZE);
 
 	/* allocate deflate state */
 	strm.zalloc = Z_NULL;
@@ -135,18 +134,17 @@ static BufferPtr Deflate(std::istream& input, types::stream_size length) {
 	SCOPE_GUARD_CAPTURE_REFERENCES(deflateEnd(&strm));
 
 	do {
-		input.read(reinterpret_cast<char *>(in_buffer.data()), std::min(length, static_cast<types::stream_size>(constant::BUFFER_SIZE)));
-		auto read = input.gcount();
+		auto read = input->Read(in_buffer, std::min(length, static_cast<types::stream_size>(constant::BUFFER_SIZE)));
 		length -= read;
 		strm.avail_in = static_cast<uInt>(read);
-		strm.next_in = in_buffer.data();
+		strm.next_in = reinterpret_cast<uint8_t *>(in_buffer.data());
 		flush = (strm.avail_in == 0) ? Z_FINISH : Z_NO_FLUSH;
 
 		/* run deflate() on input until output buffer not full, finish
 		compression if all of source has been read in */
 		do {
 			strm.avail_out = constant::BUFFER_SIZE;
-			strm.next_out = out_buffer.data();
+			strm.next_out = reinterpret_cast<uint8_t *>(out_buffer.data());
 			rv = deflate(&strm, flush);
 
 			assert(rv != Z_STREAM_ERROR);
@@ -170,28 +168,28 @@ static BufferPtr Deflate(std::istream& input, types::stream_size length) {
 
 }
 
-BufferPtr ZlibWrapper::Deflate(std::istream& input, types::stream_size length) {
+BufferPtr ZlibWrapper::Deflate(IInputStreamPtr input, types::stream_size length) {
 	return gotchangpdf::Deflate(input, length);
 }
 
-BufferPtr ZlibWrapper::Inflate(std::istream& input, types::stream_size length) {
+BufferPtr ZlibWrapper::Inflate(IInputStreamPtr input, types::stream_size length) {
 	try {
 		return gotchangpdf::Inflate(input, length);
 	} catch (ZlibDataErrorException& ex) {
 		auto size = ex.Size();
-		input.seekg(0, std::ios::beg);
+		input->SetInputPosition(0, std::ios::beg);
 		return gotchangpdf::Inflate(input, length, size);
 	}
 }
 
 BufferPtr ZlibWrapper::Deflate(const Buffer& input) {
-	auto stream = input.ToStringStream();
-	return Deflate(*stream, input.size());
+	auto stream = input.ToInputStream();
+	return Deflate(stream, input.size());
 }
 
 BufferPtr ZlibWrapper::Inflate(const Buffer& input) {
-	auto stream = input.ToStringStream();
-	return Inflate(*stream, input.size());
+	auto stream = input.ToInputStream();
+	return Inflate(stream, input.size());
 }
 
 } // gotchangpdf

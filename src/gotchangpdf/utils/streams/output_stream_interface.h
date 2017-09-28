@@ -5,6 +5,8 @@
 #include "utils/buffer.h"
 #include "utils/character.h"
 
+#include <ios>
+
 namespace gotchangpdf {
 
 class IOutputStream : public virtual IUnknown {

@@ -5,11 +5,11 @@
 namespace gotchangpdf {
 namespace syntax {
 
-BufferPtr ASCII85DecodeFilter::Encode(std::istream&, types::stream_size, DictionaryObjectPtr parameters /* = DictionaryObjectPtr() */) const {
+BufferPtr ASCII85DecodeFilter::Encode(IInputStreamPtr, types::stream_size, DictionaryObjectPtr parameters /* = DictionaryObjectPtr() */) const {
 	throw NotSupportedException("ASCII85DecodeFilter encoding is not supported");
 }
 
-BufferPtr ASCII85DecodeFilter::Decode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters /* = DictionaryObjectPtr() */) const {
+BufferPtr ASCII85DecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters /* = DictionaryObjectPtr() */) const {
 	BufferPtr result;
 
 	int current = 0;
@@ -17,8 +17,8 @@ BufferPtr ASCII85DecodeFilter::Decode(std::istream& src, types::stream_size leng
 
 	// Iterate over all elements
 	for (decltype(length) i = 0; i < length; ++i) {
-		auto meta = src.get();
-		auto next = src.peek();
+		auto meta = src->Get();
+		auto next = src->Peek();
 
 		if (meta == std::char_traits<char>::eof()) {
 			throw GeneralException("Unexpected end of file inside stream");
@@ -32,8 +32,9 @@ BufferPtr ASCII85DecodeFilter::Decode(std::istream& src, types::stream_size leng
 		}
 
 		// Silently ignore white space
-		if (IsWhiteSpace(ch))
+		if (IsWhiteSpace(ch)) {
 			continue;
+		}
 
 		// Special case 'z' char is 4 zero bytes
 		if (ch == 'z' && current == 0) {
@@ -45,8 +46,9 @@ BufferPtr ASCII85DecodeFilter::Decode(std::istream& src, types::stream_size leng
 		}
 
 		// Character outside of base 85 range
-		if (ch < '!' || ch > 'u')
+		if (ch < '!' || ch > 'u') {
 			throw GeneralException("Illegal character in ascii 85 filter: " + ch);
+		}
 
 		// Insert to our sequence
 		sequence[current] = ch - '!';
@@ -89,13 +91,13 @@ BufferPtr ASCII85DecodeFilter::Decode(std::istream& src, types::stream_size leng
 }
 
 BufferPtr ASCII85DecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const {
-	auto stream = src->ToStringStream();
-	return Encode(*stream, src->size());
+	auto stream = src->ToInputStream();
+	return Encode(stream, src->size());
 }
 
 BufferPtr ASCII85DecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters) const {
-	auto stream = src->ToStringStream();
-	return Decode(*stream, src->size());
+	auto stream = src->ToInputStream();
+	return Decode(stream, src->size());
 }
 
 } // syntax

@@ -1,12 +1,12 @@
 #include "precompiled.h"
 
 #include "utils/buffer.h"
+#include "utils/streams/input_stream.h"
 
 #include <cstring>
 
 namespace gotchangpdf {
 
-Buffer::Buffer(size_type count) : m_data(count) {}
 Buffer::Buffer(const char * chars) : Buffer(chars, std::strlen(chars)) {}
 Buffer::Buffer(std::string data) : Buffer(data.begin(), data.end()) {}
 Buffer::Buffer(const value_type * begin, const value_type * end) : m_data(begin, end) { assert(m_data.size() > 0); }
@@ -24,8 +24,10 @@ size_t Buffer::Hash() const {
 	return result;
 }
 
-std::shared_ptr<std::stringstream> Buffer::ToStringStream(void) const {
-	return std::make_shared<std::stringstream>(ToString());
+IInputStreamPtr Buffer::ToInputStream(void) const {
+	auto result = std::make_shared<std::stringstream>();
+	result->write(m_data.data(), m_data.size());
+	return make_deferred<InputStream>(result);
 }
 
 bool Buffer::Equals(const Buffer& other) const {

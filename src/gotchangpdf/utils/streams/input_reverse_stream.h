@@ -48,8 +48,8 @@ public:
 public:
 	explicit InputReverseStream(std::shared_ptr<std::istream> stream, types::stream_size size);
 
-	virtual types::stream_size Read(Buffer& result, types::size_type len) override;
-	virtual BufferPtr Read(types::size_type len) override;
+	virtual types::stream_size Read(Buffer& result, types::stream_size len) override;
+	virtual BufferPtr Read(types::stream_size len) override;
 	virtual BufferPtr Readline(void) override;
 	virtual types::stream_size GetInputPosition() override;
 	virtual void SetInputPosition(types::stream_size pos) override;

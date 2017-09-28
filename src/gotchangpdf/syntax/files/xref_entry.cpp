@@ -5,8 +5,6 @@
 #include "syntax/parsers/parser.h"
 #include "syntax/exceptions/syntax_exceptions.h"
 
-#include "utils/streams/input_stream.h"
-
 namespace gotchangpdf {
 namespace syntax {
 
@@ -184,10 +182,8 @@ void XrefCompressedEntry::Initialize(void) {
 	auto size = header->FindAs<IntegerObjectPtr>(constant::Name::N);
 	auto first = header->FindAs<IntegerObjectPtr>(constant::Name::First);
 	auto body = converted->GetBody();
+	auto input_stream = body->ToInputStream();
 
-	auto stream = body->ToStringStream();
-
-	InputStreamPtr input_stream = make_deferred<InputStream>(stream);
 	Parser parser(_file, input_stream);
 	auto stream_entries = parser.ReadObjectStreamEntries(first->GetUnsignedIntegerValue(), size->SafeConvert<types::size_type>());
 	for (auto stream_entry : stream_entries) {

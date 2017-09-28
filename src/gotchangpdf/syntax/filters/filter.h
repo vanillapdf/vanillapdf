@@ -2,8 +2,9 @@
 #define _FILTER_H
 
 #include "syntax/utils/syntax_fwd.h"
-
 #include "syntax/objects/dictionary_object.h"
+
+#include "utils/streams/input_stream_interface.h"
 
 namespace gotchangpdf {
 namespace syntax {
@@ -27,8 +28,8 @@ public:
 	virtual BufferPtr Encode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
 	virtual BufferPtr Decode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
 
-	virtual BufferPtr Encode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
-	virtual BufferPtr Decode(std::istream& src, types::stream_size length, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
+	virtual BufferPtr Encode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
+	virtual BufferPtr Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters = DictionaryObjectPtr()) const = 0;
 
 	virtual Type GetType(void) const noexcept = 0;
 };

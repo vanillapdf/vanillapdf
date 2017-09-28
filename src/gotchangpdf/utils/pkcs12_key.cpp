@@ -271,10 +271,8 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
 }
 
 void PKCS12Key::PKCS12KeyImpl::SignUpdate(const Buffer& data) {
-	auto string_stream = data.ToStringStream();
-
-	InputStreamPtr stream = make_deferred<InputStream>(string_stream);
-	SignUpdate(stream, data.size());
+	auto input_stream = data.ToInputStream();
+	SignUpdate(input_stream, data.size());
 }
 
 void PKCS12Key::PKCS12KeyImpl::SignUpdate(IInputStreamPtr data, types::stream_size length) {
