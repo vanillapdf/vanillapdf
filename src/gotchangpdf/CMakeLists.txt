@@ -1,6 +1,7 @@
 project(gotchangpdf LANGUAGES CXX)
 
 include_directories("${CMAKE_SOURCE_DIR}/include")
+include_directories("${CMAKE_SOURCE_DIR}/lib/nlohmann_json/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(GOTCHANGPDF_PRECOMPILED_SOURCE
@@ -447,6 +448,7 @@ add_library(gotchangpdf SHARED
 
 set_target_properties(gotchangpdf PROPERTIES
   PUBLIC_HEADER "${GOTCHANGPDF_INCLUDE_HEADERS}"
+  PREFIX "lib"
 )
 
 # Add precompiled header optimization

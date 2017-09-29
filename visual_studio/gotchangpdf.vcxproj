@@ -404,7 +404,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\src\gotchangpdf;..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\gotchangpdf;..\include;..\lib\nlohmann_json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GOTCHANG_PDF_CONFIGURATION_DLL;GOTCHANG_PDF_EXPORTS;GOTCHANG_PDF_HAVE_ZLIB;GOTCHANG_PDF_HAVE_JPEG;GOTCHANG_PDF_HAVE_OPENSSL;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
@@ -430,7 +430,7 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.merge\$(C
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\src\gotchangpdf;..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\gotchangpdf;..\include;..\lib\nlohmann_json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GOTCHANG_PDF_CONFIGURATION_DLL;GOTCHANG_PDF_EXPORTS;GOTCHANG_PDF_HAVE_ZLIB;GOTCHANG_PDF_HAVE_JPEG;GOTCHANG_PDF_HAVE_OPENSSL;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
@@ -459,7 +459,7 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.merge\$(C
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GOTCHANG_PDF_CONFIGURATION_DLL;GOTCHANG_PDF_EXPORTS;GOTCHANG_PDF_HAVE_ZLIB;GOTCHANG_PDF_HAVE_JPEG;GOTCHANG_PDF_HAVE_OPENSSL;RELEASE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\src\gotchangpdf;..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\gotchangpdf;..\include;..\lib\nlohmann_json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalOptions>
@@ -488,7 +488,7 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\gotchangpdf.merge\$(C
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GOTCHANG_PDF_CONFIGURATION_DLL;GOTCHANG_PDF_EXPORTS;GOTCHANG_PDF_HAVE_ZLIB;GOTCHANG_PDF_HAVE_JPEG;GOTCHANG_PDF_HAVE_OPENSSL;RELEASE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\src\gotchangpdf;..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\gotchangpdf;..\include;..\lib\nlohmann_json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalOptions>

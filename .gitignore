@@ -1,6 +1,5 @@
 # Build files
 /build/
-/lib/
 
 # Test files
 !/test/*.pdf
