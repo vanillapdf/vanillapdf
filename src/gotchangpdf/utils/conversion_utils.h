@@ -28,7 +28,7 @@ private:
 		typename RangeType,
 		typename ValueType,
 
-		// This is to enable specialization for same and different singedness
+		// This is to enable specialization for the same singedness
 		bool = (std::is_signed<ValueType>::value ^ std::is_signed<RangeType>::value),
 
 		// I had to divide logic for different singedness furthermore, because
