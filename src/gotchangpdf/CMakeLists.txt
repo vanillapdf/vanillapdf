@@ -35,6 +35,7 @@ set(GOTCHANGPDF_C_IMPLEMENTATION_SOURCES
 	implementation/c_integer_object.cpp
 	implementation/c_interactive_forms.cpp
 	implementation/c_library_info.cpp
+	implementation/c_license_info.cpp
 	implementation/c_logging.cpp
 	implementation/c_name_object.cpp
 	implementation/c_null_object.cpp
@@ -143,7 +144,9 @@ set(GOTCHANGPDF_UTILS_SOURCES
 	utils/errors.cpp
 	utils/exceptions.cpp
 	utils/library_info.cpp
+	utils/license_info.cpp
 	utils/log.cpp
+	utils/misc_utils.cpp
 	utils/modify_observer_interface.cpp
 	utils/pkcs12_key.cpp
 	utils/time_utils.cpp
@@ -267,12 +270,13 @@ set(GOTCHANGPDF_UTILS_HEADERS
 	utils/errors.h
 	utils/exceptions.h
 	utils/library_info.h
+	utils/license_info.h
 	utils/log.h
 	utils/math_utils.h
 	utils/message_digest_algorithm.h
 	utils/modify_observer_interface.h
 	utils/observable_interface.h
-	utils/other_utils.h
+	utils/misc_utils.h
 	utils/pdf_version.h
 	utils/pkcs12_key.h
 	utils/stack_allocator.h
@@ -323,6 +327,7 @@ set(GOTCHANGPDF_INCLUDE_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_integer_object.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_interactive_forms.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_library_info.h"
+	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_license_info.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_logging.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_message_digest_algorithm.h"
 	"${CMAKE_SOURCE_DIR}/include/gotchangpdf/c_name_object.h"
