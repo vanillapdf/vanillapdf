@@ -2,7 +2,7 @@
 
 #include "utils/log.h"
 #include "utils/time_utils.h"
-#include "utils/other_utils.h"
+#include "utils/misc_utils.h"
 
 #include <map>
 #include <mutex>
@@ -93,7 +93,7 @@ OutputWriter::~OutputWriter() {
 		*m_output_stream << ' ';
 		*m_output_stream << '{';
 		*m_output_stream << ' ';
-		*m_output_stream << ExtractFilename(m_file);
+		*m_output_stream << MiscUtils::ExtractFilename(m_file);
 		*m_output_stream << ':';
 		*m_output_stream << std::dec << m_line;
 		*m_output_stream << " in ";

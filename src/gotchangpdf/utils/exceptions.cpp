@@ -29,5 +29,8 @@ ZlibDataErrorException::ZlibDataErrorException(types::stream_size size, const st
 ExceptionBase("Zlib encountered corrupted data after " + std::to_string(size) + " bytes. Error: " + message) {
 }
 
+InvalidLicenseException::InvalidLicenseException(const char * const & msg) : ExceptionBase(msg) {}
+InvalidLicenseException::InvalidLicenseException(const std::string& msg) : ExceptionBase(msg) {}
+
 } // gotchangpdf
 

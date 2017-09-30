@@ -11,6 +11,9 @@ GOTCHANG_PDF_API const boolean_type GOTCHANG_PDF_RV_TRUE	= true;
 GOTCHANG_PDF_API const error_type GOTCHANG_PDF_ERROR_SUCCESS				= static_cast<error_type>(gotchangpdf::ExceptionBase::Type::Success);
 GOTCHANG_PDF_API const error_type GOTCHANG_PDF_ERROR_PARAMETER_VALUE		= static_cast<error_type>(gotchangpdf::ExceptionBase::Type::InvalidParameter);
 GOTCHANG_PDF_API const error_type GOTCHANG_PDF_ERROR_NOT_SUPPORTED			= static_cast<error_type>(gotchangpdf::ExceptionBase::Type::NotSupported);
+GOTCHANG_PDF_API const error_type GOTCHANG_PDF_ERROR_USER_CANCELLED			 =static_cast<error_type>(gotchangpdf::ExceptionBase::Type::UserCancelled);
+GOTCHANG_PDF_API const error_type GOTCHANG_PDF_ERROR_ZLIB_DATA				= static_cast<error_type>(gotchangpdf::ExceptionBase::Type::ZlibDataError);
+GOTCHANG_PDF_API const error_type GOTCHANG_PDF_ERROR_INVALID_LICENSE		= static_cast<error_type>(gotchangpdf::ExceptionBase::Type::InvalidLicense);
 GOTCHANG_PDF_API const error_type GOTCHANG_PDF_ERROR_GENERAL				= static_cast<error_type>(gotchangpdf::ExceptionBase::Type::General);
 
 // syntax errors

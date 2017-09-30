@@ -66,6 +66,24 @@ extern "C"
 
 	/**
 	* \brief
+	* Operation was cancelled by user.
+	*/
+	GOTCHANG_PDF_API extern const error_type GOTCHANG_PDF_ERROR_USER_CANCELLED;
+
+	/**
+	* \brief
+	* Error in compressed data.
+	*/
+	GOTCHANG_PDF_API extern const error_type GOTCHANG_PDF_ERROR_ZLIB_DATA;
+
+	/**
+	* \brief
+	* Presented license file is not valid.
+	*/
+	GOTCHANG_PDF_API extern const error_type GOTCHANG_PDF_ERROR_INVALID_LICENSE;
+
+	/**
+	* \brief
 	* An unknown error has occurred.
 	*
 	* Try to turn on ::Logging for extended informations.

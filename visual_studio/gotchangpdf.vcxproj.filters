@@ -564,9 +564,6 @@
     <ClInclude Include="..\src\gotchangpdf\utils\observable_interface.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\gotchangpdf\utils\other_utils.h">
-      <Filter>Header Files\utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\gotchangpdf\utils\pdf_version.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
@@ -626,6 +623,15 @@
     </ClInclude>
     <ClInclude Include="..\include\unistd.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\gotchangpdf\c_license_info.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\gotchangpdf\utils\license_info.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\gotchangpdf\utils\misc_utils.h">
+      <Filter>Header Files\utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1003,6 +1009,15 @@
     </ClCompile>
     <ClCompile Include="..\src\gotchangpdf\precompiled.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\gotchangpdf\utils\license_info.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\gotchangpdf\implementation\c_license_info.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\gotchangpdf\utils\misc_utils.cpp">
+      <Filter>Source Files\utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

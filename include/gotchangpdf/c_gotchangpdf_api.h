@@ -72,6 +72,7 @@
 #include "c_logging.h"
 #include "c_pdf_version.h"
 #include "c_library_info.h"
+#include "c_license_info.h"
 #include "c_errors.h"
 #include "c_pkcs12_key.h"
 #include "c_signing_key.h"

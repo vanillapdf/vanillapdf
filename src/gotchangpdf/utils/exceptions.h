@@ -19,6 +19,7 @@ public:
 		NotSupported,
 		UserCancelled,
 		ZlibDataError,
+		InvalidLicense,
 
 		// syntax
 		Conversion = 0x00010000,
@@ -86,6 +87,13 @@ public:
 
 private:
 	types::stream_size m_size;
+};
+
+class InvalidLicenseException : public ExceptionBase {
+public:
+	explicit InvalidLicenseException(const char * const & msg);
+	explicit InvalidLicenseException(const std::string& msg);
+	virtual Type code() const noexcept { return Type::InvalidLicense; }
 };
 
 template <typename DestT>
