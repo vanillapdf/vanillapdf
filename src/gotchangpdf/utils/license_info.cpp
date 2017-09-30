@@ -192,14 +192,7 @@ bool LicenseInfo::CheckSignature(
 
 	SCOPE_GUARD([signing_certificate_x509_pubkey]() { EVP_PKEY_free(signing_certificate_x509_pubkey); });
 
-	auto signing_certificate_x509_rsa_pubkey = EVP_PKEY_get1_RSA(signing_certificate_x509_pubkey);
-	if (signing_certificate_x509_rsa_pubkey == nullptr) {
-		return false;
-	}
-
-	SCOPE_GUARD([signing_certificate_x509_rsa_pubkey]() { RSA_free(signing_certificate_x509_rsa_pubkey); });
-
-	EVP_MD_CTX mdctx = {0};
+	EVP_MD_CTX mdctx = { 0 };
 	auto algorithm = MiscUtils::GetAlgorithm(digest_algorithm);
 
 	auto initialized = EVP_DigestVerifyInit(&mdctx, nullptr, algorithm, nullptr, signing_certificate_x509_pubkey);
@@ -214,7 +207,7 @@ bool LicenseInfo::CheckSignature(
 
 	// Signature value if base 64 encoded
 	auto signature_value_decoded = MiscUtils::FromBase64(signature_value);
-	auto signature_value_decoded_ptr = reinterpret_cast<const unsigned char *>(signature_value_decoded->data());
+	auto signature_value_decoded_ptr = reinterpret_cast<unsigned char *>(signature_value_decoded->data());
 
 	auto finalized = EVP_DigestVerifyFinal(&mdctx, signature_value_decoded_ptr, signature_value_decoded->size());
 	if (finalized != 1) {
