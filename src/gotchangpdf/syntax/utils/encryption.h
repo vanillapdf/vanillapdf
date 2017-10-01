@@ -11,8 +11,6 @@ namespace syntax {
 
 extern const uint8_t HARDCODED_PFD_PAD[];
 extern const uint8_t AES_ADDITIONAL_SALT[];
-extern const int HARDCODED_PFD_PAD_LENGTH;
-extern const int AES_ADDITIONAL_SALT_LENGTH;
 
 enum class EncryptionAlgorithm {
 	None = 0,

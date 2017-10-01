@@ -43,9 +43,6 @@ const uint8_t AES_ADDITIONAL_SALT[] = {
 	0x73, 0x41, 0x6C, 0x54
 };
 
-const int HARDCODED_PFD_PAD_LENGTH = sizeof(HARDCODED_PFD_PAD);
-const int AES_ADDITIONAL_SALT_LENGTH = sizeof(AES_ADDITIONAL_SALT);
-
 const types::size_type AES_CBC_IV_LENGTH = 16;
 const types::size_type AES_CBC_BLOCK_SIZE = 16;
 
@@ -72,7 +69,7 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
 	MD5_Update(&ctx, object_info, sizeof(object_info));
 
 	if (alg == EncryptionAlgorithm::AES) {
-		MD5_Update(&ctx, &AES_ADDITIONAL_SALT[0], AES_ADDITIONAL_SALT_LENGTH);
+		MD5_Update(&ctx, &AES_ADDITIONAL_SALT[0], sizeof(AES_ADDITIONAL_SALT));
 	}
 
 	MD5_Final((unsigned char*) object_key.data(), &ctx);
@@ -296,7 +293,7 @@ bool EncryptionUtils::CheckKey(
 			std::copy_n(temporary_digest.begin(), decryption_key_length, decryption_key_digest.begin());
 		}
 
-		Buffer hardcoded_pad(&HARDCODED_PFD_PAD[0], HARDCODED_PFD_PAD_LENGTH);
+		Buffer hardcoded_pad(std::begin(HARDCODED_PFD_PAD), sizeof(HARDCODED_PFD_PAD));
 		Buffer key_digest(MD5_DIGEST_LENGTH);
 
 		MD5_Init(&ctx);
@@ -316,7 +313,7 @@ bool EncryptionUtils::CheckKey(
 		}
 	} else {
 		assert(key_length.GetIntegerValue() == 40 && "Key length is not 5 bytes for revision <= 3");
-		Buffer hardcoded_pad(&HARDCODED_PFD_PAD[0], HARDCODED_PFD_PAD_LENGTH);
+		Buffer hardcoded_pad(std::begin(HARDCODED_PFD_PAD), sizeof(HARDCODED_PFD_PAD));
 		compare_data = EncryptionUtils::ComputeRC4(decryption_key_digest, 5, hardcoded_pad);
 	}
 
