@@ -93,6 +93,24 @@ error_type process_logging() {
 	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
 }
 
+error_type process_license_info(string_type license_file) {
+	boolean_type is_valid = GOTCHANG_PDF_RV_FALSE;
+
+	RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_IsValid(&is_valid));
+	if (is_valid != GOTCHANG_PDF_RV_FALSE) {
+		return GOTCHANG_PDF_TEST_ERROR_FAILURE;
+	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_SetLicenseFile(license_file));
+	RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_IsValid(&is_valid));
+
+	if (is_valid != GOTCHANG_PDF_RV_TRUE) {
+		return GOTCHANG_PDF_TEST_ERROR_FAILURE;
+	}
+
+	return GOTCHANG_PDF_TEST_ERROR_SUCCESS;
+}
+
 error_type process_library_info() {
 
 	// Misc

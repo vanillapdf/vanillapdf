@@ -41,6 +41,7 @@ namespace LicenseGenerator
         private void GenerateJSONLicense()
         {
             string owner = OwnerText.Text;
+            string note = NoteText.Text;
             string serial = SerialText.Text;
             int years = Convert.ToInt32(ExpirationYears.Value);
             string validUntil = DateTimeOffset.Now.AddYears(years).ToString("yyyy-MM-dd HH:mm:ssZ", CultureInfo.InvariantCulture);
@@ -68,11 +69,13 @@ namespace LicenseGenerator
 
                 LicenseData data = new LicenseData();
                 data.Owner = owner;
+                data.Note = note;
                 data.Serial = serial;
                 data.Expiration = validUntil;
 
                 StringBuilder signedDataBuilder = new StringBuilder();
                 signedDataBuilder.Append(owner);
+                signedDataBuilder.Append(note);
                 signedDataBuilder.Append(serial);
                 signedDataBuilder.Append(validUntil);
 

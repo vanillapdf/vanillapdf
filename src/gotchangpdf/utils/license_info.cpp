@@ -22,6 +22,7 @@ using namespace nlohmann;
 static const char VERSION_NODE[] =			"version";
 static const char DATA_NODE[] =				"data";
 static const char OWNER_NODE[] =			"owner";
+static const char NOTE_NODE[] =				"note";
 static const char SERIAL_NODE[] =			"serial";
 static const char EXPIRATION_NODE[] =		"expiration";
 static const char SIGNATURE_NODE[] =		"signature";
@@ -38,7 +39,8 @@ static X509* LoadCertificate(const std::string& certificate) {
 
 	SCOPE_GUARD([signing_certificate_bio]() { BIO_free(signing_certificate_bio); });
 
-	auto bytes_written = BIO_write(signing_certificate_bio, certificate.data(), certificate.size());
+	auto signing_certificate_size = ValueConvertUtils::SafeConvert<int>(certificate.size());
+	auto bytes_written = BIO_write(signing_certificate_bio, certificate.data(), signing_certificate_size);
 	if (bytes_written <= 0) {
 		throw GeneralException("Could not write certificate data");
 	}
@@ -94,10 +96,12 @@ void LicenseInfo::SetLicense(const Buffer& data) {
 	if (version_major == 1) {
 		auto data_node = json_data[DATA_NODE];
 		auto owner_node = data_node[OWNER_NODE];
+		auto note_node = data_node[NOTE_NODE];
 		auto serial_node = data_node[SERIAL_NODE];
 		auto expiration_node = data_node[EXPIRATION_NODE];
 
 		if (!owner_node.is_string() ||
+			!note_node.is_string() ||
 			!serial_node.is_string() ||
 			!expiration_node.is_string()) {
 			throw InvalidLicenseException("Invalid license data format");
@@ -133,6 +137,7 @@ void LicenseInfo::SetLicense(const Buffer& data) {
 
 		std::stringstream signed_content;
 		signed_content << owner_node.get<std::string>();
+		signed_content << note_node.get<std::string>();
 		signed_content << serial_node.get<std::string>();
 		signed_content << expiration_node.get<std::string>();
 
@@ -218,15 +223,21 @@ bool LicenseInfo::CheckSignature(
 
 	SCOPE_GUARD([signing_certificate_x509_pubkey]() { EVP_PKEY_free(signing_certificate_x509_pubkey); });
 
-	EVP_MD_CTX mdctx = { 0 };
+	auto digest_context = EVP_MD_CTX_create();
+	if (digest_context == nullptr) {
+		return false;
+	}
+
+	SCOPE_GUARD([digest_context]() { EVP_MD_CTX_destroy(digest_context); });
+
 	auto algorithm = MiscUtils::GetAlgorithm(digest_algorithm);
 
-	auto initialized = EVP_DigestVerifyInit(&mdctx, nullptr, algorithm, nullptr, signing_certificate_x509_pubkey);
+	auto initialized = EVP_DigestVerifyInit(digest_context, nullptr, algorithm, nullptr, signing_certificate_x509_pubkey);
 	if (initialized != 1) {
 		return false;
 	}
 
-	auto updated = EVP_DigestVerifyUpdate(&mdctx, signed_content.data(), signed_content.size());
+	auto updated = EVP_DigestVerifyUpdate(digest_context, signed_content.data(), signed_content.size());
 	if (updated != 1) {
 		return false;
 	}
@@ -235,7 +246,7 @@ bool LicenseInfo::CheckSignature(
 	auto signature_value_decoded = MiscUtils::FromBase64(signature_value);
 	auto signature_value_decoded_ptr = reinterpret_cast<unsigned char *>(signature_value_decoded->data());
 
-	auto finalized = EVP_DigestVerifyFinal(&mdctx, signature_value_decoded_ptr, signature_value_decoded->size());
+	auto finalized = EVP_DigestVerifyFinal(digest_context, signature_value_decoded_ptr, signature_value_decoded->size());
 	if (finalized != 1) {
 		return false;
 	}
@@ -301,12 +312,25 @@ bool LicenseInfo::CheckCertificateChain(const std::vector<std::string>& certific
 		return false;
 	}
 
-	SCOPE_GUARD([certificate_chain]() { sk_X509_free(certificate_chain); });
+	SCOPE_GUARD([certificate_chain]() {
+		auto length = sk_X509_num(certificate_chain);
+		for (decltype(length) i = 0; i < length; ++i) {
+			auto certificate_x509 = sk_X509_value(certificate_chain, i);
+
+			assert(certificate_x509 != nullptr && "Is this a bug in openssl?");
+			if (certificate_x509 == nullptr) {
+				continue;
+			}
+
+			X509_free(certificate_x509);
+		}
+
+		sk_X509_free(certificate_chain);
+	});
 
 	// Add other intermediate certificates to the validation chain
 	for (auto& certificate_string : certificates) {
 		auto certificate_x509 = LoadCertificate(certificate_string);
-		SCOPE_GUARD([certificate_x509]() { X509_free(certificate_x509); });
 
 		auto certififcate_added = sk_X509_push(certificate_chain, certificate_x509);
 		if (certififcate_added == 0) {

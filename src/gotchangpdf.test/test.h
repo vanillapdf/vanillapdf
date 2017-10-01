@@ -25,6 +25,7 @@ error_type print_last_error();
 error_type process_buffer(BufferHandle buffer, int nested);
 error_type process_version(PDFVersion version, int nested);
 error_type process_library_info();
+error_type process_license_info(string_type license_file);
 error_type process_logging();
 
 /* Files */

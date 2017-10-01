@@ -10,8 +10,10 @@ import unicodedata
 
 USER_PASSWORD_KEY = "user_password"
 OWNER_PASSWORD_KEY = "owner_password"
-PASSWORD_OPTION = "-p"
 CERTIFICATE_KEY = "certificate"
+
+LICENSE_OPTION = "-l"
+PASSWORD_OPTION = "-p"
 CERTIFICATE_OPTION = "-k"
 
 def normalize_string( str ):
@@ -19,16 +21,21 @@ def normalize_string( str ):
 	encoded = normalized.encode('utf8')
 	return encoded.decode('latin-1')
 
-if (len(sys.argv) < 4):
+if (len(sys.argv) < 5):
 	print ("Incorrect number of arguments!")
 	print ("Usage: executable_path encryption_config test_file_path")
 	sys.exit(1)
 
+# Initialize return value
 rv = -1
+
+# Parse command line arguments
 executable_path = sys.argv[1]
-encryption_config_path = sys.argv[2]
+test_file_path = sys.argv[2]
+encryption_config_path = sys.argv[3]
+license_file_path = sys.argv[4]
+
 encryption_config_dir = os.path.dirname(encryption_config_path)
-test_file_path = sys.argv[3]
 test_filename = ntpath.basename(test_file_path)
 
 # Open the settings for encrypted files
@@ -50,7 +57,7 @@ if (is_encrypted):
 		if (USER_PASSWORD_KEY in encryption_data[test_filename]):
 			raw_password = encryption_data[test_filename][USER_PASSWORD_KEY]
 			user_password = normalize_string(raw_password)
-			rv = subprocess.call([executable_path, test_file_path, PASSWORD_OPTION, user_password], stdout=FNULL)
+			rv = subprocess.call([executable_path, test_file_path, PASSWORD_OPTION, user_password, LICENSE_OPTION, license_file_path], stdout=FNULL)
 			if (rv != 0):
 				sys.exit(rv)
 			
@@ -58,7 +65,7 @@ if (is_encrypted):
 		if (OWNER_PASSWORD_KEY in encryption_data[test_filename]):
 			raw_password = encryption_data[test_filename][OWNER_PASSWORD_KEY]
 			owner_password = normalize_string(raw_password)
-			rv = subprocess.call([executable_path, test_file_path, PASSWORD_OPTION, owner_password], stdout=FNULL)
+			rv = subprocess.call([executable_path, test_file_path, PASSWORD_OPTION, owner_password, LICENSE_OPTION, license_file_path], stdout=FNULL)
 			if (rv != 0):
 				sys.exit(rv)
 			
@@ -70,12 +77,12 @@ if (is_encrypted):
 		
 		# Key may address a file local to the encryption config
 		full_key_path = os.path.join(encryption_config_dir, key)
-		rv = subprocess.call([executable_path, test_file_path, CERTIFICATE_OPTION, full_key_path], stdout=FNULL)
+		rv = subprocess.call([executable_path, test_file_path, CERTIFICATE_OPTION, full_key_path, LICENSE_OPTION, license_file_path], stdout=FNULL)
 		sys.exit(rv)
 
 	# Configuration error
 	sys.exit(1)
 
 # Run test with default behavior
-rv = subprocess.call([executable_path, test_file_path], stdout=FNULL)
+rv = subprocess.call([executable_path, test_file_path, LICENSE_OPTION, license_file_path], stdout=FNULL)
 sys.exit(rv)

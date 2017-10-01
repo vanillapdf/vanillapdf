@@ -18,6 +18,7 @@
 int main(int argc, char *argv[]) {
 	FileHandle file = NULL;
 	DocumentHandle document = NULL;
+	string_type license_file = NULL;
 	string_type password = NULL;
 	string_type cert_path = NULL;
 	string_type cert_password = NULL;
@@ -33,23 +34,29 @@ int main(int argc, char *argv[]) {
 		return GOTCHANG_PDF_TEST_ERROR_INVALID_PARAMETERS;
 	}
 
-	if (argc >= 4) {
+	for (int i = 2; i < argc; ++i) {
+
 		// password
-		if (0 == strcmp(argv[2], "-p")) {
-			password = argv[3];
-		}
-		// key
-		else if (0 == strcmp(argv[2], "-k")) {
-			cert_path = argv[3];
-			if (argc >= 5) {
-				cert_password = argv[4];
-			}
+		if (strcmp(argv[i], "-p") == 0 && (i + 1 < argc)) {
+			password = argv[i + 1];
+			i++;
+
+		// certificate
+		} else if (strcmp(argv[i], "-k") == 0 && (i + 1 < argc)) {
+			cert_path = argv[i + 1];
+			i++;
+
+		// license
+		} else if (strcmp(argv[i], "-l") == 0 && (i + 1 < argc)) {
+			license_file = argv[i + 1];
+			i++;
 		} else {
 			return GOTCHANG_PDF_TEST_ERROR_INVALID_PARAMETERS;
 		}
 	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(process_library_info());
+	RETURN_ERROR_IF_NOT_SUCCESS(process_license_info(license_file));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_logging());
 
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Open(argv[1], &file));

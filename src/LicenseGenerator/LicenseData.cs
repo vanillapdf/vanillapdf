@@ -8,6 +8,9 @@ namespace LicenseGenerator
         [JsonProperty("owner")]
         public string Owner { get; set; }
 
+        [JsonProperty("note")]
+        public string Note { get; set; }
+
         [JsonProperty("serial")]
         public string Serial { get; set; }
 

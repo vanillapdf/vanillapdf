@@ -33,8 +33,8 @@ std::string MiscUtils::ToBase64(const Buffer& value) {
 	//Ignore newlines - write everything in one line
 	BIO_set_flags(base64_bio, BIO_FLAGS_BASE64_NO_NL);
 
-	//auto content_ptr = reinterpret_cast<const unsigned char *>(value.data());
-	auto bytes_written = BIO_write(memory_bio, value.data(), value.size());
+	auto value_size = ValueConvertUtils::SafeConvert<int>(value.size());
+	auto bytes_written = BIO_write(memory_bio, value.data(), value_size);
 	if (bytes_written <= 0) {
 		throw GeneralException("Could not write data");
 	}
@@ -69,7 +69,8 @@ BufferPtr MiscUtils::FromBase64(const std::string& value) {
 
 	SCOPE_GUARD([base64_bio]() { BIO_free(base64_bio); });
 
-	auto bytes_written = BIO_write(memory_bio, value.data(), value.size());
+	auto value_size = ValueConvertUtils::SafeConvert<int>(value.size());
+	auto bytes_written = BIO_write(memory_bio, value.data(), value_size);
 	if (bytes_written <= 0) {
 		throw GeneralException("");
 	}
@@ -89,7 +90,8 @@ BufferPtr MiscUtils::FromBase64(const std::string& value) {
 	Buffer read_buffer(constant::BUFFER_SIZE);
 
 	for (;;) {
-		auto bytes_read = BIO_read(base64_bio, read_buffer.data(), read_buffer.size());
+		auto read_buffer_size = ValueConvertUtils::SafeConvert<int>(read_buffer.size());
+		auto bytes_read = BIO_read(base64_bio, read_buffer.data(), read_buffer_size);
 		if (bytes_read == 0 || bytes_read == -1) {
 			break;
 		}
@@ -135,7 +137,8 @@ BufferPtr MiscUtils::CalculateHash(const Buffer& data, MessageDigestAlgorithm di
 	// Insert md into bio chain
 	BIO_push(md_bio, memory_bio);
 
-	auto bytes_written = BIO_write(memory_bio, data.data(), data.size());
+	auto data_size = ValueConvertUtils::SafeConvert<int>(data.size());
+	auto bytes_written = BIO_write(memory_bio, data.data(), data_size);
 	if (bytes_written <= 0) {
 		throw GeneralException("");
 	}
@@ -146,7 +149,9 @@ BufferPtr MiscUtils::CalculateHash(const Buffer& data, MessageDigestAlgorithm di
 	}
 
 	BufferPtr hash_buffer = make_deferred<Buffer>(EVP_MAX_MD_SIZE);
-	auto bytes_read = BIO_gets(md_bio, hash_buffer->data(), hash_buffer->size());
+
+	auto hash_buffer_size = ValueConvertUtils::SafeConvert<int>(hash_buffer->size());
+	auto bytes_read = BIO_gets(md_bio, hash_buffer->data(), hash_buffer_size);
 	if (bytes_read <= 0) {
 		throw GeneralException("Could not calculate hash");
 	}

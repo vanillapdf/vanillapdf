@@ -31,7 +31,7 @@
             this.OwnerText = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.NoteText = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.SerialText = new System.Windows.Forms.TextBox();
@@ -83,14 +83,14 @@
             this.label2.TabIndex = 4;
             this.label2.Text = "Note";
             // 
-            // textBox2
+            // NoteText
             // 
-            this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.NoteText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox2.Location = new System.Drawing.Point(89, 38);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(578, 20);
-            this.textBox2.TabIndex = 3;
+            this.NoteText.Location = new System.Drawing.Point(89, 38);
+            this.NoteText.Name = "NoteText";
+            this.NoteText.Size = new System.Drawing.Size(578, 20);
+            this.NoteText.TabIndex = 3;
             // 
             // label4
             // 
@@ -193,7 +193,7 @@
             this.Controls.Add(this.SerialText);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.NoteText);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.OwnerText);
             this.Controls.Add(this.GenerateButton);
@@ -212,7 +212,7 @@
         private System.Windows.Forms.TextBox OwnerText;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox NoteText;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox SerialText;

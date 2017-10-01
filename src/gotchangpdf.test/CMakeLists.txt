@@ -73,7 +73,8 @@ foreach(TEST_FILE ${TEST_FILES})
 		COMMAND ${PYTHON_EXECUTABLE}					# reference to python executable
 		"${CMAKE_SOURCE_DIR}/scripts/run_test.py"		# path to run_test python script
 		"$<TARGET_FILE:gotchangpdf.test>"				# destination of the test executable
-		"${CMAKE_SOURCE_DIR}/scripts/encryption.cfg"	# path to configuration file for encrypted files
 		"${TEST_FILE}"									# destination of the source file
+		"${CMAKE_SOURCE_DIR}/scripts/encryption.cfg"	# path to configuration file for encrypted files
+		"${CMAKE_SOURCE_DIR}/scripts/VanillaPDF.lic"	# path to license file for test purposes
 	)
 endforeach(TEST_FILE)
