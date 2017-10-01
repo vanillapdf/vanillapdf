@@ -63,6 +63,10 @@ int main(int argc, char *argv[]) {
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_IsEncrypted(file, &is_encrypted));
 
+	//RETURN_ERROR_IF_NOT_SUCCESS(Document_Create("input.pdf", &document));
+	//RETURN_ERROR_IF_NOT_SUCCESS(Document_Save(document, "output.pdf"));
+	//RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));
+
 	if (is_encrypted == GOTCHANG_PDF_RV_TRUE) {
 		// No password entered
 		if (password == NULL && cert_path == NULL) {
