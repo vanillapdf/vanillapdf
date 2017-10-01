@@ -30,8 +30,9 @@ Contents::~Contents() {
 }
 
 BaseInstructionCollectionPtr Contents::Instructions(void) const {
-	if (m_instructions->IsInitialized())
+	if (m_instructions->IsInitialized()) {
 		return m_instructions;
+	}
 
 	std::vector<ContentStreamPtr> contents;
 	if (ObjectUtils::IsType<StreamObjectPtr>(_obj)) {
