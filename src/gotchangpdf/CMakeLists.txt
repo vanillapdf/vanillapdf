@@ -149,6 +149,7 @@ set(GOTCHANGPDF_UTILS_SOURCES
 	utils/misc_utils.cpp
 	utils/modify_observer_interface.cpp
 	utils/pkcs12_key.cpp
+	utils/resource.cpp
 	utils/time_utils.cpp
 	utils/unknown_interface.cpp
 	utils/zlib_wrapper.cpp
@@ -279,6 +280,7 @@ set(GOTCHANGPDF_UTILS_HEADERS
 	utils/misc_utils.h
 	utils/pdf_version.h
 	utils/pkcs12_key.h
+	utils/resource.h
 	utils/stack_allocator.h
 	utils/template_utils.h
 	utils/time_utils.h

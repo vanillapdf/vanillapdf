@@ -22,6 +22,8 @@ public:
 
 	static std::string ExtractFilename(const std::string& path);
 
+	static void InitializeOpenSSL();
+
 private:
 	MiscUtils();
 };

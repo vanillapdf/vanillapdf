@@ -1,5 +1,6 @@
 #include "precompiled.h"
 
+#include "utils/resource.h"
 #include "utils/misc_utils.h"
 #include "utils/license_info.h"
 #include "utils/streams/input_stream.h"
@@ -8,6 +9,8 @@
 
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
+#include <openssl/x509.h>
+#include <openssl/x509_vfy.h>
 
 #include <chrono>
 #include <fstream>
@@ -26,6 +29,27 @@ static const char CERTIFICATES_NODE[] =		"certificates";
 
 // Initialize static members
 bool LicenseInfo::m_valid = false;
+
+static X509* LoadCertificate(const std::string& certificate) {
+	auto signing_certificate_bio = BIO_new(BIO_s_mem());
+	if (signing_certificate_bio == nullptr) {
+		throw GeneralException("Could not create memory buffer");
+	}
+
+	SCOPE_GUARD([signing_certificate_bio]() { BIO_free(signing_certificate_bio); });
+
+	auto bytes_written = BIO_write(signing_certificate_bio, certificate.data(), certificate.size());
+	if (bytes_written <= 0) {
+		throw GeneralException("Could not write certificate data");
+	}
+
+	auto certificate_x509 = PEM_read_bio_X509(signing_certificate_bio, nullptr, nullptr, nullptr);
+	if (certificate_x509 == nullptr) {
+		throw GeneralException("Could not read PEM certificate");
+	}
+
+	return certificate_x509;
+}
 
 void LicenseInfo::SetLicense(IInputStreamPtr stream, types::stream_size length) {
 	Buffer buffer(length);
@@ -166,22 +190,7 @@ bool LicenseInfo::CheckSignature(
 	const std::string& signing_certificate,
 	MessageDigestAlgorithm digest_algorithm) {
 
-	auto signing_certificate_bio = BIO_new(BIO_s_mem());
-	if (signing_certificate_bio == nullptr) {
-		return false;
-	}
-
-	SCOPE_GUARD([signing_certificate_bio]() { BIO_free(signing_certificate_bio); });
-
-	auto bytes_written = BIO_write(signing_certificate_bio, signing_certificate.data(), signing_certificate.size());
-	if (bytes_written <= 0) {
-		return false;
-	}
-
-	auto signing_certificate_x509 = PEM_read_bio_X509(signing_certificate_bio, NULL, NULL, NULL);
-	if (signing_certificate_x509 == nullptr) {
-		return false;
-	}
+	auto signing_certificate_x509 = LoadCertificate(signing_certificate);
 
 	SCOPE_GUARD([signing_certificate_x509]() { X509_free(signing_certificate_x509); });
 
@@ -233,8 +242,73 @@ bool LicenseInfo::CheckExpiration(const std::string& expiration) {
 }
 
 bool LicenseInfo::CheckCertificateChain(const std::vector<std::string>& certificates) {
-	// TODO check chain
 
+	// Initialize algorithms is required before validating certificates
+	MiscUtils::InitializeOpenSSL();
+
+	// Create trusted certificate store
+	auto store = X509_STORE_new();
+	if (store == nullptr) {
+		return false;
+	}
+
+	SCOPE_GUARD([store]() { X509_STORE_free(store); });
+
+	auto store_ctx = X509_STORE_CTX_new();
+	if (store_ctx == nullptr) {
+		return false;
+	}
+
+	SCOPE_GUARD([store_ctx]() { X509_STORE_CTX_free(store_ctx); });
+
+	// Signing certificate is the first one in the chain
+	auto signing_certificate_string = certificates[0];
+
+	// Master certificate is embedded in the library resources
+	auto master_certificate_buffer = Resource::Load(ResourceID::MASTER_CERTIFICATE);
+
+	auto signing_certificate_x509 = LoadCertificate(signing_certificate_string);
+	SCOPE_GUARD([signing_certificate_x509]() { X509_free(signing_certificate_x509); });
+
+	auto master_certificate_x509 = LoadCertificate(master_certificate_buffer->ToString());
+	SCOPE_GUARD([master_certificate_x509]() { X509_free(master_certificate_x509); });
+
+	// Add master certificate to the trusted store
+	auto master_certififcate_added = X509_STORE_add_cert(store, master_certificate_x509);
+	if (master_certififcate_added != 1) {
+		return false;
+	}
+
+	auto certificate_chain = sk_X509_new_null();
+	if (certificate_chain == nullptr) {
+		return false;
+	}
+
+	SCOPE_GUARD([certificate_chain]() { sk_X509_free(certificate_chain); });
+
+	// Add other intermediate certificates to the validation chain
+	for (auto& certificate_string : certificates) {
+		auto certificate_x509 = LoadCertificate(certificate_string);
+		SCOPE_GUARD([certificate_x509]() { X509_free(certificate_x509); });
+
+		auto certififcate_added = sk_X509_push(certificate_chain, certificate_x509);
+		if (certififcate_added == 0) {
+			return false;
+		}
+	}
+
+	auto initialized = X509_STORE_CTX_init(store_ctx, store, signing_certificate_x509, certificate_chain);
+	if (initialized != 1) {
+		return false;
+	}
+
+	// Perform the certificate validation
+	auto verified = X509_verify_cert(store_ctx);
+	if (verified != 1) {
+		return false;
+	}
+
+	// The signing certificate is valid and was issued with the master certificate
 	return true;
 }
 

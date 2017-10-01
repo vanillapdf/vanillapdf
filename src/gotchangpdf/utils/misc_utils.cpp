@@ -6,6 +6,8 @@
 #include <openssl/evp.h>
 #include <openssl/buffer.h>
 
+#include <mutex>
+
 namespace gotchangpdf {
 
 std::string MiscUtils::ToBase64(const Buffer& value) {
@@ -232,6 +234,33 @@ const EVP_MD* MiscUtils::GetAlgorithm(MessageDigestAlgorithm algorithm) {
 #else
 
 	(void) algorithm;
+	throw NotSupportedException("This library was compiled without OpenSSL support");
+
+#endif
+
+}
+
+void MiscUtils::InitializeOpenSSL() {
+
+#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
+
+	static bool initialized = false;
+	if (initialized) {
+		return;
+	}
+
+	static std::mutex openssl_lock;
+	std::lock_guard<std::mutex> lock(openssl_lock);
+	if (initialized) {
+		return;
+	}
+
+	OpenSSL_add_all_algorithms();
+
+	initialized = true;
+
+#else
+
 	throw NotSupportedException("This library was compiled without OpenSSL support");
 
 #endif

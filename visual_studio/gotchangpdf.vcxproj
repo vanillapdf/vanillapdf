@@ -181,6 +181,7 @@
     <ClInclude Include="..\src\gotchangpdf\utils\observable_interface.h" />
     <ClInclude Include="..\src\gotchangpdf\utils\misc_utils.h" />
     <ClInclude Include="..\src\gotchangpdf\utils\pkcs12_key.h" />
+    <ClInclude Include="..\src\gotchangpdf\utils\resource.h" />
     <ClInclude Include="..\src\gotchangpdf\utils\signing_key_interface.h" />
     <ClInclude Include="..\src\gotchangpdf\utils\stack_allocator.h" />
     <ClInclude Include="..\src\gotchangpdf\utils\streams\input_output_stream.h" />
@@ -326,6 +327,7 @@
     <ClCompile Include="..\src\gotchangpdf\utils\log.cpp" />
     <ClCompile Include="..\src\gotchangpdf\utils\modify_observer_interface.cpp" />
     <ClCompile Include="..\src\gotchangpdf\utils\pkcs12_key.cpp" />
+    <ClCompile Include="..\src\gotchangpdf\utils\resource.cpp" />
     <ClCompile Include="..\src\gotchangpdf\utils\streams\input_reverse_stream.cpp" />
     <ClCompile Include="..\src\gotchangpdf\utils\streams\input_stream.cpp" />
     <ClCompile Include="..\src\gotchangpdf\utils\streams\output_stream.cpp" />

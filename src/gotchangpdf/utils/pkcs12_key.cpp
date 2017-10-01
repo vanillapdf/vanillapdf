@@ -5,7 +5,6 @@
 #include "utils/streams/input_stream.h"
 
 #include <fstream>
-#include <mutex>
 
 #if defined(GOTCHANG_PDF_HAVE_OPENSSL)
 
@@ -99,29 +98,6 @@ BufferPtr PKCS12Key::SignFinal() {
 
 #pragma endregion
 
-#if defined(GOTCHANG_PDF_HAVE_OPENSSL)
-
-static void InitializeOpenSSL() {
-	static bool initialized = false;
-	if (initialized) {
-		return;
-	}
-
-	static std::mutex openssl_lock;
-	std::lock_guard<std::mutex> lock(openssl_lock);
-	if (initialized) {
-		return;
-	}
-
-	OpenSSL_add_all_algorithms();
-	OpenSSL_add_all_ciphers();
-	OpenSSL_add_all_digests();
-
-	initialized = true;
-}
-
-#endif
-
 	// Actual implementation
 PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const std::string& path) : PKCS12KeyImpl(path, Buffer()) {}
 PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const std::string& path, const Buffer& password) {
@@ -153,7 +129,7 @@ PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const Buffer& data, const Buffer& passwo
 
 void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, const Buffer& password) {
 
-	InitializeOpenSSL();
+	MiscUtils::InitializeOpenSSL();
 
 	// The const cast seems to be unnecessary, but on my linux VM
 	// with OpenSSL 1.0.1f method BIO_new_mem_buf takes only void*
