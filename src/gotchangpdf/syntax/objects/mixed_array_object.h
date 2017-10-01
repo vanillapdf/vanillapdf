@@ -1,8 +1,6 @@
 #ifndef _MIXED_ARRAY_OBJECT_H
 #define _MIXED_ARRAY_OBJECT_H
 
-#include "utils/custom_size_vector.h"
-
 #include "syntax/utils/syntax_fwd.h"
 #include "syntax/objects/containable.h"
 

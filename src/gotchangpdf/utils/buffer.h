@@ -4,7 +4,6 @@
 #include "utils/character.h"
 #include "utils/conversion_utils.h"
 #include "utils/unknown_interface.h"
-#include "utils/custom_size_vector.h"
 #include "utils/modify_observer_interface.h"
 
 #include "utils/streams/input_stream_interface.h"
