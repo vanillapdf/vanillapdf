@@ -87,6 +87,9 @@ void LicenseInfo::SetLicense(const Buffer& data) {
 	auto version_major = std::stoi(version_major_string);
 	auto version_minor = std::stoi(version_minor_string);
 
+	// Will be used in the future
+	UNUSED(version_minor);
+
 	// Version format 1
 	if (version_major == 1) {
 		auto data_node = json_data[DATA_NODE];
