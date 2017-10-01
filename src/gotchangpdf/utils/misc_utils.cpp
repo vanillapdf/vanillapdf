@@ -7,6 +7,7 @@
 #include <openssl/buffer.h>
 
 #include <mutex>
+#include <cctype>
 
 namespace gotchangpdf {
 
@@ -265,6 +266,18 @@ void MiscUtils::InitializeOpenSSL() {
 
 #endif
 
+}
+
+bool MiscUtils::CaseInsensitiveCompare(const std::string& left, const std::string& right) {
+	if (left.size() != right.size()) {
+		return false;
+	}
+
+	auto comparison_predicate = [](unsigned char left, unsigned char right) {
+		return std::toupper(left) == std::toupper(right);
+	};
+
+	return std::equal(left.begin(), left.end(), right.begin(), comparison_predicate);
 }
 
 } // gotchangpdf

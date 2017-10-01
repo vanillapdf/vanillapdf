@@ -21,6 +21,7 @@ public:
 	static BufferPtr CalculateHash(const Buffer& data, MessageDigestAlgorithm digest_algorithm);
 
 	static std::string ExtractFilename(const std::string& path);
+	static bool CaseInsensitiveCompare(const std::string& left, const std::string& right);
 
 	static void InitializeOpenSSL();
 

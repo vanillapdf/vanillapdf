@@ -179,8 +179,22 @@ bool LicenseInfo::IsValid() noexcept {
 }
 
 bool LicenseInfo::CheckBlacklist(const std::string& serial) {
-	// TODO check blacklist
 
+	// Serial blacklist is embedded in the library resources
+	auto serial_blacklist_raw = Resource::Load(ResourceID::SERIAL_BLACKLIST);
+
+	// Parse list of blacklisted serials
+	auto serial_blacklist_json = json::parse(serial_blacklist_raw);
+	auto serial_blacklist = serial_blacklist_json.get<std::vector<std::string>>();
+
+	// Check if current serial appears within the list
+	for (auto& blacklisted_serial : serial_blacklist) {
+		if (MiscUtils::CaseInsensitiveCompare(serial, blacklisted_serial)) {
+			return true;
+		}
+	}
+
+	// Presented serial does not appear on blacklist
 	return false;
 }
 

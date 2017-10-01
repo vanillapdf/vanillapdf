@@ -24,12 +24,16 @@ NnU41+txqBdrP5y5T+SyKJXOGqgMg5WBBxisU4NY4tE=
 
 static const uint8_t WATERMARK_IMAGE[] = R"(TODO)";
 
+static const uint8_t SERIAL_BLACKLIST[] = R"([])";
+
 BufferPtr Resource::Load(ResourceID id) {
 	switch (id) {
 		case ResourceID::MASTER_CERTIFICATE:
 			return make_deferred<Buffer>(MASTER_CERTIFICATE, sizeof(MASTER_CERTIFICATE));
 		case ResourceID::WATERMARK_IMAGE:
 			return make_deferred<Buffer>(WATERMARK_IMAGE, sizeof(WATERMARK_IMAGE));
+		case ResourceID::SERIAL_BLACKLIST:
+			return make_deferred<Buffer>(SERIAL_BLACKLIST, sizeof(SERIAL_BLACKLIST));
 	}
 
 	throw GeneralException("Resource was not found");

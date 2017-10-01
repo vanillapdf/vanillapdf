@@ -7,7 +7,8 @@ namespace gotchangpdf {
 
 enum class ResourceID {
 	MASTER_CERTIFICATE,
-	WATERMARK_IMAGE
+	WATERMARK_IMAGE,
+	SERIAL_BLACKLIST
 };
 
 class Resource {
