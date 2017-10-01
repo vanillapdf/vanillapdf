@@ -11,7 +11,7 @@ namespace syntax {
 
 class MixedArrayObject : public ContainableObject, public IModifyObserver {
 public:
-	typedef CustomSizeVector<ContainableObjectPtr> list_type;
+	typedef std::vector<ContainableObjectPtr> list_type;
 	typedef list_type::value_type value_type;
 	typedef list_type::size_type size_type;
 	typedef list_type::iterator iterator;

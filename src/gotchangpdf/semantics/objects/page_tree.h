@@ -33,7 +33,7 @@ private:
 
 private:
 	// Cache
-	mutable CustomSizeVector<OutputPageObjectPtr> m_pages;
+	mutable std::vector<OutputPageObjectPtr> m_pages;
 };
 
 } // semantics

@@ -24,7 +24,7 @@ public:
 
 class BaseInstructionCollection : public virtual IUnknown, public IModifyObserver, public IModifyObservable {
 public:
-	using data_type = CustomSizeVector<InstructionBasePtr>;
+	using data_type = std::vector<InstructionBasePtr>;
 
 public:
 	using value_type = data_type::value_type;

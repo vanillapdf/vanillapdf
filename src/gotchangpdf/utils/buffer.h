@@ -17,7 +17,7 @@ namespace gotchangpdf {
 
 class Buffer : public virtual IUnknown, public IWeakReferenceable<Buffer>, public IModifyObservable {
 public:
-	using storage_type = CustomSizeVector<char>;
+	using storage_type = std::vector<char>;
 
 public:
 	using value_type = storage_type::value_type;

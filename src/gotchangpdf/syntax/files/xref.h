@@ -72,7 +72,7 @@ public:
 	types::size_type Size(void) const noexcept;
 	XrefEntryBasePtr Find(types::big_uint obj_number) const;
 	bool Contains(types::big_uint obj_number) const;
-	CustomSizeVector<XrefEntryBasePtr> Entries(void) const;
+	std::vector<XrefEntryBasePtr> Entries(void) const;
 
 	virtual Type GetType(void) const noexcept = 0;
 	virtual ~XrefBase();

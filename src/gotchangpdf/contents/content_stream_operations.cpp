@@ -14,19 +14,19 @@ namespace contents {
 
 using namespace syntax;
 
-OperationBeginText::OperationBeginText(const CustomSizeVector<ObjectPtr>& operands) {
+OperationBeginText::OperationBeginText(const std::vector<ObjectPtr>& operands) {
 	assert(operands.size() == 0);
 	if (operands.size() != 0)
 		throw GeneralException("Unexpected number of arguments");
 }
 
-OperationEndText::OperationEndText(const CustomSizeVector<ObjectPtr>& operands) {
+OperationEndText::OperationEndText(const std::vector<ObjectPtr>& operands) {
 	assert(operands.size() == 0);
 	if (operands.size() != 0)
 		throw GeneralException("Unexpected number of arguments");
 }
 
-OperationTextFont::OperationTextFont(const CustomSizeVector<ObjectPtr>& operands) {
+OperationTextFont::OperationTextFont(const std::vector<ObjectPtr>& operands) {
 	assert(operands.size() == 2);
 	if (operands.size() != 2)
 		throw GeneralException("Unexpected number of arguments");
@@ -49,25 +49,25 @@ OperationTextFont::OperationTextFont(const CustomSizeVector<ObjectPtr>& operands
 	m_scale->Subscribe(this);
 }
 
-OperationBeginInlineImageObject::OperationBeginInlineImageObject(const CustomSizeVector<ObjectPtr>& operands) {
+OperationBeginInlineImageObject::OperationBeginInlineImageObject(const std::vector<ObjectPtr>& operands) {
 	assert(operands.size() == 0);
 	if (operands.size() != 0)
 		throw GeneralException("Unexpected number of arguments");
 }
 
-OperationBeginInlineImageData::OperationBeginInlineImageData(const CustomSizeVector<ObjectPtr>& operands) {
+OperationBeginInlineImageData::OperationBeginInlineImageData(const std::vector<ObjectPtr>& operands) {
 	assert(operands.size() == 0);
 	if (operands.size() != 0)
 		throw GeneralException("Unexpected number of arguments");
 }
 
-OperationEndInlineImageObject::OperationEndInlineImageObject(const CustomSizeVector<ObjectPtr>& operands) {
+OperationEndInlineImageObject::OperationEndInlineImageObject(const std::vector<ObjectPtr>& operands) {
 	assert(operands.size() == 0);
 	if (operands.size() != 0)
 		throw GeneralException("Unexpected number of arguments");
 }
 
-OperationTextShow::OperationTextShow(const CustomSizeVector<ObjectPtr>& operands) {
+OperationTextShow::OperationTextShow(const std::vector<ObjectPtr>& operands) {
 	if (1 != operands.size()) {
 		assert(!"Text show operation has invalid arguments");
 		throw GeneralException("Unexpected number of arguments");
@@ -83,7 +83,7 @@ OperationTextShow::OperationTextShow(const CustomSizeVector<ObjectPtr>& operands
 	_str->Subscribe(this);
 }
 
-OperationTextShowArray::OperationTextShowArray(const CustomSizeVector<ObjectPtr>& operands) {
+OperationTextShowArray::OperationTextShowArray(const std::vector<ObjectPtr>& operands) {
 	if (1 != operands.size()) {
 		assert(!"Text show array operation has invalid arguments");
 		throw GeneralException("Unexpected number of arguments");

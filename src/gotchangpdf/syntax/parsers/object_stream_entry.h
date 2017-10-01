@@ -15,7 +15,7 @@ struct ObjectStreamEntry {
 	ObjectPtr object;
 };
 
-using ObjectStreamEntries = CustomSizeVector<ObjectStreamEntry>;
+using ObjectStreamEntries = std::vector<ObjectStreamEntry>;
 
 } // syntax
 } // gotchangpdf

@@ -92,7 +92,7 @@ public:
 	virtual Type GetOperationType(void) const noexcept = 0;
 };
 
-typedef CustomSizeVector<OperationBasePtr> BaseOperationCollection;
+typedef std::vector<OperationBasePtr> BaseOperationCollection;
 
 } // contents
 } // gotchangpdf

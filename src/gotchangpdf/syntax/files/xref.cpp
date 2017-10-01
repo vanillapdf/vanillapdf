@@ -211,8 +211,8 @@ bool XrefBase::Contains(types::big_uint obj_number) const {
 	return (found != _entries.end());
 }
 
-CustomSizeVector<XrefEntryBasePtr> XrefBase::Entries(void) const {
-	CustomSizeVector<XrefEntryBasePtr> result;
+std::vector<XrefEntryBasePtr> XrefBase::Entries(void) const {
+	std::vector<XrefEntryBasePtr> result;
 	result.reserve(_entries.size());
 	std::for_each(_entries.begin(), _entries.end(), [&result](const XrefEntryBasePtr& item) { result.push_back(item); });
 

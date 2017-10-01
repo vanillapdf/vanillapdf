@@ -16,7 +16,7 @@ namespace contents {
 
 class OperationBeginText : public OperationBase {
 public:
-	explicit OperationBeginText(const CustomSizeVector<syntax::ObjectPtr>& operands);
+	explicit OperationBeginText(const std::vector<syntax::ObjectPtr>& operands);
 
 	virtual Type GetOperationType(void) const noexcept override { return Type::BeginText; }
 	virtual std::string ToPdf() const override;
@@ -24,7 +24,7 @@ public:
 
 class OperationEndText : public OperationBase {
 public:
-	explicit OperationEndText(const CustomSizeVector<syntax::ObjectPtr>& operands);
+	explicit OperationEndText(const std::vector<syntax::ObjectPtr>& operands);
 
 	virtual Type GetOperationType(void) const noexcept override { return Type::EndText; }
 	virtual std::string ToPdf() const override;
@@ -32,7 +32,7 @@ public:
 
 class OperationTextFont : public OperationBase, public IModifyObserver {
 public:
-	explicit OperationTextFont(const CustomSizeVector<syntax::ObjectPtr>& operands);
+	explicit OperationTextFont(const std::vector<syntax::ObjectPtr>& operands);
 
 	virtual Type GetOperationType(void) const noexcept override { return Type::TextFont; }
 	virtual std::string ToPdf() const override;
@@ -64,7 +64,7 @@ private:
 
 class OperationTextShow : public OperationBase, public IModifyObserver {
 public:
-	explicit OperationTextShow(const CustomSizeVector<syntax::ObjectPtr>& operands);
+	explicit OperationTextShow(const std::vector<syntax::ObjectPtr>& operands);
 
 	virtual Type GetOperationType(void) const noexcept override { return Type::TextShow; }
 	virtual std::string ToPdf() const override;
@@ -86,7 +86,7 @@ private:
 
 class OperationTextShowArray : public OperationBase, public IModifyObserver {
 public:
-	explicit OperationTextShowArray(const CustomSizeVector<syntax::ObjectPtr>& operands);
+	explicit OperationTextShowArray(const std::vector<syntax::ObjectPtr>& operands);
 
 	virtual Type GetOperationType(void) const noexcept override { return Type::TextShowArray; }
 	virtual std::string ToPdf() const override;
@@ -108,21 +108,21 @@ private:
 
 class OperationBeginInlineImageObject : public OperationBase {
 public:
-	explicit OperationBeginInlineImageObject(const CustomSizeVector<syntax::ObjectPtr>& operands);
+	explicit OperationBeginInlineImageObject(const std::vector<syntax::ObjectPtr>& operands);
 	virtual Type GetOperationType(void) const noexcept override { return Type::BeginInlineImageObject; }
 	virtual std::string ToPdf() const override;
 };
 
 class OperationBeginInlineImageData : public OperationBase {
 public:
-	explicit OperationBeginInlineImageData(const CustomSizeVector<syntax::ObjectPtr>& operands);
+	explicit OperationBeginInlineImageData(const std::vector<syntax::ObjectPtr>& operands);
 	virtual Type GetOperationType(void) const noexcept override { return Type::BeginInlineImageData; }
 	virtual std::string ToPdf() const override;
 };
 
 class OperationEndInlineImageObject : public OperationBase {
 public:
-	explicit OperationEndInlineImageObject(const CustomSizeVector<syntax::ObjectPtr>& operands);
+	explicit OperationEndInlineImageObject(const std::vector<syntax::ObjectPtr>& operands);
 	virtual Type GetOperationType(void) const noexcept override { return Type::EndInlineImageObject; }
 	virtual std::string ToPdf() const override;
 };
