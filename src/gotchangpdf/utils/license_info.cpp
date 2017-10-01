@@ -2,6 +2,7 @@
 
 #include "utils/resource.h"
 #include "utils/misc_utils.h"
+#include "utils/library_info.h"
 #include "utils/license_info.h"
 #include "utils/streams/input_stream.h"
 
@@ -263,10 +264,30 @@ bool LicenseInfo::CheckExpiration(const std::string& expiration) {
 	expiration_stream >> std::get_time(&expiration_tm, "%Y-%m-%d %H:%M:%SZ");
 
 	auto expiration_since_epoch = std::mktime(&expiration_tm);
+	if (expiration_since_epoch == -1) {
+		throw GeneralException("Could not interpret expiration time as valid date time");
+	}
+
 	auto expiration_time = std::chrono::system_clock::from_time_t(expiration_since_epoch);
 
+	auto build_year = LibraryInfo::BuildYear();
+	auto build_month = LibraryInfo::BuildMonth();
+	auto build_day = LibraryInfo::BuildDay();
+
+	std::tm build_tm = { 0 };
+	build_tm.tm_year = build_year - 1900;
+	build_tm.tm_mon = build_month - 1;
+	build_tm.tm_mday = build_day;
+
+	auto build_since_epoch = std::mktime(&build_tm);
+	if (build_since_epoch == -1) {
+		throw GeneralException("Could not interpret build time as valid date time");
+	}
+
+	auto build_time = std::chrono::system_clock::from_time_t(build_since_epoch);
+
 	// Returns true if already expired
-	return (expiration_time < std::chrono::system_clock::now());
+	return (expiration_time < build_time);
 }
 
 bool LicenseInfo::CheckCertificateChain(const std::vector<std::string>& certificates) {

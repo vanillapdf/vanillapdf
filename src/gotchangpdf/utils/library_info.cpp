@@ -19,7 +19,10 @@
 #endif /* GOTCHANG_PDF_VERSION_BUILD */
 
 #ifndef GOTCHANG_PDF_BUILD_DAY
-	#define GOTCHANG_PDF_BUILD_DAY 1
+	// MSVC cannot parse date time 1.1.1970 00:00:00,
+	// because it takes timezone into account.
+	// Lets shift the default build day!
+	#define GOTCHANG_PDF_BUILD_DAY 2
 #endif /* GOTCHANG_PDF_BUILD_DAY */
 
 #ifndef GOTCHANG_PDF_BUILD_MONTH
