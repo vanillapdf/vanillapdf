@@ -1,10 +1,10 @@
-# GotchangPDF
+# VanillaPDF
 
 **Cross-platform toolkit for creating and manipulating existing PDF documents**
 
 ## API Documentation
 
-Please enjoy exploring the extensive summary about **Application Programming Interface** on our [website](https://gotchangpdf.com/doc/index.html).
+Please enjoy exploring the extensive summary about **Application Programming Interface** on our [website](https://vanillapdf.com/doc/index.html).
 
 ## FAQ
 
@@ -31,4 +31,4 @@ This project started as a hobby by our supreme leader [Juraj Zikmund](mailto:jur
 The reason was unavailability of such toolkit out in the wild.
 Growing codebase every day with our proficient team, delivering cutting-edge technology to the customers.
 
-Please visit [gotchangpdf.com](http://www.gotchangpdf.com) for more information.
+Please visit [vanillapdf.com](http://vanillapdf.com) for more information.

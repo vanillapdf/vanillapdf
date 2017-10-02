@@ -1,6 +1,6 @@
 # How to Contribute
 
-First of all, thank you for your interest in GotchangPDF! We'd love to accept your patches and contributions!
+First of all, thank you for your interest in VanillaPDF! We'd love to accept your patches and contributions!
 
 ## How to report a bug
 
@@ -11,7 +11,7 @@ If you are already a customer with paid support,
 please use the paid support section.
 
 Bug report should consist of a few useful information:
-* the version of GotchangPDF you are using
+* the version of VanillaPDF you are using
 * the version of operating system you are using
 * the description of the actual result (what is actually happening) and the expected result (what would you expect to happen instead)
 * snippet of the problematic code
@@ -22,7 +22,7 @@ Confirmed issues will be assigned internal issue ID
 and you will be notified, when the issue is resolved.
 
 In any other case please contact the support team
-at [info@gotchangpdf.com](mailto:info@gotchangpdf.com).
+at [info@vanillapdf.com](mailto:info@vanillapdf.com).
 
 ## General feedback and feature requests
 
