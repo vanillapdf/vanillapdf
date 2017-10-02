@@ -73,6 +73,7 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(ContentOperationTextFont);
 	DECLARE_OBJECT_HANDLE(ContentOperationTextShow);
 	DECLARE_OBJECT_HANDLE(ContentOperationTextShowArray);
+	DECLARE_OBJECT_HANDLE(ContentOperationBeginText);
 	DECLARE_OBJECT_HANDLE(ContentOperationEndText);
 
 	/* Content operators */

@@ -97,6 +97,20 @@ extern "C"
 	*/
 
 	/**
+	* \class ContentOperationBeginTextHandle
+	* \extends ContentOperationHandle
+	* \ingroup Contents
+	* \brief Starts a new TextObject sections
+	*/
+
+	/**
+	* \class ContentOperationEndTextHandle
+	* \extends ContentOperationHandle
+	* \ingroup Contents
+	* \brief Terminates the TextObject started with ContentOperationBeginTextHandle
+	*/
+
+	/**
 	* \class ContentOperatorHandle
 	* \extends IUnknownHandle
 	* \ingroup Contents
@@ -144,7 +158,17 @@ extern "C"
 		ContentOperatorType_EndPath,
 		ContentOperatorType_ClipPathNonzero,
 		ContentOperatorType_ClipPathEvenOdd,
+
+		/**
+		* \copydoc ContentOperationBeginTextHandle
+		* \see ContentOperationBeginTextHandle
+		*/
 		ContentOperatorType_BeginText,
+
+		/**
+		* \copydoc ContentOperationEndTextHandle
+		* \see ContentOperationEndTextHandle
+		*/
 		ContentOperatorType_EndText,
 		ContentOperatorType_CharacterSpacing,
 		ContentOperatorType_WordSpacing,
@@ -502,6 +526,11 @@ extern "C"
 	* \brief Reinterpret current object as ContentOperationTextShowArrayHandle
 	*/
 	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShowArray(ContentOperationHandle handle, ContentOperationTextShowArrayHandle* result);
+
+	/**
+	* \brief Reinterpret current object as ContentOperationBeginTextHandle
+	*/
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToBeginText(ContentOperationHandle handle, ContentOperationBeginTextHandle* result);
 
 	/**
 	* \brief Reinterpret current object as ContentOperationEndTextHandle
