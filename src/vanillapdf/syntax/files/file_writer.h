@@ -115,9 +115,14 @@ public:
 	void SetRemoveFreedObjectsFlag(bool flag) noexcept { m_remove_freed = flag; }
 
 private:
-	void WriteXrefObjects(FilePtr destination, XrefBasePtr source);
+	XrefChainPtr CloneXrefChain(FilePtr source, FilePtr destination);
 	XrefBasePtr CloneXref(FilePtr destination, XrefBasePtr source);
+	DictionaryObjectPtr CloneTrailerDictionary(FilePtr source, XrefBasePtr xref);
 	XrefBasePtr CreateIncrementalXref(FilePtr source, FilePtr destination);
+
+	void WriteHeader(IOutputStreamPtr output, HeaderPtr header);
+	void WriteXrefObjects(IOutputStreamPtr output, XrefBasePtr source);
+	void WriteXrefChain(IOutputStreamPtr output, XrefChainPtr chain);
 	void WriteXref(IOutputStreamPtr output, XrefBasePtr xref);
 	void WriteXrefTable(IOutputStreamPtr output, XrefTablePtr xref_table);
 	void WriteXrefOffset(IOutputStreamPtr output, types::stream_offset offset);
@@ -129,9 +134,14 @@ private:
 	static std::string GetFormattedGenerationNumber(types::ushort generation_number);
 	static std::string GetFormattedObjectNumber(types::big_uint generation_number);
 
-	void RecalculateStreamLength(ObjectPtr obj);
+	void FixStreamReferences(XrefChainPtr source, XrefChainPtr destination);
+
+	void RecalculateXrefChain(XrefChainPtr chain);
+	void RecalculateXref(XrefBasePtr source);
+	void RecalculateStreamLength(StreamObjectPtr obj);
 	void RecalculateStreamsLength(XrefBasePtr source);
 	void RecalculateObjectStreamContent(XrefBasePtr source);
+	void RecalculateXrefSize(XrefBasePtr source);
 
 	void CompressAndOptimize(XrefChainPtr xref);
 	void RemoveFreedObjects(XrefChainPtr xref);

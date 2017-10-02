@@ -52,13 +52,12 @@ void MixedArrayObject::ObserveeChanged(IModifyObservable*) { OnChanged(); }
 MixedArrayObject* MixedArrayObject::Clone(void) const {
 	MixedArrayObjectPtr result(pdf_new MixedArrayObject(), false);
 
-	result->SetFile(m_file);
-
 	for (auto item : _list) {
 		auto cloned = ObjectUtils::Clone<ContainableObjectPtr>(item);
 		result->Append(cloned);
 	}
 
+	result->SetFile(m_file);
 	return result.detach();
 }
 

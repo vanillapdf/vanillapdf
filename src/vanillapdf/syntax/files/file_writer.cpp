@@ -17,138 +17,45 @@
 namespace vanillapdf {
 namespace syntax {
 
-using namespace std;
+using std::setfill;
+using std::setw;
 
 IFileWriterObserver::~IFileWriterObserver() {}
 IFileWriterObservable::~IFileWriterObservable() {}
 
-// experimental
 void FileWriter::Write(FilePtr source, FilePtr destination) {
+
+	// Terminate if the source file was not initialize
 	if (!source->IsInitialized()) {
 		throw FileNotInitializedException(source->GetFilename());
 	}
 
 	std::string reason;
+
+	// Verify that configuration flags are valid
 	bool valid_configuration = ValidateConfiguration(source, reason);
 	if (!valid_configuration) {
 		throw GeneralException(reason);
 	}
 
-	auto input = source->GetInputStream();
+	// Get destination output stream
 	auto output = destination->GetInputOutputStream();
 
+	// Write the file header
 	auto header = source->GetHeader();
-	auto ver = header->GetVersion();
+	WriteHeader(output, header);
 
-	output->Write("%PDF-1.");
-	output->Write(static_cast<int>(ver));
-	output->Write(WhiteSpace::LINE_FEED);
-
-	auto source_xref = source->GetXrefChain();
-	auto dest_xref = destination->GetXrefChain();
-	auto source_end = source_xref->end();
-	for (auto it = source_xref->begin(); it != source_end; ++it) {
-		auto original_xref = *it;
-
-		// Deep clone of original xref
-		auto new_xref = CloneXref(destination, original_xref);
-
-		// Insert cloned table to destination xref chain
-		// NOTE: This is required, so that indirect references are accessible
-		dest_xref->Append(new_xref);
-	}
-
-	auto source_iterator = source_xref->begin();
-	for (auto dest_iterator = dest_xref->begin(); dest_iterator != dest_xref->end(); ++dest_iterator, ++source_iterator) {
-		auto original_xref = *source_iterator;
-		auto new_xref = *dest_iterator;
-
-		// Xref streams content needs to be recalculated
-		if (new_xref->GetType() != XrefBase::Type::Stream) {
-			continue;
-		}
-
-		auto source_xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(original_xref);
-		auto dest_xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(new_xref);
-
-		auto stream_obj = source_xref_stream->GetStreamObject();
-		auto stream_object_number = stream_obj->GetObjectNumber();
-		auto stream_generation_number = stream_obj->GetGenerationNumber();
-
-		assert(dest_xref->Contains(stream_object_number, stream_generation_number)
-			&& "Xref stream reference was not found in cloned xref");
-
-		// Get cloned stream based on same object and generation number from cloned xref
-		auto new_stream_entry = dest_xref->GetXrefEntry(stream_object_number, stream_generation_number);
-		auto new_stream_used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(new_stream_entry);
-		auto new_stream_obj = new_stream_used_entry->GetReference();
-		auto new_stream = ObjectUtils::ConvertTo<StreamObjectPtr>(new_stream_obj);
-
-		// Fix stream object reference
-		dest_xref_stream->SetStreamObject(new_stream);
-	}
-
-	// All xref entries are stored in reversed order than it is written to file
-	dest_xref->Reverse();
+	// Deeo copy of all contents from the original source document
+	auto new_chain = CloneXrefChain(source, destination);
 
 	// Compress and optimize here
-	CompressAndOptimize(dest_xref);
+	CompressAndOptimize(new_chain);
 
-	bool first_xref = true;
-	auto last_xref_iterator = dest_xref->begin();
-	for (auto it = dest_xref->begin(); it != dest_xref->end(); ++it) {
-		auto new_xref = *it;
+	// Recalculate offsets and stream sizes
+	RecalculateXrefChain(new_chain);
 
-		if (!first_xref) {
-			auto prev_xref = *last_xref_iterator;
-			auto prev_xref_offset = prev_xref->GetLastXrefOffset();
-
-			auto trailer_dictionary = new_xref->GetTrailerDictionary();
-			if (!trailer_dictionary->Contains(constant::Name::Prev)) {
-				IntegerObjectPtr xref_offset = make_deferred<IntegerObject>(prev_xref_offset);
-				trailer_dictionary->Insert(constant::Name::Prev, xref_offset);
-			}
-
-			// Fix prev entry for all following trailers
-			auto prev = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::Prev);
-			prev->SetValue(prev_xref_offset);
-
-			last_xref_iterator++;
-		}
-
-		// Object stream contents has to be adjusted separately
-		if (m_recalculate_object_stream_content) {
-			RecalculateObjectStreamContent(new_xref);
-		}
-
-		// Stream length to be adjusted according to calculated size
-		if (m_recalculate_stream_size) {
-			RecalculateStreamsLength(new_xref);
-		}
-
-		if (m_recalculate_xref_size) {
-			auto xref_size = new_xref->Size();
-			auto trailer_dictionary = new_xref->GetTrailerDictionary();
-
-			if (!trailer_dictionary->Contains(constant::Name::Size)) {
-				IntegerObjectPtr xref_size_obj = make_deferred<IntegerObject>(xref_size);
-				trailer_dictionary->Insert(constant::Name::Size, xref_size_obj);
-			}
-
-			auto size = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::Size);
-			if (size->GetUnsignedIntegerValue() != xref_size) {
-				size->SetValue(xref_size);
-			}
-		}
-
-		// Write all body objects
-		WriteXrefObjects(destination, new_xref);
-
-		// Write xref to output
-		WriteXref(output, new_xref);
-
-		first_xref = false;
-	}
+	// Dump whole cloned contents to the output
+	WriteXrefChain(output, new_chain);
 
 	// Cleanup
 	output->Flush();
@@ -165,27 +72,27 @@ void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
 	// Write original data
 	CopyStreamContent(input, output);
 
+	// TODO check the there is newline at the end
+
 	// Make an extra newline before starting new xref section
 	output->Write(WhiteSpace::LINE_FEED);
 
 	// Get all changed entries
-	auto tmp_xref = CreateIncrementalXref(source, destination);
+	auto incremental_xref = CreateIncrementalXref(source, destination);
 
 	// Deep clone of original xref
-	auto new_xref = CloneXref(destination, tmp_xref);
+	auto new_xref = CloneXref(destination, incremental_xref);
 
 	// Insert cloned table to destination xref chain
 	// NOTE: This is required, so that indirect references are accessible
 	auto dest_xref = destination->GetXrefChain();
 	dest_xref->Append(new_xref);
 
-	// Stream length to be adjusted according to calculated size
-	if (m_recalculate_stream_size) {
-		RecalculateStreamsLength(new_xref);
-	}
+	// Recalculate offsets and stream sizes
+	RecalculateXref(new_xref);
 
 	// Write xref objects to output
-	WriteXrefObjects(destination, new_xref);
+	WriteXrefObjects(output, new_xref);
 
 	// Write xref itself to output
 	WriteXref(output, new_xref);
@@ -216,6 +123,7 @@ bool FileWriter::ValidateConfiguration(FilePtr source, std::string& reason) cons
 }
 
 void FileWriter::RecalculateObjectStreamContent(XrefBasePtr source) {
+
 	// Only matters for xref streams
 	if (!ConvertUtils<XrefBasePtr>::IsType<XrefStreamPtr>(source)) {
 		return;
@@ -271,7 +179,7 @@ void FileWriter::RecalculateObjectStreamContent(XrefBasePtr source) {
 
 		// Sort compressed entries by index
 		auto sorting_predicate = [](const XrefCompressedEntryPtr& left, const XrefCompressedEntryPtr& right) {
-			return left->GetIndex() < right->GetIndex();
+			return (left->GetIndex() < right->GetIndex());
 		};
 
 		std::sort(entries.begin(), entries.end(), sorting_predicate);
@@ -350,14 +258,116 @@ void FileWriter::RecalculateObjectStreamContent(XrefBasePtr source) {
 	}
 }
 
-void FileWriter::RecalculateStreamLength(ObjectPtr obj) {
-	if (!ObjectUtils::IsType<StreamObjectPtr>(obj)) {
-		return;
+void FileWriter::FixStreamReferences(XrefChainPtr source, XrefChainPtr destination) {
+
+	auto source_iterator = source->begin();
+	auto dest_iterator = destination->begin();
+
+	// Following for loop would crash if this is not true
+	assert(source->Size() == destination->Size() && "Error in xref cloning");
+
+	for (; dest_iterator != destination->end(); ++dest_iterator, ++source_iterator) {
+		auto original_xref = *source_iterator;
+		auto new_xref = *dest_iterator;
+
+		bool is_original_stream = ConvertUtils<XrefBasePtr>::IsType<XrefStreamPtr>(original_xref);
+		bool is_new_stream = ConvertUtils<XrefBasePtr>::IsType<XrefStreamPtr>(new_xref);
+
+		// Xref streams content needs to be recalculated
+		assert(!(is_original_stream ^ is_new_stream));
+		if (!is_original_stream || !is_new_stream) {
+			continue;
+		}
+
+		auto source_xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(original_xref);
+		auto dest_xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(new_xref);
+
+		auto stream_obj = source_xref_stream->GetStreamObject();
+		auto stream_object_number = stream_obj->GetObjectNumber();
+		auto stream_generation_number = stream_obj->GetGenerationNumber();
+
+		assert(destination->Contains(stream_object_number, stream_generation_number)
+			&& "Xref stream reference was not found in cloned xref");
+
+		// Get cloned stream based on same object and generation number from cloned xref
+		auto new_stream_entry = destination->GetXrefEntry(stream_object_number, stream_generation_number);
+		auto new_stream_used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(new_stream_entry);
+		auto new_stream_obj = new_stream_used_entry->GetReference();
+		auto new_stream = ObjectUtils::ConvertTo<StreamObjectPtr>(new_stream_obj);
+
+		// Fix stream object reference
+		dest_xref_stream->SetStreamObject(new_stream);
+	}
+}
+
+void FileWriter::RecalculateXrefChain(XrefChainPtr chain) {
+
+	bool first_xref = true;
+	auto last_xref_iterator = chain->begin();
+	for (auto it = chain->begin(); it != chain->end(); ++it) {
+		auto new_xref = *it;
+
+		if (!first_xref) {
+			auto prev_xref = *last_xref_iterator;
+			auto prev_xref_offset = prev_xref->GetLastXrefOffset();
+
+			auto trailer_dictionary = new_xref->GetTrailerDictionary();
+			if (!trailer_dictionary->Contains(constant::Name::Prev)) {
+				IntegerObjectPtr xref_offset = make_deferred<IntegerObject>(prev_xref_offset);
+				trailer_dictionary->Insert(constant::Name::Prev, xref_offset);
+			}
+
+			// Fix prev entry for all following trailers
+			auto prev = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::Prev);
+			prev->SetValue(prev_xref_offset);
+
+			last_xref_iterator++;
+		}
+
+		// Apply other independent recalculations
+		RecalculateXref(new_xref);
+
+		first_xref = false;
+	}
+}
+
+void FileWriter::RecalculateXref(XrefBasePtr source) {
+
+	// Object stream contents has to be adjusted separately
+	if (m_recalculate_object_stream_content) {
+		RecalculateObjectStreamContent(source);
 	}
 
-	auto stream_obj = ObjectUtils::ConvertTo<StreamObjectPtr>(obj);
-	auto stream_data = stream_obj->GetBodyEncoded();
-	auto stream_header = stream_obj->GetHeader();
+	// Stream length to be adjusted according to calculated size
+	if (m_recalculate_stream_size) {
+		RecalculateStreamsLength(source);
+	}
+
+	// Xref contains the value that indicates number of entries contained
+	if (m_recalculate_xref_size) {
+		RecalculateXrefSize(source);
+	}
+}
+
+void FileWriter::RecalculateXrefSize(XrefBasePtr source) {
+	auto xref_size = source->Size();
+	auto trailer_dictionary = source->GetTrailerDictionary();
+
+	if (!trailer_dictionary->Contains(constant::Name::Size)) {
+		IntegerObjectPtr xref_size_obj = make_deferred<IntegerObject>(xref_size);
+		trailer_dictionary->Insert(constant::Name::Size, xref_size_obj);
+	}
+
+	auto size = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::Size);
+	if (size->GetUnsignedIntegerValue() != xref_size) {
+		size->SetValue(xref_size);
+	}
+}
+
+void FileWriter::RecalculateStreamLength(StreamObjectPtr obj) {
+
+	auto stream_data = obj->GetBodyEncoded();
+	auto stream_header = obj->GetHeader();
 
 	if (!stream_header->Contains(constant::Name::Length)) {
 		IntegerObjectPtr new_length = make_deferred<IntegerObject>(stream_data->size());
@@ -382,7 +392,11 @@ void FileWriter::RecalculateStreamsLength(XrefBasePtr source) {
 		if (entry->GetUsage() == XrefEntryBase::Usage::Used) {
 			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
 			auto new_obj = used_entry->GetReference();
-			RecalculateStreamLength(new_obj);
+
+			if (ObjectUtils::IsType<StreamObjectPtr>(new_obj)) {
+				auto stream_obj = ObjectUtils::ConvertTo<StreamObjectPtr>(new_obj);
+				RecalculateStreamLength(stream_obj);
+			}
 
 			continue;
 		}
@@ -390,7 +404,13 @@ void FileWriter::RecalculateStreamsLength(XrefBasePtr source) {
 		if (entry->GetUsage() == XrefEntryBase::Usage::Compressed) {
 			auto compressed_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(entry);
 			auto new_obj = compressed_entry->GetReference();
-			RecalculateStreamLength(new_obj);
+
+			// 7.5.7 The following objects shall not be stored in an object stream: Stream objects
+			assert(!ObjectUtils::IsType<StreamObjectPtr>(new_obj));
+
+			if (ObjectUtils::IsType<StreamObjectPtr>(new_obj)) {
+				throw GeneralException("Stream object should not be inside object stream");
+			}
 
 			continue;
 		}
@@ -399,7 +419,33 @@ void FileWriter::RecalculateStreamsLength(XrefBasePtr source) {
 	}
 }
 
+XrefChainPtr FileWriter::CloneXrefChain(FilePtr source, FilePtr destination) {
+
+	auto source_chain = source->GetXrefChain();
+	auto dest_chain = destination->GetXrefChain();
+
+	for (auto it = source_chain->begin(); it != source_chain->end(); ++it) {
+		auto original_xref = *it;
+
+		// Deep clone of original xref
+		auto new_xref = CloneXref(destination, original_xref);
+
+		// Insert cloned table to destination xref chain
+		// NOTE: This is required, so that indirect references are accessible
+		dest_chain->Append(new_xref);
+	}
+
+	// Stream object references needs to be fixed separately
+	FixStreamReferences(source_chain, dest_chain);
+
+	// All xref entries are stored in reversed order than it is written to file
+	dest_chain->Reverse();
+
+	return dest_chain;
+}
+
 XrefBasePtr FileWriter::CloneXref(FilePtr destination, XrefBasePtr source) {
+
 	// Create cloned xref table
 	// Xref base has no default constructor, therefore it is initialized with table
 	XrefBasePtr result = XrefTablePtr();
@@ -410,18 +456,6 @@ XrefBasePtr FileWriter::CloneXref(FilePtr destination, XrefBasePtr source) {
 
 	auto table_size = source->Size();
 	auto table_items = source->Entries();
-
-	// Clone original table trailer
-	auto new_trailer = ObjectUtils::Clone<DictionaryObjectPtr>(source->GetTrailerDictionary());
-	new_trailer->SetFile(destination);
-
-	result->SetTrailerDictionary(new_trailer);
-	result->SetOffset(source->GetOffset());
-	result->SetDirty(source->IsDirty());
-	result->SetFile(source->GetFile());
-
-	// TODO mayble also recalculate?
-	result->SetLastXrefOffset(source->GetLastXrefOffset());
 
 	for (decltype(table_size) i = 0; i < table_size; ++i) {
 		auto entry = table_items[i];
@@ -492,11 +526,21 @@ XrefBasePtr FileWriter::CloneXref(FilePtr destination, XrefBasePtr source) {
 		assert(false && "Uncrecognized entry type");
 	}
 
+	// Set trailer
+	auto new_trailer = CloneTrailerDictionary(destination, source);
+
+	result->SetTrailerDictionary(new_trailer);
+	result->SetOffset(source->GetOffset());
+	result->SetDirty(source->IsDirty());
+	result->SetFile(destination);
+
+	// TODO mayble also recalculate?
+	result->SetLastXrefOffset(source->GetLastXrefOffset());
 	result->SetInitialized();
 	return result;
 }
 
-void FileWriter::WriteXrefObjects(FilePtr destination, XrefBasePtr source) {
+void FileWriter::WriteXrefObjects(IOutputStreamPtr output, XrefBasePtr source) {
 	auto table_size = source->Size();
 	auto table_items = source->Entries();
 
@@ -528,10 +572,63 @@ void FileWriter::WriteXrefObjects(FilePtr destination, XrefBasePtr source) {
 			continue;
 		}
 
-		auto output = destination->GetOutputStream();
 		WriteEntry(output, used_entry);
 		continue;
 	}
+}
+
+DictionaryObjectPtr FileWriter::CloneTrailerDictionary(FilePtr source, XrefBasePtr xref) {
+
+	// Construct new trailer for latest xref table
+	DictionaryObjectPtr new_trailer;
+
+	// Set size of new entries
+	IntegerObjectPtr new_size = make_deferred<IntegerObject>(xref->Size());
+	new_trailer->Insert(constant::Name::Size, new_size);
+
+	auto source_trailer = xref->GetTrailerDictionary();
+
+	// Set document ID
+	if (source_trailer->Contains(constant::Name::ID)) {
+		ContainableObjectPtr id = source_trailer->Find(constant::Name::ID);
+		ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(id);
+		new_trailer->Insert(constant::Name::ID, cloned);
+	}
+
+	// Set document Info
+	if (source_trailer->Contains(constant::Name::Info)) {
+		ContainableObjectPtr info = source_trailer->Find(constant::Name::Info);
+		ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(info);
+		new_trailer->Insert(constant::Name::Info, cloned);
+	}
+
+	// Set document Root
+	if (source_trailer->Contains(constant::Name::Root)) {
+		ContainableObjectPtr root = source_trailer->Find(constant::Name::Root);
+		ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(root);
+		new_trailer->Insert(constant::Name::Root, cloned);
+	}
+
+	// Set reference to previous xref entry
+	if (source_trailer->Contains(constant::Name::Prev)) {
+		ContainableObjectPtr prev = source_trailer->Find(constant::Name::Prev);
+		ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(prev);
+		new_trailer->Insert(constant::Name::Prev, cloned);
+	}
+
+	// Add encryption entry to trailer
+	if (source->IsEncrypted()) {
+		ObjectPtr obj = source->GetEncryptionDictionary();
+
+		if (ObjectUtils::IsType<DictionaryObjectPtr>(obj)) {
+			DictionaryObjectPtr encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(obj);
+			DictionaryObjectPtr cloned = ObjectUtils::Clone<DictionaryObjectPtr>(encryption_dictionary);
+			new_trailer->Insert(constant::Name::Encrypt, encryption_dictionary);
+		}
+	}
+
+	new_trailer->SetFile(source);
+	return new_trailer;
 }
 
 XrefBasePtr FileWriter::CreateIncrementalXref(FilePtr source, FilePtr destination) {
@@ -623,57 +720,17 @@ XrefBasePtr FileWriter::CreateIncrementalXref(FilePtr source, FilePtr destinatio
 		}
 	}
 
-	// Construct new trailer for latest xref table
-	DictionaryObjectPtr new_trailer;
-	new_trailer->SetFile(destination);
-
-	// Set size of new entries
-	IntegerObjectPtr new_size = make_deferred<IntegerObject>(new_table->Size());
-	new_trailer->Insert(constant::Name::Size, new_size);
-
-	XrefBasePtr prev_table = chain->Begin()->Value();
-	auto prev_trailer = prev_table->GetTrailerDictionary();
-
-	// Set document ID
-	if (prev_trailer->Contains(constant::Name::ID)) {
-		ContainableObjectPtr id = prev_trailer->Find(constant::Name::ID);
-		ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(id);
-		new_trailer->Insert(constant::Name::ID, cloned);
-	}
-
-	// Set document Info
-	if (prev_trailer->Contains(constant::Name::Info)) {
-		ContainableObjectPtr id = prev_trailer->Find(constant::Name::Info);
-		ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(id);
-		new_trailer->Insert(constant::Name::Info, cloned);
-	}
-
-	// Set document Root
-	if (prev_trailer->Contains(constant::Name::Root)) {
-		ContainableObjectPtr id = prev_trailer->Find(constant::Name::Root);
-		ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(id);
-		new_trailer->Insert(constant::Name::Root, cloned);
-	}
+	// Set trailer
+	auto source_xref = chain->Begin()->Value();
+	auto new_trailer = CloneTrailerDictionary(destination, source_xref);
 
 	// Skip table, if there were no dirty entries
 	if (new_entries) {
-		auto last_xref_offset = prev_table->GetOffset();
+		auto last_xref_offset = source_xref->GetOffset();
 		IntegerObjectPtr new_offset = make_deferred<IntegerObject>(last_xref_offset);
 		new_trailer->Insert(constant::Name::Prev, new_offset);
 	}
 
-	// Add encryption entry to trailer
-	if (source->IsEncrypted()) {
-		ObjectPtr obj = source->GetEncryptionDictionary();
-
-		if (ObjectUtils::IsType<DictionaryObjectPtr>(obj)) {
-			DictionaryObjectPtr encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(obj);
-			DictionaryObjectPtr cloned = ObjectUtils::Clone<DictionaryObjectPtr>(encryption_dictionary);
-			new_trailer->Insert(constant::Name::Encrypt, encryption_dictionary);
-		}
-	}
-
-	// Set trailer
 	new_table->SetTrailerDictionary(new_trailer);
 
 	return new_table;
@@ -737,6 +794,28 @@ void FileWriter::WriteXrefOffset(IOutputStreamPtr output, types::stream_offset o
 	output->Write(WhiteSpace::LINE_FEED);
 	output->Write("%%EOF");
 	output->Write(WhiteSpace::LINE_FEED);
+}
+
+void FileWriter::WriteHeader(IOutputStreamPtr output, HeaderPtr header) {
+
+	auto version = header->GetVersion();
+
+	output->Write("%PDF-1.");
+	output->Write(static_cast<int32_t>(version));
+	output->Write(WhiteSpace::LINE_FEED);
+}
+
+void FileWriter::WriteXrefChain(IOutputStreamPtr output, XrefChainPtr chain) {
+
+	for (auto it = chain->begin(); it != chain->end(); ++it) {
+		auto new_xref = *it;
+
+		// Write all body objects
+		WriteXrefObjects(output, new_xref);
+
+		// Write xref to output
+		WriteXref(output, new_xref);
+	}
 }
 
 void FileWriter::WriteXref(IOutputStreamPtr output, XrefBasePtr xref) {
@@ -899,6 +978,7 @@ void FileWriter::CopyStreamContent(IInputStreamPtr source, IOutputStreamPtr dest
 }
 
 void FileWriter::CompressAndOptimize(XrefChainPtr xref) {
+
 	// Stage: Squash xref chain into single element
 	MergeXrefs(xref);
 
@@ -1097,9 +1177,9 @@ bool FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
 
 	// Redirect all references to chosen unique item
 	for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
-		auto current = *iterator;
+		auto current_xref = *iterator;
 
-		for (auto item : current) {
+		for (auto item : current_xref) {
 
 			// Accept either used and compressed entries
 			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(item)) {
@@ -1148,6 +1228,10 @@ bool FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
 			auto destination_object_number = destination_object->GetObjectNumber();
 			compressed_entry->SetObjectStreamNumber(destination_object_number);
 		}
+
+		// Trailer may contain references to Root or Info dictionary
+		auto trailer_dictionary = current_xref->GetTrailerDictionary();
+		RedirectReferences(trailer_dictionary, duplicit_list);
 	}
 
 	// Release all duplicit items
@@ -1198,6 +1282,10 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
 			// work should be needed.
 			InitializeReferences(object);
 		}
+
+		// Initialize also trailer, which may contain references to Root or Info dictionary
+		auto trailer_dictionary = current_xref->GetTrailerDictionary();
+		InitializeReferences(trailer_dictionary);
 	}
 
 	// Maps the old object number to the updated ones
@@ -1306,7 +1394,7 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
 	// We need to fix these after all objects have been moved
 	for (auto& item : xref) {
 
-		// For every xref_
+		// For every xref
 		for (auto& xref_entry : item) {
 
 			// Accept only compressed entries

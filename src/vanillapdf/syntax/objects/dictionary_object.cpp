@@ -9,14 +9,13 @@ namespace syntax {
 DictionaryObject* DictionaryObject::Clone(void) const {
 	DictionaryObjectPtr result(pdf_new DictionaryObject(), false);
 
-	result->SetFile(m_file);
-
 	for (auto& item : _list) {
 		auto name = ObjectUtils::Clone<NameObjectPtr>(item.first);
 		auto value = ObjectUtils::Clone<ContainableObjectPtr>(item.second);
 		result->Insert(name, value);
 	}
 
+	result->SetFile(m_file);
 	return result.detach();
 }
 
