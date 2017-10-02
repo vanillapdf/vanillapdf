@@ -8,7 +8,7 @@ using namespace gotchangpdf;
 using namespace gotchangpdf::syntax;
 using namespace gotchangpdf::semantics;
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION CharacterMap_GetType(CharacterMapHandle handle, PCharacterMapType result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION CharacterMap_GetType(CharacterMapHandle handle, CharacterMapType* result)
 {
 	CharacterMapBase* obj = reinterpret_cast<CharacterMapBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

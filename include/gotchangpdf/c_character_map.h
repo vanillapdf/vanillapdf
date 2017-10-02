@@ -60,11 +60,6 @@ extern "C"
 	} CharacterMapType;
 
 	/**
-	* \brief Pointer to CharacterMapType
-	*/
-	typedef CharacterMapType *PCharacterMapType;
-
-	/**
 	* \memberof CharacterMapHandle
 	* @{
 	*/
@@ -72,7 +67,7 @@ extern "C"
 	/**
 	* \brief Get derived type of current object
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION CharacterMap_GetType(CharacterMapHandle handle, PCharacterMapType result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION CharacterMap_GetType(CharacterMapHandle handle, CharacterMapType* result);
 
 	/**
 	* \brief Reinterpret current object as UnicodeCharacterMapHandle

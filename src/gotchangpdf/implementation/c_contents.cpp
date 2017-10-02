@@ -47,7 +47,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION Contents_Release(ContentsHandle h
 	return ObjectRelease<Contents, ContentsHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_GetType(ContentInstructionHandle handle, PContentInstructionType result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_GetType(ContentInstructionHandle handle, ContentInstructionType* result)
 {
 	InstructionBase* obj = reinterpret_cast<InstructionBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -354,6 +354,10 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToGeneric(Conten
 	return SafeObjectConvert<OperationBase, OperationGeneric, ContentOperationHandle, ContentOperationGenericHandle>(handle, result);
 }
 
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToBeginText(ContentOperationHandle handle, ContentOperationBeginTextHandle* result) {
+	return SafeObjectConvert<OperationBase, OperationBeginText, ContentOperationHandle, ContentOperationBeginTextHandle>(handle, result);
+}
+
 GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperation_ToEndText(ContentOperationHandle handle, ContentOperationEndTextHandle* result)
 {
 	return SafeObjectConvert<OperationBase, OperationEndText, ContentOperationHandle, ContentOperationEndTextHandle>(handle, result);
@@ -569,7 +573,7 @@ GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_Rel
 	return ObjectRelease<OperationTextShowArray, ContentOperationTextShowArrayHandle>(handle);
 }
 
-GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_GetType(ContentOperatorHandle handle, PContentOperatorType result)
+GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_GetType(ContentOperatorHandle handle, ContentOperatorType* result)
 {
 	OperatorBase* obj = reinterpret_cast<OperatorBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

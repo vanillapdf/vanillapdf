@@ -205,12 +205,6 @@ extern "C"
 	} ContentOperatorType;
 
 	/**
-	* \brief Pointer to ContentOperatorType
-	*/
-	typedef ContentOperatorType *PContentOperatorType;
-
-
-	/**
 	* \brief Available content operation types
 	*/
 	typedef enum {
@@ -355,11 +349,6 @@ extern "C"
 	} ContentInstructionType;
 
 	/**
-	* \brief Pointer to ContentInstructionType
-	*/
-	typedef ContentInstructionType *PContentInstructionType;
-
-	/**
 	* \memberof ContentsHandle
 	* @{
 	*/
@@ -390,7 +379,7 @@ extern "C"
 	/**
 	* \brief Get derived type of current object
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_GetType(ContentInstructionHandle handle, PContentInstructionType result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentInstruction_GetType(ContentInstructionHandle handle, ContentInstructionType* result);
 
 	/**
 	* \brief Reinterpret current object as ContentOperationHandle
@@ -659,7 +648,7 @@ extern "C"
 	/**
 	* \brief Get derived type of current object
 	*/
-	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_GetType(ContentOperatorHandle handle, PContentOperatorType result);
+	GOTCHANG_PDF_API error_type CALLING_CONVENTION ContentOperator_GetType(ContentOperatorHandle handle, ContentOperatorType* result);
 
 	/**
 	* \brief Get byte representation of content operator
