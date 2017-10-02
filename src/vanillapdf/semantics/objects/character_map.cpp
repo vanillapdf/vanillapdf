@@ -1,0 +1,52 @@
+#include "precompiled.h"
+
+#include "semantics/objects/character_map.h"
+#include "syntax/parsers/parser.h"
+
+namespace vanillapdf {
+namespace semantics {
+
+CharacterMapBase::CharacterMapBase(syntax::StreamObjectPtr root)
+	: HighLevelObject(root) {
+}
+
+EmbeddedCharacterMap::EmbeddedCharacterMap(syntax::StreamObjectPtr root)
+	: CharacterMapBase(root) {
+}
+
+UnicodeCharacterMap::UnicodeCharacterMap(syntax::StreamObjectPtr root)
+	: CharacterMapBase(root) {
+}
+
+std::unique_ptr<CharacterMapBase> CharacterMapBase::Create(syntax::StreamObjectPtr root, WeakReference<Document> doc) {
+	// TODO
+	return make_unique<UnicodeCharacterMap>(root);
+}
+
+void UnicodeCharacterMap::Initialize() const {
+	if (m_initialized) {
+		return;
+	}
+
+	auto body = _obj->GetBody();
+	auto input_stream = body->ToInputStream();
+
+	syntax::CharacterMapParser parser(_obj->GetFile(), input_stream);
+	m_data = parser.ReadCharacterMapData();
+	m_initialized = true;
+}
+
+BufferPtr UnicodeCharacterMap::GetMappedValue(BufferPtr key) const {
+	Initialize();
+
+	for (auto range : m_data.BaseFontRanges) {
+		if (range.Contains(key)) {
+			return range.GetMappedValue(key);
+		}
+	}
+
+	throw GeneralException("Value is not mapped in font ranges");
+}
+
+} // semantics
+} // vanillapdf

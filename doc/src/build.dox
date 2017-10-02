@@ -34,16 +34,16 @@ Now start a visual studio native command shell (for either x86 or x64) and type
 
 \code
 cd c:\tools
-tar zxvf gotchangpdf-x.y.z.src.tar.gz
+tar zxvf vanillapdf-x.y.z.src.tar.gz
 \endcode
 
 to unpack the sources (you can obtain \c tar from e.g. http://gnuwin32.sourceforge.net/packages.html).
 Alternatively you can use an unpack program, like 7-Zip (see http://www.7-zip.org)
 or use the build in unpack feature of modern Windows systems).
 
-Now your environment is setup to generate the required project files for \c gotchangpdf.
+Now your environment is setup to generate the required project files for \c vanillapdf.
 
-cd into the \c gotchangpdf-x.y.z directory, create and cd to a build directory
+cd into the \c vanillapdf-x.y.z directory, create and cd to a build directory
 
 \code
 mkdir build
@@ -53,7 +53,7 @@ cmake -G "Visual Studio 12 2013" ..
 
 \section install_win Installing the binaries on Windows
 
-Gotchangpdf comes as a self-installing archive, so installation is extremely simple.
+VanillaPDF comes as a self-installing archive, so installation is extremely simple.
 Just follow the dialogs.
 
 \section build_unix Compiling from source on UNIX
@@ -69,12 +69,12 @@ sudo apt-get install zlib1g-dev
 
 <li>Unpack the archive, unless you already have done that:</li>
 \code
-unzip gotchangpdf-master.zip	# uncompress the archive
+unzip vanillapdf-master.zip	# uncompress the archive
 \endcode
 
 <li>Create a build directory:</li>
 \code
-cd gotchangpdf-master
+cd vanillapdf-master
 mkdir build
 cd build
 \endcode

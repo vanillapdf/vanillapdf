@@ -1,6 +1,6 @@
 /**
 * \mainpage
-* This manual documents whole gotchangpdf __C API__.
+* This manual documents whole vanillapdf __C API__.
 *
 * The library is writted in standard C++ (currently 14)
 * and can be compiled using

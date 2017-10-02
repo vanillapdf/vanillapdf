@@ -5,19 +5,19 @@
 The first part forms a user manual:
 
 <ul>
-<li>Section \ref build discusses how to download, compile and install gotchangpdf for your platform.
+<li>Section \ref build discusses how to download, compile and install VanillaPDF for your platform.
 </ul>
 
 The second part forms a reference manual:
 
 <ul>
-<li>Section \ref features presents an overview of what gotchangpdf can do.
+<li>Section \ref features presents an overview of what VanillaPDF can do.
 </ul>
 
 The third part provides information for developers:
 
 <ul>
-<li>Section \ref architecture gives a global overview of how gotchangpdf is internally structured.
+<li>Section \ref architecture gives a global overview of how VanillaPDF is internally structured.
 </ul>
 
 <h2>License</h2>
@@ -27,7 +27,7 @@ Copyright &copy; 2013-2017 by
 
 <b>TODO Proprietary license summary</b>
 
-Documents produced by gotchangpdf are derivative works derived from the
+Documents produced by VanillaPDF are derivative works derived from the
 input used in their production; they are not affected by this license.
 
 */

@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="1">
-    <importproject>../visual_studio/gotchangpdf.sln</importproject>
+    <importproject>../visual_studio/vanillapdf.sln</importproject>
 </project>

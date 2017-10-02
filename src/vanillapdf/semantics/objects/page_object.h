@@ -1,0 +1,42 @@
+#ifndef _PAGE_H
+#define _PAGE_H
+
+#include "semantics/utils/semantics_fwd.h"
+#include "semantics/objects/page_node_base.h"
+#include "semantics/objects/rectangle.h"
+#include "semantics/objects/resource_dictionary.h"
+#include "semantics/objects/contents.h"
+#include "semantics/objects/annotations.h"
+
+namespace vanillapdf {
+namespace semantics {
+
+class PageObject : public PageNodeBase {
+public:
+	explicit PageObject(syntax::DictionaryObjectPtr obj);
+
+	static std::unique_ptr<PageObject> Create(DocumentPtr document);
+	static std::unique_ptr<PageObject> Create(syntax::DictionaryObjectPtr obj);
+
+	ResourceDictionaryPtr GetResources(void) const;
+	void SetResources(ResourceDictionaryPtr resources);
+
+	RectanglePtr GetMediaBox(void) const;
+	void SetMediaBox(RectanglePtr);
+
+	bool GetAnnotations(OutputPageAnnotationsPtr& result) const;
+	void SetAnnotations(PageAnnotationsPtr annots);
+
+	bool GetContents(OutputContentsPtr& result) const;
+	void SetContents(ContentsPtr contents);
+
+	virtual NodeType GetNodeType(void) const noexcept override { return NodeType::Object; }
+
+private:
+	mutable OutputContentsPtr m_contents;
+};
+
+} // semantics
+} // vanillapdf
+
+#endif /* _PAGE_H */

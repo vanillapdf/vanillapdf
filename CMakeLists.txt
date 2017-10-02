@@ -20,7 +20,7 @@ cmake_minimum_required(VERSION 2.8.4)
 	# build on Cygwin without WIN32.
 
 # Define main solution
-project(gotchangpdf)
+project(vanillapdf)
 
 # Prefer files in CMAKE_MODULE_PATH over shipped ones in module directory
 # In the future, they may possibly add conflicting search modules
@@ -48,13 +48,13 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # TODO Support also static library configuration
 # Global compilation definitions
-add_definitions("-DGOTCHANG_PDF_CONFIGURATION_DLL")
+add_definitions("-DVANILLAPDF_CONFIGURATION_DLL")
 
 # Set production version
-set(GOTCHANG_PDF_VERSION_MAJOR 0)
-set(GOTCHANG_PDF_VERSION_MINOR 0)
-set(GOTCHANG_PDF_VERSION_PATCH 1)
-set(GOTCHANG_PDF_VERSION_BUILD 0)
+set(VANILLAPDF_VERSION_MAJOR 0)
+set(VANILLAPDF_VERSION_MINOR 0)
+set(VANILLAPDF_VERSION_PATCH 1)
+set(VANILLAPDF_VERSION_BUILD 0)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING
@@ -63,6 +63,6 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 # Include source directories
-add_subdirectory(src/gotchangpdf)
-add_subdirectory(src/gotchangpdf.test)
-add_subdirectory(src/gotchangpdf.merge)
+add_subdirectory(src/vanillapdf)
+add_subdirectory(src/vanillapdf.test)
+add_subdirectory(src/vanillapdf.merge)

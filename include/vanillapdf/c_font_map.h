@@ -1,0 +1,55 @@
+#ifndef _C_FONT_MAP_H
+#define _C_FONT_MAP_H
+
+#include "c_export.h"
+#include "c_handles.h"
+#include "c_values.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+	/**
+	* \file c_font_map.h
+	* This file contains contains class definitions for FontMapHandle
+	*/
+
+	/**
+	* \class FontMapHandle
+	* \extends IUnknownHandle
+	* \ingroup Fonts
+	* \brief
+	* A dictionary that maps resource names to font dictionaries.
+	* \see FontHandle
+	* \see ResourceDictionaryHandle
+	*/
+
+	/**
+	* \memberof FontMapHandle
+	* @{
+	*/
+
+	/**
+	* \brief Determine if collection contains key \p name_handle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Contains(FontMapHandle handle, const struct NameObjectHandleTag* key_handle, boolean_type* result);
+
+	/**
+	* \brief Find mapped value for key \p name_handle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle handle, const struct NameObjectHandleTag* key_handle, FontHandle* result);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Release(FontMapHandle handle);
+
+	/** @} */
+
+#ifdef __cplusplus
+};
+#endif
+
+#endif /* _C_FONT_MAP_H */

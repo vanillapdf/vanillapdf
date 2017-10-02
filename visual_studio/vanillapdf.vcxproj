@@ -1,0 +1,540 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\grpc.dependencies.openssl.1.0.204.1\build\native\grpc.dependencies.openssl.props" Condition="Exists('packages\grpc.dependencies.openssl.1.0.204.1\build\native\grpc.dependencies.openssl.props')" />
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="debug|Win32">
+      <Configuration>debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="debug|x64">
+      <Configuration>debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="release|Win32">
+      <Configuration>release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="release|x64">
+      <Configuration>release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\vanillapdf\c_annotations.h" />
+    <ClInclude Include="..\include\vanillapdf\c_array_object.h" />
+    <ClInclude Include="..\include\vanillapdf\c_boolean_object.h" />
+    <ClInclude Include="..\include\vanillapdf\c_buffer.h" />
+    <ClInclude Include="..\include\vanillapdf\c_catalog.h" />
+    <ClInclude Include="..\include\vanillapdf\c_character_map.h" />
+    <ClInclude Include="..\include\vanillapdf\c_contents.h" />
+    <ClInclude Include="..\include\vanillapdf\c_date.h" />
+    <ClInclude Include="..\include\vanillapdf\c_destinations.h" />
+    <ClInclude Include="..\include\vanillapdf\c_developer_extensions.h" />
+    <ClInclude Include="..\include\vanillapdf\c_dictionary_object.h" />
+    <ClInclude Include="..\include\vanillapdf\c_digital_signature.h" />
+    <ClInclude Include="..\include\vanillapdf\c_document.h" />
+    <ClInclude Include="..\include\vanillapdf\c_document_info.h" />
+    <ClInclude Include="..\include\vanillapdf\c_document_signature_settings.h" />
+    <ClInclude Include="..\include\vanillapdf\c_errors.h" />
+    <ClInclude Include="..\include\vanillapdf\c_export.h" />
+    <ClInclude Include="..\include\vanillapdf\c_fields.h" />
+    <ClInclude Include="..\include\vanillapdf\c_file.h" />
+    <ClInclude Include="..\include\vanillapdf\c_file_writer.h" />
+    <ClInclude Include="..\include\vanillapdf\c_font.h" />
+    <ClInclude Include="..\include\vanillapdf\c_font_map.h" />
+    <ClInclude Include="..\include\vanillapdf\c_handles.h" />
+    <ClInclude Include="..\include\vanillapdf\c_indirect_object_reference.h" />
+    <ClInclude Include="..\include\vanillapdf\c_integer_object.h" />
+    <ClInclude Include="..\include\vanillapdf\c_interactive_forms.h" />
+    <ClInclude Include="..\include\vanillapdf\c_library_info.h" />
+    <ClInclude Include="..\include\vanillapdf\c_license_info.h" />
+    <ClInclude Include="..\include\vanillapdf\c_message_digest_algorithm.h" />
+    <ClInclude Include="..\include\vanillapdf\c_name_object.h" />
+    <ClInclude Include="..\include\vanillapdf\c_null_object.h" />
+    <ClInclude Include="..\include\vanillapdf\c_object.h" />
+    <ClInclude Include="..\include\vanillapdf\c_outline.h" />
+    <ClInclude Include="..\include\vanillapdf\c_page_labels.h" />
+    <ClInclude Include="..\include\vanillapdf\c_page_object.h" />
+    <ClInclude Include="..\include\vanillapdf\c_page_tree.h" />
+    <ClInclude Include="..\include\vanillapdf\c_pkcs12_key.h" />
+    <ClInclude Include="..\include\vanillapdf\c_platform.h" />
+    <ClInclude Include="..\include\vanillapdf\c_real_object.h" />
+    <ClInclude Include="..\include\vanillapdf\c_rectangle.h" />
+    <ClInclude Include="..\include\vanillapdf\c_signing_key.h" />
+    <ClInclude Include="..\include\vanillapdf\c_stream_object.h" />
+    <ClInclude Include="..\include\vanillapdf\c_string_object.h" />
+    <ClInclude Include="..\include\vanillapdf\c_logging.h" />
+    <ClInclude Include="..\include\vanillapdf\c_types.h" />
+    <ClInclude Include="..\include\vanillapdf\c_unknown_interface.h" />
+    <ClInclude Include="..\include\vanillapdf\c_values.h" />
+    <ClInclude Include="..\include\vanillapdf\c_pdf_version.h" />
+    <ClInclude Include="..\include\vanillapdf\c_vanillapdf_api.h" />
+    <ClInclude Include="..\include\vanillapdf\c_xref.h" />
+    <ClInclude Include="..\include\vanillapdf\c_encryption.h" />
+    <ClInclude Include="..\include\vanillapdf\c_viewer_preferences.h" />
+    <ClInclude Include="..\include\vanillapdf\c_resource_dictionary.h" />
+    <ClInclude Include="..\include\unistd.h" />
+    <ClInclude Include="..\src\vanillapdf\contents\content_fwd.h" />
+    <ClInclude Include="..\src\vanillapdf\contents\content_stream_instruction_base.h" />
+    <ClInclude Include="..\src\vanillapdf\contents\content_stream_objects.h" />
+    <ClInclude Include="..\src\vanillapdf\contents\content_stream_operations.h" />
+    <ClInclude Include="..\src\vanillapdf\contents\content_stream_operation_base.h" />
+    <ClInclude Include="..\src\vanillapdf\contents\content_stream_operation_generic.h" />
+    <ClInclude Include="..\src\vanillapdf\contents\content_stream_operators.h" />
+    <ClInclude Include="..\src\vanillapdf\contents\content_stream_operator_base.h" />
+    <ClInclude Include="..\src\vanillapdf\contents\content_stream_parser.h" />
+    <ClInclude Include="..\src\vanillapdf\contents\content_utils.h" />
+    <ClInclude Include="..\src\vanillapdf\implementation\c_helper.h" />
+    <ClInclude Include="..\src\vanillapdf\precompiled.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\annotations.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\catalog.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\character_map.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\contents.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\content_stream.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\date.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\destinations.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\developer_extensions.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\digital_signature.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\document.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\document_info.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\fields.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\font.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\interactive_forms.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\outline.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\high_level_object.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\name_dictionary.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\page_labels.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\page_node_base.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\page_object.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\page_tree.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\page_tree_node.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\resource_dictionary.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\tree.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\rectangle.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\viewer_preferences.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\utils\document_signature_settings.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\utils\document_signer.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\utils\semantics_fwd.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\utils\semantic_exceptions.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\utils\semantic_utils.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\exceptions\syntax_exceptions.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\files\file.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\files\file_writer.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\files\header.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\files\xref.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\files\xref_chain.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\files\xref_entry.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\filters\ascii_85_decode_filter.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\filters\ascii_hex_decode_filter.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\filters\dct_decode_filter.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\filters\filter.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\filters\flate_decode_filter.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\objects\array_object.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\objects\boolean_object.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\objects\containable.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\objects\dictionary_object.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\objects\indirect_object_reference.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\objects\integer_object.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\objects\mixed_array_object.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\objects\name_object.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\objects\null_object.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\objects\numeric_object.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\objects\object.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\objects\objects.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\objects\real_object.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\objects\stream_object.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\objects\string_object.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\parsers\character_map_data.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\parsers\parser_interface.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\parsers\reverse_parser.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\parsers\reverse_tokenizer.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\parsers\tokenizer.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\parsers\lexical_tree.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\parsers\object_stream_entry.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\parsers\parser.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\parsers\token.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\parsers\token_dictionary.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\utils\encryption.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\utils\object_utils.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\utils\output_pointer.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\utils\serialization_override_attribute.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\utils\syntax_fwd.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\attribute_interface.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\attribute_list.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\buffer.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\character.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\constants.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\conversion_utils.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\custom_size_allocator.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\custom_size_vector.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\deferred.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\encryption_key_interface.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\license_info.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\math_utils.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\message_digest_algorithm.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\errors.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\exceptions.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\base_iterator.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\library_info.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\log.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\modify_observer_interface.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\observable_interface.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\misc_utils.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\pkcs12_key.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\resource.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\signing_key_interface.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\stack_allocator.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\streams\input_output_stream.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\streams\input_output_stream_interface.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\streams\input_reverse_stream.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\streams\input_stream.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\streams\input_stream_interface.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\streams\output_stream.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\streams\output_stream_interface.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\streams\ranged_stream_buffer.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\template_utils.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\time_utils.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\unknown_interface.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\util.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\utils_fwd.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\pdf_version.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\zlib_wrapper.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\vanillapdf\contents\content_stream_objects.cpp" />
+    <ClCompile Include="..\src\vanillapdf\contents\content_stream_operations.cpp" />
+    <ClCompile Include="..\src\vanillapdf\contents\content_stream_operation_generic.cpp" />
+    <ClCompile Include="..\src\vanillapdf\contents\content_stream_parser.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_annotations.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_array_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_boolean_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_buffer.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_catalog.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_character_map.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_contents.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_date.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_destinations.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_developer_extensions.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_dictionary_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_digital_signature.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_document.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_document_signature_settings.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_encryption.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_errors.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_fields.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_file.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_file_writer.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_font.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_font_map.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_indirect_object_reference.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_integer_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_interactive_forms.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_library_info.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_license_info.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_logging.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_name_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_null_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_outline.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_page_labels.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_page_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_page_tree.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_pkcs12_key.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_real_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_rectangle.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_resource_dictionary.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_signing_key.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_stream_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_string_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_unknown_interface.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_values.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_viewer_preferences.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_xref.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_document_info.cpp" />
+    <ClCompile Include="..\src\vanillapdf\precompiled.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\annotations.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\catalog.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\character_map.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\contents.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\content_stream.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\date.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\destinations.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\developer_extensions.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\digital_signature.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\document.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\document_info.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\fields.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\font.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\interactive_forms.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\name_dictionary.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\outline.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\page_labels.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\page_node_base.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\page_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\page_tree.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\page_tree_node.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\rectangle.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\resource_dictionary.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\tree.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\viewer_preferences.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\utils\document_signature_settings.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\utils\document_signer.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\utils\semantic_utils.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\exceptions\syntax_exceptions.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\files\file.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\files\file_writer.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\files\xref.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\files\xref_chain.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\files\xref_entry.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\filters\ascii_85_decode_filter.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\filters\ascii_hex_decode_filter.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\filters\dct_decode_filter.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\filters\filter.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\filters\flate_decode_filter.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\objects\boolean_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\objects\mixed_array_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\objects\dictionary_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\objects\indirect_object_reference.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\objects\integer_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\objects\name_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\objects\null_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\objects\numeric_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\objects\object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\objects\real_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\objects\stream_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\objects\string_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\parsers\character_map_data.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\parsers\reverse_parser.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\parsers\reverse_tokenizer.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\parsers\tokenizer.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\parsers\lexical_tree.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\parsers\parser.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\parsers\token.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\parsers\token_dictionary.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\utils\encryption.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\attribute_interface.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\attribute_list.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\buffer.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\errors.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\exceptions.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\library_info.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\license_info.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\log.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\modify_observer_interface.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\pkcs12_key.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\resource.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\streams\input_reverse_stream.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\streams\input_stream.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\streams\output_stream.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\time_utils.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\unknown_interface.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\misc_utils.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\zlib_wrapper.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="..\src\vanillapdf\vanillapdf.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{9AF81955-0B8C-4778-9F93-3ED8285D3D49}</ProjectGuid>
+    <RootNamespace>vanillapdf</RootNamespace>
+    <ProjectName>vanillapdf</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">
+    <IntDir>obj\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>build\$(ProjectName)\$(Configuration)\</OutDir>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug|x64'">
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release|Win32'">
+    <IntDir>obj\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>build\$(ProjectName)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release|x64'" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\src\vanillapdf;..\include;..\lib\nlohmann_json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VANILLAPDF_CONFIGURATION_DLL;VANILLAPDF_EXPORTS;VANILLAPDF_HAVE_ZLIB;VANILLAPDF_HAVE_JPEG;VANILLAPDF_HAVE_OPENSSL;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <EnablePREfast>false</EnablePREfast>
+      <MultiProcessorCompilation>
+      </MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.test\$(Configuration)\"
+
+xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.merge\$(Configuration)\"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\src\vanillapdf;..\include;..\lib\nlohmann_json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VANILLAPDF_CONFIGURATION_DLL;VANILLAPDF_EXPORTS;VANILLAPDF_HAVE_ZLIB;VANILLAPDF_HAVE_JPEG;VANILLAPDF_HAVE_OPENSSL;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <EnablePREfast>false</EnablePREfast>
+      <MultiProcessorCompilation>
+      </MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.test\$(Configuration)\"
+
+xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.merge\$(Configuration)\"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>VANILLAPDF_CONFIGURATION_DLL;VANILLAPDF_EXPORTS;VANILLAPDF_HAVE_ZLIB;VANILLAPDF_HAVE_JPEG;VANILLAPDF_HAVE_OPENSSL;RELEASE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\src\vanillapdf;..\include;..\lib\nlohmann_json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <MultiProcessorCompilation>
+      </MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.test\$(Configuration)\"
+
+xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.merge\$(Configuration)\"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='release|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>VANILLAPDF_CONFIGURATION_DLL;VANILLAPDF_EXPORTS;VANILLAPDF_HAVE_ZLIB;VANILLAPDF_HAVE_JPEG;VANILLAPDF_HAVE_OPENSSL;RELEASE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\src\vanillapdf;..\include;..\lib\nlohmann_json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <MultiProcessorCompilation>
+      </MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.test\$(Configuration)\"
+
+xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.merge\$(Configuration)\"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\grpc.dependencies.zlib.redist.1.2.8.10\build\native\grpc.dependencies.zlib.redist.targets" Condition="Exists('packages\grpc.dependencies.zlib.redist.1.2.8.10\build\native\grpc.dependencies.zlib.redist.targets')" />
+    <Import Project="packages\grpc.dependencies.zlib.1.2.8.10\build\native\grpc.dependencies.zlib.targets" Condition="Exists('packages\grpc.dependencies.zlib.1.2.8.10\build\native\grpc.dependencies.zlib.targets')" />
+    <Import Project="packages\libjpeg.redist.9.2.0.1\build\native\libjpeg.redist.targets" Condition="Exists('packages\libjpeg.redist.9.2.0.1\build\native\libjpeg.redist.targets')" />
+    <Import Project="packages\libjpeg.9.2.0.1\build\native\libjpeg.targets" Condition="Exists('packages\libjpeg.9.2.0.1\build\native\libjpeg.targets')" />
+    <Import Project="packages\grpc.dependencies.openssl.redist.1.0.204.1\build\native\grpc.dependencies.openssl.redist.targets" Condition="Exists('packages\grpc.dependencies.openssl.redist.1.0.204.1\build\native\grpc.dependencies.openssl.redist.targets')" />
+    <Import Project="packages\grpc.dependencies.openssl.1.0.204.1\build\native\grpc.dependencies.openssl.targets" Condition="Exists('packages\grpc.dependencies.openssl.1.0.204.1\build\native\grpc.dependencies.openssl.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\grpc.dependencies.zlib.redist.1.2.8.10\build\native\grpc.dependencies.zlib.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\grpc.dependencies.zlib.redist.1.2.8.10\build\native\grpc.dependencies.zlib.redist.targets'))" />
+    <Error Condition="!Exists('packages\grpc.dependencies.zlib.1.2.8.10\build\native\grpc.dependencies.zlib.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\grpc.dependencies.zlib.1.2.8.10\build\native\grpc.dependencies.zlib.targets'))" />
+    <Error Condition="!Exists('packages\libjpeg.redist.9.2.0.1\build\native\libjpeg.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libjpeg.redist.9.2.0.1\build\native\libjpeg.redist.targets'))" />
+    <Error Condition="!Exists('packages\libjpeg.9.2.0.1\build\native\libjpeg.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libjpeg.9.2.0.1\build\native\libjpeg.targets'))" />
+    <Error Condition="!Exists('packages\grpc.dependencies.openssl.redist.1.0.204.1\build\native\grpc.dependencies.openssl.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\grpc.dependencies.openssl.redist.1.0.204.1\build\native\grpc.dependencies.openssl.redist.targets'))" />
+    <Error Condition="!Exists('packages\grpc.dependencies.openssl.1.0.204.1\build\native\grpc.dependencies.openssl.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\grpc.dependencies.openssl.1.0.204.1\build\native\grpc.dependencies.openssl.props'))" />
+    <Error Condition="!Exists('packages\grpc.dependencies.openssl.1.0.204.1\build\native\grpc.dependencies.openssl.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\grpc.dependencies.openssl.1.0.204.1\build\native\grpc.dependencies.openssl.targets'))" />
+  </Target>
+</Project>
