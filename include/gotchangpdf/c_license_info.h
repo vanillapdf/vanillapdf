@@ -11,18 +11,18 @@ extern "C"
 #endif
 
 	/**
-	* \file c_license.h
+	* \file c_license_info.h
 	* This file contains class definitions for LicenseInfo
 	*/
 
 	/**
-	* \class LicenseHandle
+	* \class LicenseInfo
 	* \ingroup Utils
 	* \brief Licensing utilities, determining whether this library is running in trial mode.
 	*/
 
 	/**
-	* \memberof LicenseHandle
+	* \memberof LicenseInfo
 	* @{
 	*/
 
