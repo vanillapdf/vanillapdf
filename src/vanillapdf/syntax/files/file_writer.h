@@ -137,10 +137,11 @@ private:
 	void FixStreamReferences(XrefChainPtr source, XrefChainPtr destination);
 
 	void RecalculateXrefChain(XrefChainPtr chain);
-	void RecalculateXref(XrefBasePtr source);
+	void RecalculateXrefPrevOffset(XrefBasePtr source, XrefBasePtr prev);
+	void RecalculateXref(XrefChainPtr chain, XrefBasePtr source);
 	void RecalculateStreamLength(StreamObjectPtr obj);
 	void RecalculateStreamsLength(XrefBasePtr source);
-	void RecalculateObjectStreamContent(XrefBasePtr source);
+	void RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr source);
 	void RecalculateXrefSize(XrefBasePtr source);
 
 	void CompressAndOptimize(XrefChainPtr xref);
