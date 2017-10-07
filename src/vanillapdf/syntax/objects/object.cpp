@@ -52,7 +52,7 @@ void Object::ClearXrefEntry(bool check_xref_reference) {
 }
 
 bool Object::HasOwner() const noexcept {
-	return !m_owner.IsEmpty() && m_owner.IsActive();
+	return (!m_owner.IsEmpty() && m_owner.IsActive());
 }
 
 types::big_uint Object::GetObjectNumber() const {

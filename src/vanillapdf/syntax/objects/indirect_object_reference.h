@@ -39,7 +39,7 @@ public:
 	void SetReferencedGenerationNumber(types::ushort value) noexcept;
 
 	bool IsReferenceInitialized(void) const noexcept {
-		return !m_reference.IsEmpty() && m_reference.IsActive();
+		return (!m_reference.IsEmpty() && m_reference.IsActive());
 	}
 
 	virtual size_t Hash() const override;
