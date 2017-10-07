@@ -28,7 +28,7 @@ void NameObject::ObserveeChanged(IModifyObservable*) {
 	OnChanged();
 }
 
-BufferPtr NameObject::GetValue() const noexcept {
+BufferPtr NameObject::GetValue() const {
 	return _value;
 }
 

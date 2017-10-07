@@ -27,7 +27,7 @@ MixedArrayObject::MixedArrayObject(const ContainableObject& other, list_type& li
 	}
 }
 
-void MixedArrayObject::SetFile(WeakReference<File> file) noexcept {
+void MixedArrayObject::SetFile(WeakReference<File> file) {
 	Object::SetFile(file);
 
 	auto size = _list.size();
@@ -37,7 +37,7 @@ void MixedArrayObject::SetFile(WeakReference<File> file) noexcept {
 	}
 }
 
-void MixedArrayObject::SetInitialized(bool initialized) noexcept {
+void MixedArrayObject::SetInitialized(bool initialized) {
 	IModifyObservable::SetInitialized(initialized);
 
 	auto size = _list.size();

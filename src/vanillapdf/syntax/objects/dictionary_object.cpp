@@ -19,7 +19,7 @@ DictionaryObject* DictionaryObject::Clone(void) const {
 	return result.detach();
 }
 
-void DictionaryObject::SetFile(WeakReference<File> file) noexcept {
+void DictionaryObject::SetFile(WeakReference<File> file) {
 	Object::SetFile(file);
 
 	for (auto it = _list.begin(); it != _list.end(); ++it) {
@@ -28,7 +28,7 @@ void DictionaryObject::SetFile(WeakReference<File> file) noexcept {
 	}
 }
 
-void DictionaryObject::SetInitialized(bool initialized) noexcept {
+void DictionaryObject::SetInitialized(bool initialized) {
 	IModifyObservable::SetInitialized(initialized);
 
 	for (auto it = _list.begin(); it != _list.end(); ++it) {

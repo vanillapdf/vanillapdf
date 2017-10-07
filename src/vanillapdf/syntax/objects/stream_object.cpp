@@ -83,12 +83,12 @@ StreamObject* StreamObject::Clone(void) const {
 	return result.detach();
 }
 
-void StreamObject::SetFile(WeakReference<File> file) noexcept {
+void StreamObject::SetFile(WeakReference<File> file) {
 	Object::SetFile(file);
 	_header->SetFile(file);
 }
 
-void StreamObject::SetInitialized(bool initialized) noexcept {
+void StreamObject::SetInitialized(bool initialized) {
 	IModifyObservable::SetInitialized(initialized);
 	_header->SetInitialized(initialized);
 }

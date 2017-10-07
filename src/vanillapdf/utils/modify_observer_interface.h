@@ -27,7 +27,7 @@ public:
 		return m_initialized;
 	}
 
-	virtual void SetInitialized(bool initialized = true) noexcept {
+	virtual void SetInitialized(bool initialized = true) {
 		m_initialized = initialized;
 	}
 

@@ -21,7 +21,7 @@ public:
 
 	virtual void ObserveeChanged(IModifyObservable*) override;
 
-	BufferPtr GetValue() const noexcept;
+	BufferPtr GetValue() const;
 	void SetValue(BufferPtr value);
 
 	bool Equals(const NameObject& other) const;

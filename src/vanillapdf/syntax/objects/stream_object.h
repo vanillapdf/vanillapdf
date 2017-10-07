@@ -35,8 +35,8 @@ public:
 	virtual StreamObject* Clone(void) const override;
 	virtual bool Equals(ObjectPtr other) const override;
 
-	virtual void SetFile(WeakReference<File> file) noexcept override;
-	virtual void SetInitialized(bool initialized = true) noexcept override;
+	virtual void SetFile(WeakReference<File> file) override;
+	virtual void SetInitialized(bool initialized = true) override;
 
 	virtual ~StreamObject();
 

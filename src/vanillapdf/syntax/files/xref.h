@@ -64,8 +64,8 @@ public:
 	bool IsDirty(void) const noexcept { return m_dirty; }
 	void SetDirty(bool dirty = true) noexcept { m_dirty = dirty; }
 
-	IteratorPtr Begin(void) const noexcept { return make_deferred<Iterator>(_entries.begin()); }
-	IteratorPtr End(void) const noexcept { return make_deferred<Iterator>(_entries.end()); }
+	IteratorPtr Begin(void) const { return make_deferred<Iterator>(_entries.begin()); }
+	IteratorPtr End(void) const { return make_deferred<Iterator>(_entries.end()); }
 
 	virtual void Add(XrefEntryBasePtr entry);
 	bool Remove(XrefEntryBasePtr entry);

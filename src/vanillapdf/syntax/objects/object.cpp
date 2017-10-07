@@ -12,7 +12,7 @@ namespace syntax {
 ObjectPtr::ObjectPtr() : Deferred<Object>(NullObject::GetInstance()) {
 }
 
-bool Object::IsIndirect(void) const noexcept {
+bool Object::IsIndirect(void) const {
 	bool is_indirect = (!m_entry.IsEmpty() && m_entry.IsActive());
 	if (is_indirect) {
 
@@ -89,7 +89,7 @@ types::ushort Object::GetGenerationNumber() const {
 	throw GeneralException("Object does not have assigned generation number");
 }
 
-bool Object::IsEncryptionExempted() const noexcept {
+bool Object::IsEncryptionExempted() const {
 	if (m_encryption_exempted) {
 		return true;
 	}

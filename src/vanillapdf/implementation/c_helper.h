@@ -33,7 +33,7 @@
 	}
 
 template <typename SourceT, typename DestT, typename SourceHandleT, typename DestHandleT>
-error_type SafeObjectConvert(SourceHandleT from, DestHandleT* result) noexcept
+error_type SafeObjectConvert(SourceHandleT from, DestHandleT* result)
 {
 	SourceT* obj = reinterpret_cast<SourceT*>(from);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -52,7 +52,7 @@ error_type SafeObjectConvert(SourceHandleT from, DestHandleT* result) noexcept
 }
 
 template <typename T, typename HandleT>
-error_type ObjectRelease(HandleT handle) noexcept
+error_type ObjectRelease(HandleT handle)
 {
 	T* obj = reinterpret_cast<T*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

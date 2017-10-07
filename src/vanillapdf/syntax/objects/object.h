@@ -37,7 +37,7 @@ public:
 	virtual std::string ToPdf(void) const = 0;
 
 public:
-	bool IsIndirect(void) const noexcept;
+	bool IsIndirect(void) const;
 	void SetXrefEntry(XrefUsedEntryBasePtr entry);
 	WeakReference<XrefUsedEntryBase> GetXrefEntry() const;
 	void ClearXrefEntry(bool check_xref_reference);
@@ -45,7 +45,7 @@ public:
 	bool IsDirty(void) const noexcept { return m_dirty; }
 	void SetDirty(bool dirty = true) noexcept { m_dirty = dirty; }
 
-	bool IsEncryptionExempted() const noexcept;
+	bool IsEncryptionExempted() const;
 	void SetEncryptionExempted(bool exempted = true) noexcept { m_encryption_exempted = exempted; }
 
 	void SetOffset(types::stream_offset offset) noexcept { m_offset = offset; }
@@ -59,7 +59,7 @@ public:
 	void ClearOwner() noexcept { m_owner.Reset(); }
 	bool HasOwner() const noexcept;
 
-	virtual void SetFile(WeakReference<File> file) noexcept { m_file = file; }
+	virtual void SetFile(WeakReference<File> file) { m_file = file; }
 	WeakReference<File> GetFile() const noexcept { return m_file; }
 
 	void AddAttribute(IAttributePtr attribute);
