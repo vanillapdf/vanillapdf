@@ -8,6 +8,7 @@
 
 #include "utils/streams/input_stream_interface.h"
 
+#include <vector>
 #include <string>
 #include <ostream>
 #include <cassert>

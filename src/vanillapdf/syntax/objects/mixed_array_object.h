@@ -4,6 +4,8 @@
 #include "syntax/utils/syntax_fwd.h"
 #include "syntax/objects/containable.h"
 
+#include <vector>
+
 namespace vanillapdf {
 namespace syntax {
 
