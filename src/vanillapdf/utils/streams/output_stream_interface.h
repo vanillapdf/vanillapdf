@@ -12,7 +12,7 @@ namespace vanillapdf {
 class IOutputStream : public virtual IUnknown {
 public:
 	virtual void Write(const Buffer& data) = 0;
-	virtual void Write(const Buffer& data, types::size_type size) = 0;
+	virtual void Write(const Buffer& data, types::stream_size size) = 0;
 	virtual void Write(const std::string& data) = 0;
 	virtual void Write(const char* str) = 0;
 	virtual void Write(char value) = 0;
