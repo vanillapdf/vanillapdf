@@ -194,7 +194,7 @@ public:
 
 #pragma region STL
 
-	// Determine if the current references a resource
+	// Determine if the current instance references a resource
 	bool empty(void) const noexcept {
 		return (m_ptr == nullptr);
 	}
@@ -361,11 +361,6 @@ public:
 
 	const_iterator end() const {
 		return Deferred<T>::get()->end();
-	}
-
-	// Check if the wrapped container is empty
-	bool empty() const {
-		return Deferred<T>::get()->empty();
 	}
 
 	const_reference operator[](size_type i) const {
