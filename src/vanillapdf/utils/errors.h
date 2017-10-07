@@ -11,7 +11,7 @@ public:
 	static void SetLastError(uint32_t value) noexcept;
 
 	static std::string GetLastErrorMessage();
-	static void SetLastErrorMessage(std::string value);
+	static void SetLastErrorMessage(const std::string& value);
 
 private:
 	static thread_local uint32_t m_error;

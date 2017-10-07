@@ -52,7 +52,7 @@ public:
 
 } // syntax
 
-inline bool operator==(const syntax::IntegerObject left, int32_t right) {
+inline bool operator==(const syntax::IntegerObject& left, int32_t right) {
 	return left.GetIntegerValue() == right;
 }
 

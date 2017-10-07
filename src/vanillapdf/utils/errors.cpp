@@ -19,7 +19,7 @@ std::string Errors::GetLastErrorMessage() {
 	return m_message;
 }
 
-void Errors::SetLastErrorMessage(std::string value) {
+void Errors::SetLastErrorMessage(const std::string& value) {
 	m_message = value;
 }
 
