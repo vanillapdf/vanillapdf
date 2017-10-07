@@ -51,9 +51,6 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 	// Compress and optimize here
 	CompressAndOptimize(new_chain);
 
-	// Recalculate offsets and stream sizes
-	RecalculateXrefChain(new_chain);
-
 	// Dump whole cloned contents to the output
 	WriteXrefChain(output, new_chain);
 
@@ -90,10 +87,16 @@ void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
 	auto dest_chain = destination->GetXrefChain();
 	dest_chain->Append(new_xref);
 
-	// Recalculate offsets and stream sizes
-	RecalculateXref(dest_chain, new_xref);
+	// Object stream contents has to be adjusted separately
+	RecalculateObjectStreamContent(dest_chain, new_xref);
 
-	// Write xref objects to output
+	// Stream length to be adjusted according to calculated size
+	RecalculateStreamsLength(new_xref);
+
+	// Xref contains the value that indicates number of entries contained
+	RecalculateXrefSize(new_xref);
+
+	// Write all body objects
 	WriteXrefObjects(output, new_xref);
 
 	// Write xref itself to output
@@ -340,26 +343,33 @@ void FileWriter::RecalculateXrefPrevOffset(XrefBasePtr source, XrefBasePtr prev)
 	prev_entry->SetValue(prev_xref_offset);
 }
 
-void FileWriter::RecalculateXrefChain(XrefChainPtr chain) {
+void FileWriter::RecalculateXrefHybridOffset(XrefTablePtr source) {
 
-	for (auto it = chain->begin(); it != chain->end(); ++it) {
-		auto current_xref = *it;
-
-		// Apply other independent recalculations
-		RecalculateXref(chain, current_xref);
+	// Disabled by control flag
+	if (!m_recalculate_offset) {
+		return;
 	}
-}
 
-void FileWriter::RecalculateXref(XrefChainPtr chain, XrefBasePtr source) {
+	// Nothing to update
+	if (!source->HasHybridStream()) {
+		return;
+	}
 
-	// Object stream contents has to be adjusted separately
-	RecalculateObjectStreamContent(chain, source);
+	auto xref_stm = source->GetHybridStream();
+	auto xref_stm_offset = xref_stm->GetOffset();
 
-	// Stream length to be adjusted according to calculated size
-	RecalculateStreamsLength(source);
+	// Offset should be set and positive
+	assert(xref_stm_offset >= 0 && "Invalid xref offset");
 
-	// Xref contains the value that indicates number of entries contained
-	RecalculateXrefSize(source);
+	auto trailer_dictionary = source->GetTrailerDictionary();
+	if (!trailer_dictionary->Contains(constant::Name::XRefStm)) {
+		IntegerObjectPtr xref_offset = make_deferred<IntegerObject>(xref_stm_offset);
+		trailer_dictionary->Insert(constant::Name::Prev, xref_offset);
+	}
+
+	// Fix prev entry for all following trailers
+	auto xref_stm_entry = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::XRefStm);
+	xref_stm_entry->SetValue(xref_stm_offset);
 }
 
 void FileWriter::RecalculateXrefSize(XrefBasePtr source) {
@@ -379,6 +389,17 @@ void FileWriter::RecalculateXrefSize(XrefBasePtr source) {
 
 	auto size = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::Size);
 	size->SetValue(xref_size);
+
+	// Recalculate hybrid xref size as well
+	if (ConvertUtils<XrefBasePtr>::IsType<XrefTablePtr>(source)) {
+		auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(source);
+
+		if (xref_table->HasHybridStream()) {
+			auto hybrid_stream = xref_table->GetHybridStream();
+
+			RecalculateXrefSize(hybrid_stream);
+		}
+	}
 }
 
 void FileWriter::RecalculateStreamLength(StreamObjectPtr obj) {
@@ -551,6 +572,40 @@ XrefBasePtr FileWriter::CloneXref(FilePtr destination, XrefBasePtr source) {
 		assert(false && "Uncrecognized entry type");
 	}
 
+	if (source->GetType() == XrefBase::Type::Table) {
+		auto source_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(source);
+		auto result_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(result);
+
+		if (source_table->HasHybridStream()) {
+			auto source_hybrid_stream = source_table->GetHybridStream();
+			auto source_hybrid_stream_object = source_hybrid_stream->GetStreamObject();
+			auto source_hybrid_stream_object_number = source_hybrid_stream_object->GetObjectNumber();
+			//auto source_hybrid_stream_generation_number = source_hybrid_stream_object->GetGenerationNumber();
+
+			// TODO the entry may be somewhere in the chain
+			//auto destination_xref_chain = destination->GetXrefChain();
+			//auto destination_hybrid_entry = destination_xref_chain->GetXrefEntry(source_hybrid_stream_object_number, source_hybrid_stream_generation_number);
+			auto destination_hybrid_entry = result_table->Find(source_hybrid_stream_object_number);
+			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(destination_hybrid_entry)) {
+				throw GeneralException("Destination xref is not in use");
+			}
+
+			auto destination_hybrid_used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(destination_hybrid_entry);
+			auto destination_hybrid_object = destination_hybrid_used_entry->GetReference();
+			if (!ConvertUtils<ObjectPtr>::IsType<StreamObjectPtr>(destination_hybrid_object)) {
+				throw GeneralException("Cloned hybrid xref is not a stream");
+			}
+
+			auto cloned_hybrid_xref = CloneXref(destination, source_hybrid_stream);
+			auto cloned_hybrid_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(cloned_hybrid_xref);
+
+			auto destination_hybrid_stream = ConvertUtils<ObjectPtr>::ConvertTo<StreamObjectPtr>(destination_hybrid_object);
+			cloned_hybrid_stream->SetStreamObject(destination_hybrid_stream);
+
+			result_table->SetHybridStream(cloned_hybrid_stream);
+		}
+	}
+
 	// Set trailer
 	auto new_trailer = CloneTrailerDictionary(destination, source);
 
@@ -571,6 +626,24 @@ void FileWriter::WriteXrefObjects(IOutputStreamPtr output, XrefBasePtr source) {
 
 	for (decltype(table_size) i = 0; i < table_size; ++i) {
 		auto entry = table_items[i];
+
+		if (source->GetType() == XrefBase::Type::Table) {
+			auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(source);
+
+			if (xref_table->HasHybridStream()) {
+				auto hybrid_stream = xref_table->GetHybridStream();
+				auto hybrid_stream_object = hybrid_stream->GetStreamObject();
+
+				// Skip xref stream object in this serialization
+				// Xref stream object itself must be written after all objects have
+				// been serialized, so that it's contents can be recalculated
+				// with correct offsets to each object
+				if (hybrid_stream_object->GetObjectNumber() == entry->GetObjectNumber()
+					&& hybrid_stream_object->GetGenerationNumber() == entry->GetGenerationNumber()) {
+					continue;
+				}
+			}
+		}
 
 		if (source->GetType() == XrefBase::Type::Stream) {
 			auto xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(source);
@@ -632,6 +705,13 @@ DictionaryObjectPtr FileWriter::CloneTrailerDictionary(FilePtr source, XrefBaseP
 		ContainableObjectPtr root = source_trailer->Find(constant::Name::Root);
 		ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(root);
 		new_trailer->Insert(constant::Name::Root, cloned);
+	}
+
+	// Set reference to hybrid stream
+	if (source_trailer->Contains(constant::Name::XRefStm)) {
+		ContainableObjectPtr xref_stm = source_trailer->Find(constant::Name::XRefStm);
+		ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(xref_stm);
+		new_trailer->Insert(constant::Name::XRefStm, cloned);
 	}
 
 	// Set reference to previous xref entry
@@ -849,6 +929,15 @@ void FileWriter::WriteXrefChain(IOutputStreamPtr output, XrefChainPtr chain) {
 			prev_xref_iterator++;
 		}
 
+		// Object stream contents has to be adjusted separately
+		RecalculateObjectStreamContent(chain, new_xref);
+
+		// Stream length to be adjusted according to calculated size
+		RecalculateStreamsLength(new_xref);
+
+		// Xref contains the value that indicates number of entries contained
+		RecalculateXrefSize(new_xref);
+
 		// Write all body objects
 		WriteXrefObjects(output, new_xref);
 
@@ -866,6 +955,25 @@ void FileWriter::WriteXref(IOutputStreamPtr output, XrefBasePtr xref) {
 
 		// Convert to xref table
 		auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(xref);
+
+		if (xref_table->HasHybridStream()) {
+			auto hybrid_stream = xref_table->GetHybridStream();
+			auto hybrid_stream_object = hybrid_stream->GetStreamObject();
+
+			// After all other objects have been written, we need
+			// to recalculate contents of xref stream
+			hybrid_stream->RecalculateContent();
+
+			// Stream has its length specified in the dictionary
+			RecalculateStreamLength(hybrid_stream_object);
+
+			// Write the stream object itself
+			WriteObject(output, hybrid_stream_object);
+
+			// Xref contains the value that indicates number of entries contained
+			// Hybrid offset has to be recalculated after all objects have been written
+			RecalculateXrefHybridOffset(xref_table);
+		}
 
 		// Seperate table from content
 		output << WhiteSpace::LINE_FEED;
@@ -892,7 +1000,6 @@ void FileWriter::WriteXref(IOutputStreamPtr output, XrefBasePtr xref) {
 		if (m_recalculate_offset) {
 			auto stream_offset = stream_obj->GetOffset();
 			xref_stream->SetLastXrefOffset(stream_offset);
-			xref_stream->SetOffset(stream_offset);
 		}
 
 		WriteXrefOffset(output, xref_stream->GetLastXrefOffset());

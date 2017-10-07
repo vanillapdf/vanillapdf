@@ -55,8 +55,8 @@ public:
 	DictionaryObjectPtr GetTrailerDictionary(void) const { return _trailer_dictionary; }
 	void SetTrailerDictionary(DictionaryObjectPtr dictionary) { _trailer_dictionary = dictionary; }
 
-	types::stream_offset GetOffset() const noexcept { return _offset; }
-	void SetOffset(types::stream_offset offset) noexcept { _offset = offset; }
+	virtual types::stream_offset GetOffset() const { return _offset; }
+	virtual void SetOffset(types::stream_offset offset) { _offset = offset; }
 
 	types::stream_offset GetLastXrefOffset() const noexcept { return _last_xref_offset; }
 	void SetLastXrefOffset(types::stream_offset offset) noexcept { _last_xref_offset = offset; }
@@ -70,8 +70,8 @@ public:
 	virtual void Add(XrefEntryBasePtr entry);
 	bool Remove(XrefEntryBasePtr entry);
 	types::size_type Size(void) const noexcept;
-	XrefEntryBasePtr Find(types::big_uint obj_number) const;
-	bool Contains(types::big_uint obj_number) const;
+	virtual XrefEntryBasePtr Find(types::big_uint obj_number) const;
+	virtual bool Contains(types::big_uint obj_number) const;
 	std::vector<XrefEntryBasePtr> Entries(void) const;
 
 	virtual Type GetType(void) const noexcept = 0;
@@ -95,20 +95,14 @@ protected:
 	bool m_dirty = false;
 };
 
-class XrefTable : public XrefBase {
-public:
-	virtual Type GetType(void) const noexcept override {
-		return XrefBase::Type::Table;
-	}
-
-	virtual void Add(XrefEntryBasePtr entry) override;
-};
-
 class XrefStream : public XrefBase {
 public:
 	virtual Type GetType(void) const noexcept override {
 		return XrefBase::Type::Stream;
 	}
+
+	virtual types::stream_offset GetOffset() const override { return _stream->GetOffset(); }
+	virtual void SetOffset(types::stream_offset offset) override { _stream->SetOffset(offset); }
 
 	StreamObjectPtr GetStreamObject(void) const {
 		return _stream;
@@ -131,6 +125,32 @@ private:
 	StreamObjectPtr _stream;
 
 	void WriteValue(std::ostream& dest, types::big_uint value, int64_t width);
+};
+
+class XrefTable : public XrefBase {
+public:
+	virtual Type GetType(void) const noexcept override {
+		return XrefBase::Type::Table;
+	}
+
+	virtual void Add(XrefEntryBasePtr entry) override;
+	virtual XrefEntryBasePtr Find(types::big_uint obj_number) const override;
+	virtual bool Contains(types::big_uint obj_number) const override;
+
+	bool HasHybridStream(void) const {
+		return !m_xref_stm.empty();
+	}
+
+	XrefStreamPtr GetHybridStream(void) const {
+		return m_xref_stm;
+	}
+
+	void SetHybridStream(XrefStreamPtr stream) {
+		m_xref_stm = stream;
+	}
+
+private:
+	XrefStreamPtr m_xref_stm;
 };
 
 } // syntax

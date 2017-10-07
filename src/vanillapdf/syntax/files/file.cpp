@@ -358,6 +358,7 @@ BufferPtr File::DecryptData(const Buffer& data,
 	}
 
 	if (_decryption_key.empty()) {
+
 		// Encrypted documents shall be opened with default empty password
 		bool passed = SetEncryptionPassword("");
 		if (!passed) {
@@ -505,35 +506,38 @@ void File::ReadXref(types::stream_offset offset) {
 	InputStreamPtr input_stream = make_deferred<InputStream>(_input);
 	Parser stream(GetWeakReference<File>(), input_stream);
 
+	// Keep track of current offset to xref
+	types::stream_offset current_offset = offset;
+
+	// Clear all previously allocated xrefs
+	_xref->Clear();
+
 	for (;;) {
-		auto xref = stream.ReadXref(offset);
+		auto xref = stream.ReadXref(current_offset);
+
 		_xref->Append(xref);
 
 		auto trailer_dictionary = xref->GetTrailerDictionary();
+		if (trailer_dictionary->Contains(constant::Name::XRefStm)) {
+			auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(xref);
+			auto stm_offset_obj = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::XRefStm);
+			auto stm_offset = stm_offset_obj->GetIntegerValue();
+			auto hybrid_xref = stream.ReadXref(stm_offset);
+
+			if (!ConvertUtils<XrefBasePtr>::IsType<XrefStreamPtr>(hybrid_xref)) {
+				throw GeneralException("Hybrid xref is not a stream");
+			}
+
+			auto hybrid_xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(hybrid_xref);
+			xref_table->SetHybridStream(hybrid_xref_stream);
+		}
+
 		if (!trailer_dictionary->Contains(constant::Name::Prev)) {
 			break;
 		}
 
 		auto prev = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::Prev);
-		offset = prev->GetIntegerValue();
-	}
-
-	std::vector<XrefBasePtr> additional_xref;
-	for (auto& xref : _xref) {
-		auto trailer_dictionary = xref->GetTrailerDictionary();
-		if (trailer_dictionary->Contains(constant::Name::XRefStm)) {
-			auto stm_offset_obj = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::XRefStm);
-			auto stm_offset = stm_offset_obj->GetIntegerValue();
-			auto xref_stm = stream.ReadXref(stm_offset);
-
-			auto xref_stm_trailer = xref_stm->GetTrailerDictionary();
-			assert(!xref_stm_trailer->Contains(constant::Name::Prev));
-			additional_xref.push_back(xref_stm);
-		}
-	}
-
-	for (auto new_xref : additional_xref) {
-		_xref->Append(new_xref);
+		current_offset = prev->GetIntegerValue();
 	}
 }
 

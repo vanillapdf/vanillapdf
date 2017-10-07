@@ -136,9 +136,8 @@ private:
 
 	void FixStreamReferences(XrefChainPtr source, XrefChainPtr destination);
 
-	void RecalculateXrefChain(XrefChainPtr chain);
 	void RecalculateXrefPrevOffset(XrefBasePtr source, XrefBasePtr prev);
-	void RecalculateXref(XrefChainPtr chain, XrefBasePtr source);
+	void RecalculateXrefHybridOffset(XrefTablePtr source);
 	void RecalculateStreamLength(StreamObjectPtr obj);
 	void RecalculateStreamsLength(XrefBasePtr source);
 	void RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr source);

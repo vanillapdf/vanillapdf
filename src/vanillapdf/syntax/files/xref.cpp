@@ -247,5 +247,23 @@ XrefBase::iterator XrefBase::erase(const_iterator pos) {
 	return _entries.erase(pos);
 }
 
+XrefEntryBasePtr XrefTable::Find(types::big_uint obj_number) const {
+	bool contains = XrefBase::Contains(obj_number);
+	if (contains) {
+		return XrefBase::Find(obj_number);
+	} else {
+		return m_xref_stm->Find(obj_number);
+	}
+}
+
+bool XrefTable::Contains(types::big_uint obj_number) const {
+	bool contains = XrefBase::Contains(obj_number);
+	if (!contains) {
+		return m_xref_stm->Contains(obj_number);
+	}
+
+	return contains;
+}
+
 } // syntax
 } // vanillapdf
