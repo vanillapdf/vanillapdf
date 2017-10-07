@@ -3,15 +3,15 @@
 
 #include "utils/unknown_interface.h"
 
-#include <vector>
+#include <list>
 
 namespace vanillapdf {
 
 template <typename T>
 class IObservable {
 public:
-	void Subscribe(WeakReference<T> observer);
-	bool Unsubscribe(WeakReference<T> observer);
+	void Subscribe(const WeakReference<T>& observer);
+	bool Unsubscribe(const WeakReference<T>& observer);
 
 	void Subscribe(T* observer);
 	bool Unsubscribe(T* observer);
@@ -19,16 +19,16 @@ public:
 	virtual ~IObservable() = 0;
 
 protected:
-	std::vector<WeakReference<T>> m_observers;
+	std::list<WeakReference<T>> m_observers;
 };
 
 template <typename T>
-void IObservable<T>::Subscribe(WeakReference<T> observer) {
+void IObservable<T>::Subscribe(const WeakReference<T>& observer) {
 	m_observers.push_back(observer);
 }
 
 template <typename T>
-bool IObservable<T>::Unsubscribe(WeakReference<T> observer) {
+bool IObservable<T>::Unsubscribe(const WeakReference<T>& observer) {
 	for (auto it = m_observers.begin(); it != m_observers.end(); ++it) {
 		if (observer == *it) {
 			m_observers.erase(it);
