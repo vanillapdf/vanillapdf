@@ -161,21 +161,17 @@ types::size_type PageTree::UpdateKidsCount(PageNodeBasePtr node) {
 	if (node->GetNodeType() == PageNodeBase::NodeType::Tree) {
 		auto tree_node = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageTreeNodePtr>(node);
 		auto tree_node_object = tree_node->GetObject();
-		auto kid_count = tree_node_object->FindAs<IntegerObjectPtr>(constant::Name::Count);
-		auto kid_count_value = kid_count->SafeConvert<types::size_type>();
+		auto kid_count_object = tree_node_object->FindAs<IntegerObjectPtr>(constant::Name::Count);
 
-		types::size_type verify = 0;
+		types::size_type kid_count = 0;
 		auto kids = tree_node->Kids();
 		for (auto kid : kids) {
-			verify += UpdateKidsCount(kid);
+			kid_count += UpdateKidsCount(kid);
 		}
 
 		// Update the kid count
-		if (kid_count_value != verify) {
-			kid_count->SetValue(verify);
-		}
-
-		return verify;
+		kid_count_object->SetValue(kid_count);
+		return kid_count;
 	}
 
 	throw GeneralException("Unknown page object type");
