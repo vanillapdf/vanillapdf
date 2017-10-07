@@ -32,6 +32,9 @@ public:
 	static_assert(is_defined<T>::value, "Incomplete type is not allowed");
 
 public:
+
+#pragma region Constructors
+
 	template <
 		// Lets have a talk about SFINAE
 		// SFINAE only works for deduced template arguments.
@@ -75,37 +78,39 @@ public:
 	// the copy constructor. Unfortunately, I was not able to call the "get" method
 	// because that would return constant pointer. The "get_internal" does the same
 	// but returns non-const pointer.
-	DeferredWrapperBase(const DeferredWrapperBase& rhs) noexcept : DeferredWrapperBase(rhs.get_internal(), true) {
+	DeferredWrapperBase(const DeferredWrapperBase& rhs) : DeferredWrapperBase(rhs.GetInternal(), true) {
 	}
 
 	DeferredWrapperBase(DeferredWrapperBase&& rhs) noexcept : DeferredWrapperBase(rhs.m_ptr, false) {
 		rhs.m_ptr = nullptr;
 	}
 
-	// This constructor is a bit tricky.
-	// I was not able to force the compiler to use
-	// this function with the parameters being non-const.
-	// Unfortunately, I need this conversion to be present.
-	// Therefore I am forced to cast away the constness
-	// because (I believe) all parameters are non-const
-	// in their scope. I don't have any way to verify
-	// this statement.
 	template <
 		typename U,
 		typename = typename std::enable_if<std::is_convertible<U*, T*>::value>::type
 	>
-	DeferredWrapperBase(const DeferredWrapperBase<U>& rhs) : DeferredWrapperBase(rhs.get_internal(), true) {}
+	DeferredWrapperBase(const DeferredWrapperBase<U>& rhs) : DeferredWrapperBase(rhs.GetInternal(), true) {}
 
 	template <
 		typename U,
 		typename = typename std::enable_if<std::is_convertible<U*, T*>::value>::type
 	>
-	DeferredWrapperBase(DeferredWrapperBase<U>&& rhs) : DeferredWrapperBase(rhs.get_internal(), false) {
+	DeferredWrapperBase(DeferredWrapperBase<U>&& rhs) : DeferredWrapperBase(rhs.GetInternal(), false) {
 		rhs.m_ptr = nullptr;
 	}
 
 	template <typename U, typename = typename std::enable_if<std::is_constructible<T, std::initializer_list<U>>::value>::type>
 	DeferredWrapperBase(std::initializer_list<U> list) : DeferredWrapperBase(pdf_new T(list), true) {}
+
+	virtual ~DeferredWrapperBase() {
+		if (m_ptr) {
+			m_ptr->Release();
+		}
+	}
+
+#pragma endregion
+
+#pragma region Operators
 
 	operator T&() { return *get(); }
 	operator const T&() const { return *get(); }
@@ -115,24 +120,6 @@ public:
 
 	T* operator->() { return get(); }
 	const T* operator->() const { return get(); }
-
-	template <
-		// Thank you C++ gods, that I have to declare even more fake arguments
-		typename U = T, // again SFINAE only on deduced arguments
-		typename = typename std::enable_if<std::is_base_of<IWeakReferenceable<U>, T>::value>::type
-	>
-	WeakReference<U> GetWeakReference() {
-		return get()->template GetWeakReference<U>();
-	}
-
-	template <
-		// Thank you C++ gods, that I have to declare even more fake arguments
-		typename U = T, // again SFINAE only on deduced arguments
-		typename = typename std::enable_if<std::is_base_of<IWeakReferenceable<U>, T>::value>::type
-	>
-	operator WeakReference<U>() {
-		return GetWeakReference<U>();
-	}
 
 	DeferredWrapperBase& operator=(const DeferredWrapperBase& rhs) {
 		DeferredWrapperBase(rhs).swap(*this);
@@ -144,18 +131,84 @@ public:
 		return *this;
 	}
 
-	bool empty(void) const {
+	template <
+		// Thank you C++ gods, that I have to declare even more fake arguments
+		typename U = T, // again SFINAE only on deduced arguments
+		typename = typename std::enable_if<std::is_base_of<IWeakReferenceable<U>, T>::value>::type
+	>
+		operator WeakReference<U>() {
+		return GetWeakReference<U>();
+	}
+
+#pragma endregion
+
+#pragma region General functions
+
+	template <
+		// Thank you C++ gods, that I have to declare even more fake arguments
+		typename U = T, // again SFINAE only on deduced arguments
+		typename = typename std::enable_if<std::is_base_of<IWeakReferenceable<U>, T>::value>::type
+	>
+	WeakReference<U> GetWeakReference() {
+		return get()->template GetWeakReference<U>();
+	}
+
+	template <
+		typename U,
+		typename = typename std::enable_if<
+			std::is_convertible<U*, T*>::value || std::is_convertible<T*, U*>::value
+		>::type
+	>
+	constexpr bool Identity(const DeferredWrapperBase<U>& rhs) const noexcept {
+		if (m_ptr == nullptr) {
+			return false;
+		}
+
+		return (m_ptr == rhs.m_ptr);
+	}
+
+	template <
+		typename U,
+		typename = typename std::enable_if<
+			std::is_convertible<U*, T*>::value || std::is_convertible<T*, U*>::value
+		>::type
+	>
+	constexpr bool Identity(const U* ptr) const noexcept {
+		if (m_ptr == nullptr) {
+			return false;
+		}
+
+		return (m_ptr == ptr);
+	}
+
+	T* AddRefGet(void) {
+		T* result = get();
+
+		// Require IUnknown to be present
+		result->AddRef();
+
+		return result;
+	}
+
+#pragma endregion
+
+#pragma region STL
+
+	// Determine if the current references a resource
+	bool empty(void) const noexcept {
 		return (m_ptr == nullptr);
 	}
 
+	// Obtain handle to the resource
 	T* get(void) {
-		return get_internal();
+		return GetInternal();
 	}
 
 	const T* get(void) const {
-		return get_internal();
+		return GetInternal();
 	}
 
+	// Release the resource
 	void reset() {
 
 		// Release existing resource
@@ -176,26 +229,13 @@ public:
 		return result;
 	}
 
-	T* AddRefGet(void) {
-		T* result = get();
-
-		// Require IUnknown to be present
-		result->AddRef();
-
-		return result;
-	}
-
 	void swap(DeferredWrapperBase& rhs) noexcept {
 		T* tmp = m_ptr;
 		m_ptr = rhs.m_ptr;
 		rhs.m_ptr = tmp;
 	}
 
-	virtual ~DeferredWrapperBase() {
-		if (m_ptr) {
-			m_ptr->Release();
-		}
-	}
+#pragma endregion
 
 protected:
 
@@ -215,7 +255,7 @@ protected:
 	// Therefore I moved template specialization to wrapping class
 	// named DeferredWrapper which does specialize on
 	// depending type using std::is_is_default_constructible<T>
-	virtual T* get_internal() const { return m_ptr; }
+	virtual T* GetInternal() const { return m_ptr; }
 	mutable T* m_ptr = nullptr;
 };
 
@@ -228,7 +268,7 @@ public:
 	using DeferredWrapperBase<T>::DeferredWrapperBase;
 
 protected:
-	virtual T* get_internal(void) const override {
+	virtual T* GetInternal(void) const override {
 		assert(DeferredWrapperBase<T>::m_ptr);
 		if (!DeferredWrapperBase<T>::m_ptr) {
 			return nullptr;
@@ -244,7 +284,7 @@ public:
 	using DeferredWrapperBase<T>::DeferredWrapperBase;
 
 protected:
-	virtual T* get_internal(void) const override {
+	virtual T* GetInternal(void) const override {
 		if (!DeferredWrapperBase<T>::m_ptr) {
 			DeferredWrapperBase<T>::m_ptr = pdf_new T();
 			DeferredWrapperBase<T>::m_ptr->AddRef();
@@ -268,6 +308,7 @@ class DeferredHandleUndefined {
 	// compilation error without any additional mess.
 
 public:
+
 	// This error means that your type is not defined.
 	// You probably forgotten to include header file.
 	static_assert(is_defined<T>::value, "Incomplete type is not allowed. Did You forgot to include header file?");
@@ -388,23 +429,68 @@ inline bool operator!=(U* left, const Deferred<U>& right) {
 }
 
 template <typename T>
-inline bool operator==(const Deferred<T>& left, std::nullptr_t) noexcept {
+inline bool operator==(const Deferred<T>& left, std::nullptr_t) {
 	return (nullptr == left.get());
 }
 
 template <typename T>
-inline bool operator==(std::nullptr_t, const Deferred<T>& right) noexcept {
+inline bool operator==(std::nullptr_t, const Deferred<T>& right) {
 	return (nullptr == right.get());
 }
 
 template <typename T>
-inline bool operator!=(const Deferred<T>& left, std::nullptr_t) noexcept {
+inline bool operator!=(const Deferred<T>& left, std::nullptr_t) {
 	return (nullptr != left.get());
 }
 
 template <typename T>
-inline bool operator!=(std::nullptr_t, const Deferred<T>& right) noexcept {
+inline bool operator!=(std::nullptr_t, const Deferred<T>& right) {
 	return (nullptr != right.get());
+}
+
+// identity operators
+
+template <
+	typename T,
+	typename U,
+	typename = typename std::enable_if<
+		std::is_convertible<U*, T*>::value || std::is_convertible<T*, U*>::value
+	>::type
+>
+inline bool Identity(const Deferred<T>& left, const Deferred<U>& right) {
+	return left.Identity(right);
+}
+
+template <
+	typename T,
+	typename U,
+	typename = typename std::enable_if<
+		std::is_convertible<U*, T*>::value || std::is_convertible<T*, U*>::value
+	>::type
+>
+inline bool Identity(const Deferred<T>& left, const U* right) {
+	return left.Identity(right);
+}
+
+template <
+	typename T,
+	typename U,
+	typename = typename std::enable_if<
+		std::is_convertible<U*, T*>::value || std::is_convertible<T*, U*>::value
+	>::type
+>
+inline bool Identity(const U* left, const Deferred<T>& right) {
+	return right.Identity(left);
+}
+
+template <typename T>
+inline bool Identity(const Deferred<T>& left, std::nullptr_t right) {
+	return left.Identity(nullptr);
+}
+
+template <typename T>
+inline bool Identity(std::nullptr_t left, const Deferred<T>& right) {
+	return right.Identity(nullptr);
 }
 
 // swap

@@ -34,9 +34,9 @@ public:
 	//	 "WeakReference<T>: T must be derived from IUnknown");
 
 public:
-	WeakReference() = default;
+	WeakReference() noexcept = default;
 
-	WeakReference(T* ptr, std::shared_ptr<WeakReferenceCounter> counter)
+	WeakReference(T* ptr, std::shared_ptr<WeakReferenceCounter> counter) noexcept
 		: m_ptr(ptr), m_counter(counter) {
 		assert(ptr != nullptr && "Empty object passed to weak reference");
 	}
@@ -45,7 +45,11 @@ public:
 		m_counter.reset();
 	}
 
-	bool Equals(const WeakReference<T>& other) const noexcept {
+	bool Identity(const WeakReference<T>& other) const noexcept {
+		if (m_ptr == nullptr) {
+			return false;
+		}
+
 		return (m_ptr == other.m_ptr);
 	}
 
@@ -199,12 +203,12 @@ public:
 
 template <typename T>
 inline bool operator==(const WeakReference<T>& left, const WeakReference<T>& right) {
-	return left.Equals(right);
+	return left.Identity(right);
 }
 
 template <typename T>
 inline bool operator!=(const WeakReference<T>& left, const WeakReference<T>& right) {
-	return !left.Equals(right);
+	return !left.Identity(right);
 }
 
 } // vanillapdf
