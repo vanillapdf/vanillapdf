@@ -16,6 +16,7 @@
 // extracted from library logging facility
 
 int main(int argc, char *argv[]) {
+	int i = 0;
 	FileHandle file = NULL;
 	DocumentHandle document = NULL;
 	string_type license_file = NULL;
@@ -34,7 +35,7 @@ int main(int argc, char *argv[]) {
 		return VANILLAPDF_TEST_ERROR_INVALID_PARAMETERS;
 	}
 
-	for (int i = 2; i < argc; ++i) {
+	for (i = 2; i < argc; ++i) {
 
 		// password
 		if (strcmp(argv[i], "-p") == 0 && (i + 1 < argc)) {
