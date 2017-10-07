@@ -2,6 +2,7 @@
 #define _PARSER_INTERFACE_H
 
 #include "syntax/utils/syntax_fwd.h"
+#include "syntax/files/xref.h"
 
 #include "syntax/parsers/object_stream_entry.h"
 #include "syntax/parsers/character_map_data.h"

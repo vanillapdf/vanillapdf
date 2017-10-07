@@ -94,6 +94,7 @@ void StreamObject::SetInitialized(bool initialized) {
 }
 
 BufferPtr StreamObject::GetBodyRaw() const {
+
 	if (!_body->empty()) {
 		return _body;
 	}
@@ -172,8 +173,10 @@ BufferPtr StreamObject::GetBodyRaw() const {
 }
 
 BufferPtr StreamObject::GetBody() const {
-	if (!_body_decoded->empty())
+
+	if (!_body_decoded->empty()) {
 		return _body_decoded;
+	}
 
 	if (!_header->Contains(constant::Name::Filter)) {
 		return GetBodyRaw();

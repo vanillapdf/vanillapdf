@@ -86,6 +86,7 @@ bool XrefChain::Contains(types::big_uint objNumber,
 	types::ushort genNumber) const {
 	for (auto it = _list.begin(); it != _list.end(); it++) {
 		auto xref = (*it);
+
 		if (!xref->Contains(objNumber)) {
 			continue;
 		}
