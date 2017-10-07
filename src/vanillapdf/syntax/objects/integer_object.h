@@ -33,11 +33,11 @@ public:
 	types::big_uint GetUnsignedIntegerValue(void) const { return m_value->GetUnsignedIntegerValue(); }
 	types::real GetRealValue(void) const { return m_value->GetRealValue(); }
 
-	void SetValue(int32_t value) { m_value->SetIntegerValue(value); OnChanged(); }
-	void SetValue(uint32_t value) { m_value->SetUnsignedIntegerValue(value); OnChanged(); }
-	void SetValue(types::big_int value) { m_value->SetIntegerValue(value); OnChanged(); }
-	void SetValue(types::big_uint value) { m_value->SetUnsignedIntegerValue(value); OnChanged(); }
-	void SetValue(types::real value) { m_value->SetRealValue(value); OnChanged(); }
+	void SetValue(int32_t value) { m_value->SetIntegerValue(value); }
+	void SetValue(uint32_t value) { m_value->SetUnsignedIntegerValue(value); }
+	void SetValue(types::big_int value) { m_value->SetIntegerValue(value); }
+	void SetValue(types::big_uint value) { m_value->SetUnsignedIntegerValue(value); }
+	void SetValue(types::real value) { m_value->SetRealValue(value); }
 
 	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Integer; }
 
