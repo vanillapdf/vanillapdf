@@ -159,7 +159,7 @@ public:
 			std::is_convertible<U*, T*>::value || std::is_convertible<T*, U*>::value
 		>::type
 	>
-	constexpr bool Identity(const DeferredWrapperBase<U>& rhs) const noexcept {
+	bool Identity(const DeferredWrapperBase<U>& rhs) const noexcept {
 		if (m_ptr == nullptr) {
 			return false;
 		}
@@ -173,7 +173,7 @@ public:
 			std::is_convertible<U*, T*>::value || std::is_convertible<T*, U*>::value
 		>::type
 	>
-	constexpr bool Identity(const U* ptr) const noexcept {
+	bool Identity(const U* ptr) const noexcept {
 		if (m_ptr == nullptr) {
 			return false;
 		}
