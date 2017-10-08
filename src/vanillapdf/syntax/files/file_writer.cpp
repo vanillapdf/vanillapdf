@@ -94,7 +94,7 @@ void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
 	RecalculateStreamsLength(new_xref);
 
 	// Xref contains the value that indicates number of entries contained
-	RecalculateXrefSize(new_xref);
+	RecalculateXrefSize(dest_chain, new_xref);
 
 	// Write all body objects
 	WriteXrefObjects(output, new_xref);
@@ -372,34 +372,54 @@ void FileWriter::RecalculateXrefHybridOffset(XrefTablePtr source) {
 	xref_stm_entry->SetValue(xref_stm_offset);
 }
 
-void FileWriter::RecalculateXrefSize(XrefBasePtr source) {
+void FileWriter::RecalculateXrefSize(XrefChainPtr chain, XrefBasePtr source) {
 
 	// Disabled by the control flag
 	if (!m_recalculate_xref_size) {
 		return;
 	}
 
-	auto xref_size = source->Size();
-	auto trailer_dictionary = source->GetTrailerDictionary();
-
-	if (!trailer_dictionary->Contains(constant::Name::Size)) {
-		IntegerObjectPtr xref_size_obj = make_deferred<IntegerObject>(xref_size);
-		trailer_dictionary->Insert(constant::Name::Size, xref_size_obj);
-	}
-
-	auto size = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::Size);
-	size->SetValue(xref_size);
+	// Special case for hybrid-reference streams
+	// 7.5.8.4 Compatibility with Applications That Do Not Support Compressed Reference Streams
+	// The Size entry of the trailer shall be large enough to include all objects,
+	// including those defined in the cross-reference stream referenced by the XRefStm entry.
 
 	// Recalculate hybrid xref size as well
+	types::size_type new_size = source->Size();
 	if (ConvertUtils<XrefBasePtr>::IsType<XrefTablePtr>(source)) {
 		auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(source);
 
 		if (xref_table->HasHybridStream()) {
 			auto hybrid_stream = xref_table->GetHybridStream();
+			auto prev_xref = FindPreviousXref(chain, source);
 
-			RecalculateXrefSize(hybrid_stream);
+			// This is ambiguous "large enough to include all objects"
+			auto new_hybrid_size = prev_xref->Size();
+
+			auto hybrid_stream_trailer = hybrid_stream->GetTrailerDictionary();
+			if (!hybrid_stream_trailer->Contains(constant::Name::Size)) {
+				IntegerObjectPtr new_hybrid_size_obj = make_deferred<IntegerObject>(new_hybrid_size);
+				hybrid_stream_trailer->Insert(constant::Name::Size, new_hybrid_size_obj);
+			}
+
+			auto hybrid_size = hybrid_stream_trailer->FindAs<IntegerObjectPtr>(constant::Name::Size);
+			hybrid_size->SetValue(new_hybrid_size);
+
+			// I do not understand why this works, but all sample documents have this condition
+			// Not a word is mentioned in the PDF specification and none of the other open-source
+			// frameworks support writing hybrid xref sections.
+			new_size += new_hybrid_size;
 		}
 	}
+
+	auto trailer_dictionary = source->GetTrailerDictionary();
+	if (!trailer_dictionary->Contains(constant::Name::Size)) {
+		IntegerObjectPtr xref_size_obj = make_deferred<IntegerObject>(new_size);
+		trailer_dictionary->Insert(constant::Name::Size, xref_size_obj);
+	}
+
+	auto size = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::Size);
+	size->SetValue(new_size);
 }
 
 void FileWriter::RecalculateStreamLength(StreamObjectPtr obj) {
@@ -463,6 +483,33 @@ void FileWriter::RecalculateStreamsLength(XrefBasePtr source) {
 
 		assert(false && "Uncrecognized entry type");
 	}
+}
+
+XrefBasePtr FileWriter::FindPreviousXref(XrefChainPtr chain, XrefBasePtr source) {
+
+	bool first_xref = true;
+	auto prev_xref_iterator = chain->begin();
+	for (auto it = chain->begin(); it != chain->end(); ++it) {
+		auto current_xref = *it;
+
+		if (Identity(current_xref, source)) {
+			if (first_xref) {
+				throw GeneralException("First xref does not have a previous entry");
+			}
+
+			return *prev_xref_iterator;
+		}
+
+		if (!first_xref) {
+
+			// Keep track of the previous entry
+			prev_xref_iterator++;
+		}
+
+		first_xref = false;
+	}
+
+	throw GeneralException("Could not find previous xref");
 }
 
 XrefChainPtr FileWriter::CloneXrefChain(FilePtr source, FilePtr destination) {
@@ -936,7 +983,7 @@ void FileWriter::WriteXrefChain(IOutputStreamPtr output, XrefChainPtr chain) {
 		RecalculateStreamsLength(new_xref);
 
 		// Xref contains the value that indicates number of entries contained
-		RecalculateXrefSize(new_xref);
+		RecalculateXrefSize(chain, new_xref);
 
 		// Write all body objects
 		WriteXrefObjects(output, new_xref);

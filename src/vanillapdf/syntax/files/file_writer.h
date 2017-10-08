@@ -141,7 +141,7 @@ private:
 	void RecalculateStreamLength(StreamObjectPtr obj);
 	void RecalculateStreamsLength(XrefBasePtr source);
 	void RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr source);
-	void RecalculateXrefSize(XrefBasePtr source);
+	void RecalculateXrefSize(XrefChainPtr chain, XrefBasePtr source);
 
 	void CompressAndOptimize(XrefChainPtr xref);
 	void RemoveFreedObjects(XrefChainPtr xref);
@@ -153,6 +153,8 @@ private:
 	void CompressObjects(XrefChainPtr xref);
 	void SquashTableSpace(XrefChainPtr xref);
 	void CompressXref(XrefChainPtr xref);
+
+	XrefBasePtr FindPreviousXref(XrefChainPtr chain, XrefBasePtr source);
 
 	void InitializeReferences(ObjectPtr source);
 	void RedirectReferences(ObjectPtr source, const std::unordered_map<ObjectPtr, ObjectPtr>& duplicit_items);
