@@ -142,6 +142,9 @@ public:
 	}
 
 	XrefStreamPtr GetHybridStream(void) const {
+		bool has_stream = HasHybridStream();
+
+		assert(has_stream && "Getting unset value");
 		return m_xref_stm;
 	}
 
