@@ -60,8 +60,8 @@ public:
 
 	XrefUsedEntryBasePtr AllocateNewEntry();
 	bool ReleaseEntry(XrefUsedEntryBasePtr entry);
-	XrefEntryBasePtr GetXrefEntry(types::big_uint objNumber, types::ushort genNumber) const;
-	bool Contains(types::big_uint objNumber, types::ushort genNumber) const;
+	XrefEntryBasePtr GetXrefEntry(types::big_uint obj_number, types::ushort gen_number) const;
+	bool Contains(types::big_uint obj_number, types::ushort gen_number) const;
 
 private:
 	list_type _list;

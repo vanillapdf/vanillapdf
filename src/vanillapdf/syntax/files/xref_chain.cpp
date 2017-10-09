@@ -67,41 +67,40 @@ XrefUsedEntryBasePtr XrefChain::AllocateNewEntry() {
 	throw GeneralException("Unable to allocate new entry");
 }
 
-XrefEntryBasePtr XrefChain::GetXrefEntry(types::big_uint objNumber, types::ushort genNumber) const {
+XrefEntryBasePtr XrefChain::GetXrefEntry(types::big_uint obj_number, types::ushort gen_number) const {
 	for (auto it = _list.begin(); it != _list.end(); it++) {
 		auto xref = (*it);
 
-		if (!xref->Contains(objNumber)) {
+		if (!xref->Contains(obj_number)) {
 			continue;
 		}
 
-		auto item = xref->Find(objNumber);
-		if (item->GetGenerationNumber() != genNumber) {
+		auto item = xref->Find(obj_number);
+		if (item->GetGenerationNumber() != gen_number) {
 			continue;
 		}
 
-		assert(item->GetObjectNumber() == objNumber && item->GetGenerationNumber() == genNumber);
+		assert(item->GetObjectNumber() == obj_number && item->GetGenerationNumber() == gen_number);
 		return item;
 	}
 
-	throw ObjectMissingException(objNumber, genNumber);
+	throw ObjectMissingException(obj_number, gen_number);
 }
 
-bool XrefChain::Contains(types::big_uint objNumber,
-	types::ushort genNumber) const {
+bool XrefChain::Contains(types::big_uint obj_number, types::ushort gen_number) const {
 	for (auto it = _list.begin(); it != _list.end(); it++) {
 		auto xref = (*it);
 
-		if (!xref->Contains(objNumber)) {
+		if (!xref->Contains(obj_number)) {
 			continue;
 		}
 
-		auto item = xref->Find(objNumber);
-		if (item->GetGenerationNumber() != genNumber) {
+		auto item = xref->Find(obj_number);
+		if (item->GetGenerationNumber() != gen_number) {
 			continue;
 		}
 
-		assert(item->GetObjectNumber() == objNumber && item->GetGenerationNumber() == genNumber);
+		assert(item->GetObjectNumber() == obj_number && item->GetGenerationNumber() == gen_number);
 		return true;
 	}
 
