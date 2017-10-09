@@ -213,5 +213,13 @@ bool DictionaryObject::Equals(ObjectPtr other) const {
 	return true;
 }
 
+void DictionaryObject::Merge(const DictionaryObject& other) {
+
+	// Simple insert overriding conflicting entries
+	for (auto item : other) {
+		_list.insert(item);
+	}
+}
+
 } // syntax
 } // vanillapdf

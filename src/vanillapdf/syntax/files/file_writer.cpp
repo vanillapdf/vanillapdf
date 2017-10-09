@@ -372,6 +372,77 @@ void FileWriter::RecalculateXrefHybridOffset(XrefTablePtr source) {
 	xref_stm_entry->SetValue(xref_stm_offset);
 }
 
+void FileWriter::RecalculateXrefStreamWidth(XrefStreamPtr source) {
+
+	// Disabled by the control flag
+	if (!m_recalculate_xref_stream_width) {
+		return;
+	}
+
+	types::big_uint field1_max = 0;
+	types::big_uint field2_max = 0;
+	types::big_uint field3_max = 0;
+
+	auto sorted_entries = source->Entries();
+	for (auto entry : sorted_entries) {
+		if (entry->GetUsage() == XrefEntryBase::Usage::Free) {
+			auto free_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefFreeEntryPtr>(entry);
+
+			field1_max = std::max<decltype(field1_max)>(field1_max, 1);
+			field2_max = std::max<decltype(field2_max)>(field2_max, free_entry->GetNextFreeObjectNumber());
+			field3_max = std::max<decltype(field3_max)>(field3_max, free_entry->GetGenerationNumber());
+			continue;
+		}
+
+		if (entry->GetUsage() == XrefEntryBase::Usage::Used) {
+			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
+
+			field1_max = std::max<decltype(field1_max)>(field1_max, 1);
+			field2_max = std::max<decltype(field2_max)>(field2_max, used_entry->GetOffset());
+			field3_max = std::max<decltype(field3_max)>(field3_max, used_entry->GetGenerationNumber());
+			continue;
+		}
+
+		if (entry->GetUsage() == XrefEntryBase::Usage::Compressed) {
+			auto compressed_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(entry);
+
+			field1_max = std::max<decltype(field1_max)>(field1_max, 1);
+			field2_max = std::max<decltype(field2_max)>(field2_max, compressed_entry->GetObjectStreamNumber());
+			field3_max = std::max<decltype(field3_max)>(field3_max, compressed_entry->GetIndex());
+			continue;
+		}
+
+		assert(false && "Incorrect entry type");
+	}
+
+	types::big_uint field1_msb = MostSignificantBit(field1_max);
+	types::big_uint field2_msb = MostSignificantBit(field2_max);
+	types::big_uint field3_msb = MostSignificantBit(field3_max);
+
+	types::big_uint field1_size = (field1_msb % 8 == 0) ? (field1_msb / 8) : ((field1_msb / 8) + 1);
+	types::big_uint field2_size = (field2_msb % 8 == 0) ? (field2_msb / 8) : ((field2_msb / 8) + 1);
+	types::big_uint field3_size = (field3_msb % 8 == 0) ? (field3_msb / 8) : ((field3_msb / 8) + 1);
+
+	IntegerObjectPtr field1 = make_deferred<IntegerObject>(field1_size);
+	IntegerObjectPtr field2 = make_deferred<IntegerObject>(field2_size);
+	IntegerObjectPtr field3 = make_deferred<IntegerObject>(field3_size);
+
+	ArrayObjectPtr<IntegerObjectPtr> new_width;
+	new_width->Append(field1);
+	new_width->Append(field2);
+	new_width->Append(field3);
+
+	auto stream_obj = source->GetStreamObject();
+	auto stream_header = stream_obj->GetHeader();
+	if (stream_header->Contains(constant::Name::Index)) {
+		bool removed = stream_header->Remove(constant::Name::W);
+		assert(removed); UNUSED(removed);
+	}
+
+	// Insert new width array
+	stream_header->Insert(constant::Name::W, new_width);
+}
+
 void FileWriter::RecalculateXrefSize(XrefChainPtr chain, XrefBasePtr source) {
 
 	// Disabled by the control flag
@@ -544,7 +615,15 @@ XrefBasePtr FileWriter::CloneXref(FilePtr destination, XrefBasePtr source) {
 	XrefBasePtr result = XrefTablePtr();
 
 	if (source->GetType() == XrefBase::Type::Stream) {
-		result = XrefStreamPtr();
+		auto source_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(source);
+		auto source_stream_obj = source_stream->GetStreamObject();
+
+		// We are reusing the original stream object
+
+		XrefStreamPtr new_stream;
+		new_stream->SetStreamObject(source_stream_obj);
+
+		result = new_stream;
 	}
 
 	auto table_size = source->Size();
@@ -768,11 +847,57 @@ DictionaryObjectPtr FileWriter::CloneTrailerDictionary(FilePtr source, XrefBaseP
 		new_trailer->Insert(constant::Name::Prev, cloned);
 	}
 
+	// Xref stream properties
+
+	// Set the type of object - usually XRef
+	if (source_trailer->Contains(constant::Name::Type)) {
+		ContainableObjectPtr type = source_trailer->Find(constant::Name::Type);
+		ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(type);
+		new_trailer->Insert(constant::Name::Type, cloned);
+	}
+
+	// Set index of objects contained within
+	if (source_trailer->Contains(constant::Name::Index)) {
+		ContainableObjectPtr index = source_trailer->Find(constant::Name::Index);
+		ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(index);
+		new_trailer->Insert(constant::Name::Index, cloned);
+	}
+
+	// Set byte width of the fields within compressed stream
+	if (source_trailer->Contains(constant::Name::W)) {
+		ContainableObjectPtr width = source_trailer->Find(constant::Name::W);
+		ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(width);
+		new_trailer->Insert(constant::Name::W, cloned);
+	}
+
+	// Set stream length
+	if (source_trailer->Contains(constant::Name::Length)) {
+		ContainableObjectPtr length = source_trailer->Find(constant::Name::Length);
+		ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(length);
+		new_trailer->Insert(constant::Name::Length, cloned);
+	}
+
+	// Set compression filter
+	if (source_trailer->Contains(constant::Name::Filter)) {
+		ContainableObjectPtr filter = source_trailer->Find(constant::Name::Filter);
+		ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(filter);
+		new_trailer->Insert(constant::Name::Filter, cloned);
+	}
+
+	// Set compression parameters
+	if (source_trailer->Contains(constant::Name::DecodeParms)) {
+		ContainableObjectPtr parms = source_trailer->Find(constant::Name::DecodeParms);
+		ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(parms);
+		new_trailer->Insert(constant::Name::DecodeParms, cloned);
+	}
+
 	// Add encryption entry to trailer
 	if (source->IsEncrypted()) {
 		ObjectPtr obj = source->GetEncryptionDictionary();
+		bool is_dictionary = ObjectUtils::IsType<DictionaryObjectPtr>(obj);
 
-		if (ObjectUtils::IsType<DictionaryObjectPtr>(obj)) {
+		assert(is_dictionary);
+		if (is_dictionary) {
 			DictionaryObjectPtr encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(obj);
 			DictionaryObjectPtr cloned = ObjectUtils::Clone<DictionaryObjectPtr>(encryption_dictionary);
 			new_trailer->Insert(constant::Name::Encrypt, encryption_dictionary);
@@ -1034,6 +1159,10 @@ void FileWriter::WriteXref(IOutputStreamPtr output, XrefBasePtr xref) {
 		auto xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(xref);
 		auto stream_obj = xref_stream->GetStreamObject();
 
+
+		// Find new minimal width to fit offsets
+		RecalculateXrefStreamWidth(xref_stream);
+
 		// After all other objects have been written, we need
 		// to recalculate contents of xref stream
 		xref_stream->RecalculateContent();
@@ -1263,22 +1392,20 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
 
 			break;
 		}
+
+		if (ConvertUtils<XrefBasePtr>::IsType<XrefTablePtr>(current)) {
+			auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(current);
+			if (xref_table->HasHybridStream()) {
+				auto hybrid_stream = xref_table->GetHybridStream();
+				auto hybrid_stream_object = hybrid_stream->GetStreamObject();
+
+				XrefStreamPtr new_xref_stream;
+				new_xref_stream->SetStreamObject(hybrid_stream_object);
+				new_xref = new_xref_stream;
+				break;
+			}
+		}
 	}
-
-	// Clone original table trailer
-	auto last_xref = *xref->begin();
-
-	// Get the correct trailer dictionary
-	auto last_trailer = last_xref->GetTrailerDictionary();
-
-	// The trailer should be correctly duplicated in the CloneXref method
-	auto new_trailer = ObjectUtils::Clone<DictionaryObjectPtr>(last_trailer);
-	new_trailer->SetFile(last_xref->GetFile());
-
-	// Set the trailer dictionary, that matches the one at the end of the file
-	new_xref->SetTrailerDictionary(new_trailer);
-	new_xref->SetFile(last_xref->GetFile());
-	new_xref->SetInitialized();
 
 	// Merge all xref entries into freshly created one
 	for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
@@ -1288,7 +1415,33 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
 		for (auto item : current) {
 			new_xref->Add(item);
 		}
+
+		if (ConvertUtils<XrefBasePtr>::IsType<XrefTablePtr>(current)) {
+			auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(current);
+			if (xref_table->HasHybridStream()) {
+				auto hybrid_stream = xref_table->GetHybridStream();
+
+				for (auto item : hybrid_stream) {
+					new_xref->Add(item);
+				}
+			}
+		}
 	}
+
+	// Clone original table trailer
+	auto last_xref = *xref->begin();
+	auto weak_file = last_xref->GetFile();
+	auto file = weak_file.GetReference();
+
+	// The trailer should be correctly duplicated in the CloneXref method
+	auto last_trailer = CloneTrailerDictionary(file, last_xref);
+	auto new_trailer = new_xref->GetTrailerDictionary();
+
+	// Merge contents of the last xref section into new trailer
+	new_trailer->Merge(last_trailer);
+
+	new_xref->SetFile(weak_file);
+	new_xref->SetInitialized();
 
 	// Release all other xrefs
 	xref->Clear();

@@ -658,7 +658,6 @@ XrefStreamPtr Parser::ParseXrefStream(
 	stream->SetEncryptionExempted();
 
 	result->SetFile(_file);
-	result->SetTrailerDictionary(header);
 	result->SetStreamObject(stream);
 	result->SetInitialized();
 	return result;

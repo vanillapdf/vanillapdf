@@ -8,6 +8,11 @@ namespace vanillapdf {
 namespace syntax {
 
 XrefUsedEntryBasePtr XrefChain::AllocateNewEntry() {
+
+	if (_list.empty()) {
+		throw GeneralException("Could not allocate entry for empty chain");
+	}
+
 	for (types::big_uint i = m_next_allocation; i < std::numeric_limits<types::big_uint>::max(); ++i) {
 
 		types::size_type eligible = 0;

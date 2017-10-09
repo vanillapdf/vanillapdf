@@ -104,6 +104,8 @@ public:
 	bool Remove(const NameObjectPtr name);
 	bool Remove(const NameObject& name);
 
+	void Merge(const DictionaryObject& other);
+
 	virtual ~DictionaryObject();
 };
 

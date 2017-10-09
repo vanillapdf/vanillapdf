@@ -69,6 +69,21 @@ ResultType SafeMultiply(ValueType number, ValueType multiplier) {
 	return result;
 }
 
+template <
+	typename T,
+	typename = typename std::enable_if<std::is_integral<T>::value>::type
+>
+inline auto MostSignificantBit(T value) -> decltype(sizeof(T)) {
+
+	decltype(MostSignificantBit(value)) result = 0;
+	while (value > 0) {
+		value = (value >> 1);
+		result++;
+	}
+
+	return result;
+}
+
 } // vanillapdf
 
 #endif /* _MATH_UTILS_H */

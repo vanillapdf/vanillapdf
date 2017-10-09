@@ -31,6 +31,7 @@ void XrefBase::ObserveeChanged(IModifyObservable*) {
 }
 
 void XrefStream::RecalculateContent() {
+
 	// Recalculate only for changed streams
 	if (!m_dirty) {
 		return;
@@ -138,6 +139,16 @@ void XrefStream::RecalculateContent() {
 }
 
 void XrefStream::WriteValue(std::ostream& dest, types::big_uint value, int64_t width) {
+
+	// Check if the value fits inside width
+	auto shifted_value = value >> (width * 8);
+
+	// This means, that the operation would overflow
+	assert(shifted_value == 0 && "Xref stream value overflow");
+	if (shifted_value != 0) {
+		throw GeneralException("Xref stream width is too small");
+	}
+
 	// Writes <value> as a sequence of <width> bytes into <dest>
 	// starting with most significant byte
 	for (decltype(width) i = width - 1; i >= 0; --i) {
@@ -263,6 +274,63 @@ bool XrefTable::Contains(types::big_uint obj_number) const {
 	}
 
 	return contains;
+}
+
+DictionaryObjectPtr XrefTable::GetTrailerDictionary(void) const {
+	return m_trailer_dictionary;
+}
+
+void XrefTable::SetTrailerDictionary(DictionaryObjectPtr dictionary) {
+	m_trailer_dictionary = dictionary;
+}
+
+bool XrefTable::HasHybridStream(void) const {
+	return !m_xref_stm.empty();
+}
+
+XrefStreamPtr XrefTable::GetHybridStream(void) const {
+	bool has_stream = HasHybridStream();
+
+	assert(has_stream && "Getting unset value");
+	return m_xref_stm;
+}
+
+void XrefTable::SetHybridStream(XrefStreamPtr stream) {
+	m_xref_stm = stream;
+}
+
+types::stream_offset XrefStream::GetOffset() const {
+	return _stream->GetOffset();
+}
+
+void XrefStream::SetOffset(types::stream_offset offset) {
+	_stream->SetOffset(offset);
+}
+
+DictionaryObjectPtr XrefStream::GetTrailerDictionary(void) const {
+	auto stream = GetStreamObject();
+	return stream->GetHeader();
+}
+
+void XrefStream::SetTrailerDictionary(DictionaryObjectPtr dictionary) {
+	auto stream = GetStreamObject();
+	stream->SetHeader(dictionary);
+}
+
+StreamObjectPtr XrefStream::GetStreamObject(void) const {
+	bool has_stream = !_stream.empty();
+
+	assert(has_stream && "Stream not yet initialized");
+	return _stream;
+}
+
+void XrefStream::SetStreamObject(StreamObjectPtr stream) {
+	_stream->Unsubscribe(this);
+	_stream = stream;
+	_stream->Subscribe(this);
+
+	auto stream_header = stream->GetHeader();
+	SetTrailerDictionary(stream_header);
 }
 
 } // syntax
