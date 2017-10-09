@@ -463,11 +463,13 @@ TokenPtr ParserBase::ReadTokenWithTypeSkip(Token::Type type) {
 	for (;;) {
 		auto token = ReadToken();
 
-		if (token->GetType() == type)
+		if (token->GetType() == type) {
 			return token;
+		}
 
-		if (token->GetType() == Token::Type::EOL)
+		if (token->GetType() == Token::Type::EOL) {
 			continue;
+		}
 
 		throw ParseException(offset);
 	}
@@ -564,7 +566,7 @@ XrefStreamPtr Parser::ParseXrefStream(
 
 	// Iterate over entries
 	auto it = body.begin();
-	for (unsigned int i = 0; i < index_size; i += 2) {
+	for (decltype(index_size) i = 0; i < index_size; i += 2) {
 
 		auto subsection_index = index->At(i);
 		auto subsection_size = index->At(i + 1);
