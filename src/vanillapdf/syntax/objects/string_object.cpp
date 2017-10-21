@@ -162,13 +162,15 @@ std::string HexadecimalStringObject::ToPdf() const {
 	std::string str = ss.str();
 	Buffer result = Buffer(str.begin(), str.end());
 
-	if (!m_file.IsActive()) {
-		throw FileDisposedException();
-	}
+	if (!m_file.IsEmpty()) {
+		if (!m_file.IsActive()) {
+			throw FileDisposedException();
+		}
 
-	auto locked_file = m_file.GetReference();
-	if (locked_file->IsEncrypted()) {
-		result = locked_file->EncryptString(result, GetObjectNumber(), GetGenerationNumber());
+		auto locked_file = m_file.GetReference();
+		if (locked_file->IsEncrypted()) {
+			result = locked_file->EncryptString(result, GetObjectNumber(), GetGenerationNumber());
+		}
 	}
 
 	result.insert(result.begin(), '<');
@@ -236,13 +238,15 @@ std::string LiteralStringObject::ToPdf() const {
 	std::string str = ss.str();
 	Buffer result = Buffer(str.begin(), str.end());
 
-	if (!m_file.IsActive()) {
-		throw FileDisposedException();
-	}
+	if (!m_file.IsEmpty()) {
+		if (!m_file.IsActive()) {
+			throw FileDisposedException();
+		}
 
-	auto locked_file = m_file.GetReference();
-	if (locked_file->IsEncrypted()) {
-		result = locked_file->EncryptString(result, GetObjectNumber(), GetGenerationNumber());
+		auto locked_file = m_file.GetReference();
+		if (locked_file->IsEncrypted()) {
+			result = locked_file->EncryptString(result, GetObjectNumber(), GetGenerationNumber());
+		}
 	}
 
 	result.insert(result.begin(), '(');
