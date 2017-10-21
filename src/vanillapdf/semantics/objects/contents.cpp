@@ -9,6 +9,7 @@
 #include "utils/streams/input_stream.h"
 
 #include <numeric>
+#include <sstream>
 
 namespace vanillapdf {
 namespace semantics {

@@ -11,6 +11,8 @@
 #include "semantics/utils/semantic_utils.h"
 #include "semantics/utils/document_signer.h"
 
+#include <sstream>
+
 namespace vanillapdf {
 namespace semantics {
 

@@ -6,6 +6,7 @@
 
 #include <regex>
 #include <iomanip>
+#include <sstream>
 
 namespace vanillapdf {
 namespace semantics {

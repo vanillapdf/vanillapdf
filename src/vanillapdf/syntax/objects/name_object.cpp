@@ -1,8 +1,12 @@
 #include "precompiled.h"
-#include "syntax/objects/name_object.h"
-#include "vanillapdf/c_name_object.h"
 
 #include "utils/character.h"
+
+#include "syntax/objects/name_object.h"
+
+#include "vanillapdf/c_name_object.h"
+
+#include <sstream>
 
 namespace vanillapdf {
 namespace syntax {

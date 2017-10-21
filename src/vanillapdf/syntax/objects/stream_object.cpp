@@ -6,6 +6,8 @@
 
 #include "syntax/exceptions/syntax_exceptions.h"
 
+#include <sstream>
+
 namespace vanillapdf {
 namespace syntax {
 

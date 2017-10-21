@@ -2,6 +2,8 @@
 
 #include "syntax/objects/mixed_array_object.h"
 
+#include <sstream>
+
 namespace vanillapdf {
 namespace syntax {
 

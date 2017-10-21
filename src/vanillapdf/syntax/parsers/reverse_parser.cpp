@@ -2,6 +2,8 @@
 
 #include "syntax/parsers/reverse_parser.h"
 
+#include <sstream>
+
 namespace vanillapdf {
 namespace syntax {
 

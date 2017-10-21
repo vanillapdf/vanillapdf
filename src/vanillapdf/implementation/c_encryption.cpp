@@ -5,6 +5,8 @@
 #include "vanillapdf/c_encryption.h"
 #include "c_helper.h"
 
+#include <sstream>
+
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 

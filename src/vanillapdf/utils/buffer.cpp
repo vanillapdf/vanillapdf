@@ -4,6 +4,7 @@
 #include "utils/streams/input_stream.h"
 
 #include <cstring>
+#include <sstream>
 
 namespace vanillapdf {
 

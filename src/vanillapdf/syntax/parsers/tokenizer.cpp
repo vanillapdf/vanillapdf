@@ -7,8 +7,9 @@
 #include "utils/util.h"
 
 #include <cassert>
-#include <algorithm>
 #include <iomanip>
+#include <sstream>
+#include <algorithm>
 
 namespace vanillapdf {
 namespace syntax {

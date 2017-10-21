@@ -3,6 +3,8 @@
 #include "syntax/objects/dictionary_object.h"
 #include "syntax/utils/output_pointer.h"
 
+#include <sstream>
+
 namespace vanillapdf {
 namespace syntax {
 

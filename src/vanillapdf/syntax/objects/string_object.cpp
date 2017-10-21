@@ -6,9 +6,10 @@
 
 #include "utils/character.h"
 
-#include <cassert>
 #include <cctype>
+#include <cassert>
 #include <iomanip>
+#include <sstream>
 
 namespace vanillapdf {
 namespace syntax {
