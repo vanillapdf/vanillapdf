@@ -2,13 +2,19 @@
 
 #include "utils/character.h"
 #include "utils/math_utils.h"
+#include "utils/license_info.h"
 
 #include "syntax/files/file_writer.h"
 #include "syntax/files/file.h"
 #include "syntax/files/xref.h"
 
+#include "syntax/utils/output_pointer.h"
 #include "syntax/exceptions/syntax_exceptions.h"
 #include "syntax/utils/serialization_override_attribute.h"
+
+#include "contents/content_stream_parser.h"
+#include "contents/content_stream_operations.h"
+#include "contents/content_stream_objects.h"
 
 #include <fstream>
 #include <unordered_set>
@@ -50,6 +56,9 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 
 	// Compress and optimize here
 	CompressAndOptimize(new_chain);
+
+	// Apply watermark
+	ApplyWatermark(new_chain);
 
 	// Dump whole cloned contents to the output
 	WriteXrefChain(output, new_chain);
@@ -1297,6 +1306,112 @@ void FileWriter::CopyStreamContent(IInputStreamPtr source, IOutputStreamPtr dest
 
 		destination->Write(buffer, read);
 	}
+}
+
+void FileWriter::ApplyWatermark(XrefChainPtr chain) {
+
+	// Watermark only for trial version
+	if (LicenseInfo::IsValid()) {
+		return;
+	}
+
+	auto xref = chain->Begin()->Value();
+	auto trailer_dictionary = xref->GetTrailerDictionary();
+
+	// File has not root entry
+	if (!trailer_dictionary->Contains(constant::Name::Root)) {
+		return;
+	}
+
+	// File has not root entry
+	OutputDictionaryObjectPtr root;
+	if (!trailer_dictionary->TryFindAs(constant::Name::Root, root)) {
+		return;
+	}
+
+	OutputDictionaryObjectPtr pages;
+	if (!root->TryFindAs(constant::Name::Pages, pages)) {
+		return;
+	}
+
+	OutputArrayObjectPtr<DictionaryObjectPtr> kids;
+	if (!pages->TryFindAs(constant::Name::Kids, kids)) {
+		return;
+	}
+
+	for (auto kid : *kids) {
+		ApplyWatermarkPageNode(kid);
+	}
+}
+
+void FileWriter::ApplyWatermarkPageNode(DictionaryObjectPtr obj) {
+
+	if (obj->Contains(constant::Name::Kids)) {
+		auto kids = obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::Kids);
+
+		for (auto kid : *kids) {
+			ApplyWatermarkPageNode(kid);
+		}
+	}
+
+	if (obj->Contains(constant::Name::Type)) {
+		auto type = obj->FindAs<NameObjectPtr>(constant::Name::Type);
+		auto equal = type->Equals(constant::Name::Page) || type->Equals(constant::Name::Pages);
+
+		assert(equal && "Just take a look, the type should be page"); UNUSED(equal);
+	}
+
+	if (obj->Contains(constant::Name::Contents)) {
+		auto contents = obj->Find(constant::Name::Contents);
+
+		if (ObjectUtils::IsType<StreamObjectPtr>(contents)) {
+			auto content_stream = ObjectUtils::ConvertTo<StreamObjectPtr>(contents);
+
+			ApplyWatermarkContentStream(content_stream);
+		}
+
+		if (ObjectUtils::IsType<ArrayObjectPtr<StreamObjectPtr>>(contents)) {
+			auto content_array = ObjectUtils::ConvertTo<ArrayObjectPtr<StreamObjectPtr>>(contents);
+			auto content_array_size = content_array->Size();
+
+			if (content_array_size > 0) {
+				auto last_stream = content_array->At(content_array_size - 1);
+				ApplyWatermarkContentStream(last_stream);
+			}
+		}
+	}
+}
+
+void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj) {
+
+	auto body = obj->GetBody();
+	auto input_stream = body->ToInputStream();
+
+	contents::BaseInstructionCollectionPtr instructions;
+
+	std::vector<ObjectPtr> begin_text_parameters;
+	auto begin_text_operation = make_deferred<contents::OperationBeginText>(begin_text_parameters);
+	instructions->push_back(begin_text_operation);
+
+	auto watermark_text = make_deferred<LiteralStringObject>("This file dude!");
+
+	std::vector<ObjectPtr> text_show_parameters;
+	text_show_parameters.push_back(watermark_text);
+
+	auto text_show_operation = make_deferred<contents::OperationTextShow>(text_show_parameters);
+	instructions->push_back(text_show_operation);
+
+	std::vector<ObjectPtr> end_text_parameters;
+	auto end_text_operation = make_deferred<contents::OperationEndText>(end_text_parameters);
+	instructions->push_back(end_text_operation);
+
+	std::stringstream ss;
+	for (auto instruction : instructions) {
+		ss << instruction->ToPdf() << std::endl;
+	}
+
+	auto watermark_body = ss.str();
+	body->insert(body.end(), watermark_body.begin(), watermark_body.end());
 }
 
 void FileWriter::CompressAndOptimize(XrefChainPtr xref) {

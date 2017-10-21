@@ -85,12 +85,37 @@ public:
 
 	template <typename U>
 	U FindAs(const NameObject& name) const {
+		NameObjectPtr temp = make_deferred<NameObject>(name);
+		return FindAs<U>(temp);
+	}
+
+	template <typename U>
+	U FindAs(const NameObjectPtr name) const {
 		auto result = Find(name);
 		return ObjectUtils::ConvertTo<U>(result);
 	}
 
 	ContainableObjectPtr Find(const NameObjectPtr name) const;
 	ContainableObjectPtr Find(const NameObject& name) const;
+
+	template <typename U>
+	bool TryFindAs(const NameObject& name, OutputPointer<U>& result) const {
+		NameObjectPtr temp = make_deferred<NameObject>(name);
+		return TryFindAs<U>(temp, result);
+	}
+
+	template <typename U>
+	bool TryFindAs(const NameObjectPtr name, OutputPointer<U>& result) const {
+		OutputContainableObjectPtr containable_result;
+		bool found = TryFind(name, containable_result);
+
+		if (!found) {
+			return false;
+		}
+
+		result = ObjectUtils::ConvertTo<U>(*containable_result);
+		return true;
+	}
 
 	bool TryFind(const NameObjectPtr name, OutputContainableObjectPtr& result) const;
 	bool TryFind(const NameObject& name, OutputContainableObjectPtr& result) const;

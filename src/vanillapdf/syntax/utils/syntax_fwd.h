@@ -100,11 +100,14 @@ class LiteralStringObject;
 template <typename T>
 using ArrayObjectPtr = DeferredArrayObject<T>;
 
+template <typename T>
+using OutputArrayObjectPtr = OutputPointer<ArrayObjectPtr<T>>;
+
 template <typename KeyT, typename ValueT, typename MapT /*= std::map<KeyT, ValueT>*/>
 using DictionaryObjectBasePtr = DeferredContainer<DictionaryObjectBase<KeyT, ValueT, MapT>>;
 
 using DictionaryObjectPtr = DeferredContainer<DictionaryObject>; using OutputDictionaryObjectPtr = OutputPointer<DictionaryObjectPtr>;
-using MixedArrayObjectPtr = DeferredContainer<MixedArrayObject>;
+using MixedArrayObjectPtr = DeferredContainer<MixedArrayObject>; using OutputMixedArrayObjectPtr = OutputPointer<MixedArrayObjectPtr>;
 
 class ObjectPtr;
 class StringObjectPtr; using OutputStringObjectPtr = OutputPointer<StringObjectPtr>;

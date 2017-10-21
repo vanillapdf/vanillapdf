@@ -5,6 +5,7 @@
 #include "utils/unknown_interface.h"
 
 #include "syntax/objects/object.h"
+#include "syntax/objects/array_object.h"
 
 #include <type_traits>
 #include <memory>
@@ -19,6 +20,7 @@ public:
 		instantiation_of<Deferred, T>::value ||
 		instantiation_of<DeferredContainer, T>::value ||
 		instantiation_of<DeferredIterator, T>::value ||
+		instantiation_of<DeferredArrayObject, T>::value ||
 		std::is_base_of<syntax::Object, typename T::deferred_ptr_type>::value,
 		"Output pointer requires template parameter to be either Deferred instance or derived from Object");
 

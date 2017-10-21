@@ -158,6 +158,10 @@ private:
 	void SquashTableSpace(XrefChainPtr xref);
 	void CompressXref(XrefChainPtr xref);
 
+	void ApplyWatermark(XrefChainPtr chain);
+	void ApplyWatermarkPageNode(DictionaryObjectPtr obj);
+	void ApplyWatermarkContentStream(StreamObjectPtr obj);
+
 	XrefBasePtr FindPreviousXref(XrefChainPtr chain, XrefBasePtr source);
 
 	void InitializeReferences(ObjectPtr source);
