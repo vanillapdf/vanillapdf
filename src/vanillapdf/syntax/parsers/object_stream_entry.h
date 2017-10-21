@@ -4,7 +4,7 @@
 #include "utils/constants.h"
 #include "syntax/objects/object.h"
 
-#include <vector>
+#include <list>
 
 namespace vanillapdf {
 namespace syntax {
@@ -15,7 +15,7 @@ struct ObjectStreamEntry {
 	ObjectPtr object;
 };
 
-using ObjectStreamEntries = std::vector<ObjectStreamEntry>;
+using ObjectStreamEntries = std::list<ObjectStreamEntry>;
 
 } // syntax
 } // vanillapdf

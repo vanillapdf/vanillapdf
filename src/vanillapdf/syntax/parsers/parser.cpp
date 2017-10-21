@@ -381,7 +381,6 @@ ObjectStreamEntry Parser::ReadObjectStreamHeader() {
 
 ObjectStreamEntries Parser::ReadObjectStreamHeaders(types::size_type size) {
 	ObjectStreamEntries result;
-	result.reserve(size);
 	for (decltype(size) i = 0; i < size; ++i) {
 		auto item = ReadObjectStreamHeader();
 		result.push_back(item);

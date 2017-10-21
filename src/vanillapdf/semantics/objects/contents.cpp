@@ -8,6 +8,7 @@
 
 #include "utils/streams/input_stream.h"
 
+#include <list>
 #include <numeric>
 #include <sstream>
 
@@ -35,7 +36,7 @@ BaseInstructionCollectionPtr Contents::Instructions(void) const {
 		return m_instructions;
 	}
 
-	std::vector<ContentStreamPtr> contents;
+	std::list<ContentStreamPtr> contents;
 	if (ObjectUtils::IsType<StreamObjectPtr>(_obj)) {
 		auto converted = ObjectUtils::ConvertTo<StreamObjectPtr>(_obj);
 		auto content_stream = make_deferred<ContentStream>(converted);
