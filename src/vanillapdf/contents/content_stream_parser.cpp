@@ -43,12 +43,14 @@ InlineImageObjectPtr ContentStreamParser::ReadInlineImageObject(void) {
 			auto name = ReadName();
 			auto value = ReadDirectObject();
 
-			if (value->GetType() == Object::Type::Null)
+			if (value->GetType() == Object::Type::Null) {
 				continue;
+			}
 
 			auto containable_ptr = dynamic_cast<ContainableObject*>(value.get());
-			if (nullptr == containable_ptr)
+			if (nullptr == containable_ptr) {
 				throw ConversionExceptionFactory<ContainableObject>::Construct(value);
+			}
 
 			image_dictionary->Insert(name, ContainableObjectPtr(containable_ptr));
 			continue;

@@ -22,7 +22,6 @@ public:
 	types::size_type GetOperandsSize() const;
 	syntax::ObjectPtr GetOperandAt(types::size_type at) const;
 
-	virtual InstructionBase::Type GetInstructionType(void) const noexcept override;
 	virtual OperationBase::Type GetOperationType(void) const noexcept override;
 	virtual std::string ToPdf() const override;
 
@@ -32,10 +31,6 @@ private:
 };
 
 typedef std::vector<OperationGenericPtr> GenericOperationCollection;
-
-inline InstructionBase::Type OperationGeneric::GetInstructionType(void) const noexcept {
-	return InstructionBase::Type::Operation;
-}
 
 inline OperationBase::Type OperationGeneric::GetOperationType(void) const noexcept {
 	return OperationBase::Type::Generic;
