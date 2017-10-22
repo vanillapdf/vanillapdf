@@ -17,6 +17,7 @@ public:
 	NameObject();
 	explicit NameObject(BufferPtr name);
 	explicit NameObject(const char * chars);
+	explicit NameObject(const std::string& chars);
 	virtual ~NameObject();
 
 	virtual void ObserveeChanged(IModifyObservable*) override;
@@ -264,6 +265,7 @@ extern const syntax::NameObject Location;
 extern const syntax::NameObject M;
 extern const syntax::NameObject ContactInfo;
 extern const syntax::NameObject Cert;
+extern const syntax::NameObject BaseFont;
 
 } // Constant
 } // Name

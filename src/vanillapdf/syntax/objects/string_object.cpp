@@ -26,7 +26,7 @@ LiteralStringObject::LiteralStringObject(const char * value)
 	: LiteralStringObject(make_deferred<Buffer>(value)) {
 }
 
-LiteralStringObject::LiteralStringObject(std::string value)
+LiteralStringObject::LiteralStringObject(const std::string& value)
 	: LiteralStringObject(make_deferred<Buffer>(value)) {
 }
 
@@ -38,7 +38,7 @@ HexadecimalStringObject::HexadecimalStringObject(const char * value)
 	: HexadecimalStringObject(make_deferred<Buffer>(value)) {
 }
 
-HexadecimalStringObject::HexadecimalStringObject(std::string value)
+HexadecimalStringObject::HexadecimalStringObject(const std::string& value)
 	: HexadecimalStringObject(make_deferred<Buffer>(value)) {
 }
 

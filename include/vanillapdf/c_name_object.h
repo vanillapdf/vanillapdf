@@ -543,6 +543,7 @@ extern "C"
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_M;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_ContactInfo;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Cert;
+	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_BaseFont;
 
 	/** @} */
 

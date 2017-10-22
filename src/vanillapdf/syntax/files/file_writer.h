@@ -161,7 +161,7 @@ private:
 	void ApplyWatermark(XrefChainPtr chain);
 	void ApplyWatermarkPageNode(DictionaryObjectPtr obj);
 	void ApplyWatermarkPrependSave(StreamObjectPtr obj);
-	void ApplyWatermarkContentStream(StreamObjectPtr obj);
+	void ApplyWatermarkContentStream(StreamObjectPtr obj, const std::string& watermark_font);
 
 	XrefBasePtr FindPreviousXref(XrefChainPtr chain, XrefBasePtr source);
 

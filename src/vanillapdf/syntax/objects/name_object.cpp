@@ -19,6 +19,11 @@ NameObject::NameObject(const char * value)
 	: NameObject(make_deferred<Buffer>(value)) {
 }
 
+NameObject::NameObject(const std::string& chars)
+	: NameObject(make_deferred<Buffer>(chars)) {
+
+}
+
 NameObject::NameObject(BufferPtr name) : _value(name) {
 	_value->Subscribe(this);
 	_value->SetInitialized();
@@ -384,3 +389,4 @@ DECLARE_CONST_NAME(Location);
 DECLARE_CONST_NAME(M);
 DECLARE_CONST_NAME(ContactInfo);
 DECLARE_CONST_NAME(Cert);
+DECLARE_CONST_NAME(BaseFont);

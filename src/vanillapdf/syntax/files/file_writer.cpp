@@ -3,6 +3,7 @@
 #include "utils/character.h"
 #include "utils/math_utils.h"
 #include "utils/license_info.h"
+#include "utils/library_info.h"
 
 #include "syntax/files/file_writer.h"
 #include "syntax/files/file.h"
@@ -1362,13 +1363,39 @@ void FileWriter::ApplyWatermarkPageNode(DictionaryObjectPtr obj) {
 	}
 
 	if (obj->Contains(constant::Name::Contents)) {
+
+		if (!obj->Contains(constant::Name::Resources)) {
+
+			DictionaryObjectPtr resources;
+			obj->Insert(constant::Name::Resources, resources);
+		}
+
+		auto resources = obj->FindAs<DictionaryObjectPtr>(constant::Name::Resources);
+		if (!resources->Contains(constant::Name::Font)) {
+
+			DictionaryObjectPtr font;
+			resources->Insert(constant::Name::Resources, font);
+		}
+
+		auto font = resources->FindAs<DictionaryObjectPtr>(constant::Name::Font);
+
+		DictionaryObjectPtr watermark_font;
+		watermark_font->Insert(constant::Name::Type, constant::Name::Font.Clone());
+		watermark_font->Insert(constant::Name::Subtype, constant::Name::Type1.Clone());
+		watermark_font->Insert(constant::Name::BaseFont, make_deferred<NameObject>("Helvetica"));
+
+		std::string watermark_font_name_string = "VanillaWatermarkFont";
+		auto watermark_font_name = make_deferred<NameObject>(watermark_font_name_string);
+
+		font->Insert(watermark_font_name, watermark_font);
+
 		auto contents = obj->Find(constant::Name::Contents);
 
 		if (ObjectUtils::IsType<StreamObjectPtr>(contents)) {
 			auto content_stream = ObjectUtils::ConvertTo<StreamObjectPtr>(contents);
 
 			ApplyWatermarkPrependSave(content_stream);
-			ApplyWatermarkContentStream(content_stream);
+			ApplyWatermarkContentStream(content_stream, watermark_font_name_string);
 		}
 
 		if (ObjectUtils::IsType<ArrayObjectPtr<StreamObjectPtr>>(contents)) {
@@ -1380,7 +1407,7 @@ void FileWriter::ApplyWatermarkPageNode(DictionaryObjectPtr obj) {
 				auto last_stream = content_array->At(content_array_size - 1);
 
 				ApplyWatermarkPrependSave(first_stream);
-				ApplyWatermarkContentStream(last_stream);
+				ApplyWatermarkContentStream(last_stream, watermark_font_name_string);
 			}
 		}
 	}
@@ -1399,7 +1426,11 @@ void FileWriter::ApplyWatermarkPrependSave(StreamObjectPtr obj) {
 	body->insert(body.begin(), save_operation_text.begin(), save_operation_text.end());
 }
 
-void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj) {
+void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj, const std::string& watermark_font) {
+
+	const char WATERMARK_TEXT[] = "This file was created by trial version of software Vanilla.PDF and should ONLY be used for evaluation purpose.";
+	const char COPYRIGHT_TEXT[] = "Copyright";
+	const char COMPANY_TEXT[] = "Vanilla.PDF Labs";
 
 	auto begin_text_operation = make_deferred<contents::OperationBeginText>();
 	auto end_text_operation = make_deferred<contents::OperationEndText>();
@@ -1416,15 +1447,20 @@ void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj) {
 	nonstroking_rgb->SetBlue(make_deferred<RealObject>(0.4));
 
 	auto text_font_operation = make_deferred<contents::OperationTextFont>();
-	text_font_operation->SetName(make_deferred<NameObject>("TT1"));
-	text_font_operation->SetScale(make_deferred<IntegerObject>(20));
+	text_font_operation->SetName(make_deferred<NameObject>(watermark_font));
+	text_font_operation->SetScale(make_deferred<IntegerObject>(8));
 
 	auto text_position_operation = make_deferred<contents::OperationTextTranslate>();
-	text_position_operation->SetX(make_deferred<IntegerObject>(50));
-	text_position_operation->SetY(make_deferred<IntegerObject>(50));
+	text_position_operation->SetX(make_deferred<IntegerObject>(20));
+	text_position_operation->SetY(make_deferred<IntegerObject>(20));
+
+	std::stringstream watermark_text_stream;
+	watermark_text_stream << WATERMARK_TEXT << " " << COPYRIGHT_TEXT << " " << LibraryInfo::BuildYear() << " " << COMPANY_TEXT;
+
+	auto watermark_text = watermark_text_stream.str();
 
 	auto text_show_operation = make_deferred<contents::OperationTextShow>();
-	text_show_operation->SetValue(make_deferred<LiteralStringObject>("This file dude!"));
+	text_show_operation->SetValue(make_deferred<LiteralStringObject>(watermark_text));
 
 	contents::BaseInstructionCollectionPtr instructions;
 	instructions->push_back(restore_state_operation);
