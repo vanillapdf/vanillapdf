@@ -311,10 +311,16 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 		bool has_params = _header->Contains(constant::Name::DecodeParms);
 		if (has_params) {
 			params = _header->FindAs<MixedArrayObjectPtr>(constant::Name::DecodeParms);
-			assert(filter_array->Size() == params->Size());
+
+			auto filters_size = filter_array->Size();
+			auto params_size = params->Size();
+
+			assert(filters_size == params_size && "Filter size does not correspond to the params size");
+			UNUSED(filters_size); UNUSED(params_size);
 		}
 
-		for (unsigned int i = 0; i < filter_array->Size(); ++i) {
+		auto filters_size = filter_array->Size();
+		for (decltype(filters_size) i = 0; i < filters_size; ++i) {
 			auto current_filter = (*filter_array)[i];
 			if (current_filter == constant::Name::Crypt) {
 				continue;
@@ -322,17 +328,19 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 
 			auto filter = FilterBase::GetFilterByName(current_filter);
 
-			if (has_params) {
-				auto current_param = (*params)[i];
-				bool is_param_null = ObjectUtils::IsType<NullObjectPtr>(current_param);
-				if (is_param_null) {
-					decoded_body = filter->Encode(decoded_body);
+			if (has_params && i < params->Size()) {
+				auto current_param = params->At(i);
+				bool is_param_dictionary = ObjectUtils::IsType<DictionaryObjectPtr>(current_param);
+				if (is_param_dictionary) {
+					auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(current_param);
+					decoded_body = filter->Encode(decoded_body, dict);
 					continue;
 				}
 
-				auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(current_param);
-				decoded_body = filter->Encode(decoded_body, dict);
-				continue;
+				bool is_param_null = ObjectUtils::IsType<NullObjectPtr>(current_param);
+
+				assert(is_param_null && "Unknown filter parameter type");
+				UNUSED(is_param_null);
 			}
 
 			decoded_body = filter->Encode(decoded_body);
