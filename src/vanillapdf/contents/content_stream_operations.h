@@ -16,6 +16,7 @@ namespace contents {
 
 class OperationBeginText : public OperationBase {
 public:
+	OperationBeginText() = default;
 	explicit OperationBeginText(const std::vector<syntax::ObjectPtr>& operands);
 
 	virtual Type GetOperationType(void) const noexcept override { return Type::BeginText; }
@@ -24,14 +25,118 @@ public:
 
 class OperationEndText : public OperationBase {
 public:
+	OperationEndText() = default;
 	explicit OperationEndText(const std::vector<syntax::ObjectPtr>& operands);
 
 	virtual Type GetOperationType(void) const noexcept override { return Type::EndText; }
 	virtual std::string ToPdf() const override;
 };
 
+class OperationSaveGraphicsState : public OperationBase {
+public:
+	OperationSaveGraphicsState() = default;
+	explicit OperationSaveGraphicsState(const std::vector<syntax::ObjectPtr>& operands);
+
+	virtual Type GetOperationType(void) const noexcept override { return Type::SaveGraphicsState; }
+	virtual std::string ToPdf() const override;
+};
+
+class OperationRestoreGraphicsState : public OperationBase {
+public:
+	OperationRestoreGraphicsState() = default;
+	explicit OperationRestoreGraphicsState(const std::vector<syntax::ObjectPtr>& operands);
+
+	virtual Type GetOperationType(void) const noexcept override { return Type::RestoreGraphicsState; }
+	virtual std::string ToPdf() const override;
+};
+
+class OperationSetStrokingColorSpaceRGB : public OperationBase, public IModifyObserver {
+public:
+	OperationSetStrokingColorSpaceRGB() = default;
+	explicit OperationSetStrokingColorSpaceRGB(const std::vector<syntax::ObjectPtr>& operands);
+
+	virtual Type GetOperationType(void) const noexcept override { return Type::SetStrokingColorSpaceRGB; }
+	virtual std::string ToPdf() const override;
+	syntax::RealObjectPtr GetRed() const { return m_red; }
+	syntax::RealObjectPtr GetGreen() const { return m_green; }
+	syntax::RealObjectPtr GetBlue() const { return m_blue; }
+
+	void SetRed(syntax::RealObjectPtr value) {
+		m_red->Unsubscribe(this);
+		m_red = value;
+		m_red->Subscribe(this);
+		OnChanged();
+	}
+
+	void SetGreen(syntax::RealObjectPtr value) {
+		m_green->Unsubscribe(this);
+		m_green = value;
+		m_green->Subscribe(this);
+		OnChanged();
+	}
+
+	void SetBlue(syntax::RealObjectPtr value) {
+		m_blue->Unsubscribe(this);
+		m_blue = value;
+		m_blue->Subscribe(this);
+		OnChanged();
+	}
+
+	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+
+	~OperationSetStrokingColorSpaceRGB();
+
+private:
+	syntax::RealObjectPtr m_red;
+	syntax::RealObjectPtr m_green;
+	syntax::RealObjectPtr m_blue;
+};
+
+class OperationSetNonstrokingColorSpaceRGB : public OperationBase, public IModifyObserver {
+public:
+	OperationSetNonstrokingColorSpaceRGB() = default;
+	explicit OperationSetNonstrokingColorSpaceRGB(const std::vector<syntax::ObjectPtr>& operands);
+
+	virtual Type GetOperationType(void) const noexcept override { return Type::SetNonstrokingColorSpaceRGB; }
+	virtual std::string ToPdf() const override;
+	syntax::RealObjectPtr GetRed() const { return m_red; }
+	syntax::RealObjectPtr GetGreen() const { return m_green; }
+	syntax::RealObjectPtr GetBlue() const { return m_blue; }
+
+	void SetRed(syntax::RealObjectPtr value) {
+		m_red->Unsubscribe(this);
+		m_red = value;
+		m_red->Subscribe(this);
+		OnChanged();
+	}
+
+	void SetGreen(syntax::RealObjectPtr value) {
+		m_green->Unsubscribe(this);
+		m_green = value;
+		m_green->Subscribe(this);
+		OnChanged();
+	}
+
+	void SetBlue(syntax::RealObjectPtr value) {
+		m_blue->Unsubscribe(this);
+		m_blue = value;
+		m_blue->Subscribe(this);
+		OnChanged();
+	}
+
+	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+
+	~OperationSetNonstrokingColorSpaceRGB();
+
+private:
+	syntax::RealObjectPtr m_red;
+	syntax::RealObjectPtr m_green;
+	syntax::RealObjectPtr m_blue;
+};
+
 class OperationTextFont : public OperationBase, public IModifyObserver {
 public:
+	OperationTextFont() = default;
 	explicit OperationTextFont(const std::vector<syntax::ObjectPtr>& operands);
 
 	virtual Type GetOperationType(void) const noexcept override { return Type::TextFont; }
@@ -62,8 +167,42 @@ private:
 	syntax::IntegerObjectPtr m_scale;
 };
 
+class OperationTextTranslate : public OperationBase, public IModifyObserver {
+public:
+	OperationTextTranslate() = default;
+	explicit OperationTextTranslate(const std::vector<syntax::ObjectPtr>& operands);
+
+	virtual Type GetOperationType(void) const noexcept override { return Type::TextTranslate; }
+	virtual std::string ToPdf() const override;
+	syntax::IntegerObjectPtr GetX() const { return m_x; }
+	syntax::IntegerObjectPtr GetY() const { return m_y; }
+
+	void SetX(syntax::IntegerObjectPtr value) {
+		m_x->Unsubscribe(this);
+		m_x = value;
+		m_x->Subscribe(this);
+		OnChanged();
+	}
+
+	void SetY(syntax::IntegerObjectPtr value) {
+		m_y->Unsubscribe(this);
+		m_y = value;
+		m_y->Subscribe(this);
+		OnChanged();
+	}
+
+	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+
+	~OperationTextTranslate();
+
+private:
+	syntax::IntegerObjectPtr m_x;
+	syntax::IntegerObjectPtr m_y;
+};
+
 class OperationTextShow : public OperationBase, public IModifyObserver {
 public:
+	OperationTextShow() = default;
 	explicit OperationTextShow(const std::vector<syntax::ObjectPtr>& operands);
 
 	virtual Type GetOperationType(void) const noexcept override { return Type::TextShow; }
@@ -86,6 +225,7 @@ private:
 
 class OperationTextShowArray : public OperationBase, public IModifyObserver {
 public:
+	OperationTextShowArray() = default;
 	explicit OperationTextShowArray(const std::vector<syntax::ObjectPtr>& operands);
 
 	virtual Type GetOperationType(void) const noexcept override { return Type::TextShowArray; }
@@ -108,6 +248,7 @@ private:
 
 class OperationBeginInlineImageObject : public OperationBase {
 public:
+	OperationBeginInlineImageObject() = default;
 	explicit OperationBeginInlineImageObject(const std::vector<syntax::ObjectPtr>& operands);
 	virtual Type GetOperationType(void) const noexcept override { return Type::BeginInlineImageObject; }
 	virtual std::string ToPdf() const override;
@@ -115,6 +256,7 @@ public:
 
 class OperationBeginInlineImageData : public OperationBase {
 public:
+	OperationBeginInlineImageData() = default;
 	explicit OperationBeginInlineImageData(const std::vector<syntax::ObjectPtr>& operands);
 	virtual Type GetOperationType(void) const noexcept override { return Type::BeginInlineImageData; }
 	virtual std::string ToPdf() const override;
@@ -122,6 +264,7 @@ public:
 
 class OperationEndInlineImageObject : public OperationBase {
 public:
+	OperationEndInlineImageObject() = default;
 	explicit OperationEndInlineImageObject(const std::vector<syntax::ObjectPtr>& operands);
 	virtual Type GetOperationType(void) const noexcept override { return Type::EndInlineImageObject; }
 	virtual std::string ToPdf() const override;

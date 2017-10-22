@@ -160,6 +160,7 @@ private:
 
 	void ApplyWatermark(XrefChainPtr chain);
 	void ApplyWatermarkPageNode(DictionaryObjectPtr obj);
+	void ApplyWatermarkPrependSave(StreamObjectPtr obj);
 	void ApplyWatermarkContentStream(StreamObjectPtr obj);
 
 	XrefBasePtr FindPreviousXref(XrefChainPtr chain, XrefBasePtr source);

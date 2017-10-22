@@ -1367,6 +1367,7 @@ void FileWriter::ApplyWatermarkPageNode(DictionaryObjectPtr obj) {
 		if (ObjectUtils::IsType<StreamObjectPtr>(contents)) {
 			auto content_stream = ObjectUtils::ConvertTo<StreamObjectPtr>(contents);
 
+			ApplyWatermarkPrependSave(content_stream);
 			ApplyWatermarkContentStream(content_stream);
 		}
 
@@ -1375,42 +1376,79 @@ void FileWriter::ApplyWatermarkPageNode(DictionaryObjectPtr obj) {
 			auto content_array_size = content_array->Size();
 
 			if (content_array_size > 0) {
+				auto first_stream = content_array->At(0);
 				auto last_stream = content_array->At(content_array_size - 1);
+
+				ApplyWatermarkPrependSave(first_stream);
 				ApplyWatermarkContentStream(last_stream);
 			}
 		}
 	}
 }
 
-void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj) {
+void FileWriter::ApplyWatermarkPrependSave(StreamObjectPtr obj) {
+
+	auto save_operation = make_deferred<contents::OperationSaveGraphicsState>();
+
+	std::stringstream ss;
+	ss << save_operation->ToPdf() << std::endl;
+
+	auto save_operation_text = ss.str();
 
 	auto body = obj->GetBody();
-	auto input_stream = body->ToInputStream();
+	body->insert(body.begin(), save_operation_text.begin(), save_operation_text.end());
+}
+
+void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj) {
+
+	auto begin_text_operation = make_deferred<contents::OperationBeginText>();
+	auto end_text_operation = make_deferred<contents::OperationEndText>();
+	auto restore_state_operation = make_deferred<contents::OperationRestoreGraphicsState>();
+
+	auto stroking_rgb = make_deferred<contents::OperationSetStrokingColorSpaceRGB>();
+	stroking_rgb->SetRed(make_deferred<RealObject>(1));
+	stroking_rgb->SetGreen(make_deferred<RealObject>(0));
+	stroking_rgb->SetBlue(make_deferred<RealObject>(0.4));
+
+	auto nonstroking_rgb = make_deferred<contents::OperationSetNonstrokingColorSpaceRGB>();
+	nonstroking_rgb->SetRed(make_deferred<RealObject>(1));
+	nonstroking_rgb->SetGreen(make_deferred<RealObject>(0));
+	nonstroking_rgb->SetBlue(make_deferred<RealObject>(0.4));
+
+	auto text_font_operation = make_deferred<contents::OperationTextFont>();
+	text_font_operation->SetName(make_deferred<NameObject>("TT1"));
+	text_font_operation->SetScale(make_deferred<IntegerObject>(20));
+
+	auto text_position_operation = make_deferred<contents::OperationTextTranslate>();
+	text_position_operation->SetX(make_deferred<IntegerObject>(50));
+	text_position_operation->SetY(make_deferred<IntegerObject>(50));
+
+	auto text_show_operation = make_deferred<contents::OperationTextShow>();
+	text_show_operation->SetValue(make_deferred<LiteralStringObject>("This file dude!"));
 
 	contents::BaseInstructionCollectionPtr instructions;
-
-	std::vector<ObjectPtr> begin_text_parameters;
-	auto begin_text_operation = make_deferred<contents::OperationBeginText>(begin_text_parameters);
+	instructions->push_back(restore_state_operation);
 	instructions->push_back(begin_text_operation);
-
-	auto watermark_text = make_deferred<LiteralStringObject>("This file dude!");
-
-	std::vector<ObjectPtr> text_show_parameters;
-	text_show_parameters.push_back(watermark_text);
-
-	auto text_show_operation = make_deferred<contents::OperationTextShow>(text_show_parameters);
+	instructions->push_back(text_font_operation);
+	instructions->push_back(stroking_rgb);
+	instructions->push_back(nonstroking_rgb);
+	instructions->push_back(text_position_operation);
 	instructions->push_back(text_show_operation);
-
-	std::vector<ObjectPtr> end_text_parameters;
-	auto end_text_operation = make_deferred<contents::OperationEndText>(end_text_parameters);
 	instructions->push_back(end_text_operation);
 
 	std::stringstream ss;
+
+	// Separate from content
+	ss << std::endl;
+
+	// Serialize instructions
 	for (auto instruction : instructions) {
 		ss << instruction->ToPdf() << std::endl;
 	}
 
 	auto watermark_body = ss.str();
+
+	auto body = obj->GetBody();
 	body->insert(body.end(), watermark_body.begin(), watermark_body.end());
 }
 
