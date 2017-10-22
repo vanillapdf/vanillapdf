@@ -518,8 +518,26 @@ void File::ReadXref(types::stream_offset offset) {
 		_xref->Append(xref);
 
 		auto trailer_dictionary = xref->GetTrailerDictionary();
+		if (!trailer_dictionary->Contains(constant::Name::Prev)) {
+			break;
+		}
+
+		auto prev = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::Prev);
+		current_offset = prev->GetIntegerValue();
+	}
+
+	// After all regular files have been parsed look for a hybrid entry
+	// In file "annotation-border-styles.pdf" there is object defined in the
+	// section that would not have been parsed
+
+	for (auto& xref : _xref) {
+
+		if (!ConvertUtils<XrefBasePtr>::IsType<XrefTablePtr>(xref)) {
+			continue;
+		}
+
+		auto trailer_dictionary = xref->GetTrailerDictionary();
 		if (trailer_dictionary->Contains(constant::Name::XRefStm)) {
-			auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(xref);
 			auto stm_offset_obj = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::XRefStm);
 			auto stm_offset = stm_offset_obj->GetIntegerValue();
 			auto hybrid_xref = stream.ReadXref(stm_offset);
@@ -529,15 +547,10 @@ void File::ReadXref(types::stream_offset offset) {
 			}
 
 			auto hybrid_xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(hybrid_xref);
+
+			auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(xref);
 			xref_table->SetHybridStream(hybrid_xref_stream);
 		}
-
-		if (!trailer_dictionary->Contains(constant::Name::Prev)) {
-			break;
-		}
-
-		auto prev = trailer_dictionary->FindAs<IntegerObjectPtr>(constant::Name::Prev);
-		current_offset = prev->GetIntegerValue();
 	}
 }
 
