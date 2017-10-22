@@ -5,6 +5,8 @@
 #include "syntax/objects/containable.h"
 
 #include "syntax/utils/syntax_fwd.h"
+#include "syntax/utils/output_pointer.h"
+
 #include "utils/base_iterator.h"
 
 #include <map>
