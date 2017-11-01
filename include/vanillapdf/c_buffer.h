@@ -27,6 +27,8 @@ extern "C"
 	* @{
 	*/
 
+	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_Create(string_type data, size_type size, BufferHandle* result);
+
 	/**
 	* \brief Get data content from buffer
 	*/
@@ -36,6 +38,8 @@ extern "C"
 	* \brief Set new data content
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_SetData(BufferHandle handle, string_type data, size_type size);
+
+	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToInputStream(BufferHandle handle, InputStreamInterfaceHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release

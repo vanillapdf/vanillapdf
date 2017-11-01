@@ -59,6 +59,12 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(XrefChain);
 	DECLARE_OBJECT_HANDLE(XrefChainIterator);
 
+	DECLARE_OBJECT_HANDLE(FilterBase);
+	DECLARE_OBJECT_HANDLE(FlateDecodeFilter);
+	DECLARE_OBJECT_HANDLE(DCTDecodeFilter);
+	DECLARE_OBJECT_HANDLE(ASCII85DecodeFilter);
+	DECLARE_OBJECT_HANDLE(ASCIIHexDecodeFilter);
+
 	#pragma endregion
 
 	#pragma region Contents
@@ -94,6 +100,9 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(SigningKey);
 	DECLARE_OBJECT_HANDLE(EncryptionKey);
 	DECLARE_OBJECT_HANDLE(PKCS12Key);
+
+	DECLARE_OBJECT_HANDLE(InputStreamInterface);
+	DECLARE_OBJECT_HANDLE(OutputStreamInterface);
 
 	#pragma endregion
 

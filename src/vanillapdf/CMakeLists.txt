@@ -29,9 +29,11 @@ set(VANILLAPDF_C_IMPLEMENTATION_SOURCES
 	implementation/c_fields.cpp
 	implementation/c_file.cpp
 	implementation/c_file_writer.cpp
+	implementation/c_filter.cpp
 	implementation/c_font.cpp
 	implementation/c_font_map.cpp
 	implementation/c_indirect_object_reference.cpp
+	implementation/c_input_stream_interface.cpp
 	implementation/c_integer_object.cpp
 	implementation/c_interactive_forms.cpp
 	implementation/c_library_info.cpp
@@ -41,6 +43,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SOURCES
 	implementation/c_null_object.cpp
 	implementation/c_object.cpp
 	implementation/c_outline.cpp
+	implementation/c_output_stream_interface.cpp
 	implementation/c_page_labels.cpp
 	implementation/c_page_object.cpp
 	implementation/c_page_tree.cpp
@@ -157,6 +160,7 @@ set(VANILLAPDF_UTILS_SOURCES
 	utils/streams/input_reverse_stream.cpp
 	utils/streams/input_stream.cpp
 	utils/streams/output_stream.cpp
+	utils/streams/stream_utils.cpp
 )
 
 set(VANILLAPDF_CONTENTS_HEADERS
@@ -298,6 +302,8 @@ set(VANILLAPDF_UTILS_HEADERS
 	
 	utils/streams/input_output_stream_interface.h
 	utils/streams/input_output_stream.h
+	
+	utils/streams/stream_utils.h
 )
 
 set(VANILLAPDF_INCLUDE_HEADERS
@@ -322,10 +328,12 @@ set(VANILLAPDF_INCLUDE_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_fields.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_file.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_file_writer.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_filter.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_font.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_font_map.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_handles.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_indirect_object_reference.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_input_stream_interface.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_integer_object.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_interactive_forms.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_library_info.h"
@@ -336,6 +344,7 @@ set(VANILLAPDF_INCLUDE_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_null_object.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_object.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_outline.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_output_stream_interface.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_page_labels.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_page_object.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_page_tree.h"

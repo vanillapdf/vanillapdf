@@ -40,6 +40,7 @@
     <ClInclude Include="..\include\vanillapdf\c_fields.h" />
     <ClInclude Include="..\include\vanillapdf\c_file.h" />
     <ClInclude Include="..\include\vanillapdf\c_file_writer.h" />
+    <ClInclude Include="..\include\vanillapdf\c_filter.h" />
     <ClInclude Include="..\include\vanillapdf\c_font.h" />
     <ClInclude Include="..\include\vanillapdf\c_font_map.h" />
     <ClInclude Include="..\include\vanillapdf\c_handles.h" />
@@ -53,6 +54,7 @@
     <ClInclude Include="..\include\vanillapdf\c_null_object.h" />
     <ClInclude Include="..\include\vanillapdf\c_object.h" />
     <ClInclude Include="..\include\vanillapdf\c_outline.h" />
+    <ClInclude Include="..\include\vanillapdf\c_output_stream_interface.h" />
     <ClInclude Include="..\include\vanillapdf\c_page_labels.h" />
     <ClInclude Include="..\include\vanillapdf\c_page_object.h" />
     <ClInclude Include="..\include\vanillapdf\c_page_tree.h" />
@@ -61,6 +63,7 @@
     <ClInclude Include="..\include\vanillapdf\c_real_object.h" />
     <ClInclude Include="..\include\vanillapdf\c_rectangle.h" />
     <ClInclude Include="..\include\vanillapdf\c_signing_key.h" />
+    <ClInclude Include="..\include\vanillapdf\c_input_stream_interface.h" />
     <ClInclude Include="..\include\vanillapdf\c_stream_object.h" />
     <ClInclude Include="..\include\vanillapdf\c_string_object.h" />
     <ClInclude Include="..\include\vanillapdf\c_logging.h" />
@@ -192,6 +195,7 @@
     <ClInclude Include="..\src\vanillapdf\utils\streams\output_stream.h" />
     <ClInclude Include="..\src\vanillapdf\utils\streams\output_stream_interface.h" />
     <ClInclude Include="..\src\vanillapdf\utils\streams\ranged_stream_buffer.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\streams\stream_utils.h" />
     <ClInclude Include="..\src\vanillapdf\utils\template_utils.h" />
     <ClInclude Include="..\src\vanillapdf\utils\time_utils.h" />
     <ClInclude Include="..\src\vanillapdf\utils\unknown_interface.h" />
@@ -224,9 +228,11 @@
     <ClCompile Include="..\src\vanillapdf\implementation\c_fields.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\c_file.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\c_file_writer.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_filter.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\c_font.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\c_font_map.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\c_indirect_object_reference.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_input_stream_interface.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\c_integer_object.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\c_interactive_forms.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\c_library_info.cpp" />
@@ -236,6 +242,7 @@
     <ClCompile Include="..\src\vanillapdf\implementation\c_null_object.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\c_object.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\c_outline.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\c_output_stream_interface.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\c_page_labels.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\c_page_object.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\c_page_tree.cpp" />
@@ -331,6 +338,7 @@
     <ClCompile Include="..\src\vanillapdf\utils\streams\input_reverse_stream.cpp" />
     <ClCompile Include="..\src\vanillapdf\utils\streams\input_stream.cpp" />
     <ClCompile Include="..\src\vanillapdf\utils\streams\output_stream.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\streams\stream_utils.cpp" />
     <ClCompile Include="..\src\vanillapdf\utils\time_utils.cpp" />
     <ClCompile Include="..\src\vanillapdf\utils\unknown_interface.cpp" />
     <ClCompile Include="..\src\vanillapdf\utils\misc_utils.cpp" />

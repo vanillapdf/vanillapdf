@@ -636,6 +636,18 @@
     <ClInclude Include="..\include\vanillapdf\c_vanillapdf_api.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\c_filter.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\vanillapdf\utils\streams\stream_utils.h">
+      <Filter>Header Files\utils\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\c_input_stream_interface.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\c_output_stream_interface.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\vanillapdf\contents\content_stream_objects.cpp">
@@ -1024,6 +1036,18 @@
     </ClCompile>
     <ClCompile Include="..\src\vanillapdf\utils\resource.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\c_filter.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\utils\streams\stream_utils.cpp">
+      <Filter>Source Files\utils\streams</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\c_input_stream_interface.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\c_output_stream_interface.cpp">
+      <Filter>Source Files\implementation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

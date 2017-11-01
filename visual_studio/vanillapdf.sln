@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlacklistManager", "..\src\BlacklistManager\BlacklistManager.csproj", "{9ED07902-42A1-4DB2-AF9A-270108AC89AE}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vanillapdf.net", "..\src\vanillapdf.net\vanillapdf.net.csproj", "{A42B54B2-D79C-479B-83A5-066B53C0F3F4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vanillapdf.net.test", "..\src\vanillapdf.net.test\vanillapdf.net.test.csproj", "{41D649DF-1CF9-4329-B89C-7276CA714B97}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vanillapdf.filter", "vanillapdf.filter.vcxproj", "{63072F81-D6FB-483D-BC55-F9BECBC6C1D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -105,6 +107,16 @@ Global
 		{41D649DF-1CF9-4329-B89C-7276CA714B97}.release|Win32.Build.0 = Release|Any CPU
 		{41D649DF-1CF9-4329-B89C-7276CA714B97}.release|x64.ActiveCfg = Release|Any CPU
 		{41D649DF-1CF9-4329-B89C-7276CA714B97}.release|x64.Build.0 = Release|Any CPU
+		{63072F81-D6FB-483D-BC55-F9BECBC6C1D2}.debug|Any CPU.ActiveCfg = debug|Win32
+		{63072F81-D6FB-483D-BC55-F9BECBC6C1D2}.debug|Win32.ActiveCfg = debug|Win32
+		{63072F81-D6FB-483D-BC55-F9BECBC6C1D2}.debug|Win32.Build.0 = debug|Win32
+		{63072F81-D6FB-483D-BC55-F9BECBC6C1D2}.debug|x64.ActiveCfg = debug|x64
+		{63072F81-D6FB-483D-BC55-F9BECBC6C1D2}.debug|x64.Build.0 = debug|x64
+		{63072F81-D6FB-483D-BC55-F9BECBC6C1D2}.release|Any CPU.ActiveCfg = release|Win32
+		{63072F81-D6FB-483D-BC55-F9BECBC6C1D2}.release|Win32.ActiveCfg = release|Win32
+		{63072F81-D6FB-483D-BC55-F9BECBC6C1D2}.release|Win32.Build.0 = release|Win32
+		{63072F81-D6FB-483D-BC55-F9BECBC6C1D2}.release|x64.ActiveCfg = release|x64
+		{63072F81-D6FB-483D-BC55-F9BECBC6C1D2}.release|x64.Build.0 = release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

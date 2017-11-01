@@ -22,6 +22,7 @@
 #include "c_file_writer.h"
 #include "c_xref.h"
 #include "c_encryption.h"
+#include "c_filter.h"
 
 /* documents */
 #include "c_document.h"
@@ -76,5 +77,7 @@
 #include "c_errors.h"
 #include "c_pkcs12_key.h"
 #include "c_signing_key.h"
+#include "c_input_stream_interface.h"
+#include "c_output_stream_interface.h"
 
 #endif /* _C_VANILLAPDF_API_H */
