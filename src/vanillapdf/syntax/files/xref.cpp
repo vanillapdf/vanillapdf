@@ -291,7 +291,7 @@ bool XrefTable::HasHybridStream(void) const {
 XrefStreamPtr XrefTable::GetHybridStream(void) const {
 	bool has_stream = HasHybridStream();
 
-	assert(has_stream && "Getting unset value");
+	assert(has_stream && "Getting unset value"); UNUSED(has_stream);
 	return m_xref_stm;
 }
 
@@ -320,7 +320,7 @@ void XrefStream::SetTrailerDictionary(DictionaryObjectPtr dictionary) {
 StreamObjectPtr XrefStream::GetStreamObject(void) const {
 	bool has_stream = !_stream.empty();
 
-	assert(has_stream && "Stream not yet initialized");
+	assert(has_stream && "Stream not yet initialized"); UNUSED(has_stream);
 	return _stream;
 }
 
