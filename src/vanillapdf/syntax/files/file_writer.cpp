@@ -1618,7 +1618,7 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
 	}
 
 	// Clone original table trailer
-	auto last_xref = *xref->begin();
+	auto last_xref = xref->Back();
 	auto weak_file = last_xref->GetFile();
 	auto file = weak_file.GetReference();
 
@@ -1628,6 +1628,10 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
 
 	// Merge contents of the last xref section into new trailer
 	new_trailer->Merge(last_trailer);
+
+	if (new_trailer->Contains(constant::Name::Prev)) {
+		bool removed = new_trailer->Remove(constant::Name::Prev); UNUSED(removed);
+	}
 
 	new_xref->SetFile(weak_file);
 	new_xref->SetInitialized();

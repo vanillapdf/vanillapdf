@@ -51,12 +51,14 @@ public:
 
 	IteratorPtr Begin() const { return make_deferred<Iterator>(_list.begin()); }
 	IteratorPtr End(void) const { return make_deferred<Iterator>(_list.end()); }
+
 	void Append(value_type item) { _list.push_back(item); }
 	void Prepend(value_type item) { _list.push_front(item); }
 	void Reverse(void) { _list.reverse(); }
 	void Clear(void) { _list.clear(); }
 	types::size_type Size(void) const { return _list.size(); }
 	bool Empty(void) const { return _list.empty(); }
+	XrefBasePtr Back(void) const { return _list.back(); }
 
 	XrefUsedEntryBasePtr AllocateNewEntry();
 	bool ReleaseEntry(XrefUsedEntryBasePtr entry);
