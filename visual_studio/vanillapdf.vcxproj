@@ -436,8 +436,8 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.test\$(Configuration)\"
-
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.merge\$(Configuration)\"</Command>
+xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.merge\$(Configuration)\"
+xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.filter\$(Configuration)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='debug|x64'">
@@ -462,8 +462,8 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.merge\$(Co
     </Link>
     <PostBuildEvent>
       <Command>xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.test\$(Configuration)\"
-
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.merge\$(Configuration)\"</Command>
+xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.merge\$(Configuration)\"
+xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.filter\$(Configuration)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='release|Win32'">
@@ -491,8 +491,8 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.merge\$(Co
     </Link>
     <PostBuildEvent>
       <Command>xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.test\$(Configuration)\"
-
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.merge\$(Configuration)\"</Command>
+xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.merge\$(Configuration)\"
+xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.filter\$(Configuration)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='release|x64'">
@@ -520,8 +520,8 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.merge\$(Co
     </Link>
     <PostBuildEvent>
       <Command>xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.test\$(Configuration)\"
-
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.merge\$(Configuration)\"</Command>
+xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.merge\$(Configuration)\"
+xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.filter\$(Configuration)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
