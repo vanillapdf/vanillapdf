@@ -23,10 +23,10 @@ int main(int argc, char *argv[]) {
 	boolean_type is_encode = VANILLAPDF_RV_FALSE;
 	boolean_type is_decode = VANILLAPDF_RV_FALSE;
 
-	boolean_type flate_decode = VANILLAPDF_RV_FALSE;
-	boolean_type dct_decode = VANILLAPDF_RV_FALSE;
-	boolean_type ascii85_decode = VANILLAPDF_RV_FALSE;
-	boolean_type ascii_hex_decode = VANILLAPDF_RV_FALSE;
+	boolean_type is_flate_decode = VANILLAPDF_RV_FALSE;
+	boolean_type is_dct_decode = VANILLAPDF_RV_FALSE;
+	boolean_type is_ascii85_decode = VANILLAPDF_RV_FALSE;
+	boolean_type is_ascii_hex_decode = VANILLAPDF_RV_FALSE;
 
 #if (defined(DEBUG) && defined(COMPILER_MICROSOFT_VISUAL_STUDIO))
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -66,12 +66,12 @@ int main(int argc, char *argv[]) {
 		return VANILLAPDF_FILTER_ERROR_INVALID_PARAMETERS;
 	}
 
-	flate_decode = (strcmp(filter_type, "flate") == 0);
-	dct_decode = (strcmp(filter_type, "dct") == 0);
-	ascii85_decode = (strcmp(filter_type, "ascii85") == 0);
-	ascii_hex_decode = (strcmp(filter_type, "ascii_hex") == 0);
+	is_flate_decode = (strcmp(filter_type, "flate") == 0);
+	is_dct_decode = (strcmp(filter_type, "dct") == 0);
+	is_ascii85_decode = (strcmp(filter_type, "ascii85") == 0);
+	is_ascii_hex_decode = (strcmp(filter_type, "ascii_hex") == 0);
 
-	if (!flate_decode && !dct_decode && ! ascii85_decode && !ascii_hex_decode) {
+	if (!is_flate_decode && !is_dct_decode && !is_ascii85_decode && !is_ascii_hex_decode) {
 		print_help();
 		return VANILLAPDF_FILTER_ERROR_INVALID_PARAMETERS;
 	}
@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
 	RETURN_ERROR_IF_NOT_SUCCESS(InputStreamInterface_CreateFromFile(source_file, &input_stream));
 	RETURN_ERROR_IF_NOT_SUCCESS(InputStreamInterface_ToBuffer(input_stream, &input_data));
 
-	if (flate_decode) {
+	if (is_flate_decode) {
 		FlateDecodeFilterHandle filter_handle = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(FlateDecodeFilter_Create(&filter_handle));
 
@@ -102,6 +102,29 @@ int main(int argc, char *argv[]) {
 		}
 
 		RETURN_ERROR_IF_NOT_SUCCESS(FlateDecodeFilter_Release(filter_handle));
+	}
+
+	if (is_dct_decode) {
+		DCTDecodeFilterHandle filter_handle = NULL;
+		RETURN_ERROR_IF_NOT_SUCCESS(DCTDecodeFilter_Create(&filter_handle));
+
+		if (is_encode) {
+			BufferHandle encoded_data = NULL;
+
+			RETURN_ERROR_IF_NOT_SUCCESS(DCTDecodeFilter_Encode(filter_handle, input_data, &encoded_data));
+			RETURN_ERROR_IF_NOT_SUCCESS(OutputStreamInterface_WriteBuffer(output_stream, encoded_data));
+			RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(encoded_data));
+		}
+
+		if (is_decode) {
+			BufferHandle decoded_data = NULL;
+
+			RETURN_ERROR_IF_NOT_SUCCESS(DCTDecodeFilter_Decode(filter_handle, input_data, &decoded_data));
+			RETURN_ERROR_IF_NOT_SUCCESS(OutputStreamInterface_WriteBuffer(output_stream, decoded_data));
+			RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(decoded_data));
+		}
+
+		RETURN_ERROR_IF_NOT_SUCCESS(DCTDecodeFilter_Release(filter_handle));
 	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(OutputStreamInterface_Release(output_stream));
