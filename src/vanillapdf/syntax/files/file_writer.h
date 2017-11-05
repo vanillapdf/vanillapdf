@@ -159,9 +159,10 @@ private:
 	void CompressXref(XrefChainPtr xref);
 
 	void ApplyWatermark(XrefChainPtr chain);
-	void ApplyWatermarkPageNode(DictionaryObjectPtr obj);
+	DictionaryObjectPtr AddWatermarkFont(XrefChainPtr chain);
+	void ApplyWatermarkPageNode(DictionaryObjectPtr obj, DictionaryObjectPtr watermark_font);
 	void ApplyWatermarkPrependSave(StreamObjectPtr obj);
-	void ApplyWatermarkContentStream(StreamObjectPtr obj, const std::string& watermark_font);
+	void ApplyWatermarkContentStream(StreamObjectPtr obj, ArrayObjectPtr<IntegerObjectPtr> media_box, const std::string& watermark_font);
 
 	XrefBasePtr FindPreviousXref(XrefChainPtr chain, XrefBasePtr source);
 

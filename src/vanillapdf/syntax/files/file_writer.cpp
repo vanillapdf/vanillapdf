@@ -1,6 +1,8 @@
 #include "precompiled.h"
 
+#include "utils/resource.h"
 #include "utils/character.h"
+#include "utils/misc_utils.h"
 #include "utils/math_utils.h"
 #include "utils/license_info.h"
 #include "utils/library_info.h"
@@ -1340,18 +1342,35 @@ void FileWriter::ApplyWatermark(XrefChainPtr chain) {
 		return;
 	}
 
+	auto watermark_font = AddWatermarkFont(chain);
+
 	for (auto kid : *kids) {
-		ApplyWatermarkPageNode(kid);
+		ApplyWatermarkPageNode(kid, watermark_font);
 	}
 }
 
-void FileWriter::ApplyWatermarkPageNode(DictionaryObjectPtr obj) {
+DictionaryObjectPtr FileWriter::AddWatermarkFont(XrefChainPtr chain) {
+
+	DictionaryObjectPtr watermark_font;
+	watermark_font->Insert(constant::Name::Type, constant::Name::Font.Clone());
+	watermark_font->Insert(constant::Name::Subtype, constant::Name::Type1.Clone());
+	watermark_font->Insert(constant::Name::BaseFont, make_deferred<NameObject>("Helvetica"));
+	watermark_font->SetInitialized();
+
+	auto watermark_font_entry = chain->AllocateNewEntry();
+	watermark_font_entry->SetReference(watermark_font);
+	watermark_font_entry->SetInitialized();
+
+	return watermark_font;
+}
+
+void FileWriter::ApplyWatermarkPageNode(DictionaryObjectPtr obj, DictionaryObjectPtr watermark_font) {
 
 	if (obj->Contains(constant::Name::Kids)) {
 		auto kids = obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::Kids);
 
 		for (auto kid : *kids) {
-			ApplyWatermarkPageNode(kid);
+			ApplyWatermarkPageNode(kid, watermark_font);
 		}
 	}
 
@@ -1360,6 +1379,11 @@ void FileWriter::ApplyWatermarkPageNode(DictionaryObjectPtr obj) {
 		auto equal = type->Equals(constant::Name::Page) || type->Equals(constant::Name::Pages);
 
 		assert(equal && "Just take a look, the type should be page"); UNUSED(equal);
+	}
+
+	ArrayObjectPtr<IntegerObjectPtr> media_box;
+	if (obj->Contains(constant::Name::MediaBox)) {
+		media_box = obj->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::MediaBox);
 	}
 
 	if (obj->Contains(constant::Name::Contents)) {
@@ -1379,15 +1403,11 @@ void FileWriter::ApplyWatermarkPageNode(DictionaryObjectPtr obj) {
 
 		auto font = resources->FindAs<DictionaryObjectPtr>(constant::Name::Font);
 
-		DictionaryObjectPtr watermark_font;
-		watermark_font->Insert(constant::Name::Type, constant::Name::Font.Clone());
-		watermark_font->Insert(constant::Name::Subtype, constant::Name::Type1.Clone());
-		watermark_font->Insert(constant::Name::BaseFont, make_deferred<NameObject>("Helvetica"));
-
 		std::string watermark_font_name_string = "VanillaWatermarkFont";
 		auto watermark_font_name = make_deferred<NameObject>(watermark_font_name_string);
 
-		font->Insert(watermark_font_name, watermark_font);
+		auto font_reference = make_deferred<IndirectObjectReference>(watermark_font);
+		font->Insert(watermark_font_name, font_reference);
 
 		auto contents = obj->Find(constant::Name::Contents);
 
@@ -1395,7 +1415,7 @@ void FileWriter::ApplyWatermarkPageNode(DictionaryObjectPtr obj) {
 			auto content_stream = ObjectUtils::ConvertTo<StreamObjectPtr>(contents);
 
 			ApplyWatermarkPrependSave(content_stream);
-			ApplyWatermarkContentStream(content_stream, watermark_font_name_string);
+			ApplyWatermarkContentStream(content_stream, media_box, watermark_font_name_string);
 		}
 
 		if (ObjectUtils::IsType<ArrayObjectPtr<StreamObjectPtr>>(contents)) {
@@ -1407,7 +1427,7 @@ void FileWriter::ApplyWatermarkPageNode(DictionaryObjectPtr obj) {
 				auto last_stream = content_array->At(content_array_size - 1);
 
 				ApplyWatermarkPrependSave(first_stream);
-				ApplyWatermarkContentStream(last_stream, watermark_font_name_string);
+				ApplyWatermarkContentStream(last_stream, media_box, watermark_font_name_string);
 			}
 		}
 	}
@@ -1426,7 +1446,7 @@ void FileWriter::ApplyWatermarkPrependSave(StreamObjectPtr obj) {
 	body->insert(body.begin(), save_operation_text.begin(), save_operation_text.end());
 }
 
-void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj, const std::string& watermark_font) {
+void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj, ArrayObjectPtr<IntegerObjectPtr> media_box, const std::string& watermark_font) {
 
 	const char WATERMARK_TEXT[] = "This file was created by trial version of software Vanilla.PDF and should ONLY be used for evaluation purpose.";
 	const char COPYRIGHT_TEXT[] = "Copyright";
@@ -1471,6 +1491,51 @@ void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj, const std::str
 	instructions->push_back(text_position_operation);
 	instructions->push_back(text_show_operation);
 	instructions->push_back(end_text_operation);
+
+	// Watermark image
+	if (!media_box.empty() && media_box->Size() == 4) {
+
+		const int WATERMARK_WIDTH_RAW = 201;
+		const int WATERMARK_HEIGHT_RAW = 142;
+		const int WATERMARK_BPC = 8;
+		const int SCALE = 4;
+		const int OFFSET = 10;
+
+		// Rectangle structure 7.9.5
+		auto llx = media_box->At(0);
+		auto lly = media_box->At(1);
+		auto urx = media_box->At(2);
+		auto ury = media_box->At(3);
+
+		auto watermark_width = WATERMARK_WIDTH_RAW / SCALE;
+		auto watermark_height = WATERMARK_HEIGHT_RAW / SCALE;
+
+		auto watermark_x = urx->GetIntegerValue() - watermark_width - OFFSET;
+		auto watermark_y = ury->GetIntegerValue() - watermark_height - OFFSET;
+
+		auto transformation_matrix_operation = make_deferred<contents::OperationTransformationMatrix>();
+		transformation_matrix_operation->SetA(make_deferred<IntegerObject>(watermark_width));
+		transformation_matrix_operation->SetB(make_deferred<IntegerObject>(0));
+		transformation_matrix_operation->SetC(make_deferred<IntegerObject>(0));
+		transformation_matrix_operation->SetD(make_deferred<IntegerObject>(watermark_height));
+		transformation_matrix_operation->SetE(make_deferred<IntegerObject>(watermark_x));
+		transformation_matrix_operation->SetF(make_deferred<IntegerObject>(watermark_y));
+
+		auto image_dictionary = make_deferred<DictionaryObject>();
+		image_dictionary->Insert(constant::Name::BitsPerComponent, make_deferred<IntegerObject>(WATERMARK_BPC));
+		image_dictionary->Insert(constant::Name::Width, make_deferred<IntegerObject>(WATERMARK_WIDTH_RAW));
+		image_dictionary->Insert(constant::Name::Height, make_deferred<IntegerObject>(WATERMARK_HEIGHT_RAW));
+		image_dictionary->Insert(constant::Name::Filter, constant::Name::DCTDecode.Clone());
+		image_dictionary->Insert(constant::Name::ColorSpace, constant::Name::DeviceRGB.Clone());
+
+		auto image_data = Resource::Load(ResourceID::WATERMARK_IMAGE);
+		auto image_raw = MiscUtils::FromBase64(image_data);
+
+		auto inline_image_object = make_deferred<contents::InlineImageObject>(image_dictionary, image_raw);
+
+		instructions->push_back(transformation_matrix_operation);
+		instructions->push_back(inline_image_object);
+	}
 
 	std::stringstream ss;
 
