@@ -200,6 +200,72 @@ OperationTextShowArray::OperationTextShowArray(const std::vector<ObjectPtr>& ope
 	m_items->Subscribe(this);
 }
 
+OperationTransformationMatrix::OperationTransformationMatrix(const std::vector<ObjectPtr>& operands) {
+	if (6 != operands.size()) {
+		assert(!"Transformation matrix operation has invalid arguments");
+		throw GeneralException("Unexpected number of arguments");
+	}
+
+	auto a = operands.at(0);
+	if (!ObjectUtils::IsType<IntegerObjectPtr>(a)) {
+		assert(!"Transformation matrix operation has invalid arguments");
+		throw GeneralException("Unexpected argument type");
+	}
+
+	auto b = operands.at(1);
+	if (!ObjectUtils::IsType<IntegerObjectPtr>(b)) {
+		assert(!"Transformation matrix operation has invalid arguments");
+		throw GeneralException("Unexpected argument type");
+	}
+
+	auto c = operands.at(2);
+	if (!ObjectUtils::IsType<IntegerObjectPtr>(c)) {
+		assert(!"Transformation matrix operation has invalid arguments");
+		throw GeneralException("Unexpected argument type");
+	}
+
+	auto d = operands.at(3);
+	if (!ObjectUtils::IsType<IntegerObjectPtr>(d)) {
+		assert(!"Transformation matrix operation has invalid arguments");
+		throw GeneralException("Unexpected argument type");
+	}
+
+	auto e = operands.at(4);
+	if (!ObjectUtils::IsType<IntegerObjectPtr>(e)) {
+		assert(!"Transformation matrix operation has invalid arguments");
+		throw GeneralException("Unexpected argument type");
+	}
+
+	auto f = operands.at(5);
+	if (!ObjectUtils::IsType<IntegerObjectPtr>(f)) {
+		assert(!"Transformation matrix operation has invalid arguments");
+		throw GeneralException("Unexpected argument type");
+	}
+
+	m_a = ObjectUtils::ConvertTo<IntegerObjectPtr>(a);
+	m_b = ObjectUtils::ConvertTo<IntegerObjectPtr>(b);
+	m_c = ObjectUtils::ConvertTo<IntegerObjectPtr>(c);
+	m_d = ObjectUtils::ConvertTo<IntegerObjectPtr>(d);
+	m_e = ObjectUtils::ConvertTo<IntegerObjectPtr>(e);
+	m_f = ObjectUtils::ConvertTo<IntegerObjectPtr>(f);
+	
+	m_a->Subscribe(this);
+	m_b->Subscribe(this);
+	m_c->Subscribe(this);
+	m_d->Subscribe(this);
+	m_e->Subscribe(this);
+	m_f->Subscribe(this);
+}
+
+OperationTransformationMatrix::~OperationTransformationMatrix() {
+	m_a->Unsubscribe(this);
+	m_b->Unsubscribe(this);
+	m_c->Unsubscribe(this);
+	m_d->Unsubscribe(this);
+	m_e->Unsubscribe(this);
+	m_f->Unsubscribe(this);
+}
+
 OperationTextShowArray::~OperationTextShowArray() {
 	m_items->Unsubscribe(this);
 }
@@ -228,6 +294,28 @@ OperationSetNonstrokingColorSpaceRGB::~OperationSetNonstrokingColorSpaceRGB() {
 	m_red->Unsubscribe(this);
 	m_green->Unsubscribe(this);
 	m_blue->Unsubscribe(this);
+}
+
+std::string OperationTransformationMatrix::ToPdf() const {
+
+	std::stringstream ss;
+
+	TransformationMatrixOperatorPtr op;
+	ss << m_a->ToPdf();
+	ss << " ";
+	ss << m_b->ToPdf();
+	ss << " ";
+	ss << m_c->ToPdf();
+	ss << " ";
+	ss << m_d->ToPdf();
+	ss << " ";
+	ss << m_e->ToPdf();
+	ss << " ";
+	ss << m_f->ToPdf();
+	ss << " ";
+	ss << op->Value();
+
+	return ss.str();
 }
 
 std::string OperationBeginText::ToPdf() const {

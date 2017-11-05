@@ -270,6 +270,75 @@ public:
 	virtual std::string ToPdf() const override;
 };
 
+class OperationTransformationMatrix : public OperationBase, public IModifyObserver {
+public:
+	OperationTransformationMatrix() = default;
+	explicit OperationTransformationMatrix(const std::vector<syntax::ObjectPtr>& operands);
+	virtual Type GetOperationType(void) const noexcept override { return Type::TransformationMatrix; }
+	virtual std::string ToPdf() const override;
+
+	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+
+	~OperationTransformationMatrix();
+
+	syntax::IntegerObjectPtr GetA() const { return m_a; }
+	syntax::IntegerObjectPtr GetB() const { return m_b; }
+	syntax::IntegerObjectPtr GetC() const { return m_c; }
+	syntax::IntegerObjectPtr GetD() const { return m_d; }
+	syntax::IntegerObjectPtr GetE() const { return m_e; }
+	syntax::IntegerObjectPtr GetF() const { return m_f; }
+
+	void SetA(syntax::IntegerObjectPtr value) {
+		m_a->Unsubscribe(this);
+		m_a = value;
+		m_a->Subscribe(this);
+		OnChanged();
+	}
+
+	void SetB(syntax::IntegerObjectPtr value) {
+		m_b->Unsubscribe(this);
+		m_b = value;
+		m_b->Subscribe(this);
+		OnChanged();
+	}
+
+	void SetC(syntax::IntegerObjectPtr value) {
+		m_c->Unsubscribe(this);
+		m_c = value;
+		m_c->Subscribe(this);
+		OnChanged();
+	}
+
+	void SetD(syntax::IntegerObjectPtr value) {
+		m_d->Unsubscribe(this);
+		m_d = value;
+		m_d->Subscribe(this);
+		OnChanged();
+	}
+
+	void SetE(syntax::IntegerObjectPtr value) {
+		m_e->Unsubscribe(this);
+		m_e = value;
+		m_e->Subscribe(this);
+		OnChanged();
+	}
+
+	void SetF(syntax::IntegerObjectPtr value) {
+		m_f->Unsubscribe(this);
+		m_f = value;
+		m_f->Subscribe(this);
+		OnChanged();
+	}
+
+private:
+	syntax::IntegerObjectPtr m_a;
+	syntax::IntegerObjectPtr m_b;
+	syntax::IntegerObjectPtr m_c;
+	syntax::IntegerObjectPtr m_d;
+	syntax::IntegerObjectPtr m_e;
+	syntax::IntegerObjectPtr m_f;
+};
+
 } // contents
 } // vanillapdf
 
