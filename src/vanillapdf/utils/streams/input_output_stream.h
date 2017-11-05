@@ -27,7 +27,7 @@ public:
 	InputOutputStream(std::shared_ptr<std::iostream> stream);
 };
 
-InputOutputStream::InputOutputStream(std::shared_ptr<std::iostream> stream) : InputStream(stream), OutputStream(stream) {
+inline InputOutputStream::InputOutputStream(std::shared_ptr<std::iostream> stream) : InputStream(stream), OutputStream(stream) {
 
 }
 
