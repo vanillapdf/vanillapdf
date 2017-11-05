@@ -544,6 +544,18 @@ extern "C"
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_ContactInfo;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Cert;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_BaseFont;
+	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Width;
+	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Height;
+	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_ColorSpace;
+	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_RGB;
+	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_G;
+	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_CMYK;
+	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_DeviceRGB;
+	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_DeviceGray;
+	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_DeviceCMYK;
+	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_XObject;
+	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Image;
+	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_ProcSet;
 
 	/** @} */
 

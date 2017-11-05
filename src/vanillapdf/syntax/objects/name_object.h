@@ -266,6 +266,18 @@ extern const syntax::NameObject M;
 extern const syntax::NameObject ContactInfo;
 extern const syntax::NameObject Cert;
 extern const syntax::NameObject BaseFont;
+extern const syntax::NameObject Width;
+extern const syntax::NameObject Height;
+extern const syntax::NameObject ColorSpace;
+extern const syntax::NameObject RGB;
+extern const syntax::NameObject G;
+extern const syntax::NameObject CMYK;
+extern const syntax::NameObject DeviceRGB;
+extern const syntax::NameObject DeviceGray;
+extern const syntax::NameObject DeviceCMYK;
+extern const syntax::NameObject XObject;
+extern const syntax::NameObject Image;
+extern const syntax::NameObject ProcSet;
 
 } // Constant
 } // Name
