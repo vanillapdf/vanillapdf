@@ -73,43 +73,47 @@ TokenPtr ReverseTokenizer::ReadToken() {
 			}
 		}
 
-		auto current = ValueConvertUtils::SafeConvert<unsigned char>(ch);
-
-		BufferPtr chars;
-		chars->push_back(current);
-
-		if (IsNumeric(current)) {
-			while (IsNumeric(m_stream->Peek())) {
-				auto numeric = static_cast<unsigned char>(m_stream->Get());
-				chars->push_back(numeric);
-			}
-
-			while ((m_stream->Peek() == '+') || (m_stream->Peek() == '-')) {
-				auto next = static_cast<unsigned char>(m_stream->Get());
-				chars->push_back(next);
-			}
-
-			return make_deferred<Token>(Token::Type::REVERSE_INTEGER_OBJECT, chars);
-		}
-
-		for (;;) {
-			auto next_meta = m_stream->Peek();
-			if (std::char_traits<char>::eof() == next_meta) {
-				break;
-			}
-
-			auto next = ValueConvertUtils::SafeConvert<unsigned char>(next_meta);
-			if (IsWhiteSpace(next)) {
-				break;
-			}
-
-			chars->push_back(next);
-			m_stream->Ignore();
-		}
-
-		auto result_type = _dictionary.Find(chars);
-		return make_deferred<Token>(result_type, chars);
+		return ReadUnknown(ch);
 	};
+}
+
+TokenPtr ReverseTokenizer::ReadUnknown(int ch) {
+	auto current = ValueConvertUtils::SafeConvert<unsigned char>(ch);
+
+	BufferPtr chars;
+	chars->push_back(current);
+
+	if (IsNumeric(current)) {
+		while (IsNumeric(m_stream->Peek())) {
+			auto numeric = static_cast<unsigned char>(m_stream->Get());
+			chars->push_back(numeric);
+		}
+
+		while ((m_stream->Peek() == '+') || (m_stream->Peek() == '-')) {
+			auto next = static_cast<unsigned char>(m_stream->Get());
+			chars->push_back(next);
+		}
+
+		return make_deferred<Token>(Token::Type::REVERSE_INTEGER_OBJECT, chars);
+	}
+
+	for (;;) {
+		auto next_meta = m_stream->Peek();
+		if (std::char_traits<char>::eof() == next_meta) {
+			break;
+		}
+
+		auto next = ValueConvertUtils::SafeConvert<unsigned char>(next_meta);
+		if (IsWhiteSpace(next)) {
+			break;
+		}
+
+		chars->push_back(next);
+		m_stream->Ignore();
+	}
+
+	auto result_type = _dictionary.Find(chars);
+	return make_deferred<Token>(result_type, chars);
 }
 
 /* Peek need cache */

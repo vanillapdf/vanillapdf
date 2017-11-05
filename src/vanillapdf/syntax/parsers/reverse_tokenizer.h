@@ -27,6 +27,8 @@ private:
 	types::stream_offset _last_token_offset, _advance_position;
 	bool _token_cached = false;
 	ReverseParserTokenDictionary _dictionary;
+
+	TokenPtr ReadUnknown(int ch);
 };
 
 } // syntax

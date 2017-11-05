@@ -32,6 +32,7 @@ private:
 	TokenPtr ReadHexadecimalString(void);
 	TokenPtr ReadLiteralString(void);
 	TokenPtr ReadName(void);
+	TokenPtr ReadUnknown(int ch);
 };
 
 } // syntax

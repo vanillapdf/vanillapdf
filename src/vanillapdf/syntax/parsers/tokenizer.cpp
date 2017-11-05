@@ -133,73 +133,77 @@ TokenPtr Tokenizer::ReadToken() {
 			return make_deferred<Token>(Token::Type::INDIRECT_REFERENCE_MARKER, chars);
 		}
 
-		auto current = ValueConvertUtils::SafeConvert<unsigned char>(ch);
-		bool has_dot = (current == '.');
-		if (IsNumeric(current) || (current == '+') || (current == '-') || has_dot) {
-			BufferPtr chars;
+		return ReadUnknown(ch);
+	};
+}
 
-			chars->push_back(current);
-			while (IsNumeric(m_stream->Peek())) {
-				auto numeric = static_cast<char>(m_stream->Get());
-				chars->push_back(numeric);
-			}
+TokenPtr Tokenizer::ReadUnknown(int ch) {
+	auto current = ValueConvertUtils::SafeConvert<unsigned char>(ch);
+	bool has_dot = (current == '.');
+	if (IsNumeric(current) || (current == '+') || (current == '-') || has_dot) {
+		BufferPtr chars;
 
-			if (has_dot) {
-				return make_deferred<Token>(Token::Type::REAL_OBJECT, chars);
-			}
+		chars->push_back(current);
+		while (IsNumeric(m_stream->Peek())) {
+			auto numeric = static_cast<char>(m_stream->Get());
+			chars->push_back(numeric);
+		}
 
-			if (m_stream->Eof() || m_stream->Peek() != '.') {
-				return make_deferred<Token>(Token::Type::INTEGER_OBJECT, chars);
-			}
-
-			// The next character is dot
-			chars->push_back('.');
-
-			// Consume it
-			m_stream->Ignore();
-
-			while (IsNumeric(m_stream->Peek())) {
-				auto next = static_cast<char>(m_stream->Get());
-				chars->push_back(next);
-			}
-
+		if (has_dot) {
 			return make_deferred<Token>(Token::Type::REAL_OBJECT, chars);
 		}
 
-		BufferPtr chars;
-
-		// Insert the character we read at the beginning
-		chars->push_back(current);
-
-		for (;;) {
-			if (m_stream->Eof()) {
-				break;
-			}
-
-			auto next_meta = m_stream->Peek();
-
-			// Terminate at the end of the stream
-			if (std::char_traits<char>::eof() == next_meta) {
-				break;
-			}
-
-			auto next = ValueConvertUtils::SafeConvert<unsigned char>(next_meta);
-
-			// Terminate on non-regular character such as whitespace
-			if (!IsRegular(next)) {
-				break;
-			}
-
-			// Insert regular character into collection
-			chars->push_back(next);
-
-			// Ignore the input, because we used peek and not get
-			m_stream->Ignore();
+		if (m_stream->Eof() || m_stream->Peek() != '.') {
+			return make_deferred<Token>(Token::Type::INTEGER_OBJECT, chars);
 		}
 
-		auto result_type = _dictionary->Find(chars);
-		return make_deferred<Token>(result_type, chars);
-	};
+		// The next character is dot
+		chars->push_back('.');
+
+		// Consume it
+		m_stream->Ignore();
+
+		while (IsNumeric(m_stream->Peek())) {
+			auto next = static_cast<char>(m_stream->Get());
+			chars->push_back(next);
+		}
+
+		return make_deferred<Token>(Token::Type::REAL_OBJECT, chars);
+	}
+
+	BufferPtr chars;
+
+	// Insert the character we read at the beginning
+	chars->push_back(current);
+
+	for (;;) {
+		if (m_stream->Eof()) {
+			break;
+		}
+
+		auto next_meta = m_stream->Peek();
+
+		// Terminate at the end of the stream
+		if (std::char_traits<char>::eof() == next_meta) {
+			break;
+		}
+
+		auto next = ValueConvertUtils::SafeConvert<unsigned char>(next_meta);
+
+		// Terminate on non-regular character such as whitespace
+		if (!IsRegular(next)) {
+			break;
+		}
+
+		// Insert regular character into collection
+		chars->push_back(next);
+
+		// Ignore the input, because we used peek and not get
+		m_stream->Ignore();
+	}
+
+	auto result_type = _dictionary->Find(chars);
+	return make_deferred<Token>(result_type, chars);
 }
 
 TokenPtr Tokenizer::ReadComment(void) {
