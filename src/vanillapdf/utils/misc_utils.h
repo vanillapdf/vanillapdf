@@ -19,8 +19,8 @@ namespace vanillapdf {
 
 class MiscUtils {
 public:
-	static std::string ToBase64(const Buffer& value);
-	static BufferPtr FromBase64(const std::string& value);
+	static BufferPtr ToBase64(const Buffer& value);
+	static BufferPtr FromBase64(const Buffer& value);
 
 	static const EVP_MD* GetAlgorithm(MessageDigestAlgorithm algorithm);
 	static BufferPtr CalculateHash(const Buffer& data, MessageDigestAlgorithm digest_algorithm);

@@ -244,7 +244,8 @@ bool LicenseInfo::CheckSignature(
 	}
 
 	// Signature value if base 64 encoded
-	auto signature_value_decoded = MiscUtils::FromBase64(signature_value);
+	auto signature_value_buffer = make_deferred<Buffer>(signature_value);
+	auto signature_value_decoded = MiscUtils::FromBase64(signature_value_buffer);
 	auto signature_value_decoded_ptr = reinterpret_cast<unsigned char *>(signature_value_decoded->data());
 
 	auto finalized = EVP_DigestVerifyFinal(digest_context, signature_value_decoded_ptr, signature_value_decoded->size());
