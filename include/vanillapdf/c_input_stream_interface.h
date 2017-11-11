@@ -11,13 +11,13 @@ extern "C"
 #endif
 
 	/**
-	* \file c_streams.h
+	* \file c_input_stream_interface.h
 	* This file contains class definitions for InputStreamInterfaceHandle
 	*/
 
 	/**
 	* \class InputStreamInterfaceHandle
-	* \extends IUnknown
+	* \extends IUnknownHandle
 	* \ingroup Utils
 	* \brief TODO
 	*/
@@ -33,7 +33,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_ToBuffer(InputStreamInterfaceHandle handle, BufferHandle* result);
 
 	/**
-	* \copydoc IUnknown_Release()
+	* \copydoc IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_Release(InputStreamInterfaceHandle handle);
 

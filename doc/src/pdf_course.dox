@@ -1,0 +1,129 @@
+/*! 
+\page pdf_course PDF tutorial
+\tableofcontents
+
+In the first place, we will talk about the syntactic structure of the document.
+If You're already familiar with the syntax, please skip to the \ref document_semantics.
+
+\section file_structure File structure
+
+It can be divided into couple main sections.
+<ul>
+<li>Section \ref object_types.
+<li>Section \ref indirect_objects.
+<li>Section \ref file_filters.
+<li>Section \ref file_header.
+<li>Section \ref file_body.
+<li>Section \ref file_xref.
+<li>Section \ref file_trailer.
+</ul>
+
+\subsection object_types Object types
+
+PDF file consists on sequence of object with a few basic types.
+Boolean, Numeric, String, Name, Array, Dictionary, Stream and Null.
+
+\subsection indirect_objects Indirect objects
+
+Any object can be labeled as indirect, meaning it is assigned an unique number within file.
+In most places and indirect reference to this object can be used instead of the object itself.
+
+\code
+1 0 obj
+(This is an indirect object)
+
+2 0 obj
+<<						% Dictionary begin
+	/Type (Dictionary)	% Sample dictionary entry
+	/Value 1 0 R		% Dictionary entry with key "Value" and its value "(This is an indirect object)"
+>>						% Dictionary end
+\endcode
+
+This association has to be added into the cross-reference table, explained in the section \ref file_xref.
+
+\subsection file_filters Filters
+
+Reason, why it is not possible to view file contents easily is because its contents are compressed.
+PDF supports multiple compression methods, such as \ref ASCII85DecodeFilterHandle, \ref FlateDecodeFilterHandle and others.
+
+\subsection file_header File header
+
+Header basically contains only the version of the PDF specification this file conforms to.
+
+\subsection file_body File body
+
+Body is just a sequence of indirect objects defined in the \ref file_xref.
+
+\subsection file_xref File cross-reference table
+
+Quote from 7.5.4 PDF reference:
+"The cross-reference table contains information that permits random access to indirect objects within the file so that the entire file need not be read to locate any particular object."
+
+What this means, is that there are stored byte offsets for every indirect object.
+When the file is read, the reader jumps to the trailer, which is at the very end of the file.
+Finds an offset to this section, searches for a object by their unique identifier (object number).
+From this point, the reader can just seek to the exact offset and read the object.
+
+\subsection file_trailer File trailer
+
+Trailer contains a byte offset to the files cross-reference table.
+There are also a few metadata information about the file, for example whether the document is encrypted.
+
+____________________________________________________
+
+\section document_semantics Document semantics
+
+From the semantic point of view, the root of the document structure is called \ref CatalogHandle.
+Catalog contains tree of pages, and other important document data.
+Document \ref PageObjectHandle contains entry called Contents, which is serialized stream of PostScript instructions.
+
+\code
+\endcode
+
+For accessing page contents please visit \ref ContentsHandle.
+
+____________________________________________________
+
+\section file_example File example
+
+\code
+%PDF-1.7
+1 0 obj
+<</Pages 2 0 R /Type /Catalog>>
+endobj
+2 0 obj
+<</Count 0 /Type /Pages>>
+endobj
+3 0 obj
+<</CreationDate (D:20170831161944Z) /Producer (I am the producer)>>
+endobj
+
+xref
+0 4
+0000000000 65535 f 
+0000000009 00000 n 
+0000000056 00000 n 
+0000000097 00000 n 
+trailer
+<</Info 3 0 R /Root 1 0 R /Size 4>>
+startxref
+181
+%%EOF
+\endcode
+
+At the start, there is marker, that this file conforms to the latest PDF standard 1.7.
+Next we seek to the end of the file, searching for offset to the last cross-reference section.
+In this case, the cross-reference section is at offset 181 from the beginning of the file.
+The file contains 3 indirect objects, with identifiers 1, 2, 3 (object numbers).
+
+\note The first entry in the cross-reference table is a head of "free entries list".
+It is possible to free and reuse objects using incremental updates, but that is out of scope of this tutorial.
+
+Trailer contains reference to the root of the document structure - Catalog, object 1.
+Catalog contains reference to page tree structure with object id 2.
+Page tree is empty for this document - it does not contain any page.
+The last object 3. is just the document metadata, with the date it was created and name of the producer.
+
+<b>That's it! We've covered the fundamentals of the PDF syntax.</b>
+
+*/

@@ -20,6 +20,9 @@ extern "C"
 	* \ingroup Utils
 	* \brief
 	* This class contains additional informations about last error occurred
+	*
+	* The error code and message is stored in the thread-local storage and
+	* does not clear until another error occurrs on the same thread.
 	*/
 
 	/**

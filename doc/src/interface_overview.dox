@@ -1,0 +1,45 @@
+/*! 
+\page interface_overview Interface overview
+
+The library exposes native C-style interface to allow interoperability with most languages.<br>
+All handles are basically opaque pointers to internal structures,
+which are meant to be modified using the only the API and not the structures themselves.
+
+<h2>Types</h2>
+
+Every function throughout the interface returns \ref error_type.
+\note \ref error_type is currently implemented as int32_t, but can change at any time!
+
+Check the return code for \ref VANILLAPDF_ERROR_SUCCESS after every operation.
+\note \ref VANILLAPDF_ERROR_SUCCESS is currently defined as 0, but can change at any time!
+
+Passing NULL into any function shall return \ref VANILLAPDF_ERROR_PARAMETER_VALUE.<br>
+All functions either accept a non-null handle, value or output variable to fill.<br>
+Neither of them the should be NULL.<br>
+
+Boolean types are not supported on the C-style interface, therefore there is \ref boolean_type.<br>
+
+However, the implementation cannot guarantee that
+\code
+		if (VANILLAPDF_RV_TRUE) && (!VANILLAPDF_RV_FALSE)
+\endcode
+is true, therefore you \b should always compare the values to these constants, instead of 0, true or any other constant.<br>
+
+For more detailed information please visit \ref Types.
+
+<h2>Error handling</h2>
+
+After an error occurrs, the error code is returned.<br>
+Most of the time, the error carries additional information that is stored and can be later obtained.<br>
+
+For more detailed information please visit \ref Errors.
+
+<h2>Debugging</h2>
+
+Sometimes the error code and message is not enough to find the error.<br>
+Library supports logging, that can be configured via \ref Logging.<br>
+Logging have multiple log levels, which control the verbosity of the output.<br>
+
+For more useful utilities please visit \ref Utils.
+
+*/
