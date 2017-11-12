@@ -1,32 +1,24 @@
 /*! 
-\page overview Overview
+\page page_overview Overview
 \tableofcontents
 
-The first part forms a user manual:
+Getting started:
 
 <ul>
-<li>Section \ref build discusses how to download, compile and install VanillaPDF for your platform.
-<li>Section \ref interface_overview explains basic premises the whole interface is built upon.
-<li>Section \ref pdf_course contains a very brief description of the PDF file format.
-<li>Section \ref file_properties shows reading simple file properties.
-<li>Section \ref file_modification guides through the process of modifying lowest parts of the PDF file.
-<li>Section \ref file_writer demonstrtates the full control of the output file format.
-<li>Section \ref interface_callbacks explains how to use custom code callbacks throughout the interface.
-<li>Section \ref document_properties shows reading simple document properties.
-<li>Section \ref document_modification showcases a few operations on the documents.
-<li>Section \ref page_content_modification demonstrates how to modify page contents.
+<li>Section \ref page_build discusses how to download, compile and install VanillaPDF for your platform.
+<li>Section \ref page_interface_overview explains basic premises the whole interface is built upon.
+<li>Section \ref page_pdf_course contains a very brief description of the PDF file format.
+<li>Section \ref page_licensing tells how the product is licensed.
 </ul>
 
-The second part forms a reference manual:
+Developer guide:
 
 <ul>
-<li>Section \ref features presents an overview of what VanillaPDF can do.
-</ul>
-
-The third part provides information for developers:
-
-<ul>
-<li>Section \ref architecture gives a global overview of how VanillaPDF is internally structured.
+<li>Section \ref page_architecture gives a global overview of how VanillaPDF is internally structured.
+<li>Section \ref page_file_interface shows reading simple file properties.
+<li>Section \ref page_document_interface showcases a few operations on the documents.
+<li>Section \ref page_content_interface demonstrates how to modify page contents.
+<li>Section \ref page_interface_callbacks explains how to use custom code callbacks throughout the interface.
 </ul>
 
 <h2>License</h2>

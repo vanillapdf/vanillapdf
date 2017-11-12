@@ -1,11 +1,12 @@
 /*! 
-\page interface_overview Interface overview
+\page page_interface_overview Interface overview
+\tableofcontents
 
 The library exposes native C-style interface to allow interoperability with most languages.<br>
 All handles are basically opaque pointers to internal structures,
 which are meant to be modified using the only the API and not the structures themselves.
 
-<h2>Types</h2>
+\section section_types Types
 
 Every function throughout the interface returns \ref error_type.
 \note \ref error_type is currently implemented as int32_t, but can change at any time!
@@ -21,24 +22,135 @@ Boolean types are not supported on the C-style interface, therefore there is \re
 
 However, the implementation cannot guarantee that
 \code
-		if (VANILLAPDF_RV_TRUE) && (!VANILLAPDF_RV_FALSE)
+	if (VANILLAPDF_RV_TRUE) && (!VANILLAPDF_RV_FALSE)
 \endcode
 is true, therefore you \b should always compare the values to these constants, instead of 0, true or any other constant.<br>
 
 For more detailed information please visit \ref Types.
 
-<h2>Error handling</h2>
+\section section_memory Memory leaks
+
+All interface objects are reference counted.<br>
+Whenever an object is received with an output parameter, it has to be released when no longer needed.<br>
+
+\code
+	FileHandle file = NULL;
+	error_code file_opened = File_Open(argv[1], &file);
+	if (file_opened != VANILLAPDF_ERROR_SUCCESS) {
+		return file_opened;
+	}
+	
+	...
+	
+	error_code file_released = File_Release(file);
+	if (file_released != VANILLAPDF_ERROR_SUCCESS) {
+		return file_released;
+	}
+\endcode
+
+After the file has been opened successfully, the caller is responsible for calling appropriate release function.<br>
+Calling the release multiple times is an error and causes <b>undefined behavior</b>.<br>
+
+I recommend resetting the handles to their initial state of NULL, to prevent any errors.<br>
+In ANSI C is a little bit trickier to clean the local variables, however a few macros can help.<br>
+
+\code
+#define SAFE_RELEASE(function_name, handle) \
+do { \
+	if (handle == NULL) { \
+		break; \
+	} \
+	\
+	error_type __result__ = (function_name(handle)); \
+	if (VANILLAPDF_ERROR_SUCCESS != __result__) { \
+		exit(EXIT_FAILURE); \
+	} \
+	\
+	handle = NULL; \
+} while(0)
+\endcode
+
+With this helper macro, the cleanup becomes easier as long as you initialize local variable with \b NULL.<br>
+
+\code
+	FileHandle file = NULL;
+	DocumentHandle document = NULL;
+	
+	error_code file_opened = File_Open(argv[1], &file);
+	if (file_opened != VANILLAPDF_ERROR_SUCCESS) {
+		goto err;
+	}
+	
+	error_code document_opened = Document_Open(argv[1], &document);
+	if (document_opened != VANILLAPDF_ERROR_SUCCESS) {
+		goto err;
+	}
+	
+err:
+	SAFE_RELEASE(File_Release, file);
+	SAFE_RELEASE(Document_Release, document);
+\endcode
+
+It would be also safe to call this release macro multiple times.
+However, this code style may seem repulsive for some developers, they are free to use any kind of cleanup, if it serves the purpose.<br>
+
+\note The release function should not fail as long as the parameter is valid.<br>
+Reason, why it returns error code is just to keep the interface consistent.<br>
+
+\section section_errors Error handling
 
 After an error occurrs, the error code is returned.<br>
-Most of the time, the error carries additional information that is stored and can be later obtained.<br>
+Most of the time, the error carries additional information that is stored and can be obtained later.<br>
+
+There is a code sample how to obtain the last error code with the message printed to console.
+
+\code
+#include "vanillapdf/c_errors.h"
+
+error_type print_last_error() {
+	char* message = NULL;
+	error_type error = 0;
+	size_type length = 0;
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Errors_GetLastError(&error));
+	RETURN_ERROR_IF_NOT_SUCCESS(Errors_GetLastErrorMessageLength(&length));
+
+	if (length >= SIZE_MAX) {
+		return VANILLAPDF_TEST_ERROR_FAILURE;
+	}
+
+	message = (char*) calloc(sizeof(char), length + 1);
+	if (NULL == message) {
+		return VANILLAPDF_TEST_ERROR_FAILURE;
+	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Errors_GetLastErrorMessage(message, length));
+
+	printf("Error %u: %s\n", error, message);
+	return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+\endcode
 
 For more detailed information please visit \ref Errors.
 
-<h2>Debugging</h2>
+\section section_debug Debugging
 
 Sometimes the error code and message is not enough to find the error.<br>
 Library supports logging, that can be configured via \ref Logging.<br>
 Logging have multiple log levels, which control the verbosity of the output.<br>
+
+\code
+#include "vanillapdf/c_logging.h"
+
+error_type set_logging() {
+	LoggingSeverity logging_severity = LoggingSeverity_Debug;
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Logging_Enable());
+	RETURN_ERROR_IF_NOT_SUCCESS(Logging_SetSeverity(logging_severity));
+
+	return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+\endcode
 
 For more useful utilities please visit \ref Utils.
 

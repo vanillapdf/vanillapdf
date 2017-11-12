@@ -1,5 +1,5 @@
 /*! 
-\page pdf_course PDF tutorial
+\page page_pdf_course PDF fundamentals
 \tableofcontents
 
 In the first place, we will talk about the syntactic structure of the document.<br>
@@ -22,14 +22,46 @@ The first part explains syntactic structure of the document:
 \subsection object_types Object types
 
 PDF file consists on sequence of object with a few basic types.<br>
-Boolean, Numeric, String, Name, Array, Dictionary, Stream and Null.<br>
+\ref BooleanObjectHandle "Boolean",
+\ref IntegerObjectHandle "Integer",
+\ref RealObjectHandle "Real",
+\ref StringObjectHandle "String",
+\ref NameObjectHandle "Name",
+\ref ArrayObjectHandle "Array",
+\ref DictionaryObjectHandle "Dictionary",
+\ref StreamObjectHandle "Stream" and
+\ref NullObjectHandle "Null".<br>
+
+\code{.unparsed}
+true, false		% boolean types
+7				% integer type
+3.14159			% real type
+(Literal)		% literal string
+<00FF00FF>		% hexadecimal string
+/Name			% name object
+[0 1 2 3]		% homogenous array
+null			% null reference
+
+<<						% Dictionary begin
+	/Type /Dictionary	% Dictionary entry with key "/Type" and value "/Dictionary"
+	/Value 10			% Dictionary entry with key "Value" and value "10"
+>>						% Dictionary end
+
+<<						% Stream header begin
+	/Length 1337		% Stream byte stream length 
+>>						% Stream header end
+stream					% Stream data begin
+%% byte stream data skipped for brevity %%
+endstream				% Stream data end
+
+\endcode
 
 \subsection indirect_objects Indirect objects
 
 Any object can be labeled as indirect, meaning it is assigned an unique number within file.<br>
 In most places and indirect reference to this object can be used instead of the object itself.<br>
 
-\code
+\code{.unparsed}
 1 0 obj
 (This is an indirect object)
 
@@ -47,7 +79,7 @@ This association has to be added into the cross-reference table, explained in th
 PDF streams support compression, so that the file size can be optimized.<br>
 Multiple compression methods are supported, such as \ref ASCII85DecodeFilterHandle, \ref FlateDecodeFilterHandle and others.<br>
 
-\code
+\code{.unparsed}
 1 0 obj
 <<
 	/Length 1337
@@ -65,7 +97,7 @@ The compressed byte stream size is exactly 1337 bytes long.
 
 Header basically contains only the version of the PDF specification this file conforms to.<br>
 
-\code
+\code{.unparsed}
 %PDF-1.4
 \endcode
 
@@ -84,7 +116,7 @@ When the file is read, the reader jumps to the trailer, which is at the very end
 Finds an offset to this section, searches for a object by their unique identifier (object number).<br>
 From this point, the reader can just seek to the exact offset and read the object.<br>
 
-\code
+\code{.unparsed}
 xref
 0 4
 0000000000 65535 f 
@@ -102,7 +134,7 @@ Next entry is at the file offset 9. Letter 'n' means the entry is "in-use".<br>
 Trailer contains a byte offset to the files cross-reference table.<br>
 There are also a few metadata information about the file, for example whether the document is encrypted.<br>
 
-\code
+\code{.unparsed}
 trailer
 <</Info 3 0 R /Root 1 0 R /Size 4>>
 startxref
@@ -123,7 +155,7 @@ From the semantic point of view, the root of the document structure is called \r
 Catalog contains tree of pages, and other important document data.<br>
 Document \ref PageObjectHandle contains entry called Contents, which is serialized stream of PostScript instructions.<br>
 
-\code
+\code{.unparsed}
 /P <</MCID 20 >>BDC 
 BT
 /TT0 1 Tf
@@ -154,7 +186,7 @@ This parts get a little bit more complex, since there are a lot of different pri
 What is essential is that all operators are preceeded by their parameters.<br>
 
 Setting the font associated with name /TT0 and size 1:
-\code
+\code{.unparsed}
 /TT0 1 Tf
 \endcode
 
@@ -165,7 +197,7 @@ ____________________________________________________
 
 \section file_example Complete file example
 
-\code
+\code{.unparsed}
 %PDF-1.7
 1 0 obj
 <</Pages 2 0 R /Type /Catalog>>

@@ -793,7 +793,6 @@ WARN_LOGFILE           =
 INPUT                  = ..\include \
                          src/architecture.dox \
                          src/build.dox \
-                         src/features.dox \
                          src/overview.dox \
                          src/index.dox \
                          src/groups.dox \
