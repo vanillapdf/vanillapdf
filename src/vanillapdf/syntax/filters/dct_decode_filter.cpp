@@ -212,13 +212,15 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
 
 	jpeg_start_compress(&jpeg, TRUE);
 
-	auto row_size = SafeMultiply<Buffer::size_type, JDIMENSION>(jpeg.image_width, jpeg.input_components);
-	BufferPtr buffer = make_deferred<Buffer>(row_size);
+	auto row_size = SafeMultiply<decltype(length), JDIMENSION>(jpeg.image_width, jpeg.input_components);
+	auto row_size_converted = ValueConvertUtils::SafeConvert<Buffer::size_type>(row_size);
+	BufferPtr buffer = make_deferred<Buffer>(row_size_converted);
 
 	decltype(length) read_total = 0;
 	while (jpeg.next_scanline < jpeg.image_height) {
 
-		if (read_total + row_size > length) {
+		auto read_plus_row = SafeAddition<decltype(length)>(read_total, row_size);
+		if (read_plus_row > length) {
 			throw GeneralException("Insufficient source data");
 		}
 
@@ -231,7 +233,7 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
 		row_pointer[0] = reinterpret_cast<JSAMPROW>(buffer->data());
 		jpeg_write_scanlines(&jpeg, row_pointer, 1);
 
-		read_total += read;
+		read_total = SafeAddition<decltype(length)>(read_total, read);
 	}
 
 	jpeg_finish_compress(&jpeg);
