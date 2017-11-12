@@ -20,12 +20,15 @@ namespace vanillapdf {
 * This class is used to speed up the construction of the AST. The construction of the node is only done when an access to the data is issued.
 * This code has been taken from the Eddi Compiler project (https://github.com/wichtounet/eddic/) and has been adapted a little.
 */
-template <typename T>
+template <
+	typename T,
+	typename = typename std::enable_if<std::is_base_of<IUnknown, T>::value>::type
+>
 class DeferredWrapperBase {
 public:
 	typedef T deferred_ptr_type;
 
-	template <typename U>
+	template <typename, typename>
 	friend class DeferredWrapperBase;
 
 	// Check whether T is defined class

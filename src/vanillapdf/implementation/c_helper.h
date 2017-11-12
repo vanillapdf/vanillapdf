@@ -3,8 +3,11 @@
 
 #include "utils/log.h"
 #include "utils/errors.h"
+#include "utils/unknown_interface.h"
 
 #include "vanillapdf/c_values.h"
+
+#include <type_traits>
 
 #define RETURN_ERROR_IF_NULL(var, error_code) do { if (nullptr == var) return error_code; } while(0)
 #define RETURN_ERROR_PARAM_VALUE_IF_NULL(var) RETURN_ERROR_IF_NULL(var, VANILLAPDF_ERROR_PARAMETER_VALUE)
@@ -32,9 +35,18 @@
 		return VANILLAPDF_ERROR_GENERAL; \
 	}
 
-template <typename SourceT, typename DestT, typename SourceHandleT, typename DestHandleT>
-error_type SafeObjectConvert(SourceHandleT from, DestHandleT* result)
-{
+template <
+	typename SourceT,
+	typename DestT,
+	typename SourceHandleT,
+	typename DestHandleT,
+	typename = typename std::enable_if<std::is_polymorphic<SourceT>::value>::type,
+	typename = typename std::enable_if<
+		std::is_convertible<SourceT *, DestT *>::value ||
+		std::is_base_of<SourceT, DestT>::value
+	>::type
+>
+error_type SafeObjectConvert(SourceHandleT from, DestHandleT* result) {
 	SourceT* obj = reinterpret_cast<SourceT*>(from);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -51,9 +63,12 @@ error_type SafeObjectConvert(SourceHandleT from, DestHandleT* result)
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-template <typename T, typename HandleT>
-error_type ObjectRelease(HandleT handle)
-{
+template <
+	typename T,
+	typename HandleT,
+	typename = typename std::enable_if<std::is_base_of<vanillapdf::IUnknown, T>::value>::type
+>
+error_type ObjectRelease(HandleT handle) {
 	T* obj = reinterpret_cast<T*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
