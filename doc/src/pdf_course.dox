@@ -155,6 +155,7 @@ From the semantic point of view, the root of the document structure is called \r
 Catalog contains tree of pages, and other important document data.<br>
 Document \ref PageObjectHandle contains entry called Contents, which is serialized stream of PostScript instructions.<br>
 
+Sample page contents:<br>
 \code{.unparsed}
 /P <</MCID 20 >>BDC 
 BT
@@ -182,7 +183,7 @@ ET
 EMC
 \endcode
 
-This parts get a little bit more complex, since there are a lot of different print instructions.<br>
+This part gets a bit more complex, since there are a \b lot of different print instructions.<br>
 What is essential is that all operators are preceeded by their parameters.<br>
 
 Setting the font associated with name /TT0 and size 1:
@@ -191,7 +192,7 @@ Setting the font associated with name /TT0 and size 1:
 \endcode
 
 For a complete list of postscript instructions visit PDF reference section 8 - Graphics.<br>
-For accessing page contents please visit \ref Contents.<br>
+For a complete reference visit \ref Contents.<br>
 
 ____________________________________________________
 
