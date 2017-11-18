@@ -32,7 +32,7 @@ Download source tarball and put it somewhere (e.g. use <code>c:\\tools</code>)
 
 Now start a visual studio native command shell (for either x86 or x64) and type
 
-\code
+\code{.unparsed}
 cd c:\tools
 tar zxvf vanillapdf-x.y.z.src.tar.gz
 \endcode
@@ -45,7 +45,7 @@ Now your environment is setup to generate the required project files for \c vani
 
 cd into the \c vanillapdf-x.y.z directory, create and cd to a build directory
 
-\code
+\code{.unparsed}
 mkdir build
 cd build
 cmake -G "Visual Studio 12 2013" ..
@@ -60,7 +60,7 @@ Just follow the dialogs.
 
 <ol>
 <li>Installing dependencies</li>
-\code
+\code{.unparsed}
 sudo apt-get install cmake
 sudo apt-get install libjpeg-dev
 sudo apt-get install libssl-dev
@@ -68,34 +68,34 @@ sudo apt-get install zlib1g-dev
 \endcode
 
 <li>Unpack the archive, unless you already have done that:</li>
-\code
+\code{.unparsed}
 unzip vanillapdf-master.zip	# uncompress the archive
 \endcode
 
 <li>Create a build directory:</li>
-\code
+\code{.unparsed}
 cd vanillapdf-master
 mkdir build
 cd build
 \endcode
 
 <li>Run CMake with the makefile generator:</li>
-\code
+\code{.unparsed}
 cmake -G "Unix Makefiles" ..
 \endcode
 
 <li>Compile the program by running make:</li>
-\code
+\code{.unparsed}
 make
 \endcode
 
 <li>Verify the library sanity:</li>
-\code
+\code{.unparsed}
 make test
 \endcode
 
 With the expected output:
-\code
+\code{.unparsed}
 100% tests passed, 0 tests failed out of 241
 Total Test time (real) = 113.72 sec
 \endcode
@@ -106,7 +106,7 @@ Total Test time (real) = 113.72 sec
 
 After the compilation of the source code or downloading the binary distribution for UNIX, type:
 
-\code
+\code{.unparsed}
 make install
 \endcode
 
