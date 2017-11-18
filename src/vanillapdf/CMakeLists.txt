@@ -4,60 +4,74 @@ include_directories("${CMAKE_SOURCE_DIR}/include")
 include_directories("${CMAKE_SOURCE_DIR}/lib/nlohmann_json/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
+include("${CMAKE_SOURCE_DIR}/include/files.cmake")
+
 set(VANILLAPDF_PRECOMPILED_SOURCE
 	precompiled.cpp
 )
 
 set(VANILLAPDF_C_IMPLEMENTATION_SOURCES
-	implementation/c_annotations.cpp
-	implementation/c_array_object.cpp
-	implementation/c_boolean_object.cpp
-	implementation/c_buffer.cpp
-	implementation/c_catalog.cpp
-	implementation/c_character_map.cpp
-	implementation/c_contents.cpp
-	implementation/c_date.cpp
-	implementation/c_destinations.cpp
-	implementation/c_developer_extensions.cpp
-	implementation/c_dictionary_object.cpp
-	implementation/c_digital_signature.cpp
-	implementation/c_document.cpp
-	implementation/c_document_info.cpp
-	implementation/c_document_signature_settings.cpp
-	implementation/c_encryption.cpp
-	implementation/c_errors.cpp
-	implementation/c_fields.cpp
-	implementation/c_file.cpp
-	implementation/c_file_writer.cpp
-	implementation/c_filter.cpp
-	implementation/c_font.cpp
-	implementation/c_font_map.cpp
-	implementation/c_indirect_object_reference.cpp
-	implementation/c_input_stream_interface.cpp
-	implementation/c_integer_object.cpp
-	implementation/c_interactive_forms.cpp
-	implementation/c_library_info.cpp
-	implementation/c_license_info.cpp
-	implementation/c_logging.cpp
-	implementation/c_name_object.cpp
-	implementation/c_null_object.cpp
-	implementation/c_object.cpp
-	implementation/c_outline.cpp
-	implementation/c_output_stream_interface.cpp
-	implementation/c_page_labels.cpp
-	implementation/c_page_object.cpp
-	implementation/c_page_tree.cpp
-	implementation/c_pkcs12_key.cpp
-	implementation/c_real_object.cpp
-	implementation/c_rectangle.cpp
-	implementation/c_resource_dictionary.cpp
-	implementation/c_signing_key.cpp
-	implementation/c_stream_object.cpp
-	implementation/c_string_object.cpp
-	implementation/c_unknown_interface.cpp
 	implementation/c_values.cpp
-	implementation/c_viewer_preferences.cpp
-	implementation/c_xref.cpp
+)
+
+set(VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES
+	implementation/utils/c_buffer.cpp
+	implementation/utils/c_encryption.cpp
+	implementation/utils/c_errors.cpp
+	implementation/utils/c_input_stream_interface.cpp
+	implementation/utils/c_library_info.cpp
+	implementation/utils/c_license_info.cpp
+	implementation/utils/c_logging.cpp
+	implementation/utils/c_output_stream_interface.cpp
+	implementation/utils/c_pkcs12_key.cpp
+	implementation/utils/c_signing_key.cpp
+	implementation/utils/c_unknown_interface.cpp
+)
+
+set(VANILLAPDF_C_IMPLEMENTATION_SYNTAX_SOURCES
+	implementation/syntax/c_array_object.cpp
+	implementation/syntax/c_boolean_object.cpp
+	implementation/syntax/c_dictionary_object.cpp
+	implementation/syntax/c_file.cpp
+	implementation/syntax/c_file_writer.cpp
+	implementation/syntax/c_filter.cpp
+	implementation/syntax/c_indirect_object_reference.cpp
+	implementation/syntax/c_integer_object.cpp
+	implementation/syntax/c_name_object.cpp
+	implementation/syntax/c_null_object.cpp
+	implementation/syntax/c_object.cpp
+	implementation/syntax/c_real_object.cpp
+	implementation/syntax/c_stream_object.cpp
+	implementation/syntax/c_string_object.cpp
+	implementation/syntax/c_xref.cpp
+)
+
+set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
+	implementation/semantics/c_annotations.cpp
+	implementation/semantics/c_catalog.cpp
+	implementation/semantics/c_character_map.cpp
+	implementation/semantics/c_contents.cpp
+	implementation/semantics/c_date.cpp
+	implementation/semantics/c_destinations.cpp
+	implementation/semantics/c_developer_extensions.cpp
+	implementation/semantics/c_digital_signature.cpp
+	implementation/semantics/c_document.cpp
+	implementation/semantics/c_document_info.cpp
+	implementation/semantics/c_document_signature_settings.cpp
+	implementation/semantics/c_fields.cpp
+	implementation/semantics/c_font.cpp
+	implementation/semantics/c_font_map.cpp
+	implementation/semantics/c_interactive_forms.cpp
+	implementation/semantics/c_outline.cpp
+	implementation/semantics/c_page_labels.cpp
+	implementation/semantics/c_page_object.cpp
+	implementation/semantics/c_page_tree.cpp
+	implementation/semantics/c_rectangle.cpp
+	implementation/semantics/c_resource_dictionary.cpp
+	implementation/semantics/c_viewer_preferences.cpp
+)
+
+set(VANILLAPDF_C_IMPLEMENTATION_CONTENTS_SOURCES
 )
 
 set(VANILLAPDF_CONTENTS_SOURCES
@@ -306,71 +320,12 @@ set(VANILLAPDF_UTILS_HEADERS
 	utils/streams/stream_utils.h
 )
 
-set(VANILLAPDF_INCLUDE_HEADERS
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_annotations.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_array_object.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_boolean_object.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_buffer.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_catalog.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_character_map.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_contents.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_date.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_destinations.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_developer_extensions.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_dictionary_object.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_digital_signature.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_document.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_document_info.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_document_signature_settings.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_encryption.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_errors.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_export.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_fields.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_file.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_file_writer.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_filter.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_font.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_font_map.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_handles.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_indirect_object_reference.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_input_stream_interface.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_integer_object.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_interactive_forms.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_library_info.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_license_info.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_logging.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_message_digest_algorithm.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_name_object.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_null_object.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_object.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_outline.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_output_stream_interface.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_page_labels.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_page_object.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_page_tree.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_pdf_version.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_pkcs12_key.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_platform.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_real_object.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_rectangle.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_resource_dictionary.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_signing_key.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_stream_object.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_string_object.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_types.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_unknown_interface.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_values.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_viewer_preferences.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_xref.h"
-	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_vanillapdf_api.h"
-)
-
-set(VANILLAPDF_IMPLEMENTATION_HELPER_HEADER
+set(VANILLAPDF_IMPLEMENTATION_HEADER
 	implementation/helper.h
 )
 
 set(VANILLAPDF_ADDITIONAL_HEADERS
-	"${CMAKE_SOURCE_DIR}/include/unistd.h"
+	unistd.h
 )
 
 set(VANILLAPDF_PRECOMPILED_HEADER
@@ -382,10 +337,12 @@ set(VANILLAPDF_RESOURCE_FILES
   resources.rc
 )
 
+# Resource files
 source_group("Resource Files" FILES
 	${VANILLAPDF_RESOURCE_FILES}
 )
 
+# Header files
 source_group("Header Files" FILES
 	${VANILLAPDF_PRECOMPILED_HEADER}
 	${VANILLAPDF_ADDITIONAL_HEADERS}
@@ -393,6 +350,22 @@ source_group("Header Files" FILES
 
 source_group("Header Files\\include" FILES
 	${VANILLAPDF_INCLUDE_HEADERS}
+)
+
+source_group("Header Files\\include\\utils" FILES
+	${VANILLAPDF_INCLUDE_UTILS_HEADERS}
+)
+
+source_group("Header Files\\include\\syntax" FILES
+	${VANILLAPDF_INCLUDE_SYNTAX_HEADERS}
+)
+
+source_group("Header Files\\include\\semantics" FILES
+	${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS}
+)
+
+source_group("Header Files\\include\\contents" FILES
+	${VANILLAPDF_INCLUDE_CONTENTS_HEADERS}
 )
 
 source_group("Header Files\\contents" FILES
@@ -411,9 +384,29 @@ source_group("Header Files\\utils" FILES
 	${VANILLAPDF_UTILS_HEADERS}
 )
 
+source_group("Header Files\\implementation" FILES
+	${VANILLAPDF_IMPLEMENTATION_HEADER}
+)
+
+# Source files
 source_group("Source Files\\implementation" FILES
 	${VANILLAPDF_C_IMPLEMENTATION_SOURCES}
-	${VANILLAPDF_IMPLEMENTATION_HELPER_HEADER}
+)
+
+source_group("Source Files\\implementation\\utils" FILES
+	${VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES}
+)
+
+source_group("Source Files\\implementation\\syntax" FILES
+	${VANILLAPDF_C_IMPLEMENTATION_SYNTAX_SOURCES}
+)
+
+source_group("Source Files\\implementation\\semantics" FILES
+	${VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES}
+)
+
+source_group("Source Files\\implementation\\contents" FILES
+	${VANILLAPDF_C_IMPLEMENTATION_CONTENTS_SOURCES}
 )
 
 source_group("Source Files\\contents" FILES
@@ -434,6 +427,11 @@ source_group("Source Files\\utils" FILES
 
 set(VANILLAPDF_ALL_SOURCES
 	${VANILLAPDF_C_IMPLEMENTATION_SOURCES}
+	${VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES}
+	${VANILLAPDF_C_IMPLEMENTATION_SYNTAX_SOURCES}
+	${VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES}
+	${VANILLAPDF_C_IMPLEMENTATION_CONTENTS_SOURCES}
+	
 	${VANILLAPDF_SEMANTICS_SOURCES}
 	${VANILLAPDF_SYNTAX_SOURCES}
 	
@@ -442,14 +440,26 @@ set(VANILLAPDF_ALL_SOURCES
 )
 
 add_library(vanillapdf SHARED
+	${VANILLAPDF_INCLUDE_HEADERS}
+	${VANILLAPDF_INCLUDE_UTILS_HEADERS}
+	${VANILLAPDF_INCLUDE_SYNTAX_HEADERS}
+	${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS}
+	${VANILLAPDF_INCLUDE_CONTENTS_HEADERS}
+	
 	${VANILLAPDF_C_IMPLEMENTATION_SOURCES}
+	${VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES}
+	${VANILLAPDF_C_IMPLEMENTATION_SYNTAX_SOURCES}
+	${VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES}
+	${VANILLAPDF_C_IMPLEMENTATION_CONTENTS_SOURCES}
+	
+	${VANILLAPDF_SEMANTICS_HEADERS}
 	${VANILLAPDF_SEMANTICS_SOURCES}
+	
+	${VANILLAPDF_SYNTAX_HEADERS}
 	${VANILLAPDF_SYNTAX_SOURCES}
+	
 	${VANILLAPDF_PRECOMPILED_SOURCE}
 	${VANILLAPDF_PRECOMPILED_HEADER}
-	${VANILLAPDF_INCLUDE_HEADERS}
-	${VANILLAPDF_SEMANTICS_HEADERS}
-	${VANILLAPDF_SYNTAX_HEADERS}
 	
 	${VANILLAPDF_CONTENTS_HEADERS}
 	${VANILLAPDF_CONTENTS_SOURCES}
@@ -463,7 +473,6 @@ add_library(vanillapdf SHARED
 )
 
 set_target_properties(vanillapdf PROPERTIES
-  PUBLIC_HEADER "${VANILLAPDF_INCLUDE_HEADERS}"
   PREFIX "lib"
 )
 
@@ -503,7 +512,7 @@ add_definitions(-DVANILLAPDF_VERSION_PATCH=${VANILLAPDF_VERSION_PATCH})
 add_definitions(-DVANILLAPDF_VERSION_BUILD=${VANILLAPDF_VERSION_BUILD})
 
 # Specify build time identificators
-string(TIMESTAMP VANILLAPDF_BUILD_DAY		"%d" UTC)
+string(TIMESTAMP VANILLAPDF_BUILD_DAY	"%d" UTC)
 string(TIMESTAMP VANILLAPDF_BUILD_MONTH	"%m" UTC)
 string(TIMESTAMP VANILLAPDF_BUILD_YEAR	"%Y" UTC)
 
@@ -571,8 +580,13 @@ install(TARGETS vanillapdf
 	RUNTIME DESTINATION bin
 	LIBRARY DESTINATION lib
 	ARCHIVE DESTINATION lib
-	PUBLIC_HEADER DESTINATION "include\\vanillapdf"
 )
+
+install(FILES ${VANILLAPDF_INCLUDE_HEADERS} DESTINATION "include\\vanillapdf")
+install(FILES ${VANILLAPDF_INCLUDE_UTILS_HEADERS} DESTINATION "include\\vanillapdf\\utils")
+install(FILES ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS} DESTINATION "include\\vanillapdf\\syntax")
+install(FILES ${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS} DESTINATION "include\\vanillapdf\\semantics")
+install(FILES ${VANILLAPDF_INCLUDE_CONTENTS_HEADERS} DESTINATION "include\\vanillapdf\\contents")
 
 # Install dependent libraries on windows
 if(WIN32)

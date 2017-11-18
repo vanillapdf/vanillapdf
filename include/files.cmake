@@ -1,0 +1,72 @@
+# Public header files for vanilla pdf
+
+set(VANILLAPDF_INCLUDE_HEADERS
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_export.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_handles.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_platform.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_types.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_values.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/c_vanillapdf_api.h"
+)
+
+set(VANILLAPDF_INCLUDE_UTILS_HEADERS
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_buffer.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_encryption.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_errors.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_input_stream_interface.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_library_info.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_license_info.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_logging.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_message_digest_algorithm.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_output_stream_interface.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_pdf_version.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_pkcs12_key.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_signing_key.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_unknown_interface.h"
+)
+
+set(VANILLAPDF_INCLUDE_SYNTAX_HEADERS
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_array_object.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_boolean_object.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_dictionary_object.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_file.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_file_writer.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_filter.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_indirect_object_reference.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_integer_object.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_name_object.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_null_object.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_object.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_real_object.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_stream_object.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_string_object.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_xref.h"
+)
+
+set(VANILLAPDF_INCLUDE_SEMANTICS_HEADERS
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_annotations.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_catalog.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_character_map.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_contents.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_date.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_destinations.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_developer_extensions.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_digital_signature.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_document.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_document_info.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_document_signature_settings.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_fields.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_font.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_font_map.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_interactive_forms.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_outline.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_page_labels.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_page_object.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_page_tree.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_rectangle.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_resource_dictionary.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_viewer_preferences.h"
+)
+
+set(VANILLAPDF_INCLUDE_CONTENTS_HEADERS
+)

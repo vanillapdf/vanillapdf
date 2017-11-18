@@ -97,6 +97,33 @@
     <Filter Include="Source Files\semantics\objects">
       <UniqueIdentifier>{5e795049-31b5-41ac-8f92-21f28a2f472a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\include\syntax">
+      <UniqueIdentifier>{3694efd5-9342-458c-b614-eeb63dd208e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\semantics">
+      <UniqueIdentifier>{2f679fee-8ada-4a0c-a20d-4fe09b81e550}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\contents">
+      <UniqueIdentifier>{1348ecec-0866-466b-a8cb-76fa34a7ce57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\utils">
+      <UniqueIdentifier>{419b090b-542c-45d3-8113-582fd75f6493}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\implementation\syntax">
+      <UniqueIdentifier>{106cea79-15a4-4a76-bc14-10217c7792a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\implementation\semantics">
+      <UniqueIdentifier>{357d723e-4e95-4fa0-99dd-f9b80c54fdc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\implementation\utils">
+      <UniqueIdentifier>{838184f5-92f0-4a87-84d0-e87f042842e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\implementation\contents">
+      <UniqueIdentifier>{22a90c5f-7a71-4966-a72c-6cb6535c997f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\implementation">
+      <UniqueIdentifier>{c20d4f5f-ab50-4177-a913-3f3a2621d052}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\vanillapdf\contents\content_fwd.h">
@@ -128,162 +155,6 @@
     </ClInclude>
     <ClInclude Include="..\src\vanillapdf\contents\content_utils.h">
       <Filter>Header Files\contents</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_annotations.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_array_object.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_boolean_object.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_buffer.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_catalog.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_character_map.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_contents.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_date.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_destinations.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_developer_extensions.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_dictionary_object.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_digital_signature.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_document.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_document_info.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_document_signature_settings.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_encryption.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_errors.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_export.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_fields.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_file.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_file_writer.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_font.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_font_map.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_handles.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_indirect_object_reference.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_integer_object.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_interactive_forms.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_library_info.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_logging.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_message_digest_algorithm.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_name_object.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_null_object.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_object.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_outline.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_page_labels.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_page_object.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_page_tree.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_pdf_version.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_pkcs12_key.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_platform.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_real_object.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_rectangle.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_resource_dictionary.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_signing_key.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_stream_object.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_string_object.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_types.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_unknown_interface.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_values.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_viewer_preferences.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_xref.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\vanillapdf\implementation\c_helper.h">
-      <Filter>Source Files\implementation</Filter>
     </ClInclude>
     <ClInclude Include="..\src\vanillapdf\semantics\objects\annotations.h">
       <Filter>Header Files\semantics\objects</Filter>
@@ -621,9 +492,6 @@
     <ClInclude Include="..\include\unistd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_license_info.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\vanillapdf\utils\license_info.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
@@ -633,20 +501,179 @@
     <ClInclude Include="..\src\vanillapdf\utils\resource.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_vanillapdf_api.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_filter.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\vanillapdf\utils\streams\stream_utils.h">
       <Filter>Header Files\utils\streams</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_input_stream_interface.h">
+    <ClInclude Include="..\include\vanillapdf\c_export.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\c_output_stream_interface.h">
+    <ClInclude Include="..\include\vanillapdf\c_handles.h">
       <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\c_platform.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\c_types.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\c_values.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\c_vanillapdf_api.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\syntax\c_array_object.h">
+      <Filter>Header Files\include\syntax</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\syntax\c_boolean_object.h">
+      <Filter>Header Files\include\syntax</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\syntax\c_dictionary_object.h">
+      <Filter>Header Files\include\syntax</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\syntax\c_file.h">
+      <Filter>Header Files\include\syntax</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\syntax\c_file_writer.h">
+      <Filter>Header Files\include\syntax</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\syntax\c_filter.h">
+      <Filter>Header Files\include\syntax</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\syntax\c_indirect_object_reference.h">
+      <Filter>Header Files\include\syntax</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\syntax\c_integer_object.h">
+      <Filter>Header Files\include\syntax</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\syntax\c_name_object.h">
+      <Filter>Header Files\include\syntax</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\syntax\c_null_object.h">
+      <Filter>Header Files\include\syntax</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\syntax\c_object.h">
+      <Filter>Header Files\include\syntax</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\syntax\c_real_object.h">
+      <Filter>Header Files\include\syntax</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\syntax\c_stream_object.h">
+      <Filter>Header Files\include\syntax</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\syntax\c_string_object.h">
+      <Filter>Header Files\include\syntax</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\syntax\c_xref.h">
+      <Filter>Header Files\include\syntax</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_annotations.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_catalog.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_character_map.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_contents.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_date.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_destinations.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_developer_extensions.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_digital_signature.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_document.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_document_info.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_document_signature_settings.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_fields.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_font.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_font_map.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_interactive_forms.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_outline.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_page_labels.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_page_object.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_page_tree.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_rectangle.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_resource_dictionary.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_viewer_preferences.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\utils\c_buffer.h">
+      <Filter>Header Files\include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\utils\c_encryption.h">
+      <Filter>Header Files\include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\utils\c_errors.h">
+      <Filter>Header Files\include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\utils\c_input_stream_interface.h">
+      <Filter>Header Files\include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\utils\c_library_info.h">
+      <Filter>Header Files\include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\utils\c_license_info.h">
+      <Filter>Header Files\include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\utils\c_logging.h">
+      <Filter>Header Files\include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\utils\c_message_digest_algorithm.h">
+      <Filter>Header Files\include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\utils\c_output_stream_interface.h">
+      <Filter>Header Files\include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\utils\c_pdf_version.h">
+      <Filter>Header Files\include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\utils\c_pkcs12_key.h">
+      <Filter>Header Files\include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\utils\c_signing_key.h">
+      <Filter>Header Files\include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\utils\c_unknown_interface.h">
+      <Filter>Header Files\include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\vanillapdf\implementation\c_helper.h">
+      <Filter>Header Files\implementation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -661,141 +688,6 @@
     </ClCompile>
     <ClCompile Include="..\src\vanillapdf\contents\content_stream_parser.cpp">
       <Filter>Source Files\contents</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_annotations.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_array_object.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_boolean_object.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_buffer.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_catalog.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_character_map.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_contents.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_date.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_destinations.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_developer_extensions.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_dictionary_object.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_digital_signature.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_document.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_document_info.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_document_signature_settings.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_encryption.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_errors.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_fields.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_file.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_file_writer.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_font.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_font_map.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_indirect_object_reference.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_integer_object.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_interactive_forms.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_library_info.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_logging.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_name_object.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_null_object.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_object.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_outline.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_page_labels.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_page_object.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_page_tree.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_pkcs12_key.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_real_object.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_rectangle.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_resource_dictionary.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_signing_key.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_stream_object.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_string_object.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_unknown_interface.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_values.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_viewer_preferences.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_xref.cpp">
-      <Filter>Source Files\implementation</Filter>
     </ClCompile>
     <ClCompile Include="..\src\vanillapdf\semantics\objects\annotations.cpp">
       <Filter>Source Files\semantics\objects</Filter>
@@ -1028,26 +920,161 @@
     <ClCompile Include="..\src\vanillapdf\utils\license_info.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_license_info.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\vanillapdf\utils\misc_utils.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
     <ClCompile Include="..\src\vanillapdf\utils\resource.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_filter.cpp">
-      <Filter>Source Files\implementation</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\vanillapdf\utils\streams\stream_utils.cpp">
       <Filter>Source Files\utils\streams</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_input_stream_interface.cpp">
+    <ClCompile Include="..\src\vanillapdf\implementation\c_values.cpp">
       <Filter>Source Files\implementation</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\c_output_stream_interface.cpp">
-      <Filter>Source Files\implementation</Filter>
+    <ClCompile Include="..\src\vanillapdf\implementation\utils\c_buffer.cpp">
+      <Filter>Source Files\implementation\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\utils\c_encryption.cpp">
+      <Filter>Source Files\implementation\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\utils\c_errors.cpp">
+      <Filter>Source Files\implementation\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\utils\c_input_stream_interface.cpp">
+      <Filter>Source Files\implementation\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\utils\c_library_info.cpp">
+      <Filter>Source Files\implementation\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\utils\c_license_info.cpp">
+      <Filter>Source Files\implementation\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\utils\c_logging.cpp">
+      <Filter>Source Files\implementation\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\utils\c_output_stream_interface.cpp">
+      <Filter>Source Files\implementation\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\utils\c_pkcs12_key.cpp">
+      <Filter>Source Files\implementation\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\utils\c_signing_key.cpp">
+      <Filter>Source Files\implementation\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\utils\c_unknown_interface.cpp">
+      <Filter>Source Files\implementation\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_annotations.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_catalog.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_character_map.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_contents.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_date.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_destinations.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_developer_extensions.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_digital_signature.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_document.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_document_info.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_document_signature_settings.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_fields.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_font.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_font_map.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_interactive_forms.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_outline.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_page_labels.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_page_object.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_page_tree.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_rectangle.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_resource_dictionary.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_viewer_preferences.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_array_object.cpp">
+      <Filter>Source Files\implementation\syntax</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_boolean_object.cpp">
+      <Filter>Source Files\implementation\syntax</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_dictionary_object.cpp">
+      <Filter>Source Files\implementation\syntax</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_file.cpp">
+      <Filter>Source Files\implementation\syntax</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_file_writer.cpp">
+      <Filter>Source Files\implementation\syntax</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_filter.cpp">
+      <Filter>Source Files\implementation\syntax</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_indirect_object_reference.cpp">
+      <Filter>Source Files\implementation\syntax</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_integer_object.cpp">
+      <Filter>Source Files\implementation\syntax</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_name_object.cpp">
+      <Filter>Source Files\implementation\syntax</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_null_object.cpp">
+      <Filter>Source Files\implementation\syntax</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_object.cpp">
+      <Filter>Source Files\implementation\syntax</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_real_object.cpp">
+      <Filter>Source Files\implementation\syntax</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_stream_object.cpp">
+      <Filter>Source Files\implementation\syntax</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_string_object.cpp">
+      <Filter>Source Files\implementation\syntax</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_xref.cpp">
+      <Filter>Source Files\implementation\syntax</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

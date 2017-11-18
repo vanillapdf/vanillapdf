@@ -1,7 +1,7 @@
 #ifndef _C_VALUES_H
 #define _C_VALUES_H
 
-#include "c_export.h"
+#include "vanillapdf/c_export.h"
 #include "c_types.h"
 
 /**

@@ -4,7 +4,7 @@
 
 #include "syntax/objects/name_object.h"
 
-#include "vanillapdf/c_name_object.h"
+#include "vanillapdf/syntax/c_name_object.h"
 
 #include <sstream>
 
