@@ -3,10 +3,10 @@
 * \brief
 * Classes representing document's properties.
 *
-* The base entity for should be ::DocumentHandle,
+* The base entity for should be \ref DocumentHandle,
 * which represents the file in terms of the high-level interface.
 *
-* Document's pages are contained in so-called ::CatalogHandle.
+* Document's pages are contained in so-called \ref CatalogHandle.
 *
 * These classes shall provide a root for your research.
 *
@@ -31,7 +31,7 @@
 * recommended as many functions are a direct reference
 * to a PDF specification.
 *
-* You might want to start with ::FileHandle,
+* You might want to start with \ref FileHandle,
 * which is the low-level counterpart of the DocumentHandle.
 *
 * It's primary use is for missing or misbehaving functionality
