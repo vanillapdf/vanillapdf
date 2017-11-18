@@ -7,7 +7,7 @@
 namespace vanillapdf {
 namespace contents {
 
-	// instructions
+// instructions
 class InstructionBase; using InstructionBasePtr = Deferred<InstructionBase>;
 class BaseInstructionCollection; using BaseInstructionCollectionPtr = DeferredContainer<BaseInstructionCollection>;
 

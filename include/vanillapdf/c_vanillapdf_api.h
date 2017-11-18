@@ -52,6 +52,12 @@
 #include "vanillapdf/semantics/c_rectangle.h"
 #include "vanillapdf/semantics/c_contents.h"
 
+/* contents */
+#include "vanillapdf/contents/c_content_object.h"
+#include "vanillapdf/contents/c_content_operator.h"
+#include "vanillapdf/contents/c_content_operation.h"
+#include "vanillapdf/contents/c_content_instruction.h"
+
 /* utils */
 #include "vanillapdf/utils/c_unknown_interface.h"
 #include "vanillapdf/utils/c_encryption.h"

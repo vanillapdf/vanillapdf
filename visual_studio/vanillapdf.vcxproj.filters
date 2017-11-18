@@ -489,9 +489,6 @@
     <ClInclude Include="..\src\vanillapdf\precompiled.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\unistd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\vanillapdf\utils\license_info.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
@@ -674,6 +671,21 @@
     </ClInclude>
     <ClInclude Include="..\src\vanillapdf\implementation\c_helper.h">
       <Filter>Header Files\implementation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\vanillapdf\unistd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\contents\c_content_instruction.h">
+      <Filter>Header Files\include\contents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\contents\c_content_object.h">
+      <Filter>Header Files\include\contents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\contents\c_content_operation.h">
+      <Filter>Header Files\include\contents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\contents\c_content_operator.h">
+      <Filter>Header Files\include\contents</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1075,6 +1087,18 @@
     </ClCompile>
     <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_xref.cpp">
       <Filter>Source Files\implementation\syntax</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\contents\c_content_instruction.cpp">
+      <Filter>Source Files\implementation\contents</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\contents\c_content_operation.cpp">
+      <Filter>Source Files\implementation\contents</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\contents\c_content_object.cpp">
+      <Filter>Source Files\implementation\contents</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\contents\c_content_operator.cpp">
+      <Filter>Source Files\implementation\contents</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

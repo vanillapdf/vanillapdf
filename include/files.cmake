@@ -69,4 +69,8 @@ set(VANILLAPDF_INCLUDE_SEMANTICS_HEADERS
 )
 
 set(VANILLAPDF_INCLUDE_CONTENTS_HEADERS
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/contents/c_content_instruction.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/contents/c_content_object.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/contents/c_content_operation.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/contents/c_content_operator.h"
 )

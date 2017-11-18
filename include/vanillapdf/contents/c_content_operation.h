@@ -1,0 +1,346 @@
+#ifndef _C_CONTENT_OPERATION_H
+#define _C_CONTENT_OPERATION_H
+
+#include "vanillapdf/c_export.h"
+#include "vanillapdf/c_handles.h"
+#include "vanillapdf/c_values.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+	/**
+	* \file c_content_operation.h
+	* This file contains class definitions for ContentOperationHandle
+	*/
+
+	/**
+	* \class ContentOperationHandle
+	* \extends ContentInstructionHandle
+	* \ingroup Contents
+	* \brief Atomic content operation.
+	*/
+
+	/**
+	* \class ContentOperationGenericHandle
+	* \extends ContentOperationHandle
+	* \ingroup Contents
+	* \brief Unresolved operation often containing unknown operator.
+	*/
+
+	/**
+	* \class ContentOperationTextShowHandle
+	* \extends ContentOperationHandle
+	* \ingroup Contents
+	* \brief Show a text string.
+	*/
+
+	/**
+	* \class ContentOperationTextShowArrayHandle
+	* \extends ContentOperationHandle
+	* \ingroup Contents
+	* \brief
+	* Show one or more text strings,
+	* allowing individual glyph positioning.
+	*/
+
+	/**
+	* \class ContentOperationTextFontHandle
+	* \extends ContentOperationHandle
+	* \ingroup Contents
+	* \brief Set the text font and the text font size.
+	*/
+
+	/**
+	* \class ContentOperationBeginTextHandle
+	* \extends ContentOperationHandle
+	* \ingroup Contents
+	* \brief Starts a new TextObject sections
+	*/
+
+	/**
+	* \class ContentOperationEndTextHandle
+	* \extends ContentOperationHandle
+	* \ingroup Contents
+	* \brief Terminates the TextObject started with ContentOperationBeginTextHandle
+	*/
+
+
+	/**
+	* \brief Available content operation types
+	*/
+	typedef enum {
+		/**
+		* \copydoc ContentOperationGenericHandle
+		* \see ContentOperationGenericHandle
+		*/
+		ContentOperationType_Generic = 0,
+		ContentOperationType_LineWidth,
+		ContentOperationType_LineCap,
+		ContentOperationType_LineJoin,
+		ContentOperationType_MiterLimit,
+		ContentOperationType_DashPattern,
+		ContentOperationType_ColorRenderingIntent,
+		ContentOperationType_Flatness,
+		ContentOperationType_GraphicsState,
+		ContentOperationType_SaveGraphicsState,
+		ContentOperationType_RestoreGraphicsState,
+		ContentOperationType_TransformationMatrix,
+		ContentOperationType_BeginSubpath,
+		ContentOperationType_Line,
+		ContentOperationType_FullCurve,
+		ContentOperationType_FinalCurve,
+		ContentOperationType_InitialCurve,
+		ContentOperationType_CloseSubpath,
+		ContentOperationType_Rectangle,
+		ContentOperationType_Stroke,
+		ContentOperationType_CloseAndStroke,
+		ContentOperationType_FillPathNonzero,
+		ContentOperationType_FillPathCompatibility,
+		ContentOperationType_FillPathEvenOdd,
+		ContentOperationType_FillStrokeNonzero,
+		ContentOperationType_FillStrokeEvenOdd,
+		ContentOperationType_CloseFillStrokeNonzero,
+		ContentOperationType_CloseFillStrokeEvenOdd,
+		ContentOperationType_EndPath,
+		ContentOperationType_ClipPathNonzero,
+		ContentOperationType_ClipPathEvenOdd,
+		ContentOperationType_BeginText,
+		ContentOperationType_EndText,
+		ContentOperationType_CharacterSpacing,
+		ContentOperationType_WordSpacing,
+		ContentOperationType_HorizontalScaling,
+		ContentOperationType_Leading,
+
+		/**
+		* \copydoc ContentOperationTextFontHandle
+		* \see ContentOperationTextFontHandle
+		*/
+		ContentOperationType_TextFont,
+		ContentOperationType_TextRenderingMode,
+		ContentOperationType_TextRise,
+		ContentOperationType_TextTranslate,
+		ContentOperationType_TextTranslateLeading,
+		ContentOperationType_TextMatrix,
+		ContentOperationType_TextNextLine,
+
+		/**
+		* \copydoc ContentOperationTextShowHandle
+		* \see ContentOperationTextShowHandle
+		*/
+		ContentOperationType_TextShow,
+
+		/**
+		* \copydoc ContentOperationTextShowArrayHandle
+		* \see ContentOperationTextShowArrayHandle
+		*/
+		ContentOperationType_TextShowArray,
+		ContentOperationType_TextNextLineShow,
+		ContentOperationType_TextNextLineShowSpacing,
+		ContentOperationType_SetCharWidth,
+		ContentOperationType_SetCacheDevice,
+		ContentOperationType_ColorSpaceStroke,
+		ContentOperationType_ColorSpaceNonstroke,
+		ContentOperationType_SetColorStroke,
+		ContentOperationType_SetColorStrokeExtended,
+		ContentOperationType_SetColorNonstroke,
+		ContentOperationType_SetColorNonstrokeExtended,
+		ContentOperationType_SetStrokingColorSpaceGray,
+		ContentOperationType_SetNonstrokingColorSpaceGray,
+		ContentOperationType_SetStrokingColorSpaceRGB,
+		ContentOperationType_SetNonstrokingColorSpaceRGB,
+		ContentOperationType_SetStrokingColorSpaceCMYK,
+		ContentOperationType_SetNonstrokingColorSpaceCMYK,
+		ContentOperationType_ShadingPaint,
+		ContentOperationType_BeginInlineImageObject,
+		ContentOperationType_BeginInlineImageData,
+		ContentOperationType_EndInlineImageObject,
+		ContentOperationType_InvokeXObject,
+		ContentOperationType_DefineMarkedContentPoint,
+		ContentOperationType_DefineMarkedContentPointWithPropertyList,
+		ContentOperationType_BeginMarkedContentSequence,
+		ContentOperationType_BeginMarkedContentSequenceWithPropertyList,
+		ContentOperationType_EndMarkedContentSequence,
+		ContentOperationType_BeginCompatibilitySection,
+		ContentOperationType_EndCompatibilitySection
+	} ContentOperationType;
+
+
+	/**
+	* \memberof ContentOperationHandle
+	* @{
+	*/
+
+	/**
+	* \brief Get derived type of current object
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_GetType(ContentOperationHandle handle, ContentOperationType* result);
+
+	/**
+	* \brief Reinterpret current object as ContentOperationGenericHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToGeneric(ContentOperationHandle handle, ContentOperationGenericHandle* result);
+
+	/**
+	* \brief Reinterpret current object as ContentOperationTextFontHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextFont(ContentOperationHandle handle, ContentOperationTextFontHandle* result);
+
+	/**
+	* \brief Reinterpret current object as ContentOperationTextShowHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShow(ContentOperationHandle handle, ContentOperationTextShowHandle* result);
+
+	/**
+	* \brief Reinterpret current object as ContentOperationTextShowArrayHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShowArray(ContentOperationHandle handle, ContentOperationTextShowArrayHandle* result);
+
+	/**
+	* \brief Reinterpret current object as ContentOperationBeginTextHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToBeginText(ContentOperationHandle handle, ContentOperationBeginTextHandle* result);
+
+	/**
+	* \brief Reinterpret current object as ContentOperationEndTextHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToEndText(ContentOperationHandle handle, ContentOperationEndTextHandle* result);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_Release(ContentOperationHandle handle);
+
+	/** @} */
+
+	/**
+	* \memberof ContentOperationGenericHandle
+	* @{
+	*/
+
+	/**
+	* \brief Get operator from unknown operation
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperator(ContentOperationGenericHandle handle, ContentOperatorHandle* result);
+
+	/**
+	* \brief Get number of operands belonging to the operator
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandsSize(ContentOperationGenericHandle handle, size_type* result);
+
+	/**
+	* \brief Get operand at location \p at
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandAt(ContentOperationGenericHandle handle, size_type at, ObjectHandle* result);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_Release(ContentOperationGenericHandle handle);
+
+	/** @} */
+
+	/**
+	* \memberof ContentOperationTextShowHandle
+	* @{
+	*/
+
+	/**
+	* \brief A text string to be shown.
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_GetValue(ContentOperationTextShowHandle handle, StringObjectHandle* result);
+
+	/**
+	* \brief Set a new text string to be shown.
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_SetValue(ContentOperationTextShowHandle handle, StringObjectHandle data);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_Release(ContentOperationTextShowHandle handle);
+
+	/** @} */
+
+	/**
+	* \memberof ContentOperationTextShowArrayHandle
+	* @{
+	*/
+
+
+	/**
+	* \brief One or more text strings to be shown.
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_GetValue(ContentOperationTextShowArrayHandle handle, ArrayObjectHandle* result);
+
+	/**
+	* \brief Set new text strings to be shown.
+	*
+	* Each element of array shall be either a string or a number.
+	*
+	* If the element is a string, this operator shall show the string.
+	*
+	* If it is a number, the operator shall adjust the text position by that amount.
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_SetValue(ContentOperationTextShowArrayHandle handle, ArrayObjectHandle data);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_Release(ContentOperationTextShowArrayHandle handle);
+
+	/** @} */
+
+	/**
+	* \memberof ContentOperationTextFontHandle
+	* @{
+	*/
+
+	/**
+	* \brief Get name of the font to be set.
+	*
+	* Font shall be the name of a font resource in the Font
+	* subdictionary of the current resource dictionary.
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetName(ContentOperationTextFontHandle handle, NameObjectHandle* result);
+
+	/**
+	* \brief Set new font name.
+	*
+	* Font shall be the name of a font resource in the Font
+	* subdictionary of the current resource dictionary.
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_SetName(ContentOperationTextFontHandle handle, NameObjectHandle data);
+
+	/**
+	* \brief Get current font scaling.
+	*
+	* Scale shall be a number representing a scale factor.
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetScale(ContentOperationTextFontHandle handle, IntegerObjectHandle* result);
+
+	/**
+	* \brief Set new font scaling.
+	*
+	* Scale shall be a number representing a scale factor.
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_SetScale(ContentOperationTextFontHandle handle, IntegerObjectHandle data);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see ::IUnknown_Release
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_Release(ContentOperationTextFontHandle handle);
+
+	/** @} */
+
+#ifdef __cplusplus
+};
+#endif
+
+#endif /* _C_CONTENT_OPERATION_H */

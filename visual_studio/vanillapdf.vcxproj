@@ -20,7 +20,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\unistd.h" />
+    <ClInclude Include="..\include\vanillapdf\contents\c_content_instruction.h" />
+    <ClInclude Include="..\include\vanillapdf\contents\c_content_object.h" />
+    <ClInclude Include="..\include\vanillapdf\contents\c_content_operation.h" />
+    <ClInclude Include="..\include\vanillapdf\contents\c_content_operator.h" />
     <ClInclude Include="..\include\vanillapdf\c_export.h" />
     <ClInclude Include="..\include\vanillapdf\c_handles.h" />
     <ClInclude Include="..\include\vanillapdf\c_platform.h" />
@@ -162,6 +165,7 @@
     <ClInclude Include="..\src\vanillapdf\syntax\utils\output_pointer.h" />
     <ClInclude Include="..\src\vanillapdf\syntax\utils\serialization_override_attribute.h" />
     <ClInclude Include="..\src\vanillapdf\syntax\utils\syntax_fwd.h" />
+    <ClInclude Include="..\src\vanillapdf\unistd.h" />
     <ClInclude Include="..\src\vanillapdf\utils\attribute_interface.h" />
     <ClInclude Include="..\src\vanillapdf\utils\attribute_list.h" />
     <ClInclude Include="..\src\vanillapdf\utils\buffer.h" />
@@ -209,6 +213,10 @@
     <ClCompile Include="..\src\vanillapdf\contents\content_stream_operations.cpp" />
     <ClCompile Include="..\src\vanillapdf\contents\content_stream_operation_generic.cpp" />
     <ClCompile Include="..\src\vanillapdf\contents\content_stream_parser.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\contents\c_content_instruction.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\contents\c_content_object.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\contents\c_content_operation.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\contents\c_content_operator.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\c_values.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_annotations.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_catalog.cpp" />
