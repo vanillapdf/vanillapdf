@@ -15,7 +15,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION LicenseInfo_SetLicenseFile(string_t
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION LicenseInfo_SetLicenseBuffer(BufferHandle data) {
+VANILLAPDF_API error_type CALLING_CONVENTION LicenseInfo_SetLicenseBuffer(BufferHandle* data) {
 	Buffer* buffer = reinterpret_cast<Buffer*>(data);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(buffer);
 

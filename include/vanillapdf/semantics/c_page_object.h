@@ -39,12 +39,12 @@ extern "C"
 	* This new entry has to be manually added to document catalog's page tree.
 	* \see \ref PageTreeHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateFromDocument(DocumentHandle handle, PageObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateFromDocument(DocumentHandle* handle, PageObjectHandle** result);
 
 	/**
 	* \copydoc PageObject_CreateFromDocument
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateFromObject(DictionaryObjectHandle handle, PageObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateFromObject(DictionaryObjectHandle* handle, PageObjectHandle** result);
 
 	/**
 	* \brief
@@ -52,13 +52,13 @@ extern "C"
 	* the contents of this page. If this entry is absent,
 	* the page shall be empty.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObjectHandle handle, ContentsHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObjectHandle* handle, ContentsHandle** result);
 
 	/**
 	* \brief
 	* The page tree node that is the immediate parent of this page object.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetParent(PageObjectHandle handle, PageTreeHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetParent(PageObjectHandle* handle, PageTreeHandle** result);
 
 	/**
 	* \brief
@@ -70,7 +70,7 @@ extern "C"
 	* Omitting the entry entirely indicates that the resources
 	* shall be inherited from an ancestor node in the page tree.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetResources(PageObjectHandle handle, ResourceDictionaryHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetResources(PageObjectHandle* handle, ResourceDictionaryHandle** result);
 
 	/**
 	* \brief
@@ -78,7 +78,7 @@ extern "C"
 	* indirect references to all annotations associated
 	* with the page (see 12.5, "Annotations").
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetAnnotations(PageObjectHandle handle, PageAnnotationsHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetAnnotations(PageObjectHandle* handle, PageAnnotationsHandle** result);
 
 	/**
 	* \brief
@@ -87,13 +87,13 @@ extern "C"
 	* physical medium on which the page shall
 	* be displayed or printed (see 14.11.2, "Page Boundaries").
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetMediaBox(PageObjectHandle handle, RectangleHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetMediaBox(PageObjectHandle* handle, RectangleHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_Release(PageObjectHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_Release(PageObjectHandle* handle);
 
 	/** @} */
 

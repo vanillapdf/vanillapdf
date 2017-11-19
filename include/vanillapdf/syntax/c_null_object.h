@@ -30,7 +30,7 @@ extern "C"
 	/**
 	* \copydoc Object_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION NullObject_Release(NullObjectHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION NullObject_Release(NullObjectHandle* handle);
 
 	/** @} */
 

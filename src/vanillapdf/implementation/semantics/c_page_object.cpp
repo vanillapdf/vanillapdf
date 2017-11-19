@@ -10,7 +10,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObjectHandle handle, ContentsHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObjectHandle* handle, ContentsHandle** result)
 {
 	PageObject* obj = reinterpret_cast<PageObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -22,12 +22,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObjectHa
 		auto contains = obj->GetContents(contents);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = contents.AddRefGet();
-		*result = reinterpret_cast<ContentsHandle>(ptr);
+		*result = reinterpret_cast<ContentsHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateFromDocument(DocumentHandle handle, PageObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateFromDocument(DocumentHandle* handle, PageObjectHandle** result)
 {
 	Document* obj = reinterpret_cast<Document*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -41,12 +41,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateFromDocument(Docum
 		// Release from unique ptr does not increase internal ref counter
 		ptr->AddRef();
 
-		*result = reinterpret_cast<PageObjectHandle>(ptr);
+		*result = reinterpret_cast<PageObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateFromObject(DictionaryObjectHandle handle, PageObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateFromObject(DictionaryObjectHandle* handle, PageObjectHandle** result)
 {
 	syntax::DictionaryObject* obj = reinterpret_cast<syntax::DictionaryObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -60,12 +60,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateFromObject(Diction
 		// Release from unique ptr does not increase internal ref counter
 		ptr->AddRef();
 
-		*result = reinterpret_cast<PageObjectHandle>(ptr);
+		*result = reinterpret_cast<PageObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetParent(PageObjectHandle handle, PageTreeHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetParent(PageObjectHandle* handle, PageTreeHandle** result)
 {
 	PageObject* obj = reinterpret_cast<PageObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -75,12 +75,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetParent(PageObjectHand
 	{
 		auto parent = obj->GetParent();
 		auto ptr = parent.AddRefGet();
-		*result = reinterpret_cast<PageTreeHandle>(ptr);
+		*result = reinterpret_cast<PageTreeHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetResources(PageObjectHandle handle, ResourceDictionaryHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetResources(PageObjectHandle* handle, ResourceDictionaryHandle** result)
 {
 	PageObject* obj = reinterpret_cast<PageObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -90,12 +90,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetResources(PageObjectH
 	{
 		auto parent = obj->GetResources();
 		auto ptr = parent.AddRefGet();
-		*result = reinterpret_cast<ResourceDictionaryHandle>(ptr);
+		*result = reinterpret_cast<ResourceDictionaryHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetAnnotations(PageObjectHandle handle, PageAnnotationsHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetAnnotations(PageObjectHandle* handle, PageAnnotationsHandle** result)
 {
 	PageObject* obj = reinterpret_cast<PageObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -107,12 +107,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetAnnotations(PageObjec
 		bool contains = obj->GetAnnotations(annots);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = annots.AddRefGet();
-		*result = reinterpret_cast<PageAnnotationsHandle>(ptr);
+		*result = reinterpret_cast<PageAnnotationsHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetMediaBox(PageObjectHandle handle, RectangleHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetMediaBox(PageObjectHandle* handle, RectangleHandle** result)
 {
 	PageObject* obj = reinterpret_cast<PageObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -122,12 +122,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetMediaBox(PageObjectHa
 	{
 		auto media_box = obj->GetMediaBox();
 		auto ptr = media_box.AddRefGet();
-		*result = reinterpret_cast<RectangleHandle>(ptr);
+		*result = reinterpret_cast<RectangleHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageObject_Release(PageObjectHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_Release(PageObjectHandle* handle)
 {
-	return ObjectRelease<PageObject, PageObjectHandle>(handle);
+	return ObjectRelease<PageObject, PageObjectHandle*>(handle);
 }

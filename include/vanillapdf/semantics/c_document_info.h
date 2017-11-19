@@ -58,22 +58,22 @@ extern "C"
 	/**
 	* \brief The document's title.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitle(DocumentInfoHandle handle, StringObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitle(DocumentInfoHandle* handle, StringObjectHandle** result);
 
 	/**
 	* \brief The name of the person who created the document.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthor(DocumentInfoHandle handle, StringObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthor(DocumentInfoHandle* handle, StringObjectHandle** result);
 
 	/**
 	* \brief The subject of the document.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubject(DocumentInfoHandle handle, StringObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubject(DocumentInfoHandle* handle, StringObjectHandle** result);
 
 	/**
 	* \brief Keywords associated with the document.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywords(DocumentInfoHandle handle, StringObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywords(DocumentInfoHandle* handle, StringObjectHandle** result);
 
 	/**
 	* \brief
@@ -81,35 +81,35 @@ extern "C"
 	* the name of the conforming product that created the original
 	* document from which it was converted.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreator(DocumentInfoHandle handle, StringObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreator(DocumentInfoHandle* handle, StringObjectHandle** result);
 
 	/**
 	* \brief
 	* If the document was converted to PDF from another format,
 	* the name of the conforming product that converted it to PDF.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducer(DocumentInfoHandle handle, StringObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducer(DocumentInfoHandle* handle, StringObjectHandle** result);
 
 	/**
 	* \brief The date and time the document was created.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreationDate(DocumentInfoHandle handle, DateHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreationDate(DocumentInfoHandle* handle, DateHandle** result);
 
 	/**
 	* \brief The date and time the document was most recently modified.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetModificationDate(DocumentInfoHandle handle, DateHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetModificationDate(DocumentInfoHandle* handle, DateHandle** result);
 
 	/**
 	* \copydoc DocumentTrappedType
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentInfoHandle handle, DocumentTrappedType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentInfoHandle* handle, DocumentTrappedType* result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_Release(DocumentInfoHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_Release(DocumentInfoHandle* handle);
 
 	/** @} */
 

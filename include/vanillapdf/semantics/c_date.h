@@ -50,53 +50,53 @@ extern "C"
 	/**
 	* \brief Get year represented by this object
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Date_GetYear(DateHandle handle, integer_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Date_GetYear(DateHandle* handle, integer_type* result);
 
 	/**
 	* \brief Get month in specified year represented by this object. Range of values (1-12)
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Date_GetMonth(DateHandle handle, integer_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Date_GetMonth(DateHandle* handle, integer_type* result);
 
 	/**
 	* \brief Get day index in month represented by this object. Range of values (1-31)
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Date_GetDay(DateHandle handle, integer_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Date_GetDay(DateHandle* handle, integer_type* result);
 
 	/**
 	* \brief Get hours in day represented by this object. Range of values (0-23)
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Date_GetHour(DateHandle handle, integer_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Date_GetHour(DateHandle* handle, integer_type* result);
 
 	/**
 	* \brief Get minutes represented by this object. Range of values (0-59)
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Date_GetMinute(DateHandle handle, integer_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Date_GetMinute(DateHandle* handle, integer_type* result);
 
 	/**
 	* \brief Get seconds represented by this object. Range of values (0-59)
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Date_GetSecond(DateHandle handle, integer_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Date_GetSecond(DateHandle* handle, integer_type* result);
 
 	/**
 	* \brief \copybrief TimezoneType
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Date_GetTimezone(DateHandle handle, TimezoneType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Date_GetTimezone(DateHandle* handle, TimezoneType* result);
 
 	/**
 	* \brief Get hour offset represented by this object. Range of values (0-23)
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Date_GetHourOffset(DateHandle handle, integer_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Date_GetHourOffset(DateHandle* handle, integer_type* result);
 
 	/**
 	* \brief Get minute offset represented by this object. Range of values (0-59)
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Date_GetMinuteOffset(DateHandle handle, integer_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Date_GetMinuteOffset(DateHandle* handle, integer_type* result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Date_Release(DateHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION Date_Release(DateHandle* handle);
 
 	/** @} */
 

@@ -67,23 +67,23 @@ extern "C"
 	/**
 	* \brief Get derived type of current object
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_GetType(ContentObjectHandle handle, ContentObjectType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_GetType(ContentObjectHandle* handle, ContentObjectType* result);
 
 	/**
-	* \brief Reinterpret current object as ContentObjectTextHandle
+	* \brief Reinterpret current object as \ref ContentObjectTextHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_ToText(ContentObjectHandle handle, ContentObjectTextHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_ToText(ContentObjectHandle* handle, ContentObjectTextHandle** result);
 
 	/**
-	* \brief Reinterpret current object as ContentObjectInlineImageHandle
+	* \brief Reinterpret current object as \ref ContentObjectInlineImageHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_ToInlineImage(ContentObjectHandle handle, ContentObjectInlineImageHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_ToInlineImage(ContentObjectHandle* handle, ContentObjectInlineImageHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_Release(ContentObjectHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_Release(ContentObjectHandle* handle);
 
 	/** @} */
 
@@ -95,18 +95,18 @@ extern "C"
 	/**
 	* \brief Return size of a collection
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationsSize(ContentObjectTextHandle handle, size_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationsSize(ContentObjectTextHandle* handle, size_type* result);
 
 	/**
 	* \brief Get operation at location \p at
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(ContentObjectTextHandle handle, size_type at, ContentOperationHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(ContentObjectTextHandle* handle, size_type at, ContentOperationHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_Release(ContentObjectTextHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_Release(ContentObjectTextHandle* handle);
 
 	/** @} */
 
@@ -118,18 +118,18 @@ extern "C"
 	/**
 	* \brief Get meta-data dictionary for inline image
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetDictionary(ContentObjectInlineImageHandle handle, DictionaryObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetDictionary(ContentObjectInlineImageHandle* handle, DictionaryObjectHandle** result);
 
 	/**
 	* \brief Get raw image data
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetData(ContentObjectInlineImageHandle handle, BufferHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetData(ContentObjectInlineImageHandle* handle, BufferHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_Release(ContentObjectInlineImageHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_Release(ContentObjectInlineImageHandle* handle);
 
 	/** @} */
 

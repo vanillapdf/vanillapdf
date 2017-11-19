@@ -7,7 +7,7 @@
 
 using namespace vanillapdf::contents;
 
-VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_GetType(ContentOperatorHandle handle, ContentOperatorType* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_GetType(ContentOperatorHandle* handle, ContentOperatorType* result) {
 	OperatorBase* obj = reinterpret_cast<OperatorBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -169,7 +169,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_GetType(ContentOper
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_GetValue(ContentOperatorHandle handle, BufferHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_GetValue(ContentOperatorHandle* handle, BufferHandle** result) {
 	OperatorBase* obj = reinterpret_cast<OperatorBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -177,12 +177,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_GetValue(ContentOpe
 	try {
 		auto buffer = obj->Value();
 		auto ptr = buffer.AddRefGet();
-		*result = reinterpret_cast<BufferHandle>(ptr);
+		*result = reinterpret_cast<BufferHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	}
 	CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_Release(ContentOperatorHandle handle) {
-	return ObjectRelease<OperatorBase, ContentOperatorHandle>(handle);
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_Release(ContentOperatorHandle* handle) {
+	return ObjectRelease<OperatorBase, ContentOperatorHandle*>(handle);
 }

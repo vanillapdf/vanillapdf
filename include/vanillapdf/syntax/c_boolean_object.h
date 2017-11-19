@@ -30,17 +30,17 @@ extern "C"
 	/**
 	* \brief Return current boolean value
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanObjectHandle handle, boolean_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanObjectHandle* handle, boolean_type* result);
 
 	/**
 	* \brief Set new boolean value
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_SetValue(BooleanObjectHandle handle, boolean_type value);
+	VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_SetValue(BooleanObjectHandle* handle, boolean_type value);
 
 	/**
 	* \copydoc Object_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_Release(BooleanObjectHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_Release(BooleanObjectHandle* handle);
 
 	/** @} */
 

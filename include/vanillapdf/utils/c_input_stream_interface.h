@@ -27,16 +27,16 @@ extern "C"
 	* @{
 	*/
 
-	VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_CreateFromFile(string_type filename, InputStreamInterfaceHandle* result);
-	VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_CreateFromBuffer(BufferHandle data, InputStreamInterfaceHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_CreateFromFile(string_type filename, InputStreamInterfaceHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_CreateFromBuffer(BufferHandle* data, InputStreamInterfaceHandle** result);
 
-	VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_ToBuffer(InputStreamInterfaceHandle handle, BufferHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_ToBuffer(InputStreamInterfaceHandle* handle, BufferHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_Release(InputStreamInterfaceHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_Release(InputStreamInterfaceHandle* handle);
 
 	/** @} */
 

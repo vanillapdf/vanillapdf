@@ -30,14 +30,14 @@ extern "C"
 	/**
 	* \brief Create new FileWriter instance
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_Create(FileWriterHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_Create(FileWriterHandle** result);
 
 	/**
 	* \brief Save file state into new destination
 	*
 	* Destination file will be overwritten if it exists.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_Write(FileWriterHandle handle, FileHandle source, FileHandle destination);
+	VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_Write(FileWriterHandle* handle, FileHandle* source, FileHandle* destination);
 
 	/**
 	* \brief Save file state into new destination and create new section for all modifications done by user
@@ -45,13 +45,13 @@ extern "C"
 	* This method creates a new section with all modified objects.
 	* Whole file content preceeding new section will be preserved.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_WriteIncremental(FileWriterHandle handle, FileHandle source, FileHandle destination);
+	VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_WriteIncremental(FileWriterHandle* handle, FileHandle* source, FileHandle* destination);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_Release(FileWriterHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_Release(FileWriterHandle* handle);
 
 	/** @} */
 

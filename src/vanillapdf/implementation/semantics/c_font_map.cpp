@@ -8,7 +8,7 @@ using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Contains(FontMapHandle handle, const struct NameObjectHandleTag* key_handle, boolean_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Contains(FontMapHandle* handle, const struct NameObjectHandle* key_handle, boolean_type* result)
 {
 	FontMap* obj = reinterpret_cast<FontMap*>(handle);
 	const NameObject* key = reinterpret_cast<const NameObject*>(key_handle);
@@ -23,7 +23,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Contains(FontMapHandle hand
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle handle, const struct NameObjectHandleTag* key_handle, FontHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle* handle, const struct NameObjectHandle* key_handle, FontHandle** result)
 {
 	FontMap* obj = reinterpret_cast<FontMap*>(handle);
 	const NameObject* key = reinterpret_cast<const NameObject*>(key_handle);
@@ -35,12 +35,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle handle, 
 	{
 		auto direct = obj->Find(*key);
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<FontHandle>(ptr);
+		*result = reinterpret_cast<FontHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Release(FontMapHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Release(FontMapHandle* handle)
 {
-	return ObjectRelease<FontMap, FontMapHandle>(handle);
+	return ObjectRelease<FontMap, FontMapHandle*>(handle);
 }

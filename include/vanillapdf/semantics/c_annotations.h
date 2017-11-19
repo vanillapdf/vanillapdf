@@ -229,18 +229,18 @@ extern "C"
 	* \param handle a handle received from page \ref PageAnnotationsHandle::PageAnnotations_At
 	* \param result a pointer to variable will be filled with annotation type, otherwise unchanged
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetType(AnnotationHandle handle, AnnotationType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetType(AnnotationHandle* handle, AnnotationType* result);
 
 	/**
-	* \brief Reinterpret current object as LinkAnnotationHandle
+	* \brief Reinterpret current object as \ref LinkAnnotationHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Annotation_ToLink(AnnotationHandle handle, LinkAnnotationHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Annotation_ToLink(AnnotationHandle* handle, LinkAnnotationHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Annotation_Release(AnnotationHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION Annotation_Release(AnnotationHandle* handle);
 
 	/** @} */
 
@@ -252,12 +252,12 @@ extern "C"
 	/**
 	* \brief A destination that shall be displayed when the annotation is activated
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_GetDestination(LinkAnnotationHandle handle, DestinationHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_GetDestination(LinkAnnotationHandle* handle, DestinationHandle** result);
 
 	/**
 	* \copydoc Annotation_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_Release(LinkAnnotationHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_Release(LinkAnnotationHandle* handle);
 
 	/** @} */
 
@@ -269,7 +269,7 @@ extern "C"
 	/**
 	* \brief Get size of annotation array
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Size(PageAnnotationsHandle handle, size_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Size(PageAnnotationsHandle* handle, size_type* result);
 
 	/**
 	* \brief
@@ -279,13 +279,13 @@ extern "C"
 	* \param result a pointer to variable will be filled with handle to
 	* annotation internal structure, otherwise unchanged
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_At(PageAnnotationsHandle handle, size_type at, AnnotationHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_At(PageAnnotationsHandle* handle, size_type at, AnnotationHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Release(PageAnnotationsHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Release(PageAnnotationsHandle* handle);
 
 	/** @} */
 

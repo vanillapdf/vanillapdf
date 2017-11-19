@@ -29,7 +29,7 @@ extern "C"
 	/**
 	* \brief Increment the internal reference counter.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IUnknown_AddRef(IUnknownHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION IUnknown_AddRef(IUnknownHandle* handle);
 
 	/**
 	* \brief Decrement the internal reference counter.
@@ -37,7 +37,7 @@ extern "C"
 	* When the internal counter reaches zero the object is deleted.
 	* Releasing already disposed object causes undefined behavior.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IUnknown_Release(IUnknownHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION IUnknown_Release(IUnknownHandle* handle);
 
 	/** @} */
 

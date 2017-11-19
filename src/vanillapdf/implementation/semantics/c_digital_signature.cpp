@@ -8,7 +8,7 @@
 using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetContactInfo(DigitalSignatureHandle handle, StringObjectHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetContactInfo(DigitalSignatureHandle* handle, StringObjectHandle** result) {
 	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -18,12 +18,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetContactInfo(Dig
 		bool contains = signature->ContactInfo(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<StringObjectHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetReason(DigitalSignatureHandle handle, StringObjectHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetReason(DigitalSignatureHandle* handle, StringObjectHandle** result) {
 	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -33,12 +33,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetReason(DigitalS
 		bool contains = signature->Reason(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<StringObjectHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetLocation(DigitalSignatureHandle handle, StringObjectHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetLocation(DigitalSignatureHandle* handle, StringObjectHandle** result) {
 	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -48,12 +48,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetLocation(Digita
 		bool contains = signature->Location(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<StringObjectHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetDate(DigitalSignatureHandle handle, DateHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetDate(DigitalSignatureHandle* handle, DateHandle** result) {
 	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -63,12 +63,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetDate(DigitalSig
 		bool contains = signature->Date(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<DateHandle>(ptr);
+		*result = reinterpret_cast<DateHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetName(DigitalSignatureHandle handle, StringObjectHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetName(DigitalSignatureHandle* handle, StringObjectHandle** result) {
 	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -78,12 +78,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetName(DigitalSig
 		bool contains = signature->Name(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<StringObjectHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetRevision(DigitalSignatureHandle handle, IntegerObjectHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetRevision(DigitalSignatureHandle* handle, IntegerObjectHandle** result) {
 	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -93,12 +93,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetRevision(Digita
 		bool contains = signature->Revision(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetCertificate(DigitalSignatureHandle handle, StringObjectHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetCertificate(DigitalSignatureHandle* handle, StringObjectHandle** result) {
 	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -108,12 +108,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetCertificate(Dig
 		bool contains = signature->Certificate(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<StringObjectHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetContents(DigitalSignatureHandle handle, HexadecimalStringObjectHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetContents(DigitalSignatureHandle* handle, HexadecimalStringObjectHandle** result) {
 	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -121,12 +121,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetContents(Digita
 	try {
 		auto direct = signature->Contents();
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<HexadecimalStringObjectHandle>(ptr);
+		*result = reinterpret_cast<HexadecimalStringObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(DigitalSignatureHandle handle, ByteRangeCollectionHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(DigitalSignatureHandle* handle, ByteRangeCollectionHandle** result) {
 	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -136,12 +136,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(Digit
 		bool contains = signature->ByteRange(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<ByteRangeCollectionHandle>(ptr);
+		*result = reinterpret_cast<ByteRangeCollectionHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_GetOffset(ByteRangeHandle handle, IntegerObjectHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_GetOffset(ByteRangeHandle* handle, IntegerObjectHandle** result) {
 	ByteRange* range = reinterpret_cast<ByteRange*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(range);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -149,12 +149,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_GetOffset(ByteRangeHandle
 	try {
 		auto direct = range->ByteOffset();
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_GetLength(ByteRangeHandle handle, IntegerObjectHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_GetLength(ByteRangeHandle* handle, IntegerObjectHandle** result) {
 	ByteRange* range = reinterpret_cast<ByteRange*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(range);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -162,12 +162,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_GetLength(ByteRangeHandle
 	try {
 		auto direct = range->Length();
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_Size(ByteRangeCollectionHandle handle, size_type* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_Size(ByteRangeCollectionHandle* handle, size_type* result) {
 	ByteRangeCollection* collection = reinterpret_cast<ByteRangeCollection*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(collection);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -178,7 +178,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_Size(ByteRangeC
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_At(ByteRangeCollectionHandle handle, size_type at, ByteRangeHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_At(ByteRangeCollectionHandle* handle, size_type at, ByteRangeHandle** result) {
 	ByteRangeCollection* collection = reinterpret_cast<ByteRangeCollection*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(collection);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -186,19 +186,19 @@ VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_At(ByteRangeCol
 	try {
 		auto direct = collection->At(at);
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<ByteRangeHandle>(ptr);
+		*result = reinterpret_cast<ByteRangeHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_Release(ByteRangeHandle handle) {
-	return ObjectRelease<ByteRange, ByteRangeHandle>(handle);
+VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_Release(ByteRangeHandle* handle) {
+	return ObjectRelease<ByteRange, ByteRangeHandle*>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_Release(ByteRangeCollectionHandle handle) {
-	return ObjectRelease<ByteRangeCollection, ByteRangeCollectionHandle>(handle);
+VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_Release(ByteRangeCollectionHandle* handle) {
+	return ObjectRelease<ByteRangeCollection, ByteRangeCollectionHandle*>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_Release(DigitalSignatureHandle handle) {
-	return ObjectRelease<DigitalSignature, DigitalSignatureHandle>(handle);
+VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_Release(DigitalSignatureHandle* handle) {
+	return ObjectRelease<DigitalSignature, DigitalSignatureHandle*>(handle);
 }

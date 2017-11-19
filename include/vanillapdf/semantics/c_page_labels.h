@@ -81,19 +81,19 @@ extern "C"
 	* Detemines if collection contains
 	* label for page number \p page_number.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_Contains(PageLabelsHandle handle, size_type page_number, boolean_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_Contains(PageLabelsHandle* handle, size_type page_number, boolean_type* result);
 
 	/**
 	* \brief
 	* Get page label for page number \p page_number.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_At(PageLabelsHandle handle, size_type page_number, PageLabelHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_At(PageLabelsHandle* handle, size_type page_number, PageLabelHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_Release(PageLabelsHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_Release(PageLabelsHandle* handle);
 
 	/** @} */
 
@@ -105,26 +105,26 @@ extern "C"
 	/**
 	* \brief The label prefix for page labels in this range.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Prefix(PageLabelHandle handle, StringObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Prefix(PageLabelHandle* handle, StringObjectHandle** result);
 
 	/**
 	* \brief
 	* The value of the numeric portion for the first page label in the range.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Start(PageLabelHandle handle, IntegerObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Start(PageLabelHandle* handle, IntegerObjectHandle** result);
 
 	/**
 	* \brief
 	* The numbering style that shall be used for
 	* the numeric portion of each page label.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Style(PageLabelHandle handle, NumberingStyle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Style(PageLabelHandle* handle, NumberingStyle* result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Release(PageLabelHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Release(PageLabelHandle* handle);
 
 	/** @} */
 

@@ -7,7 +7,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_GetFontMap(ResourceDictionaryHandle handle, FontMapHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_GetFontMap(ResourceDictionaryHandle* handle, FontMapHandle** result)
 {
 	ResourceDictionary* obj = reinterpret_cast<ResourceDictionary*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -19,12 +19,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_GetFontMap(Resou
 		bool contains = obj->Font(font);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = font.AddRefGet();
-		*result = reinterpret_cast<FontMapHandle>(ptr);
+		*result = reinterpret_cast<FontMapHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_Release(ResourceDictionaryHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_Release(ResourceDictionaryHandle* handle)
 {
-	return ObjectRelease<ResourceDictionary, ResourceDictionaryHandle>(handle);
+	return ObjectRelease<ResourceDictionary, ResourceDictionaryHandle*>(handle);
 }

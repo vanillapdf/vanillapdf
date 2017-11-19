@@ -30,32 +30,32 @@ extern "C"
 	/**
 	* \brief Return size of an array
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle handle, size_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle* handle, size_type* result);
 
 	/**
 	* \brief Get element at location \p at
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle handle, size_type at, ObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle* handle, size_type at, ObjectHandle** result);
 
 	/**
 	* \brief Insert new element at the end of the array
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Append(ArrayObjectHandle handle, ObjectHandle value);
+	VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Append(ArrayObjectHandle* handle, ObjectHandle* value);
 
 	/**
 	* \brief Insert new element at location \p at
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Insert(ArrayObjectHandle handle, size_type at, ObjectHandle value);
+	VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Insert(ArrayObjectHandle* handle, size_type at, ObjectHandle* value);
 
 	/**
 	* \brief Remove element from location \p at
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayObjectHandle handle, size_type at);
+	VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayObjectHandle* handle, size_type at);
 
 	/**
 	* \copydoc Object_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Release(ArrayObjectHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Release(ArrayObjectHandle* handle);
 
 	/** @} */
 

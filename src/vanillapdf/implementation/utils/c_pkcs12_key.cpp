@@ -9,7 +9,7 @@
 
 using namespace vanillapdf;
 
-VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_CreateFromFile(string_type path, string_type password, PKCS12KeyHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_CreateFromFile(string_type path, string_type password, PKCS12KeyHandle** result) {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(path);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
@@ -22,12 +22,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_CreateFromFile(string_typ
 
 		Deferred<PKCS12Key> key = make_deferred<PKCS12Key>(path_string, password_buffer);
 		auto ptr = key.AddRefGet();
-		*result = reinterpret_cast<PKCS12KeyHandle>(ptr);
+		*result = reinterpret_cast<PKCS12KeyHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_CreateFromBuffer(BufferHandle data, string_type password, PKCS12KeyHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_CreateFromBuffer(BufferHandle* data, string_type password, PKCS12KeyHandle** result) {
 	Buffer* buffer_ptr = reinterpret_cast<Buffer*>(data);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(buffer_ptr);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -41,19 +41,19 @@ VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_CreateFromBuffer(BufferHa
 		BufferPtr data_buffer(buffer_ptr);
 		Deferred<PKCS12Key> key = make_deferred<PKCS12Key>(data_buffer, password_buffer);
 		auto ptr = key.AddRefGet();
-		*result = reinterpret_cast<PKCS12KeyHandle>(ptr);
+		*result = reinterpret_cast<PKCS12KeyHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_ToEncryptionKey(PKCS12KeyHandle handle, EncryptionKeyHandle* result) {
-	return SafeObjectConvert<PKCS12Key, IEncryptionKey, PKCS12KeyHandle, EncryptionKeyHandle>(handle, result);
+VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_ToEncryptionKey(PKCS12KeyHandle* handle, EncryptionKeyHandle** result) {
+	return SafeObjectConvert<PKCS12Key, IEncryptionKey, PKCS12KeyHandle*, EncryptionKeyHandle*>(handle, result);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_ToSigningKey(PKCS12KeyHandle handle, SigningKeyHandle* result) {
-	return SafeObjectConvert<PKCS12Key, ISigningKey, PKCS12KeyHandle, SigningKeyHandle>(handle, result);
+VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_ToSigningKey(PKCS12KeyHandle* handle, SigningKeyHandle** result) {
+	return SafeObjectConvert<PKCS12Key, ISigningKey, PKCS12KeyHandle*, SigningKeyHandle*>(handle, result);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_Release(PKCS12KeyHandle handle) {
-	return ObjectRelease<PKCS12Key, PKCS12KeyHandle>(handle);
+VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_Release(PKCS12KeyHandle* handle) {
+	return ObjectRelease<PKCS12Key, PKCS12KeyHandle*>(handle);
 }

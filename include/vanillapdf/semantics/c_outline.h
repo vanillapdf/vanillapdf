@@ -67,12 +67,12 @@ extern "C"
 	*/
 	typedef enum {
 		/**
-		* \brief Object is type OutlineHandle
+		* \brief Object is type OutlineHandle*
 		*/
 		OutlineType_Outline,
 
 		/**
-		* \brief Object is type OutlineItemHandle
+		* \brief Object is type OutlineItemHandle*
 		*/
 		OutlineType_Item
 	} OutlineType;
@@ -85,23 +85,23 @@ extern "C"
 	/**
 	* \brief Get derived type of current object
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_GetType(OutlineBaseHandle handle, OutlineType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_GetType(OutlineBaseHandle* handle, OutlineType* result);
 
 	/**
-	* \brief Reinterpret current object as OutlineHandle
+	* \brief Reinterpret current object as OutlineHandle*
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_ToOutline(OutlineBaseHandle handle, OutlineHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_ToOutline(OutlineBaseHandle* handle, OutlineHandle** result);
 
 	/**
-	* \brief Reinterpret current object as OutlineItemHandle
+	* \brief Reinterpret current object as OutlineItemHandle*
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_ToOutlineItem(OutlineBaseHandle handle, OutlineItemHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_ToOutlineItem(OutlineBaseHandle* handle, OutlineItemHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_Release(OutlineBaseHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_Release(OutlineBaseHandle* handle);
 
 	/** @} */
 
@@ -115,14 +115,14 @@ extern "C"
 	* An outline item dictionary representing
 	* the first top-level item in the outline.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetFirst(OutlineHandle handle, OutlineItemHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetFirst(OutlineHandle* handle, OutlineItemHandle** result);
 
 	/**
 	* \brief
 	* An outline item dictionary representing
 	* the last top-level item in the outline.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetLast(OutlineHandle handle, OutlineItemHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetLast(OutlineHandle* handle, OutlineItemHandle** result);
 
 	/**
 	* \brief
@@ -132,12 +132,12 @@ extern "C"
 	*
 	* This entry shall be omitted if there are no open outline items.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetCount(OutlineHandle handle, IntegerObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetCount(OutlineHandle* handle, IntegerObjectHandle** result);
 
 	/**
 	* \copydoc OutlineBase_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Outline_Release(OutlineHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION Outline_Release(OutlineHandle* handle);
 
 	/** @} */
 
@@ -150,62 +150,62 @@ extern "C"
 	* \brief
 	* The text that shall be displayed on the screen for this item.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetTitle(OutlineItemHandle handle, StringObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetTitle(OutlineItemHandle* handle, StringObjectHandle** result);
 
 	/**
 	* \brief
 	* The parent of this item in the outline hierarchy.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetParent(OutlineItemHandle handle, OutlineBaseHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetParent(OutlineItemHandle* handle, OutlineBaseHandle** result);
 
 	/**
 	* \brief
 	* The previous item at this outline level.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetPrev(OutlineItemHandle handle, OutlineItemHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetPrev(OutlineItemHandle* handle, OutlineItemHandle** result);
 
 	/**
 	* \brief
 	* The next item at this outline level.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetNext(OutlineItemHandle handle, OutlineItemHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetNext(OutlineItemHandle* handle, OutlineItemHandle** result);
 
 	/**
 	* \brief
 	* The first of this item's immediate children in the outline hierarchy.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetFirst(OutlineItemHandle handle, OutlineItemHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetFirst(OutlineItemHandle* handle, OutlineItemHandle** result);
 
 	/**
 	* \brief
 	* The last of this item's immediate children in the outline hierarchy.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetLast(OutlineItemHandle handle, OutlineItemHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetLast(OutlineItemHandle* handle, OutlineItemHandle** result);
 
 	/**
 	* \brief
 	* Sum of the number of visible descendent outline items at all levels.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetCount(OutlineItemHandle handle, IntegerObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetCount(OutlineItemHandle* handle, IntegerObjectHandle** result);
 
-	//VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetDestinations(OutlineItemHandle handle, IntegerObjectHandle* result);
-	//VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetActions(OutlineItemHandle handle, IntegerObjectHandle* result);
-	//VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetStructureElement(OutlineItemHandle handle, IntegerObjectHandle* result);
+	//VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetDestinations(OutlineItemHandle* handle, IntegerObjectHandle** result);
+	//VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetActions(OutlineItemHandle* handle, IntegerObjectHandle** result);
+	//VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetStructureElement(OutlineItemHandle* handle, IntegerObjectHandle** result);
 
 	/**
 	* \brief \copybrief OutlineItemColorHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetColor(OutlineItemHandle handle, OutlineItemColorHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetColor(OutlineItemHandle* handle, OutlineItemColorHandle** result);
 
 	/**
 	* \brief \copybrief OutlineItemFlagsHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetFlags(OutlineItemHandle handle, OutlineItemFlagsHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetFlags(OutlineItemHandle* handle, OutlineItemFlagsHandle** result);
 
 	/**
 	* \copydoc OutlineBase_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_Release(OutlineItemHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_Release(OutlineItemHandle* handle);
 
 	/** @} */
 
@@ -217,23 +217,23 @@ extern "C"
 	/**
 	* \brief Get \b red component of defined RGB color
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_GetRed(OutlineItemColorHandle handle, IntegerObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_GetRed(OutlineItemColorHandle* handle, IntegerObjectHandle** result);
 
 	/**
 	* \brief Get \b green component of defined RGB color
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_GetGreen(OutlineItemColorHandle handle, IntegerObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_GetGreen(OutlineItemColorHandle* handle, IntegerObjectHandle** result);
 
 	/**
 	* \brief Get \b blue component of defined RGB color
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_GetBlue(OutlineItemColorHandle handle, IntegerObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_GetBlue(OutlineItemColorHandle* handle, IntegerObjectHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_Release(OutlineItemColorHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_Release(OutlineItemColorHandle* handle);
 
 	/** @} */
 
@@ -245,18 +245,18 @@ extern "C"
 	/**
 	* \brief Determine if the outline item shall be displayed in \a italic
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsItalic(OutlineItemFlagsHandle handle, boolean_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsItalic(OutlineItemFlagsHandle* handle, boolean_type* result);
 
 	/**
 	* \brief Determine if the outline item shall be displayed in \b bold
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsBold(OutlineItemFlagsHandle handle, boolean_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsBold(OutlineItemFlagsHandle* handle, boolean_type* result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_Release(OutlineItemFlagsHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_Release(OutlineItemFlagsHandle* handle);
 
 	/** @} */
 

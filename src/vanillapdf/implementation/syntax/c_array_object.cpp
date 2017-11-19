@@ -8,7 +8,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
-VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle handle, size_type at, ObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle* handle, size_type at, ObjectHandle** result)
 {
 	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -19,12 +19,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle ha
 		auto direct = obj->At(at);
 		auto base = ObjectUtils::GetObjectBase(direct);
 		auto ptr = base.AddRefGet();
-		*result = reinterpret_cast<ObjectHandle>(ptr);
+		*result = reinterpret_cast<ObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle handle, size_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle* handle, size_type* result)
 {
 	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -34,7 +34,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle 
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Append(ArrayObjectHandle handle, ObjectHandle value)
+VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Append(ArrayObjectHandle* handle, ObjectHandle* value)
 {
 	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
 	Object* data = reinterpret_cast<Object*>(value);
@@ -53,7 +53,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Append(ArrayObjectHandl
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Insert(ArrayObjectHandle handle, size_type at, ObjectHandle value)
+VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Insert(ArrayObjectHandle* handle, size_type at, ObjectHandle* value)
 {
 	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
 	Object* data = reinterpret_cast<Object*>(value);
@@ -72,7 +72,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Insert(ArrayObjectHandl
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayObjectHandle handle, size_type at)
+VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayObjectHandle* handle, size_type at)
 {
 	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -84,7 +84,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayObjectHandl
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Release(ArrayObjectHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Release(ArrayObjectHandle* handle)
 {
-	return ObjectRelease<MixedArrayObject, ArrayObjectHandle>(handle);
+	return ObjectRelease<MixedArrayObject, ArrayObjectHandle*>(handle);
 }

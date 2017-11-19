@@ -47,11 +47,11 @@ extern "C"
 	/**
 	* \brief User provided function used for decrypting data
 	*
-	* This function is only called when ::EncryptionKeyContainsFunction sets the result to true.
+	* This function is only called when \ref EncryptionKeyContainsFunction sets the result to true.
 	* \param data a pointer to source buffer containing the PKCS#7 encrypted data
 	* \param result an output pointer which has to be set with the decrypted data on success. Otherwise leave unchanged.
 	*/
-	typedef error_type (*EncryptionKeyDecryptFunction)(const struct BufferHandleTag* data, BufferHandle* result);
+	typedef error_type (*EncryptionKeyDecryptFunction)(const BufferHandle* data, BufferHandle** result);
 
 	/**
 	* \brief Function used to determine whether the private key for certificate issued by \p issuer with \p serial is present
@@ -59,7 +59,7 @@ extern "C"
 	* \param issuer a pointer to ASN.1 structure containning the certificate serial
 	* \param result a pointer to boolean. Set to true, if the private key for \p issuer and \p serial is present. Otherwise set to false.
 	*/
-	typedef error_type (*EncryptionKeyContainsFunction)(const struct BufferHandleTag* issuer, const struct BufferHandleTag* serial, boolean_type* result);
+	typedef error_type (*EncryptionKeyContainsFunction)(const BufferHandle* issuer, const BufferHandle* serial, boolean_type* result);
 
 	/**
 	* \brief Creates a custom EncryptionKeyHandle to provide custom decrypt operation
@@ -69,14 +69,14 @@ extern "C"
 		EncryptionKeyCleanupFunction cleanup,
 		EncryptionKeyDecryptFunction decrypt,
 		EncryptionKeyContainsFunction contains,
-		EncryptionKeyHandle* result
+		EncryptionKeyHandle** result
 	);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION EncryptionKey_Release(EncryptionKeyHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION EncryptionKey_Release(EncryptionKeyHandle* handle);
 
 	/** @} */
 

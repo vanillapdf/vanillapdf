@@ -63,7 +63,7 @@ extern "C"
 	* \class ContentOperationEndTextHandle
 	* \extends ContentOperationHandle
 	* \ingroup Contents
-	* \brief Terminates the TextObject started with ContentOperationBeginTextHandle
+	* \brief Terminates the TextObject started with \ref ContentOperationBeginTextHandle
 	*/
 
 
@@ -175,43 +175,43 @@ extern "C"
 	/**
 	* \brief Get derived type of current object
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_GetType(ContentOperationHandle handle, ContentOperationType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_GetType(ContentOperationHandle* handle, ContentOperationType* result);
 
 	/**
-	* \brief Reinterpret current object as ContentOperationGenericHandle
+	* \brief Reinterpret current object as \ref ContentOperationGenericHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToGeneric(ContentOperationHandle handle, ContentOperationGenericHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToGeneric(ContentOperationHandle* handle, ContentOperationGenericHandle** result);
 
 	/**
-	* \brief Reinterpret current object as ContentOperationTextFontHandle
+	* \brief Reinterpret current object as \ref ContentOperationTextFontHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextFont(ContentOperationHandle handle, ContentOperationTextFontHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextFont(ContentOperationHandle* handle, ContentOperationTextFontHandle** result);
 
 	/**
-	* \brief Reinterpret current object as ContentOperationTextShowHandle
+	* \brief Reinterpret current object as \ref ContentOperationTextShowHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShow(ContentOperationHandle handle, ContentOperationTextShowHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShow(ContentOperationHandle* handle, ContentOperationTextShowHandle** result);
 
 	/**
-	* \brief Reinterpret current object as ContentOperationTextShowArrayHandle
+	* \brief Reinterpret current object as \ref ContentOperationTextShowArrayHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShowArray(ContentOperationHandle handle, ContentOperationTextShowArrayHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShowArray(ContentOperationHandle* handle, ContentOperationTextShowArrayHandle** result);
 
 	/**
-	* \brief Reinterpret current object as ContentOperationBeginTextHandle
+	* \brief Reinterpret current object as \ref ContentOperationBeginTextHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToBeginText(ContentOperationHandle handle, ContentOperationBeginTextHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToBeginText(ContentOperationHandle* handle, ContentOperationBeginTextHandle** result);
 
 	/**
-	* \brief Reinterpret current object as ContentOperationEndTextHandle
+	* \brief Reinterpret current object as \ref ContentOperationEndTextHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToEndText(ContentOperationHandle handle, ContentOperationEndTextHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToEndText(ContentOperationHandle* handle, ContentOperationEndTextHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_Release(ContentOperationHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_Release(ContentOperationHandle* handle);
 
 	/** @} */
 
@@ -223,23 +223,23 @@ extern "C"
 	/**
 	* \brief Get operator from unknown operation
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperator(ContentOperationGenericHandle handle, ContentOperatorHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperator(ContentOperationGenericHandle* handle, ContentOperatorHandle** result);
 
 	/**
 	* \brief Get number of operands belonging to the operator
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandsSize(ContentOperationGenericHandle handle, size_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandsSize(ContentOperationGenericHandle* handle, size_type* result);
 
 	/**
 	* \brief Get operand at location \p at
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandAt(ContentOperationGenericHandle handle, size_type at, ObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandAt(ContentOperationGenericHandle* handle, size_type at, ObjectHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_Release(ContentOperationGenericHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_Release(ContentOperationGenericHandle* handle);
 
 	/** @} */
 
@@ -251,18 +251,18 @@ extern "C"
 	/**
 	* \brief A text string to be shown.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_GetValue(ContentOperationTextShowHandle handle, StringObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_GetValue(ContentOperationTextShowHandle* handle, StringObjectHandle** result);
 
 	/**
 	* \brief Set a new text string to be shown.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_SetValue(ContentOperationTextShowHandle handle, StringObjectHandle data);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_SetValue(ContentOperationTextShowHandle* handle, StringObjectHandle* data);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_Release(ContentOperationTextShowHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_Release(ContentOperationTextShowHandle* handle);
 
 	/** @} */
 
@@ -275,7 +275,7 @@ extern "C"
 	/**
 	* \brief One or more text strings to be shown.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_GetValue(ContentOperationTextShowArrayHandle handle, ArrayObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_GetValue(ContentOperationTextShowArrayHandle* handle, ArrayObjectHandle** result);
 
 	/**
 	* \brief Set new text strings to be shown.
@@ -286,13 +286,13 @@ extern "C"
 	*
 	* If it is a number, the operator shall adjust the text position by that amount.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_SetValue(ContentOperationTextShowArrayHandle handle, ArrayObjectHandle data);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_SetValue(ContentOperationTextShowArrayHandle* handle, ArrayObjectHandle* data);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_Release(ContentOperationTextShowArrayHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_Release(ContentOperationTextShowArrayHandle* handle);
 
 	/** @} */
 
@@ -307,7 +307,7 @@ extern "C"
 	* Font shall be the name of a font resource in the Font
 	* subdictionary of the current resource dictionary.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetName(ContentOperationTextFontHandle handle, NameObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetName(ContentOperationTextFontHandle* handle, NameObjectHandle** result);
 
 	/**
 	* \brief Set new font name.
@@ -315,27 +315,27 @@ extern "C"
 	* Font shall be the name of a font resource in the Font
 	* subdictionary of the current resource dictionary.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_SetName(ContentOperationTextFontHandle handle, NameObjectHandle data);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_SetName(ContentOperationTextFontHandle* handle, NameObjectHandle* data);
 
 	/**
 	* \brief Get current font scaling.
 	*
 	* Scale shall be a number representing a scale factor.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetScale(ContentOperationTextFontHandle handle, IntegerObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetScale(ContentOperationTextFontHandle* handle, IntegerObjectHandle** result);
 
 	/**
 	* \brief Set new font scaling.
 	*
 	* Scale shall be a number representing a scale factor.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_SetScale(ContentOperationTextFontHandle handle, IntegerObjectHandle data);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_SetScale(ContentOperationTextFontHandle* handle, IntegerObjectHandle* data);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_Release(ContentOperationTextFontHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_Release(ContentOperationTextFontHandle* handle);
 
 	/** @} */
 

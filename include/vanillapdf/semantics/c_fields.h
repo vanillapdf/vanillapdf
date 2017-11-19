@@ -103,19 +103,19 @@ extern "C"
 	/**
 	* \brief Get size of field collection
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_Size(FieldCollectionHandle handle, size_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_Size(FieldCollectionHandle* handle, size_type* result);
 
 	/**
 	* \brief
 	* Get single field from array at specific position
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_At(FieldCollectionHandle handle, size_type at, FieldHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_At(FieldCollectionHandle* handle, size_type at, FieldHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_Release(FieldCollectionHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_Release(FieldCollectionHandle* handle);
 
 	/** @} */
 
@@ -129,33 +129,33 @@ extern "C"
 	* Return type of field.
 	* Result can be used to convert to derived type.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Field_GetType(FieldHandle handle, FieldType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Field_GetType(FieldHandle* handle, FieldType* result);
 
 	/**
 	* \brief Reinterpret current object as \ref ButtonFieldHandle.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Field_ToButton(FieldHandle handle, ButtonFieldHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Field_ToButton(FieldHandle* handle, ButtonFieldHandle** result);
 
 	/**
 	* \brief Reinterpret current object as \ref TextFieldHandle.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Field_ToText(FieldHandle handle, TextFieldHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Field_ToText(FieldHandle* handle, TextFieldHandle** result);
 
 	/**
 	* \brief Reinterpret current object as \ref ChoiceFieldHandle.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Field_ToChoice(FieldHandle handle, ChoiceFieldHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Field_ToChoice(FieldHandle* handle, ChoiceFieldHandle** result);
 
 	/**
 	* \brief Reinterpret current object as \ref SignatureFieldHandle.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Field_ToSignature(FieldHandle handle, SignatureFieldHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Field_ToSignature(FieldHandle* handle, SignatureFieldHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Field_Release(FieldHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION Field_Release(FieldHandle* handle);
 
 	/** @} */
 
@@ -167,7 +167,7 @@ extern "C"
 	/**
 	* \copydoc Field_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_Release(ButtonFieldHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_Release(ButtonFieldHandle* handle);
 
 	/** @} */
 
@@ -179,7 +179,7 @@ extern "C"
 	/**
 	* \copydoc Field_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION TextField_Release(TextFieldHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION TextField_Release(TextFieldHandle* handle);
 
 	/** @} */
 
@@ -191,7 +191,7 @@ extern "C"
 	/**
 	* \copydoc Field_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_Release(ChoiceFieldHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_Release(ChoiceFieldHandle* handle);
 
 	/** @} */
 
@@ -205,12 +205,12 @@ extern "C"
 	* A signature dictionary containing the signature and
 	* specifying various attributes of the signature field.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_GetValue(SignatureFieldHandle handle, DigitalSignatureHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_GetValue(SignatureFieldHandle* handle, DigitalSignatureHandle** result);
 
 	/**
 	* \copydoc Field_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_Release(SignatureFieldHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_Release(SignatureFieldHandle* handle);
 
 	/** @} */
 

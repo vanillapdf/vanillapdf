@@ -8,7 +8,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_GetBaseVersion(DeveloperExtensionHandle handle, PDFVersion* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_GetBaseVersion(DeveloperExtensionHandle* handle, PDFVersion* result)
 {
 	DeveloperExtension* obj = reinterpret_cast<DeveloperExtension*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -41,7 +41,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_GetBaseVersion(D
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_GetExtensionLevel(DeveloperExtensionHandle handle, IntegerObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_GetExtensionLevel(DeveloperExtensionHandle* handle, IntegerObjectHandle** result)
 {
 	DeveloperExtension* obj = reinterpret_cast<DeveloperExtension*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -51,17 +51,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_GetExtensionLeve
 	{
 		auto level = obj->ExtensionLevel();
 		auto ptr = level.AddRefGet();
-		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_Release(DeveloperExtensionHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_Release(DeveloperExtensionHandle* handle)
 {
-	return ObjectRelease<DeveloperExtension, DeveloperExtensionHandle>(handle);
+	return ObjectRelease<DeveloperExtension, DeveloperExtensionHandle*>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensions_Iterator(DeveloperExtensionsHandle handle, DeveloperExtensionsIteratorHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensions_Iterator(DeveloperExtensionsHandle* handle, DeveloperExtensionsIteratorHandle** result)
 {
 	DeveloperExtensions* obj = reinterpret_cast<DeveloperExtensions*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -71,17 +71,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensions_Iterator(Develo
 	{
 		auto it = obj->Begin();
 		auto ptr = it.AddRefGet();
-		*result = reinterpret_cast<DeveloperExtensionsIteratorHandle>(ptr);
+		*result = reinterpret_cast<DeveloperExtensionsIteratorHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensions_Release(DeveloperExtensionsHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensions_Release(DeveloperExtensionsHandle* handle)
 {
-	return ObjectRelease<DeveloperExtensions, DeveloperExtensionsHandle>(handle);
+	return ObjectRelease<DeveloperExtensions, DeveloperExtensionsHandle*>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetKey(DeveloperExtensionsIteratorHandle handle, NameObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetKey(DeveloperExtensionsIteratorHandle* handle, NameObjectHandle** result)
 {
 	DeveloperExtensions::Iterator* obj = reinterpret_cast<DeveloperExtensions::Iterator*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -91,12 +91,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetKey(
 	{
 		auto name = obj->First();
 		auto ptr = name.AddRefGet();
-		*result = reinterpret_cast<NameObjectHandle>(ptr);
+		*result = reinterpret_cast<NameObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetValue(DeveloperExtensionsIteratorHandle handle, DeveloperExtensionHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetValue(DeveloperExtensionsIteratorHandle* handle, DeveloperExtensionHandle** result)
 {
 	DeveloperExtensions::Iterator* obj = reinterpret_cast<DeveloperExtensions::Iterator*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -106,12 +106,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetValu
 	{
 		auto extension = obj->Second();
 		auto ptr = extension.AddRefGet();
-		*result = reinterpret_cast<DeveloperExtensionHandle>(ptr);
+		*result = reinterpret_cast<DeveloperExtensionHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_IsValid(DeveloperExtensionsIteratorHandle handle, DeveloperExtensionsHandle parent, boolean_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_IsValid(DeveloperExtensionsIteratorHandle* handle, DeveloperExtensionsHandle* parent, boolean_type* result)
 {
 	DeveloperExtensions::Iterator* iterator = reinterpret_cast<DeveloperExtensions::Iterator*>(handle);
 	DeveloperExtensions* dictionary = reinterpret_cast<DeveloperExtensions*>(parent);
@@ -130,7 +130,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_IsValid
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_Next(DeveloperExtensionsIteratorHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_Next(DeveloperExtensionsIteratorHandle* handle)
 {
 	DeveloperExtensions::Iterator* obj = reinterpret_cast<DeveloperExtensions::Iterator*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -142,7 +142,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_Next(De
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_Release(DeveloperExtensionsIteratorHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_Release(DeveloperExtensionsIteratorHandle* handle)
 {
-	return ObjectRelease<DeveloperExtensions::Iterator, DeveloperExtensionsIteratorHandle>(handle);
+	return ObjectRelease<DeveloperExtensions::Iterator, DeveloperExtensionsIteratorHandle*>(handle);
 }

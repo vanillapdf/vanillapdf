@@ -140,16 +140,16 @@ extern "C"
 	* IntegerObjectHandle means index in document's page tree.
 	*
 	* IndirectObjectReferenceHandle means it is indirect reference to
-	* PageObjectHandle representing the destination page.
+	* \ref PageObjectHandle representing the destination page.
 	* \see \ref PageTreeHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Destination_GetPageNumber(DestinationHandle handle, ObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Destination_GetPageNumber(DestinationHandle* handle, ObjectHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Destination_Release(DestinationHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION Destination_Release(DestinationHandle* handle);
 
 	/** @} */
 
@@ -161,23 +161,23 @@ extern "C"
 	/**
 	* \brief Determine if current map contains \p name.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDestinationsHandle handle, const struct NameObjectHandleTag* name, boolean_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDestinationsHandle* handle, const struct NameObjectHandle* name, boolean_type* result);
 
 	/**
 	* \brief Find mapped value for key \p name.
 	*
-	* Prefer using ::NamedDestinations_Contains for validations.
+	* Prefer using \ref NamedDestinations_Contains for validations.
 	*
 	* This function throws internal exception on failure,
 	* which may render it slower.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Find(NamedDestinationsHandle handle, const struct NameObjectHandleTag* name, DestinationHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Find(NamedDestinationsHandle* handle, const struct NameObjectHandle* name, DestinationHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Release(NamedDestinationsHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Release(NamedDestinationsHandle* handle);
 
 	/** @} */
 

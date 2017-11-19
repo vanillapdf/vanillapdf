@@ -6,7 +6,7 @@
 
 using namespace vanillapdf;
 
-VANILLAPDF_API error_type CALLING_CONVENTION IUnknown_AddRef(IUnknownHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION IUnknown_AddRef(IUnknownHandle* handle)
 {
 	IUnknown* obj = reinterpret_cast<IUnknown*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -15,7 +15,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION IUnknown_AddRef(IUnknownHandle hand
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION IUnknown_Release(IUnknownHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION IUnknown_Release(IUnknownHandle* handle)
 {
-	return ObjectRelease<IUnknown, IUnknownHandle>(handle);
+	return ObjectRelease<IUnknown, IUnknownHandle*>(handle);
 }

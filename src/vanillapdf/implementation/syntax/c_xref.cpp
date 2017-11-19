@@ -9,7 +9,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
-VANILLAPDF_API error_type CALLING_CONVENTION Xref_TrailerDictionary(XrefHandle handle, DictionaryObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Xref_TrailerDictionary(XrefHandle* handle, DictionaryObjectHandle** result)
 {
 	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
@@ -19,12 +19,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Xref_TrailerDictionary(XrefHandle h
 	{
 		auto dict = xref->GetTrailerDictionary();
 		auto ptr = dict.AddRefGet();
-		*result = reinterpret_cast<DictionaryObjectHandle>(ptr);
+		*result = reinterpret_cast<DictionaryObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Xref_LastXrefOffset(XrefHandle handle, offset_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Xref_LastXrefOffset(XrefHandle* handle, offset_type* result)
 {
 	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
@@ -34,7 +34,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Xref_LastXrefOffset(XrefHandle hand
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Xref_Iterator(XrefHandle handle, XrefIteratorHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Xref_Iterator(XrefHandle* handle, XrefIteratorHandle** result)
 {
 	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
@@ -44,12 +44,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Xref_Iterator(XrefHandle handle, Xr
 	{
 		auto begin = xref->Begin();
 		auto ptr = begin.AddRefGet();
-		*result = reinterpret_cast<XrefIteratorHandle>(ptr);
+		*result = reinterpret_cast<XrefIteratorHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_GetValue(XrefIteratorHandle handle, XrefEntryHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_GetValue(XrefIteratorHandle* handle, XrefEntryHandle** result)
 {
 	XrefBase::Iterator* iterator = reinterpret_cast<XrefBase::Iterator*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
@@ -58,12 +58,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_GetValue(XrefIteratorH
 	try {
 		auto entry = iterator->Value();
 		auto ptr = entry.AddRefGet();
-		*result = reinterpret_cast<XrefEntryHandle>(ptr);
+		*result = reinterpret_cast<XrefEntryHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_IsValid(XrefIteratorHandle handle, XrefHandle xref_handle, boolean_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_IsValid(XrefIteratorHandle* handle, XrefHandle* xref_handle, boolean_type* result)
 {
 	XrefBase::Iterator* iterator = reinterpret_cast<XrefBase::Iterator*>(handle);
 	XrefBase* xref = reinterpret_cast<XrefBase*>(xref_handle);
@@ -81,7 +81,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_IsValid(XrefIteratorHa
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_Next(XrefIteratorHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_Next(XrefIteratorHandle* handle)
 {
 	XrefBase::Iterator* iterator = reinterpret_cast<XrefBase::Iterator*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
@@ -92,22 +92,22 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_Next(XrefIteratorHandl
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_Release(XrefIteratorHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_Release(XrefIteratorHandle* handle)
 {
-	return ObjectRelease<XrefBase::Iterator, XrefIteratorHandle>(handle);
+	return ObjectRelease<XrefBase::Iterator, XrefIteratorHandle*>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Xref_Release(XrefHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION Xref_Release(XrefHandle* handle)
 {
-	return ObjectRelease<XrefBase, XrefHandle>(handle);
+	return ObjectRelease<XrefBase, XrefHandle*>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle* handle)
 {
-	return ObjectRelease<XrefEntryBase, XrefEntryHandle>(handle);
+	return ObjectRelease<XrefEntryBase, XrefEntryHandle*>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_InUse(XrefEntryHandle handle, boolean_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_InUse(XrefEntryHandle* handle, boolean_type* result)
 {
 	XrefEntryBase* entry = reinterpret_cast<XrefEntryBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -121,7 +121,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_InUse(XrefEntryHandle han
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_Type(XrefEntryHandle handle, XrefEntryType* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_Type(XrefEntryHandle* handle, XrefEntryType* result)
 {
 	XrefEntryBase* entry = reinterpret_cast<XrefEntryBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -147,7 +147,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_Type(XrefEntryHandle hand
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ObjectNumber(XrefEntryHandle handle, biguint_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ObjectNumber(XrefEntryHandle* handle, biguint_type* result)
 {
 	XrefEntryBase* entry = reinterpret_cast<XrefEntryBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -157,7 +157,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ObjectNumber(XrefEntryHan
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_GenerationNumber(XrefEntryHandle handle, ushort_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_GenerationNumber(XrefEntryHandle* handle, ushort_type* result)
 {
 	XrefEntryBase* entry = reinterpret_cast<XrefEntryBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -167,7 +167,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_GenerationNumber(XrefEntr
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_ObjectNumber(XrefEntryHandle handle, biguint_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_ObjectNumber(XrefEntryHandle* handle, biguint_type* result)
 {
 	XrefFreeEntry* entry = reinterpret_cast<XrefFreeEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -177,7 +177,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_ObjectNumber(XrefEntr
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_GenerationNumber(XrefEntryHandle handle, ushort_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_GenerationNumber(XrefEntryHandle* handle, ushort_type* result)
 {
 	XrefFreeEntry* entry = reinterpret_cast<XrefFreeEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -187,7 +187,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_GenerationNumber(Xref
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_InUse(XrefFreeEntryHandle handle, boolean_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_InUse(XrefFreeEntryHandle* handle, boolean_type* result)
 {
 	XrefFreeEntry* entry = reinterpret_cast<XrefFreeEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -197,7 +197,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_InUse(XrefFreeEntryHa
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_NextFreeObjectNumber(XrefFreeEntryHandle handle, biguint_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_NextFreeObjectNumber(XrefFreeEntryHandle* handle, biguint_type* result)
 {
 	XrefFreeEntry* entry = reinterpret_cast<XrefFreeEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -207,12 +207,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_NextFreeObjectNumber(
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_Release(XrefFreeEntryHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_Release(XrefFreeEntryHandle* handle)
 {
-	return ObjectRelease<XrefFreeEntry, XrefFreeEntryHandle>(handle);
+	return ObjectRelease<XrefFreeEntry, XrefFreeEntryHandle*>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_ObjectNumber(XrefEntryHandle handle, biguint_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_ObjectNumber(XrefEntryHandle* handle, biguint_type* result)
 {
 	XrefUsedEntry* entry = reinterpret_cast<XrefUsedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -222,7 +222,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_ObjectNumber(XrefEntr
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_GenerationNumber(XrefEntryHandle handle, ushort_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_GenerationNumber(XrefEntryHandle* handle, ushort_type* result)
 {
 	XrefUsedEntry* entry = reinterpret_cast<XrefUsedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -232,7 +232,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_GenerationNumber(Xref
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_Offset(XrefUsedEntryHandle handle, offset_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_Offset(XrefUsedEntryHandle* handle, offset_type* result)
 {
 	XrefUsedEntry* entry = reinterpret_cast<XrefUsedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -242,7 +242,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_Offset(XrefUsedEntryH
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_InUse(XrefUsedEntryHandle handle, boolean_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_InUse(XrefUsedEntryHandle* handle, boolean_type* result)
 {
 	XrefUsedEntry* entry = reinterpret_cast<XrefUsedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -252,12 +252,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_InUse(XrefUsedEntryHa
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_Release(XrefUsedEntryHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_Release(XrefUsedEntryHandle* handle)
 {
-	return ObjectRelease<XrefUsedEntry, XrefUsedEntryHandle>(handle);
+	return ObjectRelease<XrefUsedEntry, XrefUsedEntryHandle*>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectNumber(XrefEntryHandle handle, biguint_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectNumber(XrefEntryHandle* handle, biguint_type* result)
 {
 	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -267,7 +267,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectNumber(Xr
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GenerationNumber(XrefEntryHandle handle, ushort_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GenerationNumber(XrefEntryHandle* handle, ushort_type* result)
 {
 	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -277,7 +277,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GenerationNumbe
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_InUse(XrefCompressedEntryHandle handle, boolean_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_InUse(XrefCompressedEntryHandle* handle, boolean_type* result)
 {
 	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -287,7 +287,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_InUse(XrefCompr
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Index(XrefCompressedEntryHandle handle, size_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Index(XrefCompressedEntryHandle* handle, size_type* result)
 {
 	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -297,7 +297,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Index(XrefCompr
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectStreamNumber(XrefCompressedEntryHandle handle, biguint_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectStreamNumber(XrefCompressedEntryHandle* handle, biguint_type* result)
 {
 	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -307,27 +307,27 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectStreamNum
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Release(XrefCompressedEntryHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Release(XrefCompressedEntryHandle* handle)
 {
-	return ObjectRelease<XrefCompressedEntry, XrefCompressedEntryHandle>(handle);
+	return ObjectRelease<XrefCompressedEntry, XrefCompressedEntryHandle*>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ToFreeEntry(XrefEntryHandle handle, XrefFreeEntryHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ToFreeEntry(XrefEntryHandle* handle, XrefFreeEntryHandle** result)
 {
-	return SafeObjectConvert<XrefEntryBase, XrefFreeEntry, XrefEntryHandle, XrefFreeEntryHandle>(handle, result);
+	return SafeObjectConvert<XrefEntryBase, XrefFreeEntry, XrefEntryHandle*, XrefFreeEntryHandle*>(handle, result);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ToUsedEntry(XrefEntryHandle handle, XrefUsedEntryHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ToUsedEntry(XrefEntryHandle* handle, XrefUsedEntryHandle** result)
 {
-	return SafeObjectConvert<XrefEntryBase, XrefUsedEntry, XrefEntryHandle, XrefUsedEntryHandle>(handle, result);
+	return SafeObjectConvert<XrefEntryBase, XrefUsedEntry, XrefEntryHandle*, XrefUsedEntryHandle*>(handle, result);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ToCompressedEntry(XrefEntryHandle handle, XrefCompressedEntryHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ToCompressedEntry(XrefEntryHandle* handle, XrefCompressedEntryHandle** result)
 {
-	return SafeObjectConvert<XrefEntryBase, XrefCompressedEntry, XrefEntryHandle, XrefCompressedEntryHandle>(handle, result);
+	return SafeObjectConvert<XrefEntryBase, XrefCompressedEntry, XrefEntryHandle*, XrefCompressedEntryHandle*>(handle, result);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_Reference(XrefUsedEntryHandle handle, ObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_Reference(XrefUsedEntryHandle* handle, ObjectHandle** result)
 {
 	XrefUsedEntry* entry = reinterpret_cast<XrefUsedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -336,12 +336,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_Reference(XrefUsedEnt
 	try {
 		auto direct = entry->GetReference();
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<ObjectHandle>(ptr);
+		*result = reinterpret_cast<ObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Reference(XrefCompressedEntryHandle handle, ObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Reference(XrefCompressedEntryHandle* handle, ObjectHandle** result)
 {
 	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -352,12 +352,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Reference(XrefC
 
 		auto base = ObjectUtils::GetObjectBase(direct);
 		auto ptr = base.AddRefGet();
-		*result = reinterpret_cast<ObjectHandle>(ptr);
+		*result = reinterpret_cast<ObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_GetValue(XrefChainIteratorHandle handle, XrefHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_GetValue(XrefChainIteratorHandle* handle, XrefHandle** result)
 {
 	XrefChain::Iterator* iterator = reinterpret_cast<XrefChain::Iterator*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
@@ -366,12 +366,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_GetValue(XrefChai
 	try {
 		auto entry = iterator->Value();
 		auto ptr = entry.AddRefGet();
-		*result = reinterpret_cast<XrefHandle>(ptr);
+		*result = reinterpret_cast<XrefHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_IsValid(XrefChainIteratorHandle handle, XrefChainHandle chain_handle, boolean_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_IsValid(XrefChainIteratorHandle* handle, XrefChainHandle* chain_handle, boolean_type* result)
 {
 	XrefChain::Iterator* iterator = reinterpret_cast<XrefChain::Iterator*>(handle);
 	XrefChain* chain = reinterpret_cast<XrefChain*>(chain_handle);
@@ -389,7 +389,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_IsValid(XrefChain
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_Next(XrefChainIteratorHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_Next(XrefChainIteratorHandle* handle)
 {
 	XrefChain::Iterator* iterator = reinterpret_cast<XrefChain::Iterator*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
@@ -400,12 +400,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_Next(XrefChainIte
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_Release(XrefChainIteratorHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_Release(XrefChainIteratorHandle* handle)
 {
-	return ObjectRelease<XrefChain::Iterator, XrefChainIteratorHandle>(handle);
+	return ObjectRelease<XrefChain::Iterator, XrefChainIteratorHandle*>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_Iterator(XrefChainHandle handle, XrefChainIteratorHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_Iterator(XrefChainHandle* handle, XrefChainIteratorHandle** result)
 {
 	XrefChain* chain = reinterpret_cast<XrefChain*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(chain);
@@ -415,12 +415,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_Iterator(XrefChainHandle 
 	{
 		auto begin = chain->Begin();
 		auto ptr = begin.AddRefGet();
-		*result = reinterpret_cast<XrefChainIteratorHandle>(ptr);
+		*result = reinterpret_cast<XrefChainIteratorHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_Release(XrefChainHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_Release(XrefChainHandle* handle)
 {
-	return ObjectRelease<XrefChain, XrefChainHandle>(handle);
+	return ObjectRelease<XrefChain, XrefChainHandle*>(handle);
 }

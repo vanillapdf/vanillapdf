@@ -8,7 +8,7 @@
 using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitle(DocumentInfoHandle handle, StringObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitle(DocumentInfoHandle* handle, StringObjectHandle** result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -20,12 +20,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitle(DocumentInfoH
 		auto contains = obj->Title(title);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = title.AddRefGet();
-		*result = reinterpret_cast<StringObjectHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthor(DocumentInfoHandle handle, StringObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthor(DocumentInfoHandle* handle, StringObjectHandle** result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -37,12 +37,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthor(DocumentInfo
 		auto contains = obj->Author(author);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = author.AddRefGet();
-		*result = reinterpret_cast<StringObjectHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubject(DocumentInfoHandle handle, StringObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubject(DocumentInfoHandle* handle, StringObjectHandle** result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -54,12 +54,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubject(DocumentInf
 		auto contains = obj->Subject(subject);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = subject.AddRefGet();
-		*result = reinterpret_cast<StringObjectHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywords(DocumentInfoHandle handle, StringObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywords(DocumentInfoHandle* handle, StringObjectHandle** result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -71,12 +71,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywords(DocumentIn
 		auto contains = obj->Keywords(keywords);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = keywords.AddRefGet();
-		*result = reinterpret_cast<StringObjectHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreator(DocumentInfoHandle handle, StringObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreator(DocumentInfoHandle* handle, StringObjectHandle** result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -88,12 +88,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreator(DocumentInf
 		auto contains = obj->Creator(creator);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = creator.AddRefGet();
-		*result = reinterpret_cast<StringObjectHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducer(DocumentInfoHandle handle, StringObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducer(DocumentInfoHandle* handle, StringObjectHandle** result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -105,12 +105,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducer(DocumentIn
 		auto contains = obj->Producer(producer);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = producer.AddRefGet();
-		*result = reinterpret_cast<StringObjectHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreationDate(DocumentInfoHandle handle, DateHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreationDate(DocumentInfoHandle* handle, DateHandle** result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -122,12 +122,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreationDate(Docume
 		auto contains = obj->CreationDate(date);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = date.AddRefGet();
-		*result = reinterpret_cast<DateHandle>(ptr);
+		*result = reinterpret_cast<DateHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetModificationDate(DocumentInfoHandle handle, DateHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetModificationDate(DocumentInfoHandle* handle, DateHandle** result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -139,12 +139,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetModificationDate(Do
 		auto contains = obj->ModificationDate(date);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = date.AddRefGet();
-		*result = reinterpret_cast<DateHandle>(ptr);
+		*result = reinterpret_cast<DateHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentInfoHandle handle, DocumentTrappedType* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentInfoHandle* handle, DocumentTrappedType* result)
 {
 	DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -172,7 +172,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentInf
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_Release(DocumentInfoHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_Release(DocumentInfoHandle* handle)
 {
-	return ObjectRelease<DocumentInfo, DocumentInfoHandle>(handle);
+	return ObjectRelease<DocumentInfo, DocumentInfoHandle*>(handle);
 }

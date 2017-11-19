@@ -9,7 +9,7 @@ using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetDigest(DocumentSignatureSettingsHandle handle, MessageDigestAlgorithmType* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetDigest(DocumentSignatureSettingsHandle* handle, MessageDigestAlgorithmType* result) {
 	DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -50,7 +50,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetDigest
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetDigest(DocumentSignatureSettingsHandle handle, MessageDigestAlgorithmType value) {
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetDigest(DocumentSignatureSettingsHandle* handle, MessageDigestAlgorithmType value) {
 	DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
@@ -92,7 +92,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetDigest
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetSigningKey(DocumentSignatureSettingsHandle handle, SigningKeyHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetSigningKey(DocumentSignatureSettingsHandle* handle, SigningKeyHandle** result) {
 	DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -105,12 +105,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetSignin
 		}
 
 		auto ptr = key.AddRefGet();
-		*result = reinterpret_cast<SigningKeyHandle>(ptr);
+		*result = reinterpret_cast<SigningKeyHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetSigningKey(DocumentSignatureSettingsHandle handle, SigningKeyHandle value) {
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetSigningKey(DocumentSignatureSettingsHandle* handle, SigningKeyHandle* value) {
 	DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
 	ISigningKey* key = reinterpret_cast<ISigningKey*>(value);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -122,7 +122,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetSignin
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetName(DocumentSignatureSettingsHandle handle, LiteralStringObjectHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetName(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle** result) {
 	DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -135,12 +135,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetName(D
 		}
 
 		auto ptr = name.AddRefGet();
-		*result = reinterpret_cast<LiteralStringObjectHandle>(ptr);
+		*result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetName(DocumentSignatureSettingsHandle handle, LiteralStringObjectHandle value) {
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetName(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle* value) {
 	DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
 	LiteralStringObject* name = reinterpret_cast<LiteralStringObject*>(value);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -152,7 +152,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetName(D
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetLocation(DocumentSignatureSettingsHandle handle, LiteralStringObjectHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetLocation(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle** result) {
 	DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -165,12 +165,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetLocati
 		}
 
 		auto ptr = location.AddRefGet();
-		*result = reinterpret_cast<LiteralStringObjectHandle>(ptr);
+		*result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetLocation(DocumentSignatureSettingsHandle handle, LiteralStringObjectHandle value) {
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetLocation(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle* value) {
 	DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
 	LiteralStringObject* location = reinterpret_cast<LiteralStringObject*>(value);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -182,7 +182,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetLocati
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetReason(DocumentSignatureSettingsHandle handle, LiteralStringObjectHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetReason(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle** result) {
 	DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -195,12 +195,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetReason
 		}
 
 		auto ptr = reason.AddRefGet();
-		*result = reinterpret_cast<LiteralStringObjectHandle>(ptr);
+		*result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetReason(DocumentSignatureSettingsHandle handle, LiteralStringObjectHandle value) {
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetReason(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle* value) {
 	DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
 	LiteralStringObject* reason = reinterpret_cast<LiteralStringObject*>(value);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -212,7 +212,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetReason
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetCertificate(DocumentSignatureSettingsHandle handle, HexadecimalStringObjectHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetCertificate(DocumentSignatureSettingsHandle* handle, HexadecimalStringObjectHandle** result) {
 	DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -225,12 +225,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetCertif
 		}
 
 		auto ptr = certificate.AddRefGet();
-		*result = reinterpret_cast<HexadecimalStringObjectHandle>(ptr);
+		*result = reinterpret_cast<HexadecimalStringObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetCertificate(DocumentSignatureSettingsHandle handle, HexadecimalStringObjectHandle value) {
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetCertificate(DocumentSignatureSettingsHandle* handle, HexadecimalStringObjectHandle* value) {
 	DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
 	HexadecimalStringObject* certificate = reinterpret_cast<HexadecimalStringObject*>(value);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -242,6 +242,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetCertif
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_Release(DocumentSignatureSettingsHandle handle) {
-	return ObjectRelease<DocumentSignatureSettings, DocumentSignatureSettingsHandle>(handle);
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_Release(DocumentSignatureSettingsHandle* handle) {
+	return ObjectRelease<DocumentSignatureSettings, DocumentSignatureSettingsHandle*>(handle);
 }

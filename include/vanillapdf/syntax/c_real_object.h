@@ -30,17 +30,17 @@ extern "C"
 	/**
 	* \brief Return objects contained real value
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_GetValue(RealObjectHandle handle, real_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_GetValue(RealObjectHandle* handle, real_type* result);
 
 	/**
 	* \brief Set objects new real value
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_SetValue(RealObjectHandle handle, real_type value);
+	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_SetValue(RealObjectHandle* handle, real_type value);
 
 	/**
 	* \copydoc Object_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_Release(RealObjectHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_Release(RealObjectHandle* handle);
 
 	/** @} */
 

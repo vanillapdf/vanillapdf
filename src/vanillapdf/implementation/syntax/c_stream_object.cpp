@@ -8,7 +8,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
-VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_GetHeader(StreamObjectHandle handle, DictionaryObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_GetHeader(StreamObjectHandle* handle, DictionaryObjectHandle** result)
 {
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -18,12 +18,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_GetHeader(StreamObject
 	{
 		auto header = obj->GetHeader();
 		auto ptr = header.AddRefGet();
-		*result = reinterpret_cast<DictionaryObjectHandle>(ptr);
+		*result = reinterpret_cast<DictionaryObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_SetHeader(StreamObjectHandle handle, DictionaryObjectHandle value)
+VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_SetHeader(StreamObjectHandle* handle, DictionaryObjectHandle* value)
 {
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	DictionaryObject* header = reinterpret_cast<DictionaryObject*>(value);
@@ -37,7 +37,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_SetHeader(StreamObject
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_GetBody(StreamObjectHandle handle, BufferHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_GetBody(StreamObjectHandle* handle, BufferHandle** result)
 {
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -47,12 +47,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_GetBody(StreamObjectHa
 	{
 		auto header = obj->GetBody();
 		auto ptr = header.AddRefGet();
-		*result = reinterpret_cast<BufferHandle>(ptr);
+		*result = reinterpret_cast<BufferHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_GetBodyRaw(StreamObjectHandle handle, BufferHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_GetBodyRaw(StreamObjectHandle* handle, BufferHandle** result)
 {
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -62,12 +62,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_GetBodyRaw(StreamObjec
 	{
 		auto body = obj->GetBodyRaw();
 		auto ptr = body.AddRefGet();
-		*result = reinterpret_cast<BufferHandle>(ptr);
+		*result = reinterpret_cast<BufferHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_SetBody(StreamObjectHandle handle, BufferHandle value)
+VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_SetBody(StreamObjectHandle* handle, BufferHandle* value)
 {
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);
 	Buffer* buffer = reinterpret_cast<Buffer*>(value);
@@ -81,7 +81,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_SetBody(StreamObjectHa
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_Release(StreamObjectHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_Release(StreamObjectHandle* handle)
 {
-	return ObjectRelease<StreamObject, StreamObjectHandle>(handle);
+	return ObjectRelease<StreamObject, StreamObjectHandle*>(handle);
 }

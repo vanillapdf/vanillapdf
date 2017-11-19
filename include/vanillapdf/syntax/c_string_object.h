@@ -61,32 +61,32 @@ extern "C"
 	/**
 	* \brief Get derived type from current string
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_Type(StringObjectHandle handle, StringType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_Type(StringObjectHandle* handle, StringType* result);
 
 	/**
 	* \brief Reinterpret current object as \ref LiteralStringObjectHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_ToLiteral(StringObjectHandle handle, LiteralStringObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_ToLiteral(StringObjectHandle* handle, LiteralStringObjectHandle** result);
 
 	/**
 	* \brief Reinterpret current object as \ref HexadecimalStringObjectHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_ToHexadecimal(StringObjectHandle handle, HexadecimalStringObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_ToHexadecimal(StringObjectHandle* handle, HexadecimalStringObjectHandle** result);
 
 	/**
 	* \brief Get strings current value
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_GetValue(StringObjectHandle handle, BufferHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_GetValue(StringObjectHandle* handle, BufferHandle** result);
 
 	/**
 	* \brief Set strings new value
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_SetValue(StringObjectHandle handle, BufferHandle value);
+	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_SetValue(StringObjectHandle* handle, BufferHandle* value);
 
 	/**
 	* \copydoc Object_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_Release(StringObjectHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_Release(StringObjectHandle* handle);
 
 	/** @} */
 
@@ -98,17 +98,17 @@ extern "C"
 	/**
 	* \brief Get strings current value
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_GetValue(LiteralStringObjectHandle handle, BufferHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_GetValue(LiteralStringObjectHandle* handle, BufferHandle** result);
 
 	/**
 	* \brief Set strings new value
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_SetValue(LiteralStringObjectHandle handle, BufferHandle value);
+	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_SetValue(LiteralStringObjectHandle* handle, BufferHandle* value);
 
 	/**
 	* \copydoc StringObject_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_Release(LiteralStringObjectHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_Release(LiteralStringObjectHandle* handle);
 
 	/** @} */
 
@@ -120,17 +120,17 @@ extern "C"
 	/**
 	* \brief Get strings current value
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_GetValue(HexadecimalStringObjectHandle handle, BufferHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_GetValue(HexadecimalStringObjectHandle* handle, BufferHandle** result);
 
 	/**
 	* \brief Set strings new value
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_SetValue(HexadecimalStringObjectHandle handle, BufferHandle value);
+	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_SetValue(HexadecimalStringObjectHandle* handle, BufferHandle* value);
 
 	/**
 	* \copydoc StringObject_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Release(HexadecimalStringObjectHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Release(HexadecimalStringObjectHandle* handle);
 
 	/** @} */
 

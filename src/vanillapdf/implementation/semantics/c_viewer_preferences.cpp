@@ -8,7 +8,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideToolbar(ViewerPreferencesHandle handle, BooleanObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideToolbar(ViewerPreferencesHandle* handle, BooleanObjectHandle** result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -20,12 +20,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideToolbar(Vi
 		auto contains = obj->HideToolbar(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<BooleanObjectHandle>(ptr);
+		*result = reinterpret_cast<BooleanObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideMenubar(ViewerPreferencesHandle handle, BooleanObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideMenubar(ViewerPreferencesHandle* handle, BooleanObjectHandle** result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -37,12 +37,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideMenubar(Vi
 		auto contains = obj->HideMenubar(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<BooleanObjectHandle>(ptr);
+		*result = reinterpret_cast<BooleanObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideWindowUI(ViewerPreferencesHandle handle, BooleanObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideWindowUI(ViewerPreferencesHandle* handle, BooleanObjectHandle** result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -54,12 +54,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideWindowUI(V
 		auto contains = obj->HideWindowUI(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<BooleanObjectHandle>(ptr);
+		*result = reinterpret_cast<BooleanObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetFitWindow(ViewerPreferencesHandle handle, BooleanObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetFitWindow(ViewerPreferencesHandle* handle, BooleanObjectHandle** result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -71,12 +71,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetFitWindow(View
 		auto contains = obj->FitWindow(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<BooleanObjectHandle>(ptr);
+		*result = reinterpret_cast<BooleanObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetCenterWindow(ViewerPreferencesHandle handle, BooleanObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetCenterWindow(ViewerPreferencesHandle* handle, BooleanObjectHandle** result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -88,12 +88,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetCenterWindow(V
 		auto contains = obj->CenterWindow(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<BooleanObjectHandle>(ptr);
+		*result = reinterpret_cast<BooleanObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDisplayDocTitle(ViewerPreferencesHandle handle, BooleanObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDisplayDocTitle(ViewerPreferencesHandle* handle, BooleanObjectHandle** result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -105,12 +105,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDisplayDocTitl
 		auto contains = obj->DisplayDocTitle(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<BooleanObjectHandle>(ptr);
+		*result = reinterpret_cast<BooleanObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNonFullScreenPageMode(ViewerPreferencesHandle handle, NonFullScreenPageMode* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNonFullScreenPageMode(ViewerPreferencesHandle* handle, NonFullScreenPageMode* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -140,7 +140,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNonFullScreenP
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDirection(ViewerPreferencesHandle handle, ReadingOrder* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDirection(ViewerPreferencesHandle* handle, ReadingOrder* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -166,7 +166,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDirection(View
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewArea(ViewerPreferencesHandle handle, NameObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewArea(ViewerPreferencesHandle* handle, NameObjectHandle** result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -178,12 +178,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewArea(Viewe
 		auto contains = obj->ViewArea(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<NameObjectHandle>(ptr);
+		*result = reinterpret_cast<NameObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewClip(ViewerPreferencesHandle handle, NameObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewClip(ViewerPreferencesHandle* handle, NameObjectHandle** result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -195,12 +195,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewClip(Viewe
 		auto contains = obj->ViewClip(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<NameObjectHandle>(ptr);
+		*result = reinterpret_cast<NameObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintArea(ViewerPreferencesHandle handle, NameObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintArea(ViewerPreferencesHandle* handle, NameObjectHandle** result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -212,12 +212,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintArea(View
 		auto contains = obj->PrintArea(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<NameObjectHandle>(ptr);
+		*result = reinterpret_cast<NameObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintClip(ViewerPreferencesHandle handle, NameObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintClip(ViewerPreferencesHandle* handle, NameObjectHandle** result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -229,12 +229,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintClip(View
 		auto contains = obj->PrintClip(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<NameObjectHandle>(ptr);
+		*result = reinterpret_cast<NameObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintScaling(ViewerPreferencesHandle handle, PrintScaling* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintScaling(ViewerPreferencesHandle* handle, PrintScaling* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -260,7 +260,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintScaling(V
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDuplex(ViewerPreferencesHandle handle, Duplex* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDuplex(ViewerPreferencesHandle* handle, Duplex* result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -288,7 +288,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDuplex(ViewerP
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPickTrayByPDFSize(ViewerPreferencesHandle handle, BooleanObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPickTrayByPDFSize(ViewerPreferencesHandle* handle, BooleanObjectHandle** result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -300,12 +300,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPickTrayByPDFS
 		auto contains = obj->PickTrayByPDFSize(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<BooleanObjectHandle>(ptr);
+		*result = reinterpret_cast<BooleanObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintPageRange(ViewerPreferencesHandle handle, PageRangeHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintPageRange(ViewerPreferencesHandle* handle, PageRangeHandle** result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -317,12 +317,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintPageRange
 		auto contains = obj->PrintPageRange(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<PageRangeHandle>(ptr);
+		*result = reinterpret_cast<PageRangeHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNumCopies(ViewerPreferencesHandle handle, IntegerObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNumCopies(ViewerPreferencesHandle* handle, IntegerObjectHandle** result)
 {
 	ViewerPreferences* obj = reinterpret_cast<ViewerPreferences*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -334,17 +334,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNumCopies(View
 		auto contains = obj->NumCopies(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_Release(ViewerPreferencesHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_Release(ViewerPreferencesHandle* handle)
 {
-	return ObjectRelease<ViewerPreferences, ViewerPreferencesHandle>(handle);
+	return ObjectRelease<ViewerPreferences, ViewerPreferencesHandle*>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageRange_GetSize(PageRangeHandle handle, size_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION PageRange_GetSize(PageRangeHandle* handle, size_type* result)
 {
 	PageRange* obj = reinterpret_cast<PageRange*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -357,7 +357,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageRange_GetSize(PageRangeHandle h
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageRange_GetSubrange(PageRangeHandle handle, size_type at, PageSubRangeHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION PageRange_GetSubrange(PageRangeHandle* handle, size_type at, PageSubRangeHandle** result)
 {
 	PageRange* obj = reinterpret_cast<PageRange*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -367,12 +367,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageRange_GetSubrange(PageRangeHand
 	{
 		auto direct = obj->At(at);
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<PageSubRangeHandle>(ptr);
+		*result = reinterpret_cast<PageSubRangeHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageSubRange_GetFirstPage(PageSubRangeHandle handle, IntegerObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION PageSubRange_GetFirstPage(PageSubRangeHandle* handle, IntegerObjectHandle** result)
 {
 	PageRange::SubRange* obj = reinterpret_cast<PageRange::SubRange*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -382,12 +382,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageSubRange_GetFirstPage(PageSubRa
 	{
 		auto direct = obj->FirstPage();
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageSubRange_GetLastPage(PageSubRangeHandle handle, IntegerObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION PageSubRange_GetLastPage(PageSubRangeHandle* handle, IntegerObjectHandle** result)
 {
 	PageRange::SubRange* obj = reinterpret_cast<PageRange::SubRange*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -397,17 +397,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageSubRange_GetLastPage(PageSubRan
 	{
 		auto direct = obj->LastPage();
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageSubRange_Release(PageSubRangeHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION PageSubRange_Release(PageSubRangeHandle* handle)
 {
-	return ObjectRelease<PageRange::SubRange, PageSubRangeHandle>(handle);
+	return ObjectRelease<PageRange::SubRange, PageSubRangeHandle*>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageRange_Release(PageRangeHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION PageRange_Release(PageRangeHandle* handle)
 {
-	return ObjectRelease<PageRange, PageRangeHandle>(handle);
+	return ObjectRelease<PageRange, PageRangeHandle*>(handle);
 }

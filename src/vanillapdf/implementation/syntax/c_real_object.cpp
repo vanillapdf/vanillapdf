@@ -8,7 +8,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
-VANILLAPDF_API error_type CALLING_CONVENTION RealObject_GetValue(RealObjectHandle handle, real_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION RealObject_GetValue(RealObjectHandle* handle, real_type* result)
 {
 	RealObject* obj = reinterpret_cast<RealObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -21,7 +21,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION RealObject_GetValue(RealObjectHandl
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION RealObject_SetValue(RealObjectHandle handle, real_type value)
+VANILLAPDF_API error_type CALLING_CONVENTION RealObject_SetValue(RealObjectHandle* handle, real_type value)
 {
 	RealObject* obj = reinterpret_cast<RealObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -33,7 +33,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION RealObject_SetValue(RealObjectHandl
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION RealObject_Release(RealObjectHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION RealObject_Release(RealObjectHandle* handle)
 {
-	return ObjectRelease<RealObject, RealObjectHandle>(handle);
+	return ObjectRelease<RealObject, RealObjectHandle*>(handle);
 }

@@ -36,7 +36,7 @@ extern "C"
 	* \param password a protection password to the data structure. If there is no password use NULL.
 	* \param result a pointer to library allocated PKCS12KeyHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_CreateFromFile(string_type path, string_type password, PKCS12KeyHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_CreateFromFile(string_type path, string_type password, PKCS12KeyHandle** result);
 
 	/**
 	* \brief Uses PKCS#12 standard format to access asymmetric keys
@@ -44,23 +44,23 @@ extern "C"
 	* \param password a protection password to the data structure. If there is no password use NULL.
 	* \param result a pointer to library allocated PKCS12KeyHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_CreateFromBuffer(BufferHandle data, string_type password, PKCS12KeyHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_CreateFromBuffer(BufferHandle* data, string_type password, PKCS12KeyHandle** result);
 
 	/**
-	* \brief Reinterpret current object as EncryptionKeyHandle
+	* \brief Reinterpret current object as \ref EncryptionKeyHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_ToEncryptionKey(PKCS12KeyHandle handle, EncryptionKeyHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_ToEncryptionKey(PKCS12KeyHandle* handle, EncryptionKeyHandle** result);
 
 	/**
-	* \brief Reinterpret current object as SigningKeyHandle
+	* \brief Reinterpret current object as \ref SigningKeyHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_ToSigningKey(PKCS12KeyHandle handle, SigningKeyHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_ToSigningKey(PKCS12KeyHandle* handle, SigningKeyHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_Release(PKCS12KeyHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_Release(PKCS12KeyHandle* handle);
 
 	/** @} */
 

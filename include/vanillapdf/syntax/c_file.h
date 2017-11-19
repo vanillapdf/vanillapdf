@@ -47,33 +47,33 @@ extern "C"
 	*
 	* The file must exist.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION File_Open(string_type filename, FileHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION File_Open(string_type filename, FileHandle** result);
 
 	/**
 	* \brief Creates a file for writing.
 	*
 	* Truncates the contents if it already exists.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION File_Create(string_type filename, FileHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION File_Create(string_type filename, FileHandle** result);
 
 	/**
 	* \brief Perform basic intialization.
 	*
 	* Read xref tables, determine if file is encrypted.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle* handle);
 
 	/**
 	* \brief Determine if file is encrypted.
 	*
 	* If the file was not initialized returns false.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION File_IsEncrypted(FileHandle handle, boolean_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION File_IsEncrypted(FileHandle* handle, boolean_type* result);
 
 	/**
 	* \brief Set encryption password.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION File_SetEncryptionPassword(FileHandle handle, string_type password);
+	VANILLAPDF_API error_type CALLING_CONVENTION File_SetEncryptionPassword(FileHandle* handle, string_type password);
 
 	/**
 	* \brief Set files encryption key
@@ -81,23 +81,23 @@ extern "C"
 	* This is most often certificate.
 	* \see \ref EncryptionKeyHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION File_SetEncryptionKey(FileHandle handle, EncryptionKeyHandle key);
+	VANILLAPDF_API error_type CALLING_CONVENTION File_SetEncryptionKey(FileHandle* handle, EncryptionKeyHandle* key);
 
 	/**
 	* \brief Get chain of xref tables for iteration
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle, XrefChainHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle* handle, XrefChainHandle** result);
 
 	/**
 	* \brief Find exact object within all xref tables
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION File_GetIndirectObject(FileHandle handle, biguint_type objNumber, ushort_type genNumber, ObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION File_GetIndirectObject(FileHandle* handle, biguint_type objNumber, ushort_type genNumber, ObjectHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION File_Release(FileHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION File_Release(FileHandle* handle);
 
 	/** @} */
 

@@ -9,7 +9,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION Contents_GetInstructionsSize(ContentsHandle handle, size_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Contents_GetInstructionsSize(ContentsHandle* handle, size_type* result)
 {
 	Contents* obj = reinterpret_cast<Contents*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -22,7 +22,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Contents_GetInstructionsSize(Conten
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(ContentsHandle handle, size_type at, ContentInstructionHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(ContentsHandle* handle, size_type at, ContentInstructionHandle** result)
 {
 	Contents* obj = reinterpret_cast<Contents*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -32,12 +32,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(ContentsH
 	{
 		auto instruction = obj->GetInstructionAt(at);
 		auto base = instruction.AddRefGet();
-		*result = reinterpret_cast<ContentInstructionHandle>(base);
+		*result = reinterpret_cast<ContentInstructionHandle*>(base);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Contents_Release(ContentsHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION Contents_Release(ContentsHandle* handle)
 {
-	return ObjectRelease<Contents, ContentsHandle>(handle);
+	return ObjectRelease<Contents, ContentsHandle*>(handle);
 }

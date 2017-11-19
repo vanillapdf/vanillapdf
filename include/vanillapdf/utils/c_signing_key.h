@@ -46,7 +46,7 @@ extern "C"
 	* This function can be called multiple times,
 	* if there are more data for signing that would fit in a single buffer.
 	*/
-	typedef error_type (*SigningKeyUpdateFunction)(const struct BufferHandleTag* data);
+	typedef error_type (*SigningKeyUpdateFunction)(const BufferHandle* data);
 
 	/**
 	* \brief Finish the digest calculation and return signed hash
@@ -56,32 +56,32 @@ extern "C"
 	*
 	* Hash should be signed and the result should be either a DER-encoded PKCS#1 binary data object or a DER-encoded PKCS#7 binary data object.
 	*/
-	typedef error_type (*SigningKeyFinalFunction)(BufferHandle* result);
+	typedef error_type (*SigningKeyFinalFunction)(BufferHandle** result);
 
 	/**
 	* \brief Cleanup all dependencies after the signing process has finished
 	*
 	* This function is called when the last reference to the
-	* SigningKeyHandle has been disposed.
+	* \ref SigningKeyHandle has been disposed.
 	*/
 	typedef void (*SigningKeyCleanupFunction)(void);
 
 	/**
-	* \brief Creates a custom SigningKeyHandle to provide custom sign operation
+	* \brief Creates a custom \ref SigningKeyHandle to provide custom sign operation
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_CreateCustom(
 		SigningKeyInitializeFunction sign_init,
 		SigningKeyUpdateFunction sign_update,
 		SigningKeyFinalFunction sign_final,
 		SigningKeyCleanupFunction sign_cleanup,
-		SigningKeyHandle* result
+		SigningKeyHandle** result
 	);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_Release(SigningKeyHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_Release(SigningKeyHandle* handle);
 
 	/** @} */
 

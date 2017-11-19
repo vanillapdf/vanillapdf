@@ -8,7 +8,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
-VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, const struct NameObjectHandleTag* key, ObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle* handle, const struct NameObjectHandle* key, ObjectHandle** result)
 {
 	DictionaryObject* obj = reinterpret_cast<DictionaryObject*>(handle);
 	const NameObject* name_object = reinterpret_cast<const NameObject*>(key);
@@ -21,12 +21,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObj
 		auto direct = obj->Find(*name_object);
 		auto base = ObjectUtils::GetObjectBase(direct);
 		auto ptr = base.AddRefGet();
-		*result = reinterpret_cast<ObjectHandle>(ptr);
+		*result = reinterpret_cast<ObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(DictionaryObjectHandle handle, DictionaryObjectIteratorHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(DictionaryObjectHandle* handle, DictionaryObjectIteratorHandle** result)
 {
 	DictionaryObject* obj = reinterpret_cast<DictionaryObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -36,13 +36,13 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(Dictionar
 	{
 		auto begin = make_deferred<DictionaryObject::Iterator>(obj->begin());
 		auto ptr = begin.AddRefGet();
-		*result = reinterpret_cast<DictionaryObjectIteratorHandle>(ptr);
+		*result = reinterpret_cast<DictionaryObjectIteratorHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Next(
-	DictionaryObjectIteratorHandle handle)
+	DictionaryObjectIteratorHandle* handle)
 {
 	DictionaryObject::Iterator* iterator = reinterpret_cast<DictionaryObject::Iterator*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
@@ -55,14 +55,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Next(
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Release(
-	DictionaryObjectIteratorHandle handle)
+	DictionaryObjectIteratorHandle* handle)
 {
-	return ObjectRelease<DictionaryObject::Iterator, DictionaryObjectIteratorHandle>(handle);
+	return ObjectRelease<DictionaryObject::Iterator, DictionaryObjectIteratorHandle*>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetKey(
-	DictionaryObjectIteratorHandle handle,
-	NameObjectHandle* result)
+	DictionaryObjectIteratorHandle* handle,
+	NameObjectHandle** result)
 {
 	DictionaryObject::Iterator* iterator = reinterpret_cast<DictionaryObject::Iterator*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
@@ -72,14 +72,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetKey(
 	{
 		NameObjectPtr name = iterator->First();
 		NameObject* ptr = name.AddRefGet();
-		*result = reinterpret_cast<NameObjectHandle>(ptr);
+		*result = reinterpret_cast<NameObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetValue(
-	DictionaryObjectIteratorHandle handle,
-	ObjectHandle* result)
+	DictionaryObjectIteratorHandle* handle,
+	ObjectHandle** result)
 {
 	DictionaryObject::Iterator* iterator = reinterpret_cast<DictionaryObject::Iterator*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
@@ -90,14 +90,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetValue(
 		auto direct = iterator->Second();
 		auto base = ObjectUtils::GetObjectBase(direct);
 		auto ptr = base.AddRefGet();
-		*result = reinterpret_cast<ObjectHandle>(ptr);
+		*result = reinterpret_cast<ObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(
-	DictionaryObjectIteratorHandle iterator_handle,
-	DictionaryObjectHandle dictionary_handle,
+	DictionaryObjectIteratorHandle* iterator_handle,
+	DictionaryObjectHandle* dictionary_handle,
 	boolean_type* result)
 {
 	DictionaryObject::Iterator* iterator = reinterpret_cast<DictionaryObject::Iterator*>(iterator_handle);
@@ -119,7 +119,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryObjectHandle dictionary_handle, const struct NameObjectHandleTag* key)
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryObjectHandle* dictionary_handle, const NameObjectHandle* key)
 {
 	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(dictionary_handle);
 	const NameObject* name = reinterpret_cast<const NameObject*>(key);
@@ -133,7 +133,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryO
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryObjectHandle dictionary_handle, NameObjectHandle key, ObjectHandle value)
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryObjectHandle* dictionary_handle, NameObjectHandle* key, ObjectHandle* value)
 {
 	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(dictionary_handle);
 	NameObject* name = reinterpret_cast<NameObject*>(key);
@@ -153,7 +153,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryO
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(DictionaryObjectHandle dictionary_handle, const struct NameObjectHandleTag* key, boolean_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(DictionaryObjectHandle* dictionary_handle, const NameObjectHandle* key, boolean_type* result)
 {
 	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(dictionary_handle);
 	const NameObject* name = reinterpret_cast<const NameObject*>(key);
@@ -168,7 +168,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(Dictionar
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Release(DictionaryObjectHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Release(DictionaryObjectHandle* handle)
 {
-	return ObjectRelease<DictionaryObject, DictionaryObjectHandle>(handle);
+	return ObjectRelease<DictionaryObject, DictionaryObjectHandle*>(handle);
 }

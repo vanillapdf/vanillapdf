@@ -56,7 +56,7 @@ extern "C"
 	* Ensure the iterator is valid.
 	* \see \ref DeveloperExtensionsIterator_IsValid
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetKey(DeveloperExtensionsIteratorHandle handle, NameObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetKey(DeveloperExtensionsIteratorHandle* handle, NameObjectHandle** result);
 
 	/**
 	* \brief Get value at iterator position
@@ -64,7 +64,7 @@ extern "C"
 	* Ensure the iterator is valid.
 	* \see \ref DeveloperExtensionsIterator_IsValid
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetValue(DeveloperExtensionsIteratorHandle handle, DeveloperExtensionHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetValue(DeveloperExtensionsIteratorHandle* handle, DeveloperExtensionHandle** result);
 
 	/**
 	* \brief Determine if current position is valid
@@ -73,7 +73,7 @@ extern "C"
 	*
 	* Any other operation except \b THIS will fail on invalid iterator.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_IsValid(DeveloperExtensionsIteratorHandle handle, DeveloperExtensionsHandle parent, boolean_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_IsValid(DeveloperExtensionsIteratorHandle* handle, DeveloperExtensionsHandle* parent, boolean_type* result);
 
 	/**
 	* \brief Advances iterator to the next position
@@ -81,13 +81,13 @@ extern "C"
 	* Ensure the iterator is valid.
 	* \see \ref DeveloperExtensionsIterator_IsValid
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_Next(DeveloperExtensionsIteratorHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_Next(DeveloperExtensionsIteratorHandle* handle);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_Release(DeveloperExtensionsIteratorHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_Release(DeveloperExtensionsIteratorHandle* handle);
 
 	/** @} */
 
@@ -101,13 +101,13 @@ extern "C"
 	*
 	* Modifying collection may invalidate this handle.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensions_Iterator(DeveloperExtensionsHandle handle, DeveloperExtensionsIteratorHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensions_Iterator(DeveloperExtensionsHandle* handle, DeveloperExtensionsIteratorHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensions_Release(DeveloperExtensionsHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensions_Release(DeveloperExtensionsHandle* handle);
 
 	/** @} */
 
@@ -119,7 +119,7 @@ extern "C"
 	/**
 	* \brief The name of the PDF version to which this extension applies.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_GetBaseVersion(DeveloperExtensionHandle handle, PDFVersion* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_GetBaseVersion(DeveloperExtensionHandle* handle, PDFVersion* result);
 
 	/**
 	* \brief
@@ -130,13 +130,13 @@ extern "C"
 	* BaseVersion the extension level numbers assigned by that
 	* developer shall increase over time.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_GetExtensionLevel(DeveloperExtensionHandle handle, IntegerObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_GetExtensionLevel(DeveloperExtensionHandle* handle, IntegerObjectHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_Release(DeveloperExtensionHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_Release(DeveloperExtensionHandle* handle);
 
 	/** @} */
 

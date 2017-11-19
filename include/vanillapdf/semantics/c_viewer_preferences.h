@@ -137,14 +137,14 @@ extern "C"
 	* A flag specifying whether to hide the conforming reader's
 	* tool bars when the document is active.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideToolbar(ViewerPreferencesHandle handle, BooleanObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideToolbar(ViewerPreferencesHandle* handle, BooleanObjectHandle** result);
 
 	/**
 	* \brief
 	* A flag specifying whether to hide the conforming reader's
 	* menu bar when the document is active.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideMenubar(ViewerPreferencesHandle handle, BooleanObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideMenubar(ViewerPreferencesHandle* handle, BooleanObjectHandle** result);
 
 	/**
 	* \brief
@@ -152,21 +152,21 @@ extern "C"
 	* in the document's window (such as scroll bars and navigation controls),
 	* leaving only the document's contents displayed.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideWindowUI(ViewerPreferencesHandle handle, BooleanObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideWindowUI(ViewerPreferencesHandle* handle, BooleanObjectHandle** result);
 
 	/**
 	* \brief
 	* A flag specifying whether to resize the document's
 	* window to fit the size of the first displayed page.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetFitWindow(ViewerPreferencesHandle handle, BooleanObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetFitWindow(ViewerPreferencesHandle* handle, BooleanObjectHandle** result);
 
 	/**
 	* \brief
 	* A flag specifying whether to position the document's
 	* window in the center of the screen.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetCenterWindow(ViewerPreferencesHandle handle, BooleanObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetCenterWindow(ViewerPreferencesHandle* handle, BooleanObjectHandle** result);
 
 	/**
 	* \brief
@@ -177,82 +177,82 @@ extern "C"
 	* If false, the title bar should instead display
 	* the name of the PDF file containing the document.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDisplayDocTitle(ViewerPreferencesHandle handle, BooleanObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDisplayDocTitle(ViewerPreferencesHandle* handle, BooleanObjectHandle** result);
 
 	/**
 	* \copydoc NonFullScreenPageMode
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNonFullScreenPageMode(ViewerPreferencesHandle handle, NonFullScreenPageMode* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNonFullScreenPageMode(ViewerPreferencesHandle* handle, NonFullScreenPageMode* result);
 
 	/**
 	* \copydoc ReadingOrder
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDirection(ViewerPreferencesHandle handle, ReadingOrder* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDirection(ViewerPreferencesHandle* handle, ReadingOrder* result);
 
 	/**
 	* \brief
 	* The name of the page boundary representing the area of a page that
 	* shall be displayed when viewing the document on the screen.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewArea(ViewerPreferencesHandle handle, NameObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewArea(ViewerPreferencesHandle* handle, NameObjectHandle** result);
 
 	/**
 	* \brief
 	* The name of the page boundary to which the contents of a page shall
 	* be clipped when viewing the document on the screen.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewClip(ViewerPreferencesHandle handle, NameObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewClip(ViewerPreferencesHandle* handle, NameObjectHandle** result);
 
 	/**
 	* \brief
 	* The name of the page boundary representing the area of a page that shall
 	* be rendered when printing the document.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintArea(ViewerPreferencesHandle handle, NameObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintArea(ViewerPreferencesHandle* handle, NameObjectHandle** result);
 
 	/**
 	* \brief
 	* The name of the page boundary to which the contents of a page shall be
 	* clipped when printing the document.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintClip(ViewerPreferencesHandle handle, NameObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintClip(ViewerPreferencesHandle* handle, NameObjectHandle** result);
 
 	/**
 	* \copydoc PrintScaling
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintScaling(ViewerPreferencesHandle handle, PrintScaling* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintScaling(ViewerPreferencesHandle* handle, PrintScaling* result);
 
 	/**
 	* \copydoc Duplex
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDuplex(ViewerPreferencesHandle handle, Duplex* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDuplex(ViewerPreferencesHandle* handle, Duplex* result);
 
 	/**
 	* \brief
 	* A flag specifying whether the PDF page size
 	* shall be used to select the input paper tray.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPickTrayByPDFSize(ViewerPreferencesHandle handle, BooleanObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPickTrayByPDFSize(ViewerPreferencesHandle* handle, BooleanObjectHandle** result);
 
 	/**
 	* \brief
 	* The page numbers used to initialize the print
 	* dialog box when the file is printed.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintPageRange(ViewerPreferencesHandle handle, PageRangeHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintPageRange(ViewerPreferencesHandle* handle, PageRangeHandle** result);
 
 	/**
 	* \brief
 	* The number of copies that shall be printed when
 	* the print dialog is opened for this file.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNumCopies(ViewerPreferencesHandle handle, IntegerObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNumCopies(ViewerPreferencesHandle* handle, IntegerObjectHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_Release(ViewerPreferencesHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_Release(ViewerPreferencesHandle* handle);
 
 	/** @} */
 
@@ -264,18 +264,18 @@ extern "C"
 	/**
 	* \brief Get size of the collections
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageRange_GetSize(PageRangeHandle handle, size_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageRange_GetSize(PageRangeHandle* handle, size_type* result);
 
 	/**
 	* \brief Get sub-range at index \p at
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageRange_GetSubrange(PageRangeHandle handle, size_type at, PageSubRangeHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageRange_GetSubrange(PageRangeHandle* handle, size_type at, PageSubRangeHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageRange_Release(PageRangeHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageRange_Release(PageRangeHandle* handle);
 
 	/** @} */
 
@@ -287,18 +287,18 @@ extern "C"
 	/**
 	* \brief Get the index of first last page in the sub-range
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageSubRange_GetFirstPage(PageSubRangeHandle handle, IntegerObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageSubRange_GetFirstPage(PageSubRangeHandle* handle, IntegerObjectHandle** result);
 
 	/**
 	* \brief Get the index of last last page in the sub-range
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageSubRange_GetLastPage(PageSubRangeHandle handle, IntegerObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageSubRange_GetLastPage(PageSubRangeHandle* handle, IntegerObjectHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageSubRange_Release(PageSubRangeHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageSubRange_Release(PageSubRangeHandle* handle);
 
 	/** @} */
 

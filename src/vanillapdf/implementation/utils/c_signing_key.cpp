@@ -72,7 +72,7 @@ public:
 	}
 
 	virtual void SignUpdate(const Buffer& data) {
-		auto input_ptr = reinterpret_cast<const BufferHandleTag*>(&data);
+		auto input_ptr = reinterpret_cast<const BufferHandle*>(&data);
 		error_type rv = m_update(input_ptr);
 		if (VANILLAPDF_ERROR_SUCCESS != rv) {
 			std::stringstream ss;
@@ -87,7 +87,7 @@ public:
 	}
 
 	virtual BufferPtr SignFinal() {
-		BufferHandle output_ptr = nullptr;
+		BufferHandle* output_ptr = nullptr;
 
 		error_type rv = m_final(&output_ptr);
 		if (VANILLAPDF_ERROR_SUCCESS != rv) {
@@ -122,7 +122,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_CreateCustom(
 	SigningKeyUpdateFunction sign_update,
 	SigningKeyFinalFunction sign_final,
 	SigningKeyCleanupFunction sign_cleanup,
-	SigningKeyHandle* result
+	SigningKeyHandle** result
 ) {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(sign_init);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(sign_update);
@@ -133,11 +133,11 @@ VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_CreateCustom(
 	try {
 		Deferred<CustomSigningKey> key = make_deferred<CustomSigningKey>(sign_init, sign_update, sign_final, sign_cleanup);
 		auto ptr = static_cast<ISigningKey*>(key.AddRefGet());
-		*result = reinterpret_cast<SigningKeyHandle>(ptr);
+		*result = reinterpret_cast<SigningKeyHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_Release(SigningKeyHandle handle) {
-	return ObjectRelease<ISigningKey, SigningKeyHandle>(handle);
+VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_Release(SigningKeyHandle* handle) {
+	return ObjectRelease<ISigningKey, SigningKeyHandle*>(handle);
 }

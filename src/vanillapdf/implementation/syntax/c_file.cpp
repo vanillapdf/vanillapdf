@@ -9,7 +9,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
-VANILLAPDF_API error_type CALLING_CONVENTION File_Open(string_type filename, FileHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION File_Open(string_type filename, FileHandle** result)
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -18,12 +18,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_Open(string_type filename, Fil
 	{
 		FilePtr file = File::Open(filename);
 		auto ptr = file.AddRefGet();
-		*result = reinterpret_cast<FileHandle>(ptr);
+		*result = reinterpret_cast<FileHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION File_Create(string_type filename, FileHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION File_Create(string_type filename, FileHandle** result)
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -32,12 +32,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_Create(string_type filename, F
 	{
 		FilePtr file = File::Create(filename);
 		auto ptr = file.AddRefGet();
-		*result = reinterpret_cast<FileHandle>(ptr);
+		*result = reinterpret_cast<FileHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle* handle)
 {
 	File* file = reinterpret_cast<File*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
@@ -49,7 +49,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle handle)
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle, XrefChainHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle* handle, XrefChainHandle** result)
 {
 	File* file = reinterpret_cast<File*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
@@ -59,13 +59,13 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle, X
 	{
 		auto chain = file->GetXrefChain();
 		auto ptr = chain.AddRefGet();
-		*result = reinterpret_cast<XrefChainHandle>(ptr);
+		*result = reinterpret_cast<XrefChainHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
-	FileHandle handle, biguint_type objNumber, ushort_type genNumber, ObjectHandle* result)
+	FileHandle* handle, biguint_type objNumber, ushort_type genNumber, ObjectHandle** result)
 {
 	File* file = reinterpret_cast<File*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
@@ -76,12 +76,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
 		auto item = file->GetIndirectObject(objNumber, genNumber);
 		auto ptr = item.AddRefGet();
 
-		*result = reinterpret_cast<ObjectHandle>(ptr);
+		*result = reinterpret_cast<ObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION File_Release(FileHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION File_Release(FileHandle* handle)
 {
 	File* file = reinterpret_cast<File*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
@@ -90,7 +90,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_Release(FileHandle handle)
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION File_IsEncrypted(FileHandle handle, boolean_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION File_IsEncrypted(FileHandle* handle, boolean_type* result)
 {
 	File* file = reinterpret_cast<File*>(handle);
 
@@ -104,7 +104,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_IsEncrypted(FileHandle handle,
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION File_SetEncryptionPassword(FileHandle handle, string_type password)
+VANILLAPDF_API error_type CALLING_CONVENTION File_SetEncryptionPassword(FileHandle* handle, string_type password)
 {
 	File* file = reinterpret_cast<File*>(handle);
 
@@ -124,7 +124,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_SetEncryptionPassword(FileHand
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION File_SetEncryptionKey(FileHandle handle, EncryptionKeyHandle key)
+VANILLAPDF_API error_type CALLING_CONVENTION File_SetEncryptionKey(FileHandle* handle, EncryptionKeyHandle* key)
 {
 	File* file = reinterpret_cast<File*>(handle);
 	IEncryptionKey* encryption_key = reinterpret_cast<IEncryptionKey*>(key);

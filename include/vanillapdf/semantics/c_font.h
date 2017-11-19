@@ -25,7 +25,7 @@ extern "C"
 	*
 	* This is a direct reference to a PDF specification,
 	* section 9.5, "Introduction to Font Data Structures".
-	* \see FontMapHandle
+	* \see \ref FontMapHandle
 	*/
 
 	/**
@@ -70,18 +70,18 @@ extern "C"
 	/**
 	* \brief Get derived type of current object.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Font_Type(FontHandle handle, FontType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Font_Type(FontHandle* handle, FontType* result);
 
 	/**
 	* \brief Reinterpret current object as \ref CompositeFontHandle.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Font_ToComposite(FontHandle handle, CompositeFontHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Font_ToComposite(FontHandle* handle, CompositeFontHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Font_Release(FontHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION Font_Release(FontHandle* handle);
 
 	/** @} */
 
@@ -95,12 +95,12 @@ extern "C"
 	* A stream containing a CMap file that maps character codes
 	* to Unicode values (see 9.10, "Extraction of Text Content").
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION CompositeFont_GetUnicodeMap(CompositeFontHandle handle, UnicodeCharacterMapHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION CompositeFont_GetUnicodeMap(CompositeFontHandle* handle, UnicodeCharacterMapHandle** result);
 
 	/**
 	* \copydoc Font_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION CompositeFont_Release(CompositeFontHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION CompositeFont_Release(CompositeFontHandle* handle);
 
 	/** @} */
 

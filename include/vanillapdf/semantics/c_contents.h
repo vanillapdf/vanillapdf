@@ -34,18 +34,18 @@ extern "C"
 	/**
 	* \brief Return size of a collection
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Contents_GetInstructionsSize(ContentsHandle handle, size_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Contents_GetInstructionsSize(ContentsHandle* handle, size_type* result);
 
 	/**
 	* \brief Get instruction at location \p at
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(ContentsHandle handle, size_type at, ContentInstructionHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(ContentsHandle* handle, size_type at, ContentInstructionHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Contents_Release(ContentsHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION Contents_Release(ContentsHandle* handle);
 
 	/** @} */
 

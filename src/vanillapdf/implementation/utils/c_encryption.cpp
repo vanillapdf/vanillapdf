@@ -39,8 +39,8 @@ public:
 
 	virtual BufferPtr Decrypt(const Buffer& data) override
 	{
-		auto input_ptr = reinterpret_cast<const BufferHandleTag*>(&data);
-		BufferHandle output_ptr = nullptr;
+		auto input_ptr = reinterpret_cast<const BufferHandle*>(&data);
+		BufferHandle* output_ptr = nullptr;
 
 		error_type rv = m_decrypt(input_ptr, &output_ptr);
 		if (VANILLAPDF_ERROR_SUCCESS != rv) {
@@ -61,8 +61,8 @@ public:
 
 	virtual bool ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const override
 	{
-		auto input_issuer = reinterpret_cast<const BufferHandleTag*>(&issuer);
-		auto input_serial = reinterpret_cast<const BufferHandleTag*>(&serial);
+		auto input_issuer = reinterpret_cast<const BufferHandle*>(&issuer);
+		auto input_serial = reinterpret_cast<const BufferHandle*>(&serial);
 		boolean_type result = false;
 
 		error_type rv = m_contains(input_issuer, input_serial, &result);
@@ -95,7 +95,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION EncryptionKey_CreateCustom(
 	EncryptionKeyCleanupFunction cleanup,
 	EncryptionKeyDecryptFunction decrypt,
 	EncryptionKeyContainsFunction contains,
-	EncryptionKeyHandle* result
+	EncryptionKeyHandle** result
 	)
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(initialize);
@@ -108,12 +108,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION EncryptionKey_CreateCustom(
 	{
 		Deferred<CustomEncryptionKey> key = make_deferred<CustomEncryptionKey>(initialize, cleanup, decrypt, contains);
 		auto ptr = static_cast<IEncryptionKey*>(key.AddRefGet());
-		*result = reinterpret_cast<EncryptionKeyHandle>(ptr);
+		*result = reinterpret_cast<EncryptionKeyHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION EncryptionKey_Release(EncryptionKeyHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION EncryptionKey_Release(EncryptionKeyHandle* handle)
 {
-	return ObjectRelease<IEncryptionKey, EncryptionKeyHandle>(handle);
+	return ObjectRelease<IEncryptionKey, EncryptionKeyHandle*>(handle);
 }

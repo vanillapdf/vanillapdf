@@ -8,7 +8,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
-VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanObjectHandle handle, boolean_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanObjectHandle* handle, boolean_type* result)
 {
 	BooleanObject* obj = reinterpret_cast<BooleanObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -18,7 +18,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanObjec
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_SetValue(BooleanObjectHandle handle, boolean_type value)
+VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_SetValue(BooleanObjectHandle* handle, boolean_type value)
 {
 	BooleanObject* obj = reinterpret_cast<BooleanObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -33,7 +33,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_SetValue(BooleanObjec
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_Release(BooleanObjectHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_Release(BooleanObjectHandle* handle)
 {
-	return ObjectRelease<BooleanObject, BooleanObjectHandle>(handle);
+	return ObjectRelease<BooleanObject, BooleanObjectHandle*>(handle);
 }

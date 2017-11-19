@@ -7,7 +7,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION Date_GetYear(DateHandle handle, integer_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Date_GetYear(DateHandle* handle, integer_type* result)
 {
 	Date* obj = reinterpret_cast<Date*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -17,7 +17,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Date_GetYear(DateHandle handle, int
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Date_GetMonth(DateHandle handle, integer_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Date_GetMonth(DateHandle* handle, integer_type* result)
 {
 	Date* obj = reinterpret_cast<Date*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -27,7 +27,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Date_GetMonth(DateHandle handle, in
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Date_GetDay(DateHandle handle, integer_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Date_GetDay(DateHandle* handle, integer_type* result)
 {
 	Date* obj = reinterpret_cast<Date*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -37,7 +37,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Date_GetDay(DateHandle handle, inte
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Date_GetHour(DateHandle handle, integer_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Date_GetHour(DateHandle* handle, integer_type* result)
 {
 	Date* obj = reinterpret_cast<Date*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -47,7 +47,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Date_GetHour(DateHandle handle, int
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Date_GetMinute(DateHandle handle, integer_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Date_GetMinute(DateHandle* handle, integer_type* result)
 {
 	Date* obj = reinterpret_cast<Date*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -57,7 +57,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Date_GetMinute(DateHandle handle, i
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Date_GetSecond(DateHandle handle, integer_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Date_GetSecond(DateHandle* handle, integer_type* result)
 {
 	Date* obj = reinterpret_cast<Date*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -67,7 +67,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Date_GetSecond(DateHandle handle, i
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Date_GetTimezone(DateHandle handle, TimezoneType* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Date_GetTimezone(DateHandle* handle, TimezoneType* result)
 {
 	Date* obj = reinterpret_cast<Date*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -87,7 +87,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Date_GetTimezone(DateHandle handle,
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Date_GetHourOffset(DateHandle handle, integer_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Date_GetHourOffset(DateHandle* handle, integer_type* result)
 {
 	Date* obj = reinterpret_cast<Date*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -97,7 +97,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Date_GetHourOffset(DateHandle handl
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Date_GetMinuteOffset(DateHandle handle, integer_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Date_GetMinuteOffset(DateHandle* handle, integer_type* result)
 {
 	Date* obj = reinterpret_cast<Date*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -107,7 +107,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Date_GetMinuteOffset(DateHandle han
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Date_Release(DateHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION Date_Release(DateHandle* handle)
 {
-	return ObjectRelease<Date, DateHandle>(handle);
+	return ObjectRelease<Date, DateHandle*>(handle);
 }

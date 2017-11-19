@@ -8,19 +8,19 @@
 
 using namespace vanillapdf;
 
-VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_CreateFromFile(string_type filename, InputStreamInterfaceHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_CreateFromFile(string_type filename, InputStreamInterfaceHandle** result) {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try {
 		auto input_stream = StreamUtils::InputStreamFromFile(filename);
 		auto ptr = input_stream.AddRefGet();
-		*result = reinterpret_cast<InputStreamInterfaceHandle>(ptr);
+		*result = reinterpret_cast<InputStreamInterfaceHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_CreateFromBuffer(BufferHandle data_handle, InputStreamInterfaceHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_CreateFromBuffer(BufferHandle* data_handle, InputStreamInterfaceHandle** result) {
 	Buffer* data = reinterpret_cast<Buffer*>(data_handle);
 
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
@@ -29,12 +29,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_CreateFromBuff
 	try {
 		auto input_stream = StreamUtils::InputStreamFromBuffer(data);
 		auto ptr = input_stream.AddRefGet();
-		*result = reinterpret_cast<InputStreamInterfaceHandle>(ptr);
+		*result = reinterpret_cast<InputStreamInterfaceHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_ToBuffer(InputStreamInterfaceHandle handle, BufferHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_ToBuffer(InputStreamInterfaceHandle* handle, BufferHandle** result) {
 	IInputStream* stream = reinterpret_cast<IInputStream*>(handle);
 
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(stream);
@@ -43,11 +43,11 @@ VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_ToBuffer(Input
 	try {
 		auto buffer = StreamUtils::InputStreamToBuffer(stream);
 		auto ptr = buffer.AddRefGet();
-		*result = reinterpret_cast<BufferHandle>(ptr);
+		*result = reinterpret_cast<BufferHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_Release(InputStreamInterfaceHandle handle) {
-	return ObjectRelease<IInputStream, InputStreamInterfaceHandle>(handle);
+VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_Release(InputStreamInterfaceHandle* handle) {
+	return ObjectRelease<IInputStream, InputStreamInterfaceHandle*>(handle);
 }

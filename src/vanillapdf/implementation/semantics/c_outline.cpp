@@ -8,7 +8,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_GetType(OutlineBaseHandle handle, OutlineType* result)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_GetType(OutlineBaseHandle* handle, OutlineType* result)
 {
 	OutlineBase* obj = reinterpret_cast<OutlineBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -26,22 +26,22 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_GetType(OutlineBaseHand
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_ToOutline(OutlineBaseHandle handle, OutlineHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_ToOutline(OutlineBaseHandle* handle, OutlineHandle** result)
 {
-	return SafeObjectConvert<OutlineBase, Outline, OutlineBaseHandle, OutlineHandle>(handle, result);
+	return SafeObjectConvert<OutlineBase, Outline, OutlineBaseHandle*, OutlineHandle*>(handle, result);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_ToOutlineItem(OutlineBaseHandle handle, OutlineItemHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_ToOutlineItem(OutlineBaseHandle* handle, OutlineItemHandle** result)
 {
-	return SafeObjectConvert<OutlineBase, OutlineItem, OutlineBaseHandle, OutlineItemHandle>(handle, result);
+	return SafeObjectConvert<OutlineBase, OutlineItem, OutlineBaseHandle*, OutlineItemHandle*>(handle, result);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_Release(OutlineBaseHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_Release(OutlineBaseHandle* handle)
 {
-	return ObjectRelease<OutlineBase, OutlineBaseHandle>(handle);
+	return ObjectRelease<OutlineBase, OutlineBaseHandle*>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetFirst(OutlineHandle handle, OutlineItemHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetFirst(OutlineHandle* handle, OutlineItemHandle** result)
 {
 	Outline* obj = reinterpret_cast<Outline*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -53,12 +53,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetFirst(OutlineHandle hand
 		auto contains = obj->First(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<OutlineItemHandle>(ptr);
+		*result = reinterpret_cast<OutlineItemHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetLast(OutlineHandle handle, OutlineItemHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetLast(OutlineHandle* handle, OutlineItemHandle** result)
 {
 	Outline* obj = reinterpret_cast<Outline*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -70,12 +70,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetLast(OutlineHandle handl
 		auto contains = obj->Last(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<OutlineItemHandle>(ptr);
+		*result = reinterpret_cast<OutlineItemHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetCount(OutlineHandle handle, IntegerObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetCount(OutlineHandle* handle, IntegerObjectHandle** result)
 {
 	Outline* obj = reinterpret_cast<Outline*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -87,17 +87,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetCount(OutlineHandle hand
 		auto contains = obj->Count(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Outline_Release(OutlineHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION Outline_Release(OutlineHandle* handle)
 {
-	return ObjectRelease<Outline, OutlineHandle>(handle);
+	return ObjectRelease<Outline, OutlineHandle*>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetTitle(OutlineItemHandle handle, StringObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetTitle(OutlineItemHandle* handle, StringObjectHandle** result)
 {
 	OutlineItem* obj = reinterpret_cast<OutlineItem*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -107,12 +107,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetTitle(OutlineItemHan
 	{
 		auto value = obj->Title();
 		auto ptr = value.AddRefGet();
-		*result = reinterpret_cast<StringObjectHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetParent(OutlineItemHandle handle, OutlineBaseHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetParent(OutlineItemHandle* handle, OutlineBaseHandle** result)
 {
 	OutlineItem* obj = reinterpret_cast<OutlineItem*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -122,12 +122,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetParent(OutlineItemHa
 	{
 		auto value = obj->Parent();
 		auto ptr = value.AddRefGet();
-		*result = reinterpret_cast<OutlineBaseHandle>(ptr);
+		*result = reinterpret_cast<OutlineBaseHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetPrev(OutlineItemHandle handle, OutlineItemHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetPrev(OutlineItemHandle* handle, OutlineItemHandle** result)
 {
 	OutlineItem* obj = reinterpret_cast<OutlineItem*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -139,12 +139,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetPrev(OutlineItemHand
 		auto contains = obj->Prev(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<OutlineItemHandle>(ptr);
+		*result = reinterpret_cast<OutlineItemHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetNext(OutlineItemHandle handle, OutlineItemHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetNext(OutlineItemHandle* handle, OutlineItemHandle** result)
 {
 	OutlineItem* obj = reinterpret_cast<OutlineItem*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -156,12 +156,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetNext(OutlineItemHand
 		auto contains = obj->Next(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<OutlineItemHandle>(ptr);
+		*result = reinterpret_cast<OutlineItemHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetFirst(OutlineItemHandle handle, OutlineItemHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetFirst(OutlineItemHandle* handle, OutlineItemHandle** result)
 {
 	OutlineItem* obj = reinterpret_cast<OutlineItem*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -173,12 +173,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetFirst(OutlineItemHan
 		auto contains = obj->First(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<OutlineItemHandle>(ptr);
+		*result = reinterpret_cast<OutlineItemHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetLast(OutlineItemHandle handle, OutlineItemHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetLast(OutlineItemHandle* handle, OutlineItemHandle** result)
 {
 	OutlineItem* obj = reinterpret_cast<OutlineItem*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -190,12 +190,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetLast(OutlineItemHand
 		auto contains = obj->Last(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<OutlineItemHandle>(ptr);
+		*result = reinterpret_cast<OutlineItemHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetCount(OutlineItemHandle handle, IntegerObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetCount(OutlineItemHandle* handle, IntegerObjectHandle** result)
 {
 	OutlineItem* obj = reinterpret_cast<OutlineItem*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -207,12 +207,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetCount(OutlineItemHan
 		auto contains = obj->Count(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetColor(OutlineItemHandle handle, OutlineItemColorHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetColor(OutlineItemHandle* handle, OutlineItemColorHandle** result)
 {
 	OutlineItem* obj = reinterpret_cast<OutlineItem*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -224,12 +224,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetColor(OutlineItemHan
 		auto contains = obj->Color(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<OutlineItemColorHandle>(ptr);
+		*result = reinterpret_cast<OutlineItemColorHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetFlags(OutlineItemHandle handle, OutlineItemFlagsHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetFlags(OutlineItemHandle* handle, OutlineItemFlagsHandle** result)
 {
 	OutlineItem* obj = reinterpret_cast<OutlineItem*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -241,17 +241,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetFlags(OutlineItemHan
 		auto contains = obj->Flags(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<OutlineItemFlagsHandle>(ptr);
+		*result = reinterpret_cast<OutlineItemFlagsHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_Release(OutlineItemHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_Release(OutlineItemHandle* handle)
 {
-	return ObjectRelease<OutlineItem, OutlineItemHandle>(handle);
+	return ObjectRelease<OutlineItem, OutlineItemHandle*>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_GetRed(OutlineItemColorHandle handle, IntegerObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_GetRed(OutlineItemColorHandle* handle, IntegerObjectHandle** result)
 {
 	OutlineItemColor* obj = reinterpret_cast<OutlineItemColor*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -261,12 +261,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_GetRed(OutlineItem
 	{
 		auto value = obj->Red();
 		auto ptr = value.AddRefGet();
-		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_GetGreen(OutlineItemColorHandle handle, IntegerObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_GetGreen(OutlineItemColorHandle* handle, IntegerObjectHandle** result)
 {
 	OutlineItemColor* obj = reinterpret_cast<OutlineItemColor*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -276,12 +276,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_GetGreen(OutlineIt
 	{
 		auto value = obj->Green();
 		auto ptr = value.AddRefGet();
-		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_GetBlue(OutlineItemColorHandle handle, IntegerObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_GetBlue(OutlineItemColorHandle* handle, IntegerObjectHandle** result)
 {
 	OutlineItemColor* obj = reinterpret_cast<OutlineItemColor*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -291,17 +291,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_GetBlue(OutlineIte
 	{
 		auto value = obj->Blue();
 		auto ptr = value.AddRefGet();
-		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_Release(OutlineItemColorHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_Release(OutlineItemColorHandle* handle)
 {
-	return ObjectRelease<OutlineItemColor, OutlineItemColorHandle>(handle);
+	return ObjectRelease<OutlineItemColor, OutlineItemColorHandle*>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsItalic(OutlineItemFlagsHandle handle, boolean_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsItalic(OutlineItemFlagsHandle* handle, boolean_type* result)
 {
 	OutlineItemFlags* obj = reinterpret_cast<OutlineItemFlags*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -311,7 +311,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsItalic(OutlineIt
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsBold(OutlineItemFlagsHandle handle, boolean_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsBold(OutlineItemFlagsHandle* handle, boolean_type* result)
 {
 	OutlineItemFlags* obj = reinterpret_cast<OutlineItemFlags*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -321,7 +321,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsBold(OutlineItem
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_Release(OutlineItemFlagsHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_Release(OutlineItemFlagsHandle* handle)
 {
-	return ObjectRelease<OutlineItemFlags, OutlineItemFlagsHandle>(handle);
+	return ObjectRelease<OutlineItemFlags, OutlineItemFlagsHandle*>(handle);
 }

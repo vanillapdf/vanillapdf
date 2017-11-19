@@ -8,7 +8,7 @@ using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION Document_Open(string_type filename, DocumentHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Document_Open(string_type filename, DocumentHandle** result)
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -18,12 +18,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_Open(string_type filename,
 		std::string name(filename);
 		DocumentPtr doc = Document::Open(name);
 		auto ptr = doc.AddRefGet();
-		*result = reinterpret_cast<DocumentHandle>(ptr);
+		*result = reinterpret_cast<DocumentHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Document_Create(string_type filename, DocumentHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION Document_Create(string_type filename, DocumentHandle** result) {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
@@ -31,12 +31,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_Create(string_type filenam
 		std::string name(filename);
 		DocumentPtr doc = Document::Create(name);
 		auto ptr = doc.AddRefGet();
-		*result = reinterpret_cast<DocumentHandle>(ptr);
+		*result = reinterpret_cast<DocumentHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Document_OpenFile(FileHandle holder_handle, DocumentHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Document_OpenFile(FileHandle* holder_handle, DocumentHandle** result)
 {
 	File* file = reinterpret_cast<File*>(holder_handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
@@ -46,12 +46,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_OpenFile(FileHandle holder
 	{
 		DocumentPtr doc = Document::OpenFile(file);
 		auto ptr = doc.AddRefGet();
-		*result = reinterpret_cast<DocumentHandle>(ptr);
+		*result = reinterpret_cast<DocumentHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Document_Save(DocumentHandle handle, string_type filename)
+VANILLAPDF_API error_type CALLING_CONVENTION Document_Save(DocumentHandle* handle, string_type filename)
 {
 	Document* document = reinterpret_cast<Document*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
@@ -64,7 +64,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_Save(DocumentHandle handle
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Document_SaveIncremental(DocumentHandle handle, string_type filename)
+VANILLAPDF_API error_type CALLING_CONVENTION Document_SaveIncremental(DocumentHandle* handle, string_type filename)
 {
 	Document* document = reinterpret_cast<Document*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
@@ -77,7 +77,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_SaveIncremental(DocumentHa
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandle handle, CatalogHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandle* handle, CatalogHandle** result)
 {
 	Document* document = reinterpret_cast<Document*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
@@ -92,12 +92,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandle 
 		}
 
 		auto ptr = catalog.AddRefGet();
-		*result = reinterpret_cast<CatalogHandle>(ptr);
+		*result = reinterpret_cast<CatalogHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Document_GetDocumentInfo(DocumentHandle handle, DocumentInfoHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Document_GetDocumentInfo(DocumentHandle* handle, DocumentInfoHandle** result)
 {
 	Document* document = reinterpret_cast<Document*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
@@ -112,17 +112,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_GetDocumentInfo(DocumentHa
 		}
 
 		auto ptr = info.AddRefGet();
-		*result = reinterpret_cast<DocumentInfoHandle>(ptr);
+		*result = reinterpret_cast<DocumentInfoHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Document_Release(DocumentHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION Document_Release(DocumentHandle* handle)
 {
-	return ObjectRelease<Document, DocumentHandle>(handle);
+	return ObjectRelease<Document, DocumentHandle*>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Document_AppendDocument(DocumentHandle handle, DocumentHandle source_handle)
+VANILLAPDF_API error_type CALLING_CONVENTION Document_AppendDocument(DocumentHandle* handle, DocumentHandle* source_handle)
 {
 	Document* document = reinterpret_cast<Document*>(handle);
 	Document* source = reinterpret_cast<Document*>(source_handle);

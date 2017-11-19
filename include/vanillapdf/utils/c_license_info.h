@@ -34,7 +34,7 @@ extern "C"
 	/**
 	* \brief Set content of the license file in case it is used as embedded resource
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION LicenseInfo_SetLicenseBuffer(BufferHandle data);
+	VANILLAPDF_API error_type CALLING_CONVENTION LicenseInfo_SetLicenseBuffer(BufferHandle* data);
 
 	/**
 	* \brief Determine whether a valid license has been presented

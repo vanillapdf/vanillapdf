@@ -34,12 +34,12 @@ extern "C"
 	/**
 	* \brief Get total number of pages in current document.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageTree_GetPageCount(PageTreeHandle handle, size_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageTree_GetPageCount(PageTreeHandle* handle, size_type* result);
 
 	/**
 	* \brief Get page at index \p at.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle handle, size_type at, PageObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle* handle, size_type at, PageObjectHandle** result);
 
 	/**
 	* \brief Insert new page at index \p at.
@@ -48,27 +48,27 @@ extern "C"
 	* element \p at the specified position,
 	* effectively increasing the container by one.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageTree_InsertPage(PageTreeHandle handle, size_type at, PageObjectHandle page);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageTree_InsertPage(PageTreeHandle* handle, size_type at, PageObjectHandle* page);
 
 	/**
 	* \brief
 	* Adds a new page at the end of the page tree,
 	* after its current last element.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageTree_AppendPage(PageTreeHandle handle, PageObjectHandle page);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageTree_AppendPage(PageTreeHandle* handle, PageObjectHandle* page);
 
 	/**
 	* \brief Removed a page at index \p at.
 	*
 	* This effectively reduces the container size by one.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageTree_RemovePage(PageTreeHandle handle, size_type at);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageTree_RemovePage(PageTreeHandle* handle, size_type at);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageTree_Release(PageTreeHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageTree_Release(PageTreeHandle* handle);
 
 	/** @} */
 

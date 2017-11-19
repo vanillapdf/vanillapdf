@@ -30,22 +30,22 @@ extern "C"
 	/**
 	* \brief Return object number of referenced object
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObjectNumber(IndirectObjectReferenceHandle handle, biguint_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObjectNumber(IndirectObjectReferenceHandle* handle, biguint_type* result);
 
 	/**
 	* \brief Return generation number of referenced object
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedGenerationNumber(IndirectObjectReferenceHandle handle, ushort_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedGenerationNumber(IndirectObjectReferenceHandle* handle, ushort_type* result);
 
 	/**
 	* \brief Return object handle to referenced object
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObject(IndirectObjectReferenceHandle handle, ObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObject(IndirectObjectReferenceHandle* handle, ObjectHandle** result);
 
 	/**
 	* \copydoc Object_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IndirectReference_Release(IndirectObjectReferenceHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION IndirectReference_Release(IndirectObjectReferenceHandle* handle);
 
 	/** @} */
 

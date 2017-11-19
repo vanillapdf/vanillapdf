@@ -8,7 +8,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetPages(CatalogHandle handle, PageTreeHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetPages(CatalogHandle* handle, PageTreeHandle** result)
 {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -23,12 +23,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetPages(CatalogHandle hand
 		}
 
 		auto ptr = pages.AddRefGet();
-		*result = reinterpret_cast<PageTreeHandle>(ptr);
+		*result = reinterpret_cast<PageTreeHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetVersion(CatalogHandle handle, PDFVersion* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetVersion(CatalogHandle* handle, PDFVersion* result)
 {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -64,7 +64,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetVersion(CatalogHandle ha
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetExtensions(CatalogHandle handle, DeveloperExtensionsHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetExtensions(CatalogHandle* handle, DeveloperExtensionsHandle** result)
 {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -76,12 +76,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetExtensions(CatalogHandle
 		auto contains = obj->Extensions(extensions);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = extensions.AddRefGet();
-		*result = reinterpret_cast<DeveloperExtensionsHandle>(ptr);
+		*result = reinterpret_cast<DeveloperExtensionsHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetPageLabels(CatalogHandle handle, PageLabelsHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetPageLabels(CatalogHandle* handle, PageLabelsHandle** result)
 {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -93,12 +93,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetPageLabels(CatalogHandle
 		auto contains = obj->PageLabels(labels);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = labels.AddRefGet();
-		*result = reinterpret_cast<PageLabelsHandle>(ptr);
+		*result = reinterpret_cast<PageLabelsHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHandle handle, PageLayout* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHandle* handle, PageLayout* result)
 {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -130,7 +130,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHandle
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetViewerPreferences(CatalogHandle handle, ViewerPreferencesHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetViewerPreferences(CatalogHandle* handle, ViewerPreferencesHandle** result)
 {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -142,12 +142,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetViewerPreferences(Catalo
 		auto contains = obj->ViewerPreferences(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<ViewerPreferencesHandle>(ptr);
+		*result = reinterpret_cast<ViewerPreferencesHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetOutlines(CatalogHandle handle, OutlineHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetOutlines(CatalogHandle* handle, OutlineHandle** result)
 {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -159,12 +159,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetOutlines(CatalogHandle h
 		auto contains = obj->Outlines(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<OutlineHandle>(ptr);
+		*result = reinterpret_cast<OutlineHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetDestinations(CatalogHandle handle, NamedDestinationsHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetDestinations(CatalogHandle* handle, NamedDestinationsHandle** result)
 {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -176,12 +176,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetDestinations(CatalogHand
 		auto contains = obj->Destinations(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<NamedDestinationsHandle>(ptr);
+		*result = reinterpret_cast<NamedDestinationsHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetAcroForm(CatalogHandle handle, InteractiveFormHandle* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetAcroForm(CatalogHandle* handle, InteractiveFormHandle** result) {
 	Catalog* obj = reinterpret_cast<Catalog*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -191,12 +191,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetAcroForm(CatalogHandle h
 		auto contains = obj->AcroForm(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<InteractiveFormHandle>(ptr);
+		*result = reinterpret_cast<InteractiveFormHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Catalog_Release(CatalogHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION Catalog_Release(CatalogHandle* handle)
 {
-	return ObjectRelease<Catalog, CatalogHandle>(handle);
+	return ObjectRelease<Catalog, CatalogHandle*>(handle);
 }

@@ -8,7 +8,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_Contains(PageLabelsHandle handle, size_type page_number, boolean_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_Contains(PageLabelsHandle* handle, size_type page_number, boolean_type* result)
 {
 	PageLabels* obj = reinterpret_cast<PageLabels*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -21,7 +21,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_Contains(PageLabelsHandl
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_At(PageLabelsHandle handle, size_type page_number, PageLabelHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_At(PageLabelsHandle* handle, size_type page_number, PageLabelHandle** result)
 {
 	PageLabels* obj = reinterpret_cast<PageLabels*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -31,12 +31,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_At(PageLabelsHandle hand
 	{
 		auto page = obj->Find(page_number);
 		auto ptr = page.AddRefGet();
-		*result = reinterpret_cast<PageLabelHandle>(ptr);
+		*result = reinterpret_cast<PageLabelHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_Release(PageLabelsHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_Release(PageLabelsHandle* handle)
 {
 	PageLabels* obj = reinterpret_cast<PageLabels*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -45,7 +45,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_Release(PageLabelsHandle
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Prefix(PageLabelHandle handle, StringObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Prefix(PageLabelHandle* handle, StringObjectHandle** result)
 {
 	PageLabel* obj = reinterpret_cast<PageLabel*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -56,12 +56,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Prefix(PageLabelHandle ha
 		auto contains = obj->Prefix(prefix);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = prefix.AddRefGet();
-		*result = reinterpret_cast<StringObjectHandle>(ptr);
+		*result = reinterpret_cast<StringObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Start(PageLabelHandle handle, IntegerObjectHandle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Start(PageLabelHandle* handle, IntegerObjectHandle** result)
 {
 	PageLabel* obj = reinterpret_cast<PageLabel*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -72,12 +72,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Start(PageLabelHandle han
 		auto contains = obj->Start(start);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = start.AddRefGet();
-		*result = reinterpret_cast<IntegerObjectHandle>(ptr);
+		*result = reinterpret_cast<IntegerObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Style(PageLabelHandle handle, NumberingStyle* result)
+VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Style(PageLabelHandle* handle, NumberingStyle* result)
 {
 	PageLabel* obj = reinterpret_cast<PageLabel*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -106,7 +106,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Style(PageLabelHandle han
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Release(PageLabelHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Release(PageLabelHandle* handle)
 {
-	return ObjectRelease<PageLabel, PageLabelHandle>(handle);
+	return ObjectRelease<PageLabel, PageLabelHandle*>(handle);
 }

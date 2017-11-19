@@ -67,23 +67,23 @@ extern "C"
 	/**
 	* \brief Get derived type of current object
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_GetType(CharacterMapHandle handle, CharacterMapType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_GetType(CharacterMapHandle* handle, CharacterMapType* result);
 
 	/**
-	* \brief Reinterpret current object as UnicodeCharacterMapHandle
+	* \brief Reinterpret current object as UnicodeCharacterMapHandle*
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_ToUnicode(CharacterMapHandle handle, UnicodeCharacterMapHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_ToUnicode(CharacterMapHandle* handle, UnicodeCharacterMapHandle** result);
 
 	/**
-	* \brief Reinterpret current object as EmbeddedCharacterMapHandle
+	* \brief Reinterpret current object as EmbeddedCharacterMapHandle*
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_ToEmbedded(CharacterMapHandle handle, EmbeddedCharacterMapHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_ToEmbedded(CharacterMapHandle* handle, EmbeddedCharacterMapHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_Release(CharacterMapHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_Release(CharacterMapHandle* handle);
 
 	/** @} */
 
@@ -96,14 +96,14 @@ extern "C"
 	* \brief Get unicode representation of key \p key_handle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_GetMappedValue(
-		UnicodeCharacterMapHandle handle,
-		BufferHandle key_handle,
-		BufferHandle* result);
+		UnicodeCharacterMapHandle* handle,
+		BufferHandle* key_handle,
+		BufferHandle** result);
 
 	/**
 	* \copydoc CharacterMap_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_Release(UnicodeCharacterMapHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_Release(UnicodeCharacterMapHandle* handle);
 
 	/** @} */
 
@@ -115,7 +115,7 @@ extern "C"
 	/**
 	* \copydoc CharacterMap_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION EmbeddedCharacterMap_Release(EmbeddedCharacterMapHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION EmbeddedCharacterMap_Release(EmbeddedCharacterMapHandle* handle);
 
 	/** @} */
 

@@ -41,7 +41,7 @@ extern "C"
 	* Ensure the iterator is valid.
 	* \see \ref DictionaryObjectIterator_IsValid
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetKey(DictionaryObjectIteratorHandle handle, NameObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetKey(DictionaryObjectIteratorHandle* handle, NameObjectHandle** result);
 
 	/**
 	* \brief Get value at iterator position
@@ -49,7 +49,7 @@ extern "C"
 	* Ensure the iterator is valid.
 	* \see \ref DictionaryObjectIterator_IsValid
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetValue(DictionaryObjectIteratorHandle handle, ObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetValue(DictionaryObjectIteratorHandle* handle, ObjectHandle** result);
 
 	/**
 	* \brief Determine if current position is valid
@@ -58,7 +58,7 @@ extern "C"
 	*
 	* Any other operation except \b THIS will fail on invalid iterator.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(DictionaryObjectIteratorHandle handle, DictionaryObjectHandle parent, boolean_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(DictionaryObjectIteratorHandle* handle, DictionaryObjectHandle* parent, boolean_type* result);
 
 	/**
 	* \brief Advances iterator to the next position
@@ -66,13 +66,13 @@ extern "C"
 	* Ensure the iterator is valid.
 	* \see \ref DictionaryObjectIterator_IsValid
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Next(DictionaryObjectIteratorHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Next(DictionaryObjectIteratorHandle* handle);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Release(DictionaryObjectIteratorHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Release(DictionaryObjectIteratorHandle* handle);
 
 	/** @} */
 
@@ -84,34 +84,34 @@ extern "C"
 	/**
 	* \brief Find mapped value for key \p key
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle handle, const struct NameObjectHandleTag* key, ObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle* handle, const NameObjectHandle* key, ObjectHandle** result);
 
 	/**
 	* \brief Determine if collection contains \p key
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(DictionaryObjectHandle handle, const struct NameObjectHandleTag* key, boolean_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(DictionaryObjectHandle* handle, const NameObjectHandle* key, boolean_type* result);
 
 	/**
 	* \brief Get collection iterator for enumerating all entries
 	*
 	* Modifying collection may invalidate this handle.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(DictionaryObjectHandle handle, DictionaryObjectIteratorHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(DictionaryObjectHandle* handle, DictionaryObjectIteratorHandle** result);
 
 	/**
 	* \brief Remove key-value pair from collection
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryObjectHandle handle, const struct NameObjectHandleTag* key);
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryObjectHandle* handle, const NameObjectHandle* key);
 
 	/**
 	* \brief Insert new key-value pair into collection
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryObjectHandle handle, NameObjectHandle key, ObjectHandle value);
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryObjectHandle* handle, NameObjectHandle* key, ObjectHandle* value);
 
 	/**
 	* \copydoc Object_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Release(DictionaryObjectHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Release(DictionaryObjectHandle* handle);
 
 	/** @} */
 

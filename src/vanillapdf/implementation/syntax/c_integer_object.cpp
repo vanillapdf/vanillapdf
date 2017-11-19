@@ -8,7 +8,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
-VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_GetIntegerValue(IntegerObjectHandle handle, bigint_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_GetIntegerValue(IntegerObjectHandle* handle, bigint_type* result)
 {
 	IntegerObject* obj = reinterpret_cast<IntegerObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -21,7 +21,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_GetIntegerValue(Integ
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_GetUnsignedIntegerValue(IntegerObjectHandle handle, biguint_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_GetUnsignedIntegerValue(IntegerObjectHandle* handle, biguint_type* result)
 {
 	IntegerObject* obj = reinterpret_cast<IntegerObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -34,7 +34,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_GetUnsignedIntegerVal
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_SetIntegerValue(IntegerObjectHandle handle, bigint_type value)
+VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_SetIntegerValue(IntegerObjectHandle* handle, bigint_type value)
 {
 	IntegerObject* obj = reinterpret_cast<IntegerObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -46,7 +46,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_SetIntegerValue(Integ
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_SetUnsignedIntegerValue(IntegerObjectHandle handle, biguint_type value)
+VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_SetUnsignedIntegerValue(IntegerObjectHandle* handle, biguint_type value)
 {
 	IntegerObject* obj = reinterpret_cast<IntegerObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -58,7 +58,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_SetUnsignedIntegerVal
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_Release(IntegerObjectHandle handle)
+VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_Release(IntegerObjectHandle* handle)
 {
-	return ObjectRelease<IntegerObject, IntegerObjectHandle>(handle);
+	return ObjectRelease<IntegerObject, IntegerObjectHandle*>(handle);
 }

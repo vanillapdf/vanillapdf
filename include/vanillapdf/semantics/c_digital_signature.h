@@ -46,19 +46,19 @@ extern "C"
 	* Information provided by the signer to enable a recipient
 	* to contact the signer to verify the signature.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetContactInfo(DigitalSignatureHandle handle, StringObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetContactInfo(DigitalSignatureHandle* handle, StringObjectHandle** result);
 
 	/**
 	* \brief
 	* The reason for the signing, such as (I agree...).
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetReason(DigitalSignatureHandle handle, StringObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetReason(DigitalSignatureHandle* handle, StringObjectHandle** result);
 
 	/**
 	* \brief
 	* The CPU host name or physical location of the signing.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetLocation(DigitalSignatureHandle handle, StringObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetLocation(DigitalSignatureHandle* handle, StringObjectHandle** result);
 
 	/**
 	* \brief
@@ -69,7 +69,7 @@ extern "C"
 	*
 	* This value should be used only when the time of signing is not available in the signature.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetDate(DigitalSignatureHandle handle, DateHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetDate(DigitalSignatureHandle* handle, DateHandle** result);
 
 	/**
 	* \brief
@@ -77,13 +77,13 @@ extern "C"
 	*
 	* This value should be used only when it is not possible to extract the name from the signature.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetName(DigitalSignatureHandle handle, StringObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetName(DigitalSignatureHandle* handle, StringObjectHandle** result);
 
 	/**
 	* \brief
 	* The version of the signature handler that was used to create the signature.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetRevision(DigitalSignatureHandle handle, IntegerObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetRevision(DigitalSignatureHandle* handle, IntegerObjectHandle** result);
 
 	/**
 	* \brief
@@ -96,7 +96,7 @@ extern "C"
 	* and the other certificates shall be used to verify
 	* the authenticity of the signing certificate.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetCertificate(DigitalSignatureHandle handle, StringObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetCertificate(DigitalSignatureHandle* handle, StringObjectHandle** result);
 
 	/**
 	* \brief
@@ -109,7 +109,7 @@ extern "C"
 	* For public-key signatures, Contents should be either a DER-encoded PKCS#1
 	* binary data object or a DER-encoded PKCS#7 binary data object.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetContents(DigitalSignatureHandle handle, HexadecimalStringObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetContents(DigitalSignatureHandle* handle, HexadecimalStringObjectHandle** result);
 
 	/**
 	* \brief
@@ -118,13 +118,13 @@ extern "C"
 	* Multiple discontiguous byte ranges shall be used to describe
 	* a digest that does not include the signature value (theContents entry) itself.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(DigitalSignatureHandle handle, ByteRangeCollectionHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(DigitalSignatureHandle* handle, ByteRangeCollectionHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_Release(DigitalSignatureHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_Release(DigitalSignatureHandle* handle);
 
 	/** @} */
 
@@ -136,19 +136,19 @@ extern "C"
 	/**
 	* \brief Get size of byte range collection
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_Size(ByteRangeCollectionHandle handle, size_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_Size(ByteRangeCollectionHandle* handle, size_type* result);
 
 	/**
 	* \brief
 	* Get single byte range from array at specific position
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_At(ByteRangeCollectionHandle handle, size_type at, ByteRangeHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_At(ByteRangeCollectionHandle* handle, size_type at, ByteRangeHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_Release(ByteRangeCollectionHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_Release(ByteRangeCollectionHandle* handle);
 
 	/** @} */
 
@@ -160,18 +160,18 @@ extern "C"
 	/**
 	* \brief Get starting offset of byte range
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_GetOffset(ByteRangeHandle handle, IntegerObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_GetOffset(ByteRangeHandle* handle, IntegerObjectHandle** result);
 
 	/**
 	* \brief Get length of byte range
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_GetLength(ByteRangeHandle handle, IntegerObjectHandle* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_GetLength(ByteRangeHandle* handle, IntegerObjectHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_Release(ByteRangeHandle handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_Release(ByteRangeHandle* handle);
 
 	/** @} */
 
