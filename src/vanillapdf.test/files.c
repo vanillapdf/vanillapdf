@@ -1,8 +1,8 @@
 #include "test.h"
 
-error_type process_file(FileHandle file, int nested) {
-	XrefChainHandle chain = NULL;
-	XrefChainIteratorHandle chain_iterator = NULL;
+error_type process_file(FileHandle* file, int nested) {
+	XrefChainHandle* chain = NULL;
+	XrefChainIteratorHandle* chain_iterator = NULL;
 	boolean_type valid = VANILLAPDF_RV_FALSE;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(File_XrefChain(file, &chain));
@@ -10,7 +10,7 @@ error_type process_file(FileHandle file, int nested) {
 
 	while (VANILLAPDF_ERROR_SUCCESS == XrefChainIterator_IsValid(chain_iterator, chain, &valid)
 		&& VANILLAPDF_RV_TRUE == valid) {
-		XrefHandle xref = NULL;
+		XrefHandle* xref = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefChainIterator_GetValue(chain_iterator, &xref));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_xref(xref, nested));
@@ -24,8 +24,8 @@ error_type process_file(FileHandle file, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_xref(XrefHandle xref, int nested) {
-	XrefIteratorHandle xref_iterator = NULL;
+error_type process_xref(XrefHandle* xref, int nested) {
+	XrefIteratorHandle* xref_iterator = NULL;
 	boolean_type valid = VANILLAPDF_RV_FALSE;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Xref_Iterator(xref, &xref_iterator));
@@ -34,11 +34,11 @@ error_type process_xref(XrefHandle xref, int nested) {
 		&& VANILLAPDF_RV_TRUE == valid) {
 
 		XrefEntryType type;
-		XrefEntryHandle entry = NULL;
-		ObjectHandle obj = NULL;
-		XrefFreeEntryHandle free_entry = NULL;
-		XrefCompressedEntryHandle compressed_entry = NULL;
-		XrefUsedEntryHandle used_entry = NULL;
+		XrefEntryHandle* entry = NULL;
+		ObjectHandle* obj = NULL;
+		XrefFreeEntryHandle* free_entry = NULL;
+		XrefCompressedEntryHandle* compressed_entry = NULL;
+		XrefUsedEntryHandle* used_entry = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefIterator_GetValue(xref_iterator, &entry));
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_Type(entry, &type));

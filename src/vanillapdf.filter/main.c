@@ -10,10 +10,10 @@ void print_help() {
 
 int main(int argc, char *argv[]) {
 
-	InputStreamInterfaceHandle input_stream = NULL;
-	OutputStreamInterfaceHandle output_stream = NULL;
+	InputStreamInterfaceHandle* input_stream = NULL;
+	OutputStreamInterfaceHandle* output_stream = NULL;
 
-	BufferHandle input_data = NULL;
+	BufferHandle* input_data = NULL;
 
 	const char *filter_type = NULL;
 	const char *operation = NULL;
@@ -82,11 +82,11 @@ int main(int argc, char *argv[]) {
 	RETURN_ERROR_IF_NOT_SUCCESS(InputStreamInterface_ToBuffer(input_stream, &input_data));
 
 	if (is_flate_decode) {
-		FlateDecodeFilterHandle filter_handle = NULL;
+		FlateDecodeFilterHandle* filter_handle = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(FlateDecodeFilter_Create(&filter_handle));
 
 		if (is_encode) {
-			BufferHandle encoded_data = NULL;
+			BufferHandle* encoded_data = NULL;
 
 			RETURN_ERROR_IF_NOT_SUCCESS(FlateDecodeFilter_Encode(filter_handle, input_data, &encoded_data));
 			RETURN_ERROR_IF_NOT_SUCCESS(OutputStreamInterface_WriteBuffer(output_stream, encoded_data));
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
 		}
 
 		if (is_decode) {
-			BufferHandle decoded_data = NULL;
+			BufferHandle* decoded_data = NULL;
 
 			RETURN_ERROR_IF_NOT_SUCCESS(FlateDecodeFilter_Decode(filter_handle, input_data, &decoded_data));
 			RETURN_ERROR_IF_NOT_SUCCESS(OutputStreamInterface_WriteBuffer(output_stream, decoded_data));
@@ -105,11 +105,11 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (is_dct_decode) {
-		DCTDecodeFilterHandle filter_handle = NULL;
+		DCTDecodeFilterHandle* filter_handle = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(DCTDecodeFilter_Create(&filter_handle));
 
 		if (is_encode) {
-			BufferHandle encoded_data = NULL;
+			BufferHandle* encoded_data = NULL;
 
 			RETURN_ERROR_IF_NOT_SUCCESS(DCTDecodeFilter_Encode(filter_handle, input_data, &encoded_data));
 			RETURN_ERROR_IF_NOT_SUCCESS(OutputStreamInterface_WriteBuffer(output_stream, encoded_data));
@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
 		}
 
 		if (is_decode) {
-			BufferHandle decoded_data = NULL;
+			BufferHandle* decoded_data = NULL;
 
 			RETURN_ERROR_IF_NOT_SUCCESS(DCTDecodeFilter_Decode(filter_handle, input_data, &decoded_data));
 			RETURN_ERROR_IF_NOT_SUCCESS(OutputStreamInterface_WriteBuffer(output_stream, decoded_data));

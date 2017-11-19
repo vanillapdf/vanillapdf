@@ -1,7 +1,7 @@
 #include "test.h"
 
-error_type process_name(NameObjectHandle name, int nested) {
-	BufferHandle buffer = NULL;
+error_type process_name(NameObjectHandle* name, int nested) {
+	BufferHandle* buffer = NULL;
 
 	print_spaces(nested);
 	printf("Name object begin\n");
@@ -16,8 +16,8 @@ error_type process_name(NameObjectHandle name, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_lit_string(LiteralStringObjectHandle string, int nested) {
-	BufferHandle buffer = NULL;
+error_type process_lit_string(LiteralStringObjectHandle* string, int nested) {
+	BufferHandle* buffer = NULL;
 
 	print_spaces(nested);
 	printf("Literal string begin\n");
@@ -32,8 +32,8 @@ error_type process_lit_string(LiteralStringObjectHandle string, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_hex_string(HexadecimalStringObjectHandle string, int nested) {
-	BufferHandle buffer = NULL;
+error_type process_hex_string(HexadecimalStringObjectHandle* string, int nested) {
+	BufferHandle* buffer = NULL;
 
 	print_spaces(nested);
 	printf("Hexadecimal string begin\n");
@@ -48,9 +48,9 @@ error_type process_hex_string(HexadecimalStringObjectHandle string, int nested) 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_dictionary(DictionaryObjectHandle dictionary, int nested) {
+error_type process_dictionary(DictionaryObjectHandle* dictionary, int nested) {
 	boolean_type boolean = VANILLAPDF_RV_FALSE;
-	DictionaryObjectIteratorHandle iterator = NULL;
+	DictionaryObjectIteratorHandle* iterator = NULL;
 
 	print_spaces(nested);
 	printf("Dictionary begin\n");
@@ -58,8 +58,8 @@ error_type process_dictionary(DictionaryObjectHandle dictionary, int nested) {
 	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Iterator(dictionary, &iterator));
 	while (VANILLAPDF_ERROR_SUCCESS == DictionaryObjectIterator_IsValid(iterator, dictionary, &boolean)
 		&& VANILLAPDF_RV_TRUE == boolean) {
-		NameObjectHandle key = NULL;
-		ObjectHandle value = NULL;
+		NameObjectHandle* key = NULL;
+		ObjectHandle* value = NULL;
 
 		print_spaces(nested);
 		printf("Pair:\n");
@@ -87,9 +87,9 @@ error_type process_dictionary(DictionaryObjectHandle dictionary, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_stream(StreamObjectHandle stream, int nested) {
-	BufferHandle body = NULL;
-	DictionaryObjectHandle dictionary = NULL;
+error_type process_stream(StreamObjectHandle* stream, int nested) {
+	BufferHandle* body = NULL;
+	DictionaryObjectHandle* dictionary = NULL;
 
 	print_spaces(nested);
 	printf("Stream object begin\n");
@@ -109,7 +109,7 @@ error_type process_stream(StreamObjectHandle stream, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_array(ArrayObjectHandle arr, int nested) {
+error_type process_array(ArrayObjectHandle* arr, int nested) {
 	size_type i = 0;
 	size_type size = 0;
 
@@ -123,7 +123,7 @@ error_type process_array(ArrayObjectHandle arr, int nested) {
 	printf("Size: %llu\n", converted_size);
 
 	for (i = 0; i < size; ++i) {
-		ObjectHandle item = NULL;
+		ObjectHandle* item = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_At(arr, i, &item));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_object(item, nested + 1));
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(item));
@@ -135,7 +135,7 @@ error_type process_array(ArrayObjectHandle arr, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_integer(IntegerObjectHandle integer, int nested) {
+error_type process_integer(IntegerObjectHandle* integer, int nested) {
 	bigint_type value = 0;
 
 	print_spaces(nested);
@@ -153,7 +153,7 @@ error_type process_integer(IntegerObjectHandle integer, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_boolean(BooleanObjectHandle obj, int nested) {
+error_type process_boolean(BooleanObjectHandle* obj, int nested) {
 	boolean_type value = VANILLAPDF_RV_FALSE;
 
 	print_spaces(nested);
@@ -173,11 +173,11 @@ error_type process_boolean(BooleanObjectHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_reference(IndirectObjectReferenceHandle reference, int nested) {
+error_type process_reference(IndirectObjectReferenceHandle* reference, int nested) {
 	ObjectType type;
 	biguint_type obj_num = 0;
 	ushort_type gen_num = 0;
-	ObjectHandle child = NULL;
+	ObjectHandle* child = NULL;
 	string_type type_name = NULL;
 
 	print_spaces(nested);
@@ -206,7 +206,7 @@ error_type process_reference(IndirectObjectReferenceHandle reference, int nested
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_real(RealObjectHandle obj, int nested) {
+error_type process_real(RealObjectHandle* obj, int nested) {
 	real_type value = 0;
 
 	print_spaces(nested);
@@ -222,7 +222,7 @@ error_type process_real(RealObjectHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_null(NullObjectHandle obj, int nested) {
+error_type process_null(NullObjectHandle* obj, int nested) {
 
 	// Null object does not have any properties
 	UNUSED(obj);
@@ -239,10 +239,10 @@ error_type process_null(NullObjectHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_string(StringObjectHandle obj, int nested) {
+error_type process_string(StringObjectHandle* obj, int nested) {
 	StringType type;
-	LiteralStringObjectHandle literal_str = NULL;
-	HexadecimalStringObjectHandle hexadecimal_str = NULL;
+	LiteralStringObjectHandle* literal_str = NULL;
+	HexadecimalStringObjectHandle* hexadecimal_str = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Type(obj, &type));
 
@@ -264,18 +264,18 @@ error_type process_string(StringObjectHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_object(ObjectHandle obj, int nested) {
+error_type process_object(ObjectHandle* obj, int nested) {
 	ObjectType type;
-	RealObjectHandle real = NULL;
-	BooleanObjectHandle boolean = NULL;
-	NullObjectHandle null_object = NULL;
-	IndirectObjectReferenceHandle indirect_reference = NULL;
-	ArrayObjectHandle arr = NULL;
-	IntegerObjectHandle integer = NULL;
-	StreamObjectHandle stream = NULL;
-	NameObjectHandle name = NULL;
-	DictionaryObjectHandle dictionary = NULL;
-	StringObjectHandle string = NULL;
+	RealObjectHandle* real = NULL;
+	BooleanObjectHandle* boolean = NULL;
+	NullObjectHandle* null_object = NULL;
+	IndirectObjectReferenceHandle* indirect_reference = NULL;
+	ArrayObjectHandle* arr = NULL;
+	IntegerObjectHandle* integer = NULL;
+	StreamObjectHandle* stream = NULL;
+	NameObjectHandle* name = NULL;
+	DictionaryObjectHandle* dictionary = NULL;
+	StringObjectHandle* string = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_GetType(obj, &type));
 

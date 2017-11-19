@@ -17,13 +17,13 @@
 
 int main(int argc, char *argv[]) {
 	int i = 0;
-	FileHandle file = NULL;
-	DocumentHandle document = NULL;
+	FileHandle* file = NULL;
+	DocumentHandle* document = NULL;
 	string_type license_file = NULL;
 	string_type password = NULL;
 	string_type cert_path = NULL;
 	string_type cert_password = NULL;
-	PKCS12KeyHandle pkcs12_key = NULL;
+	PKCS12KeyHandle* pkcs12_key = NULL;
 	boolean_type is_encrypted = VANILLAPDF_RV_FALSE;
 
 #if (defined(DEBUG) && defined(COMPILER_MICROSOFT_VISUAL_STUDIO))
@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
 		}
 
 		if (cert_path != NULL) {
-			EncryptionKeyHandle encryption_key = NULL;
+			EncryptionKeyHandle* encryption_key = NULL;
 			RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_CreateFromFile(cert_path, cert_password, &pkcs12_key));
 			RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_ToEncryptionKey(pkcs12_key, &encryption_key));
 			RETURN_ERROR_IF_NOT_SUCCESS(File_SetEncryptionKey(file, encryption_key));

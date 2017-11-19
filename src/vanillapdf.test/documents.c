@@ -1,8 +1,8 @@
 #include "test.h"
 
-error_type process_document(DocumentHandle document, int nested) {
-	CatalogHandle catalog = NULL;
-	DocumentInfoHandle info = NULL;
+error_type process_document(DocumentHandle* document, int nested) {
+	CatalogHandle* catalog = NULL;
+	DocumentInfoHandle* info = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_GetCatalog(document, &catalog));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_catalog(catalog, nested + 1));
@@ -15,10 +15,10 @@ error_type process_document(DocumentHandle document, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_object(ContentObjectHandle obj, int nested) {
+error_type process_content_object(ContentObjectHandle* obj, int nested) {
 	ContentObjectType type;
-	ContentObjectTextHandle text_object = NULL;
-	ContentObjectInlineImageHandle image_object = NULL;
+	ContentObjectTextHandle* text_object = NULL;
+	ContentObjectInlineImageHandle* image_object = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_GetType(obj, &type));
 	switch (type) {
@@ -39,9 +39,9 @@ error_type process_content_object(ContentObjectHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_object_inline_image(ContentObjectInlineImageHandle obj, int nested) {
-	DictionaryObjectHandle dictionary = NULL;
-	BufferHandle data = NULL;
+error_type process_content_object_inline_image(ContentObjectInlineImageHandle* obj, int nested) {
+	DictionaryObjectHandle* dictionary = NULL;
+	BufferHandle* data = NULL;
 
 	print_spaces(nested);
 	printf("Inline image object begin\n");
@@ -61,7 +61,7 @@ error_type process_content_object_inline_image(ContentObjectInlineImageHandle ob
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_object_text(ContentObjectTextHandle obj, int nested) {
+error_type process_content_object_text(ContentObjectTextHandle* obj, int nested) {
 	size_type i = 0;
 	size_type size = 0;
 
@@ -75,7 +75,7 @@ error_type process_content_object_text(ContentObjectTextHandle obj, int nested) 
 	printf("Operations: %llu\n", converted_size);
 
 	for (i = 0; i < size; ++i) {
-		ContentOperationHandle operation = NULL;
+		ContentOperationHandle* operation = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectText_GetOperationAt(obj, i, &operation));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation(operation, nested + 1));
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_Release(operation));
@@ -87,13 +87,13 @@ error_type process_content_object_text(ContentObjectTextHandle obj, int nested) 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_operation(ContentOperationHandle obj, int nested) {
+error_type process_content_operation(ContentOperationHandle* obj, int nested) {
 	ContentOperationType type;
-	ContentOperationGenericHandle generic_operation = NULL;
-	ContentOperationTextShowHandle text_show_operation = NULL;
-	ContentOperationTextFontHandle text_font_operation = NULL;
-	ContentOperationTextShowArrayHandle text_show_array_operation = NULL;
-	ContentOperationEndTextHandle end_text_operation = NULL;
+	ContentOperationGenericHandle* generic_operation = NULL;
+	ContentOperationTextShowHandle* text_show_operation = NULL;
+	ContentOperationTextFontHandle* text_font_operation = NULL;
+	ContentOperationTextShowArrayHandle* text_show_array_operation = NULL;
+	ContentOperationEndTextHandle* end_text_operation = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_GetType(obj, &type));
 	switch (type) {
@@ -126,10 +126,10 @@ error_type process_content_operation(ContentOperationHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_operation_generic(ContentOperationGenericHandle obj, int nested) {
+error_type process_content_operation_generic(ContentOperationGenericHandle* obj, int nested) {
 	size_type i = 0;
 	size_type size = 0;
-	ContentOperatorHandle oper = NULL;
+	ContentOperatorHandle* oper = NULL;
 
 	print_spaces(nested);
 	printf("Generic content operation begin\n");
@@ -145,7 +145,7 @@ error_type process_content_operation_generic(ContentOperationGenericHandle obj, 
 	printf("Operands: %llu\n", converted_size);
 
 	for (i = 0; i < size; ++i) {
-		ObjectHandle operand = NULL;
+		ObjectHandle* operand = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationGeneric_GetOperandAt(obj, i, &operand));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_object(operand, nested + 1));
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(operand));
@@ -157,7 +157,7 @@ error_type process_content_operation_generic(ContentOperationGenericHandle obj, 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_operation_endtext(ContentOperationEndTextHandle obj, int nested) {
+error_type process_content_operation_endtext(ContentOperationEndTextHandle* obj, int nested) {
 	print_spaces(nested);
 	printf("Content operation: ET\n");
 
@@ -167,8 +167,8 @@ error_type process_content_operation_endtext(ContentOperationEndTextHandle obj, 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_operation_textshowarray(ContentOperationTextShowArrayHandle obj, int nested) {
-	ArrayObjectHandle items_handle = NULL;
+error_type process_content_operation_textshowarray(ContentOperationTextShowArrayHandle* obj, int nested) {
+	ArrayObjectHandle* items_handle = NULL;
 
 	print_spaces(nested);
 	printf("Text show array operation begin\n");
@@ -183,9 +183,9 @@ error_type process_content_operation_textshowarray(ContentOperationTextShowArray
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_operation_textfont(ContentOperationTextFontHandle obj, int nested) {
-	NameObjectHandle font_name = NULL;
-	IntegerObjectHandle font_scale = NULL;
+error_type process_content_operation_textfont(ContentOperationTextFontHandle* obj, int nested) {
+	NameObjectHandle* font_name = NULL;
+	IntegerObjectHandle* font_scale = NULL;
 
 	print_spaces(nested);
 	printf("Text font operation begin\n");
@@ -203,8 +203,8 @@ error_type process_content_operation_textfont(ContentOperationTextFontHandle obj
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_operation_textshow(ContentOperationTextShowHandle obj, int nested) {
-	StringObjectHandle str = NULL;
+error_type process_content_operation_textshow(ContentOperationTextShowHandle* obj, int nested) {
+	StringObjectHandle* str = NULL;
 
 	print_spaces(nested);
 	printf("Text show operation begin\n");
@@ -219,9 +219,9 @@ error_type process_content_operation_textshow(ContentOperationTextShowHandle obj
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_operator(ContentOperatorHandle obj, int nested) {
+error_type process_content_operator(ContentOperatorHandle* obj, int nested) {
 	ContentOperatorType type;
-	BufferHandle buffer = NULL;
+	BufferHandle* buffer = NULL;
 
 	print_spaces(nested);
 	printf("Content operator begin\n");
@@ -241,10 +241,10 @@ error_type process_content_operator(ContentOperatorHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_content_instruction(ContentInstructionHandle obj, int nested) {
+error_type process_content_instruction(ContentInstructionHandle* obj, int nested) {
 	ContentInstructionType type;
-	ContentObjectHandle object_handle = NULL;
-	ContentOperationHandle operation_handle = NULL;
+	ContentObjectHandle* object_handle = NULL;
+	ContentOperationHandle* operation_handle = NULL;
 
 	print_spaces(nested);
 	printf("Content instruction\n");
@@ -271,7 +271,7 @@ error_type process_content_instruction(ContentInstructionHandle obj, int nested)
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_contents(ContentsHandle obj, int nested) {
+error_type process_contents(ContentsHandle* obj, int nested) {
 	size_type i = 0;
 	size_type size = 0;
 
@@ -285,7 +285,7 @@ error_type process_contents(ContentsHandle obj, int nested) {
 	printf("Size: %llu\n", converted_size);
 
 	for (i = 0; i < size; ++i) {
-		ContentInstructionHandle instruction = NULL;
+		ContentInstructionHandle* instruction = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(Contents_GetInstructionAt(obj, i, &instruction));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_content_instruction(instruction, nested + 1));
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_Release(instruction));
@@ -297,7 +297,7 @@ error_type process_contents(ContentsHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_font_map(FontMapHandle obj, int nested) {
+error_type process_font_map(FontMapHandle* obj, int nested) {
 	print_spaces(nested);
 	printf("Font map begin\n");
 
@@ -310,8 +310,8 @@ error_type process_font_map(FontMapHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_resource_dictionary(ResourceDictionaryHandle obj, int nested) {
-	FontMapHandle font_map = NULL;
+error_type process_resource_dictionary(ResourceDictionaryHandle* obj, int nested) {
+	FontMapHandle* font_map = NULL;
 
 	print_spaces(nested);
 	printf("Resource dictionary begin\n");
@@ -326,11 +326,11 @@ error_type process_resource_dictionary(ResourceDictionaryHandle obj, int nested)
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_rectangle(RectangleHandle obj, int nested) {
-	IntegerObjectHandle lower_left_x = NULL;
-	IntegerObjectHandle lower_left_y = NULL;
-	IntegerObjectHandle upper_right_x = NULL;
-	IntegerObjectHandle upper_right_y = NULL;
+error_type process_rectangle(RectangleHandle* obj, int nested) {
+	IntegerObjectHandle* lower_left_x = NULL;
+	IntegerObjectHandle* lower_left_y = NULL;
+	IntegerObjectHandle* upper_right_x = NULL;
+	IntegerObjectHandle* upper_right_y = NULL;
 
 	print_spaces(nested);
 	printf("Rectangle begin\n");
@@ -356,8 +356,8 @@ error_type process_rectangle(RectangleHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_link_annotation(LinkAnnotationHandle obj, int nested) {
-	DestinationHandle destination = NULL;
+error_type process_link_annotation(LinkAnnotationHandle* obj, int nested) {
+	DestinationHandle* destination = NULL;
 
 	print_spaces(nested);
 	printf("Link annotation begin\n");
@@ -372,9 +372,9 @@ error_type process_link_annotation(LinkAnnotationHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_annotation(AnnotationHandle obj, int nested) {
+error_type process_annotation(AnnotationHandle* obj, int nested) {
 	AnnotationType type;
-	LinkAnnotationHandle link_annotation = NULL;
+	LinkAnnotationHandle* link_annotation = NULL;
 
 	print_spaces(nested);
 	printf("Annotation begin\n");
@@ -428,7 +428,7 @@ error_type process_annotation(AnnotationHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_page_annotations(PageAnnotationsHandle obj, int nested) {
+error_type process_page_annotations(PageAnnotationsHandle* obj, int nested) {
 	size_type annotation_count = 0;
 	size_type i = 0;
 
@@ -438,7 +438,7 @@ error_type process_page_annotations(PageAnnotationsHandle obj, int nested) {
 	RETURN_ERROR_IF_NOT_SUCCESS(PageAnnotations_Size(obj, &annotation_count));
 
 	for (i = 0; i < annotation_count; ++i) {
-		AnnotationHandle annotation = NULL;
+		AnnotationHandle* annotation = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(PageAnnotations_At(obj, i, &annotation));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_annotation(annotation, nested + 1));
@@ -451,11 +451,11 @@ error_type process_page_annotations(PageAnnotationsHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_page(PageObjectHandle obj, int nested) {
-	ContentsHandle contents = NULL;
-	RectangleHandle media_box = NULL;
-	PageAnnotationsHandle annotations = NULL;
-	ResourceDictionaryHandle page_resources = NULL;
+error_type process_page(PageObjectHandle* obj, int nested) {
+	ContentsHandle* contents = NULL;
+	RectangleHandle* media_box = NULL;
+	PageAnnotationsHandle* annotations = NULL;
+	ResourceDictionaryHandle* page_resources = NULL;
 
 	print_spaces(nested);
 	printf("Page begin\n");
@@ -482,9 +482,9 @@ error_type process_page(PageObjectHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_extensions(DeveloperExtensionsHandle extensions, int nested) {
+error_type process_extensions(DeveloperExtensionsHandle* extensions, int nested) {
 	boolean_type boolean = VANILLAPDF_RV_FALSE;
-	DeveloperExtensionsIteratorHandle iterator = NULL;
+	DeveloperExtensionsIteratorHandle* iterator = NULL;
 
 	print_spaces(nested);
 	printf("Developer extensions begin\n");
@@ -492,8 +492,8 @@ error_type process_extensions(DeveloperExtensionsHandle extensions, int nested) 
 	RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtensions_Iterator(extensions, &iterator));
 	while (VANILLAPDF_ERROR_SUCCESS == DeveloperExtensionsIterator_IsValid(iterator, extensions, &boolean)
 		&& VANILLAPDF_RV_TRUE == boolean) {
-		NameObjectHandle key = NULL;
-		DeveloperExtensionHandle value = NULL;
+		NameObjectHandle* key = NULL;
+		DeveloperExtensionHandle* value = NULL;
 
 		print_spaces(nested);
 		printf("Pair:\n");
@@ -520,8 +520,8 @@ error_type process_extensions(DeveloperExtensionsHandle extensions, int nested) 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_extension(DeveloperExtensionHandle extension, int nested) {
-	IntegerObjectHandle level = NULL;
+error_type process_extension(DeveloperExtensionHandle* extension, int nested) {
+	IntegerObjectHandle* level = NULL;
 	PDFVersion base_version;
 
 	print_spaces(nested);
@@ -545,7 +545,7 @@ error_type process_extension(DeveloperExtensionHandle extension, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_named_destinations(NamedDestinationsHandle obj, int nested) {
+error_type process_named_destinations(NamedDestinationsHandle* obj, int nested) {
 	print_spaces(nested);
 	printf("Named destinations begin\n");
 
@@ -558,8 +558,8 @@ error_type process_named_destinations(NamedDestinationsHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_destination(DestinationHandle obj, int nested) {
-	ObjectHandle page = NULL;
+error_type process_destination(DestinationHandle* obj, int nested) {
+	ObjectHandle* page = NULL;
 
 	print_spaces(nested);
 	printf("Destination begin\n");
@@ -574,18 +574,18 @@ error_type process_destination(DestinationHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_catalog(CatalogHandle catalog, int nested) {
+error_type process_catalog(CatalogHandle* catalog, int nested) {
 	size_type i = 0;
 	size_type size = 0;
-	PageTreeHandle pages = NULL;
-	DeveloperExtensionsHandle extensions = NULL;
-	PageLabelsHandle page_labels = NULL;
-	ViewerPreferencesHandle viewer_preferences = NULL;
-	OutlineHandle outlines = NULL;
+	PageTreeHandle* pages = NULL;
+	DeveloperExtensionsHandle* extensions = NULL;
+	PageLabelsHandle* page_labels = NULL;
+	ViewerPreferencesHandle* viewer_preferences = NULL;
+	OutlineHandle* outlines = NULL;
 	PDFVersion version;
 	PageLayout page_layout;
-	NamedDestinationsHandle named_destinations = NULL;
-	InteractiveFormHandle interactive_form = NULL;
+	NamedDestinationsHandle* named_destinations = NULL;
+	InteractiveFormHandle* interactive_form = NULL;
 
 	print_spaces(nested);
 	printf("Document catalog begin\n");
@@ -620,7 +620,7 @@ error_type process_catalog(CatalogHandle catalog, int nested) {
 		InteractiveForm_Release(interactive_form));
 
 	for (i = 1; i <= size; ++i) {
-		PageObjectHandle page = NULL;
+		PageObjectHandle* page = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(pages, i, &page));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_page(page, nested + 1));
 		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(page));
@@ -641,15 +641,15 @@ error_type process_trapped(DocumentTrappedType trapped, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_document_info(DocumentInfoHandle obj, int nested) {
-	StringObjectHandle title = NULL;
-	StringObjectHandle author = NULL;
-	StringObjectHandle subject = NULL;
-	StringObjectHandle keywords = NULL;
-	StringObjectHandle creator = NULL;
-	StringObjectHandle producer = NULL;
-	DateHandle creation_date = NULL;
-	DateHandle modification_date = NULL;
+error_type process_document_info(DocumentInfoHandle* obj, int nested) {
+	StringObjectHandle* title = NULL;
+	StringObjectHandle* author = NULL;
+	StringObjectHandle* subject = NULL;
+	StringObjectHandle* keywords = NULL;
+	StringObjectHandle* creator = NULL;
+	StringObjectHandle* producer = NULL;
+	DateHandle* creation_date = NULL;
+	DateHandle* modification_date = NULL;
 	DocumentTrappedType trapped;
 
 	print_spaces(nested);
@@ -696,7 +696,7 @@ error_type process_document_info(DocumentInfoHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_date(DateHandle obj, int nested) {
+error_type process_date(DateHandle* obj, int nested) {
 	integer_type year = 0;
 	integer_type month = 0;
 	integer_type day = 0;
@@ -748,10 +748,10 @@ error_type process_date(DateHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_outline(OutlineHandle outline, int nested) {
-	OutlineItemHandle first = NULL;
-	OutlineItemHandle last = NULL;
-	IntegerObjectHandle count = NULL;
+error_type process_outline(OutlineHandle* outline, int nested) {
+	OutlineItemHandle* first = NULL;
+	OutlineItemHandle* last = NULL;
+	IntegerObjectHandle* count = NULL;
 
 	print_spaces(nested);
 	printf("Document outline begin\n");
@@ -774,16 +774,16 @@ error_type process_outline(OutlineHandle outline, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_outline_item(OutlineItemHandle outline, int nested) {
-	OutlineBaseHandle parent = NULL;
-	OutlineItemHandle first = NULL;
-	OutlineItemHandle last = NULL;
-	OutlineItemHandle next = NULL;
-	OutlineItemHandle prev = NULL;
-	IntegerObjectHandle count = NULL;
-	StringObjectHandle title = NULL;
-	OutlineItemColorHandle color = NULL;
-	OutlineItemFlagsHandle flags = NULL;
+error_type process_outline_item(OutlineItemHandle* outline, int nested) {
+	OutlineBaseHandle* parent = NULL;
+	OutlineItemHandle* first = NULL;
+	OutlineItemHandle* last = NULL;
+	OutlineItemHandle* next = NULL;
+	OutlineItemHandle* prev = NULL;
+	IntegerObjectHandle* count = NULL;
+	StringObjectHandle* title = NULL;
+	OutlineItemColorHandle* color = NULL;
+	OutlineItemFlagsHandle* flags = NULL;
 
 	print_spaces(nested);
 	printf("Document outline begin\n");
@@ -833,7 +833,7 @@ error_type process_outline_item(OutlineItemHandle outline, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_outline_base(OutlineBaseHandle outline, int nested) {
+error_type process_outline_base(OutlineBaseHandle* outline, int nested) {
 	OutlineType type;
 
 	print_spaces(nested);
@@ -850,10 +850,10 @@ error_type process_outline_base(OutlineBaseHandle outline, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_outline_item_color(OutlineItemColorHandle obj, int nested) {
-	IntegerObjectHandle red = NULL;
-	IntegerObjectHandle green = NULL;
-	IntegerObjectHandle blue = NULL;
+error_type process_outline_item_color(OutlineItemColorHandle* obj, int nested) {
+	IntegerObjectHandle* red = NULL;
+	IntegerObjectHandle* green = NULL;
+	IntegerObjectHandle* blue = NULL;
 
 	print_spaces(nested);
 	printf("Outline item color begin\n");
@@ -876,7 +876,7 @@ error_type process_outline_item_color(OutlineItemColorHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_outline_item_flags(OutlineItemFlagsHandle obj, int nested) {
+error_type process_outline_item_flags(OutlineItemFlagsHandle* obj, int nested) {
 	boolean_type is_italic = VANILLAPDF_RV_FALSE;
 	boolean_type is_bold = VANILLAPDF_RV_FALSE;
 
@@ -898,7 +898,7 @@ error_type process_outline_item_flags(OutlineItemFlagsHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_page_labels(PageLabelsHandle labels, size_type size, int nested) {
+error_type process_page_labels(PageLabelsHandle* labels, size_type size, int nested) {
 	size_type i = 0;
 
 	print_spaces(nested);
@@ -906,7 +906,7 @@ error_type process_page_labels(PageLabelsHandle labels, size_type size, int nest
 
 	for (i = 1; i <= size; ++i) {
 		boolean_type contains = VANILLAPDF_RV_FALSE;
-		PageLabelHandle label = NULL;
+		PageLabelHandle* label = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(PageLabels_Contains(labels, i, &contains));
 		if (VANILLAPDF_RV_TRUE != contains) {
 			continue;
@@ -923,9 +923,9 @@ error_type process_page_labels(PageLabelsHandle labels, size_type size, int nest
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_page_label(PageLabelHandle label, int nested) {
-	StringObjectHandle p = NULL;
-	IntegerObjectHandle st = NULL;
+error_type process_page_label(PageLabelHandle* label, int nested) {
+	StringObjectHandle* p = NULL;
+	IntegerObjectHandle* st = NULL;
 	NumberingStyle s;
 
 	print_spaces(nested);
@@ -955,15 +955,15 @@ error_type process_page_layout(PageLayout page_layout, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_viewer_preferences(ViewerPreferencesHandle preferences, int nested) {
+error_type process_viewer_preferences(ViewerPreferencesHandle* preferences, int nested) {
 	Duplex duplex;
 	PrintScaling print_scaling;
 	NonFullScreenPageMode page_mode;
 	ReadingOrder reading_order;
-	BooleanObjectHandle boolean = NULL;
-	NameObjectHandle name = NULL;
-	IntegerObjectHandle integer = NULL;
-	PageRangeHandle page_range = NULL;
+	BooleanObjectHandle* boolean = NULL;
+	NameObjectHandle* name = NULL;
+	IntegerObjectHandle* integer = NULL;
+	PageRangeHandle* page_range = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetHideToolbar(preferences, &boolean), process_boolean(boolean, nested + 1), BooleanObject_Release(boolean));
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ViewerPreferences_GetHideMenubar(preferences, &boolean), process_boolean(boolean, nested + 1), BooleanObject_Release(boolean));
@@ -990,16 +990,16 @@ error_type process_viewer_preferences(ViewerPreferencesHandle preferences, int n
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_page_range(PageRangeHandle range, int nested) {
+error_type process_page_range(PageRangeHandle* range, int nested) {
 	size_type i = 0;
 	size_type size = 0;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(PageRange_GetSize(range, &size));
 
 	for (i = 1; i <= size; ++i) {
-		PageSubRangeHandle sub_range = NULL;
-		IntegerObjectHandle first_page = NULL;
-		IntegerObjectHandle last_page = NULL;
+		PageSubRangeHandle* sub_range = NULL;
+		IntegerObjectHandle* first_page = NULL;
+		IntegerObjectHandle* last_page = NULL;
 		RETURN_ERROR_IF_NOT_SUCCESS(PageRange_GetSubrange(range, i, &sub_range));
 		RETURN_ERROR_IF_NOT_SUCCESS(PageSubRange_GetFirstPage(sub_range, &first_page));
 		RETURN_ERROR_IF_NOT_SUCCESS(PageSubRange_GetLastPage(sub_range, &last_page));
@@ -1043,7 +1043,7 @@ error_type process_duplex(Duplex duplex, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_document_save(DocumentHandle document, int nested) {
+error_type process_document_save(DocumentHandle* document, int nested) {
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Save(document, "output.pdf"));
 
 	// Generic function parameter nested is not needed in this case
@@ -1052,8 +1052,8 @@ error_type process_document_save(DocumentHandle document, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_interactive_form(InteractiveFormHandle obj, int nested) {
-	FieldCollectionHandle fields = NULL;
+error_type process_interactive_form(InteractiveFormHandle* obj, int nested) {
+	FieldCollectionHandle* fields = NULL;
 
 	print_spaces(nested);
 	printf("Interactive form begin\n");
@@ -1068,7 +1068,7 @@ error_type process_interactive_form(InteractiveFormHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_field_collection(FieldCollectionHandle obj, int nested) {
+error_type process_field_collection(FieldCollectionHandle* obj, int nested) {
 	size_type i = 0;
 	size_type size = 0;
 
@@ -1083,7 +1083,7 @@ error_type process_field_collection(FieldCollectionHandle obj, int nested) {
 	printf("Size: %llu\n", converted_size);
 
 	for (i = 0; i < size; ++i) {
-		FieldHandle field = NULL;
+		FieldHandle* field = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(FieldCollection_At(obj, i, &field));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_field(field, nested + 1));
@@ -1096,9 +1096,9 @@ error_type process_field_collection(FieldCollectionHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_field(FieldHandle obj, int nested) {
+error_type process_field(FieldHandle* obj, int nested) {
 	FieldType type;
-	SignatureFieldHandle signature_field = NULL;
+	SignatureFieldHandle* signature_field = NULL;
 
 	print_spaces(nested);
 	printf("Field begin\n");
@@ -1130,8 +1130,8 @@ error_type process_field(FieldHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_signature_field(SignatureFieldHandle obj, int nested) {
-	DigitalSignatureHandle digital_signature = NULL;
+error_type process_signature_field(SignatureFieldHandle* obj, int nested) {
+	DigitalSignatureHandle* digital_signature = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(SignatureField_GetValue(obj, &digital_signature));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_digital_signature(digital_signature, nested));
@@ -1140,16 +1140,16 @@ error_type process_signature_field(SignatureFieldHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_digital_signature(DigitalSignatureHandle obj, int nested) {
-	StringObjectHandle contact_info = NULL;
-	StringObjectHandle name = NULL;
-	StringObjectHandle reason = NULL;
-	StringObjectHandle location = NULL;
-	IntegerObjectHandle revision = NULL;
-	StringObjectHandle certificate = NULL;
-	ByteRangeCollectionHandle byte_range = NULL;
-	HexadecimalStringObjectHandle contents = NULL;
-	DateHandle date = NULL;
+error_type process_digital_signature(DigitalSignatureHandle* obj, int nested) {
+	StringObjectHandle* contact_info = NULL;
+	StringObjectHandle* name = NULL;
+	StringObjectHandle* reason = NULL;
+	StringObjectHandle* location = NULL;
+	IntegerObjectHandle* revision = NULL;
+	StringObjectHandle* certificate = NULL;
+	ByteRangeCollectionHandle* byte_range = NULL;
+	HexadecimalStringObjectHandle* contents = NULL;
+	DateHandle* date = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetContactInfo(obj, &contact_info),
 	process_string(contact_info, nested + 1),
@@ -1190,7 +1190,7 @@ error_type process_digital_signature(DigitalSignatureHandle obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_byte_range_collection(ByteRangeCollectionHandle obj, int nested) {
+error_type process_byte_range_collection(ByteRangeCollectionHandle* obj, int nested) {
 	size_type i = 0;
 	size_type size = 0;
 
@@ -1205,7 +1205,7 @@ error_type process_byte_range_collection(ByteRangeCollectionHandle obj, int nest
 	printf("Size: %llu\n", converted_size);
 
 	for (i = 0; i < size; ++i) {
-		ByteRangeHandle range = NULL;
+		ByteRangeHandle* range = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(ByteRangeCollection_At(obj, i, &range));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_byte_range(range, nested + 1));
@@ -1218,9 +1218,9 @@ error_type process_byte_range_collection(ByteRangeCollectionHandle obj, int nest
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_byte_range(ByteRangeHandle obj, int nested) {
-	IntegerObjectHandle offset = NULL;
-	IntegerObjectHandle length = NULL;
+error_type process_byte_range(ByteRangeHandle* obj, int nested) {
+	IntegerObjectHandle* offset = NULL;
+	IntegerObjectHandle* length = NULL;
 
 	print_spaces(nested);
 	printf("Byte range begin\n");

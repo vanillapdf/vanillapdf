@@ -13,7 +13,7 @@ void print_spaces(int nested) {
 	}
 }
 
-error_type process_buffer(BufferHandle buffer, int nested) {
+error_type process_buffer(BufferHandle* buffer, int nested) {
 	string_type data = NULL;
 	char* local_string = NULL;
 	size_type size = 0;

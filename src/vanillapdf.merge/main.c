@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
 	const char *destination_file = NULL;
 	int merge_files_count = 0;
 
-	DocumentHandle document = NULL;
+	DocumentHandle* document = NULL;
 
 	integer_type i = 0;
 
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Open(source_file, &document));
 
 	for (i = 0; i < merge_files_count; ++i) {
-		DocumentHandle other_document = NULL;
+		DocumentHandle* other_document = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(Document_Open(argv[MERGE_FILES_START_INDEX + i], &other_document));
 		RETURN_ERROR_IF_NOT_SUCCESS(Document_AppendDocument(document, other_document));
