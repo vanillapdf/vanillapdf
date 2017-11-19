@@ -8,7 +8,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
-VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle* handle, const struct NameObjectHandle* key, ObjectHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle* handle, const NameObjectHandle* key, ObjectHandle** result)
 {
 	DictionaryObject* obj = reinterpret_cast<DictionaryObject*>(handle);
 	const NameObject* name_object = reinterpret_cast<const NameObject*>(key);

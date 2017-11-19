@@ -161,7 +161,7 @@ extern "C"
 	/**
 	* \brief Determine if current map contains \p name.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDestinationsHandle* handle, const struct NameObjectHandle* name, boolean_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDestinationsHandle* handle, const NameObjectHandle* name, boolean_type* result);
 
 	/**
 	* \brief Find mapped value for key \p name.
@@ -171,7 +171,7 @@ extern "C"
 	* This function throws internal exception on failure,
 	* which may render it slower.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Find(NamedDestinationsHandle* handle, const struct NameObjectHandle* name, DestinationHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Find(NamedDestinationsHandle* handle, const NameObjectHandle* name, DestinationHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release

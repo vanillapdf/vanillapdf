@@ -28,7 +28,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Destination_Release(DestinationHand
 	return ObjectRelease<DestinationBase, DestinationHandle*>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDestinationsHandle* handle, const struct NameObjectHandle* name_handle, boolean_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDestinationsHandle* handle, const NameObjectHandle* name_handle, boolean_type* result)
 {
 	NamedDestinations* obj = reinterpret_cast<NamedDestinations*>(handle);
 	const NameObject* name = reinterpret_cast<const NameObject*>(name_handle);
@@ -43,7 +43,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDes
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Find(NamedDestinationsHandle* handle, const struct NameObjectHandle* name_handle, DestinationHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Find(NamedDestinationsHandle* handle, const NameObjectHandle* name_handle, DestinationHandle** result)
 {
 	NamedDestinations* obj = reinterpret_cast<NamedDestinations*>(handle);
 	const NameObject* name = reinterpret_cast<const NameObject*>(name_handle);

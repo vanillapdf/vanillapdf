@@ -33,12 +33,12 @@ extern "C"
 	/**
 	* \brief Determine if collection contains key \p name_handle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Contains(FontMapHandle* handle, const struct NameObjectHandle* key_handle, boolean_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Contains(FontMapHandle* handle, const NameObjectHandle* key_handle, boolean_type* result);
 
 	/**
 	* \brief Find mapped value for key \p name_handle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle* handle, const struct NameObjectHandle* key_handle, FontHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle* handle, const NameObjectHandle* key_handle, FontHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
