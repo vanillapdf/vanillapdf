@@ -9,6 +9,8 @@
 #include "syntax/objects/name_object.h"
 #include "syntax/objects/boolean_object.h"
 
+#include "syntax/utils/name_constants.h"
+
 #include "semantics/utils/semantic_exceptions.h"
 #include "semantics/utils/semantic_utils.h"
 

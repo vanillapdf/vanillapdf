@@ -6,6 +6,7 @@
 #include "syntax/parsers/token.h"
 #include "syntax/parsers/reverse_parser.h"
 #include "syntax/exceptions/syntax_exceptions.h"
+#include "syntax/utils/name_constants.h"
 
 #include "utils/character.h"
 #include "utils/math_utils.h"

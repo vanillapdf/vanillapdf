@@ -9,6 +9,7 @@
 #include "syntax/objects/string_object.h"
 #include "syntax/objects/name_object.h"
 #include "syntax/objects/array_object.h"
+#include "syntax/utils/name_constants.h"
 
 #include "utils/util.h"
 

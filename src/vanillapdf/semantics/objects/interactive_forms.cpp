@@ -2,6 +2,8 @@
 
 #include "semantics/objects/interactive_forms.h"
 
+#include "syntax/utils/name_constants.h"
+
 namespace vanillapdf {
 namespace semantics {
 

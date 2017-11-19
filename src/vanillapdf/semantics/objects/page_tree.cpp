@@ -2,6 +2,7 @@
 #include "semantics/objects/page_tree.h"
 
 #include "syntax/objects/array_object.h"
+#include "syntax/utils/name_constants.h"
 
 namespace vanillapdf {
 namespace semantics {

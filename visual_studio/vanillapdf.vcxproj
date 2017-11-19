@@ -75,6 +75,7 @@
     <ClInclude Include="..\include\vanillapdf\utils\c_license_info.h" />
     <ClInclude Include="..\include\vanillapdf\utils\c_logging.h" />
     <ClInclude Include="..\include\vanillapdf\utils\c_message_digest_algorithm.h" />
+    <ClInclude Include="..\include\vanillapdf\utils\c_name_constants.h" />
     <ClInclude Include="..\include\vanillapdf\utils\c_output_stream_interface.h" />
     <ClInclude Include="..\include\vanillapdf\utils\c_pdf_version.h" />
     <ClInclude Include="..\include\vanillapdf\utils\c_pkcs12_key.h" />
@@ -161,6 +162,7 @@
     <ClInclude Include="..\src\vanillapdf\syntax\parsers\token.h" />
     <ClInclude Include="..\src\vanillapdf\syntax\parsers\token_dictionary.h" />
     <ClInclude Include="..\src\vanillapdf\syntax\utils\encryption.h" />
+    <ClInclude Include="..\src\vanillapdf\syntax\utils\name_constants.h" />
     <ClInclude Include="..\src\vanillapdf\syntax\utils\object_utils.h" />
     <ClInclude Include="..\src\vanillapdf\syntax\utils\output_pointer.h" />
     <ClInclude Include="..\src\vanillapdf\syntax\utils\serialization_override_attribute.h" />
@@ -332,6 +334,7 @@
     <ClCompile Include="..\src\vanillapdf\syntax\parsers\token.cpp" />
     <ClCompile Include="..\src\vanillapdf\syntax\parsers\token_dictionary.cpp" />
     <ClCompile Include="..\src\vanillapdf\syntax\utils\encryption.cpp" />
+    <ClCompile Include="..\src\vanillapdf\syntax\utils\name_constants.cpp" />
     <ClCompile Include="..\src\vanillapdf\utils\attribute_interface.cpp" />
     <ClCompile Include="..\src\vanillapdf\utils\attribute_list.cpp" />
     <ClCompile Include="..\src\vanillapdf\utils\buffer.cpp" />

@@ -6,8 +6,11 @@
 
 #include "syntax/parsers/parser.h"
 #include "syntax/parsers/reverse_parser.h"
+
 #include "syntax/exceptions/syntax_exceptions.h"
+
 #include "syntax/utils/encryption.h"
+#include "syntax/utils/name_constants.h"
 
 #include "utils/streams/input_reverse_stream.h"
 #include "utils/streams/input_stream.h"

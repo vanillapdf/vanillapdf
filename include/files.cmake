@@ -23,6 +23,7 @@ set(VANILLAPDF_INCLUDE_UTILS_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_pkcs12_key.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_signing_key.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_unknown_interface.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_name_constants.h"
 )
 
 set(VANILLAPDF_INCLUDE_SYNTAX_HEADERS

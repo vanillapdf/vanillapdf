@@ -3,6 +3,7 @@
 
 #include "syntax/files/file.h"
 #include "syntax/filters/filter.h"
+#include "syntax/utils/name_constants.h"
 
 #include "syntax/exceptions/syntax_exceptions.h"
 

@@ -156,6 +156,7 @@ set(VANILLAPDF_SYNTAX_SOURCES
 	syntax/parsers/tokenizer.cpp
 	
 	syntax/utils/encryption.cpp
+	syntax/utils/name_constants.cpp
 )
 
 set(VANILLAPDF_UTILS_SOURCES
@@ -274,6 +275,7 @@ set(VANILLAPDF_SYNTAX_HEADERS
 	syntax/parsers/tokenizer.h
 	
 	syntax/utils/encryption.h
+	syntax/utils/name_constants.h
 	syntax/utils/output_pointer.h
 	syntax/utils/syntax_fwd.h
 	syntax/utils/object_utils.h

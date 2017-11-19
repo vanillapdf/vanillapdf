@@ -1,5 +1,6 @@
 #include "precompiled.h"
 
+#include "syntax/utils/name_constants.h"
 #include "syntax/filters/dct_decode_filter.h"
 
 #include "utils/math_utils.h"

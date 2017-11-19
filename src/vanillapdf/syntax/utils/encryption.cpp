@@ -3,6 +3,7 @@
 #include "utils/math_utils.h"
 
 #include "syntax/utils/encryption.h"
+#include "syntax/utils/name_constants.h"
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 

@@ -687,6 +687,12 @@
     <ClInclude Include="..\include\vanillapdf\contents\c_content_operator.h">
       <Filter>Header Files\include\contents</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\vanillapdf\syntax\utils\name_constants.h">
+      <Filter>Header Files\syntax\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\utils\c_name_constants.h">
+      <Filter>Header Files\include\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\vanillapdf\contents\content_stream_objects.cpp">
@@ -1099,6 +1105,9 @@
     </ClCompile>
     <ClCompile Include="..\src\vanillapdf\implementation\contents\c_content_operator.cpp">
       <Filter>Source Files\implementation\contents</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\syntax\utils\name_constants.cpp">
+      <Filter>Source Files\syntax\utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

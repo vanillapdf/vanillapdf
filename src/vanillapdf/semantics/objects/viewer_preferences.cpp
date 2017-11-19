@@ -3,6 +3,8 @@
 #include "semantics/objects/viewer_preferences.h"
 #include "semantics/utils/semantic_exceptions.h"
 
+#include "syntax/utils/name_constants.h"
+
 namespace vanillapdf {
 namespace semantics {
 

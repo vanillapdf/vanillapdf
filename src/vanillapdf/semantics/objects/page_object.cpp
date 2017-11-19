@@ -12,6 +12,8 @@
 #include "syntax/objects/name_object.h"
 #include "syntax/objects/integer_object.h"
 
+#include "syntax/utils/name_constants.h"
+
 namespace vanillapdf {
 namespace semantics {
 

@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "syntax/files/xref.h"
+#include "syntax/utils/name_constants.h"
 #include "syntax/exceptions/syntax_exceptions.h"
 
 #include "utils/math_utils.h"

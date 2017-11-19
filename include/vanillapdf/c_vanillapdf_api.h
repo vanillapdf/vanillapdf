@@ -72,5 +72,6 @@
 #include "vanillapdf/utils/c_input_stream_interface.h"
 #include "vanillapdf/utils/c_output_stream_interface.h"
 #include "vanillapdf/utils/c_message_digest_algorithm.h"
+#include "vanillapdf/utils/c_name_constants.h"
 
 #endif /* _C_VANILLAPDF_API_H */

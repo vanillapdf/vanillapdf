@@ -1,9 +1,12 @@
 #include "precompiled.h"
+
 #include "syntax/filters/filter.h"
-#include "flate_decode_filter.h"
-#include "ascii_85_decode_filter.h"
-#include "ascii_hex_decode_filter.h"
-#include "dct_decode_filter.h"
+#include "syntax/filters/flate_decode_filter.h"
+#include "syntax/filters/ascii_85_decode_filter.h"
+#include "syntax/filters/ascii_hex_decode_filter.h"
+#include "syntax/filters/dct_decode_filter.h"
+
+#include "syntax/utils/name_constants.h"
 
 namespace vanillapdf {
 namespace syntax {

@@ -7,6 +7,8 @@
 
 #include "semantics/utils/semantic_utils.h"
 
+#include "syntax/utils/name_constants.h"
+
 namespace vanillapdf {
 namespace semantics {
 

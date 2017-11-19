@@ -12,8 +12,10 @@
 #include "syntax/files/xref.h"
 
 #include "syntax/utils/output_pointer.h"
-#include "syntax/exceptions/syntax_exceptions.h"
+#include "syntax/utils/name_constants.h"
 #include "syntax/utils/serialization_override_attribute.h"
+
+#include "syntax/exceptions/syntax_exceptions.h"
 
 #include "contents/content_stream_parser.h"
 #include "contents/content_stream_operations.h"

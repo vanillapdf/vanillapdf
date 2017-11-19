@@ -1,6 +1,9 @@
 #include "precompiled.h"
+
 #include "semantics/objects/document_info.h"
 #include "semantics/objects/date.h"
+
+#include "syntax/utils/name_constants.h"
 
 namespace vanillapdf {
 namespace semantics {

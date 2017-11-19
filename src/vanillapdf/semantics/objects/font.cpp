@@ -1,6 +1,8 @@
 #include "precompiled.h"
 #include "semantics/objects/font.h"
 
+#include "syntax/utils/name_constants.h"
+
 namespace vanillapdf {
 namespace semantics {
 

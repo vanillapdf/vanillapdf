@@ -2,6 +2,8 @@
 
 #include "syntax/filters/flate_decode_filter.h"
 
+#include "syntax/utils/name_constants.h"
+
 #include "utils/constants.h"
 #include "utils/zlib_wrapper.h"
 #include "utils/math_utils.h"

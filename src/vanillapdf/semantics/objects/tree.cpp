@@ -2,8 +2,6 @@
 
 #include "semantics/objects/tree.h"
 
-#include "semantics/utils/semantics_fwd.h"
-
 namespace vanillapdf {
 namespace semantics {
 

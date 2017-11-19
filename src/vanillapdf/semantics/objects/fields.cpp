@@ -2,6 +2,8 @@
 
 #include "semantics/objects/fields.h"
 
+#include "syntax/utils/name_constants.h"
+
 namespace vanillapdf {
 namespace semantics {
 

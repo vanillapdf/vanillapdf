@@ -1,8 +1,10 @@
 #include "precompiled.h"
-#include "syntax/files/xref_entry.h"
 
 #include "syntax/files/file.h"
+#include "syntax/files/xref_entry.h"
+
 #include "syntax/parsers/parser.h"
+#include "syntax/utils/name_constants.h"
 #include "syntax/exceptions/syntax_exceptions.h"
 
 namespace vanillapdf {
