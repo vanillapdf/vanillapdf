@@ -34,8 +34,7 @@ extern "C"
 	* \ingroup Documents
 	* \brief
 	* Iterator concept allowing to traverse over
-	* DeveloperExtensionsHandle collection.
-	* \see \ref DeveloperExtensionsHandle
+	* \ref DeveloperExtensionsHandle collection.
 	*/
 
 	/**
@@ -43,8 +42,7 @@ extern "C"
 	* \extends IUnknownHandle
 	* \ingroup Documents
 	* \brief
-	* Single item within DeveloperExtensionsHandle collection.
-	* \see \ref DeveloperExtensionsHandle
+	* Single item within \ref DeveloperExtensionsHandle collection.
 	*/
 
 	/**

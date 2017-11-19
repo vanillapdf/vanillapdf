@@ -26,7 +26,7 @@ extern "C"
 	* \class ByteRangeCollectionHandle
 	* \extends IUnknownHandle
 	* \ingroup Documents
-	* \brief Represents a collection of ByteRangeHandle
+	* \brief Represents a collection of \ref ByteRangeHandle
 	*/
 
 	/**

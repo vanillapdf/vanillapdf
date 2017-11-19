@@ -30,7 +30,7 @@ extern "C"
 	* \extends IUnknownHandle
 	* \ingroup Documents
 	* \brief
-	* Collection of PageSubRangeHandle
+	* Collection of \ref PageSubRangeHandle
 	* \see \ref ViewerPreferencesHandle
 	*/
 
