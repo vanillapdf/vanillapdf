@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_stream_object.h
-	* This file contains class definitions for StreamObjectHandle
+	* This file contains class definitions for \ref StreamObjectHandle
 	*/
 
 	/**
@@ -57,7 +57,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_SetBody(StreamObjectHandle handle, BufferHandle value);
 
 	/**
-	* \copydoc Object_Release()
+	* \copydoc Object_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_Release(StreamObjectHandle handle);
 

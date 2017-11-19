@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_content_operation.h
-	* This file contains class definitions for ContentOperationHandle
+	* This file contains class definitions for \ref ContentOperationHandle
 	*/
 
 	/**
@@ -73,7 +73,7 @@ extern "C"
 	typedef enum {
 		/**
 		* \copydoc ContentOperationGenericHandle
-		* \see ContentOperationGenericHandle
+		* \see \ref ContentOperationGenericHandle
 		*/
 		ContentOperationType_Generic = 0,
 		ContentOperationType_LineWidth,
@@ -115,7 +115,7 @@ extern "C"
 
 		/**
 		* \copydoc ContentOperationTextFontHandle
-		* \see ContentOperationTextFontHandle
+		* \see \ref ContentOperationTextFontHandle
 		*/
 		ContentOperationType_TextFont,
 		ContentOperationType_TextRenderingMode,
@@ -127,13 +127,13 @@ extern "C"
 
 		/**
 		* \copydoc ContentOperationTextShowHandle
-		* \see ContentOperationTextShowHandle
+		* \see \ref ContentOperationTextShowHandle
 		*/
 		ContentOperationType_TextShow,
 
 		/**
 		* \copydoc ContentOperationTextShowArrayHandle
-		* \see ContentOperationTextShowArrayHandle
+		* \see \ref ContentOperationTextShowArrayHandle
 		*/
 		ContentOperationType_TextShowArray,
 		ContentOperationType_TextNextLineShow,
@@ -209,7 +209,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_Release(ContentOperationHandle handle);
 
@@ -237,7 +237,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_Release(ContentOperationGenericHandle handle);
 
@@ -260,7 +260,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_Release(ContentOperationTextShowHandle handle);
 
@@ -290,7 +290,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_Release(ContentOperationTextShowArrayHandle handle);
 
@@ -333,7 +333,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_Release(ContentOperationTextFontHandle handle);
 

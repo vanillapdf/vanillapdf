@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_page_object.h
-	* This file contains class definitions for PageObjectHandle
+	* This file contains class definitions for \ref PageObjectHandle
 	*/
 
 	/**
@@ -23,7 +23,7 @@ extern "C"
 	* The leaves of the page tree are page objects,
 	* each of which is a dictionary specifying the
 	* attributes of a single page of the document.
-	* \see PageTreeHandle
+	* \see \ref PageTreeHandle
 	*/
 
 	/**
@@ -37,7 +37,7 @@ extern "C"
 	* Function creates a new indirect dictionary with it's type set to "Page".
 	*
 	* This new entry has to be manually added to document catalog's page tree.
-	* \see PageTreeHandle
+	* \see \ref PageTreeHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateFromDocument(DocumentHandle handle, PageObjectHandle* result);
 
@@ -91,6 +91,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_Release(PageObjectHandle handle);
 

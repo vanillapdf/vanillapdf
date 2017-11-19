@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_font_map.h
-	* This file contains contains class definitions for FontMapHandle
+	* This file contains contains class definitions for \ref FontMapHandle
 	*/
 
 	/**
@@ -21,8 +21,8 @@ extern "C"
 	* \ingroup Fonts
 	* \brief
 	* A dictionary that maps resource names to font dictionaries.
-	* \see FontHandle
-	* \see ResourceDictionaryHandle
+	* \see \ref FontHandle
+	* \see \ref ResourceDictionaryHandle
 	*/
 
 	/**
@@ -42,7 +42,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Release(FontMapHandle handle);
 

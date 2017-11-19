@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_indirect_object_reference.h
-	* This file contains class definitions for IndirectObjectReferenceHandle
+	* This file contains class definitions for \ref IndirectObjectReferenceHandle
 	*/
 
 	/**
@@ -43,7 +43,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObject(IndirectObjectReferenceHandle handle, ObjectHandle* result);
 
 	/**
-	* \copydoc Object_Release()
+	* \copydoc Object_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION IndirectReference_Release(IndirectObjectReferenceHandle handle);
 

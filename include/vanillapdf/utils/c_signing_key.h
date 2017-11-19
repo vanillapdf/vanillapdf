@@ -14,7 +14,7 @@ extern "C"
 
 	/**
 	* \file c_signing_key.h
-	* This file contains class definitions for SigningKeyHandle
+	* This file contains class definitions for \ref SigningKeyHandle
 	*/
 
 	/**
@@ -24,7 +24,7 @@ extern "C"
 	* \brief Used for document signing
 	*
 	* Standard routine for message signing is Initialize, (single or multiple) Update, Final.
-	* \see DocumentSignatureSettingsHandle
+	* \see \ref DocumentSignatureSettingsHandle
 	*/
 
 	/**
@@ -79,7 +79,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_Release(SigningKeyHandle handle);
 

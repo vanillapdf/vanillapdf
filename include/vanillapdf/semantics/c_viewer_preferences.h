@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_viewer_preferences.h
-	* This file contains class definitions for ViewerPreferencesHandle
+	* This file contains class definitions for \ref ViewerPreferencesHandle
 	*/
 
 	/**
@@ -22,7 +22,7 @@ extern "C"
 	* \brief
 	* Controlling the way the document shall
 	* be presented on the screen or in print.
-	* \see CatalogHandle
+	* \see \ref CatalogHandle
 	*/
 
 	/**
@@ -31,7 +31,7 @@ extern "C"
 	* \ingroup Documents
 	* \brief
 	* Collection of PageSubRangeHandle
-	* \see ViewerPreferencesHandle
+	* \see \ref ViewerPreferencesHandle
 	*/
 
 	/**
@@ -40,7 +40,7 @@ extern "C"
 	* \ingroup Documents
 	* \brief
 	* Specifies first and last page number of defined range
-	* \see PageRangeHandle
+	* \see \ref PageRangeHandle
 	*/
 
 	/**
@@ -180,12 +180,12 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDisplayDocTitle(ViewerPreferencesHandle handle, BooleanObjectHandle* result);
 
 	/**
-	* \copydoc ::NonFullScreenPageMode
+	* \copydoc NonFullScreenPageMode
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNonFullScreenPageMode(ViewerPreferencesHandle handle, NonFullScreenPageMode* result);
 
 	/**
-	* \copydoc ::ReadingOrder
+	* \copydoc ReadingOrder
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDirection(ViewerPreferencesHandle handle, ReadingOrder* result);
 
@@ -218,12 +218,12 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintClip(ViewerPreferencesHandle handle, NameObjectHandle* result);
 
 	/**
-	* \copydoc ::PrintScaling
+	* \copydoc PrintScaling
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintScaling(ViewerPreferencesHandle handle, PrintScaling* result);
 
 	/**
-	* \copydoc ::Duplex
+	* \copydoc Duplex
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDuplex(ViewerPreferencesHandle handle, Duplex* result);
 
@@ -250,7 +250,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_Release(ViewerPreferencesHandle handle);
 
@@ -273,7 +273,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageRange_Release(PageRangeHandle handle);
 
@@ -296,7 +296,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageSubRange_Release(PageSubRangeHandle handle);
 

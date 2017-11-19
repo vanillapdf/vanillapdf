@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_integer_object.h
-	* This file contains class definitions for IntegerObjectHandle
+	* This file contains class definitions for \ref IntegerObjectHandle
 	*/
 
 	/**
@@ -48,7 +48,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_SetUnsignedIntegerValue(IntegerObjectHandle handle, biguint_type value);
 
 	/**
-	* \copydoc Object_Release()
+	* \copydoc Object_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_Release(IntegerObjectHandle handle);
 

@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_real_object.h
-	* This file contains class definitions for RealObjectHandle
+	* This file contains class definitions for \ref RealObjectHandle
 	*/
 
 	/**
@@ -38,7 +38,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_SetValue(RealObjectHandle handle, real_type value);
 
 	/**
-	* \copydoc Object_Release()
+	* \copydoc Object_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_Release(RealObjectHandle handle);
 

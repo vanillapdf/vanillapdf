@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_destinations.h
-	* This file contains class definitions for DestinationHandle and NamedDestinationsHandle
+	* This file contains class definitions for \ref DestinationHandle and \ref NamedDestinationsHandle
 	*/
 
 	/**
@@ -141,12 +141,13 @@ extern "C"
 	*
 	* IndirectObjectReferenceHandle means it is indirect reference to
 	* PageObjectHandle representing the destination page.
-	* \see PageTreeHandle
+	* \see \ref PageTreeHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Destination_GetPageNumber(DestinationHandle handle, ObjectHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Destination_Release(DestinationHandle handle);
 
@@ -174,6 +175,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Release(NamedDestinationsHandle handle);
 

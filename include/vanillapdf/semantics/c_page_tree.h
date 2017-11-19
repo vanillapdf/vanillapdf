@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_page_tree.h
-	* This file contains class definitions for PageTreeHandle
+	* This file contains class definitions for \ref PageTreeHandle
 	*/
 
 	/**
@@ -23,7 +23,7 @@ extern "C"
 	* The pages of a document are accessed through a structure
 	* known as the page tree, which defines the ordering
 	* of pages in the document.
-	* \see CatalogHandle
+	* \see \ref CatalogHandle
 	*/
 
 	/**
@@ -66,7 +66,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageTree_Release(PageTreeHandle handle);
 

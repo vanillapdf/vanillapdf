@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_string_object.h
-	* This file contains class definitions for StringObjectHandle
+	* This file contains class definitions for \ref StringObjectHandle
 	*/
 
 	/**
@@ -42,13 +42,13 @@ extern "C"
 	typedef enum {
 		/**
 		* \copybrief LiteralStringObjectHandle
-		* \see LiteralStringObjectHandle
+		* \see \ref LiteralStringObjectHandle
 		*/
 		StringType_Literal = 0,
 
 		/**
 		* \copybrief HexadecimalStringObjectHandle
-		* \see HexadecimalStringObjectHandle
+		* \see \ref HexadecimalStringObjectHandle
 		*/
 		StringType_Hexadecimal
 	} StringType;
@@ -64,12 +64,12 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_Type(StringObjectHandle handle, StringType* result);
 
 	/**
-	* \brief Reinterpret current object as LiteralStringObjectHandle
+	* \brief Reinterpret current object as \ref LiteralStringObjectHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_ToLiteral(StringObjectHandle handle, LiteralStringObjectHandle* result);
 
 	/**
-	* \brief Reinterpret current object as HexadecimalStringObjectHandle
+	* \brief Reinterpret current object as \ref HexadecimalStringObjectHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_ToHexadecimal(StringObjectHandle handle, HexadecimalStringObjectHandle* result);
 
@@ -84,7 +84,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_SetValue(StringObjectHandle handle, BufferHandle value);
 
 	/**
-	* \copydoc Object_Release()
+	* \copydoc Object_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_Release(StringObjectHandle handle);
 
@@ -106,7 +106,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_SetValue(LiteralStringObjectHandle handle, BufferHandle value);
 
 	/**
-	* \copydoc StringObject_Release()
+	* \copydoc StringObject_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_Release(LiteralStringObjectHandle handle);
 
@@ -128,7 +128,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_SetValue(HexadecimalStringObjectHandle handle, BufferHandle value);
 
 	/**
-	* \copydoc StringObject_Release()
+	* \copydoc StringObject_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Release(HexadecimalStringObjectHandle handle);
 

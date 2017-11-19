@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_document_info.h
-	* This file contains class definitions for DocumentInfoHandle
+	* This file contains class definitions for \ref DocumentInfoHandle
 	*/
 
 	/**
@@ -20,7 +20,7 @@ extern "C"
 	* \extends IUnknownHandle
 	* \ingroup Documents
 	* \brief Metadata for the document
-	* \see DocumentHandle
+	* \see \ref DocumentHandle
 	*/
 
 	/**
@@ -107,6 +107,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_Release(DocumentInfoHandle handle);
 

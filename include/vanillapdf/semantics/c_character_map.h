@@ -48,13 +48,13 @@ extern "C"
 	typedef enum {
 		/**
 		* \copybrief EmbeddedCharacterMapHandle
-		* \see EmbeddedCharacterMapHandle
+		* \see \ref EmbeddedCharacterMapHandle
 		*/
 		CharacterMapType_Embedded = 0,
 
 		/**
 		* \copybrief UnicodeCharacterMapHandle
-		* \see UnicodeCharacterMapHandle
+		* \see \ref UnicodeCharacterMapHandle
 		*/
 		CharacterMapType_Unicode
 	} CharacterMapType;
@@ -81,7 +81,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_Release(CharacterMapHandle handle);
 
@@ -101,8 +101,7 @@ extern "C"
 		BufferHandle* result);
 
 	/**
-	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \copydoc CharacterMap_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_Release(UnicodeCharacterMapHandle handle);
 
@@ -114,8 +113,7 @@ extern "C"
 	*/
 
 	/**
-	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \copydoc CharacterMap_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION EmbeddedCharacterMap_Release(EmbeddedCharacterMapHandle handle);
 

@@ -12,6 +12,10 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
+VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_Release(FilterBaseHandle handle) {
+	return ObjectRelease<FilterBase, FilterBaseHandle>(handle);
+}
+
 // FlateDecodeFilter
 
 VANILLAPDF_API error_type CALLING_CONVENTION FlateDecodeFilter_Create(FlateDecodeFilterHandle* result) {

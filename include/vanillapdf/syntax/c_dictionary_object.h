@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_dictionary_object.h
-	* This file contains class definitions for DictionaryObjectHandle
+	* This file contains class definitions for \ref DictionaryObjectHandle
 	*/
 
 	/**
@@ -24,7 +24,8 @@ extern "C"
 
 	/**
 	* \class DictionaryObjectIteratorHandle
-	* \memberof DictionaryObjectHandle
+	* \extends IUnknownHandle
+	* \ingroup Objects
 	* \brief Used for accessing Dictionary elements
 	* through iterator interface.
 	*/
@@ -38,7 +39,7 @@ extern "C"
 	* \brief Get key at iterator position
 	*
 	* Ensure the iterator is valid.
-	* \see ::DictionaryObjectIterator_IsValid
+	* \see \ref DictionaryObjectIterator_IsValid
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetKey(DictionaryObjectIteratorHandle handle, NameObjectHandle* result);
 
@@ -46,7 +47,7 @@ extern "C"
 	* \brief Get value at iterator position
 	*
 	* Ensure the iterator is valid.
-	* \see ::DictionaryObjectIterator_IsValid
+	* \see \ref DictionaryObjectIterator_IsValid
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetValue(DictionaryObjectIteratorHandle handle, ObjectHandle* result);
 
@@ -63,12 +64,13 @@ extern "C"
 	* \brief Advances iterator to the next position
 	*
 	* Ensure the iterator is valid.
-	* \see ::DictionaryObjectIterator_IsValid
+	* \see \ref DictionaryObjectIterator_IsValid
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Next(DictionaryObjectIteratorHandle handle);
 
 	/**
-	* \copydoc IUnknownHandle::IUnknown_Release
+	* \copydoc IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Release(DictionaryObjectIteratorHandle handle);
 

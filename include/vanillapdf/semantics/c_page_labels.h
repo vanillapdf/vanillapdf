@@ -13,7 +13,7 @@ extern "C"
 	/**
 	* \file c_page_labels.h
 	* This file contains class definitions for
-	* PageLabelsHandle and PageLabelHandle.
+	* \ref PageLabelsHandle and \ref PageLabelHandle.
 	*/
 
 	/**
@@ -21,8 +21,8 @@ extern "C"
 	* \extends IUnknownHandle
 	* \ingroup Documents
 	* \brief
-	* Collection of PageLabelHandle
-	* \see CatalogHandle
+	* Collection of \ref PageLabelHandle
+	* \see \ref CatalogHandle
 	*/
 
 	/**
@@ -32,7 +32,7 @@ extern "C"
 	* \brief
 	* Page labels are used for numbering or otherwise identifying
 	* individual pages (see 12.4.2, "Page Labels").
-	* \see PageLabelsHandle
+	* \see \ref PageLabelsHandle
 	*/
 
 	/**
@@ -91,7 +91,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_Release(PageLabelsHandle handle);
 
@@ -122,7 +122,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Release(PageLabelHandle handle);
 

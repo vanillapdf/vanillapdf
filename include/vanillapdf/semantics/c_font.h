@@ -13,7 +13,7 @@ extern "C"
 	/**
 	* \file c_font.h
 	* This file contains class definitions for
-	* FontHandle and CompositeFontHandle.
+	* \ref FontHandle and \ref CompositeFontHandle.
 	*/
 
 	/**
@@ -43,7 +43,7 @@ extern "C"
 	typedef enum {
 		/**
 		* \copydoc CompositeFontHandle
-		* \see CompositeFontHandle
+		* \see \ref CompositeFontHandle
 		*/
 		FontType_Composite = 0,
 
@@ -73,13 +73,13 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Font_Type(FontHandle handle, FontType* result);
 
 	/**
-	* \brief Reinterpret current object as CompositeFontHandle.
+	* \brief Reinterpret current object as \ref CompositeFontHandle.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Font_ToComposite(FontHandle handle, CompositeFontHandle* result);
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Font_Release(FontHandle handle);
 
@@ -98,8 +98,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION CompositeFont_GetUnicodeMap(CompositeFontHandle handle, UnicodeCharacterMapHandle* result);
 
 	/**
-	* \copydoc IUnknown_Release
-	* \see IUnknown_Release
+	* \copydoc Font_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION CompositeFont_Release(CompositeFontHandle handle);
 

@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_rectangle.h
-	* This file contains class definitions for RectangleHandle
+	* This file contains class definitions for \ref RectangleHandle
 	*/
 
 	/**
@@ -49,7 +49,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_Release(RectangleHandle handle);
 

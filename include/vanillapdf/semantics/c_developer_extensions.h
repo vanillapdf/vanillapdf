@@ -25,7 +25,7 @@ extern "C"
 	* The extensions dictionary, an entry in the document's catalog dictionary,
 	* if present, shall contain one or more entries identifying
 	* developer-defined extensions to the ISO 32000-1 Standard.
-	* \see CatalogHandle
+	* \see \ref CatalogHandle
 	*/
 
 	/**
@@ -35,7 +35,7 @@ extern "C"
 	* \brief
 	* Iterator concept allowing to traverse over
 	* DeveloperExtensionsHandle collection.
-	* \see DeveloperExtensionsHandle
+	* \see \ref DeveloperExtensionsHandle
 	*/
 
 	/**
@@ -44,7 +44,7 @@ extern "C"
 	* \ingroup Documents
 	* \brief
 	* Single item within DeveloperExtensionsHandle collection.
-	* \see DeveloperExtensionsHandle
+	* \see \ref DeveloperExtensionsHandle
 	*/
 
 	/**
@@ -56,7 +56,7 @@ extern "C"
 	* \brief Get key at iterator position
 	*
 	* Ensure the iterator is valid.
-	* \see ::DeveloperExtensionsIterator_IsValid
+	* \see \ref DeveloperExtensionsIterator_IsValid
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetKey(DeveloperExtensionsIteratorHandle handle, NameObjectHandle* result);
 
@@ -64,7 +64,7 @@ extern "C"
 	* \brief Get value at iterator position
 	*
 	* Ensure the iterator is valid.
-	* \see ::DeveloperExtensionsIterator_IsValid
+	* \see \ref DeveloperExtensionsIterator_IsValid
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetValue(DeveloperExtensionsIteratorHandle handle, DeveloperExtensionHandle* result);
 
@@ -81,12 +81,13 @@ extern "C"
 	* \brief Advances iterator to the next position
 	*
 	* Ensure the iterator is valid.
-	* \see ::DeveloperExtensionsIterator_IsValid
+	* \see \ref DeveloperExtensionsIterator_IsValid
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_Next(DeveloperExtensionsIteratorHandle handle);
 
 	/**
 	* \copydoc IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_Release(DeveloperExtensionsIteratorHandle handle);
 
@@ -106,6 +107,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensions_Release(DeveloperExtensionsHandle handle);
 
@@ -134,6 +136,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_Release(DeveloperExtensionHandle handle);
 

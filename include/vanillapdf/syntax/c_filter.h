@@ -42,12 +42,26 @@ extern "C"
 	* \ingroup Files
 	* \brief TODO
 	*/
+
 	/**
 	* \class ASCIIHexDecodeFilterHandle
 	* \extends FilterBaseHandle
 	* \ingroup Files
 	* \brief TODO
 	*/
+
+	/**
+	* \memberof FilterBaseHandle
+	* @{
+	*/
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see \ref IUnknown_Release
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_Release(FilterBaseHandle handle);
+
+	/** @} */
 
 	/**
 	* \memberof FlateDecodeFilterHandle
@@ -59,7 +73,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION FlateDecodeFilter_Decode(FlateDecodeFilterHandle handle, BufferHandle data, BufferHandle* result);
 
 	/**
-	* \copydoc IUnknown_Release()
+	* \copydoc FilterBase_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION FlateDecodeFilter_Release(FlateDecodeFilterHandle handle);
 
@@ -75,7 +89,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION DCTDecodeFilter_Decode(DCTDecodeFilterHandle handle, BufferHandle data, BufferHandle* result);
 
 	/**
-	* \copydoc IUnknown_Release()
+	* \copydoc FilterBase_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DCTDecodeFilter_Release(DCTDecodeFilterHandle handle);
 
@@ -91,7 +105,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION ASCII85DecodeFilter_Decode(ASCII85DecodeFilterHandle handle, BufferHandle data, BufferHandle* result);
 
 	/**
-	* \copydoc IUnknown_Release()
+	* \copydoc FilterBase_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ASCII85DecodeFilter_Release(ASCII85DecodeFilterHandle handle);
 
@@ -107,7 +121,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION ASCIIHexDecodeFilter_Decode(ASCIIHexDecodeFilterHandle handle, BufferHandle data, BufferHandle* result);
 
 	/**
-	* \copydoc IUnknown_Release()
+	* \copydoc FilterBase_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ASCIIHexDecodeFilter_Release(ASCIIHexDecodeFilterHandle handle);
 

@@ -23,7 +23,7 @@ extern "C"
 	* A content stream is a PDF stream object whose data consists of
 	* a sequence of instructions describing the graphical elements
 	* to be painted on a page.
-	* \see PageObjectHandle
+	* \see \ref PageObjectHandle
 	*/
 
 	/**
@@ -43,7 +43,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Contents_Release(ContentsHandle handle);
 

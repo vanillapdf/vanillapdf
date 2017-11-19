@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_content_instruction.h
-	* This file contains class definitions for ContentInstructionHandle
+	* This file contains class definitions for \ref ContentInstructionHandle
 	*/
 
 	/**
@@ -34,7 +34,7 @@ extern "C"
 
 		/**
 		* \copydoc ContentObjectHandle
-		* \see ContentObjectHandle
+		* \see \ref ContentObjectHandle
 		*/
 		ContentInstructionType_Object
 	} ContentInstructionType;
@@ -61,7 +61,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_Release(ContentInstructionHandle handle);
 

@@ -32,7 +32,7 @@ extern "C"
 	*
 	* This function currently cannot fail. In order to indicate failure on initialization
 	* return error code in the decrypt function itself.
-	* \see DecryptFunction
+	* \see \ref EncryptionKeyDecryptFunction
 	*/
 	typedef void (*EncryptionKeyInitializeFunction)(void);
 
@@ -74,7 +74,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION EncryptionKey_Release(EncryptionKeyHandle handle);
 

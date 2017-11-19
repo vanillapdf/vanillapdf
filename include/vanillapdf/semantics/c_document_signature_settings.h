@@ -15,7 +15,7 @@ extern "C"
 
 	/**
 	* \file c_document_signature_settings.h
-	* This file contains class definitions for DocumentSignatureSettingsHandle
+	* This file contains class definitions for \ref DocumentSignatureSettingsHandle
 	*/
 
 	/**
@@ -23,7 +23,7 @@ extern "C"
 	* \extends IUnknownHandle
 	* \ingroup Documents
 	* \brief Group of settings controlling document's digital signature
-	* \see DigitalSignatureHandle
+	* \see \ref DigitalSignatureHandle
 	*/
 
 	/**
@@ -96,7 +96,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_Release(DocumentSignatureSettingsHandle handle);
 

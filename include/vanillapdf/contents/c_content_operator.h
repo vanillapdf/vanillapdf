@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_content_operator.h
-	* This file contains class definitions for ContentOperatorHandle
+	* This file contains class definitions for \ref ContentOperatorHandle
 	*/
 
 	/**
@@ -66,13 +66,13 @@ extern "C"
 
 		/**
 		* \copydoc ContentOperationBeginTextHandle
-		* \see ContentOperationBeginTextHandle
+		* \see \ref ContentOperationBeginTextHandle
 		*/
 		ContentOperatorType_BeginText,
 
 		/**
 		* \copydoc ContentOperationEndTextHandle
-		* \see ContentOperationEndTextHandle
+		* \see \ref ContentOperationEndTextHandle
 		*/
 		ContentOperatorType_EndText,
 		ContentOperatorType_CharacterSpacing,
@@ -82,7 +82,7 @@ extern "C"
 
 		/**
 		* \copydoc ContentOperationTextFontHandle
-		* \see ContentOperationTextFontHandle
+		* \see \ref ContentOperationTextFontHandle
 		*/
 		ContentOperatorType_TextFont,
 		ContentOperatorType_TextRenderingMode,
@@ -94,13 +94,13 @@ extern "C"
 
 		/**
 		* \copydoc ContentOperationTextShowHandle
-		* \see ContentOperationTextShowHandle
+		* \see \ref ContentOperationTextShowHandle
 		*/
 		ContentOperatorType_TextShow,
 
 		/**
 		* \copydoc ContentOperationTextShowArrayHandle
-		* \see ContentOperationTextShowArrayHandle
+		* \see \ref ContentOperationTextShowArrayHandle
 		*/
 		ContentOperatorType_TextShowArray,
 		ContentOperatorType_TextNextLineShow,
@@ -150,7 +150,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_Release(ContentOperatorHandle handle);
 

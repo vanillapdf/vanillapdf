@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_resource_dictionary.h
-	* This file contains class definitions for ResourceDictionaryHandle
+	* This file contains class definitions for \ref ResourceDictionaryHandle
 	*/
 
 	/**
@@ -24,7 +24,7 @@ extern "C"
 	* by a resource dictionary, which shall enumerate the
 	* named resources needed by the operators in the
 	* content stream and the names by which they can be referred to.
-	* \see PageObjectHandle
+	* \see \ref PageObjectHandle
 	*/
 
 	/**
@@ -40,6 +40,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_Release(ResourceDictionaryHandle handle);
 

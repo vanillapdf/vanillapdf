@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_buffer.h
-	* This file contains class definitions for BufferHandle
+	* This file contains class definitions for \ref BufferHandle
 	*/
 
 	/**
@@ -43,7 +43,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_Release(BufferHandle handle);
 

@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_name_object.h
-	* This file contains class definitions for NameObjectHandle
+	* This file contains class definitions for \ref NameObjectHandle
 	*/
 
 	/**
@@ -20,7 +20,7 @@ extern "C"
 	* \extends ObjectHandle
 	* \ingroup Objects
 	* \brief Represents unique name references in document.
-	* \see NameConstants
+	* \see \ref NameConstants
 	*/
 
 	/**
@@ -68,14 +68,14 @@ extern "C"
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_AcroForm;
 
 	/**
-	* \brief Represents ::DeveloperExtensionHandle property.
-	* \see DeveloperExtension_GetBaseVersion
+	* \brief Represents \ref DeveloperExtensionHandle property.
+	* \see \ref DeveloperExtensionHandle::DeveloperExtension_GetBaseVersion
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_BaseVersion;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_BitsPerComponent;
 
 	/**
-	* \brief Represents type for ::CatalogHandle
+	* \brief Represents type for \ref CatalogHandle
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Catalog;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Collection;
@@ -84,7 +84,7 @@ extern "C"
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Container;
 
 	/**
-	* \brief Represents page ::ContentsHandle
+	* \brief Represents page \ref ContentsHandle
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Contents;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Count;
@@ -92,21 +92,21 @@ extern "C"
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Dests;
 
 	/**
-	* \brief Represents document ::DeveloperExtensionsHandle
+	* \brief Represents document \ref DeveloperExtensionsHandle
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_DeveloperExtensions;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_EarlyChange;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Extends;
 
 	/**
-	* \brief Represents ::DeveloperExtensionHandle property.
-	* \see DeveloperExtension_GetExtensionLevel
+	* \brief Represents \ref DeveloperExtensionHandle property.
+	* \see \ref DeveloperExtensionHandle::DeveloperExtension_GetExtensionLevel
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_ExtensionLevel;
 
 	/**
-	* \brief Represents ::CatalogHandle property.
-	* \see Catalog_GetExtensions
+	* \brief Represents \ref CatalogHandle property.
+	* \see \ref CatalogHandle::Catalog_GetExtensions
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Extensions;
 
@@ -126,14 +126,14 @@ extern "C"
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Legal;
 
 	/**
-	* \brief Usually represents length of a ::StreamObjectHandle.
+	* \brief Usually represents length of a \ref StreamObjectHandle.
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Length;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Limits;
 
 	/**
-	* \brief Represents ::PageObjectHandle property.
-	* \see PageObject_GetMediaBox
+	* \brief Represents \ref PageObjectHandle property.
+	* \see \ref PageObjectHandle::PageObject_GetMediaBox
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_MediaBox;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Metadata;
@@ -148,35 +148,35 @@ extern "C"
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_OutputIntents;
 
 	/**
-	* \brief Represents ::PageLabelHandle property.
-	* \see PageLabel_Prefix
+	* \brief Represents \ref PageLabelHandle property.
+	* \see \ref PageLabelHandle::PageLabel_Prefix
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_P;
 
 	/**
-	* \brief Represents type for ::PageObjectHandle.
+	* \brief Represents type for \ref PageObjectHandle.
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Page;
 
 	/**
-	* \brief Represents type for ::PageLabelHandle.
+	* \brief Represents type for \ref PageLabelHandle.
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_PageLabel;
 
 	/**
-	* \brief Represents type for ::PageLabelsHandle.
+	* \brief Represents type for \ref PageLabelsHandle.
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_PageLabels;
 
 	/**
-	* \brief Represents ::CatalogHandle property.
-	* \see Catalog_GetPageLayout
+	* \brief Represents \ref CatalogHandle property.
+	* \see \ref CatalogHandle::Catalog_GetPageLayout
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_PageLayout;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_PageMode;
 
 	/**
-	* \brief Represents catalog ::PageTreeHandle.
+	* \brief Represents catalog \ref PageTreeHandle.
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Pages;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Parent;
@@ -188,56 +188,56 @@ extern "C"
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Resources;
 
 	/**
-	* \brief Represents ::CatalogHandle entry in document's dictionary.
+	* \brief Represents \ref CatalogHandle entry in document's dictionary.
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Root;
 
 	/**
-	* \brief Represents ::PageLabelHandle property.
-	* \see PageLabel_Style
+	* \brief Represents \ref PageLabelHandle property.
+	* \see \ref PageLabelHandle::PageLabel_Style
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_S;
 
 	/**
-	* \brief Represents ::PageLabelHandle property.
-	* \see PageLabel_Start
+	* \brief Represents \ref PageLabelHandle property.
+	* \see \ref PageLabelHandle::PageLabel_Start
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_St;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Size;
 
 	/**
-	* \brief Represents ::PageLayout value.
-	* \see PageLayout_SinglePage
+	* \brief Represents \ref PageLayout value.
+	* \see \ref PageLayout_SinglePage
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_SinglePage;
 
 	/**
-	* \brief Represents ::PageLayout value.
-	* \see PageLayout_OneColumn
+	* \brief Represents \ref PageLayout value.
+	* \see \ref PageLayout_OneColumn
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_OneColumn;
 
 	/**
-	* \brief Represents ::PageLayout value.
-	* \see PageLayout_TwoColumnLeft
+	* \brief Represents \ref PageLayout value.
+	* \see \ref PageLayout_TwoColumnLeft
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_TwoColumnLeft;
 
 	/**
-	* \brief Represents ::PageLayout value.
-	* \see PageLayout_TwoColumnRight
+	* \brief Represents \ref PageLayout value.
+	* \see \ref PageLayout_TwoColumnRight
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_TwoColumnRight;
 
 	/**
-	* \brief Represents ::PageLayout value.
-	* \see PageLayout_TwoPageLeft
+	* \brief Represents \ref PageLayout value.
+	* \see \ref PageLayout_TwoPageLeft
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_TwoPageLeft;
 
 	/**
-	* \brief Represents ::PageLayout value.
-	* \see PageLayout_TwoPageRight
+	* \brief Represents \ref PageLayout value.
+	* \see \ref PageLayout_TwoPageRight
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_TwoPageRight;
 
@@ -249,111 +249,111 @@ extern "C"
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Version;
 
 	/**
-	* \brief Represents document ::ViewerPreferencesHandle.
+	* \brief Represents document \ref ViewerPreferencesHandle.
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_ViewerPreferences;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_W;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_XRefStm;
 
 	/**
-	* \brief Represents ::ViewerPreferencesHandle property.
-	* \see ViewerPreferences_GetHideToolbar
+	* \brief Represents \ref ViewerPreferencesHandle property.
+	* \see \ref ViewerPreferencesHandle::ViewerPreferences_GetHideToolbar
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_HideToolbar;
 
 	/**
-	* \brief Represents ::ViewerPreferencesHandle property.
-	* \see ViewerPreferences_GetHideMenubar
+	* \brief Represents \ref ViewerPreferencesHandle property.
+	* \see \ref ViewerPreferencesHandle::ViewerPreferences_GetHideMenubar
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_HideMenubar;
 
 	/**
-	* \brief Represents ::ViewerPreferencesHandle property.
-	* \see ViewerPreferences_GetHideWindowUI
+	* \brief Represents \ref ViewerPreferencesHandle property.
+	* \see \ref ViewerPreferencesHandle::ViewerPreferences_GetHideWindowUI
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_HideWindowUI;
 
 	/**
-	* \brief Represents ::ViewerPreferencesHandle property.
-	* \see ViewerPreferences_GetFitWindow
+	* \brief Represents ViewerPreferencesHandle property.
+	* \see \ref ViewerPreferencesHandle::ViewerPreferences_GetFitWindow
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_FitWindow;
 
 	/**
-	* \brief Represents ::ViewerPreferencesHandle property.
-	* \see ViewerPreferences_GetCenterWindow
+	* \brief Represents \ref ViewerPreferencesHandle property.
+	* \see \ref ViewerPreferencesHandle::ViewerPreferences_GetCenterWindow
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_CenterWindow;
 
 	/**
-	* \brief Represents ::ViewerPreferencesHandle property.
-	* \see ViewerPreferences_GetDisplayDocTitle
+	* \brief Represents \ref ViewerPreferencesHandle property.
+	* \see \ref ViewerPreferencesHandle::ViewerPreferences_GetDisplayDocTitle
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_DisplayDocTitle;
 
 	/**
-	* \brief Represents ::ViewerPreferencesHandle property.
-	* \see ViewerPreferences_GetNonFullScreenPageMode
+	* \brief Represents \ref ViewerPreferencesHandle property.
+	* \see \ref ViewerPreferencesHandle::ViewerPreferences_GetNonFullScreenPageMode
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_NonFullScreenPageMode;
 
 	/**
-	* \brief Represents ::ViewerPreferencesHandle property.
-	* \see ViewerPreferences_GetDirection
+	* \brief Represents \ref ViewerPreferencesHandle property.
+	* \see \ref ViewerPreferencesHandle::ViewerPreferences_GetDirection
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Direction;
 
 	/**
-	* \brief Represents ::ViewerPreferencesHandle property.
-	* \see ViewerPreferences_GetViewArea
+	* \brief Represents \ref ViewerPreferencesHandle property.
+	* \see \ref ViewerPreferencesHandle::ViewerPreferences_GetViewArea
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_ViewArea;
 
 	/**
-	* \brief Represents ::ViewerPreferencesHandle property.
-	* \see ViewerPreferences_GetViewClip
+	* \brief Represents \ref ViewerPreferencesHandle property.
+	* \see \ref ViewerPreferencesHandle::ViewerPreferences_GetViewClip
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_ViewClip;
 
 	/**
-	* \brief Represents ::ViewerPreferencesHandle property.
-	* \see ViewerPreferences_GetPrintArea
+	* \brief Represents \ref ViewerPreferencesHandle property.
+	* \see \ref ViewerPreferencesHandle::ViewerPreferences_GetPrintArea
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_PrintArea;
 
 	/**
-	* \brief Represents ::ViewerPreferencesHandle property.
-	* \see ViewerPreferences_GetPrintClip
+	* \brief Represents \ref ViewerPreferencesHandle property.
+	* \see \ref ViewerPreferencesHandle::ViewerPreferences_GetPrintClip
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_PrintClip;
 
 	/**
-	* \brief Represents ::ViewerPreferencesHandle property.
-	* \see ViewerPreferences_GetPrintScaling
+	* \brief Represents \ref ViewerPreferencesHandle property.
+	* \see \ref ViewerPreferencesHandle::ViewerPreferences_GetPrintScaling
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_PrintScaling;
 
 	/**
-	* \brief Represents ::ViewerPreferencesHandle property.
-	* \see ViewerPreferences_GetDuplex
+	* \brief Represents \ref ViewerPreferencesHandle property.
+	* \see \ref ViewerPreferencesHandle::ViewerPreferences_GetDuplex
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Duplex;
 
 	/**
-	* \brief Represents ::ViewerPreferencesHandle property.
-	* \see ViewerPreferences_GetPickTrayByPDFSize
+	* \brief Represents \ref ViewerPreferencesHandle property.
+	* \see \ref ViewerPreferencesHandle::ViewerPreferences_GetPickTrayByPDFSize
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_PickTrayByPDFSize;
 
 	/**
-	* \brief Represents ::ViewerPreferencesHandle property.
-	* \see ViewerPreferences_GetPrintPageRange
+	* \brief Represents \ref ViewerPreferencesHandle property.
+	* \see \ref ViewerPreferencesHandle::ViewerPreferences_GetPrintPageRange
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_PrintPageRange;
 
 	/**
-	* \brief Represents ::ViewerPreferencesHandle property.
-	* \see ViewerPreferences_GetNumCopies
+	* \brief Represents \ref ViewerPreferencesHandle property.
+	* \see \ref ViewerPreferencesHandle::ViewerPreferences_GetNumCopies
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_NumCopies;
 
@@ -363,44 +363,44 @@ extern "C"
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_UseOC;
 
 	/**
-	* \brief Represents ::ReadingOrder value.
-	* \see ReadingOrder_LeftToRight
+	* \brief Represents \ref ReadingOrder value.
+	* \see \ref ReadingOrder_LeftToRight
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_L2R;
 
 	/**
-	* \brief Represents ::ReadingOrder value.
-	* \see ReadingOrder_RightToLeft
+	* \brief Represents \ref ReadingOrder value.
+	* \see \ref ReadingOrder_RightToLeft
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_R2L;
 
 	/**
-	* \brief Represents ::PrintScaling value.
-	* \see PrintScaling_AppDefault
+	* \brief Represents \ref PrintScaling value.
+	* \see \ref PrintScaling_AppDefault
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_AppDefault;
 
 	/**
-	* \brief Represents ::PrintScaling value.
-	* \see PrintScaling_None
+	* \brief Represents \ref PrintScaling value.
+	* \see \ref PrintScaling_None
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_None;
 
 	/**
-	* \brief Represents ::Duplex value.
-	* \see Duplex_Simplex
+	* \brief Represents \ref Duplex value.
+	* \see \ref Duplex_Simplex
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Simplex;
 
 	/**
-	* \brief Represents ::Duplex value.
-	* \see Duplex_DuplexFlipShortEdge
+	* \brief Represents \ref Duplex value.
+	* \see \ref Duplex_DuplexFlipShortEdge
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_DuplexFlipShortEdge;
 
 	/**
-	* \brief Represents ::Duplex value.
-	* \see Duplex_DuplexFlipLongEdge
+	* \brief Represents \ref Duplex value.
+	* \see \ref Duplex_DuplexFlipLongEdge
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_DuplexFlipLongEdge;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_FullScreen;
@@ -448,14 +448,14 @@ extern "C"
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Unknown;
 
 	/**
-	* \brief Represents ::DocumentTrappedType value.
-	* \see DocumentTrappedType_True
+	* \brief Represents \ref DocumentTrappedType value.
+	* \see \ref DocumentTrappedType_True
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_True;
 
 	/**
-	* \brief Represents ::DocumentTrappedType value.
-	* \see DocumentTrappedType_False
+	* \brief Represents \ref DocumentTrappedType value.
+	* \see \ref DocumentTrappedType_False
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_False;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_NeedsRendering;
@@ -477,7 +477,7 @@ extern "C"
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Annots;
 
 	/**
-	* \brief Represents type for ::LinkAnnotationHandle.
+	* \brief Represents type for \ref LinkAnnotationHandle.
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Link;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_D;
@@ -509,20 +509,20 @@ extern "C"
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_XRef;
 
 	/**
-	* \brief Represents type for ::FontHandle.
+	* \brief Represents type for \ref FontHandle.
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Font;
 
 	/**
-	* \brief Represents type for ::CompositeFontHandle.
+	* \brief Represents type for \ref CompositeFontHandle.
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Type0;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Type1;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_Type3;
 
 	/**
-	* \brief Represents ::CharacterMapHandle property.
-	* \see CharacterMap_ToUnicode
+	* \brief Represents \ref CharacterMapHandle property.
+	* \see \ref CharacterMapHandle::CharacterMap_ToUnicode
 	*/
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_ToUnicode;
 	VANILLAPDF_API extern const struct NameObjectHandleTag* NameConstant_CIDSystemInfo;

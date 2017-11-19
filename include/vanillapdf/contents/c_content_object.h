@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_content_object.h
-	* This file contains class definitions for ContentObjectHandle
+	* This file contains class definitions for \ref ContentObjectHandle
 	*/
 
 	/**
@@ -48,13 +48,13 @@ extern "C"
 	typedef enum {
 		/**
 		* \copydoc ContentObjectTextHandle
-		* \see ContentObjectTextHandle
+		* \see \ref ContentObjectTextHandle
 		*/
 		ContentObjectType_Text,
 
 		/**
 		* \copydoc ContentObjectInlineImageHandle
-		* \see ContentObjectInlineImageHandle
+		* \see \ref ContentObjectInlineImageHandle
 		*/
 		ContentObjectType_InlineImage
 	} ContentObjectType;
@@ -81,7 +81,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_Release(ContentObjectHandle handle);
 
@@ -104,7 +104,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_Release(ContentObjectTextHandle handle);
 
@@ -127,7 +127,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_Release(ContentObjectInlineImageHandle handle);
 

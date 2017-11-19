@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_output_stream_interface.h
-	* This file contains class definitions for OutputStreamInterfaceHandle
+	* This file contains class definitions for \ref OutputStreamInterfaceHandle
 	*/
 
 	/**
@@ -34,6 +34,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION OutputStreamInterface_Release(OutputStreamInterfaceHandle handle);
 

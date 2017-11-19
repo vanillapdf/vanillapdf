@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_digital_signature.h
-	* This file contains class definitions for DigitalSignatureHandle
+	* This file contains class definitions for \ref DigitalSignatureHandle
 	*/
 
 	/**
@@ -122,7 +122,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_Release(DigitalSignatureHandle handle);
 
@@ -146,7 +146,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_Release(ByteRangeCollectionHandle handle);
 
@@ -169,7 +169,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_Release(ByteRangeHandle handle);
 

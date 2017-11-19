@@ -19,7 +19,7 @@ extern "C"
 	* \class FieldCollectionHandle
 	* \extends IUnknownHandle
 	* \ingroup Documents
-	* \brief Collection of FieldHandle
+	* \brief Collection of \ref FieldHandle
 	*/
 
 	/**
@@ -72,25 +72,25 @@ extern "C"
 	typedef enum {
 		/**
 		* \copydoc ButtonFieldHandle
-		* \see ButtonFieldHandle
+		* \see \ref ButtonFieldHandle
 		*/
 		FieldType_Button = 0,
 
 		/**
 		* \copydoc TextFieldHandle
-		* \see TextFieldHandle
+		* \see \ref TextFieldHandle
 		*/
 		FieldType_Text,
 
 		/**
 		* \copydoc ChoiceFieldHandle
-		* \see ChoiceFieldHandle
+		* \see \ref ChoiceFieldHandle
 		*/
 		FieldType_Choice,
 
 		/**
 		* \copydoc SignatureFieldHandle
-		* \see SignatureFieldHandle
+		* \see \ref SignatureFieldHandle
 		*/
 		FieldType_Signature,
 	} FieldType;
@@ -113,7 +113,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_Release(FieldCollectionHandle handle);
 
@@ -132,22 +132,22 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Field_GetType(FieldHandle handle, FieldType* result);
 
 	/**
-	* \brief Reinterpret current object as ButtonFieldHandle.
+	* \brief Reinterpret current object as \ref ButtonFieldHandle.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Field_ToButton(FieldHandle handle, ButtonFieldHandle* result);
 
 	/**
-	* \brief Reinterpret current object as TextFieldHandle.
+	* \brief Reinterpret current object as \ref TextFieldHandle.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Field_ToText(FieldHandle handle, TextFieldHandle* result);
 
 	/**
-	* \brief Reinterpret current object as ChoiceFieldHandle.
+	* \brief Reinterpret current object as \ref ChoiceFieldHandle.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Field_ToChoice(FieldHandle handle, ChoiceFieldHandle* result);
 
 	/**
-	* \brief Reinterpret current object as SignatureFieldHandle.
+	* \brief Reinterpret current object as \ref SignatureFieldHandle.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Field_ToSignature(FieldHandle handle, SignatureFieldHandle* result);
 
@@ -165,8 +165,7 @@ extern "C"
 	*/
 
 	/**
-	* \copydoc IUnknown_Release
-	* \see IUnknown_Release
+	* \copydoc Field_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_Release(ButtonFieldHandle handle);
 
@@ -178,8 +177,7 @@ extern "C"
 	*/
 
 	/**
-	* \copydoc IUnknown_Release
-	* \see IUnknown_Release
+	* \copydoc Field_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION TextField_Release(TextFieldHandle handle);
 
@@ -191,8 +189,7 @@ extern "C"
 	*/
 
 	/**
-	* \copydoc IUnknown_Release
-	* \see IUnknown_Release
+	* \copydoc Field_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_Release(ChoiceFieldHandle handle);
 
@@ -211,8 +208,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_GetValue(SignatureFieldHandle handle, DigitalSignatureHandle* result);
 
 	/**
-	* \copydoc IUnknown_Release
-	* \see IUnknown_Release
+	* \copydoc Field_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_Release(SignatureFieldHandle handle);
 

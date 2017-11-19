@@ -21,7 +21,7 @@ extern "C"
 	* \ingroup Documents
 	* \brief
 	* Base class for document outlines
-	* \see CatalogHandle
+	* \see \ref CatalogHandle
 	*/
 
 	/**
@@ -30,7 +30,7 @@ extern "C"
 	* \ingroup Documents
 	* \brief
 	* The root of a document's outline hierarchy
-	* \see CatalogHandle
+	* \see \ref CatalogHandle
 	*/
 
 	/**
@@ -39,7 +39,7 @@ extern "C"
 	* \ingroup Documents
 	* \brief
 	* Child element within tree-structured hierarchy of outline items
-	* \see CatalogHandle
+	* \see \ref CatalogHandle
 	*/
 
 	/**
@@ -49,7 +49,7 @@ extern "C"
 	* \brief
 	* Representing the components in the DeviceRGB colour
 	* space of the colour that shall be used for the outline entry's text.
-	* \see OutlineItemHandle
+	* \see \ref OutlineItemHandle
 	*/
 
 	/**
@@ -59,7 +59,7 @@ extern "C"
 	* \brief
 	* A set of flags specifying style characteristics
 	* for displaying the outline item's text
-	* \see OutlineItemHandle
+	* \see \ref OutlineItemHandle
 	*/
 
 	/**
@@ -99,7 +99,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_Release(OutlineBaseHandle handle);
 
@@ -135,8 +135,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetCount(OutlineHandle handle, IntegerObjectHandle* result);
 
 	/**
-	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \copydoc OutlineBase_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Outline_Release(OutlineHandle handle);
 
@@ -204,8 +203,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetFlags(OutlineItemHandle handle, OutlineItemFlagsHandle* result);
 
 	/**
-	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \copydoc OutlineBase_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_Release(OutlineItemHandle handle);
 
@@ -233,7 +231,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_Release(OutlineItemColorHandle handle);
 
@@ -256,7 +254,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_Release(OutlineItemFlagsHandle handle);
 

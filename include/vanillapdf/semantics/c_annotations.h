@@ -23,7 +23,7 @@ extern "C"
 	* An array of annotation dictionaries that shall contain indirect
 	* references to all annotations associated with
 	* the page (see 12.5, "Annotations").
-	* \see PageObjectHandle
+	* \see \ref PageObjectHandle
 	*/
 
 	/**
@@ -34,7 +34,7 @@ extern "C"
 	* An annotation associates an object such as a note, sound, or movie
 	* with a location on a page of a PDF document, or provides a way to
 	* interact with the user by means of the mouse and keyboard.
-	* \see PageAnnotationsHandle
+	* \see \ref PageAnnotationsHandle
 	*/
 
 	/**
@@ -226,7 +226,7 @@ extern "C"
 	* \brief
 	* Return type of annotation.
 	* Result can be used to convert to derived type.
-	* \param handle a handle received from page ::PageAnnotations_At
+	* \param handle a handle received from page \ref PageAnnotationsHandle::PageAnnotations_At
 	* \param result a pointer to variable will be filled with annotation type, otherwise unchanged
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetType(AnnotationHandle handle, AnnotationType* result);
@@ -238,6 +238,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Annotation_Release(AnnotationHandle handle);
 
@@ -254,7 +255,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_GetDestination(LinkAnnotationHandle handle, DestinationHandle* result);
 
 	/**
-	* \copydoc IUnknown_Release
+	* \copydoc Annotation_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_Release(LinkAnnotationHandle handle);
 
@@ -273,7 +274,7 @@ extern "C"
 	/**
 	* \brief
 	* Get single annotation from array at specific position
-	* \param handle a handle received from page ::PageObject_GetAnnotations
+	* \param handle a handle received from page \ref PageObjectHandle::PageObject_GetAnnotations
 	* \param at position at which the element is located in the source array
 	* \param result a pointer to variable will be filled with handle to
 	* annotation internal structure, otherwise unchanged
@@ -282,6 +283,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Release(PageAnnotationsHandle handle);
 

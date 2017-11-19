@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_date.h
-	* This file contains class definitions for DateHandle
+	* This file contains class definitions for \ref DateHandle
 	*/
 
 	/**
@@ -94,6 +94,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Date_Release(DateHandle handle);
 

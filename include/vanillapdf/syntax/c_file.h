@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_file.h
-	* This file contains class definitions for FileHandle
+	* This file contains class definitions for \ref FileHandle
 	*/
 
 	/**
@@ -27,8 +27,8 @@ extern "C"
 	* The file is basically composed of:
 	* - __Header__ is basically just a statement about
 	*   the PDF version this file is referring to
-	* - __Body__ is just a sequence of \ref Objects described in ::XrefHandle
-	* - The __trailer__ contains the ::XrefHandle itself,
+	* - __Body__ is just a sequence of \ref Objects described in cross-reference section
+	* - The __trailer__ contains the \ref XrefHandle itself,
 	*   with the bytes offset to start of the last cross-reference section.
 	*
 	* When the file has been incrementally updated,
@@ -79,14 +79,12 @@ extern "C"
 	* \brief Set files encryption key
 	*
 	* This is most often certificate.
-	* \see EncryptionKeyHandle
+	* \see \ref EncryptionKeyHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION File_SetEncryptionKey(FileHandle handle, EncryptionKeyHandle key);
 
 	/**
 	* \brief Get chain of xref tables for iteration
-	* \see XrefChainHandle
-	* \see XrefChainIterator
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle handle, XrefChainHandle* result);
 
@@ -96,7 +94,8 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION File_GetIndirectObject(FileHandle handle, biguint_type objNumber, ushort_type genNumber, ObjectHandle* result);
 
 	/**
-	* \copydoc IUnknown_Release()
+	* \copydoc IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION File_Release(FileHandle handle);
 

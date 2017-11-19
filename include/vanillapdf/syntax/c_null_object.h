@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_null_object.h
-	* This file contains class definitions for NullObjectHandle
+	* This file contains class definitions for \ref NullObjectHandle
 	*/
 
 	/**

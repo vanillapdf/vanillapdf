@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_file_writer.h
-	* This file contains class definitions for FileWriterHandle
+	* This file contains class definitions for \ref FileWriterHandle
 	*/
 
 	/**
@@ -48,7 +48,8 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_WriteIncremental(FileWriterHandle handle, FileHandle source, FileHandle destination);
 
 	/**
-	* \copydoc IUnknown_Release()
+	* \copydoc IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_Release(FileWriterHandle handle);
 

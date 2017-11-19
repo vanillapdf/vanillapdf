@@ -14,7 +14,7 @@ extern "C"
 
 	/**
 	* \file c_catalog.h
-	* This file contains class definitions for CatalogHandle
+	* This file contains class definitions for \ref CatalogHandle
 	*/
 
 	/**
@@ -22,7 +22,7 @@ extern "C"
 	* \extends IUnknownHandle
 	* \ingroup Documents
 	* \brief The root of a document's object hierarchy
-	* \see DocumentHandle
+	* \see \ref DocumentHandle
 	*/
 
 	/**
@@ -128,7 +128,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see IUnknown_Release
+	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Catalog_Release(CatalogHandle handle);
 
