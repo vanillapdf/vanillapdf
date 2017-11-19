@@ -7,22 +7,22 @@
 The library is writted in standard C++ (currently 14) and can be compiled using
 Visual studio and GCC (tested on Ubuntu 16.04) as well.
 
-It provides only ANSI <b>C API</b>.<br>
-Reason, why I have chosen the <b>C API</b> is rooted in the incompatibility of the C++ ABI between compilers.<br>
+It provides only <b>ANSI C</b> API. The reason is rooted within the incompatibility of the C++ ABI between compilers.<br>
+Functions across the interface use standard C caller clean-up [<b>cdecl</b>](https://en.wikipedia.org/wiki/X86_calling_conventions#cdecl) calling convention.<br>
 
 \section exceptions Exceptions
 
-Library uses C++ exceptions internally.
-Each interface function is wrapped inside try-catch block to prevent any exceptions to escape and potentially crash the application.
-All exceptions thrown in this way are caught and their message is stored in a thread-local buffer.
-This buffer is separate for each thread and has a pre-allocated size in case of memory shortage.
+Library uses C++ exceptions internally.<br>
+Each interface function is wrapped inside try-catch block to prevent any exceptions to escape and potentially crash the application.<br>
+All exceptions thrown in this way are caught and their message is stored in a thread-local buffer.<br>
+This buffer is separate for each thread and has a pre-allocated size in case of memory shortage.<br>
 
 \section object_ownership Object ownership
 
-All handles are basically opaque pointers to internal structures.
-Library uses so-called intrusive pointer reference counting mechanism.
-Usually, the structure and the reference counter are two separate objects.
-In this case, the reference counter is embedded inside the structure body.
+All handles are basically opaque pointers to internal structures.<br>
+Library uses so-called intrusive pointer reference counting mechanism.<br>
+Usually, the structure and the reference counter are two separate objects.<br>
+In this case, the reference counter is embedded inside the structure body.<br>
 
 TODO image_here
 
@@ -46,9 +46,9 @@ Content instructions
 
 Library provides multiple interfaces, that could be overriden by the calling application.
 
-For instance, when signing a document, it is possible to use classic PKCS#12 (Personal Information Exchange described in <a href="https://tools.ietf.org/html/rfc7292">RFC 7292</a>).
-Unfortunately, this would not work with smart cards, where the private key is not directly accessible.
-User can override \ref SigningKeyHandle and provide signing implementation outside library boundaries.
+For instance, when signing a document, it is possible to use classic PKCS#12 (Personal Information Exchange described in [<b>RFC 7292</b>](https://tools.ietf.org/html/rfc7292).<br>
+Unfortunately, this would not work with smart cards, where the private key is not directly accessible.<br>
+User can override \ref SigningKeyHandle and provide signing implementation outside library boundaries.<br>
 
 More extendable interfaces:
 <ul>
