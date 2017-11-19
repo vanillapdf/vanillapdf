@@ -1,0 +1,241 @@
+/*! 
+\page page_pdf_course PDF fundamentals
+\tableofcontents
+
+In the first place, we will talk about the syntactic structure of the document.<br>
+If You're already familiar with the syntax, please skip to the \ref document_semantics.<br>
+
+\section file_structure File structure
+
+The first part explains syntactic structure of the document:
+
+<ul>
+<li>Section \ref object_types.
+<li>Section \ref indirect_objects.
+<li>Section \ref file_filters.
+<li>Section \ref file_header.
+<li>Section \ref file_body.
+<li>Section \ref file_xref.
+<li>Section \ref file_trailer.
+</ul>
+
+\subsection object_types Object types
+
+PDF file consists on sequence of object with a few basic types.<br>
+\ref BooleanObjectHandle "Boolean",
+\ref IntegerObjectHandle "Integer",
+\ref RealObjectHandle "Real",
+\ref StringObjectHandle "String",
+\ref NameObjectHandle "Name",
+\ref ArrayObjectHandle "Array",
+\ref DictionaryObjectHandle "Dictionary",
+\ref StreamObjectHandle "Stream" and
+\ref NullObjectHandle "Null".<br>
+
+\code{.unparsed}
+true, false		% boolean types
+7				% integer type
+3.14159			% real type
+(Literal)		% literal string
+<00FF00FF>		% hexadecimal string
+/Name			% name object
+[0 1 2 3]		% homogenous array
+null			% null reference
+
+<<						% Dictionary begin
+	/Type /Dictionary	% Dictionary entry with key "/Type" and value "/Dictionary"
+	/Value 10			% Dictionary entry with key "Value" and value "10"
+>>						% Dictionary end
+
+<<						% Stream header begin
+	/Length 1337		% Stream byte stream length 
+>>						% Stream header end
+stream					% Stream data begin
+%% byte stream data skipped for brevity %%
+endstream				% Stream data end
+
+\endcode
+
+\subsection indirect_objects Indirect objects
+
+Any object can be labeled as indirect, meaning it is assigned an unique number within file.<br>
+In most places and indirect reference to this object can be used instead of the object itself.<br>
+
+\code{.unparsed}
+1 0 obj
+(This is an indirect object)
+
+2 0 obj
+<<						% Dictionary begin
+	/Type (Dictionary)	% Sample dictionary entry
+	/Value 1 0 R		% Dictionary entry with key "Value" and its value "(This is an indirect object)"
+>>						% Dictionary end
+\endcode
+
+This association has to be added into the cross-reference table, explained in the section \ref file_xref.<br>
+
+\subsection file_filters Filters
+
+PDF streams support compression, so that the file size can be optimized.<br>
+Multiple compression methods are supported, such as \ref ASCII85DecodeFilterHandle, \ref FlateDecodeFilterHandle and others.<br>
+
+\code{.unparsed}
+1 0 obj
+<<
+	/Length 1337
+	/Filter /FlateDecode
+>>
+stream
+%% byte stream data skipped for brevity %%
+endstream
+\endcode
+
+In this sample was used \ref FlateDecodeFilterHandle.<br>
+The compressed byte stream size is exactly 1337 bytes long.
+
+\subsection file_header File header
+
+Header basically contains only the version of the PDF specification this file conforms to.<br>
+
+\code{.unparsed}
+%PDF-1.4
+\endcode
+
+\subsection file_body File body
+
+Body is just a sequence of indirect objects defined in the \ref file_xref.<br>
+For a complete sample view \ref file_example.<br>
+
+\subsection file_xref File cross-reference table
+
+Quote from 7.5.4 PDF reference:<br>
+"The cross-reference table contains information that permits random access to indirect objects within the file so that the entire file need not be read to locate any particular object."<br>
+
+What this means, is that there are stored byte offsets for every indirect object.<br>
+When the file is read, the reader jumps to the trailer, which is at the very end of the file.<br>
+Finds an offset to this section, searches for a object by their unique identifier (object number).<br>
+From this point, the reader can just seek to the exact offset and read the object.<br>
+
+\code{.unparsed}
+xref
+0 4
+0000000000 65535 f 
+0000000009 00000 n 
+0000000056 00000 n 
+0000000097 00000 n 
+\endcode
+
+This sample defined a cross-reference section with 4 entries.<br>
+First entry is not used, denoted by the letter 'f' as "free".<br>
+Next entry is at the file offset 9. Letter 'n' means the entry is "in-use".<br>
+
+\subsection file_trailer File trailer
+
+Trailer contains a byte offset to the files cross-reference table.<br>
+There are also a few metadata information about the file, for example whether the document is encrypted.<br>
+
+\code{.unparsed}
+trailer
+<</Info 3 0 R /Root 1 0 R /Size 4>>
+startxref
+181
+%%EOF
+\endcode
+
+This trailer states, that a cross-reference section can be found at offset 181.<br>
+Additionaly, the document root object is indirect with identifier 1 (object number).<br>
+Document metadata are stored in is indirect with identifier 3 (object number).<br>
+Both document root and metadata should be defined in the cross-reference table.<br>
+
+____________________________________________________
+
+\section document_semantics Document semantics
+
+From the semantic point of view, the root of the document structure is called \ref CatalogHandle.<br>
+Catalog contains tree of pages, and other important document data.<br>
+Document \ref PageObjectHandle contains entry called Contents, which is serialized stream of PostScript instructions.<br>
+
+Sample page contents:<br>
+\code{.unparsed}
+/P <</MCID 20 >>BDC 
+BT
+/TT0 1 Tf
+0.0001 Tc
+-0.0009 Tw
+12 0 0 12 90 293.82 Tm
+(This FAQ is prepared in support of) Tj
+0.0003 Tc
+0.0007 Tw
+14.055 0 Td
+[( ISO 19005-1:2005, Docum)8(e)-1(nt m)8(a)-1(nagem)8(e)-1(nt \227 )] TJ
+0.0005 Tc
+-0.0005 Tw
+-14.055 -1.15 Td
+[(Electronic docum)8(e)-1(nt file for)-6(m)8(at for long-te)] TJ
+0.0004 Tc
+-0.001 Tw
+17.305 0 Td
+[(rm)8( preservation \227 Part 1: U)8(se of PDF 1.4 )] TJ
+0 Tw
+-17.305 -1.15 Td
+(\(PDF/A-1\) )Tj
+ET
+EMC
+\endcode
+
+This part gets a bit more complex, since there are a \b lot of different print instructions.<br>
+What is essential is that all operators are preceeded by their parameters.<br>
+
+Setting the font associated with name /TT0 and size 1:
+\code{.unparsed}
+/TT0 1 Tf
+\endcode
+
+For a complete list of postscript instructions visit PDF reference section 8 - Graphics.<br>
+For a complete reference visit \ref Contents.<br>
+
+____________________________________________________
+
+\section file_example Complete file example
+
+\code{.unparsed}
+%PDF-1.7
+1 0 obj
+<</Pages 2 0 R /Type /Catalog>>
+endobj
+2 0 obj
+<</Count 0 /Type /Pages>>
+endobj
+3 0 obj
+<</CreationDate (D:20170831161944Z) /Producer (I am the producer)>>
+endobj
+
+xref
+0 4
+0000000000 65535 f 
+0000000009 00000 n 
+0000000056 00000 n 
+0000000097 00000 n 
+trailer
+<</Info 3 0 R /Root 1 0 R /Size 4>>
+startxref
+181
+%%EOF
+\endcode
+
+At the start, there is marker, that this file conforms to the latest PDF standard 1.7.<br>
+Next we seek to the end of the file, searching for offset to the last cross-reference section.<br>
+In this case, the cross-reference section is at offset 181 from the beginning of the file.<br>
+The file contains 3 indirect objects, with identifiers 1, 2, 3 (object numbers).<br>
+
+\note The first entry in the cross-reference table is a head of "free entries list".<br>
+It is possible to free and reuse objects using incremental updates, but that is out of scope of this tutorial.<br>
+
+Trailer contains reference to the root of the document structure - Catalog, object 1.<br>
+Catalog contains reference to page tree structure with object id 2.<br>
+Page tree is empty for this document - it does not contain any page.<br>
+The last object 3. is just the document metadata, with the date it was created and name of the producer.<br>
+
+<b>That's it! We've covered the fundamentals of the PDF files.</b>
+
+*/

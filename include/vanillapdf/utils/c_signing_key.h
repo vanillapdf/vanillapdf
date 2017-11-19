@@ -24,6 +24,7 @@ extern "C"
 	* \brief Used for document signing
 	*
 	* Standard routine for message signing is Initialize, (single or multiple) Update, Final.
+	* \see DocumentSignatureSettingsHandle
 	*/
 
 	/**
@@ -35,7 +36,7 @@ extern "C"
 	* \brief Initialize signing engine using selected digest algorithm
 	*
 	* This function should reset all previous settings and prepare
-	* for future ::SigningKeyUpdateFunction to be called.
+	* for future \ref SigningKeyUpdateFunction to be called.
 	*/
 	typedef error_type (*SigningKeyInitializeFunction)(MessageDigestAlgorithmType algorithm);
 
@@ -51,10 +52,9 @@ extern "C"
 	* \brief Finish the digest calculation and return signed hash
 	*
 	* This function should allocate buffer, filled with data.
-	* The data should be hash value according to \p algorithm in ::SigningKeyInitializeFunction.
+	* The data should be hash value according to \p algorithm in \ref SigningKeyInitializeFunction.
 	*
 	* Hash should be signed and the result should be either a DER-encoded PKCS#1 binary data object or a DER-encoded PKCS#7 binary data object.
-	* \see ::DigitalSignatureHandle
 	*/
 	typedef error_type (*SigningKeyFinalFunction)(BufferHandle* result);
 
@@ -79,7 +79,7 @@ extern "C"
 
 	/**
 	* \copydoc IUnknown_Release
-	* \see ::IUnknown_Release
+	* \see IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_Release(SigningKeyHandle handle);
 

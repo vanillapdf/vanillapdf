@@ -1,0 +1,15 @@
+/*!
+\mainpage
+This manual documents whole vanillapdf __C API__.<br>
+
+The library is writted in standard C++ (currently 14) and can be compiled using
+Visual studio and GCC (tested on Ubuntu 16.04) as well.
+
+Reason, why I have chosen the __C API__ is rooted in the incompatibility of the C++ ABI between compilers.<br>
+In order to provide a built library, I'd rather loose all of the C++ API benefits and provide only __C API__.<br>
+
+There are build scripts provided in CMake (<https://cmake.org/>) framework.<br>
+
+For extended introduction please continue at \ref page_overview.
+
+*/

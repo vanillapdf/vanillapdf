@@ -1,0 +1,68 @@
+/*!
+\page page_architecture Architecture
+\tableofcontents
+
+\section lib_interface Library interface
+
+The library is writted in standard C++ (currently 14) and can be compiled using
+Visual studio and GCC (tested on Ubuntu 16.04) as well.
+
+It provides only ANSI <b>C API</b>.<br>
+Reason, why I have chosen the <b>C API</b> is rooted in the incompatibility of the C++ ABI between compilers.<br>
+
+\section exceptions Exceptions
+
+Library uses C++ exceptions internally.
+Each interface function is wrapped inside try-catch block to prevent any exceptions to escape and potentially crash the application.
+All exceptions thrown in this way are caught and their message is stored in a thread-local buffer.
+This buffer is separate for each thread and has a pre-allocated size in case of memory shortage.
+
+\section object_ownership Object ownership
+
+All handles are basically opaque pointers to internal structures.
+Library uses so-called intrusive pointer reference counting mechanism.
+Usually, the structure and the reference counter are two separate objects.
+In this case, the reference counter is embedded inside the structure body.
+
+TODO image_here
+
+\section file_layer File layer
+
+\subsection arch_streams IO Streams
+\subsection arch_tokens Tokens
+\subsection arch_objects Objects
+\subsection arch_xref Cross-reference tables
+
+\section document_layer Document layer
+
+Document layer is just a wrapper above \ref file_layer.
+It encapsulates syntactic operations and forms operations with semantic corectness.
+
+\section contents_layer Contents layer
+
+Content instructions
+
+\section function_callbacks Function callbacks
+
+Library provides multiple interfaces, that could be overriden by the calling application.
+
+For instance, when signing a document, it is possible to use classic PKCS#12 (Personal Information Exchange described in <a href="https://tools.ietf.org/html/rfc7292">RFC 7292</a>).
+Unfortunately, this would not work with smart cards, where the private key is not directly accessible.
+User can override \ref SigningKeyHandle and provide signing implementation outside library boundaries.
+
+More extendable interfaces:
+<ul>
+<li>Document signing with \ref SigningKeyHandle
+<li>Document encryption with \ref EncryptionKeyHandle
+</ul>
+
+\section arch_deps Dependencies
+
+Library has three dependent libraries:
+<ul>
+<li>OpenSSL (<https://www.openssl.org/>) - used for encrypted files
+<li>zlib (<http://www.zlib.net/>) - used for flate compression method
+<li>libjpeg (<http://libjpeg.sourceforge.net/>) - used for compressed JPEG images
+</ul>
+
+*/
