@@ -22,6 +22,7 @@ typedef int64_t stream_size;
 namespace constant {
 
 const int BUFFER_SIZE = 16384;
+const uint32_t MAX_MESSAGE_SIZE = 256;
 const types::stream_offset BAD_OFFSET = -1;
 const types::ushort MAX_GENERATION_NUMBER = 65535;
 

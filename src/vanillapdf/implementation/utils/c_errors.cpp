@@ -19,8 +19,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetLastErrorMessageLength(si
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(size);
 
 	try {
-		std::string message = Errors::GetLastErrorMessage();
-		*size = message.size() + 1;
+		*size = Errors::GetLastErrorMessageLength();
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -29,17 +28,15 @@ VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetLastErrorMessage(char* da
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
 
 	try {
-		std::string message = Errors::GetLastErrorMessage();
-
-		// Include the NULL termination character
-		size_t message_size = message.size() + 1;
+		auto message = Errors::GetLastErrorMessage();
+		auto message_size = Errors::GetLastErrorMessageLength();
 
 		// Terminate if the buffer is small
 		if (size < message_size) {
 			return VANILLAPDF_ERROR_GENERAL;
 		}
 		
-		std::memcpy(data, message.c_str(), message_size);
+		std::memcpy(data, message, message_size);
 
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
