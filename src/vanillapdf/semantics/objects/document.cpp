@@ -693,7 +693,7 @@ void Document::Sign(const std::string& path, DocumentSignatureSettingsPtr option
 	byte_ranges->AddAttribute(byte_range_attribute);
 
 	// TODO hardcoded value
-	std::string contents_value(1024, '0');
+	std::string contents_value(32768, '0');
 	SerializationOverrideAttributePtr contents_attribute = make_deferred<SerializationOverrideAttribute>(contents_value);
 	HexadecimalStringObjectPtr signature_contents = make_deferred<HexadecimalStringObject>();
 	signature_contents->AddAttribute(contents_attribute);
