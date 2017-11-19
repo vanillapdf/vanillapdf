@@ -130,7 +130,7 @@ error_type process_library_info() {
 	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetVersionMajor(&library_version_major));
 	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetVersionMinor(&library_version_minor));
 	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetVersionPatch(&library_version_patch));
-	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetVersionPatch(&library_version_build));
+	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetVersionBuild(&library_version_build));
 	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetAuthor(&library_author));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetBuildDay(&library_build_day));

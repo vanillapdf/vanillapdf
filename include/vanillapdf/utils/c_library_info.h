@@ -56,7 +56,7 @@ extern "C"
 	* A change in the library build version
 	* should not affect any kind of functionality.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION LibraryInfo_GetVersionPatch(integer_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION LibraryInfo_GetVersionBuild(integer_type* result);
 
 	/**
 	* \brief Get library author name
