@@ -25,7 +25,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Destination_GetPageNumber(Destinati
 
 VANILLAPDF_API error_type CALLING_CONVENTION Destination_Release(DestinationHandle* handle)
 {
-	return ObjectRelease<DestinationBase, DestinationHandle*>(handle);
+	return ObjectRelease<DestinationBase, DestinationHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Contains(NamedDestinationsHandle* handle, const NameObjectHandle* name_handle, boolean_type* result)
@@ -61,5 +61,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Find(NamedDestina
 }
 VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Release(NamedDestinationsHandle* handle)
 {
-	return ObjectRelease<NamedDestinations, NamedDestinationsHandle*>(handle);
+	return ObjectRelease<NamedDestinations, NamedDestinationsHandle>(handle);
 }

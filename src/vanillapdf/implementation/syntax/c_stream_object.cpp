@@ -83,5 +83,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_SetBody(StreamObjectHa
 
 VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_Release(StreamObjectHandle* handle)
 {
-	return ObjectRelease<StreamObject, StreamObjectHandle*>(handle);
+	return ObjectRelease<StreamObject, StreamObjectHandle>(handle);
 }

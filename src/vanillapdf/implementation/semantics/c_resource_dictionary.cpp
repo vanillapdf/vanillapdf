@@ -26,5 +26,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_GetFontMap(Resou
 
 VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_Release(ResourceDictionaryHandle* handle)
 {
-	return ObjectRelease<ResourceDictionary, ResourceDictionaryHandle*>(handle);
+	return ObjectRelease<ResourceDictionary, ResourceDictionaryHandle>(handle);
 }

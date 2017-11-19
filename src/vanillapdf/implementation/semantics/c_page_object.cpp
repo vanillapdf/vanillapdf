@@ -129,5 +129,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetMediaBox(PageObjectHa
 
 VANILLAPDF_API error_type CALLING_CONVENTION PageObject_Release(PageObjectHandle* handle)
 {
-	return ObjectRelease<PageObject, PageObjectHandle*>(handle);
+	return ObjectRelease<PageObject, PageObjectHandle>(handle);
 }

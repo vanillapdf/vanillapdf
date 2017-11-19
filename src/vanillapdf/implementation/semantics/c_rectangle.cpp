@@ -69,5 +69,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_UpperRightY(RectangleHand
 
 VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_Release(RectangleHandle* handle)
 {
-	return ObjectRelease<Rectangle, RectangleHandle*>(handle);
+	return ObjectRelease<Rectangle, RectangleHandle>(handle);
 }

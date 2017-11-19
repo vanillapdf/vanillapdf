@@ -60,5 +60,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_SetUnsignedIntegerVal
 
 VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_Release(IntegerObjectHandle* handle)
 {
-	return ObjectRelease<IntegerObject, IntegerObjectHandle*>(handle);
+	return ObjectRelease<IntegerObject, IntegerObjectHandle>(handle);
 }

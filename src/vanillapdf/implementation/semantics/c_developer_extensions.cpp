@@ -58,7 +58,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_GetExtensionLeve
 
 VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_Release(DeveloperExtensionHandle* handle)
 {
-	return ObjectRelease<DeveloperExtension, DeveloperExtensionHandle*>(handle);
+	return ObjectRelease<DeveloperExtension, DeveloperExtensionHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensions_Iterator(DeveloperExtensionsHandle* handle, DeveloperExtensionsIteratorHandle** result)
@@ -78,7 +78,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensions_Iterator(Develo
 
 VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensions_Release(DeveloperExtensionsHandle* handle)
 {
-	return ObjectRelease<DeveloperExtensions, DeveloperExtensionsHandle*>(handle);
+	return ObjectRelease<DeveloperExtensions, DeveloperExtensionsHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetKey(DeveloperExtensionsIteratorHandle* handle, NameObjectHandle** result)
@@ -144,5 +144,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_Next(De
 
 VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_Release(DeveloperExtensionsIteratorHandle* handle)
 {
-	return ObjectRelease<DeveloperExtensions::Iterator, DeveloperExtensionsIteratorHandle*>(handle);
+	return ObjectRelease<DeveloperExtensions::Iterator, DeveloperExtensionsIteratorHandle>(handle);
 }

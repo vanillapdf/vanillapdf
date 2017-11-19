@@ -198,5 +198,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetAcroForm(CatalogHandle* 
 
 VANILLAPDF_API error_type CALLING_CONVENTION Catalog_Release(CatalogHandle* handle)
 {
-	return ObjectRelease<Catalog, CatalogHandle*>(handle);
+	return ObjectRelease<Catalog, CatalogHandle>(handle);
 }

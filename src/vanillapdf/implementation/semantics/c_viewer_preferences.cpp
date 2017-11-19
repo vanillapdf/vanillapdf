@@ -341,7 +341,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNumCopies(View
 
 VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_Release(ViewerPreferencesHandle* handle)
 {
-	return ObjectRelease<ViewerPreferences, ViewerPreferencesHandle*>(handle);
+	return ObjectRelease<ViewerPreferences, ViewerPreferencesHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION PageRange_GetSize(PageRangeHandle* handle, size_type* result)
@@ -404,10 +404,10 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageSubRange_GetLastPage(PageSubRan
 
 VANILLAPDF_API error_type CALLING_CONVENTION PageSubRange_Release(PageSubRangeHandle* handle)
 {
-	return ObjectRelease<PageRange::SubRange, PageSubRangeHandle*>(handle);
+	return ObjectRelease<PageRange::SubRange, PageSubRangeHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION PageRange_Release(PageRangeHandle* handle)
 {
-	return ObjectRelease<PageRange, PageRangeHandle*>(handle);
+	return ObjectRelease<PageRange, PageRangeHandle>(handle);
 }

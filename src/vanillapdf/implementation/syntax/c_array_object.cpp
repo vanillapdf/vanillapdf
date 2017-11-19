@@ -86,5 +86,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayObjectHandl
 
 VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Release(ArrayObjectHandle* handle)
 {
-	return ObjectRelease<MixedArrayObject, ArrayObjectHandle*>(handle);
+	return ObjectRelease<MixedArrayObject, ArrayObjectHandle>(handle);
 }

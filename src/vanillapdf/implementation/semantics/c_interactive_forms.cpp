@@ -21,5 +21,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetFields(Interacti
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_Release(InteractiveFormHandle* handle) {
-	return ObjectRelease<InteractiveForm, InteractiveFormHandle*>(handle);
+	return ObjectRelease<InteractiveForm, InteractiveFormHandle>(handle);
 }

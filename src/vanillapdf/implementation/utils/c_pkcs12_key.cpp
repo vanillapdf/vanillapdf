@@ -47,13 +47,13 @@ VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_CreateFromBuffer(BufferHa
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_ToEncryptionKey(PKCS12KeyHandle* handle, EncryptionKeyHandle** result) {
-	return SafeObjectConvert<PKCS12Key, IEncryptionKey, PKCS12KeyHandle*, EncryptionKeyHandle*>(handle, result);
+	return SafeObjectConvert<PKCS12Key, IEncryptionKey, PKCS12KeyHandle, EncryptionKeyHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_ToSigningKey(PKCS12KeyHandle* handle, SigningKeyHandle** result) {
-	return SafeObjectConvert<PKCS12Key, ISigningKey, PKCS12KeyHandle*, SigningKeyHandle*>(handle, result);
+	return SafeObjectConvert<PKCS12Key, ISigningKey, PKCS12KeyHandle, SigningKeyHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_Release(PKCS12KeyHandle* handle) {
-	return ObjectRelease<PKCS12Key, PKCS12KeyHandle*>(handle);
+	return ObjectRelease<PKCS12Key, PKCS12KeyHandle>(handle);
 }

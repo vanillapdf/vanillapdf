@@ -35,5 +35,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_SetValue(BooleanObjec
 
 VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_Release(BooleanObjectHandle* handle)
 {
-	return ObjectRelease<BooleanObject, BooleanObjectHandle*>(handle);
+	return ObjectRelease<BooleanObject, BooleanObjectHandle>(handle);
 }

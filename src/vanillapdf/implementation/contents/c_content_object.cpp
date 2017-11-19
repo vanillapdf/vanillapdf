@@ -26,15 +26,15 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_GetType(ContentObject
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_ToText(ContentObjectHandle* handle, ContentObjectTextHandle** result) {
-	return SafeObjectConvert<ContentObjectBase, TextObject, ContentObjectHandle*, ContentObjectTextHandle*>(handle, result);
+	return SafeObjectConvert<ContentObjectBase, TextObject, ContentObjectHandle, ContentObjectTextHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_ToInlineImage(ContentObjectHandle* handle, ContentObjectInlineImageHandle** result) {
-	return SafeObjectConvert<ContentObjectBase, InlineImageObject, ContentObjectHandle*, ContentObjectInlineImageHandle*>(handle, result);
+	return SafeObjectConvert<ContentObjectBase, InlineImageObject, ContentObjectHandle, ContentObjectInlineImageHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_Release(ContentObjectHandle* handle) {
-	return ObjectRelease<ContentObjectBase, ContentObjectHandle*>(handle);
+	return ObjectRelease<ContentObjectBase, ContentObjectHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetDictionary(ContentObjectInlineImageHandle* handle, DictionaryObjectHandle** result) {
@@ -66,7 +66,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetData(Co
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_Release(ContentObjectInlineImageHandle* handle) {
-	return ObjectRelease<InlineImageObject, ContentObjectInlineImageHandle*>(handle);
+	return ObjectRelease<InlineImageObject, ContentObjectInlineImageHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationsSize(ContentObjectTextHandle* handle, size_type* result) {
@@ -96,5 +96,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(Co
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_Release(ContentObjectTextHandle* handle) {
-	return ObjectRelease<TextObject, ContentObjectTextHandle*>(handle);
+	return ObjectRelease<TextObject, ContentObjectTextHandle>(handle);
 }

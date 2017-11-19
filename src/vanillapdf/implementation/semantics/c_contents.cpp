@@ -39,5 +39,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(ContentsH
 
 VANILLAPDF_API error_type CALLING_CONVENTION Contents_Release(ContentsHandle* handle)
 {
-	return ObjectRelease<Contents, ContentsHandle*>(handle);
+	return ObjectRelease<Contents, ContentsHandle>(handle);
 }

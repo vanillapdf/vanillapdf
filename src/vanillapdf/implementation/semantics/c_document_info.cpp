@@ -174,5 +174,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentInf
 
 VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_Release(DocumentInfoHandle* handle)
 {
-	return ObjectRelease<DocumentInfo, DocumentInfoHandle*>(handle);
+	return ObjectRelease<DocumentInfo, DocumentInfoHandle>(handle);
 }

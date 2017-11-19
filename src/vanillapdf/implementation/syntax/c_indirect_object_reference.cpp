@@ -24,7 +24,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObje
 
 VANILLAPDF_API error_type CALLING_CONVENTION IndirectReference_Release(IndirectObjectReferenceHandle* handle)
 {
-	return ObjectRelease<IndirectObjectReference, IndirectObjectReferenceHandle*>(handle);
+	return ObjectRelease<IndirectObjectReference, IndirectObjectReferenceHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObjectNumber(IndirectObjectReferenceHandle* handle, biguint_type* result)

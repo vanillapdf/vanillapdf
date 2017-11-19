@@ -94,17 +94,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_Next(XrefIteratorHandl
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_Release(XrefIteratorHandle* handle)
 {
-	return ObjectRelease<XrefBase::Iterator, XrefIteratorHandle*>(handle);
+	return ObjectRelease<XrefBase::Iterator, XrefIteratorHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Xref_Release(XrefHandle* handle)
 {
-	return ObjectRelease<XrefBase, XrefHandle*>(handle);
+	return ObjectRelease<XrefBase, XrefHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle* handle)
 {
-	return ObjectRelease<XrefEntryBase, XrefEntryHandle*>(handle);
+	return ObjectRelease<XrefEntryBase, XrefEntryHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_InUse(XrefEntryHandle* handle, boolean_type* result)
@@ -209,7 +209,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_NextFreeObjectNumber(
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_Release(XrefFreeEntryHandle* handle)
 {
-	return ObjectRelease<XrefFreeEntry, XrefFreeEntryHandle*>(handle);
+	return ObjectRelease<XrefFreeEntry, XrefFreeEntryHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_ObjectNumber(XrefEntryHandle* handle, biguint_type* result)
@@ -254,7 +254,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_InUse(XrefUsedEntryHa
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_Release(XrefUsedEntryHandle* handle)
 {
-	return ObjectRelease<XrefUsedEntry, XrefUsedEntryHandle*>(handle);
+	return ObjectRelease<XrefUsedEntry, XrefUsedEntryHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectNumber(XrefEntryHandle* handle, biguint_type* result)
@@ -309,22 +309,22 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectStreamNum
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Release(XrefCompressedEntryHandle* handle)
 {
-	return ObjectRelease<XrefCompressedEntry, XrefCompressedEntryHandle*>(handle);
+	return ObjectRelease<XrefCompressedEntry, XrefCompressedEntryHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ToFreeEntry(XrefEntryHandle* handle, XrefFreeEntryHandle** result)
 {
-	return SafeObjectConvert<XrefEntryBase, XrefFreeEntry, XrefEntryHandle*, XrefFreeEntryHandle*>(handle, result);
+	return SafeObjectConvert<XrefEntryBase, XrefFreeEntry, XrefEntryHandle, XrefFreeEntryHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ToUsedEntry(XrefEntryHandle* handle, XrefUsedEntryHandle** result)
 {
-	return SafeObjectConvert<XrefEntryBase, XrefUsedEntry, XrefEntryHandle*, XrefUsedEntryHandle*>(handle, result);
+	return SafeObjectConvert<XrefEntryBase, XrefUsedEntry, XrefEntryHandle, XrefUsedEntryHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ToCompressedEntry(XrefEntryHandle* handle, XrefCompressedEntryHandle** result)
 {
-	return SafeObjectConvert<XrefEntryBase, XrefCompressedEntry, XrefEntryHandle*, XrefCompressedEntryHandle*>(handle, result);
+	return SafeObjectConvert<XrefEntryBase, XrefCompressedEntry, XrefEntryHandle, XrefCompressedEntryHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_Reference(XrefUsedEntryHandle* handle, ObjectHandle** result)
@@ -402,7 +402,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_Next(XrefChainIte
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_Release(XrefChainIteratorHandle* handle)
 {
-	return ObjectRelease<XrefChain::Iterator, XrefChainIteratorHandle*>(handle);
+	return ObjectRelease<XrefChain::Iterator, XrefChainIteratorHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_Iterator(XrefChainHandle* handle, XrefChainIteratorHandle** result)
@@ -422,5 +422,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_Iterator(XrefChainHandle*
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_Release(XrefChainHandle* handle)
 {
-	return ObjectRelease<XrefChain, XrefChainHandle*>(handle);
+	return ObjectRelease<XrefChain, XrefChainHandle>(handle);
 }

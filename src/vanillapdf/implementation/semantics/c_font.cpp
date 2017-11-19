@@ -30,12 +30,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Font_Type(FontHandle* handle, FontT
 
 VANILLAPDF_API error_type CALLING_CONVENTION Font_Release(FontHandle* handle)
 {
-	return ObjectRelease<FontBase, FontHandle*>(handle);
+	return ObjectRelease<FontBase, FontHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Font_ToComposite(FontHandle* handle, CompositeFontHandle** result)
 {
-	return SafeObjectConvert<FontBase, CompositeFont, FontHandle*, CompositeFontHandle*>(handle, result);
+	return SafeObjectConvert<FontBase, CompositeFont, FontHandle, CompositeFontHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION CompositeFont_GetUnicodeMap(CompositeFontHandle* handle, UnicodeCharacterMapHandle** result)
@@ -57,5 +57,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION CompositeFont_GetUnicodeMap(Composi
 
 VANILLAPDF_API error_type CALLING_CONVENTION CompositeFont_Release(CompositeFontHandle* handle)
 {
-	return ObjectRelease<CompositeFont, CompositeFontHandle*>(handle);
+	return ObjectRelease<CompositeFont, CompositeFontHandle>(handle);
 }

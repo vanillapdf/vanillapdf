@@ -27,13 +27,13 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_GetType(ContentI
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_ToOperation(ContentInstructionHandle* handle, ContentOperationHandle** result) {
-	return SafeObjectConvert<InstructionBase, OperationBase, ContentInstructionHandle*, ContentOperationHandle*>(handle, result);
+	return SafeObjectConvert<InstructionBase, OperationBase, ContentInstructionHandle, ContentOperationHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_ToObject(ContentInstructionHandle* handle, ContentObjectHandle** result) {
-	return SafeObjectConvert<InstructionBase, ContentObjectBase, ContentInstructionHandle*, ContentObjectHandle*>(handle, result);
+	return SafeObjectConvert<InstructionBase, ContentObjectBase, ContentInstructionHandle, ContentObjectHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_Release(ContentInstructionHandle* handle) {
-	return ObjectRelease<InstructionBase, ContentInstructionHandle*>(handle);
+	return ObjectRelease<InstructionBase, ContentInstructionHandle>(handle);
 }

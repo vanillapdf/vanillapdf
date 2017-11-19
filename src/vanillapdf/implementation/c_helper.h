@@ -46,7 +46,7 @@ template <
 		std::is_base_of<SourceT, DestT>::value
 	>::type
 >
-error_type SafeObjectConvert(SourceHandleT from, DestHandleT* result) {
+error_type SafeObjectConvert(SourceHandleT* from, DestHandleT** result) {
 	SourceT* obj = reinterpret_cast<SourceT*>(from);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -58,7 +58,7 @@ error_type SafeObjectConvert(SourceHandleT from, DestHandleT* result) {
 			return VANILLAPDF_ERROR_PARAMETER_VALUE;
 		}
 
-		*result = reinterpret_cast<DestHandleT>(converted);
+		*result = reinterpret_cast<DestHandleT*>(converted);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -68,7 +68,7 @@ template <
 	typename HandleT,
 	typename = typename std::enable_if<std::is_base_of<vanillapdf::IUnknown, T>::value>::type
 >
-error_type ObjectRelease(HandleT handle) {
+error_type ObjectRelease(HandleT* handle) {
 	T* obj = reinterpret_cast<T*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 

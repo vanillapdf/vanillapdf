@@ -28,17 +28,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_GetType(OutlineBaseHand
 
 VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_ToOutline(OutlineBaseHandle* handle, OutlineHandle** result)
 {
-	return SafeObjectConvert<OutlineBase, Outline, OutlineBaseHandle*, OutlineHandle*>(handle, result);
+	return SafeObjectConvert<OutlineBase, Outline, OutlineBaseHandle, OutlineHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_ToOutlineItem(OutlineBaseHandle* handle, OutlineItemHandle** result)
 {
-	return SafeObjectConvert<OutlineBase, OutlineItem, OutlineBaseHandle*, OutlineItemHandle*>(handle, result);
+	return SafeObjectConvert<OutlineBase, OutlineItem, OutlineBaseHandle, OutlineItemHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_Release(OutlineBaseHandle* handle)
 {
-	return ObjectRelease<OutlineBase, OutlineBaseHandle*>(handle);
+	return ObjectRelease<OutlineBase, OutlineBaseHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetFirst(OutlineHandle* handle, OutlineItemHandle** result)
@@ -94,7 +94,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetCount(OutlineHandle* han
 
 VANILLAPDF_API error_type CALLING_CONVENTION Outline_Release(OutlineHandle* handle)
 {
-	return ObjectRelease<Outline, OutlineHandle*>(handle);
+	return ObjectRelease<Outline, OutlineHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetTitle(OutlineItemHandle* handle, StringObjectHandle** result)
@@ -248,7 +248,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetFlags(OutlineItemHan
 
 VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_Release(OutlineItemHandle* handle)
 {
-	return ObjectRelease<OutlineItem, OutlineItemHandle*>(handle);
+	return ObjectRelease<OutlineItem, OutlineItemHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_GetRed(OutlineItemColorHandle* handle, IntegerObjectHandle** result)
@@ -298,7 +298,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_GetBlue(OutlineIte
 
 VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_Release(OutlineItemColorHandle* handle)
 {
-	return ObjectRelease<OutlineItemColor, OutlineItemColorHandle*>(handle);
+	return ObjectRelease<OutlineItemColor, OutlineItemColorHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsItalic(OutlineItemFlagsHandle* handle, boolean_type* result)
@@ -323,5 +323,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsBold(OutlineItem
 
 VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_Release(OutlineItemFlagsHandle* handle)
 {
-	return ObjectRelease<OutlineItemFlags, OutlineItemFlagsHandle*>(handle);
+	return ObjectRelease<OutlineItemFlags, OutlineItemFlagsHandle>(handle);
 }

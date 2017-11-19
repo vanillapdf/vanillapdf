@@ -57,7 +57,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Next(
 VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Release(
 	DictionaryObjectIteratorHandle* handle)
 {
-	return ObjectRelease<DictionaryObject::Iterator, DictionaryObjectIteratorHandle*>(handle);
+	return ObjectRelease<DictionaryObject::Iterator, DictionaryObjectIteratorHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetKey(
@@ -170,5 +170,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(Dictionar
 
 VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Release(DictionaryObjectHandle* handle)
 {
-	return ObjectRelease<DictionaryObject, DictionaryObjectHandle*>(handle);
+	return ObjectRelease<DictionaryObject, DictionaryObjectHandle>(handle);
 }

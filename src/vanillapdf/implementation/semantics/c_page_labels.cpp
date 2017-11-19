@@ -108,5 +108,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Style(PageLabelHandle* ha
 
 VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Release(PageLabelHandle* handle)
 {
-	return ObjectRelease<PageLabel, PageLabelHandle*>(handle);
+	return ObjectRelease<PageLabel, PageLabelHandle>(handle);
 }

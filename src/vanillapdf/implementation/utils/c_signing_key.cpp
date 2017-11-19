@@ -139,5 +139,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_CreateCustom(
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_Release(SigningKeyHandle* handle) {
-	return ObjectRelease<ISigningKey, SigningKeyHandle*>(handle);
+	return ObjectRelease<ISigningKey, SigningKeyHandle>(handle);
 }

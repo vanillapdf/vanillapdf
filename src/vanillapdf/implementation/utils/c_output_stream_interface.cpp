@@ -46,5 +46,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutputStreamInterface_WriteBuffer(O
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION OutputStreamInterface_Release(OutputStreamInterfaceHandle* handle) {
-	return ObjectRelease<IOutputStream, OutputStreamInterfaceHandle*>(handle);
+	return ObjectRelease<IOutputStream, OutputStreamInterfaceHandle>(handle);
 }

@@ -49,5 +49,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_ToBuffer(Input
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_Release(InputStreamInterfaceHandle* handle) {
-	return ObjectRelease<IInputStream, InputStreamInterfaceHandle*>(handle);
+	return ObjectRelease<IInputStream, InputStreamInterfaceHandle>(handle);
 }

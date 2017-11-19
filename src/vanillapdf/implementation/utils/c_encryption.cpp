@@ -115,5 +115,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION EncryptionKey_CreateCustom(
 
 VANILLAPDF_API error_type CALLING_CONVENTION EncryptionKey_Release(EncryptionKeyHandle* handle)
 {
-	return ObjectRelease<IEncryptionKey, EncryptionKeyHandle*>(handle);
+	return ObjectRelease<IEncryptionKey, EncryptionKeyHandle>(handle);
 }

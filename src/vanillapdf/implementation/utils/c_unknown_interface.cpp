@@ -17,5 +17,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION IUnknown_AddRef(IUnknownHandle* han
 
 VANILLAPDF_API error_type CALLING_CONVENTION IUnknown_Release(IUnknownHandle* handle)
 {
-	return ObjectRelease<IUnknown, IUnknownHandle*>(handle);
+	return ObjectRelease<IUnknown, IUnknownHandle>(handle);
 }

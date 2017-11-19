@@ -35,5 +35,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION RealObject_SetValue(RealObjectHandl
 
 VANILLAPDF_API error_type CALLING_CONVENTION RealObject_Release(RealObjectHandle* handle)
 {
-	return ObjectRelease<RealObject, RealObjectHandle*>(handle);
+	return ObjectRelease<RealObject, RealObjectHandle>(handle);
 }

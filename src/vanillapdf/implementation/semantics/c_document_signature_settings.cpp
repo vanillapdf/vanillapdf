@@ -243,5 +243,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetCertif
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_Release(DocumentSignatureSettingsHandle* handle) {
-	return ObjectRelease<DocumentSignatureSettings, DocumentSignatureSettingsHandle*>(handle);
+	return ObjectRelease<DocumentSignatureSettings, DocumentSignatureSettingsHandle>(handle);
 }

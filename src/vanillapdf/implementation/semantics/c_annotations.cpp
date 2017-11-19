@@ -76,12 +76,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetType(AnnotationHandle
 
 VANILLAPDF_API error_type CALLING_CONVENTION Annotation_ToLink(AnnotationHandle* handle, LinkAnnotationHandle** result)
 {
-	return SafeObjectConvert<AnnotationBase, LinkAnnotation, AnnotationHandle*, LinkAnnotationHandle*>(handle, result);
+	return SafeObjectConvert<AnnotationBase, LinkAnnotation, AnnotationHandle, LinkAnnotationHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Annotation_Release(AnnotationHandle* handle)
 {
-	return ObjectRelease<AnnotationBase, AnnotationHandle*>(handle);
+	return ObjectRelease<AnnotationBase, AnnotationHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_GetDestination(LinkAnnotationHandle* handle, DestinationHandle** result)
@@ -103,7 +103,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_GetDestination(LinkA
 
 VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_Release(LinkAnnotationHandle* handle)
 {
-	return ObjectRelease<LinkAnnotation, LinkAnnotationHandle*>(handle);
+	return ObjectRelease<LinkAnnotation, LinkAnnotationHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Size(PageAnnotationsHandle* handle, size_type* result)
@@ -136,5 +136,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_At(PageAnnotationsH
 
 VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Release(PageAnnotationsHandle* handle)
 {
-	return ObjectRelease<PageAnnotations, PageAnnotationsHandle*>(handle);
+	return ObjectRelease<PageAnnotations, PageAnnotationsHandle>(handle);
 }

@@ -42,5 +42,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle* handle,
 
 VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Release(FontMapHandle* handle)
 {
-	return ObjectRelease<FontMap, FontMapHandle*>(handle);
+	return ObjectRelease<FontMap, FontMapHandle>(handle);
 }

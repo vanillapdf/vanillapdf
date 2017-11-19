@@ -172,31 +172,31 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_GetType(ContentOpe
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToGeneric(ContentOperationHandle* handle, ContentOperationGenericHandle** result) {
-	return SafeObjectConvert<OperationBase, OperationGeneric, ContentOperationHandle*, ContentOperationGenericHandle*>(handle, result);
+	return SafeObjectConvert<OperationBase, OperationGeneric, ContentOperationHandle, ContentOperationGenericHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToBeginText(ContentOperationHandle* handle, ContentOperationBeginTextHandle** result) {
-	return SafeObjectConvert<OperationBase, OperationBeginText, ContentOperationHandle*, ContentOperationBeginTextHandle*>(handle, result);
+	return SafeObjectConvert<OperationBase, OperationBeginText, ContentOperationHandle, ContentOperationBeginTextHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToEndText(ContentOperationHandle* handle, ContentOperationEndTextHandle** result) {
-	return SafeObjectConvert<OperationBase, OperationEndText, ContentOperationHandle*, ContentOperationEndTextHandle*>(handle, result);
+	return SafeObjectConvert<OperationBase, OperationEndText, ContentOperationHandle, ContentOperationEndTextHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextFont(ContentOperationHandle* handle, ContentOperationTextFontHandle** result) {
-	return SafeObjectConvert<OperationBase, OperationTextFont, ContentOperationHandle*, ContentOperationTextFontHandle*>(handle, result);
+	return SafeObjectConvert<OperationBase, OperationTextFont, ContentOperationHandle, ContentOperationTextFontHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShow(ContentOperationHandle* handle, ContentOperationTextShowHandle** result) {
-	return SafeObjectConvert<OperationBase, OperationTextShow, ContentOperationHandle*, ContentOperationTextShowHandle*>(handle, result);
+	return SafeObjectConvert<OperationBase, OperationTextShow, ContentOperationHandle, ContentOperationTextShowHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShowArray(ContentOperationHandle* handle, ContentOperationTextShowArrayHandle** result) {
-	return SafeObjectConvert<OperationBase, OperationTextShowArray, ContentOperationHandle*, ContentOperationTextShowArrayHandle*>(handle, result);
+	return SafeObjectConvert<OperationBase, OperationTextShowArray, ContentOperationHandle, ContentOperationTextShowArrayHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_Release(ContentOperationHandle* handle) {
-	return ObjectRelease<OperationBase, ContentOperationHandle*>(handle);
+	return ObjectRelease<OperationBase, ContentOperationHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperator(ContentOperationGenericHandle* handle, ContentOperatorHandle** result) {
@@ -240,7 +240,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandA
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_Release(ContentOperationGenericHandle* handle) {
-	return ObjectRelease<OperationGeneric, ContentOperationGenericHandle*>(handle);
+	return ObjectRelease<OperationGeneric, ContentOperationGenericHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetScale(ContentOperationTextFontHandle* handle, IntegerObjectHandle** result) {
@@ -298,7 +298,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_SetName(Co
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_Release(ContentOperationTextFontHandle* handle) {
-	return ObjectRelease<OperationTextFont, ContentOperationTextFontHandle*>(handle);
+	return ObjectRelease<OperationTextFont, ContentOperationTextFontHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_SetValue(ContentOperationTextShowHandle* handle, StringObjectHandle* data) {
@@ -329,7 +329,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_GetValue(C
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_Release(ContentOperationTextShowHandle* handle) {
-	return ObjectRelease<OperationTextShow, ContentOperationTextShowHandle*>(handle);
+	return ObjectRelease<OperationTextShow, ContentOperationTextShowHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_GetValue(ContentOperationTextShowArrayHandle* handle, ArrayObjectHandle** result) {
@@ -360,5 +360,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_SetVa
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_Release(ContentOperationTextShowArrayHandle* handle) {
-	return ObjectRelease<OperationTextShowArray, ContentOperationTextShowArrayHandle*>(handle);
+	return ObjectRelease<OperationTextShowArray, ContentOperationTextShowArrayHandle>(handle);
 }

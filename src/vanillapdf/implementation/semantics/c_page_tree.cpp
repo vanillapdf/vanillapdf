@@ -74,5 +74,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageTree_RemovePage(PageTreeHandle*
 
 VANILLAPDF_API error_type CALLING_CONVENTION PageTree_Release(PageTreeHandle* handle)
 {
-	return ObjectRelease<PageTree, PageTreeHandle*>(handle);
+	return ObjectRelease<PageTree, PageTreeHandle>(handle);
 }

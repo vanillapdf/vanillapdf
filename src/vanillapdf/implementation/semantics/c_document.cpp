@@ -119,7 +119,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_GetDocumentInfo(DocumentHa
 
 VANILLAPDF_API error_type CALLING_CONVENTION Document_Release(DocumentHandle* handle)
 {
-	return ObjectRelease<Document, DocumentHandle*>(handle);
+	return ObjectRelease<Document, DocumentHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Document_AppendDocument(DocumentHandle* handle, DocumentHandle* source_handle)

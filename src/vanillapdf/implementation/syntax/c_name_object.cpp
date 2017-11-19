@@ -39,5 +39,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION NameObject_SetValue(NameObjectHandl
 
 VANILLAPDF_API error_type CALLING_CONVENTION NameObject_Release(NameObjectHandle* handle)
 {
-	return ObjectRelease<NameObject, NameObjectHandle*>(handle);
+	return ObjectRelease<NameObject, NameObjectHandle>(handle);
 }

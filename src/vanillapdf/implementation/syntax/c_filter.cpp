@@ -13,7 +13,7 @@ using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
 VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_Release(FilterBaseHandle* handle) {
-	return ObjectRelease<FilterBase, FilterBaseHandle*>(handle);
+	return ObjectRelease<FilterBase, FilterBaseHandle>(handle);
 }
 
 // FlateDecodeFilter
@@ -63,7 +63,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FlateDecodeFilter_Decode(FlateDecod
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION FlateDecodeFilter_Release(FlateDecodeFilterHandle* handle) {
-	return ObjectRelease<FlateDecodeFilter, FlateDecodeFilterHandle*>(handle);
+	return ObjectRelease<FlateDecodeFilter, FlateDecodeFilterHandle>(handle);
 }
 
 // DCTDecodeFilter
@@ -113,7 +113,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DCTDecodeFilter_Decode(DCTDecodeFil
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION DCTDecodeFilter_Release(DCTDecodeFilterHandle* handle) {
-	return ObjectRelease<DCTDecodeFilter, DCTDecodeFilterHandle*>(handle);
+	return ObjectRelease<DCTDecodeFilter, DCTDecodeFilterHandle>(handle);
 }
 
 // ASCII85DecodeFilter
@@ -163,7 +163,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ASCII85DecodeFilter_Decode(ASCII85D
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ASCII85DecodeFilter_Release(ASCII85DecodeFilterHandle* handle) {
-	return ObjectRelease<ASCII85DecodeFilter, ASCII85DecodeFilterHandle*>(handle);
+	return ObjectRelease<ASCII85DecodeFilter, ASCII85DecodeFilterHandle>(handle);
 }
 
 // ASCIIHexDecodeFilter
@@ -213,5 +213,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION ASCIIHexDecodeFilter_Decode(ASCIIHe
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ASCIIHexDecodeFilter_Release(ASCIIHexDecodeFilterHandle* handle) {
-	return ObjectRelease<ASCIIHexDecodeFilter, ASCIIHexDecodeFilterHandle*>(handle);
+	return ObjectRelease<ASCIIHexDecodeFilter, ASCIIHexDecodeFilterHandle>(handle);
 }

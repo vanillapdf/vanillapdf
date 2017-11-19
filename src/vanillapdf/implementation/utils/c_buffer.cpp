@@ -57,5 +57,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToInputStream(BufferHandle* 
 
 VANILLAPDF_API error_type CALLING_CONVENTION Buffer_Release(BufferHandle* handle)
 {
-	return ObjectRelease<Buffer, BufferHandle*>(handle);
+	return ObjectRelease<Buffer, BufferHandle>(handle);
 }

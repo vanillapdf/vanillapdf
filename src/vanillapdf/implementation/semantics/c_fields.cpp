@@ -68,41 +68,41 @@ VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_GetValue(SignatureFi
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Field_ToButton(FieldHandle* handle, ButtonFieldHandle** result) {
-	return SafeObjectConvert<Field, ButtonField, FieldHandle*, ButtonFieldHandle*>(handle, result);
+	return SafeObjectConvert<Field, ButtonField, FieldHandle, ButtonFieldHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Field_ToText(FieldHandle* handle, TextFieldHandle** result) {
-	return SafeObjectConvert<Field, TextField, FieldHandle*, TextFieldHandle*>(handle, result);
+	return SafeObjectConvert<Field, TextField, FieldHandle, TextFieldHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Field_ToChoice(FieldHandle* handle, ChoiceFieldHandle** result) {
-	return SafeObjectConvert<Field, ChoiceField, FieldHandle*, ChoiceFieldHandle*>(handle, result);
+	return SafeObjectConvert<Field, ChoiceField, FieldHandle, ChoiceFieldHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Field_ToSignature(FieldHandle* handle, SignatureFieldHandle** result) {
-	return SafeObjectConvert<Field, SignatureField, FieldHandle*, SignatureFieldHandle*>(handle, result);
+	return SafeObjectConvert<Field, SignatureField, FieldHandle, SignatureFieldHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_Release(FieldCollectionHandle* handle) {
-	return ObjectRelease<FieldCollection, FieldCollectionHandle*>(handle);
+	return ObjectRelease<FieldCollection, FieldCollectionHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Field_Release(FieldHandle* handle) {
-	return ObjectRelease<Field, FieldHandle*>(handle);
+	return ObjectRelease<Field, FieldHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_Release(ButtonFieldHandle* handle) {
-	return ObjectRelease<ButtonField, ButtonFieldHandle*>(handle);
+	return ObjectRelease<ButtonField, ButtonFieldHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION TextField_Release(TextFieldHandle* handle) {
-	return ObjectRelease<TextField, TextFieldHandle*>(handle);
+	return ObjectRelease<TextField, TextFieldHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_Release(ChoiceFieldHandle* handle) {
-	return ObjectRelease<ChoiceField, ChoiceFieldHandle*>(handle);
+	return ObjectRelease<ChoiceField, ChoiceFieldHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_Release(SignatureFieldHandle* handle) {
-	return ObjectRelease<SignatureField, SignatureFieldHandle*>(handle);
+	return ObjectRelease<SignatureField, SignatureFieldHandle>(handle);
 }

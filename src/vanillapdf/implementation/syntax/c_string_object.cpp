@@ -28,17 +28,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION StringObject_Type(StringObjectHandl
 
 VANILLAPDF_API error_type CALLING_CONVENTION StringObject_Release(StringObjectHandle* handle)
 {
-	return ObjectRelease<StringObjectBase, StringObjectHandle*>(handle);
+	return ObjectRelease<StringObjectBase, StringObjectHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION StringObject_ToLiteral(StringObjectHandle* handle, LiteralStringObjectHandle** result)
 {
-	return SafeObjectConvert<StringObjectBase, LiteralStringObject, StringObjectHandle*, LiteralStringObjectHandle*>(handle, result);
+	return SafeObjectConvert<StringObjectBase, LiteralStringObject, StringObjectHandle, LiteralStringObjectHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION StringObject_ToHexadecimal(StringObjectHandle* handle, HexadecimalStringObjectHandle** result)
 {
-	return SafeObjectConvert<StringObjectBase, HexadecimalStringObject, StringObjectHandle*, HexadecimalStringObjectHandle*>(handle, result);
+	return SafeObjectConvert<StringObjectBase, HexadecimalStringObject, StringObjectHandle, HexadecimalStringObjectHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION StringObject_GetValue(StringObjectHandle* handle, BufferHandle** result)
@@ -101,7 +101,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_SetValue(Litera
 
 VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_Release(LiteralStringObjectHandle* handle)
 {
-	return ObjectRelease<LiteralStringObject, LiteralStringObjectHandle*>(handle);
+	return ObjectRelease<LiteralStringObject, LiteralStringObjectHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_GetValue(HexadecimalStringObjectHandle* handle, BufferHandle** result)
@@ -135,5 +135,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_SetValue(He
 
 VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Release(HexadecimalStringObjectHandle* handle)
 {
-	return ObjectRelease<HexadecimalStringObject, HexadecimalStringObjectHandle*>(handle);
+	return ObjectRelease<HexadecimalStringObject, HexadecimalStringObjectHandle>(handle);
 }

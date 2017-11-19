@@ -109,5 +109,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION Date_GetMinuteOffset(DateHandle* ha
 
 VANILLAPDF_API error_type CALLING_CONVENTION Date_Release(DateHandle* handle)
 {
-	return ObjectRelease<Date, DateHandle*>(handle);
+	return ObjectRelease<Date, DateHandle>(handle);
 }

@@ -184,5 +184,5 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_GetValue(ContentOpe
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_Release(ContentOperatorHandle* handle) {
-	return ObjectRelease<OperatorBase, ContentOperatorHandle*>(handle);
+	return ObjectRelease<OperatorBase, ContentOperatorHandle>(handle);
 }

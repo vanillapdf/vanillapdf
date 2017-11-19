@@ -192,13 +192,13 @@ VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_At(ByteRangeCol
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_Release(ByteRangeHandle* handle) {
-	return ObjectRelease<ByteRange, ByteRangeHandle*>(handle);
+	return ObjectRelease<ByteRange, ByteRangeHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_Release(ByteRangeCollectionHandle* handle) {
-	return ObjectRelease<ByteRangeCollection, ByteRangeCollectionHandle*>(handle);
+	return ObjectRelease<ByteRangeCollection, ByteRangeCollectionHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_Release(DigitalSignatureHandle* handle) {
-	return ObjectRelease<DigitalSignature, DigitalSignatureHandle*>(handle);
+	return ObjectRelease<DigitalSignature, DigitalSignatureHandle>(handle);
 }
