@@ -2,6 +2,8 @@
 
 #include "utils/errors.h"
 
+#include <cstring>
+
 namespace vanillapdf {
 
 thread_local uint32_t Errors::m_error = 0;
@@ -34,7 +36,7 @@ void Errors::SetLastErrorMessage(const char * value) noexcept {
 }
 
 void Errors::SetLastErrorMessage(const char * value, size_type length) noexcept {
-	auto limited_length = std::min(length, constant::MAX_MESSAGE_SIZE);
+	auto limited_length = std::min<size_type>(length, constant::MAX_MESSAGE_SIZE);
 
 	std::memcpy(m_message, value, limited_length);
 	m_message[limited_length] = '\0';
