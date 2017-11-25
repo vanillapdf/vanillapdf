@@ -9,7 +9,7 @@ Visual studio (2015 and 2017) and GCC (tested on Ubuntu 16.04) as well.
 
 \subsection arch_overall_build Build
 
-Build is done using cross-platform make tool CMake (<https://cmake.org/>).<br>
+Build is executed using cross-platform make tool CMake (<https://cmake.org/>).<br>
 CMake also integrates packaging system to provide one-click installable packages for each platform.<br>
 
 Currently supported package systems:
@@ -99,7 +99,7 @@ Intrusive pointers can guarantee, that there are no multiple reference count obj
 
 \note
 There is a nice try to address this issue called [shared_from_this](http://en.cppreference.com/w/cpp/memory/enable_shared_from_this).<br>
-This could act as a help, but there is no way to enforce this behavior.<br>
+This could act as a help, but there is no guarantee.<br>
 
 Intrusive pointers should have a better performance (in some cases) comparing to traditional C++ shared pointers.<br>
 Main reason is that whole object is allocated within a single allocation, while shared pointers are often not.<br>
@@ -113,7 +113,6 @@ Sometimes, the need to move object on heap is not known in advance, making is ev
 File layer allows access to file contents at the syntactic level.<br>
 It has some necessary semantic features that are required for parsing its syntax.<br>
 
-\note
 For example \ref IndirectObjectReferenceHandle often has to be resolved to read an object.<br>
 The \ref StreamObjectHandle has it's \p Length often stored as an indirect object.<br>
 In order to validate this object, the \p Length has to be resolved to successfully parse an object.<br>
@@ -129,7 +128,7 @@ There are already interfaces, that represents these streams and will be used thr
 </ul>
 
 \note
-These interfaces could be overwritten in the future, so that user can provide custom implementation for reading source file.<br>
+These interfaces could be overriden in the future, so that user can provide custom implementation for reading source file.<br>
 This is often helpful for interacting with other applications, that might need to share file access.<br>
 
 \subsection arch_parsing Parsing
