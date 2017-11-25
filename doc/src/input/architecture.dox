@@ -2,20 +2,74 @@
 \page page_architecture Architecture
 \tableofcontents
 
-\section lib_interface Library interface
+\section arch_overall Library overview
 
 The library is writted in standard C++ (currently 14) and can be compiled using
 Visual studio (2015 and 2017) and GCC (tested on Ubuntu 16.04) as well.
 
-It provides only <b>ANSI C</b> API. The reason is rooted within the incompatibility of the C++ ABI between compilers.<br>
+\subsection arch_overall_build Build
+
+Build is done using cross-platform make tool CMake (<https://cmake.org/>).<br>
+CMake also integrates packaging system to provide one-click installable packages for each platform.<br>
+
+Currently supported package systems:
+<ul>
+<li>Windows [<b>.msi</b>](https://en.wikipedia.org/wiki/Windows_Installer)
+<li>Debian [<b>.deb</b>](https://en.wikipedia.org/wiki/Deb_(file_format))
+<li>Red Hat Package Manager [<b>.rpm</b>](https://en.wikipedia.org/wiki/Rpm_(software))
+</ul>
+
+\subsection arch_overall_interface Interface
+
+It provides only <b>ANSI C</b> API.<br>
+The reason why I did not expose native C++ interface is rooted within the incompatibility of the C++ ABI between compilers.<br>
 Functions across the interface use standard C caller clean-up [<b>cdecl</b>](https://en.wikipedia.org/wiki/X86_calling_conventions#cdecl) calling convention.<br>
 
-\section exceptions Exceptions
+\section arch_errors Error handling
 
 Library uses C++ exceptions internally.<br>
 Each interface function is wrapped inside try-catch block to prevent any exceptions to escape and potentially crash the application.<br>
+
+This is example, how interface functions usually look like:
+
+\code
+VANILLAPDF_API error_type CALLING_CONVENTION Buffer_SetData(BufferHandle* handle, string_type data, size_type size) {
+	Buffer* obj = reinterpret_cast<Buffer*>(handle);
+	
+	if (obj == nullptr) {
+		return VANILLAPDF_ERROR_PARAMETER_VALUE;
+	}
+	
+	if (data == nullptr) {
+		return VANILLAPDF_ERROR_PARAMETER_VALUE;
+	}
+
+	try
+	{
+		obj->assign(data, data + size);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} catch (std::exception& e) {
+		// Store the error message
+		return VANILLAPDF_ERROR_GENERAL;
+	} catch (...) {
+		return VANILLAPDF_ERROR_GENERAL;
+	}
+}
+\endcode
+
+\note The wrapping try-catch should have [negligible performance impact](https://en.wikipedia.org/wiki/Exception_handling#Exception_handling_implementation) on most compilers.
+
+\subsection arch_errors_messages Error codes and messages
+
 All exceptions thrown in this way are caught and their message is stored in a thread-local buffer.<br>
 This buffer is separate for each thread and has a pre-allocated size in case of memory shortage.<br>
+
+Following code snippet declares the structures that carries error information:
+\code
+	thread_local uint32_t m_error;
+	thread_local size_type m_message_length;
+	thread_local char m_message[constant::MAX_MESSAGE_SIZE];
+\endcode
 
 \section object_ownership Object ownership
 
@@ -25,6 +79,34 @@ Usually, the structure and the reference counter are two separate objects.<br>
 In this case, the reference counter is embedded inside the structure body.<br>
 
 \todo image_here
+
+\subsection arch_ownership_comparison Intrusive vs Shared
+
+Let's compare intrusive pointer with the traditional [C++ shared pointers](http://en.cppreference.com/w/cpp/memory/shared_ptr).<br>
+
+Transferring object handle outside library bounds is more clear.<br>
+
+\code
+Buffer* buffer = new Buffer();
+*result = reinterpret_cast<BufferHandle*>(buffer);
+
+...
+
+Buffer* buffer = reinterpret_cast<Buffer*>(handle);
+\endcode
+
+Intrusive pointers can guarantee, that there are no multiple reference count objects.<br>
+
+\note
+There is a nice try to address this issue called [shared_from_this](http://en.cppreference.com/w/cpp/memory/enable_shared_from_this).<br>
+This could act as a help, but there is no way to enforce this behavior.<br>
+
+Intrusive pointers should have a better performance (in some cases) comparing to traditional C++ shared pointers.<br>
+Main reason is that whole object is allocated within a single allocation, while shared pointers are often not.<br>
+
+\note
+Shared pointer can be allocated using [make_shared](http://en.cppreference.com/w/cpp/memory/shared_ptr/make_shared).<br>
+Sometimes, the need to move object on heap is not known in advance, making is even more difficult to use.<br>
 
 \section file_layer File layer
 
@@ -43,7 +125,7 @@ There are already interfaces, that represents these streams and will be used thr
 
 <ul>
 <li>Source files with \ref InputStreamInterfaceHandle
-<li>Destinatiuon files with \ref OutputStreamInterfaceHandle
+<li>Destination files with \ref OutputStreamInterfaceHandle
 </ul>
 
 \note
