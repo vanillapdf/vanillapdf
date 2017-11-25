@@ -1,0 +1,43 @@
+/*! 
+\page page_licensing Licensing
+\tableofcontents
+
+Some of the library features can be used without a valid license.
+
+\section license_free Free features
+
+\section license_premium Premium features
+
+\section license_types License types
+
+\section license_validity License validity
+
+\section license_use Using the license
+
+\subsection license_use_obtain Obtain
+
+The license has to be requested first.<br>
+Currently the only supported method to request a license is via email [<b>info@vanillapdf.com</b>](mailto:info@vanillapdf.com).<br>
+After processing your request, you'll receive an email with the invoice.<br>
+Depending on the payment processor, completing the transaction might take a few days.<br>
+Upon a successful transaction, you'll receive another email, containing <b>your very own</b> license file.<br>
+
+\note
+Please, keep in mind, that every license file is issued to either a person or a company.<br>
+It contains <b>confidential information</b> and should be kept <b>protected</b> against fraud.<br>
+Whenever in doubt, that the license file is no longer secure, let us know, so we can issue a new one, without any harm.<br>
+
+\subsection license_use_bundle Bundle
+
+To successfuly use this library an access to the license file will be reqired, when the application is run.<br>
+We recommend to embed the license file into your application a protect it with encryption algorithm.<br>
+
+\note
+We may send You some code samples upon request on how to properly protect the license file, as it is undesirable to be easily extractable.
+
+\subsection license_use_verify Verify
+
+After the license file has been entered, You now should have access to the premium features.<br>
+For example, saving a file should no longer produce a watermark image in corner.<br>
+
+*/
