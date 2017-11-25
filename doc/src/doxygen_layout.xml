@@ -8,7 +8,7 @@
 		<tab type="user" url="@ref page_overview" title="Guide"/>
 
 		<tab type="modules" visible="yes" title="" intro=""/>
-		<tab type="classlist" visible="yes" title="" intro=""/>
+		<tab type="hierarchy" visible="yes" title="" intro=""/>
 		<tab type="filelist" visible="yes" title="" intro=""/>
 
 		<tab type="namespaces" visible="no" title="">
@@ -34,7 +34,7 @@
 	<!-- Layout definition for a class page -->
 	<class>
 	<briefdescription visible="yes"/>
-	<includes visible="$SHOW_INCLUDE_FILES"/>
+	<includes visible="no"/>
 	<inheritancegraph visible="$CLASS_GRAPH"/>
 	<collaborationgraph visible="$COLLABORATION_GRAPH"/>
 	<memberdecl>
