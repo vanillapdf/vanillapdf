@@ -5,7 +5,7 @@
 \section lib_interface Library interface
 
 The library is writted in standard C++ (currently 14) and can be compiled using
-Visual studio and GCC (tested on Ubuntu 16.04) as well.
+Visual studio (2015 and 2017) and GCC (tested on Ubuntu 16.04) as well.
 
 It provides only <b>ANSI C</b> API. The reason is rooted within the incompatibility of the C++ ABI between compilers.<br>
 Functions across the interface use standard C caller clean-up [<b>cdecl</b>](https://en.wikipedia.org/wiki/X86_calling_conventions#cdecl) calling convention.<br>
@@ -28,19 +28,38 @@ In this case, the reference counter is embedded inside the structure body.<br>
 
 \section file_layer File layer
 
+File layer allows access to file contents at the syntactic level.<br>
+It has some necessary semantic features that are required for parsing its syntax.<br>
+
+\note
+For example \ref IndirectObjectReferenceHandle often has to be resolved to read an object.<br>
+The \ref StreamObjectHandle has it's \p Length often stored as an indirect object.<br>
+In order to validate this object, the \p Length has to be resolved to successfully parse an object.<br>
+
 \subsection arch_streams IO Streams
-\subsection arch_tokens Tokens
-\subsection arch_objects Objects
-\subsection arch_xref Cross-reference tables
 
-\section document_layer Document layer
+Library uses C++ io streams for reading source files and writing output files.<br>
+There are already interfaces, that represents these streams and will be used throughout the library interface.<br>
 
-Document layer is just a wrapper above \ref file_layer.
-It encapsulates syntactic operations and forms operations with semantic corectness.
+<ul>
+<li>Source files with \ref InputStreamInterfaceHandle
+<li>Destinatiuon files with \ref OutputStreamInterfaceHandle
+</ul>
 
-\section contents_layer Contents layer
+\note
+These interfaces could be overwritten in the future, so that user can provide custom implementation for reading source file.<br>
+This is often helpful for interacting with other applications, that might need to share file access.<br>
 
-Content instructions
+\subsection arch_parsing Parsing
+
+Tokens are smallest syntactic elements and are separated by a whitespace or a delimiter.<br>
+Which characters are considered whitespace and which are considered delimiter is discussed in [<b>section 7.2 - Lexical Conventions</b>](PDF32000_2008.pdf#G6.1638740).<br>
+
+Tokenizer uses look-ahead to determine proper token type, since some of the tokens are ambiguous from the first character.<br>
+For example hexadecimal string is enclosed with angle brackets "<", ">" and the dictionary "<<", ">>".<br>
+
+Tokens are passed to the parser, who is responsible for constructing objects.<br>
+Parser uses look-ahead as well, since multiple tokens may form a single object.<br>
 
 \section function_callbacks Function callbacks
 

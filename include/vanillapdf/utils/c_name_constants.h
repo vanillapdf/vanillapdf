@@ -214,8 +214,17 @@ extern "C"
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_SpiderInfo;
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_StructTreeRoot;
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_Threads;
+
+	/**
+	* \brief Usually represents a dictionary type entry.
+	*/
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_Type;
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_URI;
+
+	/**
+	* \brief Represents a catalog's version property.
+	* \see \ref CatalogHandle
+	*/
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_Version;
 
 	/**

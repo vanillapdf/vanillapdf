@@ -109,7 +109,8 @@ For a complete sample view \ref file_example.<br>
 \subsection file_xref File cross-reference table
 
 Quote from 7.5.4 PDF reference:<br>
-"The cross-reference table contains information that permits random access to indirect objects within the file so that the entire file need not be read to locate any particular object."<br>
+> The cross-reference table contains information that permits random access to indirect objects<br>
+> within the file so that the entire file need not be read to locate any particular object.<br>
 
 What this means, is that there are stored byte offsets for every indirect object.<br>
 When the file is read, the reader jumps to the trailer, which is at the very end of the file.<br>
@@ -150,6 +151,27 @@ Both document root and metadata should be defined in the cross-reference table.<
 ____________________________________________________
 
 \section document_semantics Document semantics
+
+Document encapsulates syntactic operations and forms operations with semantic validity.<br>
+
+For example, lets take a loot at a \ref CatalogHandle.<br>
+Catalog is based on a dictionary described in [<b>section 7.7.2 - Document Catalog</b>](PDF32000_2008.pdf#G6.1926881).<br>
+
+Instead of accessing dictionary directly with specific keys, it is more convenient to ask for a property.<br>
+To get a version from catalog just call \ref Catalog_GetVersion.<br>
+
+The other option would be searching for a dictionary object with key \ref NameConstant_Type and value \ref NameConstant_Catalog.<br>
+This dictionary could contain (optional, supported from PDF version 1.4 and above) key \ref NameConstant_Version and its value is a \ref NameObjectHandle.<br>
+
+Quote from [<b>section 7.7.2 - Document Catalog - Table 28</b>](PDF32000_2008.pdf#M6.9.39370.Table.caption.wide.Table326.Entries.in.a.catalog.dictionary):<br>
+> The value of this entry shall be a name object, not a number, and therefore shall be preceded<br>
+> by a SOLIDUS (2Fh) character (/) when written in the PDF file (for example, /1.4).<br>
+
+To use this method a <b>very deep knowledge</b> about the PDF file structure is often required.
+
+____________________________________________________
+
+\section page_contents Page contents
 
 From the semantic point of view, the root of the document structure is called \ref CatalogHandle.<br>
 Catalog contains tree of pages, and other important document data.<br>
