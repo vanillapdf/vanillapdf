@@ -19,7 +19,7 @@ extern "C"
 	* \class OutputStreamInterfaceHandle
 	* \extends IUnknownHandle
 	* \ingroup Utils
-	* \brief TODO
+	* \brief \todo Brief description
 	*/
 
 	/**

@@ -19,35 +19,35 @@ extern "C"
 	* \class FilterBaseHandle
 	* \extends IUnknownHandle
 	* \ingroup Files
-	* \brief TODO
+	* \brief \todo Brief description
 	*/
 
 	/**
 	* \class FlateDecodeFilterHandle
 	* \extends FilterBaseHandle
 	* \ingroup Files
-	* \brief TODO
+	* \brief \todo Brief description
 	*/
 
 	/**
 	* \class DCTDecodeFilterHandle
 	* \extends FilterBaseHandle
 	* \ingroup Files
-	* \brief TODO
+	* \brief \todo Brief description
 	*/
 
 	/**
 	* \class ASCII85DecodeFilterHandle
 	* \extends FilterBaseHandle
 	* \ingroup Files
-	* \brief TODO
+	* \brief \todo Brief description
 	*/
 
 	/**
 	* \class ASCIIHexDecodeFilterHandle
 	* \extends FilterBaseHandle
 	* \ingroup Files
-	* \brief TODO
+	* \brief \todo Brief description
 	*/
 
 	/**

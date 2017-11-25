@@ -24,7 +24,7 @@ Library uses so-called intrusive pointer reference counting mechanism.<br>
 Usually, the structure and the reference counter are two separate objects.<br>
 In this case, the reference counter is embedded inside the structure body.<br>
 
-TODO image_here
+\todo image_here
 
 \section file_layer File layer
 
