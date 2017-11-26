@@ -30,6 +30,13 @@ project(vanillapdf)
 # We can setup custom modules to search for third party dependencies
 # set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
+# Set production version
+# It is important project version before including cmake/packaging.cmake
+set(VANILLAPDF_VERSION_MAJOR 0)
+set(VANILLAPDF_VERSION_MINOR 0)
+set(VANILLAPDF_VERSION_PATCH 1)
+set(VANILLAPDF_VERSION_BUILD 0)
+
 # Package management
 include(cmake/packaging.cmake)
 include(CPack)
@@ -49,12 +56,6 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # TODO Support also static library configuration
 # Global compilation definitions
 add_definitions("-DVANILLAPDF_CONFIGURATION_DLL")
-
-# Set production version
-set(VANILLAPDF_VERSION_MAJOR 0)
-set(VANILLAPDF_VERSION_MINOR 0)
-set(VANILLAPDF_VERSION_PATCH 1)
-set(VANILLAPDF_VERSION_BUILD 0)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING
