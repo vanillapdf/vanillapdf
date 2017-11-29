@@ -69,15 +69,20 @@ FontHandle represents a base class for all derived font types.
 /**
 \defgroup Contents Page contents
 \brief
-Content streams are the primary means for describing
-the appearance of pages and other graphical elements.
+This module groups all visual operations, that are available for altering page appearance.
 
-A content stream depends on information
-contained in an associated resource dictionary.
-These two objects form a self-contained entity.
+The graphics operators form six main groups:
 
-This is a direct reference to a PDF specification,
-<a href="PDF32000_2008.pdf#G6.1913075"><b>section 7.8 - Content Streams and Resources</b></a>.
+<ul>
+<li>Graphics state operators
+<li>Path construction operators
+<li>Path-painting operators
+<li>Other painting operators
+<li>Text operators
+<li>Marked-content operators
+</ul>
+
+For more detailed information please visit [<b>Section 8 - Graphics</b>](PDF32000_2008.pdf#G7.3886368).
 */
 
 /**

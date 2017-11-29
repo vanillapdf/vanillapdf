@@ -9,10 +9,10 @@ which are meant to be modified using the only the API and not the structures the
 \section section_types Types
 
 Every function throughout the interface returns \ref error_type.
-\note \ref error_type is currently implemented as int32_t, but can change at any time!
+\note \ref error_type is currently implemented as [<b>int32_t</b>](http://en.cppreference.com/w/cpp/types/integer), but can change at any time!
 
 Check the return code for \ref VANILLAPDF_ERROR_SUCCESS after every operation.
-\note \ref VANILLAPDF_ERROR_SUCCESS is currently defined as 0, but can change at any time!
+\note \ref VANILLAPDF_ERROR_SUCCESS is currently defined as \b 0, but can change at any time!
 
 Passing NULL into any function shall return \ref VANILLAPDF_ERROR_PARAMETER_VALUE.<br>
 All functions either accept a non-null handle, value or output variable to fill.<br>
@@ -127,6 +127,8 @@ error_type print_last_error() {
 	RETURN_ERROR_IF_NOT_SUCCESS(Errors_GetLastErrorMessage(message, length));
 
 	printf("Error %u: %s\n", error, message);
+	free(message);
+	
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 \endcode

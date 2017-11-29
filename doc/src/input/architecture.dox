@@ -2,7 +2,7 @@
 \page page_architecture Architecture
 \tableofcontents
 
-\section arch_overall Library overview
+\section arch_overall General architecture overview
 
 The library is writted in standard C++ (currently 14) and can be compiled using
 Visual studio (2015 and 2017) and GCC (tested on Ubuntu 16.04) as well.
@@ -136,17 +136,49 @@ This is often helpful for interacting with other applications, that might need t
 Tokens are smallest syntactic elements and are separated by a whitespace or a delimiter.<br>
 Which characters are considered whitespace and which are considered delimiter is discussed in [<b>section 7.2 - Lexical Conventions</b>](PDF32000_2008.pdf#G6.1638740).<br>
 
+\note
+PDF supports comments, but they are currently ignored. They might be persisted in the future.
+
 Tokenizer uses look-ahead to determine proper token type, since some of the tokens are ambiguous from the first character.<br>
 For example hexadecimal string is enclosed with angle brackets "<", ">" and the dictionary "<<", ">>".<br>
 
+Sample parsing loop for hexadecimal string:
+\code
+int char = m_stream->Get();
+if (char == Delimiter::LESS_THAN_SIGN) {
+
+	int ahead = m_stream->Peek();
+	if (ahead == Delimiter::LESS_THAN_SIGN) {
+		return Token::Type::DICTIONARY_BEGIN;
+	}
+
+	for (;;) {
+		int hex_char = m_stream->Get();
+		if (hex_char == Delimiter::GREATER_THAN_SIGN) {
+			break;
+		}
+		
+		if (IsNumeric(hex_char) || IsAlpha(hex_char)) {
+			continue;
+		}
+		
+		// Found unknown character - terminate
+	}
+
+	return Token::Type::HEXADECIMAL_STRING;
+}
+\endcode
+
 Tokens are passed to the parser, who is responsible for constructing objects.<br>
 Parser uses look-ahead as well, since multiple tokens may form a single object.<br>
+
+\todo image with indirect reference parsing
 
 \section function_callbacks Function callbacks
 
 Library provides multiple interfaces, that could be overriden by the calling application.
 
-For instance, when signing a document, it is possible to use classic PKCS#12 (Personal Information Exchange described in [<b>RFC 7292</b>](https://tools.ietf.org/html/rfc7292).<br>
+For instance, when signing a document, it is possible to use classic PKCS#12 (Personal Information Exchange described in [<b>RFC 7292</b>](https://tools.ietf.org/html/rfc7292)).<br>
 Unfortunately, this would not work with smart cards, where the private key is not directly accessible.<br>
 User can override \ref SigningKeyHandle and provide signing implementation outside library boundaries.<br>
 
