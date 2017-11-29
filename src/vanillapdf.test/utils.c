@@ -178,6 +178,7 @@ error_type print_last_error() {
 	RETURN_ERROR_IF_NOT_SUCCESS(Errors_GetLastErrorMessage(message, length));
 
 	printf("Error %u: %s\n", error, message);
+	free(message);
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
