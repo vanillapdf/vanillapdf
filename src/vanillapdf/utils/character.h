@@ -3,7 +3,7 @@
 
 namespace vanillapdf {
 
-enum class WhiteSpace : char {
+enum class WhiteSpace : uint8_t {
 	NUL = 0x00,
 	HORIZONTAL_TAB = 0x09,
 	LINE_FEED = 0x0A,
@@ -12,7 +12,7 @@ enum class WhiteSpace : char {
 	SPACE = 0x20
 };
 
-enum class Delimiter : char {
+enum class Delimiter : uint8_t {
 	LEFT_PARENTHESIS = 0x28,
 	RIGHT_PARENTHESIS = 0x29,
 	LESS_THAN_SIGN = 0x3C,
