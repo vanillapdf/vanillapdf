@@ -25,7 +25,7 @@ set(CPACK_PACKAGE_CHECKSUM				SHA256)
 
 # Variables specific to CPack RPM generator
 set(CPACK_RPM_PACKAGE_LICENSE			"Proprietary")
-set(CPACK_RPM_PACKAGE_GROUP				"Development/Tools")
+set(CPACK_RPM_PACKAGE_GROUP				"Development/Libraries/C and C++")
 set(CPACK_RPM_PACKAGE_URL				"https://vanillapdf.com/")
 set(CPACK_RPM_PACKAGE_AUTOREQ			1)
 set(CPACK_RPM_PACKAGE_AUTOPROV			1)
