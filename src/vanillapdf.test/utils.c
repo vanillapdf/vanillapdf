@@ -168,10 +168,10 @@ error_type print_last_error() {
 		return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 
-	message = (char*) calloc(sizeof(char), length + 1);
+	message = (char*) calloc(sizeof(char), length);
 	if (NULL == message) {
 		unsigned long long length_converted = length;
-		printf("Could not allocate memory: %llu bytes\n", length_converted + 1);
+		printf("Could not allocate memory: %llu bytes\n", length_converted);
 		return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 
