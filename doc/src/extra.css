@@ -20,11 +20,12 @@ div.contents {
 }
 
 div.image {
-   text-align: left;
+	margin-right: 50%;
 }
 
 div.fragment {
 	padding: 5px;
+	display: inline-block;
 }
 
 body, table, div, p, dl {
