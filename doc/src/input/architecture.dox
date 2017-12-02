@@ -33,7 +33,7 @@ Each interface function is wrapped inside try-catch block to prevent any excepti
 This is example, how interface functions usually look like:
 
 \code
-VANILLAPDF_API error_type CALLING_CONVENTION Buffer_SetData(BufferHandle* handle, string_type data, size_type size) {
+error_type Buffer_SetData(BufferHandle* handle, string_type data, size_type size) {
 	Buffer* obj = reinterpret_cast<Buffer*>(handle);
 	
 	if (obj == nullptr) {
