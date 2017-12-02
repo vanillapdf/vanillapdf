@@ -78,7 +78,10 @@ Library uses so-called intrusive pointer reference counting mechanism.<br>
 Usually, the structure and the reference counter are two separate objects.<br>
 In this case, the reference counter is embedded inside the structure body.<br>
 
-\todo image_here
+\anchor arch_intrusive_pointer_image
+\image html intrusive_pointers.png "Picture 1: Illustration of embedding and intrusive pointer"
+
+Both Object and ObjectHandle in the \ref arch_intrusive_pointer_image "Picture 1" point to the same object.
 
 \subsection arch_ownership_comparison Intrusive vs Shared
 
