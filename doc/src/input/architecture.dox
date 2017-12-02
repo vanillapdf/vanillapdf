@@ -78,10 +78,7 @@ Library uses so-called intrusive pointer reference counting mechanism.<br>
 Usually, the structure and the reference counter are two separate objects.<br>
 In this case, the reference counter is embedded inside the structure body.<br>
 
-\anchor arch_intrusive_pointer_image
 \image html intrusive_pointers.png "Picture 1: Illustration of embedding and intrusive pointer"
-
-Both Object and ObjectHandle in the \ref arch_intrusive_pointer_image "Picture 1" point to the same object.
 
 \subsection arch_ownership_comparison Intrusive vs Shared
 
@@ -175,7 +172,7 @@ if (char == Delimiter::LESS_THAN_SIGN) {
 Tokens are passed to the parser, who is responsible for constructing objects.<br>
 Parser uses look-ahead as well, since multiple tokens may form a single object.<br>
 
-\todo image with indirect reference parsing
+\image html indirect_reference_parsing.png "Picture 2: Diagram for parsing indirect object references"
 
 \section function_callbacks Function callbacks
 
