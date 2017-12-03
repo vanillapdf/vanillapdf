@@ -12,6 +12,59 @@ Some of the library features can be used without a valid license.
 
 \section license_validity License validity
 
+License itself has unlimited validity for current version of the library.<br>
+Updating library to a newer version is restricted by the expiration field in the license file.<br>
+
+\code
+"expiration": "2022-10-01 18:50:36Z"
+\endcode
+
+As long as the library build date is earlier then expiration date, the library accepts license file.<br>
+Determining the library build date can be accessed with file properties on windows.<br>
+
+\image html file_properties.png "Picture 1: File properties of shared library file on windows OS"
+
+The file properties might be very slightly different to the exact values returned via \ref LibraryInfo.
+
+\code
+string_type library_author = NULL;
+
+// Version info
+integer_type library_version_major = 0;
+integer_type library_version_minor = 0;
+integer_type library_version_patch = 0;
+integer_type library_version_build = 0;
+
+// Build time infor
+integer_type library_build_day = 0;
+integer_type library_build_month = 0;
+integer_type library_build_year = 0;
+
+LibraryInfo_GetVersionMajor(&library_version_major);
+LibraryInfo_GetVersionMinor(&library_version_minor);
+LibraryInfo_GetVersionPatch(&library_version_patch);
+LibraryInfo_GetVersionBuild(&library_version_build);
+LibraryInfo_GetAuthor(&library_author);
+
+LibraryInfo_GetBuildDay(&library_build_day);
+LibraryInfo_GetBuildMonth(&library_build_month);
+LibraryInfo_GetBuildYear(&library_build_year);
+
+printf("Library vanillapdf %d.%d.%d.%d by %s\n",
+	library_version_major,
+	library_version_minor,
+	library_version_patch,
+	library_version_build,
+	library_author
+);
+
+printf("Built on %d.%d.%d\n",
+	library_build_day,
+	library_build_month,
+	library_build_year
+);
+\endcode
+
 \section license_use Using the license
 
 \subsection license_use_obtain Obtain
@@ -34,6 +87,28 @@ We recommend to embed the license file into your application a protect it with e
 
 \note
 We may send You some code samples upon request on how to properly protect the license file, as it is undesirable to be easily extractable.
+
+Before the accessing premium features be sure to initialize the library with the license key.
+
+\code
+BufferHandle* license_buffer = NULL;
+InputStreamInterfaceHandle* input_stream = NULL;
+boolean_type is_valid = VANILLAPDF_RV_FALSE;
+
+InputStreamInterface_CreateFromFile(license_file, &input_stream);
+InputStreamInterface_ToBuffer(input_stream, &license_buffer);
+LicenseInfo_SetLicenseBuffer(license_buffer);
+LicenseInfo_IsValid(&is_valid);
+
+if (is_valid != VANILLAPDF_RV_TRUE) {
+	// Terminate
+}
+
+InputStreamInterface_Release(input_stream);
+Buffer_Release(license_buffer);
+\endcode
+
+For more details visit \ref LicenseInfo.
 
 \subsection license_use_verify Verify
 
