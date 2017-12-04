@@ -122,7 +122,7 @@ error_type process_library_info() {
 	integer_type library_version_patch = 0;
 	integer_type library_version_build = 0;
 
-	// Build time infor
+	// Build time information
 	integer_type library_build_day = 0;
 	integer_type library_build_month = 0;
 	integer_type library_build_year = 0;
