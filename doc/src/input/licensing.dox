@@ -2,12 +2,6 @@
 \page page_licensing Licensing
 \tableofcontents
 
-Some of the library features can be used without a valid license.
-
-\section license_free Free features
-
-\section license_premium Premium features
-
 \section license_types License types
 
 \section license_validity License validity
@@ -20,7 +14,7 @@ Updating library to a newer version is restricted by the expiration field in the
 \endcode
 
 As long as the library build date is earlier then expiration date, the library accepts license file.<br>
-Determining the library build date can be accessed with file properties on windows.<br>
+Determining the library build date can be done using file properties on windows.<br>
 
 \image html file_properties.png "Picture 1: File properties of shared library file on windows OS"
 
@@ -35,7 +29,7 @@ integer_type library_version_minor = 0;
 integer_type library_version_patch = 0;
 integer_type library_version_build = 0;
 
-// Build time infor
+// Build time information
 integer_type library_build_day = 0;
 integer_type library_build_month = 0;
 integer_type library_build_year = 0;
@@ -65,15 +59,36 @@ printf("Built on %d.%d.%d\n",
 );
 \endcode
 
+\section license_features Features
+
+Library allows access to \ref license_features_free without a valid license.<br>
+If this is suffictient, there is no need to purchase a commercial license.<br>
+However, all of the \ref license_features_premium does require the license.<br>
+
+\subsection license_features_free Free features
+
+\subsection license_features_premium Premium features
+
+The major premium feature is creating and modifying existing files.<br>
+In the free version, all files creating contains a watermark image.<br>
+
+\todo image with watermark
+
+This is allowed to show the capabilities to a certain extent.<br>
+To remove the watermark you have to use a valid license file.<br>
+How to use a license file is described in the \ref license_use section.<br>
+
 \section license_use Using the license
 
-\subsection license_use_obtain Obtain
+A license file is needed to access library premium features.<br>
+Detailed process about how to use license files is described in the following subections.<br>
+
+\subsection license_use_request Request
 
 The license has to be requested first.<br>
 Currently the only supported method to request a license is via email [<b>info@vanillapdf.com</b>](mailto:info@vanillapdf.com).<br>
 After processing your request, you'll receive an email with the invoice.<br>
-Depending on the payment processor, completing the transaction might take a few days.<br>
-Upon a successful transaction, you'll receive another email, containing <b>your very own</b> license file.<br>
+Upon a completing the transaction, you'll receive another email, containing <b>your very own</b> license file.<br>
 
 \note
 Please, keep in mind, that every license file is issued to either a person or a company.<br>
