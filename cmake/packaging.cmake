@@ -15,12 +15,36 @@ set(CPACK_PACKAGE_VENDOR				"Vanilla PDF Labs")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY		"Vanilla PDF Labs/Vanilla PDF")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY	"Cross-platform toolkit for creating and manipulating existing PDF documents")
 set(CPACK_PACKAGE_DESCRIPTION			"Cross-platform toolkit for creating and manipulating existing PDF documents")
-set(CPACK_PACKAGE_FILE_NAME 			"${PROJECT_NAME}_${CPACK_PACKAGE_VERSION}_${CPACK_SYSTEM_NAME}")
 
+# There is a little trick going on
+# By default, the CPACK_PACKAGE_FILE_NAME is set to
+# "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}."
+# However! Variable CPACK_PACKAGE_VERSION is only used internally a is not yet set!
+# Therefore we have to create a different variable for storing the version string
+set(PACKAGE_VERSION_NAME				"${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+set(PACKAGE_SYSTEM_NAME					"${CMAKE_SYSTEM_NAME}")
+set(PACKAGE_PLATFORM_NAME				"${CMAKE_SYSTEM_PROCESSOR}")
+
+# Special naming convention for windows
+if(${PACKAGE_SYSTEM_NAME} MATCHES Windows)
+	if(CMAKE_CL_64)
+		set(PACKAGE_PLATFORM_NAME win64-x64)
+	else()
+		set(PACKAGE_PLATFORM_NAME win32-x86)
+	endif()
+endif()
+
+# Override the default package version name with PROJECT_NAME instead of CPACK_PACKAGE_NAME
+# Note: The CPACK_SYSTEM_NAME is not set either, so we have to use CMAKE_SYSTEM_NAME instead
+set(CPACK_PACKAGE_FILE_NAME 			"${PROJECT_NAME}_${PACKAGE_VERSION_NAME}_${PACKAGE_SYSTEM_NAME}-${PACKAGE_PLATFORM_NAME}")
+
+# External resources
 set(CPACK_RESOURCE_FILE_LICENSE			${CMAKE_SOURCE_DIR}/cmake/LICENSE.txt)
 set(CPACK_RESOURCE_FILE_README			${CMAKE_SOURCE_DIR}/cmake/README.txt)
 set(CPACK_RESOURCE_FILE_WELCOME			${CMAKE_SOURCE_DIR}/cmake/WELCOME.txt)
 set(CPACK_PACKAGE_ICON					${CMAKE_SOURCE_DIR}/cmake/vanilla_logo.ico)
+
+# Include checksum file
 set(CPACK_PACKAGE_CHECKSUM				SHA256)
 
 # Variables specific to CPack RPM generator
@@ -45,10 +69,6 @@ set(CPACK_WIX_UPGRADE_GUID				"{88E3B5A2-C8B2-4F7C-A7E5-A2B764A9B0E6}")
 set(CPACK_WIX_PRODUCT_ICON				${CMAKE_SOURCE_DIR}/cmake/vanilla_logo.ico)
 set(CPACK_WIX_PROGRAM_MENU_FOLDER		"Vanilla PDF")
 set(CPACK_WIX_CMAKE_PACKAGE_REGISTRY	"VanillaPDF")
-
-if (NOT DEFINED CPACK_PACKAGE_VERSION)
-	set(CPACK_PACKAGE_VERSION			"${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
-endif()
 
 if(WIN32)
 	set(CPACK_GENERATOR		"WIX;ZIP")
