@@ -99,7 +99,7 @@ Intrusive pointers can guarantee, that there are no multiple reference count obj
 
 \note
 There is a nice try to address this issue called [shared_from_this](http://en.cppreference.com/w/cpp/memory/enable_shared_from_this).<br>
-This could act as a help, but there is no guarantee.<br>
+This could be helpful, but there is no guarantee.<br>
 
 Intrusive pointers should have a better performance (in some cases) comparing to traditional C++ shared pointers.<br>
 Main reason is that whole object is allocated within a single allocation, while shared pointers are often not.<br>
