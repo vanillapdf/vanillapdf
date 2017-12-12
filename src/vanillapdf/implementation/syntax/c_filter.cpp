@@ -12,6 +12,40 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
+// FilterBase
+
+VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_Encode(FilterBaseHandle* handle, BufferHandle* data_handle, BufferHandle** result) {
+	FilterBase* filter = reinterpret_cast<FilterBase*>(handle);
+	Buffer* data = reinterpret_cast<Buffer*>(data_handle);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(filter);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto encoded = filter->Encode(data);
+		auto ptr = encoded.AddRefGet();
+		*result = reinterpret_cast<BufferHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_Decode(FilterBaseHandle* handle, BufferHandle* data_handle, BufferHandle** result) {
+	FlateDecodeFilter* filter = reinterpret_cast<FlateDecodeFilter*>(handle);
+	Buffer* data = reinterpret_cast<Buffer*>(data_handle);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(filter);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto decoded = filter->Decode(data);
+		auto ptr = decoded.AddRefGet();
+		*result = reinterpret_cast<BufferHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_Release(FilterBaseHandle* handle) {
 	return ObjectRelease<FilterBase, FilterBaseHandle>(handle);
 }

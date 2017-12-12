@@ -27,6 +27,9 @@ extern "C"
 	* @{
 	*/
 
+	/**
+	* \brief Creates a new buffer instance with the content of \p data
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_Create(string_type data, size_type size, BufferHandle** result);
 
 	/**
@@ -39,7 +42,10 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_SetData(BufferHandle* handle, string_type data, size_type size);
 
-	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToInputStream(BufferHandle* handle, InputStreamInterfaceHandle** result);
+	/**
+	* \brief Converts current buffer state to input stream
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToInputStream(BufferHandle* handle, IInputStreamHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
