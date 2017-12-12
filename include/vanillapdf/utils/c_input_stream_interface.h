@@ -12,31 +12,44 @@ extern "C"
 
 	/**
 	* \file c_input_stream_interface.h
-	* This file contains class definitions for \ref InputStreamInterfaceHandle
+	* This file contains class definitions for \ref IInputStreamHandle
 	*/
 
 	/**
-	* \class InputStreamInterfaceHandle
+	* \class IInputStreamHandle
 	* \extends IUnknownHandle
 	* \ingroup Utils
-	* \brief \todo Brief description
+	* \brief Input stream can read and interpret input from sequences of characters
 	*/
 
 	/**
-	* \memberof InputStreamInterfaceHandle
+	* \memberof IInputStreamHandle
 	* @{
 	*/
 
-	VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_CreateFromFile(string_type filename, InputStreamInterfaceHandle** result);
-	VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_CreateFromBuffer(BufferHandle* data, InputStreamInterfaceHandle** result);
+	/**
+	* \brief Opens an existing file at \p filename for read
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_CreateFromFile(string_type filename, IInputStreamHandle** result);
 
-	VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_ToBuffer(InputStreamInterfaceHandle* handle, BufferHandle** result);
+	/**
+	* \brief Reads all data from buffer and stores them for later use
+	* \details This method does not reflect buffer updates after it has been called.
+	* Only current snapshot of the buffer state is stored in the stream.
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_CreateFromBuffer(BufferHandle* data, IInputStreamHandle** result);
+
+	/**
+	* \brief Reads all data from the input stream and returns them as a single large buffer.
+	* \details This method is not recommended for large files, as the process might not have enough memory.
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_ToBuffer(IInputStreamHandle* handle, BufferHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION InputStreamInterface_Release(InputStreamInterfaceHandle* handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_Release(IInputStreamHandle* handle);
 
 	/** @} */
 

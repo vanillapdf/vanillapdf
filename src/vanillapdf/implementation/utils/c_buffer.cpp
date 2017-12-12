@@ -42,7 +42,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Buffer_SetData(BufferHandle* handle
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToInputStream(BufferHandle* handle, InputStreamInterfaceHandle** result) {
+VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToInputStream(BufferHandle* handle, IInputStreamHandle** result) {
 	Buffer* obj = reinterpret_cast<Buffer*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -50,7 +50,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToInputStream(BufferHandle* 
 	try {
 		auto input_stream = obj->ToInputStream();
 		auto ptr = input_stream.AddRefGet();
-		*result = reinterpret_cast<InputStreamInterfaceHandle*>(ptr);
+		*result = reinterpret_cast<IInputStreamHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }

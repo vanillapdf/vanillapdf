@@ -101,8 +101,8 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(EncryptionKey);
 	DECLARE_OBJECT_HANDLE(PKCS12Key);
 
-	DECLARE_OBJECT_HANDLE(InputStreamInterface);
-	DECLARE_OBJECT_HANDLE(OutputStreamInterface);
+	DECLARE_OBJECT_HANDLE(IInputStream);
+	DECLARE_OBJECT_HANDLE(IOutputStream);
 
 	#pragma endregion
 

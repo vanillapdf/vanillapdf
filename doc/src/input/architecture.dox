@@ -123,8 +123,8 @@ Library uses C++ io streams for reading source files and writing output files.<b
 There are already interfaces, that represents these streams and will be used throughout the library interface.<br>
 
 <ul>
-<li>Source files with \ref InputStreamInterfaceHandle
-<li>Destination files with \ref OutputStreamInterfaceHandle
+<li>Source files with \ref IInputStreamHandle
+<li>Destination files with \ref IOutputStreamHandle
 </ul>
 
 \note
