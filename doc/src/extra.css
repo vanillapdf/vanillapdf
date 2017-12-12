@@ -19,13 +19,28 @@ div.contents {
 	-webkit-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
 }
 
+dl.note {
+	padding-left: 6px;
+}
+
+div.contents {
+	padding: 20px;
+}
+
 div.image {
 	text-align: left;
 }
 
 div.fragment {
 	padding: 5px;
+	margin-left: 20px;
+	
+	/* This wraps the fragment to the text legth */
 	display: inline-block;
+}
+
+dl.section dd {
+    margin-left: 0px;
 }
 
 body, table, div, p, dl {
