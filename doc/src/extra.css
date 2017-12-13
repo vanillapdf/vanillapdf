@@ -19,7 +19,7 @@ div.contents {
 	-webkit-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
 }
 
-dl.note {
+dl.note, dl.todo {
 	padding-left: 6px;
 }
 
@@ -39,7 +39,7 @@ div.fragment {
 	display: inline-block;
 }
 
-dl.section dd {
+dl.section dd, dl.todo dd {
     margin-left: 0px;
 }
 
