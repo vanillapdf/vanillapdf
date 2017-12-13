@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_license_info.h
-	* This file contains class definitions for \ref LicenseInfo
+	* \brief This file contains class definitions for \ref LicenseInfo
 	*/
 
 	/**

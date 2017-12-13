@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_pkcs12_key.h
-	* This file contains class definitions for \ref PKCS12KeyHandle
+	* \brief This file contains class definitions for \ref PKCS12KeyHandle
 	*/
 
 	/**

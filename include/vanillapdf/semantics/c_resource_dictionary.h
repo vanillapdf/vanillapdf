@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_resource_dictionary.h
-	* This file contains class definitions for \ref ResourceDictionaryHandle
+	* \brief This file contains class definitions for \ref ResourceDictionaryHandle
 	*/
 
 	/**

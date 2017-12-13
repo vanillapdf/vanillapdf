@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_file_writer.h
-	* This file contains class definitions for \ref FileWriterHandle
+	* \brief This file contains class definitions for \ref FileWriterHandle
 	*/
 
 	/**

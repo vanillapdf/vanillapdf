@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_buffer.h
-	* This file contains class definitions for \ref BufferHandle
+	* \brief This file contains class definitions for \ref BufferHandle
 	*/
 
 	/**

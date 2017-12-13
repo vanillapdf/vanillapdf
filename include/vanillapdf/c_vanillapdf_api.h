@@ -3,7 +3,7 @@
 
 /**
 * \file c_vanillapdf_api.h
-* This file contains the entire available API merged in to single file.
+* \brief This file contains the entire available API merged in to single file.
 */
 
 /* general utility */

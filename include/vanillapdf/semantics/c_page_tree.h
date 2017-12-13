@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_page_tree.h
-	* This file contains class definitions for \ref PageTreeHandle
+	* \brief This file contains class definitions for \ref PageTreeHandle
 	*/
 
 	/**

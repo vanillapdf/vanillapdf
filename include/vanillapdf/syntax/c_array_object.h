@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_array_object.h
-	* This file contains class definitions for \ref ArrayObjectHandle
+	* \brief This file contains class definitions for \ref ArrayObjectHandle
 	*/
 
 	/**

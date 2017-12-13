@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_contents.h
-	* This file contains class definitions for working with compressed page contents
+	* \brief This file contains class definitions for working with compressed page contents
 	*/
 
 	/**

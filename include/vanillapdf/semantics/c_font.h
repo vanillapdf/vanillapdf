@@ -12,8 +12,7 @@ extern "C"
 
 	/**
 	* \file c_font.h
-	* This file contains class definitions for
-	* \ref FontHandle and \ref CompositeFontHandle.
+	* \brief This file contains class definitions for \ref FontHandle and \ref CompositeFontHandle.
 	*/
 
 	/**

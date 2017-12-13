@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_destinations.h
-	* This file contains class definitions for \ref DestinationHandle and \ref NamedDestinationsHandle
+	* \brief This file contains class definitions for \ref DestinationHandle and \ref NamedDestinationsHandle
 	*/
 
 	/**

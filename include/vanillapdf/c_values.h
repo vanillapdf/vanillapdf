@@ -6,7 +6,7 @@
 
 /**
 * \file c_values.h
-* This file contains types and constants used as parameters or return values.
+* \brief This file contains types and constants used as parameters or return values.
 */
 
 #ifdef __cplusplus

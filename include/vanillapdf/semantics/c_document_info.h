@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_document_info.h
-	* This file contains class definitions for \ref DocumentInfoHandle
+	* \brief This file contains class definitions for \ref DocumentInfoHandle
 	*/
 
 	/**

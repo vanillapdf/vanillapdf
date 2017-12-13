@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_stream_object.h
-	* This file contains class definitions for \ref StreamObjectHandle
+	* \brief This file contains class definitions for \ref StreamObjectHandle
 	*/
 
 	/**

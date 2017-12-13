@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_encryption.h
-	* This file contains file encryption utilities
+	* \brief This file contains file encryption utilities
 	*/
 
 	/**

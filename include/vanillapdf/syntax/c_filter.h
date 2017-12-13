@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_filter.h
-	* This file contains encoding/decoding utilities
+	* \brief This file contains encoding/decoding utilities
 	*/
 
 	/**

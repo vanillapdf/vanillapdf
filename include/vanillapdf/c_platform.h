@@ -3,7 +3,7 @@
 
 /**
 * \file c_platform.h
-* This file contains macro declarations about current platform and compiler.
+* \brief This file contains macro declarations about current platform and compiler.
 */
 
 #if defined(_MSC_VER)

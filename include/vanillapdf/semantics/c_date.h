@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_date.h
-	* This file contains class definitions for \ref DateHandle
+	* \brief This file contains class definitions for \ref DateHandle
 	*/
 
 	/**

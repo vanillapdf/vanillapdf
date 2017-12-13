@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_page_object.h
-	* This file contains class definitions for \ref PageObjectHandle
+	* \brief This file contains class definitions for \ref PageObjectHandle
 	*/
 
 	/**

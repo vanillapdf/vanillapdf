@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_content_instruction.h
-	* This file contains class definitions for \ref ContentInstructionHandle
+	* \brief This file contains class definitions for \ref ContentInstructionHandle
 	*/
 
 	/**

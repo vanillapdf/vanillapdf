@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_character_map.h
-	* This file contains contains class definitions for character maps
+	* \brief This file contains contains class definitions for character maps
 	*/
 
 	/**

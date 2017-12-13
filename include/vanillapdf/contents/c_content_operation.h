@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_content_operation.h
-	* This file contains class definitions for \ref ContentOperationHandle
+	* \brief This file contains class definitions for \ref ContentOperationHandle
 	*/
 
 	/**

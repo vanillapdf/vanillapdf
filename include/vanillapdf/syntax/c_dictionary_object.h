@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_dictionary_object.h
-	* This file contains class definitions for \ref DictionaryObjectHandle
+	* \brief This file contains class definitions for \ref DictionaryObjectHandle
 	*/
 
 	/**

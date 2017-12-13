@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_rectangle.h
-	* This file contains class definitions for \ref RectangleHandle
+	* \brief This file contains class definitions for \ref RectangleHandle
 	*/
 
 	/**

@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_interactive_forms.h
-	* This file contains class definitions for \ref InteractiveFormHandle
+	* \brief This file contains class definitions for \ref InteractiveFormHandle
 	*/
 
 	/**

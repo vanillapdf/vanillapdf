@@ -12,8 +12,7 @@ extern "C"
 
 	/**
 	* \file c_page_labels.h
-	* This file contains class definitions for
-	* \ref PageLabelsHandle and \ref PageLabelHandle.
+	* \brief This file contains class definitions for \ref PageLabelsHandle and \ref PageLabelHandle.
 	*/
 
 	/**

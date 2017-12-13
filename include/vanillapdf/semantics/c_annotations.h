@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_annotations.h
-	* This file contains functions for working with document page annotations.
+	* \brief This file contains functions for working with document page annotations.
 	*/
 
 	/**

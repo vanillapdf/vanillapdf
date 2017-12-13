@@ -15,7 +15,7 @@ extern "C"
 
 	/**
 	* \file c_document_signature_settings.h
-	* This file contains class definitions for \ref DocumentSignatureSettingsHandle
+	* \brief This file contains class definitions for \ref DocumentSignatureSettingsHandle
 	*/
 
 	/**

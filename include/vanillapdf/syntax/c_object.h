@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_object.h
-	* This file contains contains class definitions for \ref ObjectHandle
+	* \brief This file contains contains class definitions for \ref ObjectHandle
 	*/
 
 	/**

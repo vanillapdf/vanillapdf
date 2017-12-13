@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_indirect_object_reference.h
-	* This file contains class definitions for \ref IndirectObjectReferenceHandle
+	* \brief This file contains class definitions for \ref IndirectObjectReferenceHandle
 	*/
 
 	/**

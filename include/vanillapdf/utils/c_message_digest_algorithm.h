@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_message_digest_algorithm.h
-	* This file contains all supported digest algorithms
+	* \brief This file contains all supported digest algorithms
 	*/
 
 	/**

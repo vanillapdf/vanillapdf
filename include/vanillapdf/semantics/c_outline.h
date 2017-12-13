@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_outline.h
-	* This file contains contains class definitions for document outlines
+	* \brief This file contains contains class definitions for document outlines
 	*/
 
 	/**

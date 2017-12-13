@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_library_info.h
-	* This file contains definitions for \ref LibraryInfo.
+	* \brief This file contains definitions for \ref LibraryInfo.
 	*/
 
 	/**

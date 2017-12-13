@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_fields.h
-	* This file contains class definitions for interactive form fields
+	* \brief This file contains class definitions for interactive form fields
 	*/
 
 	/**

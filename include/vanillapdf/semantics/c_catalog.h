@@ -14,7 +14,7 @@ extern "C"
 
 	/**
 	* \file c_catalog.h
-	* This file contains class definitions for \ref CatalogHandle
+	* \brief This file contains class definitions for \ref CatalogHandle
 	*/
 
 	/**

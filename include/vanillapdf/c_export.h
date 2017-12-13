@@ -5,7 +5,7 @@
 
 /**
 * \file c_export.h
-* This file contains macro declarations for importing
+* \brief This file contains macro declarations for importing
 * and exporting symbols from library boundaries.
 */
 

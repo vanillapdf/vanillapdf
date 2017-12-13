@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_xref.h
-	* This file contains class definitions for cross-reference tables, chained tables and entries.
+	* \brief This file contains class definitions for cross-reference tables, chained tables and entries.
 	*/
 
 	/**

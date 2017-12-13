@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_errors.h
-	* All functions that control last error occurred
+	* \brief All functions that control last error occurred
 	*/
 
 	/**

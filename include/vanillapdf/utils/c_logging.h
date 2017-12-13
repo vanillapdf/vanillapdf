@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_logging.h
-	* All functions that control library logging configuration
+	* \brief All functions that control library logging configuration
 	*/
 
 	/**

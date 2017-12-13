@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_font_map.h
-	* This file contains contains class definitions for \ref FontMapHandle
+	* \brief This file contains contains class definitions for \ref FontMapHandle
 	*/
 
 	/**

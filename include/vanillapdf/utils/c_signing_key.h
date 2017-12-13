@@ -14,7 +14,7 @@ extern "C"
 
 	/**
 	* \file c_signing_key.h
-	* This file contains class definitions for \ref SigningKeyHandle
+	* \brief This file contains class definitions for \ref SigningKeyHandle
 	*/
 
 	/**

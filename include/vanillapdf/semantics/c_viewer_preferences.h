@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_viewer_preferences.h
-	* This file contains class definitions for \ref ViewerPreferencesHandle
+	* \brief This file contains class definitions for \ref ViewerPreferencesHandle
 	*/
 
 	/**

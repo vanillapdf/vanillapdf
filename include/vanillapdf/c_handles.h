@@ -8,7 +8,7 @@ extern "C"
 
 	/**
 	* \file c_handles.h
-	* This file contains all type forward
+	* \brief This file contains all type forward
 	* declarations returned by the library API.
 	*
 	* They are __intentionally hidden__, because they

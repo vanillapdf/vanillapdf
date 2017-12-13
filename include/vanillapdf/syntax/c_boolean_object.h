@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_boolean_object.h
-	* This file contains class definitions for \ref BooleanObjectHandle
+	* \brief This file contains class definitions for \ref BooleanObjectHandle
 	*/
 
 	/**

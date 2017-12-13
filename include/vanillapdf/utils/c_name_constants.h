@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_name_constants.h
-	* This file contains useful predefined constants referenced by PDF specification
+	* \brief This file contains useful predefined constants referenced by PDF specification
 	*/
 
 	// This command suppresses warning for undocumented members

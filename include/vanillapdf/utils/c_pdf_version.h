@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_pdf_version.h
-	* This file contains class definitions for \ref PDFVersion
+	* \brief This file contains class definitions for \ref PDFVersion
 	*/
 
 	/**

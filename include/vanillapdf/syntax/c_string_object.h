@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_string_object.h
-	* This file contains class definitions for \ref StringObjectHandle
+	* \brief This file contains class definitions for \ref StringObjectHandle
 	*/
 
 	/**

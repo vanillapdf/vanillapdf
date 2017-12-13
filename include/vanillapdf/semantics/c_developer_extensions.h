@@ -14,7 +14,7 @@ extern "C"
 
 	/**
 	* \file c_developer_extensions.h
-	* This file contains class definitions for developer extensions.
+	* \brief This file contains class definitions for developer extensions.
 	*/
 
 	/**

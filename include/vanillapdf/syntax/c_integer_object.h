@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_integer_object.h
-	* This file contains class definitions for \ref IntegerObjectHandle
+	* \brief This file contains class definitions for \ref IntegerObjectHandle
 	*/
 
 	/**

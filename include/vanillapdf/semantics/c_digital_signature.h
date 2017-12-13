@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_digital_signature.h
-	* This file contains class definitions for \ref DigitalSignatureHandle
+	* \brief This file contains class definitions for \ref DigitalSignatureHandle
 	*/
 
 	/**

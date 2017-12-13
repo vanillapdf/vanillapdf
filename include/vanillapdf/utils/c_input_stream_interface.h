@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_input_stream_interface.h
-	* This file contains class definitions for \ref IInputStreamHandle
+	* \brief This file contains class definitions for \ref IInputStreamHandle
 	*/
 
 	/**

@@ -1,6 +1,11 @@
 #ifndef _C_TYPES_H
 #define _C_TYPES_H
 
+/**
+* \file c_types.h
+* \brief This file contains type definitions.
+*/
+
 #include "c_platform.h"
 
 // C++ specific headers
@@ -12,11 +17,6 @@
 // C specific headers
 #include <stdint.h>
 #include <stddef.h>
-
-/**
-* \file c_types.h
-* This file contains type definitions.
-*/
 
 /**
 * \ingroup ErrorTypes
