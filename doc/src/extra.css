@@ -43,6 +43,12 @@ dl.section dd, dl.todo dd {
     margin-left: 0px;
 }
 
+span.arrow {
+	width: auto;
+	height: auto;
+	font-size: 100%
+}
+
 span.icona {
 	width: auto;
 	height: auto;
