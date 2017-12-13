@@ -43,6 +43,23 @@ dl.section dd, dl.todo dd {
     margin-left: 0px;
 }
 
+span.icona {
+	width: auto;
+	height: auto;
+	padding: 5px;
+}
+
+span.icondoc {
+	vertical-align: middle;
+	margin: 5px;
+}
+
+div.directory td.entry, div.directory td.desc {
+	vertical-align: middle;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
 body, table, div, p, dl {
 	font-family: Lucida Grande, Verdana, Geneva, Arial, sans-serif;
 	font-size: 10pt;
