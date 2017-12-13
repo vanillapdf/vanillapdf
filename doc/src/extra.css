@@ -32,7 +32,7 @@ div.image {
 }
 
 div.fragment {
-	padding: 5px;
+	padding: 10px;
 	margin-left: 20px;
 	
 	/* This wraps the fragment to the text legth */
