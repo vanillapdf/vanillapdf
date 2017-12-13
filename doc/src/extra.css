@@ -60,6 +60,18 @@ span.icondoc {
 	margin: 5px;
 }
 
+table.directory {
+	width: 100%;
+}
+
+div.directory td.entry {
+	width: 35%;
+}
+
+div.directory td.desc {
+	width: 65%;
+}
+
 div.directory td.entry, div.directory td.desc {
 	vertical-align: middle;
 	padding-top: 3px;
