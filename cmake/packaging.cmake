@@ -23,20 +23,19 @@ set(CPACK_PACKAGE_DESCRIPTION			"Cross-platform toolkit for creating and manipul
 # Therefore we have to create a different variable for storing the version string
 set(PACKAGE_VERSION_NAME				"${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
 set(PACKAGE_SYSTEM_NAME					"${CMAKE_SYSTEM_NAME}")
-set(PACKAGE_PLATFORM_NAME				"${CMAKE_SYSTEM_PROCESSOR}")
 
 # Special naming convention for windows
 if(${PACKAGE_SYSTEM_NAME} MATCHES Windows)
 	if(CMAKE_CL_64)
-		set(PACKAGE_PLATFORM_NAME win64-x64)
+		set(PACKAGE_SYSTEM_NAME win64-x64)
 	else()
-		set(PACKAGE_PLATFORM_NAME win32-x86)
+		set(PACKAGE_SYSTEM_NAME win32-x86)
 	endif()
 endif()
 
 # Override the default package version name with PROJECT_NAME instead of CPACK_PACKAGE_NAME
 # Note: The CPACK_SYSTEM_NAME is not set either, so we have to use CMAKE_SYSTEM_NAME instead
-set(CPACK_PACKAGE_FILE_NAME 			"${PROJECT_NAME}_${PACKAGE_VERSION_NAME}_${PACKAGE_SYSTEM_NAME}-${PACKAGE_PLATFORM_NAME}")
+set(CPACK_PACKAGE_FILE_NAME 			"${PROJECT_NAME}_${PACKAGE_VERSION_NAME}_${PACKAGE_SYSTEM_NAME}")
 
 # External resources
 set(CPACK_RESOURCE_FILE_LICENSE			${CMAKE_SOURCE_DIR}/cmake/LICENSE.txt)
