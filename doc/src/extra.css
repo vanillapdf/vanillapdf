@@ -74,8 +74,8 @@ div.directory td.desc {
 
 div.directory td.entry, div.directory td.desc {
 	vertical-align: middle;
-	padding-top: 3px;
-	padding-bottom: 3px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 
 body, table, div, p, dl {
