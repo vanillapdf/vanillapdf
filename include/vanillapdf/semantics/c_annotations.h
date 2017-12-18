@@ -30,7 +30,6 @@ extern "C"
 	* \extends IUnknownHandle
 	* \ingroup group_annotations
 	* \brief Base class for all annotations.
-	* \see \ref PageAnnotationsHandle
 	*/
 
 	/**
@@ -39,8 +38,9 @@ extern "C"
 	* \ingroup group_annotations
 	* \brief
 	* A link annotation represents either a hypertext link to a \ref DestinationHandle
-	* elsewhere in the document or an action
-	* to be performed ([<b>section 12.6 - Actions</b>](PDF32000_2008.pdf#G11.2106801)).
+	* elsewhere in the document or an [<b>Action</b>](PDF32000_2008.pdf#G11.2106801) to be performed.
+	*
+	* For more details please visit [<b>section 12.5.6.5 - Link Annotations</b>](PDF32000_2008.pdf#G11.1951136).
 	*/
 
 	/**
@@ -219,11 +219,9 @@ extern "C"
 	*/
 
 	/**
-	* \brief
-	* Return type of annotation.
-	* Result can be used to convert to derived type.
-	* \param handle a handle received from page \ref PageAnnotationsHandle::PageAnnotations_At
-	* \param result a pointer to variable will be filled with annotation type, otherwise unchanged
+	* \brief Get annotation type of object \p handle
+	* \param handle a handle to the annotation class
+	* \param result a pointer to variable will be filled with annotation type upon success, unchanged on failure
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetType(AnnotationHandle* handle, AnnotationType* result);
 
@@ -270,10 +268,9 @@ extern "C"
 	/**
 	* \brief
 	* Get single annotation from array at specific position
-	* \param handle a handle received from page \ref PageObjectHandle::PageObject_GetAnnotations
-	* \param at position at which the element is located in the source array
-	* \param result a pointer to variable will be filled with handle to
-	* annotation internal structure, otherwise unchanged
+	* \param handle a handle to annotation collection
+	* \param at position of the element in the \p handle collection
+	* \param result a pointer to variable, that will contain annotation upon success, unchanged on failure
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_At(PageAnnotationsHandle* handle, size_type at, AnnotationHandle** result);
 

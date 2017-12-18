@@ -20,11 +20,9 @@ extern "C"
 	* \extends IUnknownHandle
 	* \ingroup group_fonts
 	* \brief
-	* A PDF representation of a basic font structure.
+	* Base class for all fonts in to representable inside a PDF document
 	*
-	* This is a direct reference to a PDF specification,
-	* section 9.5, "Introduction to Font Data Structures".
-	* \see \ref FontMapHandle
+	* For more details please visit [<b>section 9.5 - Introduction to Font Data Structures</b>](PDF32000_2008.pdf#G8.1694788).
 	*/
 
 	/**
@@ -32,31 +30,31 @@ extern "C"
 	* \extends FontHandle
 	* \ingroup group_fonts
 	* \brief
-	* A font composed of glyphs from a descendant
-	* CIDFont (see 9.7, "Composite Fonts").
+	* A font composed of glyphs from a descendant CIDFont.
+	*
+	* For more details please visit [<b>section 9.7 - Composite Fonts</b>](PDF32000_2008.pdf#G8.1851619).
 	*/
 
 	/**
 	* \brief Types of fonts
+	* \ingroup group_fonts
 	*/
 	typedef enum {
 		/**
-		* \copydoc CompositeFontHandle
+		* \copybrief CompositeFontHandle
 		* \see \ref CompositeFontHandle
 		*/
 		FontType_Composite = 0,
 
 		/**
 		* \brief
-		* A font that defines glyph shapes using Type 1
-		* font technology (see 9.6.2, "Type 1 Fonts").
+		* A font that defines glyph shapes using Type 1 font technology.
 		*/
 		FontType_Type1,
 
 		/**
 		* \brief
-		* A font that defines glyphs with streams of PDF
-		* graphics operators (see 9.6.5, "Type 3 Fonts").
+		* A font that defines glyphs with streams of PDF graphics operators.
 		*/
 		FontType_Type3
 	} FontType;

@@ -26,7 +26,7 @@ extern "C"
 	* \class FieldHandle
 	* \extends IUnknownHandle
 	* \ingroup group_fields
-	* \brief Represents document's authenticated digital signature
+	* \brief Base class for all fields
 	*/
 
 	/**
@@ -61,35 +61,35 @@ extern "C"
 	* \extends FieldHandle
 	* \ingroup group_fields
 	* \brief
-	* A signature field (PDF 1.3) is a form field that contains
-	* a digital signature (see 12.8, "Digital Signatures").
+	* A signature field (PDF 1.3) is a form field that contains a digital signature.
+	* \see \ref DigitalSignatureHandle
 	*/
 
 	/**
-	* \brief
-	* Available types of fields
+	* \brief Available types of fields
+	* \ingroup group_fields
 	*/
 	typedef enum {
 		/**
-		* \copydoc ButtonFieldHandle
+		* \copybrief ButtonFieldHandle
 		* \see \ref ButtonFieldHandle
 		*/
 		FieldType_Button = 0,
 
 		/**
-		* \copydoc TextFieldHandle
+		* \copybrief TextFieldHandle
 		* \see \ref TextFieldHandle
 		*/
 		FieldType_Text,
 
 		/**
-		* \copydoc ChoiceFieldHandle
+		* \copybrief ChoiceFieldHandle
 		* \see \ref ChoiceFieldHandle
 		*/
 		FieldType_Choice,
 
 		/**
-		* \copydoc SignatureFieldHandle
+		* \copybrief SignatureFieldHandle
 		* \see \ref SignatureFieldHandle
 		*/
 		FieldType_Signature,

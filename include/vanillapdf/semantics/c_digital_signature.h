@@ -20,6 +20,8 @@ extern "C"
 	* \extends IUnknownHandle
 	* \ingroup group_documents
 	* \brief Represents document's authenticated digital signature
+	*
+	* For more details please visit [<b>section 12.8 - Digital Signatures</b>](PDF32000_2008.pdf#G11.2013350).
 	*/
 
 	/**
@@ -102,8 +104,7 @@ extern "C"
 	* \brief
 	* The signature value.
 	*
-	* When ByteRange is present, the value shall be
-	* a hexadecimal string (see 7.3.4.3, "Hexadecimal Strings")
+	* When ByteRange is present, the value shall be a \ref HexadecimalStringObjectHandle
 	* representing the value of the byte range digest.
 	*
 	* For public-key signatures, Contents should be either a DER-encoded PKCS#1
@@ -116,7 +117,7 @@ extern "C"
 	* Exact byte range for the digest calculation.
 	*
 	* Multiple discontiguous byte ranges shall be used to describe
-	* a digest that does not include the signature value (theContents entry) itself.
+	* a digest that does not include the signature value (\ref DigitalSignature_GetContents) itself.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(DigitalSignatureHandle* handle, ByteRangeCollectionHandle** result);
 

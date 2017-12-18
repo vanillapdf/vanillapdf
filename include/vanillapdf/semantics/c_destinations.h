@@ -26,7 +26,7 @@ extern "C"
 	* \class NamedDestinationsHandle
 	* \extends IUnknownHandle
 	* \ingroup group_destinations
-	* \brief Assigns unique name to a \ref DestinationHandle.
+	* \brief A map of unique names mapped to their associated a \ref DestinationHandle.
 	*
 	* For more details please visit [<b>section 12.3.2.3 - Named Destinations</b>](PDF32000_2008.pdf#G11.1947713).
 	*/

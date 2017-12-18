@@ -62,7 +62,13 @@ For more details please visit [<b>section 7.9 - Common Data Structures</b>](PDF3
 \brief
 Group of font related classes and functions.
 
-FontHandle represents a base class for all derived font types.
+For more details please visit:
+
+<ul>
+<li>[<b>section 9.5 - Introduction to Font Data Structures</b>](PDF32000_2008.pdf#G8.1694788)
+<li>[<b>section 9.6 - Simple Fonts</b>](PDF32000_2008.pdf#G8.1846107)
+<li>[<b>section 9.7 - Composite Fonts</b>](PDF32000_2008.pdf#G8.1851619)
+</ul>
 */
 
 /**

@@ -30,7 +30,6 @@ extern "C"
 	* \ingroup group_outline
 	* \brief
 	* The root of a document's outline hierarchy
-	* \see \ref CatalogHandle
 	*/
 
 	/**
@@ -39,7 +38,6 @@ extern "C"
 	* \ingroup group_outline
 	* \brief
 	* Child element within tree-structured hierarchy of outline items
-	* \see \ref CatalogHandle
 	*/
 
 	/**
@@ -49,7 +47,6 @@ extern "C"
 	* \brief
 	* Representing the components in the DeviceRGB colour
 	* space of the colour that shall be used for the outline entry's text.
-	* \see \ref OutlineItemHandle
 	*/
 
 	/**
@@ -59,7 +56,6 @@ extern "C"
 	* \brief
 	* A set of flags specifying style characteristics
 	* for displaying the outline item's text
-	* \see \ref OutlineItemHandle
 	*/
 
 	/**
@@ -67,13 +63,16 @@ extern "C"
 	* \ingroup group_outline
 	*/
 	typedef enum {
+
 		/**
-		* \brief Object is type OutlineHandle*
+		* \copybrief OutlineHandle
+		* \see \ref OutlineHandle
 		*/
 		OutlineType_Outline,
 
 		/**
-		* \brief Object is type OutlineItemHandle*
+		* \copybrief OutlineItemHandle
+		* \see \ref OutlineItemHandle
 		*/
 		OutlineType_Item
 	} OutlineType;
@@ -89,12 +88,12 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_GetType(OutlineBaseHandle* handle, OutlineType* result);
 
 	/**
-	* \brief Reinterpret current object as OutlineHandle*
+	* \brief Reinterpret current object as \ref OutlineHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_ToOutline(OutlineBaseHandle* handle, OutlineHandle** result);
 
 	/**
-	* \brief Reinterpret current object as OutlineItemHandle*
+	* \brief Reinterpret current object as \ref OutlineItemHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_ToOutlineItem(OutlineBaseHandle* handle, OutlineItemHandle** result);
 
