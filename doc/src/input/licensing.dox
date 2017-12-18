@@ -97,11 +97,11 @@ Whenever in doubt, that the license file is no longer secure, let us know, so we
 
 \subsection license_use_bundle Bundle
 
-To successfuly use this library an access to the license file will be reqired, when the application is run.<br>
-We recommend to embed the license file into your application a protect it with encryption algorithm.<br>
+To access premium features, library requires a license file, when the application is run.<br>
+We recommend to embed the license file into your application and protect it with encryption algorithm.<br>
 
 \note
-We may send You some code samples upon request on how to properly protect the license file, as it is undesirable to be easily extractable.
+Code sample on how to properly protect the license file is accessible upon request.
 
 Before the accessing premium features be sure to initialize the library with the license key.
 
@@ -127,7 +127,8 @@ For more details visit \ref LicenseInfo.
 
 \subsection license_use_verify Verify
 
-After the license file has been entered, You now should have access to the premium features.<br>
-For example, saving a file should no longer produce a watermark image in corner.<br>
+After the license file has been entered, the premium features should now be accessible.<br>
+Verifying requires a program, that uses premium features.<br>
+Such program can be found within the examples page or written by hand.<br>
 
 */
