@@ -78,7 +78,8 @@ Library uses so-called intrusive pointer reference counting mechanism.<br>
 Usually, the structure and the reference counter are two separate objects.<br>
 In this case, the reference counter is embedded inside the structure body.<br>
 
-\image html intrusive_pointers.png "Picture 1: Illustration of embedding and intrusive pointer"
+\todo Intrusive vs shared image
+<!-- \image html intrusive_pointers.png "Picture 1: Illustration of embedding and intrusive pointer" -->
 
 \subsection arch_ownership_comparison Intrusive vs Shared
 
@@ -97,16 +98,13 @@ Buffer* buffer = reinterpret_cast<Buffer*>(handle);
 
 Intrusive pointers can guarantee, that there are no multiple reference count objects.<br>
 
-\note
-There is a nice try to address this issue called [shared_from_this](http://en.cppreference.com/w/cpp/memory/enable_shared_from_this).<br>
-This could be helpful, but there is no guarantee.<br>
-
 Intrusive pointers should have a better performance (in some cases) comparing to traditional C++ shared pointers.<br>
-Main reason is that whole object is allocated within a single allocation, while shared pointers are often not.<br>
+Main reason is that accessing the object required two pointer dereferences for shared pointer, while for intrusive only one.<br>
+The other reason is that whole object is allocated within a single allocation, while shared pointers are often not.<br>
 
 \note
 Shared pointer can be allocated using [make_shared](http://en.cppreference.com/w/cpp/memory/shared_ptr/make_shared).<br>
-Sometimes, the need to move object on heap is not known in advance, making is even more difficult to use.<br>
+In addition, to ensure (not guarantee) that there is only a single reference counter object, the objects may be derived from [shared_from_this](http://en.cppreference.com/w/cpp/memory/enable_shared_from_this).<br>
 
 \section file_layer File layer
 
@@ -131,7 +129,7 @@ There are already interfaces, that represents these streams and will be used thr
 These interfaces could be overriden in the future, so that user can provide custom implementation for reading source file.<br>
 This is often helpful for interacting with other applications, that might need to share file access.<br>
 
-\subsection arch_parsing Parsing
+\subsection arch_tokenizer Tokenizer
 
 Tokens are smallest syntactic elements and are separated by a whitespace or a delimiter.<br>
 Which characters are considered whitespace and which are considered delimiter is discussed in [<b>section 7.2 - Lexical Conventions</b>](PDF32000_2008.pdf#G6.1638740).<br>
@@ -168,6 +166,8 @@ if (char == Delimiter::LESS_THAN_SIGN) {
 	return Token::Type::HEXADECIMAL_STRING;
 }
 \endcode
+
+\subsection arch_parser Parser
 
 Tokens are passed to the parser, who is responsible for constructing objects.<br>
 Parser uses look-ahead as well, since multiple tokens may form a single object.<br>
