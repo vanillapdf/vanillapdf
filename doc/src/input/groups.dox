@@ -94,7 +94,7 @@ For more details please visit [<b>section 12.5 - Annotations</b>](PDF32000_2008.
 
 /**
 \defgroup group_destinations Destinations
-\ingroup group_destinations
+\ingroup group_documents
 \brief
 A destination defines a particular view of a document.
 
