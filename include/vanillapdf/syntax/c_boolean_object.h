@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class BooleanObjectHandle
 	* \extends ObjectHandle
-	* \ingroup Objects
+	* \ingroup group_objects
 	* \brief Represents boolean type
 	*/
 

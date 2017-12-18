@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class IOutputStreamHandle
 	* \extends IUnknownHandle
-	* \ingroup Utils
+	* \ingroup group_utils
 	* \brief Output stream can write sequences of characters and represent other kinds of data
 	*/
 

@@ -18,38 +18,34 @@ extern "C"
 	/**
 	* \class PageAnnotationsHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_annotations
 	* \brief
 	* An array of annotation dictionaries that shall contain indirect
-	* references to all annotations associated with
-	* the page (see 12.5, "Annotations").
+	* references to all \ref AnnotationHandle associated with the page.
 	* \see \ref PageObjectHandle
 	*/
 
 	/**
 	* \class AnnotationHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
-	* \brief
-	* An annotation associates an object such as a note, sound, or movie
-	* with a location on a page of a PDF document, or provides a way to
-	* interact with the user by means of the mouse and keyboard.
+	* \ingroup group_annotations
+	* \brief Base class for all annotations.
 	* \see \ref PageAnnotationsHandle
 	*/
 
 	/**
 	* \class LinkAnnotationHandle
 	* \extends AnnotationHandle
-	* \ingroup Documents
+	* \ingroup group_annotations
 	* \brief
-	* A link annotation represents either a hypertext link to a destination
-	* elsewhere in the document (see 12.3.2, "Destinations") or an action
-	* to be performed (12.6, "Actions").
+	* A link annotation represents either a hypertext link to a \ref DestinationHandle
+	* elsewhere in the document or an action
+	* to be performed ([<b>section 12.6 - Actions</b>](PDF32000_2008.pdf#G11.2106801)).
 	*/
 
 	/**
-	* \brief
-	* Required for conversion to derived types.
+	* \brief Required for conversion to derived types.
+	* \ingroup group_annotations
 	*/
 	typedef enum {
 		/**

@@ -18,13 +18,12 @@ extern "C"
 	/**
 	* \class InteractiveFormHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief
 	* An interactive form (PDF 1.2) - sometimes referred to as an AcroForm - is
 	* a collection of fields for gathering information interactively from the user.
 	*
-	* This object is a direct reference to PDF specification.
-	* See 12.7, "Interactive Forms".
+	* For more details please visit [<b>section 12.7 - Interactive Forms</b>](PDF32000_2008.pdf#G11.2110737).
 	*/
 
 	/**

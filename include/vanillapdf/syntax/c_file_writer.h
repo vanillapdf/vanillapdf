@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class FileWriterHandle
 	* \extends IUnknownHandle
-	* \ingroup Files
+	* \ingroup group_files
 	* \brief Implements serialization of Files to destination stream
 	*/
 

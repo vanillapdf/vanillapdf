@@ -20,7 +20,7 @@ extern "C"
 	/**
 	* \class DeveloperExtensionsHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief
 	* The extensions dictionary, an entry in the document's catalog dictionary,
 	* if present, shall contain one or more entries identifying
@@ -31,7 +31,7 @@ extern "C"
 	/**
 	* \class DeveloperExtensionsIteratorHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief
 	* Iterator concept allowing to traverse over
 	* \ref DeveloperExtensionsHandle collection.
@@ -40,7 +40,7 @@ extern "C"
 	/**
 	* \class DeveloperExtensionHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief
 	* Single item within \ref DeveloperExtensionsHandle collection.
 	*/

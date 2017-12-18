@@ -18,9 +18,9 @@ extern "C"
 	/**
 	* \class NameObjectHandle
 	* \extends ObjectHandle
-	* \ingroup Objects
+	* \ingroup group_objects
 	* \brief Represents unique name references in document.
-	* \see \ref NameConstants
+	* \see \ref group_name_constants
 	*/
 
 	/**

@@ -17,7 +17,7 @@ extern "C"
 
 	/**
 	* \class IUnknownHandle
-	* \ingroup Utils
+	* \ingroup group_utils
 	* \brief Base class for reference counting
 	*/
 

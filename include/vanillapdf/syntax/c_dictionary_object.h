@@ -18,14 +18,14 @@ extern "C"
 	/**
 	* \class DictionaryObjectHandle
 	* \extends ObjectHandle
-	* \ingroup Objects
+	* \ingroup group_objects
 	* \brief Represents key-value map.
 	*/
 
 	/**
 	* \class DictionaryObjectIteratorHandle
 	* \extends IUnknownHandle
-	* \ingroup Objects
+	* \ingroup group_objects
 	* \brief Used for accessing Dictionary elements
 	* through iterator interface.
 	*/

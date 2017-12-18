@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class StreamObjectHandle
 	* \extends ObjectHandle
-	* \ingroup Objects
+	* \ingroup group_objects
 	* \brief Represents compressed data inside document.
 	*/
 

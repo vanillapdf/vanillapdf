@@ -20,7 +20,7 @@ extern "C"
 	/**
 	* \class CatalogHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief The root of a document's object hierarchy
 	* \see \ref DocumentHandle
 	*/

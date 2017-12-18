@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class PageLabelsHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief
 	* Collection of \ref PageLabelHandle
 	* \see \ref CatalogHandle
@@ -27,7 +27,7 @@ extern "C"
 	/**
 	* \class PageLabelHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief
 	* Page labels are used for numbering or otherwise identifying
 	* individual pages (see 12.4.2, "Page Labels").

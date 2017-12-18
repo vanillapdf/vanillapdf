@@ -17,7 +17,7 @@ extern "C"
 
 	/**
 	* \class Logging
-	* \ingroup Utils
+	* \ingroup group_utils
 	* \brief
 	* The library can provide some additional debug and error messages.
 	*

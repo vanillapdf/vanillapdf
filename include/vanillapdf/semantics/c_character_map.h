@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class CharacterMapHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief
 	* A CMap shall specify the mapping from
 	* character codes to character selectors.
@@ -27,7 +27,7 @@ extern "C"
 	/**
 	* \class EmbeddedCharacterMapHandle
 	* \extends CharacterMapHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief
 	* For character encodings that are not predefined,
 	* the PDF file shall contain a stream that defines the CMap.
@@ -36,7 +36,7 @@ extern "C"
 	/**
 	* \class UnicodeCharacterMapHandle
 	* \extends CharacterMapHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief
 	* The Unicode standard defines a system for numbering all
 	* of the common characters used in a large number of languages.

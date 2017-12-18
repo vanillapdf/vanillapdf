@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class ObjectHandle
 	* \extends IUnknownHandle
-	* \ingroup Objects
+	* \ingroup group_objects
 	* \brief Base class for syntactic tokens
 	*/
 

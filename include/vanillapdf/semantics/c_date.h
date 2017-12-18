@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class DateHandle
 	* \extends IUnknownHandle
-	* \ingroup CommonDataStructures
+	* \ingroup group_common_data_structures
 	* \brief Represents a reference to a particular day represented within a calendar system
 	*/
 

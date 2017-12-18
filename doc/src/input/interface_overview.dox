@@ -26,7 +26,7 @@ However, the implementation cannot guarantee that
 \endcode
 is true, therefore you \b should always compare the values to these constants, instead of 0, true or any other constant.<br>
 
-For more detailed information please visit \ref Types.
+For more detailed information please visit \ref group_types.
 
 \section section_memory Memory leaks
 
@@ -154,6 +154,6 @@ error_type set_logging() {
 }
 \endcode
 
-For more useful utilities please visit \ref Utils.
+For more useful utilities please visit \ref group_utils.
 
 */

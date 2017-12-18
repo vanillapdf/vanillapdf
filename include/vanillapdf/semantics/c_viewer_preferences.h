@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class ViewerPreferencesHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief
 	* Controlling the way the document shall
 	* be presented on the screen or in print.
@@ -28,7 +28,7 @@ extern "C"
 	/**
 	* \class PageRangeHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief
 	* Collection of \ref PageSubRangeHandle
 	* \see \ref ViewerPreferencesHandle
@@ -37,7 +37,7 @@ extern "C"
 	/**
 	* \class PageSubRangeHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief
 	* Specifies first and last page number of defined range
 	* \see \ref PageRangeHandle

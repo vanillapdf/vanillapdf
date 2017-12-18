@@ -18,14 +18,14 @@ extern "C"
 	/**
 	* \class XrefHandle
 	* \extends IUnknownHandle
-	* \ingroup Xref
+	* \ingroup group_xref
 	* \brief Represents either cross-reference table or stream
 	*/
 
 	/**
 	* \class XrefIteratorHandle
 	* \extends IUnknownHandle
-	* \ingroup Xref
+	* \ingroup group_xref
 	* \brief Represents pointer to cross-reference entry collection
 	*
 	* This method is useful for iterating over whole entry collecion.
@@ -36,14 +36,14 @@ extern "C"
 	/**
 	* \class XrefEntryHandle
 	* \extends IUnknownHandle
-	* \ingroup Xref
+	* \ingroup group_xref
 	* \brief Represents base entry type within \ref XrefHandle
 	*/
 
 	/**
 	* \class XrefFreeEntryHandle
 	* \extends XrefEntryHandle
-	* \ingroup Xref
+	* \ingroup group_xref
 	* \brief Represents free entry within cross-reference section.
 	*
 	* Free entry means, that this object is not used in the document.
@@ -53,14 +53,14 @@ extern "C"
 	/**
 	* \class XrefUsedEntryHandle
 	* \extends XrefEntryHandle
-	* \ingroup Xref
+	* \ingroup group_xref
 	* \brief Represents used entry within cross-reference section.
 	*/
 
 	/**
 	* \class XrefCompressedEntryHandle
 	* \extends XrefEntryHandle
-	* \ingroup Xref
+	* \ingroup group_xref
 	* \brief Represents compressed entry within cross-reference section.
 	*
 	* Compressed entry means that the object is located within (7.5.7 Object streams) compressed object stream.
@@ -70,14 +70,14 @@ extern "C"
 	/**
 	* \class XrefChainHandle
 	* \extends IUnknownHandle
-	* \ingroup Xref
+	* \ingroup group_xref
 	* \brief Represents collection of \ref XrefHandle
 	*/
 
 	/**
 	* \class XrefChainIteratorHandle
 	* \extends IUnknownHandle
-	* \ingroup Xref
+	* \ingroup group_xref
 	* \brief Represents pointer to cross-reference collection
 	*
 	* This method is useful for iterating over whole entry collecion.

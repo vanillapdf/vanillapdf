@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class ContentOperatorHandle
 	* \extends IUnknownHandle
-	* \ingroup Contents
+	* \ingroup group_contents
 	* \brief
 	* An operator is a PDF keyword specifying some action
 	* that shall be performed, such as painting a graphical
@@ -27,6 +27,7 @@ extern "C"
 
 	/**
 	* \brief Available content operator types
+	* \ingroup group_contents
 	*/
 	typedef enum {
 		/**

@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class PageTreeHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief
 	* The pages of a document are accessed through a structure
 	* known as the page tree, which defines the ordering

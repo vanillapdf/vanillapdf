@@ -20,7 +20,7 @@ extern "C"
 	/**
 	* \class SigningKeyHandle
 	* \extends IUnknownHandle
-	* \ingroup Utils
+	* \ingroup group_utils
 	* \brief Used for document signing
 	*
 	* Standard routine for message signing is Initialize, (single or multiple) Update, Final.

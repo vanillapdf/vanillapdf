@@ -18,28 +18,28 @@ extern "C"
 	/**
 	* \class ContentOperationHandle
 	* \extends ContentInstructionHandle
-	* \ingroup Contents
+	* \ingroup group_contents
 	* \brief Atomic content operation.
 	*/
 
 	/**
 	* \class ContentOperationGenericHandle
 	* \extends ContentOperationHandle
-	* \ingroup Contents
+	* \ingroup group_contents
 	* \brief Unresolved operation often containing unknown operator.
 	*/
 
 	/**
 	* \class ContentOperationTextShowHandle
 	* \extends ContentOperationHandle
-	* \ingroup Contents
+	* \ingroup group_contents
 	* \brief Show a text string.
 	*/
 
 	/**
 	* \class ContentOperationTextShowArrayHandle
 	* \extends ContentOperationHandle
-	* \ingroup Contents
+	* \ingroup group_contents
 	* \brief
 	* Show one or more text strings,
 	* allowing individual glyph positioning.
@@ -48,27 +48,28 @@ extern "C"
 	/**
 	* \class ContentOperationTextFontHandle
 	* \extends ContentOperationHandle
-	* \ingroup Contents
+	* \ingroup group_contents
 	* \brief Set the text font and the text font size.
 	*/
 
 	/**
 	* \class ContentOperationBeginTextHandle
 	* \extends ContentOperationHandle
-	* \ingroup Contents
+	* \ingroup group_contents
 	* \brief Starts a new TextObject sections
 	*/
 
 	/**
 	* \class ContentOperationEndTextHandle
 	* \extends ContentOperationHandle
-	* \ingroup Contents
+	* \ingroup group_contents
 	* \brief Terminates the TextObject started with \ref ContentOperationBeginTextHandle
 	*/
 
 
 	/**
 	* \brief Available content operation types
+	* \ingroup group_contents
 	*/
 	typedef enum {
 		/**

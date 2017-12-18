@@ -18,21 +18,21 @@ extern "C"
 	/**
 	* \class StringObjectHandle
 	* \extends ObjectHandle
-	* \ingroup Objects
+	* \ingroup group_objects
 	* \brief Reprsents human readable text.
 	*/
 
 	/**
 	* \class HexadecimalStringObjectHandle
 	* \extends StringObjectHandle
-	* \ingroup Objects
+	* \ingroup group_objects
 	* \brief Text stored in hexadecimal notation.
 	*/
 
 	/**
 	* \class LiteralStringObjectHandle
 	* \extends StringObjectHandle
-	* \ingroup Objects
+	* \ingroup group_objects
 	* \brief Text stored in raw format.
 	*/
 

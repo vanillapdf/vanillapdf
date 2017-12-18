@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class FontHandle
 	* \extends IUnknownHandle
-	* \ingroup Fonts
+	* \ingroup group_fonts
 	* \brief
 	* A PDF representation of a basic font structure.
 	*
@@ -30,7 +30,7 @@ extern "C"
 	/**
 	* \class CompositeFontHandle
 	* \extends FontHandle
-	* \ingroup Fonts
+	* \ingroup group_fonts
 	* \brief
 	* A font composed of glyphs from a descendant
 	* CIDFont (see 9.7, "Composite Fonts").

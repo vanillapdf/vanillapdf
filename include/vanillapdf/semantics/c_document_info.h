@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class DocumentInfoHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief Metadata for the document
 	* \see \ref DocumentHandle
 	*/

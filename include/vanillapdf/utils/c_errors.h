@@ -17,7 +17,7 @@ extern "C"
 
 	/**
 	* \class Errors
-	* \ingroup Utils
+	* \ingroup group_utils
 	* \brief
 	* This class contains additional informations about last error occurred
 	*

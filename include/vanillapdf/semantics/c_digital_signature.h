@@ -18,21 +18,21 @@ extern "C"
 	/**
 	* \class DigitalSignatureHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief Represents document's authenticated digital signature
 	*/
 
 	/**
 	* \class ByteRangeCollectionHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief Represents a collection of \ref ByteRangeHandle
 	*/
 
 	/**
 	* \class ByteRangeHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief Represents starting byte offset and length
 	*/
 

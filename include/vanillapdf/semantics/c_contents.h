@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class ContentsHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief
 	* A content stream is a PDF stream object whose data consists of
 	* a sequence of instructions describing the graphical elements

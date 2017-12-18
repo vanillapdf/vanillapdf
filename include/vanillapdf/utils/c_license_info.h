@@ -17,7 +17,7 @@ extern "C"
 
 	/**
 	* \class LicenseInfo
-	* \ingroup Utils
+	* \ingroup group_utils
 	* \brief Licensing utilities, determining whether this library is running in trial mode.
 	*/
 

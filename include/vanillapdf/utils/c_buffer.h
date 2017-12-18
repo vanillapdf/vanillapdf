@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class BufferHandle
 	* \extends IUnknownHandle
-	* \ingroup Utils
+	* \ingroup group_utils
 	* \brief Represents memory stored data
 	*/
 

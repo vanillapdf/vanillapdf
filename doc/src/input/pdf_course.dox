@@ -215,7 +215,7 @@ Setting the font associated with name /TT0 and size 1:
 \endcode
 
 For a complete list of postscript instructions visit [<b>Table A.1 – PDF content stream operators</b>](PDF32000_2008.pdf#G14.1029307).<br>
-For a implementation reference visit \ref Contents.<br>
+For a implementation reference visit \ref group_contents.<br>
 
 ____________________________________________________
 

@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class EncryptionKeyHandle
 	* \extends IUnknownHandle
-	* \ingroup Utils
+	* \ingroup group_utils
 	* \brief Represents encryption key other than password
 	*/
 

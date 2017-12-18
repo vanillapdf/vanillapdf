@@ -19,7 +19,7 @@ extern "C"
 	* \class PKCS12KeyHandle
 	* \implements EncryptionKeyHandle
 	* \implements SigningKeyHandle
-	* \ingroup Utils
+	* \ingroup group_utils
 	* \brief PKCS#12 container is often used in cryptography to store asymmetric key pair
 	*
 	* It can used for encryption/decryption and signing as well.

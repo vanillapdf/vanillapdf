@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class FileHandle
 	* \extends IUnknownHandle
-	* \ingroup Files
+	* \ingroup group_files
 	* \brief Represents low-level file access handle.
 	*
 	* This is a direct reference to a PDF specification,
@@ -27,7 +27,7 @@ extern "C"
 	* The file is basically composed of:
 	* - __Header__ is basically just a statement about
 	*   the PDF version this file is referring to
-	* - __Body__ is just a sequence of \ref Objects described in cross-reference section
+	* - __Body__ is just a sequence of \ref group_objects described in cross-reference section
 	* - The __trailer__ contains the \ref XrefHandle itself,
 	*   with the bytes offset to start of the last cross-reference section.
 	*

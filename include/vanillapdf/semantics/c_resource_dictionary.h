@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class ResourceDictionaryHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief
 	* A content stream's named resources shall be defined
 	* by a resource dictionary, which shall enumerate the

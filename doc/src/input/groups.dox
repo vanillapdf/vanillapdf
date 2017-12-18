@@ -1,5 +1,5 @@
 /**
-\defgroup Documents High-level document interface
+\defgroup group_documents High-level document interface
 \brief
 Classes representing document's properties.
 
@@ -17,12 +17,12 @@ shall behave as defined in the standard.
 As this task is fairly large, not all operations
 and properties are yet exposed. If you find any
 important task, that cannot be done:
-- Try to use \ref Files to complete the task
+- Try to use \ref group_files to complete the task
 - Let me know, if there does not seem to be the way at (<mailto:jur.zikmund@gmail.com>)
 */
 
 /**
-\defgroup Files Low-level file interface
+\defgroup group_files Low-level file interface
 \brief
 Accessing file thourgh list of objects such as
 ArrayObjectHandle or DictionaryObjectHandle.
@@ -35,7 +35,7 @@ You might want to start with \ref FileHandle,
 which is the low-level counterpart of the DocumentHandle.
 
 It's primary use is for missing or misbehaving functionality
-in the \ref Documents.
+in the \ref group_documents.
 
 This interface shall provide syntactic correctness
 for a file. However, the user is responsible for
@@ -47,19 +47,18 @@ semantics.
 */
 
 /**
-\defgroup CommonDataStructures Common data structures
-\ingroup Documents
+\defgroup group_common_data_structures Common data structures
+\ingroup group_documents
 \brief
 General-purpose data structures that are built from the basic
-object types described in \ref Objects.
+object types described in \ref group_objects.
 
-This is a direct reference to a PDF specification,
-<a href="PDF32000_2008.pdf#G6.1640320"><b>section 7.9 - Common Data Structures</b></a>.
+For more details please visit [<b>section 7.9 - Common Data Structures</b>](PDF32000_2008.pdf#G6.1640320).
 */
 
 /**
-\defgroup Fonts Fonts
-\ingroup Documents
+\defgroup group_fonts Fonts
+\ingroup group_documents
 \brief
 Group of font related classes and functions.
 
@@ -67,7 +66,49 @@ FontHandle represents a base class for all derived font types.
 */
 
 /**
-\defgroup Contents Page contents
+\defgroup group_fields Fields
+\ingroup group_documents
+\brief
+Field represents and interactive control within \ref InteractiveFormHandle.
+
+For more details please visit [<b>section 12.7.3 - Field Dictionaries</b>](PDF32000_2008.pdf#G11.1697617) and [<b>section 12.7.4 - Field Types</b>](PDF32000_2008.pdf#G11.2106844).
+*/
+
+/**
+\defgroup group_outline Outline
+\ingroup group_documents
+\brief
+A PDF document may contain a document outline that the conforming reader may display on the screen, allowing the user to navigate interactively from one part of the document to another.
+
+For more details please visit [<b>section 12.3.3 - Document Outline</b>](PDF32000_2008.pdf#G11.1970991).
+*/
+
+/**
+\defgroup group_annotations Annotations
+\ingroup group_documents
+\brief
+An annotation associates an object such as a note, sound, or movie with a location on a page of a PDF document, or provides a way to interact with the user by means of the mouse and keyboard.
+
+For more details please visit [<b>section 12.5 - Annotations</b>](PDF32000_2008.pdf#G11.2023455).
+*/
+
+/**
+\defgroup group_destinations Destinations
+\ingroup group_destinations
+\brief
+A destination defines a particular view of a document.
+
+Consisting of the following items:
+
+- The page of the document that shall be displayed.
+- The location of the document window on that page.
+- The magnification (zoom) factor.
+
+For more details please visit [<b>section 12.3.2 - Destinations</b>](PDF32000_2008.pdf#G11.2063217).
+*/
+
+/**
+\defgroup group_contents Page contents
 \brief
 This module groups all visual operations, that are available for altering page appearance.
 
@@ -86,18 +127,17 @@ For more detailed information please visit [<b>Section 8 - Graphics</b>](PDF3200
 */
 
 /**
-\defgroup Objects Objects
-\ingroup Files
+\defgroup group_objects Objects
+\ingroup group_files
 \brief
 Basic object types from which a whole PDF file is composed.
 
-This is a direct reference to a PDF specification,
-<a href="PDF32000_2008.pdf#G6.1965566"><b>section 7.3 - Objects</b></a>.
+For more details please visit [<b>section 7.3 - Objects</b>](PDF32000_2008.pdf#G6.1965566).
 */
 
 /**
-\defgroup Xref Cross-reference tables and streams
-\ingroup Files
+\defgroup group_xref Cross-reference tables and streams
+\ingroup group_files
 \brief
 The cross-reference table contains information that permits random
 access to indirect objects within the file so that the entire file
@@ -106,48 +146,46 @@ need not be read to locate any particular object.
 Cross-reference streams provide the following advantages:
 - A more compact representation of cross-reference information
 - The ability to access compressed objects that are stored in object
-  streams (see <a href="PDF32000_2008.pdf#G6.2393289"><b>section 7.5.7 - Object Streams</b></a>) and to allow new cross-reference
+  streams (see [<b>section 7.5.7 - Object Streams</b>](PDF32000_2008.pdf#G6.2393289)) and to allow new cross-reference
   entry types to be added in the future
 
-This is a direct reference to a PDF specification,
-<a href="PDF32000_2008.pdf#G6.1839814"><b>section 7.5.4 - Cross-Reference Table</b></a> and
-<a href="PDF32000_2008.pdf#G6.2355789"><b>section 7.5.8 - Cross-Reference Streams</b></a>.
+For more details please visit [<b>section 7.5.4 - Cross-Reference Table</b>](PDF32000_2008.pdf#G6.1839814) and [<b>section 7.5.8 - Cross-Reference Streams</b>](PDF32000_2008.pdf#G6.2355789).
 */
 
 /**
-\defgroup NameConstants Name constants
-\ingroup Files
+\defgroup group_name_constants Name constants
+\ingroup group_files
 \brief
 Often used name constant definitions.
 
-These are especially useful in conjuction with the \ref Files.
+These are especially useful in conjuction with the \ref group_files.
 
 It allow to search PDF contents without the need to create
 a name for every property that the PDF already defines.
 */
 
 /**
-\defgroup Utils Utilities
+\defgroup group_utils Utilities
 \brief
 Additional features that does not correspond directly with PDF.
 */
 
 /**
-\defgroup Types Types
+\defgroup group_types Types
 \brief
 Defines some general-purpose types used throughout the interface.
 */
 
 /**
-\defgroup BooleanTypes Boolean types
-\ingroup Types
+\defgroup group_boolean_types Boolean types
+\ingroup group_types
 \brief
 Defines boolean type with its possible values.
 */
 
 /**
-\defgroup ErrorTypes Error types
-\ingroup Types
+\defgroup group_error_types Error types
+\ingroup group_types
 \brief
 Defines a type and ranges of possible return values from whole API.
 

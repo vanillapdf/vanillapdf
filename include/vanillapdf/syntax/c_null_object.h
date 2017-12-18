@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class NullObjectHandle
 	* \extends ObjectHandle
-	* \ingroup Objects
+	* \ingroup group_objects
 	* \brief Used as missing value.
 	*/
 

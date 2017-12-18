@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class ArrayObjectHandle
 	* \extends ObjectHandle
-	* \ingroup Objects
+	* \ingroup group_objects
 	* \brief Represents array of mixed type elements.
 	*/
 

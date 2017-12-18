@@ -17,7 +17,7 @@ extern "C"
 
 	/**
 	* \class LibraryInfo
-	* \ingroup Utils
+	* \ingroup group_utils
 	* \brief
 	* Informations about library version and author.
 	*/

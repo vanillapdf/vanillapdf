@@ -18,14 +18,14 @@ extern "C"
 	/**
 	* \class FilterBaseHandle
 	* \extends IUnknownHandle
-	* \ingroup Files
+	* \ingroup group_files
 	* \brief Base class for all compression filters
 	*/
 
 	/**
 	* \class FlateDecodeFilterHandle
 	* \extends FilterBaseHandle
-	* \ingroup Files
+	* \ingroup group_files
 	* \brief The Flate method is based on the public-domain zlib/deflate compression method
 	* \details It is fully defined in Internet [<b>RFC 1950 - ZLIB Compressed Data Format Specification</b>](https://www.ietf.org/rfc/rfc1950.txt),
 	* and [<b>RFC 1951 DEFLATE Compressed Data Format Specification</b>](https://www.ietf.org/rfc/rfc1951.txt).<br>
@@ -35,7 +35,7 @@ extern "C"
 	/**
 	* \class DCTDecodeFilterHandle
 	* \extends FilterBaseHandle
-	* \ingroup Files
+	* \ingroup group_files
 	* \brief The DCTDecode filter decodes grayscale or colour image data that has been encoded in the JPEG baseline format
 	* \details See Adobe Technical Note #5116 for additional information about the use of JPEG "markers".<br>
 	* For more information please visit [<b>section 7.4.8 - DCTDecode Filter</b>](PDF32000_2008.pdf#G6.1877438)
@@ -44,7 +44,7 @@ extern "C"
 	/**
 	* \class ASCII85DecodeFilterHandle
 	* \extends FilterBaseHandle
-	* \ingroup Files
+	* \ingroup group_files
 	* \brief The ASCII85Decode filter decodes data that has been encoded in [<b>ASCII base-85 encoding</b>](https://en.wikipedia.org/wiki/Ascii85) and produces binary data
 	* \details For more information please visit [<b>section 7.4.3 - ASCII85Decode Filter</b>](PDF32000_2008.pdf#G6.1940130)
 	*/
@@ -52,7 +52,7 @@ extern "C"
 	/**
 	* \class ASCIIHexDecodeFilterHandle
 	* \extends FilterBaseHandle
-	* \ingroup Files
+	* \ingroup group_files
 	* \brief The ASCIIHexDecode filter decodes data that has been encoded in ASCII hexadecimal form
 	* \details ASCII hexadecimal encoding and \ref ASCII85DecodeFilterHandle "ASCII base-85 encoding" convert binary data,
 	* such as image data or previously compressed data, to 7-bit ASCII characters.<br>

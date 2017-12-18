@@ -17,6 +17,7 @@ extern "C"
 
 	/**
 	* \brief Supported digest algorithms used as hash functions
+	* \ingroup group_utils
 	*/
 	typedef enum {
 		/**

@@ -18,12 +18,13 @@ extern "C"
 	/**
 	* \class ContentInstructionHandle
 	* \extends IUnknownHandle
-	* \ingroup Contents
+	* \ingroup group_contents
 	* \brief Base class for all content objects and operations.
 	*/
 
 	/**
 	* \brief Available content instruction types
+	* \ingroup group_contents
 	*/
 	typedef enum {
 		/**

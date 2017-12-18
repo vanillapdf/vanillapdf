@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class IntegerObjectHandle
 	* \extends ObjectHandle
-	* \ingroup Objects
+	* \ingroup group_objects
 	* \brief Represents integer values
 	*/
 

@@ -17,6 +17,7 @@ extern "C"
 
 	/**
 	* \brief Range of available PDF versions
+	* \ingroup group_utils
 	*/
 	typedef enum {
 		/**

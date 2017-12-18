@@ -18,21 +18,21 @@ extern "C"
 	/**
 	* \class FieldCollectionHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_fields
 	* \brief Collection of \ref FieldHandle
 	*/
 
 	/**
 	* \class FieldHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_fields
 	* \brief Represents document's authenticated digital signature
 	*/
 
 	/**
 	* \class ButtonFieldHandle
 	* \extends FieldHandle
-	* \ingroup Documents
+	* \ingroup group_fields
 	* \brief
 	* A button field represents an interactive control on the screen
 	* that the user can manipulate with the mouse.
@@ -41,7 +41,7 @@ extern "C"
 	/**
 	* \class TextFieldHandle
 	* \extends FieldHandle
-	* \ingroup Documents
+	* \ingroup group_fields
 	* \brief
 	* A text field is a box or space for text
 	* fill-in data typically entered from a keyboard.
@@ -50,7 +50,7 @@ extern "C"
 	/**
 	* \class ChoiceFieldHandle
 	* \extends FieldHandle
-	* \ingroup Documents
+	* \ingroup group_fields
 	* \brief
 	* A choice field contains several text items, one or more
 	* of which shall be selected as the field value.
@@ -59,7 +59,7 @@ extern "C"
 	/**
 	* \class SignatureFieldHandle
 	* \extends FieldHandle
-	* \ingroup Documents
+	* \ingroup group_fields
 	* \brief
 	* A signature field (PDF 1.3) is a form field that contains
 	* a digital signature (see 12.8, "Digital Signatures").

@@ -20,7 +20,7 @@ extern "C"
 	//! \{
 
 	/**
-	* \addtogroup NameConstants
+	* \addtogroup group_name_constants
 	* @{
 	*/
 

@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class IInputStreamHandle
 	* \extends IUnknownHandle
-	* \ingroup Utils
+	* \ingroup group_utils
 	* \brief Input stream can read and interpret input from sequences of characters
 	*/
 

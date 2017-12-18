@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class RealObjectHandle
 	* \extends ObjectHandle
-	* \ingroup Objects
+	* \ingroup group_objects
 	* \brief Represents floating point numbers.
 	*/
 

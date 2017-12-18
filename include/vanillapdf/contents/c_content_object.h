@@ -18,14 +18,14 @@ extern "C"
 	/**
 	* \class ContentObjectHandle
 	* \extends ContentInstructionHandle
-	* \ingroup Contents
+	* \ingroup group_contents
 	* \brief Composed non-atomic content object
 	*/
 
 	/**
 	* \class ContentObjectTextHandle
 	* \extends ContentObjectHandle
-	* \ingroup Contents
+	* \ingroup group_contents
 	* \brief
 	* A PDF text object consists of operators that may show text strings,
 	* move the text position, and set text state and certain other parameters.
@@ -34,7 +34,7 @@ extern "C"
 	/**
 	* \class ContentObjectInlineImageHandle
 	* \extends ContentObjectHandle
-	* \ingroup Contents
+	* \ingroup group_contents
 	* \brief
 	* As an alternative to the image XObjects described in 8.9.5,
 	* "Image Dictionaries", a sampled image may be specified in
@@ -44,6 +44,7 @@ extern "C"
 
 	/**
 	* \brief Available content object types
+	* \ingroup group_contents
 	*/
 	typedef enum {
 		/**

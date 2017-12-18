@@ -15,7 +15,7 @@ extern "C"
 #endif
 
 	/**
-	* \addtogroup BooleanTypes
+	* \addtogroup group_boolean_types
 	* @{
 	*/
 
@@ -37,10 +37,10 @@ extern "C"
 	*/
 	VANILLAPDF_API extern const boolean_type VANILLAPDF_RV_TRUE;
 
-	/** @} */
+	/** @} */ /* group_boolean_types */
 
 	/**
-	* \addtogroup ErrorTypes
+	* \addtogroup group_error_types
 	* @{
 	*/
 
@@ -86,7 +86,7 @@ extern "C"
 	* \brief
 	* An unknown error has occurred.
 	*
-	* Try to turn on ::Logging for extended informations.
+	* Try to turn on \ref Logging for extended informations.
 	*/
 	VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_GENERAL;
 
@@ -131,7 +131,7 @@ extern "C"
 
 	// semantic errors
 
-	/** @} */
+	/** @} */ /* group_error_types */
 
 #ifdef __cplusplus
 };

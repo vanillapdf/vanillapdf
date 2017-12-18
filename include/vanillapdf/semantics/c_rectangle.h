@@ -18,7 +18,7 @@ extern "C"
 	/**
 	* \class RectangleHandle
 	* \extends IUnknownHandle
-	* \ingroup CommonDataStructures
+	* \ingroup group_common_data_structures
 	* \brief Represents rectangle in 2D space
 	*/
 

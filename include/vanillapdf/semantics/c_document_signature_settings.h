@@ -21,7 +21,7 @@ extern "C"
 	/**
 	* \class DocumentSignatureSettingsHandle
 	* \extends IUnknownHandle
-	* \ingroup Documents
+	* \ingroup group_documents
 	* \brief Group of settings controlling document's digital signature
 	* \see \ref DigitalSignatureHandle
 	*/
