@@ -58,8 +58,8 @@ BufferPtr TimeUtils::GetCurrentTimeString(const char * format) {
 	TimeInfo time = GetCurrentTime();
 
 	tm time_info;
-	time_info.tm_year = time.GetYear();
-	time_info.tm_mon = time.GetMonth();
+	time_info.tm_year = time.GetYear() - 1900;
+	time_info.tm_mon = time.GetMonth() - 1;
 	time_info.tm_mday = time.GetDay();
 	time_info.tm_hour = time.GetHour();
 	time_info.tm_min = time.GetMinute();
