@@ -1400,7 +1400,7 @@ void FileWriter::ApplyWatermarkPageNode(DictionaryObjectPtr obj, DictionaryObjec
 		if (!resources->Contains(constant::Name::Font)) {
 
 			DictionaryObjectPtr font;
-			resources->Insert(constant::Name::Resources, font);
+			resources->Insert(constant::Name::Font, font);
 		}
 
 		auto font = resources->FindAs<DictionaryObjectPtr>(constant::Name::Font);
