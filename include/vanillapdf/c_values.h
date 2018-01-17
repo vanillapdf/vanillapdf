@@ -2,7 +2,7 @@
 #define _C_VALUES_H
 
 #include "vanillapdf/c_export.h"
-#include "c_types.h"
+#include "vanillapdf/c_types.h"
 
 /**
 * \file c_values.h
