@@ -39,6 +39,11 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION NameObject_SetValue(NameObjectHandle* handle, BufferHandle* value);
 
 	/**
+	* \brief Compares two name objects
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION NameObject_Equals(const NameObjectHandle* handle, const NameObjectHandle* other, boolean_type* result);
+
+	/**
 	* \copydoc Object_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION NameObject_Release(NameObjectHandle* handle);

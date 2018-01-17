@@ -37,6 +37,20 @@ VANILLAPDF_API error_type CALLING_CONVENTION NameObject_SetValue(NameObjectHandl
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION NameObject_Equals(const NameObjectHandle* handle, const NameObjectHandle* other, boolean_type* result) {
+	const NameObject* obj = reinterpret_cast<const NameObject*>(handle);
+	const NameObject* other_obj = reinterpret_cast<const NameObject*>(other);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(other_obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		*result = obj->Equals(*other_obj);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION NameObject_Release(NameObjectHandle* handle)
 {
 	return ObjectRelease<NameObject, NameObjectHandle>(handle);
