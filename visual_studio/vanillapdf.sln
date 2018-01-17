@@ -19,6 +19,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vanillapdf.net.test", "..\s
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vanillapdf.filter", "vanillapdf.filter.vcxproj", "{63072F81-D6FB-483D-BC55-F9BECBC6C1D2}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vanillapdf.tools", "vanillapdf.tools.vcxproj", "{DDDF89E2-9FC1-4209-927A-69C356EBD5B2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9AF81955-0B8C-4778-9F93-3ED8285D3D49} = {9AF81955-0B8C-4778-9F93-3ED8285D3D49}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		debug|Any CPU = debug|Any CPU
@@ -117,6 +122,16 @@ Global
 		{63072F81-D6FB-483D-BC55-F9BECBC6C1D2}.release|Win32.Build.0 = release|Win32
 		{63072F81-D6FB-483D-BC55-F9BECBC6C1D2}.release|x64.ActiveCfg = release|x64
 		{63072F81-D6FB-483D-BC55-F9BECBC6C1D2}.release|x64.Build.0 = release|x64
+		{DDDF89E2-9FC1-4209-927A-69C356EBD5B2}.debug|Any CPU.ActiveCfg = Debug|Win32
+		{DDDF89E2-9FC1-4209-927A-69C356EBD5B2}.debug|Win32.ActiveCfg = Debug|Win32
+		{DDDF89E2-9FC1-4209-927A-69C356EBD5B2}.debug|Win32.Build.0 = Debug|Win32
+		{DDDF89E2-9FC1-4209-927A-69C356EBD5B2}.debug|x64.ActiveCfg = Debug|x64
+		{DDDF89E2-9FC1-4209-927A-69C356EBD5B2}.debug|x64.Build.0 = Debug|x64
+		{DDDF89E2-9FC1-4209-927A-69C356EBD5B2}.release|Any CPU.ActiveCfg = Release|Win32
+		{DDDF89E2-9FC1-4209-927A-69C356EBD5B2}.release|Win32.ActiveCfg = Release|Win32
+		{DDDF89E2-9FC1-4209-927A-69C356EBD5B2}.release|Win32.Build.0 = Release|Win32
+		{DDDF89E2-9FC1-4209-927A-69C356EBD5B2}.release|x64.ActiveCfg = Release|x64
+		{DDDF89E2-9FC1-4209-927A-69C356EBD5B2}.release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
