@@ -535,6 +535,11 @@ extern "C"
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_XObject;
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_Image;
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_ProcSet;
+	VANILLAPDF_API extern const NameObjectHandle* NameConstant_Tx;
+
+	VANILLAPDF_API extern const NameObjectHandle* NameConstant_AdbePkcs7s3;
+	VANILLAPDF_API extern const NameObjectHandle* NameConstant_AdbePkcs7s4;
+	VANILLAPDF_API extern const NameObjectHandle* NameConstant_AdbePkcs7s5;
 
 	/** @} */
 
