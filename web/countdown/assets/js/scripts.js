@@ -44,14 +44,11 @@ jQuery(document).ready(function() {
 	            $('.error-message').fadeIn();
 			},
 	        success: function(json) {
-				console.log(json);
 	            if(json.result == 'success') {
 	                $('.success-message').html(json.msg);
 	                $('.success-message').fadeIn();
 	            }
 	            else {
-					console.log('nope');
-					console.log(json.result);
 	                $('.error-message').html(json.msg);
 	                $('.error-message').fadeIn();
 	            }
