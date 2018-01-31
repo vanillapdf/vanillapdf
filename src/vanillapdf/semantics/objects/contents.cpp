@@ -91,4 +91,3 @@ InstructionBasePtr Contents::GetInstructionAt(types::size_type at) const {
 
 } // semantics
 } // vanillapdf
-
