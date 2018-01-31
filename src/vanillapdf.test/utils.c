@@ -351,6 +351,7 @@ error_type process_constants() {
 	dummy_name = NameConstant_XObject;
 	dummy_name = NameConstant_Image;
 	dummy_name = NameConstant_ProcSet;
+	dummy_name = NameConstant_Tx;
 
 	dummy_name = NameConstant_AdbePkcs7s3;
 	dummy_name = NameConstant_AdbePkcs7s4;
