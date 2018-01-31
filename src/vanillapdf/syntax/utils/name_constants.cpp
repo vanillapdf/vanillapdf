@@ -1,7 +1,7 @@
 #include "precompiled.h"
 
 #include "syntax/utils/name_constants.h"
-#include "vanillapdf/syntax/c_name_object.h"
+#include "vanillapdf/utils/c_name_constants.h"
 
 namespace vanillapdf {
 namespace constant {
@@ -15,15 +15,15 @@ const syntax::NameObject AdbePkcs7s5(make_deferred<Buffer>("adbe.pkcs7.s5", size
 } // constant
 } // vanillapdf
 
-const NameObjectHandle* NameConstant_AdbePkcs7s3 = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdbePkcs7s3);
-const NameObjectHandle* NameConstant_AdbePkcs7s4 = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdbePkcs7s4);
-const NameObjectHandle* NameConstant_AdbePkcs7s5 = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdbePkcs7s5);
+VANILLAPDF_API const NameObjectHandle* NameConstant_AdbePkcs7s3 = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdbePkcs7s3);
+VANILLAPDF_API const NameObjectHandle* NameConstant_AdbePkcs7s4 = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdbePkcs7s4);
+VANILLAPDF_API const NameObjectHandle* NameConstant_AdbePkcs7s5 = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdbePkcs7s5);
 
 #define DECLARE_CONST_NAME(name) \
 	namespace vanillapdf { namespace constant { namespace Name { \
 	const syntax::NameObject name(make_deferred<Buffer>(#name, sizeof(#name) - 1)); \
 	} /* Name */ } /* constant */ } /* vanillapdf */ \
-	const NameObjectHandle* NameConstant_##name = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::name);
+	VANILLAPDF_API const NameObjectHandle* NameConstant_##name = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::name);
 
 DECLARE_CONST_NAME(AA);
 DECLARE_CONST_NAME(ASCII85Decode);
