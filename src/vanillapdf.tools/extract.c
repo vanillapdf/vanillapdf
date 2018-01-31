@@ -19,6 +19,9 @@ error_type process_stream(StreamObjectHandle* stream, biguint_type object_number
 	boolean_type is_type_xobject = VANILLAPDF_RV_FALSE;
 	boolean_type is_subtype_image = VANILLAPDF_RV_FALSE;
 
+	unsigned long long object_number_converted = 0;
+	unsigned int generation_number_converted = 0;
+
 	int return_value = 0;
 	char output_filename[256] = { 0 };
 	IOutputStreamHandle* output_stream = NULL;
@@ -52,7 +55,10 @@ error_type process_stream(StreamObjectHandle* stream, biguint_type object_number
 		return VANILLAPDF_TOOLS_ERROR_SUCCESS;
 	}
 
-	return_value = snprintf(output_filename, sizeof(output_filename), "%llu.%u", object_number, generation_number);
+	object_number_converted = object_number;
+	generation_number_converted = generation_number;
+
+	return_value = snprintf(output_filename, sizeof(output_filename), "%llu.%u", object_number_converted, generation_number_converted);
 	if (return_value < 0) {
 		printf("Could not create destination filename");
 		return VANILLAPDF_TOOLS_ERROR_FAILURE;
@@ -98,7 +104,6 @@ error_type process_xref(XrefHandle* xref) {
 
 		XrefEntryType type;
 		XrefEntryHandle* entry = NULL;
-		ObjectHandle* obj = NULL;
 		XrefCompressedEntryHandle* compressed_entry = NULL;
 		XrefUsedEntryHandle* used_entry = NULL;
 
@@ -110,19 +115,22 @@ error_type process_xref(XrefHandle* xref) {
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_ObjectNumber(entry, &object_number));
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_GenerationNumber(entry, &generation_number));
 
-		switch (type) {
-			case XrefEntryType_Used:
-				RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_ToUsedEntry(entry, &used_entry));
-				RETURN_ERROR_IF_NOT_SUCCESS(XrefUsedEntry_Reference(used_entry, &obj));
-				RETURN_ERROR_IF_NOT_SUCCESS(process_object(obj, object_number, generation_number));
-				RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));
-				break;
-			case XrefEntryType_Compressed:
-				RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_ToCompressedEntry(entry, &compressed_entry));
-				RETURN_ERROR_IF_NOT_SUCCESS(XrefCompressedEntry_Reference(compressed_entry, &obj));
-				RETURN_ERROR_IF_NOT_SUCCESS(process_object(obj, object_number, generation_number));
-				RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));
-				break;
+		if (type == XrefEntryType_Used) {
+			ObjectHandle* obj = NULL;
+
+			RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_ToUsedEntry(entry, &used_entry));
+			RETURN_ERROR_IF_NOT_SUCCESS(XrefUsedEntry_Reference(used_entry, &obj));
+			RETURN_ERROR_IF_NOT_SUCCESS(process_object(obj, object_number, generation_number));
+			RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));
+		}
+
+		if (type == XrefEntryType_Used) {
+			ObjectHandle* obj = NULL;
+
+			RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_ToCompressedEntry(entry, &compressed_entry));
+			RETURN_ERROR_IF_NOT_SUCCESS(XrefCompressedEntry_Reference(compressed_entry, &obj));
+			RETURN_ERROR_IF_NOT_SUCCESS(process_object(obj, object_number, generation_number));
+			RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));
 		}
 
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_Release(entry));
