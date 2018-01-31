@@ -93,7 +93,275 @@ error_type process_logging() {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
+error_type process_constants() {
+	boolean_type dummy_boolean;
+	error_type dummy_error;
+	const NameObjectHandle* dummy_name = NULL;
+
+	// They might seem unused, but they test symbol visibility
+	UNUSED(dummy_boolean);
+	UNUSED(dummy_error);
+	UNUSED(dummy_name);
+
+	// return values
+
+	dummy_boolean = VANILLAPDF_RV_FALSE;
+	dummy_boolean = VANILLAPDF_RV_TRUE;
+
+	// global error states
+
+	dummy_error = VANILLAPDF_ERROR_SUCCESS;
+	dummy_error = VANILLAPDF_ERROR_PARAMETER_VALUE;
+	dummy_error = VANILLAPDF_ERROR_NOT_SUPPORTED;
+	dummy_error = VANILLAPDF_ERROR_USER_CANCELLED;
+	dummy_error = VANILLAPDF_ERROR_ZLIB_DATA;
+	dummy_error = VANILLAPDF_ERROR_INVALID_LICENSE;
+	dummy_error = VANILLAPDF_ERROR_GENERAL;
+
+	// Syntax errors
+
+	dummy_error = VANILLAPDF_ERROR_CONVERSION;
+	dummy_error = VANILLAPDF_ERROR_FILE_DISPOSED;
+	dummy_error = VANILLAPDF_ERROR_FILE_NOT_INITIALIZED;
+	dummy_error = VANILLAPDF_ERROR_OBJECT_MISSING;
+	dummy_error = VANILLAPDF_ERROR_INVALID_PASSWORD;
+
+	// Name constants
+
+	dummy_name = NameConstant_AA;
+	dummy_name = NameConstant_ASCII85Decode;
+	dummy_name = NameConstant_ASCIIHexDecode;
+	dummy_name = NameConstant_AcroForm;
+	dummy_name = NameConstant_BaseVersion;
+	dummy_name = NameConstant_BitsPerComponent;
+	dummy_name = NameConstant_Catalog;
+	dummy_name = NameConstant_Collection;
+	dummy_name = NameConstant_Colors;
+	dummy_name = NameConstant_Columns;
+	dummy_name = NameConstant_Container;
+	dummy_name = NameConstant_Contents;
+	dummy_name = NameConstant_Count;
+	dummy_name = NameConstant_DecodeParms;
+	dummy_name = NameConstant_Dests;
+	dummy_name = NameConstant_DeveloperExtensions;
+	dummy_name = NameConstant_EarlyChange;
+	dummy_name = NameConstant_Extends;
+	dummy_name = NameConstant_ExtensionLevel;
+	dummy_name = NameConstant_Extensions;
+	dummy_name = NameConstant_Filter;
+	dummy_name = NameConstant_First;
+	dummy_name = NameConstant_FlateDecode;
+	dummy_name = NameConstant_Index;
+	dummy_name = NameConstant_Kids;
+	dummy_name = NameConstant_Lang;
+	dummy_name = NameConstant_Legal;
+	dummy_name = NameConstant_Length;
+	dummy_name = NameConstant_Limits;
+	dummy_name = NameConstant_MediaBox;
+	dummy_name = NameConstant_Metadata;
+	dummy_name = NameConstant_N;
+	dummy_name = NameConstant_Names;
+	dummy_name = NameConstant_NeedsRendering;
+	dummy_name = NameConstant_Nums;
+	dummy_name = NameConstant_OCProperties;
+	dummy_name = NameConstant_ObjStm;
+	dummy_name = NameConstant_OpenAction;
+	dummy_name = NameConstant_Outlines;
+	dummy_name = NameConstant_OutputIntents;
+	dummy_name = NameConstant_P;
+	dummy_name = NameConstant_Page;
+	dummy_name = NameConstant_PageLabel;
+	dummy_name = NameConstant_PageLabels;
+	dummy_name = NameConstant_PageLayout;
+	dummy_name = NameConstant_PageMode;
+	dummy_name = NameConstant_Pages;
+	dummy_name = NameConstant_Parent;
+	dummy_name = NameConstant_Perms;
+	dummy_name = NameConstant_PieceInfo;
+	dummy_name = NameConstant_Predictor;
+	dummy_name = NameConstant_Prev;
+	dummy_name = NameConstant_Requirements;
+	dummy_name = NameConstant_Resources;
+	dummy_name = NameConstant_Root;
+	dummy_name = NameConstant_S;
+	dummy_name = NameConstant_St;
+	dummy_name = NameConstant_Size;
+	dummy_name = NameConstant_SinglePage;
+	dummy_name = NameConstant_OneColumn;
+	dummy_name = NameConstant_TwoColumnLeft;
+	dummy_name = NameConstant_TwoColumnRight;
+	dummy_name = NameConstant_TwoPageLeft;
+	dummy_name = NameConstant_TwoPageRight;
+	dummy_name = NameConstant_SpiderInfo;
+	dummy_name = NameConstant_StructTreeRoot;
+	dummy_name = NameConstant_Threads;
+	dummy_name = NameConstant_Type;
+	dummy_name = NameConstant_URI;
+	dummy_name = NameConstant_Version;
+	dummy_name = NameConstant_ViewerPreferences;
+	dummy_name = NameConstant_W;
+	dummy_name = NameConstant_XRefStm;
+	dummy_name = NameConstant_HideToolbar;
+	dummy_name = NameConstant_HideMenubar;
+	dummy_name = NameConstant_HideWindowUI;
+	dummy_name = NameConstant_FitWindow;
+	dummy_name = NameConstant_CenterWindow;
+	dummy_name = NameConstant_DisplayDocTitle;
+	dummy_name = NameConstant_NonFullScreenPageMode;
+	dummy_name = NameConstant_Direction;
+	dummy_name = NameConstant_ViewArea;
+	dummy_name = NameConstant_ViewClip;
+	dummy_name = NameConstant_PrintArea;
+	dummy_name = NameConstant_PrintClip;
+	dummy_name = NameConstant_PrintScaling;
+	dummy_name = NameConstant_Duplex;
+	dummy_name = NameConstant_PickTrayByPDFSize;
+	dummy_name = NameConstant_PrintPageRange;
+	dummy_name = NameConstant_NumCopies;
+	dummy_name = NameConstant_UseNone;
+	dummy_name = NameConstant_UseOutlines;
+	dummy_name = NameConstant_UseThumbs;
+	dummy_name = NameConstant_UseOC;
+	dummy_name = NameConstant_L2R;
+	dummy_name = NameConstant_R2L;
+	dummy_name = NameConstant_AppDefault;
+	dummy_name = NameConstant_None;
+	dummy_name = NameConstant_Simplex;
+	dummy_name = NameConstant_DuplexFlipShortEdge;
+	dummy_name = NameConstant_DuplexFlipLongEdge;
+	dummy_name = NameConstant_FullScreen;
+	dummy_name = NameConstant_UseAttachments;
+	dummy_name = NameConstant_Last;
+	dummy_name = NameConstant_Next;
+	dummy_name = NameConstant_Dest;
+	dummy_name = NameConstant_C;
+	dummy_name = NameConstant_F;
+	dummy_name = NameConstant_U;
+	dummy_name = NameConstant_O;
+	dummy_name = NameConstant_R;
+	dummy_name = NameConstant_V;
+	dummy_name = NameConstant_ID;
+	dummy_name = NameConstant_Standard;
+	dummy_name = NameConstant_Title;
+	dummy_name = NameConstant_Encrypt;
+	dummy_name = NameConstant_CF;
+	dummy_name = NameConstant_StmF;
+	dummy_name = NameConstant_StrF;
+	dummy_name = NameConstant_EFF;
+	dummy_name = NameConstant_CFM;
+	dummy_name = NameConstant_V2;
+	dummy_name = NameConstant_AESV2;
+	dummy_name = NameConstant_AESV3;
+	dummy_name = NameConstant_StdCF;
+	dummy_name = NameConstant_Crypt;
+	dummy_name = NameConstant_Identity;
+	dummy_name = NameConstant_Name;
+	dummy_name = NameConstant_SubFilter;
+	dummy_name = NameConstant_AdbePkcs7s3;
+	dummy_name = NameConstant_AdbePkcs7s4;
+	dummy_name = NameConstant_AdbePkcs7s5;
+	dummy_name = NameConstant_Recipients;
+	dummy_name = NameConstant_DefaultCryptFilter;
+	dummy_name = NameConstant_Info;
+	dummy_name = NameConstant_Author;
+	dummy_name = NameConstant_Subject;
+	dummy_name = NameConstant_Keywords;
+	dummy_name = NameConstant_Creator;
+	dummy_name = NameConstant_Producer;
+	dummy_name = NameConstant_CreationDate;
+	dummy_name = NameConstant_ModDate;
+	dummy_name = NameConstant_Trapped;
+	dummy_name = NameConstant_Unknown;
+	dummy_name = NameConstant_True;
+	dummy_name = NameConstant_False;
+	dummy_name = NameConstant_NeedsRendering;
+	dummy_name = NameConstant_DCTDecode;
+	dummy_name = NameConstant_XYZ;
+	dummy_name = NameConstant_Fit;
+	dummy_name = NameConstant_FitH;
+	dummy_name = NameConstant_FitV;
+	dummy_name = NameConstant_FitR;
+	dummy_name = NameConstant_FitB;
+	dummy_name = NameConstant_FitBH;
+	dummy_name = NameConstant_FitBV;
+	dummy_name = NameConstant_Subtype;
+	dummy_name = NameConstant_Annot;
+	dummy_name = NameConstant_Annots;
+	dummy_name = NameConstant_Link;
+	dummy_name = NameConstant_D;
+	dummy_name = NameConstant_Text;
+	dummy_name = NameConstant_FreeText;
+	dummy_name = NameConstant_Line;
+	dummy_name = NameConstant_Square;
+	dummy_name = NameConstant_Circle;
+	dummy_name = NameConstant_Polygon;
+	dummy_name = NameConstant_PolyLine;
+	dummy_name = NameConstant_Highlight;
+	dummy_name = NameConstant_Underline;
+	dummy_name = NameConstant_Squiggly;
+	dummy_name = NameConstant_StrikeOut;
+	dummy_name = NameConstant_RubberStamp;
+	dummy_name = NameConstant_Caret;
+	dummy_name = NameConstant_Ink;
+	dummy_name = NameConstant_Popup;
+	dummy_name = NameConstant_FileAttachment;
+	dummy_name = NameConstant_Sound;
+	dummy_name = NameConstant_Movie;
+	dummy_name = NameConstant_Widget;
+	dummy_name = NameConstant_Screen;
+	dummy_name = NameConstant_PrinterMark;
+	dummy_name = NameConstant_TrapNetwork;
+	dummy_name = NameConstant_Watermark;
+	dummy_name = NameConstant_TripleD;
+	dummy_name = NameConstant_Redact;
+	dummy_name = NameConstant_XRef;
+	dummy_name = NameConstant_Font;
+	dummy_name = NameConstant_Type0;
+	dummy_name = NameConstant_Type1;
+	dummy_name = NameConstant_Type3;
+	dummy_name = NameConstant_ToUnicode;
+	dummy_name = NameConstant_CIDSystemInfo;
+	dummy_name = NameConstant_CMapName;
+	dummy_name = NameConstant_CMapType;
+	dummy_name = NameConstant_CMap;
+	dummy_name = NameConstant_Registry;
+	dummy_name = NameConstant_Ordering;
+	dummy_name = NameConstant_Supplement;
+	dummy_name = NameConstant_FT;
+	dummy_name = NameConstant_Btn;
+	dummy_name = NameConstant_Ch;
+	dummy_name = NameConstant_Sig;
+	dummy_name = NameConstant_Fields;
+	dummy_name = NameConstant_ByteRange;
+	dummy_name = NameConstant_Reason;
+	dummy_name = NameConstant_Location;
+	dummy_name = NameConstant_M;
+	dummy_name = NameConstant_ContactInfo;
+	dummy_name = NameConstant_Cert;
+	dummy_name = NameConstant_BaseFont;
+	dummy_name = NameConstant_Width;
+	dummy_name = NameConstant_Height;
+	dummy_name = NameConstant_ColorSpace;
+	dummy_name = NameConstant_RGB;
+	dummy_name = NameConstant_G;
+	dummy_name = NameConstant_CMYK;
+	dummy_name = NameConstant_DeviceRGB;
+	dummy_name = NameConstant_DeviceGray;
+	dummy_name = NameConstant_DeviceCMYK;
+	dummy_name = NameConstant_XObject;
+	dummy_name = NameConstant_Image;
+	dummy_name = NameConstant_ProcSet;
+
+	dummy_name = NameConstant_AdbePkcs7s3;
+	dummy_name = NameConstant_AdbePkcs7s4;
+	dummy_name = NameConstant_AdbePkcs7s5;
+
+	return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
 error_type process_license_info(string_type license_file) {
+	BufferHandle* license_buffer = NULL;
+	IInputStreamHandle* input_stream = NULL;
 	boolean_type is_valid = VANILLAPDF_RV_FALSE;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_IsValid(&is_valid));
@@ -101,12 +369,17 @@ error_type process_license_info(string_type license_file) {
 		return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 
-	RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_SetLicenseFile(license_file));
+	RETURN_ERROR_IF_NOT_SUCCESS(IInputStream_CreateFromFile(license_file, &input_stream));
+	RETURN_ERROR_IF_NOT_SUCCESS(IInputStream_ToBuffer(input_stream, &license_buffer));
+	RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_SetLicenseBuffer(license_buffer));
 	RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_IsValid(&is_valid));
 
 	if (is_valid != VANILLAPDF_RV_TRUE) {
 		return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(IInputStream_Release(input_stream));
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(license_buffer));
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }

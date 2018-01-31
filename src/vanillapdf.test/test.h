@@ -27,6 +27,7 @@ error_type process_version(PDFVersion version, int nested);
 error_type process_library_info();
 error_type process_license_info(string_type license_file);
 error_type process_logging();
+error_type process_constants();
 
 /* Files */
 error_type process_file(FileHandle* file, int nested);

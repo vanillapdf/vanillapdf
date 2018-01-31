@@ -59,6 +59,7 @@ int main(int argc, char *argv[]) {
 	RETURN_ERROR_IF_NOT_SUCCESS(process_library_info());
 	RETURN_ERROR_IF_NOT_SUCCESS(process_license_info(license_file));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_logging());
+	RETURN_ERROR_IF_NOT_SUCCESS(process_constants());
 
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Open(argv[1], &file));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file));
