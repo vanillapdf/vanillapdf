@@ -4,12 +4,12 @@ input[type="email"] {
     padding: 0 10px;
     vertical-align: middle;
     background: none;
-    border: 1px solid #fff;
-    font-family: 'Roboto', sans-serif;
-    font-size: 22px;
+    border: 1px solid #fced21;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 25px;
     font-weight: 300;
     line-height: 50px;
-    color: #fff;
+    color: #000000;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     border-radius: 6px;
@@ -31,9 +31,9 @@ input[type="email"]:focus {
     box-shadow: none;
 }
 
-input[type="email"]:-moz-placeholder { color: #fff; opacity: 0.5; }
-input[type="email"]:-ms-input-placeholder { color: #fff; opacity: 0.5; }
-input[type="email"]::-webkit-input-placeholder { color: #fff; opacity: 0.5; }
+input[type="email"]:-moz-placeholder { color: #000000; opacity: 0.5; }
+input[type="email"]:-ms-input-placeholder { color: #000000; opacity: 0.5; }
+input[type="email"]::-webkit-input-placeholder { color: #000000; opacity: 0.5; }
 
 
 .subscribe button {
@@ -41,13 +41,13 @@ input[type="email"]::-webkit-input-placeholder { color: #fff; opacity: 0.5; }
     margin: 0;
     padding: 0 20px;
     vertical-align: middle;
-    background: #ff5a56;
+    background: #fced21;
     border: 0;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Source Sans Pro', sans-serif;
     font-size: 22px;
     font-weight: 300;
     line-height: 52px;
-    color: #fff;
+    color: #000000;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     border-radius: 6px;
@@ -63,8 +63,7 @@ input[type="email"]::-webkit-input-placeholder { color: #fff; opacity: 0.5; }
 }
 
 .subscribe button:hover {
-    background: #555;
-    color: #fff;
+    background: #fff;
     -o-transition: all .3s;
     -moz-transition: all .3s;
     -webkit-transition: all .3s;
@@ -83,7 +82,7 @@ input[type="email"]::-webkit-input-placeholder { color: #fff; opacity: 0.5; }
 
 .subscribe button:focus {
 	outline: 0;
-	background: #555;
+	background: #7ac942;
 	color: #fff;
 }
 
