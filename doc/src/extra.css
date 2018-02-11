@@ -1,5 +1,11 @@
 /* Extra CSS */
 
+/* Global */
+
+body, table, div, p, dl, a {
+	font-family: 'Source Sans Pro', sans-serif !important;
+}
+
 /* Page header */
 
 div#titlearea {
@@ -47,6 +53,8 @@ ul#main-menu {
 	background-image: none;
 	padding: 10px 35px;
 	color: #000000;
+	
+	font-size: medium;
 }
 
 .sm-dox a:focus, .sm-dox a:active, .sm-dox a:hover, .sm-dox a.highlighted {
@@ -98,9 +106,9 @@ div.contents a, div.contents a:visited {
 }
 
 body, table, div, p, dl {
-	font-family: Lucida Grande, Verdana, Geneva, Arial, sans-serif;
-	font-size: 10pt;
-	line-height: 17pt;
+    font-weight: 300;
+	font-size: 16pt;
+	line-height: 20pt;
 }
 
 div.contents {
@@ -119,6 +127,10 @@ dl.note, dl.todo {
 
 div.image {
 	text-align: left;
+}
+
+div.line {
+	font-size: inherit;
 }
 
 div.fragment {
@@ -152,6 +164,11 @@ span.icondoc {
 
 table.directory {
 	width: 100%;
+	font: inherit;
+}
+
+div.directory div.levels {
+	font: inherit;
 }
 
 div.directory td.entry {
@@ -166,4 +183,12 @@ div.directory td.entry, div.directory td.desc {
 	vertical-align: middle;
 	padding-top: 5px;
 	padding-bottom: 5px;
+}
+
+/* Footer */
+
+address.footer {
+	padding-top: 10px;
+	padding-bottom: 20px;
+	padding-right: 20px;
 }
