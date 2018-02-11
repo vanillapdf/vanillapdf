@@ -71,23 +71,19 @@ input[type="email"]::-webkit-input-placeholder { color: #000000; opacity: 0.5; }
     transition: all .3s;
 }
 
-.subscribe button:active {
+.subscribe button:focus {
+	background: #fff;
 	outline: 0;
-    background: #555;
-    color: #fff;
+}
+
+.subscribe button:active {
+    background: #7ac942;
+	outline: 0;
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
     box-shadow: none;
 }
 
-.subscribe button:focus {
-	outline: 0;
-	background: #7ac942;
-	color: #fff;
-}
-
 .btn:focus, .btn:active:focus, .btn.active:focus {
 	outline: 0;
-	background: #555;
-	color: #fff;
 }
