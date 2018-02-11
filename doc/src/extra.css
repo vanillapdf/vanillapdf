@@ -1,30 +1,120 @@
 /* Extra CSS */
 
-div.contents {
-	margin-top: 0px;
-	margin-left: 0px;
-	margin-right: 0px;
-	margin-bottom: 10px;
-	padding: 12px;
+/* Page header */
+
+div#titlearea {
+	
+	border-bottom: none;
+	
+	/*
+		Width 100% would mean, that the object larger, if the object has padding
+		To get around this, we need to set the box-sizing property as well
+	*/
+	width: 100%;
+	padding: 20px;
+	box-sizing: border-box;
+}
+
+td#projectlogo {
+	vertical-align: middle;
+}
+
+td#projectlogo, td#projectlogo img {
+	width: 450px;
+	height: 93px;
+}
+
+div#titlearea table {
+	width: 100%;
+}
+
+div#projectname, div#projectname span#projectnumber {
+	font-weight: bold;
+}
+
+div#projectname, div#projectbrief {
+	text-align: right;
+}
+
+/* Navigation bar */
+
+ul#main-menu {
+	background-image: none;
+	background-color: #F5F5F5;
+}
+
+.sm-dox a, .sm-dox a:focus, .sm-dox a:active, .sm-dox a:hover, .sm-dox a.highlighted {
+	background-image: none;
+	padding: 10px 35px;
+	color: #000000;
+}
+
+.sm-dox a:focus, .sm-dox a:active, .sm-dox a:hover, .sm-dox a.highlighted {
+	color: #7AC942;
+	background-color: #FFFFFF;
+	text-shadow: none;
+}
+
+div#MSearchBox {
+	margin-top: 17px;
+}
+
+div#MSearchBox span.right {
+	top: 17px;
+}
+
+/* Header */
+
+div.header {
+	background-image: none;
+	border-bottom: none;
+	background-color: inherit;
+	
+	width: 80%;
+	padding: 0 20px;
 	margin-left: auto;
 	margin-right: auto;
-	width: 960px;
-	background-color: white;
-	border-bottom-right-radius:8px;
-	border-bottom-left-radius:8px; 
-	box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
-	/* firefox specific markup */
-	-moz-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
-	/* webkit specific markup */
-	-webkit-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
+	
+	margin-top: 50px;
+	margin-bottom: 20px;
+}
+
+div.headertitle {
+	padding: 0px;
+}
+
+div.headertitle div.title {
+	margin: 0px;
+}
+
+/* Body */
+
+body {
+	background-color: #FFFFFF;
+}
+
+div.contents a, div.contents a:visited {
+	color: #7AC942;
+}
+
+body, table, div, p, dl {
+	font-family: Lucida Grande, Verdana, Geneva, Arial, sans-serif;
+	font-size: 10pt;
+	line-height: 17pt;
+}
+
+div.contents {
+	width: 80%;
+	padding: 0 20px;
+	margin-left: auto;
+	margin-right: auto;
+	
+	margin-top: 20px;
+	margin-bottom: 50px;
 }
 
 dl.note, dl.todo {
 	padding-left: 6px;
-}
-
-div.contents {
-	padding: 20px;
 }
 
 div.image {
@@ -76,14 +166,4 @@ div.directory td.entry, div.directory td.desc {
 	vertical-align: middle;
 	padding-top: 5px;
 	padding-bottom: 5px;
-}
-
-body, table, div, p, dl {
-	font-family: Lucida Grande, Verdana, Geneva, Arial, sans-serif;
-	font-size: 10pt;
-	line-height: 17pt;
-}
-
-body {
-	background-color: #F0F0F0;
 }
