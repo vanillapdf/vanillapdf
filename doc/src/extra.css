@@ -3,7 +3,15 @@
 /* Global */
 
 body, table, div, p, dl, a {
-	font-family: 'Source Sans Pro', sans-serif !important;
+	font-family: 'Source Sans Pro', sans-serif;
+}
+
+ul#main-menu, div.toc, div.fragment, blockquote {
+	background-color: #F5F5F5;
+}
+
+a, a:visited, div.contents a, div.contents a:visited {
+	color: #7AC942;
 }
 
 /* Page header */
@@ -40,13 +48,17 @@ div#projectname, div#projectname span#projectnumber {
 
 div#projectname, div#projectbrief {
 	text-align: right;
+	font-family: 'Source Sans Pro', sans-serif;
+}
+
+div#projectbrief {
+	font-size: 100%;
 }
 
 /* Navigation bar */
 
 ul#main-menu {
 	background-image: none;
-	background-color: #F5F5F5;
 }
 
 .sm-dox a, .sm-dox a:focus, .sm-dox a:active, .sm-dox a:hover, .sm-dox a.highlighted {
@@ -54,7 +66,8 @@ ul#main-menu {
 	padding: 10px 35px;
 	color: #000000;
 	
-	font-size: medium;
+	font-family: 'Source Sans Pro', sans-serif;
+	font-size: 120%;
 }
 
 .sm-dox a:focus, .sm-dox a:active, .sm-dox a:hover, .sm-dox a.highlighted {
@@ -84,7 +97,7 @@ div.header {
 	margin-right: auto;
 	
 	margin-top: 50px;
-	margin-bottom: 20px;
+	margin-bottom: 50px;
 }
 
 div.headertitle {
@@ -93,6 +106,20 @@ div.headertitle {
 
 div.headertitle div.title {
 	margin: 0px;
+	
+	font-family: 'Source Sans Pro', sans-serif;
+	font-size: 200%;
+	font-weight: bold;
+}
+
+div.header div.summary {
+	width: 20%;
+	font-size: 100%;
+}
+
+div.headertitle div.title div.ingroups {
+	margin-top: 10px;
+	font-size: 40%;
 }
 
 /* Body */
@@ -101,14 +128,26 @@ body {
 	background-color: #FFFFFF;
 }
 
-div.contents a, div.contents a:visited {
-	color: #7AC942;
-}
-
 body, table, div, p, dl {
     font-weight: 300;
 	font-size: 16pt;
 	line-height: 20pt;
+}
+
+a.el {
+	font-weight: 400;
+}
+
+div.toc h3 {
+	font-family: 'Source Sans Pro', sans-serif;
+	font-size: 100%;
+	color: #000000;
+}
+
+div.toc li {
+	font-family: 'Source Sans Pro', sans-serif;
+	font-size: 100%;
+	background-position: 0 0.5em;
 }
 
 div.contents {
@@ -117,7 +156,7 @@ div.contents {
 	margin-left: auto;
 	margin-right: auto;
 	
-	margin-top: 20px;
+	margin-top: 50px;
 	margin-bottom: 50px;
 }
 
@@ -130,7 +169,7 @@ div.image {
 }
 
 div.line {
-	font-size: inherit;
+	font-size: 80%;
 }
 
 div.fragment {
@@ -139,10 +178,6 @@ div.fragment {
 	
 	/* This wraps the fragment to the text legth */
 	display: inline-block;
-}
-
-dl.section dd, dl.todo dd {
-    margin-left: 0px;
 }
 
 span.arrow {
@@ -183,12 +218,4 @@ div.directory td.entry, div.directory td.desc {
 	vertical-align: middle;
 	padding-top: 5px;
 	padding-bottom: 5px;
-}
-
-/* Footer */
-
-address.footer {
-	padding-top: 10px;
-	padding-bottom: 20px;
-	padding-right: 20px;
 }
