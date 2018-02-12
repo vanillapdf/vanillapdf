@@ -46,18 +46,6 @@ img { max-width: 100%; }
 	padding-bottom: 20px;
 }
 
-.coming-soon .logo h1 {
-	margin: 0;
-}
-
-.coming-soon .logo {
-	display: inline-block;
-	width: 450px;
-	height: 93px;
-	background: url(../img/logo.png);
-	background-size: cover;
-}
-
 .coming-soon p {
 	display: inline-block;
 	width: 450px;
