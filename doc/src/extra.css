@@ -61,6 +61,15 @@ ul#main-menu {
 	background-image: none;
 }
 
+div#nav-path ul {
+	background-image: none;
+	background-color: #F5F5F5;
+}
+
+div#nav-path li {
+	background-color: #F5F5F5;
+}
+
 .sm-dox a, .sm-dox a:focus, .sm-dox a:active, .sm-dox a:hover, .sm-dox a.highlighted {
 	background-image: none;
 	padding: 10px 35px;
@@ -134,8 +143,22 @@ body, table, div, p, dl {
 	line-height: 20pt;
 }
 
+blockquote {
+	display: inline-block;
+}
+
+tr.heading h2 {
+	color: black;
+}
+
 a.el {
 	font-weight: 400;
+}
+
+div.toc {
+	min-width: 200px;
+	max-width: 30%;
+	width: auto;
 }
 
 div.toc h3 {
@@ -172,12 +195,16 @@ div.line {
 	font-size: 80%;
 }
 
+span.lineno a.line {
+	font-family: inherit;
+}
+
 div.fragment {
 	padding: 10px;
 	margin-left: 20px;
 	
 	/* This wraps the fragment to the text legth */
-	display: inline-block;
+	display: table;
 }
 
 span.arrow {
