@@ -47,6 +47,8 @@ input[type="email"]::-webkit-input-placeholder { color: #000000; opacity: 0.5; }
     font-size: 22px;
     font-weight: 300;
     line-height: 52px;
+	letter-spacing: 5px;
+	text-transform: uppercase;
     color: #000000;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;

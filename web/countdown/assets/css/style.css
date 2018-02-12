@@ -24,6 +24,8 @@ h2 {
 	font-size: 62px;
 	font-weight: 300;
 	line-height: 54px;
+	letter-spacing: 5px;
+	text-transform: uppercase;
 }
 
 img { max-width: 100%; }
