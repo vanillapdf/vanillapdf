@@ -70,6 +70,11 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_Encode(FilterBaseHandle* handle, BufferHandle* data, BufferHandle** result);
 
 	/**
+	* \brief Encodes source \p data with specified \p params and returns encoded \p result data
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_EncodeParams(FilterBaseHandle* handle, BufferHandle* data, DictionaryObjectHandle* parameters, BufferHandle** result);
+
+	/**
 	* \brief Decodes source \p data and returns decoded \p result data
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_Decode(FilterBaseHandle* handle, BufferHandle* data, BufferHandle** result);
@@ -97,6 +102,12 @@ extern "C"
 	* \see \ref FilterBase_Encode
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION FlateDecodeFilter_Encode(FlateDecodeFilterHandle* handle, BufferHandle* data, BufferHandle** result);
+
+	/**
+	* \copydoc FilterBase_Encode
+	* \see \ref FilterBase_EncodeParams
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION FlateDecodeFilter_EncodeParams(FlateDecodeFilterHandle* handle, BufferHandle* data, DictionaryObjectHandle* parameters, BufferHandle** result);
 
 	/**
 	* \copydoc FilterBase_Decode
@@ -128,6 +139,12 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION DCTDecodeFilter_Encode(DCTDecodeFilterHandle* handle, BufferHandle* data, BufferHandle** result);
 
 	/**
+	* \copydoc FilterBase_Encode
+	* \see \ref FilterBase_EncodeParams
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION DCTDecodeFilter_EncodeParams(DCTDecodeFilterHandle* handle, BufferHandle* data, DictionaryObjectHandle* parameters, BufferHandle** result);
+
+	/**
 	* \copydoc FilterBase_Decode
 	* \see \ref FilterBase_Decode
 	*/
@@ -157,6 +174,12 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION ASCII85DecodeFilter_Encode(ASCII85DecodeFilterHandle* handle, BufferHandle* data, BufferHandle** result);
 
 	/**
+	* \copydoc FilterBase_Encode
+	* \see \ref FilterBase_EncodeParams
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ASCII85DecodeFilter_EncodeParams(ASCII85DecodeFilterHandle* handle, BufferHandle* data, DictionaryObjectHandle* parameters, BufferHandle** result);
+
+	/**
 	* \copydoc FilterBase_Decode
 	* \see \ref FilterBase_Decode
 	*/
@@ -184,6 +207,12 @@ extern "C"
 	* \see \ref FilterBase_Encode
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ASCIIHexDecodeFilter_Encode(ASCIIHexDecodeFilterHandle* handle, BufferHandle* data, BufferHandle** result);
+
+	/**
+	* \copydoc FilterBase_Encode
+	* \see \ref FilterBase_EncodeParams
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ASCIIHexDecodeFilter_EncodeParams(ASCIIHexDecodeFilterHandle* handle, BufferHandle* data, DictionaryObjectHandle* parameters, BufferHandle** result);
 
 	/**
 	* \copydoc FilterBase_Decode

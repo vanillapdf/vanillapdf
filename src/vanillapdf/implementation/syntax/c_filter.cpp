@@ -30,6 +30,24 @@ VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_Encode(FilterBaseHandle*
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_EncodeParams(FilterBaseHandle* handle, BufferHandle* data_handle, DictionaryObjectHandle* parameters_handle, BufferHandle** result) {
+	FilterBase* filter = reinterpret_cast<FilterBase*>(handle);
+	DictionaryObject* params = reinterpret_cast<DictionaryObject*>(parameters_handle);
+	Buffer* data = reinterpret_cast<Buffer*>(data_handle);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(filter);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(params);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto encoded = filter->Encode(data, params);
+		auto ptr = encoded.AddRefGet();
+		*result = reinterpret_cast<BufferHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_Decode(FilterBaseHandle* handle, BufferHandle* data_handle, BufferHandle** result) {
 	FlateDecodeFilter* filter = reinterpret_cast<FlateDecodeFilter*>(handle);
 	Buffer* data = reinterpret_cast<Buffer*>(data_handle);
@@ -66,34 +84,26 @@ VANILLAPDF_API error_type CALLING_CONVENTION FlateDecodeFilter_Create(FlateDecod
 
 VANILLAPDF_API error_type CALLING_CONVENTION FlateDecodeFilter_Encode(FlateDecodeFilterHandle* handle, BufferHandle* data_handle, BufferHandle** result) {
 	FlateDecodeFilter* filter = reinterpret_cast<FlateDecodeFilter*>(handle);
-	Buffer* data = reinterpret_cast<Buffer*>(data_handle);
+	FilterBase* base_filter = static_cast<FilterBase*>(filter);
+	FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
 
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(filter);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	return FilterBase_Encode(base_filter_handle, data_handle, result);
+}
 
-	try {
-		auto encoded = filter->Encode(data);
-		auto ptr = encoded.AddRefGet();
-		*result = reinterpret_cast<BufferHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+VANILLAPDF_API error_type CALLING_CONVENTION FlateDecodeFilter_EncodeParams(FlateDecodeFilterHandle* handle, BufferHandle* data_handle, DictionaryObjectHandle* parameters_handle, BufferHandle** result) {
+	FlateDecodeFilter* filter = reinterpret_cast<FlateDecodeFilter*>(handle);
+	FilterBase* base_filter = static_cast<FilterBase*>(filter);
+	FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
+
+	return FilterBase_EncodeParams(base_filter_handle, data_handle, parameters_handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION FlateDecodeFilter_Decode(FlateDecodeFilterHandle* handle, BufferHandle* data_handle, BufferHandle** result) {
 	FlateDecodeFilter* filter = reinterpret_cast<FlateDecodeFilter*>(handle);
-	Buffer* data = reinterpret_cast<Buffer*>(data_handle);
+	FilterBase* base_filter = static_cast<FilterBase*>(filter);
+	FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
 
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(filter);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-	try {
-		auto decoded = filter->Decode(data);
-		auto ptr = decoded.AddRefGet();
-		*result = reinterpret_cast<BufferHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+	return FilterBase_Decode(base_filter_handle, data_handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION FlateDecodeFilter_Release(FlateDecodeFilterHandle* handle) {
@@ -116,34 +126,26 @@ VANILLAPDF_API error_type CALLING_CONVENTION DCTDecodeFilter_Create(DCTDecodeFil
 
 VANILLAPDF_API error_type CALLING_CONVENTION DCTDecodeFilter_Encode(DCTDecodeFilterHandle* handle, BufferHandle* data_handle, BufferHandle** result) {
 	DCTDecodeFilter* filter = reinterpret_cast<DCTDecodeFilter*>(handle);
-	Buffer* data = reinterpret_cast<Buffer*>(data_handle);
+	FilterBase* base_filter = static_cast<FilterBase*>(filter);
+	FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
 
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(filter);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	return FilterBase_Encode(base_filter_handle, data_handle, result);
+}
 
-	try {
-		auto encoded = filter->Encode(data);
-		auto ptr = encoded.AddRefGet();
-		*result = reinterpret_cast<BufferHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+VANILLAPDF_API error_type CALLING_CONVENTION DCTDecodeFilter_EncodeParams(DCTDecodeFilterHandle* handle, BufferHandle* data_handle, DictionaryObjectHandle* parameters_handle, BufferHandle** result) {
+	DCTDecodeFilter* filter = reinterpret_cast<DCTDecodeFilter*>(handle);
+	FilterBase* base_filter = static_cast<FilterBase*>(filter);
+	FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
+
+	return FilterBase_EncodeParams(base_filter_handle, data_handle, parameters_handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION DCTDecodeFilter_Decode(DCTDecodeFilterHandle* handle, BufferHandle* data_handle, BufferHandle** result) {
 	DCTDecodeFilter* filter = reinterpret_cast<DCTDecodeFilter*>(handle);
-	Buffer* data = reinterpret_cast<Buffer*>(data_handle);
+	FilterBase* base_filter = static_cast<FilterBase*>(filter);
+	FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
 
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(filter);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-	try {
-		auto decoded = filter->Decode(data);
-		auto ptr = decoded.AddRefGet();
-		*result = reinterpret_cast<BufferHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+	return FilterBase_Decode(base_filter_handle, data_handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION DCTDecodeFilter_Release(DCTDecodeFilterHandle* handle) {
@@ -166,34 +168,26 @@ VANILLAPDF_API error_type CALLING_CONVENTION ASCII85DecodeFilter_Create(ASCII85D
 
 VANILLAPDF_API error_type CALLING_CONVENTION ASCII85DecodeFilter_Encode(ASCII85DecodeFilterHandle* handle, BufferHandle* data_handle, BufferHandle** result) {
 	ASCII85DecodeFilter* filter = reinterpret_cast<ASCII85DecodeFilter*>(handle);
-	Buffer* data = reinterpret_cast<Buffer*>(data_handle);
+	FilterBase* base_filter = static_cast<FilterBase*>(filter);
+	FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
 
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(filter);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	return FilterBase_Encode(base_filter_handle, data_handle, result);
+}
 
-	try {
-		auto encoded = filter->Encode(data);
-		auto ptr = encoded.AddRefGet();
-		*result = reinterpret_cast<BufferHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+VANILLAPDF_API error_type CALLING_CONVENTION ASCII85DecodeFilter_EncodeParams(ASCII85DecodeFilterHandle* handle, BufferHandle* data_handle, DictionaryObjectHandle* parameters_handle, BufferHandle** result) {
+	ASCII85DecodeFilter* filter = reinterpret_cast<ASCII85DecodeFilter*>(handle);
+	FilterBase* base_filter = static_cast<FilterBase*>(filter);
+	FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
+
+	return FilterBase_EncodeParams(base_filter_handle, data_handle, parameters_handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ASCII85DecodeFilter_Decode(ASCII85DecodeFilterHandle* handle, BufferHandle* data_handle, BufferHandle** result) {
 	ASCII85DecodeFilter* filter = reinterpret_cast<ASCII85DecodeFilter*>(handle);
-	Buffer* data = reinterpret_cast<Buffer*>(data_handle);
+	FilterBase* base_filter = static_cast<FilterBase*>(filter);
+	FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
 
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(filter);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-	try {
-		auto decoded = filter->Decode(data);
-		auto ptr = decoded.AddRefGet();
-		*result = reinterpret_cast<BufferHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+	return FilterBase_Decode(base_filter_handle, data_handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ASCII85DecodeFilter_Release(ASCII85DecodeFilterHandle* handle) {
@@ -216,34 +210,26 @@ VANILLAPDF_API error_type CALLING_CONVENTION ASCIIHexDecodeFilter_Create(ASCIIHe
 
 VANILLAPDF_API error_type CALLING_CONVENTION ASCIIHexDecodeFilter_Encode(ASCIIHexDecodeFilterHandle* handle, BufferHandle* data_handle, BufferHandle** result) {
 	ASCIIHexDecodeFilter* filter = reinterpret_cast<ASCIIHexDecodeFilter*>(handle);
-	Buffer* data = reinterpret_cast<Buffer*>(data_handle);
+	FilterBase* base_filter = static_cast<FilterBase*>(filter);
+	FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
 
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(filter);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	return FilterBase_Encode(base_filter_handle, data_handle, result);
+}
 
-	try {
-		auto encoded = filter->Encode(data);
-		auto ptr = encoded.AddRefGet();
-		*result = reinterpret_cast<BufferHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+VANILLAPDF_API error_type CALLING_CONVENTION ASCIIHexDecodeFilter_EncodeParams(ASCIIHexDecodeFilterHandle* handle, BufferHandle* data_handle, DictionaryObjectHandle* parameters_handle, BufferHandle** result) {
+	ASCIIHexDecodeFilter* filter = reinterpret_cast<ASCIIHexDecodeFilter*>(handle);
+	FilterBase* base_filter = static_cast<FilterBase*>(filter);
+	FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
+
+	return FilterBase_EncodeParams(base_filter_handle, data_handle, parameters_handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ASCIIHexDecodeFilter_Decode(ASCIIHexDecodeFilterHandle* handle, BufferHandle* data_handle, BufferHandle** result) {
 	ASCIIHexDecodeFilter* filter = reinterpret_cast<ASCIIHexDecodeFilter*>(handle);
-	Buffer* data = reinterpret_cast<Buffer*>(data_handle);
+	FilterBase* base_filter = static_cast<FilterBase*>(filter);
+	FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
 
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(filter);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-	try {
-		auto decoded = filter->Decode(data);
-		auto ptr = decoded.AddRefGet();
-		*result = reinterpret_cast<BufferHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+	return FilterBase_Decode(base_filter_handle, data_handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ASCIIHexDecodeFilter_Release(ASCIIHexDecodeFilterHandle* handle) {
