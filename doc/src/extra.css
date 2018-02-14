@@ -117,7 +117,8 @@ div.headertitle div.title {
 	margin: 0px;
 	
 	font-family: 'Source Sans Pro', sans-serif;
-	font-size: 200%;
+	font-size: 250%;
+	line-height: 110%;
 	font-weight: bold;
 }
 
@@ -143,11 +144,26 @@ body, table, div, p, dl {
 	line-height: 20pt;
 }
 
+h1 {
+	font-size: 150%;
+	line-height: 150%;
+}
+
+h2 {
+	font-size: 130%;
+	line-height: 130%;
+}
+
+h3 {
+	font-size: 120%;
+	line-height: 120%;
+}
+
 blockquote {
 	display: inline-block;
 }
 
-tr.heading h2 {
+h2.groupheader {
 	color: black;
 }
 
