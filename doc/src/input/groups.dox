@@ -25,14 +25,14 @@ important task, that cannot be done:
 \defgroup group_files Low-level file interface
 \brief
 Accessing file thourgh list of objects such as
-ArrayObjectHandle or DictionaryObjectHandle.
+\ref ArrayObjectHandle or \ref DictionaryObjectHandle.
 
 An in-depth knowledge about PDF file format is strongly
 recommended as many functions are a direct reference
 to a PDF specification.
 
 You might want to start with \ref FileHandle,
-which is the low-level counterpart of the DocumentHandle.
+which is the low-level counterpart of the \ref DocumentHandle.
 
 It's primary use is for missing or misbehaving functionality
 in the \ref group_documents.

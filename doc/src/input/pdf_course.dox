@@ -113,7 +113,7 @@ Quote from [section 7.5.4 - Cross-Reference Table](PDF32000_2008.pdf#G6.1839814)
 > within the file so that the entire file need not be read to locate any particular object.<br>
 
 What this means, is that there are stored byte offsets for every indirect object.<br>
-When the file is read, the reader jumps to the trailer, which is at the very end of the file.<br>
+When the file is read, the reader jumps to the \ref file_trailer, which is at the very end of the file.<br>
 Finds an offset to this section, searches for a object by their unique identifier (object number).<br>
 From this point, the reader can just seek to the exact offset and read the object.<br>
 

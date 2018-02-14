@@ -21,9 +21,6 @@ extern "C"
 	* \ingroup group_files
 	* \brief Represents low-level file access handle.
 	*
-	* This is a direct reference to a PDF specification,
-	* section 7.5, "File Structure".
-	*
 	* The file is basically composed of:
 	* - __Header__ is basically just a statement about
 	*   the PDF version this file is referring to
@@ -33,8 +30,9 @@ extern "C"
 	*
 	* When the file has been incrementally updated,
 	* there may be multiple cross-reference sections.
-	* For details about this topic please visit section
-	* 7.5.6 "Incremental Updates" of the PDF specification.
+	*
+	* For more details please visit [section 7.5 - File Structure](PDF32000_2008.pdf#G6.1877172)
+	* and [section 7.5.6 - Incremental Updates](PDF32000_2008.pdf#G6.1639490).
 	*/
 
 	/**
