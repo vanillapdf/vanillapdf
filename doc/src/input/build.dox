@@ -4,21 +4,21 @@
 
 \section build_deps Project dependencies
 
-<p><b>CMake</b></p>
+<b>CMake</b>
 This project uses CMake (<https://cmake.org/>) framework as a cross-platform build tool.<br>
 Latest version is available at <https://cmake.org/download/>.
 
-<p><b>OpenSSL</b></p>
-Building OpenSSL from source is out of scope of this guide.<br />
+<b>OpenSSL</b>
+Building OpenSSL from source is out of scope of this guide.<br>
 For detailed information about build process visit <a href="https://www.openssl.org/">OpenSSL official page</a>.<br>
 You can find pre-built binaries <a href="https://wiki.openssl.org/index.php/Binaries">here</a>.
 
-<p><b>zlib</b></p>
+<b>zlib</b>
 Building zlib from source is out of scope of this guide.<br />
 For detailed information about build process visit <a href="https://zlib.net/">zlib official page</a>.<br>
 You can find pre-built binaries <a href="http://gnuwin32.sourceforge.net/packages/zlib.htm">here</a>.
 
-<p><b>libjpeg</b></p>
+<b>libjpeg</b>
 Building libjpeg from source is out of scope of this guide.<br>
 For detailed information about build process visit <a href="http://libjpeg.sourceforge.net/">libjpeg official page</a>.<br>
 You can find pre-built binaries <a href="http://gnuwin32.sourceforge.net/packages/jpeg.htm">here</a>.
@@ -26,7 +26,7 @@ You can find pre-built binaries <a href="http://gnuwin32.sourceforge.net/package
 \section build_win Compiling from source on Windows
 
 Alternatively, you can compile library \ref build_unix "the UNIX way" using 
-<a href="https://en.wikipedia.org/wiki/Cygwin">Cygwin</a> or <a href="http://www.mingw.org/">MinGW</a>.
+[Cygwin](https://en.wikipedia.org/wiki/Cygwin) or [MinGW](http://www.mingw.org/).
 
 Download source tarball and put it somewhere (e.g. use <code>c:\\tools</code>)
 
@@ -50,11 +50,6 @@ mkdir build
 cd build
 cmake -G "Visual Studio 12 2013" ..
 \endcode
-
-\section install_win Installing the binaries on Windows
-
-VanillaPDF comes as a self-installing archive, so installation is extremely simple.
-Just follow the dialogs.
 
 \section build_unix Compiling from source on UNIX
 
@@ -101,21 +96,5 @@ Total Test time (real) = 113.72 sec
 \endcode
 
 </ol>
-
-\section install_unix Installing the binaries on UNIX
-
-After the compilation of the source code or downloading the binary distribution for UNIX, type:
-
-\code{.unparsed}
-make install
-\endcode
-
-Binaries are installed into the directory <code>\<prefix\>/bin</code>.
-
-<code>\<prefix\></code> defaults to <code>/usr/local</code> but can be changed with 
-the `--prefix` option of the configure script. 
-
-If you have a RPM or DEB package, then please follow the 
-standard installation procedure that is required for these packages. 
 
 */
