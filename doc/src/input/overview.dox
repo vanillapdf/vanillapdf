@@ -21,7 +21,7 @@ Developer guide:
 <li>Section \ref page_interface_callbacks explains how to use custom code callbacks throughout the interface.
 </ul>
 
-External sources:
+External resources:
 
 <ul>
 <li>Adobe PDF specification available either at [official site](http://www.adobe.com/devnet/pdf/pdf_reference.html) or a [local copy](PDF32000_2008.pdf).
