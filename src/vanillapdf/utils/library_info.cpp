@@ -56,7 +56,7 @@ int LibraryInfo::BuildVersion() noexcept {
 }
 
 const char * LibraryInfo::Author() noexcept {
-	return "Juraj Zikmund";
+	return "Vanilla.PDF";
 }
 
 int LibraryInfo::BuildDay() noexcept {
