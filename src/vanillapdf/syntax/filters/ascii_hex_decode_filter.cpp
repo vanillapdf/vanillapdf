@@ -70,12 +70,12 @@ BufferPtr ASCIIHexDecodeFilter::Decode(IInputStreamPtr src, types::stream_size l
 
 BufferPtr ASCIIHexDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const {
 	auto stream = src->ToInputStream();
-	return Encode(stream, src->size());
+	return Encode(stream, src->size(), parameters);
 }
 
 BufferPtr ASCIIHexDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters) const {
 	auto stream = src->ToInputStream();
-	return Decode(stream, src->size());
+	return Decode(stream, src->size(), parameters);
 }
 
 } // syntax
