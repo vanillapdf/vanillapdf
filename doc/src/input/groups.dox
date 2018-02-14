@@ -53,7 +53,7 @@ semantics.
 General-purpose data structures that are built from the basic
 object types described in \ref group_objects.
 
-For more details please visit [<b>section 7.9 - Common Data Structures</b>](PDF32000_2008.pdf#G6.1640320).
+For more details please visit [section 7.9 - Common Data Structures](PDF32000_2008.pdf#G6.1640320).
 */
 
 /**
@@ -65,9 +65,9 @@ Group of font related classes and functions.
 For more details please visit:
 
 <ul>
-<li>[<b>section 9.5 - Introduction to Font Data Structures</b>](PDF32000_2008.pdf#G8.1694788)
-<li>[<b>section 9.6 - Simple Fonts</b>](PDF32000_2008.pdf#G8.1846107)
-<li>[<b>section 9.7 - Composite Fonts</b>](PDF32000_2008.pdf#G8.1851619)
+<li>[section 9.5 - Introduction to Font Data Structures](PDF32000_2008.pdf#G8.1694788)
+<li>[section 9.6 - Simple Fonts](PDF32000_2008.pdf#G8.1846107)
+<li>[section 9.7 - Composite Fonts](PDF32000_2008.pdf#G8.1851619)
 </ul>
 */
 
@@ -77,7 +77,7 @@ For more details please visit:
 \brief
 Field represents and interactive control within \ref InteractiveFormHandle.
 
-For more details please visit [<b>section 12.7.3 - Field Dictionaries</b>](PDF32000_2008.pdf#G11.1697617) and [<b>section 12.7.4 - Field Types</b>](PDF32000_2008.pdf#G11.2106844).
+For more details please visit [section 12.7.3 - Field Dictionaries](PDF32000_2008.pdf#G11.1697617) and [section 12.7.4 - Field Types](PDF32000_2008.pdf#G11.2106844).
 */
 
 /**
@@ -86,7 +86,7 @@ For more details please visit [<b>section 12.7.3 - Field Dictionaries</b>](PDF32
 \brief
 A PDF document may contain a document outline that the conforming reader may display on the screen, allowing the user to navigate interactively from one part of the document to another.
 
-For more details please visit [<b>section 12.3.3 - Document Outline</b>](PDF32000_2008.pdf#G11.1970991).
+For more details please visit [section 12.3.3 - Document Outline](PDF32000_2008.pdf#G11.1970991).
 */
 
 /**
@@ -95,7 +95,7 @@ For more details please visit [<b>section 12.3.3 - Document Outline</b>](PDF3200
 \brief
 An annotation associates an object such as a note, sound, or movie with a location on a page of a PDF document, or provides a way to interact with the user by means of the mouse and keyboard.
 
-For more details please visit [<b>section 12.5 - Annotations</b>](PDF32000_2008.pdf#G11.2023455).
+For more details please visit [section 12.5 - Annotations](PDF32000_2008.pdf#G11.2023455).
 */
 
 /**
@@ -110,7 +110,7 @@ Consisting of the following items:
 - The location of the document window on that page.
 - The magnification (zoom) factor.
 
-For more details please visit [<b>section 12.3.2 - Destinations</b>](PDF32000_2008.pdf#G11.2063217).
+For more details please visit [section 12.3.2 - Destinations](PDF32000_2008.pdf#G11.2063217).
 */
 
 /**
@@ -129,7 +129,7 @@ The graphics operators form six main groups:
 <li>Marked-content operators
 </ul>
 
-For more detailed information please visit [<b>Section 8 - Graphics</b>](PDF32000_2008.pdf#G7.3886368).
+For more detailed information please visit [Section 8 - Graphics](PDF32000_2008.pdf#G7.3886368).
 */
 
 /**
@@ -138,7 +138,7 @@ For more detailed information please visit [<b>Section 8 - Graphics</b>](PDF3200
 \brief
 Basic object types from which a whole PDF file is composed.
 
-For more details please visit [<b>section 7.3 - Objects</b>](PDF32000_2008.pdf#G6.1965566).
+For more details please visit [section 7.3 - Objects](PDF32000_2008.pdf#G6.1965566).
 */
 
 /**
@@ -152,10 +152,10 @@ need not be read to locate any particular object.
 Cross-reference streams provide the following advantages:
 - A more compact representation of cross-reference information
 - The ability to access compressed objects that are stored in object
-  streams (see [<b>section 7.5.7 - Object Streams</b>](PDF32000_2008.pdf#G6.2393289)) and to allow new cross-reference
+  streams (see [section 7.5.7 - Object Streams](PDF32000_2008.pdf#G6.2393289)) and to allow new cross-reference
   entry types to be added in the future
 
-For more details please visit [<b>section 7.5.4 - Cross-Reference Table</b>](PDF32000_2008.pdf#G6.1839814) and [<b>section 7.5.8 - Cross-Reference Streams</b>](PDF32000_2008.pdf#G6.2355789).
+For more details please visit [section 7.5.4 - Cross-Reference Table](PDF32000_2008.pdf#G6.1839814) and [section 7.5.8 - Cross-Reference Streams](PDF32000_2008.pdf#G6.2355789).
 */
 
 /**
