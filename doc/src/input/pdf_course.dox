@@ -108,7 +108,7 @@ For a complete sample view \ref file_example.<br>
 
 \subsection file_xref File cross-reference table
 
-Quote from [<b>section 7.5.4 - Cross-Reference Table</b>](PDF32000_2008.pdf#G6.1839814):<br>
+Quote from [section 7.5.4 - Cross-Reference Table](PDF32000_2008.pdf#G6.1839814):<br>
 > The cross-reference table contains information that permits random access to indirect objects<br>
 > within the file so that the entire file need not be read to locate any particular object.<br>
 
@@ -147,7 +147,8 @@ This trailer states, that a cross-reference section can be found at offset 181.<
 Additionaly, the document root object is indirect with identifier 1 (object number).<br>
 Document metadata are stored in is indirect with identifier 3 (object number).<br>
 Both document root and metadata should be defined in the cross-reference table.<br>
-For more detailed information please visit [<b>section 7.5.5 - File Trailer</b>](PDF32000_2008.pdf#G6.1639448).<br>
+
+For more detailed information please visit [section 7.5.5 - File Trailer](PDF32000_2008.pdf#G6.1639448).
 
 ____________________________________________________
 
@@ -214,7 +215,7 @@ Setting the font associated with name /TT0 and size 1:
 /TT0 1 Tf
 \endcode
 
-For a complete list of postscript instructions visit [<b>Table A.1 – PDF content stream operators</b>](PDF32000_2008.pdf#G14.1029307).<br>
+For a complete list of postscript instructions visit [Table A.1 – PDF content stream operators](PDF32000_2008.pdf#G14.1029307).<br>
 For a implementation reference visit \ref group_contents.<br>
 
 ____________________________________________________

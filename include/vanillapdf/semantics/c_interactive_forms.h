@@ -23,7 +23,7 @@ extern "C"
 	* An interactive form (PDF 1.2) - sometimes referred to as an AcroForm - is
 	* a collection of fields for gathering information interactively from the user.
 	*
-	* For more details please visit [<b>section 12.7 - Interactive Forms</b>](PDF32000_2008.pdf#G11.2110737).
+	* For more details please visit [section 12.7 - Interactive Forms](PDF32000_2008.pdf#G11.2110737).
 	*/
 
 	/**

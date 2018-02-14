@@ -21,7 +21,7 @@ extern "C"
 	* \ingroup group_documents
 	* \brief Represents document's authenticated digital signature
 	*
-	* For more details please visit [<b>section 12.8 - Digital Signatures</b>](PDF32000_2008.pdf#G11.2013350).
+	* For more details please visit [section 12.8 - Digital Signatures](PDF32000_2008.pdf#G11.2013350).
 	*/
 
 	/**

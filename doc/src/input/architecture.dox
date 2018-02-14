@@ -14,16 +14,15 @@ CMake also integrates packaging system to provide one-click installable packages
 
 Currently supported package systems:
 <ul>
-<li>Windows [<b>.msi</b>](https://en.wikipedia.org/wiki/Windows_Installer)
-<li>Debian [<b>.deb</b>](https://en.wikipedia.org/wiki/Deb_(file_format))
-<li>Red Hat Package Manager [<b>.rpm</b>](https://en.wikipedia.org/wiki/Rpm_(software))
+<li>Windows [.msi](https://en.wikipedia.org/wiki/Windows_Installer)
+<li>Debian [.deb](https://en.wikipedia.org/wiki/Deb_(file_format))
+<li>Red Hat Package Manager [.rpm](https://en.wikipedia.org/wiki/Rpm_(software))
 </ul>
 
 \subsection arch_overall_interface Interface
-
 It provides only <b>ANSI C</b> API.<br>
 The reason why I did not expose native C++ interface is rooted within the incompatibility of the C++ ABI between compilers.<br>
-Functions across the interface use standard C caller clean-up [<b>cdecl</b>](https://en.wikipedia.org/wiki/X86_calling_conventions#cdecl) calling convention.<br>
+Functions across the interface use standard C caller clean-up [cdecl](https://en.wikipedia.org/wiki/X86_calling_conventions#cdecl) calling convention.<br>
 
 \section arch_errors Error handling
 
@@ -132,7 +131,7 @@ This is often helpful for interacting with other applications, that might need t
 \subsection arch_tokenizer Tokenizer
 
 Tokens are smallest syntactic elements and are separated by a whitespace or a delimiter.<br>
-Which characters are considered whitespace and which are considered delimiter is discussed in [<b>section 7.2 - Lexical Conventions</b>](PDF32000_2008.pdf#G6.1638740).<br>
+Which characters are considered whitespace and which are considered delimiter is discussed in [section 7.2 - Lexical Conventions](PDF32000_2008.pdf#G6.1638740).<br>
 
 \note
 PDF supports comments, but they are currently ignored. They might be persisted in the future.
@@ -178,7 +177,7 @@ Parser uses look-ahead as well, since multiple tokens may form a single object.<
 
 Library provides multiple interfaces, that could be overriden by the calling application.
 
-For instance, when signing a document, it is possible to use classic PKCS#12 (Personal Information Exchange described in [<b>RFC 7292</b>](https://tools.ietf.org/html/rfc7292)).<br>
+For instance, when signing a document, it is possible to use classic PKCS#12 (Personal Information Exchange described in [RFC 7292](https://tools.ietf.org/html/rfc7292)).<br>
 Unfortunately, this would not work with smart cards, where the private key is not directly accessible.<br>
 User can override \ref SigningKeyHandle and provide signing implementation outside library boundaries.<br>
 

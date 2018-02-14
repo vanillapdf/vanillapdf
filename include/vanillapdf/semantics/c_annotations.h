@@ -38,9 +38,9 @@ extern "C"
 	* \ingroup group_annotations
 	* \brief
 	* A link annotation represents either a hypertext link to a \ref DestinationHandle
-	* elsewhere in the document or an [<b>Action</b>](PDF32000_2008.pdf#G11.2106801) to be performed.
+	* elsewhere in the document or an [Action](PDF32000_2008.pdf#G11.2106801) to be performed.
 	*
-	* For more details please visit [<b>section 12.5.6.5 - Link Annotations</b>](PDF32000_2008.pdf#G11.1951136).
+	* For more details please visit [section 12.5.6.5 - Link Annotations](PDF32000_2008.pdf#G11.1951136).
 	*/
 
 	/**

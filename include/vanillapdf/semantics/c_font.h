@@ -22,7 +22,7 @@ extern "C"
 	* \brief
 	* Base class for all fonts in to representable inside a PDF document
 	*
-	* For more details please visit [<b>section 9.5 - Introduction to Font Data Structures</b>](PDF32000_2008.pdf#G8.1694788).
+	* For more details please visit [section 9.5 - Introduction to Font Data Structures](PDF32000_2008.pdf#G8.1694788).
 	*/
 
 	/**
@@ -32,7 +32,7 @@ extern "C"
 	* \brief
 	* A font composed of glyphs from a descendant CIDFont.
 	*
-	* For more details please visit [<b>section 9.7 - Composite Fonts</b>](PDF32000_2008.pdf#G8.1851619).
+	* For more details please visit [section 9.7 - Composite Fonts](PDF32000_2008.pdf#G8.1851619).
 	*/
 
 	/**
