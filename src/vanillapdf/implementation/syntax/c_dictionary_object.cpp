@@ -8,6 +8,18 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Create(DictionaryObjectHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto direct = make_deferred<DictionaryObject>();
+		auto base = ObjectUtils::GetObjectBase(direct);
+		auto ptr = base.AddRefGet();
+		*result = reinterpret_cast<DictionaryObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle* handle, const NameObjectHandle* key, ObjectHandle** result)
 {
 	DictionaryObject* obj = reinterpret_cast<DictionaryObject*>(handle);
@@ -145,10 +157,30 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryO
 	try
 	{
 		auto containable_ptr = dynamic_cast<ContainableObject*>(obj);
-		if (nullptr == containable_ptr)
+		if (nullptr == containable_ptr) {
 			return VANILLAPDF_ERROR_PARAMETER_VALUE;
+		}
 
 		dictionary->Insert(name, containable_ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_InsertConst(DictionaryObjectHandle* dictionary_handle, const NameObjectHandle* key, ObjectHandle* value) {
+	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(dictionary_handle);
+	const NameObject* name = reinterpret_cast<const NameObject*>(key);
+	Object* obj = reinterpret_cast<Object*>(value);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(dictionary);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(name);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	try {
+		auto containable_ptr = dynamic_cast<ContainableObject*>(obj);
+		if (nullptr == containable_ptr) {
+			return VANILLAPDF_ERROR_PARAMETER_VALUE;
+		}
+
+		dictionary->Insert(*name, containable_ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }

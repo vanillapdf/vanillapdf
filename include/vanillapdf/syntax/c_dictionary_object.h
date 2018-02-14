@@ -82,6 +82,11 @@ extern "C"
 	*/
 
 	/**
+	* \brief Creates a new dictionary instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Create(DictionaryObjectHandle** result);
+
+	/**
 	* \brief Find mapped value for key \p key
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle* handle, const NameObjectHandle* key, ObjectHandle** result);
@@ -107,6 +112,11 @@ extern "C"
 	* \brief Insert new key-value pair into collection
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryObjectHandle* handle, NameObjectHandle* key, ObjectHandle* value);
+
+	/**
+	* \copydoc DictionaryObject_Insert
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_InsertConst(DictionaryObjectHandle* handle, const NameObjectHandle* key, ObjectHandle* value);
 
 	/**
 	* \copydoc Object_Release
