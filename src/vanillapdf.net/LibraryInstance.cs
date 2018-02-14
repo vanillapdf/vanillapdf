@@ -58,7 +58,7 @@ namespace vanillapdf.net
 
         public static void Release()
         {
-            // Not yer initialized
+            // Not yet initialized
             if (m_handle == IntPtr.Zero) {
                 return;
             }
