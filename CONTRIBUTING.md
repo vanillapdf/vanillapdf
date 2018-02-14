@@ -11,7 +11,7 @@ If you are already a customer with paid support,
 please use the paid support section.
 
 Bug report should consist of a few useful information:
-* the version of VanillaPDF you are using
+* the version of Vanilla.PDF you are using
 * the version of operating system you are using
 * the description of the actual result (what is actually happening) and the expected result (what would you expect to happen instead)
 * snippet of the problematic code
@@ -27,7 +27,7 @@ at [info@vanillapdf.com](mailto:info@vanillapdf.com).
 ## General feedback and feature requests
 
 If you are missing some crucial feature or have any idea how to make this project better,
-send me an [e-mail](mailto:jur.zikmund@gmail.com).
+send me an [e-mail](mailto:jzikmund@vanillapdf.com).
 
 ## Pull requests
 
