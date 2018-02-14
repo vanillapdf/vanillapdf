@@ -6,13 +6,13 @@
 # - http://sourceforge.net/p/klusters/klusters/ci/master/tree/CMakeLists.txt
 
 #set(CPACK_STRIP_FILES					ON)
-set(CPACK_PACKAGE_NAME					"VanillaPDF")
+set(CPACK_PACKAGE_NAME					"Vanilla.PDF")
 set(CPACK_PACKAGE_VERSION_MAJOR			${VANILLAPDF_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR			${VANILLAPDF_VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH			${VANILLAPDF_VERSION_PATCH})
 set(CPACK_PACKAGE_CONTACT				"info@vanillapdf.com")
-set(CPACK_PACKAGE_VENDOR				"Vanilla PDF Labs")
-set(CPACK_PACKAGE_INSTALL_DIRECTORY		"Vanilla PDF Labs/Vanilla PDF")
+set(CPACK_PACKAGE_VENDOR				"Vanilla.PDF Labs")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY		"Vanilla.PDF Labs/Vanilla.PDF")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY	"Cross-platform toolkit for creating and manipulating existing PDF documents")
 set(CPACK_PACKAGE_DESCRIPTION			"Cross-platform toolkit for creating and manipulating existing PDF documents")
 
@@ -66,8 +66,8 @@ set(CPACK_WIX_PRODUCT_GUID				"{4873D236-CABD-43BD-B95F-07AD54DB177F}")
 set(CPACK_WIX_UPGRADE_GUID				"{88E3B5A2-C8B2-4F7C-A7E5-A2B764A9B0E6}")
 
 set(CPACK_WIX_PRODUCT_ICON				${CMAKE_SOURCE_DIR}/cmake/vanilla_logo.ico)
-set(CPACK_WIX_PROGRAM_MENU_FOLDER		"Vanilla PDF")
-set(CPACK_WIX_CMAKE_PACKAGE_REGISTRY	"VanillaPDF")
+set(CPACK_WIX_PROGRAM_MENU_FOLDER		"Vanilla.PDF")
+set(CPACK_WIX_CMAKE_PACKAGE_REGISTRY	"Vanilla.PDF")
 
 if(WIN32)
 	set(CPACK_GENERATOR		"WIX;ZIP")
