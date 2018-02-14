@@ -5,7 +5,7 @@
 Getting started:
 
 <ul>
-<li>Section \ref page_install discusses how to download and install VanillaPDF for your platform.
+<li>Section \ref page_install discusses how to download and install Vanilla.PDF for your platform.
 <li>Section \ref page_interface_overview explains basic premises the whole interface is built upon.
 <li>Section \ref page_pdf_course contains a very brief description of the PDF file format.
 <li>Section \ref page_licensing tells how the product is licensed.
@@ -14,7 +14,7 @@ Getting started:
 Developer guide:
 
 <ul>
-<li>Section \ref page_architecture gives a global overview of how VanillaPDF is internally structured.
+<li>Section \ref page_architecture gives a global overview of how Vanilla.PDF is internally structured.
 <li>Section \ref page_file_interface shows reading simple file properties.
 <li>Section \ref page_document_interface showcases a few operations on the documents.
 <li>Section \ref page_content_interface demonstrates how to modify page contents.
@@ -30,11 +30,11 @@ External resources:
 <h2>License</h2>
 
 Copyright &copy; 2013-2017 by 
-[Juraj Zikmund](mailto:jur.zikmund@gmail.com).
+[Vanilla.PDF](mailto:info@vanillapdf.com).
 
 <b>TODO Proprietary license summary</b>
 
-Documents produced by VanillaPDF are derivative works derived from the
+Documents produced by Vanilla.PDF are derivative works derived from the
 input used in their production; they are not affected by this license.
 
 */
