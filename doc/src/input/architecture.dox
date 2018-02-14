@@ -2,12 +2,8 @@
 \page page_architecture Architecture
 \tableofcontents
 
-\section arch_overall General architecture overview
-
 The library is writted in standard C++ (currently 14) and can be compiled using
 Visual studio (2015 and 2017) and GCC (tested on Ubuntu 16.04) as well.
-
-\subsection arch_overall_build Build
 
 Build is executed using cross-platform make tool CMake (<https://cmake.org/>).<br>
 CMake also integrates packaging system to provide one-click installable packages for each platform.<br>
@@ -19,7 +15,6 @@ Currently supported package systems:
 <li>Red Hat Package Manager [.rpm](https://en.wikipedia.org/wiki/Rpm_(software))
 </ul>
 
-\subsection arch_overall_interface Interface
 It provides only <b>ANSI C</b> API.<br>
 The reason why I did not expose native C++ interface is rooted within the incompatibility of the C++ ABI between compilers.<br>
 Functions across the interface use standard C caller clean-up [cdecl](https://en.wikipedia.org/wiki/X86_calling_conventions#cdecl) calling convention.<br>
