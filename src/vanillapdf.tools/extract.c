@@ -39,7 +39,7 @@ error_type process_stream(StreamObjectHandle* stream, biguint_type object_number
 	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Contains(stream_dictionary, NameConstant_Subtype, &contains_subtype));
 
 	if (!contains_type || !contains_subtype) {
-		return VANILLAPDF_TOOLS_ERROR_SUCCESS;
+		goto err;
 	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Find(stream_dictionary, NameConstant_Type, &type_object));
@@ -49,7 +49,7 @@ error_type process_stream(StreamObjectHandle* stream, biguint_type object_number
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_GetType(subtype_object, &subtype_object_type));
 
 	if (type_object_type != ObjectType_Name || subtype_object_type != ObjectType_Name) {
-		return VANILLAPDF_TOOLS_ERROR_SUCCESS;
+		goto err;
 	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_ToName(type_object, &type_name));
@@ -59,7 +59,7 @@ error_type process_stream(StreamObjectHandle* stream, biguint_type object_number
 	RETURN_ERROR_IF_NOT_SUCCESS(NameObject_Equals(subtype_name, NameConstant_Image, &is_subtype_image));
 
 	if (!is_type_xobject || !is_subtype_image) {
-		return VANILLAPDF_TOOLS_ERROR_SUCCESS;
+		goto err;
 	}
 
 	object_number_converted = object_number;
@@ -122,6 +122,10 @@ error_type process_stream(StreamObjectHandle* stream, biguint_type object_number
 
 			processed_with_params = VANILLAPDF_RV_TRUE;
 		}
+
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(width_object));
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(height_object));
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(colorspace_object));
 	}
 
 	if (processed_with_params != VANILLAPDF_RV_TRUE) {
@@ -138,7 +142,21 @@ error_type process_stream(StreamObjectHandle* stream, biguint_type object_number
 		RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(encoded_body));
 	}
 
-	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Release(stream_dictionary));
+err:
+	if (type_object != NULL) {
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(type_object));
+		type_object = NULL;
+	}
+
+	if (subtype_object != NULL) {
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(subtype_object));
+		subtype_object = NULL;
+	}
+
+	if (stream_dictionary != NULL) {
+		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Release(stream_dictionary));
+		stream_dictionary = NULL;
+	}
 
 	return VANILLAPDF_TOOLS_ERROR_SUCCESS;
 }
