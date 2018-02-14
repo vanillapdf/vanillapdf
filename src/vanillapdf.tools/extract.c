@@ -5,38 +5,45 @@ void print_extract_help() {
 }
 
 error_type process_stream(StreamObjectHandle* stream, biguint_type object_number, ushort_type generation_number) {
-	BufferHandle* body = NULL;
-	DictionaryObjectHandle* dictionary = NULL;
+	DictionaryObjectHandle* stream_dictionary = NULL;
 
 	ObjectType type_object_type;
 	ObjectType subtype_object_type;
+
 	ObjectHandle* type_object = NULL;
 	ObjectHandle* subtype_object = NULL;
+
 	NameObjectHandle* type_name = NULL;
 	NameObjectHandle* subtype_name = NULL;
+
 	boolean_type contains_type = VANILLAPDF_RV_FALSE;
 	boolean_type contains_subtype = VANILLAPDF_RV_FALSE;
+	boolean_type contains_width = VANILLAPDF_RV_FALSE;
+	boolean_type contains_height = VANILLAPDF_RV_FALSE;
+	boolean_type contains_colorspace = VANILLAPDF_RV_FALSE;
+
 	boolean_type is_type_xobject = VANILLAPDF_RV_FALSE;
 	boolean_type is_subtype_image = VANILLAPDF_RV_FALSE;
+
+	boolean_type processed_with_params = VANILLAPDF_RV_FALSE;
 
 	unsigned long long object_number_converted = 0;
 	unsigned int generation_number_converted = 0;
 
 	int return_value = 0;
 	char output_filename[256] = { 0 };
-	IOutputStreamHandle* output_stream = NULL;
 
-	RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_GetHeader(stream, &dictionary));
+	RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_GetHeader(stream, &stream_dictionary));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Contains(dictionary, NameConstant_Type, &contains_type));
-	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Contains(dictionary, NameConstant_Subtype, &contains_subtype));
+	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Contains(stream_dictionary, NameConstant_Type, &contains_type));
+	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Contains(stream_dictionary, NameConstant_Subtype, &contains_subtype));
 
 	if (!contains_type || !contains_subtype) {
 		return VANILLAPDF_TOOLS_ERROR_SUCCESS;
 	}
 
-	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Find(dictionary, NameConstant_Type, &type_object));
-	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Find(dictionary, NameConstant_Subtype, &subtype_object));
+	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Find(stream_dictionary, NameConstant_Type, &type_object));
+	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Find(stream_dictionary, NameConstant_Subtype, &subtype_object));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_GetType(type_object, &type_object_type));
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_GetType(subtype_object, &subtype_object_type));
@@ -58,21 +65,80 @@ error_type process_stream(StreamObjectHandle* stream, biguint_type object_number
 	object_number_converted = object_number;
 	generation_number_converted = generation_number;
 
-	return_value = snprintf(output_filename, sizeof(output_filename), "%llu.%u", object_number_converted, generation_number_converted);
+	return_value = snprintf(output_filename, sizeof(output_filename), "%llu.%u.jpeg", object_number_converted, generation_number_converted);
 	if (return_value < 0) {
 		printf("Could not create destination filename");
 		return VANILLAPDF_TOOLS_ERROR_FAILURE;
 	}
 
-	RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_GetBody(stream, &body));
+	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Contains(stream_dictionary, NameConstant_Width, &contains_width));
+	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Contains(stream_dictionary, NameConstant_Height, &contains_height));
+	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Contains(stream_dictionary, NameConstant_ColorSpace, &contains_colorspace));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_CreateFromFile(output_filename, &output_stream));
-	RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_WriteBuffer(output_stream, body));
-	RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_Flush(output_stream));
-	RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_Release(output_stream));
+	if (contains_width && contains_height && contains_colorspace) {
+		ObjectType width_object_type;
+		ObjectType height_object_type;
+		ObjectType colorspace_object_type;
 
-	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Release(dictionary));
-	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(body));
+		ObjectHandle* width_object = NULL;
+		ObjectHandle* height_object = NULL;
+		ObjectHandle* colorspace_object = NULL;
+
+		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Find(stream_dictionary, NameConstant_Width, &width_object));
+		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Find(stream_dictionary, NameConstant_Height, &height_object));
+		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Find(stream_dictionary, NameConstant_ColorSpace, &colorspace_object));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_GetType(width_object, &width_object_type));
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_GetType(height_object, &height_object_type));
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_GetType(colorspace_object, &colorspace_object_type));
+
+		if (width_object_type == ObjectType_Integer && height_object_type == ObjectType_Integer && colorspace_object_type == ObjectType_Name) {
+			IOutputStreamHandle* output_stream = NULL;
+
+			DCTDecodeFilterHandle* encoding_filter = NULL;
+			DictionaryObjectHandle* encoding_dictionary = NULL;
+			BufferHandle* decoded_body = NULL;
+			BufferHandle* encoded_body = NULL;
+
+			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Create(&encoding_dictionary));
+			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_InsertConst(encoding_dictionary, NameConstant_Width, width_object));
+			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_InsertConst(encoding_dictionary, NameConstant_Height, height_object));
+			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_InsertConst(encoding_dictionary, NameConstant_ColorSpace, colorspace_object));
+
+			RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_GetBody(stream, &decoded_body));
+
+			RETURN_ERROR_IF_NOT_SUCCESS(DCTDecodeFilter_Create(&encoding_filter));
+			RETURN_ERROR_IF_NOT_SUCCESS(DCTDecodeFilter_EncodeParams(encoding_filter, decoded_body, encoding_dictionary, &encoded_body));
+			RETURN_ERROR_IF_NOT_SUCCESS(DCTDecodeFilter_Release(encoding_filter));
+
+			RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_CreateFromFile(output_filename, &output_stream));
+			RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_WriteBuffer(output_stream, encoded_body));
+			RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_Flush(output_stream));
+			RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_Release(output_stream));
+
+			RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(encoded_body));
+			RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(decoded_body));
+			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Release(encoding_dictionary));
+
+			processed_with_params = VANILLAPDF_RV_TRUE;
+		}
+	}
+
+	if (processed_with_params != VANILLAPDF_RV_TRUE) {
+		IOutputStreamHandle* output_stream = NULL;
+		BufferHandle* encoded_body = NULL;
+
+		RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_GetBodyRaw(stream, &encoded_body));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_CreateFromFile(output_filename, &output_stream));
+		RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_WriteBuffer(output_stream, encoded_body));
+		RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_Flush(output_stream));
+		RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_Release(output_stream));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(encoded_body));
+	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Release(stream_dictionary));
 
 	return VANILLAPDF_TOOLS_ERROR_SUCCESS;
 }
@@ -124,7 +190,7 @@ error_type process_xref(XrefHandle* xref) {
 			RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));
 		}
 
-		if (type == XrefEntryType_Used) {
+		if (type == XrefEntryType_Compressed) {
 			ObjectHandle* obj = NULL;
 
 			RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_ToCompressedEntry(entry, &compressed_entry));
