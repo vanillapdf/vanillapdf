@@ -36,8 +36,8 @@ extern "C"
 	* \extends ContentObjectHandle
 	* \ingroup group_contents
 	* \brief
-	* As an alternative to the image XObjects described in 8.9.5,
-	* "Image Dictionaries", a sampled image may be specified in
+	* As an alternative to the image XObjects described in
+	* [section 8.9.5 - Image Dictionaries](PDF32000_2008.pdf#G7.3816169), a sampled image may be specified in
 	* the form of an inline image.
 	*/
 

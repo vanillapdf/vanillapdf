@@ -29,8 +29,9 @@ extern "C"
 	* \extends IUnknownHandle
 	* \ingroup group_documents
 	* \brief
-	* Page labels are used for numbering or otherwise identifying
-	* individual pages (see 12.4.2, "Page Labels").
+	* Page labels are used for numbering or otherwise identifying individual pages.
+	*
+	* For more information please visit [section 12.4.2 - Page Labels](PDF32000_2008.pdf#G11.1696265).
 	* \see \ref PageLabelsHandle
 	*/
 
