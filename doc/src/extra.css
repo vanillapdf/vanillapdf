@@ -10,7 +10,8 @@ ul#main-menu, div.toc, div.fragment, blockquote {
 	background-color: #F5F5F5;
 }
 
-a, a:visited, div.contents a, div.contents a:visited {
+a, a:visited,
+div.contents a, div.contents a:visited {
 	color: #7AC942;
 }
 
@@ -71,10 +72,6 @@ div#nav-path ul {
 	background-color: #F5F5F5;
 }
 
-div#nav-path li {
-	background-color: #F5F5F5;
-}
-
 .sm-dox a, .sm-dox a:focus, .sm-dox a:active, .sm-dox a:hover, .sm-dox a.highlighted {
 	background-image: none;
 	padding: 10px 35px;
@@ -88,6 +85,17 @@ div#nav-path li {
 	color: #7AC942;
 	background-color: #FFFFFF;
 	text-shadow: none;
+}
+
+li.navelem a.el {
+	font-family: 'Source Sans Pro', sans-serif;
+	font-size: 10pt;
+	
+	color: #000000;
+}
+
+li.navelem a.el:focus, li.navelem a.el:active, li.navelem a.el:hover, li.navelem a.el.highlighted {
+	color: #7AC942;
 }
 
 div#MSearchBox {
@@ -133,7 +141,7 @@ div.header div.summary {
 
 div.headertitle div.title div.ingroups {
 	margin-top: 10px;
-	font-size: 40%;
+	font-size: 60%;
 }
 
 /* Body */
@@ -148,23 +156,19 @@ body, table, div, p, dl {
 	line-height: 25pt;
 }
 
-p {
-	margin-bottom: 1.5em;
-}
-
 h1 {
-	font-size: 150%;
-	line-height: 150%;
+	font-size: 140%;
+	line-height: 140%;
 }
 
 h2 {
-	font-size: 130%;
-	line-height: 130%;
+	font-size: 125%;
+	line-height: 125%;
 }
 
 h3 {
-	font-size: 120%;
-	line-height: 120%;
+	font-size: 110%;
+	line-height: 110%;
 }
 
 blockquote {
@@ -177,6 +181,7 @@ h2.groupheader {
 
 a.el {
 	font-weight: 400;
+	margin-left: 5px;
 }
 
 div.toc {
@@ -221,6 +226,7 @@ div.image {
 
 div.line {
 	font-size: 80%;
+	font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
 }
 
 span.lineno a.line {
@@ -238,7 +244,7 @@ div.fragment {
 span.arrow {
 	width: auto;
 	height: auto;
-	font-size: 100%;
+	color: #808080;
 }
 
 span.icona, span.icon {
@@ -256,6 +262,10 @@ table.directory {
 	font: inherit;
 }
 
+table.directory tr.even {
+	background-color: #F5F5F5;
+}
+
 div.directory div.levels {
 	font: inherit;
 }
@@ -270,6 +280,14 @@ div.directory td.desc {
 
 div.directory td.entry, div.directory td.desc {
 	vertical-align: middle;
-	padding-top: 5px;
-	padding-bottom: 5px;
+	padding: 5px;
+}
+
+/* Enumeration table */
+
+table.memberdecls td.memItemLeft,
+table.memberdecls td.memItemRight,
+table.memberdecls td.mdescLeft,
+table.memberdecls td.mdescRight {
+	background-color: #F5F5F5;
 }
