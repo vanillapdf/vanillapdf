@@ -20,6 +20,7 @@ public:
 		UserCancelled,
 		ZlibDataError,
 		InvalidLicense,
+		LicenseRequired,
 
 		// syntax
 		Conversion = 0x00010000,
@@ -38,6 +39,7 @@ public:
 	};
 
 public:
+	ExceptionBase() = default;
 	explicit ExceptionBase(const std::string& msg);
 	explicit ExceptionBase(const char * const & msg);
 
@@ -45,7 +47,7 @@ public:
 	virtual Type code() const noexcept = 0;
 	virtual ~ExceptionBase() = 0;
 
-private:
+protected:
 	std::string m_msg;
 };
 
@@ -94,6 +96,13 @@ public:
 	explicit InvalidLicenseException(const char * const & msg);
 	explicit InvalidLicenseException(const std::string& msg);
 	virtual Type code() const noexcept { return Type::InvalidLicense; }
+};
+
+class LicenseRequiredException : public ExceptionBase {
+public:
+	explicit LicenseRequiredException(const char * const & msg);
+	explicit LicenseRequiredException(const std::string& msg);
+	virtual Type code() const noexcept { return Type::LicenseRequired; }
 };
 
 template <typename DestT>

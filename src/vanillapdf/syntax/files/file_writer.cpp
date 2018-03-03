@@ -74,6 +74,11 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 
 void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
 
+	// Incremental update is a licensed feature
+	if (!LicenseInfo::IsValid()) {
+		throw LicenseRequiredException();
+	}
+
 	// Terminate if the source file was not initialized
 	if (!source->IsInitialized()) {
 		throw FileNotInitializedException(source->GetFilename());

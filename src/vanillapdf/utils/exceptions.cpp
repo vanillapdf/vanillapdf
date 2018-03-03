@@ -24,13 +24,16 @@ UserCancelledException::UserCancelledException(const std::string& msg) : Excepti
 ConversionException::ConversionException(const char * const & msg) : ExceptionBase(msg) {}
 ConversionException::ConversionException(const std::string& msg) : ExceptionBase(msg) {}
 
-ZlibDataErrorException::ZlibDataErrorException(types::stream_size size) : ZlibDataErrorException(size, std::string()) {}
-ZlibDataErrorException::ZlibDataErrorException(types::stream_size size, const std::string& message) : m_size(size),
-ExceptionBase("Zlib encountered corrupted data after " + std::to_string(size) + " bytes. Error: " + message) {
+ZlibDataErrorException::ZlibDataErrorException(types::stream_size size) : m_size(size) {}
+ZlibDataErrorException::ZlibDataErrorException(types::stream_size size, const std::string& message) : ZlibDataErrorException(size) {
+	m_msg = "Zlib encountered corrupted data after " + std::to_string(size) + " bytes. Error: " + message;
 }
 
 InvalidLicenseException::InvalidLicenseException(const char * const & msg) : ExceptionBase(msg) {}
 InvalidLicenseException::InvalidLicenseException(const std::string& msg) : ExceptionBase(msg) {}
+
+LicenseRequiredException::LicenseRequiredException(const char * const & msg) : ExceptionBase(msg) {}
+LicenseRequiredException::LicenseRequiredException(const std::string& msg) : ExceptionBase(msg) {}
 
 } // vanillapdf
 

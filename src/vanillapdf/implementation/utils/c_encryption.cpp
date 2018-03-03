@@ -1,6 +1,7 @@
 #include "precompiled.h"
+
+#include "utils/license_info.h"
 #include "utils/encryption_key_interface.h"
-#include "utils/pkcs12_key.h"
 
 #include "vanillapdf/utils/c_encryption.h"
 #include "implementation/c_helper.h"
@@ -39,6 +40,11 @@ public:
 
 	virtual BufferPtr Decrypt(const Buffer& data) override
 	{
+		// Decryption is a licensed feature
+		if (!LicenseInfo::IsValid()) {
+			throw LicenseRequiredException("File decryption is a licensed feature");
+		}
+
 		auto input_ptr = reinterpret_cast<const BufferHandle*>(&data);
 		BufferHandle* output_ptr = nullptr;
 
@@ -55,8 +61,7 @@ public:
 			throw UserCancelledException(ss.str());
 		}
 
-		Buffer *result = reinterpret_cast<Buffer*>(output_ptr);
-		return result;
+		return reinterpret_cast<Buffer*>(output_ptr);
 	}
 
 	virtual bool ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const override
@@ -72,10 +77,7 @@ public:
 			throw UserCancelledException(ss.str());
 		}
 
-		if (VANILLAPDF_RV_TRUE == result)
-			return true;
-		else
-			return false;
+		return (result == VANILLAPDF_RV_TRUE);
 	}
 
 	~CustomEncryptionKey()
@@ -113,7 +115,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION EncryptionKey_CreateCustom(
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION EncryptionKey_Release(EncryptionKeyHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION EncryptionKey_Release(EncryptionKeyHandle* handle) {
 	return ObjectRelease<IEncryptionKey, EncryptionKeyHandle>(handle);
 }

@@ -2,6 +2,7 @@
 
 #include "utils/misc_utils.h"
 #include "utils/pkcs12_key.h"
+#include "utils/license_info.h"
 #include "utils/streams/input_stream.h"
 
 #include <fstream>
@@ -151,6 +152,11 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, const Buffer& password) 
 
 BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
 
+	// Decryption is a licensed feature
+	if (!LicenseInfo::IsValid()) {
+		throw LicenseRequiredException("File decryption is a licensed feature");
+	}
+
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
 	if (rsa == nullptr) {
@@ -221,6 +227,11 @@ bool PKCS12Key::PKCS12KeyImpl::ContainsPrivateKey(const Buffer& issuer, const Bu
 
 void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) {
 
+	// Signing is a licensed feature
+	if (!LicenseInfo::IsValid()) {
+		throw LicenseRequiredException("Document signing is a licensed feature");
+	}
+
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
 	if (signing_context == nullptr) {
@@ -249,6 +260,11 @@ void PKCS12Key::PKCS12KeyImpl::SignUpdate(const Buffer& data) {
 }
 
 void PKCS12Key::PKCS12KeyImpl::SignUpdate(IInputStreamPtr data, types::stream_size length) {
+
+	// Signing is a licensed feature
+	if (!LicenseInfo::IsValid()) {
+		throw LicenseRequiredException("Document signing is a licensed feature");
+	}
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
@@ -283,6 +299,11 @@ void PKCS12Key::PKCS12KeyImpl::SignUpdate(IInputStreamPtr data, types::stream_si
 }
 
 BufferPtr PKCS12Key::PKCS12KeyImpl::SignFinal() {
+
+	// Signing is a licensed feature
+	if (!LicenseInfo::IsValid()) {
+		throw LicenseRequiredException("Document signing is a licensed feature");
+	}
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 

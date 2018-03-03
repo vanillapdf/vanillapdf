@@ -1,7 +1,7 @@
 #include "precompiled.h"
 
+#include "utils/license_info.h"
 #include "utils/signing_key_interface.h"
-#include "utils/pkcs12_key.h"
 
 #include "vanillapdf/utils/c_signing_key.h"
 #include "implementation/c_helper.h"
@@ -22,6 +22,7 @@ public:
 		m_update(sign_update),
 		m_final(sign_final),
 		m_cleanup(sign_cleanup) {
+
 		// These are only assertions, because those parameters shall be handled
 		// at the function call level.
 		// RETURN_ERROR_PARAM_VALUE_IF_NULL(initialize);
@@ -35,6 +36,11 @@ public:
 	}
 
 	virtual void SignInitialize(MessageDigestAlgorithm algorithm) {
+
+		// Document signature is a licensed feature
+		if (!LicenseInfo::IsValid()) {
+			throw LicenseRequiredException("Document signing is a licensed feature");
+		}
 
 		MessageDigestAlgorithmType algorithm_type = MessageDigestAlgorithmType_None;
 		switch (algorithm) {
@@ -72,6 +78,12 @@ public:
 	}
 
 	virtual void SignUpdate(const Buffer& data) {
+
+		// Document signature is a licensed feature
+		if (!LicenseInfo::IsValid()) {
+			throw LicenseRequiredException("Document signing is a licensed feature");
+		}
+
 		auto input_ptr = reinterpret_cast<const BufferHandle*>(&data);
 		error_type rv = m_update(input_ptr);
 		if (VANILLAPDF_ERROR_SUCCESS != rv) {
@@ -82,12 +94,23 @@ public:
 	}
 
 	virtual void SignUpdate(IInputStreamPtr data, types::stream_size length) {
+
+		// Document signature is a licensed feature
+		if (!LicenseInfo::IsValid()) {
+			throw LicenseRequiredException("Document signing is a licensed feature");
+		}
+
 		(void) data; (void) length;
 		throw NotSupportedException("Stream signing not yet supported on interface");
 	}
 
 	virtual BufferPtr SignFinal() {
 		BufferHandle* output_ptr = nullptr;
+
+		// Document signature is a licensed feature
+		if (!LicenseInfo::IsValid()) {
+			throw LicenseRequiredException("Document signing is a licensed feature");
+		}
 
 		error_type rv = m_final(&output_ptr);
 		if (VANILLAPDF_ERROR_SUCCESS != rv) {
@@ -102,8 +125,7 @@ public:
 			throw UserCancelledException(ss.str());
 		}
 
-		Buffer *result = reinterpret_cast<Buffer*>(output_ptr);
-		return result;
+		return reinterpret_cast<Buffer*>(output_ptr);
 	}
 
 	~CustomSigningKey() {

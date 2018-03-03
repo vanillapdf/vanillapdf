@@ -10,6 +10,7 @@
 #include "syntax/exceptions/syntax_exceptions.h"
 
 #include "utils/character.h"
+#include "utils/license_info.h"
 
 namespace vanillapdf {
 namespace contents {
@@ -18,6 +19,12 @@ using namespace syntax;
 
 ContentStreamParser::ContentStreamParser(WeakReference<File> file, IInputStreamPtr stream)
 	: ParserBase(file, stream) {
+
+	// Content stream parser is a licensed feature
+	if (!LicenseInfo::IsValid()) {
+		throw LicenseRequiredException();
+	}
+
 	_dictionary = make_unique<ContentStreamTokenDictionary>();
 	_dictionary->Initialize();
 }
