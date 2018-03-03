@@ -2,6 +2,8 @@
 \page page_licensing Licensing
 \tableofcontents
 
+This section describes how is the product licensed as well as how to get the license.
+
 \section license_types License types
 
 \section license_validity License validity
@@ -9,7 +11,7 @@
 License itself has unlimited validity for current version of the library.<br>
 Updating library to a newer version is restricted by the expiration field in the license file.<br>
 
-\code
+\code{.unparsed}
 "expiration": "2022-10-01 18:50:36Z"
 \endcode
 
@@ -61,22 +63,28 @@ printf("Built on %d.%d.%d\n",
 
 \section license_features Features
 
-Library allows access to \ref license_features_free without a valid license.<br>
-If this is suffictient, there is no need to purchase a commercial license.<br>
-However, all of the \ref license_features_premium does require the license.<br>
+This is a list of most common features that are easily usable and documented within our examples.
 
-\subsection license_features_free Free features
+Free features:
+<ul>
+<li>Document merge and split (\ref example_test.cpp)</li>
+<li>Document metadata</li>
+<li>PDF object enumeration</li>
+<li>PDF filter compression/decompression</li>
+<li>Parsing non-conformant PDF documents</li>
+<li>Extracting strings and byte contents</li>
+</ul>
 
-\subsection license_features_premium Premium features
-
-The major premium feature is creating and modifying existing files.<br>
-In the free version, all files creating contains a watermark image.<br>
+Premium features:
+<ul>
+<li>Document signing</li>
+<li>Incremental updates</li>
+<li>Decrypting documents</li>
+<li>Documents <b>WITHOUT</b> a watermark image</li>
+<li>Page content manipulation</li>
+</ul>
 
 \todo image with watermark
-
-This is allowed to show the capabilities to a certain extent.<br>
-To remove the watermark you have to use a valid license file.<br>
-How to use a license file is described in the \ref license_use section.<br>
 
 \section license_use Using the license
 
