@@ -27,7 +27,7 @@ $(function() {
     |
     */
 
-    googleApiKey: 'AIzaSyDRBLFOTTh2NFM93HpUA4ZrA99yKnCAsto',
+    googleApiKey: '',
 
     /*
     |--------------------------------------------------------------------------
@@ -39,7 +39,7 @@ $(function() {
     |
     */
 
-    googleAnalyticsId: '',
+    googleAnalyticsId: 'UA-106797397-1',
 
     /*
     |--------------------------------------------------------------------------
@@ -54,10 +54,10 @@ $(function() {
     |
     */
 
-    reCaptchaSiteKey:  '6Ldaf0MUAAAAAHdsMv_7dND7BSTvdrE6VcQKpM-n',
+    reCaptchaSiteKey:  '6Lf55EsUAAAAAEnK6mTnEwXbG8NS8udciZJBpoOM',
 
     // See available languages: https://developers.google.com/recaptcha/docs/language
-    reCaptchaLanguage: '',
+    reCaptchaLanguage: 'en',
 
     /*
     |--------------------------------------------------------------------------
