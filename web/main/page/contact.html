@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+
+    <title>Vanilla.PDF - SDK for creating and modifying PDF documents</title>
+
+    <!-- Styles -->
+    <link href="../assets/css/page.min.css" rel="stylesheet">
+    <link href="../assets/css/style.css" rel="stylesheet">
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/img/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="../assets/img/favicon-16x16.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32x32.png">
+	<link rel="shortcut icon" href="../assets/img/favicon.ico">
+  </head>
+
+  <body>
+
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark" data-navbar="fixed">
+      <div class="container">
+
+        <div class="navbar-left">
+          <button class="navbar-toggler" type="button">&#9776;</button>
+          <a class="navbar-brand" href="/index.html">
+            <img class="logo-dark" src="../assets/img/logo/vanilla.png" alt="logo">
+            <img class="logo-light" src="../assets/img/logo/vanilla.png" alt="logo">
+          </a>
+        </div>
+
+        <section class="navbar-mobile">
+          <nav class="nav nav-navbar ml-auto">
+            <a class="nav-link" href="/index.html">Home</a>
+            <a class="nav-link" href="#section-contact">Contact</a>
+            <a class="nav-link" href="#footer">References</a>
+          </nav>
+        </section>
+
+      </div>
+    </nav><!-- /.navbar -->
+
+
+    <!-- Header -->
+    <header class="header pt-10 pb-0">
+      <div class="container text-center">
+        <h1 class="display-4">Let's Get In Touch</h1>
+        <p class="lead-2 mt-6">Here are the ways you can contact us with any questions you have</p>
+      </div>
+    </header><!-- /.header -->
+
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+
+	  <!--
+	  |‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒
+	  | Contact form
+	  |‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒
+	  !-->
+	  <section id="section-contact" class="section">
+		<div class="container">
+
+		  <div class="row gap-y">
+			<div class="col-md-6">
+
+			  <form action="../assets/php/sendmail.php" method="POST" data-form="mailer">
+				<div class="alert alert-success d-on-success">We received your message and will contact you back soon.</div>
+
+				<div class="form-group">
+				  <input class="form-control form-control-lg" type="text" name="name" placeholder="Your Name">
+				</div>
+
+				<div class="form-group">
+				  <input class="form-control form-control-lg" type="email" name="email" placeholder="Your Email Address">
+				</div>
+
+				<div class="form-group">
+				  <textarea class="form-control form-control-lg" name="message" rows="4" placeholder="Your Message"></textarea>
+				</div>
+
+				<button class="btn btn-lg btn-primary btn-block" type="submit">Send Enquiry</button>
+			  </form>
+
+			</div>
+
+
+			<div class="col-md-5 ml-auto">
+			  <div class="bg-gray h-full p-5">
+				<p>Give us a call or stop by our door anytime, we try to answer all enquiries within 24 hours on business days.</p>
+				<p>We are open from 9am — 5pm week days.</p>
+
+				<hr class="w-20 my-6">
+
+				<p class="lead">652 Main Road, Apt 12<br>New York, USA 10033</p>
+
+				<div>
+				  <span class="d-inline-block w-5 text-lighter" title="Email">E:</span>
+				  <span class="small-1">info@domain.com</span>
+				</div>
+
+				<div>
+				  <span class="d-inline-block w-5 text-lighter" title="Phone">P:</span>
+				  <span class="small-1">+1 (123) 456-7890</span>
+				</div>
+
+			  </div>
+			</div>
+		  </div>
+
+
+		</div>
+	  </section>
+
+
+    <!-- Footer -->
+    <footer id="footer" class="footer py-7">
+    <div class="container">
+      <div class="row">
+
+        <div class="col-12">
+          <p><a href="/index.html"><img src="../assets/img/logo/vanilla-black.png" alt="logo"></a></p>
+        </div>
+
+        <div class="col-xl-5">
+          <p>We’re a team of experienced designers and developers. We can combine beautiful, modern designs with clean, functional and high-performance code to produce stunning websites.</p>
+        </div>
+
+        <div class="col-4 col-xl-2 offset-xl-1">
+          <div class="nav flex-column">
+            <a class="nav-link" href="page/about.html">About</a>
+            <a class="nav-link" href="#">EULA</a>
+            <a class="nav-link" href="page/contact.html">Contact</a>
+          </div>
+        </div>
+
+        <div class="col-4 col-xl-2">
+          <div class="nav flex-column">
+            <a class="nav-link" href="#">Features</a>
+            <a class="nav-link" href="doc/page_licensing.html">Licensing</a>
+            <a class="nav-link" href="doc/examples.html">Examples</a>
+          </div>
+        </div>
+
+        <div class="col-4 col-xl-2">
+          <div class="nav flex-column">
+            <a class="nav-link" href="doc/index.html">Tutorial</a>
+            <a class="nav-link" href="doc/hierarchy.html">API reference</a>
+            <a class="nav-link" href="#">FAQ</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    </footer><!-- /.footer -->
+
+
+    <!-- Scripts -->
+    <script src="../assets/js/page.min.js"></script>
+    <script src="../assets/js/script.js"></script>
+
+  </body>
+</html>
