@@ -9,6 +9,10 @@ body, table, div, p, dl, a {
 	line-height: 25pt;
 }
 
+a {
+	font-weight: 400;
+}
+
 ul#main-menu {
 	background-color: #F5F5F5;
 }
@@ -218,6 +222,10 @@ div.contents {
 	
 	margin-top: 50px;
 	margin-bottom: 50px;
+}
+
+.memtitle, div.memproto *, td.memItemLeft *, td.memItemRight * {
+	font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
 }
 
 div.dyncontent {
