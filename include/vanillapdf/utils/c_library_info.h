@@ -30,7 +30,7 @@ extern "C"
 	/**
 	* \brief Get library major version.
 	*
-	* A change in the library major version indicates backward incompatibility.
+	* A change in the library major version indicates backward <b>incompatibility</b>.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION LibraryInfo_GetVersionMajor(integer_type* result);
 
