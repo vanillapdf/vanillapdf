@@ -27,8 +27,8 @@ See the [our license](LICENSE.md) for more details.
 
 ## About
 
-This project started as a hobby by our supreme leader [Juraj Zikmund](mailto:jzikmund@vanillapdf.com).
+This project started as a hobby by our supreme leader [Juraj Zikmund](https://jzikmund.com/).
 The reason was unavailability of such toolkit out in the wild.
 Growing codebase every day with our proficient team, delivering cutting-edge technology to the customers.
 
-Please visit [vanillapdf.com](http://vanillapdf.com) for more information.
+Please visit [vanillapdf.com](https://vanillapdf.com) for more information.
