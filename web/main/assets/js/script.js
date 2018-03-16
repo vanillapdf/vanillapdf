@@ -98,8 +98,53 @@ $(function() {
   | them in this file.
   |
   */
+  
+  $(document).ready(function() {
+	  document.getElementById("personal-one").addEventListener("click", PersonalOneYearSupport);
+	  document.getElementById("personal-two").addEventListener("click", PersonalTwoYearSupport);
+	  document.getElementById("personal-three").addEventListener("click", PersonalThreeYearSupport);
+	  
+	  document.getElementById("commercial-one").addEventListener("click", CommercialOneYearSupport);
+	  document.getElementById("commercial-two").addEventListener("click", CommercialTwoYearSupport);
+	  document.getElementById("commercial-three").addEventListener("click", CommercialThreeYearSupport);
+	  
+	  document.getElementById("personal-one").click();
+	  document.getElementById("commercial-one").click();
+  }) 
 
+function PersonalOneYearSupport() {
+	PersonalYearsSupport(1, 200 + 300 - 1);
+}
 
+function PersonalTwoYearSupport() {
+	PersonalYearsSupport(2, 200 + 2 * 250 - 1);
+}
+
+function PersonalThreeYearSupport() {
+	PersonalYearsSupport(3, 200 + 3 * 200 - 1);
+}
+
+function PersonalYearsSupport(support, price) {
+    document.getElementById("personal-price").innerHTML = "$" + price;
+	document.getElementById("personal-support").innerHTML = support + " year support";
+}
+
+function CommercialOneYearSupport() {
+	CommercialYearsSupport(1, 1000 + 1000 - 1);
+}
+
+function CommercialTwoYearSupport() {
+	CommercialYearsSupport(2, 1000 + 2 * 900 - 1);
+}
+
+function CommercialThreeYearSupport() {
+	CommercialYearsSupport(3, 1000 + 3 * 800 - 1);
+}
+
+function CommercialYearsSupport(support, price) {
+    document.getElementById("commercial-price").innerHTML = "$" + price;
+	document.getElementById("commercial-support").innerHTML = support + " year support";
+}
 
 
 });
