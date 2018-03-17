@@ -76,7 +76,7 @@ void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
 
 	// Incremental update is a licensed feature
 	if (!LicenseInfo::IsValid()) {
-		throw LicenseRequiredException();
+		throw LicenseRequiredException("Incremental update is a licensed feature");
 	}
 
 	// Terminate if the source file was not initialized
