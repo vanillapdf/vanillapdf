@@ -19,12 +19,6 @@ using namespace syntax;
 
 ContentStreamParser::ContentStreamParser(WeakReference<File> file, IInputStreamPtr stream)
 	: ParserBase(file, stream) {
-
-	// Content stream parser is a licensed feature
-	if (!LicenseInfo::IsValid()) {
-		throw LicenseRequiredException();
-	}
-
 	_dictionary = make_unique<ContentStreamTokenDictionary>();
 	_dictionary->Initialize();
 }
