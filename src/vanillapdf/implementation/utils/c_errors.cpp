@@ -18,10 +18,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetLastError(error_type* res
 VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetLastErrorMessageLength(size_type* size) {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(size);
 
-	try {
-		*size = Errors::GetLastErrorMessageLength();
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+	*size = Errors::GetLastErrorMessageLength();
+	return VANILLAPDF_ERROR_SUCCESS;
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetLastErrorMessage(char* data, size_type size) {
