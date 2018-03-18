@@ -10,7 +10,6 @@ destination_folder = 'build'
 pages_folder = os.path.join(destination_folder, 'page')
 
 context = {
-	'current_year': ' '
 }
 
 files = {
@@ -40,7 +39,11 @@ def read_file(path):
 
 def render_template(template_path, context):
 	path, filename = os.path.split(template_path)
-	environment = jinja2.Environment(loader = jinja2.FileSystemLoader(path))
+	environment = jinja2.Environment(
+		loader = jinja2.FileSystemLoader(path),
+		keep_trailing_newline = True
+	)
+		
 	template = environment.get_template(filename)
 	return template.render(context)
 
