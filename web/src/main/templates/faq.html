@@ -8,14 +8,10 @@
     <title>Vanilla.PDF - Frequently asked questions</title>
 
     <!-- Styles -->
-    <link href="../assets/css/page.min.css" rel="stylesheet">
-    <link href="../assets/css/style.css" rel="stylesheet">
+    {% include 'styles.html' %}
 
     <!-- Favicons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="../assets/img/apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="../assets/img/favicon-16x16.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32x32.png">
-	<link rel="shortcut icon" href="../assets/img/favicon.ico">
+    {% include 'favicons.html' %}
   </head>
 
   <body>
@@ -29,7 +25,7 @@
 
         <section class="navbar-mobile">
           <nav class="nav nav-navbar ml-auto">
-            <a class="nav-link" href="/index.html#home">Home</a>
+            <a class="nav-link" href="#home">Home</a>
             <a class="nav-link" href="#section-faq">FAQ</a>
             <a class="nav-link" href="#footer">References</a>
           </nav>
@@ -40,7 +36,7 @@
 
 
     <!-- Header -->
-    <header class="header pt-10 pb-0">
+    <header id="home" class="header pt-10 pb-0">
       <div class="container text-center">
         <h1 class="display-4">Frequently Asked Questions</h1>
         <p class="lead-2 mt-6">Got a question? We've got answers. If you have some other questions, contact us using email.</p>
@@ -104,8 +100,7 @@
 
 
     <!-- Scripts -->
-    <script src="../assets/js/page.min.js"></script>
-    <script src="../assets/js/script.js"></script>
+    {% include 'scripts.html' %}
 
   </body>
 </html>

@@ -6,19 +6,26 @@ import jinja2
 
 # Constants
 source_folder = 'templates'
-destination_folder = 'build'
-pages_folder = os.path.join(destination_folder, 'page')
+include_folder = 'include'
+build_folder = 'build'
+pages_folder = os.path.join(build_folder, 'page')
 
-context = {
+generic_context = {
+	'index_file': '../index.html',
+	'root_folder': '../',
+	'pages_folder': '',
+	'doc_folder': '../doc/',
+	'assets_folder': '../assets/'
 }
 
-files = {
-	'index.html': destination_folder,
-	'about.html': pages_folder,
-	'contact.html': pages_folder,
-	'download.html': pages_folder,
-	'faq.html': pages_folder
-}
+index_file = 'index.html'
+
+files = [
+	'about.html',
+	'contact.html',
+	'download.html',
+	'faq.html'
+]
 
 # Functions
 def write_file(path, content):
@@ -40,18 +47,36 @@ def read_file(path):
 def render_template(template_path, context):
 	path, filename = os.path.split(template_path)
 	environment = jinja2.Environment(
-		loader = jinja2.FileSystemLoader(path),
+		loader = jinja2.FileSystemLoader([source_folder, include_folder]),
 		keep_trailing_newline = True
 	)
 		
 	template = environment.get_template(filename)
 	return template.render(context)
 
-# Actual script
-for (filename, destination_folder) in files.items():
-	source_path = os.path.join(source_folder, filename)
-	destination_path = os.path.join(destination_folder, filename)
-	
+def generate_template(source_path, destination_path, context):
 	content = render_template(source_path, context)
 	content_encoded = content.encode('utf-8')
 	write_file(destination_path, content_encoded)
+
+# Actual script
+for filename in files:
+	source_path = os.path.join(source_folder, filename)
+	destination_path = os.path.join(pages_folder, filename)
+	
+	generate_template(source_path, destination_path, generic_context)
+
+# Generate the index file
+index_source_path = os.path.join(source_folder, index_file)
+index_destination_path = os.path.join(build_folder, index_file)
+
+# Index file has special context
+index_context = dict(generic_context)
+index_context['index_file'] = ''
+index_context['root_folder'] = ''
+index_context['assets_folder'] = 'assets/'
+index_context['pages_folder'] = 'page/'
+index_context['doc_folder'] = 'doc/'
+
+# Generate the index template
+generate_template(index_source_path, index_destination_path, index_context)

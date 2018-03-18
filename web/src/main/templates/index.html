@@ -8,14 +8,10 @@
     <title>Vanilla.PDF - SDK for creating and modifying PDF documents</title>
 
     <!-- Styles -->
-    <link href="assets/css/page.min.css" rel="stylesheet">
-    <link href="assets/css/style.css" rel="stylesheet">
+    {% include 'styles.html' %}
 
     <!-- Favicons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png">
-    <link rel="shortcut icon" href="assets/img/favicon.ico">
+    {% include 'favicons.html' %}
   </head>
 
   <body>
@@ -424,8 +420,7 @@
 
 
     <!-- Scripts -->
-    <script src="assets/js/page.min.js"></script>
-    <script src="assets/js/script.js"></script>
+    {% include 'scripts.html' %}
 
   </body>
 </html>
