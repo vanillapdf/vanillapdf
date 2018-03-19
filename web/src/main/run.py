@@ -80,3 +80,6 @@ index_context['doc_folder'] = 'doc/'
 
 # Generate the index template
 generate_template(index_source_path, index_destination_path, index_context)
+
+# Print success message
+print('Templates were generated successfully')
