@@ -13,7 +13,7 @@ function EnableDiscount() {
 }
 
 /* Hide unnecessary fields when requesting a quote */
-var PRODUCT_ID = 'product';
+var PRODUCT_ID = 'quote-product';
 var LICENSE_GROUP_ID = 'license-group';
 var LICENSE_KEY_ID = 'license-key';
 
