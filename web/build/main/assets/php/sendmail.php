@@ -24,6 +24,36 @@ $sender_email    = "noreply@vanillapdf.com";
 $sender_name     = "vanillapdf.com";
 $error_message   = "An error occured. Please try again later.";
 
+/*
+|--------------------------------------------------------------------------
+| Verify captcha
+|--------------------------------------------------------------------------
+*/
+
+$secret_key		= '6Lf55EsUAAAAAGM6e9hntK-ZuNaDvToBDkbcqJBi';
+
+$post_data = http_build_query(
+    array(
+        'secret' => $secret_key,
+        'response' => $_POST['g-recaptcha-response'],
+        'remoteip' => $_SERVER['REMOTE_ADDR']
+    )
+);
+
+$opts = array('http' =>
+    array(
+        'method'  => 'POST',
+        'header'  => 'Content-type: application/x-www-form-urlencoded',
+        'content' => $post_data
+    )
+);
+
+$context  = stream_context_create($opts);
+$response = file_get_contents('https://www.google.com/recaptcha/api/siteverify', false, $context);
+$result = json_decode($response);
+if (!$result->success) {
+    exit("The reCAPTCHA wasn't entered correctly. Go back and try it again. Error: " . $resp->error);
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -94,18 +124,19 @@ if ( ! empty( $email ) && filter_var( $email, FILTER_VALIDATE_EMAIL ) )
   // Message content
   //
   $message = '';
-  if ( isset( $_POST['message'] ) ) {
-    $message = nl2br( $_POST['message'] );
-  }
-
+  $message_backup = $_POST['message'];
 
   // Attach other input values to the end of message
   //
-  unset( $_POST['subject'], $_POST['message'] );
-  $message .= '<br><br><br>';
+  unset( $_POST['subject'], $_POST['message'], $_POST['g-recaptcha-response'] );
+  
   foreach ($_POST as $key => $value) {
     $key = str_replace( array('-', '_'), ' ', $key);
-    $message .= '<p><b>'. ucfirst($key) .'</b><br>'. nl2br( $value ) .'<p><br><br>';
+    $message .= '<p><b>'. ucfirst($key) .'</b>: '. nl2br( $value ) .'<p><br>';
+  }
+  
+  if (isset($message_backup)) {
+	$message .= '<p><b>'. ucfirst('Message') .'</b><br>'. nl2br($message_backup) .'<p>';
   }
 
 

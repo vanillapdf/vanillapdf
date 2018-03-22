@@ -1,0 +1,6 @@
+/* Custom CSS for Vanilla.PDF */
+
+/* This class should be in bootstrap template, but for some reason is missing */
+.has-danger .form-control {
+	border-color: #d9534f;
+}

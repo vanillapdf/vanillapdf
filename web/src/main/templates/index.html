@@ -195,7 +195,7 @@
 
           </div>
 		  
-		  <hr>
+		  <hr class="w-10">
 		  
 		  <div class="row">
 		  	<div class="mx-auto">
@@ -249,6 +249,7 @@
 				
 				<div class="text-center px-4 py-6">
 				  <a class="btn btn-outline-primary btn-round w-200" href="{{ pages_folder }}download.html">Download</a>
+				  <p>&nbsp;</p>
 				</div>
               </div>
             </div>
@@ -284,48 +285,61 @@
                 </div>
 				
 				<div class="text-center px-4 py-6">
-				  <a class="btn btn-primary btn-round w-200" href="#">Purchase</a>
+				  <a id="personal-purchase-link" class="btn btn-primary btn-round w-200" href="#">Purchase</a>
+				  <p>or <a id="personal-support-link" href="#">Extend</a> your support</p>
 				</div>
               </div>
             </div>
 
 
-                <div class="col-md-4 mx-auto">
-                  <div class="border rounded">
-                    <div class="text-center px-4 py-6">
-                      <p class="mb-7"><img src="assets/img/icon/commercial.png" alt="..."></p>
-                      <h6 class="text-uppercase fw-500 ls-2 my-4">Commercial</h6>
-                      <p class="lead">Royalty-free distribution license for creating end-user products</p>
-                      <h2 id="commercial-price" class="lead-8 fw-200 mb-0">$1999</h2>
-                      <p class="small-2">One-time fee</p>
-                      
-                        <div class="dropdown">
-                            <button id="commercial-support" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">1 Year support</button>
-                            <div class="dropdown-menu">
-                              <a id="commercial-one" class="btn dropdown-item">1 Year support</a>
-                              <a id="commercial-two" class="btn dropdown-item">2 Year support</a>
-                              <a id="commercial-three" class="btn dropdown-item">3 Year support</a>
-                            </div>
-                        </div>
-                    </div>
+			<div class="col-md-4 mx-auto">
+			  <div class="border rounded">
+				<div class="text-center px-4 py-6">
+				  <p class="mb-7"><img src="assets/img/icon/commercial.png" alt="..."></p>
+				  <h6 class="text-uppercase fw-500 ls-2 my-4">Commercial</h6>
+				  <p class="lead">Commercial license for creating public products</p>
+				  <h2 id="commercial-price" class="lead-8 fw-200 mb-0">$1999</h2>
+				  <p class="small-2">One-time fee</p>
+				  
+					<div class="dropdown">
+						<button id="commercial-support" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">1 Year support</button>
+						<div class="dropdown-menu">
+						  <a id="commercial-one" class="btn dropdown-item">1 Year support</a>
+						  <a id="commercial-two" class="btn dropdown-item">2 Year support</a>
+						  <a id="commercial-three" class="btn dropdown-item">3 Year support</a>
+						</div>
+					</div>
+				</div>
 
-                    <div class="bg-light px-4 py-6">
-                      <h6 class="text-center mb-6">Commercial Features</h6>
-                      <ul class="list-unstyled mb-0">
-						<li><i class="ti-check text-success mr-2"></i> Extract text and images</li>
-						<li><i class="ti-check text-success mr-2"></i> Document signing</li>
-						<li><i class="ti-check text-success mr-2"></i> Document merge/split</li>
-						<li><i class="ti-check text-success mr-2"></i> Document encryption</li>
-						<li><i class="ti-check text-success mr-2"></i> Royalty-free distribution</li>
-                      </ul>
-                    </div>
-                    
-                    <div class="text-center px-4 py-6">
-                      <a class="btn btn-outline-primary btn-round w-200" href="#">Purchase</a>
-                    </div>
-                  </div>
-                </div>
+				<div class="bg-light px-4 py-6">
+				  <h6 class="text-center mb-6">Commercial Features</h6>
+				  <ul class="list-unstyled mb-0">
+					<li><i class="ti-check text-success mr-2"></i> Extract text and images</li>
+					<li><i class="ti-check text-success mr-2"></i> Document signing</li>
+					<li><i class="ti-check text-success mr-2"></i> Document merge/split</li>
+					<li><i class="ti-check text-success mr-2"></i> Document encryption</li>
+					<li><i class="ti-check text-success mr-2"></i> Royalty-free distribution</li>
+				  </ul>
+				</div>
+				
+				<div class="text-center px-4 py-6">
+				  <a id="commercial-purchase-link" class="btn btn-outline-primary btn-round w-200" href="#">Purchase</a>
+				  <p>or <a id="commercial-support-link" href="#">Extend</a> your support</p>
+				</div>
+			  </div>
 			</div>
+		  </div>
+
+		  <hr class="w-10">
+
+		  <div class="row">
+		    <div class="mx-auto">
+		  	  <h5>Still too expensive?</h5>
+		  	  <div class="py-4">
+		  	    <a class="btn btn-lg btn-round btn-secondary" href="{{ pages_folder }}contact.html#section-discount">Request a discount</a>
+		  	  </div>
+		    </div>
+		  </div>
 
 
         </div>
@@ -418,8 +432,8 @@
 			
 			<br>
 			
-			<p id="success-message" class="lead col-md-12 text-center text-success" style="display: none"></p>
-			<p id="error-message" class="lead col-md-12 text-center text-danger" style="display: none"></p>
+			<p id="success-message" class="lead col-md-6 mx-auto text-center text-success" style="display: none"></p>
+			<p id="error-message" class="lead col-md-6 mx-auto text-center text-danger" style="display: none"></p>
           </div>
         </div>
       </section>
@@ -440,6 +454,8 @@
 
     <!-- Scripts -->
     {% include 'scripts.html' %}
+	<script src="{{ assets_folder }}js/pricing.js"></script>
+	<script src="{{ assets_folder }}js/subscribe.js"></script>
 
   </body>
 </html>

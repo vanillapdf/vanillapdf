@@ -27,6 +27,7 @@
           <nav class="nav nav-navbar ml-auto">
             <a class="nav-link" href="#home">Home</a>
             <a class="nav-link" href="#section-contact">Contact</a>
+			<a class="nav-link" href="#section-discount">Discount</a>
             <a class="nav-link" href="#footer">References</a>
           </nav>
         </section>
@@ -59,22 +60,26 @@
 		  <div class="row gap-y">
 			<div class="col-md-6">
 
-			  <form action="../assets/php/sendmail.php" method="POST" data-form="mailer">
+			  <form action="{{ assets_folder }}php/sendmail.php" method="POST" data-form="mailer">
 				<div class="alert alert-success d-on-success">We received your message and will contact you back soon.</div>
 
 				<div class="form-group">
-				  <input class="form-control form-control-lg" type="text" name="name" placeholder="Your Name">
+				  <input class="form-control form-control-lg" type="text" name="name" placeholder="Your Name" required>
 				</div>
 
 				<div class="form-group">
-				  <input class="form-control form-control-lg" type="email" name="email" placeholder="Your Email Address">
+				  <input class="form-control form-control-lg" type="email" name="email" placeholder="Your Email Address" required>
 				</div>
 
 				<div class="form-group">
-				  <textarea class="form-control form-control-lg" name="message" rows="4" placeholder="Your Message"></textarea>
+				  <textarea class="form-control form-control-lg" name="message" rows="4" placeholder="Your Message" required></textarea>
+				</div>
+				
+				<div class="text-center w-75 d-block mx-auto p-5" data-provide="recaptcha" data-callback="EnableContact">
 				</div>
 
-				<button class="btn btn-lg btn-primary btn-block" type="submit">Send Enquiry</button>
+				<input type="text" name="subject" tabindex="-1" value="Vanilla.PDF: Generic question" style="position: absolute; left: -5000px;" aria-hidden="true">
+				<button id="btn-contact" class="btn btn-lg btn-primary btn-block" type="submit" disabled>Send Enquiry</button>
 			  </form>
 
 			</div>
@@ -97,6 +102,74 @@
 
 		</div>
 	  </section>
+	  
+	  <!--
+	  |‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒
+	  | Discount form
+	  |‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒
+	  !-->
+	  <section id="section-discount" class="section bg-gray">
+		<div class="container">
+		
+		  <header class="section-header">
+            <h2>Request a discount</h2>
+            <hr>
+			<p class="lead">We understand, that our prices might be costly for smaller companies</p>
+          </header>
+
+		  <div class="row gap-y">
+			<div class="col-11 col-lg-6 mx-auto">
+
+			  <form action="{{ assets_folder }}php/sendmail.php" method="POST" data-form="mailer">
+				<div class="alert alert-success d-on-success">We received your message and will contact you back soon.</div>
+
+				<div class="form-group">
+				  <input class="form-control form-control-lg" type="text" name="name" placeholder="Your Name" required>
+				</div>
+				
+				<div class="form-group">
+				  <input class="form-control form-control-lg" type="text" name="company" placeholder="Your Company name">
+				</div>
+
+				<div class="form-group">
+				  <input class="form-control form-control-lg" type="email" name="email" placeholder="Your Email Address" required>
+				</div>
+				
+				<div class="form-group">
+				  <input class="form-control form-control-lg" type="text" name="country" placeholder="Your country">
+				</div>
+				
+				<div class="form-group">
+				  <p>What is your team size?</p>
+				  <input class="form-control form-control-lg" type="text" name="team" placeholder="Your team size">
+				</div>
+				
+				<div class="form-group">
+				  <p>How many people use your product?</p>
+				  <input class="form-control form-control-lg" type="text" name="team" placeholder="">
+				</div>
+				
+				<div class="form-group">
+				  <input class="form-control form-control-lg" type="text" name="website" placeholder="Your product website">
+				</div>
+
+				<div class="form-group">
+				  <textarea class="form-control form-control-lg" name="message" rows="4" placeholder="Your Message" required></textarea>
+				</div>
+				
+				<div class="text-center w-75 d-block mx-auto p-5" data-provide="recaptcha" data-callback="EnableDiscount">
+				</div>
+
+				<input type="text" name="subject" tabindex="-1" value="Vanilla.PDF: Discount request" style="position: absolute; left: -5000px;" aria-hidden="true">
+				<button id="btn-discount" class="btn btn-lg btn-primary btn-block" type="submit" disabled>Request a discount</button>
+			  </form>
+
+			</div>
+		  </div>
+
+
+		</div>
+	  </section>
 
 
 	<!-- Footer -->
@@ -106,6 +179,7 @@
 
     <!-- Scripts -->
     {% include 'scripts.html' %}
+	<script src="{{ assets_folder }}js/contact.js"></script>
 
   </body>
 </html>
