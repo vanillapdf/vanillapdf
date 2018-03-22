@@ -4,3 +4,7 @@
 .has-danger .form-control {
 	border-color: #d9534f;
 }
+
+[data-form="custom-mailer"] .d-on-success {
+  display: none;
+}

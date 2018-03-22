@@ -52,7 +52,13 @@ $context  = stream_context_create($opts);
 $response = file_get_contents('https://www.google.com/recaptcha/api/siteverify', false, $context);
 $result = json_decode($response);
 if (!$result->success) {
-    exit("The reCAPTCHA wasn't entered correctly. Go back and try it again. Error: " . $resp->error);
+	echo json_encode( array(
+      'status'  => 'error',
+      'message' => $error_message,
+      'reason'  => $result->error,
+    ));
+
+    exit;
 }
 
 /*
@@ -116,10 +122,6 @@ if ( ! empty( $email ) && filter_var( $email, FILTER_VALIDATE_EMAIL ) )
     $subject = $default_subject;
   }
 
-  if ( ! empty( $name ) ) {
-    $subject .= ' - By '. $name;
-  }
-
 
   // Message content
   //
@@ -132,7 +134,7 @@ if ( ! empty( $email ) && filter_var( $email, FILTER_VALIDATE_EMAIL ) )
   
   foreach ($_POST as $key => $value) {
     $key = str_replace( array('-', '_'), ' ', $key);
-    $message .= '<p><b>'. ucfirst($key) .'</b>: '. nl2br( $value ) .'<p><br>';
+    $message .= '<p><b>'. ucfirst($key) .'</b>: '. nl2br( $value ) .'<p>';
   }
   
   if (isset($message_backup)) {
