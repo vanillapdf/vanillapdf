@@ -15,7 +15,13 @@ generic_context = {
 	'root_folder': '../',
 	'pages_folder': '',
 	'doc_folder': '../doc/',
-	'assets_folder': '../assets/'
+	'assets_folder': '../assets/',
+	'contact_page': 'contact.html',
+	'about_page': 'about.html',
+	'download_page': 'download.html',
+	'faq_page': 'faq.html',
+	'order_page': 'order.php',
+	'checkout_page': 'checkout.php'
 }
 
 index_file = 'index.html'
@@ -24,7 +30,9 @@ files = [
 	'about.html',
 	'contact.html',
 	'download.html',
-	'faq.html'
+	'faq.html',
+	'order.php',
+	'checkout.php'
 ]
 
 # Functions

@@ -115,7 +115,7 @@ if ( ! empty( $email ) && filter_var( $email, FILTER_VALIDATE_EMAIL ) )
   //
   $subject = '';
   if ( isset( $_POST['subject'] ) ) {
-    $subject = $_POST['subject'];
+    $subject = 'Vanilla.PDF:' . $_POST['subject'];
   }
 
   if ($subject == "") {
