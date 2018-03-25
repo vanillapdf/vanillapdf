@@ -1,8 +1,12 @@
+/* Data callbacks for contact form recaptcha */
+
+function EnableOrder() {
+	document.getElementById("btn-checkout").disabled = false;
+}
+
 /* Dynamic submit response */
 
 $(function() {
-  $('#btn-return').hide();
-
   $('[data-form="custom-mailer"]').each(function(){
 	  
     var form = $(this);

@@ -1,10 +1,5 @@
-/* Data callbacks for contact form recaptcha */
-
-function EnableOrder() {
-	document.getElementById("btn-order").disabled = false;
-}
-
 /* Order form checkout */
+
 var PRODUCT_ID = 'order-product';
 var LICENSE_GROUP_ID = 'license-group';
 var LICENSE_KEY_ID = 'license-key';

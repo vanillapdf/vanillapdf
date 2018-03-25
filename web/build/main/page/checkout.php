@@ -175,39 +175,42 @@
                       </div>
                     </div>
                   </div>
+				  
+				  <form id="form-back" action="order.php" method="POST">
+					<?php foreach( $_POST as $key => $val ): ?>
+						<input type="hidden" name="<?= htmlspecialchars($key, ENT_COMPAT, 'UTF-8') ?>" value="<?= htmlspecialchars($val, ENT_COMPAT, 'UTF-8') ?>">
+					<?php endforeach; ?>
+				  </form>
+				  
+				  <form id="form-checkout" action="../assets/php/sendmail.php" method="POST" data-form="custom-mailer">
+					<div class="alert alert-success d-on-success">We received your message and will contact you back soon.</div>
+					
+					<?php foreach( $_POST as $key => $val ): ?>
+						<input type="hidden" name="<?= htmlspecialchars($key, ENT_COMPAT, 'UTF-8') ?>" value="<?= htmlspecialchars($val, ENT_COMPAT, 'UTF-8') ?>">
+					<?php endforeach; ?>
+					
+					<input type="hidden" name="product-price" value="<?= $product_price ?>&euro;">
+					<input type="hidden" name="support-price" value="<?= $support_price ?>&euro;">
+					<input type="hidden" name="subtotal" value="<?= $subtotal ?>&euro;">
+					<input type="hidden" name="tax-percentage" value="<?= $tax_percent ?>%">
+					<input type="hidden" name="tax-value" value="<?= $tax_value ?>&euro;">
+					<input type="hidden" name="tax-value" value="<?= $total ?>&euro;">
+					
+					<div class="text-center w-75 d-block mx-auto p-5" data-provide="recaptcha" data-callback="EnableOrder">
+					</div>
+				  </form>
                   
                   <div class="row">
                     <div class="col-6">
-					  <form action="order.php" method="POST">
-						<?php foreach( $_POST as $key => $val ): ?>
-							<input type="hidden" name="<?= htmlspecialchars($key, ENT_COMPAT, 'UTF-8') ?>" value="<?= htmlspecialchars($val, ENT_COMPAT, 'UTF-8') ?>">
-						<?php endforeach; ?>
-						
-						<button id="btn-back" class="btn btn-block btn-secondary" type="submit"><i class="ti-angle-left fs-9"></i> Back</a>
-					  </form>
+						<button id="btn-back" class="btn btn-block btn-secondary" type="submit" form="form-back"><i class="ti-angle-left fs-9"></i> Back</button>
                     </div>
                   
                     <div class="col-6">
-					  <form action="../assets/php/sendmail.php" method="POST" data-form="custom-mailer">
-						<div class="alert alert-success d-on-success">We received your message and will contact you back soon.</div>
-						
-						<?php foreach( $_POST as $key => $val ): ?>
-							<input type="hidden" name="<?= htmlspecialchars($key, ENT_COMPAT, 'UTF-8') ?>" value="<?= htmlspecialchars($val, ENT_COMPAT, 'UTF-8') ?>">
-						<?php endforeach; ?>
-						
-						<input type="hidden" name="product-price" value="<?= $product_price ?>&euro;">
-						<input type="hidden" name="support-price" value="<?= $support_price ?>&euro;">
-						<input type="hidden" name="subtotal" value="<?= $subtotal ?>&euro;">
-						<input type="hidden" name="tax-percentage" value="<?= $tax_percent ?>%">
-						<input type="hidden" name="tax-value" value="<?= $tax_value ?>&euro;">
-						<input type="hidden" name="tax-value" value="<?= $total ?>&euro;">
-						
-						<button id="btn-checkout" class="btn btn-block btn-primary" type="submit">Checkout <i class="ti-angle-right fs-9"></i></button>
-					  </form>
+						<button id="btn-checkout" class="btn btn-block btn-primary" type="submit" form="form-checkout" disabled>Checkout <i class="ti-angle-right fs-9"></i></button>
                     </div>
                   </div>
 				  
-				  <a id="btn-return" class="btn btn-block btn-primary" type="submit" href="../index.html#home">Return to home page <i class="ti-angle-right fs-9"></i></a>
+				  <a id="btn-return" class="btn btn-block btn-primary" type="submit" href="../index.html#home" style="display: none;">Return to home page <i class="ti-angle-right fs-9"></i></a>
 
 			</div>
 		  </div>
