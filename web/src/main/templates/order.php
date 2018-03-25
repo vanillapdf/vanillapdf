@@ -52,31 +52,16 @@
 	  | Order form
 	  |‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒
 	  !-->
-	  <section id="section-order" class="section bg-gray">
+	  <section id="section-order" class="section">
 		<div class="container">
 
 		  <div class="row gap-y">
 			<div class="col-11 col-lg-6 mx-auto">
 
 			  <form id="order-form" action="{{ pages_folder }}{{ checkout_page }}" method="POST" data-form="custom-mailer">
-				<div class="form-group">
-				  <label for="order-name">Your name:</label>
-				  <input class="form-control form-control-lg" id="order-name" type="text" name="name" placeholder="Your name (required)" required
-				  value="<?php if (isset($_POST['name'])) { echo $_POST['name']; } ?>">
-				</div>
-				
-				<div class="form-group">
-				  <label for="order-company">Your company name:</label>
-				  <input class="form-control form-control-lg" id="order-company" type="text" name="company" placeholder="Your company name"
-				  value="<?php if (isset($_POST['company'])) { echo $_POST['company']; } ?>">
-				</div>
+			  
+			    <h5 class="mb-6">Product details</h5>
 
-				<div class="form-group">
-				  <label for="order-email">Your email address:</label>
-				  <input class="form-control form-control-lg" id="order-email" type="email" name="email" placeholder="Your email address (required)" required
-				  value="<?php if (isset($_POST['email'])) { echo $_POST['email']; } ?>">
-				</div>
-				
 				<?php
 					// Index page uses GET
 					if (isset($_GET['product'])) {
@@ -89,23 +74,20 @@
 				?>
 				
 				<div class="form-group">
-				  <label for="order-product">Product:</label>
-				  <select id="order-product" name="product" class="form-control form-control-lg" onchange="ProductChanged();">
+				  <select id="order-product" name="product" class="form-control" onchange="ProductChanged();">
 				    <option value="personal-license" <?php if ($_POST['product'] == 'personal-license') { echo 'selected="selected"'; } ?> >{{ PERSONAL_LICENSE_DESCRIPTION }}</option>
-				    <option value="commercial-license" <?php if ($_POST['product'] == 'commercial-license') { echo 'selected="selected"'; } ?> >{{ COMMECRIAL_LICENSE_DESCRIPTION }}</option>
+				    <option value="commercial-license" <?php if ($_POST['product'] == 'commercial-license') { echo 'selected="selected"'; } ?> >{{ COMMERCIAL_LICENSE_DESCRIPTION }}</option>
 					<option value="personal-support" <?php if ($_POST['product'] == 'personal-support') { echo 'selected="selected"'; } ?> >{{ PERSONAL_SUPPORT_DESCRIPTION }}</option>
-					<option value="commercial-support" <?php if ($_POST['product'] == 'commercial-support') { echo 'selected="selected"'; } ?> >{{ COMMECRIAL_SUPPORT_DESCRIPTION }}</option>
+					<option value="commercial-support" <?php if ($_POST['product'] == 'commercial-support') { echo 'selected="selected"'; } ?> >{{ COMMERCIAL_SUPPORT_DESCRIPTION }}</option>
 				  </select>
 				</div>
 				
 				<div id="license-group" class="form-group">
-				  <label for="license-key">Your license key:</label>
 				  <input class="form-control form-control-lg" id="license-key" type="text" name="license" placeholder="Your license key (required)" required>
 				</div>
 				
 				<div class="form-group">
-				  <label for="order-support">Support:</label>
-				  <select id="order-support" name="support" class="form-control form-control-lg">
+				  <select id="order-support" name="support" class="form-control">
 				    <option value="1" <?php if ($_POST['support'] == '1') { echo 'selected="selected"'; } ?> >1 Year</option>
 					<option value="2" <?php if ($_POST['support'] == '2') { echo 'selected="selected"'; } ?> >2 Year</option>
 					<option value="3" <?php if ($_POST['support'] == '3') { echo 'selected="selected"'; } ?> >3 Year</option>
@@ -113,11 +95,67 @@
 				</div>
 
 				<div class="form-group">
-				  <label for="order-message">Special request:</label>
-				  <textarea class="form-control form-control-lg" id="order-message" name="message" rows="4" placeholder="Special request">
-				    <?php if (isset($_POST['message'])) { echo $_POST['message']; } ?>
-				  </textarea>
+				  <textarea class="form-control" id="order-message" name="message" rows="4" placeholder="Special request"><?php if (isset($_POST['message'])) { echo $_POST['message']; } ?></textarea>
 				</div>
+				
+				<hr>
+				
+			    <h5 class="mb-6">Billing address</h5>
+                
+                <div class="form-row">
+                  <div class="col-md-6 form-group">
+                    <input name="firstname" class="form-control" type="text" title="First name" placeholder="First name" value="<?php if (isset($_POST['firstname'])) { echo $_POST['firstname']; } ?>" required>
+                  </div>
+                
+                  <div class="col-md-6 form-group">
+                    <input name="lastname" class="form-control" type="text" title="Last name" placeholder="Last name" value="<?php if (isset($_POST['lastname'])) { echo $_POST['lastname']; } ?>" required>
+                  </div>
+				  
+				  <div class="col-md-12 form-group">
+				    <input name="company" class="form-control" type="text" title="Company name" placeholder="Company name" value="<?php if (isset($_POST['company'])) { echo $_POST['company']; } ?>">
+				  </div>
+                
+                  <div class="col-md-6 form-group">
+                    <input name="email" class="form-control" type="email" title="Email address" placeholder="Email address" value="<?php if (isset($_POST['email'])) { echo $_POST['email']; } ?>" required>
+                  </div>
+                
+                  <div class="col-md-6 form-group">
+                    <input name="phone" class="form-control" type="tel" title="Phone number" placeholder="Phone number" value="<?php if (isset($_POST['phone'])) { echo $_POST['phone']; } ?>" required>
+                  </div>
+                
+                  <div class="col-md-6 form-group">
+                    <input name="country" class="form-control" type="text" title="Country" placeholder="Country" value="<?php if (isset($_POST['country'])) { echo $_POST['country']; } ?>" required>
+                  </div>
+                
+                  <div class="col-md-6 form-group">
+                    <input name="state" class="form-control" type="text" title="State" placeholder="State" value="<?php if (isset($_POST['state'])) { echo $_POST['state']; } ?>">
+                  </div>
+                
+                  <div class="col-md-6 form-group">
+                    <input name="city" class="form-control" type="text" title="City" placeholder="City" value="<?php if (isset($_POST['city'])) { echo $_POST['city']; } ?>" required>
+                  </div>
+                
+                  <div class="col-md-6 form-group">
+                    <input name="zipcode" class="form-control" type="text" title="Zip code" placeholder="Zip code" value="<?php if (isset($_POST['zipcode'])) { echo $_POST['zipcode']; } ?>" required>
+                  </div>
+                
+                  <div class="col-12 form-group">
+                    <input name="address" class="form-control" type="text" title="Address line 1" placeholder="Address line 1" value="<?php if (isset($_POST['address'])) { echo $_POST['address']; } ?>" required>
+                  </div>
+                
+                  <div class="col-12 form-group">
+                    <input name="address2" class="form-control" type="text" title="Address line 2" placeholder="Address line 2" value="<?php if (isset($_POST['address2'])) { echo $_POST['address2']; } ?>">
+                  </div>
+                </div>
+				
+				<hr>
+				
+				<h5 class="mb-6">Special</h5>
+				
+				<div class="form-group custom-control custom-checkbox">
+                  <input id="terms-conditions" name="terms-conditions" type="checkbox" class="custom-control-input" <?php if (isset($_POST['terms-conditions'])) { echo 'checked="checked"'; } ?> required>
+                  <label for="terms-conditions" class="custom-control-label">I agree to the <a class="ml-1" href="#">End-user license agreement</a></label>
+                </div>
 				
 				<div class="text-center w-75 d-block mx-auto p-5" data-provide="recaptcha" data-callback="EnableOrder">
 				</div>

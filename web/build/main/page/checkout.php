@@ -63,7 +63,7 @@
 	  | Checkout form
 	  |‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒
 	  !-->
-	  <section id="section-checkout" class="section bg-gray">
+	  <section id="section-checkout" class="section">
 		<div class="container">
 
 		  <div class="row gap-y">
@@ -155,11 +155,11 @@
                         <p><strong>Tax (%<?= $tax_percent ?>):</strong></p>
                       </div>
                   
-                      <div>
-					    <p><?= $product_price ?> &euro;</p>
-					    <p><?= $support_price ?> &euro;</p>
-                        <p><?= $subtotal ?> &euro;</p>
-                        <p><?= $tax_value ?> &euro;</p>
+                      <div class="text-right">
+					    <p><?= $product_price ?>&euro;</p>
+					    <p><?= $support_price ?>&euro;</p>
+                        <p><?= $subtotal ?>&euro;</p>
+                        <p><?= $tax_value ?>&euro;</p>
                       </div>
                     </div>
                   
@@ -170,7 +170,7 @@
                         <p><strong>Total:</strong></p>
                       </div>
                   
-                      <div>
+                      <div class="text-right">
                         <p id="total-price" class="fw-600"><?= $total ?> &euro;</p>
                       </div>
                     </div>
@@ -183,7 +183,7 @@
 							<input type="hidden" name="<?= htmlspecialchars($key, ENT_COMPAT, 'UTF-8') ?>" value="<?= htmlspecialchars($val, ENT_COMPAT, 'UTF-8') ?>">
 						<?php endforeach; ?>
 						
-						<button class="btn btn-block btn-secondary" type="submit"><i class="ti-angle-left fs-9"></i> Back</a>
+						<button id="btn-back" class="btn btn-block btn-secondary" type="submit"><i class="ti-angle-left fs-9"></i> Back</a>
 					  </form>
                     </div>
                   
@@ -195,10 +195,19 @@
 							<input type="hidden" name="<?= htmlspecialchars($key, ENT_COMPAT, 'UTF-8') ?>" value="<?= htmlspecialchars($val, ENT_COMPAT, 'UTF-8') ?>">
 						<?php endforeach; ?>
 						
-						<button class="btn btn-block btn-primary" type="submit">Checkout <i class="ti-angle-right fs-9"></i></button>
+						<input type="hidden" name="product-price" value="<?= $product_price ?>&euro;">
+						<input type="hidden" name="support-price" value="<?= $support_price ?>&euro;">
+						<input type="hidden" name="subtotal" value="<?= $subtotal ?>&euro;">
+						<input type="hidden" name="tax-percentage" value="<?= $tax_percent ?>%">
+						<input type="hidden" name="tax-value" value="<?= $tax_value ?>&euro;">
+						<input type="hidden" name="tax-value" value="<?= $total ?>&euro;">
+						
+						<button id="btn-checkout" class="btn btn-block btn-primary" type="submit">Checkout <i class="ti-angle-right fs-9"></i></button>
 					  </form>
                     </div>
                   </div>
+				  
+				  <a id="btn-return" class="btn btn-block btn-primary" type="submit" href="../index.html#home">Return to home page <i class="ti-angle-right fs-9"></i></a>
 
 			</div>
 		  </div>

@@ -230,7 +230,7 @@
                   <p class="mb-7"><img src="assets/img/icon/evaluation.png" alt="..."></p>
                   <h6 class="text-uppercase fw-500 ls-2 my-4">Evaluation</h6>
                   <p class="lead">Free license only for evaluation purposes</p>
-                  <h2 class="lead-8 fw-200 mb-0">0 &euro;</h2>
+                  <h2 class="lead-8 fw-200 mb-0">0{{ CURRENCY }}</h2>
 				  <p class="small-2">Free</p>
 				  
 				  <button class="btn disabled">Limited support</button>
@@ -260,7 +260,7 @@
                   <p class="mb-7"><img src="assets/img/icon/personal.png" alt="..."></p>
                   <h6 class="text-uppercase fw-500 ls-2 my-4">Personal</h6>
                   <p class="lead">Personal license for creating private tools</p>
-                  <h2 id="personal-price" class="lead-8 fw-200 mb-0">{{ PERSONAL_LICENSE_WITH_SUPPORT_PRICE}} {{ CURRENCY }}</h2>
+                  <h2 id="personal-price" class="lead-8 fw-200 mb-0">{{ PERSONAL_LICENSE_WITH_SUPPORT_PRICE}}{{ CURRENCY }}</h2>
                   <p class="small-2">One-time fee</p>
 
                   <div class="btn-group dropdown">
@@ -285,8 +285,8 @@
                 </div>
 				
 				<div class="text-center px-4 py-6">
-				  <a id="personal-purchase-link" class="btn btn-primary btn-round w-200" href="{{ pages_folder }}{{ order_page }}?product=personal-license&support=1#section-order">Purchase</a>
-				  <p>or <a id="personal-support-link" href="{{ pages_folder }}{{ order_page }}?product=personal-support&support=1#section-order">Extend</a> your support</p>
+				  <a id="personal-purchase-link" class="btn btn-primary btn-round w-200" href="{{ pages_folder }}{{ order_page }}?product=personal-license&support=1">Purchase</a>
+				  <p>or <a id="personal-support-link" href="{{ pages_folder }}{{ order_page }}?product=personal-support&support=1">Extend</a> your support</p>
 				</div>
               </div>
             </div>
@@ -298,7 +298,7 @@
 				  <p class="mb-7"><img src="assets/img/icon/commercial.png" alt="..."></p>
 				  <h6 class="text-uppercase fw-500 ls-2 my-4">Commercial</h6>
 				  <p class="lead">Commercial license for creating public products</p>
-				  <h2 id="commercial-price" class="lead-8 fw-200 mb-0">{{ COMMERCIAL_LICENSE_WITH_SUPPORT_PRICE}} {{ CURRENCY }}</h2>
+				  <h2 id="commercial-price" class="lead-8 fw-200 mb-0">{{ COMMERCIAL_LICENSE_WITH_SUPPORT_PRICE}}{{ CURRENCY }}</h2>
 				  <p class="small-2">One-time fee</p>
 				  
 					<div class="dropdown">
@@ -323,8 +323,8 @@
 				</div>
 				
 				<div class="text-center px-4 py-6">
-				  <a id="commercial-purchase-link" class="btn btn-outline-primary btn-round w-200" href="{{ pages_folder }}{{ order_page }}?product=commercial-license&support=1#section-order">Purchase</a>
-				  <p>or <a id="commercial-support-link" href="{{ pages_folder }}{{ order_page }}?product=commercial-support&support=1#section-order">Extend</a> your support</p>
+				  <a id="commercial-purchase-link" class="btn btn-outline-primary btn-round w-200" href="{{ pages_folder }}{{ order_page }}?product=commercial-license&support=1">Purchase</a>
+				  <p>or <a id="commercial-support-link" href="{{ pages_folder }}{{ order_page }}?product=commercial-support&support=1">Extend</a> your support</p>
 				</div>
 			  </div>
 			</div>
@@ -340,7 +340,6 @@
 		  	  </div>
 		    </div>
 		  </div>
-
 
         </div>
       </section>

@@ -12,11 +12,24 @@ $(function() {
   
     form.on('submit', function(){
 		
-  	form.children('.alert-danger').remove();
-  
   	if ( email.length ) {
   	  if ( email.val().length < 1 || ! validEmail.test( email.val() ) ) {
   		email_form_group.addClass('has-danger');
+		
+		var elOffset = email.offset().top;
+        var elHeight = email.height();
+        var windowHeight = $(window).height();
+        var offset;
+        
+        if (elHeight < windowHeight) {
+          offset = elOffset - ((windowHeight / 2) - (elHeight / 2));
+        }
+        else {
+          offset = elOffset;
+        }
+		
+		$('html, body').animate({scrollTop: offset}, 700);
+
   		return false;
   	  }
   	}
