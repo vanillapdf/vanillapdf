@@ -58,21 +58,97 @@
 		  <div class="row gap-y">
 			<div class="col-11 col-lg-6 mx-auto">
 			
-				<div id="order-checkout">
-			      <div class="cart-price">
+				<?php
+					$tax_percent = {{ TAX_PERCENTAGE }};
+					
+					if (!isset($tax_percent)) {
+						trigger_error("Tax is not set", E_USER_ERROR);
+					}
+					
+					$product_name;
+					$product_price;
+					$product_personal;
+					
+					$support_name;
+					$support_price;
+					
+					if ($_POST['product'] == 'personal-license') {
+						$product_name = '{{ PERSONAL_LICENSE_DESCRIPTION }}';
+						$product_price = {{ PERSONAL_LICENSE_PRICE }};
+						$product_personal = true;
+					}
+					
+					if ($_POST['product'] == 'commercial-license') {
+						$product_name = '{{ COMMERCIAL_LICENSE_DESCRIPTION }}';
+						$product_price = {{ COMMERCIAL_LICENSE_PRICE }};
+					}
+					
+					if (!isset($product_name)) {
+						trigger_error("Invalid product name", E_USER_ERROR);
+					}
+					
+					if (!isset($product_price)) {
+						trigger_error("Invalid product price", E_USER_ERROR);
+					}
+					
+					if ($_POST['support'] == '1') {
+						$support_name = '1 Year';
+						
+						if ($product_personal === true) {
+							$support_price = {{ PERSONAL_ONE_YEAR_SUPPORT_PRICE }};
+						} else {
+							$support_price = {{ COMMERCIAL_ONE_YEAR_SUPPORT_PRICE }};
+						}
+					}
+					
+					if ($_POST['support'] == '2') {
+						$support_name = '2 Year';
+						
+						if ($product_personal === true) {
+							$support_price = {{ PERSONAL_TWO_YEAR_SUPPORT_PRICE }};
+						} else {
+							$support_price = {{ COMMERCIAL_TWO_YEAR_SUPPORT_PRICE }};
+						}
+					}
+					
+					if ($_POST['support'] == '3') {
+						$support_name = '3 Year';
+						
+						if ($product_personal === true) {
+							$support_price = {{ PERSONAL_THREE_YEAR_SUPPORT_PRICE }};
+						} else {
+							$support_price = {{ COMMERCIAL_THREE_YEAR_SUPPORT_PRICE }};
+						}
+					}
+					
+					if (!isset($product_name)) {
+						trigger_error("Invalid support name", E_USER_ERROR);
+					}
+					
+					if (!isset($support_price)) {
+						trigger_error("Invalid support price", E_USER_ERROR);
+					}
+					
+					$subtotal = $product_price + $support_price;
+					$tax_value = $subtotal * ($tax_percent / 100);
+					$total = $subtotal + $tax_value;
+				?>
+				
+				<div id="success-message" class="alert alert-success d-on-success" style="display: none">We received your order and will contact you back soon.</div>
+			      <div id="checkout-cart" class="cart-price">
                     <div class="flexbox">
                       <div>
-					    <p><strong>Product:</strong></p>
-					    <p><strong>Support:</strong></p>
+					    <p><strong>Product:</strong> <?= $product_name ?></p>
+					    <p><strong>Support:</strong> <?= $support_name ?></p>
                         <p><strong>Subtotal:</strong></p>
-                        <p><strong>Tax (%19):</strong></p>
+                        <p><strong>Tax (%<?= $tax_percent ?>):</strong></p>
                       </div>
                   
                       <div>
-					    <p id="product-name"></p>
-					    <p id="support-name"></p>
-                        <p id="subtotal-price"></p>
-                        <p id="tax-price"></p>
+					    <p><?= $product_price ?> {{ CURRENCY }}</p>
+					    <p><?= $support_price ?> {{ CURRENCY }}</p>
+                        <p><?= $subtotal ?> {{ CURRENCY }}</p>
+                        <p><?= $tax_value ?> {{ CURRENCY }}</p>
                       </div>
                     </div>
                   
@@ -84,7 +160,7 @@
                       </div>
                   
                       <div>
-                        <p id="total-price" class="fw-600"></p>
+                        <p id="total-price" class="fw-600"><?= $total ?> {{ CURRENCY }}</p>
                       </div>
                     </div>
                   </div>
@@ -112,7 +188,6 @@
 					  </form>
                     </div>
                   </div>
-			    </div>
 
 			</div>
 		  </div>
@@ -130,7 +205,6 @@
 
     <!-- Scripts -->
     {% include 'scripts.html' %}
-	<script src="{{ assets_folder }}js/price_constants.js"></script>
 	<script src="{{ assets_folder }}js/checkout.js"></script>
 
   </body>

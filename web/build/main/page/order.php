@@ -88,27 +88,38 @@
 				  value="<?php if (isset($_POST['email'])) { echo $_POST['email']; } ?>">
 				</div>
 				
+				<?php
+					// Index page uses GET
+					if (isset($_GET['product'])) {
+						$_POST['product'] = $_GET['product'];
+					}
+					
+					if (isset($_GET['support'])) {
+						$_POST['support'] = $_GET['support'];
+					}
+				?>
+				
 				<div class="form-group">
 				  <label for="order-product">Product:</label>
 				  <select id="order-product" name="product" class="form-control form-control-lg" onchange="ProductChanged();">
-				    <option value="personal-license" <?php if ($_GET['product'] == 'personal') { echo 'selected="selected"'; } ?> >Vanilla.PDF Personal license</option>
-				    <option value="commercial-license" <?php if ($_GET['product'] == 'commercial') { echo 'selected="selected"'; } ?> >Vanilla.PDF Commercial license</option>
-					<option value="personal-support" <?php if ($_GET['product'] == 'personal-support') { echo 'selected="selected"'; } ?> >Vanilla.PDF Extended personal support</option>
-					<option value="commercial-support" <?php if ($_GET['product'] == 'commercial-support') { echo 'selected="selected"'; } ?> >Vanilla.PDF Extended commercial support</option>
+				    <option value="personal-license" <?php if ($_POST['product'] == 'personal-license') { echo 'selected="selected"'; } ?> >Vanilla.PDF Personal license</option>
+				    <option value="commercial-license" <?php if ($_POST['product'] == 'commercial-license') { echo 'selected="selected"'; } ?> ></option>
+					<option value="personal-support" <?php if ($_POST['product'] == 'personal-support') { echo 'selected="selected"'; } ?> >Vanilla.PDF Extended personal support</option>
+					<option value="commercial-support" <?php if ($_POST['product'] == 'commercial-support') { echo 'selected="selected"'; } ?> ></option>
 				  </select>
 				</div>
 				
-				<div id="license-group" class="form-group" style="display: none;">
+				<div id="license-group" class="form-group">
 				  <label for="license-key">Your license key:</label>
-				  <input class="form-control form-control-lg" id="license-key" disabled="disabled" type="text" name="license" placeholder="Your license key (required)" required>
+				  <input class="form-control form-control-lg" id="license-key" type="text" name="license" placeholder="Your license key (required)" required>
 				</div>
 				
 				<div class="form-group">
 				  <label for="order-support">Support:</label>
 				  <select id="order-support" name="support" class="form-control form-control-lg">
-				    <option value="1" <?php if ($_GET['support'] == '1') { echo 'selected="selected"'; } ?> >1 Year</option>
-					<option value="2" <?php if ($_GET['support'] == '2') { echo 'selected="selected"'; } ?> >2 Year</option>
-					<option value="3" <?php if ($_GET['support'] == '3') { echo 'selected="selected"'; } ?> >3 Year</option>
+				    <option value="1" <?php if ($_POST['support'] == '1') { echo 'selected="selected"'; } ?> >1 Year</option>
+					<option value="2" <?php if ($_POST['support'] == '2') { echo 'selected="selected"'; } ?> >2 Year</option>
+					<option value="3" <?php if ($_POST['support'] == '3') { echo 'selected="selected"'; } ?> >3 Year</option>
 				  </select>
 				</div>
 
@@ -179,8 +190,8 @@
     <!-- Scripts -->
     <script src="../assets/js/page.min.js"></script>
 <script src="../assets/js/script.js"></script>
-	<script src="../assets/js/price_constants.js"></script>
 	<script src="../assets/js/custom_mailer.js"></script>
+	<script src="../assets/js/order.js"></script>
 
   </body>
 </html>

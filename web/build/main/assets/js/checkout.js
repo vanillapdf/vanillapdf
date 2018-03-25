@@ -5,6 +5,8 @@ $(function() {
   $('[data-form="custom-mailer"]').each(function(){
 	  
     var form = $(this);
+	var success = $('#success-message');
+	var cart = $('#checkout-cart');
     form.on('submit', function(){
   
   	$.ajax({
@@ -15,11 +17,10 @@ $(function() {
   	.done( function( data ) {
   	  var response = $.parseJSON( data );
   	  if ( 'success' == response.status ) {
-  		form.find('.alert-success').fadeIn(1000);
-  		form.find(':input').val('');
+  		success.fadeIn(1000);
   	  }
   	  else {
-  		form.prepend('<div class="alert alert-danger">'+ response.message +'</div>');
+  		cart.prepend('<div class="alert alert-danger">'+ response.message +'</div>');
   		console.log( response.reason )
   	  }
   	});

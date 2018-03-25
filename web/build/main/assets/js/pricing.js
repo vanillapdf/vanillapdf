@@ -16,10 +16,10 @@ $(document).ready(function() {
 /* Orders */
 var ORDER_URL = '/page/order.php';
 
-var PERSONAL_LICENSE_ID					= 'personal';
+var PERSONAL_LICENSE_ID					= 'personal-license';
 var PERSONAL_SUPPORT_ID					= 'personal-support';
 
-var COMMERCIAL_LICENSE_ID				= 'commercial';
+var COMMERCIAL_LICENSE_ID				= 'commercial-license';
 var COMMERCIAL_SUPPORT_ID				= 'commercial-support';
 
 function GetOrderLink(product, support) {
