@@ -1,11 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Choose your favorite product and fill the billing details details.">
-
-    <title>Vanilla.PDF - Order</title>
+    <!-- Meta tags -->
+    {% include 'meta.html' %}
 
     <!-- Styles -->
     {% include 'styles.html' %}
@@ -38,7 +35,7 @@
     <!-- Header -->
     <header id="home" class="header pt-10 pb-0">
       <div class="container text-center">
-        <h1 class="display-4">Submit an order</h1>
+        <h1 class="display-4">Create an order</h1>
         <p class="lead-2 mt-6">Choose your favorite product and fill the billing details details</p>
       </div>
     </header><!-- /.header -->

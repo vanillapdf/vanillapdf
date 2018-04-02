@@ -1,11 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Choose your favorite product and fill the billing details details.">
-
-    <title>Vanilla.PDF - Checkout</title>
+      <!-- Meta tags -->
+    {% include 'meta.html' %}
 
     <!-- Styles -->
     {% include 'styles.html' %}
@@ -39,7 +36,7 @@
     <header id="home" class="header pt-10 pb-0">
       <div class="container text-center">
         <h1 class="display-4">Checkout your order</h1>
-        <p class="lead-2 mt-6">Review the details before submitting the request</p>
+        <p class="lead-2 mt-6">Review your billing address before submitting the request</p>
       </div>
     </header><!-- /.header -->
 

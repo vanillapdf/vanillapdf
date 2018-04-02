@@ -52,6 +52,22 @@ generic_context = {
 	'COMMERCIAL_THREE_YEAR_SUPPORT_PRICE':		COMMERCIAL_THREE_YEAR_SUPPORT_PRICE,
 	'PERSONAL_LICENSE_WITH_SUPPORT_PRICE':		PERSONAL_LICENSE_PRICE + PERSONAL_ONE_YEAR_SUPPORT_PRICE,
 	'COMMERCIAL_LICENSE_WITH_SUPPORT_PRICE':	COMMERCIAL_LICENSE_PRICE + COMMERCIAL_ONE_YEAR_SUPPORT_PRICE,
+	
+	'INDEX_TITLE': 'Vanilla.PDF - SDK for creating and modifying PDF documents',
+	'ABOUT_TITLE': 'Vanilla.PDF - About',
+	'CONTACT_TITLE': 'Vanilla.PDF - Contact information',
+	'DOWNLOAD_TITLE': 'Vanilla.PDF - Download',
+	'FAQ_TITLE': 'Vanilla.PDF - Frequently asked questions',
+	'ORDER_TITLE': 'Vanilla.PDF - Order',
+	'CHECKOUT_TITLE': 'Vanilla.PDF - Checkout',
+	
+	'INDEX_DESCRIPTION': 'Integration is very easy with pre-packaged binaries for multiple operating systems such as Windows, Linux and Mac.',
+	'ABOUT_DESCRIPTION': 'Brief bio about company history, project aim and future expansion.',
+	'CONTACT_DESCRIPTION': 'Here are the ways you can contact us with any questions you have.',
+	'DOWNLOAD_DESCRIPTION': 'Download the latest version.',
+	'FAQ_DESCRIPTION': "Got a question? We've got answers. If you have some other questions, contact us using email.",
+	'ORDER_DESCRIPTION': 'Choose your favorite product and fill the billing details details.',
+	'CHECKOUT_DESCRIPTION': 'Review your billing address before submitting the request.',
 }
 
 index_file = 'index.html'
@@ -109,7 +125,18 @@ for filename in page_files:
 	source_path = os.path.join(source_folder, filename)
 	destination_path = os.path.join(pages_folder, filename)
 	
-	generate_template(source_path, destination_path, generic_context)
+	file_basename = os.path.splitext(filename)[0]
+	title_key = file_basename.upper() + '_TITLE'
+	title_value = generic_context[title_key]
+	
+	description_key = file_basename.upper() + '_DESCRIPTION'
+	description_value = generic_context[description_key]
+	
+	local_context = dict(generic_context)
+	local_context['TITLE'] = title_value
+	local_context['DESCRIPTION'] = description_value
+	
+	generate_template(source_path, destination_path, local_context)
 	
 # Process js
 for filename in js_files:
@@ -129,6 +156,9 @@ index_context['root_folder'] = ''
 index_context['assets_folder'] = 'assets/'
 index_context['pages_folder'] = 'page/'
 index_context['doc_folder'] = 'doc/'
+
+index_context['TITLE'] = generic_context['INDEX_TITLE']
+index_context['DESCRIPTION'] = generic_context['INDEX_DESCRIPTION']
 
 # Generate the index template
 generate_template(index_source_path, index_destination_path, index_context)
