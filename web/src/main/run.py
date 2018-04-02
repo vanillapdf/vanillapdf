@@ -33,6 +33,7 @@ generic_context = {
 	'faq_page': 'faq.html',
 	'order_page': 'order.php',
 	'checkout_page': 'checkout.php',
+	'terms_page': 'terms.html',
 	
 	'CURRENCY': '&euro;',
 	'TAX_PERCENTAGE': 19,
@@ -60,6 +61,8 @@ generic_context = {
 	'FAQ_TITLE': 'Vanilla.PDF - Frequently asked questions',
 	'ORDER_TITLE': 'Vanilla.PDF - Order',
 	'CHECKOUT_TITLE': 'Vanilla.PDF - Checkout',
+	'TERMS_TITLE': 'Vanilla.PDF - Terms and conditions',
+	'404_TITLE': 'Vanilla.PDF - Page not found',
 	
 	'INDEX_DESCRIPTION': 'Integration is very easy with pre-packaged binaries for multiple operating systems such as Windows, Linux and Mac.',
 	'ABOUT_DESCRIPTION': 'Brief bio about company history, project aim and future expansion.',
@@ -68,6 +71,8 @@ generic_context = {
 	'FAQ_DESCRIPTION': "Got a question? We've got answers. If you have some other questions, contact us using email.",
 	'ORDER_DESCRIPTION': 'Choose your favorite product and fill the billing details details.',
 	'CHECKOUT_DESCRIPTION': 'Review your billing address before submitting the request.',
+	'TERMS_DESCRIPTION': 'Terms and conditions are a set of rules and guidelines, that a user must agree to in order to use the website.',
+	'404_DESCRIPTION': "Seems you're looking for something that doesn't exist.",
 }
 
 index_file = 'index.html'
@@ -78,7 +83,9 @@ page_files = [
 	'download.html',
 	'faq.html',
 	'order.php',
-	'checkout.php'
+	'checkout.php',
+	'terms.html',
+	'404.html'
 ]
 
 js_files = [
