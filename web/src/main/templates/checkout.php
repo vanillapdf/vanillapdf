@@ -52,7 +52,7 @@
 	  <section id="section-checkout" class="section">
 		<div class="container">
 
-		  <div class="row gap-y">
+		  <div class="row">
 			<div class="col-11 col-lg-6 mx-auto">
 			
 				<?php
@@ -131,8 +131,8 @@
 					$total = $subtotal + $tax_value;
 				?>
 				
-				<div id="success-message" class="alert alert-success d-on-success" style="display: none">We received your order and will contact you back soon.</div>
-			      <div id="checkout-cart" class="cart-price">
+				<h5 class="mb-6">Product</h5>
+			      <div class="cart-price">
                     <div class="flexbox">
                       <div>
 					    <p><strong>Product:</strong> <?= $product_name ?></p>
@@ -161,6 +161,47 @@
                       </div>
                     </div>
                   </div>
+				  
+				</div>
+		      </div>
+			   
+			  <div class="row">
+			    <div class="col-11 col-lg-6 mx-auto">
+				  
+				  <h5 class="mb-6">Billing address</h5>
+				  <div class="cart-price">
+                    <div class="flexbox">
+                      <div>
+					    <p><strong>First name:</strong></p>
+					    <p><strong>Last name:</strong></p>
+                        <p><strong>Company name:</strong></p>
+						<p><strong>Email address:</strong></p>
+						<p><strong>Phone number:</strong></p>
+						<p><strong>Country:</strong></p>
+						<p><strong>State:</strong></p>
+						<p><strong>City:</strong></p>
+						<p><strong>Zip code:</strong></p>
+						<p><strong>Address line 1:</strong></p>
+						<p><strong>Address line 2:</strong></p>
+                      </div>
+                  
+                      <div class="text-right">
+					    <p><?= $_POST['firstname'] ?></p>
+					    <p><?= $_POST['lastname'] ?></p>
+						<p><?= (!empty($_POST['company']) ? $_POST['company'] : 'N/A') ?></p>
+                        <p><?= $_POST['email'] ?></p>
+						<p><?= $_POST['phone'] ?></p>
+						<p><?= $_POST['country'] ?></p>
+						<p><?= (!empty($_POST['state']) ? $_POST['state'] : 'N/A') ?></p>
+						<p><?= $_POST['city'] ?></p>
+						<p><?= $_POST['zipcode'] ?></p>
+						<p><?= $_POST['address'] ?></p>
+						<p><?= (!empty($_POST['address2']) ? $_POST['address2'] : 'N/A') ?></p>
+                      </div>
+                    </div>
+                  </div>
+				  
+				  <div id="success-message" class="alert alert-success d-on-success" style="display: none">We received your order and will contact you back soon.</div>
 				  
 				  <form id="form-back" action="{{ pages_folder }}{{ order_page }}" method="POST">
 					<?php foreach( $_POST as $key => $val ): ?>
@@ -196,7 +237,9 @@
                     </div>
                   </div>
 				  
-				  <a id="btn-return" class="btn btn-block btn-primary" type="submit" href="{{ index_file }}#home" style="display: none;">Return to home page <i class="ti-angle-right fs-9"></i></a>
+				  <div id="return-home" class="row" style="display: none;">
+				    <a class="btn btn-block btn-primary" href="{{ index_file }}#home">Return to home page <i class="ti-angle-right fs-9"></i></a>
+				  </div>
 
 			</div>
 		  </div>
