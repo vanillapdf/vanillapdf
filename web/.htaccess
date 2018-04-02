@@ -185,5 +185,7 @@ RewriteCond %{HTTP:X-Forwarded-Proto} !=https
 RewriteRule ^.*$ https://%{SERVER_NAME}%{REQUEST_URI} [L,R]
 </IfModule>
 
+ErrorDocument 404 /page/404.html
+
 # END Custom settings
 
