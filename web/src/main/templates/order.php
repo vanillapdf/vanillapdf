@@ -109,7 +109,7 @@
                   </div>
 				  
 				  <div class="col-md-12 form-group">
-				    <input name="company" class="form-control" type="text" title="Company name" placeholder="Company name" value="<?php if (isset($_POST['company'])) { echo $_POST['company']; } ?>">
+				    <input name="company" class="form-control" type="text" title="Company name" placeholder="Company name (optional)" value="<?php if (isset($_POST['company'])) { echo $_POST['company']; } ?>">
 				  </div>
                 
                   <div class="col-md-6 form-group">
@@ -125,7 +125,7 @@
                   </div>
                 
                   <div class="col-md-6 form-group">
-                    <input name="state" class="form-control" type="text" title="State" placeholder="State" value="<?php if (isset($_POST['state'])) { echo $_POST['state']; } ?>">
+                    <input name="state" class="form-control" type="text" title="State" placeholder="State (optional)" value="<?php if (isset($_POST['state'])) { echo $_POST['state']; } ?>">
                   </div>
                 
                   <div class="col-md-6 form-group">
@@ -141,7 +141,7 @@
                   </div>
                 
                   <div class="col-12 form-group">
-                    <input name="address2" class="form-control" type="text" title="Address line 2" placeholder="Address line 2" value="<?php if (isset($_POST['address2'])) { echo $_POST['address2']; } ?>">
+                    <input name="address2" class="form-control" type="text" title="Address line 2 (optional)" placeholder="Address line 2" value="<?php if (isset($_POST['address2'])) { echo $_POST['address2']; } ?>">
                   </div>
                 </div>
 				
