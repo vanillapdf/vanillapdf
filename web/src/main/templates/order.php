@@ -150,7 +150,7 @@
 				<h5 class="mb-6">Special</h5>
 				
 				<div class="form-group custom-control custom-checkbox">
-                  <input name="terms-conditions" type="checkbox" class="custom-control-input" <?php if (isset($_POST['terms-conditions'])) { echo 'checked="checked"'; } ?> required>
+                  <input id="terms-conditions" name="terms-conditions" type="checkbox" class="custom-control-input" <?php if (isset($_POST['terms-conditions'])) { echo 'checked="checked"'; } ?> onchange="EnableProceed()" required>
                   <label class="custom-control-label">I agree to the <a class="ml-1" href="#">End-user license agreement</a></label>
                 </div>
 
@@ -161,7 +161,7 @@
 				    <a class="btn btn-block btn-secondary" href="{{ index_file }}#home"><i class="ti-angle-left fs-9"></i> Return to home</a>
 				  </div>
                   <div class="col-6">
-				    <button class="btn btn-primary btn-block" type="submit">Proceed <i class="ti-angle-right fs-9"></i></button>
+				    <button id="btn-proceed" class="btn btn-primary btn-block" type="submit" disabled>Proceed <i class="ti-angle-right fs-9"></i></button>
 				  </div>
 				</div>
 			  </form>

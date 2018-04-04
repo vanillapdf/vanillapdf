@@ -26,3 +26,9 @@ function ProductChanged() {
 $(function() {
 	ProductChanged();
 });
+
+/* Enable proceed button */
+
+function EnableProceed() {
+	document.getElementById("btn-proceed").disabled = !document.getElementById("terms-conditions").checked;
+}
