@@ -1,11 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+      <!-- Meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Choose your favorite product and fill the billing details details.">
+<meta name="author" content="Vanilla.PDF Labs">
+<meta name="robots" content="index,follow">
+<meta name="description" content="Review your billing address before submitting the request.">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Vanilla.PDF - Checkout</title>
+<title>Vanilla.PDF - Checkout</title>
+
+<meta property="og:title" content="Vanilla.PDF - Checkout">
+<meta property="og:description" content="Review your billing address before submitting the request.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Vanilla.PDF - Checkout">
+
+<meta name="apple-mobile-web-app-title" content="Vanilla.PDF - Checkout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 
     <!-- Styles -->
     <link href="../assets/css/page.min.css" rel="stylesheet">
@@ -50,7 +62,7 @@
     <header id="home" class="header pt-10 pb-0">
       <div class="container text-center">
         <h1 class="display-4">Checkout your order</h1>
-        <p class="lead-2 mt-6">Review the details before submitting the request</p>
+        <p class="lead-2 mt-6">Review your billing address before submitting the request</p>
       </div>
     </header><!-- /.header -->
 
@@ -66,7 +78,7 @@
 	  <section id="section-checkout" class="section">
 		<div class="container">
 
-		  <div class="row gap-y">
+		  <div class="row">
 			<div class="col-11 col-lg-6 mx-auto">
 			
 				<?php
@@ -142,24 +154,20 @@
 					
 					$subtotal = $product_price + $support_price;
 					$tax_value = $subtotal * ($tax_percent / 100);
-					$total = $subtotal + $tax_value;
+					$total = $subtotal /*+ $tax_value*/;
 				?>
 				
-				<div id="success-message" class="alert alert-success d-on-success" style="display: none">We received your order and will contact you back soon.</div>
-			      <div id="checkout-cart" class="cart-price">
+				<h5 class="mb-6">Product</h5>
+			      <div class="cart-price">
                     <div class="flexbox">
                       <div>
 					    <p><strong>Product:</strong> <?= $product_name ?></p>
 					    <p><strong>Support:</strong> <?= $support_name ?></p>
-                        <p><strong>Subtotal:</strong></p>
-                        <p><strong>Tax (%<?= $tax_percent ?>):</strong></p>
                       </div>
                   
                       <div class="text-right">
 					    <p><?= $product_price ?>&euro;</p>
 					    <p><?= $support_price ?>&euro;</p>
-                        <p><?= $subtotal ?>&euro;</p>
-                        <p><?= $tax_value ?>&euro;</p>
                       </div>
                     </div>
                   
@@ -176,6 +184,47 @@
                     </div>
                   </div>
 				  
+				</div>
+		      </div>
+			   
+			  <div class="row">
+			    <div class="col-11 col-lg-6 mx-auto">
+				  
+				  <h5 class="mb-6">Billing address</h5>
+				  <div class="cart-price">
+                    <div class="flexbox">
+                      <div>
+					    <p><strong>First name:</strong></p>
+					    <p><strong>Last name:</strong></p>
+                        <p><strong>Company name:</strong></p>
+						<p><strong>Email address:</strong></p>
+						<p><strong>Phone number:</strong></p>
+						<p><strong>Country:</strong></p>
+						<p><strong>State:</strong></p>
+						<p><strong>City:</strong></p>
+						<p><strong>Zip code:</strong></p>
+						<p><strong>Address line 1:</strong></p>
+						<p><strong>Address line 2:</strong></p>
+                      </div>
+                  
+                      <div class="text-right">
+					    <p><?= $_POST['firstname'] ?></p>
+					    <p><?= $_POST['lastname'] ?></p>
+						<p><?= (!empty($_POST['company']) ? $_POST['company'] : 'N/A') ?></p>
+                        <p><?= $_POST['email'] ?></p>
+						<p><?= $_POST['phone'] ?></p>
+						<p><?= $_POST['country'] ?></p>
+						<p><?= (!empty($_POST['state']) ? $_POST['state'] : 'N/A') ?></p>
+						<p><?= $_POST['city'] ?></p>
+						<p><?= $_POST['zipcode'] ?></p>
+						<p><?= $_POST['address'] ?></p>
+						<p><?= (!empty($_POST['address2']) ? $_POST['address2'] : 'N/A') ?></p>
+                      </div>
+                    </div>
+                  </div>
+				  
+				  <div id="success-message" class="alert alert-success d-on-success" style="display: none">We received your order and will contact you back soon.</div>
+				  
 				  <form id="form-back" action="order.php" method="POST">
 					<?php foreach( $_POST as $key => $val ): ?>
 						<input type="hidden" name="<?= htmlspecialchars($key, ENT_COMPAT, 'UTF-8') ?>" value="<?= htmlspecialchars($val, ENT_COMPAT, 'UTF-8') ?>">
@@ -191,10 +240,7 @@
 					
 					<input type="hidden" name="product-price" value="<?= $product_price ?>&euro;">
 					<input type="hidden" name="support-price" value="<?= $support_price ?>&euro;">
-					<input type="hidden" name="subtotal" value="<?= $subtotal ?>&euro;">
-					<input type="hidden" name="tax-percentage" value="<?= $tax_percent ?>%">
-					<input type="hidden" name="tax-value" value="<?= $tax_value ?>&euro;">
-					<input type="hidden" name="tax-value" value="<?= $total ?>&euro;">
+					<input type="hidden" name="total-price" value="<?= $total ?>&euro;">
 					
 					<div class="text-center w-75 d-block mx-auto p-5" data-provide="recaptcha" data-callback="EnableOrder">
 					</div>
@@ -210,7 +256,9 @@
                     </div>
                   </div>
 				  
-				  <a id="btn-return" class="btn btn-block btn-primary" type="submit" href="../index.html#home" style="display: none;">Return to home page <i class="ti-angle-right fs-9"></i></a>
+				  <div id="return-home" class="row" style="display: none;">
+				    <a class="btn btn-block btn-primary" href="../index.html#home">Return to home page <i class="ti-angle-right fs-9"></i></a>
+				  </div>
 
 			</div>
 		  </div>
@@ -245,8 +293,8 @@
 	<div class="col-4 col-xl-2">
 	  <div class="nav flex-column">
 		<a class="nav-link" href="faq.html">FAQ</a>
+		<a class="nav-link" href="terms.html">Terms</a>
 		<a class="nav-link" href="../doc/page_licensing.html">Licensing</a>
-		<a class="nav-link" href="#">EULA</a>
 	  </div>
 	</div>
 

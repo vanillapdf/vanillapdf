@@ -1,11 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Choose your favorite product and fill the billing details details.">
+<meta name="author" content="Vanilla.PDF Labs">
+<meta name="robots" content="index,follow">
+<meta name="description" content="Choose your favorite product and fill the billing details details.">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Vanilla.PDF - Order</title>
+<title>Vanilla.PDF - Order</title>
+
+<meta property="og:title" content="Vanilla.PDF - Order">
+<meta property="og:description" content="Choose your favorite product and fill the billing details details.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Vanilla.PDF - Order">
+
+<meta name="apple-mobile-web-app-title" content="Vanilla.PDF - Order">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 
     <!-- Styles -->
     <link href="../assets/css/page.min.css" rel="stylesheet">
@@ -49,7 +61,7 @@
     <!-- Header -->
     <header id="home" class="header pt-10 pb-0">
       <div class="container text-center">
-        <h1 class="display-4">Submit an order</h1>
+        <h1 class="display-4">Create an order</h1>
         <p class="lead-2 mt-6">Choose your favorite product and fill the billing details details</p>
       </div>
     </header><!-- /.header -->
@@ -123,7 +135,7 @@
                   </div>
 				  
 				  <div class="col-md-12 form-group">
-				    <input name="company" class="form-control" type="text" title="Company name" placeholder="Company name" value="<?php if (isset($_POST['company'])) { echo $_POST['company']; } ?>">
+				    <input name="company" class="form-control" type="text" title="Company name" placeholder="Company name (optional)" value="<?php if (isset($_POST['company'])) { echo $_POST['company']; } ?>">
 				  </div>
                 
                   <div class="col-md-6 form-group">
@@ -139,7 +151,7 @@
                   </div>
                 
                   <div class="col-md-6 form-group">
-                    <input name="state" class="form-control" type="text" title="State" placeholder="State" value="<?php if (isset($_POST['state'])) { echo $_POST['state']; } ?>">
+                    <input name="state" class="form-control" type="text" title="State" placeholder="State (optional)" value="<?php if (isset($_POST['state'])) { echo $_POST['state']; } ?>">
                   </div>
                 
                   <div class="col-md-6 form-group">
@@ -155,7 +167,7 @@
                   </div>
                 
                   <div class="col-12 form-group">
-                    <input name="address2" class="form-control" type="text" title="Address line 2" placeholder="Address line 2" value="<?php if (isset($_POST['address2'])) { echo $_POST['address2']; } ?>">
+                    <input name="address2" class="form-control" type="text" title="Address line 2 (optional)" placeholder="Address line 2" value="<?php if (isset($_POST['address2'])) { echo $_POST['address2']; } ?>">
                   </div>
                 </div>
 				
@@ -164,8 +176,8 @@
 				<h5 class="mb-6">Special</h5>
 				
 				<div class="form-group custom-control custom-checkbox">
-                  <input id="terms-conditions" name="terms-conditions" type="checkbox" class="custom-control-input" <?php if (isset($_POST['terms-conditions'])) { echo 'checked="checked"'; } ?> required>
-                  <label for="terms-conditions" class="custom-control-label">I agree to the <a class="ml-1" href="#">End-user license agreement</a></label>
+                  <input id="terms-conditions" name="terms-conditions" type="checkbox" class="custom-control-input" <?php if (isset($_POST['terms-conditions'])) { echo 'checked="checked"'; } ?> onchange="EnableProceed()" required>
+                  <label class="custom-control-label">I agree to the <a class="ml-1" href="#">End-user license agreement</a></label>
                 </div>
 
 				<input type="hidden" name="subject" value="Order">
@@ -175,7 +187,7 @@
 				    <a class="btn btn-block btn-secondary" href="../index.html#home"><i class="ti-angle-left fs-9"></i> Return to home</a>
 				  </div>
                   <div class="col-6">
-				    <button class="btn btn-primary btn-block" type="submit">Proceed <i class="ti-angle-right fs-9"></i></button>
+				    <button id="btn-proceed" class="btn btn-primary btn-block" type="submit" disabled>Proceed <i class="ti-angle-right fs-9"></i></button>
 				  </div>
 				</div>
 			  </form>
@@ -213,8 +225,8 @@
 	<div class="col-4 col-xl-2">
 	  <div class="nav flex-column">
 		<a class="nav-link" href="faq.html">FAQ</a>
+		<a class="nav-link" href="terms.html">Terms</a>
 		<a class="nav-link" href="../doc/page_licensing.html">Licensing</a>
-		<a class="nav-link" href="#">EULA</a>
 	  </div>
 	</div>
 
