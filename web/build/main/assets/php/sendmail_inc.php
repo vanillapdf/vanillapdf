@@ -120,7 +120,7 @@ function SendMail() {
     //
     $subject = '';
     if ( isset( $_POST['subject'] ) ) {
-      $subject = 'Vanilla.PDF:' . $_POST['subject'];
+      $subject = 'Vanilla.PDF: ' . $_POST['subject'];
     }
   
     if ($subject == "") {
