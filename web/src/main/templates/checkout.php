@@ -128,7 +128,7 @@
 					
 					$subtotal = $product_price + $support_price;
 					$tax_value = $subtotal * ($tax_percent / 100);
-					$total = $subtotal + $tax_value;
+					$total = $subtotal /*+ $tax_value*/;
 				?>
 				
 				<h5 class="mb-6">Product</h5>
@@ -137,15 +137,11 @@
                       <div>
 					    <p><strong>Product:</strong> <?= $product_name ?></p>
 					    <p><strong>Support:</strong> <?= $support_name ?></p>
-                        <p><strong>Subtotal:</strong></p>
-                        <p><strong>Tax (%<?= $tax_percent ?>):</strong></p>
                       </div>
                   
                       <div class="text-right">
 					    <p><?= $product_price ?>{{ CURRENCY }}</p>
 					    <p><?= $support_price ?>{{ CURRENCY }}</p>
-                        <p><?= $subtotal ?>{{ CURRENCY }}</p>
-                        <p><?= $tax_value ?>{{ CURRENCY }}</p>
                       </div>
                     </div>
                   
@@ -218,10 +214,7 @@
 					
 					<input type="hidden" name="product-price" value="<?= $product_price ?>{{ CURRENCY }}">
 					<input type="hidden" name="support-price" value="<?= $support_price ?>{{ CURRENCY }}">
-					<input type="hidden" name="subtotal" value="<?= $subtotal ?>{{ CURRENCY }}">
-					<input type="hidden" name="tax-percentage" value="<?= $tax_percent ?>%">
-					<input type="hidden" name="tax-value" value="<?= $tax_value ?>{{ CURRENCY }}">
-					<input type="hidden" name="tax-value" value="<?= $total ?>{{ CURRENCY }}">
+					<input type="hidden" name="total-price" value="<?= $total ?>{{ CURRENCY }}">
 					
 					<div class="text-center w-75 d-block mx-auto p-5" data-provide="recaptcha" data-callback="EnableOrder">
 					</div>
