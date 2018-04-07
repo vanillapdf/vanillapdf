@@ -165,37 +165,75 @@
 			    <div class="col-11 col-lg-6 mx-auto">
 				  
 				  <h5 class="mb-6">Billing address</h5>
-				  <div class="cart-price">
-                    <div class="flexbox">
-                      <div>
-					    <p><strong>First name:</strong></p>
-					    <p><strong>Last name:</strong></p>
-                        <p><strong>Company name:</strong></p>
-						<p><strong>Email address:</strong></p>
-						<p><strong>Phone number:</strong></p>
-						<p><strong>Country:</strong></p>
-						<p><strong>State:</strong></p>
-						<p><strong>City:</strong></p>
-						<p><strong>Zip code:</strong></p>
-						<p><strong>Address line 1:</strong></p>
-						<p><strong>Address line 2:</strong></p>
-                      </div>
-                  
-                      <div class="text-right">
-					    <p><?= $_POST['firstname'] ?></p>
-					    <p><?= $_POST['lastname'] ?></p>
-						<p><?= (!empty($_POST['company']) ? $_POST['company'] : 'N/A') ?></p>
-                        <p><?= $_POST['email'] ?></p>
-						<p><?= $_POST['phone'] ?></p>
-						<p><?= $_POST['country'] ?></p>
-						<p><?= (!empty($_POST['state']) ? $_POST['state'] : 'N/A') ?></p>
-						<p><?= $_POST['city'] ?></p>
-						<p><?= $_POST['zipcode'] ?></p>
-						<p><?= $_POST['address'] ?></p>
-						<p><?= (!empty($_POST['address2']) ? $_POST['address2'] : 'N/A') ?></p>
-                      </div>
-                    </div>
-                  </div>
+			      <table class="table table-bordered table-hover">
+                    <thead class="d-none">
+                      <tr>
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>First name</strong></td>
+						<td><?= $_POST['firstname'] ?></td>
+                      </tr>
+					  <tr>
+                        <td><strong>Last name</strong></td>
+						<td><?= $_POST['lastname'] ?></td>
+                      </tr>
+					  <?php 
+					    if (!empty($_POST['company'])) {
+							echo
+							'<tr>
+							  <td><strong>Company name</strong></td>
+							  <td>' . $_POST['company'] . '</td>
+							</tr>';
+						}
+					  ?>
+					  <tr>
+                        <td><strong>Email address</strong></td>
+						<td><?= $_POST['email'] ?></td>
+                      </tr>
+					  <tr>
+                        <td><strong>Phone number</strong></td>
+						<td><?= $_POST['phone'] ?></td>
+                      </tr>
+					  <tr>
+                        <td><strong>Country</strong></td>
+						<td><?= $_POST['country'] ?></td>
+                      </tr>
+					  <?php 
+					    if (!empty($_POST['state'])) {
+							echo
+							'<tr>
+							  <td><strong>State</strong></td>
+							  <td>' . $_POST['state'] . '</td>
+							</tr>';
+						}
+					  ?>
+					  <tr>
+                        <td><strong>City</strong></td>
+						<td><?= $_POST['city'] ?></td>
+                      </tr>
+					  <tr>
+                        <td><strong>Zip code</strong></td>
+						<td><?= $_POST['zipcode'] ?></td>
+                      </tr>
+					  <tr>
+                        <td><strong>Address line 1</strong></td>
+						<td><?= $_POST['address'] ?></td>
+                      </tr>
+					  <?php 
+					    if (!empty($_POST['address2'])) {
+							echo
+							'<tr>
+							  <td><strong>Address line 2</strong></td>
+							  <td>' . $_POST['address2'] . '</td>
+							</tr>';
+						}
+					  ?>
+                    </tbody>
+                  </table>
 				  
 				  <div id="success-message" class="alert alert-success d-on-success" style="display: none">We received your order and will contact you back soon.</div>
 				  
@@ -216,7 +254,7 @@
 					<input type="hidden" name="support-price" value="<?= $support_price ?>{{ CURRENCY }}">
 					<input type="hidden" name="total-price" value="<?= $total ?>{{ CURRENCY }}">
 					
-					<div class="text-center w-75 d-block mx-auto p-5" data-provide="recaptcha" data-callback="EnableOrder">
+					<div id="recaptcha" class="text-center w-75 d-block mx-auto p-5" data-provide="recaptcha" data-callback="EnableOrder">
 					</div>
 				  </form>
                   
