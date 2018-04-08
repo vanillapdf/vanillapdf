@@ -6,6 +6,7 @@
 
     <!-- Styles -->
     {% include 'styles.html' %}
+    <link href="{{ assets_folder }}css/main_page.css" rel="stylesheet">
 
     <!-- Favicons -->
     {% include 'favicons.html' %}
@@ -38,7 +39,7 @@
 
     <!-- Header -->
     <header id="home" class="header text-white h-fullscreen" style="background-image: url({{ assets_folder }}img/bg/5.jpg)">
-      <div class="overlay opacity-50" style="background-color: black"></div>
+      <div class="overlay opacity-30" style="background-color: black"></div>
 
       <div class="container text-center">
 
@@ -452,6 +453,7 @@
 	<script src="{{ assets_folder }}js/price_constants.js"></script>
 	<script src="{{ assets_folder }}js/pricing.js"></script>
 	<script src="{{ assets_folder }}js/subscribe.js"></script>
+	<script src="{{ assets_folder }}js/custom_navbar.js"></script>
 
   </body>
 </html>

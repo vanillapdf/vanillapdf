@@ -8,14 +8,3 @@
 [data-form="custom-mailer"] .d-on-success {
   display: none;
 }
-
-/* Navigation bar */
-.navbar-light[data-navbar="fixed"] {
-	background-color: rgba(0, 0, 0, 0.2);
-}
-
-.navbar-scrolled .navbar-dark[data-navbar="fixed"] {
-	border-bottom-style: solid;
-	border-bottom-width: 1px;
-	border-bottom-color: rgba(0, 0, 0, 0.2);
-}
