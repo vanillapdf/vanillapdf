@@ -41,8 +41,8 @@
         <div class="navbar-left">
   <button class="navbar-toggler" type="button">&#9776;</button>
   <a class="navbar-brand" href="../index.html#home">
-	<img class="logo-dark" src="../assets/img/logo/vanilla.png" alt="logo">
-	<img class="logo-light" src="../assets/img/logo/vanilla.png" alt="logo">
+	<img class="logo-dark" src="../assets/img/logo/vanilla-black.png" alt="Vanilla.PDF logo">
+	<img class="logo-light" src="../assets/img/logo/vanilla-white.png" alt="Vanilla.PDF logo">
   </a>
 </div>
 

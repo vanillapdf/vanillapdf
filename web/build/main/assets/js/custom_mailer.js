@@ -1,5 +1,24 @@
 /* Email validation */
 
+/* Utilities */
+
+function ScrollTo(element) {
+	var elOffset = element.offset().top;
+	var elHeight = element.height();
+	var windowHeight = $(window).height();
+	var offset;
+	
+	if (elHeight < windowHeight) {
+	  offset = elOffset - ((windowHeight / 2) - (elHeight / 2));
+	}
+	else {
+	  offset = elOffset;
+	}
+	
+	$('html, body').animate({scrollTop: offset}, 700);
+}
+
+
 $(function() {
 
   var validEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -16,19 +35,7 @@ $(function() {
   	  if ( email.val().length < 1 || ! validEmail.test( email.val() ) ) {
   		email_form_group.addClass('has-danger');
 		
-		var elOffset = email.offset().top;
-        var elHeight = email.height();
-        var windowHeight = $(window).height();
-        var offset;
-        
-        if (elHeight < windowHeight) {
-          offset = elOffset - ((windowHeight / 2) - (elHeight / 2));
-        }
-        else {
-          offset = elOffset;
-        }
-		
-		$('html, body').animate({scrollTop: offset}, 700);
+		ScrollTo(email);
 
   		return false;
   	  }
