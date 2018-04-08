@@ -35,7 +35,8 @@ generic_context = {
 	'checkout_page': 'checkout.php',
 	'terms_page': 'terms.html',
 	
-	'VERSION': '0.0.1',
+	'LATEST_VERSION': '0.0.1',
+	'PREVIOUS_VERSION': '0.0.0',
 	
 	'CURRENCY': '&euro;',
 	'TAX_PERCENTAGE': 19,
