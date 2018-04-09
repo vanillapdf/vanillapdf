@@ -23,12 +23,25 @@
     <link href="assets/css/page.min.css" rel="stylesheet">
 <link href="assets/css/style.css" rel="stylesheet">
 <link href="assets/css/custom.css" rel="stylesheet">
+    <link href="assets/css/main_page.css" rel="stylesheet">
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png">
 <link rel="shortcut icon" href="assets/img/favicon.ico">
+
+    <!-- Google Analytics -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-106797397-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-106797397-1');
+</script>
+
   </head>
 
   <body>
@@ -64,7 +77,7 @@
 
     <!-- Header -->
     <header id="home" class="header text-white h-fullscreen" style="background-image: url(assets/img/bg/5.jpg)">
-      <div class="overlay opacity-50" style="background-color: black"></div>
+      <div class="overlay opacity-30" style="background-color: black"></div>
 
       <div class="container text-center">
 
@@ -78,8 +91,6 @@
 
             <p>
               <a class="btn btn-xl btn-round btn-outline-light w-250" href="#section-features">Explore</a>
-              <br>
-              <span class="opacity-60 small-3">Currently v0.0.1</span>
             </p>
 
           </div>
@@ -112,7 +123,7 @@
             </div>
 
 		    <div class="col-md-5 text-center">
-              <img src="assets/img/icon/install.png" alt="...">
+              <i class="fa fa-wrench fa-10x"></i>
             </div>
           </div>
 
@@ -128,7 +139,7 @@
             </div>
 
             <div class="col-md-5 order-md-first text-center">
-              <img src="assets/img/icon/control.png" alt="...">
+              <i class="fa fa-sliders fa-10x"></i>
             </div>
           </div>
 
@@ -143,7 +154,7 @@
             </div>
 
             <div class="col-md-5 text-center">
-              <img src="assets/img/icon/quick.png" alt="...">
+              <i class="fa fa-tachometer fa-10x"></i>
             </div>
           </div>
 
@@ -159,7 +170,7 @@
             </div>
 
             <div class="col-md-5 order-md-first text-center">
-              <img src="assets/img/icon/manual.png" alt="...">
+              <i class="fa fa-info fa-10x"></i>
             </div>
           </div>
 
@@ -223,9 +234,9 @@
 		  
 		  <div class="row">
 		  	<div class="mx-auto">
-              <h5>Still missing something?</h5>
+              <h5>Missing something?</h5>
 			  <div class="pt-4">
-			    <a class="btn btn-lg btn-round btn-secondary" href="page/contact.html#contact">Contact us</a>
+			    <a class="btn btn-lg btn-round btn-secondary" href="page/contact.php?section=section-contact">Contact us</a>
 			  </div>
             </div>
 		  </div>
@@ -251,7 +262,7 @@
 			<div class="col-md-4 mx-auto">
               <div class="border rounded">
                 <div class="text-center px-4 py-6">
-                  <p class="mb-7"><img src="assets/img/icon/evaluation.png" alt="..."></p>
+                  <p class="mb-7"><i class="fa fa-search lead-8 text-dark"></i></p>
                   <h6 class="text-uppercase fw-500 ls-2 my-4">Evaluation</h6>
                   <p class="lead">Free license only for evaluation purposes</p>
                   <h2 class="lead-8 fw-200 mb-0">0&euro;</h2>
@@ -281,7 +292,7 @@
 			<div class="col-md-4 mx-auto">
               <div class="border rounded">
                 <div class="text-center px-4 py-6">
-                  <p class="mb-7"><img src="assets/img/icon/personal.png" alt="..."></p>
+                  <p class="mb-7"><i class="fa fa-user lead-8 text-dark"></i></p>
                   <h6 class="text-uppercase fw-500 ls-2 my-4">Personal</h6>
                   <p class="lead">Personal license for creating private tools</p>
                   <h2 id="personal-price" class="lead-8 fw-200 mb-0">498&euro;</h2>
@@ -319,7 +330,7 @@
 			<div class="col-md-4 mx-auto">
 			  <div class="border rounded">
 				<div class="text-center px-4 py-6">
-				  <p class="mb-7"><img src="assets/img/icon/commercial.png" alt="..."></p>
+				  <p class="mb-7"><i class="fa fa-line-chart lead-8 text-dark"></i></p>
 				  <h6 class="text-uppercase fw-500 ls-2 my-4">Commercial</h6>
 				  <p class="lead">Commercial license for creating public products</p>
 				  <h2 id="commercial-price" class="lead-8 fw-200 mb-0">1998&euro;</h2>
@@ -358,9 +369,9 @@
 
 		  <div class="row">
 		    <div class="mx-auto">
-		  	  <h5>Still too expensive?</h5>
+		  	  <h5>Too expensive?</h5>
 		  	  <div class="py-4">
-		  	    <a class="btn btn-lg btn-round btn-secondary" href="page/contact.html#section-discount">Request a discount</a>
+		  	    <a class="btn btn-lg btn-round btn-secondary" href="page/contact.php?section=section-discount">Request a discount</a>
 		  	  </div>
 		    </div>
 		  </div>
@@ -444,11 +455,13 @@
 				  
 				  <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups -->
 				  <input type="text" name="b_50f1056f5b063f4f6212a7789_f584a2f38b" tabindex="-1" value="" style="position: absolute; left: -5000px;" aria-hidden="true">
-
+				  
+				  <input id="mce-group[4397]-4397-0" name="group[4397][2]" type="hidden" checked> <!-- General -->
+				  <input id="mce-group[4397]-4397-1" name="group[4397][1]" type="hidden" checked> <!-- New versions -->
+				  
                   <input type="email" name="EMAIL" class="form-control" placeholder="Email Address">
-                  <span class="input-group-append">
-                  </span>
-                    <button class="btn btn-secondary">Subscribe</button>
+                  <span class="input-group-append"></span>
+                  <button class="btn btn-secondary">Subscribe</button>
                 </div>
               </form>
             </div>
@@ -481,7 +494,7 @@
 	<div class="col-4 col-xl-2 offset-xl-1">
 	  <div class="nav flex-column">
 		<a class="nav-link" href="page/about.html">About</a>
-		<a class="nav-link" href="page/contact.html">Contact</a>
+		<a class="nav-link" href="page/contact.php">Contact</a>
 		<a class="nav-link" href="page/download.html">Download</a>
 	  </div>
 	</div>
@@ -517,6 +530,7 @@
 	<script src="assets/js/price_constants.js"></script>
 	<script src="assets/js/pricing.js"></script>
 	<script src="assets/js/subscribe.js"></script>
+	<script src="assets/js/custom_navbar.js"></script>
 
   </body>
 </html>

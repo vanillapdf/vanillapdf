@@ -375,7 +375,7 @@
 	<div class="col-4 col-xl-2 offset-xl-1">
 	  <div class="nav flex-column">
 		<a class="nav-link" href="about.html">About</a>
-		<a class="nav-link" href="contact.html">Contact</a>
+		<a class="nav-link" href="contact.php">Contact</a>
 		<a class="nav-link" href="download.html">Download</a>
 	  </div>
 	</div>
@@ -407,23 +407,30 @@
 	<script src="../assets/js/custom_mailer.js"></script>
 	
 	<?php
-		var fragment = parse_url($_SERVER['REQUEST_URI'], PHP_URL_FRAGMENT);
-		var is_discount = (fragment == "section-discount");
-		var is_report = (fragment == "section-report");
-		var is_contact = (fragment == "section-report") || (!is_discount && !is_report);
+		$section = null;
+		if (isset($_GET['section'])) {
+			$section = $_GET['section'];
+		}
+		
+		$is_discount = ($section == "section-discount");
+		$is_report = ($section == "section-report");
+		$is_contact = ($section == "section-contact") || (!$is_discount && !$is_report);
 		
 		echo '<script type="text/javascript">';
 		
-		if (is_contact) {
-			echo 'GeneralQuestionClick();';
+		if ($is_contact) {
+			echo '$("#section-report").hide();';
+			echo '$("#section-discount").hide();';
 		}
 		
-		if (is_discount) {
-			echo 'DiscountClick();';
+		if ($is_discount) {
+			echo '$("#section-contact").hide();';
+			echo '$("#section-report").hide();';
 		}
 		
-		if (is_report) {
-			echo 'ReportBugClick();';
+		if ($is_report) {
+			echo '$("#section-contact").hide();';
+			echo '$("#section-discount").hide();';
 		}
 		
 		echo '</script>';

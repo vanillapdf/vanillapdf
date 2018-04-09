@@ -29,6 +29,18 @@
 <link rel="icon" type="image/png" sizes="16x16" href="../assets/img/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32x32.png">
 <link rel="shortcut icon" href="../assets/img/favicon.ico">
+
+    <!-- Google Analytics -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-106797397-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-106797397-1');
+</script>
+
   </head>
 
   <body>
@@ -217,7 +229,7 @@
 	<div class="col-4 col-xl-2 offset-xl-1">
 	  <div class="nav flex-column">
 		<a class="nav-link" href="about.html">About</a>
-		<a class="nav-link" href="contact.html">Contact</a>
+		<a class="nav-link" href="contact.php">Contact</a>
 		<a class="nav-link" href="download.html">Download</a>
 	  </div>
 	</div>
