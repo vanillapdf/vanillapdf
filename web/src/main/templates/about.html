@@ -9,6 +9,9 @@
 
     <!-- Favicons -->
     {% include 'favicons.html' %}
+
+    <!-- Google Analytics -->
+    {% include 'google_analytics.html' %}
   </head>
 
   <body>
