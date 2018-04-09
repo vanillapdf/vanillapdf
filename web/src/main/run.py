@@ -27,7 +27,7 @@ generic_context = {
 	'pages_folder': '',
 	'doc_folder': '../doc/',
 	'assets_folder': '../assets/',
-	'contact_page': 'contact.html',
+	'contact_page': 'contact.php',
 	'about_page': 'about.html',
 	'download_page': 'download.html',
 	'faq_page': 'faq.html',
@@ -82,7 +82,7 @@ index_file = 'index.html'
 
 page_files = [
 	'about.html',
-	'contact.html',
+	'contact.php',
 	'download.html',
 	'faq.html',
 	'order.php',
