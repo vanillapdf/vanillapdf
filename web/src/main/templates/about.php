@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Meta tags -->
+    {% include 'meta.html' %}
+
+    <!-- Styles -->
+    {% include 'styles.html' %}
+
+    <!-- Favicons -->
+    {% include 'favicons.html' %}
+
+    <!-- Google Analytics -->
+    {% include 'google_analytics.html' %}
+  </head>
+
+  <body>
+
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark" data-navbar="fixed">
+      <div class="container">
+
+        {% include 'navbar-left.html' %}
+
+        <section class="navbar-mobile">
+          <nav class="nav nav-navbar ml-auto">
+            <a class="nav-link" href="#home">Home</a>
+            <a class="nav-link" href="#footer">References</a>
+          </nav>
+        </section>
+
+      </div>
+    </nav><!-- /.navbar -->
+
+
+    <!-- Header -->
+    <header id="home" class="header pt-10 pb-0">
+      <div class="container text-center">
+		<img src="{{ assets_folder }}img/logo/vanilla-gold-large.png" alt="Vanilla.PDF gold large" width="450">
+        <p class="lead-2 mt-6">Brief bio about company history, project aim and future expansion</p>
+      </div>
+    </header><!-- /.header -->
+
+
+    <!-- Main Content -->
+    <main class="main-content">
+	
+	  <!--
+      |‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒
+      | Our Company
+      |‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒
+      !-->
+      <section id="section-company" class="section">
+      <div class="container">
+        <div class="row gap-y">
+          <div class="col-md-6">
+		    <h2>Our company</h2>
+			<p>This project started somewhere in the late 2013 as a hobby by our supreme leader <a href="mailto:jzikmund@vanillapdf.com">Juraj Zikmund</a>.</p>
+			
+			<blockquote class="blockquote lead-1 bg-gray p-5">
+              <p>The reason I finally decided to create my own tool, was that all of the other PDF toolkits were either insufficient or just way too expensive. It was a clear sign there is a room for improvement.</p>
+			  <p>It was a lot of work and sleepless nights in addition to a full-time job, so the progress took far more than it should. After a year or two I was able to create basic tool to fix broken files<br>- at that moment I've realized <strong>"Dude! This thing works!"</strong>.</p>
+			  <p>I didn't want to keep a working tool just for myself, so I've started to very slowly shape it towards a public release. The hardest decision was how and when release the project. A lot of effort was put into guides, tutorial, API reference, website to deliver a high-quality product, so I hope it will serve a purpose.</p>
+              <footer>Juraj Zikmund</footer>
+            </blockquote>
+			
+            <p>Few years later in 2018 we founded Vanilla.PDF Labs with a mission to release, enhance and support this project.</p>
+          </div>
+		  
+		  <div class="col-md-5 ml-auto">
+            <h2>Our Mission</h2>
+            <p>We thrive on providing our customers the best possible solutions and services. Using our expertise wisely, carefully evaluating available options and slowly moving towards our precious dreams. If we won't start making world a better place, then who will?</p>
+			
+			<br>
+			
+			<p class="lead">The goal is set and we will carry on by:</p>
+
+            <p>
+              <i class="ti-check text-success mr-2"></i>
+              <span> Creating new outstanding utilities</span>
+            </p>
+			
+			<p>
+              <i class="ti-check text-success mr-2"></i>
+              <span> Deliver frequent and high-quality updates</span>
+            </p>
+          
+            <p>
+              <i class="ti-check text-success mr-2"></i>
+              <span> Support our customers</span>
+            </p>
+          
+            <p>
+              <i class="ti-check text-success mr-2"></i>
+              <span> Expand our product based on your feedback</span>
+            </p>
+			
+			<p>
+              <i class="ti-check text-success mr-2"></i>
+              <span> Keeping it up!</span>
+            </p>
+          </div>
+
+        </div>
+      </div>
+      </section>
+	  
+	  <!--
+      |‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒
+      | Numbers
+      |‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒
+      !-->
+	  
+	  <?php
+		$start = date_create('2013-12-01');
+		$end = date_create();
+		$diff = date_diff($start, $end);
+	  ?>
+
+      <section class="section bg-gray">
+        <div class="container">
+          <div class="row gap-y text-center">
+
+            <div class="col-md-6">
+              <p class="small text-uppercase ls-2">Sleepless nights</p>
+              <p class="lead-8 lh-1 fw-700" data-provide="countup" data-from="0" data-to="<?= $diff->days ?>"></p>
+            </div>
+
+            <div class="col-md-6">
+              <p class="small text-uppercase ls-2">Lines of code</p>
+              <p class="lead-8 lh-1 fw-700" data-provide="countup" data-from="0" data-to="33160"></p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!--
+      |‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒
+      | Our Location
+      |‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒
+      !-->
+      <section id="section-location" class="section">
+        <div class="container">
+		
+		  <header class="section-header">
+            <h2>Location</h2>
+			<p class="lead">Our head office is located in capital city of Slovakia, in the heart of the central Europe</p>
+          </header>
+
+          <div class="row gap-y">
+            <div class="col-md-5">
+			  <div class="bg-gray h-full p-5">
+			      <p class="lead">Vanilla.PDF Labs s.r.o.<br>Ul. 29. Augusta 2281/28<br>Bratislava, Slovakia</p>
+			      
+			      <div>
+			      <span class="d-inline-block text-lighter" title="Email">Email:</span>
+			      <span class="small-1"><a href="mailto:info@vanillapdf.com">info@vanillapdf.com</a></span>
+			      </div>
+			      
+			      <div>
+			      <span class="d-inline-block text-lighter" title="Phone">Phone:</span>
+			      <span class="small-1">+421 903 245 072</span>
+			      </div>
+			  </div>
+            </div>
+			
+			<div class="col-md-6 ml-auto">
+              <div class="h-100" style="min-height: 300px" data-provide="map" data-lat="48.146" data-lng="17.122" data-marker-lat="48.146" data-marker-lng="17.122" data-info="&lt;strong&gt;Head office&lt;/strong&gt;&lt;br&gt;Ul. 29. Augusta 2281/28, Bratislava, Slovakia" data-style="light"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main><!-- /.main-content -->
+
+
+	<!-- Footer -->
+	<footer id="footer" class="footer py-7">
+		{% include 'footer.html' %}
+	</footer><!-- /.footer -->
+
+
+    <!-- Scripts -->
+    {% include 'scripts.html' %}
+
+  </body>
+</html>
