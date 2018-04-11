@@ -114,7 +114,7 @@
 					}
 					
 					if ($_POST['product'] == 'commercial-license') {
-						$product_name = 'Vanilla.PDF Commercial license';
+						$product_name = 'Vanilla.PDF Commercial OEM license';
 						$product_price = 1499;
 					}
 					
@@ -334,7 +334,7 @@
 
 	<div class="col-4 col-xl-2 offset-xl-1">
 	  <div class="nav flex-column">
-		<a class="nav-link" href="about.html">About</a>
+		<a class="nav-link" href="about.php">About</a>
 		<a class="nav-link" href="contact.php">Contact</a>
 		<a class="nav-link" href="download.html">Download</a>
 	  </div>

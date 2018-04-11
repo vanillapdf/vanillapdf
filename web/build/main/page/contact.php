@@ -73,7 +73,7 @@
     <!-- Header -->
     <header id="home" class="header pt-10 pb-0">
       <div class="container text-center">
-        <h1 class="display-4">Choose the reason, why you would like to contact us</h1>
+        <h1 class="display-4">Let's Get In Touch</h1>
         <p class="lead-2 mt-6">Help us separate the issues, so we can prioritize the most critical problems</p>
       </div>
     </header><!-- /.header -->
@@ -110,7 +110,7 @@
             <div class="col-lg-4 d-flex">
               <a class="card card-body border text-center hover-shadow-6 text-default" href="#" onclick="DiscountClick()">
                 <p class="my-5"><i class="fa fa-percent lead-8 text-lighter"></i></p>
-                <h5>Discount</h5>
+                <h5>Request a discount</h5>
               </a>
             </div>
           </div>
@@ -126,9 +126,9 @@
 		<div class="container">
 		
 		  <header class="section-header">
-            <h2>Let's Get In Touch</h2>
+            <h2>Generic question</h2>
             <hr>
-			<p class="lead">Here are the ways you can contact us with any questions you have</p>
+			<p class="lead">Let us know in case of any questions. We are here to help</p>
           </header>
 
 		  <div class="row gap-y">
@@ -165,25 +165,26 @@
 			</div>
 
 
+			<!-- Contact address -->
 			<div class="col-md-5 ml-auto">
-			  <div class="bg-gray h-full p-5">
-				<p>We try to answer all enquiries, but sometimes we get overwhelmed, so please be patient.</p>
-				
-				<hr class="w-20 my-6">
-				
-				<p class="lead">Vanilla.PDF Labs s.r.o.<br>Ul. 29. Augusta 2281/28<br>Bratislava, Slovakia</p>
-				
-				<div>
-				  <span class="d-inline-block text-lighter" title="Email">Email:</span>
-				  <span class="small-1"><a href="mailto:info@vanillapdf.com">info@vanillapdf.com</a></span>
-				</div>
-				
-				<div>
-                  <span class="d-inline-block text-lighter" title="Phone">Phone:</span>
-                  <span class="small-1">+421 903 245 072</span>
-                </div>
-			  </div>
-			</div>
+  <div class="bg-gray h-full p-5">
+	<p>We try to answer all enquiries, but sometimes we get overwhelmed, so please be patient.</p>
+	
+	<hr class="w-20 my-6">
+	
+	<p class="lead">Vanilla.PDF Labs s.r.o.<br>Ul. 29. Augusta 2281/28<br>Bratislava, Slovakia</p>
+	
+	<div>
+	  <span class="d-inline-block text-lighter" title="Email">Email:</span>
+	  <span class="small-1"><a href="mailto:info@vanillapdf.com">info@vanillapdf.com</a></span>
+	</div>
+	
+	<div>
+	  <span class="d-inline-block text-lighter" title="Phone">Phone:</span>
+	  <span class="small-1">+421 903 245 072</span>
+	</div>
+  </div>
+</div>
 		  </div>
 
 
@@ -201,11 +202,11 @@
 		  <header class="section-header">
             <h2>Request a discount</h2>
             <hr>
-			<p class="lead">Our prices might be costly, so we may create a special offer tailored for you!</p>
+			<p class="lead">Our prices might be costly, but we might create a special offer tailored for you!</p>
           </header>
 
 		  <div class="row gap-y">
-			<div class="col-11 col-lg-6 mx-auto">
+			<div class="col-md-6">
 
 			  <form action="../assets/php/sendmail.php" method="POST" data-form="custom-mailer">
 				<div class="alert alert-success d-on-success">We received your message and will contact you back soon.</div>
@@ -266,6 +267,27 @@
 			  </form>
 
 			</div>
+			
+			<!-- Contact address -->
+			<div class="col-md-5 ml-auto">
+  <div class="bg-gray h-full p-5">
+	<p>We try to answer all enquiries, but sometimes we get overwhelmed, so please be patient.</p>
+	
+	<hr class="w-20 my-6">
+	
+	<p class="lead">Vanilla.PDF Labs s.r.o.<br>Ul. 29. Augusta 2281/28<br>Bratislava, Slovakia</p>
+	
+	<div>
+	  <span class="d-inline-block text-lighter" title="Email">Email:</span>
+	  <span class="small-1"><a href="mailto:info@vanillapdf.com">info@vanillapdf.com</a></span>
+	</div>
+	
+	<div>
+	  <span class="d-inline-block text-lighter" title="Phone">Phone:</span>
+	  <span class="small-1">+421 903 245 072</span>
+	</div>
+  </div>
+</div>
 		  </div>
 
 
@@ -283,11 +305,11 @@
 		  <header class="section-header">
             <h2>Report a bug</h2>
             <hr>
-			<p class="lead">Sometimes there is situa</p>
+			<p class="lead">When an information is missing, obsolete or simply anything does not behave as expected, please let us know</p>
           </header>
 
 		  <div class="row gap-y">
-			<div class="col-11 col-lg-6 mx-auto">
+			<div class="col-md-6">
 
 			  <form action="../assets/php/sendmail.php" method="POST" data-form="custom-mailer">
 				<div class="alert alert-success d-on-success">We received your message and will contact you back soon.</div>
@@ -350,6 +372,27 @@
 			  </form>
 
 			</div>
+			
+			<!-- Contact address -->
+			<div class="col-md-5 ml-auto">
+  <div class="bg-gray h-full p-5">
+	<p>We try to answer all enquiries, but sometimes we get overwhelmed, so please be patient.</p>
+	
+	<hr class="w-20 my-6">
+	
+	<p class="lead">Vanilla.PDF Labs s.r.o.<br>Ul. 29. Augusta 2281/28<br>Bratislava, Slovakia</p>
+	
+	<div>
+	  <span class="d-inline-block text-lighter" title="Email">Email:</span>
+	  <span class="small-1"><a href="mailto:info@vanillapdf.com">info@vanillapdf.com</a></span>
+	</div>
+	
+	<div>
+	  <span class="d-inline-block text-lighter" title="Phone">Phone:</span>
+	  <span class="small-1">+421 903 245 072</span>
+	</div>
+  </div>
+</div>
 		  </div>
 
 
@@ -374,7 +417,7 @@
 
 	<div class="col-4 col-xl-2 offset-xl-1">
 	  <div class="nav flex-column">
-		<a class="nav-link" href="about.html">About</a>
+		<a class="nav-link" href="about.php">About</a>
 		<a class="nav-link" href="contact.php">Contact</a>
 		<a class="nav-link" href="download.html">Download</a>
 	  </div>

@@ -111,7 +111,7 @@
 				<div class="form-group">
 				  <select id="order-product" name="product" class="form-control" onchange="ProductChanged();">
 				    <option value="personal-license" <?php if ($_POST['product'] == 'personal-license') { echo 'selected="selected"'; } ?> >Vanilla.PDF Personal license</option>
-				    <option value="commercial-license" <?php if ($_POST['product'] == 'commercial-license') { echo 'selected="selected"'; } ?> >Vanilla.PDF Commercial license</option>
+				    <option value="commercial-license" <?php if ($_POST['product'] == 'commercial-license') { echo 'selected="selected"'; } ?> >Vanilla.PDF Commercial OEM license</option>
 					<option value="personal-support" <?php if ($_POST['product'] == 'personal-support') { echo 'selected="selected"'; } ?> >Vanilla.PDF Extended personal support</option>
 					<option value="commercial-support" <?php if ($_POST['product'] == 'commercial-support') { echo 'selected="selected"'; } ?> >Vanilla.PDF Extended commercial support</option>
 				  </select>
@@ -228,7 +228,7 @@
 
 	<div class="col-4 col-xl-2 offset-xl-1">
 	  <div class="nav flex-column">
-		<a class="nav-link" href="about.html">About</a>
+		<a class="nav-link" href="about.php">About</a>
 		<a class="nav-link" href="contact.php">Contact</a>
 		<a class="nav-link" href="download.html">Download</a>
 	  </div>
