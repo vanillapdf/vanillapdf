@@ -19,7 +19,7 @@ namespace LicenseGenerator
         const int LICENSE_VERSION_MAJOR = 1;
         const int LICENSE_VERSION_MINOR = 0;
         const string MASTER_CERTIFICATE_NAME = "Vanilla.PDF_LicenseGenerator.master.crt";
-        const string CERTIFICATE_THUMBPRINT = "7E87A9B62117D43C7A84D17025292708125EBC74";
+        const string CERTIFICATE_THUMBPRINT = "F3D7484309E47CE7733D0C49D20E22A3454B5F20";
         //const string CERTIFICATE_THUMBPRINT = "51CA45BD73DB6DB35D41B63D56BB81A1FAEED763";
 
         const string DIGEST_METHOD_URI = "http://www.w3.org/2001/04/xmlenc#sha256";
