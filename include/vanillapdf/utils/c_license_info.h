@@ -41,6 +41,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION LicenseInfo_IsValid(boolean_type* result);
 
+	/**
+	* \brief Determine whether the current license is temporary
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION LicenseInfo_IsTemporary(boolean_type* result);
+
 	/** @} */
 
 #ifdef __cplusplus

@@ -26,6 +26,7 @@ namespace LicenseGenerator
         const string SIGNATURE_METHOD_URI = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
 
         const string HASH_ALGORITHM = "SHA256";
+        const string DATETIME_FORMAT = "yyyy-MM-dd";
 
         public MainForm()
         {
@@ -43,8 +44,11 @@ namespace LicenseGenerator
             string owner = OwnerText.Text;
             string note = NoteText.Text;
             string serial = SerialText.Text;
-            int years = Convert.ToInt32(ExpirationYears.Value);
-            string validUntil = DateTimeOffset.Now.AddYears(years).ToString("yyyy-MM-dd HH:mm:ssZ", CultureInfo.InvariantCulture);
+            int updatesYears = Convert.ToInt32(UpdatesYears.Value);
+            string updatesUntil = DateTimeOffset.Now.AddYears(updatesYears).ToString(DATETIME_FORMAT, CultureInfo.InvariantCulture);
+
+            int temporaryDays = Convert.ToInt32(TemporaryDays.Value);
+            string temporaryExpiration = DateTimeOffset.Now.AddDays(temporaryDays).ToString(DATETIME_FORMAT, CultureInfo.InvariantCulture);
 
             if (String.IsNullOrEmpty(owner)) {
                 MessageBox.Show("Owner cannot be empty");
@@ -71,13 +75,21 @@ namespace LicenseGenerator
                 data.Owner = owner;
                 data.Note = note;
                 data.Serial = serial;
-                data.Expiration = validUntil;
+                data.Expiration = updatesUntil;
+
+                if (TemporaryCheckbox.Checked) {
+                    data.TemporaryExpiration = temporaryExpiration;
+                }
 
                 StringBuilder signedDataBuilder = new StringBuilder();
                 signedDataBuilder.Append(owner);
                 signedDataBuilder.Append(note);
                 signedDataBuilder.Append(serial);
-                signedDataBuilder.Append(validUntil);
+                signedDataBuilder.Append(updatesUntil);
+
+                if (TemporaryCheckbox.Checked) {
+                    signedDataBuilder.Append(temporaryExpiration);
+                }
 
                 string signedDataString = signedDataBuilder.ToString();
                 byte[] signedData = Encoding.UTF8.GetBytes(signedDataString);
@@ -96,7 +108,10 @@ namespace LicenseGenerator
                 license.Data = data;
                 license.Signature = Convert.ToBase64String(signature);
 
+                X509Certificate2 master = GetMasterCertificate();
+
                 X509Chain chain = new X509Chain();
+                chain.ChainPolicy.ExtraStore.Add(master);
                 chain.Build(certificates[0]);
 
                 license.Certificates = new List<string>();
@@ -113,7 +128,7 @@ namespace LicenseGenerator
                     license.Certificates.Add(builder.ToString());
                 }
 
-                string licenseString = JsonConvert.SerializeObject(license, Newtonsoft.Json.Formatting.Indented);
+                string licenseString = JsonConvert.SerializeObject(license, Newtonsoft.Json.Formatting.Indented , new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
                 byte[] licenseBytes = Encoding.UTF8.GetBytes(licenseString);
 
                 File.WriteAllBytes(licenseFile, licenseBytes);
@@ -130,7 +145,7 @@ namespace LicenseGenerator
         {
             string owner = OwnerText.Text;
             string serial = SerialText.Text;
-            int years = Convert.ToInt32(ExpirationYears.Value);
+            int years = Convert.ToInt32(UpdatesYears.Value);
             string validUntil = DateTimeOffset.Now.AddYears(years).ToString("R");
 
             if (String.IsNullOrEmpty(owner)) {
@@ -311,6 +326,11 @@ namespace LicenseGenerator
         private void UpdateLicenseVersion()
         {
             VersionText.Text = $"{LICENSE_VERSION_MAJOR}.{LICENSE_VERSION_MINOR}";
+        }
+
+        private void TemporaryCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            TemporaryDays.Enabled = TemporaryCheckbox.Checked;
         }
     }
 }

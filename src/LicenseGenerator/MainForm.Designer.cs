@@ -39,9 +39,14 @@
             this.VersionText = new System.Windows.Forms.TextBox();
             this.OEMCheck = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.ExpirationYears = new System.Windows.Forms.NumericUpDown();
+            this.UpdatesYears = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.ExpirationYears)).BeginInit();
+            this.label8 = new System.Windows.Forms.Label();
+            this.TemporaryDays = new System.Windows.Forms.NumericUpDown();
+            this.label9 = new System.Windows.Forms.Label();
+            this.TemporaryCheckbox = new System.Windows.Forms.CheckBox();
+            ((System.ComponentModel.ISupportInitialize)(this.UpdatesYears)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TemporaryDays)).BeginInit();
             this.SuspendLayout();
             // 
             // GenerateButton
@@ -97,14 +102,14 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(12, 93);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(40, 13);
+            this.label4.Size = new System.Drawing.Size(47, 13);
             this.label4.TabIndex = 8;
-            this.label4.Text = "Validity";
+            this.label4.Text = "Updates";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 119);
+            this.label5.Location = new System.Drawing.Point(12, 157);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(33, 13);
             this.label5.TabIndex = 10;
@@ -115,7 +120,7 @@
             this.SerialText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.SerialText.Enabled = false;
-            this.SerialText.Location = new System.Drawing.Point(89, 116);
+            this.SerialText.Location = new System.Drawing.Point(89, 154);
             this.SerialText.Name = "SerialText";
             this.SerialText.Size = new System.Drawing.Size(578, 20);
             this.SerialText.TabIndex = 9;
@@ -123,7 +128,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 145);
+            this.label6.Location = new System.Drawing.Point(12, 183);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(42, 13);
             this.label6.TabIndex = 12;
@@ -134,7 +139,7 @@
             this.VersionText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.VersionText.Enabled = false;
-            this.VersionText.Location = new System.Drawing.Point(89, 142);
+            this.VersionText.Location = new System.Drawing.Point(89, 180);
             this.VersionText.Name = "VersionText";
             this.VersionText.Size = new System.Drawing.Size(578, 20);
             this.VersionText.TabIndex = 11;
@@ -153,17 +158,17 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(12, 65);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(31, 13);
+            this.label3.Size = new System.Drawing.Size(61, 13);
             this.label3.TabIndex = 14;
-            this.label3.Text = "OEM";
+            this.label3.Text = "Commercial";
             // 
-            // ExpirationYears
+            // UpdatesYears
             // 
-            this.ExpirationYears.Location = new System.Drawing.Point(89, 91);
-            this.ExpirationYears.Name = "ExpirationYears";
-            this.ExpirationYears.Size = new System.Drawing.Size(61, 20);
-            this.ExpirationYears.TabIndex = 15;
-            this.ExpirationYears.Value = new decimal(new int[] {
+            this.UpdatesYears.Location = new System.Drawing.Point(89, 91);
+            this.UpdatesYears.Name = "UpdatesYears";
+            this.UpdatesYears.Size = new System.Drawing.Size(61, 20);
+            this.UpdatesYears.TabIndex = 15;
+            this.UpdatesYears.Value = new decimal(new int[] {
             1,
             0,
             0,
@@ -178,13 +183,58 @@
             this.label7.TabIndex = 16;
             this.label7.Text = "years";
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(177, 122);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(29, 13);
+            this.label8.TabIndex = 19;
+            this.label8.Text = "days";
+            // 
+            // TemporaryDays
+            // 
+            this.TemporaryDays.Enabled = false;
+            this.TemporaryDays.Location = new System.Drawing.Point(110, 120);
+            this.TemporaryDays.Name = "TemporaryDays";
+            this.TemporaryDays.Size = new System.Drawing.Size(61, 20);
+            this.TemporaryDays.TabIndex = 18;
+            this.TemporaryDays.Value = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(12, 123);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(57, 13);
+            this.label9.TabIndex = 17;
+            this.label9.Text = "Temporary";
+            // 
+            // TemporaryCheckbox
+            // 
+            this.TemporaryCheckbox.AutoSize = true;
+            this.TemporaryCheckbox.Location = new System.Drawing.Point(89, 124);
+            this.TemporaryCheckbox.Name = "TemporaryCheckbox";
+            this.TemporaryCheckbox.Size = new System.Drawing.Size(15, 14);
+            this.TemporaryCheckbox.TabIndex = 20;
+            this.TemporaryCheckbox.UseVisualStyleBackColor = true;
+            this.TemporaryCheckbox.CheckedChanged += new System.EventHandler(this.TemporaryCheckbox_CheckedChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(679, 509);
+            this.Controls.Add(this.TemporaryCheckbox);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.TemporaryDays);
+            this.Controls.Add(this.label9);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.ExpirationYears);
+            this.Controls.Add(this.UpdatesYears);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.OEMCheck);
             this.Controls.Add(this.label6);
@@ -200,7 +250,8 @@
             this.Name = "MainForm";
             this.Text = "MainForm";
             this.Load += new System.EventHandler(this.MainForm_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.ExpirationYears)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.UpdatesYears)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TemporaryDays)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -220,8 +271,12 @@
         private System.Windows.Forms.TextBox VersionText;
         private System.Windows.Forms.CheckBox OEMCheck;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.NumericUpDown ExpirationYears;
+        private System.Windows.Forms.NumericUpDown UpdatesYears;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.NumericUpDown TemporaryDays;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.CheckBox TemporaryCheckbox;
     }
 }
 

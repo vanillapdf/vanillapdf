@@ -14,8 +14,11 @@ namespace LicenseGenerator
         [JsonProperty("serial")]
         public string Serial { get; set; }
 
-        [JsonProperty("expiration")]
+        [JsonProperty("updates_expiration")]
         public string Expiration { get; set; }
+
+        [JsonProperty("temporary_expiration")]
+        public string TemporaryExpiration { get; set; }
     }
 
     class License

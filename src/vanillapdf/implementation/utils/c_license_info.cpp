@@ -28,6 +28,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION LicenseInfo_SetLicenseBuffer(Buffer
 VANILLAPDF_API error_type CALLING_CONVENTION LicenseInfo_IsValid(boolean_type* result) {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	*result = LicenseInfo::IsValid();
-	return VANILLAPDF_ERROR_SUCCESS;
+	try {
+		*result = LicenseInfo::IsValid();
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION LicenseInfo_IsTemporary(boolean_type* result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		*result = LicenseInfo::IsTemporary();
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
 }

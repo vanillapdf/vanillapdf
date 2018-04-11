@@ -20,17 +20,19 @@ namespace vanillapdf {
 
 using namespace nlohmann;
 
-static const char VERSION_NODE[] =			"version";
-static const char DATA_NODE[] =				"data";
-static const char OWNER_NODE[] =			"owner";
-static const char NOTE_NODE[] =				"note";
-static const char SERIAL_NODE[] =			"serial";
-static const char EXPIRATION_NODE[] =		"expiration";
-static const char SIGNATURE_NODE[] =		"signature";
-static const char CERTIFICATES_NODE[] =		"certificates";
+static const char VERSION_NODE[] =				"version";
+static const char DATA_NODE[] =					"data";
+static const char OWNER_NODE[] =				"owner";
+static const char NOTE_NODE[] =					"note";
+static const char SERIAL_NODE[] =				"serial";
+static const char UPDATES_EXPIRATION_NODE[] =	"updates_expiration";
+static const char TEMPORARY_EXPIRATION_NODE[] =	"temporary_expiration";
+static const char SIGNATURE_NODE[] =			"signature";
+static const char CERTIFICATES_NODE[] =			"certificates";
 
 // Initialize static members
-bool LicenseInfo::m_valid = false;
+bool LicenseInfo::m_update_valid = false;
+std::string LicenseInfo::m_temporary_expiration;
 
 static X509* LoadCertificate(const std::string& certificate) {
 	auto signing_certificate_bio = BIO_new(BIO_s_mem());
@@ -99,12 +101,13 @@ void LicenseInfo::SetLicense(const Buffer& data) {
 		auto owner_node = data_node[OWNER_NODE];
 		auto note_node = data_node[NOTE_NODE];
 		auto serial_node = data_node[SERIAL_NODE];
-		auto expiration_node = data_node[EXPIRATION_NODE];
+		auto updates_expiration_node = data_node[UPDATES_EXPIRATION_NODE];
+		auto temporary_expiration_node = data_node[TEMPORARY_EXPIRATION_NODE];
 
 		if (!owner_node.is_string() ||
 			!note_node.is_string() ||
 			!serial_node.is_string() ||
-			!expiration_node.is_string()) {
+			!updates_expiration_node.is_string()) {
 			throw InvalidLicenseException("Invalid license data format");
 		}
 
@@ -117,12 +120,12 @@ void LicenseInfo::SetLicense(const Buffer& data) {
 			throw InvalidLicenseException(msg.str());
 		}
 
-		// Check expiration
-		auto expiration_string = expiration_node.get<std::string>();
-		bool expired = CheckExpiration(expiration_string);
-		if (expired) {
+		// Check updates expiration
+		auto updates_expiration_string = updates_expiration_node.get<std::string>();
+		bool updates_expired = CheckUpdateExpiration(updates_expiration_string);
+		if (updates_expired) {
 			std::stringstream msg;
-			msg << "Your license expired on " << expiration_string;
+			msg << "Your license updates expired on " << updates_expiration_string;
 			throw InvalidLicenseException(msg.str());
 		}
 
@@ -140,7 +143,11 @@ void LicenseInfo::SetLicense(const Buffer& data) {
 		signed_content << owner_node.get<std::string>();
 		signed_content << note_node.get<std::string>();
 		signed_content << serial_node.get<std::string>();
-		signed_content << expiration_node.get<std::string>();
+		signed_content << updates_expiration_node.get<std::string>();
+
+		if (temporary_expiration_node.is_string()) {
+			signed_content << temporary_expiration_node.get<std::string>();
+		}
 
 		auto signature_value = signature_node.get<std::string>();
 		auto signing_certificate = certificates_node[0].get<std::string>();
@@ -160,8 +167,13 @@ void LicenseInfo::SetLicense(const Buffer& data) {
 			throw InvalidLicenseException("Invalid certificate chain");
 		}
 
+		m_temporary_expiration.clear();
+		if (temporary_expiration_node.is_string()) {
+			m_temporary_expiration = temporary_expiration_node.get<std::string>();
+		}
+
 		// Successfully validated
-		m_valid = true;
+		m_update_valid = true;
 		return;
 	}
 
@@ -183,8 +195,23 @@ void LicenseInfo::SetLicense(const char * filename) {
 	SetLicense(stream, length);
 }
 
-bool LicenseInfo::IsValid() noexcept {
-	return m_valid;
+bool LicenseInfo::IsValid() {
+	if (!m_update_valid) {
+		return false;
+	}
+
+	if (!m_temporary_expiration.empty()) {
+		bool temporary_expired = CheckTemporaryExpiration(m_temporary_expiration);
+		if (temporary_expired) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool LicenseInfo::IsTemporary() {
+	return !m_temporary_expiration.empty();
 }
 
 bool LicenseInfo::CheckBlacklist(const std::string& serial) {
@@ -256,13 +283,32 @@ bool LicenseInfo::CheckSignature(
 	return true;
 }
 
-bool LicenseInfo::CheckExpiration(const std::string& expiration) {
+bool LicenseInfo::CheckTemporaryExpiration(const std::string& expiration) {
+	std::stringstream expiration_stream;
+	expiration_stream << expiration;
+
+	std::tm expiration_tm = { 0 };
+	expiration_stream >> std::get_time(&expiration_tm, "%Y-%m-%d");
+
+	auto expiration_since_epoch = std::mktime(&expiration_tm);
+	if (expiration_since_epoch == -1) {
+		throw GeneralException("Could not interpret expiration time as valid date time");
+	}
+
+	auto expiration_time = std::chrono::system_clock::from_time_t(expiration_since_epoch);
+	auto current_time = std::chrono::system_clock::now();
+
+	// Returns true if already expired
+	return (expiration_time < current_time);
+}
+
+bool LicenseInfo::CheckUpdateExpiration(const std::string& expiration) {
 
 	std::stringstream expiration_stream;
 	expiration_stream << expiration;
 
 	std::tm expiration_tm = { 0 };
-	expiration_stream >> std::get_time(&expiration_tm, "%Y-%m-%d %H:%M:%SZ");
+	expiration_stream >> std::get_time(&expiration_tm, "%Y-%m-%d");
 
 	auto expiration_since_epoch = std::mktime(&expiration_tm);
 	if (expiration_since_epoch == -1) {

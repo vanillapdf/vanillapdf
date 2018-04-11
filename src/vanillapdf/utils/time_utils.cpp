@@ -12,7 +12,7 @@ TimeInfo TimeUtils::GetCurrentTime() {
 	// localtime function may not be thread-safe
 	static std::mutex m_chrono;
 
-	std::chrono::system_clock::time_point today = std::chrono::system_clock::now();
+	auto today = std::chrono::system_clock::now();
 	auto rawtime = std::chrono::system_clock::to_time_t(today);
 
 	std::lock_guard<std::mutex> locker(m_chrono);
