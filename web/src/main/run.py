@@ -42,7 +42,7 @@ generic_context = {
 	'TAX_PERCENTAGE': 19,
 	
 	'PERSONAL_LICENSE_DESCRIPTION':				'Vanilla.PDF Personal license',
-	'COMMERCIAL_LICENSE_DESCRIPTION':			'Vanilla.PDF Commercial license',
+	'COMMERCIAL_LICENSE_DESCRIPTION':			'Vanilla.PDF Commercial OEM license',
 	'PERSONAL_SUPPORT_DESCRIPTION':				'Vanilla.PDF Extended personal support',
 	'COMMERCIAL_SUPPORT_DESCRIPTION':			'Vanilla.PDF Extended commercial support',
 	
