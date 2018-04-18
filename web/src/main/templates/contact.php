@@ -52,7 +52,7 @@
       | Options
       |‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒
       !-->
-      <section id="section-options" class="section text-center bg-gray">
+      <section id="section-options" class="section text-center bg-vanilla-light">
         <div class="container">
 		  <div class="row gap-y">
 

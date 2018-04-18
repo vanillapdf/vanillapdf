@@ -55,7 +55,7 @@
       | Our History
       |‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒
       !-->
-      <section id="section-company" class="section bg-gray">
+      <section id="section-company" class="section bg-vanilla-light">
       <div class="container">
         <div class="row">
           <div class="col-md-10 mx-auto">
@@ -145,7 +145,7 @@
 		$diff = date_diff($start, $end);
 	  ?>
 
-      <section class="section bg-gray">
+      <section class="section bg-vanilla-light">
         <div class="container">
           <div class="row gap-y text-center">
 
@@ -183,7 +183,7 @@
 
           <div class="row gap-y">
             <div class="col-md-5">
-			  <div class="bg-gray h-full p-5">
+			  <div class="bg-vanilla-light h-full p-5">
 			      <p class="lead">Vanilla.PDF Labs s.r.o.<br>Ul. 29. Augusta 2281/28<br>Bratislava, Slovakia</p>
 			      
 			      <div>

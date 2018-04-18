@@ -87,7 +87,7 @@
       | Options
       |‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒
       !-->
-      <section id="section-options" class="section text-center bg-gray">
+      <section id="section-options" class="section text-center bg-vanilla-light">
         <div class="container">
 		  <div class="row gap-y">
 
@@ -167,7 +167,7 @@
 
 			<!-- Contact address -->
 			<div class="col-md-5 ml-auto">
-  <div class="bg-gray h-full p-5">
+  <div class="bg-vanilla-light h-full p-5">
 	<p>We try to answer all enquiries, but sometimes we get overwhelmed, so please be patient.</p>
 	
 	<hr class="w-20 my-6">
@@ -270,7 +270,7 @@
 			
 			<!-- Contact address -->
 			<div class="col-md-5 ml-auto">
-  <div class="bg-gray h-full p-5">
+  <div class="bg-vanilla-light h-full p-5">
 	<p>We try to answer all enquiries, but sometimes we get overwhelmed, so please be patient.</p>
 	
 	<hr class="w-20 my-6">
@@ -375,7 +375,7 @@
 			
 			<!-- Contact address -->
 			<div class="col-md-5 ml-auto">
-  <div class="bg-gray h-full p-5">
+  <div class="bg-vanilla-light h-full p-5">
 	<p>We try to answer all enquiries, but sometimes we get overwhelmed, so please be patient.</p>
 	
 	<hr class="w-20 my-6">
