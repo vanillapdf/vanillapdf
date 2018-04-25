@@ -95,7 +95,8 @@ js_files = [
 	'price_constants.js',
 	'pricing.js',
 	'custom_mailer.js',
-	'checkout.js'
+	'checkout.js',
+	'contact.js'
 ]
 
 # Functions
