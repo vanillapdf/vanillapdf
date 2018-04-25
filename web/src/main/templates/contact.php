@@ -56,15 +56,22 @@
         <div class="container">
 		  <div class="row gap-y">
 
-            <div class="col-lg-4 d-flex">
+            <div class="col-lg-3 d-flex">
               <a class="card card-body border text-center hover-shadow-6 text-default" href="#" onclick="GeneralQuestionClick()">
                 <p class="my-5"><i class="fa fa-question lead-8 text-lighter"></i></p>
                 <h5>General question</h5>
               </a>
             </div>
 
+			<div class="col-lg-3 d-flex">
+              <a class="card card-body border text-center hover-shadow-6 text-default" href="#" onclick="TemporaryLicenseClick()">
+                <p class="my-5"><i class="fa fa-clock-o lead-8 text-lighter"></i></p>
+                <h5>Temporary license</h5>
+              </a>
+            </div>
 
-            <div class="col-lg-4 d-flex">
+
+            <div class="col-lg-3 d-flex">
               <a class="card card-body border text-center hover-shadow-6 text-default" href="#" onclick="ReportBugClick()">
                 <p class="my-5"><i class="fa fa-bug lead-8 text-lighter"></i></p>
                 <h5>Report a bug</h5>
@@ -72,7 +79,7 @@
             </div>
 
 
-            <div class="col-lg-4 d-flex">
+            <div class="col-lg-3 d-flex">
               <a class="card card-body border text-center hover-shadow-6 text-default" href="#" onclick="DiscountClick()">
                 <p class="my-5"><i class="fa fa-percent lead-8 text-lighter"></i></p>
                 <h5>Request a discount</h5>
@@ -225,6 +232,71 @@
 	  
 	  <!--
 	  |‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒
+	  | Temporary license
+	  |‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒
+	  !-->
+	  <section id="section-license" class="section">
+		<div class="container">
+		
+		  <header class="section-header">
+            <h2>Temporary license</h2>
+            <hr>
+			<p class="lead">For extended evaluation purposes we can provide you a temporary license, that grants full access to the product for a limited period of time</p>
+          </header>
+
+		  <div class="row gap-y">
+			<div class="col-md-6">
+
+			  <form action="{{ assets_folder }}php/sendmail.php" method="POST" data-form="custom-mailer">
+				<div class="alert alert-success d-on-success">We received your message and will contact you back soon.</div>
+
+				<div class="form-group">
+				  <label for="license-name">Your name:</label>
+				  <input class="form-control form-control-lg" id="license-name" type="text" name="name" placeholder="Your name (required)" required>
+				</div>
+				
+				<div class="form-group">
+				  <label for="license-company">Your company name:</label>
+				  <input class="form-control form-control-lg" id="license-company" type="text" name="company" placeholder="Your company name">
+				</div>
+
+				<div class="form-group">
+				  <label for="license-email">Your email address:</label>
+				  <input class="form-control form-control-lg" id="license-email" type="email" name="email" placeholder="Your email address (required)" required>
+				</div>
+				
+				<div class="form-group">
+				  <label for="license-country">Your country:</label>
+				  <input class="form-control form-control-lg" id="license-country" type="text" name="country" placeholder="Your country">
+				</div>
+
+				<div class="form-group">
+				  <label for="license-reason">Reason:</label>
+				  <textarea class="form-control form-control-lg" id="license-reason" name="reason" rows="4" placeholder="Reason (required)" required></textarea>
+				</div>
+				
+				<div class="text-center w-75 d-block mx-auto p-5" data-provide="recaptcha" data-callback="EnableLicense">
+				</div>
+
+				<input type="hidden" name="subject" value="Temporary license">
+				
+				<div class="text-center">
+					<button id="btn-license" class="btn btn-primary" type="submit" disabled>Request a temporary license</button>
+				</div>
+			  </form>
+
+			</div>
+			
+			<!-- Contact address -->
+			{% include 'contact_address.html' %}
+		  </div>
+
+
+		</div>
+	  </section>
+	  
+	  <!--
+	  |‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒
 	  | Bug report
 	  |‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒‒
 	  !-->
@@ -331,22 +403,32 @@
 		
 		$is_discount = ($section == "section-discount");
 		$is_report = ($section == "section-report");
-		$is_contact = ($section == "section-contact") || (!$is_discount && !$is_report);
+		$is_license = ($section == "section-license");
+		$is_contact = ($section == "section-contact") || (!$is_discount && !$is_report && !$is_license);
 		
 		echo '<script type="text/javascript">';
 		
 		if ($is_contact) {
+			echo '$("#section-license").hide();';
+			echo '$("#section-report").hide();';
+			echo '$("#section-discount").hide();';
+		}
+		
+		if ($is_license) {
+			echo '$("#section-contact").hide();';
 			echo '$("#section-report").hide();';
 			echo '$("#section-discount").hide();';
 		}
 		
 		if ($is_discount) {
 			echo '$("#section-contact").hide();';
+			echo '$("#section-license").hide();';
 			echo '$("#section-report").hide();';
 		}
 		
 		if ($is_report) {
 			echo '$("#section-contact").hide();';
+			echo '$("#section-license").hide();';
 			echo '$("#section-discount").hide();';
 		}
 		
