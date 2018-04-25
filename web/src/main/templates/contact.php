@@ -337,12 +337,12 @@
 				
 				<div class="form-group">
 				  <label for="report-os">Operating system:</label>
-				  <input class="form-control form-control-lg" id="report-os" type="text" name="version" placeholder="Operating system (required)" required>
+				  <input class="form-control form-control-lg" id="report-os" type="text" name="os" placeholder="Operating system (required)" required>
 				</div>
 				
 				<div class="form-group">
 				  <label for="report-lang">Programming language:</label>
-				  <input class="form-control form-control-lg" id="report-lang" type="text" name="version" placeholder="Programming language (required)" required>
+				  <input class="form-control form-control-lg" id="report-lang" type="text" name="lang" placeholder="Programming language (required)" required>
 				</div>
 				
 				<!-- Attachment -->
@@ -362,7 +362,7 @@
 				  <textarea class="form-control form-control-lg" id="report-message" name="message" rows="4" placeholder="Your Message"></textarea>
 				</div>
 
-				<div class="text-center w-75 d-block mx-auto p-5" data-provide="recaptcha" data-callback="EnableBug">
+				<div class="text-center w-75 d-block mx-auto p-5" data-provide="recaptcha" data-callback="EnableReport">
 				</div>
 
 				<input type="hidden" name="subject" value="Bug report">
