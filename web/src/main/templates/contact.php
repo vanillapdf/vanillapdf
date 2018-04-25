@@ -312,7 +312,7 @@
 		  <div class="row gap-y">
 			<div class="col-md-6">
 
-			  <form action="{{ assets_folder }}php/sendmail.php" method="POST" data-form="custom-mailer">
+			  <form action="{{ assets_folder }}php/sendmail.php" method="POST" data-form="custom-mailer" enctype="multipart/form-data">
 				<div class="alert alert-success d-on-success">We received your message and will contact you back soon.</div>
 				
 				<div class="form-group">

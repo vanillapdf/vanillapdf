@@ -51,6 +51,7 @@ function SendMail() {
       )
   );
   
+  
   $context  = stream_context_create($opts);
   $response = file_get_contents('https://www.google.com/recaptcha/api/siteverify', false, $context);
   $result = json_decode($response);
@@ -126,24 +127,29 @@ function SendMail() {
     if ($subject == "") {
       $subject = $default_subject;
     }
-  
+	
+	// Handle file upload
+    //
+    if (isset($_FILES['input-file']) && $_FILES['input-file']['error'] == UPLOAD_ERR_OK) {
+        $mail->AddAttachment($_FILES['input-file']['tmp_name'], $_FILES['input-file']['name']);
+    }
   
     // Message content
     //
     $message = '';
     $message_backup = $_POST['message'];
   
-    // Attach other input values to the end of message
-    //
-    unset( $_POST['subject'], $_POST['message'], $_POST['g-recaptcha-response'] );
-    
+    // These values have been already stored for processing and shall be excluded from the loop
+    unset( $_POST['subject'], $_POST['message'], $_POST['input-file'], $_POST['g-recaptcha-response'] );
+	
+	// Attach other input values to the end of message
     foreach ($_POST as $key => $value) {
       $key = str_replace( array('-', '_'), ' ', $key);
       $message .= '<p><b>'. ucfirst($key) .'</b>: '. nl2br( $value ) .'<p>';
     }
     
     if (isset($message_backup)) {
-  	$message .= '<p><b>'. ucfirst('Message') .'</b><br>'. nl2br($message_backup) .'<p>';
+      $message .= '<p><b>'. ucfirst('Message:') .'</b><br>'. nl2br($message_backup) .'<p>';
     }
   
   
