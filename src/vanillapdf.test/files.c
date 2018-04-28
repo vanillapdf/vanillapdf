@@ -1,5 +1,6 @@
 #include "test.h"
 
+//! [Enumerate xref]
 error_type process_file(FileHandle* file, int nested) {
 	XrefChainHandle* chain = NULL;
 	XrefChainIteratorHandle* chain_iterator = NULL;
@@ -23,6 +24,7 @@ error_type process_file(FileHandle* file, int nested) {
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
+//! [Enumerate xref]
 
 error_type process_xref(XrefHandle* xref, int nested) {
 	XrefIteratorHandle* xref_iterator = NULL;

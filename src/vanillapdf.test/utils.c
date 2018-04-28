@@ -13,6 +13,7 @@ void print_spaces(int nested) {
 	}
 }
 
+//! [Print buffer]
 error_type process_buffer(BufferHandle* buffer, int nested) {
 	string_type data = NULL;
 	char* local_string = NULL;
@@ -55,6 +56,7 @@ error_type process_buffer(BufferHandle* buffer, int nested) {
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
+//! [Print buffer]
 
 error_type process_version(PDFVersion version, int nested) {
 	print_spaces(nested);
@@ -63,6 +65,7 @@ error_type process_version(PDFVersion version, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
+//! [Test logging]
 error_type process_logging() {
 	boolean_type logging_enabled = VANILLAPDF_RV_TRUE;
 	LoggingSeverity logging_severity;
@@ -92,6 +95,7 @@ error_type process_logging() {
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
+//! [Test logging]
 
 error_type process_constants() {
 	boolean_type dummy_boolean;
@@ -360,6 +364,7 @@ error_type process_constants() {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
+//! [Set license file]
 error_type process_license_info(string_type license_file) {
 	BufferHandle* license_buffer = NULL;
 	IInputStreamHandle* input_stream = NULL;
@@ -384,7 +389,9 @@ error_type process_license_info(string_type license_file) {
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
+//! [Set license file]
 
+//! [Print library info]
 error_type process_library_info() {
 
 	// Misc
@@ -427,7 +434,9 @@ error_type process_library_info() {
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
+//! [Print library info]
 
+//! [Print last error]
 error_type print_last_error() {
 	char* message = NULL;
 	error_type error = 0;
@@ -456,3 +465,4 @@ error_type print_last_error() {
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
+//! [Print last error]

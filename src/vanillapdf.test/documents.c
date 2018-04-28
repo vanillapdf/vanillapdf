@@ -696,6 +696,7 @@ error_type process_document_info(DocumentInfoHandle* obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
+//! [Print date]
 error_type process_date(DateHandle* obj, int nested) {
 	integer_type year = 0;
 	integer_type month = 0;
@@ -747,6 +748,7 @@ error_type process_date(DateHandle* obj, int nested) {
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
+//! [Print date]
 
 error_type process_outline(OutlineHandle* outline, int nested) {
 	OutlineItemHandle* first = NULL;

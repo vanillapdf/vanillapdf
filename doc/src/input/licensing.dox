@@ -67,7 +67,7 @@ This is a list of most common features that are easily usable and documented wit
 
 Free features:
 <ul>
-<li>Document merge and split (\ref example_test.cpp)</li>
+<li>Document merge and split (\ref merge.c)</li>
 <li>Document metadata</li>
 <li>PDF object enumeration</li>
 <li>PDF filter compression/decompression</li>
