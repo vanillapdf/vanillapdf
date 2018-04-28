@@ -74,6 +74,11 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Document_AppendDocument(DocumentHandle* handle, DocumentHandle* source);
 
 	/**
+	* \brief Digitally signs the document using specified settings
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Document_Sign(DocumentHandle* handle, string_type destination, DocumentSignatureSettingsHandle* settings);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/

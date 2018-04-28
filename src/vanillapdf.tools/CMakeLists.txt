@@ -8,6 +8,7 @@ set(VANILLAPDF_TOOLS_SOURCES
 	extract.c
 	filter.c
 	merge.c
+	sign.c
 )
 
 set(VANILLAPDF_TOOLS_HEADERS

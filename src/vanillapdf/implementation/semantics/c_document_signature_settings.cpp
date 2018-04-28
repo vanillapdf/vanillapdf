@@ -9,6 +9,17 @@ using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
 
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_Create(DocumentSignatureSettingsHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		DocumentSignatureSettingsPtr signature_settings;
+		auto ptr = signature_settings.AddRefGet();
+		*result = reinterpret_cast<DocumentSignatureSettingsHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetDigest(DocumentSignatureSettingsHandle* handle, MessageDigestAlgorithmType* result) {
 	DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

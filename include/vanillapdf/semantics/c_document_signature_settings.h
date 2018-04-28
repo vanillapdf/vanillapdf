@@ -32,6 +32,11 @@ extern "C"
 	*/
 
 	/**
+	* \brief Creates a new DocumentSignatureSettings instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_Create(DocumentSignatureSettingsHandle** result);
+
+	/**
 	* \brief Message digest algorithm for calculation hash of the data to be signed
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetDigest(DocumentSignatureSettingsHandle* handle, MessageDigestAlgorithmType* result);
