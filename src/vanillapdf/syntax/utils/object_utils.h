@@ -260,19 +260,9 @@ public:
 	}
 
 	template <typename T>
-	static T ConvertTo(Object* obj) {
-		return ObjectTypeFunctor<T>::Convert(obj);
-	}
-
-	template <typename T>
 	static bool IsType(ObjectPtr obj) {
 		auto object_ptr = obj.get();
 		return ObjectTypeFunctor<T>::IsType(object_ptr);
-	}
-
-	template <typename T>
-	static bool IsType(Object* obj) {
-		return ObjectTypeFunctor<T>::IsType(obj);
 	}
 
 	template <

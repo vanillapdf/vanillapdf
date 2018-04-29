@@ -124,6 +124,20 @@ public:
 	T* operator->() { return get(); }
 	const T* operator->() const { return get(); }
 
+	// Allow implicit conversions to base type pointers
+
+	template <
+		typename U,
+		typename = typename std::enable_if<std::is_base_of<U, T>::value>::type
+	>
+	operator U*() { return get(); }
+
+	template <
+		typename U,
+		typename = typename std::enable_if<std::is_base_of<U, T>::value>::type
+	>
+	operator const U*() const { return get(); }
+
 	DeferredWrapperBase& operator=(const DeferredWrapperBase& rhs) {
 		DeferredWrapperBase(rhs).swap(*this);
 		return *this;

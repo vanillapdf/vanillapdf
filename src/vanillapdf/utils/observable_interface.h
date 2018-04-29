@@ -13,7 +13,18 @@ public:
 	void Subscribe(const WeakReference<T>& observer);
 	bool Unsubscribe(const WeakReference<T>& observer);
 
+	template <
+		typename = typename std::enable_if<
+			!std::is_convertible<T*, WeakReference<T>>::value
+		>::type
+	>
 	void Subscribe(T* observer);
+
+	template <
+		typename = typename std::enable_if<
+		!std::is_convertible<T*, WeakReference<T>>::value
+		>::type
+	>
 	bool Unsubscribe(T* observer);
 
 	virtual ~IObservable() = 0;
@@ -40,12 +51,14 @@ bool IObservable<T>::Unsubscribe(const WeakReference<T>& observer) {
 }
 
 template <typename T>
+template <typename>
 void IObservable<T>::Subscribe(T* observer) {
 	auto weak_ref = observer->template GetWeakReference<T>();
 	Subscribe(weak_ref);
 }
 
 template <typename T>
+template <typename>
 bool IObservable<T>::Unsubscribe(T* observer) {
 	auto weak_ref = observer->template GetWeakReference<T>();
 	return Unsubscribe(weak_ref);
