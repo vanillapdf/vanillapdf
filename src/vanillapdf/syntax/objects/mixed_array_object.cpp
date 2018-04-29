@@ -60,7 +60,7 @@ MixedArrayObject* MixedArrayObject::Clone(void) const {
 		result->Append(cloned);
 	}
 
-	result->SetFile(m_file);
+	CloneBaseProperties(result);
 	return result.detach();
 }
 

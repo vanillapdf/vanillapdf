@@ -41,6 +41,8 @@ void RealObject::ObserveeChanged(IModifyObservable*) {
 RealObject* RealObject::Clone(void) const {
 	NumericObjectBackendPtr new_value(m_value->Clone());
 	RealObjectPtr result(pdf_new RealObject(new_value), false);
+
+	CloneBaseProperties(result);
 	return result.detach();
 }
 

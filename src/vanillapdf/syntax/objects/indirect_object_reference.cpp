@@ -193,9 +193,10 @@ IndirectObjectReference* IndirectObjectReference::Clone(void) const {
 	auto object_number = GetReferencedObjectNumber();
 	auto generation_number = GetReferencedGenerationNumber();
 
-	result->SetFile(m_file);
 	result->SetReferencedObjectNumber(object_number);
 	result->SetReferencedGenerationNumber(generation_number);
+
+	CloneBaseProperties(result);
 
 	return result.detach();
 }

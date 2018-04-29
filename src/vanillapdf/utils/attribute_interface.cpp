@@ -23,6 +23,10 @@ bool operator!=(const Deferred<IAttribute>& left, const Deferred<IAttribute>& ri
 	return !left->Equals(right);
 }
 
+EmptyAttribute* EmptyAttribute::Clone(void) const {
+	return pdf_new EmptyAttribute();
+}
+
 } // vanillapdf
 
 namespace std {

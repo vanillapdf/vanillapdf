@@ -191,6 +191,16 @@ const char* Object::TypeName(Type type) {
 	}
 }
 
+void Object::CloneBaseProperties(Object* other) const {
+	other->SetFile(m_file);
+	other->SetEncryptionExempted(m_encryption_exempted);
+
+	for (auto attribute : m_attributes) {
+		auto new_attribute = attribute.second->Clone();
+		other->AddAttribute(new_attribute);
+	}
+}
+
 bool Object::Identity(ObjectPtr other) const {
 	auto other_ptr = other.get();
 	return (this == other_ptr);

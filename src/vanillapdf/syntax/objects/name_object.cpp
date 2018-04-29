@@ -68,10 +68,9 @@ void NameObject::ToPdfStream(IOutputStreamPtr output) const {
 
 NameObject* NameObject::Clone(void) const {
 	NameObjectPtr result(pdf_new NameObject(), false);
-
 	result->SetValue(_value->Clone());
-	result->SetFile(m_file);
 
+	CloneBaseProperties(result);
 	return result.detach();
 }
 

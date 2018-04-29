@@ -14,12 +14,15 @@ public:
 
 	virtual bool Equals(const IAttribute& other) const;
 	virtual Type GetType(void) const noexcept = 0;
+	virtual IAttribute* Clone(void) const = 0;
 	virtual ~IAttribute() = 0;
 };
 
 class EmptyAttribute : public virtual IAttribute {
 public:
 	virtual Type GetType(void) const noexcept;
+
+	virtual EmptyAttribute* Clone(void) const;
 };
 
 class IAttributePtr : public Deferred<IAttribute> {

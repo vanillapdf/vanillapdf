@@ -42,9 +42,9 @@ void BooleanObject::ToPdfStream(IOutputStreamPtr output) const {
 
 BooleanObject* BooleanObject::Clone(void) const {
 	BooleanObjectPtr result(pdf_new BooleanObject(), false);
-
-	result->SetFile(m_file);
 	result->SetValue(m_value);
+
+	CloneBaseProperties(result);
 
 	return result.detach();
 }

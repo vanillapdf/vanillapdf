@@ -37,9 +37,7 @@ void NullObject::ToPdfStream(IOutputStreamPtr output) const {
 
 NullObject* NullObject::Clone(void) const {
 	NullObjectPtr result(pdf_new NullObject(), false);
-
-	result->SetFile(m_file);
-
+	CloneBaseProperties(result);
 	return result.detach();
 }
 

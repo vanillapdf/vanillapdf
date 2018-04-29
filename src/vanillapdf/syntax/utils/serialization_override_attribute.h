@@ -16,6 +16,7 @@ public:
 	std::string GetValue(void) const;
 
 	virtual Type GetType(void) const noexcept override;
+	virtual SerializationOverrideAttribute* Clone(void) const;
 
 private:
 	std::string m_value;
@@ -31,6 +32,10 @@ inline std::string SerializationOverrideAttribute::GetValue(void) const {
 
 inline IAttribute::Type SerializationOverrideAttribute::GetType(void) const noexcept {
 	return IAttribute::Type::SerializationOverride;
+}
+
+inline SerializationOverrideAttribute* SerializationOverrideAttribute::Clone(void) const {
+	return pdf_new SerializationOverrideAttribute(m_value);
 }
 
 } // syntax

@@ -65,12 +65,16 @@ size_t StringObjectBase::Hash() const {
 HexadecimalStringObject* HexadecimalStringObject::Clone(void) const {
 	BufferPtr new_value = _raw_value->Clone();
 	HexadecimalStringObjectPtr result(pdf_new HexadecimalStringObject(new_value), false);
+
+	CloneBaseProperties(result);
 	return result.detach();
 }
 
 LiteralStringObject* LiteralStringObject::Clone(void) const {
 	BufferPtr new_value = _raw_value->Clone();
 	LiteralStringObjectPtr result(pdf_new LiteralStringObject(new_value), false);
+
+	CloneBaseProperties(result);
 	return result.detach();
 }
 

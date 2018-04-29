@@ -68,8 +68,6 @@ Object::Type StreamObject::GetType(void) const noexcept {
 StreamObject* StreamObject::Clone(void) const {
 	StreamObjectPtr result(pdf_new StreamObject(), false);
 
-	result->SetFile(m_file);
-
 	result->_body = GetBodyRaw()->Clone();
 	result->_body_decoded = _body_decoded->Clone();
 	result->_header = _header->Clone();
@@ -83,6 +81,7 @@ StreamObject* StreamObject::Clone(void) const {
 	result->_header->SetInitialized();
 	result->SetInitialized();
 
+	CloneBaseProperties(result);
 	return result.detach();
 }
 

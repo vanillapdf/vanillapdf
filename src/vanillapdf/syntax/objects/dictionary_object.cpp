@@ -19,7 +19,7 @@ DictionaryObject* DictionaryObject::Clone(void) const {
 		result->Insert(name, value);
 	}
 
-	result->SetFile(m_file);
+	CloneBaseProperties(result);
 	return result.detach();
 }
 

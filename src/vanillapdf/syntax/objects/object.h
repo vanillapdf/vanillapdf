@@ -86,6 +86,10 @@ public:
 	virtual bool Equals(ObjectPtr other) const = 0;
 	virtual Object* Clone(void) const = 0;
 
+	// Raw pointer, because at this point the smart pointer may not be constructed
+	// When cloning an object, it's reference counter must be zero
+	void CloneBaseProperties(Object* other) const;
+
 	virtual void OnChanged() override;
 
 protected:
