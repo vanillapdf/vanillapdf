@@ -13,7 +13,6 @@
 
 #include "syntax/utils/output_pointer.h"
 #include "syntax/utils/name_constants.h"
-#include "syntax/utils/serialization_override_attribute.h"
 
 #include "syntax/exceptions/syntax_exceptions.h"
 
@@ -68,8 +67,14 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 	// Dump whole cloned contents to the output
 	WriteXrefChain(output, new_chain);
 
+	// Notify observers
+	BeforeOutputFlush(output);
+
 	// Cleanup
 	output->Flush();
+
+	// Notify observers
+	AfterOutputFlush(output);
 }
 
 void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
@@ -121,8 +126,14 @@ void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
 	// Write xref itself to output
 	WriteXref(output, new_xref);
 
+	// Notify observers
+	BeforeOutputFlush(output);
+
 	// Cleanup
 	output->Flush();
+
+	// Notify observers
+	AfterOutputFlush(output);
 }
 
 bool FileWriter::ValidateConfiguration(FilePtr source, std::string& reason) const {
@@ -928,7 +939,7 @@ DictionaryObjectPtr FileWriter::CloneTrailerDictionary(FilePtr source, XrefBaseP
 }
 
 XrefBasePtr FileWriter::CreateIncrementalXref(FilePtr source, FilePtr destination) {
-	XrefFreeEntryPtr free_list_head_entry(0, constant::MAX_GENERATION_NUMBER);
+	XrefFreeEntryPtr free_list_head_entry = make_deferred<XrefFreeEntry>(0, constant::MAX_GENERATION_NUMBER);
 	free_list_head_entry->SetFile(source);
 
 	XrefTablePtr new_table;
@@ -960,8 +971,8 @@ XrefBasePtr FileWriter::CreateIncrementalXref(FilePtr source, FilePtr destinatio
 			if (entry->GetUsage() == XrefEntryBase::Usage::Used) {
 				auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
 
-				// Entry was release
-				if (used_entry->InUse()) {
+				// Entry was released
+				if (!used_entry->InUse()) {
 					continue;
 				}
 
@@ -972,6 +983,8 @@ XrefBasePtr FileWriter::CreateIncrementalXref(FilePtr source, FilePtr destinatio
 					new_obj_number,
 					new_gen_number,
 					new_offset);
+
+				used_entry->ReleaseReference();
 
 				new_entry->SetFile(source);
 				new_entry->SetReference(obj);
@@ -1039,8 +1052,12 @@ void FileWriter::WriteEntry(IOutputStreamPtr output, XrefUsedEntryBasePtr entry)
 		if (ConvertUtils<XrefUsedEntryBasePtr>::IsType<XrefUsedEntryPtr>(entry)) {
 			auto used_entry = ConvertUtils<XrefUsedEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
 
+			BeforeEntryOffsetRecalculation(entry);
+
 			auto new_offset = output->GetOutputPosition();
 			used_entry->SetOffset(new_offset);
+
+			AfterEntryOffsetRecalculation(entry);
 		}
 	}
 
@@ -1049,27 +1066,15 @@ void FileWriter::WriteEntry(IOutputStreamPtr output, XrefUsedEntryBasePtr entry)
 
 void FileWriter::WriteObject(IOutputStreamPtr output, ObjectPtr obj) {
 	if (m_recalculate_offset) {
+		BeforeObjectOffsetRecalculation(obj);
+
 		auto new_offset = output->GetOutputPosition();
 		obj->SetOffset(new_offset);
+
+		AfterObjectOffsetRecalculation(obj);
 	}
 
-	// If the object contains attribute, that controls it's serialization
-	if (obj->ContainsAttribute(IAttribute::Type::SerializationOverride)) {
-
-		// This was first introduced with the digital signatures support
-		// Whole file first has to be written, and at the end the byte range
-		// and signature value will be updated. Since we don't know the values
-		// we can either write the file multiple times OR we leave some space
-		// for the the values, when we later update them.
-
-		auto base_attribute = obj->GetAttribute(IAttribute::Type::SerializationOverride);
-		auto override_attribute = ConvertUtils<decltype(base_attribute)>::ConvertTo<SerializationOverrideAttributePtr>(base_attribute);
-		auto override_value = override_attribute->GetValue();
-
-		// User the overriden value
-		output->Write(override_value);
-		return;
-	}
+	BeforeObjectWrite(obj);
 
 	output->Write(obj->GetObjectNumber());
 	output->Write(WhiteSpace::SPACE);
@@ -1077,10 +1082,17 @@ void FileWriter::WriteObject(IOutputStreamPtr output, ObjectPtr obj) {
 	output->Write(WhiteSpace::SPACE);
 	output->Write("obj");
 	output->Write(WhiteSpace::LINE_FEED);
-	output->Write(obj->ToPdf());
+
+	bool is_indirect = obj->IsIndirect();
+	assert(is_indirect && "Written object is not indirect"); UNUSED(is_indirect);
+
+	obj->ToPdfStreamUpdateOffset(output);
+
 	output->Write(WhiteSpace::LINE_FEED);
 	output->Write("endobj");
 	output->Write(WhiteSpace::LINE_FEED);
+
+	AfterObjectWrite(obj);
 }
 
 void FileWriter::WriteXrefOffset(IOutputStreamPtr output, types::stream_offset offset) {

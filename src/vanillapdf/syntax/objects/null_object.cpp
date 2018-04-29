@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "syntax/objects/null_object.h"
+#include "utils/streams/output_stream_interface.h"
 
 namespace vanillapdf {
 namespace syntax {
@@ -30,8 +31,8 @@ NullObjectPtr NullObject::GetInstance(void) {
 	return instance;
 }
 
-std::string NullObject::ToPdf(void) const {
-	return "null";
+void NullObject::ToPdfStream(IOutputStreamPtr output) const {
+	output->Write("null");
 }
 
 NullObject* NullObject::Clone(void) const {

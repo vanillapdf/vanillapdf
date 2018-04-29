@@ -42,7 +42,7 @@ public:
 
 	virtual BufferPtr GetValue() const override;
 	virtual void SetValue(BufferPtr value) override { _value->assign(value.begin(), value.end()); }
-	virtual std::string ToPdf(void) const override;
+	virtual void ToPdfStream(IOutputStreamPtr output) const override;
 
 	virtual HexadecimalStringObject* Clone(void) const override;
 
@@ -65,7 +65,7 @@ public:
 	virtual StringObjectBase::StringType GetStringType(void) const noexcept override { return StringObjectBase::StringType::Literal; }
 	virtual BufferPtr GetValue() const override;
 	virtual void SetValue(BufferPtr value) override { _value->assign(value.begin(), value.end()); }
-	virtual std::string ToPdf(void) const override;
+	virtual void ToPdfStream(IOutputStreamPtr output) const override;
 
 	virtual LiteralStringObject* Clone(void) const override;
 

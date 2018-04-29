@@ -20,11 +20,11 @@ public:
 	bool Contains(IAttribute::Type type) const;
 	void Add(IAttributePtr attribute);
 	bool Remove(IAttributePtr attribute);
-	IAttributePtr Get(IAttribute::Type type);
+	IAttributePtr Get(IAttribute::Type type) const;
 	void Clear();
 
 	template <typename T>
-	T GetAs(IAttribute::Type type) {
+	T GetAs(IAttribute::Type type) const {
 		IAttributePtr attribute = Get(type);
 		return ConvertUtils<IAttributePtr>::ConvertTo<T>(attribute);
 	}

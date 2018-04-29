@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "syntax/objects/real_object.h"
+#include "utils/streams/output_stream_interface.h"
 
 namespace vanillapdf {
 namespace syntax {
@@ -50,6 +51,10 @@ bool RealObject::Equals(const ObjectPtr other) const {
 
 	auto other_obj = ObjectUtils::ConvertTo<RealObjectPtr>(other);
 	return (GetValue() == other_obj->GetValue());
+}
+
+void RealObject::ToPdfStream(IOutputStreamPtr output) const {
+	output << m_value->ToString();
 }
 
 } // syntax

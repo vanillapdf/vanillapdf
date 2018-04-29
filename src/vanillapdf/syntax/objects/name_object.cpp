@@ -3,6 +3,7 @@
 #include "utils/character.h"
 
 #include "syntax/objects/name_object.h"
+#include "utils/streams/output_stream_interface.h"
 
 #include <sstream>
 
@@ -60,8 +61,9 @@ Object::Type NameObject::GetType(void) const noexcept {
 	return Object::Type::Name;
 }
 
-std::string NameObject::ToPdf(void) const {
-	return "/" + ToString();
+void NameObject::ToPdfStream(IOutputStreamPtr output) const {
+	output->Write("/");
+	output->Write(ToString());
 }
 
 NameObject* NameObject::Clone(void) const {

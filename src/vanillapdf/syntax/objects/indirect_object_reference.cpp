@@ -172,10 +172,10 @@ bool IndirectObjectReference::operator<(const IndirectObjectReference& other) co
 	return false;
 }
 
-std::string IndirectObjectReference::ToPdf(void) const {
+void IndirectObjectReference::ToPdfStream(IOutputStreamPtr output) const {
 	auto object_number = GetReferencedObjectNumber();
 	auto generation_number = GetReferencedGenerationNumber();
-	return std::to_string(object_number) + " " + std::to_string(generation_number) + " R";
+	output << std::to_string(object_number) << " " << std::to_string(generation_number) << " R";
 }
 
 bool IndirectObjectReference::Equals(ObjectPtr other) const {

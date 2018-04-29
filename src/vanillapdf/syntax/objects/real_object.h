@@ -20,7 +20,7 @@ public:
 	~RealObject();
 
 	virtual Object::Type GetType(void) const noexcept override;
-	virtual std::string ToPdf(void) const override;
+	virtual void ToPdfStream(IOutputStreamPtr output) const override;
 
 	operator value_type() const;
 	value_type GetValue(void) const;
@@ -33,10 +33,6 @@ public:
 
 inline Object::Type RealObject::GetType(void) const noexcept {
 	return Object::Type::Real;
-}
-
-inline std::string RealObject::ToPdf(void) const {
-	return m_value->ToString();
 }
 
 inline RealObject::operator RealObject::value_type() const {

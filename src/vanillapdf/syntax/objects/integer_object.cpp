@@ -1,6 +1,8 @@
 #include "precompiled.h"
+
+#include "syntax/objects/real_object.h"
 #include "syntax/objects/integer_object.h"
-#include "real_object.h"
+#include "utils/streams/output_stream_interface.h"
 
 #include <cassert>
 #include <vector>
@@ -79,6 +81,10 @@ IntegerObject* IntegerObject::Clone(void) const {
 	NumericObjectBackendPtr new_value(m_value->Clone());
 	IntegerObjectPtr result(pdf_new IntegerObject(new_value), false);
 	return result.detach();
+}
+
+void IntegerObject::ToPdfStream(IOutputStreamPtr output) const {
+	output->Write(m_value->ToString());
 }
 
 } // syntax

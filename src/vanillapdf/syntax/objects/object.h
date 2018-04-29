@@ -34,7 +34,15 @@ public:
 public:
 	virtual Type GetType(void) const noexcept = 0;
 	virtual std::string ToString(void) const { return ToPdf(); }
-	virtual std::string ToPdf(void) const = 0;
+	virtual std::string ToPdf(void) const;
+	virtual std::string ToPdfInternal(void) const;
+	virtual void ToPdfStream(IOutputStreamPtr output) const = 0;
+	virtual void ToPdfStreamUpdateOffset(IOutputStreamPtr output);
+	virtual void UpdateOffset(IOutputStreamPtr output);
+
+protected:
+	bool HasOverrideAttribute() const;
+	std::string GetOverrideAttribute() const;
 
 public:
 	bool IsIndirect(void) const;
@@ -65,7 +73,7 @@ public:
 	void AddAttribute(IAttributePtr attribute);
 	bool RemoveAttribute(IAttributePtr attribute);
 	bool ContainsAttribute(IAttribute::Type type) const;
-	IAttributePtr GetAttribute(IAttribute::Type type);
+	IAttributePtr GetAttribute(IAttribute::Type type) const;
 
 	template <typename T>
 	T GetAttributeAs(IAttribute::Type type) {

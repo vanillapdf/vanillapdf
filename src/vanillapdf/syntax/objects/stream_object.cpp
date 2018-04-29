@@ -360,13 +360,14 @@ std::string StreamObject::ToString(void) const {
 	return ss.str();
 }
 
-std::string StreamObject::ToPdf(void) const {
+void StreamObject::ToPdfStream(IOutputStreamPtr output) const {
 	std::stringstream ss;
 	ss << _header->ToPdf() << std::endl;
 	ss << "stream" << std::endl;
 	ss << GetBodyEncoded()->ToString();
 	ss << "endstream";
-	return ss.str();
+
+	output << ss.str();
 }
 
 size_t StreamObject::Hash() const {

@@ -24,8 +24,8 @@ bool AttributeList::Remove(IAttributePtr attribute) {
 	return true;
 }
 
-IAttributePtr AttributeList::Get(IAttribute::Type type) {
-	return m_attributes[type];
+IAttributePtr AttributeList::Get(IAttribute::Type type) const {
+	return m_attributes.at(type);
 }
 
 void AttributeList::Clear() {

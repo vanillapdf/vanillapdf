@@ -146,7 +146,7 @@ BufferPtr HexadecimalStringObject::GetValue() const {
 	return _value;
 }
 
-std::string HexadecimalStringObject::ToPdf() const {
+void HexadecimalStringObject::ToPdfStream(IOutputStreamPtr output) const {
 	std::stringstream ss;
 
 	BufferPtr value = GetValue();
@@ -175,10 +175,11 @@ std::string HexadecimalStringObject::ToPdf() const {
 
 	result.insert(result.begin(), '<');
 	result.insert(result.end(), '>');
-	return result.ToString();
+
+	output->Write(result);
 }
 
-std::string LiteralStringObject::ToPdf() const {
+void LiteralStringObject::ToPdfStream(IOutputStreamPtr output) const {
 	std::stringstream ss;
 
 	BufferPtr value = GetValue();
@@ -251,7 +252,8 @@ std::string LiteralStringObject::ToPdf() const {
 
 	result.insert(result.begin(), '(');
 	result.insert(result.end(), ')');
-	return result.ToString();
+
+	output->Write(result);
 }
 
 } // syntax

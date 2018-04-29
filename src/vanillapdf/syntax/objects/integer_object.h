@@ -42,7 +42,7 @@ public:
 	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Integer; }
 
 	bool Equals(const IntegerObject& other) const { return GetIntegerValue() == other.GetIntegerValue(); }
-	virtual std::string ToPdf(void) const override { return m_value->ToString(); }
+	virtual void ToPdfStream(IOutputStreamPtr output) const override;
 
 	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 

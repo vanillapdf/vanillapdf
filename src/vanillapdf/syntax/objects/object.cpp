@@ -3,6 +3,11 @@
 #include "syntax/files/xref.h"
 
 #include "syntax/exceptions/syntax_exceptions.h"
+#include "utils/streams/output_stream.h"
+#include "utils/streams/output_stream_interface.h"
+
+#include "utils/attribute_interface.h"
+#include "syntax/utils/serialization_override_attribute.h"
 
 #include <cassert>
 
@@ -10,6 +15,52 @@ namespace vanillapdf {
 namespace syntax {
 
 ObjectPtr::ObjectPtr() : Deferred<Object>(NullObject::GetInstance()) {
+}
+
+bool Object::HasOverrideAttribute() const {
+	return ContainsAttribute(IAttribute::Type::SerializationOverride);
+}
+
+std::string Object::GetOverrideAttribute() const {
+	// This was first introduced with the digital signatures support
+	// Whole file first has to be written, and at the end the byte range
+	// and signature value will be updated. Since we don't know the values
+	// we can either write the file multiple times OR we leave some space
+	// for the the values, when we later update them.
+
+	auto base_attribute = GetAttribute(IAttribute::Type::SerializationOverride);
+	auto override_attribute = ConvertUtils<decltype(base_attribute)>::ConvertTo<SerializationOverrideAttributePtr>(base_attribute);
+	return override_attribute->GetValue();
+}
+
+std::string Object::ToPdf(void) const {
+
+	// If the object contains attribute, that controls it's serialization
+	if (HasOverrideAttribute()) {
+		return GetOverrideAttribute();
+	}
+
+	return ToPdfInternal();
+}
+
+std::string Object::ToPdfInternal(void) const {
+	auto ss = std::make_shared<std::stringstream>();
+	OutputStreamPtr output_stream = make_deferred<OutputStream>(ss);
+	ToPdfStream(output_stream);
+	return ss->str();
+}
+
+void Object::ToPdfStreamUpdateOffset(IOutputStreamPtr output) {
+	UpdateOffset(output);
+	ToPdfStream(output);
+}
+
+void Object::UpdateOffset(IOutputStreamPtr output) {
+	bool is_indirect = IsIndirect();
+	if (!is_indirect) {
+		auto new_offset = output->GetOutputPosition();
+		SetOffset(new_offset);
+	}
 }
 
 bool Object::IsIndirect(void) const {
@@ -156,7 +207,7 @@ bool Object::ContainsAttribute(IAttribute::Type type) const {
 	return m_attributes.Contains(type);
 }
 
-IAttributePtr Object::GetAttribute(IAttribute::Type type) {
+IAttributePtr Object::GetAttribute(IAttribute::Type type) const {
 	return m_attributes.Get(type);
 }
 

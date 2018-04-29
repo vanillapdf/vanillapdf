@@ -12,7 +12,7 @@ public:
 	explicit BooleanObject(bool value);
 
 	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Boolean; }
-	virtual std::string ToPdf(void) const override;
+	virtual void ToPdfStream(IOutputStreamPtr output) const override;
 
 	bool GetValue(void) const noexcept;
 	void SetValue(bool value);

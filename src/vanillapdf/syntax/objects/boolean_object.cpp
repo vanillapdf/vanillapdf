@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "syntax/objects/boolean_object.h"
+#include "utils/streams/output_stream_interface.h"
 
 namespace vanillapdf {
 namespace syntax {
@@ -35,8 +36,8 @@ bool BooleanObject::Equals(ObjectPtr other) const {
 	return (GetValue() == other_obj->GetValue());
 }
 
-std::string BooleanObject::ToPdf(void) const {
-	return m_value ? "true" : "false";
+void BooleanObject::ToPdfStream(IOutputStreamPtr output) const {
+	output->Write(m_value ? "true" : "false");
 }
 
 BooleanObject* BooleanObject::Clone(void) const {

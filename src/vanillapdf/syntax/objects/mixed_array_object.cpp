@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "syntax/objects/mixed_array_object.h"
+#include "utils/streams/output_stream_interface.h"
 
 #include <sstream>
 
@@ -111,17 +112,37 @@ std::string MixedArrayObject::ToString(void) const {
 	return ss.str();
 }
 
-std::string MixedArrayObject::ToPdf(void) const {
-	std::stringstream ss;
-	ss << "[";
+void MixedArrayObject::ToPdfStream(IOutputStreamPtr output) const {
+	output << "[";
 	bool first = true;
 	for (auto item : _list) {
-		ss << (first ? "" : " ") << item->ToPdf();
+		output << (first ? "" : " ");
+		item->ToPdfStream(output);
 		first = false;
 	}
 
-	ss << "]";
-	return ss.str();
+	output << "]";
+}
+
+void MixedArrayObject::ToPdfStreamUpdateOffset(IOutputStreamPtr output) {
+	UpdateOffset(output);
+
+	// If the object contains attribute, that controls it's serialization
+	if (HasOverrideAttribute()) {
+		auto override_attribute = GetOverrideAttribute();
+		output->Write(override_attribute);
+		return;
+	}
+
+	output << "[";
+	bool first = true;
+	for (auto item : _list) {
+		output << (first ? "" : " ");
+		item->ToPdfStreamUpdateOffset(output);
+		first = false;
+	}
+
+	output << "]";
 }
 
 MixedArrayObject::~MixedArrayObject() {

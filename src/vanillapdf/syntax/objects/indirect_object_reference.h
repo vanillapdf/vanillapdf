@@ -23,7 +23,7 @@ public:
 	}
 
 	virtual Object::Type GetType(void) const noexcept override { return Object::Type::IndirectReference; }
-	virtual std::string ToPdf(void) const override;
+	virtual void ToPdfStream(IOutputStreamPtr output) const override;
 
 	bool Equals(const IndirectObjectReference& other) const;
 	virtual bool Equals(ObjectPtr other) const override;

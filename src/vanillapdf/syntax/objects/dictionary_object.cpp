@@ -3,6 +3,8 @@
 #include "syntax/objects/dictionary_object.h"
 #include "syntax/utils/output_pointer.h"
 
+#include "utils/streams/output_stream_interface.h"
+
 #include <sstream>
 
 namespace vanillapdf {
@@ -50,16 +52,41 @@ std::string DictionaryObject::ToString(void) const {
 	return ss.str();
 }
 
-std::string DictionaryObject::ToPdf(void) const {
-	std::stringstream ss;
-	ss << "<<";
+void DictionaryObject::ToPdfStream(IOutputStreamPtr output) const {
+	output << "<<";
 	bool first = true;
 	for (auto item : _list) {
-		ss << (first ? "" : " ") << item.first->ToPdf() << " " << item.second->ToPdf();
+		output << (first ? "" : " ");
+		item.first->ToPdfStream(output);
+		output << " ";
+		item.second->ToPdfStream(output);
 		first = false;
 	}
-	ss << ">>";
-	return ss.str();
+
+	output << ">>";
+}
+
+void DictionaryObject::ToPdfStreamUpdateOffset(IOutputStreamPtr output) {
+	UpdateOffset(output);
+
+	// If the object contains attribute, that controls it's serialization
+	if (HasOverrideAttribute()) {
+		auto override_attribute = GetOverrideAttribute();
+		output->Write(override_attribute);
+		return;
+	}
+
+	output << "<<";
+	bool first = true;
+	for (std::pair<NameObjectPtr, ContainableObjectPtr> item : _list) {
+		output << (first ? "" : " ");
+		item.first->ToPdfStreamUpdateOffset(output);
+		output << " ";
+		item.second->ToPdfStreamUpdateOffset(output);
+		first = false;
+	}
+
+	output << ">>";
 }
 
 ContainableObjectPtr DictionaryObject::Find(const NameObject& name) const {

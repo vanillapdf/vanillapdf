@@ -21,8 +21,8 @@ public:
 	virtual void OnBeforeObjectOffsetRecalculation(ObjectPtr ptr) {}
 	virtual void OnAfterObjectOffsetRecalculation(ObjectPtr ptr) {}
 
-	virtual void OnBeforeEntryOffsetRecalculation(XrefUsedEntryBasePtr ptr) {}
-	virtual void OnAfterEntryOffsetRecalculation(XrefUsedEntryBasePtr ptr) {}
+	virtual void OnBeforeEntryOffsetRecalculation(XrefUsedEntryBasePtr entry) {}
+	virtual void OnAfterEntryOffsetRecalculation(XrefUsedEntryBasePtr entry) {}
 
 	virtual void OnBeforeOutputFlush(IInputOutputStreamPtr output) {}
 	virtual void OnAfterOutputFlush(IInputOutputStreamPtr output) {}
@@ -41,6 +41,42 @@ public:
 	virtual void Finalizing() {
 		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
 			Invoke(*current, &IFileWriterObserver::OnFinalizing);
+		}
+	}
+
+	virtual void BeforeObjectOffsetRecalculation(ObjectPtr obj) {
+		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+			Invoke(*current, &IFileWriterObserver::OnBeforeObjectOffsetRecalculation, obj);
+		}
+	}
+
+	virtual void AfterObjectOffsetRecalculation(ObjectPtr obj) {
+		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+			Invoke(*current, &IFileWriterObserver::OnAfterObjectOffsetRecalculation, obj);
+		}
+	}
+
+	virtual void BeforeEntryOffsetRecalculation(XrefUsedEntryBasePtr entry) {
+		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+			Invoke(*current, &IFileWriterObserver::OnBeforeEntryOffsetRecalculation, entry);
+		}
+	}
+
+	virtual void AfterEntryOffsetRecalculation(XrefUsedEntryBasePtr entry) {
+		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+			Invoke(*current, &IFileWriterObserver::OnAfterEntryOffsetRecalculation, entry);
+		}
+	}
+
+	virtual void BeforeObjectWrite(ObjectPtr obj) {
+		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+			Invoke(*current, &IFileWriterObserver::OnBeforeObjectWrite, obj);
+		}
+	}
+
+	virtual void AfterObjectWrite(ObjectPtr obj) {
+		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+			Invoke(*current, &IFileWriterObserver::OnAfterObjectWrite, obj);
 		}
 	}
 
