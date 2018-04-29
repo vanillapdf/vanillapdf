@@ -1,10 +1,10 @@
 #include "tools.h"
 
-void print_merge_help() {
+void print_sign_help() {
 	printf("Usage: sign -s [source file] -d [destination file] -k [key file] -p [key password]");
 }
 
-int process_merge(int argc, char *argv[]) {
+int process_sign(int argc, char *argv[]) {
 	string_type source_file = NULL;
 	string_type destination_file = NULL;
 	string_type key_file = NULL;
@@ -16,23 +16,23 @@ int process_merge(int argc, char *argv[]) {
 	SigningKeyHandle* signing_key = NULL;
 	DocumentSignatureSettingsHandle* signature_settings = NULL;
 
-	if (argc < 7) {
-		print_merge_help();
+	if (argc < 6) {
+		print_sign_help();
 		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
 	}
 
 	if (0 != strcmp(argv[0], "-s")) {
-		print_merge_help();
+		print_sign_help();
 		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
 	}
 
 	if (0 != strcmp(argv[2], "-d")) {
-		print_merge_help();
+		print_sign_help();
 		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
 	}
 
-	if (0 != strcmp(argv[2], "-k")) {
-		print_merge_help();
+	if (0 != strcmp(argv[4], "-k")) {
+		print_sign_help();
 		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
 	}
 
@@ -41,8 +41,8 @@ int process_merge(int argc, char *argv[]) {
 	key_file = argv[5];
 
 	if (argc >= 7) {
-		if (0 != strcmp(argv[2], "-p")) {
-			print_merge_help();
+		if (0 != strcmp(argv[6], "-p")) {
+			print_sign_help();
 			return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
 		}
 
@@ -53,6 +53,7 @@ int process_merge(int argc, char *argv[]) {
 	RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_ToSigningKey(pkcs12_key, &signing_key));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_Create(&signature_settings));
+	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_SetSigningKey(signature_settings, signing_key));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Open(source_file, &document));
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Sign(document, destination_file, signature_settings));

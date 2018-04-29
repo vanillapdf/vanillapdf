@@ -5,7 +5,7 @@ const int VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS = 1;
 const int VANILLAPDF_TOOLS_ERROR_FAILURE = 255;
 
 void print_help() {
-	printf("Usage: [merge|filter|extract] [options]");
+	printf("Usage: [merge|filter|extract|sign] [options]");
 }
 
 int main(int argc, char *argv[]) {
@@ -30,6 +30,10 @@ int main(int argc, char *argv[]) {
 
 	if (0 == strcmp(argv[1], "extract")) {
 		return process_extract(argc - 2, &argv[2]);
+	}
+
+	if (0 == strcmp(argv[1], "sign")) {
+		return process_sign(argc - 2, &argv[2]);
 	}
 
 	print_help();

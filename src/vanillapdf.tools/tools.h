@@ -20,6 +20,7 @@ extern const int VANILLAPDF_TOOLS_ERROR_FAILURE;
 int process_merge(int argc, char *argv[]);
 int process_filter(int argc, char *argv[]);
 int process_extract(int argc, char *argv[]);
+int process_sign(int argc, char *argv[]);
 
 #define RETURN_ERROR_IF_NOT_SUCCESS(fn) \
 do { \

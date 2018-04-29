@@ -26,6 +26,7 @@
     <ClCompile Include="..\src\vanillapdf.tools\filter.c" />
     <ClCompile Include="..\src\vanillapdf.tools\main.c" />
     <ClCompile Include="..\src\vanillapdf.tools\merge.c" />
+    <ClCompile Include="..\src\vanillapdf.tools\sign.c" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vanillapdf.vcxproj">
