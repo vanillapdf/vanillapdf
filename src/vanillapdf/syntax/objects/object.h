@@ -35,8 +35,8 @@ public:
 	virtual Type GetType(void) const noexcept = 0;
 	virtual std::string ToString(void) const { return ToPdf(); }
 	virtual std::string ToPdf(void) const;
-	virtual std::string ToPdfInternal(void) const;
-	virtual void ToPdfStream(IOutputStreamPtr output) const = 0;
+	virtual void ToPdfStream(IOutputStreamPtr output) const;
+	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const = 0;
 	virtual void ToPdfStreamUpdateOffset(IOutputStreamPtr output);
 	virtual void UpdateOffset(IOutputStreamPtr output);
 
@@ -71,7 +71,7 @@ public:
 	WeakReference<File> GetFile() const noexcept { return m_file; }
 
 	void AddAttribute(IAttributePtr attribute);
-	bool RemoveAttribute(IAttributePtr attribute);
+	bool RemoveAttribute(IAttribute::Type type);
 	bool ContainsAttribute(IAttribute::Type type) const;
 	IAttributePtr GetAttribute(IAttribute::Type type) const;
 

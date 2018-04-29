@@ -60,7 +60,7 @@ public:
 	}
 
 	virtual std::string ToString(void) const override;
-	virtual void ToPdfStream(IOutputStreamPtr output) const override;
+	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 	virtual void ToPdfStreamUpdateOffset(IOutputStreamPtr output) override;
 
 	virtual ~MixedArrayObject();

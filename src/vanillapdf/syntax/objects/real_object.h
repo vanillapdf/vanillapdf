@@ -20,7 +20,7 @@ public:
 	~RealObject();
 
 	virtual Object::Type GetType(void) const noexcept override;
-	virtual void ToPdfStream(IOutputStreamPtr output) const override;
+	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 
 	operator value_type() const;
 	value_type GetValue(void) const;

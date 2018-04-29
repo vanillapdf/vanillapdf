@@ -52,7 +52,7 @@ std::string DictionaryObject::ToString(void) const {
 	return ss.str();
 }
 
-void DictionaryObject::ToPdfStream(IOutputStreamPtr output) const {
+void DictionaryObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 	output << "<<";
 	bool first = true;
 	for (auto item : _list) {

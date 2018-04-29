@@ -61,7 +61,7 @@ Object::Type NameObject::GetType(void) const noexcept {
 	return Object::Type::Name;
 }
 
-void NameObject::ToPdfStream(IOutputStreamPtr output) const {
+void NameObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 	output->Write("/");
 	output->Write(ToString());
 }

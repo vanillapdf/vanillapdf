@@ -86,7 +86,7 @@ IntegerObject* IntegerObject::Clone(void) const {
 	return result.detach();
 }
 
-void IntegerObject::ToPdfStream(IOutputStreamPtr output) const {
+void IntegerObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 	output->Write(m_value->ToString());
 }
 

@@ -27,7 +27,7 @@ public:
 	virtual bool Equals(ObjectPtr other) const override;
 
 	virtual Object::Type GetType(void) const noexcept override;
-	virtual void ToPdfStream(IOutputStreamPtr output) const override;
+	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 	virtual std::string ToString(void) const override;
 
 	virtual size_t Hash() const override;

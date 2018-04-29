@@ -359,7 +359,7 @@ std::string StreamObject::ToString(void) const {
 	return ss.str();
 }
 
-void StreamObject::ToPdfStream(IOutputStreamPtr output) const {
+void StreamObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 	std::stringstream ss;
 	ss << _header->ToPdf() << std::endl;
 	ss << "stream" << std::endl;

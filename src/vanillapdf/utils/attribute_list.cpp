@@ -13,9 +13,8 @@ void AttributeList::Add(IAttributePtr attribute) {
 	m_attributes[attribute_type] = attribute;
 }
 
-bool AttributeList::Remove(IAttributePtr attribute) {
-	auto attribute_type = attribute->GetType();
-	auto found = m_attributes.find(attribute_type);
+bool AttributeList::Remove(IAttribute::Type type) {
+	auto found = m_attributes.find(type);
 	if (found == m_attributes.end()) {
 		return false;
 	}

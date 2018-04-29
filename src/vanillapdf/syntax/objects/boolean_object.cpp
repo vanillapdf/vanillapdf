@@ -36,7 +36,7 @@ bool BooleanObject::Equals(ObjectPtr other) const {
 	return (GetValue() == other_obj->GetValue());
 }
 
-void BooleanObject::ToPdfStream(IOutputStreamPtr output) const {
+void BooleanObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 	output->Write(m_value ? "true" : "false");
 }
 

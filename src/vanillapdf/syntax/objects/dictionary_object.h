@@ -73,7 +73,7 @@ protected:
 class DictionaryObject : public DictionaryObjectBase<NameObjectPtr, ContainableObjectPtr>, public IModifyObserver {
 public:
 	virtual std::string ToString(void) const override;
-	virtual void ToPdfStream(IOutputStreamPtr output) const override;
+	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 	virtual void ToPdfStreamUpdateOffset(IOutputStreamPtr output) override;
 	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Dictionary; }
 

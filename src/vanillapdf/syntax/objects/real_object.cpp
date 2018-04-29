@@ -55,7 +55,7 @@ bool RealObject::Equals(const ObjectPtr other) const {
 	return (GetValue() == other_obj->GetValue());
 }
 
-void RealObject::ToPdfStream(IOutputStreamPtr output) const {
+void RealObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 	output << m_value->ToString();
 }
 

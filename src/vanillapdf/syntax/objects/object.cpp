@@ -40,14 +40,22 @@ std::string Object::ToPdf(void) const {
 		return GetOverrideAttribute();
 	}
 
-	return ToPdfInternal();
-}
-
-std::string Object::ToPdfInternal(void) const {
 	auto ss = std::make_shared<std::stringstream>();
 	OutputStreamPtr output_stream = make_deferred<OutputStream>(ss);
 	ToPdfStream(output_stream);
 	return ss->str();
+}
+
+void Object::ToPdfStream(IOutputStreamPtr output) const {
+
+	// If the object contains attribute, that controls it's serialization
+	if (HasOverrideAttribute()) {
+		auto override_attribute = GetOverrideAttribute();
+		output->Write(override_attribute);
+		return;
+	}
+
+	ToPdfStreamInternal(output);
 }
 
 void Object::ToPdfStreamUpdateOffset(IOutputStreamPtr output) {
@@ -209,8 +217,8 @@ bool Object::Identity(ObjectPtr other) const {
 void Object::AddAttribute(IAttributePtr attribute) {
 	m_attributes.Add(attribute);
 }
-bool Object::RemoveAttribute(IAttributePtr attribute) {
-	return m_attributes.Remove(attribute);
+bool Object::RemoveAttribute(IAttribute::Type type) {
+	return m_attributes.Remove(type);
 }
 
 bool Object::ContainsAttribute(IAttribute::Type type) const {

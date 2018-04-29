@@ -91,7 +91,7 @@ public:
 	T At(size_type at);
 
 	void AddAttribute(IAttributePtr attribute);
-	bool RemoveAttribute(IAttributePtr attribute);
+	bool RemoveAttribute(IAttribute::Type type);
 	bool ContainsAttribute(IAttribute::Type type) const;
 	IAttributePtr GetAttribute(IAttribute::Type type);
 
@@ -100,6 +100,7 @@ public:
 	bool Remove(size_type at);
 
 	std::string ToString(void) const;
+	std::string ToPdf(void) const;
 
 	template <typename U>
 	ArrayObjectPtr<U> Convert(std::function<U(const T& obj)> f) const;
@@ -220,8 +221,8 @@ void ArrayObject<T>::AddAttribute(IAttributePtr attribute) {
 }
 
 template <typename T>
-bool ArrayObject<T>::RemoveAttribute(IAttributePtr attribute) {
-	return _list->RemoveAttribute(attribute);
+bool ArrayObject<T>::RemoveAttribute(IAttribute::Type type) {
+	return _list->RemoveAttribute(type);
 }
 
 template <typename T>
@@ -282,6 +283,11 @@ bool ArrayObject<T>::Remove(size_type at) {
 template <typename T>
 std::string ArrayObject<T>::ToString(void) const {
 	return _list->ToString();
+}
+
+template <typename T>
+std::string ArrayObject<T>::ToPdf(void) const {
+	return _list->ToPdf();
 }
 
 template <typename T>

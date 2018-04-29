@@ -31,7 +31,7 @@ NullObjectPtr NullObject::GetInstance(void) {
 	return instance;
 }
 
-void NullObject::ToPdfStream(IOutputStreamPtr output) const {
+void NullObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 	output->Write("null");
 }
 

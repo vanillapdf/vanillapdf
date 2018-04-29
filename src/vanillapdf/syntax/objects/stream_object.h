@@ -16,7 +16,7 @@ public:
 	StreamObject(DictionaryObjectPtr header, types::stream_offset offset);
 	virtual Object::Type GetType(void) const noexcept override;
 	virtual std::string ToString(void) const override;
-	virtual void ToPdfStream(IOutputStreamPtr output) const override;
+	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 
 	virtual void ObserveeChanged(IModifyObservable* observee) override;
 

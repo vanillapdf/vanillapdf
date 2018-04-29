@@ -112,7 +112,7 @@ std::string MixedArrayObject::ToString(void) const {
 	return ss.str();
 }
 
-void MixedArrayObject::ToPdfStream(IOutputStreamPtr output) const {
+void MixedArrayObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 	output << "[";
 	bool first = true;
 	for (auto item : _list) {

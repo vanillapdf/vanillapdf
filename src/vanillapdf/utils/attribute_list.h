@@ -19,7 +19,7 @@ public:
 public:
 	bool Contains(IAttribute::Type type) const;
 	void Add(IAttributePtr attribute);
-	bool Remove(IAttributePtr attribute);
+	bool Remove(IAttribute::Type type);
 	IAttributePtr Get(IAttribute::Type type) const;
 	void Clear();
 
