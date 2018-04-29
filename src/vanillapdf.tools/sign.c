@@ -54,6 +54,7 @@ int process_sign(int argc, char *argv[]) {
 
 	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_Create(&signature_settings));
 	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_SetSigningKey(signature_settings, signing_key));
+	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_SetDigest(signature_settings, MessageDigestAlgorithmType_SHA256));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Open(source_file, &document));
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Sign(document, destination_file, signature_settings));
