@@ -33,7 +33,7 @@ void DocumentSigner::OnAfterObjectWrite(ObjectPtr obj) {
 
 void DocumentSigner::OnBeforeOutputFlush(IInputOutputStreamPtr output) {
 
-	output->SetInputPosition(0, std::ios_base::end);
+	output->SetOutputPosition(0, std::ios_base::end);
 	auto output_size = output->GetOutputPosition();
 
 	auto byte_ranges = m_dictionary->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::ByteRange);
@@ -51,16 +51,17 @@ void DocumentSigner::OnBeforeOutputFlush(IInputOutputStreamPtr output) {
 	assert(signature_contents_offset < after_signature_contents_offset);
 	assert(after_signature_contents_length > 0);
 
-	byte_ranges->Append(make_deferred<IntegerObject>(0));
-	byte_ranges->Append(make_deferred<IntegerObject>(signature_contents_offset));
-	byte_ranges->Append(make_deferred<IntegerObject>(after_signature_contents_offset));
-	byte_ranges->Append(make_deferred<IntegerObject>(after_signature_contents_length));
+	ArrayObjectPtr<IntegerObjectPtr> new_ranges;
+	new_ranges->Append(make_deferred<IntegerObject>(0));
+	new_ranges->Append(make_deferred<IntegerObject>(signature_contents_offset));
+	new_ranges->Append(make_deferred<IntegerObject>(after_signature_contents_offset));
+	new_ranges->Append(make_deferred<IntegerObject>(after_signature_contents_length));
 
 	// Make sure byte ranges are valid
-	assert(byte_ranges->Size() % 2 == 0);
+	assert(new_ranges->Size() % 2 == 0);
 
 	output->SetOutputPosition(byte_ranges_offset);
-	output->Write(byte_range_raw->ToPdf());
+	output->Write(new_ranges->ToPdf());
 
 	m_key->SignInitialize(m_digest);
 
@@ -79,9 +80,18 @@ void DocumentSigner::OnBeforeOutputFlush(IInputOutputStreamPtr output) {
 
 	auto signature = m_key->SignFinal();
 
+	HexadecimalStringObjectPtr new_signature_contents;
+	new_signature_contents->SetValue(signature);
+	new_signature_contents->SetInitialized();
+
+	std::string signature_encoded = new_signature_contents->ToPdf();
+	if (signature_encoded.size() > signature_contents_overriden_value.size()) {
+		throw GeneralException("Pre-allocated signature size is not sufficient");
+	}
+
 	// Seek to the contents and write new signature value
 	output->SetOutputPosition(signature_contents_offset);
-	output->Write(signature);
+	output->Write(signature_encoded);
 }
 
 } // semantics
