@@ -1320,6 +1320,9 @@ void FileWriter::CopyStreamContent(IInputStreamPtr source, IOutputStreamPtr dest
 	// Block copy to destination
 	Buffer buffer(constant::BUFFER_SIZE);
 
+	source->SetInputPosition(0);
+	destination->SetOutputPosition(0);
+
 	for (;;) {
 		auto read = source->Read(buffer, buffer.size());
 		if (read == 0) {
