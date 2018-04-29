@@ -711,6 +711,8 @@ void Document::Sign(const std::string& path, DocumentSignatureSettingsPtr option
 	auto chain = m_holder->GetXrefChain();
 	auto new_entry = chain->AllocateNewEntry();
 	new_entry->SetReference(signature_field);
+	new_entry->SetFile(m_holder);
+	new_entry->SetInitialized();
 
 	OutputCatalogPtr catalog;
 	bool has_catalog = GetDocumentCatalog(catalog);
@@ -726,10 +728,12 @@ void Document::Sign(const std::string& path, DocumentSignatureSettingsPtr option
 		assert(!interactive_form.empty() && "CreateAcroForm returned empty result");
 	}
 
-	auto fields = interactive_form->Fields();
+	auto fields = interactive_form->CreateFields();
 	auto fields_obj = fields->GetObject();
+	auto fields_array = fields_obj->Data();
 
-	fields_obj->Append(signature_field);
+	auto signature_fields_reference = make_deferred<syntax::IndirectObjectReference>(signature_field);
+	fields_array->Append(signature_fields_reference);
 
 	DocumentSignerPtr signer = make_deferred<DocumentSigner>(key, digest, signature_dictionary);
 	FilePtr destination = File::Create(path);

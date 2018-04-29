@@ -13,7 +13,8 @@ class InteractiveForm : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
 	explicit InteractiveForm(syntax::DictionaryObjectPtr root);
 
-	FieldCollectionPtr Fields(void) const;
+	bool Fields(OuputFieldCollectionPtr& result) const;
+	FieldCollectionPtr CreateFields();
 };
 
 } // semantics

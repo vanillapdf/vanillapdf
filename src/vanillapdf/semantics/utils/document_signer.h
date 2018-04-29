@@ -15,7 +15,9 @@ namespace semantics {
 class DocumentSigner : public virtual IUnknown, public syntax::IFileWriterObserver {
 public:
 	DocumentSigner(ISigningKeyPtr key, MessageDigestAlgorithm digest, syntax::DictionaryObjectPtr signature_dictionary);
+
 	void OnBeforeOutputFlush(IInputOutputStreamPtr output) override;
+	void OnAfterObjectWrite(syntax::ObjectPtr obj) override;
 
 private:
 	syntax::DictionaryObjectPtr m_dictionary;

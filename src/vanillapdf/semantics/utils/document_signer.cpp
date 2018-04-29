@@ -18,10 +18,23 @@ DocumentSigner::DocumentSigner(ISigningKeyPtr key, MessageDigestAlgorithm digest
 	m_dictionary = signature_dictionary;
 }
 
+void DocumentSigner::OnAfterObjectWrite(ObjectPtr obj) {
+	if (obj->GetObjectNumber() != m_dictionary->GetObjectNumber()) {
+		return;
+	}
+
+	if (obj->GetGenerationNumber() != m_dictionary->GetGenerationNumber()) {
+		return;
+	}
+
+	auto signature_fields = ObjectUtils::ConvertTo<DictionaryObjectPtr>(obj);
+	m_dictionary = signature_fields->FindAs<DictionaryObjectPtr>(constant::Name::V);
+}
+
 void DocumentSigner::OnBeforeOutputFlush(IInputOutputStreamPtr output) {
 
 	output->SetInputPosition(0, std::ios_base::end);
-	auto output_size = output->GetInputPosition();
+	auto output_size = output->GetOutputPosition();
 
 	auto byte_ranges = m_dictionary->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::ByteRange);
 	auto signature_contents = m_dictionary->FindAs<HexadecimalStringObjectPtr>(constant::Name::Contents);

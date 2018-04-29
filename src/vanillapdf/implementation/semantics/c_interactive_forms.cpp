@@ -13,7 +13,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetFields(Interacti
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try {
-		auto fields = form->Fields();
+		OuputFieldCollectionPtr fields;
+		bool contains = form->Fields(fields);
+		if (!contains) {
+			return VANILLAPDF_ERROR_OBJECT_MISSING;
+		}
+
 		auto ptr = fields.AddRefGet();
 		*result = reinterpret_cast<FieldCollectionHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
