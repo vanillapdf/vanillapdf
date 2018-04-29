@@ -11,7 +11,7 @@ namespace syntax {
 class SerializationOverrideAttribute : public IAttribute {
 public:
 	SerializationOverrideAttribute() = default;
-	SerializationOverrideAttribute(std::string value);
+	SerializationOverrideAttribute(const std::string& value);
 
 	std::string GetValue(void) const;
 
@@ -22,7 +22,7 @@ private:
 	std::string m_value;
 };
 
-inline SerializationOverrideAttribute::SerializationOverrideAttribute(std::string value) {
+inline SerializationOverrideAttribute::SerializationOverrideAttribute(const std::string& value) {
 	m_value = value;
 }
 
