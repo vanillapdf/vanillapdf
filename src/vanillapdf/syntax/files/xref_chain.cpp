@@ -58,6 +58,11 @@ XrefUsedEntryBasePtr XrefChain::AllocateNewEntry() {
 		//}
 
 		XrefUsedEntryPtr new_entry = make_deferred<XrefUsedEntry>(i, gen_number, -1);
+
+		// Newly allocated entries are marked as dirty, so when calculating incremental update
+		// differences we can check for new entries as well for changed entries
+		new_entry->SetDirty();
+
 		xref->Add(new_entry);
 
 		m_next_allocation = i + 1;
