@@ -22,19 +22,11 @@ bool InteractiveForm::Fields(OuputFieldCollectionPtr& result) const {
 
 FieldCollectionPtr InteractiveForm::CreateFields() {
 	if (!_obj->Contains(constant::Name::Fields)) {
-		auto file = _obj->GetFile().GetReference();
-		auto chain = file->GetXrefChain();
-		auto entry = chain->AllocateNewEntry();
+		syntax::MixedArrayObjectPtr mixed_array;
+		mixed_array->SetFile(_obj->GetFile());
+		mixed_array->SetInitialized();
 
-		syntax::MixedArrayObjectPtr raw_dictionary;
-		raw_dictionary->SetFile(file);
-		raw_dictionary->SetInitialized();
-		entry->SetReference(raw_dictionary);
-		entry->SetFile(file);
-		entry->SetInitialized();
-
-		syntax::IndirectObjectReferencePtr ref = make_deferred<syntax::IndirectObjectReference>(raw_dictionary);
-		_obj->Insert(constant::Name::Fields, ref);
+		_obj->Insert(constant::Name::Fields, mixed_array);
 	}
 
 	auto fields = _obj->FindAs<syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr>>(constant::Name::Fields);
