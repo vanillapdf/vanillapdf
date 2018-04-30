@@ -237,7 +237,7 @@
 	<div class="col-4 col-xl-2">
 	  <div class="nav flex-column">
 		<a class="nav-link" href="faq.html">FAQ</a>
-		<a class="nav-link" href="terms.html">Terms</a>
+		<a class="nav-link" href="licenses.html">EULA</a>
 		<a class="nav-link" href="../doc/page_licensing.html">Licensing</a>
 	  </div>
 	</div>
