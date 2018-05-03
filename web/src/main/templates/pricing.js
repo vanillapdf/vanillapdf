@@ -14,7 +14,7 @@ $(document).ready(function() {
 });
 
 /* Orders */
-var ORDER_URL = 'page/{{ order_page }}';
+var ORDER_URL = '{{ pages_folder }}/{{ order_page }}';
 
 var PERSONAL_LICENSE_ID					= 'personal-license';
 var PERSONAL_SUPPORT_ID					= 'personal-support';
