@@ -205,6 +205,7 @@ set(VANILLAPDF_SEMANTICS_HEADERS
 	semantics/objects/page_tree.h
 	semantics/objects/page_tree_node.h
 	semantics/objects/resource_dictionary.h
+	semantics/objects/signature_flags.h
 	
 	semantics/objects/annotations.h
 	semantics/objects/character_map.h

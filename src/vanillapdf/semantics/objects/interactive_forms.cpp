@@ -1,5 +1,6 @@
 #include "precompiled.h"
 
+#include "semantics/objects/signature_flags.h"
 #include "semantics/objects/interactive_forms.h"
 
 #include "syntax/files/file.h"
@@ -20,6 +21,16 @@ bool InteractiveForm::Fields(OuputFieldCollectionPtr& result) const {
 	return true;
 }
 
+bool InteractiveForm::SignatureFlags(OutputSignatureFlagsPtr& result) const {
+	if (!_obj->Contains(constant::Name::SigFlags)) {
+		return false;
+	}
+
+	auto flags = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::SigFlags);
+	result = make_deferred<class SignatureFlags>(flags);
+	return true;
+}
+
 FieldCollectionPtr InteractiveForm::CreateFields() {
 	if (!_obj->Contains(constant::Name::Fields)) {
 		syntax::MixedArrayObjectPtr mixed_array;
@@ -31,6 +42,19 @@ FieldCollectionPtr InteractiveForm::CreateFields() {
 
 	auto fields = _obj->FindAs<syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr>>(constant::Name::Fields);
 	return make_deferred<FieldCollection>(fields);
+}
+
+SignatureFlagsPtr InteractiveForm::CreateSignatureFlags() {
+	if (!_obj->Contains(constant::Name::SigFlags)) {
+		syntax::IntegerObjectPtr signature_flags;
+		signature_flags->SetFile(_obj->GetFile());
+		signature_flags->SetInitialized();
+
+		_obj->Insert(constant::Name::SigFlags, signature_flags);
+	}
+
+	auto flags = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::SigFlags);
+	return make_deferred<class SignatureFlags>(flags);
 }
 
 } // semantics

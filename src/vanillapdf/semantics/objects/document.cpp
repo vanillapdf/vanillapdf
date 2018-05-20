@@ -728,6 +728,12 @@ void Document::Sign(const std::string& path, DocumentSignatureSettingsPtr option
 		assert(!interactive_form.empty() && "CreateAcroForm returned empty result");
 	}
 
+	// Update signature flags
+	auto signature_flags = interactive_form->CreateSignatureFlags();
+	signature_flags->SetSignaturesExist(true);
+	signature_flags->SetAppendOnly(true);
+
+	// Create signature field dictionary within AcroForm
 	auto fields = interactive_form->CreateFields();
 	auto fields_obj = fields->GetObject();
 	auto fields_array = fields_obj->Data();

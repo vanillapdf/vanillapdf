@@ -693,6 +693,9 @@
     <ClInclude Include="..\include\vanillapdf\utils\c_name_constants.h">
       <Filter>Header Files\include\utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\signature_flags.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\vanillapdf\contents\content_stream_objects.cpp">

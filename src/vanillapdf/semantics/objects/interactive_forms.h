@@ -5,6 +5,7 @@
 
 #include "semantics/objects/high_level_object.h"
 #include "semantics/objects/fields.h"
+#include "semantics/objects/signature_flags.h"
 
 namespace vanillapdf {
 namespace semantics {
@@ -14,7 +15,10 @@ public:
 	explicit InteractiveForm(syntax::DictionaryObjectPtr root);
 
 	bool Fields(OuputFieldCollectionPtr& result) const;
+	bool SignatureFlags(OutputSignatureFlagsPtr& result) const;
+
 	FieldCollectionPtr CreateFields();
+	SignatureFlagsPtr CreateSignatureFlags();
 };
 
 } // semantics

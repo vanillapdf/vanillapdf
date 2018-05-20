@@ -116,6 +116,7 @@
     <ClInclude Include="..\src\vanillapdf\semantics\objects\page_tree.h" />
     <ClInclude Include="..\src\vanillapdf\semantics\objects\page_tree_node.h" />
     <ClInclude Include="..\src\vanillapdf\semantics\objects\resource_dictionary.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\signature_flags.h" />
     <ClInclude Include="..\src\vanillapdf\semantics\objects\tree.h" />
     <ClInclude Include="..\src\vanillapdf\semantics\objects\rectangle.h" />
     <ClInclude Include="..\src\vanillapdf\semantics\objects\viewer_preferences.h" />

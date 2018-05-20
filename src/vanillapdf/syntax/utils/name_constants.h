@@ -231,6 +231,7 @@ extern const syntax::NameObject DeviceCMYK;
 extern const syntax::NameObject XObject;
 extern const syntax::NameObject Image;
 extern const syntax::NameObject ProcSet;
+extern const syntax::NameObject SigFlags;
 
 } // Constant
 } // Name
