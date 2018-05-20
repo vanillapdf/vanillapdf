@@ -10,7 +10,7 @@ namespace semantics {
 
 class FieldCollection : public HighLevelObject<syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr>> {
 public:
-	FieldCollection(syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> root);
+	explicit FieldCollection(syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> root);
 	types::size_type Size() const;
 	FieldPtr At(types::size_type index) const;
 };
