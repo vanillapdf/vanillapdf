@@ -79,6 +79,68 @@ void NumericObjectBackend::SetRealValue(types::real value) {
 	OnChanged();
 }
 
+void NumericObjectBackend::ToggleBit(int pos, bool value) {
+	if (m_type == Type::SignedInteger) {
+		decltype(m_int) newbit = 1;
+
+		if (value) {
+			m_int |= newbit << pos;
+		} else {
+			m_int &= ~(newbit << pos);
+		}
+
+		OnChanged();
+		return;
+	}
+
+	if (m_type == Type::UnsignedInteger) {
+		decltype(m_uint) newbit = 1;
+
+		if (value) {
+			m_uint |= newbit << pos;
+		} else {
+			m_uint &= ~(newbit << pos);
+		}
+
+		OnChanged();
+		return;
+	}
+
+	if (m_type == Type::Real) {
+		throw GeneralException("Cannot toggle bits on floating point numbers");
+	}
+
+	assert(false && "Unknown numeric type");
+	throw GeneralException("Unknown numeric type");
+}
+
+void NumericObjectBackend::SetBit(int pos) {
+	ToggleBit(pos, true);
+}
+
+void NumericObjectBackend::ClearBit(int pos) {
+	ToggleBit(pos, false);
+}
+
+bool NumericObjectBackend::IsBitSet(int pos) const {
+	if (m_type == Type::SignedInteger) {
+		decltype(m_int) newbit = 1;
+		return ((m_int >> pos) & newbit) != 0;
+	}
+
+	if (m_type == Type::UnsignedInteger) {
+		decltype(m_uint) newbit = 1;
+		return ((m_uint >> pos) & newbit) != 0;
+	}
+
+	if (m_type == Type::Real) {
+		throw GeneralException("Cannot read bits on floating point numbers");
+	}
+
+	assert(false && "Unknown numeric type");
+	throw GeneralException("Unknown numeric type");
+}
+
 types::big_int NumericObjectBackend::GetIntegerValue(void) const {
 	if (m_type == Type::SignedInteger) {
 		return m_int;

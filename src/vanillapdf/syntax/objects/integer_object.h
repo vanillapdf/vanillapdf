@@ -39,6 +39,11 @@ public:
 	void SetValue(types::big_uint value) { m_value->SetUnsignedIntegerValue(value); }
 	void SetValue(types::real value) { m_value->SetRealValue(value); }
 
+	void ToggleBit(int pos, bool value) { m_value->ToggleBit(pos, value); }
+	void SetBit(int pos) { m_value->SetBit(pos); }
+	void ClearBit(int pos) { m_value->ClearBit(pos); }
+	bool IsBitSet(int pos) const { return m_value->IsBitSet(pos); }
+
 	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Integer; }
 
 	bool Equals(const IntegerObject& other) const { return GetIntegerValue() == other.GetIntegerValue(); }

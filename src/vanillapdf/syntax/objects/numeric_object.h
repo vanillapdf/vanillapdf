@@ -29,6 +29,11 @@ public:
 	void SetRealValue(types::real value);
 	void SetRealPrecision(uint32_t precision);
 
+	void ToggleBit(int pos, bool value);
+	void SetBit(int pos);
+	void ClearBit(int pos);
+	bool IsBitSet(int pos) const;
+
 	size_t Hash() const;
 	NumericObjectBackend* Clone(void) const;
 
