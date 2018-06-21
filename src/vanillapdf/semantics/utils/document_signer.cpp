@@ -12,8 +12,13 @@ namespace semantics {
 
 using namespace syntax;
 
-DocumentSigner::DocumentSigner(ISigningKeyPtr key, MessageDigestAlgorithm digest, DictionaryObjectPtr signature_dictionary) {
+DocumentSigner::DocumentSigner(
+	ISigningKeyPtr key,
+	syntax::HexadecimalStringObjectPtr signing_certificate,
+	MessageDigestAlgorithm digest,
+	DictionaryObjectPtr signature_dictionary) {
 	m_key = key;
+	m_certificate = signing_certificate;
 	m_digest = digest;
 	m_dictionary = signature_dictionary;
 }
@@ -64,10 +69,10 @@ void DocumentSigner::OnBeforeOutputFlush(IInputOutputStreamPtr output) {
 
 	m_key->SignInitialize(m_digest);
 
-	auto ranges_length = byte_ranges->Size();
+	auto ranges_length = new_ranges->Size();
 	for (decltype(ranges_length) i = 0; i < ranges_length; i += 2) {
-		auto offset = byte_ranges[i];
-		auto bytes_length = byte_ranges[i + 1];
+		auto offset = new_ranges[i];
+		auto bytes_length = new_ranges[i + 1];
 
 		auto offset_value = offset->GetIntegerValue();
 		auto bytes_length_value = bytes_length->GetIntegerValue();

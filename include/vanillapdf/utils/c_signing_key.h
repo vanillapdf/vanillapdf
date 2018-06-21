@@ -67,6 +67,13 @@ extern "C"
 	typedef void (*SigningKeyCleanupFunction)(void);
 
 	/**
+	* \brief Get binary representation of X.509 certificate associated with the signing key
+	*
+	* The result should be either a DER-encoded binary data of the X.509 certificate
+	*/
+	typedef error_type (*SigningKeyCertificateFunction)(BufferHandle** result);
+
+	/**
 	* \brief Creates a custom \ref SigningKeyHandle to provide custom sign operation
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_CreateCustom(
@@ -74,6 +81,7 @@ extern "C"
 		SigningKeyUpdateFunction sign_update,
 		SigningKeyFinalFunction sign_final,
 		SigningKeyCleanupFunction sign_cleanup,
+		SigningKeyCertificateFunction sign_certificate,
 		SigningKeyHandle** result
 	);
 

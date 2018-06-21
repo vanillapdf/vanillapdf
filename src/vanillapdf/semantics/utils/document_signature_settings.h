@@ -17,13 +17,11 @@ public:
 	void SetDigest(MessageDigestAlgorithm digest);
 
 	bool GetSigningKey(OutputPointer<ISigningKeyPtr>& result) const;
-	bool GetCertificate(OutputPointer<syntax::HexadecimalStringObjectPtr>& result) const;
 	bool GetName(OutputPointer<syntax::LiteralStringObjectPtr>& result) const;
 	bool GetLocation(OutputPointer<syntax::LiteralStringObjectPtr>& result) const;
 	bool GetReason(OutputPointer<syntax::LiteralStringObjectPtr>& result) const;
 
 	void SetSigningKey(ISigningKeyPtr value);
-	void SetCertificate(syntax::HexadecimalStringObjectPtr value);
 	void SetName(syntax::LiteralStringObjectPtr value);
 	void SetLocation(syntax::LiteralStringObjectPtr value);
 	void SetReason(syntax::LiteralStringObjectPtr value);
@@ -32,7 +30,6 @@ private:
 	OutputPointer<ISigningKeyPtr> m_key;
 	MessageDigestAlgorithm m_digest;
 
-	OutputPointer<syntax::HexadecimalStringObjectPtr> m_certificate;
 	OutputPointer<syntax::LiteralStringObjectPtr> m_name;
 	OutputPointer<syntax::LiteralStringObjectPtr> m_location;
 	OutputPointer<syntax::LiteralStringObjectPtr> m_reason;

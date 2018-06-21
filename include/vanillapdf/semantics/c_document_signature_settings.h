@@ -87,19 +87,6 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetReason(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle* value);
 
 	/**
-	* \brief
-	* An array of byte strings that shall represent the X.509 certificate chain
-	* used when signing and verifying signatures that use public-key cryptography,
-	* or a byte string if the chain has only one entry.
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetCertificate(DocumentSignatureSettingsHandle* handle, HexadecimalStringObjectHandle** result);
-
-	/**
-	* \brief \copybrief DocumentSignatureSettings_GetCertificate
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetCertificate(DocumentSignatureSettingsHandle* handle, HexadecimalStringObjectHandle* value);
-
-	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/

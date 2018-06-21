@@ -223,36 +223,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetReason
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetCertificate(DocumentSignatureSettingsHandle* handle, HexadecimalStringObjectHandle** result) {
-	DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-	try {
-		OutputPointer<HexadecimalStringObjectPtr> certificate;
-		bool has_name = obj->GetCertificate(certificate);
-		if (!has_name) {
-			return VANILLAPDF_ERROR_OBJECT_MISSING;
-		}
-
-		auto ptr = certificate.AddRefGet();
-		*result = reinterpret_cast<HexadecimalStringObjectHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetCertificate(DocumentSignatureSettingsHandle* handle, HexadecimalStringObjectHandle* value) {
-	DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
-	HexadecimalStringObject* certificate = reinterpret_cast<HexadecimalStringObject*>(value);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(certificate);
-
-	try {
-		obj->SetCertificate(certificate);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
-}
-
 VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_Release(DocumentSignatureSettingsHandle* handle) {
 	return ObjectRelease<DocumentSignatureSettings, DocumentSignatureSettingsHandle>(handle);
 }

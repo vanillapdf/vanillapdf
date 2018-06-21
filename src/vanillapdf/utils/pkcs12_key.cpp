@@ -36,6 +36,8 @@ public:
 	void SignUpdate(IInputStreamPtr data, types::stream_size length);
 	BufferPtr SignFinal();
 
+	BufferPtr GetSigningCertificate() const;
+
 	~PKCS12KeyImpl();
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
@@ -47,7 +49,8 @@ private:
 	X509 *cert = nullptr;
 	ENGINE *rsa = nullptr;
 
-	EVP_MD_CTX *signing_context = nullptr;
+	PKCS7 *p7 = nullptr;
+	BIO *p7bio = nullptr;
 
 #endif
 
@@ -95,6 +98,10 @@ void PKCS12Key::SignUpdate(IInputStreamPtr data, types::stream_size length) {
 
 BufferPtr PKCS12Key::SignFinal() {
 	return m_impl->SignFinal();
+}
+
+BufferPtr PKCS12Key::GetSigningCertificate() const {
+	return m_impl->GetSigningCertificate();
 }
 
 #pragma endregion
@@ -234,15 +241,45 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-	if (signing_context == nullptr) {
-		signing_context = EVP_MD_CTX_create();
+	p7 = PKCS7_new();
+	if (p7 == nullptr) {
+		throw GeneralException("Could not create PKCS#7");
+	}
+
+	int type_set = PKCS7_set_type(p7, NID_pkcs7_signed);
+	if (type_set != 1) {
+		throw GeneralException("Could not set PKCS#7 type");
+	}
+
+	int detached_set = PKCS7_set_detached(p7, 1);
+	if (detached_set != 1) {
+		throw GeneralException("Could not set PKCS#7 detached");
 	}
 
 	auto message_digest = MiscUtils::GetAlgorithm(algorithm);
+	auto signer_info = PKCS7_add_signature(p7, cert, key, message_digest);
+	if (signer_info == nullptr) {
+		throw GeneralException("Could not add signature");
+	}
 
-	int initialized = EVP_DigestSignInit(signing_context, nullptr, message_digest, nullptr, key);
-	if (initialized != 1) {
-		throw GeneralException("Could not initialize signing context");
+	int attribute_added = PKCS7_add_signed_attribute(signer_info, NID_pkcs9_contentType, V_ASN1_OBJECT, OBJ_nid2obj(NID_pkcs7_data));
+	if (attribute_added != 1) {
+		throw GeneralException("Could not add signed attribute");
+	}
+
+	int certificate_added = PKCS7_add_certificate(p7, cert);
+	if (certificate_added != 1) {
+		throw GeneralException("Could not add certificate");
+	}
+
+	/*int content_set = PKCS7_content_new(p7, NID_pkcs7_data);
+	if (content_set != 1) {
+		throw GeneralException("Could not set signing content");
+	}*/
+
+	p7bio = PKCS7_dataInit(p7, nullptr);
+	if (p7bio == nullptr) {
+		throw GeneralException("Could not initialize signing data");
 	}
 
 #else
@@ -279,11 +316,11 @@ void PKCS12Key::PKCS12KeyImpl::SignUpdate(IInputStreamPtr data, types::stream_si
 		types::stream_size block_size = std::min<types::stream_size>(length - read_total, constant::BUFFER_SIZE);
 		types::size_type block_size_converted = ValueConvertUtils::SafeConvert<types::size_type>(block_size);
 		types::stream_size read = data->Read(buffer, block_size_converted);
-		size_t read_converted = ValueConvertUtils::SafeConvert<size_t>(read);
+		int read_converted = ValueConvertUtils::SafeConvert<int>(read);
 
-		int updated = EVP_DigestSignUpdate(signing_context, buffer.data(), read_converted);
-		if (updated != 1) {
-			throw GeneralException("Could not update signing context");
+		int written = BIO_write(p7bio, buffer.data(), read_converted);
+		if (written != read_converted) {
+			throw GeneralException("Could not write data");
 		}
 
 		read_total = read_total + read;
@@ -307,16 +344,52 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::SignFinal() {
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-	size_t length = 0;
-	int finalized = EVP_DigestSignFinal(signing_context, nullptr, &length);
+	int finalized = PKCS7_dataFinal(p7, p7bio);
 	if (finalized != 1) {
-		throw GeneralException("Could not get signing digest length");
+		throw GeneralException("Could not finalize PKCS#7");
+	}
+
+	int length = i2d_PKCS7(p7, nullptr);
+	if (length < 0) {
+		throw GeneralException("Could not get PKCS#7 size");
 	}
 
 	BufferPtr result = make_deferred<Buffer>(length);
-	int digested = EVP_DigestSignFinal(signing_context, (unsigned char *) result->data(), &length);
-	if (digested != 1) {
-		throw GeneralException("Could not read signing digest");
+	auto data_pointer = (unsigned char *) result->data();
+	int converted = i2d_PKCS7(p7, &data_pointer);
+	if (converted < 0) {
+		throw GeneralException("Could not convert PKCS#7");
+	}
+
+	return result;
+
+#else
+
+	throw NotSupportedException("This library was compiled without OpenSSL support");
+
+#endif
+
+}
+
+BufferPtr PKCS12Key::PKCS12KeyImpl::GetSigningCertificate() const {
+
+	// Signing is a licensed feature
+	if (!LicenseInfo::IsValid()) {
+		throw LicenseRequiredException("Document signing is a licensed feature");
+	}
+
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+
+	int length = i2d_X509(cert, nullptr);
+	if (length < 0) {
+		throw GeneralException("Could not get certificate size");
+	}
+
+	BufferPtr result = make_deferred<Buffer>(length);
+	auto data_pointer = (unsigned char *) result->data();
+	int converted = i2d_X509(cert, &data_pointer);
+	if (converted < 0) {
+		throw GeneralException("Could not convert certificate");
 	}
 
 	return result;
@@ -358,9 +431,14 @@ PKCS12Key::PKCS12KeyImpl::~PKCS12KeyImpl() {
 		rsa = nullptr;
 	}
 
-	if (nullptr != signing_context) {
-		EVP_MD_CTX_destroy(signing_context);
-		signing_context = nullptr;
+	if (nullptr != p7) {
+		PKCS7_free(p7);
+		p7 = nullptr;
+	}
+
+	if (nullptr != p7bio) {
+		BIO_free(p7bio);
+		p7bio = nullptr;
 	}
 
 #endif

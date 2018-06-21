@@ -23,6 +23,7 @@ public:
 	void SignUpdate(const Buffer& data) override;
 	void SignUpdate(IInputStreamPtr data, types::stream_size length) override;
 	BufferPtr SignFinal() override;
+	BufferPtr GetSigningCertificate() const override;
 
 private:
 	class PKCS12KeyImpl;
