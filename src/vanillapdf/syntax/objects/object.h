@@ -62,6 +62,9 @@ public:
 	types::big_uint GetObjectNumber() const;
 	types::ushort GetGenerationNumber() const;
 
+	types::big_uint GetRootObjectNumber() const;
+	types::ushort GetRootGenerationNumber() const;
+
 	void SetOwner(WeakReference<Object> owner) noexcept { m_owner = owner; }
 	WeakReference<Object> GetOwner() const noexcept { return m_owner; }
 	void ClearOwner() noexcept { m_owner.Reset(); }

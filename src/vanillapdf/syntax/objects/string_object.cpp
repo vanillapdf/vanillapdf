@@ -101,7 +101,7 @@ BufferPtr LiteralStringObject::GetValue() const {
 		auto locked_file = m_file.GetReference();
 
 		if (!IsEncryptionExempted() && locked_file->IsEncrypted()) {
-			new_value = locked_file->DecryptString(_raw_value, GetObjectNumber(), GetGenerationNumber());
+			new_value = locked_file->DecryptString(_raw_value, GetRootObjectNumber(), GetRootGenerationNumber());
 		}
 	}
 
@@ -146,7 +146,7 @@ BufferPtr HexadecimalStringObject::GetValue() const {
 
 		auto locked_file = m_file.GetReference();
 		if (!IsEncryptionExempted() && locked_file->IsEncrypted()) {
-			result = locked_file->DecryptString(result, GetObjectNumber(), GetGenerationNumber());
+			result = locked_file->DecryptString(result, GetRootObjectNumber(), GetRootGenerationNumber());
 		}
 	}
 

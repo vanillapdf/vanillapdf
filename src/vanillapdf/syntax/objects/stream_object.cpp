@@ -129,7 +129,7 @@ BufferPtr StreamObject::GetBodyRaw() const {
 
 	if (!_header->Contains(constant::Name::Filter)) {
 		// Stream does not contain crypt filter
-		body = locked_file->DecryptStream(body, GetObjectNumber(), GetGenerationNumber());
+		body = locked_file->DecryptStream(body, GetRootObjectNumber(), GetRootGenerationNumber());
 		_body->assign(body.begin(), body.end());
 		_body->SetInitialized();
 		return _body;
@@ -144,7 +144,7 @@ BufferPtr StreamObject::GetBodyRaw() const {
 		if (filter_name == constant::Name::Crypt) {
 			auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
 			auto handler_name = params->FindAs<NameObjectPtr>(constant::Name::Name);
-			body = locked_file->DecryptData(body, GetObjectNumber(), GetGenerationNumber(), handler_name);
+			body = locked_file->DecryptData(body, GetRootObjectNumber(), GetRootGenerationNumber(), handler_name);
 			_body->assign(body.begin(), body.end());
 			_body->SetInitialized();
 			return _body;
@@ -159,7 +159,7 @@ BufferPtr StreamObject::GetBodyRaw() const {
 				assert(i == 0 && "Crypt filter is not first");
 				auto params = _header->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::DecodeParms);
 				auto handler_name = params->At(i)->FindAs<NameObjectPtr>(constant::Name::Name);
-				body = locked_file->DecryptData(body, GetObjectNumber(), GetGenerationNumber(), handler_name);
+				body = locked_file->DecryptData(body, GetRootObjectNumber(), GetRootGenerationNumber(), handler_name);
 				_body->assign(body.begin(), body.end());
 				_body->SetInitialized();
 				return _body;
@@ -168,7 +168,7 @@ BufferPtr StreamObject::GetBodyRaw() const {
 	}
 
 	// Stream does not contain crypt filter
-	body = locked_file->DecryptStream(body, GetObjectNumber(), GetGenerationNumber());
+	body = locked_file->DecryptStream(body, GetRootObjectNumber(), GetRootGenerationNumber());
 	_body->assign(body.begin(), body.end());
 	_body->SetInitialized();
 	return _body;

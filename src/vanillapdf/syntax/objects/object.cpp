@@ -123,11 +123,6 @@ types::big_uint Object::GetObjectNumber() const {
 		return entry->GetObjectNumber();
 	}
 
-	if (HasOwner()) {
-		ObjectPtr owner = m_owner.GetReference();
-		return owner->GetObjectNumber();
-	}
-
 	throw GeneralException("Object does not have assigned object number");
 }
 
@@ -140,9 +135,38 @@ types::ushort Object::GetGenerationNumber() const {
 		return entry->GetGenerationNumber();
 	}
 
+	throw GeneralException("Object does not have assigned generation number");
+}
+
+types::big_uint Object::GetRootObjectNumber() const {
+	assert(IsIndirect() || HasOwner());
+	assert(!(IsIndirect() && HasOwner()));
+
+	if (IsIndirect()) {
+		XrefEntryBasePtr entry = m_entry.GetReference();
+		return entry->GetObjectNumber();
+	}
+
 	if (HasOwner()) {
 		ObjectPtr owner = m_owner.GetReference();
-		return owner->GetGenerationNumber();
+		return owner->GetRootObjectNumber();
+	}
+
+	throw GeneralException("Object does not have assigned object number");
+}
+
+types::ushort Object::GetRootGenerationNumber() const {
+	assert(IsIndirect() || HasOwner());
+	assert(!(IsIndirect() && HasOwner()));
+
+	if (IsIndirect()) {
+		XrefEntryBasePtr entry = m_entry.GetReference();
+		return entry->GetGenerationNumber();
+	}
+
+	if (HasOwner()) {
+		ObjectPtr owner = m_owner.GetReference();
+		return owner->GetRootGenerationNumber();
 	}
 
 	throw GeneralException("Object does not have assigned generation number");
