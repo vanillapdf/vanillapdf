@@ -60,7 +60,6 @@ bool DocumentSignatureSettings::GetReason(OutputPointer<LiteralStringObjectPtr>&
 	return true;
 }
 
-
 void DocumentSignatureSettings::SetSigningKey(ISigningKeyPtr value) {
 	m_key = value;
 }
