@@ -232,6 +232,11 @@ extern const syntax::NameObject XObject;
 extern const syntax::NameObject Image;
 extern const syntax::NameObject ProcSet;
 extern const syntax::NameObject SigFlags;
+extern const syntax::NameObject EntrustPPKEF;
+extern const syntax::NameObject AdobePPKLite;
+extern const syntax::NameObject AdobePubSec;
+extern const syntax::NameObject Rect;
+extern const syntax::NameObject T;
 
 } // Constant
 } // Name

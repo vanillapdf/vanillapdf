@@ -27,8 +27,7 @@ void DocumentSigner::OnAfterObjectWrite(ObjectPtr obj) {
 		return;
 	}
 
-	auto signature_fields = ObjectUtils::ConvertTo<DictionaryObjectPtr>(obj);
-	m_dictionary = signature_fields->FindAs<DictionaryObjectPtr>(constant::Name::V);
+	m_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(obj);
 }
 
 void DocumentSigner::OnBeforeOutputFlush(IInputOutputStreamPtr output) {

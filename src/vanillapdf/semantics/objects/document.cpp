@@ -686,6 +686,9 @@ void Document::Sign(const std::string& path, DocumentSignatureSettingsPtr option
 		signature_dictionary->Insert(constant::Name::Reason, *reason);
 	}
 
+	// TODO
+	signature_dictionary->Insert(constant::Name::Filter, constant::Name::AdobePPKLite.Clone());
+
 	// TODO hardcoded value
 	std::string byte_range_value(30, ' ');
 	SerializationOverrideAttributePtr byte_range_attribute = make_deferred<SerializationOverrideAttribute>(byte_range_value);
@@ -703,23 +706,70 @@ void Document::Sign(const std::string& path, DocumentSignatureSettingsPtr option
 	signature_dictionary->Insert(constant::Name::ByteRange, byte_ranges);
 	signature_dictionary->Insert(constant::Name::Contents, signature_contents);
 
-	// Create new signature field
-	DictionaryObjectPtr signature_field;
-	signature_field->Insert(constant::Name::FT, make_deferred<NameObject>("Sig"));
-	signature_field->Insert(constant::Name::V, signature_dictionary);
+	auto dictionary_chain = m_holder->GetXrefChain();
+	auto dictionary_entry = dictionary_chain->AllocateNewEntry();
+	dictionary_entry->SetReference(signature_dictionary);
+	dictionary_entry->SetFile(m_holder);
+	dictionary_entry->SetInitialized();
 
-	auto chain = m_holder->GetXrefChain();
-	auto new_entry = chain->AllocateNewEntry();
-	new_entry->SetReference(signature_field);
-	new_entry->SetFile(m_holder);
-	new_entry->SetInitialized();
-
+	// Create signature annotation
 	OutputCatalogPtr catalog;
 	bool has_catalog = GetDocumentCatalog(catalog);
 	if (!has_catalog) {
 		catalog = CreateCatalog();
 		assert(!catalog.empty() && "CreateCatalog returned empty result");
 	}
+
+	OutputPageTreePtr page_tree;
+	bool has_pages = catalog->Pages(page_tree);
+	if (!has_pages) {
+		throw GeneralException("Cannot sign document without pages");
+	}
+
+	auto page_count = page_tree->PageCount();
+	if (page_count == 0) {
+		throw GeneralException("Cannot sign document without pages");
+	}
+
+	auto first_page = page_tree->Page(1);
+	auto first_page_object = first_page->GetObject();
+
+	if (!first_page_object->Contains(constant::Name::Annots)) {
+		MixedArrayObjectPtr first_page_annotations;
+		first_page_object->Insert(constant::Name::Annots, first_page_annotations);
+	}
+
+	auto first_page_annotations = first_page_object->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Annots);
+
+	MixedArrayObjectPtr annotation_rectangle;
+	annotation_rectangle->Append(make_deferred<IntegerObject>(0));
+	annotation_rectangle->Append(make_deferred<IntegerObject>(0));
+	annotation_rectangle->Append(make_deferred<IntegerObject>(0));
+	annotation_rectangle->Append(make_deferred<IntegerObject>(0));
+
+	DictionaryObjectPtr signature_annotation;
+	signature_annotation->Insert(constant::Name::Type, make_deferred<NameObject>("Annot"));
+	signature_annotation->Insert(constant::Name::Subtype, make_deferred<NameObject>("Widget"));
+	signature_annotation->Insert(constant::Name::Rect, annotation_rectangle);
+
+	auto first_page_reference = make_deferred<syntax::IndirectObjectReference>(first_page_object);
+	signature_annotation->Insert(constant::Name::P, first_page_reference);
+
+	auto annotation_chain = m_holder->GetXrefChain();
+	auto annotation_entry = annotation_chain->AllocateNewEntry();
+	annotation_entry->SetReference(signature_annotation);
+	annotation_entry->SetFile(m_holder);
+	annotation_entry->SetInitialized();
+
+	auto signature_annotation_reference = make_deferred<syntax::IndirectObjectReference>(signature_annotation);
+	first_page_annotations->Append(signature_annotation_reference);
+
+	// Create new signature field
+	signature_annotation->Insert(constant::Name::FT, make_deferred<NameObject>("Sig"));
+	signature_annotation->Insert(constant::Name::T, make_deferred<LiteralStringObject>("Signature1"));
+
+	auto signature_dictionary_reference = make_deferred<syntax::IndirectObjectReference>(signature_dictionary);
+	signature_annotation->Insert(constant::Name::V, signature_dictionary_reference);
 
 	OuputInteractiveFormPtr interactive_form;
 	bool has_interactive_form = catalog->AcroForm(interactive_form);
@@ -738,7 +788,7 @@ void Document::Sign(const std::string& path, DocumentSignatureSettingsPtr option
 	auto fields_obj = fields->GetObject();
 	auto fields_array = fields_obj->Data();
 
-	auto signature_fields_reference = make_deferred<syntax::IndirectObjectReference>(signature_field);
+	auto signature_fields_reference = make_deferred<syntax::IndirectObjectReference>(signature_annotation);
 	fields_array->Append(signature_fields_reference);
 
 	DocumentSignerPtr signer = make_deferred<DocumentSigner>(key, digest, signature_dictionary);

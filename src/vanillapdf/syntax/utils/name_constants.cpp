@@ -11,6 +11,10 @@ const syntax::NameObject AdbePkcs7s3(make_deferred<Buffer>("adbe.pkcs7.s3", size
 const syntax::NameObject AdbePkcs7s4(make_deferred<Buffer>("adbe.pkcs7.s4", sizeof("adbe.pkcs7.s4") - 1));
 const syntax::NameObject AdbePkcs7s5(make_deferred<Buffer>("adbe.pkcs7.s5", sizeof("adbe.pkcs7.s5") - 1));
 
+const syntax::NameObject EntrustPPKEF(make_deferred<Buffer>("Entrust.PPKEF", sizeof("Entrust.PPKEF") - 1));
+const syntax::NameObject AdobePPKLite(make_deferred<Buffer>("Adobe.PPKLite", sizeof("Adobe.PPKLite") - 1));
+const syntax::NameObject AdobePubSec(make_deferred<Buffer>("Adobe.PubSec", sizeof("Adobe.PubSec") - 1));
+
 } // Name
 } // constant
 } // vanillapdf
@@ -18,6 +22,10 @@ const syntax::NameObject AdbePkcs7s5(make_deferred<Buffer>("adbe.pkcs7.s5", size
 VANILLAPDF_API const NameObjectHandle* NameConstant_AdbePkcs7s3 = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdbePkcs7s3);
 VANILLAPDF_API const NameObjectHandle* NameConstant_AdbePkcs7s4 = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdbePkcs7s4);
 VANILLAPDF_API const NameObjectHandle* NameConstant_AdbePkcs7s5 = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdbePkcs7s5);
+
+VANILLAPDF_API const NameObjectHandle* NameConstant_EntrustPPKEF = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdbePkcs7s5);
+VANILLAPDF_API const NameObjectHandle* NameConstant_AdobePPKLite = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdbePkcs7s5);
+VANILLAPDF_API const NameObjectHandle* NameConstant_AdobePubSec = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdbePkcs7s5);
 
 #define DECLARE_CONST_NAME(name) \
 	namespace vanillapdf { namespace constant { namespace Name { \
@@ -246,3 +254,5 @@ DECLARE_CONST_NAME(XObject);
 DECLARE_CONST_NAME(Image);
 DECLARE_CONST_NAME(ProcSet);
 DECLARE_CONST_NAME(SigFlags);
+DECLARE_CONST_NAME(Rect);
+DECLARE_CONST_NAME(T);
