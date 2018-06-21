@@ -29,7 +29,7 @@ namespace vanillapdf {
 namespace syntax {
 
 	// Hard-coded in PDF specification
-const uint8_t HARDCODED_PFD_PAD[] = {
+const uint8_t HARDCODED_PDF_PAD[] = {
 	0x28, 0xBF, 0x4E, 0x5E,
 	0x4E, 0x75, 0x8A, 0x41,
 	0x64, 0x00, 0x4E, 0x56,
@@ -86,10 +86,10 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
 }
 
 BufferPtr EncryptionUtils::PadTruncatePassword(const Buffer& password) {
-	BufferPtr result = make_deferred<Buffer>(sizeof(HARDCODED_PFD_PAD));
+	BufferPtr result = make_deferred<Buffer>(sizeof(HARDCODED_PDF_PAD));
 	//result->reserve(sizeof(pad));
-	std::copy_n(password.begin(), std::min<types::size_type>(password.size(), sizeof(HARDCODED_PFD_PAD)), result.begin());
-	std::copy_n(std::begin(HARDCODED_PFD_PAD), sizeof(HARDCODED_PFD_PAD) - password.size(), result.begin() + password.size());
+	std::copy_n(password.begin(), std::min<types::size_type>(password.size(), sizeof(HARDCODED_PDF_PAD)), result.begin());
+	std::copy_n(std::begin(HARDCODED_PDF_PAD), sizeof(HARDCODED_PDF_PAD) - password.size(), result.begin() + password.size());
 	return result;
 }
 
@@ -294,7 +294,7 @@ bool EncryptionUtils::CheckKey(
 			std::copy_n(temporary_digest.begin(), decryption_key_length, decryption_key_digest.begin());
 		}
 
-		Buffer hardcoded_pad(std::begin(HARDCODED_PFD_PAD), sizeof(HARDCODED_PFD_PAD));
+		Buffer hardcoded_pad(std::begin(HARDCODED_PDF_PAD), sizeof(HARDCODED_PDF_PAD));
 		Buffer key_digest(MD5_DIGEST_LENGTH);
 
 		MD5_Init(&ctx);
@@ -314,7 +314,7 @@ bool EncryptionUtils::CheckKey(
 		}
 	} else {
 		assert(key_length.GetIntegerValue() == 40 && "Key length is not 5 bytes for revision <= 3");
-		Buffer hardcoded_pad(std::begin(HARDCODED_PFD_PAD), sizeof(HARDCODED_PFD_PAD));
+		Buffer hardcoded_pad(std::begin(HARDCODED_PDF_PAD), sizeof(HARDCODED_PDF_PAD));
 		compare_data = EncryptionUtils::ComputeRC4(decryption_key_digest, 5, hardcoded_pad);
 	}
 

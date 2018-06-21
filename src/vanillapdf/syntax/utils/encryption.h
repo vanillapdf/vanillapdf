@@ -9,7 +9,7 @@
 namespace vanillapdf {
 namespace syntax {
 
-extern const uint8_t HARDCODED_PFD_PAD[];
+extern const uint8_t HARDCODED_PDF_PAD[];
 extern const uint8_t AES_ADDITIONAL_SALT[];
 
 enum class EncryptionAlgorithm {
