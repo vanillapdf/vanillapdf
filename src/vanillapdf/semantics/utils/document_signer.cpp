@@ -93,9 +93,12 @@ void DocumentSigner::OnBeforeOutputFlush(IInputOutputStreamPtr output) {
 		throw GeneralException("Pre-allocated signature size is not sufficient");
 	}
 
+	auto padding_length = signature_contents_overriden_value.size() - signature_encoded.size();
+	std::string padded_signature = signature_encoded.insert(signature_encoded.size() - 2, padding_length, '0');
+
 	// Seek to the contents and write new signature value
 	output->SetOutputPosition(signature_contents_offset);
-	output->Write(signature_encoded);
+	output->Write(padded_signature);
 }
 
 } // semantics
