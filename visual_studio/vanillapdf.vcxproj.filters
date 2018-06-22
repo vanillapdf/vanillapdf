@@ -696,6 +696,12 @@
     <ClInclude Include="..\src\vanillapdf\semantics\objects\signature_flags.h">
       <Filter>Header Files\semantics\objects</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\utils\c_buffer_array.h">
+      <Filter>Header Files\include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\vanillapdf\utils\buffer_array.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\vanillapdf\contents\content_stream_objects.cpp">
@@ -1111,6 +1117,12 @@
     </ClCompile>
     <ClCompile Include="..\src\vanillapdf\syntax\utils\name_constants.cpp">
       <Filter>Source Files\syntax\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\utils\c_buffer_array.cpp">
+      <Filter>Source Files\implementation\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\utils\buffer_array.cpp">
+      <Filter>Source Files\utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -15,6 +15,9 @@ class DeferredIterator;
 class Buffer;
 using BufferPtr = DeferredContainer<Buffer>;
 
+class BufferArray;
+using BufferArrayPtr = DeferredContainer<BufferArray>;
+
 // Exceptions
 class ExceptionBase;
 class GeneralException;

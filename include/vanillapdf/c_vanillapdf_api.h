@@ -62,6 +62,7 @@
 #include "vanillapdf/utils/c_unknown_interface.h"
 #include "vanillapdf/utils/c_encryption.h"
 #include "vanillapdf/utils/c_buffer.h"
+#include "vanillapdf/utils/c_buffer_array.h"
 #include "vanillapdf/utils/c_logging.h"
 #include "vanillapdf/utils/c_pdf_version.h"
 #include "vanillapdf/utils/c_library_info.h"

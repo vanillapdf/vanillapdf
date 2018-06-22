@@ -68,6 +68,7 @@
     <ClInclude Include="..\include\vanillapdf\syntax\c_string_object.h" />
     <ClInclude Include="..\include\vanillapdf\syntax\c_xref.h" />
     <ClInclude Include="..\include\vanillapdf\utils\c_buffer.h" />
+    <ClInclude Include="..\include\vanillapdf\utils\c_buffer_array.h" />
     <ClInclude Include="..\include\vanillapdf\utils\c_encryption.h" />
     <ClInclude Include="..\include\vanillapdf\utils\c_errors.h" />
     <ClInclude Include="..\include\vanillapdf\utils\c_input_stream_interface.h" />
@@ -172,6 +173,7 @@
     <ClInclude Include="..\src\vanillapdf\utils\attribute_interface.h" />
     <ClInclude Include="..\src\vanillapdf\utils\attribute_list.h" />
     <ClInclude Include="..\src\vanillapdf\utils\buffer.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\buffer_array.h" />
     <ClInclude Include="..\src\vanillapdf\utils\character.h" />
     <ClInclude Include="..\src\vanillapdf\utils\constants.h" />
     <ClInclude Include="..\src\vanillapdf\utils\conversion_utils.h" />
@@ -259,6 +261,7 @@
     <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_string_object.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_xref.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\utils\c_buffer.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\utils\c_buffer_array.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\utils\c_encryption.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\utils\c_errors.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\utils\c_input_stream_interface.cpp" />
@@ -339,6 +342,7 @@
     <ClCompile Include="..\src\vanillapdf\utils\attribute_interface.cpp" />
     <ClCompile Include="..\src\vanillapdf\utils\attribute_list.cpp" />
     <ClCompile Include="..\src\vanillapdf\utils\buffer.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\buffer_array.cpp" />
     <ClCompile Include="..\src\vanillapdf\utils\errors.cpp" />
     <ClCompile Include="..\src\vanillapdf\utils\exceptions.cpp" />
     <ClCompile Include="..\src\vanillapdf\utils\library_info.cpp" />

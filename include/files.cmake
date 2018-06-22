@@ -11,6 +11,7 @@ set(VANILLAPDF_INCLUDE_HEADERS
 
 set(VANILLAPDF_INCLUDE_UTILS_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_buffer.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_buffer_array.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_encryption.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_errors.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_input_stream_interface.h"

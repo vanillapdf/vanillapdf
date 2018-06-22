@@ -16,6 +16,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SOURCES
 
 set(VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES
 	implementation/utils/c_buffer.cpp
+	implementation/utils/c_buffer_array.cpp
 	implementation/utils/c_encryption.cpp
 	implementation/utils/c_errors.cpp
 	implementation/utils/c_input_stream_interface.cpp
@@ -163,6 +164,7 @@ set(VANILLAPDF_UTILS_SOURCES
 	utils/attribute_interface.cpp
 	utils/attribute_list.cpp
 	utils/buffer.cpp
+	utils/buffer_array.cpp
 	utils/errors.cpp
 	utils/exceptions.cpp
 	utils/library_info.cpp
@@ -287,6 +289,7 @@ set(VANILLAPDF_UTILS_HEADERS
 	utils/attribute_list.h
 	utils/base_iterator.h
 	utils/buffer.h
+	utils/buffer_array.h
 	utils/character.h
 	utils/constants.h
 	utils/conversion_utils.h

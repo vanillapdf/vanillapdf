@@ -95,6 +95,7 @@ extern "C"
 	#pragma region Utils
 
 	DECLARE_OBJECT_HANDLE(Buffer);
+	DECLARE_OBJECT_HANDLE(BufferArray);
 	DECLARE_OBJECT_HANDLE(IUnknown);
 
 	DECLARE_OBJECT_HANDLE(SigningKey);
