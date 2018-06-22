@@ -26,6 +26,9 @@ public:
 	PKCS12KeyImpl(const std::string& path, const Buffer& password);
 	PKCS12KeyImpl(const Buffer& data, const Buffer& password);
 
+	BufferArrayPtr GetExtraCertificates() const;
+	void SetExtraCertificates(BufferArrayPtr certificates);
+
 	// IEncryptionKey
 	BufferPtr Decrypt(const Buffer& data);
 	bool ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const;
@@ -53,6 +56,8 @@ private:
 	BIO *p7bio = nullptr;
 
 #endif
+
+	BufferArrayPtr m_certificates;
 
 	void Load(const Buffer& data, const Buffer& password);
 };
@@ -102,6 +107,14 @@ BufferPtr PKCS12Key::SignFinal() {
 
 BufferPtr PKCS12Key::GetSigningCertificate() const {
 	return m_impl->GetSigningCertificate();
+}
+
+BufferArrayPtr PKCS12Key::GetExtraCertificates() const {
+	return m_impl->GetExtraCertificates();
+}
+
+void PKCS12Key::SetExtraCertificates(BufferArrayPtr certificates) {
+	m_impl->SetExtraCertificates(certificates);
 }
 
 #pragma endregion
@@ -155,6 +168,27 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, const Buffer& password) 
 	if (1 != parsed) {
 		throw GeneralException("Could not parse PKCS#12");
 	}
+
+	auto additional_certs_size = sk_X509_num(additional_certs);
+	for (decltype(additional_certs_size) i = 0; i < additional_certs_size; ++i) {
+		auto additional_cert = sk_X509_value(additional_certs, i);
+
+		int length = i2d_X509(additional_cert, nullptr);
+		if (length < 0) {
+			throw GeneralException("Could not get PKCS#7 size");
+		}
+
+		BufferPtr additional_cert_data = make_deferred<Buffer>(length);
+		auto data_pointer = (unsigned char *) additional_cert_data->data();
+		int converted = i2d_X509(additional_cert, &data_pointer);
+		if (converted < 0) {
+			throw GeneralException("Could not convert PKCS#7");
+		}
+
+		m_certificates->Append(additional_cert_data);
+	}
+
+	sk_X509_pop_free(additional_certs, X509_free);
 }
 
 BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
@@ -263,14 +297,32 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
 		throw GeneralException("Could not add signature");
 	}
 
-	int attribute_added = PKCS7_add_signed_attribute(signer_info, NID_pkcs9_contentType, V_ASN1_OBJECT, OBJ_nid2obj(NID_pkcs7_data));
-	if (attribute_added != 1) {
+	int content_type_added = PKCS7_add_signed_attribute(signer_info, NID_pkcs9_contentType, V_ASN1_OBJECT, OBJ_nid2obj(NID_pkcs7_data));
+	if (content_type_added != 1) {
 		throw GeneralException("Could not add signed attribute");
 	}
 
 	int certificate_added = PKCS7_add_certificate(p7, cert);
 	if (certificate_added != 1) {
 		throw GeneralException("Could not add certificate");
+	}
+
+	auto extra_certificates_size = m_certificates->Size();
+	for (decltype(extra_certificates_size) i = 0; i < extra_certificates_size; ++i) {
+		auto extra_certificate_data = m_certificates[i];
+
+		auto extra_certificate_raw_data = (const unsigned char *) extra_certificate_data->data();
+		auto extra_certificate = d2i_X509(nullptr, &extra_certificate_raw_data, extra_certificate_data->size());
+		if (extra_certificate == nullptr) {
+			throw GeneralException("Extra certificate is invalid");
+		}
+
+		SCOPE_GUARD([extra_certificate]() { X509_free(extra_certificate); });
+
+		int extra_certificate_added = PKCS7_add_certificate(p7, extra_certificate);
+		if (extra_certificate_added != 1) {
+			throw GeneralException("Could not add extra certificate");
+		}
 	}
 
 	int content_set = PKCS7_content_new(p7, NID_pkcs7_data);
@@ -412,6 +464,14 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::GetSigningCertificate() const {
 
 #endif
 
+}
+
+BufferArrayPtr PKCS12Key::PKCS12KeyImpl::GetExtraCertificates() const {
+	return m_certificates;
+}
+
+void PKCS12Key::PKCS12KeyImpl::SetExtraCertificates(BufferArrayPtr certificates) {
+	m_certificates = certificates;
 }
 
 PKCS12Key::PKCS12KeyImpl::~PKCS12KeyImpl() {

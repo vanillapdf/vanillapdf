@@ -2,6 +2,7 @@
 #define _PKCS12_KEY_H
 
 #include "utils/utils_fwd.h"
+#include "utils/buffer_array.h"
 #include "utils/encryption_key_interface.h"
 #include "utils/signing_key_interface.h"
 
@@ -13,6 +14,9 @@ public:
 	explicit PKCS12Key(const std::string& path);
 	PKCS12Key(const std::string& path, const Buffer& password);
 	PKCS12Key(const Buffer& data, const Buffer& password);
+
+	BufferArrayPtr GetExtraCertificates() const;
+	void SetExtraCertificates(BufferArrayPtr certificates);
 
 	// IEncryptionKey
 	BufferPtr Decrypt(const Buffer& data) override;
