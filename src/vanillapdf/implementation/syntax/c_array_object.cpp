@@ -79,7 +79,11 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayObjectHandl
 
 	try
 	{
-		obj->Remove(at);
+		bool removed = obj->Remove(at);
+		if (!removed) {
+			return VANILLAPDF_ERROR_OBJECT_MISSING;
+		}
+
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
