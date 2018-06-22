@@ -671,6 +671,7 @@ void Document::Sign(const std::string& path, DocumentSignatureSettingsPtr option
 	auto signing_certificate_data = key->GetSigningCertificate();
 	auto signing_certificate = make_deferred<HexadecimalStringObject>();
 	signing_certificate->SetValue(signing_certificate_data);
+	signing_certificate->SetInitialized();
 
 	signature_dictionary->Insert(constant::Name::Cert, signing_certificate);
 
