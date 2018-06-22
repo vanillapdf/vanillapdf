@@ -46,6 +46,32 @@ VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_CreateFromBuffer(BufferHa
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+//VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_GetExtraCertificates(PKCS12KeyHandle* handle, BufferArrayHandle** result) {
+//	PKCS12Key* obj = reinterpret_cast<PKCS12Key*>(handle);
+//	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+//	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+//
+//	try {
+//		auto extra_certificates = obj->GetExtraCertificates();
+//		auto ptr = extra_certificates.AddRefGet();
+//		*result = reinterpret_cast<BufferArrayHandle*>(ptr);
+//		return VANILLAPDF_ERROR_SUCCESS;
+//	} CATCH_VANILLAPDF_EXCEPTIONS
+//}
+//
+//VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_SetExtraCertificates(PKCS12KeyHandle* handle, BufferArrayHandle* data) {
+//	PKCS12Key* obj = reinterpret_cast<PKCS12Key*>(handle);
+//	BufferArray* extra_certificates = reinterpret_cast<BufferArray*>(data);
+//
+//	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+//	RETURN_ERROR_PARAM_VALUE_IF_NULL(extra_certificates);
+//
+//	try {
+//		obj->SetExtraCertificates(extra_certificates);
+//		return VANILLAPDF_ERROR_SUCCESS;
+//	} CATCH_VANILLAPDF_EXCEPTIONS
+//}
+
 VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_ToEncryptionKey(PKCS12KeyHandle* handle, EncryptionKeyHandle** result) {
 	return SafeObjectConvert<PKCS12Key, IEncryptionKey, PKCS12KeyHandle, EncryptionKeyHandle>(handle, result);
 }
