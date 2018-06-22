@@ -241,7 +241,13 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
+	if (p7 != nullptr) {
+		PKCS7_free(p7);
+		p7 = nullptr;
+	}
+
 	p7 = PKCS7_new();
+
 	if (p7 == nullptr) {
 		throw GeneralException("Could not create PKCS#7");
 	}
@@ -249,11 +255,6 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
 	int type_set = PKCS7_set_type(p7, NID_pkcs7_signed);
 	if (type_set != 1) {
 		throw GeneralException("Could not set PKCS#7 type");
-	}
-
-	int detached_set = PKCS7_set_detached(p7, 1);
-	if (detached_set != 1) {
-		throw GeneralException("Could not set PKCS#7 detached");
 	}
 
 	auto message_digest = MiscUtils::GetAlgorithm(algorithm);
@@ -272,12 +273,23 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
 		throw GeneralException("Could not add certificate");
 	}
 
-	/*int content_set = PKCS7_content_new(p7, NID_pkcs7_data);
+	int content_set = PKCS7_content_new(p7, NID_pkcs7_data);
 	if (content_set != 1) {
 		throw GeneralException("Could not set signing content");
-	}*/
+	}
+
+	int detached_set = PKCS7_set_detached(p7, 1);
+	if (detached_set != 1) {
+		throw GeneralException("Could not set PKCS#7 detached");
+	}
+
+	if (p7bio != nullptr) {
+		BIO_free(p7bio);
+		p7bio = nullptr;
+	}
 
 	p7bio = PKCS7_dataInit(p7, nullptr);
+
 	if (p7bio == nullptr) {
 		throw GeneralException("Could not initialize signing data");
 	}
