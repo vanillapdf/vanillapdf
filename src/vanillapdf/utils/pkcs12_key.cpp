@@ -285,6 +285,11 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
 		throw GeneralException("Could not add signed attribute");
 	}
 
+	int signing_time_added = PKCS7_add0_attrib_signing_time(signer_info, nullptr);
+	if (signing_time_added != 1) {
+		throw GeneralException("Could not add signing time");
+	}
+
 	int certificate_added = PKCS7_add_certificate(p7, cert);
 	if (certificate_added != 1) {
 		throw GeneralException("Could not add certificate");
