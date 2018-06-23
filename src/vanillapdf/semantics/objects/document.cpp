@@ -653,8 +653,10 @@ void Document::Sign(const std::string& path, DocumentSignatureSettingsPtr option
 	OutputPointer<syntax::LiteralStringObjectPtr> name;
 	OutputPointer<syntax::LiteralStringObjectPtr> location;
 	OutputPointer<syntax::LiteralStringObjectPtr> reason;
+	OutputPointer<DatePtr> signing_time;
 
 	bool has_key = options->GetSigningKey(key);
+	bool has_time = options->GetSigningTime(signing_time);
 	bool has_certificate = options->GetCertificate(certificate);
 	bool has_name = options->GetName(name);
 	bool has_location = options->GetLocation(location);
@@ -684,6 +686,10 @@ void Document::Sign(const std::string& path, DocumentSignatureSettingsPtr option
 
 	if (has_reason) {
 		signature_dictionary->Insert(constant::Name::Reason, *reason);
+	}
+
+	if (has_time) {
+		signature_dictionary->Insert(constant::Name::M, signing_time->GetObject());
 	}
 
 	// TODO

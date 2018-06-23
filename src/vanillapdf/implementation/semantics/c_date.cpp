@@ -7,6 +7,28 @@
 using namespace vanillapdf;
 using namespace vanillapdf::semantics;
 
+VANILLAPDF_API error_type CALLING_CONVENTION Date_CreateEmpty(DateHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		DatePtr date;
+		auto ptr = date.AddRefGet();
+		*result = reinterpret_cast<DateHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Date_CreateCurrent(DateHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		DatePtr date = Date::GetCurrentDate();
+		auto ptr = date.AddRefGet();
+		*result = reinterpret_cast<DateHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Date_GetYear(DateHandle* handle, integer_type* result)
 {
 	Date* obj = reinterpret_cast<Date*>(handle);

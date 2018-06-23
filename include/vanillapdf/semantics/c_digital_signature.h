@@ -71,7 +71,7 @@ extern "C"
 	*
 	* This value should be used only when the time of signing is not available in the signature.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetDate(DigitalSignatureHandle* handle, DateHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetSigningTime(DigitalSignatureHandle* handle, DateHandle** result);
 
 	/**
 	* \brief

@@ -82,7 +82,7 @@ bool DigitalSignature::ContactInfo(syntax::OutputStringObjectPtr& result) {
 	return true;
 }
 
-bool DigitalSignature::Date(OutputDatePtr& result) {
+bool DigitalSignature::SigningTime(OutputDatePtr& result) {
 	if (!_obj->Contains(constant::Name::M)) {
 		return false;
 	}

@@ -8,6 +8,8 @@
 #include "vanillapdf/utils/c_message_digest_algorithm.h"
 #include "vanillapdf/utils/c_signing_key.h"
 
+#include "vanillapdf/semantics/c_date.h"
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -85,6 +87,19 @@ extern "C"
 	* \brief \copybrief DocumentSignatureSettings_GetReason
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetReason(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle* value);
+
+	/**
+	* \brief The time of signing.
+	*
+	* Depending on the signature handler, this may be a normal unverified computer time or a time generated in a verifiable way from a secure time server.
+	* This value should be used only when the time of signing is not available in the signature.
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetSigningTime(DocumentSignatureSettingsHandle* handle, DateHandle** result);
+
+	/**
+	* \brief \copybrief DocumentSignatureSettings_GetSigningTime
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetSigningTime(DocumentSignatureSettingsHandle* handle, DateHandle* value);
 
 	/**
 	* \brief

@@ -53,14 +53,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetLocation(Digita
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetDate(DigitalSignatureHandle* handle, DateHandle** result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetSigningTime(DigitalSignatureHandle* handle, DateHandle** result) {
 	DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try {
 		OutputDatePtr direct;
-		bool contains = signature->Date(direct);
+		bool contains = signature->SigningTime(direct);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<DateHandle*>(ptr);

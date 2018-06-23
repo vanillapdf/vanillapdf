@@ -223,6 +223,36 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetReason
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetSigningTime(DocumentSignatureSettingsHandle* handle, DateHandle** result) {
+	DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		OutputPointer<DatePtr> date;
+		bool has_time = obj->GetSigningTime(date);
+		if (!has_time) {
+			return VANILLAPDF_ERROR_OBJECT_MISSING;
+		}
+
+		auto ptr = date.AddRefGet();
+		*result = reinterpret_cast<DateHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetSigningTime(DocumentSignatureSettingsHandle* handle, DateHandle* value) {
+	DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
+	Date* date = reinterpret_cast<Date*>(value);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+	try {
+		obj->SetSigningTime(date);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetCertificate(DocumentSignatureSettingsHandle* handle, HexadecimalStringObjectHandle** result) {
 	DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

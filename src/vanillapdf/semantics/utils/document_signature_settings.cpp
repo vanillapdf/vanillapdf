@@ -60,6 +60,15 @@ bool DocumentSignatureSettings::GetReason(OutputPointer<LiteralStringObjectPtr>&
 	return true;
 }
 
+bool DocumentSignatureSettings::GetSigningTime(OutputPointer<DatePtr>& result) const {
+	if (m_time.empty()) {
+		return false;
+	}
+
+	result = m_time;
+	return true;
+}
+
 void DocumentSignatureSettings::SetSigningKey(ISigningKeyPtr value) {
 	m_key = value;
 }
@@ -78,6 +87,10 @@ void DocumentSignatureSettings::SetLocation(LiteralStringObjectPtr value) {
 
 void DocumentSignatureSettings::SetReason(LiteralStringObjectPtr value) {
 	m_reason = value;
+}
+
+void DocumentSignatureSettings::SetSigningTime(DatePtr value) {
+	m_time = value;
 }
 
 } // semantics

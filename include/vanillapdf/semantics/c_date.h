@@ -48,6 +48,16 @@ extern "C"
 	*/
 
 	/**
+	* \brief Create a new blank date instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Date_CreateEmpty(DateHandle** result);
+
+	/**
+	* \brief Get current date in UTC format
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Date_CreateCurrent(DateHandle** result);
+
+	/**
 	* \brief Get year represented by this object
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Date_GetYear(DateHandle* handle, integer_type* result);

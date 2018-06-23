@@ -11,6 +11,7 @@ namespace semantics {
 
 class Date : public HighLevelObject<syntax::StringObjectPtr> {
 public:
+	Date();
 	explicit Date(syntax::StringObjectPtr root);
 
 	int32_t GetYear(void) const noexcept { return m_year; }

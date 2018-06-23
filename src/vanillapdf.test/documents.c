@@ -1151,7 +1151,7 @@ error_type process_digital_signature(DigitalSignatureHandle* obj, int nested) {
 	StringObjectHandle* certificate = NULL;
 	ByteRangeCollectionHandle* byte_range = NULL;
 	HexadecimalStringObjectHandle* contents = NULL;
-	DateHandle* date = NULL;
+	DateHandle* signing_time = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetContactInfo(obj, &contact_info),
 	process_string(contact_info, nested + 1),
@@ -1181,9 +1181,9 @@ error_type process_digital_signature(DigitalSignatureHandle* obj, int nested) {
 	process_hex_string(contents, nested + 1),
 	HexadecimalStringObject_Release(contents));
 
-	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetDate(obj, &date),
-	process_date(date, nested + 1),
-	Date_Release(date));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetSigningTime(obj, &signing_time),
+	process_date(signing_time, nested + 1),
+	Date_Release(signing_time));
 
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetByteRange(obj, &byte_range),
 	process_byte_range_collection(byte_range, nested + 1),

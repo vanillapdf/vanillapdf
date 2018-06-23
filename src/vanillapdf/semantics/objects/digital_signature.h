@@ -40,7 +40,7 @@ public:
 	bool Reason(syntax::OutputStringObjectPtr& result);
 	bool Location(syntax::OutputStringObjectPtr& result);
 	bool ContactInfo(syntax::OutputStringObjectPtr& result);
-	bool Date(OutputDatePtr& result);
+	bool SigningTime(OutputDatePtr& result);
 	bool Name(syntax::OutputStringObjectPtr& result);
 	bool Revision(syntax::OutputIntegerObjectPtr& result);
 	bool SubFilter(syntax::OutputNameObjectPtr& result);
