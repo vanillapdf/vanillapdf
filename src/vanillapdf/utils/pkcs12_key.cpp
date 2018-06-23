@@ -300,7 +300,8 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
 		auto extra_certificate_data = m_certificates[i];
 
 		auto extra_certificate_raw_data = (const unsigned char *) extra_certificate_data->data();
-		auto extra_certificate = d2i_X509(nullptr, &extra_certificate_raw_data, extra_certificate_data->size());
+		auto extra_certificate_raw_data_size = ValueConvertUtils::SafeConvert<long>(extra_certificate_data->size());
+		auto extra_certificate = d2i_X509(nullptr, &extra_certificate_raw_data, extra_certificate_raw_data_size);
 		if (extra_certificate == nullptr) {
 			throw GeneralException("Extra certificate is invalid");
 		}
