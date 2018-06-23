@@ -15,9 +15,6 @@ public:
 	PKCS12Key(const std::string& path, const Buffer& password);
 	PKCS12Key(const Buffer& data, const Buffer& password);
 
-	BufferArrayPtr GetExtraCertificates() const;
-	void SetExtraCertificates(BufferArrayPtr certificates);
-
 	// IEncryptionKey
 	BufferPtr Decrypt(const Buffer& data) override;
 	bool ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const override;
@@ -27,7 +24,6 @@ public:
 	void SignUpdate(const Buffer& data) override;
 	void SignUpdate(IInputStreamPtr data, types::stream_size length) override;
 	BufferPtr SignFinal() override;
-	BufferPtr GetSigningCertificate() const override;
 
 private:
 	class PKCS12KeyImpl;

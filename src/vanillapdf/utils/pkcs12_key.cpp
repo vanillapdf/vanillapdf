@@ -26,9 +26,6 @@ public:
 	PKCS12KeyImpl(const std::string& path, const Buffer& password);
 	PKCS12KeyImpl(const Buffer& data, const Buffer& password);
 
-	BufferArrayPtr GetExtraCertificates() const;
-	void SetExtraCertificates(BufferArrayPtr certificates);
-
 	// IEncryptionKey
 	BufferPtr Decrypt(const Buffer& data);
 	bool ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const;
@@ -38,8 +35,6 @@ public:
 	void SignUpdate(const Buffer& data);
 	void SignUpdate(IInputStreamPtr data, types::stream_size length);
 	BufferPtr SignFinal();
-
-	BufferPtr GetSigningCertificate() const;
 
 	~PKCS12KeyImpl();
 
@@ -103,18 +98,6 @@ void PKCS12Key::SignUpdate(IInputStreamPtr data, types::stream_size length) {
 
 BufferPtr PKCS12Key::SignFinal() {
 	return m_impl->SignFinal();
-}
-
-BufferPtr PKCS12Key::GetSigningCertificate() const {
-	return m_impl->GetSigningCertificate();
-}
-
-BufferArrayPtr PKCS12Key::GetExtraCertificates() const {
-	return m_impl->GetExtraCertificates();
-}
-
-void PKCS12Key::SetExtraCertificates(BufferArrayPtr certificates) {
-	m_impl->SetExtraCertificates(certificates);
 }
 
 #pragma endregion
@@ -433,45 +416,6 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::SignFinal() {
 
 #endif
 
-}
-
-BufferPtr PKCS12Key::PKCS12KeyImpl::GetSigningCertificate() const {
-
-	// Signing is a licensed feature
-	if (!LicenseInfo::IsValid()) {
-		throw LicenseRequiredException("Document signing is a licensed feature");
-	}
-
-#if defined(VANILLAPDF_HAVE_OPENSSL)
-
-	int length = i2d_X509(cert, nullptr);
-	if (length < 0) {
-		throw GeneralException("Could not get certificate size");
-	}
-
-	BufferPtr result = make_deferred<Buffer>(length);
-	auto data_pointer = (unsigned char *) result->data();
-	int converted = i2d_X509(cert, &data_pointer);
-	if (converted < 0) {
-		throw GeneralException("Could not convert certificate");
-	}
-
-	return result;
-
-#else
-
-	throw NotSupportedException("This library was compiled without OpenSSL support");
-
-#endif
-
-}
-
-BufferArrayPtr PKCS12Key::PKCS12KeyImpl::GetExtraCertificates() const {
-	return m_certificates;
-}
-
-void PKCS12Key::PKCS12KeyImpl::SetExtraCertificates(BufferArrayPtr certificates) {
-	m_certificates = certificates;
 }
 
 PKCS12Key::PKCS12KeyImpl::~PKCS12KeyImpl() {

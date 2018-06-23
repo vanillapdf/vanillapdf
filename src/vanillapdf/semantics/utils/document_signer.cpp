@@ -12,13 +12,8 @@ namespace semantics {
 
 using namespace syntax;
 
-DocumentSigner::DocumentSigner(
-	ISigningKeyPtr key,
-	syntax::HexadecimalStringObjectPtr signing_certificate,
-	MessageDigestAlgorithm digest,
-	DictionaryObjectPtr signature_dictionary) {
+DocumentSigner::DocumentSigner(ISigningKeyPtr key, MessageDigestAlgorithm digest, DictionaryObjectPtr signature_dictionary) {
 	m_key = key;
-	m_certificate = signing_certificate;
 	m_digest = digest;
 	m_dictionary = signature_dictionary;
 }

@@ -24,6 +24,15 @@ bool DocumentSignatureSettings::GetSigningKey(OutputPointer<ISigningKeyPtr>& res
 	return true;
 }
 
+bool DocumentSignatureSettings::GetCertificate(OutputPointer<HexadecimalStringObjectPtr>& result) const {
+	if (m_certificate.empty()) {
+		return false;
+	}
+
+	result = m_certificate;
+	return true;
+}
+
 bool DocumentSignatureSettings::GetName(OutputPointer<LiteralStringObjectPtr>& result) const {
 	if (m_name.empty()) {
 		return false;
@@ -53,6 +62,10 @@ bool DocumentSignatureSettings::GetReason(OutputPointer<LiteralStringObjectPtr>&
 
 void DocumentSignatureSettings::SetSigningKey(ISigningKeyPtr value) {
 	m_key = value;
+}
+
+void DocumentSignatureSettings::SetCertificate(HexadecimalStringObjectPtr value) {
+	m_certificate = value;
 }
 
 void DocumentSignatureSettings::SetName(LiteralStringObjectPtr value) {

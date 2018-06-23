@@ -17,13 +17,11 @@ public:
 		SigningKeyInitializeFunction sign_init,
 		SigningKeyUpdateFunction sign_update,
 		SigningKeyFinalFunction sign_final,
-		SigningKeyCleanupFunction sign_cleanup,
-		SigningKeyCertificateFunction sign_certificate
+		SigningKeyCleanupFunction sign_cleanup
 	) : m_init(sign_init),
 		m_update(sign_update),
 		m_final(sign_final),
-		m_cleanup(sign_cleanup),
-		m_certificate(sign_certificate) {
+		m_cleanup(sign_cleanup) {
 
 		// These are only assertions, because those parameters shall be handled
 		// at the function call level.
@@ -35,7 +33,6 @@ public:
 		assert(m_update != nullptr && "Invalid update pointer");
 		assert(m_final != nullptr && "Invalid final pointer");
 		assert(m_cleanup != nullptr && "Invalid cleanup pointer");
-		assert(m_certificate != nullptr && "Invalid certificate pointer");
 	}
 
 	void SignInitialize(MessageDigestAlgorithm algorithm) override {
@@ -131,30 +128,6 @@ public:
 		return reinterpret_cast<Buffer*>(output_ptr);
 	}
 
-	BufferPtr GetSigningCertificate() const override {
-		BufferHandle* output_ptr = nullptr;
-
-		// Document signature is a licensed feature
-		if (!LicenseInfo::IsValid()) {
-			throw LicenseRequiredException("Document signing is a licensed feature");
-		}
-
-		error_type rv = m_certificate(&output_ptr);
-		if (VANILLAPDF_ERROR_SUCCESS != rv) {
-			std::stringstream ss;
-			ss << "Custom key sign final operation returned: " << rv;
-			throw UserCancelledException(ss.str());
-		}
-
-		if (output_ptr == nullptr) {
-			std::stringstream ss;
-			ss << "Custom key certificate operation succeeded, but did not fill the certificate data pointer";
-			throw UserCancelledException(ss.str());
-		}
-
-		return reinterpret_cast<Buffer*>(output_ptr);
-	}
-
 	~CustomSigningKey() {
 		m_cleanup();
 	}
@@ -164,7 +137,6 @@ private:
 	SigningKeyUpdateFunction m_update;
 	SigningKeyFinalFunction m_final;
 	SigningKeyCleanupFunction m_cleanup;
-	SigningKeyCertificateFunction m_certificate;
 };
 
 VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_CreateCustom(
@@ -172,18 +144,16 @@ VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_CreateCustom(
 	SigningKeyUpdateFunction sign_update,
 	SigningKeyFinalFunction sign_final,
 	SigningKeyCleanupFunction sign_cleanup,
-	SigningKeyCertificateFunction sign_certificate,
 	SigningKeyHandle** result
 ) {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(sign_init);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(sign_update);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(sign_final);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(sign_cleanup);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(sign_certificate);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try {
-		Deferred<CustomSigningKey> key = make_deferred<CustomSigningKey>(sign_init, sign_update, sign_final, sign_cleanup, sign_certificate);
+		Deferred<CustomSigningKey> key = make_deferred<CustomSigningKey>(sign_init, sign_update, sign_final, sign_cleanup);
 		auto ptr = static_cast<ISigningKey*>(key.AddRefGet());
 		*result = reinterpret_cast<SigningKeyHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;

@@ -15,7 +15,6 @@ public:
 	virtual void SignUpdate(const Buffer& data) = 0;
 	virtual void SignUpdate(IInputStreamPtr data, types::stream_size length) = 0;
 	virtual BufferPtr SignFinal() = 0;
-	virtual BufferPtr GetSigningCertificate() const = 0;
 };
 
 } // vanillapdf

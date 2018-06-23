@@ -649,11 +649,13 @@ void Document::MergePageDestinations(DocumentPtr other, PageObjectPtr other_page
 void Document::Sign(const std::string& path, DocumentSignatureSettingsPtr options) {
 
 	OutputPointer<ISigningKeyPtr> key;
+	OutputPointer<syntax::HexadecimalStringObjectPtr> certificate;
 	OutputPointer<syntax::LiteralStringObjectPtr> name;
 	OutputPointer<syntax::LiteralStringObjectPtr> location;
 	OutputPointer<syntax::LiteralStringObjectPtr> reason;
 
 	bool has_key = options->GetSigningKey(key);
+	bool has_certificate = options->GetCertificate(certificate);
 	bool has_name = options->GetName(name);
 	bool has_location = options->GetLocation(location);
 	bool has_reason = options->GetReason(reason);
@@ -668,12 +670,9 @@ void Document::Sign(const std::string& path, DocumentSignatureSettingsPtr option
 	DictionaryObjectPtr signature_dictionary;
 	signature_dictionary->Insert(constant::Name::Type, make_deferred<NameObject>("Sig"));
 
-	auto signing_certificate_data = key->GetSigningCertificate();
-	auto signing_certificate = make_deferred<HexadecimalStringObject>();
-	signing_certificate->SetValue(signing_certificate_data);
-	signing_certificate->SetInitialized();
-
-	signature_dictionary->Insert(constant::Name::Cert, signing_certificate);
+	if (has_certificate) {
+		signature_dictionary->Insert(constant::Name::Cert, *certificate);
+	}
 
 	if (has_name) {
 		signature_dictionary->Insert(constant::Name::Name, *name);
@@ -793,7 +792,7 @@ void Document::Sign(const std::string& path, DocumentSignatureSettingsPtr option
 	auto signature_fields_reference = make_deferred<syntax::IndirectObjectReference>(signature_annotation);
 	fields_array->Append(signature_fields_reference);
 
-	DocumentSignerPtr signer = make_deferred<DocumentSigner>(key, signing_certificate, digest, signature_dictionary);
+	DocumentSignerPtr signer = make_deferred<DocumentSigner>(key, digest, signature_dictionary);
 	FilePtr destination = File::Create(path);
 
 	FileWriter writer;
