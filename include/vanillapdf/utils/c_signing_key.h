@@ -5,7 +5,7 @@
 #include "vanillapdf/c_handles.h"
 #include "vanillapdf/c_values.h"
 
-#include "c_message_digest_algorithm.h"
+#include "vanillapdf/utils/c_message_digest_algorithm.h"
 
 #ifdef __cplusplus
 extern "C"
