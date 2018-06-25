@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_unknown_interface.h
-	* \brief This file contains class definitions for IUnknown interface
+	* \brief This file contains class definitions for \ref IUnknownHandle interface
 	*/
 
 	/**
