@@ -184,11 +184,12 @@ More extendable interfaces:
 
 \section arch_deps Dependencies
 
-Library has three dependent libraries:
+Library has also following dependent libraries:
 <ul>
 <li>OpenSSL (<https://www.openssl.org/>) - used for encrypted files
 <li>zlib (<http://www.zlib.net/>) - used for flate compression method
 <li>libjpeg (<http://libjpeg.sourceforge.net/>) - used for compressed JPEG images
+<li>JSON for Modern C++ (<https://github.com/nlohmann/json>) - used for processing license files
 </ul>
 
 */
