@@ -22,6 +22,7 @@
     <ClInclude Include="..\src\vanillapdf.tools\tools.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\vanillapdf.tools\decrypt.c" />
     <ClCompile Include="..\src\vanillapdf.tools\extract.c" />
     <ClCompile Include="..\src\vanillapdf.tools\filter.c" />
     <ClCompile Include="..\src\vanillapdf.tools\main.c" />

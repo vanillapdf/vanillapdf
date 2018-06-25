@@ -40,17 +40,15 @@ This is a list of most common features that are easily usable and documented wit
 Free features:
 <ul>
 <li>Document merge and split (\ref merge.c)</li>
-<li>Document metadata</li>
-<li>PDF object enumeration</li>
 <li>PDF filter compression/decompression (\ref filter.c)</li>
-<li>Extracting strings and byte contents (\ref extract.c)</li>
+<li>Extracting strings and images (\ref extract.c)</li>
 <li>Page content manipulation</li>
 </ul>
 
 Premium features:
 <ul>
 <li>Document signing (\ref sign.c)</li>
-<li>Decrypting documents</li>
+<li>Decrypting documents (\ref decrypt.c)</li>
 </ul>
 
 \section license_use Using the license

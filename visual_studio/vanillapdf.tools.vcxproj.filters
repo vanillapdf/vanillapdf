@@ -35,5 +35,8 @@
     <ClCompile Include="..\src\vanillapdf.tools\sign.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\vanillapdf.tools\decrypt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

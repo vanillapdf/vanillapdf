@@ -8,6 +8,7 @@ Full example list:
 <li>\ref extract.c - Image extraction
 <li>\ref filter.c - Compression filters
 <li>\ref sign.c - Digital signature
+<li>\ref decrypt.c - File decryption
 </ul>
 
 Utilities:
@@ -94,4 +95,9 @@ Additional resources:
 /**
 * \example sign.c
 * Example use of digital signature with PKCS#12 key.
+*/
+
+/**
+* \example decrypt.c
+* Example use of encrypted files, protected with password or certificate.
 */
