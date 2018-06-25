@@ -60,13 +60,12 @@ int process_sign(int argc, char *argv[]) {
 	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_SetDigest(signature_settings, MessageDigestAlgorithmType_SHA256));
 	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_SetSigningTime(signature_settings, signing_time));
 
-
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Open(source_file, &document));
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Sign(document, destination_file, signature_settings));
-
-	RETURN_ERROR_IF_NOT_SUCCESS(Date_Release(signing_time));
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));
+
 	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_Release(signature_settings));
+	RETURN_ERROR_IF_NOT_SUCCESS(Date_Release(signing_time));
 	RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_Release(pkcs12_key));
 
 	return VANILLAPDF_TOOLS_ERROR_SUCCESS;
