@@ -8,6 +8,7 @@ Full example list:
 <li>\ref extract.c - Image extraction
 <li>\ref filter.c - Compression filters
 <li>\ref sign.c - Digital signature
+<li>\ref sign_custom.c - Custom digital signature using interface callbacks
 <li>\ref decrypt.c - File decryption
 </ul>
 
@@ -95,6 +96,11 @@ Additional resources:
 /**
 * \example sign.c
 * Example use of digital signature with PKCS#12 key.
+*/
+
+/**
+* \example sign_custom.c
+* Example use of custom interface callbacks for document signing.
 */
 
 /**
