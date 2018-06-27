@@ -38,7 +38,7 @@ extern "C"
 	* This function should reset all previous settings and prepare
 	* for future \ref SigningKeyUpdateFunction to be called.
 	*/
-	typedef error_type (*SigningKeyInitializeFunction)(MessageDigestAlgorithmType algorithm);
+	typedef error_type (*SigningKeyInitializeFunction)(void* user_data, MessageDigestAlgorithmType algorithm);
 
 	/**
 	* \brief Insert data into engine for digest calculation
@@ -46,7 +46,7 @@ extern "C"
 	* This function can be called multiple times,
 	* if there are more data for signing that would fit in a single buffer.
 	*/
-	typedef error_type (*SigningKeyUpdateFunction)(const BufferHandle* data);
+	typedef error_type (*SigningKeyUpdateFunction)(void* user_data, const BufferHandle* data);
 
 	/**
 	* \brief Finish the digest calculation and return signed hash
@@ -56,7 +56,7 @@ extern "C"
 	*
 	* Hash should be signed and the result should be either a DER-encoded PKCS#1 binary data object or a DER-encoded PKCS#7 binary data object.
 	*/
-	typedef error_type (*SigningKeyFinalFunction)(BufferHandle** result);
+	typedef error_type (*SigningKeyFinalFunction)(void* user_data, BufferHandle** result);
 
 	/**
 	* \brief Cleanup all dependencies after the signing process has finished
@@ -64,7 +64,7 @@ extern "C"
 	* This function is called when the last reference to the
 	* \ref SigningKeyHandle has been disposed.
 	*/
-	typedef void (*SigningKeyCleanupFunction)(void);
+	typedef void (*SigningKeyCleanupFunction)(void* user_data);
 
 	/**
 	* \brief Creates a custom \ref SigningKeyHandle to provide custom sign operation
@@ -74,6 +74,7 @@ extern "C"
 		SigningKeyUpdateFunction sign_update,
 		SigningKeyFinalFunction sign_final,
 		SigningKeyCleanupFunction sign_cleanup,
+		void* user_data,
 		SigningKeyHandle** result
 	);
 

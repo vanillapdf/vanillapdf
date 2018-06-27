@@ -17,11 +17,13 @@ public:
 		SigningKeyInitializeFunction sign_init,
 		SigningKeyUpdateFunction sign_update,
 		SigningKeyFinalFunction sign_final,
-		SigningKeyCleanupFunction sign_cleanup
+		SigningKeyCleanupFunction sign_cleanup,
+		void* user_data
 	) : m_init(sign_init),
 		m_update(sign_update),
 		m_final(sign_final),
-		m_cleanup(sign_cleanup) {
+		m_cleanup(sign_cleanup),
+		m_user_data(user_data) {
 
 		// These are only assertions, because those parameters shall be handled
 		// at the function call level.
@@ -74,7 +76,7 @@ public:
 				throw GeneralException("Unknown digest algorithm");
 		}
 
-		m_init(algorithm_type);
+		m_init(m_user_data, algorithm_type);
 	}
 
 	void SignUpdate(const Buffer& data) override {
@@ -85,7 +87,7 @@ public:
 		}
 
 		auto input_ptr = reinterpret_cast<const BufferHandle*>(&data);
-		error_type rv = m_update(input_ptr);
+		error_type rv = m_update(m_user_data, input_ptr);
 		if (VANILLAPDF_ERROR_SUCCESS != rv) {
 			std::stringstream ss;
 			ss << "Custom key sign update operation returned: " << rv;
@@ -112,7 +114,7 @@ public:
 			throw LicenseRequiredException("Document signing is a licensed feature");
 		}
 
-		error_type rv = m_final(&output_ptr);
+		error_type rv = m_final(m_user_data, &output_ptr);
 		if (VANILLAPDF_ERROR_SUCCESS != rv) {
 			std::stringstream ss;
 			ss << "Custom key sign final operation returned: " << rv;
@@ -129,7 +131,7 @@ public:
 	}
 
 	~CustomSigningKey() {
-		m_cleanup();
+		m_cleanup(m_user_data);
 	}
 
 private:
@@ -137,6 +139,8 @@ private:
 	SigningKeyUpdateFunction m_update;
 	SigningKeyFinalFunction m_final;
 	SigningKeyCleanupFunction m_cleanup;
+
+	void* m_user_data;
 };
 
 VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_CreateCustom(
@@ -144,6 +148,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_CreateCustom(
 	SigningKeyUpdateFunction sign_update,
 	SigningKeyFinalFunction sign_final,
 	SigningKeyCleanupFunction sign_cleanup,
+	void* user_data,
 	SigningKeyHandle** result
 ) {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(sign_init);
@@ -153,7 +158,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_CreateCustom(
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try {
-		Deferred<CustomSigningKey> key = make_deferred<CustomSigningKey>(sign_init, sign_update, sign_final, sign_cleanup);
+		Deferred<CustomSigningKey> key = make_deferred<CustomSigningKey>(sign_init, sign_update, sign_final, sign_cleanup, user_data);
 		auto ptr = static_cast<ISigningKey*>(key.AddRefGet());
 		*result = reinterpret_cast<SigningKeyHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
