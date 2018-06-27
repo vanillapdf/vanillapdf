@@ -9,6 +9,7 @@ set(VANILLAPDF_TOOLS_SOURCES
 	filter.c
 	merge.c
 	sign.c
+	sign_custom.c
 	decrypt.c
 )
 

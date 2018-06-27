@@ -21,6 +21,11 @@ int process_merge(int argc, char *argv[]);
 int process_filter(int argc, char *argv[]);
 int process_extract(int argc, char *argv[]);
 int process_sign(int argc, char *argv[]);
+int process_sign_custom(int argc, char *argv[]);
+int process_decrypt(int argc, char *argv[]);
+
+// Some parameters to functions are unused
+#define UNUSED(x) (void)(x)
 
 #define RETURN_ERROR_IF_NOT_SUCCESS(fn) \
 do { \
