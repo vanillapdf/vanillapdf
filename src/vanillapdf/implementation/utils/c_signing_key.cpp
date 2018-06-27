@@ -128,7 +128,8 @@ public:
 			throw UserCancelledException(ss.str());
 		}
 
-		return reinterpret_cast<Buffer*>(output_ptr);
+		auto result = reinterpret_cast<Buffer*>(output_ptr);
+		return BufferPtr(result, false);
 	}
 
 	~CustomSigningKey() {
