@@ -35,7 +35,7 @@ extern "C"
 	/**
 	* \brief Get data content from buffer
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_GetData(BufferHandle* handle, string_type* data, size_type* size);
+	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_GetData(const BufferHandle* handle, string_type* data, size_type* size);
 
 	/**
 	* \brief Set new data content
@@ -45,7 +45,7 @@ extern "C"
 	/**
 	* \brief Converts current buffer state to input stream
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToInputStream(BufferHandle* handle, IInputStreamHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToInputStream(const BufferHandle* handle, IInputStreamHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release

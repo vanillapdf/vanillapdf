@@ -17,9 +17,9 @@ VANILLAPDF_API error_type CALLING_CONVENTION Buffer_Create(string_type data, siz
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Buffer_GetData(BufferHandle* handle, string_type* data, size_type* size)
+VANILLAPDF_API error_type CALLING_CONVENTION Buffer_GetData(const BufferHandle* handle, string_type* data, size_type* size)
 {
-	Buffer* obj = reinterpret_cast<Buffer*>(handle);
+	const Buffer* obj = reinterpret_cast<const Buffer*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(size);
@@ -42,8 +42,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION Buffer_SetData(BufferHandle* handle
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToInputStream(BufferHandle* handle, IInputStreamHandle** result) {
-	Buffer* obj = reinterpret_cast<Buffer*>(handle);
+VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToInputStream(const BufferHandle* handle, IInputStreamHandle** result) {
+	const Buffer* obj = reinterpret_cast<const Buffer*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
