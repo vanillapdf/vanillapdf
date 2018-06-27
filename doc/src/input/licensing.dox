@@ -42,7 +42,6 @@ Free features:
 <li>Document merge and split (\ref merge.c)</li>
 <li>PDF filter compression/decompression (\ref filter.c)</li>
 <li>Extracting strings and images (\ref extract.c)</li>
-<li>Page content manipulation</li>
 </ul>
 
 Premium features:
@@ -80,11 +79,11 @@ Before the accessing premium features be sure to initialize the library with the
 
 \code
 BufferHandle* license_buffer = NULL;
-InputStreamInterfaceHandle* input_stream = NULL;
+IInputStreamHandle* input_stream = NULL;
 boolean_type is_valid = VANILLAPDF_RV_FALSE;
 
-InputStreamInterface_CreateFromFile(license_file, &input_stream);
-InputStreamInterface_ToBuffer(input_stream, &license_buffer);
+IInputStream_CreateFromFile(license_file, &input_stream);
+IInputStream_ToBuffer(input_stream, &license_buffer);
 LicenseInfo_SetLicenseBuffer(license_buffer);
 LicenseInfo_IsValid(&is_valid);
 
@@ -92,7 +91,7 @@ if (is_valid != VANILLAPDF_RV_TRUE) {
 	// Terminate
 }
 
-InputStreamInterface_Release(input_stream);
+IInputStream_Release(input_stream);
 Buffer_Release(license_buffer);
 \endcode
 
