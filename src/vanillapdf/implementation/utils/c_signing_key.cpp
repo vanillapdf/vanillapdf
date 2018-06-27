@@ -95,15 +95,16 @@ public:
 		}
 	}
 
-	virtual void SignUpdate(IInputStreamPtr data, types::stream_size length) {
+	void SignUpdate(IInputStreamPtr data, types::stream_size length) override {
 
 		// Document signature is a licensed feature
 		if (!LicenseInfo::IsValid()) {
 			throw LicenseRequiredException("Document signing is a licensed feature");
 		}
 
-		(void) data; (void) length;
-		throw NotSupportedException("Stream signing not yet supported on interface");
+		// TODO support input stream on interface
+		auto buffer = data->Read(length);
+		SignUpdate(buffer);
 	}
 
 	BufferPtr SignFinal() override {
