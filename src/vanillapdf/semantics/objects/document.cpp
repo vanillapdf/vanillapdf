@@ -646,7 +646,7 @@ void Document::MergePageDestinations(DocumentPtr other, PageObjectPtr other_page
 	}
 }
 
-void Document::Sign(const std::string& path, DocumentSignatureSettingsPtr options) {
+void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
 
 	OutputPointer<ISigningKeyPtr> key;
 	OutputPointer<syntax::HexadecimalStringObjectPtr> certificate;
@@ -799,7 +799,6 @@ void Document::Sign(const std::string& path, DocumentSignatureSettingsPtr option
 	fields_array->Append(signature_fields_reference);
 
 	DocumentSignerPtr signer = make_deferred<DocumentSigner>(key, digest, signature_dictionary);
-	FilePtr destination = File::Create(path);
 
 	FileWriter writer;
 	writer.Subscribe(signer);

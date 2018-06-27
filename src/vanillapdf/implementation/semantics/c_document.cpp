@@ -136,16 +136,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_AppendDocument(DocumentHan
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Document_Sign(DocumentHandle* handle, string_type destination, DocumentSignatureSettingsHandle* settings) {
+VANILLAPDF_API error_type CALLING_CONVENTION Document_Sign(DocumentHandle* handle, FileHandle* destination, DocumentSignatureSettingsHandle* settings) {
 	Document* document = reinterpret_cast<Document*>(handle);
+	File* file = reinterpret_cast<File*>(destination);
 	DocumentSignatureSettings* signature_settings = reinterpret_cast<DocumentSignatureSettings*>(settings);
 
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(destination);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(signature_settings);
 
 	try {
-		document->Sign(destination, signature_settings);
+		document->Sign(file, signature_settings);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }

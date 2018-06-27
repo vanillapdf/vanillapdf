@@ -36,7 +36,7 @@ public:
 	void AppendDocument(DocumentPtr other);
 	void AppendPage(DocumentPtr other, PageObjectPtr other_page);
 
-	void Sign(const std::string& path, DocumentSignatureSettingsPtr options);
+	void Sign(syntax::FilePtr destination, DocumentSignatureSettingsPtr options);
 
 private:
 	syntax::FilePtr m_holder;

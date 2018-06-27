@@ -5,12 +5,13 @@ void print_sign_help() {
 }
 
 int process_sign(int argc, char *argv[]) {
-	string_type source_file = NULL;
-	string_type destination_file = NULL;
+	string_type source_document_path = NULL;
+	string_type destination_file_path = NULL;
 	string_type key_file = NULL;
 	string_type key_password = NULL;
 
-	DocumentHandle* document = NULL;
+	DocumentHandle* source_document = NULL;
+	FileHandle* destination_file = NULL;
 
 	PKCS12KeyHandle* pkcs12_key = NULL;
 	SigningKeyHandle* signing_key = NULL;
@@ -37,8 +38,8 @@ int process_sign(int argc, char *argv[]) {
 		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
 	}
 
-	source_file = argv[1];
-	destination_file = argv[3];
+	source_document_path = argv[1];
+	destination_file_path = argv[3];
 	key_file = argv[5];
 
 	if (argc >= 7) {
@@ -60,9 +61,11 @@ int process_sign(int argc, char *argv[]) {
 	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_SetDigest(signature_settings, MessageDigestAlgorithmType_SHA256));
 	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_SetSigningTime(signature_settings, signing_time));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Document_Open(source_file, &document));
-	RETURN_ERROR_IF_NOT_SUCCESS(Document_Sign(document, destination_file, signature_settings));
-	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Create(destination_file_path, &destination_file));
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_Open(source_document_path, &source_document));
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_Sign(source_document, destination_file, signature_settings));
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(source_document));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(destination_file));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_Release(signature_settings));
 	RETURN_ERROR_IF_NOT_SUCCESS(Date_Release(signing_time));
