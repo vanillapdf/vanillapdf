@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (0 == strcmp(argv[1], "decrypt")) {
-		return process_sign(argc - 2, &argv[2]);
+		return process_decrypt(argc - 2, &argv[2]);
 	}
 
 	print_help();
