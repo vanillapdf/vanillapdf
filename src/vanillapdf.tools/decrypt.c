@@ -12,11 +12,7 @@ int process_decrypt(int argc, char *argv[]) {
 
 	integer_type i = 0;
 
-	if (argc < 2) {
-		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
-	}
-
-	for (i = 2; i < argc; ++i) {
+	for (i = 0; i < argc; ++i) {
 
 		// password
 		if (strcmp(argv[i], "-p") == 0 && (i + 1 < argc)) {
@@ -32,8 +28,14 @@ int process_decrypt(int argc, char *argv[]) {
 			file_path = argv[i + 1];
 			i++;
 		} else {
+			print_decrypt_help();
 			return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
 		}
+	}
+
+	if (file_path == NULL) {
+		print_decrypt_help();
+		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
 	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Open(file_path, &file));
