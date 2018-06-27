@@ -1,12 +1,15 @@
 /*!
 \mainpage
-This manual documents whole vanillapdf __C API__.<br>
+This manual documents whole Vanilla.PDF API.<br>
 
-The library is writted in standard C++ (currently 14) and can be compiled using Visual studio and GCC (tested on Ubuntu 16.04) as well.<br>
-Reason, why I have chosen the __C API__ is rooted in the incompatibility of the C++ ABI between compilers.<br>
-In order to provide a built library, I'd rather loose all of the C++ API benefits and provide only __C API__.<br>
-There are build scripts provided in CMake (<https://cmake.org/>) framework.<br>
+This library allows users to create, modify and sign PDF documents. The main focus is to allow users very precisely control the output documents, so that __ANY__ part can be easily changed.
+The range of changes varies from visible (page layout) to invisible (compression, signatures), yet both of them can be achieved.
 
-For extended introduction please continue at \ref page_overview.
+Due to these reasons, the library interface ofter requires a very deep knowledge of the PDF format. That is our audience.
+
+We have also created a \ref page_pdf_course "PDF tutorial", for developers that are not yet very familiar with PDF file format.
+Next be sure to take a look at \ref page_overview, which contains all the necessary steps to go through.
+
+In case of any questions, do not hesitate to [contact us](mailto:info@vanillapdf.com).
 
 */
