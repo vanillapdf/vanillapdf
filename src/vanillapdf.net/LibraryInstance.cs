@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace vanillapdf.net
@@ -40,10 +41,14 @@ namespace vanillapdf.net
                 return;
             }
 
+            // Root path of the entry assembly
+            string rootAssemblyPath = Assembly.GetEntryAssembly().Location;
+            string rootPath = Path.GetDirectoryName(rootAssemblyPath);
+
             // Find the correct library path depending on the process
-            string libraryPath = Path.GetFullPath(X86_LIBRARY_PATH);
+            string libraryPath = Path.Combine(rootPath, X86_LIBRARY_PATH);
             if (Environment.Is64BitProcess) {
-                libraryPath = Path.GetFullPath(X64_LIBRARY_PATH);
+                libraryPath = Path.Combine(rootPath, X64_LIBRARY_PATH);
             }
 
             // Call the load library native function
