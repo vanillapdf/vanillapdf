@@ -1,6 +1,6 @@
-# VanillaPDF
+# Vanilla.PDF
 
-**Cross-platform toolkit for creating and manipulating existing PDF documents**
+**Cross-platform toolkit for creating and modifying existing PDF documents**
 
 ## API Documentation
 
