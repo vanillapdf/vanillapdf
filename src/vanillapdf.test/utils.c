@@ -439,30 +439,58 @@ error_type process_library_info() {
 
 //! [Print last error]
 error_type print_last_error() {
-	char* message = NULL;
 	error_type error = 0;
-	size_type length = 0;
+	char* error_message = NULL;
+	char* error_code_name = NULL;
+	size_type error_code_name_length = 0;
+	size_type error_message_length = 0;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Errors_GetLastError(&error));
-	RETURN_ERROR_IF_NOT_SUCCESS(Errors_GetLastErrorMessageLength(&length));
 
-	if (length >= SIZE_MAX) {
-		unsigned long long length_converted = length;
+	// Last error message
+	RETURN_ERROR_IF_NOT_SUCCESS(Errors_GetLastErrorMessageLength(&error_message_length));
+
+	if (error_message_length >= SIZE_MAX) {
+		unsigned long long length_converted = error_message_length;
 		printf("Buffer size is too big: %llu bytes\n", length_converted);
 		return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 
-	message = (char*) calloc(sizeof(char), length);
-	if (NULL == message) {
-		unsigned long long length_converted = length;
+	error_message = (char*) calloc(sizeof(char), error_message_length);
+	if (NULL == error_message) {
+		unsigned long long length_converted = error_message_length;
 		printf("Could not allocate memory: %llu bytes\n", length_converted);
 		return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Errors_GetLastErrorMessage(message, length));
+	RETURN_ERROR_IF_NOT_SUCCESS(Errors_GetLastErrorMessage(error_message, error_message_length));
 
-	printf("Error %u: %s\n", error, message);
-	free(message);
+	// error code name
+	RETURN_ERROR_IF_NOT_SUCCESS(Errors_GetPrintableErrorTextLength(error, &error_code_name_length));
+
+	if (error_code_name_length >= SIZE_MAX) {
+		unsigned long long length_converted = error_code_name_length;
+		printf("Buffer size is too big: %llu bytes\n", length_converted);
+		return VANILLAPDF_TEST_ERROR_FAILURE;
+	}
+
+	error_code_name = (char*) calloc(sizeof(char), error_code_name_length);
+	if (NULL == error_code_name) {
+		unsigned long long length_converted = error_code_name_length;
+		printf("Could not allocate memory: %llu bytes\n", length_converted);
+		return VANILLAPDF_TEST_ERROR_FAILURE;
+	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Errors_GetPrintableErrorText(error, error_code_name, error_code_name_length));
+
+	if (error_message_length == 0) {
+		printf("Error %u (%s)\n", error, error_code_name);
+	} else {
+		printf("Error %u (%s): %s\n", error, error_code_name, error_message);
+	}
+
+	free(error_message);
+	free(error_code_name);
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }

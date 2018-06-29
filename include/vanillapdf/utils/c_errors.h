@@ -36,9 +36,21 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetLastError(error_type* result);
 
 	/**
+	* \brief Get length of the name returned by \ref Errors_GetErrorName including the trailing NULL character
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetPrintableErrorTextLength(error_type value, size_type* size);
+
+	/**
+	* \brief Obtain a human readable text of the error code including the trailing NULL character
+	*
+	* This function returns a pointer to statically allocated data and it <b>shall not</b> be freed.
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetPrintableErrorText(error_type value, char* data, size_type size);
+
+	/**
 	* \brief Obtain length of the additional error message including the trailing NULL character
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetLastErrorMessageLength(size_type* size);
+	VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetLastErrorMessageLength(size_type* result);
 
 	/**
 	* \brief Obtain the additional NULL terminated text message about the last error
