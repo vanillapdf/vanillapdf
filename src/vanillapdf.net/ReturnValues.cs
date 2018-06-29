@@ -6,8 +6,8 @@ namespace vanillapdf.net
     {
         public static string GetValueName(uint value)
         {
-            if (value == ERROR_SUCCES) {
-                return VANILLAPDF_ERROR_SUCCES;
+            if (value == ERROR_SUCCESS) {
+                return VANILLAPDF_ERROR_SUCCESS;
             }
 
             if (value == ERROR_PARAMETER_VALUE) {
@@ -45,7 +45,7 @@ namespace vanillapdf.net
             throw new Exception("Unknown return value");
         }
 
-        public static UInt32 ERROR_SUCCES = LibraryInstance.GetConstant(VANILLAPDF_ERROR_SUCCES);
+        public static UInt32 ERROR_SUCCESS = LibraryInstance.GetConstant(VANILLAPDF_ERROR_SUCCESS);
         public static UInt32 ERROR_PARAMETER_VALUE = LibraryInstance.GetConstant(VANILLAPDF_ERROR_PARAMETER_VALUE);
         public static UInt32 ERROR_NOT_SUPPORTED = LibraryInstance.GetConstant(VANILLAPDF_ERROR_NOT_SUPPORTED);
         public static UInt32 ERROR_GENERAL = LibraryInstance.GetConstant(VANILLAPDF_ERROR_GENERAL);
@@ -55,7 +55,7 @@ namespace vanillapdf.net
         public static UInt32 ERROR_OBJECT_MISSING = LibraryInstance.GetConstant(VANILLAPDF_ERROR_OBJECT_MISSING);
         public static UInt32 ERROR_INVALID_PASSWORD = LibraryInstance.GetConstant(VANILLAPDF_ERROR_INVALID_PASSWORD);
 
-        private const string VANILLAPDF_ERROR_SUCCES = "VANILLAPDF_ERROR_SUCCES";
+        private const string VANILLAPDF_ERROR_SUCCESS = "VANILLAPDF_ERROR_SUCCESS";
         private const string VANILLAPDF_ERROR_PARAMETER_VALUE = "VANILLAPDF_ERROR_PARAMETER_VALUE";
         private const string VANILLAPDF_ERROR_NOT_SUPPORTED = "VANILLAPDF_ERROR_NOT_SUPPORTED";
         private const string VANILLAPDF_ERROR_GENERAL = "VANILLAPDF_ERROR_GENERAL";

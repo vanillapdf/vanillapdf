@@ -19,7 +19,7 @@ namespace vanillapdf.net
                 throw BaseException.GetException(result);
             }
 
-            if (result != ReturnValues.ERROR_SUCCES) {
+            if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
 
@@ -33,7 +33,7 @@ namespace vanillapdf.net
                 return false;
             }
 
-            if (result != ReturnValues.ERROR_SUCCES) {
+            if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
 
@@ -44,7 +44,7 @@ namespace vanillapdf.net
         public PageTree GetPageTree()
         {
             UInt32 result = NativeMethods.Catalog_GetPages(Handle, out IntPtr tree);
-            if (result != ReturnValues.ERROR_SUCCES) {
+            if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
 
@@ -55,7 +55,7 @@ namespace vanillapdf.net
         {
             if (Handle != IntPtr.Zero) {
                 UInt32 result = NativeMethods.Catalog_Release(Handle);
-                if (result != ReturnValues.ERROR_SUCCES) {
+                if (result != ReturnValues.ERROR_SUCCESS) {
                     throw Errors.GetLastErrorException();
                 }
 

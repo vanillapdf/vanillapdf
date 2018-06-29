@@ -15,7 +15,7 @@ namespace vanillapdf.net
         public int GetPageCount()
         {
             UInt32 result = NativeMethods.PageTree_GetPageCount(Handle, out int count);
-            if (result != ReturnValues.ERROR_SUCCES) {
+            if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
 
@@ -25,7 +25,7 @@ namespace vanillapdf.net
         public PageObject GetPage(int index)
         {
             UInt32 result = NativeMethods.PageTree_GetPage(Handle, out IntPtr page);
-            if (result != ReturnValues.ERROR_SUCCES) {
+            if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
 
@@ -36,7 +36,7 @@ namespace vanillapdf.net
         {
             if (Handle != IntPtr.Zero) {
                 UInt32 result = NativeMethods.PageTree_Release(Handle);
-                if (result != ReturnValues.ERROR_SUCCES) {
+                if (result != ReturnValues.ERROR_SUCCESS) {
                     throw Errors.GetLastErrorException();
                 }
 

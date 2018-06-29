@@ -15,7 +15,7 @@ namespace vanillapdf.net
         public static Document OpenNew(string filename)
         {
             UInt32 result = NativeMethods.Document_OpenNew(filename, out IntPtr handle);
-            if (result != ReturnValues.ERROR_SUCCES) {
+            if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
 
@@ -25,7 +25,7 @@ namespace vanillapdf.net
         public static Document OpenExisting(File file)
         {
             UInt32 result = NativeMethods.Document_OpenExisting(file.Handle, out IntPtr handle);
-            if (result != ReturnValues.ERROR_SUCCES) {
+            if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
 
@@ -35,7 +35,7 @@ namespace vanillapdf.net
         public void AppendDocument(Document source)
         {
             UInt32 result = NativeMethods.Document_AppendDocument(Handle, source.Handle);
-            if (result != ReturnValues.ERROR_SUCCES) {
+            if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
         }
@@ -43,7 +43,7 @@ namespace vanillapdf.net
         public Catalog GetCatalog()
         {
             UInt32 result = NativeMethods.Document_GetCatalog(Handle, out IntPtr catalog);
-            if (result != ReturnValues.ERROR_SUCCES) {
+            if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
 
@@ -53,7 +53,7 @@ namespace vanillapdf.net
         public void Save(string filename)
         {
             UInt32 result = NativeMethods.Document_Save(Handle, filename);
-            if (result != ReturnValues.ERROR_SUCCES) {
+            if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
         }
@@ -62,7 +62,7 @@ namespace vanillapdf.net
         {
             if (Handle != IntPtr.Zero) {
                 UInt32 result = NativeMethods.Document_Release(Handle);
-                if (result != ReturnValues.ERROR_SUCCES) {
+                if (result != ReturnValues.ERROR_SUCCESS) {
                     throw Errors.GetLastErrorException();
                 }
 

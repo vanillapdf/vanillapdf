@@ -16,7 +16,7 @@ namespace vanillapdf.net
         {
             if (Handle != IntPtr.Zero) {
                 UInt32 result = NativeMethods.PageObject_Release(Handle);
-                if (result != ReturnValues.ERROR_SUCCES) {
+                if (result != ReturnValues.ERROR_SUCCESS) {
                     throw Errors.GetLastErrorException();
                 }
 

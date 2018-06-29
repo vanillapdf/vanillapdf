@@ -23,7 +23,7 @@ namespace vanillapdf.net
         public static bool IsEnabled()
         {
             UInt32 result = NativeMethods.Logging_IsEnabled(out bool enabled);
-            if (result != ReturnValues.ERROR_SUCCES) {
+            if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
 
@@ -33,7 +33,7 @@ namespace vanillapdf.net
         public static void Enable()
         {
             UInt32 result = NativeMethods.Logging_Enable();
-            if (result != ReturnValues.ERROR_SUCCES) {
+            if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
         }
@@ -41,7 +41,7 @@ namespace vanillapdf.net
         public static void Disable()
         {
             UInt32 result = NativeMethods.Logging_Disable();
-            if (result != ReturnValues.ERROR_SUCCES) {
+            if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
         }
@@ -49,7 +49,7 @@ namespace vanillapdf.net
         public static LoggingSeverity GetSeverity()
         {
             UInt32 result = NativeMethods.Logging_GetSeverity(out LoggingSeverity severity);
-            if (result != ReturnValues.ERROR_SUCCES) {
+            if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
 
@@ -59,7 +59,7 @@ namespace vanillapdf.net
         public static void SetSeverity(LoggingSeverity severity)
         {
             UInt32 result = NativeMethods.Logging_SetSeverity(severity);
-            if (result != ReturnValues.ERROR_SUCCES) {
+            if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
         }

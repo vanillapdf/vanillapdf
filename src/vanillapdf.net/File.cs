@@ -15,7 +15,7 @@ namespace vanillapdf.net
         public static File Open(string filename)
         {
             UInt32 result = NativeMethods.File_Open(filename, out IntPtr handle);
-            if (result != ReturnValues.ERROR_SUCCES) {
+            if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
 
@@ -25,7 +25,7 @@ namespace vanillapdf.net
         public static File Create(string filename)
         {
             UInt32 result = NativeMethods.File_Open(filename, out IntPtr handle);
-            if (result != ReturnValues.ERROR_SUCCES) {
+            if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
 
@@ -35,7 +35,7 @@ namespace vanillapdf.net
         public void Initialize()
         {
             UInt32 result = NativeMethods.File_Initialize(Handle);
-            if (result != ReturnValues.ERROR_SUCCES) {
+            if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
         }
@@ -44,7 +44,7 @@ namespace vanillapdf.net
         {
             if (Handle != IntPtr.Zero) {
                 UInt32 result = NativeMethods.File_Release(Handle);
-                if (result != ReturnValues.ERROR_SUCCES) {
+                if (result != ReturnValues.ERROR_SUCCESS) {
                     throw Errors.GetLastErrorException();
                 }
 
