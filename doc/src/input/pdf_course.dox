@@ -2,8 +2,8 @@
 \page page_pdf_course PDF fundamentals
 \tableofcontents
 
-In the first place, we will talk about the syntactic structure of the document.<br>
-If You're already familiar with the syntax, please skip to the \ref document_semantics.<br>
+In the first place, let's talk about the syntactic structure of the document.
+If You're already familiar with the syntax, please skip to the \ref document_semantics.
 
 \section file_structure File structure
 
@@ -30,7 +30,7 @@ PDF file consists on sequence of object with a few basic types.<br>
 \ref ArrayObjectHandle "Array",
 \ref DictionaryObjectHandle "Dictionary",
 \ref StreamObjectHandle "Stream" and
-\ref NullObjectHandle "Null".<br>
+\ref NullObjectHandle "Null".
 
 \code{.unparsed}
 true, false		% boolean types
@@ -58,8 +58,8 @@ endstream				% Stream data end
 
 \subsection indirect_objects Indirect objects
 
-Any object can be labeled as indirect, meaning it is assigned an unique number within file.<br>
-In most places and indirect reference to this object can be used instead of the object itself.<br>
+Any object can be labeled as indirect, meaning it is assigned an unique number within file.
+In most places an indirect reference to object can be used instead of the object value itself.
 
 \code{.unparsed}
 1 0 obj
@@ -72,12 +72,12 @@ In most places and indirect reference to this object can be used instead of the 
 >>						% Dictionary end
 \endcode
 
-This association has to be added into the cross-reference table, explained in the section \ref file_xref.<br>
+This association has to be added into the cross-reference table, explained in the section \ref file_xref.
 
 \subsection file_filters Filters
 
-PDF streams support compression, so that the file size can be optimized.<br>
-Multiple compression methods are supported, such as \ref ASCII85DecodeFilterHandle, \ref FlateDecodeFilterHandle and others.<br>
+PDF streams support compression, so that the file size can be optimized.
+Multiple compression methods are supported, such as \ref ASCII85DecodeFilterHandle, \ref FlateDecodeFilterHandle and others.
 
 \code{.unparsed}
 1 0 obj
@@ -90,12 +90,13 @@ stream
 endstream
 \endcode
 
-In this sample was used \ref FlateDecodeFilterHandle.<br>
-The compressed byte stream size is exactly 1337 bytes long.
+In this sample was used \ref FlateDecodeFilterHandle. The compressed byte stream size is exactly 1337 bytes long.
 
 \subsection file_header File header
 
-Header basically contains only the version of the PDF specification this file conforms to.<br>
+Header basically contains only the version of the PDF specification this file conforms to.
+Depending on the version, certain features are disabled, as they were not available in the earlier standards.
+A very common feature nowdays is cross-reference section compression, which is available since PDF 1.4.
 
 \code{.unparsed}
 %PDF-1.4
@@ -103,19 +104,31 @@ Header basically contains only the version of the PDF specification this file co
 
 \subsection file_body File body
 
-Body is composed from sequence of indirect objects defined in the \ref file_xref.<br>
-For a complete sample view \ref file_example.<br>
+Body is composed from sequence of indirect objects defined in the \ref file_xref.
+For a complete sample view \ref file_example.
+
+\code{.unparsed}
+1 0 obj
+<</Pages 2 0 R /Type /Catalog>>
+endobj
+2 0 obj
+<</Count 0 /Type /Pages>>
+endobj
+3 0 obj
+<</CreationDate (D:20170831161944Z) /Producer (I am the producer)>>
+endobj
+\endcode
 
 \subsection file_xref File cross-reference table
 
-Quote from [section 7.5.4 - Cross-Reference Table](PDF32000_2008.pdf#G6.1839814):<br>
-> The cross-reference table contains information that permits random access to indirect objects<br>
-> within the file so that the entire file need not be read to locate any particular object.<br>
+Quote from [section 7.5.4 - Cross-Reference Table](PDF32000_2008.pdf#G6.1839814):
+> The cross-reference table contains information that permits random access to indirect objects
+> within the file so that the entire file need not be read to locate any particular object.
 
-What this means, is that there are stored byte offsets for every indirect object.<br>
-When the file is read, the reader jumps to the \ref file_trailer, which is at the very end of the file.<br>
-Finds an offset to this section, searches for a object by their unique identifier (object number).<br>
-From this point, the reader can just seek to the exact offset and read the object.<br>
+What this means, is that there are stored byte offsets for every indirect object.
+When the file is read, the reader jumps to the \ref file_trailer, which is at the very end of the file.
+Finds an offset to this section, searches for a object by their unique identifier (object number).
+From this point, the reader can just seek to the exact offset and read the object.
 
 \code{.unparsed}
 xref
@@ -126,14 +139,15 @@ xref
 0000000097 00000 n 
 \endcode
 
-This sample defined a cross-reference section with 4 entries.<br>
-First entry is not used, denoted by the letter 'f' as "free".<br>
-Next entry is at the file offset 9. Letter 'n' means the entry is "in-use".<br>
+This sample defined a cross-reference section with 4 entries.
+First entry is not used, denoted by the letter 'f' as "free".
+Next entry is at the file offset 9. Letter 'n' means the entry is "in-use".
 
 \subsection file_trailer File trailer
 
-Trailer contains a byte offset to the files cross-reference table.<br>
-There are also a few metadata information about the file, for example whether the document is encrypted.<br>
+File trailer should be located at the very end of the file, thus can be found easily.
+Trailer contains a byte offset to the files cross-reference table.
+There are also a few metadata information about the file, for example whether the document is encrypted.
 
 \code{.unparsed}
 trailer
@@ -143,10 +157,10 @@ startxref
 %%EOF
 \endcode
 
-This trailer states, that a cross-reference section can be found at offset 181.<br>
-Additionaly, the document root object is indirect with identifier 1 (object number).<br>
-Document metadata are stored in is indirect with identifier 3 (object number).<br>
-Both document root and metadata should be defined in the cross-reference table.<br>
+This trailer states, that a cross-reference section can be found at offset 181.
+Additionaly, the document root object is indirect with identifier 1 (object number).
+Document metadata are stored in is indirect with identifier 3 (object number).
+Both document root and metadata should be defined in the cross-reference table.
 
 For more detailed information please visit [section 7.5.5 - File Trailer](PDF32000_2008.pdf#G6.1639448).
 
@@ -154,32 +168,21 @@ ____________________________________________________
 
 \section document_semantics Document semantics
 
-Document encapsulates syntactic operations and forms operations with semantic validity.<br>
+Document encapsulates syntactic operations and forms operations with semantic validity.
+This abstraction level is provided so that users no longer need to understand all the caveats of the PDF file format.
 
-For example, lets take a loot at a \ref CatalogHandle.<br>
-Catalog is based on a dictionary described in [<b>section 7.7.2 - Document Catalog</b>](PDF32000_2008.pdf#G6.1926881).<br>
-
-Instead of accessing dictionary directly with specific keys, it is more convenient to ask for a property.<br>
-To get a version from catalog just call \ref Catalog_GetVersion.<br>
-
-The other option would be searching for a dictionary object with key \ref NameConstant_Type and value \ref NameConstant_Catalog.<br>
-This dictionary could contain (optional, supported from PDF version 1.4 and above) key \ref NameConstant_Version and its value is a \ref NameObjectHandle.<br>
-
-Quote from [<b>section 7.7.2 - Document Catalog - Table 28</b>](PDF32000_2008.pdf#M6.9.39370.Table.caption.wide.Table326.Entries.in.a.catalog.dictionary):<br>
-> The value of this entry shall be a name object, not a number, and therefore shall be preceded<br>
-> by a SOLIDUS (2Fh) character (/) when written in the PDF file (for example, /1.4).<br>
-
-To use this method a <b>very deep knowledge</b> about the PDF file structure is often required.
+\subsection document_common_data_structures Common data structures
 
 ____________________________________________________
 
 \section page_contents Page contents
 
-From the semantic point of view, the root of the document structure is called \ref CatalogHandle.<br>
-Catalog contains tree of pages, and other important document data.<br>
-Document \ref PageObjectHandle contains entry called Contents, which is serialized stream of PostScript instructions.<br>
+From the semantic point of view, the root of the document structure is called \ref CatalogHandle.
+Catalog contains tree of pages, and other important document data.
+Document \ref PageObjectHandle contains entry called Contents, which is serialized stream of PostScript instructions.
 
-Sample page contents:<br>
+Sample page contents:
+
 \code{.unparsed}
 /P <</MCID 20 >>BDC 
 BT
@@ -207,20 +210,38 @@ ET
 EMC
 \endcode
 
-This part gets a bit more complex, since there are a \b lot of different print instructions.<br>
-What is essential is that all operators are preceeded by their parameters.<br>
+Essential clue is that all operators are preceeded by their parameters.
+The generic formula for all postscript instructions is:
 
-Setting the font associated with name /TT0 and size 1:
+\code{.unparsed}
+operand operand operand operator
+\endcode
+
+The number of operands is always dependent on the operator.
+
+For example, following code snippet sets current font to font associated with name /TT0 and it's size to 1:
+
 \code{.unparsed}
 /TT0 1 Tf
 \endcode
 
-For a complete list of postscript instructions visit [Table A.1 – PDF content stream operators](PDF32000_2008.pdf#G14.1029307).<br>
-For a implementation reference visit \ref group_contents.<br>
+Following snippet prints a literal string at the current location on the page.
+The current location depends on the previous move and print instructions.
+
+\code{.unparsed}
+(This FAQ is prepared in support of) Tj
+\endcode
+
+For a complete list of postscript instructions visit [Table A.1 – PDF content stream operators](PDF32000_2008.pdf#G14.1029307).
+
+For implementation reference visit \ref group_contents.
 
 ____________________________________________________
 
 \section file_example Complete file example
+
+This is a minimal valid PDF document, that can be opened by Adobe Acrobat Reader.
+It has zero visible pages and it only contains document metadata.
 
 \code{.unparsed}
 %PDF-1.7
@@ -247,18 +268,18 @@ startxref
 %%EOF
 \endcode
 
-At the start, there is marker, that this file conforms to the latest PDF standard 1.7.<br>
-Next we seek to the end of the file, searching for offset to the last cross-reference section.<br>
-In this case, the cross-reference section is at offset 181 from the beginning of the file.<br>
-The file contains 3 indirect objects, with identifiers 1, 2, 3 (object numbers).<br>
+At the start, there is marker, that this file conforms to the latest PDF standard 1.7.
+Next we seek to the end of the file, searching for offset to the last cross-reference section.
+In this case, the cross-reference section is at offset 181 from the beginning of the file.
+The file contains 3 indirect objects, with identifiers 1, 2, 3 (object numbers).
 
-\note The first entry in the cross-reference table is a head of "free entries list".<br>
-It is possible to free and reuse objects using incremental updates, but that is out of scope of this tutorial.<br>
+\note The first entry in the cross-reference table is a head of "free entries list".
+It is possible to free and reuse objects using incremental updates, but that is out of scope of this tutorial.
 
-Trailer contains reference to the root of the document structure - Catalog, object 1.<br>
-Catalog contains reference to page tree structure with object id 2.<br>
-Page tree is empty for this document - it does not contain any page.<br>
-The last object 3. is just the document metadata, with the date it was created and name of the producer.<br>
+Trailer contains reference to the root of the document structure - Catalog, object number 1.
+Catalog contains reference to page tree structure with object number 2.
+Page tree is empty for this document - it does not contain any page.
+The last object number 3. is just the document metadata, with the date it was created and name of the producer.
 
 <b>That's it! We've covered the fundamentals of the PDF files.</b>
 
