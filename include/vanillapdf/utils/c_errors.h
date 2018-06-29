@@ -36,7 +36,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetLastError(error_type* result);
 
 	/**
-	* \brief Get length of the name returned by \ref Errors_GetErrorName including the trailing NULL character
+	* \brief Get length of the name returned by \ref Errors_GetPrintableErrorText including the trailing NULL character
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetPrintableErrorTextLength(error_type value, size_type* size);
 
