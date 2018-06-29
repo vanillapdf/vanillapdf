@@ -77,23 +77,7 @@ Code sample on how to protect the license file is available upon request.
 
 Before the accessing premium features be sure to initialize the library with the license key.
 
-\code
-BufferHandle* license_buffer = NULL;
-IInputStreamHandle* input_stream = NULL;
-boolean_type is_valid = VANILLAPDF_RV_FALSE;
-
-IInputStream_CreateFromFile(license_file, &input_stream);
-IInputStream_ToBuffer(input_stream, &license_buffer);
-LicenseInfo_SetLicenseBuffer(license_buffer);
-LicenseInfo_IsValid(&is_valid);
-
-if (is_valid != VANILLAPDF_RV_TRUE) {
-	// Terminate
-}
-
-IInputStream_Release(input_stream);
-Buffer_Release(license_buffer);
-\endcode
+\snippet utils.c Set license file
 
 For more details visit \ref LicenseInfo.
 
@@ -119,43 +103,6 @@ Determining the library build date can be done using file properties on windows.
 
 The file properties might be very slightly different to the exact values returned via \ref LibraryInfo.
 
-\code
-string_type library_author = NULL;
-
-// Version info
-integer_type library_version_major = 0;
-integer_type library_version_minor = 0;
-integer_type library_version_patch = 0;
-integer_type library_version_build = 0;
-
-// Build time information
-integer_type library_build_day = 0;
-integer_type library_build_month = 0;
-integer_type library_build_year = 0;
-
-LibraryInfo_GetVersionMajor(&library_version_major);
-LibraryInfo_GetVersionMinor(&library_version_minor);
-LibraryInfo_GetVersionPatch(&library_version_patch);
-LibraryInfo_GetVersionBuild(&library_version_build);
-LibraryInfo_GetAuthor(&library_author);
-
-LibraryInfo_GetBuildDay(&library_build_day);
-LibraryInfo_GetBuildMonth(&library_build_month);
-LibraryInfo_GetBuildYear(&library_build_year);
-
-printf("Library vanillapdf %d.%d.%d.%d by %s\n",
-	library_version_major,
-	library_version_minor,
-	library_version_patch,
-	library_version_build,
-	library_author
-);
-
-printf("Built on %d.%d.%d\n",
-	library_build_day,
-	library_build_month,
-	library_build_year
-);
-\endcode
+\snippet utils.c Print library info
 
 */
