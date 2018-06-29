@@ -56,16 +56,16 @@
     <Compile Include="ReturnValues.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="x86\vanillapdf.dll">
+    <Content Include="x86\jpeg.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="x86\jpeg62.dll">
+    <Content Include="x86\vanillapdf.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\libeay32.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="x86\zlib1.dll">
+    <Content Include="x86\zlib.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
