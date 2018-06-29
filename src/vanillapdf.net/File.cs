@@ -59,16 +59,16 @@ namespace vanillapdf.net
             public static FileInitializeDelgate File_Initialize = LibraryInstance.GetFunction<FileInitializeDelgate>("File_Initialize");
             public static FileReleaseDelgate File_Release = LibraryInstance.GetFunction<FileReleaseDelgate>("File_Release");
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 FileOpenDelgate(string filename, out IntPtr handle);
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 FileCreateDelgate(string filename, out IntPtr handle);
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 FileInitializeDelgate(IntPtr handle);
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 FileReleaseDelgate(IntPtr handle);
         }
     }

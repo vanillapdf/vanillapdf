@@ -48,13 +48,13 @@ namespace vanillapdf.net
             public static ErrorsGetLastErrorMessageDelgate Errors_GetLastErrorMessage = LibraryInstance.GetFunction<ErrorsGetLastErrorMessageDelgate>("Errors_GetLastErrorMessage");
             public static ErrorsGetLastErrorMessageLengthDelgate Errors_GetLastErrorMessageLength = LibraryInstance.GetFunction<ErrorsGetLastErrorMessageLengthDelgate>("Errors_GetLastErrorMessageLength");
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 ErrorsGetLastErrorDelgate(out UInt32 result);
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 ErrorsGetLastErrorMessageDelgate(StringBuilder sb, UInt32 size);
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 ErrorsGetLastErrorMessageLengthDelgate(out UInt32 result);
         }
     }

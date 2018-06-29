@@ -79,22 +79,22 @@ namespace vanillapdf.net
             public static DocumentSaveDelgate Document_Save = LibraryInstance.GetFunction<DocumentSaveDelgate>("Document_Save");
             public static DocumentReleaseDelgate Document_Release = LibraryInstance.GetFunction<DocumentReleaseDelgate>("Document_Release");
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 DocumentOpenNewDelgate(string filename, out IntPtr handle);
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 DocumentOpenExistingDelgate(IntPtr file, out IntPtr handle);
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 DocumentAppendDocumentDelgate(IntPtr handle, IntPtr source);
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 DocumentGetCatalogDelgate(IntPtr handle, out IntPtr catalog);
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 DocumentSaveDelgate(IntPtr handle, string filename);
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 DocumentReleaseDelgate(IntPtr handle);
         }
     }

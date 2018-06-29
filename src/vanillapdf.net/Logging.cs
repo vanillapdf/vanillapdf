@@ -72,19 +72,19 @@ namespace vanillapdf.net
             public static LoggingGetSeverityDelgate Logging_GetSeverity = LibraryInstance.GetFunction<LoggingGetSeverityDelgate>("Logging_GetSeverity");
             public static LoggingSetSeverityDelgate Logging_SetSeverity = LibraryInstance.GetFunction<LoggingSetSeverityDelgate>("Logging_SetSeverity");
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 LoggingIsEnabledDelgate(out bool result);
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 LoggingEnableDelgate();
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 LoggingDisableDelgate();
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 LoggingGetSeverityDelgate(out LoggingSeverity severity);
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 LoggingSetSeverityDelgate(LoggingSeverity severity);
         }
     }

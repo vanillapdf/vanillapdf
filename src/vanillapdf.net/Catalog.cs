@@ -69,13 +69,13 @@ namespace vanillapdf.net
             public static CatalogGetVersionDelgate Catalog_GetVersion = LibraryInstance.GetFunction<CatalogGetVersionDelgate>("Catalog_GetVersion");
             public static CatalogReleaseDelgate Catalog_Release = LibraryInstance.GetFunction<CatalogReleaseDelgate>("Catalog_Release");
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 CatalogGetPagesDelgate(IntPtr handle, out IntPtr version);
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 CatalogGetVersionDelgate(IntPtr handle, out int version);
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
             public delegate UInt32 CatalogReleaseDelgate(IntPtr handle);
         }
     }
