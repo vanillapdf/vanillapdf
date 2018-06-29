@@ -5,8 +5,8 @@
 The library is writted in standard C++ (currently 14) and can be compiled using
 Visual studio (2015 and 2017) and GCC (tested on Ubuntu 16.04) as well.
 
-Build is executed using cross-platform make tool CMake (<https://cmake.org/>).<br>
-CMake also integrates packaging system to provide one-click installable packages for each platform.<br>
+Build is executed using cross-platform make tool CMake (<https://cmake.org/>).
+CMake also integrates packaging system to provide one-click installable packages for each platform.
 
 Currently supported package systems:
 <ul>
@@ -15,14 +15,12 @@ Currently supported package systems:
 <li>Red Hat Package Manager [.rpm](https://en.wikipedia.org/wiki/Rpm_(software))
 </ul>
 
-It provides only <b>ANSI C</b> API.<br>
-The reason why I did not expose native C++ interface is rooted within the incompatibility of the C++ ABI between compilers.<br>
-Functions across the interface use standard C caller clean-up [cdecl](https://en.wikipedia.org/wiki/X86_calling_conventions#cdecl) calling convention.<br>
+It provides only <b>ANSI C</b> API. The reason why I did not expose native C++ interface is rooted within the incompatibility of the C++ ABI between compilers.
+Functions across the interface use standard C caller clean-up [cdecl](https://en.wikipedia.org/wiki/X86_calling_conventions#cdecl) calling convention.
 
 \section arch_errors Error handling
 
-Library uses C++ exceptions internally.<br>
-Each interface function is wrapped inside try-catch block to prevent any exceptions to escape and potentially crash the application.<br>
+Library uses C++ exceptions internally. Each interface function is wrapped inside try-catch block to prevent any exceptions to escape and potentially crash the application.
 
 This is example, how interface functions usually look like:
 
@@ -55,8 +53,8 @@ error_type Buffer_SetData(BufferHandle* handle, string_type data, size_type size
 
 \subsection arch_errors_messages Error codes and messages
 
-All exceptions thrown in this way are caught and their message is stored in a thread-local buffer.<br>
-This buffer is separate for each thread and has a pre-allocated size in case of memory shortage.<br>
+All exceptions thrown in this way are caught and their message is stored in a thread-local buffer.
+This buffer is separate for each thread and has a pre-allocated size in case of memory shortage.
 
 Following code snippet declares the structures that carries error information:
 \code
@@ -67,19 +65,16 @@ Following code snippet declares the structures that carries error information:
 
 \section object_ownership Object ownership
 
-All handles are basically opaque pointers to internal structures.<br>
-Library uses so-called intrusive pointer reference counting mechanism.<br>
-Usually, the structure and the reference counter are two separate objects.<br>
-In this case, the reference counter is embedded inside the structure body.<br>
-
-\todo Intrusive vs shared image
-<!-- \image html intrusive_pointers.png "Picture 1: Illustration of embedding and intrusive pointer" -->
+All handles are basically opaque pointers to internal structures.
+Library uses so-called intrusive pointer reference counting mechanism.
+Usually, the structure and the reference counter are two separate objects.
+In this case, the reference counter is embedded inside the structure body.
 
 \subsection arch_ownership_comparison Intrusive vs Shared
 
-Let's compare intrusive pointer with the traditional [C++ shared pointers](http://en.cppreference.com/w/cpp/memory/shared_ptr).<br>
+Let's compare intrusive pointer with the traditional [C++ shared pointers](http://en.cppreference.com/w/cpp/memory/shared_ptr).
 
-Transferring object handle outside library bounds is more clear.<br>
+Transferring object handle outside library bounds is more clear.
 
 \code
 Buffer* buffer = new Buffer();
@@ -90,29 +85,29 @@ Buffer* buffer = new Buffer();
 Buffer* buffer = reinterpret_cast<Buffer*>(handle);
 \endcode
 
-Intrusive pointers can guarantee, that there are no multiple reference count objects.<br>
+Intrusive pointers can guarantee, that there are no multiple reference count objects.
 
-Intrusive pointers should have a better performance (in some cases) comparing to traditional C++ shared pointers.<br>
-Main reason is that accessing the object required two pointer dereferences for shared pointer, while for intrusive only one.<br>
-The other reason is that whole object is allocated within a single allocation, while shared pointers are often not.<br>
+Intrusive pointers should have a better performance (in some cases) comparing to traditional C++ shared pointers.
+Main reason is that accessing the object required two pointer dereferences for shared pointer, while for intrusive only one.
+The other reason is that whole object is allocated within a single allocation, while shared pointers are often not.
 
 \note
-Shared pointer can be allocated using [make_shared](http://en.cppreference.com/w/cpp/memory/shared_ptr/make_shared).<br>
-In addition, to ensure (not guarantee) that there is only a single reference counter object, the objects may be derived from [shared_from_this](http://en.cppreference.com/w/cpp/memory/enable_shared_from_this).<br>
+Shared pointer can be allocated using [make_shared](http://en.cppreference.com/w/cpp/memory/shared_ptr/make_shared).
+In addition, to ensure (not guarantee) that there is only a single reference counter object, the objects may be derived from [shared_from_this](http://en.cppreference.com/w/cpp/memory/enable_shared_from_this).
 
 \section file_layer File layer
 
-File layer allows access to file contents at the syntactic level.<br>
-It has some necessary semantic features that are required for parsing its syntax.<br>
+File layer allows access to file contents at the syntactic level.
+It has some necessary semantic features that are required for parsing its syntax.
 
-For example \ref IndirectObjectReferenceHandle often has to be resolved to read an object.<br>
-The \ref StreamObjectHandle has it's \p Length often stored as an indirect object.<br>
-In order to validate this object, the \p Length has to be resolved to successfully parse an object.<br>
+For example \ref IndirectObjectReferenceHandle often has to be resolved to read an object.
+The \ref StreamObjectHandle has it's \p Length often stored as an indirect object.
+In order to validate this object, the \p Length has to be resolved to successfully parse an object.
 
 \subsection arch_streams IO Streams
 
-Library uses C++ io streams for reading source files and writing output files.<br>
-There are already interfaces, that represents these streams and will be used throughout the library interface.<br>
+Library uses C++ io streams for reading source files and writing output files.
+There are already interfaces, that represents these streams and will be used throughout the library interface.
 
 <ul>
 <li>Source files with \ref IInputStreamHandle
@@ -120,19 +115,19 @@ There are already interfaces, that represents these streams and will be used thr
 </ul>
 
 \note
-These interfaces could be overriden in the future, so that user can provide custom implementation for reading source file.<br>
-This is often helpful for interacting with other applications, that might need to share file access.<br>
+These interfaces could be overriden in the future, so that user can provide custom implementation for reading source file.
+This is often helpful for interacting with other applications, that might need to share file access.
 
 \subsection arch_tokenizer Tokenizer
 
-Tokens are smallest syntactic elements and are separated by a whitespace or a delimiter.<br>
-Which characters are considered whitespace and which are considered delimiter is discussed in [section 7.2 - Lexical Conventions](PDF32000_2008.pdf#G6.1638740).<br>
+Tokens are smallest syntactic elements and are separated by a whitespace or a delimiter.
+Which characters are considered whitespace and which are considered delimiter is discussed in [section 7.2 - Lexical Conventions](PDF32000_2008.pdf#G6.1638740).
 
 \note
 PDF supports comments, but they are currently ignored. They might be persisted in the future.
 
-Tokenizer uses look-ahead to determine proper token type, since some of the tokens are ambiguous from the first character.<br>
-For example hexadecimal string is enclosed with angle brackets "<", ">" and the dictionary "<<", ">>".<br>
+Tokenizer uses look-ahead to determine proper token type, since some of the tokens are ambiguous from the first character.
+For example hexadecimal string is enclosed with angle brackets "<", ">" and the dictionary "<<", ">>".
 
 Sample parsing loop for hexadecimal string:
 \code
@@ -163,18 +158,18 @@ if (char == Delimiter::LESS_THAN_SIGN) {
 
 \subsection arch_parser Parser
 
-Tokens are passed to the parser, who is responsible for constructing objects.<br>
-Parser uses look-ahead as well, since multiple tokens may form a single object.<br>
+Tokens are passed to the parser, who is responsible for constructing objects.
+Parser uses look-ahead as well, since multiple tokens may form a single object.
 
-\image html indirect_reference_parsing.png "Picture 2: Diagram for parsing indirect object references"
+\image html indirect_reference_parsing.png "Picture 1: Diagram for parsing indirect object references"
 
 \section function_callbacks Function callbacks
 
 Library provides multiple interfaces, that could be overriden by the calling application.
 
-For instance, when signing a document, it is possible to use classic PKCS#12 (Personal Information Exchange described in [RFC 7292](https://tools.ietf.org/html/rfc7292)).<br>
-Unfortunately, this would not work with smart cards, where the private key is not directly accessible.<br>
-User can override \ref SigningKeyHandle and provide signing implementation outside library boundaries.<br>
+For instance, when signing a document, it is possible to use classic PKCS#12 (Personal Information Exchange described in [RFC 7292](https://tools.ietf.org/html/rfc7292)).
+Unfortunately, this would not work with smart cards, where the private key is not directly accessible.
+User can override \ref SigningKeyHandle and provide signing implementation outside library boundaries.
 
 More extendable interfaces:
 <ul>
