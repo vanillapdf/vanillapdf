@@ -373,6 +373,7 @@ error_type process_license_info(string_type license_file) {
 
 	RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_IsValid(&is_valid));
 	if (is_valid != VANILLAPDF_RV_FALSE) {
+		printf("License is enabled by default\n");
 		return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 
@@ -382,6 +383,7 @@ error_type process_license_info(string_type license_file) {
 	RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_IsValid(&is_valid));
 
 	if (is_valid != VANILLAPDF_RV_TRUE) {
+		printf("Could not enable license\n");
 		return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 
