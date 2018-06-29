@@ -3,15 +3,21 @@ using System.Runtime.InteropServices;
 
 namespace vanillapdf.net
 {
+    public enum LoggingSeverity
+    {
+        Debug = 0,
+        Info,
+        Warning,
+        Error,
+        Fatal
+    }
+
     public static class Logging
     {
-        public enum Severity
+        public static LoggingSeverity Severity
         {
-            Debug = 0,
-            Info,
-            Warning,
-            Error,
-            Fatal
+            get { return GetSeverity(); }
+            set { SetSeverity(value); }
         }
 
         public static bool IsEnabled()
@@ -40,6 +46,24 @@ namespace vanillapdf.net
             }
         }
 
+        public static LoggingSeverity GetSeverity()
+        {
+            UInt32 result = NativeMethods.Logging_GetSeverity(out LoggingSeverity severity);
+            if (result != ReturnValues.ERROR_SUCCES) {
+                throw Errors.GetLastErrorException();
+            }
+
+            return severity;
+        }
+
+        public static void SetSeverity(LoggingSeverity severity)
+        {
+            UInt32 result = NativeMethods.Logging_SetSeverity(severity);
+            if (result != ReturnValues.ERROR_SUCCES) {
+                throw Errors.GetLastErrorException();
+            }
+        }
+
         private static class NativeMethods
         {
             public static LoggingIsEnabledDelgate Logging_IsEnabled = LibraryInstance.GetFunction<LoggingIsEnabledDelgate>("Logging_IsEnabled");
@@ -58,10 +82,10 @@ namespace vanillapdf.net
             public delegate UInt32 LoggingDisableDelgate();
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate UInt32 LoggingGetSeverityDelgate(out Severity severity);
+            public delegate UInt32 LoggingGetSeverityDelgate(out LoggingSeverity severity);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate UInt32 LoggingSetSeverityDelgate(Severity severity);
+            public delegate UInt32 LoggingSetSeverityDelgate(LoggingSeverity severity);
         }
     }
 }
