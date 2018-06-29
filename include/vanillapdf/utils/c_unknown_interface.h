@@ -35,7 +35,7 @@ extern "C"
 	* \brief Decrement the internal reference counter.
 	* 
 	* When the internal counter reaches zero the object is deleted.
-	* Releasing already disposed object causes undefined behavior.
+	* Releasing already disposed object causes <b>undefined behavior</b>.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION IUnknown_Release(IUnknownHandle* handle);
 
