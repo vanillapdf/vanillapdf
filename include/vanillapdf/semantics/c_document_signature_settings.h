@@ -114,7 +114,6 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetCertificate(DocumentSignatureSettingsHandle* handle, HexadecimalStringObjectHandle* value);
 
-
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release

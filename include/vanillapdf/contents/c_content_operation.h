@@ -56,16 +56,15 @@ extern "C"
 	* \class ContentOperationBeginTextHandle
 	* \extends ContentOperationHandle
 	* \ingroup group_contents
-	* \brief Starts a new TextObject sections
+	* \brief Starts a new \ref ContentObjectTextHandle section
 	*/
 
 	/**
 	* \class ContentOperationEndTextHandle
 	* \extends ContentOperationHandle
 	* \ingroup group_contents
-	* \brief Terminates the TextObject started with \ref ContentOperationBeginTextHandle
+	* \brief Terminates the \ref ContentObjectTextHandle started with \ref ContentOperationBeginTextHandle
 	*/
-
 
 	/**
 	* \brief Available content operation types

@@ -19,7 +19,7 @@ extern "C"
 	* \class BufferArrayHandle
 	* \extends IUnknownHandle
 	* \ingroup group_utils
-	* \brief Represents a list of /ref BufferHandle
+	* \brief Represents a list of \ref BufferHandle
 	*/
 
 	/**
