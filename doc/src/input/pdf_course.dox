@@ -171,15 +171,28 @@ ____________________________________________________
 Document encapsulates syntactic operations and forms operations with semantic validity.
 This abstraction level is provided so that users no longer need to understand all the caveats of the PDF file format.
 
+Root of documents hierarchy is so called \ref CatalogHandle, which contains information about document pages, layout, actions and so on.
+All document pages can be found within \ref PageTreeHandle, with references to their \ref PageObjectHandle.
+Page contents are describer in the \ref page_contents section.
+
+Documents digital signature is also supported using \ref Document_Sign function. The easiest way is to use \ref PKCS12KeyHandle from file.
+A complete example on how to digitally sign a document is available at \ref sign.c.
+
 \subsection document_common_data_structures Common data structures
+
+There are multiple general-purpose data structures that are built from the basic object types, such as \ref DateHandle, Rectangles or Trees.
+Since they are composed from the basic object types, they provide interface to modify their back-end object in graceful manner.
+
+For example when a date field is expected, the user does not need to know the syntax of date (D:YYYYMMDDHHmmSSOHH'mm).
+
+Another example are trees, which should be balanced to help the PDF readers optimize searching within large amount of data.
+This process is done by the semantic layer, who is responsible for making best efforts on such optimizations.
 
 ____________________________________________________
 
 \section page_contents Page contents
 
-From the semantic point of view, the root of the document structure is called \ref CatalogHandle.
-Catalog contains tree of pages, and other important document data.
-Document \ref PageObjectHandle contains entry called Contents, which is serialized stream of PostScript instructions.
+Document \ref PageObjectHandle contains entry called Contents, which contains serialized stream of PostScript instructions.
 
 Sample page contents:
 
