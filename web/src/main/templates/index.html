@@ -456,9 +456,12 @@
     <!-- Scripts -->
     {% include 'scripts.html' %}
 	<script src="{{ assets_folder }}js/price_constants.js"></script>
-	<script src="{{ assets_folder }}js/pricing.js"></script>
 	<script src="{{ assets_folder }}js/subscribe.js"></script>
 	<script src="{{ assets_folder }}js/custom_navbar.js"></script>
+	
+	<script>
+		{% include 'pricing.js' %}
+	</script>
 
   </body>
 </html>

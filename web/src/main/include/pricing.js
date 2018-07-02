@@ -14,7 +14,7 @@ $(document).ready(function() {
 });
 
 /* Orders */
-var ORDER_URL = 'page/order.php';
+var ORDER_URL = '{{ pages_folder }}{{ order_page }}';
 
 var PERSONAL_LICENSE_ID					= 'personal-license';
 var PERSONAL_SUPPORT_ID					= 'personal-support';
@@ -52,7 +52,7 @@ function PersonalThreeYearSupport() {
 }
 
 function PersonalYearsSupport(support, price, purchase_link, support_link) {
-    document.getElementById("personal-price").innerHTML = price + '&euro;';
+    document.getElementById("personal-price").innerHTML = price + '{{ CURRENCY }}';
 	document.getElementById("personal-support").innerHTML = support + " year support";
 	
 	document.getElementById("personal-purchase-link").href = purchase_link;
@@ -78,7 +78,7 @@ function CommercialThreeYearSupport() {
 }
 
 function CommercialYearsSupport(support, price, purchase_link, support_link) {
-    document.getElementById("commercial-price").innerHTML = price + '&euro;';
+    document.getElementById("commercial-price").innerHTML = price + '{{ CURRENCY }}';
 	document.getElementById("commercial-support").innerHTML = support + " year support";
 	
 	document.getElementById("commercial-purchase-link").href = purchase_link;
