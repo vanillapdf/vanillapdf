@@ -32,9 +32,9 @@ project(vanillapdf)
 
 # Set production version
 # It is important project version before including cmake/packaging.cmake
-set(VANILLAPDF_VERSION_MAJOR 0)
+set(VANILLAPDF_VERSION_MAJOR 1)
 set(VANILLAPDF_VERSION_MINOR 0)
-set(VANILLAPDF_VERSION_PATCH 1)
+set(VANILLAPDF_VERSION_PATCH 0)
 set(VANILLAPDF_VERSION_BUILD 0)
 
 # Package management
