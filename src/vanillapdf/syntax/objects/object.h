@@ -111,6 +111,7 @@ class ObjectPtr : public Deferred<Object> {
 
 public:
 	ObjectPtr();
+	ObjectPtr(Deferred<Object> value);
 };
 
 } // syntax

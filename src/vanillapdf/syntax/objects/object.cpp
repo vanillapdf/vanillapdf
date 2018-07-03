@@ -17,6 +17,10 @@ namespace syntax {
 ObjectPtr::ObjectPtr() : Deferred<Object>(NullObject::GetInstance()) {
 }
 
+ObjectPtr::ObjectPtr(Deferred<Object> value) : Deferred<Object>(value) {
+
+}
+
 bool Object::HasOverrideAttribute() const {
 	return ContainsAttribute(IAttribute::Type::SerializationOverride);
 }

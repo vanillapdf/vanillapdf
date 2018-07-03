@@ -2,6 +2,8 @@
 #define _ARRAY_OBJECT_H
 
 #include "syntax/utils/syntax_fwd.h"
+#include "syntax/utils/object_utils.h"
+
 #include "syntax/objects/mixed_array_object.h"
 
 #include <algorithm>
@@ -115,7 +117,14 @@ private:
 	MixedArrayObjectPtr _list;
 	std::function<T(const ContainableObjectPtr& obj)> _conversion;
 
-	static T DefaultConversion(const ContainableObjectPtr& obj);
+	template <typename U = ObjectUtils>
+	static T DefaultConversionTemplate(const ContainableObjectPtr& obj) {
+		return U::template ConvertTo<T>(obj);
+	}
+
+	static T DefaultConversion(const ContainableObjectPtr& obj) {
+		return DefaultConversionTemplate(obj);
+	}
 };
 
 #pragma region ArrayObjectIterator
@@ -293,7 +302,7 @@ std::string ArrayObject<T>::ToPdf(void) const {
 template <typename T>
 template <typename U>
 ArrayObjectPtr<U> ArrayObject<T>::Convert(std::function<U(const T& obj)> f) const {
-	return make_deferred<ArrayObject<U>>(*this, f);
+	return ArrayObjectPtr<U>(pdf_new ArrayObject<U>(*this, f));
 }
 
 template <typename T>
@@ -314,11 +323,6 @@ ArrayObjectIterator<T> ArrayObject<T>::end() {
 template <typename T>
 const ArrayObjectIterator<T> ArrayObject<T>::end() const {
 	return ArrayObjectIterator<T>(_list->end(), _conversion);
-}
-
-template <typename T>
-T ArrayObject<T>::DefaultConversion(const ContainableObjectPtr& obj) {
-	return ObjectUtils::ConvertTo<T>(obj);
 }
 
 #pragma endregion

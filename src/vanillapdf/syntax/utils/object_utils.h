@@ -10,6 +10,7 @@
 #include "syntax/objects/real_object.h"
 #include "syntax/objects/indirect_object_reference.h"
 #include "syntax/objects/mixed_array_object.h"
+#include "syntax/objects/array_object.h"
 
 #include <map>
 #include <sstream>
@@ -236,7 +237,7 @@ public:
 		}
 
 		auto mixed = ObjectTypeFunctor<MixedArrayObjectPtr>::Convert(obj);
-		return make_deferred<ArrayObject<T>>(mixed);
+		return ArrayObjectPtr<T>(pdf_new ArrayObject<T>(mixed));
 	}
 };
 
