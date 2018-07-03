@@ -167,7 +167,7 @@ types::stream_size InputReverseStream::Read(Buffer& result, types::stream_size l
 }
 
 BufferPtr InputReverseStream::Read(types::stream_size len) {
-	BufferPtr result = make_deferred<Buffer>(len);
+	BufferPtr result = make_deferred_container<Buffer>(len);
 	m_stream->read(result->data(), len);
 	return result;
 }

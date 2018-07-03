@@ -50,7 +50,7 @@ BufferPtr MiscUtils::ToBase64(const Buffer& value) {
 		throw GeneralException("Could not get memory pointer");
 	}
 
-	return make_deferred<Buffer>(memory_buffer->data, memory_buffer->length);
+	return make_deferred_container<Buffer>(memory_buffer->data, memory_buffer->length);
 }
 
 BufferPtr MiscUtils::FromBase64(const Buffer& value) {
@@ -148,7 +148,7 @@ BufferPtr MiscUtils::CalculateHash(const Buffer& data, MessageDigestAlgorithm di
 		throw GeneralException("Could not flush buffer");
 	}
 
-	BufferPtr hash_buffer = make_deferred<Buffer>(EVP_MAX_MD_SIZE);
+	BufferPtr hash_buffer = make_deferred_container<Buffer>(EVP_MAX_MD_SIZE);
 
 	auto hash_buffer_size = ValueConvertUtils::SafeConvert<int>(hash_buffer->size());
 	auto bytes_read = BIO_gets(md_bio, hash_buffer->data(), hash_buffer_size);

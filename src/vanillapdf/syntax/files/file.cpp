@@ -270,7 +270,7 @@ BufferPtr File::DecryptStream(const Buffer& data,
 	types::big_uint objNumber,
 	types::ushort genNumber) {
 	if (!IsEncrypted()) {
-		return make_deferred<Buffer>(data);
+		return make_deferred_container<Buffer>(data);
 	}
 
 	auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
@@ -288,7 +288,7 @@ BufferPtr File::DecryptString(const Buffer& data,
 	types::big_uint objNumber,
 	types::ushort genNumber) {
 	if (!IsEncrypted()) {
-		return make_deferred<Buffer>(data);
+		return make_deferred_container<Buffer>(data);
 	}
 
 	auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
@@ -307,7 +307,7 @@ BufferPtr File::DecryptData(const Buffer& data,
 	types::ushort genNumber,
 	const NameObject& filter_name) {
 	if (!IsEncrypted()) {
-		return make_deferred<Buffer>(data);
+		return make_deferred_container<Buffer>(data);
 	}
 
 	EncryptionAlgorithm algorithm = GetEncryptionAlgorithmForFilter(filter_name);
@@ -325,7 +325,7 @@ BufferPtr File::DecryptData(const Buffer& data,
 	assert(objNumber != 0);
 
 	if (!IsEncrypted()) {
-		return make_deferred<Buffer>(data);
+		return make_deferred_container<Buffer>(data);
 	}
 
 	auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
@@ -344,7 +344,7 @@ BufferPtr File::DecryptData(const Buffer& data,
 
 	// data inside encryption dictionary are not encrypted
 	if ((dictionary_object_number == objNumber && dictionary_generation_number == genNumber)) {
-		return make_deferred<Buffer>(data);
+		return make_deferred_container<Buffer>(data);
 	}
 
 	// Same idea as above. SetEncryptionExempted shall be used for every
@@ -357,7 +357,7 @@ BufferPtr File::DecryptData(const Buffer& data,
 	// Any strings that are inside streams such as content streams and compressed object streams,
 	// which themselves are encrypted
 	if (object_entry->GetUsage() == XrefEntryBase::Usage::Compressed) {
-		return make_deferred<Buffer>(data);
+		return make_deferred_container<Buffer>(data);
 	}
 
 	if (_decryption_key.empty()) {
@@ -393,7 +393,7 @@ BufferPtr File::EncryptStream(const Buffer& data,
 	types::big_uint objNumber,
 	types::ushort genNumber) {
 	if (!IsEncrypted()) {
-		return make_deferred<Buffer>(data);
+		return make_deferred_container<Buffer>(data);
 	}
 
 	auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
@@ -411,7 +411,7 @@ BufferPtr File::EncryptString(const Buffer& data,
 	types::big_uint objNumber,
 	types::ushort genNumber) {
 	if (!IsEncrypted()) {
-		return make_deferred<Buffer>(data);
+		return make_deferred_container<Buffer>(data);
 	}
 
 	auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
@@ -430,7 +430,7 @@ BufferPtr File::EncryptData(const Buffer& data,
 	types::ushort genNumber,
 	const NameObject& filter_name) {
 	if (!IsEncrypted()) {
-		return make_deferred<Buffer>(data);
+		return make_deferred_container<Buffer>(data);
 	}
 
 	EncryptionAlgorithm algorithm = GetEncryptionAlgorithmForFilter(filter_name);
@@ -442,7 +442,7 @@ BufferPtr File::EncryptData(const Buffer& data,
 	types::ushort genNumber,
 	EncryptionAlgorithm alg) const {
 	if (!IsEncrypted()) {
-		return make_deferred<Buffer>(data);
+		return make_deferred_container<Buffer>(data);
 	}
 
 	auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
@@ -451,7 +451,7 @@ BufferPtr File::EncryptData(const Buffer& data,
 
 	// data inside encryption dictionary are not encrypted
 	if (objNumber == 0 || (dictionary_object_number == objNumber && dictionary_generation_number == genNumber)) {
-		return make_deferred<Buffer>(data);
+		return make_deferred_container<Buffer>(data);
 	}
 
 	// AES 256 bits behaves differently

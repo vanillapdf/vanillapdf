@@ -10,7 +10,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Buffer_Create(string_type data, siz
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try {
-		auto buffer = make_deferred<Buffer>(data, size);
+		auto buffer = make_deferred_container<Buffer>(data, size);
 		auto ptr = buffer.AddRefGet();
 		*result = reinterpret_cast<BufferHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;

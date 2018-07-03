@@ -161,7 +161,7 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, const Buffer& password) 
 			throw GeneralException("Could not get PKCS#7 size");
 		}
 
-		BufferPtr additional_cert_data = make_deferred<Buffer>(length);
+		BufferPtr additional_cert_data = make_deferred_container<Buffer>(length);
 		auto data_pointer = (unsigned char *) additional_cert_data->data();
 		int converted = i2d_X509(additional_cert, &data_pointer);
 		if (converted < 0) {
@@ -202,7 +202,7 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
 		throw GeneralException("Could not get decrypt message length");
 	}
 
-	BufferPtr output = make_deferred<Buffer>(outlen);
+	BufferPtr output = make_deferred_container<Buffer>(outlen);
 	int decrypted = EVP_PKEY_decrypt(encryption_context, (unsigned char *) output->data(), &outlen, (unsigned char *) data.data(), data.std_size());
 	if (decrypted != 1) {
 		throw GeneralException("Could not get decrypt message");
@@ -407,7 +407,7 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::SignFinal() {
 		throw GeneralException("Could not get PKCS#7 size");
 	}
 
-	BufferPtr result = make_deferred<Buffer>(length);
+	BufferPtr result = make_deferred_container<Buffer>(length);
 	auto data_pointer = (unsigned char *) result->data();
 	int converted = i2d_PKCS7(p7, &data_pointer);
 	if (converted < 0) {

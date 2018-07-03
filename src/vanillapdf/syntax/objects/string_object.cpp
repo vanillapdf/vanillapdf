@@ -23,11 +23,11 @@ HexadecimalStringObject::HexadecimalStringObject() {
 }
 
 LiteralStringObject::LiteralStringObject(const char * value)
-	: LiteralStringObject(make_deferred<Buffer>(value)) {
+	: LiteralStringObject(make_deferred_container<Buffer>(value)) {
 }
 
 LiteralStringObject::LiteralStringObject(const std::string& value)
-	: LiteralStringObject(make_deferred<Buffer>(value)) {
+	: LiteralStringObject(make_deferred_container<Buffer>(value)) {
 }
 
 LiteralStringObject::LiteralStringObject(BufferPtr value) : _raw_value(value) {
@@ -35,11 +35,11 @@ LiteralStringObject::LiteralStringObject(BufferPtr value) : _raw_value(value) {
 }
 
 HexadecimalStringObject::HexadecimalStringObject(const char * value)
-	: HexadecimalStringObject(make_deferred<Buffer>(value)) {
+	: HexadecimalStringObject(make_deferred_container<Buffer>(value)) {
 }
 
 HexadecimalStringObject::HexadecimalStringObject(const std::string& value)
-	: HexadecimalStringObject(make_deferred<Buffer>(value)) {
+	: HexadecimalStringObject(make_deferred_container<Buffer>(value)) {
 }
 
 HexadecimalStringObject::HexadecimalStringObject(BufferPtr value) : _raw_value(value) {

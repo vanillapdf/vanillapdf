@@ -10,7 +10,7 @@ InputStream::InputStream(std::shared_ptr<std::istream> stream) : m_stream(stream
 }
 
 BufferPtr InputStream::Read(types::stream_size len) {
-	BufferPtr result = make_deferred<Buffer>(len);
+	BufferPtr result = make_deferred_container<Buffer>(len);
 	m_stream->read(result->data(), len);
 	return result;
 }

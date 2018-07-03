@@ -511,6 +511,8 @@ void swap(Deferred<T>& lhs, Deferred<T>& rhs) {
 	lhs.swap(rhs);
 }
 
+// TODO rework make_deferred to single function and user deferred_ptr_type as value
+
 template<typename T, typename... Parameters>
 Deferred<T> make_deferred(Parameters&&... p) {
 
@@ -518,6 +520,24 @@ Deferred<T> make_deferred(Parameters&&... p) {
 	static_assert(is_defined<T>::value, "Incomplete type is not allowed");
 
 	return (Deferred<T>(pdf_new T(std::forward<Parameters>(p)...)));
+}
+
+template<typename T, typename... Parameters>
+DeferredContainer<T> make_deferred_container(Parameters&&... p) {
+
+	// Check whether T is defined class
+	static_assert(is_defined<T>::value, "Incomplete type is not allowed");
+
+	return (DeferredContainer<T>(pdf_new T(std::forward<Parameters>(p)...)));
+}
+
+template<typename T, typename... Parameters>
+DeferredIterator<T> make_deferred_iterator(Parameters&&... p) {
+
+	// Check whether T is defined class
+	static_assert(is_defined<T>::value, "Incomplete type is not allowed");
+
+	return (DeferredIterator<T>(pdf_new T(std::forward<Parameters>(p)...)));
 }
 
 } // vanillapdf

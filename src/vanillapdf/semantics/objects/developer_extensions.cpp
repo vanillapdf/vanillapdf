@@ -50,11 +50,11 @@ bool DeveloperExtensions::Remove(const syntax::NameObjectPtr& name) {
 }
 
 DeveloperExtensions::IteratorPtr DeveloperExtensions::Begin(void) const {
-	return make_deferred<DeveloperExtensions::Iterator>(_obj->begin());
+	return make_deferred_iterator<DeveloperExtensions::Iterator>(_obj->begin());
 }
 
 DeveloperExtensions::IteratorPtr DeveloperExtensions::End(void) const {
-	return make_deferred<DeveloperExtensions::Iterator>(_obj->end());
+	return make_deferred_iterator<DeveloperExtensions::Iterator>(_obj->end());
 }
 
 DeveloperExtension::DeveloperExtension(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {

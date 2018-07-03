@@ -25,7 +25,7 @@ class Name##Operator : public OperatorBase \
 { \
 public: \
 	virtual Type GetType(void) const noexcept { return Type::Name; } \
-	virtual BufferPtr Value(void) const override { return make_deferred<Buffer>(Val); } \
+	virtual BufferPtr Value(void) const override { return make_deferred_container<Buffer>(Val); } \
 };
 
 		// General graphics state

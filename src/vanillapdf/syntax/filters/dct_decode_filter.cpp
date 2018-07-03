@@ -215,7 +215,7 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
 
 	auto row_size = SafeMultiply<decltype(length), JDIMENSION>(jpeg.image_width, jpeg.input_components);
 	auto row_size_converted = ValueConvertUtils::SafeConvert<Buffer::size_type>(row_size);
-	BufferPtr buffer = make_deferred<Buffer>(row_size_converted);
+	BufferPtr buffer = make_deferred_container<Buffer>(row_size_converted);
 
 	decltype(length) read_total = 0;
 	while (jpeg.next_scanline < jpeg.image_height) {
@@ -281,7 +281,7 @@ BufferPtr DCTDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 
 	size_t length_converted = ValueConvertUtils::SafeConvert<size_t>(length);
 
-	BufferPtr input = make_deferred<Buffer>(length_converted);
+	BufferPtr input = make_deferred_container<Buffer>(length_converted);
 	src->Read(input, length_converted);
 
 	jpeg.src->next_input_byte = reinterpret_cast<uint8_t *>(input->data());

@@ -5,7 +5,7 @@
 #include <cassert>
 #include <algorithm>
 
-#define INSERT_TO_DICTIONARY(name) m_dictionary.Insert(make_deferred<Buffer>(name, sizeof(name) - 1), Token::Type::name)
+#define INSERT_TO_DICTIONARY(name) m_dictionary.Insert(make_deferred_container<Buffer>(name, sizeof(name) - 1), Token::Type::name)
 
 namespace vanillapdf {
 namespace syntax {

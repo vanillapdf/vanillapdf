@@ -119,7 +119,7 @@ bool Catalog::Destinations(OutputNamedDestinationsPtr& result) const {
 	}
 
 	auto dests = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Dests);
-	auto named_dests = make_deferred<NamedDestinations>(dests);
+	auto named_dests = make_deferred_container<NamedDestinations>(dests);
 	result = named_dests;
 	return true;
 }

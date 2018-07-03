@@ -21,6 +21,7 @@ public:
 
 public:
 	using value_type = storage_type::value_type;
+	using allocator_type = storage_type::allocator_type;
 	using iterator = storage_type::iterator;
 	using size_type = storage_type::size_type;
 	using const_iterator = storage_type::const_iterator;
@@ -49,7 +50,7 @@ public:
 	}
 
 	template <typename InputIterator>
-	Buffer(InputIterator first, InputIterator last) : m_data(first, last) {}
+	Buffer(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) : m_data(first, last, alloc) {}
 
 	template <
 		typename T,
@@ -63,7 +64,7 @@ public:
 	}
 
 	size_t Hash() const;
-	BufferPtr Clone(void) const { return make_deferred<Buffer>(begin(), end()); }
+	BufferPtr Clone(void) const { return make_deferred_container<Buffer>(begin(), end()); }
 	std::string ToString(void) const { return std::string(begin(), end()); }
 	IInputStreamPtr ToInputStream(void) const;
 	bool Equals(const Buffer& other) const;

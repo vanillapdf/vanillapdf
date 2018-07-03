@@ -1543,7 +1543,7 @@ void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj, ArrayObjectPtr
 		transformation_matrix_operation->SetE(make_deferred<IntegerObject>(watermark_x));
 		transformation_matrix_operation->SetF(make_deferred<IntegerObject>(watermark_y));
 
-		auto image_dictionary = make_deferred<DictionaryObject>();
+		auto image_dictionary = make_deferred_container<DictionaryObject>();
 		image_dictionary->Insert(constant::Name::BitsPerComponent, make_deferred<IntegerObject>(WATERMARK_BPC));
 		image_dictionary->Insert(constant::Name::Width, make_deferred<IntegerObject>(WATERMARK_WIDTH_RAW));
 		image_dictionary->Insert(constant::Name::Height, make_deferred<IntegerObject>(WATERMARK_HEIGHT_RAW));

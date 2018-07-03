@@ -35,11 +35,11 @@ static const uint8_t SERIAL_BLACKLIST[] = R"([])";
 BufferPtr Resource::Load(ResourceID id) {
 	switch (id) {
 		case ResourceID::MASTER_CERTIFICATE:
-			return make_deferred<Buffer>(MASTER_CERTIFICATE, sizeof(MASTER_CERTIFICATE));
+			return make_deferred_container<Buffer>(MASTER_CERTIFICATE, sizeof(MASTER_CERTIFICATE));
 		case ResourceID::WATERMARK_IMAGE:
-			return make_deferred<Buffer>(WATERMARK_IMAGE, sizeof(WATERMARK_IMAGE));
+			return make_deferred_container<Buffer>(WATERMARK_IMAGE, sizeof(WATERMARK_IMAGE));
 		case ResourceID::SERIAL_BLACKLIST:
-			return make_deferred<Buffer>(SERIAL_BLACKLIST, sizeof(SERIAL_BLACKLIST));
+			return make_deferred_container<Buffer>(SERIAL_BLACKLIST, sizeof(SERIAL_BLACKLIST));
 	}
 
 	throw GeneralException("Resource was not found");

@@ -135,7 +135,7 @@ void XrefStream::RecalculateContent() {
 	}
 
 	auto new_data_string = ss.str();
-	BufferPtr new_data = make_deferred<Buffer>(new_data_string.begin(), new_data_string.end());
+	BufferPtr new_data = make_deferred_container<Buffer>(new_data_string.begin(), new_data_string.end());
 	_stream->SetBody(new_data);
 }
 

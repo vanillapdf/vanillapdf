@@ -7,13 +7,13 @@ namespace vanillapdf {
 namespace constant {
 namespace Name {
 
-const syntax::NameObject AdbePkcs7s3(make_deferred<Buffer>("adbe.pkcs7.s3", sizeof("adbe.pkcs7.s3") - 1));
-const syntax::NameObject AdbePkcs7s4(make_deferred<Buffer>("adbe.pkcs7.s4", sizeof("adbe.pkcs7.s4") - 1));
-const syntax::NameObject AdbePkcs7s5(make_deferred<Buffer>("adbe.pkcs7.s5", sizeof("adbe.pkcs7.s5") - 1));
+const syntax::NameObject AdbePkcs7s3(make_deferred_container<Buffer>("adbe.pkcs7.s3", sizeof("adbe.pkcs7.s3") - 1));
+const syntax::NameObject AdbePkcs7s4(make_deferred_container<Buffer>("adbe.pkcs7.s4", sizeof("adbe.pkcs7.s4") - 1));
+const syntax::NameObject AdbePkcs7s5(make_deferred_container<Buffer>("adbe.pkcs7.s5", sizeof("adbe.pkcs7.s5") - 1));
 
-const syntax::NameObject EntrustPPKEF(make_deferred<Buffer>("Entrust.PPKEF", sizeof("Entrust.PPKEF") - 1));
-const syntax::NameObject AdobePPKLite(make_deferred<Buffer>("Adobe.PPKLite", sizeof("Adobe.PPKLite") - 1));
-const syntax::NameObject AdobePubSec(make_deferred<Buffer>("Adobe.PubSec", sizeof("Adobe.PubSec") - 1));
+const syntax::NameObject EntrustPPKEF(make_deferred_container<Buffer>("Entrust.PPKEF", sizeof("Entrust.PPKEF") - 1));
+const syntax::NameObject AdobePPKLite(make_deferred_container<Buffer>("Adobe.PPKLite", sizeof("Adobe.PPKLite") - 1));
+const syntax::NameObject AdobePubSec(make_deferred_container<Buffer>("Adobe.PubSec", sizeof("Adobe.PubSec") - 1));
 
 } // Name
 } // constant
@@ -29,7 +29,7 @@ VANILLAPDF_API const NameObjectHandle* NameConstant_AdobePubSec = reinterpret_ca
 
 #define DECLARE_CONST_NAME(name) \
 	namespace vanillapdf { namespace constant { namespace Name { \
-	const syntax::NameObject name(make_deferred<Buffer>(#name, sizeof(#name) - 1)); \
+	const syntax::NameObject name(make_deferred_container<Buffer>(#name, sizeof(#name) - 1)); \
 	} /* Name */ } /* constant */ } /* vanillapdf */ \
 	VANILLAPDF_API const NameObjectHandle* NameConstant_##name = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::name);
 

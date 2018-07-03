@@ -167,7 +167,7 @@ void Document::RecalculatePageContents() {
 		}
 
 		std::string string_body = ss.str();
-		BufferPtr new_body = make_deferred<Buffer>(string_body.begin(), string_body.end());
+		BufferPtr new_body = make_deferred_container<Buffer>(string_body.begin(), string_body.end());
 		stream_object->SetBody(new_body);
 	}
 }
@@ -265,7 +265,7 @@ NamedDestinationsPtr Document::CreateNameDestinations(CatalogPtr catalog) {
 	IndirectObjectReferencePtr ref = make_deferred<IndirectObjectReference>(raw_dictionary);
 	raw_catalog->Insert(constant::Name::Dests, ref);
 
-	return make_deferred<NamedDestinations>(raw_dictionary);
+	return make_deferred_container<NamedDestinations>(raw_dictionary);
 }
 
 NameDictionaryPtr Document::CreateNameDictionary(CatalogPtr catalog) {

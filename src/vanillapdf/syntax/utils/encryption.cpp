@@ -76,7 +76,7 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
 	MD5_Final((unsigned char*) object_key.data(), &ctx);
 
 	types::size_type key_length = std::min<types::size_type>(key.size() + 5, 16);
-	return make_deferred<Buffer>(object_key.begin(), object_key.begin() + key_length);
+	return make_deferred_container<Buffer>(object_key.begin(), object_key.begin() + key_length);
 
 #else
 	(void) key; (void) objNumber; (void) genNumber; (void) alg;
@@ -86,7 +86,7 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
 }
 
 BufferPtr EncryptionUtils::PadTruncatePassword(const Buffer& password) {
-	BufferPtr result = make_deferred<Buffer>(sizeof(HARDCODED_PDF_PAD));
+	BufferPtr result = make_deferred_container<Buffer>(sizeof(HARDCODED_PDF_PAD));
 	//result->reserve(sizeof(pad));
 	std::copy_n(password.begin(), std::min<types::size_type>(password.size(), sizeof(HARDCODED_PDF_PAD)), result.begin());
 	std::copy_n(std::begin(HARDCODED_PDF_PAD), sizeof(HARDCODED_PDF_PAD) - password.size(), result.begin() + password.size());
@@ -97,7 +97,7 @@ BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, types::size_type key_le
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-	BufferPtr result = make_deferred<Buffer>(data.size());
+	BufferPtr result = make_deferred_container<Buffer>(data.size());
 
 	RC4_KEY rc_key;
 	RC4_set_key(&rc_key, ValueConvertUtils::SafeConvert<int>(key_length), (unsigned char*) key.data());
@@ -130,7 +130,7 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
 	}
 
 	Buffer iv(data.begin(), data.begin() + AES_CBC_IV_LENGTH);
-	BufferPtr result = make_deferred<Buffer>(data.size() - AES_CBC_IV_LENGTH);
+	BufferPtr result = make_deferred_container<Buffer>(data.size() - AES_CBC_IV_LENGTH);
 
 	using decrypt_key_type = unsigned char;
 	const decrypt_key_type* key_data = reinterpret_cast<const decrypt_key_type*>(key.data());
@@ -238,7 +238,7 @@ BufferPtr EncryptionUtils::RemovePkcs7Padding(const Buffer& data, types::size_ty
 			break;
 		}
 
-		return make_deferred<Buffer>(data.begin(), data.end() - converted);
+		return make_deferred_container<Buffer>(data.begin(), data.end() - converted);
 	} while (false);
 
 	// I would really like to be strict about padding,
@@ -247,7 +247,7 @@ BufferPtr EncryptionUtils::RemovePkcs7Padding(const Buffer& data, types::size_ty
 	// pkcs padding. That means, that there is some trash after we decrypt the
 	// signature contents and padding could not be validated
 	LOG_WARNING_GLOBAL << "Pkcs padding is incorrect";
-	return make_deferred<Buffer>(data);
+	return make_deferred_container<Buffer>(data);
 }
 
 bool EncryptionUtils::CheckKey(
@@ -302,8 +302,8 @@ bool EncryptionUtils::CheckKey(
 		MD5_Update(&ctx, document_id.data(), document_id.std_size());
 		MD5_Final((unsigned char*) key_digest.data(), &ctx);
 
-		BufferPtr key = make_deferred<Buffer>(length_bytes);
-		compare_data = make_deferred<Buffer>(key_digest);
+		BufferPtr key = make_deferred_container<Buffer>(length_bytes);
+		compare_data = make_deferred_container<Buffer>(key_digest);
 
 		for (Buffer::value_type i = 0; i < 20; ++i) {
 			for (decltype(decryption_key_length) j = 0; j < decryption_key_length; ++j) {
@@ -320,7 +320,7 @@ bool EncryptionUtils::CheckKey(
 
 	int compare_length = (revision >= 3 ? 16 : 32);
 	if (std::equal(compare_data.begin(), compare_data.begin() + compare_length, user_data.begin())) {
-		decryption_key = make_deferred<Buffer>(decryption_key_digest.begin(), decryption_key_digest.begin() + decryption_key_length);
+		decryption_key = make_deferred_container<Buffer>(decryption_key_digest.begin(), decryption_key_digest.begin() + decryption_key_length);
 		return true;
 	}
 
@@ -376,7 +376,7 @@ BufferPtr EncryptionUtils::GetRecipientKey
 
 	auto length_bytes = ValueConvertUtils::SafeConvert<types::size_type>(length_bits.GetIntegerValue() / 8);
 	types::size_type decryption_key_length = std::min(length_bytes, decrypted_key.size());
-	return make_deferred<Buffer>(decrypted_key.begin(), decrypted_key.begin() + decryption_key_length);
+	return make_deferred_container<Buffer>(decrypted_key.begin(), decrypted_key.begin() + decryption_key_length);
 
 #else
 	(void) enveloped_data; (void) length_bits; (void) algorithm; (void) key;
@@ -554,8 +554,8 @@ BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer& pad_password,
 			std::copy_n(temporary_digest.begin(), password_length, password_digest.begin());
 		}
 
-		BufferPtr key = make_deferred<Buffer>(length_bytes);
-		encrypted_owner_data = make_deferred<Buffer>(*owner_value->GetValue());
+		BufferPtr key = make_deferred_container<Buffer>(length_bytes);
+		encrypted_owner_data = make_deferred_container<Buffer>(*owner_value->GetValue());
 
 		for (Buffer::value_type i = 0; i < 20; ++i) {
 			for (decltype(password_length) j = 0; j < password_length; ++j) {

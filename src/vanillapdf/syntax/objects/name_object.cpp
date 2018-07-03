@@ -15,11 +15,11 @@ NameObject::NameObject() {
 }
 
 NameObject::NameObject(const char * value)
-	: NameObject(make_deferred<Buffer>(value)) {
+	: NameObject(make_deferred_container<Buffer>(value)) {
 }
 
 NameObject::NameObject(const std::string& chars)
-	: NameObject(make_deferred<Buffer>(chars)) {
+	: NameObject(make_deferred_container<Buffer>(chars)) {
 
 }
 

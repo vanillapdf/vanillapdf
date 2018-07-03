@@ -72,7 +72,7 @@ BufferPtr TimeUtils::GetCurrentTimeString(const char * format) {
 		throw GeneralException("Could not convert localtime to string");
 	}
 
-	return make_deferred<Buffer>(buffer);
+	return make_deferred_container<Buffer>(buffer);
 }
 
 } // vanillapdf
