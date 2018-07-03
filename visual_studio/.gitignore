@@ -2,6 +2,7 @@
 /build/
 /obj/
 /.vs/
+/x64/
 
 # VS packages
 /packages/
