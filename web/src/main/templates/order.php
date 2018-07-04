@@ -154,7 +154,7 @@
 				
 				<div class="form-group custom-control custom-checkbox">
                   <input id="terms-conditions" name="terms-conditions" type="checkbox" class="custom-control-input" <?php if (isset($_POST['terms-conditions'])) { echo 'checked="checked"'; } ?> onchange="EnableProceed()" required>
-                  <label class="custom-control-label">I agree to the <a class="ml-1" href="#">End-user license agreement</a></label>
+                  <label class="custom-control-label">I agree to the <a class="ml-1" href="{{ pages_folder }}{{ licenses_page }}">End-user license agreement</a></label>
                 </div>
 
 				<input type="hidden" name="subject" value="Order">

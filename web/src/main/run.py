@@ -25,7 +25,7 @@ generic_context = {
 	'index_file': '../index.html',
 	'root_folder': '../',
 	'pages_folder': '',
-	'doc_folder': '../doc/',
+	'versions_folder': '/versions/',
 	'assets_folder': '../assets/',
 	'contact_page': 'contact.php',
 	'about_page': 'about.php',
@@ -167,7 +167,6 @@ index_context['index_file'] = ''
 index_context['root_folder'] = ''
 index_context['assets_folder'] = 'assets/'
 index_context['pages_folder'] = 'page/'
-index_context['doc_folder'] = 'doc/'
 
 index_context['TITLE'] = generic_context['INDEX_TITLE']
 index_context['DESCRIPTION'] = generic_context['INDEX_DESCRIPTION']

@@ -189,7 +189,7 @@
 				
 				<div class="form-group custom-control custom-checkbox">
                   <input id="terms-conditions" name="terms-conditions" type="checkbox" class="custom-control-input" <?php if (isset($_POST['terms-conditions'])) { echo 'checked="checked"'; } ?> onchange="EnableProceed()" required>
-                  <label class="custom-control-label">I agree to the <a class="ml-1" href="#">End-user license agreement</a></label>
+                  <label class="custom-control-label">I agree to the <a class="ml-1" href="licenses.html">End-user license agreement</a></label>
                 </div>
 
 				<input type="hidden" name="subject" value="Order">
@@ -238,15 +238,14 @@
 	  <div class="nav flex-column">
 		<a class="nav-link" href="faq.html">FAQ</a>
 		<a class="nav-link" href="licenses.html">EULA</a>
-		<a class="nav-link" href="../doc/page_licensing.html">Licensing</a>
 	  </div>
 	</div>
 
 	<div class="col-4 col-xl-2">
 	  <div class="nav flex-column">
-		<a class="nav-link" href="../doc/index.html">Tutorial</a>
-		<a class="nav-link" href="../doc/hierarchy.html">API reference</a>
-		<a class="nav-link" href="../doc/examples.html">Examples</a>
+		<a class="nav-link" href="/versions/1.0.0/doc/index.html">Tutorial</a>
+		<a class="nav-link" href="/versions/1.0.0/doc/hierarchy.html">API reference</a>
+		<a class="nav-link" href="/versions/1.0.0/doc/examples.html">Examples</a>
 	  </div>
 	</div>
 
