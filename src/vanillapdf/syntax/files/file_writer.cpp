@@ -40,6 +40,10 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 		throw FileNotInitializedException(source->GetFilename());
 	}
 
+	if (!destination->IsInitialized()) {
+		throw FileNotInitializedException(destination->GetFilename());
+	}
+
 	std::string reason;
 
 	// Verify that configuration flags are valid
@@ -93,6 +97,10 @@ void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
 	// Terminate if the source file was not initialized
 	if (!source->IsInitialized()) {
 		throw FileNotInitializedException(source->GetFilename());
+	}
+
+	if (!destination->IsInitialized()) {
+		throw FileNotInitializedException(destination->GetFilename());
 	}
 
 	auto input = source->GetInputStream();

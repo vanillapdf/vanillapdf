@@ -7,6 +7,9 @@
 namespace vanillapdf {
 
 InputStream::InputStream(std::shared_ptr<std::istream> stream) : m_stream(stream) {
+	if (m_stream == nullptr) {
+		throw GeneralException("Could not create input stream");
+	}
 }
 
 BufferPtr InputStream::Read(types::stream_size len) {
