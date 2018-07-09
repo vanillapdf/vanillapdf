@@ -23,6 +23,9 @@ public:
 	bool operator==(const NullObject& other) const { return Equals(other); }
 	bool operator!=(const NullObject& other) const { return !Equals(other); }
 	bool operator<(const NullObject&) const { return false; }
+
+private:
+	NullObject() = default;
 };
 
 } // syntax

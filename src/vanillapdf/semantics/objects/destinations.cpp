@@ -184,7 +184,7 @@ bool DestinationBase::HasAttribute(const syntax::NameObject& name) const {
 
 syntax::ObjectPtr DestinationBase::GetAttribute(const syntax::NameObject& name) const {
 	if (!syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(_obj)) {
-		return syntax::NullObjectPtr();
+		return syntax::NullObject::GetInstance();
 	}
 
 	auto dict = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(_obj);
