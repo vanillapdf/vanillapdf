@@ -14,10 +14,10 @@ using namespace vanillapdf::syntax;
 class CustomSigningKey : public ISigningKey {
 public:
 	CustomSigningKey(
-		SigningKeyInitializeFunction sign_init,
-		SigningKeyUpdateFunction sign_update,
-		SigningKeyFinalFunction sign_final,
-		SigningKeyCleanupFunction sign_cleanup,
+		SigningKey_Initialize_Function sign_init,
+		SigningKey_Update_Function sign_update,
+		SigningKey_Final_Function sign_final,
+		SigningKey_Cleanup_Function sign_cleanup,
 		void* user_data
 	) : m_init(sign_init),
 		m_update(sign_update),
@@ -35,14 +35,14 @@ public:
 		assert(m_update != nullptr && "Invalid update pointer");
 		assert(m_final != nullptr && "Invalid final pointer");
 		assert(m_cleanup != nullptr && "Invalid cleanup pointer");
-	}
-
-	void SignInitialize(MessageDigestAlgorithm algorithm) override {
 
 		// Document signature is a licensed feature
 		if (!LicenseInfo::IsValid()) {
 			throw LicenseRequiredException("Document signing is a licensed feature");
 		}
+	}
+
+	void SignInitialize(MessageDigestAlgorithm algorithm) override {
 
 		MessageDigestAlgorithmType algorithm_type = MessageDigestAlgorithmType_None;
 		switch (algorithm) {
@@ -80,12 +80,6 @@ public:
 	}
 
 	void SignUpdate(const Buffer& data) override {
-
-		// Document signature is a licensed feature
-		if (!LicenseInfo::IsValid()) {
-			throw LicenseRequiredException("Document signing is a licensed feature");
-		}
-
 		auto input_ptr = reinterpret_cast<const BufferHandle*>(&data);
 		error_type rv = m_update(m_user_data, input_ptr);
 		if (VANILLAPDF_ERROR_SUCCESS != rv) {
@@ -96,12 +90,6 @@ public:
 	}
 
 	void SignUpdate(IInputStreamPtr data, types::stream_size length) override {
-
-		// Document signature is a licensed feature
-		if (!LicenseInfo::IsValid()) {
-			throw LicenseRequiredException("Document signing is a licensed feature");
-		}
-
 		// TODO support input stream on interface
 		auto buffer = data->Read(length);
 		SignUpdate(buffer);
@@ -109,11 +97,6 @@ public:
 
 	BufferPtr SignFinal() override {
 		BufferHandle* output_ptr = nullptr;
-
-		// Document signature is a licensed feature
-		if (!LicenseInfo::IsValid()) {
-			throw LicenseRequiredException("Document signing is a licensed feature");
-		}
 
 		error_type rv = m_final(m_user_data, &output_ptr);
 		if (VANILLAPDF_ERROR_SUCCESS != rv) {
@@ -137,19 +120,19 @@ public:
 	}
 
 private:
-	SigningKeyInitializeFunction m_init;
-	SigningKeyUpdateFunction m_update;
-	SigningKeyFinalFunction m_final;
-	SigningKeyCleanupFunction m_cleanup;
+	SigningKey_Initialize_Function m_init;
+	SigningKey_Update_Function m_update;
+	SigningKey_Final_Function m_final;
+	SigningKey_Cleanup_Function m_cleanup;
 
 	void* m_user_data;
 };
 
 VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_CreateCustom(
-	SigningKeyInitializeFunction sign_init,
-	SigningKeyUpdateFunction sign_update,
-	SigningKeyFinalFunction sign_final,
-	SigningKeyCleanupFunction sign_cleanup,
+	SigningKey_Initialize_Function sign_init,
+	SigningKey_Update_Function sign_update,
+	SigningKey_Final_Function sign_final,
+	SigningKey_Cleanup_Function sign_cleanup,
 	void* user_data,
 	SigningKeyHandle** result
 ) {

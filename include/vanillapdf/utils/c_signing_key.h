@@ -38,7 +38,7 @@ extern "C"
 	* This function should reset all previous settings and prepare
 	* for future \ref SigningKeyUpdateFunction to be called.
 	*/
-	typedef error_type (*SigningKeyInitializeFunction)(void* user_data, MessageDigestAlgorithmType algorithm);
+	typedef error_type (*SigningKey_Initialize_Function)(void* user_data, MessageDigestAlgorithmType algorithm);
 
 	/**
 	* \brief Insert data into engine for digest calculation
@@ -46,7 +46,7 @@ extern "C"
 	* This function can be called multiple times,
 	* if there are more data for signing that would fit in a single buffer.
 	*/
-	typedef error_type (*SigningKeyUpdateFunction)(void* user_data, const BufferHandle* data);
+	typedef error_type (*SigningKey_Update_Function)(void* user_data, const BufferHandle* data);
 
 	/**
 	* \brief Finish the digest calculation and return signed hash
@@ -56,7 +56,7 @@ extern "C"
 	*
 	* Hash should be signed and the result should be either a DER-encoded PKCS#1 binary data object or a DER-encoded PKCS#7 binary data object.
 	*/
-	typedef error_type (*SigningKeyFinalFunction)(void* user_data, BufferHandle** result);
+	typedef error_type (*SigningKey_Final_Function)(void* user_data, BufferHandle** result);
 
 	/**
 	* \brief Cleanup all dependencies after the signing process has finished
@@ -64,16 +64,16 @@ extern "C"
 	* This function is called when the last reference to the
 	* \ref SigningKeyHandle has been disposed.
 	*/
-	typedef void (*SigningKeyCleanupFunction)(void* user_data);
+	typedef void (*SigningKey_Cleanup_Function)(void* user_data);
 
 	/**
 	* \brief Creates a custom \ref SigningKeyHandle to provide custom sign operation
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_CreateCustom(
-		SigningKeyInitializeFunction sign_init,
-		SigningKeyUpdateFunction sign_update,
-		SigningKeyFinalFunction sign_final,
-		SigningKeyCleanupFunction sign_cleanup,
+		SigningKey_Initialize_Function sign_init,
+		SigningKey_Update_Function sign_update,
+		SigningKey_Final_Function sign_final,
+		SigningKey_Cleanup_Function sign_cleanup,
 		void* user_data,
 		SigningKeyHandle** result
 	);
