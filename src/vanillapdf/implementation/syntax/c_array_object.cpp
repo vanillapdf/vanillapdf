@@ -8,6 +8,17 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
+VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Create(ArrayObjectHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto buffer = make_deferred<MixedArrayObject>();
+		auto ptr = buffer.AddRefGet();
+		*result = reinterpret_cast<ArrayObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle* handle, size_type at, ObjectHandle** result)
 {
 	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);

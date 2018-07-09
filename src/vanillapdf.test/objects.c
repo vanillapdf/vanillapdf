@@ -183,9 +183,9 @@ error_type process_reference(IndirectObjectReferenceHandle* reference, int neste
 	print_spaces(nested);
 	printf("Indirect reference begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedObjectNumber(reference, &obj_num));
-	RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedGenerationNumber(reference, &gen_num));
-	RETURN_ERROR_IF_NOT_SUCCESS(IndirectReference_GetReferencedObject(reference, &child));
+	RETURN_ERROR_IF_NOT_SUCCESS(IndirectObjectReference_GetReferencedObjectNumber(reference, &obj_num));
+	RETURN_ERROR_IF_NOT_SUCCESS(IndirectObjectReference_GetReferencedGenerationNumber(reference, &gen_num));
+	RETURN_ERROR_IF_NOT_SUCCESS(IndirectObjectReference_GetReferencedObject(reference, &child));
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_GetType(child, &type));
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_TypeName(type, &type_name));
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(child));

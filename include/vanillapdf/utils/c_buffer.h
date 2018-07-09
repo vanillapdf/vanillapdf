@@ -28,9 +28,9 @@ extern "C"
 	*/
 
 	/**
-	* \brief Creates a new buffer instance with the content of \p data
+	* \brief Creates a new buffer instance
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_Create(string_type data, size_type size, BufferHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_Create(BufferHandle** result);
 
 	/**
 	* \brief Get data content from buffer

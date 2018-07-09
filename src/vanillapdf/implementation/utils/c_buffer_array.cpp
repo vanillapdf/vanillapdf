@@ -7,6 +7,17 @@
 
 using namespace vanillapdf;
 
+VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_Create(BufferArrayHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto buffer = make_deferred_container<BufferArray>();
+		auto ptr = buffer.AddRefGet();
+		*result = reinterpret_cast<BufferArrayHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_Size(BufferArrayHandle* handle, size_type* result) {
 	BufferArray* obj = reinterpret_cast<BufferArray*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

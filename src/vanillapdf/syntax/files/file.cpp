@@ -564,25 +564,25 @@ types::stream_offset File::GetLastXrefOffset(types::stream_size file_size) {
 }
 
 ObjectPtr File::GetIndirectObject(
-	types::big_uint objNumber,
-	types::ushort genNumber) const {
+	types::big_uint obj_number,
+	types::ushort gen_number) const {
 	if (!_initialized) {
 		throw FileNotInitializedException(_filename);
 	}
 
-	return GetIndirectObjectInternal(objNumber, genNumber);
+	return GetIndirectObjectInternal(obj_number, gen_number);
 }
 
 ObjectPtr File::GetIndirectObjectInternal(
-	types::big_uint objNumber,
-	types::ushort genNumber) const {
-	LOG_DEBUG(_filename) << "GetIndirectObject " << objNumber << " and " << genNumber;
+	types::big_uint obj_number,
+	types::ushort gen_number) const {
+	LOG_DEBUG(_filename) << "GetIndirectObject " << obj_number << " and " << gen_number;
 
-	if (!_xref->Contains(objNumber, genNumber)) {
+	if (!_xref->Contains(obj_number, gen_number)) {
 		return NullObject::GetInstance();
 	}
 
-	auto item = _xref->GetXrefEntry(objNumber, genNumber);
+	auto item = _xref->GetXrefEntry(obj_number, gen_number);
 
 	switch (item->GetUsage()) {
 		case XrefEntryBase::Usage::Used:
@@ -596,7 +596,7 @@ ObjectPtr File::GetIndirectObjectInternal(
 			return compressed->GetReference();
 		}
 		case XrefEntryBase::Usage::Null:
-			LOG_ERROR(_filename) << "Xref entry type is null for object " << objNumber << " " << genNumber;
+			LOG_ERROR(_filename) << "Xref entry type is null for object " << obj_number << " " << gen_number;
 		case XrefEntryBase::Usage::Free:
 			return NullObject::GetInstance();
 		default:

@@ -96,6 +96,11 @@ extern "C"
 	*/
 
 	/**
+	* \brief Creates a new LiteralStringObject instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_Create(LiteralStringObjectHandle** result);
+
+	/**
 	* \brief Get strings current value
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_GetValue(LiteralStringObjectHandle* handle, BufferHandle** result);
@@ -116,6 +121,11 @@ extern "C"
 	* \memberof HexadecimalStringObjectHandle
 	* @{
 	*/
+
+	/**
+	* \brief Creates a new HexadecimalStringObject instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Create(HexadecimalStringObjectHandle** result);
 
 	/**
 	* \brief Get strings current value

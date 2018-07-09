@@ -89,7 +89,7 @@ extern "C"
 	/**
 	* \brief Find exact object within all xref tables
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION File_GetIndirectObject(FileHandle* handle, biguint_type objNumber, ushort_type genNumber, ObjectHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION File_GetIndirectObject(FileHandle* handle, biguint_type obj_number, ushort_type gen_number, ObjectHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release

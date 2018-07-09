@@ -5,12 +5,11 @@
 
 using namespace vanillapdf;
 
-VANILLAPDF_API error_type CALLING_CONVENTION Buffer_Create(string_type data, size_type size, BufferHandle** result) {
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+VANILLAPDF_API error_type CALLING_CONVENTION Buffer_Create(BufferHandle** result) {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try {
-		auto buffer = make_deferred_container<Buffer>(data, size);
+		auto buffer = make_deferred_container<Buffer>();
 		auto ptr = buffer.AddRefGet();
 		*result = reinterpret_cast<BufferHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;

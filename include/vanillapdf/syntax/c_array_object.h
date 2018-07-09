@@ -28,6 +28,11 @@ extern "C"
 	*/
 
 	/**
+	* \brief Creates a new ArrayObject instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Create(ArrayObjectHandle** result);
+
+	/**
 	* \brief Return size of an array
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle* handle, size_type* result);

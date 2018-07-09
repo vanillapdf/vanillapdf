@@ -65,7 +65,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle* handle, 
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
-	FileHandle* handle, biguint_type objNumber, ushort_type genNumber, ObjectHandle** result)
+	FileHandle* handle, biguint_type obj_number, ushort_type gen_number, ObjectHandle** result)
 {
 	File* file = reinterpret_cast<File*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
@@ -73,7 +73,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
 
 	try
 	{
-		auto item = file->GetIndirectObject(objNumber, genNumber);
+		auto item = file->GetIndirectObject(obj_number, gen_number);
 		auto ptr = item.AddRefGet();
 
 		*result = reinterpret_cast<ObjectHandle*>(ptr);

@@ -8,10 +8,22 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
-VANILLAPDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObject(IndirectObjectReferenceHandle* handle, ObjectHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION IndirectObjectReference_Create(IndirectObjectReferenceHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto object = make_deferred<IndirectObjectReference>();
+		auto ptr = object.AddRefGet();
+		*result = reinterpret_cast<IndirectObjectReferenceHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION IndirectObjectReference_GetReferencedObject(IndirectObjectReferenceHandle* handle, ObjectHandle** result)
 {
 	IndirectObjectReference* obj = reinterpret_cast<IndirectObjectReference*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try
 	{
@@ -22,12 +34,24 @@ VANILLAPDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObje
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION IndirectReference_Release(IndirectObjectReferenceHandle* handle)
+VANILLAPDF_API error_type CALLING_CONVENTION IndirectObjectReference_SetReferencedObject(IndirectObjectReferenceHandle* handle, ObjectHandle* value) {
+	IndirectObjectReference* obj = reinterpret_cast<IndirectObjectReference*>(handle);
+	Object* value_object = reinterpret_cast<Object*>(value);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(value_object);
+
+	try {
+		obj->SetReferencedObject(value_object);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION IndirectObjectReference_Release(IndirectObjectReferenceHandle* handle)
 {
 	return ObjectRelease<IndirectObjectReference, IndirectObjectReferenceHandle>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObjectNumber(IndirectObjectReferenceHandle* handle, biguint_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION IndirectObjectReference_GetReferencedObjectNumber(IndirectObjectReferenceHandle* handle, biguint_type* result)
 {
 	IndirectObjectReference* obj = reinterpret_cast<IndirectObjectReference*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -37,7 +61,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedObje
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION IndirectReference_GetReferencedGenerationNumber(IndirectObjectReferenceHandle* handle, ushort_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION IndirectObjectReference_GetReferencedGenerationNumber(IndirectObjectReferenceHandle* handle, ushort_type* result)
 {
 	IndirectObjectReference* obj = reinterpret_cast<IndirectObjectReference*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

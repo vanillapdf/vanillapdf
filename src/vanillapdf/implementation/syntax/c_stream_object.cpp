@@ -8,6 +8,17 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
+VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_Create(StreamObjectHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto object = make_deferred<StreamObject>();
+		auto ptr = object.AddRefGet();
+		*result = reinterpret_cast<StreamObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_GetHeader(StreamObjectHandle* handle, DictionaryObjectHandle** result)
 {
 	StreamObject* obj = reinterpret_cast<StreamObject*>(handle);

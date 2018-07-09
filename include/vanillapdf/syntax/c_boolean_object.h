@@ -28,6 +28,11 @@ extern "C"
 	*/
 
 	/**
+	* \brief Creates a new instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_Create(BooleanObjectHandle** result);
+
+	/**
 	* \brief Return current boolean value
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanObjectHandle* handle, boolean_type* result);

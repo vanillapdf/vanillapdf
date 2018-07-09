@@ -28,6 +28,11 @@ extern "C"
 	*/
 
 	/**
+	* \brief Creates a new buffer array instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_Create(BufferArrayHandle** result);
+
+	/**
 	* \brief Return size of an array
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_Size(BufferArrayHandle* handle, size_type* result);

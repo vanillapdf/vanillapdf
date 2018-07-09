@@ -8,6 +8,17 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
+VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_Create(BooleanObjectHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto object = make_deferred<BooleanObject>();
+		auto ptr = object.AddRefGet();
+		*result = reinterpret_cast<BooleanObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanObjectHandle* handle, boolean_type* result)
 {
 	BooleanObject* obj = reinterpret_cast<BooleanObject*>(handle);

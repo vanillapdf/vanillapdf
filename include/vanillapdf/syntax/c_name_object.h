@@ -29,6 +29,11 @@ extern "C"
 	*/
 
 	/**
+	* \brief Creates a new NameObject instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION NameObject_Create(NameObjectHandle** result);
+
+	/**
 	* \brief Get names binary representation
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION NameObject_GetValue(const NameObjectHandle* handle, BufferHandle** result);

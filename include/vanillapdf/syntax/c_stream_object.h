@@ -28,6 +28,11 @@ extern "C"
 	*/
 
 	/**
+	* \brief Creates a new StreamObject instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_Create(StreamObjectHandle** result);
+
+	/**
 	* \brief Return streams header dictionary
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_GetHeader(StreamObjectHandle* handle, DictionaryObjectHandle** result);

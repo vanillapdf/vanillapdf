@@ -28,6 +28,11 @@ extern "C"
 	*/
 
 	/**
+	* \brief Creates a new IntegerObject instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_Create(IntegerObjectHandle** result);
+
+	/**
 	* \brief Return objects contained integer value
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_GetIntegerValue(IntegerObjectHandle* handle, bigint_type* result);

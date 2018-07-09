@@ -42,7 +42,8 @@ error_type sign_update(void* user_data, const BufferHandle* data) {
 error_type sign_final(void* user_data, BufferHandle** result) {
 	SignatureData* signature_data = (SignatureData*) user_data;
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Create(signature_data->data, signature_data->size, result));
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Create(result));
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_SetData(*result, signature_data->data, signature_data->size));
 
 	return VANILLAPDF_ERROR_SUCCESS;
 }

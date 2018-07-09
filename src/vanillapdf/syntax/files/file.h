@@ -114,8 +114,8 @@ private:
 	EncryptionAlgorithm GetEncryptionAlgorithmForFilter(const NameObject& filter_name);
 
 	ObjectPtr GetIndirectObjectInternal(
-		types::big_uint objNumber,
-		types::ushort genNumber) const;
+		types::big_uint obj_number,
+		types::ushort gen_number) const;
 
 private:
 	File(const std::string& path);

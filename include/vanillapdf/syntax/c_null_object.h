@@ -28,6 +28,11 @@ extern "C"
 	*/
 
 	/**
+	* \brief Creates a new NullObject instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION NullObject_Create(NullObjectHandle** result);
+
+	/**
 	* \copydoc Object_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION NullObject_Release(NullObjectHandle* handle);

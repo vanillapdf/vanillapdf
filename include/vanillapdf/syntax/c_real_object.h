@@ -28,6 +28,11 @@ extern "C"
 	*/
 
 	/**
+	* \brief Creates a new RealObject instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_Create(RealObjectHandle** result);
+
+	/**
 	* \brief Return objects contained real value
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_GetValue(RealObjectHandle* handle, real_type* result);

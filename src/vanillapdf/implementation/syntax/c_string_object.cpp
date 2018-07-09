@@ -70,6 +70,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION StringObject_SetValue(StringObjectH
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_Create(LiteralStringObjectHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto object = make_deferred<LiteralStringObject>();
+		auto ptr = object.AddRefGet();
+		*result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_GetValue(LiteralStringObjectHandle* handle, BufferHandle** result)
 {
 	LiteralStringObject* obj = reinterpret_cast<LiteralStringObject*>(handle);
@@ -102,6 +113,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_SetValue(Litera
 VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_Release(LiteralStringObjectHandle* handle)
 {
 	return ObjectRelease<LiteralStringObject, LiteralStringObjectHandle>(handle);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Create(HexadecimalStringObjectHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto object = make_deferred<HexadecimalStringObject>();
+		auto ptr = object.AddRefGet();
+		*result = reinterpret_cast<HexadecimalStringObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_GetValue(HexadecimalStringObjectHandle* handle, BufferHandle** result)
