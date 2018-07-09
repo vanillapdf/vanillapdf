@@ -11,6 +11,7 @@ set(VANILLAPDF_TOOLS_SOURCES
 	sign.c
 	sign_custom.c
 	decrypt.c
+	write_custom.c
 )
 
 set(VANILLAPDF_TOOLS_HEADERS

@@ -33,6 +33,7 @@ set(VANILLAPDF_INCLUDE_SYNTAX_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_dictionary_object.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_file.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_file_writer.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_file_writer_observer.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_filter.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_indirect_object_reference.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_integer_object.h"

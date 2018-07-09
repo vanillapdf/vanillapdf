@@ -51,6 +51,9 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 	// Get destination output stream
 	auto output = destination->GetInputOutputStream();
 
+	// Notify observers
+	Initializing(output);
+
 	// Write the file header
 	auto header = source->GetHeader();
 	WriteHeader(output, header);
@@ -75,6 +78,9 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 
 	// Notify observers
 	AfterOutputFlush(output);
+
+	// Notify observers
+	Finalizing(output);
 }
 
 void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
@@ -91,6 +97,9 @@ void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
 
 	auto input = source->GetInputStream();
 	auto output = destination->GetInputOutputStream();
+
+	// Notify observers
+	Initializing(output);
 
 	// Write original data
 	CopyStreamContent(input, output);
@@ -134,6 +143,9 @@ void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
 
 	// Notify observers
 	AfterOutputFlush(output);
+
+	// Notify observers
+	Finalizing(output);
 }
 
 bool FileWriter::ValidateConfiguration(FilePtr source, std::string& reason) const {

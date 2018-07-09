@@ -41,5 +41,8 @@
     <ClCompile Include="..\src\vanillapdf.tools\sign_custom.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\vanillapdf.tools\write_custom.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

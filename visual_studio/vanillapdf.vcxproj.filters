@@ -702,6 +702,9 @@
     <ClInclude Include="..\src\vanillapdf\utils\buffer_array.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\syntax\c_file_writer_observer.h">
+      <Filter>Header Files\include\syntax</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\vanillapdf\contents\content_stream_objects.cpp">
@@ -1123,6 +1126,9 @@
     </ClCompile>
     <ClCompile Include="..\src\vanillapdf\utils\buffer_array.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_file_writer_observer.cpp">
+      <Filter>Source Files\implementation\syntax</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

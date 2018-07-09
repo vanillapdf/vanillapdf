@@ -23,6 +23,7 @@ int process_extract(int argc, char *argv[]);
 int process_sign(int argc, char *argv[]);
 int process_sign_custom(int argc, char *argv[]);
 int process_decrypt(int argc, char *argv[]);
+int process_write_custom(int argc, char *argv[]);
 
 // Some parameters to functions are unused
 #define UNUSED(x) (void)(x)

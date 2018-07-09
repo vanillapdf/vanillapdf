@@ -29,6 +29,7 @@
     <ClCompile Include="..\src\vanillapdf.tools\merge.c" />
     <ClCompile Include="..\src\vanillapdf.tools\sign.c" />
     <ClCompile Include="..\src\vanillapdf.tools\sign_custom.c" />
+    <ClCompile Include="..\src\vanillapdf.tools\write_custom.c" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vanillapdf.vcxproj">

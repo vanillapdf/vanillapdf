@@ -12,8 +12,8 @@ namespace syntax {
 
 class IFileWriterObserver : public virtual IUnknown, public IWeakReferenceable<IFileWriterObserver> {
 public:
-	virtual void OnInitializing(IInputStreamPtr input, IInputOutputStreamPtr output) {}
-	virtual void OnFinalizing() {}
+	virtual void OnInitializing(IInputOutputStreamPtr output) {}
+	virtual void OnFinalizing(IInputOutputStreamPtr output) {}
 
 	virtual void OnBeforeObjectWrite(ObjectPtr ptr) {}
 	virtual void OnAfterObjectWrite(ObjectPtr ptr) {}
@@ -32,15 +32,15 @@ public:
 
 class IFileWriterObservable : public virtual IUnknown, public IObservable<IFileWriterObserver> {
 public:
-	virtual void Initializing(IInputStreamPtr input, IInputOutputStreamPtr output) {
+	virtual void Initializing(IInputOutputStreamPtr output) {
 		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
-			Invoke(*current, &IFileWriterObserver::OnInitializing, input, output);
+			Invoke(*current, &IFileWriterObserver::OnInitializing, output);
 		}
 	}
 
-	virtual void Finalizing() {
+	virtual void Finalizing(IInputOutputStreamPtr output) {
 		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
-			Invoke(*current, &IFileWriterObserver::OnFinalizing);
+			Invoke(*current, &IFileWriterObserver::OnFinalizing, output);
 		}
 	}
 

@@ -44,6 +44,10 @@ int main(int argc, char *argv[]) {
 		return process_decrypt(argc - 2, &argv[2]);
 	}
 
+	if (0 == strcmp(argv[1], "write_custom")) {
+		return process_write_custom(argc - 2, &argv[2]);
+	}
+
 	print_help();
 	return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
 }

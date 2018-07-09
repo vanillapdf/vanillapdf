@@ -48,10 +48,30 @@ VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_WriteIncremental(FileWri
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_Release(FileWriterHandle* handle) {
+VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_Subscribe(FileWriterHandle* handle, FileWriterObserverHandle* observer_handle) {
 	FileWriter* writer = reinterpret_cast<FileWriter*>(handle);
+	IFileWriterObserver* observer = reinterpret_cast<IFileWriterObserver*>(observer_handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(writer);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(observer);
 
-	writer->Release();
-	return VANILLAPDF_ERROR_SUCCESS;
+	try {
+		writer->Subscribe(observer);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_Unsubscribe(FileWriterHandle* handle, FileWriterObserverHandle* observer_handle) {
+	FileWriter* writer = reinterpret_cast<FileWriter*>(handle);
+	IFileWriterObserver* observer = reinterpret_cast<IFileWriterObserver*>(observer_handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(writer);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(observer);
+
+	try {
+		writer->Unsubscribe(observer);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_Release(FileWriterHandle* handle) {
+	return ObjectRelease<FileWriter, FileWriterHandle>(handle);
 }

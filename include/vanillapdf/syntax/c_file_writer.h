@@ -48,6 +48,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_WriteIncremental(FileWriterHandle* handle, FileHandle* source, FileHandle* destination);
 
 	/**
+	* \brief Subscribe a new observer to the file writer events
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_Subscribe(FileWriterHandle* handle, FileWriterObserverHandle* observer);
+
+	/**
+	* \brief Unsubscribe existing observer from the file writer events
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_Unsubscribe(FileWriterHandle* handle, FileWriterObserverHandle* observer);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/

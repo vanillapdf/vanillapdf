@@ -35,6 +35,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SYNTAX_SOURCES
 	implementation/syntax/c_dictionary_object.cpp
 	implementation/syntax/c_file.cpp
 	implementation/syntax/c_file_writer.cpp
+	implementation/syntax/c_file_writer_observer.cpp
 	implementation/syntax/c_filter.cpp
 	implementation/syntax/c_indirect_object_reference.cpp
 	implementation/syntax/c_integer_object.cpp
