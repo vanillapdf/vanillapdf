@@ -6,6 +6,7 @@
 #include "utils/conversion_utils.h"
 
 #include "syntax/objects/object.h"
+#include "syntax/objects/null_object.h"
 #include "syntax/objects/integer_object.h"
 #include "syntax/objects/real_object.h"
 #include "syntax/objects/indirect_object_reference.h"
@@ -56,6 +57,22 @@ public:
 
 template <typename T>
 class ConversionHelper : public ConversionHelperBase<T, std::is_constructible<T>::value> {
+};
+
+template <>
+class ConversionHelper<NullObjectPtr> {
+public:
+	static NullObjectPtr Get(Object* ptr, bool& result) {
+		auto null_converted = dynamic_cast<NullObject *>(ptr);
+
+		if (null_converted) {
+			result = true;
+			return NullObjectPtr(null_converted);
+		}
+
+		result = false;
+		return NullObject::GetInstance();
+	}
 };
 
 template <>
