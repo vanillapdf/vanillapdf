@@ -14,8 +14,8 @@ typedef ::bigint_type big_int;
 typedef ::biguint_type big_uint;
 
 // Custom internal types
-typedef int64_t stream_offset;
-typedef int64_t stream_size;
+typedef ::offset_type stream_offset;
+typedef ::offset_type stream_size;
 
 } // types
 
