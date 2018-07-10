@@ -7,7 +7,7 @@ This section describes how is the product licensed as well as how to get the lic
 \section license_types License types
 
 There are few basic types of product license, depending whether the product is being evaluated or running in product environment.
-For more information about the licenses, please visit [Licenses](https://vanillapdf.com/plot/main/page/licenses.html).
+For more information about the licenses, please visit [Licenses](https://vanillapdf.com/page/licenses.html).
 
 \subsection license_types_free Free license
 
@@ -52,25 +52,23 @@ Premium features:
 
 \section license_use Using the license
 
-A license file is needed to access library premium features.<br>
-Detailed process about how to use license files is described in the following subections.<br>
+A license file is required to access library premium features.
 
 \subsection license_use_request Request
 
-The license has to be requested first.<br>
-Currently the only supported method to request a license is via email [info@vanillapdf.com](mailto:info@vanillapdf.com).<br>
-After processing your request, you'll receive an email with the invoice.<br>
-Upon a completing the transaction, you'll receive another email, containing <b>your very own</b> license file.<br>
+Requesting the license file is done via our [order form](https://vanillapdf.com/page/order.php).
+After processing your request, you'll receive an email with the invoice.
+Upon completing the transaction, you'll receive another email, containing <b>your very own</b> license file.
 
 \note
-Please, keep in mind, that every license file is issued to either a person or a company.<br>
-It contains <b>confidential information</b> and should be kept <b>protected</b> against fraud.<br>
-Whenever in doubt, that the license file is no longer secure, let us know, so we can issue a new one, without any harm.<br>
+Please, keep in mind, that every license file is issued to either a person or a company.
+It contains <b>confidential information</b> and should be kept <b>protected</b> against fraud.
+Whenever in doubt, that the license file is no longer secure, let us know, so we can issue a new one, without any harm.
 
 \subsection license_use_bundle Bundle
 
-To access premium features, library requires a license file, when the application is run.<br>
-We recommend to embed the license file into your application and protect it with encryption algorithm.<br>
+To access premium features, library requires a license file, when the application is run.
+We recommend to embed the license file into your application and protect it with encryption algorithm.
 
 \note
 Code sample on how to protect the license file is available upon request.
@@ -83,21 +81,20 @@ For more details visit \ref LicenseInfo.
 
 \subsection license_use_verify Verify
 
-After the license file has been entered, the premium features should now be accessible.<br>
-Verifying requires a program, that uses premium features.<br>
-Such program can be found within the examples page or written by hand.<br>
+After the license file has been entered, the premium features should now be accessible.
+To verify the license file is working properly please use any of our \ref page_examples for premium features.
 
 \section license_validity License validity
 
-License itself has unlimited validity for current version of the library.<br>
-Updating library to a newer version is restricted by the expiration field in the license file.<br>
+License itself has unlimited validity for current version of the library.
+Updating library to a newer version is restricted by the expiration field in the license file.
 
 \code{.unparsed}
 "expiration": "2022-10-01 18:50:36Z"
 \endcode
 
-As long as the library build date is earlier then expiration date, the library accepts license file.<br>
-Determining the library build date can be done using file properties on windows.<br>
+As long as the library build date is earlier then expiration date, the library accepts license file.
+Determining the library build date can be done using file properties on windows.
 
 \image html file_properties.png "Picture 1: File properties of shared library file on windows OS"
 
