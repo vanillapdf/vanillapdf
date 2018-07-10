@@ -16,14 +16,14 @@ extern "C"
 	*/
 
 	/**
-	* \class FileWriterObserver
+	* \class FileWriterObserverHandle
 	* \extends IUnknownHandle
 	* \ingroup group_files
 	* \brief Allows hooking on \ref FileWriterHandle events
 	*/
 
 	/**
-	* \memberof FileWriterObserver
+	* \memberof FileWriterObserverHandle
 	* @{
 	*/
 

@@ -36,7 +36,7 @@ extern "C"
 	* \brief Initialize signing engine using selected digest algorithm
 	*
 	* This function should reset all previous settings and prepare
-	* for future \ref SigningKeyUpdateFunction to be called.
+	* for future \ref SigningKey_Update_Function to be called.
 	*/
 	typedef error_type (*SigningKey_Initialize_Function)(void* user_data, MessageDigestAlgorithmType algorithm);
 
@@ -52,7 +52,7 @@ extern "C"
 	* \brief Finish the digest calculation and return signed hash
 	*
 	* This function should allocate buffer, filled with data.
-	* The data should be hash value according to \p algorithm in \ref SigningKeyInitializeFunction.
+	* The data should be hash value according to \p algorithm in \ref SigningKey_Initialize_Function.
 	*
 	* Hash should be signed and the result should be either a DER-encoded PKCS#1 binary data object or a DER-encoded PKCS#7 binary data object.
 	*/
