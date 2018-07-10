@@ -10,6 +10,7 @@ Full example list:
 <li>\ref sign.c - Digital signature
 <li>\ref sign_custom.c - Custom digital signature using interface callbacks
 <li>\ref decrypt.c - File decryption
+<li>\ref write_custom.c - Custom file writer callbacks
 </ul>
 
 Utilities:
@@ -106,4 +107,9 @@ Additional resources:
 /**
 * \example decrypt.c
 * Example use of encrypted files, protected with password or certificate.
+*/
+
+/**
+* \example write_custom.c
+* Example use of custom file writer callbacks
 */
