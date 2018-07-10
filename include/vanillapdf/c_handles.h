@@ -105,6 +105,7 @@ extern "C"
 
 	DECLARE_OBJECT_HANDLE(IInputStream);
 	DECLARE_OBJECT_HANDLE(IOutputStream);
+	DECLARE_OBJECT_HANDLE(IInputOutputStream);
 
 	#pragma endregion
 

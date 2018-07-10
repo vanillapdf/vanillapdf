@@ -72,6 +72,7 @@
     <ClInclude Include="..\include\vanillapdf\utils\c_buffer_array.h" />
     <ClInclude Include="..\include\vanillapdf\utils\c_encryption.h" />
     <ClInclude Include="..\include\vanillapdf\utils\c_errors.h" />
+    <ClInclude Include="..\include\vanillapdf\utils\c_input_output_stream_interface.h" />
     <ClInclude Include="..\include\vanillapdf\utils\c_input_stream_interface.h" />
     <ClInclude Include="..\include\vanillapdf\utils\c_library_info.h" />
     <ClInclude Include="..\include\vanillapdf\utils\c_license_info.h" />
@@ -267,6 +268,7 @@
     <ClCompile Include="..\src\vanillapdf\implementation\utils\c_encryption.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\utils\c_errors.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\utils\c_input_stream_interface.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\utils\c_input_output_stream_interface.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\utils\c_library_info.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\utils\c_license_info.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\utils\c_logging.cpp" />

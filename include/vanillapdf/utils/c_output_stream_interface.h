@@ -33,6 +33,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION IOutputStream_CreateFromFile(string_type filename, IOutputStreamHandle** result);
 
 	/**
+	* \brief Gets current offset in the output stream
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION IOutputStream_GetOutputPosition(IOutputStreamHandle* handle, offset_type* result);
+
+	/**
+	* \brief Sets current offset in the output stream
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION IOutputStream_SetOutputPosition(IOutputStreamHandle* handle, offset_type value);
+
+	/**
 	* \brief Appends null terminated string to current output stream instance
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION IOutputStream_WriteString(IOutputStreamHandle* handle, string_type data);

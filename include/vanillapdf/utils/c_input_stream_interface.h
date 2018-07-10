@@ -46,6 +46,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_ToBuffer(IInputStreamHandle* handle, BufferHandle** result);
 
 	/**
+	* \brief Gets current offset in the input stream
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_GetInputPosition(IInputStreamHandle* handle, offset_type* result);
+
+	/**
+	* \brief Sets current offset in the input stream
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_SetInputPosition(IInputStreamHandle* handle, offset_type value);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/

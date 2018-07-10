@@ -48,6 +48,29 @@ VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_ToBuffer(IInputStreamH
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_GetInputPosition(IInputStreamHandle* handle, offset_type* result) {
+	IInputStream* stream = reinterpret_cast<IInputStream*>(handle);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(stream);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		*result = stream->GetInputPosition();
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_SetInputPosition(IInputStreamHandle* handle, offset_type value) {
+	IInputStream* stream = reinterpret_cast<IInputStream*>(handle);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(stream);
+
+	try {
+		stream->SetInputPosition(value);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_Release(IInputStreamHandle* handle) {
 	return ObjectRelease<IInputStream, IInputStreamHandle>(handle);
 }

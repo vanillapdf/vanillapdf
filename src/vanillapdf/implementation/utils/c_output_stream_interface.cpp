@@ -1,7 +1,7 @@
 #include "precompiled.h"
 
-#include "utils/streams/output_stream.h"
 #include "utils/streams/stream_utils.h"
+#include "utils/streams/output_stream_interface.h"
 
 #include "vanillapdf/utils/c_output_stream_interface.h"
 #include "implementation/c_helper.h"
@@ -16,6 +16,29 @@ VANILLAPDF_API error_type CALLING_CONVENTION IOutputStream_CreateFromFile(string
 		auto output_stream = StreamUtils::OutputStreamFromFile(filename);
 		auto ptr = output_stream.AddRefGet();
 		*result = reinterpret_cast<IOutputStreamHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION IOutputStream_GetOutputPosition(IOutputStreamHandle* handle, offset_type* result) {
+	IOutputStream* stream = reinterpret_cast<IOutputStream*>(handle);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(stream);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		*result = stream->GetOutputPosition();
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION IOutputStream_SetOutputPosition(IOutputStreamHandle* handle, offset_type value) {
+	IOutputStream* stream = reinterpret_cast<IOutputStream*>(handle);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(stream);
+
+	try {
+		stream->SetOutputPosition(value);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }

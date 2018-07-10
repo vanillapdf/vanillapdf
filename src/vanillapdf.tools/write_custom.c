@@ -9,27 +9,47 @@ typedef struct {
 	int data;
 } ObserverData;
 
-error_type on_initializing(void* user_data, IOutputStreamHandle* output_stream) {
+error_type on_initializing(void* user_data, IInputOutputStreamHandle* input_output_stream) {
 	ObserverData* observer_data = (ObserverData*) user_data;
+	offset_type current_offset = 0;
+	long long current_offset_converted = 0;
 
-	// Do something with the output stream
+	IOutputStreamHandle* output_stream = NULL;
 
 	UNUSED(observer_data);
-	UNUSED(output_stream);
+
+	// Do something with the output stream
+	RETURN_ERROR_IF_NOT_SUCCESS(IInputOutputStream_ToOutputStream(input_output_stream, &output_stream));
+	RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_GetOutputPosition(output_stream, &current_offset));
+
+	// Convert to long long for printf
+	current_offset_converted = current_offset;
 
 	printf("File writer is initializing\n");
+	printf("Current output position: %lld\n", current_offset_converted);
+
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-error_type on_finalizing(void* user_data, IOutputStreamHandle* output_stream) {
+error_type on_finalizing(void* user_data, IInputOutputStreamHandle* input_output_stream) {
 	ObserverData* observer_data = (ObserverData*) user_data;
+	offset_type current_offset = 0;
+	long long current_offset_converted = 0;
 
-	// Do something with the output stream
+	IOutputStreamHandle* output_stream = NULL;
 
 	UNUSED(observer_data);
-	UNUSED(output_stream);
+
+	// Do something with the output stream
+	RETURN_ERROR_IF_NOT_SUCCESS(IInputOutputStream_ToOutputStream(input_output_stream, &output_stream));
+	RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_GetOutputPosition(output_stream, &current_offset));
+
+	// Convert to long long for printf
+	current_offset_converted = current_offset;
 
 	printf("File writer is finalizing\n");
+	printf("Current output position: %lld\n", current_offset_converted);
+
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
@@ -72,6 +92,7 @@ int process_write_custom(int argc, char *argv[]) {
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Create(destination_file_path, &destination_file));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(source_file));
 
+	// Unused callbacks can be set to NULL
 	RETURN_ERROR_IF_NOT_SUCCESS(FileWriterObserver_CreateCustom(on_initializing, on_finalizing, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &observer_data, &file_writer_observer));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(FileWriter_Create(&file_writer));

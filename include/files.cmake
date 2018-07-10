@@ -20,6 +20,7 @@ set(VANILLAPDF_INCLUDE_UTILS_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_logging.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_message_digest_algorithm.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_output_stream_interface.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_input_output_stream_interface.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_pdf_version.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_pkcs12_key.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/utils/c_signing_key.h"

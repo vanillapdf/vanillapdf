@@ -20,6 +20,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES
 	implementation/utils/c_encryption.cpp
 	implementation/utils/c_errors.cpp
 	implementation/utils/c_input_stream_interface.cpp
+	implementation/utils/c_input_output_stream_interface.cpp
 	implementation/utils/c_library_info.cpp
 	implementation/utils/c_license_info.cpp
 	implementation/utils/c_logging.cpp
