@@ -2,25 +2,22 @@
 \page page_install Installation
 \tableofcontents
 
-\section install_win Installing the binaries on Windows
+Installation packages comes in two variants. Either a self-installing archive or compressed package.
 
-VanillaPDF comes as a self-installing archive, so installation is extremely simple.
-Just follow the dialogs.
+Self-installing archives are very easy to install, as they use the standard installation process for each platform.
 
-\section install_unix Installing the binaries on UNIX
+\section install_compressed Installing compressed package
 
-After the compilation of the source code or downloading the binary distribution for UNIX, type:
+Compressed package for UNIX does not include package dependencies runtime, which has to be installed separately.
+
+For debian, the installation would require:
 
 \code{.unparsed}
-make install
+apt-get install libjpeg9
+apt-get install libssl1.0.0
+apt-get install zlib1g
 \endcode
 
-Binaries are installed into the directory <code>\<prefix\>/bin</code>.
-
-<code>\<prefix\></code> defaults to <code>/usr/local</code> but can be changed with 
-the `--prefix` option of the configure script. 
-
-If you have a RPM or DEB package, then please follow the 
-standard installation procedure that is required for these packages. 
+After the package contents are extracted, the application should be ready to run.
 
 */
