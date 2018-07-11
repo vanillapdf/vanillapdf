@@ -175,15 +175,22 @@ More extendable interfaces:
 <ul>
 <li>Document signing with \ref SigningKeyHandle
 <li>Document encryption with \ref EncryptionKeyHandle
+<li>File writer callbacks with \ref FileWriterObserverHandle
 </ul>
 
 \section arch_deps Dependencies
 
-Library has also following dependent libraries:
+Library has also following dependent libraries \b with required runtime support:
+
 <ul>
 <li>OpenSSL (<https://www.openssl.org/>) - used for encrypted files
 <li>zlib (<http://www.zlib.net/>) - used for flate compression method
 <li>libjpeg (<http://libjpeg.sourceforge.net/>) - used for compressed JPEG images
+</ul>
+
+Internal dependent library \b without runtime support:
+
+<ul>
 <li>JSON for Modern C++ (<https://github.com/nlohmann/json>) - used for processing license files
 </ul>
 
