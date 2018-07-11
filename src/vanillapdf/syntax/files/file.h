@@ -118,7 +118,7 @@ private:
 		types::ushort gen_number) const;
 
 private:
-	File(const std::string& path);
+	explicit File(const std::string& path);
 };
 
 } // syntax

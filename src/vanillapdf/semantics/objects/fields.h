@@ -34,25 +34,25 @@ public:
 class ButtonField : public Field {
 public:
 	explicit ButtonField(syntax::DictionaryObjectPtr root);
-	virtual Field::Type GetType() const noexcept { return Field::Type::Button; }
+	virtual Field::Type GetType() const noexcept override { return Field::Type::Button; }
 };
 
 class TextField : public Field {
 public:
 	explicit TextField(syntax::DictionaryObjectPtr root);
-	virtual Field::Type GetType() const noexcept { return Field::Type::Text; }
+	virtual Field::Type GetType() const noexcept override { return Field::Type::Text; }
 };
 
 class ChoiceField : public Field {
 public:
 	explicit ChoiceField(syntax::DictionaryObjectPtr root);
-	virtual Field::Type GetType() const noexcept { return Field::Type::Choice; }
+	virtual Field::Type GetType() const noexcept override { return Field::Type::Choice; }
 };
 
 class SignatureField : public Field {
 public:
 	explicit SignatureField(syntax::DictionaryObjectPtr root);
-	virtual Field::Type GetType() const noexcept { return Field::Type::Signature; }
+	virtual Field::Type GetType() const noexcept override { return Field::Type::Signature; }
 
 	bool Value(OuputDigitalSignaturePtr& result) const;
 };

@@ -66,7 +66,7 @@ public:
 		return XrefEntryBase::Usage::Null;
 	}
 
-	virtual bool InUse(void) const noexcept {
+	virtual bool InUse(void) const noexcept override {
 		return false;
 	}
 };
@@ -98,7 +98,7 @@ public:
 		OnChanged();
 	}
 
-	virtual bool InUse(void) const noexcept {
+	virtual bool InUse(void) const noexcept override {
 		return false;
 	}
 
@@ -111,9 +111,9 @@ public:
 	using XrefEntryBase::XrefEntryBase;
 
 public:
-	virtual ObjectPtr GetReference(void);
-	virtual void SetReference(ObjectPtr ref);
-	virtual void ReleaseReference(bool check_object_xref = true);
+	ObjectPtr GetReference(void);
+	void SetReference(ObjectPtr ref);
+	void ReleaseReference(bool check_object_xref = true);
 
 	virtual void ObserveeChanged(IModifyObservable*) override;
 	virtual bool InUse(void) const noexcept override;

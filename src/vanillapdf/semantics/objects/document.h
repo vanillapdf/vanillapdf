@@ -61,7 +61,7 @@ private:
 	void RecalculatePageContents();
 
 private:
-	Document(syntax::FilePtr holder);
+	explicit Document(syntax::FilePtr holder);
 };
 
 } // semantics

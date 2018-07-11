@@ -55,35 +55,35 @@ class GeneralException : public ExceptionBase {
 public:
 	explicit GeneralException(const char * const & msg);
 	explicit GeneralException(const std::string& msg);
-	virtual Type code() const noexcept { return Type::General; }
+	virtual Type code() const noexcept override { return Type::General; }
 };
 
 class NotSupportedException : public ExceptionBase {
 public:
 	explicit NotSupportedException(const char * const & msg);
 	explicit NotSupportedException(const std::string& msg);
-	virtual Type code() const noexcept { return Type::NotSupported; }
+	virtual Type code() const noexcept override { return Type::NotSupported; }
 };
 
 class UserCancelledException : public ExceptionBase {
 public:
 	explicit UserCancelledException(const char * const & msg);
 	explicit UserCancelledException(const std::string& msg);
-	virtual Type code() const noexcept { return Type::UserCancelled; }
+	virtual Type code() const noexcept override { return Type::UserCancelled; }
 };
 
 class ConversionException : public ExceptionBase {
 public:
 	explicit ConversionException(const char * const & msg);
 	explicit ConversionException(const std::string& msg);
-	virtual Type code() const noexcept { return Type::Conversion; }
+	virtual Type code() const noexcept override { return Type::Conversion; }
 };
 
 class ZlibDataErrorException : public ExceptionBase {
 public:
 	explicit ZlibDataErrorException(types::stream_size size);
 	explicit ZlibDataErrorException(types::stream_size size, const std::string& message);
-	virtual Type code() const noexcept { return Type::ZlibDataError; }
+	virtual Type code() const noexcept override { return Type::ZlibDataError; }
 
 	types::stream_size Size(void) const { return m_size; }
 
@@ -95,14 +95,14 @@ class InvalidLicenseException : public ExceptionBase {
 public:
 	explicit InvalidLicenseException(const char * const & msg);
 	explicit InvalidLicenseException(const std::string& msg);
-	virtual Type code() const noexcept { return Type::InvalidLicense; }
+	virtual Type code() const noexcept override { return Type::InvalidLicense; }
 };
 
 class LicenseRequiredException : public ExceptionBase {
 public:
 	explicit LicenseRequiredException(const char * const & msg);
 	explicit LicenseRequiredException(const std::string& msg);
-	virtual Type code() const noexcept { return Type::LicenseRequired; }
+	virtual Type code() const noexcept override { return Type::LicenseRequired; }
 };
 
 template <typename DestT>

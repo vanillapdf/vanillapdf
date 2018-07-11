@@ -11,7 +11,7 @@ namespace contents {
 class UnknownOperator : public OperatorBase {
 public:
 	UnknownOperator() = default;
-	UnknownOperator(const BufferPtr& data) : _data(data) {}
+	explicit UnknownOperator(const BufferPtr& data) : _data(data) {}
 
 	virtual Type GetType(void) const noexcept { return Type::Unknown; }
 	virtual BufferPtr Value(void) const override { return _data; }
@@ -24,7 +24,7 @@ private:
 class Name##Operator : public OperatorBase \
 { \
 public: \
-	virtual Type GetType(void) const noexcept { return Type::Name; } \
+	virtual Type GetType(void) const noexcept override { return Type::Name; } \
 	virtual BufferPtr Value(void) const override { return make_deferred_container<Buffer>(Val); } \
 };
 

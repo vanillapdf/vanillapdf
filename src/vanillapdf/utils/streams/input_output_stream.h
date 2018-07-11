@@ -24,7 +24,7 @@ namespace vanillapdf {
 
 class InputOutputStream : public IInputOutputStream, public InputStream, public OutputStream {
 public:
-	InputOutputStream(std::shared_ptr<std::iostream> stream);
+	explicit InputOutputStream(std::shared_ptr<std::iostream> stream);
 };
 
 inline InputOutputStream::InputOutputStream(std::shared_ptr<std::iostream> stream) : InputStream(stream), OutputStream(stream) {

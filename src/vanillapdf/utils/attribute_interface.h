@@ -20,9 +20,9 @@ public:
 
 class EmptyAttribute : public virtual IAttribute {
 public:
-	virtual Type GetType(void) const noexcept;
+	virtual Type GetType(void) const noexcept override;
 
-	virtual EmptyAttribute* Clone(void) const;
+	virtual EmptyAttribute* Clone(void) const override;
 };
 
 class IAttributePtr : public Deferred<IAttribute> {

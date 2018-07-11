@@ -17,7 +17,7 @@ public:
 private:
 	struct Node {
 		Node() = default;
-		Node(unsigned char val) : value(val) {}
+		explicit Node(unsigned char val) : value(val) {}
 		unsigned char value = 0;
 		Token::Type type = Token::Type::UNKNOWN;
 		std::shared_ptr<Node> childs[std::numeric_limits<decltype(value)>::max() + 1];

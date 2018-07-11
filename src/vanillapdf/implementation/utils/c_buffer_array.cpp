@@ -23,10 +23,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_Size(BufferArrayHandle*
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try {
-		*result = obj->Size();
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+	*result = obj->Size();
+	return VANILLAPDF_ERROR_SUCCESS;
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_At(BufferArrayHandle* handle, size_type at, BufferHandle** result) {

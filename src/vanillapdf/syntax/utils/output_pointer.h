@@ -31,9 +31,9 @@ public:
 	OutputPointer& operator=(const OutputPointer& other) = default;
 	OutputPointer& operator=(OutputPointer&& other) = default;
 
-	OutputPointer(T* value) : m_value(value) {}
-	OutputPointer(const T& value) { SetValue(value); }
-	OutputPointer(T&& value) { SetValue(value); }
+	explicit OutputPointer(T* value) : m_value(value) {}
+	explicit OutputPointer(const T& value) { SetValue(value); }
+	explicit OutputPointer(T&& value) { SetValue(value); }
 
 	void SetValue(const T& value) { m_value.reset(pdf_new T(value)); }
 	void SetValue(T&& value) { m_value.reset(pdf_new T(value)); }

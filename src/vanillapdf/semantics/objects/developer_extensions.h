@@ -10,7 +10,7 @@ namespace semantics {
 
 class DeveloperExtension : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
-	DeveloperExtension(syntax::DictionaryObjectPtr root);
+	explicit DeveloperExtension(syntax::DictionaryObjectPtr root);
 	Version BaseVersion(void) const;
 	syntax::IntegerObjectPtr ExtensionLevel(void) const;
 };

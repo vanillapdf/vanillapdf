@@ -81,7 +81,7 @@ public:
 	typedef typename map_type::difference_type difference_type;
 
 public:
-	TreeBase(syntax::DictionaryObjectPtr obj);
+	explicit TreeBase(syntax::DictionaryObjectPtr obj);
 	bool IsInitialized() const;
 	void Initialize() const;
 	void RemoveAllChilds();

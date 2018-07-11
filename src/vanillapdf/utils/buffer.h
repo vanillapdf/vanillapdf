@@ -36,7 +36,7 @@ public:
 	Buffer() = default;
 
 	explicit Buffer(const char * chars);
-	explicit Buffer(std::string data);
+	explicit Buffer(const std::string& data);
 	Buffer(const value_type * begin, const value_type * end);
 	Buffer(size_type count, const value_type& val);
 
@@ -44,7 +44,7 @@ public:
 		typename T,
 		typename = typename std::enable_if<std::is_integral<T>::value>::type
 	>
-	Buffer(T count) {
+	explicit Buffer(T count) {
 		auto count_converted = ValueConvertUtils::SafeConvert<uint32_t>(count);
 		m_data.resize(count_converted);
 	}

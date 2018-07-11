@@ -10,10 +10,10 @@ namespace syntax {
 
 class ReverseParser : public ReverseTokenizer, public IReverseParser {
 public:
-	ReverseParser(IInputStreamPtr stream);
+	explicit ReverseParser(IInputStreamPtr stream);
 	ReverseParser(const ReverseParser & other);
 
-	types::stream_offset ReadLastXrefOffset();
+	types::stream_offset ReadLastXrefOffset() override;
 
 private:
 	TokenPtr ReadTokenWithTypeSkip(Token::Type type);

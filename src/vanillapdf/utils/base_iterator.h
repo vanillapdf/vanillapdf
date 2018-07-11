@@ -9,7 +9,7 @@ template <typename T>
 class BaseIterator : public virtual IUnknown, public std::iterator<std::input_iterator_tag, T> {
 public:
 	BaseIterator() = default;
-	BaseIterator(T it);
+	explicit BaseIterator(T it);
 
 	typename std::iterator_traits<T>::value_type Value() const;
 	typename std::iterator_traits<T>::value_type operator*();

@@ -27,7 +27,7 @@ public:
 
 class ObjectMissingException : public ExceptionBase {
 public:
-	ObjectMissingException(types::big_uint objNumber);
+	explicit ObjectMissingException(types::big_uint objNumber);
 	ObjectMissingException(types::big_uint objNumber, types::ushort genNumber);
 	virtual Type code() const noexcept { return Type::ObjectMissing; }
 };
