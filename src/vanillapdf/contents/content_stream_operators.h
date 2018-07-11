@@ -13,7 +13,7 @@ public:
 	UnknownOperator() = default;
 	explicit UnknownOperator(const BufferPtr& data) : _data(data) {}
 
-	virtual Type GetType(void) const noexcept { return Type::Unknown; }
+	virtual Type GetType(void) const noexcept override { return Type::Unknown; }
 	virtual BufferPtr Value(void) const override { return _data; }
 
 private:
