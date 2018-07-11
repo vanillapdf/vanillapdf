@@ -77,6 +77,15 @@ private:
 	std::shared_ptr<T> m_value = nullptr;
 };
 
+template<typename T, typename... Parameters>
+OutputPointer<T> make_output(Parameters&&... p) {
+
+	// Check whether T is defined class
+	static_assert(is_defined<T>::value, "Incomplete type is not allowed");
+
+	return (OutputPointer<T>(pdf_new T(std::forward<Parameters>(p)...)));
+}
+
 } // syntax
 } // vanillapdf
 

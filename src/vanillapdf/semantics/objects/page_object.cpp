@@ -97,7 +97,7 @@ void PageObject::SetContents(ContentsPtr contents) {
 
 bool PageObject::GetContents(OutputContentsPtr& result) const {
 	if (!m_contents.empty()) {
-		result = m_contents.GetValue();
+		result = m_contents;
 		return true;
 	}
 

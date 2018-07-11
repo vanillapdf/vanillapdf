@@ -126,7 +126,7 @@ void PageTree::Insert(PageObjectPtr object, types::size_type page_index) {
 	object->SetParent(make_deferred<PageTreeNode>(_obj));
 
 	UpdateKidsCount();
-	m_pages.insert(m_pages.begin() + array_index, object);
+	m_pages.insert(m_pages.begin() + array_index, make_output<PageObjectPtr>(object));
 }
 
 void PageTree::Append(PageObjectPtr object) {
