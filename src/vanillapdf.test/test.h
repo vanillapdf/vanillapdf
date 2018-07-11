@@ -19,9 +19,11 @@ extern const int VANILLAPDF_TEST_ERROR_INVALID_PARAMETERS;
 extern const int VANILLAPDF_TEST_ERROR_LOGGING_ENABLED;
 extern const int VANILLAPDF_TEST_ERROR_FAILURE;
 
+/* Support functions */
 void print_spaces(int nested);
 error_type print_last_error();
 
+/* Utilities */
 error_type process_buffer(BufferHandle* buffer, int nested);
 error_type process_version(PDFVersion version, int nested);
 error_type process_library_info();
@@ -148,6 +150,6 @@ do { \
 } while(0)
 
 #define RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(eval, call) \
-RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(eval, call, VANILLAPDF_ERROR_SUCCESS)
+RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(eval, call, VANILLAPDF_TEST_ERROR_SUCCESS)
 
 #endif /* _VANILLAPDF_TEST_H */
