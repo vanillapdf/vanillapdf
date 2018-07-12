@@ -349,9 +349,9 @@
 
 	<div class="col-4 col-xl-2">
 	  <div class="nav flex-column">
-		<a class="nav-link" href="/versions/1.0.0/doc/index.html">Tutorial</a>
-		<a class="nav-link" href="/versions/1.0.0/doc/hierarchy.html">API reference</a>
-		<a class="nav-link" href="/versions/1.0.0/doc/examples.html">Examples</a>
+		<a class="nav-link" href="/versions/0.1.0-alpha/doc/index.html">Tutorial</a>
+		<a class="nav-link" href="/versions/0.1.0-alpha/doc/hierarchy.html">API reference</a>
+		<a class="nav-link" href="/versions/0.1.0-alpha/doc/examples.html">Examples</a>
 	  </div>
 	</div>
 
