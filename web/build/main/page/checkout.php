@@ -351,7 +351,7 @@
 	  <div class="nav flex-column">
 		<a class="nav-link" href="/versions/0.1.0-alpha/doc/index.html">Tutorial</a>
 		<a class="nav-link" href="/versions/0.1.0-alpha/doc/hierarchy.html">API reference</a>
-		<a class="nav-link" href="/versions/0.1.0-alpha/doc/examples.html">Examples</a>
+		<a class="nav-link" href="/versions/0.1.0-alpha/doc/page_examples.html">Examples</a>
 	  </div>
 	</div>
 
