@@ -42,8 +42,6 @@ extern "C"
 
 	/**
 	* \brief Obtain a human readable text of the error code including the trailing NULL character
-	*
-	* This function returns a pointer to statically allocated data and it <b>shall not</b> be freed.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetPrintableErrorText(error_type value, char* data, size_type size);
 
