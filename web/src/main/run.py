@@ -22,6 +22,8 @@ COMMERCIAL_TWO_YEAR_SUPPORT_PRICE =		2 * (450 - 1);
 COMMERCIAL_THREE_YEAR_SUPPORT_PRICE =	3 * (400 - 1);
 
 generic_context = {
+	'BASE_URL': 'https://vanillapdf.com/',
+
 	'index_file': '../index.html',
 	'root_folder': '../',
 	'pages_folder': '',
@@ -147,6 +149,7 @@ for filename in page_files:
 	local_context = dict(generic_context)
 	local_context['TITLE'] = title_value
 	local_context['DESCRIPTION'] = description_value
+	local_context['FILENAME'] = filename
 	
 	generate_template(source_path, destination_path, local_context)
 	
