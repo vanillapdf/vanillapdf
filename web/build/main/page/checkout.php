@@ -336,24 +336,24 @@
 
 	<div class="col-4 col-xl-2 offset-xl-1">
 	  <div class="nav flex-column">
-		<a class="nav-link" href="about.php">About</a>
-		<a class="nav-link" href="contact.php">Contact</a>
-		<a class="nav-link" href="download.html">Download</a>
+		<a class="nav-link lead" href="about.php">About</a>
+		<a class="nav-link lead" href="contact.php">Contact</a>
+		<a class="nav-link lead" href="download.html">Download</a>
 	  </div>
 	</div>
 
 	<div class="col-4 col-xl-2">
 	  <div class="nav flex-column">
-		<a class="nav-link" href="faq.html">FAQ</a>
-		<a class="nav-link" href="licenses.html">EULA</a>
+		<a class="nav-link lead" href="faq.html">FAQ</a>
+		<a class="nav-link lead" href="licenses.html">EULA</a>
 	  </div>
 	</div>
 
 	<div class="col-4 col-xl-2">
 	  <div class="nav flex-column">
-		<a class="nav-link" href="/versions/0.1.0-alpha/doc/index.html">Tutorial</a>
-		<a class="nav-link" href="/versions/0.1.0-alpha/doc/hierarchy.html">API reference</a>
-		<a class="nav-link" href="/versions/0.1.0-alpha/doc/page_examples.html">Examples</a>
+		<a class="nav-link lead" href="/versions/0.1.0-alpha/doc/index.html">Tutorial</a>
+		<a class="nav-link lead" href="/versions/0.1.0-alpha/doc/hierarchy.html">API reference</a>
+		<a class="nav-link lead" href="/versions/0.1.0-alpha/doc/page_examples.html">Examples</a>
 	  </div>
 	</div>
 
