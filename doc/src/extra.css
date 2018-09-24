@@ -41,8 +41,13 @@ td#projectlogo {
 	vertical-align: middle;
 }
 
-td#projectlogo, td#projectlogo img {
-	width: 400px;
+td#projectlogo {
+	text-align: left;
+}
+
+td#projectlogo img {
+	width: 100%;
+	max-width: 400px;
 }
 
 div#titlearea table {
