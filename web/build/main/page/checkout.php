@@ -111,13 +111,13 @@
 					
 					if ($_POST['product'] == 'personal-license') {
 						$product_name = 'Vanilla.PDF Personal license';
-						$product_price = 299;
+						$product_price = 9;
 						$product_personal = true;
 					}
 					
 					if ($_POST['product'] == 'commercial-license') {
 						$product_name = 'Vanilla.PDF Commercial OEM license';
-						$product_price = 1499;
+						$product_price = 109;
 					}
 					
 					if (!isset($product_name)) {
@@ -132,9 +132,9 @@
 						$support_name = '1 Year';
 						
 						if ($product_personal === true) {
-							$support_price = 199;
+							$support_price = 39;
 						} else {
-							$support_price = 499;
+							$support_price = 299;
 						}
 					}
 					
@@ -142,9 +142,9 @@
 						$support_name = '2 Year';
 						
 						if ($product_personal === true) {
-							$support_price = 348;
+							$support_price = 46;
 						} else {
-							$support_price = 898;
+							$support_price = 358;
 						}
 					}
 					
@@ -152,9 +152,9 @@
 						$support_name = '3 Year';
 						
 						if ($product_personal === true) {
-							$support_price = 447;
+							$support_price = 54;
 						} else {
-							$support_price = 1197;
+							$support_price = 417;
 						}
 					}
 					
