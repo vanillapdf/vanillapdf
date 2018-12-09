@@ -1,19 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Meta tags -->
-    {% include 'meta.html' %}
 	
 	<?php
 		// Extra styles
-		wp_enqueue_style( 'main-page', get_template_directory_uri() . '/assets/css/main_page.css', 'template-page');
+		wp_enqueue_style( 'main-page', get_assets_folder() . '/css/main_page.css', 'template-page');
 	?>
-
-    <!-- Favicons -->
-    {% include 'favicons.html' %}
-
-    <!-- Google Analytics -->
-    {% include 'google_analytics.html' %}
 	
 	<?php wp_head(); ?>
   </head>
@@ -44,7 +36,7 @@
 
 
     <!-- Header -->
-    <header id="home" class="header text-white h-fullscreen" style="background-image: url({{ assets_folder }}img/bg/abstract.jpg)">
+    <header id="home" class="header text-white h-fullscreen" style="background-image: url(<?php echo get_assets_folder(); ?>/img/bg/abstract.jpg)">
       <div class="overlay opacity-90 bg-vanilla"></div>
 
       <div class="container text-center">
@@ -163,7 +155,7 @@
 		  <div class="row gap-y">
 
             <div class="col-lg-3 d-flex">
-              <a class="card card-body border text-center hover-shadow-6 text-default" href="{{ pages_folder }}{{ download_page }}">
+              <a class="card card-body border text-center hover-shadow-6 text-default" href="<?php echo get_pages_folder() . '/' . PAGE_DOWNLOAD; ?>">
                 <p class="my-5"><i class="fa fa-download lead-8 text-lighter"></i></p>
                 <h5>Download</h5>
                 <p>Download the latest version</p>
@@ -172,7 +164,7 @@
 
 
             <div class="col-lg-3 d-flex">
-              <a class="card card-body border text-center hover-shadow-6 text-default" href="{{ versions_folder }}{{ LATEST_VERSION }}/doc/index.html">
+              <a class="card card-body border text-center hover-shadow-6 text-default" href="<?php echo get_versions_folder() . '/' . LATEST_VERSION; ?>/doc/index.html">
                 <p class="my-5"><i class="fa fa-book lead-8 text-lighter"></i></p>
                 <h5>Tutorial</h5>
                 <p>Learn the basics</p>
@@ -181,7 +173,7 @@
 
 
             <div class="col-lg-3 d-flex">
-              <a class="card card-body border text-center hover-shadow-6 text-default" href="{{ versions_folder }}{{ LATEST_VERSION }}/doc/hierarchy.html">
+              <a class="card card-body border text-center hover-shadow-6 text-default" href="<?php echo get_versions_folder() . '/' . LATEST_VERSION; ?>/doc/hierarchy.html">
                 <p class="my-5"><i class="fa fa-gear lead-8 text-lighter"></i></p>
                 <h5>API reference</h5>
                 <p>Explore possibilities</p>
@@ -189,7 +181,7 @@
             </div>
 			
 			<div class="col-lg-3 d-flex">
-              <a class="card card-body border text-center hover-shadow-6 text-default" href="{{ versions_folder }}{{ LATEST_VERSION }}/doc/page_examples.html">
+              <a class="card card-body border text-center hover-shadow-6 text-default" href="<?php echo get_versions_folder() . '/' . LATEST_VERSION; ?>/doc/page_examples.html">
                 <p class="my-5"><i class="fa fa-flask lead-8 text-lighter"></i></p>
                 <h5>Examples</h5>
                 <p>Discover other concepts</p>
@@ -204,7 +196,7 @@
 		  	<div class="mx-auto">
               <h5>Missing something?</h5>
 			  <div class="pt-4">
-			    <a class="btn btn-lg btn-round btn-secondary" href="{{ pages_folder }}{{ contact_page }}?section=section-contact">Contact us</a>
+			    <a class="btn btn-lg btn-round btn-secondary" href="<?php echo get_pages_folder() . '/' . PAGE_CONTACT; ?>?section=section-contact">Contact us</a>
 			  </div>
             </div>
 		  </div>
@@ -251,8 +243,8 @@
                 </div>
 				
 				<div class="text-center px-4 py-6">
-				  <a class="btn btn-outline-primary btn-round w-200" href="{{ pages_folder }}{{ download_page }}">Download</a>
-				  <p>or <a href="{{ pages_folder }}{{ contact_page }}?section=section-license">Get a temporary license</a></p>
+				  <a class="btn btn-outline-primary btn-round w-200" href="<?php echo get_pages_folder(); ?>/{{ download_page }}">Download</a>
+				  <p>or <a href="<?php echo get_pages_folder(); ?>/{{ contact_page }}?section=section-license">Get a temporary license</a></p>
 				</div>
               </div>
             </div>
@@ -288,8 +280,8 @@
                 </div>
 				
 				<div class="text-center px-4 py-6">
-				  <a id="personal-purchase-link" class="btn btn-primary btn-round w-200" href="{{ pages_folder }}{{ order_page }}?product=personal-license&support=1">Purchase</a>
-				  <p>or <a id="personal-support-link" href="{{ pages_folder }}{{ order_page }}?product=personal-support&support=1">Extend your support</a></p>
+				  <a id="personal-purchase-link" class="btn btn-primary btn-round w-200" href="<?php echo get_pages_folder(); ?>{{ order_page }}?product=personal-license&support=1">Purchase</a>
+				  <p>or <a id="personal-support-link" href="<?php echo get_pages_folder(); ?>{{ order_page }}?product=personal-support&support=1">Extend your support</a></p>
 				</div>
               </div>
             </div>
@@ -326,8 +318,8 @@
 				</div>
 				
 				<div class="text-center px-4 py-6">
-				  <a id="commercial-purchase-link" class="btn btn-outline-primary btn-round w-200" href="{{ pages_folder }}{{ order_page }}?product=commercial-license&support=1">Purchase</a>
-				  <p>or <a id="commercial-support-link" href="{{ pages_folder }}{{ order_page }}?product=commercial-support&support=1">Extend your support</a></p>
+				  <a id="commercial-purchase-link" class="btn btn-outline-primary btn-round w-200" href="<?php echo get_pages_folder(); ?>{{ order_page }}?product=commercial-license&support=1">Purchase</a>
+				  <p>or <a id="commercial-support-link" href="<?php echo get_pages_folder(); ?>{{ order_page }}?product=commercial-support&support=1">Extend your support</a></p>
 				</div>
 			  </div>
 			</div>
@@ -339,7 +331,7 @@
 		    <div class="mx-auto">
 		  	  <h5>Too expensive?</h5>
 		  	  <div class="py-4">
-		  	    <a class="btn btn-lg btn-round btn-secondary" href="{{ pages_folder }}{{ contact_page }}?section=section-discount">Request a discount</a>
+		  	    <a class="btn btn-lg btn-round btn-secondary" href="<?php echo get_pages_folder(); ?>{{ contact_page }}?section=section-discount">Request a discount</a>
 		  	  </div>
 		    </div>
 		  </div>
@@ -394,7 +386,7 @@
 
 			<div class="row mt-8">
 			  <div class="text-center mx-auto">
-				<a class="btn btn-lg btn-round btn-secondary px-7" href="{{ pages_folder }}{{ faq_page }}">More answers</a>
+				<a class="btn btn-lg btn-round btn-secondary px-7" href="<?php echo get_pages_folder(); ?>{{ faq_page }}">More answers</a>
 			  </div>
 			</div>
 
@@ -448,7 +440,7 @@
 
 	<!-- Footer -->
 	<footer id="footer" class="footer py-7">
-		{% include 'footer.html' %}
+		<?php get_template_part( 'inc/footer' ); ?>
 	</footer><!-- /.footer -->
 
 
@@ -458,9 +450,9 @@
 
     <!-- Scripts -->
     {% include 'scripts.html' %}
-	<script src="{{ assets_folder }}js/price_constants.js"></script>
-	<script src="{{ assets_folder }}js/subscribe.js"></script>
-	<script src="{{ assets_folder }}js/custom_navbar.js"></script>
+	<script src="<?php echo get_assets_folder(); ?>/js/price_constants.js"></script>
+	<script src="<?php echo get_assets_folder(); ?>/js/subscribe.js"></script>
+	<script src="<?php echo get_assets_folder(); ?>/js/custom_navbar.js"></script>
 	
 	<script>
 		{% include 'pricing.js' %}
