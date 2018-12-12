@@ -2,47 +2,16 @@
 <html lang="en">
   <head>
       <!-- Meta tags -->
-    <meta charset="utf-8">
-<meta name="author" content="Vanilla.PDF Labs">
-<meta name="robots" content="index,follow">
-<meta name="description" content="Review your billing address before submitting the request.">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-<title>Vanilla.PDF - Checkout</title>
-
-<meta property="og:title" content="Vanilla.PDF - Checkout">
-<meta property="og:description" content="Review your billing address before submitting the request.">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Vanilla.PDF - Checkout">
-
-<meta name="apple-mobile-web-app-title" content="Vanilla.PDF - Checkout">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-
-<link rel="canonical" href="https://vanillapdf.com/checkout.php" />
+    {% include 'meta.html' %}
 
     <!-- Styles -->
-    <link href="../assets/css/page.min.css" rel="stylesheet">
-<link href="../assets/css/style.css" rel="stylesheet">
-<link href="../assets/css/custom.css" rel="stylesheet">
+    {% include 'styles.html' %}
 
     <!-- Favicons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="../assets/img/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="16x16" href="../assets/img/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32x32.png">
-<link rel="shortcut icon" href="../assets/img/favicon.ico">
+    {% include 'favicons.html' %}
 
     <!-- Google Analytics -->
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-106797397-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-106797397-1');
-</script>
-
+    {% include 'google_analytics.html' %}
   </head>
 
   <body>
@@ -52,13 +21,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark" data-navbar="fixed">
       <div class="container">
 
-        <div class="navbar-left">
-  <button class="navbar-toggler" type="button">&#9776;</button>
-  <a class="navbar-brand" href="../index.html#home">
-	<img class="logo-dark" src="../assets/img/logo/vanilla-black.png" alt="Vanilla.PDF logo">
-	<img class="logo-light" src="../assets/img/logo/vanilla-white.png" alt="Vanilla.PDF logo">
-  </a>
-</div>
+        {% include 'navbar-left.html' %}
 
         <section class="navbar-mobile">
           <nav class="nav nav-navbar ml-auto">
@@ -96,7 +59,7 @@
 			<div class="col-11 col-lg-6 mx-auto">
 			
 				<?php
-					$tax_percent = 19;
+					$tax_percent = {{ TAX_PERCENTAGE }};
 					
 					if (!isset($tax_percent)) {
 						trigger_error("Tax is not set", E_USER_ERROR);
@@ -110,14 +73,14 @@
 					$support_price;
 					
 					if ($_POST['product'] == 'personal-license') {
-						$product_name = 'Vanilla.PDF Personal license';
-						$product_price = 299;
+						$product_name = '{{ PERSONAL_LICENSE_DESCRIPTION }}';
+						$product_price = {{ PERSONAL_LICENSE_PRICE }};
 						$product_personal = true;
 					}
 					
 					if ($_POST['product'] == 'commercial-license') {
-						$product_name = 'Vanilla.PDF Commercial OEM license';
-						$product_price = 1499;
+						$product_name = '{{ COMMERCIAL_LICENSE_DESCRIPTION }}';
+						$product_price = {{ COMMERCIAL_LICENSE_PRICE }};
 					}
 					
 					if (!isset($product_name)) {
@@ -132,9 +95,9 @@
 						$support_name = '1 Year';
 						
 						if ($product_personal === true) {
-							$support_price = 199;
+							$support_price = {{ PERSONAL_ONE_YEAR_SUPPORT_PRICE }};
 						} else {
-							$support_price = 499;
+							$support_price = {{ COMMERCIAL_ONE_YEAR_SUPPORT_PRICE }};
 						}
 					}
 					
@@ -142,9 +105,9 @@
 						$support_name = '2 Year';
 						
 						if ($product_personal === true) {
-							$support_price = 348;
+							$support_price = {{ PERSONAL_TWO_YEAR_SUPPORT_PRICE }};
 						} else {
-							$support_price = 898;
+							$support_price = {{ COMMERCIAL_TWO_YEAR_SUPPORT_PRICE }};
 						}
 					}
 					
@@ -152,9 +115,9 @@
 						$support_name = '3 Year';
 						
 						if ($product_personal === true) {
-							$support_price = 447;
+							$support_price = {{ PERSONAL_THREE_YEAR_SUPPORT_PRICE }};
 						} else {
-							$support_price = 1197;
+							$support_price = {{ COMMERCIAL_THREE_YEAR_SUPPORT_PRICE }};
 						}
 					}
 					
@@ -180,8 +143,8 @@
                       </div>
                   
                       <div class="text-right">
-					    <p><?= $product_price ?>&euro;</p>
-					    <p><?= $support_price ?>&euro;</p>
+					    <p><?= $product_price ?>{{ CURRENCY }}</p>
+					    <p><?= $support_price ?>{{ CURRENCY }}</p>
                       </div>
                     </div>
                   
@@ -193,7 +156,7 @@
                       </div>
                   
                       <div class="text-right">
-                        <p id="total-price" class="fw-600"><?= $total ?> &euro;</p>
+                        <p id="total-price" class="fw-600"><?= $total ?> {{ CURRENCY }}</p>
                       </div>
                     </div>
                   </div>
@@ -277,22 +240,22 @@
 				  
 				  <div id="success-message" class="alert alert-success d-on-success" style="display: none">We received your order and will contact you back soon.</div>
 				  
-				  <form id="form-back" action="order.php" method="POST">
+				  <form id="form-back" action="{{ pages_folder }}{{ order_page }}" method="POST">
 					<?php foreach( $_POST as $key => $val ): ?>
 						<input type="hidden" name="<?= htmlspecialchars($key, ENT_COMPAT, 'UTF-8') ?>" value="<?= htmlspecialchars($val, ENT_COMPAT, 'UTF-8') ?>">
 					<?php endforeach; ?>
 				  </form>
 				  
-				  <form id="form-checkout" action="../assets/php/sendmail.php" method="POST" data-form="custom-mailer">
+				  <form id="form-checkout" action="{{ assets_folder }}php/sendmail.php" method="POST" data-form="custom-mailer">
 					<div class="alert alert-success d-on-success">We received your message and will contact you back soon.</div>
 					
 					<?php foreach( $_POST as $key => $val ): ?>
 						<input type="hidden" name="<?= htmlspecialchars($key, ENT_COMPAT, 'UTF-8') ?>" value="<?= htmlspecialchars($val, ENT_COMPAT, 'UTF-8') ?>">
 					<?php endforeach; ?>
 					
-					<input type="hidden" name="product-price" value="<?= $product_price ?>&euro;">
-					<input type="hidden" name="support-price" value="<?= $support_price ?>&euro;">
-					<input type="hidden" name="total-price" value="<?= $total ?>&euro;">
+					<input type="hidden" name="product-price" value="<?= $product_price ?>{{ CURRENCY }}">
+					<input type="hidden" name="support-price" value="<?= $support_price ?>{{ CURRENCY }}">
+					<input type="hidden" name="total-price" value="<?= $total ?>{{ CURRENCY }}">
 					
 					<div id="recaptcha" class="text-center w-75 d-block mx-auto p-5" data-provide="recaptcha" data-callback="EnableOrder">
 					</div>
@@ -309,7 +272,7 @@
                   </div>
 				  
 				  <div id="return-home" class="row" style="display: none;">
-				    <a class="btn btn-block btn-primary" href="../index.html#home">Return to home page <i class="ti-angle-right fs-9"></i></a>
+				    <a class="btn btn-block btn-primary" href="{{ index_file }}#home">Return to home page <i class="ti-angle-right fs-9"></i></a>
 				  </div>
 
 			</div>
@@ -323,48 +286,12 @@
 
 	<!-- Footer -->
 	<footer id="footer" class="footer py-7">
-		<div class="container">
-  <div class="row">
-
-	<div class="col-12">
-	  <p><a href="../index.html#home"><img src="../assets/img/logo/vanilla-black.png" alt="logo"></a></p>
-	</div>
-
-	<div class="col-xl-5">
-	  <p>Vanilla.PDF can help you create more awesome products and services. In case of any questions, we would love to hear your feedback!</p>
-	</div>
-
-	<div class="col-4 col-xl-2 offset-xl-1">
-	  <div class="nav flex-column">
-		<a class="nav-link lead" href="about.php">About</a>
-		<a class="nav-link lead" href="contact.php">Contact</a>
-		<a class="nav-link lead" href="download.html">Download</a>
-	  </div>
-	</div>
-
-	<div class="col-4 col-xl-2">
-	  <div class="nav flex-column">
-		<a class="nav-link lead" href="faq.html">FAQ</a>
-		<a class="nav-link lead" href="licenses.html">EULA</a>
-	  </div>
-	</div>
-
-	<div class="col-4 col-xl-2">
-	  <div class="nav flex-column">
-		<a class="nav-link lead" href="/versions/0.1.0-alpha/doc/index.html">Tutorial</a>
-		<a class="nav-link lead" href="/versions/0.1.0-alpha/doc/hierarchy.html">API reference</a>
-		<a class="nav-link lead" href="/versions/0.1.0-alpha/doc/page_examples.html">Examples</a>
-	  </div>
-	</div>
-
-  </div>
-</div>
+		{% include 'footer.html' %}
 	</footer><!-- /.footer -->
 
     <!-- Scripts -->
-    <script src="../assets/js/page.min.js"></script>
-<script src="../assets/js/script.js"></script>
-	<script src="../assets/js/checkout.js"></script>
+    {% include 'scripts.html' %}
+	<script src="{{ assets_folder }}js/checkout.js"></script>
 
   </body>
 </html>

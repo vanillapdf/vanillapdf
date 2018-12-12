@@ -2,47 +2,16 @@
 <html lang="en">
   <head>
     <!-- Meta tags -->
-    <meta charset="utf-8">
-<meta name="author" content="Vanilla.PDF Labs">
-<meta name="robots" content="index,follow">
-<meta name="description" content="Choose your favorite product and fill the billing details details.">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-<title>Vanilla.PDF - Order</title>
-
-<meta property="og:title" content="Vanilla.PDF - Order">
-<meta property="og:description" content="Choose your favorite product and fill the billing details details.">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Vanilla.PDF - Order">
-
-<meta name="apple-mobile-web-app-title" content="Vanilla.PDF - Order">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-
-<link rel="canonical" href="https://vanillapdf.com/order.php" />
+    {% include 'meta.html' %}
 
     <!-- Styles -->
-    <link href="../assets/css/page.min.css" rel="stylesheet">
-<link href="../assets/css/style.css" rel="stylesheet">
-<link href="../assets/css/custom.css" rel="stylesheet">
+    {% include 'styles.html' %}
 
     <!-- Favicons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="../assets/img/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="16x16" href="../assets/img/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32x32.png">
-<link rel="shortcut icon" href="../assets/img/favicon.ico">
+    {% include 'favicons.html' %}
 
     <!-- Google Analytics -->
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-106797397-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-106797397-1');
-</script>
-
+    {% include 'google_analytics.html' %}
   </head>
 
   <body>
@@ -52,13 +21,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark" data-navbar="fixed">
       <div class="container">
 
-        <div class="navbar-left">
-  <button class="navbar-toggler" type="button">&#9776;</button>
-  <a class="navbar-brand" href="../index.html#home">
-	<img class="logo-dark" src="../assets/img/logo/vanilla-black.png" alt="Vanilla.PDF logo">
-	<img class="logo-light" src="../assets/img/logo/vanilla-white.png" alt="Vanilla.PDF logo">
-  </a>
-</div>
+        {% include 'navbar-left.html' %}
 
         <section class="navbar-mobile">
           <nav class="nav nav-navbar ml-auto">
@@ -95,7 +58,7 @@
 		  <div class="row gap-y">
 			<div class="col-11 col-lg-6 mx-auto">
 
-			  <form id="order-form" action="checkout.php" method="POST" data-form="custom-mailer">
+			  <form id="order-form" action="{{ pages_folder }}{{ checkout_page }}" method="POST" data-form="custom-mailer">
 			  
 			    <h5 class="mb-6">Product details</h5>
 
@@ -112,10 +75,10 @@
 				
 				<div class="form-group">
 				  <select id="order-product" name="product" class="form-control" onchange="ProductChanged();">
-				    <option value="personal-license" <?php if ($_POST['product'] == 'personal-license') { echo 'selected="selected"'; } ?> >Vanilla.PDF Personal license</option>
-				    <option value="commercial-license" <?php if ($_POST['product'] == 'commercial-license') { echo 'selected="selected"'; } ?> >Vanilla.PDF Commercial OEM license</option>
-					<option value="personal-support" <?php if ($_POST['product'] == 'personal-support') { echo 'selected="selected"'; } ?> >Vanilla.PDF Extended personal support</option>
-					<option value="commercial-support" <?php if ($_POST['product'] == 'commercial-support') { echo 'selected="selected"'; } ?> >Vanilla.PDF Extended commercial support</option>
+				    <option value="personal-license" <?php if ($_POST['product'] == 'personal-license') { echo 'selected="selected"'; } ?> >{{ PERSONAL_LICENSE_DESCRIPTION }}</option>
+				    <option value="commercial-license" <?php if ($_POST['product'] == 'commercial-license') { echo 'selected="selected"'; } ?> >{{ COMMERCIAL_LICENSE_DESCRIPTION }}</option>
+					<option value="personal-support" <?php if ($_POST['product'] == 'personal-support') { echo 'selected="selected"'; } ?> >{{ PERSONAL_SUPPORT_DESCRIPTION }}</option>
+					<option value="commercial-support" <?php if ($_POST['product'] == 'commercial-support') { echo 'selected="selected"'; } ?> >{{ COMMERCIAL_SUPPORT_DESCRIPTION }}</option>
 				  </select>
 				</div>
 				
@@ -191,14 +154,14 @@
 				
 				<div class="form-group custom-control custom-checkbox">
                   <input id="terms-conditions" name="terms-conditions" type="checkbox" class="custom-control-input" <?php if (isset($_POST['terms-conditions'])) { echo 'checked="checked"'; } ?> onchange="EnableProceed()" required>
-                  <label class="custom-control-label">I agree to the <a class="ml-1" href="licenses.html">End-user license agreement</a></label>
+                  <label class="custom-control-label">I agree to the <a class="ml-1" href="{{ pages_folder }}{{ licenses_page }}">End-user license agreement</a></label>
                 </div>
 
 				<input type="hidden" name="subject" value="Order">
 				
 				<div class="row">
 				  <div class="col-6">
-				    <a class="btn btn-block btn-secondary" href="../index.html#home"><i class="ti-angle-left fs-9"></i> Return to home</a>
+				    <a class="btn btn-block btn-secondary" href="{{ index_file }}#home"><i class="ti-angle-left fs-9"></i> Return to home</a>
 				  </div>
                   <div class="col-6">
 				    <button id="btn-proceed" class="btn btn-primary btn-block" type="submit" disabled>Proceed <i class="ti-angle-right fs-9"></i></button>
@@ -217,49 +180,13 @@
 
 	<!-- Footer -->
 	<footer id="footer" class="footer py-7">
-		<div class="container">
-  <div class="row">
-
-	<div class="col-12">
-	  <p><a href="../index.html#home"><img src="../assets/img/logo/vanilla-black.png" alt="logo"></a></p>
-	</div>
-
-	<div class="col-xl-5">
-	  <p>Vanilla.PDF can help you create more awesome products and services. In case of any questions, we would love to hear your feedback!</p>
-	</div>
-
-	<div class="col-4 col-xl-2 offset-xl-1">
-	  <div class="nav flex-column">
-		<a class="nav-link lead" href="about.php">About</a>
-		<a class="nav-link lead" href="contact.php">Contact</a>
-		<a class="nav-link lead" href="download.html">Download</a>
-	  </div>
-	</div>
-
-	<div class="col-4 col-xl-2">
-	  <div class="nav flex-column">
-		<a class="nav-link lead" href="faq.html">FAQ</a>
-		<a class="nav-link lead" href="licenses.html">EULA</a>
-	  </div>
-	</div>
-
-	<div class="col-4 col-xl-2">
-	  <div class="nav flex-column">
-		<a class="nav-link lead" href="/versions/0.1.0-alpha/doc/index.html">Tutorial</a>
-		<a class="nav-link lead" href="/versions/0.1.0-alpha/doc/hierarchy.html">API reference</a>
-		<a class="nav-link lead" href="/versions/0.1.0-alpha/doc/page_examples.html">Examples</a>
-	  </div>
-	</div>
-
-  </div>
-</div>
+		{% include 'footer.html' %}
 	</footer><!-- /.footer -->
 
     <!-- Scripts -->
-    <script src="../assets/js/page.min.js"></script>
-<script src="../assets/js/script.js"></script>
-	<script src="../assets/js/custom_mailer.js"></script>
-	<script src="../assets/js/order.js"></script>
+    {% include 'scripts.html' %}
+	<script src="{{ assets_folder }}js/custom_mailer.js"></script>
+	<script src="{{ assets_folder }}js/order.js"></script>
 
   </body>
 </html>

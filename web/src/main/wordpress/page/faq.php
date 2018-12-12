@@ -2,47 +2,16 @@
 <html lang="en">
   <head>
     <!-- Meta tags -->
-    <meta charset="utf-8">
-<meta name="author" content="Vanilla.PDF Labs">
-<meta name="robots" content="index,follow">
-<meta name="description" content="Got a question? We've got answers. If you have some other questions, contact us using email.">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-<title>Vanilla.PDF - Frequently asked questions</title>
-
-<meta property="og:title" content="Vanilla.PDF - Frequently asked questions">
-<meta property="og:description" content="Got a question? We've got answers. If you have some other questions, contact us using email.">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Vanilla.PDF - Frequently asked questions">
-
-<meta name="apple-mobile-web-app-title" content="Vanilla.PDF - Frequently asked questions">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-
-<link rel="canonical" href="https://vanillapdf.com/faq.html" />
+    {% include 'meta.html' %}
 
     <!-- Styles -->
-    <link href="../assets/css/page.min.css" rel="stylesheet">
-<link href="../assets/css/style.css" rel="stylesheet">
-<link href="../assets/css/custom.css" rel="stylesheet">
+    {% include 'styles.html' %}
 
     <!-- Favicons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="../assets/img/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="16x16" href="../assets/img/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32x32.png">
-<link rel="shortcut icon" href="../assets/img/favicon.ico">
+    {% include 'favicons.html' %}
 
     <!-- Google Analytics -->
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-106797397-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-106797397-1');
-</script>
-
+    {% include 'google_analytics.html' %}
   </head>
 
   <body>
@@ -52,13 +21,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark" data-navbar="fixed">
       <div class="container">
 
-        <div class="navbar-left">
-  <button class="navbar-toggler" type="button">&#9776;</button>
-  <a class="navbar-brand" href="../index.html#home">
-	<img class="logo-dark" src="../assets/img/logo/vanilla-black.png" alt="Vanilla.PDF logo">
-	<img class="logo-light" src="../assets/img/logo/vanilla-white.png" alt="Vanilla.PDF logo">
-  </a>
-</div>
+        {% include 'navbar-left.html' %}
 
         <section class="navbar-mobile">
           <nav class="nav nav-navbar ml-auto">
@@ -132,48 +95,12 @@
 
 	<!-- Footer -->
 	<footer id="footer" class="footer py-7">
-		<div class="container">
-  <div class="row">
-
-	<div class="col-12">
-	  <p><a href="../index.html#home"><img src="../assets/img/logo/vanilla-black.png" alt="logo"></a></p>
-	</div>
-
-	<div class="col-xl-5">
-	  <p>Vanilla.PDF can help you create more awesome products and services. In case of any questions, we would love to hear your feedback!</p>
-	</div>
-
-	<div class="col-4 col-xl-2 offset-xl-1">
-	  <div class="nav flex-column">
-		<a class="nav-link lead" href="about.php">About</a>
-		<a class="nav-link lead" href="contact.php">Contact</a>
-		<a class="nav-link lead" href="download.html">Download</a>
-	  </div>
-	</div>
-
-	<div class="col-4 col-xl-2">
-	  <div class="nav flex-column">
-		<a class="nav-link lead" href="faq.html">FAQ</a>
-		<a class="nav-link lead" href="licenses.html">EULA</a>
-	  </div>
-	</div>
-
-	<div class="col-4 col-xl-2">
-	  <div class="nav flex-column">
-		<a class="nav-link lead" href="/versions/0.1.0-alpha/doc/index.html">Tutorial</a>
-		<a class="nav-link lead" href="/versions/0.1.0-alpha/doc/hierarchy.html">API reference</a>
-		<a class="nav-link lead" href="/versions/0.1.0-alpha/doc/page_examples.html">Examples</a>
-	  </div>
-	</div>
-
-  </div>
-</div>
+		{% include 'footer.html' %}
 	</footer><!-- /.footer -->
 
 
     <!-- Scripts -->
-    <script src="../assets/js/page.min.js"></script>
-<script src="../assets/js/script.js"></script>
+    {% include 'scripts.html' %}
 
   </body>
 </html>

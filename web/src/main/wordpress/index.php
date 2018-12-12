@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-	
-	<?php
+  <?php
 		// Extra styles
-		wp_enqueue_style( 'main-page', get_assets_folder() . '/css/main_page.css', 'template-page');
+		add_action('wp_enqueue_scripts', function() {
+			wp_enqueue_style( 'main-page', get_assets_folder() . '/css/main_page.css');
+		});
+		
+		// Wordpress head
+		wp_head();
 	?>
-	
-	<?php wp_head(); ?>
   </head>
 
   <body>
@@ -17,7 +19,7 @@
     <nav class="navbar navbar-expand-lg navbar-light" data-navbar="fixed">
       <div class="container">
 
-        {% include 'navbar-left.html' %}
+        <?php get_template_part( 'inc/navbar-left' ); ?>
 
         <section class="navbar-mobile">
           <nav class="nav nav-navbar ml-auto">
@@ -225,7 +227,7 @@
                   <p class="mb-7"><i class="fa fa-search lead-8 text-dark"></i></p>
                   <h6 class="text-uppercase fw-500 ls-2 my-4">Evaluation</h6>
                   <p class="lead">Free license only for evaluation purposes</p>
-                  <h2 class="lead-8 fw-200 mb-0">0{{ CURRENCY }}</h2>
+                  <h2 class="lead-8 fw-200 mb-0">0<?php echo PRICE_CURRENCY_SYMBOL; ?></h2>
 				  <p class="small-2">Free</p>
 				  
 				  <button class="btn disabled">Limited support</button>
@@ -243,8 +245,8 @@
                 </div>
 				
 				<div class="text-center px-4 py-6">
-				  <a class="btn btn-outline-primary btn-round w-200" href="<?php echo get_pages_folder(); ?>/{{ download_page }}">Download</a>
-				  <p>or <a href="<?php echo get_pages_folder(); ?>/{{ contact_page }}?section=section-license">Get a temporary license</a></p>
+				  <a class="btn btn-outline-primary btn-round w-200" href="<?php echo get_pages_folder() . '/' . PAGE_DOWNLOAD; ?>">Download</a>
+				  <p>or <a href="<?php echo get_pages_folder() . '/' . PAGE_CONTACT; ?>?section=section-license">Get a temporary license</a></p>
 				</div>
               </div>
             </div>
@@ -255,7 +257,7 @@
                   <p class="mb-7"><i class="fa fa-user lead-8 text-dark"></i></p>
                   <h6 class="text-uppercase fw-500 ls-2 my-4">Personal</h6>
                   <p class="lead">Personal license for creating private tools</p>
-                  <h2 id="personal-price" class="lead-8 fw-200 mb-0">{{ PERSONAL_LICENSE_WITH_SUPPORT_PRICE }}{{ CURRENCY }}</h2>
+                  <h2 id="personal-price" class="lead-8 fw-200 mb-0">{{ PERSONAL_LICENSE_WITH_SUPPORT_PRICE }}<?php echo PRICE_CURRENCY_SYMBOL; ?></h2>
                   <p class="small-2">One-time fee</p>
 
                   <div class="btn-group dropdown">
@@ -280,8 +282,8 @@
                 </div>
 				
 				<div class="text-center px-4 py-6">
-				  <a id="personal-purchase-link" class="btn btn-primary btn-round w-200" href="<?php echo get_pages_folder(); ?>{{ order_page }}?product=personal-license&support=1">Purchase</a>
-				  <p>or <a id="personal-support-link" href="<?php echo get_pages_folder(); ?>{{ order_page }}?product=personal-support&support=1">Extend your support</a></p>
+				  <a id="personal-purchase-link" class="btn btn-primary btn-round w-200" href="<?php echo get_pages_folder() . '/' . PAGE_ORDER; ?>?product=personal-license&support=1">Purchase</a>
+				  <p>or <a id="personal-support-link" href="<?php echo get_pages_folder() . '/' . PAGE_ORDER; ?>?product=personal-support&support=1">Extend your support</a></p>
 				</div>
               </div>
             </div>
@@ -293,7 +295,7 @@
 				  <p class="mb-7"><i class="fa fa-line-chart lead-8 text-dark"></i></p>
 				  <h6 class="text-uppercase fw-500 ls-2 my-4">Commercial OEM</h6>
 				  <p class="lead">Commercial license for creating public products</p>
-				  <h2 id="commercial-price" class="lead-8 fw-200 mb-0">{{ COMMERCIAL_LICENSE_WITH_SUPPORT_PRICE }}{{ CURRENCY }}</h2>
+				  <h2 id="commercial-price" class="lead-8 fw-200 mb-0">{{ COMMERCIAL_LICENSE_WITH_SUPPORT_PRICE }}<?php echo PRICE_CURRENCY_SYMBOL; ?></h2>
 				  <p class="small-2">One-time fee</p>
 				  
 					<div class="dropdown">
@@ -318,8 +320,8 @@
 				</div>
 				
 				<div class="text-center px-4 py-6">
-				  <a id="commercial-purchase-link" class="btn btn-outline-primary btn-round w-200" href="<?php echo get_pages_folder(); ?>{{ order_page }}?product=commercial-license&support=1">Purchase</a>
-				  <p>or <a id="commercial-support-link" href="<?php echo get_pages_folder(); ?>{{ order_page }}?product=commercial-support&support=1">Extend your support</a></p>
+				  <a id="commercial-purchase-link" class="btn btn-outline-primary btn-round w-200" href="<?php echo get_pages_folder() . '/' . PAGE_ORDER; ?>?product=commercial-license&support=1">Purchase</a>
+				  <p>or <a id="commercial-support-link" href="<?php echo get_pages_folder() . '/' . PAGE_ORDER; ?>?product=commercial-support&support=1">Extend your support</a></p>
 				</div>
 			  </div>
 			</div>
@@ -331,7 +333,7 @@
 		    <div class="mx-auto">
 		  	  <h5>Too expensive?</h5>
 		  	  <div class="py-4">
-		  	    <a class="btn btn-lg btn-round btn-secondary" href="<?php echo get_pages_folder(); ?>{{ contact_page }}?section=section-discount">Request a discount</a>
+		  	    <a class="btn btn-lg btn-round btn-secondary" href="<?php echo get_pages_folder()  . '/' . PAGE_CONTACT; ?>?section=section-discount">Request a discount</a>
 		  	  </div>
 		    </div>
 		  </div>
@@ -386,7 +388,7 @@
 
 			<div class="row mt-8">
 			  <div class="text-center mx-auto">
-				<a class="btn btn-lg btn-round btn-secondary px-7" href="<?php echo get_pages_folder(); ?>{{ faq_page }}">More answers</a>
+				<a class="btn btn-lg btn-round btn-secondary px-7" href="<?php echo get_pages_folder() . '/' . PAGE_FAQ; ?>">More answers</a>
 			  </div>
 			</div>
 
@@ -449,13 +451,14 @@
 
 
     <!-- Scripts -->
-    {% include 'scripts.html' %}
+	<?php get_template_part( 'inc/scripts' ); ?>
+	
 	<script src="<?php echo get_assets_folder(); ?>/js/price_constants.js"></script>
 	<script src="<?php echo get_assets_folder(); ?>/js/subscribe.js"></script>
 	<script src="<?php echo get_assets_folder(); ?>/js/custom_navbar.js"></script>
 	
 	<script>
-		{% include 'pricing.js' %}
+		<?php get_template_part( 'inc/pricing' ); ?>
 	</script>
 
   </body>

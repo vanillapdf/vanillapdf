@@ -9,7 +9,10 @@ const PAGE_CONTACT = 'contact.php';
 const PAGE_ABOUT = 'about.php';
 const PAGE_LICENSES = 'licenses.php';
 const PAGE_FAQ = 'faq.php';
+const PAGE_ORDER = 'order.php';
 const PAGE_INDEX = 'index.php';
+
+const PRICE_CURRENCY_SYMBOL = '&euro;';
 
 function get_assets_folder() {
 	return get_template_directory_uri() . '/assets';
@@ -20,7 +23,7 @@ function get_pages_folder() {
 }
 
 function get_versions_folder() {
-	return '/versions';
+	return get_template_directory_uri() . '/versions';
 }
 
 function get_stylesheet_folder() {

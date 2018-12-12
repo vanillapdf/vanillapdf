@@ -2,47 +2,16 @@
 <html lang="en">
   <head>
     <!-- Meta tags -->
-    <meta charset="utf-8">
-<meta name="author" content="Vanilla.PDF Labs">
-<meta name="robots" content="index,follow">
-<meta name="description" content="Brief bio about company history, project aim and future expansion.">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-<title>Vanilla.PDF - About</title>
-
-<meta property="og:title" content="Vanilla.PDF - About">
-<meta property="og:description" content="Brief bio about company history, project aim and future expansion.">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Vanilla.PDF - About">
-
-<meta name="apple-mobile-web-app-title" content="Vanilla.PDF - About">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-
-<link rel="canonical" href="https://vanillapdf.com/about.php" />
+    {% include 'meta.html' %}
 
     <!-- Styles -->
-    <link href="../assets/css/page.min.css" rel="stylesheet">
-<link href="../assets/css/style.css" rel="stylesheet">
-<link href="../assets/css/custom.css" rel="stylesheet">
+    {% include 'styles.html' %}
 
     <!-- Favicons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="../assets/img/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="16x16" href="../assets/img/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32x32.png">
-<link rel="shortcut icon" href="../assets/img/favicon.ico">
+    {% include 'favicons.html' %}
 
     <!-- Google Analytics -->
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-106797397-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-106797397-1');
-</script>
-
+    {% include 'google_analytics.html' %}
   </head>
 
   <body>
@@ -52,13 +21,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark" data-navbar="fixed">
       <div class="container">
 
-        <div class="navbar-left">
-  <button class="navbar-toggler" type="button">&#9776;</button>
-  <a class="navbar-brand" href="../index.html#home">
-	<img class="logo-dark" src="../assets/img/logo/vanilla-black.png" alt="Vanilla.PDF logo">
-	<img class="logo-light" src="../assets/img/logo/vanilla-white.png" alt="Vanilla.PDF logo">
-  </a>
-</div>
+        {% include 'navbar-left.html' %}
 
         <section class="navbar-mobile">
           <nav class="nav nav-navbar ml-auto">
@@ -76,7 +39,7 @@
       <div class="container text-center">
 	    <div class="row">
 		  <div class="col-md-8 mx-auto">
-		    <img src="../assets/img/logo/vanilla-gold-large.png" alt="Vanilla.PDF gold large" width="450">
+		    <img src="{{ assets_folder }}img/logo/vanilla-gold-large.png" alt="Vanilla.PDF gold large" width="450">
             <p class="lead-2 mt-6">Brief bio about company history, project aim and future expansion</p>
 		  </div>
 		</div>
@@ -128,7 +91,7 @@
 			</ul>
 			<p>The <span class="text-quoted">blank</span> meaning fits quite well with our application, because it literally allows you to create blank PDF files - which other toolkits often doesn't.</p>
 			<p>With the name in mind, it was the right time to focus on public profile, such as logos and website. Luckily, we have found a very creative graphic designer, who took a good care of the product appearance.</p>
-			<p>If you'd like to know more about the company or simply anything regarding our portfolio, we would love to hear from you! Please visit section <a href="contact.php?section=section-contact">Contact us</a>.</p>
+			<p>If you'd like to know more about the company or simply anything regarding our portfolio, we would love to hear from you! Please visit section <a href="{{ pages_folder }}{{ contact_page }}?section=section-contact">Contact us</a>.</p>
           </div>
 		  
 		  <div class="col-md-5 ml-auto">
@@ -247,48 +210,12 @@
 
 	<!-- Footer -->
 	<footer id="footer" class="footer py-7">
-		<div class="container">
-  <div class="row">
-
-	<div class="col-12">
-	  <p><a href="../index.html#home"><img src="../assets/img/logo/vanilla-black.png" alt="logo"></a></p>
-	</div>
-
-	<div class="col-xl-5">
-	  <p>Vanilla.PDF can help you create more awesome products and services. In case of any questions, we would love to hear your feedback!</p>
-	</div>
-
-	<div class="col-4 col-xl-2 offset-xl-1">
-	  <div class="nav flex-column">
-		<a class="nav-link lead" href="about.php">About</a>
-		<a class="nav-link lead" href="contact.php">Contact</a>
-		<a class="nav-link lead" href="download.html">Download</a>
-	  </div>
-	</div>
-
-	<div class="col-4 col-xl-2">
-	  <div class="nav flex-column">
-		<a class="nav-link lead" href="faq.html">FAQ</a>
-		<a class="nav-link lead" href="licenses.html">EULA</a>
-	  </div>
-	</div>
-
-	<div class="col-4 col-xl-2">
-	  <div class="nav flex-column">
-		<a class="nav-link lead" href="/versions/0.1.0-alpha/doc/index.html">Tutorial</a>
-		<a class="nav-link lead" href="/versions/0.1.0-alpha/doc/hierarchy.html">API reference</a>
-		<a class="nav-link lead" href="/versions/0.1.0-alpha/doc/page_examples.html">Examples</a>
-	  </div>
-	</div>
-
-  </div>
-</div>
+		{% include 'footer.html' %}
 	</footer><!-- /.footer -->
 
 
     <!-- Scripts -->
-    <script src="../assets/js/page.min.js"></script>
-<script src="../assets/js/script.js"></script>
+    {% include 'scripts.html' %}
 
   </body>
 </html>
