@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-      <!-- Meta tags -->
-    {% include 'meta.html' %}
+  <?php
+		const PAGE_TITLE = 'Vanilla.PDF - Checkout';
+		const PAGE_DESCRIPTION = "Review your billing address before submitting the request.";
+		
+		// Extra scripts
+		add_action('wp_enqueue_scripts', function() {
+			wp_enqueue_script('js-checkout', get_assets_folder() . '/js/checkout.js');
+		});
 
-    <!-- Styles -->
-    {% include 'styles.html' %}
-
-    <!-- Favicons -->
-    {% include 'favicons.html' %}
-
-    <!-- Google Analytics -->
-    {% include 'google_analytics.html' %}
+		// Wordpress head
+		wp_head();
+	?>
   </head>
 
   <body>
@@ -21,7 +22,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark" data-navbar="fixed">
       <div class="container">
 
-        {% include 'navbar-left.html' %}
+        <?php get_template_part('inc/navbar-left'); ?>
 
         <section class="navbar-mobile">
           <nav class="nav nav-navbar ml-auto">
@@ -59,7 +60,7 @@
 			<div class="col-11 col-lg-6 mx-auto">
 			
 				<?php
-					$tax_percent = {{ TAX_PERCENTAGE }};
+					$tax_percent = TAX_PERCENTAGE;
 					
 					if (!isset($tax_percent)) {
 						trigger_error("Tax is not set", E_USER_ERROR);
@@ -73,14 +74,14 @@
 					$support_price;
 					
 					if ($_POST['product'] == 'personal-license') {
-						$product_name = '{{ PERSONAL_LICENSE_DESCRIPTION }}';
-						$product_price = {{ PERSONAL_LICENSE_PRICE }};
+						$product_name = PERSONAL_LICENSE_DESCRIPTION;
+						$product_price = PERSONAL_LICENSE_PRICE;
 						$product_personal = true;
 					}
 					
 					if ($_POST['product'] == 'commercial-license') {
-						$product_name = '{{ COMMERCIAL_LICENSE_DESCRIPTION }}';
-						$product_price = {{ COMMERCIAL_LICENSE_PRICE }};
+						$product_name = COMMERCIAL_LICENSE_DESCRIPTION;
+						$product_price = COMMERCIAL_LICENSE_PRICE;
 					}
 					
 					if (!isset($product_name)) {
@@ -95,9 +96,9 @@
 						$support_name = '1 Year';
 						
 						if ($product_personal === true) {
-							$support_price = {{ PERSONAL_ONE_YEAR_SUPPORT_PRICE }};
+							$support_price = PERSONAL_ONE_YEAR_SUPPORT_PRICE;
 						} else {
-							$support_price = {{ COMMERCIAL_ONE_YEAR_SUPPORT_PRICE }};
+							$support_price = COMMERCIAL_ONE_YEAR_SUPPORT_PRICE;
 						}
 					}
 					
@@ -105,9 +106,9 @@
 						$support_name = '2 Year';
 						
 						if ($product_personal === true) {
-							$support_price = {{ PERSONAL_TWO_YEAR_SUPPORT_PRICE }};
+							$support_price = PERSONAL_TWO_YEAR_SUPPORT_PRICE;
 						} else {
-							$support_price = {{ COMMERCIAL_TWO_YEAR_SUPPORT_PRICE }};
+							$support_price = COMMERCIAL_TWO_YEAR_SUPPORT_PRICE;
 						}
 					}
 					
@@ -115,9 +116,9 @@
 						$support_name = '3 Year';
 						
 						if ($product_personal === true) {
-							$support_price = {{ PERSONAL_THREE_YEAR_SUPPORT_PRICE }};
+							$support_price = PERSONAL_THREE_YEAR_SUPPORT_PRICE;
 						} else {
-							$support_price = {{ COMMERCIAL_THREE_YEAR_SUPPORT_PRICE }};
+							$support_price = COMMERCIAL_THREE_YEAR_SUPPORT_PRICE;
 						}
 					}
 					
@@ -143,8 +144,8 @@
                       </div>
                   
                       <div class="text-right">
-					    <p><?= $product_price ?>{{ CURRENCY }}</p>
-					    <p><?= $support_price ?>{{ CURRENCY }}</p>
+					    <p><?= $product_price . PRICE_CURRENCY_SYMBOL ?></p>
+					    <p><?= $support_price . PRICE_CURRENCY_SYMBOL ?></p>
                       </div>
                     </div>
                   
@@ -156,7 +157,7 @@
                       </div>
                   
                       <div class="text-right">
-                        <p id="total-price" class="fw-600"><?= $total ?> {{ CURRENCY }}</p>
+                        <p id="total-price" class="fw-600"><?= $total . PRICE_CURRENCY_SYMBOL ?></p>
                       </div>
                     </div>
                   </div>
@@ -240,22 +241,22 @@
 				  
 				  <div id="success-message" class="alert alert-success d-on-success" style="display: none">We received your order and will contact you back soon.</div>
 				  
-				  <form id="form-back" action="{{ pages_folder }}{{ order_page }}" method="POST">
+				  <form id="form-back" action="<?php echo get_pages_folder() . '/' . PAGE_ORDER; ?>" method="POST">
 					<?php foreach( $_POST as $key => $val ): ?>
 						<input type="hidden" name="<?= htmlspecialchars($key, ENT_COMPAT, 'UTF-8') ?>" value="<?= htmlspecialchars($val, ENT_COMPAT, 'UTF-8') ?>">
 					<?php endforeach; ?>
 				  </form>
 				  
-				  <form id="form-checkout" action="{{ assets_folder }}php/sendmail.php" method="POST" data-form="custom-mailer">
+				  <form id="form-checkout" action="<?php echo get_assets_folder(); ?>/php/sendmail.php" method="POST" data-form="custom-mailer">
 					<div class="alert alert-success d-on-success">We received your message and will contact you back soon.</div>
 					
 					<?php foreach( $_POST as $key => $val ): ?>
 						<input type="hidden" name="<?= htmlspecialchars($key, ENT_COMPAT, 'UTF-8') ?>" value="<?= htmlspecialchars($val, ENT_COMPAT, 'UTF-8') ?>">
 					<?php endforeach; ?>
 					
-					<input type="hidden" name="product-price" value="<?= $product_price ?>{{ CURRENCY }}">
-					<input type="hidden" name="support-price" value="<?= $support_price ?>{{ CURRENCY }}">
-					<input type="hidden" name="total-price" value="<?= $total ?>{{ CURRENCY }}">
+					<input type="hidden" name="product-price" value="<?= $product_price . PRICE_CURRENCY_SYMBOL ?>">
+					<input type="hidden" name="support-price" value="<?= $support_price . PRICE_CURRENCY_SYMBOL ?>">
+					<input type="hidden" name="total-price" value="<?= $total . PRICE_CURRENCY_SYMBOL ?>">
 					
 					<div id="recaptcha" class="text-center w-75 d-block mx-auto p-5" data-provide="recaptcha" data-callback="EnableOrder">
 					</div>
@@ -272,7 +273,7 @@
                   </div>
 				  
 				  <div id="return-home" class="row" style="display: none;">
-				    <a class="btn btn-block btn-primary" href="{{ index_file }}#home">Return to home page <i class="ti-angle-right fs-9"></i></a>
+				    <a class="btn btn-block btn-primary" href="<?php echo get_home_url(); ?>">Return to home page <i class="ti-angle-right fs-9"></i></a>
 				  </div>
 
 			</div>
@@ -286,12 +287,11 @@
 
 	<!-- Footer -->
 	<footer id="footer" class="footer py-7">
-		{% include 'footer.html' %}
+		<?php get_template_part( 'inc/footer' ); ?>
 	</footer><!-- /.footer -->
 
     <!-- Scripts -->
-    {% include 'scripts.html' %}
-	<script src="{{ assets_folder }}js/checkout.js"></script>
+	<?php wp_footer(); ?>
 
   </body>
 </html>

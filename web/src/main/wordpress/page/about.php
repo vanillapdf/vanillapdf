@@ -1,17 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Meta tags -->
-    {% include 'meta.html' %}
+  <?php
+		const PAGE_TITLE = 'Vanilla.PDF - About';
+		const PAGE_DESCRIPTION = 'Brief bio about company history, project aim and future expansion.';
 
-    <!-- Styles -->
-    {% include 'styles.html' %}
-
-    <!-- Favicons -->
-    {% include 'favicons.html' %}
-
-    <!-- Google Analytics -->
-    {% include 'google_analytics.html' %}
+		// Wordpress head
+		wp_head();
+	?>
   </head>
 
   <body>
@@ -21,7 +17,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark" data-navbar="fixed">
       <div class="container">
 
-        {% include 'navbar-left.html' %}
+        <?php get_template_part('inc/navbar-left'); ?>
 
         <section class="navbar-mobile">
           <nav class="nav nav-navbar ml-auto">
@@ -210,12 +206,12 @@
 
 	<!-- Footer -->
 	<footer id="footer" class="footer py-7">
-		{% include 'footer.html' %}
+		<?php get_template_part( 'inc/footer' ); ?>
 	</footer><!-- /.footer -->
 
 
     <!-- Scripts -->
-    {% include 'scripts.html' %}
+	<?php wp_footer(); ?>
 
   </body>
 </html>

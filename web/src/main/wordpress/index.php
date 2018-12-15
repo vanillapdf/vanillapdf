@@ -2,11 +2,20 @@
 <html lang="en">
   <head>
   <?php
+		const PAGE_TITLE = 'Vanilla.PDF - SDK for creating and modifying PDF documents';
+		const PAGE_DESCRIPTION = 'Integration is very easy with pre-packaged binaries for multiple operating systems such as Windows, Linux and Mac.';
+		
 		// Extra styles
 		add_action('wp_enqueue_scripts', function() {
 			wp_enqueue_style( 'main-page', get_assets_folder() . '/css/main_page.css');
 		});
 		
+		// Extra scripts
+		add_action('wp_enqueue_scripts', function() {
+			wp_enqueue_script('js-subscribe', get_assets_folder() . '/js/subscribe.js');
+			wp_enqueue_script('js-navbar', get_assets_folder() . '/js/custom_navbar.js');
+		});
+
 		// Wordpress head
 		wp_head();
 	?>
@@ -19,7 +28,7 @@
     <nav class="navbar navbar-expand-lg navbar-light" data-navbar="fixed">
       <div class="container">
 
-        <?php get_template_part( 'inc/navbar-left' ); ?>
+        <?php get_template_part('inc/navbar-left'); ?>
 
         <section class="navbar-mobile">
           <nav class="nav nav-navbar ml-auto">
@@ -257,7 +266,7 @@
                   <p class="mb-7"><i class="fa fa-user lead-8 text-dark"></i></p>
                   <h6 class="text-uppercase fw-500 ls-2 my-4">Personal</h6>
                   <p class="lead">Personal license for creating private tools</p>
-                  <h2 id="personal-price" class="lead-8 fw-200 mb-0">{{ PERSONAL_LICENSE_WITH_SUPPORT_PRICE }}<?php echo PRICE_CURRENCY_SYMBOL; ?></h2>
+                  <h2 id="personal-price" class="lead-8 fw-200 mb-0"><?php echo (PERSONAL_LICENSE_PRICE + PERSONAL_ONE_YEAR_SUPPORT_PRICE) . PRICE_CURRENCY_SYMBOL; ?></h2>
                   <p class="small-2">One-time fee</p>
 
                   <div class="btn-group dropdown">
@@ -295,7 +304,7 @@
 				  <p class="mb-7"><i class="fa fa-line-chart lead-8 text-dark"></i></p>
 				  <h6 class="text-uppercase fw-500 ls-2 my-4">Commercial OEM</h6>
 				  <p class="lead">Commercial license for creating public products</p>
-				  <h2 id="commercial-price" class="lead-8 fw-200 mb-0">{{ COMMERCIAL_LICENSE_WITH_SUPPORT_PRICE }}<?php echo PRICE_CURRENCY_SYMBOL; ?></h2>
+				  <h2 id="commercial-price" class="lead-8 fw-200 mb-0"><?php echo (COMMERCIAL_LICENSE_PRICE + COMMERCIAL_ONE_YEAR_SUPPORT_PRICE) .  PRICE_CURRENCY_SYMBOL; ?></h2>
 				  <p class="small-2">One-time fee</p>
 				  
 					<div class="dropdown">
@@ -439,7 +448,6 @@
 
     </main><!-- /.main-content -->
 
-
 	<!-- Footer -->
 	<footer id="footer" class="footer py-7">
 		<?php get_template_part( 'inc/footer' ); ?>
@@ -451,15 +459,12 @@
 
 
     <!-- Scripts -->
-	<?php get_template_part( 'inc/scripts' ); ?>
-	
-	<script src="<?php echo get_assets_folder(); ?>/js/price_constants.js"></script>
-	<script src="<?php echo get_assets_folder(); ?>/js/subscribe.js"></script>
-	<script src="<?php echo get_assets_folder(); ?>/js/custom_navbar.js"></script>
-	
 	<script>
+		<?php get_template_part( 'inc/price_constants' ); ?>
 		<?php get_template_part( 'inc/pricing' ); ?>
 	</script>
+	
+	<?php wp_footer(); ?>
 
   </body>
 </html>

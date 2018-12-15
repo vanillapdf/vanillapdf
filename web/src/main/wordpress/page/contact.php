@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-      <!-- Meta tags -->
-    {% include 'meta.html' %}
+  <?php
+		const PAGE_TITLE = 'Vanilla.PDF - Contact information';
+		const PAGE_DESCRIPTION = "Here are the ways you can contact us with any questions you have.";
+		
+				// Extra scripts
+		add_action('wp_enqueue_scripts', function() {
+			wp_enqueue_script('js-contact', get_assets_folder() . '/js/contact.js');
+			wp_enqueue_script('js-mailer', get_assets_folder() . '/js/custom_mailer.js');
+		});
 
-    <!-- Styles -->
-    {% include 'styles.html' %}
-
-    <!-- Favicons -->
-    {% include 'favicons.html' %}
-
-    <!-- Google Analytics -->
-    {% include 'google_analytics.html' %}
+		// Wordpress head
+		wp_head();
+	?>
   </head>
 
   <body>
@@ -21,7 +23,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark" data-navbar="fixed">
       <div class="container">
 
-        {% include 'navbar-left.html' %}
+        <?php get_template_part('inc/navbar-left'); ?>
 
         <section class="navbar-mobile">
           <nav class="nav nav-navbar ml-auto">
@@ -106,7 +108,7 @@
 		  <div class="row gap-y">
 			<div class="col-md-6">
 
-			  <form action="{{ assets_folder }}php/sendmail.php" method="POST" data-form="custom-mailer">
+			  <form action="<?php echo get_assets_folder(); ?>/php/sendmail.php" method="POST" data-form="custom-mailer">
 				<div class="alert alert-success d-on-success">We received your message and will contact you back soon.</div>
 
 				<div class="form-group">
@@ -138,7 +140,7 @@
 
 
 			<!-- Contact address -->
-			{% include 'contact_address.html' %}
+			<?php get_template_part('inc/contact_address'); ?>
 		  </div>
 
 
@@ -162,7 +164,7 @@
 		  <div class="row gap-y">
 			<div class="col-md-6">
 
-			  <form action="{{ assets_folder }}php/sendmail.php" method="POST" data-form="custom-mailer">
+			  <form action="<?php echo get_assets_folder(); ?>/php/sendmail.php" method="POST" data-form="custom-mailer">
 				<div class="alert alert-success d-on-success">We received your message and will contact you back soon.</div>
 
 				<div class="form-group">
@@ -223,7 +225,7 @@
 			</div>
 			
 			<!-- Contact address -->
-			{% include 'contact_address.html' %}
+			<?php get_template_part('inc/contact_address'); ?>
 		  </div>
 
 
@@ -247,7 +249,7 @@
 		  <div class="row gap-y">
 			<div class="col-md-6">
 
-			  <form action="{{ assets_folder }}php/sendmail.php" method="POST" data-form="custom-mailer">
+			  <form action="<?php echo get_assets_folder(); ?>/php/sendmail.php" method="POST" data-form="custom-mailer">
 				<div class="alert alert-success d-on-success">We received your message and will contact you back soon.</div>
 
 				<div class="form-group">
@@ -288,7 +290,7 @@
 			</div>
 			
 			<!-- Contact address -->
-			{% include 'contact_address.html' %}
+			<?php get_template_part('inc/contact_address'); ?>
 		  </div>
 
 
@@ -312,7 +314,7 @@
 		  <div class="row gap-y">
 			<div class="col-md-6">
 
-			  <form action="{{ assets_folder }}php/sendmail.php" method="POST" data-form="custom-mailer" enctype="multipart/form-data">
+			  <form action="<?php echo get_assets_folder(); ?>/php/sendmail.php" method="POST" data-form="custom-mailer" enctype="multipart/form-data">
 				<div class="alert alert-success d-on-success">We received your message and will contact you back soon.</div>
 				
 				<div class="form-group">
@@ -375,7 +377,7 @@
 			</div>
 			
 			<!-- Contact address -->
-			{% include 'contact_address.html' %}
+			<?php get_template_part('inc/contact_address'); ?>
 		  </div>
 
 
@@ -387,13 +389,11 @@
 
 	<!-- Footer -->
 	<footer id="footer" class="footer py-7">
-		{% include 'footer.html' %}
+		<?php get_template_part( 'inc/footer' ); ?>
 	</footer><!-- /.footer -->
 
     <!-- Scripts -->
-    {% include 'scripts.html' %}
-	<script src="{{ assets_folder }}js/contact.js"></script>
-	<script src="{{ assets_folder }}js/custom_mailer.js"></script>
+	<?php wp_footer(); ?>
 	
 	<?php
 		$section = null;

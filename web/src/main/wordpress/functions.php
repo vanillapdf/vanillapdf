@@ -12,7 +12,22 @@ const PAGE_FAQ = 'faq.php';
 const PAGE_ORDER = 'order.php';
 const PAGE_INDEX = 'index.php';
 
+const TAX_PERCENTAGE = 19;
 const PRICE_CURRENCY_SYMBOL = '&euro;';
+
+const PERSONAL_LICENSE_DESCRIPTION =		'Vanilla.PDF Personal license';
+const COMMERCIAL_LICENSE_DESCRIPTION =		'Vanilla.PDF Commercial OEM license';
+const PERSONAL_SUPPORT_DESCRIPTION =		'Vanilla.PDF Extended personal support';
+const COMMERCIAL_SUPPORT_DESCRIPTION =		'Vanilla.PDF Extended commercial support';
+
+const PERSONAL_LICENSE_PRICE =				10 - 1;
+const PERSONAL_ONE_YEAR_SUPPORT_PRICE =		40 - 1;
+const PERSONAL_TWO_YEAR_SUPPORT_PRICE =		2 * (24 - 1);
+const PERSONAL_THREE_YEAR_SUPPORT_PRICE =	3 * (19 - 1);
+const COMMERCIAL_LICENSE_PRICE =			110 - 1;
+const COMMERCIAL_ONE_YEAR_SUPPORT_PRICE =	300 - 1;
+const COMMERCIAL_TWO_YEAR_SUPPORT_PRICE =	2 * (180 - 1);
+const COMMERCIAL_THREE_YEAR_SUPPORT_PRICE =	3 * (140 - 1);
 
 function get_assets_folder() {
 	return get_template_directory_uri() . '/assets';
@@ -52,6 +67,9 @@ function vanillapdf_scripts() {
 	wp_enqueue_style( 'template-page', get_stylesheet_folder() . '/page.min.css');
 	wp_enqueue_style( 'template-style', get_stylesheet_folder() . '/style.min.css');
 	wp_enqueue_style( 'template-custom', get_stylesheet_folder() . '/custom.css');
+	
+	wp_enqueue_script('js-page', get_assets_folder() . '/js/page.min.js');
+	wp_enqueue_script('js-script', get_assets_folder() . '/js/script.js');
 
 }
 add_action( 'wp_enqueue_scripts', 'vanillapdf_scripts' );
@@ -67,23 +85,24 @@ function vanillapdf_favicons() {
 add_action('wp_head', 'vanillapdf_favicons');
 
 function vanillapdf_meta() {
-	$title = get_the_title();
+	$title = PAGE_TITLE;
+	$description = PAGE_DESCRIPTION;
 	
 	echo '<!-- Meta tags -->' . "\n";
 	echo '<meta charset="utf-8">' . "\n";
 	echo '<meta name="author" content="Vanilla.PDF Labs">' . "\n";
 	echo '<meta name="robots" content="index,follow">' . "\n";
-	echo '<meta name="description" content="{{ DESCRIPTION }}">' . "\n";
+	echo '<meta name="description" content="' . $description . '">' . "\n";
 	echo '<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">' . "\n";
 
 	echo '<title>' . $title . '</title>' . "\n";
 
-	echo '<meta property="og:title" content="{{ TITLE }}">' . "\n";
-	echo '<meta property="og:description" content="{{ DESCRIPTION }}">' . "\n";
+	echo '<meta property="og:title" content="' . $title . '">' . "\n";
+	echo '<meta property="og:description" content="' . $description . '">' . "\n";
 	echo '<meta property="og:type" content="website">' . "\n";
-	echo '<meta property="og:site_name" content="{{ TITLE }}">' . "\n";
+	echo '<meta property="og:site_name" content="' . $title . '">' . "\n";
 
-	echo '<meta name="apple-mobile-web-app-title" content="{{ TITLE }}">' . "\n";
+	echo '<meta name="apple-mobile-web-app-title" content="' . $title . '">' . "\n";
 	echo '<meta name="apple-mobile-web-app-capable" content="yes">' . "\n";
 	echo '<meta name="mobile-web-app-capable" content="yes">' . "\n";
 

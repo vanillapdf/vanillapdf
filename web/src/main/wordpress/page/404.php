@@ -1,17 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Meta tags -->
-    {% include 'meta.html' %}
+  <?php
+		const PAGE_TITLE = 'Vanilla.PDF - Page not found';
+		const PAGE_DESCRIPTION = "Seems you're looking for something that doesn't exist.";
 
-    <!-- Styles -->
-    {% include 'styles.html' %}
-
-    <!-- Favicons -->
-    {% include 'favicons.html' %}
-
-    <!-- Google Analytics -->
-    {% include 'google_analytics.html' %}
+		// Wordpress head
+		wp_head();
+	?>
   </head>
 
   <body class="layout-centered bg-gray">
@@ -25,14 +21,13 @@
         <p class="lead">Seems you're looking for something that doesn't exist.</p>
         <br>
         <button class="btn btn-secondary w-150 mr-2" type="button" onclick="window.history.back();">Go back</button>
-        <a class="btn btn-secondary w-150" href="{{ index_file }}#home">Return Home</a>
+        <a class="btn btn-secondary w-150" href="<?php echo get_home_url(); ?>">Return Home</a>
 
       </div>
     </main><!-- /.main-content -->
 
-
-    <!-- Scripts -->
-    {% include 'scripts.html' %}
+	<!-- Scripts -->
+	<?php wp_footer(); ?>
 
   </body>
 </html>
