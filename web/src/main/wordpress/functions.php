@@ -48,10 +48,6 @@ function get_assets_folder() {
 	return get_template_directory_uri() . '/assets';
 }
 
-function get_pages_folder() {
-	return get_template_directory_uri();
-}
-
 function get_versions_folder() {
 	return get_assets_folder() . '/versions';
 }
@@ -68,7 +64,9 @@ function get_template_page($template_name) {
 
 	foreach ($pages as &$current_page) {
 		if ($current_page->post_name == $template_name) {
-			return get_page_link($current_page->ID);
+			$page_id = $current_page->ID;
+			$page_link = get_page_link($page_id);
+			return rtrim($page_link, '/');
 		}
 	}
 
@@ -136,8 +134,7 @@ function vanillapdf_meta() {
 	echo '<meta name="apple-mobile-web-app-capable" content="yes">' . "\n";
 	echo '<meta name="mobile-web-app-capable" content="yes">' . "\n";
 
-	//echo '<link rel="canonical" href="{{ BASE_URL }}{{ FILENAME }}" />' . "\n";
-
+	// echo '<link rel="canonical" href="{{ BASE_URL }}{{ FILENAME }}" />' . "\n";
 }
 
 add_action('wp_head', 'vanillapdf_meta');
