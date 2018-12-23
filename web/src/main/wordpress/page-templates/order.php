@@ -17,8 +17,8 @@
 
 		// Extra scripts
 		add_action('wp_enqueue_scripts', function() {
-			wp_enqueue_script('js-order', get_assets_folder() . '/js/order.js');
-			wp_enqueue_script('js-mailer', get_assets_folder() . '/js/custom_mailer.js');
+			wp_enqueue_script('js-order', get_assets_folder() . '/js/order.js', null, null, true);
+			wp_enqueue_script('js-mailer', get_assets_folder() . '/js/custom_mailer.js', null, null, true);
 		});
 
 		// Wordpress head

@@ -17,7 +17,7 @@
 		
 		// Extra scripts
 		add_action('wp_enqueue_scripts', function() {
-			wp_enqueue_script('js-checkout', get_assets_folder() . '/js/checkout.js');
+			wp_enqueue_script('js-checkout', get_assets_folder() . '/js/checkout.js', null, null, true);
 		});
 
 		// Wordpress head
