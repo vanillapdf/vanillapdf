@@ -14,7 +14,7 @@ $(document).ready(function() {
 });
 
 /* Orders */
-var ORDER_URL = '<?php echo get_pages_folder() . '/' . PAGE_ORDER; ?>';
+var ORDER_URL = '<?php echo get_template_page(PAGE_ORDER); ?>';
 
 var PERSONAL_LICENSE_ID					= 'personal-license';
 var PERSONAL_SUPPORT_ID					= 'personal-support';

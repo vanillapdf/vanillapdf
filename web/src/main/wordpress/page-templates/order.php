@@ -87,10 +87,10 @@
 				
 				<div class="form-group">
 				  <select id="order-product" name="product" class="form-control" onchange="ProductChanged();">
-				    <option value="personal-license" <?php if ($_POST['product'] == 'personal-license') { echo 'selected="selected"'; } ?><?php echo PERSONAL_LICENSE_DESCRIPTION ?></option>
-				    <option value="commercial-license" <?php if ($_POST['product'] == 'commercial-license') { echo 'selected="selected"'; } ?> ><?php echo COMMERCIAL_LICENSE_DESCRIPTION ?></option>
-					<option value="personal-support" <?php if ($_POST['product'] == 'personal-support') { echo 'selected="selected"'; } ?> ><?php echo PERSONAL_SUPPORT_DESCRIPTION ?></option>
-					<option value="commercial-support" <?php if ($_POST['product'] == 'commercial-support') { echo 'selected="selected"'; } ?> ><?php echo COMMERCIAL_SUPPORT_DESCRIPTION ?></option>
+				    <option value="personal-license" <?php if ($_POST['product'] == 'personal-license') { echo 'selected="selected"'; } ?> ><?php echo PERSONAL_LICENSE_DESCRIPTION; ?></option>
+				    <option value="commercial-license" <?php if ($_POST['product'] == 'commercial-license') { echo 'selected="selected"'; } ?> ><?php echo COMMERCIAL_LICENSE_DESCRIPTION; ?></option>
+					<option value="personal-support" <?php if ($_POST['product'] == 'personal-support') { echo 'selected="selected"'; } ?> ><?php echo PERSONAL_SUPPORT_DESCRIPTION; ?></option>
+					<option value="commercial-support" <?php if ($_POST['product'] == 'commercial-support') { echo 'selected="selected"'; } ?> ><?php echo COMMERCIAL_SUPPORT_DESCRIPTION; ?></option>
 				  </select>
 				</div>
 				

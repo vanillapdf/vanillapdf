@@ -37,7 +37,7 @@ generic_context = {
 	'checkout_page': 'checkout.php',
 	'licenses_page': 'licenses.html',
 	
-	'LATEST_VERSION': '0.1.0-alpha',
+	'LATEST_VERSION': '0.1.0',
 	'PREVIOUS_VERSION': '0.0.0',
 	
 	'CURRENCY': '&euro;',

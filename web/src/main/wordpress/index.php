@@ -29,8 +29,7 @@
 		
 		// Extra scripts
 		add_action('wp_enqueue_scripts', function() {
-			wp_enqueue_script('js-subscribe', get_assets_folder() . '/js/subscribe.js');
-			wp_enqueue_script('js-navbar', get_assets_folder() . '/js/custom_navbar.js');
+			wp_enqueue_script('js-navbar', get_assets_folder() . '/js/custom_navbar.js', null, null, true);
 		});
 
 		// Wordpress head
@@ -476,12 +475,13 @@
 
 
     <!-- Scripts -->
+	<?php wp_footer(); ?>
+	
 	<script>
+		<?php get_template_part( 'inc/subscribe' ); ?>
 		<?php get_template_part( 'inc/price_constants' ); ?>
 		<?php get_template_part( 'inc/pricing' ); ?>
 	</script>
-	
-	<?php wp_footer(); ?>
 
   </body>
 </html>

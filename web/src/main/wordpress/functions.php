@@ -16,7 +16,7 @@
  * @since Vanilla.PDF 1.0
  */
 
-const LATEST_VERSION = '0.0.1-alpha';
+const LATEST_VERSION = '0.1.0';
 
 const PAGE_DOWNLOAD = 'download';
 const PAGE_CONTACT = 'contact';
@@ -24,6 +24,7 @@ const PAGE_ABOUT = 'about';
 const PAGE_LICENSES = 'licenses';
 const PAGE_FAQ = 'faq';
 const PAGE_ORDER = 'order';
+const PAGE_CHECKOUT = 'checkout';
 const PAGE_INDEX = 'index';
 
 const TAX_PERCENTAGE = 19;
@@ -52,7 +53,7 @@ function get_pages_folder() {
 }
 
 function get_versions_folder() {
-	return get_template_directory_uri() . '/versions';
+	return get_assets_folder() . '/versions';
 }
 
 function get_stylesheet_folder() {
@@ -60,25 +61,17 @@ function get_stylesheet_folder() {
 }
 
 function get_template_page($template_name) {
-    $url;
+	$pages = query_posts(array(
+		'post_type' =>'page',
+		'meta_key'  =>'_wp_page_template',
+	));
 
-    //Code which i need
-
-     $pages = query_posts(array(
-    'post_type' =>'page',
-    'meta_key'  =>'_wp_page_template',
-));
-
-    // cycle through $pages here and either grab the URL
-    // from the results or do get_page_link($id) with 
-    // the id of the page you want 
-	
 	foreach ($pages as &$current_page) {
 		if ($current_page->post_name == $template_name) {
 			return get_page_link($current_page->ID);
 		}
 	}
-	
+
 	throw new Exception('Could not find page: ' . $template_name);
 }
 
@@ -105,8 +98,8 @@ function vanillapdf_scripts() {
 	wp_enqueue_style( 'template-style', get_stylesheet_folder() . '/style.min.css');
 	wp_enqueue_style( 'template-custom', get_stylesheet_folder() . '/custom.css');
 	
-	wp_enqueue_script('js-page', get_assets_folder() . '/js/page.min.js');
-	wp_enqueue_script('js-script', get_assets_folder() . '/js/script.js');
+	wp_enqueue_script('js-page', get_assets_folder() . '/js/page.min.js', null, null, true);
+	wp_enqueue_script('js-script', get_assets_folder() . '/js/script.js', null, null, true);
 
 }
 add_action( 'wp_enqueue_scripts', 'vanillapdf_scripts' );
@@ -158,7 +151,6 @@ function vanillapdf_google_analytics() {
 	echo "gtag('js', new Date());" . "\n";
 	echo "gtag('config', 'UA-106797397-1');" . "\n";
 	echo '</script>' . "\n";
-
 }
 
 add_action('wp_head', 'vanillapdf_google_analytics');
