@@ -251,7 +251,7 @@
 				  
 				  <div id="success-message" class="alert alert-success d-on-success" style="display: none">We received your order and will contact you back soon.</div>
 				  
-				  <form id="form-back" action="<?php echo get_pages_folder() . '/' . PAGE_ORDER; ?>" method="POST">
+				  <form id="form-back" action="<?php echo get_template_page(PAGE_ORDER); ?>" method="POST">
 					<?php foreach( $_POST as $key => $val ): ?>
 						<input type="hidden" name="<?= htmlspecialchars($key, ENT_COMPAT, 'UTF-8') ?>" value="<?= htmlspecialchars($val, ENT_COMPAT, 'UTF-8') ?>">
 					<?php endforeach; ?>
@@ -302,6 +302,10 @@
 
     <!-- Scripts -->
 	<?php wp_footer(); ?>
+	
+	<script>
+		<?php get_template_part( 'inc/subscribe' ); ?>
+	</script>
 
   </body>
 </html>
