@@ -1,17 +1,23 @@
+<?php
+/**
+ * Template Name: Licenses
+ 
+ * @package WordPress
+ * @subpackage Vanilla.PDF
+ * @since Vanilla.PDF 1.0
+ */
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Meta tags -->
-    {% include 'meta.html' %}
+  <?php
+		const PAGE_TITLE = 'Vanilla.PDF - Licenses';
+		const PAGE_DESCRIPTION = "Terms and conditions are a set of rules and guidelines, that a user must agree to in order to use the website.";
 
-    <!-- Styles -->
-    {% include 'styles.html' %}
-
-    <!-- Favicons -->
-    {% include 'favicons.html' %}
-
-    <!-- Google Analytics -->
-    {% include 'google_analytics.html' %}
+		// Wordpress head
+		wp_head();
+	?>
   </head>
 
   <body>
@@ -21,7 +27,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark" data-navbar="fixed">
       <div class="container">
 
-        {% include 'navbar-left.html' %}
+        <?php get_template_part('inc/navbar-left'); ?>
 
         <section class="navbar-mobile">
           <nav class="nav nav-navbar ml-auto">
@@ -65,8 +71,8 @@
           <div class="row h-90">
             <div class="col-md-10 mx-auto">
 			
-			  <object data="{{ assets_folder }}data/EULA.pdf" type="application/pdf" width="100%" height="100%">
-			    <p><b>Example fallback content</b>: This browser does not support PDFs. Please download the PDF to view it: <a href="{{ assets_folder }}data/EULA.pdf">Download PDF</a>.</p>
+			  <object data="<?php echo get_assets_folder(); ?>/data/EULA.pdf" type="application/pdf" width="100%" height="100%">
+			    <p><b>Example fallback content</b>: This browser does not support PDFs. Please download the PDF to view it: <a href="<?php echo get_assets_folder(); ?>/data/EULA.pdf">Download PDF</a>.</p>
 			  </object>
             </div>
           </div>
@@ -81,8 +87,8 @@
           <div class="row h-90">
             <div class="col-md-10 mx-auto">
 			
-			  <object data="{{ assets_folder }}data/terms_of_use.pdf" type="application/pdf" width="100%" height="100%">
-			    <p><b>Example fallback content</b>: This browser does not support PDFs. Please download the PDF to view it: <a href="{{ assets_folder }}data/terms_of_use.pdf">Download PDF</a>.</p>
+			  <object data="<?php echo get_assets_folder(); ?>/data/terms_of_use.pdf" type="application/pdf" width="100%" height="100%">
+			    <p><b>Example fallback content</b>: This browser does not support PDFs. Please download the PDF to view it: <a href="<?php echo get_assets_folder(); ?>/data/terms_of_use.pdf">Download PDF</a>.</p>
 			  </object>
             </div>
           </div>
@@ -94,12 +100,12 @@
 
 	<!-- Footer -->
 	<footer id="footer" class="footer py-7">
-		{% include 'footer.html' %}
+		<?php get_template_part( 'inc/footer' ); ?>
 	</footer><!-- /.footer -->
 
 
     <!-- Scripts -->
-    {% include 'scripts.html' %}
+	<?php wp_footer(); ?>
 
   </body>
 </html>

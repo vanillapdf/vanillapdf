@@ -1,17 +1,29 @@
+<?php
+/**
+ * Template Name: Order
+ 
+ * @package WordPress
+ * @subpackage Vanilla.PDF
+ * @since Vanilla.PDF 1.0
+ */
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Meta tags -->
-    {% include 'meta.html' %}
+  <?php
+		const PAGE_TITLE = 'Vanilla.PDF - Order';
+		const PAGE_DESCRIPTION = "Choose your favorite product and fill the billing details details.";
 
-    <!-- Styles -->
-    {% include 'styles.html' %}
+		// Extra scripts
+		add_action('wp_enqueue_scripts', function() {
+			wp_enqueue_script('js-order', get_assets_folder() . '/js/order.js');
+			wp_enqueue_script('js-mailer', get_assets_folder() . '/js/custom_mailer.js');
+		});
 
-    <!-- Favicons -->
-    {% include 'favicons.html' %}
-
-    <!-- Google Analytics -->
-    {% include 'google_analytics.html' %}
+		// Wordpress head
+		wp_head();
+	?>
   </head>
 
   <body>
@@ -21,7 +33,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark" data-navbar="fixed">
       <div class="container">
 
-        {% include 'navbar-left.html' %}
+        <?php get_template_part('inc/navbar-left'); ?>
 
         <section class="navbar-mobile">
           <nav class="nav nav-navbar ml-auto">
@@ -58,7 +70,7 @@
 		  <div class="row gap-y">
 			<div class="col-11 col-lg-6 mx-auto">
 
-			  <form id="order-form" action="{{ pages_folder }}{{ checkout_page }}" method="POST" data-form="custom-mailer">
+			  <form id="order-form" action="<?php echo get_template_page(PAGE_CHECKOUT); ?>" method="POST" data-form="custom-mailer">
 			  
 			    <h5 class="mb-6">Product details</h5>
 
@@ -75,10 +87,10 @@
 				
 				<div class="form-group">
 				  <select id="order-product" name="product" class="form-control" onchange="ProductChanged();">
-				    <option value="personal-license" <?php if ($_POST['product'] == 'personal-license') { echo 'selected="selected"'; } ?> >{{ PERSONAL_LICENSE_DESCRIPTION }}</option>
-				    <option value="commercial-license" <?php if ($_POST['product'] == 'commercial-license') { echo 'selected="selected"'; } ?> >{{ COMMERCIAL_LICENSE_DESCRIPTION }}</option>
-					<option value="personal-support" <?php if ($_POST['product'] == 'personal-support') { echo 'selected="selected"'; } ?> >{{ PERSONAL_SUPPORT_DESCRIPTION }}</option>
-					<option value="commercial-support" <?php if ($_POST['product'] == 'commercial-support') { echo 'selected="selected"'; } ?> >{{ COMMERCIAL_SUPPORT_DESCRIPTION }}</option>
+				    <option value="personal-license" <?php if ($_POST['product'] == 'personal-license') { echo 'selected="selected"'; } ?><?php echo PERSONAL_LICENSE_DESCRIPTION ?></option>
+				    <option value="commercial-license" <?php if ($_POST['product'] == 'commercial-license') { echo 'selected="selected"'; } ?> ><?php echo COMMERCIAL_LICENSE_DESCRIPTION ?></option>
+					<option value="personal-support" <?php if ($_POST['product'] == 'personal-support') { echo 'selected="selected"'; } ?> ><?php echo PERSONAL_SUPPORT_DESCRIPTION ?></option>
+					<option value="commercial-support" <?php if ($_POST['product'] == 'commercial-support') { echo 'selected="selected"'; } ?> ><?php echo COMMERCIAL_SUPPORT_DESCRIPTION ?></option>
 				  </select>
 				</div>
 				
@@ -154,14 +166,14 @@
 				
 				<div class="form-group custom-control custom-checkbox">
                   <input id="terms-conditions" name="terms-conditions" type="checkbox" class="custom-control-input" <?php if (isset($_POST['terms-conditions'])) { echo 'checked="checked"'; } ?> onchange="EnableProceed()" required>
-                  <label class="custom-control-label">I agree to the <a class="ml-1" href="{{ pages_folder }}{{ licenses_page }}">End-user license agreement</a></label>
+                  <label class="custom-control-label">I agree to the <a class="ml-1" href="<?php echo get_template_page(PAGE_LICENSES); ?>">End-user license agreement</a></label>
                 </div>
 
 				<input type="hidden" name="subject" value="Order">
 				
 				<div class="row">
 				  <div class="col-6">
-				    <a class="btn btn-block btn-secondary" href="{{ index_file }}#home"><i class="ti-angle-left fs-9"></i> Return to home</a>
+				    <a class="btn btn-block btn-secondary" href="<?php echo get_home_url(); ?>#home"><i class="ti-angle-left fs-9"></i> Return to home</a>
 				  </div>
                   <div class="col-6">
 				    <button id="btn-proceed" class="btn btn-primary btn-block" type="submit" disabled>Proceed <i class="ti-angle-right fs-9"></i></button>
@@ -180,13 +192,12 @@
 
 	<!-- Footer -->
 	<footer id="footer" class="footer py-7">
-		{% include 'footer.html' %}
+		<?php get_template_part( 'inc/footer' ); ?>
 	</footer><!-- /.footer -->
 
+
     <!-- Scripts -->
-    {% include 'scripts.html' %}
-	<script src="{{ assets_folder }}js/custom_mailer.js"></script>
-	<script src="{{ assets_folder }}js/order.js"></script>
+	<?php wp_footer(); ?>
 
   </body>
 </html>

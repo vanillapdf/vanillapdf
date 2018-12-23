@@ -1,3 +1,13 @@
+<?php
+/**
+ * Template Name: About
+ 
+ * @package WordPress
+ * @subpackage Vanilla.PDF
+ * @since Vanilla.PDF 1.0
+ */
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -35,7 +45,7 @@
       <div class="container text-center">
 	    <div class="row">
 		  <div class="col-md-8 mx-auto">
-		    <img src="{{ assets_folder }}img/logo/vanilla-gold-large.png" alt="Vanilla.PDF gold large" width="450">
+		    <img src="<?php echo get_assets_folder(); ?>/img/logo/vanilla-gold-large.png" alt="Vanilla.PDF gold large" width="450">
             <p class="lead-2 mt-6">Brief bio about company history, project aim and future expansion</p>
 		  </div>
 		</div>

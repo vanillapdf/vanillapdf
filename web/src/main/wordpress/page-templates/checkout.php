@@ -1,3 +1,13 @@
+<?php
+/**
+ * Template Name: Checkout
+ 
+ * @package WordPress
+ * @subpackage Vanilla.PDF
+ * @since Vanilla.PDF 1.0
+ */
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>

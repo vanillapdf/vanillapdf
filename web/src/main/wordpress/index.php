@@ -1,3 +1,20 @@
+<?php
+/**
+ * The main template file
+ *
+ * This is the most generic template file in a WordPress theme
+ * and one of the two required files for a theme (the other being style.css).
+ * It is used to display a page when nothing more specific matches a query.
+ * E.g., it puts together the home page when no home.php file exists.
+ *
+ * @link https://codex.wordpress.org/Template_Hierarchy
+ *
+ * @package WordPress
+ * @subpackage Vanilla.PDF
+ * @since Vanilla.PDF 1.0
+ */
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -166,7 +183,7 @@
 		  <div class="row gap-y">
 
             <div class="col-lg-3 d-flex">
-              <a class="card card-body border text-center hover-shadow-6 text-default" href="<?php echo get_pages_folder() . '/' . PAGE_DOWNLOAD; ?>">
+              <a class="card card-body border text-center hover-shadow-6 text-default" href="<?php echo get_template_page(PAGE_DOWNLOAD); ?>">
                 <p class="my-5"><i class="fa fa-download lead-8 text-lighter"></i></p>
                 <h5>Download</h5>
                 <p>Download the latest version</p>
@@ -207,7 +224,7 @@
 		  	<div class="mx-auto">
               <h5>Missing something?</h5>
 			  <div class="pt-4">
-			    <a class="btn btn-lg btn-round btn-secondary" href="<?php echo get_pages_folder() . '/' . PAGE_CONTACT; ?>?section=section-contact">Contact us</a>
+			    <a class="btn btn-lg btn-round btn-secondary" href="<?php echo get_template_page(PAGE_CONTACT); ?>?section=section-contact">Contact us</a>
 			  </div>
             </div>
 		  </div>
@@ -254,8 +271,8 @@
                 </div>
 				
 				<div class="text-center px-4 py-6">
-				  <a class="btn btn-outline-primary btn-round w-200" href="<?php echo get_pages_folder() . '/' . PAGE_DOWNLOAD; ?>">Download</a>
-				  <p>or <a href="<?php echo get_pages_folder() . '/' . PAGE_CONTACT; ?>?section=section-license">Get a temporary license</a></p>
+				  <a class="btn btn-outline-primary btn-round w-200" href="<?php echo get_template_page(PAGE_DOWNLOAD); ?>">Download</a>
+				  <p>or <a href="<?php echo get_template_page(PAGE_CONTACT); ?>?section=section-license">Get a temporary license</a></p>
 				</div>
               </div>
             </div>
@@ -291,8 +308,8 @@
                 </div>
 				
 				<div class="text-center px-4 py-6">
-				  <a id="personal-purchase-link" class="btn btn-primary btn-round w-200" href="<?php echo get_pages_folder() . '/' . PAGE_ORDER; ?>?product=personal-license&support=1">Purchase</a>
-				  <p>or <a id="personal-support-link" href="<?php echo get_pages_folder() . '/' . PAGE_ORDER; ?>?product=personal-support&support=1">Extend your support</a></p>
+				  <a id="personal-purchase-link" class="btn btn-primary btn-round w-200" href="<?php echo get_template_page(PAGE_ORDER); ?>?product=personal-license&support=1">Purchase</a>
+				  <p>or <a id="personal-support-link" href="<?php echo get_template_page(PAGE_ORDER); ?>?product=personal-support&support=1">Extend your support</a></p>
 				</div>
               </div>
             </div>
@@ -329,8 +346,8 @@
 				</div>
 				
 				<div class="text-center px-4 py-6">
-				  <a id="commercial-purchase-link" class="btn btn-outline-primary btn-round w-200" href="<?php echo get_pages_folder() . '/' . PAGE_ORDER; ?>?product=commercial-license&support=1">Purchase</a>
-				  <p>or <a id="commercial-support-link" href="<?php echo get_pages_folder() . '/' . PAGE_ORDER; ?>?product=commercial-support&support=1">Extend your support</a></p>
+				  <a id="commercial-purchase-link" class="btn btn-outline-primary btn-round w-200" href="<?php echo get_template_page(PAGE_ORDER); ?>?product=commercial-license&support=1">Purchase</a>
+				  <p>or <a id="commercial-support-link" href="<?php echo get_template_page(PAGE_ORDER); ?>?product=commercial-support&support=1">Extend your support</a></p>
 				</div>
 			  </div>
 			</div>
@@ -342,7 +359,7 @@
 		    <div class="mx-auto">
 		  	  <h5>Too expensive?</h5>
 		  	  <div class="py-4">
-		  	    <a class="btn btn-lg btn-round btn-secondary" href="<?php echo get_pages_folder()  . '/' . PAGE_CONTACT; ?>?section=section-discount">Request a discount</a>
+		  	    <a class="btn btn-lg btn-round btn-secondary" href="<?php echo get_template_page(PAGE_CONTACT); ?>?section=section-discount">Request a discount</a>
 		  	  </div>
 		    </div>
 		  </div>
@@ -397,7 +414,7 @@
 
 			<div class="row mt-8">
 			  <div class="text-center mx-auto">
-				<a class="btn btn-lg btn-round btn-secondary px-7" href="<?php echo get_pages_folder() . '/' . PAGE_FAQ; ?>">More answers</a>
+				<a class="btn btn-lg btn-round btn-secondary px-7" href="<?php echo get_template_page(PAGE_FAQ); ?>">More answers</a>
 			  </div>
 			</div>
 

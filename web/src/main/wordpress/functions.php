@@ -1,16 +1,30 @@
-<?php
+ <?php
 /**
+ * Vanilla.PDF functions and definitions
+ *
+ * @link https://codex.wordpress.org/Theme_Development
+ * @link https://codex.wordpress.org/Child_Themes
+ *
+ * Functions that are not pluggable (not wrapped in function_exists()) are
+ * instead attached to a filter or action hook.
+ *
+ * For more information on hooks, actions, and filters,
+ * {@link https://codex.wordpress.org/Plugin_API}
+ *
+ * @package WordPress
+ * @subpackage Vanilla.PDF
+ * @since Vanilla.PDF 1.0
  */
 
 const LATEST_VERSION = '0.0.1-alpha';
 
-const PAGE_DOWNLOAD = 'download.html';
-const PAGE_CONTACT = 'contact.php';
-const PAGE_ABOUT = 'about.php';
-const PAGE_LICENSES = 'licenses.php';
-const PAGE_FAQ = 'faq.php';
-const PAGE_ORDER = 'order.php';
-const PAGE_INDEX = 'index.php';
+const PAGE_DOWNLOAD = 'download';
+const PAGE_CONTACT = 'contact';
+const PAGE_ABOUT = 'about';
+const PAGE_LICENSES = 'licenses';
+const PAGE_FAQ = 'faq';
+const PAGE_ORDER = 'order';
+const PAGE_INDEX = 'index';
 
 const TAX_PERCENTAGE = 19;
 const PRICE_CURRENCY_SYMBOL = '&euro;';
@@ -34,7 +48,7 @@ function get_assets_folder() {
 }
 
 function get_pages_folder() {
-	return get_template_directory_uri() . '/page';
+	return get_template_directory_uri();
 }
 
 function get_versions_folder() {
@@ -43,6 +57,29 @@ function get_versions_folder() {
 
 function get_stylesheet_folder() {
 	return get_assets_folder() . '/css';
+}
+
+function get_template_page($template_name) {
+    $url;
+
+    //Code which i need
+
+     $pages = query_posts(array(
+    'post_type' =>'page',
+    'meta_key'  =>'_wp_page_template',
+));
+
+    // cycle through $pages here and either grab the URL
+    // from the results or do get_page_link($id) with 
+    // the id of the page you want 
+	
+	foreach ($pages as &$current_page) {
+		if ($current_page->post_name == $template_name) {
+			return get_page_link($current_page->ID);
+		}
+	}
+	
+	throw new Exception('Could not find page: ' . $template_name);
 }
 
 function vanillapdf_setup() {

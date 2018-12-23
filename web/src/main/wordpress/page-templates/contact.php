@@ -1,3 +1,13 @@
+<?php
+/**
+ * Template Name: Contact
+ 
+ * @package WordPress
+ * @subpackage Vanilla.PDF
+ * @since Vanilla.PDF 1.0
+ */
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -5,7 +15,7 @@
 		const PAGE_TITLE = 'Vanilla.PDF - Contact information';
 		const PAGE_DESCRIPTION = "Here are the ways you can contact us with any questions you have.";
 		
-				// Extra scripts
+		// Extra scripts
 		add_action('wp_enqueue_scripts', function() {
 			wp_enqueue_script('js-contact', get_assets_folder() . '/js/contact.js');
 			wp_enqueue_script('js-mailer', get_assets_folder() . '/js/custom_mailer.js');
