@@ -66,7 +66,11 @@ function get_template_page($template_name) {
 		if ($current_page->post_name == $template_name) {
 			$page_id = $current_page->ID;
 			$page_link = get_page_link($page_id);
-			return rtrim($page_link, '/');
+
+			// Slash trimming causes 3xx redirect on wordpress
+			// return rtrim($page_link, '/');
+
+			return $page_link;
 		}
 	}
 
@@ -144,7 +148,7 @@ function vanillapdf_meta() {
 	echo '<meta name="apple-mobile-web-app-capable" content="yes">' . "\n";
 	echo '<meta name="mobile-web-app-capable" content="yes">' . "\n";
 
-	// echo '<link rel="canonical" href="{{ BASE_URL }}{{ FILENAME }}" />' . "\n";
+	//!!!! // echo '<link rel="canonical" href="{{ BASE_URL }}{{ FILENAME }}" />' . "\n";
 }
 
 add_action('wp_head', 'vanillapdf_meta');
