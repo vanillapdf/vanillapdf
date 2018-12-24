@@ -2,7 +2,7 @@
   <div class="row">
 
 	<div class="col-12">
-	  <p><a href="<?php echo get_home_url(); ?>#home"><img src="<?php echo get_assets_folder(); ?>/img/logo/vanilla-black.png" alt="logo"></a></p>
+	  <p><a href="<?php echo get_index_home(); ?>"><img src="<?php echo get_assets_folder(); ?>/img/logo/vanilla-black.png" alt="logo"></a></p>
 	</div>
 
 	<div class="col-xl-5">

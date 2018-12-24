@@ -73,6 +73,16 @@ function get_template_page($template_name) {
 	throw new Exception('Could not find page: ' . $template_name);
 }
 
+function get_index_home() {
+	$front_page = is_front_page() || is_home();
+	
+	if ($front_page) {
+		return '#home';
+	}
+	
+	return get_site_url();
+}
+
 function vanillapdf_setup() {
 	/*
 	 * Let WordPress manage the document title.

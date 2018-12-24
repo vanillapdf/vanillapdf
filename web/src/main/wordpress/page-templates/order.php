@@ -173,7 +173,7 @@
 				
 				<div class="row">
 				  <div class="col-6">
-				    <a class="btn btn-block btn-secondary" href="<?php echo get_home_url(); ?>#home"><i class="ti-angle-left fs-9"></i> Return to home</a>
+				    <a class="btn btn-block btn-secondary" href="<?php echo get_index_home(); ?>"><i class="ti-angle-left fs-9"></i> Return to home</a>
 				  </div>
                   <div class="col-6">
 				    <button id="btn-proceed" class="btn btn-primary btn-block" type="submit" disabled>Proceed <i class="ti-angle-right fs-9"></i></button>

@@ -283,7 +283,7 @@
                   </div>
 				  
 				  <div id="return-home" class="row" style="display: none;">
-				    <a class="btn btn-block btn-primary" href="<?php echo get_home_url(); ?>">Return to home page <i class="ti-angle-right fs-9"></i></a>
+				    <a class="btn btn-block btn-primary" href="<?php echo get_index_home(); ?>">Return to home page <i class="ti-angle-right fs-9"></i></a>
 				  </div>
 
 			</div>
