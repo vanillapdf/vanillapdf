@@ -61,8 +61,14 @@
       <section id="section-download" class="section">
         <div class="container">
 		
+		  <header class="section-header">
+			<h3 style="font-family: inherit;">Latest release (<?php echo LATEST_VERSION; ?>)</h3>
+		  </header>
+		
 		  <div class="row">
-		  <h3 style="font-family: inherit;">Latest release (<?php echo LATEST_VERSION; ?>)</h3>
+		  
+		  <?php get_template_part('inc/notes/' . LATEST_VERSION); ?>
+		  
 		  <table class="table table-bordered table-hover">
 			<thead>
 			  <tr class="bg-gray">
@@ -114,6 +120,8 @@
 			  </tr>
 			</tbody>
 		  </table>
+		  
+		  <p>For more information visit full <a id="latest-doc" href="<?php echo get_versions_folder() . '/' . LATEST_VERSION; ?>/doc/index.html">API documentation</a>.</p>
 		  </div>
 
         </div>

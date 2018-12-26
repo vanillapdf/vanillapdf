@@ -16,7 +16,7 @@
  * @since Vanilla.PDF 1.0
  */
 
-const LATEST_VERSION = '0.1.0';
+const LATEST_VERSION = '1.3.0';
 
 const PAGE_DOWNLOAD = 'download';
 const PAGE_CONTACT = 'contact';
