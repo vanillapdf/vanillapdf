@@ -3,6 +3,13 @@
 
 #include "vanillapdf/c_platform.h"
 
+/*-----------------------TO DO-----------------------*/
+
+/*--------------------Known issues--------------------*/
+// Issue: 1
+// FIX: vc141 (works on v140) triggers error:
+// error C2600: 'vanillapdf::syntax::ObjectPtr::ObjectPtr': cannot define a compiler-generated special member function (must be declared in the class first)
+
 /*--------------Global warning disables--------------*/
 
 #if defined(COMPILER_MICROSOFT_VISUAL_STUDIO)

@@ -345,8 +345,8 @@ set(VANILLAPDF_PRECOMPILED_HEADER
 )
 
 set(VANILLAPDF_RESOURCE_FILES
-  vanillapdf.natvis
-  resources.rc
+	vanillapdf.natvis
+	resources.rc
 )
 
 # Resource files
@@ -570,7 +570,7 @@ if (JPEG_FOUND)
 
 	message(STATUS "JPEG library was found")
 else (JPEG_FOUND)
-	message(STATUS "Compiling without JPEG support. JPEG compression will become unavailable")
+	message(WARNING "Compiling without JPEG support. JPEG compression will become unavailable")
 endif (JPEG_FOUND)
 
 if (ZLIB_FOUND)
@@ -580,7 +580,7 @@ if (ZLIB_FOUND)
 
 	message(STATUS "zlib ${ZLIB_VERSION_STRING} was found")
 else (ZLIB_FOUND)
-	message(STATUS "Compiling without zlib support. zlib decompression will become unavailable")
+	message(WARNING "Compiling without zlib support. zlib decompression will become unavailable")
 endif (ZLIB_FOUND)
 
 target_link_libraries(vanillapdf ${VANILLAPDF_LIBS})
@@ -600,6 +600,9 @@ install(FILES ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS} DESTINATION "include\\vanilla
 install(FILES ${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS} DESTINATION "include\\vanillapdf\\semantics")
 install(FILES ${VANILLAPDF_INCLUDE_CONTENTS_HEADERS} DESTINATION "include\\vanillapdf\\contents")
 
+install(FILES "${CMAKE_SOURCE_DIR}/cmake/README.txt" DESTINATION .)
+install(FILES "${CMAKE_SOURCE_DIR}/cmake/LICENSE.txt" DESTINATION .)
+
 # Install dependent libraries on windows
 if(WIN32)
 
@@ -615,6 +618,10 @@ if(WIN32)
 		else(CONFIG:debug)
 			set(OPENSSL_CRYPTO_BINARY ${OPENSSL_CRYPTO_BINARY_RELEASE})
 		endif(CONFIG:debug)
+		
+		if (NOT EXISTS ${OPENSSL_CRYPTO_BINARY})
+			message(SEND_ERROR "OpenSSL support is enabled, but the OPENSSL_CRYPTO_BINARY does not exist")
+		endif(NOT EXISTS ${OPENSSL_CRYPTO_BINARY})
 		
 		# Install dependency into output package
 		install(FILES ${OPENSSL_CRYPTO_BINARY} DESTINATION bin)
@@ -633,6 +640,10 @@ if(WIN32)
 			set(JPEG_BINARY ${JPEG_BINARY_RELEASE})
 		endif(CONFIG:debug)
 		
+		if (NOT EXISTS ${JPEG_BINARY})
+			message(SEND_ERROR "JPEG support is enabled, but the JPEG_BINARY does not exist")
+		endif(NOT EXISTS ${JPEG_BINARY})
+		
 		# Install dependency into output package
 		install(FILES ${JPEG_BINARY} DESTINATION bin)
 	endif (JPEG_FOUND)
@@ -649,6 +660,10 @@ if(WIN32)
 		else(CONFIG:debug)
 			set(ZLIB_BINARY ${ZLIB_BINARY_RELEASE})
 		endif(CONFIG:debug)
+		
+		if (NOT EXISTS ${ZLIB_BINARY})
+			message(SEND_ERROR "zlib support is enabled, but the ZLIB_BINARY does not exist")
+		endif(NOT EXISTS ${ZLIB_BINARY})
 		
 		# Install dependency into output package
 		install(FILES ${ZLIB_BINARY} DESTINATION bin)

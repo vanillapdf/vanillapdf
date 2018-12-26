@@ -1,34 +1,20 @@
 # Vanilla.PDF
 
-**Cross-platform toolkit for creating and modifying existing PDF documents**
+## About
 
-## API Documentation
+Vanilla PDF is a cross-platform SDK (Software development kit) for creating and modifying PDF documents.
+While offering supreme control over the document structure, it is blazingly fast with extremely small memory footprint.
+Integration is very easy with pre-packaged binaries for multiple operating systems such as Windows, Linux and Mac.
+Full interface documentation, detailed guide and code samples are available at the product website.
+Automated build and test process eliminates most of the common defects.
+Support, such as bug reports is free and available at your service.
 
-Please enjoy exploring the extensive summary about **Application Programming Interface** on our [website](https://vanillapdf.com/doc/index.html).
+Please visit [vanillapdf.com](http://vanillapdf.com) for more information.
 
 ## FAQ
 
-**TODO Answer some useful questions**
+Frequently asked questions are discussed on our [website](https://vanillapdf.com/faq/).
 
-## Contributing
+## Contact
 
-We'd love to see you contributing to this project.
-There are many ways you can help such as reporting bugs, submitting patches and more!
-For detailed guide on how to contribute visit [here](CONTRIBUTING.md).
-
-## License
-
-Copyright &copy; 2013-2017 by 
-[Vanilla.PDF](mailto:info@vanillapdf.com).
-
-**TODO Proprietary license summary**
-
-See the [our license](LICENSE.md) for more details.
-
-## About
-
-This project started as a hobby by our supreme leader [Juraj Zikmund](https://jzikmund.com/).
-The reason was unavailability of such toolkit out in the wild.
-Growing codebase every day with our proficient team, delivering cutting-edge technology to the customers.
-
-Please visit [vanillapdf.com](https://vanillapdf.com) for more information.
+In case of any questions do not hesitate to [Contact us](https://vanillapdf.com/contact/).
