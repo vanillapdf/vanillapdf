@@ -1,0 +1,33 @@
+Debian:
+  image: debian
+
+  before_script:
+  - apt-get update --yes
+  - apt-get update
+  - apt-get install --yes lsb-release g++ dpkg-dev
+  - apt-get install --yes cmake zlib1g-dev libssl-dev libjpeg62-turbo-dev
+
+  script:
+    - cmake .
+    - make
+    - make test
+    - make package
+  artifacts:
+    paths:
+      - ./*.deb
+      - ./*.tar.gz
+      - ./*.sha256
+
+CentOS:
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-centos:latest
+
+  script:
+    - cmake .
+    - make
+    - make test
+    - make package
+  artifacts:
+    paths:
+      - ./*.rpm
+      - ./*.tar.gz
+      - ./*.sha256

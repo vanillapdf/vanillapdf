@@ -86,19 +86,18 @@ elseif(UNIX)
 		execute_process(COMMAND dpkg --print-architecture OUTPUT_VARIABLE CPACK_DEBIAN_PACKAGE_ARCHITECTURE OUTPUT_STRIP_TRAILING_WHITESPACE)
 		set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}_${PACKAGE_VERSION_NAME}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
 
-	elseif(distribution MATCHES "RedHat.*")
+	elseif(distribution MATCHES "RedHat.*" OR distribution STREQUAL "CentOS")
 		# extract the major version from RedHat full version (e.g. 6.7 --> 6)
 		execute_process(COMMAND lsb_release -sr COMMAND sed s/[.].*//  OUTPUT_VARIABLE redhat_version_major OUTPUT_STRIP_TRAILING_WHITESPACE)
 		set(CPACK_GENERATOR "RPM;TGZ")
-		set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PACKAGE_VERSION_NAME}-${CPACK_RPM_PACKAGE_RELEASE}.el${redhat_version_major}.${CPACK_RPM_PACKAGE_ARCHITECTURE}")
+		set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PACKAGE_VERSION_NAME}.el${redhat_version_major}.${CPACK_RPM_PACKAGE_ARCHITECTURE}")
 
 	elseif(distribution STREQUAL "Fedora")
 		set(CPACK_GENERATOR "RPM;TGZ")
 		set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PACKAGE_VERSION_NAME}.fc${release}.${CPACK_RPM_PACKAGE_ARCHITECTURE}")
 	  
 	else()
-		set(CPACK_GENERATOR "RPM;TGZ")
-		set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PACKAGE_VERSION_NAME}-${release}.${CPACK_RPM_PACKAGE_ARCHITECTURE}")
+		message(FATAL_ERROR "Unknown UNIX distribution: ${distribution}")
 	endif()
 
 else()
