@@ -5,6 +5,8 @@ void print_sign_help() {
 }
 
 int process_sign(int argc, char *argv[]) {
+
+	int arg_counter = 0;
 	string_type source_document_path = NULL;
 	string_type destination_file_path = NULL;
 	string_type key_file = NULL;
@@ -18,37 +20,46 @@ int process_sign(int argc, char *argv[]) {
 	DateHandle* signing_time = NULL;
 	DocumentSignatureSettingsHandle* signature_settings = NULL;
 
-	if (argc < 6) {
-		print_sign_help();
-		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
-	}
+	for (arg_counter = 0; arg_counter < argc; ++arg_counter) {
 
-	if (0 != strcmp(argv[0], "-s")) {
-		print_sign_help();
-		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
-	}
+		// source file
+		if (strcmp(argv[arg_counter], "-s") == 0 && (arg_counter + 1 < argc)) {
+			source_document_path = argv[arg_counter + 1];
+			arg_counter++;
 
-	if (0 != strcmp(argv[2], "-d")) {
-		print_sign_help();
-		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
-	}
+		// destination file
+		} else if (strcmp(argv[arg_counter], "-d") == 0 && (arg_counter + 1 < argc)) {
+			destination_file_path = argv[arg_counter + 1];
+			arg_counter++;
 
-	if (0 != strcmp(argv[4], "-k")) {
-		print_sign_help();
-		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
-	}
+		// key file
+		} else if (strcmp(argv[arg_counter], "-k") == 0 && (arg_counter + 1 < argc)) {
+			key_file = argv[arg_counter + 1];
+			arg_counter++;
 
-	source_document_path = argv[1];
-	destination_file_path = argv[3];
-	key_file = argv[5];
-
-	if (argc >= 7) {
-		if (0 != strcmp(argv[6], "-p")) {
+		// key file password
+		} else if (strcmp(argv[arg_counter], "-p") == 0 && (arg_counter + 1 < argc)) {
+			key_password = argv[arg_counter + 1];
+			arg_counter++;
+		} else {
 			print_sign_help();
 			return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
 		}
+	}
 
-		key_password = argv[7];
+	if (source_document_path == NULL) {
+		print_sign_help();
+		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
+	}
+
+	if (destination_file_path == NULL) {
+		print_sign_help();
+		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
+	}
+
+	if (key_file == NULL) {
+		print_sign_help();
+		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
 	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_CreateFromFile(key_file, key_password, &pkcs12_key));

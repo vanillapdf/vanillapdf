@@ -11,6 +11,7 @@ int process_filter(int argc, char *argv[]) {
 
 	BufferHandle* input_data = NULL;
 
+	int arg_counter = 0;
 	const char *filter_type = NULL;
 	const char *operation = NULL;
 	const char *source_file = NULL;
@@ -24,30 +25,34 @@ int process_filter(int argc, char *argv[]) {
 	boolean_type is_ascii85_decode = VANILLAPDF_RV_FALSE;
 	boolean_type is_ascii_hex_decode = VANILLAPDF_RV_FALSE;
 
-	if (argc < 7) {
+	for (arg_counter = 0; arg_counter < argc; ++arg_counter) {
+
+		// filter type
+		if (strcmp(argv[arg_counter], "-f") == 0 && (arg_counter + 2 < argc)) {
+			filter_type = argv[arg_counter + 1];
+			operation = argv[arg_counter + 2];
+			arg_counter++;
+			arg_counter++;
+
+		// source file
+		} else if (strcmp(argv[arg_counter], "-s") == 0 && (arg_counter + 1 < argc)) {
+			source_file = argv[arg_counter + 1];
+			arg_counter++;
+
+		// destination file
+		} else if (strcmp(argv[arg_counter], "-d") == 0 && (arg_counter + 1 < argc)) {
+			destination_file = argv[arg_counter + 1];
+			arg_counter++;
+		} else {
+			print_filter_help();
+			return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
+		}
+	}
+
+	if (filter_type == NULL || operation == NULL || source_file == NULL || destination_file == NULL) {
 		print_filter_help();
 		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
 	}
-
-	if (0 != strcmp(argv[0], "-f")) {
-		print_filter_help();
-		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
-	}
-
-	if (0 != strcmp(argv[3], "-s")) {
-		print_filter_help();
-		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
-	}
-
-	if (0 != strcmp(argv[5], "-d")) {
-		print_filter_help();
-		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
-	}
-
-	filter_type = argv[1];
-	operation = argv[2];
-	source_file = argv[4];
-	destination_file = argv[6];
 
 	is_encode = (strcmp(operation, "encode") == 0);
 	is_decode = (strcmp(operation, "decode") == 0);

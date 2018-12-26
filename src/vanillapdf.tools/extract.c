@@ -313,6 +313,7 @@ error_type process_contents(ContentsHandle* page_contents, size_type page_number
 int process_extract(int argc, char *argv[]) {
 
 	const char *filename = NULL;
+	int arg_counter = 0;
 
 	size_type i = 0;
 	size_type page_count = 0;
@@ -322,17 +323,22 @@ int process_extract(int argc, char *argv[]) {
 	CatalogHandle* catalog = NULL;
 	PageTreeHandle* tree = NULL;
 
-	if (argc < 2) {
+	for (arg_counter = 0; arg_counter < argc; ++arg_counter) {
+
+		// source file
+		if (strcmp(argv[arg_counter], "-s") == 0 && (arg_counter + 1 < argc)) {
+			filename = argv[arg_counter + 1];
+			arg_counter++;
+		} else {
+			print_extract_help();
+			return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
+		}
+	}
+
+	if (filename == NULL) {
 		print_extract_help();
 		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
 	}
-
-	if (0 != strcmp(argv[0], "-s")) {
-		print_extract_help();
-		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
-	}
-
-	filename = argv[1];
 
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Open(filename, &file));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(file));

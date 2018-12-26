@@ -15,7 +15,7 @@ int process_merge(int argc, char *argv[]) {
 
 	integer_type i = 0;
 
-	if (argc < 7) {
+	if (argc < 6) {
 		print_merge_help();
 		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
 	}

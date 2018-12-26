@@ -23,7 +23,7 @@ int process_decrypt(int argc, char *argv[]) {
 		} else if (strcmp(argv[i], "-k") == 0 && (i + 1 < argc)) {
 			cert_path = argv[i + 1];
 			i++;
-			// certificate
+			// source file path
 		} else if (strcmp(argv[i], "-s") == 0 && (i + 1 < argc)) {
 			file_path = argv[i + 1];
 			i++;
