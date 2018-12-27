@@ -39,10 +39,10 @@ CentOS-i386:
   when: manual
   
   before_script:
-  - yum update --yes
+  - yum update -y
   - yum update
-  - yum install --yes redhat-lsb-core rpm-build gcc-c++
-  - yum install --yes cmake zlib-devel openssl-devel libjpeg-turbo-devel
+  - yum install -y redhat-lsb-core rpm-build gcc-c++
+  - yum install -y cmake zlib-devel openssl-devel libjpeg-turbo-devel
 
   script:
     - cmake .
