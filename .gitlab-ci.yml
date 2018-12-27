@@ -18,7 +18,7 @@ Ubuntu-i386:
   when: manual
 
   script:
-    - cmake -DVANILLAPDF_FORCE_32_BIT .
+    - cmake -DVANILLAPDF_FORCE_32_BIT=ON .
     - make
     - make test
     - make package
@@ -48,7 +48,7 @@ CentOS-i386:
   when: manual
 
   script:
-    - cmake -DVANILLAPDF_FORCE_32_BIT .
+    - cmake -DVANILLAPDF_FORCE_32_BIT=ON .
     - make
     - make test
     - make package
