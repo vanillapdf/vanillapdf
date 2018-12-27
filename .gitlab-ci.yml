@@ -1,5 +1,6 @@
 Debian:
   image: debian
+  when: manual
 
   before_script:
   - apt-get update --yes
@@ -20,6 +21,7 @@ Debian:
 
 CentOS:
   image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-centos:latest
+  when: manual
 
   script:
     - cmake .
