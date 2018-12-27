@@ -1,5 +1,7 @@
 # Vanilla.PDF
 
+[![pipeline status](https://gitlab.com/jurzik/vanillapdf/badges/master/pipeline.svg)](https://gitlab.com/jurzik/vanillapdf/commits/master)
+
 ## About
 
 Vanilla PDF is a cross-platform SDK (Software development kit) for creating and modifying PDF documents.
