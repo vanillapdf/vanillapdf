@@ -57,6 +57,16 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Global compilation definitions
 add_definitions("-DVANILLAPDF_CONFIGURATION_DLL")
 
+set(VANILLAPDF_FORCE_32_BIT CACHE BOOL "OFF")
+
+if(VANILLAPDF_FORCE_32_BIT)
+	message("Regardless of architecture, forcing 32-bit output binary")
+
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -m32")
+endif(VANILLAPDF_FORCE_32_BIT)
+
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING
       "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."

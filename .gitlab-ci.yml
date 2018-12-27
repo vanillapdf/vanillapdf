@@ -1,15 +1,24 @@
-Debian:
-  image: debian
+Ubuntu-amd64:
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu:latest
   when: manual
-
-  before_script:
-  - apt-get update --yes
-  - apt-get update
-  - apt-get install --yes lsb-release g++ dpkg-dev
-  - apt-get install --yes cmake zlib1g-dev libssl-dev libjpeg62-turbo-dev
 
   script:
     - cmake .
+    - make
+    - make test
+    - make package
+  artifacts:
+    paths:
+      - ./*.deb
+      - ./*.tar.gz
+      - ./*.sha256
+
+Ubuntu-i386:
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu:latest
+  when: manual
+
+  script:
+    - cmake -DVANILLAPDF_FORCE_32_BIT .
     - make
     - make test
     - make package
@@ -35,17 +44,11 @@ CentOS-amd64:
       - ./*.sha256
 
 CentOS-i386:
-  image: i386/centos
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-centos:latest
   when: manual
-  
-  before_script:
-  - yum update -y
-  - yum update
-  - yum install -y redhat-lsb-core rpm-build gcc-c++
-  - yum install -y cmake zlib-devel openssl-devel libjpeg-turbo-devel
 
   script:
-    - cmake .
+    - cmake -DVANILLAPDF_FORCE_32_BIT .
     - make
     - make test
     - make package

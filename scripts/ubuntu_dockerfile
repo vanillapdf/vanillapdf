@@ -1,0 +1,33 @@
+FROM ubuntu:latest
+
+# Support 32-bit cross compilation
+RUN dpkg --add-architecture i386
+
+# Update repository
+RUN apt-get update -y
+RUN apt-get update
+
+# Install wget to download CMake sources
+RUN apt-get install -y \
+    lsb-release \
+    g++ \
+    dpkg-dev \
+    cmake \
+    zlib1g-dev \
+    libssl-dev \
+    libjpeg9-dev
+
+RUN apt-get install -y \
+    lsb-release \
+    gcc-multilib \
+    g++-multilib \
+    libssl-dev:i386 \
+    libjpeg9-dev:i386
+
+# Repository cleanup after everything was installed
+RUN apt-get clean all
+
+# Build directory
+RUN mkdir -p /src
+WORKDIR /src
+
