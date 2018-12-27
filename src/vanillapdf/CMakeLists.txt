@@ -601,8 +601,8 @@ install(FILES ${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS} DESTINATION "include\\vani
 install(FILES ${VANILLAPDF_INCLUDE_CONTENTS_HEADERS} DESTINATION "include\\vanillapdf\\contents")
 
 install(FILES "${CMAKE_SOURCE_DIR}/cmake/README.txt" DESTINATION .)
-install(FILES "${CMAKE_SOURCE_DIR}/cmake/LICENSE.txt" DESTINATION .)
-install(FILES "${CMAKE_SOURCE_DIR}/cmake/CHANGELOG.txt" DESTINATION .)
+install(FILES "${CMAKE_SOURCE_DIR}/LICENSE.txt" DESTINATION .)
+install(FILES "${CMAKE_SOURCE_DIR}/CHANGELOG.txt" DESTINATION .)
 
 # Install dependent libraries on windows
 if(WIN32)
