@@ -101,22 +101,22 @@
 			  <tr>
 				<td>Linux amd64 debian</td>
 				<td><a href="<?php echo get_versions_folder() . '/' . LATEST_VERSION; ?>/build/vanillapdf_<?php echo LATEST_VERSION; ?>_amd64.deb">vanillapdf_<?php echo LATEST_VERSION; ?>_amd64.deb</a></td>
-				<td></td>
+				<td><a href="<?php echo get_versions_folder() . '/' . LATEST_VERSION; ?>/build/vanillapdf_<?php echo LATEST_VERSION; ?>_amd64.deb.sha256">vanillapdf_<?php echo LATEST_VERSION; ?>_amd64.deb.sha256</a></td>
 			  </tr>
 			  <tr>
 				<td>Linux amd64 tarball</td>
 				<td><a href="<?php echo get_versions_folder() . '/' . LATEST_VERSION; ?>/build/vanillapdf_<?php echo LATEST_VERSION; ?>_amd64.tar.gz">vanillapdf_<?php echo LATEST_VERSION; ?>_amd64.tar.gz</a></td>
-				<td></td>
+				<td><a href="<?php echo get_versions_folder() . '/' . LATEST_VERSION; ?>/build/vanillapdf_<?php echo LATEST_VERSION; ?>_amd64.tar.gz.sha256">vanillapdf_<?php echo LATEST_VERSION; ?>_amd64.tar.gz.sha256</a></td>
 			  </tr>
 			  <tr>
 				<td>Linux i386 debian</td>
 				<td><a href="<?php echo get_versions_folder() . '/' . LATEST_VERSION; ?>/build/vanillapdf_<?php echo LATEST_VERSION; ?>_i386.deb">vanillapdf_<?php echo LATEST_VERSION; ?>_i386.deb</a></td>
-				<td></td>
+				<td><a href="<?php echo get_versions_folder() . '/' . LATEST_VERSION; ?>/build/vanillapdf_<?php echo LATEST_VERSION; ?>_i386.deb.sha256">vanillapdf_<?php echo LATEST_VERSION; ?>_i386.deb.sha256</a></td>
 			  </tr>
 			  <tr>
 				<td>Linux i386 tarball</td>
 				<td><a href="<?php echo get_versions_folder() . '/' . LATEST_VERSION; ?>/build/vanillapdf_<?php echo LATEST_VERSION; ?>_i386.tar.gz">vanillapdf_<?php echo LATEST_VERSION; ?>_i386.tar.gz</a></td>
-				<td></td>
+				<td><a href="<?php echo get_versions_folder() . '/' . LATEST_VERSION; ?>/build/vanillapdf_<?php echo LATEST_VERSION; ?>_i386.tar.gz.sha256">vanillapdf_<?php echo LATEST_VERSION; ?>_i386.tar.gz.sha256</a></td>
 			  </tr>
 			</tbody>
 		  </table>
