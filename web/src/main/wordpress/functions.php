@@ -165,3 +165,15 @@ function vanillapdf_google_analytics() {
 }
 
 add_action('wp_head', 'vanillapdf_google_analytics');
+
+function vanillapdf_tag_manager() {
+	get_template_part('inc/tag_manager');
+}
+
+add_action('wp_head', 'vanillapdf_tag_manager');
+
+function vanillapdf_tag_manager_noscript() {
+	get_template_part('inc/tag_manager_noscript');
+}
+
+add_action('vanillapdf_body_begin', 'vanillapdf_tag_manager_noscript');

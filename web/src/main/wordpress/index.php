@@ -38,6 +38,8 @@
   </head>
 
   <body>
+  
+    <?php do_action('vanillapdf_body_begin'); ?>
 
 
     <!-- Navbar -->

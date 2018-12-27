@@ -22,6 +22,7 @@
 
   <body>
 
+    <?php do_action('vanillapdf_body_begin'); ?>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark" data-navbar="fixed">
