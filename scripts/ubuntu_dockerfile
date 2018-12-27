@@ -21,6 +21,7 @@ RUN apt-get install -y \
     lsb-release \
     gcc-multilib \
     g++-multilib \
+    zlib1g-dev:i386 \
     libssl-dev:i386 \
     libjpeg9-dev:i386
 

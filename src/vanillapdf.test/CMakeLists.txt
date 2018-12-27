@@ -23,9 +23,14 @@ source_group("Source Files" FILES
 	${VANILLAPDF_TEST_SOURCES}
 )
 
+set(VANILLAPDF_TEST_RESOURCE_FILES
+	resources.rc
+)
+
 add_executable(vanillapdf.test
 	${VANILLAPDF_TEST_HEADERS}
 	${VANILLAPDF_TEST_SOURCES}
+	${VANILLAPDF_TEST_RESOURCE_FILES}
 )
 
 if(WIN32)
@@ -51,6 +56,19 @@ if (CMAKE_COMPILER_IS_GNUCC)
 endif (CMAKE_COMPILER_IS_GNUCC)
 
 target_link_libraries(vanillapdf.test ${VANILLAPDF_TEST_LIBS})
+
+# Project install targets
+install(TARGETS vanillapdf.test
+	RUNTIME DESTINATION bin
+)
+
+# Specify version identificators
+add_definitions(-DVANILLAPDF_TEST_VERSION_MAJOR=${VANILLAPDF_VERSION_MAJOR})
+add_definitions(-DVANILLAPDF_TEST_VERSION_MINOR=${VANILLAPDF_VERSION_MINOR})
+add_definitions(-DVANILLAPDF_TEST_VERSION_PATCH=${VANILLAPDF_VERSION_PATCH})
+add_definitions(-DVANILLAPDF_TEST_VERSION_BUILD=${VANILLAPDF_VERSION_BUILD})
+
+add_definitions(-DVANILLAPDF_TEST_ICON="${CMAKE_SOURCE_DIR}/cmake/vanilla_logo.ico")
 
 # Run tests
 include(FindPythonInterp)
