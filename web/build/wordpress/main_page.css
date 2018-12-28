@@ -1,0 +1,22 @@
+/*
+Theme Name: Vanilla.PDF
+Description: Main page extra stylesheet
+*/
+
+/* Navigation bar */
+
+.navbar-light[data-navbar="fixed"] {
+	background-color: rgba(0, 0, 0, 0.2);
+}
+
+.navbar-scrolled .navbar-dark[data-navbar="fixed"] {
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Extend Font Awesome sizes */
+
+.fa-10x {
+  font-size: 10em;
+}

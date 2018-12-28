@@ -1,0 +1,10 @@
+/*
+Theme Name: Vanilla.PDF
+Author: Vanilla.PDF Labs
+Description: Vanilla.PDF main theme
+Version: 1.1
+*/
+
+section#section-poll li {
+	list-style-type:none;
+}
