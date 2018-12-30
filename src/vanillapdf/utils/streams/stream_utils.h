@@ -11,7 +11,9 @@ class StreamUtils {
 public:
 	static IOutputStreamPtr OutputStreamFromFile(const std::string& filename);
 	static IInputStreamPtr InputStreamFromFile(const std::string& filename);
+
 	static IInputOutputStreamPtr InputOutputStreamFromFile(const std::string& filename);
+	static IInputOutputStreamPtr InputOutputStreamFromMemory();
 
 	static IInputStreamPtr InputStreamFromBuffer(BufferPtr data);
 	static BufferPtr InputStreamToBuffer(IInputStreamPtr source);

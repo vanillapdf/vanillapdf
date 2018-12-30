@@ -64,6 +64,18 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_Save(DocumentHandle* handl
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Document_SaveFile(DocumentHandle* handle, FileHandle* file_handle) {
+	Document* document = reinterpret_cast<Document*>(handle);
+	File* file = reinterpret_cast<File*>(file_handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
+
+	try {
+		document->Save(file);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Document_SaveIncremental(DocumentHandle* handle, string_type filename)
 {
 	Document* document = reinterpret_cast<Document*>(handle);
@@ -73,6 +85,18 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_SaveIncremental(DocumentHa
 	try
 	{
 		document->SaveIncremental(filename);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Document_SaveIncrementalFile(DocumentHandle* handle, FileHandle* file_handle) {
+	Document* document = reinterpret_cast<Document*>(handle);
+	File* file = reinterpret_cast<File*>(file_handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
+
+	try {
+		document->SaveIncremental(file);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }

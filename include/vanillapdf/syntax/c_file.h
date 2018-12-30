@@ -48,7 +48,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION File_Open(string_type filename, FileHandle** result);
 
 	/**
-	* \brief Opens a file stream for reading.
+	* \brief Opens an input stream for reading.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION File_OpenStream(InputOutputStreamHandle* input_stream, string_type name, FileHandle** result);
 
@@ -58,6 +58,11 @@ extern "C"
 	* Truncates the contents if it already exists.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION File_Create(string_type filename, FileHandle** result);
+
+	/**
+	* \brief Uses arbitrary stream as a file.
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION File_CreateStream(InputOutputStreamHandle* input_stream, string_type name, FileHandle** result);
 
 	/**
 	* \brief Perform basic intialization.

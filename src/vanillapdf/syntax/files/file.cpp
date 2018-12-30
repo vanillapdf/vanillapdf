@@ -49,7 +49,12 @@ FilePtr File::Create(const std::string& path) {
 
 	auto input_stream = GetFilestream(path, flags);
 
-	FilePtr result(pdf_new File(input_stream, path));
+	return CreateStream(input_stream, path);
+}
+
+FilePtr File::CreateStream(IInputOutputStreamPtr stream, const std::string& name) {
+
+	FilePtr result(pdf_new File(stream, name));
 
 	result->_initialized = true;
 	return result;

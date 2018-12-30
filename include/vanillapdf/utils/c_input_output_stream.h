@@ -29,9 +29,14 @@ extern "C"
 	*/
 
 	/**
-	* \brief Opens an existing file at \p filename for read
+	* \brief Opens an existing file at \p filename for read and write
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_CreateFromFile(string_type filename, InputOutputStreamHandle** result);
+
+	/**
+	* \brief Creates a memory buffer for data manipulation
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_CreateFromMemory(InputOutputStreamHandle** result);
 
 	/**
 	* \brief Reinterpret current object as \ref InputStreamHandle

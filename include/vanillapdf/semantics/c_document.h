@@ -48,9 +48,19 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Document_Save(DocumentHandle* handle, string_type filename);
 
 	/**
+	* \copydoc FileWriterHandle::FileWriter_Write
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Document_SaveFile(DocumentHandle* handle, FileHandle* file_handle);
+
+	/**
 	* \copydoc FileWriterHandle::FileWriter_WriteIncremental
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Document_SaveIncremental(DocumentHandle* handle, string_type filename);
+
+	/**
+	* \copydoc FileWriterHandle::FileWriter_WriteIncremental
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Document_SaveIncrementalFile(DocumentHandle* handle, FileHandle* file_handle);
 
 	/**
 	* \brief Get document's catalog property

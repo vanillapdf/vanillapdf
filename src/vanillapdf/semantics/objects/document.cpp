@@ -173,18 +173,24 @@ void Document::RecalculatePageContents() {
 }
 
 void Document::Save(const std::string& path) {
-	RecalculatePageContents();
-
 	FilePtr destination = File::Create(path);
+	Save(destination);
+}
+
+void Document::Save(syntax::FilePtr destination) {
+	RecalculatePageContents();
 
 	FileWriter writer;
 	writer.Write(m_holder, destination);
 }
 
 void Document::SaveIncremental(const std::string& path) {
-	RecalculatePageContents();
-
 	FilePtr destination = File::Create(path);
+	SaveIncremental(destination);
+}
+
+void Document::SaveIncremental(syntax::FilePtr destination) {
+	RecalculatePageContents();
 
 	FileWriter writer;
 	writer.WriteIncremental(m_holder, destination);

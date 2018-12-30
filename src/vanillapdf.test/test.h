@@ -110,6 +110,7 @@ error_type process_date(DateHandle* obj, int nested);
 
 /* Test document save */
 error_type process_document_save(DocumentHandle* document, int nested);
+error_type process_document_save_incremental(DocumentHandle* document, int nested);
 
 // Some parameters to functions are unused
 #define UNUSED(x) (void)(x)

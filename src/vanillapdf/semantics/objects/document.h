@@ -29,7 +29,9 @@ public:
 	bool GetDocumentInfo(OutputDocumentInfoPtr& result) const;
 
 	void Save(const std::string& path);
+	void Save(syntax::FilePtr destination);
 	void SaveIncremental(const std::string& path);
+	void SaveIncremental(syntax::FilePtr destination);
 
 	syntax::FilePtr GetFile() const;
 

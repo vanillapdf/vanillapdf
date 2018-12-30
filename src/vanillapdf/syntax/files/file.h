@@ -21,8 +21,10 @@ class File : public virtual IUnknown, public IWeakReferenceable<File> {
 public:
 	// Filesystem
 	static FilePtr Open(const std::string& path);
-	static FilePtr OpenStream(IInputOutputStreamPtr stream, const std::string& name);
 	static FilePtr Create(const std::string& path);
+
+	static FilePtr OpenStream(IInputOutputStreamPtr stream, const std::string& name);
+	static FilePtr CreateStream(IInputOutputStreamPtr stream, const std::string& name);
 	static IInputOutputStreamPtr GetFilestream(const std::string& path, int mode);
 
 	BufferPtr GetByteRange(types::stream_size begin, types::size_type length);

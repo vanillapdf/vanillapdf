@@ -1046,10 +1046,44 @@ error_type process_duplex(Duplex duplex, int nested) {
 }
 
 error_type process_document_save(DocumentHandle* document, int nested) {
-	RETURN_ERROR_IF_NOT_SUCCESS(Document_Save(document, "output.pdf"));
+	FileHandle* file = NULL;
+	InputOutputStreamHandle* input_output_stream = NULL;
 
-	// Generic function parameter nested is not needed in this case
-	UNUSED(nested);
+	print_spaces(nested);
+	printf("Process document save begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_CreateFromMemory(&input_output_stream));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_CreateStream(input_output_stream, "UNUSED", &file));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_SaveFile(document, file));
+	//RETURN_ERROR_IF_NOT_SUCCESS(Document_Save(document, "output.pdf"));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));
+	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_Release(input_output_stream));
+
+	print_spaces(nested);
+	printf("Process document save end\n");
+
+	return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_document_save_incremental(DocumentHandle* document, int nested) {
+	FileHandle* file = NULL;
+	InputOutputStreamHandle* input_output_stream = NULL;
+
+	print_spaces(nested);
+	printf("Process document save incremental begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_CreateFromMemory(&input_output_stream));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_CreateStream(input_output_stream, "UNUSED", &file));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_SaveIncrementalFile(document, file));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));
+	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_Release(input_output_stream));
+
+	print_spaces(nested);
+	printf("Process document save incremental end\n");
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }

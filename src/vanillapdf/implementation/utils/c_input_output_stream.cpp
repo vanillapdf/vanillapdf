@@ -20,6 +20,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_CreateFromFile(st
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_CreateFromMemory(InputOutputStreamHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto input_stream = StreamUtils::InputOutputStreamFromMemory();
+		auto ptr = input_stream.AddRefGet();
+		*result = reinterpret_cast<InputOutputStreamHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_ToInputStream(InputOutputStreamHandle* handle, InputStreamHandle** result) {
 	return SafeObjectConvert<IInputOutputStream, IInputStream, InputOutputStreamHandle, InputStreamHandle>(handle, result);
 }
