@@ -38,9 +38,7 @@ public:
 	void SetReferencedObjectNumber(types::big_uint value) noexcept;
 	void SetReferencedGenerationNumber(types::ushort value) noexcept;
 
-	bool IsReferenceInitialized(void) const noexcept {
-		return (!m_reference.IsEmpty() && m_reference.IsActive());
-	}
+	bool IsReferenceInitialized(void) const;
 
 	virtual size_t Hash() const override;
 	virtual IndirectObjectReference* Clone(void) const override;

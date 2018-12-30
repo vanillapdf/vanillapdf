@@ -47,6 +47,16 @@ void IndirectObjectReference::SetReferencedGenerationNumber(types::ushort value)
 	m_reference.Reset();
 }
 
+bool IndirectObjectReference::IsReferenceInitialized(void) const {
+	bool active = (!m_reference.IsEmpty() && m_reference.IsActive());
+	if (!active) {
+		return false;
+	}
+
+	// Null reference does not count as active
+	return !ObjectUtils::IsType<NullObjectPtr>(m_reference.GetReference());
+}
+
 //bool IndirectObjectReference::IsCyclicReference(ObjectPtr object, std::map<ObjectPtr, bool>& visited) const {
 //	// We have found the cycle
 //	if (Identity(object)) {
