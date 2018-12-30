@@ -128,11 +128,11 @@ bool InputStream::Eof(void) const {
 	return m_stream->eof();
 }
 
-InputStream& InputStream::Ignore(void) {
+bool InputStream::Ignore(void) {
 	assert(!m_stream->eof());
 	m_stream->ignore();
 	assert(!m_stream->fail());
-	return *this;
+	return m_stream->operator bool();
 }
 
 int InputStream::Get(void) {
@@ -147,6 +147,10 @@ int InputStream::Peek(void) {
 	int result = m_stream->peek();
 	assert(!m_stream->fail());
 	return result;
+}
+
+bool InputStream::IsFail(void) const {
+	return m_stream->fail();
 }
 
 InputStream::operator bool(void) const {

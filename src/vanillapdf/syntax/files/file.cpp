@@ -25,42 +25,55 @@ namespace vanillapdf {
 namespace syntax {
 
 FilePtr File::Open(const std::string& path) {
-	return FilePtr(pdf_new File(path));
+
+	int flags = 0;
+	flags |= std::ios_base::in;
+	flags |= std::ios_base::binary;
+	flags |= std::ios_base::ate;
+
+	auto input_stream = GetFilestream(path, flags);
+	return FilePtr(pdf_new File(input_stream, path));
+}
+
+FilePtr File::OpenStream(IInputOutputStreamPtr stream, const std::string& name) {
+	return FilePtr(pdf_new File(stream, name));
 }
 
 FilePtr File::Create(const std::string& path) {
-	FilePtr result(pdf_new File(path));
 
-	result->_input = std::make_shared<std::fstream>();
-	result->_input->open(path,
-		std::ios_base::in |
-		std::ios_base::out |
-		std::ios_base::binary |
-		std::ios::trunc
-	);
+	int flags = 0;
+	flags |= std::ios_base::in;
+	flags |= std::ios_base::out;
+	flags |= std::ios_base::binary;
+	flags |= std::ios_base::trunc;
 
-	if (!result->_input || !result->_input->good()) {
-		throw GeneralException("Could not open file");
-	}
+	auto input_stream = GetFilestream(path, flags);
+
+	FilePtr result(pdf_new File(input_stream, path));
 
 	result->_initialized = true;
 	return result;
 }
 
-File::File(const std::string& path)
-	: _full_path(path) {
+IInputOutputStreamPtr File::GetFilestream(const std::string& path, int mode) {
+
+	auto input_file = std::make_shared<std::fstream>();
+	input_file->open(path, mode);
+
+	if (!input_file || !input_file->good()) {
+		throw GeneralException("Could not open file");
+	}
+
+	return make_deferred<InputOutputStream>(input_file);
+}
+
+File::File(IInputOutputStreamPtr stream, const std::string& path) : _full_path(path), _input(stream) {
 	_filename = MiscUtils::ExtractFilename(path);
 	LOG_WARNING_GLOBAL << "File constructor " << _filename;
 }
 
 File::~File(void) {
 	LOG_WARNING_GLOBAL << "File destructor " << _filename;
-
-	if (nullptr != _input) {
-		_input->close();
-		_input = nullptr;
-	}
-
 	_cache.clear();
 }
 
@@ -71,22 +84,10 @@ void File::Initialize() {
 		return;
 	}
 
-	_input = std::make_shared<std::fstream>();
-	_input->open(_full_path,
-		std::ios::in |
-		std::ios::binary |
-		std::ios::ate
-	);
-
-	if (!_input || !_input->good()) {
-		throw GeneralException("Could not open file");
-	}
-
 	// Opening the stream with ate option
-	auto file_size = _input->tellg();
+	auto file_size = _input->GetInputPosition();
 
-	InputStreamPtr input_stream = make_deferred<InputStream>(_input);
-	Parser stream(GetWeakReference<File>(), input_stream);
+	Parser stream(GetWeakReference<File>(), _input);
 	_header = stream.ReadHeader(0);
 
 	try {
@@ -506,8 +507,7 @@ EncryptionAlgorithm File::GetEncryptionAlgorithmForFilter(const NameObject& filt
 }
 
 void File::ReadXref(types::stream_offset offset) {
-	InputStreamPtr input_stream = make_deferred<InputStream>(_input);
-	Parser stream(GetWeakReference<File>(), input_stream);
+	Parser stream(GetWeakReference<File>(), _input);
 
 	// Keep track of current offset to xref
 	types::stream_offset current_offset = offset;
@@ -776,36 +776,34 @@ std::vector<ObjectPtr> File::DeepCopyObjects(const std::vector<ObjectPtr>& objec
 }
 
 IInputStreamPtr File::GetInputStream(void) {
-	return make_deferred<InputStream>(_input);
+	return _input;
 }
 
 IOutputStreamPtr File::GetOutputStream(void) {
-	return make_deferred<OutputStream>(_input);
+	return _input;
 }
 
 IInputOutputStreamPtr File::GetInputOutputStream(void) {
-	return make_deferred<InputOutputStream>(_input);
+	return _input;
 }
 
-BufferPtr File::GetByteRange(types::stream_size begin, types::size_type length) const {
+BufferPtr File::GetByteRange(types::stream_size begin, types::size_type length) {
 	if (!_initialized) {
 		throw FileNotInitializedException(_filename);
 	}
 
-	InputStream stream(_input);
-	stream.SetInputPosition(begin);
-	return stream.Read(length);
+	_input->SetInputPosition(begin);
+	return _input->Read(length);
 }
 
-IInputStreamPtr File::GetByteRangeStream(types::stream_size begin, types::size_type length) const {
+IInputStreamPtr File::GetByteRangeStream(types::stream_size begin, types::size_type length) {
 	if (!_initialized) {
 		throw FileNotInitializedException(_filename);
 	}
 
 	// Avoid huge allocation and use filtering stream buffer
-	InputStream stream(_input);
-	stream.SetInputPosition(begin);
-	auto buffer = stream.Read(length);
+	_input->SetInputPosition(begin);
+	auto buffer = _input->Read(length);
 	return buffer->ToInputStream();
 }
 

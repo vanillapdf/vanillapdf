@@ -17,9 +17,11 @@ public:
 	virtual void SetInputPosition(types::stream_size pos, std::ios_base::seekdir way) override;
 
 	virtual bool Eof(void) const override;
-	virtual InputStream& Ignore(void) override;
+	virtual bool Ignore(void) override;
 	virtual int Get(void) override;
 	virtual int Peek(void) override;
+
+	virtual bool IsFail(void) const override;
 
 	virtual operator bool(void) const override;
 

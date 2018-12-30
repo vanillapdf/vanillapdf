@@ -11,10 +11,8 @@
 #include "utils/streams/output_stream_interface.h"
 #include "utils/streams/input_output_stream_interface.h"
 
-#include <memory>
 #include <vector>
 #include <string>
-#include <iosfwd>
 
 namespace vanillapdf {
 namespace syntax {
@@ -23,10 +21,12 @@ class File : public virtual IUnknown, public IWeakReferenceable<File> {
 public:
 	// Filesystem
 	static FilePtr Open(const std::string& path);
+	static FilePtr OpenStream(IInputOutputStreamPtr stream, const std::string& name);
 	static FilePtr Create(const std::string& path);
+	static IInputOutputStreamPtr GetFilestream(const std::string& path, int mode);
 
-	BufferPtr GetByteRange(types::stream_size begin, types::size_type length) const;
-	IInputStreamPtr GetByteRangeStream(types::stream_size begin, types::size_type length) const;
+	BufferPtr GetByteRange(types::stream_size begin, types::size_type length);
+	IInputStreamPtr GetByteRangeStream(types::stream_size begin, types::size_type length);
 
 	std::vector<ObjectPtr> DeepCopyObject(ObjectPtr object);
 	std::vector<ObjectPtr> DeepCopyObjects(const std::vector<ObjectPtr>& objects);
@@ -98,7 +98,7 @@ public:
 	~File(void);
 
 private:
-	std::shared_ptr<std::fstream> _input;
+	IInputOutputStreamPtr _input;
 	HeaderPtr _header;
 	XrefChainPtr _xref;
 	std::vector<ObjectPtr> _cache;
@@ -118,7 +118,7 @@ private:
 		types::ushort gen_number) const;
 
 private:
-	explicit File(const std::string& path);
+	File(IInputOutputStreamPtr stream, const std::string& path);
 };
 
 } // syntax

@@ -46,7 +46,7 @@ public:
 	friend class ReverseBuf;
 
 public:
-	explicit InputReverseStream(std::shared_ptr<std::istream> stream, types::stream_size size);
+	explicit InputReverseStream(IInputStreamPtr stream, types::stream_size size);
 
 	virtual types::stream_size Read(Buffer& result, types::stream_size len) override;
 	virtual BufferPtr Read(types::stream_size len) override;
@@ -56,16 +56,18 @@ public:
 	virtual void SetInputPosition(types::stream_size pos, std::ios_base::seekdir way) override;
 
 	virtual bool Eof(void) const override;
-	virtual InputReverseStream& Ignore(void) override;
+	virtual bool Ignore(void) override;
 	virtual int Get(void) override;
 	virtual int Peek(void) override;
+
+	virtual bool IsFail(void) const override;
 
 	virtual operator bool(void) const override;
 
 private:
 	class ReverseBuf : public std::streambuf {
 	public:
-		explicit ReverseBuf(std::shared_ptr<std::istream> stream, types::stream_size size);
+		explicit ReverseBuf(IInputStreamPtr stream, types::stream_size size);
 
 		virtual pos_type seekoff(off_type,
 			std::ios_base::seekdir,
@@ -82,7 +84,7 @@ private:
 		virtual std::streamsize showmanyc() override;
 
 	private:
-		std::shared_ptr<std::istream> m_stream;
+		IInputStreamPtr m_stream;
 		types::stream_offset _offset;
 		types::stream_size _size;
 		types::size_type _put_back;

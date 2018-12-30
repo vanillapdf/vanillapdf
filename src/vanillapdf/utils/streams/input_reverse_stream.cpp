@@ -16,12 +16,12 @@ const types::size_type REVERSE_BUFFER_PUTBACK_SIZE = 16;
 
 } // constant
 
-InputReverseStream::InputReverseStream(std::shared_ptr<std::istream> stream, types::stream_size size) {
+InputReverseStream::InputReverseStream(IInputStreamPtr stream, types::stream_size size) {
 	m_buffer = std::unique_ptr<ReverseBuf>(pdf_new ReverseBuf(stream, size));
 	m_stream = std::unique_ptr<std::istream>(pdf_new std::istream(m_buffer.get()));
 }
 
-InputReverseStream::ReverseBuf::ReverseBuf(std::shared_ptr<std::istream> stream, types::stream_size size)
+InputReverseStream::ReverseBuf::ReverseBuf(IInputStreamPtr stream, types::stream_size size)
 	: m_stream(stream), _size(size), _offset(0),
 	_put_back(constant::REVERSE_BUFFER_PUTBACK_SIZE),
 	_buffer(constant::REVERSE_BUFFER_SIZE + _put_back) {
@@ -78,13 +78,12 @@ InputReverseStream::ReverseBuf::int_type InputReverseStream::ReverseBuf::underfl
 		_offset -= to_read;
 	}
 
-	m_stream->seekg(_offset, std::ios::end);
-	m_stream->read(_buffer.data(), to_read);
+	m_stream->SetInputPosition(_offset, std::ios::end);
+	auto size =  m_stream->Read(_buffer, to_read);
 	_base = _buffer.data();
 
-	assert(!m_stream->fail());
+	assert(!m_stream->IsFail());
 
-	auto size = m_stream->gcount();
 	if (size <= 0) {
 		return traits_type::eof();
 	}
@@ -245,10 +244,10 @@ bool InputReverseStream::Eof(void) const {
 	return m_stream->eof();
 }
 
-InputReverseStream& InputReverseStream::Ignore(void) {
+bool InputReverseStream::Ignore(void) {
 	assert(!m_stream->fail());
 	m_stream->ignore();
-	return *this;
+	return m_stream->operator bool();
 }
 
 int InputReverseStream::Get(void) {
@@ -259,6 +258,10 @@ int InputReverseStream::Get(void) {
 int InputReverseStream::Peek(void) {
 	assert(!m_stream->fail());
 	return m_stream->peek();
+}
+
+bool InputReverseStream::IsFail(void) const {
+	return m_stream->fail();
 }
 
 InputReverseStream::operator bool(void) const {

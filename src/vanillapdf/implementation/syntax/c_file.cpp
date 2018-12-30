@@ -23,6 +23,21 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_Open(string_type filename, Fil
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION File_OpenStream(InputOutputStreamHandle* input_stream, string_type name, FileHandle** result) {
+
+	auto input_stream_converted = reinterpret_cast<IInputOutputStream*>(input_stream);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(input_stream_converted);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(name);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		FilePtr file = File::OpenStream(input_stream_converted, name);
+		auto ptr = file.AddRefGet();
+		*result = reinterpret_cast<FileHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION File_Create(string_type filename, FileHandle** result)
 {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);

@@ -18,9 +18,11 @@ public:
 	virtual void SetInputPosition(types::stream_size pos, std::ios_base::seekdir way) = 0;
 
 	virtual bool Eof(void) const = 0;
-	virtual IInputStream& Ignore(void) = 0;
+	virtual bool Ignore(void) = 0;
 	virtual int Get(void) = 0;
 	virtual int Peek(void) = 0;
+
+	virtual bool IsFail(void) const = 0;
 
 	virtual operator bool(void) const = 0;
 
