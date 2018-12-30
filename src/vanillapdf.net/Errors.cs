@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using vanillapdf.net.Utils;
 
 namespace vanillapdf.net
 {
@@ -68,19 +69,19 @@ namespace vanillapdf.net
             public static ErrorsGetLastErrorMessageDelgate Errors_GetLastErrorMessage = LibraryInstance.GetFunction<ErrorsGetLastErrorMessageDelgate>("Errors_GetLastErrorMessage");
             public static ErrorsGetLastErrorMessageLengthDelgate Errors_GetLastErrorMessageLength = LibraryInstance.GetFunction<ErrorsGetLastErrorMessageLengthDelgate>("Errors_GetLastErrorMessageLength");
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 ErrorsGetLastErrorDelgate(out UInt32 result);
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 ErrorsGetPrintableErrorTextDelegate(UInt32 error, StringBuilder sb, UInt32 size);
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 ErrorsGetPrintableErrorTextLengthDelegate(UInt32 error, out UInt32 result);
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 ErrorsGetLastErrorMessageDelgate(StringBuilder sb, UInt32 size);
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 ErrorsGetLastErrorMessageLengthDelgate(out UInt32 result);
         }
     }

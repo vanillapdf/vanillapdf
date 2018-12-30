@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using vanillapdf.net.Utils;
 
 namespace vanillapdf.net
 {
@@ -48,17 +49,17 @@ namespace vanillapdf.net
 
         public static LoggingSeverity GetSeverity()
         {
-            UInt32 result = NativeMethods.Logging_GetSeverity(out LoggingSeverity severity);
+            UInt32 result = NativeMethods.Logging_GetSeverity(out int severity);
             if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
 
-            return severity;
+            return EnumUtil<LoggingSeverity>.CheckedCast(severity);
         }
 
         public static void SetSeverity(LoggingSeverity severity)
         {
-            UInt32 result = NativeMethods.Logging_SetSeverity(severity);
+            UInt32 result = NativeMethods.Logging_SetSeverity(severity.GetIntegralValue());
             if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
@@ -72,20 +73,20 @@ namespace vanillapdf.net
             public static LoggingGetSeverityDelgate Logging_GetSeverity = LibraryInstance.GetFunction<LoggingGetSeverityDelgate>("Logging_GetSeverity");
             public static LoggingSetSeverityDelgate Logging_SetSeverity = LibraryInstance.GetFunction<LoggingSetSeverityDelgate>("Logging_SetSeverity");
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 LoggingIsEnabledDelgate(out bool result);
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 LoggingEnableDelgate();
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 LoggingDisableDelgate();
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
-            public delegate UInt32 LoggingGetSeverityDelgate(out LoggingSeverity severity);
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
+            public delegate UInt32 LoggingGetSeverityDelgate(out int severity);
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
-            public delegate UInt32 LoggingSetSeverityDelgate(LoggingSeverity severity);
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
+            public delegate UInt32 LoggingSetSeverityDelgate(int severity);
         }
     }
 }

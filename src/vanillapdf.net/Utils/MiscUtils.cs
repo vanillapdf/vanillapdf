@@ -1,8 +1,8 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace vanillapdf.net
+namespace vanillapdf.net.Utils
 {
-    public static class Utils
+    public static class MiscUtils
     {
         public const CallingConvention LibraryCallingConvention = CallingConvention.Cdecl;
     }

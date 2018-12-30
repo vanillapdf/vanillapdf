@@ -36,7 +36,7 @@ namespace vanillapdf.net
 
         public static void Intialize()
         {
-            // Already initialize
+            // Already initialized
             if (m_handle != IntPtr.Zero) {
                 return;
             }

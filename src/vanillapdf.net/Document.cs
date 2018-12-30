@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using vanillapdf.net.Utils;
 
 namespace vanillapdf.net
 {
@@ -79,22 +80,22 @@ namespace vanillapdf.net
             public static DocumentSaveDelgate Document_Save = LibraryInstance.GetFunction<DocumentSaveDelgate>("Document_Save");
             public static DocumentReleaseDelgate Document_Release = LibraryInstance.GetFunction<DocumentReleaseDelgate>("Document_Release");
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 DocumentOpenNewDelgate(string filename, out IntPtr handle);
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 DocumentOpenExistingDelgate(IntPtr file, out IntPtr handle);
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 DocumentAppendDocumentDelgate(IntPtr handle, IntPtr source);
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 DocumentGetCatalogDelgate(IntPtr handle, out IntPtr catalog);
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 DocumentSaveDelgate(IntPtr handle, string filename);
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 DocumentReleaseDelgate(IntPtr handle);
         }
     }

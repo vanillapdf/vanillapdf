@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using vanillapdf.net.Utils;
 
 namespace vanillapdf.net
 {
@@ -23,7 +24,7 @@ namespace vanillapdf.net
                 throw Errors.GetLastErrorException();
             }
 
-            return (PDFVersion)param;
+            return EnumUtil<PDFVersion>.CheckedCast(param);
         }
 
         public bool TryGetVersion(ref PDFVersion version)
@@ -37,7 +38,7 @@ namespace vanillapdf.net
                 throw Errors.GetLastErrorException();
             }
 
-            version = (PDFVersion)param;
+            version = EnumUtil<PDFVersion>.CheckedCast(param);
             return true;
         }
 
@@ -69,13 +70,13 @@ namespace vanillapdf.net
             public static CatalogGetVersionDelgate Catalog_GetVersion = LibraryInstance.GetFunction<CatalogGetVersionDelgate>("Catalog_GetVersion");
             public static CatalogReleaseDelgate Catalog_Release = LibraryInstance.GetFunction<CatalogReleaseDelgate>("Catalog_Release");
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 CatalogGetPagesDelgate(IntPtr handle, out IntPtr version);
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 CatalogGetVersionDelgate(IntPtr handle, out int version);
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 CatalogReleaseDelgate(IntPtr handle);
         }
     }

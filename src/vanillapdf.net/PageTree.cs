@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using vanillapdf.net.Utils;
 
 namespace vanillapdf.net
 {
@@ -50,13 +51,13 @@ namespace vanillapdf.net
             public static PageTreeGetPageCountDelgate PageTree_GetPageCount = LibraryInstance.GetFunction<PageTreeGetPageCountDelgate>("PageTree_GetPageCount");
             public static PageTreeReleaseDelgate PageTree_Release = LibraryInstance.GetFunction<PageTreeReleaseDelgate>("PageTree_Release");
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 PageTreeGetPageDelgate(IntPtr handle, out IntPtr page);
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 PageTreeGetPageCountDelgate(IntPtr handle, out int count);
 
-            [UnmanagedFunctionPointer(Utils.LibraryCallingConvention)]
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 PageTreeReleaseDelgate(IntPtr handle);
         }
     }
