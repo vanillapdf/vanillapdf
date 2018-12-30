@@ -9,18 +9,18 @@ typedef struct {
 	int data;
 } ObserverData;
 
-error_type on_initializing(void* user_data, IInputOutputStreamHandle* input_output_stream) {
+error_type on_initializing(void* user_data, InputOutputStreamHandle* input_output_stream) {
 	ObserverData* observer_data = (ObserverData*) user_data;
 	offset_type current_offset = 0;
 	long long current_offset_converted = 0;
 
-	IOutputStreamHandle* output_stream = NULL;
+	OutputStreamHandle* output_stream = NULL;
 
 	UNUSED(observer_data);
 
 	// Do something with the output stream
-	RETURN_ERROR_IF_NOT_SUCCESS(IInputOutputStream_ToOutputStream(input_output_stream, &output_stream));
-	RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_GetOutputPosition(output_stream, &current_offset));
+	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_ToOutputStream(input_output_stream, &output_stream));
+	RETURN_ERROR_IF_NOT_SUCCESS(OutputStream_GetOutputPosition(output_stream, &current_offset));
 
 	// Convert to long long for printf
 	current_offset_converted = current_offset;
@@ -31,18 +31,18 @@ error_type on_initializing(void* user_data, IInputOutputStreamHandle* input_outp
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-error_type on_finalizing(void* user_data, IInputOutputStreamHandle* input_output_stream) {
+error_type on_finalizing(void* user_data, InputOutputStreamHandle* input_output_stream) {
 	ObserverData* observer_data = (ObserverData*) user_data;
 	offset_type current_offset = 0;
 	long long current_offset_converted = 0;
 
-	IOutputStreamHandle* output_stream = NULL;
+	OutputStreamHandle* output_stream = NULL;
 
 	UNUSED(observer_data);
 
 	// Do something with the output stream
-	RETURN_ERROR_IF_NOT_SUCCESS(IInputOutputStream_ToOutputStream(input_output_stream, &output_stream));
-	RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_GetOutputPosition(output_stream, &current_offset));
+	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_ToOutputStream(input_output_stream, &output_stream));
+	RETURN_ERROR_IF_NOT_SUCCESS(OutputStream_GetOutputPosition(output_stream, &current_offset));
 
 	// Convert to long long for printf
 	current_offset_converted = current_offset;

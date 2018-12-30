@@ -30,12 +30,12 @@ extern "C"
 	/**
 	* \brief The first operation of the FileWriter
 	*/
-	typedef error_type(*FileWriterObserver_OnInitializing_Function)(void* user_data, IInputOutputStreamHandle* output_stream);
+	typedef error_type(*FileWriterObserver_OnInitializing_Function)(void* user_data, InputOutputStreamHandle* output_stream);
 
 	/**
 	* \brief The last operation of the FileWriter
 	*/
-	typedef error_type(*FileWriterObserver_OnFinalizing_Function)(void* user_data, IInputOutputStreamHandle* output_stream);
+	typedef error_type(*FileWriterObserver_OnFinalizing_Function)(void* user_data, InputOutputStreamHandle* output_stream);
 
 	/**
 	* \brief Invoked before every single object is written to the destination file
@@ -70,12 +70,12 @@ extern "C"
 	/**
 	* \brief Invoked before the destination stream is flushed
 	*/
-	typedef error_type(*FileWriterObserver_OnBeforeOutputFlush_Function)(void* user_data, IInputOutputStreamHandle* output_stream);
+	typedef error_type(*FileWriterObserver_OnBeforeOutputFlush_Function)(void* user_data, InputOutputStreamHandle* output_stream);
 
 	/**
 	* \brief Invoked after the destination stream is flushed
 	*/
-	typedef error_type(*FileWriterObserver_OnAfterOutputFlush_Function)(void* user_data, IInputOutputStreamHandle* output_stream);
+	typedef error_type(*FileWriterObserver_OnAfterOutputFlush_Function)(void* user_data, InputOutputStreamHandle* output_stream);
 
 	/**
 	* \brief Create a new FileWriterObserverHandle instance with custom callbacks

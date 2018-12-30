@@ -3,24 +3,24 @@
 #include "utils/streams/input_stream.h"
 #include "utils/streams/stream_utils.h"
 
-#include "vanillapdf/utils/c_input_stream_interface.h"
+#include "vanillapdf/utils/c_input_stream.h"
 #include "implementation/c_helper.h"
 
 using namespace vanillapdf;
 
-VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_CreateFromFile(string_type filename, IInputStreamHandle** result) {
+VANILLAPDF_API error_type CALLING_CONVENTION InputStream_CreateFromFile(string_type filename, InputStreamHandle** result) {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try {
 		auto input_stream = StreamUtils::InputStreamFromFile(filename);
 		auto ptr = input_stream.AddRefGet();
-		*result = reinterpret_cast<IInputStreamHandle*>(ptr);
+		*result = reinterpret_cast<InputStreamHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_CreateFromBuffer(BufferHandle* data_handle, IInputStreamHandle** result) {
+VANILLAPDF_API error_type CALLING_CONVENTION InputStream_CreateFromBuffer(BufferHandle* data_handle, InputStreamHandle** result) {
 	Buffer* data = reinterpret_cast<Buffer*>(data_handle);
 
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
@@ -29,12 +29,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_CreateFromBuffer(Buffe
 	try {
 		auto input_stream = StreamUtils::InputStreamFromBuffer(data);
 		auto ptr = input_stream.AddRefGet();
-		*result = reinterpret_cast<IInputStreamHandle*>(ptr);
+		*result = reinterpret_cast<InputStreamHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_ToBuffer(IInputStreamHandle* handle, BufferHandle** result) {
+VANILLAPDF_API error_type CALLING_CONVENTION InputStream_ToBuffer(InputStreamHandle* handle, BufferHandle** result) {
 	IInputStream* stream = reinterpret_cast<IInputStream*>(handle);
 
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(stream);
@@ -48,7 +48,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_ToBuffer(IInputStreamH
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_GetInputPosition(IInputStreamHandle* handle, offset_type* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION InputStream_GetInputPosition(InputStreamHandle* handle, offset_type* result) {
 	IInputStream* stream = reinterpret_cast<IInputStream*>(handle);
 
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(stream);
@@ -60,7 +60,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_GetInputPosition(IInpu
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_SetInputPosition(IInputStreamHandle* handle, offset_type value) {
+VANILLAPDF_API error_type CALLING_CONVENTION InputStream_SetInputPosition(InputStreamHandle* handle, offset_type value) {
 	IInputStream* stream = reinterpret_cast<IInputStream*>(handle);
 
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(stream);
@@ -71,6 +71,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_SetInputPosition(IInpu
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_Release(IInputStreamHandle* handle) {
-	return ObjectRelease<IInputStream, IInputStreamHandle>(handle);
+VANILLAPDF_API error_type CALLING_CONVENTION InputStream_Release(InputStreamHandle* handle) {
+	return ObjectRelease<IInputStream, InputStreamHandle>(handle);
 }

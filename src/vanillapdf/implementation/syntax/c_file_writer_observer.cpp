@@ -39,7 +39,7 @@ public:
 	}
 
 	virtual void OnInitializing(IInputOutputStreamPtr output) override {
-		auto output_ptr = reinterpret_cast<IInputOutputStreamHandle*>(output.get());
+		auto output_ptr = reinterpret_cast<InputOutputStreamHandle*>(output.get());
 
 		if (m_on_initializing == nullptr) {
 			return;
@@ -54,7 +54,7 @@ public:
 	}
 
 	virtual void OnFinalizing(IInputOutputStreamPtr output) override {
-		auto output_ptr = reinterpret_cast<IInputOutputStreamHandle*>(output.get());
+		auto output_ptr = reinterpret_cast<InputOutputStreamHandle*>(output.get());
 
 		if (m_on_finalizing == nullptr) {
 			return;
@@ -159,7 +159,7 @@ public:
 	}
 
 	virtual void OnBeforeOutputFlush(IInputOutputStreamPtr output) override {
-		auto output_ptr = reinterpret_cast<IInputOutputStreamHandle*>(output.get());
+		auto output_ptr = reinterpret_cast<InputOutputStreamHandle*>(output.get());
 
 		if (m_on_before_output_flush == nullptr) {
 			return;
@@ -174,7 +174,7 @@ public:
 	}
 
 	virtual void OnAfterOutputFlush(IInputOutputStreamPtr output) override {
-		auto output_ptr = reinterpret_cast<IInputOutputStreamHandle*>(output.get());
+		auto output_ptr = reinterpret_cast<InputOutputStreamHandle*>(output.get());
 
 		if (m_on_after_output_flush == nullptr) {
 			return;

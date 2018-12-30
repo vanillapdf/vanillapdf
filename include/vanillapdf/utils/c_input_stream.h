@@ -11,55 +11,55 @@ extern "C"
 #endif
 
 	/**
-	* \file c_input_stream_interface.h
-	* \brief This file contains class definitions for \ref IInputStreamHandle
+	* \file c_input_stream.h
+	* \brief This file contains class definitions for \ref InputStreamHandle
 	*/
 
 	/**
-	* \class IInputStreamHandle
+	* \class InputStreamHandle
 	* \extends IUnknownHandle
 	* \ingroup group_utils
 	* \brief Input stream can read and interpret input from sequences of characters
 	*/
 
 	/**
-	* \memberof IInputStreamHandle
+	* \memberof InputStreamHandle
 	* @{
 	*/
 
 	/**
 	* \brief Opens an existing file at \p filename for read
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_CreateFromFile(string_type filename, IInputStreamHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION InputStream_CreateFromFile(string_type filename, InputStreamHandle** result);
 
 	/**
 	* \brief Reads all data from buffer and stores them for later use
 	* \details This method does not reflect buffer updates after it has been called.
 	* Only current snapshot of the buffer state is stored in the stream.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_CreateFromBuffer(BufferHandle* data, IInputStreamHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION InputStream_CreateFromBuffer(BufferHandle* data, InputStreamHandle** result);
 
 	/**
 	* \brief Reads all data from the input stream and returns them as a single large buffer.
 	* \details This method is not recommended for large files, as the process might not have enough memory.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_ToBuffer(IInputStreamHandle* handle, BufferHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION InputStream_ToBuffer(InputStreamHandle* handle, BufferHandle** result);
 
 	/**
 	* \brief Gets current offset in the input stream
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_GetInputPosition(IInputStreamHandle* handle, offset_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION InputStream_GetInputPosition(InputStreamHandle* handle, offset_type* result);
 
 	/**
 	* \brief Sets current offset in the input stream
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_SetInputPosition(IInputStreamHandle* handle, offset_type value);
+	VANILLAPDF_API error_type CALLING_CONVENTION InputStream_SetInputPosition(InputStreamHandle* handle, offset_type value);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IInputStream_Release(IInputStreamHandle* handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION InputStream_Release(InputStreamHandle* handle);
 
 	/** @} */
 

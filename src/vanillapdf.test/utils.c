@@ -368,7 +368,7 @@ error_type process_constants() {
 //! [Set license file]
 error_type process_license_info(string_type license_file) {
 	BufferHandle* license_buffer = NULL;
-	IInputStreamHandle* input_stream = NULL;
+	InputStreamHandle* input_stream = NULL;
 	boolean_type is_valid = VANILLAPDF_RV_FALSE;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_IsValid(&is_valid));
@@ -377,8 +377,8 @@ error_type process_license_info(string_type license_file) {
 		return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 
-	RETURN_ERROR_IF_NOT_SUCCESS(IInputStream_CreateFromFile(license_file, &input_stream));
-	RETURN_ERROR_IF_NOT_SUCCESS(IInputStream_ToBuffer(input_stream, &license_buffer));
+	RETURN_ERROR_IF_NOT_SUCCESS(InputStream_CreateFromFile(license_file, &input_stream));
+	RETURN_ERROR_IF_NOT_SUCCESS(InputStream_ToBuffer(input_stream, &license_buffer));
 	RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_SetLicenseBuffer(license_buffer));
 	RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_IsValid(&is_valid));
 
@@ -387,7 +387,7 @@ error_type process_license_info(string_type license_file) {
 		return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 
-	RETURN_ERROR_IF_NOT_SUCCESS(IInputStream_Release(input_stream));
+	RETURN_ERROR_IF_NOT_SUCCESS(InputStream_Release(input_stream));
 	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(license_buffer));
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;

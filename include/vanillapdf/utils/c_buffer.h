@@ -45,7 +45,7 @@ extern "C"
 	/**
 	* \brief Converts current buffer state to input stream
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToInputStream(const BufferHandle* handle, IInputStreamHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToInputStream(const BufferHandle* handle, InputStreamHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release

@@ -11,57 +11,57 @@ extern "C"
 #endif
 
 	/**
-	* \file c_output_stream_interface.h
-	* \brief This file contains class definitions for \ref IOutputStreamHandle
+	* \file c_output_stream.h
+	* \brief This file contains class definitions for \ref OutputStreamHandle
 	*/
 
 	/**
-	* \class IOutputStreamHandle
+	* \class OutputStreamHandle
 	* \extends IUnknownHandle
 	* \ingroup group_utils
 	* \brief Output stream can write sequences of characters and represent other kinds of data
 	*/
 
 	/**
-	* \memberof IOutputStreamHandle
+	* \memberof OutputStreamHandle
 	* @{
 	*/
 
 	/**
 	* \brief Creates a new file at \p filename location and opens it for writing
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IOutputStream_CreateFromFile(string_type filename, IOutputStreamHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutputStream_CreateFromFile(string_type filename, OutputStreamHandle** result);
 
 	/**
 	* \brief Gets current offset in the output stream
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IOutputStream_GetOutputPosition(IOutputStreamHandle* handle, offset_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutputStream_GetOutputPosition(OutputStreamHandle* handle, offset_type* result);
 
 	/**
 	* \brief Sets current offset in the output stream
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IOutputStream_SetOutputPosition(IOutputStreamHandle* handle, offset_type value);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutputStream_SetOutputPosition(OutputStreamHandle* handle, offset_type value);
 
 	/**
 	* \brief Appends null terminated string to current output stream instance
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IOutputStream_WriteString(IOutputStreamHandle* handle, string_type data);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutputStream_WriteString(OutputStreamHandle* handle, string_type data);
 
 	/**
 	* \brief Appends buffer string to current output stream instance
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IOutputStream_WriteBuffer(IOutputStreamHandle* handle, BufferHandle* data);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutputStream_WriteBuffer(OutputStreamHandle* handle, BufferHandle* data);
 
 	/**
 	* \brief Flushes all pending data from the stream to it's destination
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IOutputStream_Flush(IOutputStreamHandle* handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutputStream_Flush(OutputStreamHandle* handle);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IOutputStream_Release(IOutputStreamHandle* handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutputStream_Release(OutputStreamHandle* handle);
 
 	/** @} */
 

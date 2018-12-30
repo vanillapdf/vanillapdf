@@ -93,7 +93,7 @@ error_type process_stream(StreamObjectHandle* stream, biguint_type object_number
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_GetType(colorspace_object, &colorspace_object_type));
 
 		if (width_object_type == ObjectType_Integer && height_object_type == ObjectType_Integer && colorspace_object_type == ObjectType_Name) {
-			IOutputStreamHandle* output_stream = NULL;
+			OutputStreamHandle* output_stream = NULL;
 
 			DCTDecodeFilterHandle* encoding_filter = NULL;
 			DictionaryObjectHandle* encoding_dictionary = NULL;
@@ -111,10 +111,10 @@ error_type process_stream(StreamObjectHandle* stream, biguint_type object_number
 			RETURN_ERROR_IF_NOT_SUCCESS(DCTDecodeFilter_EncodeParams(encoding_filter, decoded_body, encoding_dictionary, &encoded_body));
 			RETURN_ERROR_IF_NOT_SUCCESS(DCTDecodeFilter_Release(encoding_filter));
 
-			RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_CreateFromFile(output_filename, &output_stream));
-			RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_WriteBuffer(output_stream, encoded_body));
-			RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_Flush(output_stream));
-			RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_Release(output_stream));
+			RETURN_ERROR_IF_NOT_SUCCESS(OutputStream_CreateFromFile(output_filename, &output_stream));
+			RETURN_ERROR_IF_NOT_SUCCESS(OutputStream_WriteBuffer(output_stream, encoded_body));
+			RETURN_ERROR_IF_NOT_SUCCESS(OutputStream_Flush(output_stream));
+			RETURN_ERROR_IF_NOT_SUCCESS(OutputStream_Release(output_stream));
 
 			RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(encoded_body));
 			RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(decoded_body));
@@ -129,15 +129,15 @@ error_type process_stream(StreamObjectHandle* stream, biguint_type object_number
 	}
 
 	if (processed_with_params != VANILLAPDF_RV_TRUE) {
-		IOutputStreamHandle* output_stream = NULL;
+		OutputStreamHandle* output_stream = NULL;
 		BufferHandle* encoded_body = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_GetBodyRaw(stream, &encoded_body));
 
-		RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_CreateFromFile(output_filename, &output_stream));
-		RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_WriteBuffer(output_stream, encoded_body));
-		RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_Flush(output_stream));
-		RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_Release(output_stream));
+		RETURN_ERROR_IF_NOT_SUCCESS(OutputStream_CreateFromFile(output_filename, &output_stream));
+		RETURN_ERROR_IF_NOT_SUCCESS(OutputStream_WriteBuffer(output_stream, encoded_body));
+		RETURN_ERROR_IF_NOT_SUCCESS(OutputStream_Flush(output_stream));
+		RETURN_ERROR_IF_NOT_SUCCESS(OutputStream_Release(output_stream));
 
 		RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(encoded_body));
 	}
@@ -269,7 +269,7 @@ error_type process_contents(ContentsHandle* page_contents, size_type page_number
 		int return_value = 0;
 		unsigned long long i_converted = i;
 		char output_filename[256] = {0};
-		IOutputStreamHandle* output_stream = NULL;
+		OutputStreamHandle* output_stream = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(Contents_GetInstructionAt(page_contents, i, &content_instruction));
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_GetType(content_instruction, &instruction_type));
@@ -297,10 +297,10 @@ error_type process_contents(ContentsHandle* page_contents, size_type page_number
 			return VANILLAPDF_TOOLS_ERROR_FAILURE;
 		}
 
-		RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_CreateFromFile(output_filename, &output_stream));
-		RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_WriteBuffer(output_stream, content_image_data));
-		RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_Flush(output_stream));
-		RETURN_ERROR_IF_NOT_SUCCESS(IOutputStream_Release(output_stream));
+		RETURN_ERROR_IF_NOT_SUCCESS(OutputStream_CreateFromFile(output_filename, &output_stream));
+		RETURN_ERROR_IF_NOT_SUCCESS(OutputStream_WriteBuffer(output_stream, content_image_data));
+		RETURN_ERROR_IF_NOT_SUCCESS(OutputStream_Flush(output_stream));
+		RETURN_ERROR_IF_NOT_SUCCESS(OutputStream_Release(output_stream));
 
 		RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(content_image_data));
 		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Release(content_image_dictionary));
