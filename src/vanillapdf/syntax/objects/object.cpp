@@ -228,6 +228,11 @@ const char* Object::TypeName(Type type) {
 }
 
 void Object::CloneBaseProperties(Object* other) const {
+	assert(other != nullptr && "Invalid clone object parameter");
+	if (other == nullptr) {
+		throw GeneralException("Invalid clone object parameter");
+	}
+
 	other->SetFile(m_file);
 	other->SetEncryptionExempted(m_encryption_exempted);
 
