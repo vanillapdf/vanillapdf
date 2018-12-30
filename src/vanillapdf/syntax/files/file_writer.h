@@ -173,6 +173,7 @@ private:
 	static std::string GetFormattedGenerationNumber(types::ushort generation_number);
 	static std::string GetFormattedObjectNumber(types::big_uint generation_number);
 
+	void CloneHybridStreams(FilePtr source, FilePtr destination);
 	void FixStreamReferences(XrefChainPtr source, XrefChainPtr destination);
 
 	void RecalculateXrefPrevOffset(XrefBasePtr source, XrefBasePtr prev);

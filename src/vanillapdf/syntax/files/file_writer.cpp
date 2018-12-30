@@ -328,6 +328,67 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
 	}
 }
 
+void FileWriter::CloneHybridStreams(FilePtr source, FilePtr destination) {
+
+	auto source_chain = source->GetXrefChain();
+	auto destination_chain = destination->GetXrefChain();
+
+	auto source_iterator = source_chain->begin();
+	auto dest_iterator = destination_chain->begin();
+
+	// Following for loop would crash if this is not true
+	assert(source_chain->Size() == destination_chain->Size() && "Error in xref cloning");
+
+	if (source_chain->Size() != destination_chain->Size()) {
+		throw GeneralException("Invalid xref size");
+	}
+
+	for (; dest_iterator != destination_chain->end(); ++dest_iterator, ++source_iterator) {
+		auto original_xref = *source_iterator;
+		auto new_xref = *dest_iterator;
+
+		assert(new_xref->GetType() == original_xref->GetType() && "Cloning error");
+		if (new_xref->GetType() != original_xref->GetType()) {
+			throw GeneralException("Error in cloning xref");
+		}
+
+		if (original_xref->GetType() != XrefBase::Type::Table) {
+			continue;
+		}
+
+		auto source_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(original_xref);
+		auto dest_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(new_xref);
+
+		if (!source_table->HasHybridStream()) {
+			continue;
+		}
+
+		auto source_hybrid_stream = source_table->GetHybridStream();
+		auto source_hybrid_stream_object = source_hybrid_stream->GetStreamObject();
+		auto source_hybrid_stream_object_number = source_hybrid_stream_object->GetObjectNumber();
+		auto source_hybrid_stream_generation_number = source_hybrid_stream_object->GetGenerationNumber();
+
+		auto destination_hybrid_entry = destination_chain->GetXrefEntry(source_hybrid_stream_object_number, source_hybrid_stream_generation_number);
+		if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(destination_hybrid_entry)) {
+			throw GeneralException("Destination xref is not in use");
+		}
+
+		auto destination_hybrid_used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(destination_hybrid_entry);
+		auto destination_hybrid_object = destination_hybrid_used_entry->GetReference();
+		if (!ConvertUtils<ObjectPtr>::IsType<StreamObjectPtr>(destination_hybrid_object)) {
+			throw GeneralException("Cloned hybrid xref is not a stream");
+		}
+
+		auto cloned_hybrid_xref = CloneXref(destination, source_hybrid_stream);
+		auto cloned_hybrid_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(cloned_hybrid_xref);
+
+		auto destination_hybrid_stream = ConvertUtils<ObjectPtr>::ConvertTo<StreamObjectPtr>(destination_hybrid_object);
+		cloned_hybrid_stream->SetStreamObject(destination_hybrid_stream);
+
+		dest_table->SetHybridStream(cloned_hybrid_stream);
+	}
+}
+
 void FileWriter::FixStreamReferences(XrefChainPtr source, XrefChainPtr destination) {
 
 	auto source_iterator = source->begin();
@@ -336,15 +397,23 @@ void FileWriter::FixStreamReferences(XrefChainPtr source, XrefChainPtr destinati
 	// Following for loop would crash if this is not true
 	assert(source->Size() == destination->Size() && "Error in xref cloning");
 
+	if (source->Size() != destination->Size()) {
+		throw GeneralException("Invalid xref size");
+	}
+
 	for (; dest_iterator != destination->end(); ++dest_iterator, ++source_iterator) {
 		auto original_xref = *source_iterator;
 		auto new_xref = *dest_iterator;
+
+		assert(new_xref->GetType() == original_xref->GetType() && "Cloning error");
+		if (new_xref->GetType() != original_xref->GetType()) {
+			throw GeneralException("Error in cloning xref");
+		}
 
 		bool is_original_stream = ConvertUtils<XrefBasePtr>::IsType<XrefStreamPtr>(original_xref);
 		bool is_new_stream = ConvertUtils<XrefBasePtr>::IsType<XrefStreamPtr>(new_xref);
 
 		// Xref streams content needs to be recalculated
-		assert(!(is_original_stream ^ is_new_stream));
 		if (!is_original_stream || !is_new_stream) {
 			continue;
 		}
@@ -650,6 +719,9 @@ XrefChainPtr FileWriter::CloneXrefChain(FilePtr source, FilePtr destination) {
 	}
 
 	// Stream object references needs to be fixed separately
+	CloneHybridStreams(source, destination);
+
+	// Stream object references needs to be fixed separately
 	FixStreamReferences(source_chain, dest_chain);
 
 	// All xref entries are stored in reversed order than it is written to file
@@ -746,40 +818,6 @@ XrefBasePtr FileWriter::CloneXref(FilePtr destination, XrefBasePtr source) {
 		}
 
 		assert(false && "Uncrecognized entry type");
-	}
-
-	if (source->GetType() == XrefBase::Type::Table) {
-		auto source_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(source);
-		auto result_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(result);
-
-		if (source_table->HasHybridStream()) {
-			auto source_hybrid_stream = source_table->GetHybridStream();
-			auto source_hybrid_stream_object = source_hybrid_stream->GetStreamObject();
-			auto source_hybrid_stream_object_number = source_hybrid_stream_object->GetObjectNumber();
-			//auto source_hybrid_stream_generation_number = source_hybrid_stream_object->GetGenerationNumber();
-
-			// TODO the entry may be somewhere in the chain
-			//auto destination_xref_chain = destination->GetXrefChain();
-			//auto destination_hybrid_entry = destination_xref_chain->GetXrefEntry(source_hybrid_stream_object_number, source_hybrid_stream_generation_number);
-			auto destination_hybrid_entry = result_table->Find(source_hybrid_stream_object_number);
-			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(destination_hybrid_entry)) {
-				throw GeneralException("Destination xref is not in use");
-			}
-
-			auto destination_hybrid_used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(destination_hybrid_entry);
-			auto destination_hybrid_object = destination_hybrid_used_entry->GetReference();
-			if (!ConvertUtils<ObjectPtr>::IsType<StreamObjectPtr>(destination_hybrid_object)) {
-				throw GeneralException("Cloned hybrid xref is not a stream");
-			}
-
-			auto cloned_hybrid_xref = CloneXref(destination, source_hybrid_stream);
-			auto cloned_hybrid_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(cloned_hybrid_xref);
-
-			auto destination_hybrid_stream = ConvertUtils<ObjectPtr>::ConvertTo<StreamObjectPtr>(destination_hybrid_object);
-			cloned_hybrid_stream->SetStreamObject(destination_hybrid_stream);
-
-			result_table->SetHybridStream(cloned_hybrid_stream);
-		}
 	}
 
 	// Set trailer
