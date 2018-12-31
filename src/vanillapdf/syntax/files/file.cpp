@@ -26,7 +26,7 @@ namespace syntax {
 
 FilePtr File::Open(const std::string& path) {
 
-	std::ios_base::openmode flags;
+	std::ios_base::openmode flags = static_cast<std::ios_base::openmode>(0);
 	flags |= std::ios_base::in;
 	flags |= std::ios_base::binary;
 	flags |= std::ios_base::ate;
@@ -41,7 +41,7 @@ FilePtr File::OpenStream(IInputOutputStreamPtr stream, const std::string& name) 
 
 FilePtr File::Create(const std::string& path) {
 
-	std::ios_base::openmode flags;
+	std::ios_base::openmode flags = static_cast<std::ios_base::openmode>(0);
 	flags |= std::ios_base::in;
 	flags |= std::ios_base::out;
 	flags |= std::ios_base::binary;
