@@ -15,16 +15,21 @@ set(VANILLAPDF_TEST_HEADERS
 	test.h
 )
 
+set(VANILLAPDF_TEST_RESOURCE_FILES
+	resources.rc
+)
+
+# Resource files
+source_group("Resource Files" FILES
+	${VANILLAPDF_TEST_RESOURCE_FILES}
+)
+
 source_group("Header Files" FILES
 	${VANILLAPDF_TEST_HEADERS}
 )
 
 source_group("Source Files" FILES
 	${VANILLAPDF_TEST_SOURCES}
-)
-
-set(VANILLAPDF_TEST_RESOURCE_FILES
-	resources.rc
 )
 
 add_executable(vanillapdf.test
