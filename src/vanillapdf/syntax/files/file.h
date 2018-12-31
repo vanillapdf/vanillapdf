@@ -11,6 +11,7 @@
 #include "utils/streams/output_stream_interface.h"
 #include "utils/streams/input_output_stream_interface.h"
 
+#include <ios>
 #include <vector>
 #include <string>
 
@@ -25,7 +26,7 @@ public:
 
 	static FilePtr OpenStream(IInputOutputStreamPtr stream, const std::string& name);
 	static FilePtr CreateStream(IInputOutputStreamPtr stream, const std::string& name);
-	static IInputOutputStreamPtr GetFilestream(const std::string& path, int mode);
+	static IInputOutputStreamPtr GetFilestream(const std::string& path, std::ios_base::openmode mode);
 
 	BufferPtr GetByteRange(types::stream_size begin, types::size_type length);
 	IInputStreamPtr GetByteRangeStream(types::stream_size begin, types::size_type length);
