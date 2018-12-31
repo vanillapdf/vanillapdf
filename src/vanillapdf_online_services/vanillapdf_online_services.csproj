@@ -16,4 +16,8 @@
     <Folder Include="Resources\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\vanillapdf.net\vanillapdf.net.csproj" />
+  </ItemGroup>
+
 </Project>

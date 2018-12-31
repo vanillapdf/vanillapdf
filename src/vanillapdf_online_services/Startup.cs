@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using vanillapdf.net.Utils;
 using vanillapdf_online_services.Common;
 using vanillapdf_online_services.Services;
 
@@ -15,6 +16,8 @@ namespace vanillapdf_online_services
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            MiscUtils.InitializeClasses();
         }
 
         public IConfiguration Configuration { get; }

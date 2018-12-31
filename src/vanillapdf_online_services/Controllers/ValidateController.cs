@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.IO;
+using vanillapdf.net;
 using vanillapdf_online_services.Common;
 using vanillapdf_online_services.Models.ViewModels;
 
@@ -39,7 +41,30 @@ namespace vanillapdf_online_services.Controllers
                 return View(model);
             }
 
-            // TODO: Add insert logic here
+            string fileHash;
+            string downloadPath = Path.Combine("TemporaryDownloads", UploadedFile.FileName);
+
+            using (var uploadStream = UploadedFile.OpenReadStream()) {
+                using (var fileStream = new FileStream(downloadPath, FileMode.Create)) {
+                    uploadStream.CopyTo(fileStream);
+
+                    fileStream.Position = 0;
+                    fileHash = Utils.CalculateSha256(fileStream);
+                }
+            }
+
+            // TODO: check db
+
+            string hashPath = Path.Combine("FileDownloads", fileHash);
+            System.IO.File.Move(downloadPath, hashPath);
+
+            using (var file = PdfFile.Open(hashPath)) {
+                file.Initialize();
+
+                using (var document = PdfDocument.OpenFile(file)) {
+                }
+            }
+
             return RedirectToAction(nameof(Index));
         }
     }
