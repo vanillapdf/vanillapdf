@@ -1,14 +1,20 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using vanillapdf.net.Utils;
 
 namespace vanillapdf.net
 {
-    public class Inputstream : IUnknown
+    public class PdfInputstream : PdfUnknown
     {
-        internal Inputstream(IntPtr handle)
+        internal PdfInputstream(IntPtr handle)
         {
             Handle = handle;
+        }
+
+        static PdfInputstream()
+        {
+            RuntimeHelpers.RunClassConstructor(typeof(NativeMethods).TypeHandle);
         }
 
         public Int64 InputPosition
@@ -17,41 +23,41 @@ namespace vanillapdf.net
             set { SetInputPosition(value); }
         }
 
-        public static Inputstream CreateFromFile(string filename)
+        public static PdfInputstream CreateFromFile(string filename)
         {
             UInt32 result = NativeMethods.InputStream_CreateFromFile(filename, out IntPtr data);
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
 
-            return new Inputstream(data);
+            return new PdfInputstream(data);
         }
 
-        public static Inputstream CreateFromBuffer(Buffer buffer)
+        public static PdfInputstream CreateFromBuffer(PdfBuffer buffer)
         {
             UInt32 result = NativeMethods.InputStream_CreateFromBuffer(buffer.Handle, out IntPtr data);
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
 
-            return new Inputstream(data);
+            return new PdfInputstream(data);
         }
 
-        public Buffer ToBuffer()
+        public PdfBuffer ToBuffer()
         {
             UInt32 result = NativeMethods.InputStream_ToBuffer(Handle, out IntPtr data);
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
 
-            return new Buffer(data);
+            return new PdfBuffer(data);
         }
 
         public Int64 GetInputPosition()
         {
             UInt32 result = NativeMethods.InputStream_GetInputPosition(Handle, out Int64 data);
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
 
             return data;
@@ -60,14 +66,13 @@ namespace vanillapdf.net
         public void SetInputPosition(Int64 data)
         {
             UInt32 result = NativeMethods.InputStream_SetInputPosition(Handle, data);
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
         }
 
         //public static implicit operator Inputstream(Stream stream)
         //{
-        //    System.Console.WriteLine("Conversion occurred.");
         //    return new Inputstream(IntPtr.Zero);
         //}
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using vanillapdf.net.Utils;
 
 namespace vanillapdf.net.test
 {
@@ -6,31 +7,39 @@ namespace vanillapdf.net.test
     {
         static void Main(string[] args)
         {
-            Logging.Enable();
+            MiscUtils.InitializeClasses();
 
-            using (Document document = Document.OpenNew(args[0])) {
-                Catalog catalog = document.GetCatalog();
-                PageTree tree = catalog.GetPageTree();
-                int count = tree.GetPageCount();
+            PdfLogging.Enable();
 
-                for (int i = 1; i < args.Length; ++i) {
-                    using (Document other_document = Document.OpenNew(args[i])) {
-                        document.AppendDocument(other_document);
-                    }
-                }
+            //var severity = Logging.GetSeverity();
 
-                document.Save("example.pdf");
-            }
+            //using (File file = File.Open("aa")) {
+            //    file.Initialize();
+            //}
 
-            try {
-                using (Document document = Document.OpenNew("aa")) {
-                }
-                }catch (Exception ex) {
+            //using (Document document = Document.OpenNew(args[0])) {
+            //    Catalog catalog = document.GetCatalog();
+            //    PageTree tree = catalog.GetPageTree();
+            //    int count = tree.GetPageCount();
 
-            }
+            //    for (int i = 1; i < args.Length; ++i) {
+            //        using (Document other_document = Document.OpenNew(args[i])) {
+            //            document.AppendDocument(other_document);
+            //        }
+            //    }
 
-            uint test = Errors.GetLastError();
-            string message = Errors.GetLastErrorMessage();
+            //    document.Save("example.pdf");
+            //}
+
+            //try {
+            //    using (Document document = Document.OpenNew("aa")) {
+            //    }
+            //    }catch (Exception ex) {
+
+            //}
+
+            uint test = PdfErrors.GetLastError();
+            string message = PdfErrors.GetLastErrorMessage();
         }
     }
 }

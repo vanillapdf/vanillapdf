@@ -1,14 +1,20 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using vanillapdf.net.Utils;
 
 namespace vanillapdf.net
 {
-    public class Buffer : IUnknown
+    public class PdfBuffer : PdfUnknown
     {
-        internal Buffer(IntPtr handle)
+        internal PdfBuffer(IntPtr handle)
         {
             Handle = handle;
+        }
+
+        static PdfBuffer()
+        {
+            RuntimeHelpers.RunClassConstructor(typeof(NativeMethods).TypeHandle);
         }
 
         public byte[] Data
@@ -17,21 +23,21 @@ namespace vanillapdf.net
             set { SetData(value); }
         }
 
-        public static Buffer Create()
+        public static PdfBuffer Create()
         {
             UInt32 result = NativeMethods.Buffer_Create(out IntPtr handle);
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
 
-            return new Buffer(handle);
+            return new PdfBuffer(handle);
         }
 
         public byte[] GetData()
         {
             UInt32 result = NativeMethods.Buffer_GetData(Handle, out IntPtr data, out UInt32 size);
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
 
             int sizeConverted = Convert.ToInt32(size);
@@ -44,7 +50,7 @@ namespace vanillapdf.net
         public void SetData(byte[] data)
         {
             IntPtr allocator = IntPtr.Zero;
-            UInt32 result = ReturnValues.ERROR_GENERAL;
+            UInt32 result = PdfReturnValues.ERROR_GENERAL;
 
             try {
                 allocator = Marshal.AllocHGlobal(data.Length);
@@ -60,19 +66,19 @@ namespace vanillapdf.net
                 }
             }
 
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
         }
 
-        public Inputstream ToInputStream(string name)
+        public PdfInputstream ToInputStream(string name)
         {
             UInt32 result = NativeMethods.Buffer_ToInputStream(Handle, name, out IntPtr handle);
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
 
-            return new Inputstream(handle);
+            return new PdfInputstream(handle);
         }
 
         protected override UInt32 Release(IntPtr data)

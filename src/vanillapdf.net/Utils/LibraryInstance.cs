@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace vanillapdf.net
+namespace vanillapdf.net.Utils
 {
     internal static class LibraryInstance
     {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using vanillapdf.net.Utils;
 
@@ -13,8 +14,13 @@ namespace vanillapdf.net
         Fatal
     }
 
-    public static class Logging
+    public static class PdfLogging
     {
+        static PdfLogging()
+        {
+            RuntimeHelpers.RunClassConstructor(typeof(NativeMethods).TypeHandle);
+        }
+
         public static LoggingSeverity Severity
         {
             get { return GetSeverity(); }
@@ -24,8 +30,8 @@ namespace vanillapdf.net
         public static bool IsEnabled()
         {
             UInt32 result = NativeMethods.Logging_IsEnabled(out bool enabled);
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
 
             return enabled;
@@ -34,24 +40,24 @@ namespace vanillapdf.net
         public static void Enable()
         {
             UInt32 result = NativeMethods.Logging_Enable();
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
         }
 
         public static void Disable()
         {
             UInt32 result = NativeMethods.Logging_Disable();
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
         }
 
         public static LoggingSeverity GetSeverity()
         {
             UInt32 result = NativeMethods.Logging_GetSeverity(out int severity);
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
 
             return EnumUtil<LoggingSeverity>.CheckedCast(severity);
@@ -60,8 +66,8 @@ namespace vanillapdf.net
         public static void SetSeverity(LoggingSeverity severity)
         {
             UInt32 result = NativeMethods.Logging_SetSeverity(severity.GetIntegralValue());
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
         }
 

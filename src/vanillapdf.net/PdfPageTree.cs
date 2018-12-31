@@ -1,34 +1,40 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using vanillapdf.net.Utils;
 
 namespace vanillapdf.net
 {
-    public class PageTree : IUnknown
+    public class PdfPageTree : PdfUnknown
     {
-        internal PageTree(IntPtr handle)
+        internal PdfPageTree(IntPtr handle)
         {
             Handle = handle;
+        }
+
+        static PdfPageTree()
+        {
+            RuntimeHelpers.RunClassConstructor(typeof(NativeMethods).TypeHandle);
         }
 
         public int GetPageCount()
         {
             UInt32 result = NativeMethods.PageTree_GetPageCount(Handle, out int count);
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
 
             return count;
         }
 
-        public PageObject GetPage(int index)
+        public PdfPageObject GetPage(int index)
         {
             UInt32 result = NativeMethods.PageTree_GetPage(Handle, out IntPtr data);
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
 
-            return new PageObject(data);
+            return new PdfPageObject(data);
         }
 
         protected override UInt32 Release(IntPtr handle)

@@ -23,11 +23,14 @@
     <None Remove="x64\libvanillapdf.dll" />
     <None Remove="x64\zlib.dll" />
     <None Remove="x86\jpeg.dll" />
+    <None Remove="x86\jpeg62.dll" />
+    <None Remove="x86\libcrypto-1_1.dll" />
     <None Remove="x86\libeay32.dll" />
     <None Remove="x86\libvanillapdf.dll" />
     <None Remove="x86\ssleay32.dll" />
     <None Remove="x86\vanillapdf.dll" />
     <None Remove="x86\zlib.dll" />
+    <None Remove="x86\zlib1.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,19 +46,16 @@
     <Content Include="x64\zlib.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="x86\jpeg.dll">
+    <Content Include="x86\jpeg62.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="x86\libeay32.dll">
+    <Content Include="x86\libcrypto-1_1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\libvanillapdf.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="x86\ssleay32.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="x86\zlib.dll">
+    <Content Include="x86\zlib1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

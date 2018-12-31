@@ -1,16 +1,22 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using vanillapdf.net.Utils;
 
 namespace vanillapdf.net
 {
-    public static class Errors
+    public static class PdfErrors
     {
+        static PdfErrors()
+        {
+            RuntimeHelpers.RunClassConstructor(typeof(NativeMethods).TypeHandle);
+        }
+
         public static UInt32 GetLastError()
         {
             UInt32 result = NativeMethods.Errors_GetLastError(out UInt32 code);
-            if (result != ReturnValues.ERROR_SUCCESS) {
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
                 throw new Exception("Could not get last error");
             }
 
@@ -20,7 +26,7 @@ namespace vanillapdf.net
         public static string GetPrintableErrorText(UInt32 error)
         {
             UInt32 lengthResult = NativeMethods.Errors_GetPrintableErrorTextLength(error, out UInt32 length);
-            if (lengthResult != ReturnValues.ERROR_SUCCESS) {
+            if (lengthResult != PdfReturnValues.ERROR_SUCCESS) {
                 throw new Exception("Could not get last error message length");
             }
 
@@ -28,7 +34,7 @@ namespace vanillapdf.net
             StringBuilder sb = new StringBuilder(convertedLength);
 
             UInt32 messageResult = NativeMethods.Errors_GetPrintableErrorText(error, sb, length);
-            if (messageResult != ReturnValues.ERROR_SUCCESS) {
+            if (messageResult != PdfReturnValues.ERROR_SUCCESS) {
                 throw new Exception("Could not get last error message");
             }
 
@@ -38,7 +44,7 @@ namespace vanillapdf.net
         public static string GetLastErrorMessage()
         {
             UInt32 lengthResult = NativeMethods.Errors_GetLastErrorMessageLength(out UInt32 length);
-            if (lengthResult != ReturnValues.ERROR_SUCCESS) {
+            if (lengthResult != PdfReturnValues.ERROR_SUCCESS) {
                 throw new Exception("Could not get last error message length");
             }
 
@@ -46,19 +52,19 @@ namespace vanillapdf.net
             StringBuilder sb = new StringBuilder(convertedLength);
 
             UInt32 messageResult = NativeMethods.Errors_GetLastErrorMessage(sb, length);
-            if (messageResult != ReturnValues.ERROR_SUCCESS) {
+            if (messageResult != PdfReturnValues.ERROR_SUCCESS) {
                 throw new Exception("Could not get last error message");
             }
 
             return sb.ToString();
         }
 
-        public static BaseException GetLastErrorException()
+        public static PdfBaseException GetLastErrorException()
         {
             uint value = GetLastError();
             string message = GetLastErrorMessage();
 
-            return BaseException.GetException(value, message);
+            return PdfBaseException.GetException(value, message);
         }
 
         private static class NativeMethods

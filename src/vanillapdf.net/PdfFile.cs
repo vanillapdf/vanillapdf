@@ -1,61 +1,67 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using vanillapdf.net.Utils;
 
 namespace vanillapdf.net
 {
-    public class File : IUnknown
+    public class PdfFile : PdfUnknown
     {
-        internal File(IntPtr handle)
+        internal PdfFile(IntPtr handle)
         {
             Handle = handle;
         }
 
-        public static File Open(string filename)
+        static PdfFile()
+        {
+            RuntimeHelpers.RunClassConstructor(typeof(NativeMethods).TypeHandle);
+        }
+
+        public static PdfFile Open(string filename)
         {
             UInt32 result = NativeMethods.File_Open(filename, out IntPtr data);
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
 
-            return new File(data);
+            return new PdfFile(data);
         }
 
-        public static File OpenStream(Inputstream stream, string filename)
+        public static PdfFile OpenStream(PdfInputstream stream, string filename)
         {
             UInt32 result = NativeMethods.File_OpenStream(stream.Handle, filename, out IntPtr data);
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
 
-            return new File(data);
+            return new PdfFile(data);
         }
 
-        public static File Create(string filename)
+        public static PdfFile Create(string filename)
         {
             UInt32 result = NativeMethods.File_Create(filename, out IntPtr data);
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
 
-            return new File(data);
+            return new PdfFile(data);
         }
 
-        public static File CreateStream(Inputstream stream, string name)
+        public static PdfFile CreateStream(PdfInputstream stream, string name)
         {
             UInt32 result = NativeMethods.File_CreateStream(stream.Handle, name, out IntPtr data);
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
 
-            return new File(data);
+            return new PdfFile(data);
         }
 
         public void Initialize()
         {
             UInt32 result = NativeMethods.File_Initialize(Handle);
-            if (result != ReturnValues.ERROR_SUCCESS) {
-                throw Errors.GetLastErrorException();
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
             }
         }
 

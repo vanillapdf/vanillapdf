@@ -1,14 +1,14 @@
 ﻿namespace vanillapdf.net
 {
-    public enum PDFVersion
+    public enum PdfVersion
     {
-        PDFVersion_10 = 0,
-        PDFVersion_11 = 1,
-        PDFVersion_12 = 2,
-        PDFVersion_13 = 3,
-        PDFVersion_14 = 4,
-        PDFVersion_15 = 5,
-        PDFVersion_16 = 6,
-        PDFVersion_17 = 7
+        PdfVersion_10 = 0,
+        PdfVersion_11 = 1,
+        PdfVersion_12 = 2,
+        PdfVersion_13 = 3,
+        PdfVersion_14 = 4,
+        PdfVersion_15 = 5,
+        PdfVersion_16 = 6,
+        PdfVersion_17 = 7
     }
 }

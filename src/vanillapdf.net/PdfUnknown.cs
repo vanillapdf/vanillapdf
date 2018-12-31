@@ -1,12 +1,18 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using vanillapdf.net.Utils;
 
 namespace vanillapdf.net
 {
-    public abstract class IUnknown : IDisposable
+    public abstract class PdfUnknown : IDisposable
     {
         protected internal IntPtr Handle { get; protected set; }
+
+        static PdfUnknown()
+        {
+            RuntimeHelpers.RunClassConstructor(typeof(NativeMethods).TypeHandle);
+        }
 
         public void Dispose()
         {
@@ -19,8 +25,8 @@ namespace vanillapdf.net
         {
             if (Handle != IntPtr.Zero) {
                 UInt32 result = Release(Handle);
-                if (result != ReturnValues.ERROR_SUCCESS) {
-                    throw Errors.GetLastErrorException();
+                if (result != PdfReturnValues.ERROR_SUCCESS) {
+                    throw PdfErrors.GetLastErrorException();
                 }
 
                 Handle = IntPtr.Zero;

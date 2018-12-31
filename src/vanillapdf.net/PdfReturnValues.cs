@@ -1,8 +1,9 @@
 ﻿using System;
+using vanillapdf.net.Utils;
 
 namespace vanillapdf.net
 {
-    public static class ReturnValues
+    public static class PdfReturnValues
     {
         public static string GetValueName(uint value)
         {

@@ -1,14 +1,20 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using vanillapdf.net.Utils;
 
 namespace vanillapdf.net
 {
-    public class PageObject : IUnknown
+    public class PdfPageObject : PdfUnknown
     {
-        internal PageObject(IntPtr handle)
+        internal PdfPageObject(IntPtr handle)
         {
             Handle = handle;
+        }
+
+        static PdfPageObject()
+        {
+            RuntimeHelpers.RunClassConstructor(typeof(NativeMethods).TypeHandle);
         }
 
         protected override UInt32 Release(IntPtr data)
