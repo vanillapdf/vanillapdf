@@ -6,23 +6,14 @@ namespace vanillapdf.net
 {
     public class PageObject : IUnknown
     {
-        internal IntPtr Handle { get; private set; }
-
         internal PageObject(IntPtr handle)
         {
             Handle = handle;
         }
 
-        protected override void Dispose(bool disposing)
+        protected override UInt32 Release(IntPtr data)
         {
-            if (Handle != IntPtr.Zero) {
-                UInt32 result = NativeMethods.PageObject_Release(Handle);
-                if (result != ReturnValues.ERROR_SUCCESS) {
-                    throw Errors.GetLastErrorException();
-                }
-
-                Handle = IntPtr.Zero;
-            }
+            return NativeMethods.PageObject_Release(data);
         }
 
         private static class NativeMethods

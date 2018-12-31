@@ -6,8 +6,6 @@ namespace vanillapdf.net
 {
     public class Document : IUnknown
     {
-        internal IntPtr Handle { get; private set; }
-
         internal Document(IntPtr handle)
         {
             Handle = handle;
@@ -15,22 +13,22 @@ namespace vanillapdf.net
 
         public static Document OpenNew(string filename)
         {
-            UInt32 result = NativeMethods.Document_OpenNew(filename, out IntPtr handle);
+            UInt32 result = NativeMethods.Document_OpenNew(filename, out IntPtr data);
             if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
 
-            return new Document(handle);
+            return new Document(data);
         }
 
         public static Document OpenExisting(File file)
         {
-            UInt32 result = NativeMethods.Document_OpenExisting(file.Handle, out IntPtr handle);
+            UInt32 result = NativeMethods.Document_OpenExisting(file.Handle, out IntPtr data);
             if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
 
-            return new Document(handle);
+            return new Document(data);
         }
 
         public void AppendDocument(Document source)
@@ -43,12 +41,12 @@ namespace vanillapdf.net
 
         public Catalog GetCatalog()
         {
-            UInt32 result = NativeMethods.Document_GetCatalog(Handle, out IntPtr catalog);
+            UInt32 result = NativeMethods.Document_GetCatalog(Handle, out IntPtr data);
             if (result != ReturnValues.ERROR_SUCCESS) {
                 throw Errors.GetLastErrorException();
             }
 
-            return new Catalog(catalog);
+            return new Catalog(data);
         }
 
         public void Save(string filename)
@@ -59,16 +57,9 @@ namespace vanillapdf.net
             }
         }
 
-        protected override void Dispose(bool disposing)
+        protected override UInt32 Release(IntPtr data)
         {
-            if (Handle != IntPtr.Zero) {
-                UInt32 result = NativeMethods.Document_Release(Handle);
-                if (result != ReturnValues.ERROR_SUCCESS) {
-                    throw Errors.GetLastErrorException();
-                }
-
-                Handle = IntPtr.Zero;
-            }
+            return NativeMethods.Document_Release(data);
         }
 
         private static class NativeMethods
@@ -81,16 +72,16 @@ namespace vanillapdf.net
             public static DocumentReleaseDelgate Document_Release = LibraryInstance.GetFunction<DocumentReleaseDelgate>("Document_Release");
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 DocumentOpenNewDelgate(string filename, out IntPtr handle);
+            public delegate UInt32 DocumentOpenNewDelgate(string filename, out IntPtr data);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 DocumentOpenExistingDelgate(IntPtr file, out IntPtr handle);
+            public delegate UInt32 DocumentOpenExistingDelgate(IntPtr file, out IntPtr data);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 DocumentAppendDocumentDelgate(IntPtr handle, IntPtr source);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 DocumentGetCatalogDelgate(IntPtr handle, out IntPtr catalog);
+            public delegate UInt32 DocumentGetCatalogDelgate(IntPtr handle, out IntPtr data);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 DocumentSaveDelgate(IntPtr handle, string filename);

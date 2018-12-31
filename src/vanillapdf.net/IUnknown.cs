@@ -6,13 +6,26 @@ namespace vanillapdf.net
 {
     public abstract class IUnknown : IDisposable
     {
+        protected internal IntPtr Handle { get; protected set; }
+
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        protected abstract void Dispose(bool disposing);
+        protected abstract UInt32 Release(IntPtr data);
+        protected virtual void Dispose(bool disposing)
+        {
+            if (Handle != IntPtr.Zero) {
+                UInt32 result = Release(Handle);
+                if (result != ReturnValues.ERROR_SUCCESS) {
+                    throw Errors.GetLastErrorException();
+                }
+
+                Handle = IntPtr.Zero;
+            }
+        }
 
         private static class NativeMethods
         {

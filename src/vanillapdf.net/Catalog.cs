@@ -6,8 +6,6 @@ namespace vanillapdf.net
 {
     public class Catalog : IUnknown
     {
-        internal IntPtr Handle { get; private set; }
-
         internal Catalog(IntPtr handle)
         {
             Handle = handle;
@@ -52,16 +50,9 @@ namespace vanillapdf.net
             return new PageTree(tree);
         }
 
-        protected override void Dispose(bool disposing)
+        protected override UInt32 Release(IntPtr data)
         {
-            if (Handle != IntPtr.Zero) {
-                UInt32 result = NativeMethods.Catalog_Release(Handle);
-                if (result != ReturnValues.ERROR_SUCCESS) {
-                    throw Errors.GetLastErrorException();
-                }
-
-                Handle = IntPtr.Zero;
-            }
+            return NativeMethods.Catalog_Release(data);
         }
 
         private static class NativeMethods
