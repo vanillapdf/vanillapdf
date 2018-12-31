@@ -8,7 +8,7 @@ using vanillapdf_online_services.Models.ViewModels;
 
 namespace vanillapdf_online_services.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ILogger _Logger;
 

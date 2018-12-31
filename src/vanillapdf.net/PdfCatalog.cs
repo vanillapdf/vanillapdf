@@ -17,11 +17,16 @@ namespace vanillapdf.net
             RuntimeHelpers.RunClassConstructor(typeof(NativeMethods).TypeHandle);
         }
 
-        public PdfVersion GetVersion()
+        public PdfVersion? Version
+        {
+            get { return GetVersion(); }
+        }
+
+        public PdfVersion? GetVersion()
         {
             UInt32 result = NativeMethods.Catalog_GetVersion(Handle, out int param);
             if (result == PdfReturnValues.ERROR_OBJECT_MISSING) {
-                throw PdfBaseException.GetException(result);
+                return null;
             }
 
             if (result != PdfReturnValues.ERROR_SUCCESS) {
@@ -29,21 +34,6 @@ namespace vanillapdf.net
             }
 
             return EnumUtil<PdfVersion>.CheckedCast(param);
-        }
-
-        public bool TryGetVersion(ref PdfVersion version)
-        {
-            UInt32 result = NativeMethods.Catalog_GetVersion(Handle, out int param);
-            if (result == PdfReturnValues.ERROR_OBJECT_MISSING) {
-                return false;
-            }
-
-            if (result != PdfReturnValues.ERROR_SUCCESS) {
-                throw PdfErrors.GetLastErrorException();
-            }
-
-            version = EnumUtil<PdfVersion>.CheckedCast(param);
-            return true;
         }
 
         public PdfPageTree GetPageTree()

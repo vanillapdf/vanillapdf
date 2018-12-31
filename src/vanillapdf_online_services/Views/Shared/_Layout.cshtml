@@ -39,6 +39,31 @@
         </div>
     </nav>
 
+    @if (ViewData["ErrorMessage"] != null) {
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <strong>@Loc["Error"]:</strong> @ViewData["ErrorMessage"].ToString()
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null) {
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <strong>@Loc["Error"]:</strong> @TempData["ErrorMessage"].ToString()
+        </div>
+    }
+    @if (ViewData["SuccessMessage"] != null) {
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <strong>@Loc["Success"]:</strong> @ViewData["SuccessMessage"].ToString()
+        </div>
+    }
+    @if (TempData["SuccessMessage"] != null) {
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <strong>@Loc["Success"]:</strong> @TempData["SuccessMessage"].ToString()
+        </div>
+    }
+
     <partial name="_CookieConsentPartial" />
 
     <div class="container body-content">

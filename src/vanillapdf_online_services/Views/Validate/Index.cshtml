@@ -17,3 +17,7 @@
 
     <button type="submit" class="btn btn-default">@Loc["Validate"]</button>
 }
+
+@if (ViewData["ValidatedFile"] != null) {
+    <p>@Html.Raw("<pre>" + Html.Encode(ViewData["ValidatedFile"].ToString()) + "</pre>")</p>
+}
