@@ -22,8 +22,6 @@ using namespace syntax;
 
 DocumentPtr Document::Open(const std::string& path) {
 	FilePtr file = File::Open(path);
-	file->Initialize();
-
 	return DocumentPtr(pdf_new Document(file));
 }
 
@@ -62,6 +60,8 @@ DocumentPtr Document::OpenFile(syntax::FilePtr holder) {
 
 Document::Document(syntax::FilePtr holder) : m_holder(holder) {
 	SemanticUtils::AddDocumentMapping(m_holder, GetWeakReference<Document>());
+
+	m_holder->Initialize();
 }
 
 syntax::FilePtr Document::GetFile() const {
