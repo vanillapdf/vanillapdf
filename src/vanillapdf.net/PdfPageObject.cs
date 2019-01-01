@@ -7,14 +7,37 @@ namespace vanillapdf.net
 {
     public class PdfPageObject : PdfUnknown
     {
-        internal PdfPageObject(IntPtr handle)
+        internal PdfPageObject(IntPtr handle) : base(handle)
         {
-            Handle = handle;
         }
 
         static PdfPageObject()
         {
             RuntimeHelpers.RunClassConstructor(typeof(NativeMethods).TypeHandle);
+        }
+
+        public PdfContents GetContents()
+        {
+            UInt32 result = NativeMethods.PageObject_GetContents(Handle, out IntPtr data);
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
+            }
+
+            return new PdfContents(data);
+        }
+
+        public PdfPageAnnotations GetAnnotations()
+        {
+            UInt32 result = NativeMethods.PageObject_GetAnnotations(Handle, out IntPtr data);
+            if (result == PdfReturnValues.ERROR_OBJECT_MISSING) {
+                return null;
+            }
+
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
+            }
+
+            return new PdfPageAnnotations(data);
         }
 
         protected override UInt32 Release(IntPtr data)
@@ -24,15 +47,15 @@ namespace vanillapdf.net
 
         private static class NativeMethods
         {
-            public static PageTreeGetPageDelgate PageTree_GetPage = LibraryInstance.GetFunction<PageTreeGetPageDelgate>("PageTree_GetPage");
-            public static PageTreeGetPageCountDelgate PageTree_GetPageCount = LibraryInstance.GetFunction<PageTreeGetPageCountDelgate>("PageTree_GetPageCount");
+            public static PageObjectGetContentsDelgate PageObject_GetContents = LibraryInstance.GetFunction<PageObjectGetContentsDelgate>("PageObject_GetContents");
+            public static PageObjectGetAnnotationsDelgate PageObject_GetAnnotations = LibraryInstance.GetFunction<PageObjectGetAnnotationsDelgate>("PageObject_GetAnnotations");
             public static PageObjectReleaseDelgate PageObject_Release = LibraryInstance.GetFunction<PageObjectReleaseDelgate>("PageObject_Release");
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 PageTreeGetPageDelgate(IntPtr handle, out int count);
+            public delegate UInt32 PageObjectGetContentsDelgate(IntPtr handle, out IntPtr data);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 PageTreeGetPageCountDelgate(IntPtr handle, out int count);
+            public delegate UInt32 PageObjectGetAnnotationsDelgate(IntPtr handle, out IntPtr data);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 PageObjectReleaseDelgate(IntPtr handle);

@@ -72,31 +72,14 @@ namespace vanillapdf_online_services.Controllers
                 System.IO.File.Delete(downloadPath);
             }
 
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"Filename: {UploadedFile.FileName}");
-            sb.AppendLine($"SHA-256: {fileHash}");
-
-            using (var file = PdfFile.Open(hashPath)) {
-                file.Initialize();
-
-                using (var document = PdfDocument.OpenFile(file)) {
-                    var catalog = document.GetCatalog();
-
-                    var version = catalog.GetVersion();
-                    var pageTree = catalog.GetPageTree();
-
-                    int pageCount = pageTree.GetPageCount();
-
-                    string versionString = (version.HasValue ? Convert.ToString(version.Value) : "Not specified");
-
-                    sb.AppendLine($"Version: {versionString}");
-                    sb.AppendLine($"Pages: {pageCount}");
-                }
+            try {
+                ViewData["ValidatedFile"] = Utils.ValidateDocument(UploadedFile.FileName, fileHash, hashPath);
+                SuccessMessage("File was successfully validated");
+            } catch (Exception ex) {
+                ViewData["ValidatedFile"] = ex.Message;
+                ErrorMessage("File validation has failed");
             }
 
-            ViewData["ValidatedFile"] = sb.ToString();
-
-            SuccessMessage("File was successfully validated");
             return View();
         }
     }

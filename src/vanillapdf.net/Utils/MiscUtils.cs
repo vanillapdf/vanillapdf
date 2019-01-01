@@ -22,6 +22,9 @@ namespace vanillapdf.net.Utils
             RuntimeHelpers.RunClassConstructor(typeof(PdfDocument).TypeHandle);
             RuntimeHelpers.RunClassConstructor(typeof(PdfPageObject).TypeHandle);
             RuntimeHelpers.RunClassConstructor(typeof(PdfPageTree).TypeHandle);
+            RuntimeHelpers.RunClassConstructor(typeof(PdfContents).TypeHandle);
+            RuntimeHelpers.RunClassConstructor(typeof(PdfPageAnnotations).TypeHandle);
+            RuntimeHelpers.RunClassConstructor(typeof(PdfAnnotation).TypeHandle);
         }
     }
 }

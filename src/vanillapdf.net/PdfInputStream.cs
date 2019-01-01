@@ -7,9 +7,8 @@ namespace vanillapdf.net
 {
     public class PdfInputstream : PdfUnknown
     {
-        internal PdfInputstream(IntPtr handle)
+        internal PdfInputstream(IntPtr handle) : base(handle)
         {
-            Handle = handle;
         }
 
         static PdfInputstream()

@@ -7,9 +7,8 @@ namespace vanillapdf.net
 {
     public class PdfDocument : PdfUnknown
     {
-        internal PdfDocument(IntPtr handle)
+        internal PdfDocument(IntPtr handle) : base(handle)
         {
-            Handle = handle;
         }
 
         static PdfDocument()

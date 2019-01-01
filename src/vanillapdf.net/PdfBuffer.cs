@@ -7,9 +7,8 @@ namespace vanillapdf.net
 {
     public class PdfBuffer : PdfUnknown
     {
-        internal PdfBuffer(IntPtr handle)
+        internal PdfBuffer(IntPtr handle) : base(handle)
         {
-            Handle = handle;
         }
 
         static PdfBuffer()
@@ -35,12 +34,15 @@ namespace vanillapdf.net
 
         public byte[] GetData()
         {
-            UInt32 result = NativeMethods.Buffer_GetData(Handle, out IntPtr data, out UInt32 size);
+            UInt32 result = NativeMethods.Buffer_GetData(Handle, out IntPtr data, out UIntPtr size);
             if (result != PdfReturnValues.ERROR_SUCCESS) {
                 throw PdfErrors.GetLastErrorException();
             }
 
-            int sizeConverted = Convert.ToInt32(size);
+            // TODO: might overflow
+            var rawSize = size.ToUInt64();
+            var sizeConverted = Convert.ToInt32(rawSize);
+
             byte[] allocatedBuffer = new byte[sizeConverted];
             Marshal.Copy(data, allocatedBuffer, 0, sizeConverted);
 
@@ -56,8 +58,8 @@ namespace vanillapdf.net
                 allocator = Marshal.AllocHGlobal(data.Length);
                 Marshal.Copy(data, 0, allocator, data.Length);
 
-                UInt32 dataSize = Convert.ToUInt32(data.Length);
-                result = NativeMethods.Buffer_SetData(Handle, allocator, dataSize);
+                var dataSize = Convert.ToUInt64(data.Length);
+                result = NativeMethods.Buffer_SetData(Handle, allocator, new UIntPtr(dataSize));
 
             } finally {
                 if (allocator != IntPtr.Zero) {
@@ -98,10 +100,10 @@ namespace vanillapdf.net
             public delegate UInt32 BufferCreateDelgate(out IntPtr handle);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 BufferGetDataDelgate(IntPtr handle, out IntPtr data, out UInt32 size);
+            public delegate UInt32 BufferGetDataDelgate(IntPtr handle, out IntPtr data, out UIntPtr size);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 BufferSetDataDelgate(IntPtr handle, IntPtr data, UInt32 size);
+            public delegate UInt32 BufferSetDataDelgate(IntPtr handle, IntPtr data, UIntPtr size);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 BufferToInputStreamDelgate(IntPtr handle, string name, out IntPtr data);

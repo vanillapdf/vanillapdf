@@ -7,9 +7,8 @@ namespace vanillapdf.net
 {
     public class PdfFile : PdfUnknown
     {
-        internal PdfFile(IntPtr handle)
+        internal PdfFile(IntPtr handle) : base(handle)
         {
-            Handle = handle;
         }
 
         static PdfFile()
@@ -65,6 +64,24 @@ namespace vanillapdf.net
             }
         }
 
+        public bool IsEncrypted()
+        {
+            UInt32 result = NativeMethods.File_IsEncrypted(Handle, out bool data);
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
+            }
+
+            return data;
+        }
+
+        public void SetEncryptionPassword(string password)
+        {
+            UInt32 result = NativeMethods.File_SetEncryptionPassword(Handle, password);
+            if (result != PdfReturnValues.ERROR_SUCCESS) {
+                throw PdfErrors.GetLastErrorException();
+            }
+        }
+
         protected override UInt32 Release(IntPtr data)
         {
             return NativeMethods.File_Release(data);
@@ -77,6 +94,8 @@ namespace vanillapdf.net
             public static FileCreateDelgate File_Create = LibraryInstance.GetFunction<FileCreateDelgate>("File_Create");
             public static FileCreateStreamDelgate File_CreateStream = LibraryInstance.GetFunction<FileCreateStreamDelgate>("File_CreateStream");
             public static FileInitializeDelgate File_Initialize = LibraryInstance.GetFunction<FileInitializeDelgate>("File_Initialize");
+            public static FileIsEncryptedDelgate File_IsEncrypted = LibraryInstance.GetFunction<FileIsEncryptedDelgate>("File_IsEncrypted");
+            public static FileSetEncryptionPasswordDelgate File_SetEncryptionPassword = LibraryInstance.GetFunction<FileSetEncryptionPasswordDelgate>("File_SetEncryptionPassword");
             public static FileReleaseDelgate File_Release = LibraryInstance.GetFunction<FileReleaseDelgate>("File_Release");
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
@@ -93,6 +112,12 @@ namespace vanillapdf.net
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 FileInitializeDelgate(IntPtr handle);
+
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
+            public delegate UInt32 FileIsEncryptedDelgate(IntPtr handle, out bool data);
+
+            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
+            public delegate UInt32 FileSetEncryptionPasswordDelgate(IntPtr handle, string password);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 FileReleaseDelgate(IntPtr handle);

@@ -9,6 +9,15 @@ namespace vanillapdf.net
     {
         protected internal IntPtr Handle { get; protected set; }
 
+        internal PdfUnknown(IntPtr handle)
+        {
+            if (handle == IntPtr.Zero) {
+                throw new ArgumentNullException(nameof(handle));
+            }
+
+            Handle = handle;
+        }
+
         static PdfUnknown()
         {
             RuntimeHelpers.RunClassConstructor(typeof(NativeMethods).TypeHandle);
@@ -31,6 +40,11 @@ namespace vanillapdf.net
 
                 Handle = IntPtr.Zero;
             }
+        }
+
+        ~PdfUnknown()
+        {
+            Dispose(false);
         }
 
         private static class NativeMethods
