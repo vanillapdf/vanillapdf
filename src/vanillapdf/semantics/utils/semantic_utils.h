@@ -6,8 +6,6 @@
 
 #include "syntax/objects/name_object.h"
 
-#include "utils/pdf_version.h"
-
 namespace vanillapdf {
 namespace semantics {
 

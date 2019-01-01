@@ -54,17 +54,24 @@ BaseInstructionCollectionPtr Contents::Instructions(void) const {
 
 	// We are not using contents.Instructions, because objects can we separated
 	// into multiple content streams
-	auto ss = std::make_shared<std::stringstream>();
+
+	size_t instructions_size = 0;
+	std::list<BaseInstructionCollectionPtr> instruction_list;
+
 	for (auto item : contents) {
 		auto stream_object = item->GetObject();
-		*ss << stream_object->GetBody();
+		auto input_stream = stream_object->GetBody()->ToInputStream();
+
+		contents::ContentStreamParser parser(_obj->GetFile(), input_stream);
+		auto stream_instructions = parser.ReadContentStreamInstructions();
+
+		instruction_list.push_back(stream_instructions);
+		instructions_size += stream_instructions->size();
 	}
 
-	InputStreamPtr input_stream = make_deferred<InputStream>(ss);
-	contents::ContentStreamParser parser(_obj->GetFile(), input_stream);
-	auto instructions = parser.ReadContentStreamInstructions();
-	for (auto instruction : instructions) {
-		m_instructions->push_back(instruction);
+	m_instructions->reserve(instructions_size);
+	for (auto stream_instructions : instruction_list) {
+		m_instructions->insert(m_instructions.end(), stream_instructions.begin(), stream_instructions.end());
 	}
 
 	m_instructions->SetInitialized();

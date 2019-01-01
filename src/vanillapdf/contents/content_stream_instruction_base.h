@@ -63,6 +63,18 @@ public:
 	reference operator[](size_type pos) { return m_data[pos]; }
 	const_reference operator[](size_type pos) const { return m_data[pos]; }
 
+	template <class InputIterator>
+	void assign(InputIterator first, InputIterator last) {
+		m_data.assign(first, last);
+		OnChanged();
+	}
+
+	template <class InputIterator>
+	void insert(iterator position, InputIterator first, InputIterator last) {
+		m_data.insert(position, first, last);
+		OnChanged();
+	}
+
 	// Modifying operations
 	void reserve(size_type count) { m_data.reserve(count); OnChanged(); }
 	void push_back(InstructionBasePtr val) { m_data.push_back(val); val->Subscribe(this); OnChanged(); }

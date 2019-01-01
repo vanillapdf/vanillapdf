@@ -25,11 +25,16 @@ ContentStreamParser::ContentStreamParser(WeakReference<File> file, IInputStreamP
 
 BaseInstructionCollectionPtr ContentStreamParser::ReadContentStreamInstructions(void) {
 	BaseInstructionCollectionPtr result;
+
+	std::list<InstructionBasePtr> instructions;
 	while (PeekTokenTypeSkip() != Token::Type::END_OF_INPUT) {
 		auto operation = ReadContentStreamInstruction();
 		operation->SetInitialized();
-		result->push_back(operation);
+		instructions.push_back(operation);
 	}
+
+	result->reserve(instructions.size());
+	result->assign(instructions.begin(), instructions.end());
 
 	return result;
 }
