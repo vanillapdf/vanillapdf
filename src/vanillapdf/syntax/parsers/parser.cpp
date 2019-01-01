@@ -51,11 +51,17 @@ public:
 		throw GeneralException("Expected boolean token type");
 	}
 
-	static IntegerObjectPtr CreateInteger(TokenPtr token) {
+	static types::big_int GetIntegerValue(TokenPtr token) {
 		assert(token->GetType() == Token::Type::INTEGER_OBJECT && "Expected integer token type");
 
 		auto buffer = token->Value();
-		types::big_int value = std::stoll(buffer->ToString());
+		return std::stoll(buffer->ToString());
+	}
+
+	static IntegerObjectPtr CreateInteger(TokenPtr token) {
+		assert(token->GetType() == Token::Type::INTEGER_OBJECT && "Expected integer token type");
+
+		types::big_int value = GetIntegerValue(token);
 		return make_deferred<IntegerObject>(value);
 	}
 
@@ -110,11 +116,11 @@ ObjectPtr ParserBase::ReadIndirectReference() {
 	auto pos = m_stream->GetInputPosition();
 	if (PeekTokenTypeSkip() == Token::Type::INTEGER_OBJECT) {
 		auto ahead = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
-		auto gen_number = ObjectFactory::CreateInteger(ahead);
+		auto gen_number = ObjectFactory::GetIntegerValue(ahead);
 
 		if (PeekTokenTypeSkip() == Token::Type::INDIRECT_REFERENCE_MARKER) {
 			auto reference_marker = ReadTokenWithTypeSkip(Token::Type::INDIRECT_REFERENCE_MARKER);
-			IndirectObjectReferencePtr result = make_deferred<IndirectObjectReference>(integer->GetUnsignedIntegerValue(), gen_number->SafeConvert<types::ushort>());
+			IndirectObjectReferencePtr result = make_deferred<IndirectObjectReference>(integer->GetUnsignedIntegerValue(), ValueConvertUtils::SafeConvert<types::ushort>(gen_number));
 			result->SetFile(_file);
 			return result;
 		}
@@ -321,10 +327,10 @@ ObjectPtr Parser::ReadIndirectObject(types::big_uint& obj_number, types::ushort&
 	auto direct = ReadDirectObject();
 	auto end_token = ReadTokenWithTypeSkip(Token::Type::INDIRECT_OBJECT_END);
 
-	auto obj_number_value = ObjectFactory::CreateInteger(obj_number_token);
-	auto gen_number_value = ObjectFactory::CreateInteger(gen_number_token);
-	obj_number = obj_number_value->GetUnsignedIntegerValue();
-	gen_number = gen_number_value->SafeConvert<types::ushort>();
+	auto obj_number_value = ObjectFactory::GetIntegerValue(obj_number_token);
+	auto gen_number_value = ObjectFactory::GetIntegerValue(gen_number_token);
+	obj_number = ValueConvertUtils::SafeConvert<types::big_uint>(obj_number_value);
+	gen_number = ValueConvertUtils::SafeConvert<types::ushort>(gen_number_value);
 
 	direct->SetOffset(offset);
 	direct->SetFile(_file);
@@ -372,11 +378,11 @@ ObjectStreamEntry Parser::ReadObjectStreamHeader() {
 	auto obj_number_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 	auto offset_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 
-	auto obj_number = ObjectFactory::CreateInteger(obj_number_token);
-	auto offset = ObjectFactory::CreateInteger(offset_token);
+	auto obj_number = ObjectFactory::GetIntegerValue(obj_number_token);
+	auto offset = ObjectFactory::GetIntegerValue(offset_token);
 
-	result.object_number = obj_number->GetUnsignedIntegerValue();
-	result.offset = offset->GetIntegerValue();
+	result.object_number = ValueConvertUtils::SafeConvert<types::big_uint>(obj_number);
+	result.offset = ValueConvertUtils::SafeConvert<types::stream_offset>(offset);
 	return result;
 }
 
@@ -483,20 +489,20 @@ XrefEntryBasePtr Parser::ReadTableEntry(types::big_uint objNumber) {
 	auto offset_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 	auto generation_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 
-	auto offset = ObjectFactory::CreateInteger(offset_token);
-	auto gen_number = ObjectFactory::CreateInteger(generation_token);
+	auto offset = ObjectFactory::GetIntegerValue(offset_token);
+	auto gen_number = ObjectFactory::GetIntegerValue(generation_token);
 
 	auto peeked_token = PeekTokenSkip();
 	if (*peeked_token->Value() == "n") {
 		ReadTokenSkip();
-		XrefUsedEntryPtr result = make_deferred<XrefUsedEntry>(objNumber, gen_number->SafeConvert<types::ushort>(), offset->GetIntegerValue());
+		XrefUsedEntryPtr result = make_deferred<XrefUsedEntry>(objNumber, ValueConvertUtils::SafeConvert<types::ushort>(gen_number), ValueConvertUtils::SafeConvert<types::stream_offset>(offset));
 		result->SetFile(_file);
 		return result;
 	}
 
 	if (*peeked_token->Value() == "f") {
 		ReadTokenSkip();
-		XrefFreeEntryPtr result = make_deferred<XrefFreeEntry>(objNumber, gen_number->SafeConvert<types::ushort>());
+		XrefFreeEntryPtr result = make_deferred<XrefFreeEntry>(objNumber, ValueConvertUtils::SafeConvert<types::ushort>(gen_number));
 		result->SetFile(_file);
 		return result;
 	}
@@ -764,8 +770,8 @@ XrefChainPtr Parser::FindAllObjects(void) {
 			auto next_token = PeekTokenSkip();
 			if (next_token->GetType() == Token::Type::INTEGER_OBJECT) {
 				ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
-				auto xref_offset = ObjectFactory::CreateInteger(next_token);
-				xref->SetLastXrefOffset(xref_offset->GetIntegerValue());
+				auto xref_offset = ObjectFactory::GetIntegerValue(next_token);
+				xref->SetLastXrefOffset(ValueConvertUtils::SafeConvert<types::stream_offset>(xref_offset));
 			}
 
 			continue;
@@ -850,8 +856,8 @@ CharacterMapData CharacterMapParser::ReadCharacterMapData(void) {
 			if (ahead->GetType() == Token::Type::BEGIN_CODE_SPACE_RANGE) {
 				ReadTokenWithTypeSkip(Token::Type::BEGIN_CODE_SPACE_RANGE);
 
-				auto count = ObjectFactory::CreateInteger(token);
-				for (int i = 0; i < count->GetIntegerValue(); ++i) {
+				auto count = ObjectFactory::GetIntegerValue(token);
+				for (decltype(count) i = 0; i < count; ++i) {
 					CodeSpaceRange range;
 					range.Begin = ReadHexadecimalString();
 					range.End = ReadHexadecimalString();
@@ -865,8 +871,8 @@ CharacterMapData CharacterMapParser::ReadCharacterMapData(void) {
 			if (ahead->GetType() == Token::Type::BEGIN_BASE_FONT_RANGE) {
 				ReadTokenWithTypeSkip(Token::Type::BEGIN_BASE_FONT_RANGE);
 
-				auto count = ObjectFactory::CreateInteger(token);
-				for (int i = 0; i < count->GetIntegerValue(); ++i) {
+				auto count = ObjectFactory::GetIntegerValue(token);
+				for (decltype(count) i = 0; i < count; ++i) {
 					auto low = ReadHexadecimalString();
 					auto high = ReadHexadecimalString();
 					auto dest = ReadDirectObject();
