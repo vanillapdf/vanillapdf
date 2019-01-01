@@ -79,6 +79,16 @@ namespace vanillapdf_online_services.Common
                             sb.AppendLine($"Page: {i}");
                             sb.AppendLine($"Instructions: {instructionsSize}");
                             sb.AppendLine($"Annotations: {annotationsSize}");
+
+                            for (ulong j = 0; j < instructionsSize; ++j) {
+                                //sb.AppendLine($"Instruction {j}: {annotation.GetAnnotationType()}");
+                            }
+
+                            for (ulong j = 0; j < annotationsSize; ++j) {
+                                using (var annotation = annotations.At(j)) {
+                                    sb.AppendLine($"Annotation {j}: {annotation.GetAnnotationType()}");
+                                }
+                            }
                         }
                     }
                 }

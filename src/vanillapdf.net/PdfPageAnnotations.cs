@@ -28,14 +28,14 @@ namespace vanillapdf.net
             return data.ToUInt64();
         }
 
-        public UInt64 At(UInt64 index)
+        public PdfAnnotation At(UInt64 index)
         {
-            UInt32 result = NativeMethods.PageAnnotations_At(Handle, new UIntPtr(index), out UIntPtr data);
+            UInt32 result = NativeMethods.PageAnnotations_At(Handle, new UIntPtr(index), out IntPtr data);
             if (result != PdfReturnValues.ERROR_SUCCESS) {
                 throw PdfErrors.GetLastErrorException();
             }
 
-            return data.ToUInt64();
+            return new PdfAnnotation(data);
         }
 
         protected override UInt32 Release(IntPtr data)
@@ -53,7 +53,7 @@ namespace vanillapdf.net
             public delegate UInt32 PageAnnotationsSizeDelgate(IntPtr handle, out UIntPtr data);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 PageAnnotationsAtDelgate(IntPtr handle, UIntPtr index, out UIntPtr data);
+            public delegate UInt32 PageAnnotationsAtDelgate(IntPtr handle, UIntPtr index, out IntPtr data);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
             public delegate UInt32 PageAnnotationsReleaseDelgate(IntPtr handle);
