@@ -1141,6 +1141,9 @@
     <Natvis Include="..\src\vanillapdf\vanillapdf.natvis">
       <Filter>Resource Files</Filter>
     </Natvis>
+    <Natvis Include="..\src\vanillapdf\public.natvis">
+      <Filter>Resource Files</Filter>
+    </Natvis>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
