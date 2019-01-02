@@ -120,8 +120,7 @@
       <AdditionalDependencies />
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>xcopy /E /Y "build\vanillapdf\$(Configuration)" "build\$(ProjectName)\$(Configuration)\"</Command>
     </PostBuildEvent>
     <PreLinkEvent>
       <Command>
@@ -151,8 +150,7 @@
       </AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>xcopy /E /Y "build\vanillapdf\$(Configuration)" "build\$(ProjectName)\$(Configuration)\"</Command>
     </PostBuildEvent>
     <PreLinkEvent>
       <Command>
@@ -186,8 +184,7 @@
       </AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>xcopy /E /Y "build\vanillapdf\$(Configuration)" "build\$(ProjectName)\$(Configuration)\"</Command>
     </PostBuildEvent>
     <PreLinkEvent>
       <Command>
@@ -220,8 +217,7 @@
       </AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>xcopy /E /Y "build\vanillapdf\$(Configuration)" "build\$(ProjectName)\$(Configuration)\"</Command>
     </PostBuildEvent>
     <PreLinkEvent>
       <Command>

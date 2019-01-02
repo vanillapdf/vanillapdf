@@ -457,10 +457,8 @@
       <AdditionalOptions>/NATVIS:..\src\vanillapdf\public.natvis %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.test\$(Configuration)\"
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.merge\$(Configuration)\"
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.filter\$(Configuration)\"
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.tools\$(Configuration)\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='debug|x64'">
@@ -482,12 +480,11 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.tools\$(Co
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/NATVIS:..\src\vanillapdf\public.natvis %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.test\$(Configuration)\"
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.merge\$(Configuration)\"
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.filter\$(Configuration)\"
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.tools\$(Configuration)\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='release|Win32'">
@@ -512,12 +509,11 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.tools\$(Co
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/NATVIS:..\src\vanillapdf\public.natvis %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.test\$(Configuration)\"
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.merge\$(Configuration)\"
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.filter\$(Configuration)\"
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.tools\$(Configuration)\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='release|x64'">
@@ -542,12 +538,11 @@ xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.tools\$(Co
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/NATVIS:..\src\vanillapdf\public.natvis %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.test\$(Configuration)\"
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.merge\$(Configuration)\"
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.filter\$(Configuration)\"
-xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.tools\$(Configuration)\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
