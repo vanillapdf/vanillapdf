@@ -22,7 +22,7 @@ extern "C"
 	* Declares opaque pointer to struct allocated by library.
 	*/
 	#define DECLARE_OBJECT_HANDLE(x) \
-	typedef struct x##Tag x##Handle;
+	typedef struct x##HandleTag x##Handle;
 
 	#pragma region Syntax
 
