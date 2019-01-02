@@ -345,6 +345,7 @@ set(VANILLAPDF_PRECOMPILED_HEADER
 )
 
 set(VANILLAPDF_RESOURCE_FILES
+	public.natvis
 	vanillapdf.natvis
 	resources.rc
 )
@@ -499,6 +500,11 @@ if(MSVC)
 	set_source_files_properties(${VANILLAPDF_ALL_SOURCES}
 								PROPERTIES COMPILE_FLAGS "/Yu\"${VANILLAPDF_PRECOMPILED_HEADER}\" /FI\"${VANILLAPDF_PRECOMPILED_HEADER}\" /Fp\"${PrecompiledBinary}\""
 										   OBJECT_DEPENDS "${PrecompiledBinary}")
+endif(MSVC)
+
+# Add natvis file embedding
+if(MSVC)
+	set_property(TARGET vanillapdf APPEND_STRING PROPERTY LINK_FLAGS "/NATVIS:public.natvis" )
 endif(MSVC)
 
 target_compile_features(vanillapdf PRIVATE

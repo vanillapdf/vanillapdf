@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="ObjectHandleTag" Inheritable="true">
+    <DisplayString>{ *(vanillapdf.dll!vanillapdf::syntax::Object*)this }</DisplayString>
+  </Type>
+
+  <Type Name="ArrayObjectHandleTag">
+    <DisplayString>{ *(vanillapdf.dll!vanillapdf::syntax::MixedArrayObject*)this }</DisplayString>
+  </Type>
+
+  <Type Name="BooleanObjectHandleTag">
+    <DisplayString>{ *(vanillapdf.dll!vanillapdf::syntax::BooleanObject*)this }</DisplayString>
+  </Type>
+
+  <Type Name="NameObjectHandleTag">
+    <DisplayString>{ *(vanillapdf.dll!vanillapdf::syntax::NameObject*)this }</DisplayString>
+  </Type>
+
+  <Type Name="NullObjectHandleTag">
+    <DisplayString>{ *(vanillapdf.dll!vanillapdf::syntax::NullObject*)this }</DisplayString>
+  </Type>
+
+  <Type Name="RealObjectHandleTag">
+    <DisplayString>{ *(vanillapdf.dll!vanillapdf::syntax::RealObject*)this }</DisplayString>
+  </Type>
+
+  <Type Name="IntegerObjectHandleTag">
+    <DisplayString>{ *(vanillapdf.dll!vanillapdf::syntax::IntegerObject*)this }</DisplayString>
+  </Type>
+
+  <Type Name="StreamObjectHandleTag">
+    <DisplayString>{ *(vanillapdf.dll!vanillapdf::syntax::StreamObject*)this }</DisplayString>
+  </Type>
+
+  <Type Name="StringObjectHandleTag">
+    <DisplayString>{ *(vanillapdf.dll!vanillapdf::syntax::StringObject*)this }</DisplayString>
+  </Type>
+
+  <Type Name="HexadecimalStringObjectHandleTag">
+    <DisplayString>{ *(vanillapdf.dll!vanillapdf::syntax::HexadecimalStringObject*)this }</DisplayString>
+  </Type>
+
+  <Type Name="LiteralStringObjectHandleTag">
+    <DisplayString>{ *(vanillapdf.dll!vanillapdf::syntax::LiteralStringObject*)this }</DisplayString>
+  </Type>
+
+  <Type Name="IndirextObjectReferenceHandleTag">
+    <DisplayString>{ *(vanillapdf.dll!vanillapdf::syntax::IndirextObjectReference*)this }</DisplayString>
+  </Type>
+
+  <Type Name="DictionaryObjectHandleTag">
+    <DisplayString>{ *(vanillapdf.dll!vanillapdf::syntax::DictionaryObject*)this }</DisplayString>
+  </Type>
+
+  <Type Name="BufferHandleTag">
+    <DisplayString>{ *(vanillapdf.dll!vanillapdf::Buffer*)this }</DisplayString>
+    <StringView>*(vanillapdf.dll!vanillapdf::Buffer*)this</StringView>
+  </Type>
+</AutoVisualizer>

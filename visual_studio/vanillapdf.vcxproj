@@ -365,6 +365,7 @@
     <ClCompile Include="..\src\vanillapdf\utils\zlib_wrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Natvis Include="..\src\vanillapdf\public.natvis" />
     <Natvis Include="..\src\vanillapdf\vanillapdf.natvis" />
   </ItemGroup>
   <ItemGroup>
@@ -453,6 +454,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/NATVIS:..\src\vanillapdf\public.natvis %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /E /Y "build\$(ProjectName)\$(Configuration)" "build\vanillapdf.test\$(Configuration)\"

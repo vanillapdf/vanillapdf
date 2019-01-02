@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
  <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
-   <Type Name="Object">
-     <DisplayString>Object: {m_dirty}</DisplayString>
+   <Type Name="vanillapdf::syntax::Object" Inheritable="true">
+     <DisplayString>Object: {m_offset}</DisplayString>
      <Expand>
+       <Item Name="Offset">m_offset</Item>
        <Item Name="Dirty">m_dirty</Item>
        <Item Name="Encryption Exempted">m_encryption_exempted</Item>
      </Expand>
    </Type>
+   
    <Type Name="vanillapdf::syntax::MixedArrayObject">
      <DisplayString>MixedArrayObject: {_list._Mypair._Myval2._Mylast - _list._Mypair._Myval2._Myfirst}</DisplayString>
      <Expand>
@@ -108,7 +110,7 @@
    </Type>
 
    <Type Name="vanillapdf::Buffer">
-     <DisplayString>{m_data._Mypair._Myval2._Myfirst,[m_data._Mypair._Myval2._Mylast - m_data._Mypair._Myval2._Myfirst]sb}</DisplayString>
+     <DisplayString>{ m_data._Mypair._Myval2._Myfirst,[m_data._Mypair._Myval2._Mylast - m_data._Mypair._Myval2._Myfirst]sb }</DisplayString>
      <StringView>m_data._Mypair._Myval2._Myfirst,[m_data._Mypair._Myval2._Mylast - m_data._Mypair._Myval2._Myfirst]sb</StringView>
    </Type>
  </AutoVisualizer>
