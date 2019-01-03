@@ -14,24 +14,17 @@
 namespace vanillapdf {
 namespace syntax {
 
-Tokenizer::Tokenizer(IInputStreamPtr stream)
-	: m_stream(stream),
-	_last_token_offset(constant::BAD_OFFSET),
-	_advance_position(constant::BAD_OFFSET) {
+Tokenizer::Tokenizer(IInputStreamPtr stream) : m_stream(stream) {
 }
 
 TokenPtr Tokenizer::ReadToken() {
 	auto current_offset = m_stream->GetInputPosition();
-	if (_token_cached && _last_token_offset == current_offset) {
-		auto result = _last_token;
+	if (IsItemCached(current_offset)) {
+		auto cache_item = GetCachedItem(current_offset);
 
-		m_stream->SetInputPosition(_advance_position);
+		m_stream->SetInputPosition(cache_item.advance_position);
 
-		_last_token_offset = constant::BAD_OFFSET;
-		_advance_position = constant::BAD_OFFSET;
-		_token_cached = false;
-
-		return result;
+		return cache_item.token;
 	}
 
 	for (;;) {
@@ -414,30 +407,45 @@ TokenPtr Tokenizer::ReadLiteralString(void)	{
 	return make_deferred<Token>(Token::Type::LITERAL_STRING, chars);
 }
 
+bool Tokenizer::IsItemCached(types::stream_offset offset) {
+	return (_cache.find(offset) != _cache.end());
+}
+
+const Tokenizer::CacheItem& Tokenizer::GetCachedItem(types::stream_offset offset) {
+	return _cache[offset];
+}
+
 /* Peek need cache */
 TokenPtr Tokenizer::PeekToken() {
 	auto current = m_stream->GetInputPosition();
-	if (_token_cached && _last_token_offset == current) {
-		return _last_token;
+	if (IsItemCached(current)) {
+		auto cache_item = GetCachedItem(current);
+		return cache_item.token;
 	}
 
-	_last_token = ReadToken();
-	_advance_position = m_stream->GetInputPosition();
-	_last_token_offset = current;
-	_token_cached = true;
+	CacheItem cache_item;
+	cache_item.token = ReadToken();
+	cache_item.advance_position = m_stream->GetInputPosition();
 
-	if (constant::BAD_OFFSET == _advance_position && constant::BAD_OFFSET == _last_token_offset) {
-		assert(_last_token->GetType() == Token::Type::END_OF_INPUT);
+	if (_cache.size() == constant::TOKENIZER_CACHE_SIZE) {
+		_cache.erase(_cache.begin());
 	}
 
-	m_stream->SetInputPosition(_last_token_offset);
-	return _last_token;
+	_cache[current] = cache_item;
+
+	if (constant::BAD_OFFSET == cache_item.advance_position && constant::BAD_OFFSET == current) {
+		assert(cache_item.token->GetType() == Token::Type::END_OF_INPUT);
+	}
+
+	m_stream->SetInputPosition(current);
+	return cache_item.token;
 }
 
 TokenPtr Tokenizer::ReadTokenWithType(Token::Type type) {
 	auto current_type = PeekTokenType();
-	if (current_type != type)
+	if (current_type != type) {
 		throw GeneralException("Unexpected token type");
+	}
 
 	return ReadToken();
 }

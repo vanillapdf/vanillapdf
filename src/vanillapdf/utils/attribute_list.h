@@ -3,6 +3,7 @@
 
 #include "utils/attribute_interface.h"
 
+#include <memory>
 #include <unordered_map>
 
 namespace vanillapdf {
@@ -37,7 +38,9 @@ public:
 	const_iterator end() const noexcept;
 
 private:
-	map_type m_attributes;
+	mutable std::shared_ptr<map_type> m_attributes;
+
+	std::shared_ptr<map_type> GetAttributes() const;
 };
 
 } // vanillapdf

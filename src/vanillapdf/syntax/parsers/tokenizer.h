@@ -11,8 +11,17 @@ namespace vanillapdf {
 namespace syntax {
 
 class Tokenizer {
+private:
+	struct CacheItem {
+		TokenPtr token;
+		types::stream_offset advance_position;
+	};
+
 public:
 	explicit Tokenizer(IInputStreamPtr stream);
+
+	bool IsItemCached(types::stream_offset offset);
+	const CacheItem& GetCachedItem(types::stream_offset offset);
 
 	TokenPtr ReadToken(void);
 	TokenPtr PeekToken(void);
@@ -24,9 +33,11 @@ protected:
 	IInputStreamPtr m_stream;
 
 private:
-	TokenPtr _last_token;
-	types::stream_offset _last_token_offset, _advance_position;
-	bool _token_cached = false;
+	//TokenPtr _last_token;
+	//types::stream_offset _last_token_offset, _advance_position;
+	//bool _token_cached = false;
+
+	std::unordered_map<types::stream_offset, CacheItem> _cache;
 
 	TokenPtr ReadComment(void);
 	TokenPtr ReadHexadecimalString(void);

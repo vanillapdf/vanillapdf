@@ -4,47 +4,55 @@
 
 namespace vanillapdf {
 
+std::shared_ptr<AttributeList::map_type> AttributeList::GetAttributes() const {
+	if (!m_attributes) {
+		m_attributes = std::make_shared<map_type>();
+	}
+
+	return m_attributes;
+}
+
 bool AttributeList::Contains(IAttribute::Type type) const {
-	return (m_attributes.find(type) != m_attributes.end());
+	return (GetAttributes()->find(type) != GetAttributes()->end());
 }
 
 void AttributeList::Add(IAttributePtr attribute) {
 	auto attribute_type = attribute->GetType();
-	m_attributes[attribute_type] = attribute;
+	(*GetAttributes())[attribute_type] = attribute;
 }
 
 bool AttributeList::Remove(IAttribute::Type type) {
-	auto found = m_attributes.find(type);
-	if (found == m_attributes.end()) {
+	auto found = GetAttributes()->find(type);
+	if (found == GetAttributes()->end()) {
 		return false;
 	}
 
-	m_attributes.erase(found);
+	GetAttributes()->erase(found);
 	return true;
 }
 
 IAttributePtr AttributeList::Get(IAttribute::Type type) const {
-	return m_attributes.at(type);
+	return GetAttributes()->at(type);
 }
 
 void AttributeList::Clear() {
-	m_attributes.clear();
+	GetAttributes()->clear();
 }
 
 AttributeList::iterator AttributeList::begin() noexcept {
-	return m_attributes.begin();
+	return GetAttributes()->begin();
 }
 
 AttributeList::const_iterator AttributeList::begin() const noexcept {
-	return m_attributes.begin();
+	return GetAttributes()->begin();
 }
 
 AttributeList::iterator AttributeList::end() noexcept {
-	return m_attributes.end();
+	return GetAttributes()->end();
 }
 
 AttributeList::const_iterator AttributeList::end() const noexcept {
-	return m_attributes.end();
+	return GetAttributes()->end();
 }
 
 } // vanillapdf
