@@ -72,7 +72,7 @@ namespace vanillapdf_online_services.Common
                             }
 
                             if (annotations != null) {
-                                instructionsSize = annotations.Size();
+                                annotationsSize = annotations.Size();
                             }
 
                             sb.AppendLine(Environment.NewLine);
