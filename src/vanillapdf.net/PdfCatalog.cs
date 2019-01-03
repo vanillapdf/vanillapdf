@@ -7,8 +7,11 @@ namespace vanillapdf.net
 {
     public class PdfCatalog : PdfUnknown
     {
-        internal PdfCatalog(IntPtr handle) : base(handle)
+        internal PdfCatalogSafeHandle Handle { get; }
+
+        internal PdfCatalog(PdfCatalogSafeHandle handle)
         {
+            Handle = handle;
         }
 
         static PdfCatalog()
@@ -23,7 +26,7 @@ namespace vanillapdf.net
 
         public PdfVersion? GetVersion()
         {
-            UInt32 result = NativeMethods.Catalog_GetVersion(Handle, out int param);
+            UInt32 result = NativeMethods.Catalog_GetVersion(Handle, out int data);
             if (result == PdfReturnValues.ERROR_OBJECT_MISSING) {
                 return null;
             }
@@ -32,38 +35,34 @@ namespace vanillapdf.net
                 throw PdfErrors.GetLastErrorException();
             }
 
-            return EnumUtil<PdfVersion>.CheckedCast(param);
+            return EnumUtil<PdfVersion>.CheckedCast(data);
         }
 
         public PdfPageTree GetPageTree()
         {
-            UInt32 result = NativeMethods.Catalog_GetPages(Handle, out IntPtr tree);
+            UInt32 result = NativeMethods.Catalog_GetPages(Handle, out PdfPageTreeSafeHandle data);
             if (result != PdfReturnValues.ERROR_SUCCESS) {
                 throw PdfErrors.GetLastErrorException();
             }
 
-            return new PdfPageTree(tree);
+            return new PdfPageTree(data);
         }
 
-        protected override UInt32 Release(IntPtr data)
+        protected override void ReleaseManagedResources()
         {
-            return NativeMethods.Catalog_Release(data);
+            Handle.Dispose();
         }
 
         private static class NativeMethods
         {
             public static CatalogGetPagesDelgate Catalog_GetPages = LibraryInstance.GetFunction<CatalogGetPagesDelgate>("Catalog_GetPages");
             public static CatalogGetVersionDelgate Catalog_GetVersion = LibraryInstance.GetFunction<CatalogGetVersionDelgate>("Catalog_GetVersion");
-            public static CatalogReleaseDelgate Catalog_Release = LibraryInstance.GetFunction<CatalogReleaseDelgate>("Catalog_Release");
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 CatalogGetPagesDelgate(IntPtr handle, out IntPtr version);
+            public delegate UInt32 CatalogGetPagesDelgate(PdfCatalogSafeHandle handle, out PdfPageTreeSafeHandle data);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 CatalogGetVersionDelgate(IntPtr handle, out int version);
-
-            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 CatalogReleaseDelgate(IntPtr handle);
+            public delegate UInt32 CatalogGetVersionDelgate(PdfCatalogSafeHandle handle, out int data);
         }
     }
 }

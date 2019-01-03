@@ -1,16 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
 using vanillapdf.net.Utils;
 
 namespace vanillapdf.net
 {
     public class PdfPageAnnotations : PdfUnknown
     {
-        internal PdfPageAnnotations(IntPtr handle) : base(handle)
+        internal PdfPageAnnotationsSafeHandle Handle { get; }
+
+        internal PdfPageAnnotations(PdfPageAnnotationsSafeHandle handle)
         {
+            Handle = handle;
         }
 
         static PdfPageAnnotations()
@@ -30,7 +31,7 @@ namespace vanillapdf.net
 
         public PdfAnnotation At(UInt64 index)
         {
-            UInt32 result = NativeMethods.PageAnnotations_At(Handle, new UIntPtr(index), out IntPtr data);
+            UInt32 result = NativeMethods.PageAnnotations_At(Handle, new UIntPtr(index), out PdfAnnotationSafeHandle data);
             if (result != PdfReturnValues.ERROR_SUCCESS) {
                 throw PdfErrors.GetLastErrorException();
             }
@@ -38,25 +39,21 @@ namespace vanillapdf.net
             return new PdfAnnotation(data);
         }
 
-        protected override UInt32 Release(IntPtr data)
+        protected override void ReleaseManagedResources()
         {
-            return NativeMethods.PageAnnotations_Release(data);
+            Handle.Dispose();
         }
 
         private static class NativeMethods
         {
             public static PageAnnotationsSizeDelgate PageAnnotations_Size = LibraryInstance.GetFunction<PageAnnotationsSizeDelgate>("PageAnnotations_Size");
             public static PageAnnotationsAtDelgate PageAnnotations_At = LibraryInstance.GetFunction<PageAnnotationsAtDelgate>("PageAnnotations_At");
-            public static PageAnnotationsReleaseDelgate PageAnnotations_Release = LibraryInstance.GetFunction<PageAnnotationsReleaseDelgate>("PageAnnotations_Release");
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 PageAnnotationsSizeDelgate(IntPtr handle, out UIntPtr data);
+            public delegate UInt32 PageAnnotationsSizeDelgate(PdfPageAnnotationsSafeHandle handle, out UIntPtr data);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 PageAnnotationsAtDelgate(IntPtr handle, UIntPtr index, out IntPtr data);
-
-            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 PageAnnotationsReleaseDelgate(IntPtr handle);
+            public delegate UInt32 PageAnnotationsAtDelgate(PdfPageAnnotationsSafeHandle handle, UIntPtr index, out PdfAnnotationSafeHandle data);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace vanillapdf.net.Utils
         {
             RuntimeHelpers.RunClassConstructor(typeof(PdfUnknown).TypeHandle);
             RuntimeHelpers.RunClassConstructor(typeof(PdfBuffer).TypeHandle);
-            RuntimeHelpers.RunClassConstructor(typeof(PdfInputstream).TypeHandle);
+            RuntimeHelpers.RunClassConstructor(typeof(PdfInputStream).TypeHandle);
             RuntimeHelpers.RunClassConstructor(typeof(PdfLogging).TypeHandle);
             RuntimeHelpers.RunClassConstructor(typeof(PdfErrors).TypeHandle);
             RuntimeHelpers.RunClassConstructor(typeof(PdfReturnValues).TypeHandle);

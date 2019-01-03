@@ -9,34 +9,19 @@ namespace vanillapdf.net.test
         {
             MiscUtils.InitializeClasses();
 
-            PdfLogging.Enable();
+             PdfLogging.Enable();
 
-            //var severity = Logging.GetSeverity();
+            var severity = PdfLogging.GetSeverity();
 
-            //using (File file = File.Open("aa")) {
-            //    file.Initialize();
-            //}
+            using (PdfFile file = PdfFile.Open("aa")) {
+                file.Initialize();
+            }
 
-            //using (Document document = Document.OpenNew(args[0])) {
-            //    Catalog catalog = document.GetCatalog();
-            //    PageTree tree = catalog.GetPageTree();
-            //    int count = tree.GetPageCount();
-
-            //    for (int i = 1; i < args.Length; ++i) {
-            //        using (Document other_document = Document.OpenNew(args[i])) {
-            //            document.AppendDocument(other_document);
-            //        }
-            //    }
-
-            //    document.Save("example.pdf");
-            //}
-
-            //try {
-            //    using (Document document = Document.OpenNew("aa")) {
-            //    }
-            //    }catch (Exception ex) {
-
-            //}
+            using (PdfDocument document = PdfDocument.Open("aa")) {
+                PdfCatalog catalog = document.GetCatalog();
+                PdfPageTree tree = catalog.GetPageTree();
+                var count = tree.GetPageCount();
+            }
 
             uint test = PdfErrors.GetLastError();
             string message = PdfErrors.GetLastErrorMessage();

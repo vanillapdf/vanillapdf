@@ -7,8 +7,11 @@ namespace vanillapdf.net
 {
     public class PdfFile : PdfUnknown
     {
-        internal PdfFile(IntPtr handle) : base(handle)
+        internal PdfFileSafeHandle Handle { get; }
+
+        internal PdfFile(PdfFileSafeHandle handle)
         {
+            Handle = handle;
         }
 
         static PdfFile()
@@ -18,7 +21,7 @@ namespace vanillapdf.net
 
         public static PdfFile Open(string filename)
         {
-            UInt32 result = NativeMethods.File_Open(filename, out IntPtr data);
+            UInt32 result = NativeMethods.File_Open(filename, out var data);
             if (result != PdfReturnValues.ERROR_SUCCESS) {
                 throw PdfErrors.GetLastErrorException();
             }
@@ -26,9 +29,9 @@ namespace vanillapdf.net
             return new PdfFile(data);
         }
 
-        public static PdfFile OpenStream(PdfInputstream stream, string filename)
+        public static PdfFile OpenStream(PdfInputStream stream, string filename)
         {
-            UInt32 result = NativeMethods.File_OpenStream(stream.Handle, filename, out IntPtr data);
+            UInt32 result = NativeMethods.File_OpenStream(stream.Handle, filename, out var data);
             if (result != PdfReturnValues.ERROR_SUCCESS) {
                 throw PdfErrors.GetLastErrorException();
             }
@@ -38,7 +41,7 @@ namespace vanillapdf.net
 
         public static PdfFile Create(string filename)
         {
-            UInt32 result = NativeMethods.File_Create(filename, out IntPtr data);
+            UInt32 result = NativeMethods.File_Create(filename, out var data);
             if (result != PdfReturnValues.ERROR_SUCCESS) {
                 throw PdfErrors.GetLastErrorException();
             }
@@ -46,9 +49,9 @@ namespace vanillapdf.net
             return new PdfFile(data);
         }
 
-        public static PdfFile CreateStream(PdfInputstream stream, string name)
+        public static PdfFile CreateStream(PdfInputStream stream, string name)
         {
-            UInt32 result = NativeMethods.File_CreateStream(stream.Handle, name, out IntPtr data);
+            UInt32 result = NativeMethods.File_CreateStream(stream.Handle, name, out var data);
             if (result != PdfReturnValues.ERROR_SUCCESS) {
                 throw PdfErrors.GetLastErrorException();
             }
@@ -82,9 +85,9 @@ namespace vanillapdf.net
             }
         }
 
-        protected override UInt32 Release(IntPtr data)
+        protected override void ReleaseManagedResources()
         {
-            return NativeMethods.File_Release(data);
+            Handle.Dispose();
         }
 
         private static class NativeMethods
@@ -96,31 +99,27 @@ namespace vanillapdf.net
             public static FileInitializeDelgate File_Initialize = LibraryInstance.GetFunction<FileInitializeDelgate>("File_Initialize");
             public static FileIsEncryptedDelgate File_IsEncrypted = LibraryInstance.GetFunction<FileIsEncryptedDelgate>("File_IsEncrypted");
             public static FileSetEncryptionPasswordDelgate File_SetEncryptionPassword = LibraryInstance.GetFunction<FileSetEncryptionPasswordDelgate>("File_SetEncryptionPassword");
-            public static FileReleaseDelgate File_Release = LibraryInstance.GetFunction<FileReleaseDelgate>("File_Release");
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 FileOpenDelgate(string filename, out IntPtr data);
+            public delegate UInt32 FileOpenDelgate(string filename, out PdfFileSafeHandle data);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 FileOpenStreamDelgate(IntPtr input_stream, string name, out IntPtr data);
+            public delegate UInt32 FileOpenStreamDelgate(PdfInputStreamSafeHandle input_stream, string name, out PdfFileSafeHandle data);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 FileCreateDelgate(string filename, out IntPtr data);
+            public delegate UInt32 FileCreateDelgate(string filename, out PdfFileSafeHandle data);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 FileCreateStreamDelgate(IntPtr input_stream, string name, out IntPtr data);
+            public delegate UInt32 FileCreateStreamDelgate(PdfInputStreamSafeHandle input_stream, string name, out PdfFileSafeHandle data);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 FileInitializeDelgate(IntPtr handle);
+            public delegate UInt32 FileInitializeDelgate(PdfFileSafeHandle handle);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 FileIsEncryptedDelgate(IntPtr handle, out bool data);
+            public delegate UInt32 FileIsEncryptedDelgate(PdfFileSafeHandle handle, out bool data);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 FileSetEncryptionPasswordDelgate(IntPtr handle, string password);
-
-            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 FileReleaseDelgate(IntPtr handle);
+            public delegate UInt32 FileSetEncryptionPasswordDelgate(PdfFileSafeHandle handle, string password);
         }
     }
 }

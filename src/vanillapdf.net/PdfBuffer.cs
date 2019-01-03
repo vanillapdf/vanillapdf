@@ -7,8 +7,11 @@ namespace vanillapdf.net
 {
     public class PdfBuffer : PdfUnknown
     {
-        internal PdfBuffer(IntPtr handle) : base(handle)
+        internal PdfBufferSafeHandle Handle { get; }
+
+        internal PdfBuffer(PdfBufferSafeHandle handle)
         {
+            Handle = handle;
         }
 
         static PdfBuffer()
@@ -24,7 +27,7 @@ namespace vanillapdf.net
 
         public static PdfBuffer Create()
         {
-            UInt32 result = NativeMethods.Buffer_Create(out IntPtr handle);
+            UInt32 result = NativeMethods.Buffer_Create(out PdfBufferSafeHandle handle);
             if (result != PdfReturnValues.ERROR_SUCCESS) {
                 throw PdfErrors.GetLastErrorException();
             }
@@ -73,19 +76,19 @@ namespace vanillapdf.net
             }
         }
 
-        public PdfInputstream ToInputStream(string name)
+        public PdfInputStream ToInputStream(string name)
         {
-            UInt32 result = NativeMethods.Buffer_ToInputStream(Handle, name, out IntPtr handle);
+            UInt32 result = NativeMethods.Buffer_ToInputStream(Handle, name, out PdfInputStreamSafeHandle handle);
             if (result != PdfReturnValues.ERROR_SUCCESS) {
                 throw PdfErrors.GetLastErrorException();
             }
 
-            return new PdfInputstream(handle);
+            return new PdfInputStream(handle);
         }
 
-        protected override UInt32 Release(IntPtr data)
+        protected override void ReleaseManagedResources()
         {
-            return NativeMethods.Buffer_Release(data);
+            Handle.Dispose();
         }
 
         private static class NativeMethods
@@ -94,22 +97,18 @@ namespace vanillapdf.net
             public static BufferGetDataDelgate Buffer_GetData = LibraryInstance.GetFunction<BufferGetDataDelgate>("Buffer_GetData");
             public static BufferSetDataDelgate Buffer_SetData = LibraryInstance.GetFunction<BufferSetDataDelgate>("Buffer_SetData");
             public static BufferToInputStreamDelgate Buffer_ToInputStream = LibraryInstance.GetFunction<BufferToInputStreamDelgate>("Buffer_ToInputStream");
-            public static BufferReleaseDelgate Buffer_Release = LibraryInstance.GetFunction<BufferReleaseDelgate>("Buffer_Release");
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 BufferCreateDelgate(out IntPtr handle);
+            public delegate UInt32 BufferCreateDelgate(out PdfBufferSafeHandle handle);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 BufferGetDataDelgate(IntPtr handle, out IntPtr data, out UIntPtr size);
+            public delegate UInt32 BufferGetDataDelgate(PdfBufferSafeHandle handle, out IntPtr data, out UIntPtr size);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 BufferSetDataDelgate(IntPtr handle, IntPtr data, UIntPtr size);
+            public delegate UInt32 BufferSetDataDelgate(PdfBufferSafeHandle handle, IntPtr data, UIntPtr size);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 BufferToInputStreamDelgate(IntPtr handle, string name, out IntPtr data);
-
-            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 BufferReleaseDelgate(IntPtr handle);
+            public delegate UInt32 BufferToInputStreamDelgate(PdfBufferSafeHandle handle, string name, out PdfInputStreamSafeHandle data);
         }
     }
 }

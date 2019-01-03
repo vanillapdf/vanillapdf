@@ -7,8 +7,11 @@ namespace vanillapdf.net
 {
     public class PdfContents : PdfUnknown
     {
-        internal PdfContents(IntPtr handle) : base(handle)
+        internal PdfContentsSafeHandle Handle { get; }
+
+        internal PdfContents(PdfContentsSafeHandle handle)
         {
+            Handle = handle;
         }
 
         static PdfContents()
@@ -26,21 +29,17 @@ namespace vanillapdf.net
             return data.ToUInt64();
         }
 
-        protected override UInt32 Release(IntPtr data)
+        protected override void ReleaseManagedResources()
         {
-            return NativeMethods.Contents_Release(data);
+            Handle.Dispose();
         }
 
         private static class NativeMethods
         {
             public static ContentsGetInstructionsSizeDelgate Contents_GetInstructionsSize = LibraryInstance.GetFunction<ContentsGetInstructionsSizeDelgate>("Contents_GetInstructionsSize");
-            public static ContentsReleaseDelgate Contents_Release = LibraryInstance.GetFunction<ContentsReleaseDelgate>("Contents_Release");
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 ContentsGetInstructionsSizeDelgate(IntPtr handle, out UIntPtr data);
-
-            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 ContentsReleaseDelgate(IntPtr handle);
+            public delegate UInt32 ContentsGetInstructionsSizeDelgate(PdfContentsSafeHandle handle, out UIntPtr data);
         }
     }
 }

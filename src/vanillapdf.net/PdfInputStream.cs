@@ -5,13 +5,16 @@ using vanillapdf.net.Utils;
 
 namespace vanillapdf.net
 {
-    public class PdfInputstream : PdfUnknown
+    public class PdfInputStream : PdfUnknown
     {
-        internal PdfInputstream(IntPtr handle) : base(handle)
+        internal PdfInputStreamSafeHandle Handle { get; }
+
+        internal PdfInputStream(PdfInputStreamSafeHandle handle)
         {
+            Handle = handle;
         }
 
-        static PdfInputstream()
+        static PdfInputStream()
         {
             RuntimeHelpers.RunClassConstructor(typeof(NativeMethods).TypeHandle);
         }
@@ -22,29 +25,29 @@ namespace vanillapdf.net
             set { SetInputPosition(value); }
         }
 
-        public static PdfInputstream CreateFromFile(string filename)
+        public static PdfInputStream CreateFromFile(string filename)
         {
-            UInt32 result = NativeMethods.InputStream_CreateFromFile(filename, out IntPtr data);
+            UInt32 result = NativeMethods.InputStream_CreateFromFile(filename, out PdfInputStreamSafeHandle data);
             if (result != PdfReturnValues.ERROR_SUCCESS) {
                 throw PdfErrors.GetLastErrorException();
             }
 
-            return new PdfInputstream(data);
+            return new PdfInputStream(data);
         }
 
-        public static PdfInputstream CreateFromBuffer(PdfBuffer buffer)
+        public static PdfInputStream CreateFromBuffer(PdfBuffer buffer)
         {
-            UInt32 result = NativeMethods.InputStream_CreateFromBuffer(buffer.Handle, out IntPtr data);
+            UInt32 result = NativeMethods.InputStream_CreateFromBuffer(buffer.Handle, out PdfInputStreamSafeHandle data);
             if (result != PdfReturnValues.ERROR_SUCCESS) {
                 throw PdfErrors.GetLastErrorException();
             }
 
-            return new PdfInputstream(data);
+            return new PdfInputStream(data);
         }
 
         public PdfBuffer ToBuffer()
         {
-            UInt32 result = NativeMethods.InputStream_ToBuffer(Handle, out IntPtr data);
+            UInt32 result = NativeMethods.InputStream_ToBuffer(Handle, out PdfBufferSafeHandle data);
             if (result != PdfReturnValues.ERROR_SUCCESS) {
                 throw PdfErrors.GetLastErrorException();
             }
@@ -75,9 +78,9 @@ namespace vanillapdf.net
         //    return new Inputstream(IntPtr.Zero);
         //}
 
-        protected override UInt32 Release(IntPtr data)
+        protected override void ReleaseManagedResources()
         {
-            return NativeMethods.InputStream_Release(data);
+            Handle.Dispose();
         }
 
         private static class NativeMethods
@@ -87,25 +90,21 @@ namespace vanillapdf.net
             public static InputStreamToBufferDelgate InputStream_ToBuffer = LibraryInstance.GetFunction<InputStreamToBufferDelgate>("InputStream_ToBuffer");
             public static InputStreamGetInputPositionDelgate InputStream_GetInputPosition = LibraryInstance.GetFunction<InputStreamGetInputPositionDelgate>("InputStream_GetInputPosition");
             public static InputStreamSetInputPositionDelgate InputStream_SetInputPosition = LibraryInstance.GetFunction<InputStreamSetInputPositionDelgate>("InputStream_SetInputPosition");
-            public static InputStreamReleaseDelgate InputStream_Release = LibraryInstance.GetFunction<InputStreamReleaseDelgate>("InputStream_Release");
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 InputStreamCreateFromFileDelgate(string filename, out IntPtr data);
+            public delegate UInt32 InputStreamCreateFromFileDelgate(string filename, out PdfInputStreamSafeHandle data);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 InputStreamCreateFromBufferDelgate(IntPtr buffer, out IntPtr data);
+            public delegate UInt32 InputStreamCreateFromBufferDelgate(PdfBufferSafeHandle buffer, out PdfInputStreamSafeHandle data);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 InputStreamToBufferDelgate(IntPtr handle, out IntPtr data);
+            public delegate UInt32 InputStreamToBufferDelgate(PdfInputStreamSafeHandle handle, out PdfBufferSafeHandle data);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 InputStreamGetInputPositionDelgate(IntPtr handle, out Int64 data);
+            public delegate UInt32 InputStreamGetInputPositionDelgate(PdfInputStreamSafeHandle handle, out Int64 data);
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 InputStreamSetInputPositionDelgate(IntPtr handle, Int64 data);
-
-            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 InputStreamReleaseDelgate(IntPtr handle);
+            public delegate UInt32 InputStreamSetInputPositionDelgate(PdfInputStreamSafeHandle handle, Int64 data);
         }
     }
 }

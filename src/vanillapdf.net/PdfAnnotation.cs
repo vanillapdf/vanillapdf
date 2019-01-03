@@ -37,8 +37,11 @@ namespace vanillapdf.net
 
     public class PdfAnnotation : PdfUnknown
     {
-        internal PdfAnnotation(IntPtr handle) : base(handle)
+        internal PdfAnnotationSafeHandle Handle { get; }
+
+        internal PdfAnnotation(PdfAnnotationSafeHandle handle)
         {
+            Handle = handle;
         }
 
         static PdfAnnotation()
@@ -56,21 +59,17 @@ namespace vanillapdf.net
             return EnumUtil<PdfAnnotationType>.CheckedCast(data);
         }
 
-        protected override UInt32 Release(IntPtr data)
+        protected override void ReleaseManagedResources()
         {
-            return NativeMethods.Annotation_Release(data);
+            Handle.Dispose();
         }
 
         private static class NativeMethods
         {
             public static AnnotationGetTypeDelgate Annotation_GetType = LibraryInstance.GetFunction<AnnotationGetTypeDelgate>("Annotation_GetType");
-            public static AnnotationReleaseDelgate Annotation_Release = LibraryInstance.GetFunction<AnnotationReleaseDelgate>("Annotation_Release");
 
             [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 AnnotationGetTypeDelgate(IntPtr handle, out int data);
-
-            [UnmanagedFunctionPointer(MiscUtils.LibraryCallingConvention)]
-            public delegate UInt32 AnnotationReleaseDelgate(IntPtr handle);
+            public delegate UInt32 AnnotationGetTypeDelgate(PdfAnnotationSafeHandle handle, out int data);
         }
     }
 }

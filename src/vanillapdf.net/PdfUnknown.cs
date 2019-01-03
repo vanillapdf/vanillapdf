@@ -5,18 +5,9 @@ using vanillapdf.net.Utils;
 
 namespace vanillapdf.net
 {
-    public abstract class PdfUnknown : IDisposable
+    public class PdfUnknown : IDisposable
     {
-        protected internal IntPtr Handle { get; protected set; }
-
-        internal PdfUnknown(IntPtr handle)
-        {
-            if (handle == IntPtr.Zero) {
-                throw new ArgumentNullException(nameof(handle));
-            }
-
-            Handle = handle;
-        }
+        // internal PdfUnknownSafeHandle Handle { get; }
 
         static PdfUnknown()
         {
@@ -25,26 +16,16 @@ namespace vanillapdf.net
 
         public void Dispose()
         {
-            Dispose(true);
+            // Handle.Dispose();
+
+            // Hook for derived classes
+            ReleaseManagedResources();
+
             GC.SuppressFinalize(this);
         }
 
-        protected abstract UInt32 Release(IntPtr data);
-        protected virtual void Dispose(bool disposing)
+        protected virtual void ReleaseManagedResources()
         {
-            if (Handle != IntPtr.Zero) {
-                UInt32 result = Release(Handle);
-                if (result != PdfReturnValues.ERROR_SUCCESS) {
-                    throw PdfErrors.GetLastErrorException();
-                }
-
-                Handle = IntPtr.Zero;
-            }
-        }
-
-        ~PdfUnknown()
-        {
-            Dispose(false);
         }
 
         private static class NativeMethods
