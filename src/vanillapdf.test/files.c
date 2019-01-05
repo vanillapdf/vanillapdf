@@ -62,10 +62,10 @@ error_type process_xref(XrefHandle* xref, int nested) {
 				RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));
 				break;
 			case XrefEntryType_Null:
-				printf("Missing xref entry\n");
+				print_text("Missing xref entry\n");
 				return VANILLAPDF_TEST_ERROR_FAILURE;
 			default:
-				printf("Unknown xref entry type\n");
+				print_text("Unknown xref entry type\n");
 				return VANILLAPDF_TEST_ERROR_FAILURE;
 		}
 

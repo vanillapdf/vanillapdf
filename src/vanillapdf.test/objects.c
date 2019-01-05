@@ -4,14 +4,14 @@ error_type process_name(NameObjectHandle* name, int nested) {
 	BufferHandle* buffer = NULL;
 
 	print_spaces(nested);
-	printf("Name object begin\n");
+	print_text("Name object begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(NameObject_GetValue(name, &buffer));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(buffer, nested + 1));
 	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(buffer));
 
 	print_spaces(nested);
-	printf("Name object end\n");
+	print_text("Name object end\n");
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
@@ -20,14 +20,14 @@ error_type process_lit_string(LiteralStringObjectHandle* string, int nested) {
 	BufferHandle* buffer = NULL;
 
 	print_spaces(nested);
-	printf("Literal string begin\n");
+	print_text("Literal string begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(LiteralStringObject_GetValue(string, &buffer));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(buffer, nested + 1));
 	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(buffer));
 
 	print_spaces(nested);
-	printf("Literal string end\n");
+	print_text("Literal string end\n");
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
@@ -36,14 +36,14 @@ error_type process_hex_string(HexadecimalStringObjectHandle* string, int nested)
 	BufferHandle* buffer = NULL;
 
 	print_spaces(nested);
-	printf("Hexadecimal string begin\n");
+	print_text("Hexadecimal string begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(HexadecimalStringObject_GetValue(string, &buffer));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(buffer, nested + 1));
 	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(buffer));
 
 	print_spaces(nested);
-	printf("Hexadecimal string end\n");
+	print_text("Hexadecimal string end\n");
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
@@ -53,7 +53,7 @@ error_type process_dictionary(DictionaryObjectHandle* dictionary, int nested) {
 	DictionaryObjectIteratorHandle* iterator = NULL;
 
 	print_spaces(nested);
-	printf("Dictionary begin\n");
+	print_text("Dictionary begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Iterator(dictionary, &iterator));
 	while (VANILLAPDF_ERROR_SUCCESS == DictionaryObjectIterator_IsValid(iterator, dictionary, &boolean)
@@ -62,7 +62,7 @@ error_type process_dictionary(DictionaryObjectHandle* dictionary, int nested) {
 		ObjectHandle* value = NULL;
 
 		print_spaces(nested);
-		printf("Pair:\n");
+		print_text("Pair:\n");
 
 		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_GetKey(iterator, &key));
 		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_GetValue(iterator, &value));
@@ -74,7 +74,7 @@ error_type process_dictionary(DictionaryObjectHandle* dictionary, int nested) {
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(value));
 
 		print_spaces(nested);
-		printf("EndPair\n");
+		print_text("EndPair\n");
 
 		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_Next(iterator));
 	}
@@ -82,7 +82,7 @@ error_type process_dictionary(DictionaryObjectHandle* dictionary, int nested) {
 	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObjectIterator_Release(iterator));
 
 	print_spaces(nested);
-	printf("Dictionary end\n");
+	print_text("Dictionary end\n");
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
@@ -92,7 +92,7 @@ error_type process_stream(StreamObjectHandle* stream, int nested) {
 	DictionaryObjectHandle* dictionary = NULL;
 
 	print_spaces(nested);
-	printf("Stream object begin\n");
+	print_text("Stream object begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_GetHeader(stream, &dictionary));
 	RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_GetBodyRaw(stream, &body));
@@ -104,7 +104,7 @@ error_type process_stream(StreamObjectHandle* stream, int nested) {
 	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(body));
 
 	print_spaces(nested);
-	printf("Stream object end\n");
+	print_text("Stream object end\n");
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
@@ -114,13 +114,13 @@ error_type process_array(ArrayObjectHandle* arr, int nested) {
 	size_type size = 0;
 
 	print_spaces(nested);
-	printf("Array begin\n");
+	print_text("Array begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_Size(arr, &size));
 
 	print_spaces(nested + 1);
 	unsigned long long converted_size = size;
-	printf("Size: %llu\n", converted_size);
+	print_text("Size: %llu\n", converted_size);
 
 	for (i = 0; i < size; ++i) {
 		ObjectHandle* item = NULL;
@@ -130,7 +130,7 @@ error_type process_array(ArrayObjectHandle* arr, int nested) {
 	}
 
 	print_spaces(nested);
-	printf("Array end\n");
+	print_text("Array end\n");
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
@@ -139,16 +139,16 @@ error_type process_integer(IntegerObjectHandle* integer, int nested) {
 	bigint_type value = 0;
 
 	print_spaces(nested);
-	printf("Integer object begin\n");
+	print_text("Integer object begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_GetIntegerValue(integer, &value));
 	print_spaces(nested + 1);
 
 	long long converted = value;
-	printf("Value: %lld\n", converted);
+	print_text("Value: %lld\n", converted);
 
 	print_spaces(nested);
-	printf("Integer object end\n");
+	print_text("Integer object end\n");
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
@@ -157,18 +157,20 @@ error_type process_boolean(BooleanObjectHandle* obj, int nested) {
 	boolean_type value = VANILLAPDF_RV_FALSE;
 
 	print_spaces(nested);
-	printf("Boolean object begin\n");
+	print_text("Boolean object begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(BooleanObject_GetValue(obj, &value));
 
 	print_spaces(nested + 1);
-	if (VANILLAPDF_RV_TRUE == value)
-		printf("Value: true\n");
-	else
-		printf("Value: false\n");
+	if (VANILLAPDF_RV_TRUE == value) {
+		print_text("Value: true\n");
+	}
+	else {
+		print_text("Value: false\n");
+	}
 
 	print_spaces(nested);
-	printf("Boolean object end\n");
+	print_text("Boolean object end\n");
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
@@ -181,7 +183,7 @@ error_type process_reference(IndirectObjectReferenceHandle* reference, int neste
 	string_type type_name = NULL;
 
 	print_spaces(nested);
-	printf("Indirect reference begin\n");
+	print_text("Indirect reference begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(IndirectObjectReference_GetReferencedObjectNumber(reference, &obj_num));
 	RETURN_ERROR_IF_NOT_SUCCESS(IndirectObjectReference_GetReferencedGenerationNumber(reference, &gen_num));
@@ -192,16 +194,16 @@ error_type process_reference(IndirectObjectReferenceHandle* reference, int neste
 
 	print_spaces(nested + 1);
 	unsigned long long obj_num_converted = obj_num;
-	printf("Object Number: %llu\n", obj_num_converted);
+	print_text("Object Number: %llu\n", obj_num_converted);
 
 	print_spaces(nested + 1);
-	printf("Generation Number: %d\n", gen_num);
+	print_text("Generation Number: %d\n", gen_num);
 
 	print_spaces(nested + 1);
-	printf("Type: %s\n", type_name);
+	print_text("Type: %s\n", type_name);
 
 	print_spaces(nested);
-	printf("Indirect reference end\n");
+	print_text("Indirect reference end\n");
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
@@ -210,14 +212,14 @@ error_type process_real(RealObjectHandle* obj, int nested) {
 	real_type value = 0;
 
 	print_spaces(nested);
-	printf("Real object begin\n");
+	print_text("Real object begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(RealObject_GetValue(obj, &value));
 	print_spaces(nested + 1);
-	printf("Value: %g\n", value);
+	print_text("Value: %g\n", value);
 
 	print_spaces(nested);
-	printf("Real object end\n");
+	print_text("Real object end\n");
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
@@ -228,13 +230,13 @@ error_type process_null(NullObjectHandle* obj, int nested) {
 	UNUSED(obj);
 
 	print_spaces(nested);
-	printf("Null object begin\n");
+	print_text("Null object begin\n");
 
 	print_spaces(nested + 1);
-	printf("Value: null\n");
+	print_text("Value: null\n");
 
 	print_spaces(nested);
-	printf("Null object end\n");
+	print_text("Null object end\n");
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
@@ -257,7 +259,7 @@ error_type process_string(StringObjectHandle* obj, int nested) {
 			break;
 		default:
 			print_spaces(nested);
-			printf("Unknown string type\n");
+			print_text("Unknown string type\n");
 			return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 
@@ -322,7 +324,7 @@ error_type process_object(ObjectHandle* obj, int nested) {
 			break;
 		default:
 			print_spaces(nested);
-			printf("Unknown object type\n");
+			print_text("Unknown object type\n");
 			return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 

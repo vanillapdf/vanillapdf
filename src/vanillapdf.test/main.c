@@ -51,6 +51,10 @@ int main(int argc, char *argv[]) {
 		} else if (strcmp(argv[i], "-l") == 0 && (i + 1 < argc)) {
 			license_file = argv[i + 1];
 			i++;
+
+		// quiet
+		} else if (strcmp(argv[i], "-q") == 0) {
+			set_quiet_mode(VANILLAPDF_RV_TRUE);
 		} else {
 			return VANILLAPDF_TEST_ERROR_INVALID_PARAMETERS;
 		}

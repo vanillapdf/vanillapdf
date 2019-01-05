@@ -4,7 +4,7 @@
 #include "vanillapdf/c_vanillapdf_api.h"
 
 #include <stdio.h>
-#include <stdlib.h> 
+#include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 
@@ -20,7 +20,11 @@ extern const int VANILLAPDF_TEST_ERROR_LOGGING_ENABLED;
 extern const int VANILLAPDF_TEST_ERROR_FAILURE;
 
 /* Support functions */
+boolean_type is_quiet_mode();
+void set_quiet_mode(boolean_type value);
 void print_spaces(int nested);
+void print_spaces(int nested);
+void print_text(const char * const format, ...);
 error_type print_last_error();
 
 /* Utilities */
@@ -120,7 +124,7 @@ do { \
 	error_type __result__ = (fn); \
 	if (VANILLAPDF_ERROR_SUCCESS != __result__) \
 	{ \
-		printf("Function call \"%s\" has failed with result %u { %s:%d }\n", \
+		print_text("Function call \"%s\" has failed with result %u { %s:%d }\n", \
 		#fn, __result__, __FILE__, __LINE__); \
 		print_last_error(); \
 		assert(!"Operation failed"); \
@@ -142,7 +146,7 @@ do { \
 	} \
 	else \
 	{ \
-		printf("Function call \"%s\" has failed with result %u { %s:%d }\n", \
+		print_text("Function call \"%s\" has failed with result %u { %s:%d }\n", \
 		#eval, __result__, __FILE__, __LINE__); \
 		print_last_error(); \
 		assert(!"Operation failed"); \

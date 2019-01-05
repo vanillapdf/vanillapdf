@@ -1,16 +1,43 @@
 #include "test.h"
 
+#include <stdarg.h>
+
 const int VANILLAPDF_TEST_ERROR_SUCCESS = 0;
 const int VANILLAPDF_TEST_ERROR_INVALID_PASSWORD = 1;
 const int VANILLAPDF_TEST_ERROR_INVALID_PARAMETERS = 2;
 const int VANILLAPDF_TEST_ERROR_LOGGING_ENABLED = 3;
 const int VANILLAPDF_TEST_ERROR_FAILURE = 255;
 
+static boolean_type quiet_mode = 0;
+
+boolean_type is_quiet_mode() {
+	return quiet_mode;
+}
+
+void set_quiet_mode(boolean_type value) {
+	quiet_mode = value;
+}
+
 void print_spaces(int nested) {
+	if (is_quiet_mode() == VANILLAPDF_RV_TRUE) {
+		return;
+	}
+
 	int i;
 	for (i = 0; i < nested; ++i) {
-		printf("  ");
+		print_text("  ");
 	}
+}
+
+void print_text(const char * const format, ...) {
+	if (is_quiet_mode() == VANILLAPDF_RV_TRUE) {
+		return;
+	}
+
+	va_list argument_list;
+	va_start(argument_list, format);
+	vprintf(format, argument_list);
+	va_end(argument_list);
 }
 
 //! [Print buffer]
@@ -22,13 +49,13 @@ error_type process_buffer(BufferHandle* buffer, int nested) {
 	unsigned long long size_converted = 0;
 
 	print_spaces(nested);
-	printf("Buffer begin\n");
+	print_text("Buffer begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(buffer, &data, &size));
 
 	if (size >= SIZE_MAX) {
 		unsigned long long size_long_long = size;
-		printf("Buffer size is too big: %llu bytes\n", size_long_long);
+		print_text("Buffer size is too big: %llu bytes\n", size_long_long);
 		return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 
@@ -38,21 +65,21 @@ error_type process_buffer(BufferHandle* buffer, int nested) {
 	local_string = (char*) calloc(sizeof(char), print_size + 1);
 	if (NULL == local_string) {
 		unsigned long long print_size_converted = print_size;
-		printf("Could not allocate memory: %llu bytes\n", print_size_converted + 1);
+		print_text("Could not allocate memory: %llu bytes\n", print_size_converted + 1);
 		return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 
 	memcpy(local_string, data, print_size);
 
 	print_spaces(nested + 1);
-	printf("Size: %llu\n", size_converted);
+	print_text("Size: %llu\n", size_converted);
 	print_spaces(nested + 1);
-	printf("Data: %s\n", local_string);
+	print_text("Data: %s\n", local_string);
 
 	free(local_string);
 
 	print_spaces(nested);
-	printf("Buffer end\n");
+	print_text("Buffer end\n");
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
@@ -60,7 +87,7 @@ error_type process_buffer(BufferHandle* buffer, int nested) {
 
 error_type process_version(PDFVersion version, int nested) {
 	print_spaces(nested);
-	printf("PDF Version: 1.%d \n", version);
+	print_text("PDF Version: 1.%d \n", version);
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
@@ -373,7 +400,7 @@ error_type process_license_info(string_type license_file) {
 
 	RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_IsValid(&is_valid));
 	if (is_valid != VANILLAPDF_RV_FALSE) {
-		printf("License is enabled by default\n");
+		print_text("License is enabled by default\n");
 		return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 
@@ -383,7 +410,7 @@ error_type process_license_info(string_type license_file) {
 	RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_IsValid(&is_valid));
 
 	if (is_valid != VANILLAPDF_RV_TRUE) {
-		printf("Could not enable license\n");
+		print_text("Could not enable license\n");
 		return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 
@@ -421,7 +448,7 @@ error_type process_library_info() {
 	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetBuildMonth(&library_build_month));
 	RETURN_ERROR_IF_NOT_SUCCESS(LibraryInfo_GetBuildYear(&library_build_year));
 
-	printf("Library vanillapdf %d.%d.%d.%d by %s\n",
+	print_text("Library vanillapdf %d.%d.%d.%d by %s\n",
 		library_version_major,
 		library_version_minor,
 		library_version_patch,
@@ -429,7 +456,7 @@ error_type process_library_info() {
 		library_author
 	);
 
-	printf("Built on %d.%d.%d\n",
+	print_text("Built on %d.%d.%d\n",
 		library_build_day,
 		library_build_month,
 		library_build_year
@@ -454,14 +481,14 @@ error_type print_last_error() {
 
 	if (error_message_length >= SIZE_MAX) {
 		unsigned long long length_converted = error_message_length;
-		printf("Buffer size is too big: %llu bytes\n", length_converted);
+		print_text("Buffer size is too big: %llu bytes\n", length_converted);
 		return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 
 	error_message = (char*) calloc(sizeof(char), error_message_length);
 	if (NULL == error_message) {
 		unsigned long long length_converted = error_message_length;
-		printf("Could not allocate memory: %llu bytes\n", length_converted);
+		print_text("Could not allocate memory: %llu bytes\n", length_converted);
 		return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 
@@ -472,23 +499,23 @@ error_type print_last_error() {
 
 	if (error_code_name_length >= SIZE_MAX) {
 		unsigned long long length_converted = error_code_name_length;
-		printf("Buffer size is too big: %llu bytes\n", length_converted);
+		print_text("Buffer size is too big: %llu bytes\n", length_converted);
 		return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 
 	error_code_name = (char*) calloc(sizeof(char), error_code_name_length);
 	if (NULL == error_code_name) {
 		unsigned long long length_converted = error_code_name_length;
-		printf("Could not allocate memory: %llu bytes\n", length_converted);
+		print_text("Could not allocate memory: %llu bytes\n", length_converted);
 		return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Errors_GetPrintableErrorText(error, error_code_name, error_code_name_length));
 
 	if (error_message_length == 0) {
-		printf("Error %u (%s)\n", error, error_code_name);
+		print_text("Error %u (%s)\n", error, error_code_name);
 	} else {
-		printf("Error %u (%s): %s\n", error, error_code_name, error_message);
+		print_text("Error %u (%s): %s\n", error, error_code_name, error_message);
 	}
 
 	free(error_message);
