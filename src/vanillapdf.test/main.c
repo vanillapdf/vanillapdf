@@ -25,6 +25,7 @@ int main(int argc, char *argv[]) {
 	string_type cert_password = NULL;
 	PKCS12KeyHandle* pkcs12_key = NULL;
 	boolean_type is_encrypted = VANILLAPDF_RV_FALSE;
+	boolean_type quiet_mode = VANILLAPDF_RV_FALSE;
 
 #if (defined(DEBUG) && defined(COMPILER_MICROSOFT_VISUAL_STUDIO))
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -54,11 +55,13 @@ int main(int argc, char *argv[]) {
 
 		// quiet
 		} else if (strcmp(argv[i], "-q") == 0) {
-			set_quiet_mode(VANILLAPDF_RV_TRUE);
+			quiet_mode = VANILLAPDF_RV_TRUE;
 		} else {
 			return VANILLAPDF_TEST_ERROR_INVALID_PARAMETERS;
 		}
 	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(set_quiet_mode(quiet_mode));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(process_library_info());
 	RETURN_ERROR_IF_NOT_SUCCESS(process_license_info(license_file));

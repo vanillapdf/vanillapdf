@@ -14,8 +14,9 @@ boolean_type is_quiet_mode() {
 	return quiet_mode;
 }
 
-void set_quiet_mode(boolean_type value) {
+error_type set_quiet_mode(boolean_type value) {
 	quiet_mode = value;
+	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
 void print_spaces(int nested) {

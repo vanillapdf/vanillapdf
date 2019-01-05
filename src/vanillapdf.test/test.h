@@ -21,8 +21,7 @@ extern const int VANILLAPDF_TEST_ERROR_FAILURE;
 
 /* Support functions */
 boolean_type is_quiet_mode();
-void set_quiet_mode(boolean_type value);
-void print_spaces(int nested);
+error_type set_quiet_mode(boolean_type value);
 void print_spaces(int nested);
 void print_text(const char * const format, ...);
 error_type print_last_error();
