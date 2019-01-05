@@ -54,45 +54,36 @@ BaseInstructionCollectionPtr Contents::Instructions(void) const {
 
 	// We are not using contents.Instructions, because objects can we separated
 	// into multiple content streams
-
-	size_t instructions_size = 0;
-	std::list<BaseInstructionCollectionPtr> instruction_list;
-
+	auto ss = std::make_shared<std::stringstream>();
 	for (auto item : contents) {
 		auto stream_object = item->GetObject();
-		auto input_stream = stream_object->GetBody()->ToInputStream();
-
-		contents::ContentStreamParser parser(_obj->GetFile(), input_stream);
-		auto stream_instructions = parser.ReadContentStreamInstructions();
-
-		instruction_list.push_back(stream_instructions);
-		instructions_size += stream_instructions->size();
+		*ss << stream_object->GetBody();
 	}
 
-	m_instructions->reserve(instructions_size);
-	for (auto stream_instructions : instruction_list) {
-		m_instructions->insert(m_instructions.end(), stream_instructions.begin(), stream_instructions.end());
-	}
+	InputStreamPtr input_stream = make_deferred<InputStream>(ss);
+	contents::ContentStreamParser parser(_obj->GetFile(), input_stream);
+	auto instructions = parser.ReadContentStreamInstructions();
 
+	m_instructions->reserve(instructions->size());
+	m_instructions->insert(m_instructions.end(), instructions.begin(), instructions.end());
 	m_instructions->SetInitialized();
+
 	return m_instructions;
 }
 
 types::size_type Contents::GetInstructionsSize(void) const {
-	if (m_instructions->IsInitialized()) {
-		return m_instructions->size();
+	if (!m_instructions->IsInitialized()) {
+		Instructions();
 	}
 
-	Instructions();
 	return m_instructions->size();
 }
 
 InstructionBasePtr Contents::GetInstructionAt(types::size_type at) const {
 	if (!m_instructions->IsInitialized()) {
-		return m_instructions->at(at);
+		Instructions();
 	}
 
-	Instructions();
 	return m_instructions->at(at);
 }
 
