@@ -27,7 +27,7 @@ public:
 
 class TextObject : public ContentObjectBase, public IModifyObserver {
 public:
-	explicit TextObject(BaseOperationCollection ops);
+	explicit TextObject(const BaseOperationCollection& ops);
 
 	virtual Type GetType(void) const noexcept override { return Type::TextObject; }
 	virtual std::string ToPdf() const override;

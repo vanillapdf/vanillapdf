@@ -7,7 +7,7 @@
 namespace vanillapdf {
 namespace contents {
 
-OperationGeneric::OperationGeneric(std::vector<syntax::ObjectPtr> operands, OperatorBasePtr oper)
+OperationGeneric::OperationGeneric(const std::vector<syntax::ObjectPtr>& operands, OperatorBasePtr oper)
 	: _operator(oper), _operands(operands) {
 }
 

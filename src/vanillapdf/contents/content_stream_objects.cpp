@@ -8,7 +8,7 @@
 namespace vanillapdf {
 namespace contents {
 
-TextObject::TextObject(contents::BaseOperationCollection ops)
+TextObject::TextObject(const contents::BaseOperationCollection& ops)
 	: _operations(ops) {
 	for (auto op : _operations) {
 		op->Subscribe(this);
