@@ -9,16 +9,14 @@
 namespace vanillapdf {
 namespace syntax {
 
-class IntegerObject : public NumericObject, public IModifyObserver {
+class IntegerObject : public NumericObject {
 public:
 	IntegerObject();
 	explicit IntegerObject(int32_t value);
 	explicit IntegerObject(uint32_t value);
 	explicit IntegerObject(types::big_int value);
 	explicit IntegerObject(types::big_uint value);
-	explicit IntegerObject(const NumericObject& value);
 	explicit IntegerObject(NumericObjectBackendPtr value);
-	~IntegerObject();
 
 	IntegerObject& operator= (int32_t value);
 	IntegerObject& operator= (uint32_t value);
@@ -48,8 +46,6 @@ public:
 
 	bool Equals(const IntegerObject& other) const { return GetIntegerValue() == other.GetIntegerValue(); }
 	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
-
-	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
 
 	virtual IntegerObject* Clone(void) const override;
 	virtual bool Equals(ObjectPtr other) const override;

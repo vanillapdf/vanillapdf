@@ -11,36 +11,22 @@ namespace vanillapdf {
 namespace syntax {
 
 IntegerObject::IntegerObject() {
-	m_value->Subscribe(this);
-}
-
-IntegerObject::~IntegerObject() {
-	m_value->Unsubscribe(this);
 }
 
 IntegerObject::IntegerObject(int32_t value) {
 	m_value->SetIntegerValue(value);
-	m_value->Subscribe(this);
 }
 
 IntegerObject::IntegerObject(uint32_t value) {
 	m_value->SetUnsignedIntegerValue(value);
-	m_value->Subscribe(this);
 }
 
 IntegerObject::IntegerObject(types::big_int value) {
 	m_value->SetIntegerValue(value);
-	m_value->Subscribe(this);
 }
 
 IntegerObject::IntegerObject(types::big_uint value) {
 	m_value->SetUnsignedIntegerValue(value);
-	m_value->Subscribe(this);
-}
-
-IntegerObject::IntegerObject(const NumericObject& value) {
-	m_value = value.GetNumericBackend();
-	m_value->Subscribe(this);
 }
 
 IntegerObject::IntegerObject(NumericObjectBackendPtr value) {

@@ -89,7 +89,10 @@ public:
 
 		if (real_converted) {
 			result = true;
-			return make_deferred<IntegerObject>(*real_converted);
+
+			// New instance shares numeric data backend with the original number
+			// Means that changing one valua also changes the other
+			return make_deferred<IntegerObject>(real_converted->GetNumericBackend());
 		}
 
 		result = false;
@@ -106,7 +109,10 @@ public:
 
 		if (int_converted) {
 			result = true;
-			return make_deferred<RealObject>(*int_converted);
+
+			// New instance shares numeric data backend with the original number
+			// Means that changing one valua also changes the other
+			return make_deferred<RealObject>(int_converted->GetNumericBackend());
 		}
 
 		if (real_converted) {

@@ -41,6 +41,11 @@ public:
 		assert(ptr != nullptr && "Empty object passed to weak reference");
 	}
 
+	size_t Hash() const {
+		assert(!IsEmpty());
+		return reinterpret_cast<size_t>(m_ptr);
+	}
+
 	void Reset() noexcept {
 		m_counter.reset();
 	}
@@ -212,5 +217,16 @@ inline bool operator!=(const WeakReference<T>& left, const WeakReference<T>& rig
 }
 
 } // vanillapdf
+
+namespace std {
+
+template <typename T>
+struct hash<vanillapdf::WeakReference<T>> {
+	size_t operator()(vanillapdf::WeakReference<T> value) const {
+		return value.Hash();
+	}
+};
+
+} // std
 
 #endif /* _UNKNOWN_INTERFACE_H */

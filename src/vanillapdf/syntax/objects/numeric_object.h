@@ -62,13 +62,19 @@ private:
 	};
 };
 
-class NumericObject : public ContainableObject {
+class NumericObject : public ContainableObject, public IModifyObserver {
 public:
-	NumericObjectBackendPtr GetNumericBackend(void) const {
-		return m_value;
+	virtual ~NumericObject() override;
+	virtual size_t Hash() const override;
+
+	virtual void ObserveeChanged(IModifyObservable*) override {
+		OnChanged();
 	}
 
-	virtual size_t Hash() const override;
+	NumericObjectBackendPtr GetNumericBackend(void) {
+		m_value->Subscribe(this);
+		return m_value;
+	}
 
 protected:
 	NumericObjectBackendPtr m_value;

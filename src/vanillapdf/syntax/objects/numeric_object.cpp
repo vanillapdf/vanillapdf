@@ -249,5 +249,9 @@ size_t NumericObject::Hash() const {
 	return m_value->Hash();
 }
 
+NumericObject::~NumericObject(){
+	m_value->Unsubscribe(this);
+}
+
 } // syntax
 } // vanillapdf

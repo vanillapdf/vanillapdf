@@ -3,7 +3,7 @@
 
 #include "utils/unknown_interface.h"
 
-#include <list>
+#include <unordered_set>
 
 namespace vanillapdf {
 
@@ -31,28 +31,39 @@ public:
 
 protected:
 	bool HasObservers() const;
-	std::shared_ptr<std::list<WeakReference<T>>> GetObservers();
+	std::shared_ptr<std::unordered_set<WeakReference<T>>> GetObservers();
 
 private:
-	std::shared_ptr<std::list<WeakReference<T>>> m_observers;
+	std::shared_ptr<std::unordered_set<WeakReference<T>>> m_observers;
 };
 
 template <typename T>
 void IObservable<T>::Subscribe(const WeakReference<T>& observer) {
-	GetObservers()->push_back(observer);
+	auto found = GetObservers()->find(observer);
+
+	if (found != GetObservers()->end()) {
+		// Already subscribed - Problem?
+	}
+
+	if (found == GetObservers()->end()) {
+		GetObservers()->insert(observer);
+	}
 }
 
 template <typename T>
 bool IObservable<T>::Unsubscribe(const WeakReference<T>& observer) {
-	auto observers = GetObservers();
-	for (auto it = observers->begin(); it != observers->end(); ++it) {
-		if (observer == *it) {
-			observers->erase(it);
-			return true;
-		}
+	if (!HasObservers()) {
+		return false;
 	}
 
-	return false;
+	auto observers = GetObservers();
+	auto found = observers->find(observer);
+	if (found == observers->end()) {
+		return false;
+	}
+
+	observers->erase(found);
+	return true;
 }
 
 template <typename T>
@@ -75,9 +86,9 @@ bool IObservable<T>::HasObservers() const {
 }
 
 template <typename T>
-std::shared_ptr<std::list<WeakReference<T>>> IObservable<T>::GetObservers() {
+std::shared_ptr<std::unordered_set<WeakReference<T>>> IObservable<T>::GetObservers() {
 	if (!m_observers) {
-		m_observers = std::make_shared<std::list<WeakReference<T>>>();
+		m_observers = std::make_shared<std::unordered_set<WeakReference<T>>>();
 	}
 
 	return m_observers;

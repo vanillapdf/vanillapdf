@@ -7,7 +7,7 @@
 namespace vanillapdf {
 namespace syntax {
 
-class RealObject : public NumericObject, public IModifyObserver {
+class RealObject : public NumericObject {
 public:
 	typedef types::real value_type;
 
@@ -15,9 +15,7 @@ public:
 	RealObject();
 	explicit RealObject(types::real value);
 	explicit RealObject(types::real value, uint32_t precision);
-	explicit RealObject(const NumericObject& value);
 	explicit RealObject(NumericObjectBackendPtr value);
-	~RealObject();
 
 	virtual Object::Type GetType(void) const noexcept override;
 	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
@@ -26,7 +24,6 @@ public:
 	value_type GetValue(void) const;
 	void SetValue(value_type value);
 
-	virtual void ObserveeChanged(IModifyObservable*) override;
 	virtual RealObject* Clone(void) const override;
 	virtual bool Equals(ObjectPtr other) const override;
 };
