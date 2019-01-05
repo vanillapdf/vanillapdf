@@ -33,10 +33,6 @@ protected:
 	IInputStreamPtr m_stream;
 
 private:
-	//TokenPtr _last_token;
-	//types::stream_offset _last_token_offset, _advance_position;
-	//bool _token_cached = false;
-
 	std::unordered_map<types::stream_offset, CacheItem> _cache;
 
 	TokenPtr ReadComment(void);

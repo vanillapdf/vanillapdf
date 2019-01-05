@@ -30,19 +30,24 @@ public:
 	virtual ~IObservable() = 0;
 
 protected:
-	std::list<WeakReference<T>> m_observers;
+	bool HasObservers() const;
+	std::shared_ptr<std::list<WeakReference<T>>> GetObservers();
+
+private:
+	std::shared_ptr<std::list<WeakReference<T>>> m_observers;
 };
 
 template <typename T>
 void IObservable<T>::Subscribe(const WeakReference<T>& observer) {
-	m_observers.push_back(observer);
+	GetObservers()->push_back(observer);
 }
 
 template <typename T>
 bool IObservable<T>::Unsubscribe(const WeakReference<T>& observer) {
-	for (auto it = m_observers.begin(); it != m_observers.end(); ++it) {
+	auto observers = GetObservers();
+	for (auto it = observers->begin(); it != observers->end(); ++it) {
 		if (observer == *it) {
-			m_observers.erase(it);
+			observers->erase(it);
 			return true;
 		}
 	}
@@ -62,6 +67,20 @@ template <typename>
 bool IObservable<T>::Unsubscribe(T* observer) {
 	auto weak_ref = observer->template GetWeakReference<T>();
 	return Unsubscribe(weak_ref);
+}
+
+template <typename T>
+bool IObservable<T>::HasObservers() const {
+	return (m_observers != nullptr);
+}
+
+template <typename T>
+std::shared_ptr<std::list<WeakReference<T>>> IObservable<T>::GetObservers() {
+	if (!m_observers) {
+		m_observers = std::make_shared<std::list<WeakReference<T>>>();
+	}
+
+	return m_observers;
 }
 
 template <typename T>

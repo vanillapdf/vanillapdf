@@ -33,61 +33,61 @@ public:
 class IFileWriterObservable : public virtual IUnknown, public IObservable<IFileWriterObserver> {
 public:
 	virtual void Initializing(IInputOutputStreamPtr output) {
-		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+		for (auto current = GetObservers()->begin(); current != GetObservers()->end(); ++current) {
 			Invoke(*current, &IFileWriterObserver::OnInitializing, output);
 		}
 	}
 
 	virtual void Finalizing(IInputOutputStreamPtr output) {
-		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+		for (auto current = GetObservers()->begin(); current != GetObservers()->end(); ++current) {
 			Invoke(*current, &IFileWriterObserver::OnFinalizing, output);
 		}
 	}
 
 	virtual void BeforeObjectOffsetRecalculation(ObjectPtr obj) {
-		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+		for (auto current = GetObservers()->begin(); current != GetObservers()->end(); ++current) {
 			Invoke(*current, &IFileWriterObserver::OnBeforeObjectOffsetRecalculation, obj);
 		}
 	}
 
 	virtual void AfterObjectOffsetRecalculation(ObjectPtr obj) {
-		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+		for (auto current = GetObservers()->begin(); current != GetObservers()->end(); ++current) {
 			Invoke(*current, &IFileWriterObserver::OnAfterObjectOffsetRecalculation, obj);
 		}
 	}
 
 	virtual void BeforeEntryOffsetRecalculation(XrefUsedEntryBasePtr entry) {
-		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+		for (auto current = GetObservers()->begin(); current != GetObservers()->end(); ++current) {
 			Invoke(*current, &IFileWriterObserver::OnBeforeEntryOffsetRecalculation, entry);
 		}
 	}
 
 	virtual void AfterEntryOffsetRecalculation(XrefUsedEntryBasePtr entry) {
-		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+		for (auto current = GetObservers()->begin(); current != GetObservers()->end(); ++current) {
 			Invoke(*current, &IFileWriterObserver::OnAfterEntryOffsetRecalculation, entry);
 		}
 	}
 
 	virtual void BeforeObjectWrite(ObjectPtr obj) {
-		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+		for (auto current = GetObservers()->begin(); current != GetObservers()->end(); ++current) {
 			Invoke(*current, &IFileWriterObserver::OnBeforeObjectWrite, obj);
 		}
 	}
 
 	virtual void AfterObjectWrite(ObjectPtr obj) {
-		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+		for (auto current = GetObservers()->begin(); current != GetObservers()->end(); ++current) {
 			Invoke(*current, &IFileWriterObserver::OnAfterObjectWrite, obj);
 		}
 	}
 
 	virtual void BeforeOutputFlush(IInputOutputStreamPtr output) {
-		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+		for (auto current = GetObservers()->begin(); current != GetObservers()->end(); ++current) {
 			Invoke(*current, &IFileWriterObserver::OnBeforeOutputFlush, output);
 		}
 	}
 
 	virtual void AfterOutputFlush(IInputOutputStreamPtr output) {
-		for (auto current = m_observers.begin(); current != m_observers.end(); ++current) {
+		for (auto current = GetObservers()->begin(); current != GetObservers()->end(); ++current) {
 			Invoke(*current, &IFileWriterObserver::OnAfterOutputFlush, output);
 		}
 	}

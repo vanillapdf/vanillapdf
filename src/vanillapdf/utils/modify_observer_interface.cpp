@@ -8,7 +8,11 @@ IModifyObservable::~IModifyObservable() {
 
 	// Check if all references are active
 	// All deactivated references shall remove themselves
-	std::for_each(m_observers.begin(), m_observers.end(), CheckReferenceActive);
+	if (!HasObservers()) {
+		return;
+	}
+
+	std::for_each(GetObservers()->begin(), GetObservers()->end(), CheckReferenceActive);
 }
 
 IModifyObserver::~IModifyObserver() {}
@@ -28,14 +32,18 @@ void IModifyObservable::OnChanged() {
 		return;
 	}
 
+	if (!HasObservers()) {
+		return;
+	}
+
 	// This iteration does not increment iterator in the loop
-	for (auto current = m_observers.begin(); current != m_observers.end();) {
+	for (auto current = GetObservers()->begin(); current != GetObservers()->end();) {
 
 		// Remove deactivated elements
 		if (!CheckReferenceActive(*current)) {
 
 			// Erase will return next iterator
-			current = m_observers.erase(current);
+			current = GetObservers()->erase(current);
 			continue;
 		}
 
