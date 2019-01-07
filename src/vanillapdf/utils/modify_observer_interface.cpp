@@ -26,7 +26,7 @@ IModifyObservable& IModifyObservable::operator=(const IModifyObservable&) {
 	return *this;
 }
 
-void IModifyObservable::OnChanged() {
+void IModifyObservable::OnChanged() const {
 	// Skip for uninitialized objects
 	if (!m_initialized) {
 		return;

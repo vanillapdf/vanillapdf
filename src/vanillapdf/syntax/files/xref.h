@@ -46,8 +46,8 @@ public:
 		Stream
 	};
 
-	virtual void ObserveeChanged(IModifyObservable*) override;
-	virtual void OnChanged() override;
+	virtual void ObserveeChanged(const IModifyObservable*) override;
+	virtual void OnChanged() const override;
 
 	void SetFile(WeakReference<File>file) noexcept { _file = file; }
 	WeakReference<File> GetFile() const noexcept { return _file; }
@@ -97,7 +97,9 @@ protected:
 	map_type _entries;
 	types::stream_offset _last_xref_offset = constant::BAD_OFFSET;
 	types::stream_offset _offset = constant::BAD_OFFSET;
-	bool m_dirty = false;
+
+	// Same as Object::m_dirty
+	mutable bool m_dirty = false;
 };
 
 class XrefStream : public XrefBase {

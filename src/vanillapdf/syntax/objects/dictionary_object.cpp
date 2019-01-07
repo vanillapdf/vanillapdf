@@ -194,14 +194,29 @@ DictionaryObject::~DictionaryObject() {
 	}
 }
 
+void DictionaryObject::ObserveeChanged(const IModifyObservable*) {
+	OnChanged();
+}
+
+void DictionaryObject::OnChanged() const {
+	Object::OnChanged();
+
+	m_hash_cache = 0;
+}
+
 size_t DictionaryObject::Hash() const {
+	if (m_hash_cache != 0) {
+		return m_hash_cache;
+	}
+
 	size_t result = 0;
 	for (auto item : _list) {
 		result ^= item.first->Hash();
 		result ^= item.second->Hash();
 	}
 
-	return result;
+	m_hash_cache = result;
+	return m_hash_cache;
 }
 
 bool DictionaryObject::Equals(ObjectPtr other) const {

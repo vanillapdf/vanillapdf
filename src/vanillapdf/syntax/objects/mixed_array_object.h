@@ -29,7 +29,8 @@ public:
 	virtual void SetFile(WeakReference<File> file) override;
 	virtual void SetInitialized(bool initialized = true) override;
 
-	virtual void ObserveeChanged(IModifyObservable*) override;
+	virtual void ObserveeChanged(const IModifyObservable*) override;
+	virtual void OnChanged() const override;
 
 	virtual size_t Hash() const override;
 	virtual MixedArrayObject* Clone(void) const override;
@@ -67,6 +68,8 @@ public:
 
 protected:
 	list_type _list;
+	
+	mutable std::size_t m_hash_cache = 0;
 };
 
 } // syntax

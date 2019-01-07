@@ -67,7 +67,7 @@ public:
 	virtual ~NumericObject() override;
 	virtual size_t Hash() const override;
 
-	virtual void ObserveeChanged(IModifyObservable*) override {
+	virtual void ObserveeChanged(const IModifyObservable*) override {
 		OnChanged();
 	}
 

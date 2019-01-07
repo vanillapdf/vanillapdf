@@ -189,12 +189,12 @@ bool Object::IsEncryptionExempted() const {
 	return false;
 }
 
-void Object::OnChanged() {
+void Object::OnChanged() const {
 	if (!m_initialized) {
 		return;
 	}
 
-	SetDirty();
+	m_dirty = true;
 	IModifyObservable::OnChanged();
 }
 

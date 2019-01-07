@@ -18,7 +18,7 @@ public:
 	explicit NameObject(const std::string& chars);
 	virtual ~NameObject();
 
-	virtual void ObserveeChanged(IModifyObservable*) override;
+	virtual void ObserveeChanged(const IModifyObservable*) override;
 
 	BufferPtr GetValue() const;
 	void SetValue(BufferPtr value);

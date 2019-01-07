@@ -31,10 +31,10 @@ public:
 
 protected:
 	bool HasObservers() const;
-	std::shared_ptr<std::unordered_set<WeakReference<T>>> GetObservers();
+	std::shared_ptr<std::unordered_set<WeakReference<T>>> GetObservers() const;
 
 private:
-	std::shared_ptr<std::unordered_set<WeakReference<T>>> m_observers;
+	mutable std::shared_ptr<std::unordered_set<WeakReference<T>>> m_observers;
 };
 
 template <typename T>
@@ -86,7 +86,7 @@ bool IObservable<T>::HasObservers() const {
 }
 
 template <typename T>
-std::shared_ptr<std::unordered_set<WeakReference<T>>> IObservable<T>::GetObservers() {
+std::shared_ptr<std::unordered_set<WeakReference<T>>> IObservable<T>::GetObservers() const {
 	if (!m_observers) {
 		m_observers = std::make_shared<std::unordered_set<WeakReference<T>>>();
 	}

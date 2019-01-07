@@ -52,7 +52,9 @@ protected:
 	WeakReference<File> _file;
 	types::big_uint _obj_number = 0;
 	types::ushort _gen_number = 0;
-	bool _dirty = false;
+
+	// Same as Object::m_dirty
+	mutable bool _dirty = false;
 
 private:
 	// Private only for NullEntry
@@ -115,7 +117,9 @@ public:
 	void SetReference(ObjectPtr ref);
 	void ReleaseReference(bool check_object_xref = true);
 
-	virtual void ObserveeChanged(IModifyObservable*) override;
+	virtual void ObserveeChanged(const IModifyObservable*) override;
+	virtual void OnChanged() const override;
+
 	virtual bool InUse(void) const noexcept override;
 
 	~XrefUsedEntryBase();

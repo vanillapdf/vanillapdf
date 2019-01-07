@@ -35,18 +35,22 @@ public:
 	types::big_uint GetReferencedObjectNumber() const;
 	types::ushort GetReferencedGenerationNumber() const;
 
-	void SetReferencedObjectNumber(types::big_uint value) noexcept;
-	void SetReferencedGenerationNumber(types::ushort value) noexcept;
+	void SetReferencedObjectNumber(types::big_uint value);
+	void SetReferencedGenerationNumber(types::ushort value);
 
 	bool IsReferenceInitialized(void) const;
 
 	virtual size_t Hash() const override;
+	virtual void OnChanged() const override;
+
 	virtual IndirectObjectReference* Clone(void) const override;
 
 private:
 	mutable types::big_uint m_reference_object_number = 0;
 	mutable types::ushort m_reference_generation_number = 0;
 	mutable WeakReference<Object> m_reference;
+
+	mutable size_t m_hash_cache = 0;
 
 	//bool IsCyclicReference(ObjectPtr object, std::map<ObjectPtr, bool>& visited) const;
 

@@ -50,7 +50,15 @@ void MixedArrayObject::SetInitialized(bool initialized) {
 	}
 }
 
-void MixedArrayObject::ObserveeChanged(IModifyObservable*) { OnChanged(); }
+void MixedArrayObject::ObserveeChanged(const IModifyObservable*) {
+	OnChanged();
+}
+
+void MixedArrayObject::OnChanged() const {
+	Object::OnChanged();
+
+	m_hash_cache = 0;
+}
 
 MixedArrayObject* MixedArrayObject::Clone(void) const {
 	MixedArrayObjectPtr result(pdf_new MixedArrayObject(), false);
@@ -152,12 +160,17 @@ MixedArrayObject::~MixedArrayObject() {
 }
 
 size_t MixedArrayObject::Hash() const {
+	if (m_hash_cache != 0) {
+		return m_hash_cache;
+	}
+
 	size_t result = 0;
 	for (auto item : _list) {
 		result ^= item->Hash();
 	}
 
-	return result;
+	m_hash_cache = result;
+	return m_hash_cache;
 }
 
 bool MixedArrayObject::Equals(ObjectPtr other) const {

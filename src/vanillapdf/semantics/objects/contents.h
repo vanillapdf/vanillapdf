@@ -19,7 +19,10 @@ public:
 	types::size_type GetInstructionsSize(void) const;
 	contents::InstructionBasePtr GetInstructionAt(types::size_type at) const;
 
-	virtual void ObserveeChanged(IModifyObservable*) override { m_dirty = true; }
+	virtual void ObserveeChanged(const IModifyObservable*) override {
+		m_dirty = true;
+	}
+
 	bool IsDirty() const noexcept { return m_dirty; }
 	void SetDirty(bool dirty) noexcept { m_dirty = dirty; }
 

@@ -32,7 +32,7 @@ size_t NameObject::Hash() const {
 	return _value->Hash();
 }
 
-void NameObject::ObserveeChanged(IModifyObservable*) {
+void NameObject::ObserveeChanged(const IModifyObservable*) {
 	OnChanged();
 }
 

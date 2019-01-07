@@ -33,8 +33,15 @@ StreamObject::~StreamObject() {
 	_body_decoded->Unsubscribe(this);
 }
 
-void StreamObject::ObserveeChanged(IModifyObservable*) {
+void StreamObject::ObserveeChanged(const IModifyObservable*) {
 	OnChanged();
+}
+
+void StreamObject::OnChanged() const {
+	Object::OnChanged();
+
+	// Erase hash cache if something changes
+	_hash_cache = 0;
 }
 
 DictionaryObjectPtr StreamObject::GetHeader() const {
@@ -301,7 +308,7 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 			return filter->Encode(decoded_body, params);
 		}
 
-		return filter->Encode(decoded_body);
+		return filter->Encode(decoded_body, _header);
 	}
 
 	if (is_filter_array) {
@@ -370,8 +377,14 @@ void StreamObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 }
 
 size_t StreamObject::Hash() const {
+	if (_hash_cache != 0) {
+		return _hash_cache;
+	}
+
 	auto encoded_body = GetBodyEncoded();
-	return _header->Hash() ^ encoded_body->Hash();
+	_hash_cache = _header->Hash() ^ encoded_body->Hash();
+
+	return _hash_cache;
 }
 
 bool StreamObject::Equals(ObjectPtr other) const {

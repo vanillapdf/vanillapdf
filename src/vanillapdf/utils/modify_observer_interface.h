@@ -8,7 +8,7 @@ namespace vanillapdf {
 
 class IModifyObserver : public virtual IUnknown, public IWeakReferenceable<IModifyObserver> {
 public:
-	virtual void ObserveeChanged(IModifyObservable* observee) = 0;
+	virtual void ObserveeChanged(const IModifyObservable* observee) = 0;
 	virtual ~IModifyObserver() = 0;
 };
 
@@ -21,7 +21,7 @@ public:
 	IModifyObservable& operator=(IModifyObservable&& other) = default;
 
 public:
-	virtual void OnChanged();
+	virtual void OnChanged() const;
 
 	bool IsInitialized(void) const noexcept {
 		return m_initialized;

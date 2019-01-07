@@ -19,15 +19,15 @@ XrefBase::~XrefBase() {
 	}
 }
 
-void XrefBase::OnChanged() {
+void XrefBase::OnChanged() const {
 	if (m_initialized) {
-		SetDirty();
+		m_dirty = true;
 	}
 
 	IModifyObservable::OnChanged();
 }
 
-void XrefBase::ObserveeChanged(IModifyObservable*) {
+void XrefBase::ObserveeChanged(const IModifyObservable*) {
 	OnChanged();
 }
 

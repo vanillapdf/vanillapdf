@@ -37,14 +37,18 @@ types::ushort IndirectObjectReference::GetReferencedGenerationNumber() const {
 	return m_reference_generation_number;
 }
 
-void IndirectObjectReference::SetReferencedObjectNumber(types::big_uint value) noexcept {
+void IndirectObjectReference::SetReferencedObjectNumber(types::big_uint value) {
 	m_reference_object_number = value;
 	m_reference.Reset();
+
+	OnChanged();
 }
 
-void IndirectObjectReference::SetReferencedGenerationNumber(types::ushort value) noexcept {
+void IndirectObjectReference::SetReferencedGenerationNumber(types::ushort value) {
 	m_reference_generation_number = value;
 	m_reference.Reset();
+
+	OnChanged();
 }
 
 bool IndirectObjectReference::IsReferenceInitialized(void) const {
@@ -100,14 +104,26 @@ bool IndirectObjectReference::IsReferenceInitialized(void) const {
 //	return false;
 //}
 
+void IndirectObjectReference::OnChanged() const {
+	Object::OnChanged();
+
+	m_hash_cache = 0;
+}
+
 size_t IndirectObjectReference::Hash() const {
+
+	if (m_hash_cache != 0) {
+		return m_hash_cache;
+	}
 
 	auto object_number = GetReferencedObjectNumber();
 	auto generation_number = GetReferencedGenerationNumber();
 
 	std::hash<decltype(object_number)> obj_hasher;
 	std::hash<decltype(generation_number)> gen_hasher;
-	return obj_hasher(object_number) ^ gen_hasher(generation_number);
+
+	m_hash_cache = obj_hasher(object_number) ^ gen_hasher(generation_number);
+	return m_hash_cache;
 
 	//auto referenced_object = GetReferencedObject();
 
@@ -139,6 +155,7 @@ void IndirectObjectReference::SetReferencedObject(ObjectPtr obj) const {
 	}
 
 	m_reference = obj;
+	OnChanged();
 }
 
 ObjectPtr IndirectObjectReference::GetReferencedObject() const {

@@ -44,7 +44,9 @@ public:
 	BaseInstructionCollection& operator=(BaseInstructionCollection&&) = default;
 
 public:
-	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+	virtual void ObserveeChanged(const IModifyObservable*) override {
+		OnChanged();
+	}
 
 public:
 	// stl compatibility

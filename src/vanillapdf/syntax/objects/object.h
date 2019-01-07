@@ -93,17 +93,20 @@ public:
 	// When cloning an object, it's reference counter must be zero
 	void CloneBaseProperties(Object* other) const;
 
-	virtual void OnChanged() override;
+	virtual void OnChanged() const override;
 
 protected:
 	WeakReference<File> m_file;
-	bool m_dirty = false;
 	types::stream_offset m_offset = constant::BAD_OFFSET;
 	bool m_encryption_exempted = false;
 	WeakReference<XrefUsedEntryBase> m_entry;
 	WeakReference<Object> m_owner;
 
 	AttributeList m_attributes;
+
+	// This looks very weird, but this is actually called from the OnChanged method
+	// I had to change the function to const, since I often call OnChanged from const methods
+	mutable bool m_dirty = false;
 };
 
 class ObjectPtr : public Deferred<Object> {

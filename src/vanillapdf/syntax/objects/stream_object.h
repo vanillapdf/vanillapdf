@@ -18,7 +18,8 @@ public:
 	virtual std::string ToString(void) const override;
 	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 
-	virtual void ObserveeChanged(IModifyObservable* observee) override;
+	virtual void ObserveeChanged(const IModifyObservable* observee) override;
+	virtual void OnChanged() const override;
 
 	DictionaryObjectPtr GetHeader() const;
 	void SetHeader(DictionaryObjectPtr header);
@@ -46,6 +47,7 @@ private:
 
 	mutable BufferPtr _body;
 	mutable BufferPtr _body_decoded;
+	mutable std::size_t _hash_cache = 0;
 };
 
 } // syntax

@@ -35,7 +35,9 @@ public:
 	types::size_type GetOperationsSize(void) const { return _operations.size(); }
 	OperationBasePtr GetOperationAt(types::size_type at) const { return _operations.at(at); }
 
-	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+	virtual void ObserveeChanged(const IModifyObservable*) override {
+		OnChanged();
+	}
 
 	~TextObject();
 

@@ -36,7 +36,9 @@ public:
 	explicit HexadecimalStringObject(const char * chars);
 	explicit HexadecimalStringObject(const std::string& value);
 
-	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+	virtual void ObserveeChanged(const IModifyObservable*) override {
+		OnChanged();
+	}
 
 	virtual StringObjectBase::StringType GetStringType(void) const noexcept override { return StringObjectBase::StringType::Hexadecimal; }
 
@@ -60,7 +62,7 @@ public:
 	explicit LiteralStringObject(const char * chars);
 	explicit LiteralStringObject(const std::string& value);
 
-	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+	virtual void ObserveeChanged(const IModifyObservable*) override { OnChanged(); }
 
 	virtual StringObjectBase::StringType GetStringType(void) const noexcept override { return StringObjectBase::StringType::Literal; }
 	virtual BufferPtr GetValue() const override;

@@ -82,7 +82,9 @@ public:
 		OnChanged();
 	}
 
-	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+	virtual void ObserveeChanged(const IModifyObservable*) override {
+		OnChanged();
+	}
 
 	~OperationSetStrokingColorSpaceRGB();
 
@@ -124,7 +126,7 @@ public:
 		OnChanged();
 	}
 
-	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+	virtual void ObserveeChanged(const IModifyObservable*) override { OnChanged(); }
 
 	~OperationSetNonstrokingColorSpaceRGB();
 
@@ -158,7 +160,9 @@ public:
 		OnChanged();
 	}
 
-	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+	virtual void ObserveeChanged(const IModifyObservable*) override {
+		OnChanged();
+	}
 
 	~OperationTextFont();
 
@@ -191,7 +195,9 @@ public:
 		OnChanged();
 	}
 
-	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+	virtual void ObserveeChanged(const IModifyObservable*) override {
+		OnChanged();
+	}
 
 	~OperationTextTranslate();
 
@@ -215,7 +221,9 @@ public:
 		OnChanged();
 	}
 
-	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+	virtual void ObserveeChanged(const IModifyObservable*) override {
+		OnChanged();
+	}
 
 	~OperationTextShow();
 
@@ -238,7 +246,9 @@ public:
 		OnChanged();
 	}
 
-	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+	virtual void ObserveeChanged(const IModifyObservable*) override {
+		OnChanged();
+	}
 
 	~OperationTextShowArray();
 
@@ -277,7 +287,9 @@ public:
 	virtual Type GetOperationType(void) const noexcept override { return Type::TransformationMatrix; }
 	virtual std::string ToPdf() const override;
 
-	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+	virtual void ObserveeChanged(const IModifyObservable*) override {
+		OnChanged();
+	}
 
 	~OperationTransformationMatrix();
 

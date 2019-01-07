@@ -50,13 +50,17 @@ XrefUsedEntryBase::~XrefUsedEntryBase() {
 	ReleaseReference(false);
 }
 
-void XrefUsedEntryBase::ObserveeChanged(IModifyObservable*) {
-	if (m_initialized) {
-		SetDirty();
-	}
-
+void XrefUsedEntryBase::ObserveeChanged(const IModifyObservable*) {
 	// Notify observers
 	OnChanged();
+}
+
+void XrefUsedEntryBase::OnChanged() const {
+	if (m_initialized) {
+		_dirty = true;
+	}
+
+	IModifyObservable::OnChanged();
 }
 
 bool XrefEntryBase::operator==(const XrefEntryBase& other) const {

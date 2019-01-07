@@ -80,7 +80,8 @@ public:
 	virtual void SetFile(WeakReference<File> file) override;
 	virtual void SetInitialized(bool initialized = true) override;
 
-	virtual void ObserveeChanged(IModifyObservable*) override { OnChanged(); }
+	virtual void ObserveeChanged(const IModifyObservable*) override;
+	virtual void OnChanged() const override;
 
 	virtual size_t Hash() const override;
 	virtual DictionaryObject* Clone(void) const override;
@@ -135,6 +136,9 @@ public:
 	void Merge(const DictionaryObject& other);
 
 	virtual ~DictionaryObject();
+
+private:
+	mutable size_t m_hash_cache = 0;
 };
 
 } // syntax
