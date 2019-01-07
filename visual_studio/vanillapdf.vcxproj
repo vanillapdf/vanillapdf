@@ -362,6 +362,7 @@
     <ClCompile Include="..\src\vanillapdf\utils\time_utils.cpp" />
     <ClCompile Include="..\src\vanillapdf\utils\unknown_interface.cpp" />
     <ClCompile Include="..\src\vanillapdf\utils\misc_utils.cpp" />
+    <ClCompile Include="..\src\vanillapdf\utils\constants.cpp" />
     <ClCompile Include="..\src\vanillapdf\utils\zlib_wrapper.cpp" />
   </ItemGroup>
   <ItemGroup>

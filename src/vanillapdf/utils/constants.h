@@ -21,11 +21,14 @@ typedef ::offset_type stream_size;
 
 namespace constant {
 
-const int BUFFER_SIZE = 16384;
+// General constants
+extern const int BUFFER_SIZE;
+extern const uint32_t TOKENIZER_CACHE_SIZE;
+extern const types::stream_offset BAD_OFFSET;
+extern const types::ushort MAX_GENERATION_NUMBER;
+
+// Compiler time required
 const uint32_t MAX_MESSAGE_SIZE = 256;
-const uint32_t TOKENIZER_CACHE_SIZE = 10;
-const types::stream_offset BAD_OFFSET = -1;
-const types::ushort MAX_GENERATION_NUMBER = 65535;
 
 } // constant
 } // vanillapdf

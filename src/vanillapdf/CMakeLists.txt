@@ -167,6 +167,7 @@ set(VANILLAPDF_UTILS_SOURCES
 	utils/attribute_list.cpp
 	utils/buffer.cpp
 	utils/buffer_array.cpp
+	utils/constants.cpp
 	utils/errors.cpp
 	utils/exceptions.cpp
 	utils/library_info.cpp

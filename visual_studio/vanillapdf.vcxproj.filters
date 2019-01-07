@@ -1136,6 +1136,9 @@
     <ClCompile Include="..\src\vanillapdf\implementation\utils\c_output_stream.cpp">
       <Filter>Source Files\implementation\utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\utils\constants.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="..\src\vanillapdf\vanillapdf.natvis">
