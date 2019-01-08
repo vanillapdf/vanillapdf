@@ -33,7 +33,7 @@ protected:
 	IInputStreamPtr m_stream;
 
 private:
-	std::unordered_map<types::stream_offset, CacheItem> _cache;
+	std::map<types::stream_offset, CacheItem> _cache;
 
 	TokenPtr ReadComment(void);
 	TokenPtr ReadHexadecimalString(void);
