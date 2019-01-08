@@ -34,7 +34,9 @@ StreamObject::~StreamObject() {
 }
 
 void StreamObject::ObserveeChanged(const IModifyObservable*) {
-	OnChanged();
+	// TODO: This should be enabled BUT
+	// ASCII85 encoding is not supported
+	// OnChanged();
 }
 
 void StreamObject::OnChanged() const {
@@ -350,7 +352,7 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 				UNUSED(is_param_null);
 			}
 
-			decoded_body = filter->Encode(decoded_body);
+			decoded_body = filter->Encode(decoded_body, _header);
 		}
 
 		return decoded_body;
@@ -381,8 +383,10 @@ size_t StreamObject::Hash() const {
 		return _hash_cache;
 	}
 
-	auto encoded_body = GetBodyEncoded();
-	_hash_cache = _header->Hash() ^ encoded_body->Hash();
+	// TODO: There should be decoded body in the hash algorithm
+	// Decoded body is not yet fully supported, for example JPX decode
+	auto decoded_body = GetBodyEncoded();
+	_hash_cache = _header->Hash() ^ decoded_body->Hash();
 
 	return _hash_cache;
 }
