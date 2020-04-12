@@ -19,7 +19,7 @@ namespace {
 
 #define CHECK_CODE(code, constant) \
 	if (code == constant) { \
-		char value[] = STRINGIFY(constant); \
+		static const char value[] = STRINGIFY(constant); \
 		data = value; \
 		length = sizeof(value); \
 		return true; \
