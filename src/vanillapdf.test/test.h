@@ -33,6 +33,7 @@ error_type process_library_info();
 error_type process_license_info(string_type license_file);
 error_type process_logging();
 error_type process_constants();
+error_type process_utils_conversions();
 
 /* Files */
 error_type process_file(FileHandle* file, int nested);
