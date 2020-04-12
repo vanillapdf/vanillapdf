@@ -72,6 +72,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_Unsubscribe(FileWriterHa
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_ToUnknown(FileWriterHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<FileWriter, IUnknown, FileWriterHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_FromUnknown(IUnknownHandle* handle, FileWriterHandle** result) {
+	return SafeObjectConvert<IUnknown, FileWriter, IUnknownHandle, FileWriterHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_Release(FileWriterHandle* handle) {
 	return ObjectRelease<FileWriter, FileWriterHandle>(handle);
 }

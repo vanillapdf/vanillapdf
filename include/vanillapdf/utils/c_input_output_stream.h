@@ -19,6 +19,7 @@ extern "C"
 	* \class InputOutputStreamHandle
 	* \extends InputStreamHandle
 	* \extends OutputStreamHandle
+	* \extends IUnknownHandle
 	* \ingroup group_utils
 	* \brief Input stream can read and interpret input from sequences of characters
 	*/
@@ -47,6 +48,16 @@ extern "C"
 	* \brief Reinterpret current object as \ref OutputStreamHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_ToOutputStream(InputOutputStreamHandle* handle, OutputStreamHandle** result);
+
+	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_ToUnknown(InputOutputStreamHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref InputOutputStreamHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_FromUnknown(IUnknownHandle* handle, InputOutputStreamHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release

@@ -89,6 +89,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Document_Sign(DocumentHandle* handle, FileHandle* destination, DocumentSignatureSettingsHandle* settings);
 
 	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Document_ToUnknown(DocumentHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref DocumentHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Document_FromUnknown(IUnknownHandle* handle, DocumentHandle** result);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/

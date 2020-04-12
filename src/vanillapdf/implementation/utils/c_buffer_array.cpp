@@ -80,6 +80,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_Remove(BufferArrayHandl
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_ToUnknown(BufferArrayHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<BufferArray, IUnknown, BufferArrayHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_FromUnknown(IUnknownHandle* handle, BufferArrayHandle** result) {
+	return SafeObjectConvert<IUnknown, BufferArray, IUnknownHandle, BufferArrayHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_Release(BufferArrayHandle* handle) {
 	return ObjectRelease<BufferArray, BufferArrayHandle>(handle);
 }

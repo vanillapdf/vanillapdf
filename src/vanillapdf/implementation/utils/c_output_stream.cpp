@@ -78,6 +78,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutputStream_Flush(OutputStreamHand
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION OutputStream_ToUnknown(OutputStreamHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<IOutputStream, IUnknown, OutputStreamHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION OutputStream_FromUnknown(IUnknownHandle* handle, OutputStreamHandle** result) {
+	return SafeObjectConvert<IUnknown, IOutputStream, IUnknownHandle, OutputStreamHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION OutputStream_Release(OutputStreamHandle* handle) {
 	return ObjectRelease<IOutputStream, OutputStreamHandle>(handle);
 }

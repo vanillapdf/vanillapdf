@@ -58,6 +58,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_Remove(BufferArrayHandle* handle, size_type at);
 
 	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_ToUnknown(BufferArrayHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref BufferArrayHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_FromUnknown(IUnknownHandle* handle, BufferArrayHandle** result);
+
+	/**
 	* \copydoc IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_Release(BufferArrayHandle* handle);

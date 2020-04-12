@@ -200,6 +200,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(Dictionar
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_ToObject(DictionaryObjectHandle* handle, ObjectHandle** result) {
+	return SafeObjectConvert<DictionaryObject, Object, DictionaryObjectHandle, ObjectHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_FromObject(ObjectHandle* handle, DictionaryObjectHandle** result) {
+	return SafeObjectConvert<Object, DictionaryObject, ObjectHandle, DictionaryObjectHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Release(DictionaryObjectHandle* handle)
 {
 	return ObjectRelease<DictionaryObject, DictionaryObjectHandle>(handle);

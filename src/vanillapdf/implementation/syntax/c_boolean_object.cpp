@@ -44,6 +44,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_SetValue(BooleanObjec
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_ToObject(BooleanObjectHandle* handle, ObjectHandle** result) {
+	return SafeObjectConvert<BooleanObject, Object, BooleanObjectHandle, ObjectHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_FromObject(ObjectHandle* handle, BooleanObjectHandle** result) {
+	return SafeObjectConvert<Object, BooleanObject, ObjectHandle, BooleanObjectHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_Release(BooleanObjectHandle* handle)
 {
 	return ObjectRelease<BooleanObject, BooleanObjectHandle>(handle);

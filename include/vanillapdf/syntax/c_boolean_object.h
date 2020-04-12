@@ -43,6 +43,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_SetValue(BooleanObjectHandle* handle, boolean_type value);
 
 	/**
+	* \brief Reinterpret current object as \ref ObjectHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_ToObject(BooleanObjectHandle* handle, ObjectHandle** result);
+
+	/**
+	* \brief Convert \ref ObjectHandle to \ref BooleanObjectHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_FromObject(ObjectHandle* handle, BooleanObjectHandle** result);
+
+	/**
 	* \copydoc Object_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_Release(BooleanObjectHandle* handle);

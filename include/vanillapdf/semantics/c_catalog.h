@@ -127,6 +127,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetAcroForm(CatalogHandle* handle, InteractiveFormHandle** result);
 
 	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Catalog_ToUnknown(CatalogHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref CatalogHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Catalog_FromUnknown(IUnknownHandle* handle, CatalogHandle** result);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/

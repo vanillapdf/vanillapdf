@@ -97,6 +97,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_Release(XrefIteratorHa
 	return ObjectRelease<XrefBase::Iterator, XrefIteratorHandle>(handle);
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Xref_ToUnknown(XrefHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<XrefBase, IUnknown, XrefHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Xref_FromUnknown(IUnknownHandle* handle, XrefHandle** result) {
+	return SafeObjectConvert<IUnknown, XrefBase, IUnknownHandle, XrefHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Xref_Release(XrefHandle* handle)
 {
 	return ObjectRelease<XrefBase, XrefHandle>(handle);

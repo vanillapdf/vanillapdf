@@ -119,6 +119,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_InsertConst(DictionaryObjectHandle* handle, const NameObjectHandle* key, ObjectHandle* value);
 
 	/**
+	* \brief Reinterpret current object as \ref ObjectHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_ToObject(DictionaryObjectHandle* handle, ObjectHandle** result);
+
+	/**
+	* \brief Convert \ref ObjectHandle to \ref DictionaryObjectHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_FromObject(ObjectHandle* handle, DictionaryObjectHandle** result);
+
+	/**
 	* \copydoc Object_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Release(DictionaryObjectHandle* handle);

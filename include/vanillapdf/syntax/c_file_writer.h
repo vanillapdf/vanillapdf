@@ -58,6 +58,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_Unsubscribe(FileWriterHandle* handle, FileWriterObserverHandle* observer);
 
 	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_ToUnknown(FileWriterHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref FileWriterHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION FileWriter_FromUnknown(IUnknownHandle* handle, FileWriterHandle** result);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/

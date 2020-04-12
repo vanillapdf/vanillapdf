@@ -196,6 +196,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetAcroForm(CatalogHandle* 
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Catalog_ToUnknown(CatalogHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<Catalog, IUnknown, CatalogHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Catalog_FromUnknown(IUnknownHandle* handle, CatalogHandle** result) {
+	return SafeObjectConvert<IUnknown, Catalog, IUnknownHandle, CatalogHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Catalog_Release(CatalogHandle* handle)
 {
 	return ObjectRelease<Catalog, CatalogHandle>(handle);

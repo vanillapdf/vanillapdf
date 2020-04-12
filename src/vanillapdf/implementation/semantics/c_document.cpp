@@ -141,11 +141,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_GetDocumentInfo(DocumentHa
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Document_Release(DocumentHandle* handle)
-{
-	return ObjectRelease<Document, DocumentHandle>(handle);
-}
-
 VANILLAPDF_API error_type CALLING_CONVENTION Document_AppendDocument(DocumentHandle* handle, DocumentHandle* source_handle)
 {
 	Document* document = reinterpret_cast<Document*>(handle);
@@ -173,4 +168,16 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_Sign(DocumentHandle* handl
 		document->Sign(file, signature_settings);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Document_ToUnknown(DocumentHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<Document, IUnknown, DocumentHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Document_FromUnknown(IUnknownHandle* handle, DocumentHandle** result) {
+	return SafeObjectConvert<IUnknown, Document, IUnknownHandle, DocumentHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Document_Release(DocumentHandle* handle) {
+	return ObjectRelease<Document, DocumentHandle>(handle);
 }

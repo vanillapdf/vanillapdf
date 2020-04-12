@@ -64,6 +64,10 @@ VANILLAPDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle* hand
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Object_ToUnknown(ObjectHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<Object, IUnknown, ObjectHandle, IUnknownHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Object_Release(ObjectHandle* handle)
 {
 	return ObjectRelease<Object, ObjectHandle>(handle);

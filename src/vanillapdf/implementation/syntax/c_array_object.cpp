@@ -99,6 +99,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayObjectHandl
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_ToObject(ArrayObjectHandle* handle, ObjectHandle** result) {
+	return SafeObjectConvert<MixedArrayObject, Object, ArrayObjectHandle, ObjectHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_FromObject(ObjectHandle* handle, ArrayObjectHandle** result) {
+	return SafeObjectConvert<Object, MixedArrayObject, ObjectHandle, ArrayObjectHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Release(ArrayObjectHandle* handle)
 {
 	return ObjectRelease<MixedArrayObject, ArrayObjectHandle>(handle);

@@ -54,6 +54,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToInputStream(const BufferHa
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToUnknown(BufferHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<Buffer, IUnknown, BufferHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Buffer_FromUnknown(IUnknownHandle* handle, BufferHandle** result) {
+	return SafeObjectConvert<IUnknown, Buffer, IUnknownHandle, BufferHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Buffer_Release(BufferHandle* handle)
 {
 	return ObjectRelease<Buffer, BufferHandle>(handle);

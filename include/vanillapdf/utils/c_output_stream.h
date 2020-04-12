@@ -58,6 +58,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION OutputStream_Flush(OutputStreamHandle* handle);
 
 	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION OutputStream_ToUnknown(OutputStreamHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref OutputStreamHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION OutputStream_FromUnknown(IUnknownHandle* handle, OutputStreamHandle** result);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/

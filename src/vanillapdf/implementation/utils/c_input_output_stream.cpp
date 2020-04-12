@@ -39,6 +39,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_ToOutputStream(In
 	return SafeObjectConvert<IInputOutputStream, IOutputStream, InputOutputStreamHandle, OutputStreamHandle>(handle, result);
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_ToUnknown(InputOutputStreamHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<IInputOutputStream, IUnknown, InputOutputStreamHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_FromUnknown(IUnknownHandle* handle, InputOutputStreamHandle** result) {
+	return SafeObjectConvert<IUnknown, IInputOutputStream, IUnknownHandle, InputOutputStreamHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_Release(InputOutputStreamHandle* handle) {
 	return ObjectRelease<IInputOutputStream, InputOutputStreamHandle>(handle);
 }

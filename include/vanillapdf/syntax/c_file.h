@@ -102,6 +102,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION File_GetIndirectObject(FileHandle* handle, biguint_type obj_number, ushort_type gen_number, ObjectHandle** result);
 
 	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION File_ToUnknown(FileHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref FileHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION File_FromUnknown(IUnknownHandle* handle, FileHandle** result);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/

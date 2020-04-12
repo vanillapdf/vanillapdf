@@ -174,3 +174,11 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_SetEncryptionKey(FileHandle* h
 		}
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
+
+VANILLAPDF_API error_type CALLING_CONVENTION File_ToUnknown(FileHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<File, IUnknown, FileHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION File_FromUnknown(IUnknownHandle* handle, FileHandle** result) {
+	return SafeObjectConvert<IUnknown, File, IUnknownHandle, FileHandle>(handle, result);
+}

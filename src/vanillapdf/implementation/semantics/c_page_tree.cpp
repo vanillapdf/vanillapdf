@@ -5,6 +5,7 @@
 #include "vanillapdf/semantics/c_page_tree.h"
 #include "implementation/c_helper.h"
 
+using namespace vanillapdf;
 using namespace vanillapdf::semantics;
 
 VANILLAPDF_API error_type CALLING_CONVENTION PageTree_GetPageCount(PageTreeHandle* handle, size_type* result)
@@ -70,6 +71,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageTree_RemovePage(PageTreeHandle*
 		obj->Remove(at);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageTree_ToUnknown(PageTreeHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<PageTree, IUnknown, PageTreeHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageTree_FromUnknown(IUnknownHandle* handle, PageTreeHandle** result) {
+	return SafeObjectConvert<IUnknown, PageTree, IUnknownHandle, PageTreeHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION PageTree_Release(PageTreeHandle* handle)

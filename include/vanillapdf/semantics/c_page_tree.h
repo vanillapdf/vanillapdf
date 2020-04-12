@@ -65,6 +65,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION PageTree_RemovePage(PageTreeHandle* handle, size_type at);
 
 	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION PageTree_ToUnknown(PageTreeHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref PageTreeHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION PageTree_FromUnknown(IUnknownHandle* handle, PageTreeHandle** result);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/

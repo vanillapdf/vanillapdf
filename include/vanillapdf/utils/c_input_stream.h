@@ -56,6 +56,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION InputStream_SetInputPosition(InputStreamHandle* handle, offset_type value);
 
 	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION InputStream_ToUnknown(InputStreamHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref InputStreamHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION InputStream_FromUnknown(IUnknownHandle* handle, InputStreamHandle** result);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
