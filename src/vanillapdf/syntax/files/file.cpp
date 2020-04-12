@@ -74,12 +74,16 @@ IInputOutputStreamPtr File::GetFilestream(const std::string& path, std::ios_base
 
 File::File(IInputOutputStreamPtr stream, const std::string& path) : _full_path(path), _input(stream) {
 	_filename = MiscUtils::ExtractFilename(path);
-	LOG_WARNING_GLOBAL << "File constructor " << _filename;
+
+	LOG_INFO_GLOBAL << "File constructor " << _filename;
+	LOG_INFO(_filename) << "File constructor";
 }
 
 File::~File(void) {
-	LOG_WARNING_GLOBAL << "File destructor " << _filename;
 	_cache.clear();
+
+	LOG_INFO_GLOBAL << "File destructor " << _filename;
+	LOG_INFO(_filename) << "File destructor";
 }
 
 void File::Initialize() {
@@ -173,16 +177,19 @@ bool File::SetEncryptionKey(IEncryptionKey& key) {
 	if (sub_filter == constant::Name::AdbePkcs7s5) {
 
 		do {
-			if (!dict->Contains(constant::Name::CF))
+			if (!dict->Contains(constant::Name::CF)) {
 				break;
+			}
 
 			auto crypt_filter_dictionary = dict->FindAs<DictionaryObjectPtr>(constant::Name::CF);
-			if (!crypt_filter_dictionary->Contains(constant::Name::DefaultCryptFilter))
+			if (!crypt_filter_dictionary->Contains(constant::Name::DefaultCryptFilter)) {
 				break;
+			}
 
 			auto crypt_filter = crypt_filter_dictionary->FindAs<DictionaryObjectPtr>(constant::Name::DefaultCryptFilter);
-			if (!crypt_filter->Contains(constant::Name::CFM))
+			if (!crypt_filter->Contains(constant::Name::CFM)) {
 				break;
+			}
 
 			auto method = crypt_filter->FindAs<NameObjectPtr>(constant::Name::CFM);
 			if (method == constant::Name::AESV2) {
@@ -213,7 +220,11 @@ bool File::SetEncryptionKey(IEncryptionKey& key) {
 	try {
 		_decryption_key = EncryptionUtils::GetRecipientKey(recipients, length_bits, algorithm, key);
 		return true;
+	} catch (GeneralException& ex) {
+		LOG_ERROR(_filename) << "Error setting recepient encryption key: " << ex.what();
+		return false;
 	} catch (...) {
+		LOG_ERROR(_filename) << "Error setting recepient encryption key";
 		return false;
 	}
 }

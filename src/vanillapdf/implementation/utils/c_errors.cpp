@@ -79,13 +79,16 @@ VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetPrintableErrorText(error_
 	bool success = GetValueName(value, value_data, value_data_size);
 
 	if (!success || value_data == nullptr || value_data_size == 0) {
+		LOG_ERROR_GLOBAL << "Errors_GetPrintableErrorText: Failed to get error code";
 		return VANILLAPDF_ERROR_GENERAL;
 	}
 
 	if (size < value_data_size) {
+		LOG_ERROR_GLOBAL << "Errors_GetPrintableErrorText: Buffer too small";
 		return VANILLAPDF_ERROR_GENERAL;
 	}
 
+	LOG_DEBUG_GLOBAL << "Errors_GetPrintableErrorText (" << value << "): " << value_data;
 	std::memcpy(data, value_data, value_data_size);
 	return VANILLAPDF_ERROR_SUCCESS;
 }
