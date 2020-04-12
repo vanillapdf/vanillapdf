@@ -139,11 +139,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_SetEncryptionPassword(FileHand
 	File* file = reinterpret_cast<File*>(handle);
 
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(password);
 
 	try
 	{
-		std::string str(password);
+		std::string str;
+		if (password != nullptr) {
+			str = password;
+		}
+
 		bool result = file->SetEncryptionPassword(str);
 		if (true == result) {
 			return VANILLAPDF_ERROR_SUCCESS;
