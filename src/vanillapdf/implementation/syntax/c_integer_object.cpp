@@ -69,6 +69,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_SetUnsignedIntegerVal
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_ToObject(IntegerObjectHandle* handle, ObjectHandle** result) {
+	return SafeObjectConvert<IntegerObject, Object, IntegerObjectHandle, ObjectHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_FromObject(ObjectHandle* handle, IntegerObjectHandle** result) {
+	return SafeObjectConvert<Object, IntegerObject, ObjectHandle, IntegerObjectHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_Release(IntegerObjectHandle* handle)
 {
 	return ObjectRelease<IntegerObject, IntegerObjectHandle>(handle);

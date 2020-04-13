@@ -53,6 +53,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_SetUnsignedIntegerValue(IntegerObjectHandle* handle, biguint_type value);
 
 	/**
+	* \brief Reinterpret current object as \ref ObjectHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_ToObject(IntegerObjectHandle* handle, ObjectHandle** result);
+
+	/**
+	* \brief Convert \ref ObjectHandle to \ref IntegerObjectHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_FromObject(ObjectHandle* handle, IntegerObjectHandle** result);
+
+	/**
 	* \copydoc Object_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_Release(IntegerObjectHandle* handle);

@@ -46,11 +46,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION IndirectObjectReference_SetReferenc
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION IndirectObjectReference_Release(IndirectObjectReferenceHandle* handle)
-{
-	return ObjectRelease<IndirectObjectReference, IndirectObjectReferenceHandle>(handle);
-}
-
 VANILLAPDF_API error_type CALLING_CONVENTION IndirectObjectReference_GetReferencedObjectNumber(IndirectObjectReferenceHandle* handle, biguint_type* result)
 {
 	IndirectObjectReference* obj = reinterpret_cast<IndirectObjectReference*>(handle);
@@ -69,4 +64,16 @@ VANILLAPDF_API error_type CALLING_CONVENTION IndirectObjectReference_GetReferenc
 
 	*result = obj->GetReferencedGenerationNumber();
 	return VANILLAPDF_ERROR_SUCCESS;
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION IndirectObjectReference_ToObject(IndirectObjectReferenceHandle* handle, ObjectHandle** result) {
+	return SafeObjectConvert<IndirectObjectReference, Object, IndirectObjectReferenceHandle, ObjectHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION IndirectObjectReference_FromObject(ObjectHandle* handle, IndirectObjectReferenceHandle** result) {
+	return SafeObjectConvert<Object, IndirectObjectReference, ObjectHandle, IndirectObjectReferenceHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION IndirectObjectReference_Release(IndirectObjectReferenceHandle* handle) {
+	return ObjectRelease<IndirectObjectReference, IndirectObjectReferenceHandle>(handle);
 }

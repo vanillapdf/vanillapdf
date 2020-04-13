@@ -33,6 +33,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION NullObject_Create(NullObjectHandle** result);
 
 	/**
+	* \brief Reinterpret current object as \ref ObjectHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION NullObject_ToObject(NullObjectHandle* handle, ObjectHandle** result);
+
+	/**
+	* \brief Convert \ref ObjectHandle to \ref NullObjectHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION NullObject_FromObject(ObjectHandle* handle, NullObjectHandle** result);
+
+	/**
 	* \copydoc Object_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION NullObject_Release(NullObjectHandle* handle);

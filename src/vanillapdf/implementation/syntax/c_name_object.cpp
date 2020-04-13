@@ -62,6 +62,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION NameObject_Equals(const NameObjectH
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION NameObject_ToObject(NameObjectHandle* handle, ObjectHandle** result) {
+	return SafeObjectConvert<NameObject, Object, NameObjectHandle, ObjectHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION NameObject_FromObject(ObjectHandle* handle, NameObjectHandle** result) {
+	return SafeObjectConvert<Object, NameObject, ObjectHandle, NameObjectHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION NameObject_Release(NameObjectHandle* handle)
 {
 	return ObjectRelease<NameObject, NameObjectHandle>(handle);

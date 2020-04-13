@@ -53,6 +53,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION IndirectObjectReference_SetReferencedObject(IndirectObjectReferenceHandle* handle, ObjectHandle* value);
 
 	/**
+	* \brief Reinterpret current object as \ref ObjectHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION IndirectObjectReference_ToObject(IndirectObjectReferenceHandle* handle, ObjectHandle** result);
+
+	/**
+	* \brief Convert \ref ObjectHandle to \ref IndirectObjectReferenceHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION IndirectObjectReference_FromObject(ObjectHandle* handle, IndirectObjectReferenceHandle** result);
+
+	/**
 	* \copydoc Object_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION IndirectObjectReference_Release(IndirectObjectReferenceHandle* handle);
