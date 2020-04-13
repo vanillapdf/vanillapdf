@@ -10,8 +10,8 @@ namespace vanillapdf {
 template <typename T>
 class IObservable {
 public:
-	void Subscribe(const WeakReference<T>& observer);
-	bool Unsubscribe(const WeakReference<T>& observer);
+	virtual void Subscribe(const WeakReference<T>& observer);
+	virtual bool Unsubscribe(const WeakReference<T>& observer);
 
 	template <
 		typename = typename std::enable_if<

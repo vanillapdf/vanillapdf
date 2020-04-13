@@ -24,6 +24,16 @@ public:
 	bool operator!=(const NullObject& other) const { return !Equals(other); }
 	bool operator<(const NullObject&) const { return false; }
 
+	// IObservable<IModifyObserver> overrides
+
+	virtual void Subscribe(const WeakReference<IModifyObserver>&) override {
+		// Do nothing - Null object never changes
+	}
+
+	virtual bool Unsubscribe(const WeakReference<IModifyObserver>&) override {
+		return true;
+	}
+
 private:
 	NullObject() = default;
 };
