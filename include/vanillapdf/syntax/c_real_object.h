@@ -43,6 +43,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_SetValue(RealObjectHandle* handle, real_type value);
 
 	/**
+	* \brief Reinterpret current object as \ref ObjectHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_ToObject(RealObjectHandle* handle, ObjectHandle** result);
+
+	/**
+	* \brief Convert \ref ObjectHandle to \ref RealObjectHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_FromObject(ObjectHandle* handle, RealObjectHandle** result);
+
+	/**
 	* \copydoc Object_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_Release(RealObjectHandle* handle);

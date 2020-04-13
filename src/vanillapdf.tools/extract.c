@@ -52,8 +52,8 @@ error_type process_stream(StreamObjectHandle* stream, biguint_type object_number
 		goto err;
 	}
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Object_ToName(type_object, &type_name));
-	RETURN_ERROR_IF_NOT_SUCCESS(Object_ToName(subtype_object, &subtype_name));
+	RETURN_ERROR_IF_NOT_SUCCESS(NameObject_FromObject(type_object, &type_name));
+	RETURN_ERROR_IF_NOT_SUCCESS(NameObject_FromObject(subtype_object, &subtype_name));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(NameObject_Equals(type_name, NameConstant_XObject, &is_type_xobject));
 	RETURN_ERROR_IF_NOT_SUCCESS(NameObject_Equals(subtype_name, NameConstant_Image, &is_subtype_image));
@@ -170,7 +170,7 @@ error_type process_object(ObjectHandle* obj, biguint_type object_number, ushort_
 	if (type == ObjectType_Stream) {
 		StreamObjectHandle* stream = NULL;
 
-		RETURN_ERROR_IF_NOT_SUCCESS(Object_ToStream(obj, &stream));
+		RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_FromObject(obj, &stream));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_stream(stream, object_number, generation_number));
 	}
 

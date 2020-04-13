@@ -26,21 +26,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION StringObject_Type(StringObjectHandl
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION StringObject_Release(StringObjectHandle* handle)
-{
-	return ObjectRelease<StringObjectBase, StringObjectHandle>(handle);
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION StringObject_ToLiteral(StringObjectHandle* handle, LiteralStringObjectHandle** result)
-{
-	return SafeObjectConvert<StringObjectBase, LiteralStringObject, StringObjectHandle, LiteralStringObjectHandle>(handle, result);
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION StringObject_ToHexadecimal(StringObjectHandle* handle, HexadecimalStringObjectHandle** result)
-{
-	return SafeObjectConvert<StringObjectBase, HexadecimalStringObject, StringObjectHandle, HexadecimalStringObjectHandle>(handle, result);
-}
-
 VANILLAPDF_API error_type CALLING_CONVENTION StringObject_GetValue(StringObjectHandle* handle, BufferHandle** result)
 {
 	StringObjectBase* obj = reinterpret_cast<StringObjectBase*>(handle);
@@ -69,6 +54,20 @@ VANILLAPDF_API error_type CALLING_CONVENTION StringObject_SetValue(StringObjectH
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
+
+VANILLAPDF_API error_type CALLING_CONVENTION StringObject_ToObject(StringObjectHandle* handle, ObjectHandle** result) {
+	return SafeObjectConvert<StringObjectBase, Object, StringObjectHandle, ObjectHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION StringObject_FromObject(ObjectHandle* handle, StringObjectHandle** result) {
+	return SafeObjectConvert<Object, StringObjectBase, ObjectHandle, StringObjectHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION StringObject_Release(StringObjectHandle* handle) {
+	return ObjectRelease<StringObjectBase, StringObjectHandle>(handle);
+}
+
+// Literal string object
 
 VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_Create(LiteralStringObjectHandle** result) {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -110,10 +109,20 @@ VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_SetValue(Litera
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_ToStringObject(LiteralStringObjectHandle* handle, StringObjectHandle** result) {
+	return SafeObjectConvert<LiteralStringObject, StringObjectBase, LiteralStringObjectHandle, StringObjectHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_FromStringObject(StringObjectHandle* handle, LiteralStringObjectHandle** result) {
+	return SafeObjectConvert<StringObjectBase, LiteralStringObject, StringObjectHandle, LiteralStringObjectHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_Release(LiteralStringObjectHandle* handle)
 {
 	return ObjectRelease<LiteralStringObject, LiteralStringObjectHandle>(handle);
 }
+
+// Hexadecimal string object
 
 VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Create(HexadecimalStringObjectHandle** result) {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -153,6 +162,15 @@ VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_SetValue(He
 		obj->SetValue(buffer);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+
+VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_ToStringObject(HexadecimalStringObjectHandle* handle, StringObjectHandle** result) {
+	return SafeObjectConvert<HexadecimalStringObject, StringObjectBase, HexadecimalStringObjectHandle, StringObjectHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_FromStringObject(StringObjectHandle* handle, HexadecimalStringObjectHandle** result) {
+	return SafeObjectConvert<StringObjectBase, HexadecimalStringObject, StringObjectHandle, HexadecimalStringObjectHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Release(HexadecimalStringObjectHandle* handle)

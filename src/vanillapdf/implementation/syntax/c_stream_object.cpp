@@ -92,6 +92,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_SetBody(StreamObjectHa
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_ToObject(StreamObjectHandle* handle, ObjectHandle** result) {
+	return SafeObjectConvert<StreamObject, Object, StreamObjectHandle, ObjectHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_FromObject(ObjectHandle* handle, StreamObjectHandle** result) {
+	return SafeObjectConvert<Object, StreamObject, ObjectHandle, StreamObjectHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_Release(StreamObjectHandle* handle)
 {
 	return ObjectRelease<StreamObject, StreamObjectHandle>(handle);

@@ -62,6 +62,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_SetBody(StreamObjectHandle* handle, BufferHandle* value);
 
 	/**
+	* \brief Reinterpret current object as \ref ObjectHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_ToObject(StreamObjectHandle* handle, ObjectHandle** result);
+
+	/**
+	* \brief Convert \ref ObjectHandle to \ref StreamObjectHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_FromObject(ObjectHandle* handle, StreamObjectHandle** result);
+
+	/**
 	* \copydoc Object_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_Release(StreamObjectHandle* handle);

@@ -28,6 +28,7 @@
 #include "vanillapdf/syntax/c_indirect_object_reference.h"
 #include "vanillapdf/syntax/c_integer_object.h"
 #include "vanillapdf/syntax/c_name_object.h"
+#include "vanillapdf/syntax/c_null_object.h"
 
 /* semantics */
 #include "vanillapdf/semantics/c_document.h"

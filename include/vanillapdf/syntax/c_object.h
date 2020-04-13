@@ -113,60 +113,15 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Object_ToUnknown(ObjectHandle* handle, IUnknownHandle** result);
 
 	/**
+	* \brief Convert \ref IUnknownHandle to \ref ObjectHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Object_FromUnknown(IUnknownHandle* handle, ObjectHandle** result);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Object_Release(ObjectHandle* handle);
-
-	/**
-	* \brief Reinterpret current object as \ref ArrayObjectHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Object_ToArray(ObjectHandle* handle, ArrayObjectHandle** result);
-
-	/**
-	* \brief Reinterpret current object as \ref StreamObjectHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Object_ToStream(ObjectHandle* handle, StreamObjectHandle** result);
-
-	/**
-	* \brief Reinterpret current object as \ref DictionaryObjectHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Object_ToDictionary(ObjectHandle* handle, DictionaryObjectHandle** result);
-
-	/**
-	* \brief Reinterpret current object as \ref IndirectObjectReferenceHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Object_ToIndirectReference(ObjectHandle* handle, IndirectObjectReferenceHandle** result);
-
-	/**
-	* \brief Reinterpret current object as \ref IntegerObjectHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Object_ToInteger(ObjectHandle* handle, IntegerObjectHandle** result);
-
-	/**
-	* \brief Reinterpret current object as \ref BooleanObjectHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Object_ToBoolean(ObjectHandle* handle, BooleanObjectHandle** result);
-
-	/**
-	* \brief Reinterpret current object as \ref RealObjectHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Object_ToReal(ObjectHandle* handle, RealObjectHandle** result);
-
-	/**
-	* \brief Reinterpret current object as \ref NullObjectHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Object_ToNull(ObjectHandle* handle, NullObjectHandle** result);
-
-	/**
-	* \brief Reinterpret current object as \ref NameObjectHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Object_ToName(ObjectHandle* handle, NameObjectHandle** result);
-
-	/**
-	* \brief Reinterpret current object as \ref StringObjectHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle* handle, StringObjectHandle** result);
 
 	/** @} */
 

@@ -44,6 +44,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION RealObject_SetValue(RealObjectHandl
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION RealObject_ToObject(RealObjectHandle* handle, ObjectHandle** result) {
+	return SafeObjectConvert<RealObject, Object, RealObjectHandle, ObjectHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION RealObject_FromObject(ObjectHandle* handle, RealObjectHandle** result) {
+	return SafeObjectConvert<Object, RealObject, ObjectHandle, RealObjectHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION RealObject_Release(RealObjectHandle* handle)
 {
 	return ObjectRelease<RealObject, RealObjectHandle>(handle);
