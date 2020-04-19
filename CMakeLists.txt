@@ -19,6 +19,10 @@ cmake_minimum_required(VERSION 2.8.4)
 	# required version of CMake to 2.8.4 or higher.  Then teach your project to
 	# build on Cygwin without WIN32.
 
+# Note: This needs to be included before defining the main project
+# Check for VCPKG - C++ package management system
+include(cmake/vcpkg_init.cmake)
+
 # Define main solution
 project(vanillapdf)
 

@@ -545,26 +545,18 @@ add_definitions(-DVANILLAPDF_BUILD_DAY=${VANILLAPDF_BUILD_DAY})
 add_definitions(-DVANILLAPDF_BUILD_MONTH=${VANILLAPDF_BUILD_MONTH})
 add_definitions(-DVANILLAPDF_BUILD_YEAR=${VANILLAPDF_BUILD_YEAR})
 
-if(WIN32)
+# This installs required libraries
+include("${CMAKE_SOURCE_DIR}/cmake/vcpkg_dependencies.cmake")
 
-	# TODO packaged openSSL build uses older VC compiler
-	# also it requires multiple additional dependencies such as winsock
-	
-	# Try to use static libraries on windows as they have to be shipped
-	#set(OPENSSL_USE_STATIC_LIBS TRUE)
-	#set(OPENSSL_MSVC_STATIC_RT TRUE)
-
-endif(WIN32)
-
-find_package(OpenSSL)
-find_package(ZLIB)
-find_package(JPEG)
+find_package(OpenSSL REQUIRED)
+find_package(ZLIB REQUIRED)
+find_package(JPEG REQUIRED)
 
 if (OPENSSL_FOUND)
 	include_directories(${OPENSSL_INCLUDE_DIR})
-	set(VANILLAPDF_LIBS ${OPENSSL_LIBRARIES} ${VANILLAPDF_LIBS})
+	set(VANILLAPDF_LIBS OpenSSL::Crypto ${VANILLAPDF_LIBS})
 	add_definitions(-DVANILLAPDF_HAVE_OPENSSL)
-	
+
 	message(STATUS "OpenSSL ${OPENSSL_VERSION} was found")
 else (OPENSSL_FOUND)
 	message(WARNING "Compiling without OpenSSL support. Work with encrypted document will be prohibited")
@@ -572,17 +564,17 @@ endif (OPENSSL_FOUND)
 
 if (JPEG_FOUND)
 	include_directories(${JPEG_INCLUDE_DIR})
-	set(VANILLAPDF_LIBS ${JPEG_LIBRARIES} ${VANILLAPDF_LIBS})
+	set(VANILLAPDF_LIBS JPEG::JPEG ${VANILLAPDF_LIBS})
 	add_definitions(-DVANILLAPDF_HAVE_JPEG)
 
-	message(STATUS "JPEG library was found")
+	message(STATUS "JPEG library ${JPEG_VERSION} was found")
 else (JPEG_FOUND)
 	message(WARNING "Compiling without JPEG support. JPEG compression will become unavailable")
 endif (JPEG_FOUND)
 
 if (ZLIB_FOUND)
 	include_directories(${ZLIB_INCLUDE_DIRS})
-	set(VANILLAPDF_LIBS ${ZLIB_LIBRARIES} ${VANILLAPDF_LIBS})
+	set(VANILLAPDF_LIBS ZLIB::ZLIB ${VANILLAPDF_LIBS})
 	add_definitions(-DVANILLAPDF_HAVE_ZLIB)
 
 	message(STATUS "zlib ${ZLIB_VERSION_STRING} was found")
@@ -616,64 +608,59 @@ if(WIN32)
 
 	# OpenSSL dependent libraries
 	if (OPENSSL_FOUND)
-		# TODO search module for binaries
-		set(OPENSSL_CRYPTO_BINARY_DEBUG CACHE FILEPATH "")
-		set(OPENSSL_CRYPTO_BINARY_RELEASE CACHE FILEPATH "")
+	
+		# Find dll runtime binary file
+		find_file(LIBEAY_RUNTIME
+			NAMES libcrypto-1_1.dll libcrypto-1_1-x64.dll
+			PATHS ${VANILLPDF_BINARY_DIR}
+		)
 
-		# Set current configuration binary file
-		if (CONFIG:debug)
-			set(OPENSSL_CRYPTO_BINARY ${OPENSSL_CRYPTO_BINARY_DEBUG})
-		else(CONFIG:debug)
-			set(OPENSSL_CRYPTO_BINARY ${OPENSSL_CRYPTO_BINARY_RELEASE})
-		endif(CONFIG:debug)
+		if (NOT EXISTS ${LIBEAY_RUNTIME})
+			message(FATAL_ERROR "OpenSSL support is enabled, but the LIBEAY_RUNTIME does not exist")
+		endif(NOT EXISTS ${LIBEAY_RUNTIME})
 		
-		if (NOT EXISTS ${OPENSSL_CRYPTO_BINARY})
-			message(SEND_ERROR "OpenSSL support is enabled, but the OPENSSL_CRYPTO_BINARY does not exist")
-		endif(NOT EXISTS ${OPENSSL_CRYPTO_BINARY})
+		message(STATUS "LIBEAY runtime was found at ${LIBEAY_RUNTIME}")
 		
 		# Install dependency into output package
-		install(FILES ${OPENSSL_CRYPTO_BINARY} DESTINATION bin)
+		install(FILES ${LIBEAY_RUNTIME} DESTINATION bin)
+
 	endif (OPENSSL_FOUND)
 
 	# libjpeg dependent libraries
 	if (JPEG_FOUND)
-		# TODO search module for binaries
-		set(JPEG_BINARY_DEBUG CACHE FILEPATH "")
-		set(JPEG_BINARY_RELEASE CACHE FILEPATH "")
 
-		# Set current configuration binary file
-		if (CONFIG:debug)
-			set(JPEG_BINARY ${JPEG_BINARY_DEBUG})
-		else(CONFIG:debug)
-			set(JPEG_BINARY ${JPEG_BINARY_RELEASE})
-		endif(CONFIG:debug)
+		# Find dll runtime binary file
+		find_file(LIBJPEG_RUNTIME
+			NAMES jpeg62.dll
+			PATHS ${VANILLPDF_BINARY_DIR}
+		)
+
+		if (NOT EXISTS ${LIBJPEG_RUNTIME})
+			message(FATAL_ERROR "JPEG support is enabled, but the LIBJPEG_RUNTIME does not exist")
+		endif(NOT EXISTS ${LIBJPEG_RUNTIME})
 		
-		if (NOT EXISTS ${JPEG_BINARY})
-			message(SEND_ERROR "JPEG support is enabled, but the JPEG_BINARY does not exist")
-		endif(NOT EXISTS ${JPEG_BINARY})
+		message(STATUS "LIBJPEG runtime was found at ${LIBJPEG_RUNTIME}")
 		
 		# Install dependency into output package
-		install(FILES ${JPEG_BINARY} DESTINATION bin)
+		install(FILES ${LIBJPEG_RUNTIME} DESTINATION bin)
 	endif (JPEG_FOUND)
 
 	# zlib dependent libraries
 	if (ZLIB_FOUND)
-		# TODO search module for binaries
-		set(ZLIB_BINARY_DEBUG CACHE FILEPATH "")
-		set(ZLIB_BINARY_RELEASE CACHE FILEPATH "")
+
+		# Find dll runtime binary file
+		find_file(ZLIB_RUNTIME
+			NAMES zlib1.dll
+			PATHS ${VANILLPDF_BINARY_DIR}
+		)
+
+		if (NOT EXISTS ${ZLIB_RUNTIME})
+			message(FATAL_ERROR "zlib support is enabled, but the ZLIB_RUNTIME does not exist")
+		endif(NOT EXISTS ${ZLIB_RUNTIME})
 		
-		# Set current configuration binary file
-		if (CONFIG:debug)
-			set(ZLIB_BINARY ${ZLIB_BINARY_DEBUG})
-		else(CONFIG:debug)
-			set(ZLIB_BINARY ${ZLIB_BINARY_RELEASE})
-		endif(CONFIG:debug)
-		
-		if (NOT EXISTS ${ZLIB_BINARY})
-			message(SEND_ERROR "zlib support is enabled, but the ZLIB_BINARY does not exist")
-		endif(NOT EXISTS ${ZLIB_BINARY})
+		message(STATUS "ZLIB runtime was found at ${ZLIB_RUNTIME}")
 		
 		# Install dependency into output package
-		install(FILES ${ZLIB_BINARY} DESTINATION bin)
+		install(FILES ${ZLIB_RUNTIME} DESTINATION bin)
 	endif (ZLIB_FOUND)
 endif(WIN32)
