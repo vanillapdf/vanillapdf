@@ -1,5 +1,0 @@
-perl Configure VC-WIN32 --prefix=C:\Build-OpenSSL-VC-32
-"C:\Program Files (x86)\NASM\nasmpath.bat"
-ms\do_nasm
-nmake -f ms\ntdll.mak 
-nmake -f ms\ntdll.mak install
