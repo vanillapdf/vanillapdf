@@ -1,4 +1,5 @@
 # Build files
+/.vs/
 /build/
 
 # Test files
