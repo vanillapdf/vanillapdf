@@ -146,6 +146,11 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Xref_Iterator(XrefHandle* handle, XrefIteratorHandle** result);
 
 	/**
+	* \brief Determine if the current iterator position is valid
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Xref_IsIteratorValid(XrefHandle* handle, XrefIteratorHandle* iterator_handle, boolean_type* result);
+
+	/**
 	* \brief Reinterpret current object as \ref IUnknownHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Xref_ToUnknown(XrefHandle* handle, IUnknownHandle** result);
@@ -174,14 +179,19 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_GetValue(XrefIteratorHandle* handle, XrefEntryHandle** result);
 
 	/**
-	* \brief Determine if the current iterator position is valid
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_IsValid(XrefIteratorHandle* handle, XrefHandle* xref, boolean_type* result);
-
-	/**
 	* \brief Advance iterator to the next position
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_Next(XrefIteratorHandle* handle);
+
+	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_ToUnknown(XrefIteratorHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref XrefIteratorHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_FromUnknown(IUnknownHandle* handle, XrefIteratorHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -202,6 +212,21 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_Iterator(XrefChainHandle* handle, XrefChainIteratorHandle** result);
 
 	/**
+	* \brief Determine if the current iterator position is valid
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_IsIteratorValid(XrefChainHandle* handle, XrefChainIteratorHandle* iterator_handle, boolean_type* result);
+
+	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_ToUnknown(XrefChainHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref XrefChainHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_FromUnknown(IUnknownHandle* handle, XrefChainHandle** result);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
@@ -220,14 +245,19 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_GetValue(XrefChainIteratorHandle* handle, XrefHandle** result);
 
 	/**
-	* \brief Determine if the current iterator position is valid
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_IsValid(XrefChainIteratorHandle* handle, XrefChainHandle* chain, boolean_type* result);
-
-	/**
 	* \brief Advance iterator to the next position
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_Next(XrefChainIteratorHandle* handle);
+
+	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_ToUnknown(XrefChainIteratorHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref XrefChainIteratorHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_FromUnknown(IUnknownHandle* handle, XrefChainIteratorHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -263,25 +293,20 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_InUse(XrefEntryHandle* handle, boolean_type* result);
 
 	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ToUnknown(XrefEntryHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref XrefEntryHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_FromUnknown(IUnknownHandle* handle, XrefEntryHandle** result);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle* handle);
-
-	/**
-	* \brief Reinterpret entry as \ref XrefFreeEntryHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ToFreeEntry(XrefEntryHandle* handle, XrefFreeEntryHandle** result);
-
-	/**
-	* \brief Reinterpret entry as \ref XrefUsedEntryHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ToUsedEntry(XrefEntryHandle* handle, XrefUsedEntryHandle** result);
-
-	/**
-	* \brief Reinterpret entry as \ref XrefCompressedEntryHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ToCompressedEntry(XrefEntryHandle* handle, XrefCompressedEntryHandle** result);
 
 	/** @} */
 
@@ -309,6 +334,16 @@ extern "C"
 	* \brief Object number of the next free object
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_NextFreeObjectNumber(XrefFreeEntryHandle* handle, biguint_type* result);
+
+	/**
+	* \brief Reinterpret current object as \ref XrefEntryHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_ToEntry(XrefFreeEntryHandle* handle, XrefEntryHandle** result);
+
+	/**
+	* \brief Convert \ref XrefEntryHandle to \ref XrefFreeEntryHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_FromEntry(XrefEntryHandle* handle, XrefFreeEntryHandle** result);
 
 	/**
 	* \copydoc XrefEntry_Release
@@ -346,6 +381,16 @@ extern "C"
 	* \brief Get reference to the object represented by this entry
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_Reference(XrefUsedEntryHandle* handle, ObjectHandle** result);
+
+	/**
+	* \brief Reinterpret current object as \ref XrefEntryHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_ToEntry(XrefUsedEntryHandle* handle, XrefEntryHandle** result);
+
+	/**
+	* \brief Convert \ref XrefEntryHandle to \ref XrefUsedEntryHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_FromEntry(XrefEntryHandle* handle, XrefUsedEntryHandle** result);
 
 	/**
 	* \copydoc XrefEntry_Release
@@ -389,6 +434,16 @@ extern "C"
 	* (The generation number of the object stream shall be implicitly 0.)
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectStreamNumber(XrefCompressedEntryHandle* handle, biguint_type* result);
+
+	/**
+	* \brief Reinterpret current object as \ref XrefEntryHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ToEntry(XrefCompressedEntryHandle* handle, XrefEntryHandle** result);
+
+	/**
+	* \brief Convert \ref XrefEntryHandle to \ref XrefUsedEntryHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_FromEntry(XrefEntryHandle* handle, XrefCompressedEntryHandle** result);
 
 	/**
 	* \copydoc XrefEntry_Release

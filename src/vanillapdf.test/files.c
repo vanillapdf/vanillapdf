@@ -9,7 +9,7 @@ error_type process_file(FileHandle* file, int nested) {
 	RETURN_ERROR_IF_NOT_SUCCESS(File_XrefChain(file, &chain));
 	RETURN_ERROR_IF_NOT_SUCCESS(XrefChain_Iterator(chain, &chain_iterator));
 
-	while (VANILLAPDF_ERROR_SUCCESS == XrefChainIterator_IsValid(chain_iterator, chain, &valid)
+	while (VANILLAPDF_ERROR_SUCCESS == XrefChain_IsIteratorValid(chain, chain_iterator, &valid)
 		&& VANILLAPDF_RV_TRUE == valid) {
 		XrefHandle* xref = NULL;
 
@@ -32,7 +32,7 @@ error_type process_xref(XrefHandle* xref, int nested) {
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Xref_Iterator(xref, &xref_iterator));
 
-	while (VANILLAPDF_ERROR_SUCCESS == XrefIterator_IsValid(xref_iterator, xref, &valid)
+	while (VANILLAPDF_ERROR_SUCCESS == Xref_IsIteratorValid(xref, xref_iterator, &valid)
 		&& VANILLAPDF_RV_TRUE == valid) {
 
 		XrefEntryType type;
@@ -47,16 +47,16 @@ error_type process_xref(XrefHandle* xref, int nested) {
 
 		switch (type) {
 			case XrefEntryType_Free:
-				RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_ToFreeEntry(entry, &free_entry));
+				RETURN_ERROR_IF_NOT_SUCCESS(XrefFreeEntry_FromEntry(entry, &free_entry));
 				break;
 			case XrefEntryType_Used:
-				RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_ToUsedEntry(entry, &used_entry));
+				RETURN_ERROR_IF_NOT_SUCCESS(XrefUsedEntry_FromEntry(entry, &used_entry));
 				RETURN_ERROR_IF_NOT_SUCCESS(XrefUsedEntry_Reference(used_entry, &obj));
 				RETURN_ERROR_IF_NOT_SUCCESS(process_object(obj, nested + 1));
 				RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));
 				break;
 			case XrefEntryType_Compressed:
-				RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_ToCompressedEntry(entry, &compressed_entry));
+				RETURN_ERROR_IF_NOT_SUCCESS(XrefCompressedEntry_FromEntry(entry, &compressed_entry));
 				RETURN_ERROR_IF_NOT_SUCCESS(XrefCompressedEntry_Reference(compressed_entry, &obj));
 				RETURN_ERROR_IF_NOT_SUCCESS(process_object(obj, nested + 1));
 				RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));

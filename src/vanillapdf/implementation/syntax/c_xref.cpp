@@ -49,6 +49,24 @@ VANILLAPDF_API error_type CALLING_CONVENTION Xref_Iterator(XrefHandle* handle, X
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Xref_IsIteratorValid(XrefHandle* handle, XrefIteratorHandle* iterator_handle, boolean_type* result) {
+	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
+	XrefBase::Iterator* iterator = reinterpret_cast<XrefBase::Iterator*>(iterator_handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		if (*xref->End() == *iterator) {
+			*result = VANILLAPDF_RV_FALSE;
+		} else {
+			*result = VANILLAPDF_RV_TRUE;
+		}
+
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_GetValue(XrefIteratorHandle* handle, XrefEntryHandle** result)
 {
 	XrefBase::Iterator* iterator = reinterpret_cast<XrefBase::Iterator*>(handle);
@@ -63,24 +81,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_GetValue(XrefIteratorH
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_IsValid(XrefIteratorHandle* handle, XrefHandle* xref_handle, boolean_type* result)
-{
-	XrefBase::Iterator* iterator = reinterpret_cast<XrefBase::Iterator*>(handle);
-	XrefBase* xref = reinterpret_cast<XrefBase*>(xref_handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-	try {
-		if (*xref->End() == *iterator)
-			*result = VANILLAPDF_RV_FALSE;
-		else
-			*result = VANILLAPDF_RV_TRUE;
-
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
-}
-
 VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_Next(XrefIteratorHandle* handle)
 {
 	XrefBase::Iterator* iterator = reinterpret_cast<XrefBase::Iterator*>(handle);
@@ -90,6 +90,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_Next(XrefIteratorHandl
 		++(*iterator);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_ToUnknown(XrefIteratorHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<XrefBase::Iterator, IUnknown, XrefIteratorHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_FromUnknown(IUnknownHandle* handle, XrefIteratorHandle** result) {
+	return SafeObjectConvert<IUnknown, XrefBase::Iterator, IUnknownHandle, XrefIteratorHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_Release(XrefIteratorHandle* handle)
@@ -108,6 +116,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION Xref_FromUnknown(IUnknownHandle* ha
 VANILLAPDF_API error_type CALLING_CONVENTION Xref_Release(XrefHandle* handle)
 {
 	return ObjectRelease<XrefBase, XrefHandle>(handle);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ToUnknown(XrefEntryHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<XrefEntryBase, IUnknown, XrefEntryHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_FromUnknown(IUnknownHandle* handle, XrefEntryHandle** result) {
+	return SafeObjectConvert<IUnknown, XrefEntryBase, IUnknownHandle, XrefEntryHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle* handle)
@@ -215,6 +231,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_NextFreeObjectNumber(
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_ToEntry(XrefFreeEntryHandle* handle, XrefEntryHandle** result) {
+	return SafeObjectConvert<XrefFreeEntry, XrefEntryBase, XrefFreeEntryHandle, XrefEntryHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_FromEntry(XrefEntryHandle* handle, XrefFreeEntryHandle** result) {
+	return SafeObjectConvert<XrefEntryBase, XrefFreeEntry, XrefEntryHandle, XrefFreeEntryHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_Release(XrefFreeEntryHandle* handle)
 {
 	return ObjectRelease<XrefFreeEntry, XrefFreeEntryHandle>(handle);
@@ -258,6 +282,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_InUse(XrefUsedEntryHa
 
 	*result = entry->InUse();
 	return VANILLAPDF_ERROR_SUCCESS;
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_ToEntry(XrefUsedEntryHandle* handle, XrefEntryHandle** result) {
+	return SafeObjectConvert<XrefUsedEntry, XrefEntryBase, XrefUsedEntryHandle, XrefEntryHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_FromEntry(XrefEntryHandle* handle, XrefUsedEntryHandle** result) {
+	return SafeObjectConvert<XrefEntryBase, XrefUsedEntry, XrefEntryHandle, XrefUsedEntryHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_Release(XrefUsedEntryHandle* handle)
@@ -315,24 +347,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectStreamNum
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ToEntry(XrefCompressedEntryHandle* handle, XrefEntryHandle** result) {
+	return SafeObjectConvert<XrefCompressedEntry, XrefEntryBase, XrefCompressedEntryHandle, XrefEntryHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_FromEntry(XrefEntryHandle* handle, XrefCompressedEntryHandle** result) {
+	return SafeObjectConvert<XrefEntryBase, XrefCompressedEntry, XrefEntryHandle, XrefCompressedEntryHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Release(XrefCompressedEntryHandle* handle)
 {
 	return ObjectRelease<XrefCompressedEntry, XrefCompressedEntryHandle>(handle);
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ToFreeEntry(XrefEntryHandle* handle, XrefFreeEntryHandle** result)
-{
-	return SafeObjectConvert<XrefEntryBase, XrefFreeEntry, XrefEntryHandle, XrefFreeEntryHandle>(handle, result);
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ToUsedEntry(XrefEntryHandle* handle, XrefUsedEntryHandle** result)
-{
-	return SafeObjectConvert<XrefEntryBase, XrefUsedEntry, XrefEntryHandle, XrefUsedEntryHandle>(handle, result);
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ToCompressedEntry(XrefEntryHandle* handle, XrefCompressedEntryHandle** result)
-{
-	return SafeObjectConvert<XrefEntryBase, XrefCompressedEntry, XrefEntryHandle, XrefCompressedEntryHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_Reference(XrefUsedEntryHandle* handle, ObjectHandle** result)
@@ -379,24 +404,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_GetValue(XrefChai
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_IsValid(XrefChainIteratorHandle* handle, XrefChainHandle* chain_handle, boolean_type* result)
-{
-	XrefChain::Iterator* iterator = reinterpret_cast<XrefChain::Iterator*>(handle);
-	XrefChain* chain = reinterpret_cast<XrefChain*>(chain_handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(chain);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-	try {
-		if (*chain->End() == *iterator)
-			*result = VANILLAPDF_RV_FALSE;
-		else
-			*result = VANILLAPDF_RV_TRUE;
-
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
-}
-
 VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_Next(XrefChainIteratorHandle* handle)
 {
 	XrefChain::Iterator* iterator = reinterpret_cast<XrefChain::Iterator*>(handle);
@@ -406,6 +413,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_Next(XrefChainIte
 		++(*iterator);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_ToUnknown(XrefChainIteratorHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<XrefChain::Iterator, IUnknown, XrefChainIteratorHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_FromUnknown(IUnknownHandle* handle, XrefChainIteratorHandle** result) {
+	return SafeObjectConvert<IUnknown, XrefChain::Iterator, IUnknownHandle, XrefChainIteratorHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_Release(XrefChainIteratorHandle* handle)
@@ -426,6 +441,32 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_Iterator(XrefChainHandle*
 		*result = reinterpret_cast<XrefChainIteratorHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_IsIteratorValid(XrefChainHandle* handle, XrefChainIteratorHandle* iterator_handle, boolean_type* result) {
+	XrefChain* chain = reinterpret_cast<XrefChain*>(handle);
+	XrefChain::Iterator* iterator = reinterpret_cast<XrefChain::Iterator*>(iterator_handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		if (*chain->End() == *iterator) {
+			*result = VANILLAPDF_RV_FALSE;
+		} else {
+			*result = VANILLAPDF_RV_TRUE;
+		}
+
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_ToUnknown(XrefChainHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<XrefChain, IUnknown, XrefChainHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_FromUnknown(IUnknownHandle* handle, XrefChainHandle** result) {
+	return SafeObjectConvert<IUnknown, XrefChain, IUnknownHandle, XrefChainHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_Release(XrefChainHandle* handle)
