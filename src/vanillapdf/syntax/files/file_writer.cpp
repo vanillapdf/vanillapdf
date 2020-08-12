@@ -166,7 +166,7 @@ bool FileWriter::ValidateConfiguration(FilePtr source, std::string& reason) cons
 
 				std::stringstream ss;
 				ss << "Flag squash table space is disabled, while the source file contains cross-reference streams." << std::endl;
-				ss << "Either disable also flag remove freed objects, or enable squashing table space.";
+				ss << "Either also disable remove freed objects flag, or enable squashing table space.";
 
 				reason = ss.str();
 				return false;
