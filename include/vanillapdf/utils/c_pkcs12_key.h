@@ -17,8 +17,8 @@ extern "C"
 
 	/**
 	* \class PKCS12KeyHandle
-	* \implements EncryptionKeyHandle
-	* \implements SigningKeyHandle
+	* \extends EncryptionKeyHandle
+	* \extends SigningKeyHandle
 	* \ingroup group_utils
 	* \brief PKCS#12 container is often used in cryptography to store asymmetric key pair
 	*
