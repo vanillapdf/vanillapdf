@@ -195,15 +195,15 @@ error_type process_xref(XrefHandle* xref) {
 		ushort_type generation_number = 0;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefIterator_GetValue(xref_iterator, &entry));
-		RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_Type(entry, &type));
-		RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_ObjectNumber(entry, &object_number));
-		RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_GenerationNumber(entry, &generation_number));
+		RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_GetType(entry, &type));
+		RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_GetObjectNumber(entry, &object_number));
+		RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_GetGenerationNumber(entry, &generation_number));
 
 		if (type == XrefEntryType_Used) {
 			ObjectHandle* obj = NULL;
 
 			RETURN_ERROR_IF_NOT_SUCCESS(XrefUsedEntry_FromEntry(entry, &used_entry));
-			RETURN_ERROR_IF_NOT_SUCCESS(XrefUsedEntry_Reference(used_entry, &obj));
+			RETURN_ERROR_IF_NOT_SUCCESS(XrefUsedEntry_GetReference(used_entry, &obj));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_object(obj, object_number, generation_number));
 			RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));
 		}
@@ -212,7 +212,7 @@ error_type process_xref(XrefHandle* xref) {
 			ObjectHandle* obj = NULL;
 
 			RETURN_ERROR_IF_NOT_SUCCESS(XrefCompressedEntry_FromEntry(entry, &compressed_entry));
-			RETURN_ERROR_IF_NOT_SUCCESS(XrefCompressedEntry_Reference(compressed_entry, &obj));
+			RETURN_ERROR_IF_NOT_SUCCESS(XrefCompressedEntry_GetReference(compressed_entry, &obj));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_object(obj, object_number, generation_number));
 			RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));
 		}

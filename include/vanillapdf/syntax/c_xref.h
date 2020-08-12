@@ -275,17 +275,17 @@ extern "C"
 	/**
 	* \brief Get entry type
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_Type(XrefEntryHandle* handle, XrefEntryType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_GetType(XrefEntryHandle* handle, XrefEntryType* result);
 
 	/**
 	* \brief Get entry object number
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_ObjectNumber(XrefEntryHandle* handle, biguint_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_GetObjectNumber(XrefEntryHandle* handle, biguint_type* result);
 
 	/**
 	* \brief Get entry generation number
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_GenerationNumber(XrefEntryHandle* handle, ushort_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_GetGenerationNumber(XrefEntryHandle* handle, ushort_type* result);
 
 	/**
 	* \brief Quick check, if the entry is used or compressed
@@ -316,14 +316,14 @@ extern "C"
 	*/
 
 	/**
-	* \copydoc XrefEntry_ObjectNumber
+	* \copydoc XrefEntry_GetObjectNumber
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_ObjectNumber(XrefEntryHandle* handle, biguint_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_GetObjectNumber(XrefEntryHandle* handle, biguint_type* result);
 
 	/**
-	* \copydoc XrefEntry_GenerationNumber
+	* \copydoc XrefEntry_GetGenerationNumber
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_GenerationNumber(XrefEntryHandle* handle, ushort_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_GetGenerationNumber(XrefEntryHandle* handle, ushort_type* result);
 
 	/**
 	* \copydoc XrefEntry_InUse
@@ -333,7 +333,7 @@ extern "C"
 	/**
 	* \brief Object number of the next free object
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_NextFreeObjectNumber(XrefFreeEntryHandle* handle, biguint_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_GetNextFreeObjectNumber(XrefFreeEntryHandle* handle, biguint_type* result);
 
 	/**
 	* \brief Reinterpret current object as \ref XrefEntryHandle
@@ -358,19 +358,19 @@ extern "C"
 	*/
 
 	/**
-	* \copydoc XrefEntry_ObjectNumber
+	* \copydoc XrefEntry_GetObjectNumber
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_ObjectNumber(XrefEntryHandle* handle, biguint_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_GetObjectNumber(XrefEntryHandle* handle, biguint_type* result);
 
 	/**
-	* \copydoc XrefEntry_GenerationNumber
+	* \copydoc XrefEntry_GetGenerationNumber
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_GenerationNumber(XrefEntryHandle* handle, ushort_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_GetGenerationNumber(XrefEntryHandle* handle, ushort_type* result);
 
 	/**
 	* \brief Number of bytes from the beginning of the file to the beginning of the referenced object.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_Offset(XrefUsedEntryHandle* handle, offset_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_GetOffset(XrefUsedEntryHandle* handle, offset_type* result);
 
 	/**
 	* \copydoc XrefEntry_InUse
@@ -380,7 +380,7 @@ extern "C"
 	/**
 	* \brief Get reference to the object represented by this entry
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_Reference(XrefUsedEntryHandle* handle, ObjectHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_GetReference(XrefUsedEntryHandle* handle, ObjectHandle** result);
 
 	/**
 	* \brief Reinterpret current object as \ref XrefEntryHandle
@@ -405,14 +405,14 @@ extern "C"
 	*/
 
 	/**
-	* \copydoc XrefEntry_ObjectNumber
+	* \copydoc XrefEntry_GetObjectNumber
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectNumber(XrefEntryHandle* handle, biguint_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GetObjectNumber(XrefEntryHandle* handle, biguint_type* result);
 
 	/**
-	* \copydoc XrefEntry_GenerationNumber
+	* \copydoc XrefEntry_GetGenerationNumber
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GenerationNumber(XrefEntryHandle* handle, ushort_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GetGenerationNumber(XrefEntryHandle* handle, ushort_type* result);
 
 	/**
 	* \copydoc XrefEntry_InUse
@@ -422,18 +422,18 @@ extern "C"
 	/**
 	* \brief Get reference to the object represented by this entry
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Reference(XrefCompressedEntryHandle* handle, ObjectHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GetReference(XrefCompressedEntryHandle* handle, ObjectHandle** result);
 
 	/**
 	* \brief The index of this object within the object stream.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Index(XrefCompressedEntryHandle* handle, size_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GetIndex(XrefCompressedEntryHandle* handle, size_type* result);
 
 	/**
 	* \brief The object number of the object stream in which this object is stored.
 	* (The generation number of the object stream shall be implicitly 0.)
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_ObjectStreamNumber(XrefCompressedEntryHandle* handle, biguint_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GetObjectStreamNumber(XrefCompressedEntryHandle* handle, biguint_type* result);
 
 	/**
 	* \brief Reinterpret current object as \ref XrefEntryHandle

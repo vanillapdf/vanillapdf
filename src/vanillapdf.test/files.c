@@ -43,7 +43,7 @@ error_type process_xref(XrefHandle* xref, int nested) {
 		XrefUsedEntryHandle* used_entry = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefIterator_GetValue(xref_iterator, &entry));
-		RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_Type(entry, &type));
+		RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_GetType(entry, &type));
 
 		switch (type) {
 			case XrefEntryType_Free:
@@ -51,13 +51,13 @@ error_type process_xref(XrefHandle* xref, int nested) {
 				break;
 			case XrefEntryType_Used:
 				RETURN_ERROR_IF_NOT_SUCCESS(XrefUsedEntry_FromEntry(entry, &used_entry));
-				RETURN_ERROR_IF_NOT_SUCCESS(XrefUsedEntry_Reference(used_entry, &obj));
+				RETURN_ERROR_IF_NOT_SUCCESS(XrefUsedEntry_GetReference(used_entry, &obj));
 				RETURN_ERROR_IF_NOT_SUCCESS(process_object(obj, nested + 1));
 				RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));
 				break;
 			case XrefEntryType_Compressed:
 				RETURN_ERROR_IF_NOT_SUCCESS(XrefCompressedEntry_FromEntry(entry, &compressed_entry));
-				RETURN_ERROR_IF_NOT_SUCCESS(XrefCompressedEntry_Reference(compressed_entry, &obj));
+				RETURN_ERROR_IF_NOT_SUCCESS(XrefCompressedEntry_GetReference(compressed_entry, &obj));
 				RETURN_ERROR_IF_NOT_SUCCESS(process_object(obj, nested + 1));
 				RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));
 				break;
