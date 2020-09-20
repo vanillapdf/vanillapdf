@@ -213,7 +213,7 @@ CatalogPtr Document::CreateCatalog() {
 	auto xref = chain->Begin()->Value();
 	auto trailer_dictionary = xref->GetTrailerDictionary();
 
-	IndirectObjectReferencePtr ref = make_deferred<IndirectObjectReference>(raw_dictionary);
+	IndirectReferenceObjectPtr ref = make_deferred<IndirectReferenceObject>(raw_dictionary);
 	trailer_dictionary->Insert(constant::Name::Root, ref);
 
 	return make_deferred<Catalog>(raw_dictionary);
@@ -232,7 +232,7 @@ DocumentInfoPtr Document::CreateDocumentInfo() {
 	auto xref = chain->Begin()->Value();
 	auto trailer_dictionary = xref->GetTrailerDictionary();
 
-	IndirectObjectReferencePtr ref = make_deferred<IndirectObjectReference>(raw_dictionary);
+	IndirectReferenceObjectPtr ref = make_deferred<IndirectReferenceObject>(raw_dictionary);
 	trailer_dictionary->Insert(constant::Name::Info, ref);
 
 	return make_deferred<DocumentInfo>(raw_dictionary);
@@ -250,7 +250,7 @@ PageTreePtr Document::CreatePageTree(CatalogPtr catalog) {
 
 	auto raw_catalog = catalog->GetObject();
 
-	IndirectObjectReferencePtr ref = make_deferred<IndirectObjectReference>(raw_dictionary);
+	IndirectReferenceObjectPtr ref = make_deferred<IndirectReferenceObject>(raw_dictionary);
 	raw_catalog->Insert(constant::Name::Pages, ref);
 
 	return make_deferred<PageTree>(raw_dictionary);
@@ -268,7 +268,7 @@ NamedDestinationsPtr Document::CreateNameDestinations(CatalogPtr catalog) {
 
 	auto raw_catalog = catalog->GetObject();
 
-	IndirectObjectReferencePtr ref = make_deferred<IndirectObjectReference>(raw_dictionary);
+	IndirectReferenceObjectPtr ref = make_deferred<IndirectReferenceObject>(raw_dictionary);
 	raw_catalog->Insert(constant::Name::Dests, ref);
 
 	return make_deferred_container<NamedDestinations>(raw_dictionary);
@@ -286,7 +286,7 @@ NameDictionaryPtr Document::CreateNameDictionary(CatalogPtr catalog) {
 
 	auto raw_catalog = catalog->GetObject();
 
-	IndirectObjectReferencePtr ref = make_deferred<IndirectObjectReference>(raw_dictionary);
+	IndirectReferenceObjectPtr ref = make_deferred<IndirectReferenceObject>(raw_dictionary);
 	raw_catalog->Insert(constant::Name::Names, ref);
 
 	return make_deferred<NameDictionary>(raw_dictionary);
@@ -304,7 +304,7 @@ InteractiveFormPtr Document::CreateAcroForm(CatalogPtr catalog) {
 
 	auto raw_catalog = catalog->GetObject();
 
-	IndirectObjectReferencePtr ref = make_deferred<IndirectObjectReference>(raw_dictionary);
+	IndirectReferenceObjectPtr ref = make_deferred<IndirectReferenceObject>(raw_dictionary);
 	raw_catalog->Insert(constant::Name::AcroForm, ref);
 
 	return make_deferred<InteractiveForm>(raw_dictionary);
@@ -322,7 +322,7 @@ NameTreePtr<DestinationPtr> Document::CreateStringDestinations(NameDictionaryPtr
 
 	auto name_dictionary = dictionary->GetObject();
 
-	IndirectObjectReferencePtr ref = make_deferred<IndirectObjectReference>(raw_dictionary);
+	IndirectReferenceObjectPtr ref = make_deferred<IndirectReferenceObject>(raw_dictionary);
 	name_dictionary->Insert(constant::Name::Dests, ref);
 
 	OutputNameTreePtr<DestinationPtr> result;
@@ -345,9 +345,9 @@ void Document::FixDestinationPage(ObjectPtr cloned_page, PageObjectPtr other_pag
 		assert(other_file.get() != m_holder.get());
 	}
 
-	assert(ObjectUtils::IsType<IndirectObjectReferencePtr>(cloned_page)
+	assert(ObjectUtils::IsType<IndirectReferenceObjectPtr>(cloned_page)
 		|| ObjectUtils::IsType<IntegerObjectPtr>(cloned_page));
-	if (!ObjectUtils::IsType<IndirectObjectReferencePtr>(cloned_page)
+	if (!ObjectUtils::IsType<IndirectReferenceObjectPtr>(cloned_page)
 		&& !ObjectUtils::IsType<IntegerObjectPtr>(cloned_page)) {
 		throw GeneralException("Unknown object type");
 	}
@@ -366,8 +366,8 @@ void Document::FixDestinationPage(ObjectPtr cloned_page, PageObjectPtr other_pag
 
 	auto original_page_count = original_pages->PageCount();
 
-	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(cloned_page)) {
-		auto cloned_page_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(cloned_page);
+	if (ObjectUtils::IsType<IndirectReferenceObjectPtr>(cloned_page)) {
+		auto cloned_page_reference = ObjectUtils::ConvertTo<IndirectReferenceObjectPtr>(cloned_page);
 
 		auto merged_page_object = merged_page->GetObject();
 		cloned_page_reference->SetReferencedObject(merged_page_object);
@@ -422,15 +422,15 @@ bool Document::IsDestinationReferencingPage(DestinationPtr destination, PageObje
 	auto destination_page_object = destination->GetPage();
 	auto other_page_dictionary = page->GetObject();
 
-	assert(ObjectUtils::IsType<IndirectObjectReferencePtr>(destination_page_object)
+	assert(ObjectUtils::IsType<IndirectReferenceObjectPtr>(destination_page_object)
 		|| ObjectUtils::IsType<IntegerObjectPtr>(destination_page_object));
-	if (!ObjectUtils::IsType<IndirectObjectReferencePtr>(destination_page_object)
+	if (!ObjectUtils::IsType<IndirectReferenceObjectPtr>(destination_page_object)
 		&& !ObjectUtils::IsType<IntegerObjectPtr>(destination_page_object)) {
 		throw GeneralException("Unknown object type");
 	}
 
-	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(destination_page_object)) {
-		auto cloned_page_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(destination_page_object);
+	if (ObjectUtils::IsType<IndirectReferenceObjectPtr>(destination_page_object)) {
+		auto cloned_page_reference = ObjectUtils::ConvertTo<IndirectReferenceObjectPtr>(destination_page_object);
 		auto destination_page_dictionary = cloned_page_reference->GetReferencedObjectAs<DictionaryObjectPtr>();
 
 		if (!destination_page_dictionary->Identity(other_page_dictionary)) {
@@ -523,8 +523,8 @@ void Document::AppendStringDestination(StringObjectPtr key, DestinationPtr value
 
 	// Derefence destination in case it is indirect reference
 	auto value_object = value->GetObject();
-	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(value_object)) {
-		auto destination_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(value_object);
+	if (ObjectUtils::IsType<IndirectReferenceObjectPtr>(value_object)) {
+		auto destination_reference = ObjectUtils::ConvertTo<IndirectReferenceObjectPtr>(value_object);
 		value_object = destination_reference->GetReferencedObjectAs<ContainableObjectPtr>();
 	}
 
@@ -565,8 +565,8 @@ void Document::AppendNameDestination(NameObjectPtr key, DestinationPtr value, Pa
 
 	// Derefence destination in case it is indirect reference
 	auto value_object = value->GetObject();
-	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(value_object)) {
-		auto destination_reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(value_object);
+	if (ObjectUtils::IsType<IndirectReferenceObjectPtr>(value_object)) {
+		auto destination_reference = ObjectUtils::ConvertTo<IndirectReferenceObjectPtr>(value_object);
 		value_object = destination_reference->GetReferencedObjectAs<ContainableObjectPtr>();
 	}
 
@@ -765,7 +765,7 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
 	signature_annotation->Insert(constant::Name::Subtype, make_deferred<NameObject>("Widget"));
 	signature_annotation->Insert(constant::Name::Rect, annotation_rectangle);
 
-	auto first_page_reference = make_deferred<syntax::IndirectObjectReference>(first_page_object);
+	auto first_page_reference = make_deferred<syntax::IndirectReferenceObject>(first_page_object);
 	signature_annotation->Insert(constant::Name::P, first_page_reference);
 
 	auto annotation_chain = m_holder->GetXrefChain();
@@ -774,14 +774,14 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
 	annotation_entry->SetFile(m_holder);
 	annotation_entry->SetInitialized();
 
-	auto signature_annotation_reference = make_deferred<syntax::IndirectObjectReference>(signature_annotation);
+	auto signature_annotation_reference = make_deferred<syntax::IndirectReferenceObject>(signature_annotation);
 	first_page_annotations->Append(signature_annotation_reference);
 
 	// Create new signature field
 	signature_annotation->Insert(constant::Name::FT, make_deferred<NameObject>("Sig"));
 	signature_annotation->Insert(constant::Name::T, make_deferred<LiteralStringObject>("Signature1"));
 
-	auto signature_dictionary_reference = make_deferred<syntax::IndirectObjectReference>(signature_dictionary);
+	auto signature_dictionary_reference = make_deferred<syntax::IndirectReferenceObject>(signature_dictionary);
 	signature_annotation->Insert(constant::Name::V, signature_dictionary_reference);
 
 	OuputInteractiveFormPtr interactive_form;
@@ -801,7 +801,7 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
 	auto fields_obj = fields->GetObject();
 	auto fields_array = fields_obj->Data();
 
-	auto signature_fields_reference = make_deferred<syntax::IndirectObjectReference>(signature_annotation);
+	auto signature_fields_reference = make_deferred<syntax::IndirectReferenceObject>(signature_annotation);
 	fields_array->Append(signature_fields_reference);
 
 	DocumentSignerPtr signer = make_deferred<DocumentSigner>(key, digest, signature_dictionary);

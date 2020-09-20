@@ -1486,7 +1486,7 @@ void FileWriter::ApplyWatermarkPageNode(DictionaryObjectPtr obj, DictionaryObjec
 		std::string watermark_font_name_string = "VanillaWatermarkFont";
 		auto watermark_font_name = make_deferred<NameObject>(watermark_font_name_string);
 
-		auto font_reference = make_deferred<IndirectObjectReference>(watermark_font);
+		auto font_reference = make_deferred<IndirectReferenceObject>(watermark_font);
 		font->Insert(watermark_font_name, font_reference);
 
 		auto contents = obj->Find(constant::Name::Contents);
@@ -2123,8 +2123,8 @@ void FileWriter::CompressXref(XrefChainPtr xref) {
 }
 
 void FileWriter::InitializeReferences(ObjectPtr source) {
-	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(source)) {
-		auto source_ref = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(source);
+	if (ObjectUtils::IsType<IndirectReferenceObjectPtr>(source)) {
+		auto source_ref = ObjectUtils::ConvertTo<IndirectReferenceObjectPtr>(source);
 
 		// This is the initialization
 		auto referenced_object = source_ref->GetReferencedObject();
@@ -2146,8 +2146,8 @@ void FileWriter::InitializeReferences(ObjectPtr source) {
 }
 
 void FileWriter::RedirectReferences(ObjectPtr source, const std::unordered_map<ObjectPtr, ObjectPtr>& duplicit_items) {
-	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(source)) {
-		auto source_ref = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(source);
+	if (ObjectUtils::IsType<IndirectReferenceObjectPtr>(source)) {
+		auto source_ref = ObjectUtils::ConvertTo<IndirectReferenceObjectPtr>(source);
 		auto referenced_object = source_ref->GetReferencedObject();
 
 		auto found = duplicit_items.find(referenced_object);

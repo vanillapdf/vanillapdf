@@ -39,7 +39,7 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(StringObject);
 	DECLARE_OBJECT_HANDLE(HexadecimalStringObject);
 	DECLARE_OBJECT_HANDLE(LiteralStringObject);
-	DECLARE_OBJECT_HANDLE(IndirectObjectReference);
+	DECLARE_OBJECT_HANDLE(IndirectReferenceObject);
 	DECLARE_OBJECT_HANDLE(DictionaryObject);
 	DECLARE_OBJECT_HANDLE(DictionaryObjectIterator);
 

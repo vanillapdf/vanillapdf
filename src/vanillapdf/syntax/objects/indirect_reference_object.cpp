@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-#include "syntax/objects/indirect_object_reference.h"
+#include "syntax/objects/indirect_reference_object.h"
 
 #include "syntax/files/file.h"
 
@@ -9,15 +9,15 @@
 namespace vanillapdf {
 namespace syntax {
 
-IndirectObjectReference::IndirectObjectReference(ObjectPtr obj) {
+IndirectReferenceObject::IndirectReferenceObject(ObjectPtr obj) {
 	SetReferencedObject(obj);
 }
 
-IndirectObjectReference::IndirectObjectReference(types::big_uint obj, types::ushort gen)
+IndirectReferenceObject::IndirectReferenceObject(types::big_uint obj, types::ushort gen)
 	: m_reference_object_number(obj), m_reference_generation_number(gen) {
 }
 
-types::big_uint IndirectObjectReference::GetReferencedObjectNumber() const {
+types::big_uint IndirectReferenceObject::GetReferencedObjectNumber() const {
 	if (IsReferenceInitialized()) {
 		auto referenced_object = GetReferencedObject();
 		return referenced_object->GetObjectNumber();
@@ -27,7 +27,7 @@ types::big_uint IndirectObjectReference::GetReferencedObjectNumber() const {
 	return m_reference_object_number;
 }
 
-types::ushort IndirectObjectReference::GetReferencedGenerationNumber() const {
+types::ushort IndirectReferenceObject::GetReferencedGenerationNumber() const {
 	if (IsReferenceInitialized()) {
 		auto referenced_object = GetReferencedObject();
 		return referenced_object->GetGenerationNumber();
@@ -37,21 +37,21 @@ types::ushort IndirectObjectReference::GetReferencedGenerationNumber() const {
 	return m_reference_generation_number;
 }
 
-void IndirectObjectReference::SetReferencedObjectNumber(types::big_uint value) {
+void IndirectReferenceObject::SetReferencedObjectNumber(types::big_uint value) {
 	m_reference_object_number = value;
 	m_reference.Reset();
 
 	OnChanged();
 }
 
-void IndirectObjectReference::SetReferencedGenerationNumber(types::ushort value) {
+void IndirectReferenceObject::SetReferencedGenerationNumber(types::ushort value) {
 	m_reference_generation_number = value;
 	m_reference.Reset();
 
 	OnChanged();
 }
 
-bool IndirectObjectReference::IsReferenceInitialized(void) const {
+bool IndirectReferenceObject::IsReferenceInitialized(void) const {
 	bool active = (!m_reference.IsEmpty() && m_reference.IsActive());
 	if (!active) {
 		return false;
@@ -61,7 +61,7 @@ bool IndirectObjectReference::IsReferenceInitialized(void) const {
 	return !ObjectUtils::IsType<NullObjectPtr>(m_reference.GetReference());
 }
 
-//bool IndirectObjectReference::IsCyclicReference(ObjectPtr object, std::map<ObjectPtr, bool>& visited) const {
+//bool IndirectReferenceObject::IsCyclicReference(ObjectPtr object, std::map<ObjectPtr, bool>& visited) const {
 //	// We have found the cycle
 //	if (Identity(object)) {
 //		return true;
@@ -75,7 +75,7 @@ bool IndirectObjectReference::IsReferenceInitialized(void) const {
 //	// Mark current object as visited
 //	visited[object] = true;
 //
-//	//if (ObjectUtils::IsType<IndirectObjectReferencePtr>(object)) {
+//	//if (ObjectUtils::IsType<IndirectReferenceObjectPtr>(object)) {
 //	//	return false;
 //	//}
 //
@@ -104,13 +104,13 @@ bool IndirectObjectReference::IsReferenceInitialized(void) const {
 //	return false;
 //}
 
-void IndirectObjectReference::OnChanged() const {
+void IndirectReferenceObject::OnChanged() const {
 	Object::OnChanged();
 
 	m_hash_cache = 0;
 }
 
-size_t IndirectObjectReference::Hash() const {
+size_t IndirectReferenceObject::Hash() const {
 
 	if (m_hash_cache != 0) {
 		return m_hash_cache;
@@ -139,7 +139,7 @@ size_t IndirectObjectReference::Hash() const {
 	//return referenced_object->Hash();
 }
 
-void IndirectObjectReference::SetReferencedObject(ObjectPtr obj) const {
+void IndirectReferenceObject::SetReferencedObject(ObjectPtr obj) const {
 
 	// Reference shall be indirect object or null
 	bool indirect_or_null = (obj->IsIndirect() || ObjectUtils::IsType<NullObjectPtr>(obj));
@@ -158,7 +158,7 @@ void IndirectObjectReference::SetReferencedObject(ObjectPtr obj) const {
 	OnChanged();
 }
 
-ObjectPtr IndirectObjectReference::GetReferencedObject() const {
+ObjectPtr IndirectReferenceObject::GetReferencedObject() const {
 	if (IsReferenceInitialized()) {
 		return m_reference.GetReference();
 	}
@@ -176,7 +176,7 @@ ObjectPtr IndirectObjectReference::GetReferencedObject() const {
 	return new_reference;
 }
 
-bool IndirectObjectReference::Equals(const IndirectObjectReference& other) const {
+bool IndirectReferenceObject::Equals(const IndirectReferenceObject& other) const {
 	auto object_number = GetReferencedObjectNumber();
 	auto other_object_number = other.GetReferencedObjectNumber();
 	auto generation_number = GetReferencedGenerationNumber();
@@ -188,7 +188,7 @@ bool IndirectObjectReference::Equals(const IndirectObjectReference& other) const
 	return (object_numbers_equals && generation_numbers_equals);
 }
 
-bool IndirectObjectReference::operator<(const IndirectObjectReference& other) const {
+bool IndirectReferenceObject::operator<(const IndirectReferenceObject& other) const {
 	auto object_number = GetReferencedObjectNumber();
 	auto other_object_number = other.GetReferencedObjectNumber();
 	if (object_number != other_object_number) {
@@ -204,23 +204,23 @@ bool IndirectObjectReference::operator<(const IndirectObjectReference& other) co
 	return false;
 }
 
-void IndirectObjectReference::ToPdfStreamInternal(IOutputStreamPtr output) const {
+void IndirectReferenceObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 	auto object_number = GetReferencedObjectNumber();
 	auto generation_number = GetReferencedGenerationNumber();
 	output << std::to_string(object_number) << " " << std::to_string(generation_number) << " R";
 }
 
-bool IndirectObjectReference::Equals(ObjectPtr other) const {
-	if (!ObjectUtils::IsType<IndirectObjectReferencePtr>(other)) {
+bool IndirectReferenceObject::Equals(ObjectPtr other) const {
+	if (!ObjectUtils::IsType<IndirectReferenceObjectPtr>(other)) {
 		return false;
 	}
 
-	auto other_obj = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(other);
+	auto other_obj = ObjectUtils::ConvertTo<IndirectReferenceObjectPtr>(other);
 	return Equals(*other_obj);
 }
 
-IndirectObjectReference* IndirectObjectReference::Clone(void) const {
-	IndirectObjectReferencePtr result(pdf_new IndirectObjectReference(), false);
+IndirectReferenceObject* IndirectReferenceObject::Clone(void) const {
+	IndirectReferenceObjectPtr result(pdf_new IndirectReferenceObject(), false);
 
 	auto object_number = GetReferencedObjectNumber();
 	auto generation_number = GetReferencedGenerationNumber();

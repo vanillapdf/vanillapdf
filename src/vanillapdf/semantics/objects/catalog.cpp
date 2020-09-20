@@ -201,7 +201,7 @@ PageTreePtr Catalog::CreatePages() {
 	entry->SetReference(raw_dictionary);
 	entry->SetInitialized();
 
-	IndirectObjectReferencePtr ref = make_deferred<IndirectObjectReference>(raw_dictionary);
+	IndirectReferenceObjectPtr ref = make_deferred<IndirectReferenceObject>(raw_dictionary);
 	_obj->Insert(constant::Name::Pages, ref);
 
 	return make_deferred<PageTree>(raw_dictionary);

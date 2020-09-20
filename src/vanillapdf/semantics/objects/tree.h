@@ -598,7 +598,7 @@ template <typename ValueT>
 inline void NameTree<ValueT>::Insert(const syntax::StringObjectPtr& key, ValueT value) {
 	auto raw_object = value->GetObject();
 
-	syntax::IndirectObjectReferencePtr reference = make_deferred<syntax::IndirectObjectReference>(raw_object);
+	syntax::IndirectReferenceObjectPtr reference = make_deferred<syntax::IndirectReferenceObject>(raw_object);
 	base_type::Insert(key, reference);
 }
 
@@ -636,7 +636,7 @@ template <typename ValueT>
 inline void NumberTree<ValueT>::Insert(const syntax::IntegerObjectPtr& key, ValueT value) {
 	auto raw_object = value->GetObject();
 
-	syntax::IndirectObjectReferencePtr reference(raw_object);
+	syntax::IndirectReferenceObjectPtr reference(raw_object);
 	base_type::Insert(key, reference);
 }
 

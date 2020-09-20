@@ -81,8 +81,8 @@ extern "C"
 		ObjectType_String,
 
 		/**
-		* \copybrief IndirectObjectReferenceHandle
-		* \see \ref IndirectObjectReferenceHandle
+		* \copybrief IndirectReferenceObjectHandle
+		* \see \ref IndirectReferenceObjectHandle
 		*/
 		ObjectType_IndirectReference
 	} ObjectType;

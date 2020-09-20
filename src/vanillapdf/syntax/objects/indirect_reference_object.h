@@ -1,5 +1,5 @@
-#ifndef _INDIRECT_OBJECT_REFERENCE_H
-#define _INDIRECT_OBJECT_REFERENCE_H
+#ifndef _INDIRECT_REFERENCE_OBJECT_H
+#define _INDIRECT_REFERENCE_OBJECT_H
 
 #include "syntax/utils/syntax_fwd.h"
 #include "syntax/objects/containable.h"
@@ -7,11 +7,11 @@
 namespace vanillapdf {
 namespace syntax {
 
-class IndirectObjectReference : public ContainableObject {
+class IndirectReferenceObject : public ContainableObject {
 public:
-	IndirectObjectReference() = default;
-	explicit IndirectObjectReference(ObjectPtr obj);
-	IndirectObjectReference(types::big_uint obj, types::ushort gen);
+	IndirectReferenceObject() = default;
+	explicit IndirectReferenceObject(ObjectPtr obj);
+	IndirectReferenceObject(types::big_uint obj, types::ushort gen);
 
 	void SetReferencedObject(ObjectPtr obj) const;
 	ObjectPtr GetReferencedObject() const;
@@ -25,12 +25,12 @@ public:
 	virtual Object::Type GetType(void) const noexcept override { return Object::Type::IndirectReference; }
 	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 
-	bool Equals(const IndirectObjectReference& other) const;
+	bool Equals(const IndirectReferenceObject& other) const;
 	virtual bool Equals(ObjectPtr other) const override;
 
-	bool operator==(const IndirectObjectReference& other) const { return Equals(other); }
-	bool operator!=(const IndirectObjectReference& other) const { return !Equals(other); }
-	bool operator<(const IndirectObjectReference& other) const;
+	bool operator==(const IndirectReferenceObject& other) const { return Equals(other); }
+	bool operator!=(const IndirectReferenceObject& other) const { return !Equals(other); }
+	bool operator<(const IndirectReferenceObject& other) const;
 
 	types::big_uint GetReferencedObjectNumber() const;
 	types::ushort GetReferencedGenerationNumber() const;
@@ -43,7 +43,7 @@ public:
 	virtual size_t Hash() const override;
 	virtual void OnChanged() const override;
 
-	virtual IndirectObjectReference* Clone(void) const override;
+	virtual IndirectReferenceObject* Clone(void) const override;
 
 private:
 	mutable types::big_uint m_reference_object_number = 0;
@@ -64,7 +64,7 @@ private:
 
 		// This unfortunately does not work on gcc.
 		// Problem is that class ObjectUtils requires
-		// definition of IndirectObjectReference,
+		// definition of IndirectReferenceObject,
 		// therefore this class is not yet defined.
 		// To work around this problem I've passed
 		// another defauled template parameter U
@@ -85,4 +85,4 @@ private:
 } // syntax
 } // vanillapdf
 
-#endif /* _INDIRECT_OBJECT_REFERENCE_H */
+#endif /* _INDIRECT_REFERENCE_OBJECT_H */

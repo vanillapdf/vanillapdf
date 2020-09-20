@@ -12,7 +12,7 @@ class Contents : public HighLevelObject<syntax::ObjectPtr>, public IModifyObserv
 public:
 	Contents() = default;
 	explicit Contents(syntax::StreamObjectPtr obj);
-	explicit Contents(syntax::ArrayObjectPtr<syntax::IndirectObjectReferencePtr> obj);
+	explicit Contents(syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> obj);
 	~Contents();
 
 	contents::BaseInstructionCollectionPtr Instructions(void) const;

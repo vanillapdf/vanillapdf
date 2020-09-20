@@ -120,7 +120,7 @@ ObjectPtr ParserBase::ReadIndirectReference() {
 
 		if (PeekTokenTypeSkip() == Token::Type::INDIRECT_REFERENCE_MARKER) {
 			auto reference_marker = ReadTokenWithTypeSkip(Token::Type::INDIRECT_REFERENCE_MARKER);
-			IndirectObjectReferencePtr result = make_deferred<IndirectObjectReference>(integer->GetUnsignedIntegerValue(), ValueConvertUtils::SafeConvert<types::ushort>(gen_number));
+			IndirectReferenceObjectPtr result = make_deferred<IndirectReferenceObject>(integer->GetUnsignedIntegerValue(), ValueConvertUtils::SafeConvert<types::ushort>(gen_number));
 			result->SetFile(_file);
 			return result;
 		}

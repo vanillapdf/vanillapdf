@@ -25,7 +25,7 @@
 #include "vanillapdf/syntax/c_string_object.h"
 #include "vanillapdf/syntax/c_stream_object.h"
 #include "vanillapdf/syntax/c_dictionary_object.h"
-#include "vanillapdf/syntax/c_indirect_object_reference.h"
+#include "vanillapdf/syntax/c_indirect_reference_object.h"
 #include "vanillapdf/syntax/c_integer_object.h"
 #include "vanillapdf/syntax/c_name_object.h"
 #include "vanillapdf/syntax/c_null_object.h"

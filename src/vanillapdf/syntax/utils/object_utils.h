@@ -9,7 +9,7 @@
 #include "syntax/objects/null_object.h"
 #include "syntax/objects/integer_object.h"
 #include "syntax/objects/real_object.h"
-#include "syntax/objects/indirect_object_reference.h"
+#include "syntax/objects/indirect_reference_object.h"
 #include "syntax/objects/mixed_array_object.h"
 #include "syntax/objects/array_object.h"
 
@@ -132,15 +132,15 @@ public:
 template <typename T>
 class DereferenceHelper {
 public:
-	static T Get(Object* ptr, std::map<IndirectObjectReference, bool>& visited, bool& result) {
+	static T Get(Object* ptr, std::map<IndirectReferenceObject, bool>& visited, bool& result) {
 		bool is_ref = (ptr->GetType() == Object::Type::IndirectReference);
 		if (!is_ref) {
 			return ConversionHelper<T>::Get(ptr, result);
 		}
 
-		auto converted = dynamic_cast<IndirectObjectReference*>(ptr);
+		auto converted = dynamic_cast<IndirectReferenceObject*>(ptr);
 		if (nullptr == converted) {
-			throw ConversionExceptionFactory<IndirectObjectReference>::Construct(ptr);
+			throw ConversionExceptionFactory<IndirectReferenceObject>::Construct(ptr);
 		}
 
 		auto found = visited.find(*converted);
@@ -169,7 +169,7 @@ public:
 		bool passed = false;
 		bool is_ref = (obj->GetType() == Object::Type::IndirectReference);
 		if (is_ref) {
-			std::map<IndirectObjectReference, bool> visited;
+			std::map<IndirectReferenceObject, bool> visited;
 			auto result = DereferenceHelper<T>::Get(obj, visited, passed);
 			return passed;
 		}
@@ -182,7 +182,7 @@ public:
 		bool passed = false;
 		bool is_ref = (obj->GetType() == Object::Type::IndirectReference);
 		if (is_ref) {
-			std::map<IndirectObjectReference, bool> visited;
+			std::map<IndirectReferenceObject, bool> visited;
 			auto result = DereferenceHelper<T>::Get(obj, visited, passed);
 
 			if (!passed) {
@@ -202,20 +202,20 @@ public:
 };
 
 template <>
-class ObjectTypeFunctor<IndirectObjectReferencePtr> {
+class ObjectTypeFunctor<IndirectReferenceObjectPtr> {
 public:
 	static bool IsType(Object* ptr) {
-		auto converted = dynamic_cast<IndirectObjectReference*>(ptr);
+		auto converted = dynamic_cast<IndirectReferenceObject*>(ptr);
 		return (nullptr != converted);
 	}
 
-	static IndirectObjectReferencePtr Convert(Object* ptr) {
-		auto converted = dynamic_cast<IndirectObjectReference*>(ptr);
+	static IndirectReferenceObjectPtr Convert(Object* ptr) {
+		auto converted = dynamic_cast<IndirectReferenceObject*>(ptr);
 		if (nullptr == converted) {
-			throw ConversionExceptionFactory<IndirectObjectReference>::Construct(ptr);
+			throw ConversionExceptionFactory<IndirectReferenceObject>::Construct(ptr);
 		}
 
-		return IndirectObjectReferencePtr(converted);
+		return IndirectReferenceObjectPtr(converted);
 	}
 };
 
@@ -226,7 +226,7 @@ public:
 		bool is_ref = (obj->GetType() == Object::Type::IndirectReference);
 		if (is_ref) {
 			bool found = false;
-			std::map<IndirectObjectReference, bool> visited;
+			std::map<IndirectReferenceObject, bool> visited;
 			auto converted = DereferenceHelper<ArrayObjectPtr<T>>::Get(obj, visited, found);
 			if (found) {
 				return true;
@@ -252,7 +252,7 @@ public:
 		bool is_ref = (obj->GetType() == Object::Type::IndirectReference);
 		if (is_ref) {
 			bool found = false;
-			std::map<IndirectObjectReference, bool> visited;
+			std::map<IndirectReferenceObject, bool> visited;
 			auto converted = DereferenceHelper<ArrayObjectPtr<T>>::Get(obj, visited, found);
 			if (found) {
 				return converted;

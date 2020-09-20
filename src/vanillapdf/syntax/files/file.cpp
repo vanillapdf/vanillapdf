@@ -116,8 +116,8 @@ void File::Initialize() {
 	if (last_trailer_dictionary->Contains(constant::Name::Encrypt)) {
 		_encryption_dictionary = last_trailer_dictionary->Find(constant::Name::Encrypt);
 
-		if (ObjectUtils::IsType<IndirectObjectReferencePtr>(_encryption_dictionary)) {
-			auto reference = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(_encryption_dictionary);
+		if (ObjectUtils::IsType<IndirectReferenceObjectPtr>(_encryption_dictionary)) {
+			auto reference = ObjectUtils::ConvertTo<IndirectReferenceObjectPtr>(_encryption_dictionary);
 			auto obj_number = reference->GetReferencedObjectNumber();
 			auto gen_number = reference->GetReferencedGenerationNumber();
 
@@ -134,7 +134,7 @@ void File::Initialize() {
 
 		if (trailer_dictionary->Contains(constant::Name::ID)) {
 			auto ids = trailer_dictionary->Find(constant::Name::ID);
-			assert(!ObjectUtils::IsType<IndirectObjectReferencePtr>(ids) && "Document ID is indirect reference");
+			assert(!ObjectUtils::IsType<IndirectReferenceObjectPtr>(ids) && "Document ID is indirect reference");
 
 			// I have found document, that have document ID as a single integer "77777777777777777" issue5599.pdf.
 			// Adobe acrobat can open this document without any notifications,
@@ -638,8 +638,8 @@ void File::FixObjectReferences(const std::map<ObjectPtr, ObjectPtr>& map, std::m
 	// Visit
 	visited[copied] = true;
 
-	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(copied)) {
-		auto copied_ref = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(copied);
+	if (ObjectUtils::IsType<IndirectReferenceObjectPtr>(copied)) {
+		auto copied_ref = ObjectUtils::ConvertTo<IndirectReferenceObjectPtr>(copied);
 
 		bool found = false;
 		for (auto item : map) {
@@ -732,8 +732,8 @@ void File::DeepCopyObject(std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPt
 
 	ShallowCopyObject(map, original);
 
-	if (ObjectUtils::IsType<IndirectObjectReferencePtr>(original)) {
-		auto ref = ObjectUtils::ConvertTo<IndirectObjectReferencePtr>(original);
+	if (ObjectUtils::IsType<IndirectReferenceObjectPtr>(original)) {
+		auto ref = ObjectUtils::ConvertTo<IndirectReferenceObjectPtr>(original);
 		auto referenced_obj = ref->GetReferencedObject();
 		DeepCopyObject(map, visited, referenced_obj);
 	}

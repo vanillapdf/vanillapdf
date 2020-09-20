@@ -91,7 +91,7 @@ void PageObject::SetContents(ContentsPtr contents) {
 		assert(removed && "Unable to remove existing item"); UNUSED(removed);
 	}
 
-	IndirectObjectReferencePtr contents_ref = make_deferred<IndirectObjectReference>(contents->GetObject());
+	IndirectReferenceObjectPtr contents_ref = make_deferred<IndirectReferenceObject>(contents->GetObject());
 	_obj->Insert(Name::Contents, contents_ref);
 }
 
@@ -138,7 +138,7 @@ bool PageObject::GetContents(OutputContentsPtr& result) const {
 	}
 
 	if (is_array) {
-		auto data = ObjectUtils::ConvertTo<ArrayObjectPtr<IndirectObjectReferencePtr>>(*content);
+		auto data = ObjectUtils::ConvertTo<ArrayObjectPtr<IndirectReferenceObjectPtr>>(*content);
 		ContentsPtr contents = make_deferred<Contents>(data);
 		m_contents = contents;
 		result = contents;

@@ -127,11 +127,11 @@ extern "C"
 	* \brief The page of the document that shall be displayed.
 	*
 	* The object type shall be either
-	* IntegerObjectHandle or IndirectObjectReferenceHandle.
+	* IntegerObjectHandle or IndirectReferenceObjectHandle.
 	*
 	* IntegerObjectHandle means index in document's page tree.
 	*
-	* IndirectObjectReferenceHandle means it is indirect reference to
+	* IndirectReferenceObjectHandle means it is indirect reference to
 	* \ref PageObjectHandle representing the destination page.
 	* \see \ref PageTreeHandle
 	*/

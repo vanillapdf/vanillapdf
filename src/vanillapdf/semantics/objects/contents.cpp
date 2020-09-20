@@ -22,7 +22,7 @@ Contents::Contents(StreamObjectPtr obj) : HighLevelObject(obj) {
 	m_instructions->Subscribe(this);
 }
 
-Contents::Contents(ArrayObjectPtr<IndirectObjectReferencePtr> obj)
+Contents::Contents(ArrayObjectPtr<IndirectReferenceObjectPtr> obj)
 	: HighLevelObject(obj->Data()) {
 	m_instructions->Subscribe(this);
 }
@@ -41,8 +41,8 @@ BaseInstructionCollectionPtr Contents::Instructions(void) const {
 		auto converted = ObjectUtils::ConvertTo<StreamObjectPtr>(_obj);
 		auto content_stream = make_deferred<ContentStream>(converted);
 		contents.push_back(content_stream);
-	} else if (ObjectUtils::IsType<ArrayObjectPtr<IndirectObjectReferencePtr>>(_obj)) {
-		auto converted = ObjectUtils::ConvertTo<ArrayObjectPtr<IndirectObjectReferencePtr>>(_obj);
+	} else if (ObjectUtils::IsType<ArrayObjectPtr<IndirectReferenceObjectPtr>>(_obj)) {
+		auto converted = ObjectUtils::ConvertTo<ArrayObjectPtr<IndirectReferenceObjectPtr>>(_obj);
 		for (auto ref : converted) {
 			auto stream = ref->GetReferencedObjectAs<StreamObjectPtr>();
 			auto content_stream = make_deferred<ContentStream>(stream);

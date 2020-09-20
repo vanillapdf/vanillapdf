@@ -85,7 +85,7 @@ class ArrayObjectIterator;
 class MixedArrayObject;
 class BooleanObject;
 class DictionaryObject;
-class IndirectObjectReference;
+class IndirectReferenceObject;
 class IntegerObject;
 class NameObject;
 class NullObject;
@@ -115,7 +115,7 @@ class StringObjectPtr; using OutputStringObjectPtr = OutputPointer<StringObjectP
 using ContainableObjectPtr = Deferred<ContainableObject>; using OutputContainableObjectPtr = OutputPointer<ContainableObjectPtr>;
 using NameObjectPtr = Deferred<NameObject>; using OutputNameObjectPtr = OutputPointer<NameObjectPtr>;
 using BooleanObjectPtr = Deferred<BooleanObject>;
-using IndirectObjectReferencePtr = Deferred<IndirectObjectReference>;
+using IndirectReferenceObjectPtr = Deferred<IndirectReferenceObject>;
 using IntegerObjectPtr = Deferred<IntegerObject>; using OutputIntegerObjectPtr = OutputPointer<IntegerObjectPtr>;
 using NullObjectPtr = Deferred<NullObject>;
 using RealObjectPtr = Deferred<RealObject>;

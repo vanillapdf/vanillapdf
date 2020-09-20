@@ -12,7 +12,7 @@
 #include "syntax/objects/integer_object.h"
 #include "syntax/objects/real_object.h"
 #include "syntax/objects/string_object.h"
-#include "syntax/objects/indirect_object_reference.h"
+#include "syntax/objects/indirect_reference_object.h"
 #include "syntax/objects/mixed_array_object.h"
 
 // recursive

@@ -175,7 +175,7 @@ error_type process_boolean(BooleanObjectHandle* obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_reference(IndirectObjectReferenceHandle* reference, int nested) {
+error_type process_reference(IndirectReferenceObjectHandle* reference, int nested) {
 	ObjectType type;
 	biguint_type obj_num = 0;
 	ushort_type gen_num = 0;
@@ -185,9 +185,9 @@ error_type process_reference(IndirectObjectReferenceHandle* reference, int neste
 	print_spaces(nested);
 	print_text("Indirect reference begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(IndirectObjectReference_GetReferencedObjectNumber(reference, &obj_num));
-	RETURN_ERROR_IF_NOT_SUCCESS(IndirectObjectReference_GetReferencedGenerationNumber(reference, &gen_num));
-	RETURN_ERROR_IF_NOT_SUCCESS(IndirectObjectReference_GetReferencedObject(reference, &child));
+	RETURN_ERROR_IF_NOT_SUCCESS(IndirectReferenceObject_GetReferencedObjectNumber(reference, &obj_num));
+	RETURN_ERROR_IF_NOT_SUCCESS(IndirectReferenceObject_GetReferencedGenerationNumber(reference, &gen_num));
+	RETURN_ERROR_IF_NOT_SUCCESS(IndirectReferenceObject_GetReferencedObject(reference, &child));
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_GetType(child, &type));
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_TypeName(type, &type_name));
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(child));
@@ -271,7 +271,7 @@ error_type process_object(ObjectHandle* obj, int nested) {
 	RealObjectHandle* real = NULL;
 	BooleanObjectHandle* boolean = NULL;
 	NullObjectHandle* null_object = NULL;
-	IndirectObjectReferenceHandle* indirect_reference = NULL;
+	IndirectReferenceObjectHandle* indirect_reference = NULL;
 	ArrayObjectHandle* arr = NULL;
 	IntegerObjectHandle* integer = NULL;
 	StreamObjectHandle* stream = NULL;
@@ -319,7 +319,7 @@ error_type process_object(ObjectHandle* obj, int nested) {
 			RETURN_ERROR_IF_NOT_SUCCESS(process_string(string, nested));
 			break;
 		case ObjectType_IndirectReference:
-			RETURN_ERROR_IF_NOT_SUCCESS(IndirectObjectReference_FromObject(obj, &indirect_reference));
+			RETURN_ERROR_IF_NOT_SUCCESS(IndirectReferenceObject_FromObject(obj, &indirect_reference));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_reference(indirect_reference, nested));
 			break;
 		default:

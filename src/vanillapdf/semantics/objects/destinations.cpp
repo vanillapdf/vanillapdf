@@ -64,7 +64,7 @@ std::unique_ptr<DestinationBase> DestinationBase::Create(syntax::MixedArrayObjec
 	// page_number_obj shall be indirect reference to page object
 	// for remote go to actions it can be integer value of destination page
 	if (!syntax::ObjectUtils::IsType<syntax::IntegerObjectPtr>(page_number_obj)
-		&& !syntax::ObjectUtils::IsType<syntax::IndirectObjectReferencePtr>(page_number_obj)) {
+		&& !syntax::ObjectUtils::IsType<syntax::IndirectReferenceObjectPtr>(page_number_obj)) {
 		throw GeneralException("Invalid page number in destination");
 	}
 
@@ -126,7 +126,7 @@ std::unique_ptr<DestinationBase> DestinationBase::Create(syntax::DictionaryObjec
 	// page_number_obj shall be indirect reference to page object
 	// for remote go to actions it can be integer value of destination page
 	if (!syntax::ObjectUtils::IsType<syntax::IntegerObjectPtr>(page_number_obj)
-		&& !syntax::ObjectUtils::IsType<syntax::IndirectObjectReferencePtr>(page_number_obj)) {
+		&& !syntax::ObjectUtils::IsType<syntax::IndirectReferenceObjectPtr>(page_number_obj)) {
 		throw GeneralException("Invalid page number in destination");
 	}
 
@@ -236,7 +236,7 @@ void NamedDestinations::Insert(const syntax::NameObject& name, DestinationPtr va
 
 	auto raw_obj = value->GetObject();
 	if (raw_obj->IsIndirect()) {
-		syntax::IndirectObjectReferencePtr reference = make_deferred<syntax::IndirectObjectReference>(raw_obj);
+		syntax::IndirectReferenceObjectPtr reference = make_deferred<syntax::IndirectReferenceObject>(raw_obj);
 		_obj->Insert(name, reference);
 	} else {
 		auto containable = syntax::ObjectUtils::ConvertTo<syntax::ContainableObjectPtr>(raw_obj);

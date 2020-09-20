@@ -45,7 +45,7 @@
      <DisplayString>{m_value}</DisplayString>
    </Type>
 
-   <Type Name="vanillapdf::syntax::IndirectObjectReference">
+   <Type Name="vanillapdf::syntax::IndirectReferenceObject">
      <DisplayString>{m_reference_object_number} {m_reference_generation_number} R</DisplayString>
      <Expand>
        <Item Name="Reference" Condition="m_reference.m_counter._Ptr != nullptr &amp;&amp; m_reference.m_ptr != nullptr">m_reference</Item>

@@ -38,7 +38,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SYNTAX_SOURCES
 	implementation/syntax/c_file_writer.cpp
 	implementation/syntax/c_file_writer_observer.cpp
 	implementation/syntax/c_filter.cpp
-	implementation/syntax/c_indirect_object_reference.cpp
+	implementation/syntax/c_indirect_reference_object.cpp
 	implementation/syntax/c_integer_object.cpp
 	implementation/syntax/c_name_object.cpp
 	implementation/syntax/c_null_object.cpp
@@ -138,7 +138,7 @@ set(VANILLAPDF_SYNTAX_SOURCES
 	
 	syntax/objects/boolean_object.cpp
 	syntax/objects/dictionary_object.cpp
-	syntax/objects/indirect_object_reference.cpp
+	syntax/objects/indirect_reference_object.cpp
 	syntax/objects/integer_object.cpp
 	syntax/objects/mixed_array_object.cpp
 	syntax/objects/name_object.cpp
@@ -258,7 +258,7 @@ set(VANILLAPDF_SYNTAX_HEADERS
 	syntax/objects/boolean_object.h
 	syntax/objects/containable.h
 	syntax/objects/dictionary_object.h
-	syntax/objects/indirect_object_reference.h
+	syntax/objects/indirect_reference_object.h
 	syntax/objects/integer_object.h
 	syntax/objects/name_object.h
 	syntax/objects/null_object.h

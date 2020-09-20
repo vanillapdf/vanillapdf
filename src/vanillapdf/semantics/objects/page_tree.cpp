@@ -121,8 +121,8 @@ void PageTree::Insert(PageObjectPtr object, types::size_type page_index) {
 	auto array_index = page_index - 1;
 
 	auto raw_obj = object->GetObject();
-	auto kids = _obj->FindAs<ArrayObjectPtr<IndirectObjectReferencePtr>>(constant::Name::Kids);
-	kids->Insert(make_deferred<IndirectObjectReference>(raw_obj), array_index);
+	auto kids = _obj->FindAs<ArrayObjectPtr<IndirectReferenceObjectPtr>>(constant::Name::Kids);
+	kids->Insert(make_deferred<IndirectReferenceObject>(raw_obj), array_index);
 	object->SetParent(make_deferred<PageTreeNode>(_obj));
 
 	UpdateKidsCount();
@@ -130,7 +130,7 @@ void PageTree::Insert(PageObjectPtr object, types::size_type page_index) {
 }
 
 void PageTree::Append(PageObjectPtr object) {
-	auto kids = _obj->FindAs<ArrayObjectPtr<IndirectObjectReferencePtr>>(constant::Name::Kids);
+	auto kids = _obj->FindAs<ArrayObjectPtr<IndirectReferenceObjectPtr>>(constant::Name::Kids);
 
 	// Insert at the end of kids array
 	Insert(object, kids->GetSize() + 1);
@@ -139,7 +139,7 @@ void PageTree::Append(PageObjectPtr object) {
 void PageTree::Remove(types::size_type page_index) {
 	auto array_index = page_index - 1;
 
-	auto kids = _obj->FindAs<ArrayObjectPtr<IndirectObjectReferencePtr>>(constant::Name::Kids);
+	auto kids = _obj->FindAs<ArrayObjectPtr<IndirectReferenceObjectPtr>>(constant::Name::Kids);
 	bool removed = kids->Remove(array_index);
 	assert(removed && "Could not remove page"); UNUSED(removed);
 
