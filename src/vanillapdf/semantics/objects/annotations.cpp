@@ -41,8 +41,8 @@ TripleDAnnotation::TripleDAnnotation(syntax::DictionaryObjectPtr root) : Annotat
 RedactionAnnotation::RedactionAnnotation(syntax::DictionaryObjectPtr root) : AnnotationBase(root) {}
 PageAnnotations::PageAnnotations(syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> root) : HighLevelObject(root) {}
 
-types::size_type PageAnnotations::Size() const {
-	return _obj->Size();
+types::size_type PageAnnotations::GetSize() const {
+	return _obj->GetSize();
 }
 
 AnnotationPtr PageAnnotations::At(types::size_type index) const {

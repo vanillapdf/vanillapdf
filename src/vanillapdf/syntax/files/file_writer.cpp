@@ -337,9 +337,9 @@ void FileWriter::CloneHybridStreams(FilePtr source, FilePtr destination) {
 	auto dest_iterator = destination_chain->begin();
 
 	// Following for loop would crash if this is not true
-	assert(source_chain->Size() == destination_chain->Size() && "Error in xref cloning");
+	assert(source_chain->GetSize() == destination_chain->GetSize() && "Error in xref cloning");
 
-	if (source_chain->Size() != destination_chain->Size()) {
+	if (source_chain->GetSize() != destination_chain->GetSize()) {
 		throw GeneralException("Invalid xref size");
 	}
 
@@ -395,9 +395,9 @@ void FileWriter::FixStreamReferences(XrefChainPtr source, XrefChainPtr destinati
 	auto dest_iterator = destination->begin();
 
 	// Following for loop would crash if this is not true
-	assert(source->Size() == destination->Size() && "Error in xref cloning");
+	assert(source->GetSize() == destination->GetSize() && "Error in xref cloning");
 
-	if (source->Size() != destination->Size()) {
+	if (source->GetSize() != destination->GetSize()) {
 		throw GeneralException("Invalid xref size");
 	}
 
@@ -575,7 +575,7 @@ void FileWriter::RecalculateXrefSize(XrefChainPtr chain, XrefBasePtr source) {
 	// including those defined in the cross-reference stream referenced by the XRefStm entry.
 
 	// Recalculate hybrid xref size as well
-	types::size_type new_size = source->Size();
+	types::size_type new_size = source->GetSize();
 	if (ConvertUtils<XrefBasePtr>::IsType<XrefTablePtr>(source)) {
 		auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(source);
 
@@ -584,7 +584,7 @@ void FileWriter::RecalculateXrefSize(XrefChainPtr chain, XrefBasePtr source) {
 			auto prev_xref = FindPreviousXref(chain, source);
 
 			// This is ambiguous "large enough to include all objects"
-			auto new_hybrid_size = prev_xref->Size();
+			auto new_hybrid_size = prev_xref->GetSize();
 
 			auto hybrid_stream_trailer = hybrid_stream->GetTrailerDictionary();
 			if (!hybrid_stream_trailer->Contains(constant::Name::Size)) {
@@ -748,7 +748,7 @@ XrefBasePtr FileWriter::CloneXref(FilePtr destination, XrefBasePtr source) {
 		result = new_stream;
 	}
 
-	auto table_size = source->Size();
+	auto table_size = source->GetSize();
 	auto table_items = source->Entries();
 
 	for (decltype(table_size) i = 0; i < table_size; ++i) {
@@ -835,7 +835,7 @@ XrefBasePtr FileWriter::CloneXref(FilePtr destination, XrefBasePtr source) {
 }
 
 void FileWriter::WriteXrefObjects(IOutputStreamPtr output, XrefBasePtr source) {
-	auto table_size = source->Size();
+	auto table_size = source->GetSize();
 	auto table_items = source->Entries();
 
 	for (decltype(table_size) i = 0; i < table_size; ++i) {
@@ -895,7 +895,7 @@ DictionaryObjectPtr FileWriter::CloneTrailerDictionary(FilePtr source, XrefBaseP
 	DictionaryObjectPtr new_trailer;
 
 	// Set size of new entries
-	IntegerObjectPtr new_size = make_deferred<IntegerObject>(xref->Size());
+	IntegerObjectPtr new_size = make_deferred<IntegerObject>(xref->GetSize());
 	new_trailer->Insert(constant::Name::Size, new_size);
 
 	auto source_trailer = xref->GetTrailerDictionary();
@@ -1009,7 +1009,7 @@ XrefBasePtr FileWriter::CreateIncrementalXref(FilePtr source, FilePtr destinatio
 	for (auto it = chain->Begin(); *it != *end; ++(*it)) {
 		auto xref = it->Value();
 
-		auto table_size = xref->Size();
+		auto table_size = xref->GetSize();
 		auto table_items = xref->Entries();
 		for (decltype(table_size) i = 0; i < table_size; ++i) {
 			auto entry = table_items[i];
@@ -1279,7 +1279,7 @@ void FileWriter::WriteXrefTable(IOutputStreamPtr output, XrefTablePtr xref_table
 		xref_table->SetOffset(offset);
 	}
 
-	auto table_size = xref_table->Size();
+	auto table_size = xref_table->GetSize();
 	auto table_items = xref_table->Entries();
 
 	output->Write("xref");
@@ -1500,7 +1500,7 @@ void FileWriter::ApplyWatermarkPageNode(DictionaryObjectPtr obj, DictionaryObjec
 
 		if (ObjectUtils::IsType<ArrayObjectPtr<StreamObjectPtr>>(contents)) {
 			auto content_array = ObjectUtils::ConvertTo<ArrayObjectPtr<StreamObjectPtr>>(contents);
-			auto content_array_size = content_array->Size();
+			auto content_array_size = content_array->GetSize();
 
 			if (content_array_size > 0) {
 				auto first_stream = content_array->At(0);
@@ -1573,7 +1573,7 @@ void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj, ArrayObjectPtr
 	instructions->push_back(end_text_operation);
 
 	// Watermark image
-	if (!media_box.empty() && media_box->Size() == 4) {
+	if (!media_box.empty() && media_box->GetSize() == 4) {
 
 		const int WATERMARK_WIDTH_RAW = 201;
 		const int WATERMARK_HEIGHT_RAW = 142;

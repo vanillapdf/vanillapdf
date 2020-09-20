@@ -162,7 +162,7 @@ BufferPtr StreamObject::GetBodyRaw() const {
 
 	if (is_filter_array) {
 		auto filter_array = _header->FindAs<ArrayObjectPtr<NameObjectPtr>>(constant::Name::Filter);
-		for (unsigned int i = 0; i < filter_array->Size(); ++i) {
+		for (unsigned int i = 0; i < filter_array->GetSize(); ++i) {
 			auto current_filter = (*filter_array)[i];
 			if (current_filter == constant::Name::Crypt) {
 				assert(i == 0 && "Crypt filter is not first");
@@ -241,11 +241,11 @@ BufferPtr StreamObject::GetBody() const {
 		bool has_params = _header->Contains(constant::Name::DecodeParms);
 		if (has_params) {
 			params = _header->FindAs<MixedArrayObjectPtr>(constant::Name::DecodeParms);
-			assert(filter_array->Size() == params->Size());
+			assert(filter_array->GetSize() == params->GetSize());
 		}
 
 		BufferPtr result = GetBodyRaw();
-		for (unsigned int i = 0; i < filter_array->Size(); ++i) {
+		for (unsigned int i = 0; i < filter_array->GetSize(); ++i) {
 			auto current_filter = (*filter_array)[i];
 			if (current_filter == constant::Name::Crypt) {
 				continue;
@@ -321,14 +321,14 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 		if (has_params) {
 			params = _header->FindAs<MixedArrayObjectPtr>(constant::Name::DecodeParms);
 
-			auto filters_size = filter_array->Size();
-			auto params_size = params->Size();
+			auto filters_size = filter_array->GetSize();
+			auto params_size = params->GetSize();
 
 			assert(filters_size == params_size && "Filter size does not correspond to the params size");
 			UNUSED(filters_size); UNUSED(params_size);
 		}
 
-		auto filters_size = filter_array->Size();
+		auto filters_size = filter_array->GetSize();
 		for (decltype(filters_size) i = 0; i < filters_size; ++i) {
 			auto current_filter = (*filter_array)[i];
 			if (current_filter == constant::Name::Crypt) {
@@ -337,7 +337,7 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 
 			auto filter = FilterBase::GetFilterByName(current_filter);
 
-			if (has_params && i < params->Size()) {
+			if (has_params && i < params->GetSize()) {
 				auto current_param = params->At(i);
 				bool is_param_dictionary = ObjectUtils::IsType<DictionaryObjectPtr>(current_param);
 				if (is_param_dictionary) {

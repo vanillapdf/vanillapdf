@@ -209,7 +209,7 @@ public:
 class PageAnnotations : public HighLevelObject<syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr>> {
 public:
 	explicit PageAnnotations(syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> root);
-	types::size_type Size() const;
+	types::size_type GetSize() const;
 	AnnotationPtr At(types::size_type index) const;
 };
 

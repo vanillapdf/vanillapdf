@@ -14,8 +14,8 @@ PageRange::SubRange::SubRange(syntax::IntegerObjectPtr first, syntax::IntegerObj
 }
 
 PageRange::PageRange(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> obj) : HighLevelObject(obj) {
-	assert(obj->Size() % 2 == 0);
-	if (obj->Size() % 2 != 0) {
+	assert(obj->GetSize() % 2 == 0);
+	if (obj->GetSize() % 2 != 0) {
 		throw SemanticContextExceptionFactory::Construct<syntax::ArrayObject<syntax::IntegerObjectPtr>, PageRange>(obj);
 	}
 }
@@ -28,8 +28,8 @@ syntax::IntegerObjectPtr PageRange::SubRange::LastPage(void) const {
 	return _last_page;
 }
 
-types::size_type PageRange::Size(void) const {
-	return _obj->Size() / 2;
+types::size_type PageRange::GetSize(void) const {
+	return _obj->GetSize() / 2;
 }
 
 PageRange::SubRangePtr PageRange::At(types::size_type at) const {

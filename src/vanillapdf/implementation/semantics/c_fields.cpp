@@ -28,13 +28,13 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_GetType(FieldHandle* handle, 
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_Size(FieldCollectionHandle* handle, size_type* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_GetSize(FieldCollectionHandle* handle, size_type* result) {
 	FieldCollection* collection = reinterpret_cast<FieldCollection*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(collection);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try {
-		*result = collection->Size();
+		*result = collection->GetSize();
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }

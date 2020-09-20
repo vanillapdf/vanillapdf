@@ -57,8 +57,8 @@ bool SignatureField::Value(OuputDigitalSignaturePtr& result) const {
 	return true;
 }
 
-types::size_type FieldCollection::Size() const {
-	return _obj->Size();
+types::size_type FieldCollection::GetSize() const {
+	return _obj->GetSize();
 }
 
 FieldPtr FieldCollection::At(types::size_type index) const {

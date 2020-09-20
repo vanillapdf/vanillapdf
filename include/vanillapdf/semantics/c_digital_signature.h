@@ -137,7 +137,7 @@ extern "C"
 	/**
 	* \brief Get size of byte range collection
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_Size(ByteRangeCollectionHandle* handle, size_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_GetSize(ByteRangeCollectionHandle* handle, size_type* result);
 
 	/**
 	* \brief

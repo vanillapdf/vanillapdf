@@ -352,7 +352,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageRange_GetSize(PageRangeHandle* 
 
 	try
 	{
-		*result = obj->Size();
+		*result = obj->GetSize();
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }

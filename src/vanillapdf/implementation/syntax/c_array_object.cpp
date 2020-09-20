@@ -35,13 +35,13 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle* h
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Size(ArrayObjectHandle* handle, size_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_GetSize(ArrayObjectHandle* handle, size_type* result)
 {
 	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	*result = obj->Size();
+	*result = obj->GetSize();
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 

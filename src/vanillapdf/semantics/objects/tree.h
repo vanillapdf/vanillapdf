@@ -327,10 +327,10 @@ void TreeBase<KeyT, ValueT>::Rebuild() {
 
 	//syntax::DictionaryObjectPtr leaf_dict;
 
-	if (leaf_values->Size() > 0) {
+	if (leaf_values->GetSize() > 0) {
 		syntax::MixedArrayObjectPtr limit_values;
 		auto lower_bound = leaf_values->At(0);
-		auto upper_bound = leaf_values->At(leaf_values->Size() - 2);
+		auto upper_bound = leaf_values->At(leaf_values->GetSize() - 2);
 
 		// Clone the raw values
 		limit_values->Append(lower_bound->Clone());
@@ -391,7 +391,7 @@ bool TreeBase<KeyT, ValueT>::Remove(const KeyT& key) {
 
 template <typename KeyT, typename ValueT>
 void TreeBase<KeyT, ValueT>::InsertPairsToMap(std::map<KeyT, syntax::ContainableObjectPtr>& map, const syntax::MixedArrayObjectPtr values) const {
-	auto size = values->Size();
+	auto size = values->GetSize();
 	for (decltype(size) i = 0; i + 1 < size; i += 2) {
 		auto key_obj = values->At(i);
 		auto value_obj = values->At(i + 1);
@@ -453,7 +453,7 @@ std::map<KeyT, syntax::ContainableObjectPtr> TreeBase<KeyT, ValueT>::GetAllKeys(
 
 template <typename KeyT, typename ValueT>
 bool TreeBase<KeyT, ValueT>::ContainsInternal(const syntax::MixedArrayObjectPtr values, const KeyT& key) const {
-	int size = values->Size();
+	int size = values->GetSize();
 	for (int i = 0; i + 1 < size; i += 2) {
 		if (values->At(i)->Equals(key)) {
 			return true;
@@ -494,8 +494,8 @@ bool TreeBase<KeyT, ValueT>::ContainsInternal(const TreeNodeBasePtr node, const 
 	if (node_type == TreeNodeBase::TreeNodeType::Leaf) {
 		auto leaf = ConvertUtils<TreeNodeBasePtr>::ConvertTo<TreeNodeLeafPtr>(node);
 		auto limits = leaf->Limits();
-		assert(limits->Size() == 2);
-		if (limits->Size() != 2)
+		assert(limits->GetSize() == 2);
+		if (limits->GetSize() != 2)
 			return false;
 
 		if (key < limits->At(0) || limits->At(1) < key)
@@ -509,7 +509,7 @@ bool TreeBase<KeyT, ValueT>::ContainsInternal(const TreeNodeBasePtr node, const 
 
 template <typename KeyT, typename ValueT>
 ValueT TreeBase<KeyT, ValueT>::FindInternal(const syntax::MixedArrayObjectPtr values, const KeyT& key) const {
-	int size = values->Size();
+	int size = values->GetSize();
 	for (int i = 0; i + 1 < size; i += 2) {
 		if (values->At(i)->Equals(key)) {
 			return values->At(i + 1);
@@ -556,8 +556,8 @@ ValueT TreeBase<KeyT, ValueT>::FindInternal(const TreeNodeBasePtr node, const Ke
 	if (node_type == TreeNodeBase::TreeNodeType::Leaf) {
 		auto leaf = ConvertUtils<TreeNodeBasePtr>::ConvertTo<TreeNodeLeafPtr>(node);
 		auto limits = leaf->Limits();
-		assert(limits->Size() == 2);
-		if (limits->Size() != 2)
+		assert(limits->GetSize() == 2);
+		if (limits->GetSize() != 2)
 			throw GeneralException("Tree node has incorrect size");
 
 		if (key < limits->At(0) || limits->At(1) < key)

@@ -148,7 +148,7 @@ void Document::RecalculatePageContents() {
 
 		if (ObjectUtils::IsType<ArrayObjectPtr<StreamObjectPtr>>(object)) {
 			auto stream_array = ObjectUtils::ConvertTo<ArrayObjectPtr<StreamObjectPtr>>(object);
-			auto stream_array_size = stream_array->Size();
+			auto stream_array_size = stream_array->GetSize();
 
 			assert(0 != stream_array_size && "Content stream array is empty");
 			if (0 == stream_array_size) {

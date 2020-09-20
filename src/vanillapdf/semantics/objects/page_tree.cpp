@@ -65,7 +65,7 @@ PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
 
 PageObjectPtr PageTree::PageInternal(PageTreeNodePtr node, types::size_type page_number, types::size_type& processed) const {
 	auto kids = node->Kids();
-	auto count = kids->Size();
+	auto count = kids->GetSize();
 	for (decltype(count) i = 0; i < count; ++i) {
 		auto kid = kids->At(i);
 
@@ -106,7 +106,7 @@ PageObjectPtr PageTree::PageInternal(PageTreeNodePtr node, types::size_type page
 
 bool PageTree::HasTreeChilds(PageTreeNodePtr node) const {
 	auto kids = node->Kids();
-	auto count = kids->Size();;
+	auto count = kids->GetSize();;
 	for (decltype(count) i = 0; i < count; ++i) {
 		auto kid = kids->At(i);
 		if (kid->GetNodeType() == PageNodeBase::NodeType::Tree) {
@@ -133,7 +133,7 @@ void PageTree::Append(PageObjectPtr object) {
 	auto kids = _obj->FindAs<ArrayObjectPtr<IndirectObjectReferencePtr>>(constant::Name::Kids);
 
 	// Insert at the end of kids array
-	Insert(object, kids->Size() + 1);
+	Insert(object, kids->GetSize() + 1);
 }
 
 void PageTree::Remove(types::size_type page_index) {

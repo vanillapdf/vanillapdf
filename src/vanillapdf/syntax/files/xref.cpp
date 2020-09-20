@@ -45,8 +45,8 @@ void XrefStream::RecalculateContent() {
 
 	auto fields = header->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::W);
 
-	assert(fields->Size() == 3);
-	if (fields->Size() != 3) {
+	assert(fields->GetSize() == 3);
+	if (fields->GetSize() != 3) {
 		throw GeneralException("Xref stream width does not contain three integers");
 	}
 
@@ -201,7 +201,7 @@ bool XrefBase::Remove(XrefEntryBasePtr entry) {
 	return true;
 }
 
-types::size_type XrefBase::Size(void) const noexcept {
+types::size_type XrefBase::GetSize(void) const noexcept {
 	return _entries.size();
 }
 

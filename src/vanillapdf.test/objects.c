@@ -116,7 +116,7 @@ error_type process_array(ArrayObjectHandle* arr, int nested) {
 	print_spaces(nested);
 	print_text("Array begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_Size(arr, &size));
+	RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_GetSize(arr, &size));
 
 	print_spaces(nested + 1);
 	unsigned long long converted_size = size;

@@ -133,12 +133,12 @@ extern "C"
 	* For cross-reference tables it is the trailer dictionary after all entries.
 	* For cross-reference streams it is the streams dictionary.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Xref_TrailerDictionary(XrefHandle* handle, DictionaryObjectHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Xref_GetTrailerDictionary(XrefHandle* handle, DictionaryObjectHandle** result);
 
 	/**
 	* \brief Get byte offset in the decoded stream from the beginning of the file to the beginning of the xref keyword in the last cross-reference section.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Xref_LastXrefOffset(XrefHandle* handle, offset_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Xref_GetLastXrefOffset(XrefHandle* handle, offset_type* result);
 
 	/**
 	* \brief Get cross-reference entry iterator

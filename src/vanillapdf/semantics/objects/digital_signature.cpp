@@ -10,8 +10,8 @@ namespace semantics {
 
 DigitalSignature::DigitalSignature(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
 ByteRangeCollection::ByteRangeCollection(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> obj) : HighLevelObject(obj) {
-	assert(obj->Size() % 2 == 0);
-	if (obj->Size() % 2 != 0) {
+	assert(obj->GetSize() % 2 == 0);
+	if (obj->GetSize() % 2 != 0) {
 		throw SemanticContextExceptionFactory::Construct<syntax::ArrayObject<syntax::IntegerObjectPtr>, ByteRangeCollection>(obj);
 	}
 }
@@ -28,8 +28,8 @@ syntax::IntegerObjectPtr ByteRange::Length(void) const {
 	return m_length;
 }
 
-types::size_type ByteRangeCollection::Size(void) const {
-	return _obj->Size() / 2;
+types::size_type ByteRangeCollection::GetSize(void) const {
+	return _obj->GetSize() / 2;
 }
 
 ByteRangePtr ByteRangeCollection::At(types::size_type at) const {

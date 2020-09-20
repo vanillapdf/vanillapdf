@@ -24,7 +24,7 @@ public:
 	void Insert(BufferPtr value, size_type at);
 	bool Remove(size_type at);
 
-	size_type Size(void) const noexcept { return m_data.size(); }
+	size_type GetSize(void) const noexcept { return m_data.size(); }
 	const BufferPtr& operator[](size_type i) const { return m_data[i]; }
 	BufferPtr& operator[](size_type i) { return m_data[i]; }
 	const BufferPtr& At(size_type at) const { return m_data.at(at); }

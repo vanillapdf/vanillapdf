@@ -54,7 +54,7 @@ std::unique_ptr<DestinationBase> DestinationBase::Create(syntax::ObjectPtr root)
 }
 
 std::unique_ptr<DestinationBase> DestinationBase::Create(syntax::MixedArrayObjectPtr root) {
-	if (root->Size() < 2) {
+	if (root->GetSize() < 2) {
 		throw GeneralException("Invalid destination array");
 	}
 
@@ -116,7 +116,7 @@ std::unique_ptr<DestinationBase> DestinationBase::Create(syntax::DictionaryObjec
 
 	auto destination = root->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::D);
 
-	if (destination->Size() < 2) {
+	if (destination->GetSize() < 2) {
 		throw GeneralException("Invalid destination array");
 	}
 

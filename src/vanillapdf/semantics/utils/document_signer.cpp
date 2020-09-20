@@ -57,14 +57,14 @@ void DocumentSigner::OnBeforeOutputFlush(IInputOutputStreamPtr output) {
 	new_ranges->Append(make_deferred<IntegerObject>(after_signature_contents_length));
 
 	// Make sure byte ranges are valid
-	assert(new_ranges->Size() % 2 == 0);
+	assert(new_ranges->GetSize() % 2 == 0);
 
 	output->SetOutputPosition(byte_ranges_offset);
 	output->Write(new_ranges->ToPdf());
 
 	m_key->SignInitialize(m_digest);
 
-	auto ranges_length = new_ranges->Size();
+	auto ranges_length = new_ranges->GetSize();
 	for (decltype(ranges_length) i = 0; i < ranges_length; i += 2) {
 		auto offset = new_ranges[i];
 		auto bytes_length = new_ranges[i + 1];

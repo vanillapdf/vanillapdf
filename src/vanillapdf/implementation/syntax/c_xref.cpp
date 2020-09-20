@@ -9,7 +9,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
-VANILLAPDF_API error_type CALLING_CONVENTION Xref_TrailerDictionary(XrefHandle* handle, DictionaryObjectHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION Xref_GetTrailerDictionary(XrefHandle* handle, DictionaryObjectHandle** result)
 {
 	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
@@ -24,7 +24,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Xref_TrailerDictionary(XrefHandle* 
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Xref_LastXrefOffset(XrefHandle* handle, offset_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Xref_GetLastXrefOffset(XrefHandle* handle, offset_type* result)
 {
 	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);

@@ -37,7 +37,7 @@ public:
 	virtual bool Equals(ObjectPtr other) const override;
 
 	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Array; }
-	size_type Size(void) const noexcept { return _list.size(); }
+	size_type GetSize(void) const noexcept { return _list.size(); }
 	const ContainableObjectPtr& operator[](size_type i) const { return _list[i]; }
 	ContainableObjectPtr& operator[](size_type i) { return _list[i]; }
 	const ContainableObjectPtr& At(size_type at) const { return _list.at(at); }

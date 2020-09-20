@@ -25,7 +25,7 @@ class ByteRangeCollection : public HighLevelObject<syntax::ArrayObjectPtr<syntax
 public:
 	explicit ByteRangeCollection(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> obj);
 
-	types::size_type Size(void) const;
+	types::size_type GetSize(void) const;
 	ByteRangePtr At(types::size_type at) const;
 };
 

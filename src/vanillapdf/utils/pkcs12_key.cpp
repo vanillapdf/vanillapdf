@@ -295,7 +295,7 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
 		throw GeneralException("Could not add certificate");
 	}
 
-	auto extra_certificates_size = m_certificates->Size();
+	auto extra_certificates_size = m_certificates->GetSize();
 	for (decltype(extra_certificates_size) i = 0; i < extra_certificates_size; ++i) {
 		auto extra_certificate_data = m_certificates[i];
 

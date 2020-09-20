@@ -352,7 +352,7 @@ BufferPtr EncryptionUtils::GetRecipientKey
 		SHA256_Init(&ctx);
 		SHA256_Update(&ctx, decrypted_data->data(), 20);
 
-		auto length = enveloped_data.Size();
+		auto length = enveloped_data.GetSize();
 		for (decltype(length) i = 0; i < length; ++i) {
 			auto enveloped_bytes = enveloped_data.At(i);
 			SHA256_Update(&ctx, enveloped_bytes->GetValue()->data(), enveloped_bytes->GetValue()->std_size());
@@ -365,7 +365,7 @@ BufferPtr EncryptionUtils::GetRecipientKey
 		SHA1_Init(&ctx);
 		SHA1_Update(&ctx, decrypted_data->data(), 20);
 
-		auto length = enveloped_data.Size();
+		auto length = enveloped_data.GetSize();
 		for (decltype(length) i = 0; i < length; ++i) {
 			auto enveloped_bytes = enveloped_data.At(i);
 			SHA1_Update(&ctx, enveloped_bytes->GetValue()->data(), enveloped_bytes->GetValue()->std_size());
@@ -389,7 +389,7 @@ BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-	auto length = enveloped_data.Size();
+	auto length = enveloped_data.GetSize();
 	for (decltype(length) i = 0; i < length; ++i) {
 		auto enveloped_bytes = enveloped_data.At(i);
 

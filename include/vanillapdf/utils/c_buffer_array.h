@@ -35,7 +35,7 @@ extern "C"
 	/**
 	* \brief Return size of an array
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_Size(BufferArrayHandle* handle, size_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_GetSize(BufferArrayHandle* handle, size_type* result);
 
 	/**
 	* \brief Get element at location \p at

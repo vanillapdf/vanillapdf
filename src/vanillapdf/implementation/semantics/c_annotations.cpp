@@ -106,7 +106,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_Release(LinkAnnotati
 	return ObjectRelease<LinkAnnotation, LinkAnnotationHandle>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Size(PageAnnotationsHandle* handle, size_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_GetSize(PageAnnotationsHandle* handle, size_type* result)
 {
 	PageAnnotations* obj = reinterpret_cast<PageAnnotations*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -114,7 +114,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Size(PageAnnotation
 
 	try
 	{
-		*result = obj->Size();
+		*result = obj->GetSize();
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }

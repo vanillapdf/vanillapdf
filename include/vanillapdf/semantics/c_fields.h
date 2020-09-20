@@ -103,7 +103,7 @@ extern "C"
 	/**
 	* \brief Get size of field collection
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_Size(FieldCollectionHandle* handle, size_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_GetSize(FieldCollectionHandle* handle, size_type* result);
 
 	/**
 	* \brief

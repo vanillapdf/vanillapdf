@@ -86,7 +86,7 @@ public:
 	ArrayObject(ArrayObject<U> other, std::function<T(const U& obj)> new_conversion);
 
 	MixedArrayObjectPtr Data(void) const;
-	size_type Size(void) const;
+	size_type GetSize(void) const;
 	const T operator[](size_type i) const;
 	T operator[](size_type i);
 	const T At(size_type at) const;
@@ -250,8 +250,8 @@ MixedArrayObjectPtr ArrayObject<T>::Data(void) const {
 }
 
 template <typename T>
-size_type ArrayObject<T>::Size(void) const {
-	return _list->Size();
+size_type ArrayObject<T>::GetSize(void) const {
+	return _list->GetSize();
 }
 
 template <typename T>

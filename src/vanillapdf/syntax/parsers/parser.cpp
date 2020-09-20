@@ -548,8 +548,8 @@ XrefStreamPtr Parser::ParseXrefStream(
 
 	auto fields = header->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::W);
 
-	assert(fields->Size() == 3);
-	if (fields->Size() != 3) {
+	assert(fields->GetSize() == 3);
+	if (fields->GetSize() != 3) {
 		throw GeneralException("Xref stream width does not contain three integers");
 	}
 
@@ -559,7 +559,7 @@ XrefStreamPtr Parser::ParseXrefStream(
 		index = header->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::Index);
 	}
 
-	auto index_size = index->Size();
+	auto index_size = index->GetSize();
 	assert(index_size % 2 == 0);
 
 	auto body = stream->GetBody();

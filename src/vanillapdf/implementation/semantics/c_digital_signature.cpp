@@ -167,13 +167,13 @@ VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_GetLength(ByteRangeHandle
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_Size(ByteRangeCollectionHandle* handle, size_type* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_GetSize(ByteRangeCollectionHandle* handle, size_type* result) {
 	ByteRangeCollection* collection = reinterpret_cast<ByteRangeCollection*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(collection);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try {
-		*result = collection->Size();
+		*result = collection->GetSize();
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }

@@ -18,12 +18,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_Create(BufferArrayHandl
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_Size(BufferArrayHandle* handle, size_type* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_GetSize(BufferArrayHandle* handle, size_type* result) {
 	BufferArray* obj = reinterpret_cast<BufferArray*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	*result = obj->Size();
+	*result = obj->GetSize();
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 

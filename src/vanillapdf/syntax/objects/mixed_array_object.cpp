@@ -180,8 +180,8 @@ bool MixedArrayObject::Equals(ObjectPtr other) const {
 
 	auto other_obj = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(other);
 
-	auto first_size = Size();
-	auto second_size = other_obj->Size();
+	auto first_size = GetSize();
+	auto second_size = other_obj->GetSize();
 	if (first_size != second_size) {
 		return false;
 	}

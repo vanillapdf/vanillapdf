@@ -435,7 +435,7 @@ error_type process_page_annotations(PageAnnotationsHandle* obj, int nested) {
 	print_spaces(nested);
 	print_text("Page annotations begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(PageAnnotations_Size(obj, &annotation_count));
+	RETURN_ERROR_IF_NOT_SUCCESS(PageAnnotations_GetSize(obj, &annotation_count));
 
 	for (i = 0; i < annotation_count; ++i) {
 		AnnotationHandle* annotation = NULL;
@@ -1111,7 +1111,7 @@ error_type process_field_collection(FieldCollectionHandle* obj, int nested) {
 	print_spaces(nested);
 	print_text("Field collection begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(FieldCollection_Size(obj, &size));
+	RETURN_ERROR_IF_NOT_SUCCESS(FieldCollection_GetSize(obj, &size));
 
 	print_spaces(nested);
 
@@ -1233,7 +1233,7 @@ error_type process_byte_range_collection(ByteRangeCollectionHandle* obj, int nes
 	print_spaces(nested);
 	print_text("Byte range collection begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(ByteRangeCollection_Size(obj, &size));
+	RETURN_ERROR_IF_NOT_SUCCESS(ByteRangeCollection_GetSize(obj, &size));
 
 	print_spaces(nested);
 

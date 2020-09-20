@@ -69,7 +69,7 @@ public:
 
 	virtual void Add(XrefEntryBasePtr entry);
 	bool Remove(XrefEntryBasePtr entry);
-	types::size_type Size(void) const noexcept;
+	types::size_type GetSize(void) const noexcept;
 	virtual XrefEntryBasePtr Find(types::big_uint obj_number) const;
 	virtual bool Contains(types::big_uint obj_number) const;
 	std::vector<XrefEntryBasePtr> Entries(void) const;

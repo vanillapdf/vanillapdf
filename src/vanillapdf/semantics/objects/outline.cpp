@@ -15,8 +15,8 @@ OutlineItemFlags::OutlineItemFlags(syntax::IntegerObjectPtr value) : HighLevelOb
 OutlineItem::OutlineItem(syntax::DictionaryObjectPtr root) : OutlineBase(root) {}
 
 OutlineItemColor::OutlineItemColor(syntax::ArrayObjectPtr<syntax::RealObjectPtr> rgb) : HighLevelObject(rgb) {
-	assert(rgb->Size() == 3);
-	if (rgb->Size() != 3) {
+	assert(rgb->GetSize() == 3);
+	if (rgb->GetSize() != 3) {
 		throw SemanticContextExceptionFactory::Construct<syntax::ArrayObject<syntax::RealObjectPtr>, OutlineItemColor>(rgb);
 	}
 }

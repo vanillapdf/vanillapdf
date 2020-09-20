@@ -263,7 +263,7 @@ extern "C"
 	/**
 	* \brief Get size of annotation array
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Size(PageAnnotationsHandle* handle, size_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_GetSize(PageAnnotationsHandle* handle, size_type* result);
 
 	/**
 	* \brief
