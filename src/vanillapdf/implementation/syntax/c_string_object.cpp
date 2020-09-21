@@ -8,7 +8,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
-VANILLAPDF_API error_type CALLING_CONVENTION StringObject_Type(StringObjectHandle* handle, StringType* result)
+VANILLAPDF_API error_type CALLING_CONVENTION StringObject_GetType(StringObjectHandle* handle, StringType* result)
 {
 	StringObjectBase* obj = reinterpret_cast<StringObjectBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

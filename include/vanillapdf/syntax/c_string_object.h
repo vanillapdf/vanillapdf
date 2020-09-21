@@ -61,7 +61,7 @@ extern "C"
 	/**
 	* \brief Get derived type from current string
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_Type(StringObjectHandle* handle, StringType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_GetType(StringObjectHandle* handle, StringType* result);
 
 	/**
 	* \brief Get strings current value
