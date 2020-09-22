@@ -15,14 +15,31 @@ public:
 	explicit Date(syntax::StringObjectPtr root);
 
 	int32_t GetYear(void) const noexcept { return m_year; }
+	void SetYear(int32_t value) noexcept { m_year = value; }
+
 	int32_t GetMonth(void) const noexcept { return m_month; }
+	void SetMonth(int32_t value) noexcept { m_month = value; }
+
 	int32_t GetDay(void) const noexcept { return m_day; }
+	void SetDay(int32_t value) noexcept { m_day = value; }
+
 	int32_t GetHour(void) const noexcept { return m_hour; }
+	void SetHour(int32_t value) noexcept { m_hour = value; }
+
 	int32_t GetMinute(void) const noexcept { return m_minute; }
+	void SetMinute(int32_t value) noexcept { m_minute = value; }
+
 	int32_t GetSecond(void) const noexcept { return m_second; }
+	void SetSecond(int32_t value) noexcept { m_second = value; }
+
 	Timezone GetTimezone(void) const noexcept { return m_timezone; }
+	void SetTimezone(Timezone value) noexcept { m_timezone = value; }
+
 	int32_t GetHourOffset(void) const noexcept { return m_hour_offset; }
+	void SetHourOffset(int32_t value) noexcept { m_hour_offset = value; }
+
 	int32_t GetMinuteOffset(void) const noexcept { return m_minute_offset; }
+	void SetMinuteOffset(int32_t value) noexcept { m_minute_offset = value; }
 
 	static DatePtr GetCurrentDate();
 
