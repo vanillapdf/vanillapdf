@@ -150,6 +150,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_CreateCustom(
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_ToUnknown(SigningKeyHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<ISigningKey, IUnknown, SigningKeyHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_FromUnknown(IUnknownHandle* handle, SigningKeyHandle** result) {
+	return SafeObjectConvert<IUnknown, ISigningKey, IUnknownHandle, SigningKeyHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_Release(SigningKeyHandle* handle) {
 	return ObjectRelease<ISigningKey, SigningKeyHandle>(handle);
 }
