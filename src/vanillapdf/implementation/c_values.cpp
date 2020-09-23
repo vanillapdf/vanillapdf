@@ -14,6 +14,7 @@ VANILLAPDF_API const error_type VANILLAPDF_ERROR_NOT_SUPPORTED			= static_cast<e
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_USER_CANCELLED			= static_cast<error_type>(vanillapdf::ExceptionBase::Type::UserCancelled);
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_ZLIB_DATA				= static_cast<error_type>(vanillapdf::ExceptionBase::Type::ZlibDataError);
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_INVALID_LICENSE		= static_cast<error_type>(vanillapdf::ExceptionBase::Type::InvalidLicense);
+VANILLAPDF_API const error_type VANILLAPDF_ERROR_LICENSE_REQUIRED		= static_cast<error_type>(vanillapdf::ExceptionBase::Type::LicenseRequired);
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_GENERAL				= static_cast<error_type>(vanillapdf::ExceptionBase::Type::General);
 
 // syntax errors

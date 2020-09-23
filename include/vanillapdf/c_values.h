@@ -84,6 +84,12 @@ extern "C"
 
 	/**
 	* \brief
+	* Error accessing licensed feature without a valid license file.
+	*/
+	VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_LICENSE_REQUIRED;
+
+	/**
+	* \brief
 	* An unknown error has occurred.
 	*
 	* Try to turn on \ref Logging for extended informations.
