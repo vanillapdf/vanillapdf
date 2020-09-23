@@ -297,9 +297,6 @@
     <ClInclude Include="..\src\vanillapdf\syntax\objects\dictionary_object.h">
       <Filter>Header Files\syntax\objects</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\vanillapdf\syntax\objects\indirect_object_reference.h">
-      <Filter>Header Files\syntax\objects</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\vanillapdf\syntax\objects\integer_object.h">
       <Filter>Header Files\syntax\objects</Filter>
     </ClInclude>
@@ -537,9 +534,6 @@
     <ClInclude Include="..\include\vanillapdf\syntax\c_filter.h">
       <Filter>Header Files\include\syntax</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\syntax\c_indirect_object_reference.h">
-      <Filter>Header Files\include\syntax</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\vanillapdf\syntax\c_integer_object.h">
       <Filter>Header Files\include\syntax</Filter>
     </ClInclude>
@@ -708,6 +702,12 @@
     <ClInclude Include="..\include\vanillapdf\utils\c_output_stream.h">
       <Filter>Header Files\include\utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\syntax\c_indirect_reference_object.h">
+      <Filter>Header Files\include\syntax</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\vanillapdf\syntax\objects\indirect_reference_object.h">
+      <Filter>Header Files\syntax\objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\vanillapdf\contents\content_stream_objects.cpp">
@@ -843,9 +843,6 @@
       <Filter>Source Files\syntax\objects</Filter>
     </ClCompile>
     <ClCompile Include="..\src\vanillapdf\syntax\objects\dictionary_object.cpp">
-      <Filter>Source Files\syntax\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\syntax\objects\indirect_object_reference.cpp">
       <Filter>Source Files\syntax\objects</Filter>
     </ClCompile>
     <ClCompile Include="..\src\vanillapdf\syntax\objects\integer_object.cpp">
@@ -1076,9 +1073,6 @@
     <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_filter.cpp">
       <Filter>Source Files\implementation\syntax</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_indirect_object_reference.cpp">
-      <Filter>Source Files\implementation\syntax</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_integer_object.cpp">
       <Filter>Source Files\implementation\syntax</Filter>
     </ClCompile>
@@ -1138,6 +1132,12 @@
     </ClCompile>
     <ClCompile Include="..\src\vanillapdf\utils\constants.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\syntax\c_indirect_reference_object.cpp">
+      <Filter>Source Files\implementation\syntax</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\syntax\objects\indirect_reference_object.cpp">
+      <Filter>Source Files\syntax\objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
