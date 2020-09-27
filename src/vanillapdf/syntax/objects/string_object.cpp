@@ -22,28 +22,64 @@ HexadecimalStringObject::HexadecimalStringObject() {
 	_value->Subscribe(this);
 }
 
-LiteralStringObject::LiteralStringObject(const char * value)
-	: LiteralStringObject(make_deferred_container<Buffer>(value)) {
+LiteralStringObject LiteralStringObject::CreateFromEncoded(BufferPtr value) {
+	LiteralStringObject result;
+
+	result.SetRawValue(value);
+	return result;
 }
 
-LiteralStringObject::LiteralStringObject(const std::string& value)
-	: LiteralStringObject(make_deferred_container<Buffer>(value)) {
+LiteralStringObject LiteralStringObject::CreateFromEncoded(const char * value) {
+	return CreateFromEncoded(make_deferred_container<Buffer>(value));
 }
 
-LiteralStringObject::LiteralStringObject(BufferPtr value) : _raw_value(value) {
-	_value->Subscribe(this);
+LiteralStringObject LiteralStringObject::CreateFromEncoded(const std::string& value) {
+	return CreateFromEncoded(make_deferred_container<Buffer>(value));
 }
 
-HexadecimalStringObject::HexadecimalStringObject(const char * value)
-	: HexadecimalStringObject(make_deferred_container<Buffer>(value)) {
+LiteralStringObject LiteralStringObject::CreateFromDecoded(BufferPtr value) {
+	LiteralStringObject result;
+
+	result.SetValue(value);
+	return result;
 }
 
-HexadecimalStringObject::HexadecimalStringObject(const std::string& value)
-	: HexadecimalStringObject(make_deferred_container<Buffer>(value)) {
+LiteralStringObject LiteralStringObject::CreateFromDecoded(const char * value) {
+	return CreateFromDecoded(make_deferred_container<Buffer>(value));
 }
 
-HexadecimalStringObject::HexadecimalStringObject(BufferPtr value) : _raw_value(value) {
-	_value->Subscribe(this);
+LiteralStringObject LiteralStringObject::CreateFromDecoded(const std::string& value) {
+	return CreateFromDecoded(make_deferred_container<Buffer>(value));
+}
+
+HexadecimalStringObject HexadecimalStringObject::CreateFromEncoded(BufferPtr value) {
+	HexadecimalStringObject result;
+
+	result.SetRawValue(value);
+	return result;
+}
+
+HexadecimalStringObject HexadecimalStringObject::CreateFromEncoded(const char * value) {
+	return CreateFromEncoded(make_deferred_container<Buffer>(value));
+}
+
+HexadecimalStringObject HexadecimalStringObject::CreateFromEncoded(const std::string& value) {
+	return CreateFromEncoded(make_deferred_container<Buffer>(value));
+}
+
+HexadecimalStringObject HexadecimalStringObject::CreateFromDecoded(BufferPtr value) {
+	HexadecimalStringObject result;
+
+	result.SetValue(value);
+	return result;
+}
+
+HexadecimalStringObject HexadecimalStringObject::CreateFromDecoded(const char * value) {
+	return CreateFromDecoded(make_deferred_container<Buffer>(value));
+}
+
+HexadecimalStringObject HexadecimalStringObject::CreateFromDecoded(const std::string& value) {
+	return CreateFromDecoded(make_deferred_container<Buffer>(value));
 }
 
 StringObjectPtr::StringObjectPtr() : Deferred<StringObjectBase>(LiteralStringObjectPtr()) {
@@ -115,6 +151,15 @@ void LiteralStringObject::SetValue(BufferPtr value) {
 	_value->SetInitialized();
 }
 
+BufferPtr LiteralStringObject::GetRawValue() const {
+	return _raw_value;
+}
+
+void LiteralStringObject::SetRawValue(BufferPtr value) {
+	_raw_value->assign(value.begin(), value.end());
+	_raw_value->SetInitialized();
+}
+
 BufferPtr HexadecimalStringObject::GetValue() const {
 	if (_value->IsInitialized()) {
 		return _value;
@@ -158,6 +203,15 @@ BufferPtr HexadecimalStringObject::GetValue() const {
 void HexadecimalStringObject::SetValue(BufferPtr value) {
 	_value->assign(value.begin(), value.end());
 	_value->SetInitialized();
+}
+
+BufferPtr HexadecimalStringObject::GetRawValue() const {
+	return _raw_value;
+}
+
+void HexadecimalStringObject::SetRawValue(BufferPtr value) {
+	_raw_value->assign(value.begin(), value.end());
+	_raw_value->SetInitialized();
 }
 
 void HexadecimalStringObject::ToPdfStreamInternal(IOutputStreamPtr output) const {

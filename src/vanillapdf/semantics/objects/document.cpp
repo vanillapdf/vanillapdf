@@ -45,7 +45,7 @@ DocumentPtr Document::Create(const std::string& path) {
 
 	DocumentInfoPtr document_info = document->CreateDocumentInfo();
 
-	LiteralStringObjectPtr producer = make_deferred<LiteralStringObject>("I am the producer");
+	LiteralStringObjectPtr producer = make_deferred<LiteralStringObject>(LiteralStringObject::CreateFromDecoded("I am the producer"));
 	document_info->SetProducer(producer);
 
 	DatePtr creation_date = Date::GetCurrentDate();
@@ -779,7 +779,7 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
 
 	// Create new signature field
 	signature_annotation->Insert(constant::Name::FT, make_deferred<NameObject>("Sig"));
-	signature_annotation->Insert(constant::Name::T, make_deferred<LiteralStringObject>("Signature1"));
+	signature_annotation->Insert(constant::Name::T, make_deferred<LiteralStringObject>(LiteralStringObject::CreateFromDecoded("Signature1")));
 
 	auto signature_dictionary_reference = make_deferred<syntax::IndirectReferenceObject>(signature_dictionary);
 	signature_annotation->Insert(constant::Name::V, signature_dictionary_reference);

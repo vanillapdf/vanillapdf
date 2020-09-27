@@ -80,6 +80,58 @@ VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_Create(LiteralS
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromEncodedBuffer(BufferHandle* value, LiteralStringObjectHandle** result) {
+	Buffer* buffer = reinterpret_cast<Buffer*>(value);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(value);
+
+	try {
+		auto object = make_deferred<LiteralStringObject>(LiteralStringObject::CreateFromEncoded(buffer));
+		auto ptr = object.AddRefGet();
+		*result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromEncodedString(string_type value, LiteralStringObjectHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(value);
+
+	try {
+		auto object = make_deferred<LiteralStringObject>(LiteralStringObject::CreateFromEncoded(value));
+		auto ptr = object.AddRefGet();
+		*result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromDecodedBuffer(BufferHandle* value, LiteralStringObjectHandle** result) {
+	Buffer* buffer = reinterpret_cast<Buffer*>(value);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(value);
+
+	try {
+		auto object = make_deferred<LiteralStringObject>(LiteralStringObject::CreateFromDecoded(buffer));
+		auto ptr = object.AddRefGet();
+		*result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromDecodedString(string_type value, LiteralStringObjectHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(value);
+
+	try {
+		auto object = make_deferred<LiteralStringObject>(LiteralStringObject::CreateFromDecoded(value));
+		auto ptr = object.AddRefGet();
+		*result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_GetValue(LiteralStringObjectHandle* handle, BufferHandle** result)
 {
 	LiteralStringObject* obj = reinterpret_cast<LiteralStringObject*>(handle);
@@ -129,6 +181,58 @@ VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Create(Hexa
 
 	try {
 		auto object = make_deferred<HexadecimalStringObject>();
+		auto ptr = object.AddRefGet();
+		*result = reinterpret_cast<HexadecimalStringObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_CreateFromEncodedBuffer(BufferHandle* value, HexadecimalStringObjectHandle** result) {
+	Buffer* buffer = reinterpret_cast<Buffer*>(value);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(value);
+
+	try {
+		auto object = make_deferred<HexadecimalStringObject>(HexadecimalStringObject::CreateFromEncoded(buffer));
+		auto ptr = object.AddRefGet();
+		*result = reinterpret_cast<HexadecimalStringObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_CreateFromEncodedString(string_type value, HexadecimalStringObjectHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(value);
+
+	try {
+		auto object = make_deferred<HexadecimalStringObject>(HexadecimalStringObject::CreateFromEncoded(value));
+		auto ptr = object.AddRefGet();
+		*result = reinterpret_cast<HexadecimalStringObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_CreateFromDecodedBuffer(BufferHandle* value, HexadecimalStringObjectHandle** result) {
+	Buffer* buffer = reinterpret_cast<Buffer*>(value);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(value);
+
+	try {
+		auto object = make_deferred<HexadecimalStringObject>(HexadecimalStringObject::CreateFromDecoded(buffer));
+		auto ptr = object.AddRefGet();
+		*result = reinterpret_cast<HexadecimalStringObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_CreateFromDecodedString(string_type value, HexadecimalStringObjectHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(value);
+
+	try {
+		auto object = make_deferred<HexadecimalStringObject>(HexadecimalStringObject::CreateFromDecoded(value));
 		auto ptr = object.AddRefGet();
 		*result = reinterpret_cast<HexadecimalStringObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;

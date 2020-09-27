@@ -105,11 +105,11 @@ DatePtr Date::GetCurrentDate() {
 		ss << '\'';
 	}
 
-	std::string formatted_time = ss.str();
+	auto formatted_time = ss.str();
+	auto string_object = syntax::LiteralStringObject::CreateFromDecoded(formatted_time);
+	auto string_object_ptr = make_deferred<syntax::LiteralStringObject>(string_object);
 
-	syntax::LiteralStringObjectPtr current_time_string = make_deferred<syntax::LiteralStringObject>(formatted_time);
-
-	return make_deferred<Date>(current_time_string);
+	return make_deferred<Date>(string_object_ptr);
 }
 
 } // semantics

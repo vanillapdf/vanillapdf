@@ -92,14 +92,14 @@ public:
 		assert(token->GetType() == Token::Type::HEXADECIMAL_STRING && "Expected hexadecimal string token type");
 
 		auto buffer = token->Value();
-		return make_deferred<HexadecimalStringObject>(buffer);
+		return make_deferred<HexadecimalStringObject>(HexadecimalStringObject::CreateFromEncoded(buffer));
 	}
 
 	static LiteralStringObjectPtr CreateLitString(TokenPtr token) {
 		assert(token->GetType() == Token::Type::LITERAL_STRING && "Expected literal string token type");
 
 		auto buffer = token->Value();
-		return make_deferred<LiteralStringObject>(buffer);
+		return make_deferred<LiteralStringObject>(LiteralStringObject::CreateFromEncoded(buffer));
 	}
 };
 

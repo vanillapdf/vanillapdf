@@ -32,9 +32,14 @@ public:
 class HexadecimalStringObject : public StringObjectBase, public IModifyObserver {
 public:
 	HexadecimalStringObject();
-	explicit HexadecimalStringObject(BufferPtr value);
-	explicit HexadecimalStringObject(const char * chars);
-	explicit HexadecimalStringObject(const std::string& value);
+
+	static HexadecimalStringObject CreateFromEncoded(BufferPtr value);
+	static HexadecimalStringObject CreateFromEncoded(const char * value);
+	static HexadecimalStringObject CreateFromEncoded(const std::string& value);
+
+	static HexadecimalStringObject CreateFromDecoded(BufferPtr value);
+	static HexadecimalStringObject CreateFromDecoded(const char * value);
+	static HexadecimalStringObject CreateFromDecoded(const std::string& value);
 
 	virtual void ObserveeChanged(const IModifyObservable*) override {
 		OnChanged();
@@ -51,6 +56,9 @@ public:
 	virtual ~HexadecimalStringObject();
 
 private:
+	BufferPtr GetRawValue() const;
+	void SetRawValue(BufferPtr value);
+
 	BufferPtr _raw_value;
 	mutable BufferPtr _value;
 };
@@ -58,9 +66,14 @@ private:
 class LiteralStringObject : public StringObjectBase, public IModifyObserver {
 public:
 	LiteralStringObject();
-	explicit LiteralStringObject(BufferPtr value);
-	explicit LiteralStringObject(const char * chars);
-	explicit LiteralStringObject(const std::string& value);
+
+	static LiteralStringObject CreateFromEncoded(BufferPtr value);
+	static LiteralStringObject CreateFromEncoded(const char * value);
+	static LiteralStringObject CreateFromEncoded(const std::string& value);
+
+	static LiteralStringObject CreateFromDecoded(BufferPtr value);
+	static LiteralStringObject CreateFromDecoded(const char * value);
+	static LiteralStringObject CreateFromDecoded(const std::string& value);
 
 	virtual void ObserveeChanged(const IModifyObservable*) override { OnChanged(); }
 
@@ -74,6 +87,9 @@ public:
 	virtual ~LiteralStringObject();
 
 private:
+	BufferPtr GetRawValue() const;
+	void SetRawValue(BufferPtr value);
+
 	BufferPtr _raw_value;
 	mutable BufferPtr _value;
 };

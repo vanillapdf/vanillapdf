@@ -273,7 +273,7 @@ TokenPtr Tokenizer::ReadName(void) {
 	return make_deferred<Token>(Token::Type::NAME_OBJECT, chars);
 }
 
-TokenPtr Tokenizer::ReadLiteralString(void)	{
+TokenPtr Tokenizer::ReadLiteralString(void) {
 	BufferPtr chars;
 
 	int nested_count = 0;
