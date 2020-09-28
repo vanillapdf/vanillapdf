@@ -40,14 +40,69 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_CreateFromMemory(InputOutputStreamHandle** result);
 
 	/**
+	* \copydoc InputStream_Read
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_Read(InputOutputStreamHandle* handle, size_type length, char* result, size_type* read_length);
+
+	/**
+	* \copydoc InputStream_ReadBuffer
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_ReadBuffer(InputOutputStreamHandle* handle, size_type length, BufferHandle** result);
+
+	/**
+	* \copydoc InputStream_GetInputPosition
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_GetInputPosition(InputOutputStreamHandle* handle, offset_type* result);
+
+	/**
+	* \copydoc InputStream_SetInputPosition
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_SetInputPosition(InputOutputStreamHandle* handle, offset_type value);
+
+	/**
+	* \copydoc OutputStream_GetOutputPosition
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_GetOutputPosition(InputOutputStreamHandle* handle, offset_type* result);
+
+	/**
+	* \copydoc OutputStream_SetOutputPosition
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_SetOutputPosition(InputOutputStreamHandle* handle, offset_type value);
+
+	/**
+	* \copydoc OutputStream_WriteString
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_WriteString(InputOutputStreamHandle* handle, string_type data);
+
+	/**
+	* \copydoc OutputStream_WriteBuffer
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_WriteBuffer(InputOutputStreamHandle* handle, BufferHandle* data);
+
+	/**
+	* \copydoc OutputStream_Flush
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_Flush(InputOutputStreamHandle* handle);
+
+	/**
 	* \brief Reinterpret current object as \ref InputStreamHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_ToInputStream(InputOutputStreamHandle* handle, InputStreamHandle** result);
 
 	/**
+	* \brief Convert \ref InputStreamHandle to \ref InputOutputStreamHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_FromInputStream(InputStreamHandle* handle, InputOutputStreamHandle** result);
+
+	/**
 	* \brief Reinterpret current object as \ref OutputStreamHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_ToOutputStream(InputOutputStreamHandle* handle, OutputStreamHandle** result);
+
+	/**
+	* \brief Convert \ref InputStreamHandle to \ref InputOutputStreamHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_FromOutputStream(OutputStreamHandle* handle, InputOutputStreamHandle** result);
 
 	/**
 	* \brief Reinterpret current object as \ref IUnknownHandle

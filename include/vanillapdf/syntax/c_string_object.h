@@ -105,7 +105,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromEncodedBuffer(BufferHandle* value, LiteralStringObjectHandle** result);
 
-		/**
+	/**
 	* \brief Creates a new LiteralStringObject instance from encoded string data
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromEncodedString(string_type value, LiteralStringObjectHandle** result);
@@ -115,7 +115,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromDecodedBuffer(BufferHandle* value, LiteralStringObjectHandle** result);
 
-		/**
+	/**
 	* \brief Creates a new LiteralStringObject instance from decoded string data
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromDecodedString(string_type value, LiteralStringObjectHandle** result);
@@ -162,7 +162,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_CreateFromEncodedBuffer(BufferHandle* value, HexadecimalStringObjectHandle** result);
 
-		/**
+	/**
 	* \brief Creates a new HexadecimalStringObject instance from encoded string data
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_CreateFromEncodedString(string_type value, HexadecimalStringObjectHandle** result);
@@ -172,7 +172,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_CreateFromDecodedBuffer(BufferHandle* value, HexadecimalStringObjectHandle** result);
 
-		/**
+	/**
 	* \brief Creates a new HexadecimalStringObject instance from decoded string data
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_CreateFromDecodedString(string_type value, HexadecimalStringObjectHandle** result);

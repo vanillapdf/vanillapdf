@@ -18,6 +18,11 @@ BufferPtr InputStream::Read(types::stream_size len) {
 	return result;
 }
 
+types::stream_size InputStream::Read(char* result, types::stream_size len) {
+	m_stream->read(result, len);
+	return m_stream->gcount();
+}
+
 types::stream_size InputStream::Read(Buffer& result, types::stream_size len) {
 	auto length_converted = ValueConvertUtils::SafeConvert<types::size_type>(len);
 
@@ -26,8 +31,7 @@ types::stream_size InputStream::Read(Buffer& result, types::stream_size len) {
 		result.resize(length_converted);
 	}
 
-	m_stream->read(result.data(), length_converted);
-	return m_stream->gcount();
+	return Read(result.data(), length_converted);
 }
 
 types::stream_size InputStream::GetInputPosition() {

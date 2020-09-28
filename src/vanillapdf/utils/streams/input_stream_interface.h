@@ -10,6 +10,7 @@ namespace vanillapdf {
 
 class IInputStream : public virtual IUnknown {
 public:
+	virtual types::stream_size Read(char* result, types::stream_size len) = 0;
 	virtual types::stream_size Read(Buffer& result, types::stream_size len) = 0;
 	virtual BufferPtr Read(types::stream_size len) = 0;
 	virtual BufferPtr Readline(void) = 0;

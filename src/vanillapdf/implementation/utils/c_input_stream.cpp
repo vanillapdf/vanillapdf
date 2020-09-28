@@ -34,6 +34,33 @@ VANILLAPDF_API error_type CALLING_CONVENTION InputStream_CreateFromBuffer(Buffer
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION InputStream_Read(InputStreamHandle* handle, size_type length, char* result, size_type* read_length) {
+	IInputStream* stream = reinterpret_cast<IInputStream*>(handle);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(stream);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(read_length);
+
+	try {
+		*read_length = stream->Read(result, length);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InputStream_ReadBuffer(InputStreamHandle* handle, size_type length, BufferHandle** result) {
+	IInputStream* stream = reinterpret_cast<IInputStream*>(handle);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(stream);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto buffer = stream->Read(length);
+		auto ptr = buffer.AddRefGet();
+		*result = reinterpret_cast<BufferHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION InputStream_ToBuffer(InputStreamHandle* handle, BufferHandle** result) {
 	IInputStream* stream = reinterpret_cast<IInputStream*>(handle);
 

@@ -153,6 +153,13 @@ InputReverseStream::ReverseBuf::pos_type InputReverseStream::ReverseBuf::seekpos
 	return ptr;
 }
 
+types::stream_size InputReverseStream::Read(char* result, types::stream_size len) {
+	auto length_converted = ValueConvertUtils::SafeConvert<types::size_type>(len);
+
+	m_stream->read(result, length_converted);
+	return m_stream->gcount();
+}
+
 types::stream_size InputReverseStream::Read(Buffer& result, types::stream_size len) {
 	auto length_converted = ValueConvertUtils::SafeConvert<types::size_type>(len);
 
@@ -161,8 +168,7 @@ types::stream_size InputReverseStream::Read(Buffer& result, types::stream_size l
 		result.resize(length_converted);
 	}
 
-	m_stream->read(result.data(), length_converted);
-	return m_stream->gcount();
+	return Read(result.data(), length_converted);
 }
 
 BufferPtr InputReverseStream::Read(types::stream_size len) {

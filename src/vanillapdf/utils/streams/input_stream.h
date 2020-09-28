@@ -10,6 +10,7 @@ public:
 	explicit InputStream(std::shared_ptr<std::istream> stream);
 
 	virtual BufferPtr Read(types::stream_size len) override;
+	virtual types::stream_size Read(char* result, types::stream_size len) override;
 	virtual types::stream_size Read(Buffer& result, types::stream_size len) override;
 	virtual BufferPtr Readline(void) override;
 	virtual types::stream_size GetInputPosition() override;

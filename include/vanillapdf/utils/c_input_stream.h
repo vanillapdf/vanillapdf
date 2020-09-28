@@ -40,6 +40,17 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION InputStream_CreateFromBuffer(BufferHandle* data, InputStreamHandle** result);
 
 	/**
+	* \brief Reads data from input stream and stores them in the resulting array
+	* \details The allocation and deallocation of the resulting data is responsibility of the caller
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION InputStream_Read(InputStreamHandle* handle, size_type length, char* result, size_type* read_length);
+
+	/**
+	* \brief Reads data from input stream and stores them in the resulting buffer
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION InputStream_ReadBuffer(InputStreamHandle* handle, size_type length, BufferHandle** result);
+
+	/**
 	* \brief Reads all data from the input stream and returns them as a single large buffer.
 	* \details This method is not recommended for large files, as the process might not have enough memory.
 	*/
