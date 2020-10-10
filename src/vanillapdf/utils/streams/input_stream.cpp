@@ -15,6 +15,16 @@ InputStream::InputStream(std::shared_ptr<std::istream> stream) : m_stream(stream
 BufferPtr InputStream::Read(types::stream_size len) {
 	BufferPtr result = make_deferred_container<Buffer>(len);
 	m_stream->read(result->data(), len);
+
+	// Check the read data size
+	types::stream_size bytes_read = m_stream->gcount();
+	assert(bytes_read <= len);
+
+	// Trim the buffer in case there is not enough data
+	if (bytes_read < len) {
+		result->resize(bytes_read);
+	}
+
 	return result;
 }
 
