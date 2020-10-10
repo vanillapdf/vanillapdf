@@ -48,6 +48,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToInputStream(const BufferHandle* handle, InputStreamHandle** result);
 
 	/**
+	* \brief Compares two buffers by their value
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_Equals(const BufferHandle* handle, const BufferHandle* other, boolean_type* result);
+
+	/**
+	* \brief Get object hash code
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_Hash(const BufferHandle* handle, size_type* result);
+
+	/**
 	* \brief Reinterpret current object as \ref IUnknownHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToUnknown(BufferHandle* handle, IUnknownHandle** result);

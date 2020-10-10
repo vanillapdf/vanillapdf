@@ -49,6 +49,11 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION NameObject_Equals(const NameObjectHandle* handle, const NameObjectHandle* other, boolean_type* result);
 
 	/**
+	* \brief Get object hash code
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION NameObject_Hash(const NameObjectHandle* handle, size_type* result);
+
+	/**
 	* \brief Reinterpret current object as \ref ObjectHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION NameObject_ToObject(NameObjectHandle* handle, ObjectHandle** result);

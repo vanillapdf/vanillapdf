@@ -54,6 +54,32 @@ VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToInputStream(const BufferHa
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Buffer_Equals(const BufferHandle* handle, const BufferHandle* other, boolean_type* result) {
+	const Buffer* obj = reinterpret_cast<const Buffer*>(handle);
+	const Buffer* other_obj = reinterpret_cast<const Buffer*>(other);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(other_obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		*result = obj->Equals(*other_obj);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Buffer_Hash(const BufferHandle* handle, size_type* result) {
+	const Buffer* obj = reinterpret_cast<const Buffer*>(handle);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		*result = obj->Hash();
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToUnknown(BufferHandle* handle, IUnknownHandle** result) {
 	return SafeObjectConvert<Buffer, IUnknown, BufferHandle, IUnknownHandle>(handle, result);
 }

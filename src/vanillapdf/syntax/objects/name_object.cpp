@@ -148,13 +148,7 @@ bool operator<(const Deferred<syntax::NameObject>& left, const Deferred<syntax::
 
 namespace std {
 size_t hash<vanillapdf::syntax::NameObject>::operator()(const vanillapdf::syntax::NameObject& name) const {
-	size_t result = 0;
-	for (auto & val : name.GetValue()) {
-		std::hash<char> hash_fn;
-		result ^= hash_fn(val);
-	}
-
-	return result;
+	return name.Hash();
 }
 
 } // std
