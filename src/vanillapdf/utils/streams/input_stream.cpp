@@ -22,7 +22,8 @@ BufferPtr InputStream::Read(types::stream_size len) {
 
 	// Trim the buffer in case there is not enough data
 	if (bytes_read < len) {
-		result->resize(bytes_read);
+		auto bytes_read_converted = ValueConvertUtils::SafeConvert<types::size_type>(bytes_read);
+		result->resize(bytes_read_converted);
 	}
 
 	return result;
