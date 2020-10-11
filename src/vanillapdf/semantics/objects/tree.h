@@ -126,24 +126,24 @@ public:
 		using base_iterator_type = BaseIterator<base_iterator>;
 
 	public:
-		Iterator(base_iterator it, conversion_type convertor)
-			: base_iterator_type(it), _conversion(convertor) {
+		Iterator(base_iterator current, base_iterator invalid, conversion_type convertor)
+			: base_iterator_type(current, invalid), _conversion(convertor) {
 		}
 
 		const Iterator& operator++() {
-			++base_iterator_type::m_it;
+			++base_iterator_type::m_current;
 			return *this;
 		}
 
 		const Iterator operator++(int) {
-			Iterator temp(base_iterator_type::m_it);
-			++base_iterator_type::m_it;
+			Iterator temp(base_iterator_type::m_current, base_iterator_type::m_invalid);
+			++base_iterator_type::m_current;
 			return temp;
 		}
 
 		std::pair<syntax::StringObjectPtr, ValueT> operator*() {
-			auto first = base_iterator_type::m_it->first;
-			auto second = _conversion(base_iterator_type::m_it->second);
+			auto first = base_iterator_type::m_current->first;
+			auto second = _conversion(base_iterator_type::m_current->second);
 			return std::pair<syntax::StringObjectPtr, ValueT>(first, second);
 		}
 
@@ -171,19 +171,19 @@ public:
 
 	// stl compatibility
 	iterator begin() {
-		return Iterator(base_type::begin(), _conversion);
+		return Iterator(base_type::begin(), base_type::end(), _conversion);
 	}
 
 	const_iterator begin() const {
-		return Iterator(base_type::begin(), _conversion);
+		return Iterator(base_type::begin(), base_type::end(), _conversion);
 	}
 
 	iterator end() {
-		return Iterator(base_type::end(), _conversion);
+		return Iterator(base_type::end(), base_type::end(), _conversion);
 	}
 
 	const_iterator end() const {
-		return Iterator(base_type::end(), _conversion);
+		return Iterator(base_type::end(), base_type::end(), _conversion);
 	}
 
 private:

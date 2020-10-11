@@ -27,13 +27,13 @@ public:
 		using BaseIterator<map_type::const_iterator>::BaseIterator;
 
 		const Iterator& operator++() {
-			++BaseIterator<map_type::const_iterator>::m_it;
+			++BaseIterator<map_type::const_iterator>::m_current;
 			return *this;
 		}
 
 		const Iterator operator++(int) {
-			Iterator temp(BaseIterator<map_type::const_iterator>::m_it);
-			++BaseIterator<map_type::const_iterator>::m_it;
+			Iterator temp(BaseIterator<map_type::const_iterator>::m_current, BaseIterator<map_type::const_iterator>::m_invalid);
+			++BaseIterator<map_type::const_iterator>::m_current;
 			return temp;
 		}
 	};
@@ -64,8 +64,8 @@ public:
 	bool IsDirty(void) const noexcept { return m_dirty; }
 	void SetDirty(bool dirty = true) noexcept { m_dirty = dirty; }
 
-	IteratorPtr Begin(void) const { return make_deferred_iterator<Iterator>(_entries.begin()); }
-	IteratorPtr End(void) const { return make_deferred_iterator<Iterator>(_entries.end()); }
+	IteratorPtr Begin(void) const { return make_deferred_iterator<Iterator>(_entries.begin(), _entries.end()); }
+	IteratorPtr End(void) const { return make_deferred_iterator<Iterator>(_entries.end(), _entries.end()); }
 
 	virtual void Add(XrefEntryBasePtr entry);
 	bool Remove(XrefEntryBasePtr entry);

@@ -489,8 +489,8 @@ error_type process_extensions(DeveloperExtensionsHandle* extensions, int nested)
 	print_spaces(nested);
 	print_text("Developer extensions begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtensions_Iterator(extensions, &iterator));
-	while (VANILLAPDF_ERROR_SUCCESS == DeveloperExtensionsIterator_IsValid(iterator, extensions, &boolean)
+	RETURN_ERROR_IF_NOT_SUCCESS(DeveloperExtensions_GetIterator(extensions, &iterator));
+	while (VANILLAPDF_ERROR_SUCCESS == DeveloperExtensionsIterator_IsValid(iterator, &boolean)
 		&& VANILLAPDF_RV_TRUE == boolean) {
 		NameObjectHandle* key = NULL;
 		DeveloperExtensionHandle* value = NULL;

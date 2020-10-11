@@ -61,7 +61,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_Release(Develope
 	return ObjectRelease<DeveloperExtension, DeveloperExtensionHandle>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensions_Iterator(DeveloperExtensionsHandle* handle, DeveloperExtensionsIteratorHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensions_GetIterator(DeveloperExtensionsHandle* handle, DeveloperExtensionsIteratorHandle** result)
 {
 	DeveloperExtensions* obj = reinterpret_cast<DeveloperExtensions*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -111,20 +111,20 @@ VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_GetValu
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_IsValid(DeveloperExtensionsIteratorHandle* handle, DeveloperExtensionsHandle* parent, boolean_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_IsValid(DeveloperExtensionsIteratorHandle* handle, boolean_type* result)
 {
 	DeveloperExtensions::Iterator* iterator = reinterpret_cast<DeveloperExtensions::Iterator*>(handle);
-	DeveloperExtensions* dictionary = reinterpret_cast<DeveloperExtensions*>(parent);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(dictionary);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try
 	{
-		if (*dictionary->End() == *iterator)
-			*result = VANILLAPDF_RV_FALSE;
-		else
+		if (iterator->IsValid()) {
 			*result = VANILLAPDF_RV_TRUE;
+		}
+		else {
+			*result = VANILLAPDF_RV_FALSE;
+		}
 
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS

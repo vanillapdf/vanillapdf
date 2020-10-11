@@ -58,7 +58,7 @@ extern "C"
 	*
 	* Any other operation except \b THIS will fail on invalid iterator.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(DictionaryObjectIteratorHandle* handle, DictionaryObjectHandle* parent, boolean_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(DictionaryObjectIteratorHandle* handle, boolean_type* result);
 
 	/**
 	* \brief Advances iterator to the next position
@@ -101,7 +101,7 @@ extern "C"
 	*
 	* Modifying collection may invalidate this handle.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(DictionaryObjectHandle* handle, DictionaryObjectIteratorHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_GetIterator(DictionaryObjectHandle* handle, DictionaryObjectIteratorHandle** result);
 
 	/**
 	* \brief Remove key-value pair from collection

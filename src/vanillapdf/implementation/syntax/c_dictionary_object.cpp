@@ -38,7 +38,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObj
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(DictionaryObjectHandle* handle, DictionaryObjectIteratorHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_GetIterator(DictionaryObjectHandle* handle, DictionaryObjectIteratorHandle** result)
 {
 	DictionaryObject* obj = reinterpret_cast<DictionaryObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -46,7 +46,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Iterator(Dictionar
 
 	try
 	{
-		auto begin = make_deferred<DictionaryObject::Iterator>(obj->begin());
+		auto begin = make_deferred<DictionaryObject::Iterator>(obj->begin(), obj->end());
 		auto ptr = begin.AddRefGet();
 		*result = reinterpret_cast<DictionaryObjectIteratorHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
@@ -107,24 +107,19 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_GetValue(
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(
-	DictionaryObjectIteratorHandle* iterator_handle,
-	DictionaryObjectHandle* dictionary_handle,
-	boolean_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(DictionaryObjectIteratorHandle* handle, boolean_type* result)
 {
-	DictionaryObject::Iterator* iterator = reinterpret_cast<DictionaryObject::Iterator*>(iterator_handle);
-	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(dictionary_handle);
+	DictionaryObject::Iterator* iterator = reinterpret_cast<DictionaryObject::Iterator*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(dictionary);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try
 	{
-		if (dictionary->end() == iterator->RawIterator()) {
-			*result = VANILLAPDF_RV_FALSE;
+		if (iterator->IsValid()) {
+			*result = VANILLAPDF_RV_TRUE;
 		}
 		else {
-			*result = VANILLAPDF_RV_TRUE;
+			*result = VANILLAPDF_RV_FALSE;
 		}
 
 		return VANILLAPDF_ERROR_SUCCESS;

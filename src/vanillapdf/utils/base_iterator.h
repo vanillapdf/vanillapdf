@@ -9,47 +9,54 @@ template <typename T>
 class BaseIterator : public virtual IUnknown, public std::iterator<std::input_iterator_tag, T> {
 public:
 	BaseIterator() = default;
-	explicit BaseIterator(T it);
+	explicit BaseIterator(T current, T invalid);
 
 	typename std::iterator_traits<T>::value_type Value() const;
 	typename std::iterator_traits<T>::value_type operator*();
 
 	bool operator==(const BaseIterator& other) const;
 	bool operator!=(const BaseIterator& other) const;
+	bool IsValid() const;
 
 	T RawIterator() const;
 
 protected:
-	T m_it;
+	T m_current;
+	T m_invalid;
 };
 
 template <typename T>
-BaseIterator<T>::BaseIterator(T it) : m_it(it) {
+BaseIterator<T>::BaseIterator(T current, T invalid) : m_current(current), m_invalid(invalid) {
 }
 
 template <typename T>
 typename std::iterator_traits<T>::value_type BaseIterator<T>::Value() const {
-	return *m_it;
+	return *m_current;
 }
 
 template <typename T>
 bool BaseIterator<T>::operator==(const BaseIterator& other) const {
-	return (m_it == other.m_it);
+	return (m_current == other.m_current);
 }
 
 template <typename T>
 bool BaseIterator<T>::operator!=(const BaseIterator& other) const {
-	return (m_it != other.m_it);
+	return (m_current != other.m_current);
+}
+
+template <typename T>
+bool BaseIterator<T>::IsValid() const {
+	return (m_current != m_invalid);
 }
 
 template <typename T>
 typename std::iterator_traits<T>::value_type BaseIterator<T>::operator*() {
-	return *m_it;
+	return *m_current;
 }
 
 template <typename T>
 T BaseIterator<T>::RawIterator() const {
-	return m_it;
+	return m_current;
 }
 
 } // vanillapdf

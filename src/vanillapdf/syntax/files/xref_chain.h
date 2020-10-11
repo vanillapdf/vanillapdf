@@ -28,13 +28,13 @@ public:
 		using BaseIterator<list_type::const_iterator>::BaseIterator;
 
 		const Iterator& operator++() {
-			++BaseIterator<list_type::const_iterator>::m_it;
+			++BaseIterator<list_type::const_iterator>::m_current;
 			return *this;
 		}
 
 		const Iterator operator++(int) {
-			Iterator temp(BaseIterator<list_type::const_iterator>::m_it);
-			++BaseIterator<list_type::const_iterator>::m_it;
+			Iterator temp(BaseIterator<list_type::const_iterator>::m_current, BaseIterator<list_type::const_iterator>::m_invalid);
+			++BaseIterator<list_type::const_iterator>::m_current;
 			return temp;
 		}
 	};
@@ -49,8 +49,8 @@ public:
 	iterator end(void) { return _list.end(); }
 	const_iterator end(void) const { return _list.end(); }
 
-	IteratorPtr Begin() const { return make_deferred_iterator<Iterator>(_list.begin()); }
-	IteratorPtr End(void) const { return make_deferred_iterator<Iterator>(_list.end()); }
+	IteratorPtr Begin() const { return make_deferred_iterator<Iterator>(_list.begin(), _list.end()); }
+	IteratorPtr End(void) const { return make_deferred_iterator<Iterator>(_list.end(), _list.end()); }
 
 	void Append(value_type item) { _list.push_back(item); }
 	void Prepend(value_type item) { _list.push_front(item); }

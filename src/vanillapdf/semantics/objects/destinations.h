@@ -101,13 +101,13 @@ public:
 
 	public:
 		const Iterator& operator++() {
-			++BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_it;
+			++BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_current;
 			return *this;
 		}
 
 		const Iterator operator++(int) {
-			Iterator temp(BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_it);
-			++BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_it;
+			Iterator temp(BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_current, BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_invalid);
+			++BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_current;
 			return temp;
 		}
 
@@ -116,11 +116,11 @@ public:
 		}
 
 		syntax::NameObjectPtr First() const {
-			return BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_it->first;
+			return BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_current->first;
 		}
 
 		DestinationPtr Second() const {
-			auto containable = BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_it->second;
+			auto containable = BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_current->second;
 			auto new_destination = DestinationBase::Create(containable);
 			return DestinationPtr(new_destination.release());
 		}
@@ -144,19 +144,19 @@ public:
 
 	// stl compatibility
 	iterator begin() {
-		return Iterator(_obj->begin());
+		return Iterator(_obj->begin(), _obj->end());
 	}
 
 	const_iterator begin() const {
-		return Iterator(_obj->begin());
+		return Iterator(_obj->begin(), _obj->end());
 	}
 
 	iterator end() {
-		return Iterator(_obj->end());
+		return Iterator(_obj->end(), _obj->end());
 	}
 
 	const_iterator end() const {
-		return Iterator(_obj->end());
+		return Iterator(_obj->end(), _obj->end());
 	}
 };
 

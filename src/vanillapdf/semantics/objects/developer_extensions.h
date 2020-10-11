@@ -23,18 +23,18 @@ public:
 		typedef syntax::DictionaryObject::const_iterator IteratorT;
 
 		const Iterator& operator++() {
-			++BaseIterator<syntax::DictionaryObject::const_iterator>::m_it;
+			++BaseIterator<syntax::DictionaryObject::const_iterator>::m_current;
 			return *this;
 		}
 
 		const Iterator operator++(int) {
-			Iterator temp(BaseIterator<syntax::DictionaryObject::const_iterator>::m_it);
-			++BaseIterator<syntax::DictionaryObject::const_iterator>::m_it;
+			Iterator temp(BaseIterator<syntax::DictionaryObject::const_iterator>::m_current, BaseIterator<syntax::DictionaryObject::const_iterator>::m_invalid);
+			++BaseIterator<syntax::DictionaryObject::const_iterator>::m_current;
 			return temp;
 		}
 
 		syntax::NameObjectPtr First() const {
-			return BaseIterator<syntax::DictionaryObject::const_iterator>::m_it->first;
+			return BaseIterator<syntax::DictionaryObject::const_iterator>::m_current->first;
 		}
 
 		DeveloperExtensionPtr Second() const;

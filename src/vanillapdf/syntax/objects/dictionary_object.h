@@ -35,22 +35,22 @@ public:
 		using BaseIterator<const_iterator>::BaseIterator;
 
 		const Iterator& operator++() {
-			++BaseIterator<const_iterator>::m_it;
+			++BaseIterator<const_iterator>::m_current;
 			return *this;
 		}
 
 		const Iterator operator++(int) {
-			Iterator temp(BaseIterator<const_iterator>::m_it);
-			++BaseIterator<const_iterator>::m_it;
+			Iterator temp(BaseIterator<const_iterator>::m_current, BaseIterator<const_iterator>::m_invalid);
+			++BaseIterator<const_iterator>::m_current;
 			return temp;
 		}
 
 		const KeyT First() const {
-			return BaseIterator<const_iterator>::m_it->first;
+			return BaseIterator<const_iterator>::m_current->first;
 		}
 
 		ValueT Second() const {
-			return BaseIterator<const_iterator>::m_it->second;
+			return BaseIterator<const_iterator>::m_current->second;
 		}
 	};
 

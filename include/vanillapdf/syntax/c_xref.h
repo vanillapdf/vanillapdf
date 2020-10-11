@@ -143,12 +143,7 @@ extern "C"
 	/**
 	* \brief Get cross-reference entry iterator
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Xref_Iterator(XrefHandle* handle, XrefIteratorHandle** result);
-
-	/**
-	* \brief Determine if the current iterator position is valid
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Xref_IsIteratorValid(XrefHandle* handle, XrefIteratorHandle* iterator_handle, boolean_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Xref_GetIterator(XrefHandle* handle, XrefIteratorHandle** result);
 
 	/**
 	* \brief Reinterpret current object as \ref IUnknownHandle
@@ -184,6 +179,11 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_Next(XrefIteratorHandle* handle);
 
 	/**
+	* \brief Determine if the current iterator position is valid
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_IsValid(XrefIteratorHandle* handle, boolean_type* result);
+
+	/**
 	* \brief Reinterpret current object as \ref IUnknownHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_ToUnknown(XrefIteratorHandle* handle, IUnknownHandle** result);
@@ -209,12 +209,7 @@ extern "C"
 	/**
 	* \brief Get cross-reference iterator
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_Iterator(XrefChainHandle* handle, XrefChainIteratorHandle** result);
-
-	/**
-	* \brief Determine if the current iterator position is valid
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_IsIteratorValid(XrefChainHandle* handle, XrefChainIteratorHandle* iterator_handle, boolean_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_GetIterator(XrefChainHandle* handle, XrefChainIteratorHandle** result);
 
 	/**
 	* \brief Reinterpret current object as \ref IUnknownHandle
@@ -248,6 +243,11 @@ extern "C"
 	* \brief Advance iterator to the next position
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_Next(XrefChainIteratorHandle* handle);
+
+	/**
+	* \brief Determine if the current iterator position is valid
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_IsValid(XrefChainIteratorHandle* handle, boolean_type* result);
 
 	/**
 	* \brief Reinterpret current object as \ref IUnknownHandle

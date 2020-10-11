@@ -34,7 +34,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Xref_GetLastXrefOffset(XrefHandle* 
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Xref_Iterator(XrefHandle* handle, XrefIteratorHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION Xref_GetIterator(XrefHandle* handle, XrefIteratorHandle** result)
 {
 	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
@@ -45,24 +45,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION Xref_Iterator(XrefHandle* handle, X
 		auto begin = xref->Begin();
 		auto ptr = begin.AddRefGet();
 		*result = reinterpret_cast<XrefIteratorHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION Xref_IsIteratorValid(XrefHandle* handle, XrefIteratorHandle* iterator_handle, boolean_type* result) {
-	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
-	XrefBase::Iterator* iterator = reinterpret_cast<XrefBase::Iterator*>(iterator_handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-	try {
-		if (*xref->End() == *iterator) {
-			*result = VANILLAPDF_RV_FALSE;
-		} else {
-			*result = VANILLAPDF_RV_TRUE;
-		}
-
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -88,6 +70,22 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_Next(XrefIteratorHandl
 
 	try {
 		++(*iterator);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_IsValid(XrefIteratorHandle* handle, boolean_type* result) {
+	XrefBase::Iterator* iterator = reinterpret_cast<XrefBase::Iterator*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		if (iterator->IsValid()) {
+			*result = VANILLAPDF_RV_TRUE;
+		} else {
+			*result = VANILLAPDF_RV_FALSE;
+		}
+
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -415,6 +413,22 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_Next(XrefChainIte
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_IsValid(XrefChainIteratorHandle* handle, boolean_type* result) {
+	XrefChain::Iterator* iterator = reinterpret_cast<XrefChain::Iterator*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		if (iterator->IsValid()) {
+			*result = VANILLAPDF_RV_TRUE;
+		} else {
+			*result = VANILLAPDF_RV_FALSE;
+		}
+
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_ToUnknown(XrefChainIteratorHandle* handle, IUnknownHandle** result) {
 	return SafeObjectConvert<XrefChain::Iterator, IUnknown, XrefChainIteratorHandle, IUnknownHandle>(handle, result);
 }
@@ -428,7 +442,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_Release(XrefChain
 	return ObjectRelease<XrefChain::Iterator, XrefChainIteratorHandle>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_Iterator(XrefChainHandle* handle, XrefChainIteratorHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_GetIterator(XrefChainHandle* handle, XrefChainIteratorHandle** result)
 {
 	XrefChain* chain = reinterpret_cast<XrefChain*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(chain);
@@ -439,24 +453,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_Iterator(XrefChainHandle*
 		auto begin = chain->Begin();
 		auto ptr = begin.AddRefGet();
 		*result = reinterpret_cast<XrefChainIteratorHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_IsIteratorValid(XrefChainHandle* handle, XrefChainIteratorHandle* iterator_handle, boolean_type* result) {
-	XrefChain* chain = reinterpret_cast<XrefChain*>(handle);
-	XrefChain::Iterator* iterator = reinterpret_cast<XrefChain::Iterator*>(iterator_handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-	try {
-		if (*chain->End() == *iterator) {
-			*result = VANILLAPDF_RV_FALSE;
-		} else {
-			*result = VANILLAPDF_RV_TRUE;
-		}
-
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }

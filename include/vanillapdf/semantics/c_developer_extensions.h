@@ -73,7 +73,7 @@ extern "C"
 	*
 	* Any other operation except \b THIS will fail on invalid iterator.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_IsValid(DeveloperExtensionsIteratorHandle* handle, DeveloperExtensionsHandle* parent, boolean_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_IsValid(DeveloperExtensionsIteratorHandle* handle, boolean_type* result);
 
 	/**
 	* \brief Advances iterator to the next position
@@ -101,7 +101,7 @@ extern "C"
 	*
 	* Modifying collection may invalidate this handle.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensions_Iterator(DeveloperExtensionsHandle* handle, DeveloperExtensionsIteratorHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensions_GetIterator(DeveloperExtensionsHandle* handle, DeveloperExtensionsIteratorHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release

@@ -10,7 +10,7 @@ namespace vanillapdf {
 namespace semantics {
 
 DeveloperExtensionPtr DeveloperExtensions::Iterator::Second() const {
-	auto containable = BaseIterator<syntax::DictionaryObject::const_iterator>::m_it->second;
+	auto containable = BaseIterator<syntax::DictionaryObject::const_iterator>::m_current->second;
 	if (!syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(containable)) {
 		throw GeneralException("Developer extension value is not dictionary");
 	}
@@ -50,11 +50,11 @@ bool DeveloperExtensions::Remove(const syntax::NameObjectPtr& name) {
 }
 
 DeveloperExtensions::IteratorPtr DeveloperExtensions::Begin(void) const {
-	return make_deferred_iterator<DeveloperExtensions::Iterator>(_obj->begin());
+	return make_deferred_iterator<DeveloperExtensions::Iterator>(_obj->begin(), _obj->end());
 }
 
 DeveloperExtensions::IteratorPtr DeveloperExtensions::End(void) const {
-	return make_deferred_iterator<DeveloperExtensions::Iterator>(_obj->end());
+	return make_deferred_iterator<DeveloperExtensions::Iterator>(_obj->end(), _obj->end());
 }
 
 DeveloperExtension::DeveloperExtension(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {

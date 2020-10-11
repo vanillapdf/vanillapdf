@@ -55,8 +55,8 @@ error_type process_dictionary(DictionaryObjectHandle* dictionary, int nested) {
 	print_spaces(nested);
 	print_text("Dictionary begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Iterator(dictionary, &iterator));
-	while (VANILLAPDF_ERROR_SUCCESS == DictionaryObjectIterator_IsValid(iterator, dictionary, &boolean)
+	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_GetIterator(dictionary, &iterator));
+	while (VANILLAPDF_ERROR_SUCCESS == DictionaryObjectIterator_IsValid(iterator, &boolean)
 		&& VANILLAPDF_RV_TRUE == boolean) {
 		NameObjectHandle* key = NULL;
 		ObjectHandle* value = NULL;
