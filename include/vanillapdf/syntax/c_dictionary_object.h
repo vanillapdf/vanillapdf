@@ -69,6 +69,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Next(DictionaryObjectIteratorHandle* handle);
 
 	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_ToUnknown(DictionaryObjectIteratorHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref DictionaryObjectIterator
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_FromUnknown(IUnknownHandle* handle, DictionaryObjectIteratorHandle** result);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
@@ -85,6 +95,11 @@ extern "C"
 	* \brief Creates a new dictionary instance
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Create(DictionaryObjectHandle** result);
+
+	/**
+	* \brief Return size of collection
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_GetSize(DictionaryObjectHandle* handle, size_type* result);
 
 	/**
 	* \brief Find mapped value for key \p key
@@ -106,7 +121,12 @@ extern "C"
 	/**
 	* \brief Remove key-value pair from collection
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryObjectHandle* handle, const NameObjectHandle* key);
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryObjectHandle* handle, const NameObjectHandle* key, boolean_type* result);
+
+	/**
+	* \brief Remove all items from the collection
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Clear(DictionaryObjectHandle* handle);
 
 	/**
 	* \brief Insert new key-value pair into collection

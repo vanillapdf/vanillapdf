@@ -265,5 +265,13 @@ void DictionaryObject::Merge(const DictionaryObject& other) {
 	}
 }
 
+void DictionaryObject::Clear() {
+	_list.clear();
+}
+
+size_type DictionaryObject::GetSize() const {
+	return _list.size();
+}
+
 } // syntax
 } // vanillapdf

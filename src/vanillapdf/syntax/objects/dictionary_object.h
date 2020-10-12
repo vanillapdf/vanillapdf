@@ -134,6 +134,9 @@ public:
 	bool Remove(const NameObject& name);
 
 	void Merge(const DictionaryObject& other);
+	void Clear();
+
+	size_type GetSize() const;
 
 	virtual ~DictionaryObject();
 

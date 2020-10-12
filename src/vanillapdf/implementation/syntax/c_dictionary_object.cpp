@@ -20,6 +20,15 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Create(DictionaryO
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_GetSize(DictionaryObjectHandle* handle, size_type* result) {
+	DictionaryObject* obj = reinterpret_cast<DictionaryObject*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	*result = obj->GetSize();
+	return VANILLAPDF_ERROR_SUCCESS;
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle* handle, const NameObjectHandle* key, ObjectHandle** result)
 {
 	DictionaryObject* obj = reinterpret_cast<DictionaryObject*>(handle);
@@ -64,6 +73,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Next(
 		++(*iterator);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_ToUnknown(DictionaryObjectIteratorHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<DictionaryObject::Iterator, IUnknown, DictionaryObjectIteratorHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_FromUnknown(IUnknownHandle* handle, DictionaryObjectIteratorHandle** result) {
+	return SafeObjectConvert<IUnknown, DictionaryObject::Iterator, IUnknownHandle, DictionaryObjectIteratorHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Release(
@@ -126,7 +143,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_IsValid(Di
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryObjectHandle* dictionary_handle, const NameObjectHandle* key)
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryObjectHandle* dictionary_handle, const NameObjectHandle* key, boolean_type* result)
 {
 	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(dictionary_handle);
 	const NameObject* name = reinterpret_cast<const NameObject*>(key);
@@ -135,7 +152,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Remove(DictionaryO
 
 	try
 	{
-		dictionary->Remove(*name);
+		*result = dictionary->Remove(*name);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Clear(DictionaryObjectHandle* handle) {
+	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(dictionary);
+
+	try {
+		dictionary->Clear();
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
