@@ -40,12 +40,14 @@ public:
 	size_type GetSize(void) const noexcept { return _list.size(); }
 	const ContainableObjectPtr& operator[](size_type i) const { return _list[i]; }
 	ContainableObjectPtr& operator[](size_type i) { return _list[i]; }
-	const ContainableObjectPtr& At(size_type at) const { return _list.at(at); }
-	ContainableObjectPtr& At(size_type at) { return _list.at(at); }
+	const ContainableObjectPtr& GetValue(size_type at) const { return _list.at(at); }
+	ContainableObjectPtr& GetValue(size_type at) { return _list.at(at); }
+	void SetValue(size_type at, ContainableObjectPtr value);
 
 	void Append(ContainableObjectPtr value);
-	void Insert(ContainableObjectPtr value, size_type at);
+	void Insert(size_type at, ContainableObjectPtr value);
 	bool Remove(size_type at);
+	void Clear();
 
 	// stl compatibility
 	void push_back(ContainableObjectPtr value);

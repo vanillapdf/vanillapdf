@@ -128,9 +128,9 @@ bool Outline::Count(syntax::IntegerObjectPtr& result) const {
 	return true;
 }
 
-syntax::RealObjectPtr OutlineItemColor::Red(void) const { return _obj->At(0); }
-syntax::RealObjectPtr OutlineItemColor::Green(void) const { return _obj->At(1); }
-syntax::RealObjectPtr OutlineItemColor::Blue(void) const { return _obj->At(2); }
+syntax::RealObjectPtr OutlineItemColor::Red(void) const { return _obj->GetValue(0); }
+syntax::RealObjectPtr OutlineItemColor::Green(void) const { return _obj->GetValue(1); }
+syntax::RealObjectPtr OutlineItemColor::Blue(void) const { return _obj->GetValue(2); }
 
 bool OutlineItemFlags::Italic(void) const { return (_obj->GetIntegerValue() & 0x01) != 0; }
 bool OutlineItemFlags::Bold(void) const { return (_obj->GetIntegerValue() & 0x02) != 0; }

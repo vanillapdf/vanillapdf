@@ -46,7 +46,7 @@ types::size_type PageAnnotations::GetSize() const {
 }
 
 AnnotationPtr PageAnnotations::At(types::size_type index) const {
-	auto obj = _obj->At(index);
+	auto obj = _obj->GetValue(index);
 	auto unique = AnnotationBase::Create(obj);
 	auto raw_ptr = unique.release();
 	return AnnotationPtr(raw_ptr);

@@ -67,7 +67,7 @@ PageObjectPtr PageTree::PageInternal(PageTreeNodePtr node, types::size_type page
 	auto kids = node->Kids();
 	auto count = kids->GetSize();
 	for (decltype(count) i = 0; i < count; ++i) {
-		auto kid = kids->At(i);
+		auto kid = kids->GetValue(i);
 
 		if (kid->GetNodeType() == PageNodeBase::NodeType::Tree) {
 			auto tree_node = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageTreeNodePtr>(kid);
@@ -81,7 +81,7 @@ PageObjectPtr PageTree::PageInternal(PageTreeNodePtr node, types::size_type page
 				return PageInternal(tree_node, page_number, processed);
 			}
 
-			auto result = tree_node->Kids()->At(page_number - processed);
+			auto result = tree_node->Kids()->GetValue(page_number - processed);
 			auto page_object = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageObjectPtr>(result);
 			m_pages[page_number - 1] = page_object;
 			return page_object;
@@ -108,7 +108,7 @@ bool PageTree::HasTreeChilds(PageTreeNodePtr node) const {
 	auto kids = node->Kids();
 	auto count = kids->GetSize();;
 	for (decltype(count) i = 0; i < count; ++i) {
-		auto kid = kids->At(i);
+		auto kid = kids->GetValue(i);
 		if (kid->GetNodeType() == PageNodeBase::NodeType::Tree) {
 			return true;
 		}
@@ -122,7 +122,7 @@ void PageTree::Insert(PageObjectPtr object, types::size_type page_index) {
 
 	auto raw_obj = object->GetObject();
 	auto kids = _obj->FindAs<ArrayObjectPtr<IndirectReferenceObjectPtr>>(constant::Name::Kids);
-	kids->Insert(make_deferred<IndirectReferenceObject>(raw_obj), array_index);
+	kids->Insert(array_index, make_deferred<IndirectReferenceObject>(raw_obj));
 	object->SetParent(make_deferred<PageTreeNode>(_obj));
 
 	UpdateKidsCount();

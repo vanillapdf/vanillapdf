@@ -50,9 +50,9 @@ void XrefStream::RecalculateContent() {
 		throw GeneralException("Xref stream width does not contain three integers");
 	}
 
-	auto field1_size = fields->At(0);
-	auto field2_size = fields->At(1);
-	auto field3_size = fields->At(2);
+	auto field1_size = fields->GetValue(0);
+	auto field2_size = fields->GetValue(1);
+	auto field3_size = fields->GetValue(2);
 
 	auto sorted_entries = Entries();
 	std::sort(sorted_entries.begin(), sorted_entries.end());

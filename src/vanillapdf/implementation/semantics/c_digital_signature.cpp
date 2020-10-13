@@ -178,13 +178,13 @@ VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_GetSize(ByteRan
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_At(ByteRangeCollectionHandle* handle, size_type at, ByteRangeHandle** result) {
+VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_GetValue(ByteRangeCollectionHandle* handle, size_type at, ByteRangeHandle** result) {
 	ByteRangeCollection* collection = reinterpret_cast<ByteRangeCollection*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(collection);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try {
-		auto direct = collection->At(at);
+		auto direct = collection->GetValue(at);
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<ByteRangeHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;

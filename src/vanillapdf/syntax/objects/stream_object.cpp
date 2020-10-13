@@ -167,7 +167,7 @@ BufferPtr StreamObject::GetBodyRaw() const {
 			if (current_filter == constant::Name::Crypt) {
 				assert(i == 0 && "Crypt filter is not first");
 				auto params = _header->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::DecodeParms);
-				auto handler_name = params->At(i)->FindAs<NameObjectPtr>(constant::Name::Name);
+				auto handler_name = params->GetValue(i)->FindAs<NameObjectPtr>(constant::Name::Name);
 				body = locked_file->DecryptData(body, GetRootObjectNumber(), GetRootGenerationNumber(), handler_name);
 				_body->assign(body.begin(), body.end());
 				_body->SetInitialized();
@@ -338,7 +338,7 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 			auto filter = FilterBase::GetFilterByName(current_filter);
 
 			if (has_params && i < params->GetSize()) {
-				auto current_param = params->At(i);
+				auto current_param = params->GetValue(i);
 				bool is_param_dictionary = ObjectUtils::IsType<DictionaryObjectPtr>(current_param);
 				if (is_param_dictionary) {
 					auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(current_param);

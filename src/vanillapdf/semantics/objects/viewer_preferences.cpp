@@ -33,7 +33,7 @@ types::size_type PageRange::GetSize(void) const {
 }
 
 PageRange::SubRangePtr PageRange::At(types::size_type at) const {
-	return make_deferred<SubRange>(_obj->At(at), _obj->At(at + 1));
+	return make_deferred<SubRange>(_obj->GetValue(at), _obj->GetValue(at + 1));
 }
 
 bool ViewerPreferences::HideToolbar(syntax::BooleanObjectPtr& result) const {

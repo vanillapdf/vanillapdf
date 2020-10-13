@@ -19,7 +19,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Create(ArrayObjectHandl
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle* handle, size_type at, ObjectHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_GetValue(ArrayObjectHandle* handle, size_type at, ObjectHandle** result)
 {
 	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -27,10 +27,27 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle* h
 
 	try
 	{
-		auto direct = obj->At(at);
+		auto direct = obj->GetValue(at);
 		auto base = ObjectUtils::GetObjectBase(direct);
 		auto ptr = base.AddRefGet();
 		*result = reinterpret_cast<ObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_SetValue(ArrayObjectHandle* handle, size_type at, ObjectHandle* value) {
+	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
+	Object* data = reinterpret_cast<Object*>(value);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+
+	try {
+		auto containable_ptr = dynamic_cast<ContainableObject*>(data);
+		if (nullptr == containable_ptr) {
+			return VANILLAPDF_ERROR_PARAMETER_VALUE;
+		}
+
+		obj->SetValue(at, containable_ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -78,7 +95,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Insert(ArrayObjectHandl
 			return VANILLAPDF_ERROR_PARAMETER_VALUE;
 		}
 
-		obj->Insert(containable_ptr, at);
+		obj->Insert(at, containable_ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -95,6 +112,16 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayObjectHandl
 			return VANILLAPDF_ERROR_OBJECT_MISSING;
 		}
 
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Clear(ArrayObjectHandle* handle) {
+	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	try {
+		obj->Clear();
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }

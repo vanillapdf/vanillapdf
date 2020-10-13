@@ -1503,8 +1503,8 @@ void FileWriter::ApplyWatermarkPageNode(DictionaryObjectPtr obj, DictionaryObjec
 			auto content_array_size = content_array->GetSize();
 
 			if (content_array_size > 0) {
-				auto first_stream = content_array->At(0);
-				auto last_stream = content_array->At(content_array_size - 1);
+				auto first_stream = content_array->GetValue(0);
+				auto last_stream = content_array->GetValue(content_array_size - 1);
 
 				ApplyWatermarkPrependSave(first_stream);
 				ApplyWatermarkContentStream(last_stream, media_box, watermark_font_name_string);
@@ -1582,10 +1582,10 @@ void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj, ArrayObjectPtr
 		const int OFFSET = 10;
 
 		// Rectangle structure 7.9.5
-		auto llx = media_box->At(0);
-		auto lly = media_box->At(1);
-		auto urx = media_box->At(2);
-		auto ury = media_box->At(3);
+		auto llx = media_box->GetValue(0);
+		auto lly = media_box->GetValue(1);
+		auto urx = media_box->GetValue(2);
+		auto ury = media_box->GetValue(3);
 
 		auto watermark_width = WATERMARK_WIDTH_RAW / SCALE;
 		auto watermark_height = WATERMARK_HEIGHT_RAW / SCALE;

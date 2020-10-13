@@ -124,7 +124,7 @@ error_type process_array(ArrayObjectHandle* arr, int nested) {
 
 	for (i = 0; i < size; ++i) {
 		ObjectHandle* item = NULL;
-		RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_At(arr, i, &item));
+		RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_GetValue(arr, i, &item));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_object(item, nested + 1));
 		RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(item));
 	}

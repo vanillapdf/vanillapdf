@@ -156,14 +156,14 @@ void Document::RecalculatePageContents() {
 			}
 
 			for (decltype(stream_array_size) j = 0; j < stream_array_size; ++j) {
-				auto referenced_stram = stream_array->At(j);
+				auto referenced_stram = stream_array->GetValue(j);
 
 				// TODO divide output into multiple streams
 				BufferPtr empty_body;
 				referenced_stram->SetBody(empty_body);
 			}
 
-			stream_object = stream_array->At(0);
+			stream_object = stream_array->GetValue(0);
 		}
 
 		std::string string_body = ss.str();

@@ -564,9 +564,9 @@ XrefStreamPtr Parser::ParseXrefStream(
 
 	auto body = stream->GetBody();
 
-	auto field1_size = fields->At(0);
-	auto field2_size = fields->At(1);
-	auto field3_size = fields->At(2);
+	auto field1_size = fields->GetValue(0);
+	auto field2_size = fields->GetValue(1);
+	auto field3_size = fields->GetValue(2);
 
 	bool contains_self = false;
 
@@ -574,8 +574,8 @@ XrefStreamPtr Parser::ParseXrefStream(
 	auto it = body.begin();
 	for (decltype(index_size) i = 0; i < index_size; i += 2) {
 
-		auto subsection_index = index->At(i);
-		auto subsection_size = index->At(i + 1);
+		auto subsection_index = index->GetValue(i);
+		auto subsection_size = index->GetValue(i + 1);
 
 		for (auto idx = 0; idx < *subsection_size; idx++) {
 

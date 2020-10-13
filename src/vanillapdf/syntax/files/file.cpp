@@ -240,7 +240,7 @@ bool File::SetEncryptionPassword(const Buffer& password) {
 	}
 
 	auto ids = _xref->Begin()->Value()->GetTrailerDictionary()->FindAs<ArrayObjectPtr<StringObjectPtr>>(constant::Name::ID);
-	auto id = ids->At(0);
+	auto id = ids->GetValue(0);
 
 	auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
 	auto filter = dict->FindAs<NameObjectPtr>(constant::Name::Filter);

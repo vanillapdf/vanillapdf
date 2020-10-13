@@ -89,8 +89,9 @@ public:
 	size_type GetSize(void) const;
 	const T operator[](size_type i) const;
 	T operator[](size_type i);
-	const T At(size_type at) const;
-	T At(size_type at);
+	const T GetValue(size_type at) const;
+	T GetValue(size_type at);
+	void SetValue(size_type at, T value);
 
 	void AddAttribute(IAttributePtr attribute);
 	bool RemoveAttribute(IAttribute::Type type);
@@ -98,8 +99,9 @@ public:
 	IAttributePtr GetAttribute(IAttribute::Type type);
 
 	void Append(const T& value);
-	void Insert(const T& value, size_type at);
+	void Insert(size_type at, const T& value);
 	bool Remove(size_type at);
+	void Clear();
 
 	std::string ToString(void) const;
 	std::string ToPdf(void) const;
@@ -265,13 +267,18 @@ T ArrayObject<T>::operator[](size_type i) {
 }
 
 template <typename T>
-const T ArrayObject<T>::At(size_type at) const {
-	return _conversion(_list->At(at));
+const T ArrayObject<T>::GetValue(size_type at) const {
+	return _conversion(_list->GetValue(at));
 }
 
 template <typename T>
-T ArrayObject<T>::At(size_type at) {
-	return _conversion(_list->At(at));
+T ArrayObject<T>::GetValue(size_type at) {
+	return _conversion(_list->GetValue(at));
+}
+
+template <typename T>
+void ArrayObject<T>::SetValue(size_type at, T value) {
+	return _list->SetValue(at, value);
 }
 
 template <typename T>
@@ -280,13 +287,18 @@ void ArrayObject<T>::Append(const T& value) {
 }
 
 template <typename T>
-void ArrayObject<T>::Insert(const T& value, size_type at) {
-	_list->Insert(value, at);
+void ArrayObject<T>::Insert(size_type at, const T& value) {
+	_list->Insert(at, value);
 }
 
 template <typename T>
 bool ArrayObject<T>::Remove(size_type at) {
 	return _list->Remove(at);
+}
+
+template <typename T>
+void ArrayObject<T>::Clear() {
+	return _list->Clear();
 }
 
 template <typename T>

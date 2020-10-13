@@ -26,7 +26,7 @@ public:
 	explicit ByteRangeCollection(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> obj);
 
 	types::size_type GetSize(void) const;
-	ByteRangePtr At(types::size_type at) const;
+	ByteRangePtr GetValue(types::size_type at) const;
 };
 
 class DigitalSignature : public HighLevelObject<syntax::DictionaryObjectPtr> {

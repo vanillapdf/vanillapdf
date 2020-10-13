@@ -32,8 +32,8 @@ types::size_type ByteRangeCollection::GetSize(void) const {
 	return _obj->GetSize() / 2;
 }
 
-ByteRangePtr ByteRangeCollection::At(types::size_type at) const {
-	return make_deferred<ByteRange>(_obj->At(at), _obj->At(at + 1));
+ByteRangePtr ByteRangeCollection::GetValue(types::size_type at) const {
+	return make_deferred<ByteRange>(_obj->GetValue(at), _obj->GetValue(at + 1));
 }
 
 syntax::HexadecimalStringObjectPtr DigitalSignature::Contents() {

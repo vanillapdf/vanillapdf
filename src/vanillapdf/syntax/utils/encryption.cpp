@@ -354,7 +354,7 @@ BufferPtr EncryptionUtils::GetRecipientKey
 
 		auto length = enveloped_data.GetSize();
 		for (decltype(length) i = 0; i < length; ++i) {
-			auto enveloped_bytes = enveloped_data.At(i);
+			auto enveloped_bytes = enveloped_data.GetValue(i);
 			SHA256_Update(&ctx, enveloped_bytes->GetValue()->data(), enveloped_bytes->GetValue()->std_size());
 		}
 
@@ -367,7 +367,7 @@ BufferPtr EncryptionUtils::GetRecipientKey
 
 		auto length = enveloped_data.GetSize();
 		for (decltype(length) i = 0; i < length; ++i) {
-			auto enveloped_bytes = enveloped_data.At(i);
+			auto enveloped_bytes = enveloped_data.GetValue(i);
 			SHA1_Update(&ctx, enveloped_bytes->GetValue()->data(), enveloped_bytes->GetValue()->std_size());
 		}
 
@@ -391,7 +391,7 @@ BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax
 
 	auto length = enveloped_data.GetSize();
 	for (decltype(length) i = 0; i < length; ++i) {
-		auto enveloped_bytes = enveloped_data.At(i);
+		auto enveloped_bytes = enveloped_data.GetValue(i);
 
 		auto enveloped_bytes_data = enveloped_bytes->GetValue()->data();
 		auto enveloped_bytes_size = enveloped_bytes->GetValue()->size();

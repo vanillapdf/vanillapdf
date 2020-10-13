@@ -40,7 +40,12 @@ extern "C"
 	/**
 	* \brief Get element at location \p at
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_At(ArrayObjectHandle* handle, size_type at, ObjectHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_GetValue(ArrayObjectHandle* handle, size_type at, ObjectHandle** result);
+
+	/**
+	* \brief Set element at location \p at
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_SetValue(ArrayObjectHandle* handle, size_type at, ObjectHandle* value);
 
 	/**
 	* \brief Insert new element at the end of the array
@@ -56,6 +61,11 @@ extern "C"
 	* \brief Remove element from location \p at
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayObjectHandle* handle, size_type at);
+
+	/**
+	* \brief Clear all items from the collection
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Clear(ArrayObjectHandle* handle);
 
 	/**
 	* \brief Reinterpret current object as \ref ObjectHandle

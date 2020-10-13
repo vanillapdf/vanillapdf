@@ -79,7 +79,7 @@ void MixedArrayObject::Append(ContainableObjectPtr value) {
 	OnChanged();
 }
 
-void MixedArrayObject::Insert(ContainableObjectPtr value, size_type at) {
+void MixedArrayObject::Insert(size_type at, ContainableObjectPtr value) {
 	_list.insert(_list.begin() + at, value);
 	value->SetOwner(Object::GetWeakReference());
 	value->Subscribe(this);
@@ -98,6 +98,18 @@ bool MixedArrayObject::Remove(size_type at) {
 	OnChanged();
 
 	return true;
+}
+
+void MixedArrayObject::Clear() {
+	_list.clear();
+}
+
+void MixedArrayObject::SetValue(size_type at, ContainableObjectPtr value) {
+	_list[at] = value;
+
+	value->SetOwner(Object::GetWeakReference());
+	value->Subscribe(this);
+	OnChanged();
 }
 
 // stl compatibility
@@ -187,8 +199,8 @@ bool MixedArrayObject::Equals(ObjectPtr other) const {
 	}
 
 	for (unsigned int i = 0; i < first_size; ++i) {
-		auto first_obj = At(i);
-		auto second_obj = other_obj->At(i);
+		auto first_obj = GetValue(i);
+		auto second_obj = other_obj->GetValue(i);
 		if (!first_obj->Equals(second_obj)) {
 			return false;
 		}

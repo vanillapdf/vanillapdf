@@ -62,7 +62,7 @@ types::size_type FieldCollection::GetSize() const {
 }
 
 FieldPtr FieldCollection::At(types::size_type index) const {
-	auto obj = _obj->At(index);
+	auto obj = _obj->GetValue(index);
 	auto unique = Field::Create(obj);
 	auto raw_ptr = unique.release();
 	return FieldPtr(raw_ptr);

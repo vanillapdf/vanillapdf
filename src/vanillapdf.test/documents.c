@@ -1243,7 +1243,7 @@ error_type process_byte_range_collection(ByteRangeCollectionHandle* obj, int nes
 	for (i = 0; i < size; ++i) {
 		ByteRangeHandle* range = NULL;
 
-		RETURN_ERROR_IF_NOT_SUCCESS(ByteRangeCollection_At(obj, i, &range));
+		RETURN_ERROR_IF_NOT_SUCCESS(ByteRangeCollection_GetValue(obj, i, &range));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_byte_range(range, nested + 1));
 		RETURN_ERROR_IF_NOT_SUCCESS(ByteRange_Release(range));
 	}

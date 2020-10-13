@@ -50,7 +50,7 @@ BufferPtr BaseFontRange::GetMappedValue(BufferPtr key) const {
 		auto arr = ObjectUtils::ConvertTo<ArrayObjectPtr<HexadecimalStringObjectPtr>>(m_dest);
 		auto low_value = m_low->GetValue();
 		auto diff = Difference(key, low_value);
-		auto result_obj = arr->At(diff);
+		auto result_obj = arr->GetValue(diff);
 		return result_obj->GetValue();
 	}
 

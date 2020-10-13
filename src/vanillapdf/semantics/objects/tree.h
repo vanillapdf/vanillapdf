@@ -329,8 +329,8 @@ void TreeBase<KeyT, ValueT>::Rebuild() {
 
 	if (leaf_values->GetSize() > 0) {
 		syntax::MixedArrayObjectPtr limit_values;
-		auto lower_bound = leaf_values->At(0);
-		auto upper_bound = leaf_values->At(leaf_values->GetSize() - 2);
+		auto lower_bound = leaf_values->GetValue(0);
+		auto upper_bound = leaf_values->GetValue(leaf_values->GetSize() - 2);
 
 		// Clone the raw values
 		limit_values->Append(lower_bound->Clone());
@@ -393,8 +393,8 @@ template <typename KeyT, typename ValueT>
 void TreeBase<KeyT, ValueT>::InsertPairsToMap(std::map<KeyT, syntax::ContainableObjectPtr>& map, const syntax::MixedArrayObjectPtr values) const {
 	auto size = values->GetSize();
 	for (decltype(size) i = 0; i + 1 < size; i += 2) {
-		auto key_obj = values->At(i);
-		auto value_obj = values->At(i + 1);
+		auto key_obj = values->GetValue(i);
+		auto value_obj = values->GetValue(i + 1);
 
 		// TODO this assumes that key is derived from object
 		auto key = syntax::ObjectUtils::ConvertTo<KeyT>(key_obj);
@@ -455,7 +455,7 @@ template <typename KeyT, typename ValueT>
 bool TreeBase<KeyT, ValueT>::ContainsInternal(const syntax::MixedArrayObjectPtr values, const KeyT& key) const {
 	int size = values->GetSize();
 	for (int i = 0; i + 1 < size; i += 2) {
-		if (values->At(i)->Equals(key)) {
+		if (values->GetValue(i)->Equals(key)) {
 			return true;
 		}
 	}
@@ -498,7 +498,7 @@ bool TreeBase<KeyT, ValueT>::ContainsInternal(const TreeNodeBasePtr node, const 
 		if (limits->GetSize() != 2)
 			return false;
 
-		if (key < limits->At(0) || limits->At(1) < key)
+		if (key < limits->GetValue(0) || limits->GetValue(1) < key)
 			return false;
 
 		return ContainsInternal(leaf->Values(), key);
@@ -511,8 +511,8 @@ template <typename KeyT, typename ValueT>
 ValueT TreeBase<KeyT, ValueT>::FindInternal(const syntax::MixedArrayObjectPtr values, const KeyT& key) const {
 	int size = values->GetSize();
 	for (int i = 0; i + 1 < size; i += 2) {
-		if (values->At(i)->Equals(key)) {
-			return values->At(i + 1);
+		if (values->GetValue(i)->Equals(key)) {
+			return values->GetValue(i + 1);
 		}
 	}
 
@@ -560,7 +560,7 @@ ValueT TreeBase<KeyT, ValueT>::FindInternal(const TreeNodeBasePtr node, const Ke
 		if (limits->GetSize() != 2)
 			throw GeneralException("Tree node has incorrect size");
 
-		if (key < limits->At(0) || limits->At(1) < key)
+		if (key < limits->GetValue(0) || limits->GetValue(1) < key)
 			throw GeneralException("Tree node does not contain required item");
 
 		return FindInternal(leaf->Values(), key);

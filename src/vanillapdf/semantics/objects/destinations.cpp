@@ -58,8 +58,8 @@ std::unique_ptr<DestinationBase> DestinationBase::Create(syntax::MixedArrayObjec
 		throw GeneralException("Invalid destination array");
 	}
 
-	syntax::ObjectPtr page_number_obj = root->At(0);
-	syntax::ObjectPtr type_obj = root->At(1);
+	syntax::ObjectPtr page_number_obj = root->GetValue(0);
+	syntax::ObjectPtr type_obj = root->GetValue(1);
 
 	// page_number_obj shall be indirect reference to page object
 	// for remote go to actions it can be integer value of destination page
@@ -120,8 +120,8 @@ std::unique_ptr<DestinationBase> DestinationBase::Create(syntax::DictionaryObjec
 		throw GeneralException("Invalid destination array");
 	}
 
-	syntax::ObjectPtr page_number_obj = destination->At(0);
-	syntax::ObjectPtr type_obj = destination->At(1);
+	syntax::ObjectPtr page_number_obj = destination->GetValue(0);
+	syntax::ObjectPtr type_obj = destination->GetValue(1);
 
 	// page_number_obj shall be indirect reference to page object
 	// for remote go to actions it can be integer value of destination page
@@ -192,13 +192,13 @@ syntax::ObjectPtr DestinationBase::GetAttribute(const syntax::NameObject& name) 
 syntax::ObjectPtr DestinationBase::GetPage() const {
 	if (syntax::ObjectUtils::IsType<syntax::MixedArrayObjectPtr>(_obj)) {
 		auto destination = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(_obj);
-		return destination->At(0);
+		return destination->GetValue(0);
 	}
 
 	if (syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(_obj)) {
 		auto dict = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(_obj);
 		auto destination = dict->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::D);
-		return destination->At(0);
+		return destination->GetValue(0);
 	}
 
 	assert(false && "Destination was created but object is neither array nor dictionary");

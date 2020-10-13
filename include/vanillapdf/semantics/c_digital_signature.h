@@ -143,7 +143,7 @@ extern "C"
 	* \brief
 	* Get single byte range from array at specific position
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_At(ByteRangeCollectionHandle* handle, size_type at, ByteRangeHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_GetValue(ByteRangeCollectionHandle* handle, size_type at, ByteRangeHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
