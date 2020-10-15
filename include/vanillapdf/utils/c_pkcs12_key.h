@@ -51,10 +51,20 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_ToEncryptionKey(PKCS12KeyHandle* handle, EncryptionKeyHandle** result);
 
+		/**
+	* \brief Convert \ref SigningKeyHandle to \ref EncryptionKeyHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_FromEncryptionKey(EncryptionKeyHandle* handle, PKCS12KeyHandle** result);
+
 	/**
 	* \brief Reinterpret current object as \ref SigningKeyHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_ToSigningKey(PKCS12KeyHandle* handle, SigningKeyHandle** result);
+
+	/**
+	* \brief Convert \ref SigningKeyHandle to \ref PKCS12KeyHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_FromSigningKey(SigningKeyHandle* handle, PKCS12KeyHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release

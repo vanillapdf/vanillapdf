@@ -76,8 +76,16 @@ VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_ToEncryptionKey(PKCS12Key
 	return SafeObjectConvert<PKCS12Key, IEncryptionKey, PKCS12KeyHandle, EncryptionKeyHandle>(handle, result);
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_FromEncryptionKey(EncryptionKeyHandle* handle, PKCS12KeyHandle** result) {
+	return SafeObjectConvert<IEncryptionKey, PKCS12Key, EncryptionKeyHandle, PKCS12KeyHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_ToSigningKey(PKCS12KeyHandle* handle, SigningKeyHandle** result) {
 	return SafeObjectConvert<PKCS12Key, ISigningKey, PKCS12KeyHandle, SigningKeyHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_FromSigningKey(SigningKeyHandle* handle, PKCS12KeyHandle** result) {
+	return SafeObjectConvert<ISigningKey, PKCS12Key, SigningKeyHandle, PKCS12KeyHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_Release(PKCS12KeyHandle* handle) {
