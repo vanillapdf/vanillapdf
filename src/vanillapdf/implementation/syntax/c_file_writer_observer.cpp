@@ -34,7 +34,7 @@ public:
 
 		// File writer events are licensed feature
 		if (!LicenseInfo::IsValid()) {
-			throw LicenseRequiredException("Document signing is a licensed feature");
+			throw LicenseRequiredException("File writer event is a licensed feature");
 		}
 	}
 
