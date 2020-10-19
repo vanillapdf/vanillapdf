@@ -236,6 +236,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION FileWriterObserver_CreateCustom(
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION FileWriterObserver_ToUnknown(FileWriterObserverHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<IFileWriterObserver, IUnknown, FileWriterObserverHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FileWriterObserver_FromUnknown(IUnknownHandle* handle, FileWriterObserverHandle** result) {
+	return SafeObjectConvert<IUnknown, IFileWriterObserver, IUnknownHandle, FileWriterObserverHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION FileWriterObserver_Release(FileWriterObserverHandle* handle) {
 	return ObjectRelease<IFileWriterObserver, FileWriterObserverHandle>(handle);
 }

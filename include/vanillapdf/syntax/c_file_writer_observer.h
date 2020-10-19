@@ -96,6 +96,15 @@ extern "C"
 		void* user_data,
 		FileWriterObserverHandle** result);
 
+	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION FileWriterObserver_ToUnknown(FileWriterObserverHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref FileWriterObserverHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION FileWriterObserver_FromUnknown(IUnknownHandle* handle, FileWriterObserverHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
