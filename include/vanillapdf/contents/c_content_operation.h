@@ -339,6 +339,19 @@ extern "C"
 
 	/** @} */
 
+	/**
+	* \memberof ContentOperationEndTextHandle
+	* @{
+	*/
+
+		/**
+	* \copydoc IUnknown_Release
+	* \see \ref IUnknown_Release
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationEndText_Release(ContentOperationEndTextHandle* handle);
+
+	/** @} */
+
 #ifdef __cplusplus
 };
 #endif

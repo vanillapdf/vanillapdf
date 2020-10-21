@@ -51,6 +51,7 @@ int process_decrypt(int argc, char *argv[]) {
 		RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_ToEncryptionKey(pkcs12_key, &encryption_key));
 		RETURN_ERROR_IF_NOT_SUCCESS(File_SetEncryptionKey(file, encryption_key));
 
+		RETURN_ERROR_IF_NOT_SUCCESS(EncryptionKey_Release(encryption_key));
 		RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_Release(pkcs12_key));
 	}
 

@@ -153,6 +153,16 @@ err:
 		subtype_object = NULL;
 	}
 
+	if (type_name != NULL) {
+		RETURN_ERROR_IF_NOT_SUCCESS(NameObject_Release(type_name));
+		type_name = NULL;
+	}
+
+	if (subtype_name != NULL) {
+		RETURN_ERROR_IF_NOT_SUCCESS(NameObject_Release(subtype_name));
+		subtype_name = NULL;
+	}
+
 	if (stream_dictionary != NULL) {
 		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Release(stream_dictionary));
 		stream_dictionary = NULL;
@@ -172,6 +182,7 @@ error_type process_object(ObjectHandle* obj, biguint_type object_number, ushort_
 
 		RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_FromObject(obj, &stream));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_stream(stream, object_number, generation_number));
+		RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_Release(stream));
 	}
 
 	return VANILLAPDF_TOOLS_ERROR_SUCCESS;
@@ -206,6 +217,7 @@ error_type process_xref(XrefHandle* xref) {
 			RETURN_ERROR_IF_NOT_SUCCESS(XrefUsedEntry_GetReference(used_entry, &obj));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_object(obj, object_number, generation_number));
 			RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));
+			RETURN_ERROR_IF_NOT_SUCCESS(XrefUsedEntry_Release(used_entry));
 		}
 
 		if (type == XrefEntryType_Compressed) {
@@ -215,6 +227,7 @@ error_type process_xref(XrefHandle* xref) {
 			RETURN_ERROR_IF_NOT_SUCCESS(XrefCompressedEntry_GetReference(compressed_entry, &obj));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_object(obj, object_number, generation_number));
 			RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));
+			RETURN_ERROR_IF_NOT_SUCCESS(XrefCompressedEntry_Release(compressed_entry));
 		}
 
 		RETURN_ERROR_IF_NOT_SUCCESS(XrefEntry_Release(entry));
@@ -283,6 +296,7 @@ error_type process_contents(ContentsHandle* page_contents, size_type page_number
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_GetType(content_object, &object_type));
 
 		if (object_type != ContentObjectType_InlineImage) {
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_Release(content_object));
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_Release(content_instruction));
 			continue;
 		}
@@ -304,7 +318,10 @@ error_type process_contents(ContentsHandle* page_contents, size_type page_number
 
 		RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(content_image_data));
 		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Release(content_image_dictionary));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectInlineImage_Release(content_image));
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_Release(content_object));
+		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_Release(content_instruction));
 	}
 
 	return VANILLAPDF_TOOLS_ERROR_SUCCESS;

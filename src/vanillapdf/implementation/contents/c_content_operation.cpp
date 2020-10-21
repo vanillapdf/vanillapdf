@@ -362,3 +362,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_SetVa
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_Release(ContentOperationTextShowArrayHandle* handle) {
 	return ObjectRelease<OperationTextShowArray, ContentOperationTextShowArrayHandle>(handle);
 }
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationEndText_Release(ContentOperationEndTextHandle* handle) {
+	return ObjectRelease<OperationEndText, ContentOperationEndTextHandle>(handle);
+}

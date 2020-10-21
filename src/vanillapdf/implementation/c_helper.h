@@ -58,6 +58,19 @@ error_type SafeObjectConvert(SourceHandleT* from, DestHandleT** result) {
 			return VANILLAPDF_ERROR_PARAMETER_VALUE;
 		}
 
+		// My friend, we need to talk and it won't be easy
+		// Back in my days, we didn't have to increment the
+		// reference counters when converting from one to another
+
+		// When implementing .NET wrapper with usage of SafeHandle
+		// the things get complicated. It would not be pretty
+		// to increment the counters here, but not there.
+		
+		// Let's be nice and keep the interface consistent
+		// AND
+		// Increment the reference counter
+		converted->AddRef();
+
 		*result = reinterpret_cast<DestHandleT*>(converted);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS

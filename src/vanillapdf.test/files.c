@@ -48,18 +48,21 @@ error_type process_xref(XrefHandle* xref, int nested) {
 		switch (type) {
 			case XrefEntryType_Free:
 				RETURN_ERROR_IF_NOT_SUCCESS(XrefFreeEntry_FromEntry(entry, &free_entry));
+				RETURN_ERROR_IF_NOT_SUCCESS(XrefFreeEntry_Release(free_entry));
 				break;
 			case XrefEntryType_Used:
 				RETURN_ERROR_IF_NOT_SUCCESS(XrefUsedEntry_FromEntry(entry, &used_entry));
 				RETURN_ERROR_IF_NOT_SUCCESS(XrefUsedEntry_GetReference(used_entry, &obj));
 				RETURN_ERROR_IF_NOT_SUCCESS(process_object(obj, nested + 1));
 				RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));
+				RETURN_ERROR_IF_NOT_SUCCESS(XrefUsedEntry_Release(used_entry));
 				break;
 			case XrefEntryType_Compressed:
 				RETURN_ERROR_IF_NOT_SUCCESS(XrefCompressedEntry_FromEntry(entry, &compressed_entry));
 				RETURN_ERROR_IF_NOT_SUCCESS(XrefCompressedEntry_GetReference(compressed_entry, &obj));
 				RETURN_ERROR_IF_NOT_SUCCESS(process_object(obj, nested + 1));
 				RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(obj));
+				RETURN_ERROR_IF_NOT_SUCCESS(XrefCompressedEntry_Release(compressed_entry));
 				break;
 			case XrefEntryType_Null:
 				print_text("Missing xref entry\n");

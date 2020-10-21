@@ -21,6 +21,7 @@ error_type on_initializing(void* user_data, InputOutputStreamHandle* input_outpu
 	// Do something with the output stream
 	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_ToOutputStream(input_output_stream, &output_stream));
 	RETURN_ERROR_IF_NOT_SUCCESS(OutputStream_GetOutputPosition(output_stream, &current_offset));
+	RETURN_ERROR_IF_NOT_SUCCESS(OutputStream_Release(output_stream));
 
 	// Convert to long long for printf
 	current_offset_converted = current_offset;
@@ -43,6 +44,7 @@ error_type on_finalizing(void* user_data, InputOutputStreamHandle* input_output_
 	// Do something with the output stream
 	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_ToOutputStream(input_output_stream, &output_stream));
 	RETURN_ERROR_IF_NOT_SUCCESS(OutputStream_GetOutputPosition(output_stream, &current_offset));
+	RETURN_ERROR_IF_NOT_SUCCESS(OutputStream_Release(output_stream));
 
 	// Convert to long long for printf
 	current_offset_converted = current_offset;

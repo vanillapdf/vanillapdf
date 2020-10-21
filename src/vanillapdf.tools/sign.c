@@ -80,6 +80,8 @@ int process_sign(int argc, char *argv[]) {
 
 	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_Release(signature_settings));
 	RETURN_ERROR_IF_NOT_SUCCESS(Date_Release(signing_time));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(SigningKey_Release(signing_key));
 	RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_Release(pkcs12_key));
 
 	return VANILLAPDF_TOOLS_ERROR_SUCCESS;

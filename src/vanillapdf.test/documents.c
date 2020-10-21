@@ -25,10 +25,12 @@ error_type process_content_object(ContentObjectHandle* obj, int nested) {
 		case ContentObjectType_Text:
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_ToText(obj, &text_object));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_content_object_text(text_object, nested + 1));
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectText_Release(text_object));
 			break;
 		case ContentObjectType_InlineImage:
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_ToInlineImage(obj, &image_object));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_content_object_inline_image(image_object, nested + 1));
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectInlineImage_Release(image_object));
 			break;
 		default:
 			print_spaces(nested + 1);
@@ -100,22 +102,27 @@ error_type process_content_operation(ContentOperationHandle* obj, int nested) {
 		case ContentOperationType_Generic:
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToGeneric(obj, &generic_operation));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_generic(generic_operation, nested + 1));
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationGeneric_Release(generic_operation));
 			break;
 		case ContentOperationType_TextShow:
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextShow(obj, &text_show_operation));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_textshow(text_show_operation, nested + 1));
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextShow_Release(text_show_operation));
 			break;
 		case ContentOperationType_TextFont:
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextFont(obj, &text_font_operation));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_textfont(text_font_operation, nested + 1));
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextFont_Release(text_font_operation));
 			break;
 		case ContentOperationType_TextShowArray:
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextShowArray(obj, &text_show_array_operation));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_textshowarray(text_show_array_operation, nested + 1));
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextShowArray_Release(text_show_array_operation));
 			break;
 		case ContentOperationType_EndText:
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToEndText(obj, &end_text_operation));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_endtext(end_text_operation, nested + 1));
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationEndText_Release(end_text_operation));
 			break;
 		default:
 			print_spaces(nested + 1);
@@ -254,10 +261,12 @@ error_type process_content_instruction(ContentInstructionHandle* obj, int nested
 		case ContentInstructionType_Object:
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_ToObject(obj, &object_handle));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_content_object(object_handle, nested + 1));
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_Release(object_handle));
 			break;
 		case ContentInstructionType_Operation:
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_ToOperation(obj, &operation_handle));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation(operation_handle, nested + 1));
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_Release(operation_handle));
 			break;
 		default:
 			print_spaces(nested + 1);
@@ -385,6 +394,7 @@ error_type process_annotation(AnnotationHandle* obj, int nested) {
 		case AnnotationType_Link:
 			RETURN_ERROR_IF_NOT_SUCCESS(Annotation_ToLink(obj, &link_annotation));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_link_annotation(link_annotation, nested + 1));
+			RETURN_ERROR_IF_NOT_SUCCESS(LinkAnnotation_Release(link_annotation));
 			break;
 
 		case AnnotationType_Text:
@@ -1145,6 +1155,7 @@ error_type process_field(FieldHandle* obj, int nested) {
 		case FieldType_Signature:
 			RETURN_ERROR_IF_NOT_SUCCESS(Field_ToSignature(obj, &signature_field));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_signature_field(signature_field, nested + 1));
+			RETURN_ERROR_IF_NOT_SUCCESS(SignatureField_Release(signature_field));
 			break;
 
 		case FieldType_Button:

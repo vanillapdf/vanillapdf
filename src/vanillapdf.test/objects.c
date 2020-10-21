@@ -252,10 +252,12 @@ error_type process_string(StringObjectHandle* obj, int nested) {
 		case StringType_Literal:
 			RETURN_ERROR_IF_NOT_SUCCESS(LiteralStringObject_FromStringObject(obj, &literal_str));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_lit_string(literal_str, nested));
+			RETURN_ERROR_IF_NOT_SUCCESS(LiteralStringObject_Release(literal_str));
 			break;
 		case StringType_Hexadecimal:
 			RETURN_ERROR_IF_NOT_SUCCESS(HexadecimalStringObject_FromStringObject(obj, &hexadecimal_str));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_hex_string(hexadecimal_str, nested));
+			RETURN_ERROR_IF_NOT_SUCCESS(HexadecimalStringObject_Release(hexadecimal_str));
 			break;
 		default:
 			print_spaces(nested);
@@ -285,42 +287,52 @@ error_type process_object(ObjectHandle* obj, int nested) {
 		case ObjectType_Array:
 			RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_FromObject(obj, &arr));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_array(arr, nested));
+			RETURN_ERROR_IF_NOT_SUCCESS(ArrayObject_Release(arr));
 			break;
 		case ObjectType_Boolean:
 			RETURN_ERROR_IF_NOT_SUCCESS(BooleanObject_FromObject(obj, &boolean));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_boolean(boolean, nested));
+			RETURN_ERROR_IF_NOT_SUCCESS(BooleanObject_Release(boolean));
 			break;
 		case ObjectType_Dictionary:
 			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_FromObject(obj, &dictionary));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_dictionary(dictionary, nested));
+			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Release(dictionary));
 			break;
 		case ObjectType_Integer:
 			RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_FromObject(obj, &integer));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_integer(integer, nested));
+			RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(integer));
 			break;
 		case ObjectType_Name:
 			RETURN_ERROR_IF_NOT_SUCCESS(NameObject_FromObject(obj, &name));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_name(name, nested));
+			RETURN_ERROR_IF_NOT_SUCCESS(NameObject_Release(name));
 			break;
 		case ObjectType_Null:
 			RETURN_ERROR_IF_NOT_SUCCESS(NullObject_FromObject(obj, &null_object));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_null(null_object, nested));
+			RETURN_ERROR_IF_NOT_SUCCESS(NullObject_Release(null_object));
 			break;
 		case ObjectType_Real:
 			RETURN_ERROR_IF_NOT_SUCCESS(RealObject_FromObject(obj, &real));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_real(real, nested));
+			RETURN_ERROR_IF_NOT_SUCCESS(RealObject_Release(real));
 			break;
 		case ObjectType_Stream:
 			RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_FromObject(obj, &stream));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_stream(stream, nested));
+			RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_Release(stream));
 			break;
 		case ObjectType_String:
 			RETURN_ERROR_IF_NOT_SUCCESS(StringObject_FromObject(obj, &string));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_string(string, nested));
+			RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(string));
 			break;
 		case ObjectType_IndirectReference:
 			RETURN_ERROR_IF_NOT_SUCCESS(IndirectReferenceObject_FromObject(obj, &indirect_reference));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_reference(indirect_reference, nested));
+			RETURN_ERROR_IF_NOT_SUCCESS(IndirectReferenceObject_Release(indirect_reference));
 			break;
 		default:
 			print_spaces(nested);
