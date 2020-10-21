@@ -80,6 +80,10 @@ void MixedArrayObject::Append(ContainableObjectPtr value) {
 }
 
 void MixedArrayObject::Insert(size_type at, ContainableObjectPtr value) {
+	if (at >= _list.size()) {
+		throw GeneralException("Index was outside the bounds of the array");
+	}
+
 	_list.insert(_list.begin() + at, value);
 	value->SetOwner(Object::GetWeakReference());
 	value->Subscribe(this);
@@ -87,10 +91,11 @@ void MixedArrayObject::Insert(size_type at, ContainableObjectPtr value) {
 }
 
 bool MixedArrayObject::Remove(size_type at) {
-	auto item = _list.begin() + at;
-	if (item == _list.end()) {
+	if (at >= _list.size()) {
 		return false;
 	}
+
+	auto item = _list.begin() + at;
 
 	(*item)->ClearOwner();
 	(*item)->Unsubscribe(this);
@@ -105,6 +110,10 @@ void MixedArrayObject::Clear() {
 }
 
 void MixedArrayObject::SetValue(size_type at, ContainableObjectPtr value) {
+	if (at >= _list.size()) {
+		throw GeneralException("Index was outside the bounds of the array");
+	}
+
 	_list[at] = value;
 
 	value->SetOwner(Object::GetWeakReference());
