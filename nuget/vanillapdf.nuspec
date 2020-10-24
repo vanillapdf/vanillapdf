@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>vanillapdf</id>
+	<title>vanillapdf 1.4.0</title>
+    <version>1.4.0</version>
+    <authors>Vanilla.PDF Labs s.r.o.</authors>
+    <owners>Vanilla.PDF Labs s.r.o.</owners>
+    <license type="file">LICENSE.txt</license>
+    <icon>images\vanilla_logo.ico</icon>
+    <projectUrl>https://vanillapdf.com/</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Vanilla.PDF is a cross-platform SDK for creating and modifying PDF documents</description>
+    <summary>Integration is very easy with pre-packaged binaries for multiple operating systems such as Windows, Linux and Mac.</summary>
+    <copyright>Copyright 2020</copyright>
+    <tags>pdf parsing sign</tags>
+
+    <dependencies>
+      <group targetFramework="native" />
+	  <group targetFramework="netstandard" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="vanillapdf.targets" target="build\native\vanillapdf.targets" />
+    <file src="vanillapdf.targets" target="build\netstandard\vanillapdf.targets" />
+
+    <file src="build\win-x86_v140\src\vanillapdf\Release\*.dll" target="runtimes\win-x86\native" />
+    <file src="build\win-x64_v140\src\vanillapdf\Release\*.dll" target="runtimes\win-x64\native" />
+
+    <file src="build\win-x86_v140\src\vanillapdf\Release\*.lib" target="lib\native\win-x86" />
+    <file src="build\win-x64_v140\src\vanillapdf\Release\*.lib" target="lib\native\win-x64" />
+
+    <!-- This is a placeholder file, so we can target netstandard without a warning -->
+    <file src="_._" target="lib\netstandard" />
+
+    <file src="..\cmake\README.txt" target="" />
+    <file src="..\LICENSE.txt" target="" />
+    <file src="..\cmake\vanilla_logo.ico" target="images" />
+  </files>
+</package>
