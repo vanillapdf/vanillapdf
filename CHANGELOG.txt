@@ -37,3 +37,8 @@ v1.3.0 - 27.12.2018
  - IO streams API
  - Added tools project to realease package
  - Document signature flags support
+
+v1.4.0 - 25.10.2020
+ - Interface naming unification - iterators, getters/setters
+ - Enhanced support for hybrid streams
+ - .NET wrapper support
