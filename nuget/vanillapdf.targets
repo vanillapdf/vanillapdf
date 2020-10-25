@@ -4,15 +4,32 @@
     <ItemGroup Condition=" '$(Platform)' == 'x64' OR '$(Platform)' == 'AnyCPU'">
         <None Include="$(MSBuildThisFileDirectory)..\..\runtimes\win-x64\native\*.dll">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
+            <Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
+        </None>
+        <None Include="$(MSBuildThisFileDirectory)..\..\runtimes\linux-x64\native\*.so">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Link>runtimes\linux-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
         </None>
     </ItemGroup>
 
     <ItemGroup Condition=" '$(Platform)' == 'x86' OR '$(Platform)' == 'AnyCPU' ">
         <None Include="$(MSBuildThisFileDirectory)..\..\runtimes\win-x86\native\*.dll">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<Link>runtimes\win-x86\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
+            <Link>runtimes\win-x86\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
+        </None>
+        <None Include="$(MSBuildThisFileDirectory)..\..\runtimes\linux-x86\native\*.so">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Link>runtimes\linux-x86\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
         </None>
     </ItemGroup>
+
+    <ItemDefinitionGroup>
+        <ClCompile>
+            <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)../..//build/native/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+        </ClCompile>
+        <ResourceCompile>
+            <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)../..//build/native/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+        </ResourceCompile>
+    </ItemDefinitionGroup>
 
 </Project>

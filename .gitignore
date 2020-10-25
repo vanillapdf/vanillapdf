@@ -10,4 +10,5 @@
 
 # Nuget
 /nuget/build/
+/nuget/archives/
 /nuget/*.nupkg

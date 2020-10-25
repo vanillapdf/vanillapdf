@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>vanillapdf</id>
-	<title>vanillapdf 1.4.0</title>
+    <title>vanillapdf 1.4.0</title>
     <version>1.4.0</version>
     <authors>Vanilla.PDF Labs s.r.o.</authors>
     <owners>Vanilla.PDF Labs s.r.o.</owners>
@@ -17,24 +17,35 @@
 
     <dependencies>
       <group targetFramework="native" />
-	  <group targetFramework="netstandard" />
+      <group targetFramework="netstandard" />
     </dependencies>
   </metadata>
   <files>
+    <!-- Configuration files -->
     <file src="vanillapdf.targets" target="build\native\vanillapdf.targets" />
     <file src="vanillapdf.targets" target="build\netstandard\vanillapdf.targets" />
 
+    <!-- Windows files -->
     <file src="build\win-x86_v140\src\vanillapdf\Release\*.dll" target="runtimes\win-x86\native" />
     <file src="build\win-x64_v140\src\vanillapdf\Release\*.dll" target="runtimes\win-x64\native" />
 
     <file src="build\win-x86_v140\src\vanillapdf\Release\*.lib" target="lib\native\win-x86" />
     <file src="build\win-x64_v140\src\vanillapdf\Release\*.lib" target="lib\native\win-x64" />
 
+    <!-- Linux files -->
+    <file src="build\vanillapdf_1.4.0_i386\lib\*.so" target="runtimes\linux-x86\native" />
+    <file src="build\vanillapdf_1.4.0_amd64\lib\*.so" target="runtimes\linux-x64\native" />
+
+    <!-- Header include files -->
+    <file src="..\include\**\*.h" target="build\native\include" />
+
     <!-- This is a placeholder file, so we can target netstandard without a warning -->
     <file src="_._" target="lib\netstandard" />
 
-    <file src="..\cmake\README.txt" target="" />
+    <!-- Additional dependencies -->
     <file src="..\LICENSE.txt" target="" />
+    <file src="..\CHANGELOG.txt" target="" />
+    <file src="..\cmake\README.txt" target="" />
     <file src="..\cmake\vanilla_logo.ico" target="images" />
   </files>
 </package>
