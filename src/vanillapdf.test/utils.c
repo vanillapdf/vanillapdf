@@ -56,7 +56,7 @@ error_type process_utils_conversions() {
 	RETURN_ERROR_IF_NOT_SUCCESS(BufferArray_Create(&buffer_array_handle));
 	RETURN_ERROR_IF_NOT_SUCCESS(BufferArray_ToUnknown(buffer_array_handle, &unknown_buffer_array_handle));
 	RETURN_ERROR_IF_NOT_SUCCESS(IUnknown_Release(unknown_buffer_array_handle));
-	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(buffer_handle));
+	RETURN_ERROR_IF_NOT_SUCCESS(BufferArray_Release(buffer_array_handle));
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
