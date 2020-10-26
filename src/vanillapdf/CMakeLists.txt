@@ -564,7 +564,10 @@ endif (OPENSSL_FOUND)
 
 if (JPEG_FOUND)
 	include_directories(${JPEG_INCLUDE_DIR})
-	set(VANILLAPDF_LIBS JPEG::JPEG ${VANILLAPDF_LIBS})
+
+	# This is not yet supported on all linux CMake distributions
+	# set(VANILLAPDF_LIBS JPEG::JPEG ${VANILLAPDF_LIBS})
+	set(VANILLAPDF_LIBS ${JPEG_LIBRARIES} ${VANILLAPDF_LIBS})
 	add_definitions(-DVANILLAPDF_HAVE_JPEG)
 
 	message(STATUS "JPEG library ${JPEG_VERSION} was found")
