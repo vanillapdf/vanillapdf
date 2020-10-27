@@ -1,5 +1,5 @@
 Ubuntu-amd64:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu:latest
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:latest
   when: manual
 
   script:
@@ -15,11 +15,11 @@ Ubuntu-amd64:
       - ./*.sha256
 
 Ubuntu-i386:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu:latest
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-i386:latest
   when: manual
 
   script:
-    - cmake -DVANILLAPDF_FORCE_32_BIT=ON .
+    - cmake .
     - make
     - make test
     - make package
@@ -31,7 +31,7 @@ Ubuntu-i386:
       - ./*.sha256
 
 CentOS-amd64:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-centos:latest
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-centos-amd64:latest
   when: manual
 
   script:
@@ -47,11 +47,11 @@ CentOS-amd64:
       - ./*.sha256
 
 CentOS-i386:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-centos:latest
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-centos-i386:latest
   when: manual
 
   script:
-    - cmake -DVANILLAPDF_FORCE_32_BIT=ON .
+    - cmake .
     - make
     - make test
     - make package
