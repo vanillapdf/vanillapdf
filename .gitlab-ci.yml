@@ -19,14 +19,13 @@ Ubuntu-i386:
   when: manual
 
   script:
-    - cmake .
+    - cmake -DVANILLAPDF_FORCE_32_BIT=ON .
     - make
     - make test
     - make package
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     paths:
-      - ./*.deb
       - ./*.tar.gz
       - ./*.sha256
 
@@ -51,7 +50,7 @@ CentOS-i386:
   when: manual
 
   script:
-    - cmake .
+    - cmake -DVANILLAPDF_FORCE_32_BIT=ON .
     - make
     - make test
     - make package
