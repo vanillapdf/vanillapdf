@@ -35,13 +35,16 @@ archives_suffix = [
     "_amd64.tar.gz"
 ]
 
+extracted_count = 0
 for suffix in archives_suffix:
     filename = archive_prefix + args.build_version + suffix
-    print ("Checking file: " + filename)
 
     archive_path = os.path.join(args.archives_folder, filename)
     if not os.path.exists(archive_path):
+        print("File " + archive_path + " does not exist, terminating")
         sys.exit(-1)
 
-    print ("File exists, extracting")
     extract_file(archive_path, args.build_folder)
+    extracted_count = extracted_count + 1
+
+print("Successfully extracted " + str(extracted_count) + " packages")
