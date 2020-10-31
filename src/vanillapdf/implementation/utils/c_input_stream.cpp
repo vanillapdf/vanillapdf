@@ -34,7 +34,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION InputStream_CreateFromBuffer(Buffer
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION InputStream_Read(InputStreamHandle* handle, size_type length, char* result, size_type* read_length) {
+VANILLAPDF_API error_type CALLING_CONVENTION InputStream_Read(InputStreamHandle* handle, bigint_type length, char* result, bigint_type* read_length) {
 	IInputStream* stream = reinterpret_cast<IInputStream*>(handle);
 
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(stream);
@@ -47,7 +47,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION InputStream_Read(InputStreamHandle*
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION InputStream_ReadBuffer(InputStreamHandle* handle, size_type length, BufferHandle** result) {
+VANILLAPDF_API error_type CALLING_CONVENTION InputStream_ReadBuffer(InputStreamHandle* handle, bigint_type length, BufferHandle** result) {
 	IInputStream* stream = reinterpret_cast<IInputStream*>(handle);
 
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(stream);

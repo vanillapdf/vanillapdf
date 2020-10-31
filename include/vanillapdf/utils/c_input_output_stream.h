@@ -42,12 +42,12 @@ extern "C"
 	/**
 	* \copydoc InputStream_Read
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_Read(InputOutputStreamHandle* handle, size_type length, char* result, size_type* read_length);
+	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_Read(InputOutputStreamHandle* handle, bigint_type length, char* result, bigint_type* read_length);
 
 	/**
 	* \copydoc InputStream_ReadBuffer
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_ReadBuffer(InputOutputStreamHandle* handle, size_type length, BufferHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_ReadBuffer(InputOutputStreamHandle* handle, bigint_type length, BufferHandle** result);
 
 	/**
 	* \copydoc InputStream_GetInputPosition

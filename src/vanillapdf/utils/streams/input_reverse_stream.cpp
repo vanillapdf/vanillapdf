@@ -154,9 +154,7 @@ InputReverseStream::ReverseBuf::pos_type InputReverseStream::ReverseBuf::seekpos
 }
 
 types::stream_size InputReverseStream::Read(char* result, types::stream_size len) {
-	auto length_converted = ValueConvertUtils::SafeConvert<types::size_type>(len);
-
-	m_stream->read(result, length_converted);
+	m_stream->read(result, len);
 	return m_stream->gcount();
 }
 
@@ -174,6 +172,17 @@ types::stream_size InputReverseStream::Read(Buffer& result, types::stream_size l
 BufferPtr InputReverseStream::Read(types::stream_size len) {
 	BufferPtr result = make_deferred_container<Buffer>(len);
 	m_stream->read(result->data(), len);
+
+	// Check the read data size
+	types::stream_size bytes_read = m_stream->gcount();
+	assert(bytes_read <= len);
+
+	// Trim the buffer in case there is not enough data
+	if (bytes_read < len) {
+		auto bytes_read_converted = ValueConvertUtils::SafeConvert<types::size_type>(bytes_read);
+		result->resize(bytes_read_converted);
+	}
+
 	return result;
 }
 
