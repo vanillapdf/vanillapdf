@@ -13,17 +13,18 @@
     <description>Vanilla.PDF is a cross-platform SDK for creating and modifying PDF documents</description>
     <summary>Integration is very easy with pre-packaged binaries for multiple operating systems such as Windows, Linux and Mac.</summary>
     <copyright>Copyright 2020</copyright>
-    <tags>pdf parsing sign</tags>
+    <tags>pdf parsing sign native</tags>
 
     <dependencies>
       <group targetFramework="native" />
       <group targetFramework="netstandard" />
     </dependencies>
   </metadata>
+
   <files>
     <!-- Configuration files -->
-    <file src="vanillapdf.targets" target="build\native\vanillapdf.targets" />
-    <file src="vanillapdf.targets" target="build\netstandard\vanillapdf.targets" />
+    <file src="vanillapdf_native.targets" target="build\native\vanillapdf.targets" />
+    <file src="vanillapdf_net.targets" target="build\netstandard\vanillapdf.targets" />
 
     <!-- Windows files -->
     <file src="build\win-x86_v140\src\vanillapdf\Release\*.dll" target="runtimes\win-x86\native" />
