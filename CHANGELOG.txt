@@ -42,3 +42,6 @@ v1.4.0 - 25.10.2020
  - Interface naming unification - iterators, getters/setters
  - Enhanced support for hybrid streams
  - .NET wrapper support
+
+v1.4.1 - 1.11.2020
+ - NuGet support for C++ solutions
