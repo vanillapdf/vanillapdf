@@ -2,8 +2,8 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>vanillapdf</id>
-    <title>vanillapdf 1.4.0</title>
-    <version>1.4.0</version>
+    <title>vanillapdf 1.4.1</title>
+    <version>1.4.1</version>
     <authors>Vanilla.PDF Labs s.r.o.</authors>
     <owners>Vanilla.PDF Labs s.r.o.</owners>
     <license type="file">LICENSE.txt</license>
@@ -11,7 +11,6 @@
     <projectUrl>https://vanillapdf.com/</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Vanilla.PDF is a cross-platform SDK for creating and modifying PDF documents</description>
-    <summary>Integration is very easy with pre-packaged binaries for multiple operating systems such as Windows, Linux and Mac.</summary>
     <copyright>Copyright 2020 Vanilla.PDF</copyright>
     <tags>pdf parsing sign native</tags>
 
