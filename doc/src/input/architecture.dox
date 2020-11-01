@@ -100,7 +100,7 @@ In addition, to ensure (not guarantee) that there is only a single reference cou
 File layer allows access to file contents at the syntactic level.
 It has some necessary semantic features that are required for parsing its syntax.
 
-For example \ref IndirectObjectReferenceHandle often has to be resolved to read an object.
+For example \ref IndirectReferenceObjectHandle often has to be resolved to read an object.
 The \ref StreamObjectHandle has it's \p Length often stored as an indirect object.
 In order to validate this object, the \p Length has to be resolved to successfully parse an object.
 

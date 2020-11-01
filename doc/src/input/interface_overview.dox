@@ -34,10 +34,6 @@ Whenever an object is received with an output parameter, it has to be released w
 	}
 \endcode
 
-\note
-A single exception to the release rule are conversion functions such as \ref Object_ToArray, \ref PKCS12Key_ToSigningKey, etc.
-The reason is that both references always identify the same object.
-
 After the file has been opened successfully, the caller is responsible for calling appropriate release function.
 Calling the release multiple times is an error and causes <b>undefined behavior</b>.
 We recommend resetting the handles to their initial state of \b NULL, to prevent any errors.

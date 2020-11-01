@@ -74,7 +74,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_ToUnknown(DictionaryObjectIteratorHandle* handle, IUnknownHandle** result);
 
 	/**
-	* \brief Convert \ref IUnknownHandle to \ref DictionaryObjectIterator
+	* \brief Convert \ref IUnknownHandle to \ref DictionaryObjectIteratorHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_FromUnknown(IUnknownHandle* handle, DictionaryObjectIteratorHandle** result);
 
