@@ -17,7 +17,8 @@ namespace syntax {
 class Object : public virtual IUnknown, public IWeakReferenceable<Object>, public IModifyObservable {
 public:
 	enum class Type {
-		Null = 0,
+		Undefined = 0,
+		Null,
 		Array,
 		Boolean,
 		Dictionary,
@@ -32,7 +33,7 @@ public:
 	static const char* TypeName(Type type);
 
 public:
-	virtual Type GetType(void) const noexcept = 0;
+	virtual Type GetObjectType(void) const noexcept = 0;
 	virtual std::string ToString(void) const { return ToPdf(); }
 	virtual std::string ToPdf(void) const;
 	virtual void ToPdfStream(IOutputStreamPtr output) const;

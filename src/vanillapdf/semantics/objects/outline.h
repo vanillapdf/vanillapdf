@@ -32,18 +32,19 @@ public:
 class OutlineBase : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
 	enum class Type {
+		Undefined = 0,
 		Outline,
 		Item
 	};
 
 	explicit OutlineBase(syntax::DictionaryObjectPtr root);
-	virtual Type OutlineType(void) const noexcept = 0;
+	virtual Type GetOutlineType(void) const noexcept = 0;
 };
 
 class OutlineItem : public OutlineBase {
 public:
 	explicit OutlineItem(syntax::DictionaryObjectPtr root);
-	virtual Type OutlineType(void) const noexcept override;
+	virtual Type GetOutlineType(void) const noexcept override;
 
 	syntax::StringObjectPtr Title(void) const;
 	OutlineBasePtr Parent(void) const;
@@ -80,18 +81,18 @@ public:
 class Outline : public OutlineBase {
 public:
 	explicit Outline(syntax::DictionaryObjectPtr root);
-	virtual Type OutlineType(void) const noexcept override;
+	virtual Type GetOutlineType(void) const noexcept override;
 
 	bool First(OutputOutlineItemPtr& result) const;
 	bool Last(OutputOutlineItemPtr& result) const;
 	bool Count(syntax::IntegerObjectPtr& result) const;
 };
 
-inline OutlineBase::Type OutlineItem::OutlineType(void) const noexcept {
+inline OutlineBase::Type OutlineItem::GetOutlineType(void) const noexcept {
 	return OutlineBase::Type::Item;
 }
 
-inline OutlineBase::Type Outline::OutlineType(void) const noexcept {
+inline OutlineBase::Type Outline::GetOutlineType(void) const noexcept {
 	return OutlineBase::Type::Outline;
 }
 

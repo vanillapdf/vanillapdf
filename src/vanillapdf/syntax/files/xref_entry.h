@@ -11,7 +11,8 @@ namespace syntax {
 class XrefEntryBase : public virtual IUnknown, public IWeakReferenceable<XrefEntryBase>, public IModifyObservable {
 public:
 	enum class Usage {
-		Null = 0,
+		Undefined = 0,
+		Null,
 		Used,
 		Free,
 		Compressed

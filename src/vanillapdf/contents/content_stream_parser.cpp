@@ -49,7 +49,7 @@ InlineImageObjectPtr ContentStreamParser::ReadInlineImageObject(void) {
 			auto name = ReadName();
 			auto value = ReadDirectObject();
 
-			if (value->GetType() == Object::Type::Null) {
+			if (value->GetObjectType() == Object::Type::Null) {
 				continue;
 			}
 

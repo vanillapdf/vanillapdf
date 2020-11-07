@@ -4,7 +4,7 @@
 namespace vanillapdf {
 
 enum class MessageDigestAlgorithm {
-	None = 0,
+	Undefined = 0,
 	MDNULL,
 	MD2,
 	MD4,

@@ -12,6 +12,7 @@ namespace syntax {
 class FilterBase : public virtual IUnknown, public IWeakReferenceable<FilterBase> {
 public:
 	enum class Type : unsigned char {
+		Undefined = 0,
 		ASCIIHexDecode,
 		ASCII85Decode,
 		LZWDecode,

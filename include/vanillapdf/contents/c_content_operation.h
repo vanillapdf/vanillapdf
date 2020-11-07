@@ -71,11 +71,12 @@ extern "C"
 	* \ingroup group_contents
 	*/
 	typedef enum {
+		ContentOperationType_Undefined = 0,
 		/**
 		* \copydoc ContentOperationGenericHandle
 		* \see \ref ContentOperationGenericHandle
 		*/
-		ContentOperationType_Generic = 0,
+		ContentOperationType_Generic,
 		ContentOperationType_LineWidth,
 		ContentOperationType_LineCap,
 		ContentOperationType_LineJoin,
@@ -175,7 +176,7 @@ extern "C"
 	/**
 	* \brief Get derived type of current object
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_GetType(ContentOperationHandle* handle, ContentOperationType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_GetOperationType(ContentOperationHandle* handle, ContentOperationType* result);
 
 	/**
 	* \brief Reinterpret current object as \ref ContentOperationGenericHandle
@@ -206,6 +207,16 @@ extern "C"
 	* \brief Reinterpret current object as \ref ContentOperationEndTextHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToEndText(ContentOperationHandle* handle, ContentOperationEndTextHandle** result);
+
+	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToUnknown(ContentOperationHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref ContentOperationHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_FromUnknown(IUnknownHandle* handle, ContentOperationHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release

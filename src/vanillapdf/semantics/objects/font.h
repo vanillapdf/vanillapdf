@@ -20,7 +20,8 @@ public:
 class FontBase : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
 	enum class Type {
-		Composite = 0,
+		Undefined = 0,
+		Composite,
 		Type1,
 		Type3
 	};
@@ -29,26 +30,26 @@ public:
 	explicit FontBase(syntax::DictionaryObjectPtr root);
 	static FontBase* Create(syntax::DictionaryObjectPtr root);
 
-	virtual Type GetType() const noexcept = 0;
+	virtual Type GetFontType() const noexcept = 0;
 };
 
 class Type1Font : public FontBase {
 public:
 	explicit Type1Font(syntax::DictionaryObjectPtr root);
-	virtual Type GetType() const noexcept override;
+	virtual Type GetFontType() const noexcept override;
 };
 
 class Type3Font : public FontBase {
 public:
 	explicit Type3Font(syntax::DictionaryObjectPtr root);
-	virtual Type GetType() const noexcept override;
+	virtual Type GetFontType() const noexcept override;
 };
 
 class CompositeFont : public FontBase {
 public:
 	explicit CompositeFont(syntax::DictionaryObjectPtr root);
 
-	virtual Type GetType() const noexcept override;
+	virtual Type GetFontType() const noexcept override;
 
 	//syntax::NameObjectPtr BaseFont() const;
 	//syntax::ObjectPtr Encoding() const;

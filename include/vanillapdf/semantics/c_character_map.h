@@ -46,11 +46,13 @@ extern "C"
 	* \brief Available types of character maps.
 	*/
 	typedef enum {
+		CharacterMapType_Undefined = 0,
+
 		/**
 		* \copybrief EmbeddedCharacterMapHandle
 		* \see \ref EmbeddedCharacterMapHandle
 		*/
-		CharacterMapType_Embedded = 0,
+		CharacterMapType_Embedded,
 
 		/**
 		* \copybrief UnicodeCharacterMapHandle

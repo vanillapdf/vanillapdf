@@ -48,11 +48,12 @@ extern "C"
 	* \ingroup group_annotations
 	*/
 	typedef enum {
+		AnnotationType_Undefined = 0,
 		/**
 		* A text annotation represents a "sticky note" attached to a point in
 		* the PDF document.
 		*/
-		AnnotationType_Text = 0,
+		AnnotationType_Text,
 
 		/**
 		* A link annotation represents either a hypertext link to a
@@ -223,7 +224,7 @@ extern "C"
 	* \param handle a handle to the annotation class
 	* \param result a pointer to variable will be filled with annotation type upon success, unchanged on failure
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetType(AnnotationHandle* handle, AnnotationType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetAnnotationType(AnnotationHandle* handle, AnnotationType* result);
 
 	/**
 	* \brief Reinterpret current object as \ref LinkAnnotationHandle

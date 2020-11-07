@@ -13,7 +13,7 @@ public:
 	UnknownOperator() = default;
 	explicit UnknownOperator(BufferPtr data) : _data(data) {}
 
-	virtual Type GetType(void) const noexcept override { return Type::Unknown; }
+	virtual Type GetOperatorType(void) const noexcept override { return Type::Unknown; }
 	virtual BufferPtr Value(void) const override { return _data; }
 
 private:
@@ -24,7 +24,7 @@ private:
 class Name##Operator : public OperatorBase \
 { \
 public: \
-	virtual Type GetType(void) const noexcept override { return Type::Name; } \
+	virtual Type GetOperatorType(void) const noexcept override { return Type::Name; } \
 	virtual BufferPtr Value(void) const override { return make_deferred_container<Buffer>(Val); } \
 };
 

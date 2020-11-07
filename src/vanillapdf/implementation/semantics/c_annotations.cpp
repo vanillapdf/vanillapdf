@@ -8,13 +8,13 @@ using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetType(AnnotationHandle* handle, AnnotationType* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetAnnotationType(AnnotationHandle* handle, AnnotationType* result)
 {
 	AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	switch (obj->GetType()) {
+	switch (obj->GetAnnotationType()) {
 	case AnnotationBase::Type::Text:
 		*result = AnnotationType_Text; break;
 	case AnnotationBase::Type::Link:

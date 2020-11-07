@@ -9,7 +9,7 @@ namespace syntax {
 
 class NullObject : public ContainableObject {
 public:
-	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Null; }
+	virtual Object::Type GetObjectType(void) const noexcept override { return Object::Type::Null; }
 	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 
 	static NullObjectPtr GetInstance(void);

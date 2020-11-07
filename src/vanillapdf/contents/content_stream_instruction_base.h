@@ -14,6 +14,7 @@ namespace contents {
 class InstructionBase : public virtual IUnknown, public IWeakReferenceable<InstructionBase>, public IModifyObservable {
 public:
 	enum class Type {
+		Undefined = 0,
 		Object,
 		Operation
 	};

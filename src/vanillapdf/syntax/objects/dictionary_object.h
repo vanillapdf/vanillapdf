@@ -75,7 +75,7 @@ public:
 	virtual std::string ToString(void) const override;
 	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 	virtual void ToPdfStreamUpdateOffset(IOutputStreamPtr output) override;
-	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Dictionary; }
+	virtual Object::Type GetObjectType(void) const noexcept override { return Object::Type::Dictionary; }
 
 	virtual void SetFile(WeakReference<File> file) override;
 	virtual void SetInitialized(bool initialized = true) override;

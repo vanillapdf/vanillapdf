@@ -47,6 +47,7 @@ extern "C"
 	* \ingroup group_contents
 	*/
 	typedef enum {
+		ContentObjectType_Undefined = 0,
 		/**
 		* \copydoc ContentObjectTextHandle
 		* \see \ref ContentObjectTextHandle
@@ -68,7 +69,7 @@ extern "C"
 	/**
 	* \brief Get derived type of current object
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_GetType(ContentObjectHandle* handle, ContentObjectType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_GetObjectType(ContentObjectHandle* handle, ContentObjectType* result);
 
 	/**
 	* \brief Reinterpret current object as \ref ContentObjectTextHandle
@@ -79,6 +80,16 @@ extern "C"
 	* \brief Reinterpret current object as \ref ContentObjectInlineImageHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_ToInlineImage(ContentObjectHandle* handle, ContentObjectInlineImageHandle** result);
+
+	/**
+	* \brief Reinterpret current object as \ref ContentInstructionHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_ToInstruction(ContentObjectHandle* handle, ContentInstructionHandle** result);
+
+	/**
+	* \brief Convert \ref ContentInstructionHandle to \ref ContentObjectHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_FromInstruction(ContentInstructionHandle* handle, ContentObjectHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release

@@ -57,7 +57,7 @@ bool NameObject::Equals(ObjectPtr other) const {
 	return Equals(*other_obj);
 }
 
-Object::Type NameObject::GetType(void) const noexcept {
+Object::Type NameObject::GetObjectType(void) const noexcept {
 	return Object::Type::Name;
 }
 

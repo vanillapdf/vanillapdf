@@ -7,9 +7,10 @@
 #include "vanillapdf/contents/c_content_instruction.h"
 #include "implementation/c_helper.h"
 
+using namespace vanillapdf;
 using namespace vanillapdf::contents;
 
-VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_GetType(ContentInstructionHandle* handle, ContentInstructionType* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_GetInstructionType(ContentInstructionHandle* handle, ContentInstructionType* result) {
 	InstructionBase* obj = reinterpret_cast<InstructionBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -30,8 +31,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_ToOperation(Cont
 	return SafeObjectConvert<InstructionBase, OperationBase, ContentInstructionHandle, ContentOperationHandle>(handle, result);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_ToObject(ContentInstructionHandle* handle, ContentObjectHandle** result) {
-	return SafeObjectConvert<InstructionBase, ContentObjectBase, ContentInstructionHandle, ContentObjectHandle>(handle, result);
+VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_ToUnknown(ContentInstructionHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<InstructionBase, IUnknown, ContentInstructionHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_FromUnknown(IUnknownHandle* handle, ContentInstructionHandle** result) {
+	return SafeObjectConvert<IUnknown, InstructionBase, IUnknownHandle, ContentInstructionHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_Release(ContentInstructionHandle* handle) {

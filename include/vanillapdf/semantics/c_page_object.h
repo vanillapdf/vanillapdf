@@ -90,6 +90,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetMediaBox(PageObjectHandle* handle, RectangleHandle** result);
 
 	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_ToUnknown(PageObjectHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref PageObjectHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_FromUnknown(IUnknownHandle* handle, PageObjectHandle** result);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/

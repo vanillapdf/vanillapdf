@@ -125,7 +125,7 @@ bool PageObject::GetContents(OutputContentsPtr& result) const {
 		// This is programming safe check
 		assert(!(is_ref && is_array) && "Error in object utils, object is stream and array at the same time");
 
-		auto base_type_str = Object::TypeName(content->GetType());
+		auto base_type_str = Object::TypeName(content->GetObjectType());
 		throw GeneralException("Invalid contents type: " + std::string(base_type_str));
 	}
 

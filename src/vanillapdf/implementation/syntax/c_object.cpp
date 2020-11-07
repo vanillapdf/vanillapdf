@@ -20,13 +20,13 @@ VANILLAPDF_API error_type Object_TypeName(ObjectType type, string_type* result)
 	CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Object_GetType(ObjectHandle* handle, ObjectType* result)
+VANILLAPDF_API error_type CALLING_CONVENTION Object_GetObjectType(ObjectHandle* handle, ObjectType* result)
 {
 	Object* obj = reinterpret_cast<Object*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	switch (obj->GetType()) {
+	switch (obj->GetObjectType()) {
 	case Object::Type::Array:
 		*result = ObjectType_Array; break;
 	case Object::Type::Boolean:

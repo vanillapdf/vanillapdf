@@ -133,7 +133,7 @@ template <typename T>
 class DereferenceHelper {
 public:
 	static T Get(Object* ptr, std::map<IndirectReferenceObject, bool>& visited, bool& result) {
-		bool is_ref = (ptr->GetType() == Object::Type::IndirectReference);
+		bool is_ref = (ptr->GetObjectType() == Object::Type::IndirectReference);
 		if (!is_ref) {
 			return ConversionHelper<T>::Get(ptr, result);
 		}
@@ -167,7 +167,7 @@ class ObjectTypeFunctor {
 public:
 	static bool IsType(Object* obj) {
 		bool passed = false;
-		bool is_ref = (obj->GetType() == Object::Type::IndirectReference);
+		bool is_ref = (obj->GetObjectType() == Object::Type::IndirectReference);
 		if (is_ref) {
 			std::map<IndirectReferenceObject, bool> visited;
 			auto result = DereferenceHelper<T>::Get(obj, visited, passed);
@@ -180,7 +180,7 @@ public:
 
 	static T Convert(Object* obj) {
 		bool passed = false;
-		bool is_ref = (obj->GetType() == Object::Type::IndirectReference);
+		bool is_ref = (obj->GetObjectType() == Object::Type::IndirectReference);
 		if (is_ref) {
 			std::map<IndirectReferenceObject, bool> visited;
 			auto result = DereferenceHelper<T>::Get(obj, visited, passed);
@@ -223,7 +223,7 @@ template <typename T>
 class ObjectTypeFunctor<ArrayObjectPtr<T>> {
 public:
 	static bool IsType(Object* obj) {
-		bool is_ref = (obj->GetType() == Object::Type::IndirectReference);
+		bool is_ref = (obj->GetObjectType() == Object::Type::IndirectReference);
 		if (is_ref) {
 			bool found = false;
 			std::map<IndirectReferenceObject, bool> visited;
@@ -249,7 +249,7 @@ public:
 	}
 
 	static ArrayObjectPtr<T> Convert(Object* obj) {
-		bool is_ref = (obj->GetType() == Object::Type::IndirectReference);
+		bool is_ref = (obj->GetObjectType() == Object::Type::IndirectReference);
 		if (is_ref) {
 			bool found = false;
 			std::map<IndirectReferenceObject, bool> visited;

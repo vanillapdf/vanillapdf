@@ -42,6 +42,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(ContentsHandle* handle, size_type at, ContentInstructionHandle** result);
 
 	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Contents_ToUnknown(ContentsHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref ContentsHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Contents_FromUnknown(IUnknownHandle* handle, ContentsHandle** result);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/

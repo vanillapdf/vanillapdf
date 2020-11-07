@@ -153,7 +153,7 @@ DictionaryObjectPtr ParserBase::ReadDictionary() {
 		auto name = ReadDirectObjectWithType<NameObjectPtr>();
 		auto direct = ReadDirectObject();
 
-		if (direct->GetType() == Object::Type::Null) {
+		if (direct->GetObjectType() == Object::Type::Null) {
 			continue;
 		}
 
@@ -184,7 +184,7 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 			}
 
 			auto length_obj = dictionary->Find(constant::Name::Length);
-			if (length_obj->GetType() != Object::Type::Integer) {
+			if (length_obj->GetObjectType() != Object::Type::Integer) {
 				auto locked_file = _file.GetReference();
 				if (!locked_file->IsInitialized()) {
 					break;
@@ -242,7 +242,7 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 			}
 
 			auto length_obj = dictionary->Find(constant::Name::Length);
-			if (length_obj->GetType() != Object::Type::Integer) {
+			if (length_obj->GetObjectType() != Object::Type::Integer) {
 				auto locked_file = _file.GetReference();
 				if (!locked_file->IsInitialized()) {
 					dictionary->Remove(constant::Name::Length);

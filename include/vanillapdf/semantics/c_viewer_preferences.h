@@ -49,10 +49,12 @@ extern "C"
 	* the document on exiting full-screen mode.
 	*/
 	typedef enum {
+		NonFullScreenPageMode_Undefined = 0,
+
 		/**
 		* \brief Neither document outline nor thumbnail images visible
 		*/
-		NonFullScreenPageMode_UseNone = 0,
+		NonFullScreenPageMode_UseNone,
 
 		/**
 		* \brief Document outline visible
@@ -74,10 +76,12 @@ extern "C"
 	* \brief The predominant reading order for text.
 	*/
 	typedef enum {
+		ReadingOrder_Undefined = 0,
+
 		/**
 		* \brief Left to right
 		*/
-		ReadingOrder_LeftToRight = 0,
+		ReadingOrder_LeftToRight,
 
 		/**
 		* \brief
@@ -93,11 +97,13 @@ extern "C"
 	* a print dialog is displayed for this document.
 	*/
 	typedef enum {
+		PrintScaling_Undefined = 0,
+
 		/**
 		* \brief
 		* Indicates the conforming reader's default print scaling
 		*/
-		PrintScaling_AppDefault = 0,
+		PrintScaling_AppDefault,
 
 		/**
 		* \brief No page scaling
@@ -111,6 +117,8 @@ extern "C"
 	* when printing the file from the print dialog.
 	*/
 	typedef enum {
+		Duplex_Undefined = 0,
+
 		/**
 		* \brief Print single-sided
 		*/

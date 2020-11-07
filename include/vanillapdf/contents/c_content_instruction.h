@@ -27,6 +27,8 @@ extern "C"
 	* \ingroup group_contents
 	*/
 	typedef enum {
+		ContentInstructionType_Undefined = 0,
+
 		/**
 		* \copydoc ContentOperationHandle
 		* \see ContentOperationHandle
@@ -48,7 +50,7 @@ extern "C"
 	/**
 	* \brief Get derived type of current object
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_GetType(ContentInstructionHandle* handle, ContentInstructionType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_GetInstructionType(ContentInstructionHandle* handle, ContentInstructionType* result);
 
 	/**
 	* \brief Reinterpret current object as \ref ContentOperationHandle
@@ -56,9 +58,14 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_ToOperation(ContentInstructionHandle* handle, ContentOperationHandle** result);
 
 	/**
-	* \brief Reinterpret current object as \ref ContentObjectHandle
+	* \brief Reinterpret current object as \ref IUnknownHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_ToObject(ContentInstructionHandle* handle, ContentObjectHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_ToUnknown(ContentInstructionHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref ContentInstructionHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_FromUnknown(IUnknownHandle* handle, ContentInstructionHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release

@@ -46,6 +46,7 @@ private:
 
 private:
 	enum class Type {
+		Undefined = 0,
 		SignedInteger,
 		UnsignedInteger,
 		Real

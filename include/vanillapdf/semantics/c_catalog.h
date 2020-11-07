@@ -29,10 +29,11 @@ extern "C"
 	* \brief Page layout which shall be used when the document is opened.
 	*/
 	typedef enum {
+		PageLayout_Undefined = 0,
 		/**
 		* \brief Display one page at a time
 		*/
-		PageLayout_SinglePage = 0,
+		PageLayout_SinglePage,
 
 		/**
 		* \brief Display the pages in one column

@@ -26,10 +26,12 @@ extern "C"
 	* \brief Relationship of local time to Universal Time (UT).
 	*/
 	typedef enum {
+		TimezoneType_Undefined = 0,
+
 		/**
 		* \brief Signifies that local time is equal to UT.
 		*/
-		TimezoneType_UTC = 0,
+		TimezoneType_UTC,
 
 		/**
 		* \brief Signifies that local time is later than UT.

@@ -45,8 +45,8 @@ error_type process_stream(StreamObjectHandle* stream, biguint_type object_number
 	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Find(stream_dictionary, NameConstant_Type, &type_object));
 	RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Find(stream_dictionary, NameConstant_Subtype, &subtype_object));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Object_GetType(type_object, &type_object_type));
-	RETURN_ERROR_IF_NOT_SUCCESS(Object_GetType(subtype_object, &subtype_object_type));
+	RETURN_ERROR_IF_NOT_SUCCESS(Object_GetObjectType(type_object, &type_object_type));
+	RETURN_ERROR_IF_NOT_SUCCESS(Object_GetObjectType(subtype_object, &subtype_object_type));
 
 	if (type_object_type != ObjectType_Name || subtype_object_type != ObjectType_Name) {
 		goto err;
@@ -88,9 +88,9 @@ error_type process_stream(StreamObjectHandle* stream, biguint_type object_number
 		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Find(stream_dictionary, NameConstant_Height, &height_object));
 		RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Find(stream_dictionary, NameConstant_ColorSpace, &colorspace_object));
 
-		RETURN_ERROR_IF_NOT_SUCCESS(Object_GetType(width_object, &width_object_type));
-		RETURN_ERROR_IF_NOT_SUCCESS(Object_GetType(height_object, &height_object_type));
-		RETURN_ERROR_IF_NOT_SUCCESS(Object_GetType(colorspace_object, &colorspace_object_type));
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_GetObjectType(width_object, &width_object_type));
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_GetObjectType(height_object, &height_object_type));
+		RETURN_ERROR_IF_NOT_SUCCESS(Object_GetObjectType(colorspace_object, &colorspace_object_type));
 
 		if (width_object_type == ObjectType_Integer && height_object_type == ObjectType_Integer && colorspace_object_type == ObjectType_Name) {
 			OutputStreamHandle* output_stream = NULL;
@@ -175,7 +175,7 @@ error_type process_object(ObjectHandle* obj, biguint_type object_number, ushort_
 
 	ObjectType type;
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Object_GetType(obj, &type));
+	RETURN_ERROR_IF_NOT_SUCCESS(Object_GetObjectType(obj, &type));
 
 	if (type == ObjectType_Stream) {
 		StreamObjectHandle* stream = NULL;
@@ -285,15 +285,15 @@ error_type process_contents(ContentsHandle* page_contents, size_type page_number
 		OutputStreamHandle* output_stream = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(Contents_GetInstructionAt(page_contents, i, &content_instruction));
-		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_GetType(content_instruction, &instruction_type));
+		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_GetInstructionType(content_instruction, &instruction_type));
 
 		if (instruction_type != ContentInstructionType_Object) {
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_Release(content_instruction));
 			continue;
 		}
 
-		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_ToObject(content_instruction, &content_object));
-		RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_GetType(content_object, &object_type));
+		RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_FromInstruction(content_instruction, &content_object));
+		RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_GetObjectType(content_object, &object_type));
 
 		if (object_type != ContentObjectType_InlineImage) {
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_Release(content_object));

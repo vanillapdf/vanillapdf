@@ -42,7 +42,7 @@ public:
 	void ClearBit(int pos) { m_value->ClearBit(pos); }
 	bool IsBitSet(int pos) const { return m_value->IsBitSet(pos); }
 
-	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Integer; }
+	virtual Object::Type GetObjectType(void) const noexcept override { return Object::Type::Integer; }
 
 	bool Equals(const IntegerObject& other) const { return GetIntegerValue() == other.GetIntegerValue(); }
 	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;

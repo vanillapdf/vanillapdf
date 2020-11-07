@@ -63,6 +63,7 @@ extern "C"
 	* \ingroup group_outline
 	*/
 	typedef enum {
+		OutlineType_Undefined = 0,
 
 		/**
 		* \copybrief OutlineHandle
@@ -85,7 +86,7 @@ extern "C"
 	/**
 	* \brief Get derived type of current object
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_GetType(OutlineBaseHandle* handle, OutlineType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_GetOutlineType(OutlineBaseHandle* handle, OutlineType* result);
 
 	/**
 	* \brief Reinterpret current object as \ref OutlineHandle

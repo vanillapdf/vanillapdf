@@ -40,11 +40,13 @@ extern "C"
 	* \ingroup group_fonts
 	*/
 	typedef enum {
+		FontType_Undefined = 0,
+
 		/**
 		* \copybrief CompositeFontHandle
 		* \see \ref CompositeFontHandle
 		*/
-		FontType_Composite = 0,
+		FontType_Composite,
 
 		/**
 		* \brief
@@ -67,7 +69,7 @@ extern "C"
 	/**
 	* \brief Get derived type of current object.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Font_Type(FontHandle* handle, FontType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Font_GetFontType(FontHandle* handle, FontType* result);
 
 	/**
 	* \brief Reinterpret current object as \ref CompositeFontHandle.

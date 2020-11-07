@@ -12,9 +12,9 @@ Type1Font::Type1Font(syntax::DictionaryObjectPtr root) : FontBase(root) {}
 Type3Font::Type3Font(syntax::DictionaryObjectPtr root) : FontBase(root) {}
 CompositeFont::CompositeFont(syntax::DictionaryObjectPtr root) : FontBase(root) {}
 
-FontBase::Type Type1Font::GetType() const noexcept { return Type::Type1; }
-FontBase::Type Type3Font::GetType() const noexcept { return Type::Type3; }
-FontBase::Type CompositeFont::GetType() const noexcept { return Type::Composite; }
+FontBase::Type Type1Font::GetFontType() const noexcept { return Type::Type1; }
+FontBase::Type Type3Font::GetFontType() const noexcept { return Type::Type3; }
+FontBase::Type CompositeFont::GetFontType() const noexcept { return Type::Composite; }
 
 bool FontMap::Contains(const syntax::NameObject& name) const {
 	return _obj->Contains(name);

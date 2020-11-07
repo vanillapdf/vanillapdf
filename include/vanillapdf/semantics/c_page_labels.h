@@ -39,10 +39,12 @@ extern "C"
 	* \brief Numbering style types.
 	*/
 	typedef enum {
+		NumberingStyle_Undefined = 0,
+
 		/**
 		* \brief Decimal arabic numerals.
 		*/
-		NumberingStyle_Decimal = 0,
+		NumberingStyle_Decimal,
 
 		/**
 		* \brief Uppercase roman numerals.

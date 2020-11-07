@@ -26,11 +26,13 @@ extern "C"
 	* \brief Available types of objects.
 	*/
 	typedef enum {
+		ObjectType_Undefined = 0,
+
 		/**
 		* \copybrief NullObjectHandle
 		* \see \ref NullObjectHandle
 		*/
-		ObjectType_Null = 0,
+		ObjectType_Null,
 
 		/**
 		* \copybrief ArrayObjectHandle
@@ -95,7 +97,7 @@ extern "C"
 	/**
 	* \brief Get derived type of current object
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Object_GetType(ObjectHandle* handle, ObjectType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Object_GetObjectType(ObjectHandle* handle, ObjectType* result);
 
 	/**
 	* \brief Get string representation of object type

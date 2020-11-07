@@ -8,13 +8,13 @@
 using namespace vanillapdf;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_GetType(OutlineBaseHandle* handle, OutlineType* result)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_GetOutlineType(OutlineBaseHandle* handle, OutlineType* result)
 {
 	OutlineBase* obj = reinterpret_cast<OutlineBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	switch (obj->OutlineType()) {
+	switch (obj->GetOutlineType()) {
 	case OutlineBase::Type::Outline:
 		*result = OutlineType_Outline; break;
 	case OutlineBase::Type::Item:

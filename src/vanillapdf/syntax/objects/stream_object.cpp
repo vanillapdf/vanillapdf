@@ -70,7 +70,7 @@ void StreamObject::SetDataOffset(types::stream_offset offset) {
 	OnChanged();
 }
 
-Object::Type StreamObject::GetType(void) const noexcept {
+Object::Type StreamObject::GetObjectType(void) const noexcept {
 	return Object::Type::Stream;
 }
 

@@ -5,14 +5,15 @@
 #include "vanillapdf/contents/c_content_operator.h"
 #include "implementation/c_helper.h"
 
+using namespace vanillapdf;
 using namespace vanillapdf::contents;
 
-VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_GetType(ContentOperatorHandle* handle, ContentOperatorType* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_GetOperatorType(ContentOperatorHandle* handle, ContentOperatorType* result) {
 	OperatorBase* obj = reinterpret_cast<OperatorBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	switch (obj->GetType()) {
+	switch (obj->GetOperatorType()) {
 		case OperatorBase::Type::Unknown:
 			*result = ContentOperatorType_Unknown; break;
 		case OperatorBase::Type::LineWidth:
@@ -181,6 +182,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_GetValue(ContentOpe
 		return VANILLAPDF_ERROR_SUCCESS;
 	}
 	CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_ToUnknown(ContentOperatorHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<OperatorBase, IUnknown, ContentOperatorHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_FromUnknown(IUnknownHandle* handle, ContentOperatorHandle** result) {
+	return SafeObjectConvert<IUnknown, OperatorBase, IUnknownHandle, ContentOperatorHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_Release(ContentOperatorHandle* handle) {

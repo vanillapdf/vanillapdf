@@ -8,6 +8,7 @@
 namespace vanillapdf {
 
 enum class Timezone : char {
+	Undefined = 0,
 	UTC = 'Z',
 	Later = '+',
 	Earlier = '-'

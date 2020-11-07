@@ -23,7 +23,7 @@ extern "C"
 		/**
 		* \brief Default unset value, triggers error when used
 		*/
-		MessageDigestAlgorithmType_None = 0,
+		MessageDigestAlgorithmType_Undefined = 0,
 
 		/**
 		* \brief "null" message digest that does nothing: i.e. the hash it returns is of zero length.

@@ -11,7 +11,8 @@ namespace syntax {
 class StringObjectBase : public ContainableObject {
 public:
 	enum class StringType {
-		Literal = 0,
+		Undefined = 0,
+		Literal,
 		Hexadecimal
 	};
 
@@ -19,7 +20,7 @@ public:
 	virtual void SetValue(BufferPtr value) = 0;
 
 	virtual StringType GetStringType(void) const noexcept = 0;
-	virtual Object::Type GetType(void) const noexcept override { return Object::Type::String; }
+	virtual Object::Type GetObjectType(void) const noexcept override { return Object::Type::String; }
 
 	bool Equals(const StringObjectBase& other) const { return GetValue() == other.GetValue(); }
 	bool operator==(const StringObjectBase& other) const { return Equals(other); }

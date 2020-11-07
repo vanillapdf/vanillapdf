@@ -70,11 +70,13 @@ extern "C"
 	* \ingroup group_fields
 	*/
 	typedef enum {
+		FieldType_Undefined = 0,
+
 		/**
 		* \copybrief ButtonFieldHandle
 		* \see \ref ButtonFieldHandle
 		*/
-		FieldType_Button = 0,
+		FieldType_Button,
 
 		/**
 		* \copybrief TextFieldHandle

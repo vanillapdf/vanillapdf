@@ -26,7 +26,7 @@ public:
 	bool Equals(const NameObject& other) const;
 	virtual bool Equals(ObjectPtr other) const override;
 
-	virtual Object::Type GetType(void) const noexcept override;
+	virtual Object::Type GetObjectType(void) const noexcept override;
 	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 	virtual std::string ToString(void) const override;
 

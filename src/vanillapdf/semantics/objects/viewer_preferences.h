@@ -36,24 +36,28 @@ public:
 class ViewerPreferences : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
 	enum class NonFullScreenPageModeType {
-		UseNone = 0,
+		Undefined = 0,
+		UseNone,
 		UseOutlines,
 		UseThumbs,
 		UseOC
 	};
 
 	enum class ReadingOrderType {
-		LeftToRight = 0,
+		Undefined = 0,
+		LeftToRight,
 		RightToLeft
 	};
 
 	enum class PrintScalingType {
-		AppDefault = 0,
+		Undefined = 0,
+		AppDefault,
 		None
 	};
 
 	enum class DuplexType {
-		Simplex = 0,
+		Undefined = 0,
+		Simplex,
 		DuplexFlipShortEdge,
 		DuplexFlipLongEdge
 	};

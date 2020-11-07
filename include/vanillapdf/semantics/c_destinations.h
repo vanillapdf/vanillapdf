@@ -36,13 +36,15 @@ extern "C"
 	* \ingroup group_destinations
 	*/
 	typedef enum {
+		DestinationType_Undefined = 0,
+
 		/**
 		* \brief
 		* Display the page designated by page, with the coordinates
 		* (left, top) positioned at the upper-left corner of the window
 		* and the contents of the page magnified by the factor zoom.
 		*/
-		DestinationType_XYZ = 0,
+		DestinationType_XYZ,
 
 		/**
 		* \brief

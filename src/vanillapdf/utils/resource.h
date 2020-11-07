@@ -6,6 +6,7 @@
 namespace vanillapdf {
 
 enum class ResourceID {
+	Undefined = 0,
 	MASTER_CERTIFICATE,
 	WATERMARK_IMAGE,
 	SERIAL_BLACKLIST

@@ -17,11 +17,12 @@ namespace contents {
 class ContentObjectBase : public InstructionBase {
 public:
 	enum class Type {
+		Undefined = 0,
 		TextObject,
 		InlineImageObject
 	};
 
-	virtual Type GetType(void) const noexcept = 0;
+	virtual Type GetObjectType(void) const noexcept = 0;
 	virtual InstructionBase::Type GetInstructionType(void) const noexcept override { return InstructionBase::Type::Object; }
 };
 
@@ -29,7 +30,7 @@ class TextObject : public ContentObjectBase, public IModifyObserver {
 public:
 	explicit TextObject(const BaseOperationCollection& ops);
 
-	virtual Type GetType(void) const noexcept override { return Type::TextObject; }
+	virtual Type GetObjectType(void) const noexcept override { return Type::TextObject; }
 	virtual std::string ToPdf() const override;
 
 	types::size_type GetOperationsSize(void) const { return _operations.size(); }
@@ -51,7 +52,7 @@ public:
 		: m_dictionary(dictionary), m_data(data) {
 	}
 
-	virtual Type GetType(void) const noexcept override { return Type::InlineImageObject; }
+	virtual Type GetObjectType(void) const noexcept override { return Type::InlineImageObject; }
 	virtual std::string ToPdf() const override;
 
 	syntax::DictionaryObjectPtr GetDictionary() const { return m_dictionary; }

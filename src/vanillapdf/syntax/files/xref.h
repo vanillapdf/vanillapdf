@@ -42,7 +42,8 @@ public:
 
 public:
 	enum class Type {
-		Table = 0,
+		Undefined = 0,
+		Table,
 		Stream
 	};
 

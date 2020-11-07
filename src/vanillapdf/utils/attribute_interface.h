@@ -8,7 +8,8 @@ namespace vanillapdf {
 class IAttribute : public virtual IUnknown {
 public:
 	enum class Type {
-		Empty = 0,
+		Undefined = 0,
+		Empty,
 		SerializationOverride
 	};
 

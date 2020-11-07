@@ -12,7 +12,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_GetType(FieldHandle* handle, 
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	switch (obj->GetType()) {
+	switch (obj->GetFieldType()) {
 		case Field::Type::Button:
 			*result = FieldType_Button; break;
 		case Field::Type::Text:

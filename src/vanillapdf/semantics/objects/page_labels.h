@@ -16,6 +16,7 @@ namespace semantics {
 class PageLabel : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
 	enum class NumberingStyle : char {
+		Undefined = 0,
 		Decimal = 'D',
 		UpperRoman = 'R',
 		LowerRoman = 'r',

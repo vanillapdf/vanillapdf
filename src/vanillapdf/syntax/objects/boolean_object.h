@@ -11,7 +11,7 @@ public:
 	BooleanObject() = default;
 	explicit BooleanObject(bool value);
 
-	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Boolean; }
+	virtual Object::Type GetObjectType(void) const noexcept override { return Object::Type::Boolean; }
 	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 
 	bool GetValue(void) const noexcept;

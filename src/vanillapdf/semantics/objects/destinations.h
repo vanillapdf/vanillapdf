@@ -12,7 +12,8 @@ namespace semantics {
 class DestinationBase : public HighLevelObject<syntax::ObjectPtr> {
 public:
 	enum class Type {
-		XYZ = 0,
+		Undefined = 0,
+		XYZ,
 		Fit,
 		FitHorizontal,
 		FitVertical,

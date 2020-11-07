@@ -37,7 +37,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(ContentsH
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Contents_Release(ContentsHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION Contents_ToUnknown(ContentsHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<Contents, IUnknown, ContentsHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Contents_FromUnknown(IUnknownHandle* handle, ContentsHandle** result) {
+	return SafeObjectConvert<IUnknown, Contents, IUnknownHandle, ContentsHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Contents_Release(ContentsHandle* handle) {
 	return ObjectRelease<Contents, ContentsHandle>(handle);
 }

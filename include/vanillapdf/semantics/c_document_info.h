@@ -29,13 +29,15 @@ extern "C"
 	* trapping information (see 14.11.6, "Trapping Support")
 	*/
 	typedef enum {
+		DocumentTrappedType_Undefined = 0,
+
 		/**
 		* \brief
 		* Either it is unknown whether the document has been trapped
 		* or it has been partly but not yet fully trapped.
 		* Some additional trapping may still be needed.
 		*/
-		DocumentTrappedType_Unknown = 0,
+		DocumentTrappedType_Unknown,
 
 		/**
 		* \brief

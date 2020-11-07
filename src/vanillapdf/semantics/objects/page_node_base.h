@@ -10,6 +10,7 @@ namespace semantics {
 class PageNodeBase : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
 	enum class NodeType {
+		Undefined = 0,
 		Tree,
 		Object
 	};

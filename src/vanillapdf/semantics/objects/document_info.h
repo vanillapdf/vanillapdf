@@ -10,7 +10,8 @@ namespace vanillapdf {
 namespace semantics {
 
 enum class DocumentTrapped {
-	Unknown = 0,
+	Undefined = 0,
+	Unknown,
 	True,
 	False
 };

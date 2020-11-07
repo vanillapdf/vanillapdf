@@ -17,7 +17,7 @@ public:
 	explicit RealObject(types::real value, uint32_t precision);
 	explicit RealObject(NumericObjectBackendPtr value);
 
-	virtual Object::Type GetType(void) const noexcept override;
+	virtual Object::Type GetObjectType(void) const noexcept override;
 	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 
 	operator value_type() const;
@@ -28,7 +28,7 @@ public:
 	virtual bool Equals(ObjectPtr other) const override;
 };
 
-inline Object::Type RealObject::GetType(void) const noexcept {
+inline Object::Type RealObject::GetObjectType(void) const noexcept {
 	return Object::Type::Real;
 }
 

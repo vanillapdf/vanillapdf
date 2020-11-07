@@ -22,7 +22,7 @@ public:
 		return InternalGetReferencedObjectAs<T>();
 	}
 
-	virtual Object::Type GetType(void) const noexcept override { return Object::Type::IndirectReference; }
+	virtual Object::Type GetObjectType(void) const noexcept override { return Object::Type::IndirectReference; }
 	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 
 	bool Equals(const IndirectReferenceObject& other) const;

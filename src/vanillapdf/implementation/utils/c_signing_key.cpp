@@ -44,10 +44,10 @@ public:
 
 	void SignInitialize(MessageDigestAlgorithm algorithm) override {
 
-		MessageDigestAlgorithmType algorithm_type = MessageDigestAlgorithmType_None;
+		MessageDigestAlgorithmType algorithm_type;
 		switch (algorithm) {
-			case MessageDigestAlgorithm::None:
-				algorithm_type = MessageDigestAlgorithmType_None; break;
+			case MessageDigestAlgorithm::Undefined:
+				algorithm_type = MessageDigestAlgorithmType_Undefined; break;
 			case MessageDigestAlgorithm::MDNULL:
 				algorithm_type = MessageDigestAlgorithmType_MDNULL; break;
 			case MessageDigestAlgorithm::MD2:

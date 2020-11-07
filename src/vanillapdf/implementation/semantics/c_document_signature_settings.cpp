@@ -27,8 +27,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetDigest
 
 	try {
 		switch (obj->GetDigest()) {
-			case MessageDigestAlgorithm::None:
-				*result = MessageDigestAlgorithmType_None; break;
+			case MessageDigestAlgorithm::Undefined:
+				*result = MessageDigestAlgorithmType_Undefined; break;
 			case MessageDigestAlgorithm::MDNULL:
 				*result = MessageDigestAlgorithmType_MDNULL; break;
 			case MessageDigestAlgorithm::MD2:
@@ -66,10 +66,10 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetDigest
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
 	try {
-		MessageDigestAlgorithm algorithm = MessageDigestAlgorithm::None;
+		MessageDigestAlgorithm algorithm;
 		switch (value) {
-			case MessageDigestAlgorithmType_None:
-				algorithm = MessageDigestAlgorithm::None; break;
+			case MessageDigestAlgorithmType_Undefined:
+				algorithm = MessageDigestAlgorithm::Undefined; break;
 			case MessageDigestAlgorithmType_MDNULL:
 				algorithm = MessageDigestAlgorithm::MDNULL; break;
 			case MessageDigestAlgorithmType_MD2:

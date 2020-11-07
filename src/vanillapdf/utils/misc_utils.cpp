@@ -175,7 +175,7 @@ const EVP_MD* MiscUtils::GetAlgorithm(MessageDigestAlgorithm algorithm) {
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-	if (algorithm == MessageDigestAlgorithm::None) {
+	if (algorithm == MessageDigestAlgorithm::Undefined) {
 		throw GeneralException("No message digest algorithm was selected");
 	}
 

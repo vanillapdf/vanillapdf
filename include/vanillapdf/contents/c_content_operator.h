@@ -30,10 +30,11 @@ extern "C"
 	* \ingroup group_contents
 	*/
 	typedef enum {
+		ContentOperatorType_Undefined = 0,
 		/**
 		* \brief Unknown operator
 		*/
-		ContentOperatorType_Unknown = 0,
+		ContentOperatorType_Unknown,
 		ContentOperatorType_LineWidth,
 		ContentOperatorType_LineCap,
 		ContentOperatorType_LineJoin,
@@ -142,12 +143,22 @@ extern "C"
 	/**
 	* \brief Get derived type of current object
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_GetType(ContentOperatorHandle* handle, ContentOperatorType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_GetOperatorType(ContentOperatorHandle* handle, ContentOperatorType* result);
 
 	/**
 	* \brief Get byte representation of content operator
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_GetValue(ContentOperatorHandle* handle, BufferHandle** result);
+
+	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_ToUnknown(ContentOperatorHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref ContentOperatorHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_FromUnknown(IUnknownHandle* handle, ContentOperatorHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release

@@ -11,7 +11,8 @@ namespace contents {
 class OperationBase : public InstructionBase {
 public:
 	enum class Type {
-		Generic = 0,
+		Undefined = 0,
+		Generic,
 		LineWidth,
 		LineCap,
 		LineJoin,

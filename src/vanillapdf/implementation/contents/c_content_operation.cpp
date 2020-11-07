@@ -6,10 +6,11 @@
 #include "vanillapdf/contents/c_content_operation.h"
 #include "implementation/c_helper.h"
 
+using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 using namespace vanillapdf::contents;
 
-VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_GetType(ContentOperationHandle* handle, ContentOperationType* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_GetOperationType(ContentOperationHandle* handle, ContentOperationType* result) {
 	OperationBase* obj = reinterpret_cast<OperationBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -193,6 +194,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShow(Content
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShowArray(ContentOperationHandle* handle, ContentOperationTextShowArrayHandle** result) {
 	return SafeObjectConvert<OperationBase, OperationTextShowArray, ContentOperationHandle, ContentOperationTextShowArrayHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToUnknown(ContentOperationHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<OperationBase, IUnknown, ContentOperationHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_FromUnknown(IUnknownHandle* handle, ContentOperationHandle** result) {
+	return SafeObjectConvert<IUnknown, OperationBase, IUnknownHandle, ContentOperationHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_Release(ContentOperationHandle* handle) {

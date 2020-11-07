@@ -20,7 +20,7 @@ error_type process_content_object(ContentObjectHandle* obj, int nested) {
 	ContentObjectTextHandle* text_object = NULL;
 	ContentObjectInlineImageHandle* image_object = NULL;
 
-	RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_GetType(obj, &type));
+	RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_GetObjectType(obj, &type));
 	switch (type) {
 		case ContentObjectType_Text:
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_ToText(obj, &text_object));
@@ -97,7 +97,7 @@ error_type process_content_operation(ContentOperationHandle* obj, int nested) {
 	ContentOperationTextShowArrayHandle* text_show_array_operation = NULL;
 	ContentOperationEndTextHandle* end_text_operation = NULL;
 
-	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_GetType(obj, &type));
+	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_GetOperationType(obj, &type));
 	switch (type) {
 		case ContentOperationType_Generic:
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToGeneric(obj, &generic_operation));
@@ -233,7 +233,7 @@ error_type process_content_operator(ContentOperatorHandle* obj, int nested) {
 	print_spaces(nested);
 	print_text("Content operator begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperator_GetType(obj, &type));
+	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperator_GetOperatorType(obj, &type));
 
 	print_spaces(nested + 1);
 	print_text("Type: %d\n", type);
@@ -256,10 +256,10 @@ error_type process_content_instruction(ContentInstructionHandle* obj, int nested
 	print_spaces(nested);
 	print_text("Content instruction\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_GetType(obj, &type));
+	RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_GetInstructionType(obj, &type));
 	switch (type) {
 		case ContentInstructionType_Object:
-			RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_ToObject(obj, &object_handle));
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_FromInstruction(obj, &object_handle));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_content_object(object_handle, nested + 1));
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_Release(object_handle));
 			break;
@@ -388,7 +388,7 @@ error_type process_annotation(AnnotationHandle* obj, int nested) {
 	print_spaces(nested);
 	print_text("Annotation begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Annotation_GetType(obj, &type));
+	RETURN_ERROR_IF_NOT_SUCCESS(Annotation_GetAnnotationType(obj, &type));
 
 	switch (type) {
 		case AnnotationType_Link:
@@ -851,7 +851,7 @@ error_type process_outline_base(OutlineBaseHandle* outline, int nested) {
 	print_spaces(nested);
 	print_text("Outline base begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(OutlineBase_GetType(outline, &type));
+	RETURN_ERROR_IF_NOT_SUCCESS(OutlineBase_GetOutlineType(outline, &type));
 
 	print_spaces(nested + 1);
 	print_text("Type: %d\n", type);

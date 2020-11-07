@@ -36,7 +36,7 @@ public:
 	virtual MixedArrayObject* Clone(void) const override;
 	virtual bool Equals(ObjectPtr other) const override;
 
-	virtual Object::Type GetType(void) const noexcept override { return Object::Type::Array; }
+	virtual Object::Type GetObjectType(void) const noexcept override { return Object::Type::Array; }
 	size_type GetSize(void) const noexcept { return _list.size(); }
 	const ContainableObjectPtr& operator[](size_type i) const { return _list[i]; }
 	ContainableObjectPtr& operator[](size_type i) { return _list[i]; }

@@ -7,6 +7,7 @@
 namespace vanillapdf {
 
 enum class Severity {
+	Undefined = 0,
 	Debug,
 	Info,
 	Warning,

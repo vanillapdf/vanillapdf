@@ -12,23 +12,20 @@ class SignatureFlags : public HighLevelObject<syntax::IntegerObjectPtr> {
 public:
 	explicit SignatureFlags(syntax::IntegerObjectPtr value) : HighLevelObject(value) {}
 
-	bool GetSignaturesExist() const { return _obj->IsBitSet((uint32_t) SignatureFlagBit::SignaturesExist); }
-	bool GetAppendOnly() const { return _obj->IsBitSet((uint32_t) SignatureFlagBit::AppendOnly); }
+	bool GetSignaturesExist() const { return _obj->IsBitSet(SignaturesExistBit); }
+	bool GetAppendOnly() const { return _obj->IsBitSet(AppendOnlyBit); }
 
 	void SetSignaturesExist(bool value) {
-		_obj->ToggleBit((uint32_t) SignatureFlagBit::SignaturesExist, value);
+		_obj->ToggleBit(SignaturesExistBit, value);
 	}
 
 	void SetAppendOnly(bool value) {
-		_obj->ToggleBit((uint32_t) SignatureFlagBit::AppendOnly, value);
+		_obj->ToggleBit(AppendOnlyBit, value);
 	}
 
 private:
-	// 
-	enum class SignatureFlagBit : uint32_t {
-		SignaturesExist = 0,
-		AppendOnly = 1
-	};
+	const uint32_t SignaturesExistBit = 0;
+	const uint32_t AppendOnlyBit = 1;
 };
 
 } // semantics

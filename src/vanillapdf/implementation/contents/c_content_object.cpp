@@ -5,14 +5,15 @@
 #include "vanillapdf/contents/c_content_object.h"
 #include "implementation/c_helper.h"
 
+using namespace vanillapdf;
 using namespace vanillapdf::contents;
 
-VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_GetType(ContentObjectHandle* handle, ContentObjectType* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_GetObjectType(ContentObjectHandle* handle, ContentObjectType* result) {
 	ContentObjectBase* obj = reinterpret_cast<ContentObjectBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	switch (obj->GetType()) {
+	switch (obj->GetObjectType()) {
 		case ContentObjectBase::Type::TextObject:
 			*result = ContentObjectType_Text; break;
 		case ContentObjectBase::Type::InlineImageObject:
@@ -31,6 +32,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_ToText(ContentObjectH
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_ToInlineImage(ContentObjectHandle* handle, ContentObjectInlineImageHandle** result) {
 	return SafeObjectConvert<ContentObjectBase, InlineImageObject, ContentObjectHandle, ContentObjectInlineImageHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_ToInstruction(ContentObjectHandle* handle, ContentInstructionHandle** result) {
+	return SafeObjectConvert<ContentObjectBase, InstructionBase, ContentObjectHandle, ContentInstructionHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_FromInstruction(ContentInstructionHandle* handle, ContentObjectHandle** result) {
+	return SafeObjectConvert<InstructionBase, ContentObjectBase, ContentInstructionHandle, ContentObjectHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_Release(ContentObjectHandle* handle) {

@@ -25,6 +25,7 @@ public:
 class TreeNodeBase : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
 	enum class TreeNodeType {
+		Undefined = 0,
 		Root,
 		Intermediate,
 		Leaf

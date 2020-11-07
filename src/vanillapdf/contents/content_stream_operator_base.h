@@ -12,7 +12,8 @@ namespace contents {
 class OperatorBase : public virtual IUnknown, public IWeakReferenceable<OperationBase> {
 public:
 	enum class Type {
-		Unknown = 0,
+		Undefined = 0,
+		Unknown,
 		LineWidth,
 		LineCap,
 		LineJoin,
@@ -88,7 +89,7 @@ public:
 		EndCompatibilitySection
 	};
 
-	virtual Type GetType(void) const noexcept = 0;
+	virtual Type GetOperatorType(void) const noexcept = 0;
 	virtual BufferPtr Value(void) const = 0;
 };
 

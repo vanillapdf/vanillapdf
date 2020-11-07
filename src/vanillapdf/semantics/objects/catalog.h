@@ -20,7 +20,8 @@ namespace semantics {
 class Catalog : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
 	enum class PageLayoutType {
-		SinglePage = 0,
+		Undefined = 0,
+		SinglePage,
 		OneColumn,
 		TwoColumnLeft,
 		TwoColumnRight,
@@ -29,7 +30,8 @@ public:
 	};
 
 	enum class PageModeType {
-		UseNone = 0,
+		Undefined = 0,
+		UseNone,
 		UseOutlines,
 		UseThumbs,
 		FullScreen,

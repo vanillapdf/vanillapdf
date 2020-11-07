@@ -127,7 +127,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetMediaBox(PageObjectHa
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageObject_Release(PageObjectHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_ToUnknown(PageObjectHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<PageObject, IUnknown, PageObjectHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_FromUnknown(IUnknownHandle* handle, PageObjectHandle** result) {
+	return SafeObjectConvert<IUnknown, PageObject, IUnknownHandle, PageObjectHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_Release(PageObjectHandle* handle) {
 	return ObjectRelease<PageObject, PageObjectHandle>(handle);
 }
