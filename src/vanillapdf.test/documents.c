@@ -23,7 +23,7 @@ error_type process_content_object(ContentObjectHandle* obj, int nested) {
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_GetObjectType(obj, &type));
 	switch (type) {
 		case ContentObjectType_Text:
-			RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_ToText(obj, &text_object));
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectText_FromContentObject(obj, &text_object));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_content_object_text(text_object, nested + 1));
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectText_Release(text_object));
 			break;
@@ -100,7 +100,7 @@ error_type process_content_operation(ContentOperationHandle* obj, int nested) {
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_GetOperationType(obj, &type));
 	switch (type) {
 		case ContentOperationType_Generic:
-			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToGeneric(obj, &generic_operation));
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationGeneric_FromContentOperation(obj, &generic_operation));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_generic(generic_operation, nested + 1));
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationGeneric_Release(generic_operation));
 			break;

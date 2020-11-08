@@ -172,10 +172,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_GetOperationType(C
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToGeneric(ContentOperationHandle* handle, ContentOperationGenericHandle** result) {
-	return SafeObjectConvert<OperationBase, OperationGeneric, ContentOperationHandle, ContentOperationGenericHandle>(handle, result);
-}
-
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToBeginText(ContentOperationHandle* handle, ContentOperationBeginTextHandle** result) {
 	return SafeObjectConvert<OperationBase, OperationBeginText, ContentOperationHandle, ContentOperationBeginTextHandle>(handle, result);
 }
@@ -246,6 +242,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandA
 		return VANILLAPDF_ERROR_SUCCESS;
 	}
 	CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_ToContentOperation(ContentOperationGenericHandle* handle, ContentOperationHandle** result) {
+	return SafeObjectConvert<OperationGeneric, OperationBase, ContentOperationGenericHandle, ContentOperationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_FromContentOperation(ContentOperationHandle* handle, ContentOperationGenericHandle** result) {
+	return SafeObjectConvert<OperationBase, OperationGeneric, ContentOperationHandle, ContentOperationGenericHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_Release(ContentOperationGenericHandle* handle) {
@@ -337,6 +341,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_GetValue(C
 	CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_ToContentOperation(ContentOperationTextShowHandle* handle, ContentOperationHandle** result) {
+	return SafeObjectConvert<OperationTextShow, OperationBase, ContentOperationTextShowHandle, ContentOperationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_FromContentOperation(ContentOperationHandle* handle, ContentOperationTextShowHandle** result) {
+	return SafeObjectConvert<OperationBase, OperationTextShow, ContentOperationHandle, ContentOperationTextShowHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_Release(ContentOperationTextShowHandle* handle) {
 	return ObjectRelease<OperationTextShow, ContentOperationTextShowHandle>(handle);
 }
@@ -366,6 +378,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_SetVa
 		return VANILLAPDF_ERROR_SUCCESS;
 	}
 	CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_ToContentOperation(ContentOperationTextShowArrayHandle* handle, ContentOperationHandle** result) {
+	return SafeObjectConvert<OperationTextShowArray, OperationBase, ContentOperationTextShowArrayHandle, ContentOperationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_FromContentOperation(ContentOperationHandle* handle, ContentOperationTextShowArrayHandle** result) {
+	return SafeObjectConvert<OperationBase, OperationTextShowArray, ContentOperationHandle, ContentOperationTextShowArrayHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_Release(ContentOperationTextShowArrayHandle* handle) {

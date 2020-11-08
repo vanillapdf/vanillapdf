@@ -179,11 +179,6 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_GetOperationType(ContentOperationHandle* handle, ContentOperationType* result);
 
 	/**
-	* \brief Reinterpret current object as \ref ContentOperationGenericHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToGeneric(ContentOperationHandle* handle, ContentOperationGenericHandle** result);
-
-	/**
 	* \brief Reinterpret current object as \ref ContentOperationTextFontHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextFont(ContentOperationHandle* handle, ContentOperationTextFontHandle** result);
@@ -247,6 +242,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_GetOperandAt(ContentOperationGenericHandle* handle, size_type at, ObjectHandle** result);
 
 	/**
+	* \brief Reinterpret current object as \ref ContentOperationHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_ToContentOperation(ContentOperationGenericHandle* handle, ContentOperationHandle** result);
+
+	/**
+	* \brief Convert \ref ContentOperationHandle to \ref ContentOperationGenericHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_FromContentOperation(ContentOperationHandle* handle, ContentOperationGenericHandle** result);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
@@ -268,6 +273,16 @@ extern "C"
 	* \brief Set a new text string to be shown.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_SetValue(ContentOperationTextShowHandle* handle, StringObjectHandle* data);
+
+	/**
+	* \brief Reinterpret current object as \ref ContentOperationHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_ToContentOperation(ContentOperationTextShowHandle* handle, ContentOperationHandle** result);
+
+	/**
+	* \brief Convert \ref ContentOperationHandle to \ref ContentOperationTextShowHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_FromContentOperation(ContentOperationHandle* handle, ContentOperationTextShowHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -298,6 +313,16 @@ extern "C"
 	* If it is a number, the operator shall adjust the text position by that amount.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_SetValue(ContentOperationTextShowArrayHandle* handle, ArrayObjectHandle* data);
+
+	/**
+	* \brief Reinterpret current object as \ref ContentOperationHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_ToContentOperation(ContentOperationTextShowArrayHandle* handle, ContentOperationHandle** result);
+
+	/**
+	* \brief Convert \ref ContentOperationHandle to \ref ContentOperationTextShowArrayHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_FromContentOperation(ContentOperationHandle* handle, ContentOperationTextShowArrayHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release

@@ -72,11 +72,6 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_GetObjectType(ContentObjectHandle* handle, ContentObjectType* result);
 
 	/**
-	* \brief Reinterpret current object as \ref ContentObjectTextHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_ToText(ContentObjectHandle* handle, ContentObjectTextHandle** result);
-
-	/**
 	* \brief Reinterpret current object as \ref ContentObjectInlineImageHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_ToInlineImage(ContentObjectHandle* handle, ContentObjectInlineImageHandle** result);
@@ -113,6 +108,16 @@ extern "C"
 	* \brief Get operation at location \p at
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(ContentObjectTextHandle* handle, size_type at, ContentOperationHandle** result);
+
+	/**
+	* \brief Reinterpret current object as \ref ContentObjectHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_ToContentObject(ContentObjectTextHandle* handle, ContentObjectHandle** result);
+
+	/**
+	* \brief Convert \ref ContentObjectTextHandle to \ref ContentObjectHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_FromContentObject(ContentObjectHandle* handle, ContentObjectTextHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release

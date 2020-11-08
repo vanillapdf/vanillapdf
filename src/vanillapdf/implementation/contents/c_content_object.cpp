@@ -26,10 +26,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_GetObjectType(Content
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_ToText(ContentObjectHandle* handle, ContentObjectTextHandle** result) {
-	return SafeObjectConvert<ContentObjectBase, TextObject, ContentObjectHandle, ContentObjectTextHandle>(handle, result);
-}
-
 VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_ToInlineImage(ContentObjectHandle* handle, ContentObjectInlineImageHandle** result) {
 	return SafeObjectConvert<ContentObjectBase, InlineImageObject, ContentObjectHandle, ContentObjectInlineImageHandle>(handle, result);
 }
@@ -102,6 +98,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationAt(Co
 		return VANILLAPDF_ERROR_SUCCESS;
 	}
 	CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_ToContentObject(ContentObjectTextHandle* handle, ContentObjectHandle** result) {
+	return SafeObjectConvert<TextObject, ContentObjectBase, ContentObjectTextHandle, ContentObjectHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_FromContentObject(ContentObjectHandle* handle, ContentObjectTextHandle** result) {
+	return SafeObjectConvert<ContentObjectBase, TextObject, ContentObjectHandle, ContentObjectTextHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_Release(ContentObjectTextHandle* handle) {
