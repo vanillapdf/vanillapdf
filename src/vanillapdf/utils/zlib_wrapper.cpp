@@ -177,7 +177,7 @@ BufferPtr ZlibWrapper::Inflate(IInputStreamPtr input, types::stream_size length)
 		return vanillapdf::Inflate(input, length);
 	} catch (ZlibDataErrorException& ex) {
 		auto size = ex.Size();
-		input->SetInputPosition(0, std::ios::beg);
+		input->SetInputPosition(0, SeekDirection::Beginning);
 		return vanillapdf::Inflate(input, length, size);
 	}
 }

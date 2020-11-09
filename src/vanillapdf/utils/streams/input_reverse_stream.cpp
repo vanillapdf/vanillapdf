@@ -1,6 +1,8 @@
 #include "precompiled.h"
 
+#include "utils/streams/stream_utils.h"
 #include "utils/streams/input_reverse_stream.h"
+
 #include "utils/constants.h"
 #include "utils/math_utils.h"
 #include "utils/conversion_utils.h"
@@ -78,7 +80,7 @@ InputReverseStream::ReverseBuf::int_type InputReverseStream::ReverseBuf::underfl
 		_offset -= to_read;
 	}
 
-	m_stream->SetInputPosition(_offset, std::ios::end);
+	m_stream->SetInputPosition(_offset, SeekDirection::End);
 	auto size =  m_stream->Read(_buffer, to_read);
 	_base = _buffer.data();
 
@@ -197,10 +199,10 @@ types::stream_size InputReverseStream::GetInputPosition() {
 }
 
 void InputReverseStream::SetInputPosition(types::stream_size pos) {
-	SetInputPosition(pos, std::ios_base::beg);
+	SetInputPosition(pos, SeekDirection::Beginning);
 }
 
-void InputReverseStream::SetInputPosition(types::stream_size pos, std::ios_base::seekdir way) {
+void InputReverseStream::SetInputPosition(types::stream_size pos, SeekDirection way) {
 	auto initial_offset = GetInputPosition();
 
 	// of badoff is specified, set eof flag
@@ -215,16 +217,16 @@ void InputReverseStream::SetInputPosition(types::stream_size pos, std::ios_base:
 	}
 
 	// seek to the actual position
-	m_stream->seekg(pos, way);
+	m_stream->seekg(pos, StreamUtils::ConvertFromSeekDirection(way));
 	assert(!m_stream->fail() && !m_stream->eof());
 
 	auto verify_offset = GetInputPosition();
-	if (way == std::ios_base::beg) {
+	if (way == SeekDirection::Beginning) {
 		// verify if the position is correct
 		assert(pos == verify_offset);
 	}
 
-	if (way == std::ios_base::cur) {
+	if (way == SeekDirection::Current) {
 		// verify if the position is correct
 		assert(initial_offset + pos == verify_offset);
 	}

@@ -54,7 +54,7 @@ public:
 	virtual BufferPtr Readline(void) override;
 	virtual types::stream_size GetInputPosition() override;
 	virtual void SetInputPosition(types::stream_size pos) override;
-	virtual void SetInputPosition(types::stream_size pos, std::ios_base::seekdir way) override;
+	virtual void SetInputPosition(types::stream_size pos, SeekDirection way) override;
 
 	virtual bool Eof(void) const override;
 	virtual bool Ignore(void) override;

@@ -331,6 +331,7 @@ set(VANILLAPDF_UTILS_HEADERS
 	utils/streams/input_output_stream.h
 	
 	utils/streams/stream_utils.h
+	utils/streams/seek_direction.h
 )
 
 set(VANILLAPDF_IMPLEMENTATION_HEADER

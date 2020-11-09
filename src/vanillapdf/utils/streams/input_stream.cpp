@@ -1,5 +1,6 @@
 #include "precompiled.h"
 
+#include "utils/streams/stream_utils.h"
 #include "utils/streams/input_stream.h"
 
 #include "utils/constants.h"
@@ -55,7 +56,7 @@ types::stream_size InputStream::GetInputPosition() {
 	return m_stream->tellg();
 }
 
-void InputStream::SetInputPosition(types::stream_size pos, std::ios_base::seekdir way) {
+void InputStream::SetInputPosition(types::stream_size pos, SeekDirection way) {
 	auto initial_offset = GetInputPosition();
 
 	// if badoff is specified, set eof flag
@@ -70,19 +71,19 @@ void InputStream::SetInputPosition(types::stream_size pos, std::ios_base::seekdi
 	}
 
 	// seek to the actual position
-	m_stream->seekg(pos, way);
+	m_stream->seekg(pos, StreamUtils::ConvertFromSeekDirection(way));
 
 	// clear fail flags in case we accessed EOF
 	if (m_stream->fail()) {
 		m_stream->clear(m_stream->rdstate() & m_stream->failbit);
 	} else {
 		auto verify_offset = GetInputPosition();
-		if (way == std::ios_base::beg) {
+		if (way == SeekDirection::Beginning) {
 			// verify if the position is correct
 			assert(pos == verify_offset);
 		}
 
-		if (way == std::ios_base::cur) {
+		if (way == SeekDirection::Current) {
 			// verify if the position is correct
 			assert(initial_offset + pos == verify_offset);
 		}
@@ -93,7 +94,7 @@ void InputStream::SetInputPosition(types::stream_size pos, std::ios_base::seekdi
 }
 
 void InputStream::SetInputPosition(types::stream_size pos) {
-	SetInputPosition(pos, std::ios_base::beg);
+	SetInputPosition(pos, SeekDirection::Beginning);
 }
 
 BufferPtr InputStream::Readline(void) {

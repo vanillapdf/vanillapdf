@@ -24,7 +24,7 @@ public:
 
 	virtual types::stream_size GetOutputPosition(void) override;
 	virtual void SetOutputPosition(types::stream_size pos) override;
-	virtual void SetOutputPosition(types::stream_size pos, std::ios_base::seekdir way) override;
+	virtual void SetOutputPosition(types::stream_size pos, SeekDirection way) override;
 
 protected:
 	std::shared_ptr<std::ostream> m_stream;

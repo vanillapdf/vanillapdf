@@ -1,5 +1,6 @@
 #include "precompiled.h"
 
+#include "utils/streams/stream_utils.h"
 #include "utils/streams/output_stream.h"
 
 #include "utils/constants.h"
@@ -68,8 +69,8 @@ void OutputStream::SetOutputPosition(types::stream_size pos) {
 	m_stream->seekp(pos);
 }
 
-void OutputStream::SetOutputPosition(types::stream_size pos, std::ios_base::seekdir way) {
-	m_stream->seekp(pos, way);
+void OutputStream::SetOutputPosition(types::stream_size pos, SeekDirection way) {
+	m_stream->seekp(pos, StreamUtils::ConvertFromSeekDirection(way));
 }
 
 } // vanillapdf

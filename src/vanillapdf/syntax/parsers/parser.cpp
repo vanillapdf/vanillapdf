@@ -192,7 +192,7 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 			}
 
 			auto length = ObjectUtils::ConvertTo<IntegerObjectPtr>(length_obj);
-			m_stream->SetInputPosition(length->GetIntegerValue(), std::ios_base::cur);
+			m_stream->SetInputPosition(length->GetIntegerValue(), SeekDirection::Current);
 			auto expect_stream_end = ReadTokenSkip();
 			if (expect_stream_end->GetType() != Token::Type::STREAM_END) {
 				break;
@@ -204,7 +204,7 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 		} while (false);
 
 		// Recalculate stream length
-		m_stream->SetInputPosition(stream_offset, std::ios_base::beg);
+		m_stream->SetInputPosition(stream_offset, SeekDirection::Beginning);
 
 		for (;;) {
 			auto offset = m_stream->GetInputPosition();
@@ -339,7 +339,7 @@ ObjectPtr Parser::ReadIndirectObject(types::big_uint& obj_number, types::ushort&
 }
 
 ObjectPtr Parser::ReadIndirectObject(types::stream_offset offset, types::big_uint& obj_number, types::ushort& gen_number) {
-	m_stream->SetInputPosition(offset, std::ios_base::beg);
+	m_stream->SetInputPosition(offset, SeekDirection::Beginning);
 	return ReadIndirectObject(obj_number, gen_number);
 }
 
@@ -414,7 +414,7 @@ ObjectStreamEntries Parser::ReadObjectStreamEntries(types::big_uint first, types
 }
 
 ObjectPtr ParserBase::ReadDirectObject(types::stream_offset offset) {
-	m_stream->SetInputPosition(offset, std::ios_base::beg);
+	m_stream->SetInputPosition(offset, SeekDirection::Beginning);
 	return ReadDirectObject();
 }
 
@@ -688,7 +688,7 @@ XrefBasePtr Parser::ReadXref(void) {
 }
 
 XrefBasePtr Parser::ReadXref(types::stream_offset offset) {
-	m_stream->SetInputPosition(offset, std::ios_base::beg);
+	m_stream->SetInputPosition(offset, SeekDirection::Beginning);
 	XrefBasePtr result = ReadXref();
 	result->SetOffset(offset);
 	return result;
@@ -697,7 +697,7 @@ XrefBasePtr Parser::ReadXref(types::stream_offset offset) {
 #pragma endregion
 
 HeaderPtr Parser::ReadHeader(types::stream_offset offset) {
-	m_stream->SetInputPosition(offset, std::ios_base::beg);
+	m_stream->SetInputPosition(offset, SeekDirection::Beginning);
 	return ReadHeader();
 }
 

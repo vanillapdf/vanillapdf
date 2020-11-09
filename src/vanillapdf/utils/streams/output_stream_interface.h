@@ -5,7 +5,7 @@
 #include "utils/buffer.h"
 #include "utils/character.h"
 
-#include <ios>
+#include "utils/streams/seek_direction.h"
 
 namespace vanillapdf {
 
@@ -26,7 +26,7 @@ public:
 
 	virtual types::stream_size GetOutputPosition(void) = 0;
 	virtual void SetOutputPosition(types::stream_size pos) = 0;
-	virtual void SetOutputPosition(types::stream_size pos, std::ios_base::seekdir way) = 0;
+	virtual void SetOutputPosition(types::stream_size pos, SeekDirection way) = 0;
 
 	virtual ~IOutputStream() {};
 };

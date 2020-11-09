@@ -708,6 +708,9 @@
     <ClInclude Include="..\src\vanillapdf\syntax\objects\indirect_reference_object.h">
       <Filter>Header Files\syntax\objects</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\vanillapdf\utils\streams\seek_direction.h">
+      <Filter>Header Files\utils\streams</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\vanillapdf\contents\content_stream_objects.cpp">

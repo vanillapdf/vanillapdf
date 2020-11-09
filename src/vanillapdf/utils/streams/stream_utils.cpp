@@ -73,4 +73,36 @@ BufferPtr StreamUtils::InputStreamToBuffer(IInputStreamPtr source) {
 	return result;
 }
 
+SeekDirection StreamUtils::ConvertToSeekDirection(std::ios_base::seekdir value) {
+	if (value == std::ios_base::beg) {
+		return SeekDirection::Beginning;
+	}
+
+	if (value == std::ios_base::cur) {
+		return SeekDirection::Current;
+	}
+
+	if (value == std::ios_base::end) {
+		return SeekDirection::End;
+	}
+
+	throw GeneralException("Unknown seek direction: " + std::to_string(value));
+}
+
+std::ios_base::seekdir StreamUtils::ConvertFromSeekDirection(SeekDirection value) {
+	if (value == SeekDirection::Beginning) {
+		return std::ios_base::beg;
+	}
+
+	if (value == SeekDirection::Current) {
+		return std::ios_base::cur;
+	}
+
+	if (value == SeekDirection::End) {
+		return std::ios_base::end;
+	}
+
+	throw GeneralException("Unknown seek direction: " + std::to_string(static_cast<int>(value)));
+}
+
 } // vanillapdf

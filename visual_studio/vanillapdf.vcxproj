@@ -206,6 +206,7 @@
     <ClInclude Include="..\src\vanillapdf\utils\streams\output_stream.h" />
     <ClInclude Include="..\src\vanillapdf\utils\streams\output_stream_interface.h" />
     <ClInclude Include="..\src\vanillapdf\utils\streams\ranged_stream_buffer.h" />
+    <ClInclude Include="..\src\vanillapdf\utils\streams\seek_direction.h" />
     <ClInclude Include="..\src\vanillapdf\utils\streams\stream_utils.h" />
     <ClInclude Include="..\src\vanillapdf\utils\template_utils.h" />
     <ClInclude Include="..\src\vanillapdf\utils\time_utils.h" />

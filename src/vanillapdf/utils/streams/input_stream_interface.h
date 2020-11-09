@@ -4,7 +4,7 @@
 #include "utils/utils_fwd.h"
 #include "utils/buffer.h"
 
-#include <ios>
+#include "utils/streams/seek_direction.h"
 
 namespace vanillapdf {
 
@@ -16,7 +16,7 @@ public:
 	virtual BufferPtr Readline(void) = 0;
 	virtual types::stream_size GetInputPosition() = 0;
 	virtual void SetInputPosition(types::stream_size pos) = 0;
-	virtual void SetInputPosition(types::stream_size pos, std::ios_base::seekdir way) = 0;
+	virtual void SetInputPosition(types::stream_size pos, SeekDirection way) = 0;
 
 	virtual bool Eof(void) const = 0;
 	virtual bool Ignore(void) = 0;
