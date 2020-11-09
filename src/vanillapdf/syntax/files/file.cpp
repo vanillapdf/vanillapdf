@@ -93,7 +93,10 @@ void File::Initialize() {
 		return;
 	}
 
-	// Opening the stream with ate option
+	// Seek to the end of file
+	_input->SetInputPosition(0, SeekDirection::End);
+
+	// Check file size by getting the offset of the end of file
 	auto file_size = _input->GetInputPosition();
 
 	Parser stream(GetWeakReference<File>(), _input);
