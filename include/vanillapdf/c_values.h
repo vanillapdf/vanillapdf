@@ -129,6 +129,17 @@ extern "C"
 
 	/**
 	* \brief
+	* Error during low-level file processing, the document might be damaged.
+	*
+	* If the document can be correctly processed with other readers,
+	* please let us know by sending the document for observations.
+	* In case the document contains sensitive information,
+	* consider document anonymizer utility.
+	*/
+	VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_PARSE_EXCEPTION;
+
+	/**
+	* \brief
 	* Invalid protection password or key.
 	*
 	* The source file was encrypted, while the entered password did not match.

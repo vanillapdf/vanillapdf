@@ -22,6 +22,7 @@ VANILLAPDF_API const error_type VANILLAPDF_ERROR_CONVERSION				= static_cast<err
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_FILE_DISPOSED			= static_cast<error_type>(vanillapdf::ExceptionBase::Type::FileDisposed);
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_FILE_NOT_INITIALIZED	= static_cast<error_type>(vanillapdf::ExceptionBase::Type::FileNotInitialized);
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_OBJECT_MISSING			= static_cast<error_type>(vanillapdf::ExceptionBase::Type::ObjectMissing);
+VANILLAPDF_API const error_type VANILLAPDF_ERROR_PARSE_EXCEPTION		= static_cast<error_type>(vanillapdf::ExceptionBase::Type::ParseException);
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_INVALID_PASSWORD		= static_cast<error_type>(vanillapdf::ExceptionBase::Type::InvalidPassword);
 
 // semantic errors
