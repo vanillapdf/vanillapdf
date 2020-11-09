@@ -32,7 +32,7 @@ void DocumentSigner::OnAfterObjectWrite(ObjectPtr obj) {
 
 void DocumentSigner::OnBeforeOutputFlush(IInputOutputStreamPtr output) {
 
-	output->SetOutputPosition(0, std::ios_base::end);
+	output->SetOutputPosition(0, SeekDirection::End);
 	auto output_size = output->GetOutputPosition();
 
 	auto byte_ranges = m_dictionary->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::ByteRange);
