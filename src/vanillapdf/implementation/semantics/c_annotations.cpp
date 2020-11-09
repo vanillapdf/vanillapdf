@@ -74,13 +74,11 @@ VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetAnnotationType(Annota
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Annotation_ToLink(AnnotationHandle* handle, LinkAnnotationHandle** result)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_ToLink(AnnotationHandle* handle, LinkAnnotationHandle** result) {
 	return SafeObjectConvert<AnnotationBase, LinkAnnotation, AnnotationHandle, LinkAnnotationHandle>(handle, result);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Annotation_Release(AnnotationHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_Release(AnnotationHandle* handle) {
 	return ObjectRelease<AnnotationBase, AnnotationHandle>(handle);
 }
 
@@ -94,15 +92,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_GetDestination(LinkA
 	{
 		OutputDestinationPtr destination;
 		bool contains = obj->Destination(destination);
-		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+		if (!contains) {
+			return VANILLAPDF_ERROR_OBJECT_MISSING;
+		}
+
 		auto ptr = destination.AddRefGet();
 		*result = reinterpret_cast<DestinationHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_Release(LinkAnnotationHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_Release(LinkAnnotationHandle* handle) {
 	return ObjectRelease<LinkAnnotation, LinkAnnotationHandle>(handle);
 }
 
@@ -134,7 +134,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_At(PageAnnotationsH
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Release(PageAnnotationsHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Release(PageAnnotationsHandle* handle) {
 	return ObjectRelease<PageAnnotations, PageAnnotationsHandle>(handle);
 }

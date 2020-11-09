@@ -38,7 +38,10 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetVersion(CatalogHandle* h
 	{
 		Version version;
 		auto contains = obj->Version(version);
-		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+		if (!contains) {
+			return VANILLAPDF_ERROR_OBJECT_MISSING;
+		}
+
 		switch (version) {
 		case Version::PDF10:
 			*result = PDFVersion_10; break;
@@ -74,7 +77,10 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetExtensions(CatalogHandle
 	{
 		OutputDeveloperExtensionsPtr extensions;
 		auto contains = obj->Extensions(extensions);
-		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+		if (!contains) {
+			return VANILLAPDF_ERROR_OBJECT_MISSING;
+		}
+
 		auto ptr = extensions.AddRefGet();
 		*result = reinterpret_cast<DeveloperExtensionsHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
@@ -91,7 +97,10 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetPageLabels(CatalogHandle
 	{
 		OutputPageLabelsPtr labels;
 		auto contains = obj->PageLabels(labels);
-		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+		if (!contains) {
+			return VANILLAPDF_ERROR_OBJECT_MISSING;
+		}
+
 		auto ptr = labels.AddRefGet();
 		*result = reinterpret_cast<PageLabelsHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
@@ -108,7 +117,10 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHandle
 	{
 		Catalog::PageLayoutType layout;
 		auto contains = obj->PageLayout(layout);
-		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+		if (!contains) {
+			return VANILLAPDF_ERROR_OBJECT_MISSING;
+		}
+
 		switch (layout) {
 		case semantics::Catalog::PageLayoutType::SinglePage:
 			*result = PageLayout_SinglePage; break;
@@ -140,7 +152,10 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetViewerPreferences(Catalo
 	{
 		OutputViewerPreferencesPtr direct;
 		auto contains = obj->ViewerPreferences(direct);
-		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+		if (!contains) {
+			return VANILLAPDF_ERROR_OBJECT_MISSING;
+		}
+
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<ViewerPreferencesHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
@@ -157,7 +172,10 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetOutlines(CatalogHandle* 
 	{
 		OutputOutlinePtr direct;
 		auto contains = obj->Outlines(direct);
-		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+		if (!contains) {
+			return VANILLAPDF_ERROR_OBJECT_MISSING;
+		}
+
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<OutlineHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
@@ -174,7 +192,10 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetDestinations(CatalogHand
 	{
 		OutputNamedDestinationsPtr direct;
 		auto contains = obj->Destinations(direct);
-		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+		if (!contains) {
+			return VANILLAPDF_ERROR_OBJECT_MISSING;
+		}
+
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<NamedDestinationsHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
@@ -189,7 +210,10 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetAcroForm(CatalogHandle* 
 	try {
 		OuputInteractiveFormPtr direct;
 		auto contains = obj->AcroForm(direct);
-		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+		if (!contains) {
+			return VANILLAPDF_ERROR_OBJECT_MISSING;
+		}
+
 		auto ptr = direct.AddRefGet();
 		*result = reinterpret_cast<InteractiveFormHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
@@ -204,7 +228,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_FromUnknown(IUnknownHandle*
 	return SafeObjectConvert<IUnknown, Catalog, IUnknownHandle, CatalogHandle>(handle, result);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Catalog_Release(CatalogHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION Catalog_Release(CatalogHandle* handle) {
 	return ObjectRelease<Catalog, CatalogHandle>(handle);
 }
