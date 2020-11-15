@@ -1,0 +1,50 @@
+#include "precompiled.h"
+#include "semantics/objects/page_contents.h"
+
+#include "contents/content_stream_instruction_base.h"
+
+#include "vanillapdf/semantics/c_page_contents.h"
+#include "implementation/c_helper.h"
+
+using namespace vanillapdf;
+using namespace vanillapdf::semantics;
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageContents_GetInstructionsSize(PageContentsHandle* handle, size_type* result)
+{
+	PageContents* obj = reinterpret_cast<PageContents*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		*result = obj->GetInstructionsSize();
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageContents_GetInstructionAt(PageContentsHandle* handle, size_type at, ContentInstructionHandle** result)
+{
+	PageContents* obj = reinterpret_cast<PageContents*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto instruction = obj->GetInstructionAt(at);
+		auto base = instruction.AddRefGet();
+		*result = reinterpret_cast<ContentInstructionHandle*>(base);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageContents_ToUnknown(PageContentsHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<PageContents, IUnknown, PageContentsHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageContents_FromUnknown(IUnknownHandle* handle, PageContentsHandle** result) {
+	return SafeObjectConvert<IUnknown, PageContents, IUnknownHandle, PageContentsHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageContents_Release(PageContentsHandle* handle) {
+	return ObjectRelease<PageContents, PageContentsHandle>(handle);
+}

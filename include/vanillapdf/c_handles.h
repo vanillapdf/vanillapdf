@@ -121,6 +121,7 @@ extern "C"
 
 	DECLARE_OBJECT_HANDLE(PageTree);
 	DECLARE_OBJECT_HANDLE(PageObject);
+	DECLARE_OBJECT_HANDLE(PageContents);
 
 	DECLARE_OBJECT_HANDLE(DeveloperExtensions);
 	DECLARE_OBJECT_HANDLE(DeveloperExtensionsIterator);
@@ -177,10 +178,6 @@ extern "C"
 
 	DECLARE_OBJECT_HANDLE(Date);
 	DECLARE_OBJECT_HANDLE(Rectangle);
-	
-	/* Contents */
-
-	DECLARE_OBJECT_HANDLE(Contents);
 
 	#pragma endregion
 

@@ -280,14 +280,14 @@ error_type process_content_instruction(ContentInstructionHandle* obj, int nested
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_contents(ContentsHandle* obj, int nested) {
+error_type process_page_contents(PageContentsHandle* obj, int nested) {
 	size_type i = 0;
 	size_type size = 0;
 
 	print_spaces(nested);
 	print_text("Contents begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Contents_GetInstructionsSize(obj, &size));
+	RETURN_ERROR_IF_NOT_SUCCESS(PageContents_GetInstructionsSize(obj, &size));
 
 	print_spaces(nested + 1);
 	unsigned long long converted_size = size;
@@ -295,7 +295,7 @@ error_type process_contents(ContentsHandle* obj, int nested) {
 
 	for (i = 0; i < size; ++i) {
 		ContentInstructionHandle* instruction = NULL;
-		RETURN_ERROR_IF_NOT_SUCCESS(Contents_GetInstructionAt(obj, i, &instruction));
+		RETURN_ERROR_IF_NOT_SUCCESS(PageContents_GetInstructionAt(obj, i, &instruction));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_content_instruction(instruction, nested + 1));
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_Release(instruction));
 	}
@@ -462,7 +462,7 @@ error_type process_page_annotations(PageAnnotationsHandle* obj, int nested) {
 }
 
 error_type process_page(PageObjectHandle* obj, int nested) {
-	ContentsHandle* contents = NULL;
+	PageContentsHandle* contents = NULL;
 	RectangleHandle* media_box = NULL;
 	PageAnnotationsHandle* annotations = NULL;
 	ResourceDictionaryHandle* page_resources = NULL;
@@ -471,8 +471,8 @@ error_type process_page(PageObjectHandle* obj, int nested) {
 	print_text("Page begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageObject_GetContents(obj, &contents),
-		process_contents(contents, nested + 1),
-		Contents_Release(contents));
+		process_page_contents(contents, nested + 1),
+		PageContents_Release(contents));
 
 	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageObject_GetMediaBox(obj, &media_box),
 		process_rectangle(media_box, nested + 1),

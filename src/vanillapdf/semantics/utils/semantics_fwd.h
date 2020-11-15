@@ -52,7 +52,7 @@ class Rectangle;
 class Tree;
 
 class ContentStream; using ContentStreamPtr = Deferred<ContentStream>;
-class Contents; using ContentsPtr = Deferred<Contents>; using OutputContentsPtr = OutputPointer<ContentsPtr>;
+class PageContents; using PageContentsPtr = Deferred<PageContents>; using OutputPageContentsPtr = OutputPointer<PageContentsPtr>;
 
 class OutlineItemColor; using OutlineItemColorPtr = Deferred<OutlineItemColor>; using OutputOutlineItemColorPtr = OutputPointer<OutlineItemColorPtr>;
 class OutlineItemFlags; using OutlineItemFlagsPtr = Deferred<OutlineItemFlags>; using OutputOutlineItemFlagsPtr = OutputPointer<OutlineItemFlagsPtr>;

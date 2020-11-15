@@ -3,7 +3,7 @@
 #include "semantics/objects/page_object.h"
 #include "semantics/objects/page_tree_node.h"
 #include "semantics/objects/resource_dictionary.h"
-#include "semantics/objects/contents.h"
+#include "semantics/objects/page_contents.h"
 #include "semantics/objects/rectangle.h"
 #include "semantics/utils/semantic_exceptions.h"
 #include "semantics/objects/document.h"
@@ -85,7 +85,7 @@ void PageObject::SetAnnotations(PageAnnotationsPtr annots) {
 	_obj->Insert(Name::Annots, annots->GetObject());
 }
 
-void PageObject::SetContents(ContentsPtr contents) {
+void PageObject::SetContents(PageContentsPtr contents) {
 	if (_obj->Contains(Name::Contents)) {
 		bool removed = _obj->Remove(Name::Contents);
 		assert(removed && "Unable to remove existing item"); UNUSED(removed);
@@ -95,7 +95,7 @@ void PageObject::SetContents(ContentsPtr contents) {
 	_obj->Insert(Name::Contents, contents_ref);
 }
 
-bool PageObject::GetContents(OutputContentsPtr& result) const {
+bool PageObject::GetContents(OutputPageContentsPtr& result) const {
 	if (!m_contents.empty()) {
 		result = m_contents;
 		return true;
@@ -131,7 +131,7 @@ bool PageObject::GetContents(OutputContentsPtr& result) const {
 
 	if (is_ref) {
 		auto data = ObjectUtils::ConvertTo<StreamObjectPtr>(*content);
-		ContentsPtr contents = make_deferred<Contents>(data);
+		PageContentsPtr contents = make_deferred<PageContents>(data);
 		m_contents = contents;
 		result = contents;
 		return true;
@@ -139,7 +139,7 @@ bool PageObject::GetContents(OutputContentsPtr& result) const {
 
 	if (is_array) {
 		auto data = ObjectUtils::ConvertTo<ArrayObjectPtr<IndirectReferenceObjectPtr>>(*content);
-		ContentsPtr contents = make_deferred<Contents>(data);
+		PageContentsPtr contents = make_deferred<PageContents>(data);
 		m_contents = contents;
 		result = contents;
 		return true;

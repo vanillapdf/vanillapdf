@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-#include "semantics/objects/contents.h"
+#include "semantics/objects/page_contents.h"
 
 #include "contents/content_stream_parser.h"
 #include "contents/content_stream_operations.h"
@@ -18,20 +18,20 @@ namespace semantics {
 using namespace syntax;
 using namespace contents;
 
-Contents::Contents(StreamObjectPtr obj) : HighLevelObject(obj) {
+PageContents::PageContents(StreamObjectPtr obj) : HighLevelObject(obj) {
 	m_instructions->Subscribe(this);
 }
 
-Contents::Contents(ArrayObjectPtr<IndirectReferenceObjectPtr> obj)
+PageContents::PageContents(ArrayObjectPtr<IndirectReferenceObjectPtr> obj)
 	: HighLevelObject(obj->Data()) {
 	m_instructions->Subscribe(this);
 }
 
-Contents::~Contents() {
+PageContents::~PageContents() {
 	m_instructions->Unsubscribe(this);
 }
 
-BaseInstructionCollectionPtr Contents::Instructions(void) const {
+BaseInstructionCollectionPtr PageContents::Instructions(void) const {
 	if (m_instructions->IsInitialized()) {
 		return m_instructions;
 	}
@@ -71,7 +71,7 @@ BaseInstructionCollectionPtr Contents::Instructions(void) const {
 	return m_instructions;
 }
 
-types::size_type Contents::GetInstructionsSize(void) const {
+types::size_type PageContents::GetInstructionsSize(void) const {
 	if (!m_instructions->IsInitialized()) {
 		Instructions();
 	}
@@ -79,7 +79,7 @@ types::size_type Contents::GetInstructionsSize(void) const {
 	return m_instructions->size();
 }
 
-InstructionBasePtr Contents::GetInstructionAt(types::size_type at) const {
+InstructionBasePtr PageContents::GetInstructionAt(types::size_type at) const {
 	if (!m_instructions->IsInitialized()) {
 		Instructions();
 	}

@@ -33,7 +33,7 @@
     <ClInclude Include="..\include\vanillapdf\semantics\c_annotations.h" />
     <ClInclude Include="..\include\vanillapdf\semantics\c_catalog.h" />
     <ClInclude Include="..\include\vanillapdf\semantics\c_character_map.h" />
-    <ClInclude Include="..\include\vanillapdf\semantics\c_contents.h" />
+    <ClInclude Include="..\include\vanillapdf\semantics\c_page_contents.h" />
     <ClInclude Include="..\include\vanillapdf\semantics\c_date.h" />
     <ClInclude Include="..\include\vanillapdf\semantics\c_destinations.h" />
     <ClInclude Include="..\include\vanillapdf\semantics\c_developer_extensions.h" />
@@ -99,7 +99,7 @@
     <ClInclude Include="..\src\vanillapdf\semantics\objects\annotations.h" />
     <ClInclude Include="..\src\vanillapdf\semantics\objects\catalog.h" />
     <ClInclude Include="..\src\vanillapdf\semantics\objects\character_map.h" />
-    <ClInclude Include="..\src\vanillapdf\semantics\objects\contents.h" />
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\page_contents.h" />
     <ClInclude Include="..\src\vanillapdf\semantics\objects\content_stream.h" />
     <ClInclude Include="..\src\vanillapdf\semantics\objects\date.h" />
     <ClInclude Include="..\src\vanillapdf\semantics\objects\destinations.h" />
@@ -229,7 +229,7 @@
     <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_annotations.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_catalog.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_character_map.cpp" />
-    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_contents.cpp" />
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_page_contents.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_date.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_destinations.cpp" />
     <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_developer_extensions.cpp" />
@@ -286,7 +286,7 @@
     <ClCompile Include="..\src\vanillapdf\semantics\objects\annotations.cpp" />
     <ClCompile Include="..\src\vanillapdf\semantics\objects\catalog.cpp" />
     <ClCompile Include="..\src\vanillapdf\semantics\objects\character_map.cpp" />
-    <ClCompile Include="..\src\vanillapdf\semantics\objects\contents.cpp" />
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\page_contents.cpp" />
     <ClCompile Include="..\src\vanillapdf\semantics\objects\content_stream.cpp" />
     <ClCompile Include="..\src\vanillapdf\semantics\objects\date.cpp" />
     <ClCompile Include="..\src\vanillapdf\semantics\objects\destinations.cpp" />

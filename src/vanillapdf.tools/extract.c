@@ -263,12 +263,12 @@ error_type process_file(FileHandle* file) {
 	return VANILLAPDF_TOOLS_ERROR_SUCCESS;
 }
 
-error_type process_contents(ContentsHandle* page_contents, size_type page_number) {
+error_type process_page_contents(PageContentsHandle* page_contents, size_type page_number) {
 	size_type i = 0;
 	size_type contents_size = 0;
 	unsigned long long page_number_converted = page_number;
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Contents_GetInstructionsSize(page_contents, &contents_size));
+	RETURN_ERROR_IF_NOT_SUCCESS(PageContents_GetInstructionsSize(page_contents, &contents_size));
 
 	for (i = 0; i < contents_size; ++i) {
 		ContentInstructionType instruction_type;
@@ -284,7 +284,7 @@ error_type process_contents(ContentsHandle* page_contents, size_type page_number
 		char output_filename[256] = {0};
 		OutputStreamHandle* output_stream = NULL;
 
-		RETURN_ERROR_IF_NOT_SUCCESS(Contents_GetInstructionAt(page_contents, i, &content_instruction));
+		RETURN_ERROR_IF_NOT_SUCCESS(PageContents_GetInstructionAt(page_contents, i, &content_instruction));
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_GetInstructionType(content_instruction, &instruction_type));
 
 		if (instruction_type != ContentInstructionType_Object) {
@@ -369,15 +369,15 @@ int process_extract(int argc, char *argv[]) {
 	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(tree, &page_count));
 
 	for (i = 0; i < page_count; ++i) {
-		ContentsHandle* page_contents = NULL;
+		PageContentsHandle* page_contents = NULL;
 		PageObjectHandle* page_object = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(tree, i + 1, &page_object));
 		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_GetContents(page_object, &page_contents));
 
-		RETURN_ERROR_IF_NOT_SUCCESS(process_contents(page_contents, i + 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_page_contents(page_contents, i + 1));
 
-		RETURN_ERROR_IF_NOT_SUCCESS(Contents_Release(page_contents));
+		RETURN_ERROR_IF_NOT_SUCCESS(PageContents_Release(page_contents));
 		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(page_object));
 	}
 

@@ -1,7 +1,7 @@
 #include "precompiled.h"
 
 #include "semantics/objects/page_object.h"
-#include "semantics/objects/contents.h"
+#include "semantics/objects/page_contents.h"
 #include "semantics/objects/document.h"
 
 #include "vanillapdf/semantics/c_page_object.h"
@@ -10,7 +10,7 @@
 using namespace vanillapdf;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObjectHandle* handle, ContentsHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObjectHandle* handle, PageContentsHandle** result)
 {
 	PageObject* obj = reinterpret_cast<PageObject*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -18,11 +18,11 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObjectHa
 
 	try
 	{
-		OutputContentsPtr contents;
+		OutputPageContentsPtr contents;
 		auto contains = obj->GetContents(contents);
 		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
 		auto ptr = contents.AddRefGet();
-		*result = reinterpret_cast<ContentsHandle*>(ptr);
+		*result = reinterpret_cast<PageContentsHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }

@@ -52,7 +52,7 @@ extern "C"
 	* the contents of this page. If this entry is absent,
 	* the page shall be empty.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObjectHandle* handle, ContentsHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObjectHandle* handle, PageContentsHandle** result);
 
 	/**
 	* \brief

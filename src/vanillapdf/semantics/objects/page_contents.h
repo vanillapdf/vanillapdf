@@ -8,12 +8,12 @@
 namespace vanillapdf {
 namespace semantics {
 
-class Contents : public HighLevelObject<syntax::ObjectPtr>, public IModifyObserver {
+class PageContents : public HighLevelObject<syntax::ObjectPtr>, public IModifyObserver {
 public:
-	Contents() = default;
-	explicit Contents(syntax::StreamObjectPtr obj);
-	explicit Contents(syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> obj);
-	~Contents();
+	PageContents() = default;
+	explicit PageContents(syntax::StreamObjectPtr obj);
+	explicit PageContents(syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> obj);
+	~PageContents();
 
 	contents::BaseInstructionCollectionPtr Instructions(void) const;
 	types::size_type GetInstructionsSize(void) const;

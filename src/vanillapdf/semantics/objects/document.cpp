@@ -6,7 +6,7 @@
 #include "syntax/utils/serialization_override_attribute.h"
 
 #include "semantics/objects/document.h"
-#include "semantics/objects/contents.h"
+#include "semantics/objects/page_contents.h"
 #include "semantics/objects/annotations.h"
 #include "semantics/objects/name_dictionary.h"
 
@@ -124,7 +124,7 @@ void Document::RecalculatePageContents() {
 	for (decltype(page_count) i = 1; i < page_count + 1; ++i) {
 		auto page = pages->Page(i);
 
-		OutputContentsPtr page_contents;
+		OutputPageContentsPtr page_contents;
 		bool has_contents = page->GetContents(page_contents);
 		if (!has_contents) {
 			continue;

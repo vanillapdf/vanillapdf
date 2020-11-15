@@ -5,7 +5,7 @@
 #include "semantics/objects/page_node_base.h"
 #include "semantics/objects/rectangle.h"
 #include "semantics/objects/resource_dictionary.h"
-#include "semantics/objects/contents.h"
+#include "semantics/objects/page_contents.h"
 #include "semantics/objects/annotations.h"
 
 namespace vanillapdf {
@@ -27,13 +27,13 @@ public:
 	bool GetAnnotations(OutputPageAnnotationsPtr& result) const;
 	void SetAnnotations(PageAnnotationsPtr annots);
 
-	bool GetContents(OutputContentsPtr& result) const;
-	void SetContents(ContentsPtr contents);
+	bool GetContents(OutputPageContentsPtr& result) const;
+	void SetContents(PageContentsPtr contents);
 
 	virtual NodeType GetNodeType(void) const noexcept override { return NodeType::Object; }
 
 private:
-	mutable OutputContentsPtr m_contents;
+	mutable OutputPageContentsPtr m_contents;
 };
 
 } // semantics

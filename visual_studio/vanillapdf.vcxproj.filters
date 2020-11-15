@@ -168,9 +168,6 @@
     <ClInclude Include="..\src\vanillapdf\semantics\objects\content_stream.h">
       <Filter>Header Files\semantics\objects</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\vanillapdf\semantics\objects\contents.h">
-      <Filter>Header Files\semantics\objects</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\vanillapdf\semantics\objects\date.h">
       <Filter>Header Files\semantics\objects</Filter>
     </ClInclude>
@@ -567,9 +564,6 @@
     <ClInclude Include="..\include\vanillapdf\semantics\c_character_map.h">
       <Filter>Header Files\include\semantics</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\vanillapdf\semantics\c_contents.h">
-      <Filter>Header Files\include\semantics</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\vanillapdf\semantics\c_date.h">
       <Filter>Header Files\include\semantics</Filter>
     </ClInclude>
@@ -711,6 +705,12 @@
     <ClInclude Include="..\src\vanillapdf\utils\streams\seek_direction.h">
       <Filter>Header Files\utils\streams</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\vanillapdf\semantics\c_page_contents.h">
+      <Filter>Header Files\include\semantics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\vanillapdf\semantics\objects\page_contents.h">
+      <Filter>Header Files\semantics\objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\vanillapdf\contents\content_stream_objects.cpp">
@@ -735,9 +735,6 @@
       <Filter>Source Files\semantics\objects</Filter>
     </ClCompile>
     <ClCompile Include="..\src\vanillapdf\semantics\objects\content_stream.cpp">
-      <Filter>Source Files\semantics\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\semantics\objects\contents.cpp">
       <Filter>Source Files\semantics\objects</Filter>
     </ClCompile>
     <ClCompile Include="..\src\vanillapdf\semantics\objects\date.cpp">
@@ -1001,9 +998,6 @@
     <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_character_map.cpp">
       <Filter>Source Files\implementation\semantics</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_contents.cpp">
-      <Filter>Source Files\implementation\semantics</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_date.cpp">
       <Filter>Source Files\implementation\semantics</Filter>
     </ClCompile>
@@ -1141,6 +1135,12 @@
     </ClCompile>
     <ClCompile Include="..\src\vanillapdf\syntax\objects\indirect_reference_object.cpp">
       <Filter>Source Files\syntax\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\implementation\semantics\c_page_contents.cpp">
+      <Filter>Source Files\implementation\semantics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vanillapdf\semantics\objects\page_contents.cpp">
+      <Filter>Source Files\semantics\objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

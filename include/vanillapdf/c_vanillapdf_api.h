@@ -52,7 +52,7 @@
 #include "vanillapdf/semantics/c_character_map.h"
 #include "vanillapdf/semantics/c_date.h"
 #include "vanillapdf/semantics/c_rectangle.h"
-#include "vanillapdf/semantics/c_contents.h"
+#include "vanillapdf/semantics/c_page_contents.h"
 
 /* contents */
 #include "vanillapdf/contents/c_content_object.h"

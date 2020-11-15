@@ -16,7 +16,7 @@ extern "C"
 	*/
 
 	/**
-	* \class ContentsHandle
+	* \class PageContentsHandle
 	* \extends IUnknownHandle
 	* \ingroup group_documents
 	* \brief
@@ -27,35 +27,35 @@ extern "C"
 	*/
 
 	/**
-	* \memberof ContentsHandle
+	* \memberof PageContentsHandle
 	* @{
 	*/
 
 	/**
 	* \brief Return size of a collection
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Contents_GetInstructionsSize(ContentsHandle* handle, size_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageContents_GetInstructionsSize(PageContentsHandle* handle, size_type* result);
 
 	/**
 	* \brief Get instruction at location \p at
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Contents_GetInstructionAt(ContentsHandle* handle, size_type at, ContentInstructionHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageContents_GetInstructionAt(PageContentsHandle* handle, size_type at, ContentInstructionHandle** result);
 
 	/**
 	* \brief Reinterpret current object as \ref IUnknownHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Contents_ToUnknown(ContentsHandle* handle, IUnknownHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageContents_ToUnknown(PageContentsHandle* handle, IUnknownHandle** result);
 
 	/**
-	* \brief Convert \ref IUnknownHandle to \ref ContentsHandle
+	* \brief Convert \ref IUnknownHandle to \ref PageContentsHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Contents_FromUnknown(IUnknownHandle* handle, ContentsHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageContents_FromUnknown(IUnknownHandle* handle, PageContentsHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Contents_Release(ContentsHandle* handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageContents_Release(PageContentsHandle* handle);
 
 	/** @} */
 

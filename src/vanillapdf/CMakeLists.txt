@@ -53,7 +53,6 @@ set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
 	implementation/semantics/c_annotations.cpp
 	implementation/semantics/c_catalog.cpp
 	implementation/semantics/c_character_map.cpp
-	implementation/semantics/c_contents.cpp
 	implementation/semantics/c_date.cpp
 	implementation/semantics/c_destinations.cpp
 	implementation/semantics/c_developer_extensions.cpp
@@ -66,6 +65,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
 	implementation/semantics/c_font_map.cpp
 	implementation/semantics/c_interactive_forms.cpp
 	implementation/semantics/c_outline.cpp
+	implementation/semantics/c_page_contents.cpp
 	implementation/semantics/c_page_labels.cpp
 	implementation/semantics/c_page_object.cpp
 	implementation/semantics/c_page_tree.cpp
@@ -91,8 +91,8 @@ set(VANILLAPDF_CONTENTS_SOURCES
 set(VANILLAPDF_SEMANTICS_SOURCES
 	semantics/objects/catalog.cpp
 	semantics/objects/content_stream.cpp
-	semantics/objects/contents.cpp
 	semantics/objects/document.cpp
+	semantics/objects/page_contents.cpp
 	semantics/objects/page_object.cpp
 	semantics/objects/page_tree.cpp
 	semantics/objects/page_tree_node.cpp
@@ -203,8 +203,8 @@ set(VANILLAPDF_CONTENTS_HEADERS
 set(VANILLAPDF_SEMANTICS_HEADERS
 	semantics/objects/catalog.h
 	semantics/objects/content_stream.h
-	semantics/objects/contents.h
 	semantics/objects/document.h
+	semantics/objects/page_contents.h
 	semantics/objects/page_node_base.h
 	semantics/objects/page_object.h
 	semantics/objects/page_tree.h
