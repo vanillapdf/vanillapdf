@@ -43,12 +43,12 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION OutputStream_SetOutputPosition(OutputStreamHandle* handle, offset_type value);
 
 	/**
-	* \brief Appends null terminated string to current output stream instance
+	* \brief Appends null terminated string data to current output stream instance
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION OutputStream_WriteString(OutputStreamHandle* handle, string_type data);
 
 	/**
-	* \brief Appends buffer string to current output stream instance
+	* \brief Appends buffer data to current output stream instance
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION OutputStream_WriteBuffer(OutputStreamHandle* handle, BufferHandle* data);
 

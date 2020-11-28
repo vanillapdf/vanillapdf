@@ -26,6 +26,10 @@ extern "C"
 	* \brief Relationship of local time to Universal Time (UT).
 	*/
 	typedef enum {
+
+		/**
+		* \brief Undefined unitialized default value
+		*/
 		TimezoneType_Undefined = 0,
 
 		/**
