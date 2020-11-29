@@ -19,7 +19,7 @@ extern "C"
 	* \class IntegerObjectHandle
 	* \extends ObjectHandle
 	* \ingroup group_objects
-	* \brief Represents integer values
+	* \brief Integer objects represent mathematical integers
 	*/
 
 	/**

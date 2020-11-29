@@ -19,7 +19,7 @@ extern "C"
 	* \class RealObjectHandle
 	* \extends ObjectHandle
 	* \ingroup group_objects
-	* \brief Represents floating point numbers.
+	* \brief Real objects represent mathematical real numbers
 	*/
 
 	/**

@@ -19,7 +19,7 @@ extern "C"
 	* \class IndirectReferenceObjectHandle
 	* \extends ObjectHandle
 	* \ingroup group_objects
-	* \brief Represents reference to other object
+	* \brief Represents reference to another object
 	*/
 
 	/**

@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_string_object.h
-	* \brief This file contains class definitions for \ref StringObjectHandle
+	* \brief This file contains class definitions for \ref StringObjectHandle.
 	*/
 
 	/**
@@ -26,18 +26,18 @@ extern "C"
 	* \class HexadecimalStringObjectHandle
 	* \extends StringObjectHandle
 	* \ingroup group_objects
-	* \brief Text stored in hexadecimal notation.
+	* \brief A hexadecimal string is preferable for arbitrary binary data
 	*/
 
 	/**
 	* \class LiteralStringObjectHandle
 	* \extends StringObjectHandle
 	* \ingroup group_objects
-	* \brief Text stored in raw format.
+	* \brief A literal string is preferable for printable data
 	*/
 
 	/**
-	* \brief Available types of strings.
+	* \brief Derived types of \ref StringObjectHandle
 	*/
 	typedef enum {
 		/**

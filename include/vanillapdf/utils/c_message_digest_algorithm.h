@@ -20,9 +20,10 @@ extern "C"
 	* \ingroup group_utils
 	*/
 	typedef enum {
+
 		/**
-		* \brief Default unset value, triggers error when used
-		*/
+		* \brief Undefined unitialized default value, triggers error when used
+		*/ /
 		MessageDigestAlgorithmType_Undefined = 0,
 
 		/**

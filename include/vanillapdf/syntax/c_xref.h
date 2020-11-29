@@ -19,7 +19,7 @@ extern "C"
 	* \class XrefHandle
 	* \extends IUnknownHandle
 	* \ingroup group_xref
-	* \brief Represents either cross-reference table or stream
+	* \brief The cross-reference table contains information that permits random access to indirect objects within the file.
 	*/
 
 	/**

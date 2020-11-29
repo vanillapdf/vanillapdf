@@ -19,7 +19,7 @@ extern "C"
 	* \class BooleanObjectHandle
 	* \extends ObjectHandle
 	* \ingroup group_objects
-	* \brief Represents boolean type
+	* \brief Boolean objects represent the logical values of true and false.
 	*/
 
 	/**

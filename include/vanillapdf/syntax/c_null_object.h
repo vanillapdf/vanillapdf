@@ -19,7 +19,7 @@ extern "C"
 	* \class NullObjectHandle
 	* \extends ObjectHandle
 	* \ingroup group_objects
-	* \brief Used as missing value.
+	* \brief The null object has a type and value that are unequal to those of any other object.
 	*/
 
 	/**

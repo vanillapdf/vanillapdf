@@ -19,7 +19,7 @@ extern "C"
 	* \class DictionaryObjectHandle
 	* \extends ObjectHandle
 	* \ingroup group_objects
-	* \brief Represents key-value map.
+	* \brief A dictionary object is an associative table containing pairs of objects
 	*/
 
 	/**

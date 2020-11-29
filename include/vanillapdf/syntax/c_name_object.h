@@ -19,7 +19,7 @@ extern "C"
 	* \class NameObjectHandle
 	* \extends ObjectHandle
 	* \ingroup group_objects
-	* \brief Represents unique name references in document.
+	* \brief A name object is an atomic symbol uniquely defined by a sequence of characters
 	* \see \ref group_name_constants
 	*/
 

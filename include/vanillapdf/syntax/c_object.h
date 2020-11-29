@@ -23,9 +23,13 @@ extern "C"
 	*/
 
 	/**
-	* \brief Available types of objects.
+	* \brief Derived types of \ref ObjectHandle
 	*/
 	typedef enum {
+
+		/**
+		* \brief Undefined unitialized default value, triggers error when used
+		*/
 		ObjectType_Undefined = 0,
 
 		/**

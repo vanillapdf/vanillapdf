@@ -28,7 +28,7 @@ extern "C"
 	typedef enum {
 
 		/**
-		* \brief Undefined unitialized default value
+		* \brief Undefined unitialized default value, triggers error when used
 		*/
 		TimezoneType_Undefined = 0,
 

@@ -19,7 +19,7 @@ extern "C"
 	* \class ArrayObjectHandle
 	* \extends ObjectHandle
 	* \ingroup group_objects
-	* \brief Represents array of mixed type elements.
+	* \brief An array object is a one-dimensional collection of objects arranged sequentially
 	*/
 
 	/**
