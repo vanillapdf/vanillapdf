@@ -40,11 +40,17 @@ extern "C"
 	* \brief Derived types of \ref StringObjectHandle
 	*/
 	typedef enum {
+
+		/**
+		* \brief Undefined unitialized default value, triggers error when used
+		*/
+		StringType_Undefined = 0,
+
 		/**
 		* \copybrief LiteralStringObjectHandle
 		* \see \ref LiteralStringObjectHandle
 		*/
-		StringType_Literal = 0,
+		StringType_Literal,
 
 		/**
 		* \copybrief HexadecimalStringObjectHandle
@@ -61,7 +67,7 @@ extern "C"
 	/**
 	* \brief Get derived type from current string
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_GetType(StringObjectHandle* handle, StringType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_GetStringType(StringObjectHandle* handle, StringType* result);
 
 	/**
 	* \brief Get strings current value

@@ -8,13 +8,15 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
-VANILLAPDF_API error_type CALLING_CONVENTION StringObject_GetType(StringObjectHandle* handle, StringType* result)
+VANILLAPDF_API error_type CALLING_CONVENTION StringObject_GetStringType(StringObjectHandle* handle, StringType* result)
 {
 	StringObjectBase* obj = reinterpret_cast<StringObjectBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	switch (obj->GetStringType()) {
+	case StringObjectBase::StringType::Undefined:
+		*result = StringType_Undefined; break;
 	case StringObjectBase::StringType::Literal:
 		*result = StringType_Literal; break;
 	case StringObjectBase::StringType::Hexadecimal:

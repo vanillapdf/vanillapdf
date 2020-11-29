@@ -246,7 +246,7 @@ error_type process_string(StringObjectHandle* obj, int nested) {
 	LiteralStringObjectHandle* literal_str = NULL;
 	HexadecimalStringObjectHandle* hexadecimal_str = NULL;
 
-	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_GetType(obj, &type));
+	RETURN_ERROR_IF_NOT_SUCCESS(StringObject_GetStringType(obj, &type));
 
 	switch (type) {
 		case StringType_Literal:
