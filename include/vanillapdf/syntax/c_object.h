@@ -24,6 +24,7 @@ extern "C"
 
 	/**
 	* \brief Derived types of \ref ObjectHandle
+	* \ingroup group_objects
 	*/
 	typedef enum {
 

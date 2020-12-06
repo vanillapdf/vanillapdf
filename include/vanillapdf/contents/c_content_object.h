@@ -19,7 +19,7 @@ extern "C"
 	* \class ContentObjectHandle
 	* \extends ContentInstructionHandle
 	* \ingroup group_contents
-	* \brief Composed non-atomic content object
+	* \brief A sequence of content instructions grouped within a single object.
 	*/
 
 	/**
@@ -43,7 +43,7 @@ extern "C"
 
 
 	/**
-	* \brief Available content object types
+	* \brief Derived types of \ref ContentObjectHandle
 	* \ingroup group_contents
 	*/
 	typedef enum {
@@ -100,7 +100,7 @@ extern "C"
 	*/
 
 	/**
-	* \brief Return size of a collection
+	* \brief Get number of operations within current text object
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_GetOperationsSize(ContentObjectTextHandle* handle, size_type* result);
 

@@ -19,7 +19,7 @@ extern "C"
 	* \class ContentOperationHandle
 	* \extends ContentInstructionHandle
 	* \ingroup group_contents
-	* \brief Atomic content operation.
+	* \brief Atomic operation modifying graphics state parameters.
 	*/
 
 	/**
@@ -67,7 +67,7 @@ extern "C"
 	*/
 
 	/**
-	* \brief Available content operation types
+	* \brief Derived types of \ref ContentOperationHandle
 	* \ingroup group_contents
 	*/
 	typedef enum {
