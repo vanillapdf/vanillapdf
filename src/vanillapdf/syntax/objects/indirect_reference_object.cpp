@@ -172,7 +172,7 @@ ObjectPtr IndirectReferenceObject::GetReferencedObject() const {
 		m_reference_object_number,
 		m_reference_generation_number);
 
-	SetReferencedObject(new_reference);
+	m_reference = new_reference;
 	return new_reference;
 }
 

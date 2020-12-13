@@ -329,9 +329,6 @@ void XrefStream::SetStreamObject(StreamObjectPtr stream) {
 	_stream->Unsubscribe(this);
 	_stream = stream;
 	_stream->Subscribe(this);
-
-	auto stream_header = stream->GetHeader();
-	SetTrailerDictionary(stream_header);
 }
 
 } // syntax

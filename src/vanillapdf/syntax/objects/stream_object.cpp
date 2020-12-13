@@ -34,9 +34,7 @@ StreamObject::~StreamObject() {
 }
 
 void StreamObject::ObserveeChanged(const IModifyObservable*) {
-	// TODO: This should be enabled BUT
-	// ASCII85 encoding is not supported
-	// OnChanged();
+	OnChanged();
 }
 
 void StreamObject::OnChanged() const {
@@ -77,17 +75,20 @@ Object::Type StreamObject::GetObjectType(void) const noexcept {
 StreamObject* StreamObject::Clone(void) const {
 	StreamObjectPtr result(pdf_new StreamObject(), false);
 
-	result->_body = GetBodyRaw()->Clone();
-	result->_body_decoded = _body_decoded->Clone();
 	result->_header = _header->Clone();
-
-	result->_body->Subscribe(result.get());
-	result->_body_decoded->Subscribe(result.get());
 	result->_header->Subscribe(result.get());
-
-	result->_body->SetInitialized();
-	result->_body_decoded->SetInitialized();
 	result->_header->SetInitialized();
+
+	result->_body = GetBodyRaw()->Clone();
+	result->_body->Subscribe(result.get());
+	result->_body->SetInitialized();
+
+	if (_body_decoded->IsInitialized()) {
+		result->_body_decoded = GetBody()->Clone();
+		result->_body_decoded->Subscribe(result.get());
+		result->_body_decoded->SetInitialized();
+	}
+
 	result->SetInitialized();
 
 	CloneBaseProperties(result);
@@ -106,12 +107,16 @@ void StreamObject::SetInitialized(bool initialized) {
 
 BufferPtr StreamObject::GetBodyRaw() const {
 
-	if (!_body->empty()) {
+	if (_body->IsInitialized()) {
 		return _body;
 	}
 
 	if (!m_file.IsActive()) {
 		throw FileDisposedException();
+	}
+
+	if (_raw_data_offset == constant::BAD_OFFSET) {
+		throw GeneralException("Stream object data offset is not initialized");
 	}
 
 	auto locked_file = m_file.GetReference();
@@ -185,7 +190,7 @@ BufferPtr StreamObject::GetBodyRaw() const {
 
 BufferPtr StreamObject::GetBody() const {
 
-	if (!_body_decoded->empty()) {
+	if (_body_decoded->IsInitialized()) {
 		return _body_decoded;
 	}
 
