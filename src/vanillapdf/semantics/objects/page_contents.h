@@ -10,7 +10,6 @@ namespace semantics {
 
 class PageContents : public HighLevelObject<syntax::ObjectPtr>, public IModifyObserver {
 public:
-	PageContents() = default;
 	explicit PageContents(syntax::StreamObjectPtr obj);
 	explicit PageContents(syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> obj);
 	~PageContents();
@@ -19,17 +18,13 @@ public:
 	types::size_type GetInstructionsSize(void) const;
 	contents::InstructionBasePtr GetInstructionAt(types::size_type at) const;
 
-	virtual void ObserveeChanged(const IModifyObservable*) override {
-		m_dirty = true;
-	}
+	virtual void ObserveeChanged(const IModifyObservable*) override;
 
-	bool IsDirty() const noexcept { return m_dirty; }
-	void SetDirty(bool dirty) noexcept { m_dirty = dirty; }
+	bool IsDirty() const;
+	void SetDirty(bool dirty);
 
 private:
 	mutable contents::BaseInstructionCollectionPtr m_instructions;
-
-	bool m_dirty = false;
 };
 
 } // semantics

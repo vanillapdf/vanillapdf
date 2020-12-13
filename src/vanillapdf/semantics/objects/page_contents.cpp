@@ -31,6 +31,18 @@ PageContents::~PageContents() {
 	m_instructions->Unsubscribe(this);
 }
 
+void PageContents::ObserveeChanged(const IModifyObservable*) {
+	SetDirty(true);
+}
+
+bool PageContents::IsDirty() const {
+	return GetObject()->IsDirty();
+}
+
+void PageContents::SetDirty(bool dirty) {
+	GetObject()->SetDirty(dirty);
+}
+
 BaseInstructionCollectionPtr PageContents::Instructions(void) const {
 	if (m_instructions->IsInitialized()) {
 		return m_instructions;
