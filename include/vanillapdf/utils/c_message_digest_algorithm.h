@@ -23,7 +23,7 @@ extern "C"
 
 		/**
 		* \brief Undefined unitialized default value, triggers error when used
-		*/ /
+		*/
 		MessageDigestAlgorithmType_Undefined = 0,
 
 		/**

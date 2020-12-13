@@ -279,7 +279,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_FromStringO
 	return SafeObjectConvert<StringObjectBase, HexadecimalStringObject, StringObjectHandle, HexadecimalStringObjectHandle>(handle, result);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Release(HexadecimalStringObjectHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Release(HexadecimalStringObjectHandle* handle) {
 	return ObjectRelease<HexadecimalStringObject, HexadecimalStringObjectHandle>(handle);
 }

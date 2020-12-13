@@ -380,7 +380,7 @@ extern "C"
 	* @{
 	*/
 
-		/**
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
