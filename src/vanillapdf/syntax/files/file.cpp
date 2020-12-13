@@ -595,7 +595,7 @@ ObjectPtr File::GetIndirectObject(
 ObjectPtr File::GetIndirectObjectInternal(
 	types::big_uint obj_number,
 	types::ushort gen_number) const {
-	LOG_DEBUG(_filename) << "GetIndirectObject " << obj_number << " and " << gen_number;
+	LOG_DEBUG(_filename) << std::dec << "GetIndirectObject " << obj_number << " and " << gen_number;
 
 	if (!_xref->Contains(obj_number, gen_number)) {
 		return NullObject::GetInstance();
