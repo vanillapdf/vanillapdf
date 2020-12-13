@@ -13,6 +13,8 @@ namespace syntax {
 class NameObject : public ContainableObject, public IModifyObserver {
 public:
 	NameObject();
+	//NameObject(const NameObject&) = delete;
+
 	explicit NameObject(BufferPtr name);
 	explicit NameObject(const char * chars);
 	explicit NameObject(const std::string& chars);

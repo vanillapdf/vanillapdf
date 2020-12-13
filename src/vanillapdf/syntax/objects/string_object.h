@@ -33,6 +33,7 @@ public:
 class HexadecimalStringObject : public StringObjectBase, public IModifyObserver {
 public:
 	HexadecimalStringObject();
+	HexadecimalStringObject(const HexadecimalStringObject&) = delete;
 
 	static HexadecimalStringObjectPtr CreateFromEncoded(BufferPtr value);
 	static HexadecimalStringObjectPtr CreateFromEncoded(const char * value);

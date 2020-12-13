@@ -72,6 +72,9 @@ protected:
 
 class DictionaryObject : public DictionaryObjectBase<NameObjectPtr, ContainableObjectPtr>, public IModifyObserver {
 public:
+	DictionaryObject() = default;
+	DictionaryObject(const DictionaryObject&) = delete;
+
 	virtual std::string ToString(void) const override;
 	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 	virtual void ToPdfStreamUpdateOffset(IOutputStreamPtr output) override;

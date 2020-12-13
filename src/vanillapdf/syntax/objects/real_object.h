@@ -13,6 +13,8 @@ public:
 
 public:
 	RealObject();
+	RealObject(const RealObject&) = delete;
+
 	explicit RealObject(types::real value);
 	explicit RealObject(types::real value, uint32_t precision);
 	explicit RealObject(NumericObjectBackendPtr value);

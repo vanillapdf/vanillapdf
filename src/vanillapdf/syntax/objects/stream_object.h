@@ -13,6 +13,8 @@ namespace syntax {
 class StreamObject : public Object, public IModifyObserver {
 public:
 	StreamObject();
+	StreamObject(const StreamObject&) = delete;
+
 	StreamObject(DictionaryObjectPtr header, types::stream_offset offset);
 	virtual Object::Type GetObjectType(void) const noexcept override;
 	virtual std::string ToString(void) const override;

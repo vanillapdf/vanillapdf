@@ -10,6 +10,8 @@ namespace syntax {
 class IndirectReferenceObject : public ContainableObject {
 public:
 	IndirectReferenceObject() = default;
+	//IndirectReferenceObject(const IndirectReferenceObject&) = delete;
+
 	explicit IndirectReferenceObject(ObjectPtr obj);
 	IndirectReferenceObject(types::big_uint obj, types::ushort gen);
 

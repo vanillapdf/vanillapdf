@@ -9,6 +9,8 @@ namespace syntax {
 class BooleanObject : public ContainableObject {
 public:
 	BooleanObject() = default;
+	BooleanObject(const BooleanObject&) = delete;
+
 	explicit BooleanObject(bool value);
 
 	virtual Object::Type GetObjectType(void) const noexcept override { return Object::Type::Boolean; }

@@ -12,6 +12,8 @@ namespace syntax {
 class IntegerObject : public NumericObject {
 public:
 	IntegerObject();
+	IntegerObject(const IntegerObject&) = delete;
+
 	explicit IntegerObject(int32_t value);
 	explicit IntegerObject(uint32_t value);
 	explicit IntegerObject(types::big_int value);

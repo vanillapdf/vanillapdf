@@ -22,6 +22,8 @@ public:
 
 public:
 	MixedArrayObject() = default;
+	MixedArrayObject(const MixedArrayObject&) = delete;
+
 	explicit MixedArrayObject(const list_type& list);
 	explicit MixedArrayObject(const std::initializer_list<ContainableObjectPtr>& list);
 	MixedArrayObject(const ContainableObject& other, list_type& list);
