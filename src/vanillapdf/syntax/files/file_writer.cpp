@@ -1845,6 +1845,13 @@ bool FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
 			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(item);
 			auto object = used_entry->GetReference();
 
+			// TODO: maybe one day
+			// Just skip stream objects as they are never redundant
+			// The comparison is also problematic - hash of the content needs to be often recalculated
+			if (ObjectUtils::IsType<StreamObjectPtr>(object)) {
+				continue;
+			}
+
 			// Check if object is already in our unique list
 			auto inserted = unique_set.insert(object);
 
