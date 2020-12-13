@@ -68,19 +68,37 @@ public:
 
 	template <class InputIterator>
 	void assign(InputIterator first, InputIterator last) {
+
 		m_data.assign(first, last);
+		for (; first != last; ++first) {
+			(*first)->Subscribe(this);
+		}
+
 		OnChanged();
 	}
 
 	template <class InputIterator>
 	void insert(iterator position, InputIterator first, InputIterator last) {
+
 		m_data.insert(position, first, last);
+		for (; first != last; ++first) {
+			(*first)->Subscribe(this);
+		}
+
 		OnChanged();
 	}
 
 	// Modifying operations
-	void reserve(size_type count) { m_data.reserve(count); OnChanged(); }
-	void push_back(InstructionBasePtr val) { m_data.push_back(val); val->Subscribe(this); OnChanged(); }
+	void reserve(size_type count) {
+		m_data.reserve(count);
+		OnChanged();
+	}
+
+	void push_back(InstructionBasePtr val) {
+		m_data.push_back(val);
+		val->Subscribe(this);
+		OnChanged();
+	}
 
 	~BaseInstructionCollection() {
 		for (auto item : m_data)

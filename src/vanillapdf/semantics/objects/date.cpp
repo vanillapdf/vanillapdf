@@ -107,9 +107,8 @@ DatePtr Date::GetCurrentDate() {
 
 	auto formatted_time = ss.str();
 	auto string_object = syntax::LiteralStringObject::CreateFromDecoded(formatted_time);
-	auto string_object_ptr = make_deferred<syntax::LiteralStringObject>(string_object);
 
-	return make_deferred<Date>(string_object_ptr);
+	return make_deferred<Date>(string_object);
 }
 
 } // semantics

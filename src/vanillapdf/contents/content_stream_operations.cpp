@@ -69,8 +69,13 @@ OperationSetStrokingColorSpaceRGB::OperationSetStrokingColorSpaceRGB(const std::
 	m_blue = syntax::ObjectUtils::ConvertTo<RealObjectPtr>(blue);
 
 	m_red->Subscribe(this);
+	m_red->SetInitialized();
+
 	m_green->Subscribe(this);
+	m_green->SetInitialized();
+
 	m_blue->Subscribe(this);
+	m_blue->SetInitialized();
 }
 
 OperationSetNonstrokingColorSpaceRGB::OperationSetNonstrokingColorSpaceRGB(const std::vector<ObjectPtr>& operands) {
@@ -100,8 +105,13 @@ OperationSetNonstrokingColorSpaceRGB::OperationSetNonstrokingColorSpaceRGB(const
 	m_blue = syntax::ObjectUtils::ConvertTo<RealObjectPtr>(blue);
 
 	m_red->Subscribe(this);
+	m_red->SetInitialized();
+
 	m_green->Subscribe(this);
+	m_green->SetInitialized();
+
 	m_blue->Subscribe(this);
+	m_blue->SetInitialized();
 }
 
 OperationTextFont::OperationTextFont(const std::vector<ObjectPtr>& operands) {
@@ -124,8 +134,12 @@ OperationTextFont::OperationTextFont(const std::vector<ObjectPtr>& operands) {
 
 	m_font = syntax::ObjectUtils::ConvertTo<NameObjectPtr>(name);
 	m_scale = syntax::ObjectUtils::ConvertTo<IntegerObjectPtr>(scale);
+
 	m_font->Subscribe(this);
+	m_font->SetInitialized();
+
 	m_scale->Subscribe(this);
+	m_scale->SetInitialized();
 }
 
 OperationTextTranslate::OperationTextTranslate(const std::vector<ObjectPtr>& operands) {
@@ -148,8 +162,12 @@ OperationTextTranslate::OperationTextTranslate(const std::vector<ObjectPtr>& ope
 
 	m_x = syntax::ObjectUtils::ConvertTo<IntegerObjectPtr>(x);
 	m_y = syntax::ObjectUtils::ConvertTo<IntegerObjectPtr>(y);
+
 	m_x->Subscribe(this);
+	m_x->SetInitialized();
+
 	m_y->Subscribe(this);
+	m_y->SetInitialized();
 }
 
 OperationBeginInlineImageObject::OperationBeginInlineImageObject(const std::vector<ObjectPtr>& operands) {
@@ -187,6 +205,7 @@ OperationTextShow::OperationTextShow(const std::vector<ObjectPtr>& operands) {
 
 	_str = ObjectUtils::ConvertTo<StringObjectPtr>(item);
 	_str->Subscribe(this);
+	_str->SetInitialized();
 }
 
 OperationTextShowArray::OperationTextShowArray(const std::vector<ObjectPtr>& operands) {
@@ -198,6 +217,7 @@ OperationTextShowArray::OperationTextShowArray(const std::vector<ObjectPtr>& ope
 	auto operand = operands.at(0);
 	m_items = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(operand);
 	m_items->Subscribe(this);
+	m_items->SetInitialized();
 }
 
 OperationTransformationMatrix::OperationTransformationMatrix(const std::vector<ObjectPtr>& operands) {
@@ -250,11 +270,22 @@ OperationTransformationMatrix::OperationTransformationMatrix(const std::vector<O
 	m_f = ObjectUtils::ConvertTo<IntegerObjectPtr>(f);
 	
 	m_a->Subscribe(this);
+	m_a->SetInitialized();
+
 	m_b->Subscribe(this);
+	m_b->SetInitialized();
+
 	m_c->Subscribe(this);
+	m_c->SetInitialized();
+
 	m_d->Subscribe(this);
+	m_d->SetInitialized();
+
 	m_e->Subscribe(this);
+	m_e->SetInitialized();
+
 	m_f->Subscribe(this);
+	m_f->SetInitialized();
 }
 
 OperationTransformationMatrix::~OperationTransformationMatrix() {

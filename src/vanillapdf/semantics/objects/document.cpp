@@ -1,5 +1,7 @@
 #include "precompiled.h"
 
+#include "utils/library_info.h"
+
 #include "syntax/files/file_writer.h"
 
 #include "syntax/utils/name_constants.h"
@@ -45,7 +47,16 @@ DocumentPtr Document::Create(const std::string& path) {
 
 	DocumentInfoPtr document_info = document->CreateDocumentInfo();
 
-	LiteralStringObjectPtr producer = make_deferred<LiteralStringObject>(LiteralStringObject::CreateFromDecoded("I am the producer"));
+	std::stringstream producer_string;
+	producer_string << LibraryInfo::Author();
+	producer_string << ' ';
+	producer_string << LibraryInfo::MajorVersion();
+	producer_string << '.';
+	producer_string << LibraryInfo::MinorVersion();
+	producer_string << '.';
+	producer_string << LibraryInfo::PatchVersion();
+
+	LiteralStringObjectPtr producer = LiteralStringObject::CreateFromDecoded(producer_string.str());
 	document_info->SetProducer(producer);
 
 	DatePtr creation_date = Date::GetCurrentDate();
@@ -779,7 +790,7 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
 
 	// Create new signature field
 	signature_annotation->Insert(constant::Name::FT, make_deferred<NameObject>("Sig"));
-	signature_annotation->Insert(constant::Name::T, make_deferred<LiteralStringObject>(LiteralStringObject::CreateFromDecoded("Signature1")));
+	signature_annotation->Insert(constant::Name::T, LiteralStringObject::CreateFromDecoded("Signature1"));
 
 	auto signature_dictionary_reference = make_deferred<syntax::IndirectReferenceObject>(signature_dictionary);
 	signature_annotation->Insert(constant::Name::V, signature_dictionary_reference);

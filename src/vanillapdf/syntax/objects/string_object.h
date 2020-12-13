@@ -34,17 +34,15 @@ class HexadecimalStringObject : public StringObjectBase, public IModifyObserver 
 public:
 	HexadecimalStringObject();
 
-	static HexadecimalStringObject CreateFromEncoded(BufferPtr value);
-	static HexadecimalStringObject CreateFromEncoded(const char * value);
-	static HexadecimalStringObject CreateFromEncoded(const std::string& value);
+	static HexadecimalStringObjectPtr CreateFromEncoded(BufferPtr value);
+	static HexadecimalStringObjectPtr CreateFromEncoded(const char * value);
+	static HexadecimalStringObjectPtr CreateFromEncoded(const std::string& value);
 
-	static HexadecimalStringObject CreateFromDecoded(BufferPtr value);
-	static HexadecimalStringObject CreateFromDecoded(const char * value);
-	static HexadecimalStringObject CreateFromDecoded(const std::string& value);
+	static HexadecimalStringObjectPtr CreateFromDecoded(BufferPtr value);
+	static HexadecimalStringObjectPtr CreateFromDecoded(const char * value);
+	static HexadecimalStringObjectPtr CreateFromDecoded(const std::string& value);
 
-	virtual void ObserveeChanged(const IModifyObservable*) override {
-		OnChanged();
-	}
+	virtual void ObserveeChanged(const IModifyObservable*) override;
 
 	virtual StringObjectBase::StringType GetStringType(void) const noexcept override { return StringObjectBase::StringType::Hexadecimal; }
 
@@ -67,16 +65,17 @@ private:
 class LiteralStringObject : public StringObjectBase, public IModifyObserver {
 public:
 	LiteralStringObject();
+	LiteralStringObject(const LiteralStringObject&) = delete;
 
-	static LiteralStringObject CreateFromEncoded(BufferPtr value);
-	static LiteralStringObject CreateFromEncoded(const char * value);
-	static LiteralStringObject CreateFromEncoded(const std::string& value);
+	static LiteralStringObjectPtr CreateFromEncoded(BufferPtr value);
+	static LiteralStringObjectPtr CreateFromEncoded(const char * value);
+	static LiteralStringObjectPtr CreateFromEncoded(const std::string& value);
 
-	static LiteralStringObject CreateFromDecoded(BufferPtr value);
-	static LiteralStringObject CreateFromDecoded(const char * value);
-	static LiteralStringObject CreateFromDecoded(const std::string& value);
+	static LiteralStringObjectPtr CreateFromDecoded(BufferPtr value);
+	static LiteralStringObjectPtr CreateFromDecoded(const char * value);
+	static LiteralStringObjectPtr CreateFromDecoded(const std::string& value);
 
-	virtual void ObserveeChanged(const IModifyObservable*) override { OnChanged(); }
+	virtual void ObserveeChanged(const IModifyObservable*) override;
 
 	virtual StringObjectBase::StringType GetStringType(void) const noexcept override { return StringObjectBase::StringType::Literal; }
 	virtual BufferPtr GetValue() const override;

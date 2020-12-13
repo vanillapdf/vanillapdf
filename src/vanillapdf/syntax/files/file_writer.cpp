@@ -1560,7 +1560,7 @@ void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj, ArrayObjectPtr
 	auto watermark_text = watermark_text_stream.str();
 
 	auto text_show_operation = make_deferred<contents::OperationTextShow>();
-	text_show_operation->SetValue(make_deferred<LiteralStringObject>(LiteralStringObject::CreateFromDecoded(watermark_text)));
+	text_show_operation->SetValue(LiteralStringObject::CreateFromDecoded(watermark_text));
 
 	contents::BaseInstructionCollectionPtr instructions;
 	instructions->push_back(restore_state_operation);
