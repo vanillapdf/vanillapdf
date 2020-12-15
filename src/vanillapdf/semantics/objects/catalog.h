@@ -56,6 +56,9 @@ public:
 	bool AcroForm(OuputInteractiveFormPtr& result) const;
 
 	PageTreePtr CreatePages();
+
+private:
+	mutable OutputPageTreePtr m_pages;
 };
 
 } // semantics

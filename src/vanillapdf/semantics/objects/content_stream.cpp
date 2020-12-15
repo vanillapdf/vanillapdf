@@ -11,8 +11,9 @@ namespace semantics {
 ContentStream::ContentStream(syntax::StreamObjectPtr obj) : HighLevelObject(obj) {}
 
 contents::BaseInstructionCollection ContentStream::Instructions(void) const {
-	if (!_instructions.empty())
+	if (!_instructions.empty()) {
 		return _instructions;
+	}
 
 	auto body = _obj->GetBody();
 	auto input_stream = body->ToInputStream();

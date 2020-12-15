@@ -64,6 +64,8 @@ private:
 
 private:
 	explicit Document(syntax::FilePtr holder);
+
+	mutable OutputCatalogPtr m_catalog;
 };
 
 } // semantics
