@@ -57,6 +57,10 @@ void StreamObject::SetHeader(DictionaryObjectPtr header) {
 
 void StreamObject::SetBody(BufferPtr value) {
 	_body_decoded->assign(value.begin(), value.end());
+	_body_decoded->SetInitialized();
+
+	// Trigger change event
+	OnChanged();
 }
 
 types::stream_offset StreamObject::GetDataOffset() const {
