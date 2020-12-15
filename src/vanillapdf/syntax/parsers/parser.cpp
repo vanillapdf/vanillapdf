@@ -236,6 +236,13 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 			ReadTokenWithTypeSkip(Token::Type::STREAM_END);
 			auto stream_end_offset = offset + pos;
 			auto computed_length = stream_end_offset - stream_offset;
+			if (computed_length < 0) {
+				// There is a document called Scan2.pdf, in which the real length of the stream is zero
+				// For this case the computed length was -1, which is invalid
+				// For any other cases this algorithm works
+				computed_length = 0;
+			}
+
 			if (!dictionary->Contains(constant::Name::Length)) {
 				dictionary->Insert(constant::Name::Length, make_deferred<IntegerObject>(computed_length));
 				break;
