@@ -234,8 +234,12 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 			}
 
 			ReadTokenWithTypeSkip(Token::Type::STREAM_END);
-			auto stream_end_offset = offset + pos;
-			auto computed_length = stream_end_offset - stream_offset;
+
+			// Ensure stream_size is signed
+			static_assert(std::is_signed<types::stream_size>::value, "Stream size is unsigned, zero comparison won't work");
+			types::stream_size stream_end_offset = offset + pos;
+			types::stream_size computed_length = stream_end_offset - stream_offset;
+
 			if (computed_length < 0) {
 				// There is a document called Scan2.pdf, in which the real length of the stream is zero
 				// For this case the computed length was -1, which is invalid
