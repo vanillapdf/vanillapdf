@@ -125,6 +125,8 @@ void Document::RecalculatePageContents() {
 
 	// On before Save
 
+	auto log_scope = GetFile()->GetFilename();
+
 	OutputCatalogPtr catalog_ptr;
 	bool has_catalog = GetDocumentCatalog(catalog_ptr);
 	if (!has_catalog) {
@@ -148,8 +150,11 @@ void Document::RecalculatePageContents() {
 		}
 
 		if (!page_contents->IsDirty()) {
+			LOG_DEBUG(log_scope) << "Page " << i << " contents are not dirty";
 			continue;
 		}
+
+		LOG_INFO(log_scope) << "Page " << i << " contents are dirty, recalculating";
 
 		std::stringstream ss;
 		for (auto instruction : page_contents->Instructions()) {
