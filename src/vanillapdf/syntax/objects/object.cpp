@@ -234,6 +234,7 @@ void Object::CloneBaseProperties(Object* other) const {
 	}
 
 	other->SetFile(m_file);
+	other->SetDirty(m_dirty);
 	other->SetEncryptionExempted(m_encryption_exempted);
 
 	for (auto attribute : m_attributes) {
