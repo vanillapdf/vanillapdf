@@ -6,6 +6,7 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 set(VANILLAPDF_TOOLS_SOURCES
 	main.c
 	extract.c
+	extract_object.c
 	filter.c
 	merge.c
 	sign.c

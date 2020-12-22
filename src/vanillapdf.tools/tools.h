@@ -20,6 +20,7 @@ extern const int VANILLAPDF_TOOLS_ERROR_FAILURE;
 int process_merge(int argc, char *argv[]);
 int process_filter(int argc, char *argv[]);
 int process_extract(int argc, char *argv[]);
+int process_extract_object(int argc, char *argv[]);
 int process_sign(int argc, char *argv[]);
 int process_sign_custom(int argc, char *argv[]);
 int process_decrypt(int argc, char *argv[]);
