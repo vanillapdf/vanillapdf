@@ -385,5 +385,7 @@ int process_extract(int argc, char *argv[]) {
 	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_Release(catalog));
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));
 
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));
+
 	return VANILLAPDF_TOOLS_ERROR_SUCCESS;
 }
