@@ -21,6 +21,7 @@ static const char TRAILER[] = "trailer";
 static const char NULL_OBJECT[] = "null";
 static const char TRUE_VALUE[] = "true";
 static const char FALSE_VALUE[] = "false";
+static const char INDIRECT_REFERENCE_MARKER[] = "R";
 
 // reverse tokens
 static const char REVERSE_END_OF_FILE_MARKER[] = "FOE%%";
@@ -140,6 +141,7 @@ void ParserTokenDictionary::Initialize() {
 	INSERT_TO_DICTIONARY(NULL_OBJECT);
 	INSERT_TO_DICTIONARY(TRUE_VALUE);
 	INSERT_TO_DICTIONARY(FALSE_VALUE);
+	INSERT_TO_DICTIONARY(INDIRECT_REFERENCE_MARKER);
 
 	m_initialized = true;
 }

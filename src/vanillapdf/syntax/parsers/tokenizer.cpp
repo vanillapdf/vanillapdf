@@ -119,13 +119,6 @@ TokenPtr Tokenizer::ReadToken() {
 				return ReadLiteralString();
 		}
 
-		if (ch == 'R') {
-			BufferPtr chars;
-
-			chars->push_back('R');
-			return make_deferred<Token>(Token::Type::INDIRECT_REFERENCE_MARKER, chars);
-		}
-
 		return ReadUnknown(ch);
 	};
 }
