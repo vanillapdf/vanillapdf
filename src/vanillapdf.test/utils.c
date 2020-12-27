@@ -176,6 +176,7 @@ error_type process_constants() {
 	dummy_error = VANILLAPDF_ERROR_FILE_DISPOSED;
 	dummy_error = VANILLAPDF_ERROR_FILE_NOT_INITIALIZED;
 	dummy_error = VANILLAPDF_ERROR_OBJECT_MISSING;
+	dummy_error = VANILLAPDF_ERROR_PARSE_EXCEPTION;
 	dummy_error = VANILLAPDF_ERROR_INVALID_PASSWORD;
 
 	// Name constants
@@ -524,7 +525,7 @@ error_type print_last_error() {
 		return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
 
-	error_code_name = (char*) calloc(sizeof(char), error_code_name_length);
+	error_code_name = (char*) calloc(error_code_name_length, sizeof(char));
 	if (NULL == error_code_name) {
 		unsigned long long length_converted = error_code_name_length;
 		print_text("Could not allocate memory: %llu bytes\n", length_converted);
