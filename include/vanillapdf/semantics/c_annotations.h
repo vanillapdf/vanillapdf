@@ -48,6 +48,10 @@ extern "C"
 	* \ingroup group_annotations
 	*/
 	typedef enum {
+
+		/**
+		* \brief Undefined unitialized default value, triggers error when used
+		*/
 		AnnotationType_Undefined = 0,
 		/**
 		* A text annotation represents a "sticky note" attached to a point in

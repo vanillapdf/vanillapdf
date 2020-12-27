@@ -46,6 +46,10 @@ extern "C"
 	* \brief Available types of character maps.
 	*/
 	typedef enum {
+
+		/**
+		* \brief Undefined unitialized default value, triggers error when used
+		*/
 		CharacterMapType_Undefined = 0,
 
 		/**
@@ -72,12 +76,12 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_GetType(CharacterMapHandle* handle, CharacterMapType* result);
 
 	/**
-	* \brief Reinterpret current object as UnicodeCharacterMapHandle*
+	* \brief Reinterpret current object as \ref UnicodeCharacterMapHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_ToUnicode(CharacterMapHandle* handle, UnicodeCharacterMapHandle** result);
 
 	/**
-	* \brief Reinterpret current object as EmbeddedCharacterMapHandle*
+	* \brief Reinterpret current object as \ref EmbeddedCharacterMapHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_ToEmbedded(CharacterMapHandle* handle, EmbeddedCharacterMapHandle** result);
 
