@@ -42,6 +42,9 @@ BufferPtr NameObject::GetValue() const {
 
 void NameObject::SetValue(BufferPtr value) {
 	_value->assign(value.begin(), value.end());
+	_value->SetInitialized();
+
+	OnChanged();
 }
 
 bool NameObject::Equals(const NameObject& other) const {
