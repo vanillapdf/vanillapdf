@@ -29,7 +29,12 @@ extern "C"
 	* \brief Page layout which shall be used when the document is opened.
 	*/
 	typedef enum {
+
+		/**
+		* \brief Undefined unitialized default value, triggers error when used
+		*/
 		PageLayout_Undefined = 0,
+
 		/**
 		* \brief Display one page at a time
 		*/

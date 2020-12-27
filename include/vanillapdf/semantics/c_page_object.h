@@ -49,8 +49,7 @@ extern "C"
 	/**
 	* \brief
 	* A content stream (see 7.8.2, "Content Streams") that shall describe
-	* the contents of this page. If this entry is absent,
-	* the page shall be empty.
+	* the contents of this page. If this entry is absent, the page shall be empty.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObjectHandle* handle, PageContentsHandle** result);
 

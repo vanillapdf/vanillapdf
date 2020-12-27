@@ -29,7 +29,10 @@ extern "C"
 	* \class AnnotationHandle
 	* \extends IUnknownHandle
 	* \ingroup group_annotations
-	* \brief Base class for all annotations.
+	* \brief
+	* An annotation associates an object such as a note, sound, or movie
+	* with a location on a page of a PDF document, or provides a way
+	* to interact with the user by means of the mouse and keyboard.
 	*/
 
 	/**
@@ -44,7 +47,7 @@ extern "C"
 	*/
 
 	/**
-	* \brief Required for conversion to derived types.
+	* \brief Derived types of \ref AnnotationHandle
 	* \ingroup group_annotations
 	*/
 	typedef enum {

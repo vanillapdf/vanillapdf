@@ -33,7 +33,7 @@ extern "C"
 	* \class ContentOperationTextShowHandle
 	* \extends ContentOperationHandle
 	* \ingroup group_contents
-	* \brief Show a text string.
+	* \brief Stream operation for showing a simple text string.
 	*/
 
 	/**
@@ -41,8 +41,7 @@ extern "C"
 	* \extends ContentOperationHandle
 	* \ingroup group_contents
 	* \brief
-	* Show one or more text strings,
-	* allowing individual glyph positioning.
+	* Show one or more text strings, allowing individual glyph positioning.
 	*/
 
 	/**

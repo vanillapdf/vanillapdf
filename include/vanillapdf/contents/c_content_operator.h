@@ -26,7 +26,7 @@ extern "C"
 	*/
 
 	/**
-	* \brief Available content operator types
+	* \brief Derived types of \ref ContentOperatorHandle
 	* \ingroup group_contents
 	*/
 	typedef enum {

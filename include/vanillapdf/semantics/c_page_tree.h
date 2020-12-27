@@ -20,9 +20,8 @@ extern "C"
 	* \extends IUnknownHandle
 	* \ingroup group_documents
 	* \brief
-	* The pages of a document are accessed through a structure
-	* known as the page tree, which defines the ordering
-	* of pages in the document.
+	* The pages of a document are accessed through a structure known as the page tree,
+	* which defines the ordering of pages in the document.
 	* \see \ref CatalogHandle
 	*/
 
