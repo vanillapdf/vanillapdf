@@ -45,7 +45,7 @@ extern "C"
 	/**
 	* \brief Get uncompressed stream body
 	*
-	* This function is useful when the library does not understand the stream content.
+	* This function is useful when the library cannot decompress or decrypt the stream data.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_GetBodyRaw(StreamObjectHandle* handle, BufferHandle** result);
 
@@ -57,7 +57,7 @@ extern "C"
 	/**
 	* \brief Set new stream content
 	*
-	* This sets the decompressed content. Compression is done when the file will be saved.
+	* This sets the decompressed content. Compression is done when the file is saved.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_SetBody(StreamObjectHandle* handle, BufferHandle* value);
 

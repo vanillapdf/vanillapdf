@@ -26,9 +26,9 @@ extern "C"
 	* \class XrefIteratorHandle
 	* \extends IUnknownHandle
 	* \ingroup group_xref
-	* \brief Represents pointer to cross-reference entry collection
+	* \brief A pointer to \ref XrefEntryHandle within \ref XrefHandle collection.
 	*
-	* This method is useful for iterating over whole entry collecion.
+	* This object is useful for iterating over whole entry collecion.
 	* \see \ref XrefIterator_Next
 	* \see \ref XrefIterator_GetValue
 	*/
@@ -37,7 +37,7 @@ extern "C"
 	* \class XrefEntryHandle
 	* \extends IUnknownHandle
 	* \ingroup group_xref
-	* \brief Represents base entry type within \ref XrefHandle
+	* \brief Cross-reference entry represents item within \ref XrefHandle
 	*/
 
 	/**
@@ -71,14 +71,14 @@ extern "C"
 	* \class XrefChainHandle
 	* \extends IUnknownHandle
 	* \ingroup group_xref
-	* \brief Represents collection of \ref XrefHandle
+	* \brief An ordered collection of all \ref XrefHandle within the PDF file.
 	*/
 
 	/**
 	* \class XrefChainIteratorHandle
 	* \extends IUnknownHandle
 	* \ingroup group_xref
-	* \brief Represents pointer to cross-reference collection
+	* \brief A pointer to \ref XrefHandle within \ref XrefChainHandle collection.
 	*
 	* This method is useful for iterating over whole entry collecion.
 	* \see \ref XrefChainIterator_Next
@@ -179,7 +179,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_Next(XrefIteratorHandle* handle);
 
 	/**
-	* \brief Determine if the current iterator position is valid
+	* \brief Check if the current iterator position is valid
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_IsValid(XrefIteratorHandle* handle, boolean_type* result);
 
@@ -207,7 +207,7 @@ extern "C"
 	*/
 
 	/**
-	* \brief Get cross-reference iterator
+	* \brief Get cross-reference section iterator
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_GetIterator(XrefChainHandle* handle, XrefChainIteratorHandle** result);
 
