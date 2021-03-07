@@ -37,7 +37,7 @@ extern "C"
 	* \class XrefEntryHandle
 	* \extends IUnknownHandle
 	* \ingroup group_xref
-	* \brief Cross-reference entry represents item within \ref XrefHandle
+	* \brief Cross-reference entry represents item within \ref XrefHandle.
 	*/
 
 	/**
@@ -47,7 +47,7 @@ extern "C"
 	* \brief Represents free entry within cross-reference section.
 	*
 	* Free entry means, that this object is not used in the document.
-	* It can be reused in new cross-reference section.
+	* It can be reused in the new cross-reference section.
 	*/
 
 	/**
@@ -55,6 +55,9 @@ extern "C"
 	* \extends XrefEntryHandle
 	* \ingroup group_xref
 	* \brief Represents used entry within cross-reference section.
+	*
+	* Used entry means that an indirect object is allocated within the PDF file
+	* and this entry points to it's offset.
 	*/
 
 	/**
@@ -431,7 +434,8 @@ extern "C"
 
 	/**
 	* \brief The object number of the object stream in which this object is stored.
-	* (The generation number of the object stream shall be implicitly 0.)
+	*
+	* The generation number of the object stream shall be implicitly 0.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GetObjectStreamNumber(XrefCompressedEntryHandle* handle, biguint_type* result);
 

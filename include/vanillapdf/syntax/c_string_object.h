@@ -102,27 +102,27 @@ extern "C"
 	*/
 
 	/**
-	* \brief Creates a new LiteralStringObject instance
+	* \brief Creates a new \ref LiteralStringObjectHandle instance
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_Create(LiteralStringObjectHandle** result);
 
 	/**
-	* \brief Creates a new LiteralStringObject instance from encoded data
+	* \brief Creates a new \ref LiteralStringObjectHandle instance from PDF encoded data
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromEncodedBuffer(BufferHandle* value, LiteralStringObjectHandle** result);
 
 	/**
-	* \brief Creates a new LiteralStringObject instance from encoded string data
+	* \brief Creates a new \ref LiteralStringObjectHandle instance from PDF encoded string data
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromEncodedString(string_type value, LiteralStringObjectHandle** result);
 
 	/**
-	* \brief Creates a new LiteralStringObject instance from decoded data
+	* \brief Creates a new \ref LiteralStringObjectHandle instance from decoded data without PDF syntax
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromDecodedBuffer(BufferHandle* value, LiteralStringObjectHandle** result);
 
 	/**
-	* \brief Creates a new LiteralStringObject instance from decoded string data
+	* \brief Creates a new \ref LiteralStringObjectHandle instance from decoded string data without PDF syntax
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromDecodedString(string_type value, LiteralStringObjectHandle** result);
 
