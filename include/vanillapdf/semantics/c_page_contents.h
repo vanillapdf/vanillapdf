@@ -11,7 +11,7 @@ extern "C"
 #endif
 
 	/**
-	* \file c_contents.h
+	* \file c_page_contents.h
 	* \brief This file contains class definitions for working with compressed page contents
 	*/
 

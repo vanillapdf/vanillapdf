@@ -54,7 +54,7 @@ extern "C"
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_Container;
 
 	/**
-	* \brief Represents page \ref ContentsHandle
+	* \brief Represents page \ref PageContentsHandle
 	*/
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_Contents;
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_Count;
