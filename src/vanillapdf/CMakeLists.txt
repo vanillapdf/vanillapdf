@@ -590,6 +590,9 @@ target_link_libraries(vanillapdf ${VANILLAPDF_LIBS})
 
 # Place for install targets
 
+# System libs such as msvcp and vcruntime
+include(InstallRequiredSystemLibraries)
+
 # Project install targets
 install(TARGETS vanillapdf
 	RUNTIME DESTINATION bin
