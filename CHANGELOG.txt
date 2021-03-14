@@ -1,36 +1,21 @@
 # Vanilla.PDF Release notes
 
-v1.0.0 - 2.10.2017
- - Reading and parsing PDF files
+v1.5.1 - 14.3.2021
+ - Include missing runtime libs for windows
+ 
+v1.5.0 - 7.3.2021
+ - Dirty flag FIX for content streams
+ - Negative length check for stream content size
+ - Get/Set interface unification
+ - Conversion interface unification
 
-v1.0.1 - 7.10.2017
- - Hybrid stream support
+v1.4.1 - 1.11.2020
+ - NuGet support for C++ solutions
 
-v1.1.0 - 5.11.2017
- - PDF Streams and filters available as API
- - DCT filter compression/decompression support
-
-v1.1.1 - 19.11.2017
- - Error message fix for multi-threaded environments
- - Linux crash fix on GCC 4.8
-
-v1.1.2 - 30.12.2017
- - MSI and DEB package support
- - Crash fix with parsing non-conformant time strings
-
-v1.2.0 - 21.6.2018
- - Content streams are no longer premium feature
- - Document signing API
- - PKCS#12 support
-
-v1.2.1 - 23.6.2018
- - Adobe acrobat signature validation fix
- - Missing signing time in PKCS#7
- - Document signing critical update
-
-v1.2.2 - 9.7.2018
- - Empty file crash fix
- - Memory leak fix
+v1.4.0 - 25.10.2020
+ - Interface naming unification - iterators, getters/setters
+ - Enhanced support for hybrid streams
+ - .NET wrapper support
 
 v1.3.0 - 27.12.2018
  - 32/64 bit architecture support
@@ -38,16 +23,34 @@ v1.3.0 - 27.12.2018
  - Added tools project to realease package
  - Document signature flags support
 
-v1.4.0 - 25.10.2020
- - Interface naming unification - iterators, getters/setters
- - Enhanced support for hybrid streams
- - .NET wrapper support
+v1.2.2 - 9.7.2018
+ - Empty file crash fix
+ - Memory leak fix
 
-v1.4.1 - 1.11.2020
- - NuGet support for C++ solutions
+v1.2.1 - 23.6.2018
+ - Adobe acrobat signature validation fix
+ - Missing signing time in PKCS#7
+ - Document signing critical update
 
-v1.5.0 - 7.3.2021
- - Dirty flag FIX for content streams
- - Negative length check for stream content size
- - Get/Set interface unification
- - Conversion interface unification
+v1.2.0 - 21.6.2018
+ - Content streams are no longer premium feature
+ - Document signing API
+ - PKCS#12 support
+
+v1.1.2 - 30.12.2017
+ - MSI and DEB package support
+ - Crash fix with parsing non-conformant time strings
+
+v1.1.1 - 19.11.2017
+ - Error message fix for multi-threaded environments
+ - Linux crash fix on GCC 4.8
+
+v1.1.0 - 5.11.2017
+ - PDF Streams and filters available as API
+ - DCT filter compression/decompression support
+
+v1.0.1 - 7.10.2017
+ - Hybrid stream support
+
+v1.0.0 - 2.10.2017
+ - Reading and parsing PDF files
