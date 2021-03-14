@@ -590,8 +590,19 @@ target_link_libraries(vanillapdf ${VANILLAPDF_LIBS})
 
 # Place for install targets
 
-# System libs such as msvcp and vcruntime
-include(InstallRequiredSystemLibraries)
+if(WIN32)
+	# System libs such as msvcp and vcruntime
+	include(InstallRequiredSystemLibraries)
+    
+    # Copy DLL dependencies on windows to our build directory
+	add_custom_command(
+		TARGET vanillapdf POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy
+		${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+		$<TARGET_FILE_DIR:vanillapdf>
+    )
+    
+endif(WIN32)
 
 # Project install targets
 install(TARGETS vanillapdf
