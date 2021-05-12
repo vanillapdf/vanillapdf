@@ -44,7 +44,7 @@ class PageTree; using PageTreePtr = Deferred<PageTree>; using OutputPageTreePtr 
 class PageTreeNode; using PageTreeNodePtr = Deferred<PageTreeNode>;
 class PageObject; using PageObjectPtr = Deferred<PageObject>; using OutputPageObjectPtr = OutputPointer<PageObjectPtr>;
 
-class ResourceDictionary; using ResourceDictionaryPtr = Deferred<ResourceDictionary>;
+class ResourceDictionary; using ResourceDictionaryPtr = Deferred<ResourceDictionary>; using OutputResourceDictionaryPtr = OutputPointer<ResourceDictionaryPtr>;
 
 class Rectangle; using RectanglePtr = Deferred<Rectangle>;
 class Date; using DatePtr = Deferred<Date>; using OutputDatePtr = OutputPointer<DatePtr>;

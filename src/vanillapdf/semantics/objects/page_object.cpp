@@ -26,9 +26,15 @@ PageObject::PageObject(DictionaryObjectPtr obj) : PageNodeBase(obj)	{
 	}
 }
 
-ResourceDictionaryPtr PageObject::GetResources() const {
-	auto resource = _obj->FindAs<DictionaryObjectPtr>(Name::Resources);
-	return make_deferred<ResourceDictionary>(resource);
+bool PageObject::GetResources(OutputResourceDictionaryPtr& result) const {
+	if (!_obj->Contains(constant::Name::Resources)) {
+		return false;
+	}
+
+	auto resources_obj = _obj->FindAs<DictionaryObjectPtr>(constant::Name::Resources);
+	auto resources = make_deferred<ResourceDictionary>(resources_obj);
+	result = resources;
+	return true;
 }
 
 void PageObject::SetResources(ResourceDictionaryPtr resources) {

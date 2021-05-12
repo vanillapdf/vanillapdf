@@ -18,7 +18,7 @@ public:
 	static std::unique_ptr<PageObject> Create(DocumentPtr document);
 	static std::unique_ptr<PageObject> Create(syntax::DictionaryObjectPtr obj);
 
-	ResourceDictionaryPtr GetResources(void) const;
+	bool GetResources(OutputResourceDictionaryPtr& result) const;
 	void SetResources(ResourceDictionaryPtr resources);
 
 	RectanglePtr GetMediaBox(void) const;
