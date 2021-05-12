@@ -88,8 +88,13 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetResources(PageObjectH
 
 	try
 	{
-		auto parent = obj->GetResources();
-		auto ptr = parent.AddRefGet();
+		OutputResourceDictionaryPtr resources;
+		bool contains = obj->GetResources(resources);
+		if (!contains) {
+			return VANILLAPDF_ERROR_OBJECT_MISSING;
+		}
+
+		auto ptr = resources.AddRefGet();
 		*result = reinterpret_cast<ResourceDictionaryHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
