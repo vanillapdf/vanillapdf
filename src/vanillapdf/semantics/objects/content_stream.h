@@ -12,10 +12,10 @@ namespace semantics {
 class ContentStream : public HighLevelObject<syntax::StreamObjectPtr> {
 public:
 	explicit ContentStream(syntax::StreamObjectPtr obj);
-	contents::BaseInstructionCollection Instructions(void) const;
+	contents::BaseInstructionCollectionPtr Instructions(void) const;
 
 private:
-	mutable contents::BaseInstructionCollection _instructions;
+	mutable contents::BaseInstructionCollectionPtr _instructions;
 };
 
 } // semantics

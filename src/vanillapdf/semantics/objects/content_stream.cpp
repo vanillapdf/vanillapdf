@@ -10,8 +10,8 @@ namespace semantics {
 
 ContentStream::ContentStream(syntax::StreamObjectPtr obj) : HighLevelObject(obj) {}
 
-contents::BaseInstructionCollection ContentStream::Instructions(void) const {
-	if (!_instructions.empty()) {
+contents::BaseInstructionCollectionPtr ContentStream::Instructions(void) const {
+	if (_instructions->IsInitialized()) {
 		return _instructions;
 	}
 
@@ -19,7 +19,10 @@ contents::BaseInstructionCollection ContentStream::Instructions(void) const {
 	auto input_stream = body->ToInputStream();
 
 	contents::ContentStreamParser parser(_obj->GetFile(), input_stream);
+
 	_instructions = parser.ReadContentStreamInstructions();
+	_instructions->SetInitialized();
+
 	return _instructions;
 }
 
