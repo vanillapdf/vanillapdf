@@ -10,8 +10,6 @@ namespace semantics {
 using namespace syntax;
 
 PageTree::PageTree(DictionaryObjectPtr root) : HighLevelObject(root) {
-	auto page_count = PageCount();
-	m_pages.resize(page_count);
 }
 
 types::size_type PageTree::PageCount(void) const {
@@ -48,15 +46,6 @@ PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
 		throw GeneralException("Invalid page number: " + page_number);
 	}
 
-	auto page_size = m_pages.size();
-	auto page_number_converted = ValueConvertUtils::SafeConvert<decltype(page_size)>(page_number);
-	if (page_number_converted <= page_size) {
-		auto& found_page = m_pages.at(page_number - 1);
-		if (!found_page.empty()) {
-			return found_page;
-		}
-	}
-
 	auto root = make_deferred<PageTreeNode>(_obj);
 	types::size_type pages_processed = 1;
 
@@ -83,7 +72,6 @@ PageObjectPtr PageTree::PageInternal(PageTreeNodePtr node, types::size_type page
 
 			auto result = tree_node->Kids()->GetValue(page_number - processed);
 			auto page_object = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageObjectPtr>(result);
-			m_pages[page_number - 1] = page_object;
 			return page_object;
 		}
 
@@ -96,7 +84,6 @@ PageObjectPtr PageTree::PageInternal(PageTreeNodePtr node, types::size_type page
 			}
 
 			auto page_object = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageObjectPtr>(kid);
-			m_pages[page_number - 1] = page_object;
 			return page_object;
 		}
 	}
@@ -126,7 +113,6 @@ void PageTree::Insert(PageObjectPtr object, types::size_type page_index) {
 	object->SetParent(make_deferred<PageTreeNode>(_obj));
 
 	UpdateKidsCount();
-	m_pages.insert(m_pages.begin() + array_index, make_output<PageObjectPtr>(object));
 }
 
 void PageTree::Append(PageObjectPtr object) {
@@ -144,7 +130,6 @@ void PageTree::Remove(types::size_type page_index) {
 	assert(removed && "Could not remove page"); UNUSED(removed);
 
 	UpdateKidsCount();
-	m_pages.erase(m_pages.begin() + array_index);
 }
 
 void PageTree::UpdateKidsCount() {

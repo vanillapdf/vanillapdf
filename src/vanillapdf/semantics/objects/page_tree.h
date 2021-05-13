@@ -31,9 +31,6 @@ private:
 
 	static types::size_type UpdateKidsCount(PageNodeBasePtr node);
 
-private:
-	// Cache
-	mutable std::vector<OutputPageObjectPtr> m_pages;
 };
 
 } // semantics
