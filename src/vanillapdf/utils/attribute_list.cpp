@@ -13,6 +13,13 @@ std::shared_ptr<AttributeList::map_type> AttributeList::GetAttributes() const {
 }
 
 bool AttributeList::Contains(IAttribute::Type type) const {
+	// Optimization:
+	// The unordered map allocates 16 empty entries,
+	// but most of the object do not contain any attributes at all
+	if (!m_attributes) {
+		return false;
+	}
+
 	return (GetAttributes()->find(type) != GetAttributes()->end());
 }
 
