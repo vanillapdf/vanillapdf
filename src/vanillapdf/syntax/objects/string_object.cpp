@@ -244,8 +244,8 @@ void HexadecimalStringObject::ToPdfStreamInternal(IOutputStreamPtr output) const
 		}
 
 		auto locked_file = m_file.GetReference();
-		if (locked_file->IsEncrypted()) {
-			result = locked_file->EncryptString(result, GetObjectNumber(), GetGenerationNumber());
+		if (!IsEncryptionExempted() && locked_file->IsEncrypted()) {
+			result = locked_file->EncryptString(result, GetRootObjectNumber(), GetRootGenerationNumber());
 		}
 	}
 
@@ -321,8 +321,8 @@ void LiteralStringObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 		}
 
 		auto locked_file = m_file.GetReference();
-		if (locked_file->IsEncrypted()) {
-			result = locked_file->EncryptString(result, GetObjectNumber(), GetGenerationNumber());
+		if (!IsEncryptionExempted() && locked_file->IsEncrypted()) {
+			result = locked_file->EncryptString(result, GetRootObjectNumber(), GetRootGenerationNumber());
 		}
 	}
 
