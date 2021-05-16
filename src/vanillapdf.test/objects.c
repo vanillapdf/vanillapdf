@@ -270,6 +270,7 @@ error_type process_string(StringObjectHandle* obj, int nested) {
 
 error_type process_object(ObjectHandle* obj, int nested) {
 	ObjectType type;
+	BufferHandle* tostring_buffer = NULL;
 	RealObjectHandle* real = NULL;
 	BooleanObjectHandle* boolean = NULL;
 	NullObjectHandle* null_object = NULL;
@@ -282,6 +283,10 @@ error_type process_object(ObjectHandle* obj, int nested) {
 	StringObjectHandle* string = NULL;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_GetObjectType(obj, &type));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Object_ToString(obj, &tostring_buffer));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(tostring_buffer, nested));
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(tostring_buffer));
 
 	switch (type) {
 		case ObjectType_Array:

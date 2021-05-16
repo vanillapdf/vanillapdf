@@ -64,6 +64,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle* hand
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle* handle, BufferHandle** result) {
+	Object* obj = reinterpret_cast<Object*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	BufferPtr buffer = make_deferred<Buffer>(obj->ToString());
+	auto ptr = buffer.AddRefGet();
+	*result = reinterpret_cast<BufferHandle*>(ptr);
+	return VANILLAPDF_ERROR_SUCCESS;
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Object_ToUnknown(ObjectHandle* handle, IUnknownHandle** result) {
 	return SafeObjectConvert<Object, IUnknown, ObjectHandle, IUnknownHandle>(handle, result);
 }

@@ -115,6 +115,11 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle* handle, offset_type* result);
 
 	/**
+	* \brief Convert to human readable text format
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle* handle, BufferHandle** result);
+
+	/**
 	* \brief Reinterpret current object as \ref IUnknownHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Object_ToUnknown(ObjectHandle* handle, IUnknownHandle** result);
