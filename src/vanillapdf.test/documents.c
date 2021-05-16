@@ -281,23 +281,23 @@ error_type process_content_instruction(ContentInstructionHandle* obj, int nested
 }
 
 error_type process_page_contents(PageContentsHandle* obj, int nested) {
-	size_type i = 0;
-	size_type size = 0;
+	PageContentsIteratorHandle* page_iterator = NULL;
+	boolean_type valid = VANILLAPDF_RV_FALSE;
 
 	print_spaces(nested);
 	print_text("Contents begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(PageContents_GetInstructionsSize(obj, &size));
+	RETURN_ERROR_IF_NOT_SUCCESS(PageContents_GetIterator(obj, &page_iterator));
 
-	print_spaces(nested + 1);
-	unsigned long long converted_size = size;
-	print_text("Size: %llu\n", converted_size);
+	while (VANILLAPDF_ERROR_SUCCESS == PageContentsIterator_IsValid(page_iterator, &valid)
+		&& VANILLAPDF_RV_TRUE == valid) {
 
-	for (i = 0; i < size; ++i) {
 		ContentInstructionHandle* instruction = NULL;
-		RETURN_ERROR_IF_NOT_SUCCESS(PageContents_GetInstructionAt(obj, i, &instruction));
+		RETURN_ERROR_IF_NOT_SUCCESS(PageContentsIterator_GetValue(page_iterator, &instruction));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_content_instruction(instruction, nested + 1));
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_Release(instruction));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(PageContentsIterator_Next(page_iterator));
 	}
 
 	print_spaces(nested);

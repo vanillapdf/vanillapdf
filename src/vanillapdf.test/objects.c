@@ -242,7 +242,7 @@ error_type process_null(NullObjectHandle* obj, int nested) {
 }
 
 error_type process_string(StringObjectHandle* obj, int nested) {
-	StringType type;
+	StringType type = StringType_Undefined;
 	LiteralStringObjectHandle* literal_str = NULL;
 	HexadecimalStringObjectHandle* hexadecimal_str = NULL;
 
@@ -269,7 +269,7 @@ error_type process_string(StringObjectHandle* obj, int nested) {
 }
 
 error_type process_object(ObjectHandle* obj, int nested) {
-	ObjectType type;
+	ObjectType type = ObjectType_Undefined;
 	BufferHandle* tostring_buffer = NULL;
 	RealObjectHandle* real = NULL;
 	BooleanObjectHandle* boolean = NULL;
