@@ -69,7 +69,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle* handl
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	BufferPtr buffer = make_deferred<Buffer>(obj->ToString());
+	BufferPtr buffer = make_deferred_container<Buffer>(obj->ToString());
 	auto ptr = buffer.AddRefGet();
 	*result = reinterpret_cast<BufferHandle*>(ptr);
 	return VANILLAPDF_ERROR_SUCCESS;
