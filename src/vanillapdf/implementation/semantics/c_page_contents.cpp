@@ -24,6 +24,22 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageContents_GetIterator(PageConten
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION PageContents_RecalculateStreamData(PageContentsHandle* handle, boolean_type* result) {
+
+	PageContents* obj = reinterpret_cast<PageContents*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	try {
+		if (obj->RecalculateStreamData()) {
+			*result = VANILLAPDF_RV_TRUE;
+		} else {
+			*result = VANILLAPDF_RV_FALSE;
+		}
+
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION PageContents_ToUnknown(PageContentsHandle* handle, IUnknownHandle** result) {
 	return SafeObjectConvert<PageContents, IUnknown, PageContentsHandle, IUnknownHandle>(handle, result);
 }

@@ -1,5 +1,7 @@
 #include "precompiled.h"
 
+#include "syntax/files/file.h"
+
 #include "semantics/objects/page_contents.h"
 
 #include "contents/content_stream_parser.h"
@@ -41,6 +43,61 @@ bool PageContents::IsDirty() const {
 
 void PageContents::SetDirty(bool dirty) {
 	GetObject()->SetDirty(dirty);
+}
+
+bool PageContents::RecalculateStreamData() {
+
+	auto weak_file = GetObject()->GetFile();
+	auto file = weak_file.GetReference();
+	auto log_scope = file->GetFilename();
+
+	auto obj_number = GetObject()->GetObjectNumber();
+	auto gen_number = GetObject()->GetObjectNumber();
+
+	if (!IsDirty()) {
+		LOG_DEBUG(log_scope) << "Page " << obj_number << " " << gen_number << " contents are not dirty";
+		return false;
+	}
+
+	LOG_INFO(log_scope) << "Page " << obj_number << " " << gen_number << " contents are dirty, recalculating";
+
+	std::stringstream ss;
+	for (auto instruction : m_instructions) {
+		ss << instruction->ToPdf() << std::endl;
+	}
+
+	auto object = GetObject();
+
+	StreamObjectPtr stream_object;
+	if (ObjectUtils::IsType<StreamObjectPtr>(object)) {
+		stream_object = ObjectUtils::ConvertTo<StreamObjectPtr>(object);
+	}
+
+	if (ObjectUtils::IsType<ArrayObjectPtr<StreamObjectPtr>>(object)) {
+		auto stream_array = ObjectUtils::ConvertTo<ArrayObjectPtr<StreamObjectPtr>>(object);
+		auto stream_array_size = stream_array->GetSize();
+
+		assert(0 != stream_array_size && "Content stream array is empty");
+		if (0 == stream_array_size) {
+			throw GeneralException("Content stream array is empty");
+		}
+
+		for (decltype(stream_array_size) j = 0; j < stream_array_size; ++j) {
+			auto referenced_stram = stream_array->GetValue(j);
+
+			// TODO divide output into multiple streams
+			BufferPtr empty_body;
+			referenced_stram->SetBody(empty_body);
+		}
+
+		stream_object = stream_array->GetValue(0);
+	}
+
+	std::string string_body = ss.str();
+	BufferPtr new_body = make_deferred_container<Buffer>(string_body.begin(), string_body.end());
+	stream_object->SetBody(new_body);
+
+	return true;
 }
 
 BaseInstructionCollectionPtr PageContents::Instructions(void) const {

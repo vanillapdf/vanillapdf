@@ -37,6 +37,11 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION PageContents_GetIterator(PageContentsHandle* handle, PageContentsIteratorHandle** result);
 
 	/**
+	* \brief Updates the referenced stream content to reflect content operation changes
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION PageContents_RecalculateStreamData(PageContentsHandle* handle, boolean_type* result);
+
+	/**
 	* \brief Reinterpret current object as \ref IUnknownHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageContents_ToUnknown(PageContentsHandle* handle, IUnknownHandle** result);

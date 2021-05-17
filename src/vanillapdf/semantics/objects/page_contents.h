@@ -22,6 +22,8 @@ public:
 	bool IsDirty() const;
 	void SetDirty(bool dirty);
 
+	bool RecalculateStreamData();
+
 private:
 	mutable contents::BaseInstructionCollectionPtr m_instructions;
 };

@@ -60,8 +60,6 @@ private:
 	void FixDestinationPage(syntax::ObjectPtr cloned_page, PageObjectPtr other_page, PageObjectPtr merged_page);
 	bool IsDestinationReferencingPage(DestinationPtr destination, PageObjectPtr page);
 
-	void RecalculatePageContents();
-
 private:
 	explicit Document(syntax::FilePtr holder);
 

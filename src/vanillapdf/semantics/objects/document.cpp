@@ -121,87 +121,12 @@ bool Document::GetDocumentInfo(OutputDocumentInfoPtr& result) const {
 	return true;
 }
 
-void Document::RecalculatePageContents() {
-
-	// On before Save
-
-	auto log_scope = GetFile()->GetFilename();
-
-	OutputCatalogPtr catalog_ptr;
-	bool has_catalog = GetDocumentCatalog(catalog_ptr);
-	if (!has_catalog) {
-		return;
-	}
-
-	OutputPageTreePtr pages;
-	bool has_pages = catalog_ptr->Pages(pages);
-	if (!has_pages) {
-		return;
-	}
-
-	auto page_count = pages->PageCount();
-	for (decltype(page_count) i = 1; i < page_count + 1; ++i) {
-		auto page = pages->Page(i);
-
-		OutputPageContentsPtr page_contents;
-		bool has_contents = page->GetContents(page_contents);
-		if (!has_contents) {
-			continue;
-		}
-
-		if (!page_contents->IsDirty()) {
-			LOG_DEBUG(log_scope) << "Page " << i << " contents are not dirty";
-			continue;
-		}
-
-		LOG_INFO(log_scope) << "Page " << i << " contents are dirty, recalculating";
-
-		std::stringstream ss;
-		for (auto instruction : page_contents->Instructions()) {
-			ss << instruction->ToPdf() << std::endl;
-		}
-
-		auto object = page_contents->GetObject();
-
-		StreamObjectPtr stream_object;
-		if (ObjectUtils::IsType<StreamObjectPtr>(object)) {
-			stream_object = ObjectUtils::ConvertTo<StreamObjectPtr>(object);
-		}
-
-		if (ObjectUtils::IsType<ArrayObjectPtr<StreamObjectPtr>>(object)) {
-			auto stream_array = ObjectUtils::ConvertTo<ArrayObjectPtr<StreamObjectPtr>>(object);
-			auto stream_array_size = stream_array->GetSize();
-
-			assert(0 != stream_array_size && "Content stream array is empty");
-			if (0 == stream_array_size) {
-				throw GeneralException("Content stream array is empty");
-			}
-
-			for (decltype(stream_array_size) j = 0; j < stream_array_size; ++j) {
-				auto referenced_stram = stream_array->GetValue(j);
-
-				// TODO divide output into multiple streams
-				BufferPtr empty_body;
-				referenced_stram->SetBody(empty_body);
-			}
-
-			stream_object = stream_array->GetValue(0);
-		}
-
-		std::string string_body = ss.str();
-		BufferPtr new_body = make_deferred_container<Buffer>(string_body.begin(), string_body.end());
-		stream_object->SetBody(new_body);
-	}
-}
-
 void Document::Save(const std::string& path) {
 	FilePtr destination = File::Create(path);
 	Save(destination);
 }
 
 void Document::Save(syntax::FilePtr destination) {
-	RecalculatePageContents();
-
 	FileWriter writer;
 	writer.Write(m_holder, destination);
 }
@@ -212,8 +137,6 @@ void Document::SaveIncremental(const std::string& path) {
 }
 
 void Document::SaveIncremental(syntax::FilePtr destination) {
-	RecalculatePageContents();
-
 	FileWriter writer;
 	writer.WriteIncremental(m_holder, destination);
 }
