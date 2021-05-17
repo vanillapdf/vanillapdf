@@ -15,7 +15,8 @@ public:
 	~PageContents();
 
 	contents::BaseInstructionCollectionPtr Instructions(void) const;
-	contents::BaseInstructionCollection::IteratorPtr GetInstructionIterator() const;
+	types::size_type GetInstructionsSize(void) const;
+	contents::InstructionBasePtr GetInstructionAt(types::size_type at) const;
 
 	virtual void ObserveeChanged(const IModifyObservable*) override;
 

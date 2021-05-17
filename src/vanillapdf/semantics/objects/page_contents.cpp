@@ -133,18 +133,27 @@ BaseInstructionCollectionPtr PageContents::Instructions(void) const {
 	contents::ContentStreamParser parser(_obj->GetFile(), input_stream);
 	auto instructions = parser.ReadContentStreamInstructions();
 
+	m_instructions->reserve(instructions->size());
 	m_instructions->insert(m_instructions.end(), instructions.begin(), instructions.end());
 	m_instructions->SetInitialized();
 
 	return m_instructions;
 }
 
-contents::BaseInstructionCollection::IteratorPtr PageContents::GetInstructionIterator() const {
+types::size_type PageContents::GetInstructionsSize(void) const {
 	if (!m_instructions->IsInitialized()) {
 		Instructions();
 	}
 
-	return m_instructions->Begin();
+	return m_instructions->size();
+}
+
+InstructionBasePtr PageContents::GetInstructionAt(types::size_type at) const {
+	if (!m_instructions->IsInitialized()) {
+		Instructions();
+	}
+
+	return m_instructions->at(at);
 }
 
 } // semantics

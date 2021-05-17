@@ -6,7 +6,7 @@
 #include "utils/unknown_interface.h"
 #include "utils/modify_observer_interface.h"
 
-#include <list>
+#include <vector>
 
 namespace vanillapdf {
 namespace contents {
@@ -25,7 +25,7 @@ public:
 
 class BaseInstructionCollection : public virtual IUnknown, public IModifyObserver, public IModifyObservable {
 public:
-	using data_type = std::list<InstructionBasePtr>;
+	using data_type = std::vector<InstructionBasePtr>;
 
 public:
 	using value_type = data_type::value_type;
@@ -35,25 +35,6 @@ public:
 	using reference = data_type::reference;
 	using const_reference = data_type::const_reference;
 	using difference_type = data_type::difference_type;
-
-public:
-	class Iterator : public BaseIterator<data_type::const_iterator>, public IWeakReferenceable<Iterator> {
-	public:
-		using BaseIterator<data_type::const_iterator>::BaseIterator;
-
-		const Iterator& operator++() {
-			++BaseIterator<data_type::const_iterator>::m_current;
-			return *this;
-		}
-
-		const Iterator operator++(int) {
-			Iterator temp(BaseIterator<data_type::const_iterator>::m_current, BaseIterator<data_type::const_iterator>::m_invalid);
-			++BaseIterator<data_type::const_iterator>::m_current;
-			return temp;
-		}
-	};
-
-	using IteratorPtr = DeferredIterator<Iterator>;
 
 public:
 	BaseInstructionCollection() = default;
@@ -71,6 +52,8 @@ public:
 public:
 	// stl compatibility
 	bool empty(void) const noexcept { return m_data.empty(); }
+	reference at(types::size_type pos) { return m_data.at(pos); }
+	const_reference at(size_type pos) const { return m_data.at(pos); }
 	size_type size(void) const noexcept { return m_data.size(); }
 	iterator begin(void) noexcept { return m_data.begin(); }
 	const_iterator begin(void) const noexcept { return m_data.begin(); }
@@ -80,9 +63,8 @@ public:
 	const_reference front(void) const { return m_data.front(); }
 	reference back(void) { return m_data.back(); }
 	const_reference back(void) const { return m_data.back(); }
-
-	IteratorPtr Begin() const { return make_deferred_iterator<Iterator>(m_data.begin(), m_data.end()); }
-	IteratorPtr End(void) const { return make_deferred_iterator<Iterator>(m_data.end(), m_data.end()); }
+	reference operator[](size_type pos) { return m_data[pos]; }
+	const_reference operator[](size_type pos) const { return m_data[pos]; }
 
 	template <class InputIterator>
 	void assign(InputIterator first, InputIterator last) {
@@ -103,6 +85,12 @@ public:
 			(*first)->Subscribe(this);
 		}
 
+		OnChanged();
+	}
+
+	// Modifying operations
+	void reserve(size_type count) {
+		m_data.reserve(count);
 		OnChanged();
 	}
 
