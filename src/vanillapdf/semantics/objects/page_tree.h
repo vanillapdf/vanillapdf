@@ -28,6 +28,7 @@ private:
 	bool HasTreeChilds(PageTreeNodePtr node) const;
 	types::size_type PageCount(PageNodeBasePtr node);
 	void UpdateKidsCount();
+	syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> GetKidsInternal();
 
 	static types::size_type UpdateKidsCount(PageNodeBasePtr node);
 

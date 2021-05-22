@@ -93,7 +93,7 @@ PageObjectPtr PageTree::PageInternal(PageTreeNodePtr node, types::size_type page
 
 bool PageTree::HasTreeChilds(PageTreeNodePtr node) const {
 	auto kids = node->Kids();
-	auto count = kids->GetSize();;
+	auto count = kids->GetSize();
 	for (decltype(count) i = 0; i < count; ++i) {
 		auto kid = kids->GetValue(i);
 		if (kid->GetNodeType() == PageNodeBase::NodeType::Tree) {
@@ -108,7 +108,7 @@ void PageTree::Insert(PageObjectPtr object, types::size_type page_index) {
 	auto array_index = page_index - 1;
 
 	auto raw_obj = object->GetObject();
-	auto kids = _obj->FindAs<ArrayObjectPtr<IndirectReferenceObjectPtr>>(constant::Name::Kids);
+	auto kids = GetKidsInternal();
 	kids->Insert(array_index, make_deferred<IndirectReferenceObject>(raw_obj));
 	object->SetParent(make_deferred<PageTreeNode>(_obj));
 
@@ -116,7 +116,8 @@ void PageTree::Insert(PageObjectPtr object, types::size_type page_index) {
 }
 
 void PageTree::Append(PageObjectPtr object) {
-	auto kids = _obj->FindAs<ArrayObjectPtr<IndirectReferenceObjectPtr>>(constant::Name::Kids);
+
+	auto kids = GetKidsInternal();
 
 	// Insert at the end of kids array
 	Insert(object, kids->GetSize() + 1);
@@ -125,7 +126,7 @@ void PageTree::Append(PageObjectPtr object) {
 void PageTree::Remove(types::size_type page_index) {
 	auto array_index = page_index - 1;
 
-	auto kids = _obj->FindAs<ArrayObjectPtr<IndirectReferenceObjectPtr>>(constant::Name::Kids);
+	auto kids = GetKidsInternal();
 	bool removed = kids->Remove(array_index);
 	assert(removed && "Could not remove page"); UNUSED(removed);
 
@@ -161,6 +162,16 @@ types::size_type PageTree::UpdateKidsCount(PageNodeBasePtr node) {
 	}
 
 	throw GeneralException("Unknown page object type");
+}
+
+ArrayObjectPtr<IndirectReferenceObjectPtr> PageTree::GetKidsInternal() {
+
+	if (!_obj->Contains(constant::Name::Kids)) {
+		ArrayObjectPtr<IndirectReferenceObjectPtr> empty_kids_obj;
+		_obj->Insert(constant::Name::Kids, empty_kids_obj);
+	}
+
+	return _obj->FindAs<ArrayObjectPtr<IndirectReferenceObjectPtr>>(constant::Name::Kids);
 }
 
 } // semantics
