@@ -33,14 +33,19 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Document_Open(string_type filename, DocumentHandle** result);
 
 	/**
+	* \brief Opens a document using already existing file handle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Document_OpenFile(FileHandle* holder, DocumentHandle** result);
+
+	/**
 	* \brief Creates a new document
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Document_Create(string_type filename, DocumentHandle** result);
 
 	/**
-	* \brief Opens a document using already existing file handle
+	* \brief Creates a new document
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Document_OpenFile(FileHandle* holder, DocumentHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Document_CreateFile(FileHandle* holder, DocumentHandle** result);
 
 	/**
 	* \copydoc FileWriterHandle::FileWriter_Write

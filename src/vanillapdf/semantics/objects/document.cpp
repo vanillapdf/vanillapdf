@@ -24,13 +24,21 @@ using namespace syntax;
 
 DocumentPtr Document::Open(const std::string& path) {
 	FilePtr file = File::Open(path);
-	return DocumentPtr(pdf_new Document(file));
+	return OpenFile(file);
+}
+
+DocumentPtr Document::OpenFile(syntax::FilePtr holder) {
+	return DocumentPtr(pdf_new Document(holder));
 }
 
 DocumentPtr Document::Create(const std::string& path) {
 	FilePtr file = File::Create(path);
+	return CreateFile(file);
+}
 
-	HeaderPtr header = file->GetHeader();
+DocumentPtr Document::CreateFile(syntax::FilePtr holder) {
+
+	HeaderPtr header = holder->GetHeader();
 	header->SetVersion(Version::PDF17);
 
 	XrefFreeEntryPtr initial_entry = XrefFreeEntry::Create(0, constant::MAX_GENERATION_NUMBER);
@@ -38,10 +46,10 @@ DocumentPtr Document::Create(const std::string& path) {
 	XrefTablePtr xref_table;
 	xref_table->Add(initial_entry);
 
-	XrefChainPtr chain = file->GetXrefChain();
+	XrefChainPtr chain = holder->GetXrefChain();
 	chain->Append(xref_table);
 
-	DocumentPtr document = DocumentPtr(pdf_new Document(file));
+	DocumentPtr document = DocumentPtr(pdf_new Document(holder));
 	CatalogPtr catalog = document->CreateCatalog();
 	catalog->CreatePages();
 
@@ -63,10 +71,6 @@ DocumentPtr Document::Create(const std::string& path) {
 	document_info->SetCreationDate(creation_date);
 
 	return document;
-}
-
-DocumentPtr Document::OpenFile(syntax::FilePtr holder) {
-	return DocumentPtr(pdf_new Document(holder));
 }
 
 Document::Document(syntax::FilePtr holder) : m_holder(holder) {

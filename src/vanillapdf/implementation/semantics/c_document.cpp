@@ -23,6 +23,19 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_Open(string_type filename,
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Document_OpenFile(FileHandle* holder_handle, DocumentHandle** result) {
+	File* file = reinterpret_cast<File*>(holder_handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		DocumentPtr doc = Document::OpenFile(file);
+		auto ptr = doc.AddRefGet();
+		*result = reinterpret_cast<DocumentHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Document_Create(string_type filename, DocumentHandle** result) {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -36,15 +49,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_Create(string_type filenam
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Document_OpenFile(FileHandle* holder_handle, DocumentHandle** result)
-{
-	File* file = reinterpret_cast<File*>(holder_handle);
+VANILLAPDF_API error_type CALLING_CONVENTION Document_CreateFile(FileHandle* holder, DocumentHandle** result) {
+
+	File* file = reinterpret_cast<File*>(holder);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		DocumentPtr doc = Document::OpenFile(file);
+	try {
+		DocumentPtr doc = Document::CreateFile(file);
 		auto ptr = doc.AddRefGet();
 		*result = reinterpret_cast<DocumentHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
