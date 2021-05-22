@@ -80,7 +80,7 @@ void MixedArrayObject::Append(ContainableObjectPtr value) {
 }
 
 void MixedArrayObject::Insert(size_type at, ContainableObjectPtr value) {
-	if (at >= _list.size()) {
+	if (at > _list.size()) {
 		throw GeneralException("Index was outside the bounds of the array");
 	}
 
