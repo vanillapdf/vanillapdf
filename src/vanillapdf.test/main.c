@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
 	string_type password = NULL;
 	string_type cert_path = NULL;
 	string_type cert_password = NULL;
+	string_type merge_file = NULL;
 	boolean_type is_encrypted = VANILLAPDF_RV_FALSE;
 	boolean_type quiet_mode = VANILLAPDF_RV_FALSE;
 
@@ -50,6 +51,11 @@ int main(int argc, char *argv[]) {
 		// license
 		} else if (strcmp(argv[i], "-l") == 0 && (i + 1 < argc)) {
 			license_file = argv[i + 1];
+			i++;
+
+		// merge file
+		} else if (strcmp(argv[i], "-m") == 0 && (i + 1 < argc)) {
+			merge_file = argv[i + 1];
 			i++;
 
 		// quiet
@@ -104,6 +110,7 @@ int main(int argc, char *argv[]) {
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenFile(file, &document));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_document(document, 0));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_document_save(document, 0));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_document_merge(document, merge_file, 0));
 
 	// TODO: Incremental saving broken on some files
 	// RETURN_ERROR_IF_NOT_SUCCESS(process_document_save_incremental(document, 0));

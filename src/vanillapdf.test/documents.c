@@ -1098,6 +1098,39 @@ error_type process_document_save_incremental(DocumentHandle* document, int neste
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
+error_type process_document_merge(DocumentHandle* document, string_type merge_file, int nested) {
+	FileHandle* destination_file = NULL;
+	DocumentHandle* other_document = NULL;
+	InputOutputStreamHandle* input_output_stream = NULL;
+
+	if (merge_file == NULL) {
+		return VANILLAPDF_TEST_ERROR_SUCCESS;
+	}
+
+	print_spaces(nested);
+	print_text("Process document merge begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_CreateFromMemory(&input_output_stream));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_CreateStream(input_output_stream, "UNUSED", &destination_file));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_Open(merge_file, &other_document));
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_AppendDocument(document, other_document));
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(other_document));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_SaveFile(document, destination_file));
+
+	// Check the file consistency
+	RETURN_ERROR_IF_NOT_SUCCESS(process_file(destination_file, nested + 1));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(destination_file));
+	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_Release(input_output_stream));
+
+	print_spaces(nested);
+	print_text("Process document merge end\n");
+
+	return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
 error_type process_interactive_form(InteractiveFormHandle* obj, int nested) {
 	FieldCollectionHandle* fields = NULL;
 

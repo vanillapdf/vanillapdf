@@ -92,7 +92,8 @@ foreach(TEST_FILE ${TEST_FILES})
 		"${CMAKE_SOURCE_DIR}/scripts/run_test.py"		# path to run_test python script
 		"$<TARGET_FILE:vanillapdf.test>"				# destination of the test executable
 		"${TEST_FILE}"									# destination of the source file
-		"${CMAKE_SOURCE_DIR}/scripts/encryption.cfg"	# path to configuration file for encrypted files
+		"${CMAKE_SOURCE_DIR}/scripts/vanilla_test.cfg"	# path to additional configuration file
 		"${CMAKE_SOURCE_DIR}/scripts/VanillaPDF.lic"	# path to license file for test purposes
+        "${CMAKE_SOURCE_DIR}"							# path to root of the source directory
 	)
 endforeach(TEST_FILE)
