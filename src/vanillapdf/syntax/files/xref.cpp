@@ -57,6 +57,65 @@ void XrefStream::RecalculateContent() {
 	auto sorted_entries = Entries();
 	std::sort(sorted_entries.begin(), sorted_entries.end());
 
+	// Check and update field sizes according to maximum value
+	IntegerObjectPtr field2_max;
+	IntegerObjectPtr field3_max;
+
+	for (auto entry : sorted_entries) {
+		if (entry->GetUsage() == XrefEntryBase::Usage::Free) {
+			auto free_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefFreeEntryPtr>(entry);
+
+			types::big_uint field2_bytes = (MostSignificantBit(free_entry->GetNextFreeObjectNumber()) / 8) + 1;
+			types::big_uint field3_bytes = (MostSignificantBit(free_entry->GetGenerationNumber()) / 8) + 1;
+
+			if (field2_bytes > field2_max->GetUnsignedIntegerValue()) {
+				*field2_max = field2_bytes;
+			}
+
+			if (field3_bytes > field3_max->GetUnsignedIntegerValue()) {
+				*field3_max = field3_bytes;
+			}
+		}
+
+		if (entry->GetUsage() == XrefEntryBase::Usage::Used) {
+			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
+
+			types::big_uint field2_bytes = (MostSignificantBit(used_entry->GetOffset()) / 8) + 1;
+			types::big_uint field3_bytes = (MostSignificantBit(used_entry->GetGenerationNumber()) / 8) + 1;
+
+			if (field2_bytes > field2_max->GetUnsignedIntegerValue()) {
+				*field2_max = field2_bytes;
+			}
+
+			if (field3_bytes > field3_max->GetUnsignedIntegerValue()) {
+				*field3_max = field3_bytes;
+			}
+		}
+
+		if (entry->GetUsage() == XrefEntryBase::Usage::Compressed) {
+			auto compressed_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(entry);
+
+			types::big_uint field2_bytes = (MostSignificantBit(compressed_entry->GetObjectStreamNumber()) / 8) + 1;
+			types::big_uint field3_bytes = (MostSignificantBit(compressed_entry->GetIndex()) / 8) + 1;
+
+			if (field2_bytes > field2_max->GetUnsignedIntegerValue()) {
+				*field2_max = field2_bytes;
+			}
+
+			if (field3_bytes > field3_max->GetUnsignedIntegerValue()) {
+				*field3_max = field3_bytes;
+			}
+		}
+	}
+
+	if (field2_max->GetUnsignedIntegerValue() > field2_size->GetUnsignedIntegerValue()) {
+		*field2_size = field2_max->GetUnsignedIntegerValue();
+	}
+
+	if (field3_max->GetUnsignedIntegerValue() > field3_size->GetUnsignedIntegerValue()) {
+		*field3_size = field3_max->GetUnsignedIntegerValue();
+	}
+
 	ArrayObjectPtr<IntegerObjectPtr> subsections;
 	types::big_uint section_index = 0;
 	types::big_uint section_size = 0;
