@@ -24,6 +24,7 @@
   <ItemGroup>
     <ClCompile Include="..\src\vanillapdf.tools\decrypt.c" />
     <ClCompile Include="..\src\vanillapdf.tools\extract.c" />
+    <ClCompile Include="..\src\vanillapdf.tools\extract_object.c" />
     <ClCompile Include="..\src\vanillapdf.tools\filter.c" />
     <ClCompile Include="..\src\vanillapdf.tools\main.c" />
     <ClCompile Include="..\src\vanillapdf.tools\merge.c" />
