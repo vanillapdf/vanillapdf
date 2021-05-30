@@ -8,6 +8,8 @@
 #include "utils/zlib_wrapper.h"
 #include "utils/math_utils.h"
 
+#include <cmath>
+
 namespace vanillapdf {
 namespace syntax {
 
