@@ -96,12 +96,12 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
 	uint32_t bytes_per_row = SafeAddition<uint32_t>(colors_columns_bits, 7) / 8;
 
 	BufferPtr result;
-	Buffer current(bytes_per_row);
-	Buffer prior(bytes_per_row);
+	std::vector<uint8_t> current(bytes_per_row);
+	std::vector<uint8_t> prior(bytes_per_row);
 
 	while (src->Peek() != std::char_traits<char>::eof()) {
 		auto filter = src->Get();
-		auto read = src->Read(current, bytes_per_row);
+		auto read = src->Read(reinterpret_cast<char*>(current.data()), bytes_per_row);
 
 		assert(read == bytes_per_row);
 		if (read != bytes_per_row) {
@@ -136,10 +136,15 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
 				assert(bytes_per_row <= prior.size());
 				assert(bytes_per_row <= current.size());
 				for (uint32_t i = 0; (bytes_per_pixel + i) < bytes_per_row; i++) {
-					char current_byte = current[i] & 0xFF;
-					char prior_byte = prior[bytes_per_pixel + i] & 0xFF;
-					char value = SafeAddition<char>(current_byte, prior_byte) / 2;
-					current[i] += value;
+					uint8_t current_byte = current[i] & 0xFF;
+					uint8_t prior_byte = prior[bytes_per_pixel + i] & 0xFF;
+
+					// Note:
+					// There used to be safe addition, however this addition is allowed to overflow
+					uint32_t added_value = (current_byte + prior_byte);
+					auto divided_value = (added_value / 2.0f);
+					auto rounded_value = std::floor(divided_value);
+					current[i] += static_cast<uint8_t>(rounded_value);
 				}
 
 				break;
