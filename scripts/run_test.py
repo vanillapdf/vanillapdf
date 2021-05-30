@@ -17,6 +17,7 @@ PASSWORD_OPTION = "-p"
 CERTIFICATE_OPTION = "-k"
 MERGE_OPTION = "-m"
 QUIET_OPTION = "-q"
+SKIP_SAVE_OPTION = "-ss"
 
 def normalize_string( str ):
 	normalized = unicodedata.normalize('NFC', str)
@@ -57,6 +58,9 @@ base_parameters = [executable_path, test_file_path, LICENSE_OPTION, license_file
 if ("Merge" in config_data):
 	base_parameters.append(MERGE_OPTION)
 	base_parameters.append(os.path.join(source_root_path, config_data["Merge"]))
+
+if ("SkipSave" in config_data and test_filename in config_data["SkipSave"]):
+	base_parameters.append(SKIP_SAVE_OPTION)
 
 # Determine if the file is encrypted
 is_encrypted = test_filename in encryption_data

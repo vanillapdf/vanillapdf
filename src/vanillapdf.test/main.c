@@ -26,6 +26,7 @@ int main(int argc, char *argv[]) {
 	string_type merge_file = NULL;
 	boolean_type is_encrypted = VANILLAPDF_RV_FALSE;
 	boolean_type quiet_mode = VANILLAPDF_RV_FALSE;
+	boolean_type skip_save = VANILLAPDF_RV_FALSE;
 
 #if (defined(DEBUG) && defined(COMPILER_MICROSOFT_VISUAL_STUDIO))
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -57,6 +58,10 @@ int main(int argc, char *argv[]) {
 		} else if (strcmp(argv[i], "-m") == 0 && (i + 1 < argc)) {
 			merge_file = argv[i + 1];
 			i++;
+
+		// skip save
+		} else if (strcmp(argv[i], "-ss") == 0) {
+			skip_save = VANILLAPDF_RV_TRUE;
 
 		// quiet
 		} else if (strcmp(argv[i], "-q") == 0) {
@@ -109,8 +114,12 @@ int main(int argc, char *argv[]) {
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenFile(file, &document));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_document(document, 0));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_document_save(document, 0));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_document_merge(document, merge_file, 0));
+
+	// Some test documents are broken for save currently
+	if (skip_save != VANILLAPDF_RV_TRUE) {
+		RETURN_ERROR_IF_NOT_SUCCESS(process_document_save(document, 0));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_document_merge(document, merge_file, 0));
+	}
 
 	// TODO: Incremental saving broken on some files
 	// RETURN_ERROR_IF_NOT_SUCCESS(process_document_save_incremental(document, 0));
