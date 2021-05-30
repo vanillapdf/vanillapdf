@@ -1845,12 +1845,22 @@ bool FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
 			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(item);
 			auto object = used_entry->GetReference();
 
-			// TODO: maybe one day
 			// Just skip stream objects as they are never redundant
 			// The comparison is also problematic - hash of the content needs to be often recalculated
-			if (ObjectUtils::IsType<StreamObjectPtr>(object)) {
-				continue;
-			}
+
+			// Update 30.5.2021
+			// Now, we're having a raging debate, why should someone skip the stream objects.
+			// The sentence "stream objects as they are never redundant" is actually true
+			// However, we are not removing the stream objects, but removing the duplicates instead.
+			// The streams with equal content are redundant and it seems they can be removed.
+			// Reason for this change is with the document merge functionality the
+			// page fonts are being duplicated for every page, even if they were a single object
+			// within the original file. The deduplication in the page clone phase would be
+			// even more problematic and it does not solve this issue entirely.
+
+			//if (ObjectUtils::IsType<StreamObjectPtr>(object)) {
+			//	continue;
+			//}
 
 			// Check if object is already in our unique list
 			auto inserted = unique_set.insert(object);
