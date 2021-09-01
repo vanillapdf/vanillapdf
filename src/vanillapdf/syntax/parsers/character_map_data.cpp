@@ -14,23 +14,7 @@ bool BaseFontRange::Contains(BufferPtr key) const {
 }
 
 bool BaseFontRange::ValueEqualLessThan(BufferPtr source, BufferPtr dest) const {
-	auto src_size = source->size();
-	auto dest_size = dest->size();
-
-	if (src_size != dest_size) {
-		return (src_size < dest_size);
-	}
-
-	for (decltype(src_size) i = 0; i < src_size; ++i) {
-		auto src_byte = source[i];
-		auto dest_byte = dest[i];
-
-		if (src_byte != dest_byte) {
-			return (src_byte < dest_byte);
-		}
-	}
-
-	return true;
+	return source->ValueEqualLessThan(dest);
 }
 
 BufferPtr BaseFontRange::GetMappedValue(BufferPtr key) const {

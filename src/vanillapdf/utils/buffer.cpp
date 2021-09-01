@@ -3,6 +3,7 @@
 #include "utils/buffer.h"
 #include "utils/streams/input_stream.h"
 
+#include <iomanip>
 #include <cstring>
 #include <sstream>
 
@@ -25,6 +26,16 @@ size_t Buffer::Hash() const {
 	return result;
 }
 
+std::string Buffer::ToHexString(void) const {
+	std::stringstream result;
+
+	for (const auto& v : m_data) {
+		result << std::setfill('0') << std::setw(sizeof(v) * 2) << std::hex << (int) v;
+	}
+
+	return result.str();
+}
+
 IInputStreamPtr Buffer::ToInputStream(void) const {
 	auto result = std::make_shared<std::stringstream>();
 	result->write(m_data.data(), m_data.size());
@@ -37,6 +48,26 @@ bool Buffer::Equals(const Buffer& other) const {
 
 bool Buffer::LessThan(const Buffer& other) const {
 	return std::operator<(m_data, other.m_data);
+}
+
+bool Buffer::ValueEqualLessThan(const Buffer& other) const {
+	auto src_size = size();
+	auto dest_size = other.size();
+
+	if (src_size != dest_size) {
+		return (src_size < dest_size);
+	}
+
+	for (decltype(src_size) i = 0; i < src_size; ++i) {
+		auto src_byte = (*this)[i];
+		auto dest_byte = other[i];
+
+		if (src_byte != dest_byte) {
+			return (src_byte < dest_byte);
+		}
+	}
+
+	return true;
 }
 
 bool operator==(const char * left, const Buffer& right) {

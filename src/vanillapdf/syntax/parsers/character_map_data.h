@@ -41,6 +41,11 @@ struct CodeSpaceRange {
 	HexadecimalStringObjectPtr End;
 };
 
+struct FontCharMapping {
+	HexadecimalStringObjectPtr Source;
+	HexadecimalStringObjectPtr Destination;
+};
+
 struct CIDSystemInfo {
 	StringObjectPtr Registry;
 	StringObjectPtr Ordering;
@@ -53,7 +58,15 @@ struct CharacterMapData {
 	IntegerObjectPtr CMapType;
 
 	std::vector<CodeSpaceRange> CodeSpaceRanges;
+
 	std::vector<BaseFontRange> BaseFontRanges;
+	std::vector<FontCharMapping> BaseFontCharMapping;
+
+	std::vector<BaseFontRange> NotDefinedRanges;
+	std::vector<FontCharMapping> NotDefinedCharMapping;
+
+	std::vector<BaseFontRange> CIDRanges;
+	std::vector<FontCharMapping> CIDCharMapping;
 };
 
 } // syntax

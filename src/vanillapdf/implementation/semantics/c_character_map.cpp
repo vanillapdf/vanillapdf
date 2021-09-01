@@ -8,13 +8,13 @@ using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_GetType(CharacterMapHandle* handle, CharacterMapType* result)
+VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_GetCharacterMapType(CharacterMapHandle* handle, CharacterMapType* result)
 {
 	CharacterMapBase* obj = reinterpret_cast<CharacterMapBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	switch (obj->GetType()) {
+	switch (obj->GetCharacterMapType()) {
 	case CharacterMapBase::Type::Embedded:
 		*result = CharacterMapType_Embedded; break;
 	case CharacterMapBase::Type::Unicode:
@@ -26,19 +26,16 @@ VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_GetType(CharacterMapHa
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_Release(CharacterMapHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_ToUnknown(CharacterMapHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<CharacterMapBase, IUnknown, CharacterMapHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_FromUnknown(IUnknownHandle* handle, CharacterMapHandle** result) {
+	return SafeObjectConvert<IUnknown, CharacterMapBase, IUnknownHandle, CharacterMapHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_Release(CharacterMapHandle* handle) {
 	return ObjectRelease<CharacterMapBase, CharacterMapHandle>(handle);
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_ToUnicode(CharacterMapHandle* handle, UnicodeCharacterMapHandle** result)
-{
-	return SafeObjectConvert<CharacterMapBase, UnicodeCharacterMap, CharacterMapHandle, UnicodeCharacterMapHandle>(handle, result);
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_ToEmbedded(CharacterMapHandle* handle, EmbeddedCharacterMapHandle** result)
-{
-	return SafeObjectConvert<CharacterMapBase, EmbeddedCharacterMap, CharacterMapHandle, EmbeddedCharacterMapHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_GetMappedValue(
@@ -61,12 +58,26 @@ VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_GetMappedValue(
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_Release(UnicodeCharacterMapHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_ToCharacterMap(UnicodeCharacterMapHandle* handle, CharacterMapHandle** result) {
+	return SafeObjectConvert<UnicodeCharacterMap, CharacterMapBase, UnicodeCharacterMapHandle, CharacterMapHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_FromCharacterMap(CharacterMapHandle* handle, UnicodeCharacterMapHandle** result) {
+	return SafeObjectConvert<CharacterMapBase, UnicodeCharacterMap, CharacterMapHandle, UnicodeCharacterMapHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_Release(UnicodeCharacterMapHandle* handle) {
 	return ObjectRelease<UnicodeCharacterMap, UnicodeCharacterMapHandle>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION EmbeddedCharacterMap_Release(EmbeddedCharacterMapHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION EmbeddedCharacterMap_ToCharacterMap(EmbeddedCharacterMapHandle* handle, CharacterMapHandle** result) {
+	return SafeObjectConvert<EmbeddedCharacterMap, CharacterMapBase, EmbeddedCharacterMapHandle, CharacterMapHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION EmbeddedCharacterMap_FromCharacterMap(CharacterMapHandle* handle, EmbeddedCharacterMapHandle** result) {
+	return SafeObjectConvert<CharacterMapBase, EmbeddedCharacterMap, CharacterMapHandle, EmbeddedCharacterMapHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION EmbeddedCharacterMap_Release(EmbeddedCharacterMapHandle* handle) {
 	return ObjectRelease<EmbeddedCharacterMap, EmbeddedCharacterMapHandle>(handle);
 }
