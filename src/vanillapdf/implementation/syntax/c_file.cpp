@@ -165,7 +165,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_SetEncryptionKey(FileHandle* h
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(encryption_key);
 
-
 	try
 	{
 		bool result = file->SetEncryptionKey(*encryption_key);
