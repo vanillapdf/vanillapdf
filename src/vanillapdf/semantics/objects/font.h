@@ -21,9 +21,13 @@ class FontBase : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
 	enum class Type {
 		Undefined = 0,
-		Composite,
+		Type0,
 		Type1,
-		Type3
+		MMType1,
+		Type3,
+		TrueType,
+		CIDFontType0,
+		CIDFontType2
 	};
 
 public:
@@ -33,9 +37,27 @@ public:
 	virtual Type GetFontType() const noexcept = 0;
 };
 
+class Type0Font : public FontBase {
+public:
+	explicit Type0Font(syntax::DictionaryObjectPtr root);
+
+	virtual Type GetFontType() const noexcept override;
+
+	//syntax::NameObjectPtr BaseFont() const;
+	//syntax::ObjectPtr Encoding() const;
+	//syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> DescendantFonts() const;
+	bool ToUnicode(OuputUnicodeCharacterMapPtr& result) const;
+};
+
 class Type1Font : public FontBase {
 public:
 	explicit Type1Font(syntax::DictionaryObjectPtr root);
+	virtual Type GetFontType() const noexcept override;
+};
+
+class MMType1Font : public FontBase {
+public:
+	explicit MMType1Font(syntax::DictionaryObjectPtr root);
 	virtual Type GetFontType() const noexcept override;
 };
 
@@ -45,16 +67,22 @@ public:
 	virtual Type GetFontType() const noexcept override;
 };
 
-class CompositeFont : public FontBase {
+class TrueTypeFont : public FontBase {
 public:
-	explicit CompositeFont(syntax::DictionaryObjectPtr root);
-
+	explicit TrueTypeFont(syntax::DictionaryObjectPtr root);
 	virtual Type GetFontType() const noexcept override;
+};
 
-	//syntax::NameObjectPtr BaseFont() const;
-	//syntax::ObjectPtr Encoding() const;
-	//syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> DescendantFonts() const;
-	bool ToUnicode(OuputUnicodeCharacterMapPtr& result) const;
+class CIDFontType0Font : public FontBase {
+public:
+	explicit CIDFontType0Font(syntax::DictionaryObjectPtr root);
+	virtual Type GetFontType() const noexcept override;
+};
+
+class CIDFontType2Font : public FontBase {
+public:
+	explicit CIDFontType2Font(syntax::DictionaryObjectPtr root);
+	virtual Type GetFontType() const noexcept override;
 };
 
 } // semantics

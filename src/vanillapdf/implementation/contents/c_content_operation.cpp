@@ -180,18 +180,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToEndText(ContentO
 	return SafeObjectConvert<OperationBase, OperationEndText, ContentOperationHandle, ContentOperationEndTextHandle>(handle, result);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextFont(ContentOperationHandle* handle, ContentOperationTextFontHandle** result) {
-	return SafeObjectConvert<OperationBase, OperationTextFont, ContentOperationHandle, ContentOperationTextFontHandle>(handle, result);
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShow(ContentOperationHandle* handle, ContentOperationTextShowHandle** result) {
-	return SafeObjectConvert<OperationBase, OperationTextShow, ContentOperationHandle, ContentOperationTextShowHandle>(handle, result);
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShowArray(ContentOperationHandle* handle, ContentOperationTextShowArrayHandle** result) {
-	return SafeObjectConvert<OperationBase, OperationTextShowArray, ContentOperationHandle, ContentOperationTextShowArrayHandle>(handle, result);
-}
-
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToUnknown(ContentOperationHandle* handle, IUnknownHandle** result) {
 	return SafeObjectConvert<OperationBase, IUnknown, ContentOperationHandle, IUnknownHandle>(handle, result);
 }
@@ -308,6 +296,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_SetName(Co
 		return VANILLAPDF_ERROR_SUCCESS;
 	}
 	CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_ToContentOperation(ContentOperationTextFontHandle* handle, ContentOperationHandle** result) {
+	return SafeObjectConvert<OperationTextFont, OperationBase, ContentOperationTextFontHandle, ContentOperationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_FromContentOperation(ContentOperationHandle* handle, ContentOperationTextFontHandle** result) {
+	return SafeObjectConvert<OperationBase, OperationTextFont, ContentOperationHandle, ContentOperationTextFontHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_Release(ContentOperationTextFontHandle* handle) {

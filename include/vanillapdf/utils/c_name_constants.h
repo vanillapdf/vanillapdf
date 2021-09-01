@@ -493,7 +493,7 @@ extern "C"
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_Font;
 
 	/**
-	* \brief Represents type for \ref CompositeFontHandle.
+	* \brief Represents type for \ref Type0FontHandle.
 	*/
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_Type0;
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_Type1;

@@ -105,17 +105,17 @@ error_type process_content_operation(ContentOperationHandle* obj, int nested) {
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationGeneric_Release(generic_operation));
 			break;
 		case ContentOperationType_TextShow:
-			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextShow(obj, &text_show_operation));
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextShow_FromContentOperation(obj, &text_show_operation));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_textshow(text_show_operation, nested + 1));
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextShow_Release(text_show_operation));
 			break;
 		case ContentOperationType_TextFont:
-			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextFont(obj, &text_font_operation));
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextFont_FromContentOperation(obj, &text_font_operation));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_textfont(text_font_operation, nested + 1));
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextFont_Release(text_font_operation));
 			break;
 		case ContentOperationType_TextShowArray:
-			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToTextShowArray(obj, &text_show_array_operation));
+			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextShowArray_FromContentOperation(obj, &text_show_array_operation));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_textshowarray(text_show_array_operation, nested + 1));
 			RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextShowArray_Release(text_show_array_operation));
 			break;

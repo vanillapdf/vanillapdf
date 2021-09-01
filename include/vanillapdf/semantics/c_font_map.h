@@ -40,6 +40,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle* handle, const NameObjectHandle* key_handle, FontHandle** result);
 
 	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION FontMap_ToUnknown(FontMapHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref FontMapHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION FontMap_FromUnknown(IUnknownHandle* handle, FontMapHandle** result);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/

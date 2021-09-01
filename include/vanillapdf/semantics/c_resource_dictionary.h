@@ -39,6 +39,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_GetFontMap(ResourceDictionaryHandle* handle, FontMapHandle** result);
 
 	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_ToUnknown(ResourceDictionaryHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref ResourceDictionaryHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_FromUnknown(IUnknownHandle* handle, ResourceDictionaryHandle** result);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/

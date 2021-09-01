@@ -40,7 +40,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle* handle,
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Release(FontMapHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION FontMap_ToUnknown(FontMapHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<FontMap, IUnknown, FontMapHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FontMap_FromUnknown(IUnknownHandle* handle, FontMapHandle** result) {
+	return SafeObjectConvert<IUnknown, FontMap, IUnknownHandle, FontMapHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Release(FontMapHandle* handle) {
 	return ObjectRelease<FontMap, FontMapHandle>(handle);
 }

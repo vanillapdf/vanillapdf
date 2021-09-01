@@ -178,21 +178,6 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_GetOperationType(ContentOperationHandle* handle, ContentOperationType* result);
 
 	/**
-	* \brief Reinterpret current object as \ref ContentOperationTextFontHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextFont(ContentOperationHandle* handle, ContentOperationTextFontHandle** result);
-
-	/**
-	* \brief Reinterpret current object as \ref ContentOperationTextShowHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShow(ContentOperationHandle* handle, ContentOperationTextShowHandle** result);
-
-	/**
-	* \brief Reinterpret current object as \ref ContentOperationTextShowArrayHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToTextShowArray(ContentOperationHandle* handle, ContentOperationTextShowArrayHandle** result);
-
-	/**
 	* \brief Reinterpret current object as \ref ContentOperationBeginTextHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToBeginText(ContentOperationHandle* handle, ContentOperationBeginTextHandle** result);
@@ -365,6 +350,16 @@ extern "C"
 	* Scale shall be a number representing a scale factor.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_SetScale(ContentOperationTextFontHandle* handle, IntegerObjectHandle* data);
+
+	/**
+	* \brief Reinterpret current object as \ref ContentOperationHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_ToContentOperation(ContentOperationTextFontHandle* handle, ContentOperationHandle** result);
+
+	/**
+	* \brief Convert \ref ContentOperationHandle to \ref ContentOperationTextFontHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_FromContentOperation(ContentOperationHandle* handle, ContentOperationTextFontHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release

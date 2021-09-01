@@ -73,17 +73,17 @@ extern "C"
 	/**
 	* \brief Get derived type of current object
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_GetType(CharacterMapHandle* handle, CharacterMapType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_GetCharacterMapType(CharacterMapHandle* handle, CharacterMapType* result);
 
 	/**
-	* \brief Reinterpret current object as \ref UnicodeCharacterMapHandle
+	* \brief Reinterpret current object as \ref IUnknownHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_ToUnicode(CharacterMapHandle* handle, UnicodeCharacterMapHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_ToUnknown(CharacterMapHandle* handle, IUnknownHandle** result);
 
 	/**
-	* \brief Reinterpret current object as \ref EmbeddedCharacterMapHandle
+	* \brief Convert \ref IUnknownHandle to \ref FontHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_ToEmbedded(CharacterMapHandle* handle, EmbeddedCharacterMapHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_FromUnknown(IUnknownHandle* handle, CharacterMapHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -107,6 +107,16 @@ extern "C"
 		BufferHandle** result);
 
 	/**
+	* \brief Reinterpret current object as \ref CharacterMapHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_ToCharacterMap(UnicodeCharacterMapHandle* handle, CharacterMapHandle** result);
+
+	/**
+	* \brief Convert \ref CharacterMapHandle to \ref UnicodeCharacterMapHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_FromCharacterMap(CharacterMapHandle* handle, UnicodeCharacterMapHandle** result);
+
+	/**
 	* \copydoc CharacterMap_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_Release(UnicodeCharacterMapHandle* handle);
@@ -117,6 +127,16 @@ extern "C"
 	* \memberof EmbeddedCharacterMapHandle
 	* @{
 	*/
+
+	/**
+	* \brief Reinterpret current object as \ref CharacterMapHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION EmbeddedCharacterMap_ToCharacterMap(EmbeddedCharacterMapHandle* handle, CharacterMapHandle** result);
+
+	/**
+	* \brief Convert \ref CharacterMapHandle to \ref EmbeddedCharacterMapHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION EmbeddedCharacterMap_FromCharacterMap(CharacterMapHandle* handle, EmbeddedCharacterMapHandle** result);
 
 	/**
 	* \copydoc CharacterMap_Release

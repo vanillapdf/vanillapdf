@@ -168,7 +168,7 @@ extern "C"
 	/* Fonts */
 
 	DECLARE_OBJECT_HANDLE(Font);
-	DECLARE_OBJECT_HANDLE(CompositeFont);
+	DECLARE_OBJECT_HANDLE(Type0Font);
 	DECLARE_OBJECT_HANDLE(FontMap);
 	DECLARE_OBJECT_HANDLE(CharacterMap);
 	DECLARE_OBJECT_HANDLE(EmbeddedCharacterMap);

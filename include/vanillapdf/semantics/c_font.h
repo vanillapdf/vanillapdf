@@ -12,7 +12,7 @@ extern "C"
 
 	/**
 	* \file c_font.h
-	* \brief This file contains class definitions for \ref FontHandle and \ref CompositeFontHandle.
+	* \brief This file contains class definitions for \ref FontHandle and \ref Type0FontHandle.
 	*/
 
 	/**
@@ -26,7 +26,7 @@ extern "C"
 	*/
 
 	/**
-	* \class CompositeFontHandle
+	* \class Type0FontHandle
 	* \extends FontHandle
 	* \ingroup group_fonts
 	* \brief
@@ -43,22 +43,26 @@ extern "C"
 		FontType_Undefined = 0,
 
 		/**
-		* \copybrief CompositeFontHandle
-		* \see \ref CompositeFontHandle
+		* \copybrief Type0FontHandle
+		* \see \ref Type0FontHandle
 		*/
-		FontType_Composite,
+		FontType_Type0,
 
 		/**
 		* \brief
 		* A font that defines glyph shapes using Type 1 font technology.
 		*/
 		FontType_Type1,
+		FontType_MMType1,
 
 		/**
 		* \brief
 		* A font that defines glyphs with streams of PDF graphics operators.
 		*/
-		FontType_Type3
+		FontType_Type3,
+		FontType_TrueType,
+		FontType_CIDFontType0,
+		FontType_CIDFontType2
 	} FontType;
 
 	/**
@@ -72,9 +76,14 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Font_GetFontType(FontHandle* handle, FontType* result);
 
 	/**
-	* \brief Reinterpret current object as \ref CompositeFontHandle.
+	* \brief Reinterpret current object as \ref IUnknownHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Font_ToComposite(FontHandle* handle, CompositeFontHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Font_ToUnknown(FontHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref FontHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Font_FromUnknown(IUnknownHandle* handle, FontHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -85,7 +94,7 @@ extern "C"
 	/** @} */
 
 	/**
-	* \memberof CompositeFontHandle
+	* \memberof Type0FontHandle
 	* @{
 	*/
 
@@ -94,12 +103,22 @@ extern "C"
 	* A stream containing a CMap file that maps character codes
 	* to Unicode values (see 9.10, "Extraction of Text Content").
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION CompositeFont_GetUnicodeMap(CompositeFontHandle* handle, UnicodeCharacterMapHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Type0Font_GetUnicodeMap(Type0FontHandle* handle, UnicodeCharacterMapHandle** result);
+
+	/**
+	* \brief Reinterpret current object as \ref FontHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Type0Font_ToFont(Type0FontHandle* handle, FontHandle** result);
+
+	/**
+	* \brief Convert \ref ObjectHandle to \ref Type0FontHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Type0Font_FromFont(FontHandle* handle, Type0FontHandle** result);
 
 	/**
 	* \copydoc Font_Release
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION CompositeFont_Release(CompositeFontHandle* handle);
+	VANILLAPDF_API error_type CALLING_CONVENTION Type0Font_Release(Type0FontHandle* handle);
 
 	/** @} */
 

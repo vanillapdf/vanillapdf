@@ -24,7 +24,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_GetFontMap(Resou
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_Release(ResourceDictionaryHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_ToUnknown(ResourceDictionaryHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<ResourceDictionary, IUnknown, ResourceDictionaryHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_FromUnknown(IUnknownHandle* handle, ResourceDictionaryHandle** result) {
+	return SafeObjectConvert<IUnknown, ResourceDictionary, IUnknownHandle, ResourceDictionaryHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_Release(ResourceDictionaryHandle* handle) {
 	return ObjectRelease<ResourceDictionary, ResourceDictionaryHandle>(handle);
 }

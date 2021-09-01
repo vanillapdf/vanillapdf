@@ -87,7 +87,7 @@ class PageAnnotations; using PageAnnotationsPtr = Deferred<PageAnnotations>; usi
 // Fonts
 class FontMap; using FontMapPtr = Deferred<FontMap>; using OutputFontMapPtr = OutputPointer<FontMapPtr>;
 class FontBase; using FontPtr = Deferred<FontBase>; using OutputFontPtr = OutputPointer<FontPtr>;
-class CompositeFont; using CompositeFontPtr = Deferred<CompositeFont>;
+class Type0Font; using Type0FontPtr = Deferred<Type0Font>;
 
 // Character maps
 class CharacterMapBase; using CharacterMapBasePtr = Deferred<CharacterMapBase>;

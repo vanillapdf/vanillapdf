@@ -15,12 +15,20 @@ VANILLAPDF_API error_type CALLING_CONVENTION Font_GetFontType(FontHandle* handle
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	switch (obj->GetFontType()) {
-	case FontBase::Type::Composite:
-		*result = FontType_Composite; break;
+	case FontBase::Type::Type0:
+		*result = FontType_Type0; break;
 	case FontBase::Type::Type1:
 		*result = FontType_Type1; break;
+	case FontBase::Type::MMType1:
+		*result = FontType_MMType1; break;
 	case FontBase::Type::Type3:
 		*result = FontType_Type3; break;
+	case FontBase::Type::TrueType:
+		*result = FontType_TrueType; break;
+	case FontBase::Type::CIDFontType0:
+		*result = FontType_CIDFontType0; break;
+	case FontBase::Type::CIDFontType2:
+		*result = FontType_CIDFontType2; break;
 	default:
 		return VANILLAPDF_ERROR_GENERAL;
 	}
@@ -28,19 +36,21 @@ VANILLAPDF_API error_type CALLING_CONVENTION Font_GetFontType(FontHandle* handle
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Font_Release(FontHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION Font_ToUnknown(FontHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<FontBase, IUnknown, FontHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Font_FromUnknown(IUnknownHandle* handle, FontHandle** result) {
+	return SafeObjectConvert<IUnknown, FontBase, IUnknownHandle, FontHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Font_Release(FontHandle* handle) {
 	return ObjectRelease<FontBase, FontHandle>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Font_ToComposite(FontHandle* handle, CompositeFontHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION Type0Font_GetUnicodeMap(Type0FontHandle* handle, UnicodeCharacterMapHandle** result)
 {
-	return SafeObjectConvert<FontBase, CompositeFont, FontHandle, CompositeFontHandle>(handle, result);
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION CompositeFont_GetUnicodeMap(CompositeFontHandle* handle, UnicodeCharacterMapHandle** result)
-{
-	CompositeFont* obj = reinterpret_cast<CompositeFont*>(handle);
+	Type0Font* obj = reinterpret_cast<Type0Font*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
@@ -55,7 +65,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION CompositeFont_GetUnicodeMap(Composi
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION CompositeFont_Release(CompositeFontHandle* handle)
-{
-	return ObjectRelease<CompositeFont, CompositeFontHandle>(handle);
+VANILLAPDF_API error_type CALLING_CONVENTION Type0Font_ToFont(Type0FontHandle* handle, FontHandle** result) {
+	return SafeObjectConvert<Type0Font, FontBase, Type0FontHandle, FontHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Type0Font_FromFont(FontHandle* handle, Type0FontHandle** result) {
+	return SafeObjectConvert<FontBase, Type0Font, FontHandle, Type0FontHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Type0Font_Release(Type0FontHandle* handle) {
+	return ObjectRelease<Type0Font, Type0FontHandle>(handle);
 }
