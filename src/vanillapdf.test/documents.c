@@ -90,7 +90,7 @@ error_type process_content_object_text(ContentObjectTextHandle* obj, int nested)
 }
 
 error_type process_content_operation(ContentOperationHandle* obj, int nested) {
-	ContentOperationType type;
+	ContentOperationType type = ContentOperationType_Undefined;
 	ContentOperationGenericHandle* generic_operation = NULL;
 	ContentOperationTextShowHandle* text_show_operation = NULL;
 	ContentOperationTextFontHandle* text_font_operation = NULL;
