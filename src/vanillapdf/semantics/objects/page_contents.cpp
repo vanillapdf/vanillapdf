@@ -51,8 +51,8 @@ bool PageContents::RecalculateStreamData() {
 	auto file = weak_file.GetReference();
 	auto log_scope = file->GetFilename();
 
-	auto obj_number = GetObject()->GetObjectNumber();
-	auto gen_number = GetObject()->GetObjectNumber();
+	auto obj_number = GetObject()->GetRootObjectNumber();
+	auto gen_number = GetObject()->GetRootGenerationNumber();
 
 	if (!IsDirty()) {
 		LOG_DEBUG(log_scope) << "Page " << obj_number << " " << gen_number << " contents are not dirty";
