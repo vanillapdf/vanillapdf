@@ -62,8 +62,14 @@ bool Buffer::ValueEqualLessThan(const Buffer& other) const {
 		auto src_byte = (*this)[i];
 		auto dest_byte = other[i];
 
-		if (src_byte != dest_byte) {
-			return (src_byte < dest_byte);
+		using unsigned_src_type = std::make_unsigned<decltype(src_byte)>::type;
+		using unsigned_dest_type = std::make_unsigned<decltype(dest_byte)>::type;
+
+		auto unsigned_src = reinterpret_cast<unsigned_src_type&>(src_byte);
+		auto unsigned_dest = reinterpret_cast<unsigned_dest_type&>(dest_byte);
+
+		if (unsigned_src != unsigned_dest) {
+			return (unsigned_src < unsigned_dest);
 		}
 	}
 
