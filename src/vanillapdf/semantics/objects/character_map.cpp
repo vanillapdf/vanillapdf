@@ -59,7 +59,7 @@ BufferPtr UnicodeCharacterMap::GetMappedValue(BufferPtr key) const {
 		auto log_scope = file->GetFilename();
 
 		std::stringstream error_stream;
-		error_stream << "The key " << key->ToString() << " was not found in the UnicodeCharacterMap codespace range";
+		error_stream << "The key " << key->ToHexString() << " was not found in the UnicodeCharacterMap codespace range";
 
 		LOG_ERROR(log_scope) << error_stream.str();
 
