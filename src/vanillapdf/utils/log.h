@@ -1,6 +1,8 @@
 #ifndef _LOG_H
 #define _LOG_H
 
+#include "utils/exceptions.h"
+
 #include <ostream>
 #include <memory>
 
@@ -28,6 +30,8 @@ std::basic_ostream<CharT, TraitsT>& operator<< (std::basic_ostream<CharT, Traits
 			strm << "Error"; break;
 		case Severity::Fatal:
 			strm << "Fatal"; break;
+		default:
+			throw GeneralException("Invalid logging severity specified: " + std::to_string((int) level));
 	}
 
 	return strm;
