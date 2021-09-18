@@ -20,7 +20,7 @@ extern "C"
 	* \extends IUnknownHandle
 	* \ingroup group_fonts
 	* \brief
-	* Base class for all fonts in to representable inside a PDF document
+	* Base class for all fonts in to representable inside a PDF document.
 	*
 	* For more details please visit [section 9.5 - Introduction to Font Data Structures](PDF32000_2008.pdf#G8.1694788).
 	*/
