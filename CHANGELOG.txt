@@ -1,5 +1,9 @@
 # Vanilla.PDF Release notes
 
+v1.5.2 - 18.9.2021
+ - Font and codemap interface unification
+ - Performance and stability improvements
+
 v1.5.1 - 14.3.2021
  - Include missing runtime libs for windows
  
