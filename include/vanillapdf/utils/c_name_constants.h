@@ -501,7 +501,7 @@ extern "C"
 
 	/**
 	* \brief Represents \ref CharacterMapHandle property.
-	* \see \ref CharacterMapHandle::CharacterMap_ToUnicode
+	* \see \ref Type0FontHandle::Type0Font_GetUnicodeMap
 	*/
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_ToUnicode;
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_CIDSystemInfo;
