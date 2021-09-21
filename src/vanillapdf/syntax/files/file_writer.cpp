@@ -737,13 +737,16 @@ XrefBasePtr FileWriter::CloneXref(FilePtr destination, XrefBasePtr source) {
 	XrefBasePtr result = XrefTablePtr();
 
 	if (source->GetType() == XrefBase::Type::Stream) {
-		auto source_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(source);
-		auto source_stream_obj = source_stream->GetStreamObject();
 
 		// We are reusing the original stream object
 
 		XrefStreamPtr new_stream;
-		new_stream->SetStreamObject(source_stream_obj);
+
+		// 21.9.2021
+		// Reusing the original stream object causes issues in the original file.
+		// After save the original stream object has invalid handle to the file property.
+		// We are going to skip this step and fix the stream object association in the FixStreamReferences.
+		//new_stream->SetStreamObject(source_stream_obj);
 
 		result = new_stream;
 	}
@@ -820,13 +823,16 @@ XrefBasePtr FileWriter::CloneXref(FilePtr destination, XrefBasePtr source) {
 		assert(false && "Uncrecognized entry type");
 	}
 
-	// Set trailer
-	auto new_trailer = CloneTrailerDictionary(destination, source);
+	// Set trailer dictionary
+	// This is redundant for Xref streams, that are cloned as objects
+	if (source->GetType() == XrefBase::Type::Table) {
+		auto new_trailer = CloneTrailerDictionary(destination, source);
+		result->SetTrailerDictionary(new_trailer);
 
-	result->SetTrailerDictionary(new_trailer);
-	result->SetOffset(source->GetOffset());
-	result->SetDirty(source->IsDirty());
-	result->SetFile(destination);
+		result->SetOffset(source->GetOffset());
+		result->SetDirty(source->IsDirty());
+		result->SetFile(destination);
+	}
 
 	// TODO mayble also recalculate?
 	result->SetLastXrefOffset(source->GetLastXrefOffset());
