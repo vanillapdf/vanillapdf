@@ -198,7 +198,7 @@ void DictionaryObject::ObserveeChanged(const IModifyObservable*) {
 	OnChanged();
 }
 
-void DictionaryObject::OnChanged() const {
+void DictionaryObject::OnChanged() {
 	Object::OnChanged();
 
 	m_hash_cache = 0;

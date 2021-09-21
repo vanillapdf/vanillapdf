@@ -21,7 +21,7 @@ public:
 	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 
 	virtual void ObserveeChanged(const IModifyObservable* observee) override;
-	virtual void OnChanged() const override;
+	virtual void OnChanged() override;
 
 	DictionaryObjectPtr GetHeader() const;
 	void SetHeader(DictionaryObjectPtr header);

@@ -19,9 +19,9 @@ XrefBase::~XrefBase() {
 	}
 }
 
-void XrefBase::OnChanged() const {
+void XrefBase::OnChanged() {
 	if (m_initialized) {
-		m_dirty = true;
+		SetDirty();
 	}
 
 	IModifyObservable::OnChanged();
@@ -34,7 +34,7 @@ void XrefBase::ObserveeChanged(const IModifyObservable*) {
 void XrefStream::RecalculateContent() {
 
 	// Recalculate only for changed streams
-	if (!m_dirty) {
+	if (!IsDirty()) {
 		return;
 	}
 
@@ -359,12 +359,34 @@ void XrefTable::SetHybridStream(XrefStreamPtr stream) {
 	m_xref_stm = stream;
 }
 
+void XrefStream::SetFile(WeakReference<File> file) noexcept {
+	auto stream = GetStreamObject();
+	return stream->SetFile(file);
+}
+
+WeakReference<File> XrefStream::GetFile() const noexcept {
+	auto stream = GetStreamObject();
+	return stream->GetFile();
+}
+
 types::stream_offset XrefStream::GetOffset() const {
-	return _stream->GetOffset();
+	auto stream = GetStreamObject();
+	return stream->GetOffset();
 }
 
 void XrefStream::SetOffset(types::stream_offset offset) {
-	_stream->SetOffset(offset);
+	auto stream = GetStreamObject();
+	stream->SetOffset(offset);
+}
+
+bool XrefStream::IsDirty(void) const noexcept {
+	auto stream = GetStreamObject();
+	return stream->IsDirty();
+}
+
+void XrefStream::SetDirty(bool dirty) noexcept {
+	auto stream = GetStreamObject();
+	return stream->SetDirty(dirty);
 }
 
 DictionaryObjectPtr XrefStream::GetTrailerDictionary(void) const {

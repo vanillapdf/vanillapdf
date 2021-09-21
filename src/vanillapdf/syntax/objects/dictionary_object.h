@@ -84,7 +84,7 @@ public:
 	virtual void SetInitialized(bool initialized = true) override;
 
 	virtual void ObserveeChanged(const IModifyObservable*) override;
-	virtual void OnChanged() const override;
+	virtual void OnChanged() override;
 
 	virtual size_t Hash() const override;
 	virtual DictionaryObject* Clone(void) const override;

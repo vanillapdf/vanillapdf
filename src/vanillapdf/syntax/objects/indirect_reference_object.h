@@ -15,7 +15,7 @@ public:
 	explicit IndirectReferenceObject(ObjectPtr obj);
 	IndirectReferenceObject(types::big_uint obj, types::ushort gen);
 
-	void SetReferencedObject(ObjectPtr obj) const;
+	void SetReferencedObject(ObjectPtr obj);
 	ObjectPtr GetReferencedObject() const;
 	ObjectPtr operator->() const { return GetReferencedObject(); }
 
@@ -43,7 +43,7 @@ public:
 	bool IsReferenceInitialized(void) const;
 
 	virtual size_t Hash() const override;
-	virtual void OnChanged() const override;
+	virtual void OnChanged() override;
 
 	virtual IndirectReferenceObject* Clone(void) const override;
 

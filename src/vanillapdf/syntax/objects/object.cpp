@@ -189,7 +189,7 @@ bool Object::IsEncryptionExempted() const {
 	return false;
 }
 
-void Object::OnChanged() const {
+void Object::OnChanged() {
 	if (!m_initialized) {
 		return;
 	}

@@ -37,7 +37,7 @@ void StreamObject::ObserveeChanged(const IModifyObservable*) {
 	OnChanged();
 }
 
-void StreamObject::OnChanged() const {
+void StreamObject::OnChanged() {
 	Object::OnChanged();
 
 	// Erase hash cache if something changes

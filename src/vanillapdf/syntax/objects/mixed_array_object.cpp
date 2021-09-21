@@ -54,7 +54,7 @@ void MixedArrayObject::ObserveeChanged(const IModifyObservable*) {
 	OnChanged();
 }
 
-void MixedArrayObject::OnChanged() const {
+void MixedArrayObject::OnChanged() {
 	Object::OnChanged();
 
 	m_hash_cache = 0;

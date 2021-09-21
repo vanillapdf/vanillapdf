@@ -21,7 +21,7 @@ public:
 	IModifyObservable& operator=(IModifyObservable&& other) = default;
 
 public:
-	virtual void OnChanged() const;
+	virtual void OnChanged();
 
 	bool IsInitialized(void) const noexcept {
 		return m_initialized;

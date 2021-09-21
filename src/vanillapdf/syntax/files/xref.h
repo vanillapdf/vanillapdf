@@ -48,22 +48,22 @@ public:
 	};
 
 	virtual void ObserveeChanged(const IModifyObservable*) override;
-	virtual void OnChanged() const override;
+	virtual void OnChanged() override;
 
-	void SetFile(WeakReference<File>file) noexcept { _file = file; }
-	WeakReference<File> GetFile() const noexcept { return _file; }
+	virtual void SetFile(WeakReference<File>file) noexcept = 0;
+	virtual WeakReference<File> GetFile() const noexcept = 0;
 
 	virtual DictionaryObjectPtr GetTrailerDictionary(void) const = 0;
 	virtual void SetTrailerDictionary(DictionaryObjectPtr dictionary) = 0;
 
-	virtual types::stream_offset GetOffset() const { return _offset; }
-	virtual void SetOffset(types::stream_offset offset) { _offset = offset; }
+	virtual types::stream_offset GetOffset() const = 0;
+	virtual void SetOffset(types::stream_offset offset) = 0;
 
 	types::stream_offset GetLastXrefOffset() const noexcept { return _last_xref_offset; }
 	void SetLastXrefOffset(types::stream_offset offset) noexcept { _last_xref_offset = offset; }
 
-	bool IsDirty(void) const noexcept { return m_dirty; }
-	void SetDirty(bool dirty = true) noexcept { m_dirty = dirty; }
+	virtual bool IsDirty(void) const noexcept = 0;
+	virtual void SetDirty(bool dirty = true) noexcept = 0;
 
 	IteratorPtr Begin(void) const { return make_deferred_iterator<Iterator>(_entries.begin(), _entries.end()); }
 	IteratorPtr End(void) const { return make_deferred_iterator<Iterator>(_entries.end(), _entries.end()); }
@@ -94,13 +94,8 @@ public:
 	iterator erase(const_iterator pos);
 
 protected:
-	WeakReference<File> _file;
 	map_type _entries;
 	types::stream_offset _last_xref_offset = constant::BAD_OFFSET;
-	types::stream_offset _offset = constant::BAD_OFFSET;
-
-	// Same as Object::m_dirty
-	mutable bool m_dirty = false;
 };
 
 class XrefStream : public XrefBase {
@@ -109,8 +104,14 @@ public:
 		return XrefBase::Type::Stream;
 	}
 
+	virtual void SetFile(WeakReference<File> file) noexcept override;
+	virtual WeakReference<File> GetFile() const noexcept override;
+
 	virtual types::stream_offset GetOffset() const override;
 	virtual void SetOffset(types::stream_offset offset) override;
+
+	virtual bool IsDirty(void) const noexcept override;
+	virtual void SetDirty(bool dirty = true) noexcept override;
 
 	virtual DictionaryObjectPtr GetTrailerDictionary(void) const override;
 	virtual void SetTrailerDictionary(DictionaryObjectPtr dictionary) override;
@@ -134,6 +135,15 @@ public:
 		return XrefBase::Type::Table;
 	}
 
+	virtual void SetFile(WeakReference<File> file) noexcept override { _file = file; }
+	virtual WeakReference<File> GetFile() const noexcept override { return _file; }
+
+	virtual types::stream_offset GetOffset() const override { return _offset; }
+	virtual void SetOffset(types::stream_offset offset) override { _offset = offset; }
+
+	virtual bool IsDirty(void) const noexcept override { return m_dirty; }
+	virtual void SetDirty(bool dirty = true) noexcept override { m_dirty = dirty; }
+
 	virtual void Add(XrefEntryBasePtr entry) override;
 	virtual XrefEntryBasePtr Find(types::big_uint obj_number) const override;
 	virtual bool Contains(types::big_uint obj_number) const override;
@@ -146,8 +156,14 @@ public:
 	void SetHybridStream(XrefStreamPtr stream);
 
 private:
+	WeakReference<File> _file;
 	XrefStreamPtr m_xref_stm;
 	DictionaryObjectPtr m_trailer_dictionary;
+
+	types::stream_offset _offset = constant::BAD_OFFSET;
+
+	// Same as Object::m_dirty
+	bool m_dirty = false;
 };
 
 } // syntax

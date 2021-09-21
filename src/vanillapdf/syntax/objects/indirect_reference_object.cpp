@@ -104,7 +104,7 @@ bool IndirectReferenceObject::IsReferenceInitialized(void) const {
 //	return false;
 //}
 
-void IndirectReferenceObject::OnChanged() const {
+void IndirectReferenceObject::OnChanged() {
 	Object::OnChanged();
 
 	m_hash_cache = 0;
@@ -139,7 +139,7 @@ size_t IndirectReferenceObject::Hash() const {
 	//return referenced_object->Hash();
 }
 
-void IndirectReferenceObject::SetReferencedObject(ObjectPtr obj) const {
+void IndirectReferenceObject::SetReferencedObject(ObjectPtr obj) {
 
 	// Reference shall be indirect object or null
 	bool indirect_or_null = (obj->IsIndirect() || ObjectUtils::IsType<NullObjectPtr>(obj));

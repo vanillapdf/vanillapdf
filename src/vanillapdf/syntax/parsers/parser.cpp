@@ -676,8 +676,8 @@ XrefStreamPtr Parser::ParseXrefStream(
 
 	stream->SetEncryptionExempted();
 
-	result->SetFile(_file);
 	result->SetStreamObject(stream);
+	result->SetFile(_file);
 	result->SetInitialized();
 	return result;
 }

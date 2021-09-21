@@ -55,7 +55,7 @@ void XrefUsedEntryBase::ObserveeChanged(const IModifyObservable*) {
 	OnChanged();
 }
 
-void XrefUsedEntryBase::OnChanged() const {
+void XrefUsedEntryBase::OnChanged() {
 	if (m_initialized) {
 		_dirty = true;
 	}
