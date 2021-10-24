@@ -105,6 +105,13 @@ public:
 	virtual Type code() const noexcept override { return Type::LicenseRequired; }
 };
 
+class InvalidPasswordException : public ExceptionBase {
+public:
+	explicit InvalidPasswordException(const char * const & msg);
+	explicit InvalidPasswordException(const std::string& msg);
+	virtual Type code() const noexcept override { return Type::InvalidPassword; }
+};
+
 template <typename DestT>
 class ConversionExceptionFactory {
 public:

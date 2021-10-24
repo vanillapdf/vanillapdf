@@ -385,7 +385,7 @@ BufferPtr File::DecryptData(const Buffer& data,
 		// Encrypted documents shall be opened with default empty password
 		bool passed = SetEncryptionPassword("");
 		if (!passed) {
-			throw GeneralException("Invalid password");
+			throw InvalidPasswordException("Could not decrypt file using default password");
 		}
 	}
 
