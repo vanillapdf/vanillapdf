@@ -18,8 +18,34 @@ bool BaseFontRange::ValueEqualLessThan(BufferPtr source, BufferPtr dest) const {
 }
 
 BufferPtr BaseFontRange::GetMappedValue(BufferPtr key) const {
+	try {
+		return GetMappedValueInternal(key);
+	} catch (ExceptionBase& ex) {
+		LOG_ERROR_GLOBAL << "Could not get mapped value for key \"" << key->ToHexString() << "\"";
+		LOG_ERROR_GLOBAL << "Error: " << ex.what();
+
+		// Continue error processing
+		throw;
+	}
+}
+
+BufferPtr BaseFontRange::GetMappedValueInternal(BufferPtr key) const {
 	if (!Contains(key)) {
-		throw GeneralException("Out of range");
+
+		std::stringstream error_stream;
+		error_stream << "Key: ";
+		error_stream << key->ToHexString();
+		error_stream << " is out of range: {";
+		error_stream << m_low->GetValue()->ToHexString();
+		error_stream << ",";
+		error_stream << m_high->GetValue()->ToHexString();
+		error_stream << "}";
+
+		// TODO
+		// I don't have handle to relevant file that is relevant, so lets use global for now
+		LOG_ERROR_GLOBAL << error_stream.str();
+
+		throw GeneralException(error_stream.str());
 	}
 
 	if (ObjectUtils::IsType<HexadecimalStringObjectPtr>(m_dest)) {
@@ -38,7 +64,10 @@ BufferPtr BaseFontRange::GetMappedValue(BufferPtr key) const {
 		return result_obj->GetValue();
 	}
 
-	throw GeneralException("Unknown destination type");
+	std::stringstream error_stream;
+	error_stream << "Unknown destination type: " << (int)m_dest->GetObjectType();
+
+	throw GeneralException(error_stream.str());
 }
 
 uint8_t BaseFontRange::Difference(uint8_t source, uint8_t dest, bool& borrow) const {
@@ -115,6 +144,18 @@ uint32_t BaseFontRange::Difference(BufferPtr source, BufferPtr dest) const {
 }
 
 BufferPtr BaseFontRange::Increment(BufferPtr data, uint32_t count) const {
+	try {
+		return IncrementInternal(data, count);
+	} catch (ExceptionBase& ex) {
+		LOG_ERROR_GLOBAL << "Could not increment \"" << data->ToHexString() << "\" by " << count;
+		LOG_ERROR_GLOBAL << "Error: " << ex.what();
+
+		// Continue error processing
+		throw;
+	}
+}
+
+BufferPtr BaseFontRange::IncrementInternal(BufferPtr data, uint32_t count) const {
 	BufferPtr result;
 
 	auto data_size = data->size();
