@@ -269,12 +269,15 @@ bool File::SetEncryptionPassword(const Buffer& password) {
 	BufferPtr encrypted_owner_data = EncryptionUtils::ComputeEncryptedOwnerData(padPassword, dict);
 
 	// Check if entered password was owner password
-	if (EncryptionUtils::CheckKey(encrypted_owner_data, id->GetValue(), owner_value->GetValue(), user_value->GetValue(), permissions, revision, length_bits, _decryption_key)) {
+	BufferPtr temp_decryption_key;
+	if (EncryptionUtils::CheckKey(encrypted_owner_data, id->GetValue(), owner_value->GetValue(), user_value->GetValue(), permissions, revision, length_bits, temp_decryption_key)) {
+		_decryption_key = temp_decryption_key;
 		return true;
 	}
 
 	// Check if entered password was user password
-	if (EncryptionUtils::CheckKey(padPassword, id->GetValue(), owner_value->GetValue(), user_value->GetValue(), permissions, revision, length_bits, _decryption_key)) {
+	if (EncryptionUtils::CheckKey(padPassword, id->GetValue(), owner_value->GetValue(), user_value->GetValue(), permissions, revision, length_bits, temp_decryption_key)) {
+		_decryption_key = temp_decryption_key;
 		return true;
 	}
 
