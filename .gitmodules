@@ -2,3 +2,6 @@
 	path = external/vcpkg
 	url = https://github.com/microsoft/vcpkg.git
 	branch = master
+[submodule "external/googletest"]
+	path = external/googletest
+	url = https://github.com/google/googletest
