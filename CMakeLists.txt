@@ -80,7 +80,5 @@ endif(NOT CMAKE_BUILD_TYPE)
 # Include source directories
 add_subdirectory(src/vanillapdf)
 add_subdirectory(src/vanillapdf.test)
-add_subdirectory(src/vanillapdf.merge)
-add_subdirectory(src/vanillapdf.filter)
 add_subdirectory(src/vanillapdf.unittest)
 add_subdirectory(src/vanillapdf.tools)
