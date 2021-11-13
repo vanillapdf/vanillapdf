@@ -1,5 +1,5 @@
 # Require minimum CMAKE version
-cmake_minimum_required(VERSION 2.8.4)
+cmake_minimum_required(VERSION 3.0)
 
 # Minimum version is 2.8.4 due to Cygwin warning:
 
