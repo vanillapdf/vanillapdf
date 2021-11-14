@@ -12,16 +12,16 @@ extern "C"
 
 	/**
 	* \file c_base_font_range.h
-	* \brief This file contains contains class definitions for character maps
+	* \brief This file contains contains class definitions of font ranges in CID fonts
 	*/
 
 	/**
 	* \class BaseFontRangeHandle
 	* \extends IUnknownHandle
-	* \ingroup group_documents
+	* \ingroup group_contents
 	* \brief
-	* A CMap shall specify the mapping from
-	* character codes to character selectors.
+	* Base font ranges are used for mapping input codes to
+	* corresponding range of character codes or names
 	*/
 
 	/**
@@ -29,14 +29,51 @@ extern "C"
 	* @{
 	*/
 
+	/**
+	* \brief Creates a new empty instance of \ref BaseFontRangeHandle
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION BaseFontRange_Create(BaseFontRangeHandle** result);
+
+	/**
+	* \brief Get the lower boundary of the font range
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION BaseFontRange_GetRangeLow(BaseFontRangeHandle* handle, HexadecimalStringObjectHandle** result);
+
+	/**
+	* \brief Set the lower boundary of the font range
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION BaseFontRange_SetRangeLow(BaseFontRangeHandle* handle, HexadecimalStringObjectHandle* data);
+
+	/**
+	* \brief Get the upper boundary of the font range
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION BaseFontRange_GetRangeHigh(BaseFontRangeHandle* handle, HexadecimalStringObjectHandle** result);
+
+	/**
+	* \brief Set the upper boundary of the font range
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION BaseFontRange_SetRangeHigh(BaseFontRangeHandle* handle, HexadecimalStringObjectHandle* data);
+
+	/**
+	* \brief Get the mapped value that is associated with the range boundaries
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION BaseFontRange_GetDestination(BaseFontRangeHandle* handle, ObjectHandle** result);
+
+	/**
+	* \brief Set the mapped value that is associated with the range boundaries
+	*
+	* The data could be either \ref HexadecimalStringObjectHandle or \ref ArrayObjectHandle filled with one or multiple \ref HexadecimalStringObjectHandle
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION BaseFontRange_SetDestination(BaseFontRangeHandle* handle, ObjectHandle* data);
+
+	/**
+	* \brief Check if parameter \p data is present in the mapping table
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION BaseFontRange_Contains(BaseFontRangeHandle* handle, BufferHandle* data, boolean_type* result);
+
+	/**
+	* \brief Get corresponding value for parameter \p data in the mapping table
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION BaseFontRange_GetMappedValue(BaseFontRangeHandle* handle, BufferHandle* data, BufferHandle** result);
 
 	/**

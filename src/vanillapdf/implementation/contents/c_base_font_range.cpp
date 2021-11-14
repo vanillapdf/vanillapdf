@@ -127,7 +127,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION BaseFontRange_GetMappedValue(BaseFo
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-
 VANILLAPDF_API error_type CALLING_CONVENTION BaseFontRange_ToUnknown(BaseFontRangeHandle* handle, IUnknownHandle** result) {
 	return SafeObjectConvert<BaseFontRange, IUnknown, BaseFontRangeHandle, IUnknownHandle>(handle, result);
 }
