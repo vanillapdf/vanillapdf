@@ -1,5 +1,10 @@
 # Vanilla.PDF Release notes
 
+v1.5.3 - 14.11.2021
+ - FIX: CMap unicode glyph translation for corner cases
+ - FIX: Object stream could have been corrupted during save procedure
+ - TWEAK: Invalid password is now used as error code for encrypted documents
+
 v1.5.2 - 18.9.2021
  - Font and codemap interface unification
  - Performance and stability improvements
