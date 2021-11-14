@@ -2,6 +2,9 @@ Ubuntu-amd64:
   image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:latest
   when: manual
 
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+
   script:
     - cmake .
     - make
@@ -17,6 +20,9 @@ Ubuntu-amd64:
 Ubuntu-i386:
   image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-i386:latest
   when: manual
+  
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
 
   script:
     - cmake -DVANILLAPDF_FORCE_32_BIT=ON .
@@ -33,6 +39,9 @@ Ubuntu-i386:
 CentOS-amd64:
   image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-centos-amd64:latest
   when: manual
+  
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
 
   script:
     - cmake .
