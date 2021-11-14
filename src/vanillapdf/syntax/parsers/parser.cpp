@@ -4,6 +4,7 @@
 
 #include "syntax/parsers/parser.h"
 #include "syntax/parsers/token.h"
+#include "syntax/parsers/parser_utils.h"
 #include "syntax/parsers/reverse_parser.h"
 #include "syntax/exceptions/syntax_exceptions.h"
 #include "syntax/utils/name_constants.h"
@@ -30,82 +31,11 @@ Parser::Parser(WeakReference<File> file, IInputStreamPtr stream)
 	_dictionary->Initialize();
 }
 
-CharacterMapParser::CharacterMapParser(WeakReference<File> file, IInputStreamPtr stream)
-	: ParserBase(file, stream) {
-	_dictionary = make_unique<CharacterMapTokenDictionary>();
-	_dictionary->Initialize();
-}
-
 WeakReference<File> ParserBase::GetFile(void) const { return _file; }
-
-class ObjectFactory {
-public:
-	static BooleanObjectPtr CreateBoolean(TokenPtr token) {
-		if (token->GetType() == Token::Type::TRUE_VALUE)
-			return make_deferred<BooleanObject>(true);
-
-		if (token->GetType() == Token::Type::FALSE_VALUE)
-			return make_deferred<BooleanObject>(false);
-
-		assert(!"Expected boolean token type");
-		throw GeneralException("Expected boolean token type");
-	}
-
-	static types::big_int GetIntegerValue(TokenPtr token) {
-		assert(token->GetType() == Token::Type::INTEGER_OBJECT && "Expected integer token type");
-
-		auto buffer = token->Value();
-		return std::stoll(buffer->ToString());
-	}
-
-	static IntegerObjectPtr CreateInteger(TokenPtr token) {
-		assert(token->GetType() == Token::Type::INTEGER_OBJECT && "Expected integer token type");
-
-		types::big_int value = GetIntegerValue(token);
-		return make_deferred<IntegerObject>(value);
-	}
-
-	static RealObjectPtr CreateReal(TokenPtr token) {
-		assert(token->GetType() == Token::Type::REAL_OBJECT && "Expected real token type");
-
-		auto buffer = token->Value();
-		auto str = buffer->ToString();
-		auto value = std::stod(str);
-		auto pos = str.rfind('.');
-		if (pos != std::string::npos) {
-			auto precision = str.size() - pos - 1;
-			auto converted = ValueConvertUtils::SafeConvert<uint32_t>(precision);
-			return make_deferred<RealObject>(value, converted);
-		}
-
-		return make_deferred<RealObject>(value);
-	}
-
-	static NameObjectPtr CreateName(TokenPtr token) {
-		assert(token->GetType() == Token::Type::NAME_OBJECT && "Expected name token type");
-
-		auto buffer = token->Value();
-		return make_deferred<NameObject>(buffer);
-	}
-
-	static HexadecimalStringObjectPtr CreateHexString(TokenPtr token) {
-		assert(token->GetType() == Token::Type::HEXADECIMAL_STRING && "Expected hexadecimal string token type");
-
-		auto buffer = token->Value();
-		return HexadecimalStringObject::CreateFromEncoded(buffer);
-	}
-
-	static LiteralStringObjectPtr CreateLitString(TokenPtr token) {
-		assert(token->GetType() == Token::Type::LITERAL_STRING && "Expected literal string token type");
-
-		auto buffer = token->Value();
-		return LiteralStringObject::CreateFromEncoded(buffer);
-	}
-};
 
 IntegerObjectPtr ParserBase::ReadInteger() {
 	auto token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
-	auto result = ObjectFactory::CreateInteger(token);
+	auto result = ParserUtils::CreateInteger(token);
 	result->SetFile(_file);
 	return result;
 }
@@ -116,7 +46,7 @@ ObjectPtr ParserBase::ReadIndirectReference() {
 	auto pos = m_stream->GetInputPosition();
 	if (PeekTokenTypeSkip() == Token::Type::INTEGER_OBJECT) {
 		auto ahead = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
-		auto gen_number = ObjectFactory::GetIntegerValue(ahead);
+		auto gen_number = ParserUtils::GetIntegerValue(ahead);
 
 		if (PeekTokenTypeSkip() == Token::Type::INDIRECT_REFERENCE_MARKER) {
 			auto reference_marker = ReadTokenWithTypeSkip(Token::Type::INDIRECT_REFERENCE_MARKER);
@@ -134,7 +64,7 @@ ObjectPtr ParserBase::ReadIndirectReference() {
 
 RealObjectPtr ParserBase::ReadReal() {
 	auto token = ReadTokenWithTypeSkip(Token::Type::REAL_OBJECT);
-	auto result = ObjectFactory::CreateReal(token);
+	auto result = ParserUtils::CreateReal(token);
 	result->SetFile(_file);
 	return result;
 }
@@ -297,35 +227,35 @@ MixedArrayObjectPtr ParserBase::ReadArray() {
 
 NameObjectPtr ParserBase::ReadName() {
 	auto token = ReadTokenWithTypeSkip(Token::Type::NAME_OBJECT);
-	auto result = ObjectFactory::CreateName(token);
+	auto result = ParserUtils::CreateName(token);
 	result->SetFile(_file);
 	return result;
 }
 
 LiteralStringObjectPtr ParserBase::ReadLiteralString() {
 	auto token = ReadTokenWithTypeSkip(Token::Type::LITERAL_STRING);
-	auto result = ObjectFactory::CreateLitString(token);
+	auto result = ParserUtils::CreateLitString(token);
 	result->SetFile(_file);
 	return result;
 }
 
 HexadecimalStringObjectPtr ParserBase::ReadHexadecimalString() {
 	auto token = ReadTokenWithTypeSkip(Token::Type::HEXADECIMAL_STRING);
-	auto result = ObjectFactory::CreateHexString(token);
+	auto result = ParserUtils::CreateHexString(token);
 	result->SetFile(_file);
 	return result;
 }
 
 BooleanObjectPtr ParserBase::ReadTrue() {
 	auto token = ReadTokenWithTypeSkip(Token::Type::TRUE_VALUE);
-	auto result = ObjectFactory::CreateBoolean(token);
+	auto result = ParserUtils::CreateBoolean(token);
 	result->SetFile(_file);
 	return result;
 }
 
 BooleanObjectPtr ParserBase::ReadFalse() {
 	auto token = ReadTokenWithTypeSkip(Token::Type::FALSE_VALUE);
-	auto result = ObjectFactory::CreateBoolean(token);
+	auto result = ParserUtils::CreateBoolean(token);
 	result->SetFile(_file);
 	return result;
 }
@@ -338,8 +268,8 @@ ObjectPtr Parser::ReadIndirectObject(types::big_uint& obj_number, types::ushort&
 	auto direct = ReadDirectObject();
 	auto end_token = ReadTokenWithTypeSkip(Token::Type::INDIRECT_OBJECT_END);
 
-	auto obj_number_value = ObjectFactory::GetIntegerValue(obj_number_token);
-	auto gen_number_value = ObjectFactory::GetIntegerValue(gen_number_token);
+	auto obj_number_value = ParserUtils::GetIntegerValue(obj_number_token);
+	auto gen_number_value = ParserUtils::GetIntegerValue(gen_number_token);
 	obj_number = ValueConvertUtils::SafeConvert<types::big_uint>(obj_number_value);
 	gen_number = ValueConvertUtils::SafeConvert<types::ushort>(gen_number_value);
 
@@ -389,8 +319,8 @@ ObjectStreamEntry Parser::ReadObjectStreamHeader() {
 	auto obj_number_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 	auto offset_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 
-	auto obj_number = ObjectFactory::GetIntegerValue(obj_number_token);
-	auto offset = ObjectFactory::GetIntegerValue(offset_token);
+	auto obj_number = ParserUtils::GetIntegerValue(obj_number_token);
+	auto offset = ParserUtils::GetIntegerValue(offset_token);
 
 	result.object_number = ValueConvertUtils::SafeConvert<types::big_uint>(obj_number);
 	result.offset = ValueConvertUtils::SafeConvert<types::stream_offset>(offset);
@@ -500,8 +430,8 @@ XrefEntryBasePtr Parser::ReadTableEntry(types::big_uint objNumber) {
 	auto offset_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 	auto generation_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 
-	auto offset = ObjectFactory::GetIntegerValue(offset_token);
-	auto gen_number = ObjectFactory::GetIntegerValue(generation_token);
+	auto offset = ParserUtils::GetIntegerValue(offset_token);
+	auto gen_number = ParserUtils::GetIntegerValue(generation_token);
 
 	auto peeked_token = PeekTokenSkip();
 	if (*peeked_token->Value() == "n") {
@@ -781,7 +711,7 @@ XrefChainPtr Parser::FindAllObjects(void) {
 			auto next_token = PeekTokenSkip();
 			if (next_token->GetType() == Token::Type::INTEGER_OBJECT) {
 				ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
-				auto xref_offset = ObjectFactory::GetIntegerValue(next_token);
+				auto xref_offset = ParserUtils::GetIntegerValue(next_token);
 				xref->SetLastXrefOffset(ValueConvertUtils::SafeConvert<types::stream_offset>(xref_offset));
 			}
 
@@ -850,172 +780,6 @@ XrefChainPtr Parser::FindAllObjects(void) {
 	xref->SetFile(_file);
 	result->Append(xref);
 	return result;
-}
-
-CharacterMapData CharacterMapParser::ReadCharacterMapData(void) {
-	CharacterMapData result;
-
-	for (;;) {
-		auto token = ReadTokenSkip();
-		auto ahead = PeekTokenSkip();
-
-		if (token->GetType() == Token::Type::END_OF_INPUT) {
-			return result;
-		}
-
-		if (token->GetType() == Token::Type::INTEGER_OBJECT) {
-			if (ahead->GetType() == Token::Type::BEGIN_CODE_SPACE_RANGE) {
-				ReadTokenWithTypeSkip(Token::Type::BEGIN_CODE_SPACE_RANGE);
-
-				auto count = ObjectFactory::GetIntegerValue(token);
-				for (decltype(count) i = 0; i < count; ++i) {
-					CodeSpaceRange range;
-					range.Begin = ReadHexadecimalString();
-					range.End = ReadHexadecimalString();
-
-					result.CodeSpaceRanges.push_back(range);
-				}
-
-				ReadTokenWithTypeSkip(Token::Type::END_CODE_SPACE_RANGE);
-			}
-
-			if (ahead->GetType() == Token::Type::BEGIN_BASE_FONT_RANGE) {
-				ReadTokenWithTypeSkip(Token::Type::BEGIN_BASE_FONT_RANGE);
-
-				auto count = ObjectFactory::GetIntegerValue(token);
-				for (decltype(count) i = 0; i < count; ++i) {
-					auto low = ReadHexadecimalString();
-					auto high = ReadHexadecimalString();
-					auto dest = ReadDirectObject();
-
-					BaseFontRange range;
-					range.SetRangeLow(low);
-					range.SetRangeHigh(high);
-					range.SetDestination(dest);
-
-					result.BaseFontRanges.push_back(range);
-				}
-
-				ReadTokenWithTypeSkip(Token::Type::END_BASE_FONT_RANGE);
-			}
-
-			if (ahead->GetType() == Token::Type::BEGIN_BASE_FONT_CHAR) {
-				ReadTokenWithTypeSkip(Token::Type::BEGIN_BASE_FONT_CHAR);
-
-				auto count = ObjectFactory::GetIntegerValue(token);
-				for (decltype(count) i = 0; i < count; ++i) {
-					auto source = ReadHexadecimalString();
-					auto destination = ReadHexadecimalString();
-
-					FontCharMapping base_font_char_mapping;
-					base_font_char_mapping.Source = source;
-					base_font_char_mapping.Destination = destination;
-
-					result.BaseFontCharMapping.push_back(base_font_char_mapping);
-				}
-
-				ReadTokenWithTypeSkip(Token::Type::END_BASE_FONT_CHAR);
-			}
-
-			if (ahead->GetType() == Token::Type::BEGIN_NOT_DEF_RANGE) {
-				ReadTokenWithTypeSkip(Token::Type::BEGIN_NOT_DEF_RANGE);
-
-				auto count = ObjectFactory::GetIntegerValue(token);
-				for (decltype(count) i = 0; i < count; ++i) {
-					auto low = ReadHexadecimalString();
-					auto high = ReadHexadecimalString();
-					auto dest = ReadDirectObject();
-
-					BaseFontRange range;
-					range.SetRangeLow(low);
-					range.SetRangeHigh(high);
-					range.SetDestination(dest);
-
-					result.NotDefinedRanges.push_back(range);
-				}
-
-				ReadTokenWithTypeSkip(Token::Type::END_NOT_DEF_RANGE);
-			}
-
-			if (ahead->GetType() == Token::Type::BEGIN_NOT_DEF_CHAR) {
-				ReadTokenWithTypeSkip(Token::Type::BEGIN_NOT_DEF_CHAR);
-
-				auto count = ObjectFactory::GetIntegerValue(token);
-				for (decltype(count) i = 0; i < count; ++i) {
-					auto source = ReadHexadecimalString();
-					auto destination = ReadHexadecimalString();
-
-					FontCharMapping not_defined_char_mapping;
-					not_defined_char_mapping.Source = source;
-					not_defined_char_mapping.Destination = destination;
-
-					result.NotDefinedCharMapping.push_back(not_defined_char_mapping);
-				}
-
-				ReadTokenWithTypeSkip(Token::Type::END_NOT_DEF_CHAR);
-			}
-
-			if (ahead->GetType() == Token::Type::BEGIN_CID_RANGE) {
-				ReadTokenWithTypeSkip(Token::Type::BEGIN_CID_RANGE);
-
-				auto count = ObjectFactory::GetIntegerValue(token);
-				for (decltype(count) i = 0; i < count; ++i) {
-					auto low = ReadHexadecimalString();
-					auto high = ReadHexadecimalString();
-					auto dest = ReadDirectObject();
-
-					BaseFontRange range;
-					range.SetRangeLow(low);
-					range.SetRangeHigh(high);
-					range.SetDestination(dest);
-
-					result.CIDRanges.push_back(range);
-				}
-
-				ReadTokenWithTypeSkip(Token::Type::END_CID_RANGE);
-			}
-
-			if (ahead->GetType() == Token::Type::BEGIN_CID_CHAR) {
-				ReadTokenWithTypeSkip(Token::Type::BEGIN_CID_CHAR);
-
-				auto count = ObjectFactory::GetIntegerValue(token);
-				for (decltype(count) i = 0; i < count; ++i) {
-					auto source = ReadHexadecimalString();
-					auto destination = ReadHexadecimalString();
-
-					FontCharMapping cid_char_mapping;
-					cid_char_mapping.Source = source;
-					cid_char_mapping.Destination = destination;
-
-					result.CIDCharMapping.push_back(cid_char_mapping);
-				}
-
-				ReadTokenWithTypeSkip(Token::Type::END_CID_CHAR);
-			}
-		}
-
-		if (token->GetType() == Token::Type::NAME_OBJECT) {
-			auto name = ObjectFactory::CreateName(token);
-
-			if (name == constant::Name::CIDSystemInfo) {
-				DictionaryObjectPtr system_info = ReadDictionary();
-				result.SystemInfo.Registry = system_info->FindAs<StringObjectPtr>(constant::Name::Registry);
-				result.SystemInfo.Ordering = system_info->FindAs<StringObjectPtr>(constant::Name::Ordering);
-				result.SystemInfo.Supplement = system_info->FindAs<IntegerObjectPtr>(constant::Name::Supplement);
-				ReadTokenWithTypeSkip(Token::Type::DEFINITION);
-			}
-
-			if (name == constant::Name::CMapName) {
-				result.CMapName = ReadName();
-				ReadTokenWithTypeSkip(Token::Type::DEFINITION);
-			}
-
-			if (name == constant::Name::CMapType) {
-				result.CMapType = ReadInteger();
-				ReadTokenWithTypeSkip(Token::Type::DEFINITION);
-			}
-		}
-	}
 }
 
 } // syntax

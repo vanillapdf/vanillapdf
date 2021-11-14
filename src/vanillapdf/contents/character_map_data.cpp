@@ -1,11 +1,13 @@
 #include "precompiled.h"
 
-#include "syntax/parsers/character_map_data.h"
+#include "contents/character_map_data.h"
 
 #include "utils/math_utils.h"
 
 namespace vanillapdf {
-namespace syntax {
+namespace contents {
+
+using namespace vanillapdf::syntax;
 
 bool BaseFontRange::Contains(BufferPtr key) const {
 	bool above_low = ValueEqualLessThan(m_low->GetValue(), key);
@@ -136,7 +138,7 @@ uint32_t BaseFontRange::Difference(BufferPtr source, BufferPtr dest) const {
 		}
 
 		uint8_t diff = Difference(src_value, dest_value, borrow);
-		result = (result << 8) + diff;
+		result += (diff << (i * 8));
 	}
 
 	assert(!borrow && "This function does not support negative result");
@@ -159,7 +161,6 @@ BufferPtr BaseFontRange::IncrementInternal(BufferPtr data, uint32_t count) const
 	BufferPtr result;
 
 	auto data_size = data->size();
-	uint32_t increment = count;
 	for (decltype(data_size) i = 0; i < data_size; ++i) {
 		auto item = data[data_size - i - 1];
 
@@ -167,16 +168,20 @@ BufferPtr BaseFontRange::IncrementInternal(BufferPtr data, uint32_t count) const
 		auto unsigned_item = reinterpret_cast<unsigned_type&>(item);
 
 		unsigned_type diff = std::numeric_limits<unsigned_type>::max() - unsigned_item;
+		uint32_t current_increment = (count >> (i * 8)) & 0xFF;
 
 		unsigned_type new_value;
-		if (diff > increment) {
-			uint32_t int_value = SafeAddition<uint32_t>(unsigned_item, increment);
+		if (diff >= current_increment) {
+			uint32_t int_value = SafeAddition<uint32_t>(unsigned_item, current_increment);
 			new_value = ValueConvertUtils::SafeConvert<unsigned_type>(int_value);
-			increment = 0;
+			count -= current_increment << (i * 8);
 		} else {
-			uint32_t int_value = increment - diff;
+			uint32_t int_value = (unsigned_item + current_increment) % 256;
 			new_value = ValueConvertUtils::SafeConvert<unsigned_type>(int_value);
-			increment = 1;
+
+			// This should work as borrow
+			count -= current_increment << (i * 8);
+			count += (1 << ((i + 1) * 8));
 		}
 
 		result->insert(result->begin(), new_value);
@@ -184,8 +189,17 @@ BufferPtr BaseFontRange::IncrementInternal(BufferPtr data, uint32_t count) const
 
 	// Check if there was overflow all the way
 	// Example: 0xFF + 1 would be 0 instead of 0x100
-	if (1 == increment) {
-		result->insert(result->begin(), 1);
+	if (count > 0) {
+
+		// There could be multiple bytes to insert
+		for (uint32_t i = 0; i < sizeof(count); ++i) {
+			uint32_t current_value = count % ((i + 1) * 256);
+			uint8_t current_char_value = ValueConvertUtils::SafeConvert<uint8_t>(current_value);
+
+			if (current_char_value != 0) {
+				result->insert(result->begin(), current_char_value);
+			}
+		}
 	}
 
 	return result;

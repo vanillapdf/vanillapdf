@@ -174,6 +174,8 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(EmbeddedCharacterMap);
 	DECLARE_OBJECT_HANDLE(UnicodeCharacterMap);
 
+	DECLARE_OBJECT_HANDLE(BaseFontRange);
+
 	/* Common data structures */
 
 	DECLARE_OBJECT_HANDLE(Date);

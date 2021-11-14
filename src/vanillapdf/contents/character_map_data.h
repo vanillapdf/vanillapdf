@@ -2,33 +2,31 @@
 #define _CHARACTER_MAP_DATA_H
 
 #include "utils/constants.h"
-
-#include "syntax/objects/objects.h"
-#include "syntax/utils/object_utils.h"
+#include "contents/content_fwd.h"
 
 #include <vector>
 
 namespace vanillapdf {
-namespace syntax {
+namespace contents {
 
-class BaseFontRange {
+class BaseFontRange : public IUnknown {
 public:
-	HexadecimalStringObjectPtr GetRangeLow() const { return m_low; }
-	void SetRangeLow(HexadecimalStringObjectPtr low) { m_low = low; }
+	syntax::HexadecimalStringObjectPtr GetRangeLow() const { return m_low; }
+	void SetRangeLow(syntax::HexadecimalStringObjectPtr low) { m_low = low; }
 
-	HexadecimalStringObjectPtr GetRangeHigh() const { return m_high; }
-	void SetRangeHigh(HexadecimalStringObjectPtr high) { m_high = high; }
+	syntax::HexadecimalStringObjectPtr GetRangeHigh() const { return m_high; }
+	void SetRangeHigh(syntax::HexadecimalStringObjectPtr high) { m_high = high; }
 
-	ObjectPtr GetDestination() const { return m_dest; }
-	void SetDestination(ObjectPtr dest) { m_dest = dest; }
+	syntax::ObjectPtr GetDestination() const { return m_dest; }
+	void SetDestination(syntax::ObjectPtr dest) { m_dest = dest; }
 
 	bool Contains(BufferPtr key) const;
 	BufferPtr GetMappedValue(BufferPtr key) const;
 
 private:
-	HexadecimalStringObjectPtr m_low;
-	HexadecimalStringObjectPtr m_high;
-	ObjectPtr m_dest;
+	syntax::HexadecimalStringObjectPtr m_low;
+	syntax::HexadecimalStringObjectPtr m_high;
+	syntax::ObjectPtr m_dest;
 
 	bool ValueEqualLessThan(BufferPtr source, BufferPtr dest) const;
 	uint32_t Difference(BufferPtr source, BufferPtr dest) const;
@@ -41,25 +39,25 @@ private:
 };
 
 struct CodeSpaceRange {
-	HexadecimalStringObjectPtr Begin;
-	HexadecimalStringObjectPtr End;
+	syntax::HexadecimalStringObjectPtr Begin;
+	syntax::HexadecimalStringObjectPtr End;
 };
 
 struct FontCharMapping {
-	HexadecimalStringObjectPtr Source;
-	HexadecimalStringObjectPtr Destination;
+	syntax::HexadecimalStringObjectPtr Source;
+	syntax::HexadecimalStringObjectPtr Destination;
 };
 
 struct CIDSystemInfo {
-	StringObjectPtr Registry;
-	StringObjectPtr Ordering;
-	IntegerObjectPtr Supplement;
+	syntax::StringObjectPtr Registry;
+	syntax::StringObjectPtr Ordering;
+	syntax::IntegerObjectPtr Supplement;
 };
 
 struct CharacterMapData {
 	CIDSystemInfo SystemInfo;
-	NameObjectPtr CMapName;
-	IntegerObjectPtr CMapType;
+	syntax::NameObjectPtr CMapName;
+	syntax::IntegerObjectPtr CMapType;
 
 	std::vector<CodeSpaceRange> CodeSpaceRanges;
 
@@ -73,7 +71,7 @@ struct CharacterMapData {
 	std::vector<FontCharMapping> CIDCharMapping;
 };
 
-} // syntax
+} // contents
 } // vanillapdf
 
 #endif /* _CHARACTER_MAP_DATA_H */

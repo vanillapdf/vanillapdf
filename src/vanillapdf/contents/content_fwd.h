@@ -121,6 +121,10 @@ class EndMarkedContentSequenceOperator;
 class BeginCompatibilitySectionOperator;
 class EndCompatibilitySectionOperator;
 
+// CMap
+
+class BaseFontRange; using BaseFontRangePtr = Deferred<BaseFontRange>;
+
 typedef Deferred<OperationBase> OperationBasePtr;
 typedef Deferred<OperationGeneric> OperationGenericPtr;
 

@@ -83,12 +83,6 @@ private:
 		types::ushort stream_gen_number);
 };
 
-class CharacterMapParser : public ParserBase, public ICharacterMapParser {
-public:
-	CharacterMapParser(WeakReference<File> file, IInputStreamPtr stream);
-	virtual CharacterMapData ReadCharacterMapData(void) override;
-};
-
 } // syntax
 } // vanillapdf
 

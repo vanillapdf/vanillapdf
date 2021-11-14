@@ -75,6 +75,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
 )
 
 set(VANILLAPDF_C_IMPLEMENTATION_CONTENTS_SOURCES
+    implementation/contents/c_base_font_range.cpp
 	implementation/contents/c_content_instruction.cpp
 	implementation/contents/c_content_object.cpp
 	implementation/contents/c_content_operation.cpp
@@ -82,6 +83,8 @@ set(VANILLAPDF_C_IMPLEMENTATION_CONTENTS_SOURCES
 )
 
 set(VANILLAPDF_CONTENTS_SOURCES
+    contents/character_map_data.cpp
+    contents/character_map_parser.cpp
 	contents/content_stream_objects.cpp
 	contents/content_stream_operations.cpp
 	contents/content_stream_parser.cpp
@@ -149,9 +152,9 @@ set(VANILLAPDF_SYNTAX_SOURCES
 	syntax/objects/stream_object.cpp
 	syntax/objects/string_object.cpp
 	
-	syntax/parsers/character_map_data.cpp
 	syntax/parsers/lexical_tree.cpp
 	syntax/parsers/parser.cpp
+    syntax/parsers/parser_utils.cpp
 	syntax/parsers/reverse_parser.cpp
 	syntax/parsers/reverse_tokenizer.cpp
 	syntax/parsers/token.cpp
@@ -189,6 +192,8 @@ set(VANILLAPDF_UTILS_SOURCES
 
 set(VANILLAPDF_CONTENTS_HEADERS
 	contents/content_fwd.h
+    contents/character_map_data.h
+    contents/character_map_parser.h
 	contents/content_stream_instruction_base.h
 	contents/content_stream_objects.h
 	contents/content_stream_operation_base.h
@@ -269,11 +274,11 @@ set(VANILLAPDF_SYNTAX_HEADERS
 	syntax/objects/stream_object.h
 	syntax/objects/string_object.h
 	
-	syntax/parsers/character_map_data.h
 	syntax/parsers/lexical_tree.h
 	syntax/parsers/object_stream_entry.h
 	syntax/parsers/parser.h
 	syntax/parsers/parser_interface.h
+    syntax/parsers/parser_utils.h
 	syntax/parsers/reverse_parser.h
 	syntax/parsers/reverse_tokenizer.h
 	syntax/parsers/token.h

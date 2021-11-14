@@ -4,7 +4,7 @@
 #include "semantics/utils/semantics_fwd.h"
 #include "semantics/objects/high_level_object.h"
 
-#include "syntax/parsers/character_map_data.h"
+#include "contents/character_map_data.h"
 
 namespace vanillapdf {
 namespace semantics {
@@ -42,7 +42,7 @@ public:
 	BufferPtr GetMappedValue(BufferPtr key) const;
 
 private:
-	mutable syntax::CharacterMapData m_data;
+	mutable contents::CharacterMapData m_data;
 	mutable bool m_initialized = false;
 
 	void Initialize() const;

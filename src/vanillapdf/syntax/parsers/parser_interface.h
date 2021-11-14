@@ -5,7 +5,6 @@
 #include "syntax/files/xref.h"
 
 #include "syntax/parsers/object_stream_entry.h"
-#include "syntax/parsers/character_map_data.h"
 
 #include "utils/constants.h"
 
@@ -29,13 +28,6 @@ public:
 	virtual types::stream_offset ReadLastXrefOffset() = 0;
 
 	virtual ~IReverseParser() {}
-};
-
-class ICharacterMapParser {
-public:
-	virtual CharacterMapData ReadCharacterMapData(void) = 0;
-
-	virtual ~ICharacterMapParser() {}
 };
 
 } // syntax

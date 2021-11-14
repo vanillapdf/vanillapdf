@@ -55,6 +55,7 @@
 #include "vanillapdf/semantics/c_page_contents.h"
 
 /* contents */
+#include "vanillapdf/contents/c_base_font_range.h"
 #include "vanillapdf/contents/c_content_object.h"
 #include "vanillapdf/contents/c_content_operator.h"
 #include "vanillapdf/contents/c_content_operation.h"

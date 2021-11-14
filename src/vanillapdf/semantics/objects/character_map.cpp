@@ -1,7 +1,7 @@
 #include "precompiled.h"
 
 #include "syntax/files/file.h"
-#include "syntax/parsers/parser.h"
+#include "contents/character_map_parser.h"
 
 #include "semantics/objects/character_map.h"
 
@@ -33,7 +33,7 @@ void UnicodeCharacterMap::Initialize() const {
 	auto body = _obj->GetBody();
 	auto input_stream = body->ToInputStream();
 
-	syntax::CharacterMapParser parser(_obj->GetFile(), input_stream);
+	contents::CharacterMapParser parser(_obj->GetFile(), input_stream);
 	m_data = parser.ReadCharacterMapData();
 	m_initialized = true;
 }
