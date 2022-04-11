@@ -185,6 +185,10 @@ void LicenseInfo::SetLicense(const char * filename) {
 
 	// Determine file size
 	auto file = std::make_shared<std::ifstream>(filename, std::ios::binary | std::ios::ate);
+	if (!file || !file->good()) {
+		throw GeneralException("Could not open license file " + std::string(filename));
+	}
+
 	auto length = file->tellg();
 
 	// Seek back to the beginning
