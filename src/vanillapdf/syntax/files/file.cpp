@@ -351,6 +351,12 @@ BufferPtr File::DecryptData(const Buffer& data,
 		return make_deferred_container<Buffer>(data);
 	}
 
+	// Decrypting empty content should result in empty content as well
+	// For AES this is also missing the IV, so the application crashes
+	if (data.size() == 0) {
+		return make_deferred_container<Buffer>();
+	}
+
 	auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
 	auto dictionary_object_number = encryption_dictionary->GetObjectNumber();
 	auto dictionary_generation_number = encryption_dictionary->GetGenerationNumber();
