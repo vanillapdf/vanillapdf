@@ -110,7 +110,10 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetAnnotations(PageObjec
 	{
 		OutputPageAnnotationsPtr annots;
 		bool contains = obj->GetAnnotations(annots);
-		if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+		if (!contains) {
+			return VANILLAPDF_ERROR_OBJECT_MISSING;
+		}
+
 		auto ptr = annots.AddRefGet();
 		*result = reinterpret_cast<PageAnnotationsHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
@@ -125,9 +128,28 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetMediaBox(PageObjectHa
 
 	try
 	{
-		auto media_box = obj->GetMediaBox();
+		OutputRectanglePtr media_box;
+		bool contains = obj->GetMediaBox(media_box);
+		if (!contains) {
+			return VANILLAPDF_ERROR_OBJECT_MISSING;
+		}
+
 		auto ptr = media_box.AddRefGet();
 		*result = reinterpret_cast<RectangleHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetMediaBox(PageObjectHandle* handle, RectangleHandle* value)
+{
+	PageObject* obj = reinterpret_cast<PageObject*>(handle);
+	Rectangle* media_box = reinterpret_cast<Rectangle*>(value);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(media_box);
+
+	try
+	{
+		obj->SetMediaBox(media_box);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }

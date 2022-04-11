@@ -46,20 +46,15 @@ void PageObject::SetResources(ResourceDictionaryPtr resources) {
 	_obj->Insert(Name::Resources, resources->GetObject());
 }
 
-RectanglePtr PageObject::GetMediaBox() const {
+bool PageObject::GetMediaBox(OutputRectanglePtr& result) const {
 	if (!_obj->Contains(Name::MediaBox)) {
-		auto parent = GetParent();
-		auto parent_dictionary = parent->GetObject();
-		if (!parent_dictionary->Contains(Name::MediaBox)) {
-			throw GeneralException("Media box is missing");
-		}
-
-		auto box = parent_dictionary->FindAs<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>>(Name::MediaBox);
-		return make_deferred<Rectangle>(box);
+		return false;
 	}
 
-	auto box = _obj->FindAs<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>>(Name::MediaBox);
-	return make_deferred<Rectangle>(box);
+	auto box_obj = _obj->FindAs<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>>(Name::MediaBox);
+	auto box = make_deferred<Rectangle>(box_obj);
+	result = box;
+	return true;
 }
 
 void PageObject::SetMediaBox(RectanglePtr media_box) {
@@ -68,7 +63,7 @@ void PageObject::SetMediaBox(RectanglePtr media_box) {
 		assert(removed && "Unable to remove existing item"); UNUSED(removed);
 	}
 
-	_obj->Insert(Name::MediaBox, media_box->GetObject()->Data());
+	_obj->Insert(Name::MediaBox, media_box->GetObject());
 }
 
 bool PageObject::GetAnnotations(OutputPageAnnotationsPtr& result) const {

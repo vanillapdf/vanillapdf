@@ -21,7 +21,7 @@ public:
 	bool GetResources(OutputResourceDictionaryPtr& result) const;
 	void SetResources(ResourceDictionaryPtr resources);
 
-	RectanglePtr GetMediaBox(void) const;
+	bool GetMediaBox(OutputRectanglePtr& result) const;
 	void SetMediaBox(RectanglePtr);
 
 	bool GetAnnotations(OutputPageAnnotationsPtr& result) const;
