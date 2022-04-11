@@ -28,24 +28,59 @@ extern "C"
 	*/
 
 	/**
+	* \brief Create a new rectangle with default values
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_Create(RectangleHandle** result);
+
+	/**
 	* \brief Get X-coordinate of lower-left corner
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_LowerLeftX(RectangleHandle* handle, IntegerObjectHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetLowerLeftX(RectangleHandle* handle, bigint_type* result);
+
+	/**
+	* \brief Set X-coordinate of lower-left corner
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetLowerLeftX(RectangleHandle* handle, bigint_type data);
 
 	/**
 	* \brief Get Y-coordinate of lower-left corner
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_LowerLeftY(RectangleHandle* handle, IntegerObjectHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetLowerLeftY(RectangleHandle* handle, bigint_type* result);
+
+	/**
+	* \brief Set Y-coordinate of lower-left corner
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetLowerLeftY(RectangleHandle* handle, bigint_type data);
 
 	/**
 	* \brief Get X-coordinate of upper-right corner
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_UpperRightX(RectangleHandle* handle, IntegerObjectHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetUpperRightX(RectangleHandle* handle, bigint_type* result);
+
+	/**
+	* \brief Set X-coordinate of upper-right corner
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetUpperRightX(RectangleHandle* handle, bigint_type data);
 
 	/**
 	* \brief Get Y-coordinate of upper-right corner
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_UpperRightY(RectangleHandle* handle, IntegerObjectHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetUpperRightY(RectangleHandle* handle, bigint_type* result);
+
+	/**
+	* \brief Set Y-coordinate of upper-right corner
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetUpperRightY(RectangleHandle* handle, bigint_type data);
+
+	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_ToUnknown(RectangleHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref ObjectHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_FromUnknown(IUnknownHandle* handle, RectangleHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release

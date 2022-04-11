@@ -100,6 +100,37 @@ TEST(BaseFontRange, IncrementMapping) {
 	ASSERT_EQ(BaseFontRange_Release(font_range_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 
+TEST(Rectangle, CreateRelease) {
+	RectangleHandle* rectangle_ptr = nullptr;
+
+	ASSERT_EQ(Rectangle_Create(&rectangle_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(rectangle_ptr, nullptr);
+	ASSERT_EQ(Rectangle_Release(rectangle_ptr), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(Rectangle, NullCheck) {
+	ASSERT_EQ(Rectangle_Create(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+	ASSERT_EQ(Rectangle_Release(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
+TEST(Rectangle, GetSet) {
+
+	const bigint_type CHECK_VALUE = 123456;
+
+	bigint_type int_value = 0;
+	RectangleHandle* rectangle_ptr = nullptr;
+
+	ASSERT_EQ(Rectangle_Create(&rectangle_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(rectangle_ptr, nullptr);
+
+	ASSERT_EQ(Rectangle_SetLowerLeftX(rectangle_ptr, CHECK_VALUE), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(Rectangle_GetLowerLeftX(rectangle_ptr, &int_value), VANILLAPDF_ERROR_SUCCESS);
+
+	ASSERT_EQ(int_value, CHECK_VALUE);
+
+	ASSERT_EQ(Rectangle_Release(rectangle_ptr), VANILLAPDF_ERROR_SUCCESS);
+}
+
 int main(int argc, char *argv[]) {
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();

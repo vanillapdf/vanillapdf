@@ -336,28 +336,23 @@ error_type process_resource_dictionary(ResourceDictionaryHandle* obj, int nested
 }
 
 error_type process_rectangle(RectangleHandle* obj, int nested) {
-	IntegerObjectHandle* lower_left_x = NULL;
-	IntegerObjectHandle* lower_left_y = NULL;
-	IntegerObjectHandle* upper_right_x = NULL;
-	IntegerObjectHandle* upper_right_y = NULL;
+	bigint_type lower_left_x = 0;
+	bigint_type lower_left_y = 0;
+	bigint_type upper_right_x = 0;
+	bigint_type upper_right_y = 0;
 
 	print_spaces(nested);
 	print_text("Rectangle begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_LowerLeftX(obj, &lower_left_x));
-	RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_LowerLeftY(obj, &lower_left_y));
-	RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_UpperRightX(obj, &upper_right_x));
-	RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_UpperRightY(obj, &upper_right_y));
+	RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_GetLowerLeftX(obj, &lower_left_x));
+	RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_GetLowerLeftY(obj, &lower_left_y));
+	RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_GetUpperRightX(obj, &upper_right_x));
+	RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_GetUpperRightY(obj, &upper_right_y));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(lower_left_x, nested + 1));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(lower_left_y, nested + 1));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(upper_right_x, nested + 1));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(upper_right_y, nested + 1));
-
-	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(lower_left_x));
-	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(lower_left_y));
-	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(upper_right_x));
-	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(upper_right_y));
+	print_spaces(nested + 1); print_text("Lower left X: %lld\n", lower_left_x);
+	print_spaces(nested + 1); print_text("Lower left Y: %lld\n", lower_left_y);
+	print_spaces(nested + 1); print_text("Upper right X: %lld\n", upper_right_x);
+	print_spaces(nested + 1); print_text("Upper right Y: %lld\n", upper_right_y);
 
 	print_spaces(nested);
 	print_text("Rectangle end\n");
