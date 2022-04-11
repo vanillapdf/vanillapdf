@@ -38,6 +38,9 @@ CharacterMapData CharacterMapParser::ReadCharacterMapData(void) {
 					range.Begin = ReadHexadecimalString();
 					range.End = ReadHexadecimalString();
 
+					range.Begin->SetEncryptionExempted();
+					range.End->SetEncryptionExempted();
+
 					result.CodeSpaceRanges.push_back(range);
 				}
 
@@ -58,6 +61,10 @@ CharacterMapData CharacterMapParser::ReadCharacterMapData(void) {
 					range.SetRangeHigh(high);
 					range.SetDestination(dest);
 
+					range.GetRangeLow()->SetEncryptionExempted();
+					range.GetRangeHigh()->SetEncryptionExempted();
+					range.GetDestination()->SetEncryptionExempted();
+
 					result.BaseFontRanges.push_back(range);
 				}
 
@@ -75,6 +82,9 @@ CharacterMapData CharacterMapParser::ReadCharacterMapData(void) {
 					FontCharMapping base_font_char_mapping;
 					base_font_char_mapping.Source = source;
 					base_font_char_mapping.Destination = destination;
+
+					base_font_char_mapping.Source->SetEncryptionExempted();
+					base_font_char_mapping.Destination->SetEncryptionExempted();
 
 					result.BaseFontCharMapping.push_back(base_font_char_mapping);
 				}
@@ -96,6 +106,10 @@ CharacterMapData CharacterMapParser::ReadCharacterMapData(void) {
 					range.SetRangeHigh(high);
 					range.SetDestination(dest);
 
+					range.GetRangeLow()->SetEncryptionExempted();
+					range.GetRangeHigh()->SetEncryptionExempted();
+					range.GetDestination()->SetEncryptionExempted();
+
 					result.NotDefinedRanges.push_back(range);
 				}
 
@@ -113,6 +127,9 @@ CharacterMapData CharacterMapParser::ReadCharacterMapData(void) {
 					FontCharMapping not_defined_char_mapping;
 					not_defined_char_mapping.Source = source;
 					not_defined_char_mapping.Destination = destination;
+
+					not_defined_char_mapping.Source->SetEncryptionExempted();
+					not_defined_char_mapping.Destination->SetEncryptionExempted();
 
 					result.NotDefinedCharMapping.push_back(not_defined_char_mapping);
 				}
@@ -134,6 +151,10 @@ CharacterMapData CharacterMapParser::ReadCharacterMapData(void) {
 					range.SetRangeHigh(high);
 					range.SetDestination(dest);
 
+					range.GetRangeLow()->SetEncryptionExempted();
+					range.GetRangeHigh()->SetEncryptionExempted();
+					range.GetDestination()->SetEncryptionExempted();
+
 					result.CIDRanges.push_back(range);
 				}
 
@@ -152,6 +173,9 @@ CharacterMapData CharacterMapParser::ReadCharacterMapData(void) {
 					cid_char_mapping.Source = source;
 					cid_char_mapping.Destination = destination;
 
+					cid_char_mapping.Source->SetEncryptionExempted();
+					cid_char_mapping.Destination->SetEncryptionExempted();
+
 					result.CIDCharMapping.push_back(cid_char_mapping);
 				}
 
@@ -164,9 +188,12 @@ CharacterMapData CharacterMapParser::ReadCharacterMapData(void) {
 
 			if (name == constant::Name::CIDSystemInfo) {
 				DictionaryObjectPtr system_info = ReadDictionary();
+				system_info->SetEncryptionExempted();
+
 				result.SystemInfo.Registry = system_info->FindAs<StringObjectPtr>(constant::Name::Registry);
 				result.SystemInfo.Ordering = system_info->FindAs<StringObjectPtr>(constant::Name::Ordering);
 				result.SystemInfo.Supplement = system_info->FindAs<IntegerObjectPtr>(constant::Name::Supplement);
+
 				ReadTokenWithTypeSkip(Token::Type::DEFINITION);
 			}
 
