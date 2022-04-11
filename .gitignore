@@ -1,6 +1,7 @@
 # Build files
 /.vs/
 /build/
+/out/
 
 # Test files
 !/test/*.pdf
