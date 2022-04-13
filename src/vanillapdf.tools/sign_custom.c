@@ -6,21 +6,18 @@ void print_sign_custom_help() {
 
 // Custom callbacks
 typedef struct {
-	char* data;
-	int size;
+	BufferHandle* data;
 } SignatureData;
 
 error_type sign_init(void* user_data, MessageDigestAlgorithmType algorithm) {
 	SignatureData* signature_data = (SignatureData*) user_data;
-	int data_size = 100;
+
+	const char SAMPLE_DATA[] = "Hello world!";
 
 	UNUSED(algorithm);
 
-	signature_data->data = malloc(data_size);
-	signature_data->size = data_size;
-
-	memset(signature_data->data, 0, signature_data->size);
-	snprintf(signature_data->data, signature_data->size, "Hello world!");
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Create(&signature_data->data));
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_SetData(signature_data->data, SAMPLE_DATA, sizeof(SAMPLE_DATA)));
 
 	return VANILLAPDF_ERROR_SUCCESS;
 }
@@ -42,19 +39,17 @@ error_type sign_update(void* user_data, const BufferHandle* data) {
 error_type sign_final(void* user_data, BufferHandle** result) {
 	SignatureData* signature_data = (SignatureData*) user_data;
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Create(result));
-	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_SetData(*result, signature_data->data, signature_data->size));
+	*result = signature_data->data;
 
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-void sign_cleanup(void* user_data) {
+error_type sign_cleanup(void* user_data) {
 	SignatureData* signature_data = (SignatureData*) user_data;
 
-	if (signature_data->data != NULL) {
-		free(signature_data->data);
-		signature_data->data = NULL;
-	}
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(signature_data->data));
+
+	return VANILLAPDF_ERROR_SUCCESS;
 }
 
 int process_sign_custom(int argc, char *argv[]) {

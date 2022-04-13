@@ -12,9 +12,10 @@ namespace vanillapdf {
 class ISigningKey : public virtual IUnknown, public IWeakReferenceable<ISigningKey> {
 public:
 	virtual void SignInitialize(MessageDigestAlgorithm algorithm) = 0;
-	virtual void SignUpdate(const Buffer& data) = 0;
+	virtual void SignUpdate(const BufferPtr data) = 0;
 	virtual void SignUpdate(IInputStreamPtr data, types::stream_size length) = 0;
 	virtual BufferPtr SignFinal() = 0;
+	virtual void SignCleanup() = 0;
 };
 
 } // vanillapdf

@@ -64,6 +64,8 @@ void DocumentSigner::OnBeforeOutputFlush(IInputOutputStreamPtr output) {
 
 	m_key->SignInitialize(m_digest);
 
+	SCOPE_GUARD([&]() { m_key->SignCleanup(); });
+
 	auto ranges_length = new_ranges->GetSize();
 	for (decltype(ranges_length) i = 0; i < ranges_length; i += 2) {
 		auto offset = new_ranges[i];

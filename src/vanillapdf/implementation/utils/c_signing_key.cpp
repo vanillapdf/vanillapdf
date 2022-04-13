@@ -76,12 +76,18 @@ public:
 				throw GeneralException("Unknown digest algorithm");
 		}
 
-		m_init(m_user_data, algorithm_type);
+		error_type rv = m_init(m_user_data, algorithm_type);
+		if (VANILLAPDF_ERROR_SUCCESS != rv) {
+			std::stringstream ss;
+			ss << "Custom key sign init operation returned: " << rv;
+			throw UserCancelledException(ss.str());
+		}
 	}
 
-	void SignUpdate(const Buffer& data) override {
-		auto input_ptr = reinterpret_cast<const BufferHandle*>(&data);
-		error_type rv = m_update(m_user_data, input_ptr);
+	void SignUpdate(BufferPtr data) override {
+		auto input_ptr = data.get();
+		auto input_handle = reinterpret_cast<const BufferHandle*>(input_ptr);
+		error_type rv = m_update(m_user_data, input_handle);
 		if (VANILLAPDF_ERROR_SUCCESS != rv) {
 			std::stringstream ss;
 			ss << "Custom key sign update operation returned: " << rv;
@@ -112,11 +118,16 @@ public:
 		}
 
 		auto result = reinterpret_cast<Buffer*>(output_ptr);
-		return BufferPtr(result, false);
+		return BufferPtr(result);
 	}
 
-	~CustomSigningKey() {
-		m_cleanup(m_user_data);
+	void SignCleanup() override {
+		error_type rv = m_cleanup(m_user_data);
+		if (VANILLAPDF_ERROR_SUCCESS != rv) {
+			std::stringstream ss;
+			ss << "Custom key sign cleanup operation returned: " << rv;
+			throw UserCancelledException(ss.str());
+		}
 	}
 
 private:

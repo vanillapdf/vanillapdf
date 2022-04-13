@@ -32,11 +32,10 @@ public:
 
 	// ISigningKey
 	void SignInitialize(MessageDigestAlgorithm algorithm);
-	void SignUpdate(const Buffer& data);
+	void SignUpdate(BufferPtr data);
 	void SignUpdate(IInputStreamPtr data, types::stream_size length);
 	BufferPtr SignFinal();
-
-	~PKCS12KeyImpl();
+	void SignCleanup();
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
@@ -88,7 +87,7 @@ void PKCS12Key::SignInitialize(MessageDigestAlgorithm algorithm) {
 	return m_impl->SignInitialize(algorithm);
 }
 
-void PKCS12Key::SignUpdate(const Buffer& data) {
+void PKCS12Key::SignUpdate(const BufferPtr data) {
 	return m_impl->SignUpdate(data);
 }
 
@@ -98,6 +97,10 @@ void PKCS12Key::SignUpdate(IInputStreamPtr data, types::stream_size length) {
 
 BufferPtr PKCS12Key::SignFinal() {
 	return m_impl->SignFinal();
+}
+
+void PKCS12Key::SignCleanup() {
+	return m_impl->SignCleanup();
 }
 
 #pragma endregion
@@ -344,9 +347,9 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
 
 }
 
-void PKCS12Key::PKCS12KeyImpl::SignUpdate(const Buffer& data) {
-	auto input_stream = data.ToInputStream();
-	SignUpdate(input_stream, data.size());
+void PKCS12Key::PKCS12KeyImpl::SignUpdate(BufferPtr data) {
+	auto input_stream = data->ToInputStream();
+	SignUpdate(input_stream, data->size());
 }
 
 void PKCS12Key::PKCS12KeyImpl::SignUpdate(IInputStreamPtr data, types::stream_size length) {
@@ -424,7 +427,7 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::SignFinal() {
 
 }
 
-PKCS12Key::PKCS12KeyImpl::~PKCS12KeyImpl() {
+void PKCS12Key::PKCS12KeyImpl::SignCleanup() {
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
