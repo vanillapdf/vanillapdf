@@ -757,7 +757,7 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
 
 	FileWriter writer;
 	writer.Subscribe(signer);
-	writer.WriteIncremental(m_holder, destination);
+	writer.Write(m_holder, destination);
 }
 
 } // semantics
