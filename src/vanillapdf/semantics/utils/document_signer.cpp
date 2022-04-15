@@ -50,6 +50,14 @@ void DocumentSigner::OnBeforeOutputFlush(IInputOutputStreamPtr output) {
 	auto byte_ranges_offset = byte_range_raw->GetOffset();
 	auto signature_contents_offset = signature_contents->GetOffset();
 
+	if (byte_ranges_offset == constant::BAD_OFFSET) {
+		throw GeneralException("Invalid offset for byte range array");
+	}
+
+	if (signature_contents_offset == constant::BAD_OFFSET) {
+		throw GeneralException("Invalid offset for signature contents");
+	}
+
 	auto signature_contents_attribute = signature_contents->GetAttributeAs<SerializationOverrideAttributePtr>(IAttribute::Type::SerializationOverride);
 	auto signature_contents_overriden_value = signature_contents_attribute->GetValue();
 	auto after_signature_contents_offset = SafeAddition<types::stream_offset>(signature_contents_offset, signature_contents_overriden_value.size());
