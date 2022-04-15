@@ -3,6 +3,7 @@
 #include "semantics/utils/document_signer.h"
 
 #include "syntax/utils/name_constants.h"
+#include "syntax/utils/tracking_identifier_attribute.h"
 #include "syntax/utils/serialization_override_attribute.h"
 
 #include "utils/math_utils.h"
@@ -16,18 +17,25 @@ DocumentSigner::DocumentSigner(ISigningKeyPtr key, MessageDigestAlgorithm digest
 	m_key = key;
 	m_digest = digest;
 	m_dictionary = signature_dictionary;
+
+	std::string tracking_identifier_value = std::to_string(m_dictionary->GetRootObjectNumber()) + std::to_string(m_dictionary->GetRootGenerationNumber());
+	TrackingIdentifierAttributePtr tracking_identifier = make_deferred<TrackingIdentifierAttribute>(tracking_identifier_value);
+	m_dictionary->AddAttribute(tracking_identifier);
 }
 
 void DocumentSigner::OnAfterObjectWrite(ObjectPtr obj) {
-	if (obj->GetObjectNumber() != m_dictionary->GetObjectNumber()) {
+
+	if (!obj->ContainsAttribute(IAttribute::Type::TrackingIdentifier)) {
 		return;
 	}
 
-	if (obj->GetGenerationNumber() != m_dictionary->GetGenerationNumber()) {
-		return;
-	}
+	auto original_tracking_identifier = m_dictionary->GetAttributeAs<TrackingIdentifierAttributePtr>(IAttribute::Type::TrackingIdentifier);
+	auto obj_tracking_identifier = obj->GetAttributeAs<TrackingIdentifierAttributePtr>(IAttribute::Type::TrackingIdentifier);
 
-	m_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(obj);
+	// This condition should only match for the same object in the cloned destination
+	if (original_tracking_identifier->GetValue() == obj_tracking_identifier->GetValue()) {
+		m_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(obj);
+	}
 }
 
 void DocumentSigner::OnBeforeOutputFlush(IInputOutputStreamPtr output) {

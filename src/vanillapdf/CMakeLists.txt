@@ -290,6 +290,8 @@ set(VANILLAPDF_SYNTAX_HEADERS
 	syntax/utils/output_pointer.h
 	syntax/utils/syntax_fwd.h
 	syntax/utils/object_utils.h
+	syntax/utils/serialization_override_attribute.h
+	syntax/utils/tracking_identifier_attribute.h
 )
 
 set(VANILLAPDF_UTILS_HEADERS

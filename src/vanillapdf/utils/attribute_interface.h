@@ -10,7 +10,8 @@ public:
 	enum class Type {
 		Undefined = 0,
 		Empty,
-		SerializationOverride
+		SerializationOverride,
+		TrackingIdentifier
 	};
 
 	virtual bool Equals(const IAttribute& other) const;

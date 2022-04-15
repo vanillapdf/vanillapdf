@@ -15,6 +15,7 @@ class DeferredArrayObject;
 
 // Attributes
 class SerializationOverrideAttribute; using SerializationOverrideAttributePtr = Deferred<SerializationOverrideAttribute>;
+class TrackingIdentifierAttribute; using TrackingIdentifierAttributePtr = Deferred<TrackingIdentifierAttribute>;
 
 // Exceptions
 class FileDisposedException;
