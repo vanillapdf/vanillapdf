@@ -1,12 +1,13 @@
 #include "tools.h"
 
 void print_sign_help() {
-	printf("Usage: sign -s [source file] -d [destination file] -k [key file] -p [key password]");
+	printf("Usage: sign -s [source file] -d [destination file] -k [key file] -p [key password] -l [license file]");
 }
 
 int process_sign(int argc, char *argv[]) {
 
 	int arg_counter = 0;
+	string_type license_file = NULL;
 	string_type source_document_path = NULL;
 	string_type destination_file_path = NULL;
 	string_type key_file = NULL;
@@ -41,6 +42,12 @@ int process_sign(int argc, char *argv[]) {
 		} else if (strcmp(argv[arg_counter], "-p") == 0 && (arg_counter + 1 < argc)) {
 			key_password = argv[arg_counter + 1];
 			arg_counter++;
+
+		// license
+		} else if (strcmp(argv[arg_counter], "-l") == 0 && (arg_counter + 1 < argc)) {
+			license_file = argv[arg_counter + 1];
+			arg_counter++;
+
 		} else {
 			print_sign_help();
 			return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
@@ -60,6 +67,10 @@ int process_sign(int argc, char *argv[]) {
 	if (key_file == NULL) {
 		print_sign_help();
 		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
+	}
+
+	if (license_file != NULL) {
+		RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_SetLicenseFile(license_file));
 	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_CreateFromFile(key_file, key_password, &pkcs12_key));

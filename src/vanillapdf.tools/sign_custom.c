@@ -1,7 +1,7 @@
 #include "tools.h"
 
 void print_sign_custom_help() {
-	printf("Usage: sign_custom -s [source file] -d [destination file]");
+	printf("Usage: sign_custom -s [source file] -d [destination file] -l [license file]");
 }
 
 // Custom callbacks
@@ -53,6 +53,7 @@ error_type sign_cleanup(void* user_data) {
 }
 
 int process_sign_custom(int argc, char *argv[]) {
+	string_type license_file = NULL;
 	string_type source_document_path = NULL;
 	string_type destination_file_path = NULL;
 
@@ -76,6 +77,12 @@ int process_sign_custom(int argc, char *argv[]) {
 		} else if (strcmp(argv[i], "-d") == 0 && (i + 1 < argc)) {
 			destination_file_path = argv[i + 1];
 			i++;
+
+		// license
+		} else if (strcmp(argv[i], "-l") == 0 && (i + 1 < argc)) {
+			license_file = argv[i + 1];
+			i++;
+
 		} else {
 			print_sign_custom_help();
 			return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
@@ -85,6 +92,10 @@ int process_sign_custom(int argc, char *argv[]) {
 	if (source_document_path == NULL || destination_file_path == NULL) {
 		print_sign_custom_help();
 		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
+	}
+
+	if (license_file != NULL) {
+		RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_SetLicenseFile(license_file));
 	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(SigningKey_CreateCustom(&sign_init, &sign_update, &sign_final, &sign_cleanup, &user_data, &signing_key));
