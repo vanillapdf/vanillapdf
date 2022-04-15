@@ -118,11 +118,9 @@ int main(int argc, char *argv[]) {
 	// Some test documents are broken for save currently
 	if (skip_save != VANILLAPDF_RV_TRUE) {
 		RETURN_ERROR_IF_NOT_SUCCESS(process_document_save(document, 0));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_document_save_incremental(document, 0));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_document_merge(document, merge_file, 0));
 	}
-
-	// TODO: Incremental saving broken on some files
-	// RETURN_ERROR_IF_NOT_SUCCESS(process_document_save_incremental(document, 0));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));

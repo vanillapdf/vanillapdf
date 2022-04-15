@@ -1061,7 +1061,6 @@ error_type process_document_save(DocumentHandle* document, int nested) {
 	RETURN_ERROR_IF_NOT_SUCCESS(File_CreateStream(input_output_stream, "UNUSED", &file));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_SaveFile(document, file));
-	//RETURN_ERROR_IF_NOT_SUCCESS(Document_Save(document, "output.pdf"));
 
 	// Check the file consistency
 	RETURN_ERROR_IF_NOT_SUCCESS(process_file(file, nested + 1));
@@ -1086,6 +1085,9 @@ error_type process_document_save_incremental(DocumentHandle* document, int neste
 	RETURN_ERROR_IF_NOT_SUCCESS(File_CreateStream(input_output_stream, "UNUSED", &file));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_SaveIncrementalFile(document, file));
+
+	// Check the file consistency
+	RETURN_ERROR_IF_NOT_SUCCESS(process_file(file, nested + 1));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));
 	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_Release(input_output_stream));
