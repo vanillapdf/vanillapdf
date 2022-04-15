@@ -1131,6 +1131,51 @@ error_type process_document_merge(DocumentHandle* document, string_type merge_fi
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
+error_type process_document_sign(DocumentHandle* document, string_type key_file, string_type key_password, int nested) {
+	FileHandle* file = NULL;
+	InputOutputStreamHandle* input_output_stream = NULL;
+
+	PKCS12KeyHandle* pkcs12_key = NULL;
+	SigningKeyHandle* signing_key = NULL;
+	DateHandle* signing_time = NULL;
+	DocumentSignatureSettingsHandle* signature_settings = NULL;
+
+	print_spaces(nested);
+	print_text("Process document sign begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_CreateFromMemory(&input_output_stream));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_CreateStream(input_output_stream, "UNUSED", &file));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_CreateFromFile(key_file, key_password, &pkcs12_key));
+	RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_ToSigningKey(pkcs12_key, &signing_key));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Date_CreateCurrent(&signing_time));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_Create(&signature_settings));
+	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_SetSigningKey(signature_settings, signing_key));
+	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_SetDigest(signature_settings, MessageDigestAlgorithmType_SHA256));
+	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_SetSigningTime(signature_settings, signing_time));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_Sign(document, file, signature_settings));
+
+	// Check the file consistency
+	RETURN_ERROR_IF_NOT_SUCCESS(process_file(file, nested + 1));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_Release(signature_settings));
+	RETURN_ERROR_IF_NOT_SUCCESS(Date_Release(signing_time));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(SigningKey_Release(signing_key));
+	RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_Release(pkcs12_key));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));
+	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_Release(input_output_stream));
+
+	print_spaces(nested);
+	print_text("Process document sign end\n");
+
+	return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
 error_type process_interactive_form(InteractiveFormHandle* obj, int nested) {
 	FieldCollectionHandle* fields = NULL;
 

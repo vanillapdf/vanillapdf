@@ -116,6 +116,7 @@ error_type process_date(DateHandle* obj, int nested);
 error_type process_document_save(DocumentHandle* document, int nested);
 error_type process_document_save_incremental(DocumentHandle* document, int nested);
 error_type process_document_merge(DocumentHandle* document, string_type merge_file, int nested);
+error_type process_document_sign(DocumentHandle* document, string_type key_file, string_type key_password, int nested);
 
 // Some parameters to functions are unused
 #define UNUSED(x) (void)(x)

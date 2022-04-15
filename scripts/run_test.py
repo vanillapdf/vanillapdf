@@ -18,6 +18,8 @@ CERTIFICATE_OPTION = "-k"
 MERGE_OPTION = "-m"
 QUIET_OPTION = "-q"
 SKIP_SAVE_OPTION = "-ss"
+SKIP_INCREMENTAL_SAVE_OPTION = "-si"
+SIGNING_CERTIFICATE_OPTION = "-sc"
 
 def normalize_string( str ):
 	normalized = unicodedata.normalize('NFC', str)
@@ -61,6 +63,15 @@ if ("Merge" in config_data):
 
 if ("SkipSave" in config_data and test_filename in config_data["SkipSave"]):
 	base_parameters.append(SKIP_SAVE_OPTION)
+
+if ("SkipIncrementalSave" in config_data and test_filename in config_data["SkipIncrementalSave"]):
+	base_parameters.append(SKIP_INCREMENTAL_SAVE_OPTION)
+
+if ("SigningCertificate" in config_data):
+	signing_certificate_path = os.path.join(source_root_path, config_data["SigningCertificate"])
+
+	base_parameters.append(SIGNING_CERTIFICATE_OPTION)
+	base_parameters.append(signing_certificate_path)
 
 # Determine if the file is encrypted
 is_encrypted = test_filename in encryption_data

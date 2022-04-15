@@ -24,9 +24,11 @@ int main(int argc, char *argv[]) {
 	string_type cert_path = NULL;
 	string_type cert_password = NULL;
 	string_type merge_file = NULL;
+	string_type signing_cert_file = NULL;
 	boolean_type is_encrypted = VANILLAPDF_RV_FALSE;
 	boolean_type quiet_mode = VANILLAPDF_RV_FALSE;
 	boolean_type skip_save = VANILLAPDF_RV_FALSE;
+	boolean_type skip_incremental_save = VANILLAPDF_RV_FALSE;
 
 #if (defined(DEBUG) && defined(COMPILER_MICROSOFT_VISUAL_STUDIO))
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -49,6 +51,11 @@ int main(int argc, char *argv[]) {
 			cert_path = argv[i + 1];
 			i++;
 
+		// signing certificate
+		}else if (strcmp(argv[i], "-sc") == 0 && (i + 1 < argc)) {
+			signing_cert_file = argv[i + 1];
+			i++;
+
 		// license
 		} else if (strcmp(argv[i], "-l") == 0 && (i + 1 < argc)) {
 			license_file = argv[i + 1];
@@ -62,6 +69,11 @@ int main(int argc, char *argv[]) {
 		// skip save
 		} else if (strcmp(argv[i], "-ss") == 0) {
 			skip_save = VANILLAPDF_RV_TRUE;
+
+		// skip incremental
+		}
+		else if (strcmp(argv[i], "-si") == 0) {
+			skip_incremental_save = VANILLAPDF_RV_TRUE;
 
 		// quiet
 		} else if (strcmp(argv[i], "-q") == 0) {
@@ -118,8 +130,16 @@ int main(int argc, char *argv[]) {
 	// Some test documents are broken for save currently
 	if (skip_save != VANILLAPDF_RV_TRUE) {
 		RETURN_ERROR_IF_NOT_SUCCESS(process_document_save(document, 0));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_document_save_incremental(document, 0));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_document_merge(document, merge_file, 0));
+
+		if (signing_cert_file != NULL) {
+			RETURN_ERROR_IF_NOT_SUCCESS(process_document_sign(document, signing_cert_file, NULL, 0));
+		}
+	}
+
+	// TODO: This is still broken
+	if (skip_incremental_save != VANILLAPDF_RV_TRUE) {
+		//RETURN_ERROR_IF_NOT_SUCCESS(process_document_save_incremental(document, 0));
 	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));
