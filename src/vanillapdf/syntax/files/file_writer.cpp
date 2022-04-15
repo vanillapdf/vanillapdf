@@ -1069,6 +1069,8 @@ XrefBasePtr FileWriter::CreateIncrementalXref(FilePtr source, FilePtr destinatio
 					new_obj_stream_number,
 					new_index);
 
+				compressed_entry->ReleaseReference();
+
 				new_entry->SetFile(source);
 				new_entry->SetReference(obj);
 				new_entry->SetInitialized();
