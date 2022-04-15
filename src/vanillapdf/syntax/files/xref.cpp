@@ -222,8 +222,10 @@ void XrefTable::Add(XrefEntryBasePtr entry) {
 	bool is_used = ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(entry);
 
 	// Xref table can only stored free and used entries
-	assert((is_free || is_used) && "Adding invalid entry type to xref table");
-	UNUSED(is_free); UNUSED(is_used);
+	assert((is_free || is_used) && "Adding unsupported entry type into the xref table");
+	if (!is_free && !is_used) {
+		throw GeneralException("Adding unsupported entry type into the xref table");
+	}
 
 	// Perform the addition
 	XrefBase::Add(entry);
