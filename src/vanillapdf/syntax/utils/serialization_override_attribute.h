@@ -11,31 +11,26 @@ namespace syntax {
 class SerializationOverrideAttribute : public IAttribute {
 public:
 	SerializationOverrideAttribute() = default;
-	explicit SerializationOverrideAttribute(const std::string& value);
 
-	std::string GetValue(void) const;
+	explicit SerializationOverrideAttribute(const std::string& value) : m_value(value) {
 
-	virtual Type GetType(void) const noexcept override;
-	virtual SerializationOverrideAttribute* Clone(void) const;
+	}
+
+	std::string GetValue(void) const {
+		return m_value;
+	}
+
+	virtual Type GetType(void) const noexcept override {
+		return IAttribute::Type::SerializationOverride;
+	}
+
+	virtual SerializationOverrideAttribute* Clone(void) const {
+		return pdf_new SerializationOverrideAttribute(m_value);
+	}
 
 private:
 	std::string m_value;
 };
-
-inline SerializationOverrideAttribute::SerializationOverrideAttribute(const std::string& value) : m_value(value) {
-}
-
-inline std::string SerializationOverrideAttribute::GetValue(void) const {
-	return m_value;
-}
-
-inline IAttribute::Type SerializationOverrideAttribute::GetType(void) const noexcept {
-	return IAttribute::Type::SerializationOverride;
-}
-
-inline SerializationOverrideAttribute* SerializationOverrideAttribute::Clone(void) const {
-	return pdf_new SerializationOverrideAttribute(m_value);
-}
 
 } // syntax
 } // vanillapdf
