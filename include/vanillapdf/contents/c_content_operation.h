@@ -188,14 +188,14 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToEndText(ContentOperationHandle* handle, ContentOperationEndTextHandle** result);
 
 	/**
-	* \brief Reinterpret current object as \ref IUnknownHandle
+	* \brief Reinterpret current object as \ref ContentInstructionHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToUnknown(ContentOperationHandle* handle, IUnknownHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToInstruction(ContentOperationHandle* handle, ContentInstructionHandle** result);
 
 	/**
-	* \brief Convert \ref IUnknownHandle to \ref ContentOperationHandle
+	* \brief Convert \ref ContentInstructionHandle to \ref ContentOperationHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_FromUnknown(IUnknownHandle* handle, ContentOperationHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_FromInstruction(ContentInstructionHandle* handle, ContentOperationHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release

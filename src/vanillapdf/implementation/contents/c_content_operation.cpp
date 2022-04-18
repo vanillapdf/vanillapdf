@@ -180,12 +180,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToEndText(ContentO
 	return SafeObjectConvert<OperationBase, OperationEndText, ContentOperationHandle, ContentOperationEndTextHandle>(handle, result);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToUnknown(ContentOperationHandle* handle, IUnknownHandle** result) {
-	return SafeObjectConvert<OperationBase, IUnknown, ContentOperationHandle, IUnknownHandle>(handle, result);
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToInstruction(ContentOperationHandle* handle, ContentInstructionHandle** result) {
+	return SafeObjectConvert<OperationBase, InstructionBase, ContentOperationHandle, ContentInstructionHandle>(handle, result);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_FromUnknown(IUnknownHandle* handle, ContentOperationHandle** result) {
-	return SafeObjectConvert<IUnknown, OperationBase, IUnknownHandle, ContentOperationHandle>(handle, result);
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_FromInstruction(ContentInstructionHandle* handle, ContentOperationHandle** result) {
+	return SafeObjectConvert<InstructionBase, OperationBase, ContentInstructionHandle, ContentOperationHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_Release(ContentOperationHandle* handle) {
