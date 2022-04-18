@@ -289,7 +289,10 @@ bool File::SetEncryptionPassword(const Buffer& password) {
 }
 
 bool File::IsEncrypted(void) const {
-	// Returns false if wasn't initialized
+	if (!_initialized) {
+		throw FileNotInitializedException(_filename);
+	}
+
 	return (!_encryption_dictionary.empty() && _encryption_dictionary != NullObject::GetInstance());
 }
 
@@ -637,10 +640,18 @@ ObjectPtr File::GetIndirectObjectInternal(
 }
 
 HeaderPtr File::GetHeader(void) const {
+	if (!_initialized) {
+		throw FileNotInitializedException(_filename);
+	}
+
 	return _header;
 }
 
 XrefChainPtr File::GetXrefChain(void) const {
+	if (!_initialized) {
+		throw FileNotInitializedException(_filename);
+	}
+
 	return _xref;
 }
 
