@@ -11,6 +11,8 @@ OutputStream::OutputStream(std::shared_ptr<std::ostream> stream) : m_stream(stre
 	if (m_stream == nullptr) {
 		throw GeneralException("Could not create output stream");
 	}
+
+	m_output_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 void OutputStream::Write(const Buffer& data) {
@@ -71,6 +73,14 @@ void OutputStream::SetOutputPosition(types::stream_size pos) {
 
 void OutputStream::SetOutputPosition(types::stream_size pos, SeekDirection way) {
 	m_stream->seekp(pos, StreamUtils::ConvertFromSeekDirection(way));
+}
+
+void OutputStream::ExclusiveOutputLock() {
+	m_output_lock->lock();
+}
+
+void OutputStream::ExclusiveOutputUnlock() {
+	m_output_lock->unlock();
 }
 
 } // vanillapdf

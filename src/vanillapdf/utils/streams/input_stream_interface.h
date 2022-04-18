@@ -18,6 +18,9 @@ public:
 	virtual void SetInputPosition(types::stream_size pos) = 0;
 	virtual void SetInputPosition(types::stream_size pos, SeekDirection way) = 0;
 
+	virtual void ExclusiveInputLock() = 0;
+	virtual void ExclusiveInputUnlock() = 0;
+
 	virtual bool Eof(void) const = 0;
 	virtual bool Ignore(void) = 0;
 	virtual int Get(void) = 0;

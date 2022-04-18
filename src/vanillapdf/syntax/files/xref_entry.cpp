@@ -148,12 +148,16 @@ void XrefUsedEntry::Initialize(void) {
 
 	auto locked_file = _file.GetReference();
 	auto input = locked_file->GetInputStream();
+
+	input->ExclusiveInputLock();
+
 	auto rewind_pos = input->GetInputPosition();
 
 	// We want to capture input by value, because it might be out of scope
 	// In order to call non-const method we have to tag the lambda mutable
 	auto cleanup_lambda = [input, rewind_pos]() mutable {
 		input->SetInputPosition(rewind_pos);
+		input->ExclusiveInputUnlock();
 	};
 
 	SCOPE_GUARD(cleanup_lambda);

@@ -11,6 +11,8 @@ InputStream::InputStream(std::shared_ptr<std::istream> stream) : m_stream(stream
 	if (m_stream == nullptr) {
 		throw GeneralException("Could not create input stream");
 	}
+
+	m_input_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 BufferPtr InputStream::Read(types::stream_size len) {
@@ -137,6 +139,14 @@ BufferPtr InputStream::Readline(void) {
 	}
 
 	return result;
+}
+
+void InputStream::ExclusiveInputLock() {
+	m_input_lock->lock();
+}
+
+void InputStream::ExclusiveInputUnlock() {
+	m_input_lock->unlock();
 }
 
 bool InputStream::Eof(void) const {

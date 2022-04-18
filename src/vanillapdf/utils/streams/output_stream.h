@@ -3,6 +3,8 @@
 
 #include "utils/streams/output_stream_interface.h"
 
+#include <mutex>
+
 namespace vanillapdf {
 
 class OutputStream : public virtual IOutputStream {
@@ -26,8 +28,12 @@ public:
 	virtual void SetOutputPosition(types::stream_size pos) override;
 	virtual void SetOutputPosition(types::stream_size pos, SeekDirection way) override;
 
+	virtual void ExclusiveOutputLock() override;
+	virtual void ExclusiveOutputUnlock() override;
+
 protected:
 	std::shared_ptr<std::ostream> m_stream;
+	std::shared_ptr<std::recursive_mutex> m_output_lock;
 };
 
 } // vanillapdf

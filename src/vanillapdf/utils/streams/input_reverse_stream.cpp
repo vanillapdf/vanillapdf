@@ -21,6 +21,7 @@ const types::size_type REVERSE_BUFFER_PUTBACK_SIZE = 16;
 InputReverseStream::InputReverseStream(IInputStreamPtr stream, types::stream_size size) {
 	m_buffer = std::unique_ptr<ReverseBuf>(pdf_new ReverseBuf(stream, size));
 	m_stream = std::unique_ptr<std::istream>(pdf_new std::istream(m_buffer.get()));
+	m_input_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 InputReverseStream::ReverseBuf::ReverseBuf(IInputStreamPtr stream, types::stream_size size)
@@ -254,6 +255,14 @@ BufferPtr InputReverseStream::Readline(void) {
 	m_stream->unget();
 
 	return result;
+}
+
+void InputReverseStream::ExclusiveInputLock() {
+	m_input_lock->lock();
+}
+
+void InputReverseStream::ExclusiveInputUnlock() {
+	m_input_lock->unlock();
 }
 
 bool InputReverseStream::Eof(void) const {

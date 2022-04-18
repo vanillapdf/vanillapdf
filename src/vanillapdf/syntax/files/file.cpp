@@ -93,6 +93,10 @@ void File::Initialize() {
 		return;
 	}
 
+	_input->ExclusiveInputLock();
+
+	SCOPE_GUARD_CAPTURE_REFERENCES( _input->ExclusiveInputUnlock() );
+
 	// Seek to the end of file
 	_input->SetInputPosition(0, SeekDirection::End);
 

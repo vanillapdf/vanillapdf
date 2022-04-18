@@ -28,6 +28,9 @@ public:
 	virtual void SetOutputPosition(types::stream_size pos) = 0;
 	virtual void SetOutputPosition(types::stream_size pos, SeekDirection way) = 0;
 
+	virtual void ExclusiveOutputLock() = 0;
+	virtual void ExclusiveOutputUnlock() = 0;
+
 	virtual ~IOutputStream() {};
 };
 

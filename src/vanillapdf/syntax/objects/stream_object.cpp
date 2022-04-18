@@ -125,18 +125,22 @@ BufferPtr StreamObject::GetBodyRaw() const {
 
 	auto locked_file = m_file.GetReference();
 	auto input = locked_file->GetInputStream();
-	auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
-	auto pos = input->GetInputPosition();
+
+	input->ExclusiveInputLock();
 	input->SetInputPosition(_raw_data_offset);
+
+	auto pos = input->GetInputPosition();
 
 	// We want to capture input by value, because it might be out of scope
 	// In order to call non-const method we have to tag the lambda mutable
 	auto cleanup_lambda = [input, pos]() mutable {
 		input->SetInputPosition(pos);
+		input->ExclusiveInputUnlock();
 	};
 
 	SCOPE_GUARD(cleanup_lambda);
 
+	auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
 	auto body = input->Read(size->SafeConvert<types::size_type>());
 
 	if (IsEncryptionExempted() || !locked_file->IsEncrypted()) {

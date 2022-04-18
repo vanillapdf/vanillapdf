@@ -3,6 +3,8 @@
 
 #include "utils/streams/input_stream_interface.h"
 
+#include <mutex>
+
 namespace vanillapdf {
 
 class InputStream : public virtual IInputStream {
@@ -17,6 +19,9 @@ public:
 	virtual void SetInputPosition(types::stream_size pos) override;
 	virtual void SetInputPosition(types::stream_size pos, SeekDirection way) override;
 
+	virtual void ExclusiveInputLock() override;
+	virtual void ExclusiveInputUnlock() override;
+
 	virtual bool Eof(void) const override;
 	virtual bool Ignore(void) override;
 	virtual int Get(void) override;
@@ -28,6 +33,7 @@ public:
 
 protected:
 	std::shared_ptr<std::istream> m_stream;
+	std::shared_ptr<std::recursive_mutex> m_input_lock;
 };
 
 } // vanillapdf
