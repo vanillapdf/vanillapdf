@@ -143,7 +143,11 @@ BufferPtr StreamObject::GetBodyRaw() const {
 	auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
 	auto body = input->Read(size->SafeConvert<types::size_type>());
 
-	if (IsEncryptionExempted() || !locked_file->IsEncrypted()) {
+	// During the initialization it is unknown whether a file is encrypted
+	// This is important for object streams that are being parsed before encryption dictionary
+	bool is_file_encrypted = locked_file->IsInitialized() && locked_file->IsEncrypted();
+
+	if (IsEncryptionExempted() || !is_file_encrypted) {
 		_body->assign(body.begin(), body.end());
 		_body->SetInitialized();
 		return _body;

@@ -647,8 +647,12 @@ HeaderPtr File::GetHeader(void) const {
 	return _header;
 }
 
-XrefChainPtr File::GetXrefChain(void) const {
-	if (!_initialized) {
+XrefChainPtr File::GetXrefChain() const {
+	return GetXrefChain(true);
+}
+
+XrefChainPtr File::GetXrefChain(bool check_initialization) const {
+	if (check_initialization && !_initialized) {
 		throw FileNotInitializedException(_filename);
 	}
 

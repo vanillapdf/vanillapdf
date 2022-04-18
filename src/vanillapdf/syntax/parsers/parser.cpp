@@ -585,7 +585,7 @@ XrefStreamPtr Parser::ParseXrefStream(
 		}
 
 		auto locked_file = _file.GetReference();
-		auto chain = locked_file->GetXrefChain();
+		auto chain = locked_file->GetXrefChain(false);
 
 		if (!chain->Contains(stream_obj_number, stream_gen_number)) {
 			assert(false && "Where is stream entry stored?");

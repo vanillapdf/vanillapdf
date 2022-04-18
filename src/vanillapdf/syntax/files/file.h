@@ -46,6 +46,7 @@ public:
 		types::ushort genNumber) const;
 
 	XrefChainPtr GetXrefChain(void) const;
+	XrefChainPtr GetXrefChain(bool check_initialization) const;
 	HeaderPtr GetHeader(void) const;
 
 	std::string GetFilename(void) const { return _filename; }
