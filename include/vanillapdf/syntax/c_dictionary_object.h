@@ -131,12 +131,12 @@ extern "C"
 	/**
 	* \brief Insert new key-value pair into collection
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryObjectHandle* handle, NameObjectHandle* key, ObjectHandle* value);
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryObjectHandle* handle, NameObjectHandle* key, ObjectHandle* value, boolean_type overwrite);
 
 	/**
 	* \copydoc DictionaryObject_Insert
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_InsertConst(DictionaryObjectHandle* handle, const NameObjectHandle* key, ObjectHandle* value);
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_InsertConst(DictionaryObjectHandle* handle, const NameObjectHandle* key, ObjectHandle* value, boolean_type overwrite);
 
 	/**
 	* \brief Reinterpret current object as \ref ObjectHandle

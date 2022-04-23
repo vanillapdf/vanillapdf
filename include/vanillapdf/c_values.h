@@ -146,6 +146,12 @@ extern "C"
 	*/
 	VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_INVALID_PASSWORD;
 
+	/**
+	* \brief
+	* Raise when trying to insert already existing key into the dictionary.
+	*/
+	VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_DUPLICATE_KEY;
+
 	// semantic errors
 
 	/** @} */ /* group_error_types */

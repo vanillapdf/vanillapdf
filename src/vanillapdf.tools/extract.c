@@ -101,9 +101,9 @@ error_type process_stream(StreamObjectHandle* stream, biguint_type object_number
 			BufferHandle* encoded_body = NULL;
 
 			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_Create(&encoding_dictionary));
-			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_InsertConst(encoding_dictionary, NameConstant_Width, width_object));
-			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_InsertConst(encoding_dictionary, NameConstant_Height, height_object));
-			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_InsertConst(encoding_dictionary, NameConstant_ColorSpace, colorspace_object));
+			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_InsertConst(encoding_dictionary, NameConstant_Width, width_object, VANILLAPDF_RV_FALSE));
+			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_InsertConst(encoding_dictionary, NameConstant_Height, height_object, VANILLAPDF_RV_FALSE));
+			RETURN_ERROR_IF_NOT_SUCCESS(DictionaryObject_InsertConst(encoding_dictionary, NameConstant_ColorSpace, colorspace_object, VANILLAPDF_RV_FALSE));
 
 			RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_GetBody(stream, &decoded_body));
 

@@ -167,7 +167,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Clear(DictionaryOb
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryObjectHandle* dictionary_handle, NameObjectHandle* key, ObjectHandle* value)
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryObjectHandle* dictionary_handle, NameObjectHandle* key, ObjectHandle* value, boolean_type overwrite)
 {
 	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(dictionary_handle);
 	NameObject* name = reinterpret_cast<NameObject*>(key);
@@ -183,12 +183,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryO
 			return VANILLAPDF_ERROR_PARAMETER_VALUE;
 		}
 
-		dictionary->Insert(name, containable_ptr);
+		dictionary->Insert(name, containable_ptr, overwrite);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_InsertConst(DictionaryObjectHandle* dictionary_handle, const NameObjectHandle* key, ObjectHandle* value) {
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_InsertConst(DictionaryObjectHandle* dictionary_handle, const NameObjectHandle* key, ObjectHandle* value, boolean_type overwrite) {
 	DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(dictionary_handle);
 	const NameObject* name = reinterpret_cast<const NameObject*>(key);
 	Object* obj = reinterpret_cast<Object*>(value);
@@ -202,7 +202,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_InsertConst(Dictio
 			return VANILLAPDF_ERROR_PARAMETER_VALUE;
 		}
 
-		dictionary->Insert(*name, containable_ptr);
+		dictionary->Insert(*name, containable_ptr, overwrite);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }

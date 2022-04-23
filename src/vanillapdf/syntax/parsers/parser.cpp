@@ -87,6 +87,13 @@ DictionaryObjectPtr ParserBase::ReadDictionary() {
 			continue;
 		}
 
+		if (dictionary->Contains(name)) {
+			auto locked_file = _file.GetReference();
+			auto filename = locked_file->GetFilename();
+			LOG_WARNING(filename.c_str()) << "Found duplicate entry for " << name->ToString() << ", skipping";
+			continue;
+		}
+
 		// Watch out! I am intentionally using ConvertUtils because
 		// object utils was trying to dereference object references.
 		// We just need cast the item without any other fancy mechanisms.

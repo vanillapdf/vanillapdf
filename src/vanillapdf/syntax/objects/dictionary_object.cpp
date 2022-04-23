@@ -2,6 +2,7 @@
 
 #include "syntax/objects/dictionary_object.h"
 #include "syntax/utils/output_pointer.h"
+#include "syntax/exceptions/syntax_exceptions.h"
 
 #include "utils/streams/output_stream_interface.h"
 
@@ -146,16 +147,27 @@ bool DictionaryObject::Remove(const NameObjectPtr name) {
 	return true;
 }
 
-bool DictionaryObject::Insert(const NameObject& name, ContainableObjectPtr value) {
+void DictionaryObject::Insert(const NameObject& name, ContainableObjectPtr value, bool overwrite) {
 	NameObjectPtr temp = make_deferred<NameObject>(name);
-	return Insert(temp, value);
+	Insert(temp, value, overwrite);
 }
 
-bool DictionaryObject::Insert(NameObjectPtr name, ContainableObjectPtr value) {
+void DictionaryObject::Insert(NameObjectPtr name, ContainableObjectPtr value, bool overwrite) {
+	auto found = _list.find(name);
+
+	if (found != _list.end()) {
+		if (!overwrite) {
+			throw DuplicateKeyException("The key " + name->ToString() + " was already present in the dictionary");
+		}
+
+		bool removed = Remove(name);
+		assert(removed); UNUSED(removed);
+	}
+
 	auto pair = std::make_pair(name, value);
 	auto result = _list.insert(pair);
 	if (result.second == false) {
-		return false;
+		throw GeneralException("Failed to add key " + name->ToString() + " with value " + value->ToString() + " into the dictionary");
 	}
 
 	name->SetOwner(Object::GetWeakReference());
@@ -164,10 +176,7 @@ bool DictionaryObject::Insert(NameObjectPtr name, ContainableObjectPtr value) {
 	name->Subscribe(this);
 	value->Subscribe(this);
 
-	//assert(result.second && "Key was already in the dictionary");
 	OnChanged();
-
-	return true;
 }
 
 bool DictionaryObject::Contains(const NameObject& name) const {

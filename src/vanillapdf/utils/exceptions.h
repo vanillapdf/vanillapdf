@@ -29,6 +29,7 @@ public:
 		ObjectMissing,
 		ParseException,
 		InvalidPassword,
+		DuplicateKey,
 
 		// semantic
 		OptionalEntryMissing = 0x10000000,

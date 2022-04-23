@@ -25,5 +25,9 @@ ObjectMissingException::ObjectMissingException(types::big_uint objNumber, types:
 	: ExceptionBase("Object " + std::to_string(objNumber) + " " + std::to_string(genNumber) + " is missing") {
 }
 
+DuplicateKeyException::DuplicateKeyException(const std::string& key)
+	: ExceptionBase("The key " + key + " was already present in the dictionary") {
+}
+
 } // syntax
 } // vanillapdf

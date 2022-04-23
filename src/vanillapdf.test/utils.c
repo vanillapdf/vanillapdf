@@ -178,6 +178,7 @@ error_type process_constants() {
 	dummy_error = VANILLAPDF_ERROR_OBJECT_MISSING;
 	dummy_error = VANILLAPDF_ERROR_PARSE_EXCEPTION;
 	dummy_error = VANILLAPDF_ERROR_INVALID_PASSWORD;
+	dummy_error = VANILLAPDF_ERROR_DUPLICATE_KEY;
 
 	// Name constants
 

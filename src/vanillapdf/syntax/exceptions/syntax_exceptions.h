@@ -32,6 +32,12 @@ public:
 	virtual Type code() const noexcept { return Type::ObjectMissing; }
 };
 
+class DuplicateKeyException : public ExceptionBase {
+public:
+	explicit DuplicateKeyException(const std::string& key);
+	virtual Type code() const noexcept { return Type::DuplicateKey; }
+};
+
 } // syntax
 } // vanillapdf
 
