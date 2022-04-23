@@ -553,7 +553,7 @@ void FileWriter::RecalculateXrefStreamWidth(XrefStreamPtr source) {
 
 	auto stream_obj = source->GetStreamObject();
 	auto stream_header = stream_obj->GetHeader();
-	if (stream_header->Contains(constant::Name::Index)) {
+	if (stream_header->Contains(constant::Name::W)) {
 		bool removed = stream_header->Remove(constant::Name::W);
 		assert(removed); UNUSED(removed);
 	}
