@@ -131,6 +131,25 @@ TEST(Rectangle, GetSet) {
 	ASSERT_EQ(Rectangle_Release(rectangle_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 
+TEST(File, XrefAllocation) {
+
+	FileHandle* file = NULL;
+	XrefUsedEntryHandle* used_entry_handle = NULL;
+	InputOutputStreamHandle* input_output_stream = NULL;
+
+	ASSERT_EQ(InputOutputStream_CreateFromMemory(&input_output_stream), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(File_CreateStream(input_output_stream, "UNUSED", &file), VANILLAPDF_ERROR_SUCCESS);
+
+	for (int i = 0; i < 1000; ++i) {
+		ASSERT_EQ(File_AllocateNewEntry(file, &used_entry_handle), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_NE(used_entry_handle, nullptr);
+		ASSERT_EQ(XrefUsedEntry_Release(used_entry_handle), VANILLAPDF_ERROR_SUCCESS);
+	}
+
+	ASSERT_EQ(File_Release(file), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(InputOutputStream_Release(input_output_stream), VANILLAPDF_ERROR_SUCCESS);
+}
+
 int main(int argc, char *argv[]) {
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
