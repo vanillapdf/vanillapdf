@@ -102,6 +102,11 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION File_GetIndirectObject(FileHandle* handle, biguint_type obj_number, ushort_type gen_number, ObjectHandle** result);
 
 	/**
+	* \brief Find exact object within all xref tables
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION File_AllocateNewEntry(FileHandle* handle, XrefUsedEntryHandle** result);
+
+	/**
 	* \brief Reinterpret current object as \ref IUnknownHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION File_ToUnknown(FileHandle* handle, IUnknownHandle** result);

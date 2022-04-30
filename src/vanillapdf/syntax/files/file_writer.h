@@ -184,7 +184,7 @@ private:
 	void RecalculateXrefSize(XrefChainPtr chain, XrefBasePtr source);
 	void RecalculateXrefStreamWidth(XrefStreamPtr source);
 
-	void CompressAndOptimize(XrefChainPtr xref);
+	void CompressAndOptimize(FilePtr destination);
 	void RemoveFreedObjects(XrefChainPtr xref);
 	void MergeXrefs(XrefChainPtr xref);
 	void RemoveUnreferencedObjects(XrefChainPtr xref);
@@ -195,8 +195,8 @@ private:
 	void SquashTableSpace(XrefChainPtr xref);
 	void CompressXref(XrefChainPtr xref);
 
-	void ApplyWatermark(XrefChainPtr chain);
-	DictionaryObjectPtr AddWatermarkFont(XrefChainPtr chain);
+	void ApplyWatermark(FilePtr destination);
+	DictionaryObjectPtr AddWatermarkFont(FilePtr destination);
 	void ApplyWatermarkPageNode(DictionaryObjectPtr obj, DictionaryObjectPtr watermark_font);
 	void ApplyWatermarkPrependSave(StreamObjectPtr obj);
 	void ApplyWatermarkContentStream(StreamObjectPtr obj, ArrayObjectPtr<IntegerObjectPtr> media_box, const std::string& watermark_font);

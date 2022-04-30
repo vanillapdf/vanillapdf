@@ -111,6 +111,21 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_GetIndirectObject(
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION File_AllocateNewEntry(FileHandle* handle, XrefUsedEntryHandle** result) {
+	File* file = reinterpret_cast<File*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto entry = file->AllocateNewEntry();
+		auto ptr = entry.AddRefGet();
+
+		*result = reinterpret_cast<XrefUsedEntryHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION File_Release(FileHandle* handle)
 {
 	File* file = reinterpret_cast<File*>(handle);

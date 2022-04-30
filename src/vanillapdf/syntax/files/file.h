@@ -49,6 +49,8 @@ public:
 	XrefChainPtr GetXrefChain(bool check_initialization) const;
 	HeaderPtr GetHeader(void) const;
 
+	XrefUsedEntryBasePtr AllocateNewEntry();
+
 	std::string GetFilename(void) const { return _filename; }
 	IInputStreamPtr GetInputStream(void);
 	IOutputStreamPtr GetOutputStream(void);
@@ -120,6 +122,8 @@ private:
 	ObjectPtr GetIndirectObjectInternal(
 		types::big_uint obj_number,
 		types::ushort gen_number) const;
+
+	types::big_uint m_next_allocation = 0;
 
 private:
 	File(IInputOutputStreamPtr stream, const std::string& path);

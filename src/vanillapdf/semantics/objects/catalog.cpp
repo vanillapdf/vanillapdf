@@ -191,8 +191,7 @@ bool Catalog::AcroForm(OuputInteractiveFormPtr& result) const {
 PageTreePtr Catalog::CreatePages() {
 	auto weak_file = _obj->GetFile();
 	auto file = weak_file.GetReference();
-	auto chain = file->GetXrefChain();
-	auto entry = chain->AllocateNewEntry();
+	auto entry = file->AllocateNewEntry();
 
 	DictionaryObjectPtr raw_dictionary;
 

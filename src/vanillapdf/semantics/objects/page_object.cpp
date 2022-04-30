@@ -151,12 +151,11 @@ bool PageObject::GetContents(OutputPageContentsPtr& result) const {
 
 std::unique_ptr<PageObject> PageObject::Create(DocumentPtr document) {
 	auto file = document->GetFile();
-	auto xref_chain = file->GetXrefChain();
 
 	syntax::DictionaryObjectPtr obj;
 	obj->Insert(Name::Type, Name::Page.Clone());
 
-	XrefUsedEntryBasePtr new_entry = xref_chain->AllocateNewEntry();
+	XrefUsedEntryBasePtr new_entry = file->AllocateNewEntry();
 	new_entry->SetReference(obj);
 	new_entry->SetFile(file);
 	new_entry->SetInitialized();

@@ -60,15 +60,12 @@ public:
 	bool Empty(void) const { return _list.empty(); }
 	XrefBasePtr Back(void) const { return _list.back(); }
 
-	XrefUsedEntryBasePtr AllocateNewEntry();
 	bool ReleaseEntry(XrefUsedEntryBasePtr entry);
 	XrefEntryBasePtr GetXrefEntry(types::big_uint obj_number, types::ushort gen_number) const;
 	bool Contains(types::big_uint obj_number, types::ushort gen_number) const;
 
 private:
 	list_type _list;
-
-	types::big_uint m_next_allocation = 0;
 };
 
 } // syntax

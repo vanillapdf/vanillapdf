@@ -147,7 +147,7 @@ void Document::SaveIncremental(syntax::FilePtr destination) {
 
 CatalogPtr Document::CreateCatalog() {
 	auto chain = m_holder->GetXrefChain();
-	auto entry = chain->AllocateNewEntry();
+	auto entry = m_holder->AllocateNewEntry();
 
 	DictionaryObjectPtr raw_dictionary;
 
@@ -170,7 +170,7 @@ CatalogPtr Document::CreateCatalog() {
 
 DocumentInfoPtr Document::CreateDocumentInfo() {
 	auto chain = m_holder->GetXrefChain();
-	auto entry = chain->AllocateNewEntry();
+	auto entry = m_holder->AllocateNewEntry();
 
 	DictionaryObjectPtr raw_dictionary;
 	raw_dictionary->SetFile(m_holder);
@@ -188,8 +188,7 @@ DocumentInfoPtr Document::CreateDocumentInfo() {
 }
 
 PageTreePtr Document::CreatePageTree(CatalogPtr catalog) {
-	auto chain = m_holder->GetXrefChain();
-	auto entry = chain->AllocateNewEntry();
+	auto entry = m_holder->AllocateNewEntry();
 
 	DictionaryObjectPtr raw_dictionary;
 	raw_dictionary->SetFile(m_holder);
@@ -206,8 +205,7 @@ PageTreePtr Document::CreatePageTree(CatalogPtr catalog) {
 }
 
 NamedDestinationsPtr Document::CreateNameDestinations(CatalogPtr catalog) {
-	auto chain = m_holder->GetXrefChain();
-	auto entry = chain->AllocateNewEntry();
+	auto entry = m_holder->AllocateNewEntry();
 
 	DictionaryObjectPtr raw_dictionary;
 	raw_dictionary->SetFile(m_holder);
@@ -224,8 +222,7 @@ NamedDestinationsPtr Document::CreateNameDestinations(CatalogPtr catalog) {
 }
 
 NameDictionaryPtr Document::CreateNameDictionary(CatalogPtr catalog) {
-	auto chain = m_holder->GetXrefChain();
-	auto entry = chain->AllocateNewEntry();
+	auto entry = m_holder->AllocateNewEntry();
 
 	DictionaryObjectPtr raw_dictionary;
 	raw_dictionary->SetFile(m_holder);
@@ -242,8 +239,7 @@ NameDictionaryPtr Document::CreateNameDictionary(CatalogPtr catalog) {
 }
 
 InteractiveFormPtr Document::CreateAcroForm(CatalogPtr catalog) {
-	auto chain = m_holder->GetXrefChain();
-	auto entry = chain->AllocateNewEntry();
+	auto entry = m_holder->AllocateNewEntry();
 
 	DictionaryObjectPtr raw_dictionary;
 	raw_dictionary->SetFile(m_holder);
@@ -260,8 +256,7 @@ InteractiveFormPtr Document::CreateAcroForm(CatalogPtr catalog) {
 }
 
 NameTreePtr<DestinationPtr> Document::CreateStringDestinations(NameDictionaryPtr dictionary) {
-	auto chain = m_holder->GetXrefChain();
-	auto entry = chain->AllocateNewEntry();
+	auto entry = m_holder->AllocateNewEntry();
 
 	DictionaryObjectPtr raw_dictionary;
 	raw_dictionary->SetFile(m_holder);
@@ -668,8 +663,7 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
 	signature_dictionary->Insert(constant::Name::ByteRange, byte_ranges);
 	signature_dictionary->Insert(constant::Name::Contents, signature_contents);
 
-	auto dictionary_chain = m_holder->GetXrefChain();
-	auto dictionary_entry = dictionary_chain->AllocateNewEntry();
+	auto dictionary_entry = m_holder->AllocateNewEntry();
 	dictionary_entry->SetReference(signature_dictionary);
 	dictionary_entry->SetFile(m_holder);
 	dictionary_entry->SetInitialized();
@@ -717,8 +711,7 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
 	auto first_page_reference = make_deferred<syntax::IndirectReferenceObject>(first_page_object);
 	signature_annotation->Insert(constant::Name::P, first_page_reference);
 
-	auto annotation_chain = m_holder->GetXrefChain();
-	auto annotation_entry = annotation_chain->AllocateNewEntry();
+	auto annotation_entry = m_holder->AllocateNewEntry();
 	annotation_entry->SetReference(signature_annotation);
 	annotation_entry->SetFile(m_holder);
 	annotation_entry->SetInitialized();

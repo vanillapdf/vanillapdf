@@ -66,10 +66,10 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 	auto new_chain = CloneXrefChain(source, destination);
 
 	// Compress and optimize here
-	CompressAndOptimize(new_chain);
+	CompressAndOptimize(destination);
 
 	// Apply watermark
-	ApplyWatermark(new_chain);
+	ApplyWatermark(destination);
 
 	// Dump whole cloned contents to the output
 	WriteXrefChain(output, new_chain);
@@ -1399,13 +1399,14 @@ void FileWriter::CopyStreamContent(IInputStreamPtr source, IOutputStreamPtr dest
 	}
 }
 
-void FileWriter::ApplyWatermark(XrefChainPtr chain) {
+void FileWriter::ApplyWatermark(FilePtr destination) {
 
 	// Watermark only for trial version
 	if (LicenseInfo::IsValid()) {
 		return;
 	}
 
+	auto chain = destination->GetXrefChain();
 	auto xref = chain->Begin()->Value();
 	auto trailer_dictionary = xref->GetTrailerDictionary();
 
@@ -1430,14 +1431,14 @@ void FileWriter::ApplyWatermark(XrefChainPtr chain) {
 		return;
 	}
 
-	auto watermark_font = AddWatermarkFont(chain);
+	auto watermark_font = AddWatermarkFont(destination);
 
 	for (auto kid : *kids) {
 		ApplyWatermarkPageNode(kid, watermark_font);
 	}
 }
 
-DictionaryObjectPtr FileWriter::AddWatermarkFont(XrefChainPtr chain) {
+DictionaryObjectPtr FileWriter::AddWatermarkFont(FilePtr destination) {
 
 	DictionaryObjectPtr watermark_font;
 	watermark_font->Insert(constant::Name::Type, constant::Name::Font.Clone());
@@ -1445,7 +1446,7 @@ DictionaryObjectPtr FileWriter::AddWatermarkFont(XrefChainPtr chain) {
 	watermark_font->Insert(constant::Name::BaseFont, make_deferred<NameObject>("Helvetica"));
 	watermark_font->SetInitialized();
 
-	auto watermark_font_entry = chain->AllocateNewEntry();
+	auto watermark_font_entry = destination->AllocateNewEntry();
 	watermark_font_entry->SetReference(watermark_font);
 	watermark_font_entry->SetInitialized();
 
@@ -1641,7 +1642,9 @@ void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj, ArrayObjectPtr
 	body->insert(body.end(), watermark_body.begin(), watermark_body.end());
 }
 
-void FileWriter::CompressAndOptimize(XrefChainPtr xref) {
+void FileWriter::CompressAndOptimize(FilePtr destination) {
+
+	auto xref = destination->GetXrefChain();
 
 	// Stage: Squash xref chain into single element
 	MergeXrefs(xref);
