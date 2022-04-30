@@ -386,6 +386,11 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_GetReference(XrefUsedEntryHandle* handle, ObjectHandle** result);
 
 	/**
+	* \brief Set reference to the object represented by this entry
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_SetReference(XrefUsedEntryHandle* handle, ObjectHandle* data);
+
+	/**
 	* \brief Reinterpret current object as \ref XrefEntryHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_ToEntry(XrefUsedEntryHandle* handle, XrefEntryHandle** result);
@@ -426,6 +431,11 @@ extern "C"
 	* \brief Get reference to the object represented by this entry
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GetReference(XrefCompressedEntryHandle* handle, ObjectHandle** result);
+
+	/**
+	* \brief Set reference to the object represented by this entry
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_SetReference(XrefCompressedEntryHandle* handle, ObjectHandle* data);
 
 	/**
 	* \brief The index of this object within the object stream.

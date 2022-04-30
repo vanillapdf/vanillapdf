@@ -372,6 +372,19 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_GetReference(XrefUsed
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_SetReference(XrefUsedEntryHandle* handle, ObjectHandle* data) {
+	XrefUsedEntry* entry = reinterpret_cast<XrefUsedEntry*>(handle);
+	Object* obj = reinterpret_cast<Object*>(data);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	try {
+		entry->SetReference(obj);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GetReference(XrefCompressedEntryHandle* handle, ObjectHandle** result)
 {
 	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
@@ -384,6 +397,18 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GetReference(Xr
 		auto base = ObjectUtils::GetObjectBase(direct);
 		auto ptr = base.AddRefGet();
 		*result = reinterpret_cast<ObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_SetReference(XrefCompressedEntryHandle* handle, ObjectHandle* data) {
+	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
+	Object* obj = reinterpret_cast<Object*>(data);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	try {
+		entry->SetReference(obj);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
