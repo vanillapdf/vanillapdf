@@ -74,7 +74,23 @@ VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_ToObject(IntegerObjec
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_FromObject(ObjectHandle* handle, IntegerObjectHandle** result) {
-	return SafeObjectConvert<Object, IntegerObject, ObjectHandle, IntegerObjectHandle>(handle, result);
+	Object* obj = reinterpret_cast<Object*>(handle);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		bool converted = false;
+		auto integer = ConversionHelper<IntegerObjectPtr>::Get(obj, converted);
+		if (!converted) {
+			return VANILLAPDF_ERROR_PARAMETER_VALUE;
+		}
+
+		auto ptr = integer.AddRefGet();
+		*result = reinterpret_cast<IntegerObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_Release(IntegerObjectHandle* handle)

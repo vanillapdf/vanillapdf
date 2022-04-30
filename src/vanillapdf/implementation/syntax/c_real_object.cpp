@@ -49,10 +49,25 @@ VANILLAPDF_API error_type CALLING_CONVENTION RealObject_ToObject(RealObjectHandl
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION RealObject_FromObject(ObjectHandle* handle, RealObjectHandle** result) {
-	return SafeObjectConvert<Object, RealObject, ObjectHandle, RealObjectHandle>(handle, result);
+	Object* obj = reinterpret_cast<Object*>(handle);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		bool converted = false;
+		auto integer = ConversionHelper<RealObjectPtr>::Get(obj, converted);
+		if (!converted) {
+			return VANILLAPDF_ERROR_PARAMETER_VALUE;
+		}
+
+		auto ptr = integer.AddRefGet();
+		*result = reinterpret_cast<RealObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION RealObject_Release(RealObjectHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION RealObject_Release(RealObjectHandle* handle) {
 	return ObjectRelease<RealObject, RealObjectHandle>(handle);
 }
