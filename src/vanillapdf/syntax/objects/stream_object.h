@@ -15,6 +15,7 @@ public:
 	StreamObject();
 	StreamObject(const StreamObject&) = delete;
 
+	explicit StreamObject(bool initialized);
 	StreamObject(DictionaryObjectPtr header, types::stream_offset offset);
 	virtual Object::Type GetObjectType(void) const noexcept override;
 	virtual std::string ToString(void) const override;

@@ -12,11 +12,16 @@
 namespace vanillapdf {
 namespace syntax {
 
-StreamObject::StreamObject() {
+StreamObject::StreamObject() : StreamObject(false) {
+}
+
+StreamObject::StreamObject(bool initialized) {
 	_header->SetOwner(Object::GetWeakReference());
 	_header->Subscribe(this);
 	_body->Subscribe(this);
 	_body_decoded->Subscribe(this);
+
+	SetInitialized(initialized);
 }
 
 StreamObject::StreamObject(DictionaryObjectPtr header, types::stream_offset offset)
@@ -107,6 +112,12 @@ void StreamObject::SetFile(WeakReference<File> file) {
 void StreamObject::SetInitialized(bool initialized) {
 	IModifyObservable::SetInitialized(initialized);
 	_header->SetInitialized(initialized);
+
+	// In case the object is already initialized without data offset
+	// consider it data to be initialized as well
+	if (initialized && _raw_data_offset == constant::BAD_OFFSET) {
+		_body->SetInitialized();
+	}
 }
 
 BufferPtr StreamObject::GetBodyRaw() const {
