@@ -222,12 +222,22 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
 
 		auto read_plus_row = SafeAddition<decltype(length)>(read_total, row_size);
 		if (read_plus_row > length) {
-			throw GeneralException("Insufficient source data");
+			throw GeneralException(
+				"Insufficient source data, read_plus_row: " +
+				std::to_string(read_plus_row) +
+				", length: " +
+				std::to_string(length)
+			);
 		}
 
 		auto read = src->Read(buffer, row_size);
 		if (read != row_size) {
-			throw GeneralException("Insufficient source data");
+			throw GeneralException(
+				"Insufficient source data, read: " +
+				std::to_string(read) +
+				", row_size: " +
+				std::to_string(row_size)
+			);
 		}
 
 		JSAMPROW row_pointer[1];
