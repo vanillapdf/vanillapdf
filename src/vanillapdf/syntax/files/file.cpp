@@ -716,7 +716,13 @@ XrefUsedEntryBasePtr File::AllocateNewEntry() {
 		// Newly allocated entries are marked as dirty, so when calculating incremental update
 		// differences we can check for new entries as well for changed entries
 		new_entry->SetDirty();
+
+		// Immediately associate current file, as it is tightly coupled
 		new_entry->SetFile(GetWeakReference<File>());
+
+		// Initialized flag prevents to seek within the input file,
+		// which is not wanted for newly allocated entries
+		new_entry->SetInitialized();
 
 		xref->Add(new_entry);
 
