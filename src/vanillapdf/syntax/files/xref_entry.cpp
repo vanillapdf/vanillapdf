@@ -146,6 +146,10 @@ void XrefUsedEntry::Initialize(void) {
 		throw FileDisposedException();
 	}
 
+	if (_offset == constant::BAD_OFFSET) {
+		throw GeneralException("Xref entry data offset is not initialized");
+	}
+
 	auto locked_file = _file.GetReference();
 	auto input = locked_file->GetInputStream();
 
