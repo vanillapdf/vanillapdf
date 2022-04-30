@@ -663,7 +663,8 @@ XrefChainPtr File::GetXrefChain(bool check_initialization) const {
 XrefUsedEntryBasePtr File::AllocateNewEntry() {
 
 	if (_xref.empty()) {
-		throw GeneralException("Could not allocate entry for empty chain");
+		XrefTablePtr new_table;
+		_xref->Append(new_table);
 	}
 
 	for (types::big_uint i = m_next_allocation; i < std::numeric_limits<types::big_uint>::max(); ++i) {
