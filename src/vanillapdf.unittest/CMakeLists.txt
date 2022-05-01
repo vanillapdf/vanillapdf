@@ -61,6 +61,11 @@ add_definitions(-DVANILLAPDF_UNITTEST_VERSION_BUILD=${VANILLAPDF_VERSION_BUILD})
 
 add_definitions(-DVANILLAPDF_UNITTEST_ICON="${CMAKE_SOURCE_DIR}/cmake/vanilla_logo.ico")
 
+if(WIN32)
+	# We are currently using shared CRT on windows and there are link errors with GTest
+	set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+endif(WIN32)
+
 # Build GoogleTest from the external repository
 add_subdirectory("${CMAKE_SOURCE_DIR}/external/googletest" build EXCLUDE_FROM_ALL)
 
