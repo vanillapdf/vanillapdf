@@ -146,13 +146,13 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, const Buffer& password) 
 	BIO* bio = BIO_new_mem_buf(buffer_data, buffer_length);
 	p12 = d2i_PKCS12_bio(bio, nullptr);
 	if (nullptr == p12) {
-		throw GeneralException("Could not parse der structure PKCS#12");
+		throw GeneralException("Could not parse der structure PKCS#12, " + MiscUtils::GetLastOpensslError());
 	}
 
 	STACK_OF(X509) *additional_certs = NULL;
 	int parsed = PKCS12_parse(p12, password.data(), &key, &cert, &additional_certs);
 	if (1 != parsed) {
-		throw GeneralException("Could not parse PKCS#12");
+		throw GeneralException("Could not parse PKCS#12, " + MiscUtils::GetLastOpensslError());
 	}
 
 	auto additional_certs_size = sk_X509_num(additional_certs);
@@ -161,14 +161,14 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, const Buffer& password) 
 
 		int length = i2d_X509(additional_cert, nullptr);
 		if (length < 0) {
-			throw GeneralException("Could not get PKCS#7 size");
+			throw GeneralException("Could not get PKCS#7 size, " + MiscUtils::GetLastOpensslError());
 		}
 
 		BufferPtr additional_cert_data = make_deferred_container<Buffer>(length);
 		auto data_pointer = (unsigned char *) additional_cert_data->data();
 		int converted = i2d_X509(additional_cert, &data_pointer);
 		if (converted < 0) {
-			throw GeneralException("Could not convert PKCS#7");
+			throw GeneralException("Could not convert PKCS#7, " + MiscUtils::GetLastOpensslError());
 		}
 
 		m_certificates->Append(additional_cert_data);
@@ -467,7 +467,6 @@ void PKCS12Key::PKCS12KeyImpl::SignCleanup() {
 	}
 
 #endif
-
 }
 
 } // vanillapdf

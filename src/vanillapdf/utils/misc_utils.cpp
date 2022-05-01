@@ -3,11 +3,13 @@
 #include "utils/misc_utils.h"
 
 #include <openssl/bio.h>
+#include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/buffer.h>
+//#include <openssl/provider.h>
 
-#include <mutex>
 #include <cctype>
+#include <mutex>
 
 namespace vanillapdf {
 
@@ -261,9 +263,52 @@ void MiscUtils::InitializeOpenSSL() {
 		return;
 	}
 
+	//auto search_path_result = OSSL_PROVIDER_set_default_search_path(nullptr, ".");
+	//if (search_path_result != 1) {
+	//	throw GeneralException("Failed to set OSSL search path, " + GetLastOpensslError());
+	//}
+
+	//auto legacy_provider = OSSL_PROVIDER_load(nullptr, "legacy");
+	//if (legacy_provider == nullptr) {
+	//	throw GeneralException("Failed to initialize legacy OSSL provider, " + GetLastOpensslError());
+	//}
+
 	OpenSSL_add_all_algorithms();
 
 	initialized = true;
+
+#else
+
+	throw NotSupportedException("This library was compiled without OpenSSL support");
+
+#endif
+
+}
+
+std::string MiscUtils::GetLastOpensslError() {
+
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+
+	const char* err_file = nullptr;
+	//const char* err_func = nullptr;
+	const char* err_data = nullptr;
+
+	int err_line = 0;
+	int err_flags = 0;
+
+	//auto err_code = ERR_get_error_all(&err_file, &err_line, &err_func, &err_data, &err_flags);
+	auto err_code = ERR_get_error_line_data(&err_file, &err_line, &err_data, &err_flags);
+
+	std::stringstream error_message;
+
+	error_message << "Error: " << '\'' << err_code << '\'' << std::endl;
+	error_message << "File: " << '\'' << err_file << '\'' << std::endl;
+	error_message << "Line: " << err_line << '\'' << std::endl;
+	//error_message << "Function: " << '\'' << err_func << '\'' << std::endl;
+	error_message << "Data: " << '\'' << err_data << '\'' << std::endl;
+	error_message << "Flags: " << '\'' << err_flags << '\'' << std::endl;
+
+	return error_message.str();
 
 #else
 
