@@ -29,7 +29,7 @@ public:
 	static bool CaseInsensitiveCompare(const std::string& left, const std::string& right);
 
 	static void InitializeOpenSSL();
-	static std::string MiscUtils::GetLastOpensslError();
+	static std::string GetLastOpensslError();
 
 private:
 	MiscUtils();
