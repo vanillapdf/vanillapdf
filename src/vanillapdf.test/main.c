@@ -25,6 +25,7 @@ int main(int argc, char *argv[]) {
 	string_type cert_password = NULL;
 	string_type merge_file = NULL;
 	string_type signing_cert_file = NULL;
+	string_type signing_cert_password = NULL;
 	boolean_type is_encrypted = VANILLAPDF_RV_FALSE;
 	boolean_type quiet_mode = VANILLAPDF_RV_FALSE;
 	boolean_type skip_save = VANILLAPDF_RV_FALSE;
@@ -51,9 +52,19 @@ int main(int argc, char *argv[]) {
 			cert_path = argv[i + 1];
 			i++;
 
+		// certificate password
+		} else if (strcmp(argv[i], "-kp") == 0 && (i + 1 < argc)) {
+			cert_password = argv[i + 1];
+			i++;
+
 		// signing certificate
 		}else if (strcmp(argv[i], "-sc") == 0 && (i + 1 < argc)) {
 			signing_cert_file = argv[i + 1];
+			i++;
+
+		// signing certificate
+		} else if (strcmp(argv[i], "-scp") == 0 && (i + 1 < argc)) {
+			signing_cert_password = argv[i + 1];
 			i++;
 
 		// license
@@ -133,7 +144,7 @@ int main(int argc, char *argv[]) {
 		RETURN_ERROR_IF_NOT_SUCCESS(process_document_merge(document, merge_file, 0));
 
 		if (signing_cert_file != NULL) {
-			RETURN_ERROR_IF_NOT_SUCCESS(process_document_sign(document, signing_cert_file, NULL, 0));
+			RETURN_ERROR_IF_NOT_SUCCESS(process_document_sign(document, signing_cert_file, signing_cert_password, 0));
 		}
 	}
 
