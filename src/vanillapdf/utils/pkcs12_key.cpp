@@ -111,6 +111,10 @@ PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const std::string& path, const Buffer& p
 	std::ifstream file(path, std::ios::in | std::ios::binary);
 	SCOPE_GUARD_CAPTURE_REFERENCES(file.close());
 
+	if (!file || !file.good()) {
+		throw GeneralException("Could not open file: " + path);
+	}
+
 	Buffer data;
 	Buffer buffer(constant::BUFFER_SIZE);
 
