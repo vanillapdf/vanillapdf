@@ -20,6 +20,56 @@ TEST(Buffer, NullCheck) {
 	ASSERT_EQ(Buffer_Release(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
+TEST(HexadecimalStringObject, GetValue) {
+
+	string_type buffer_data = nullptr;
+	size_type buffer_size = 0;
+
+	BufferHandle* buffer_ptr = nullptr;
+	HexadecimalStringObjectHandle* hexadecimal_string_ptr = nullptr;
+
+	ASSERT_EQ(HexadecimalStringObject_CreateFromEncodedString("0027", &hexadecimal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(HexadecimalStringObject_GetValue(hexadecimal_string_ptr, &buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+
+	ASSERT_EQ(Buffer_GetData(buffer_ptr, &buffer_data, &buffer_size), VANILLAPDF_ERROR_SUCCESS);
+
+	ASSERT_EQ(buffer_size, 2);
+	ASSERT_EQ(buffer_data[0], 0x00);
+	ASSERT_EQ(buffer_data[1], 0x27);
+
+	ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(HexadecimalStringObject_Release(hexadecimal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(HexadecimalStringObject, SetValue) {
+
+	const char NEW_VALUE[] = { 0x00, 0x27 };
+
+	string_type buffer_data = nullptr;
+	size_type buffer_size = 0;
+
+	BufferHandle* buffer_ptr = nullptr;
+	BufferHandle* buffer_check_ptr = nullptr;
+	HexadecimalStringObjectHandle* hexadecimal_string_ptr = nullptr;
+
+	ASSERT_EQ(Buffer_Create(&buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(Buffer_SetData(buffer_ptr, NEW_VALUE, sizeof(NEW_VALUE)), VANILLAPDF_ERROR_SUCCESS);
+
+	ASSERT_EQ(HexadecimalStringObject_Create(&hexadecimal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(HexadecimalStringObject_SetValue(hexadecimal_string_ptr, buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(HexadecimalStringObject_GetValue(hexadecimal_string_ptr, &buffer_check_ptr), VANILLAPDF_ERROR_SUCCESS);
+
+	ASSERT_EQ(Buffer_GetData(buffer_check_ptr, &buffer_data, &buffer_size), VANILLAPDF_ERROR_SUCCESS);
+
+	ASSERT_EQ(buffer_size, 2);
+	ASSERT_EQ(buffer_data[0], 0x00);
+	ASSERT_EQ(buffer_data[1], 0x27);
+
+	ASSERT_EQ(Buffer_Release(buffer_check_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(HexadecimalStringObject_Release(hexadecimal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+}
+
 TEST(BaseFontRange, CreateRelease) {
 
 	BaseFontRangeHandle* font_range_ptr = nullptr;
