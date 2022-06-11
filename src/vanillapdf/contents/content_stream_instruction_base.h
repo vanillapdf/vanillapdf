@@ -50,6 +50,25 @@ public:
 	}
 
 public:
+	class Iterator : public BaseIterator<const_iterator>, public IWeakReferenceable {
+	public:
+		using BaseIterator<const_iterator>::BaseIterator;
+
+		const Iterator& operator++() {
+			++BaseIterator<const_iterator>::m_current;
+			return *this;
+		}
+
+		const Iterator operator++(int) {
+			Iterator temp(BaseIterator<const_iterator>::m_current, BaseIterator<const_iterator>::m_invalid);
+			++BaseIterator<const_iterator>::m_current;
+			return temp;
+		}
+	};
+
+	using IteratorPtr = DeferredIterator<Iterator>;
+
+public:
 	// stl compatibility
 	bool empty(void) const noexcept { return m_data.empty(); }
 	reference at(types::size_type pos) { return m_data.at(pos); }

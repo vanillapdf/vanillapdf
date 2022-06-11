@@ -80,6 +80,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_CONTENTS_SOURCES
 	implementation/contents/c_content_object.cpp
 	implementation/contents/c_content_operation.cpp
 	implementation/contents/c_content_operator.cpp
+	implementation/contents/c_content_parser.cpp
 )
 
 set(VANILLAPDF_CONTENTS_SOURCES

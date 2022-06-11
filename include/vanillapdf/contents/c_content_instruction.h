@@ -23,6 +23,20 @@ extern "C"
 	*/
 
 	/**
+	* \class ContentInstructionCollectionHandle
+	* \extends IUnknownHandle
+	* \ingroup group_contents
+	* \brief TODO
+	*/
+
+	/**
+	* \class ContentInstructionCollectionIteratorHandle
+	* \extends IUnknownHandle
+	* \ingroup group_contents
+	* \brief TODO
+	*/
+
+	/**
 	* \brief Available content instruction types
 	* \ingroup group_contents
 	*/
@@ -72,6 +86,84 @@ extern "C"
 	* \see \ref IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_Release(ContentInstructionHandle* handle);
+
+	/** @} */
+
+	/**
+	* \memberof ContentInstructionCollectionHandle
+	* @{
+	*/
+
+	/**
+	* \brief Get collection iterator for enumerating all entries
+	*
+	* Modifying collection may invalidate this handle.
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_GetIterator(ContentInstructionCollectionHandle* handle, ContentInstructionCollectionIteratorHandle** result);
+
+	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_ToUnknown(ContentInstructionCollectionHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref ContentInstructionCollectionHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_FromUnknown(IUnknownHandle* handle, ContentInstructionCollectionHandle** result);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see \ref IUnknown_Release
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_Release(ContentInstructionCollectionHandle* handle);
+
+	/** @} */
+
+	/**
+	* \memberof ContentInstructionCollectionIteratorHandle
+	* @{
+	*/
+
+	/**
+	* \brief Get value at iterator position
+	*
+	* Ensure the iterator is valid.
+	* \see \ref ContentInstructionCollectionIterator_IsValid
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollectionIterator_GetValue(ContentInstructionCollectionIteratorHandle* handle, ContentInstructionHandle** result);
+
+	/**
+	* \brief Determine if current position is valid
+	*
+	* Invalid position may mean that iterator moved past the end of the collection, as well as the collection was modified.
+	*
+	* Any other operation except \b THIS will fail on invalid iterator.
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollectionIterator_IsValid(ContentInstructionCollectionIteratorHandle* handle, boolean_type* result);
+
+	/**
+	* \brief Advances iterator to the next position
+	*
+	* Ensure the iterator is valid.
+	* \see \ref ContentInstructionCollectionIterator_IsValid
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollectionIterator_Next(ContentInstructionCollectionIteratorHandle* handle);
+
+	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollectionIterator_ToUnknown(ContentInstructionCollectionIteratorHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref ContentInstructionCollectionIteratorHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollectionIterator_FromUnknown(IUnknownHandle* handle, ContentInstructionCollectionIteratorHandle** result);
+
+	/**
+	* \copydoc IUnknown_Release
+	* \see \ref IUnknown_Release
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollectionIterator_Release(ContentInstructionCollectionIteratorHandle* handle);
 
 	/** @} */
 

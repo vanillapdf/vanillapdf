@@ -20,7 +20,7 @@ contents::BaseInstructionCollectionPtr ContentStream::Instructions(void) const {
 
 	contents::ContentStreamParser parser(_obj->GetFile(), input_stream);
 
-	_instructions = parser.ReadContentStreamInstructions();
+	_instructions = parser.ReadInstructions();
 	_instructions->SetInitialized();
 
 	return _instructions;

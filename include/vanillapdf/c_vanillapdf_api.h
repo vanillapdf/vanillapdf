@@ -60,6 +60,7 @@
 #include "vanillapdf/contents/c_content_operator.h"
 #include "vanillapdf/contents/c_content_operation.h"
 #include "vanillapdf/contents/c_content_instruction.h"
+#include "vanillapdf/contents/c_content_parser.h"
 
 /* utils */
 #include "vanillapdf/utils/c_unknown_interface.h"

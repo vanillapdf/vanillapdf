@@ -8,21 +8,14 @@
 namespace vanillapdf {
 namespace contents {
 
-class IContentStreamParser {
-public:
-	virtual BaseInstructionCollectionPtr ReadContentStreamInstructions(void) = 0;
-
-	virtual ~IContentStreamParser() {}
-};
-
-class ContentStreamParser : public syntax::ParserBase, public IContentStreamParser {
+class ContentStreamParser : public syntax::ParserBase {
 public:
 	ContentStreamParser(WeakReference<syntax::File> file, IInputStreamPtr stream);
-	virtual BaseInstructionCollectionPtr ReadContentStreamInstructions(void) override;
+	BaseInstructionCollectionPtr ReadInstructions(void);
 
 private:
-	InstructionBasePtr ReadContentStreamInstruction(void);
-	OperationBasePtr ReadContentStreamOperation(void);
+	InstructionBasePtr ReadInstruction(void);
+	OperationBasePtr ReadOperation(void);
 	bool IsOperand(syntax::Token::Type type);
 	syntax::ObjectPtr ReadOperand();
 	OperationBasePtr ReadOperatorReturnOperation(const std::vector<syntax::ObjectPtr>& operands);

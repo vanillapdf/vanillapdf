@@ -71,9 +71,11 @@ extern "C"
 	#pragma region Contents
 
 	/* Content instructions */
-	DECLARE_OBJECT_HANDLE(ContentInstruction);
 	DECLARE_OBJECT_HANDLE(ContentObject);
 	DECLARE_OBJECT_HANDLE(ContentOperation);
+	DECLARE_OBJECT_HANDLE(ContentInstruction);
+	DECLARE_OBJECT_HANDLE(ContentInstructionCollection);
+	DECLARE_OBJECT_HANDLE(ContentInstructionCollectionIterator);
 
 	/* Content operations */
 	DECLARE_OBJECT_HANDLE(ContentOperationGeneric);
@@ -90,6 +92,9 @@ extern "C"
 	/* Content objects */
 	DECLARE_OBJECT_HANDLE(ContentObjectText);
 	DECLARE_OBJECT_HANDLE(ContentObjectInlineImage);
+
+	/* Content stream parser */
+	DECLARE_OBJECT_HANDLE(ContentParser);
 
 	#pragma endregion
 

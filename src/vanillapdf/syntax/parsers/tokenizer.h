@@ -5,12 +5,13 @@
 #include "syntax/parsers/token_dictionary.h"
 
 #include "utils/constants.h"
+#include "utils/unknown_interface.h"
 #include "utils/streams/input_stream_interface.h"
 
 namespace vanillapdf {
 namespace syntax {
 
-class Tokenizer {
+class Tokenizer : public IUnknown {
 private:
 	struct CacheItem {
 		TokenPtr token;

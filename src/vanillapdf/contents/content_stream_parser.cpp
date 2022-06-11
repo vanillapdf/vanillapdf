@@ -23,12 +23,12 @@ ContentStreamParser::ContentStreamParser(WeakReference<File> file, IInputStreamP
 	_dictionary->Initialize();
 }
 
-BaseInstructionCollectionPtr ContentStreamParser::ReadContentStreamInstructions(void) {
+BaseInstructionCollectionPtr ContentStreamParser::ReadInstructions(void) {
 	BaseInstructionCollectionPtr result;
 
 	std::list<InstructionBasePtr> instructions;
 	while (PeekTokenTypeSkip() != Token::Type::END_OF_INPUT) {
-		auto operation = ReadContentStreamInstruction();
+		auto operation = ReadInstruction();
 		operation->SetInitialized();
 		instructions.push_back(operation);
 	}
@@ -70,7 +70,7 @@ InlineImageObjectPtr ContentStreamParser::ReadInlineImageObject(void) {
 	}
 
 	// read operation begin image data
-	auto inline_image_data_op = ReadContentStreamOperation();
+	auto inline_image_data_op = ReadOperation();
 	if (inline_image_data_op->GetOperationType() != OperationBase::Type::BeginInlineImageData) {
 		assert(!"Invalid operation after inline image dictionary");
 	}
@@ -149,8 +149,8 @@ InlineImageObjectPtr ContentStreamParser::ReadInlineImageObject(void) {
 	return make_deferred<InlineImageObject>(image_dictionary, image_data);
 }
 
-InstructionBasePtr ContentStreamParser::ReadContentStreamInstruction(void) {
-	auto operation = ReadContentStreamOperation();
+InstructionBasePtr ContentStreamParser::ReadInstruction(void) {
+	auto operation = ReadOperation();
 
 	if (operation->GetOperationType() == OperationBase::Type::EndText) {
 		// This seems, that someone is trying to parse content stream,
@@ -176,7 +176,7 @@ InstructionBasePtr ContentStreamParser::ReadContentStreamInstruction(void) {
 				assert(!"Found BeginText operation without end"); break;
 			}
 
-			auto text_operation = ReadContentStreamOperation();
+			auto text_operation = ReadOperation();
 			if (text_operation->GetOperationType() == OperationBase::Type::EndText) {
 				break;
 			}
@@ -190,7 +190,7 @@ InstructionBasePtr ContentStreamParser::ReadContentStreamInstruction(void) {
 	return operation;
 }
 
-OperationBasePtr ContentStreamParser::ReadContentStreamOperation(void) {
+OperationBasePtr ContentStreamParser::ReadOperation(void) {
 	std::vector<syntax::ObjectPtr> operands;
 	while (IsOperand(PeekTokenTypeSkip())) {
 		auto operand = ReadOperand();

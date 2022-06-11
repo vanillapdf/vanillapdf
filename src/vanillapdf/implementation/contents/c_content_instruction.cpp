@@ -42,3 +42,88 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_FromUnknown(IUnk
 VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_Release(ContentInstructionHandle* handle) {
 	return ObjectRelease<InstructionBase, ContentInstructionHandle>(handle);
 }
+
+// ContentInstructionCollection
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_GetIterator(ContentInstructionCollectionHandle* handle, ContentInstructionCollectionIteratorHandle** result) {
+	BaseInstructionCollection* obj = reinterpret_cast<BaseInstructionCollection*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto begin = make_deferred<BaseInstructionCollection::Iterator>(obj->begin(), obj->end());
+		auto ptr = begin.AddRefGet();
+		*result = reinterpret_cast<ContentInstructionCollectionIteratorHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_ToUnknown(ContentInstructionCollectionHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<BaseInstructionCollection, IUnknown, ContentInstructionCollectionHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_FromUnknown(IUnknownHandle* handle, ContentInstructionCollectionHandle** result) {
+	return SafeObjectConvert<IUnknown, BaseInstructionCollection, IUnknownHandle, ContentInstructionCollectionHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_Release(ContentInstructionCollectionHandle* handle) {
+	return ObjectRelease<BaseInstructionCollection, ContentInstructionCollectionHandle>(handle);
+}
+
+// ContentInstructionCollectionIterator
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollectionIterator_GetValue(ContentInstructionCollectionIteratorHandle* handle, ContentInstructionHandle** result) {
+	BaseInstructionCollection::Iterator* iterator = reinterpret_cast<BaseInstructionCollection::Iterator*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto instruction = iterator->Value();
+		auto ptr = instruction.AddRefGet();
+		*result = reinterpret_cast<ContentInstructionHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollectionIterator_IsValid(ContentInstructionCollectionIteratorHandle* handle, boolean_type* result) {
+	BaseInstructionCollection::Iterator* iterator = reinterpret_cast<BaseInstructionCollection::Iterator*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		if (iterator->IsValid()) {
+			*result = VANILLAPDF_RV_TRUE;
+		}
+		else {
+			*result = VANILLAPDF_RV_FALSE;
+		}
+
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollectionIterator_Next(ContentInstructionCollectionIteratorHandle* handle) {
+	BaseInstructionCollection::Iterator* iterator = reinterpret_cast<BaseInstructionCollection::Iterator*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
+
+	try
+	{
+		++(*iterator);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollectionIterator_ToUnknown(ContentInstructionCollectionIteratorHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<BaseInstructionCollection::Iterator, IUnknown, ContentInstructionCollectionIteratorHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollectionIterator_FromUnknown(IUnknownHandle* handle, ContentInstructionCollectionIteratorHandle** result) {
+	return SafeObjectConvert<IUnknown, BaseInstructionCollection::Iterator, IUnknownHandle, ContentInstructionCollectionIteratorHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollectionIterator_Release(ContentInstructionCollectionIteratorHandle* handle) {
+	return ObjectRelease<BaseInstructionCollection::Iterator, ContentInstructionCollectionIteratorHandle>(handle);
+}
