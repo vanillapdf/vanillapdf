@@ -154,6 +154,20 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetMediaBox(PageObjectHa
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetBaseObject(PageObjectHandle* handle, DictionaryObjectHandle** result) {
+	PageObject* obj = reinterpret_cast<PageObject*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto base_object = obj->GetObject();
+		auto ptr = base_object.AddRefGet();
+		*result = reinterpret_cast<DictionaryObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION PageObject_ToUnknown(PageObjectHandle* handle, IUnknownHandle** result) {
 	return SafeObjectConvert<PageObject, IUnknown, PageObjectHandle, IUnknownHandle>(handle, result);
 }

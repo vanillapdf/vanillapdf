@@ -93,6 +93,8 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetMediaBox(PageObjectHandle* handle, RectangleHandle* value);
 
+	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetBaseObject(PageObjectHandle* handle, DictionaryObjectHandle** result);
+
 	/**
 	* \brief Reinterpret current object as \ref IUnknownHandle
 	*/
