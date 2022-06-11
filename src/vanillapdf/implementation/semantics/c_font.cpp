@@ -8,6 +8,24 @@ using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
 
+VANILLAPDF_API error_type CALLING_CONVENTION Font_CreateFromObject(DictionaryObjectHandle* handle, FontHandle** result) {
+
+	syntax::DictionaryObject* obj = reinterpret_cast<syntax::DictionaryObject*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto font = FontBase::Create(obj);
+
+		// Release from unique ptr does not increase internal ref counter
+		font->AddRef();
+
+		*result = reinterpret_cast<FontHandle*>(font);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Font_GetFontType(FontHandle* handle, FontType* result)
 {
 	FontBase* obj = reinterpret_cast<FontBase*>(handle);

@@ -71,6 +71,11 @@ extern "C"
 	*/
 
 	/**
+	* \brief Create new font object from the specified dictionary
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Font_CreateFromObject(DictionaryObjectHandle* handle, FontHandle** result);
+
+	/**
 	* \brief Get derived type of current object.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Font_GetFontType(FontHandle* handle, FontType* result);
