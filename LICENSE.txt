@@ -336,5 +336,5 @@ The IJG distribution formerly included code to read and write GIF files. To avoi
 
 Important: Do not make changes to this agreement. If Licensee wish to discuss any of the terms within this agreement please contact Vanilla.PDF Labs for further information.
 
-Vanilla.PDF - Copyright (C) 2018 Vanilla.PDF Labs info@vanillapdf.com
+Vanilla.PDF - Copyright (C) 2022 Vanilla.PDF Labs info@vanillapdf.com
 

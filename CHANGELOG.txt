@@ -1,5 +1,12 @@
 # Vanilla.PDF Release notes
 
+v1.6.0 - 14.8.2022
+ - FIX: Multiple encryption issues with obsolete algorithms
+ - TWEAK: Custom SigningKey interface revamped
+ - TWEAK: RealObject and IntegerObject can be directly converted from each other
+ - NEW: Support internal thread synchronization for accessing the input files
+ - NEW: Content stream parser can be initialized and used for custom input data
+
 v1.5.3 - 14.11.2021
  - FIX: CMap unicode glyph translation for corner cases
  - FIX: Object stream could have been corrupted during save procedure

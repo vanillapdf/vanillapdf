@@ -2,8 +2,8 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>vanillapdf</id>
-    <title>vanillapdf 1.5.3</title>
-    <version>1.5.3</version>
+    <title>vanillapdf 1.6.0</title>
+    <version>1.6.0</version>
     <authors>Vanilla.PDF Labs s.r.o.</authors>
     <owners>Vanilla.PDF Labs s.r.o.</owners>
     <license type="file">LICENSE.txt</license>
@@ -11,7 +11,7 @@
     <projectUrl>https://vanillapdf.com/</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Vanilla.PDF is a cross-platform SDK for creating and modifying PDF documents</description>
-    <copyright>Copyright 2018-2021 Vanilla.PDF Labs s.r.o.</copyright>
+    <copyright>Copyright 2018-2022 Vanilla.PDF Labs s.r.o.</copyright>
     <tags>pdf parsing sign native</tags>
 
     <dependencies>
@@ -33,8 +33,8 @@
     <file src="build\win-x64_v140\src\vanillapdf\Release\*.lib" target="lib\native\win-x64" />
 
     <!-- Linux files -->
-    <file src="build\vanillapdf_1.5.3_i386\lib\*.so" target="runtimes\linux-x86\native" />
-    <file src="build\vanillapdf_1.5.3_amd64\lib\*.so" target="runtimes\linux-x64\native" />
+    <file src="build\vanillapdf_1.6.0_i386\lib\*.so" target="runtimes\linux-x86\native" />
+    <file src="build\vanillapdf_1.6.0_amd64\lib\*.so" target="runtimes\linux-x64\native" />
 
     <!-- Header include files -->
     <file src="..\include\**\*.h" target="build\native\include" />
