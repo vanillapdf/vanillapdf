@@ -42,7 +42,8 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateFromDocument(DocumentHandle* handle, PageObjectHandle** result);
 
 	/**
-	* \copydoc PageObject_CreateFromDocument
+	* \brief
+	* Create a new PageObject from existing low-level syntax API object.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateFromObject(DictionaryObjectHandle* handle, PageObjectHandle** result);
 
@@ -93,6 +94,12 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetMediaBox(PageObjectHandle* handle, RectangleHandle* value);
 
+	/**
+	* \brief
+	* Switch object to low-level syntax API
+	* 
+	* Useful for cases, where semantic API is not sufficient.
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetBaseObject(PageObjectHandle* handle, DictionaryObjectHandle** result);
 
 	/**

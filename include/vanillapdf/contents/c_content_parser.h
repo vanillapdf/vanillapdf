@@ -20,7 +20,8 @@ extern "C"
 	* \extends IUnknownHandle
 	* \ingroup group_contents
 	* \brief
-	* TODO
+	* An object used for reading PDF PostScript instructions
+	* \see PostScript Language Reference
 	*/
 
 	/**

@@ -26,14 +26,14 @@ extern "C"
 	* \class ContentInstructionCollectionHandle
 	* \extends IUnknownHandle
 	* \ingroup group_contents
-	* \brief TODO
+	* \brief Collection of content instructions
 	*/
 
 	/**
 	* \class ContentInstructionCollectionIteratorHandle
 	* \extends IUnknownHandle
 	* \ingroup group_contents
-	* \brief TODO
+	* \brief Enumerator for content instruction collection
 	*/
 
 	/**
