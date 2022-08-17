@@ -43,8 +43,8 @@ if(WIN32)
 	add_custom_command(
 		TARGET vanillapdf.test POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
-		$<TARGET_FILE_DIR:vanillapdf>
-		$<TARGET_FILE_DIR:vanillapdf.test>
+		"$<TARGET_FILE_DIR:vanillapdf>"
+		"$<TARGET_FILE_DIR:vanillapdf.test>"
 	)
 endif(WIN32)
 

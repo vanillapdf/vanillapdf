@@ -596,22 +596,6 @@ endif (ZLIB_FOUND)
 
 target_link_libraries(vanillapdf ${VANILLAPDF_LIBS})
 
-# Place for install targets
-
-if(WIN32)
-	# System libs such as msvcp and vcruntime
-	include(InstallRequiredSystemLibraries)
-    
-    # Copy DLL dependencies on windows to our build directory
-	add_custom_command(
-		TARGET vanillapdf POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy
-		${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
-		$<TARGET_FILE_DIR:vanillapdf>
-    )
-    
-endif(WIN32)
-
 # Project install targets
 install(TARGETS vanillapdf
 	RUNTIME DESTINATION bin
@@ -637,18 +621,18 @@ if(WIN32)
 	
 		# Find dll runtime binary file
 		find_file(LIBEAY_RUNTIME
-			NAMES libcrypto-1_1.dll libcrypto-1_1-x64.dll
+			NAMES libcrypto-3.dll libcrypto-3-x64.dll legacy.dll
 			PATHS ${VANILLPDF_BINARY_DIR}
 		)
 
 		if (NOT EXISTS ${LIBEAY_RUNTIME})
-			message(FATAL_ERROR "OpenSSL support is enabled, but the LIBEAY_RUNTIME does not exist")
+			# message(FATAL_ERROR "OpenSSL support is enabled, but the LIBEAY_RUNTIME does not exist")
 		endif(NOT EXISTS ${LIBEAY_RUNTIME})
 		
-		message(STATUS "LIBEAY runtime was found at ${LIBEAY_RUNTIME}")
+		# message(STATUS "LIBEAY runtime was found at ${LIBEAY_RUNTIME}")
 		
 		# Install dependency into output package
-		install(FILES ${LIBEAY_RUNTIME} DESTINATION bin)
+		# install(FILES ${LIBEAY_RUNTIME} DESTINATION bin)
 
 	endif (OPENSSL_FOUND)
 
@@ -657,18 +641,18 @@ if(WIN32)
 
 		# Find dll runtime binary file
 		find_file(LIBJPEG_RUNTIME
-			NAMES jpeg62.dll
+			NAMES turbojpeg.dll
 			PATHS ${VANILLPDF_BINARY_DIR}
 		)
 
 		if (NOT EXISTS ${LIBJPEG_RUNTIME})
-			message(FATAL_ERROR "JPEG support is enabled, but the LIBJPEG_RUNTIME does not exist")
+			# message(FATAL_ERROR "JPEG support is enabled, but the LIBJPEG_RUNTIME does not exist")
 		endif(NOT EXISTS ${LIBJPEG_RUNTIME})
 		
-		message(STATUS "LIBJPEG runtime was found at ${LIBJPEG_RUNTIME}")
+		# message(STATUS "LIBJPEG runtime was found at ${LIBJPEG_RUNTIME}")
 		
 		# Install dependency into output package
-		install(FILES ${LIBJPEG_RUNTIME} DESTINATION bin)
+		# install(FILES ${LIBJPEG_RUNTIME} DESTINATION bin)
 	endif (JPEG_FOUND)
 
 	# zlib dependent libraries
@@ -681,12 +665,12 @@ if(WIN32)
 		)
 
 		if (NOT EXISTS ${ZLIB_RUNTIME})
-			message(FATAL_ERROR "zlib support is enabled, but the ZLIB_RUNTIME does not exist")
+			# message(FATAL_ERROR "zlib support is enabled, but the ZLIB_RUNTIME does not exist")
 		endif(NOT EXISTS ${ZLIB_RUNTIME})
 		
-		message(STATUS "ZLIB runtime was found at ${ZLIB_RUNTIME}")
+		# message(STATUS "ZLIB runtime was found at ${ZLIB_RUNTIME}")
 		
 		# Install dependency into output package
-		install(FILES ${ZLIB_RUNTIME} DESTINATION bin)
+		# install(FILES ${ZLIB_RUNTIME} DESTINATION bin)
 	endif (ZLIB_FOUND)
 endif(WIN32)

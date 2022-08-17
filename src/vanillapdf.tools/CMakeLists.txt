@@ -43,12 +43,13 @@ add_executable(vanillapdf.tools
 )
 
 if(WIN32)
+
 	# Copy DLL dependencies on windows to our build directory
 	add_custom_command(
 		TARGET vanillapdf.tools POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
-		$<TARGET_FILE_DIR:vanillapdf>
-		$<TARGET_FILE_DIR:vanillapdf.tools>
+		"$<TARGET_FILE_DIR:vanillapdf>"
+		"$<TARGET_FILE_DIR:vanillapdf.tools>"
 	)
 endif(WIN32)
 

@@ -26,11 +26,11 @@
     <file src="vanillapdf_net.targets" target="build\netstandard\vanillapdf.targets" />
 
     <!-- Windows files -->
-    <file src="build\win-x86_v140\src\vanillapdf\Release\*.dll" target="runtimes\win-x86\native" />
-    <file src="build\win-x64_v140\src\vanillapdf\Release\*.dll" target="runtimes\win-x64\native" />
+    <file src="build\win-x86_v143\src\vanillapdf\Release\*.dll" target="runtimes\win-x86\native" />
+    <file src="build\win-x64_v143\src\vanillapdf\Release\*.dll" target="runtimes\win-x64\native" />
 
-    <file src="build\win-x86_v140\src\vanillapdf\Release\*.lib" target="lib\native\win-x86" />
-    <file src="build\win-x64_v140\src\vanillapdf\Release\*.lib" target="lib\native\win-x64" />
+    <file src="build\win-x86_v143\src\vanillapdf\Release\*.lib" target="lib\native\win-x86" />
+    <file src="build\win-x64_v143\src\vanillapdf\Release\*.lib" target="lib\native\win-x64" />
 
     <!-- Linux files -->
     <file src="build\vanillapdf_1.6.0_i386\lib\*.so" target="runtimes\linux-x86\native" />
