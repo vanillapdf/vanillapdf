@@ -497,7 +497,11 @@ extern "C"
 	*/
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_Type0;
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_Type1;
+	VANILLAPDF_API extern const NameObjectHandle* NameConstant_MMType1;
 	VANILLAPDF_API extern const NameObjectHandle* NameConstant_Type3;
+	VANILLAPDF_API extern const NameObjectHandle* NameConstant_TrueType;
+	VANILLAPDF_API extern const NameObjectHandle* NameConstant_CIDFontType0;
+	VANILLAPDF_API extern const NameObjectHandle* NameConstant_CIDFontType2;
 
 	/**
 	* \brief Represents \ref CharacterMapHandle property.
