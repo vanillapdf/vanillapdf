@@ -33,7 +33,7 @@ TEST(HexadecimalStringObject, GetValue) {
 
 	ASSERT_EQ(Buffer_GetData(buffer_ptr, &buffer_data, &buffer_size), VANILLAPDF_ERROR_SUCCESS);
 
-	ASSERT_EQ(buffer_size, 2);
+	ASSERT_EQ(buffer_size, static_cast<decltype(buffer_size)>(2));
 	ASSERT_EQ(buffer_data[0], 0x00);
 	ASSERT_EQ(buffer_data[1], 0x27);
 
@@ -61,7 +61,7 @@ TEST(HexadecimalStringObject, SetValue) {
 
 	ASSERT_EQ(Buffer_GetData(buffer_check_ptr, &buffer_data, &buffer_size), VANILLAPDF_ERROR_SUCCESS);
 
-	ASSERT_EQ(buffer_size, 2);
+	ASSERT_EQ(buffer_size, static_cast<decltype(buffer_size)>(2));
 	ASSERT_EQ(buffer_data[0], 0x00);
 	ASSERT_EQ(buffer_data[1], 0x27);
 
