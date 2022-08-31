@@ -273,6 +273,11 @@ void MiscUtils::InitializeOpenSSL() {
 		throw GeneralException("Failed to initialize legacy OSSL provider, " + GetLastOpensslError());
 	}
 
+	auto default_provider = OSSL_PROVIDER_load(nullptr, "default");
+	if (default_provider == nullptr) {
+		throw GeneralException("Failed to initialize default OSSL provider, " + GetLastOpensslError());
+	}
+
 #endif /* OPENSSL_VERSION_MAJOR >= 3 */
 
 	OpenSSL_add_all_algorithms();
