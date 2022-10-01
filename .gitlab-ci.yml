@@ -1,5 +1,5 @@
-Ubuntu-amd64:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:latest
+Ubuntu-amd64-18.04:
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:18.04
   when: manual
 
   variables:
@@ -17,15 +17,15 @@ Ubuntu-amd64:
       - ./*.tar.gz
       - ./*.sha256
 
-Ubuntu-i386:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-i386:latest
+Ubuntu-amd64-22.04:
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:22.04
   when: manual
-  
+
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - cmake -DVANILLAPDF_FORCE_32_BIT=ON .
+    - cmake .
     - make
     - make test
     - make package
