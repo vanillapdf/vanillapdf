@@ -1,6 +1,8 @@
 Windows-amd64-ltsc2022:
   image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-windows-amd64:ltsc2022
   when: manual
+  tags:
+    - windows
 
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
