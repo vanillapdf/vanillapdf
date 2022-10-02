@@ -74,6 +74,25 @@ almalinux-8-amd64:
       - ./*.tar.gz
       - ./*.sha256
 
+almalinux-8-arm64v8:
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-almalinux-arm64v8:8
+  when: manual
+  
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+
+  script:
+    - cmake .
+    - make
+    - make test
+    - make package
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - ./*.rpm
+      - ./*.tar.gz
+      - ./*.sha256
+
 almalinux-9-amd64:
   image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-almalinux-amd64:9
   when: manual
