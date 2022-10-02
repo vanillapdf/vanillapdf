@@ -98,6 +98,7 @@ almalinux-8-amd64:
 almalinux-8-arm64v8:
   image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-almalinux-arm64v8:8
   when: manual
+  timeout: 5 hours # The runner machine seems to be very slow
   
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
