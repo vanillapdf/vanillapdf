@@ -19,9 +19,9 @@
 #if (__GNUC__)
 	#define COMPILER_GCC
 
-	#if (__x86_64__ || __ppc64__)
+	#if (__x86_64__ || __ppc64__ || __aarch64__)
 		#define ENVIRONMENT_64_BIT
-	#endif /* __x86_64__ || __ppc64__ */
+	#endif /* __x86_64__ || __ppc64__ || __aarch64__ */
 #endif /* __GNUC__ */
 
 #if !defined(ENVIRONMENT_64_BIT)
