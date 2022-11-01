@@ -33,6 +33,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_GetBaseVersion(D
 			*result = PDFVersion_16; break;
 		case Version::PDF17:
 			*result = PDFVersion_17; break;
+		case Version::PDF20:
+			*result = PDFVersion_20; break;
 		default:
 			return VANILLAPDF_ERROR_NOT_SUPPORTED;
 		}

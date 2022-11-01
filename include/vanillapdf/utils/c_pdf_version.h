@@ -20,45 +20,53 @@ extern "C"
 	* \ingroup group_utils
 	*/
 	typedef enum {
+
+		Undefined = 0,
+
 		/**
 		* \brief PDF version 1.0
 		*/
-		PDFVersion_10 = 0,
+		PDFVersion_10,
 
 		/**
 		* \brief PDF version 1.1
 		*/
-		PDFVersion_11 = 1,
+		PDFVersion_11,
 
 		/**
 		* \brief PDF version 1.2
 		*/
-		PDFVersion_12 = 2,
+		PDFVersion_12,
 
 		/**
 		* \brief PDF version 1.3
 		*/
-		PDFVersion_13 = 3,
+		PDFVersion_13,
 
 		/**
 		* \brief PDF version 1.4
 		*/
-		PDFVersion_14 = 4,
+		PDFVersion_14,
 
 		/**
 		* \brief PDF version 1.5
 		*/
-		PDFVersion_15 = 5,
+		PDFVersion_15,
 
 		/**
 		* \brief PDF version 1.6
 		*/
-		PDFVersion_16 = 6,
+		PDFVersion_16,
 
 		/**
 		* \brief PDF version 1.7
 		*/
-		PDFVersion_17 = 7
+		PDFVersion_17,
+
+		/**
+		* \brief PDF version 2.0
+		*/
+		PDFVersion_20,
 	} PDFVersion;
 
 #ifdef __cplusplus
