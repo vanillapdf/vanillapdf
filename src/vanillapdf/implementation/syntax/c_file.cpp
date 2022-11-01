@@ -79,6 +79,44 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle* handle)
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION File_GetVersion(FileHandle* handle, PDFVersion* result) {
+
+	File* file = reinterpret_cast<File*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto file_header = file->GetHeader();
+		auto version = file_header->GetVersion();
+
+		switch (version) {
+		case Version::PDF10:
+			*result = PDFVersion_10; break;
+		case Version::PDF11:
+			*result = PDFVersion_11; break;
+		case Version::PDF12:
+			*result = PDFVersion_12; break;
+		case Version::PDF13:
+			*result = PDFVersion_13; break;
+		case Version::PDF14:
+			*result = PDFVersion_14; break;
+		case Version::PDF15:
+			*result = PDFVersion_15; break;
+		case Version::PDF16:
+			*result = PDFVersion_16; break;
+		case Version::PDF17:
+			*result = PDFVersion_17; break;
+		case Version::PDF20:
+			*result = PDFVersion_20; break;
+		default:
+			return VANILLAPDF_ERROR_NOT_SUPPORTED;
+		}
+
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle* handle, XrefChainHandle** result)
 {
 	File* file = reinterpret_cast<File*>(handle);

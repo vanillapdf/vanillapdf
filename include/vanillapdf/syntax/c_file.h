@@ -5,6 +5,8 @@
 #include "vanillapdf/c_handles.h"
 #include "vanillapdf/c_values.h"
 
+#include "vanillapdf/utils/c_pdf_version.h"
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -70,6 +72,12 @@ extern "C"
 	* Read xref tables, determine if file is encrypted.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION File_Initialize(FileHandle* handle);
+
+	/**
+	* \brief
+	* The version of the PDF specification to which the document conforms
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION File_GetVersion(FileHandle* handle, PDFVersion* result);
 
 	/**
 	* \brief Determine if file is encrypted.
