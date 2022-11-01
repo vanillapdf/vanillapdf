@@ -94,10 +94,13 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+	if (license_file != NULL) {
+		RETURN_ERROR_IF_NOT_SUCCESS(process_license_info(license_file));
+	}
+
 	RETURN_ERROR_IF_NOT_SUCCESS(set_quiet_mode(quiet_mode));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(process_library_info());
-	RETURN_ERROR_IF_NOT_SUCCESS(process_license_info(license_file));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_logging());
 	RETURN_ERROR_IF_NOT_SUCCESS(process_constants());
 	RETURN_ERROR_IF_NOT_SUCCESS(process_utils_conversions());
