@@ -16,14 +16,16 @@
 
     <dependencies>
       <group targetFramework="native" />
-      <group targetFramework="netstandard" />
+      <group targetFramework="netstandard2.0" />
+      <group targetFramework="netstandard2.1" />
     </dependencies>
   </metadata>
 
   <files>
     <!-- Configuration files -->
     <file src="vanillapdf_native.targets" target="build\native\vanillapdf.targets" />
-    <file src="vanillapdf_net.targets" target="build\netstandard\vanillapdf.targets" />
+    <file src="vanillapdf_net.targets" target="build\netstandard2.0\vanillapdf.targets" />
+    <file src="vanillapdf_net.targets" target="build\netstandard2.1\vanillapdf.targets" />
 
     <!-- Windows files -->
     <file src="build\win-x86_v143\src\vanillapdf\Release\*.dll" target="runtimes\win-x86\native" />
@@ -40,7 +42,8 @@
     <file src="..\include\**\*.h" target="build\native\include" />
 
     <!-- This is a placeholder file, so we can target netstandard without a warning -->
-    <file src="_._" target="lib\netstandard" />
+    <file src="_._" target="lib\netstandard2.0" />
+    <file src="_._" target="lib\netstandard2.1" />
 
     <!-- Additional dependencies -->
     <file src="..\LICENSE.txt" target="" />
