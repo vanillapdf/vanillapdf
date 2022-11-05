@@ -47,16 +47,17 @@ Ubuntu-amd64-22.04:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - cmake .
+    - cmake . -DPLATFORM_IDENTIFIER=ubuntu.22.04-x64
     - make
-    - make test
     - make package
+    - nuget pack nuget/vanillapdf.runtime.nuspec
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     paths:
       - ./*.deb
       - ./*.tar.gz
       - ./*.sha256
+      - ./*.nupkg
 
 CentOS-7-amd64:
   image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-centos-amd64:latest

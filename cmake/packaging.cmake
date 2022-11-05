@@ -68,6 +68,32 @@ set(CPACK_WIX_PRODUCT_ICON				${CMAKE_SOURCE_DIR}/cmake/vanilla_logo.ico)
 set(CPACK_WIX_PROGRAM_MENU_FOLDER		"Vanilla.PDF")
 set(CPACK_WIX_CMAKE_PACKAGE_REGISTRY	"Vanilla.PDF")
 
+# Variables specific to CPack NuGet generator
+#set(CPACK_NUGET_PACKAGE_NAME							"vanillapdf.runtime.${PLATFORM_IDENTIFIER}")
+#set(CPACK_NUGET_PACKAGE_DESCRIPTION					"Vanilla.PDF is a cross-platform SDK for creating and modifying PDF documents")
+#set(CPACK_NUGET_PACKAGE_HOMEPAGE_URL					"https://vanillapdf.com/")
+#set(CPACK_NUGET_PACKAGE_LICENSE_FILE_NAME				"common/LICENSE.txt")
+#set(CPACK_NUGET_PACKAGE_REQUIRE_LICENSE_ACCEPTANCE		true)
+##set(CPACK_NUGET_PACKAGE_ICON							"${CMAKE_SOURCE_DIR}/cmake/vanilla_logo.png")
+#set(CPACK_NUGET_PACKAGE_AUTHORS						"Vanilla.PDF Labs s.r.o.")
+#set(CPACK_NUGET_PACKAGE_OWNERS							"Vanilla.PDF Labs s.r.o.")
+#set(CPACK_NUGET_PACKAGE_TITLE							"vanillapdf.runtime.${PLATFORM_IDENTIFIER}")
+#set(CPACK_NUGET_PACKAGE_COPYRIGHT						"Copyright 2018-2022 Vanilla.PDF Labs s.r.o.")
+#set(CPACK_NUGET_PACKAGE_TAGS							"pdf parsing sign native")
+
+# I am not able to use NuGet generator since it bundles a lot of unnecessary
+# items and the controlling is not sufficient, so let's do it the old way
+
+# Initialize NuGet for current platform
+configure_file("${CMAKE_SOURCE_DIR}/nuget/vanillapdf.runtime.nuspec.in" "${CMAKE_SOURCE_DIR}/nuget/vanillapdf.runtime.nuspec")
+
+# This could be useful, however at the time of CPack
+# I am not able to alter some of the properties,
+# such as install target destination
+
+# Allow runtime customizations based on current generator
+#set(CPACK_PROJECT_CONFIG_FILE ${CMAKE_SOURCE_DIR}/cmake/packaging_runtime.cmake)
+
 if(WIN32)
 	set(CPACK_GENERATOR		"WIX;ZIP")
 	
