@@ -62,10 +62,10 @@ endif (CMAKE_COMPILER_IS_GNUCC)
 
 target_link_libraries(vanillapdf.test ${VANILLAPDF_TEST_LIBS})
 
-# Project install targets
-install(TARGETS vanillapdf.test
-	RUNTIME DESTINATION bin
-)
+# We do not need test project to be shipped
+#install(TARGETS vanillapdf.test
+	#RUNTIME DESTINATION "bin/${PLATFORM_IDENTIFIER}"
+#)
 
 # Specify version identificators
 add_definitions(-DVANILLAPDF_TEST_VERSION_MAJOR=${VANILLAPDF_VERSION_MAJOR})

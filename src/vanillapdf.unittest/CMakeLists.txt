@@ -48,10 +48,10 @@ set(VANILLAPDF_UNITTEST_LIBS
 
 target_link_libraries(vanillapdf.unittest ${VANILLAPDF_UNITTEST_LIBS})
 
-# Project install targets
-install(TARGETS vanillapdf.unittest
-	RUNTIME DESTINATION bin
-)
+# We do not need unit test project to be shipped
+#install(TARGETS vanillapdf.unittest
+#	RUNTIME DESTINATION bin
+#)
 
 # Specify version identificators
 add_definitions(-DVANILLAPDF_UNITTEST_VERSION_MAJOR=${VANILLAPDF_VERSION_MAJOR})
