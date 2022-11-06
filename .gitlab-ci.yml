@@ -62,7 +62,7 @@ build-ubuntu.20.04-x64:
       - ./*.sha256
       - ./*.nupkg
 
-build-ubuntu.18.04-x64:
+build-ubuntu.22.04-x64:
   image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:22.04
   when: manual
 
