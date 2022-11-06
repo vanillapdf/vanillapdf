@@ -110,16 +110,18 @@ almalinux-8-amd64:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - cmake .
+    - cmake . -DPLATFORM_IDENTIFIER=rhel.8-x64
     - make
     - make test
     - make package
+    - dotnet nuget pack nuget/vanillapdf.runtime.nuspec
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     paths:
       - ./*.rpm
       - ./*.tar.gz
       - ./*.sha256
+      - ./*.nupkg
 
 almalinux-8-arm64v8:
   image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-almalinux-arm64v8:8
