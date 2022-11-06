@@ -75,6 +75,7 @@ build-ubuntu.22.04-x64:
     - make test
     - make package
     - nuget pack nuget/vanillapdf.runtime.nuspec
+    
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     paths:
@@ -164,6 +165,7 @@ almalinux-9-amd64:
 
 nuget-deploy:
   image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:22.04
+  stage: deploy
   when: manual
   needs: []
 
@@ -171,8 +173,6 @@ nuget-deploy:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - 'curl --location --output ubuntu.22.04-x64.zip --header "PRIVATE-TOKEN: $PRIVATE_TOKEN" "https://gitlab.com/jurzik/vanillapdf/-/jobs/artifacts/nuget_packaging/download?job=build-ubuntu.22.04-x64"'
-    - unzip ubuntu.22.04-x64.zip
     - nuget add source "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text
     - nuget push "*.nupkg" --source gitlab
 
