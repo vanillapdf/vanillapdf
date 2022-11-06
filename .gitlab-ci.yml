@@ -1,4 +1,4 @@
-Windows-amd64-ltsc2022:
+windows-amd64-ltsc2022:
   image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-windows-amd64:ltsc2022
   when: manual
   tags:
@@ -20,7 +20,7 @@ Windows-amd64-ltsc2022:
       - ./*.zip
       - ./*.sha256
 
-Ubuntu-amd64-18.04:
+build-ubuntu.18.04-x64:
   image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:18.04
   when: manual
 
@@ -28,27 +28,9 @@ Ubuntu-amd64-18.04:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - cmake .
+    - cmake . -DPLATFORM_IDENTIFIER=ubuntu.18.04-x64
     - make
     - make test
-    - make package
-  artifacts:
-    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
-    paths:
-      - ./*.deb
-      - ./*.tar.gz
-      - ./*.sha256
-
-Ubuntu-amd64-22.04:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:22.04
-  when: manual
-
-  variables:
-    GIT_SUBMODULE_STRATEGY: recursive
-
-  script:
-    - cmake . -DPLATFORM_IDENTIFIER=ubuntu.22.04-x64
-    - make
     - make package
     - nuget pack nuget/vanillapdf.runtime.nuspec
   artifacts:
@@ -59,7 +41,49 @@ Ubuntu-amd64-22.04:
       - ./*.sha256
       - ./*.nupkg
 
-CentOS-7-amd64:
+build-ubuntu.20.04-x64:
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:20.04
+  when: manual
+
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+
+  script:
+    - cmake . -DPLATFORM_IDENTIFIER=ubuntu.20.04-x64
+    - make
+    - make test
+    - make package
+    - nuget pack nuget/vanillapdf.runtime.nuspec
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - ./*.deb
+      - ./*.tar.gz
+      - ./*.sha256
+      - ./*.nupkg
+
+build-ubuntu.18.04-x64:
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:22.04
+  when: manual
+
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+
+  script:
+    - cmake . -DPLATFORM_IDENTIFIER=ubuntu.22.04-x64
+    - make
+    - make test
+    - make package
+    - nuget pack nuget/vanillapdf.runtime.nuspec
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - ./*.deb
+      - ./*.tar.gz
+      - ./*.sha256
+      - ./*.nupkg
+
+centOS-7-amd64:
   image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-centos-amd64:latest
   when: manual
   
@@ -135,3 +159,17 @@ almalinux-9-amd64:
       - ./*.rpm
       - ./*.tar.gz
       - ./*.sha256
+
+nuget-deploy:
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:22.04
+  when: manual
+  needs: [build-ubuntu.18.04-x64, build-ubuntu.20.04-x64, build-ubuntu.22.04-x64]
+
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+
+  script:
+    - curl --location --output ubuntu.18.04-x64.zip "https://gitlab.com/jurzik/vanillapdf/-/jobs/artifacts/main/download?job=build-ubuntu.18.04-x64&job_token=$CI_JOB_TOKEN"
+    - nuget add source "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text
+    - nuget push "*.nupkg" --source gitlab
+
