@@ -28,9 +28,9 @@
     <file src="vanillapdf_net.targets" target="build/netstandard2.1/vanillapdf.targets" />
 
     <!-- Binary files -->
-    <file src="build/src/vanillapdf/Release/*.dll" target="runtimes/@PLATFORM_IDENTIFIER@/native" />
-    <file src="build/src/vanillapdf/Release/*.so" target="runtimes/@PLATFORM_IDENTIFIER@/native" />
-    <file src="build/src/vanillapdf/Release/*.lib" target="lib/@PLATFORM_IDENTIFIER@/native" />
+    <file src="@CMAKE_CURRENT_BINARY_DIR@/src/vanillapdf/Release/*.dll" target="runtimes/@PLATFORM_IDENTIFIER@/native" />
+    <file src="@CMAKE_CURRENT_BINARY_DIR@/src/vanillapdf/Release/*.so" target="runtimes/@PLATFORM_IDENTIFIER@/native" />
+    <file src="@CMAKE_CURRENT_BINARY_DIR@/src/vanillapdf/Release/*.lib" target="lib/@PLATFORM_IDENTIFIER@/native" />
 
     <!-- Header include files -->
     <file src="../include/**/*.h" target="build/native/include" />
