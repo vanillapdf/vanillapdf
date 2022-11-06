@@ -15,14 +15,11 @@
     <tags>pdf parsing sign native</tags>
 
     <dependencies>
-      <dependency id="vanillapdf.runtime.ubuntu.22.04-x64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@" include="all" />
+      <dependency id="vanillapdf.runtime.ubuntu.22.04-x64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@" />
     </dependencies>
   </metadata>
 
   <files>
-
-    <!-- Configuration files -->
-    <file src="vanillapdf_native.targets" target="build\native\vanillapdf.targets" />
 
     <!-- Additional dependencies -->
     <file src="..\LICENSE.txt" target="" />
