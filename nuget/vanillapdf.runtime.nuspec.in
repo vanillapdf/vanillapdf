@@ -23,9 +23,9 @@
 
   <files>
     <!-- Configuration files -->
-    <file src="vanillapdf_native.targets" target="build/native/vanillapdf.targets" />
-    <file src="vanillapdf_net.targets" target="build/netstandard2.0/vanillapdf.targets" />
-    <file src="vanillapdf_net.targets" target="build/netstandard2.1/vanillapdf.targets" />
+    <file src="vanillapdf_native.targets" target="build/native/vanillapdf.runtime.@PLATFORM_IDENTIFIER@.targets" />
+    <file src="vanillapdf_net.targets" target="build/netstandard2.0/vanillapdf.runtime.@PLATFORM_IDENTIFIER@.targets" />
+    <file src="vanillapdf_net.targets" target="build/netstandard2.1/vanillapdf.runtime.@PLATFORM_IDENTIFIER@.targets" />
 
     <!-- Binary files -->
     <file src="@CMAKE_CURRENT_BINARY_DIR@/src/vanillapdf/*.dll" target="runtimes/@PLATFORM_IDENTIFIER@/native" />
@@ -36,6 +36,7 @@
     <file src="@CMAKE_SOURCE_DIR@/include/**/*.h" target="build/native/include" />
 
     <!-- This is a placeholder file, so we can target netstandard without a warning -->
+    <file src="_._" target="lib/native" />
     <file src="_._" target="lib/netstandard2.0" />
     <file src="_._" target="lib/netstandard2.1" />
 
