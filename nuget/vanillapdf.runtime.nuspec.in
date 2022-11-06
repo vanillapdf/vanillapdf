@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
-    <id>vanillapdf</id>
+    <id>vanillapdf.runtime.@PLATFORM_IDENTIFIER@</id>
     <title>vanillapdf</title>
     <version>@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@</version>
     <authors>Vanilla.PDF Labs s.r.o.</authors>
@@ -33,7 +33,7 @@
     <file src="@CMAKE_CURRENT_BINARY_DIR@/src/vanillapdf/Release/*.lib" target="lib/@PLATFORM_IDENTIFIER@/native" />
 
     <!-- Header include files -->
-    <file src="../include/**/*.h" target="build/native/include" />
+    <file src="@CMAKE_SOURCE_DIR@/include/**/*.h" target="build/native/include" />
 
     <!-- This is a placeholder file, so we can target netstandard without a warning -->
     <file src="_._" target="lib/netstandard2.0" />
