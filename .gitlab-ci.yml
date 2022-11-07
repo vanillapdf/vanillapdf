@@ -1,3 +1,8 @@
+stages:
+  - test
+  - deploy-staging
+  - deploy-production
+
 windows-amd64-ltsc2019:
   image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-windows-amd64:ltsc2019
   when: manual
@@ -6,6 +11,9 @@ windows-amd64-ltsc2019:
 
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
+
+  before_script:
+    - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
 
   script:
     - cmake . -G "Visual Studio 16 2019" -DCMAKE_GENERATOR_PLATFORM=x64 -DPLATFORM_IDENTIFIER=win-x64
@@ -174,12 +182,45 @@ almalinux-9-amd64:
       - ./*.sha256
       - ./*.nupkg
 
-nuget-deploy:
+build-vanillapdf-nuget:
   image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:22.04
-  stage: deploy
+  when: manual
+
+  script:
+    - nuget pack nuget/vanillapdf.runtime.nuspec
+
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - ./*.nupkg
+
+build-vanillapdf-docs:
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:22.04
+  when: manual
+
+  script:
+    - doxygen doc/doxyfile
+
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - ./doc/api
+
+nuget-deploy-staging:
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:22.04
+  stage: deploy-staging
   when: manual
 
   script:
     - dotnet nuget add source "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text
     - dotnet nuget push "*.nupkg" --source gitlab
 
+nuget-deploy-production:
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:22.04
+  stage: deploy-production
+  when: manual
+
+  script:
+    # - dotnet nuget add source "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text
+    # - dotnet nuget push "*.nupkg" --source gitlab
+    # - FTP msi, tgz, deb, rpm, docs
