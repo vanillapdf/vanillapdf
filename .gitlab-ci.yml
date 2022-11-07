@@ -187,7 +187,7 @@ build-vanillapdf-nuget:
   when: manual
 
   script:
-    - cmake .
+    - cmake . -DPLATFORM_IDENTIFIER=ubuntu.22.04-x64
     - nuget pack nuget/vanillapdf.nuspec
 
   artifacts:
@@ -200,7 +200,8 @@ build-vanillapdf-docs:
   when: manual
 
   script:
-    - doxygen doc/doxyfile
+    - cd doc
+    - doxygen doxyfile
 
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
