@@ -186,6 +186,9 @@ build-vanillapdf-nuget:
   image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:22.04
   when: manual
 
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+
   script:
     - cmake . -DPLATFORM_IDENTIFIER=ubuntu.22.04-x64
     - nuget pack nuget/vanillapdf.nuspec
