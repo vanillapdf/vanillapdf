@@ -16,7 +16,7 @@ windows-amd64-ltsc2019:
     - setx path "%path%;C:\Program Files\CMake\bin"
 
   script:
-    - cmake . -G "Visual Studio 16 2019" -DCMAKE_GENERATOR_PLATFORM=x64 -DPLATFORM_IDENTIFIER=win-x64
+    - "C:\Program Files\CMake\bin\cmake" .
     - cmake --build . --config Release --target ALL_BUILD
     - cmake --build . --config Release --target RUN_TESTS
     - cmake --build . --config Release --target PACKAGE
