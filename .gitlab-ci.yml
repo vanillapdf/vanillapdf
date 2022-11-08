@@ -13,7 +13,7 @@ windows-amd64-ltsc2019:
     GIT_SUBMODULE_STRATEGY: recursive
 
   before_script:
-    - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+    - setx path "%path%;C:\Program Files\CMake\bin"
 
   script:
     - cmake . -G "Visual Studio 16 2019" -DCMAKE_GENERATOR_PLATFORM=x64 -DPLATFORM_IDENTIFIER=win-x64
