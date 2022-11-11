@@ -3,17 +3,18 @@ stages:
   - deploy-staging
   - deploy-production
 
-windows-amd64-ltsc2019:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-windows-amd64:ltsc2019
+windows-ltsc2022-x86:
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-windows-x86:ltsc2022
   when: manual
   tags:
     - windows
+    - private # Shared windows runners are broke and broken
 
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - cmake . -G "Visual Studio 16 2019" -DCMAKE_GENERATOR_PLATFORM=x64 -DPLATFORM_IDENTIFIER=win-x64
+    - cmake . -G "Visual Studio 17 2022" -DCMAKE_GENERATOR_PLATFORM=Win32 -DPLATFORM_IDENTIFIER=win-x86
     - cmake --build . --config Release --target ALL_BUILD
     - cmake --build . --config Release --target RUN_TESTS
     - cmake --build . --config Release --target PACKAGE
@@ -27,11 +28,12 @@ windows-amd64-ltsc2019:
       - ./*.sha256
       - ./*.nupkg
 
-windows-amd64-ltsc2022:
+windows-ltsc2022-x64:
   image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-windows-amd64:ltsc2022
   when: manual
   tags:
     - windows
+    - private # Shared windows runners are broke and broken
 
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
