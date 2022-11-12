@@ -53,15 +53,15 @@ windows-ltsc2022-x64:
       - ./*.sha256
       - ./*.nupkg
 
-build-ubuntu.18.04-x64:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:18.04
+build-ubuntu.20.04-x64:
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:20.04
   when: manual
 
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - cmake . -DPLATFORM_IDENTIFIER=ubuntu.18.04-x64
+    - cmake . -DPLATFORM_IDENTIFIER=ubuntu.20.04-x64
     - make
     - make test
     - make package
@@ -75,15 +75,37 @@ build-ubuntu.18.04-x64:
       - ./*.sha256
       - ./*.nupkg
 
-build-ubuntu.20.04-x64:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:20.04
+build-ubuntu.22.04-arm:
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-arm32v7:22.04
   when: manual
 
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - cmake . -DPLATFORM_IDENTIFIER=ubuntu.20.04-x64
+    - cmake . -DPLATFORM_IDENTIFIER=ubuntu.22.04-arm
+    - make
+    - make test
+    - make package
+    - nuget pack nuget/vanillapdf.runtime.nuspec
+
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - ./*.deb
+      - ./*.tar.gz
+      - ./*.sha256
+      - ./*.nupkg
+
+build-ubuntu.22.04-arm64:
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-arm64v8:22.04
+  when: manual
+
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+
+  script:
+    - cmake . -DPLATFORM_IDENTIFIER=ubuntu.22.04-arm64
     - make
     - make test
     - make package
@@ -119,15 +141,15 @@ build-ubuntu.22.04-x64:
       - ./*.sha256
       - ./*.nupkg
 
-build-centos.7-x64:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-centos-amd64:latest
+build-rocky.8-x64:
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-rockylinux-amd64:8
   when: manual
   
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - cmake . -DPLATFORM_IDENTIFIER=centos.7-x64
+    - cmake . -DPLATFORM_IDENTIFIER=rocky.8-x64
     - make
     - make test
     - make package
@@ -141,30 +163,8 @@ build-centos.7-x64:
       - ./*.sha256
       - ./*.nupkg
 
-build-almalinux-8-amd64:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-almalinux-amd64:8
-  when: manual
-  
-  variables:
-    GIT_SUBMODULE_STRATEGY: recursive
-
-  script:
-    - cmake . -DPLATFORM_IDENTIFIER=rhel.8-x64
-    - make
-    - make test
-    - make package
-    - nuget pack nuget/vanillapdf.runtime.nuspec
-
-  artifacts:
-    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
-    paths:
-      - ./*.rpm
-      - ./*.tar.gz
-      - ./*.sha256
-      - ./*.nupkg
-
-build-almalinux-8-arm64:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-almalinux-arm64v8:8
+build-rocky.8-arm64:
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-rockylinux-arm64v8:8
   when: manual
   timeout: 5 hours # The runner machine seems to be very slow
   
@@ -172,7 +172,7 @@ build-almalinux-8-arm64:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - cmake . -DPLATFORM_IDENTIFIER=rhel.8-arm64
+    - cmake . -DPLATFORM_IDENTIFIER=rocky.8-arm64
     - make
     - make test
     - make package
@@ -183,15 +183,15 @@ build-almalinux-8-arm64:
       - ./*.tar.gz
       - ./*.sha256
 
-almalinux-9-amd64:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-almalinux-amd64:9
+build-rocky.9-x64:
+  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-rockylinux-amd64:9
   when: manual
   
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - cmake . -DPLATFORM_IDENTIFIER=rhel.9-x64
+    - cmake . -DPLATFORM_IDENTIFIER=rocky.9-x64
     - make
     - make test
     - make package
@@ -250,6 +250,8 @@ nuget-deploy-production:
 
   script:
     - echo "deploying to production"
+    # - push sourceforge
+    # - push nuget.org
     # - dotnet nuget add source "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text
     # - dotnet nuget push "*.nupkg" --source gitlab
     # - FTP msi, tgz, deb, rpm, docs
