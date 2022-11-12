@@ -8,6 +8,10 @@
 
 #if defined(_MSC_VER)
 	#define COMPILER_MICROSOFT_VISUAL_STUDIO
+
+	#ifdef _M_X86
+		#define PROCESSOR_X86
+	#endif
 #endif /* _MSC_VER */
 
 // Check windows
@@ -18,6 +22,10 @@
 // Check GCC
 #if (__GNUC__)
 	#define COMPILER_GCC
+
+	#ifdef __i386__
+		#define PROCESSOR_X86
+	#endif
 
 	#if (__x86_64__ || __ppc64__ || __aarch64__)
 		#define ENVIRONMENT_64_BIT
