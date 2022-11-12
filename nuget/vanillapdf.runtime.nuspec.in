@@ -28,9 +28,9 @@
     <file src="vanillapdf_net.targets" target="build\netstandard2.1\vanillapdf.runtime.@PLATFORM_IDENTIFIER@.targets" />
 
     <!-- Binary files -->
-    <file src="..\src\vanillapdf\**\libvanillapdf.dll" target="runtimes\@PLATFORM_IDENTIFIER@\native" />
+    <file src="..\src\vanillapdf\**\Release\libvanillapdf.dll" target="runtimes\@PLATFORM_IDENTIFIER@\native" />
     <file src="..\src\vanillapdf\**\libvanillapdf.so" target="runtimes\@PLATFORM_IDENTIFIER@\native" />
-    <file src="..\src\vanillapdf\**\vanillapdf.lib" target="lib\@PLATFORM_IDENTIFIER@\native" />
+    <file src="..\src\vanillapdf\**\Release\vanillapdf.lib" target="lib\native\@PLATFORM_IDENTIFIER@" />
 
     <!-- Header include files -->
     <file src="..\include\**\*.h" target="build\native\include" />
