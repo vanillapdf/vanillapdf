@@ -45,12 +45,6 @@
 	// std::_Select1st<std::pair<const vanillapdf::syntax::IndirectReferenceObject, bool> >,
 	// std::less<vanillapdf::syntax::IndirectReferenceObject>,
 	// std::allocator<std::pair<const vanillapdf::syntax::IndirectReferenceObject, bool> > >::const_iterator' changed in GCC 7.1
-	// 501 | __i = _M_t._M_emplace_hint_unique(__i, std::piecewise_construct,
-	// 	| ~~~~~~~~~~~~~~~~~~~~~~~~~~~^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	// 	502 | std::tuple<const key_type&>(__k),
-	// 	| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	// 	503 | std::tuple<>());
-	// | ~~~~~~~~~~~~~~~
 
 	// That warning is telling you that there was a subtle ABI change
 	// (actually a conformance fix) between 6 and 7.1,
