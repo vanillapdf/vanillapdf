@@ -47,7 +47,7 @@ BufferPtr ASCII85DecodeFilter::Decode(IInputStreamPtr src, types::stream_size le
 
 		// Character outside of base 85 range
 		if (ch < '!' || ch > 'u') {
-			throw GeneralException("Illegal character in ascii 85 filter: " + ch);
+			throw GeneralException("Illegal character in ascii 85 filter: " + std::to_string(ch));
 		}
 
 		// Insert to our sequence

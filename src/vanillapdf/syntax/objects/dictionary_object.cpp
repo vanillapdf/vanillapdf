@@ -278,7 +278,7 @@ void DictionaryObject::Clear() {
 	_list.clear();
 }
 
-size_type DictionaryObject::GetSize() const {
+DictionaryObject::size_type DictionaryObject::GetSize() const {
 	return _list.size();
 }
 
