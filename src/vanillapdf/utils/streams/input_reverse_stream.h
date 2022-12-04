@@ -83,7 +83,7 @@ private:
 			std::ios_base::openmode = std::ios_base::in | std::ios_base::out) override;
 
 	public:
-		int sync();
+		virtual int sync() override;
 		virtual int_type underflow() override;
 		virtual int_type uflow() override;
 		virtual int_type pbackfail(int_type ch) override;

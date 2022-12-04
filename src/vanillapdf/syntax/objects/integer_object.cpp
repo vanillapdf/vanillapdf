@@ -21,6 +21,10 @@ IntegerObject::IntegerObject(uint32_t value) {
 	m_value->SetUnsignedIntegerValue(value);
 }
 
+IntegerObject::IntegerObject(unsigned long value) {
+	m_value->SetUnsignedIntegerValue(value);
+}
+
 IntegerObject::IntegerObject(types::big_int value) {
 	m_value->SetIntegerValue(value);
 }
@@ -40,6 +44,11 @@ IntegerObject& IntegerObject::operator=(int32_t value) {
 }
 
 IntegerObject& IntegerObject::operator=(uint32_t value) {
+	m_value->SetUnsignedIntegerValue(value);
+	return *this;
+}
+
+IntegerObject& IntegerObject::operator=(unsigned long value) {
 	m_value->SetUnsignedIntegerValue(value);
 	return *this;
 }

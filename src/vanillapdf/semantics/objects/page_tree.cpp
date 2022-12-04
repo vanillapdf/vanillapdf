@@ -43,7 +43,7 @@ types::size_type PageTree::PageCount(PageNodeBasePtr node) {
 
 PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
 	if (page_number < 1) {
-		throw GeneralException("Invalid page number: " + page_number);
+		throw GeneralException("Invalid page number: " + std::to_string(page_number));
 	}
 
 	auto root = make_deferred<PageTreeNode>(_obj);

@@ -16,12 +16,14 @@ public:
 
 	explicit IntegerObject(int32_t value);
 	explicit IntegerObject(uint32_t value);
+	explicit IntegerObject(unsigned long value);
 	explicit IntegerObject(types::big_int value);
 	explicit IntegerObject(types::big_uint value);
 	explicit IntegerObject(NumericObjectBackendPtr value);
 
 	IntegerObject& operator= (int32_t value);
 	IntegerObject& operator= (uint32_t value);
+	IntegerObject& operator= (unsigned long value);
 	IntegerObject& operator= (types::big_int value);
 	IntegerObject& operator= (types::big_uint value);
 
@@ -35,6 +37,7 @@ public:
 
 	void SetValue(int32_t value) { m_value->SetIntegerValue(value); }
 	void SetValue(uint32_t value) { m_value->SetUnsignedIntegerValue(value); }
+	void SetValue(unsigned long value) { m_value->SetUnsignedIntegerValue(value); }
 	void SetValue(types::big_int value) { m_value->SetIntegerValue(value); }
 	void SetValue(types::big_uint value) { m_value->SetUnsignedIntegerValue(value); }
 	void SetValue(types::real value) { m_value->SetRealValue(value); }

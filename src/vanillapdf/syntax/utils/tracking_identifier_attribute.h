@@ -24,7 +24,7 @@ public:
 		return IAttribute::Type::TrackingIdentifier;
 	}
 
-	virtual TrackingIdentifierAttribute* Clone(void) const {
+	virtual TrackingIdentifierAttribute* Clone(void) const override {
 		return pdf_new TrackingIdentifierAttribute(m_value);
 	}
 

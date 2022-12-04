@@ -13,7 +13,6 @@ namespace contents {
 
 class OperationGeneric : public OperationBase {
 public:
-	OperationGeneric() = default;
 	OperationGeneric(const std::vector<syntax::ObjectPtr>& operands, OperatorBasePtr oper);
 
 	OperatorBasePtr GetOperator() const;

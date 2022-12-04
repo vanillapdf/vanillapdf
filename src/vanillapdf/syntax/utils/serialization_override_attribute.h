@@ -24,7 +24,7 @@ public:
 		return IAttribute::Type::SerializationOverride;
 	}
 
-	virtual SerializationOverrideAttribute* Clone(void) const {
+	virtual SerializationOverrideAttribute* Clone(void) const override {
 		return pdf_new SerializationOverrideAttribute(m_value);
 	}
 
