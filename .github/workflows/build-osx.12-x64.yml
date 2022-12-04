@@ -24,24 +24,17 @@ jobs:
       - name: Install dependencies
         run: |
           brew update
-          brew install cmake
-          brew install python@3
-          brew install jpeg
           brew install openssl
-          brew install zlib
       
       - name: Update library paths
         run: |
-          export LDFLAGS="-L/usr/local/opt/libressl/lib"
-          export CPPFLAGS="-I/usr/local/opt/libressl/include"
-          export OPENSSL_ROOT_DIR=/usr/local/opt/openssl
+          export LDFLAGS="-L/usr/local/opt/openssl@3/lib"
+          export CPPFLAGS="-I/usr/local/opt/openssl@3/include"
           
       - name: Print environment
         run: |
           openssl version
           which openssl
-          ls -la /usr/local/opt/libressl
-          ls -la /usr/local/opt/libressl/lib
 
       # Runs a single command using the runners shell
       - name: Generate CMake project
