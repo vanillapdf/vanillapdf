@@ -26,7 +26,7 @@ jobs:
           brew update
           brew install cmake
           brew install python@3
-          brew install openssl@3
+          brew install libressl
           brew install jpeg
           brew install zlib
 
