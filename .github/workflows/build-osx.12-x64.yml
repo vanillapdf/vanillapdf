@@ -64,4 +64,4 @@ jobs:
           path: |
             CMakeFiles
             Testing
-            /src/*.log
+            src/**/*.log
