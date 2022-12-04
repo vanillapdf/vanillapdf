@@ -75,8 +75,8 @@ add_definitions(-DVANILLAPDF_TEST_VERSION_BUILD=${VANILLAPDF_VERSION_BUILD})
 
 add_definitions(-DVANILLAPDF_TEST_ICON="${CMAKE_SOURCE_DIR}/cmake/vanilla_logo.ico")
 
-# Run tests
-include(FindPythonInterp)
+# Python for running the test cases
+find_package (Python3 COMPONENTS Interpreter REQUIRED)
 
 # Case insensitive
 file(GLOB_RECURSE TEST_FILES "${CMAKE_SOURCE_DIR}/test/*.[Pp][Dd][Ff]")
@@ -88,7 +88,7 @@ foreach(TEST_FILE ${TEST_FILES})
 	# Add every test file as separate entry
 	add_test(
 		NAME ${TEST_FILENAME}							# test name same with file name
-		COMMAND ${PYTHON_EXECUTABLE}					# reference to python executable
+		COMMAND ${Python3_EXECUTABLE}					# reference to python executable
 		"${CMAKE_SOURCE_DIR}/scripts/run_test.py"		# path to run_test python script
 		"$<TARGET_FILE:vanillapdf.test>"				# destination of the test executable
 		"${TEST_FILE}"									# destination of the source file
