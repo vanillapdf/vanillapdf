@@ -40,6 +40,8 @@ TokenPtr ReverseParser::ReadTokenWithTypeSkip(Token::Type type) {
 		ss << offset;
 		ss << ", instead token type ";
 		ss << static_cast<int>(token->GetType());
+		ss << " with value ";
+		ss << token->Value();
 		ss << " was found";
 
 		throw GeneralException(ss.str());
