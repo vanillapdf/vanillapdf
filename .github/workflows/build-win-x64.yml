@@ -29,7 +29,7 @@ jobs:
         run: cmake --build . --config Release --target ALL_BUILD
       
       - name: Run automated test scenarios
-        run: --build . --config Release --target RUN_TESTS
+        run: cmake --build . --config Release --target RUN_TESTS
       
       - name: Build installer packages
-        run: --build . --config Release --target PACKAGE
+        run: cmake --build . --config Release --target PACKAGE
