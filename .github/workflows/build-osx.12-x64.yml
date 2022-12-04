@@ -27,17 +27,25 @@ jobs:
           brew install cmake
           brew install python@3
           brew install jpeg
+          brew install openssl
           brew install zlib
       
       - name: Update library paths
         run: |
           export LDFLAGS="-L/usr/local/opt/libressl/lib"
           export CPPFLAGS="-I/usr/local/opt/libressl/include"
-          export OPENSSL_ROOT_DIR=/usr/local/opt/libressl
+          export OPENSSL_ROOT_DIR=/usr/local/opt/openssl
+          
+      - name: Print environment
+        run: |
+          openssl version
+          which openssl
+          ls -la /usr/local/opt/libressl
+          ls -la /usr/local/opt/libressl/lib
 
       # Runs a single command using the runners shell
       - name: Generate CMake project
-        run: cmake . -DPLATFORM_IDENTIFIER=osx.12-x64 -DOPENSSL_ROOT_DIR=/usr/local/opt/libressl
+        run: cmake . -DPLATFORM_IDENTIFIER=osx.12-x64 -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl
       
       - name: Build project
         run: make
