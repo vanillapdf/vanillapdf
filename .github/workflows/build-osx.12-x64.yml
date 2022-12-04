@@ -23,22 +23,16 @@ jobs:
       
       - name: Install dependencies
         run: |
-          brew update
-          brew install openssl
+          brew install openssl@3
       
       - name: Update library paths
         run: |
           export LDFLAGS="-L/usr/local/opt/openssl@3/lib"
           export CPPFLAGS="-I/usr/local/opt/openssl@3/include"
-          
-      - name: Print environment
-        run: |
-          openssl version
-          which openssl
 
       # Runs a single command using the runners shell
       - name: Generate CMake project
-        run: cmake . -DPLATFORM_IDENTIFIER=osx.12-x64 -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl
+        run: cmake . -DPLATFORM_IDENTIFIER=osx.12-x64
       
       - name: Build project
         run: make
@@ -48,3 +42,11 @@ jobs:
       
       - name: Build installer packages
         run: make package
+        
+      - name: Upload result artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: install-package
+          path: |
+            ./*.zip
+            ./*.dmg
