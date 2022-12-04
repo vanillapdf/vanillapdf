@@ -88,7 +88,7 @@ PageObjectPtr PageTree::PageInternal(PageTreeNodePtr node, types::size_type page
 		}
 	}
 
-	throw GeneralException("Page number was not found: " + page_number);
+	throw GeneralException("Page number was not found: " + std::to_string(page_number));
 }
 
 bool PageTree::HasTreeChilds(PageTreeNodePtr node) const {

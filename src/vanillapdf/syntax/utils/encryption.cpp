@@ -374,8 +374,8 @@ BufferPtr EncryptionUtils::GetRecipientKey
 		SHA1_Final((unsigned char*) decrypted_key.data(), &ctx);
 	}
 
-	auto length_bytes = ValueConvertUtils::SafeConvert<types::size_type>(length_bits.GetIntegerValue() / 8);
-	types::size_type decryption_key_length = std::min(length_bytes, decrypted_key.size());
+	auto length_bytes = ValueConvertUtils::SafeConvert<Buffer::size_type>(length_bits.GetIntegerValue() / 8);
+	auto decryption_key_length = std::min(length_bytes, decrypted_key.size());
 	return make_deferred_container<Buffer>(decrypted_key.begin(), decrypted_key.begin() + decryption_key_length);
 
 #else
