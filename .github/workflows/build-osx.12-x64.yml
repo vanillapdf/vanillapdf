@@ -32,7 +32,7 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Generate CMake project
-        run: cmake . -DPLATFORM_IDENTIFIER=osx.12-x64
+        run: cmake . -DPLATFORM_IDENTIFIER=osx.12-x64 -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl
       
       - name: Build project
         run: make
