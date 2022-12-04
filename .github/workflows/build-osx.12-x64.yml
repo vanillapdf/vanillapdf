@@ -26,9 +26,13 @@ jobs:
           brew update
           brew install cmake
           brew install python@3
-          brew install libressl
           brew install jpeg
           brew install zlib
+      
+      - name: Update library paths
+        run: |
+          export LDFLAGS="-L/usr/local/opt/libressl/lib"
+          export CPPFLAGS="-I/usr/local/opt/libressl/include"
 
       # Runs a single command using the runners shell
       - name: Generate CMake project
