@@ -138,6 +138,13 @@ error_type process_logging() {
 		return VANILLAPDF_TEST_ERROR_LOGGING_ENABLED;
 	}
 
+	RETURN_ERROR_IF_NOT_SUCCESS(Logging_Enable());
+	RETURN_ERROR_IF_NOT_SUCCESS(Logging_IsEnabled(&logging_enabled));
+
+	if (logging_enabled != VANILLAPDF_RV_TRUE) {
+		return VANILLAPDF_TEST_ERROR_LOGGING_ENABLED;
+	}
+
 	RETURN_ERROR_IF_NOT_SUCCESS(Logging_GetSeverity(&logging_severity));
 	RETURN_ERROR_IF_NOT_SUCCESS(Logging_SetSeverity(logging_severity));
 
