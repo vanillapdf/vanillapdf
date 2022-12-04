@@ -40,11 +40,6 @@ InputReverseStream::ReverseBuf::ReverseBuf(IInputStreamPtr stream, types::stream
 	setg(begin, begin, begin);
 }
 
-int InputReverseStream::ReverseBuf::sync() {
-	//cout << s << ": " << str(); str("");  return !cout;
-	return 0;
-}
-
 InputReverseStream::ReverseBuf::int_type InputReverseStream::ReverseBuf::underflow() {
 	// buffer not exhausted
 	if (gptr() > egptr()) {
