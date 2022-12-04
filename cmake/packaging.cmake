@@ -98,11 +98,11 @@ configure_file("${CMAKE_SOURCE_DIR}/nuget/vanillapdf.nuspec.in" "${CMAKE_SOURCE_
 
 if(WIN32)
 	set(CPACK_GENERATOR		"WIX;ZIP")
-	
+
 elseif(APPLE)
-	set(CPACK_GENERATOR		"ZIP")
+	set(CPACK_GENERATOR		"DragNDrop;ZIP")
 	set(CPACK_SYSTEM_NAME	"OSX")
-	
+
 elseif(UNIX)
 	# Determine distribution and release
 	execute_process(COMMAND lsb_release -si	OUTPUT_VARIABLE PACKAGE_DISTRIBUTION					OUTPUT_STRIP_TRAILING_WHITESPACE)
