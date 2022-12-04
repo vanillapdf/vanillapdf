@@ -55,7 +55,7 @@ with io.open(encryption_config_path, encoding='utf8') as test_config:
 FNULL = open(os.devnull, 'w')
 
 # Create list of base parameters
-base_parameters = [executable_path, test_file_path, LICENSE_OPTION, license_file_path, QUIET_OPTION]
+base_parameters = [executable_path, test_file_path, LICENSE_OPTION, license_file_path]
 
 if ("Merge" in config_data):
 	base_parameters.append(MERGE_OPTION)
