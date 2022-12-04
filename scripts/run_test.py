@@ -55,7 +55,7 @@ with io.open(encryption_config_path, encoding='utf8') as test_config:
 FNULL = open(os.devnull, 'w')
 
 # Create list of base parameters
-base_parameters = [executable_path, test_file_path, LICENSE_OPTION, license_file_path, QUIET_OPTION]
+base_parameters = [executable_path, test_file_path, LICENSE_OPTION, license_file_path]
 
 if ("Merge" in config_data):
 	base_parameters.append(MERGE_OPTION)
@@ -88,7 +88,7 @@ if (is_encrypted):
 			specific_parameters.append(PASSWORD_OPTION)
 			specific_parameters.append(user_password)
 			
-			rv = subprocess.call(specific_parameters, stdout=FNULL)
+			rv = subprocess.call(specific_parameters)
 			if (rv != 0):
 				sys.exit(rv)
 			
@@ -100,7 +100,7 @@ if (is_encrypted):
 			specific_parameters.append(PASSWORD_OPTION)
 			specific_parameters.append(owner_password)
 			
-			rv = subprocess.call(specific_parameters, stdout=FNULL)
+			rv = subprocess.call(specific_parameters)
 			if (rv != 0):
 				sys.exit(rv)
 			
@@ -117,12 +117,12 @@ if (is_encrypted):
 		specific_parameters.append(CERTIFICATE_OPTION)
 		specific_parameters.append(full_key_path)
 
-		rv = subprocess.call(specific_parameters, stdout=FNULL)
+		rv = subprocess.call(specific_parameters)
 		sys.exit(rv)
 
 	# Configuration error
 	sys.exit(1)
 
 # Run test with default behavior
-rv = subprocess.call(base_parameters, stdout=FNULL)
+rv = subprocess.call(base_parameters)
 sys.exit(rv)
