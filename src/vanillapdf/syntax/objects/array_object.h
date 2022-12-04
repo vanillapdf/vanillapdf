@@ -80,7 +80,7 @@ public:
 	explicit ArrayObject(const std::initializer_list<T>& list);
 	ArrayObject(const list_type& list, std::function<T(const ContainableObjectPtr& obj)> conversion);
 	ArrayObject(const std::initializer_list<T>& list, std::function<T(const ContainableObjectPtr& obj)> conversion);
-	ArrayObject(const MixedArrayObject& other, std::function<T(const ContainableObjectPtr& obj)> conversion);
+	ArrayObject(MixedArrayObjectPtr other, std::function<T(const ContainableObjectPtr& obj)> conversion);
 
 	template <typename U>
 	ArrayObject(ArrayObject<U> other, std::function<T(const U& obj)> new_conversion);
@@ -209,11 +209,8 @@ ArrayObject<T>::ArrayObject(const std::initializer_list<T>& list, std::function<
 }
 
 template <typename T>
-ArrayObject<T>::ArrayObject(const MixedArrayObject& other, std::function<T(const ContainableObjectPtr& obj)> conversion)
+ArrayObject<T>::ArrayObject(MixedArrayObjectPtr other, std::function<T(const ContainableObjectPtr& obj)> conversion)
 	: _list(other), _conversion(conversion) {
-	for (auto item : other) {
-		_conversion(item);
-	}
 }
 
 template <typename T>
@@ -252,7 +249,7 @@ MixedArrayObjectPtr ArrayObject<T>::Data(void) const {
 }
 
 template <typename T>
-size_type ArrayObject<T>::GetSize(void) const {
+typename ArrayObject<T>::size_type ArrayObject<T>::GetSize(void) const {
 	return _list->GetSize();
 }
 

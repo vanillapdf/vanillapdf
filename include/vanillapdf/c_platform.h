@@ -20,7 +20,7 @@
 #endif /* _WIN64 */
 
 // Check GCC
-#if (__GNUC__)
+#if defined(__GNUC__) && !defined(__clang__)
 	#define COMPILER_GCC
 
 	#ifdef __i386__
@@ -30,7 +30,20 @@
 	#if (__x86_64__ || __ppc64__ || __aarch64__)
 		#define ENVIRONMENT_64_BIT
 	#endif /* __x86_64__ || __ppc64__ || __aarch64__ */
-#endif /* __GNUC__ */
+#endif /* defined(__GNUC__) && !defined(__clang__) */
+
+// Check clang
+#if defined(__clang__)
+	#define COMPILER_CLANG
+
+	#ifdef __i386__
+		#define PROCESSOR_X86
+	#endif
+
+	#if (__x86_64__ || __ppc64__ || __aarch64__)
+		#define ENVIRONMENT_64_BIT
+	#endif /* __x86_64__ || __ppc64__ || __aarch64__ */
+#endif /* defined(__clang__) */
 
 #if !defined(ENVIRONMENT_64_BIT)
 	#define ENVIRONMENT_32_BIT

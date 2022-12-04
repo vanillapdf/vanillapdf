@@ -1,6 +1,8 @@
 #ifndef _UNKNOWN_INTERFACE_H
 #define _UNKNOWN_INTERFACE_H
 
+#include "utils/exceptions.h"
+
 #include <memory>
 #include <atomic>
 #include <cassert>
@@ -117,8 +119,28 @@ public:
 	IUnknown(const IUnknown&) noexcept;
 	IUnknown& operator= (const IUnknown&) noexcept;
 
-	IUnknown(IUnknown&&) noexcept = default;
-	IUnknown& operator= (IUnknown&&) noexcept = default;
+	/*
+	* clang warning: explicitly defaulted move constructor is implicitly deleted
+	* note: move constructor of 'IUnknown' is implicitly deleted because field 'm_ref_counter' has a deleted move constructor
+	* note: copy constructor of 'atomic<unsigned int>' is implicitly deleted because base class '__atomic_base<unsigned int>' has a deleted copy constructor
+	* note: copy constructor of '__atomic_base<unsigned int, true>' is implicitly deleted because base class '__atomic_base<unsigned int, false>' has a deleted copy constructor
+	* note: '__atomic_base' has been explicitly marked deleted here
+	* __atomic_base(const __atomic_base&) = delete;
+	* 
+	* https://learn.microsoft.com/en-us/cpp/cpp/explicitly-defaulted-and-deleted-functions?view=msvc-170
+	* 
+	* If any constructor is explicitly declared, then no default constructor is automatically generated.
+	* If a virtual destructor is explicitly declared, then no default destructor is automatically generated.
+	* If a move constructor or move-assignment operator is explicitly declared, then:
+	* No copy constructor is automatically generated.
+	* No copy-assignment operator is automatically generated.
+	* If a copy constructor, copy-assignment operator, move constructor, move-assignment operator, or destructor is explicitly declared, then:
+	* No move constructor is automatically generated.
+	* No move-assignment operator is automatically generated.
+	*/
+
+	//IUnknown(IUnknown&&) noexcept = default;
+	//IUnknown& operator= (IUnknown&&) noexcept = default;
 
 	uint32_t UseCount() const noexcept;
 
