@@ -61,4 +61,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: cmake-logs
-          path: CMakeFiles
+          path: |
+            CMakeFiles
+            Testing
