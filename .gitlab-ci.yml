@@ -54,21 +54,13 @@ windows-ltsc2022-x64:
       - ./*.nupkg
 
 build-osx.12-x64:
-  image: macos-12-xcode-14
   when: manual
   tags:
-    - shared-macos-amd64
+    - macos
+    - private
 
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
-
-  before_script:
-    - brew install cmake
-    - brew install python@3
-    - brew install openssl@3
-    - brew install jpeg
-    - brew install zlib
-    - brew install nuget
 
   script:
     - cmake . -DPLATFORM_IDENTIFIER=osx.12-x64
