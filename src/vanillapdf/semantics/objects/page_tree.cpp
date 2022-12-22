@@ -29,7 +29,7 @@ types::size_type PageTree::PageCount(PageNodeBasePtr node) {
 			verify += PageCount(kid);
 		}
 
-		assert(result_value == verify && "Kid count does not match");
+		assert(result_value == verify && "Kid count does not match"); UNUSED(verify);
 		return result_value;
 	}
 

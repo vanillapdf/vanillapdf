@@ -147,6 +147,10 @@ public:
 		m_severity = severity;
 	}
 
+	virtual ~Logger() {
+
+	}
+
 private:
 	Logger();
 
