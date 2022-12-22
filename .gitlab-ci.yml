@@ -63,7 +63,7 @@ build-osx.12-x64:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - cmake . -DPLATFORM_IDENTIFIER=osx.12-x64
+    - cmake . -DPLATFORM_IDENTIFIER=osx.12-x64 -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl
     - make
     - make test
     - make package
