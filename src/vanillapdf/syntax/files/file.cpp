@@ -16,6 +16,7 @@
 #include "utils/streams/input_stream.h"
 #include "utils/streams/output_stream.h"
 #include "utils/streams/input_output_stream.h"
+#include "utils/streams/stream_utils.h"
 
 #include "utils/misc_utils.h"
 
@@ -593,8 +594,29 @@ void File::ReadXref(types::stream_offset offset) {
 }
 
 types::stream_offset File::GetLastXrefOffset(types::stream_size file_size) {
-	InputReverseStreamPtr raw_reversed = make_deferred<InputReverseStream>(_input, file_size);
-	auto reverse_stream = ReverseParser(raw_reversed);
+	//InputReverseStreamPtr raw_reversed = make_deferred<InputReverseStream>(_input, file_size);
+	//auto reverse_stream = ReverseParser(raw_reversed);
+
+	types::stream_size to_read = constant::BUFFER_SIZE;
+	if (file_size < to_read) {
+		to_read = file_size;
+	}
+
+	_input->SetInputPosition(-to_read, SeekDirection::End);
+	if (_input->IsFail()) {
+		throw GeneralException("Failed to seek for reading the file trailer");
+	}
+
+	BufferPtr file_trailer(make_deferred_container<Buffer>(to_read));
+	auto bytes_read = _input->Read(file_trailer, to_read);
+	if (bytes_read != to_read) {
+		throw GeneralException("Failed to read file trailer");
+	}
+
+	std::reverse(file_trailer.begin(), file_trailer.end());
+	auto memory_stream = StreamUtils::InputStreamFromBuffer(file_trailer);
+	auto reverse_stream = ReverseParser(memory_stream);
+
 	return reverse_stream.ReadLastXrefOffset();
 }
 
