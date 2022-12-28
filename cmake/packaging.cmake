@@ -100,7 +100,7 @@ if(WIN32)
 	set(CPACK_GENERATOR		"WIX;ZIP")
 
 elseif(APPLE)
-	set(CPACK_GENERATOR		"DragNDrop;ZIP")
+	set(CPACK_GENERATOR		"DragNDrop;TGZ")
 	set(CPACK_SYSTEM_NAME	"OSX")
 
 elseif(UNIX)
