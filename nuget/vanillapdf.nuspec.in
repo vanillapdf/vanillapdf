@@ -7,7 +7,7 @@
     <authors>Vanilla.PDF Labs s.r.o.</authors>
     <owners>Vanilla.PDF Labs s.r.o.</owners>
     <license type="file">LICENSE.txt</license>
-    <icon>images\vanilla_logo.png</icon>
+    <icon>images/vanilla_logo.png</icon>
     <projectUrl>https://vanillapdf.com/</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Vanilla.PDF is a cross-platform SDK for creating and modifying PDF documents</description>
