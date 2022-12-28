@@ -31,6 +31,23 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 	# This should be harmless unless you take at least a little care.
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder")
 
+	# On Linux arm GCC the entire log is filled with notes:
+
+	# parameter passing for argument of type 'std::_Rb_tree<vanillapdf::syntax::IndirectReferenceObject,
+	# std::pair<const vanillapdf::syntax::IndirectReferenceObject, bool>,
+	# std::_Select1st<std::pair<const vanillapdf::syntax::IndirectReferenceObject, bool> >,
+	# std::less<vanillapdf::syntax::IndirectReferenceObject>,
+	# std::allocator<std::pair<const vanillapdf::syntax::IndirectReferenceObject, bool> > >::const_iterator' changed in GCC 7.1
+
+	# That warning is telling you that there was a subtle ABI change
+	# (actually a conformance fix) between 6 and 7.1,
+	# such that libraries built with 6.x or earlier may not work properly when called
+	# from code built with 7.x (and vice-versa).
+	# As long as all your C++ code is built with GCC 7.1 or later, you can safely ignore this warning.
+	# To disable it, pass -Wno-psabi to the compiler.
+	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=77728
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-psabi")
+
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 if(WIN32)
