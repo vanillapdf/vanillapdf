@@ -14,18 +14,61 @@ public:
 	IntegerObject();
 	IntegerObject(const IntegerObject&) = delete;
 
-	explicit IntegerObject(int32_t value);
-	explicit IntegerObject(uint32_t value);
-	explicit IntegerObject(unsigned long value);
-	explicit IntegerObject(types::big_int value);
-	explicit IntegerObject(types::big_uint value);
 	explicit IntegerObject(NumericObjectBackendPtr value);
 
-	IntegerObject& operator= (int32_t value);
-	IntegerObject& operator= (uint32_t value);
-	IntegerObject& operator= (unsigned long value);
-	IntegerObject& operator= (types::big_int value);
-	IntegerObject& operator= (types::big_uint value);
+	template <
+		typename T,
+		std::enable_if_t<
+			std::is_integral<T>::value &&
+			!std::is_same<T, bool>::value &&
+			std::is_signed<T>::value,
+			T
+		> = true
+	>
+	explicit IntegerObject(T value) {
+		m_value->SetIntegerValue(value);
+	}
+
+	template <
+		typename T,
+		std::enable_if_t<
+			std::is_integral<T>::value &&
+			!std::is_same<T, bool>::value &&
+			!std::is_signed<T>::value,
+			T
+		> = true
+	>
+	explicit IntegerObject(T value) {
+		m_value->SetUnsignedIntegerValue(value);
+	}
+
+	template <
+		typename T,
+		std::enable_if_t<
+			std::is_integral<T>::value &&
+			!std::is_same<T, bool>::value &&
+			std::is_signed<T>::value,
+			T
+		> = true
+	>
+	IntegerObject& operator= (T value) {
+		m_value->SetIntegerValue(value);
+		return *this;
+	}
+
+	template <
+		typename T,
+		std::enable_if_t<
+			std::is_integral<T>::value &&
+			!std::is_same<T, bool>::value &&
+			!std::is_signed<T>::value,
+			T
+		> = true
+	>
+	IntegerObject& operator= (T value) {
+		m_value->SetUnsignedIntegerValue(value);
+		return *this;
+	}
 
 	template <typename T>
 	T SafeConvert(void) const { return ValueConvertUtils::SafeConvert<T>(m_value->GetIntegerValue()); }
@@ -35,11 +78,32 @@ public:
 	types::big_uint GetUnsignedIntegerValue(void) const { return m_value->GetUnsignedIntegerValue(); }
 	types::real GetRealValue(void) const { return m_value->GetRealValue(); }
 
-	void SetValue(int32_t value) { m_value->SetIntegerValue(value); }
-	void SetValue(uint32_t value) { m_value->SetUnsignedIntegerValue(value); }
-	void SetValue(unsigned long value) { m_value->SetUnsignedIntegerValue(value); }
-	void SetValue(types::big_int value) { m_value->SetIntegerValue(value); }
-	void SetValue(types::big_uint value) { m_value->SetUnsignedIntegerValue(value); }
+	template <
+		typename T,
+		std::enable_if_t<
+			std::is_integral<T>::value &&
+			!std::is_same<T, bool>::value &&
+			std::is_signed<T>::value,
+			T
+		> = true
+	>
+	void SetValue(T value) {
+		m_value->SetIntegerValue(value);
+	}
+
+	template <
+		typename T,
+		std::enable_if_t<
+			std::is_integral<T>::value &&
+			!std::is_same<T, bool>::value &&
+			!std::is_signed<T>::value,
+			T
+		> = true
+	>
+	void SetValue(T value) {
+		m_value->SetUnsignedIntegerValue(value);
+	}
+
 	void SetValue(types::real value) { m_value->SetRealValue(value); }
 
 	void ToggleBit(int pos, bool value) { m_value->ToggleBit(pos, value); }
