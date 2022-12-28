@@ -18,12 +18,12 @@ public:
 
 	template <
 		typename T,
-		std::enable_if_t<
+		typename std::enable_if<
 			std::is_integral<T>::value &&
 			!std::is_same<T, bool>::value &&
 			std::is_signed<T>::value,
 			T
-		> = true
+		>::type = true
 	>
 	explicit IntegerObject(T value) {
 		m_value->SetIntegerValue(value);
@@ -31,12 +31,12 @@ public:
 
 	template <
 		typename T,
-		std::enable_if_t<
+		typename std::enable_if<
 			std::is_integral<T>::value &&
 			!std::is_same<T, bool>::value &&
 			!std::is_signed<T>::value,
 			T
-		> = true
+		>::type = true
 	>
 	explicit IntegerObject(T value) {
 		m_value->SetUnsignedIntegerValue(value);
@@ -44,12 +44,12 @@ public:
 
 	template <
 		typename T,
-		std::enable_if_t<
+		typename std::enable_if<
 			std::is_integral<T>::value &&
 			!std::is_same<T, bool>::value &&
 			std::is_signed<T>::value,
 			T
-		> = true
+		>::type = true
 	>
 	IntegerObject& operator= (T value) {
 		m_value->SetIntegerValue(value);
@@ -58,12 +58,12 @@ public:
 
 	template <
 		typename T,
-		std::enable_if_t<
+		typename std::enable_if<
 			std::is_integral<T>::value &&
 			!std::is_same<T, bool>::value &&
 			!std::is_signed<T>::value,
 			T
-		> = true
+		>::type = true
 	>
 	IntegerObject& operator= (T value) {
 		m_value->SetUnsignedIntegerValue(value);
@@ -80,12 +80,12 @@ public:
 
 	template <
 		typename T,
-		std::enable_if_t<
+		typename std::enable_if<
 			std::is_integral<T>::value &&
 			!std::is_same<T, bool>::value &&
 			std::is_signed<T>::value,
 			T
-		> = true
+		>::type = true
 	>
 	void SetValue(T value) {
 		m_value->SetIntegerValue(value);
@@ -93,12 +93,12 @@ public:
 
 	template <
 		typename T,
-		std::enable_if_t<
+		typename std::enable_if<
 			std::is_integral<T>::value &&
 			!std::is_same<T, bool>::value &&
 			!std::is_signed<T>::value,
 			T
-		> = true
+		>::type = true
 	>
 	void SetValue(T value) {
 		m_value->SetUnsignedIntegerValue(value);
