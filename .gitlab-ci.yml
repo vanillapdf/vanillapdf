@@ -4,7 +4,7 @@ stages:
   - deploy-production
 
 windows-ltsc2022-x86:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-windows-x86:ltsc2022
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-windows-amd64:ltsc2022
   when: manual
   tags:
     - windows
@@ -29,7 +29,7 @@ windows-ltsc2022-x86:
       - ./*.nupkg
 
 windows-ltsc2022-x64:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-windows-amd64:ltsc2022
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-windows-amd64:ltsc2022
   when: manual
   tags:
     - windows
@@ -78,7 +78,7 @@ build-osx-x64:
       - ./*.nupkg
 
 build-ubuntu.20.04-arm:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd32v7:20.04
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd32v7:20.04
   when: manual
   timeout: 3 hours # The arm runner machine seems to be very slow
 
@@ -101,7 +101,7 @@ build-ubuntu.20.04-arm:
       - ./*.nupkg
 
 build-ubuntu.20.04-arm64:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-arm64v8:20.04
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-arm64v8:20.04
   when: manual
   timeout: 3 hours # The arm runner machine seems to be very slow
 
@@ -124,7 +124,7 @@ build-ubuntu.20.04-arm64:
       - ./*.nupkg
 
 build-ubuntu.20.04-x64:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:20.04
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:20.04
   when: manual
 
   variables:
@@ -146,7 +146,7 @@ build-ubuntu.20.04-x64:
       - ./*.nupkg
 
 build-ubuntu.22.04-arm:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-arm32v7:22.04
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-arm32v7:22.04
   when: manual
   timeout: 3 hours # The arm runner machine seems to be very slow
 
@@ -169,7 +169,7 @@ build-ubuntu.22.04-arm:
       - ./*.nupkg
 
 build-ubuntu.22.04-arm64:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-arm64v8:22.04
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-arm64v8:22.04
   when: manual
   timeout: 3 hours # The arm runner machine seems to be very slow
 
@@ -192,7 +192,7 @@ build-ubuntu.22.04-arm64:
       - ./*.nupkg
 
 build-ubuntu.22.04-x64:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:22.04
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:22.04
   when: manual
 
   variables:
@@ -214,7 +214,7 @@ build-ubuntu.22.04-x64:
       - ./*.nupkg
 
 build-rocky.8-x64:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-rockylinux-amd64:8
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-amd64:8
   when: manual
   
   variables:
@@ -236,7 +236,7 @@ build-rocky.8-x64:
       - ./*.nupkg
 
 build-vanillapdf-nuget:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:22.04
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:22.04
   when: manual
 
   variables:
@@ -252,7 +252,7 @@ build-vanillapdf-nuget:
       - ./*.nupkg
 
 build-vanillapdf-docs:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:22.04
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:22.04
   when: manual
 
   script:
@@ -265,7 +265,7 @@ build-vanillapdf-docs:
       - ./doc/api
 
 nuget-deploy-staging:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:22.04
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:22.04
   stage: deploy-staging
   when: manual
 
@@ -274,7 +274,7 @@ nuget-deploy-staging:
     - dotnet nuget push "*.nupkg" --source gitlab
 
 nuget-deploy-production:
-  image: registry.gitlab.com/jurzik/vanillapdf/vanillapdf-ubuntu-amd64:22.04
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:22.04
   stage: deploy-production
   when: manual
 
