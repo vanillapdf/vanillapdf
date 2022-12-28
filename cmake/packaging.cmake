@@ -21,7 +21,7 @@ set(CPACK_PACKAGE_DESCRIPTION			"Cross-platform toolkit for creating and modifyi
 # "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}."
 # However! Variable CPACK_PACKAGE_VERSION is only used internally a is not yet set!
 # Therefore we have to create a different variable for storing the version string
-set(PACKAGE_VERSION_NAME				"${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+set(PACKAGE_VERSION_NAME				"${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}${VANILLAPDF_VERSION_BUILD_SUFFIX}")
 set(PACKAGE_SYSTEM_NAME					"${CMAKE_SYSTEM_NAME}")
 
 # Special naming convention for windows

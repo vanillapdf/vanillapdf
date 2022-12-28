@@ -3,7 +3,7 @@
   <metadata>
     <id>vanillapdf.runtime.@PLATFORM_IDENTIFIER@</id>
     <title>vanillapdf</title>
-    <version>@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@</version>
+    <version>@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@</version>
     <authors>Vanilla.PDF Labs s.r.o.</authors>
     <owners>Vanilla.PDF Labs s.r.o.</owners>
     <license type="file">LICENSE.txt</license>
