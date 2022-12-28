@@ -31,6 +31,8 @@
       <dependency id="vanillapdf.runtime.win-x86" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@" />
       <dependency id="vanillapdf.runtime.win-x64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@" />
 
+      <dependency id="vanillapdf.runtime.osx-x64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@" />
+
     </dependencies>
   </metadata>
 

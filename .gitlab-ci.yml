@@ -53,7 +53,7 @@ windows-ltsc2022-x64:
       - ./*.sha256
       - ./*.nupkg
 
-build-osx.12-x64:
+build-osx-x64:
   when: manual
   tags:
     - macos
@@ -63,7 +63,7 @@ build-osx.12-x64:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - cmake . -DPLATFORM_IDENTIFIER=osx.12-x64 -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl
+    - cmake . -DPLATFORM_IDENTIFIER=osx-x64 -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl
     - make
     - make test
     - make package
