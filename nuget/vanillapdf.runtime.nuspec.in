@@ -29,8 +29,8 @@
 
     <!-- Binary files -->
     <file src="..\src\vanillapdf\*\libvanillapdf.dll" target="runtimes\@PLATFORM_IDENTIFIER@\native" />
-    <file src="..\src\vanillapdf\*\libvanillapdf.so" target="runtimes\@PLATFORM_IDENTIFIER@\native" />
-    <file src="..\src\vanillapdf\*\libvanillapdf.dylib" target="runtimes\@PLATFORM_IDENTIFIER@\native" />
+    <file src="..\src\vanillapdf\**\libvanillapdf.so" target="runtimes\@PLATFORM_IDENTIFIER@\native" />
+    <file src="..\src\vanillapdf\**\libvanillapdf.dylib" target="runtimes\@PLATFORM_IDENTIFIER@\native" />
     <file src="..\src\vanillapdf\*\vanillapdf.lib" target="lib\native\@PLATFORM_IDENTIFIER@" />
 
     <!-- Header include files -->
