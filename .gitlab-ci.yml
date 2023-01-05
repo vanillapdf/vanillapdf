@@ -201,6 +201,8 @@ build-ubuntu.22.04-x64:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
+    - curl -s https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer | bash
+    - ls -lah .secure_files
     - cmake . -DPLATFORM_IDENTIFIER=ubuntu.22.04-x64
     - make
     - make test
