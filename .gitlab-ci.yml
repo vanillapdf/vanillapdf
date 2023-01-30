@@ -201,14 +201,11 @@ build-ubuntu.22.04-x64:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - curl -s https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer | bash
-    - ls -lah .secure_files
     - cmake . -DPLATFORM_IDENTIFIER=ubuntu.22.04-x64
     - make
     - make test
     - make package
     - nuget pack nuget/vanillapdf.runtime.nuspec
-    - nuget sign *.nupkg -CertificatePath .secure_files/codesigning.pfx
 
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
@@ -277,16 +274,3 @@ nuget-deploy-staging:
   script:
     - dotnet nuget add source "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text
     - dotnet nuget push "*.nupkg" --source gitlab
-
-nuget-deploy-production:
-  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:22.04
-  stage: deploy-production
-  when: manual
-
-  script:
-    - echo "deploying to production"
-    # - push sourceforge
-    # - push nuget.org
-    # - dotnet nuget add source "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text
-    # - dotnet nuget push "*.nupkg" --source gitlab
-    # - FTP msi, tgz, deb, rpm, docs
