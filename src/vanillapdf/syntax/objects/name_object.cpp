@@ -5,6 +5,7 @@
 #include "syntax/objects/name_object.h"
 #include "utils/streams/output_stream_interface.h"
 
+#include <iomanip>
 #include <sstream>
 
 namespace vanillapdf {
@@ -85,7 +86,10 @@ std::string NameObject::GetHexadecimalNotation(char ch) const {
 	std::stringstream ss;
 	int converted = static_cast<int>(ch);
 	ss << '#';
-	ss << std::hex << converted;
+	ss << std::setw(2);
+	ss << std::setfill('0');
+	ss << std::hex;
+	ss << converted;
 
 	return ss.str();
 }
