@@ -16,7 +16,7 @@ IOutputStreamPtr StreamUtils::OutputStreamFromFile(const std::string& filename) 
 	output->open(filename, std::ios::out | std::ios::binary);
 
 	if (!output || !output->good()) {
-		throw GeneralException("Could not open file");
+		throw GeneralException("Could not open file: " + filename);
 	}
 
 	return make_deferred<OutputStream>(output);
@@ -28,7 +28,7 @@ IInputStreamPtr StreamUtils::InputStreamFromFile(const std::string& filename) {
 	input->open(filename, std::ios::in |std::ios::binary);
 
 	if (!input || !input->good()) {
-		throw GeneralException("Could not open file");
+		throw GeneralException("Could not open file: " + filename);
 	}
 
 	return make_deferred<InputStream>(input);
@@ -40,7 +40,7 @@ IInputOutputStreamPtr StreamUtils::InputOutputStreamFromFile(const std::string& 
 	input->open(filename, std::ios::in | std::ios::out | std::ios::binary);
 
 	if (!input || !input->good()) {
-		throw GeneralException("Could not open file");
+		throw GeneralException("Could not open file: " + filename);
 	}
 
 	return make_deferred<InputOutputStream>(input);
