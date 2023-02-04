@@ -622,14 +622,22 @@ void FileWriter::RecalculateStreamLength(StreamObjectPtr obj) {
 	auto stream_data = obj->GetBodyEncoded();
 	auto stream_header = obj->GetHeader();
 
+	// Remove only if the value is different
+	// There was a case that the length was indirect reference to another integer
+	// Two different streams were pointing to this integer and the final
+	// value was updated to a different stream
+	if (stream_header->Contains(constant::Name::Length)) {
+		auto length_obj = stream_header->FindAs<IntegerObjectPtr>(constant::Name::Length);
+		if (length_obj->GetUnsignedIntegerValue() != stream_data->size()) {
+			bool removed = stream_header->Remove(constant::Name::Length);
+			assert(removed && "Could not remove stream length"); UNUSED(removed);
+		}
+	}
+
 	if (!stream_header->Contains(constant::Name::Length)) {
 		IntegerObjectPtr new_length = make_deferred<IntegerObject>(stream_data->size());
 		stream_header->Insert(constant::Name::Length, new_length);
-		return;
 	}
-
-	auto length_obj = stream_header->FindAs<IntegerObjectPtr>(constant::Name::Length);
-	length_obj->SetValue(stream_data->size());
 }
 
 void FileWriter::RecalculateStreamsLength(XrefBasePtr source) {
