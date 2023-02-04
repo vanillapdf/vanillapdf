@@ -117,6 +117,16 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 
 		do {
 			if (!dictionary->Contains(constant::Name::Length)) {
+				auto locked_file = _file.GetReference();
+				auto filename = locked_file->GetFilename();
+
+				// Log warning as this is not standard, however not fatal
+				LOG_WARNING(filename.c_str()) <<
+					"The stream at offset " <<
+					stream_offset <<
+					" does not contain length" <<
+					", using the fallback method";
+
 				break;
 			}
 
@@ -124,14 +134,40 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 			if (length_obj->GetObjectType() != Object::Type::Integer) {
 				auto locked_file = _file.GetReference();
 				if (!locked_file->IsInitialized()) {
+					auto filename = locked_file->GetFilename();
+
+					// Log warning as this is not standard, however not fatal
+					LOG_WARNING(filename.c_str()) <<
+						"The stream at offset " <<
+						stream_offset <<
+						" does has length specified as indirect object" <<
+						", however the document is broken"
+						", using the fallback method";
+
 					break;
 				}
 			}
 
+			// Seek to the end of the stream to verify terminating token
 			auto length = ObjectUtils::ConvertTo<IntegerObjectPtr>(length_obj);
 			m_stream->SetInputPosition(length->GetIntegerValue(), SeekDirection::Current);
+
+			// Read the token beyond the stream data
 			auto expect_stream_end = ReadTokenSkip();
+
+			// Verify the terminating token type and try fallback method
 			if (expect_stream_end->GetType() != Token::Type::STREAM_END) {
+				auto locked_file = _file.GetReference();
+				auto filename = locked_file->GetFilename();
+
+				// Log warning as this is not standard, however not fatal
+				LOG_WARNING(filename.c_str()) <<
+					"Failed to verify stream length " <<
+					length->GetIntegerValue() <<
+					" for stream object at offset " <<
+					stream_offset <<
+					", using the fallback method";
+
 				break;
 			}
 
@@ -154,23 +190,28 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 			}
 
 			auto end_obj_token = PeekTokenTypeSkip();
-			assert(end_obj_token == Token::Type::INDIRECT_OBJECT_END); (void) end_obj_token;
+			assert(end_obj_token == Token::Type::INDIRECT_OBJECT_END); UNUSED(end_obj_token);
 
-			m_stream->SetInputPosition(offset - 2);
-			auto new_line1 = m_stream->Get();
-			auto new_line2 = m_stream->Get();
-			if (new_line1 == '\r') {
-				offset -= 1;
+			// If and only if the endstream is at the start of the line
+			// try to search for the EOL on the previous line
+			if (pos == 0) {
+				m_stream->SetInputPosition(offset - 2);
+				auto new_line1 = m_stream->Get();
+				auto new_line2 = m_stream->Get();
+				if (new_line1 == '\r') {
+					offset -= 1;
 
-				assert(new_line2 == '\n');
-				if (new_line2 == '\n') {
+					assert(new_line2 == '\n');
+					if (new_line2 == '\n') {
+						offset -= 1;
+					}
+				}
+				else if (new_line2 == '\r' || new_line2 == '\n') {
 					offset -= 1;
 				}
-			} else if (new_line2 == '\r' || new_line2 == '\n') {
-				offset -= 1;
-			}
 
-			ReadTokenWithTypeSkip(Token::Type::STREAM_END);
+				ReadTokenWithTypeSkip(Token::Type::STREAM_END);
+			}
 
 			// Ensure stream_size is signed
 			static_assert(std::is_signed<types::stream_size>::value, "Stream size is unsigned, zero comparison won't work");
@@ -193,8 +234,7 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 			if (length_obj->GetObjectType() != Object::Type::Integer) {
 				auto locked_file = _file.GetReference();
 				if (!locked_file->IsInitialized()) {
-					dictionary->Remove(constant::Name::Length);
-					dictionary->Insert(constant::Name::Length, make_deferred<IntegerObject>(computed_length));
+					dictionary->Insert(constant::Name::Length, make_deferred<IntegerObject>(computed_length), true);
 					break;
 				}
 			}
