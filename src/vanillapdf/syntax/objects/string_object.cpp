@@ -233,9 +233,23 @@ void HexadecimalStringObject::SetRawValue(BufferPtr value) {
 }
 
 void HexadecimalStringObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
-	std::stringstream ss;
 
 	BufferPtr value = GetValue();
+
+	if (!m_file.IsEmpty()) {
+		if (!m_file.IsActive()) {
+			throw FileDisposedException();
+		}
+
+		auto locked_file = m_file.GetReference();
+		if (!IsEncryptionExempted() && locked_file->IsEncrypted()) {
+			value = locked_file->EncryptString(value, GetRootObjectNumber(), GetRootGenerationNumber());
+		}
+	}
+
+	std::stringstream ss;
+	ss << '<';
+
 	auto size = value->size();
 	for (decltype(size) i = 0; i < size; ++i) {
 		auto current = value[i];
@@ -245,8 +259,14 @@ void HexadecimalStringObject::ToPdfStreamInternal(IOutputStreamPtr output) const
 		ss << std::hex << std::setfill('0') << std::setw(2) << converted;
 	}
 
-	std::string str = ss.str();
-	Buffer result = Buffer(str.begin(), str.end());
+	ss << '>';
+
+	auto result = ss.str();
+	output->Write(result);
+}
+
+void LiteralStringObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
+	BufferPtr value = GetValue();
 
 	if (!m_file.IsEmpty()) {
 		if (!m_file.IsActive()) {
@@ -255,20 +275,13 @@ void HexadecimalStringObject::ToPdfStreamInternal(IOutputStreamPtr output) const
 
 		auto locked_file = m_file.GetReference();
 		if (!IsEncryptionExempted() && locked_file->IsEncrypted()) {
-			result = locked_file->EncryptString(result, GetRootObjectNumber(), GetRootGenerationNumber());
+			value = locked_file->EncryptString(value, GetRootObjectNumber(), GetRootGenerationNumber());
 		}
 	}
 
-	result.insert(result.begin(), '<');
-	result.insert(result.end(), '>');
-
-	output->Write(result);
-}
-
-void LiteralStringObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 	std::stringstream ss;
+	ss << '(';
 
-	BufferPtr value = GetValue();
 	auto size = value->size();
 	for (decltype(size) i = 0; i < size; ++i) {
 		unsigned char current = value[i];
@@ -322,23 +335,9 @@ void LiteralStringObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 		ss << current;
 	}
 
-	std::string str = ss.str();
-	Buffer result = Buffer(str.begin(), str.end());
+	ss << ')';
 
-	if (!m_file.IsEmpty()) {
-		if (!m_file.IsActive()) {
-			throw FileDisposedException();
-		}
-
-		auto locked_file = m_file.GetReference();
-		if (!IsEncryptionExempted() && locked_file->IsEncrypted()) {
-			result = locked_file->EncryptString(result, GetRootObjectNumber(), GetRootGenerationNumber());
-		}
-	}
-
-	result.insert(result.begin(), '(');
-	result.insert(result.end(), ')');
-
+	auto result = ss.str();
 	output->Write(result);
 }
 
