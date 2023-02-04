@@ -366,22 +366,26 @@ BufferPtr File::DecryptData(const Buffer& data,
 	}
 
 	auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
-	auto dictionary_object_number = encryption_dictionary->GetObjectNumber();
-	auto dictionary_generation_number = encryption_dictionary->GetGenerationNumber();
 
-	// The idea behind this was originally check whether we are dealing with
-	// encryption dictionary based on object and generation number.
-	// However, encryption dictionary does not have to be indirect object
-	// therefore I have created SetEncryptionExempted property, which shall
-	// prohibit any decryption on such objects. If this triggers
-	// error in encryption exemption most probably occurred
-	assert(!(dictionary_object_number == objNumber
-		&& dictionary_generation_number == genNumber)
-		&& "Encryption dictionary shall be exempted from encryption");
+	// Check if we are trying to decrypt data inside encryption dictionary
+	if (encryption_dictionary->IsIndirect()) {
+		auto dictionary_object_number = encryption_dictionary->GetObjectNumber();
+		auto dictionary_generation_number = encryption_dictionary->GetGenerationNumber();
 
-	// data inside encryption dictionary are not encrypted
-	if ((dictionary_object_number == objNumber && dictionary_generation_number == genNumber)) {
-		return make_deferred_container<Buffer>(data);
+		// The idea behind this was originally check whether we are dealing with
+		// encryption dictionary based on object and generation number.
+		// However, encryption dictionary does not have to be indirect object
+		// therefore I have created SetEncryptionExempted property, which shall
+		// prohibit any decryption on such objects. If this triggers
+		// error in encryption exemption most probably occurred
+		assert(!(dictionary_object_number == objNumber
+			&& dictionary_generation_number == genNumber)
+			&& "Encryption dictionary shall be exempted from encryption");
+
+		// data inside encryption dictionary are not encrypted
+		if ((dictionary_object_number == objNumber && dictionary_generation_number == genNumber)) {
+			return make_deferred_container<Buffer>(data);
+		}
 	}
 
 	// Same idea as above. SetEncryptionExempted shall be used for every
@@ -483,12 +487,16 @@ BufferPtr File::EncryptData(const Buffer& data,
 	}
 
 	auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
-	auto dictionary_object_number = encryption_dictionary->GetObjectNumber();
-	auto dictionary_generation_number = encryption_dictionary->GetGenerationNumber();
 
-	// data inside encryption dictionary are not encrypted
-	if (objNumber == 0 || (dictionary_object_number == objNumber && dictionary_generation_number == genNumber)) {
-		return make_deferred_container<Buffer>(data);
+	// Check if we are trying to encrypt data inside encryption dictionary
+	if (encryption_dictionary->IsIndirect()) {
+		auto dictionary_object_number = encryption_dictionary->GetObjectNumber();
+		auto dictionary_generation_number = encryption_dictionary->GetGenerationNumber();
+
+		// data inside encryption dictionary are not encrypted
+		if (objNumber == 0 || (dictionary_object_number == objNumber && dictionary_generation_number == genNumber)) {
+			return make_deferred_container<Buffer>(data);
+		}
 	}
 
 	// AES 256 bits behaves differently
