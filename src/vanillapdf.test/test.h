@@ -113,10 +113,35 @@ error_type process_rectangle(RectangleHandle* obj, int nested);
 error_type process_date(DateHandle* obj, int nested);
 
 /* Test document save */
-error_type process_document_save(DocumentHandle* document, int nested);
-error_type process_document_save_incremental(DocumentHandle* document, int nested);
-error_type process_document_merge(DocumentHandle* document, string_type merge_file, int nested);
-error_type process_document_sign(DocumentHandle* document, string_type key_file, string_type key_password, int nested);
+error_type process_document_save(
+	DocumentHandle* document,
+	string_type password,
+	string_type cert_path,
+	string_type cert_password,
+	int nested);
+
+error_type process_document_save_incremental(
+	DocumentHandle* document,
+	string_type password,
+	string_type cert_path,
+	string_type cert_password,
+	int nested);
+
+error_type process_document_merge(
+	DocumentHandle* document,
+	string_type merge_file,
+	string_type password,
+	string_type cert_path,
+	string_type cert_password,
+	int nested);
+
+error_type process_document_sign(DocumentHandle* document,
+	string_type key_file,
+	string_type key_password,
+	string_type password,
+	string_type cert_path,
+	string_type cert_password,
+	int nested);
 
 // Some parameters to functions are unused
 #define UNUSED(x) (void)(x)

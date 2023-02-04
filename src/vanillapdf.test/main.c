@@ -143,11 +143,11 @@ int main(int argc, char *argv[]) {
 
 	// Some test documents are broken for save currently
 	if (skip_save != VANILLAPDF_RV_TRUE) {
-		RETURN_ERROR_IF_NOT_SUCCESS(process_document_save(document, 0));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_document_merge(document, merge_file, 0));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_document_save(document, password, cert_path, cert_password, 0));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_document_merge(document, merge_file, password, cert_path, cert_password, 0));
 
 		if (signing_cert_file != NULL) {
-			RETURN_ERROR_IF_NOT_SUCCESS(process_document_sign(document, signing_cert_file, signing_cert_password, 0));
+			RETURN_ERROR_IF_NOT_SUCCESS(process_document_sign(document, signing_cert_file, signing_cert_password, password, cert_path, cert_password, 0));
 		}
 	}
 

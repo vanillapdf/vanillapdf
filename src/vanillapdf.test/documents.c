@@ -1050,22 +1050,65 @@ error_type process_duplex(Duplex duplex, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_document_save(DocumentHandle* document, int nested) {
-	FileHandle* file = NULL;
+error_type process_document_save(
+	DocumentHandle* document,
+	string_type password,
+	string_type cert_path,
+	string_type cert_password,
+	int nested) {
+
+	FileHandle* save_file = NULL;
+	FileHandle* load_file = NULL;
+
 	InputOutputStreamHandle* input_output_stream = NULL;
+	boolean_type is_encrypted = VANILLAPDF_RV_FALSE;
 
 	print_spaces(nested);
 	print_text("Process document save begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_CreateFromMemory(&input_output_stream));
-	RETURN_ERROR_IF_NOT_SUCCESS(File_CreateStream(input_output_stream, "UNUSED", &file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_CreateStream(input_output_stream, "UNUSED", &save_file));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Document_SaveFile(document, file));
+	//RETURN_ERROR_IF_NOT_SUCCESS(Document_Save(document, "C:\\temp\\output.pdf"));
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_SaveFile(document, save_file));
 
 	// Check the file consistency
-	RETURN_ERROR_IF_NOT_SUCCESS(process_file(file, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_OpenStream(input_output_stream, "UNUSED", &load_file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(load_file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_IsEncrypted(load_file, &is_encrypted));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));
+	if (is_encrypted == VANILLAPDF_RV_TRUE) {
+		// No password entered
+		if (password == NULL && cert_path == NULL) {
+			// Opening the file with default password
+		}
+
+		if (password != NULL) {
+			RETURN_ERROR_IF_NOT_SUCCESS(File_SetEncryptionPassword(load_file, password));
+		}
+
+		if (cert_path != NULL) {
+			PKCS12KeyHandle* pkcs12_key = NULL;
+			EncryptionKeyHandle* encryption_key = NULL;
+
+			RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_CreateFromFile(cert_path, cert_password, &pkcs12_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_ToEncryptionKey(pkcs12_key, &encryption_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(File_SetEncryptionKey(load_file, encryption_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(EncryptionKey_Release(encryption_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_Release(pkcs12_key));
+		}
+	}
+	else {
+		// Password for un-encrypted file
+		if (password != NULL || cert_path != NULL) {
+			return VANILLAPDF_TEST_ERROR_INVALID_PASSWORD;
+		}
+	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(process_file(load_file, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(load_file));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(save_file));
 	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_Release(input_output_stream));
 
 	print_spaces(nested);
@@ -1074,22 +1117,64 @@ error_type process_document_save(DocumentHandle* document, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_document_save_incremental(DocumentHandle* document, int nested) {
-	FileHandle* file = NULL;
+error_type process_document_save_incremental(
+	DocumentHandle* document,
+	string_type password,
+	string_type cert_path,
+	string_type cert_password,
+	int nested) {
+
+	FileHandle* save_file = NULL;
+	FileHandle* load_file = NULL;
+
 	InputOutputStreamHandle* input_output_stream = NULL;
+	boolean_type is_encrypted = VANILLAPDF_RV_FALSE;
 
 	print_spaces(nested);
 	print_text("Process document save incremental begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_CreateFromMemory(&input_output_stream));
-	RETURN_ERROR_IF_NOT_SUCCESS(File_CreateStream(input_output_stream, "UNUSED", &file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_CreateStream(input_output_stream, "UNUSED", &save_file));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Document_SaveIncrementalFile(document, file));
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_SaveIncrementalFile(document, save_file));
 
 	// Check the file consistency
-	RETURN_ERROR_IF_NOT_SUCCESS(process_file(file, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_OpenStream(input_output_stream, "UNUSED", &load_file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(load_file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_IsEncrypted(load_file, &is_encrypted));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));
+	if (is_encrypted == VANILLAPDF_RV_TRUE) {
+		// No password entered
+		if (password == NULL && cert_path == NULL) {
+			// Opening the file with default password
+		}
+
+		if (password != NULL) {
+			RETURN_ERROR_IF_NOT_SUCCESS(File_SetEncryptionPassword(load_file, password));
+		}
+
+		if (cert_path != NULL) {
+			PKCS12KeyHandle* pkcs12_key = NULL;
+			EncryptionKeyHandle* encryption_key = NULL;
+
+			RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_CreateFromFile(cert_path, cert_password, &pkcs12_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_ToEncryptionKey(pkcs12_key, &encryption_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(File_SetEncryptionKey(load_file, encryption_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(EncryptionKey_Release(encryption_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_Release(pkcs12_key));
+		}
+	}
+	else {
+		// Password for un-encrypted file
+		if (password != NULL || cert_path != NULL) {
+			return VANILLAPDF_TEST_ERROR_INVALID_PASSWORD;
+		}
+	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(process_file(load_file, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(load_file));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(save_file));
 	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_Release(input_output_stream));
 
 	print_spaces(nested);
@@ -1098,10 +1183,19 @@ error_type process_document_save_incremental(DocumentHandle* document, int neste
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_document_merge(DocumentHandle* document, string_type merge_file, int nested) {
-	FileHandle* destination_file = NULL;
+error_type process_document_merge(
+	DocumentHandle* document,
+	string_type merge_file,
+	string_type password,
+	string_type cert_path,
+	string_type cert_password,
+	int nested) {
+
+	FileHandle* save_file = NULL;
+	FileHandle* load_file = NULL;
 	DocumentHandle* other_document = NULL;
 	InputOutputStreamHandle* input_output_stream = NULL;
+	boolean_type is_encrypted = VANILLAPDF_RV_FALSE;
 
 	if (merge_file == NULL) {
 		return VANILLAPDF_TEST_ERROR_SUCCESS;
@@ -1111,18 +1205,51 @@ error_type process_document_merge(DocumentHandle* document, string_type merge_fi
 	print_text("Process document merge begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_CreateFromMemory(&input_output_stream));
-	RETURN_ERROR_IF_NOT_SUCCESS(File_CreateStream(input_output_stream, "UNUSED", &destination_file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_CreateStream(input_output_stream, "UNUSED", &save_file));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Open(merge_file, &other_document));
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_AppendDocument(document, other_document));
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(other_document));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Document_SaveFile(document, destination_file));
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_SaveFile(document, save_file));
 
 	// Check the file consistency
-	RETURN_ERROR_IF_NOT_SUCCESS(process_file(destination_file, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_OpenStream(input_output_stream, "UNUSED", &load_file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(load_file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_IsEncrypted(load_file, &is_encrypted));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(destination_file));
+	if (is_encrypted == VANILLAPDF_RV_TRUE) {
+		// No password entered
+		if (password == NULL && cert_path == NULL) {
+			// Opening the file with default password
+		}
+
+		if (password != NULL) {
+			RETURN_ERROR_IF_NOT_SUCCESS(File_SetEncryptionPassword(load_file, password));
+		}
+
+		if (cert_path != NULL) {
+			PKCS12KeyHandle* pkcs12_key = NULL;
+			EncryptionKeyHandle* encryption_key = NULL;
+
+			RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_CreateFromFile(cert_path, cert_password, &pkcs12_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_ToEncryptionKey(pkcs12_key, &encryption_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(File_SetEncryptionKey(load_file, encryption_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(EncryptionKey_Release(encryption_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_Release(pkcs12_key));
+		}
+	}
+	else {
+		// Password for un-encrypted file
+		if (password != NULL || cert_path != NULL) {
+			return VANILLAPDF_TEST_ERROR_INVALID_PASSWORD;
+		}
+	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(process_file(load_file, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(load_file));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(save_file));
 	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_Release(input_output_stream));
 
 	print_spaces(nested);
@@ -1131,23 +1258,33 @@ error_type process_document_merge(DocumentHandle* document, string_type merge_fi
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_document_sign(DocumentHandle* document, string_type key_file, string_type key_password, int nested) {
-	FileHandle* file = NULL;
+error_type process_document_sign(
+	DocumentHandle* document,
+	string_type key_file,
+	string_type key_password,
+	string_type password,
+	string_type cert_path,
+	string_type cert_password,
+	int nested) {
+
+	FileHandle* save_file = NULL;
+	FileHandle* load_file = NULL;
 	InputOutputStreamHandle* input_output_stream = NULL;
 
-	PKCS12KeyHandle* pkcs12_key = NULL;
+	PKCS12KeyHandle* signature_pkcs12_key = NULL;
 	SigningKeyHandle* signing_key = NULL;
 	DateHandle* signing_time = NULL;
 	DocumentSignatureSettingsHandle* signature_settings = NULL;
+	boolean_type is_encrypted = VANILLAPDF_RV_FALSE;
 
 	print_spaces(nested);
 	print_text("Process document sign begin\n");
 
 	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_CreateFromMemory(&input_output_stream));
-	RETURN_ERROR_IF_NOT_SUCCESS(File_CreateStream(input_output_stream, "UNUSED", &file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_CreateStream(input_output_stream, "UNUSED", &save_file));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_CreateFromFile(key_file, key_password, &pkcs12_key));
-	RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_ToSigningKey(pkcs12_key, &signing_key));
+	RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_CreateFromFile(key_file, key_password, &signature_pkcs12_key));
+	RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_ToSigningKey(signature_pkcs12_key, &signing_key));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Date_CreateCurrent(&signing_time));
 
@@ -1156,18 +1293,51 @@ error_type process_document_sign(DocumentHandle* document, string_type key_file,
 	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_SetDigest(signature_settings, MessageDigestAlgorithmType_SHA256));
 	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_SetSigningTime(signature_settings, signing_time));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Document_Sign(document, file, signature_settings));
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_Sign(document, save_file, signature_settings));
 
 	// Check the file consistency
-	RETURN_ERROR_IF_NOT_SUCCESS(process_file(file, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_OpenStream(input_output_stream, "UNUSED", &load_file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(load_file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_IsEncrypted(load_file, &is_encrypted));
+
+	if (is_encrypted == VANILLAPDF_RV_TRUE) {
+		// No password entered
+		if (password == NULL && cert_path == NULL) {
+			// Opening the file with default password
+		}
+
+		if (password != NULL) {
+			RETURN_ERROR_IF_NOT_SUCCESS(File_SetEncryptionPassword(load_file, password));
+		}
+
+		if (cert_path != NULL) {
+			PKCS12KeyHandle* encryption_pkcs12_key = NULL;
+			EncryptionKeyHandle* encryption_key = NULL;
+
+			RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_CreateFromFile(cert_path, cert_password, &encryption_pkcs12_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_ToEncryptionKey(encryption_pkcs12_key, &encryption_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(File_SetEncryptionKey(load_file, encryption_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(EncryptionKey_Release(encryption_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_Release(encryption_pkcs12_key));
+		}
+	}
+	else {
+		// Password for un-encrypted file
+		if (password != NULL || cert_path != NULL) {
+			return VANILLAPDF_TEST_ERROR_INVALID_PASSWORD;
+		}
+	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(process_file(load_file, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(load_file));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(DocumentSignatureSettings_Release(signature_settings));
 	RETURN_ERROR_IF_NOT_SUCCESS(Date_Release(signing_time));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(SigningKey_Release(signing_key));
-	RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_Release(pkcs12_key));
+	RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_Release(signature_pkcs12_key));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(save_file));
 	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_Release(input_output_stream));
 
 	print_spaces(nested);
