@@ -1177,8 +1177,31 @@ void FileWriter::WriteHeader(IOutputStreamPtr output, HeaderPtr header) {
 
 	auto version = header->GetVersion();
 
-	output->Write("%PDF-1.");
-	output->Write(static_cast<int32_t>(version));
+	output->Write("%PDF-");
+
+	switch (version) {
+	case Version::PDF10:
+		output->Write("1.0"); break;
+	case Version::PDF11:
+		output->Write("1.1"); break;
+	case Version::PDF12:
+		output->Write("1.2"); break;
+	case Version::PDF13:
+		output->Write("1.3"); break;
+	case Version::PDF14:
+		output->Write("1.4"); break;
+	case Version::PDF15:
+		output->Write("1.5"); break;
+	case Version::PDF16:
+		output->Write("1.6"); break;
+	case Version::PDF17:
+		output->Write("1.7"); break;
+	case Version::PDF20:
+		output->Write("2.0"); break;
+	default:
+		throw GeneralException("Unknown PDF version: " + std::to_string(static_cast<int32_t>(version)));
+	}
+
 	output->Write(WhiteSpace::LINE_FEED);
 }
 
