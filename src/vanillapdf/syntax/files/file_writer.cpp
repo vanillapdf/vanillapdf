@@ -439,6 +439,52 @@ void FileWriter::FixStreamReferences(XrefChainPtr source, XrefChainPtr destinati
 	}
 }
 
+void FileWriter::SetEncryptionData(FilePtr source, FilePtr destination) {
+
+	// Terminate for unencrypted files
+	if (!source->IsEncrypted()) {
+		return;
+	}
+
+	auto source_encryption_dictionary = source->GetEncryptionDictionary();
+
+	ObjectPtr destination_encryption_object;
+	if (source_encryption_dictionary->IsIndirect()) {
+		auto source_object_number = source_encryption_dictionary->GetRootObjectNumber();
+		auto source_generation_number = source_encryption_dictionary->GetRootGenerationNumber();
+
+		destination_encryption_object = destination->GetIndirectObject(source_object_number, source_generation_number);
+	}
+	else {
+		auto chain = destination->GetXrefChain();
+		auto chain_iterator = chain->Begin();
+		auto chain_value = chain_iterator->Value();
+		auto trailer_dictionary = chain_value->GetTrailerDictionary();
+
+		if (!trailer_dictionary->Contains(constant::Name::Encrypt)) {
+			throw GeneralException("Destination trailer dictionary does not contain encryption entry");
+		}
+
+		// TODO Compare the source and destination dictionaries?
+
+		destination_encryption_object = trailer_dictionary->FindAs<DictionaryObjectPtr>(constant::Name::Encrypt);
+	}
+
+	if (!ObjectUtils::IsType<DictionaryObjectPtr>(destination_encryption_object)) {
+		throw GeneralException("Destination encryption object is not a dictionary");
+	}
+
+	auto dictionary_obj = ObjectUtils::ConvertTo<DictionaryObjectPtr>(destination_encryption_object);
+	destination->SetEncryptionDictionary(dictionary_obj);
+
+	// Copy the encryption key from the source file
+	// If the source encryption key is set, the user does have the password
+	// Possessing the password to the original file means that the user is authorized to save the file
+	// Although it seems to be safe I am not going to expose the functionality on the DLL border
+	auto source_encryption_key = source->GetEncryptionKey();
+	destination->SetEncryptionKey(source_encryption_key);
+}
+
 void FileWriter::RecalculateXrefPrevOffset(XrefBasePtr source, XrefBasePtr prev) {
 
 	// Disabled by control flag
@@ -732,6 +778,9 @@ XrefChainPtr FileWriter::CloneXrefChain(FilePtr source, FilePtr destination) {
 	// Stream object references needs to be fixed separately
 	FixStreamReferences(source_chain, dest_chain);
 
+	// Update encryption dictionary info in the new file
+	SetEncryptionData(source, destination);
+
 	// All xref entries are stored in reversed order than it is written to file
 	dest_chain->Reverse();
 
@@ -993,17 +1042,11 @@ DictionaryObjectPtr FileWriter::CloneTrailerDictionary(FilePtr source, XrefBaseP
 		new_trailer->Insert(constant::Name::DecodeParms, cloned);
 	}
 
-	// Add encryption entry to trailer
-	if (source->IsEncrypted()) {
-		ObjectPtr obj = source->GetEncryptionDictionary();
-		bool is_dictionary = ObjectUtils::IsType<DictionaryObjectPtr>(obj);
-
-		assert(is_dictionary);
-		if (is_dictionary) {
-			DictionaryObjectPtr encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(obj);
-			DictionaryObjectPtr cloned = ObjectUtils::Clone<DictionaryObjectPtr>(encryption_dictionary);
-			new_trailer->Insert(constant::Name::Encrypt, encryption_dictionary);
-		}
+	// Set encryption dictionary
+	if (source_trailer->Contains(constant::Name::Encrypt)) {
+		ContainableObjectPtr encryption_dictionary = source_trailer->Find(constant::Name::Encrypt);
+		ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(encryption_dictionary);
+		new_trailer->Insert(constant::Name::Encrypt, cloned);
 	}
 
 	new_trailer->SetFile(source);

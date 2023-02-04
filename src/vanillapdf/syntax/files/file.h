@@ -60,6 +60,8 @@ public:
 	bool IsEncrypted(void) const;
 	ObjectPtr GetEncryptionDictionary(void) const { return _encryption_dictionary; }
 	void SetEncryptionDictionary(DictionaryObjectPtr object) { _encryption_dictionary = object; }
+	BufferPtr GetEncryptionKey() const { return _decryption_key; }
+	void SetEncryptionKey(BufferPtr data) { _decryption_key = data; }
 
 	bool SetEncryptionPassword(const Buffer& password);
 	bool SetEncryptionPassword(const std::string& password);

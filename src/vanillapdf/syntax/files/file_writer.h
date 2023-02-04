@@ -175,6 +175,7 @@ private:
 
 	void CloneHybridStreams(FilePtr source, FilePtr destination);
 	void FixStreamReferences(XrefChainPtr source, XrefChainPtr destination);
+	void SetEncryptionData(FilePtr source, FilePtr destination);
 
 	void RecalculateXrefPrevOffset(XrefBasePtr source, XrefBasePtr prev);
 	void RecalculateXrefHybridOffset(XrefTablePtr source);
