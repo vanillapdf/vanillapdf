@@ -108,7 +108,12 @@ size_t StringObjectBase::Hash() const {
 
 HexadecimalStringObject* HexadecimalStringObject::Clone(void) const {
 	HexadecimalStringObjectPtr result(pdf_new HexadecimalStringObject(), false);
-	result->SetValue(GetValue());
+
+	auto original_value = GetValue();
+	auto original_raw_value = GetRawValue();
+
+	result->SetValue(original_value);
+	result->SetRawValue(original_raw_value);
 
 	CloneBaseProperties(result);
 	return result.detach();
@@ -116,7 +121,12 @@ HexadecimalStringObject* HexadecimalStringObject::Clone(void) const {
 
 LiteralStringObject* LiteralStringObject::Clone(void) const {
 	LiteralStringObjectPtr result(pdf_new LiteralStringObject(), false);
-	result->SetValue(GetValue());
+
+	auto original_value = GetValue();
+	auto original_raw_value = GetRawValue();
+
+	result->SetValue(original_value);
+	result->SetRawValue(original_raw_value);
 
 	CloneBaseProperties(result);
 	return result.detach();
