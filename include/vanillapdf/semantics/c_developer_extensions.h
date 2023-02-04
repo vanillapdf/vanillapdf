@@ -47,7 +47,7 @@ extern "C"
 
 	/**
 	* \memberof DeveloperExtensionsIteratorHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -89,7 +89,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensionsIterator_Release(DeveloperExtensionsIteratorHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof DeveloperExtensionsHandle
@@ -109,11 +109,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtensions_Release(DeveloperExtensionsHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof DeveloperExtensionHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -138,7 +138,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_Release(DeveloperExtensionHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 #ifdef __cplusplus
 };

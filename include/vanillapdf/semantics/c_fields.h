@@ -99,7 +99,7 @@ extern "C"
 
 	/**
 	* \memberof FieldCollectionHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -119,11 +119,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_Release(FieldCollectionHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof FieldHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -159,11 +159,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Field_Release(FieldHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof ButtonFieldHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -171,11 +171,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_Release(ButtonFieldHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof TextFieldHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -183,11 +183,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION TextField_Release(TextFieldHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof ChoiceFieldHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -195,11 +195,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_Release(ChoiceFieldHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof SignatureFieldHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -214,7 +214,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_Release(SignatureFieldHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 #ifdef __cplusplus
 };

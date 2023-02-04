@@ -127,7 +127,7 @@ extern "C"
 
 	/**
 	* \memberof XrefHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -164,11 +164,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Xref_Release(XrefHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof XrefIteratorHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -202,11 +202,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefIterator_Release(XrefIteratorHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof XrefChainHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -230,11 +230,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefChain_Release(XrefChainHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof XrefChainIteratorHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -268,11 +268,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefChainIterator_Release(XrefChainIteratorHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof XrefEntryHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -311,11 +311,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_Release(XrefEntryHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof XrefFreeEntryHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -353,11 +353,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_Release(XrefFreeEntryHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof XrefUsedEntryHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -405,11 +405,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_Release(XrefUsedEntryHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof XrefCompressedEntryHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -464,7 +464,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Release(XrefCompressedEntryHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 #ifdef __cplusplus
 };

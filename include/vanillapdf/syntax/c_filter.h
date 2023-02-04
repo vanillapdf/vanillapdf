@@ -61,7 +61,7 @@ extern "C"
 
 	/**
 	* \memberof FilterBaseHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -85,11 +85,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_Release(FilterBaseHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof FlateDecodeFilterHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -120,11 +120,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION FlateDecodeFilter_Release(FlateDecodeFilterHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof DCTDecodeFilterHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -155,11 +155,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DCTDecodeFilter_Release(DCTDecodeFilterHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof ASCII85DecodeFilterHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -190,11 +190,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ASCII85DecodeFilter_Release(ASCII85DecodeFilterHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof ASCIIHexDecodeFilterHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -225,7 +225,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ASCIIHexDecodeFilter_Release(ASCIIHexDecodeFilterHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 #ifdef __cplusplus
 };

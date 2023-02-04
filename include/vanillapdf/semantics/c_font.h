@@ -67,7 +67,7 @@ extern "C"
 
 	/**
 	* \memberof FontHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -96,11 +96,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Font_Release(FontHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof Type0FontHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -125,7 +125,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Type0Font_Release(Type0FontHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 #ifdef __cplusplus
 };

@@ -32,7 +32,7 @@ extern "C"
 
 	/**
 	* \memberof DictionaryObjectIteratorHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -84,11 +84,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_Release(DictionaryObjectIteratorHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof DictionaryObjectHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -153,7 +153,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Release(DictionaryObjectHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 #ifdef __cplusplus
 };

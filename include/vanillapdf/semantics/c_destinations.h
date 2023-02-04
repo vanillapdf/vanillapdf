@@ -122,7 +122,7 @@ extern "C"
 
 	/**
 	* \memberof DestinationHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -145,11 +145,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Destination_Release(DestinationHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof NamedDestinationsHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -173,7 +173,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION NamedDestinations_Release(NamedDestinationsHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 #ifdef __cplusplus
 };

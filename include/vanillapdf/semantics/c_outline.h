@@ -80,7 +80,7 @@ extern "C"
 
 	/**
 	* \memberof OutlineBaseHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -104,11 +104,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_Release(OutlineBaseHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof OutlineHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -140,11 +140,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Outline_Release(OutlineHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof OutlineItemHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -208,11 +208,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_Release(OutlineItemHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof OutlineItemColorHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -236,11 +236,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_Release(OutlineItemColorHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof OutlineItemFlagsHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -259,7 +259,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_Release(OutlineItemFlagsHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 #ifdef __cplusplus
 };

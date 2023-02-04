@@ -137,7 +137,7 @@ extern "C"
 
 	/**
 	* \memberof ViewerPreferencesHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -262,11 +262,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_Release(ViewerPreferencesHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof PageRangeHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -285,11 +285,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageRange_Release(PageRangeHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof PageSubRangeHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -308,7 +308,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageSubRange_Release(PageSubRangeHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 #ifdef __cplusplus
 };

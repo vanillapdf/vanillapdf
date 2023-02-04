@@ -40,7 +40,7 @@ extern "C"
 
 	/**
 	* \memberof DigitalSignatureHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -127,11 +127,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_Release(DigitalSignatureHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof ByteRangeCollectionHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -151,11 +151,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_Release(ByteRangeCollectionHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 	/**
 	* \memberof ByteRangeHandle
-	* @{
+	* ///@{
 	*/
 
 	/**
@@ -174,7 +174,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_Release(ByteRangeHandle* handle);
 
-	/** @} */
+	/** ///@} */
 
 #ifdef __cplusplus
 };
