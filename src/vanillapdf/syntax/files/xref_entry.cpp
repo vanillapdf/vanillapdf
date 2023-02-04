@@ -198,6 +198,10 @@ void XrefCompressedEntry::Initialize(void) {
 	auto body = converted->GetBody();
 	auto input_stream = body->ToInputStream();
 
+	if (body->empty()) {
+		throw GeneralException("Could not find data for the ObjStm " + std::to_string(_object_stream_number));
+	}
+
 	Parser parser(_file, input_stream);
 	auto stream_entries = parser.ReadObjectStreamEntries(first->GetUnsignedIntegerValue(), size->SafeConvert<types::size_type>());
 	for (auto stream_entry : stream_entries) {
