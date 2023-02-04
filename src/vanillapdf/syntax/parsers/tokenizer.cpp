@@ -234,6 +234,13 @@ TokenPtr Tokenizer::ReadHexadecimalString(void) {
 			break;
 		}
 
+		// Each pair of hexadecimal digits defines one byte of the string.
+		// White-space characters (such as SPACE (20h), HORIZONTAL TAB (09h),
+		// CARRIAGE RETURN (0Dh), LINE FEED (0Ah), and FORM FEED (0Ch)) shall be ignored.
+		if (IsWhiteSpace(current)) {
+			continue;
+		}
+
 		if (IsNumeric(current) || IsAlpha(current)) {
 			chars->push_back(current);
 			continue;
