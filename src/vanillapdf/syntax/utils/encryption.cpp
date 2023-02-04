@@ -138,7 +138,7 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
 	auto decrypt_key_type_size = std::numeric_limits<decrypt_key_type>::digits;
 	int key_length_bits = SafeMultiply<int>(key_length, ValueConvertUtils::SafeConvert<decltype(key_length)>(decrypt_key_type_size));
 
-	AES_KEY dec_key;
+	AES_KEY dec_key = {0};
 	int key_set = AES_set_decrypt_key(key_data, key_length_bits, &dec_key);
 	if (0 != key_set) {
 		throw GeneralException("Unable to set decryption key");
@@ -164,12 +164,14 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
 	Buffer iv(AES_CBC_IV_LENGTH);
+
 	int rv = RAND_bytes((unsigned char*) iv.data(), AES_CBC_IV_LENGTH);
 	if (1 != rv) {
 		throw GeneralException("Could not generate initialization vector for AES");
 	}
 
-	BufferPtr buffer = AddPkcs7Padding(data, AES_CBC_BLOCK_SIZE);
+	BufferPtr data_padded = AddPkcs7Padding(data, AES_CBC_BLOCK_SIZE);
+	BufferPtr result = make_deferred_container<Buffer>(data_padded->size() + AES_CBC_IV_LENGTH);
 
 	using decrypt_key_type = unsigned char;
 	const decrypt_key_type* key_data = reinterpret_cast<const decrypt_key_type*>(key.data());
@@ -177,16 +179,19 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
 	auto decrypt_key_type_size = std::numeric_limits<decrypt_key_type>::digits;
 	int key_length_bits = SafeMultiply<int>(key_length, ValueConvertUtils::SafeConvert<decltype(key_length)>(decrypt_key_type_size));
 
-	AES_KEY enc_key;
-	int key_set = AES_set_decrypt_key(key_data, key_length_bits, &enc_key);
+	AES_KEY enc_key = {0};
+	int key_set = AES_set_encrypt_key(key_data, key_length_bits, &enc_key);
 	if (0 != key_set) {
 		throw GeneralException("Unable to set encryption key");
 	}
 
-	AES_cbc_encrypt((unsigned char*) data.data(), (unsigned char*) buffer->data(), data.std_size(), &enc_key, (unsigned char*) iv.data(), AES_ENCRYPT);
+	// The encryption function alters the iv structure
+	// We need to save the original data before the operation
+	result->insert(result->begin(), iv.begin(), iv.end());
 
-	buffer->insert(buffer.begin(), iv.begin(), iv.end());
-	return buffer;
+	AES_cbc_encrypt((unsigned char*) data_padded->data(), (unsigned char*) result->data() + iv.size(), data_padded->std_size(), &enc_key, (unsigned char*)iv.data(), AES_ENCRYPT);
+
+	return result;
 
 #else
 	(void) key; (void) key_length; (void) data;
