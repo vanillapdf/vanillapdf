@@ -33,6 +33,7 @@ public:
 	BufferPtr GetBodyRaw() const;
 	BufferPtr GetBody() const;
 	BufferPtr GetBodyEncoded() const;
+	BufferPtr GetBodyDecrypted() const;
 	void SetBody(BufferPtr value);
 
 	virtual size_t Hash() const override;
@@ -51,6 +52,11 @@ private:
 	mutable BufferPtr _body;
 	mutable BufferPtr _body_decoded;
 	mutable std::size_t _hash_cache = 0;
+
+	BufferPtr EncryptStream(BufferPtr data, types::big_uint obj_number, types::ushort generation_number) const;
+	BufferPtr EncryptData(BufferPtr data, types::big_uint obj_number, types::ushort generation_number, NameObjectPtr handler) const;
+	BufferPtr DecryptStream(BufferPtr data, types::big_uint obj_number, types::ushort generation_number) const;
+	BufferPtr DecryptData(BufferPtr data, types::big_uint obj_number, types::ushort generation_number, NameObjectPtr handler) const;
 };
 
 } // syntax

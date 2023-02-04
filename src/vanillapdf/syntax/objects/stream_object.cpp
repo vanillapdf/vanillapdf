@@ -154,58 +154,6 @@ BufferPtr StreamObject::GetBodyRaw() const {
 	auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
 	auto body = input->Read(size->SafeConvert<types::size_type>());
 
-	// During the initialization it is unknown whether a file is encrypted
-	// This is important for object streams that are being parsed before encryption dictionary
-	bool is_file_encrypted = locked_file->IsInitialized() && locked_file->IsEncrypted();
-
-	if (IsEncryptionExempted() || !is_file_encrypted) {
-		_body->assign(body.begin(), body.end());
-		_body->SetInitialized();
-		return _body;
-	}
-
-	if (!_header->Contains(constant::Name::Filter)) {
-		// Stream does not contain crypt filter
-		body = locked_file->DecryptStream(body, GetRootObjectNumber(), GetRootGenerationNumber());
-		_body->assign(body.begin(), body.end());
-		_body->SetInitialized();
-		return _body;
-	}
-
-	auto filter_obj = _header->Find(constant::Name::Filter);
-	bool is_filter_name = ObjectUtils::IsType<NameObjectPtr>(filter_obj);
-	bool is_filter_array = ObjectUtils::IsType<ArrayObjectPtr<NameObjectPtr>>(filter_obj);
-
-	if (is_filter_name) {
-		auto filter_name = _header->FindAs<NameObjectPtr>(constant::Name::Filter);
-		if (filter_name == constant::Name::Crypt) {
-			auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
-			auto handler_name = params->FindAs<NameObjectPtr>(constant::Name::Name);
-			body = locked_file->DecryptData(body, GetRootObjectNumber(), GetRootGenerationNumber(), handler_name);
-			_body->assign(body.begin(), body.end());
-			_body->SetInitialized();
-			return _body;
-		}
-	}
-
-	if (is_filter_array) {
-		auto filter_array = _header->FindAs<ArrayObjectPtr<NameObjectPtr>>(constant::Name::Filter);
-		for (unsigned int i = 0; i < filter_array->GetSize(); ++i) {
-			auto current_filter = (*filter_array)[i];
-			if (current_filter == constant::Name::Crypt) {
-				assert(i == 0 && "Crypt filter is not first");
-				auto params = _header->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::DecodeParms);
-				auto handler_name = params->GetValue(i)->FindAs<NameObjectPtr>(constant::Name::Name);
-				body = locked_file->DecryptData(body, GetRootObjectNumber(), GetRootGenerationNumber(), handler_name);
-				_body->assign(body.begin(), body.end());
-				_body->SetInitialized();
-				return _body;
-			}
-		}
-	}
-
-	// Stream does not contain crypt filter
-	body = locked_file->DecryptStream(body, GetRootObjectNumber(), GetRootGenerationNumber());
 	_body->assign(body.begin(), body.end());
 	_body->SetInitialized();
 	return _body;
@@ -218,7 +166,7 @@ BufferPtr StreamObject::GetBody() const {
 	}
 
 	if (!_header->Contains(constant::Name::Filter)) {
-		return GetBodyRaw();
+		return GetBodyDecrypted();
 	}
 
 	//auto stream = locked_file->GetInputStream();
@@ -233,13 +181,13 @@ BufferPtr StreamObject::GetBody() const {
 	bool is_filter_array = ObjectUtils::IsType<ArrayObjectPtr<NameObjectPtr>>(filter_obj);
 
 	if (is_filter_null) {
-		return GetBodyRaw();
+		return GetBodyDecrypted();
 	}
 
 	if (is_filter_name) {
 		auto filter_name = _header->FindAs<NameObjectPtr>(constant::Name::Filter);
 		if (filter_name == constant::Name::Crypt) {
-			auto body = GetBodyRaw();
+			auto body = GetBodyDecrypted();
 			_body_decoded->assign(body.begin(), body.end());
 			_body_decoded->SetInitialized();
 			return _body_decoded;
@@ -248,15 +196,15 @@ BufferPtr StreamObject::GetBody() const {
 		auto filter = FilterBase::GetFilterByName(filter_name);
 		if (_header->Contains(constant::Name::DecodeParms)) {
 			auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
-			//_body_decoded = filter->Decode(*stream, *size, params);
-			auto body = filter->Decode(GetBodyRaw(), params);
+			auto body_decrypted = GetBodyDecrypted();
+			auto body = filter->Decode(body_decrypted, params);
 			_body_decoded->assign(body.begin(), body.end());
 			_body_decoded->SetInitialized();
 			return _body_decoded;
 		}
 
-		//_body_decoded = filter->Decode(*stream, *size);
-		auto body = filter->Decode(GetBodyRaw());
+		auto body_decrypted = GetBodyDecrypted();
+		auto body = filter->Decode(body_decrypted);
 		_body_decoded->assign(body.begin(), body.end());
 		_body_decoded->SetInitialized();
 		return _body_decoded;
@@ -272,7 +220,7 @@ BufferPtr StreamObject::GetBody() const {
 			assert(filter_array->GetSize() == params->GetSize());
 		}
 
-		BufferPtr result = GetBodyRaw();
+		BufferPtr result = GetBodyDecrypted();
 		for (unsigned int i = 0; i < filter_array->GetSize(); ++i) {
 			auto current_filter = (*filter_array)[i];
 			if (current_filter == constant::Name::Crypt) {
@@ -316,29 +264,35 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 		return GetBody();
 	}
 
-	BufferPtr decoded_body = GetBody();
+	auto locked_file = m_file.GetReference();
+	auto decoded_body = GetBody();
+
 	auto filter_obj = _header->Find(constant::Name::Filter);
 	bool is_filter_null = ObjectUtils::IsType<NullObjectPtr>(filter_obj);
 	bool is_filter_name = ObjectUtils::IsType<NameObjectPtr>(filter_obj);
 	bool is_filter_array = ObjectUtils::IsType<ArrayObjectPtr<NameObjectPtr>>(filter_obj);
 
 	if (is_filter_null) {
-		return decoded_body;
+		return EncryptStream(decoded_body, GetRootObjectNumber(), GetRootGenerationNumber());
 	}
 
 	if (is_filter_name) {
 		auto filter_name = _header->FindAs<NameObjectPtr>(constant::Name::Filter);
 		if (filter_name == constant::Name::Crypt) {
-			return decoded_body;
+			auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
+			auto handler_name = params->FindAs<NameObjectPtr>(constant::Name::Name);
+			return EncryptData(decoded_body, GetRootObjectNumber(), GetRootGenerationNumber(), handler_name);
 		}
 
 		auto filter = FilterBase::GetFilterByName(filter_name);
 		if (_header->Contains(constant::Name::DecodeParms)) {
 			auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
-			return filter->Encode(decoded_body, params);
+			auto result = filter->Encode(decoded_body, params);
+			return EncryptStream(result, GetRootObjectNumber(), GetRootGenerationNumber());
 		}
 
-		return filter->Encode(decoded_body, _header);
+		auto result = filter->Encode(decoded_body, _header);
+		return EncryptStream(result, GetRootObjectNumber(), GetRootGenerationNumber());
 	}
 
 	if (is_filter_array) {
@@ -360,7 +314,7 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 		for (decltype(filters_size) i = 0; i < filters_size; ++i) {
 			auto current_filter = (*filter_array)[i];
 			if (current_filter == constant::Name::Crypt) {
-				continue;
+				decoded_body = EncryptStream(decoded_body, GetRootObjectNumber(), GetRootGenerationNumber());
 			}
 
 			auto filter = FilterBase::GetFilterByName(current_filter);
@@ -388,6 +342,136 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 
 	assert(is_filter_name ^ is_filter_array);
 	throw GeneralException("Filter is neither name nor array of names");
+}
+
+BufferPtr StreamObject::GetBodyDecrypted() const {
+
+	auto locked_file = m_file.GetReference();
+	auto body_raw = GetBodyRaw();
+
+	// During the initialization it is unknown whether a file is encrypted
+	// This is important for object streams that are being parsed before encryption dictionary
+	bool is_file_encrypted = locked_file->IsInitialized() && locked_file->IsEncrypted();
+
+	if (IsEncryptionExempted() || !is_file_encrypted) {
+		return body_raw;
+	}
+
+	// Stream does not contain crypt filter
+	if (!_header->Contains(constant::Name::Filter)) {
+		return locked_file->DecryptStream(body_raw, GetRootObjectNumber(), GetRootGenerationNumber());
+	}
+
+	auto filter_obj = _header->Find(constant::Name::Filter);
+	bool is_filter_name = ObjectUtils::IsType<NameObjectPtr>(filter_obj);
+	bool is_filter_array = ObjectUtils::IsType<ArrayObjectPtr<NameObjectPtr>>(filter_obj);
+
+	if (is_filter_name) {
+		auto filter_name = _header->FindAs<NameObjectPtr>(constant::Name::Filter);
+		if (filter_name == constant::Name::Crypt) {
+			auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
+			auto handler_name = params->FindAs<NameObjectPtr>(constant::Name::Name);
+			return locked_file->DecryptData(body_raw, GetRootObjectNumber(), GetRootGenerationNumber(), handler_name);
+		}
+	}
+
+	if (is_filter_array) {
+		auto filter_array = _header->FindAs<ArrayObjectPtr<NameObjectPtr>>(constant::Name::Filter);
+		for (unsigned int i = 0; i < filter_array->GetSize(); ++i) {
+			auto current_filter = (*filter_array)[i];
+			if (current_filter == constant::Name::Crypt) {
+				assert(i == 0 && "Crypt filter is not first");
+				auto params = _header->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::DecodeParms);
+				auto handler_name = params->GetValue(i)->FindAs<NameObjectPtr>(constant::Name::Name);
+				return locked_file->DecryptData(body_raw, GetRootObjectNumber(), GetRootGenerationNumber(), handler_name);
+			}
+		}
+	}
+
+	// Stream does not contain crypt filter
+	return locked_file->DecryptStream(body_raw, GetRootObjectNumber(), GetRootGenerationNumber());
+}
+
+BufferPtr StreamObject::EncryptStream(BufferPtr data, types::big_uint obj_number, types::ushort generation_number) const {
+
+	auto locked_file = m_file.GetReference();
+
+	// During the initialization it is unknown whether a file is encrypted
+	// This is important for object streams that are being parsed before encryption dictionary
+	bool is_file_encrypted = locked_file->IsInitialized() && locked_file->IsEncrypted();
+
+	if (IsEncryptionExempted() || !is_file_encrypted) {
+		return data;
+	}
+
+	auto result = locked_file->EncryptStream(data, obj_number, generation_number);
+
+#ifdef DEBUG_ENCRYPTION
+
+	auto verify_result = locked_file->DecryptStream(result, obj_number, generation_number);
+	if (data != verify_result) {
+		assert(!"Stream encryption problem");
+	}
+
+#endif /* DEBUG_ENCRYPTION */
+
+	return result;
+}
+
+BufferPtr StreamObject::EncryptData(BufferPtr data, types::big_uint obj_number, types::ushort generation_number, NameObjectPtr handler) const {
+
+	auto locked_file = m_file.GetReference();
+
+	// During the initialization it is unknown whether a file is encrypted
+	// This is important for object streams that are being parsed before encryption dictionary
+	bool is_file_encrypted = locked_file->IsInitialized() && locked_file->IsEncrypted();
+
+	if (IsEncryptionExempted() || !is_file_encrypted) {
+		return data;
+	}
+
+	auto result = locked_file->EncryptData(data, obj_number, generation_number, handler);
+
+#ifdef DEBUG_ENCRYPTION
+
+	auto verify_result = locked_file->DecryptData(result, obj_number, generation_number, handler);
+	if (data != verify_result) {
+		assert(!"Stream encryption problem");
+	}
+
+#endif /* DEBUG_ENCRYPTION */
+
+	return result;
+}
+
+BufferPtr StreamObject::DecryptStream(BufferPtr data, types::big_uint obj_number, types::ushort generation_number) const {
+
+	auto locked_file = m_file.GetReference();
+
+	// During the initialization it is unknown whether a file is encrypted
+	// This is important for object streams that are being parsed before encryption dictionary
+	bool is_file_encrypted = locked_file->IsInitialized() && locked_file->IsEncrypted();
+
+	if (IsEncryptionExempted() || !is_file_encrypted) {
+		return data;
+	}
+
+	return locked_file->DecryptStream(data, obj_number, generation_number);
+}
+
+BufferPtr StreamObject::DecryptData(BufferPtr data, types::big_uint obj_number, types::ushort generation_number, NameObjectPtr handler) const {
+
+	auto locked_file = m_file.GetReference();
+
+	// During the initialization it is unknown whether a file is encrypted
+	// This is important for object streams that are being parsed before encryption dictionary
+	bool is_file_encrypted = locked_file->IsInitialized() && locked_file->IsEncrypted();
+
+	if (IsEncryptionExempted() || !is_file_encrypted) {
+		return data;
+	}
+
+	return locked_file->DecryptData(data, obj_number, generation_number, handler);
 }
 
 std::string StreamObject::ToString(void) const {
