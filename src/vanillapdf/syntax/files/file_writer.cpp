@@ -1513,13 +1513,15 @@ void FileWriter::ApplyWatermarkPageNode(DictionaryObjectPtr obj, DictionaryObjec
 			resources->Insert(constant::Name::Font, font);
 		}
 
-		auto font = resources->FindAs<DictionaryObjectPtr>(constant::Name::Font);
+		auto font_dictionary = resources->FindAs<DictionaryObjectPtr>(constant::Name::Font);
 
 		std::string watermark_font_name_string = "VanillaWatermarkFont";
 		auto watermark_font_name = make_deferred<NameObject>(watermark_font_name_string);
 
-		auto font_reference = make_deferred<IndirectReferenceObject>(watermark_font);
-		font->Insert(watermark_font_name, font_reference);
+		if (!font_dictionary->Contains(watermark_font_name)) {
+			auto font_reference = make_deferred<IndirectReferenceObject>(watermark_font);
+			font_dictionary->Insert(watermark_font_name, font_reference);
+		}
 
 		auto contents = obj->Find(constant::Name::Contents);
 
