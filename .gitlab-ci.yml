@@ -77,7 +77,7 @@ build-osx-x64:
       - ./*.nupkg
 
 build-ubuntu.20.04-arm:
-  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd32v7:20.04
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-arm32v7:20.04
   when: manual
   timeout: 3 hours # The arm runner machine seems to be very slow
 
