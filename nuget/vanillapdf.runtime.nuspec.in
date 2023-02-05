@@ -17,7 +17,6 @@
     <dependencies>
       <group targetFramework="native" />
       <group targetFramework="netstandard2.0" />
-      <group targetFramework="netstandard2.1" />
     </dependencies>
   </metadata>
 
@@ -39,7 +38,6 @@
     <!-- This is a placeholder file, so we can target netstandard without a warning -->
     <file src="_._" target="lib\native" />
     <file src="_._" target="lib\netstandard2.0" />
-    <file src="_._" target="lib\netstandard2.1" />
 
     <!-- Additional dependencies -->
     <file src="..\LICENSE.txt" target="" />
