@@ -1,7 +1,6 @@
 stages:
   - test
   - deploy-staging
-  - deploy-production
 
 windows-ltsc2022-x86:
   image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-windows-amd64:ltsc2022
@@ -44,8 +43,6 @@ windows-ltsc2022-x64:
     - cmake --build . --config Release --target RUN_TESTS
     - cmake --build . --config Release --target PACKAGE
     - nuget pack nuget/vanillapdf.runtime.nuspec
-    - nuget sign *.nupkg -CertificatePath .secure_files/codesigning.pfx
-    - signtool sign /fd sha256 /a /f .secure_files/codesigning.pfx *.msi
 
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
