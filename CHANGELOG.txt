@@ -1,5 +1,12 @@
 # Vanilla.PDF Release notes
 
+v1.7.0-rc - 5.2.2023
+ - FIX: Multiple encryption issues with obsolete algorithms
+ - FIX: Multiple issues with saving encrypted documents
+ - FIX: Name object hexadecimal notation padding
+ - NEW: Support for multiple Linux distributions and OSX
+ - NEW: Basic support for PDF 2.0
+
 v1.6.0 - 14.8.2022
  - FIX: Multiple encryption issues with obsolete algorithms
  - TWEAK: Custom SigningKey interface revamped
