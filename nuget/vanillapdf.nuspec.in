@@ -15,12 +15,12 @@
     <tags>pdf parsing sign native</tags>
 
     <dependencies>
-      <dependency id="vanillapdf.runtime.ubuntu.20.04-arm" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@" />
-      <dependency id="vanillapdf.runtime.ubuntu.20.04-arm64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@" />
+      <dependency id="vanillapdf.runtime.ubuntu.20.04-arm" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+      <dependency id="vanillapdf.runtime.ubuntu.20.04-arm64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
       <dependency id="vanillapdf.runtime.ubuntu.20.04-x64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
 
-      <dependency id="vanillapdf.runtime.ubuntu.22.04-arm" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@" />
-      <dependency id="vanillapdf.runtime.ubuntu.22.04-arm64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@" />
+      <dependency id="vanillapdf.runtime.ubuntu.22.04-arm" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+      <dependency id="vanillapdf.runtime.ubuntu.22.04-arm64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
       <dependency id="vanillapdf.runtime.ubuntu.22.04-x64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
 
       <dependency id="vanillapdf.runtime.rocky.8-x64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
