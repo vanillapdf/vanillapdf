@@ -217,7 +217,8 @@ build-ubuntu.22.04-x64:
 build-rocky.8-arm64:
   image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-arm64v8:8
   when: manual
-  
+  timeout: 3 hours # The arm runner machine seems to be very slow
+
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
 
