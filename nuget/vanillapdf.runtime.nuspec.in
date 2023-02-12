@@ -8,6 +8,7 @@
     <owners>Vanilla.PDF Labs s.r.o.</owners>
     <license type="file">LICENSE.txt</license>
     <icon>images/vanilla_logo.png</icon>
+    <readme>README.md</readme>
     <projectUrl>https://vanillapdf.com/</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Vanilla.PDF is a cross-platform SDK for creating and modifying PDF documents</description>
@@ -42,7 +43,7 @@
     <!-- Additional dependencies -->
     <file src="..\LICENSE.txt" target="" />
     <file src="..\CHANGELOG.txt" target="" />
-    <file src="..\cmake\README.txt" target="" />
+    <file src="vanillapdf.readme.md" target="README.md" />
     <file src="..\cmake\vanilla_logo.png" target="images" />
   </files>
 </package>
