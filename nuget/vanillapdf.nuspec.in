@@ -16,7 +16,7 @@
     <tags>pdf parsing sign native</tags>
 
     <dependencies>
-      <group>
+      <group targetFramework="native">
         <!-- <dependency id="vanillapdf.runtime.ubuntu.20.04-arm" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" /> -->
         <dependency id="vanillapdf.runtime.ubuntu.20.04-arm64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
         <dependency id="vanillapdf.runtime.ubuntu.20.04-x64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
@@ -34,8 +34,23 @@
         <dependency id="vanillapdf.runtime.osx-x64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
       </group>
 
-      <group targetFramework="native" />
-      <group targetFramework="netstandard2.0" />
+      <group targetFramework="netstandard2.0">
+        <!-- <dependency id="vanillapdf.runtime.ubuntu.20.04-arm" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" /> -->
+        <dependency id="vanillapdf.runtime.ubuntu.20.04-arm64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+        <dependency id="vanillapdf.runtime.ubuntu.20.04-x64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+
+        <dependency id="vanillapdf.runtime.ubuntu.22.04-arm" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+        <dependency id="vanillapdf.runtime.ubuntu.22.04-arm64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+        <dependency id="vanillapdf.runtime.ubuntu.22.04-x64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+
+        <dependency id="vanillapdf.runtime.rocky.8-arm64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+        <dependency id="vanillapdf.runtime.rocky.8-x64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+
+        <dependency id="vanillapdf.runtime.win-x86" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+        <dependency id="vanillapdf.runtime.win-x64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+
+        <dependency id="vanillapdf.runtime.osx-x64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+      </group>
 
     </dependencies>
   </metadata>
