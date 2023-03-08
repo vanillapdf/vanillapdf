@@ -261,7 +261,20 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
 
 			// How to fix this?
 			auto entry_index = entry->GetIndex();
-			assert(current_verify_index == entry_index && "Entry index is invalid"); UNUSED(entry_index);
+
+			// TODO: if FixObjectStreamEntryIndex
+
+			if (current_verify_index != entry_index) {
+				auto weak_file = entry->GetFile();
+				auto locked_file = weak_file.GetReference();
+				auto filename = locked_file->GetFilename();
+
+				LOG_WARNING(filename.c_str())
+					<< "Object stream entry index "
+					<< std::to_string(entry_index)
+					<< " does not match expected "
+					<< std::to_string(current_verify_index);
+			}
 		}
 
 		// Initialize output streams
@@ -808,6 +821,10 @@ XrefBasePtr FileWriter::CloneXref(FilePtr destination, XrefBasePtr source) {
 		result = new_stream;
 	}
 
+	if (source->GetType() == XrefBase::Type::Virtual) {
+		result = XrefVirtualTablePtr();
+	}
+
 	auto table_size = source->GetSize();
 	auto table_items = source->Entries();
 
@@ -888,6 +905,10 @@ XrefBasePtr FileWriter::CloneXref(FilePtr destination, XrefBasePtr source) {
 
 		result->SetOffset(source->GetOffset());
 		result->SetDirty(source->IsDirty());
+		result->SetFile(destination);
+	}
+
+	if (source->GetType() == XrefBase::Type::Virtual) {
 		result->SetFile(destination);
 	}
 
@@ -1350,6 +1371,14 @@ void FileWriter::WriteXref(IOutputStreamPtr output, XrefBasePtr xref) {
 		}
 
 		WriteXrefOffset(output, xref_stream->GetLastXrefOffset());
+	}
+
+	if (xref->GetType() == XrefBase::Type::Virtual) {
+		auto weak_file = xref->GetFile();
+		auto locked_file = weak_file.GetReference();
+		auto filename = locked_file->GetFilename();
+
+		LOG_INFO(filename.c_str()) << "Serializing virtual xref table as empty data";
 	}
 }
 

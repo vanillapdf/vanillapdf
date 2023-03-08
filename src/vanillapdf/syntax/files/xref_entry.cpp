@@ -208,16 +208,33 @@ void XrefCompressedEntry::Initialize(void) {
 		auto entry_object_number = stream_entry.object_number;
 		auto entry_object = stream_entry.object;
 
-		auto stream_entry_xref = chain->GetXrefEntry(entry_object_number, 0);
-
-		assert(stream_entry_xref->GetUsage() == XrefEntryBase::Usage::Compressed && "Stream entry has different usage than Compressed");
-		if (stream_entry_xref->GetUsage() != XrefEntryBase::Usage::Compressed) {
+		// In the standard setup the standard search for xref entry GetXrefEntry should be sufficient.
+		// However in the incrementally updated document there are multiple references to the same object,
+		// so that we sometimes do get another entry, leaving this one uninitialized.
+		// I could imagine a case where this is not correct, but for the sake of simplicity let's leave it out of scope.
+		if (entry_object_number == GetObjectNumber() && GetGenerationNumber() == 0) {
+			SetReference(entry_object);
+			SetInitialized();
 			continue;
 		}
 
-		auto stream_compressed_entry_xref = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(stream_entry_xref);
-		stream_compressed_entry_xref->SetReference(entry_object);
-		stream_compressed_entry_xref->SetInitialized();
+		auto stream_entry_xref = chain->GetXrefEntry(entry_object_number, 0);
+		auto is_used = ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(stream_entry_xref);
+
+		if (!is_used) {
+			auto scope = locked_file->GetFilename();
+			LOG_WARNING(scope) <<
+				"Object stream " <<
+				std::to_string(_object_stream_number) <<
+				" contains unused xref entry " <<
+				std::to_string(entry_object_number);
+
+			continue;
+		}
+
+		auto stream_used_entry_xref = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(stream_entry_xref);
+		stream_used_entry_xref->SetReference(entry_object);
+		stream_used_entry_xref->SetInitialized();
 	}
 
 	if (!m_initialized) {

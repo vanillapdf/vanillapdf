@@ -56,6 +56,8 @@ public:
 	void Prepend(value_type item) { _list.push_front(item); }
 	void Reverse(void) { _list.reverse(); }
 	void Clear(void) { _list.clear(); }
+	void PopFront() { _list.pop_front(); }
+	void PopBack() { _list.pop_back(); }
 	types::size_type GetSize(void) const { return _list.size(); }
 	bool Empty(void) const { return _list.empty(); }
 	XrefBasePtr Back(void) const { return _list.back(); }

@@ -36,6 +36,7 @@ class Header;
 class XrefBase; using XrefBasePtr = DeferredContainer<XrefBase>;
 class XrefSubsection;
 class XrefTable;
+class XrefVirtualTable;
 class XrefStream;
 class XrefChain;
 
@@ -49,6 +50,7 @@ class XrefCompressedEntry;
 using HeaderPtr = Deferred<Header>;
 
 using XrefTablePtr = DeferredContainer<XrefTable>;
+using XrefVirtualTablePtr = DeferredContainer<XrefVirtualTable>;
 using XrefStreamPtr = DeferredContainer<XrefStream>;
 
 using XrefChainPtr = DeferredContainer<XrefChain>;

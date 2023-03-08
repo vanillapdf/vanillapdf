@@ -44,7 +44,8 @@ public:
 	enum class Type {
 		Undefined = 0,
 		Table,
-		Stream
+		Stream,
+		Virtual
 	};
 
 	virtual void ObserveeChanged(const IModifyObservable*) override;
@@ -158,6 +159,34 @@ public:
 private:
 	WeakReference<File> _file;
 	XrefStreamPtr m_xref_stm;
+	DictionaryObjectPtr m_trailer_dictionary;
+
+	types::stream_offset _offset = constant::BAD_OFFSET;
+
+	// Same as Object::m_dirty
+	bool m_dirty = false;
+};
+
+class XrefVirtualTable : public XrefBase {
+public:
+	virtual Type GetType(void) const noexcept override {
+		return XrefBase::Type::Virtual;
+	}
+
+	virtual void SetFile(WeakReference<File> file) noexcept override { _file = file; }
+	virtual WeakReference<File> GetFile() const noexcept override { return _file; }
+
+	virtual types::stream_offset GetOffset() const override { return _offset; }
+	virtual void SetOffset(types::stream_offset offset) override { _offset = offset; }
+
+	virtual bool IsDirty(void) const noexcept override { return m_dirty; }
+	virtual void SetDirty(bool dirty = true) noexcept override { m_dirty = dirty; }
+
+	virtual DictionaryObjectPtr GetTrailerDictionary(void) const override { return m_trailer_dictionary; }
+	virtual void SetTrailerDictionary(DictionaryObjectPtr dictionary) override { m_trailer_dictionary = dictionary; }
+
+private:
+	WeakReference<File> _file;
 	DictionaryObjectPtr m_trailer_dictionary;
 
 	types::stream_offset _offset = constant::BAD_OFFSET;

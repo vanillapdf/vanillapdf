@@ -649,9 +649,28 @@ XrefStreamPtr Parser::ParseXrefStream(
 		auto locked_file = _file.GetReference();
 		auto chain = locked_file->GetXrefChain(false);
 
+		// 7.5.8.3 Cross-Reference Stream Data
+		// Like any stream, a cross-reference stream shall be an indirect object.
+		// Therefore, an entry for it shall exist in either a cross-reference stream (usually itself)
+		// or in a cross-reference table (in hybrid-reference files; see 7.5.8.4,
+		// "Compatibility with Applications That Do Not Support Compressed Reference Streams").
+
+		// In the document request_for_taxpayer.pdf there is no entry for the Xref stream object
+		// Since we do want to have the maximum freedom how the final document is structured
+		// we do not modify the existing xref table, however we create a virtual table.
+		// The virtual table is used only as metadata to the current document and is
+		// NOT stored in the final document.
+
 		if (!chain->Contains(stream_obj_number, stream_gen_number)) {
-			assert(false && "Where is stream entry stored?");
-			throw GeneralException("Could not find xref stream object entry");
+			XrefUsedEntryPtr entry = make_deferred<XrefUsedEntry>(stream_obj_number, stream_gen_number);
+			entry->SetFile(_file);
+
+			XrefVirtualTablePtr virtual_xref;
+			virtual_xref->Add(entry);
+			virtual_xref->SetFile(_file);
+			virtual_xref->SetInitialized();
+
+			chain->Append(virtual_xref);
 		}
 
 		auto entry = chain->GetXrefEntry(stream_obj_number, stream_gen_number);

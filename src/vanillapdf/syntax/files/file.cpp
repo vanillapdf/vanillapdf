@@ -599,6 +599,17 @@ void File::ReadXref(types::stream_offset offset) {
 			xref_table->SetHybridStream(hybrid_xref_stream);
 		}
 	}
+
+	// Put the virtual table to the end to avoid disruptions of chain->Begin()
+	if (_xref->GetSize() > 0) {
+
+		// TODO: There may be multiple virtual tables
+		auto first_xref = _xref->Begin()->Value();
+		if (first_xref->GetType() == XrefBase::Type::Virtual) {
+			_xref->PopFront();
+			_xref->Append(first_xref);
+		}
+	}
 }
 
 types::stream_offset File::GetLastXrefOffset(types::stream_size file_size) {
