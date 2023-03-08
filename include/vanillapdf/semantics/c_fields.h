@@ -30,6 +30,16 @@ extern "C"
 	*/
 
 	/**
+	* \class NonTerminalFieldHandle
+	* \extends FieldHandle
+	* \ingroup group_fields
+	* \brief
+	* Many field attributes are inheritable,
+	* meaning that if they are not explicitly specified for a given field,
+	* their values are taken from those of its parent in the field hierarchy.
+	*/
+
+	/**
 	* \class ButtonFieldHandle
 	* \extends FieldHandle
 	* \ingroup group_fields
@@ -71,6 +81,12 @@ extern "C"
 	*/
 	typedef enum {
 		FieldType_Undefined = 0,
+
+		/**
+		* \copybrief NonTerminalFieldHandle
+		* \see \ref NonTerminalFieldHandle
+		*/
+		FieldType_NonTerminal,
 
 		/**
 		* \copybrief ButtonFieldHandle

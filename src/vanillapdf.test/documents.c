@@ -1406,6 +1406,7 @@ error_type process_field(FieldHandle* obj, int nested) {
 			RETURN_ERROR_IF_NOT_SUCCESS(SignatureField_Release(signature_field));
 			break;
 
+		case FieldType_NonTerminal:
 		case FieldType_Button:
 		case FieldType_Text:
 		case FieldType_Choice:

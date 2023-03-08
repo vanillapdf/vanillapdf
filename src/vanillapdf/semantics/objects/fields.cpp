@@ -8,6 +8,7 @@ namespace vanillapdf {
 namespace semantics {
 
 Field::Field(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
+NonTerminalField::NonTerminalField(syntax::DictionaryObjectPtr root) : Field(root) {}
 ButtonField::ButtonField(syntax::DictionaryObjectPtr root) : Field(root) {}
 TextField::TextField(syntax::DictionaryObjectPtr root) : Field(root) {}
 ChoiceField::ChoiceField(syntax::DictionaryObjectPtr root) : Field(root) {}
@@ -16,8 +17,7 @@ FieldCollection::FieldCollection(syntax::ArrayObjectPtr<syntax::DictionaryObject
 
 std::unique_ptr<Field> Field::Create(syntax::DictionaryObjectPtr root) {
 	if (!root->Contains(constant::Name::FT)) {
-		assert(!"Type field is not included");
-		throw GeneralException("Dictionary does not contain field type");
+		return make_unique<NonTerminalField>(root);
 	}
 
 	syntax::ObjectPtr type_obj = root->Find(constant::Name::FT);

@@ -19,6 +19,7 @@ class Field : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
 	enum Type {
 		Undefined = 0,
+		NonTerminal,
 		Button,
 		Text,
 		Choice,
@@ -30,6 +31,12 @@ public:
 	static std::unique_ptr<Field> Create(syntax::DictionaryObjectPtr root);
 
 	virtual Field::Type GetFieldType() const noexcept = 0;
+};
+
+class NonTerminalField : public Field {
+public:
+	explicit NonTerminalField(syntax::DictionaryObjectPtr root);
+	virtual Field::Type GetFieldType() const noexcept override { return Field::Type::NonTerminal; }
 };
 
 class ButtonField : public Field {
