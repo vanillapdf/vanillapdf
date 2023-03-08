@@ -229,7 +229,7 @@ void XrefCompressedEntry::Initialize(void) {
 			GetGenerationNumber()
 			<< " was supposed to be found in object stream number "
 			<< GetObjectStreamNumber()
-			<< " but was not found";
+			<< ", but was not found";
 
 		LOG_WARNING(scope) << "Treating as NULL reference";
 	}
