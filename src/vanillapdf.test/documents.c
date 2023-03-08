@@ -527,7 +527,7 @@ error_type process_extensions(DeveloperExtensionsHandle* extensions, int nested)
 
 error_type process_extension(DeveloperExtensionHandle* extension, int nested) {
 	IntegerObjectHandle* level = NULL;
-	PDFVersion base_version;
+	PDFVersion base_version = PDFVersion_Undefined;
 
 	print_spaces(nested);
 	print_text("Developer extensions begin\n");
@@ -587,8 +587,8 @@ error_type process_catalog(CatalogHandle* catalog, int nested) {
 	PageLabelsHandle* page_labels = NULL;
 	ViewerPreferencesHandle* viewer_preferences = NULL;
 	OutlineHandle* outlines = NULL;
-	PDFVersion version;
-	PageLayout page_layout;
+	PDFVersion version = PDFVersion_Undefined;
+	PageLayout page_layout = PageLayout_Undefined;
 	NamedDestinationsHandle* named_destinations = NULL;
 	InteractiveFormHandle* interactive_form = NULL;
 

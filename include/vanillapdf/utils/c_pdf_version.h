@@ -21,7 +21,7 @@ extern "C"
 	*/
 	typedef enum {
 
-		Undefined = 0,
+		PDFVersion_Undefined = 0,
 
 		/**
 		* \brief PDF version 1.0

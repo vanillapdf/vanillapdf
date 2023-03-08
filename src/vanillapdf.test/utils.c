@@ -108,7 +108,29 @@ error_type process_buffer(BufferHandle* buffer, int nested) {
 
 error_type process_version(PDFVersion version, int nested) {
 	print_spaces(nested);
-	print_text("PDF Version: 1.%d \n", version);
+
+	switch (version) {
+	case PDFVersion_10:
+		print_text("PDF Version: 1.0\n"); break;
+	case PDFVersion_11:
+		print_text("PDF Version: 1.1\n"); break;
+	case PDFVersion_12:
+		print_text("PDF Version: 1.2\n"); break;
+	case PDFVersion_13:
+		print_text("PDF Version: 1.3\n"); break;
+	case PDFVersion_14:
+		print_text("PDF Version: 1.4\n"); break;
+	case PDFVersion_15:
+		print_text("PDF Version: 1.5\n"); break;
+	case PDFVersion_16:
+		print_text("PDF Version: 1.6\n"); break;
+	case PDFVersion_17:
+		print_text("PDF Version: 1.7\n"); break;
+	case PDFVersion_20:
+		print_text("PDF Version: 2.0\n"); break;
+	default:
+		return VANILLAPDF_TEST_ERROR_FAILURE;
+	}
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
