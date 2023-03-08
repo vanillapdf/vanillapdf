@@ -1352,9 +1352,9 @@ error_type process_interactive_form(InteractiveFormHandle* obj, int nested) {
 	print_spaces(nested);
 	print_text("Interactive form begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(InteractiveForm_GetFields(obj, &fields));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_field_collection(fields, nested + 1));
-	RETURN_ERROR_IF_NOT_SUCCESS(FieldCollection_Release(fields));
+	RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(InteractiveForm_GetFields(obj, &fields),
+		process_field_collection(fields, nested + 1),
+		FieldCollection_Release(fields));
 
 	print_spaces(nested);
 	print_text("Interactive form end\n");
