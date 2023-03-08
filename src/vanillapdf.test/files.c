@@ -35,7 +35,7 @@ error_type process_xref(XrefHandle* xref, int nested) {
 	while (VANILLAPDF_ERROR_SUCCESS == XrefIterator_IsValid(xref_iterator, &valid)
 		&& VANILLAPDF_RV_TRUE == valid) {
 
-		XrefEntryType type;
+		XrefEntryType type = XrefEntryType_Null;
 		XrefEntryHandle* entry = NULL;
 		ObjectHandle* obj = NULL;
 		XrefFreeEntryHandle* free_entry = NULL;

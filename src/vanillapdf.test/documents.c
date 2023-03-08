@@ -539,10 +539,13 @@ error_type process_extension(DeveloperExtensionHandle* extension, int nested) {
 
 	print_spaces(nested + 1);
 	print_text("Extensions level begin\n");
+
 	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(level, nested + 2));
-	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(level));
+
 	print_spaces(nested + 1);
 	print_text("Extensions level end\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(level));
 
 	print_spaces(nested);
 	print_text("Developer extensions end\n");
