@@ -480,6 +480,21 @@ XrefEntryBasePtr Parser::ReadTableEntry(types::big_uint objNumber) {
 	auto offset = ParserUtils::GetIntegerValue(offset_token);
 	auto gen_number = ParserUtils::GetIntegerValue(generation_token);
 
+	// 7.5.4 Cross-Reference Table
+	// The maximum generation number is 65,535;
+	// when a cross - reference entry reaches this value, it shall never be reused.
+	// File: cv_juraj_matys.pdf, Producer(Microsoft Word 2016)
+	// 0000000000 65536 f
+
+	if (gen_number > constant::MAX_GENERATION_NUMBER) {
+
+		auto locked_file = _file.GetReference();
+		auto filename = locked_file->GetFilename();
+		LOG_WARNING(filename.c_str()) << "Invalid object generation number " << gen_number << ", converting";
+
+		gen_number = constant::MAX_GENERATION_NUMBER;
+	}
+
 	auto peeked_token = PeekTokenSkip();
 	if (*peeked_token->Value() == "n") {
 		ReadTokenSkip();
