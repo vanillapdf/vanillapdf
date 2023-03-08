@@ -1,9 +1,10 @@
 # Vanilla.PDF Release notes
 
-v1.7.0-rc - 5.2.2023
- - FIX: Multiple encryption issues with obsolete algorithms
+v1.7.0 - 5.2.2023
  - FIX: Multiple issues with saving encrypted documents
  - FIX: Name object hexadecimal notation padding
+ - TWEAK: Support for invalid generation number
+ - TWEAK: Extended support for cross-reference streams
  - NEW: Support for multiple Linux distributions and OSX
  - NEW: Basic support for PDF 2.0
 
