@@ -7,6 +7,7 @@
 #include "utils/math_utils.h"
 
 #include <bitset>
+#include <climits>
 
 namespace vanillapdf {
 namespace syntax {
