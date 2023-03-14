@@ -1,5 +1,7 @@
 #include "precompiled.h"
 
+#include "utils/misc_utils.h"
+
 #include "semantics/objects/document_info.h"
 #include "semantics/objects/date.h"
 
@@ -90,29 +92,39 @@ bool DocumentInfo::Trapped(DocumentTrapped& result) const {
 		return false;
 	}
 
-	BufferPtr value;
+	std::string trapped_value;
 	auto trapped = _obj->Find(constant::Name::Trapped);
 	if (syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(trapped)) {
 		auto name = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(trapped);
-		value = name->GetValue();
+		auto name_buffer = name->GetValue();
+		trapped_value = name_buffer->ToString();
 	}
 
 	if (syntax::ObjectUtils::IsType<syntax::StringObjectPtr>(trapped)) {
 		auto string = syntax::ObjectUtils::ConvertTo<syntax::StringObjectPtr>(trapped);
-		value = string->GetValue();
+		auto string_buffer = string->GetValue();
+		trapped_value = string_buffer->ToString();
 	}
 
-	if (value == constant::Name::True.GetValue()) {
+	auto true_buffer = constant::Name::True.GetValue();
+	auto false_buffer = constant::Name::False.GetValue();
+	auto unknown_buffer = constant::Name::Unknown.GetValue();
+
+	auto true_string = true_buffer->ToString();
+	auto false_string = false_buffer->ToString();
+	auto unknown_string = unknown_buffer->ToString();
+
+	if (MiscUtils::CaseInsensitiveCompare(trapped_value, true_string)) {
 		result = DocumentTrapped::True;
 		return true;
 	}
 
-	if (value == constant::Name::False.GetValue()) {
+	if (MiscUtils::CaseInsensitiveCompare(trapped_value, false_string)) {
 		result = DocumentTrapped::False;
 		return true;
 	}
 
-	if (value == constant::Name::Unknown.GetValue()) {
+	if (MiscUtils::CaseInsensitiveCompare(trapped_value, unknown_string)) {
 		result = DocumentTrapped::Unknown;
 		return true;
 	}
