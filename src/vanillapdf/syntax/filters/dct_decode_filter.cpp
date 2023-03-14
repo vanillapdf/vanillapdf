@@ -1,5 +1,6 @@
 #include "precompiled.h"
 
+#include "syntax/files/file.h"
 #include "syntax/utils/name_constants.h"
 #include "syntax/filters/dct_decode_filter.h"
 
@@ -172,7 +173,32 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
 
 	auto width = parameters->FindAs<IntegerObjectPtr>(constant::Name::Width);
 	auto height = parameters->FindAs<IntegerObjectPtr>(constant::Name::Height);
-	auto color_space = parameters->FindAs<NameObjectPtr>(constant::Name::ColorSpace);
+
+	NameObjectPtr color_space;
+	auto color_space_object = parameters->Find(constant::Name::ColorSpace);
+
+	// if name
+	if (ObjectUtils::IsType<NameObjectPtr>(color_space_object)) {
+		color_space = ObjectUtils::ConvertTo<NameObjectPtr>(color_space_object);
+	}
+
+	// if array
+	if (ObjectUtils::IsType<MixedArrayObjectPtr>(color_space_object)) {
+
+		auto color_space_array = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(color_space_object);
+
+		auto weak_file = parameters->GetFile();
+		auto locked_file = weak_file.GetReference();
+		auto filename = locked_file->GetFilename();
+
+		LOG_ERROR(filename.c_str())
+			<< "Non-standard color spaces "
+			<< color_space_array->ToString()
+			<< " are not supported";
+
+		// TODO: ICCBased, Indexed, Lab, Separation, DeviceN
+		throw NotSupportedException("Non-standard colorspaces are not supported");
+	}
 
 	jpeg_compress_struct jpeg = { 0 };
 	jpeg_error_mgr err = { 0 };
