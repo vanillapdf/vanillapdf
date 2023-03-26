@@ -608,7 +608,21 @@ endif (JPEG_FOUND)
 
 if (ZLIB_FOUND)
 	include_directories(${ZLIB_INCLUDE_DIRS})
-	set(VANILLAPDF_LIBS ZLIB::ZLIB ${VANILLAPDF_LIBS})
+
+	# FindZLIB supports static libraries from CMake 3.24
+	#set(VANILLAPDF_LIBS ZLIB::ZLIB ${VANILLAPDF_LIBS})
+
+	# Find static libraries in the local filesystem
+	find_library(ZLIB_STATIC_LIBRARY
+		NAMES zlib.lib libz.a
+		HINTS ${VANILLPDF_BINARY_DIR}
+	)
+
+	if (NOT EXISTS ${ZLIB_STATIC_LIBRARY})
+		 message(FATAL_ERROR "ZLIB support is enabled, but the ZLIB_STATIC_LIBRARY does not exist")
+	endif(NOT EXISTS ${ZLIB_STATIC_LIBRARY})
+
+	set(VANILLAPDF_LIBS ${ZLIB_STATIC_LIBRARY} ${VANILLAPDF_LIBS})
 	add_definitions(-DVANILLAPDF_HAVE_ZLIB)
 
 	message(STATUS "zlib ${ZLIB_VERSION_STRING} was found")
