@@ -598,6 +598,7 @@ if (JPEG_FOUND)
 		 message(FATAL_ERROR "JPEG support is enabled, but the LIBJPEG_STATIC_LIBRARY does not exist")
 	endif(NOT EXISTS ${LIBJPEG_STATIC_LIBRARY})
 
+	set(VANILLAPDF_LIBS ${LIBJPEG_STATIC_LIBRARY} ${VANILLAPDF_LIBS})
 	add_definitions(-DVANILLAPDF_HAVE_JPEG)
 
 	message(STATUS "JPEG library ${JPEG_VERSION} was found")
