@@ -588,10 +588,18 @@ if (JPEG_FOUND)
 	# FindJPEG does not support static libraries, so we have to do it manually
 	# set(VANILLAPDF_LIBS ${JPEG_LIBRARIES} ${VANILLAPDF_LIBS})
 
+	get_property(ZLIB_LOCATION TARGET ZLIB::ZLIB PROPERTY LOCATION)
+	get_filename_component(ZLIB_LOCATION_DIRECTORY ${ZLIB_LOCATION} DIRECTORY)
+
+	foreach(JPEG_LIBRARY ${JPEG_LIBRARIES})
+		get_filename_component(ZLIB_LOCATION_DIRECTORY ${ZLIB_LOCATION} DIRECTORY)
+		set(JPEG_LIBRARY_DIRECTORIES ${ZLIB_LOCATION_DIRECTORY} ${JPEG_LIBRARY_DIRECTORIES})
+	endforeach()
+
 	# Find static libraries in the local filesystem
 	find_library(LIBJPEG_STATIC_LIBRARY
 		NAMES jpeg.lib libjpeg.a
-		HINTS ${VANILLPDF_BINARY_DIR}
+		HINTS ${JPEG_LIBRARY_DIRECTORIES}
 	)
 
 	if (NOT EXISTS ${LIBJPEG_STATIC_LIBRARY})
@@ -612,10 +620,13 @@ if (ZLIB_FOUND)
 	# FindZLIB supports static libraries from CMake 3.24
 	#set(VANILLAPDF_LIBS ZLIB::ZLIB ${VANILLAPDF_LIBS})
 
+	get_property(ZLIB_LOCATION TARGET ZLIB::ZLIB PROPERTY LOCATION)
+	get_filename_component(ZLIB_LOCATION_DIRECTORY ${ZLIB_LOCATION} DIRECTORY)
+
 	# Find static libraries in the local filesystem
 	find_library(ZLIB_STATIC_LIBRARY
 		NAMES zlib.lib libz.a
-		HINTS ${VANILLPDF_BINARY_DIR}
+		HINTS ${ZLIB_LOCATION_DIRECTORY}
 	)
 
 	if (NOT EXISTS ${ZLIB_STATIC_LIBRARY})
