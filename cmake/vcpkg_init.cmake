@@ -1,16 +1,10 @@
 # VCPKG - C++ package management system
 
-# I currently do not see any benefits for using vcpkg for linux
-if(NOT WIN32)
-  return()
-endif(NOT WIN32)
-
 set(VCPKG_ROOT "${CMAKE_SOURCE_DIR}/external/vcpkg")
 
 if(WIN32)
   set(VCPKG_EXEC ${VCPKG_ROOT}/vcpkg.exe)
   set(VCPKG_BOOTSTRAP ${VCPKG_ROOT}/bootstrap-vcpkg.bat)
-  
 else()
   set(VCPKG_EXEC ${VCPKG_ROOT}/vcpkg)
   set(VCPKG_BOOTSTRAP ${VCPKG_ROOT}/bootstrap-vcpkg.sh)

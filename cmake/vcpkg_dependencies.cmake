@@ -1,10 +1,5 @@
 # VCPKG - C++ package management system
 
-# I currently do not see any benefits for using vcpkg for linux
-if(NOT WIN32)
-  return()
-endif(NOT WIN32)
-
 if(WIN32)
   # Note:
   # For the sake of ease of use, I am overriding default vcpkg triplets (x86-windows, x64-windows)
