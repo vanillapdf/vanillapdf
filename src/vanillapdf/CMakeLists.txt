@@ -557,14 +557,6 @@ add_definitions(-DVANILLAPDF_BUILD_YEAR=${VANILLAPDF_BUILD_YEAR})
 # This installs required libraries
 include("${CMAKE_SOURCE_DIR}/cmake/vcpkg_dependencies.cmake")
 
-# Managing dependencies is hell for nuget packages
-# According to licenses it should not be an issues, since we are including notice
-set(ZLIB_USE_STATIC_LIBS TRUE)
-set(OPENSSL_USE_STATIC_LIBS TRUE)
-
-# This is not yet supported
-# set(JPEG_USE_STATIC_LIBS TRUE)
-
 find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(JPEG REQUIRED)
@@ -584,31 +576,7 @@ if (JPEG_FOUND)
 
 	# This is not yet supported on all linux CMake distributions
 	# set(VANILLAPDF_LIBS JPEG::JPEG ${VANILLAPDF_LIBS})
-
-	# FindJPEG does not support static libraries, so we have to do it manually
-	# set(VANILLAPDF_LIBS ${JPEG_LIBRARIES} ${VANILLAPDF_LIBS})
-
-	get_property(ZLIB_LOCATION TARGET ZLIB::ZLIB PROPERTY LOCATION)
-	get_filename_component(ZLIB_LOCATION_DIRECTORY ${ZLIB_LOCATION} DIRECTORY)
-
-	foreach(JPEG_LIBRARY ${JPEG_LIBRARIES})
-		get_filename_component(JPEG_LOCATION_DIRECTORY ${JPEG_LIBRARY} DIRECTORY)
-		set(JPEG_LIBRARY_DIRECTORIES ${JPEG_LOCATION_DIRECTORY} ${JPEG_LIBRARY_DIRECTORIES})
-	endforeach()
-
-	# Find static libraries in the local filesystem
-	find_library(LIBJPEG_STATIC_LIBRARY
-		NAMES jpeg.lib libjpeg.a
-		HINTS ${JPEG_LIBRARY_DIRECTORIES}
-	)
-
-	if (NOT EXISTS ${LIBJPEG_STATIC_LIBRARY})
-		 message(FATAL_ERROR "JPEG support is enabled, but the LIBJPEG_STATIC_LIBRARY does not exist")
-	endif(NOT EXISTS ${LIBJPEG_STATIC_LIBRARY})
-
-    message(STATUS "Found JPEG static in ${LIBJPEG_STATIC_LIBRARY}")
-
-	set(VANILLAPDF_LIBS ${LIBJPEG_STATIC_LIBRARY} ${VANILLAPDF_LIBS})
+	set(VANILLAPDF_LIBS ${JPEG_LIBRARIES} ${VANILLAPDF_LIBS})
 	add_definitions(-DVANILLAPDF_HAVE_JPEG)
 
 	message(STATUS "JPEG library ${JPEG_VERSION} was found")
@@ -618,26 +586,7 @@ endif (JPEG_FOUND)
 
 if (ZLIB_FOUND)
 	include_directories(${ZLIB_INCLUDE_DIRS})
-
-	# FindZLIB supports static libraries from CMake 3.24
-	#set(VANILLAPDF_LIBS ZLIB::ZLIB ${VANILLAPDF_LIBS})
-
-	get_property(ZLIB_LOCATION TARGET ZLIB::ZLIB PROPERTY LOCATION)
-	get_filename_component(ZLIB_LOCATION_DIRECTORY ${ZLIB_LOCATION} DIRECTORY)
-
-	# Find static libraries in the local filesystem
-	find_library(ZLIB_STATIC_LIBRARY
-		NAMES zlib.lib libz.a
-		HINTS ${ZLIB_LOCATION_DIRECTORY}
-	)
-
-	if (NOT EXISTS ${ZLIB_STATIC_LIBRARY})
-		 message(FATAL_ERROR "ZLIB support is enabled, but the ZLIB_STATIC_LIBRARY does not exist")
-	endif(NOT EXISTS ${ZLIB_STATIC_LIBRARY})
-
-	message(STATUS "Found ZLIB static in ${ZLIB_STATIC_LIBRARY}")
-
-	set(VANILLAPDF_LIBS ${ZLIB_STATIC_LIBRARY} ${VANILLAPDF_LIBS})
+	set(VANILLAPDF_LIBS ZLIB::ZLIB ${VANILLAPDF_LIBS})
 	add_definitions(-DVANILLAPDF_HAVE_ZLIB)
 
 	message(STATUS "zlib ${ZLIB_VERSION_STRING} was found")
