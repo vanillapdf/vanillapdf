@@ -2,7 +2,7 @@ stages:
   - test
   - deploy-staging
 
-windows-ltsc2022-x86:
+build-win-x86:
   image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-windows-amd64:ltsc2022
   when: manual
   tags:
@@ -27,7 +27,7 @@ windows-ltsc2022-x86:
       - ./*.sha256
       - ./*.nupkg
 
-windows-ltsc2022-x64:
+build-win-x64:
   image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-windows-amd64:ltsc2022
   when: manual
   tags:
