@@ -108,7 +108,7 @@ public:
 	BufferPtr EncryptData(const Buffer& data,
 		types::big_uint objNumber,
 		types::ushort genNumber,
-		EncryptionAlgorithm alg) const;
+		EncryptionAlgorithm alg);
 
 	~File(void);
 

@@ -492,9 +492,18 @@ BufferPtr File::EncryptData(const Buffer& data,
 BufferPtr File::EncryptData(const Buffer& data,
 	types::big_uint objNumber,
 	types::ushort genNumber,
-	EncryptionAlgorithm alg) const {
+	EncryptionAlgorithm alg) {
 	if (!IsEncrypted()) {
 		return make_deferred_container<Buffer>(data);
+	}
+
+	if (_decryption_key.empty()) {
+
+		// Encrypted documents shall be opened with default empty password
+		bool passed = SetEncryptionPassword("");
+		if (!passed) {
+			throw InvalidPasswordException("Could not decrypt file using default password");
+		}
 	}
 
 	auto encryption_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
