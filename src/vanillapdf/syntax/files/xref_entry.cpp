@@ -151,7 +151,16 @@ void XrefUsedEntry::Initialize(void) {
 	}
 
 	auto locked_file = _file.GetReference();
+	auto log_scope = locked_file->GetFilenameString();
 	auto input = locked_file->GetInputStream();
+
+	LOG_DEBUG(log_scope)
+		<< "Initializing xref USED entry "
+		<< std::to_string(_obj_number)
+		<< " "
+		<< std::to_string(_gen_number)
+		<< " at offset "
+		<< std::to_string(_offset);
 
 	input->ExclusiveInputLock();
 
@@ -188,6 +197,7 @@ void XrefCompressedEntry::Initialize(void) {
 	}
 
 	auto locked_file = _file.GetReference();
+	auto log_scope = locked_file->GetFilenameString();
 	auto chain = locked_file->GetXrefChain();
 	auto stm = locked_file->GetIndirectObject(_object_stream_number, 0);
 
@@ -201,6 +211,14 @@ void XrefCompressedEntry::Initialize(void) {
 	if (body->empty()) {
 		throw GeneralException("Could not find data for the ObjStm " + std::to_string(_object_stream_number));
 	}
+
+	LOG_DEBUG(log_scope)
+		<< "Initializing xref COMPRESSED entry "
+		<< std::to_string(_obj_number)
+		<< " "
+		<< std::to_string(_gen_number)
+		<< " inside object stream "
+		<< std::to_string(_object_stream_number);
 
 	Parser parser(_file, input_stream);
 	auto stream_entries = parser.ReadObjectStreamEntries(first->GetUnsignedIntegerValue(), size->SafeConvert<types::size_type>());

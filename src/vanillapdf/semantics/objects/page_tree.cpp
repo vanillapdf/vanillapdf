@@ -1,6 +1,7 @@
 #include "precompiled.h"
 #include "semantics/objects/page_tree.h"
 
+#include "syntax/files/file.h"
 #include "syntax/objects/array_object.h"
 #include "syntax/utils/name_constants.h"
 
@@ -42,6 +43,12 @@ types::size_type PageTree::PageCount(PageNodeBasePtr node) {
 }
 
 PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
+	auto weak_file = GetObject()->GetFile();
+	auto file = weak_file.GetReference();
+	auto log_scope = file->GetFilenameString();
+
+	LOG_DEBUG(log_scope) << "Searching for page " << std::to_string(page_number);
+
 	if (page_number < 1) {
 		throw GeneralException("Invalid page number: " + std::to_string(page_number));
 	}

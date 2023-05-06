@@ -92,13 +92,14 @@ File::~File(void) {
 }
 
 void File::Initialize() {
-	auto filename = GetFilenameString();
-
-	LOG_DEBUG(filename) << "Initialize";
 
 	if (_initialized) {
 		return;
 	}
+
+	auto filename = GetFilenameString();
+
+	LOG_INFO(filename) << "File initialization";
 
 	_input->ExclusiveInputLock();
 
