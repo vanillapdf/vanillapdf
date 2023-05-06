@@ -69,10 +69,13 @@ VANILLAPDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle* handl
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	BufferPtr buffer = make_deferred_container<Buffer>(obj->ToString());
-	auto ptr = buffer.AddRefGet();
-	*result = reinterpret_cast<BufferHandle*>(ptr);
-	return VANILLAPDF_ERROR_SUCCESS;
+	try {
+		BufferPtr buffer = make_deferred_container<Buffer>(obj->ToString());
+		auto ptr = buffer.AddRefGet();
+		*result = reinterpret_cast<BufferHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	}
+	CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Object_ToPdf(ObjectHandle* handle, BufferHandle** result) {
@@ -80,10 +83,13 @@ VANILLAPDF_API error_type CALLING_CONVENTION Object_ToPdf(ObjectHandle* handle, 
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	BufferPtr buffer = make_deferred_container<Buffer>(obj->ToPdf());
-	auto ptr = buffer.AddRefGet();
-	*result = reinterpret_cast<BufferHandle*>(ptr);
-	return VANILLAPDF_ERROR_SUCCESS;
+	try {
+		BufferPtr buffer = make_deferred_container<Buffer>(obj->ToPdf());
+		auto ptr = buffer.AddRefGet();
+		*result = reinterpret_cast<BufferHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	}
+	CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Object_ToUnknown(ObjectHandle* handle, IUnknownHandle** result) {
