@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 			signing_cert_file = argv[i + 1];
 			i++;
 
-		// signing certificate
+		// signing certificate password
 		} else if (strcmp(argv[i], "-scp") == 0 && (i + 1 < argc)) {
 			signing_cert_password = argv[i + 1];
 			i++;
