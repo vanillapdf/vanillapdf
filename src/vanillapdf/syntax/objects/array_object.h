@@ -38,7 +38,7 @@ template <typename T>
 class ArrayObjectIterator : public virtual IUnknown, public std::iterator<std::input_iterator_tag, T> {
 public:
 	ArrayObjectIterator(std::function<T(const ContainableObjectPtr& obj)> conversion);
-	ArrayObjectIterator(typename MixedArrayObject::iterator it, const std::function<T(const ContainableObjectPtr& obj)>& conversion);
+	ArrayObjectIterator(typename MixedArrayObject::const_iterator it, const std::function<T(const ContainableObjectPtr& obj)>& conversion);
 
 	const ArrayObjectIterator& operator++();
 	const ArrayObjectIterator operator++(int);
@@ -49,7 +49,7 @@ public:
 	T operator*() const;
 
 private:
-	typename MixedArrayObject::iterator _it;
+	typename MixedArrayObject::const_iterator _it;
 	std::function<T(const ContainableObjectPtr& obj)> _conversion;
 };
 
@@ -83,7 +83,7 @@ public:
 	ArrayObject(MixedArrayObjectPtr other, std::function<T(const ContainableObjectPtr& obj)> conversion);
 
 	template <typename U>
-	ArrayObject(ArrayObject<U> other, std::function<T(const U& obj)> new_conversion);
+	ArrayObject(const ArrayObject<U>& other, std::function<T(const U& obj)> new_conversion);
 
 	MixedArrayObjectPtr Data(void) const;
 	size_type GetSize(void) const;
@@ -139,7 +139,7 @@ ArrayObjectIterator<T>::ArrayObjectIterator(
 
 template <typename T>
 ArrayObjectIterator<T>::ArrayObjectIterator(
-	typename MixedArrayObject::iterator it,
+	typename MixedArrayObject::const_iterator it,
 	const std::function<T(const ContainableObjectPtr& obj)>& conversion)
 	: _it(it), _conversion(conversion) {
 }
@@ -194,10 +194,7 @@ ArrayObject<T>::ArrayObject(const std::initializer_list<T>& list) : _conversion(
 
 template <typename T>
 ArrayObject<T>::ArrayObject(const list_type& list, std::function<T(const ContainableObjectPtr& obj)> conversion)
-	: _conversion(conversion) {
-	for (auto item : list) {
-		_list->push_back(item);
-	}
+	: _conversion(conversion), _list(list) {
 }
 
 template <typename T>
@@ -215,12 +212,13 @@ ArrayObject<T>::ArrayObject(MixedArrayObjectPtr other, std::function<T(const Con
 
 template <typename T>
 template <typename U>
-ArrayObject<T>::ArrayObject(ArrayObject<U> other, std::function<T(const U& obj)> new_conversion) {
+ArrayObject<T>::ArrayObject(const ArrayObject<U>& other, std::function<T(const U& obj)> new_conversion) {
 	auto other_conversion = other._conversion;
-	_conversion = [other_conversion, new_conversion](const ContainableObjectPtr& obj) { return new_conversion(other_conversion(obj)); };
-	for (auto item : other) {
-		_list->push_back(item);
-	}
+
+	_list = other._list;
+	_conversion = [other_conversion, new_conversion](const ContainableObjectPtr& obj) {
+		return new_conversion(other_conversion(obj));
+	};
 }
 
 template <typename T>
