@@ -37,11 +37,11 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 
 	// Terminate if the source file was not initialized
 	if (!source->IsInitialized()) {
-		throw FileNotInitializedException(source->GetFilename());
+		throw FileNotInitializedException(source->GetFilenameString());
 	}
 
 	if (!destination->IsInitialized()) {
-		throw FileNotInitializedException(destination->GetFilename());
+		throw FileNotInitializedException(destination->GetFilenameString());
 	}
 
 	std::string reason;
@@ -62,7 +62,7 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 	auto header = source->GetHeader();
 	WriteHeader(output, header);
 
-	// Deeo copy of all contents from the original source document
+	// Deep copy of all contents from the original source document
 	auto new_chain = CloneXrefChain(source, destination);
 
 	// Compress and optimize here
@@ -96,11 +96,11 @@ void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
 
 	// Terminate if the source file was not initialized
 	if (!source->IsInitialized()) {
-		throw FileNotInitializedException(source->GetFilename());
+		throw FileNotInitializedException(source->GetFilenameString());
 	}
 
 	if (!destination->IsInitialized()) {
-		throw FileNotInitializedException(destination->GetFilename());
+		throw FileNotInitializedException(destination->GetFilenameString());
 	}
 
 	auto input = source->GetInputStream();
@@ -267,9 +267,9 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
 			if (current_verify_index != entry_index) {
 				auto weak_file = entry->GetFile();
 				auto locked_file = weak_file.GetReference();
-				auto filename = locked_file->GetFilename();
+				auto filename = locked_file->GetFilenameString();
 
-				LOG_WARNING(filename.c_str())
+				LOG_WARNING(filename)
 					<< "Object stream entry index "
 					<< std::to_string(entry_index)
 					<< " does not match expected "
@@ -1376,9 +1376,9 @@ void FileWriter::WriteXref(IOutputStreamPtr output, XrefBasePtr xref) {
 	if (xref->GetType() == XrefBase::Type::Virtual) {
 		auto weak_file = xref->GetFile();
 		auto locked_file = weak_file.GetReference();
-		auto filename = locked_file->GetFilename();
+		auto filename = locked_file->GetFilenameString();
 
-		LOG_INFO(filename.c_str()) << "Serializing virtual xref table as empty data";
+		LOG_INFO(filename) << "Serializing virtual xref table as empty data";
 	}
 }
 

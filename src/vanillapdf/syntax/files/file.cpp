@@ -74,21 +74,27 @@ IInputOutputStreamPtr File::GetFilestream(const std::string& path, std::ios_base
 }
 
 File::File(IInputOutputStreamPtr stream, const std::string& path) : _full_path(path), _input(stream) {
-	_filename = MiscUtils::ExtractFilename(path);
+	auto filename = MiscUtils::ExtractFilename(path);
 
-	LOG_INFO_GLOBAL << "File constructor " << _filename;
-	LOG_INFO(_filename) << "File constructor";
+	LOG_INFO_GLOBAL << "File constructor " << filename;
+	LOG_INFO(filename) << "File constructor";
+
+	_filename = make_deferred_container<Buffer>(filename);
 }
 
 File::~File(void) {
 	_cache.clear();
 
-	LOG_INFO_GLOBAL << "File destructor " << _filename;
-	LOG_INFO(_filename) << "File destructor";
+	auto filename = GetFilenameString();
+
+	LOG_INFO_GLOBAL << "File destructor " << filename;
+	LOG_INFO(filename) << "File destructor";
 }
 
 void File::Initialize() {
-	LOG_DEBUG(_filename) << "Initialize";
+	auto filename = GetFilenameString();
+
+	LOG_DEBUG(filename) << "Initialize";
 
 	if (_initialized) {
 		return;
@@ -113,8 +119,8 @@ void File::Initialize() {
 	} catch (NotSupportedException&) {
 		throw;
 	} catch (ExceptionBase& e) {
-		LOG_ERROR(_filename) << "Could not parse xref chain, using fallback mechanism";
-		LOG_ERROR(_filename) << "Reason: " << e.what();
+		LOG_ERROR(filename) << "Could not parse xref chain, using fallback mechanism";
+		LOG_ERROR(filename) << "Reason: " << e.what();
 
 		_xref = stream.FindAllObjects();
 	}
@@ -158,6 +164,8 @@ void File::Initialize() {
 }
 
 bool File::SetEncryptionKey(IEncryptionKey& key) {
+	auto filename = GetFilenameString();
+
 	if (!IsEncrypted()) {
 		return false;
 	}
@@ -229,10 +237,10 @@ bool File::SetEncryptionKey(IEncryptionKey& key) {
 		_decryption_key = EncryptionUtils::GetRecipientKey(recipients, length_bits, algorithm, key);
 		return true;
 	} catch (GeneralException& ex) {
-		LOG_ERROR(_filename) << "Error setting recepient encryption key: " << ex.what();
+		LOG_ERROR(filename) << "Error setting recepient encryption key: " << ex.what();
 		return false;
 	} catch (...) {
-		LOG_ERROR(_filename) << "Error setting recepient encryption key";
+		LOG_ERROR(filename) << "Error setting recepient encryption key";
 		return false;
 	}
 }
@@ -290,8 +298,10 @@ bool File::SetEncryptionPassword(const Buffer& password) {
 }
 
 bool File::IsEncrypted(void) const {
+	auto filename = GetFilenameString();
+
 	if (!_initialized) {
-		throw FileNotInitializedException(_filename);
+		throw FileNotInitializedException(filename);
 	}
 
 	return (!_encryption_dictionary.empty() && _encryption_dictionary != NullObject::GetInstance());
@@ -642,8 +652,10 @@ types::stream_offset File::GetLastXrefOffset(types::stream_size file_size) {
 ObjectPtr File::GetIndirectObject(
 	types::big_uint obj_number,
 	types::ushort gen_number) const {
+
 	if (!_initialized) {
-		throw FileNotInitializedException(_filename);
+		auto filename = GetFilenameString();
+		throw FileNotInitializedException(filename);
 	}
 
 	return GetIndirectObjectInternal(obj_number, gen_number);
@@ -652,7 +664,9 @@ ObjectPtr File::GetIndirectObject(
 ObjectPtr File::GetIndirectObjectInternal(
 	types::big_uint obj_number,
 	types::ushort gen_number) const {
-	LOG_DEBUG(_filename) << std::dec << "GetIndirectObject " << obj_number << " and " << gen_number;
+
+	auto filename = GetFilenameString();
+	LOG_DEBUG(filename) << std::dec << "GetIndirectObject " << obj_number << " and " << gen_number;
 
 	if (!_xref->Contains(obj_number, gen_number)) {
 		return NullObject::GetInstance();
@@ -672,7 +686,7 @@ ObjectPtr File::GetIndirectObjectInternal(
 			return compressed->GetReference();
 		}
 		case XrefEntryBase::Usage::Null:
-			LOG_ERROR(_filename) << "Xref entry type is null for object " << obj_number << " " << gen_number;
+			LOG_ERROR(filename) << "Xref entry type is null for object " << obj_number << " " << gen_number;
 		case XrefEntryBase::Usage::Free:
 			return NullObject::GetInstance();
 		default:
@@ -681,8 +695,10 @@ ObjectPtr File::GetIndirectObjectInternal(
 }
 
 HeaderPtr File::GetHeader(void) const {
+
 	if (!_initialized) {
-		throw FileNotInitializedException(_filename);
+		auto filename = GetFilenameString();
+		throw FileNotInitializedException(filename);
 	}
 
 	return _header;
@@ -694,7 +710,8 @@ XrefChainPtr File::GetXrefChain() const {
 
 XrefChainPtr File::GetXrefChain(bool check_initialization) const {
 	if (check_initialization && !_initialized) {
-		throw FileNotInitializedException(_filename);
+		auto filename = GetFilenameString();
+		throw FileNotInitializedException(filename);
 	}
 
 	return _xref;
@@ -951,7 +968,8 @@ IInputOutputStreamPtr File::GetInputOutputStream(void) {
 
 BufferPtr File::GetByteRange(types::stream_size begin, types::size_type length) {
 	if (!_initialized) {
-		throw FileNotInitializedException(_filename);
+		auto filename = GetFilenameString();
+		throw FileNotInitializedException(filename);
 	}
 
 	_input->SetInputPosition(begin);
@@ -960,7 +978,8 @@ BufferPtr File::GetByteRange(types::stream_size begin, types::size_type length) 
 
 IInputStreamPtr File::GetByteRangeStream(types::stream_size begin, types::size_type length) {
 	if (!_initialized) {
-		throw FileNotInitializedException(_filename);
+		auto filename = GetFilenameString();
+		throw FileNotInitializedException(filename);
 	}
 
 	// Avoid huge allocation and use filtering stream buffer

@@ -49,7 +49,7 @@ bool PageContents::RecalculateStreamData() {
 
 	auto weak_file = GetObject()->GetFile();
 	auto file = weak_file.GetReference();
-	auto log_scope = file->GetFilename();
+	auto log_scope = file->GetFilenameString();
 
 	auto obj_number = GetObject()->GetRootObjectNumber();
 	auto gen_number = GetObject()->GetRootGenerationNumber();

@@ -89,8 +89,8 @@ DictionaryObjectPtr ParserBase::ReadDictionary() {
 
 		if (dictionary->Contains(name)) {
 			auto locked_file = _file.GetReference();
-			auto filename = locked_file->GetFilename();
-			LOG_WARNING(filename.c_str()) << "Found duplicate entry for " << name->ToString() << ", skipping";
+			auto filename = locked_file->GetFilenameString();
+			LOG_WARNING(filename) << "Found duplicate entry for " << name->ToString() << ", skipping";
 			continue;
 		}
 
@@ -118,10 +118,10 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 		do {
 			if (!dictionary->Contains(constant::Name::Length)) {
 				auto locked_file = _file.GetReference();
-				auto filename = locked_file->GetFilename();
+				auto filename = locked_file->GetFilenameString();
 
 				// Log warning as this is not standard, however not fatal
-				LOG_WARNING(filename.c_str()) <<
+				LOG_WARNING(filename) <<
 					"The stream at offset " <<
 					stream_offset <<
 					" does not contain length" <<
@@ -134,10 +134,10 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 			if (length_obj->GetObjectType() != Object::Type::Integer) {
 				auto locked_file = _file.GetReference();
 				if (!locked_file->IsInitialized()) {
-					auto filename = locked_file->GetFilename();
+					auto filename = locked_file->GetFilenameString();
 
 					// Log warning as this is not standard, however not fatal
-					LOG_WARNING(filename.c_str()) <<
+					LOG_WARNING(filename) <<
 						"The stream at offset " <<
 						stream_offset <<
 						" does has length specified as indirect object" <<
@@ -158,10 +158,10 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 			// Verify the terminating token type and try fallback method
 			if (expect_stream_end->GetType() != Token::Type::STREAM_END) {
 				auto locked_file = _file.GetReference();
-				auto filename = locked_file->GetFilename();
+				auto filename = locked_file->GetFilenameString();
 
 				// Log warning as this is not standard, however not fatal
-				LOG_WARNING(filename.c_str()) <<
+				LOG_WARNING(filename) <<
 					"Failed to verify stream length " <<
 					length->GetIntegerValue() <<
 					" for stream object at offset " <<
@@ -489,8 +489,8 @@ XrefEntryBasePtr Parser::ReadTableEntry(types::big_uint objNumber) {
 	if (gen_number > constant::MAX_GENERATION_NUMBER) {
 
 		auto locked_file = _file.GetReference();
-		auto filename = locked_file->GetFilename();
-		LOG_WARNING(filename.c_str()) << "Invalid object generation number " << gen_number << ", converting";
+		auto filename = locked_file->GetFilenameString();
+		LOG_WARNING(filename) << "Invalid object generation number " << gen_number << ", converting";
 
 		gen_number = constant::MAX_GENERATION_NUMBER;
 	}

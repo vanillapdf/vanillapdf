@@ -51,7 +51,14 @@ public:
 
 	XrefUsedEntryBasePtr AllocateNewEntry();
 
-	std::string GetFilename(void) const { return _filename; }
+	BufferPtr GetFilenameData(void) const {
+		return _filename;
+	}
+
+	std::string GetFilenameString(void) const {
+		return _filename->ToString();
+	}
+
 	IInputStreamPtr GetInputStream(void);
 	IOutputStreamPtr GetOutputStream(void);
 	IInputOutputStreamPtr GetInputOutputStream(void);
@@ -113,7 +120,7 @@ private:
 
 	bool _initialized = false;
 	std::string _full_path;
-	std::string _filename;
+	BufferPtr _filename;
 	BufferPtr _decryption_key;
 	ObjectPtr _encryption_dictionary;
 

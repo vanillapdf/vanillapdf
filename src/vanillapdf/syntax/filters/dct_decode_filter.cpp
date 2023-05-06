@@ -189,9 +189,9 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
 
 		auto weak_file = parameters->GetFile();
 		auto locked_file = weak_file.GetReference();
-		auto filename = locked_file->GetFilename();
+		auto filename = locked_file->GetFilenameString();
 
-		LOG_ERROR(filename.c_str())
+		LOG_ERROR(filename)
 			<< "Non-standard color spaces "
 			<< color_space_array->ToString()
 			<< " are not supported";

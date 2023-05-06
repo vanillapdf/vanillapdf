@@ -222,7 +222,7 @@ void XrefCompressedEntry::Initialize(void) {
 		auto is_used = ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(stream_entry_xref);
 
 		if (!is_used) {
-			auto scope = locked_file->GetFilename();
+			auto scope = locked_file->GetFilenameString();
 			LOG_WARNING(scope) <<
 				"Object stream " <<
 				std::to_string(_object_stream_number) <<
@@ -238,7 +238,7 @@ void XrefCompressedEntry::Initialize(void) {
 	}
 
 	if (!m_initialized) {
-		auto scope = locked_file->GetFilename();
+		auto scope = locked_file->GetFilenameString();
 		LOG_WARNING(scope) <<
 			"Compressed entry number " <<
 			std::to_string(GetObjectNumber()) <<

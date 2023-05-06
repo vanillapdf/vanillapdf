@@ -80,6 +80,12 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION File_GetVersion(FileHandle* handle, PDFVersion* result);
 
 	/**
+	* \brief
+	* Get filename of the current file on physical filesystem
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION File_GetFilename(FileHandle* handle, BufferHandle** result);
+
+	/**
 	* \brief Determine if file is encrypted.
 	*
 	* If the file was not initialized returns false.

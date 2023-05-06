@@ -117,6 +117,21 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_GetVersion(FileHandle* handle,
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION File_GetFilename(FileHandle* handle, BufferHandle** result) {
+
+	File* file = reinterpret_cast<File*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto filename_buffer = file->GetFilenameData();
+		auto ptr = filename_buffer.AddRefGet();
+		*result = reinterpret_cast<BufferHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION File_XrefChain(FileHandle* handle, XrefChainHandle** result)
 {
 	File* file = reinterpret_cast<File*>(handle);

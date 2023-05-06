@@ -56,7 +56,7 @@ BufferPtr UnicodeCharacterMap::GetMappedValue(BufferPtr key) const {
 
 		auto weak_file = GetObject()->GetFile();
 		auto file = weak_file.GetReference();
-		auto log_scope = file->GetFilename();
+		auto log_scope = file->GetFilenameString();
 
 		std::stringstream error_stream;
 		error_stream << "The key " << key->ToHexString() << " was not found in the UnicodeCharacterMap codespace range";
@@ -87,7 +87,7 @@ BufferPtr UnicodeCharacterMap::GetMappedValue(BufferPtr key) const {
 
 	auto weak_file = GetObject()->GetFile();
 	auto file = weak_file.GetReference();
-	auto log_scope = file->GetFilename();
+	auto log_scope = file->GetFilenameString();
 
 	std::stringstream error_stream;
 	error_stream << "The key " << key->ToHexString() << " was not found in the UnicodeCharacterMap";
