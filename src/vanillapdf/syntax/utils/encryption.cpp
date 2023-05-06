@@ -74,14 +74,14 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
 		throw GeneralException("Could not initialize MD5 digest: " + std::to_string(init_result));
 	}
 
-	auto update_result1 = EVP_DigestUpdate(evp_md_ctx, key.data(), key.std_size());
-	if (update_result1 != 1) {
-		throw GeneralException("Could not update MD5 digest: " + std::to_string(update_result1));
+	auto update_key_result = EVP_DigestUpdate(evp_md_ctx, key.data(), key.std_size());
+	if (update_key_result != 1) {
+		throw GeneralException("Could not update MD5 digest: " + std::to_string(update_key_result));
 	}
 
-	auto update_result2 = EVP_DigestUpdate(evp_md_ctx, object_info, sizeof(object_info));
-	if (update_result2 != 1) {
-		throw GeneralException("Could not update MD5 digest: " + std::to_string(update_result2));
+	auto update_object_result = EVP_DigestUpdate(evp_md_ctx, object_info, sizeof(object_info));
+	if (update_object_result != 1) {
+		throw GeneralException("Could not update MD5 digest: " + std::to_string(update_object_result));
 	}
 
 	if (alg == EncryptionAlgorithm::AES) {
@@ -96,6 +96,9 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
 	if (final_result != 1) {
 		throw GeneralException("Could not finalize MD5 digest: " + std::to_string(final_result));
 	}
+
+	// Confirm the actual output matches  the digest
+	assert(final_size == MD5_DIGEST_LENGTH);
 
 	// 7.6.2 General Encryption Algorithm
 	// Algorithm 1: Encryption of data using the RC4 or AES algorithms
@@ -378,6 +381,11 @@ BufferPtr EncryptionUtils::CalculateDecryptionCompareDataV3(
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
+	auto evp_md = EVP_md5();
+	auto evp_md_ctx = EVP_MD_CTX_new();
+
+	SCOPE_GUARD([evp_md_ctx]() { EVP_MD_CTX_free(evp_md_ctx); });
+
 	auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(key_length.GetIntegerValue() / 8);
 	size_t decryption_key_length = std::min(length_bytes, decryption_key_digest->std_size());
 
@@ -385,21 +393,53 @@ BufferPtr EncryptionUtils::CalculateDecryptionCompareDataV3(
 
 	for (int i = 0; i < 50; ++i) {
 
-		MD5_CTX ctx;
-		MD5_Init(&ctx);
-		MD5_Update(&ctx, decryption_key_digest->data(), decryption_key_digest->size());
-		MD5_Final((unsigned char*)temporary_digest.data(), &ctx);
+		auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
+		if (init_result != 1) {
+			throw GeneralException("Could not initialize MD5 digest: " + std::to_string(init_result));
+		}
+
+		auto update_result = EVP_DigestUpdate(evp_md_ctx, decryption_key_digest->data(), decryption_key_digest->size());
+		if (update_result != 1) {
+			throw GeneralException("Could not update MD5 digest: " + std::to_string(update_result));
+		}
+
+		unsigned int final_size = 0;
+		auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)temporary_digest.data(), &final_size);
+		if (final_result != 1) {
+			throw GeneralException("Could not finalize MD5 digest: " + std::to_string(final_result));
+		}
+
+		// Confirm the actual output matches  the digest
+		assert(final_size == MD5_DIGEST_LENGTH);
 
 		std::copy_n(temporary_digest.begin(), decryption_key_length, decryption_key_digest.begin());
 	}
 
 	Buffer key_digest(MD5_DIGEST_LENGTH);
 
-	MD5_CTX ctx;
-	MD5_Init(&ctx);
-	MD5_Update(&ctx, HARDCODED_PDF_PAD, sizeof(HARDCODED_PDF_PAD));
-	MD5_Update(&ctx, document_id.data(), document_id.std_size());
-	MD5_Final((unsigned char*)key_digest.data(), &ctx);
+	auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
+	if (init_result != 1) {
+		throw GeneralException("Could not initialize MD5 digest: " + std::to_string(init_result));
+	}
+
+	auto update_pad_result = EVP_DigestUpdate(evp_md_ctx, HARDCODED_PDF_PAD, sizeof(HARDCODED_PDF_PAD));
+	if (update_pad_result != 1) {
+		throw GeneralException("Could not update MD5 digest: " + std::to_string(update_pad_result));
+	}
+
+	auto update_document_id_result = EVP_DigestUpdate(evp_md_ctx, document_id.data(), document_id.std_size());
+	if (update_document_id_result != 1) {
+		throw GeneralException("Could not update MD5 digest: " + std::to_string(update_document_id_result));
+	}
+
+	unsigned int final_size = 0;
+	auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)key_digest.data(), &final_size);
+	if (final_result != 1) {
+		throw GeneralException("Could not finalize MD5 digest: " + std::to_string(final_result));
+	}
+
+	// Confirm the actual output matches  the digest
+	assert(final_size == MD5_DIGEST_LENGTH);
 
 	BufferPtr key = make_deferred_container<Buffer>(length_bytes);
 	BufferPtr compare_data = make_deferred_container<Buffer>(key_digest);
@@ -489,40 +529,63 @@ BufferPtr EncryptionUtils::GetRecipientKey
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-	auto decrypted_data = EncryptionUtils::DecryptEnvelopedData(enveloped_data, key);
+	const EVP_MD* evp_md = nullptr;
+	unsigned int expected_final_digest_size = 0;
 
-	Buffer decrypted_key;
+	BufferPtr decrypted_key;
 	if (length_bits == 256 && algorithm == EncryptionAlgorithm::AES) {
-		decrypted_key.resize(SHA256_DIGEST_LENGTH);
-		SHA256_CTX ctx;
-		SHA256_Init(&ctx);
-		SHA256_Update(&ctx, decrypted_data->data(), 20);
-
-		auto length = enveloped_data.GetSize();
-		for (decltype(length) i = 0; i < length; ++i) {
-			auto enveloped_bytes = enveloped_data.GetValue(i);
-			SHA256_Update(&ctx, enveloped_bytes->GetValue()->data(), enveloped_bytes->GetValue()->std_size());
-		}
-
-		SHA256_Final((unsigned char*) decrypted_key.data(), &ctx);
-	} else {
-		decrypted_key.resize(SHA_DIGEST_LENGTH);
-		SHA_CTX ctx;
-		SHA1_Init(&ctx);
-		SHA1_Update(&ctx, decrypted_data->data(), 20);
-
-		auto length = enveloped_data.GetSize();
-		for (decltype(length) i = 0; i < length; ++i) {
-			auto enveloped_bytes = enveloped_data.GetValue(i);
-			SHA1_Update(&ctx, enveloped_bytes->GetValue()->data(), enveloped_bytes->GetValue()->std_size());
-		}
-
-		SHA1_Final((unsigned char*) decrypted_key.data(), &ctx);
+		evp_md = EVP_sha256();
+		decrypted_key->resize(SHA256_DIGEST_LENGTH);
+		expected_final_digest_size = SHA256_DIGEST_LENGTH;
+	}
+	else {
+		evp_md = EVP_sha1();
+		decrypted_key->resize(SHA_DIGEST_LENGTH);
+		expected_final_digest_size = SHA_DIGEST_LENGTH;
 	}
 
+	auto evp_md_ctx = EVP_MD_CTX_new();
+
+	SCOPE_GUARD([evp_md_ctx]() { EVP_MD_CTX_free(evp_md_ctx); });
+
+	auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
+	if (init_result != 1) {
+		throw GeneralException("Could not initialize SHA digest: " + std::to_string(init_result));
+	}
+
+	auto decrypted_data = EncryptionUtils::DecryptEnvelopedData(enveloped_data, key);
+	auto update_key_result = EVP_DigestUpdate(evp_md_ctx, decrypted_data->data(), 20);
+	if (update_key_result != 1) {
+		throw GeneralException("Could not update SHA digest: " + std::to_string(update_key_result));
+	}
+
+	auto length = enveloped_data.GetSize();
+	for (decltype(length) i = 0; i < length; ++i) {
+		auto enveloped_bytes = enveloped_data.GetValue(i);
+		auto enveloped_buffer = enveloped_bytes->GetValue();
+
+		auto update_enveloped_result = EVP_DigestUpdate(evp_md_ctx, enveloped_buffer->data(), enveloped_buffer->std_size());
+		if (update_enveloped_result != 1) {
+			throw GeneralException("Could not update SHA digest: " + std::to_string(update_enveloped_result));
+		}
+	}
+
+	unsigned int final_size = 0;
+	auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)decrypted_key->data(), &final_size);
+	if (final_result != 1) {
+		throw GeneralException("Could not finalize SHA digest: " + std::to_string(final_result));
+	}
+
+	// Confirm the actual output matches  the digest
+	assert(final_size == expected_final_digest_size);
+
 	auto length_bytes = ValueConvertUtils::SafeConvert<Buffer::size_type>(length_bits.GetIntegerValue() / 8);
-	auto decryption_key_length = std::min(length_bytes, decrypted_key.size());
-	return make_deferred_container<Buffer>(decrypted_key.begin(), decrypted_key.begin() + decryption_key_length);
+
+	if (length_bytes < decrypted_key->size()) {
+		decrypted_key->resize(length_bytes);
+	}
+
+	return decrypted_key;
 
 #else
 	(void) enveloped_data; (void) length_bits; (void) algorithm; (void) key;
@@ -684,24 +747,64 @@ BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer& pad_password,
 
 	// check owner key
 	Buffer password_digest(MD5_DIGEST_LENGTH);
-	MD5((unsigned char*) pad_password.data(), pad_password.std_size(), (unsigned char*) password_digest.data());
 
-	BufferPtr encrypted_owner_data;
+	auto evp_md = EVP_md5();
+	auto evp_md_ctx = EVP_MD_CTX_new();
+
+	SCOPE_GUARD([evp_md_ctx]() { EVP_MD_CTX_free(evp_md_ctx); });
+
+	auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
+	if (init_result != 1) {
+		throw GeneralException("Could not initialize MD5 digest: " + std::to_string(init_result));
+	}
+
+	auto update_password_result = EVP_DigestUpdate(evp_md_ctx, pad_password.data(), pad_password.std_size());
+	if (update_password_result != 1) {
+		throw GeneralException("Could not update MD5 digest: " + std::to_string(update_password_result));
+	}
+
+	unsigned int final_size = 0;
+	auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)password_digest.data(), &final_size);
+	if (final_result != 1) {
+		throw GeneralException("Could not finalize MD5 digest: " + std::to_string(final_result));
+	}
+
+	// Confirm the actual output matches  the digest
+	assert(final_size == MD5_DIGEST_LENGTH);
+
 	if (*revision >= 3) {
-		MD5_CTX ctx;
+
 		Buffer temporary_digest(MD5_DIGEST_LENGTH);
 
 		auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(length_bits->GetIntegerValue() / 8);
 		auto password_length = std::min(length_bytes, password_digest.std_size());
+
 		for (int i = 0; i < 50; ++i) {
-			MD5_Init(&ctx);
-			MD5_Update(&ctx, password_digest.data(), password_length);
-			MD5_Final((unsigned char*) temporary_digest.data(), &ctx);
+
+			auto init_loop_result = EVP_DigestInit(evp_md_ctx, evp_md);
+			if (init_loop_result != 1) {
+				throw GeneralException("Could not initialize MD5 digest: " + std::to_string(init_loop_result));
+			}
+
+			auto update_loop_result = EVP_DigestUpdate(evp_md_ctx, password_digest.data(), password_length);
+			if (update_loop_result != 1) {
+				throw GeneralException("Could not update MD5 digest: " + std::to_string(update_loop_result));
+			}
+
+			unsigned int final_loop_size = 0;
+			auto final_loop_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)temporary_digest.data(), &final_loop_size);
+			if (final_loop_result != 1) {
+				throw GeneralException("Could not finalize MD5 digest: " + std::to_string(final_loop_result));
+			}
+
+			// Confirm the actual output matches  the digest
+			assert(final_loop_size == MD5_DIGEST_LENGTH);
+
 			std::copy_n(temporary_digest.begin(), password_length, password_digest.begin());
 		}
 
 		BufferPtr key = make_deferred_container<Buffer>(length_bytes);
-		encrypted_owner_data = make_deferred_container<Buffer>(*owner_value->GetValue());
+		BufferPtr encrypted_owner_data = make_deferred_container<Buffer>(*owner_value->GetValue());
 
 		for (Buffer::value_type i = 0; i < 20; ++i) {
 			for (decltype(password_length) j = 0; j < password_length; ++j) {
@@ -710,11 +813,11 @@ BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer& pad_password,
 
 			encrypted_owner_data = EncryptionUtils::ComputeRC4(key, encrypted_owner_data);
 		}
-	} else {
-		encrypted_owner_data = EncryptionUtils::ComputeRC4(password_digest, 5, owner_value->GetValue());
+
+		return encrypted_owner_data;
 	}
 
-	return encrypted_owner_data;
+	return EncryptionUtils::ComputeRC4(password_digest, 5, owner_value->GetValue());
 
 #else
 	(void) pad_password; (void) encryption_dictionary;
