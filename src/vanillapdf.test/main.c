@@ -82,8 +82,7 @@ int main(int argc, char *argv[]) {
 			skip_save = VANILLAPDF_RV_TRUE;
 
 		// skip incremental
-		}
-		else if (strcmp(argv[i], "-si") == 0) {
+		} else if (strcmp(argv[i], "-si") == 0) {
 			skip_incremental_save = VANILLAPDF_RV_TRUE;
 
 		// quiet
