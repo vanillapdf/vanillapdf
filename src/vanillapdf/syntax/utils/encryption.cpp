@@ -748,7 +748,7 @@ BufferPtr EncryptionUtils::GetRecipientKey
 	}
 
 	// Confirm the actual output matches  the digest
-	assert(final_size == expected_final_digest_size);
+	assert(final_size == expected_final_digest_size); (void)expected_final_digest_size;
 
 	auto length_bytes = ValueConvertUtils::SafeConvert<Buffer::size_type>(length_bits.GetIntegerValue() / 8);
 
