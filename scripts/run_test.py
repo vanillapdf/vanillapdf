@@ -84,11 +84,11 @@ if (is_encrypted):
 		if (USER_PASSWORD_KEY in encryption_data[test_filename]):
 			raw_password = encryption_data[test_filename][USER_PASSWORD_KEY]
 			user_password = normalize_string(raw_password)
-			specific_parameters = base_parameters
-			specific_parameters.append(PASSWORD_OPTION)
-			specific_parameters.append(user_password)
+			user_specific_parameters = base_parameters
+			user_specific_parameters.append(PASSWORD_OPTION)
+			user_specific_parameters.append(user_password)
 			
-			rv = subprocess.call(specific_parameters)
+			rv = subprocess.call(user_specific_parameters)
 			if (rv != 0):
 				sys.exit(rv)
 			
@@ -96,11 +96,11 @@ if (is_encrypted):
 		if (OWNER_PASSWORD_KEY in encryption_data[test_filename]):
 			raw_password = encryption_data[test_filename][OWNER_PASSWORD_KEY]
 			owner_password = normalize_string(raw_password)
-			specific_parameters = base_parameters
-			specific_parameters.append(PASSWORD_OPTION)
-			specific_parameters.append(owner_password)
-			
-			rv = subprocess.call(specific_parameters)
+			owner_specific_parameters = base_parameters
+			owner_specific_parameters.append(PASSWORD_OPTION)
+			owner_specific_parameters.append(owner_password)
+            
+			rv = subprocess.call(owner_specific_parameters)
 			if (rv != 0):
 				sys.exit(rv)
 			
