@@ -161,7 +161,56 @@ void File::Initialize() {
 		}
 	}
 
+	// Signature search needs to be done after the file has been initialized,
+	// since we need to process indirect references as well
 	_initialized = true;
+
+	// File signatures are also exempted from the encryption
+	do {
+		if (!last_trailer_dictionary->Contains(constant::Name::Root)) {
+			break;
+		}
+
+		auto document_root = last_trailer_dictionary->FindAs<DictionaryObjectPtr>(constant::Name::Root);
+		if (!document_root->Contains(constant::Name::AcroForm)) {
+			break;
+		}
+
+		auto acro_form_dictionary = document_root->FindAs<DictionaryObjectPtr>(constant::Name::AcroForm);
+		if (!acro_form_dictionary->Contains(constant::Name::Fields)) {
+			break;
+		}
+
+		auto fields_reference_list = acro_form_dictionary->FindAs<MixedArrayObjectPtr>(constant::Name::Fields);
+		for (auto field_item_reference : fields_reference_list) {
+			if (!ObjectUtils::IsType<DictionaryObjectPtr>(field_item_reference)) {
+				continue;
+			}
+
+			auto field_item = ObjectUtils::ConvertTo<DictionaryObjectPtr>(field_item_reference);
+			if (!field_item->Contains(constant::Name::FT)) {
+				continue;
+			}
+
+			auto field_item_type = field_item->FindAs<NameObjectPtr>(constant::Name::FT);
+			if (field_item_type != constant::Name::Sig) {
+				continue;
+			}
+
+			if (!field_item->Contains(constant::Name::V)) {
+				continue;
+			}
+
+			auto signature_dictionary = field_item->FindAs<DictionaryObjectPtr>(constant::Name::V);
+			if (!signature_dictionary->Contains(constant::Name::Contents)) {
+				continue;
+			}
+
+			auto signature_contents = signature_dictionary->FindAs<HexadecimalStringObjectPtr>(constant::Name::Contents);
+			signature_contents->SetEncryptionExempted();
+		}
+
+	} while (false);
 }
 
 bool File::SetEncryptionKey(IEncryptionKey& key) {
