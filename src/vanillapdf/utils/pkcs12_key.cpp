@@ -13,7 +13,6 @@
 #include <openssl/evp.h>
 #include <openssl/engine.h>
 #include <openssl/err.h>
-#include <openssl/rsa.h>
 
 #endif
 
@@ -44,7 +43,6 @@ private:
 	EVP_PKEY *key = nullptr;
 	EVP_PKEY_CTX *encryption_context = nullptr;
 	X509 *cert = nullptr;
-	ENGINE *rsa = nullptr;
 
 	PKCS7 *p7 = nullptr;
 	BIO *p7bio = nullptr;
@@ -190,29 +188,38 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-	if (rsa == nullptr) {
-		rsa = ENGINE_get_default_RSA();
-	}
-
 	if (encryption_context == nullptr) {
-		encryption_context = EVP_PKEY_CTX_new(key, rsa);
+		auto evp_pkey_context = EVP_PKEY_CTX_new_from_pkey(nullptr, key, nullptr);
+		if (evp_pkey_context == nullptr) {
+			auto openssl_error = MiscUtils::GetLastOpensslError();
+			LOG_ERROR_GLOBAL << "Could not initialize encryption engine: " << openssl_error;
+			throw GeneralException("Could not create PKEY context");
+		}
+
+		encryption_context = evp_pkey_context;
 	}
 
-	int initialized = EVP_PKEY_decrypt_init(encryption_context);
-	if (1 != initialized) {
-		throw GeneralException("Could not initialize encryption engine");
+	int init_result = EVP_PKEY_decrypt_init(encryption_context);
+	if (init_result != 1) {
+		auto openssl_error = MiscUtils::GetLastOpensslError();
+		LOG_ERROR_GLOBAL << "Could not initialize encryption engine: " << openssl_error;
+		throw GeneralException("Could not initialize encryption engine: " + std::to_string(init_result));
 	}
 
 	size_t outlen = 0;
-	int has_length = EVP_PKEY_decrypt(encryption_context, nullptr, &outlen, (unsigned char *) data.data(), data.std_size());
-	if (has_length != 1) {
-		throw GeneralException("Could not get decrypt message length");
+	int length_result = EVP_PKEY_decrypt(encryption_context, nullptr, &outlen, (unsigned char *) data.data(), data.std_size());
+	if (length_result != 1) {
+		auto openssl_error = MiscUtils::GetLastOpensslError();
+		LOG_ERROR_GLOBAL << "Could not get decrypt message length: " << openssl_error;
+		throw GeneralException("Could not get decrypt message length: " + std::to_string(length_result));
 	}
 
 	BufferPtr output = make_deferred_container<Buffer>(outlen);
-	int decrypted = EVP_PKEY_decrypt(encryption_context, (unsigned char *) output->data(), &outlen, (unsigned char *) data.data(), data.std_size());
-	if (decrypted != 1) {
-		throw GeneralException("Could not get decrypt message");
+	int decrypt_result = EVP_PKEY_decrypt(encryption_context, (unsigned char *) output->data(), &outlen, (unsigned char *) data.data(), data.std_size());
+	if (decrypt_result != 1) {
+		auto openssl_error = MiscUtils::GetLastOpensslError();
+		LOG_ERROR_GLOBAL << "Could not get decrypt message: " << openssl_error;
+		throw GeneralException("Could not get decrypt message: " + std::to_string(decrypt_result));
 	}
 
 	return output;
@@ -453,11 +460,6 @@ void PKCS12Key::PKCS12KeyImpl::SignCleanup() {
 	if (nullptr != encryption_context) {
 		EVP_PKEY_CTX_free(encryption_context);
 		encryption_context = nullptr;
-	}
-
-	if (nullptr != rsa) {
-		ENGINE_free(rsa);
-		rsa = nullptr;
 	}
 
 	if (nullptr != p7) {
