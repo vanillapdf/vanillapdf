@@ -1285,6 +1285,7 @@ error_type process_document_sign(
 
 	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_CreateFromMemory(&input_output_stream));
 	RETURN_ERROR_IF_NOT_SUCCESS(File_CreateStream(input_output_stream, "UNUSED", &save_file));
+	//RETURN_ERROR_IF_NOT_SUCCESS(File_Create("C:\\temp\\output.pdf", &save_file));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_CreateFromFile(key_file, key_password, &signature_pkcs12_key));
 	RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_ToSigningKey(signature_pkcs12_key, &signing_key));
