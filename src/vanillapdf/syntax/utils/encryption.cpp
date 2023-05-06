@@ -55,7 +55,7 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-	Buffer object_key(MD5_DIGEST_LENGTH);
+	BufferPtr object_key = make_deferred_container<Buffer>(MD5_DIGEST_LENGTH);
 
 	uint8_t object_info[5];
 	object_info[0] = objNumber & 0xFF;
@@ -64,17 +64,44 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
 	object_info[3] = (genNumber) & 0xFF;
 	object_info[4] = (genNumber >> 8) & 0xFF;
 
-	MD5_CTX ctx;
-	MD5_Init(&ctx);
-	MD5_Update(&ctx, key.data(), key.std_size());
-	MD5_Update(&ctx, object_info, sizeof(object_info));
+	auto evp_md = EVP_md5();
+	auto evp_md_ctx = EVP_MD_CTX_new();
 
-	if (alg == EncryptionAlgorithm::AES) {
-		MD5_Update(&ctx, &AES_ADDITIONAL_SALT[0], sizeof(AES_ADDITIONAL_SALT));
+	SCOPE_GUARD([evp_md_ctx]() { EVP_MD_CTX_free(evp_md_ctx); });
+
+	auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
+	if (init_result != 1) {
+		throw GeneralException("Could not initialize MD5 digest: " + std::to_string(init_result));
 	}
 
-	MD5_Final((unsigned char*) object_key.data(), &ctx);
+	auto update_result1 = EVP_DigestUpdate(evp_md_ctx, key.data(), key.std_size());
+	if (update_result1 != 1) {
+		throw GeneralException("Could not update MD5 digest: " + std::to_string(update_result1));
+	}
 
+	auto update_result2 = EVP_DigestUpdate(evp_md_ctx, object_info, sizeof(object_info));
+	if (update_result2 != 1) {
+		throw GeneralException("Could not update MD5 digest: " + std::to_string(update_result2));
+	}
+
+	if (alg == EncryptionAlgorithm::AES) {
+		auto update_salt_result = EVP_DigestUpdate(evp_md_ctx, &AES_ADDITIONAL_SALT[0], sizeof(AES_ADDITIONAL_SALT));
+		if (update_salt_result != 1) {
+			throw GeneralException("Could not update MD5 digest: " + std::to_string(update_salt_result));
+		}
+	}
+
+	unsigned int final_size = 0;
+	auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)object_key->data(), &final_size);
+	if (final_result != 1) {
+		throw GeneralException("Could not finalize MD5 digest: " + std::to_string(final_result));
+	}
+
+	// 7.6.2 General Encryption Algorithm
+	// Algorithm 1: Encryption of data using the RC4 or AES algorithms
+	// Use the first (n + 5) bytes, up to a maximum of 16,
+	// of the output from the MD5 hash as the key for the RC4 or AES symmetric key algorithms,
+	// along with the string or stream data to be encrypted.
 	types::size_type key_length = std::min<types::size_type>(key.size() + 5, 16);
 	return make_deferred_container<Buffer>(object_key.begin(), object_key.begin() + key_length);
 
@@ -99,11 +126,57 @@ BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, types::size_type key_le
 
 	BufferPtr result = make_deferred_container<Buffer>(data.size());
 
+	// OpenSSL 3.0 does not support RC4 using custom key length - only 40-bit and 128-bits are supported.
+	// The PDF does often use length of 80-bits.
+	// Until this is resolved, we cannot remove this warning
+
 	RC4_KEY rc_key;
-	RC4_set_key(&rc_key, ValueConvertUtils::SafeConvert<int>(key_length), (unsigned char*) key.data());
-	RC4(&rc_key, data.std_size(), (unsigned char*) data.data(), (unsigned char*) result->data());
+	RC4_set_key(&rc_key, ValueConvertUtils::SafeConvert<int>(key_length), (unsigned char*)key.data());
+	RC4(&rc_key, data.std_size(), (unsigned char*)data.data(), (unsigned char*)result->data());
 
 	return result;
+
+	//const EVP_CIPHER* evp_cipher = nullptr;
+	//
+	//if (key_length == 5) {
+	//	evp_cipher = EVP_rc4_40();
+	//}
+	//
+	//if (key_length == 16) {
+	//	evp_cipher = EVP_rc4();
+	//}
+	//
+	//if (evp_cipher == nullptr) {
+	//	throw GeneralException("Unknown RC4 key length: " + std::to_string(key_length));
+	//}
+	//
+	//auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
+	//
+	//SCOPE_GUARD([evp_cipher_ctx]() { EVP_CIPHER_CTX_free(evp_cipher_ctx); });
+	//
+	//auto init_result = EVP_EncryptInit(evp_cipher_ctx, evp_cipher, (unsigned char*)key.data(), nullptr);
+	//if (init_result != 1) {
+	//	throw GeneralException("Could not initialize RC4 digest: " + std::to_string(init_result));
+	//}
+	//
+	//int current_offset = 0;
+	//int data_size = ValueConvertUtils::SafeConvert<int>(data.size());
+	//
+	//auto update_result = EVP_EncryptUpdate(
+	//	evp_cipher_ctx,
+	//	(unsigned char*) result->data(),
+	//	&current_offset,
+	//	(unsigned char*) data.data(),
+	//	data_size);
+	//
+	//if (update_result != 1) {
+	//	throw GeneralException("Could not update RC4 digest: " + std::to_string(update_result));
+	//}
+	//
+	//auto final_result = EVP_EncryptFinal(evp_cipher_ctx, (unsigned char*)result->data() + current_offset, &current_offset);
+	//if (final_result != 1) {
+	//	throw GeneralException("Could not finalize RC4 digest: " + std::to_string(final_result));
+	//}
 
 #else
 	(void) key; (void) key_length; (void) data;
@@ -267,56 +340,14 @@ bool EncryptionUtils::CheckKey(
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-	Buffer decryption_key_digest(MD5_DIGEST_LENGTH);
-
-	MD5_CTX ctx;
-	MD5_Init(&ctx);
-	MD5_Update(&ctx, input.data(), input.std_size());
-	MD5_Update(&ctx, owner_data.data(), owner_data.std_size());
-
-	auto permissions_value = permissions.GetIntegerValue();
-	int32_t permissions_raw = ValueConvertUtils::SafeConvert<int32_t>(permissions_value);
-	uint8_t permissions_array[sizeof(permissions_raw)];
-
-	for (size_t i = 0; i < sizeof(permissions_raw); ++i) {
-		permissions_array[i] = (permissions_raw >> (i * 8)) & 0xFF;
-	}
-
-	MD5_Update(&ctx, permissions_array, sizeof(permissions_array));
-	MD5_Update(&ctx, document_id.data(), document_id.std_size());
-	MD5_Final((unsigned char*) decryption_key_digest.data(), &ctx);
+	auto decryption_key_digest = CalculateDecryptionKeyDigest(input, document_id, owner_data, permissions);
 
 	auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(key_length.GetIntegerValue() / 8);
-	size_t decryption_key_length = std::min(length_bytes, decryption_key_digest.std_size());
+	size_t decryption_key_length = std::min(length_bytes, decryption_key_digest->std_size());
 
 	BufferPtr compare_data;
 	if (revision >= 3) {
-		Buffer temporary_digest(MD5_DIGEST_LENGTH);
-		for (int i = 0; i < 50; ++i) {
-			MD5_Init(&ctx);
-			MD5_Update(&ctx, decryption_key_digest.data(), decryption_key_length);
-			MD5_Final((unsigned char*) temporary_digest.data(), &ctx);
-			std::copy_n(temporary_digest.begin(), decryption_key_length, decryption_key_digest.begin());
-		}
-
-		Buffer hardcoded_pad(std::begin(HARDCODED_PDF_PAD), sizeof(HARDCODED_PDF_PAD));
-		Buffer key_digest(MD5_DIGEST_LENGTH);
-
-		MD5_Init(&ctx);
-		MD5_Update(&ctx, hardcoded_pad.data(), hardcoded_pad.std_size());
-		MD5_Update(&ctx, document_id.data(), document_id.std_size());
-		MD5_Final((unsigned char*) key_digest.data(), &ctx);
-
-		BufferPtr key = make_deferred_container<Buffer>(length_bytes);
-		compare_data = make_deferred_container<Buffer>(key_digest);
-
-		for (Buffer::value_type i = 0; i < 20; ++i) {
-			for (decltype(decryption_key_length) j = 0; j < decryption_key_length; ++j) {
-				key[j] = (decryption_key_digest[j] ^ i);
-			}
-
-			compare_data = EncryptionUtils::ComputeRC4(key, compare_data);
-		}
+		compare_data = CalculateDecryptionCompareDataV3(decryption_key_digest, document_id, key_length);
 	} else {
 		assert(key_length.GetIntegerValue() == 40 && "Key length is not 5 bytes for revision <= 3");
 		Buffer hardcoded_pad(std::begin(HARDCODED_PDF_PAD), sizeof(HARDCODED_PDF_PAD));
@@ -335,6 +366,116 @@ bool EncryptionUtils::CheckKey(
 	(void) input; (void) document_id; (void) owner_data;
 	(void) user_data; (void) permissions; (void) revision;
 	(void) key_length; (void) decryption_key;
+	throw NotSupportedException("This library was compiled without OpenSSL support");
+#endif
+
+}
+
+BufferPtr EncryptionUtils::CalculateDecryptionCompareDataV3(
+	BufferPtr decryption_key_digest,
+	const Buffer& document_id,
+	const syntax::IntegerObject& key_length) {
+
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+
+	auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(key_length.GetIntegerValue() / 8);
+	size_t decryption_key_length = std::min(length_bytes, decryption_key_digest->std_size());
+
+	Buffer temporary_digest(MD5_DIGEST_LENGTH);
+
+	for (int i = 0; i < 50; ++i) {
+
+		MD5_CTX ctx;
+		MD5_Init(&ctx);
+		MD5_Update(&ctx, decryption_key_digest->data(), decryption_key_digest->size());
+		MD5_Final((unsigned char*)temporary_digest.data(), &ctx);
+
+		std::copy_n(temporary_digest.begin(), decryption_key_length, decryption_key_digest.begin());
+	}
+
+	Buffer key_digest(MD5_DIGEST_LENGTH);
+
+	MD5_CTX ctx;
+	MD5_Init(&ctx);
+	MD5_Update(&ctx, HARDCODED_PDF_PAD, sizeof(HARDCODED_PDF_PAD));
+	MD5_Update(&ctx, document_id.data(), document_id.std_size());
+	MD5_Final((unsigned char*)key_digest.data(), &ctx);
+
+	BufferPtr key = make_deferred_container<Buffer>(length_bytes);
+	BufferPtr compare_data = make_deferred_container<Buffer>(key_digest);
+
+	for (Buffer::value_type i = 0; i < 20; ++i) {
+		for (decltype(decryption_key_length) j = 0; j < decryption_key_length; ++j) {
+			key[j] = (decryption_key_digest[j] ^ i);
+		}
+
+		compare_data = EncryptionUtils::ComputeRC4(key, compare_data);
+	}
+
+	return compare_data;
+
+#else
+	throw NotSupportedException("This library was compiled without OpenSSL support");
+#endif
+}
+
+BufferPtr EncryptionUtils::CalculateDecryptionKeyDigest(
+	const Buffer& input,
+	const Buffer& document_id,
+	const Buffer& owner_data,
+	const syntax::IntegerObject& permissions) {
+
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+
+	BufferPtr decryption_key_digest = make_deferred_container<Buffer>(MD5_DIGEST_LENGTH);
+
+	auto evp_md = EVP_md5();
+	auto evp_md_ctx = EVP_MD_CTX_new();
+
+	SCOPE_GUARD([evp_md_ctx]() { EVP_MD_CTX_free(evp_md_ctx); });
+
+	auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
+	if (init_result != 1) {
+		throw GeneralException("Could not initialize MD5 digest: " + std::to_string(init_result));
+	}
+
+	auto update_input_result = EVP_DigestUpdate(evp_md_ctx, input.data(), input.std_size());
+	if (update_input_result != 1) {
+		throw GeneralException("Could not update MD5 digest: " + std::to_string(update_input_result));
+	}
+
+	auto update_owner_result = EVP_DigestUpdate(evp_md_ctx, owner_data.data(), owner_data.std_size());
+	if (update_owner_result != 1) {
+		throw GeneralException("Could not update MD5 digest: " + std::to_string(update_owner_result));
+	}
+
+	auto permissions_value = permissions.GetIntegerValue();
+	int32_t permissions_raw = ValueConvertUtils::SafeConvert<int32_t>(permissions_value);
+	uint8_t permissions_array[sizeof(permissions_raw)];
+
+	for (size_t i = 0; i < sizeof(permissions_raw); ++i) {
+		permissions_array[i] = (permissions_raw >> (i * 8)) & 0xFF;
+	}
+
+	auto update_permissions_result = EVP_DigestUpdate(evp_md_ctx, permissions_array, sizeof(permissions_array));
+	if (update_permissions_result != 1) {
+		throw GeneralException("Could not update MD5 digest: " + std::to_string(update_permissions_result));
+	}
+
+	auto update_document_id_result = EVP_DigestUpdate(evp_md_ctx, document_id.data(), document_id.std_size());
+	if (update_document_id_result != 1) {
+		throw GeneralException("Could not update MD5 digest: " + std::to_string(update_document_id_result));
+	}
+
+	unsigned int final_size = 0;
+	auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)decryption_key_digest->data(), &final_size);
+	if (final_result != 1) {
+		throw GeneralException("Could not finalize MD5 digest: " + std::to_string(final_result));
+	}
+
+	return decryption_key_digest;
+
+#else
 	throw NotSupportedException("This library was compiled without OpenSSL support");
 #endif
 

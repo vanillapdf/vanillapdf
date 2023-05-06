@@ -56,6 +56,17 @@ public:
 		const syntax::IntegerObject& revision,
 		const syntax::IntegerObject& key_length,
 		Buffer& decryption_key);
+
+	static BufferPtr CalculateDecryptionKeyDigest(
+		const Buffer& input,
+		const Buffer& document_id,
+		const Buffer& owner_data,
+		const syntax::IntegerObject& permissions);
+
+	static BufferPtr CalculateDecryptionCompareDataV3(
+		BufferPtr decryption_key_digest,
+		const Buffer& document_id,
+		const syntax::IntegerObject& key_length);
 };
 
 } // syntax
