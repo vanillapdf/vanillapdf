@@ -1,5 +1,6 @@
 #include "precompiled.h"
 
+#include "syntax/files/file.h"
 #include "syntax/objects/dictionary_object.h"
 #include "syntax/utils/output_pointer.h"
 #include "syntax/exceptions/syntax_exceptions.h"
@@ -8,11 +9,21 @@
 
 #include <sstream>
 
+#define ACCESS_LOCK_GUARD(lock_name) \
+	lock_name->lock(); \
+	SCOPE_GUARD([this]() { lock_name->unlock(); });
+
 namespace vanillapdf {
 namespace syntax {
 
+DictionaryObject::DictionaryObject() {
+	m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+}
+
 DictionaryObject* DictionaryObject::Clone(void) const {
 	DictionaryObjectPtr result(pdf_new DictionaryObject(), false);
+
+	ACCESS_LOCK_GUARD(m_access_lock);
 
 	for (auto& item : _list) {
 		auto name = ObjectUtils::Clone<NameObjectPtr>(item.first);
@@ -25,8 +36,10 @@ DictionaryObject* DictionaryObject::Clone(void) const {
 }
 
 void DictionaryObject::SetFile(WeakReference<File> file) {
-	Object::SetFile(file);
 
+	ACCESS_LOCK_GUARD(m_access_lock);
+
+	Object::SetFile(file);
 	for (auto it = _list.begin(); it != _list.end(); ++it) {
 		auto item = it->second;
 		item->SetFile(file);
@@ -34,8 +47,9 @@ void DictionaryObject::SetFile(WeakReference<File> file) {
 }
 
 void DictionaryObject::SetInitialized(bool initialized) {
-	IModifyObservable::SetInitialized(initialized);
+	ACCESS_LOCK_GUARD(m_access_lock);
 
+	IModifyObservable::SetInitialized(initialized);
 	for (auto it = _list.begin(); it != _list.end(); ++it) {
 		auto item = it->second;
 		item->SetInitialized(initialized);
@@ -43,6 +57,8 @@ void DictionaryObject::SetInitialized(bool initialized) {
 }
 
 std::string DictionaryObject::ToString(void) const {
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	std::stringstream ss;
 	ss << "<<" << std::endl;
 	for (auto item : _list) {
@@ -54,6 +70,8 @@ std::string DictionaryObject::ToString(void) const {
 }
 
 void DictionaryObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	output << "<<";
 	bool first = true;
 	for (auto item : _list) {
@@ -68,6 +86,8 @@ void DictionaryObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 }
 
 void DictionaryObject::ToPdfStreamUpdateOffset(IOutputStreamPtr output) {
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	UpdateOffset(output);
 
 	// If the object contains attribute, that controls it's serialization
@@ -96,6 +116,9 @@ ContainableObjectPtr DictionaryObject::Find(const NameObject& name) const {
 }
 
 ContainableObjectPtr DictionaryObject::Find(const NameObjectPtr name) const {
+
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	auto result = _list.find(name);
 	if (result == _list.end()) {
 		throw GeneralException("Item with name " + name->ToString() + " was not found in dictionary");
@@ -110,6 +133,9 @@ bool DictionaryObject::TryFind(const NameObject& name, OutputContainableObjectPt
 }
 
 bool DictionaryObject::TryFind(const NameObjectPtr name, OutputContainableObjectPtr& result) const {
+
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	auto item = _list.find(name);
 	if (item == _list.end()) {
 		return false;
@@ -125,6 +151,9 @@ bool DictionaryObject::Remove(const NameObject& name) {
 }
 
 bool DictionaryObject::Remove(const NameObjectPtr name) {
+
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	auto found = _list.find(name);
 	if (found == _list.end()) {
 		return false;
@@ -153,6 +182,9 @@ void DictionaryObject::Insert(const NameObject& name, ContainableObjectPtr value
 }
 
 void DictionaryObject::Insert(NameObjectPtr name, ContainableObjectPtr value, bool overwrite) {
+
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	auto found = _list.find(name);
 
 	if (found != _list.end()) {
@@ -185,10 +217,14 @@ bool DictionaryObject::Contains(const NameObject& name) const {
 }
 
 bool DictionaryObject::Contains(const NameObjectPtr name) const {
+
+	ACCESS_LOCK_GUARD(m_access_lock);
 	return (_list.find(name) != _list.end());
 }
 
 DictionaryObject::~DictionaryObject() {
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	for (auto item : _list) {
 
 		// The trick here is that assignment
@@ -214,6 +250,8 @@ void DictionaryObject::OnChanged() {
 }
 
 size_t DictionaryObject::Hash() const {
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	if (m_hash_cache != 0) {
 		return m_hash_cache;
 	}
@@ -229,6 +267,8 @@ size_t DictionaryObject::Hash() const {
 }
 
 bool DictionaryObject::Equals(ObjectPtr other) const {
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	if (!ObjectUtils::IsType<DictionaryObjectPtr>(other)) {
 		return false;
 	}
@@ -267,6 +307,7 @@ bool DictionaryObject::Equals(ObjectPtr other) const {
 }
 
 void DictionaryObject::Merge(const DictionaryObject& other) {
+	ACCESS_LOCK_GUARD(m_access_lock);
 
 	// Simple insert overriding conflicting entries
 	for (auto item : other) {
@@ -275,10 +316,12 @@ void DictionaryObject::Merge(const DictionaryObject& other) {
 }
 
 void DictionaryObject::Clear() {
+	ACCESS_LOCK_GUARD(m_access_lock);
 	_list.clear();
 }
 
 DictionaryObject::size_type DictionaryObject::GetSize() const {
+	ACCESS_LOCK_GUARD(m_access_lock);
 	return _list.size();
 }
 
