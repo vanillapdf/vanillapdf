@@ -81,7 +81,7 @@ extern "C"
 
 	/**
 	* \brief
-	* Get filename of the current file on physical filesystem
+	* Get ASCII representation the name of the current file on the physical filesystem
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION File_GetFilename(FileHandle* handle, BufferHandle** result);
 
