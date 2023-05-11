@@ -26,4 +26,8 @@ VANILLAPDF_API const error_type VANILLAPDF_ERROR_PARSE_EXCEPTION		= static_cast<
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_INVALID_PASSWORD		= static_cast<error_type>(vanillapdf::ExceptionBase::Type::InvalidPassword);
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_DUPLICATE_KEY			= static_cast<error_type>(vanillapdf::ExceptionBase::Type::DuplicateKey);
 
+// semantic
+VANILLAPDF_API const error_type VANILLAPDF_ERROR_OPTIONAL_ENTRY_MISSING = static_cast<error_type>(vanillapdf::ExceptionBase::Type::OptionalEntryMissing);
+VANILLAPDF_API const error_type VANILLAPDF_ERROR_SEMANTIC_CONTEXT = static_cast<error_type>(vanillapdf::ExceptionBase::Type::SemanticContext);
+
 // semantic errors

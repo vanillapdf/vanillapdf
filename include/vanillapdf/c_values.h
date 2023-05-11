@@ -154,6 +154,18 @@ extern "C"
 
 	// semantic errors
 
+	/**
+	* \brief
+	* The requested object is empty or missing.
+	*/
+	VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_OPTIONAL_ENTRY_MISSING;
+
+	/**
+	* \brief
+	* The underlying type of the object was different than expected.
+	*/
+	VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_SEMANTIC_CONTEXT;
+
 	/** @} */ /* group_error_types */
 
 #ifdef __cplusplus
