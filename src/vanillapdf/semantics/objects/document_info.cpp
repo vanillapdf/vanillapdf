@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "utils/misc_utils.h"
+#include "syntax/files/file.h"
 
 #include "semantics/objects/document_info.h"
 #include "semantics/objects/date.h"
@@ -72,9 +73,18 @@ bool DocumentInfo::CreationDate(OutputDatePtr& result) const {
 		return false;
 	}
 
-	auto date_string = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::CreationDate);
-	result = make_deferred<Date>(date_string);
-	return true;
+	try {
+		auto date_string = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::CreationDate);
+		result = make_deferred<Date>(date_string);
+		return true;
+	}
+	catch (GeneralException& ex) {
+		auto file = _obj->GetFile();
+		auto locked_file = file.GetReference();
+		auto filename = locked_file->GetFilenameString();
+		LOG_ERROR(filename) << "Error parsing datetime: " << ex.what();
+		return false;
+	}
 }
 
 bool DocumentInfo::ModificationDate(OutputDatePtr& result) const {
