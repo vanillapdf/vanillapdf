@@ -737,7 +737,13 @@ ObjectPtr File::GetIndirectObjectInternal(
 		case XrefEntryBase::Usage::Used:
 		{
 			auto used = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(item);
-			return used->GetReference();
+			auto result = used->GetReference();
+
+			// The object numbers could have changed accoring to parsing
+			assert(item->GetObjectNumber() == obj_number && "Could not find correct xref entry");
+			assert(item->GetGenerationNumber() == gen_number && "Could not find correct xref entry");
+
+			return result;
 		}
 		case XrefEntryBase::Usage::Compressed:
 		{

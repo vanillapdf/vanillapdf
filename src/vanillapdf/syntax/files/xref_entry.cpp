@@ -180,8 +180,32 @@ void XrefUsedEntry::Initialize(void) {
 	types::big_uint obj_number = 0;
 	types::ushort gen_number = 0;
 	auto object = parser.ReadIndirectObject(_offset, obj_number, gen_number);
-	assert(_obj_number == obj_number);
-	assert(_gen_number == gen_number);
+
+	if (_obj_number != obj_number) {
+		LOG_WARNING(log_scope)
+			<< "Object number in the XREF "
+			<< std::to_string(_obj_number)
+			<< " does not match the actual object "
+			<< std::to_string(obj_number)
+			<< " at offset "
+			<< std::to_string(_offset)
+			<< ". Taking preference on the object";
+
+		_obj_number = obj_number;
+	}
+
+	if (_gen_number != _gen_number) {
+		LOG_WARNING(log_scope)
+			<< "Generation number in the XREF "
+			<< std::to_string(_gen_number)
+			<< " does not match the actual object "
+			<< std::to_string(gen_number)
+			<< " at offset "
+			<< std::to_string(_offset)
+			<< ". Taking preference on the object";
+
+		_gen_number = _gen_number;
+	}
 
 	SetReference(object);
 	SetInitialized();
