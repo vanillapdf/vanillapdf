@@ -14,6 +14,11 @@ XrefEntryBase::XrefEntryBase(types::big_uint obj_number, types::ushort gen_numbe
 	: _obj_number(obj_number), _gen_number(gen_number) {
 }
 
+XrefUsedEntryBase::XrefUsedEntryBase(types::big_uint obj_number, types::ushort gen_number)
+	: XrefEntryBase(obj_number, gen_number) {
+	m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+}
+
 XrefFreeEntry::XrefFreeEntry(types::big_uint obj_number, types::ushort gen_number)
 	: XrefFreeEntry(obj_number, gen_number, 0) {
 }
@@ -76,6 +81,8 @@ bool XrefEntryBase::operator<(const XrefEntryBase& other) const {
 }
 
 void XrefUsedEntryBase::SetReference(ObjectPtr ref) {
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	auto weak_ref_xref = ref->GetXrefEntry();
 
 	if (weak_ref_xref.IsActive() && !weak_ref_xref.IsEmpty()) {
@@ -120,6 +127,8 @@ void XrefUsedEntryBase::ReleaseReference(bool check_object_xref) {
 		return;
 	}
 
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	bool unsubscribed = _reference->Unsubscribe(this);
 	assert(unsubscribed && "Could not unsubscribe"); UNUSED(unsubscribed);
 
@@ -148,6 +157,12 @@ void XrefUsedEntry::Initialize(void) {
 
 	if (_offset == constant::BAD_OFFSET) {
 		throw GeneralException("Xref entry data offset is not initialized");
+	}
+
+	ACCESS_LOCK_GUARD(m_access_lock);
+
+	if (IsInitialized()) {
+		return;
 	}
 
 	auto locked_file = _file.GetReference();
@@ -218,6 +233,12 @@ void XrefCompressedEntry::Initialize(void) {
 
 	if (!_file.IsActive()) {
 		throw FileDisposedException();
+	}
+
+	ACCESS_LOCK_GUARD(m_access_lock);
+
+	if (IsInitialized()) {
+		return;
 	}
 
 	auto locked_file = _file.GetReference();

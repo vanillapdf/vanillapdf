@@ -96,6 +96,10 @@ using std::make_unique;
 #define SCOPE_GUARD_CAPTURE_REFERENCES(deleter_function_code) auto TOKENPASTE2(__scope_guard_, __LINE__, __) = ScopeGuardFactory::CreateGuard([&](){ deleter_function_code; });
 #define SCOPE_GUARD_CAPTURE_VALUES(deleter_function_code) auto TOKENPASTE2(__scope_guard_, __LINE__, __) = ScopeGuardFactory::CreateGuard([=](){ deleter_function_code; });
 
+#define ACCESS_LOCK_GUARD(lock_name) \
+	lock_name->lock(); \
+	SCOPE_GUARD([this]() { lock_name->unlock(); });
+
 } // vanillapdf
 
 #endif /* _UTIL_H */

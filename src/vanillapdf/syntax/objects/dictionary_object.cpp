@@ -9,10 +9,6 @@
 
 #include <sstream>
 
-#define ACCESS_LOCK_GUARD(lock_name) \
-	lock_name->lock(); \
-	SCOPE_GUARD([this]() { lock_name->unlock(); });
-
 namespace vanillapdf {
 namespace syntax {
 
