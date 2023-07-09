@@ -561,6 +561,11 @@ find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(JPEG REQUIRED)
 
+if (COMPILE_SKIA)
+	find_package(unofficial-skia CONFIG REQUIRED)
+	set(VANILLAPDF_LIBS unofficial::skia::skia ${VANILLAPDF_LIBS})
+endif (COMPILE_SKIA)
+
 if (OPENSSL_FOUND)
 	include_directories(${OPENSSL_INCLUDE_DIR})
 	set(VANILLAPDF_LIBS OpenSSL::Crypto ${VANILLAPDF_LIBS})
