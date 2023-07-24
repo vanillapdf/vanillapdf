@@ -178,7 +178,7 @@ void LicenseInfo::SetLicense(const Buffer& data) {
 	}
 
 	// None of the known license format matches
-	throw GeneralException("Unknown license version");
+	throw GeneralException("Unknown license version: " + version_string);
 }
 
 void LicenseInfo::SetLicense(const char * filename) {
