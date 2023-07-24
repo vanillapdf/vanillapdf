@@ -490,7 +490,7 @@ XrefEntryBasePtr Parser::ReadTableEntry(types::big_uint objNumber) {
 
 		auto locked_file = _file.GetReference();
 		auto filename = locked_file->GetFilenameString();
-		LOG_WARNING(filename) << "Invalid object generation number " << gen_number << ", converting";
+		LOG_WARNING(filename) << "Invalid object generation number " << std::dec << gen_number << ", converting";
 
 		gen_number = constant::MAX_GENERATION_NUMBER;
 	}
