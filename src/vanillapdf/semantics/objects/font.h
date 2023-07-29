@@ -47,6 +47,9 @@ public:
 	//syntax::ObjectPtr Encoding() const;
 	//syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> DescendantFonts() const;
 	bool ToUnicode(OuputUnicodeCharacterMapPtr& result) const;
+
+private:
+	mutable OuputUnicodeCharacterMapPtr m_character_map;
 };
 
 class Type1Font : public FontBase {

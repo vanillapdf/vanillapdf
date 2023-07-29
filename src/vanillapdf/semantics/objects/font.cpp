@@ -99,12 +99,18 @@ FontBase* FontBase::Create(syntax::DictionaryObjectPtr root) {
 }
 
 bool Type0Font::ToUnicode(OuputUnicodeCharacterMapPtr& result) const {
+	if (!m_character_map.empty()) {
+		result = m_character_map;
+		return true;
+	}
+
 	if (!_obj->Contains(constant::Name::ToUnicode)) {
 		return false;
 	}
 
 	auto stream = _obj->FindAs<syntax::StreamObjectPtr>(constant::Name::ToUnicode);
-	result = make_deferred<UnicodeCharacterMap>(stream);
+	m_character_map = make_deferred<UnicodeCharacterMap>(stream);
+	result = m_character_map;
 	return true;
 }
 
