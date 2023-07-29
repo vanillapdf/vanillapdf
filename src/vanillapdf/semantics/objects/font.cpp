@@ -38,13 +38,13 @@ FontBase* FontBase::Create(syntax::DictionaryObjectPtr root) {
 	if (root->Contains(constant::Name::Type)) {
 		syntax::ObjectPtr type_obj = root->Find(constant::Name::Type);
 		if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(type_obj)) {
-			throw GeneralException("Invalid font type");
+			throw GeneralException("Invalid font type object");
 		}
 
-		syntax::NameObjectPtr type = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(type_obj);
+		syntax::NameObjectPtr font_type = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(type_obj);
 
-		if (type != constant::Name::Font) {
-			throw GeneralException("Invalid font type");
+		if (font_type != constant::Name::Font) {
+			throw GeneralException("Invalid font type: " + font_type->ToString());
 		}
 	}
 
@@ -55,7 +55,7 @@ FontBase* FontBase::Create(syntax::DictionaryObjectPtr root) {
 	syntax::ObjectPtr subtype_obj = root->Find(constant::Name::Subtype);
 
 	if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(subtype_obj)) {
-		throw GeneralException("Invalid font subtype");
+		throw GeneralException("Invalid font subtype object");
 	}
 
 	syntax::NameObjectPtr subtype = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(subtype_obj);
@@ -95,7 +95,7 @@ FontBase* FontBase::Create(syntax::DictionaryObjectPtr root) {
 		return result.release();
 	}
 
-	throw GeneralException("Unknown font subtype");
+	throw GeneralException("Unknown font subtype: " + subtype->ToString());
 }
 
 bool Type0Font::ToUnicode(OuputUnicodeCharacterMapPtr& result) const {
