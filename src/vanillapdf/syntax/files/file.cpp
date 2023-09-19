@@ -685,7 +685,13 @@ types::stream_offset File::GetLastXrefOffset(types::stream_size file_size) {
 	//InputReverseStreamPtr raw_reversed = make_deferred<InputReverseStream>(_input, file_size);
 	//auto reverse_stream = ReverseParser(raw_reversed);
 
-	types::stream_size to_read = constant::BUFFER_SIZE;
+	// TODO:
+	// 16 kilobytes seems to be reasonable size from the end of the document.
+	// There are some documents explicitly testing 4 kilobytes.
+	// For the time being it is sufficient, however a proper solution is desired.
+	// The InputReverseStream had some issues on MAC platform, so it was disabled.
+	types::stream_size to_read = 16 * 1024;
+
 	if (file_size < to_read) {
 		to_read = file_size;
 	}
