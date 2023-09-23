@@ -669,6 +669,20 @@ XrefStreamPtr Parser::ParseXrefStream(
 		// NOT stored in the final document.
 
 		if (!chain->Contains(stream_obj_number, stream_gen_number)) {
+
+			// This is let's say a standard procedure, however not well defined in the standard.
+			// We are creating a virtual table to keep additional information and it is often
+			// not handled properly throughout the source code as it was added later in the development.
+
+			auto filename = locked_file->GetFilenameString();
+
+			LOG_INFO(filename) <<
+				"Could not find object " <<
+				std::to_string(stream_obj_number) <<
+				" " <<
+				std::to_string(stream_gen_number) <<
+				" in the xref chain, creating a virtual table";
+
 			XrefUsedEntryPtr entry = make_deferred<XrefUsedEntry>(stream_obj_number, stream_gen_number);
 			entry->SetFile(_file);
 
