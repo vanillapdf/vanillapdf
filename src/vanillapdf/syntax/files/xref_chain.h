@@ -22,6 +22,9 @@ public:
 	typedef typename list_type::const_reference const_reference;
 	typedef typename list_type::difference_type difference_type;
 
+	typedef typename list_type::reverse_iterator reverse_iterator;
+	typedef typename list_type::const_reverse_iterator const_reverse_iterator;
+
 public:
 	class Iterator : public BaseIterator<list_type::const_iterator>, public IWeakReferenceable<Iterator> {
 	public:
@@ -48,6 +51,12 @@ public:
 
 	iterator end(void) { return _list.end(); }
 	const_iterator end(void) const { return _list.end(); }
+
+	reverse_iterator rbegin() { return _list.rbegin(); }
+	const_reverse_iterator rbegin() const { return _list.rbegin(); }
+
+	reverse_iterator rend() { return _list.rend(); }
+	const_reverse_iterator rend() const { return _list.rend(); }
 
 	IteratorPtr Begin() const { return make_deferred_iterator<Iterator>(_list.begin(), _list.end()); }
 	IteratorPtr End(void) const { return make_deferred_iterator<Iterator>(_list.end(), _list.end()); }

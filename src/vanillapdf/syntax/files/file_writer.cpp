@@ -1857,8 +1857,17 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
 		}
 	}
 
+	// 23.9.2023
+	// We are using rbegin instead of begin due to ordering of the xref tables.
+	// It looks like that the order should be overriden meaning that the first one is the least relevant.
+	// The recent VirtualXrefTable mechanism actually made this behavior more visible.
+
+	// Problematic file s2010135x20500290.pdf contained two xref entries - one xref stream and one virtual table.
+	// The xref stream contained the item 657 marked as free entry and it was incorrectly overriden.
+	// Changing the order does pass all of the test cases and makes more sense, than making other exceptions.
+
 	// Merge all xref entries into freshly created one
-	for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
+	for (auto iterator = xref->rbegin(); iterator != xref->rend(); ++iterator) {
 		auto current = *iterator;
 
 		// All conflicts are overwritten
