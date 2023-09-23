@@ -209,7 +209,7 @@ void XrefUsedEntry::Initialize(void) {
 		_obj_number = obj_number;
 	}
 
-	if (_gen_number != _gen_number) {
+	if (_gen_number != gen_number) {
 		LOG_WARNING(log_scope)
 			<< "Generation number in the XREF "
 			<< std::to_string(_gen_number)
@@ -219,7 +219,7 @@ void XrefUsedEntry::Initialize(void) {
 			<< std::to_string(_offset)
 			<< ". Taking preference on the object";
 
-		_gen_number = _gen_number;
+		_gen_number = gen_number;
 	}
 
 	SetReference(object);
