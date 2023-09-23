@@ -119,39 +119,59 @@ bool Object::HasOwner() const noexcept {
 }
 
 types::big_uint Object::GetObjectNumber() const {
-	assert(IsIndirect() || HasOwner());
-	assert(!(IsIndirect() && HasOwner()));
 
-	if (IsIndirect()) {
+	bool is_indirect = IsIndirect();
+	bool has_owner = HasOwner();
+
+	assert(is_indirect || has_owner);
+	assert(!(is_indirect && has_owner));
+
+	if (is_indirect) {
 		XrefEntryBasePtr entry = m_entry.GetReference();
 		return entry->GetObjectNumber();
+	}
+
+	if (has_owner) {
+		throw GeneralException("Object does not an indirect object, but a composite of another object");
 	}
 
 	throw GeneralException("Object does not have assigned object number");
 }
 
 types::ushort Object::GetGenerationNumber() const {
-	assert(IsIndirect() || HasOwner());
-	assert(!(IsIndirect() && HasOwner()));
 
-	if (IsIndirect()) {
+	bool is_indirect = IsIndirect();
+	bool has_owner = HasOwner();
+
+	assert(is_indirect || has_owner);
+	assert(!(is_indirect && has_owner));
+
+	if (is_indirect) {
 		XrefEntryBasePtr entry = m_entry.GetReference();
 		return entry->GetGenerationNumber();
+	}
+
+	if (has_owner) {
+		throw GeneralException("Object does not an indirect object, but a composite of another object");
 	}
 
 	throw GeneralException("Object does not have assigned generation number");
 }
 
 types::big_uint Object::GetRootObjectNumber() const {
-	assert(IsIndirect() || HasOwner());
-	assert(!(IsIndirect() && HasOwner()));
 
-	if (IsIndirect()) {
+	bool is_indirect = IsIndirect();
+	bool has_owner = HasOwner();
+
+	assert(is_indirect || has_owner);
+	assert(!(is_indirect && has_owner));
+
+	if (is_indirect) {
 		XrefEntryBasePtr entry = m_entry.GetReference();
 		return entry->GetObjectNumber();
 	}
 
-	if (HasOwner()) {
+	if (has_owner) {
 		ObjectPtr owner = m_owner.GetReference();
 		return owner->GetRootObjectNumber();
 	}
@@ -160,15 +180,19 @@ types::big_uint Object::GetRootObjectNumber() const {
 }
 
 types::ushort Object::GetRootGenerationNumber() const {
-	assert(IsIndirect() || HasOwner());
-	assert(!(IsIndirect() && HasOwner()));
 
-	if (IsIndirect()) {
+	bool is_indirect = IsIndirect();
+	bool has_owner = HasOwner();
+
+	assert(is_indirect || has_owner);
+	assert(!(is_indirect && has_owner));
+
+	if (is_indirect) {
 		XrefEntryBasePtr entry = m_entry.GetReference();
 		return entry->GetGenerationNumber();
 	}
 
-	if (HasOwner()) {
+	if (has_owner) {
 		ObjectPtr owner = m_owner.GetReference();
 		return owner->GetRootGenerationNumber();
 	}
