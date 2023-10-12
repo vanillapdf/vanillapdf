@@ -35,7 +35,14 @@ public:
 };
 
 template <typename T>
-class ArrayObjectIterator : public virtual IUnknown, public std::iterator<std::input_iterator_tag, T> {
+class ArrayObjectIterator : public IUnknown {
+public:
+	using iterator_category = std::input_iterator_tag;
+	using value_type = T;
+	using difference_type = ptrdiff_t;
+	using pointer = T*;
+	using reference = T&;
+
 public:
 	ArrayObjectIterator(std::function<T(const ContainableObjectPtr& obj)> conversion);
 	ArrayObjectIterator(typename MixedArrayObject::const_iterator it, const std::function<T(const ContainableObjectPtr& obj)>& conversion);

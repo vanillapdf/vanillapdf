@@ -6,7 +6,14 @@
 namespace vanillapdf {
 
 template <typename T>
-class BaseIterator : public virtual IUnknown, public std::iterator<std::input_iterator_tag, T> {
+class BaseIterator : public virtual IUnknown {
+public:
+	using iterator_category = std::input_iterator_tag;
+	using value_type = T;
+	using difference_type = ptrdiff_t;
+	using pointer = T*;
+	using reference = T&;
+
 public:
 	BaseIterator() = default;
 	explicit BaseIterator(T current, T invalid);

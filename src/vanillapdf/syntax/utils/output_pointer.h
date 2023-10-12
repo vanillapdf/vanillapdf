@@ -56,7 +56,7 @@ public:
 	T& operator->() { return *GetValue(); }
 	const T& operator->() const { return *GetValue(); }
 
-	auto AddRefGet(void) -> typename std::result_of<decltype(&T::AddRefGet)(T)>::type {
+	auto AddRefGet(void) {
 		auto value = GetValue();
 		return value->AddRefGet();
 	}
