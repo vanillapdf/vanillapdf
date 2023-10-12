@@ -517,8 +517,8 @@ if(MSVC)
 	set_property(TARGET vanillapdf APPEND_STRING PROPERTY LINK_FLAGS "/NATVIS:public.natvis" )
 endif(MSVC)
 
-# Set C++ standard to be 17
-set_property(TARGET vanillapdf PROPERTY CXX_STANDARD 17)
+# Set C++ standard to be 20
+set_property(TARGET vanillapdf PROPERTY CXX_STANDARD 20)
 set_property(TARGET vanillapdf PROPERTY CXX_STANDARD_REQUIRED ON)
 
 # Specify that library should export functions
