@@ -43,11 +43,11 @@ IInputStreamPtr Buffer::ToInputStream(void) const {
 }
 
 bool Buffer::Equals(const Buffer& other) const {
-	return std::operator==(m_data, other.m_data);
+	return (m_data == other.m_data);
 }
 
 bool Buffer::LessThan(const Buffer& other) const {
-	return std::operator<(m_data, other.m_data);
+	return (m_data < other.m_data);
 }
 
 bool Buffer::ValueEqualLessThan(const Buffer& other) const {
