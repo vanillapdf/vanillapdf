@@ -36,7 +36,7 @@ void Errors::SetLastErrorMessage(const char * value) noexcept {
 }
 
 void Errors::SetLastErrorMessage(const char * value, size_type length) noexcept {
-	auto limited_length = std::min<size_type>(length, constant::MAX_MESSAGE_SIZE);
+	auto limited_length = std::min<size_type>(length, constant::MAX_MESSAGE_SIZE - 1);
 
 	std::memcpy(m_message, value, limited_length);
 	m_message[limited_length] = '\0';
