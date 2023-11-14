@@ -41,26 +41,6 @@ void print_text(const char * const format, ...) {
 	va_end(argument_list);
 }
 
-error_type process_utils_conversions() {
-	BufferHandle* buffer_handle = NULL;
-	IUnknownHandle *unknown_buffer_handle = NULL;
-
-	BufferArrayHandle* buffer_array_handle = NULL;
-	IUnknownHandle *unknown_buffer_array_handle = NULL;
-
-	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Create(&buffer_handle));
-	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_ToUnknown(buffer_handle, &unknown_buffer_handle));
-	RETURN_ERROR_IF_NOT_SUCCESS(IUnknown_Release(unknown_buffer_handle));
-	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(buffer_handle));
-
-	RETURN_ERROR_IF_NOT_SUCCESS(BufferArray_Create(&buffer_array_handle));
-	RETURN_ERROR_IF_NOT_SUCCESS(BufferArray_ToUnknown(buffer_array_handle, &unknown_buffer_array_handle));
-	RETURN_ERROR_IF_NOT_SUCCESS(IUnknown_Release(unknown_buffer_array_handle));
-	RETURN_ERROR_IF_NOT_SUCCESS(BufferArray_Release(buffer_array_handle));
-
-	return VANILLAPDF_TEST_ERROR_SUCCESS;
-}
-
 //! [Print buffer]
 error_type process_buffer(BufferHandle* buffer, int nested) {
 	string_type data = NULL;

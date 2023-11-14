@@ -20,6 +20,34 @@ TEST(Buffer, NullCheck) {
 	ASSERT_EQ(Buffer_Release(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
+TEST(Buffer, Conversion) {
+	BufferHandle* buffer_handle = nullptr;
+	IUnknownHandle* unknown_buffer_handle = nullptr;
+
+	ASSERT_EQ(Buffer_Create(&buffer_handle), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(buffer_handle, nullptr);
+
+	ASSERT_EQ(Buffer_ToUnknown(buffer_handle, &unknown_buffer_handle), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(unknown_buffer_handle, nullptr);
+
+	ASSERT_EQ(IUnknown_Release(unknown_buffer_handle), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(Buffer_Release(buffer_handle), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(BufferArray, Conversion) {
+	BufferArrayHandle* buffer_array_handle = nullptr;
+	IUnknownHandle* unknown_buffer_array_handle = nullptr;
+
+	ASSERT_EQ(BufferArray_Create(&buffer_array_handle), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(buffer_array_handle, nullptr);
+
+	ASSERT_EQ(BufferArray_ToUnknown(buffer_array_handle, &unknown_buffer_array_handle), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(unknown_buffer_array_handle, nullptr);
+
+	ASSERT_EQ(IUnknown_Release(unknown_buffer_array_handle), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(BufferArray_Release(buffer_array_handle), VANILLAPDF_ERROR_SUCCESS);
+}
+
 TEST(HexadecimalStringObject, GetValue) {
 
 	string_type buffer_data = nullptr;
