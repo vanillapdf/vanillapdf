@@ -130,7 +130,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_WriteBuffer(Input
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_Flush(InputOutputStreamHandle* handle) {
-	IOutputStream* stream = reinterpret_cast<IOutputStream*>(handle);
+	IInputOutputStream* stream = reinterpret_cast<IInputOutputStream*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(stream);
 
 	try {

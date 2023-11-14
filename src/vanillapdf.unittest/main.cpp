@@ -228,6 +228,17 @@ TEST(File, XrefAllocation) {
 	ASSERT_EQ(InputOutputStream_Release(input_output_stream), VANILLAPDF_ERROR_SUCCESS);
 }
 
+TEST(InputOutputStream, Flush) {
+
+	InputOutputStreamHandle* input_output_stream = NULL;
+
+	ASSERT_EQ(InputOutputStream_CreateFromMemory(&input_output_stream), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(input_output_stream, nullptr);
+
+	ASSERT_EQ(InputOutputStream_Flush(input_output_stream), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(InputOutputStream_Release(input_output_stream), VANILLAPDF_ERROR_SUCCESS);
+}
+
 int main(int argc, char *argv[]) {
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
