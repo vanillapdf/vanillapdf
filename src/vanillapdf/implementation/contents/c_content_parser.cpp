@@ -24,8 +24,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentParser_Create(FileHandle* so
 		*result = reinterpret_cast<ContentParserHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
-
-	return VANILLAPDF_ERROR_SUCCESS;
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentParser_ReadInstructionCollection(ContentParserHandle* handle, ContentInstructionCollectionHandle** result) {
