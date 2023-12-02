@@ -281,31 +281,24 @@ error_type process_content_instruction(ContentInstructionHandle* obj, int nested
 }
 
 error_type process_page_contents(PageContentsHandle* obj, int nested) {
-
-	ContentInstructionCollectionHandle* content_instruction_collection = NULL;
-	ContentInstructionCollectionIteratorHandle* content_instruction_collection_iterator = NULL;
-
-	boolean_type is_valid = VANILLAPDF_RV_FALSE;
+	size_type i = 0;
+	size_type size = 0;
 
 	print_spaces(nested);
 	print_text("Contents begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(PageContents_GetInstructionCollection(obj, &content_instruction_collection));
-	RETURN_ERROR_IF_NOT_SUCCESS(ContentInstructionCollection_GetIterator(content_instruction_collection, &content_instruction_collection_iterator));
+	RETURN_ERROR_IF_NOT_SUCCESS(PageContents_GetInstructionsSize(obj, &size));
 
-	while (VANILLAPDF_ERROR_SUCCESS == ContentInstructionCollectionIterator_IsValid(content_instruction_collection_iterator, &is_valid)
-		&& VANILLAPDF_RV_TRUE == is_valid) {
+	print_spaces(nested + 1);
+	unsigned long long converted_size = size;
+	print_text("Size: %llu\n", converted_size);
+
+	for (i = 0; i < size; ++i) {
 		ContentInstructionHandle* instruction = NULL;
-
-		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstructionCollectionIterator_GetValue(content_instruction_collection_iterator, &instruction));
+		RETURN_ERROR_IF_NOT_SUCCESS(PageContents_GetInstructionAt(obj, i, &instruction));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_content_instruction(instruction, nested + 1));
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_Release(instruction));
-
-		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstructionCollectionIterator_Next(content_instruction_collection_iterator));
 	}
-
-	RETURN_ERROR_IF_NOT_SUCCESS(ContentInstructionCollectionIterator_Release(content_instruction_collection_iterator));
-	RETURN_ERROR_IF_NOT_SUCCESS(ContentInstructionCollection_Release(content_instruction_collection));
 
 	print_spaces(nested);
 	print_text("Contents end\n");

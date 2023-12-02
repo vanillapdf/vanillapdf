@@ -25,7 +25,7 @@ public:
 
 class BaseInstructionCollection : public IModifyObserver, public IModifyObservable {
 public:
-	using data_type = std::list<InstructionBasePtr>;
+	using data_type = std::vector<InstructionBasePtr>;
 
 public:
 	using value_type = data_type::value_type;
@@ -71,6 +71,8 @@ public:
 public:
 	// stl compatibility
 	bool empty(void) const noexcept { return m_data.empty(); }
+	reference at(types::size_type pos) { return m_data.at(pos); }
+	const_reference at(size_type pos) const { return m_data.at(pos); }
 	size_type size(void) const noexcept { return m_data.size(); }
 	iterator begin(void) noexcept { return m_data.begin(); }
 	const_iterator begin(void) const noexcept { return m_data.begin(); }
@@ -80,6 +82,8 @@ public:
 	const_reference front(void) const { return m_data.front(); }
 	reference back(void) { return m_data.back(); }
 	const_reference back(void) const { return m_data.back(); }
+	reference operator[](size_type pos) { return m_data[pos]; }
+	const_reference operator[](size_type pos) const { return m_data[pos]; }
 
 	template <class InputIterator>
 	void assign(InputIterator first, InputIterator last) {
@@ -100,6 +104,12 @@ public:
 			(*first)->Subscribe(this);
 		}
 
+		OnChanged();
+	}
+
+	// Modifying operations
+	void reserve(size_type count) {
+		m_data.reserve(count);
 		OnChanged();
 	}
 

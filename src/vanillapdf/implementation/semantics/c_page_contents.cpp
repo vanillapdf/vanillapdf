@@ -9,17 +9,30 @@
 using namespace vanillapdf;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageContents_GetInstructionCollection(PageContentsHandle* handle, ContentInstructionCollectionHandle** result) {
-
+VANILLAPDF_API error_type CALLING_CONVENTION PageContents_GetInstructionsSize(PageContentsHandle* handle, size_type* result)
+{
 	PageContents* obj = reinterpret_cast<PageContents*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
 	try
 	{
-		auto instructions = obj->GetInstructions();
-		auto ptr = instructions.AddRefGet();
-		*result = reinterpret_cast<ContentInstructionCollectionHandle*>(ptr);
+		*result = obj->GetInstructionsSize();
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageContents_GetInstructionAt(PageContentsHandle* handle, size_type at, ContentInstructionHandle** result)
+{
+	PageContents* obj = reinterpret_cast<PageContents*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto instruction = obj->GetInstructionAt(at);
+		auto base = instruction.AddRefGet();
+		*result = reinterpret_cast<ContentInstructionHandle*>(base);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }

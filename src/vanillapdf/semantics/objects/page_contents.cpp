@@ -100,7 +100,7 @@ bool PageContents::RecalculateStreamData() {
 	return true;
 }
 
-BaseInstructionCollectionPtr PageContents::GetInstructions(void) const {
+BaseInstructionCollectionPtr PageContents::Instructions(void) const {
 	if (m_instructions->IsInitialized()) {
 		return m_instructions;
 	}
@@ -133,10 +133,27 @@ BaseInstructionCollectionPtr PageContents::GetInstructions(void) const {
 	contents::ContentStreamParser parser(_obj->GetFile(), input_stream);
 	auto instructions = parser.ReadInstructions();
 
-	m_instructions->assign(instructions.begin(), instructions.end());
+	m_instructions->reserve(instructions->size());
+	m_instructions->insert(m_instructions.end(), instructions.begin(), instructions.end());
 	m_instructions->SetInitialized();
 
 	return m_instructions;
+}
+
+types::size_type PageContents::GetInstructionsSize(void) const {
+	if (!m_instructions->IsInitialized()) {
+		Instructions();
+	}
+
+	return m_instructions->size();
+}
+
+InstructionBasePtr PageContents::GetInstructionAt(types::size_type at) const {
+	if (!m_instructions->IsInitialized()) {
+		Instructions();
+	}
+
+	return m_instructions->at(at);
 }
 
 } // semantics
