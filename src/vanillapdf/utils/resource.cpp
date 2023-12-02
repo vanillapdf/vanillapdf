@@ -40,11 +40,9 @@ BufferPtr Resource::Load(ResourceID id) {
 			return make_deferred_container<Buffer>(WATERMARK_IMAGE, sizeof(WATERMARK_IMAGE));
 		case ResourceID::SERIAL_BLACKLIST:
 			return make_deferred_container<Buffer>(SERIAL_BLACKLIST, sizeof(SERIAL_BLACKLIST));
-		default:
-			throw GeneralException("Trying to access undefined resource ID");
 	}
 
-	throw GeneralException("Resource was not found");
+	throw GeneralException("Undefined resource ID: " + std::to_string(static_cast<int>(id)));
 }
 
 } // vanillapdf
