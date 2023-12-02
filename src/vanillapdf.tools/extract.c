@@ -264,15 +264,22 @@ error_type process_file(FileHandle* file) {
 }
 
 error_type process_page_contents(PageContentsHandle* page_contents, size_type page_number) {
-	size_type i = 0;
-	size_type contents_size = 0;
+
+	unsigned long long current_object_i = 0;
 	unsigned long long page_number_converted = page_number;
 
-	RETURN_ERROR_IF_NOT_SUCCESS(PageContents_GetInstructionsSize(page_contents, &contents_size));
+	ContentInstructionCollectionHandle* content_instruction_collection = NULL;
+	ContentInstructionCollectionIteratorHandle* content_instruction_collection_iterator = NULL;
 
-	for (i = 0; i < contents_size; ++i) {
-		ContentInstructionType instruction_type;
-		ContentObjectType object_type;
+	boolean_type is_valid = VANILLAPDF_RV_FALSE;
+
+	RETURN_ERROR_IF_NOT_SUCCESS(PageContents_GetInstructionCollection(page_contents, &content_instruction_collection));
+	RETURN_ERROR_IF_NOT_SUCCESS(ContentInstructionCollection_GetIterator(content_instruction_collection, &content_instruction_collection_iterator));
+
+	while (VANILLAPDF_ERROR_SUCCESS == ContentInstructionCollectionIterator_IsValid(content_instruction_collection_iterator, &is_valid)
+		&& VANILLAPDF_RV_TRUE == is_valid) {
+		ContentInstructionType instruction_type = ContentInstructionType_Undefined;
+		ContentObjectType object_type = ContentObjectType_Undefined;
 		ContentInstructionHandle* content_instruction = NULL;
 		ContentObjectHandle* content_object = NULL;
 		ContentObjectInlineImageHandle* content_image = NULL;
@@ -280,11 +287,10 @@ error_type process_page_contents(PageContentsHandle* page_contents, size_type pa
 		BufferHandle* content_image_data = NULL;
 
 		int return_value = 0;
-		unsigned long long i_converted = i;
 		char output_filename[256] = {0};
 		OutputStreamHandle* output_stream = NULL;
 
-		RETURN_ERROR_IF_NOT_SUCCESS(PageContents_GetInstructionAt(page_contents, i, &content_instruction));
+		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstructionCollectionIterator_GetValue(content_instruction_collection_iterator, &content_instruction));
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_GetInstructionType(content_instruction, &instruction_type));
 
 		if (instruction_type != ContentInstructionType_Object) {
@@ -305,7 +311,7 @@ error_type process_page_contents(PageContentsHandle* page_contents, size_type pa
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectInlineImage_GetDictionary(content_image, &content_image_dictionary));
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectInlineImage_GetData(content_image, &content_image_data));
 
-		return_value = snprintf(output_filename, sizeof(output_filename), "%llu.%llu", page_number_converted, i_converted);
+		return_value = snprintf(output_filename, sizeof(output_filename), "%llu.%llu", page_number_converted, current_object_i);
 		if (return_value < 0) {
 			printf("Could not create destination filename");
 			return VANILLAPDF_TOOLS_ERROR_FAILURE;
@@ -322,7 +328,16 @@ error_type process_page_contents(PageContentsHandle* page_contents, size_type pa
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectInlineImage_Release(content_image));
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_Release(content_object));
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_Release(content_instruction));
+
+		// Move the collection iterator to the next item
+		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstructionCollectionIterator_Next(content_instruction_collection_iterator));
+
+		// Increment the current object counter
+		current_object_i++;
 	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(ContentInstructionCollectionIterator_Release(content_instruction_collection_iterator));
+	RETURN_ERROR_IF_NOT_SUCCESS(ContentInstructionCollection_Release(content_instruction_collection));
 
 	return VANILLAPDF_TOOLS_ERROR_SUCCESS;
 }

@@ -32,14 +32,9 @@ extern "C"
 	*/
 
 	/**
-	* \brief Return size of a collection
+	* \brief Read the collection of instructions within the page contents
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageContents_GetInstructionsSize(PageContentsHandle* handle, size_type* result);
-
-	/**
-	* \brief Get instruction at location \p at
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageContents_GetInstructionAt(PageContentsHandle* handle, size_type at, ContentInstructionHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION PageContents_GetInstructionCollection(PageContentsHandle* handle, ContentInstructionCollectionHandle** result);
 
 	/**
 	* \brief Updates the referenced stream content to reflect content operation changes

@@ -35,7 +35,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentParser_Create(FileHandle* source_file, InputStreamHandle* input_stream, ContentParserHandle** result);
 
 	/**
-	* \brief Get byte representation of content operator
+	* \brief Read the collection of instructions within the source provided
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentParser_ReadInstructionCollection(ContentParserHandle* handle, ContentInstructionCollectionHandle** result);
 

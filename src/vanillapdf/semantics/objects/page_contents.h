@@ -14,9 +14,7 @@ public:
 	explicit PageContents(syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> obj);
 	~PageContents();
 
-	contents::BaseInstructionCollectionPtr Instructions(void) const;
-	types::size_type GetInstructionsSize(void) const;
-	contents::InstructionBasePtr GetInstructionAt(types::size_type at) const;
+	contents::BaseInstructionCollectionPtr GetInstructions(void) const;
 
 	virtual void ObserveeChanged(const IModifyObservable*) override;
 
