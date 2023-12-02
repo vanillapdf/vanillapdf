@@ -131,10 +131,8 @@ BaseInstructionCollectionPtr PageContents::Instructions(void) const {
 
 	InputStreamPtr input_stream = make_deferred<InputStream>(ss);
 	contents::ContentStreamParser parser(_obj->GetFile(), input_stream);
-	auto instructions = parser.ReadInstructions();
 
-	m_instructions->reserve(instructions->size());
-	m_instructions->insert(m_instructions.end(), instructions.begin(), instructions.end());
+	m_instructions = parser.ReadInstructions();
 	m_instructions->SetInitialized();
 
 	return m_instructions;
