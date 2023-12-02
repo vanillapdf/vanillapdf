@@ -138,7 +138,6 @@ build-ubuntu.20.04-x64:
     - make
     - make test
     - make package
-    - nuget pack nuget/vanillapdf.runtime.nuspec
 
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
@@ -146,7 +145,6 @@ build-ubuntu.20.04-x64:
       - ./*.deb
       - ./*.tar.gz
       - ./*.sha256
-      - ./*.nupkg
 
 # 28.3.2023 vcpkg cannot be built on arm
 # g++: fatal error: Killed signal terminated program cc1plus
@@ -210,7 +208,6 @@ build-ubuntu.22.04-x64:
     - make
     - make test
     - make package
-    - nuget pack nuget/vanillapdf.runtime.nuspec
 
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
@@ -218,7 +215,6 @@ build-ubuntu.22.04-x64:
       - ./*.deb
       - ./*.tar.gz
       - ./*.sha256
-      - ./*.nupkg
 
 # 28.3.2023 vcpkg cannot be built on arm
 # g++: fatal error: Killed signal terminated program cc1plus
@@ -257,7 +253,6 @@ build-rocky.8-x64:
     - make
     - make test
     - make package
-    - nuget pack nuget/vanillapdf.runtime.nuspec
 
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
@@ -265,6 +260,51 @@ build-rocky.8-x64:
       - ./*.rpm
       - ./*.tar.gz
       - ./*.sha256
+
+# 15.11.2023
+# Since .NET 8 it is recommended to provide distro agnostic NuGet packages
+
+# warning NETSDK1206: Found version-specific or distribution-specific runtime identifier(s):
+# rocky.8-x64, ubuntu.20.04-x64, ubuntu.22.04-x64. Affected libraries: vanillapdf.runtime.rocky.8-x64, vanillapdf.runtime.ubuntu.20.04-x64, vanillapdf.runtime.ubuntu.22.04-x64.
+# In .NET 8.0 and higher, assets for version-specific and distribution-specific runtime identifiers will not be found by default. See https://aka.ms/dotnet/rid-usage for details.
+build-linux-x64:
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:22.04
+  when: manual
+
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+
+  script:
+    - cmake . -DPLATFORM_IDENTIFIER=linux-x64
+    - make
+    - make test
+    - make package
+    - nuget pack nuget/vanillapdf.runtime.nuspec
+
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - ./*.nupkg
+
+build-linux-arm64:
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-arm64v8:22.04
+  when: manual
+  timeout: 3 hours # The arm runner machine seems to be very slow
+
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+
+  script:
+    - export VCPKG_FORCE_SYSTEM_BINARIES=1
+    - cmake . -DPLATFORM_IDENTIFIER=linux-arm64
+    - make
+    - make test
+    - make package
+    - nuget pack nuget/vanillapdf.runtime.nuspec
+
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
       - ./*.nupkg
 
 build-vanillapdf-nuget:
