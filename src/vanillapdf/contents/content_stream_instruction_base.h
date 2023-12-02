@@ -11,7 +11,7 @@
 namespace vanillapdf {
 namespace contents {
 
-class InstructionBase : public virtual IUnknown, public IWeakReferenceable<InstructionBase>, public IModifyObservable {
+class InstructionBase : public virtual IUnknown, public IModifyObservable {
 public:
 	enum class Type {
 		Undefined = 0,
@@ -23,7 +23,7 @@ public:
 	virtual std::string ToPdf() const = 0;
 };
 
-class BaseInstructionCollection : public virtual IUnknown, public IModifyObserver, public IModifyObservable {
+class BaseInstructionCollection : public IModifyObserver, public IModifyObservable {
 public:
 	using data_type = std::list<InstructionBasePtr>;
 
