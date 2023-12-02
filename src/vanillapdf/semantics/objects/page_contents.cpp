@@ -121,7 +121,7 @@ BaseInstructionCollectionPtr PageContents::Instructions(void) const {
 		throw GeneralException("Contents was constructed from unrecognized element: " + _obj->ToString());
 	}
 
-	// We are not using contents.Instructions, because objects can we separated
+	// We are not using contents.Instructions, because objects can be separated
 	// into multiple content streams
 	auto ss = std::make_shared<std::stringstream>();
 	for (auto item : contents) {
