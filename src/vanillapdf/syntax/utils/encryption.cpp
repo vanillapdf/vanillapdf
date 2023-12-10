@@ -140,57 +140,70 @@ BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, types::size_type key_le
 
 	BufferPtr result = make_deferred_container<Buffer>(data.size());
 
-	// OpenSSL 3.0 does not support RC4 using custom key length - only 40-bit and 128-bits are supported.
-	// The PDF does often use length of 80-bits.
-	// Until this is resolved, we cannot remove this warning
+	const EVP_CIPHER* evp_cipher = EVP_rc4();
+	
+	auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
+	
+	SCOPE_GUARD([evp_cipher_ctx]() { EVP_CIPHER_CTX_free(evp_cipher_ctx); });
 
-	RC4_KEY rc_key;
-	RC4_set_key(&rc_key, ValueConvertUtils::SafeConvert<int>(key_length), (unsigned char*)key.data());
-	RC4(&rc_key, data.std_size(), (unsigned char*)data.data(), (unsigned char*)result->data());
+	// This is a trick required by the OpenSSL 3.0 to call EVP_EncryptInit two times
+
+	// The issue is that EVP_rc4 is a variable length and the parameter for the key length cannot be set directly
+	// https://www.openssl.org/docs/manmaster/man3/EVP_rc4.html
+	// RC4 stream cipher. This is a variable key length cipher with a default key length of 128 bits.
+
+	// In the first call of EVP_EncryptInit leave key empty to just initialize the engine.
+	// In the second call of EVP_EncryptInit leave the cipher empty and set only the key.
+	// https://github.com/openssl/openssl/issues/22629
+	
+	auto init_result = EVP_EncryptInit(evp_cipher_ctx, evp_cipher, nullptr, nullptr);
+	if (init_result != 1) {
+		throw GeneralException("Could not initialize RC4 digest: " + std::to_string(init_result));
+	}
+
+	// Key length is set in bytes and not bits, found this experimentally
+	// auto test = EVP_CIPHER_CTX_get_key_length(evp_cipher_ctx);
+
+	auto key_length_converted = ValueConvertUtils::SafeConvert<int>(key_length);
+	auto set_key_length_result = EVP_CIPHER_CTX_set_key_length(evp_cipher_ctx, key_length_converted);
+	if (set_key_length_result != 1) {
+		throw GeneralException("Could not set RC4 key length: " + std::to_string(set_key_length_result));
+	}
+
+	auto init_result2 = EVP_EncryptInit(evp_cipher_ctx, nullptr, (unsigned char*)key.data(), nullptr);
+	if (init_result2 != 1) {
+		throw GeneralException("Could not re-initialize RC4 digest: " + std::to_string(init_result2));
+	}
+	
+	int current_offset = 0;
+	int total_result_length = 0;
+
+	int data_size = ValueConvertUtils::SafeConvert<int>(data.size());
+	
+	auto update_result = EVP_EncryptUpdate(
+		evp_cipher_ctx,
+		(unsigned char*) result->data(),
+		&current_offset,
+		(unsigned char*) data.data(),
+		data_size);
+	
+	if (update_result != 1) {
+		throw GeneralException("Could not update RC4 digest: " + std::to_string(update_result));
+	}
+
+	total_result_length += current_offset;
+	
+	auto final_result = EVP_EncryptFinal(evp_cipher_ctx, (unsigned char*)result->data() + current_offset, &current_offset);
+	if (final_result != 1) {
+		throw GeneralException("Could not finalize RC4 digest: " + std::to_string(final_result));
+	}
+
+	total_result_length += current_offset;
+
+	// Remove trailing zeroes
+	result->resize(total_result_length);
 
 	return result;
-
-	//const EVP_CIPHER* evp_cipher = nullptr;
-	//
-	//if (key_length == 5) {
-	//	evp_cipher = EVP_rc4_40();
-	//}
-	//
-	//if (key_length == 16) {
-	//	evp_cipher = EVP_rc4();
-	//}
-	//
-	//if (evp_cipher == nullptr) {
-	//	throw GeneralException("Unknown RC4 key length: " + std::to_string(key_length));
-	//}
-	//
-	//auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
-	//
-	//SCOPE_GUARD([evp_cipher_ctx]() { EVP_CIPHER_CTX_free(evp_cipher_ctx); });
-	//
-	//auto init_result = EVP_EncryptInit(evp_cipher_ctx, evp_cipher, (unsigned char*)key.data(), nullptr);
-	//if (init_result != 1) {
-	//	throw GeneralException("Could not initialize RC4 digest: " + std::to_string(init_result));
-	//}
-	//
-	//int current_offset = 0;
-	//int data_size = ValueConvertUtils::SafeConvert<int>(data.size());
-	//
-	//auto update_result = EVP_EncryptUpdate(
-	//	evp_cipher_ctx,
-	//	(unsigned char*) result->data(),
-	//	&current_offset,
-	//	(unsigned char*) data.data(),
-	//	data_size);
-	//
-	//if (update_result != 1) {
-	//	throw GeneralException("Could not update RC4 digest: " + std::to_string(update_result));
-	//}
-	//
-	//auto final_result = EVP_EncryptFinal(evp_cipher_ctx, (unsigned char*)result->data() + current_offset, &current_offset);
-	//if (final_result != 1) {
-	//	throw GeneralException("Could not finalize RC4 digest: " + std::to_string(final_result));
-	//}
 
 #else
 	(void) key; (void) key_length; (void) data;
