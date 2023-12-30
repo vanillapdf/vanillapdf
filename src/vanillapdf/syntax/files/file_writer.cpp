@@ -1275,6 +1275,22 @@ void FileWriter::WriteHeader(IOutputStreamPtr output, HeaderPtr header) {
 	}
 
 	output->Write(WhiteSpace::LINE_FEED);
+
+	// Quote from 7.5.2 File Header
+	// 
+	// If a PDF file contains binary data, as most do (see 7.2, "Lexical Conventions"),
+	// the header line shall be immediately followed by a comment line containing at least four binary characters—that is,
+	// characters whose codes are 128 or greater.
+	// This ensures proper behaviour of file transfer applications that inspect data near the beginning of a file
+	// to determine whether to treat the file’s contents as text or as binary.
+
+	// TODO: Add this only in case the document contains binary data
+	output->Write('%');
+	output->Write(0xDE);
+	output->Write(0xAD);
+	output->Write(0xC0);
+	output->Write(0xDE);
+	output->Write(WhiteSpace::LINE_FEED);
 }
 
 void FileWriter::WriteXrefChain(IOutputStreamPtr output, XrefChainPtr chain) {
