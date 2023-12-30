@@ -5,6 +5,7 @@
 #include <chrono>
 #include <ctime>
 #include <mutex>
+#include <iomanip>
 
 namespace vanillapdf {
 
@@ -66,13 +67,11 @@ BufferPtr TimeUtils::GetCurrentTimeString(const char * format) {
 	time_info.tm_sec = time.GetSecond();
 	time_info.tm_hour = time.GetHour();
 
-	char buffer[128] = { 0 };
-	size_t result = strftime(buffer, sizeof(buffer), format, &time_info);
-	if (result == 0) {
-		throw GeneralException("Could not convert localtime to string");
-	}
+	std::ostringstream oss;
+	oss << std::put_time(&time_info, format);
+	auto str = oss.str();
 
-	return make_deferred_container<Buffer>(buffer);
+	return make_deferred_container<Buffer>(str);
 }
 
 } // vanillapdf
