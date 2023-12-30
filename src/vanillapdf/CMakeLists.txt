@@ -75,7 +75,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
 )
 
 set(VANILLAPDF_C_IMPLEMENTATION_CONTENTS_SOURCES
-    implementation/contents/c_base_font_range.cpp
+	implementation/contents/c_base_font_range.cpp
 	implementation/contents/c_content_instruction.cpp
 	implementation/contents/c_content_object.cpp
 	implementation/contents/c_content_operation.cpp
@@ -84,8 +84,8 @@ set(VANILLAPDF_C_IMPLEMENTATION_CONTENTS_SOURCES
 )
 
 set(VANILLAPDF_CONTENTS_SOURCES
-    contents/character_map_data.cpp
-    contents/character_map_parser.cpp
+	contents/character_map_data.cpp
+	contents/character_map_parser.cpp
 	contents/content_stream_objects.cpp
 	contents/content_stream_operations.cpp
 	contents/content_stream_parser.cpp
@@ -193,8 +193,8 @@ set(VANILLAPDF_UTILS_SOURCES
 
 set(VANILLAPDF_CONTENTS_HEADERS
 	contents/content_fwd.h
-    contents/character_map_data.h
-    contents/character_map_parser.h
+	contents/character_map_data.h
+	contents/character_map_parser.h
 	contents/content_stream_instruction_base.h
 	contents/content_stream_objects.h
 	contents/content_stream_operation_base.h
