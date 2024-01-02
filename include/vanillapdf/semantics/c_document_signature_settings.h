@@ -120,7 +120,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_ToUnknown(DocumentSignatureSettingsHandle* handle, IUnknownHandle** result);
 
 	/**
-	* \brief Convert \ref IUnknownHandle to \ref ObjectHandle
+	* \brief Convert \ref IUnknownHandle to \ref DocumentSignatureSettingsHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_FromUnknown(IUnknownHandle* handle, DocumentSignatureSettingsHandle** result);
 
