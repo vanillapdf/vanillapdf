@@ -114,7 +114,7 @@ extern "C"
 	* \brief
 	* The source file was not yet initialized.
 	*
-	* \see \ref File_Initialize
+	* \see \ref FileHandle::File_Initialize "File_Initialize"
 	*/
 	VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_FILE_NOT_INITIALIZED;
 
