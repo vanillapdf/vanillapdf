@@ -223,7 +223,7 @@ extern "C"
 
 	/**
 	* \memberof AnnotationHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -244,11 +244,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Annotation_Release(AnnotationHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 	/**
 	* \memberof LinkAnnotationHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -261,11 +261,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_Release(LinkAnnotationHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 	/**
 	* \memberof PageAnnotationsHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -288,7 +288,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Release(PageAnnotationsHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 #ifdef __cplusplus
 };

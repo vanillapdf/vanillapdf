@@ -61,7 +61,7 @@ extern "C"
 
 	/**
 	* \memberof StringObjectHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -94,11 +94,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_Release(StringObjectHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 	/**
 	* \memberof LiteralStringObjectHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -151,11 +151,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_Release(LiteralStringObjectHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 	/**
 	* \memberof HexadecimalStringObjectHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -208,7 +208,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Release(HexadecimalStringObjectHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 #ifdef __cplusplus
 };

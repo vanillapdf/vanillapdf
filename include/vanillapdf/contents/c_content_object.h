@@ -63,7 +63,7 @@ extern "C"
 
 	/**
 	* \memberof ContentObjectHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -92,11 +92,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_Release(ContentObjectHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 	/**
 	* \memberof ContentObjectTextHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -125,11 +125,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_Release(ContentObjectTextHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 	/**
 	* \memberof ContentObjectInlineImageHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -148,7 +148,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_Release(ContentObjectInlineImageHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 
 #ifdef __cplusplus

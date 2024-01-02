@@ -169,7 +169,7 @@ extern "C"
 
 	/**
 	* \memberof ContentOperationHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -203,11 +203,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_Release(ContentOperationHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 	/**
 	* \memberof ContentOperationGenericHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -241,11 +241,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_Release(ContentOperationGenericHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 	/**
 	* \memberof ContentOperationTextShowHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -274,11 +274,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_Release(ContentOperationTextShowHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 	/**
 	* \memberof ContentOperationTextShowArrayHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -313,11 +313,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_Release(ContentOperationTextShowArrayHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 	/**
 	* \memberof ContentOperationTextFontHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -366,11 +366,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_Release(ContentOperationTextFontHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 	/**
 	* \memberof ContentOperationEndTextHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -379,7 +379,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationEndText_Release(ContentOperationEndTextHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 #ifdef __cplusplus
 };

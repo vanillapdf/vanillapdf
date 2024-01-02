@@ -67,7 +67,7 @@ extern "C"
 
 	/**
 	* \memberof CharacterMapHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -91,11 +91,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_Release(CharacterMapHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 	/**
 	* \memberof UnicodeCharacterMapHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -121,11 +121,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_Release(UnicodeCharacterMapHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 	/**
 	* \memberof EmbeddedCharacterMapHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -143,7 +143,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION EmbeddedCharacterMap_Release(EmbeddedCharacterMapHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 #ifdef __cplusplus
 };

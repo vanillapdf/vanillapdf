@@ -75,7 +75,7 @@ extern "C"
 
 	/**
 	* \memberof PageLabelsHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -97,11 +97,11 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_Release(PageLabelsHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 	/**
 	* \memberof PageLabelHandle
-	* ///@{
+	* @{
 	*/
 
 	/**
@@ -128,7 +128,7 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Release(PageLabelHandle* handle);
 
-	/** ///@} */
+	/** @} */
 
 #ifdef __cplusplus
 };
