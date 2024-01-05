@@ -23,6 +23,7 @@ int process_extract(int argc, char *argv[]);
 int process_extract_object(int argc, char *argv[]);
 int process_sign(int argc, char *argv[]);
 int process_sign_custom(int argc, char *argv[]);
+int process_encrypt(int argc, char* argv[]);
 int process_decrypt(int argc, char *argv[]);
 int process_write_custom(int argc, char *argv[]);
 

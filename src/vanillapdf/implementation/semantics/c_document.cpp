@@ -182,6 +182,31 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_Sign(DocumentHandle* handl
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Document_AddEncryption(DocumentHandle* handle, DocumentEncryptionSettingsHandle* settings) {
+
+	Document* document = reinterpret_cast<Document*>(handle);
+	DocumentEncryptionSettings* encryption_settings = reinterpret_cast<DocumentEncryptionSettings*>(settings);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(encryption_settings);
+
+	try {
+		document->AddEncryption(encryption_settings);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Document_RemoveEncryption(DocumentHandle* handle) {
+
+	Document* document = reinterpret_cast<Document*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
+
+	try {
+		document->RemoveEncryption();
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Document_ToUnknown(DocumentHandle* handle, IUnknownHandle** result) {
 	return SafeObjectConvert<Document, IUnknown, DocumentHandle, IUnknownHandle>(handle, result);
 }

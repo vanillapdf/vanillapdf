@@ -58,6 +58,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
 	implementation/semantics/c_developer_extensions.cpp
 	implementation/semantics/c_digital_signature.cpp
 	implementation/semantics/c_document.cpp
+	implementation/semantics/c_document_encryption_settings.cpp
 	implementation/semantics/c_document_info.cpp
 	implementation/semantics/c_document_signature_settings.cpp
 	implementation/semantics/c_fields.cpp
@@ -119,6 +120,8 @@ set(VANILLAPDF_SEMANTICS_SOURCES
 	semantics/objects/interactive_forms.cpp
 	semantics/objects/viewer_preferences.cpp
 	semantics/objects/page_node_base.cpp
+	
+	semantics/utils/document_encryption_settings.cpp
 	
 	semantics/utils/document_signer.cpp
 	semantics/utils/document_signature_settings.cpp
@@ -235,6 +238,8 @@ set(VANILLAPDF_SEMANTICS_HEADERS
 	semantics/objects/rectangle.h
 	semantics/objects/tree.h
 	semantics/objects/viewer_preferences.h
+	
+	semantics/utils/document_encryption_settings.h
 	
 	semantics/utils/document_signer.h
 	semantics/utils/document_signature_settings.h

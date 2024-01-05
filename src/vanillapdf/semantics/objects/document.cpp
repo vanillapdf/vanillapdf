@@ -14,6 +14,7 @@
 
 #include "semantics/utils/semantic_utils.h"
 #include "semantics/utils/document_signer.h"
+#include "semantics/utils/document_encryption_settings.h"
 
 #include <sstream>
 
@@ -46,10 +47,35 @@ DocumentPtr Document::CreateFile(syntax::FilePtr holder) {
 	XrefTablePtr xref_table;
 	xref_table->Add(initial_entry);
 
+	// Generate a unique document ID
+	//
+	// To help ensure the uniqueness of file identifiers, they should be computed by means of a message digest algorithm
+	// such as MD5 (described in Internet RFC 1321, The MD5 Message-Digest Algorithm; see the Bibliography),
+	// using the following information:
+	//   - The current time
+	//   - A string representation of the file’s location, usually a pathname
+	//   - The size of the file in bytes
+	//   - The values of all entries in the file’s document information dictionary(see 14.3.3, “Document Information Dictionary”)
+
+	// We are going to use random data as for example we don't know the path, neither file size
+	BufferPtr document_id_value = EncryptionUtils::GenerateRandomData(16);
+
+	// An array of two byte-strings constituting a file identifier (see 14.4, "File Identifiers") for the file.
+	// If there is an Encrypt entry this array and the two byte-strings shall be direct objects and shall be unencrypted.
+	ArrayObjectPtr<HexadecimalStringObjectPtr> document_ids;
+	document_ids->Append(HexadecimalStringObject::CreateFromDecoded(document_id_value));
+	document_ids->Append(HexadecimalStringObject::CreateFromDecoded(document_id_value));
+
+	// Insert the ID into the trailer dictionary
+	auto trailer_dictionary = xref_table->GetTrailerDictionary();
+	trailer_dictionary->Insert(constant::Name::ID, document_ids);
+
 	XrefChainPtr chain = holder->GetXrefChain();
 	chain->Append(xref_table);
 
+	// Create an instace of the resulting document
 	DocumentPtr document = DocumentPtr(pdf_new Document(holder));
+
 	CatalogPtr catalog = document->CreateCatalog();
 	catalog->CreatePages();
 
@@ -751,6 +777,173 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
 	FileWriter writer;
 	writer.Subscribe(signer);
 	writer.Write(m_holder, destination);
+}
+
+void Document::AddEncryption(DocumentEncryptionSettingsPtr settings) {
+
+	// Terminate in case the document is already encrypted
+	if (m_holder->IsEncrypted()) {
+		throw GeneralException("Cannot encrypt an encrypted document, please remove the encryption first");
+	}
+
+	// Initialize all entries, to load them into cache
+	// Once loaded, the objects won't ask for decryption when accessing from file save
+	ForceObjectInitialization();
+
+	// Find the proper xref section
+	auto xref_chain = m_holder->GetXrefChain();
+	auto xref_iterator = xref_chain->Begin();
+	auto xref = xref_iterator->Value();
+
+	// Find the trailer dictionary
+	auto trailer_dictionary = xref->GetTrailerDictionary();
+
+	if (!trailer_dictionary->Contains(constant::Name::ID)) {
+		// TODO: Generate document ID
+	}
+
+	auto document_ids = trailer_dictionary->FindAs<MixedArrayObjectPtr>(constant::Name::ID);
+	if (document_ids->GetSize() < 2) {
+		// TODO: Generate document ID
+	}
+
+	// Identify the document ID object - it could be other types than string
+	auto document_id_obj = document_ids[0];
+
+	BufferPtr document_id_buffer;
+	if (ObjectUtils::IsType<StringObjectPtr>(document_id_obj)) {
+		auto document_id_string = ObjectUtils::ConvertTo<StringObjectPtr>(document_id_obj);
+		document_id_buffer = document_id_string->GetValue();
+	}
+
+	if (document_id_buffer->empty()) {
+		throw GeneralException("Could not encrypt document with empty document ID");
+	}
+
+	auto key_length = settings->GetKeyLength();
+
+	auto permissions_flags = settings->GetUserPermissions();
+	auto permission_value = DocumentEncryptionSettings::GetPermissionInteger(permissions_flags);
+
+	// (PDF 1.4) "Algorithm 1: Encryption of data using the RC4 or AES algorithms"in 7.6.2,
+	// "General Encryption Algorithm," but permitting encryption key lengths greater than 40 bits.
+	int32_t algorithm_version = 2;
+
+	// if the document is encrypted with a V value of 2 or 3,
+	// or has any "Security handlers of revision 3 or greater" access permissions set to 0
+	int32_t security_revision = 2;
+
+	// Calculate the encryption entries
+	auto owner_key_buffer = EncryptionUtils::GenerateOwnerEncryptionKey(
+		document_id_buffer,
+		settings->GetOwnerPassword(),
+		settings->GetUserPassword(),
+		settings->GetEncryptionAlgorithm(),
+		key_length,
+		permission_value,
+		security_revision);
+
+	auto user_key_buffer = EncryptionUtils::GenerateUserEncryptionKey(
+		document_id_buffer,
+		settings->GetUserPassword(),
+		owner_key_buffer,
+		settings->GetEncryptionAlgorithm(),
+		key_length,
+		permission_value,
+		security_revision);
+
+	// Create new encryption dictionary
+	DictionaryObjectPtr encryption_dictionary;
+
+	// Table 20 - Entries common to all encryption dictionaries
+	encryption_dictionary->Insert(constant::Name::Filter, make_deferred<NameObject>("Standard"));
+	//encryption_dictionary->Insert(constant::Name::SubFilter, make_deferred<IntegerObject>(2));
+	encryption_dictionary->Insert(constant::Name::V, make_deferred<IntegerObject>(algorithm_version));
+	encryption_dictionary->Insert(constant::Name::Length, make_deferred<IntegerObject>(key_length));
+
+	// Table 21 - Additional encryption dictionary entries for the standard security handler
+	encryption_dictionary->Insert(constant::Name::R, make_deferred<IntegerObject>(security_revision));
+	encryption_dictionary->Insert(constant::Name::O, HexadecimalStringObject::CreateFromDecoded(owner_key_buffer));
+	encryption_dictionary->Insert(constant::Name::U, HexadecimalStringObject::CreateFromDecoded(user_key_buffer));
+	encryption_dictionary->Insert(constant::Name::P, make_deferred<IntegerObject>(permission_value));
+	//encryption_dictionary->Insert(constant::Name::EncryptMetadata, make_deferred<IntegerObject>(2));
+
+	// Mark this entry as encryption exempted
+	encryption_dictionary->SetEncryptionExempted();
+
+	// Create new xref entry for the encryption dictionary
+	auto encryption_entry = m_holder->AllocateNewEntry();
+	encryption_entry->SetReference(encryption_dictionary);
+	encryption_entry->SetFile(m_holder);
+	encryption_entry->SetInitialized();
+
+	// Insert indirect reference to the as the document encryption dictionary
+	auto encryption_dictionary_reference = make_deferred<syntax::IndirectReferenceObject>(encryption_dictionary);
+
+	// Add association to the trailer dictionary
+	trailer_dictionary->Insert(constant::Name::Encrypt, encryption_dictionary_reference);
+
+	// The encryption dictionary needs to be set explicitly as it is only initialized during the parse process
+	m_holder->SetEncryptionDictionary(encryption_dictionary);
+
+	// The document needs to have encryption/decryption key initialized
+	bool password_set = m_holder->SetEncryptionPassword(settings->GetUserPassword());
+
+	if (!password_set) {
+		throw GeneralException("Could not verify the encryption password");
+	}
+}
+
+void Document::RemoveEncryption() {
+
+	// Terminate in case the document is not encrypted, treat as success
+	if (!m_holder->IsEncrypted()) {
+		return;
+	}
+
+	// TODO: Check if the password is owner only
+
+	// Initialize all entries, to decrypt them forcefully
+	ForceObjectInitialization();
+
+	auto xref_chain = m_holder->GetXrefChain();
+	auto xref_iterator = xref_chain->Begin();
+	auto xref = xref_iterator->Value();
+
+	// Remove the encryption dictionary
+	auto trailer_dictionary = xref->GetTrailerDictionary();
+	trailer_dictionary->Remove(constant::Name::Encrypt);
+}
+
+void Document::ForceObjectInitialization() {
+
+	auto xref_chain = m_holder->GetXrefChain();
+
+	// Initialize all entries, to decrypt them forcefully
+	for (auto& xref : xref_chain) {
+		for (auto& xref_entry : xref) {
+
+			// Accept only used entries
+			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(xref_entry)) {
+				continue;
+			}
+
+			// Convert to used entry
+			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(xref_entry);
+			auto used_entry_object = used_entry->GetReference();
+
+			// The object has been initialized by now
+
+			// The stream content has to be handled specifically
+			if (!ConvertUtils<ObjectPtr>::IsType<StreamObjectPtr>(used_entry_object)) {
+				continue;
+			}
+
+			// Force the object body initialization
+			auto used_stream_object = ConvertUtils<ObjectPtr>::ConvertTo<StreamObjectPtr>(used_entry_object);
+			used_stream_object->GetBody();
+		}
+	}
 }
 
 } // semantics

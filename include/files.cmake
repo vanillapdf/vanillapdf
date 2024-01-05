@@ -56,6 +56,7 @@ set(VANILLAPDF_INCLUDE_SEMANTICS_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_developer_extensions.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_digital_signature.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_document.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_document_encryption_settings.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_document_info.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_document_signature_settings.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/semantics/c_fields.h"

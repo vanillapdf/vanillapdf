@@ -305,8 +305,43 @@ bool File::SetEncryptionPassword(const Buffer& password) {
 		return false;
 	}
 
-	auto ids = _xref->Begin()->Value()->GetTrailerDictionary()->FindAs<ArrayObjectPtr<StringObjectPtr>>(constant::Name::ID);
-	auto id = ids->GetValue(0);
+	// Find the proper xref section
+	auto xref_iterator = _xref->Begin();
+	auto xref = xref_iterator->Value();
+
+	// Find the trailer dictionary
+	auto trailer_dictionary = xref->GetTrailerDictionary();
+
+	if (!trailer_dictionary->Contains(constant::Name::ID)) {
+		auto filename = GetFilenameString();
+		LOG_ERROR(filename) << "Trailer dictionary does not contain document ID";
+
+		throw GeneralException("Trailer dictionary does not contain document ID");
+	}
+
+	auto document_ids = trailer_dictionary->FindAs<MixedArrayObjectPtr>(constant::Name::ID);
+	if (document_ids->GetSize() == 0) {
+		auto filename = GetFilenameString();
+		LOG_ERROR(filename) << "Document ID list is empty";
+
+		throw GeneralException("Document ID list is empty");
+	}
+
+	// Identify the document ID object - it could be other types than string
+	auto document_id_obj = document_ids[0];
+
+	BufferPtr document_id_buffer;
+	if (ObjectUtils::IsType<StringObjectPtr>(document_id_obj)) {
+		auto document_id_string = ObjectUtils::ConvertTo<StringObjectPtr>(document_id_obj);
+		document_id_buffer = document_id_string->GetValue();
+	}
+
+	if (document_id_buffer->empty()) {
+		auto filename = GetFilenameString();
+		LOG_ERROR(filename) << "Could not decrypt document with empty document ID";
+
+		throw GeneralException("Could not decrypt document with empty document ID");
+	}
 
 	auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
 	auto filter = dict->FindAs<NameObjectPtr>(constant::Name::Filter);
@@ -327,19 +362,27 @@ bool File::SetEncryptionPassword(const Buffer& password) {
 		assert(length_bits->GetIntegerValue() % 8 == 0 && "Key length is not multiplier of 8");
 	}
 
+	auto permissions_value = ValueConvertUtils::SafeConvert<int32_t>(permissions->GetIntegerValue());
+	auto revision_value = ValueConvertUtils::SafeConvert<int32_t>(revision->GetIntegerValue());
+	auto key_length_value = ValueConvertUtils::SafeConvert<int32_t>(length_bits->GetIntegerValue());
+
 	// Pad password with predefined scheme
 	BufferPtr padPassword = EncryptionUtils::PadTruncatePassword(password);
 	BufferPtr encrypted_owner_data = EncryptionUtils::ComputeEncryptedOwnerData(padPassword, dict);
 
 	// Check if entered password was owner password
 	BufferPtr temp_decryption_key;
-	if (EncryptionUtils::CheckKey(encrypted_owner_data, id->GetValue(), owner_value->GetValue(), user_value->GetValue(), permissions, revision, length_bits, temp_decryption_key)) {
+	if (EncryptionUtils::CheckKey(
+		encrypted_owner_data, document_id_buffer, owner_value->GetValue(), user_value->GetValue(),
+		permissions_value, revision_value, key_length_value, temp_decryption_key)) {
 		_decryption_key = temp_decryption_key;
 		return true;
 	}
 
 	// Check if entered password was user password
-	if (EncryptionUtils::CheckKey(padPassword, id->GetValue(), owner_value->GetValue(), user_value->GetValue(), permissions, revision, length_bits, temp_decryption_key)) {
+	if (EncryptionUtils::CheckKey(
+		padPassword, document_id_buffer, owner_value->GetValue(), user_value->GetValue(),
+		permissions_value, revision_value, key_length_value, temp_decryption_key)) {
 		_decryption_key = temp_decryption_key;
 		return true;
 	}

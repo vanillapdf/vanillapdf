@@ -32,6 +32,7 @@
 
 /* semantics */
 #include "vanillapdf/semantics/c_document.h"
+#include "vanillapdf/semantics/c_document_encryption_settings.h"
 #include "vanillapdf/semantics/c_document_info.h"
 #include "vanillapdf/semantics/c_document_signature_settings.h"
 #include "vanillapdf/semantics/c_catalog.h"

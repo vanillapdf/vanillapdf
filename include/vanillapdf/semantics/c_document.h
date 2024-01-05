@@ -94,6 +94,20 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Document_Sign(DocumentHandle* handle, FileHandle* destination, DocumentSignatureSettingsHandle* settings);
 
 	/**
+	* \brief Encrypt the document using the specified settings
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Document_AddEncryption(DocumentHandle* handle, DocumentEncryptionSettingsHandle* settings);
+
+	/**
+	* \brief Remove any existing encryption from the document.
+	* 
+	* The document MUST be unlocked either with password or encryption key.
+	* \see \ref File_SetEncryptionPassword
+	* \see \ref File_SetEncryptionKey
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Document_RemoveEncryption(DocumentHandle* handle);
+
+	/**
 	* \brief Reinterpret current object as \ref IUnknownHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Document_ToUnknown(DocumentHandle* handle, IUnknownHandle** result);

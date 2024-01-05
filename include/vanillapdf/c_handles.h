@@ -170,6 +170,8 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(DocumentSigner);
 	DECLARE_OBJECT_HANDLE(DocumentSignatureSettings);
 
+	DECLARE_OBJECT_HANDLE(DocumentEncryptionSettings);
+
 	/* Fonts */
 
 	DECLARE_OBJECT_HANDLE(Font);

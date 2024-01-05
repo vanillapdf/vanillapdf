@@ -2,6 +2,7 @@
 #define _DOCUMENT_H
 
 #include "semantics/utils/semantics_fwd.h"
+#include "semantics/utils/document_encryption_settings.h"
 #include "semantics/utils/document_signature_settings.h"
 
 #include "semantics/objects/catalog.h"
@@ -42,6 +43,9 @@ public:
 
 	void Sign(syntax::FilePtr destination, DocumentSignatureSettingsPtr options);
 
+	void AddEncryption(DocumentEncryptionSettingsPtr settings);
+	void RemoveEncryption();
+
 private:
 	syntax::FilePtr m_holder;
 
@@ -61,6 +65,8 @@ private:
 
 	void FixDestinationPage(syntax::ObjectPtr cloned_page, PageObjectPtr other_page, PageObjectPtr merged_page);
 	bool IsDestinationReferencingPage(DestinationPtr destination, PageObjectPtr page);
+
+	void ForceObjectInitialization();
 
 private:
 	explicit Document(syntax::FilePtr holder);

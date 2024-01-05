@@ -31,6 +31,8 @@ public:
 	static BufferPtr ComputeRC4(const Buffer& key, const Buffer& data);
 	static BufferPtr ComputeRC4(const Buffer& key, types::size_type key_length, const Buffer& data);
 
+	static BufferPtr ComputeMD5(const Buffer& data);
+
 	static BufferPtr AESDecrypt(const Buffer& key, const Buffer& data);
 	static BufferPtr AESDecrypt(const Buffer& key, types::size_type key_length, const Buffer& data);
 	static BufferPtr AESEncrypt(const Buffer& key, const Buffer& data);
@@ -47,26 +49,46 @@ public:
 		EncryptionAlgorithm algorithm,
 		IEncryptionKey& key);
 
+	static BufferPtr GenerateOwnerEncryptionKey(
+		const Buffer& document_id,
+		const Buffer& owner_password,
+		const Buffer& user_password,
+		EncryptionAlgorithm algorithm,
+		int32_t key_length,
+		int32_t permissions,
+		int32_t revision);
+
+	static BufferPtr GenerateUserEncryptionKey(
+		const Buffer& document_id,
+		const Buffer& user_password,
+		const Buffer& owner_data,
+		EncryptionAlgorithm algorithm,
+		int32_t key_length,
+		int32_t permissions,
+		int32_t revision);
+
 	static bool CheckKey(
 		const Buffer& input,
 		const Buffer& document_id,
 		const Buffer& owner_data,
 		const Buffer& user_data,
-		const syntax::IntegerObject& permissions,
-		const syntax::IntegerObject& revision,
-		const syntax::IntegerObject& key_length,
+		int32_t permissions,
+		int32_t revision,
+		int32_t key_length,
 		Buffer& decryption_key);
 
 	static BufferPtr CalculateDecryptionKeyDigest(
 		const Buffer& input,
 		const Buffer& document_id,
 		const Buffer& owner_data,
-		const syntax::IntegerObject& permissions);
+		int32_t permissions);
 
 	static BufferPtr CalculateDecryptionCompareDataV3(
 		BufferPtr decryption_key_digest,
 		const Buffer& document_id,
-		const syntax::IntegerObject& key_length);
+		int32_t key_length);
+
+	static BufferPtr GenerateRandomData(int length);
 };
 
 } // syntax

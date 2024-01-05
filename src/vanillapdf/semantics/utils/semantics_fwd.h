@@ -110,6 +110,9 @@ class ByteRangeCollection; using ByteRangeCollectionPtr = Deferred<ByteRangeColl
 // Interactive forms
 class InteractiveForm; using InteractiveFormPtr = Deferred<InteractiveForm>; using OuputInteractiveFormPtr = OutputPointer<InteractiveFormPtr>;
 
+// Encryption
+class DocumentEncryptionSettings; using DocumentEncryptionSettingsPtr = Deferred<DocumentEncryptionSettings>;
+
 // Utils
 class DocumentSigner; using DocumentSignerPtr = Deferred<DocumentSigner>;
 class DocumentSignatureSettings; using DocumentSignatureSettingsPtr = Deferred<DocumentSignatureSettings>;

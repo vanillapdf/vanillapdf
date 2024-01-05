@@ -11,6 +11,7 @@ set(VANILLAPDF_TOOLS_SOURCES
 	merge.c
 	sign.c
 	sign_custom.c
+	encrypt.c
 	decrypt.c
 	write_custom.c
 )
