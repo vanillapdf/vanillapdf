@@ -496,6 +496,9 @@ void FileWriter::SetEncryptionData(FilePtr source, FilePtr destination) {
 	// Although it seems to be safe I am not going to expose the functionality on the DLL border
 	auto source_encryption_key = source->GetEncryptionKey();
 	destination->SetEncryptionKey(source_encryption_key);
+
+	// Encryption dictionary needs to be exempted from the encryption explicitly
+	destination_encryption_object->SetEncryptionExempted();
 }
 
 void FileWriter::RecalculateXrefPrevOffset(XrefBasePtr source, XrefBasePtr prev) {
@@ -988,6 +991,10 @@ DictionaryObjectPtr FileWriter::CloneTrailerDictionary(FilePtr source, XrefBaseP
 	if (source_trailer->Contains(constant::Name::ID)) {
 		ContainableObjectPtr id = source_trailer->Find(constant::Name::ID);
 		ContainableObjectPtr cloned = ObjectUtils::Clone<ContainableObjectPtr>(id);
+
+		// The document ID cannot be encrypted as it is used for calculating the keys
+		cloned->SetEncryptionExempted();
+
 		new_trailer->Insert(constant::Name::ID, cloned);
 	}
 
