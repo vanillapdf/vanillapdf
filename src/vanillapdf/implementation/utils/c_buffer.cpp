@@ -16,6 +16,20 @@ VANILLAPDF_API error_type CALLING_CONVENTION Buffer_Create(BufferHandle** result
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Buffer_CreateFromData(BufferHandle** result, string_type data, size_type size) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto buffer = make_deferred_container<Buffer>();
+		buffer->assign(data, data + size);
+
+		auto ptr = buffer.AddRefGet();
+		*result = reinterpret_cast<BufferHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Buffer_GetData(const BufferHandle* handle, string_type* data, size_type* size)
 {
 	const Buffer* obj = reinterpret_cast<const Buffer*>(handle);

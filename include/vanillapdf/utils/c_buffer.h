@@ -33,6 +33,11 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_Create(BufferHandle** result);
 
 	/**
+	* \brief Creates a new buffer instance with specified data
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_CreateFromData(BufferHandle** result, string_type data, size_type size);
+
+	/**
 	* \brief Get data content from buffer
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_GetData(const BufferHandle* handle, string_type* data, size_type* size);

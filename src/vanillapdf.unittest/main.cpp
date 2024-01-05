@@ -15,6 +15,30 @@ TEST(Buffer, CreateRelease) {
 	ASSERT_EQ(release_result, VANILLAPDF_ERROR_SUCCESS);
 }
 
+TEST(Buffer, CreateFromDataRelease) {
+
+	const char BUFFER_DATA[] = "BUFFER_DATA";
+
+	BufferHandle* buffer_ptr = nullptr;
+	string_type check_data_ptr = nullptr;
+	size_type check_data_len = 0;
+
+	// Create buffer with data
+	ASSERT_EQ(Buffer_CreateFromData(&buffer_ptr, BUFFER_DATA, sizeof(BUFFER_DATA)), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(buffer_ptr, nullptr);
+
+	// Read data information from buffer
+	ASSERT_EQ(Buffer_GetData(buffer_ptr, &check_data_ptr, &check_data_len), VANILLAPDF_ERROR_SUCCESS);
+
+	// Verify the data and length returned by Buffer_GetData
+	ASSERT_NE(check_data_ptr, nullptr);
+	ASSERT_STREQ(BUFFER_DATA, check_data_ptr);
+	ASSERT_EQ(check_data_len, sizeof(BUFFER_DATA));
+
+	// Release the actual buffer allocation
+	ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+}
+
 TEST(Buffer, NullCheck) {
 	ASSERT_EQ(Buffer_Create(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
 	ASSERT_EQ(Buffer_Release(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
