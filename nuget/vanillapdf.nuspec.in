@@ -12,7 +12,7 @@
     <projectUrl>https://vanillapdf.com/</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Vanilla.PDF is a cross-platform SDK for creating and modifying PDF documents</description>
-    <copyright>Copyright 2018-2023 Vanilla.PDF Labs s.r.o.</copyright>
+    <copyright>Copyright 2018-2024 Vanilla.PDF Labs s.r.o.</copyright>
     <tags>pdf parsing sign native</tags>
 
     <dependencies>
