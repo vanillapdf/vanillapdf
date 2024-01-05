@@ -35,6 +35,10 @@ void OutputStream::Write(char value) {
 	*m_stream << value;
 }
 
+void OutputStream::Write(unsigned char value) {
+	*m_stream << value;
+}
+
 void OutputStream::Write(WhiteSpace value) {
 	*m_stream << static_cast<char>(value);
 }

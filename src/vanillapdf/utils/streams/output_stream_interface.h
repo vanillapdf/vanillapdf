@@ -16,6 +16,7 @@ public:
 	virtual void Write(const std::string& data) = 0;
 	virtual void Write(const char* str) = 0;
 	virtual void Write(char value) = 0;
+	virtual void Write(unsigned char value) = 0;
 	virtual void Write(WhiteSpace value) = 0;
 	virtual void Write(Delimiter value) = 0;
 	virtual void Write(int32_t value) = 0;

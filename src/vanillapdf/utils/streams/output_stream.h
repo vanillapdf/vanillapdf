@@ -16,6 +16,7 @@ public:
 	virtual void Write(const std::string& data) override;
 	virtual void Write(const char* str) override;
 	virtual void Write(char value) override;
+	virtual void Write(unsigned char value) override;
 	virtual void Write(WhiteSpace value) override;
 	virtual void Write(Delimiter value) override;
 	virtual void Write(int32_t value) override;

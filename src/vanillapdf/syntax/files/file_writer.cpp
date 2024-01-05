@@ -1286,10 +1286,10 @@ void FileWriter::WriteHeader(IOutputStreamPtr output, HeaderPtr header) {
 
 	// TODO: Add this only in case the document contains binary data
 	output->Write('%');
-	output->Write(0xDE);
-	output->Write(0xAD);
-	output->Write(0xC0);
-	output->Write(0xDE);
+	output->Write((unsigned char)0xDE);
+	output->Write((unsigned char)0xAD);
+	output->Write((unsigned char)0xC0);
+	output->Write((unsigned char)0xDE);
 	output->Write(WhiteSpace::LINE_FEED);
 }
 
