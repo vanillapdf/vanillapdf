@@ -166,7 +166,12 @@ BufferPtr StreamObject::GetBody() const {
 	}
 
 	if (!_header->Contains(constant::Name::Filter)) {
-		return GetBodyDecrypted();
+		auto body = GetBodyDecrypted();
+
+		_body_decoded->assign(body.begin(), body.end());
+		_body_decoded->SetInitialized();
+
+		return _body_decoded;
 	}
 
 	//auto stream = locked_file->GetInputStream();
@@ -255,17 +260,20 @@ BufferPtr StreamObject::GetBody() const {
 }
 
 BufferPtr StreamObject::GetBodyEncoded() const {
+
+	auto locked_file = m_file.GetReference();
+
 	// Optimization for unchanged streams
-	if (!IsDirty()) {
+	// In case the document is encrypted, the stream contents needs to be recalculated
+	if (!IsDirty() && !locked_file->IsEncrypted()) {
 		return GetBodyRaw();
 	}
 
-	if (!_header->Contains(constant::Name::Filter)) {
-		return GetBody();
-	}
-
-	auto locked_file = m_file.GetReference();
 	auto decoded_body = GetBody();
+
+	if (!_header->Contains(constant::Name::Filter)) {
+		return EncryptStream(decoded_body, GetRootObjectNumber(), GetRootGenerationNumber());
+	}
 
 	auto filter_obj = _header->Find(constant::Name::Filter);
 	bool is_filter_null = ObjectUtils::IsType<NullObjectPtr>(filter_obj);
