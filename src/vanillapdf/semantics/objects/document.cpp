@@ -932,17 +932,55 @@ void Document::ForceObjectInitialization() {
 			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(xref_entry);
 			auto used_entry_object = used_entry->GetReference();
 
-			// The object has been initialized by now
+			ForceObjectInitialization(used_entry_object);
 
-			// The stream content has to be handled specifically
-			if (!ConvertUtils<ObjectPtr>::IsType<StreamObjectPtr>(used_entry_object)) {
-				continue;
-			}
-
-			// Force the object body initialization
-			auto used_stream_object = ConvertUtils<ObjectPtr>::ConvertTo<StreamObjectPtr>(used_entry_object);
-			used_stream_object->GetBody();
+			// The object with all references has been initialized by now
 		}
+	}
+}
+
+void Document::ForceObjectInitialization(ObjectPtr obj) {
+
+	// The stream content has to be handled specifically
+	if (ConvertUtils<ObjectPtr>::IsType<StreamObjectPtr>(obj)) {
+
+		// Force the object body initialization
+		auto used_stream_object = ConvertUtils<ObjectPtr>::ConvertTo<StreamObjectPtr>(obj);
+		used_stream_object->GetBody();
+
+		// Initialize stream dictionary entries
+		ForceObjectInitialization(used_stream_object->GetHeader());
+	}
+
+	// Dictionary may contain other strings and references
+	if (ConvertUtils<ObjectPtr>::IsType<DictionaryObjectPtr>(obj)) {
+
+		// Force the object body initialization
+		auto used_dictionary_object = ConvertUtils<ObjectPtr>::ConvertTo<DictionaryObjectPtr>(obj);
+
+		// Initialize also dictionary entries
+		for (auto& item : used_dictionary_object) {
+			ForceObjectInitialization(item.second);
+		}
+	}
+
+	// Array may contain other strings and references
+	if (ConvertUtils<ObjectPtr>::IsType<MixedArrayObjectPtr>(obj)) {
+
+		auto used_array_object = ConvertUtils<ObjectPtr>::ConvertTo<MixedArrayObjectPtr>(obj);
+
+		// Initialize also array entries
+		for (auto& item : used_array_object) {
+			ForceObjectInitialization(item);
+		}
+	}
+
+	// The string values needs to be initialized as well before settings the encryption dictionary
+	if (ConvertUtils<ObjectPtr>::IsType<StringObjectPtr>(obj)) {
+
+		// Force the string value initialization
+		auto used_string_object = ConvertUtils<ObjectPtr>::ConvertTo<StringObjectPtr>(obj);
+		used_string_object->GetValue();
 	}
 }
 

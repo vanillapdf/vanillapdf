@@ -67,6 +67,7 @@ private:
 	bool IsDestinationReferencingPage(DestinationPtr destination, PageObjectPtr page);
 
 	void ForceObjectInitialization();
+	void ForceObjectInitialization(syntax::ObjectPtr obj);
 
 private:
 	explicit Document(syntax::FilePtr holder);
