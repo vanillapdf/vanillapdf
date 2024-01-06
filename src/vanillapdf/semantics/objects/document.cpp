@@ -366,6 +366,9 @@ void Document::FixDestinationPage(ObjectPtr cloned_page, PageObjectPtr other_pag
 
 void Document::AppendDocument(DocumentPtr other) {
 
+	// All strings and streams needs to be initialized before cloning
+	other->ForceObjectInitialization();
+
 	OutputCatalogPtr other_catalog;
 	bool has_other_catalog = other->GetDocumentCatalog(other_catalog);
 	if (!has_other_catalog) {
