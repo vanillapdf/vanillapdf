@@ -78,7 +78,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_SetKeyLe
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetUserPermissions(DocumentEncryptionSettingsHandle* handle, UserAccessPermissionFlags* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetUserAccessPermissions(DocumentEncryptionSettingsHandle* handle, UserAccessPermissionFlags* result) {
 	DocumentEncryptionSettings* obj = reinterpret_cast<DocumentEncryptionSettings*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -100,7 +100,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetUserP
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_SetUserPermissions(DocumentEncryptionSettingsHandle* handle, UserAccessPermissionFlags user_permissions) {
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_SetUserAccessPermissions(DocumentEncryptionSettingsHandle* handle, UserAccessPermissionFlags user_permissions) {
 	DocumentEncryptionSettings* obj = reinterpret_cast<DocumentEncryptionSettings*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 

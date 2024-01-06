@@ -140,19 +140,54 @@ extern "C"
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_Create(DocumentEncryptionSettingsHandle** result);
 
+	/**
+	* \brief Algorithm to be used for document encryption
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetAlgorithm(DocumentEncryptionSettingsHandle* handle, EncryptionAlgorithmType* result);
+
+	/**
+	* \copydoc DocumentEncryptionSettings_GetAlgorithm
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_SetAlgorithm(DocumentEncryptionSettingsHandle* handle, EncryptionAlgorithmType encryption_algorithm);
 
+	/**
+	* \brief Length of the key for document encryption
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetKeyLength(DocumentEncryptionSettingsHandle* handle, integer_type* result);
+
+	/**
+	* \copydoc DocumentEncryptionSettings_GetKeyLength
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_SetKeyLength(DocumentEncryptionSettingsHandle* handle, integer_type key_length);
 
-	VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetUserPermissions(DocumentEncryptionSettingsHandle* handle, UserAccessPermissionFlags* result);
-	VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_SetUserPermissions(DocumentEncryptionSettingsHandle* handle, UserAccessPermissionFlags user_permissions);
+	/**
+	* \brief Permissions for user, when opening the document with user password
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetUserAccessPermissions(DocumentEncryptionSettingsHandle* handle, UserAccessPermissionFlags* result);
 
+	/**
+	* \copydoc DocumentEncryptionSettings_GetUserPermissions
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_SetUserAccessPermissions(DocumentEncryptionSettingsHandle* handle, UserAccessPermissionFlags user_permissions);
+
+	/**
+	* \brief User password to be used for document encryption
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetUserPassword(DocumentEncryptionSettingsHandle* handle, BufferHandle** result);
+
+	/**
+	* \copydoc DocumentEncryptionSettings_GetUserPassword
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_SetUserPassword(DocumentEncryptionSettingsHandle* handle, BufferHandle* user_password);
 
+	/**
+	* \brief Owner password to be used for document encryption
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetOwnerPassword(DocumentEncryptionSettingsHandle* handle, BufferHandle** result);
+
+	/**
+	* \copydoc DocumentEncryptionSettings_GetOwnerPassword
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_SetOwnerPassword(DocumentEncryptionSettingsHandle* handle, BufferHandle* owner_password);
 
 	/**

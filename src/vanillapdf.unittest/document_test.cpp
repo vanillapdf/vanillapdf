@@ -34,7 +34,7 @@ namespace documents {
 
 		ASSERT_EQ(DocumentEncryptionSettings_SetAlgorithm(encryption_settings, ENCRYPTION_ALGORITHM), VANILLAPDF_ERROR_SUCCESS);
 		ASSERT_EQ(DocumentEncryptionSettings_SetKeyLength(encryption_settings, ENCRYPTION_KEY_LENGTH), VANILLAPDF_ERROR_SUCCESS);
-		ASSERT_EQ(DocumentEncryptionSettings_SetUserPermissions(encryption_settings, UserAccessPermissionFlag_None), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(DocumentEncryptionSettings_SetUserAccessPermissions(encryption_settings, UserAccessPermissionFlag_None), VANILLAPDF_ERROR_SUCCESS);
 
 		BufferHandle* owner_password = nullptr;
 		BufferHandle* user_password = nullptr;

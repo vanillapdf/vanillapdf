@@ -89,7 +89,7 @@ int process_encrypt(int argc, char *argv[]) {
 
 	RETURN_ERROR_IF_NOT_SUCCESS(DocumentEncryptionSettings_SetAlgorithm(encryption_settings, encryption_algorithm));
 	RETURN_ERROR_IF_NOT_SUCCESS(DocumentEncryptionSettings_SetKeyLength(encryption_settings, key_length));
-	RETURN_ERROR_IF_NOT_SUCCESS(DocumentEncryptionSettings_SetUserPermissions(encryption_settings, UserAccessPermissionFlag_None));
+	RETURN_ERROR_IF_NOT_SUCCESS(DocumentEncryptionSettings_SetUserAccessPermissions(encryption_settings, UserAccessPermissionFlag_None));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_CreateFromData(&owner_password_buffer, owner_password, strlen(owner_password)));
 	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_CreateFromData(&user_password_buffer, user_password, strlen(user_password)));
