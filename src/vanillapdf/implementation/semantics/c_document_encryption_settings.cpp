@@ -9,6 +9,19 @@ using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
 
+// Verify the enum values to match at compile time
+static_assert(sizeof(UserAccessPermissionFlags) == sizeof(DocumentEncryptionSettings::UserAccessPermissionFlags));
+
+static_assert(static_cast<int32_t>(UserAccessPermissionFlag_None) == static_cast<int32_t>(DocumentEncryptionSettings::UserAccessPermissionFlags::None));
+static_assert(static_cast<int32_t>(UserAccessPermissionFlag_PrintDegraded) == static_cast<int32_t>(DocumentEncryptionSettings::UserAccessPermissionFlags::PrintDegraded));
+static_assert(static_cast<int32_t>(UserAccessPermissionFlag_ModifyContents) == static_cast<int32_t>(DocumentEncryptionSettings::UserAccessPermissionFlags::ModifyContents));
+static_assert(static_cast<int32_t>(UserAccessPermissionFlag_CopyAndExtract) == static_cast<int32_t>(DocumentEncryptionSettings::UserAccessPermissionFlags::CopyAndExtract));
+static_assert(static_cast<int32_t>(UserAccessPermissionFlag_AddAnnotations) == static_cast<int32_t>(DocumentEncryptionSettings::UserAccessPermissionFlags::AddAnnotations));
+static_assert(static_cast<int32_t>(UserAccessPermissionFlag_FillForms) == static_cast<int32_t>(DocumentEncryptionSettings::UserAccessPermissionFlags::FillForms));
+static_assert(static_cast<int32_t>(UserAccessPermissionFlag_ExtractText) == static_cast<int32_t>(DocumentEncryptionSettings::UserAccessPermissionFlags::ExtractText));
+static_assert(static_cast<int32_t>(UserAccessPermissionFlag_AssembleDocument) == static_cast<int32_t>(DocumentEncryptionSettings::UserAccessPermissionFlags::AssembleDocument));
+static_assert(static_cast<int32_t>(UserAccessPermissionFlag_PrintFaithful) == static_cast<int32_t>(DocumentEncryptionSettings::UserAccessPermissionFlags::PrintFaithful));
+
 VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_Create(DocumentEncryptionSettingsHandle** result) {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
@@ -83,18 +96,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetUserA
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	// Verify the enum values to match at compile time
-	static_assert(sizeof(UserAccessPermissionFlags) == sizeof(DocumentEncryptionSettings::UserAccessPermissionFlags));
-	static_assert(UserAccessPermissionFlag_None == DocumentEncryptionSettings::UserAccessPermissionFlags::None);
-	static_assert(UserAccessPermissionFlag_PrintDegraded == DocumentEncryptionSettings::UserAccessPermissionFlags::PrintDegraded);
-	static_assert(UserAccessPermissionFlag_ModifyContents == DocumentEncryptionSettings::UserAccessPermissionFlags::ModifyContents);
-	static_assert(UserAccessPermissionFlag_CopyAndExtract == DocumentEncryptionSettings::UserAccessPermissionFlags::CopyAndExtract);
-	static_assert(UserAccessPermissionFlag_AddAnnotations == DocumentEncryptionSettings::UserAccessPermissionFlags::AddAnnotations);
-	static_assert(UserAccessPermissionFlag_FillForms == DocumentEncryptionSettings::UserAccessPermissionFlags::FillForms);
-	static_assert(UserAccessPermissionFlag_ExtractText == DocumentEncryptionSettings::UserAccessPermissionFlags::ExtractText);
-	static_assert(UserAccessPermissionFlag_AssembleDocument == DocumentEncryptionSettings::UserAccessPermissionFlags::AssembleDocument);
-	static_assert(UserAccessPermissionFlag_PrintFaithful == DocumentEncryptionSettings::UserAccessPermissionFlags::PrintFaithful);
-
 	// The values between internal and public enum match exactly allowing to make this conversion
 	*result = static_cast<UserAccessPermissionFlags>(obj->GetUserPermissions());
 	return VANILLAPDF_ERROR_SUCCESS;
@@ -103,18 +104,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetUserA
 VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_SetUserAccessPermissions(DocumentEncryptionSettingsHandle* handle, UserAccessPermissionFlags user_permissions) {
 	DocumentEncryptionSettings* obj = reinterpret_cast<DocumentEncryptionSettings*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-
-	// Verify the enum values to match at compile time
-	static_assert(sizeof(UserAccessPermissionFlags) == sizeof(DocumentEncryptionSettings::UserAccessPermissionFlags));
-	static_assert(UserAccessPermissionFlag_None == DocumentEncryptionSettings::UserAccessPermissionFlags::None);
-	static_assert(UserAccessPermissionFlag_PrintDegraded == DocumentEncryptionSettings::UserAccessPermissionFlags::PrintDegraded);
-	static_assert(UserAccessPermissionFlag_ModifyContents == DocumentEncryptionSettings::UserAccessPermissionFlags::ModifyContents);
-	static_assert(UserAccessPermissionFlag_CopyAndExtract == DocumentEncryptionSettings::UserAccessPermissionFlags::CopyAndExtract);
-	static_assert(UserAccessPermissionFlag_AddAnnotations == DocumentEncryptionSettings::UserAccessPermissionFlags::AddAnnotations);
-	static_assert(UserAccessPermissionFlag_FillForms == DocumentEncryptionSettings::UserAccessPermissionFlags::FillForms);
-	static_assert(UserAccessPermissionFlag_ExtractText == DocumentEncryptionSettings::UserAccessPermissionFlags::ExtractText);
-	static_assert(UserAccessPermissionFlag_AssembleDocument == DocumentEncryptionSettings::UserAccessPermissionFlags::AssembleDocument);
-	static_assert(UserAccessPermissionFlag_PrintFaithful == DocumentEncryptionSettings::UserAccessPermissionFlags::PrintFaithful);
 
 	// The values between internal and public enum match exactly allowing to make this conversion
 	auto user_permissions_converted = static_cast<DocumentEncryptionSettings::UserAccessPermissionFlags>(user_permissions);
