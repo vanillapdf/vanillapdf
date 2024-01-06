@@ -83,8 +83,6 @@ File::File(IInputOutputStreamPtr stream, const std::string& path) : _full_path(p
 }
 
 File::~File(void) {
-	_cache.clear();
-
 	auto filename = GetFilenameString();
 
 	LOG_INFO_GLOBAL << "File destructor " << filename;

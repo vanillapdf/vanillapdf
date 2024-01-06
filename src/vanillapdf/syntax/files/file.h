@@ -116,7 +116,6 @@ private:
 	IInputOutputStreamPtr _input;
 	HeaderPtr _header;
 	XrefChainPtr _xref;
-	std::vector<ObjectPtr> _cache;
 
 	bool _initialized = false;
 	std::string _full_path;
