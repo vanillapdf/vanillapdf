@@ -6,6 +6,7 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 set(VANILLAPDF_UNITTEST_SOURCES
 	main.cpp
 	document_test.cpp
+	filter_test.cpp
 )
 
 set(VANILLAPDF_UNITTEST_HEADERS
