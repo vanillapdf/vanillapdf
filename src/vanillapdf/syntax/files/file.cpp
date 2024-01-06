@@ -799,10 +799,11 @@ ObjectPtr File::GetIndirectObjectInternal(
 		}
 		case XrefEntryBase::Usage::Null:
 			LOG_ERROR(filename) << "Xref entry type is null for object " << obj_number << " " << gen_number;
+			return NullObject::GetInstance();
 		case XrefEntryBase::Usage::Free:
 			return NullObject::GetInstance();
 		default:
-			throw GeneralException("Unknown entry type");
+			throw GeneralException("Unknown xref entry type: " + std::to_string(static_cast<int>(item->GetUsage())));
 	}
 }
 
