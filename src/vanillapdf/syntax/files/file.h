@@ -135,6 +135,10 @@ private:
 
 private:
 	File(IInputOutputStreamPtr stream, const std::string& path);
+
+	void ExemptEncryptionDictionary();
+	void ExemptDocumentId();
+	void ExemptFileSignatures();
 };
 
 } // syntax

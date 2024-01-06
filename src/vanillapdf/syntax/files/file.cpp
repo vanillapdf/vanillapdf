@@ -124,91 +124,14 @@ void File::Initialize() {
 		_xref = stream.FindAllObjects();
 	}
 
-	// After xref informations are parsed, check for encryption
-	auto last_trailer_dictionary = _xref->Begin()->Value()->GetTrailerDictionary();
-	if (last_trailer_dictionary->Contains(constant::Name::Encrypt)) {
-		_encryption_dictionary = last_trailer_dictionary->Find(constant::Name::Encrypt);
-
-		if (ObjectUtils::IsType<IndirectReferenceObjectPtr>(_encryption_dictionary)) {
-			auto reference = ObjectUtils::ConvertTo<IndirectReferenceObjectPtr>(_encryption_dictionary);
-			auto obj_number = reference->GetReferencedObjectNumber();
-			auto gen_number = reference->GetReferencedGenerationNumber();
-
-			_encryption_dictionary = GetIndirectObjectInternal(obj_number, gen_number);
-		}
-
-		// Encryption dictionary itself is not encrypted
-		_encryption_dictionary->SetEncryptionExempted();
-	}
-
-	// ID entries in trailer are exempted from encryption
-	for (auto xref : _xref) {
-		auto trailer_dictionary = xref->GetTrailerDictionary();
-
-		if (trailer_dictionary->Contains(constant::Name::ID)) {
-			auto ids = trailer_dictionary->Find(constant::Name::ID);
-			assert(!ObjectUtils::IsType<IndirectReferenceObjectPtr>(ids) && "Document ID is indirect reference");
-
-			// I have found document, that have document ID as a single integer "77777777777777777" issue5599.pdf.
-			// Adobe acrobat can open this document without any notifications,
-			// therefore following requirement from specification 7.5.5 is considered invalid:
-			// "An array of two byte-strings constituting a file identifier"
-			//assert(ObjectUtils::IsType<ArrayObjectPtr<StringObjectPtr>>(ids) && "Document ID is not array of strings");
-
-			ids->SetEncryptionExempted();
-		}
-	}
+	// Mark file as initialized
+	_initialized = true;
 
 	// Signature search needs to be done after the file has been initialized,
 	// since we need to process indirect references as well
-	_initialized = true;
-
-	// File signatures are also exempted from the encryption
-	do {
-		if (!last_trailer_dictionary->Contains(constant::Name::Root)) {
-			break;
-		}
-
-		auto document_root = last_trailer_dictionary->FindAs<DictionaryObjectPtr>(constant::Name::Root);
-		if (!document_root->Contains(constant::Name::AcroForm)) {
-			break;
-		}
-
-		auto acro_form_dictionary = document_root->FindAs<DictionaryObjectPtr>(constant::Name::AcroForm);
-		if (!acro_form_dictionary->Contains(constant::Name::Fields)) {
-			break;
-		}
-
-		auto fields_reference_list = acro_form_dictionary->FindAs<MixedArrayObjectPtr>(constant::Name::Fields);
-		for (auto field_item_reference : fields_reference_list) {
-			if (!ObjectUtils::IsType<DictionaryObjectPtr>(field_item_reference)) {
-				continue;
-			}
-
-			auto field_item = ObjectUtils::ConvertTo<DictionaryObjectPtr>(field_item_reference);
-			if (!field_item->Contains(constant::Name::FT)) {
-				continue;
-			}
-
-			auto field_item_type = field_item->FindAs<NameObjectPtr>(constant::Name::FT);
-			if (field_item_type != constant::Name::Sig) {
-				continue;
-			}
-
-			if (!field_item->Contains(constant::Name::V)) {
-				continue;
-			}
-
-			auto signature_dictionary = field_item->FindAs<DictionaryObjectPtr>(constant::Name::V);
-			if (!signature_dictionary->Contains(constant::Name::Contents)) {
-				continue;
-			}
-
-			auto signature_contents = signature_dictionary->FindAs<HexadecimalStringObjectPtr>(constant::Name::Contents);
-			signature_contents->SetEncryptionExempted();
-		}
-
-	} while (false);
+	ExemptDocumentId();
+	ExemptFileSignatures();
+	ExemptEncryptionDictionary();
 }
 
 bool File::SetEncryptionKey(IEncryptionKey& key) {
@@ -1099,6 +1022,107 @@ IInputStreamPtr File::GetByteRangeStream(types::stream_size begin, types::size_t
 	_input->SetInputPosition(begin);
 	auto buffer = _input->Read(length);
 	return buffer->ToInputStream();
+}
+
+void File::ExemptEncryptionDictionary() {
+
+	// Find the proper xref section
+	auto xref_iterator = _xref->Begin();
+	auto xref = xref_iterator->Value();
+
+	// Find the trailer dictionary
+	auto trailer_dictionary = xref->GetTrailerDictionary();
+
+	// After xref informations are parsed, check for encryption
+	if (trailer_dictionary->Contains(constant::Name::Encrypt)) {
+		_encryption_dictionary = trailer_dictionary->Find(constant::Name::Encrypt);
+
+		if (ObjectUtils::IsType<IndirectReferenceObjectPtr>(_encryption_dictionary)) {
+			auto reference = ObjectUtils::ConvertTo<IndirectReferenceObjectPtr>(_encryption_dictionary);
+			auto obj_number = reference->GetReferencedObjectNumber();
+			auto gen_number = reference->GetReferencedGenerationNumber();
+
+			_encryption_dictionary = GetIndirectObjectInternal(obj_number, gen_number);
+		}
+
+		// Encryption dictionary itself is not encrypted
+		_encryption_dictionary->SetEncryptionExempted();
+	}
+}
+
+void File::ExemptDocumentId() {
+
+	// ID entries in trailer are exempted from encryption
+	for (auto xref : _xref) {
+		auto trailer_dictionary = xref->GetTrailerDictionary();
+
+		if (trailer_dictionary->Contains(constant::Name::ID)) {
+			auto ids = trailer_dictionary->Find(constant::Name::ID);
+			assert(!ObjectUtils::IsType<IndirectReferenceObjectPtr>(ids) && "Document ID is indirect reference");
+
+			// I have found document, that have document ID as a single integer "77777777777777777" issue5599.pdf.
+			// Adobe acrobat can open this document without any notifications,
+			// therefore following requirement from specification 7.5.5 is considered invalid:
+			// "An array of two byte-strings constituting a file identifier"
+			//assert(ObjectUtils::IsType<ArrayObjectPtr<StringObjectPtr>>(ids) && "Document ID is not array of strings");
+
+			ids->SetEncryptionExempted();
+		}
+	}
+}
+
+void File::ExemptFileSignatures() {
+
+	// Find the proper xref section
+	auto xref_iterator = _xref->Begin();
+	auto xref = xref_iterator->Value();
+
+	// Find the trailer dictionary
+	auto trailer_dictionary = xref->GetTrailerDictionary();
+
+	// File signatures are also exempted from the encryption
+	if (!trailer_dictionary->Contains(constant::Name::Root)) {
+		return;
+	}
+
+	auto document_root = trailer_dictionary->FindAs<DictionaryObjectPtr>(constant::Name::Root);
+	if (!document_root->Contains(constant::Name::AcroForm)) {
+		return;
+	}
+
+	auto acro_form_dictionary = document_root->FindAs<DictionaryObjectPtr>(constant::Name::AcroForm);
+	if (!acro_form_dictionary->Contains(constant::Name::Fields)) {
+		return;
+	}
+
+	auto fields_reference_list = acro_form_dictionary->FindAs<MixedArrayObjectPtr>(constant::Name::Fields);
+	for (auto field_item_reference : fields_reference_list) {
+		if (!ObjectUtils::IsType<DictionaryObjectPtr>(field_item_reference)) {
+			continue;
+		}
+
+		auto field_item = ObjectUtils::ConvertTo<DictionaryObjectPtr>(field_item_reference);
+		if (!field_item->Contains(constant::Name::FT)) {
+			continue;
+		}
+
+		auto field_item_type = field_item->FindAs<NameObjectPtr>(constant::Name::FT);
+		if (field_item_type != constant::Name::Sig) {
+			continue;
+		}
+
+		if (!field_item->Contains(constant::Name::V)) {
+			continue;
+		}
+
+		auto signature_dictionary = field_item->FindAs<DictionaryObjectPtr>(constant::Name::V);
+		if (!signature_dictionary->Contains(constant::Name::Contents)) {
+			continue;
+		}
+
+		auto signature_contents = signature_dictionary->FindAs<HexadecimalStringObjectPtr>(constant::Name::Contents);
+		signature_contents->SetEncryptionExempted();
+	}
 }
 
 } // syntax
