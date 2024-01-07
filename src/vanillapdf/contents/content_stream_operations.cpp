@@ -214,8 +214,13 @@ OperationTextShowArray::OperationTextShowArray(const std::vector<ObjectPtr>& ope
 		throw GeneralException("Unexpected number of arguments");
 	}
 
-	auto operand = operands.at(0);
-	m_items = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(operand);
+	auto item = operands.at(0);
+	if (!ObjectUtils::IsType<MixedArrayObjectPtr>(item)) {
+		assert(!"Text show array operation has invalid arguments");
+		throw GeneralException("Unexpected argument type");
+	}
+
+	m_items = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(item);
 	m_items->Subscribe(this);
 	m_items->SetInitialized();
 }
