@@ -61,7 +61,7 @@ if(WIN32)
 
 	# UPDATE 2022:
 	# Some dependencies such as libjpeg and OpenSSL do not support static CRT
-	# This means that we have to ship CRL libraries in any case
+	# This means that we have to ship CRT libraries in any case
 	# Let's use this and reduce the libvanillapdf size by dynamically linking the CRT
 
 	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd")
