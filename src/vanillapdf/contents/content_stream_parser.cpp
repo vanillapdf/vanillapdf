@@ -189,7 +189,7 @@ InstructionBasePtr ContentStreamParser::ReadInstruction(void) {
 OperationBasePtr ContentStreamParser::ReadOperation(void) {
 	std::vector<syntax::ObjectPtr> operands;
 	while (IsOperand(PeekTokenTypeSkip())) {
-		auto operand = ReadOperand();
+		auto operand = ReadDirectObject();
 		operand->SetEncryptionExempted();
 		operand->SetInitialized();
 		operands.push_back(operand);
@@ -370,7 +370,7 @@ bool ContentStreamParser::IsOperand(Token::Type type) {
 	}
 }
 
-ObjectPtr ContentStreamParser::ReadOperand() {
+ObjectPtr ContentStreamParser::ReadDirectObject() {
 	auto offset = m_stream->GetInputPosition();
 	switch (PeekTokenTypeSkip()) {
 		case Token::Type::DICTIONARY_BEGIN:

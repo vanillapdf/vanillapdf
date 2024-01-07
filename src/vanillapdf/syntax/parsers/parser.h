@@ -14,9 +14,9 @@ class ParserBase : public Tokenizer {
 public:
 	ParserBase(WeakReference<File> file, IInputStreamPtr stream);
 
-	ObjectPtr ReadDirectObject(void);
-	ObjectPtr ReadDirectObject(types::stream_offset offset);
-	ObjectPtr PeekDirectObject(void);
+	virtual ObjectPtr ReadDirectObject(void);
+	virtual ObjectPtr ReadDirectObject(types::stream_offset offset);
+	virtual ObjectPtr PeekDirectObject(void);
 
 	template<typename T>
 	T ReadDirectObjectWithType(types::stream_offset offset) {
