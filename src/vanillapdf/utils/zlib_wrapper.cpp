@@ -127,7 +127,7 @@ static BufferPtr Deflate(IInputStreamPtr input, types::stream_size length) {
 	strm.opaque = Z_NULL;
 	rv = deflateInit(&strm, Z_DEFAULT_COMPRESSION);
 	if (rv != Z_OK) {
-		throw GeneralException("Zlib initialization failed");
+		throw GeneralException("Zlib initialization failed: " + std::to_string(rv));
 	}
 
 	/* clean up */
