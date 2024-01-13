@@ -139,6 +139,7 @@ private:
 	void ExemptEncryptionDictionary();
 	void ExemptDocumentId();
 	void ExemptFileSignatures();
+	void ExemptCrossReferenceStreams();
 };
 
 } // syntax

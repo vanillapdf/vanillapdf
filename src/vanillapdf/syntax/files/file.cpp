@@ -1,4 +1,4 @@
-#include "precompiled.h"
+﻿#include "precompiled.h"
 
 #include "syntax/files/file.h"
 #include "syntax/files/xref_chain.h"
@@ -127,11 +127,19 @@ void File::Initialize() {
 	// Mark file as initialized
 	_initialized = true;
 
+	// Encryption dictionary should be parsed and exepted as first in the order
+	// The file "bps_park_rpk.pdf" is encrypted,
+	// and the AcroForm dictionary is stored within object stream.
+	// Accessing such object fails on decompression, as the stream was not decrypted.
+	ExemptEncryptionDictionary();
+
+	// Cross-reference streams could contain information about file signatures
+	ExemptCrossReferenceStreams();
+
 	// Signature search needs to be done after the file has been initialized,
 	// since we need to process indirect references as well
 	ExemptDocumentId();
 	ExemptFileSignatures();
-	ExemptEncryptionDictionary();
 }
 
 bool File::SetEncryptionKey(IEncryptionKey& key) {
@@ -1085,7 +1093,13 @@ void File::ExemptFileSignatures() {
 		return;
 	}
 
-	auto document_root = trailer_dictionary->FindAs<DictionaryObjectPtr>(constant::Name::Root);
+	auto document_root_obj = trailer_dictionary->Find(constant::Name::Root);
+
+	if (!ObjectUtils::IsType<DictionaryObjectPtr>(document_root_obj)) {
+		return;
+	}
+
+	auto document_root = ObjectUtils::ConvertTo<DictionaryObjectPtr>(document_root_obj);
 	if (!document_root->Contains(constant::Name::AcroForm)) {
 		return;
 	}
@@ -1122,6 +1136,23 @@ void File::ExemptFileSignatures() {
 
 		auto signature_contents = signature_dictionary->FindAs<HexadecimalStringObjectPtr>(constant::Name::Contents);
 		signature_contents->SetEncryptionExempted();
+	}
+}
+
+void File::ExemptCrossReferenceStreams() {
+
+	for (auto xref : _xref) {
+
+		if (!ConvertUtils<XrefBasePtr>::IsType<XrefStreamPtr>(xref)) {
+			continue;
+		}
+
+		auto xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(xref);
+		auto xref_stream_dictionary = xref_stream->GetTrailerDictionary();
+
+		// The cross-reference stream shall not be encrypted and strings appearing in the cross-reference stream dictionary
+		// shall not be encrypted. It shall not have a Filter entry that specifies a Crypt filter (see 7.4.10, "Crypt Filter").
+		xref_stream_dictionary->SetEncryptionExempted();
 	}
 }
 

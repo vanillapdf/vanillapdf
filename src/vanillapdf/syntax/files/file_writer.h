@@ -206,6 +206,7 @@ private:
 
 	void InitializeReferences(ObjectPtr source);
 	void RedirectReferences(ObjectPtr source, const std::unordered_map<ObjectPtr, ObjectPtr>& duplicit_items);
+	void FindIndirectReferences(ObjectPtr source, std::unordered_map<XrefEntryBasePtr, bool>& used_entries);
 
 	// flags
 	bool m_recalculate_offset = true;

@@ -1077,6 +1077,11 @@ DictionaryObjectPtr FileWriter::CloneTrailerDictionary(FilePtr source, XrefBaseP
 		new_trailer->Insert(constant::Name::Encrypt, cloned);
 	}
 
+	// Set encryption exemption
+	if (source_trailer->IsEncryptionExempted()) {
+		new_trailer->SetEncryptionExempted();
+	}
+
 	new_trailer->SetFile(source);
 	return new_trailer;
 }
@@ -1880,6 +1885,12 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
 		}
 	}
 
+	// Create head of the new xref table
+	XrefFreeEntryPtr free_list_head_entry = make_deferred<XrefFreeEntry>(0, constant::MAX_GENERATION_NUMBER);
+	//free_list_head_entry->SetFile(source);
+
+	new_xref->Add(free_list_head_entry);
+
 	// 23.9.2023
 	// We are using rbegin instead of begin due to ordering of the xref tables.
 	// It looks like that the order should be overriden meaning that the first one is the least relevant.
@@ -1895,6 +1906,12 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
 
 		// All conflicts are overwritten
 		for (auto item : current) {
+
+			// Skip unused entries
+			if (!item->InUse()) {
+				continue;
+			}
+
 			new_xref->Add(item);
 		}
 
@@ -1904,6 +1921,12 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
 				auto hybrid_stream = xref_table->GetHybridStream();
 
 				for (auto item : hybrid_stream) {
+
+					// Skip unused entries
+					if (!item->InUse()) {
+						continue;
+					}
+
 					new_xref->Add(item);
 				}
 			}
@@ -1941,6 +1964,177 @@ void FileWriter::RemoveUnreferencedObjects(XrefChainPtr xref) {
 	// Disabled feature
 	if (!m_remove_unreferenced) {
 		return;
+	}
+
+	std::unordered_map<XrefEntryBasePtr, bool> used_entries;
+	std::unordered_map<XrefEntryBasePtr, bool> visited_entries;
+
+	// Add all existing entries into the dictionary
+	for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
+		auto current = *iterator;
+
+		for (auto item : current) {
+
+			// Accept either used and compressed entries
+			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(item)) {
+				continue;
+			}
+
+			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(item);
+
+			// Insert into the dictionary as unused by default, unless there is a reference
+			used_entries[used_entry] = false;
+		}
+
+		// Check for hybrid streams
+		if (ConvertUtils<XrefBasePtr>::IsType<XrefTablePtr>(current)) {
+			auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(current);
+			if (xref_table->HasHybridStream()) {
+				auto hybrid_stream = xref_table->GetHybridStream();
+
+				for (auto item : hybrid_stream) {
+					// Accept either used and compressed entries
+					if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(item)) {
+						continue;
+					}
+
+					auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(item);
+
+					// Insert into the dictionary as unused by default, unless there is a reference
+					used_entries[used_entry] = false;
+				}
+			}
+		}
+	}
+
+	// Find and mark all used objects
+	for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
+		auto current = *iterator;
+
+		auto trailer_dictionary = current->GetTrailerDictionary();
+		auto trailer_dictionary_weak_entry = trailer_dictionary->GetXrefEntry();
+
+		// What?
+		if (!trailer_dictionary_weak_entry.IsActive()) {
+			continue;
+		}
+
+		auto trailer_dictionary_entry = trailer_dictionary_weak_entry.GetReference();
+		used_entries[trailer_dictionary_entry] = true;
+	}
+
+	// Find and mark all xref streams and object streams
+	for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
+		auto current = *iterator;
+
+		if (ConvertUtils<XrefBasePtr>::IsType<XrefTablePtr>(current)) {
+			auto xref_table = ConvertUtils<XrefBasePtr>::ConvertTo<XrefTablePtr>(current);
+			auto xref_trailer_dictionary = xref_table->GetTrailerDictionary();
+
+			// Xref table trailer dictionary is the entry point of the PDF file
+			FindIndirectReferences(xref_trailer_dictionary, used_entries);
+		}
+
+		// Accept either used and compressed entries
+		if (ConvertUtils<XrefBasePtr>::IsType<XrefStreamPtr>(current)) {
+			auto xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(current);
+			auto xref_stream_object = xref_stream->GetStreamObject();
+			auto xref_stream_weak_entry = xref_stream_object->GetXrefEntry();
+
+			if (xref_stream_weak_entry.IsActive()) {
+				auto xref_stream_entry = xref_stream_weak_entry.GetReference();
+				used_entries[xref_stream_entry] = true;
+			}
+
+			for (auto stream_entry : xref_stream) {
+				if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefCompressedEntryPtr>(stream_entry)) {
+					continue;
+				}
+
+				auto compressed_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(stream_entry);
+				auto object_stream_obj_number = compressed_entry->GetObjectStreamNumber();
+				auto object_stream_xref_entry = xref->GetXrefEntry(object_stream_obj_number, 0);
+
+				used_entries[object_stream_xref_entry] = true;
+			}
+		}
+
+		// TODO: Linearization dictionary - F.3.3 Linearization Parameter Dictionary (Part 2)
+		// The linearization dictionary is not referenced by any other object,
+		// however we do not support linearization yet, so it does not make sense to keep the dictionary.
+		// It also contains hint table offsets, which are removed as well.
+	}
+
+	while (true) {
+
+		bool found_unvisited = false;
+		for (auto used_entry_pair : used_entries) {
+			if (!used_entry_pair.second) {
+				continue;
+			}
+
+			if (visited_entries[used_entry_pair.first]) {
+				continue;
+			}
+
+			// Accept either used and compressed entries
+			if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(used_entry_pair.first)) {
+				continue;
+			}
+
+			auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(used_entry_pair.first);
+			auto used_object = used_entry->GetReference();
+
+			FindIndirectReferences(used_object, used_entries);
+
+			visited_entries[used_entry] = true;
+			found_unvisited = true;
+		}
+
+		if (!found_unvisited) {
+			break;
+		}
+	}
+
+	// ----- DEBUG BEGIN -----
+
+#ifdef DEBUG
+
+	int used_count = 0;
+	int unused_count = 0;
+	for (auto used_entry : used_entries) {
+		if (used_entry.second) {
+			used_count++;
+		}
+		else {
+			unused_count++;
+		}
+	}
+
+#endif
+
+	// ----- DEBUG END -----
+
+	// Remove all unused objects
+	for (auto used_entry : used_entries) {
+
+		if (used_entry.second) {
+			continue;
+		}
+
+		bool removed = false;
+		for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
+			auto current = *iterator;
+
+			if (current->Contains(used_entry.first->GetObjectNumber())) {
+				removed = current->Remove(used_entry.first);
+				break;
+			}
+		}
+
+		if (!removed) {
+			// TODO: Log error cannot remove
+		}
 	}
 }
 
@@ -2164,9 +2358,10 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
 			}
 
 			// Store the object mapping for later object number fixups
-			auto remapped_object = std::make_pair(original_object_number, new_object_number);
-			auto inserted = squash_object_map.insert(remapped_object);
-			assert(inserted.second && "Could not insert object mapping"); UNUSED(inserted);
+			//auto remapped_object = std::make_pair(original_object_number, new_object_number);
+			//auto inserted = squash_object_map.insert(remapped_object);
+			//assert(inserted.second && "Could not insert object mapping"); UNUSED(inserted);
+			squash_object_map[original_object_number] = new_object_number;
 
 			if (ConvertUtils<XrefEntryBasePtr>::IsType<XrefFreeEntryPtr>(entry)) {
 				auto free_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefFreeEntryPtr>(entry);
@@ -2333,6 +2528,46 @@ void FileWriter::RedirectReferences(ObjectPtr source, const std::unordered_map<O
 		auto stream = ObjectUtils::ConvertTo<StreamObjectPtr>(source);
 		auto dict = stream->GetHeader();
 		RedirectReferences(dict, duplicit_items);
+	}
+}
+
+void FileWriter::FindIndirectReferences(ObjectPtr source, std::unordered_map<XrefEntryBasePtr, bool>& used_entries) {
+
+	// Find all references inside
+	if (ConvertUtils<ObjectPtr>::IsType<IndirectReferenceObjectPtr>(source)) {
+		auto used_reference = ConvertUtils<ObjectPtr>::ConvertTo<IndirectReferenceObjectPtr>(source);
+		auto used_reference_destination = used_reference->GetReferencedObject();
+		auto used_reference_destination_weak_entry = used_reference_destination->GetXrefEntry();
+
+		if (used_reference_destination_weak_entry.IsActive()) {
+			auto used_reference_destination_entry = used_reference_destination_weak_entry.GetReference();
+			used_entries[used_reference_destination_entry] = true;
+		}
+	}
+
+	if (ConvertUtils<ObjectPtr>::IsType<DictionaryObjectPtr>(source)) {
+		auto used_dictionary = ConvertUtils<ObjectPtr>::ConvertTo<DictionaryObjectPtr>(source);
+
+		for (auto current_pair : used_dictionary) {
+			FindIndirectReferences(current_pair.second, used_entries);
+		}
+	}
+
+	if (ConvertUtils<ObjectPtr>::IsType<StreamObjectPtr>(source)) {
+		auto used_stream = ConvertUtils<ObjectPtr>::ConvertTo<StreamObjectPtr>(source);
+		auto used_stream_header = used_stream->GetHeader();
+
+		for (auto current_pair : used_stream_header) {
+			FindIndirectReferences(current_pair.second, used_entries);
+		}
+	}
+
+	if (ConvertUtils<ObjectPtr>::IsType<MixedArrayObjectPtr>(source)) {
+		auto used_array = ConvertUtils<ObjectPtr>::ConvertTo<MixedArrayObjectPtr>(source);
+
+		for (auto item : used_array) {
+			FindIndirectReferences(item, used_entries);
+		}
 	}
 }
 
