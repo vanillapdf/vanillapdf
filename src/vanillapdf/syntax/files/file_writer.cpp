@@ -1849,6 +1849,8 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
 		return;
 	}
 
+	// TODO: Check if document is signed - if so, warn the user
+
 	// Merge all items into single table
 	XrefBasePtr new_xref = XrefTablePtr();
 
@@ -1890,9 +1892,8 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
 	}
 
 	// Create head of the new xref table
+	// We need to include this as the copy of free entries was disabled in the later stages
 	XrefFreeEntryPtr free_list_head_entry = make_deferred<XrefFreeEntry>(0, constant::MAX_GENERATION_NUMBER);
-	//free_list_head_entry->SetFile(source);
-
 	new_xref->Add(free_list_head_entry);
 
 	// 23.9.2023
@@ -1904,8 +1905,14 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
 	// The xref stream contained the item 657 marked as free entry and it was incorrectly overriden.
 	// Changing the order does pass all of the test cases and makes more sense, than making other exceptions.
 
+	// Update 13.1.2024
+	// We are using begin again with filtering the free entries, as this breaks the incremental update documents.
+	// For example document "sample_signed.pdf" is digitally signed containing updated objects in the second xref table.
+	// In the reverse order there will be only the first and not the second object number 57, which loses information.
+	// After this change all the documents pass the test cases.
+
 	// Merge all xref entries into freshly created one
-	for (auto iterator = xref->rbegin(); iterator != xref->rend(); ++iterator) {
+	for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
 		auto current = *iterator;
 
 		// All conflicts are overwritten
@@ -2018,7 +2025,7 @@ void FileWriter::RemoveUnreferencedObjects(XrefChainPtr xref) {
 		auto trailer_dictionary = current->GetTrailerDictionary();
 		auto trailer_dictionary_weak_entry = trailer_dictionary->GetXrefEntry();
 
-		// What?
+		// If the entry is not active, it could be reference to missing/null object
 		if (!trailer_dictionary_weak_entry.IsActive()) {
 			continue;
 		}
@@ -2045,6 +2052,7 @@ void FileWriter::RemoveUnreferencedObjects(XrefChainPtr xref) {
 			auto xref_stream_object = xref_stream->GetStreamObject();
 			auto xref_stream_weak_entry = xref_stream_object->GetXrefEntry();
 
+			// If the entry is not active, it could be reference to missing/null object
 			if (xref_stream_weak_entry.IsActive()) {
 				auto xref_stream_entry = xref_stream_weak_entry.GetReference();
 				used_entries[xref_stream_entry] = true;
@@ -2543,6 +2551,7 @@ void FileWriter::FindIndirectReferences(ObjectPtr source, std::unordered_map<Xre
 		auto used_reference_destination = used_reference->GetReferencedObject();
 		auto used_reference_destination_weak_entry = used_reference_destination->GetXrefEntry();
 
+		// If the entry is not active, it could be reference to missing/null object
 		if (used_reference_destination_weak_entry.IsActive()) {
 			auto used_reference_destination_entry = used_reference_destination_weak_entry.GetReference();
 			used_entries[used_reference_destination_entry] = true;
