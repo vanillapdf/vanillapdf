@@ -189,8 +189,9 @@ void XrefStream::RecalculateContent() {
 	// Insert subsection info
 	header->Insert(constant::Name::Index, subsections->Data());
 
-	// TODO unable to encode prediction algorithms
-	// so I just have to remove them
+	// TODO:
+	// The DecodeParms encoding is currently not implemented
+	// We have to either terminate the generation or remove the obstacle
 	if (header->Contains(constant::Name::DecodeParms)) {
 		bool removed = header->Remove(constant::Name::DecodeParms);
 		assert(removed && "Could not remove item from dictionary"); UNUSED(removed);
