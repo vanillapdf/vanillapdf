@@ -603,7 +603,7 @@ BufferPtr EncryptionUtils::GenerateOwnerEncryptionKey(
 
 		// Create an RC4 encryption key using the first n bytes of the output from the final MD5 hash,
 		// where n shall always be 5 for security handlers of revision 2 but, for security handlers of revision 3 or greater,
-		// shall depend on the value of the encryption dictionary’s Length entry.
+		// shall depend on the value of the encryption dictionary's Length entry.
 		types::big_int rc4_key_length = 0;
 		if (revision >= 3) {
 			rc4_key_length = (key_length / 8);

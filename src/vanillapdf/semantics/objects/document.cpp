@@ -53,9 +53,9 @@ DocumentPtr Document::CreateFile(syntax::FilePtr holder) {
 	// such as MD5 (described in Internet RFC 1321, The MD5 Message-Digest Algorithm; see the Bibliography),
 	// using the following information:
 	//   - The current time
-	//   - A string representation of the file’s location, usually a pathname
+	//   - A string representation of the file's location, usually a pathname
 	//   - The size of the file in bytes
-	//   - The values of all entries in the file’s document information dictionary(see 14.3.3, “Document Information Dictionary”)
+	//   - The values of all entries in the file's document information dictionary(see 14.3.3, "Document Information Dictionary")
 
 	// We are going to use random data as for example we don't know the path, neither file size
 	BufferPtr document_id_value = EncryptionUtils::GenerateRandomData(16);
