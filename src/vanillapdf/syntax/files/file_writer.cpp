@@ -1817,7 +1817,11 @@ void FileWriter::RemoveFreedObjects(XrefChainPtr xref) {
 
 		// Ignore first entry - it represents the free item linked list
 		auto sorted_entries = current_xref->Entries();
-		sorted_entries.erase(sorted_entries.begin());
+
+		// The document "cv_juraj_matys.pdf" contains xref table with 0 entries
+		if (sorted_entries.size() > 0) {
+			sorted_entries.erase(sorted_entries.begin());
+		}
 
 		// For each xref entry
 		for (auto entry_iterator = sorted_entries.begin(); entry_iterator != sorted_entries.end(); ++entry_iterator) {
