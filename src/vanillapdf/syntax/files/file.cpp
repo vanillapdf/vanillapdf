@@ -19,8 +19,10 @@
 #include "utils/streams/stream_utils.h"
 
 #include "utils/misc_utils.h"
+#include "utils/windows_utils.h"
 
 #include <fstream>
+#include <filesystem>
 
 namespace vanillapdf {
 namespace syntax {
@@ -63,11 +65,22 @@ FilePtr File::CreateStream(IInputOutputStreamPtr stream, const std::string& name
 
 IInputOutputStreamPtr File::GetFilestream(const std::string& path, std::ios_base::openmode mode) {
 
+	auto fs_path = std::filesystem::path(path);
+
+	// On windows there is an issue with unicode filenames.
+	// By default the std::string does not work even if the path is in UTF-8 encoding.
+	// This can be switched in the OS regional settings, however requires a user interaction.
+	// The std::wstring seems to be capable of opening such file, however it's not portable.
+
+#if _WIN32
+	fs_path = WindowsUtils::MultiByteToWideChar(path);
+#endif _WIN32
+
 	auto input_file = std::make_shared<std::fstream>();
-	input_file->open(path, mode);
+	input_file->open(fs_path, mode);
 
 	if (!input_file || !input_file->good()) {
-		throw GeneralException("Could not open file");
+		throw GeneralException("Could not open file: " + path + ", errno: " + std::to_string(errno));
 	}
 
 	return make_deferred<InputOutputStream>(input_file);

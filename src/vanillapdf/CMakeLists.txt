@@ -186,6 +186,7 @@ set(VANILLAPDF_UTILS_SOURCES
 	utils/resource.cpp
 	utils/time_utils.cpp
 	utils/unknown_interface.cpp
+	utils/windows_utils.cpp
 	utils/zlib_wrapper.cpp
 	
 	utils/streams/input_reverse_stream.cpp
@@ -331,18 +332,19 @@ set(VANILLAPDF_UTILS_HEADERS
 	utils/unknown_interface.h
 	utils/util.h
 	utils/utils_fwd.h
+	utils/windows_utils.h
 	utils/zlib_wrapper.h
-	
+
 	utils/streams/input_stream_interface.h
 	utils/streams/input_reverse_stream.h
 	utils/streams/input_stream.h
-	
+
 	utils/streams/output_stream_interface.h
 	utils/streams/output_stream.h
-	
+
 	utils/streams/input_output_stream_interface.h
 	utils/streams/input_output_stream.h
-	
+
 	utils/streams/stream_utils.h
 	utils/streams/seek_direction.h
 )
