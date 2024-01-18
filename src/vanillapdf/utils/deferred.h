@@ -68,7 +68,7 @@ public:
 
 	// 3.9.1 Fundamental types[basic.fundamental]
 	// Values of type bool are either true or false
-	// [Note:There are no signed, unsigned, short, or long bool types or values.— end note]
+	// [Note:There are no signed, unsigned, short, or long bool types or values. end note]
 	// Values of type bool participate in integral promotions(4.5).
 
 	// There is no need to specify nullptr - use the default constructor
