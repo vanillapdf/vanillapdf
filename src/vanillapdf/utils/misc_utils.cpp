@@ -77,12 +77,12 @@ BufferPtr MiscUtils::FromBase64(const Buffer& value) {
 	auto value_size = ValueConvertUtils::SafeConvert<int>(value.size());
 	auto bytes_written = BIO_write(memory_bio, value.data(), value_size);
 	if (bytes_written <= 0) {
-		throw GeneralException("");
+		throw GeneralException("Could not write data into buffer: " + std::to_string(bytes_written));
 	}
 
 	auto flushed = BIO_flush(memory_bio);
 	if (flushed != 1) {
-		throw GeneralException("Could not flush buffer");
+		throw GeneralException("Could not flush buffer: " + std::to_string(flushed));
 	}
 
 	// Insert base64 filter into bio chain
