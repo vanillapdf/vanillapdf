@@ -35,6 +35,11 @@ public:
 	static FontBase* Create(syntax::DictionaryObjectPtr root);
 
 	virtual Type GetFontType() const noexcept = 0;
+
+	bool ToUnicode(OuputUnicodeCharacterMapPtr& result) const;
+
+private:
+	mutable OuputUnicodeCharacterMapPtr m_character_map;
 };
 
 class Type0Font : public FontBase {
@@ -46,10 +51,6 @@ public:
 	//syntax::NameObjectPtr BaseFont() const;
 	//syntax::ObjectPtr Encoding() const;
 	//syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> DescendantFonts() const;
-	bool ToUnicode(OuputUnicodeCharacterMapPtr& result) const;
-
-private:
-	mutable OuputUnicodeCharacterMapPtr m_character_map;
 };
 
 class Type1Font : public FontBase {

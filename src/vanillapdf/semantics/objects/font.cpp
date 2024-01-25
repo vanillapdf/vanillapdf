@@ -98,7 +98,7 @@ FontBase* FontBase::Create(syntax::DictionaryObjectPtr root) {
 	throw GeneralException("Unknown font subtype: " + subtype->ToString());
 }
 
-bool Type0Font::ToUnicode(OuputUnicodeCharacterMapPtr& result) const {
+bool FontBase::ToUnicode(OuputUnicodeCharacterMapPtr& result) const {
 	if (!m_character_map.empty()) {
 		result = m_character_map;
 		return true;

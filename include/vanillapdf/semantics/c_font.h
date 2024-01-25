@@ -81,6 +81,13 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Font_GetFontType(FontHandle* handle, FontType* result);
 
 	/**
+	* \brief
+	* A stream containing a CMap file that maps character codes
+	* to Unicode values (see 9.10, "Extraction of Text Content").
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Font_GetUnicodeMap(FontHandle* handle, UnicodeCharacterMapHandle** result);
+
+	/**
 	* \brief Reinterpret current object as \ref IUnknownHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Font_ToUnknown(FontHandle* handle, IUnknownHandle** result);
@@ -102,13 +109,6 @@ extern "C"
 	* \memberof Type0FontHandle
 	* @{
 	*/
-
-	/**
-	* \brief
-	* A stream containing a CMap file that maps character codes
-	* to Unicode values (see 9.10, "Extraction of Text Content").
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Type0Font_GetUnicodeMap(Type0FontHandle* handle, UnicodeCharacterMapHandle** result);
 
 	/**
 	* \brief Reinterpret current object as \ref FontHandle

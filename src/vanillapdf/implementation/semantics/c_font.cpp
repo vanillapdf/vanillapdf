@@ -54,21 +54,9 @@ VANILLAPDF_API error_type CALLING_CONVENTION Font_GetFontType(FontHandle* handle
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Font_ToUnknown(FontHandle* handle, IUnknownHandle** result) {
-	return SafeObjectConvert<FontBase, IUnknown, FontHandle, IUnknownHandle>(handle, result);
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION Font_FromUnknown(IUnknownHandle* handle, FontHandle** result) {
-	return SafeObjectConvert<IUnknown, FontBase, IUnknownHandle, FontHandle>(handle, result);
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION Font_Release(FontHandle* handle) {
-	return ObjectRelease<FontBase, FontHandle>(handle);
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION Type0Font_GetUnicodeMap(Type0FontHandle* handle, UnicodeCharacterMapHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION Font_GetUnicodeMap(FontHandle* handle, UnicodeCharacterMapHandle** result)
 {
-	Type0Font* obj = reinterpret_cast<Type0Font*>(handle);
+	FontBase* obj = reinterpret_cast<FontBase*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
@@ -81,6 +69,18 @@ VANILLAPDF_API error_type CALLING_CONVENTION Type0Font_GetUnicodeMap(Type0FontHa
 		*result = reinterpret_cast<UnicodeCharacterMapHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Font_ToUnknown(FontHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<FontBase, IUnknown, FontHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Font_FromUnknown(IUnknownHandle* handle, FontHandle** result) {
+	return SafeObjectConvert<IUnknown, FontBase, IUnknownHandle, FontHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Font_Release(FontHandle* handle) {
+	return ObjectRelease<FontBase, FontHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Type0Font_ToFont(Type0FontHandle* handle, FontHandle** result) {
