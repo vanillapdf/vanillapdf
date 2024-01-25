@@ -192,7 +192,7 @@ error_type process_content_operation_textshowarray(ContentOperationTextShowArray
 
 error_type process_content_operation_textfont(ContentOperationTextFontHandle* obj, int nested) {
 	NameObjectHandle* font_name = NULL;
-	IntegerObjectHandle* font_scale = NULL;
+	RealObjectHandle* font_scale = NULL;
 
 	print_spaces(nested);
 	print_text("Text font operation begin\n");
@@ -200,9 +200,9 @@ error_type process_content_operation_textfont(ContentOperationTextFontHandle* ob
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextFont_GetName(obj, &font_name));
 	RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextFont_GetScale(obj, &font_scale));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_name(font_name, nested + 1));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_integer(font_scale, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_real(font_scale, nested + 1));
 	RETURN_ERROR_IF_NOT_SUCCESS(NameObject_Release(font_name));
-	RETURN_ERROR_IF_NOT_SUCCESS(IntegerObject_Release(font_scale));
+	RETURN_ERROR_IF_NOT_SUCCESS(RealObject_Release(font_scale));
 
 	print_spaces(nested);
 	print_text("Text font operation end\n");
