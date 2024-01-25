@@ -136,13 +136,14 @@ set(VANILLAPDF_SYNTAX_SOURCES
 	syntax/files/xref.cpp
 	syntax/files/xref_entry.cpp
 	syntax/files/xref_chain.cpp
-	
+
 	syntax/filters/ascii_85_decode_filter.cpp
 	syntax/filters/ascii_hex_decode_filter.cpp
 	syntax/filters/dct_decode_filter.cpp
 	syntax/filters/filter.cpp
 	syntax/filters/flate_decode_filter.cpp
-	
+	syntax/filters/lzw_decode_filter.cpp
+
 	syntax/objects/boolean_object.cpp
 	syntax/objects/dictionary_object.cpp
 	syntax/objects/indirect_reference_object.cpp
@@ -155,10 +156,10 @@ set(VANILLAPDF_SYNTAX_SOURCES
 	syntax/objects/real_object.cpp
 	syntax/objects/stream_object.cpp
 	syntax/objects/string_object.cpp
-	
+
 	syntax/parsers/lexical_tree.cpp
 	syntax/parsers/parser.cpp
-    syntax/parsers/parser_utils.cpp
+	syntax/parsers/parser_utils.cpp
 	syntax/parsers/reverse_parser.cpp
 	syntax/parsers/reverse_tokenizer.cpp
 	syntax/parsers/token.cpp
@@ -221,7 +222,7 @@ set(VANILLAPDF_SEMANTICS_HEADERS
 	semantics/objects/page_tree_node.h
 	semantics/objects/resource_dictionary.h
 	semantics/objects/signature_flags.h
-	
+
 	semantics/objects/annotations.h
 	semantics/objects/character_map.h
 	semantics/objects/date.h
@@ -239,9 +240,9 @@ set(VANILLAPDF_SEMANTICS_HEADERS
 	semantics/objects/rectangle.h
 	semantics/objects/tree.h
 	semantics/objects/viewer_preferences.h
-	
+
 	semantics/utils/document_encryption_settings.h
-	
+
 	semantics/utils/document_signer.h
 	semantics/utils/document_signature_settings.h
 	semantics/utils/semantic_exceptions.h
@@ -258,13 +259,14 @@ set(VANILLAPDF_SYNTAX_HEADERS
 	syntax/files/xref.h
 	syntax/files/xref_entry.h
 	syntax/files/xref_chain.h
-	
+
 	syntax/filters/ascii_85_decode_filter.h
 	syntax/filters/ascii_hex_decode_filter.h
 	syntax/filters/dct_decode_filter.h
 	syntax/filters/filter.h
 	syntax/filters/flate_decode_filter.h
-	
+	syntax/filters/lzw_decode_filter.h
+
 	syntax/objects/array_object.h
 	syntax/objects/mixed_array_object.h
 	syntax/objects/boolean_object.h
@@ -280,18 +282,18 @@ set(VANILLAPDF_SYNTAX_HEADERS
 	syntax/objects/real_object.h
 	syntax/objects/stream_object.h
 	syntax/objects/string_object.h
-	
+
 	syntax/parsers/lexical_tree.h
 	syntax/parsers/object_stream_entry.h
 	syntax/parsers/parser.h
 	syntax/parsers/parser_interface.h
-    syntax/parsers/parser_utils.h
+	syntax/parsers/parser_utils.h
 	syntax/parsers/reverse_parser.h
 	syntax/parsers/reverse_tokenizer.h
 	syntax/parsers/token.h
 	syntax/parsers/token_dictionary.h
 	syntax/parsers/tokenizer.h
-	
+
 	syntax/utils/encryption.h
 	syntax/utils/name_constants.h
 	syntax/utils/output_pointer.h

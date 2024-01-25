@@ -20,6 +20,8 @@ FilterBasePtr FilterBase::GetFilterByName(const NameObject& name) {
 		return ASCIIHexDecodeFilterPtr();
 	} else if (name.Equals(constant::Name::DCTDecode)) {
 		return DCTDecodeFilterPtr();
+	} else if (name.Equals(constant::Name::LZWDecode)) {
+		return DCTDecodeFilterPtr();
 	}
 
 	throw GeneralException("Unknown filter type: " + name.GetValue()->ToString());

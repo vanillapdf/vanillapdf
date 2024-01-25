@@ -227,6 +227,41 @@ extern "C"
 
 	/** @} */
 
+	/**
+	* \memberof LZWDecodeFilterHandle
+	* @{
+	*/
+
+	/**
+	* \brief Creates a new filter instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION LZWDecodeFilter_Create(LZWDecodeFilterHandle** result);
+
+	/**
+	* \copydoc FilterBase_Encode
+	* \see \ref FilterBase_Encode
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION LZWDecodeFilter_Encode(LZWDecodeFilterHandle* handle, BufferHandle* data, BufferHandle** result);
+
+	/**
+	* \copydoc FilterBase_Encode
+	* \see \ref FilterBase_EncodeParams
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION LZWDecodeFilter_EncodeParams(LZWDecodeFilterHandle* handle, BufferHandle* data, DictionaryObjectHandle* parameters, BufferHandle** result);
+
+	/**
+	* \copydoc FilterBase_Decode
+	* \see \ref FilterBase_Decode
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION LZWDecodeFilter_Decode(LZWDecodeFilterHandle* handle, BufferHandle* data, BufferHandle** result);
+
+	/**
+	* \copydoc FilterBase_Release
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION LZWDecodeFilter_Release(LZWDecodeFilterHandle* handle);
+
+	/** @} */
+
 #ifdef __cplusplus
 };
 #endif

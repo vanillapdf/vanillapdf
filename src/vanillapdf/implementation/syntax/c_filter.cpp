@@ -2,6 +2,7 @@
 
 #include "syntax/filters/filter.h"
 #include "syntax/filters/dct_decode_filter.h"
+#include "syntax/filters/lzw_decode_filter.h"
 #include "syntax/filters/flate_decode_filter.h"
 #include "syntax/filters/ascii_85_decode_filter.h"
 #include "syntax/filters/ascii_hex_decode_filter.h"
@@ -234,4 +235,46 @@ VANILLAPDF_API error_type CALLING_CONVENTION ASCIIHexDecodeFilter_Decode(ASCIIHe
 
 VANILLAPDF_API error_type CALLING_CONVENTION ASCIIHexDecodeFilter_Release(ASCIIHexDecodeFilterHandle* handle) {
 	return ObjectRelease<ASCIIHexDecodeFilter, ASCIIHexDecodeFilterHandle>(handle);
+}
+
+// LZWDecodeFilter
+
+VANILLAPDF_API error_type CALLING_CONVENTION LZWDecodeFilter_Create(LZWDecodeFilterHandle** result) {
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto filter = make_deferred<LZWDecodeFilter>();
+		auto ptr = filter.AddRefGet();
+		*result = reinterpret_cast<LZWDecodeFilterHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION LZWDecodeFilter_Encode(LZWDecodeFilterHandle* handle, BufferHandle* data_handle, BufferHandle** result) {
+	LZWDecodeFilter* filter = reinterpret_cast<LZWDecodeFilter*>(handle);
+	FilterBase* base_filter = static_cast<FilterBase*>(filter);
+	FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
+
+	return FilterBase_Encode(base_filter_handle, data_handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION LZWDecodeFilter_EncodeParams(LZWDecodeFilterHandle* handle, BufferHandle* data_handle, DictionaryObjectHandle* parameters_handle, BufferHandle** result) {
+	LZWDecodeFilter* filter = reinterpret_cast<LZWDecodeFilter*>(handle);
+	FilterBase* base_filter = static_cast<FilterBase*>(filter);
+	FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
+
+	return FilterBase_EncodeParams(base_filter_handle, data_handle, parameters_handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION LZWDecodeFilter_Decode(LZWDecodeFilterHandle* handle, BufferHandle* data_handle, BufferHandle** result) {
+	LZWDecodeFilter* filter = reinterpret_cast<LZWDecodeFilter*>(handle);
+	FilterBase* base_filter = static_cast<FilterBase*>(filter);
+	FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
+
+	return FilterBase_Decode(base_filter_handle, data_handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION LZWDecodeFilter_Release(LZWDecodeFilterHandle* handle) {
+	return ObjectRelease<LZWDecodeFilter, LZWDecodeFilterHandle>(handle);
 }
