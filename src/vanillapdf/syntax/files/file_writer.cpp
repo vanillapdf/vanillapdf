@@ -1690,7 +1690,7 @@ void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj, ArrayObjectPtr
 
 	auto text_font_operation = make_deferred<contents::OperationTextFont>();
 	text_font_operation->SetName(make_deferred<NameObject>(watermark_font));
-	text_font_operation->SetScale(make_deferred<IntegerObject>(8));
+	text_font_operation->SetScale(make_deferred<RealObject>(8));
 
 	auto text_position_operation = make_deferred<contents::OperationTextTranslate>();
 	text_position_operation->SetX(make_deferred<IntegerObject>(20));

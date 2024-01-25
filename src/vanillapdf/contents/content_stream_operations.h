@@ -144,7 +144,7 @@ public:
 	virtual Type GetOperationType(void) const noexcept override { return Type::TextFont; }
 	virtual std::string ToPdf() const override;
 	syntax::NameObjectPtr GetName() const { return m_font; }
-	syntax::IntegerObjectPtr GetScale() const { return m_scale; }
+	syntax::RealObjectPtr GetScale() const { return m_scale; }
 
 	void SetName(syntax::NameObjectPtr value) {
 		m_font->Unsubscribe(this);
@@ -153,7 +153,7 @@ public:
 		OnChanged();
 	}
 
-	void SetScale(syntax::IntegerObjectPtr value) {
+	void SetScale(syntax::RealObjectPtr value) {
 		m_scale->Unsubscribe(this);
 		m_scale = value;
 		m_scale->Subscribe(this);
@@ -168,7 +168,7 @@ public:
 
 private:
 	syntax::NameObjectPtr m_font;
-	syntax::IntegerObjectPtr m_scale;
+	syntax::RealObjectPtr m_scale;
 };
 
 class OperationTextTranslate : public OperationBase, public IModifyObserver {

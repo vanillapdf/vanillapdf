@@ -127,13 +127,13 @@ OperationTextFont::OperationTextFont(const std::vector<ObjectPtr>& operands) {
 		throw GeneralException("Unexpected argument type");
 	}
 
-	if (!ObjectUtils::IsType<IntegerObjectPtr>(scale)) {
+	if (!ObjectUtils::IsType<RealObjectPtr>(scale)) {
 		assert(!"Text font operation has invalid arguments");
 		throw GeneralException("Unexpected argument type");
 	}
 
 	m_font = syntax::ObjectUtils::ConvertTo<NameObjectPtr>(name);
-	m_scale = syntax::ObjectUtils::ConvertTo<IntegerObjectPtr>(scale);
+	m_scale = syntax::ObjectUtils::ConvertTo<RealObjectPtr>(scale);
 
 	m_font->Subscribe(this);
 	m_font->SetInitialized();

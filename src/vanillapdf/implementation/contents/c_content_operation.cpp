@@ -244,7 +244,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_Release(Con
 	return ObjectRelease<OperationGeneric, ContentOperationGenericHandle>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetScale(ContentOperationTextFontHandle* handle, IntegerObjectHandle** result) {
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetScale(ContentOperationTextFontHandle* handle, RealObjectHandle** result) {
 	OperationTextFont* obj = reinterpret_cast<OperationTextFont*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -252,20 +252,20 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetScale(C
 	try {
 		auto value = obj->GetScale();
 		auto ptr = value.AddRefGet();
-		*result = reinterpret_cast<IntegerObjectHandle*>(ptr);
+		*result = reinterpret_cast<RealObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	}
 	CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_SetScale(ContentOperationTextFontHandle* handle, IntegerObjectHandle* data) {
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_SetScale(ContentOperationTextFontHandle* handle, RealObjectHandle* data) {
 	OperationTextFont* obj = reinterpret_cast<OperationTextFont*>(handle);
-	IntegerObject* name = reinterpret_cast<IntegerObject*>(data);
+	RealObject* value = reinterpret_cast<RealObject*>(data);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(name);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(value);
 
 	try {
-		obj->SetScale(name);
+		obj->SetScale(value);
 		return VANILLAPDF_ERROR_SUCCESS;
 	}
 	CATCH_VANILLAPDF_EXCEPTIONS

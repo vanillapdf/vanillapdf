@@ -341,14 +341,14 @@ extern "C"
 	*
 	* Scale shall be a number representing a scale factor.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetScale(ContentOperationTextFontHandle* handle, IntegerObjectHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_GetScale(ContentOperationTextFontHandle* handle, RealObjectHandle** result);
 
 	/**
 	* \brief Set new font scaling.
 	*
 	* Scale shall be a number representing a scale factor.
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_SetScale(ContentOperationTextFontHandle* handle, IntegerObjectHandle* data);
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_SetScale(ContentOperationTextFontHandle* handle, RealObjectHandle* data);
 
 	/**
 	* \brief Reinterpret current object as \ref ContentOperationHandle
