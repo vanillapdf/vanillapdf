@@ -74,7 +74,7 @@ IInputOutputStreamPtr File::GetFilestream(const std::string& path, std::ios_base
 
 #if _WIN32
 	fs_path = WindowsUtils::MultiByteToWideChar(path);
-#endif _WIN32
+#endif /* _WIN32 */
 
 	auto input_file = std::make_shared<std::fstream>();
 	input_file->open(fs_path, mode);
