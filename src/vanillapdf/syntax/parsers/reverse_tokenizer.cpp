@@ -50,15 +50,12 @@ TokenPtr ReverseTokenizer::ReadToken() {
 		switch (ch) {
 			case static_cast<int>(WhiteSpace::LINE_FEED):
 			{
-				BufferPtr chars;
-				chars->push_back(WhiteSpace::LINE_FEED);
-
 				int carriage_return = m_stream->Peek();
-				if (carriage_return == WhiteSpace::CARRIAGE_RETURN && m_stream->Ignore()) {
-					chars->push_back(WhiteSpace::CARRIAGE_RETURN);
+				if (carriage_return == WhiteSpace::CARRIAGE_RETURN) {
+					m_stream->Ignore();
 				}
 
-				return make_deferred<Token>(Token::Type::REVERSE_EOL, chars);
+				return make_deferred<Token>(Token::Type::REVERSE_EOL);
 			}
 			case static_cast<int>(WhiteSpace::SPACE):
 			case static_cast<int>(WhiteSpace::FORM_FEED):
@@ -66,11 +63,7 @@ TokenPtr ReverseTokenizer::ReadToken() {
 			case static_cast<int>(WhiteSpace::NUL):
 				continue;
 			case static_cast<int>(WhiteSpace::CARRIAGE_RETURN):
-			{
-				BufferPtr chars;
-				chars->push_back(WhiteSpace::CARRIAGE_RETURN);
-				return make_deferred<Token>(Token::Type::REVERSE_EOL, chars);
-			}
+				return make_deferred<Token>(Token::Type::REVERSE_EOL);
 		}
 
 		return ReadUnknown(ch);

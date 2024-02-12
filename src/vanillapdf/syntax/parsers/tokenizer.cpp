@@ -52,31 +52,22 @@ TokenPtr Tokenizer::ReadToken() {
 				continue;
 			case static_cast<int>(WhiteSpace::LINE_FEED):
 			{
-				BufferPtr chars;
-				chars->push_back(WhiteSpace::LINE_FEED);
-				return make_deferred<Token>(Token::Type::EOL, chars);
+				return make_deferred<Token>(Token::Type::EOL);
 			}
 			case static_cast<int>(WhiteSpace::CARRIAGE_RETURN):
 			{
-				BufferPtr chars;
-				chars->push_back(WhiteSpace::CARRIAGE_RETURN);
-
 				int line_feed = m_stream->Peek();
-				if (line_feed == WhiteSpace::LINE_FEED && m_stream->Ignore()) {
-					chars->push_back(WhiteSpace::LINE_FEED);
+				if (line_feed == WhiteSpace::LINE_FEED) {
+					m_stream->Ignore();
 				}
 
-				return make_deferred<Token>(Token::Type::EOL, chars);
+				return make_deferred<Token>(Token::Type::EOL);
 			}
 			case static_cast<int>(Delimiter::GREATER_THAN_SIGN):
 			{
 				int sign = m_stream->Peek();
 				if (sign == Delimiter::GREATER_THAN_SIGN && m_stream->Ignore()) {
-					BufferPtr chars;
-
-					chars->push_back(Delimiter::GREATER_THAN_SIGN);
-					chars->push_back(Delimiter::GREATER_THAN_SIGN);
-					return make_deferred<Token>(Token::Type::DICTIONARY_END, chars);
+					return make_deferred<Token>(Token::Type::DICTIONARY_END);
 				}
 
 				throw GeneralException("Unexpected character at offset: " + std::to_string(m_stream->GetInputPosition()));
@@ -85,11 +76,7 @@ TokenPtr Tokenizer::ReadToken() {
 			{
 				int sign = m_stream->Peek();
 				if (sign == Delimiter::LESS_THAN_SIGN && m_stream->Ignore()) {
-					BufferPtr chars;
-
-					chars->push_back(Delimiter::LESS_THAN_SIGN);
-					chars->push_back(Delimiter::LESS_THAN_SIGN);
-					return make_deferred<Token>(Token::Type::DICTIONARY_BEGIN, chars);
+					return make_deferred<Token>(Token::Type::DICTIONARY_BEGIN);
 				}
 
 				// empty hexadecimal string
@@ -100,19 +87,9 @@ TokenPtr Tokenizer::ReadToken() {
 				return ReadHexadecimalString();
 			}
 			case static_cast<int>(Delimiter::LEFT_SQUARE_BRACKET):
-			{
-				BufferPtr chars;
-
-				chars->push_back(Delimiter::LEFT_SQUARE_BRACKET);
-				return make_deferred<Token>(Token::Type::ARRAY_BEGIN, chars);
-			}
+				return make_deferred<Token>(Token::Type::ARRAY_BEGIN);
 			case static_cast<int>(Delimiter::RIGHT_SQUARE_BRACKET):
-			{
-				BufferPtr chars;
-
-				chars->push_back(Delimiter::RIGHT_SQUARE_BRACKET);
-				return make_deferred<Token>(Token::Type::ARRAY_END, chars);
-			}
+				return make_deferred<Token>(Token::Type::ARRAY_END);
 			case static_cast<int>(Delimiter::SOLIDUS):
 				return ReadName();
 			case static_cast<int>(Delimiter::LEFT_PARENTHESIS):
