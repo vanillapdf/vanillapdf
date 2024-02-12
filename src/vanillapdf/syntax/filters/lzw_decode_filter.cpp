@@ -11,11 +11,11 @@ namespace syntax {
 
 using namespace std;
 
-BufferPtr LZWDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters /* = DictionaryObjectPtr() */) const {
+BufferPtr LZWDecodeFilter::Encode(IInputStreamPtr src, types::stream_size, DictionaryObjectPtr /* = DictionaryObjectPtr() */) const {
 	throw NotSupportedException("LZWDecodeFilter encoding is not supported");
 }
 
-BufferPtr LZWDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters /* = DictionaryObjectPtr() */) const {
+BufferPtr LZWDecodeFilter::Decode(IInputStreamPtr src, types::stream_size, DictionaryObjectPtr /* = DictionaryObjectPtr() */) const {
 	throw NotSupportedException("LZWDecodeFilter decoding is not supported");
 }
 
