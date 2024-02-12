@@ -15,10 +15,13 @@ public:
 	NameObject();
 	//NameObject(const NameObject&) = delete;
 
-	explicit NameObject(BufferPtr name);
-	explicit NameObject(const char * chars);
-	explicit NameObject(const std::string& chars);
-	virtual ~NameObject();
+	static NameObjectPtr CreateFromEncoded(BufferPtr value);
+	static NameObjectPtr CreateFromEncoded(const char* value);
+	static NameObjectPtr CreateFromEncoded(const std::string& value);
+
+	static NameObjectPtr CreateFromDecoded(BufferPtr value);
+	static NameObjectPtr CreateFromDecoded(const char* value);
+	static NameObjectPtr CreateFromDecoded(const std::string& value);
 
 	virtual void ObserveeChanged(const IModifyObservable*) override;
 
@@ -34,6 +37,8 @@ public:
 
 	virtual size_t Hash() const override;
 	virtual NameObject* Clone(void) const override;
+
+	virtual ~NameObject();
 
 private:
 	BufferPtr _value;

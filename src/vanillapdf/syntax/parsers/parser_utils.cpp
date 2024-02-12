@@ -52,7 +52,7 @@ NameObjectPtr ParserUtils::CreateName(TokenPtr token) {
 	assert(token->GetType() == Token::Type::NAME_OBJECT && "Expected name token type");
 
 	auto buffer = token->Value();
-	return make_deferred<NameObject>(buffer);
+	return NameObject::CreateFromDecoded(buffer);
 }
 
 HexadecimalStringObjectPtr ParserUtils::CreateHexString(TokenPtr token) {

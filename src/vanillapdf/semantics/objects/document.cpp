@@ -649,7 +649,7 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
 
 	// Create new signature dictionary
 	DictionaryObjectPtr signature_dictionary;
-	signature_dictionary->Insert(constant::Name::Type, make_deferred<NameObject>("Sig"));
+	signature_dictionary->Insert(constant::Name::Type, NameObject::CreateFromDecoded("Sig"));
 
 	if (has_certificate) {
 		signature_dictionary->Insert(constant::Name::Cert, *certificate);
@@ -673,7 +673,7 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
 
 	// TODO
 	signature_dictionary->Insert(constant::Name::Filter, constant::Name::AdobePPKLite.Clone());
-	signature_dictionary->Insert(constant::Name::SubFilter, make_deferred<NameObject>("adbe.pkcs7.detached"));
+	signature_dictionary->Insert(constant::Name::SubFilter, NameObject::CreateFromDecoded("adbe.pkcs7.detached"));
 
 	// TODO hardcoded value
 	std::string byte_range_value(100, ' ');
@@ -733,8 +733,8 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
 	annotation_rectangle->Append(make_deferred<IntegerObject>(0));
 
 	DictionaryObjectPtr signature_annotation;
-	signature_annotation->Insert(constant::Name::Type, make_deferred<NameObject>("Annot"));
-	signature_annotation->Insert(constant::Name::Subtype, make_deferred<NameObject>("Widget"));
+	signature_annotation->Insert(constant::Name::Type, NameObject::CreateFromDecoded("Annot"));
+	signature_annotation->Insert(constant::Name::Subtype, NameObject::CreateFromDecoded("Widget"));
 	signature_annotation->Insert(constant::Name::Rect, annotation_rectangle);
 
 	auto first_page_reference = make_deferred<syntax::IndirectReferenceObject>(first_page_object);
@@ -749,7 +749,7 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
 	first_page_annotations->Append(signature_annotation_reference);
 
 	// Create new signature field
-	signature_annotation->Insert(constant::Name::FT, make_deferred<NameObject>("Sig"));
+	signature_annotation->Insert(constant::Name::FT, NameObject::CreateFromDecoded("Sig"));
 	signature_annotation->Insert(constant::Name::T, LiteralStringObject::CreateFromDecoded("Signature1"));
 
 	auto signature_dictionary_reference = make_deferred<syntax::IndirectReferenceObject>(signature_dictionary);
@@ -859,7 +859,7 @@ void Document::AddEncryption(DocumentEncryptionSettingsPtr settings) {
 	DictionaryObjectPtr encryption_dictionary;
 
 	// Table 20 - Entries common to all encryption dictionaries
-	encryption_dictionary->Insert(constant::Name::Filter, make_deferred<NameObject>("Standard"));
+	encryption_dictionary->Insert(constant::Name::Filter, NameObject::CreateFromDecoded("Standard"));
 	//encryption_dictionary->Insert(constant::Name::SubFilter, make_deferred<IntegerObject>(2));
 	encryption_dictionary->Insert(constant::Name::V, make_deferred<IntegerObject>(algorithm_version));
 	encryption_dictionary->Insert(constant::Name::Length, make_deferred<IntegerObject>(key_length));

@@ -34,6 +34,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION NameObject_Create(NameObjectHandle** result);
 
 	/**
+	* \brief Creates a new NameObject instance from PDF encoded data
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION NameObject_CreateFromEncodedString(string_type value, NameObjectHandle** result);
+
+	/**
+	* \brief Creates a new NameObject instance from decoded data without PDF syntax
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION NameObject_CreateFromDecodedString(string_type value, NameObjectHandle** result);
+
+	/**
 	* \brief Get names binary representation
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION NameObject_GetValue(const NameObjectHandle* handle, BufferHandle** result);

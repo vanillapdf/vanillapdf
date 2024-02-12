@@ -1574,7 +1574,7 @@ DictionaryObjectPtr FileWriter::AddWatermarkFont(FilePtr destination) {
 	DictionaryObjectPtr watermark_font;
 	watermark_font->Insert(constant::Name::Type, constant::Name::Font.Clone());
 	watermark_font->Insert(constant::Name::Subtype, constant::Name::Type1.Clone());
-	watermark_font->Insert(constant::Name::BaseFont, make_deferred<NameObject>("Helvetica"));
+	watermark_font->Insert(constant::Name::BaseFont, NameObject::CreateFromDecoded("Helvetica"));
 	watermark_font->SetInitialized();
 
 	auto watermark_font_entry = destination->AllocateNewEntry();
@@ -1624,7 +1624,7 @@ void FileWriter::ApplyWatermarkPageNode(DictionaryObjectPtr obj, DictionaryObjec
 		auto font_dictionary = resources->FindAs<DictionaryObjectPtr>(constant::Name::Font);
 
 		std::string watermark_font_name_string = "VanillaWatermarkFont";
-		auto watermark_font_name = make_deferred<NameObject>(watermark_font_name_string);
+		auto watermark_font_name = NameObject::CreateFromDecoded(watermark_font_name_string);
 
 		if (!font_dictionary->Contains(watermark_font_name)) {
 			auto font_reference = make_deferred<IndirectReferenceObject>(watermark_font);
@@ -1689,7 +1689,7 @@ void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj, ArrayObjectPtr
 	nonstroking_rgb->SetBlue(make_deferred<RealObject>(0.4));
 
 	auto text_font_operation = make_deferred<contents::OperationTextFont>();
-	text_font_operation->SetName(make_deferred<NameObject>(watermark_font));
+	text_font_operation->SetName(NameObject::CreateFromDecoded(watermark_font));
 	text_font_operation->SetScale(make_deferred<RealObject>(8));
 
 	auto text_position_operation = make_deferred<contents::OperationTextTranslate>();

@@ -15,18 +15,57 @@ NameObject::NameObject() {
 	_value->Subscribe(this);
 }
 
-NameObject::NameObject(const char * value)
-	: NameObject(make_deferred_container<Buffer>(value)) {
+NameObjectPtr NameObject::CreateFromEncoded(BufferPtr value) {
+
+	auto input_stream = value->ToInputStream();
+
+	BufferPtr chars;
+	while (IsRegular(input_stream->Peek())) {
+		auto current = static_cast<char>(input_stream->Get());
+		if (current == '#') {
+			auto values = input_stream->Read(2);
+			auto str = values->ToString();
+			auto val = std::stoi(str, 0, 16);
+			auto parsed = ValueConvertUtils::SafeConvert<unsigned char, int>(val);
+			char converted = reinterpret_cast<char&>(parsed);
+			chars->push_back(converted);
+			continue;
+		}
+
+		chars->push_back(current);
+	}
+
+	return CreateFromDecoded(chars);
+
 }
 
-NameObject::NameObject(const std::string& chars)
-	: NameObject(make_deferred_container<Buffer>(chars)) {
-
+NameObjectPtr NameObject::CreateFromEncoded(const char* value) {
+	auto buffer = make_deferred_container<Buffer>(value);
+	return CreateFromEncoded(buffer);
 }
 
-NameObject::NameObject(BufferPtr name) : _value(name) {
-	_value->Subscribe(this);
-	_value->SetInitialized();
+NameObjectPtr NameObject::CreateFromEncoded(const std::string& value) {
+	auto buffer = make_deferred_container<Buffer>(value);
+	return CreateFromEncoded(buffer);
+}
+
+NameObjectPtr NameObject::CreateFromDecoded(BufferPtr value) {
+	NameObjectPtr result;
+
+	result->SetValue(value);
+	result->SetInitialized();
+
+	return result;
+}
+
+NameObjectPtr NameObject::CreateFromDecoded(const char* value) {
+	auto buffer = make_deferred_container<Buffer>(value);
+	return CreateFromDecoded(buffer);
+}
+
+NameObjectPtr NameObject::CreateFromDecoded(const std::string& value) {
+	auto buffer = make_deferred_container<Buffer>(value);
+	return CreateFromDecoded(buffer);
 }
 
 size_t NameObject::Hash() const {
