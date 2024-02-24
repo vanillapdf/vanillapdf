@@ -29,6 +29,12 @@ DocumentPtr Document::Open(const std::string& path) {
 }
 
 DocumentPtr Document::OpenFile(syntax::FilePtr holder) {
+	if (SemanticUtils::HasMappedDocument(holder)) {
+		auto result = SemanticUtils::GetMappedDocument(holder);
+
+		return result.GetReference();
+	}
+
 	return DocumentPtr(pdf_new Document(holder));
 }
 
@@ -38,6 +44,19 @@ DocumentPtr Document::Create(const std::string& path) {
 }
 
 DocumentPtr Document::CreateFile(syntax::FilePtr holder) {
+
+	if (SemanticUtils::HasMappedDocument(holder)) {
+		auto log_scope = holder->GetFilenameString();
+
+		std::stringstream error_stream;
+		error_stream << "Trying to create new document for file ";
+		error_stream << log_scope;
+		error_stream << ", but the file instance was already opened";
+
+		LOG_ERROR(log_scope) << error_stream.str();
+
+		throw GeneralException(error_stream.str());
+	}
 
 	HeaderPtr header = holder->GetHeader();
 	header->SetVersion(Version::PDF17);

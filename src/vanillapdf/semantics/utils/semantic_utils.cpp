@@ -49,7 +49,7 @@ Version SemanticUtils::GetVersionFromName(const syntax::NameObjectPtr& name) {
 using document_map_type = std::unordered_map<syntax::File*, WeakReference<Document>>;
 using document_map_ptr_type = std::shared_ptr<document_map_type>;
 
-static std::mutex document_map_lock;
+static std::recursive_mutex document_map_lock;
 document_map_ptr_type GetDocumentMapInstance() {
 	static document_map_ptr_type document_map;
 
@@ -60,12 +60,26 @@ document_map_ptr_type GetDocumentMapInstance() {
 	return document_map;
 }
 
+bool SemanticUtils::HasMappedDocument(WeakReference<syntax::File> file) {
+	if (!file.IsActive()) {
+		return false;
+	}
+
+	std::lock_guard<std::recursive_mutex> locker(document_map_lock);
+	auto document_map = GetDocumentMapInstance();
+
+	auto shared = file.GetReference();
+	auto found = document_map->find(shared.get());
+
+	return (found != document_map->end());
+}
+
 WeakReference<Document> SemanticUtils::GetMappedDocument(WeakReference<syntax::File> file) {
 	if (!file.IsActive()) {
 		throw syntax::FileDisposedException();
 	}
 
-	std::lock_guard<std::mutex> locker(document_map_lock);
+	std::lock_guard<std::recursive_mutex> locker(document_map_lock);
 	auto document_map = GetDocumentMapInstance();
 
 	auto shared = file.GetReference();
@@ -80,10 +94,15 @@ void SemanticUtils::AddDocumentMapping(WeakReference<syntax::File> file, WeakRef
 		throw syntax::FileDisposedException();
 	}
 
-	std::lock_guard<std::mutex> locker(document_map_lock);
+	std::lock_guard<std::recursive_mutex> locker(document_map_lock);
 	auto document_map = GetDocumentMapInstance();
 
 	auto shared = file.GetReference();
+
+	if (HasMappedDocument(file)) {
+		LOG_WARNING_GLOBAL << "File " << shared->GetFilenameString() << " was already present in the document mapping, overriding";
+	}
+
 	(*document_map)[shared.get()] = value;
 }
 
@@ -92,7 +111,7 @@ void SemanticUtils::ReleaseMapping(WeakReference<syntax::File> file) {
 		throw syntax::FileDisposedException();
 	}
 
-	std::lock_guard<std::mutex> locker(document_map_lock);
+	std::lock_guard<std::recursive_mutex> locker(document_map_lock);
 	auto document_map = GetDocumentMapInstance();
 
 	auto shared = file.GetReference();
