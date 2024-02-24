@@ -204,7 +204,12 @@ std::string NumericObjectBackend::UnsignedIntegerString(void) const {
 
 std::string NumericObjectBackend::RealString(void) const {
 	std::stringstream ss;
-	ss << std::fixed << std::setprecision(m_precision) << m_real;
+
+	if (m_precision > 0) {
+		ss << std::fixed << std::setprecision(m_precision);
+	}
+
+	ss << m_real;
 	return ss.str();
 }
 
