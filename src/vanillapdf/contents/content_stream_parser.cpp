@@ -26,7 +26,18 @@ ContentStreamParser::ContentStreamParser(WeakReference<File> file, IInputStreamP
 BaseInstructionCollectionPtr ContentStreamParser::ReadInstructions(void) {
 
 	BaseInstructionCollectionPtr result;
-	while (PeekTokenTypeSkip() != Token::Type::END_OF_INPUT) {
+	while (true) {
+
+		auto type = PeekTokenType();
+		if (type == Token::Type::END_OF_INPUT) {
+			break;
+		}
+
+		if (type == Token::Type::EOL) {
+			ReadTokenWithType(Token::Type::EOL);
+			continue;
+		}
+
 		auto operation = ReadInstruction();
 		operation->SetInitialized();
 		result->push_back(operation);
@@ -188,7 +199,18 @@ InstructionBasePtr ContentStreamParser::ReadInstruction(void) {
 
 OperationBasePtr ContentStreamParser::ReadOperation(void) {
 	std::vector<syntax::ObjectPtr> operands;
-	while (IsOperand(PeekTokenTypeSkip())) {
+	while (true) {
+
+		auto type = PeekTokenType();
+		if (type == Token::Type::EOL) {
+			ReadTokenWithType(Token::Type::EOL);
+			continue;
+		}
+
+		if (!IsOperand(type)) {
+			break;
+		}
+
 		auto operand = ReadDirectObject();
 		operand->SetEncryptionExempted();
 		operand->SetInitialized();
@@ -372,7 +394,15 @@ bool ContentStreamParser::IsOperand(Token::Type type) {
 
 ObjectPtr ContentStreamParser::ReadDirectObject() {
 	auto offset = m_stream->GetInputPosition();
-	switch (PeekTokenTypeSkip()) {
+
+	auto type = PeekTokenType();
+
+	while (type == Token::Type::EOL) {
+		ReadTokenWithType(Token::Type::EOL);
+		type = PeekTokenType();
+	}
+
+	switch (type) {
 		case Token::Type::DICTIONARY_BEGIN:
 			return ReadDictionary();
 		case Token::Type::INTEGER_OBJECT:

@@ -419,12 +419,12 @@ TokenPtr Tokenizer::PeekToken() {
 }
 
 TokenPtr Tokenizer::ReadTokenWithType(Token::Type type) {
-	auto current_type = PeekTokenType();
-	if (current_type != type) {
+	auto result = ReadToken();
+	if (result->GetType() != type) {
 		throw GeneralException("Unexpected token type");
 	}
 
-	return ReadToken();
+	return result;
 }
 
 Token::Type Tokenizer::PeekTokenType(void) {

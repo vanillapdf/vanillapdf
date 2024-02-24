@@ -333,7 +333,13 @@ ObjectPtr Parser::ReadIndirectObject(types::stream_offset offset, types::big_uin
 
 ObjectPtr ParserBase::ReadDirectObject() {
 	auto offset = m_stream->GetInputPosition();
-	auto type = PeekTokenTypeSkip();
+	auto type = PeekTokenType();
+
+	while (type == Token::Type::EOL) {
+		ReadTokenWithType(Token::Type::EOL);
+		type = PeekTokenType();
+	}
+
 	switch (type) {
 		case Token::Type::DICTIONARY_BEGIN:
 			return ReadDictionaryStream();
