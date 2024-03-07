@@ -83,6 +83,21 @@ IInputOutputStreamPtr File::GetFilestream(const std::string& path, std::ios_base
 		throw GeneralException("Could not open file: " + path + ", errno: " + std::to_string(errno));
 	}
 
+	// TODO: Add file open flag support
+	//// Support the option, where the file is not held for the entire duration
+	//// This is handy, when another tool is generating output files and we need
+	//// to quickly reopen the file, without closing the entire application.
+	//bool flag = false;
+	//if (flag) {
+	//	// Seek to the end of file
+	//	input_file->seekg(0, std::ios::beg);
+	//	
+	//	auto input_memory_file = std::make_shared<std::stringstream>();
+	//	*input_memory_file << input_file->rdbuf();
+	//
+	//	return make_deferred<InputOutputStream>(input_memory_file);
+	//}
+
 	return make_deferred<InputOutputStream>(input_file);
 }
 
