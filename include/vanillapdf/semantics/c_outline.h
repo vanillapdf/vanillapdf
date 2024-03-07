@@ -89,14 +89,14 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_GetOutlineType(OutlineBaseHandle* handle, OutlineType* result);
 
 	/**
-	* \brief Reinterpret current object as \ref OutlineHandle
+	* \brief Reinterpret current object as \ref IUnknownHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_ToOutline(OutlineBaseHandle* handle, OutlineHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_ToUnknown(OutlineBaseHandle* handle, IUnknownHandle** result);
 
 	/**
-	* \brief Reinterpret current object as \ref OutlineItemHandle
+	* \brief Convert \ref IUnknownHandle to \ref CatalogHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_ToOutlineItem(OutlineBaseHandle* handle, OutlineItemHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_FromUnknown(IUnknownHandle* handle, OutlineBaseHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -134,6 +134,16 @@ extern "C"
 	* This entry shall be omitted if there are no open outline items.
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetCount(OutlineHandle* handle, IntegerObjectHandle** result);
+
+	/**
+	* \brief Reinterpret current object as \ref OutlineBaseHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Outline_ToOutlineBase(OutlineHandle* handle, OutlineBaseHandle** result);
+
+	/**
+	* \brief Convert \ref OutlineBaseHandle to \ref OutlineItemHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Outline_FromOutlineBase(OutlineBaseHandle* handle, OutlineHandle** result);
 
 	/**
 	* \copydoc OutlineBase_Release
@@ -202,6 +212,16 @@ extern "C"
 	* \brief \copybrief OutlineItemFlagsHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetFlags(OutlineItemHandle* handle, OutlineItemFlagsHandle** result);
+
+	/**
+	* \brief Reinterpret current object as \ref OutlineBaseHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_ToOutlineBase(OutlineItemHandle* handle, OutlineBaseHandle** result);
+
+	/**
+	* \brief Convert \ref OutlineBaseHandle to \ref OutlineItemHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_FromOutlineBase(OutlineBaseHandle* handle, OutlineItemHandle** result);
 
 	/**
 	* \copydoc OutlineBase_Release

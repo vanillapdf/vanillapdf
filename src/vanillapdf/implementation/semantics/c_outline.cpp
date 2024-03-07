@@ -26,18 +26,15 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_GetOutlineType(OutlineB
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_ToOutline(OutlineBaseHandle* handle, OutlineHandle** result)
-{
-	return SafeObjectConvert<OutlineBase, Outline, OutlineBaseHandle, OutlineHandle>(handle, result);
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_ToUnknown(OutlineBaseHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<OutlineBase, IUnknown, OutlineBaseHandle, IUnknownHandle>(handle, result);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_ToOutlineItem(OutlineBaseHandle* handle, OutlineItemHandle** result)
-{
-	return SafeObjectConvert<OutlineBase, OutlineItem, OutlineBaseHandle, OutlineItemHandle>(handle, result);
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_FromUnknown(IUnknownHandle* handle, OutlineBaseHandle** result) {
+	return SafeObjectConvert<IUnknown, OutlineBase, IUnknownHandle, OutlineBaseHandle>(handle, result);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_Release(OutlineBaseHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_Release(OutlineBaseHandle* handle) {
 	return ObjectRelease<OutlineBase, OutlineBaseHandle>(handle);
 }
 
@@ -92,8 +89,15 @@ VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetCount(OutlineHandle* han
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Outline_Release(OutlineHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION Outline_ToOutlineBase(OutlineHandle* handle, OutlineBaseHandle** result) {
+	return SafeObjectConvert<Outline, OutlineBase, OutlineHandle, OutlineBaseHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Outline_FromOutlineBase(OutlineBaseHandle* handle, OutlineHandle** result) {
+	return SafeObjectConvert<OutlineBase, Outline, OutlineBaseHandle, OutlineHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Outline_Release(OutlineHandle* handle) {
 	return ObjectRelease<Outline, OutlineHandle>(handle);
 }
 
@@ -246,8 +250,15 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetFlags(OutlineItemHan
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_Release(OutlineItemHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_ToOutlineBase(OutlineItemHandle* handle, OutlineBaseHandle** result) {
+	return SafeObjectConvert<OutlineItem, OutlineBase, OutlineItemHandle, OutlineBaseHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_FromOutlineBase(OutlineBaseHandle* handle, OutlineItemHandle** result) {
+	return SafeObjectConvert<OutlineBase, OutlineItem, OutlineBaseHandle, OutlineItemHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_Release(OutlineItemHandle* handle) {
 	return ObjectRelease<OutlineItem, OutlineItemHandle>(handle);
 }
 
@@ -321,7 +332,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsBold(OutlineItem
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_Release(OutlineItemFlagsHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_Release(OutlineItemFlagsHandle* handle) {
 	return ObjectRelease<OutlineItemFlags, OutlineItemFlagsHandle>(handle);
 }
