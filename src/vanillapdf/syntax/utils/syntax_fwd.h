@@ -27,6 +27,7 @@ class ASCII85DecodeFilter; using ASCII85DecodeFilterPtr = Deferred<ASCII85Decode
 class ASCIIHexDecodeFilter; using ASCIIHexDecodeFilterPtr = Deferred<ASCIIHexDecodeFilter>;
 class FlateDecodeFilter; using FlateDecodeFilterPtr = Deferred<FlateDecodeFilter>;
 class DCTDecodeFilter; using DCTDecodeFilterPtr = Deferred<DCTDecodeFilter>;
+class LZWDecodeFilter; using LZWDecodeFilterPtr = Deferred<LZWDecodeFilter>;
 
 // Files
 class File; using FilePtr = Deferred<File>;
