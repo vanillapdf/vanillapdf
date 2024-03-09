@@ -11,10 +11,6 @@
 namespace vanillapdf {
 namespace semantics {
 
-Date::Date() : HighLevelObject(make_deferred<syntax::LiteralStringObject>()) {
-
-}
-
 Date::Date(syntax::StringObjectPtr root) : HighLevelObject(root) {
 	auto str = root->GetValue()->ToString();
 
