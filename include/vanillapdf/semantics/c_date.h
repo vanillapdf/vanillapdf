@@ -159,7 +159,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Date_ToUnknown(DateHandle* handle, IUnknownHandle** result);
 
 	/**
-	* \brief Convert \ref IUnknownHandle to \ref ObjectHandle
+	* \brief Convert \ref IUnknownHandle to \ref DateHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Date_FromUnknown(IUnknownHandle* handle, DateHandle** result);
 
