@@ -5,6 +5,7 @@
 #include "vanillapdf/semantics/c_document_info.h"
 #include "implementation/c_helper.h"
 
+using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
 
@@ -172,7 +173,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentInf
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_Release(DocumentInfoHandle* handle)
-{
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_ToUnknown(DocumentInfoHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<DocumentInfo, IUnknown, DocumentInfoHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_FromUnknown(IUnknownHandle* handle, DocumentInfoHandle** result) {
+	return SafeObjectConvert<IUnknown, DocumentInfo, IUnknownHandle, DocumentInfoHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_Release(DocumentInfoHandle* handle) {
 	return ObjectRelease<DocumentInfo, DocumentInfoHandle>(handle);
 }

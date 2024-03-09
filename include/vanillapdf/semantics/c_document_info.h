@@ -108,6 +108,16 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentInfoHandle* handle, DocumentTrappedType* result);
 
 	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_ToUnknown(DocumentInfoHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref DocumentInfoHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_FromUnknown(IUnknownHandle* handle, DocumentInfoHandle** result);
+
+	/**
 	* \copydoc IUnknown_Release
 	* \see \ref IUnknown_Release
 	*/
