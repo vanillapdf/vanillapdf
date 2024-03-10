@@ -35,7 +35,7 @@ error_type eo_process_stream(StreamObjectHandle* stream, biguint_type object_num
 
 error_type eo_process_object(ObjectHandle* obj, biguint_type object_number, ushort_type generation_number) {
 
-	ObjectType type;
+	ObjectType type = ObjectType_Undefined;
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_GetObjectType(obj, &type));
 
@@ -59,7 +59,7 @@ error_type eo_process_xref(XrefHandle* xref, biguint_type object_number, ushort_
 	while (VANILLAPDF_ERROR_SUCCESS == XrefIterator_IsValid(xref_iterator, &valid)
 		&& VANILLAPDF_RV_TRUE == valid) {
 
-		XrefEntryType type;
+		XrefEntryType type = XrefEntryType_Null;
 		XrefEntryHandle* entry = NULL;
 		XrefCompressedEntryHandle* compressed_entry = NULL;
 		XrefUsedEntryHandle* used_entry = NULL;
