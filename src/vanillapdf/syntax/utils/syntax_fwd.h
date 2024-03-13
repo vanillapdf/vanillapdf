@@ -28,6 +28,7 @@ class ASCIIHexDecodeFilter; using ASCIIHexDecodeFilterPtr = Deferred<ASCIIHexDec
 class FlateDecodeFilter; using FlateDecodeFilterPtr = Deferred<FlateDecodeFilter>;
 class DCTDecodeFilter; using DCTDecodeFilterPtr = Deferred<DCTDecodeFilter>;
 class LZWDecodeFilter; using LZWDecodeFilterPtr = Deferred<LZWDecodeFilter>;
+class JPXDecodeFilter; using JPXDecodeFilterPtr = Deferred<JPXDecodeFilter>;
 
 // Files
 class File; using FilePtr = Deferred<File>;

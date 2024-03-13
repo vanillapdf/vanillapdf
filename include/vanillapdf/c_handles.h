@@ -66,6 +66,7 @@ extern "C"
 	DECLARE_OBJECT_HANDLE(ASCII85DecodeFilter);
 	DECLARE_OBJECT_HANDLE(ASCIIHexDecodeFilter);
 	DECLARE_OBJECT_HANDLE(LZWDecodeFilter);
+	DECLARE_OBJECT_HANDLE(JPXDecodeFilter);
 
 	#pragma endregion
 

@@ -143,6 +143,7 @@ set(VANILLAPDF_SYNTAX_SOURCES
 	syntax/filters/filter.cpp
 	syntax/filters/flate_decode_filter.cpp
 	syntax/filters/lzw_decode_filter.cpp
+	syntax/filters/jpx_decode_filter.cpp
 
 	syntax/objects/boolean_object.cpp
 	syntax/objects/dictionary_object.cpp
@@ -266,6 +267,7 @@ set(VANILLAPDF_SYNTAX_HEADERS
 	syntax/filters/filter.h
 	syntax/filters/flate_decode_filter.h
 	syntax/filters/lzw_decode_filter.h
+	syntax/filters/jpx_decode_filter.h
 
 	syntax/objects/array_object.h
 	syntax/objects/mixed_array_object.h
@@ -562,6 +564,7 @@ include("${CMAKE_SOURCE_DIR}/cmake/vcpkg_dependencies.cmake")
 find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(JPEG REQUIRED)
+find_package(OpenJPEG REQUIRED)
 
 if (COMPILE_SKIA)
 	find_package(unofficial-skia CONFIG REQUIRED)
@@ -600,6 +603,15 @@ if (ZLIB_FOUND)
 else (ZLIB_FOUND)
 	message(WARNING "Compiling without zlib support. zlib decompression will become unavailable")
 endif (ZLIB_FOUND)
+
+if (OPENJPEG_LIBRARIES)
+	include_directories(${OPENJPEG_INCLUDE_DIRS})
+	set(VANILLAPDF_LIBS ${OPENJPEG_LIBRARIES} ${VANILLAPDF_LIBS})
+	add_definitions(-DVANILLAPDF_HAVE_OPENJPEG)
+	message(STATUS "openjpeg was found without specified version")
+else (OPENJPEG_LIBRARIES)
+	message(WARNING "Compiling without openjpeg support. jpeg2000 decompression will become unavailable")
+endif (OPENJPEG_LIBRARIES)
 
 target_link_libraries(vanillapdf ${VANILLAPDF_LIBS})
 

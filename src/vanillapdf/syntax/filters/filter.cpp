@@ -6,6 +6,7 @@
 #include "syntax/filters/ascii_hex_decode_filter.h"
 #include "syntax/filters/dct_decode_filter.h"
 #include "syntax/filters/lzw_decode_filter.h"
+#include "syntax/filters/jpx_decode_filter.h"
 
 #include "syntax/utils/name_constants.h"
 
@@ -23,6 +24,8 @@ FilterBasePtr FilterBase::GetFilterByName(const NameObject& name) {
 		return DCTDecodeFilterPtr();
 	} else if (name.Equals(constant::Name::LZWDecode)) {
 		return LZWDecodeFilterPtr();
+	} else if (name.Equals(constant::Name::JPXDecode)) {
+		return JPXDecodeFilterPtr();
 	}
 
 	throw GeneralException("Unknown filter type: " + name.GetValue()->ToString());

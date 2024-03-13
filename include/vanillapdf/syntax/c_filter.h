@@ -262,6 +262,41 @@ extern "C"
 
 	/** @} */
 
+	/**
+	* \memberof JPXDecodeFilterHandle
+	* @{
+	*/
+
+	/**
+	* \brief Creates a new filter instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION JPXDecodeFilter_Create(JPXDecodeFilterHandle** result);
+
+	/**
+	* \copydoc FilterBase_Encode
+	* \see \ref FilterBase_Encode
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION JPXDecodeFilter_Encode(JPXDecodeFilterHandle* handle, BufferHandle* data, BufferHandle** result);
+
+	/**
+	* \copydoc FilterBase_Encode
+	* \see \ref FilterBase_EncodeParams
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION JPXDecodeFilter_EncodeParams(JPXDecodeFilterHandle* handle, BufferHandle* data, DictionaryObjectHandle* parameters, BufferHandle** result);
+
+	/**
+	* \copydoc FilterBase_Decode
+	* \see \ref FilterBase_Decode
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION JPXDecodeFilter_Decode(JPXDecodeFilterHandle* handle, BufferHandle* data, BufferHandle** result);
+
+	/**
+	* \copydoc FilterBase_Release
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION JPXDecodeFilter_Release(JPXDecodeFilterHandle* handle);
+
+	/** @} */
+
 #ifdef __cplusplus
 };
 #endif

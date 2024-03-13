@@ -3,6 +3,7 @@
 #include "syntax/filters/filter.h"
 #include "syntax/filters/dct_decode_filter.h"
 #include "syntax/filters/lzw_decode_filter.h"
+#include "syntax/filters/jpx_decode_filter.h"
 #include "syntax/filters/flate_decode_filter.h"
 #include "syntax/filters/ascii_85_decode_filter.h"
 #include "syntax/filters/ascii_hex_decode_filter.h"
@@ -277,4 +278,46 @@ VANILLAPDF_API error_type CALLING_CONVENTION LZWDecodeFilter_Decode(LZWDecodeFil
 
 VANILLAPDF_API error_type CALLING_CONVENTION LZWDecodeFilter_Release(LZWDecodeFilterHandle* handle) {
 	return ObjectRelease<LZWDecodeFilter, LZWDecodeFilterHandle>(handle);
+}
+
+// JPXDecodeFilter
+
+VANILLAPDF_API error_type CALLING_CONVENTION JPXDecodeFilter_Create(JPXDecodeFilterHandle** result) {
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto filter = make_deferred<JPXDecodeFilter>();
+		auto ptr = filter.AddRefGet();
+		*result = reinterpret_cast<JPXDecodeFilterHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION JPXDecodeFilter_Encode(JPXDecodeFilterHandle* handle, BufferHandle* data_handle, BufferHandle** result) {
+	JPXDecodeFilter* filter = reinterpret_cast<JPXDecodeFilter*>(handle);
+	FilterBase* base_filter = static_cast<FilterBase*>(filter);
+	FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
+
+	return FilterBase_Encode(base_filter_handle, data_handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION JPXDecodeFilter_EncodeParams(JPXDecodeFilterHandle* handle, BufferHandle* data_handle, DictionaryObjectHandle* parameters_handle, BufferHandle** result) {
+	JPXDecodeFilter* filter = reinterpret_cast<JPXDecodeFilter*>(handle);
+	FilterBase* base_filter = static_cast<FilterBase*>(filter);
+	FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
+
+	return FilterBase_EncodeParams(base_filter_handle, data_handle, parameters_handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION JPXDecodeFilter_Decode(JPXDecodeFilterHandle* handle, BufferHandle* data_handle, BufferHandle** result) {
+	JPXDecodeFilter* filter = reinterpret_cast<JPXDecodeFilter*>(handle);
+	FilterBase* base_filter = static_cast<FilterBase*>(filter);
+	FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
+
+	return FilterBase_Decode(base_filter_handle, data_handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION JPXDecodeFilter_Release(JPXDecodeFilterHandle* handle) {
+	return ObjectRelease<JPXDecodeFilter, JPXDecodeFilterHandle>(handle);
 }
