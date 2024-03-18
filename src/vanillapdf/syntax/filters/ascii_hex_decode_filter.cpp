@@ -14,11 +14,11 @@ char HexPairToByte(const std::string& hex_pair) {
 	return reinterpret_cast<char&>(converted);
 }
 
-BufferPtr ASCIIHexDecodeFilter::Encode(IInputStreamPtr, types::stream_size, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */) const {
+BufferPtr ASCIIHexDecodeFilter::Encode(IInputStreamPtr, types::stream_size, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
 	throw NotSupportedException("ASCIIHexDecodeFilter encoding is not supported");
 }
 
-BufferPtr ASCIIHexDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */) const {
+BufferPtr ASCIIHexDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
 	BufferPtr result;
 
 	std::string hex_pair;
@@ -68,14 +68,14 @@ BufferPtr ASCIIHexDecodeFilter::Decode(IInputStreamPtr src, types::stream_size l
 	return result;
 }
 
-BufferPtr ASCIIHexDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const {
+BufferPtr ASCIIHexDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
 	auto stream = src->ToInputStream();
-	return Encode(stream, src->size(), parameters);
+	return Encode(stream, src->size(), parameters, object_attributes);
 }
 
-BufferPtr ASCIIHexDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters) const {
+BufferPtr ASCIIHexDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
 	auto stream = src->ToInputStream();
-	return Decode(stream, src->size(), parameters);
+	return Decode(stream, src->size(), parameters, object_attributes);
 }
 
 } // syntax

@@ -202,14 +202,14 @@ BufferPtr StreamObject::GetBody() const {
 		if (_header->Contains(constant::Name::DecodeParms)) {
 			auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
 			auto body_decrypted = GetBodyDecrypted();
-			auto body = filter->Decode(body_decrypted, params);
+			auto body = filter->Decode(body_decrypted, params, m_attributes);
 			_body_decoded->assign(body.begin(), body.end());
 			_body_decoded->SetInitialized();
 			return _body_decoded;
 		}
 
 		auto body_decrypted = GetBodyDecrypted();
-		auto body = filter->Decode(body_decrypted);
+		auto body = filter->Decode(body_decrypted, DictionaryObjectPtr(), m_attributes);
 		_body_decoded->assign(body.begin(), body.end());
 		_body_decoded->SetInitialized();
 		return _body_decoded;
@@ -238,16 +238,16 @@ BufferPtr StreamObject::GetBody() const {
 				auto current_param = (*params)[i];
 				bool is_param_null = ObjectUtils::IsType<NullObjectPtr>(current_param);
 				if (is_param_null) {
-					result = filter->Decode(result);
+					result = filter->Decode(result, DictionaryObjectPtr(), m_attributes);
 					continue;
 				}
 
 				auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(current_param);
-				result = filter->Decode(result, dict);
+				result = filter->Decode(result, dict, m_attributes);
 				continue;
 			}
 
-			result = filter->Decode(result);
+			result = filter->Decode(result, DictionaryObjectPtr(), m_attributes);
 		}
 
 		_body_decoded->assign(result.begin(), result.end());
@@ -299,7 +299,7 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 			return EncryptStream(result, GetRootObjectNumber(), GetRootGenerationNumber());
 		}
 
-		auto result = filter->Encode(decoded_body, _header);
+		auto result = filter->Encode(decoded_body);
 		return EncryptStream(result, GetRootObjectNumber(), GetRootGenerationNumber());
 	}
 
@@ -342,7 +342,7 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 				UNUSED(is_param_null);
 			}
 
-			decoded_body = filter->Encode(decoded_body, _header);
+			decoded_body = filter->Encode(decoded_body);
 		}
 
 		return decoded_body;

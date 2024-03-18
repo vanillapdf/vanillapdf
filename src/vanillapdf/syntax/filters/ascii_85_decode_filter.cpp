@@ -5,11 +5,11 @@
 namespace vanillapdf {
 namespace syntax {
 
-BufferPtr ASCII85DecodeFilter::Encode(IInputStreamPtr, types::stream_size, DictionaryObjectPtr parameters /* = DictionaryObjectPtr() */) const {
+BufferPtr ASCII85DecodeFilter::Encode(IInputStreamPtr, types::stream_size, DictionaryObjectPtr parameters /* = DictionaryObjectPtr() */, AttributeListPtr /* = AttributeListPtr() */) const {
 	throw NotSupportedException("ASCII85DecodeFilter encoding is not supported");
 }
 
-BufferPtr ASCII85DecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters /* = DictionaryObjectPtr() */) const {
+BufferPtr ASCII85DecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters /* = DictionaryObjectPtr() */, AttributeListPtr /* = AttributeListPtr() */) const {
 	BufferPtr result;
 
 	int current = 0;
@@ -90,14 +90,14 @@ BufferPtr ASCII85DecodeFilter::Decode(IInputStreamPtr src, types::stream_size le
 	return result;
 }
 
-BufferPtr ASCII85DecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const {
+BufferPtr ASCII85DecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
 	auto stream = src->ToInputStream();
-	return Encode(stream, src->size(), parameters);
+	return Encode(stream, src->size(), parameters, object_attributes);
 }
 
-BufferPtr ASCII85DecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters) const {
+BufferPtr ASCII85DecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
 	auto stream = src->ToInputStream();
-	return Decode(stream, src->size(), parameters);
+	return Decode(stream, src->size(), parameters, object_attributes);
 }
 
 } // syntax

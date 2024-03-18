@@ -22,20 +22,20 @@ enum PNGFilterTypes {
 	Paeth = 4
 };
 
-BufferPtr FlateDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const {
+BufferPtr FlateDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters, AttributeListPtr /* = AttributeListPtr() */) const {
 	return ZlibWrapper::Deflate(src);
 }
 
-BufferPtr FlateDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters) const {
+BufferPtr FlateDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters, AttributeListPtr /* = AttributeListPtr() */) const {
 	auto dest = ZlibWrapper::Inflate(src);
 	return ApplyPredictor(dest, parameters);
 }
 
-BufferPtr FlateDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters) const {
+BufferPtr FlateDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters, AttributeListPtr /* = AttributeListPtr() */) const {
 	return ZlibWrapper::Deflate(src, length);
 }
 
-BufferPtr FlateDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters) const {
+BufferPtr FlateDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters, AttributeListPtr /*= AttributeListPtr() */) const {
 	auto dest = ZlibWrapper::Inflate(src, length);
 	return ApplyPredictor(dest, parameters);
 }

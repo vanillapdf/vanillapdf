@@ -155,7 +155,7 @@ J_COLOR_SPACE GetColorSpace(const NameObject& name) {
 
 #endif
 
-BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */) const {
+BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
 
 #if defined(VANILLAPDF_HAVE_JPEG)
 
@@ -277,7 +277,7 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
 #endif
 }
 
-BufferPtr DCTDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */) const {
+BufferPtr DCTDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
 
 #if defined(VANILLAPDF_HAVE_JPEG)
 
@@ -362,6 +362,8 @@ BufferPtr DCTDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 		throw GeneralException("Could not finish jpeg decompression");
 	}
 
+	// TODO: Store jpeg.out_color_components, jpeg.out_color_space
+
 	return StreamUtils::InputStreamToBuffer(result);
 
 #else
@@ -371,14 +373,14 @@ BufferPtr DCTDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 
 }
 
-BufferPtr DCTDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const {
+BufferPtr DCTDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
 	auto stream = src->ToInputStream();
-	return Encode(stream, src->size(), parameters);
+	return Encode(stream, src->size(), parameters, object_attributes);
 }
 
-BufferPtr DCTDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters) const {
+BufferPtr DCTDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
 	auto stream = src->ToInputStream();
-	return Decode(stream, src->size(), parameters);
+	return Decode(stream, src->size(), parameters, object_attributes);
 }
 
 } // syntax

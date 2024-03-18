@@ -11,22 +11,22 @@ namespace syntax {
 
 using namespace std;
 
-BufferPtr LZWDecodeFilter::Encode(IInputStreamPtr src, types::stream_size, DictionaryObjectPtr /* = DictionaryObjectPtr() */) const {
+BufferPtr LZWDecodeFilter::Encode(IInputStreamPtr src, types::stream_size, DictionaryObjectPtr /* = DictionaryObjectPtr() */, AttributeListPtr /* = AttributeListPtr() */) const {
 	throw NotSupportedException("LZWDecodeFilter encoding is not supported");
 }
 
-BufferPtr LZWDecodeFilter::Decode(IInputStreamPtr src, types::stream_size, DictionaryObjectPtr /* = DictionaryObjectPtr() */) const {
+BufferPtr LZWDecodeFilter::Decode(IInputStreamPtr src, types::stream_size, DictionaryObjectPtr /* = DictionaryObjectPtr() */, AttributeListPtr /* = AttributeListPtr() */) const {
 	throw NotSupportedException("LZWDecodeFilter decoding is not supported");
 }
 
-BufferPtr LZWDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const {
+BufferPtr LZWDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
 	auto stream = src->ToInputStream();
-	return Encode(stream, src->size(), parameters);
+	return Encode(stream, src->size(), parameters, object_attributes);
 }
 
-BufferPtr LZWDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters) const {
+BufferPtr LZWDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
 	auto stream = src->ToInputStream();
-	return Decode(stream, src->size(), parameters);
+	return Decode(stream, src->size(), parameters, object_attributes);
 }
 
 } // syntax

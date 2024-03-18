@@ -40,11 +40,11 @@ static OPJ_BOOL memory_stream_seek(OPJ_OFF_T p_nb_bytes, void* p_user_data) {
     return OPJ_TRUE;
 }
 
-BufferPtr JPXDecodeFilter::Encode(IInputStreamPtr src, types::stream_size, DictionaryObjectPtr /* = DictionaryObjectPtr() */) const {
-	throw NotSupportedException("LZWDecodeFilter encoding is not supported");
+BufferPtr JPXDecodeFilter::Encode(IInputStreamPtr src, types::stream_size, DictionaryObjectPtr /* = DictionaryObjectPtr() */, AttributeListPtr /* = AttributeListPtr() */) const {
+	throw NotSupportedException("JPXDecodeFilter encoding is not supported");
 }
 
-BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr /* = DictionaryObjectPtr() */) const {
+BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr /* = DictionaryObjectPtr() */, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
 
     // Set default decoder parameters
     opj_dparameters_t parameters = { 0 };
@@ -124,19 +124,23 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
         }
     }
 
+    // TODO: Store image->numcomps, image->color_space
+    //object_attributes->Add();
+    //object_attributes->Add();
+
     // Copy the image data to a new buffer
     // The reason I have not used the Buffer is that it is currently based on signed char
     return make_deferred_container<Buffer>(result.begin(), result.end());
 }
 
-BufferPtr JPXDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters) const {
+BufferPtr JPXDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
 	auto stream = src->ToInputStream();
-	return Encode(stream, src->size(), parameters);
+	return Encode(stream, src->size(), parameters, object_attributes);
 }
 
-BufferPtr JPXDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters) const {
+BufferPtr JPXDecodeFilter::Decode(BufferPtr src,  DictionaryObjectPtr parameters, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
 	auto stream = src->ToInputStream();
-	return Decode(stream, src->size(), parameters);
+	return Decode(stream, src->size(), parameters, object_attributes);
 }
 
 } // syntax
