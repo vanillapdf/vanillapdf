@@ -172,7 +172,7 @@ set(VANILLAPDF_SYNTAX_SOURCES
 )
 
 set(VANILLAPDF_UTILS_SOURCES
-	utils/attribute_interface.cpp
+	utils/base_attribute.cpp
 	utils/attribute_list.cpp
 	utils/buffer.cpp
 	utils/buffer_array.cpp
@@ -306,7 +306,7 @@ set(VANILLAPDF_SYNTAX_HEADERS
 )
 
 set(VANILLAPDF_UTILS_HEADERS
-	utils/attribute_interface.h
+	utils/base_attribute.h
 	utils/attribute_list.h
 	utils/base_iterator.h
 	utils/buffer.h

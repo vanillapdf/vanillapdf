@@ -12,7 +12,7 @@ std::shared_ptr<AttributeList::map_type> AttributeList::GetAttributes() const {
 	return m_attributes;
 }
 
-bool AttributeList::Contains(IAttribute::Type type) const {
+bool AttributeList::Contains(BaseAttribute::Type type) const {
 	// Optimization:
 	// The unordered map allocates 16 empty entries,
 	// but most of the object do not contain any attributes at all
@@ -23,12 +23,12 @@ bool AttributeList::Contains(IAttribute::Type type) const {
 	return (GetAttributes()->find(type) != GetAttributes()->end());
 }
 
-void AttributeList::Add(IAttributePtr attribute) {
+void AttributeList::Add(BaseAttributePtr attribute) {
 	auto attribute_type = attribute->GetType();
 	(*GetAttributes())[attribute_type] = attribute;
 }
 
-bool AttributeList::Remove(IAttribute::Type type) {
+bool AttributeList::Remove(BaseAttribute::Type type) {
 	auto found = GetAttributes()->find(type);
 	if (found == GetAttributes()->end()) {
 		return false;
@@ -38,7 +38,7 @@ bool AttributeList::Remove(IAttribute::Type type) {
 	return true;
 }
 
-IAttributePtr AttributeList::Get(IAttribute::Type type) const {
+BaseAttributePtr AttributeList::Get(BaseAttribute::Type type) const {
 	return GetAttributes()->at(type);
 }
 

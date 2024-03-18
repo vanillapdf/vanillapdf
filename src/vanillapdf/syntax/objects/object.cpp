@@ -6,7 +6,7 @@
 #include "utils/streams/output_stream.h"
 #include "utils/streams/output_stream_interface.h"
 
-#include "utils/attribute_interface.h"
+#include "utils/base_attribute.h"
 #include "syntax/utils/serialization_override_attribute.h"
 
 #include <cassert>
@@ -22,7 +22,7 @@ ObjectPtr::ObjectPtr(Deferred<Object> value) : Deferred<Object>(value) {
 }
 
 bool Object::HasOverrideAttribute() const {
-	return ContainsAttribute(IAttribute::Type::SerializationOverride);
+	return ContainsAttribute(BaseAttribute::Type::SerializationOverride);
 }
 
 std::string Object::GetOverrideAttribute() const {
@@ -32,7 +32,7 @@ std::string Object::GetOverrideAttribute() const {
 	// we can either write the file multiple times OR we leave some space
 	// for the the values, when we later update them.
 
-	auto base_attribute = GetAttribute(IAttribute::Type::SerializationOverride);
+	auto base_attribute = GetAttribute(BaseAttribute::Type::SerializationOverride);
 	auto override_attribute = ConvertUtils<decltype(base_attribute)>::ConvertTo<SerializationOverrideAttributePtr>(base_attribute);
 	return override_attribute->GetValue();
 }
@@ -272,18 +272,18 @@ bool Object::Identity(ObjectPtr other) const {
 	return (this == other_ptr);
 }
 
-void Object::AddAttribute(IAttributePtr attribute) {
+void Object::AddAttribute(BaseAttributePtr attribute) {
 	m_attributes->Add(attribute);
 }
-bool Object::RemoveAttribute(IAttribute::Type type) {
+bool Object::RemoveAttribute(BaseAttribute::Type type) {
 	return m_attributes->Remove(type);
 }
 
-bool Object::ContainsAttribute(IAttribute::Type type) const {
+bool Object::ContainsAttribute(BaseAttribute::Type type) const {
 	return m_attributes->Contains(type);
 }
 
-IAttributePtr Object::GetAttribute(IAttribute::Type type) const {
+BaseAttributePtr Object::GetAttribute(BaseAttribute::Type type) const {
 	return m_attributes->Get(type);
 }
 

@@ -316,7 +316,7 @@ class DeferredHandleUndefined {
 	// I often find some insane error like:
 	// "SerializationOverrideAttribute': an undefined class is not allowed as an argument to compiler intrinsic type trait '__is_constructible"
 	// or even
-	// Cannot convert argument 1 from 'SerializationOverrideAttributePtr' to 'Deferred<IAttribute>'
+	// Cannot convert argument 1 from 'SerializationOverrideAttributePtr' to 'Deferred<BaseAttribute>'
 	// With the stack trace of multiple monitors, I am not able to easily solve the problem.
 	// The problem is most of the time class being undefined.
 	// Finally, the solution is ugly, but it works.

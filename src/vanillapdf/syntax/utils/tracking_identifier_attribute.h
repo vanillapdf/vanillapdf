@@ -1,14 +1,14 @@
 #ifndef _TRACKING_IDENTIFIER_ATTRIBUTE_H
 #define _TRACKING_IDENTIFIER_ATTRIBUTE_H
 
-#include "utils/attribute_interface.h"
+#include "utils/base_attribute.h"
 
 #include <string>
 
 namespace vanillapdf {
 namespace syntax {
 
-class TrackingIdentifierAttribute : public IAttribute {
+class TrackingIdentifierAttribute : public BaseAttribute {
 public:
 	TrackingIdentifierAttribute() = default;
 
@@ -21,7 +21,7 @@ public:
 	}
 
 	virtual Type GetType(void) const noexcept override {
-		return IAttribute::Type::TrackingIdentifier;
+		return BaseAttribute::Type::TrackingIdentifier;
 	}
 
 	virtual TrackingIdentifierAttribute* Clone(void) const override {

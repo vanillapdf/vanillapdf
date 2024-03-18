@@ -25,12 +25,12 @@ DocumentSigner::DocumentSigner(ISigningKeyPtr key, MessageDigestAlgorithm digest
 
 void DocumentSigner::OnAfterObjectWrite(ObjectPtr obj) {
 
-	if (!obj->ContainsAttribute(IAttribute::Type::TrackingIdentifier)) {
+	if (!obj->ContainsAttribute(BaseAttribute::Type::TrackingIdentifier)) {
 		return;
 	}
 
-	auto original_tracking_identifier = m_dictionary->GetAttributeAs<TrackingIdentifierAttributePtr>(IAttribute::Type::TrackingIdentifier);
-	auto obj_tracking_identifier = obj->GetAttributeAs<TrackingIdentifierAttributePtr>(IAttribute::Type::TrackingIdentifier);
+	auto original_tracking_identifier = m_dictionary->GetAttributeAs<TrackingIdentifierAttributePtr>(BaseAttribute::Type::TrackingIdentifier);
+	auto obj_tracking_identifier = obj->GetAttributeAs<TrackingIdentifierAttributePtr>(BaseAttribute::Type::TrackingIdentifier);
 
 	// This condition should only match for the same object in the cloned destination
 	if (original_tracking_identifier->GetValue() == obj_tracking_identifier->GetValue()) {
@@ -58,7 +58,7 @@ void DocumentSigner::OnBeforeOutputFlush(IInputOutputStreamPtr output) {
 		throw GeneralException("Invalid offset for signature contents");
 	}
 
-	auto signature_contents_attribute = signature_contents->GetAttributeAs<SerializationOverrideAttributePtr>(IAttribute::Type::SerializationOverride);
+	auto signature_contents_attribute = signature_contents->GetAttributeAs<SerializationOverrideAttributePtr>(BaseAttribute::Type::SerializationOverride);
 	auto signature_contents_overriden_value = signature_contents_attribute->GetValue();
 	auto after_signature_contents_offset = SafeAddition<types::stream_offset>(signature_contents_offset, signature_contents_overriden_value.size());
 	auto after_signature_contents_length = output_size - after_signature_contents_offset;

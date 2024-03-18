@@ -39,8 +39,8 @@ template <typename T>
 class BaseIterator;
 
 // Attributes
-class IAttribute;
-class IAttributePtr;
+class BaseAttribute;
+class BaseAttributePtr;
 class AttributeList; using AttributeListPtr = DeferredContainer<AttributeList>;
 
 class IEncryptionKey; using IEncryptionKeyPtr = Deferred<IEncryptionKey>;

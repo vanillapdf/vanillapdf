@@ -74,13 +74,13 @@ public:
 	virtual void SetFile(WeakReference<File> file) { m_file = file; }
 	WeakReference<File> GetFile() const noexcept { return m_file; }
 
-	void AddAttribute(IAttributePtr attribute);
-	bool RemoveAttribute(IAttribute::Type type);
-	bool ContainsAttribute(IAttribute::Type type) const;
-	IAttributePtr GetAttribute(IAttribute::Type type) const;
+	void AddAttribute(BaseAttributePtr attribute);
+	bool RemoveAttribute(BaseAttribute::Type type);
+	bool ContainsAttribute(BaseAttribute::Type type) const;
+	BaseAttributePtr GetAttribute(BaseAttribute::Type type) const;
 
 	template <typename T>
-	T GetAttributeAs(IAttribute::Type type) {
+	T GetAttributeAs(BaseAttribute::Type type) {
 		return m_attributes->GetAs<T>(type);
 	}
 

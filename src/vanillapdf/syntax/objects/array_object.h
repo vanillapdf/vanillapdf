@@ -100,10 +100,10 @@ public:
 	T GetValue(size_type at);
 	void SetValue(size_type at, T value);
 
-	void AddAttribute(IAttributePtr attribute);
-	bool RemoveAttribute(IAttribute::Type type);
-	bool ContainsAttribute(IAttribute::Type type) const;
-	IAttributePtr GetAttribute(IAttribute::Type type);
+	void AddAttribute(BaseAttributePtr attribute);
+	bool RemoveAttribute(BaseAttribute::Type type);
+	bool ContainsAttribute(BaseAttribute::Type type) const;
+	BaseAttributePtr GetAttribute(BaseAttribute::Type type);
 
 	void Append(const T& value);
 	void Insert(size_type at, const T& value);
@@ -229,22 +229,22 @@ ArrayObject<T>::ArrayObject(const ArrayObject<U>& other, std::function<T(const U
 }
 
 template <typename T>
-void ArrayObject<T>::AddAttribute(IAttributePtr attribute) {
+void ArrayObject<T>::AddAttribute(BaseAttributePtr attribute) {
 	_list->AddAttribute(attribute);
 }
 
 template <typename T>
-bool ArrayObject<T>::RemoveAttribute(IAttribute::Type type) {
+bool ArrayObject<T>::RemoveAttribute(BaseAttribute::Type type) {
 	return _list->RemoveAttribute(type);
 }
 
 template <typename T>
-bool ArrayObject<T>::ContainsAttribute(IAttribute::Type type) const {
+bool ArrayObject<T>::ContainsAttribute(BaseAttribute::Type type) const {
 	return _list->ContainsAttribute(type);
 }
 
 template <typename T>
-IAttributePtr ArrayObject<T>::GetAttribute(IAttribute::Type type) {
+BaseAttributePtr ArrayObject<T>::GetAttribute(BaseAttribute::Type type) {
 	return _list->GetAttribute(type);
 }
 

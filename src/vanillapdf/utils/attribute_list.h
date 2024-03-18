@@ -2,7 +2,7 @@
 #define _ATTRIBUTE_LIST_H
 
 #include "utils/unknown_interface.h"
-#include "utils/attribute_interface.h"
+#include "utils/base_attribute.h"
 
 #include <memory>
 #include <unordered_map>
@@ -11,8 +11,8 @@ namespace vanillapdf {
 
 class AttributeList : public IUnknown {
 public:
-	typedef IAttribute::Type key_type;
-	typedef IAttributePtr value_type;
+	typedef BaseAttribute::Type key_type;
+	typedef BaseAttributePtr value_type;
 	typedef std::unordered_map<key_type, value_type> map_type;
 
 	// DeferredContainer
@@ -25,16 +25,16 @@ public:
 	typedef map_type::difference_type difference_type;
 
 public:
-	bool Contains(IAttribute::Type type) const;
-	void Add(IAttributePtr attribute);
-	bool Remove(IAttribute::Type type);
-	IAttributePtr Get(IAttribute::Type type) const;
+	bool Contains(BaseAttribute::Type type) const;
+	void Add(BaseAttributePtr attribute);
+	bool Remove(BaseAttribute::Type type);
+	BaseAttributePtr Get(BaseAttribute::Type type) const;
 	void Clear();
 
 	template <typename T>
-	T GetAs(IAttribute::Type type) const {
-		IAttributePtr attribute = Get(type);
-		return ConvertUtils<IAttributePtr>::ConvertTo<T>(attribute);
+	T GetAs(BaseAttribute::Type type) const {
+		BaseAttributePtr attribute = Get(type);
+		return ConvertUtils<BaseAttributePtr>::ConvertTo<T>(attribute);
 	}
 
 	// STL compatibility

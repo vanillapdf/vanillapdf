@@ -1,14 +1,14 @@
 #ifndef _SERIALIZATION_OVERRIDE_ATTRIBUTE_H
 #define _SERIALIZATION_OVERRIDE_ATTRIBUTE_H
 
-#include "utils/attribute_interface.h"
+#include "utils/base_attribute.h"
 
 #include <string>
 
 namespace vanillapdf {
 namespace syntax {
 
-class SerializationOverrideAttribute : public IAttribute {
+class SerializationOverrideAttribute : public BaseAttribute {
 public:
 	SerializationOverrideAttribute() = default;
 
@@ -21,7 +21,7 @@ public:
 	}
 
 	virtual Type GetType(void) const noexcept override {
-		return IAttribute::Type::SerializationOverride;
+		return BaseAttribute::Type::SerializationOverride;
 	}
 
 	virtual SerializationOverrideAttribute* Clone(void) const override {
