@@ -144,7 +144,7 @@ public:
 	}
 
 	DeferredWrapperBase& operator=(DeferredWrapperBase&& rhs) {
-		DeferredWrapperBase(std::move(rhs)).swap(*this);
+		DeferredWrapperBase(rhs).swap(*this);
 		return *this;
 	}
 
