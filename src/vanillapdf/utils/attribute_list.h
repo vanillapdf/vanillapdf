@@ -1,6 +1,7 @@
 #ifndef _ATTRIBUTE_LIST_H
 #define _ATTRIBUTE_LIST_H
 
+#include "utils/unknown_interface.h"
 #include "utils/attribute_interface.h"
 
 #include <memory>
@@ -8,14 +9,20 @@
 
 namespace vanillapdf {
 
-class AttributeList {
+class AttributeList : public IUnknown {
 public:
 	typedef IAttribute::Type key_type;
 	typedef IAttributePtr value_type;
 	typedef std::unordered_map<key_type, value_type> map_type;
 
+	// DeferredContainer
+	//typedef typename T::value_type value_type;
 	typedef map_type::iterator iterator;
 	typedef map_type::const_iterator const_iterator;
+	typedef map_type::size_type size_type;
+	typedef map_type::reference reference;
+	typedef map_type::const_reference const_reference;
+	typedef map_type::difference_type difference_type;
 
 public:
 	bool Contains(IAttribute::Type type) const;
@@ -31,11 +38,11 @@ public:
 	}
 
 	// STL compatibility
-	iterator begin() noexcept;
-	const_iterator begin() const noexcept;
+	iterator begin();
+	const_iterator begin() const;
 
-	iterator end() noexcept;
-	const_iterator end() const noexcept;
+	iterator end();
+	const_iterator end() const;
 
 private:
 	mutable std::shared_ptr<map_type> m_attributes;

@@ -81,7 +81,7 @@ public:
 
 	template <typename T>
 	T GetAttributeAs(IAttribute::Type type) {
-		return m_attributes.GetAs<T>(type);
+		return m_attributes->GetAs<T>(type);
 	}
 
 	bool Identity(ObjectPtr other) const;
@@ -99,12 +99,13 @@ public:
 protected:
 	WeakReference<File> m_file;
 	types::stream_offset m_offset = constant::BAD_OFFSET;
-	bool m_encryption_exempted = false;
 	WeakReference<XrefUsedEntryBase> m_entry;
 	WeakReference<Object> m_owner;
 
-	AttributeList m_attributes;
+	bool m_encryption_exempted = false;
 	bool m_dirty = false;
+
+	AttributeListPtr m_attributes;
 };
 
 class ObjectPtr : public Deferred<Object> {

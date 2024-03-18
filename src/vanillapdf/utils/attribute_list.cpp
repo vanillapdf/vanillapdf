@@ -46,19 +46,19 @@ void AttributeList::Clear() {
 	GetAttributes()->clear();
 }
 
-AttributeList::iterator AttributeList::begin() noexcept {
+AttributeList::iterator AttributeList::begin() {
 	return GetAttributes()->begin();
 }
 
-AttributeList::const_iterator AttributeList::begin() const noexcept {
+AttributeList::const_iterator AttributeList::begin() const {
 	return GetAttributes()->begin();
 }
 
-AttributeList::iterator AttributeList::end() noexcept {
+AttributeList::iterator AttributeList::end() {
 	return GetAttributes()->end();
 }
 
-AttributeList::const_iterator AttributeList::end() const noexcept {
+AttributeList::const_iterator AttributeList::end() const {
 	return GetAttributes()->end();
 }
 

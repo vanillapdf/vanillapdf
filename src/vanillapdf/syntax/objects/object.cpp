@@ -273,18 +273,18 @@ bool Object::Identity(ObjectPtr other) const {
 }
 
 void Object::AddAttribute(IAttributePtr attribute) {
-	m_attributes.Add(attribute);
+	m_attributes->Add(attribute);
 }
 bool Object::RemoveAttribute(IAttribute::Type type) {
-	return m_attributes.Remove(type);
+	return m_attributes->Remove(type);
 }
 
 bool Object::ContainsAttribute(IAttribute::Type type) const {
-	return m_attributes.Contains(type);
+	return m_attributes->Contains(type);
 }
 
 IAttributePtr Object::GetAttribute(IAttribute::Type type) const {
-	return m_attributes.Get(type);
+	return m_attributes->Get(type);
 }
 
 } // syntax

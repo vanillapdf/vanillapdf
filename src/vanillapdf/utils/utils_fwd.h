@@ -41,7 +41,7 @@ class BaseIterator;
 // Attributes
 class IAttribute;
 class IAttributePtr;
-class AttributeList;
+class AttributeList; using AttributeListPtr = DeferredContainer<AttributeList>;
 
 class IEncryptionKey; using IEncryptionKeyPtr = Deferred<IEncryptionKey>;
 class ISigningKey; using ISigningKeyPtr = Deferred<ISigningKey>;

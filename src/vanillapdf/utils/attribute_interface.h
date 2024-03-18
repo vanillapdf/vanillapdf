@@ -5,7 +5,7 @@
 
 namespace vanillapdf {
 
-class IAttribute : public virtual IUnknown {
+class IAttribute : public IUnknown {
 public:
 	enum class Type {
 		Undefined = 0,
@@ -20,9 +20,11 @@ public:
 	virtual ~IAttribute() = 0;
 };
 
-class EmptyAttribute : public virtual IAttribute {
+class EmptyAttribute : public IAttribute {
 public:
-	virtual Type GetType(void) const noexcept override;
+	virtual Type GetType(void) const noexcept override {
+		return Type::Empty;
+	}
 
 	virtual EmptyAttribute* Clone(void) const override;
 };
@@ -36,10 +38,6 @@ public:
 
 bool operator==(const Deferred<IAttribute>& left, const Deferred<IAttribute>& right);
 bool operator!=(const Deferred<IAttribute>& left, const Deferred<IAttribute>& right);
-
-inline IAttribute::Type EmptyAttribute::GetType() const noexcept {
-	return Type::Empty;
-}
 
 } // vanillapdf
 
