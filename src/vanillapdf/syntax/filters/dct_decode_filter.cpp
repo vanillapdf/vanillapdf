@@ -209,13 +209,7 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
 
 	jpeg_create_compress(&jpeg);
 
-	// We want to capture input by value, because it might be out of scope
-	// In order to call non-const method we have to tag the lambda mutable
-	auto cleanup_lambda = [jpeg]() mutable {
-		jpeg_destroy_compress(&jpeg);
-	};
-
-	SCOPE_GUARD(cleanup_lambda);
+	SCOPE_GUARD([&jpeg]() { jpeg_destroy_compress(&jpeg); });
 
 	auto output_stream = make_deferred<InputOutputStream>(std::make_shared<std::stringstream>());
 	auto destination_manager = std::make_shared<CustomDestinationManager>(output_stream);
@@ -296,13 +290,7 @@ BufferPtr DCTDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 
 	jpeg_create_decompress(&jpeg);
 
-	// We want to capture input by value, because it might be out of scope
-	// In order to call non-const method we have to tag the lambda mutable
-	auto cleanup_lambda = [jpeg]() mutable {
-		jpeg_destroy_decompress(&jpeg);
-	};
-
-	SCOPE_GUARD(cleanup_lambda);
+	SCOPE_GUARD([&jpeg]() { jpeg_destroy_decompress(&jpeg); });
 
 	jpeg.src = static_cast<jpeg_source_mgr*>(
 		(jpeg.mem->alloc_small)
@@ -316,9 +304,7 @@ BufferPtr DCTDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 	jpeg.src->term_source = term_source;
 
 	size_t length_converted = ValueConvertUtils::SafeConvert<size_t>(length);
-
-	BufferPtr input = make_deferred_container<Buffer>(length_converted);
-	src->Read(input, length_converted);
+	BufferPtr input = src->Read(length_converted);
 
 	jpeg.src->next_input_byte = reinterpret_cast<uint8_t *>(input->data());
 	jpeg.src->bytes_in_buffer = length_converted;
