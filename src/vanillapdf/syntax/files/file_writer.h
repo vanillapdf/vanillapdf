@@ -10,7 +10,7 @@
 namespace vanillapdf {
 namespace syntax {
 
-class IFileWriterObserver : public virtual IUnknown, public IWeakReferenceable<IFileWriterObserver> {
+class IFileWriterObserver : public IUnknown, public IWeakReferenceable<IFileWriterObserver> {
 public:
 	virtual void OnInitializing(IInputOutputStreamPtr output) {}
 	virtual void OnFinalizing(IInputOutputStreamPtr output) {}
@@ -30,7 +30,7 @@ public:
 	virtual ~IFileWriterObserver() = 0;
 };
 
-class IFileWriterObservable : public virtual IUnknown, public IObservable<IFileWriterObserver> {
+class IFileWriterObservable : public IUnknown, public IObservable<IFileWriterObserver> {
 public:
 	virtual void Initializing(IInputOutputStreamPtr output) {
 		for (auto current = GetObservers()->begin(); current != GetObservers()->end(); ++current) {
@@ -107,7 +107,7 @@ private:
 	}
 };
 
-class FileWriter : public virtual IUnknown, public IFileWriterObservable {
+class FileWriter : public IFileWriterObservable {
 public:
 	bool ValidateConfiguration(FilePtr source, std::string& reason) const;
 

@@ -9,7 +9,7 @@
 namespace vanillapdf {
 namespace semantics {
 
-class ByteRange : public virtual IUnknown, public IWeakReferenceable<ByteRange> {
+class ByteRange : public IUnknown, public IWeakReferenceable<ByteRange> {
 public:
 	explicit ByteRange(syntax::IntegerObjectPtr byte_offset, syntax::IntegerObjectPtr length);
 

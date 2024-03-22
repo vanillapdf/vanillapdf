@@ -8,7 +8,7 @@
 namespace vanillapdf {
 namespace syntax {
 
-class Token : public virtual IUnknown, public IWeakReferenceable<Token> {
+class Token : public IUnknown, public IWeakReferenceable<Token> {
 public:
 	enum class Type : unsigned char {
 		UNKNOWN = 0,

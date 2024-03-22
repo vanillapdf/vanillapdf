@@ -12,7 +12,7 @@
 namespace vanillapdf {
 namespace semantics {
 
-class DocumentSigner : public virtual IUnknown, public syntax::IFileWriterObserver {
+class DocumentSigner : public syntax::IFileWriterObserver {
 public:
 	DocumentSigner(ISigningKeyPtr key, MessageDigestAlgorithm digest, syntax::DictionaryObjectPtr signature_dictionary);
 

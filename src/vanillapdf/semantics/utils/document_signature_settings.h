@@ -12,7 +12,7 @@
 namespace vanillapdf {
 namespace semantics {
 
-class DocumentSignatureSettings : public virtual IUnknown {
+class DocumentSignatureSettings : public IUnknown {
 public:
 	MessageDigestAlgorithm GetDigest() const;
 	void SetDigest(MessageDigestAlgorithm digest);

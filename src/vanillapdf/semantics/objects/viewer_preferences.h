@@ -12,7 +12,7 @@ namespace semantics {
 
 class PageRange : public HighLevelObject<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>> {
 public:
-	class SubRange : public virtual IUnknown, public IWeakReferenceable {
+	class SubRange : public IUnknown, public IWeakReferenceable {
 	public:
 		SubRange(syntax::IntegerObjectPtr first, syntax::IntegerObjectPtr last);
 

@@ -9,7 +9,7 @@
 namespace vanillapdf {
 namespace syntax {
 
-class FilterBase : public virtual IUnknown, public IWeakReferenceable<FilterBase> {
+class FilterBase : public IUnknown, public IWeakReferenceable<FilterBase> {
 public:
 	enum class Type : unsigned char {
 		Undefined = 0,

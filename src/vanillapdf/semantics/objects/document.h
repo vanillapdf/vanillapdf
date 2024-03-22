@@ -18,7 +18,7 @@
 namespace vanillapdf {
 namespace semantics {
 
-class Document : public virtual IUnknown, public IWeakReferenceable<Document> {
+class Document : public IUnknown, public IWeakReferenceable<Document> {
 public:
 	static DocumentPtr Open(const std::string& path);
 	static DocumentPtr OpenFile(syntax::FilePtr holder);

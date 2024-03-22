@@ -9,7 +9,7 @@
 namespace vanillapdf {
 namespace syntax {
 
-class XrefBase : public virtual IUnknown, public IModifyObserver, public IModifyObservable {
+class XrefBase : public IModifyObserver, public IModifyObservable {
 public:
 	using map_type = std::unordered_set<XrefEntryBasePtr>;
 
