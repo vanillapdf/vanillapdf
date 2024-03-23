@@ -1,8 +1,9 @@
 #include "precompiled.h"
 
-#include "utils/attribute_list.h"
+#include "syntax/utils/object_attribute_list.h"
 
 namespace vanillapdf {
+namespace syntax {
 
 std::shared_ptr<AttributeList::map_type> AttributeList::GetAttributes() const {
 	if (!m_attributes) {
@@ -62,4 +63,5 @@ AttributeList::const_iterator AttributeList::end() const {
 	return GetAttributes()->end();
 }
 
+} // syntax
 } // vanillapdf

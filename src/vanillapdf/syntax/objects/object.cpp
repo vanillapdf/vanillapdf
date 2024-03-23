@@ -6,8 +6,8 @@
 #include "utils/streams/output_stream.h"
 #include "utils/streams/output_stream_interface.h"
 
-#include "utils/base_attribute.h"
-#include "syntax/utils/serialization_override_attribute.h"
+#include "syntax/utils/base_object_attribute.h"
+#include "syntax/utils/serialization_override_object_attribute.h"
 
 #include <cassert>
 

@@ -1,8 +1,10 @@
 #include "precompiled.h"
 
-#include "utils/base_attribute.h"
+#include "syntax/utils/base_object_attribute.h"
+#include "syntax/utils/empty_object_attribute.h"
 
 namespace vanillapdf {
+namespace syntax {
 
 BaseAttributePtr::BaseAttributePtr() : Deferred<BaseAttribute>(make_deferred<EmptyAttribute>()) {
 
@@ -23,15 +25,12 @@ bool operator!=(const Deferred<BaseAttribute>& left, const Deferred<BaseAttribut
 	return !left->Equals(right);
 }
 
-EmptyAttribute* EmptyAttribute::Clone(void) const {
-	return pdf_new EmptyAttribute();
-}
-
+} // syntax
 } // vanillapdf
 
 namespace std {
 
-size_t hash<vanillapdf::BaseAttribute::Type>::operator()(vanillapdf::BaseAttribute::Type attribute) const {
+size_t hash<vanillapdf::syntax::BaseAttribute::Type>::operator()(vanillapdf::syntax::BaseAttribute::Type attribute) const {
 	size_t converted = static_cast<size_t>(attribute);
 
 	std::hash<size_t> hasher;

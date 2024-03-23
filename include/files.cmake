@@ -45,6 +45,8 @@ set(VANILLAPDF_INCLUDE_SYNTAX_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_stream_object.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_string_object.h"
 	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_xref.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_object_attributes.h"
+	"${CMAKE_SOURCE_DIR}/include/vanillapdf/syntax/c_object_attribute_list.h"
 )
 
 set(VANILLAPDF_INCLUDE_SEMANTICS_HEADERS

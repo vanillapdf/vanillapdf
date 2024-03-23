@@ -102,6 +102,8 @@ extern "C"
 
 	#pragma region Utils
 
+	DECLARE_OBJECT_HANDLE(BaseObjectAttribute);
+	DECLARE_OBJECT_HANDLE(ObjectAttributeList);
 	DECLARE_OBJECT_HANDLE(Buffer);
 	DECLARE_OBJECT_HANDLE(BufferArray);
 	DECLARE_OBJECT_HANDLE(IUnknown);

@@ -1,7 +1,7 @@
 #ifndef _SERIALIZATION_OVERRIDE_ATTRIBUTE_H
 #define _SERIALIZATION_OVERRIDE_ATTRIBUTE_H
 
-#include "utils/base_attribute.h"
+#include "syntax/utils/base_object_attribute.h"
 
 #include <string>
 

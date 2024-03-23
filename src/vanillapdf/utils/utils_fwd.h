@@ -38,11 +38,6 @@ class IWeakReferenceable;
 template <typename T>
 class BaseIterator;
 
-// Attributes
-class BaseAttribute;
-class BaseAttributePtr;
-class AttributeList; using AttributeListPtr = DeferredContainer<AttributeList>;
-
 class IEncryptionKey; using IEncryptionKeyPtr = Deferred<IEncryptionKey>;
 class ISigningKey; using ISigningKeyPtr = Deferred<ISigningKey>;
 class PKCS12Key; using PKCS12KeyPtr = Deferred<PKCS12Key>;

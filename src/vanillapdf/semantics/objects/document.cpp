@@ -5,7 +5,7 @@
 #include "syntax/files/file_writer.h"
 
 #include "syntax/utils/name_constants.h"
-#include "syntax/utils/serialization_override_attribute.h"
+#include "syntax/utils/serialization_override_object_attribute.h"
 
 #include "semantics/objects/document.h"
 #include "semantics/objects/page_contents.h"

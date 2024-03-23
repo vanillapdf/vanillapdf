@@ -2,10 +2,10 @@
 #define _OBJECT_H
 
 #include "syntax/utils/syntax_fwd.h"
+#include "syntax/utils/object_attribute_list.h"
 
 #include "utils/constants.h"
 #include "utils/unknown_interface.h"
-#include "utils/attribute_list.h"
 #include "utils/modify_observer_interface.h"
 
 #include <memory>

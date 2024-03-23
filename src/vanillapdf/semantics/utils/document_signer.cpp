@@ -3,8 +3,8 @@
 #include "semantics/utils/document_signer.h"
 
 #include "syntax/utils/name_constants.h"
-#include "syntax/utils/tracking_identifier_attribute.h"
-#include "syntax/utils/serialization_override_attribute.h"
+#include "syntax/utils/tracking_identifier_object_attribute.h"
+#include "syntax/utils/serialization_override_object_attribute.h"
 
 #include "utils/math_utils.h"
 

@@ -1,13 +1,14 @@
-#ifndef _ATTRIBUTE_LIST_H
-#define _ATTRIBUTE_LIST_H
+#ifndef _OBJECT_ATTRIBUTE_LIST_H
+#define _OBJECT_ATTRIBUTE_LIST_H
 
 #include "utils/unknown_interface.h"
-#include "utils/base_attribute.h"
+#include "syntax/utils/base_object_attribute.h"
 
 #include <memory>
 #include <unordered_map>
 
 namespace vanillapdf {
+namespace syntax {
 
 class AttributeList : public IUnknown {
 public:
@@ -50,6 +51,7 @@ private:
 	std::shared_ptr<map_type> GetAttributes() const;
 };
 
+} // syntax
 } // vanillapdf
 
-#endif /* _ATTRIBUTE_LIST_H */
+#endif /* _OBJECT_ATTRIBUTE_LIST_H */

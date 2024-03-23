@@ -14,8 +14,13 @@ template <typename T>
 class DeferredArrayObject;
 
 // Attributes
+class BaseAttribute;
+class BaseAttributePtr;
 class SerializationOverrideAttribute; using SerializationOverrideAttributePtr = Deferred<SerializationOverrideAttribute>;
 class TrackingIdentifierAttribute; using TrackingIdentifierAttributePtr = Deferred<TrackingIdentifierAttribute>;
+class ImageColorSpaceObjectAttribute; using ImageColorSpaceObjectAttributePtr = Deferred<ImageColorSpaceObjectAttribute>;
+class ImageColorComponentsObjectAttribute; using ImageColorComponentsObjectAttributePtr = Deferred<ImageColorComponentsObjectAttribute>;
+class AttributeList; using AttributeListPtr = DeferredContainer<AttributeList>;
 
 // Exceptions
 class FileDisposedException;

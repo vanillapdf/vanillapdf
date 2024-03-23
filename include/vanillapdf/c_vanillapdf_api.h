@@ -30,6 +30,9 @@
 #include "vanillapdf/syntax/c_name_object.h"
 #include "vanillapdf/syntax/c_null_object.h"
 
+#include "vanillapdf/syntax/c_object_attributes.h"
+#include "vanillapdf/syntax/c_object_attribute_list.h"
+
 /* semantics */
 #include "vanillapdf/semantics/c_document.h"
 #include "vanillapdf/semantics/c_document_encryption_settings.h"

@@ -47,6 +47,8 @@ set(VANILLAPDF_C_IMPLEMENTATION_SYNTAX_SOURCES
 	implementation/syntax/c_stream_object.cpp
 	implementation/syntax/c_string_object.cpp
 	implementation/syntax/c_xref.cpp
+	implementation/syntax/c_object_attributes.cpp
+	implementation/syntax/c_object_attribute_list.cpp
 )
 
 set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
@@ -130,7 +132,7 @@ set(VANILLAPDF_SEMANTICS_SOURCES
 
 set(VANILLAPDF_SYNTAX_SOURCES
 	syntax/exceptions/syntax_exceptions.cpp
-	
+
 	syntax/files/file.cpp
 	syntax/files/file_writer.cpp
 	syntax/files/xref.cpp
@@ -166,14 +168,14 @@ set(VANILLAPDF_SYNTAX_SOURCES
 	syntax/parsers/token.cpp
 	syntax/parsers/token_dictionary.cpp
 	syntax/parsers/tokenizer.cpp
-	
+
 	syntax/utils/encryption.cpp
 	syntax/utils/name_constants.cpp
+	syntax/utils/base_object_attribute.cpp
+	syntax/utils/object_attribute_list.cpp
 )
 
 set(VANILLAPDF_UTILS_SOURCES
-	utils/base_attribute.cpp
-	utils/attribute_list.cpp
 	utils/buffer.cpp
 	utils/buffer_array.cpp
 	utils/constants.cpp
@@ -190,7 +192,7 @@ set(VANILLAPDF_UTILS_SOURCES
 	utils/unknown_interface.cpp
 	utils/windows_utils.cpp
 	utils/zlib_wrapper.cpp
-	
+
 	utils/streams/input_reverse_stream.cpp
 	utils/streams/input_stream.cpp
 	utils/streams/output_stream.cpp
@@ -301,13 +303,17 @@ set(VANILLAPDF_SYNTAX_HEADERS
 	syntax/utils/output_pointer.h
 	syntax/utils/syntax_fwd.h
 	syntax/utils/object_utils.h
-	syntax/utils/serialization_override_attribute.h
-	syntax/utils/tracking_identifier_attribute.h
+
+	syntax/utils/base_object_attribute.h
+	syntax/utils/object_attribute_list.h
+	syntax/utils/empty_object_attribute.h
+	syntax/utils/serialization_override_object_attribute.h
+	syntax/utils/tracking_identifier_object_attribute.h
+	syntax/utils/image_color_space_object_attribute.h
+	syntax/utils/image_color_components_object_attribute.h
 )
 
 set(VANILLAPDF_UTILS_HEADERS
-	utils/base_attribute.h
-	utils/attribute_list.h
 	utils/base_iterator.h
 	utils/buffer.h
 	utils/buffer_array.h
