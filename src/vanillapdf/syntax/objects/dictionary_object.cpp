@@ -181,22 +181,17 @@ void DictionaryObject::Insert(NameObjectPtr name, ContainableObjectPtr value, bo
 
 	ACCESS_LOCK_GUARD(m_access_lock);
 
-	auto found = _list.find(name);
-
-	if (found != _list.end()) {
-		if (!overwrite) {
+	if (!overwrite) {
+		auto found = _list.find(name);
+		if (found != _list.end()) {
 			throw DuplicateKeyException("The key " + name->ToString() + " was already present in the dictionary");
 		}
-
-		bool removed = Remove(name);
-		assert(removed); UNUSED(removed);
 	}
 
 	auto pair = std::make_pair(name, value);
 	auto result = _list.insert(pair);
-	if (result.second == false) {
-		throw GeneralException("Failed to add key " + name->ToString() + " with value " + value->ToString() + " into the dictionary");
-	}
+
+	// The pair::second element in the pair is set to true if a new element was inserted or false if an equivalent key already existed.
 
 	name->SetOwner(Object::GetWeakReference());
 	value->SetOwner(Object::GetWeakReference());
