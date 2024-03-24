@@ -5,14 +5,11 @@
 TEST(Buffer, CreateRelease) {
 
 	BufferHandle* buffer_ptr = nullptr;
-	auto create_result = Buffer_Create(&buffer_ptr);
 
-	ASSERT_EQ(create_result, VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(Buffer_Create(&buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
 	ASSERT_NE(buffer_ptr, nullptr);
 
-	auto release_result = Buffer_Release(buffer_ptr);
-
-	ASSERT_EQ(release_result, VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 
 TEST(Buffer, CreateFromDataRelease) {
@@ -29,11 +26,11 @@ TEST(Buffer, CreateFromDataRelease) {
 
 	// Read data information from buffer
 	ASSERT_EQ(Buffer_GetData(buffer_ptr, &check_data_ptr, &check_data_len), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(check_data_ptr, nullptr);
 
 	// Verify the data and length returned by Buffer_GetData
-	ASSERT_NE(check_data_ptr, nullptr);
-	ASSERT_STREQ(BUFFER_DATA, check_data_ptr);
 	ASSERT_EQ(check_data_len, sizeof(BUFFER_DATA));
+	EXPECT_STREQ(check_data_ptr, BUFFER_DATA);
 
 	// Release the actual buffer allocation
 	ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
@@ -85,9 +82,9 @@ TEST(HexadecimalStringObject, GetValue) {
 
 	ASSERT_EQ(Buffer_GetData(buffer_ptr, &buffer_data, &buffer_size), VANILLAPDF_ERROR_SUCCESS);
 
-	ASSERT_EQ(buffer_size, static_cast<decltype(buffer_size)>(2));
-	ASSERT_EQ(buffer_data[0], 0x00);
-	ASSERT_EQ(buffer_data[1], 0x27);
+	ASSERT_EQ(buffer_size, 2);
+	EXPECT_EQ(buffer_data[0], 0x00);
+	EXPECT_EQ(buffer_data[1], 0x27);
 
 	ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
 	ASSERT_EQ(HexadecimalStringObject_Release(hexadecimal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
@@ -114,8 +111,8 @@ TEST(HexadecimalStringObject, SetValue) {
 	ASSERT_EQ(Buffer_GetData(buffer_check_ptr, &buffer_data, &buffer_size), VANILLAPDF_ERROR_SUCCESS);
 
 	ASSERT_EQ(buffer_size, static_cast<decltype(buffer_size)>(2));
-	ASSERT_EQ(buffer_data[0], 0x00);
-	ASSERT_EQ(buffer_data[1], 0x27);
+	EXPECT_EQ(buffer_data[0], 0x00);
+	EXPECT_EQ(buffer_data[1], 0x27);
 
 	ASSERT_EQ(Buffer_Release(buffer_check_ptr), VANILLAPDF_ERROR_SUCCESS);
 	ASSERT_EQ(HexadecimalStringObject_Release(hexadecimal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
@@ -125,14 +122,11 @@ TEST(HexadecimalStringObject, SetValue) {
 TEST(BaseFontRange, CreateRelease) {
 
 	BaseFontRangeHandle* font_range_ptr = nullptr;
-	auto create_result = BaseFontRange_Create(&font_range_ptr);
 
-	ASSERT_EQ(create_result, VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(BaseFontRange_Create(&font_range_ptr), VANILLAPDF_ERROR_SUCCESS);
 	ASSERT_NE(font_range_ptr, nullptr);
 
-	auto release_result = BaseFontRange_Release(font_range_ptr);
-
-	ASSERT_EQ(release_result, VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(BaseFontRange_Release(font_range_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 
 TEST(BaseFontRange, NullCheck) {
@@ -157,7 +151,7 @@ void CheckBaseFontRangeValue(BaseFontRangeHandle* font_range, const std::vector<
 	ASSERT_EQ(response_data_len, response_data_content.size());
 
 	for (uint32_t i = 0; i < response_data_content.size(); ++i) {
-		ASSERT_EQ(response_data_str[i], response_data_content[i]);
+		EXPECT_EQ(response_data_str[i], response_data_content[i]);
 	}
 
 	ASSERT_EQ(Buffer_Release(request_data), VANILLAPDF_ERROR_SUCCESS);
@@ -228,7 +222,7 @@ TEST(Rectangle, GetSet) {
 	ASSERT_EQ(Rectangle_SetLowerLeftX(rectangle_ptr, CHECK_VALUE), VANILLAPDF_ERROR_SUCCESS);
 	ASSERT_EQ(Rectangle_GetLowerLeftX(rectangle_ptr, &int_value), VANILLAPDF_ERROR_SUCCESS);
 
-	ASSERT_EQ(int_value, CHECK_VALUE);
+	EXPECT_EQ(int_value, CHECK_VALUE);
 
 	ASSERT_EQ(Rectangle_Release(rectangle_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
