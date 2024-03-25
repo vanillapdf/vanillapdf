@@ -54,6 +54,9 @@ error_type process_stream(StreamObjectHandle* stream, int nested);
 error_type process_lit_string(LiteralStringObjectHandle* string, int nested);
 error_type process_hex_string(HexadecimalStringObjectHandle* string, int nested);
 
+error_type process_atrribute(BaseObjectAttributeHandle* attribute, int nested);
+error_type process_atrribute_list(ObjectAttributeListHandle* attributes, int nested);
+
 /* Contents */
 error_type process_content_instruction(ContentInstructionHandle* obj, int nested);
 error_type process_content_object(ContentObjectHandle* obj, int nested);

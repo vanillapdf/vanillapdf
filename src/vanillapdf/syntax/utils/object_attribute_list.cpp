@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "syntax/utils/object_attribute_list.h"
+#include "syntax/exceptions/syntax_exceptions.h"
 
 namespace vanillapdf {
 namespace syntax {
@@ -24,9 +25,14 @@ bool AttributeList::Contains(BaseAttribute::Type type) const {
 	return (GetAttributes()->find(type) != GetAttributes()->end());
 }
 
-void AttributeList::Add(BaseAttributePtr attribute) {
+void AttributeList::Add(BaseAttributePtr attribute, bool overwrite /*= false*/) {
+
 	auto attribute_type = attribute->GetType();
-	(*GetAttributes())[attribute_type] = attribute;
+	if (!overwrite && Contains(attribute_type)) {
+		throw DuplicateKeyException("The key " + std::to_string(static_cast<int>(attribute_type)) + " was already present in the dictionary");
+	}
+
+	GetAttributes()->insert({ attribute_type , attribute });
 }
 
 bool AttributeList::Remove(BaseAttribute::Type type) {

@@ -5,6 +5,8 @@
 #include "vanillapdf/c_handles.h"
 #include "vanillapdf/c_values.h"
 
+#include "vanillapdf/syntax/c_object_attributes.h"
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -18,7 +20,7 @@ extern "C"
 	/**
 	* \class ObjectAttributeListHandle
 	* \extends IUnknownHandle
-	* \ingroup group_utils
+	* \ingroup group_objects
 	* \brief Represents a list of object attributes
 	*/
 
@@ -26,6 +28,36 @@ extern "C"
 	* \memberof ObjectAttributeListHandle
 	* @{
 	*/
+
+	/**
+	* \brief Create new ObjectAttributeList instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ObjectAttributeList_Create(ObjectAttributeListHandle** result);
+
+	/**
+	* \brief Adds an element with the provided key and value to the list
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ObjectAttributeList_Add(ObjectAttributeListHandle* handle, BaseObjectAttributeHandle* value, boolean_type overwrite);
+
+	/**
+	* \brief Removes the element with the specified key from the list
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ObjectAttributeList_Remove(ObjectAttributeListHandle* handle, ObjectAttributeType key, boolean_type* result);
+
+	/**
+	* \brief Determine if collection contains \p key
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ObjectAttributeList_Contains(ObjectAttributeListHandle* handle, ObjectAttributeType key, boolean_type* result);
+
+	/**
+	* \brief Find mapped value for key \p key
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ObjectAttributeList_Get(ObjectAttributeListHandle* handle, ObjectAttributeType key, BaseObjectAttributeHandle** result);
+
+	/**
+	* \brief Remove all items from the collection
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ObjectAttributeList_Clear(ObjectAttributeListHandle* handle);
 
 	/**
 	* \brief Reinterpret current object as \ref IUnknownHandle

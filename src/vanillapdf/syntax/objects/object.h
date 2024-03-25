@@ -78,6 +78,7 @@ public:
 	bool RemoveAttribute(BaseAttribute::Type type);
 	bool ContainsAttribute(BaseAttribute::Type type) const;
 	BaseAttributePtr GetAttribute(BaseAttribute::Type type) const;
+	AttributeListPtr GetAttributeList() const;
 
 	template <typename T>
 	T GetAttributeAs(BaseAttribute::Type type) {

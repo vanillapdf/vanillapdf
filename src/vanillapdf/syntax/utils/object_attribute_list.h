@@ -27,7 +27,7 @@ public:
 
 public:
 	bool Contains(BaseAttribute::Type type) const;
-	void Add(BaseAttributePtr attribute);
+	void Add(BaseAttributePtr attribute, bool overwrite = false);
 	bool Remove(BaseAttribute::Type type);
 	BaseAttributePtr Get(BaseAttribute::Type type) const;
 	void Clear();

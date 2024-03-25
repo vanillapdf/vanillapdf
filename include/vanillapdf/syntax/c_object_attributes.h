@@ -18,13 +18,13 @@ extern "C"
 	/**
 	* \class BaseObjectAttributeHandle
 	* \extends IUnknownHandle
-	* \ingroup group_utils
+	* \ingroup group_objects
 	* \brief Represents a base class for representing object attributes
 	*/
 
 	/**
 	* \brief Derived types of \ref BaseObjectAttributeHandle
-	* \ingroup group_utils
+	* \ingroup group_objects
 	*/
 	typedef enum {
 
@@ -36,12 +36,18 @@ extern "C"
 		ObjectAttributeType_SerializationOverride,
 		ObjectAttributeType_TrackingIdentifier,
 
+		// Image attributes
+		ObjectAttributeType_ImageColorSpace = 0x00001000,
+		ObjectAttributeType_ImageColorComponents
+
 	} ObjectAttributeType;
 
 	/**
 	* \memberof BaseObjectAttributeHandle
 	* @{
 	*/
+
+	VANILLAPDF_API error_type CALLING_CONVENTION BaseObjectAttribute_GetAtrributeType(BaseObjectAttributeHandle* handle, ObjectAttributeType* result);
 
 	/**
 	* \brief Reinterpret current object as \ref IUnknownHandle

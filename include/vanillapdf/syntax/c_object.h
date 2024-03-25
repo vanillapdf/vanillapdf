@@ -115,6 +115,11 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle* handle, offset_type* result);
 
 	/**
+	* \brief Get object attribute list attached to this PDF object
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Object_GetAttributeList(ObjectHandle* handle, ObjectAttributeListHandle** result);
+
+	/**
 	* \brief Convert to human readable text format
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle* handle, BufferHandle** result);

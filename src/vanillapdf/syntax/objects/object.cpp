@@ -287,6 +287,10 @@ BaseAttributePtr Object::GetAttribute(BaseAttribute::Type type) const {
 	return m_attributes->Get(type);
 }
 
+AttributeListPtr Object::GetAttributeList() const {
+	return m_attributes;
+}
+
 } // syntax
 
 bool operator==(const syntax::ObjectPtr& left, const syntax::ObjectPtr& right) {

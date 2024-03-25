@@ -270,7 +270,6 @@ error_type process_string(StringObjectHandle* obj, int nested) {
 
 error_type process_object(ObjectHandle* obj, int nested) {
 	ObjectType type = ObjectType_Undefined;
-	BufferHandle* tostring_buffer = NULL;
 	RealObjectHandle* real = NULL;
 	BooleanObjectHandle* boolean = NULL;
 	NullObjectHandle* null_object = NULL;
@@ -282,11 +281,26 @@ error_type process_object(ObjectHandle* obj, int nested) {
 	DictionaryObjectHandle* dictionary = NULL;
 	StringObjectHandle* string = NULL;
 
+	BufferHandle* tostring_buffer = NULL;
+	BufferHandle* topdf_buffer = NULL;
+	ObjectAttributeListHandle* object_attribute_list = NULL;
+
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_GetObjectType(obj, &type));
 
+	// Object ToString
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_ToString(obj, &tostring_buffer));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(tostring_buffer, nested));
 	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(tostring_buffer));
+
+	// Object ToPdf
+	RETURN_ERROR_IF_NOT_SUCCESS(Object_ToPdf(obj, &topdf_buffer));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(topdf_buffer, nested));
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(topdf_buffer));
+
+	// Object GetAttributeList
+	RETURN_ERROR_IF_NOT_SUCCESS(Object_GetAttributeList(obj, &object_attribute_list));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_atrribute_list(object_attribute_list, nested));
+	RETURN_ERROR_IF_NOT_SUCCESS(ObjectAttributeList_Release(object_attribute_list));
 
 	switch (type) {
 		case ObjectType_Array:
@@ -344,6 +358,49 @@ error_type process_object(ObjectHandle* obj, int nested) {
 			print_text("Unknown object type\n");
 			return VANILLAPDF_TEST_ERROR_FAILURE;
 	}
+
+	return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_atrribute(BaseObjectAttributeHandle* attribute, int nested) {
+	ObjectAttributeType attribute_type = ObjectAttributeType_Undefined;
+
+	RETURN_ERROR_IF_NOT_SUCCESS(BaseObjectAttribute_GetAtrributeType(attribute, &attribute_type));
+
+	print_spaces(nested);
+	print_text("Object attribute type: %d\n", attribute_type);
+
+	return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_atrribute_list(ObjectAttributeListHandle* attributes, int nested) {
+
+	boolean_type contains_image_color_space = VANILLAPDF_RV_FALSE;
+	boolean_type contains_image_color_components = VANILLAPDF_RV_FALSE;
+
+	print_spaces(nested);
+	print_text("Object attribute list begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(ObjectAttributeList_Contains(attributes, ObjectAttributeType_ImageColorSpace, &contains_image_color_space));
+	RETURN_ERROR_IF_NOT_SUCCESS(ObjectAttributeList_Contains(attributes, ObjectAttributeType_ImageColorComponents, &contains_image_color_components));
+
+	if (contains_image_color_space) {
+		BaseObjectAttributeHandle* base_attribute = NULL;
+
+		RETURN_ERROR_IF_NOT_SUCCESS(ObjectAttributeList_Get(attributes, ObjectAttributeType_ImageColorSpace, &base_attribute));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_atrribute(base_attribute, nested + 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(BaseObjectAttribute_Release(base_attribute));
+	}
+
+	if (contains_image_color_components) {
+		BaseObjectAttributeHandle* base_attribute = NULL;
+
+		RETURN_ERROR_IF_NOT_SUCCESS(ObjectAttributeList_Get(attributes, ObjectAttributeType_ImageColorComponents, &base_attribute));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_atrribute(base_attribute, nested + 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(BaseObjectAttribute_Release(base_attribute));
+	}
+
+	print_text("Object attribute list end\n");
 
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
