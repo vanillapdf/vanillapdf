@@ -13,10 +13,7 @@ public:
 		Empty,
 		SerializationOverride,
 		TrackingIdentifier,
-
-		// Image attributes
-		ImageColorSpace = 0x00001000,
-		ImageColorComponents
+		ImageMetadata
 	};
 
 	virtual bool Equals(const BaseAttribute& other) const;

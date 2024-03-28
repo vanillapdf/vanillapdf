@@ -4,6 +4,7 @@
 #include "implementation/c_helper.h"
 
 #include "syntax/utils/base_object_attribute.h"
+#include "syntax/utils/image_metadata_object_attribute.h"
 
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
@@ -15,8 +16,7 @@ static_assert(static_cast<int32_t>(ObjectAttributeType_Undefined) == static_cast
 static_assert(static_cast<int32_t>(ObjectAttributeType_Empty) == static_cast<int32_t>(BaseAttribute::Type::Empty));
 static_assert(static_cast<int32_t>(ObjectAttributeType_SerializationOverride) == static_cast<int32_t>(BaseAttribute::Type::SerializationOverride));
 static_assert(static_cast<int32_t>(ObjectAttributeType_TrackingIdentifier) == static_cast<int32_t>(BaseAttribute::Type::TrackingIdentifier));
-static_assert(static_cast<int32_t>(ObjectAttributeType_ImageColorSpace) == static_cast<int32_t>(BaseAttribute::Type::ImageColorSpace));
-static_assert(static_cast<int32_t>(ObjectAttributeType_ImageColorComponents) == static_cast<int32_t>(BaseAttribute::Type::ImageColorComponents));
+static_assert(static_cast<int32_t>(ObjectAttributeType_ImageMetadata) == static_cast<int32_t>(BaseAttribute::Type::ImageMetadata));
 
 VANILLAPDF_API error_type CALLING_CONVENTION BaseObjectAttribute_GetAtrributeType(BaseObjectAttributeHandle* handle, ObjectAttributeType* result) {
 
@@ -33,10 +33,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION BaseObjectAttribute_GetAtrributeTyp
 		*result = ObjectAttributeType_SerializationOverride; break;
 	case BaseAttribute::Type::TrackingIdentifier:
 		*result = ObjectAttributeType_TrackingIdentifier; break;
-	case BaseAttribute::Type::ImageColorSpace:
-		*result = ObjectAttributeType_ImageColorSpace; break;
-	case BaseAttribute::Type::ImageColorComponents:
-		*result = ObjectAttributeType_ImageColorComponents; break;
+	case BaseAttribute::Type::ImageMetadata:
+		*result = ObjectAttributeType_ImageMetadata; break;
 	default:
 		return VANILLAPDF_ERROR_GENERAL;
 	}
@@ -54,4 +52,28 @@ VANILLAPDF_API error_type CALLING_CONVENTION BaseObjectAttribute_FromUnknown(IUn
 
 VANILLAPDF_API error_type CALLING_CONVENTION BaseObjectAttribute_Release(BaseObjectAttributeHandle* handle) {
 	return ObjectRelease<BaseAttribute, BaseObjectAttributeHandle>(handle);
+}
+
+// ImageColorSpaceObjectAttribute
+
+VANILLAPDF_API error_type CALLING_CONVENTION ImageColorComponentsObjectAttribute_GetColorComponents(ImageMetadataObjectAttributeHandle* handle, integer_type* result) {
+
+	ImageMetadataObjectAttribute* atrribute_object = reinterpret_cast<ImageMetadataObjectAttribute*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(atrribute_object);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	*result = atrribute_object->GetColorComponents();
+	return VANILLAPDF_ERROR_SUCCESS;
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_ToBaseAttribute(ImageMetadataObjectAttributeHandle* handle, BaseObjectAttributeHandle** result) {
+	return SafeObjectConvert<ImageMetadataObjectAttribute, BaseAttribute, ImageMetadataObjectAttributeHandle, BaseObjectAttributeHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_FromBaseAttribute(BaseObjectAttributeHandle* handle, ImageMetadataObjectAttributeHandle** result) {
+	return SafeObjectConvert<BaseAttribute, ImageMetadataObjectAttribute, BaseObjectAttributeHandle, ImageMetadataObjectAttributeHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_Release(ImageMetadataObjectAttributeHandle* handle) {
+	return ObjectRelease<ImageMetadataObjectAttribute, ImageMetadataObjectAttributeHandle>(handle);
 }

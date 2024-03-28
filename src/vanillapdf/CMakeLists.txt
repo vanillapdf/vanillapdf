@@ -309,8 +309,7 @@ set(VANILLAPDF_SYNTAX_HEADERS
 	syntax/utils/empty_object_attribute.h
 	syntax/utils/serialization_override_object_attribute.h
 	syntax/utils/tracking_identifier_object_attribute.h
-	syntax/utils/image_color_space_object_attribute.h
-	syntax/utils/image_color_components_object_attribute.h
+	syntax/utils/image_metadata_object_attribute.h
 )
 
 set(VANILLAPDF_UTILS_HEADERS

@@ -375,27 +375,17 @@ error_type process_atrribute(BaseObjectAttributeHandle* attribute, int nested) {
 
 error_type process_atrribute_list(ObjectAttributeListHandle* attributes, int nested) {
 
-	boolean_type contains_image_color_space = VANILLAPDF_RV_FALSE;
-	boolean_type contains_image_color_components = VANILLAPDF_RV_FALSE;
+	boolean_type contains_image_metadata = VANILLAPDF_RV_FALSE;
 
 	print_spaces(nested);
 	print_text("Object attribute list begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(ObjectAttributeList_Contains(attributes, ObjectAttributeType_ImageColorSpace, &contains_image_color_space));
-	RETURN_ERROR_IF_NOT_SUCCESS(ObjectAttributeList_Contains(attributes, ObjectAttributeType_ImageColorComponents, &contains_image_color_components));
+	RETURN_ERROR_IF_NOT_SUCCESS(ObjectAttributeList_Contains(attributes, ObjectAttributeType_ImageMetadata, &contains_image_metadata));
 
-	if (contains_image_color_space) {
+	if (contains_image_metadata) {
 		BaseObjectAttributeHandle* base_attribute = NULL;
 
-		RETURN_ERROR_IF_NOT_SUCCESS(ObjectAttributeList_Get(attributes, ObjectAttributeType_ImageColorSpace, &base_attribute));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_atrribute(base_attribute, nested + 1));
-		RETURN_ERROR_IF_NOT_SUCCESS(BaseObjectAttribute_Release(base_attribute));
-	}
-
-	if (contains_image_color_components) {
-		BaseObjectAttributeHandle* base_attribute = NULL;
-
-		RETURN_ERROR_IF_NOT_SUCCESS(ObjectAttributeList_Get(attributes, ObjectAttributeType_ImageColorComponents, &base_attribute));
+		RETURN_ERROR_IF_NOT_SUCCESS(ObjectAttributeList_Get(attributes, ObjectAttributeType_ImageMetadata, &base_attribute));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_atrribute(base_attribute, nested + 1));
 		RETURN_ERROR_IF_NOT_SUCCESS(BaseObjectAttribute_Release(base_attribute));
 	}

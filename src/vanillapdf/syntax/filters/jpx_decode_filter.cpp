@@ -2,6 +2,8 @@
 
 #include "syntax/filters/jpx_decode_filter.h"
 
+#include "syntax/utils/image_metadata_object_attribute.h"
+
 #include <openjpeg.h>
 
 namespace vanillapdf {
@@ -109,28 +111,56 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
         throw GeneralException("Received empty image components in JPEG2000 decompression");
     }
 
-    // Calculate the size of the image data
-    size_t image_size = image->x1 * image->y1 * image->numcomps;
+    if (image->color_space == OPJ_CLRSPC_SRGB ||
+        image->color_space == OPJ_CLRSPC_GRAY ||
+        image->color_space == OPJ_CLRSPC_CMYK) {
 
-    std::vector<uint8_t> result;
-    result.resize(image_size);
+        // Use 8 bits per components in the result
 
-    for (OPJ_UINT32 comp = 0; comp < image->numcomps; ++comp) {
-        for (OPJ_UINT32 y = 0; y < image->comps[comp].h; ++y) {
-            for (OPJ_UINT32 x = 0; x < image->comps[comp].w; ++x) {
-                auto current_value = image->comps[comp].data[y * image->comps[comp].w + x];
-                result[(y * image->comps[comp].w + x) * image->numcomps + comp] = ValueConvertUtils::SafeConvert<uint8_t>(current_value);
+        // Calculate the size of the image data
+        size_t image_size = image->x1 * image->y1 * image->numcomps;
+
+        std::vector<uint8_t> result;
+        result.resize(image_size);
+
+        for (OPJ_UINT32 y = 0; y < image->y1; ++y) {
+            for (OPJ_UINT32 x = 0; x < image->x1; ++x) {
+                for (OPJ_UINT32 comp = 0; comp < image->numcomps; ++comp) {
+                    auto data_offset = (y * image->x1) + x;
+                    auto result_offset = (y * image->x1 + x) * image->numcomps + comp;
+
+                    auto current_value = image->comps[comp].data[data_offset];
+                    result[result_offset] = ValueConvertUtils::SafeConvert<uint8_t>(current_value);
+                }
             }
         }
+
+        ImageMetadataObjectAttribute::ColorSpaceType attribute_color_space = ImageMetadataObjectAttribute::ColorSpaceType::Undefined;
+
+        if (image->color_space == OPJ_CLRSPC_SRGB) {
+            attribute_color_space = ImageMetadataObjectAttribute::ColorSpaceType::RGB;
+        }
+
+        if (image->color_space == OPJ_CLRSPC_GRAY) {
+            attribute_color_space = ImageMetadataObjectAttribute::ColorSpaceType::GRAY;
+        }
+
+        if (image->color_space == OPJ_CLRSPC_CMYK) {
+            attribute_color_space = ImageMetadataObjectAttribute::ColorSpaceType::CMYK;
+        }
+
+        // Create the attribute to augument the stream object
+        auto metadata_attribute = make_deferred<ImageMetadataObjectAttribute>(attribute_color_space, image->numcomps);
+
+        // Associate the attribute with the object
+        object_attributes->Add(metadata_attribute);
+
+        // Copy the image data to a new buffer
+        // The reason I have not used the Buffer is that it is currently based on signed char
+        return make_deferred_container<Buffer>(result.begin(), result.end());
     }
 
-    // TODO: Store image->numcomps, image->color_space
-    //object_attributes->Add();
-    //object_attributes->Add();
-
-    // Copy the image data to a new buffer
-    // The reason I have not used the Buffer is that it is currently based on signed char
-    return make_deferred_container<Buffer>(result.begin(), result.end());
+    throw GeneralException("Unknown JPEG2000 color space: " + std::to_string(image->color_space));
 }
 
 BufferPtr JPXDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {

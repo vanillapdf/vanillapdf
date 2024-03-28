@@ -23,6 +23,13 @@ extern "C"
 	*/
 
 	/**
+	* \class ImageMetadataObjectAttributeHandle
+	* \extends BaseObjectAttributeHandle
+	* \ingroup group_objects
+	* \brief Attribute object contains information about image colorspace and components
+	*/
+
+	/**
 	* \brief Derived types of \ref BaseObjectAttributeHandle
 	* \ingroup group_objects
 	*/
@@ -35,10 +42,7 @@ extern "C"
 		ObjectAttributeType_Empty,
 		ObjectAttributeType_SerializationOverride,
 		ObjectAttributeType_TrackingIdentifier,
-
-		// Image attributes
-		ObjectAttributeType_ImageColorSpace = 0x00001000,
-		ObjectAttributeType_ImageColorComponents
+		ObjectAttributeType_ImageMetadata
 
 	} ObjectAttributeType;
 
@@ -63,6 +67,33 @@ extern "C"
 	* \copydoc IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION BaseObjectAttribute_Release(BaseObjectAttributeHandle* handle);
+
+	/** @} */
+
+	/**
+	* \memberof ImageMetadataObjectAttributeHandle
+	* @{
+	*/
+
+	/**
+	* \brief Get number of color components inside the associated image
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ImageColorComponentsObjectAttribute_GetColorComponents(ImageMetadataObjectAttributeHandle* handle, integer_type* result);
+
+	/**
+	* \brief Reinterpret current object as \ref BaseObjectAttributeHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_ToBaseAttribute(ImageMetadataObjectAttributeHandle* handle, BaseObjectAttributeHandle** result);
+
+	/**
+	* \brief Convert \ref BaseObjectAttributeHandle to \ref ImageMetadataObjectAttributeHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_FromBaseAttribute(BaseObjectAttributeHandle* handle, ImageMetadataObjectAttributeHandle** result);
+
+	/**
+	* \copydoc IUnknown_Release
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_Release(ImageMetadataObjectAttributeHandle* handle);
 
 	/** @} */
 

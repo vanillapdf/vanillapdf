@@ -18,8 +18,7 @@ class BaseAttribute;
 class BaseAttributePtr;
 class SerializationOverrideAttribute; using SerializationOverrideAttributePtr = Deferred<SerializationOverrideAttribute>;
 class TrackingIdentifierAttribute; using TrackingIdentifierAttributePtr = Deferred<TrackingIdentifierAttribute>;
-class ImageColorSpaceObjectAttribute; using ImageColorSpaceObjectAttributePtr = Deferred<ImageColorSpaceObjectAttribute>;
-class ImageColorComponentsObjectAttribute; using ImageColorComponentsObjectAttributePtr = Deferred<ImageColorComponentsObjectAttribute>;
+class ImageMetadataObjectAttribute; using ImageMetadataObjectAttributePtr = Deferred<ImageMetadataObjectAttribute>;
 class AttributeList; using AttributeListPtr = DeferredContainer<AttributeList>;
 
 // Exceptions
