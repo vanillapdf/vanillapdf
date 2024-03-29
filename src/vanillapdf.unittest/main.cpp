@@ -314,7 +314,10 @@ TEST(DictionaryObject, InsertOverwrite) {
 
 	// Verify the item was stored in the dictionary
 	ASSERT_EQ(check_string_size, strlen(AUTHOR_NAME));
-	EXPECT_STREQ(check_string_data, AUTHOR_NAME);
+
+	for (uint32_t i = 0; i < check_string_size; ++i) {
+		EXPECT_EQ(check_string_data[i], AUTHOR_NAME[i]);
+	}
 
 	// Release the check objects
 	ASSERT_EQ(LiteralStringObject_Release(check_literal_string_object), VANILLAPDF_ERROR_SUCCESS);
