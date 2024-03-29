@@ -387,7 +387,7 @@ error_type process_annotation(AnnotationHandle* obj, int nested) {
 
 	switch (type) {
 		case AnnotationType_Link:
-			RETURN_ERROR_IF_NOT_SUCCESS(Annotation_ToLink(obj, &link_annotation));
+			RETURN_ERROR_IF_NOT_SUCCESS(LinkAnnotation_FromBaseAnnotation(obj, &link_annotation));
 			RETURN_ERROR_IF_NOT_SUCCESS(process_link_annotation(link_annotation, nested + 1));
 			RETURN_ERROR_IF_NOT_SUCCESS(LinkAnnotation_Release(link_annotation));
 			break;

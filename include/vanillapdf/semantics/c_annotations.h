@@ -234,9 +234,14 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetAnnotationType(AnnotationHandle* handle, AnnotationType* result);
 
 	/**
-	* \brief Reinterpret current object as \ref LinkAnnotationHandle
+	* \brief Reinterpret current object as \ref IUnknownHandle
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION Annotation_ToLink(AnnotationHandle* handle, LinkAnnotationHandle** result);
+	VANILLAPDF_API error_type CALLING_CONVENTION Annotation_ToUnknown(AnnotationHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref PageAnnotationsHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Annotation_FromUnknown(IUnknownHandle* handle, AnnotationHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release
@@ -255,6 +260,16 @@ extern "C"
 	* \brief A destination that shall be displayed when the annotation is activated
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_GetDestination(LinkAnnotationHandle* handle, DestinationHandle** result);
+
+	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_ToBaseAnnotation(LinkAnnotationHandle* handle, AnnotationHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref LinkAnnotationHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_FromBaseAnnotation(AnnotationHandle* handle, LinkAnnotationHandle** result);
 
 	/**
 	* \copydoc Annotation_Release
@@ -281,6 +296,16 @@ extern "C"
 	* \param result a pointer to variable, that will contain annotation upon success, unchanged on failure
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_At(PageAnnotationsHandle* handle, size_type at, AnnotationHandle** result);
+
+	/**
+	* \brief Reinterpret current object as \ref IUnknownHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_ToUnknown(PageAnnotationsHandle* handle, IUnknownHandle** result);
+
+	/**
+	* \brief Convert \ref IUnknownHandle to \ref PageAnnotationsHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_FromUnknown(IUnknownHandle* handle, PageAnnotationsHandle** result);
 
 	/**
 	* \copydoc IUnknown_Release

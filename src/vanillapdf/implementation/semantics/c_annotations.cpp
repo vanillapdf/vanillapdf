@@ -74,8 +74,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetAnnotationType(Annota
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Annotation_ToLink(AnnotationHandle* handle, LinkAnnotationHandle** result) {
-	return SafeObjectConvert<AnnotationBase, LinkAnnotation, AnnotationHandle, LinkAnnotationHandle>(handle, result);
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_ToUnknown(AnnotationHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<AnnotationBase, IUnknown, AnnotationHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_FromUnknown(IUnknownHandle* handle, AnnotationHandle** result) {
+	return SafeObjectConvert<IUnknown, AnnotationBase, IUnknownHandle, AnnotationHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Annotation_Release(AnnotationHandle* handle) {
@@ -100,6 +104,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_GetDestination(LinkA
 		*result = reinterpret_cast<DestinationHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_ToBaseAnnotation(LinkAnnotationHandle* handle, AnnotationHandle** result) {
+	return SafeObjectConvert<LinkAnnotation, AnnotationBase, LinkAnnotationHandle, AnnotationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_FromBaseAnnotation(AnnotationHandle* handle, LinkAnnotationHandle** result) {
+	return SafeObjectConvert<AnnotationBase, LinkAnnotation, AnnotationHandle, LinkAnnotationHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_Release(LinkAnnotationHandle* handle) {
@@ -132,6 +144,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_At(PageAnnotationsH
 		*result = reinterpret_cast<AnnotationHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_ToUnknown(PageAnnotationsHandle* handle, IUnknownHandle** result) {
+	return SafeObjectConvert<PageAnnotations, IUnknown, PageAnnotationsHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_FromUnknown(IUnknownHandle* handle, PageAnnotationsHandle** result) {
+	return SafeObjectConvert<IUnknown, PageAnnotations, IUnknownHandle, PageAnnotationsHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Release(PageAnnotationsHandle* handle) {
