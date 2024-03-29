@@ -44,7 +44,7 @@ public:
 	}
 
 	size_t Hash() const {
-		assert(!IsEmpty());
+		assert(m_ptr && "Trying to hash nullptr");
 		return reinterpret_cast<size_t>(m_ptr);
 	}
 

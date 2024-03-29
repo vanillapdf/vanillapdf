@@ -19,7 +19,7 @@ extern "C"
 	* \class BaseObjectAttributeHandle
 	* \extends IUnknownHandle
 	* \ingroup group_objects
-	* \brief Represents a base class for representing object attributes
+	* \brief Base class for representing object attributes that are augumenting specific properties with additional metadata
 	*/
 
 	/**
@@ -51,6 +51,9 @@ extern "C"
 	* @{
 	*/
 
+	/**
+	* \brief Get derived type of current object attribute
+	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION BaseObjectAttribute_GetAtrributeType(BaseObjectAttributeHandle* handle, ObjectAttributeType* result);
 
 	/**

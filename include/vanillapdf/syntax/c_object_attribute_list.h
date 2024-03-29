@@ -22,6 +22,7 @@ extern "C"
 	* \extends IUnknownHandle
 	* \ingroup group_objects
 	* \brief Represents a list of object attributes
+	* \see \ref BaseObjectAttributeHandle
 	*/
 
 	/**
