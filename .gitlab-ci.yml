@@ -76,56 +76,6 @@ build-osx-x64:
       - ./*.sha256
       - ./*.nupkg
 
-# There is a bug in the docker image with CMake 3.16
-# Until this is resolved I am disabling this
-#build-ubuntu.20.04-arm:
-#  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-arm32v7:20.04
-#  when: manual
-#  timeout: 3 hours # The arm runner machine seems to be very slow
-#
-#  variables:
-#    GIT_SUBMODULE_STRATEGY: recursive
-#
-#  script:
-#    - cmake . -DPLATFORM_IDENTIFIER=ubuntu.20.04-arm
-#    - make
-#    - make test
-#    - make package
-#    - nuget pack nuget/vanillapdf.runtime.nuspec
-#
-#  artifacts:
-#    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
-#    paths:
-#      - ./*.deb
-#      - ./*.tar.gz
-#      - ./*.sha256
-#      - ./*.nupkg
-
-# 28.3.2023 vcpkg cannot be built on arm
-# g++: fatal error: Killed signal terminated program cc1plus
-#build-ubuntu.20.04-arm64:
-#  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-arm64v8:20.04
-#  when: manual
-#  timeout: 3 hours # The arm runner machine seems to be very slow
-#
-#  variables:
-#    GIT_SUBMODULE_STRATEGY: recursive
-#
-#  script:
-#    - cmake . -DPLATFORM_IDENTIFIER=ubuntu.20.04-arm64
-#    - make
-#    - make test
-#    - make package
-#    - nuget pack nuget/vanillapdf.runtime.nuspec
-#
-#  artifacts:
-#    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
-#    paths:
-#      - ./*.deb
-#      - ./*.tar.gz
-#      - ./*.sha256
-#      - ./*.nupkg
-
 build-ubuntu.20.04-x64:
   image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:20.04
   when: manual
@@ -241,15 +191,15 @@ build-ubuntu.22.04-x64:
 #      - ./*.sha256
 #      - ./*.nupkg
 
-build-rocky.8-x64:
-  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-amd64:8
+build-rocky.9-x64:
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-amd64:9
   when: manual
   
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - cmake . -DPLATFORM_IDENTIFIER=rocky.8-x64
+    - cmake . -DPLATFORM_IDENTIFIER=rocky.9-x64
     - make
     - make test
     - make package
