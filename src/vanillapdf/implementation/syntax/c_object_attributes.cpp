@@ -18,7 +18,7 @@ static_assert(static_cast<int32_t>(ObjectAttributeType_SerializationOverride) ==
 static_assert(static_cast<int32_t>(ObjectAttributeType_TrackingIdentifier) == static_cast<int32_t>(BaseAttribute::Type::TrackingIdentifier));
 static_assert(static_cast<int32_t>(ObjectAttributeType_ImageMetadata) == static_cast<int32_t>(BaseAttribute::Type::ImageMetadata));
 
-VANILLAPDF_API error_type CALLING_CONVENTION BaseObjectAttribute_GetAtrributeType(BaseObjectAttributeHandle* handle, ObjectAttributeType* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION BaseObjectAttribute_GetAttributeType(BaseObjectAttributeHandle* handle, ObjectAttributeType* result) {
 
 	BaseAttribute* base_attribute = reinterpret_cast<BaseAttribute*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(base_attribute);
@@ -54,9 +54,9 @@ VANILLAPDF_API error_type CALLING_CONVENTION BaseObjectAttribute_Release(BaseObj
 	return ObjectRelease<BaseAttribute, BaseObjectAttributeHandle>(handle);
 }
 
-// ImageColorSpaceObjectAttribute
+// ImageMetadataObjectAttribute
 
-VANILLAPDF_API error_type CALLING_CONVENTION ImageColorComponentsObjectAttribute_GetColorComponents(ImageMetadataObjectAttributeHandle* handle, integer_type* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_GetColorComponents(ImageMetadataObjectAttributeHandle* handle, integer_type* result) {
 
 	ImageMetadataObjectAttribute* atrribute_object = reinterpret_cast<ImageMetadataObjectAttribute*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(atrribute_object);

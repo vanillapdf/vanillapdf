@@ -299,7 +299,7 @@ error_type process_object(ObjectHandle* obj, int nested) {
 
 	// Object GetAttributeList
 	RETURN_ERROR_IF_NOT_SUCCESS(Object_GetAttributeList(obj, &object_attribute_list));
-	RETURN_ERROR_IF_NOT_SUCCESS(process_atrribute_list(object_attribute_list, nested));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_attribute_list(object_attribute_list, nested));
 	RETURN_ERROR_IF_NOT_SUCCESS(ObjectAttributeList_Release(object_attribute_list));
 
 	switch (type) {
@@ -362,10 +362,10 @@ error_type process_object(ObjectHandle* obj, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_atrribute(BaseObjectAttributeHandle* attribute, int nested) {
+error_type process_attribute(BaseObjectAttributeHandle* attribute, int nested) {
 	ObjectAttributeType attribute_type = ObjectAttributeType_Undefined;
 
-	RETURN_ERROR_IF_NOT_SUCCESS(BaseObjectAttribute_GetAtrributeType(attribute, &attribute_type));
+	RETURN_ERROR_IF_NOT_SUCCESS(BaseObjectAttribute_GetAttributeType(attribute, &attribute_type));
 
 	print_spaces(nested);
 	print_text("Object attribute type: %d\n", attribute_type);
@@ -373,7 +373,7 @@ error_type process_atrribute(BaseObjectAttributeHandle* attribute, int nested) {
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_atrribute_list(ObjectAttributeListHandle* attributes, int nested) {
+error_type process_attribute_list(ObjectAttributeListHandle* attributes, int nested) {
 
 	boolean_type contains_image_metadata = VANILLAPDF_RV_FALSE;
 
@@ -386,7 +386,7 @@ error_type process_atrribute_list(ObjectAttributeListHandle* attributes, int nes
 		BaseObjectAttributeHandle* base_attribute = NULL;
 
 		RETURN_ERROR_IF_NOT_SUCCESS(ObjectAttributeList_Get(attributes, ObjectAttributeType_ImageMetadata, &base_attribute));
-		RETURN_ERROR_IF_NOT_SUCCESS(process_atrribute(base_attribute, nested + 1));
+		RETURN_ERROR_IF_NOT_SUCCESS(process_attribute(base_attribute, nested + 1));
 		RETURN_ERROR_IF_NOT_SUCCESS(BaseObjectAttribute_Release(base_attribute));
 	}
 

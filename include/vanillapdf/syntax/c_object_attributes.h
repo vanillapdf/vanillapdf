@@ -26,7 +26,7 @@ extern "C"
 	* \class ImageMetadataObjectAttributeHandle
 	* \extends BaseObjectAttributeHandle
 	* \ingroup group_objects
-	* \brief Attribute object contains information about image colorspace and components
+	* \brief Attribute object that contains information about image colorspace and components
 	*/
 
 	/**
@@ -54,7 +54,7 @@ extern "C"
 	/**
 	* \brief Get derived type of current object attribute
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION BaseObjectAttribute_GetAtrributeType(BaseObjectAttributeHandle* handle, ObjectAttributeType* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION BaseObjectAttribute_GetAttributeType(BaseObjectAttributeHandle* handle, ObjectAttributeType* result);
 
 	/**
 	* \brief Reinterpret current object as \ref IUnknownHandle
@@ -81,7 +81,7 @@ extern "C"
 	/**
 	* \brief Get number of color components inside the associated image
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION ImageColorComponentsObjectAttribute_GetColorComponents(ImageMetadataObjectAttributeHandle* handle, integer_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_GetColorComponents(ImageMetadataObjectAttributeHandle* handle, integer_type* result);
 
 	/**
 	* \brief Reinterpret current object as \ref BaseObjectAttributeHandle
