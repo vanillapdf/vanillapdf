@@ -77,7 +77,10 @@ NullObjectPtr ParserBase::ReadNull() {
 }
 
 DictionaryObjectPtr ParserBase::ReadDictionary() {
+
 	DictionaryObjectPtr dictionary;
+	dictionary->SetFile(_file);
+
 	ReadTokenWithTypeSkip(Token::Type::DICTIONARY_BEGIN);
 	while (PeekTokenTypeSkip() != Token::Type::DICTIONARY_END) {
 		auto name = ReadDirectObjectWithType<NameObjectPtr>();
@@ -104,7 +107,6 @@ DictionaryObjectPtr ParserBase::ReadDictionary() {
 	}
 
 	ReadTokenWithTypeSkip(Token::Type::DICTIONARY_END);
-	dictionary->SetFile(_file);
 	return dictionary;
 }
 
