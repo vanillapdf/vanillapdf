@@ -37,8 +37,8 @@ TEST(Buffer, CreateFromDataRelease) {
 }
 
 TEST(Buffer, NullCheck) {
-	ASSERT_EQ(Buffer_Create(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
-	ASSERT_EQ(Buffer_Release(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+	EXPECT_EQ(Buffer_Create(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+	EXPECT_EQ(Buffer_Release(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
 TEST(Buffer, Conversion) {
@@ -130,8 +130,8 @@ TEST(BaseFontRange, CreateRelease) {
 }
 
 TEST(BaseFontRange, NullCheck) {
-	ASSERT_EQ(BaseFontRange_Create(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
-	ASSERT_EQ(BaseFontRange_Release(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+	EXPECT_EQ(BaseFontRange_Create(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+	EXPECT_EQ(BaseFontRange_Release(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
 void CheckBaseFontRangeValue(BaseFontRangeHandle* font_range, const std::vector<char>& request_data_content, const std::vector<char>& response_data_content) {
@@ -205,8 +205,8 @@ TEST(Rectangle, CreateRelease) {
 }
 
 TEST(Rectangle, NullCheck) {
-	ASSERT_EQ(Rectangle_Create(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
-	ASSERT_EQ(Rectangle_Release(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+	EXPECT_EQ(Rectangle_Create(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+	EXPECT_EQ(Rectangle_Release(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
 TEST(Rectangle, GetSet) {
@@ -253,7 +253,7 @@ TEST(InputOutputStream, Flush) {
 	ASSERT_EQ(InputOutputStream_CreateFromMemory(&input_output_stream), VANILLAPDF_ERROR_SUCCESS);
 	ASSERT_NE(input_output_stream, nullptr);
 
-	ASSERT_EQ(InputOutputStream_Flush(input_output_stream), VANILLAPDF_ERROR_SUCCESS);
+	EXPECT_EQ(InputOutputStream_Flush(input_output_stream), VANILLAPDF_ERROR_SUCCESS);
 	ASSERT_EQ(InputOutputStream_Release(input_output_stream), VANILLAPDF_ERROR_SUCCESS);
 }
 
@@ -328,6 +328,50 @@ TEST(DictionaryObject, InsertOverwrite) {
 
 	// Release the container dictionary
 	ASSERT_EQ(DictionaryObject_Release(dictionary_object), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(ObjectAttributeList, CreateRelease) {
+
+	ObjectAttributeListHandle* attribute_list = NULL;
+
+	ASSERT_EQ(ObjectAttributeList_Create(&attribute_list), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(attribute_list, nullptr);
+
+	ASSERT_EQ(ObjectAttributeList_Release(attribute_list), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(ObjectAttributeList, NullCheck) {
+	EXPECT_NE(ObjectAttributeList_Create(nullptr), VANILLAPDF_ERROR_SUCCESS);
+	EXPECT_NE(ObjectAttributeList_Release(nullptr), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(ObjectAttributeList, Clear) {
+
+	ObjectAttributeListHandle* attribute_list = NULL;
+
+	ASSERT_EQ(ObjectAttributeList_Create(&attribute_list), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(attribute_list, nullptr);
+
+	EXPECT_EQ(ObjectAttributeList_Clear(attribute_list), VANILLAPDF_ERROR_SUCCESS);
+
+	ASSERT_EQ(ObjectAttributeList_Release(attribute_list), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(ObjectAttributeList, MissingKey) {
+
+	BaseObjectAttributeHandle* found_attribute = NULL;
+	ObjectAttributeListHandle* attribute_list = NULL;
+
+	ASSERT_EQ(ObjectAttributeList_Create(&attribute_list), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(attribute_list, nullptr);
+
+	EXPECT_NE(ObjectAttributeList_Get(attribute_list, ObjectAttributeType_Undefined, &found_attribute), VANILLAPDF_ERROR_SUCCESS);
+	EXPECT_NE(ObjectAttributeList_Get(attribute_list, ObjectAttributeType_Empty, &found_attribute), VANILLAPDF_ERROR_SUCCESS);
+	EXPECT_NE(ObjectAttributeList_Get(attribute_list, ObjectAttributeType_SerializationOverride, &found_attribute), VANILLAPDF_ERROR_SUCCESS);
+	EXPECT_NE(ObjectAttributeList_Get(attribute_list, ObjectAttributeType_TrackingIdentifier, &found_attribute), VANILLAPDF_ERROR_SUCCESS);
+	EXPECT_NE(ObjectAttributeList_Get(attribute_list, ObjectAttributeType_ImageMetadata, &found_attribute), VANILLAPDF_ERROR_SUCCESS);
+
+	ASSERT_EQ(ObjectAttributeList_Release(attribute_list), VANILLAPDF_ERROR_SUCCESS);
 }
 
 int main(int argc, char *argv[]) {
