@@ -132,10 +132,10 @@ elseif(UNIX)
 	endif(NOT DEFINED PACKAGE_FILENAME_ARCHITECTURE)
 
 	# Determine distribution and release
-	file(STRINGS /etc/os-release OS_ID REGEX "^ID=")
-	string(REGEX REPLACE "ID=\"(.*)\"" "\\1" OS_ID "${OS_ID}")
+	file(STRINGS /etc/os-release PACKAGE_DISTRIBUTION REGEX "^ID=")
+	string(REGEX REPLACE "ID=\"(.*)\"" "\\1" PACKAGE_DISTRIBUTION "${PACKAGE_DISTRIBUTION}")
 
-	message(STATUS "Packaging for OS: ${OS_ID}")
+	message(STATUS "Packaging for OS: ${PACKAGE_DISTRIBUTION}")
 
 	if(PACKAGE_DISTRIBUTION STREQUAL "debian" OR PACKAGE_DISTRIBUTION STREQUAL "ubuntu")
 		string(TOLOWER ${PACKAGE_DISTRIBUTION} PACKAGE_DISTRIBUTION)
