@@ -193,11 +193,17 @@ void DictionaryObject::Insert(NameObjectPtr name, ContainableObjectPtr value, bo
 
 	// The pair::second element in the pair is set to true if a new element was inserted or false if an equivalent key already existed.
 	if (!result.second) {
-		auto weak_file = GetFile();
-		auto file = weak_file.GetReference();
-		auto log_scope = file->GetFilenameString();
 
-		LOG_INFO(log_scope) << "Overwriting dictionary entry for key: " << name->ToString();
+		auto log_writer = LOG_INFO_GLOBAL;
+
+		auto weak_file = GetFile();
+		if (!weak_file.IsEmpty() && weak_file.IsActive()) {
+			auto file = weak_file.GetReference();
+			auto log_scope = file->GetFilenameString();
+			log_writer = LOG_INFO(log_scope);
+		}
+
+		log_writer->GetOutputStream() << "Overwriting dictionary entry for key: " << name->ToString();
 	}
 
 	name->SetOwner(Object::GetWeakReference());
