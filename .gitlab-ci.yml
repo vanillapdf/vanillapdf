@@ -167,7 +167,7 @@ build-rocky.9-arm64:
 # rocky.8-x64, ubuntu.20.04-x64, ubuntu.22.04-x64. Affected libraries: vanillapdf.runtime.rocky.8-x64, vanillapdf.runtime.ubuntu.20.04-x64, vanillapdf.runtime.ubuntu.22.04-x64.
 # In .NET 8.0 and higher, assets for version-specific and distribution-specific runtime identifiers will not be found by default. See https://aka.ms/dotnet/rid-usage for details.
 build-linux-x64:
-  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-amd64:9
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:22.04
   when: manual
 
   variables:
