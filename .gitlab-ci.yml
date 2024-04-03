@@ -76,10 +76,52 @@ build-osx-x64:
       - ./*.sha256
       - ./*.nupkg
 
+# Ubuntu
+build-ubuntu.22.04-x64:
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:22.04
+  when: manual
+
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+
+  script:
+    - cmake . -DPLATFORM_IDENTIFIER=ubuntu.22.04-x64
+    - make
+    - make test
+    - make package
+
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - ./*.deb
+      - ./*.tar.gz
+      - ./*.sha256
+
+build-ubuntu.24.04-x64:
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:24.04
+  when: manual
+
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+
+  script:
+    - cmake . -DPLATFORM_IDENTIFIER=ubuntu.24.04-x64
+    - make
+    - make test
+    - make package
+
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - ./*.deb
+      - ./*.tar.gz
+      - ./*.sha256
+
+# rockylinux
 build-rocky.9-x64:
   image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-amd64:9
   when: manual
-  
+
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
 
@@ -125,7 +167,7 @@ build-rocky.9-arm64:
 # rocky.8-x64, ubuntu.20.04-x64, ubuntu.22.04-x64. Affected libraries: vanillapdf.runtime.rocky.8-x64, vanillapdf.runtime.ubuntu.20.04-x64, vanillapdf.runtime.ubuntu.22.04-x64.
 # In .NET 8.0 and higher, assets for version-specific and distribution-specific runtime identifiers will not be found by default. See https://aka.ms/dotnet/rid-usage for details.
 build-linux-x64:
-  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:22.04
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-amd64:9
   when: manual
 
   variables:
