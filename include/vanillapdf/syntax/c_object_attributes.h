@@ -46,6 +46,13 @@ extern "C"
 
 	} ObjectAttributeType;
 
+	typedef enum {
+		ImageColorSpaceType_Undefined = 0,
+		ImageColorSpaceType_GRAY,
+		ImageColorSpaceType_RGB,
+		ImageColorSpaceType_CMYK
+	} ImageColorSpaceType;
+
 	/**
 	* \memberof BaseObjectAttributeHandle
 	* @{
@@ -79,9 +86,49 @@ extern "C"
 	*/
 
 	/**
+	* \brief Creates a new NameObject instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_Create(ImageMetadataObjectAttributeHandle** result);
+
+	/**
 	* \brief Get number of color components inside the associated image
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_GetColorComponents(ImageMetadataObjectAttributeHandle* handle, integer_type* result);
+
+	/**
+	* \brief Set number of color components inside the associated image
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_SetColorComponents(ImageMetadataObjectAttributeHandle* handle, integer_type data);
+
+	/**
+	* \brief Get color space of the associated image
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_GetColorSpace(ImageMetadataObjectAttributeHandle* handle, ImageColorSpaceType* result);
+
+	/**
+	* \brief Set color space of the associated image
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_SetColorSpace(ImageMetadataObjectAttributeHandle* handle, ImageColorSpaceType data);
+
+	/**
+	* \brief Get image width in pixels
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_GetWidth(ImageMetadataObjectAttributeHandle* handle, integer_type* result);
+
+	/**
+	* \brief Set image width in pixels
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_SetWidth(ImageMetadataObjectAttributeHandle* handle, integer_type data);
+
+	/**
+	* \brief Get image height in pixels
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_GetHeight(ImageMetadataObjectAttributeHandle* handle, integer_type* result);
+
+	/**
+	* \brief Set image height in pixels
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_SetHeight(ImageMetadataObjectAttributeHandle* handle, integer_type data);
 
 	/**
 	* \brief Reinterpret current object as \ref BaseObjectAttributeHandle
