@@ -82,6 +82,9 @@ public:
 	const_reference front(void) const { return m_data.front(); }
 	reference back(void) { return m_data.back(); }
 	const_reference back(void) const { return m_data.back(); }
+	iterator erase(const_iterator pos) noexcept { return m_data.erase(pos); }
+	void clear() noexcept { return m_data.clear(); }
+	iterator insert(const_iterator where, reference value) { return m_data.insert(where, value); }
 	reference operator[](size_type pos) { return m_data[pos]; }
 	const_reference operator[](size_type pos) const { return m_data[pos]; }
 

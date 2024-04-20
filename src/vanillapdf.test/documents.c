@@ -280,14 +280,14 @@ error_type process_content_instruction(ContentInstructionHandle* obj, int nested
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
-error_type process_page_contents(PageContentsHandle* obj, int nested) {
+error_type process_content_instruction_collection(ContentInstructionCollectionHandle* obj, int nested) {
 	size_type i = 0;
 	size_type size = 0;
 
 	print_spaces(nested);
 	print_text("Contents begin\n");
 
-	RETURN_ERROR_IF_NOT_SUCCESS(PageContents_GetInstructionsSize(obj, &size));
+	RETURN_ERROR_IF_NOT_SUCCESS(ContentInstructionCollection_GetSize(obj, &size));
 
 	print_spaces(nested + 1);
 	unsigned long long converted_size = size;
@@ -295,10 +295,26 @@ error_type process_page_contents(PageContentsHandle* obj, int nested) {
 
 	for (i = 0; i < size; ++i) {
 		ContentInstructionHandle* instruction = NULL;
-		RETURN_ERROR_IF_NOT_SUCCESS(PageContents_GetInstructionAt(obj, i, &instruction));
+		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstructionCollection_At(obj, i, &instruction));
 		RETURN_ERROR_IF_NOT_SUCCESS(process_content_instruction(instruction, nested + 1));
 		RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_Release(instruction));
 	}
+
+	print_spaces(nested);
+	print_text("Contents end\n");
+
+	return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_page_contents(PageContentsHandle* obj, int nested) {
+	ContentInstructionCollectionHandle* instruction_collection = NULL;
+
+	print_spaces(nested);
+	print_text("Contents begin\n");
+
+	RETURN_ERROR_IF_NOT_SUCCESS(PageContents_GetInstructionCollection(obj, &instruction_collection));
+	RETURN_ERROR_IF_NOT_SUCCESS(process_content_instruction_collection(instruction_collection, nested + 1));
+	RETURN_ERROR_IF_NOT_SUCCESS(ContentInstructionCollection_Release(instruction_collection));
 
 	print_spaces(nested);
 	print_text("Contents end\n");

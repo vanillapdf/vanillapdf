@@ -138,21 +138,5 @@ BaseInstructionCollectionPtr PageContents::Instructions(void) const {
 	return m_instructions;
 }
 
-types::size_type PageContents::GetInstructionsSize(void) const {
-	if (!m_instructions->IsInitialized()) {
-		Instructions();
-	}
-
-	return m_instructions->size();
-}
-
-InstructionBasePtr PageContents::GetInstructionAt(types::size_type at) const {
-	if (!m_instructions->IsInitialized()) {
-		Instructions();
-	}
-
-	return m_instructions->at(at);
-}
-
 } // semantics
 } // vanillapdf

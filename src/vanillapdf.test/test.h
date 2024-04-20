@@ -59,6 +59,7 @@ error_type process_attribute_list(ObjectAttributeListHandle* attributes, int nes
 
 /* Contents */
 error_type process_content_instruction(ContentInstructionHandle* obj, int nested);
+error_type process_content_instruction_collection(ContentInstructionCollectionHandle* obj, int nested);
 error_type process_content_object(ContentObjectHandle* obj, int nested);
 error_type process_content_operation(ContentOperationHandle* obj, int nested);
 error_type process_page_contents(PageContentsHandle* obj, int nested);

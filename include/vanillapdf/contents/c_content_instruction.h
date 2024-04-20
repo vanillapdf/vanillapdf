@@ -95,6 +95,36 @@ extern "C"
 	*/
 
 	/**
+	* \brief Return size of a collection
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_GetSize(ContentInstructionCollectionHandle* handle, size_type* result);
+
+	/**
+	* \brief Get instruction at location \p at
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_At(ContentInstructionCollectionHandle* handle, size_type at, ContentInstructionHandle** result);
+
+	/**
+	* \brief Insert new element at the end of the collection
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_Append(ContentInstructionCollectionHandle* handle, ContentInstructionHandle* value);
+
+	/**
+	* \brief Insert new element at location \p at
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_Insert(ContentInstructionCollectionHandle* handle, size_type at, ContentInstructionHandle* value);
+
+	/**
+	* \brief Remove element from location \p at
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_Remove(ContentInstructionCollectionHandle* handle, size_type at);
+
+	/**
+	* \brief Clear all items from the collection
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_Clear(ContentInstructionCollectionHandle* handle);
+
+	/**
 	* \brief Get collection iterator for enumerating all entries
 	*
 	* Modifying collection may invalidate this handle.

@@ -45,6 +45,77 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_Release(ContentI
 
 // ContentInstructionCollection
 
+VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_GetSize(ContentInstructionCollectionHandle* handle, size_type* result) {
+	BaseInstructionCollection* obj = reinterpret_cast<BaseInstructionCollection*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		*result = obj->size();
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_At(ContentInstructionCollectionHandle* handle, size_type at, ContentInstructionHandle** result) {
+	BaseInstructionCollection* obj = reinterpret_cast<BaseInstructionCollection*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto instruction = obj->at(at);
+		auto base = instruction.AddRefGet();
+		*result = reinterpret_cast<ContentInstructionHandle*>(base);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_Append(ContentInstructionCollectionHandle* handle, ContentInstructionHandle* value) {
+	BaseInstructionCollection* obj = reinterpret_cast<BaseInstructionCollection*>(handle);
+	InstructionBase* instruction = reinterpret_cast<InstructionBase*>(value);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(instruction);
+
+	try
+	{
+		obj->push_back(instruction);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_Insert(ContentInstructionCollectionHandle* handle, size_type at, ContentInstructionHandle* value) {
+	BaseInstructionCollection* obj = reinterpret_cast<BaseInstructionCollection*>(handle);
+	InstructionBase* instruction = reinterpret_cast<InstructionBase*>(value);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(instruction);
+
+	try
+	{
+		InstructionBasePtr instruction_ptr(instruction);
+		obj->insert(obj->begin() + at, instruction_ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_Remove(ContentInstructionCollectionHandle* handle, size_type at) {
+	BaseInstructionCollection* obj = reinterpret_cast<BaseInstructionCollection*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	obj->erase(obj->begin() + at);
+	return VANILLAPDF_ERROR_SUCCESS;
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_Clear(ContentInstructionCollectionHandle* handle) {
+	BaseInstructionCollection* obj = reinterpret_cast<BaseInstructionCollection*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+	obj->clear();
+	return VANILLAPDF_ERROR_SUCCESS;
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_GetIterator(ContentInstructionCollectionHandle* handle, ContentInstructionCollectionIteratorHandle** result) {
 	BaseInstructionCollection* obj = reinterpret_cast<BaseInstructionCollection*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
