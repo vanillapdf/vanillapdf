@@ -3,6 +3,7 @@
 #include "syntax/files/file.h"
 #include "syntax/utils/name_constants.h"
 #include "syntax/filters/dct_decode_filter.h"
+#include "syntax/utils/image_metadata_object_attribute.h"
 
 #include "utils/math_utils.h"
 #include "utils/streams/input_output_stream.h"
@@ -159,45 +160,76 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
 
 #if defined(VANILLAPDF_HAVE_JPEG)
 
-	if (!parameters->Contains(constant::Name::Width)) {
+	IntegerObjectPtr width;
+	IntegerObjectPtr height;
+	NameObjectPtr color_space;
+
+	// Check the parameter dictionary for input
+	if (parameters->Contains(constant::Name::Width)) {
+		width = parameters->FindAs<IntegerObjectPtr>(constant::Name::Width);
+	}
+
+	if (parameters->Contains(constant::Name::Height)) {
+		height = parameters->FindAs<IntegerObjectPtr>(constant::Name::Height);
+	}
+
+	if (parameters->Contains(constant::Name::ColorSpace)) {
+		auto color_space_object = parameters->Find(constant::Name::ColorSpace);
+
+		// if name
+		if (ObjectUtils::IsType<NameObjectPtr>(color_space_object)) {
+			color_space = ObjectUtils::ConvertTo<NameObjectPtr>(color_space_object);
+		}
+
+		// if array
+		if (ObjectUtils::IsType<MixedArrayObjectPtr>(color_space_object)) {
+
+			auto color_space_array = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(color_space_object);
+
+			auto weak_file = parameters->GetFile();
+			auto locked_file = weak_file.GetReference();
+			auto filename = locked_file->GetFilenameString();
+
+			LOG_ERROR(filename)
+				<< "Non-standard color spaces "
+				<< color_space_array->ToString()
+				<< " are not supported";
+
+			// TODO: ICCBased, Indexed, Lab, Separation, DeviceN
+			throw NotSupportedException("Non-standard colorspaces are not supported");
+		}
+	}
+
+	// Check additional object attributes as well
+	if (object_attributes->Contains(BaseAttribute::Type::ImageMetadata)) {
+		auto image_metadata = object_attributes->GetAs<ImageMetadataObjectAttributePtr>(BaseAttribute::Type::ImageMetadata);
+
+		*width = image_metadata->GetWidth();
+		*height = image_metadata->GetHeight();
+
+		if (image_metadata->GetColorSpace() == ImageMetadataObjectAttribute::ColorSpaceType::GRAY) {
+			*color_space = constant::Name::DeviceGray;
+		}
+
+		if (image_metadata->GetColorSpace() == ImageMetadataObjectAttribute::ColorSpaceType::RGB) {
+			*color_space = constant::Name::DeviceRGB;
+		}
+
+		if (image_metadata->GetColorSpace() == ImageMetadataObjectAttribute::ColorSpaceType::CMYK) {
+			*color_space = constant::Name::DeviceCMYK;
+		}
+	}
+
+	if (width.empty()) {
 		throw GeneralException("Missing parameter Width");
 	}
 
-	if (!parameters->Contains(constant::Name::Height)) {
+	if (height.empty()) {
 		throw GeneralException("Missing parameter Height");
 	}
 
-	if (!parameters->Contains(constant::Name::ColorSpace)) {
+	if (color_space.empty()) {
 		throw GeneralException("Missing parameter ColorSpace");
-	}
-
-	auto width = parameters->FindAs<IntegerObjectPtr>(constant::Name::Width);
-	auto height = parameters->FindAs<IntegerObjectPtr>(constant::Name::Height);
-
-	NameObjectPtr color_space;
-	auto color_space_object = parameters->Find(constant::Name::ColorSpace);
-
-	// if name
-	if (ObjectUtils::IsType<NameObjectPtr>(color_space_object)) {
-		color_space = ObjectUtils::ConvertTo<NameObjectPtr>(color_space_object);
-	}
-
-	// if array
-	if (ObjectUtils::IsType<MixedArrayObjectPtr>(color_space_object)) {
-
-		auto color_space_array = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(color_space_object);
-
-		auto weak_file = parameters->GetFile();
-		auto locked_file = weak_file.GetReference();
-		auto filename = locked_file->GetFilenameString();
-
-		LOG_ERROR(filename)
-			<< "Non-standard color spaces "
-			<< color_space_array->ToString()
-			<< " are not supported";
-
-		// TODO: ICCBased, Indexed, Lab, Separation, DeviceN
-		throw NotSupportedException("Non-standard colorspaces are not supported");
 	}
 
 	jpeg_compress_struct jpeg = { 0 };

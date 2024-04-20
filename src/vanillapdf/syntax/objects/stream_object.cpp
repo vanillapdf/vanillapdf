@@ -295,11 +295,11 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 		auto filter = FilterBase::GetFilterByName(filter_name);
 		if (_header->Contains(constant::Name::DecodeParms)) {
 			auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
-			auto result = filter->Encode(decoded_body, params);
+			auto result = filter->Encode(decoded_body, params, m_attributes);
 			return EncryptStream(result, GetRootObjectNumber(), GetRootGenerationNumber());
 		}
 
-		auto result = filter->Encode(decoded_body);
+		auto result = filter->Encode(decoded_body, DictionaryObjectPtr(), m_attributes);
 		return EncryptStream(result, GetRootObjectNumber(), GetRootGenerationNumber());
 	}
 
@@ -332,7 +332,7 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 				bool is_param_dictionary = ObjectUtils::IsType<DictionaryObjectPtr>(current_param);
 				if (is_param_dictionary) {
 					auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(current_param);
-					decoded_body = filter->Encode(decoded_body, dict);
+					decoded_body = filter->Encode(decoded_body, dict, m_attributes);
 					continue;
 				}
 
@@ -342,7 +342,7 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 				UNUSED(is_param_null);
 			}
 
-			decoded_body = filter->Encode(decoded_body);
+			decoded_body = filter->Encode(decoded_body, DictionaryObjectPtr(), m_attributes);
 		}
 
 		return decoded_body;
