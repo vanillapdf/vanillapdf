@@ -220,6 +220,7 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
 		}
 	}
 
+	// In case the input parameters are missing, terminate immediately
 	if (width.empty()) {
 		throw GeneralException("Missing parameter Width");
 	}
@@ -394,7 +395,29 @@ BufferPtr DCTDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 		throw GeneralException("Could not finish jpeg decompression");
 	}
 
-	// TODO: Store jpeg.out_color_components, jpeg.out_color_space
+	ImageMetadataObjectAttribute::ColorSpaceType attribute_color_space = ImageMetadataObjectAttribute::ColorSpaceType::Undefined;
+
+	if (jpeg.out_color_space == JCS_GRAYSCALE) {
+		attribute_color_space = ImageMetadataObjectAttribute::ColorSpaceType::GRAY;
+	}
+
+	if (jpeg.out_color_space == JCS_RGB) {
+		attribute_color_space = ImageMetadataObjectAttribute::ColorSpaceType::RGB;
+	}
+
+	if (jpeg.out_color_space == JCS_CMYK) {
+		attribute_color_space = ImageMetadataObjectAttribute::ColorSpaceType::CMYK;
+	}
+
+	// Create the attribute to augument the stream object
+	auto metadata_attribute = make_deferred<ImageMetadataObjectAttribute>();
+	metadata_attribute->SetWidth(jpeg.output_width);
+	metadata_attribute->SetHeight(jpeg.output_height);
+	metadata_attribute->SetColorSpace(attribute_color_space);
+	metadata_attribute->SetColorComponents(jpeg.out_color_components);
+
+	// Associate the attribute with the object
+	object_attributes->Add(metadata_attribute);
 
 	return StreamUtils::InputStreamToBuffer(result);
 

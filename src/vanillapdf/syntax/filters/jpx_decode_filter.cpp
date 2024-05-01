@@ -151,6 +151,8 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 
         // Create the attribute to augument the stream object
         auto metadata_attribute = make_deferred<ImageMetadataObjectAttribute>();
+        metadata_attribute->SetWidth(image->x1);
+        metadata_attribute->SetHeight(image->y1);
         metadata_attribute->SetColorSpace(attribute_color_space);
         metadata_attribute->SetColorComponents(image->numcomps);
 
