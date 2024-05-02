@@ -798,7 +798,7 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
 
 	FileWriter writer;
 	writer.Subscribe(signer);
-	writer.Write(m_holder, destination);
+	writer.WriteIncremental(m_holder, destination);
 }
 
 void Document::AddEncryption(DocumentEncryptionSettingsPtr settings) {
