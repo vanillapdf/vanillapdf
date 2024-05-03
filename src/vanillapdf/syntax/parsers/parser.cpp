@@ -83,12 +83,29 @@ DictionaryObjectPtr ParserBase::ReadDictionary() {
 
 	ReadTokenWithTypeSkip(Token::Type::DICTIONARY_BEGIN);
 	while (PeekTokenTypeSkip() != Token::Type::DICTIONARY_END) {
-		auto name = ReadDirectObjectWithType<NameObjectPtr>();
+		auto key = ReadDirectObject();
 		auto direct = ReadDirectObject();
 
 		if (direct->GetObjectType() == Object::Type::Null) {
 			continue;
 		}
+
+		// There was an incorrect flow in the document signing, which did not include the signature ByteRange
+		// <</ByteRange                                                                                      
+		// What this did was to skip the expected array and then beyond the dictionary key was an incorrect type
+		// Adobe is able to open such document without any issue and we should not refuse to do so as well
+		// Let's just include the warning in the log, that the entries may be missing
+		if (key->GetObjectType() != Object::Type::Name) {
+			auto locked_file = _file.GetReference();
+			auto filename = locked_file->GetFilenameString();
+
+			auto key_type_str = Object::TypeName(key->GetObjectType());
+			LOG_WARNING(filename) << "Found dictionary key with type " << key_type_str << ", skipping";
+
+			continue;
+		}
+
+		auto name = ConvertUtils<ObjectPtr>::ConvertTo<NameObjectPtr>(key);
 
 		if (dictionary->Contains(name)) {
 			auto locked_file = _file.GetReference();
