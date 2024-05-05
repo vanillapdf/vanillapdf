@@ -14,7 +14,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetFields(Interacti
 
 	try {
 		OuputFieldCollectionPtr fields;
-		bool contains = form->Fields(fields);
+		bool contains = form->GetFields(fields);
 		if (!contains) {
 			return VANILLAPDF_ERROR_OBJECT_MISSING;
 		}

@@ -11,7 +11,7 @@ namespace semantics {
 
 InteractiveForm::InteractiveForm(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
 
-bool InteractiveForm::Fields(OuputFieldCollectionPtr& result) const {
+bool InteractiveForm::GetFields(OuputFieldCollectionPtr& result) const {
 	if (!_obj->Contains(constant::Name::Fields)) {
 		return false;
 	}
@@ -21,13 +21,13 @@ bool InteractiveForm::Fields(OuputFieldCollectionPtr& result) const {
 	return true;
 }
 
-bool InteractiveForm::SignatureFlags(OutputSignatureFlagsPtr& result) const {
+bool InteractiveForm::GetSignatureFlags(OutputSignatureFlagsPtr& result) const {
 	if (!_obj->Contains(constant::Name::SigFlags)) {
 		return false;
 	}
 
 	auto flags = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::SigFlags);
-	result = make_deferred<class SignatureFlags>(flags);
+	result = make_deferred<SignatureFlags>(flags);
 	return true;
 }
 
@@ -54,7 +54,7 @@ SignatureFlagsPtr InteractiveForm::CreateSignatureFlags() {
 	}
 
 	auto flags = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::SigFlags);
-	return make_deferred<class SignatureFlags>(flags);
+	return make_deferred<SignatureFlags>(flags);
 }
 
 } // semantics

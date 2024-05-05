@@ -14,8 +14,8 @@ class InteractiveForm : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
 	explicit InteractiveForm(syntax::DictionaryObjectPtr root);
 
-	bool Fields(OuputFieldCollectionPtr& result) const;
-	bool SignatureFlags(OutputSignatureFlagsPtr& result) const;
+	bool GetFields(OuputFieldCollectionPtr& result) const;
+	bool GetSignatureFlags(OutputSignatureFlagsPtr& result) const;
 
 	FieldCollectionPtr CreateFields();
 	SignatureFlagsPtr CreateSignatureFlags();
