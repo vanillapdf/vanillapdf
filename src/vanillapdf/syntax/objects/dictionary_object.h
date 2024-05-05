@@ -140,7 +140,7 @@ public:
 	void Merge(const DictionaryObject& other);
 	void Clear();
 
-	size_type GetSize() const;
+	size_type GetSize() const noexcept;
 
 	virtual ~DictionaryObject();
 

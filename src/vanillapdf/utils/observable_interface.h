@@ -60,7 +60,7 @@ public:
 	virtual ~IObservable() = 0;
 
 protected:
-	bool HasObservers() const {
+	bool HasObservers() const noexcept {
 		return (m_observers != nullptr);
 	}
 
