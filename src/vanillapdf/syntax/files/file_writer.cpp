@@ -1187,7 +1187,7 @@ XrefBasePtr FileWriter::CreateIncrementalXref(FilePtr source, FilePtr destinatio
 	if (new_entries) {
 		auto last_xref_offset = source_xref->GetOffset();
 		IntegerObjectPtr new_offset = make_deferred<IntegerObject>(last_xref_offset);
-		new_trailer->Insert(constant::Name::Prev, new_offset);
+		new_trailer->Insert(constant::Name::Prev, new_offset, true);
 	}
 
 	new_table->SetTrailerDictionary(new_trailer);
