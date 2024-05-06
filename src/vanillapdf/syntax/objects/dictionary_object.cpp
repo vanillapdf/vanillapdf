@@ -227,20 +227,7 @@ bool DictionaryObject::Contains(const NameObjectPtr name) const {
 }
 
 DictionaryObject::~DictionaryObject() {
-	ACCESS_LOCK_GUARD(m_access_lock);
-
-	for (auto item : _list) {
-
-		// The trick here is that assignment
-		// creates a non-const copy.
-		// Be careful to preserve
-		// the object state
-		auto item_key = item.first;
-		auto item_value = item.second;
-
-		item_key->Unsubscribe(this);
-		item_value->Unsubscribe(this);
-	}
+	Clear();
 }
 
 void DictionaryObject::ObserveeChanged(const IModifyObservable*) {
@@ -321,7 +308,25 @@ void DictionaryObject::Merge(const DictionaryObject& other) {
 
 void DictionaryObject::Clear() {
 	ACCESS_LOCK_GUARD(m_access_lock);
+
+	for (auto item : _list) {
+
+		// The trick here is that assignment
+		// creates a non-const copy.
+		// Be careful to preserve
+		// the object state
+		auto item_key = item.first;
+		auto item_value = item.second;
+
+		item_key->ClearOwner();
+		item_value->ClearOwner();
+		item_key->Unsubscribe(this);
+		item_value->Unsubscribe(this);
+	}
+
 	_list.clear();
+
+	OnChanged();
 }
 
 DictionaryObject::size_type DictionaryObject::GetSize() const noexcept {
