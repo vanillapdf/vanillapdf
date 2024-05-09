@@ -794,11 +794,21 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
 	auto signature_fields_reference = make_deferred<syntax::IndirectReferenceObject>(signature_annotation);
 	fields_array->Append(signature_fields_reference);
 
+	// TODO:
+	// Move the signature creation logic to new callback IFileWriterObserver::OnAfterXrefClone
+	// The reason for this is to allow subsequent signing of the same document in case error occurs
+
 	DocumentSignerPtr signer = make_deferred<DocumentSigner>(key, digest, signature_dictionary);
 
 	FileWriter writer;
 	writer.Subscribe(signer);
-	writer.WriteIncremental(m_holder, destination);
+
+	// TODO:
+	// WriteIncremental is currently too complicated, let's switch to Write
+	// Incremental updates needs to be able to handle removed objects, object stream updates, etc.
+	// writer.WriteIncremental(m_holder, destination);
+
+	writer.Write(m_holder, destination);
 }
 
 void Document::AddEncryption(DocumentEncryptionSettingsPtr settings) {
