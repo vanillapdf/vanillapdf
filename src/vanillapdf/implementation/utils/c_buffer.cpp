@@ -55,6 +55,23 @@ VANILLAPDF_API error_type CALLING_CONVENTION Buffer_SetData(BufferHandle* handle
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Buffer_CopyTo(BufferHandle* handle, byte_array_type data, size_type size) {
+
+	Buffer* obj = reinterpret_cast<Buffer*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+
+	try
+	{
+		if (size < 0 || obj->size() > size) {
+			return VANILLAPDF_ERROR_INSUFFICIENT_SPACE;
+		}
+
+		std::copy(obj->data(), obj->data() + obj->size(), data);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToInputStream(const BufferHandle* handle, InputStreamHandle** result) {
 	const Buffer* obj = reinterpret_cast<const Buffer*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

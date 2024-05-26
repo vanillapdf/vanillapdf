@@ -81,6 +81,11 @@ typedef uint64_t biguint_type;
 */
 typedef const char* string_type;
 
+/**
+* \brief Writeable byte array
+*/
+typedef char* byte_array_type;
+
 /** @} */ /* group_types */
 
 #endif /* _C_TYPES_H */

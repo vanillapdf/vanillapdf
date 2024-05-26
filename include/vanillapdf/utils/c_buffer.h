@@ -48,6 +48,11 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_SetData(BufferHandle* handle, string_type data, size_type size);
 
 	/**
+	* \brief Copy buffer data to the memory provided by the caller
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_CopyTo(BufferHandle* handle, byte_array_type data, size_type size);
+
+	/**
 	* \brief Converts current buffer state to input stream
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToInputStream(const BufferHandle* handle, InputStreamHandle** result);

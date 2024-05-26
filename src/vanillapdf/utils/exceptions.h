@@ -21,6 +21,7 @@ public:
 		ZlibDataError,
 		InvalidLicense,
 		LicenseRequired,
+		InsufficientSpace,
 
 		// syntax
 		Conversion = 0x00010000,

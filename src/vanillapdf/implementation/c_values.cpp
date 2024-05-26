@@ -15,6 +15,7 @@ VANILLAPDF_API const error_type VANILLAPDF_ERROR_USER_CANCELLED			= static_cast<
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_ZLIB_DATA				= static_cast<error_type>(vanillapdf::ExceptionBase::Type::ZlibDataError);
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_INVALID_LICENSE		= static_cast<error_type>(vanillapdf::ExceptionBase::Type::InvalidLicense);
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_LICENSE_REQUIRED		= static_cast<error_type>(vanillapdf::ExceptionBase::Type::LicenseRequired);
+VANILLAPDF_API const error_type VANILLAPDF_ERROR_INSUFFICIENT_SPACE		= static_cast<error_type>(vanillapdf::ExceptionBase::Type::InsufficientSpace);
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_GENERAL				= static_cast<error_type>(vanillapdf::ExceptionBase::Type::General);
 
 // syntax errors

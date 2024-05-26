@@ -90,6 +90,12 @@ extern "C"
 
 	/**
 	* \brief
+	* The space usually for buffer was not sufficient for requested operation.
+	*/
+	VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_INSUFFICIENT_SPACE;
+
+	/**
+	* \brief
 	* An unknown error has occurred.
 	*
 	* Try to turn on \ref Logging for extended informations.
