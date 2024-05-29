@@ -36,6 +36,11 @@ private:
 	mutable OutputPageContentsPtr m_contents;
 };
 
+class PageObjectExtensions {
+public:
+	static bool GetInheritableResources(const PageObject& obj, OutputResourceDictionaryPtr& result);
+};
+
 } // semantics
 } // vanillapdf
 

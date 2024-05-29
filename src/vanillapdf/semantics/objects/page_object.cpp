@@ -170,5 +170,23 @@ std::unique_ptr<PageObject> PageObject::Create(syntax::DictionaryObjectPtr obj) 
 	return make_unique<PageObject>(obj);
 }
 
+bool PageObjectExtensions::GetInheritableResources(const PageObject& obj, OutputResourceDictionaryPtr& result) {
+	auto page_dictionary = obj.GetObject();
+	if (!page_dictionary->Contains(constant::Name::Resources)) {
+		if (!page_dictionary->Contains(constant::Name::Parent)) {
+			return false;
+		}
+
+		auto parent_dictionary_obj = page_dictionary->FindAs<DictionaryObjectPtr>(constant::Name::Parent);
+		auto parent_obj = PageObject::Create(parent_dictionary_obj);
+		return GetInheritableResources(*parent_obj, result);
+	}
+
+	auto resources_obj = page_dictionary->FindAs<DictionaryObjectPtr>(constant::Name::Resources);
+	auto resources = make_deferred<ResourceDictionary>(resources_obj);
+	result = resources;
+	return true;
+}
+
 } // semantics
 } // vanillapdf
