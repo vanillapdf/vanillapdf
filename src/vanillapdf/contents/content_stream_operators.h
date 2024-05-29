@@ -28,7 +28,7 @@ public: \
 	virtual BufferPtr Value(void) const override { return make_deferred_container<Buffer>(Val); } \
 };
 
-		// General graphics state
+// General graphics state
 GENERIC_OPERATOR_DEFINITION(LineWidth, "w");
 GENERIC_OPERATOR_DEFINITION(LineCap, "J");
 GENERIC_OPERATOR_DEFINITION(LineJoin, "j");
