@@ -16,10 +16,12 @@ namespace syntax {
 
 LiteralStringObject::LiteralStringObject() {
 	_value->Subscribe(this);
+	_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 HexadecimalStringObject::HexadecimalStringObject() {
 	_value->Subscribe(this);
+	_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 LiteralStringObjectPtr LiteralStringObject::CreateFromEncoded(BufferPtr value) {
@@ -146,6 +148,12 @@ BufferPtr LiteralStringObject::GetValue() const {
 		return _value;
 	}
 
+	ACCESS_LOCK_GUARD(_access_lock);
+
+	if (_value->IsInitialized()) {
+		return _value;
+	}
+
 	BufferPtr new_value = _raw_value;
 	if (!m_file.IsEmpty()) {
 		if (!m_file.IsActive()) {
@@ -165,6 +173,8 @@ BufferPtr LiteralStringObject::GetValue() const {
 }
 
 void LiteralStringObject::SetValue(BufferPtr value) {
+	ACCESS_LOCK_GUARD(_access_lock);
+
 	_value->assign(value.begin(), value.end());
 	_value->SetInitialized();
 }
@@ -174,11 +184,19 @@ BufferPtr LiteralStringObject::GetRawValue() const {
 }
 
 void LiteralStringObject::SetRawValue(BufferPtr value) {
+	ACCESS_LOCK_GUARD(_access_lock);
+
 	_raw_value->assign(value.begin(), value.end());
 	_raw_value->SetInitialized();
 }
 
 BufferPtr HexadecimalStringObject::GetValue() const {
+	if (_value->IsInitialized()) {
+		return _value;
+	}
+
+	ACCESS_LOCK_GUARD(_access_lock);
+
 	if (_value->IsInitialized()) {
 		return _value;
 	}
@@ -219,6 +237,8 @@ BufferPtr HexadecimalStringObject::GetValue() const {
 }
 
 void HexadecimalStringObject::SetValue(BufferPtr value) {
+	ACCESS_LOCK_GUARD(_access_lock);
+
 	_value->assign(value.begin(), value.end());
 	_value->SetInitialized();
 }
@@ -228,6 +248,8 @@ BufferPtr HexadecimalStringObject::GetRawValue() const {
 }
 
 void HexadecimalStringObject::SetRawValue(BufferPtr value) {
+	ACCESS_LOCK_GUARD(_access_lock);
+
 	_raw_value->assign(value.begin(), value.end());
 	_raw_value->SetInitialized();
 }

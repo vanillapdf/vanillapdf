@@ -5,6 +5,8 @@
 #include "syntax/objects/containable.h"
 #include "utils/buffer.h"
 
+#include <mutex>
+
 namespace vanillapdf {
 namespace syntax {
 
@@ -28,6 +30,12 @@ public:
 
 	virtual bool Equals(ObjectPtr other) const override;
 	virtual size_t Hash() const override;
+
+protected:
+	// The library interface wants to be thread-safe as much as possible
+	// Even though the are currently no cases for multi-thread access
+	// to the dictonary, let's try to be visionary and prepare for this
+	std::shared_ptr<std::recursive_mutex> _access_lock;
 };
 
 class HexadecimalStringObject : public StringObjectBase, public IModifyObserver {
