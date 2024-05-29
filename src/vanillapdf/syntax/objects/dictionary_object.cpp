@@ -300,10 +300,14 @@ bool DictionaryObject::Equals(ObjectPtr other) const {
 void DictionaryObject::Merge(const DictionaryObject& other) {
 	ACCESS_LOCK_GUARD(m_access_lock);
 
+	// TODO: Missing add owner and subscribe
+
 	// Simple insert overriding conflicting entries
 	for (auto item : other) {
 		_list.insert(item);
 	}
+
+	OnChanged();
 }
 
 void DictionaryObject::Clear() {
