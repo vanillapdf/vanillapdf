@@ -776,6 +776,10 @@ HeaderPtr File::GetHeader(void) const {
 	return _header;
 }
 
+void File::SetHeader(HeaderPtr header) {
+	_header = header;
+}
+
 XrefChainPtr File::GetXrefChain() const {
 	return GetXrefChain(true);
 }

@@ -47,7 +47,9 @@ public:
 
 	XrefChainPtr GetXrefChain(void) const;
 	XrefChainPtr GetXrefChain(bool check_initialization) const;
+
 	HeaderPtr GetHeader(void) const;
+	void SetHeader(HeaderPtr header);
 
 	XrefUsedEntryBasePtr AllocateNewEntry();
 

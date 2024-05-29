@@ -154,6 +154,7 @@ public:
 	void SetRemoveFreedObjectsFlag(bool flag) noexcept { m_remove_freed = flag; }
 
 private:
+	HeaderPtr CloneHeader(FilePtr source, FilePtr destination);
 	XrefChainPtr CloneXrefChain(FilePtr source, FilePtr destination);
 	XrefBasePtr CloneXref(FilePtr destination, XrefBasePtr source);
 	DictionaryObjectPtr CloneTrailerDictionary(FilePtr source, XrefBasePtr xref);

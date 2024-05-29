@@ -59,8 +59,8 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
 	Initializing(output);
 
 	// Write the file header
-	auto header = source->GetHeader();
-	WriteHeader(output, header);
+	auto new_header = CloneHeader(source, destination);
+	WriteHeader(output, new_header);
 
 	// Deep copy of all contents from the original source document
 	auto new_chain = CloneXrefChain(source, destination);
@@ -770,6 +770,18 @@ XrefBasePtr FileWriter::FindPreviousXref(XrefChainPtr chain, XrefBasePtr source)
 	}
 
 	throw GeneralException("Could not find previous xref");
+}
+
+HeaderPtr FileWriter::CloneHeader(FilePtr source, FilePtr destination) {
+
+	auto source_header = source->GetHeader();
+	auto source_header_version = source_header->GetVersion();
+
+	auto destination_header = make_deferred<Header>();
+	destination_header->SetVersion(source_header_version);
+	destination->SetHeader(destination_header);
+
+	return destination_header;
 }
 
 XrefChainPtr FileWriter::CloneXrefChain(FilePtr source, FilePtr destination) {
