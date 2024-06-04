@@ -11,7 +11,7 @@
 namespace vanillapdf {
 namespace contents {
 
-class InstructionBase : public virtual IUnknown, public IModifyObservable {
+class InstructionBase : public virtual IUnknown {
 public:
 	enum class Type {
 		Undefined = 0,
@@ -23,7 +23,7 @@ public:
 	virtual std::string ToPdf() const = 0;
 };
 
-class BaseInstructionCollection : public IModifyObserver, public IModifyObservable {
+class BaseInstructionCollection : public IUnknown, public IModifyObservable {
 public:
 	using data_type = std::vector<InstructionBasePtr>;
 
@@ -45,12 +45,7 @@ public:
 	BaseInstructionCollection& operator=(BaseInstructionCollection&&) = default;
 
 public:
-	virtual void ObserveeChanged(const IModifyObservable*) override {
-		OnChanged();
-	}
-
-public:
-	class Iterator : public BaseIterator<const_iterator>, public IWeakReferenceable {
+	class Iterator : public BaseIterator<const_iterator> {
 	public:
 		using BaseIterator<const_iterator>::BaseIterator;
 
@@ -113,18 +108,10 @@ public:
 	// Modifying operations
 	void reserve(size_type count) {
 		m_data.reserve(count);
-		OnChanged();
 	}
 
 	void push_back(InstructionBasePtr val) {
 		m_data.push_back(val);
-		val->Subscribe(this);
-		OnChanged();
-	}
-
-	~BaseInstructionCollection() {
-		for (auto item : m_data)
-			item->Unsubscribe(this);
 	}
 
 private:

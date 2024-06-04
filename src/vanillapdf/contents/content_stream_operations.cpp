@@ -67,15 +67,6 @@ OperationSetStrokingColorSpaceRGB::OperationSetStrokingColorSpaceRGB(const std::
 	m_red = syntax::ObjectUtils::ConvertTo<RealObjectPtr>(red);
 	m_green = syntax::ObjectUtils::ConvertTo<RealObjectPtr>(green);
 	m_blue = syntax::ObjectUtils::ConvertTo<RealObjectPtr>(blue);
-
-	m_red->Subscribe(this);
-	m_red->SetInitialized();
-
-	m_green->Subscribe(this);
-	m_green->SetInitialized();
-
-	m_blue->Subscribe(this);
-	m_blue->SetInitialized();
 }
 
 OperationSetNonstrokingColorSpaceRGB::OperationSetNonstrokingColorSpaceRGB(const std::vector<ObjectPtr>& operands) {
@@ -103,15 +94,6 @@ OperationSetNonstrokingColorSpaceRGB::OperationSetNonstrokingColorSpaceRGB(const
 	m_red = syntax::ObjectUtils::ConvertTo<RealObjectPtr>(red);
 	m_green = syntax::ObjectUtils::ConvertTo<RealObjectPtr>(green);
 	m_blue = syntax::ObjectUtils::ConvertTo<RealObjectPtr>(blue);
-
-	m_red->Subscribe(this);
-	m_red->SetInitialized();
-
-	m_green->Subscribe(this);
-	m_green->SetInitialized();
-
-	m_blue->Subscribe(this);
-	m_blue->SetInitialized();
 }
 
 OperationTextFont::OperationTextFont(const std::vector<ObjectPtr>& operands) {
@@ -134,12 +116,6 @@ OperationTextFont::OperationTextFont(const std::vector<ObjectPtr>& operands) {
 
 	m_font = syntax::ObjectUtils::ConvertTo<NameObjectPtr>(name);
 	m_scale = syntax::ObjectUtils::ConvertTo<RealObjectPtr>(scale);
-
-	m_font->Subscribe(this);
-	m_font->SetInitialized();
-
-	m_scale->Subscribe(this);
-	m_scale->SetInitialized();
 }
 
 OperationTextTranslate::OperationTextTranslate(const std::vector<ObjectPtr>& operands) {
@@ -162,12 +138,6 @@ OperationTextTranslate::OperationTextTranslate(const std::vector<ObjectPtr>& ope
 
 	m_x = syntax::ObjectUtils::ConvertTo<IntegerObjectPtr>(x);
 	m_y = syntax::ObjectUtils::ConvertTo<IntegerObjectPtr>(y);
-
-	m_x->Subscribe(this);
-	m_x->SetInitialized();
-
-	m_y->Subscribe(this);
-	m_y->SetInitialized();
 }
 
 OperationBeginInlineImageObject::OperationBeginInlineImageObject(const std::vector<ObjectPtr>& operands) {
@@ -204,8 +174,6 @@ OperationTextShow::OperationTextShow(const std::vector<ObjectPtr>& operands) {
 	}
 
 	_str = ObjectUtils::ConvertTo<StringObjectPtr>(item);
-	_str->Subscribe(this);
-	_str->SetInitialized();
 }
 
 OperationTextShowArray::OperationTextShowArray(const std::vector<ObjectPtr>& operands) {
@@ -221,8 +189,6 @@ OperationTextShowArray::OperationTextShowArray(const std::vector<ObjectPtr>& ope
 	}
 
 	m_items = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(item);
-	m_items->Subscribe(this);
-	m_items->SetInitialized();
 }
 
 OperationTransformationMatrix::OperationTransformationMatrix(const std::vector<ObjectPtr>& operands) {
@@ -273,63 +239,6 @@ OperationTransformationMatrix::OperationTransformationMatrix(const std::vector<O
 	m_d = ObjectUtils::ConvertTo<IntegerObjectPtr>(d);
 	m_e = ObjectUtils::ConvertTo<IntegerObjectPtr>(e);
 	m_f = ObjectUtils::ConvertTo<IntegerObjectPtr>(f);
-	
-	m_a->Subscribe(this);
-	m_a->SetInitialized();
-
-	m_b->Subscribe(this);
-	m_b->SetInitialized();
-
-	m_c->Subscribe(this);
-	m_c->SetInitialized();
-
-	m_d->Subscribe(this);
-	m_d->SetInitialized();
-
-	m_e->Subscribe(this);
-	m_e->SetInitialized();
-
-	m_f->Subscribe(this);
-	m_f->SetInitialized();
-}
-
-OperationTransformationMatrix::~OperationTransformationMatrix() {
-	m_a->Unsubscribe(this);
-	m_b->Unsubscribe(this);
-	m_c->Unsubscribe(this);
-	m_d->Unsubscribe(this);
-	m_e->Unsubscribe(this);
-	m_f->Unsubscribe(this);
-}
-
-OperationTextShowArray::~OperationTextShowArray() {
-	m_items->Unsubscribe(this);
-}
-
-OperationTextShow::~OperationTextShow() {
-	_str->Unsubscribe(this);
-}
-
-OperationTextFont::~OperationTextFont() {
-	m_font->Unsubscribe(this);
-	m_scale->Unsubscribe(this);
-}
-
-OperationTextTranslate::~OperationTextTranslate() {
-	m_x->Unsubscribe(this);
-	m_y->Unsubscribe(this);
-}
-
-OperationSetStrokingColorSpaceRGB::~OperationSetStrokingColorSpaceRGB() {
-	m_red->Unsubscribe(this);
-	m_green->Unsubscribe(this);
-	m_blue->Unsubscribe(this);
-}
-
-OperationSetNonstrokingColorSpaceRGB::~OperationSetNonstrokingColorSpaceRGB() {
-	m_red->Unsubscribe(this);
-	m_green->Unsubscribe(this);
-	m_blue->Unsubscribe(this);
 }
 
 std::string OperationTransformationMatrix::ToPdf() const {

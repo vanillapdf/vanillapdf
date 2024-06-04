@@ -10,16 +10,6 @@ namespace contents {
 
 TextObject::TextObject(const contents::BaseOperationCollection& ops)
 	: _operations(ops) {
-	for (auto op : _operations) {
-		op->Subscribe(this);
-		op->SetInitialized();
-	}
-}
-
-TextObject::~TextObject() {
-	for (auto op : _operations) {
-		op->Unsubscribe(this);
-	}
 }
 
 std::string TextObject::ToPdf() const {

@@ -26,7 +26,7 @@ public:
 	virtual InstructionBase::Type GetInstructionType(void) const noexcept override { return InstructionBase::Type::Object; }
 };
 
-class TextObject : public ContentObjectBase, public IModifyObserver {
+class TextObject : public ContentObjectBase {
 public:
 	explicit TextObject(const BaseOperationCollection& ops);
 
@@ -35,12 +35,6 @@ public:
 
 	types::size_type GetOperationsSize(void) const { return _operations.size(); }
 	OperationBasePtr GetOperationAt(types::size_type at) const { return _operations.at(at); }
-
-	virtual void ObserveeChanged(const IModifyObservable*) override {
-		OnChanged();
-	}
-
-	~TextObject();
 
 private:
 	BaseOperationCollection _operations;

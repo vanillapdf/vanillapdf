@@ -39,7 +39,6 @@ BaseInstructionCollectionPtr ContentStreamParser::ReadInstructions(void) {
 		}
 
 		auto operation = ReadInstruction();
-		operation->SetInitialized();
 		result->push_back(operation);
 	}
 
