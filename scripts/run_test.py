@@ -99,7 +99,7 @@ if (is_encrypted):
 			owner_specific_parameters = base_parameters
 			owner_specific_parameters.append(PASSWORD_OPTION)
 			owner_specific_parameters.append(owner_password)
-            
+
 			rv = subprocess.call(owner_specific_parameters)
 			if (rv != 0):
 				sys.exit(rv)
