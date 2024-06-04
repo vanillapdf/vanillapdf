@@ -33,7 +33,7 @@ public:
 
 private:
 	OutputPointer<ISigningKeyPtr> m_key;
-	MessageDigestAlgorithm m_digest;
+	MessageDigestAlgorithm m_digest = MessageDigestAlgorithm::Undefined;
 
 	OutputPointer<syntax::HexadecimalStringObjectPtr> m_certificate;
 	OutputPointer<syntax::LiteralStringObjectPtr> m_name;

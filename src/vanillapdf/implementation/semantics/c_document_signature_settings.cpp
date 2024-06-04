@@ -66,7 +66,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetDigest
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
 	try {
-		MessageDigestAlgorithm algorithm;
+		MessageDigestAlgorithm algorithm = MessageDigestAlgorithm::Undefined;
+
 		switch (value) {
 			case MessageDigestAlgorithmType_Undefined:
 				algorithm = MessageDigestAlgorithm::Undefined; break;
