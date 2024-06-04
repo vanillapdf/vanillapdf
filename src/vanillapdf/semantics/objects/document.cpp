@@ -96,7 +96,21 @@ DocumentPtr Document::CreateFile(syntax::FilePtr holder) {
 	DocumentPtr document = DocumentPtr(pdf_new Document(holder));
 
 	CatalogPtr catalog = document->CreateCatalog();
-	catalog->CreatePages();
+	PageTreePtr page_tree = catalog->CreatePages();
+
+	// Create at least one empty page
+	DictionaryObjectPtr new_page_dictionary;
+	new_page_dictionary->Insert(constant::Name::Type, NameObject::CreateFromDecoded("Page"));
+
+	// Page has to be an indirect object, as the page tree has only references to the pages
+	auto entry = holder->AllocateNewEntry();
+	entry->SetReference(new_page_dictionary);
+	entry->SetInitialized();
+
+	auto new_page = PageObject::Create(new_page_dictionary);
+
+	// Insert into the page tree
+	page_tree->Append(new_page);
 
 	DocumentInfoPtr document_info = document->CreateDocumentInfo();
 
