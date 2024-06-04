@@ -378,6 +378,10 @@ TEST(ObjectAttributeList, MissingKey) {
 }
 
 int main(int argc, char *argv[]) {
+
+	TestEnvironment* test_environment = new TestEnvironment();
+
 	::testing::InitGoogleTest(&argc, argv);
+	::testing::AddGlobalTestEnvironment(test_environment);
 	return RUN_ALL_TESTS();
 }
