@@ -21,7 +21,7 @@ TEST(Buffer, CreateFromDataRelease) {
 	size_type check_data_len = 0;
 
 	// Create buffer with data
-	ASSERT_EQ(Buffer_CreateFromData(&buffer_ptr, BUFFER_DATA, sizeof(BUFFER_DATA)), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(Buffer_CreateFromData(BUFFER_DATA, sizeof(BUFFER_DATA), &buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
 	ASSERT_NE(buffer_ptr, nullptr);
 
 	// Read data information from buffer

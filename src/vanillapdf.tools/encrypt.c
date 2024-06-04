@@ -91,8 +91,8 @@ int process_encrypt(int argc, char *argv[]) {
 	RETURN_ERROR_IF_NOT_SUCCESS(DocumentEncryptionSettings_SetKeyLength(encryption_settings, key_length));
 	RETURN_ERROR_IF_NOT_SUCCESS(DocumentEncryptionSettings_SetUserAccessPermissions(encryption_settings, UserAccessPermissionFlag_None));
 
-	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_CreateFromData(&owner_password_buffer, owner_password, strlen(owner_password)));
-	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_CreateFromData(&user_password_buffer, user_password, strlen(user_password)));
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_CreateFromData(owner_password, strlen(owner_password), &owner_password_buffer));
+	RETURN_ERROR_IF_NOT_SUCCESS(Buffer_CreateFromData(user_password, strlen(user_password), &user_password_buffer));
 
 	RETURN_ERROR_IF_NOT_SUCCESS(DocumentEncryptionSettings_SetOwnerPassword(encryption_settings, owner_password_buffer));
 	RETURN_ERROR_IF_NOT_SUCCESS(DocumentEncryptionSettings_SetUserPassword(encryption_settings, user_password_buffer));

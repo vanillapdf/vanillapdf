@@ -39,8 +39,8 @@ namespace documents {
 		BufferHandle* owner_password = nullptr;
 		BufferHandle* user_password = nullptr;
 
-		ASSERT_EQ(Buffer_CreateFromData(&owner_password, OWNER_PASSWORD, sizeof(OWNER_PASSWORD)), VANILLAPDF_ERROR_SUCCESS);
-		ASSERT_EQ(Buffer_CreateFromData(&user_password, USER_PASSWORD, sizeof(USER_PASSWORD)), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(Buffer_CreateFromData(OWNER_PASSWORD, sizeof(OWNER_PASSWORD), &owner_password), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(Buffer_CreateFromData(USER_PASSWORD, sizeof(USER_PASSWORD), &user_password), VANILLAPDF_ERROR_SUCCESS);
 
 		ASSERT_NE(owner_password, nullptr);
 		ASSERT_NE(user_password, nullptr);

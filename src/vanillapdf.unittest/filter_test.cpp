@@ -31,7 +31,7 @@ namespace filters {
 		ASSERT_EQ(FlateDecodeFilter_Create(&filter_handle), VANILLAPDF_ERROR_SUCCESS);
 		ASSERT_NE(filter_handle, nullptr);
 
-		ASSERT_EQ(Buffer_CreateFromData(&input_data_buffer, reinterpret_cast<string_type>(INPUT_DATA), sizeof(INPUT_DATA)), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(INPUT_DATA), sizeof(INPUT_DATA), &input_data_buffer), VANILLAPDF_ERROR_SUCCESS);
 		ASSERT_NE(input_data_buffer, nullptr);
 
 		ASSERT_EQ(FlateDecodeFilter_Encode(filter_handle, input_data_buffer, &encoded_data_buffer), VANILLAPDF_ERROR_SUCCESS);
@@ -131,7 +131,7 @@ namespace filters {
 		ASSERT_EQ(DCTDecodeFilter_Create(&filter_handle), VANILLAPDF_ERROR_SUCCESS);
 		ASSERT_NE(filter_handle, nullptr);
 
-		ASSERT_EQ(Buffer_CreateFromData(&input_data_buffer, reinterpret_cast<string_type>(INPUT_DATA), sizeof(INPUT_DATA)), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(INPUT_DATA), sizeof(INPUT_DATA), &input_data_buffer), VANILLAPDF_ERROR_SUCCESS);
 		ASSERT_NE(input_data_buffer, nullptr);
 
 		ASSERT_EQ(DCTDecodeFilter_Decode(filter_handle, input_data_buffer, &decoded_data_buffer), VANILLAPDF_ERROR_SUCCESS);
@@ -171,7 +171,7 @@ namespace filters {
 		ASSERT_EQ(JPXDecodeFilter_Create(&filter_handle), VANILLAPDF_ERROR_SUCCESS);
 		ASSERT_NE(filter_handle, nullptr);
 
-		ASSERT_EQ(Buffer_CreateFromData(&input_data_buffer, reinterpret_cast<string_type>(INPUT_DATA), sizeof(INPUT_DATA)), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(INPUT_DATA), sizeof(INPUT_DATA), &input_data_buffer), VANILLAPDF_ERROR_SUCCESS);
 		ASSERT_NE(input_data_buffer, nullptr);
 
 		ASSERT_EQ(JPXDecodeFilter_Decode(filter_handle, input_data_buffer, &decoded_data_buffer), VANILLAPDF_ERROR_SUCCESS);

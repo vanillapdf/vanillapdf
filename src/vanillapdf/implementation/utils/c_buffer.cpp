@@ -16,7 +16,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Buffer_Create(BufferHandle** result
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Buffer_CreateFromData(BufferHandle** result, string_type data, size_type size) {
+VANILLAPDF_API error_type CALLING_CONVENTION Buffer_CreateFromData(string_type data, size_type size, BufferHandle** result) {
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
