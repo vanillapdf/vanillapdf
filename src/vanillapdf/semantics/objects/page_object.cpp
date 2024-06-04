@@ -20,7 +20,7 @@ namespace semantics {
 using namespace constant;
 using namespace syntax;
 
-PageObject::PageObject(DictionaryObjectPtr obj) : PageNodeBase(obj)	{
+PageObject::PageObject(DictionaryObjectPtr obj) : PageNodeBase(obj) {
 	if (_obj->FindAs<NameObjectPtr>(Name::Type) != Name::Page) {
 		throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageObject>(obj);
 	}
@@ -149,7 +149,7 @@ bool PageObject::GetContents(OutputPageContentsPtr& result) const {
 	throw GeneralException("Unreachable code");
 }
 
-std::unique_ptr<PageObject> PageObject::Create(DocumentPtr document) {
+PageObjectPtr PageObject::Create(DocumentPtr document) {
 	auto file = document->GetFile();
 
 	syntax::DictionaryObjectPtr obj;
@@ -163,11 +163,11 @@ std::unique_ptr<PageObject> PageObject::Create(DocumentPtr document) {
 	obj->SetFile(file);
 	obj->SetInitialized();
 
-	return make_unique<PageObject>(obj);
+	return make_deferred<PageObject>(obj);
 }
 
-std::unique_ptr<PageObject> PageObject::Create(syntax::DictionaryObjectPtr obj) {
-	return make_unique<PageObject>(obj);
+PageObjectPtr PageObject::Create(syntax::DictionaryObjectPtr obj) {
+	return make_deferred<PageObject>(obj);
 }
 
 bool PageObjectExtensions::GetInheritableResources(const PageObject& obj, OutputResourceDictionaryPtr& result) {

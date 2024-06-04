@@ -36,11 +36,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateFromDocument(Docum
 	try
 	{
 		auto page = PageObject::Create(obj);
-		auto ptr = page.release();
-
-		// Release from unique ptr does not increase internal ref counter
-		ptr->AddRef();
-
+		auto ptr = page.AddRefGet();
 		*result = reinterpret_cast<PageObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS
@@ -55,11 +51,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateFromObject(Diction
 	try
 	{
 		auto page = PageObject::Create(obj);
-		auto ptr = page.release();
-
-		// Release from unique ptr does not increase internal ref counter
-		ptr->AddRef();
-
+		auto ptr = page.AddRefGet();
 		*result = reinterpret_cast<PageObjectHandle*>(ptr);
 		return VANILLAPDF_ERROR_SUCCESS;
 	} CATCH_VANILLAPDF_EXCEPTIONS

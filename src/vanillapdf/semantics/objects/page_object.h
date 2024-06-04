@@ -15,8 +15,8 @@ class PageObject : public PageNodeBase {
 public:
 	explicit PageObject(syntax::DictionaryObjectPtr obj);
 
-	static std::unique_ptr<PageObject> Create(DocumentPtr document);
-	static std::unique_ptr<PageObject> Create(syntax::DictionaryObjectPtr obj);
+	static PageObjectPtr Create(DocumentPtr document);
+	static PageObjectPtr Create(syntax::DictionaryObjectPtr obj);
 
 	bool GetResources(OutputResourceDictionaryPtr& result) const;
 	void SetResources(ResourceDictionaryPtr resources);
