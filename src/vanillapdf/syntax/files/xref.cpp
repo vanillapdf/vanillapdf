@@ -364,7 +364,12 @@ bool XrefTable::HasHybridStream(void) const {
 XrefStreamPtr XrefTable::GetHybridStream(void) const {
 	bool has_stream = HasHybridStream();
 
-	assert(has_stream && "Getting unset value"); UNUSED(has_stream);
+	assert(has_stream && "Trying to access hybrid stream, that was not set");
+
+	if (!has_stream) {
+		throw GeneralException("Trying to access hybrid stream, that was not set");
+	}
+
 	return m_xref_stm;
 }
 
