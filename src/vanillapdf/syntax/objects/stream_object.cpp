@@ -43,10 +43,22 @@ void StreamObject::ObserveeChanged(const IModifyObservable*) {
 }
 
 void StreamObject::OnChanged() {
+
 	Object::OnChanged();
 
 	// Erase hash cache if something changes
 	_hash_cache = 0;
+
+	if (IsDirty()) {
+		auto weak_file = GetFile();
+		auto file = weak_file.GetReference();
+		auto log_scope = file->GetFilenameString();
+
+		auto obj_number = GetRootObjectNumber();
+		auto gen_number = GetRootGenerationNumber();
+
+		LOG_DEBUG(log_scope) << "Stream object " << std::dec << obj_number << " " << gen_number << " change triggered, object is dirty";
+	}
 }
 
 DictionaryObjectPtr StreamObject::GetHeader() const {
