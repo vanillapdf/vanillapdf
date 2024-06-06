@@ -46,6 +46,7 @@ extern "C"
 	// Attributes
 	DECLARE_OBJECT_HANDLE(BaseObjectAttribute);
 	DECLARE_OBJECT_HANDLE(ImageMetadataObjectAttribute);
+	DECLARE_OBJECT_HANDLE(SerializationOverrideObjectAttribute);
 	DECLARE_OBJECT_HANDLE(ObjectAttributeList);
 
 	#pragma endregion

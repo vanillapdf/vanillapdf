@@ -12,7 +12,7 @@ class SerializationOverrideAttribute : public BaseAttribute {
 public:
 	SerializationOverrideAttribute() = default;
 
-	explicit SerializationOverrideAttribute(const std::string& value) : m_value(value) {
+	explicit SerializationOverrideAttribute(std::string_view value) : m_value(value) {
 
 	}
 

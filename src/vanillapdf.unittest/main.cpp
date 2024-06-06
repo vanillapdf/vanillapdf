@@ -333,50 +333,6 @@ TEST(DictionaryObject, InsertOverwrite) {
 	ASSERT_EQ(DictionaryObject_Release(dictionary_object), VANILLAPDF_ERROR_SUCCESS);
 }
 
-TEST(ObjectAttributeList, CreateRelease) {
-
-	ObjectAttributeListHandle* attribute_list = NULL;
-
-	ASSERT_EQ(ObjectAttributeList_Create(&attribute_list), VANILLAPDF_ERROR_SUCCESS);
-	ASSERT_NE(attribute_list, nullptr);
-
-	ASSERT_EQ(ObjectAttributeList_Release(attribute_list), VANILLAPDF_ERROR_SUCCESS);
-}
-
-TEST(ObjectAttributeList, NullCheck) {
-	EXPECT_NE(ObjectAttributeList_Create(nullptr), VANILLAPDF_ERROR_SUCCESS);
-	EXPECT_NE(ObjectAttributeList_Release(nullptr), VANILLAPDF_ERROR_SUCCESS);
-}
-
-TEST(ObjectAttributeList, Clear) {
-
-	ObjectAttributeListHandle* attribute_list = NULL;
-
-	ASSERT_EQ(ObjectAttributeList_Create(&attribute_list), VANILLAPDF_ERROR_SUCCESS);
-	ASSERT_NE(attribute_list, nullptr);
-
-	EXPECT_EQ(ObjectAttributeList_Clear(attribute_list), VANILLAPDF_ERROR_SUCCESS);
-
-	ASSERT_EQ(ObjectAttributeList_Release(attribute_list), VANILLAPDF_ERROR_SUCCESS);
-}
-
-TEST(ObjectAttributeList, MissingKey) {
-
-	BaseObjectAttributeHandle* found_attribute = NULL;
-	ObjectAttributeListHandle* attribute_list = NULL;
-
-	ASSERT_EQ(ObjectAttributeList_Create(&attribute_list), VANILLAPDF_ERROR_SUCCESS);
-	ASSERT_NE(attribute_list, nullptr);
-
-	EXPECT_NE(ObjectAttributeList_Get(attribute_list, ObjectAttributeType_Undefined, &found_attribute), VANILLAPDF_ERROR_SUCCESS);
-	EXPECT_NE(ObjectAttributeList_Get(attribute_list, ObjectAttributeType_Empty, &found_attribute), VANILLAPDF_ERROR_SUCCESS);
-	EXPECT_NE(ObjectAttributeList_Get(attribute_list, ObjectAttributeType_SerializationOverride, &found_attribute), VANILLAPDF_ERROR_SUCCESS);
-	EXPECT_NE(ObjectAttributeList_Get(attribute_list, ObjectAttributeType_TrackingIdentifier, &found_attribute), VANILLAPDF_ERROR_SUCCESS);
-	EXPECT_NE(ObjectAttributeList_Get(attribute_list, ObjectAttributeType_ImageMetadata, &found_attribute), VANILLAPDF_ERROR_SUCCESS);
-
-	ASSERT_EQ(ObjectAttributeList_Release(attribute_list), VANILLAPDF_ERROR_SUCCESS);
-}
-
 int main(int argc, char *argv[]) {
 
 	TestEnvironment* test_environment = new TestEnvironment();

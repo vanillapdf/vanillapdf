@@ -8,6 +8,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
 	document_test.cpp
 	filter_test.cpp
 	test_environment.cpp
+	attributes_test.cpp
 )
 
 set(VANILLAPDF_UNITTEST_HEADERS

@@ -86,7 +86,7 @@ extern "C"
 	*/
 
 	/**
-	* \brief Creates a new NameObject instance
+	* \brief Creates a new ImageMetadataObjectAttribute instance
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_Create(ImageMetadataObjectAttributeHandle** result);
 
@@ -144,6 +144,38 @@ extern "C"
 	* \copydoc IUnknown_Release
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_Release(ImageMetadataObjectAttributeHandle* handle);
+
+	/** @} */
+
+	/**
+	* \memberof SerializationOverrideObjectAttributeHandle
+	* @{
+	*/
+
+	/**
+	* \brief Creates a new SerializationOverrideObjectAttribute instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION SerializationOverrideObjectAttribute_Create(SerializationOverrideObjectAttributeHandle** result);
+
+	/**
+	* \brief Creates a new SerializationOverrideObjectAttribute instance with value specified in data and size
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION SerializationOverrideObjectAttribute_CreateFromData(string_type data, size_type size, SerializationOverrideObjectAttributeHandle** result);
+
+	/**
+	* \brief Reinterpret current object as \ref BaseObjectAttributeHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION SerializationOverrideObjectAttribute_ToBaseAttribute(SerializationOverrideObjectAttributeHandle* handle, BaseObjectAttributeHandle** result);
+
+	/**
+	* \brief Convert \ref BaseObjectAttributeHandle to \ref SerializationOverrideObjectAttributeHandle
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION SerializationOverrideObjectAttribute_FromBaseAttribute(BaseObjectAttributeHandle* handle, SerializationOverrideObjectAttributeHandle** result);
+
+	/**
+	* \copydoc IUnknown_Release
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION SerializationOverrideObjectAttribute_Release(SerializationOverrideObjectAttributeHandle* handle);
 
 	/** @} */
 

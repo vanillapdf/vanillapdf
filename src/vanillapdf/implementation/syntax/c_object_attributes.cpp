@@ -5,6 +5,7 @@
 
 #include "syntax/utils/base_object_attribute.h"
 #include "syntax/utils/image_metadata_object_attribute.h"
+#include "syntax/utils/serialization_override_object_attribute.h"
 
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
@@ -160,4 +161,42 @@ VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_FromBa
 
 VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_Release(ImageMetadataObjectAttributeHandle* handle) {
 	return ObjectRelease<ImageMetadataObjectAttribute, ImageMetadataObjectAttributeHandle>(handle);
+}
+
+// SerializationOverrideObjectAttribute
+
+VANILLAPDF_API error_type CALLING_CONVENTION SerializationOverrideObjectAttribute_Create(SerializationOverrideObjectAttributeHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto object = make_deferred<SerializationOverrideAttribute>();
+		auto ptr = object.AddRefGet();
+		*result = reinterpret_cast<SerializationOverrideObjectAttributeHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SerializationOverrideObjectAttribute_CreateFromData(string_type data, size_type size, SerializationOverrideObjectAttributeHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		std::string_view user_data(data, size);
+		auto object = make_deferred<SerializationOverrideAttribute>(user_data);
+		auto ptr = object.AddRefGet();
+		*result = reinterpret_cast<SerializationOverrideObjectAttributeHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SerializationOverrideObjectAttribute_ToBaseAttribute(SerializationOverrideObjectAttributeHandle* handle, BaseObjectAttributeHandle** result) {
+	return SafeObjectConvert<SerializationOverrideAttribute, BaseAttribute, SerializationOverrideObjectAttributeHandle, BaseObjectAttributeHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SerializationOverrideObjectAttribute_FromBaseAttribute(BaseObjectAttributeHandle* handle, SerializationOverrideObjectAttributeHandle** result) {
+	return SafeObjectConvert<BaseAttribute, SerializationOverrideAttribute, BaseObjectAttributeHandle, SerializationOverrideObjectAttributeHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SerializationOverrideObjectAttribute_Release(SerializationOverrideObjectAttributeHandle* handle) {
+	return ObjectRelease<SerializationOverrideAttribute, SerializationOverrideObjectAttributeHandle>(handle);
 }
