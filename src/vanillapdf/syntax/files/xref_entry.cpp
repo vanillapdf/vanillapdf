@@ -179,16 +179,21 @@ void XrefUsedEntry::Initialize(void) {
 
 	input->ExclusiveInputLock();
 
-	auto rewind_pos = input->GetInputPosition();
-
-	// We want to capture input by value, because it might be out of scope
-	// In order to call non-const method we have to tag the lambda mutable
-	auto cleanup_lambda = [input, rewind_pos]() mutable {
-		input->SetInputPosition(rewind_pos);
+	auto unlock_lambda = [&input]() {
 		input->ExclusiveInputUnlock();
 	};
 
-	SCOPE_GUARD(cleanup_lambda);
+	SCOPE_GUARD(unlock_lambda);
+
+	auto rewind_pos = input->GetInputPosition();
+
+	// I am not sure about this entire rewind functionality,
+	// but it was done a long time ago by someone who was really clever
+	auto rewind_lambda = [&input, rewind_pos]() {
+		input->SetInputPosition(rewind_pos);
+	};
+
+	SCOPE_GUARD(rewind_lambda);
 
 	Parser parser(_file, input);
 
