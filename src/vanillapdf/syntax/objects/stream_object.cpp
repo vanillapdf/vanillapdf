@@ -46,9 +46,6 @@ void StreamObject::OnChanged() {
 
 	Object::OnChanged();
 
-	// Erase hash cache if something changes
-	_hash_cache = 0;
-
 	if (IsDirty()) {
 		auto weak_file = GetFile();
 		auto file = weak_file.GetReference();
@@ -511,16 +508,7 @@ void StreamObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 }
 
 size_t StreamObject::Hash() const {
-	if (_hash_cache != 0) {
-		return _hash_cache;
-	}
-
-	// TODO: There should be decoded body in the hash algorithm
-	// Decoded body is not yet fully supported, for example JPX decode
-	auto decoded_body = GetBodyEncoded();
-	_hash_cache = _header->Hash() ^ decoded_body->Hash();
-
-	return _hash_cache;
+	return _header->Hash();
 }
 
 bool StreamObject::Equals(ObjectPtr other) const {
