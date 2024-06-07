@@ -17,7 +17,7 @@ public:
 
 class DeveloperExtensions : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
-	class Iterator : public BaseIterator<syntax::DictionaryObject::const_iterator>, public IWeakReferenceable {
+	class Iterator : public BaseIterator<syntax::DictionaryObject::const_iterator> {
 	public:
 		using BaseIterator<syntax::DictionaryObject::const_iterator>::BaseIterator;
 		typedef syntax::DictionaryObject::const_iterator IteratorT;

@@ -7,7 +7,7 @@ namespace vanillapdf {
 namespace semantics {
 
 template <typename T>
-class HighLevelObject : public virtual IUnknown, public IWeakReferenceable<HighLevelObject<T>> {
+class HighLevelObject : public virtual IUnknown {
 public:
 	template <typename = typename std::enable_if<std::is_default_constructible<T>::value>::type>
 	HighLevelObject() {}

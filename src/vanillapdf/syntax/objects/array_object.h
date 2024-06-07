@@ -62,7 +62,7 @@ private:
 
 // This class shall act as a front-end above mixed array
 template <typename T>
-class ArrayObject : public IUnknown, public IWeakReferenceable<ArrayObject<T>> {
+class ArrayObject : public IUnknown {
 public:
 	static_assert(instantiation_of<Deferred, T>::value ||
 		std::is_base_of<Object, typename T::deferred_ptr_type>::value,

@@ -8,7 +8,7 @@
 namespace vanillapdf {
 namespace syntax {
 
-class Header : public IUnknown, public IWeakReferenceable<Header> {
+class Header : public IUnknown {
 public:
 	Version GetVersion(void) const noexcept { return _version; }
 	void SetVersion(Version version) { _version = version; }

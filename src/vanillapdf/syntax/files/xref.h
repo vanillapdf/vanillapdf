@@ -22,7 +22,7 @@ public:
 	typedef map_type::difference_type difference_type;
 
 public:
-	class Iterator : public BaseIterator<map_type::const_iterator>, public IWeakReferenceable {
+	class Iterator : public BaseIterator<map_type::const_iterator> {
 	public:
 		using BaseIterator<map_type::const_iterator>::BaseIterator;
 

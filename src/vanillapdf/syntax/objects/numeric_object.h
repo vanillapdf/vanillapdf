@@ -9,7 +9,7 @@
 namespace vanillapdf {
 namespace syntax {
 
-class NumericObjectBackend : public IUnknown, public IWeakReferenceable<NumericObjectBackend>, public IModifyObservable {
+class NumericObjectBackend : public IUnknown, public IModifyObservable {
 public:
 	NumericObjectBackend();
 	explicit NumericObjectBackend(int32_t value);

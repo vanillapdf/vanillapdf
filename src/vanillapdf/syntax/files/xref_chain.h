@@ -10,7 +10,7 @@
 namespace vanillapdf {
 namespace syntax {
 
-class XrefChain : public virtual IUnknown, public IWeakReferenceable<XrefChain> {
+class XrefChain : public IUnknown {
 public:
 	using list_type = std::list<XrefBasePtr>;
 
@@ -26,7 +26,7 @@ public:
 	typedef typename list_type::const_reverse_iterator const_reverse_iterator;
 
 public:
-	class Iterator : public BaseIterator<list_type::const_iterator>, public IWeakReferenceable<Iterator> {
+	class Iterator : public BaseIterator<list_type::const_iterator> {
 	public:
 		using BaseIterator<list_type::const_iterator>::BaseIterator;
 

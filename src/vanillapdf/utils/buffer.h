@@ -15,7 +15,7 @@
 
 namespace vanillapdf {
 
-class Buffer : public IUnknown, public IWeakReferenceable<Buffer>, public IModifyObservable {
+class Buffer : public IUnknown, public IModifyObservable {
 public:
 	using storage_type = std::vector<char>;
 

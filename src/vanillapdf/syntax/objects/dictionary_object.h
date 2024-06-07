@@ -31,7 +31,7 @@ public:
 	typedef typename list_type::difference_type difference_type;
 
 public:
-	class Iterator : public BaseIterator<const_iterator>, public IWeakReferenceable {
+	class Iterator : public BaseIterator<const_iterator> {
 	public:
 		using BaseIterator<const_iterator>::BaseIterator;
 

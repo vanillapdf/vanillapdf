@@ -9,7 +9,7 @@
 namespace vanillapdf {
 namespace contents {
 
-class OperatorBase : public IUnknown, public IWeakReferenceable<OperationBase> {
+class OperatorBase : public IUnknown {
 public:
 	enum class Type {
 		Undefined = 0,

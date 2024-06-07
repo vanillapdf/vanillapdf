@@ -8,7 +8,7 @@
 namespace vanillapdf {
 namespace syntax {
 
-class XrefEntryBase : public virtual IUnknown, public IWeakReferenceable<XrefEntryBase>, public IModifyObservable {
+class XrefEntryBase : public virtual IUnknown, public IModifyObservable {
 public:
 	enum class Usage {
 		Undefined = 0,
