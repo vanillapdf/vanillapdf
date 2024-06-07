@@ -177,6 +177,13 @@ void XrefUsedEntry::Initialize(void) {
 		<< " at offset "
 		<< std::to_string(_offset);
 
+	// In case the we have a document with XRefStm, there are multiple entries for the same object.
+	// What this means is that we are reading the same object multiple times and not sharing the reference.
+	// We should try to search for such cases before actually reading from the disk.
+
+	// Multiple xref entries needs to be synchronized locking shared property such as input stream.
+	// This prevents the cases, where 2 xref entries simultaneously check if the object was loaded,
+	// where both of them do not find anything yet and both of them load the indirect object from disk.
 	input->ExclusiveInputLock();
 
 	auto unlock_lambda = [&input]() {
@@ -184,6 +191,58 @@ void XrefUsedEntry::Initialize(void) {
 	};
 
 	SCOPE_GUARD(unlock_lambda);
+
+	auto xref_chain = locked_file->GetXrefChain(false);
+
+	for (auto xref : xref_chain) {
+		if (!xref->Contains(_obj_number)) {
+			continue;
+		}
+
+		auto xref_entry = xref->Find(_obj_number);
+		if (xref_entry->GetGenerationNumber() != _gen_number) {
+			continue;
+		}
+
+		if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(xref_entry)) {
+			continue;
+		}
+
+		auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(xref_entry);
+
+		if (!used_entry->IsInitialized()) {
+			continue;
+		}
+
+		// This could be a regular update in the increment xref section,
+		// describing a new object with the same object and generation number.
+		// The generation number AFAIK is only incremented when the object is released
+		// and then reacquired.
+		if (used_entry->GetOffset() != _offset) {
+			LOG_WARNING(log_scope)
+				<< "Initializing xref USED entry "
+				<< std::to_string(_obj_number)
+				<< " "
+				<< std::to_string(_gen_number)
+				<< " from another XRef entry, however the offset is "
+				<< std::to_string(used_entry->GetOffset())
+				<< " instead of "
+				<< std::to_string(_offset);
+
+			continue;
+		}
+
+		auto used_entry_reference = used_entry->GetReference();
+		
+		SetReference(used_entry_reference);
+		SetInitialized();
+		
+		// The object reference was shared from another xref entry
+		// which was already initialized, no need to read from disk
+		return;
+	}
+
+	// The object was not yet loaded, read indirect object from disk
 
 	auto rewind_pos = input->GetInputPosition();
 
