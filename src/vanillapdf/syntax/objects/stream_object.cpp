@@ -151,9 +151,7 @@ BufferPtr StreamObject::GetBodyRaw() const {
 
 	auto pos = input->GetInputPosition();
 
-	// We want to capture input by value, because it might be out of scope
-	// In order to call non-const method we have to tag the lambda mutable
-	auto cleanup_lambda = [input, pos]() mutable {
+	auto cleanup_lambda = [&input, pos]() {
 		input->SetInputPosition(pos);
 		input->ExclusiveInputUnlock();
 	};
