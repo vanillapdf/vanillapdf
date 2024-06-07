@@ -270,10 +270,28 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 
 	auto locked_file = m_file.GetReference();
 
+	bool is_file_encrypted = locked_file->IsEncrypted();
+
 	// Optimization for unchanged streams
 	// In case the document is encrypted, the stream contents needs to be recalculated
-	if (!IsDirty() && !locked_file->IsEncrypted()) {
-		return GetBodyRaw();
+
+	if (!is_file_encrypted) {
+		bool is_dirty = IsDirty();
+		bool is_body_initialized = _body_decoded->IsInitialized();
+
+		// In case the object is not dirty, we can safely return the original stream data
+
+		if (!is_dirty) {
+			return GetBodyRaw();
+		}
+
+		// We need to avoid cases, where there is non-significant change in the stream header
+		// as we are always losing some kind of precision, when re-encoding images.
+		// It's better to let user handle the scenario of changing stream contents explicitly.
+
+		if (!is_body_initialized) {
+			return GetBodyRaw();
+		}
 	}
 
 	auto decoded_body = GetBody();
