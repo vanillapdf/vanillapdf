@@ -132,7 +132,7 @@ types::big_uint Object::GetObjectNumber() const {
 	}
 
 	if (has_owner) {
-		throw GeneralException("Object does not an indirect object, but a composite of another object");
+		throw GeneralException("Object does not an indirect object, but is a composite of another object");
 	}
 
 	throw GeneralException("Object does not have assigned object number");
