@@ -51,7 +51,6 @@ private:
 
 	mutable BufferPtr _body;
 	mutable BufferPtr _body_decoded;
-	mutable std::size_t _hash_cache = 0;
 
 	BufferPtr EncryptStream(BufferPtr data, types::big_uint obj_number, types::ushort generation_number) const;
 	BufferPtr EncryptData(BufferPtr data, types::big_uint obj_number, types::ushort generation_number, NameObjectPtr handler) const;
