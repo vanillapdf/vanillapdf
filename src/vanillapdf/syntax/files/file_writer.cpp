@@ -1969,7 +1969,8 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
 	new_trailer->Merge(last_trailer);
 
 	if (new_trailer->Contains(constant::Name::Prev)) {
-		bool removed = new_trailer->Remove(constant::Name::Prev); UNUSED(removed);
+		bool removed = new_trailer->Remove(constant::Name::Prev);
+		assert(removed && "Could not remove Prev from trailer"); UNUSED(removed);
 	}
 
 	new_xref->SetFile(weak_file);
