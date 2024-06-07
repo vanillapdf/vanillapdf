@@ -420,7 +420,12 @@ void XrefStream::SetTrailerDictionary(DictionaryObjectPtr dictionary) {
 StreamObjectPtr XrefStream::GetStreamObject(void) const {
 	bool has_stream = !_stream.empty();
 
-	assert(has_stream && "Stream not yet initialized"); UNUSED(has_stream);
+	assert(has_stream && "Trying to access stream object, that was not set");
+
+	if (!has_stream) {
+		throw GeneralException("Trying to access stream object, that was not set");
+	}
+
 	return _stream;
 }
 
