@@ -1366,6 +1366,206 @@ error_type process_document_sign(
 	return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
+error_type process_document_edit(
+	DocumentHandle* document,
+	string_type password,
+	string_type cert_path,
+	string_type cert_password,
+	int nested) {
+
+	FileHandle* save_file = NULL;
+	FileHandle* load_file = NULL;
+	InputOutputStreamHandle* input_output_stream = NULL;
+	boolean_type is_encrypted = VANILLAPDF_RV_FALSE;
+
+	CatalogHandle* source_catalog = NULL;
+	PageTreeHandle* source_pages = NULL;
+	size_type source_page_count = 0;
+
+	boolean_type page_modified = VANILLAPDF_RV_FALSE;
+
+	print_spaces(nested);
+	print_text("Process document edit begin\n");
+
+	// There was an issues for files that contained XRefStm, where the stream object contents
+	// were not persisted after the save. This was due to duplicit entry in the XrefTable
+	// with hybrid stream.
+
+	// Edit first page contents
+	const char NEW_PAGE_DATA[] = "Q q Q q Q q Q q";
+
+	// Get Catalog
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_GetCatalog(document, &source_catalog));
+	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_GetPages(source_catalog, &source_pages));
+	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(source_pages, &source_page_count));
+
+	if (source_page_count > 0) {
+		PageObjectHandle* source_first_page = NULL;
+		PageContentsHandle* source_first_page_contents = NULL;
+
+		error_type source_contents_result = VANILLAPDF_ERROR_GENERAL;
+
+		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(source_pages, 1, &source_first_page));
+
+		// (Optional)
+		// A content stream (see 7.8.2, "Content Streams") that shall describe the contents of this page.
+		// If this entry is absent, the page shall be empty.
+
+		source_contents_result = PageObject_GetContents(source_first_page, &source_first_page_contents);
+
+		if (source_contents_result == VANILLAPDF_ERROR_SUCCESS) {
+			ObjectHandle* source_first_page_contents_object = NULL;
+			ObjectType source_first_page_contents_object_type = ObjectType_Undefined;
+
+			RETURN_ERROR_IF_NOT_SUCCESS(PageContents_GetBaseObject(source_first_page_contents, &source_first_page_contents_object));
+			RETURN_ERROR_IF_NOT_SUCCESS(Object_GetObjectType(source_first_page_contents_object, &source_first_page_contents_object_type));
+
+			if (source_first_page_contents_object_type == ObjectType_Stream) {
+				StreamObjectHandle* source_first_page_contents_stream = NULL;
+				BufferHandle* page_data_buffer = NULL;
+
+				RETURN_ERROR_IF_NOT_SUCCESS(Buffer_CreateFromData(NEW_PAGE_DATA, sizeof(NEW_PAGE_DATA), &page_data_buffer));
+
+				RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_FromObject(source_first_page_contents_object, &source_first_page_contents_stream));
+				RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_SetBody(source_first_page_contents_stream, page_data_buffer));
+
+				RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_Release(source_first_page_contents_stream));
+				RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(page_data_buffer));
+
+				page_modified = VANILLAPDF_RV_TRUE;
+			}
+
+			RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(source_first_page_contents_object));
+		}
+
+		if (source_first_page_contents != NULL) {
+			RETURN_ERROR_IF_NOT_SUCCESS(PageContents_Release(source_first_page_contents));
+		}
+
+		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(source_first_page));
+	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_CreateFromMemory(&input_output_stream));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_CreateStream(input_output_stream, "UNUSED", &save_file));
+	RETURN_ERROR_IF_NOT_SUCCESS(Document_SaveFile(document, save_file));
+
+	// Check the file consistency
+	RETURN_ERROR_IF_NOT_SUCCESS(File_OpenStream(input_output_stream, "UNUSED", &load_file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Initialize(load_file));
+	RETURN_ERROR_IF_NOT_SUCCESS(File_IsEncrypted(load_file, &is_encrypted));
+
+	if (is_encrypted == VANILLAPDF_RV_TRUE) {
+		// No password entered
+		if (password == NULL && cert_path == NULL) {
+			// Opening the file with default password
+		}
+
+		if (password != NULL) {
+			RETURN_ERROR_IF_NOT_SUCCESS(File_SetEncryptionPassword(load_file, password));
+		}
+
+		if (cert_path != NULL) {
+			PKCS12KeyHandle* encryption_pkcs12_key = NULL;
+			EncryptionKeyHandle* encryption_key = NULL;
+
+			RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_CreateFromFile(cert_path, cert_password, &encryption_pkcs12_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_ToEncryptionKey(encryption_pkcs12_key, &encryption_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(File_SetEncryptionKey(load_file, encryption_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(EncryptionKey_Release(encryption_key));
+			RETURN_ERROR_IF_NOT_SUCCESS(PKCS12Key_Release(encryption_pkcs12_key));
+		}
+	}
+	else {
+		// Password for un-encrypted file
+		if (password != NULL || cert_path != NULL) {
+			return VANILLAPDF_TEST_ERROR_INVALID_PASSWORD;
+		}
+	}
+
+	// Check the first page contents
+	if (page_modified) {
+		DocumentHandle* destination_document = NULL;
+		CatalogHandle* destination_catalog = NULL;
+		PageTreeHandle* destination_pages = NULL;
+		size_type destination_page_count = 0;
+
+		PageObjectHandle* destination_first_page = NULL;
+		PageContentsHandle* destination_first_page_contents = NULL;
+
+		error_type destination_contents_result = VANILLAPDF_ERROR_GENERAL;
+
+		RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenFile(load_file, &destination_document));
+		RETURN_ERROR_IF_NOT_SUCCESS(Document_GetCatalog(destination_document, &destination_catalog));
+		RETURN_ERROR_IF_NOT_SUCCESS(Catalog_GetPages(destination_catalog, &destination_pages));
+		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPageCount(destination_pages, &destination_page_count));
+
+		// The page count has changed in between saves
+		if (source_page_count != destination_page_count) {
+			return VANILLAPDF_TEST_ERROR_FAILURE;
+		}
+
+		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_GetPage(destination_pages, 1, &destination_first_page));
+
+		// (Optional)
+		// A content stream (see 7.8.2, "Content Streams") that shall describe the contents of this page.
+		// If this entry is absent, the page shall be empty.
+		destination_contents_result = PageObject_GetContents(destination_first_page, &destination_first_page_contents);
+
+		if (destination_contents_result == VANILLAPDF_ERROR_SUCCESS) {
+			ObjectHandle* destination_first_page_contents_object = NULL;
+			ObjectType destination_first_page_contents_object_type = ObjectType_Undefined;
+
+			RETURN_ERROR_IF_NOT_SUCCESS(PageContents_GetBaseObject(destination_first_page_contents, &destination_first_page_contents_object));
+			RETURN_ERROR_IF_NOT_SUCCESS(Object_GetObjectType(destination_first_page_contents_object, &destination_first_page_contents_object_type));
+
+			if (destination_first_page_contents_object_type == ObjectType_Stream) {
+				StreamObjectHandle* destination_first_page_contents_stream = NULL;
+				BufferHandle* destination_page_stream_buffer = NULL;
+
+				string_type destination_page_stream_buffer_data = NULL;
+				size_type destination_page_stream_buffer_size = 0;
+
+				RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_FromObject(destination_first_page_contents_object, &destination_first_page_contents_stream));
+				RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_GetBody(destination_first_page_contents_stream, &destination_page_stream_buffer));
+				RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(destination_page_stream_buffer, &destination_page_stream_buffer_data, &destination_page_stream_buffer_size));
+
+				// Check if the page data were persisted
+				if (memcmp(destination_page_stream_buffer_data, NEW_PAGE_DATA, destination_page_stream_buffer_size) != 0) {
+					return VANILLAPDF_TEST_ERROR_FAILURE;
+				}
+
+				RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(destination_page_stream_buffer));
+				RETURN_ERROR_IF_NOT_SUCCESS(StreamObject_Release(destination_first_page_contents_stream));
+			}
+
+			RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(destination_first_page_contents_object));
+		}
+
+		if (destination_first_page_contents != NULL) {
+			RETURN_ERROR_IF_NOT_SUCCESS(PageContents_Release(destination_first_page_contents));
+		}
+
+		RETURN_ERROR_IF_NOT_SUCCESS(PageObject_Release(destination_first_page));
+
+		RETURN_ERROR_IF_NOT_SUCCESS(PageTree_Release(destination_pages));
+		RETURN_ERROR_IF_NOT_SUCCESS(Catalog_Release(destination_catalog));
+		RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(destination_document));
+	}
+
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(load_file));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(File_Release(save_file));
+	RETURN_ERROR_IF_NOT_SUCCESS(InputOutputStream_Release(input_output_stream));
+
+	RETURN_ERROR_IF_NOT_SUCCESS(PageTree_Release(source_pages));
+	RETURN_ERROR_IF_NOT_SUCCESS(Catalog_Release(source_catalog));
+
+	print_spaces(nested);
+	print_text("Process document edit end\n");
+
+	return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
 error_type process_interactive_form(InteractiveFormHandle* obj, int nested) {
 	FieldCollectionHandle* fields = NULL;
 

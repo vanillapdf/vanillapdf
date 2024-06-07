@@ -29,6 +29,7 @@ int main(int argc, char *argv[]) {
 	boolean_type is_encrypted = VANILLAPDF_RV_FALSE;
 	boolean_type quiet_mode = VANILLAPDF_RV_FALSE;
 	boolean_type skip_save = VANILLAPDF_RV_FALSE;
+	boolean_type skip_edit = VANILLAPDF_RV_FALSE;
 	boolean_type skip_incremental_save = VANILLAPDF_RV_FALSE;
 
 #if (defined(DEBUG) && defined(COMPILER_MICROSOFT_VISUAL_STUDIO))
@@ -80,6 +81,10 @@ int main(int argc, char *argv[]) {
 		// skip save
 		} else if (strcmp(argv[i], "-ss") == 0) {
 			skip_save = VANILLAPDF_RV_TRUE;
+
+		// skip edit
+		} else if (strcmp(argv[i], "-se") == 0) {
+			skip_edit = VANILLAPDF_RV_TRUE;
 
 		// skip incremental
 		} else if (strcmp(argv[i], "-si") == 0) {
@@ -147,6 +152,10 @@ int main(int argc, char *argv[]) {
 		if (signing_cert_file != NULL) {
 			RETURN_ERROR_IF_NOT_SUCCESS(process_document_sign(document, signing_cert_file, signing_cert_password, password, cert_path, cert_password, 0));
 		}
+	}
+
+	if (skip_edit != VANILLAPDF_RV_TRUE) {
+		RETURN_ERROR_IF_NOT_SUCCESS(process_document_edit(document, password, cert_path, cert_password, 0));
 	}
 
 	// TODO: This is still broken

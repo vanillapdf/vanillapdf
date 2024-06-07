@@ -146,6 +146,13 @@ error_type process_document_sign(DocumentHandle* document,
 	string_type cert_password,
 	int nested);
 
+error_type process_document_edit(
+	DocumentHandle* document,
+	string_type password,
+	string_type cert_path,
+	string_type cert_password,
+	int nested);
+
 // Some parameters to functions are unused
 #define UNUSED(x) (void)(x)
 

@@ -18,6 +18,7 @@ CERTIFICATE_OPTION = "-k"
 MERGE_OPTION = "-m"
 QUIET_OPTION = "-q"
 SKIP_SAVE_OPTION = "-ss"
+SKIP_EDIT_OPTION = "-se"
 SKIP_INCREMENTAL_SAVE_OPTION = "-si"
 SIGNING_CERTIFICATE_OPTION = "-sc"
 
@@ -63,6 +64,9 @@ if ("Merge" in config_data):
 
 if ("SkipSave" in config_data and test_filename in config_data["SkipSave"]):
 	base_parameters.append(SKIP_SAVE_OPTION)
+
+if ("SkipSave" in config_data and test_filename in config_data["SkipEdit"]):
+	base_parameters.append(SKIP_EDIT_OPTION)
 
 if ("SkipIncrementalSave" in config_data and test_filename in config_data["SkipIncrementalSave"]):
 	base_parameters.append(SKIP_INCREMENTAL_SAVE_OPTION)
