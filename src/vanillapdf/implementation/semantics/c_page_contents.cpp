@@ -40,6 +40,20 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageContents_RecalculateStreamData(
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION PageContents_GetBaseObject(PageContentsHandle* handle, ObjectHandle** result) {
+	PageContents* obj = reinterpret_cast<PageContents*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto base_object = obj->GetObject();
+		auto ptr = base_object.AddRefGet();
+		*result = reinterpret_cast<ObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION PageContents_ToUnknown(PageContentsHandle* handle, IUnknownHandle** result) {
 	return SafeObjectConvert<PageContents, IUnknown, PageContentsHandle, IUnknownHandle>(handle, result);
 }

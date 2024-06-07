@@ -42,6 +42,14 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION PageContents_RecalculateStreamData(PageContentsHandle* handle, boolean_type* result);
 
 	/**
+	* \brief
+	* Switch object to low-level syntax API
+	*
+	* Useful for cases, where semantic API is not sufficient.
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION PageContents_GetBaseObject(PageContentsHandle* handle, ObjectHandle** result);
+
+	/**
 	* \brief Reinterpret current object as \ref IUnknownHandle
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION PageContents_ToUnknown(PageContentsHandle* handle, IUnknownHandle** result);
