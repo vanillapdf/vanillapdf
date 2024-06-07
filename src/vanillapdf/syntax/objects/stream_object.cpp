@@ -13,6 +13,7 @@ namespace vanillapdf {
 namespace syntax {
 
 StreamObject::StreamObject() : StreamObject(false) {
+	_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 StreamObject::StreamObject(bool initialized) {
@@ -20,6 +21,8 @@ StreamObject::StreamObject(bool initialized) {
 	_header->Subscribe(this);
 	_body->Subscribe(this);
 	_body_decoded->Subscribe(this);
+
+	_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 
 	SetInitialized(initialized);
 }
@@ -30,6 +33,8 @@ StreamObject::StreamObject(DictionaryObjectPtr header, types::stream_offset offs
 	_header->Subscribe(this);
 	_body->Subscribe(this);
 	_body_decoded->Subscribe(this);
+
+	_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 StreamObject::~StreamObject() {
@@ -43,6 +48,7 @@ void StreamObject::ObserveeChanged(const IModifyObservable*) {
 }
 
 void StreamObject::OnChanged() {
+	ACCESS_LOCK_GUARD(_access_lock);
 
 	Object::OnChanged();
 
@@ -63,6 +69,8 @@ DictionaryObjectPtr StreamObject::GetHeader() const {
 }
 
 void StreamObject::SetHeader(DictionaryObjectPtr header) {
+	ACCESS_LOCK_GUARD(_access_lock);
+
 	_header->Unsubscribe(this);
 	header->Subscribe(this);
 	_header = header;
@@ -70,6 +78,8 @@ void StreamObject::SetHeader(DictionaryObjectPtr header) {
 }
 
 void StreamObject::SetBody(BufferPtr value) {
+	ACCESS_LOCK_GUARD(_access_lock);
+
 	_body_decoded->assign(value.begin(), value.end());
 	_body_decoded->SetInitialized();
 
@@ -82,6 +92,8 @@ types::stream_offset StreamObject::GetDataOffset() const {
 }
 
 void StreamObject::SetDataOffset(types::stream_offset offset) {
+	ACCESS_LOCK_GUARD(_access_lock);
+
 	_raw_data_offset = offset;
 	OnChanged();
 }
@@ -92,6 +104,8 @@ Object::Type StreamObject::GetObjectType(void) const noexcept {
 
 StreamObject* StreamObject::Clone(void) const {
 	StreamObjectPtr result(pdf_new StreamObject(), false);
+
+	ACCESS_LOCK_GUARD(_access_lock);
 
 	result->_header = _header->Clone();
 	result->_header->Subscribe(result.get());
@@ -114,11 +128,15 @@ StreamObject* StreamObject::Clone(void) const {
 }
 
 void StreamObject::SetFile(WeakReference<File> file) {
+	ACCESS_LOCK_GUARD(_access_lock);
+
 	Object::SetFile(file);
 	_header->SetFile(file);
 }
 
 void StreamObject::SetInitialized(bool initialized) {
+	ACCESS_LOCK_GUARD(_access_lock);
+
 	IModifyObservable::SetInitialized(initialized);
 	_header->SetInitialized(initialized);
 
@@ -130,6 +148,12 @@ void StreamObject::SetInitialized(bool initialized) {
 }
 
 BufferPtr StreamObject::GetBodyRaw() const {
+
+	if (_body->IsInitialized()) {
+		return _body;
+	}
+
+	ACCESS_LOCK_GUARD(_access_lock);
 
 	if (_body->IsInitialized()) {
 		return _body;
@@ -167,6 +191,12 @@ BufferPtr StreamObject::GetBodyRaw() const {
 }
 
 BufferPtr StreamObject::GetBody() const {
+
+	if (_body_decoded->IsInitialized()) {
+		return _body_decoded;
+	}
+
+	ACCESS_LOCK_GUARD(_access_lock);
 
 	if (_body_decoded->IsInitialized()) {
 		return _body_decoded;
@@ -508,12 +538,16 @@ BufferPtr StreamObject::DecryptData(BufferPtr data, types::big_uint obj_number, 
 }
 
 std::string StreamObject::ToString(void) const {
+	ACCESS_LOCK_GUARD(_access_lock);
+
 	std::stringstream ss;
 	ss << _header->ToString() << "stream: " << GetBodyEncoded()->size() << std::endl;
 	return ss.str();
 }
 
 void StreamObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
+	ACCESS_LOCK_GUARD(_access_lock);
+
 	std::stringstream ss;
 	ss << _header->ToPdf() << std::endl;
 	ss << "stream" << std::endl;
@@ -524,10 +558,13 @@ void StreamObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 }
 
 size_t StreamObject::Hash() const {
+	ACCESS_LOCK_GUARD(_access_lock);
 	return _header->Hash();
 }
 
 bool StreamObject::Equals(ObjectPtr other) const {
+	ACCESS_LOCK_GUARD(_access_lock);
+
 	if (!ObjectUtils::IsType<StreamObjectPtr>(other)) {
 		return false;
 	}

@@ -52,6 +52,11 @@ private:
 	mutable BufferPtr _body;
 	mutable BufferPtr _body_decoded;
 
+	// The library interface wants to be thread-safe as much as possible
+	// Even though the are currently no cases for multi-thread access
+	// to the dictonary, let's try to be visionary and prepare for this
+	std::shared_ptr<std::recursive_mutex> _access_lock;
+
 	BufferPtr EncryptStream(BufferPtr data, types::big_uint obj_number, types::ushort generation_number) const;
 	BufferPtr EncryptData(BufferPtr data, types::big_uint obj_number, types::ushort generation_number, NameObjectPtr handler) const;
 	BufferPtr DecryptStream(BufferPtr data, types::big_uint obj_number, types::ushort generation_number) const;
