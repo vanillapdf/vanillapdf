@@ -49,6 +49,53 @@ private:
 	ScopeGuardFactory();
 };
 
+// The AutoSubscribe concept is something I was thinking about for a long time.
+// Unfortunately I am still not able to create a working POC, however I want to keep the code.
+// In case I will be thinking about such functionality in the future, this could be the starting point.
+
+template <
+	typename T,
+	typename U,
+	typename = typename std::enable_if<instantiation_of<Deferred, T>::value ||
+	std::is_base_of<IModifyObservable, typename T::deferred_ptr_type>::value>::type,
+	typename = typename std::enable_if<std::is_base_of<IModifyObservable, U>::value>::type>
+class AutoSubscribe {
+public:
+	explicit AutoSubscribe(const T& observable, U* observer) : _observable(observable), _observer(observer) {
+		_observable->Subscribe(_observer);
+	}
+
+	AutoSubscribe(const AutoSubscribe& rhs) = delete;
+
+	AutoSubscribe(AutoSubscribe&& rhs) {
+
+		// Unsubscribe the original objects
+		_observable->Unsubscribe(_observer);
+
+		// Move the data from the object that is being moved
+		_observable = rhs._observable;
+		_observer = rhs._observer;
+
+		// Subscribe to new objects
+		_observable->Subscribe(_observer);
+	}
+
+	AutoSubscribe& operator=(const AutoSubscribe& rhs) = delete;
+
+	AutoSubscribe& operator=(AutoSubscribe&& rhs) {
+		AutoSubscribe(rhs).swap(*this);
+		return *this;
+	}
+
+	~AutoSubscribe() {
+		_observable->Unsubscribe(_observer);
+	}
+
+private:
+	T _observable;
+	U* _observer;
+};
+
 #if (__cplusplus < 201402L) && !defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
 	// Use custom implementation if not
 	// supporting c++14
