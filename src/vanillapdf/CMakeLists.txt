@@ -618,7 +618,9 @@ else (OPENJPEG_LIBRARIES)
 	message(WARNING "Compiling without openjpeg support. jpeg2000 decompression will become unavailable")
 endif (OPENJPEG_LIBRARIES)
 
-target_link_libraries(vanillapdf ${VANILLAPDF_LIBS})
+add_subdirectory("${CMAKE_SOURCE_DIR}/external/fmtlib" build EXCLUDE_FROM_ALL)
+
+target_link_libraries(vanillapdf ${VANILLAPDF_LIBS} fmt::fmt)
 
 # Project install targets
 install(TARGETS vanillapdf
