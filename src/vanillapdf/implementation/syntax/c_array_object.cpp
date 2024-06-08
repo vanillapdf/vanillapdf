@@ -42,8 +42,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_SetValue(ArrayObjectHan
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
 
 	try {
-		auto containable_ptr = dynamic_cast<ContainableObject*>(data);
-		if (nullptr == containable_ptr) {
+		auto containable_ptr = static_cast<ContainableObject*>(data);
+		if (containable_ptr == nullptr) {
 			return VANILLAPDF_ERROR_PARAMETER_VALUE;
 		}
 
@@ -71,8 +71,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Append(ArrayObjectHandl
 
 	try
 	{
-		auto containable_ptr = dynamic_cast<ContainableObject*>(data);
-		if (nullptr == containable_ptr) {
+		auto containable_ptr = static_cast<ContainableObject*>(data);
+		if (containable_ptr == nullptr) {
 			return VANILLAPDF_ERROR_PARAMETER_VALUE;
 		}
 
@@ -90,8 +90,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Insert(ArrayObjectHandl
 
 	try
 	{
-		auto containable_ptr = dynamic_cast<ContainableObject*>(data);
-		if (nullptr == containable_ptr) {
+		auto containable_ptr = static_cast<ContainableObject*>(data);
+		if (containable_ptr == nullptr) {
 			return VANILLAPDF_ERROR_PARAMETER_VALUE;
 		}
 

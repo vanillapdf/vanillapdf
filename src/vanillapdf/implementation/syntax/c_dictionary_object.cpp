@@ -178,8 +178,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryO
 
 	try
 	{
-		auto containable_ptr = dynamic_cast<ContainableObject*>(obj);
-		if (nullptr == containable_ptr) {
+		auto containable_ptr = static_cast<ContainableObject*>(obj);
+		if (containable_ptr == nullptr) {
 			return VANILLAPDF_ERROR_PARAMETER_VALUE;
 		}
 
@@ -197,8 +197,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_InsertConst(Dictio
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
 	try {
-		auto containable_ptr = dynamic_cast<ContainableObject*>(obj);
-		if (nullptr == containable_ptr) {
+		auto containable_ptr = static_cast<ContainableObject*>(obj);
+		if (containable_ptr == nullptr) {
 			return VANILLAPDF_ERROR_PARAMETER_VALUE;
 		}
 
