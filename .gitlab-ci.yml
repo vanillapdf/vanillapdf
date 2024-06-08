@@ -62,7 +62,7 @@ build-osx-x64:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - cmake . -DPLATFORM_IDENTIFIER=osx-x64
+    - cmake . -DPLATFORM_IDENTIFIER=osx-x64 -DCMAKE_BUILD_TYPE=Release
     - make
     - make test
     - make package
@@ -85,7 +85,7 @@ build-ubuntu.22.04-x64:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - cmake . -DPLATFORM_IDENTIFIER=ubuntu.22.04-x64
+    - cmake . -DPLATFORM_IDENTIFIER=ubuntu.22.04-x64 -DCMAKE_BUILD_TYPE=Release
     - make
     - make test
     - make package
@@ -105,7 +105,7 @@ build-ubuntu.24.04-x64:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - cmake . -DPLATFORM_IDENTIFIER=ubuntu.24.04-x64
+    - cmake . -DPLATFORM_IDENTIFIER=ubuntu.24.04-x64 -DCMAKE_BUILD_TYPE=Release
     - make
     - make test
     - make package
@@ -126,7 +126,7 @@ build-rocky.9-x64:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - cmake . -DPLATFORM_IDENTIFIER=rocky.9-x64
+    - cmake . -DPLATFORM_IDENTIFIER=rocky.9-x64 -DCMAKE_BUILD_TYPE=Release
     - make
     - make test
     - make package
@@ -148,7 +148,7 @@ build-rocky.9-arm64:
 
   script:
     - export VCPKG_FORCE_SYSTEM_BINARIES=1
-    - cmake . -DPLATFORM_IDENTIFIER=rocky.9-arm64
+    - cmake . -DPLATFORM_IDENTIFIER=rocky.9-arm64 -DCMAKE_BUILD_TYPE=Release
     - make
     - make test
     - make package
@@ -174,7 +174,7 @@ build-linux-x64:
     GIT_SUBMODULE_STRATEGY: recursive
 
   script:
-    - cmake . -DPLATFORM_IDENTIFIER=linux-x64
+    - cmake . -DPLATFORM_IDENTIFIER=linux-x64 -DCMAKE_BUILD_TYPE=Release
     - make
     - make test
     - make package
@@ -195,7 +195,7 @@ build-linux-arm64:
 
   script:
     - export VCPKG_FORCE_SYSTEM_BINARIES=1
-    - cmake . -DPLATFORM_IDENTIFIER=linux-arm64
+    - cmake . -DPLATFORM_IDENTIFIER=linux-arm64 -DCMAKE_BUILD_TYPE=Release
     - make
     - make test
     - make package
