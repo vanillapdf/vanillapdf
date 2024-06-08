@@ -181,5 +181,48 @@ ArrayObjectPtr<IndirectReferenceObjectPtr> PageTree::GetKidsInternal() {
 	return _obj->FindAs<ArrayObjectPtr<IndirectReferenceObjectPtr>>(constant::Name::Kids);
 }
 
+// NOTE:
+// The page tree cache was already tried multiple times and it was actually slower.
+// I have seen this in the profiler, thus was trying to address, however if the cache does not make it faster
+// there is probably another issues, that is not visible right now.
+// Since there are more prevalent performance botllenecks I am dropping this for now.
+
+#ifdef USE_PAGE_TREE_CACHE
+
+void PageTree::ObserveeChanged(const IModifyObservable*) {
+	// Reset the page object cache, so it has to be reconstructed
+	m_page_object_cache.reset();
+}
+
+std::vector<PageObjectPtr> PageTree::InitializePageCache() const {
+
+	std::vector<PageObjectPtr> new_pages;
+
+	auto root = make_deferred<PageTreeNode>(_obj);
+	InitializePageCacheInternal(root, new_pages);
+
+	return new_pages;
+}
+
+void PageTree::InitializePageCacheInternal(PageTreeNodePtr node, std::vector<PageObjectPtr>& current_list) const {
+	auto kids = node->Kids();
+	auto count = kids->GetSize();
+	for (decltype(count) i = 0; i < count; ++i) {
+		auto kid = kids->GetValue(i);
+
+		if (kid->GetNodeType() == PageNodeBase::NodeType::Tree) {
+			auto tree_node = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageTreeNodePtr>(kid);
+			InitializePageCacheInternal(tree_node, current_list);
+		}
+
+		if (kid->GetNodeType() == PageNodeBase::NodeType::Object) {
+			auto page_object = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageObjectPtr>(kid);
+			current_list.push_back(page_object);
+		}
+	}
+}
+
+#endif /* USE_PAGE_TREE_CACHE */
+
 } // semantics
 } // vanillapdf
