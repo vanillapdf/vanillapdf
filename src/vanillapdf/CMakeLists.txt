@@ -618,6 +618,14 @@ else (OPENJPEG_LIBRARIES)
 	message(WARNING "Compiling without openjpeg support. jpeg2000 decompression will become unavailable")
 endif (OPENJPEG_LIBRARIES)
 
+if(UNIX)
+	# There is an issue with fmtlib on Linux
+	# error: '::write' has not been declared; did you mean 'fwrite'?
+	# error: '::dup' has not been declared
+	# https://github.com/fmtlib/fmt/issues/2710
+	set(FMT_OS OFF)
+endif(UNIX)
+
 add_subdirectory("${CMAKE_SOURCE_DIR}/external/fmtlib" build EXCLUDE_FROM_ALL)
 
 target_link_libraries(vanillapdf ${VANILLAPDF_LIBS} fmt::fmt)
