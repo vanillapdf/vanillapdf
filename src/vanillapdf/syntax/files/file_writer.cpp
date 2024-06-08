@@ -22,13 +22,11 @@
 
 #include <fstream>
 #include <unordered_set>
-#include <iomanip>
+
+#include <fmt/core.h>
 
 namespace vanillapdf {
 namespace syntax {
-
-using std::setfill;
-using std::setw;
 
 IFileWriterObserver::~IFileWriterObserver() {}
 IFileWriterObservable::~IFileWriterObservable() {}
@@ -1507,21 +1505,15 @@ void FileWriter::WriteXrefTable(IOutputStreamPtr output, XrefTablePtr xref_table
 }
 
 std::string FileWriter::GetFormattedOffset(types::stream_offset offset) {
-	std::stringstream ss;
-	ss << setfill('0') << setw(10) << offset;
-	return ss.str();
+	return fmt::format("{:010}", offset);
 }
 
 std::string FileWriter::GetFormattedGenerationNumber(types::ushort generation_number) {
-	std::stringstream ss;
-	ss << setfill('0') << setw(5) << generation_number;
-	return ss.str();
+	return fmt::format("{:05}", generation_number);
 }
 
 std::string FileWriter::GetFormattedObjectNumber(types::big_uint object_number) {
-	std::stringstream ss;
-	ss << setfill('0') << setw(10) << object_number;
-	return ss.str();
+	return fmt::format("{:010}", object_number);
 }
 
 void FileWriter::CopyStreamContent(IInputStreamPtr source, IOutputStreamPtr destination) {

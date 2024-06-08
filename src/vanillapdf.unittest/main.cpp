@@ -333,6 +333,43 @@ TEST(DictionaryObject, InsertOverwrite) {
 	ASSERT_EQ(DictionaryObject_Release(dictionary_object), VANILLAPDF_ERROR_SUCCESS);
 }
 
+TEST(RealObject, SerializationPrecision) {
+	RealObjectHandle* real_object;
+	ObjectHandle* base_object;
+	BufferHandle* object_pdf_buffer;
+
+	string_type object_pdf_data = nullptr;
+	size_type object_pdf_size = 0;
+
+	const real_type REAL_VALUE_DATA = 752.43f;
+	const integer_type REAL_VALUE_DATA_PRECISION = 2;
+	const char REAL_VALUE_STRING_CHECK[] = "752.43";
+
+	ASSERT_EQ(RealObject_CreateFromData(REAL_VALUE_DATA, REAL_VALUE_DATA_PRECISION, &real_object), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(real_object, nullptr);
+
+	ASSERT_EQ(RealObject_SetValue(real_object, REAL_VALUE_DATA), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(RealObject_ToObject(real_object, &base_object), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(base_object, nullptr);
+
+	ASSERT_EQ(Object_ToPdf(base_object, &object_pdf_buffer), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(object_pdf_buffer, nullptr);
+
+	ASSERT_EQ(Buffer_GetData(object_pdf_buffer, &object_pdf_data, &object_pdf_size), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(object_pdf_data, nullptr);
+
+	// Verify the data and length returned by Buffer_GetData
+	ASSERT_EQ(object_pdf_size, strlen(REAL_VALUE_STRING_CHECK));
+
+	for (uint32_t i = 0; i < object_pdf_size; ++i) {
+		EXPECT_EQ(object_pdf_data[i], REAL_VALUE_STRING_CHECK[i]);
+	}
+
+	ASSERT_EQ(Buffer_Release(object_pdf_buffer), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(Object_Release(base_object), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(RealObject_Release(real_object), VANILLAPDF_ERROR_SUCCESS);
+}
+
 int main(int argc, char *argv[]) {
 
 	TestEnvironment* test_environment = new TestEnvironment();

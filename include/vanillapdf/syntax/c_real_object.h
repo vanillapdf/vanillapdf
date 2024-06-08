@@ -33,6 +33,11 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_Create(RealObjectHandle** result);
 
 	/**
+	* \brief Creates a new RealObject instance with specified data
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_CreateFromData(real_type data, integer_type precision, RealObjectHandle** result);
+
+	/**
 	* \brief Return objects contained real value
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_GetValue(RealObjectHandle* handle, real_type* result);

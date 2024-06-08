@@ -1,8 +1,7 @@
 #include "precompiled.h"
 #include "numeric_object.h"
 
-#include <sstream>
-#include <iomanip>
+#include <fmt/core.h>
 
 namespace vanillapdf {
 namespace syntax {
@@ -203,14 +202,13 @@ std::string NumericObjectBackend::UnsignedIntegerString(void) const {
 }
 
 std::string NumericObjectBackend::RealString(void) const {
-	std::stringstream ss;
 
 	if (m_precision > 0) {
-		ss << std::fixed << std::setprecision(m_precision);
+		return fmt::format("{:.{p}f}", m_real, fmt::arg("p", m_precision));
 	}
 
-	ss << m_real;
-	return ss.str();
+	return fmt::format("{}", m_real);
+	//return std::to_string(m_real);
 }
 
 std::string NumericObjectBackend::ToString(void) const {

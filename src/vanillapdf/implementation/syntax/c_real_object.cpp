@@ -19,6 +19,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION RealObject_Create(RealObjectHandle*
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION RealObject_CreateFromData(real_type data, integer_type precision, RealObjectHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try {
+		auto object = make_deferred<RealObject>(data, precision);
+		auto ptr = object.AddRefGet();
+		*result = reinterpret_cast<RealObjectHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION RealObject_GetValue(RealObjectHandle* handle, real_type* result)
 {
 	RealObject* obj = reinterpret_cast<RealObject*>(handle);

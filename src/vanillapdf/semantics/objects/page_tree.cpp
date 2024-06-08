@@ -5,6 +5,8 @@
 #include "syntax/objects/array_object.h"
 #include "syntax/utils/name_constants.h"
 
+#include <fmt/core.h>
+
 namespace vanillapdf {
 namespace semantics {
 
@@ -50,7 +52,7 @@ PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
 	LOG_DEBUG(log_scope) << "Searching for page " << std::to_string(page_number);
 
 	if (page_number < 1) {
-		throw GeneralException("Invalid page number: " + std::to_string(page_number));
+		throw GeneralException(fmt::format("Invalid page number: {}", page_number));
 	}
 
 	auto root = make_deferred<PageTreeNode>(_obj);
