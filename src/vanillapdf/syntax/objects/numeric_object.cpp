@@ -203,12 +203,28 @@ std::string NumericObjectBackend::UnsignedIntegerString(void) const {
 
 std::string NumericObjectBackend::RealString(void) const {
 
+	// Benchmarking the difference os stringstream vs fmtlib
+
+	// Run on(16 X 3792 MHz CPU s)
+	// CPU Caches :
+	//  L1 Data 32 KiB(x8)
+	//  L1 Instruction 32 KiB(x8)
+	//  L2 Unified 256 KiB(x8)
+	//  L3 Unified 16384 KiB(x1)
+
+	//fmtlib
+	//BM_RealObjectToPdf / 752 / 0       1298 ns          977 ns      1120000
+	//BM_RealObjectToPdf / 752 / 2       1243 ns          816 ns       746667
+
+	//stringstream
+	//BM_RealObjectToPdf / 752 / 0       2749 ns         1660 ns       404645
+	//BM_RealObjectToPdf / 752 / 2       2793 ns         1967 ns       373333
+
 	if (m_precision > 0) {
 		return fmt::format("{:.{p}f}", m_real, fmt::arg("p", m_precision));
 	}
 
-	return fmt::format("{}", m_real);
-	//return std::to_string(m_real);
+	return fmt::to_string(m_real);
 }
 
 std::string NumericObjectBackend::ToString(void) const {
