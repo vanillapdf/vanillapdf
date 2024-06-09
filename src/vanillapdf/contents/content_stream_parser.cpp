@@ -370,7 +370,7 @@ OperationBasePtr ContentStreamParser::ReadOperatorReturnOperation(const std::vec
 			return make_deferred<OperationGeneric>(operands, EndCompatibilitySectionOperatorPtr());
 		default:
 			auto token_value = token->Value();
-			auto buffer = make_deferred<Buffer>(token_value.begin(), token_value.end());
+			auto buffer = make_deferred_container<Buffer>(token_value.begin(), token_value.end());
 			return make_deferred<OperationGeneric>(operands, make_deferred<UnknownOperator>(buffer));
 	}
 }
