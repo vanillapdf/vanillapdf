@@ -96,5 +96,48 @@ BENCHMARK_CAPTURE(BM_LiteralStringObjectToPdf, string_empty, "");
 BENCHMARK_CAPTURE(BM_LiteralStringObjectToPdf, string_basic, "abcdefghijklmnopqrstuvwxyz");
 BENCHMARK_CAPTURE(BM_LiteralStringObjectToPdf, string_octal, "\001\002\003\004\252\253\254\255");
 
+static const char MINIMALIST_DOCUMENT[] = R"(%PDF-1.7
+1 0 obj
+<</Pages 2 0 R /Type /Catalog>>
+endobj
+2 0 obj
+<</Count 0 /Type /Pages>>
+endobj
+3 0 obj
+<</CreationDate (D:20170831161944Z) /Producer (I am the producer)>>
+endobj
+
+xref
+0 4
+0000000000 65535 f 
+0000000009 00000 n 
+0000000056 00000 n 
+0000000097 00000 n 
+trailer
+<</Info 3 0 R /Root 1 0 R /Size 4>>
+startxref
+181
+%%EOF
+)";
+
+static void BM_FileSaveParse(benchmark::State& state) {
+	for (auto _ : state) {
+		FileHandle* test_file = nullptr;
+		InputOutputStreamHandle* io_stream = nullptr;
+
+		InputOutputStream_CreateFromMemory(&io_stream);
+		InputOutputStream_WriteString(io_stream, MINIMALIST_DOCUMENT);
+
+		File_OpenStream(io_stream, "temp", &test_file);
+		File_Initialize(test_file);
+		File_Release(test_file);
+
+		// Cleanup
+		InputOutputStream_Release(io_stream);
+	}
+}
+
+BENCHMARK(BM_FileSaveParse);
+
 // Run the benchmark
 BENCHMARK_MAIN();
