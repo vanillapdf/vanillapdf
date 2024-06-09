@@ -6,6 +6,9 @@
 
 #include "utils/character.h"
 
+#include <fmt/core.h>
+#include <fmt/ranges.h>
+
 #include <cctype>
 #include <cassert>
 #include <iomanip>
@@ -155,6 +158,10 @@ BufferPtr LiteralStringObject::GetValue() const {
 	}
 
 	BufferPtr new_value = _raw_value;
+
+	// TODO: Handle \r, \t, \f, etc.
+	// TODO: Handle octal values
+
 	if (!m_file.IsEmpty()) {
 		if (!m_file.IsActive()) {
 			throw FileDisposedException();
@@ -256,6 +263,21 @@ void HexadecimalStringObject::SetRawValue(BufferPtr value) {
 
 void HexadecimalStringObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 
+	// Benchmark comparison
+
+	// stringstream
+	// ------------------------------------------------------------------------------------------
+	// Benchmark                                                Time             CPU   Iterations
+	// ------------------------------------------------------------------------------------------
+	// BM_HexadecimalStringObjectToPdf / string_empty          2062 ns         1517 ns       896000
+	// BM_HexadecimalStringObjectToPdf / string_unpaired       2625 ns         1904 ns       344615
+	// BM_HexadecimalStringObjectToPdf / string_values         4064 ns         3128 ns       194783
+
+	// fmtlib
+	// BM_HexadecimalStringObjectToPdf / string_empty          1792 ns         1273 ns       896000
+	// BM_HexadecimalStringObjectToPdf / string_unpaired       2094 ns         1569 ns       497778
+	// BM_HexadecimalStringObjectToPdf / string_values         2600 ns         1957 ns       407273
+
 	BufferPtr value = GetValue();
 
 	if (!m_file.IsEmpty()) {
@@ -269,25 +291,29 @@ void HexadecimalStringObject::ToPdfStreamInternal(IOutputStreamPtr output) const
 		}
 	}
 
-	std::stringstream ss;
-	ss << '<';
+	auto result = fmt::format("<{:02X}>", fmt::join(value, ""));
 
-	auto size = value->size();
-	for (decltype(size) i = 0; i < size; ++i) {
-		auto current = value[i];
-
-		// Only 2 byte hex representation
-		int converted = static_cast<int>(current & 0xFF);
-		ss << std::hex << std::setfill('0') << std::setw(2) << converted;
-	}
-
-	ss << '>';
-
-	auto result = ss.str();
 	output->Write(result);
 }
 
 void LiteralStringObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
+
+	// stringstream
+	// ---------------------------------------------------------------------------------- -
+	// Benchmark                                         Time             CPU   Iterations
+	// ---------------------------------------------------------------------------------- -
+	// BM_LiteralStringObjectToPdf / string_empty       2076 ns         1256 ns       448000
+	// BM_LiteralStringObjectToPdf / string_basic       2904 ns         2250 ns       298667
+	// BM_LiteralStringObjectToPdf / string_octal       4855 ns         3578 ns       248889
+
+	// fmtlib
+	// ---------------------------------------------------------------------------------- -
+	// Benchmark                                         Time             CPU   Iterations
+	// ---------------------------------------------------------------------------------- -
+	// BM_LiteralStringObjectToPdf / string_empty       2028 ns         1658 ns       735179
+	// BM_LiteralStringObjectToPdf / string_basic       2955 ns         2023 ns       448000
+	// BM_LiteralStringObjectToPdf / string_octal       3218 ns         2354 ns       497778
+
 	BufferPtr value = GetValue();
 
 	if (!m_file.IsEmpty()) {
@@ -309,48 +335,47 @@ void LiteralStringObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 		unsigned char current = value[i];
 
 		if (current == '\n') {
-			ss << '\\' << 'n';
+			ss << "\\n";
 			continue;
 		}
 
 		if (current == '\r') {
-			ss << '\\' << 'r';
+			ss << "\\r";
 			continue;
 		}
 
 		if (current == '\t') {
-			ss << '\\' << 't';
+			ss << "\\t";
 			continue;
 		}
 
 		if (current == '\b') {
-			ss << '\\' << 'b';
+			ss << "\\b";
 			continue;
 		}
 
 		if (current == '\f') {
-			ss << '\\' << 'f';
+			ss << "\\f";
 			continue;
 		}
 
 		if (current == '(') {
-			ss << '\\' << '(';
+			ss << "\\(";
 			continue;
 		}
 
 		if (current == ')') {
-			ss << '\\' << ')';
+			ss << "\\)";
 			continue;
 		}
 
 		if (current == '\\') {
-			ss << '\\' << '\\';
+			ss << "\\\\";
 			continue;
 		}
 
 		if (!std::isprint(current)) {
-			int converted = static_cast<int>(current);
-			ss << '\\' << std::setfill('0') << std::setw(3) << std::oct << converted;
+			ss << fmt::format("\\{:03o}", current);
 			continue;
 		}
 
