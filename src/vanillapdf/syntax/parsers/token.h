@@ -146,14 +146,14 @@ public:
 
 	Token() = default;
 	explicit Token(Type type);
-	Token(Type type, BufferPtr chars);
+	Token(Type type, std::string_view chars);
 
 	Token::Type GetType(void) const { return _type; }
-	BufferPtr Value() const { return _value; }
+	std::string Value() const { return _value; }
 
 private:
 	Type _type = Type::UNKNOWN;
-	BufferPtr _value;
+	std::string _value;
 };
 
 } // syntax

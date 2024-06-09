@@ -521,7 +521,7 @@ XrefEntryBasePtr Parser::ReadTableEntry(types::big_uint objNumber) {
 	}
 
 	auto peeked_token = PeekTokenSkip();
-	if (*peeked_token->Value() == "n") {
+	if (peeked_token->Value() == "n") {
 		ReadTokenSkip();
 		XrefUsedEntryPtr result = make_deferred<XrefUsedEntry>(objNumber, ValueConvertUtils::SafeConvert<types::ushort>(gen_number), ValueConvertUtils::SafeConvert<types::stream_offset>(offset));
 		result->SetFile(_file);
@@ -535,7 +535,7 @@ XrefEntryBasePtr Parser::ReadTableEntry(types::big_uint objNumber) {
 		return result;
 	}
 
-	if (*peeked_token->Value() == "f") {
+	if (peeked_token->Value() == "f") {
 		ReadTokenSkip();
 		XrefFreeEntryPtr result = make_deferred<XrefFreeEntry>(objNumber, ValueConvertUtils::SafeConvert<types::ushort>(gen_number));
 		result->SetFile(_file);
@@ -553,8 +553,8 @@ XrefTablePtr Parser::ReadXrefTable() {
 		auto revision_base_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 		auto size_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 
-		auto revision_base = std::stoull(revision_base_token->Value()->ToString());
-		auto size = std::stoull(size_token->Value()->ToString());
+		auto revision_base = std::stoull(revision_base_token->Value());
+		auto size = std::stoull(size_token->Value());
 
 		for (decltype(size) i = 0; i < size; ++i) {
 			auto entry = ReadTableEntry(SafeAddition<types::big_uint>(revision_base, i));
@@ -884,8 +884,8 @@ XrefChainPtr Parser::FindAllObjects(void) {
 			continue;
 		}
 
-		auto obj_number = std::stoull(first_token->Value()->ToString());
-		auto gen_number_ul = std::stoul(gen_number_token->Value()->ToString());
+		auto obj_number = std::stoull(first_token->Value());
+		auto gen_number_ul = std::stoul(gen_number_token->Value());
 		auto gen_number = ValueConvertUtils::SafeConvert<types::ushort>(gen_number_ul);
 
 		auto obj = ReadDirectObject();

@@ -104,12 +104,12 @@ TokenPtr Tokenizer::ReadUnknown(int ch) {
 	auto current = ValueConvertUtils::SafeConvert<unsigned char>(ch);
 	bool has_dot = (current == '.');
 	if (IsNumeric(current) || (current == '+') || (current == '-') || has_dot) {
-		BufferPtr chars;
+		std::string chars;
 
-		chars->push_back(current);
+		chars.push_back(current);
 		while (IsNumeric(m_stream->Peek())) {
 			auto numeric = static_cast<char>(m_stream->Get());
-			chars->push_back(numeric);
+			chars.push_back(numeric);
 		}
 
 		if (has_dot) {
@@ -121,23 +121,23 @@ TokenPtr Tokenizer::ReadUnknown(int ch) {
 		}
 
 		// The next character is dot
-		chars->push_back('.');
+		chars.push_back('.');
 
 		// Consume it
 		m_stream->Ignore();
 
 		while (IsNumeric(m_stream->Peek())) {
 			auto next = static_cast<char>(m_stream->Get());
-			chars->push_back(next);
+			chars.push_back(next);
 		}
 
 		return make_deferred<Token>(Token::Type::REAL_OBJECT, chars);
 	}
 
-	BufferPtr chars;
+	std::string chars;
 
 	// Insert the character we read at the beginning
-	chars->push_back(current);
+	chars.push_back(current);
 
 	for (;;) {
 		if (m_stream->Eof()) {
@@ -159,7 +159,7 @@ TokenPtr Tokenizer::ReadUnknown(int ch) {
 		}
 
 		// Insert regular character into collection
-		chars->push_back(next);
+		chars.push_back(next);
 
 		// Ignore the input, because we used peek and not get
 		m_stream->Ignore();
@@ -197,7 +197,7 @@ TokenPtr Tokenizer::ReadComment(void) {
 }
 
 TokenPtr Tokenizer::ReadHexadecimalString(void) {
-	BufferPtr chars;
+	std::string chars;
 
 	for (;;) {
 		auto eof_test = m_stream->Peek();
@@ -219,7 +219,7 @@ TokenPtr Tokenizer::ReadHexadecimalString(void) {
 		}
 
 		if (IsNumeric(current) || IsAlpha(current)) {
-			chars->push_back(current);
+			chars.push_back(current);
 			continue;
 		}
 
@@ -230,7 +230,7 @@ TokenPtr Tokenizer::ReadHexadecimalString(void) {
 }
 
 TokenPtr Tokenizer::ReadName(void) {
-	BufferPtr chars;
+	std::string chars;
 
 	while (IsRegular(m_stream->Peek())) {
 		auto current = static_cast<char>(m_stream->Get());
@@ -240,24 +240,24 @@ TokenPtr Tokenizer::ReadName(void) {
 			auto val = stoi(str, 0, 16);
 			auto parsed = ValueConvertUtils::SafeConvert<unsigned char, int>(val);
 			char converted = reinterpret_cast<char&>(parsed);
-			chars->push_back(converted);
+			chars.push_back(converted);
 			continue;
 		}
 
-		chars->push_back(current);
+		chars.push_back(current);
 	}
 
 	return make_deferred<Token>(Token::Type::NAME_OBJECT, chars);
 }
 
 TokenPtr Tokenizer::ReadLiteralString(void) {
-	BufferPtr chars;
+	std::string chars;
 
 	int nested_count = 0;
 	for (;;) {
 		auto eof_test = m_stream->Peek();
 		if (eof_test == std::char_traits<char>::eof()) {
-			throw GeneralException("Improperly terminated literal string sequence: " + chars->ToString());
+			throw GeneralException("Improperly terminated literal string sequence: " + chars);
 		}
 
 		int current_meta = m_stream->Get();
@@ -278,17 +278,18 @@ TokenPtr Tokenizer::ReadLiteralString(void) {
 		}
 
 		if (current == '\r') {
+			chars.push_back('\r');
+
 			auto line_feed = m_stream->Peek();
-			if (line_feed == '\n') {
-				m_stream->Ignore();
+			if (line_feed == '\n' && m_stream->Ignore()) {
+				chars.push_back('\n');
 			}
 
-			chars->push_back(WhiteSpace::LINE_FEED);
 			continue;
 		}
 
 		if (current != '\\') {
-			chars->push_back(current);
+			chars.push_back(current);
 			continue;
 		}
 
@@ -299,42 +300,42 @@ TokenPtr Tokenizer::ReadLiteralString(void) {
 
 		// escaped characters
 		if (next == 'r' && m_stream->Ignore()) {
-			chars->push_back('\r');
+			chars.push_back('\r');
 			continue;
 		}
 
 		if (next == 'f' && m_stream->Ignore()) {
-			chars->push_back('\f');
+			chars.push_back('\f');
 			continue;
 		}
 
 		if (next == 't' && m_stream->Ignore()) {
-			chars->push_back('\t');
+			chars.push_back('\t');
 			continue;
 		}
 
 		if (next == 'n' && m_stream->Ignore()) {
-			chars->push_back('\n');
+			chars.push_back('\n');
 			continue;
 		}
 
 		if (next == 'b' && m_stream->Ignore()) {
-			chars->push_back('\b');
+			chars.push_back('\b');
 			continue;
 		}
 
 		if (next == '(' && m_stream->Ignore()) {
-			chars->push_back('(');
+			chars.push_back('(');
 			continue;
 		}
 
 		if (next == ')' && m_stream->Ignore()) {
-			chars->push_back(')');
+			chars.push_back(')');
 			continue;
 		}
 
 		if (next == '\\' && m_stream->Ignore()) {
-			chars->push_back('\\');
+			chars.push_back('\\');
 			continue;
 		}
 
@@ -377,7 +378,7 @@ TokenPtr Tokenizer::ReadLiteralString(void) {
 		octal >> std::oct >> value;
 		auto converted = ValueConvertUtils::SafeConvert<unsigned char, int>(value);
 		char char_converted = reinterpret_cast<char&>(converted);
-		chars->push_back(char_converted);
+		chars.push_back(char_converted);
 		continue;
 	}
 

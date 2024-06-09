@@ -18,7 +18,7 @@ types::stream_offset ReverseParser::ReadLastXrefOffset() {
 
 	auto buffer = offset_token->Value();
 	std::reverse(buffer.begin(), buffer.end());
-	auto value = std::stoll(buffer->ToString());
+	auto value = std::stoll(buffer);
 	return value;
 }
 

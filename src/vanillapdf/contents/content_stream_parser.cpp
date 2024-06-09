@@ -369,7 +369,9 @@ OperationBasePtr ContentStreamParser::ReadOperatorReturnOperation(const std::vec
 		case Token::Type::END_COMPATIBILITY_SECTION:
 			return make_deferred<OperationGeneric>(operands, EndCompatibilitySectionOperatorPtr());
 		default:
-			return make_deferred<OperationGeneric>(operands, make_deferred<UnknownOperator>(token->Value()));
+			auto token_value = token->Value();
+			auto buffer = make_deferred<Buffer>(token_value.begin(), token_value.end());
+			return make_deferred<OperationGeneric>(operands, make_deferred<UnknownOperator>(buffer));
 	}
 }
 

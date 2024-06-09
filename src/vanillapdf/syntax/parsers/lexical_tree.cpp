@@ -4,11 +4,11 @@
 namespace vanillapdf {
 namespace syntax {
 
-void Tree::Insert(BufferPtr path, Token::Type type) {
+void Tree::Insert(std::string_view path, Token::Type type) {
 	auto cur = _root;
-	auto len = path->size();
+	auto len = path.size();
 	for (decltype(len) i = 0; i < len; ++i) {
-		char ch = path->at(i);
+		char ch = path.at(i);
 		auto converted = static_cast<unsigned char>(ch);
 		if (!cur->childs[converted]) {
 			cur->childs[converted] = std::make_shared<Node>(converted);
@@ -20,7 +20,7 @@ void Tree::Insert(BufferPtr path, Token::Type type) {
 	cur->type = type;
 }
 
-bool Tree::PathExists(BufferPtr path) {
+bool Tree::PathExists(std::string_view path) {
 	auto found = NodeAtPath(path);
 	if (!found)
 		return false;
@@ -28,7 +28,7 @@ bool Tree::PathExists(BufferPtr path) {
 	return true;
 }
 
-Token::Type Tree::TokenType(BufferPtr path) {
+Token::Type Tree::TokenType(std::string_view path) {
 	auto found = NodeAtPath(path);
 	if (!found) {
 		return Token::Type::UNKNOWN;
@@ -37,11 +37,11 @@ Token::Type Tree::TokenType(BufferPtr path) {
 	return found->type;
 }
 
-std::shared_ptr<Tree::Node> Tree::NodeAtPath(BufferPtr path) {
+std::shared_ptr<Tree::Node> Tree::NodeAtPath(std::string_view path) {
 	auto cur = _root;
-	auto len = path->size();
+	auto len = path.size();
 	for (decltype(len) i = 0; i < len; ++i) {
-		auto ch = path->at(i);
+		auto ch = path.at(i);
 		auto converted = static_cast<unsigned char>(ch);
 		cur = cur->childs[converted];
 		if (!cur) {

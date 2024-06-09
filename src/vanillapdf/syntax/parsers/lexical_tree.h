@@ -10,9 +10,9 @@ namespace syntax {
 
 class Tree {
 public:
-	bool PathExists(BufferPtr path);
-	Token::Type TokenType(BufferPtr path);
-	void Insert(BufferPtr path, Token::Type type);
+	bool PathExists(std::string_view path);
+	Token::Type TokenType(std::string_view path);
+	void Insert(std::string_view path, Token::Type type);
 
 private:
 	struct Node {
@@ -24,7 +24,7 @@ private:
 	};
 
 	std::shared_ptr<Node> _root = std::make_shared<Node>();
-	std::shared_ptr<Node> NodeAtPath(BufferPtr path);
+	std::shared_ptr<Node> NodeAtPath(std::string_view path);
 };
 
 } // syntax

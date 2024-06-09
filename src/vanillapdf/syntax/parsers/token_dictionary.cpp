@@ -5,7 +5,7 @@
 #include <cassert>
 #include <algorithm>
 
-#define INSERT_TO_DICTIONARY(name) m_dictionary.Insert(make_deferred_container<Buffer>(name, sizeof(name) - 1), Token::Type::name)
+#define INSERT_TO_DICTIONARY(name) m_dictionary.Insert(std::string_view(name, sizeof(name) - 1), Token::Type::name)
 
 namespace vanillapdf {
 namespace syntax {
@@ -131,7 +131,7 @@ static const char END_COMPATIBILITY_SECTION[] = "EX";
 
 TokenDictionaryBase::~TokenDictionaryBase() {}
 
-Token::Type TokenDictionaryBase::Find(BufferPtr set) {
+Token::Type TokenDictionaryBase::Find(std::string_view set) {
 	Initialize();
 	return m_dictionary.TokenType(set);
 }

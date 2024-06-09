@@ -12,7 +12,7 @@ class TokenDictionaryBase {
 public:
 	virtual ~TokenDictionaryBase();
 	virtual void Initialize() = 0;
-	Token::Type Find(BufferPtr set);
+	Token::Type Find(std::string_view set);
 
 protected:
 	bool m_initialized = false;

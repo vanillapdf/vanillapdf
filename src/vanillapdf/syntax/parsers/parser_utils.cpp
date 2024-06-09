@@ -22,7 +22,7 @@ types::big_int ParserUtils::GetIntegerValue(TokenPtr token) {
 	assert(token->GetType() == Token::Type::INTEGER_OBJECT && "Expected integer token type");
 
 	auto buffer = token->Value();
-	return std::stoll(buffer->ToString());
+	return std::stoll(buffer);
 }
 
 IntegerObjectPtr ParserUtils::CreateInteger(TokenPtr token) {
@@ -35,8 +35,7 @@ IntegerObjectPtr ParserUtils::CreateInteger(TokenPtr token) {
 RealObjectPtr ParserUtils::CreateReal(TokenPtr token) {
 	assert(token->GetType() == Token::Type::REAL_OBJECT && "Expected real token type");
 
-	auto buffer = token->Value();
-	auto str = buffer->ToString();
+	auto str = token->Value();
 	auto value = std::stod(str);
 	auto pos = str.rfind('.');
 	if (pos != std::string::npos) {
