@@ -618,17 +618,16 @@ else (OPENJPEG_LIBRARIES)
 	message(WARNING "Compiling without openjpeg support. jpeg2000 decompression will become unavailable")
 endif (OPENJPEG_LIBRARIES)
 
-if(UNIX)
-	# There is an issue with fmtlib on Linux
-	# error: '::write' has not been declared; did you mean 'fwrite'?
-	# error: '::dup' has not been declared
-	# https://github.com/fmtlib/fmt/issues/2710
-	set(FMT_OS OFF)
-endif(UNIX)
+# Add fmtlib dependency as git external submodule
+
+# Use header only version as under linux there are some compilation issues
+# relocation R_X86_64_PC32 against symbol `stderr@@GLIBC_2.2.5' can not be used when making a shared object; recompile with -fPIC
+# https://stackoverflow.com/questions/38296756/what-is-the-idiomatic-way-in-cmake-to-add-the-fpic-compiler-option
 
 add_subdirectory("${CMAKE_SOURCE_DIR}/external/fmtlib" build EXCLUDE_FROM_ALL)
+set(VANILLAPDF_LIBS fmt::fmt-header-only ${VANILLAPDF_LIBS})
 
-target_link_libraries(vanillapdf ${VANILLAPDF_LIBS} fmt::fmt)
+target_link_libraries(vanillapdf ${VANILLAPDF_LIBS})
 
 # Project install targets
 install(TARGETS vanillapdf
