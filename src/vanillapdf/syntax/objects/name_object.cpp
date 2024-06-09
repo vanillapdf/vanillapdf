@@ -5,7 +5,8 @@
 #include "syntax/objects/name_object.h"
 #include "utils/streams/output_stream_interface.h"
 
-#include <iomanip>
+#include <fmt/core.h>
+
 #include <sstream>
 
 namespace vanillapdf {
@@ -122,15 +123,24 @@ NameObject::~NameObject() {
 }
 
 std::string NameObject::GetHexadecimalNotation(char ch) const {
-	std::stringstream ss;
-	int converted = static_cast<int>(ch);
-	ss << '#';
-	ss << std::setw(2);
-	ss << std::setfill('0');
-	ss << std::hex;
-	ss << converted;
 
-	return ss.str();
+	// stringstream
+	// --------------------------------------------------------------------------------
+	// Benchmark                                      Time             CPU   Iterations
+	// --------------------------------------------------------------------------------
+	// BM_NameObjectToPdf / string_empty             2370 ns         1664 ns       497778
+	// BM_NameObjectToPdf / string_basic             4610 ns         3174 ns       172308
+	// BM_NameObjectToPdf / string_hexadecimal      10948 ns         7394 ns       112000
+
+	// fmtlib
+	// --------------------------------------------------------------------------------
+	// Benchmark                                      Time             CPU   Iterations
+	// --------------------------------------------------------------------------------
+	// BM_NameObjectToPdf / string_empty             2342 ns         1562 ns       560000
+	// BM_NameObjectToPdf / string_basic             4518 ns         3537 ns       172308
+	// BM_NameObjectToPdf / string_hexadecimal       5765 ns         5259 ns       154483
+
+	return fmt::format("#{:02X}", ch);
 }
 
 std::string NameObject::ToString(void) const {

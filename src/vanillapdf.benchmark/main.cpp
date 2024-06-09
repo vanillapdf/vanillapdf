@@ -96,6 +96,37 @@ BENCHMARK_CAPTURE(BM_LiteralStringObjectToPdf, string_empty, "");
 BENCHMARK_CAPTURE(BM_LiteralStringObjectToPdf, string_basic, "abcdefghijklmnopqrstuvwxyz");
 BENCHMARK_CAPTURE(BM_LiteralStringObjectToPdf, string_octal, "\001\002\003\004\252\253\254\255");
 
+template <class ...Args>
+static void BM_NameObjectToPdf(benchmark::State& state, Args&&... args) {
+	auto args_tuple = std::make_tuple(std::move(args)...);
+
+	for (auto _ : state) {
+		NameObjectHandle* name_object = nullptr;
+		ObjectHandle* base_object = nullptr;
+		BufferHandle* object_pdf_buffer = nullptr;
+
+		std::string encoded_name = std::get<0>(args_tuple);
+
+		// Create data from defined value
+		NameObject_CreateFromEncodedString(encoded_name.c_str(), &name_object);
+
+		// Get base object as it is the only one having ToPdf exposed
+		NameObject_ToObject(name_object, &base_object);
+
+		// Get PDF representation of LiteralStringObject value
+		Object_ToPdf(base_object, &object_pdf_buffer);
+
+		// Cleanup
+		Buffer_Release(object_pdf_buffer);
+		Object_Release(base_object);
+		NameObject_Release(name_object);
+	}
+}
+
+BENCHMARK_CAPTURE(BM_NameObjectToPdf, string_empty, "");
+BENCHMARK_CAPTURE(BM_NameObjectToPdf, string_basic, "abcdefghijklmnopqrstuvwxyz");
+BENCHMARK_CAPTURE(BM_NameObjectToPdf, string_hexadecimal, "#01#02#03#FA#FB#FC#FD#FE#FF");
+
 static const char MINIMALIST_DOCUMENT[] = R"(%PDF-1.7
 1 0 obj
 <</Pages 2 0 R /Type /Catalog>>
