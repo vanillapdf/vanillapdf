@@ -13,7 +13,7 @@ public:
 
 	virtual void Write(const Buffer& data) override;
 	virtual void Write(const Buffer& data, types::stream_size size) override;
-	virtual void Write(const std::string& data) override;
+	virtual void Write(std::string_view data) override;
 	virtual void Write(const char* str) override;
 	virtual void Write(char value) override;
 	virtual void Write(unsigned char value) override;

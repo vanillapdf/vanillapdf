@@ -23,7 +23,7 @@ void OutputStream::Write(const Buffer& data, types::stream_size size) {
 	m_stream->write(data.data(), size);
 }
 
-void OutputStream::Write(const std::string& data) {
+void OutputStream::Write(std::string_view data) {
 	*m_stream << data;
 }
 

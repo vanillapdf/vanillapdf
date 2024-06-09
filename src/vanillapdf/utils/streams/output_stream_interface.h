@@ -13,7 +13,7 @@ class IOutputStream : public virtual IUnknown {
 public:
 	virtual void Write(const Buffer& data) = 0;
 	virtual void Write(const Buffer& data, types::stream_size size) = 0;
-	virtual void Write(const std::string& data) = 0;
+	virtual void Write(std::string_view data) = 0;
 	virtual void Write(const char* str) = 0;
 	virtual void Write(char value) = 0;
 	virtual void Write(unsigned char value) = 0;
@@ -35,7 +35,7 @@ public:
 	virtual ~IOutputStream() {};
 };
 
-inline IOutputStream& operator<<(IOutputStream& os, const std::string& value) {
+inline IOutputStream& operator<<(IOutputStream& os, std::string_view value) {
 	os.Write(value);
 	return os;
 }
