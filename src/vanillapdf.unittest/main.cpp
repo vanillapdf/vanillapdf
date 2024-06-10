@@ -333,6 +333,24 @@ TEST(DictionaryObject, InsertOverwrite) {
 	ASSERT_EQ(DictionaryObject_Release(dictionary_object), VANILLAPDF_ERROR_SUCCESS);
 }
 
+TEST(StreamObject, OnChangeEvent) {
+
+	StreamObjectHandle* stream_object = NULL;
+	DictionaryObjectHandle* dictionary_object = NULL;
+
+	ASSERT_EQ(StreamObject_Create(&stream_object), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(stream_object, nullptr);
+
+	ASSERT_EQ(DictionaryObject_Create(&dictionary_object), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(dictionary_object, nullptr);
+
+	ASSERT_EQ(StreamObject_SetHeader(stream_object, dictionary_object), VANILLAPDF_ERROR_SUCCESS);
+
+	// Cleanup
+	ASSERT_EQ(DictionaryObject_Release(dictionary_object), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(StreamObject_Release(stream_object), VANILLAPDF_ERROR_SUCCESS);
+}
+
 TEST(RealObject, SerializationPrecision) {
 	RealObjectHandle* real_object;
 	ObjectHandle* base_object;

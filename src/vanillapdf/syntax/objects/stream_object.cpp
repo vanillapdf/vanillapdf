@@ -53,14 +53,16 @@ void StreamObject::OnChanged() {
 	Object::OnChanged();
 
 	if (IsDirty()) {
-		auto weak_file = GetFile();
-		auto file = weak_file.GetReference();
-		auto log_scope = file->GetFilenameString();
 
-		auto obj_number = GetRootObjectNumber();
-		auto gen_number = GetRootGenerationNumber();
+		// In case the object is within a file and has object number specified
+		if (IsIndirect() || HasOwner()) {
+			auto obj_number = GetRootObjectNumber();
+			auto gen_number = GetRootGenerationNumber();
 
-		LOG_DEBUG(log_scope) << "Stream object " << std::dec << obj_number << " " << gen_number << " change triggered, object is dirty";
+			LOG_DEBUG_GLOBAL << "Stream object " << std::dec << obj_number << " " << gen_number << " change triggered, object is dirty";
+		}
+
+		// Do we need to log something otherwise for other stream objects?
 	}
 }
 
