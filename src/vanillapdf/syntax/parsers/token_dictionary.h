@@ -12,11 +12,12 @@ class TokenDictionaryBase {
 public:
 	virtual ~TokenDictionaryBase();
 	virtual void Initialize() = 0;
-	Token::Type Find(std::string_view set);
+	Token::Type Find(const std::string& set);
 
 protected:
 	bool m_initialized = false;
-	Tree m_dictionary;
+	//Tree m_dictionary;
+	std::map<std::string, Token::Type> m_dictionary;
 };
 
 class ParserTokenDictionary : public TokenDictionaryBase {

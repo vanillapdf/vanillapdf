@@ -127,6 +127,65 @@ BENCHMARK_CAPTURE(BM_NameObjectToPdf, string_empty, "");
 BENCHMARK_CAPTURE(BM_NameObjectToPdf, string_basic, "abcdefghijklmnopqrstuvwxyz");
 BENCHMARK_CAPTURE(BM_NameObjectToPdf, string_hexadecimal, "#01#02#03#FA#FB#FC#FD#FE#FF");
 
+static const char SAMPLE_CONTENT_STREAM[] = R"(q
+0.000008871 0 595.32 841.92 re
+W* n
+BT
+/F1 9 Tf
+1 0 0 1 362.83 799.8 Tm
+0 g
+0 G
+[( )] TJ
+ET
+Q
+q
+0.000008871 0 595.32 841.92 re
+W* n
+BT
+/F1 9 Tf
+1 0 0 1 458.35 799.8 Tm
+0 g
+0 G
+[( )-2( )-2( )-2( )-2( )-2( )10( )] TJ
+ET)";
+
+static void BM_Contents_ParseContentStream(benchmark::State& state) {
+	FileHandle* test_file = nullptr;
+	InputOutputStreamHandle* file_stream = nullptr;
+
+	InputOutputStreamHandle* content_io_stream = nullptr;
+	InputStreamHandle* content_input_stream = nullptr;
+
+	InputOutputStream_CreateFromMemory(&file_stream);
+	File_OpenStream(file_stream, "temp", &test_file);
+
+	InputOutputStream_CreateFromMemory(&content_io_stream);
+	InputOutputStream_WriteString(content_io_stream, SAMPLE_CONTENT_STREAM);
+	InputOutputStream_ToInputStream(content_io_stream, &content_input_stream);
+
+	for (auto _ : state) {
+		ContentParserHandle* content_parser = nullptr;
+		ContentInstructionCollectionHandle* content_instruction_collection = nullptr;
+
+		InputStream_SetInputPosition(content_input_stream, 0);
+
+		ContentParser_Create(test_file, content_input_stream, &content_parser);
+		ContentParser_ReadInstructionCollection(content_parser, &content_instruction_collection);
+
+		ContentInstructionCollection_Release(content_instruction_collection);
+		ContentParser_Release(content_parser);
+	}
+
+	// Cleanup
+	InputStream_Release(content_input_stream);
+	InputOutputStream_Release(content_io_stream);
+
+	File_Release(test_file);
+	InputOutputStream_Release(file_stream);
+}
+
+BENCHMARK(BM_Contents_ParseContentStream);
+
 static const char MINIMALIST_DOCUMENT[] = R"(%PDF-1.7
 1 0 obj
 <</Pages 2 0 R /Type /Catalog>>

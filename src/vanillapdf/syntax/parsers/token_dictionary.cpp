@@ -5,7 +5,8 @@
 #include <cassert>
 #include <algorithm>
 
-#define INSERT_TO_DICTIONARY(name) m_dictionary.Insert(std::string_view(name, sizeof(name) - 1), Token::Type::name)
+#define INSERT_TO_DICTIONARY(name) m_dictionary.insert({ std::string(name, sizeof(name) - 1), Token::Type::name })
+//#define INSERT_TO_DICTIONARY(name) m_dictionary.Insert(std::string_view(name, sizeof(name) - 1), Token::Type::name)
 
 namespace vanillapdf {
 namespace syntax {
@@ -131,9 +132,27 @@ static const char END_COMPATIBILITY_SECTION[] = "EX";
 
 TokenDictionaryBase::~TokenDictionaryBase() {}
 
-Token::Type TokenDictionaryBase::Find(std::string_view set) {
+Token::Type TokenDictionaryBase::Find(const std::string& set) {
 	Initialize();
-	return m_dictionary.TokenType(set);
+
+	// std::map
+	// ------------------------------------------------------------------------ -
+	// Benchmark                               Time             CPU   Iterations
+	// ------------------------------------------------------------------------ -
+	// BM_Contents_ParseContentStream     113394 ns        69054 ns         7467
+
+	// Custom lexical tree
+	// ------------------------------------------------------------------------ -
+	// Benchmark                               Time             CPU   Iterations
+	// ------------------------------------------------------------------------ -
+	// BM_Contents_ParseContentStream     238547 ns       167392 ns         2987
+
+	auto found = m_dictionary.find(set);
+	if (found == m_dictionary.end()) {
+		return Token::Type::UNKNOWN;
+	}
+	
+	return found->second;
 }
 
 void ParserTokenDictionary::Initialize() {
