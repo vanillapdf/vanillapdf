@@ -570,6 +570,7 @@ find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(OpenJPEG REQUIRED)
+find_package(spdlog REQUIRED)
 
 if (COMPILE_SKIA)
 	find_package(unofficial-skia CONFIG REQUIRED)
@@ -625,7 +626,7 @@ endif (OPENJPEG_LIBRARIES)
 # https://stackoverflow.com/questions/38296756/what-is-the-idiomatic-way-in-cmake-to-add-the-fpic-compiler-option
 
 add_subdirectory("${CMAKE_SOURCE_DIR}/external/fmtlib" build EXCLUDE_FROM_ALL)
-set(VANILLAPDF_LIBS fmt::fmt-header-only ${VANILLAPDF_LIBS})
+set(VANILLAPDF_LIBS spdlog::spdlog ${VANILLAPDF_LIBS})
 
 target_link_libraries(vanillapdf ${VANILLAPDF_LIBS})
 
