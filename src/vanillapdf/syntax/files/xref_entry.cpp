@@ -166,16 +166,9 @@ void XrefUsedEntry::Initialize(void) {
 	}
 
 	auto locked_file = _file.GetReference();
-	auto log_scope = locked_file->GetFilenameString();
 	auto input = locked_file->GetInputStream();
 
-	LOG_DEBUG(log_scope)
-		<< "Initializing xref USED entry "
-		<< std::to_string(_obj_number)
-		<< " "
-		<< std::to_string(_gen_number)
-		<< " at offset "
-		<< std::to_string(_offset);
+	spdlog::debug("Initializing xref USED entry {} {} at offset {}", _obj_number, _gen_number, _offset);
 
 	// In case the we have a document with XRefStm, there are multiple entries for the same object.
 	// What this means is that we are reading the same object multiple times and not sharing the reference.
@@ -219,16 +212,7 @@ void XrefUsedEntry::Initialize(void) {
 		// The generation number AFAIK is only incremented when the object is released
 		// and then reacquired.
 		if (used_entry->GetOffset() != _offset) {
-			LOG_WARNING(log_scope)
-				<< "Initializing xref USED entry "
-				<< std::to_string(_obj_number)
-				<< " "
-				<< std::to_string(_gen_number)
-				<< " from another XRef entry, however the offset is "
-				<< std::to_string(used_entry->GetOffset())
-				<< " instead of "
-				<< std::to_string(_offset);
-
+			spdlog::warn("Initializing xref USED entry {} {} from another XRef entry, however the offset is {} instead of {}", _obj_number, _gen_number, used_entry->GetOffset(), _offset);
 			continue;
 		}
 
@@ -261,28 +245,12 @@ void XrefUsedEntry::Initialize(void) {
 	auto object = parser.ReadIndirectObject(_offset, obj_number, gen_number);
 
 	if (_obj_number != obj_number) {
-		LOG_WARNING(log_scope)
-			<< "Object number in the XREF "
-			<< std::to_string(_obj_number)
-			<< " does not match the actual object "
-			<< std::to_string(obj_number)
-			<< " at offset "
-			<< std::to_string(_offset)
-			<< ". Taking preference on the object";
-
+		spdlog::warn("Object number in the XREF {} does not match the actual object {} at offset {}. Taking preference on the object", _obj_number, obj_number, _offset);
 		_obj_number = obj_number;
 	}
 
 	if (_gen_number != gen_number) {
-		LOG_WARNING(log_scope)
-			<< "Generation number in the XREF "
-			<< std::to_string(_gen_number)
-			<< " does not match the actual object "
-			<< std::to_string(gen_number)
-			<< " at offset "
-			<< std::to_string(_offset)
-			<< ". Taking preference on the object";
-
+		spdlog::warn("Generation number in the XREF {} does not match the actual object {} at offset {}. Taking preference on the object", _gen_number, gen_number, _offset);
 		_gen_number = gen_number;
 	}
 
@@ -306,7 +274,6 @@ void XrefCompressedEntry::Initialize(void) {
 	}
 
 	auto locked_file = _file.GetReference();
-	auto log_scope = locked_file->GetFilenameString();
 	auto chain = locked_file->GetXrefChain();
 	auto stm = locked_file->GetIndirectObject(_object_stream_number, 0);
 
@@ -321,13 +288,7 @@ void XrefCompressedEntry::Initialize(void) {
 		throw GeneralException("Could not find data for the ObjStm " + std::to_string(_object_stream_number));
 	}
 
-	LOG_DEBUG(log_scope)
-		<< "Initializing xref COMPRESSED entry "
-		<< std::to_string(_obj_number)
-		<< " "
-		<< std::to_string(_gen_number)
-		<< " inside object stream "
-		<< std::to_string(_object_stream_number);
+	spdlog::debug("Initializing xref COMPRESSED entry {} {} inside object stream {}", _obj_number, _gen_number, _object_stream_number);
 
 	Parser parser(_file, input_stream);
 	auto stream_entries = parser.ReadObjectStreamEntries(first->GetUnsignedIntegerValue(), size->SafeConvert<types::size_type>());
@@ -349,13 +310,7 @@ void XrefCompressedEntry::Initialize(void) {
 		auto is_used = ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(stream_entry_xref);
 
 		if (!is_used) {
-			auto scope = locked_file->GetFilenameString();
-			LOG_WARNING(scope) <<
-				"Object stream " <<
-				std::to_string(_object_stream_number) <<
-				" contains unused xref entry " <<
-				std::to_string(entry_object_number);
-
+			spdlog::warn("Object stream {} contains unused xref entry {}", _object_stream_number, entry_object_number);
 			continue;
 		}
 
@@ -365,17 +320,7 @@ void XrefCompressedEntry::Initialize(void) {
 	}
 
 	if (!m_initialized) {
-		auto scope = locked_file->GetFilenameString();
-		LOG_WARNING(scope) <<
-			"Compressed entry number " <<
-			std::to_string(GetObjectNumber()) <<
-			" " <<
-			GetGenerationNumber()
-			<< " was supposed to be found in object stream number "
-			<< GetObjectStreamNumber()
-			<< ", but was not found";
-
-		LOG_WARNING(scope) << "Treating as NULL reference";
+		spdlog::warn("Compressed entry number {} {} was supposed to be found in object stream number {}, but was not found. Treating as NULL reference", _obj_number, _gen_number, _object_stream_number);
 	}
 }
 

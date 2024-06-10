@@ -12,11 +12,11 @@ namespace syntax {
 using namespace std;
 
 static void error_callback(const char* msg, void*) {
-    LOG_ERROR_GLOBAL << "OpenJPEG error: " << msg;
+    spdlog::error("OpenJPEG error: {}", msg);
 }
 
 static void warning_callback(const char* msg, void*) {
-    LOG_WARNING_GLOBAL << "OpenJPEG error: " << msg;
+    spdlog::warn("OpenJPEG error: {}", msg);
 }
 
 static void info_callback(const char*, void*) {

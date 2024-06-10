@@ -100,7 +100,7 @@ void SemanticUtils::AddDocumentMapping(WeakReference<syntax::File> file, WeakRef
 	auto shared = file.GetReference();
 
 	if (HasMappedDocument(file)) {
-		LOG_WARNING_GLOBAL << "File " << shared->GetFilenameString() << " was already present in the document mapping, overriding";
+		spdlog::warn("File {} was already present in the document mapping, overriding", shared->GetFilenameString());
 	}
 
 	(*document_map)[shared.get()] = value;

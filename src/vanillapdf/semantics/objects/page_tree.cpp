@@ -49,7 +49,7 @@ PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
 	auto file = weak_file.GetReference();
 	auto log_scope = file->GetFilenameString();
 
-	LOG_DEBUG(log_scope) << "Searching for page " << std::to_string(page_number);
+	spdlog::debug("Searching for page {}", page_number);
 
 	if (page_number < 1) {
 		throw GeneralException(fmt::format("Invalid page number: {}", page_number));

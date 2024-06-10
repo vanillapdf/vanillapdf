@@ -72,7 +72,7 @@ BufferPtr ASCII85DecodeFilter::Decode(IInputStreamPtr src, types::stream_size le
 
 	assert(current > 1 && "A final partial group contains only one character");
 	if (current == 1) {
-		LOG_ERROR_GLOBAL << "A final partial group contains only one character";
+		spdlog::error("A final partial group contains only one character");
 	} else if (current == 2) {
 		int value = sequence[0] * 85 * 85 * 85 * 85 + sequence[1] * 85 * 85 * 85 + 85 * 85 * 85 + 85 * 85 + 85;
 		result->push_back(value >> 24 & 0xFF);

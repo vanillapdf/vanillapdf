@@ -100,7 +100,7 @@ DictionaryObjectPtr ParserBase::ReadDictionary() {
 			auto filename = locked_file->GetFilenameString();
 
 			auto key_type_str = Object::TypeName(key->GetObjectType());
-			LOG_WARNING(filename) << "Found dictionary key with type " << key_type_str << ", skipping";
+			spdlog::warn("Found dictionary key with type {}, skipping", key_type_str);
 
 			continue;
 		}
@@ -110,7 +110,7 @@ DictionaryObjectPtr ParserBase::ReadDictionary() {
 		if (dictionary->Contains(name)) {
 			auto locked_file = _file.GetReference();
 			auto filename = locked_file->GetFilenameString();
-			LOG_WARNING(filename) << "Found duplicate entry for " << name->ToString() << ", skipping";
+			spdlog::warn("Found duplicate entry for {}, skipping", name->ToString());
 			continue;
 		}
 
@@ -140,12 +140,7 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 				auto filename = locked_file->GetFilenameString();
 
 				// Log warning as this is not standard, however not fatal
-				LOG_WARNING(filename) <<
-					"The stream at offset " <<
-					stream_offset <<
-					" does not contain length" <<
-					", using the fallback method";
-
+				spdlog::warn("The stream at offset {} does not contain length, using the fallback method", stream_offset);
 				break;
 			}
 
@@ -156,13 +151,7 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 					auto filename = locked_file->GetFilenameString();
 
 					// Log warning as this is not standard, however not fatal
-					LOG_WARNING(filename) <<
-						"The stream at offset " <<
-						stream_offset <<
-						" does has length specified as indirect object" <<
-						", however the document is broken"
-						", using the fallback method";
-
+					spdlog::warn("The stream at offset {} does has length specified as indirect object, however the document is broken, using the fallback method", stream_offset);
 					break;
 				}
 			}
@@ -180,13 +169,7 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 				auto filename = locked_file->GetFilenameString();
 
 				// Log warning as this is not standard, however not fatal
-				LOG_WARNING(filename) <<
-					"Failed to verify stream length " <<
-					length->GetIntegerValue() <<
-					" for stream object at offset " <<
-					stream_offset <<
-					", using the fallback method";
-
+				spdlog::warn("Failed to verify stream length {} for stream object at offset {}, using the fallback method", length->GetIntegerValue(), stream_offset);
 				break;
 			}
 
@@ -512,11 +495,7 @@ XrefEntryBasePtr Parser::ReadTableEntry(types::big_uint objNumber) {
 	// 0000000000 65536 f
 
 	if (gen_number > constant::MAX_GENERATION_NUMBER) {
-
-		auto locked_file = _file.GetReference();
-		auto filename = locked_file->GetFilenameString();
-		LOG_WARNING(filename) << "Invalid object generation number " << std::dec << gen_number << ", converting";
-
+		spdlog::warn("Invalid object generation number {}, converting", gen_number);
 		gen_number = constant::MAX_GENERATION_NUMBER;
 	}
 
@@ -699,14 +678,7 @@ XrefStreamPtr Parser::ParseXrefStream(
 			// We are creating a virtual table to keep additional information and it is often
 			// not handled properly throughout the source code as it was added later in the development.
 
-			auto filename = locked_file->GetFilenameString();
-
-			LOG_INFO(filename) <<
-				"Could not find object " <<
-				std::to_string(stream_obj_number) <<
-				" " <<
-				std::to_string(stream_gen_number) <<
-				" in the xref chain, creating a virtual table";
+			spdlog::info("Could not find object {} {} in the xref chain, creating a virtual table", stream_obj_number, stream_gen_number);
 
 			XrefUsedEntryPtr entry = make_deferred<XrefUsedEntry>(stream_obj_number, stream_gen_number);
 			entry->SetFile(_file);

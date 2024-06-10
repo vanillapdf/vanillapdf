@@ -15,7 +15,7 @@
 #define CATCH_VANILLAPDF_EXCEPTIONS \
 	catch (vanillapdf::ExceptionBase& e) \
 	{ \
-		LOG_ERROR_GLOBAL << e.what(); \
+		spdlog::error("{}", e.what()); \
 		error_type code = static_cast<error_type>(e.code()); \
 		vanillapdf::Errors::SetLastError(code); \
 		vanillapdf::Errors::SetLastErrorMessage(e.what()); \
@@ -23,14 +23,14 @@
 	} \
 	catch (std::exception& e) \
 	{ \
-		LOG_ERROR_GLOBAL << e.what(); \
+		spdlog::error("{}", e.what()); \
 		vanillapdf::Errors::SetLastError(VANILLAPDF_ERROR_GENERAL); \
 		vanillapdf::Errors::SetLastErrorMessage(e.what()); \
 		return VANILLAPDF_ERROR_GENERAL; \
 	} \
 	catch (...) \
 	{ \
-		LOG_ERROR_GLOBAL << "Caught unknown exception"; \
+		spdlog::error("Caught unknown exception"); \
 		vanillapdf::Errors::SetLastError(VANILLAPDF_ERROR_GENERAL); \
 		return VANILLAPDF_ERROR_GENERAL; \
 	}

@@ -48,14 +48,10 @@ DocumentPtr Document::CreateFile(syntax::FilePtr holder) {
 	if (SemanticUtils::HasMappedDocument(holder)) {
 		auto log_scope = holder->GetFilenameString();
 
-		std::stringstream error_stream;
-		error_stream << "Trying to create new document for file ";
-		error_stream << log_scope;
-		error_stream << ", but the file instance was already opened";
+		auto error_message = fmt::format("Trying to create new document for file {}, but the file instance was already opened", log_scope);
 
-		LOG_ERROR(log_scope) << error_stream.str();
-
-		throw GeneralException(error_stream.str());
+		spdlog::error(error_message);
+		throw GeneralException(error_message);
 	}
 
 	HeaderPtr header = holder->GetHeader();

@@ -47,19 +47,15 @@ void PageContents::SetDirty(bool dirty) {
 
 bool PageContents::RecalculateStreamData() {
 
-	auto weak_file = GetObject()->GetFile();
-	auto file = weak_file.GetReference();
-	auto log_scope = file->GetFilenameString();
-
 	auto obj_number = GetObject()->GetRootObjectNumber();
 	auto gen_number = GetObject()->GetRootGenerationNumber();
 
 	if (!IsDirty()) {
-		LOG_DEBUG(log_scope) << "Page " << obj_number << " " << gen_number << " contents are not dirty";
+		spdlog::debug("Page {} {} contents are not dirty", obj_number, gen_number);
 		return false;
 	}
 
-	LOG_INFO(log_scope) << "Page " << obj_number << " " << gen_number << " contents are dirty, recalculating";
+	spdlog::info("Page {} {} contents are dirty, recalculating", obj_number, gen_number);
 
 	std::stringstream ss;
 	for (auto instruction : m_instructions) {

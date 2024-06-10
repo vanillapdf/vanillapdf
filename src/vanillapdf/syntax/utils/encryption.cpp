@@ -69,7 +69,7 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
 	auto evp_md_ctx = EVP_MD_CTX_new();
 
 	if (evp_md_ctx == nullptr) {
-		LOG_ERROR_GLOBAL << "Failed to allocate new EVP_MD_CTX";
+		spdlog::error("Failed to allocate new EVP_MD_CTX");
 		throw GeneralException("Failed to allocate new EVP_MD_CTX");
 	}
 
@@ -78,21 +78,21 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
 	auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
 	if (init_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not initialize MD5 digest: " << openssl_error;
+		spdlog::error("Could not initialize MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not initialize MD5 digest: " + openssl_error);
 	}
 
 	auto update_key_result = EVP_DigestUpdate(evp_md_ctx, key.data(), key.std_size());
 	if (update_key_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not update MD5 digest: " << openssl_error;
+		spdlog::error("Could not update MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not update MD5 digest: " + openssl_error);
 	}
 
 	auto update_object_result = EVP_DigestUpdate(evp_md_ctx, object_info, sizeof(object_info));
 	if (update_object_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not update MD5 digest: " << openssl_error;
+		spdlog::error("Could not update MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not update MD5 digest: " + openssl_error);
 	}
 
@@ -100,7 +100,7 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
 		auto update_salt_result = EVP_DigestUpdate(evp_md_ctx, &AES_ADDITIONAL_SALT[0], sizeof(AES_ADDITIONAL_SALT));
 		if (update_salt_result != 1) {
 			auto openssl_error = MiscUtils::GetLastOpensslError();
-			LOG_ERROR_GLOBAL << "Could not update MD5 digest: " << openssl_error;
+			spdlog::error("Could not update MD5 digest: {}", openssl_error);
 			throw GeneralException("Could not update MD5 digest: " + openssl_error);
 		}
 	}
@@ -109,7 +109,7 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
 	auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)object_key->data(), &final_size);
 	if (final_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not finalize MD5 digest: " << openssl_error;
+		spdlog::error("Could not finalize MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not finalize MD5 digest: " + openssl_error);
 	}
 
@@ -153,7 +153,7 @@ BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, types::size_type key_le
 	
 	auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
 	if (evp_cipher_ctx == nullptr) {
-		LOG_ERROR_GLOBAL << "Failed to allocate new EVP_CIPHER_CTX";
+		spdlog::error("Failed to allocate new EVP_CIPHER_CTX");
 		throw GeneralException("Failed to allocate new EVP_CIPHER_CTX");
 	}
 	
@@ -172,7 +172,7 @@ BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, types::size_type key_le
 	auto init_result = EVP_EncryptInit(evp_cipher_ctx, evp_cipher, nullptr, nullptr);
 	if (init_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not initialize RC4 digest: " << openssl_error;
+		spdlog::error("Could not initialize RC4 digest: {}", openssl_error);
 		throw GeneralException("Could not initialize RC4 digest: " + openssl_error);
 	}
 
@@ -183,14 +183,14 @@ BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, types::size_type key_le
 	auto set_key_length_result = EVP_CIPHER_CTX_set_key_length(evp_cipher_ctx, key_length_converted);
 	if (set_key_length_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not set RC4 key length: " << openssl_error;
+		spdlog::error("Could not set RC4 key length: {}", openssl_error);
 		throw GeneralException("Could not set RC4 key length: " + openssl_error);
 	}
 
 	auto init_result2 = EVP_EncryptInit(evp_cipher_ctx, nullptr, (unsigned char*)key.data(), nullptr);
 	if (init_result2 != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not re-initialize RC4 digest: " << openssl_error;
+		spdlog::error("Could not re-initialize RC4 digest: {}", openssl_error);
 		throw GeneralException("Could not re-initialize RC4 digest: " + openssl_error);
 	}
 	
@@ -208,7 +208,7 @@ BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, types::size_type key_le
 	
 	if (update_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not update RC4 digest: " << openssl_error;
+		spdlog::error("Could not update RC4 digest: {}", openssl_error);
 		throw GeneralException("Could not update RC4 digest: " + openssl_error);
 	}
 
@@ -217,7 +217,7 @@ BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, types::size_type key_le
 	auto final_result = EVP_EncryptFinal(evp_cipher_ctx, (unsigned char*)result->data() + current_offset, &current_offset);
 	if (final_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not finalize RC4 digest: " << openssl_error;
+		spdlog::error("Could not finalize RC4 digest: {}", openssl_error);
 		throw GeneralException("Could not finalize RC4 digest: " + openssl_error);
 	}
 
@@ -242,7 +242,7 @@ BufferPtr EncryptionUtils::ComputeMD5(const Buffer& data) {
 	auto evp_md = EVP_md5();
 	auto evp_md_ctx = EVP_MD_CTX_new();
 	if (evp_md_ctx == nullptr) {
-		LOG_ERROR_GLOBAL << "Failed to allocate new EVP_MD_CTX";
+		spdlog::error("Failed to allocate new EVP_MD_CTX");
 		throw GeneralException("Failed to allocate new EVP_MD_CTX");
 	}
 
@@ -253,14 +253,14 @@ BufferPtr EncryptionUtils::ComputeMD5(const Buffer& data) {
 	auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
 	if (init_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not initialize MD5 digest: " << openssl_error;
+		spdlog::error("Could not initialize MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not initialize MD5 digest: " + openssl_error);
 	}
 
 	auto update_document_id_result = EVP_DigestUpdate(evp_md_ctx, data.data(), data.std_size());
 	if (update_document_id_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not update MD5 digest: " << openssl_error;
+		spdlog::error("Could not update MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not update MD5 digest: " + openssl_error);
 	}
 
@@ -268,7 +268,7 @@ BufferPtr EncryptionUtils::ComputeMD5(const Buffer& data) {
 	auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)key_digest->data(), &final_size);
 	if (final_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not finalize MD5 digest: " << openssl_error;
+		spdlog::error("Could not finalize MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not finalize MD5 digest: " + openssl_error);
 	}
 
@@ -323,7 +323,7 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
 
 	auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
 	if (evp_cipher_ctx == nullptr) {
-		LOG_ERROR_GLOBAL << "Failed to allocate new EVP_CIPHER_CTX";
+		spdlog::error("Failed to allocate new EVP_CIPHER_CTX");
 		throw GeneralException("Failed to allocate new EVP_CIPHER_CTX");
 	}
 
@@ -337,7 +337,7 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
 
 	if (init_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not initialize AES cipher: " << openssl_error;
+		spdlog::error("Could not initialize AES digest: {}", openssl_error);
 		throw GeneralException("Could not initialize AES cipher: " + openssl_error);
 	}
 
@@ -346,7 +346,7 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
 	auto padding_result = EVP_CIPHER_CTX_set_padding(evp_cipher_ctx, 0);
 	if (padding_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not set AES decryption padding: " << openssl_error;
+		spdlog::error("Could not set AES decryption padding: {}", openssl_error);
 		throw GeneralException("Could not set AES decryption padding: " + openssl_error);
 	}
 	
@@ -364,7 +364,7 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
 	
 	if (update_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not update AES cipher: " << openssl_error;
+		spdlog::error("Could not update AES cipher: {}", openssl_error);
 		throw GeneralException("Could not update AES cipher: " + openssl_error);
 	}
 
@@ -377,7 +377,7 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
 
 	if (final_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not finalize AES cipher: " << openssl_error;
+		spdlog::error("Could not finalize AES cipher: {}", openssl_error);
 		throw GeneralException("Could not finalize AES cipher: " + openssl_error);
 	}
 
@@ -412,7 +412,7 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
 	auto rand_result = RAND_bytes((unsigned char*) iv.data(), AES_CBC_IV_LENGTH);
 	if (rand_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not generate initialization vector for AES: " << openssl_error;
+		spdlog::error("Could not generate initialization vector for AES: {}", openssl_error);
 		throw GeneralException("Could not generate initialization vector for AES: " + openssl_error);
 	}
 
@@ -435,7 +435,7 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
 
 	auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
 	if (evp_cipher_ctx == nullptr) {
-		LOG_ERROR_GLOBAL << "Failed to allocate new EVP_CIPHER_CTX";
+		spdlog::error("Failed to allocate new EVP_CIPHER_CTX");
 		throw GeneralException("Failed to allocate new EVP_CIPHER_CTX");
 	}
 
@@ -449,7 +449,7 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
 
 	if (init_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not initialize AES cipher: " << openssl_error;
+		spdlog::error("Could not initialize AES cipher: {}", openssl_error);
 		throw GeneralException("Could not initialize AES cipher: " + openssl_error);
 	}
 
@@ -467,7 +467,7 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
 
 	if (update_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not update AES cipher: " << openssl_error;
+		spdlog::error("Could not update AES cipher: {}", openssl_error);
 		throw GeneralException("Could not update AES cipher: " + openssl_error);
 	}
 
@@ -480,7 +480,7 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
 
 	if (final_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not finalize AES cipher: " << openssl_error;
+		spdlog::error("Could not finalize AES cipher: {}", openssl_error);
 		throw GeneralException("Could not finalize AES cipher: " + openssl_error);
 	}
 
@@ -552,7 +552,7 @@ BufferPtr EncryptionUtils::RemovePkcs7Padding(const Buffer& data, types::size_ty
 	// that allocated space with zeroes and did not care about setting proper
 	// pkcs padding. That means, that there is some trash after we decrypt the
 	// signature contents and padding could not be validated
-	LOG_WARNING_GLOBAL << "Pkcs padding is incorrect";
+	spdlog::warn("Pkcs padding is incorrect");
 	return make_deferred_container<Buffer>(data);
 }
 
@@ -747,7 +747,7 @@ BufferPtr EncryptionUtils::CalculateDecryptionCompareDataV3(
 	auto evp_md = EVP_md5();
 	auto evp_md_ctx = EVP_MD_CTX_new();
 	if (evp_md_ctx == nullptr) {
-		LOG_ERROR_GLOBAL << "Failed to allocate new EVP_MD_CTX";
+		spdlog::error("Failed to allocate new EVP_CIPHER_CTX");
 		throw GeneralException("Failed to allocate new EVP_MD_CTX");
 	}
 
@@ -763,14 +763,14 @@ BufferPtr EncryptionUtils::CalculateDecryptionCompareDataV3(
 		auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
 		if (init_result != 1) {
 			auto openssl_error = MiscUtils::GetLastOpensslError();
-			LOG_ERROR_GLOBAL << "Could not initialize MD5 digest: " << openssl_error;
+			spdlog::error("Could not initialize MD5 cipher: {}", openssl_error);
 			throw GeneralException("Could not initialize MD5 digest: " + openssl_error);
 		}
 
 		auto update_result = EVP_DigestUpdate(evp_md_ctx, decryption_key_digest->data(), decryption_key_digest->size());
 		if (update_result != 1) {
 			auto openssl_error = MiscUtils::GetLastOpensslError();
-			LOG_ERROR_GLOBAL << "Could not update MD5 digest: " << openssl_error;
+			spdlog::error("Could not update MD5 cipher: {}", openssl_error);
 			throw GeneralException("Could not update MD5 digest: " + openssl_error);
 		}
 
@@ -778,7 +778,7 @@ BufferPtr EncryptionUtils::CalculateDecryptionCompareDataV3(
 		auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)temporary_digest.data(), &final_size);
 		if (final_result != 1) {
 			auto openssl_error = MiscUtils::GetLastOpensslError();
-			LOG_ERROR_GLOBAL << "Could not finalize MD5 digest: " << openssl_error;
+			spdlog::error("Could not finalize MD5 cipher: {}", openssl_error);
 			throw GeneralException("Could not finalize MD5 digest: " + openssl_error);
 		}
 
@@ -793,21 +793,21 @@ BufferPtr EncryptionUtils::CalculateDecryptionCompareDataV3(
 	auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
 	if (init_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not initialize MD5 digest: " << openssl_error;
+		spdlog::error("Could not initialize MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not initialize MD5 digest: " + openssl_error);
 	}
 
 	auto update_pad_result = EVP_DigestUpdate(evp_md_ctx, HARDCODED_PDF_PAD, sizeof(HARDCODED_PDF_PAD));
 	if (update_pad_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not update MD5 digest: " << openssl_error;
+		spdlog::error("Could not update MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not update MD5 digest: " + openssl_error);
 	}
 
 	auto update_document_id_result = EVP_DigestUpdate(evp_md_ctx, document_id.data(), document_id.std_size());
 	if (update_document_id_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not update MD5 digest: " << openssl_error;
+		spdlog::error("Could not update MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not update MD5 digest: " + openssl_error);
 	}
 
@@ -815,7 +815,7 @@ BufferPtr EncryptionUtils::CalculateDecryptionCompareDataV3(
 	auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)key_digest.data(), &final_size);
 	if (final_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not finalize MD5 digest: " << openssl_error;
+		spdlog::error("Could not finalize MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not finalize MD5 digest: " + openssl_error);
 	}
 
@@ -853,7 +853,7 @@ BufferPtr EncryptionUtils::CalculateDecryptionKeyDigest(
 	auto evp_md = EVP_md5();
 	auto evp_md_ctx = EVP_MD_CTX_new();
 	if (evp_md_ctx == nullptr) {
-		LOG_ERROR_GLOBAL << "Failed to allocate new EVP_MD_CTX";
+		spdlog::error("Failed to allocate new EVP_CIPHER_CTX");
 		throw GeneralException("Failed to allocate new EVP_MD_CTX");
 	}
 
@@ -862,21 +862,21 @@ BufferPtr EncryptionUtils::CalculateDecryptionKeyDigest(
 	auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
 	if (init_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not initialize MD5 digest: " << openssl_error;
+		spdlog::error("Could not initialize MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not initialize MD5 digest: " + openssl_error);
 	}
 
 	auto update_input_result = EVP_DigestUpdate(evp_md_ctx, input.data(), input.std_size());
 	if (update_input_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not update MD5 digest: " << openssl_error;
+		spdlog::error("Could not update MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not update MD5 digest: " + openssl_error);
 	}
 
 	auto update_owner_result = EVP_DigestUpdate(evp_md_ctx, owner_data.data(), owner_data.std_size());
 	if (update_owner_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not update MD5 digest: " << openssl_error;
+		spdlog::error("Could not update MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not update MD5 digest: " + openssl_error);
 	}
 
@@ -889,14 +889,14 @@ BufferPtr EncryptionUtils::CalculateDecryptionKeyDigest(
 	auto update_permissions_result = EVP_DigestUpdate(evp_md_ctx, permissions_array, sizeof(permissions_array));
 	if (update_permissions_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not update MD5 digest: " << openssl_error;
+		spdlog::error("Could not update MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not update MD5 digest: " + openssl_error);
 	}
 
 	auto update_document_id_result = EVP_DigestUpdate(evp_md_ctx, document_id.data(), document_id.std_size());
 	if (update_document_id_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not update MD5 digest: " << openssl_error;
+		spdlog::error("Could not update MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not update MD5 digest: " + openssl_error);
 	}
 
@@ -904,7 +904,7 @@ BufferPtr EncryptionUtils::CalculateDecryptionKeyDigest(
 	auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)decryption_key_digest->data(), &final_size);
 	if (final_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not finalize MD5 digest: " << openssl_error;
+		spdlog::error("Could not finalize MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not finalize MD5 digest: " + openssl_error);
 	}
 
@@ -941,7 +941,7 @@ BufferPtr EncryptionUtils::GetRecipientKey
 
 	auto evp_md_ctx = EVP_MD_CTX_new();
 	if (evp_md_ctx == nullptr) {
-		LOG_ERROR_GLOBAL << "Failed to allocate new EVP_MD_CTX";
+		spdlog::error("Failed to allocate new EVP_CIPHER_CTX");
 		throw GeneralException("Failed to allocate new EVP_MD_CTX");
 	}
 
@@ -950,7 +950,7 @@ BufferPtr EncryptionUtils::GetRecipientKey
 	auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
 	if (init_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not finalize SHA digest: " << openssl_error;
+		spdlog::error("Could not initialize SHA digest: {}", openssl_error);
 		throw GeneralException("Could not initialize SHA digest: " + openssl_error);
 	}
 
@@ -958,7 +958,7 @@ BufferPtr EncryptionUtils::GetRecipientKey
 	auto update_key_result = EVP_DigestUpdate(evp_md_ctx, decrypted_data->data(), 20);
 	if (update_key_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not update SHA digest: " << openssl_error;
+		spdlog::error("Could not update SHA digest: {}", openssl_error);
 		throw GeneralException("Could not update SHA digest: " + openssl_error);
 	}
 
@@ -970,7 +970,7 @@ BufferPtr EncryptionUtils::GetRecipientKey
 		auto update_enveloped_result = EVP_DigestUpdate(evp_md_ctx, enveloped_buffer->data(), enveloped_buffer->std_size());
 		if (update_enveloped_result != 1) {
 			auto openssl_error = MiscUtils::GetLastOpensslError();
-			LOG_ERROR_GLOBAL << "Could not update SHA digest: " << openssl_error;
+			spdlog::error("Could not update SHA digest: {}", openssl_error);
 			throw GeneralException("Could not update SHA digest: " + openssl_error);
 		}
 	}
@@ -979,7 +979,7 @@ BufferPtr EncryptionUtils::GetRecipientKey
 	auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)decrypted_key->data(), &final_size);
 	if (final_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not finalize SHA digest: " << openssl_error;
+		spdlog::error("Could not finalize SHA digest: {}", openssl_error);
 		throw GeneralException("Could not finalize SHA digest: " + openssl_error);
 	}
 
@@ -1015,20 +1015,20 @@ BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax
 		BIO* enveloped_bytes_bio = BIO_new_mem_buf(enveloped_bytes_data, ValueConvertUtils::SafeConvert<int>(enveloped_bytes_size));
 		SCOPE_GUARD_CAPTURE_REFERENCES(BIO_free(enveloped_bytes_bio));
 		if (nullptr == enveloped_bytes_bio) {
-			LOG_ERROR_GLOBAL << "Could not create BIO structure from enveloped data";
+			spdlog::error("Could not create BIO structure from enveloped data");
 			continue;
 		}
 
 		PKCS7* p7 = d2i_PKCS7_bio(enveloped_bytes_bio, nullptr);
 		SCOPE_GUARD_CAPTURE_REFERENCES(PKCS7_free(p7));
 		if (nullptr == p7) {
-			LOG_ERROR_GLOBAL << "Could not parse PKCS#7 structure from enveloped data";
+			spdlog::error("Could not parse PKCS#7 structure from enveloped data");
 			continue;
 		}
 
 		assert(PKCS7_type_is_enveloped(p7) && "PKCS#7 container is not enveloped");
 		if (!PKCS7_type_is_enveloped(p7)) {
-			LOG_ERROR_GLOBAL << "PKCS#7 container is not enveloped";
+			spdlog::error("PKCS#7 container is not enveloped");
 			continue;
 		}
 
@@ -1046,7 +1046,7 @@ BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax
 			SCOPE_GUARD([oneline]() {OPENSSL_free(oneline); });
 
 			if (oneline == nullptr) {
-				LOG_ERROR_GLOBAL << "Could not print issuer to buffer";
+				spdlog::error("Could not print issuer to buffer");
 				continue;
 			}
 
@@ -1069,19 +1069,19 @@ BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax
 			EVP_CIPHER_CTX *evp_ctx = nullptr;
 			rv = BIO_get_cipher_ctx(etmp, &evp_ctx);
 			if (1 != rv || nullptr == evp_ctx) {
-				LOG_ERROR_GLOBAL << "Could not obtain cipher context";
+				spdlog::error("Could not obtain cipher context");
 				continue;
 			}
 
 			rv = EVP_CipherInit_ex(evp_ctx, evp_cipher, NULL, NULL, NULL, 0);
 			if (1 != rv) {
-				LOG_ERROR_GLOBAL << "Could not initialize cipher";
+				spdlog::error("Could not initialize cipher");
 				continue;
 			}
 
 			rv = EVP_CIPHER_asn1_to_param(evp_ctx, envelope->enc_data->algorithm->parameter);
 			if (rv <= 0) {
-				LOG_ERROR_GLOBAL << "Could not convert asn1 to parameter";
+				spdlog::error("Could not convert asn1 to parameter");
 				continue;
 			}
 
@@ -1096,14 +1096,14 @@ BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax
 
 			rv = EVP_CipherInit_ex(evp_ctx, NULL, NULL, (unsigned char *) decrypted_recipient_key.data(), NULL, 0);
 			if (1 != rv) {
-				LOG_ERROR_GLOBAL << "Could not decrypt enveloped data";
+				spdlog::error("Could not decrypt enveloped data");
 				continue;
 			}
 
 			auto out = BIO_new_mem_buf(envelope->enc_data->enc_data->data, envelope->enc_data->enc_data->length);
 			SCOPE_GUARD_CAPTURE_REFERENCES(BIO_free(out));
 			if (nullptr == out) {
-				LOG_ERROR_GLOBAL << "Could not create BIO structure for decrypted data";
+				spdlog::error("Could not create BIO structure for decrypted data");
 				continue;
 			}
 
@@ -1161,7 +1161,7 @@ BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer& pad_password,
 	auto evp_md = EVP_md5();
 	auto evp_md_ctx = EVP_MD_CTX_new();
 	if (evp_md_ctx == nullptr) {
-		LOG_ERROR_GLOBAL << "Failed to allocate new EVP_MD_CTX";
+		spdlog::error("Failed to allocate new EVP_CIPHER_CTX");
 		throw GeneralException("Failed to allocate new EVP_MD_CTX");
 	}
 
@@ -1170,14 +1170,14 @@ BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer& pad_password,
 	auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
 	if (init_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not initialize MD5 digest: " << openssl_error;
+		spdlog::error("Could not initialize MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not initialize MD5 digest: " + openssl_error);
 	}
 
 	auto update_password_result = EVP_DigestUpdate(evp_md_ctx, pad_password.data(), pad_password.std_size());
 	if (update_password_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not update MD5 digest: " << openssl_error;
+		spdlog::error("Could not update MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not update MD5 digest: " + openssl_error);
 	}
 
@@ -1185,7 +1185,7 @@ BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer& pad_password,
 	auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)password_digest.data(), &final_size);
 	if (final_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not finalize MD5 digest: " << openssl_error;
+		spdlog::error("Could not finalize MD5 digest: {}", openssl_error);
 		throw GeneralException("Could not finalize MD5 digest: " + openssl_error);
 	}
 
@@ -1204,14 +1204,14 @@ BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer& pad_password,
 			auto init_loop_result = EVP_DigestInit(evp_md_ctx, evp_md);
 			if (init_loop_result != 1) {
 				auto openssl_error = MiscUtils::GetLastOpensslError();
-				LOG_ERROR_GLOBAL << "Could not initialize MD5 digest: " << openssl_error;
+				spdlog::error("Could not initialize MD5 digest: {}", openssl_error);
 				throw GeneralException("Could not initialize MD5 digest: " + openssl_error);
 			}
 
 			auto update_loop_result = EVP_DigestUpdate(evp_md_ctx, password_digest.data(), password_length);
 			if (update_loop_result != 1) {
 				auto openssl_error = MiscUtils::GetLastOpensslError();
-				LOG_ERROR_GLOBAL << "Could not update MD5 digest: " << openssl_error;
+				spdlog::error("Could not update MD5 digest: {}", openssl_error);
 				throw GeneralException("Could not update MD5 digest: " + openssl_error);
 			}
 
@@ -1219,7 +1219,7 @@ BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer& pad_password,
 			auto final_loop_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)temporary_digest.data(), &final_loop_size);
 			if (final_loop_result != 1) {
 				auto openssl_error = MiscUtils::GetLastOpensslError();
-				LOG_ERROR_GLOBAL << "Could not finalize MD5 digest: " << openssl_error;
+				spdlog::error("Could not finalize MD5 digest: {}", openssl_error);
 				throw GeneralException("Could not finalize MD5 digest: " + openssl_error);
 			}
 
@@ -1264,7 +1264,7 @@ BufferPtr EncryptionUtils::GenerateRandomData(int length) {
 	auto rand_result = RAND_bytes((unsigned char*)result->data(), length);
 	if (rand_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not generate random data: " << openssl_error;
+		spdlog::error("Could not generate random data: {}", openssl_error);
 		throw GeneralException("Could not generate random data: " + openssl_error);
 	}
 

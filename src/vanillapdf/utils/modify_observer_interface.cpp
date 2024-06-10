@@ -64,7 +64,7 @@ bool IModifyObservable::CheckReferenceActive(const WeakReference<IModifyObserver
 	// All references shall unsubscribe properly from the notifications
 	assert(ref.IsActive() && "Found deactivated reference");
 	if (!ref.IsActive()) {
-		LOG_ERROR_GLOBAL << "Found deactivated reference";
+		spdlog::error("Found deactivated reference");
 	}
 
 	return ref.IsActive();

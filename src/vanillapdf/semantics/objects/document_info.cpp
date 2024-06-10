@@ -82,7 +82,8 @@ bool DocumentInfo::CreationDate(OutputDatePtr& result) const {
 		auto file = _obj->GetFile();
 		auto locked_file = file.GetReference();
 		auto filename = locked_file->GetFilenameString();
-		LOG_ERROR(filename) << "Error parsing datetime: " << ex.what();
+
+		spdlog::error("Error parsing datetime: {}", ex.what());
 		return false;
 	}
 }

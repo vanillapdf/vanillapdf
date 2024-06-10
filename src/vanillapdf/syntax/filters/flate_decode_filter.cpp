@@ -183,7 +183,7 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
 
 				break;
 			default:
-				LOG_ERROR_GLOBAL << "Unknown filter type: " << filter;
+				spdlog::error("Unknown filter type: {}", filter);
 				break;
 		}
 

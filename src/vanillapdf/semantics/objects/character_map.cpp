@@ -54,21 +54,15 @@ BufferPtr UnicodeCharacterMap::GetMappedValue(BufferPtr key) const {
 
 	if (!in_codespace) {
 
-		auto weak_file = GetObject()->GetFile();
-		auto file = weak_file.GetReference();
-		auto log_scope = file->GetFilenameString();
-
-		std::stringstream error_stream;
-		error_stream << "The key " << key->ToHexString() << " was not found in the UnicodeCharacterMap codespace range";
-
-		LOG_ERROR(log_scope) << error_stream.str();
+		auto error_message = fmt::format("The key {} was not found in the UnicodeCharacterMap codespace range", key->ToHexString());
+		spdlog::error(error_message);
 
 		auto codespace_range_size = m_data.CodeSpaceRanges.size();
 		for (decltype(codespace_range_size) i = 0; i < codespace_range_size; ++i) {
-			LOG_ERROR(log_scope) << "Codespace ranges [" << i << "]" << " " << m_data.CodeSpaceRanges[i].Begin->ToString() << ":" << m_data.CodeSpaceRanges[i].End->ToString();
+			spdlog::error("Codespace ranges [{}] {}:{}", i, m_data.CodeSpaceRanges[i].Begin->ToString(), m_data.CodeSpaceRanges[i].End->ToString());
 		}
 
-		throw GeneralException(error_stream.str());
+		throw GeneralException(error_message);
 	}
 
 	// Check base font ranges
@@ -85,37 +79,31 @@ BufferPtr UnicodeCharacterMap::GetMappedValue(BufferPtr key) const {
 		}
 	}
 
-	auto weak_file = GetObject()->GetFile();
-	auto file = weak_file.GetReference();
-	auto log_scope = file->GetFilenameString();
+	auto error_message = fmt::format("The key {} was not found in the UnicodeCharacterMap", key->ToHexString());
+	spdlog::error(error_message);
 
-	std::stringstream error_stream;
-	error_stream << "The key " << key->ToHexString() << " was not found in the UnicodeCharacterMap";
-
-	LOG_ERROR(log_scope) << error_stream.str();
-
-	LOG_ERROR(log_scope) << "CodeSpaceRanges: " << m_data.CodeSpaceRanges.size();
+	spdlog::error("CodeSpaceRanges: {}", m_data.CodeSpaceRanges.size());
 
 	auto codespace_range_size = m_data.CodeSpaceRanges.size();
 	for (decltype(codespace_range_size) i = 0; i < codespace_range_size; ++i) {
-		LOG_ERROR(log_scope) << "Codespace range [" << i << "]" << " " << m_data.CodeSpaceRanges[i].Begin->ToString() << ":" << m_data.CodeSpaceRanges[i].End->ToString();
+		spdlog::error("Codespace range [{}] {}:{}", i, m_data.CodeSpaceRanges[i].Begin->ToString(), m_data.CodeSpaceRanges[i].End->ToString());
 	}
 
-	LOG_ERROR(log_scope) << "BaseFontRanges: " << m_data.BaseFontRanges.size();
+	spdlog::error("BaseFontRanges: {}", m_data.BaseFontRanges.size());
 
 	auto font_range_size = m_data.BaseFontRanges.size();
 	for (decltype(font_range_size) i = 0; i < font_range_size; ++i) {
-		LOG_ERROR(log_scope) << "Font range [" << i << "]" << " " << m_data.BaseFontRanges[i].GetRangeLow()->ToString() << ":" << m_data.BaseFontRanges[i].GetRangeHigh()->ToString();
+		spdlog::error("Font range [{}] {}:{}", i, m_data.BaseFontRanges[i].GetRangeLow()->ToString(), m_data.BaseFontRanges[i].GetRangeHigh()->ToString());
 	}
 
-	LOG_ERROR(log_scope) << "BaseFontCharMapping: " << m_data.BaseFontCharMapping.size();
+	spdlog::error("BaseFontCharMapping: {}", m_data.BaseFontCharMapping.size());
 
 	auto font_char_size = m_data.BaseFontCharMapping.size();
 	for (decltype(font_char_size) i = 0; i < font_char_size; ++i) {
-		LOG_ERROR(log_scope) << "Font char mapping [" << i << "]" << " " << m_data.BaseFontCharMapping[i].Source->ToString() << ":" << m_data.BaseFontCharMapping[i].Destination->ToString();
+		spdlog::error("Font char mapping [{}] {}:{}", i, m_data.BaseFontCharMapping[i].Source->ToString(), m_data.BaseFontCharMapping[i].Destination->ToString());
 	}
 
-	throw GeneralException(error_stream.str());
+	throw GeneralException(error_message);
 }
 
 } // semantics

@@ -8,63 +8,76 @@ using namespace vanillapdf;
 
 VANILLAPDF_API error_type CALLING_CONVENTION Logging_IsEnabled(boolean_type* result)
 {
-	*result = LogManager::GetLoggerInstance()->IsEnabled();
-	return VANILLAPDF_ERROR_SUCCESS;
+	try
+	{
+		//*result = LogManager::GetLoggerInstance()->IsEnabled();
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Logging_Enable(void)
 {
-	LogManager::GetLoggerInstance()->SetEnabled(true);
-	return VANILLAPDF_ERROR_SUCCESS;
+	try
+	{
+		//LogManager::GetLoggerInstance()->SetEnabled(true);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Logging_Disable(void)
 {
-	LogManager::GetLoggerInstance()->SetEnabled(false);
-	return VANILLAPDF_ERROR_SUCCESS;
+	try
+	{
+		//LogManager::GetLoggerInstance()->SetEnabled(false);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Logging_GetSeverity(LoggingSeverity* level)
 {
-	auto result = LogManager::GetLoggerInstance()->GetSeverity();
-	switch (result)
+	try
 	{
-	case vanillapdf::Severity::Debug:
-		*level = LoggingSeverity_Debug; break;
-	case vanillapdf::Severity::Info:
-		*level = LoggingSeverity_Info; break;
-	case vanillapdf::Severity::Warning:
-		*level = LoggingSeverity_Warning; break;
-	case vanillapdf::Severity::Error:
-		*level = LoggingSeverity_Error; break;
-	case vanillapdf::Severity::Fatal:
-		*level = LoggingSeverity_Fatal; break;
-	default:
-		return VANILLAPDF_ERROR_GENERAL;
-	}
+		auto result = spdlog::get_level();
+		switch (result)
+		{
+		case spdlog::level::debug:
+			*level = LoggingSeverity_Debug; break;
+		case spdlog::level::info:
+			*level = LoggingSeverity_Info; break;
+		case spdlog::level::warn:
+			*level = LoggingSeverity_Warning; break;
+		case spdlog::level::err:
+			*level = LoggingSeverity_Error; break;
+		case spdlog::level::critical:
+			*level = LoggingSeverity_Fatal; break;
+		default:
+			return VANILLAPDF_ERROR_GENERAL;
+		}
 
-	return VANILLAPDF_ERROR_SUCCESS;
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Logging_SetSeverity(LoggingSeverity level)
 {
-	Severity converted;
-	switch (level)
+	try
 	{
-	case LoggingSeverity_Debug:
-		converted = vanillapdf::Severity::Debug; break;
-	case LoggingSeverity_Info:
-		converted = vanillapdf::Severity::Info; break;
-	case LoggingSeverity_Warning:
-		converted = vanillapdf::Severity::Warning; break;
-	case LoggingSeverity_Error:
-		converted = vanillapdf::Severity::Error; break;
-	case LoggingSeverity_Fatal:
-		converted = vanillapdf::Severity::Fatal; break;
-	default:
-		return VANILLAPDF_ERROR_GENERAL;
-	}
+		switch (level)
+		{
+		case LoggingSeverity_Debug:
+			spdlog::set_level(spdlog::level::debug); break;
+		case LoggingSeverity_Info:
+			spdlog::set_level(spdlog::level::info); break;
+		case LoggingSeverity_Warning:
+			spdlog::set_level(spdlog::level::warn); break;
+		case LoggingSeverity_Error:
+			spdlog::set_level(spdlog::level::err); break;
+		case LoggingSeverity_Fatal:
+			spdlog::set_level(spdlog::level::critical); break;
+		default:
+			return VANILLAPDF_ERROR_GENERAL;
+		}
 
-	LogManager::GetLoggerInstance()->SetSeverity(converted);
-	return VANILLAPDF_ERROR_SUCCESS;
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
 }

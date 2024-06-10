@@ -192,8 +192,8 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
 		auto evp_pkey_context = EVP_PKEY_CTX_new_from_pkey(nullptr, key, nullptr);
 		if (evp_pkey_context == nullptr) {
 			auto openssl_error = MiscUtils::GetLastOpensslError();
-			LOG_ERROR_GLOBAL << "Could not initialize encryption engine: " << openssl_error;
-			throw GeneralException("Could not create PKEY context");
+			spdlog::error("Could not create PKEY context: {}", openssl_error);
+			throw GeneralException("Could not create PKEY context" + openssl_error);
 		}
 
 		encryption_context = evp_pkey_context;
@@ -202,7 +202,7 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
 	int init_result = EVP_PKEY_decrypt_init(encryption_context);
 	if (init_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not initialize encryption engine: " << openssl_error;
+		spdlog::error("Could not initialize encryption engine: {}", openssl_error);
 		throw GeneralException("Could not initialize encryption engine: " + std::to_string(init_result));
 	}
 
@@ -210,7 +210,7 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
 	int length_result = EVP_PKEY_decrypt(encryption_context, nullptr, &outlen, (unsigned char *) data.data(), data.std_size());
 	if (length_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not get decrypt message length: " << openssl_error;
+		spdlog::error("Could not get decrypt message length: {}", openssl_error);
 		throw GeneralException("Could not get decrypt message length: " + std::to_string(length_result));
 	}
 
@@ -218,7 +218,7 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
 	int decrypt_result = EVP_PKEY_decrypt(encryption_context, (unsigned char *) output->data(), &outlen, (unsigned char *) data.data(), data.std_size());
 	if (decrypt_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		LOG_ERROR_GLOBAL << "Could not get decrypt message: " << openssl_error;
+		spdlog::error("Could not get decrypt message: {}", openssl_error);
 		throw GeneralException("Could not get decrypt message: " + std::to_string(decrypt_result));
 	}
 
@@ -246,7 +246,7 @@ bool PKCS12Key::PKCS12KeyImpl::ContainsPrivateKey(const Buffer& issuer, const Bu
 	SCOPE_GUARD([oneline]() {OPENSSL_free(oneline); });
 
 	if (oneline == nullptr) {
-		LOG_ERROR_GLOBAL << "Could not print issuer to buffer";
+		spdlog::error("Could not print issuer to buffer");
 		return false;
 	}
 

@@ -37,7 +37,7 @@ void error_exit(j_common_ptr cinfo) {
 	char buffer[JMSG_LENGTH_MAX];
 	(*cinfo->err->format_message) (cinfo, buffer);
 
-	LOG_ERROR_GLOBAL << "JPEG decompression exited with error: " << buffer;
+	spdlog::error("JPEG decompression exited with error: {}", buffer);
 
 	throw GeneralException(buffer);
 }
@@ -46,7 +46,7 @@ void output_message(j_common_ptr cinfo) {
 	char buffer[JMSG_LENGTH_MAX];
 	(*cinfo->err->format_message) (cinfo, buffer);
 
-	LOG_WARNING_GLOBAL << "JPEG decompression reported message: " << buffer;
+	spdlog::warn("JPEG decompression reported message: {}", buffer);
 }
 
 void init_source(j_decompress_ptr cinfo) {
@@ -57,7 +57,7 @@ boolean fill_input_buffer(j_decompress_ptr cinfo) {
 	UNUSED(cinfo);
 
 	assert(!"This method is not handled");
-	LOG_ERROR_GLOBAL << "JPEG decompression failure. Please report this issue";
+	spdlog::error("JPEG decompression failure. Please report this issue");
 
 	return TRUE;
 }
@@ -81,7 +81,7 @@ void term_source(j_decompress_ptr cinfo) {
 }
 
 boolean resync_to_restart(j_decompress_ptr cinfo, int desired) {
-	LOG_INFO_GLOBAL << "JPEG decompression resync restart, desired: " << desired;
+	spdlog::info("JPEG decompression resync restart, desired: {}", desired);
 	return jpeg_resync_to_restart(cinfo, desired);
 }
 
@@ -186,14 +186,7 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
 
 			auto color_space_array = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(color_space_object);
 
-			auto weak_file = parameters->GetFile();
-			auto locked_file = weak_file.GetReference();
-			auto filename = locked_file->GetFilenameString();
-
-			LOG_ERROR(filename)
-				<< "Non-standard color spaces "
-				<< color_space_array->ToString()
-				<< " are not supported";
+			spdlog::error("Non-standard color spaces {} are not supported", color_space_array->ToString());
 
 			// TODO: ICCBased, Indexed, Lab, Separation, DeviceN
 			throw NotSupportedException("Non-standard colorspaces are not supported");
@@ -384,7 +377,7 @@ BufferPtr DCTDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 			std::memcpy(buffer.data(), jpeg_buffer[0], jpeg.output_width);
 		} else {
 			assert(!"Unknown JPEG components");
-			LOG_ERROR_GLOBAL << "Unknown JPEG components";
+			spdlog::error("Unknown JPEG components");
 		}
 
 		result->Write(buffer);

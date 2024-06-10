@@ -104,17 +104,19 @@ IInputOutputStreamPtr File::GetFilestream(const std::string& path, std::ios_base
 File::File(IInputOutputStreamPtr stream, const std::string& path) : _full_path(path), _input(stream) {
 	auto filename = MiscUtils::ExtractFilename(path);
 
-	LOG_INFO_GLOBAL << "File constructor " << filename;
-	LOG_INFO(filename) << "File constructor";
+	spdlog::info("File constructor {}", filename);
 
 	_filename = make_deferred_container<Buffer>(filename);
 }
 
 File::~File(void) {
-	auto filename = GetFilenameString();
-
-	LOG_INFO_GLOBAL << "File destructor " << filename;
-	LOG_INFO(filename) << "File destructor";
+	try {
+		auto filename = GetFilenameString();
+		spdlog::info("File destructor {}", filename);
+	}
+	catch (std::exception&) {
+		// Exceptions in destructor could not be really handled
+	}
 }
 
 void File::Initialize() {
@@ -125,7 +127,7 @@ void File::Initialize() {
 
 	auto filename = GetFilenameString();
 
-	LOG_INFO(filename) << "File initialization";
+	spdlog::info("File initialization {}", filename);
 
 	_input->ExclusiveInputLock();
 
@@ -146,8 +148,8 @@ void File::Initialize() {
 	} catch (NotSupportedException&) {
 		throw;
 	} catch (ExceptionBase& e) {
-		LOG_ERROR(filename) << "Could not parse xref chain, using fallback mechanism";
-		LOG_ERROR(filename) << "Reason: " << e.what();
+		spdlog::error("Could not parse xref chain, using fallback mechanism");
+		spdlog::error("Reason: {}", e.what());
 
 		_xref = stream.FindAllObjects();
 	}
@@ -244,10 +246,10 @@ bool File::SetEncryptionKey(IEncryptionKey& key) {
 		_decryption_key = EncryptionUtils::GetRecipientKey(recipients, length_bits, algorithm, key);
 		return true;
 	} catch (GeneralException& ex) {
-		LOG_ERROR(filename) << "Error setting recepient encryption key: " << ex.what();
+		spdlog::error("Error setting recepient encryption key: {}", ex.what());
 		return false;
 	} catch (...) {
-		LOG_ERROR(filename) << "Error setting recepient encryption key";
+		spdlog::error("Error setting recepient encryption key");
 		return false;
 	}
 }
@@ -270,17 +272,13 @@ bool File::SetEncryptionPassword(const Buffer& password) {
 	auto trailer_dictionary = xref->GetTrailerDictionary();
 
 	if (!trailer_dictionary->Contains(constant::Name::ID)) {
-		auto filename = GetFilenameString();
-		LOG_ERROR(filename) << "Trailer dictionary does not contain document ID";
-
+		spdlog::error("Trailer dictionary does not contain document ID");
 		throw GeneralException("Trailer dictionary does not contain document ID");
 	}
 
 	auto document_ids = trailer_dictionary->FindAs<MixedArrayObjectPtr>(constant::Name::ID);
 	if (document_ids->GetSize() == 0) {
-		auto filename = GetFilenameString();
-		LOG_ERROR(filename) << "Document ID list is empty";
-
+		spdlog::error("Document ID list is empty");
 		throw GeneralException("Document ID list is empty");
 	}
 
@@ -294,9 +292,7 @@ bool File::SetEncryptionPassword(const Buffer& password) {
 	}
 
 	if (document_id_buffer->empty()) {
-		auto filename = GetFilenameString();
-		LOG_ERROR(filename) << "Could not decrypt document with empty document ID";
-
+		spdlog::error("Could not decrypt document with empty document ID");
 		throw GeneralException("Could not decrypt document with empty document ID");
 	}
 
@@ -730,8 +726,7 @@ ObjectPtr File::GetIndirectObjectInternal(
 	types::big_uint obj_number,
 	types::ushort gen_number) const {
 
-	auto filename = GetFilenameString();
-	LOG_DEBUG(filename) << std::dec << "GetIndirectObject " << obj_number << " and " << gen_number;
+	spdlog::debug("GetIndirectObject {} and {}", obj_number, gen_number);
 
 	if (!_xref->Contains(obj_number, gen_number)) {
 		return NullObject::GetInstance();
@@ -757,7 +752,7 @@ ObjectPtr File::GetIndirectObjectInternal(
 			return compressed->GetReference();
 		}
 		case XrefEntryBase::Usage::Null:
-			LOG_ERROR(filename) << "Xref entry type is null for object " << obj_number << " " << gen_number;
+			spdlog::error("Xref entry type is null for object {} {}", obj_number, gen_number);
 			return NullObject::GetInstance();
 		case XrefEntryBase::Usage::Free:
 			return NullObject::GetInstance();

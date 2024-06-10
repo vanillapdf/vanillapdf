@@ -263,15 +263,7 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
 			// TODO: if FixObjectStreamEntryIndex
 
 			if (current_verify_index != entry_index) {
-				auto weak_file = entry->GetFile();
-				auto locked_file = weak_file.GetReference();
-				auto filename = locked_file->GetFilenameString();
-
-				LOG_WARNING(filename)
-					<< "Object stream entry index "
-					<< std::to_string(entry_index)
-					<< " does not match expected "
-					<< std::to_string(current_verify_index);
+				spdlog::warn("Object stream entry index {} does not match expected {}", entry_index, current_verify_index);
 			}
 		}
 
@@ -1412,11 +1404,7 @@ void FileWriter::WriteXref(IOutputStreamPtr output, XrefBasePtr xref) {
 	}
 
 	if (xref->GetType() == XrefBase::Type::Virtual) {
-		auto weak_file = xref->GetFile();
-		auto locked_file = weak_file.GetReference();
-		auto filename = locked_file->GetFilenameString();
-
-		LOG_INFO(filename) << "Serializing virtual xref table as empty data";
+		spdlog::info("Serializing virtual xref table as empty data");
 	}
 }
 

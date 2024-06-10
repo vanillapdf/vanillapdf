@@ -59,7 +59,7 @@ void StreamObject::OnChanged() {
 			auto obj_number = GetRootObjectNumber();
 			auto gen_number = GetRootGenerationNumber();
 
-			LOG_DEBUG_GLOBAL << "Stream object " << std::dec << obj_number << " " << gen_number << " change triggered, object is dirty";
+			spdlog::debug("Stream object {} {} change triggered, object is dirty", obj_number, gen_number);
 		}
 
 		// Do we need to log something otherwise for other stream objects?
