@@ -388,6 +388,28 @@ TEST(RealObject, SerializationPrecision) {
 	ASSERT_EQ(RealObject_Release(real_object), VANILLAPDF_ERROR_SUCCESS);
 }
 
+void SetCheckLoggingSeverity(LoggingSeverity desired_severity) {
+	LoggingSeverity logging_severity = LoggingSeverity_Undefined;
+
+	ASSERT_EQ(Logging_SetSeverity(desired_severity), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(Logging_GetSeverity(&logging_severity), VANILLAPDF_ERROR_SUCCESS);
+	EXPECT_EQ(logging_severity, desired_severity);
+}
+
+TEST(Logging, Severity) {
+	SetCheckLoggingSeverity(LoggingSeverity_Trace);
+	SetCheckLoggingSeverity(LoggingSeverity_Debug);
+	SetCheckLoggingSeverity(LoggingSeverity_Info);
+	SetCheckLoggingSeverity(LoggingSeverity_Warning);
+	SetCheckLoggingSeverity(LoggingSeverity_Error);
+	SetCheckLoggingSeverity(LoggingSeverity_Critical);
+	SetCheckLoggingSeverity(LoggingSeverity_Off);
+}
+
+TEST(Logging, Shutdown) {
+	ASSERT_EQ(Logging_Shutdown(), VANILLAPDF_ERROR_SUCCESS);
+}
+
 int main(int argc, char *argv[]) {
 
 	TestEnvironment* test_environment = new TestEnvironment();
