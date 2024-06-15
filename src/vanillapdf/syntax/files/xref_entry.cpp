@@ -85,6 +85,7 @@ void XrefUsedEntryBase::SetReference(ObjectPtr ref) {
 
 	auto weak_ref_xref = ref->GetXrefEntry();
 
+	// TODO: This can happen with XRefStm for example
 	if (weak_ref_xref.IsActive() && !weak_ref_xref.IsEmpty()) {
 		auto ref_xref = weak_ref_xref.GetReference();
 		assert(ref_xref == this && "Reference another owner");
