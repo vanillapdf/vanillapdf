@@ -30,6 +30,14 @@ extern "C"
 	*/
 
 	/**
+	* \class SerializationOverrideObjectAttributeHandle
+	* \extends BaseObjectAttributeHandle
+	* \ingroup group_objects
+	* \brief Attribute that modifies the attached object serialization ToPdf
+	* \see \ref ObjectHandle::Object_ToPdf
+	*/
+
+	/**
 	* \brief Derived types of \ref BaseObjectAttributeHandle
 	* \ingroup group_objects
 	*/
@@ -46,10 +54,29 @@ extern "C"
 
 	} ObjectAttributeType;
 
+	/**
+	* \brief Image color spaces used within \ref ImageMetadataObjectAttributeHandle
+	* \ingroup group_objects
+	*/
 	typedef enum {
+		/**
+		* \brief Undefined unitialized default value, triggers error when used
+		*/
 		ImageColorSpaceType_Undefined = 0,
+
+		/**
+		* \brief Grayscale (monochrome)
+		*/
 		ImageColorSpaceType_GRAY,
+
+		/**
+		* \brief RGB (red-green-blue)
+		*/
 		ImageColorSpaceType_RGB,
+
+		/**
+		* \brief CMYK (cyan-magenta-yellow-black)
+		*/
 		ImageColorSpaceType_CMYK
 	} ImageColorSpaceType;
 

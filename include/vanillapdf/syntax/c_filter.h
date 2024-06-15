@@ -60,6 +60,26 @@ extern "C"
 	*/
 
 	/**
+	* \class LZWDecodeFilterHandle
+	* \extends FilterBaseHandle
+	* \ingroup group_files
+	* \brief
+	* LZW (Lempel-Ziv-Welch) is a variable-length, adaptive compression method that has been adopted
+	* as one of the standard compression methods in the Tag Image File Format (TIFF) standard.
+	* 
+	* For details on LZW encoding see 7.4.4.2, "Details of LZW Encoding."
+	*/
+
+	/**
+	* \class JPXDecodeFilterHandle
+	* \extends FilterBaseHandle
+	* \ingroup group_files
+	* \brief
+	* The JPXDecode filter (PDF 1.5) decodes data that has been encoded using the JPEG2000 compression method,
+	* an ISO standard for the compression and packaging of image data.
+	*/
+
+	/**
 	* \memberof FilterBaseHandle
 	* @{
 	*/

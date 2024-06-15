@@ -166,7 +166,7 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetUserAccessPermissions(DocumentEncryptionSettingsHandle* handle, UserAccessPermissionFlags* result);
 
 	/**
-	* \copydoc DocumentEncryptionSettings_GetUserPermissions
+	* \copydoc DocumentEncryptionSettings_GetUserAccessPermissions
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_SetUserAccessPermissions(DocumentEncryptionSettingsHandle* handle, UserAccessPermissionFlags user_permissions);
 
