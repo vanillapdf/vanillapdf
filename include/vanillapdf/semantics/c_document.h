@@ -102,8 +102,8 @@ extern "C"
 	* \brief Remove any existing encryption from the document.
 	* 
 	* The document MUST be unlocked either with password or encryption key.
-	* \see \ref File_SetEncryptionPassword
-	* \see \ref File_SetEncryptionKey
+	* \see \ref FileHandle::File_SetEncryptionPassword
+	* \see \ref FileHandle::File_SetEncryptionKey
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION Document_RemoveEncryption(DocumentHandle* handle);
 
