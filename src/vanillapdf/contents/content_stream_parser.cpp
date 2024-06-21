@@ -320,18 +320,18 @@ OperationBasePtr ContentStreamParser::ReadOperatorReturnOperation(const std::vec
 			return make_deferred<OperationGeneric>(operands, SetCharWidthOperatorPtr());
 		case Token::Type::SET_CACHE_DEVICE:
 			return make_deferred<OperationGeneric>(operands, SetCacheDeviceOperatorPtr());
-		case Token::Type::COLOR_SPACE_STROKE:
-			return make_deferred<OperationGeneric>(operands, ColorSpaceStrokeOperatorPtr());
-		case Token::Type::COLOR_SPACE_NONSTROKE:
-			return make_deferred<OperationGeneric>(operands, ColorSpaceNonstrokeOperatorPtr());
-		case Token::Type::SET_COLOR_STROKE:
-			return make_deferred<OperationGeneric>(operands, SetColorStrokeOperatorPtr());
-		case Token::Type::SET_COLOR_STROKE_EXTENDED:
-			return make_deferred<OperationGeneric>(operands, SetColorStrokeExtendedOperatorPtr());
-		case Token::Type::SET_COLOR_NONSTROKE:
-			return make_deferred<OperationGeneric>(operands, SetColorNonstrokeOperatorPtr());
-		case Token::Type::SET_COLOR_NONSTROKE_EXTENDED:
-			return make_deferred<OperationGeneric>(operands, SetColorNonstrokeExtendedOperatorPtr());
+		case Token::Type::SET_STROKING_COLOR_SPACE_NAME:
+			return make_deferred<OperationGeneric>(operands, SetStrokingColorSpaceNameOperatorPtr());
+		case Token::Type::SET_NONSTROKING_COLOR_SPACE_NAME:
+			return make_deferred<OperationGeneric>(operands, SetNonstrokingColorSpaceNameOperatorPtr());
+		case Token::Type::SET_STROKING_COLOR_SPACE_DEVICE:
+			return make_deferred<OperationGeneric>(operands, SetStrokingColorSpaceDeviceOperatorPtr());
+		case Token::Type::SET_STROKING_COLOR_SPACE_DEVICE_EXTENDED:
+			return make_deferred<OperationGeneric>(operands, SetStrokingColorSpaceDeviceExtendedOperatorPtr());
+		case Token::Type::SET_NONSTROKING_COLOR_SPACE_DEVICE:
+			return make_deferred<OperationGeneric>(operands, SetNonstrokingColorSpaceDeviceOperatorPtr());
+		case Token::Type::SET_NONSTROKING_COLOR_SPACE_DEVICE_EXTENDED:
+			return make_deferred<OperationGeneric>(operands, SetNonstrokingColorSpaceDeviceExtendedOperatorPtr());
 		case Token::Type::SET_STROKING_COLOR_SPACE_GRAY:
 			return make_deferred<OperationGeneric>(operands, SetStrokingColorSpaceGrayOperatorPtr());
 		case Token::Type::SET_NONSTROKING_COLOR_SPACE_GRAY:

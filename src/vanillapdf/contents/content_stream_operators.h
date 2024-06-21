@@ -98,12 +98,12 @@ GENERIC_OPERATOR_DEFINITION(SetCharWidth, "d0");
 GENERIC_OPERATOR_DEFINITION(SetCacheDevice, "d1");
 
 // Color
-GENERIC_OPERATOR_DEFINITION(ColorSpaceStroke, "CS");
-GENERIC_OPERATOR_DEFINITION(ColorSpaceNonstroke, "cs");
-GENERIC_OPERATOR_DEFINITION(SetColorStroke, "SC");
-GENERIC_OPERATOR_DEFINITION(SetColorStrokeExtended, "SCN");
-GENERIC_OPERATOR_DEFINITION(SetColorNonstroke, "sc");
-GENERIC_OPERATOR_DEFINITION(SetColorNonstrokeExtended, "scn");
+GENERIC_OPERATOR_DEFINITION(SetStrokingColorSpaceName, "CS");
+GENERIC_OPERATOR_DEFINITION(SetNonstrokingColorSpaceName, "cs");
+GENERIC_OPERATOR_DEFINITION(SetStrokingColorSpaceDevice, "SC");
+GENERIC_OPERATOR_DEFINITION(SetStrokingColorSpaceDeviceExtended, "SCN");
+GENERIC_OPERATOR_DEFINITION(SetNonstrokingColorSpaceDevice, "sc");
+GENERIC_OPERATOR_DEFINITION(SetNonstrokingColorSpaceDeviceExtended, "scn");
 GENERIC_OPERATOR_DEFINITION(SetStrokingColorSpaceGray, "G");
 GENERIC_OPERATOR_DEFINITION(SetNonstrokingColorSpaceGray, "g");
 GENERIC_OPERATOR_DEFINITION(SetStrokingColorSpaceRGB, "RG");

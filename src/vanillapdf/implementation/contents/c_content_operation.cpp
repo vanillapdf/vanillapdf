@@ -116,18 +116,18 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_GetOperationType(C
 			*result = ContentOperationType_SetCharWidth; break;
 		case OperationBase::Type::SetCacheDevice:
 			*result = ContentOperationType_SetCacheDevice; break;
-		case OperationBase::Type::ColorSpaceStroke:
-			*result = ContentOperationType_ColorSpaceStroke; break;
-		case OperationBase::Type::ColorSpaceNonstroke:
-			*result = ContentOperationType_ColorSpaceNonstroke; break;
-		case OperationBase::Type::SetColorStroke:
-			*result = ContentOperationType_SetColorStroke; break;
-		case OperationBase::Type::SetColorStrokeExtended:
-			*result = ContentOperationType_SetColorStrokeExtended; break;
-		case OperationBase::Type::SetColorNonstroke:
-			*result = ContentOperationType_SetColorNonstroke; break;
-		case OperationBase::Type::SetColorNonstrokeExtended:
-			*result = ContentOperationType_SetColorNonstrokeExtended; break;
+		case OperationBase::Type::SetStrokingColorSpaceName:
+			*result = ContentOperationType_SetStrokingColorSpaceName; break;
+		case OperationBase::Type::SetNonstrokingColorSpaceName:
+			*result = ContentOperationType_SetNonstrokingColorSpaceName; break;
+		case OperationBase::Type::SetStrokingColorSpaceDevice:
+			*result = ContentOperationType_SetStrokingColorSpaceDevice; break;
+		case OperationBase::Type::SetStrokingColorSpaceDeviceExtended:
+			*result = ContentOperationType_SetStrokingColorSpaceDeviceExtended; break;
+		case OperationBase::Type::SetNonstrokingColorSpaceDevice:
+			*result = ContentOperationType_SetNonstrokingColorSpaceDevice; break;
+		case OperationBase::Type::SetNonstrokingColorSpaceDeviceExtended:
+			*result = ContentOperationType_SetNonstrokingColorSpaceDeviceExtended; break;
 		case OperationBase::Type::SetStrokingColorSpaceGray:
 			*result = ContentOperationType_SetStrokingColorSpaceGray; break;
 		case OperationBase::Type::SetNonstrokingColorSpaceGray:
