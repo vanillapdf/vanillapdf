@@ -18,6 +18,8 @@ IndirectReferenceObject::IndirectReferenceObject(types::big_uint obj, types::ush
 }
 
 types::big_uint IndirectReferenceObject::GetReferencedObjectNumber() const {
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	if (IsReferenceInitialized()) {
 		auto referenced_object = GetReferencedObject();
 		return referenced_object->GetObjectNumber();
@@ -28,6 +30,8 @@ types::big_uint IndirectReferenceObject::GetReferencedObjectNumber() const {
 }
 
 types::ushort IndirectReferenceObject::GetReferencedGenerationNumber() const {
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	if (IsReferenceInitialized()) {
 		auto referenced_object = GetReferencedObject();
 		return referenced_object->GetGenerationNumber();
@@ -38,6 +42,8 @@ types::ushort IndirectReferenceObject::GetReferencedGenerationNumber() const {
 }
 
 void IndirectReferenceObject::SetReferencedObjectNumber(types::big_uint value) {
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	m_reference_object_number = value;
 	m_reference.Reset();
 
@@ -45,6 +51,8 @@ void IndirectReferenceObject::SetReferencedObjectNumber(types::big_uint value) {
 }
 
 void IndirectReferenceObject::SetReferencedGenerationNumber(types::ushort value) {
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	m_reference_generation_number = value;
 	m_reference.Reset();
 
@@ -52,6 +60,8 @@ void IndirectReferenceObject::SetReferencedGenerationNumber(types::ushort value)
 }
 
 bool IndirectReferenceObject::IsReferenceInitialized(void) const {
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	bool active = (!m_reference.IsEmpty() && m_reference.IsActive());
 	if (!active) {
 		return false;
@@ -116,6 +126,8 @@ size_t IndirectReferenceObject::Hash() const {
 		return m_hash_cache;
 	}
 
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	auto object_number = GetReferencedObjectNumber();
 	auto generation_number = GetReferencedGenerationNumber();
 
@@ -141,6 +153,8 @@ size_t IndirectReferenceObject::Hash() const {
 
 void IndirectReferenceObject::SetReferencedObject(ObjectPtr obj) {
 
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	// Reference shall be indirect object or null
 	bool indirect_or_null = (obj->IsIndirect() || ObjectUtils::IsType<NullObjectPtr>(obj));
 	assert(indirect_or_null && "Referenced object is neither indirect nor null");
@@ -163,6 +177,12 @@ ObjectPtr IndirectReferenceObject::GetReferencedObject() const {
 		return m_reference.GetReference();
 	}
 
+	ACCESS_LOCK_GUARD(m_access_lock);
+
+	if (IsReferenceInitialized()) {
+		return m_reference.GetReference();
+	}
+
 	if (!m_file.IsActive()) {
 		throw FileDisposedException();
 	}
@@ -177,6 +197,8 @@ ObjectPtr IndirectReferenceObject::GetReferencedObject() const {
 }
 
 bool IndirectReferenceObject::Equals(const IndirectReferenceObject& other) const {
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	auto object_number = GetReferencedObjectNumber();
 	auto other_object_number = other.GetReferencedObjectNumber();
 	auto generation_number = GetReferencedGenerationNumber();
@@ -189,6 +211,8 @@ bool IndirectReferenceObject::Equals(const IndirectReferenceObject& other) const
 }
 
 bool IndirectReferenceObject::operator<(const IndirectReferenceObject& other) const {
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	auto object_number = GetReferencedObjectNumber();
 	auto other_object_number = other.GetReferencedObjectNumber();
 	if (object_number != other_object_number) {
@@ -205,6 +229,8 @@ bool IndirectReferenceObject::operator<(const IndirectReferenceObject& other) co
 }
 
 void IndirectReferenceObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
+	ACCESS_LOCK_GUARD(m_access_lock);
+
 	auto object_number = GetReferencedObjectNumber();
 	auto generation_number = GetReferencedGenerationNumber();
 	output << std::to_string(object_number) << " " << std::to_string(generation_number) << " R";
@@ -221,6 +247,8 @@ bool IndirectReferenceObject::Equals(ObjectPtr other) const {
 
 IndirectReferenceObject* IndirectReferenceObject::Clone(void) const {
 	IndirectReferenceObjectPtr result(pdf_new IndirectReferenceObject(), false);
+
+	ACCESS_LOCK_GUARD(m_access_lock);
 
 	auto object_number = GetReferencedObjectNumber();
 	auto generation_number = GetReferencedGenerationNumber();

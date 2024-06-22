@@ -54,6 +54,11 @@ private:
 
 	mutable size_t m_hash_cache = 0;
 
+	// The library interface wants to be thread-safe as much as possible
+	// Even though the are currently no cases for multi-thread access
+	// to the dictonary, let's try to be visionary and prepare for this
+	std::shared_ptr<std::recursive_mutex> m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+
 	//bool IsCyclicReference(ObjectPtr object, std::map<ObjectPtr, bool>& visited) const;
 
 	template <
