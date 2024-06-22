@@ -39,7 +39,11 @@ public:
 	void FixObjectReferences(const std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPtr, bool>& visited, ObjectPtr copied);
 
 	void Initialize(void);
-	bool IsInitialized(void) const noexcept { return _initialized; }
+	bool IsInitialized(void) const noexcept {
+		return _initialized;
+	}
+
+	void InitializeObjectStream(types::big_uint object_stream_number);
 
 	ObjectPtr GetIndirectObject(
 		types::big_uint objNumber,
@@ -134,6 +138,8 @@ private:
 		types::ushort gen_number) const;
 
 	types::big_uint m_next_allocation = 0;
+
+	std::shared_ptr<std::recursive_mutex> m_object_stream_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 
 private:
 	File(IInputOutputStreamPtr stream, const std::string& path);

@@ -268,57 +268,19 @@ void XrefCompressedEntry::Initialize(void) {
 		throw FileDisposedException();
 	}
 
-	ACCESS_LOCK_GUARD(m_access_lock);
-
-	if (IsInitialized()) {
-		return;
-	}
-
-	auto locked_file = _file.GetReference();
-	auto chain = locked_file->GetXrefChain();
-	auto stm = locked_file->GetIndirectObject(_object_stream_number, 0);
-
-	auto converted = ObjectUtils::ConvertTo<StreamObjectPtr>(stm);
-	auto header = converted->GetHeader();
-	auto size = header->FindAs<IntegerObjectPtr>(constant::Name::N);
-	auto first = header->FindAs<IntegerObjectPtr>(constant::Name::First);
-	auto body = converted->GetBody();
-	auto input_stream = body->ToInputStream();
-
-	if (body->empty()) {
-		throw GeneralException("Could not find data for the ObjStm " + std::to_string(_object_stream_number));
-	}
-
 	spdlog::debug("Initializing xref COMPRESSED entry {} {} inside object stream {}", _obj_number, _gen_number, _object_stream_number);
 
-	Parser parser(_file, input_stream);
-	auto stream_entries = parser.ReadObjectStreamEntries(first->GetUnsignedIntegerValue(), size->SafeConvert<types::size_type>());
-	for (auto stream_entry : stream_entries) {
-		auto entry_object_number = stream_entry.object_number;
-		auto entry_object = stream_entry.object;
+	auto locked_file = _file.GetReference();
+	locked_file->InitializeObjectStream(_object_stream_number);
 
-		// In the standard setup the standard search for xref entry GetXrefEntry should be sufficient.
-		// However in the incrementally updated document there are multiple references to the same object,
-		// so that we sometimes do get another entry, leaving this one uninitialized.
-		// I could imagine a case where this is not correct, but for the sake of simplicity let's leave it out of scope.
-		if (entry_object_number == GetObjectNumber() && GetGenerationNumber() == 0) {
-			SetReference(entry_object);
-			SetInitialized();
-			continue;
-		}
+	// As far as I understand this logic, we do not need to lock the access
+	// since the object stream initialization was moved to File and the File
+	// does handle and prevent duplicit initialization.
 
-		auto stream_entry_xref = chain->GetXrefEntry(entry_object_number, 0);
-		auto is_used = ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(stream_entry_xref);
-
-		if (!is_used) {
-			spdlog::warn("Object stream {} contains unused xref entry {}", _object_stream_number, entry_object_number);
-			continue;
-		}
-
-		auto stream_used_entry_xref = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(stream_entry_xref);
-		stream_used_entry_xref->SetReference(entry_object);
-		stream_used_entry_xref->SetInitialized();
-	}
+	// There have been some deadlocks observed from the file PDF32000_2008.pdf,
+	// when the objects were not initialized upfront and multiple xref entries
+	// were referencing the same object stream, it has been parsed multiple times.
+	// Please do check this file before tweaking this logic.
 
 	if (!m_initialized) {
 		spdlog::warn("Compressed entry number {} {} was supposed to be found in object stream number {}, but was not found. Treating as NULL reference", _obj_number, _gen_number, _object_stream_number);

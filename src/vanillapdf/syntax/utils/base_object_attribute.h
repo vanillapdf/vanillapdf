@@ -13,7 +13,8 @@ public:
 		Empty,
 		SerializationOverride,
 		TrackingIdentifier,
-		ImageMetadata
+		ImageMetadata,
+		ObjectStreamMetadata
 	};
 
 	virtual bool Equals(const BaseAttribute& other) const;

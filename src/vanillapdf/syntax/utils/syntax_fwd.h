@@ -19,6 +19,7 @@ class BaseAttributePtr;
 class SerializationOverrideAttribute; using SerializationOverrideAttributePtr = Deferred<SerializationOverrideAttribute>;
 class TrackingIdentifierAttribute; using TrackingIdentifierAttributePtr = Deferred<TrackingIdentifierAttribute>;
 class ImageMetadataObjectAttribute; using ImageMetadataObjectAttributePtr = Deferred<ImageMetadataObjectAttribute>;
+class ObjectStreamMetadataAttribute; using ObjectStreamMetadataAttributePtr = Deferred<ObjectStreamMetadataAttribute>;
 class AttributeList; using AttributeListPtr = DeferredContainer<AttributeList>;
 
 // Exceptions

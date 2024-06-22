@@ -310,6 +310,7 @@ set(VANILLAPDF_SYNTAX_HEADERS
 	syntax/utils/serialization_override_object_attribute.h
 	syntax/utils/tracking_identifier_object_attribute.h
 	syntax/utils/image_metadata_object_attribute.h
+	syntax/utils/object_stream_metadata_attribute.h
 )
 
 set(VANILLAPDF_UTILS_HEADERS

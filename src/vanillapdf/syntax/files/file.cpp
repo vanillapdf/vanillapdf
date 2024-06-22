@@ -11,6 +11,7 @@
 
 #include "syntax/utils/encryption.h"
 #include "syntax/utils/name_constants.h"
+#include "syntax/utils/object_stream_metadata_attribute.h"
 
 #include "utils/streams/input_reverse_stream.h"
 #include "utils/streams/input_stream.h"
@@ -170,6 +171,68 @@ void File::Initialize() {
 	// since we need to process indirect references as well
 	ExemptDocumentId();
 	ExemptFileSignatures();
+}
+
+void File::InitializeObjectStream(types::big_uint object_stream_number) {
+
+	ACCESS_LOCK_GUARD(m_object_stream_lock);
+
+	auto stm = GetIndirectObject(object_stream_number, 0);
+
+	// Mark the object stream with the attribute to prevent duplicit initialization
+	if (stm->ContainsAttribute(BaseAttribute::Type::ObjectStreamMetadata)) {
+		auto object_stream_attribute = stm->GetAttributeAs<ObjectStreamMetadataAttributePtr>(BaseAttribute::Type::ObjectStreamMetadata);
+
+		// The object stream was already initialized
+		if (object_stream_attribute->GetInitialized()) {
+			return;
+		}
+	}
+
+	auto converted = ObjectUtils::ConvertTo<StreamObjectPtr>(stm);
+	auto header = converted->GetHeader();
+	auto size = header->FindAs<IntegerObjectPtr>(constant::Name::N);
+	auto first = header->FindAs<IntegerObjectPtr>(constant::Name::First);
+	auto body = converted->GetBody();
+	auto input_stream = body->ToInputStream();
+
+	if (body->empty()) {
+		throw GeneralException("Could not find data for the ObjStm " + std::to_string(object_stream_number));
+	}
+
+	spdlog::debug("Initializing object stream {}", object_stream_number);
+
+	Parser parser(GetWeakReference<File>(), input_stream);
+	auto stream_entries = parser.ReadObjectStreamEntries(first->GetUnsignedIntegerValue(), size->SafeConvert<types::size_type>());
+
+	spdlog::trace("Object stream {} has been parsed and contains {} entries", object_stream_number, stream_entries.size());
+
+	for (auto stream_entry : stream_entries) {
+		auto entry_object_number = stream_entry.object_number;
+		auto entry_object = stream_entry.object;
+
+		auto stream_entry_xref = _xref->GetXrefEntry(entry_object_number, 0);
+		auto is_used = ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(stream_entry_xref);
+
+		if (!is_used) {
+			spdlog::warn("Object stream {} contains unused xref entry {}", object_stream_number, entry_object_number);
+			continue;
+		}
+
+		spdlog::trace("Initializing object {} from object stream {}", entry_object_number, object_stream_number);
+
+		auto stream_used_entry_xref = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(stream_entry_xref);
+		stream_used_entry_xref->SetReference(entry_object);
+		stream_used_entry_xref->SetInitialized();
+	}
+
+	ObjectStreamMetadataAttributePtr stream_initialized_attribute;
+	stream_initialized_attribute->SetInitialized(true);
+
+	// Mark the object stream as already initialized
+	stm->AddAttribute(stream_initialized_attribute);
+
+	spdlog::debug("Initializing object stream {} has finished", object_stream_number);
 }
 
 bool File::SetEncryptionKey(IEncryptionKey& key) {
