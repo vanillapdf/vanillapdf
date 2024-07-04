@@ -38,7 +38,7 @@ public:
 
 		// Document signature is a licensed feature
 		if (!LicenseInfo::IsValid()) {
-			throw LicenseRequiredException("Document signing is a licensed feature");
+			throw LicenseRequiredException("Custom signing key is a licensed feature");
 		}
 	}
 

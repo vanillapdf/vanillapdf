@@ -35,16 +35,16 @@ public:
 		assert(decrypt != nullptr && "Invalid decrypt pointer");
 		assert(contains != nullptr && "Invalid contains pointer");
 
+		// Decryption is a licensed feature
+		if (!LicenseInfo::IsValid()) {
+			throw LicenseRequiredException("Custom file encryption is a licensed feature");
+		}
+
 		m_init();
 	}
 
 	virtual BufferPtr Decrypt(const Buffer& data) override
 	{
-		// Decryption is a licensed feature
-		if (!LicenseInfo::IsValid()) {
-			throw LicenseRequiredException("File decryption is a licensed feature");
-		}
-
 		auto input_ptr = reinterpret_cast<const BufferHandle*>(&data);
 		BufferHandle* output_ptr = nullptr;
 

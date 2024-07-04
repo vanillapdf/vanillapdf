@@ -181,11 +181,6 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, const Buffer& password) 
 
 BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
 
-	// Decryption is a licensed feature
-	if (!LicenseInfo::IsValid()) {
-		throw LicenseRequiredException("File decryption is a licensed feature");
-	}
-
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
 	if (encryption_context == nullptr) {
@@ -264,11 +259,6 @@ bool PKCS12Key::PKCS12KeyImpl::ContainsPrivateKey(const Buffer& issuer, const Bu
 }
 
 void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) {
-
-	// Signing is a licensed feature
-	if (!LicenseInfo::IsValid()) {
-		throw LicenseRequiredException("Document signing is a licensed feature");
-	}
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
@@ -365,11 +355,6 @@ void PKCS12Key::PKCS12KeyImpl::SignUpdate(BufferPtr data) {
 
 void PKCS12Key::PKCS12KeyImpl::SignUpdate(IInputStreamPtr data, types::stream_size length) {
 
-	// Signing is a licensed feature
-	if (!LicenseInfo::IsValid()) {
-		throw LicenseRequiredException("Document signing is a licensed feature");
-	}
-
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
 	types::stream_size read_total = 0;
@@ -403,11 +388,6 @@ void PKCS12Key::PKCS12KeyImpl::SignUpdate(IInputStreamPtr data, types::stream_si
 }
 
 BufferPtr PKCS12Key::PKCS12KeyImpl::SignFinal() {
-
-	// Signing is a licensed feature
-	if (!LicenseInfo::IsValid()) {
-		throw LicenseRequiredException("Document signing is a licensed feature");
-	}
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 

@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "utils/library_info.h"
+#include "utils/license_info.h"
 
 #include "syntax/files/file_writer.h"
 
@@ -823,6 +824,11 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
 
 void Document::AddEncryption(DocumentEncryptionSettingsPtr settings) {
 
+	// Document encryption is a licensed feature
+	if (!LicenseInfo::IsValid()) {
+		throw LicenseRequiredException("Document encryption is a licensed feature");
+	}
+
 	// Terminate in case the document is already encrypted
 	if (m_holder->IsEncrypted()) {
 		throw GeneralException("Cannot encrypt an encrypted document, please remove the encryption first");
@@ -937,6 +943,11 @@ void Document::AddEncryption(DocumentEncryptionSettingsPtr settings) {
 }
 
 void Document::RemoveEncryption() {
+
+	// Document encryption is a licensed feature
+	if (!LicenseInfo::IsValid()) {
+		throw LicenseRequiredException("Document encryption is a licensed feature");
+	}
 
 	// Terminate in case the document is not encrypted, treat as success
 	if (!m_holder->IsEncrypted()) {
