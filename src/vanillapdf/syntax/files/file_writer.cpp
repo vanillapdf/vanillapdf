@@ -1524,7 +1524,7 @@ void FileWriter::CopyStreamContent(IInputStreamPtr source, IOutputStreamPtr dest
 
 void FileWriter::ApplyWatermark(FilePtr destination) {
 
-	// Watermark only for trial version
+	// Watermark only for free version
 	if (LicenseInfo::IsValid()) {
 		return;
 	}
@@ -1533,7 +1533,7 @@ void FileWriter::ApplyWatermark(FilePtr destination) {
 	auto xref = chain->Begin()->Value();
 	auto trailer_dictionary = xref->GetTrailerDictionary();
 
-	// File has not root entry
+	// File has no root entry
 	if (!trailer_dictionary->Contains(constant::Name::Root)) {
 		return;
 	}
