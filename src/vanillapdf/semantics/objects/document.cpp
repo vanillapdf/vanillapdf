@@ -966,6 +966,9 @@ void Document::RemoveEncryption() {
 	// Remove the encryption dictionary
 	auto trailer_dictionary = xref->GetTrailerDictionary();
 	trailer_dictionary->Remove(constant::Name::Encrypt);
+
+	// Reset the cached encryption dictionary object
+	m_holder->SetEncryptionDictionary(NullObject::GetInstance());
 }
 
 void Document::ForceObjectInitialization() {
