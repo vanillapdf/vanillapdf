@@ -40,6 +40,7 @@ protected:
 		case spdlog::level::critical:
 			msg_severity_level = LoggingSeverity_Critical; break;
 		case spdlog::level::off:
+		case spdlog::level::n_levels:
 			msg_severity_level = LoggingSeverity_Off; break;
 		}
 
