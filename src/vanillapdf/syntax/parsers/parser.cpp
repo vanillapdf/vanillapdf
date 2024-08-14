@@ -151,7 +151,7 @@ ObjectPtr ParserBase::ReadDictionaryStream() {
 					auto filename = locked_file->GetFilenameString();
 
 					// Log warning as this is not standard, however not fatal
-					spdlog::warn("The stream at offset {} does has length specified as indirect object, however the document is broken, using the fallback method", stream_offset);
+					spdlog::warn("The stream at offset {} does have length specified as indirect object, however the document is broken, using the fallback method", stream_offset);
 					break;
 				}
 			}
