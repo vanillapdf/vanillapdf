@@ -803,9 +803,47 @@ ObjectPtr File::GetIndirectObjectInternal(
 			auto used = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(item);
 			auto result = used->GetReference();
 
-			// The object numbers could have changed accoring to parsing
-			assert(item->GetObjectNumber() == obj_number && "Could not find correct xref entry");
-			assert(item->GetGenerationNumber() == gen_number && "Could not find correct xref entry");
+			// Park-University-USA.pdf
+			// In this file the XREF entry does not match the indirect object header.
+			// The object is present, but we do a workaround by initializing all of the other objects,
+			// in order to find the correct one.
+
+			// This logic was previously in the parser, which loaded all of the objects immediately.
+			// The downside of the approach was slower loading time for all the files,
+			// even though they did not have this issue.
+
+			// With this approach the performance impact should be negligible and still fix the issue.
+
+			if (item->GetObjectNumber() != obj_number ||
+				item->GetGenerationNumber() != gen_number) {
+
+				// Force the entry initialization
+				// In some cases the XREF numbering does not match the actual object
+				// The object numbering does take precedence before the XREF
+				// Forcing the initialization will immediately resolve the differences
+				for (auto& xref_table : _xref) {
+					for (auto& xref_entry : xref_table) {
+						auto is_used_entry = ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(xref_entry);
+						if (!is_used_entry) {
+							continue;
+						}
+
+						auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(xref_entry);
+						used_entry->GetReference();
+					}
+				}
+
+				// Find the item once again after the object reinitialization has finished
+				item = _xref->GetXrefEntry(obj_number, gen_number);
+
+				// In case the type of the entry has changed we will get terminated
+				used = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(item);
+				result = used->GetReference();
+
+				// The object numbers could have changed according to parsing
+				assert(item->GetObjectNumber() == obj_number && "Could not find correct xref entry");
+				assert(item->GetGenerationNumber() == gen_number && "Could not find correct xref entry");
+			}
 
 			return result;
 		}

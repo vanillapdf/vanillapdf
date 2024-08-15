@@ -4,6 +4,7 @@
 #include "syntax/utils/syntax_fwd.h"
 #include "syntax/files/xref_entry.h"
 
+#include <set>
 #include <unordered_set>
 
 namespace vanillapdf {
@@ -11,7 +12,7 @@ namespace syntax {
 
 class XrefBase : public IModifyObserver, public IModifyObservable {
 public:
-	using map_type = std::unordered_set<XrefEntryBasePtr>;
+	using map_type = std::set<XrefEntryBasePtr>;
 
 	typedef map_type::value_type value_type;
 	typedef map_type::iterator iterator;

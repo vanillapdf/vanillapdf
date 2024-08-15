@@ -504,13 +504,6 @@ XrefEntryBasePtr Parser::ReadTableEntry(types::big_uint objNumber) {
 		ReadTokenSkip();
 		XrefUsedEntryPtr result = make_deferred<XrefUsedEntry>(objNumber, ValueConvertUtils::SafeConvert<types::ushort>(gen_number), ValueConvertUtils::SafeConvert<types::stream_offset>(offset));
 		result->SetFile(_file);
-
-		// Force the entry initialization
-		// In some cases the XREF numbering does not match the actual object
-		// The object numbering does take precedence before the XREF
-		// Forcing the initialization will immediately resolve the differences
-		result->GetReference();
-
 		return result;
 	}
 
