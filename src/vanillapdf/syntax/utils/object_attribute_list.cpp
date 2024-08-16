@@ -49,8 +49,6 @@ bool AttributeList::Remove(BaseAttribute::Type type) {
 }
 
 BaseAttributePtr AttributeList::Get(BaseAttribute::Type type) const {
-	assert(m_attributes && "Trying to search empty collection");
-
 	auto found = GetAttributes()->find(type);
 	if (found == GetAttributes()->end()) {
 		throw GeneralException("Attribute with key " + std::to_string(static_cast<int>(type)) + " was not found in the list");
@@ -60,7 +58,6 @@ BaseAttributePtr AttributeList::Get(BaseAttribute::Type type) const {
 }
 
 void AttributeList::Clear() {
-	assert(m_attributes && "Trying to clear empty collection");
 	GetAttributes()->clear();
 }
 
