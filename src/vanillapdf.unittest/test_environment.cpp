@@ -35,5 +35,5 @@ void TestEnvironment::SetUp() {
 }
 
 void TestEnvironment::TearDown() {
-
+	ASSERT_EQ(Logging_Shutdown(), VANILLAPDF_ERROR_SUCCESS);
 }

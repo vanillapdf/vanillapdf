@@ -406,9 +406,6 @@ TEST(Logging, Severity) {
 	SetCheckLoggingSeverity(LoggingSeverity_Off);
 }
 
-TEST(Logging, Shutdown) {
-	ASSERT_EQ(Logging_Shutdown(), VANILLAPDF_ERROR_SUCCESS);
-}
 
 int main(int argc, char *argv[]) {
 
