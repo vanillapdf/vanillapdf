@@ -199,7 +199,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_GetObjectNumber(XrefE
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_GetGenerationNumber(XrefEntryHandle* handle, ushort_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_GetGenerationNumber(XrefFreeEntryHandle* handle, ushort_type* result)
 {
 	XrefFreeEntry* entry = reinterpret_cast<XrefFreeEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -252,7 +252,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_GetObjectNumber(XrefE
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_GetGenerationNumber(XrefEntryHandle* handle, ushort_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_GetGenerationNumber(XrefUsedEntryHandle* handle, ushort_type* result)
 {
 	XrefUsedEntry* entry = reinterpret_cast<XrefUsedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -305,7 +305,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GetObjectNumber
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GetGenerationNumber(XrefEntryHandle* handle, ushort_type* result)
+VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GetGenerationNumber(XrefCompressedEntryHandle* handle, ushort_type* result)
 {
 	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);

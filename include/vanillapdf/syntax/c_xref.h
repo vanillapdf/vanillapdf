@@ -321,12 +321,12 @@ extern "C"
 	/**
 	* \copydoc XrefEntry_GetObjectNumber
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_GetObjectNumber(XrefEntryHandle* handle, biguint_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_GetObjectNumber(XrefFreeEntryHandle* handle, biguint_type* result);
 
 	/**
 	* \copydoc XrefEntry_GetGenerationNumber
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_GetGenerationNumber(XrefEntryHandle* handle, ushort_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_GetGenerationNumber(XrefFreeEntryHandle* handle, ushort_type* result);
 
 	/**
 	* \copydoc XrefEntry_InUse
@@ -363,12 +363,12 @@ extern "C"
 	/**
 	* \copydoc XrefEntry_GetObjectNumber
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_GetObjectNumber(XrefEntryHandle* handle, biguint_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_GetObjectNumber(XrefUsedEntryHandle* handle, biguint_type* result);
 
 	/**
 	* \copydoc XrefEntry_GetGenerationNumber
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_GetGenerationNumber(XrefEntryHandle* handle, ushort_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_GetGenerationNumber(XrefUsedEntryHandle* handle, ushort_type* result);
 
 	/**
 	* \brief Number of bytes from the beginning of the file to the beginning of the referenced object.
@@ -415,12 +415,12 @@ extern "C"
 	/**
 	* \copydoc XrefEntry_GetObjectNumber
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GetObjectNumber(XrefEntryHandle* handle, biguint_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GetObjectNumber(XrefCompressedEntryHandle* handle, biguint_type* result);
 
 	/**
 	* \copydoc XrefEntry_GetGenerationNumber
 	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GetGenerationNumber(XrefEntryHandle* handle, ushort_type* result);
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GetGenerationNumber(XrefCompressedEntryHandle* handle, ushort_type* result);
 
 	/**
 	* \copydoc XrefEntry_InUse
