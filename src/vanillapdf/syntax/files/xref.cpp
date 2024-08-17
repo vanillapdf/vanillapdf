@@ -329,6 +329,10 @@ std::vector<XrefEntryBasePtr> XrefBase::Entries(void) const {
 	return result;
 }
 
+void XrefBase::Clear(void) noexcept {
+	_entries.clear();
+}
+
 XrefBase::iterator XrefBase::begin() {
 	return _entries.begin();
 }

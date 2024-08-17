@@ -81,6 +81,7 @@ public:
 	virtual XrefEntryBasePtr Find(types::big_uint obj_number) const;
 	virtual bool Contains(types::big_uint obj_number) const;
 	std::vector<XrefEntryBasePtr> Entries(void) const;
+	void Clear(void) noexcept;
 
 	template <typename T>
 	T FindAs(types::big_uint obj_number) const {
