@@ -9,6 +9,80 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
+VANILLAPDF_API error_type CALLING_CONVENTION Xref_Create(XrefHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		XrefTablePtr table;
+		auto ptr = table.AddRefGet();
+		*result = reinterpret_cast<XrefHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Xref_Insert(XrefHandle* handle, XrefEntryHandle* entry) {
+	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
+	XrefEntryBase* entry_base = reinterpret_cast<XrefEntryBase*>(entry);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry_base);
+
+	try
+	{
+		xref->Add(entry_base);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Xref_Contains(XrefHandle* handle, biguint_type object_number, boolean_type* result) {
+	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		*result = xref->Contains(object_number);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Xref_Find(XrefHandle* handle, biguint_type object_number, XrefEntryHandle** result) {
+	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto entry = xref->Find(object_number);
+		auto ptr = entry.AddRefGet();
+		*result = reinterpret_cast<XrefEntryHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Xref_Remove(XrefHandle* handle, biguint_type object_number, boolean_type* result) {
+	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		// We do not have a better interface for the time being
+		XrefFreeEntryPtr temp = make_deferred<XrefFreeEntry>(object_number, static_cast<types::ushort>(0));
+
+		*result = xref->Remove(temp);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Xref_Clear(XrefHandle* handle) {
+	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
+
+	xref->Clear();
+	return VANILLAPDF_ERROR_SUCCESS;
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Xref_GetTrailerDictionary(XrefHandle* handle, DictionaryObjectHandle** result)
 {
 	XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
@@ -189,7 +263,21 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_GetGenerationNumber(XrefE
 	return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_GetObjectNumber(XrefEntryHandle* handle, biguint_type* result)
+// Free entry
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_Create(biguint_type object_number, ushort_type generation_number, biguint_type next_free_object, XrefFreeEntryHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto entry = make_deferred<XrefFreeEntry>(object_number, generation_number, next_free_object);
+		auto ptr = entry.AddRefGet();
+		*result = reinterpret_cast<XrefFreeEntryHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_GetObjectNumber(XrefFreeEntryHandle* handle, biguint_type* result)
 {
 	XrefFreeEntry* entry = reinterpret_cast<XrefFreeEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -242,7 +330,21 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_Release(XrefFreeEntry
 	return ObjectRelease<XrefFreeEntry, XrefFreeEntryHandle>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_GetObjectNumber(XrefEntryHandle* handle, biguint_type* result)
+// Used entry
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_Create(biguint_type object_number, ushort_type generation_number, offset_type offset, XrefUsedEntryHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto entry = make_deferred<XrefUsedEntry>(object_number, generation_number, offset);
+		auto ptr = entry.AddRefGet();
+		*result = reinterpret_cast<XrefUsedEntryHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_GetObjectNumber(XrefUsedEntryHandle* handle, biguint_type* result)
 {
 	XrefUsedEntry* entry = reinterpret_cast<XrefUsedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);
@@ -295,7 +397,21 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_Release(XrefUsedEntry
 	return ObjectRelease<XrefUsedEntry, XrefUsedEntryHandle>(handle);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GetObjectNumber(XrefEntryHandle* handle, biguint_type* result)
+// Compressed entry
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Create(biguint_type object_number, ushort_type generation_number, biguint_type object_stream_number, size_type index, XrefCompressedEntryHandle** result) {
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+	try
+	{
+		auto entry = make_deferred<XrefCompressedEntry>(object_number, generation_number, object_stream_number, index);
+		auto ptr = entry.AddRefGet();
+		*result = reinterpret_cast<XrefCompressedEntryHandle*>(ptr);
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_GetObjectNumber(XrefCompressedEntryHandle* handle, biguint_type* result)
 {
 	XrefCompressedEntry* entry = reinterpret_cast<XrefCompressedEntry*>(handle);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(entry);

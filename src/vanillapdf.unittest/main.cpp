@@ -406,6 +406,74 @@ TEST(Logging, Severity) {
 	SetCheckLoggingSeverity(LoggingSeverity_Off);
 }
 
+namespace xref {
+
+	TEST(Xref, CreateRelease) {
+		XrefHandle* xref_ptr = nullptr;
+
+		ASSERT_EQ(Xref_Create(&xref_ptr), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_NE(xref_ptr, nullptr);
+		ASSERT_EQ(Xref_Release(xref_ptr), VANILLAPDF_ERROR_SUCCESS);
+	}
+
+	TEST(Xref, NullCheck) {
+		EXPECT_EQ(Xref_Create(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+		EXPECT_EQ(Xref_Release(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+	}
+
+	TEST(Xref, AddRemoveEntry) {
+		XrefHandle* xref_ptr = nullptr;
+
+		XrefEntryHandle* xref_entry_ptr = nullptr;
+		XrefFreeEntryHandle* xref_free_entry_ptr = nullptr;
+
+		boolean_type remove_result = VANILLAPDF_RV_FALSE;
+		boolean_type contains_result = VANILLAPDF_RV_FALSE;
+
+		ASSERT_EQ(Xref_Create(&xref_ptr), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_NE(xref_ptr, nullptr);
+
+		ASSERT_EQ(XrefFreeEntry_Create(1, 0, 65535, &xref_free_entry_ptr), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_NE(xref_free_entry_ptr, nullptr);
+
+		ASSERT_EQ(XrefFreeEntry_ToEntry(xref_free_entry_ptr, &xref_entry_ptr), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(Xref_Insert(xref_ptr, xref_entry_ptr), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(Xref_Contains(xref_ptr, 1, &contains_result), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(Xref_Remove(xref_ptr, 1, &remove_result), VANILLAPDF_ERROR_SUCCESS);
+
+		EXPECT_EQ(contains_result, VANILLAPDF_RV_TRUE);
+		EXPECT_EQ(remove_result, VANILLAPDF_RV_TRUE);
+
+		ASSERT_EQ(XrefEntry_Release(xref_entry_ptr), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(XrefFreeEntry_Release(xref_free_entry_ptr), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(Xref_Release(xref_ptr), VANILLAPDF_ERROR_SUCCESS);
+	}
+
+	TEST(XrefFreeEntry, CreateRelease) {
+		XrefFreeEntryHandle* xref_free_entry_ptr = nullptr;
+
+		ASSERT_EQ(XrefFreeEntry_Create(0, 0, 0, &xref_free_entry_ptr), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_NE(xref_free_entry_ptr, nullptr);
+		ASSERT_EQ(XrefFreeEntry_Release(xref_free_entry_ptr), VANILLAPDF_ERROR_SUCCESS);
+	}
+
+	TEST(XrefUsedEntry, CreateRelease) {
+		XrefUsedEntryHandle* xref_used_entry_ptr = nullptr;
+
+		ASSERT_EQ(XrefUsedEntry_Create(0, 0, 0, &xref_used_entry_ptr), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_NE(xref_used_entry_ptr, nullptr);
+		ASSERT_EQ(XrefUsedEntry_Release(xref_used_entry_ptr), VANILLAPDF_ERROR_SUCCESS);
+	}
+
+	TEST(XrefCompressedEntry, CreateRelease) {
+		XrefCompressedEntryHandle* xref_compressed_entry_ptr = nullptr;
+
+		ASSERT_EQ(XrefCompressedEntry_Create(0, 0, 0, 0, &xref_compressed_entry_ptr), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_NE(xref_compressed_entry_ptr, nullptr);
+		ASSERT_EQ(XrefCompressedEntry_Release(xref_compressed_entry_ptr), VANILLAPDF_ERROR_SUCCESS);
+	}
+
+} /* xref */
 
 int main(int argc, char *argv[]) {
 

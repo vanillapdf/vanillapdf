@@ -131,6 +131,36 @@ extern "C"
 	*/
 
 	/**
+	* \brief Creates a new instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Xref_Create(XrefHandle** result);
+
+	/**
+	* \brief Insert new entry into the collection
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Xref_Insert(XrefHandle* handle, XrefEntryHandle* entry);
+
+	/**
+	* \brief Determine if collection contains \p object_number
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Xref_Contains(XrefHandle* handle, biguint_type object_number, boolean_type* result);
+
+	/**
+	* \brief Find mapped value for key \p object_number
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Xref_Find(XrefHandle* handle, biguint_type object_number, XrefEntryHandle** result);
+
+	/**
+	* \brief Remove entry with key \p object_number from the collection
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Xref_Remove(XrefHandle* handle, biguint_type object_number, boolean_type* result);
+
+	/**
+	* \brief Remove all items from the collection
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION Xref_Clear(XrefHandle* handle);
+
+	/**
 	* \brief Get cross-reference table meta-data dictionary
 	*
 	* For cross-reference tables it is the trailer dictionary after all entries.
@@ -319,6 +349,11 @@ extern "C"
 	*/
 
 	/**
+	* \brief Creates a new instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_Create(biguint_type object_number, ushort_type generation_number, biguint_type next_free_object, XrefFreeEntryHandle** result);
+
+	/**
 	* \copydoc XrefEntry_GetObjectNumber
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION XrefFreeEntry_GetObjectNumber(XrefFreeEntryHandle* handle, biguint_type* result);
@@ -359,6 +394,11 @@ extern "C"
 	* \memberof XrefUsedEntryHandle
 	* @{
 	*/
+
+	/**
+	* \brief Creates a new instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefUsedEntry_Create(biguint_type object_number, ushort_type generation_number, offset_type offset, XrefUsedEntryHandle** result);
 
 	/**
 	* \copydoc XrefEntry_GetObjectNumber
@@ -411,6 +451,11 @@ extern "C"
 	* \memberof XrefCompressedEntryHandle
 	* @{
 	*/
+
+	/**
+	* \brief Creates a new instance
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION XrefCompressedEntry_Create(biguint_type object_number, ushort_type generation_number, biguint_type object_stream_number, size_type index, XrefCompressedEntryHandle** result);
 
 	/**
 	* \copydoc XrefEntry_GetObjectNumber
