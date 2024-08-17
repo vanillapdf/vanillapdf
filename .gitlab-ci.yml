@@ -136,7 +136,7 @@ build-ubuntu.24.04-arm64:
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     paths:
-      - ./*.rpm
+      - ./*.deb
       - ./*.tar.gz
       - ./*.sha256
 
