@@ -817,12 +817,18 @@ ObjectPtr File::GetIndirectObjectInternal(
 			if (item->GetObjectNumber() != obj_number ||
 				item->GetGenerationNumber() != gen_number) {
 
+				spdlog::warn("Xref entry {} {} is actually pointing to object {} {}, trying to recover",
+					obj_number,
+					gen_number,
+					item->GetObjectNumber(),
+					item->GetGenerationNumber());
+
 				// Force the entry initialization
 				// In some cases the XREF numbering does not match the actual object
 				// The object numbering does take precedence before the XREF
 				// Forcing the initialization will immediately resolve the differences
-				for (auto& xref_table : _xref) {
-					for (auto& xref_entry : xref_table) {
+				for (auto xref_table : _xref) {
+					for (auto xref_entry : xref_table) {
 						auto is_used_entry = ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(xref_entry);
 						if (!is_used_entry) {
 							continue;
@@ -830,6 +836,21 @@ ObjectPtr File::GetIndirectObjectInternal(
 
 						auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(xref_entry);
 						used_entry->GetReference();
+					}
+
+					// After all of the objects have been initialized, we need to rebuild xref map indexes.
+					// The issue was observed when using unordered_set, that the object could not be found.
+					// Chaning the object key is not a way to go, so we remove and reinsert all entries.
+
+					// Store entries before removal
+					auto entries = xref_table->Entries();
+
+					// Remove all xref entries
+					xref_table->Clear();
+
+					// Reinsert all of them once again to rebuild the hash buckets
+					for (auto& entry : entries) {
+						xref_table->Add(entry);
 					}
 				}
 

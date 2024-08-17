@@ -12,7 +12,12 @@ namespace syntax {
 
 class XrefBase : public IModifyObserver, public IModifyObservable {
 public:
-	using map_type = std::set<XrefEntryBasePtr>;
+
+	// Changing to set from unordered_set is failing on linux GCC images.
+	// I have not found the reason, however it seems to be connected with the comparison operator.
+	// The same test case works on MSVC for both set and unordered_set and it is not trivial to resolve.
+	// Failing test case issue918.pdf from pdfjs.
+	using map_type = std::unordered_set<XrefEntryBasePtr>;
 
 	typedef map_type::value_type value_type;
 	typedef map_type::iterator iterator;
