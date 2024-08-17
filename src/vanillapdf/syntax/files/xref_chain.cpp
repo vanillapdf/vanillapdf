@@ -24,6 +24,7 @@ XrefEntryBasePtr XrefChain::GetXrefEntry(types::big_uint obj_number, types::usho
 		return item;
 	}
 
+	spdlog::error("Xref entry {} {} was not found in the list", obj_number, gen_number);
 	throw ObjectMissingException(obj_number, gen_number);
 }
 

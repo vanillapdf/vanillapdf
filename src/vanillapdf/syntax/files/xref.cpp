@@ -299,6 +299,7 @@ XrefEntryBasePtr XrefBase::Find(types::big_uint obj_number) const {
 
 	auto found = _entries.find(temp);
 	if (found == _entries.end()) {
+		spdlog::error("Xref entry {} was not found in the list", obj_number);
 		throw ObjectMissingException(obj_number);
 	}
 
