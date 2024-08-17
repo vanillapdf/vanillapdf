@@ -437,6 +437,8 @@ namespace xref {
 		ASSERT_NE(xref_free_entry_ptr, nullptr);
 
 		ASSERT_EQ(XrefFreeEntry_ToEntry(xref_free_entry_ptr, &xref_entry_ptr), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_NE(xref_entry_ptr, nullptr);
+
 		ASSERT_EQ(Xref_Insert(xref_ptr, xref_entry_ptr), VANILLAPDF_ERROR_SUCCESS);
 		ASSERT_EQ(Xref_Contains(xref_ptr, 1, &contains_result), VANILLAPDF_ERROR_SUCCESS);
 		ASSERT_EQ(Xref_Remove(xref_ptr, 1, &remove_result), VANILLAPDF_ERROR_SUCCESS);
