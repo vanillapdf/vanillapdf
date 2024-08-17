@@ -243,12 +243,29 @@ void XrefTable::Add(XrefEntryBasePtr entry) {
 }
 
 void XrefBase::Add(XrefEntryBasePtr entry) {
-	auto found = _entries.find(entry);
-	if (found != _entries.end()) {
-		_entries.erase(found);
+
+	// Try to insert new entry into the list
+	auto result = _entries.insert(entry);
+
+	// The pair::second element in the pair is set to true if a new element was inserted
+	// or false if an equivalent key already existed.
+	if (!result.second) {
+
+		// TODO: Add overwrite flag, currently it is always overwriting
+
+		// Remove the item as there was a conflict
+		bool removed = Remove(entry);
+		if (!removed) {
+			throw GeneralException("Failed to remove xref entry from the list");
+		}
+
+		// Retry the insertion
+		auto retry_result = _entries.insert(entry);
+		if (!retry_result.second) {
+			throw GeneralException("Failed to insert xref entry into the list");
+		}
 	}
 
-	_entries.insert(entry);
 	entry->Subscribe(this);
 	OnChanged();
 }
