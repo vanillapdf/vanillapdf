@@ -121,7 +121,7 @@ build-ubuntu.24.04-x64:
 build-ubuntu.24.04-arm64:
   image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-arm64v8:24.04
   when: manual
-  timeout: 3 hours # The arm runner machine seems to be very slow
+  timeout: 5 hours # The arm runner machine seems to be very slow
 
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -164,7 +164,7 @@ build-rocky.9-x64:
 build-rocky.9-arm64:
   image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-arm64v8:9
   when: manual
-  timeout: 3 hours # The arm runner machine seems to be very slow
+  timeout: 5 hours # The arm runner machine seems to be very slow
 
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -211,7 +211,7 @@ build-linux-x64:
 build-linux-arm64:
   image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-arm64v8:22.04
   when: manual
-  timeout: 3 hours # The arm runner machine seems to be very slow
+  timeout: 5 hours # The arm runner machine seems to be very slow
 
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
