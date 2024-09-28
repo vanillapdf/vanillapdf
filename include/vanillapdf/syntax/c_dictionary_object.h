@@ -107,6 +107,11 @@ extern "C"
 	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle* handle, const NameObjectHandle* key, ObjectHandle** result);
 
 	/**
+	* \brief Find mapped value for key \p key, however does not return an error in case the entry is missing
+	*/
+	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_TryFind(DictionaryObjectHandle* handle, const NameObjectHandle* key, boolean_type* result, ObjectHandle** result_object);
+
+	/**
 	* \brief Determine if collection contains \p key
 	*/
 	VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Contains(DictionaryObjectHandle* handle, const NameObjectHandle* key, boolean_type* result);

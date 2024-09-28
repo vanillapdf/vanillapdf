@@ -333,6 +333,71 @@ TEST(DictionaryObject, InsertOverwrite) {
 	ASSERT_EQ(DictionaryObject_Release(dictionary_object), VANILLAPDF_ERROR_SUCCESS);
 }
 
+TEST(DictionaryObject, TryFind) {
+
+	const char AUTHOR_NAME[] = "Vanilla.PDF Labs s.r.o.";
+
+	DictionaryObjectHandle* dictionary_object = nullptr;
+
+	ObjectHandle* author_base_object = NULL;
+	StringObjectHandle* author_string_object = NULL;
+	LiteralStringObjectHandle* author_literal_string_object = NULL;
+
+	boolean_type object_found = false;
+	ObjectHandle* found_object_reference = nullptr;
+
+	ASSERT_EQ(DictionaryObject_Create(&dictionary_object), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(dictionary_object, nullptr);
+
+	ASSERT_EQ(LiteralStringObject_CreateFromDecodedString(AUTHOR_NAME, &author_literal_string_object), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(author_literal_string_object, nullptr);
+
+	ASSERT_EQ(LiteralStringObject_ToStringObject(author_literal_string_object, &author_string_object), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(author_string_object, nullptr);
+
+	ASSERT_EQ(StringObject_ToObject(author_string_object, &author_base_object), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(author_base_object, nullptr);
+
+	// Insert one element into the dictionary
+	ASSERT_EQ(DictionaryObject_InsertConst(dictionary_object, NameConstant_Author, author_base_object, VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
+
+	// TryFind should return success with results being filled within output variables
+	ASSERT_EQ(DictionaryObject_TryFind(dictionary_object, NameConstant_Author, &object_found, &found_object_reference), VANILLAPDF_ERROR_SUCCESS);
+
+	// Entries are present in the dictionary
+	EXPECT_EQ(object_found, true);
+	EXPECT_EQ(found_object_reference, author_base_object);
+
+	// Release the original inserted objects
+	ASSERT_EQ(Object_Release(author_base_object), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(StringObject_Release(author_string_object), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(LiteralStringObject_Release(author_literal_string_object), VANILLAPDF_ERROR_SUCCESS);
+
+	// Release the container dictionary
+	ASSERT_EQ(DictionaryObject_Release(dictionary_object), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(DictionaryObject, TryFindMissing) {
+
+	DictionaryObjectHandle* dictionary_object = nullptr;
+
+	boolean_type object_found = false;
+	ObjectHandle* found_object_reference = nullptr;
+
+	ASSERT_EQ(DictionaryObject_Create(&dictionary_object), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(dictionary_object, nullptr);
+
+	// TryFind should return success, however the results should be empty
+	ASSERT_EQ(DictionaryObject_TryFind(dictionary_object, NameConstant_Author, &object_found, &found_object_reference), VANILLAPDF_ERROR_SUCCESS);
+
+	// Entries are not present in the dictionary
+	EXPECT_EQ(object_found, false);
+	EXPECT_EQ(found_object_reference, nullptr);
+
+	// Release the container dictionary
+	ASSERT_EQ(DictionaryObject_Release(dictionary_object), VANILLAPDF_ERROR_SUCCESS);
+}
+
 TEST(StreamObject, OnChangeEvent) {
 
 	StreamObjectHandle* stream_object = NULL;

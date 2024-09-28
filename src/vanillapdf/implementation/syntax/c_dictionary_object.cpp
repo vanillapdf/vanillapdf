@@ -47,6 +47,37 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObj
 	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_TryFind(DictionaryObjectHandle* handle, const NameObjectHandle* key, boolean_type* result, ObjectHandle** result_object) {
+	DictionaryObject* obj = reinterpret_cast<DictionaryObject*>(handle);
+	const NameObject* name_object = reinterpret_cast<const NameObject*>(key);
+
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(name_object);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+	RETURN_ERROR_PARAM_VALUE_IF_NULL(result_object);
+
+	try
+	{
+		OutputContainableObjectPtr found_object;
+
+		auto found = obj->TryFind(*name_object, found_object);
+		if (!found) {
+			*result_object = nullptr;
+			*result = false;
+			return VANILLAPDF_ERROR_SUCCESS;
+		}
+
+		ContainableObjectPtr found_containable = found_object;
+		auto base = ObjectUtils::GetObjectBase(found_containable);
+		auto ptr = base.AddRefGet();
+
+		*result_object = reinterpret_cast<ObjectHandle*>(ptr);
+		*result = true;
+
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_GetIterator(DictionaryObjectHandle* handle, DictionaryObjectIteratorHandle** result)
 {
 	DictionaryObject* obj = reinterpret_cast<DictionaryObject*>(handle);
