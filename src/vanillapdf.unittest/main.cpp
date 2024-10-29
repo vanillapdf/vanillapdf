@@ -150,9 +150,13 @@ TEST(HexadecimalStringObject, GetValue) {
 	HexadecimalStringObjectHandle* hexadecimal_string_ptr = nullptr;
 
 	ASSERT_EQ(HexadecimalStringObject_CreateFromEncodedString("0027", &hexadecimal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(hexadecimal_string_ptr, nullptr);
+
 	ASSERT_EQ(HexadecimalStringObject_GetValue(hexadecimal_string_ptr, &buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(buffer_ptr, nullptr);
 
 	ASSERT_EQ(Buffer_GetData(buffer_ptr, &buffer_data, &buffer_size), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(buffer_data, nullptr);
 
 	ASSERT_EQ(buffer_size, 2);
 	EXPECT_EQ(buffer_data[0], 0x00);
