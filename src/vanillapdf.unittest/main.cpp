@@ -69,6 +69,78 @@ TEST(BufferArray, Conversion) {
 	ASSERT_EQ(BufferArray_Release(buffer_array_handle), VANILLAPDF_ERROR_SUCCESS);
 }
 
+TEST(LiteralStringObject, ParenthesesIncluded) {
+
+	// In the previous algorithm implementation there was incorrect logic for handling unescaped parentheses.
+	// Let's double down on this, that they should be part of the result.
+
+	// NOTE:
+	// Currently the wrapping parentheses are not part of the input, thus the result is the same in this case.
+
+	const char TEST_DATA[] = "(test)";
+
+	string_type buffer_data = nullptr;
+	size_type buffer_size = 0;
+
+	BufferHandle* buffer_ptr = nullptr;
+	LiteralStringObjectHandle* literal_string_ptr = nullptr;
+
+	ASSERT_EQ(LiteralStringObject_CreateFromEncodedString("(test)", &literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(literal_string_ptr, nullptr);
+
+	ASSERT_EQ(LiteralStringObject_GetValue(literal_string_ptr, &buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(buffer_ptr, nullptr);
+
+	ASSERT_EQ(Buffer_GetData(buffer_ptr, &buffer_data, &buffer_size), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(buffer_data, nullptr);
+
+	// Verify the data and length returned by Buffer_GetData
+	ASSERT_EQ(buffer_size, strlen(TEST_DATA));
+
+	for (uint32_t i = 0; i < buffer_size; ++i) {
+		EXPECT_EQ(buffer_data[i], TEST_DATA[i]);
+	}
+
+	ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(LiteralStringObject_Release(literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(LiteralStringObject, OctalTwoDigitCompare) {
+
+	// There was a bug in the application, which was expecting octal format to always include 3 digits.
+	// To my understanding ddd means no 3 digits, no questions, however I might be wrong sometimes.
+
+	// Quote from specs:
+	// EXAMPLE 5 the literal
+	// (\0053)
+	// denotes a string containing two characters, \005 (Control - E) followed by the digit 3, whereas both
+	// (\053)
+	// and
+	// (\53)
+	// denote strings containing the single character \053, a plus sign(+)
+
+	string_type buffer_data = nullptr;
+	size_type buffer_size = 0;
+
+	BufferHandle* buffer_ptr = nullptr;
+	LiteralStringObjectHandle* literal_string_ptr = nullptr;
+
+	ASSERT_EQ(LiteralStringObject_CreateFromEncodedString("\\53", &literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(literal_string_ptr, nullptr);
+
+	ASSERT_EQ(LiteralStringObject_GetValue(literal_string_ptr, &buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(buffer_ptr, nullptr);
+
+	ASSERT_EQ(Buffer_GetData(buffer_ptr, &buffer_data, &buffer_size), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(buffer_data, nullptr);
+	
+	ASSERT_EQ(buffer_size, 1);
+	EXPECT_EQ(buffer_data[0], 053);
+
+	ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(LiteralStringObject_Release(literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
+}
+
 TEST(HexadecimalStringObject, GetValue) {
 
 	string_type buffer_data = nullptr;

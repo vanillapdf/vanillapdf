@@ -97,6 +97,7 @@ public:
 
 private:
 	BufferPtr GetRawValue() const;
+	BufferPtr GetRawValueDecoded() const;
 	void SetRawValue(BufferPtr value);
 
 	BufferPtr _raw_value;

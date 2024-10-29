@@ -5,6 +5,7 @@
 #include "syntax/exceptions/syntax_exceptions.h"
 
 #include "utils/character.h"
+#include "utils/streams/stream_utils.h"
 
 #include <fmt/core.h>
 #include <fmt/ranges.h>
@@ -152,10 +153,8 @@ BufferPtr LiteralStringObject::GetValue() const {
 		return _value;
 	}
 
-	BufferPtr new_value = _raw_value;
-
-	// TODO: Handle \r, \t, \f, etc.
-	// TODO: Handle octal values
+	// Handles backslashes and replaces with actual binary values
+	BufferPtr new_value = GetRawValueDecoded();
 
 	if (!m_file.IsEmpty()) {
 		if (!m_file.IsActive()) {
@@ -165,7 +164,7 @@ BufferPtr LiteralStringObject::GetValue() const {
 		auto locked_file = m_file.GetReference();
 
 		if (!IsEncryptionExempted() && locked_file->IsEncrypted()) {
-			new_value = locked_file->DecryptString(_raw_value, GetRootObjectNumber(), GetRootGenerationNumber());
+			new_value = locked_file->DecryptString(new_value, GetRootObjectNumber(), GetRootGenerationNumber());
 		}
 	}
 
@@ -183,6 +182,180 @@ void LiteralStringObject::SetValue(BufferPtr value) {
 
 BufferPtr LiteralStringObject::GetRawValue() const {
 	return _raw_value;
+}
+
+BufferPtr LiteralStringObject::GetRawValueDecoded() const {
+
+	BufferPtr result;
+
+	// I am using stream conversion as the algorithm was written using streams and not buffers.
+	// Even though it is not very efficient, I am confident that there will be one brave soul,
+	// that will overcome this and do the refactoring with benchmark included, so that we can
+	// sleep peacefully knowing the complexity of this algorithm is not quadratically asymptotic.
+	auto raw_value_stream = StreamUtils::InputStreamFromBuffer(_raw_value);
+
+	// Keep track of unescaped parenthesis as they have to be balanced
+	int nested_count = 0;
+
+	for (;;) {
+		assert(nested_count >= 0);
+
+		if (raw_value_stream->Eof()) {
+			break;
+		}
+
+		auto eof_test = raw_value_stream->Peek();
+		if (eof_test == std::char_traits<char>::eof()) {
+			break;
+		}
+
+		int current_meta = raw_value_stream->Get();
+		auto current = ValueConvertUtils::SafeConvert<unsigned char>(current_meta);
+
+		if (current == Delimiter::LEFT_PARENTHESIS) {
+			nested_count++;
+
+			// TODO:
+			// Wrapping parentheses are currently not included in the raw data
+
+			// Do not include initial parenthesis in the result
+			//if (nested_count == 1) {
+			//	continue;
+			//}
+		}
+
+		if (current == Delimiter::RIGHT_PARENTHESIS) {
+
+			// TODO:
+			// Wrapping parentheses are currently not included in the raw data
+
+			// Terminate in case we would underflow the nested count
+			if (nested_count == 0) {
+				spdlog::warn("Literal string parsing would underflow the parenthesis count: {}", _raw_value->ToString());
+				break;
+			}
+
+			nested_count--;
+		}
+
+		if (current == '\r') {
+			result->push_back('\r');
+
+			auto line_feed = raw_value_stream->Peek();
+			if (line_feed == '\n' && raw_value_stream->Ignore()) {
+				result->push_back('\n');
+			}
+
+			continue;
+		}
+
+		if (current != '\\') {
+			result->push_back(current);
+			continue;
+		}
+
+		auto next = raw_value_stream->Peek();
+		if (next == std::char_traits<char>::eof()) {
+			break;
+		}
+
+		// escaped characters
+		if (next == 'r' && raw_value_stream->Ignore()) {
+			result->push_back('\r');
+			continue;
+		}
+
+		if (next == 'f' && raw_value_stream->Ignore()) {
+			result->push_back('\f');
+			continue;
+		}
+
+		if (next == 't' && raw_value_stream->Ignore()) {
+			result->push_back('\t');
+			continue;
+		}
+
+		if (next == 'n' && raw_value_stream->Ignore()) {
+			result->push_back('\n');
+			continue;
+		}
+
+		if (next == 'b' && raw_value_stream->Ignore()) {
+			result->push_back('\b');
+			continue;
+		}
+
+		if (next == '(' && raw_value_stream->Ignore()) {
+			result->push_back('(');
+			continue;
+		}
+
+		if (next == ')' && raw_value_stream->Ignore()) {
+			result->push_back(')');
+			continue;
+		}
+
+		if (next == '\\' && raw_value_stream->Ignore()) {
+			result->push_back('\\');
+			continue;
+		}
+
+		// Backslash at the EOL shall be disregarded
+		if (next == '\r' && raw_value_stream->Ignore()) {
+			if (raw_value_stream->Peek() == '\n') {
+				raw_value_stream->Ignore();
+			}
+
+			continue;
+		}
+
+		// Backslash at the EOL shall be disregarded
+		if (next == '\n' && raw_value_stream->Ignore()) {
+			continue;
+		}
+
+		if (!IsNumeric(next)) {
+			continue;
+		}
+
+		std::stringstream octal;
+		for (int i = 0; i < 3; ++i) {
+
+			auto numeric_meta = raw_value_stream->Peek();
+			if (numeric_meta == std::char_traits<char>::eof()) {
+				break;
+			}
+
+			auto numeric = ValueConvertUtils::SafeConvert<unsigned char>(numeric_meta);
+			if (IsNumeric(numeric) && raw_value_stream->Ignore()) {
+				octal << numeric;
+				continue;
+			}
+
+			// Update 24.10.2024
+
+			// Until now I have not seen a document actually using only two digits specifying the octal value.
+			// The specification says \ddd strictly without any other options, however:
+			// "whereas both (\053) and (\53) denote strings containing the single character \053, a plus sign (+)"
+			// This means that even less characters can be used for octal representation.
+
+			// In case there are less than 3 numbers specifying the octal value we can break the loop
+			break;
+		}
+
+		int value = 0;
+		octal >> std::oct >> value;
+		auto converted = ValueConvertUtils::SafeConvert<unsigned char, int>(value);
+		char char_converted = reinterpret_cast<char&>(converted);
+		result->push_back(char_converted);
+		continue;
+	}
+
+	if (nested_count != 0) {
+		throw GeneralException("Improperly terminated literal string sequence: " + result->ToString());
+	}
+
+	return result;
 }
 
 void LiteralStringObject::SetRawValue(BufferPtr value) {

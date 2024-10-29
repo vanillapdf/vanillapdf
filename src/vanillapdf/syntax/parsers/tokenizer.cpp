@@ -253,8 +253,16 @@ TokenPtr Tokenizer::ReadName(void) {
 TokenPtr Tokenizer::ReadLiteralString(void) {
 	std::string chars;
 
-	int nested_count = 0;
+	// The initial left parenthesis was already read before
+	int nested_count = 1;
+
+	bool previous_backslash = false;
+
 	for (;;) {
+
+		// Nested count should not be negative
+		assert(nested_count >= 0);
+
 		auto eof_test = m_stream->Peek();
 		if (eof_test == std::char_traits<char>::eof()) {
 			throw GeneralException("Improperly terminated literal string sequence: " + chars);
@@ -263,123 +271,31 @@ TokenPtr Tokenizer::ReadLiteralString(void) {
 		int current_meta = m_stream->Get();
 		auto current = ValueConvertUtils::SafeConvert<unsigned char>(current_meta);
 
+		// If the previous character was a backslash we consume the next one without questions
+		if (previous_backslash) {
+			chars.push_back(current);
+
+			previous_backslash = false;
+			continue;
+		}
+
 		if (current == Delimiter::LEFT_PARENTHESIS) {
 			nested_count++;
 		}
 
 		if (current == Delimiter::RIGHT_PARENTHESIS) {
-			if (0 == nested_count) {
+			if (nested_count == 1) {
 				break;
 			}
 
 			nested_count--;
-			assert(nested_count >= 0);
-			continue;
 		}
 
-		if (current == '\r') {
-			chars.push_back('\r');
-
-			auto line_feed = m_stream->Peek();
-			if (line_feed == '\n' && m_stream->Ignore()) {
-				chars.push_back('\n');
-			}
-
-			continue;
+		if (current == '\\') {
+			previous_backslash = true;
 		}
 
-		if (current != '\\') {
-			chars.push_back(current);
-			continue;
-		}
-
-		auto next = m_stream->Peek();
-		if (next == std::char_traits<char>::eof()) {
-			continue;
-		}
-
-		// escaped characters
-		if (next == 'r' && m_stream->Ignore()) {
-			chars.push_back('\r');
-			continue;
-		}
-
-		if (next == 'f' && m_stream->Ignore()) {
-			chars.push_back('\f');
-			continue;
-		}
-
-		if (next == 't' && m_stream->Ignore()) {
-			chars.push_back('\t');
-			continue;
-		}
-
-		if (next == 'n' && m_stream->Ignore()) {
-			chars.push_back('\n');
-			continue;
-		}
-
-		if (next == 'b' && m_stream->Ignore()) {
-			chars.push_back('\b');
-			continue;
-		}
-
-		if (next == '(' && m_stream->Ignore()) {
-			chars.push_back('(');
-			continue;
-		}
-
-		if (next == ')' && m_stream->Ignore()) {
-			chars.push_back(')');
-			continue;
-		}
-
-		if (next == '\\' && m_stream->Ignore()) {
-			chars.push_back('\\');
-			continue;
-		}
-
-		// Backslash at the EOL shall be disregarded
-		if (next == '\r' && m_stream->Ignore()) {
-			if (m_stream->Peek() == '\n') {
-				m_stream->Ignore();
-			}
-
-			continue;
-		}
-
-		// Backslash at the EOL shall be disregarded
-		if (next == '\n' && m_stream->Ignore()) {
-			continue;
-		}
-
-		if (!IsNumeric(next)) {
-			continue;
-		}
-
-		std::stringstream octal;
-		for (int i = 0; i < 3; ++i) {
-			auto numeric_meta = m_stream->Peek();
-			if (std::char_traits<char>::eof() == numeric_meta) {
-				break;
-			}
-
-			auto numeric = ValueConvertUtils::SafeConvert<unsigned char>(numeric_meta);
-			if (IsNumeric(numeric) && m_stream->Ignore()) {
-				octal << numeric;
-				continue;
-			}
-
-			assert(!"Found invalid value in octal representation inside literal string");
-			throw GeneralException("Expected octal value inside literal string: " + octal.str());
-		}
-
-		int value = 0;
-		octal >> std::oct >> value;
-		auto converted = ValueConvertUtils::SafeConvert<unsigned char, int>(value);
-		char char_converted = reinterpret_cast<char&>(converted);
-		chars.push_back(char_converted);
-		continue;
+		chars.push_back(current);
 	}
 
 	return make_deferred<Token>(Token::Type::LITERAL_STRING, chars);
