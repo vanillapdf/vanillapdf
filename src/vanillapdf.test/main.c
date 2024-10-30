@@ -28,6 +28,7 @@ int main(int argc, char *argv[]) {
 	string_type signing_cert_password = NULL;
 	boolean_type is_encrypted = VANILLAPDF_RV_FALSE;
 	boolean_type quiet_mode = VANILLAPDF_RV_FALSE;
+	boolean_type skip_process = VANILLAPDF_RV_FALSE;
 	boolean_type skip_save = VANILLAPDF_RV_FALSE;
 	boolean_type skip_edit = VANILLAPDF_RV_FALSE;
 	boolean_type skip_incremental_save = VANILLAPDF_RV_FALSE;
@@ -77,6 +78,10 @@ int main(int argc, char *argv[]) {
 		} else if (strcmp(argv[i], "-m") == 0 && (i + 1 < argc)) {
 			merge_file = argv[i + 1];
 			i++;
+
+		// skip process
+		} else if (strcmp(argv[i], "-sp") == 0) {
+			skip_process = VANILLAPDF_RV_TRUE;
 
 		// skip save
 		} else if (strcmp(argv[i], "-ss") == 0) {
@@ -139,7 +144,9 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	RETURN_ERROR_IF_NOT_SUCCESS(process_file(file, 0));
+	if (skip_process != VANILLAPDF_RV_TRUE) {
+		RETURN_ERROR_IF_NOT_SUCCESS(process_file(file, 0));
+	}
 
 	RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenFile(file, &document));
 	RETURN_ERROR_IF_NOT_SUCCESS(process_document(document, 0));

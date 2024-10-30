@@ -177,6 +177,18 @@ BufferPtr ZlibWrapper::Inflate(IInputStreamPtr input, types::stream_size length)
 		return vanillapdf::Inflate(input, length);
 	} catch (ZlibDataErrorException& ex) {
 		auto size = ex.Size();
+
+		// I really believe that error at the first byte of data stream should be escalated.
+		// If there are bunch of data beyond the actual content it's fine, but not this.
+		// The reason I am here right now is that after file decryption I found out,
+		// that the content of stream cannot be decompressed, which is being currently silenced.
+		if (size == 0) {
+			SPDLOG_ERROR("zlib data error: {}", ex.what());
+			throw;
+		}
+
+		SPDLOG_WARN("zlib data error at offset {}, skipping unexpected bytes: {}", ex.Size(), ex.what());
+
 		input->SetInputPosition(0, SeekDirection::Beginning);
 		return vanillapdf::Inflate(input, length, size);
 	}

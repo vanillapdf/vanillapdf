@@ -55,6 +55,31 @@ namespace filters {
 		ASSERT_EQ(FlateDecodeFilter_Release(filter_handle), VANILLAPDF_ERROR_SUCCESS);
 	}
 
+	TEST(FlateDecodeFilter, InvalidDataDecodeError) {
+
+		const unsigned char INPUT_DATA[] = {
+			0xDE, 0xAD, 0xC0, 0xDE
+		};
+
+		BufferHandle* input_data_buffer = nullptr;
+		BufferHandle* decoded_data_buffer = nullptr;
+		FlateDecodeFilterHandle* filter_handle = nullptr;
+
+		ASSERT_EQ(FlateDecodeFilter_Create(&filter_handle), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_NE(filter_handle, nullptr);
+
+		ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(INPUT_DATA), sizeof(INPUT_DATA), &input_data_buffer), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_NE(input_data_buffer, nullptr);
+
+		EXPECT_NE(FlateDecodeFilter_Decode(filter_handle, input_data_buffer, &decoded_data_buffer), VANILLAPDF_ERROR_SUCCESS);
+		EXPECT_EQ(decoded_data_buffer, nullptr);
+
+		// Cleanup
+
+		ASSERT_EQ(Buffer_Release(input_data_buffer), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(FlateDecodeFilter_Release(filter_handle), VANILLAPDF_ERROR_SUCCESS);
+	}
+
 	TEST(DCTDecodeFilter, Decode) {
 
 		const unsigned char INPUT_DATA[] = {
