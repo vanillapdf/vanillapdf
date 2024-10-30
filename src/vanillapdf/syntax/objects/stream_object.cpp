@@ -303,11 +303,13 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 	auto locked_file = m_file.GetReference();
 
 	bool is_file_encrypted = locked_file->IsEncrypted();
+	bool is_file_encryption_dirty = locked_file->IsEncryptionDirty();
 
 	// Optimization for unchanged streams
 	// In case the document is encrypted, the stream contents needs to be recalculated
+	// Encryption dirty flag is toggled in case there were changes to the encryption at the file level
 
-	if (!is_file_encrypted) {
+	if (!is_file_encrypted && !is_file_encryption_dirty) {
 		bool is_dirty = IsDirty();
 		bool is_body_initialized = _body_decoded->IsInitialized();
 

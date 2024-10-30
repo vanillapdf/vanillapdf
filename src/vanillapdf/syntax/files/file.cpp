@@ -378,7 +378,20 @@ bool File::SetEncryptionPassword(const Buffer& password) {
 		assert(length_bits->GetIntegerValue() % 8 == 0 && "Key length is not multiplier of 8");
 	}
 
-	auto permissions_value = ValueConvertUtils::SafeConvert<int32_t>(permissions->GetIntegerValue());
+	// The value of the P entry shall be interpreted as an unsigned 32-bit quantity
+	// containing a set of flags specifying which access permissions shall be granted
+	// when the document is opened with user access.
+
+	int64_t permissions_int64_value = permissions->GetIntegerValue();
+	uint64_t permissions_uint64_value = static_cast<uint64_t>(permissions_int64_value);
+
+	if (permissions_uint64_value > std::numeric_limits<uint32_t>::max()) {
+		spdlog::warn("Permission field is above specified threshold ({}), truncating", permissions_uint64_value);
+
+		permissions_uint64_value = permissions_uint64_value & 0xFFFFFFFFLL;
+	}
+
+	auto permissions_value = ValueConvertUtils::SafeConvert<uint32_t>(permissions_uint64_value);
 	auto revision_value = ValueConvertUtils::SafeConvert<int32_t>(revision->GetIntegerValue());
 	auto key_length_value = ValueConvertUtils::SafeConvert<int32_t>(length_bits->GetIntegerValue());
 

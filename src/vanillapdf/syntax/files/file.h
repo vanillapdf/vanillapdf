@@ -71,16 +71,18 @@ public:
 
 	// Encryption
 	bool IsEncrypted(void) const;
+	bool IsEncryptionDirty(void) const noexcept {
+		return _is_encryption_dirty;
+	}
+
 	ObjectPtr GetEncryptionDictionary(void) const {
 		return _encryption_dictionary;
 	}
 
 	void SetEncryptionDictionary(ObjectPtr object) {
 		_encryption_dictionary = object;
+		_is_encryption_dirty = true;
 	}
-
-	BufferPtr GetEncryptionKey() const { return _decryption_key; }
-	void SetEncryptionKey(BufferPtr data) { _decryption_key = data; }
 
 	bool SetEncryptionPassword(const Buffer& password);
 	bool SetEncryptionPassword(const std::string& password);
@@ -132,6 +134,8 @@ private:
 	bool _initialized = false;
 	std::string _full_path;
 	BufferPtr _filename;
+
+	bool _is_encryption_dirty = false;
 	BufferPtr _decryption_key;
 	ObjectPtr _encryption_dictionary;
 
@@ -154,6 +158,21 @@ private:
 	void ExemptDocumentId();
 	void ExemptFileSignatures();
 	void ExemptCrossReferenceStreams();
+
+	void SetEncryptionDirty(bool dirty = true) {
+		_is_encryption_dirty = dirty;
+	}
+
+	BufferPtr GetEncryptionKey() const {
+		return _decryption_key;
+	}
+
+	void SetEncryptionKey(BufferPtr data) {
+		_decryption_key = data;
+	}
+
+	// FileWriter might need to access some private functions such as encryption key
+	friend class FileWriter;
 };
 
 } // syntax

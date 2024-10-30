@@ -444,6 +444,12 @@ void FileWriter::FixStreamReferences(XrefChainPtr source, XrefChainPtr destinati
 
 void FileWriter::SetEncryptionData(FilePtr source, FilePtr destination) {
 
+	bool source_encryption_dirty = source->IsEncryptionDirty();
+
+	if (source_encryption_dirty) {
+		destination->SetEncryptionDirty();
+	}
+
 	// Terminate for unencrypted files
 	if (!source->IsEncrypted()) {
 		return;

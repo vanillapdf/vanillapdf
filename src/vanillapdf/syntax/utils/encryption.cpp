@@ -562,7 +562,7 @@ BufferPtr EncryptionUtils::GenerateOwnerEncryptionKey(
 	const Buffer& user_password,
 	EncryptionAlgorithm algorithm,
 	int32_t key_length,
-	int32_t permissions,
+	uint32_t permissions,
 	int32_t revision) {
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
@@ -699,7 +699,7 @@ bool EncryptionUtils::CheckKey(
 	const Buffer& document_id,
 	const Buffer& owner_data,
 	const Buffer& user_data,
-	int32_t permissions,
+	uint32_t permissions,
 	int32_t revision,
 	int32_t key_length,
 	Buffer& decryption_key) {
@@ -844,7 +844,7 @@ BufferPtr EncryptionUtils::CalculateDecryptionKeyDigest(
 	const Buffer& input,
 	const Buffer& document_id,
 	const Buffer& owner_data,
-	int32_t permissions) {
+	uint32_t permissions) {
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
