@@ -69,7 +69,7 @@ if ("SkipProcess" in config_data and test_filename in config_data["SkipProcess"]
 if ("SkipSave" in config_data and test_filename in config_data["SkipSave"]):
 	base_parameters.append(SKIP_SAVE_OPTION)
 
-if ("SkipSave" in config_data and test_filename in config_data["SkipEdit"]):
+if ("SkipEdit" in config_data and test_filename in config_data["SkipEdit"]):
 	base_parameters.append(SKIP_EDIT_OPTION)
 
 if ("SkipIncrementalSave" in config_data and test_filename in config_data["SkipIncrementalSave"]):
