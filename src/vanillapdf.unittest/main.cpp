@@ -303,6 +303,24 @@ TEST(Rectangle, GetSet) {
 	ASSERT_EQ(Rectangle_Release(rectangle_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 
+TEST(File, LoadEmptyError) {
+
+	FileHandle* file = NULL;
+	InputOutputStreamHandle* input_output_stream = NULL;
+
+	ASSERT_EQ(InputOutputStream_CreateFromMemory(&input_output_stream), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(input_output_stream, nullptr);
+
+	ASSERT_EQ(File_OpenStream(input_output_stream, "UNUSED", &file), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(file, nullptr);
+
+	// Initialization should fail, however gracefully
+	// This could cause the application to hang, so let's cover it in the test
+	EXPECT_NE(File_Initialize(file), VANILLAPDF_ERROR_SUCCESS);
+
+	ASSERT_EQ(InputOutputStream_Release(input_output_stream), VANILLAPDF_ERROR_SUCCESS);
+}
+
 TEST(File, XrefAllocation) {
 
 	FileHandle* file = NULL;
