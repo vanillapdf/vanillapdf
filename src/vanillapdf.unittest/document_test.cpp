@@ -164,6 +164,32 @@ static const unsigned char SIGNING_CERTIFICATE[] = {
 
 namespace documents {
 
+	TEST(DocumentEncryptionSettings, CreateRelease) {
+		DocumentEncryptionSettingsHandle* encryption_settings = nullptr;
+
+		ASSERT_EQ(DocumentEncryptionSettings_Create(&encryption_settings), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_NE(encryption_settings, nullptr);
+
+		ASSERT_EQ(DocumentEncryptionSettings_Release(encryption_settings), VANILLAPDF_ERROR_SUCCESS);
+	}
+
+	TEST(DocumentEncryptionSettings, PermissionsFlagMaxValue) {
+		DocumentEncryptionSettingsHandle* encryption_settings = nullptr;
+
+		UserAccessPermissionFlags permissions_flags = static_cast<UserAccessPermissionFlags>(-1);
+		UserAccessPermissionFlags permissions_flags_check = UserAccessPermissionFlag_None;
+
+		ASSERT_EQ(DocumentEncryptionSettings_Create(&encryption_settings), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_NE(encryption_settings, nullptr);
+
+		ASSERT_EQ(DocumentEncryptionSettings_SetUserAccessPermissions(encryption_settings, permissions_flags), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(DocumentEncryptionSettings_GetUserAccessPermissions(encryption_settings, &permissions_flags_check), VANILLAPDF_ERROR_SUCCESS);
+
+		EXPECT_EQ(permissions_flags, permissions_flags_check);
+
+		ASSERT_EQ(DocumentEncryptionSettings_Release(encryption_settings), VANILLAPDF_ERROR_SUCCESS);
+	}
+
 	TEST(Document, AddEncryption) {
 
 		const char USER_PASSWORD[] = "user_password";
