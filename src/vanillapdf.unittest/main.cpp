@@ -85,7 +85,7 @@ TEST(LiteralStringObject, ParenthesesIncluded) {
 	BufferHandle* buffer_ptr = nullptr;
 	LiteralStringObjectHandle* literal_string_ptr = nullptr;
 
-	ASSERT_EQ(LiteralStringObject_CreateFromEncodedString("(test)", &literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(LiteralStringObject_CreateFromEncodedString(TEST_DATA, &literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
 	ASSERT_NE(literal_string_ptr, nullptr);
 
 	ASSERT_EQ(LiteralStringObject_GetValue(literal_string_ptr, &buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
@@ -102,6 +102,23 @@ TEST(LiteralStringObject, ParenthesesIncluded) {
 	}
 
 	ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_EQ(LiteralStringObject_Release(literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(LiteralStringObject, UnbalancedParentheses) {
+
+	const char TEST_DATA[] = "())";
+
+	BufferHandle* buffer_ptr = nullptr;
+	LiteralStringObjectHandle* literal_string_ptr = nullptr;
+
+	ASSERT_EQ(LiteralStringObject_CreateFromEncodedString(TEST_DATA, &literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
+	ASSERT_NE(literal_string_ptr, nullptr);
+
+	// Invalid content was provided and it should trigger and error
+	EXPECT_NE(LiteralStringObject_GetValue(literal_string_ptr, &buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+	EXPECT_EQ(buffer_ptr, nullptr);
+
 	ASSERT_EQ(LiteralStringObject_Release(literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 

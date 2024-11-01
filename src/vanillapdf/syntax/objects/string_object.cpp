@@ -229,13 +229,14 @@ BufferPtr LiteralStringObject::GetRawValueDecoded() const {
 			// TODO:
 			// Wrapping parentheses are currently not included in the raw data
 
+			// Decrement the nested counter on the right parenthesis
+			nested_count--;
+
 			// Terminate in case we would underflow the nested count
-			if (nested_count == 0) {
+			if (nested_count < 0) {
 				spdlog::warn("Literal string parsing would underflow the parenthesis count: {}", _raw_value->ToString());
 				break;
 			}
-
-			nested_count--;
 		}
 
 		if (current == '\r') {
@@ -318,7 +319,7 @@ BufferPtr LiteralStringObject::GetRawValueDecoded() const {
 			continue;
 		}
 
-		std::stringstream octal;
+		std::string octal;
 		for (int i = 0; i < 3; ++i) {
 
 			auto numeric_meta = raw_value_stream->Peek();
@@ -328,7 +329,7 @@ BufferPtr LiteralStringObject::GetRawValueDecoded() const {
 
 			auto numeric = ValueConvertUtils::SafeConvert<unsigned char>(numeric_meta);
 			if (IsNumeric(numeric) && raw_value_stream->Ignore()) {
-				octal << numeric;
+				octal.push_back(numeric);
 				continue;
 			}
 
@@ -343,8 +344,16 @@ BufferPtr LiteralStringObject::GetRawValueDecoded() const {
 			break;
 		}
 
-		int value = 0;
-		octal >> std::oct >> value;
+		// ----------------------------------------------------------------------------------------
+		// Benchmark                                              Time             CPU   Iterations
+		// ----------------------------------------------------------------------------------------
+		// BM_StringGetValue_Literal/stringstream_octal        8462 ns         4604 ns       149333
+		// BM_StringGetValue_Literal/stoi_octal                3252 ns         1590 ns       560000
+
+		// The value can actually overflow 255, as the maximum 3-digit octal value is 777.
+		// This is 511 in decimal and it's not clear what should be done in such case.
+
+		int value = stoi(octal, 0, 8);
 		auto converted = ValueConvertUtils::SafeConvert<unsigned char, int>(value);
 		char char_converted = reinterpret_cast<char&>(converted);
 		result->push_back(char_converted);
@@ -376,20 +385,30 @@ BufferPtr HexadecimalStringObject::GetValue() const {
 		return _value;
 	}
 
-	BufferPtr result;
 	auto hexadecimal = _raw_value->ToString();
-	auto len = (hexadecimal.length() / 2);
-	for (decltype(len) i = 0; i < len; ++i) {
-		int val = stoi(hexadecimal.substr(i * 2, 2), 0, 16);
-		auto parsed = ValueConvertUtils::SafeConvert<unsigned char, int>(val);
-		char converted = reinterpret_cast<char&>(parsed);
-		result->push_back(converted);
+
+	// Pad missing character with zero
+	if (hexadecimal.length() % 2 == 1) {
+		hexadecimal.push_back('0');
 	}
 
-	// Last byte in unpaired
-	if (len * 2 < hexadecimal.length()) {
-		std::string pair { hexadecimal[hexadecimal.length() - 1], 0 };
-		int val = stoi(pair, 0, 16);
+	// Measure len after the padding has been done
+	auto len = (hexadecimal.length() / 2);
+
+	// Based on len we know exact capacity of the output,
+	// which can save a few reallocations for longer strings
+
+	// ----------------------------------------------------------------------------------------
+	// Benchmark                                              Time             CPU   Iterations
+	// ----------------------------------------------------------------------------------------
+	// BM_StringGetValue_Hexadecimal/reserve_no            1533 ns          879 ns       746667
+	// BM_StringGetValue_Hexadecimal/reserve_yes           1327 ns          808 ns      1102769
+
+	BufferPtr result;
+	result->reserve(len);
+
+	for (decltype(len) i = 0; i < len; ++i) {
+		int val = stoi(hexadecimal.substr(i * 2, 2), 0, 16);
 		auto parsed = ValueConvertUtils::SafeConvert<unsigned char, int>(val);
 		char converted = reinterpret_cast<char&>(parsed);
 		result->push_back(converted);
