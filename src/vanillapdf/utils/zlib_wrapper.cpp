@@ -183,11 +183,11 @@ BufferPtr ZlibWrapper::Inflate(IInputStreamPtr input, types::stream_size length)
 		// The reason I am here right now is that after file decryption I found out,
 		// that the content of stream cannot be decompressed, which is being currently silenced.
 		if (size == 0) {
-			SPDLOG_ERROR("zlib data error: {}", ex.what());
+			spdlog::error("zlib data error: {}", ex.what());
 			throw;
 		}
 
-		SPDLOG_WARN("zlib data error at offset {}, skipping unexpected bytes: {}", ex.Size(), ex.what());
+		spdlog::warn("zlib data error at offset {}, skipping unexpected bytes: {}", ex.Size(), ex.what());
 
 		input->SetInputPosition(0, SeekDirection::Beginning);
 		return vanillapdf::Inflate(input, length, size);
