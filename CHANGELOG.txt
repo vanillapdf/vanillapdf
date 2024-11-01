@@ -1,5 +1,19 @@
 # Vanilla.PDF Release notes
 
+v2.0.0 - 1.11.2024
+  - NEW: Thread-safe access to all syntax objects
+  - NEW: Support for JPEG2000
+  - NEW: Complete logging rework
+  - NEW: Generic linux x64 and arm64 support
+  - NEW: Object attributes such as SerializationOverrideAttribute and ImageMetadataObjectAttribute
+  - TWEAK: GetUnicodeMap is now available for all fonts not just Type0Font
+  - TWEAK: Significant performance optimizations based on benchmark measurement
+  - FIX: zlib decoding would not return error on invalid input
+  - FIX: Buffer overflow in thread-static string message storage
+  - FIX: InputOutputStream_Flush crash
+  - FIX: Destination file header did not contain 4-bytes of binary data
+  - FIX: Stream object decryption and dirty flag handling
+
 v1.8.0 - 24.9.2023
   - NEW: Thread-safe access to single file
   - NEW: Add cache for font dictionaries for performance reasons
