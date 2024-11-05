@@ -534,6 +534,17 @@ if(MSVC)
 	set_property(TARGET vanillapdf APPEND_STRING PROPERTY LINK_FLAGS "/NATVIS:public.natvis" )
 endif(MSVC)
 
+if(CMAKE_COMPILER_IS_GNUCXX)
+	# C++17 filesystem implementation exception for GCC
+	# https://en.cppreference.com/w/cpp/filesystem#Notes
+
+	# Quote from link above:
+	# Using this library may require additional compiler/linker options.
+	# GNU implementation prior to 9.1 requires linking with -lstdc++fs and LLVM implementation prior to LLVM 9.0 requires linking with -lc++fs.
+
+	set_property(TARGET vanillapdf APPEND_STRING PROPERTY LINK_FLAGS "-lstdc++fs" )
+endif(CMAKE_COMPILER_IS_GNUCXX)
+
 # Set C++ standard to be 17
 # NOTE: C++20 fails on latest GCC, due to error with atomic variables
 # NOTE: Similar issue here https://github.com/zephyrproject-rtos/zephyr/issues/40023
