@@ -534,7 +534,7 @@ if(MSVC)
 	set_property(TARGET vanillapdf APPEND_STRING PROPERTY LINK_FLAGS "/NATVIS:public.natvis" )
 endif(MSVC)
 
-if(CMAKE_COMPILER_IS_GNUCXX)
+#if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSION_LESS "9.1")
 	# C++17 filesystem implementation exception for GCC
 	# https://en.cppreference.com/w/cpp/filesystem#Notes
 
@@ -543,7 +543,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 	# GNU implementation prior to 9.1 requires linking with -lstdc++fs and LLVM implementation prior to LLVM 9.0 requires linking with -lc++fs.
 
 	target_link_options(vanillapdf PRIVATE "LINKER:-lstdc++fs")
-endif(CMAKE_COMPILER_IS_GNUCXX)
+#endif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSION_LESS "9.1")
 
 # Set C++ standard to be 17
 # NOTE: C++20 fails on latest GCC, due to error with atomic variables
