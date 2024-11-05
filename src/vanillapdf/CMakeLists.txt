@@ -542,7 +542,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 	# Using this library may require additional compiler/linker options.
 	# GNU implementation prior to 9.1 requires linking with -lstdc++fs and LLVM implementation prior to LLVM 9.0 requires linking with -lc++fs.
 
-	set_property(TARGET vanillapdf APPEND_STRING PROPERTY LINK_FLAGS "-lstdc++fs" )
+	target_link_options(vanillapdf PRIVATE "LINKER:-lstdc++fs")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 # Set C++ standard to be 17
