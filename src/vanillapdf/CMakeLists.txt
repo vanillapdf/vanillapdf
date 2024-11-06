@@ -534,7 +534,7 @@ if(MSVC)
 	set_property(TARGET vanillapdf APPEND_STRING PROPERTY LINK_FLAGS "/NATVIS:public.natvis" )
 endif(MSVC)
 
-#if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSION_LESS "9.1")
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSION_LESS "9.1")
 	# C++17 filesystem implementation exception for GCC
 	# https://en.cppreference.com/w/cpp/filesystem#Notes
 
@@ -542,8 +542,8 @@ endif(MSVC)
 	# Using this library may require additional compiler/linker options.
 	# GNU implementation prior to 9.1 requires linking with -lstdc++fs and LLVM implementation prior to LLVM 9.0 requires linking with -lc++fs.
 
-	#target_link_options(vanillapdf PRIVATE "LINKER:-lstdc++fs")
-#endif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSION_LESS "9.1")
+	target_link_libraries(vanillapdf stdc++fs)
+endif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSION_LESS "9.1")
 
 # Set C++ standard to be 17
 # NOTE: C++20 fails on latest GCC, due to error with atomic variables
@@ -646,7 +646,7 @@ endif (OPENJPEG_LIBRARIES)
 
 set(VANILLAPDF_LIBS spdlog::spdlog ${VANILLAPDF_LIBS})
 
-target_link_libraries(vanillapdf ${VANILLAPDF_LIBS} stdc++fs)
+target_link_libraries(vanillapdf ${VANILLAPDF_LIBS})
 
 # Project install targets
 install(TARGETS vanillapdf
