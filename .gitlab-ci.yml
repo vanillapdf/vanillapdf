@@ -232,8 +232,16 @@ build-rocky.9-arm64:
 # warning NETSDK1206: Found version-specific or distribution-specific runtime identifier(s):
 # rocky.8-x64, ubuntu.20.04-x64, ubuntu.22.04-x64. Affected libraries: vanillapdf.runtime.rocky.8-x64, vanillapdf.runtime.ubuntu.20.04-x64, vanillapdf.runtime.ubuntu.22.04-x64.
 # In .NET 8.0 and higher, assets for version-specific and distribution-specific runtime identifiers will not be found by default. See https://aka.ms/dotnet/rid-usage for details.
+
+# 06.11.2024
+# Switching linux builds for nuget to rockylinux, as it has oldest GCC out of all supported platforms.
+# Compiling with newer GCC fails the load on a platform, where the glibc or glibcxx does not match.
+# Switching to static linking of standard library seems even more problematic.
+# Error detail: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by runtimes/linux-arm64/native/libvanillapdf.so)
+# Error detail: /lib64/libstdc++.so.6: version `GLIBCXX_3.4.30' not found (required by runtimes/linux-arm64/native/libvanillapdf.so)
+
 build-linux-x64:
-  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:24.04
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-amd64:8
   when: manual
 
   variables:
@@ -252,7 +260,7 @@ build-linux-x64:
       - ./*.nupkg
 
 build-linux-arm64:
-  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-arm64v8:24.04
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-arm64v8:8
   when: manual
   timeout: 5 hours # The arm runner machine seems to be very slow
 
