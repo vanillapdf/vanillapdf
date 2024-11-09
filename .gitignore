@@ -3,6 +3,9 @@
 /build/
 /out/
 
+# User specific configuration
+CMakeSettings.json
+
 # Test files
 !/test/*.pdf
 
