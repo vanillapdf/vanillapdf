@@ -26,11 +26,7 @@ extern "C"
 	* Additionally, the verbosity of the logging output
 	* can be adjusted as well.
 	*
-	* The default behavior is that it creates a
-	* log file for each file, where you can find some additional informations
-	* based on the log level.
-	*
-	* This feature is __disabled__ by default.
+	* This feature is __enabled__ by default, with log_level info and logging output to console.
 	*/
 
 	/**
