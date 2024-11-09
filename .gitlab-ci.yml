@@ -241,7 +241,7 @@ build-rocky.9-arm64:
 # Error detail: /lib64/libstdc++.so.6: version `GLIBCXX_3.4.30' not found (required by runtimes/linux-arm64/native/libvanillapdf.so)
 
 build-linux-x64:
-  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-amd64:8
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-amd64:9
   when: manual
 
   variables:
@@ -260,7 +260,7 @@ build-linux-x64:
       - ./*.nupkg
 
 build-linux-arm64:
-  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-arm64v8:8
+  image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-arm64v8:9
   when: manual
   timeout: 5 hours # The arm runner machine seems to be very slow
 
