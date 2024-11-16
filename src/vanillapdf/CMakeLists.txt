@@ -655,11 +655,11 @@ install(TARGETS vanillapdf
 	ARCHIVE DESTINATION lib
 )
 
-install(FILES ${VANILLAPDF_INCLUDE_HEADERS} DESTINATION "include\\vanillapdf")
-install(FILES ${VANILLAPDF_INCLUDE_UTILS_HEADERS} DESTINATION "include\\vanillapdf\\utils")
-install(FILES ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS} DESTINATION "include\\vanillapdf\\syntax")
-install(FILES ${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS} DESTINATION "include\\vanillapdf\\semantics")
-install(FILES ${VANILLAPDF_INCLUDE_CONTENTS_HEADERS} DESTINATION "include\\vanillapdf\\contents")
+install(FILES ${VANILLAPDF_INCLUDE_HEADERS} DESTINATION "include/vanillapdf")
+install(FILES ${VANILLAPDF_INCLUDE_UTILS_HEADERS} DESTINATION "include/vanillapdf/utils")
+install(FILES ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS} DESTINATION "include/vanillapdf/syntax")
+install(FILES ${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS} DESTINATION "include/vanillapdf/semantics")
+install(FILES ${VANILLAPDF_INCLUDE_CONTENTS_HEADERS} DESTINATION "include/vanillapdf/contents")
 
 install(FILES "${CMAKE_SOURCE_DIR}/cmake/README.txt" DESTINATION .)
 install(FILES "${CMAKE_SOURCE_DIR}/LICENSE.txt" DESTINATION .)
