@@ -24,13 +24,24 @@ set(CPACK_PACKAGE_DESCRIPTION			"Cross-platform toolkit for creating and modifyi
 set(PACKAGE_VERSION_NAME				"${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}${VANILLAPDF_VERSION_BUILD_SUFFIX}")
 set(PACKAGE_SYSTEM_NAME					"${CMAKE_SYSTEM_NAME}")
 
-# Special naming convention for windows
-if(${PACKAGE_SYSTEM_NAME} MATCHES Windows)
-	if(CMAKE_CL_64)
-		set(PACKAGE_SYSTEM_NAME win64-x64)
-	else()
-		set(PACKAGE_SYSTEM_NAME win32-x86)
+if (PLATFORM_IDENTIFIER)
+	set(PACKAGE_SYSTEM_NAME "${PLATFORM_IDENTIFIER}")
+else()
+
+	# Special naming convention for windows
+	if(${PACKAGE_SYSTEM_NAME} MATCHES "Windows")
+		if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+			set(PACKAGE_SYSTEM_NAME win64-x64)
+		else()
+			set(PACKAGE_SYSTEM_NAME win32-x86)
+		endif()
+	elseif(${PACKAGE_SYSTEM_NAME} MATCHES "Darwin")
+		set(PACKAGE_SYSTEM_NAME osx)
+	elseif(${PACKAGE_SYSTEM_NAME} MATCHES "Linux")
+		set(PACKAGE_SYSTEM_NAME linux)
 	endif()
+
+	message(STATUS "Platform identifier was not specified, using CMAKE_SYSTEM_NAME: \"${PACKAGE_SYSTEM_NAME}\"")
 endif()
 
 # Override the default package version name with PROJECT_NAME instead of CPACK_PACKAGE_NAME
@@ -104,6 +115,17 @@ elseif(APPLE)
 	set(CPACK_SYSTEM_NAME	"OSX")
 
 elseif(UNIX)
+	set(CPACK_GENERATOR		"TGZ")
+else()
+	# other operating system (not Windows/Apple/Unix)
+	message(FATAL_ERROR "Unsupported platform")
+endif()
+
+# Opt-in to detect and build custom distro packages RHEL/DEB
+if (DETECT_CUSTOM_LINUX_DISTRIBUTION)
+
+	message(STATUS "Detecting custom Linux distribution")
+
 	# OS Architecture
 	execute_process(COMMAND uname -m		OUTPUT_VARIABLE PACKAGE_ARCHITECTURE					OUTPUT_STRIP_TRAILING_WHITESPACE)
 
@@ -158,7 +180,4 @@ elseif(UNIX)
 	else()
 		message(FATAL_ERROR "Unknown UNIX distribution: ${PACKAGE_DISTRIBUTION}")
 	endif()
-
-else()
-	# other operating system (not Windows/Apple/Unix)
-endif()
+endif(DETECT_CUSTOM_LINUX_DISTRIBUTION)
