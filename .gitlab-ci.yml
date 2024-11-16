@@ -258,6 +258,8 @@ build-linux-x64:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     paths:
       - ./*.nupkg
+      - ./*.tar.gz
+      - ./*.sha256
 
 build-linux-arm64:
   image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-arm64v8:9
@@ -279,6 +281,8 @@ build-linux-arm64:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     paths:
       - ./*.nupkg
+      - ./*.tar.gz
+      - ./*.sha256
 
 build-vanillapdf-nuget:
   image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:24.04
