@@ -183,7 +183,7 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
 
 				break;
 			default:
-				spdlog::error("Unknown filter type: {}", filter);
+				spdlog::error("Unknown PNG filter type: {}", filter);
 				break;
 		}
 
