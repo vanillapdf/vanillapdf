@@ -383,15 +383,22 @@ bool File::SetEncryptionPassword(const Buffer& password) {
 	// when the document is opened with user access.
 
 	int64_t permissions_int64_value = permissions->GetIntegerValue();
-	uint64_t permissions_uint64_value = static_cast<uint64_t>(permissions_int64_value);
 
-	if (permissions_uint64_value > std::numeric_limits<uint32_t>::max()) {
-		spdlog::warn("Permission field is above specified threshold ({}), truncating", permissions_uint64_value);
+	// By default it should be sufficient to check only for positive uint32_t limit,
+	// however anything lower than FFFFFFFF00000000 = -4294967296 on 64-bit integer
+	// would not fall under this condition.
 
-		permissions_uint64_value = permissions_uint64_value & 0xFFFFFFFFLL;
+	uint32_t numeric_limit_max = std::numeric_limits<uint32_t>::max();
+	int64_t numeric_limit_min = -static_cast<int64_t>(numeric_limit_max);
+
+	if (permissions_int64_value < numeric_limit_min || permissions_int64_value > numeric_limit_max) {
+		spdlog::warn("Permission field is outside specified threshold ({}), truncating", permissions_int64_value);
 	}
 
-	auto permissions_value = ValueConvertUtils::SafeConvert<uint32_t>(permissions_uint64_value);
+	// This seems very dirty, however it works, so just clean hands afterwards.
+	uint32_t permissions_uint32_value = static_cast<uint32_t>(permissions_int64_value);
+
+	auto permissions_value = ValueConvertUtils::SafeConvert<uint32_t>(permissions_uint32_value);
 	auto revision_value = ValueConvertUtils::SafeConvert<int32_t>(revision->GetIntegerValue());
 	auto key_length_value = ValueConvertUtils::SafeConvert<int32_t>(length_bits->GetIntegerValue());
 
