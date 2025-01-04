@@ -1,7 +1,7 @@
 #include "tools.h"
 
 void print_encrypt_help() {
-	printf("Usage: encrypt -s [source file] -d [destination file] -op [owner password] -up [user password] -a [None|RC4|AES] -l [key length]");
+	printf("Usage: encrypt -s [source file] -d [destination file] -op [owner password] -up [user password] -ka [None|RC4|AES] -kl [key length] -l [license file]");
 }
 
 int process_encrypt(int argc, char *argv[]) {
@@ -11,6 +11,8 @@ int process_encrypt(int argc, char *argv[]) {
 	string_type owner_password = NULL;
 	string_type user_password = NULL;
 	string_type encryption_algorithm_text = NULL;
+
+	string_type license_file_path = NULL;
 	string_type source_file_path = NULL;
 	string_type destination_file_path = NULL;
 
@@ -46,13 +48,18 @@ int process_encrypt(int argc, char *argv[]) {
 			i++;
 
 			// encryption algorithm
-		} else if (strcmp(argv[i], "-a") == 0 && (i + 1 < argc)) {
+		} else if (strcmp(argv[i], "-ka") == 0 && (i + 1 < argc)) {
 			encryption_algorithm_text = argv[i + 1];
 			i++;
 
 			// key length
-		} else if (strcmp(argv[i], "-l") == 0 && (i + 1 < argc)) {
+		} else if (strcmp(argv[i], "-kl") == 0 && (i + 1 < argc)) {
 			key_length = atoi(argv[i + 1]);
+			i++;
+
+			// license file path
+		} else if (strcmp(argv[i], "-l") == 0 && (i + 1 < argc)) {
+			license_file_path = argv[i + 1];
 			i++;
 		} else {
 			print_encrypt_help();
@@ -66,6 +73,15 @@ int process_encrypt(int argc, char *argv[]) {
 		owner_password == NULL) {
 		print_encrypt_help();
 		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
+	}
+
+	if (license_file_path == NULL) {
+		print_encrypt_help();
+		return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
+	}
+
+	if (license_file_path != NULL) {
+		RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_SetLicenseFile(license_file_path));
 	}
 
 	if (encryption_algorithm_text != NULL) {
