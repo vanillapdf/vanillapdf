@@ -484,7 +484,10 @@ void FileWriter::SetEncryptionData(FilePtr source, FilePtr destination) {
 	}
 
 	auto dictionary_obj = ObjectUtils::ConvertTo<DictionaryObjectPtr>(destination_encryption_object);
-	destination->SetEncryptionDictionary(dictionary_obj);
+
+	// We are calling SetEncryptionDictionaryInternal to not override dirty flag on the encryption.
+	// In case the file was already encrypted before our changes, the IsEncryptionDirty should not be set.
+	destination->SetEncryptionDictionaryInternal(dictionary_obj);
 
 	// Copy the encryption key from the source file
 	// If the source encryption key is set, the user does have the password

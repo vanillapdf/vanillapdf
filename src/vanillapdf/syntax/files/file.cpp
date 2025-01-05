@@ -1093,6 +1093,15 @@ ObjectPtr File::ShallowCopyObject(ObjectPtr original) {
 	new_obj->SetFile(GetWeakReference<File>());
 	new_obj->SetInitialized();
 
+	// Mark all new objects as dirty, so they are included in the xref incremental section.
+	// The dirty flag is also important for streams, since the original file might not be encrypted
+	// and the the stream content recalculation does have specific optimizations for unchanged objects.
+	// 
+	// If this causes issues just add a flag to all deep/shallow copy
+	// functions whether it should mark objects as dirty.
+	// For the time being this is only called from append page/document.
+	new_obj->SetDirty();
+
 	return new_obj;
 }
 

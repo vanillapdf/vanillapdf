@@ -19,7 +19,8 @@ StreamObject::StreamObject() : StreamObject(false) {
 StreamObject::StreamObject(bool initialized) {
 	_header->SetOwner(Object::GetWeakReference());
 	_header->Subscribe(this);
-	_body->Subscribe(this);
+	_body_raw->Subscribe(this);
+	_body_decrypted->Subscribe(this);
 	_body_decoded->Subscribe(this);
 
 	_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
@@ -31,7 +32,8 @@ StreamObject::StreamObject(DictionaryObjectPtr header, types::stream_offset offs
 	: _header(header), _raw_data_offset(offset) {
 	_header->SetOwner(Object::GetWeakReference());
 	_header->Subscribe(this);
-	_body->Subscribe(this);
+	_body_raw->Subscribe(this);
+	_body_decrypted->Subscribe(this);
 	_body_decoded->Subscribe(this);
 
 	_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
@@ -39,7 +41,8 @@ StreamObject::StreamObject(DictionaryObjectPtr header, types::stream_offset offs
 
 StreamObject::~StreamObject() {
 	_header->Unsubscribe(this);
-	_body->Unsubscribe(this);
+	_body_raw->Unsubscribe(this);
+	_body_decrypted->Unsubscribe(this);
 	_body_decoded->Unsubscribe(this);
 }
 
@@ -113,9 +116,15 @@ StreamObject* StreamObject::Clone(void) const {
 	result->_header->Subscribe(result.get());
 	result->_header->SetInitialized();
 
-	result->_body = GetBodyRaw()->Clone();
-	result->_body->Subscribe(result.get());
-	result->_body->SetInitialized();
+	result->_body_raw = GetBodyRaw()->Clone();
+	result->_body_raw->Subscribe(result.get());
+	result->_body_raw->SetInitialized();
+
+	if (_body_decrypted->IsInitialized()) {
+		result->_body_decrypted = GetBodyDecrypted()->Clone();
+		result->_body_decrypted->Subscribe(result.get());
+		result->_body_decrypted->SetInitialized();
+	}
 
 	if (_body_decoded->IsInitialized()) {
 		result->_body_decoded = GetBody()->Clone();
@@ -145,20 +154,20 @@ void StreamObject::SetInitialized(bool initialized) {
 	// In case the object is already initialized without data offset
 	// consider it data to be initialized as well
 	if (initialized && _raw_data_offset == constant::BAD_OFFSET) {
-		_body->SetInitialized();
+		_body_raw->SetInitialized();
 	}
 }
 
 BufferPtr StreamObject::GetBodyRaw() const {
 
-	if (_body->IsInitialized()) {
-		return _body;
+	if (_body_raw->IsInitialized()) {
+		return _body_raw;
 	}
 
 	ACCESS_LOCK_GUARD(_access_lock);
 
-	if (_body->IsInitialized()) {
-		return _body;
+	if (_body_raw->IsInitialized()) {
+		return _body_raw;
 	}
 
 	if (!m_file.IsActive()) {
@@ -187,9 +196,9 @@ BufferPtr StreamObject::GetBodyRaw() const {
 	auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
 	auto body = input->Read(size->SafeConvert<types::size_type>());
 
-	_body->assign(body.begin(), body.end());
-	_body->SetInitialized();
-	return _body;
+	_body_raw->assign(body.begin(), body.end());
+	_body_raw->SetInitialized();
+	return _body_raw;
 }
 
 BufferPtr StreamObject::GetBody() const {
@@ -328,6 +337,15 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 		}
 	}
 
+	// Extended optimization that works even if the original file was encrypted.
+	// This is especially important for add/remove encryption, as the images were always distorted.
+	// We are not actually changing the images, so let's keep the content intact.
+
+	if (!IsDirty()) {
+		auto body_decrypted = GetBodyDecrypted();
+		return EncryptStream(body_decrypted, GetRootObjectNumber(), GetRootGenerationNumber());
+	}
+
 	auto decoded_body = GetBody();
 
 	if (!_header->Contains(constant::Name::Filter)) {
@@ -413,6 +431,16 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 
 BufferPtr StreamObject::GetBodyDecrypted() const {
 
+	if (_body_decrypted->IsInitialized()) {
+		return _body_decrypted;
+	}
+
+	ACCESS_LOCK_GUARD(_access_lock);
+
+	if (_body_decrypted->IsInitialized()) {
+		return _body_decrypted;
+	}
+
 	auto locked_file = m_file.GetReference();
 	auto body_raw = GetBodyRaw();
 
@@ -421,7 +449,9 @@ BufferPtr StreamObject::GetBodyDecrypted() const {
 	bool is_file_encrypted = locked_file->IsInitialized() && locked_file->IsEncrypted();
 
 	if (IsEncryptionExempted() || !is_file_encrypted) {
-		return body_raw;
+		_body_decrypted->assign(body_raw.begin(), body_raw.end());
+		_body_decrypted->SetInitialized();
+		return _body_decrypted;
 	}
 
 	// Stream does not contain crypt filter
@@ -438,7 +468,11 @@ BufferPtr StreamObject::GetBodyDecrypted() const {
 		if (filter_name == constant::Name::Crypt) {
 			auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
 			auto handler_name = params->FindAs<NameObjectPtr>(constant::Name::Name);
-			return locked_file->DecryptData(body_raw, GetRootObjectNumber(), GetRootGenerationNumber(), handler_name);
+			auto result = locked_file->DecryptData(body_raw, GetRootObjectNumber(), GetRootGenerationNumber(), handler_name);
+
+			_body_decrypted->assign(result.begin(), result.end());
+			_body_decrypted->SetInitialized();
+			return _body_decrypted;
 		}
 	}
 
@@ -450,13 +484,21 @@ BufferPtr StreamObject::GetBodyDecrypted() const {
 				assert(i == 0 && "Crypt filter is not first");
 				auto params = _header->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(constant::Name::DecodeParms);
 				auto handler_name = params->GetValue(i)->FindAs<NameObjectPtr>(constant::Name::Name);
-				return locked_file->DecryptData(body_raw, GetRootObjectNumber(), GetRootGenerationNumber(), handler_name);
+				auto result = locked_file->DecryptData(body_raw, GetRootObjectNumber(), GetRootGenerationNumber(), handler_name);
+
+				_body_decrypted->assign(result.begin(), result.end());
+				_body_decrypted->SetInitialized();
+				return _body_decrypted;
 			}
 		}
 	}
 
 	// Stream does not contain crypt filter
-	return locked_file->DecryptStream(body_raw, GetRootObjectNumber(), GetRootGenerationNumber());
+	auto result = locked_file->DecryptStream(body_raw, GetRootObjectNumber(), GetRootGenerationNumber());
+
+	_body_decrypted->assign(result.begin(), result.end());
+	_body_decrypted->SetInitialized();
+	return _body_decrypted;
 }
 
 BufferPtr StreamObject::EncryptStream(BufferPtr data, types::big_uint obj_number, types::ushort generation_number) const {
@@ -552,10 +594,13 @@ std::string StreamObject::ToString(void) const {
 void StreamObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 	ACCESS_LOCK_GUARD(_access_lock);
 
+	auto obj_header = _header->ToPdf();
+	auto obj_body = GetBodyEncoded()->ToString();
+
 	std::stringstream ss;
-	ss << _header->ToPdf() << std::endl;
+	ss << obj_header << std::endl;
 	ss << "stream" << std::endl;
-	ss << GetBodyEncoded()->ToString();
+	ss << obj_body;
 	ss << "endstream";
 
 	output << ss.str();

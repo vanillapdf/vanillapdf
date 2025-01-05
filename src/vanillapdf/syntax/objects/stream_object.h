@@ -49,7 +49,8 @@ private:
 	DictionaryObjectPtr _header;
 	types::stream_offset _raw_data_offset = constant::BAD_OFFSET;
 
-	mutable BufferPtr _body;
+	mutable BufferPtr _body_raw;
+	mutable BufferPtr _body_decrypted;
 	mutable BufferPtr _body_decoded;
 
 	// The library interface wants to be thread-safe as much as possible

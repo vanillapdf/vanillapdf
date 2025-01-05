@@ -80,8 +80,8 @@ public:
 	}
 
 	void SetEncryptionDictionary(ObjectPtr object) {
-		_encryption_dictionary = object;
-		_is_encryption_dirty = true;
+		SetEncryptionDictionaryInternal(object);
+		SetEncryptionDirty();
 	}
 
 	bool SetEncryptionPassword(const Buffer& password);
@@ -159,8 +159,12 @@ private:
 	void ExemptFileSignatures();
 	void ExemptCrossReferenceStreams();
 
-	void SetEncryptionDirty(bool dirty = true) {
+	void SetEncryptionDirty(bool dirty = true) noexcept {
 		_is_encryption_dirty = dirty;
+	}
+
+	void SetEncryptionDictionaryInternal(ObjectPtr object) {
+		_encryption_dictionary = object;
 	}
 
 	BufferPtr GetEncryptionKey() const {
