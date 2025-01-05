@@ -1307,7 +1307,6 @@ void FileWriter::WriteHeader(IOutputStreamPtr output, HeaderPtr header) {
 	// This ensures proper behaviour of file transfer applications that inspect data near the beginning of a file
 	// to determine whether to treat the file's contents as text or as binary.
 
-	// TODO: Add this only in case the document contains binary data
 	output->Write('%');
 	output->Write((unsigned char)0xDE);
 	output->Write((unsigned char)0xAD);
