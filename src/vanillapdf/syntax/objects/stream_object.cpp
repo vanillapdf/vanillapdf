@@ -456,7 +456,11 @@ BufferPtr StreamObject::GetBodyDecrypted() const {
 
 	// Stream does not contain crypt filter
 	if (!_header->Contains(constant::Name::Filter)) {
-		return locked_file->DecryptStream(body_raw, GetRootObjectNumber(), GetRootGenerationNumber());
+		auto result = locked_file->DecryptStream(body_raw, GetRootObjectNumber(), GetRootGenerationNumber());
+
+		_body_decrypted->assign(result.begin(), result.end());
+		_body_decrypted->SetInitialized();
+		return _body_decrypted;
 	}
 
 	auto filter_obj = _header->Find(constant::Name::Filter);
