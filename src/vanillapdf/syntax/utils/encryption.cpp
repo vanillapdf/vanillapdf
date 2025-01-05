@@ -364,8 +364,8 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
 	
 	if (update_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		spdlog::error("Could not update AES cipher: {}", openssl_error);
-		throw GeneralException("Could not update AES cipher: " + openssl_error);
+		spdlog::error("Could not decrypt update AES cipher: {}", openssl_error);
+		throw GeneralException("Could not decrypt update AES cipher: " + openssl_error);
 	}
 
 	total_result_length += current_offset;
@@ -377,8 +377,8 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
 
 	if (final_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		spdlog::error("Could not finalize AES cipher: {}", openssl_error);
-		throw GeneralException("Could not finalize AES cipher: " + openssl_error);
+		spdlog::error("Could not decrypt finalize AES cipher: {}", openssl_error);
+		throw GeneralException("Could not decrypt finalize AES cipher: " + openssl_error);
 	}
 
 	total_result_length += current_offset;
@@ -467,8 +467,8 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
 
 	if (update_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		spdlog::error("Could not update AES cipher: {}", openssl_error);
-		throw GeneralException("Could not update AES cipher: " + openssl_error);
+		spdlog::error("Could not encrypt update AES cipher: {}", openssl_error);
+		throw GeneralException("Could not encrypt update AES cipher: " + openssl_error);
 	}
 
 	total_result_length += current_offset;
@@ -480,8 +480,8 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
 
 	if (final_result != 1) {
 		auto openssl_error = MiscUtils::GetLastOpensslError();
-		spdlog::error("Could not finalize AES cipher: {}", openssl_error);
-		throw GeneralException("Could not finalize AES cipher: " + openssl_error);
+		spdlog::error("Could not encrypt finalize AES cipher: {}", openssl_error);
+		throw GeneralException("Could not encrypt finalize AES cipher: " + openssl_error);
 	}
 
 	total_result_length += current_offset;
