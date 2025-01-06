@@ -10,6 +10,8 @@
 
 #include "syntax/files/file.h"
 
+#include "syntax/objects/array_object.h"
+#include "syntax/objects/string_object.h"
 #include "syntax/objects/dictionary_object.h"
 #include "syntax/objects/name_object.h"
 
@@ -25,6 +27,8 @@ public:
 
 	static DocumentPtr Create(const std::string& path);
 	static DocumentPtr CreateFile(syntax::FilePtr holder);
+
+	static syntax::ArrayObjectPtr<syntax::HexadecimalStringObjectPtr> GenerateDocumentId();
 
 	~Document();
 

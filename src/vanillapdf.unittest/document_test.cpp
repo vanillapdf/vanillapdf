@@ -190,21 +190,23 @@ namespace documents {
 		ASSERT_EQ(DocumentEncryptionSettings_Release(encryption_settings), VANILLAPDF_ERROR_SUCCESS);
 	}
 
-	TEST(Document, AddEncryption) {
-
-		const char USER_PASSWORD[] = "user_password";
-		const char OWNER_PASSWORD[] = "owner_password";
-
-		const integer_type ENCRYPTION_KEY_LENGTH = 40;
-		const EncryptionAlgorithmType ENCRYPTION_ALGORITHM = EncryptionAlgorithmType_RC4;
+	void EncryptDocument(
+		std::string owner_password,
+		std::string user_password,
+		EncryptionAlgorithmType encryption_algorithm,
+		integer_type encryption_key_length,
+		UserAccessPermissionFlags user_permissions) {
 
 		FileHandle* memory_file = nullptr;
 		DocumentHandle* memory_document = nullptr;
 		InputOutputStreamHandle* io_stream = nullptr;
 		DocumentEncryptionSettingsHandle* encryption_settings = nullptr;
 
-		FileHandle* destination_file = nullptr;
+		FileHandle* destination_save_file = nullptr;
+		FileHandle* destination_load_file = nullptr;
 		InputOutputStreamHandle* destination_io_stream = nullptr;
+
+		boolean_type destination_is_encrypted = VANILLAPDF_RV_FALSE;
 
 		ASSERT_EQ(InputOutputStream_CreateFromMemory(&io_stream), VANILLAPDF_ERROR_SUCCESS);
 		ASSERT_NE(io_stream, nullptr);
@@ -218,21 +220,21 @@ namespace documents {
 		ASSERT_EQ(DocumentEncryptionSettings_Create(&encryption_settings), VANILLAPDF_ERROR_SUCCESS);
 		ASSERT_NE(encryption_settings, nullptr);
 
-		ASSERT_EQ(DocumentEncryptionSettings_SetAlgorithm(encryption_settings, ENCRYPTION_ALGORITHM), VANILLAPDF_ERROR_SUCCESS);
-		ASSERT_EQ(DocumentEncryptionSettings_SetKeyLength(encryption_settings, ENCRYPTION_KEY_LENGTH), VANILLAPDF_ERROR_SUCCESS);
-		ASSERT_EQ(DocumentEncryptionSettings_SetUserAccessPermissions(encryption_settings, UserAccessPermissionFlag_None), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(DocumentEncryptionSettings_SetAlgorithm(encryption_settings, encryption_algorithm), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(DocumentEncryptionSettings_SetKeyLength(encryption_settings, encryption_key_length), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(DocumentEncryptionSettings_SetUserAccessPermissions(encryption_settings, user_permissions), VANILLAPDF_ERROR_SUCCESS);
 
-		BufferHandle* owner_password = nullptr;
-		BufferHandle* user_password = nullptr;
+		BufferHandle* owner_password_buffer = nullptr;
+		BufferHandle* user_password_buffer = nullptr;
 
-		ASSERT_EQ(Buffer_CreateFromData(OWNER_PASSWORD, sizeof(OWNER_PASSWORD), &owner_password), VANILLAPDF_ERROR_SUCCESS);
-		ASSERT_EQ(Buffer_CreateFromData(USER_PASSWORD, sizeof(USER_PASSWORD), &user_password), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(Buffer_CreateFromData(owner_password.data(), owner_password.length(), &owner_password_buffer), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(Buffer_CreateFromData(user_password.data(), user_password.length(), &user_password_buffer), VANILLAPDF_ERROR_SUCCESS);
 
-		ASSERT_NE(owner_password, nullptr);
-		ASSERT_NE(user_password, nullptr);
+		ASSERT_NE(owner_password_buffer, nullptr);
+		ASSERT_NE(user_password_buffer, nullptr);
 
-		ASSERT_EQ(DocumentEncryptionSettings_SetOwnerPassword(encryption_settings, owner_password), VANILLAPDF_ERROR_SUCCESS);
-		ASSERT_EQ(DocumentEncryptionSettings_SetUserPassword(encryption_settings, user_password), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(DocumentEncryptionSettings_SetOwnerPassword(encryption_settings, owner_password_buffer), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(DocumentEncryptionSettings_SetUserPassword(encryption_settings, user_password_buffer), VANILLAPDF_ERROR_SUCCESS);
 
 		// Add encryption dictionary and initialize keys
 		ASSERT_EQ(Document_AddEncryption(memory_document, encryption_settings), VANILLAPDF_ERROR_SUCCESS);
@@ -241,24 +243,58 @@ namespace documents {
 		ASSERT_EQ(InputOutputStream_CreateFromMemory(&destination_io_stream), VANILLAPDF_ERROR_SUCCESS);
 		ASSERT_NE(destination_io_stream, nullptr);
 
-		ASSERT_EQ(File_CreateStream(destination_io_stream, "temp_destination", &destination_file), VANILLAPDF_ERROR_SUCCESS);
-		ASSERT_NE(destination_file, nullptr);
+		ASSERT_EQ(File_CreateStream(destination_io_stream, "temp_destination", &destination_save_file), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_NE(destination_save_file, nullptr);
 
 		// Save the file into destination memory stream
-		ASSERT_EQ(Document_SaveFile(memory_document, destination_file), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(Document_SaveFile(memory_document, destination_save_file), VANILLAPDF_ERROR_SUCCESS);
+
+		// Check the destination file for consistency
+		ASSERT_EQ(File_OpenStream(destination_io_stream, "temp_destination", &destination_load_file), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_NE(destination_load_file, nullptr);
+
+		ASSERT_EQ(File_Initialize(destination_load_file), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(File_IsEncrypted(destination_load_file, &destination_is_encrypted), VANILLAPDF_ERROR_SUCCESS);
+
+		EXPECT_EQ(destination_is_encrypted, VANILLAPDF_RV_TRUE);
+
+		ASSERT_EQ(File_SetEncryptionPassword(destination_load_file, owner_password.data()), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(File_SetEncryptionPassword(destination_load_file, user_password.data()), VANILLAPDF_ERROR_SUCCESS);
 
 		// Cleanup
 
-		ASSERT_EQ(File_Release(destination_file), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(File_Release(destination_load_file), VANILLAPDF_ERROR_SUCCESS);
+
+		ASSERT_EQ(File_Release(destination_save_file), VANILLAPDF_ERROR_SUCCESS);
 		ASSERT_EQ(InputOutputStream_Release(destination_io_stream), VANILLAPDF_ERROR_SUCCESS);
 
-		ASSERT_EQ(Buffer_Release(owner_password), VANILLAPDF_ERROR_SUCCESS);
-		ASSERT_EQ(Buffer_Release(user_password), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(Buffer_Release(owner_password_buffer), VANILLAPDF_ERROR_SUCCESS);
+		ASSERT_EQ(Buffer_Release(user_password_buffer), VANILLAPDF_ERROR_SUCCESS);
 
 		ASSERT_EQ(DocumentEncryptionSettings_Release(encryption_settings), VANILLAPDF_ERROR_SUCCESS);
 		ASSERT_EQ(Document_Release(memory_document), VANILLAPDF_ERROR_SUCCESS);
 		ASSERT_EQ(File_Release(memory_file), VANILLAPDF_ERROR_SUCCESS);
 		ASSERT_EQ(InputOutputStream_Release(io_stream), VANILLAPDF_ERROR_SUCCESS);
+	}
+
+	TEST(Document, Encrypt_RC4_40) {
+		EncryptDocument("owner", "user", EncryptionAlgorithmType_RC4, 40, UserAccessPermissionFlag_None);
+	}
+
+	TEST(Document, Encrypt_RC4_128) {
+		EncryptDocument("owner", "user", EncryptionAlgorithmType_RC4, 128, UserAccessPermissionFlag_None);
+	}
+
+	TEST(Document, Encrypt_AES_40) {
+		EncryptDocument("owner", "user", EncryptionAlgorithmType_AES, 40, UserAccessPermissionFlag_None);
+	}
+
+	TEST(Document, Encrypt_AES_128) {
+		EncryptDocument("owner", "user", EncryptionAlgorithmType_AES, 128, UserAccessPermissionFlag_None);
+	}
+
+	TEST(Document, Encrypt_AES_256) {
+		EncryptDocument("owner", "user", EncryptionAlgorithmType_AES, 256, UserAccessPermissionFlag_None);
 	}
 
 	TEST(Document, Sign) {
@@ -327,5 +363,4 @@ namespace documents {
 		ASSERT_EQ(File_Release(source_memory_file), VANILLAPDF_ERROR_SUCCESS);
 		ASSERT_EQ(InputOutputStream_Release(io_stream), VANILLAPDF_ERROR_SUCCESS);
 	}
-
 }

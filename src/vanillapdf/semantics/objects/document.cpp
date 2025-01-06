@@ -61,23 +61,7 @@ DocumentPtr Document::CreateFile(syntax::FilePtr holder) {
 	xref_table->Add(initial_entry);
 
 	// Generate a unique document ID
-	//
-	// To help ensure the uniqueness of file identifiers, they should be computed by means of a message digest algorithm
-	// such as MD5 (described in Internet RFC 1321, The MD5 Message-Digest Algorithm; see the Bibliography),
-	// using the following information:
-	//   - The current time
-	//   - A string representation of the file's location, usually a pathname
-	//   - The size of the file in bytes
-	//   - The values of all entries in the file's document information dictionary(see 14.3.3, "Document Information Dictionary")
-
-	// We are going to use random data as for example we don't know the path, neither file size
-	BufferPtr document_id_value = EncryptionUtils::GenerateRandomData(16);
-
-	// An array of two byte-strings constituting a file identifier (see 14.4, "File Identifiers") for the file.
-	// If there is an Encrypt entry this array and the two byte-strings shall be direct objects and shall be unencrypted.
-	ArrayObjectPtr<HexadecimalStringObjectPtr> document_ids;
-	document_ids->Append(HexadecimalStringObject::CreateFromDecoded(document_id_value));
-	document_ids->Append(HexadecimalStringObject::CreateFromDecoded(document_id_value));
+	auto document_ids = GenerateDocumentId();
 
 	// Insert the ID into the trailer dictionary
 	auto trailer_dictionary = xref_table->GetTrailerDictionary();
@@ -124,6 +108,28 @@ DocumentPtr Document::CreateFile(syntax::FilePtr holder) {
 	document_info->SetCreationDate(creation_date);
 
 	return document;
+}
+
+ArrayObjectPtr<HexadecimalStringObjectPtr> Document::GenerateDocumentId() {
+
+	// To help ensure the uniqueness of file identifiers, they should be computed by means of a message digest algorithm
+	// such as MD5 (described in Internet RFC 1321, The MD5 Message-Digest Algorithm; see the Bibliography),
+	// using the following information:
+	//   - The current time
+	//   - A string representation of the file's location, usually a pathname
+	//   - The size of the file in bytes
+	//   - The values of all entries in the file's document information dictionary(see 14.3.3, "Document Information Dictionary")
+
+	// We are going to use random data as for example we don't know the path, neither file size
+	BufferPtr document_id_value = EncryptionUtils::GenerateRandomData(16);
+
+	// An array of two byte-strings constituting a file identifier (see 14.4, "File Identifiers") for the file.
+	// If there is an Encrypt entry this array and the two byte-strings shall be direct objects and shall be unencrypted.
+	ArrayObjectPtr<HexadecimalStringObjectPtr> document_ids;
+	document_ids->Append(HexadecimalStringObject::CreateFromDecoded(document_id_value));
+	document_ids->Append(HexadecimalStringObject::CreateFromDecoded(document_id_value));
+
+	return document_ids;
 }
 
 Document::Document(syntax::FilePtr holder) : m_holder(holder) {
@@ -844,7 +850,11 @@ void Document::AddEncryption(DocumentEncryptionSettingsPtr settings) {
 	auto trailer_dictionary = xref->GetTrailerDictionary();
 
 	if (!trailer_dictionary->Contains(constant::Name::ID)) {
-		// TODO: Generate document ID
+
+		// Generate a unique document ID
+		auto document_ids = GenerateDocumentId();
+
+		trailer_dictionary->Insert(constant::Name::ID, document_ids);
 	}
 
 	auto document_ids = trailer_dictionary->FindAs<MixedArrayObjectPtr>(constant::Name::ID);

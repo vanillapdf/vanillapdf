@@ -401,7 +401,7 @@ bool File::SetEncryptionPassword(const Buffer& password) {
 
 	// Pad password with predefined scheme
 	BufferPtr padPassword = EncryptionUtils::PadTruncatePassword(password);
-	BufferPtr encrypted_owner_data = EncryptionUtils::ComputeEncryptedOwnerData(padPassword, dict);
+	BufferPtr encrypted_owner_data = EncryptionUtils::ComputeAuthenticationOwnerData(padPassword, dict);
 
 	// Check if entered password was owner password
 	BufferPtr temp_decryption_key;

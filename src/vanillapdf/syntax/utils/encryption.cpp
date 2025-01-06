@@ -578,7 +578,7 @@ BufferPtr EncryptionUtils::GenerateOwnerEncryptionKey(
 		// Create an RC4 encryption key using the first n bytes of the output from the final MD5 hash,
 		// where n shall always be 5 for security handlers of revision 2 but, for security handlers of revision 3 or greater,
 		// shall depend on the value of the encryption dictionary's Length entry.
-		types::big_int rc4_key_length = 0;
+		decltype(key_length) rc4_key_length = 0;
 		if (revision >= 3) {
 			rc4_key_length = (key_length / 8);
 		}
@@ -590,7 +590,7 @@ BufferPtr EncryptionUtils::GenerateOwnerEncryptionKey(
 		BufferPtr pad_user_password = EncryptionUtils::PadTruncatePassword(user_password);
 
 		// Encrypt the result of step (e), using an RC4 encryption function with the encryption key obtained in step (d).
-		auto rc4_key_length_converted = ValueConvertUtils::SafeConvert<int>(rc4_key_length);
+		auto rc4_key_length_converted = ValueConvertUtils::SafeConvert<types::size_type>(rc4_key_length);
 		BufferPtr stepf = EncryptionUtils::ComputeRC4(stepc, rc4_key_length_converted, pad_user_password);
 
 		// (Security handlers of revision 3 or greater) Do the following 19 times:
@@ -601,12 +601,12 @@ BufferPtr EncryptionUtils::GenerateOwnerEncryptionKey(
 
 		if (revision >= 3) {
 			for (int i = 1; i < 20; ++i) {
-				BufferPtr key = make_deferred_container<Buffer>(rc4_key_length_converted);
-				for (int j = 0; j < rc4_key_length_converted; ++j) {
+				BufferPtr key = make_deferred_container<Buffer>(stepc->size());
+				for (int j = 0; j < stepc->size(); ++j) {
 					key[j] = (stepc[j] ^ i) & 0xFF;
 				}
 
-				stepg = EncryptionUtils::ComputeRC4(key, rc4_key_length_converted, stepg);
+				stepg = EncryptionUtils::ComputeRC4(key, key->size(), stepg);
 			}
 		}
 
@@ -648,17 +648,12 @@ BufferPtr EncryptionUtils::GenerateUserEncryptionKey(
 		BufferPtr padPassword = EncryptionUtils::PadTruncatePassword(user_password);
 		auto decryption_key_digest = CalculateDecryptionKeyDigest(padPassword, document_id, owner_data, permissions);
 
-		BufferPtr compare_data;
 		if (revision >= 3) {
-			compare_data = CalculateDecryptionCompareDataV3(decryption_key_digest, document_id, key_length);
-		}
-		else {
-			assert(key_length == 40 && "Key length is not 5 bytes for revision <= 3");
-			Buffer hardcoded_pad(std::begin(HARDCODED_PDF_PAD), sizeof(HARDCODED_PDF_PAD));
-			compare_data = EncryptionUtils::ComputeRC4(decryption_key_digest, 5, hardcoded_pad);
+			return CalculateDecryptionCompareDataV3(decryption_key_digest, document_id, key_length);
 		}
 
-		return compare_data;
+		Buffer hardcoded_pad(std::begin(HARDCODED_PDF_PAD), sizeof(HARDCODED_PDF_PAD));
+		return EncryptionUtils::ComputeRC4(decryption_key_digest, 5, hardcoded_pad);
 	}
 
 	throw NotSupportedException("Unknown encryption algorithm: " + std::to_string(static_cast<int>(algorithm)));
@@ -689,7 +684,6 @@ bool EncryptionUtils::CheckKey(
 	if (revision >= 3) {
 		compare_data = CalculateDecryptionCompareDataV3(decryption_key_digest, document_id, key_length);
 	} else {
-		assert(key_length == 40 && "Key length is not 5 bytes for revision <= 3");
 		Buffer hardcoded_pad(std::begin(HARDCODED_PDF_PAD), sizeof(HARDCODED_PDF_PAD));
 		compare_data = EncryptionUtils::ComputeRC4(decryption_key_digest, 5, hardcoded_pad);
 	}
@@ -739,7 +733,7 @@ BufferPtr EncryptionUtils::CalculateDecryptionCompareDataV3(
 			LOG_ERROR_AND_THROW_GENERAL("Could not initialize MD5 cipher: {}", openssl_error);
 		}
 
-		auto update_result = EVP_DigestUpdate(evp_md_ctx, decryption_key_digest->data(), decryption_key_digest->size());
+		auto update_result = EVP_DigestUpdate(evp_md_ctx, decryption_key_digest->data(), decryption_key_length);
 		if (update_result != 1) {
 			auto openssl_error = MiscUtils::GetLastOpensslError();
 			spdlog::error("Could not update MD5 cipher: {}", openssl_error);
@@ -789,11 +783,12 @@ BufferPtr EncryptionUtils::CalculateDecryptionCompareDataV3(
 	// Confirm the actual output matches  the digest
 	assert(final_size == MD5_DIGEST_LENGTH);
 
-	BufferPtr key = make_deferred_container<Buffer>(length_bytes);
 	BufferPtr compare_data = make_deferred_container<Buffer>(key_digest);
 
 	for (Buffer::value_type i = 0; i < 20; ++i) {
-		for (decltype(decryption_key_length) j = 0; j < decryption_key_length; ++j) {
+		BufferPtr key = make_deferred_container<Buffer>(decryption_key_digest->size());
+
+		for (int j = 0; j < decryption_key_digest->size(); ++j) {
 			key[j] = (decryption_key_digest[j] ^ i);
 		}
 
@@ -1091,7 +1086,7 @@ BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax
 
 }
 
-BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer& pad_password, const syntax::DictionaryObject& encryption_dictionary) {
+BufferPtr EncryptionUtils::ComputeAuthenticationOwnerData(const Buffer& pad_password, const syntax::DictionaryObject& encryption_dictionary) {
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
@@ -1177,11 +1172,17 @@ BufferPtr EncryptionUtils::ComputeEncryptedOwnerData(const Buffer& pad_password,
 			std::copy_n(temporary_digest.begin(), password_length, password_digest.begin());
 		}
 
-		BufferPtr key = make_deferred_container<Buffer>(length_bytes);
+		// (Security handlers of revision 3 or greater) Do the following 20 times: Decrypt the value of the encryption
+		// dictionary's O entry (first iteration) or the output from the previous iteration (all subsequent iterations),
+		// using an RC4 encryption function with a different encryption key at each iteration. The key shall be
+		// generated by taking the original key (obtained in step (a)) and performing an XOR (exclusive or) operation
+		// between each byte of the key and the single-byte value of the iteration counter (from 19 to 0).
 		BufferPtr encrypted_owner_data = make_deferred_container<Buffer>(*owner_value->GetValue());
 
-		for (Buffer::value_type i = 0; i < 20; ++i) {
-			for (decltype(password_length) j = 0; j < password_length; ++j) {
+		for (Buffer::value_type i = 19; i >= 0; --i) {
+			BufferPtr key = make_deferred_container<Buffer>(password_digest.size());
+
+			for (int j = 0; j < password_digest.size(); ++j) {
 				key[j] = (password_digest[j] ^ i);
 			}
 

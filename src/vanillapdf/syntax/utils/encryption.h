@@ -42,7 +42,7 @@ public:
 	static BufferPtr RemovePkcs7Padding(const Buffer& data, types::size_type block_size);
 
 	static BufferPtr DecryptEnvelopedData(const syntax::ArrayObject<syntax::StringObjectPtr>& recipients, IEncryptionKey& key);
-	static BufferPtr ComputeEncryptedOwnerData(const Buffer& pad_password, const syntax::DictionaryObject& encryption_dictionary);
+	static BufferPtr ComputeAuthenticationOwnerData(const Buffer& pad_password, const syntax::DictionaryObject& encryption_dictionary);
 	static BufferPtr GetRecipientKey(
 		const syntax::ArrayObject<syntax::StringObjectPtr>& recipients,
 		const syntax::IntegerObject& length_bits,
