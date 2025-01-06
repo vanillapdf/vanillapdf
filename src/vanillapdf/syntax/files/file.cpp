@@ -335,14 +335,12 @@ bool File::SetEncryptionPassword(const Buffer& password) {
 	auto trailer_dictionary = xref->GetTrailerDictionary();
 
 	if (!trailer_dictionary->Contains(constant::Name::ID)) {
-		spdlog::error("Trailer dictionary does not contain document ID");
-		throw GeneralException("Trailer dictionary does not contain document ID");
+		LOG_ERROR_AND_THROW_GENERAL("Trailer dictionary does not contain document ID");
 	}
 
 	auto document_ids = trailer_dictionary->FindAs<MixedArrayObjectPtr>(constant::Name::ID);
 	if (document_ids->GetSize() == 0) {
-		spdlog::error("Document ID list is empty");
-		throw GeneralException("Document ID list is empty");
+		LOG_ERROR_AND_THROW_GENERAL("Document ID list is empty");
 	}
 
 	// Identify the document ID object - it could be other types than string
@@ -355,8 +353,7 @@ bool File::SetEncryptionPassword(const Buffer& password) {
 	}
 
 	if (document_id_buffer->empty()) {
-		spdlog::error("Could not decrypt document with empty document ID");
-		throw GeneralException("Could not decrypt document with empty document ID");
+		LOG_ERROR_AND_THROW_GENERAL("Could not decrypt document with empty document ID");
 	}
 
 	auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);

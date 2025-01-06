@@ -49,10 +49,7 @@ DocumentPtr Document::CreateFile(syntax::FilePtr holder) {
 	if (SemanticUtils::HasMappedDocument(holder)) {
 		auto log_scope = holder->GetFilenameString();
 
-		auto error_message = fmt::format("Trying to create new document for file {}, but the file instance was already opened", log_scope);
-
-		spdlog::error(error_message);
-		throw GeneralException(error_message);
+		LOG_ERROR_AND_THROW_GENERAL("Trying to create new document for file {}, but the file instance was already opened", log_scope);
 	}
 
 	HeaderPtr header = holder->GetHeader();
@@ -853,6 +850,7 @@ void Document::AddEncryption(DocumentEncryptionSettingsPtr settings) {
 	auto document_ids = trailer_dictionary->FindAs<MixedArrayObjectPtr>(constant::Name::ID);
 	if (document_ids->GetSize() < 2) {
 		// TODO: Generate document ID
+		LOG_ERROR_AND_THROW_GENERAL("The target document has invalid ID: {}", document_ids->ToPdf());
 	}
 
 	// Identify the document ID object - it could be other types than string
@@ -865,7 +863,7 @@ void Document::AddEncryption(DocumentEncryptionSettingsPtr settings) {
 	}
 
 	if (document_id_buffer->empty()) {
-		throw GeneralException("Could not encrypt document with empty document ID");
+		LOG_ERROR_AND_THROW_GENERAL("Could not encrypt document with empty document ID");
 	}
 
 	auto key_length = settings->GetKeyLength();
