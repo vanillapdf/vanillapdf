@@ -385,7 +385,7 @@ bool File::SetEncryptionPassword(const Buffer& password) {
 	// however anything lower than FFFFFFFF00000000 = -4294967296 on 64-bit integer
 	// would not fall under this condition.
 
-	uint32_t numeric_limit_max = std::numeric_limits<uint32_t>::max();
+	constexpr uint32_t numeric_limit_max = std::numeric_limits<uint32_t>::max();
 	int64_t numeric_limit_min = -static_cast<int64_t>(numeric_limit_max);
 
 	if (permissions_int64_value < numeric_limit_min || permissions_int64_value > numeric_limit_max) {
