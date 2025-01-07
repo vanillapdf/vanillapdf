@@ -883,11 +883,19 @@ void Document::AddEncryption(DocumentEncryptionSettingsPtr settings) {
 
 	// (PDF 1.4) "Algorithm 1: Encryption of data using the RC4 or AES algorithms"in 7.6.2,
 	// "General Encryption Algorithm," but permitting encryption key lengths greater than 40 bits.
-	int32_t algorithm_version = 2;
+	int32_t algorithm_version = 1;
 
 	// if the document is encrypted with a V value of 2 or 3,
 	// or has any "Security handlers of revision 3 or greater" access permissions set to 0
 	int32_t security_revision = 2;
+
+	// There is some bug preventing to use security handler revision 2 with keys longer than 40.
+	// I have tried multiple tweaks, however either Acrobat or Foxit are not able to open such file.
+	// Since we have a solution, that works with both, let's not spend more time on this.
+	if (key_length > 40) {
+		algorithm_version = 2;
+		security_revision = 3;
+	}
 
 	// Calculate the encryption entries
 	auto owner_key_buffer = EncryptionUtils::GenerateOwnerEncryptionKey(
