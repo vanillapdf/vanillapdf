@@ -26,7 +26,14 @@ static void info_callback(const char*, void*) {
 // Custom stream to read from memory buffer
 static OPJ_SIZE_T memory_stream_read(void* p_buffer, OPJ_SIZE_T p_nb_bytes, void* p_user_data) {
     IInputStream* input_stream = static_cast<IInputStream*>(p_user_data);
-    return input_stream->Read(static_cast<char*>(p_buffer), p_nb_bytes);
+    auto result = input_stream->Read(static_cast<char*>(p_buffer), p_nb_bytes);
+
+    // We should return (OPJ_SIZE_T) -1 instead of exception according to examples.
+    // https://github.com/uclouvain/openjpeg/blob/master/src/lib/openjp2/openjpeg.c
+    // Unfortunately it's not mentioned anywhere and I do not have a sample to test,
+    // so let's keep the exception behavior as default for SafeConvert.
+
+    return ValueConvertUtils::SafeConvert<OPJ_SIZE_T>(result);
 }
 
 static OPJ_OFF_T memory_stream_skip(OPJ_OFF_T p_nb_bytes, void* p_user_data) {
@@ -65,8 +72,10 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
     opj_set_warning_handler(codec, warning_callback, nullptr);
     opj_set_error_handler(codec, error_callback, nullptr);
 
+    auto length_converted = ValueConvertUtils::SafeConvert<OPJ_SIZE_T>(length);
+
     // Set up the stream
-    opj_stream_t* stream = opj_stream_create(length, OPJ_TRUE);
+    opj_stream_t* stream = opj_stream_create(length_converted, OPJ_TRUE);
     if (stream == nullptr) {
         throw GeneralException("Failed to create JPEG2000 stream");
     }
