@@ -46,6 +46,11 @@ static OPJ_BOOL memory_stream_seek(OPJ_OFF_T p_nb_bytes, void* p_user_data) {
     IInputStream* input_stream = static_cast<IInputStream*>(p_user_data);
     input_stream->SetInputPosition(p_nb_bytes, SeekDirection::Beginning);
 
+    // If we have reached eof return false
+    if (input_stream->Eof()) {
+        return OPJ_FALSE;
+    }
+
     return OPJ_TRUE;
 }
 
