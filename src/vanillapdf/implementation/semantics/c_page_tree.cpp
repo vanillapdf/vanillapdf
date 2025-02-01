@@ -14,8 +14,11 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageTree_GetPageCount(PageTreeHandl
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	*result = obj->PageCount();
-	return VANILLAPDF_ERROR_SUCCESS;
+	try
+	{
+		*result = obj->PageCount();
+		return VANILLAPDF_ERROR_SUCCESS;
+	} CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle* handle, size_type at, PageObjectHandle** result)
