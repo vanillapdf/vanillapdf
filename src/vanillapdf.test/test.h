@@ -9,8 +9,8 @@
 #include <assert.h>
 
 #if defined(DEBUG) && defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
-	#define _CRTDBG_MAP_ALLOC
-	#include <crtdbg.h>
+    #define _CRTDBG_MAP_ALLOC
+    #include <crtdbg.h>
 #endif /* DEBUG && COMPILER_MICROSOFT_VISUAL_STUDIO */
 
 extern const int VANILLAPDF_TEST_ERROR_SUCCESS;
@@ -117,78 +117,78 @@ error_type process_date(DateHandle* obj, int nested);
 
 /* Test document save */
 error_type process_document_save(
-	DocumentHandle* document,
-	string_type password,
-	string_type cert_path,
-	string_type cert_password,
-	int nested);
+    DocumentHandle* document,
+    string_type password,
+    string_type cert_path,
+    string_type cert_password,
+    int nested);
 
 error_type process_document_save_incremental(
-	DocumentHandle* document,
-	string_type password,
-	string_type cert_path,
-	string_type cert_password,
-	int nested);
+    DocumentHandle* document,
+    string_type password,
+    string_type cert_path,
+    string_type cert_password,
+    int nested);
 
 error_type process_document_merge(
-	DocumentHandle* document,
-	string_type merge_file,
-	string_type password,
-	string_type cert_path,
-	string_type cert_password,
-	int nested);
+    DocumentHandle* document,
+    string_type merge_file,
+    string_type password,
+    string_type cert_path,
+    string_type cert_password,
+    int nested);
 
 error_type process_document_sign(DocumentHandle* document,
-	string_type key_file,
-	string_type key_password,
-	string_type password,
-	string_type cert_path,
-	string_type cert_password,
-	int nested);
+    string_type key_file,
+    string_type key_password,
+    string_type password,
+    string_type cert_path,
+    string_type cert_password,
+    int nested);
 
 error_type process_document_edit(
-	DocumentHandle* document,
-	string_type password,
-	string_type cert_path,
-	string_type cert_password,
-	int nested);
+    DocumentHandle* document,
+    string_type password,
+    string_type cert_path,
+    string_type cert_password,
+    int nested);
 
 // Some parameters to functions are unused
 #define UNUSED(x) (void)(x)
 
 #define RETURN_ERROR_IF_NOT_SUCCESS(fn) \
 do { \
-	error_type __result__ = (fn); \
-	if (VANILLAPDF_ERROR_SUCCESS != __result__) \
-	{ \
-		print_text("Function call \"%s\" has failed with result %u { %s:%d }\n", \
-		#fn, __result__, __FILE__, __LINE__); \
-		print_last_error(); \
-		assert(!"Operation failed"); \
-		return VANILLAPDF_TEST_ERROR_FAILURE; \
-	} \
+    error_type __result__ = (fn); \
+    if (VANILLAPDF_ERROR_SUCCESS != __result__) \
+    { \
+        print_text("Function call \"%s\" has failed with result %u { %s:%d }\n", \
+        #fn, __result__, __FILE__, __LINE__); \
+        print_last_error(); \
+        assert(!"Operation failed"); \
+        return VANILLAPDF_TEST_ERROR_FAILURE; \
+    } \
 } while(0)
 
 #define RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(eval, call, release) \
 do { \
-	error_type __result__ = (eval); \
-	if (VANILLAPDF_ERROR_SUCCESS == __result__) \
-	{ \
-		RETURN_ERROR_IF_NOT_SUCCESS(call); \
-		RETURN_ERROR_IF_NOT_SUCCESS(release); \
-	} \
-	else if (VANILLAPDF_ERROR_OBJECT_MISSING == __result__) \
-	{ \
-		/* Do nothing */ \
-	} \
-	else \
-	{ \
-		print_text("Function call \"%s\" has failed with result %u { %s:%d }\n", \
-		#eval, __result__, __FILE__, __LINE__); \
-		print_last_error(); \
-		assert(!"Operation failed"); \
-		return VANILLAPDF_TEST_ERROR_FAILURE; \
-	} \
+    error_type __result__ = (eval); \
+    if (VANILLAPDF_ERROR_SUCCESS == __result__) \
+    { \
+        RETURN_ERROR_IF_NOT_SUCCESS(call); \
+        RETURN_ERROR_IF_NOT_SUCCESS(release); \
+    } \
+    else if (VANILLAPDF_ERROR_OBJECT_MISSING == __result__) \
+    { \
+        /* Do nothing */ \
+    } \
+    else \
+    { \
+        print_text("Function call \"%s\" has failed with result %u { %s:%d }\n", \
+        #eval, __result__, __FILE__, __LINE__); \
+        print_last_error(); \
+        assert(!"Operation failed"); \
+        return VANILLAPDF_TEST_ERROR_FAILURE; \
+    } \
 } while(0)
 
 #define RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(eval, call) \

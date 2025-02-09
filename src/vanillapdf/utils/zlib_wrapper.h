@@ -10,14 +10,14 @@ namespace vanillapdf {
 
 class ZlibWrapper {
 public:
-	static BufferPtr Deflate(const Buffer& input);
-	static BufferPtr Inflate(const Buffer& input);
+    static BufferPtr Deflate(const Buffer& input);
+    static BufferPtr Inflate(const Buffer& input);
 
-	static BufferPtr Deflate(IInputStreamPtr input, types::stream_size length);
-	static BufferPtr Inflate(IInputStreamPtr input, types::stream_size length);
+    static BufferPtr Deflate(IInputStreamPtr input, types::stream_size length);
+    static BufferPtr Inflate(IInputStreamPtr input, types::stream_size length);
 
 private:
-	ZlibWrapper() = default;
+    ZlibWrapper() = default;
 };
 
 } // vanillapdf

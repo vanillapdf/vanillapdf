@@ -12,38 +12,38 @@ namespace syntax {
 
 class NameObject : public ContainableObject, public IModifyObserver {
 public:
-	NameObject();
-	//NameObject(const NameObject&) = delete;
+    NameObject();
+    //NameObject(const NameObject&) = delete;
 
-	static NameObjectPtr CreateFromEncoded(BufferPtr value);
-	static NameObjectPtr CreateFromEncoded(const char* value);
-	static NameObjectPtr CreateFromEncoded(const std::string& value);
+    static NameObjectPtr CreateFromEncoded(BufferPtr value);
+    static NameObjectPtr CreateFromEncoded(const char* value);
+    static NameObjectPtr CreateFromEncoded(const std::string& value);
 
-	static NameObjectPtr CreateFromDecoded(BufferPtr value);
-	static NameObjectPtr CreateFromDecoded(const char* value);
-	static NameObjectPtr CreateFromDecoded(const std::string& value);
+    static NameObjectPtr CreateFromDecoded(BufferPtr value);
+    static NameObjectPtr CreateFromDecoded(const char* value);
+    static NameObjectPtr CreateFromDecoded(const std::string& value);
 
-	virtual void ObserveeChanged(const IModifyObservable*) override;
+    virtual void ObserveeChanged(const IModifyObservable*) override;
 
-	BufferPtr GetValue() const;
-	void SetValue(BufferPtr value);
+    BufferPtr GetValue() const;
+    void SetValue(BufferPtr value);
 
-	bool Equals(const NameObject& other) const;
-	virtual bool Equals(ObjectPtr other) const override;
+    bool Equals(const NameObject& other) const;
+    virtual bool Equals(ObjectPtr other) const override;
 
-	virtual Object::Type GetObjectType(void) const noexcept override;
-	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
-	virtual std::string ToString(void) const override;
+    virtual Object::Type GetObjectType(void) const noexcept override;
+    virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
+    virtual std::string ToString(void) const override;
 
-	virtual size_t Hash() const override;
-	virtual NameObject* Clone(void) const override;
+    virtual size_t Hash() const override;
+    virtual NameObject* Clone(void) const override;
 
-	virtual ~NameObject();
+    virtual ~NameObject();
 
 private:
-	BufferPtr _value;
+    BufferPtr _value;
 
-	std::string GetHexadecimalNotation(char ch) const;
+    std::string GetHexadecimalNotation(char ch) const;
 };
 
 } // syntax
@@ -61,7 +61,7 @@ bool operator<(const Deferred<syntax::NameObject>& left, const Deferred<syntax::
 namespace std {
 
 template <> struct hash<vanillapdf::syntax::NameObject> {
-	size_t operator()(const vanillapdf::syntax::NameObject& name) const;
+    size_t operator()(const vanillapdf::syntax::NameObject& name) const;
 };
 
 } // std

@@ -10,11 +10,11 @@ namespace syntax {
 
 class Header : public IUnknown {
 public:
-	Version GetVersion(void) const noexcept { return _version; }
-	void SetVersion(Version version) { _version = version; }
+    Version GetVersion(void) const noexcept { return _version; }
+    void SetVersion(Version version) { _version = version; }
 
 private:
-	Version _version;
+    Version _version;
 };
 
 } // syntax

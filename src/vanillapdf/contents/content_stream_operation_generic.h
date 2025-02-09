@@ -13,26 +13,26 @@ namespace contents {
 
 class OperationGeneric : public OperationBase {
 public:
-	OperationGeneric(const std::vector<syntax::ObjectPtr>& operands, OperatorBasePtr oper);
+    OperationGeneric(const std::vector<syntax::ObjectPtr>& operands, OperatorBasePtr oper);
 
-	OperatorBasePtr GetOperator() const;
-	std::vector<syntax::ObjectPtr> GetOperands() const;
+    OperatorBasePtr GetOperator() const;
+    std::vector<syntax::ObjectPtr> GetOperands() const;
 
-	types::size_type GetOperandsSize() const;
-	syntax::ObjectPtr GetOperandAt(types::size_type at) const;
+    types::size_type GetOperandsSize() const;
+    syntax::ObjectPtr GetOperandAt(types::size_type at) const;
 
-	virtual OperationBase::Type GetOperationType(void) const noexcept override;
-	virtual std::string ToPdf() const override;
+    virtual OperationBase::Type GetOperationType(void) const noexcept override;
+    virtual std::string ToPdf() const override;
 
 private:
-	OperatorBasePtr _operator;
-	std::vector<syntax::ObjectPtr> _operands;
+    OperatorBasePtr _operator;
+    std::vector<syntax::ObjectPtr> _operands;
 };
 
 typedef std::vector<OperationGenericPtr> GenericOperationCollection;
 
 inline OperationBase::Type OperationGeneric::GetOperationType(void) const noexcept {
-	return OperationBase::Type::Generic;
+    return OperationBase::Type::Generic;
 }
 
 } // contents

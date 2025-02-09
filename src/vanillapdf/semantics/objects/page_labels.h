@@ -15,34 +15,34 @@ namespace semantics {
 
 class PageLabel : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
-	enum class NumberingStyle : char {
-		Undefined = 0,
-		Decimal = 'D',
-		UpperRoman = 'R',
-		LowerRoman = 'r',
-		UpperLetters = 'A',
-		LowerLetters = 'a'
-	};
+    enum class NumberingStyle : char {
+        Undefined = 0,
+        Decimal = 'D',
+        UpperRoman = 'R',
+        LowerRoman = 'r',
+        UpperLetters = 'A',
+        LowerLetters = 'a'
+    };
 
 public:
-	explicit PageLabel(syntax::DictionaryObjectPtr obj);
+    explicit PageLabel(syntax::DictionaryObjectPtr obj);
 
-	bool Prefix(syntax::StringObjectPtr& result) const;
-	bool Start(syntax::IntegerObjectPtr& result) const;
-	bool Style(NumberingStyle& result) const;
+    bool Prefix(syntax::StringObjectPtr& result) const;
+    bool Start(syntax::IntegerObjectPtr& result) const;
+    bool Style(NumberingStyle& result) const;
 };
 
 class PageLabels : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
-	explicit PageLabels(const syntax::DictionaryObjectPtr& obj);
+    explicit PageLabels(const syntax::DictionaryObjectPtr& obj);
 
-	bool Contains(types::size_type page_number) const;
-	PageLabelPtr Find(types::size_type page_number) const;
+    bool Contains(types::size_type page_number) const;
+    PageLabelPtr Find(types::size_type page_number) const;
 
 private:
-	NumberTreePtr<PageLabelPtr> _tree;
+    NumberTreePtr<PageLabelPtr> _tree;
 
-	static PageLabelPtr ConvertFunction(const syntax::ContainableObjectPtr& item);
+    static PageLabelPtr ConvertFunction(const syntax::ContainableObjectPtr& item);
 };
 
 } // semantics

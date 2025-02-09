@@ -10,22 +10,22 @@ namespace semantics {
 
 class SignatureFlags : public HighLevelObject<syntax::IntegerObjectPtr> {
 public:
-	explicit SignatureFlags(syntax::IntegerObjectPtr value) : HighLevelObject(value) {}
+    explicit SignatureFlags(syntax::IntegerObjectPtr value) : HighLevelObject(value) {}
 
-	bool GetSignaturesExist() const { return _obj->IsBitSet(SignaturesExistBit); }
-	bool GetAppendOnly() const { return _obj->IsBitSet(AppendOnlyBit); }
+    bool GetSignaturesExist() const { return _obj->IsBitSet(SignaturesExistBit); }
+    bool GetAppendOnly() const { return _obj->IsBitSet(AppendOnlyBit); }
 
-	void SetSignaturesExist(bool value) {
-		_obj->ToggleBit(SignaturesExistBit, value);
-	}
+    void SetSignaturesExist(bool value) {
+        _obj->ToggleBit(SignaturesExistBit, value);
+    }
 
-	void SetAppendOnly(bool value) {
-		_obj->ToggleBit(AppendOnlyBit, value);
-	}
+    void SetAppendOnly(bool value) {
+        _obj->ToggleBit(AppendOnlyBit, value);
+    }
 
 private:
-	const uint32_t SignaturesExistBit = 0;
-	const uint32_t AppendOnlyBit = 1;
+    const uint32_t SignaturesExistBit = 0;
+    const uint32_t AppendOnlyBit = 1;
 };
 
 } // semantics

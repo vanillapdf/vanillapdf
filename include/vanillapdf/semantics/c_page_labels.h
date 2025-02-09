@@ -10,125 +10,125 @@ extern "C"
 {
 #endif
 
-	/**
-	* \file c_page_labels.h
-	* \brief This file contains class definitions for \ref PageLabelsHandle and \ref PageLabelHandle.
-	*/
+    /**
+    * \file c_page_labels.h
+    * \brief This file contains class definitions for \ref PageLabelsHandle and \ref PageLabelHandle.
+    */
 
-	/**
-	* \class PageLabelsHandle
-	* \extends IUnknownHandle
-	* \ingroup group_documents
-	* \brief
-	* Collection of \ref PageLabelHandle
-	* \see \ref CatalogHandle
-	*/
+    /**
+    * \class PageLabelsHandle
+    * \extends IUnknownHandle
+    * \ingroup group_documents
+    * \brief
+    * Collection of \ref PageLabelHandle
+    * \see \ref CatalogHandle
+    */
 
-	/**
-	* \class PageLabelHandle
-	* \extends IUnknownHandle
-	* \ingroup group_documents
-	* \brief
-	* Page labels are used for numbering or otherwise identifying individual pages.
-	*
-	* For more information please visit [section 12.4.2 - Page Labels](PDF32000_2008.pdf#G11.1696265).
-	* \see \ref PageLabelsHandle
-	*/
+    /**
+    * \class PageLabelHandle
+    * \extends IUnknownHandle
+    * \ingroup group_documents
+    * \brief
+    * Page labels are used for numbering or otherwise identifying individual pages.
+    *
+    * For more information please visit [section 12.4.2 - Page Labels](PDF32000_2008.pdf#G11.1696265).
+    * \see \ref PageLabelsHandle
+    */
 
-	/**
-	* \brief Numbering style types.
-	*/
-	typedef enum {
-		NumberingStyle_Undefined = 0,
+    /**
+    * \brief Numbering style types.
+    */
+    typedef enum {
+        NumberingStyle_Undefined = 0,
 
-		/**
-		* \brief Decimal arabic numerals.
-		*/
-		NumberingStyle_Decimal,
+        /**
+        * \brief Decimal arabic numerals.
+        */
+        NumberingStyle_Decimal,
 
-		/**
-		* \brief Uppercase roman numerals.
-		*/
-		NumberingStyle_UpperRoman,
+        /**
+        * \brief Uppercase roman numerals.
+        */
+        NumberingStyle_UpperRoman,
 
-		/**
-		* \brief Lowercase roman numerals.
-		*/
-		NumberingStyle_LowerRoman,
+        /**
+        * \brief Lowercase roman numerals.
+        */
+        NumberingStyle_LowerRoman,
 
-		/**
-		* \brief
-		* Uppercase letters
-		* (A to Z for the first 26 pages,
-		* AA to ZZ for the next 26, and so on).
-		*/
-		NumberingStyle_UpperLetters,
+        /**
+        * \brief
+        * Uppercase letters
+        * (A to Z for the first 26 pages,
+        * AA to ZZ for the next 26, and so on).
+        */
+        NumberingStyle_UpperLetters,
 
-		/**
-		* \brief
-		* Lowercase letters
-		* (a to z for the first 26 pages,
-		* aa to zz for the next 26, and so on).
-		*/
-		NumberingStyle_LowerLetters
-	} NumberingStyle;
+        /**
+        * \brief
+        * Lowercase letters
+        * (a to z for the first 26 pages,
+        * aa to zz for the next 26, and so on).
+        */
+        NumberingStyle_LowerLetters
+    } NumberingStyle;
 
-	/**
-	* \memberof PageLabelsHandle
-	* @{
-	*/
+    /**
+    * \memberof PageLabelsHandle
+    * @{
+    */
 
-	/**
-	* \brief
-	* Detemines if collection contains
-	* label for page number \p page_number.
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_Contains(PageLabelsHandle* handle, size_type page_number, boolean_type* result);
+    /**
+    * \brief
+    * Detemines if collection contains
+    * label for page number \p page_number.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_Contains(PageLabelsHandle* handle, size_type page_number, boolean_type* result);
 
-	/**
-	* \brief
-	* Get page label for page number \p page_number.
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_At(PageLabelsHandle* handle, size_type page_number, PageLabelHandle** result);
+    /**
+    * \brief
+    * Get page label for page number \p page_number.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_At(PageLabelsHandle* handle, size_type page_number, PageLabelHandle** result);
 
-	/**
-	* \copydoc IUnknown_Release
-	* \see \ref IUnknown_Release
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_Release(PageLabelsHandle* handle);
+    /**
+    * \copydoc IUnknown_Release
+    * \see \ref IUnknown_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageLabels_Release(PageLabelsHandle* handle);
 
-	/** @} */
+    /** @} */
 
-	/**
-	* \memberof PageLabelHandle
-	* @{
-	*/
+    /**
+    * \memberof PageLabelHandle
+    * @{
+    */
 
-	/**
-	* \brief The label prefix for page labels in this range.
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Prefix(PageLabelHandle* handle, StringObjectHandle** result);
+    /**
+    * \brief The label prefix for page labels in this range.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Prefix(PageLabelHandle* handle, StringObjectHandle** result);
 
-	/**
-	* \brief
-	* The value of the numeric portion for the first page label in the range.
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Start(PageLabelHandle* handle, IntegerObjectHandle** result);
+    /**
+    * \brief
+    * The value of the numeric portion for the first page label in the range.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Start(PageLabelHandle* handle, IntegerObjectHandle** result);
 
-	/**
-	* \brief
-	* The numbering style that shall be used for
-	* the numeric portion of each page label.
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Style(PageLabelHandle* handle, NumberingStyle* result);
+    /**
+    * \brief
+    * The numbering style that shall be used for
+    * the numeric portion of each page label.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Style(PageLabelHandle* handle, NumberingStyle* result);
 
-	/**
-	* \copydoc IUnknown_Release
-	* \see \ref IUnknown_Release
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Release(PageLabelHandle* handle);
+    /**
+    * \copydoc IUnknown_Release
+    * \see \ref IUnknown_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Release(PageLabelHandle* handle);
 
-	/** @} */
+    /** @} */
 
 #ifdef __cplusplus
 };

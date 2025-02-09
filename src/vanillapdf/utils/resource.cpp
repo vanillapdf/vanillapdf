@@ -33,16 +33,16 @@ static const uint8_t SERIAL_BLACKLIST[] = R"([])";
 #pragma endregion
 
 BufferPtr Resource::Load(ResourceID id) {
-	switch (id) {
-		case ResourceID::MASTER_CERTIFICATE:
-			return make_deferred_container<Buffer>(MASTER_CERTIFICATE, sizeof(MASTER_CERTIFICATE));
-		case ResourceID::WATERMARK_IMAGE:
-			return make_deferred_container<Buffer>(WATERMARK_IMAGE, sizeof(WATERMARK_IMAGE));
-		case ResourceID::SERIAL_BLACKLIST:
-			return make_deferred_container<Buffer>(SERIAL_BLACKLIST, sizeof(SERIAL_BLACKLIST));
-		default:
-			throw GeneralException("Undefined resource ID: " + std::to_string(static_cast<int>(id)));
-	}
+    switch (id) {
+        case ResourceID::MASTER_CERTIFICATE:
+            return make_deferred_container<Buffer>(MASTER_CERTIFICATE, sizeof(MASTER_CERTIFICATE));
+        case ResourceID::WATERMARK_IMAGE:
+            return make_deferred_container<Buffer>(WATERMARK_IMAGE, sizeof(WATERMARK_IMAGE));
+        case ResourceID::SERIAL_BLACKLIST:
+            return make_deferred_container<Buffer>(SERIAL_BLACKLIST, sizeof(SERIAL_BLACKLIST));
+        default:
+            throw GeneralException("Undefined resource ID: " + std::to_string(static_cast<int>(id)));
+    }
 }
 
 } // vanillapdf

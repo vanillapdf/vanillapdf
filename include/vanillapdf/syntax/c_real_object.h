@@ -10,59 +10,59 @@ extern "C"
 {
 #endif
 
-	/**
-	* \file c_real_object.h
-	* \brief This file contains class definitions for \ref RealObjectHandle
-	*/
+    /**
+    * \file c_real_object.h
+    * \brief This file contains class definitions for \ref RealObjectHandle
+    */
 
-	/**
-	* \class RealObjectHandle
-	* \extends ObjectHandle
-	* \ingroup group_objects
-	* \brief Real objects represent mathematical real numbers
-	*/
+    /**
+    * \class RealObjectHandle
+    * \extends ObjectHandle
+    * \ingroup group_objects
+    * \brief Real objects represent mathematical real numbers
+    */
 
-	/**
-	* \memberof RealObjectHandle
-	* @{
-	*/
+    /**
+    * \memberof RealObjectHandle
+    * @{
+    */
 
-	/**
-	* \brief Creates a new RealObject instance
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_Create(RealObjectHandle** result);
+    /**
+    * \brief Creates a new RealObject instance
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION RealObject_Create(RealObjectHandle** result);
 
-	/**
-	* \brief Creates a new RealObject instance with specified data
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_CreateFromData(real_type data, integer_type precision, RealObjectHandle** result);
+    /**
+    * \brief Creates a new RealObject instance with specified data
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION RealObject_CreateFromData(real_type data, integer_type precision, RealObjectHandle** result);
 
-	/**
-	* \brief Return objects contained real value
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_GetValue(RealObjectHandle* handle, real_type* result);
+    /**
+    * \brief Return objects contained real value
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION RealObject_GetValue(RealObjectHandle* handle, real_type* result);
 
-	/**
-	* \brief Set objects new real value
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_SetValue(RealObjectHandle* handle, real_type value);
+    /**
+    * \brief Set objects new real value
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION RealObject_SetValue(RealObjectHandle* handle, real_type value);
 
-	/**
-	* \brief Reinterpret current object as \ref ObjectHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_ToObject(RealObjectHandle* handle, ObjectHandle** result);
+    /**
+    * \brief Reinterpret current object as \ref ObjectHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION RealObject_ToObject(RealObjectHandle* handle, ObjectHandle** result);
 
-	/**
-	* \brief Convert \ref ObjectHandle to \ref RealObjectHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_FromObject(ObjectHandle* handle, RealObjectHandle** result);
+    /**
+    * \brief Convert \ref ObjectHandle to \ref RealObjectHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION RealObject_FromObject(ObjectHandle* handle, RealObjectHandle** result);
 
-	/**
-	* \copydoc Object_Release
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION RealObject_Release(RealObjectHandle* handle);
+    /**
+    * \copydoc Object_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION RealObject_Release(RealObjectHandle* handle);
 
-	/** @} */
+    /** @} */
 
 #ifdef __cplusplus
 };

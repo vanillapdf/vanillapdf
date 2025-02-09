@@ -13,71 +13,71 @@ namespace semantics {
 
 class DocumentEncryptionSettings : public IUnknown {
 public:
-	enum UserAccessPermissionFlags : int32_t
-	{
-		None = 0,
-		PrintDegraded = 4,
-		ModifyContents = 8,
-		CopyAndExtract = 16,
-		AddAnnotations = 32,
-		FillForms = 256,
-		ExtractText = 512,
-		AssembleDocument = 1024,
-		PrintFaithful = 2048
-	};
+    enum UserAccessPermissionFlags : int32_t
+    {
+        None = 0,
+        PrintDegraded = 4,
+        ModifyContents = 8,
+        CopyAndExtract = 16,
+        AddAnnotations = 32,
+        FillForms = 256,
+        ExtractText = 512,
+        AssembleDocument = 1024,
+        PrintFaithful = 2048
+    };
 
 public:
-	DocumentEncryptionSettings();
+    DocumentEncryptionSettings();
 
-	syntax::EncryptionAlgorithm GetEncryptionAlgorithm() const noexcept {
-		return m_algorithm;
-	}
+    syntax::EncryptionAlgorithm GetEncryptionAlgorithm() const noexcept {
+        return m_algorithm;
+    }
 
-	void SetEncryptionAlgorithm(syntax::EncryptionAlgorithm algorithm) noexcept {
-		m_algorithm = algorithm;
-	}
+    void SetEncryptionAlgorithm(syntax::EncryptionAlgorithm algorithm) noexcept {
+        m_algorithm = algorithm;
+    }
 
-	int32_t GetKeyLength() const noexcept {
-		return m_key_length;
-	}
+    int32_t GetKeyLength() const noexcept {
+        return m_key_length;
+    }
 
-	void SetKeyLength(int32_t value) noexcept {
-		m_key_length = value;
-	}
+    void SetKeyLength(int32_t value) noexcept {
+        m_key_length = value;
+    }
 
-	UserAccessPermissionFlags GetUserPermissions() const noexcept {
-		return m_permissions;
-	}
+    UserAccessPermissionFlags GetUserPermissions() const noexcept {
+        return m_permissions;
+    }
 
-	void SetUserPermissions(UserAccessPermissionFlags value) noexcept {
-		m_permissions = value;
-	}
+    void SetUserPermissions(UserAccessPermissionFlags value) noexcept {
+        m_permissions = value;
+    }
 
-	BufferPtr GetUserPassword() const {
-		return m_user_password;
-	}
+    BufferPtr GetUserPassword() const {
+        return m_user_password;
+    }
 
-	void SetUserPassword(BufferPtr value) {
-		m_user_password = value;
-	}
+    void SetUserPassword(BufferPtr value) {
+        m_user_password = value;
+    }
 
-	BufferPtr GetOwnerPassword() const {
-		return m_owner_password;
-	}
+    BufferPtr GetOwnerPassword() const {
+        return m_owner_password;
+    }
 
-	void SetOwnerPassword(BufferPtr value) {
-		m_owner_password = value;
-	}
+    void SetOwnerPassword(BufferPtr value) {
+        m_owner_password = value;
+    }
 
-	static int32_t GetPermissionInteger(UserAccessPermissionFlags value);
+    static int32_t GetPermissionInteger(UserAccessPermissionFlags value);
 
 private:
-	syntax::EncryptionAlgorithm m_algorithm;
-	int32_t m_key_length;
-	UserAccessPermissionFlags m_permissions;
+    syntax::EncryptionAlgorithm m_algorithm;
+    int32_t m_key_length;
+    UserAccessPermissionFlags m_permissions;
 
-	BufferPtr m_user_password;
-	BufferPtr m_owner_password;
+    BufferPtr m_user_password;
+    BufferPtr m_owner_password;
 };
 
 } // semantics

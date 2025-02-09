@@ -11,78 +11,78 @@ namespace vanillapdf {
 
 class IOutputStream : public virtual IUnknown {
 public:
-	virtual void Write(const Buffer& data) = 0;
-	virtual void Write(const Buffer& data, types::stream_size size) = 0;
-	virtual void Write(std::string_view data) = 0;
-	virtual void Write(const char* str) = 0;
-	virtual void Write(char value) = 0;
-	virtual void Write(unsigned char value) = 0;
-	virtual void Write(WhiteSpace value) = 0;
-	virtual void Write(Delimiter value) = 0;
-	virtual void Write(int32_t value) = 0;
-	virtual void Write(uint32_t value) = 0;
-	virtual void Write(int64_t value) = 0;
-	virtual void Write(uint64_t value) = 0;
-	virtual void Flush(void) = 0;
+    virtual void Write(const Buffer& data) = 0;
+    virtual void Write(const Buffer& data, types::stream_size size) = 0;
+    virtual void Write(std::string_view data) = 0;
+    virtual void Write(const char* str) = 0;
+    virtual void Write(char value) = 0;
+    virtual void Write(unsigned char value) = 0;
+    virtual void Write(WhiteSpace value) = 0;
+    virtual void Write(Delimiter value) = 0;
+    virtual void Write(int32_t value) = 0;
+    virtual void Write(uint32_t value) = 0;
+    virtual void Write(int64_t value) = 0;
+    virtual void Write(uint64_t value) = 0;
+    virtual void Flush(void) = 0;
 
-	virtual types::stream_size GetOutputPosition(void) = 0;
-	virtual void SetOutputPosition(types::stream_size pos) = 0;
-	virtual void SetOutputPosition(types::stream_size pos, SeekDirection way) = 0;
+    virtual types::stream_size GetOutputPosition(void) = 0;
+    virtual void SetOutputPosition(types::stream_size pos) = 0;
+    virtual void SetOutputPosition(types::stream_size pos, SeekDirection way) = 0;
 
-	virtual void ExclusiveOutputLock() = 0;
-	virtual void ExclusiveOutputUnlock() = 0;
+    virtual void ExclusiveOutputLock() = 0;
+    virtual void ExclusiveOutputUnlock() = 0;
 
-	virtual ~IOutputStream() {};
+    virtual ~IOutputStream() {};
 };
 
 inline IOutputStream& operator<<(IOutputStream& os, std::string_view value) {
-	os.Write(value);
-	return os;
+    os.Write(value);
+    return os;
 }
 
 inline IOutputStream& operator<<(IOutputStream& os, const Buffer& value) {
-	os.Write(value);
-	return os;
+    os.Write(value);
+    return os;
 }
 
 inline IOutputStream& operator<<(IOutputStream& os, const char* value) {
-	os.Write(value);
-	return os;
+    os.Write(value);
+    return os;
 }
 
 inline IOutputStream& operator<<(IOutputStream& os, char value) {
-	os.Write(value);
-	return os;
+    os.Write(value);
+    return os;
 }
 
 inline IOutputStream& operator<<(IOutputStream& os, WhiteSpace value) {
-	os.Write(value);
-	return os;
+    os.Write(value);
+    return os;
 }
 
 inline IOutputStream& operator<<(IOutputStream& os, Delimiter value) {
-	os.Write(value);
-	return os;
+    os.Write(value);
+    return os;
 }
 
 inline IOutputStream& operator<<(IOutputStream& os, int32_t value) {
-	os.Write(value);
-	return os;
+    os.Write(value);
+    return os;
 }
 
 inline IOutputStream& operator<<(IOutputStream& os, uint32_t value) {
-	os.Write(value);
-	return os;
+    os.Write(value);
+    return os;
 }
 
 inline IOutputStream& operator<<(IOutputStream& os, int64_t value) {
-	os.Write(value);
-	return os;
+    os.Write(value);
+    return os;
 }
 
 inline IOutputStream& operator<<(IOutputStream& os, uint64_t value) {
-	os.Write(value);
-	return os;
+    os.Write(value);
+    return os;
 }
 
 } // vanillapdf

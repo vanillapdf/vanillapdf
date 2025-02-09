@@ -9,50 +9,50 @@ using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
 VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_Create(BooleanObjectHandle** result) {
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try {
-		auto object = make_deferred<BooleanObject>();
-		auto ptr = object.AddRefGet();
-		*result = reinterpret_cast<BooleanObjectHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+    try {
+        auto object = make_deferred<BooleanObject>();
+        auto ptr = object.AddRefGet();
+        *result = reinterpret_cast<BooleanObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanObjectHandle* handle, boolean_type* result)
 {
-	BooleanObject* obj = reinterpret_cast<BooleanObject*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    BooleanObject* obj = reinterpret_cast<BooleanObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	*result = obj->GetValue();
-	return VANILLAPDF_ERROR_SUCCESS;
+    *result = obj->GetValue();
+    return VANILLAPDF_ERROR_SUCCESS;
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_SetValue(BooleanObjectHandle* handle, boolean_type value)
 {
-	BooleanObject* obj = reinterpret_cast<BooleanObject*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    BooleanObject* obj = reinterpret_cast<BooleanObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
-	if (value == VANILLAPDF_RV_TRUE)
-		obj->SetValue(true);
-	else if (value == VANILLAPDF_RV_FALSE)
-		obj->SetValue(false);
-	else
-		return VANILLAPDF_ERROR_GENERAL;
+    if (value == VANILLAPDF_RV_TRUE)
+        obj->SetValue(true);
+    else if (value == VANILLAPDF_RV_FALSE)
+        obj->SetValue(false);
+    else
+        return VANILLAPDF_ERROR_GENERAL;
 
-	return VANILLAPDF_ERROR_SUCCESS;
+    return VANILLAPDF_ERROR_SUCCESS;
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_ToObject(BooleanObjectHandle* handle, ObjectHandle** result) {
-	return SafeObjectConvert<BooleanObject, Object, BooleanObjectHandle, ObjectHandle>(handle, result);
+    return SafeObjectConvert<BooleanObject, Object, BooleanObjectHandle, ObjectHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_FromObject(ObjectHandle* handle, BooleanObjectHandle** result) {
-	return SafeObjectConvert<Object, BooleanObject, ObjectHandle, BooleanObjectHandle>(handle, result);
+    return SafeObjectConvert<Object, BooleanObject, ObjectHandle, BooleanObjectHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_Release(BooleanObjectHandle* handle)
 {
-	return ObjectRelease<BooleanObject, BooleanObjectHandle>(handle);
+    return ObjectRelease<BooleanObject, BooleanObjectHandle>(handle);
 }

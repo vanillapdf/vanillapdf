@@ -15,50 +15,50 @@ PageNodeBase::PageNodeBase(syntax::DictionaryObjectPtr obj) : HighLevelObject(ob
 }
 
 PageNodeBasePtr PageNodeBase::GetPageRoot() {
-	PageNodeBasePtr result = PageNodeBasePtr(this);
-	while (result->HasParent()) {
-		result = result->GetParent();
-	}
+    PageNodeBasePtr result = PageNodeBasePtr(this);
+    while (result->HasParent()) {
+        result = result->GetParent();
+    }
 
-	return result;
+    return result;
 }
 
 bool PageNodeBase::HasParent(void) const {
-	return _obj->Contains(constant::Name::Parent);
+    return _obj->Contains(constant::Name::Parent);
 }
 
 PageNodeBasePtr PageNodeBase::GetParent() const {
-	auto parent = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Parent);
-	return make_deferred<PageTreeNode>(parent);
+    auto parent = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Parent);
+    return make_deferred<PageTreeNode>(parent);
 }
 
 void PageNodeBase::SetParent(PageNodeBasePtr parent) {
-	if (_obj->Contains(constant::Name::Parent)) {
-		bool removed = _obj->Remove(constant::Name::Parent);
-		assert(removed && "Unable to remove existing item"); UNUSED(removed);
-	}
+    if (_obj->Contains(constant::Name::Parent)) {
+        bool removed = _obj->Remove(constant::Name::Parent);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
 
-	syntax::IndirectReferenceObjectPtr parent_ref = make_deferred<syntax::IndirectReferenceObject>(parent->GetObject());
-	_obj->Insert(constant::Name::Parent, parent_ref);
+    syntax::IndirectReferenceObjectPtr parent_ref = make_deferred<syntax::IndirectReferenceObject>(parent->GetObject());
+    _obj->Insert(constant::Name::Parent, parent_ref);
 }
 
 PageNodeBasePtr PageNodeBase::CreatePageNode(syntax::DictionaryObjectPtr obj) {
-	if (!obj->Contains(constant::Name::Type))
-		throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageNodeBase>(obj);
+    if (!obj->Contains(constant::Name::Type))
+        throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageNodeBase>(obj);
 
-	auto type = obj->FindAs<syntax::NameObjectPtr>(constant::Name::Type);
+    auto type = obj->FindAs<syntax::NameObjectPtr>(constant::Name::Type);
 
-	if (type == constant::Name::Pages) {
-		auto result = make_deferred<PageTreeNode>(obj);
-		return result;
-	}
+    if (type == constant::Name::Pages) {
+        auto result = make_deferred<PageTreeNode>(obj);
+        return result;
+    }
 
-	if (type == constant::Name::Page) {
-		auto result = make_deferred<PageObject>(obj);
-		return result;
-	}
+    if (type == constant::Name::Page) {
+        auto result = make_deferred<PageObject>(obj);
+        return result;
+    }
 
-	throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageNodeBase>(obj);
+    throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageNodeBase>(obj);
 }
 
 } // semantics

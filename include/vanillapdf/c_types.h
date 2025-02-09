@@ -10,8 +10,8 @@
 
 // C++ specific headers
 #ifdef __cplusplus
-	#include <cstdint>
-	#include <cstddef>
+    #include <cstdint>
+    #include <cstddef>
 #endif /* __cplusplus */
 
 // C specific headers
@@ -59,11 +59,11 @@ typedef int64_t offset_type;
 * \brief Size type defined in standard library
 */
 #if defined(ENVIRONMENT_32_BIT)
-	typedef uint32_t size_type;
+    typedef uint32_t size_type;
 #elif defined(ENVIRONMENT_64_BIT)
-	typedef uint64_t size_type;
+    typedef uint64_t size_type;
 #elif !defined(ENVIRONMENT_32_BIT) && !defined(ENVIRONMENT_64_BIT)
-	#error Unknown environment size type
+    #error Unknown environment size type
 #endif /* ENVIRONMENT_32_BIT */
 
 /**

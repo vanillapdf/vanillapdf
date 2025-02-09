@@ -8,24 +8,24 @@ namespace syntax {
 
 class BooleanObject : public ContainableObject {
 public:
-	BooleanObject() = default;
-	BooleanObject(const BooleanObject&) = delete;
+    BooleanObject() = default;
+    BooleanObject(const BooleanObject&) = delete;
 
-	explicit BooleanObject(bool value);
+    explicit BooleanObject(bool value);
 
-	virtual Object::Type GetObjectType(void) const noexcept override { return Object::Type::Boolean; }
-	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
+    virtual Object::Type GetObjectType(void) const noexcept override { return Object::Type::Boolean; }
+    virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 
-	bool GetValue(void) const noexcept;
-	void SetValue(bool value);
-	operator bool() const noexcept;
+    bool GetValue(void) const noexcept;
+    void SetValue(bool value);
+    operator bool() const noexcept;
 
-	virtual size_t Hash() const override;
-	virtual BooleanObject* Clone(void) const override;
-	virtual bool Equals(ObjectPtr other) const override;
+    virtual size_t Hash() const override;
+    virtual BooleanObject* Clone(void) const override;
+    virtual bool Equals(ObjectPtr other) const override;
 
 private:
-	bool m_value = false;
+    bool m_value = false;
 };
 
 } // syntax

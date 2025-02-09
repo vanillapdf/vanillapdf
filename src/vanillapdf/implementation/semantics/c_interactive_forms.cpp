@@ -8,23 +8,23 @@
 using namespace vanillapdf::semantics;
 
 VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetFields(InteractiveFormHandle* handle, FieldCollectionHandle** result) {
-	InteractiveForm* form = reinterpret_cast<InteractiveForm*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(form);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    InteractiveForm* form = reinterpret_cast<InteractiveForm*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(form);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try {
-		OuputFieldCollectionPtr fields;
-		bool contains = form->GetFields(fields);
-		if (!contains) {
-			return VANILLAPDF_ERROR_OBJECT_MISSING;
-		}
+    try {
+        OuputFieldCollectionPtr fields;
+        bool contains = form->GetFields(fields);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
 
-		auto ptr = fields.AddRefGet();
-		*result = reinterpret_cast<FieldCollectionHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+        auto ptr = fields.AddRefGet();
+        *result = reinterpret_cast<FieldCollectionHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_Release(InteractiveFormHandle* handle) {
-	return ObjectRelease<InteractiveForm, InteractiveFormHandle>(handle);
+    return ObjectRelease<InteractiveForm, InteractiveFormHandle>(handle);
 }

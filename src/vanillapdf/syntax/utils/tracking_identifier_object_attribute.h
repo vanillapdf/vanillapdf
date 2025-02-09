@@ -10,26 +10,26 @@ namespace syntax {
 
 class TrackingIdentifierAttribute : public BaseAttribute {
 public:
-	TrackingIdentifierAttribute() = default;
+    TrackingIdentifierAttribute() = default;
 
-	explicit TrackingIdentifierAttribute(const std::string& value) : m_value(value) {
+    explicit TrackingIdentifierAttribute(const std::string& value) : m_value(value) {
 
-	}
+    }
 
-	std::string GetValue(void) const {
-		return m_value;
-	}
+    std::string GetValue(void) const {
+        return m_value;
+    }
 
-	virtual Type GetType(void) const noexcept override {
-		return BaseAttribute::Type::TrackingIdentifier;
-	}
+    virtual Type GetType(void) const noexcept override {
+        return BaseAttribute::Type::TrackingIdentifier;
+    }
 
-	virtual TrackingIdentifierAttribute* Clone(void) const override {
-		return pdf_new TrackingIdentifierAttribute(m_value);
-	}
+    virtual TrackingIdentifierAttribute* Clone(void) const override {
+        return pdf_new TrackingIdentifierAttribute(m_value);
+    }
 
 private:
-	std::string m_value;
+    std::string m_value;
 };
 
 } // syntax

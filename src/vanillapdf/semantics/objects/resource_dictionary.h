@@ -10,10 +10,10 @@ namespace semantics {
 
 class ResourceDictionary : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
-	explicit ResourceDictionary(syntax::DictionaryObjectPtr obj);
+    explicit ResourceDictionary(syntax::DictionaryObjectPtr obj);
 
-	// Optional
-	bool Font(OutputFontMapPtr& result) const;
+    // Optional
+    bool Font(OutputFontMapPtr& result) const;
 };
 
 } // semantics

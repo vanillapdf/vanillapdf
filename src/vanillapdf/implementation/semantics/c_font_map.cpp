@@ -10,44 +10,44 @@ using namespace vanillapdf::semantics;
 
 VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Contains(FontMapHandle* handle, const NameObjectHandle* key_handle, boolean_type* result)
 {
-	FontMap* obj = reinterpret_cast<FontMap*>(handle);
-	const NameObject* key = reinterpret_cast<const NameObject*>(key_handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(key);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    FontMap* obj = reinterpret_cast<FontMap*>(handle);
+    const NameObject* key = reinterpret_cast<const NameObject*>(key_handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(key);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		*result = obj->Contains(*key);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+    try
+    {
+        *result = obj->Contains(*key);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle* handle, const NameObjectHandle* key_handle, FontHandle** result)
 {
-	FontMap* obj = reinterpret_cast<FontMap*>(handle);
-	const NameObject* key = reinterpret_cast<const NameObject*>(key_handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(key);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    FontMap* obj = reinterpret_cast<FontMap*>(handle);
+    const NameObject* key = reinterpret_cast<const NameObject*>(key_handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(key);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		auto direct = obj->Find(*key);
-		auto ptr = direct.AddRefGet();
-		*result = reinterpret_cast<FontHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+    try
+    {
+        auto direct = obj->Find(*key);
+        auto ptr = direct.AddRefGet();
+        *result = reinterpret_cast<FontHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION FontMap_ToUnknown(FontMapHandle* handle, IUnknownHandle** result) {
-	return SafeObjectConvert<FontMap, IUnknown, FontMapHandle, IUnknownHandle>(handle, result);
+    return SafeObjectConvert<FontMap, IUnknown, FontMapHandle, IUnknownHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION FontMap_FromUnknown(IUnknownHandle* handle, FontMapHandle** result) {
-	return SafeObjectConvert<IUnknown, FontMap, IUnknownHandle, FontMapHandle>(handle, result);
+    return SafeObjectConvert<IUnknown, FontMap, IUnknownHandle, FontMapHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Release(FontMapHandle* handle) {
-	return ObjectRelease<FontMap, FontMapHandle>(handle);
+    return ObjectRelease<FontMap, FontMapHandle>(handle);
 }
