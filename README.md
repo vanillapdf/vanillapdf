@@ -15,7 +15,7 @@ Please visit [vanillapdf.com](http://vanillapdf.com) for more information.
 
 ## License
 
-Vanilla.PDF is licenced under the [Apache 2.0 license](LICENSE.txt).
+Vanilla.PDF is licensed under the [Apache 2.0 license](LICENSE.txt).
 
 ## FAQ
 
