@@ -13,6 +13,10 @@ Support, such as bug reports is free and available at your service.
 
 Please visit [vanillapdf.com](http://vanillapdf.com) for more information.
 
+## License
+
+Vanilla.PDF is licenced under the [Apache 2.0 license](LICENSE.txt).
+
 ## FAQ
 
 Frequently asked questions are discussed on our [website](https://vanillapdf.com/faq/).
