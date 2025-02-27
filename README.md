@@ -1,6 +1,6 @@
 # Vanilla.PDF
 
-[NuGet](https://www.nuget.org/packages/vanillapdf)
+[![NuGet](https://img.shields.io/nuget/v/vanillapdf)](https://www.nuget.org/packages/vanillapdf)
 [![pipeline status](https://gitlab.com/jurzik/vanillapdf/badges/master/pipeline.svg)](https://gitlab.com/jurzik/vanillapdf/commits/master)
 
 ## About
