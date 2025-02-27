@@ -200,6 +200,14 @@ void LicenseInfo::SetLicense(const char * filename) {
 }
 
 bool LicenseInfo::IsValid() {
+
+    // Since we are now open source, we will not enforce license checks.
+    // The API remains for the time being to keep backwards compatibility.
+
+#if !defined(ENFORCE_LICENSE_CHECKS)
+    return true;
+#endif
+
     if (!m_update_valid) {
         return false;
     }
