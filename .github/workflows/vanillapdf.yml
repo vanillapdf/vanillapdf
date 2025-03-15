@@ -1,0 +1,388 @@
+name: vanillapdf-group/vanillapdf
+on:
+  push:
+  workflow_dispatch:
+concurrency:
+  group: "${{ github.ref }}"
+  cancel-in-progress: true
+env:
+  PRIVATE_TOKEN: "${{ secrets.PRIVATE_TOKEN }}"
+jobs:
+  build-win-x86:
+    runs-on: windows-latest
+    container:
+      image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-windows-amd64:ltsc2022
+    if: github.event_name == 'workflow_dispatch'
+    timeout-minutes: 60
+    env:
+      GIT_SUBMODULE_STRATEGY: recursive
+    steps:
+    - uses: actions/checkout@v4.1.0
+      with:
+        lfs: true
+        submodules: recursive
+    - run: cmake . -G "Visual Studio 17 2022" -DCMAKE_GENERATOR_PLATFORM=Win32 -DPLATFORM_IDENTIFIER=win-x86
+    - run: cmake --build . --config Release --target ALL_BUILD
+    - run: cmake --build . --config Release --target RUN_TESTS
+    - run: cmake --build . --config Release --target PACKAGE
+    - run: nuget pack nuget/vanillapdf.runtime.nuspec
+    - uses: actions/upload-artifact@v4.1.0
+      if: success()
+      with:
+        name: "${{ github.job }}"
+        path: |-
+          ./*.msi
+          ./*.zip
+          ./*.sha256
+          ./*.nupkg
+  build-win-x64:
+    runs-on: windows-latest
+    container:
+      image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-windows-amd64:ltsc2022
+    if: github.event_name == 'workflow_dispatch'
+    timeout-minutes: 60
+    env:
+      GIT_SUBMODULE_STRATEGY: recursive
+    steps:
+    - uses: actions/checkout@v4.1.0
+      with:
+        lfs: true
+        submodules: recursive
+    - run: cmake . -G "Visual Studio 17 2022" -DCMAKE_GENERATOR_PLATFORM=x64 -DPLATFORM_IDENTIFIER=win-x64
+    - run: cmake --build . --config Release --target ALL_BUILD
+    - run: cmake --build . --config Release --target RUN_TESTS
+    - run: cmake --build . --config Release --target PACKAGE
+    - run: nuget pack nuget/vanillapdf.runtime.nuspec
+    - uses: actions/upload-artifact@v4.1.0
+      if: success()
+      with:
+        name: "${{ github.job }}"
+        path: |-
+          ./*.msi
+          ./*.zip
+          ./*.sha256
+          ./*.nupkg
+  build-osx-x64:
+    runs-on:
+      - self-hosted
+      - macos
+      - private
+    if: github.event_name == 'workflow_dispatch'
+    timeout-minutes: 60
+    env:
+      GIT_SUBMODULE_STRATEGY: recursive
+    steps:
+    - uses: actions/checkout@v4.1.0
+      with:
+        lfs: true
+        submodules: recursive
+    - run: cmake . -DPLATFORM_IDENTIFIER=osx-x64
+    - run: make
+    - run: make test
+    - run: make package
+    - run: nuget pack nuget/vanillapdf.runtime.nuspec
+    - uses: actions/upload-artifact@v4.1.0
+      if: success()
+      with:
+        name: "${{ github.job }}"
+        path: |-
+          ./*.dmg
+          ./*.tar.gz
+          ./*.sha256
+          ./*.nupkg
+  build-ubuntu-22-04-x64:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:22.04
+    if: github.event_name == 'workflow_dispatch'
+    timeout-minutes: 60
+    env:
+      GIT_SUBMODULE_STRATEGY: recursive
+    steps:
+    - uses: actions/checkout@v4.1.0
+      with:
+        lfs: true
+        submodules: recursive
+    - run: cmake . -DPLATFORM_IDENTIFIER=ubuntu.22.04-x64
+    - run: make
+    - run: make test
+    - run: make package
+    - uses: actions/upload-artifact@v4.1.0
+      if: success()
+      with:
+        name: "${{ github.job }}"
+        path: |-
+          ./*.deb
+          ./*.tar.gz
+          ./*.sha256
+  build-ubuntu-24-04-x64:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:24.04
+    if: github.event_name == 'workflow_dispatch'
+    timeout-minutes: 60
+    env:
+      GIT_SUBMODULE_STRATEGY: recursive
+    steps:
+    - uses: actions/checkout@v4.1.0
+      with:
+        lfs: true
+        submodules: recursive
+    - run: cmake . -DPLATFORM_IDENTIFIER=ubuntu.24.04-x64 -DDETECT_CUSTOM_LINUX_DISTRIBUTION=1
+    - run: make
+    - run: make test
+    - run: make package
+    - uses: actions/upload-artifact@v4.1.0
+      if: success()
+      with:
+        name: "${{ github.job }}"
+        path: |-
+          ./*.deb
+          ./*.tar.gz
+          ./*.sha256
+  build-ubuntu-24-04-arm64:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-arm64v8:24.04
+    if: github.event_name == 'workflow_dispatch'
+    timeout-minutes: 300
+    env:
+      GIT_SUBMODULE_STRATEGY: recursive
+    steps:
+    - uses: actions/checkout@v4.1.0
+      with:
+        lfs: true
+        submodules: recursive
+    - run: export VCPKG_FORCE_SYSTEM_BINARIES=1
+    - run: cmake . -DPLATFORM_IDENTIFIER=ubuntu.24.04-arm64 -DDETECT_CUSTOM_LINUX_DISTRIBUTION=1
+    - run: make
+    - run: make test
+    - run: make package
+    - uses: actions/upload-artifact@v4.1.0
+      if: success()
+      with:
+        name: "${{ github.job }}"
+        path: |-
+          ./*.deb
+          ./*.tar.gz
+          ./*.sha256
+  build-rocky-8-x64:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-amd64:8
+    if: github.event_name == 'workflow_dispatch'
+    timeout-minutes: 60
+    env:
+      GIT_SUBMODULE_STRATEGY: recursive
+    steps:
+    - uses: actions/checkout@v4.1.0
+      with:
+        lfs: true
+        submodules: recursive
+    - run: cmake . -DPLATFORM_IDENTIFIER=rocky.8-x64 -DDETECT_CUSTOM_LINUX_DISTRIBUTION=1
+    - run: make
+    - run: make test
+    - run: make package
+    - uses: actions/upload-artifact@v4.1.0
+      if: success()
+      with:
+        name: "${{ github.job }}"
+        path: |-
+          ./*.rpm
+          ./*.tar.gz
+          ./*.sha256
+  build-rocky-8-arm64:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-arm64v8:8
+    if: github.event_name == 'workflow_dispatch'
+    timeout-minutes: 300
+    env:
+      GIT_SUBMODULE_STRATEGY: recursive
+    steps:
+    - uses: actions/checkout@v4.1.0
+      with:
+        lfs: true
+        submodules: recursive
+    - run: export VCPKG_FORCE_SYSTEM_BINARIES=1
+    - run: cmake . -DPLATFORM_IDENTIFIER=rocky.8-arm64 -DDETECT_CUSTOM_LINUX_DISTRIBUTION=1
+    - run: make
+    - run: make test
+    - run: make package
+    - uses: actions/upload-artifact@v4.1.0
+      if: success()
+      with:
+        name: "${{ github.job }}"
+        path: |-
+          ./*.rpm
+          ./*.tar.gz
+          ./*.sha256
+  build-rocky-9-x64:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-amd64:9
+    if: github.event_name == 'workflow_dispatch'
+    timeout-minutes: 60
+    env:
+      GIT_SUBMODULE_STRATEGY: recursive
+    steps:
+    - uses: actions/checkout@v4.1.0
+      with:
+        lfs: true
+        submodules: recursive
+    - run: cmake . -DPLATFORM_IDENTIFIER=rocky.9-x64 -DDETECT_CUSTOM_LINUX_DISTRIBUTION=1
+    - run: make
+    - run: make test
+    - run: make package
+    - uses: actions/upload-artifact@v4.1.0
+      if: success()
+      with:
+        name: "${{ github.job }}"
+        path: |-
+          ./*.rpm
+          ./*.tar.gz
+          ./*.sha256
+  build-rocky-9-arm64:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-arm64v8:9
+    if: github.event_name == 'workflow_dispatch'
+    timeout-minutes: 300
+    env:
+      GIT_SUBMODULE_STRATEGY: recursive
+    steps:
+    - uses: actions/checkout@v4.1.0
+      with:
+        lfs: true
+        submodules: recursive
+    - run: export VCPKG_FORCE_SYSTEM_BINARIES=1
+    - run: cmake . -DPLATFORM_IDENTIFIER=rocky.9-arm64 -DDETECT_CUSTOM_LINUX_DISTRIBUTION=1
+    - run: make
+    - run: make test
+    - run: make package
+    - uses: actions/upload-artifact@v4.1.0
+      if: success()
+      with:
+        name: "${{ github.job }}"
+        path: |-
+          ./*.rpm
+          ./*.tar.gz
+          ./*.sha256
+  build-linux-x64:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-amd64:9
+    if: github.event_name == 'workflow_dispatch'
+    timeout-minutes: 60
+    env:
+      GIT_SUBMODULE_STRATEGY: recursive
+    steps:
+    - uses: actions/checkout@v4.1.0
+      with:
+        lfs: true
+        submodules: recursive
+    - run: cmake . -DPLATFORM_IDENTIFIER=linux-x64
+    - run: make
+    - run: make test
+    - run: make package
+    - run: nuget pack nuget/vanillapdf.runtime.nuspec
+    - uses: actions/upload-artifact@v4.1.0
+      if: success()
+      with:
+        name: "${{ github.job }}"
+        path: |-
+          ./*.nupkg
+          ./*.tar.gz
+          ./*.sha256
+  build-linux-arm64:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-rockylinux-arm64v8:9
+    if: github.event_name == 'workflow_dispatch'
+    timeout-minutes: 300
+    env:
+      GIT_SUBMODULE_STRATEGY: recursive
+    steps:
+    - uses: actions/checkout@v4.1.0
+      with:
+        lfs: true
+        submodules: recursive
+    - run: export VCPKG_FORCE_SYSTEM_BINARIES=1
+    - run: cmake . -DPLATFORM_IDENTIFIER=linux-arm64
+    - run: make
+    - run: make test
+    - run: make package
+    - run: nuget pack nuget/vanillapdf.runtime.nuspec
+    - uses: actions/upload-artifact@v4.1.0
+      if: success()
+      with:
+        name: "${{ github.job }}"
+        path: |-
+          ./*.nupkg
+          ./*.tar.gz
+          ./*.sha256
+  build-vanillapdf-nuget:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:24.04
+    if: github.event_name == 'workflow_dispatch'
+    timeout-minutes: 60
+    env:
+      GIT_SUBMODULE_STRATEGY: recursive
+    steps:
+    - uses: actions/checkout@v4.1.0
+      with:
+        lfs: true
+        submodules: recursive
+    - run: cmake . -DPLATFORM_IDENTIFIER=ubuntu.22.04-x64
+    - run: nuget pack nuget/vanillapdf.nuspec
+    - uses: actions/upload-artifact@v4.1.0
+      if: success()
+      with:
+        name: "${{ github.job }}"
+        path: "./*.nupkg"
+  build-vanillapdf-docs:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:24.04
+    if: github.event_name == 'workflow_dispatch'
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@v4.1.0
+      with:
+        lfs: true
+    - run: cd doc
+    - run: doxygen doxyfile
+    - uses: actions/upload-artifact@v4.1.0
+      if: success()
+      with:
+        name: "${{ github.job }}"
+        path: "./doc/api"
+  nuget-deploy-staging:
+    needs:
+    - build-win-x86
+    - build-win-x64
+    - build-osx-x64
+    - build-ubuntu-22-04-x64
+    - build-ubuntu-24-04-x64
+    - build-ubuntu-24-04-arm64
+    - build-rocky-8-x64
+    - build-rocky-8-arm64
+    - build-rocky-9-x64
+    - build-rocky-9-arm64
+    - build-linux-x64
+    - build-linux-arm64
+    - build-vanillapdf-nuget
+    - build-vanillapdf-docs
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/vanillapdf-group/vanillapdf/vanillapdf-ubuntu-amd64:24.04
+    if: github.event_name == 'workflow_dispatch'
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@v4.1.0
+      with:
+        lfs: true
+    - uses: actions/download-artifact@v4.1.0
+    - run: dotnet nuget add source "${{ github.api_url }}/projects/${{ github.repository }}/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password ${{ github.token }} --store-password-in-clear-text
+    - run: dotnet nuget push "*.nupkg" --source gitlab
