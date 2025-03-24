@@ -10,203 +10,203 @@ namespace syntax {
 
 class XrefEntryBase : public virtual IUnknown, public IModifyObservable {
 public:
-	enum class Usage {
-		Undefined = 0,
-		Null,
-		Used,
-		Free,
-		Compressed
-	};
+    enum class Usage {
+        Undefined = 0,
+        Null,
+        Used,
+        Free,
+        Compressed
+    };
 
 public:
-	XrefEntryBase(types::big_uint obj_number, types::ushort gen_number);
+    XrefEntryBase(types::big_uint obj_number, types::ushort gen_number);
 
 public:
-	types::big_uint GetObjectNumber(void) const noexcept {
-		return _obj_number;
-	}
+    types::big_uint GetObjectNumber(void) const noexcept {
+        return _obj_number;
+    }
 
-	types::ushort GetGenerationNumber(void) const noexcept {
-		return _gen_number;
-	}
+    types::ushort GetGenerationNumber(void) const noexcept {
+        return _gen_number;
+    }
 
-	void SetGenerationNumber(types::ushort value) {
-		_gen_number = value;
-		OnChanged();
-	}
+    void SetGenerationNumber(types::ushort value) {
+        _gen_number = value;
+        OnChanged();
+    }
 
-	virtual Usage GetUsage(void) const noexcept = 0;
+    virtual Usage GetUsage(void) const noexcept = 0;
 
-	virtual bool InUse(void) const noexcept = 0;
+    virtual bool InUse(void) const noexcept = 0;
 
-	void SetFile(WeakReference<File> file) noexcept { _file = file; }
-	WeakReference<File> GetFile() const noexcept { return _file; }
+    void SetFile(WeakReference<File> file) noexcept { _file = file; }
+    WeakReference<File> GetFile() const noexcept { return _file; }
 
-	bool IsDirty(void) const noexcept { return _dirty; }
-	void SetDirty(bool dirty = true) noexcept { _dirty = dirty; }
+    bool IsDirty(void) const noexcept { return _dirty; }
+    void SetDirty(bool dirty = true) noexcept { _dirty = dirty; }
 
-	bool operator==(const XrefEntryBase& other) const;
-	bool operator!=(const XrefEntryBase& other) const;
-	bool operator<(const XrefEntryBase& other) const;
+    bool operator==(const XrefEntryBase& other) const;
+    bool operator!=(const XrefEntryBase& other) const;
+    bool operator<(const XrefEntryBase& other) const;
 
 protected:
-	WeakReference<File> _file;
-	types::big_uint _obj_number = 0;
-	types::ushort _gen_number = 0;
+    WeakReference<File> _file;
+    types::big_uint _obj_number = 0;
+    types::ushort _gen_number = 0;
 
-	// Same as Object::m_dirty
-	bool _dirty = false;
+    // Same as Object::m_dirty
+    bool _dirty = false;
 
 private:
-	// Private only for NullEntry
-	XrefEntryBase() = default;
-	friend class XrefNullEntry;
+    // Private only for NullEntry
+    XrefEntryBase() = default;
+    friend class XrefNullEntry;
 };
 
 class XrefNullEntry : public XrefEntryBase {
 public:
-	virtual Usage GetUsage(void) const noexcept override {
-		return XrefEntryBase::Usage::Null;
-	}
+    virtual Usage GetUsage(void) const noexcept override {
+        return XrefEntryBase::Usage::Null;
+    }
 
-	virtual bool InUse(void) const noexcept override {
-		return false;
-	}
+    virtual bool InUse(void) const noexcept override {
+        return false;
+    }
 };
 
 class XrefFreeEntry : public XrefEntryBase {
 public:
-	XrefFreeEntry(types::big_uint obj_number, types::ushort gen_number);
-	XrefFreeEntry(types::big_uint obj_number, types::ushort gen_number, types::big_uint next_free_object);
+    XrefFreeEntry(types::big_uint obj_number, types::ushort gen_number);
+    XrefFreeEntry(types::big_uint obj_number, types::ushort gen_number, types::big_uint next_free_object);
 
-	static XrefFreeEntryPtr Create(types::big_uint obj_number, types::ushort gen_number) {
-		return make_deferred<XrefFreeEntry>(obj_number, gen_number);
-	}
+    static XrefFreeEntryPtr Create(types::big_uint obj_number, types::ushort gen_number) {
+        return make_deferred<XrefFreeEntry>(obj_number, gen_number);
+    }
 
-	static XrefFreeEntryPtr Create(types::big_uint obj_number, types::ushort gen_number, types::big_uint next_free_object) {
-		return make_deferred<XrefFreeEntry>(obj_number, gen_number, next_free_object);
-	}
+    static XrefFreeEntryPtr Create(types::big_uint obj_number, types::ushort gen_number, types::big_uint next_free_object) {
+        return make_deferred<XrefFreeEntry>(obj_number, gen_number, next_free_object);
+    }
 
 public:
-	virtual Usage GetUsage(void) const noexcept override {
-		return XrefEntryBase::Usage::Free;
-	}
+    virtual Usage GetUsage(void) const noexcept override {
+        return XrefEntryBase::Usage::Free;
+    }
 
-	types::big_uint GetNextFreeObjectNumber(void) const noexcept {
-		return m_next_free_object;
-	}
+    types::big_uint GetNextFreeObjectNumber(void) const noexcept {
+        return m_next_free_object;
+    }
 
-	void SetNextFreeObjectNumber(types::big_uint value) {
-		m_next_free_object = value;
-		OnChanged();
-	}
+    void SetNextFreeObjectNumber(types::big_uint value) {
+        m_next_free_object = value;
+        OnChanged();
+    }
 
-	virtual bool InUse(void) const noexcept override {
-		return false;
-	}
+    virtual bool InUse(void) const noexcept override {
+        return false;
+    }
 
 private:
-	types::big_uint m_next_free_object = 0;
+    types::big_uint m_next_free_object = 0;
 };
 
 class XrefUsedEntryBase : public XrefEntryBase, public IWeakReferenceable<XrefUsedEntryBase>, public IModifyObserver {
 public:
-	XrefUsedEntryBase(types::big_uint obj_number, types::ushort gen_number);
+    XrefUsedEntryBase(types::big_uint obj_number, types::ushort gen_number);
 
 public:
-	ObjectPtr GetReference(void);
-	void SetReference(ObjectPtr ref);
-	void ReleaseReference(bool check_object_xref = true);
+    ObjectPtr GetReference(void);
+    void SetReference(ObjectPtr ref);
+    void ReleaseReference(bool check_object_xref = true);
 
-	virtual void ObserveeChanged(const IModifyObservable*) override;
-	virtual void OnChanged() override;
+    virtual void ObserveeChanged(const IModifyObservable*) override;
+    virtual void OnChanged() override;
 
-	virtual bool InUse(void) const noexcept override;
+    virtual bool InUse(void) const noexcept override;
 
-	~XrefUsedEntryBase();
+    ~XrefUsedEntryBase();
 
 protected:
-	// TODO rework used flag as std::optional
-	bool m_used = false;
-	ObjectPtr _reference;
+    // TODO rework used flag as std::optional
+    bool m_used = false;
+    ObjectPtr _reference;
 
-	// The library interface wants to be thread-safe as much as possible
-	// Accessing to the reference of an used entry starts the initialization process.
-	// During this process a duplicate initialization can be invoked.
-	std::shared_ptr<std::recursive_mutex> m_access_lock;
+    // The library interface wants to be thread-safe as much as possible
+    // Accessing to the reference of an used entry starts the initialization process.
+    // During this process a duplicate initialization can be invoked.
+    std::shared_ptr<std::recursive_mutex> m_access_lock;
 
-	virtual void Initialize(void) = 0;
+    virtual void Initialize(void) = 0;
 };
 
 class XrefUsedEntry : public XrefUsedEntryBase {
 public:
-	XrefUsedEntry(types::big_uint obj_number, types::ushort gen_number);
-	XrefUsedEntry(types::big_uint obj_number, types::ushort gen_number, types::stream_offset offset);
+    XrefUsedEntry(types::big_uint obj_number, types::ushort gen_number);
+    XrefUsedEntry(types::big_uint obj_number, types::ushort gen_number, types::stream_offset offset);
 
 public:
-	virtual Usage GetUsage(void) const noexcept override {
-		return XrefEntryBase::Usage::Used;
-	}
+    virtual Usage GetUsage(void) const noexcept override {
+        return XrefEntryBase::Usage::Used;
+    }
 
-	types::stream_offset GetOffset(void) const noexcept {
-		return _offset;
-	}
+    types::stream_offset GetOffset(void) const noexcept {
+        return _offset;
+    }
 
-	void SetOffset(types::stream_offset value) {
-		_offset = value;
-		OnChanged();
-	}
+    void SetOffset(types::stream_offset value) {
+        _offset = value;
+        OnChanged();
+    }
 
 private:
-	virtual void Initialize(void) override;
-	types::stream_offset _offset = constant::BAD_OFFSET;
+    virtual void Initialize(void) override;
+    types::stream_offset _offset = constant::BAD_OFFSET;
 };
 
 class XrefCompressedEntry : public XrefUsedEntryBase {
 public:
-	XrefCompressedEntry(types::big_uint obj_number, types::ushort gen_number);
-	XrefCompressedEntry(types::big_uint obj_number, types::ushort gen_number, types::big_uint object_stream_number, types::size_type index);
+    XrefCompressedEntry(types::big_uint obj_number, types::ushort gen_number);
+    XrefCompressedEntry(types::big_uint obj_number, types::ushort gen_number, types::big_uint object_stream_number, types::size_type index);
 
 public:
-	virtual Usage GetUsage(void) const noexcept override {
-		return XrefEntryBase::Usage::Compressed;
-	}
+    virtual Usage GetUsage(void) const noexcept override {
+        return XrefEntryBase::Usage::Compressed;
+    }
 
-	types::big_uint GetObjectStreamNumber(void) const noexcept {
-		return _object_stream_number;
-	}
+    types::big_uint GetObjectStreamNumber(void) const noexcept {
+        return _object_stream_number;
+    }
 
-	void SetObjectStreamNumber(types::big_uint value) {
-		_object_stream_number = value;
-		OnChanged();
-	}
+    void SetObjectStreamNumber(types::big_uint value) {
+        _object_stream_number = value;
+        OnChanged();
+    }
 
-	types::size_type GetIndex(void) const noexcept {
-		return _index;
-	}
+    types::size_type GetIndex(void) const noexcept {
+        return _index;
+    }
 
-	void SetIndex(types::size_type value) {
-		_index = value;
-		OnChanged();
-	}
+    void SetIndex(types::size_type value) {
+        _index = value;
+        OnChanged();
+    }
 
 private:
-	virtual void Initialize(void) override;
+    virtual void Initialize(void) override;
 
-	types::big_uint _object_stream_number = 0;
-	types::size_type _index = 0;
+    types::big_uint _object_stream_number = 0;
+    types::size_type _index = 0;
 };
 
 inline bool operator==(const Deferred<syntax::XrefEntryBase>& left, const Deferred<syntax::XrefEntryBase>& right) {
-	return *left == *right;
+    return *left == *right;
 }
 
 inline bool operator!=(const Deferred<syntax::XrefEntryBase>& left, const Deferred<syntax::XrefEntryBase>& right) {
-	return *left != *right;
+    return *left != *right;
 }
 
 inline bool operator<(const Deferred<syntax::XrefEntryBase>& left, const Deferred<syntax::XrefEntryBase>& right) {
-	return *left < *right;
+    return *left < *right;
 }
 
 } // syntax
@@ -215,7 +215,7 @@ inline bool operator<(const Deferred<syntax::XrefEntryBase>& left, const Deferre
 namespace std {
 
 template <> struct hash<vanillapdf::syntax::XrefEntryBasePtr> {
-	size_t operator()(const vanillapdf::syntax::XrefEntryBasePtr& entry) const;
+    size_t operator()(const vanillapdf::syntax::XrefEntryBasePtr& entry) const;
 };
 
 } // std

@@ -55,21 +55,21 @@
 template <size_t Size, size_t ByteAlignment>
 class AlignedMemory {
 public:
-	alignas(ByteAlignment) uint8_t data_[Size];
-	void* void_data() { return reinterpret_cast<void*>(data_); }
-	const void* void_data() const {
-		return reinterpret_cast<const void*>(data_);
-	}
-	template<typename Type>
-	Type* data_as() { return reinterpret_cast<Type*>(void_data()); }
+    alignas(ByteAlignment) uint8_t data_[Size];
+    void* void_data() { return reinterpret_cast<void*>(data_); }
+    const void* void_data() const {
+        return reinterpret_cast<const void*>(data_);
+    }
+    template<typename Type>
+    Type* data_as() { return reinterpret_cast<Type*>(void_data()); }
 
-	template<typename Type>
-	const Type* data_as() const {
-		return reinterpret_cast<const Type*>(void_data());
-	}
+    template<typename Type>
+    const Type* data_as() const {
+        return reinterpret_cast<const Type*>(void_data());
+    }
 private:
-	void* operator new(size_t);
-	void operator delete(void*);
+    void* operator new(size_t);
+    void operator delete(void*);
 };
 
 // This allocator can be used with STL containers to provide a stack buffer
@@ -93,83 +93,83 @@ private:
 template<typename T, size_t stack_capacity>
 class StackAllocator : public std::allocator<T> {
 public:
-	typedef typename std::allocator<T>::pointer pointer;
-	typedef typename std::allocator<T>::size_type size_type;
+    typedef typename std::allocator<T>::pointer pointer;
+    typedef typename std::allocator<T>::size_type size_type;
 
-	// Backing store for the allocator. The container owner is responsible for
-	// maintaining this for as long as any containers using this allocator are
-	// live.
+    // Backing store for the allocator. The container owner is responsible for
+    // maintaining this for as long as any containers using this allocator are
+    // live.
 
-	struct Source {
-		Source() : used_stack_buffer_(false) {
-		}
+    struct Source {
+        Source() : used_stack_buffer_(false) {
+        }
 
-		// Casts the buffer in its right type.
-		T* stack_buffer() { return stack_buffer_.template data_as<T>(); }
-		const T* stack_buffer() const {
-			return stack_buffer_.template data_as<T>();
-		}
-		// The buffer itself. It is not of type T because we don't want the
-		// constructors and destructors to be automatically called. Define a POD
-		// buffer of the right size instead.
-		AlignedMemory<sizeof(T[stack_capacity]), alignof(T)> stack_buffer_;
+        // Casts the buffer in its right type.
+        T* stack_buffer() { return stack_buffer_.template data_as<T>(); }
+        const T* stack_buffer() const {
+            return stack_buffer_.template data_as<T>();
+        }
+        // The buffer itself. It is not of type T because we don't want the
+        // constructors and destructors to be automatically called. Define a POD
+        // buffer of the right size instead.
+        AlignedMemory<sizeof(T[stack_capacity]), alignof(T)> stack_buffer_;
 
-		// Set when the stack buffer is used for an allocation. We do not track
-		// how much of the buffer is used, only that somebody is using it.
-		bool used_stack_buffer_;
-	};
+        // Set when the stack buffer is used for an allocation. We do not track
+        // how much of the buffer is used, only that somebody is using it.
+        bool used_stack_buffer_;
+    };
 
-	// Used by containers when they want to refer to an allocator of type U.
-	template<typename U>
-	struct rebind {
-		typedef StackAllocator<U, stack_capacity> other;
-	};
-	// For the straight up copy c-tor, we can share storage.
-	StackAllocator(const StackAllocator<T, stack_capacity>& rhs)
-		: std::allocator<T>(), source_(rhs.source_) {
-	}
+    // Used by containers when they want to refer to an allocator of type U.
+    template<typename U>
+    struct rebind {
+        typedef StackAllocator<U, stack_capacity> other;
+    };
+    // For the straight up copy c-tor, we can share storage.
+    StackAllocator(const StackAllocator<T, stack_capacity>& rhs)
+        : std::allocator<T>(), source_(rhs.source_) {
+    }
 
 
-	// ISO C++ requires the following constructor to be defined,
-	// and std::vector in VC++2008SP1 Release fails with an error
-	// in the class _Container_base_aux_alloc_real (from <xutility>)
-	// if the constructor does not exist.
-	// For this constructor, we cannot share storage; there's
-	// no guarantee that the Source buffer of Ts is large enough
-	// for Us.
-	// TODO: If we were fancy pants, perhaps we could share storage
-	// iff sizeof(T) == sizeof(U).
-	template<typename U, size_t other_capacity>
-	StackAllocator(const StackAllocator<U, other_capacity>&)
-		: source_(NULL) {
-	}
+    // ISO C++ requires the following constructor to be defined,
+    // and std::vector in VC++2008SP1 Release fails with an error
+    // in the class _Container_base_aux_alloc_real (from <xutility>)
+    // if the constructor does not exist.
+    // For this constructor, we cannot share storage; there's
+    // no guarantee that the Source buffer of Ts is large enough
+    // for Us.
+    // TODO: If we were fancy pants, perhaps we could share storage
+    // iff sizeof(T) == sizeof(U).
+    template<typename U, size_t other_capacity>
+    StackAllocator(const StackAllocator<U, other_capacity>&)
+        : source_(NULL) {
+    }
 
-	explicit StackAllocator(Source* source) : source_(source) {
-	}
+    explicit StackAllocator(Source* source) : source_(source) {
+    }
 
-	// Actually do the allocation. Use the stack buffer if nobody has used it yet
-	// and the size requested fits. Otherwise, fall through to the standard
-	// allocator.
-	pointer allocate(size_type n, void* hint = 0) {
-		if (source_ != NULL && !source_->used_stack_buffer_
-			&& n <= stack_capacity) {
-			source_->used_stack_buffer_ = true;
-			return source_->stack_buffer();
-		}
-		else {
-			return std::allocator<T>::allocate(n, hint);
-		}
-	}
-	// Free: when trying to free the stack buffer, just mark it as free. For
-	// non-stack-buffer pointers, just fall though to the standard allocator.
-	void deallocate(pointer p, size_type n) {
-		if (source_ != NULL && p == source_->stack_buffer())
-			source_->used_stack_buffer_ = false;
-		else
-			std::allocator<T>::deallocate(p, n);
-	}
+    // Actually do the allocation. Use the stack buffer if nobody has used it yet
+    // and the size requested fits. Otherwise, fall through to the standard
+    // allocator.
+    pointer allocate(size_type n, void* hint = 0) {
+        if (source_ != NULL && !source_->used_stack_buffer_
+            && n <= stack_capacity) {
+            source_->used_stack_buffer_ = true;
+            return source_->stack_buffer();
+        }
+        else {
+            return std::allocator<T>::allocate(n, hint);
+        }
+    }
+    // Free: when trying to free the stack buffer, just mark it as free. For
+    // non-stack-buffer pointers, just fall though to the standard allocator.
+    void deallocate(pointer p, size_type n) {
+        if (source_ != NULL && p == source_->stack_buffer())
+            source_->used_stack_buffer_ = false;
+        else
+            std::allocator<T>::deallocate(p, n);
+    }
 private:
-	Source* source_;
+    Source* source_;
 };
 
 
@@ -184,71 +184,71 @@ private:
 template<typename TContainerType, int stack_capacity>
 class StackContainer {
 public:
-	typedef TContainerType ContainerType;
-	typedef typename ContainerType::value_type ContainedType;
-	typedef StackAllocator<ContainedType, stack_capacity> Allocator;
-	// Allocator must be constructed before the container!
-	StackContainer() : allocator_(&stack_data_), container_(allocator_) {
-		// Make the container use the stack allocation by reserving our buffer size
-		// before doing anything else.
-		container_.reserve(stack_capacity);
-	}
-	// Getters for the actual container.
-	//
-	// Danger: any copies of this made using the copy constructor must have
-	// shorter lifetimes than the source. The copy will share the same allocator
-	// and therefore the same stack buffer as the original. Use std::copy to
-	// copy into a "real" container for longer-lived objects.
-	ContainerType& container() { return container_; }
-	const ContainerType& container() const { return container_; }
-	// Support operator-> to get to the container. This allows nicer syntax like:
-	//   StackContainer<...> foo;
-	//   std::sort(foo->begin(), foo->end());
-	ContainerType* operator->() { return &container_; }
-	const ContainerType* operator->() const { return &container_; }
+    typedef TContainerType ContainerType;
+    typedef typename ContainerType::value_type ContainedType;
+    typedef StackAllocator<ContainedType, stack_capacity> Allocator;
+    // Allocator must be constructed before the container!
+    StackContainer() : allocator_(&stack_data_), container_(allocator_) {
+        // Make the container use the stack allocation by reserving our buffer size
+        // before doing anything else.
+        container_.reserve(stack_capacity);
+    }
+    // Getters for the actual container.
+    //
+    // Danger: any copies of this made using the copy constructor must have
+    // shorter lifetimes than the source. The copy will share the same allocator
+    // and therefore the same stack buffer as the original. Use std::copy to
+    // copy into a "real" container for longer-lived objects.
+    ContainerType& container() { return container_; }
+    const ContainerType& container() const { return container_; }
+    // Support operator-> to get to the container. This allows nicer syntax like:
+    //   StackContainer<...> foo;
+    //   std::sort(foo->begin(), foo->end());
+    ContainerType* operator->() { return &container_; }
+    const ContainerType* operator->() const { return &container_; }
 
 protected:
-	typename Allocator::Source stack_data_;
-	Allocator allocator_;
-	ContainerType container_;
+    typename Allocator::Source stack_data_;
+    Allocator allocator_;
+    ContainerType container_;
 
-	StackContainer(const StackContainer&) = delete;
-	StackContainer& operator=(const StackContainer&) = delete;
+    StackContainer(const StackContainer&) = delete;
+    StackContainer& operator=(const StackContainer&) = delete;
 };
 // StackString
 template<size_t stack_capacity>
 class StackString : public StackContainer<
-	std::basic_string<char,
-	std::char_traits<char>,
-	StackAllocator<char, stack_capacity> >,
-	stack_capacity> {
+    std::basic_string<char,
+    std::char_traits<char>,
+    StackAllocator<char, stack_capacity> >,
+    stack_capacity> {
 public:
-	StackString() : StackContainer<
-		std::basic_string<char,
-		std::char_traits<char>,
-		StackAllocator<char, stack_capacity> >,
-		stack_capacity>() {
-	}
+    StackString() : StackContainer<
+        std::basic_string<char,
+        std::char_traits<char>,
+        StackAllocator<char, stack_capacity> >,
+        stack_capacity>() {
+    }
 private:
-	StackString(const StackString&) = delete;
-	StackString& operator=(const StackString&) = delete;
+    StackString(const StackString&) = delete;
+    StackString& operator=(const StackString&) = delete;
 };
 // StackWString
 template<size_t stack_capacity>
 class StackWString : public StackContainer<
-	std::basic_string<wchar_t,
-	std::char_traits<wchar_t>,
-	StackAllocator<wchar_t, stack_capacity> >,
-	stack_capacity> {
+    std::basic_string<wchar_t,
+    std::char_traits<wchar_t>,
+    StackAllocator<wchar_t, stack_capacity> >,
+    stack_capacity> {
 public:
-	StackWString() : StackContainer<
-		std::basic_string<wchar_t,
-		std::char_traits<wchar_t>,
-		StackAllocator<wchar_t, stack_capacity> >,
-		stack_capacity>() {
-	}
+    StackWString() : StackContainer<
+        std::basic_string<wchar_t,
+        std::char_traits<wchar_t>,
+        StackAllocator<wchar_t, stack_capacity> >,
+        stack_capacity>() {
+    }
 private:
-	//DISALLOW_COPY_AND_ASSIGN(StackWString);
+    //DISALLOW_COPY_AND_ASSIGN(StackWString);
 };
 // StackVector
 //
@@ -258,35 +258,35 @@ private:
 //   foo[0] = 10;         // as well as operator[]
 template<typename T, size_t stack_capacity>
 class StackVector : public StackContainer<
-	std::vector<T, StackAllocator<T, stack_capacity> >,
-	stack_capacity> {
+    std::vector<T, StackAllocator<T, stack_capacity> >,
+    stack_capacity> {
 public:
-	StackVector() : StackContainer<
-		std::vector<T, StackAllocator<T, stack_capacity> >,
-		stack_capacity>() {
-	}
+    StackVector() : StackContainer<
+        std::vector<T, StackAllocator<T, stack_capacity> >,
+        stack_capacity>() {
+    }
 
-	// We need to put this in STL containers sometimes, which requires a copy
-	// constructor. We can't call the regular copy constructor because that will
-	// take the stack buffer from the original. Here, we create an empty object
-	// and make a stack buffer of its own.
-	StackVector(const StackVector<T, stack_capacity>& other)
-		: StackContainer<
-		std::vector<T, StackAllocator<T, stack_capacity> >,
-		stack_capacity>() {
-		this->container().assign(other->begin(), other->end());
-	}
-	StackVector<T, stack_capacity>& operator=(
-		const StackVector<T, stack_capacity>& other) {
-		this->container().assign(other->begin(), other->end());
-		return *this;
-	}
-	// Vectors are commonly indexed, which isn't very convenient even with
-	// operator-> (using "->at()" does exception stuff we don't want).
-	T& operator[](size_t i) { return this->container().operator[](i); }
-	const T& operator[](size_t i) const {
-		return this->container().operator[](i);
-	}
+    // We need to put this in STL containers sometimes, which requires a copy
+    // constructor. We can't call the regular copy constructor because that will
+    // take the stack buffer from the original. Here, we create an empty object
+    // and make a stack buffer of its own.
+    StackVector(const StackVector<T, stack_capacity>& other)
+        : StackContainer<
+        std::vector<T, StackAllocator<T, stack_capacity> >,
+        stack_capacity>() {
+        this->container().assign(other->begin(), other->end());
+    }
+    StackVector<T, stack_capacity>& operator=(
+        const StackVector<T, stack_capacity>& other) {
+        this->container().assign(other->begin(), other->end());
+        return *this;
+    }
+    // Vectors are commonly indexed, which isn't very convenient even with
+    // operator-> (using "->at()" does exception stuff we don't want).
+    T& operator[](size_t i) { return this->container().operator[](i); }
+    const T& operator[](size_t i) const {
+        return this->container().operator[](i);
+    }
 };
 
 #endif  // BASE_STACK_CONTAINER_H_

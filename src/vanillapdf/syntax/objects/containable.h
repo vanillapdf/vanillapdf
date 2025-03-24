@@ -8,7 +8,7 @@ namespace syntax {
 
 class ContainableObject : public Object {
 public:
-	virtual ContainableObject* Clone(void) const override = 0;
+    virtual ContainableObject* Clone(void) const override = 0;
 };
 
 } // syntax

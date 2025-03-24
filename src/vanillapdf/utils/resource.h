@@ -6,18 +6,18 @@
 namespace vanillapdf {
 
 enum class ResourceID {
-	Undefined = 0,
-	MASTER_CERTIFICATE,
-	WATERMARK_IMAGE,
-	SERIAL_BLACKLIST
+    Undefined = 0,
+    MASTER_CERTIFICATE,
+    WATERMARK_IMAGE,
+    SERIAL_BLACKLIST
 };
 
 class Resource {
 public:
-	static BufferPtr Load(ResourceID id);
+    static BufferPtr Load(ResourceID id);
 
 private:
-	Resource();
+    Resource();
 };
 
 } // vanillapdf

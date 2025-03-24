@@ -11,19 +11,19 @@ namespace semantics {
 ContentStream::ContentStream(syntax::StreamObjectPtr obj) : HighLevelObject(obj) {}
 
 contents::BaseInstructionCollectionPtr ContentStream::Instructions(void) const {
-	if (_instructions->IsInitialized()) {
-		return _instructions;
-	}
+    if (_instructions->IsInitialized()) {
+        return _instructions;
+    }
 
-	auto body = _obj->GetBody();
-	auto input_stream = body->ToInputStream();
+    auto body = _obj->GetBody();
+    auto input_stream = body->ToInputStream();
 
-	contents::ContentStreamParser parser(_obj->GetFile(), input_stream);
+    contents::ContentStreamParser parser(_obj->GetFile(), input_stream);
 
-	_instructions = parser.ReadInstructions();
-	_instructions->SetInitialized();
+    _instructions = parser.ReadInstructions();
+    _instructions->SetInitialized();
 
-	return _instructions;
+    return _instructions;
 }
 
 } // semantics

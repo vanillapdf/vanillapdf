@@ -12,13 +12,13 @@ namespace semantics {
 
 class InteractiveForm : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
-	explicit InteractiveForm(syntax::DictionaryObjectPtr root);
+    explicit InteractiveForm(syntax::DictionaryObjectPtr root);
 
-	bool GetFields(OuputFieldCollectionPtr& result) const;
-	bool GetSignatureFlags(OutputSignatureFlagsPtr& result) const;
+    bool GetFields(OuputFieldCollectionPtr& result) const;
+    bool GetSignatureFlags(OutputSignatureFlagsPtr& result) const;
 
-	FieldCollectionPtr CreateFields();
-	SignatureFlagsPtr CreateSignatureFlags();
+    FieldCollectionPtr CreateFields();
+    SignatureFlagsPtr CreateSignatureFlags();
 };
 
 } // semantics

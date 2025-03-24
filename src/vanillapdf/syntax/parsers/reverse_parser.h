@@ -10,13 +10,13 @@ namespace syntax {
 
 class ReverseParser : public ReverseTokenizer, public IReverseParser {
 public:
-	explicit ReverseParser(IInputStreamPtr stream);
-	ReverseParser(const ReverseParser & other);
+    explicit ReverseParser(IInputStreamPtr stream);
+    ReverseParser(const ReverseParser & other);
 
-	types::stream_offset ReadLastXrefOffset() override;
+    types::stream_offset ReadLastXrefOffset() override;
 
 private:
-	TokenPtr ReadTokenWithTypeSkip(Token::Type type);
+    TokenPtr ReadTokenWithTypeSkip(Token::Type type);
 };
 
 } // syntax

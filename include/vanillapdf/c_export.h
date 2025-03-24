@@ -19,21 +19,21 @@
 */
 
 #if defined(COMPILER_MICROSOFT_VISUAL_STUDIO) && defined(PROCESSOR_X86)
-	#define CALLING_CONVENTION __cdecl
+    #define CALLING_CONVENTION __cdecl
 #elif defined(COMPILER_GCC) && defined(PROCESSOR_X86)
-	#define CALLING_CONVENTION __attribute__ ((cdecl))
+    #define CALLING_CONVENTION __attribute__ ((cdecl))
 #else
-	#define CALLING_CONVENTION
+    #define CALLING_CONVENTION
 #endif
 
 #if defined(VANILLAPDF_CONFIGURATION_DLL) && defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
-	#if defined(VANILLAPDF_EXPORTS)
-		#define VANILLAPDF_API __declspec(dllexport)
-	#else
-		#define VANILLAPDF_API __declspec(dllimport)
-	#endif
+    #if defined(VANILLAPDF_EXPORTS)
+        #define VANILLAPDF_API __declspec(dllexport)
+    #else
+        #define VANILLAPDF_API __declspec(dllimport)
+    #endif
 #else
-	#define VANILLAPDF_API
+    #define VANILLAPDF_API
 #endif
 
 #endif /* _C_EXPORT_H */

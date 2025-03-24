@@ -19,10 +19,10 @@ struct is_defined : std::false_type {
 
 template <typename T>
 struct is_defined<T,
-	typename std::enable_if<std::is_object<T>::value &&
-	!std::is_pointer<T>::value &&
-	(sizeof(T) > 0)>::type>
-	: std::true_type {
+    typename std::enable_if<std::is_object<T>::value &&
+    !std::is_pointer<T>::value &&
+    (sizeof(T) > 0)>::type>
+    : std::true_type {
 };
 
 } // vanillapdf

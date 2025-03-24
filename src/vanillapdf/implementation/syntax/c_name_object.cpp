@@ -9,104 +9,104 @@ using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
 VANILLAPDF_API error_type CALLING_CONVENTION NameObject_Create(NameObjectHandle** result) {
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try {
-		auto object = make_deferred<NameObject>();
-		auto ptr = object.AddRefGet();
-		*result = reinterpret_cast<NameObjectHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+    try {
+        auto object = make_deferred<NameObject>();
+        auto ptr = object.AddRefGet();
+        *result = reinterpret_cast<NameObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION NameObject_CreateFromEncodedString(string_type value, NameObjectHandle** result) {
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(value);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try {
-		auto object = NameObject::CreateFromEncoded(value);
-		auto ptr = object.AddRefGet();
-		*result = reinterpret_cast<NameObjectHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+    try {
+        auto object = NameObject::CreateFromEncoded(value);
+        auto ptr = object.AddRefGet();
+        *result = reinterpret_cast<NameObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION NameObject_CreateFromDecodedString(string_type value, NameObjectHandle** result) {
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(value);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try {
-		auto object = NameObject::CreateFromDecoded(value);
-		auto ptr = object.AddRefGet();
-		*result = reinterpret_cast<NameObjectHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+    try {
+        auto object = NameObject::CreateFromDecoded(value);
+        auto ptr = object.AddRefGet();
+        *result = reinterpret_cast<NameObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION NameObject_GetValue(const NameObjectHandle* handle, BufferHandle** result)
 {
-	const NameObject* obj = reinterpret_cast<const NameObject*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    const NameObject* obj = reinterpret_cast<const NameObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		auto buffer = obj->GetValue();
-		auto ptr = buffer.AddRefGet();
-		*result = reinterpret_cast<BufferHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+    try
+    {
+        auto buffer = obj->GetValue();
+        auto ptr = buffer.AddRefGet();
+        *result = reinterpret_cast<BufferHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION NameObject_SetValue(NameObjectHandle* handle, BufferHandle* value)
 {
-	NameObject* obj = reinterpret_cast<NameObject*>(handle);
-	Buffer* buffer = reinterpret_cast<Buffer*>(value);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(buffer);
+    NameObject* obj = reinterpret_cast<NameObject*>(handle);
+    Buffer* buffer = reinterpret_cast<Buffer*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(buffer);
 
-	try
-	{
-		obj->SetValue(buffer);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+    try
+    {
+        obj->SetValue(buffer);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION NameObject_Equals(const NameObjectHandle* handle, const NameObjectHandle* other, boolean_type* result) {
-	const NameObject* obj = reinterpret_cast<const NameObject*>(handle);
-	const NameObject* other_obj = reinterpret_cast<const NameObject*>(other);
+    const NameObject* obj = reinterpret_cast<const NameObject*>(handle);
+    const NameObject* other_obj = reinterpret_cast<const NameObject*>(other);
 
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(other_obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(other_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try {
-		*result = obj->Equals(*other_obj);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+    try {
+        *result = obj->Equals(*other_obj);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION NameObject_Hash(const NameObjectHandle* handle, size_type* result) {
-	const NameObject* obj = reinterpret_cast<const NameObject*>(handle);
+    const NameObject* obj = reinterpret_cast<const NameObject*>(handle);
 
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try {
-		*result = obj->Hash();
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+    try {
+        *result = obj->Hash();
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION NameObject_ToObject(NameObjectHandle* handle, ObjectHandle** result) {
-	return SafeObjectConvert<NameObject, Object, NameObjectHandle, ObjectHandle>(handle, result);
+    return SafeObjectConvert<NameObject, Object, NameObjectHandle, ObjectHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION NameObject_FromObject(ObjectHandle* handle, NameObjectHandle** result) {
-	return SafeObjectConvert<Object, NameObject, ObjectHandle, NameObjectHandle>(handle, result);
+    return SafeObjectConvert<Object, NameObject, ObjectHandle, NameObjectHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION NameObject_Release(NameObjectHandle* handle)
 {
-	return ObjectRelease<NameObject, NameObjectHandle>(handle);
+    return ObjectRelease<NameObject, NameObjectHandle>(handle);
 }

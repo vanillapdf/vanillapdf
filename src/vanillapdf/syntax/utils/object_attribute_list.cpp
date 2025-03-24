@@ -7,74 +7,74 @@ namespace vanillapdf {
 namespace syntax {
 
 std::shared_ptr<AttributeList::map_type> AttributeList::GetAttributes() const {
-	if (!m_attributes) {
-		m_attributes = std::make_shared<map_type>();
-	}
+    if (!m_attributes) {
+        m_attributes = std::make_shared<map_type>();
+    }
 
-	return m_attributes;
+    return m_attributes;
 }
 
 bool AttributeList::Contains(BaseAttribute::Type type) const {
-	// Optimization:
-	// The unordered map allocates 16 empty entries,
-	// but most of the object do not contain any attributes at all
-	if (!m_attributes) {
-		return false;
-	}
+    // Optimization:
+    // The unordered map allocates 16 empty entries,
+    // but most of the object do not contain any attributes at all
+    if (!m_attributes) {
+        return false;
+    }
 
-	return (GetAttributes()->find(type) != GetAttributes()->end());
+    return (GetAttributes()->find(type) != GetAttributes()->end());
 }
 
 void AttributeList::Add(BaseAttributePtr attribute, bool overwrite /*= false*/) {
 
-	auto attribute_type = attribute->GetType();
-	if (!overwrite && Contains(attribute_type)) {
-		throw DuplicateKeyException("The key " + std::to_string(static_cast<int>(attribute_type)) + " was already present in the dictionary");
-	}
+    auto attribute_type = attribute->GetType();
+    if (!overwrite && Contains(attribute_type)) {
+        throw DuplicateKeyException("The key " + std::to_string(static_cast<int>(attribute_type)) + " was already present in the dictionary");
+    }
 
-	GetAttributes()->insert({ attribute_type , attribute });
+    GetAttributes()->insert({ attribute_type , attribute });
 }
 
 bool AttributeList::Remove(BaseAttribute::Type type) {
 
-	assert(m_attributes && "Trying to remove key from empty collection");
+    assert(m_attributes && "Trying to remove key from empty collection");
 
-	auto found = GetAttributes()->find(type);
-	if (found == GetAttributes()->end()) {
-		return false;
-	}
+    auto found = GetAttributes()->find(type);
+    if (found == GetAttributes()->end()) {
+        return false;
+    }
 
-	GetAttributes()->erase(found);
-	return true;
+    GetAttributes()->erase(found);
+    return true;
 }
 
 BaseAttributePtr AttributeList::Get(BaseAttribute::Type type) const {
-	auto found = GetAttributes()->find(type);
-	if (found == GetAttributes()->end()) {
-		throw GeneralException("Attribute with key " + std::to_string(static_cast<int>(type)) + " was not found in the list");
-	}
+    auto found = GetAttributes()->find(type);
+    if (found == GetAttributes()->end()) {
+        throw GeneralException("Attribute with key " + std::to_string(static_cast<int>(type)) + " was not found in the list");
+    }
 
-	return found->second;
+    return found->second;
 }
 
 void AttributeList::Clear() {
-	GetAttributes()->clear();
+    GetAttributes()->clear();
 }
 
 AttributeList::iterator AttributeList::begin() {
-	return GetAttributes()->begin();
+    return GetAttributes()->begin();
 }
 
 AttributeList::const_iterator AttributeList::begin() const {
-	return GetAttributes()->begin();
+    return GetAttributes()->begin();
 }
 
 AttributeList::iterator AttributeList::end() {
-	return GetAttributes()->end();
+    return GetAttributes()->end();
 }
 
 AttributeList::const_iterator AttributeList::end() const {
-	return GetAttributes()->end();
+    return GetAttributes()->end();
 }
 
 } // syntax

@@ -13,34 +13,34 @@ namespace syntax {
 
 class Tokenizer : public IUnknown {
 private:
-	struct CacheItem {
-		TokenPtr token;
-		types::stream_offset advance_position;
-	};
+    struct CacheItem {
+        TokenPtr token;
+        types::stream_offset advance_position;
+    };
 
 public:
-	explicit Tokenizer(IInputStreamPtr stream);
+    explicit Tokenizer(IInputStreamPtr stream);
 
-	bool IsItemCached(types::stream_offset offset);
-	const CacheItem& GetCachedItem(types::stream_offset offset);
+    bool IsItemCached(types::stream_offset offset);
+    const CacheItem& GetCachedItem(types::stream_offset offset);
 
-	TokenPtr ReadToken(void);
-	TokenPtr PeekToken(void);
-	TokenPtr ReadTokenWithType(Token::Type type);
-	Token::Type PeekTokenType(void);
+    TokenPtr ReadToken(void);
+    TokenPtr PeekToken(void);
+    TokenPtr ReadTokenWithType(Token::Type type);
+    Token::Type PeekTokenType(void);
 
 protected:
-	std::unique_ptr<TokenDictionaryBase> _dictionary;
-	IInputStreamPtr m_stream;
+    std::unique_ptr<TokenDictionaryBase> _dictionary;
+    IInputStreamPtr m_stream;
 
 private:
-	std::map<types::stream_offset, CacheItem> _cache;
+    std::map<types::stream_offset, CacheItem> _cache;
 
-	TokenPtr ReadComment(void);
-	TokenPtr ReadHexadecimalString(void);
-	TokenPtr ReadLiteralString(void);
-	TokenPtr ReadName(void);
-	TokenPtr ReadUnknown(int ch);
+    TokenPtr ReadComment(void);
+    TokenPtr ReadHexadecimalString(void);
+    TokenPtr ReadLiteralString(void);
+    TokenPtr ReadName(void);
+    TokenPtr ReadUnknown(int ch);
 };
 
 } // syntax

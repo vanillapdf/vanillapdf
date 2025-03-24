@@ -28,10 +28,10 @@ VANILLAPDF_API const NameObjectHandle* NameConstant_AdobePPKLite = reinterpret_c
 VANILLAPDF_API const NameObjectHandle* NameConstant_AdobePubSec = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdbePkcs7s5);
 
 #define DECLARE_CONST_NAME(name) \
-	namespace vanillapdf { namespace constant { namespace Name { \
-	const syntax::NameObject name = syntax::NameObject::CreateFromDecoded(make_deferred_container<Buffer>(#name, sizeof(#name) - 1)); \
-	} /* Name */ } /* constant */ } /* vanillapdf */ \
-	VANILLAPDF_API const NameObjectHandle* NameConstant_##name = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::name);
+    namespace vanillapdf { namespace constant { namespace Name { \
+    const syntax::NameObject name = syntax::NameObject::CreateFromDecoded(make_deferred_container<Buffer>(#name, sizeof(#name) - 1)); \
+    } /* Name */ } /* constant */ } /* vanillapdf */ \
+    VANILLAPDF_API const NameObjectHandle* NameConstant_##name = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::name);
 
 DECLARE_CONST_NAME(AA);
 DECLARE_CONST_NAME(ASCII85Decode);

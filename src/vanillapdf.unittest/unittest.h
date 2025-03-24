@@ -7,10 +7,10 @@
 
 class TestEnvironment : public ::testing::Environment {
 public:
-	void SetUp() override;
-	void TearDown() override;
+    void SetUp() override;
+    void TearDown() override;
 
-	~TestEnvironment();
+    ~TestEnvironment();
 };
 
 #endif /* _VANILLAPDF_UNITTEST_H */

@@ -18,22 +18,22 @@ using namespace constant;
 using namespace syntax;
 
 PageTreeNode::PageTreeNode(DictionaryObjectPtr obj) : PageNodeBase(obj) {
-	if (!_obj->Contains(Name::Type) || _obj->FindAs<NameObjectPtr>(Name::Type) != Name::Pages) {
-		throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageTreeNode>(obj);
-	}
+    if (!_obj->Contains(Name::Type) || _obj->FindAs<NameObjectPtr>(Name::Type) != Name::Pages) {
+        throw SemanticContextExceptionFactory::Construct<syntax::DictionaryObject, PageTreeNode>(obj);
+    }
 }
 
 IntegerObjectPtr PageTreeNode::KidCount(void) const {
-	return _obj->FindAs<IntegerObjectPtr>(Name::Count);
+    return _obj->FindAs<IntegerObjectPtr>(Name::Count);
 }
 
 ArrayObjectPtr<PageNodeBasePtr> PageTreeNode::Kids() const {
-	auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(Name::Kids);
-	return kids->Convert<PageNodeBasePtr>(ConvertFunction);
+    auto kids = _obj->FindAs<ArrayObjectPtr<DictionaryObjectPtr>>(Name::Kids);
+    return kids->Convert<PageNodeBasePtr>(ConvertFunction);
 }
 
 PageNodeBasePtr PageTreeNode::ConvertFunction(DictionaryObjectPtr obj) {
-	return CreatePageNode(obj);
+    return CreatePageNode(obj);
 }
 
 } // semantics

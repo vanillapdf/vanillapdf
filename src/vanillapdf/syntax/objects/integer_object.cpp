@@ -14,30 +14,30 @@ IntegerObject::IntegerObject() {
 }
 
 IntegerObject::IntegerObject(NumericObjectBackendPtr value) {
-	m_value = value;
-	m_value->Subscribe(this);
+    m_value = value;
+    m_value->Subscribe(this);
 }
 
 bool IntegerObject::Equals(ObjectPtr other) const {
-	if (!ObjectUtils::IsType<IntegerObjectPtr>(other)) {
-		return false;
-	}
+    if (!ObjectUtils::IsType<IntegerObjectPtr>(other)) {
+        return false;
+    }
 
-	auto other_obj = ObjectUtils::ConvertTo<IntegerObjectPtr>(other);
-	return Equals(*other_obj);
+    auto other_obj = ObjectUtils::ConvertTo<IntegerObjectPtr>(other);
+    return Equals(*other_obj);
 }
 
 IntegerObject* IntegerObject::Clone(void) const {
-	NumericObjectBackendPtr new_value(m_value->Clone());
-	IntegerObjectPtr result(pdf_new IntegerObject(new_value), false);
+    NumericObjectBackendPtr new_value(m_value->Clone());
+    IntegerObjectPtr result(pdf_new IntegerObject(new_value), false);
 
-	CloneBaseProperties(result);
+    CloneBaseProperties(result);
 
-	return result.detach();
+    return result.detach();
 }
 
 void IntegerObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
-	output->Write(m_value->ToString());
+    output->Write(m_value->ToString());
 }
 
 } // syntax

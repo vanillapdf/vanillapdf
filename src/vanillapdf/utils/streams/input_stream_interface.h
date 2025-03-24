@@ -10,27 +10,27 @@ namespace vanillapdf {
 
 class IInputStream : public virtual IUnknown {
 public:
-	virtual types::stream_size Read(char* result, types::stream_size len) = 0;
-	virtual types::stream_size Read(Buffer& result, types::stream_size len) = 0;
-	virtual BufferPtr Read(types::stream_size len) = 0;
-	virtual BufferPtr Readline(void) = 0;
-	virtual types::stream_size GetInputPosition() = 0;
-	virtual void SetInputPosition(types::stream_size pos) = 0;
-	virtual void SetInputPosition(types::stream_size pos, SeekDirection way) = 0;
+    virtual types::stream_size Read(char* result, types::stream_size len) = 0;
+    virtual types::stream_size Read(Buffer& result, types::stream_size len) = 0;
+    virtual BufferPtr Read(types::stream_size len) = 0;
+    virtual BufferPtr Readline(void) = 0;
+    virtual types::stream_size GetInputPosition() = 0;
+    virtual void SetInputPosition(types::stream_size pos) = 0;
+    virtual void SetInputPosition(types::stream_size pos, SeekDirection way) = 0;
 
-	virtual void ExclusiveInputLock() = 0;
-	virtual void ExclusiveInputUnlock() = 0;
+    virtual void ExclusiveInputLock() = 0;
+    virtual void ExclusiveInputUnlock() = 0;
 
-	virtual bool Eof(void) const = 0;
-	virtual bool Ignore(void) = 0;
-	virtual int Get(void) = 0;
-	virtual int Peek(void) = 0;
+    virtual bool Eof(void) const = 0;
+    virtual bool Ignore(void) = 0;
+    virtual int Get(void) = 0;
+    virtual int Peek(void) = 0;
 
-	virtual bool IsFail(void) const = 0;
+    virtual bool IsFail(void) const = 0;
 
-	virtual operator bool(void) const = 0;
+    virtual operator bool(void) const = 0;
 
-	virtual ~IInputStream() {};
+    virtual ~IInputStream() {};
 };
 
 } // vanillapdf

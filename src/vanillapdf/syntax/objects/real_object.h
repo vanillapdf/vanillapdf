@@ -9,41 +9,41 @@ namespace syntax {
 
 class RealObject : public NumericObject {
 public:
-	typedef types::real value_type;
+    typedef types::real value_type;
 
 public:
-	RealObject();
-	RealObject(const RealObject&) = delete;
+    RealObject();
+    RealObject(const RealObject&) = delete;
 
-	explicit RealObject(types::real value);
-	explicit RealObject(types::real value, uint32_t precision);
-	explicit RealObject(NumericObjectBackendPtr value);
+    explicit RealObject(types::real value);
+    explicit RealObject(types::real value, uint32_t precision);
+    explicit RealObject(NumericObjectBackendPtr value);
 
-	virtual Object::Type GetObjectType(void) const noexcept override;
-	virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
+    virtual Object::Type GetObjectType(void) const noexcept override;
+    virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 
-	operator value_type() const;
-	value_type GetValue(void) const;
-	void SetValue(value_type value);
+    operator value_type() const;
+    value_type GetValue(void) const;
+    void SetValue(value_type value);
 
-	virtual RealObject* Clone(void) const override;
-	virtual bool Equals(ObjectPtr other) const override;
+    virtual RealObject* Clone(void) const override;
+    virtual bool Equals(ObjectPtr other) const override;
 };
 
 inline Object::Type RealObject::GetObjectType(void) const noexcept {
-	return Object::Type::Real;
+    return Object::Type::Real;
 }
 
 inline RealObject::operator RealObject::value_type() const {
-	return m_value->GetRealValue();
+    return m_value->GetRealValue();
 }
 
 inline RealObject::value_type RealObject::GetValue(void) const {
-	return m_value->GetRealValue();
+    return m_value->GetRealValue();
 }
 
 inline void RealObject::SetValue(value_type value) {
-	m_value->SetRealValue(value);
+    m_value->SetRealValue(value);
 }
 
 } // syntax

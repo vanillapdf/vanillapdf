@@ -9,11 +9,11 @@ namespace vanillapdf {
 
 class WindowsUtils {
 public:
-	static std::wstring MultiByteToWideChar(const std::string& data);
-	static std::wstring MultiByteToWideChar(const std::string& data, int code_page);
+    static std::wstring MultiByteToWideChar(const std::string& data);
+    static std::wstring MultiByteToWideChar(const std::string& data, int code_page);
 
 private:
-	WindowsUtils() = default;
+    WindowsUtils() = default;
 };
 
 } // vanillapdf

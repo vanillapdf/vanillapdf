@@ -10,22 +10,22 @@ namespace contents {
 // Unknown operator from compatibility section
 class UnknownOperator : public OperatorBase {
 public:
-	UnknownOperator() = default;
-	explicit UnknownOperator(BufferPtr data) : _data(data) {}
+    UnknownOperator() = default;
+    explicit UnknownOperator(BufferPtr data) : _data(data) {}
 
-	virtual Type GetOperatorType(void) const noexcept override { return Type::Unknown; }
-	virtual BufferPtr Value(void) const override { return _data; }
+    virtual Type GetOperatorType(void) const noexcept override { return Type::Unknown; }
+    virtual BufferPtr Value(void) const override { return _data; }
 
 private:
-	BufferPtr _data;
+    BufferPtr _data;
 };
 
 #define GENERIC_OPERATOR_DEFINITION(Name, Val) \
 class Name##Operator : public OperatorBase \
 { \
 public: \
-	virtual Type GetOperatorType(void) const noexcept override { return Type::Name; } \
-	virtual BufferPtr Value(void) const override { return make_deferred_container<Buffer>(Val); } \
+    virtual Type GetOperatorType(void) const noexcept override { return Type::Name; } \
+    virtual BufferPtr Value(void) const override { return make_deferred_container<Buffer>(Val); } \
 };
 
 // General graphics state

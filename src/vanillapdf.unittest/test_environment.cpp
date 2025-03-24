@@ -21,19 +21,19 @@ TestEnvironment::~TestEnvironment() {
 
 void TestEnvironment::SetUp() {
 
-	BufferHandle* license_buffer = nullptr;
-	boolean_type is_valid = VANILLAPDF_RV_FALSE;
-	
-	ASSERT_EQ(Buffer_CreateFromData(UNIT_TEST_LICENSE, sizeof(UNIT_TEST_LICENSE), &license_buffer), VANILLAPDF_ERROR_SUCCESS);
-	ASSERT_NE(license_buffer, nullptr);
+    BufferHandle* license_buffer = nullptr;
+    boolean_type is_valid = VANILLAPDF_RV_FALSE;
+    
+    ASSERT_EQ(Buffer_CreateFromData(UNIT_TEST_LICENSE, sizeof(UNIT_TEST_LICENSE), &license_buffer), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(license_buffer, nullptr);
 
-	ASSERT_EQ(LicenseInfo_SetLicenseBuffer(license_buffer), VANILLAPDF_ERROR_SUCCESS);
-	ASSERT_EQ(LicenseInfo_IsValid(&is_valid), VANILLAPDF_ERROR_SUCCESS);
-	ASSERT_EQ(is_valid, VANILLAPDF_RV_TRUE);
-	
-	ASSERT_EQ(Buffer_Release(license_buffer), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LicenseInfo_SetLicenseBuffer(license_buffer), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LicenseInfo_IsValid(&is_valid), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(is_valid, VANILLAPDF_RV_TRUE);
+    
+    ASSERT_EQ(Buffer_Release(license_buffer), VANILLAPDF_ERROR_SUCCESS);
 }
 
 void TestEnvironment::TearDown() {
-	ASSERT_EQ(Logging_Shutdown(), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Logging_Shutdown(), VANILLAPDF_ERROR_SUCCESS);
 }
