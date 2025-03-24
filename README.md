@@ -2,6 +2,11 @@
 
 [![NuGet](https://img.shields.io/nuget/v/vanillapdf)](https://www.nuget.org/packages/vanillapdf) ![NuGet Downloads](https://img.shields.io/nuget/dt/vanillapdf)
 
+## NEW
+
+This repository has been recently open-sourced and might be missing a few pieces here and there.
+If you notice something is not aligned please let us know and we will fix it immediately.
+
 ## About
 
 Vanilla PDF is a cross-platform SDK (Software development kit) for creating and modifying PDF documents.
