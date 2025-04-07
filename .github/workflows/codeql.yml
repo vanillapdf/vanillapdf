@@ -46,7 +46,7 @@ jobs:
         - language: actions
           build-mode: none
         - language: c-cpp
-          build-mode: manual
+          build-mode: autobuild
         - language: python
           build-mode: none
         # CodeQL supports the following values keywords for 'language': 'actions', 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'swift'
@@ -60,6 +60,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        submodules: 'true'
 
     # Add any setup steps before running the `github/codeql-action/init` action.
     # This includes steps like installing compilers or runtimes (`actions/setup-node`
