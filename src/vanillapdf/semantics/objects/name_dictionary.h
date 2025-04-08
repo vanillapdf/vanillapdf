@@ -11,21 +11,21 @@ namespace semantics {
 
 class NameDictionary : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
-	explicit NameDictionary(syntax::DictionaryObjectPtr root);
+    explicit NameDictionary(syntax::DictionaryObjectPtr root);
 
-	bool Dests(OutputNameTreePtr<DestinationPtr>& result) const;
+    bool Dests(OutputNameTreePtr<DestinationPtr>& result) const;
 
-	//NameTreePtr AP(void) const;
-	//NameTreePtr JavaScript(void) const;
-	//NameTreePtr Pages(void) const;
-	//NameTreePtr Templates(void) const;
-	//NameTreePtr IDS(void) const;
-	//NameTreePtr URLS(void) const;
-	//NameTreePtr EmbeddedFiles(void) const;
-	//NameTreePtr Renditions(void) const;
+    //NameTreePtr AP(void) const;
+    //NameTreePtr JavaScript(void) const;
+    //NameTreePtr Pages(void) const;
+    //NameTreePtr Templates(void) const;
+    //NameTreePtr IDS(void) const;
+    //NameTreePtr URLS(void) const;
+    //NameTreePtr EmbeddedFiles(void) const;
+    //NameTreePtr Renditions(void) const;
 
 private:
-	static DestinationPtr DestinationConversionFunction(const syntax::ContainableObjectPtr& obj);
+    static DestinationPtr DestinationConversionFunction(const syntax::ContainableObjectPtr& obj);
 };
 
 } // semantics

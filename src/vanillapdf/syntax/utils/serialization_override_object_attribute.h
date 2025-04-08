@@ -10,26 +10,26 @@ namespace syntax {
 
 class SerializationOverrideAttribute : public BaseAttribute {
 public:
-	SerializationOverrideAttribute() = default;
+    SerializationOverrideAttribute() = default;
 
-	explicit SerializationOverrideAttribute(std::string_view value) : m_value(value) {
+    explicit SerializationOverrideAttribute(std::string_view value) : m_value(value) {
 
-	}
+    }
 
-	std::string GetValue(void) const {
-		return m_value;
-	}
+    std::string GetValue(void) const {
+        return m_value;
+    }
 
-	virtual Type GetType(void) const noexcept override {
-		return BaseAttribute::Type::SerializationOverride;
-	}
+    virtual Type GetType(void) const noexcept override {
+        return BaseAttribute::Type::SerializationOverride;
+    }
 
-	virtual SerializationOverrideAttribute* Clone(void) const override {
-		return pdf_new SerializationOverrideAttribute(m_value);
-	}
+    virtual SerializationOverrideAttribute* Clone(void) const override {
+        return pdf_new SerializationOverrideAttribute(m_value);
+    }
 
 private:
-	std::string m_value;
+    std::string m_value;
 };
 
 } // syntax

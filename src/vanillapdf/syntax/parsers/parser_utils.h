@@ -10,13 +10,13 @@ namespace syntax {
 
 class ParserUtils {
 public:
-	static BooleanObjectPtr CreateBoolean(TokenPtr token);
-	static types::big_int GetIntegerValue(TokenPtr token);
-	static IntegerObjectPtr CreateInteger(TokenPtr token);
-	static RealObjectPtr CreateReal(TokenPtr token);
-	static NameObjectPtr CreateName(TokenPtr token);
-	static HexadecimalStringObjectPtr CreateHexString(TokenPtr token);
-	static LiteralStringObjectPtr CreateLitString(TokenPtr token);
+    static BooleanObjectPtr CreateBoolean(TokenPtr token);
+    static types::big_int GetIntegerValue(TokenPtr token);
+    static IntegerObjectPtr CreateInteger(TokenPtr token);
+    static RealObjectPtr CreateReal(TokenPtr token);
+    static NameObjectPtr CreateName(TokenPtr token);
+    static HexadecimalStringObjectPtr CreateHexString(TokenPtr token);
+    static LiteralStringObjectPtr CreateLitString(TokenPtr token);
 };
 
 } // syntax

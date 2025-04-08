@@ -9,15 +9,15 @@ namespace semantics {
 
 class PageTreeNode : public PageNodeBase {
 public:
-	explicit PageTreeNode(syntax::DictionaryObjectPtr obj);
+    explicit PageTreeNode(syntax::DictionaryObjectPtr obj);
 
-	syntax::IntegerObjectPtr KidCount(void) const;
-	syntax::ArrayObjectPtr<PageNodeBasePtr> Kids(void) const;
+    syntax::IntegerObjectPtr KidCount(void) const;
+    syntax::ArrayObjectPtr<PageNodeBasePtr> Kids(void) const;
 
-	virtual NodeType GetNodeType(void) const noexcept override { return NodeType::Tree; }
+    virtual NodeType GetNodeType(void) const noexcept override { return NodeType::Tree; }
 
 private:
-	static PageNodeBasePtr ConvertFunction(syntax::DictionaryObjectPtr obj);
+    static PageNodeBasePtr ConvertFunction(syntax::DictionaryObjectPtr obj);
 };
 
 } // semantics

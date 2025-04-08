@@ -4,10 +4,10 @@
 namespace vanillapdf {
 
 enum class SeekDirection {
-	Undefined = 0,
-	Beginning,
-	Current,
-	End
+    Undefined = 0,
+    Beginning,
+    Current,
+    End
 };
 
 } // vanillapdf

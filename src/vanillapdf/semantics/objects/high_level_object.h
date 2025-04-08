@@ -9,16 +9,16 @@ namespace semantics {
 template <typename T>
 class HighLevelObject : public virtual IUnknown {
 public:
-	template <typename = typename std::enable_if<std::is_default_constructible<T>::value>::type>
-	HighLevelObject() {}
+    template <typename = typename std::enable_if<std::is_default_constructible<T>::value>::type>
+    HighLevelObject() {}
 
-	explicit HighLevelObject(const T& obj) : _obj(obj) {}
-	T GetObject(void) const { return _obj; }
+    explicit HighLevelObject(const T& obj) : _obj(obj) {}
+    T GetObject(void) const { return _obj; }
 
 protected:
-	T _obj;
+    T _obj;
 
-	void SetObject(const T& obj) { _obj = obj; }
+    void SetObject(const T& obj) { _obj = obj; }
 };
 
 } // semantics

@@ -19,46 +19,46 @@ namespace semantics {
 
 class Catalog : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
-	enum class PageLayoutType {
-		Undefined = 0,
-		SinglePage,
-		OneColumn,
-		TwoColumnLeft,
-		TwoColumnRight,
-		TwoPageLeft,
-		TwoPageRight
-	};
+    enum class PageLayoutType {
+        Undefined = 0,
+        SinglePage,
+        OneColumn,
+        TwoColumnLeft,
+        TwoColumnRight,
+        TwoPageLeft,
+        TwoPageRight
+    };
 
-	enum class PageModeType {
-		Undefined = 0,
-		UseNone,
-		UseOutlines,
-		UseThumbs,
-		FullScreen,
-		UseOC,
-		UseAttachments
-	};
+    enum class PageModeType {
+        Undefined = 0,
+        UseNone,
+        UseOutlines,
+        UseThumbs,
+        FullScreen,
+        UseOC,
+        UseAttachments
+    };
 
 public:
-	explicit Catalog(syntax::DictionaryObjectPtr root);
+    explicit Catalog(syntax::DictionaryObjectPtr root);
 
-	bool Pages(OutputPageTreePtr& result) const;
-	bool Version(Version& result) const;
-	bool Extensions(OutputDeveloperExtensionsPtr& result) const;
-	bool PageLabels(OutputPageLabelsPtr& result) const;
-	bool PageLayout(PageLayoutType& result) const;
-	bool ViewerPreferences(OutputViewerPreferencesPtr& result) const;
-	bool PageMode(PageModeType& result) const;
-	bool Outlines(OutputOutlinePtr& result) const;
-	bool NeedsRendering(syntax::BooleanObjectPtr& result) const;
-	bool Destinations(OutputNamedDestinationsPtr& result) const;
-	bool Names(OutputNameDictionaryPtr& result) const;
-	bool AcroForm(OuputInteractiveFormPtr& result) const;
+    bool Pages(OutputPageTreePtr& result) const;
+    bool Version(Version& result) const;
+    bool Extensions(OutputDeveloperExtensionsPtr& result) const;
+    bool PageLabels(OutputPageLabelsPtr& result) const;
+    bool PageLayout(PageLayoutType& result) const;
+    bool ViewerPreferences(OutputViewerPreferencesPtr& result) const;
+    bool PageMode(PageModeType& result) const;
+    bool Outlines(OutputOutlinePtr& result) const;
+    bool NeedsRendering(syntax::BooleanObjectPtr& result) const;
+    bool Destinations(OutputNamedDestinationsPtr& result) const;
+    bool Names(OutputNameDictionaryPtr& result) const;
+    bool AcroForm(OuputInteractiveFormPtr& result) const;
 
-	PageTreePtr CreatePages();
+    PageTreePtr CreatePages();
 
 private:
-	mutable OutputPageTreePtr m_pages;
+    mutable OutputPageTreePtr m_pages;
 };
 
 } // semantics

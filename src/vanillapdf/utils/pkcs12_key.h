@@ -10,25 +10,25 @@ namespace vanillapdf {
 
 class PKCS12Key : public IEncryptionKey, public ISigningKey {
 public:
-	explicit PKCS12Key(const Buffer& data);
-	explicit PKCS12Key(const std::string& path);
-	PKCS12Key(const std::string& path, const Buffer& password);
-	PKCS12Key(const Buffer& data, const Buffer& password);
+    explicit PKCS12Key(const Buffer& data);
+    explicit PKCS12Key(const std::string& path);
+    PKCS12Key(const std::string& path, const Buffer& password);
+    PKCS12Key(const Buffer& data, const Buffer& password);
 
-	// IEncryptionKey
-	BufferPtr Decrypt(const Buffer& data) override;
-	bool ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const override;
+    // IEncryptionKey
+    BufferPtr Decrypt(const Buffer& data) override;
+    bool ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const override;
 
-	// ISigningKey
-	void SignInitialize(MessageDigestAlgorithm algorithm) override;
-	void SignUpdate(BufferPtr data) override;
-	void SignUpdate(IInputStreamPtr data, types::stream_size length) override;
-	BufferPtr SignFinal() override;
-	void SignCleanup() override;
+    // ISigningKey
+    void SignInitialize(MessageDigestAlgorithm algorithm) override;
+    void SignUpdate(BufferPtr data) override;
+    void SignUpdate(IInputStreamPtr data, types::stream_size length) override;
+    BufferPtr SignFinal() override;
+    void SignCleanup() override;
 
 private:
-	class PKCS12KeyImpl;
-	std::shared_ptr<PKCS12KeyImpl> m_impl;
+    class PKCS12KeyImpl;
+    std::shared_ptr<PKCS12KeyImpl> m_impl;
 };
 
 } // vanillapdf

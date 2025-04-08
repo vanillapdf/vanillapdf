@@ -10,21 +10,21 @@ namespace semantics {
 
 class PageContents : public HighLevelObject<syntax::ObjectPtr>, public IModifyObserver {
 public:
-	explicit PageContents(syntax::StreamObjectPtr obj);
-	explicit PageContents(syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> obj);
-	~PageContents();
+    explicit PageContents(syntax::StreamObjectPtr obj);
+    explicit PageContents(syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> obj);
+    ~PageContents();
 
-	contents::BaseInstructionCollectionPtr Instructions(void) const;
+    contents::BaseInstructionCollectionPtr Instructions(void) const;
 
-	virtual void ObserveeChanged(const IModifyObservable*) override;
+    virtual void ObserveeChanged(const IModifyObservable*) override;
 
-	bool IsDirty() const;
-	void SetDirty(bool dirty);
+    bool IsDirty() const;
+    void SetDirty(bool dirty);
 
-	bool RecalculateStreamData();
+    bool RecalculateStreamData();
 
 private:
-	mutable contents::BaseInstructionCollectionPtr m_instructions;
+    mutable contents::BaseInstructionCollectionPtr m_instructions;
 };
 
 } // semantics

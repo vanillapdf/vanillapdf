@@ -23,38 +23,38 @@ BT
 ET)";
 
 static void BM_Contents_ParseContentStream(benchmark::State& state) {
-	FileHandle* test_file = nullptr;
-	InputOutputStreamHandle* file_stream = nullptr;
+    FileHandle* test_file = nullptr;
+    InputOutputStreamHandle* file_stream = nullptr;
 
-	InputOutputStreamHandle* content_io_stream = nullptr;
-	InputStreamHandle* content_input_stream = nullptr;
+    InputOutputStreamHandle* content_io_stream = nullptr;
+    InputStreamHandle* content_input_stream = nullptr;
 
-	InputOutputStream_CreateFromMemory(&file_stream);
-	File_OpenStream(file_stream, "temp", &test_file);
+    InputOutputStream_CreateFromMemory(&file_stream);
+    File_OpenStream(file_stream, "temp", &test_file);
 
-	InputOutputStream_CreateFromMemory(&content_io_stream);
-	InputOutputStream_WriteString(content_io_stream, SAMPLE_CONTENT_STREAM);
-	InputOutputStream_ToInputStream(content_io_stream, &content_input_stream);
+    InputOutputStream_CreateFromMemory(&content_io_stream);
+    InputOutputStream_WriteString(content_io_stream, SAMPLE_CONTENT_STREAM);
+    InputOutputStream_ToInputStream(content_io_stream, &content_input_stream);
 
-	for (auto _ : state) {
-		ContentParserHandle* content_parser = nullptr;
-		ContentInstructionCollectionHandle* content_instruction_collection = nullptr;
+    for (auto _ : state) {
+        ContentParserHandle* content_parser = nullptr;
+        ContentInstructionCollectionHandle* content_instruction_collection = nullptr;
 
-		InputStream_SetInputPosition(content_input_stream, 0);
+        InputStream_SetInputPosition(content_input_stream, 0);
 
-		ContentParser_Create(test_file, content_input_stream, &content_parser);
-		ContentParser_ReadInstructionCollection(content_parser, &content_instruction_collection);
+        ContentParser_Create(test_file, content_input_stream, &content_parser);
+        ContentParser_ReadInstructionCollection(content_parser, &content_instruction_collection);
 
-		ContentInstructionCollection_Release(content_instruction_collection);
-		ContentParser_Release(content_parser);
-	}
+        ContentInstructionCollection_Release(content_instruction_collection);
+        ContentParser_Release(content_parser);
+    }
 
-	// Cleanup
-	InputStream_Release(content_input_stream);
-	InputOutputStream_Release(content_io_stream);
+    // Cleanup
+    InputStream_Release(content_input_stream);
+    InputOutputStream_Release(content_io_stream);
 
-	File_Release(test_file);
-	InputOutputStream_Release(file_stream);
+    File_Release(test_file);
+    InputOutputStream_Release(file_stream);
 }
 
 BENCHMARK(BM_Contents_ParseContentStream);
@@ -84,20 +84,20 @@ startxref
 )";
 
 static void BM_FileSaveParse(benchmark::State& state) {
-	for (auto _ : state) {
-		FileHandle* test_file = nullptr;
-		InputOutputStreamHandle* io_stream = nullptr;
+    for (auto _ : state) {
+        FileHandle* test_file = nullptr;
+        InputOutputStreamHandle* io_stream = nullptr;
 
-		InputOutputStream_CreateFromMemory(&io_stream);
-		InputOutputStream_WriteString(io_stream, MINIMALIST_DOCUMENT);
+        InputOutputStream_CreateFromMemory(&io_stream);
+        InputOutputStream_WriteString(io_stream, MINIMALIST_DOCUMENT);
 
-		File_OpenStream(io_stream, "temp", &test_file);
-		File_Initialize(test_file);
-		File_Release(test_file);
+        File_OpenStream(io_stream, "temp", &test_file);
+        File_Initialize(test_file);
+        File_Release(test_file);
 
-		// Cleanup
-		InputOutputStream_Release(io_stream);
-	}
+        // Cleanup
+        InputOutputStream_Release(io_stream);
+    }
 }
 
 BENCHMARK(BM_FileSaveParse);

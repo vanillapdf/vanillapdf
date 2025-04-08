@@ -9,7 +9,7 @@ ExceptionBase::ExceptionBase(const char * const & msg) : m_msg(msg) {}
 ExceptionBase::~ExceptionBase() {}
 
 const char * ExceptionBase::what() const noexcept {
-	return m_msg.c_str();
+    return m_msg.c_str();
 }
 
 GeneralException::GeneralException(const char * const & msg) : ExceptionBase(msg) {}
@@ -26,7 +26,7 @@ ConversionException::ConversionException(const std::string& msg) : ExceptionBase
 
 ZlibDataErrorException::ZlibDataErrorException(types::stream_size size) : m_size(size) {}
 ZlibDataErrorException::ZlibDataErrorException(types::stream_size size, const std::string& message) : ZlibDataErrorException(size) {
-	m_msg = "Zlib encountered corrupted data after " + std::to_string(size) + " bytes. Error: " + message;
+    m_msg = "Zlib encountered corrupted data after " + std::to_string(size) + " bytes. Error: " + message;
 }
 
 InvalidLicenseException::InvalidLicenseException(const char * const & msg) : ExceptionBase(msg) {}

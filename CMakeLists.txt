@@ -3,21 +3,21 @@ cmake_minimum_required(VERSION 3.5)
 
 # Minimum version is 2.8.4 due to Cygwin warning:
 
-	# CMake no longer defines WIN32 on Cygwin!
+    # CMake no longer defines WIN32 on Cygwin!
 
-	# (1) If you are just trying to build this project, ignore this warning or
-	# quiet it by setting CMAKE_LEGACY_CYGWIN_WIN32=0 in your environment or in
-	# the CMake cache.  If later configuration or build errors occur then this
-	# project may have been written under the assumption that Cygwin is WIN32.
-	# In that case, set CMAKE_LEGACY_CYGWIN_WIN32=1 instead.
+    # (1) If you are just trying to build this project, ignore this warning or
+    # quiet it by setting CMAKE_LEGACY_CYGWIN_WIN32=0 in your environment or in
+    # the CMake cache.  If later configuration or build errors occur then this
+    # project may have been written under the assumption that Cygwin is WIN32.
+    # In that case, set CMAKE_LEGACY_CYGWIN_WIN32=1 instead.
 
-	# (2) If you are developing this project, add the line
+    # (2) If you are developing this project, add the line
 
-	  # set(CMAKE_LEGACY_CYGWIN_WIN32 0) # Remove when CMake >= 2.8.4 is required
+      # set(CMAKE_LEGACY_CYGWIN_WIN32 0) # Remove when CMake >= 2.8.4 is required
 
-	# at the top of your top-level CMakeLists.txt file or set the minimum
-	# required version of CMake to 2.8.4 or higher.  Then teach your project to
-	# build on Cygwin without WIN32.
+    # at the top of your top-level CMakeLists.txt file or set the minimum
+    # required version of CMake to 2.8.4 or higher.  Then teach your project to
+    # build on Cygwin without WIN32.
 
 # Note: This needs to be included before defining the main project
 # Check for VCPKG - C++ package management system
@@ -65,11 +65,11 @@ add_definitions("-DVANILLAPDF_CONFIGURATION_DLL")
 set(VANILLAPDF_FORCE_32_BIT CACHE BOOL "OFF")
 
 if(VANILLAPDF_FORCE_32_BIT)
-	message("Regardless of architecture, forcing 32-bit output binary")
+    message("Regardless of architecture, forcing 32-bit output binary")
 
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -m32")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -m32")
 endif(VANILLAPDF_FORCE_32_BIT)
 
 if(NOT CMAKE_BUILD_TYPE)

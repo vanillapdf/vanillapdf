@@ -9,28 +9,28 @@ namespace syntax {
 class ObjectStreamMetadataAttribute : public BaseAttribute {
 
 public:
-	bool GetInitialized() const noexcept {
-		return m_initialized;
-	}
+    bool GetInitialized() const noexcept {
+        return m_initialized;
+    }
 
-	void SetInitialized(bool value) noexcept {
-		m_initialized = value;
-	}
+    void SetInitialized(bool value) noexcept {
+        m_initialized = value;
+    }
 
-	virtual Type GetType(void) const noexcept override {
-		return Type::ObjectStreamMetadata;
-	}
+    virtual Type GetType(void) const noexcept override {
+        return Type::ObjectStreamMetadata;
+    }
 
-	virtual ObjectStreamMetadataAttribute* Clone(void) const override {
-		auto result = pdf_new ObjectStreamMetadataAttribute();
+    virtual ObjectStreamMetadataAttribute* Clone(void) const override {
+        auto result = pdf_new ObjectStreamMetadataAttribute();
 
-		result->SetInitialized(m_initialized);
+        result->SetInitialized(m_initialized);
 
-		return result;
-	}
+        return result;
+    }
 
 private:
-	bool m_initialized = false;
+    bool m_initialized = false;
 };
 
 } // syntax

@@ -11,8 +11,8 @@ namespace contents {
 
 class CharacterMapParser : public syntax::ParserBase {
 public:
-	CharacterMapParser(WeakReference<syntax::File> file, IInputStreamPtr stream);
-	CharacterMapData ReadCharacterMapData(void);
+    CharacterMapParser(WeakReference<syntax::File> file, IInputStreamPtr stream);
+    CharacterMapData ReadCharacterMapData(void);
 };
 
 } // contents

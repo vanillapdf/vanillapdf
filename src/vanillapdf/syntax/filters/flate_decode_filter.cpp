@@ -15,183 +15,183 @@ namespace syntax {
 
 // https://www.w3.org/TR/PNG-Filters.html
 enum PNGFilterTypes {
-	None = 0,
-	Sub = 1,
-	Up = 2,
-	Average = 3,
-	Paeth = 4
+    None = 0,
+    Sub = 1,
+    Up = 2,
+    Average = 3,
+    Paeth = 4
 };
 
 BufferPtr FlateDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters, AttributeListPtr /* = AttributeListPtr() */) const {
-	return ZlibWrapper::Deflate(src);
+    return ZlibWrapper::Deflate(src);
 }
 
 BufferPtr FlateDecodeFilter::Decode(BufferPtr src, DictionaryObjectPtr parameters, AttributeListPtr /* = AttributeListPtr() */) const {
-	auto dest = ZlibWrapper::Inflate(src);
-	return ApplyPredictor(dest, parameters);
+    auto dest = ZlibWrapper::Inflate(src);
+    return ApplyPredictor(dest, parameters);
 }
 
 BufferPtr FlateDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters, AttributeListPtr /* = AttributeListPtr() */) const {
-	return ZlibWrapper::Deflate(src, length);
+    return ZlibWrapper::Deflate(src, length);
 }
 
 BufferPtr FlateDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters, AttributeListPtr /*= AttributeListPtr() */) const {
-	auto dest = ZlibWrapper::Inflate(src, length);
-	return ApplyPredictor(dest, parameters);
+    auto dest = ZlibWrapper::Inflate(src, length);
+    return ApplyPredictor(dest, parameters);
 }
 
 BufferPtr FlateDecodeFilter::ApplyPredictor(BufferPtr src, DictionaryObjectPtr parameters) const {
-	auto stream = src->ToInputStream();
-	return ApplyPredictor(stream, src->size(), parameters);
+    auto stream = src->ToInputStream();
+    return ApplyPredictor(stream, src->size(), parameters);
 }
 
 BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters) const {
-	IntegerObjectPtr predictor = make_deferred<IntegerObject>(1);
-	if (parameters->Contains(constant::Name::Predictor)) {
-		predictor = parameters->FindAs<IntegerObjectPtr>(constant::Name::Predictor);
-		assert(*predictor == 1 || *predictor == 2 || (*predictor >= 10 && *predictor <= 15));
-	}
+    IntegerObjectPtr predictor = make_deferred<IntegerObject>(1);
+    if (parameters->Contains(constant::Name::Predictor)) {
+        predictor = parameters->FindAs<IntegerObjectPtr>(constant::Name::Predictor);
+        assert(*predictor == 1 || *predictor == 2 || (*predictor >= 10 && *predictor <= 15));
+    }
 
-	// No prediction was used
-	if (predictor == 1) {
-		auto length_converted = ValueConvertUtils::SafeConvert<types::size_type>(length);
-		return src->Read(length_converted);
-	}
+    // No prediction was used
+    if (predictor == 1) {
+        auto length_converted = ValueConvertUtils::SafeConvert<types::size_type>(length);
+        return src->Read(length_converted);
+    }
 
-	IntegerObjectPtr colors = make_deferred<IntegerObject>(1);
-	if (parameters->Contains(constant::Name::Colors)) {
-		colors = parameters->FindAs<IntegerObjectPtr>(constant::Name::Colors);
-		assert(*colors >= 1);
-	}
+    IntegerObjectPtr colors = make_deferred<IntegerObject>(1);
+    if (parameters->Contains(constant::Name::Colors)) {
+        colors = parameters->FindAs<IntegerObjectPtr>(constant::Name::Colors);
+        assert(*colors >= 1);
+    }
 
-	syntax::IntegerObjectPtr bits = make_deferred<IntegerObject>(8);
-	if (parameters->Contains(constant::Name::BitsPerComponent)) {
-		bits = parameters->FindAs<IntegerObjectPtr>(constant::Name::BitsPerComponent);
-		assert(*bits == 1 || *bits == 2 || *bits == 4 || *bits == 8);
-	}
+    syntax::IntegerObjectPtr bits = make_deferred<IntegerObject>(8);
+    if (parameters->Contains(constant::Name::BitsPerComponent)) {
+        bits = parameters->FindAs<IntegerObjectPtr>(constant::Name::BitsPerComponent);
+        assert(*bits == 1 || *bits == 2 || *bits == 4 || *bits == 8);
+    }
 
-	IntegerObjectPtr columns = make_deferred<IntegerObject>(1);
-	if (parameters->Contains(constant::Name::Columns)) {
-		columns = parameters->FindAs<IntegerObjectPtr>(constant::Name::Columns);
-	}
+    IntegerObjectPtr columns = make_deferred<IntegerObject>(1);
+    if (parameters->Contains(constant::Name::Columns)) {
+        columns = parameters->FindAs<IntegerObjectPtr>(constant::Name::Columns);
+    }
 
-	IntegerObjectPtr change = make_deferred<IntegerObject>(1);
-	if (parameters->Contains(constant::Name::EarlyChange)) {
-		change = parameters->FindAs<IntegerObjectPtr>(constant::Name::EarlyChange);
-	}
+    IntegerObjectPtr change = make_deferred<IntegerObject>(1);
+    if (parameters->Contains(constant::Name::EarlyChange)) {
+        change = parameters->FindAs<IntegerObjectPtr>(constant::Name::EarlyChange);
+    }
 
-	if (*predictor == 2) {
-		throw NotSupportedException("TIFF predictor is currently not supported");
-	} else if (*predictor < 10) {
-		throw GeneralException("Unknown predictor type");
-	}
+    if (*predictor == 2) {
+        throw NotSupportedException("TIFF predictor is currently not supported");
+    } else if (*predictor < 10) {
+        throw GeneralException("Unknown predictor type");
+    }
 
-	uint32_t colors_int = colors->SafeConvert<uint32_t>();
-	uint32_t columns_int = columns->SafeConvert<uint32_t>();
-	uint32_t bits_int = bits->SafeConvert<uint32_t>();
+    uint32_t colors_int = colors->SafeConvert<uint32_t>();
+    uint32_t columns_int = columns->SafeConvert<uint32_t>();
+    uint32_t bits_int = bits->SafeConvert<uint32_t>();
 
-	// Division should be safe?
-	uint32_t bytes_per_pixel = SafeMultiply<uint32_t>(colors_int, bits_int) / 8;
+    // Division should be safe?
+    uint32_t bytes_per_pixel = SafeMultiply<uint32_t>(colors_int, bits_int) / 8;
 
-	uint32_t colors_columns = SafeMultiply<uint32_t>(colors_int, columns_int);
-	uint32_t colors_columns_bits = SafeMultiply<uint32_t>(colors_columns, bits_int);
-	uint32_t bytes_per_row = SafeAddition<uint32_t>(colors_columns_bits, 7) / 8;
+    uint32_t colors_columns = SafeMultiply<uint32_t>(colors_int, columns_int);
+    uint32_t colors_columns_bits = SafeMultiply<uint32_t>(colors_columns, bits_int);
+    uint32_t bytes_per_row = SafeAddition<uint32_t>(colors_columns_bits, 7) / 8;
 
-	BufferPtr result;
-	std::vector<uint8_t> current(bytes_per_row);
-	std::vector<uint8_t> prior(bytes_per_row);
+    BufferPtr result;
+    std::vector<uint8_t> current(bytes_per_row);
+    std::vector<uint8_t> prior(bytes_per_row);
 
-	while (src->Peek() != std::char_traits<char>::eof()) {
-		auto filter = src->Get();
-		auto read = src->Read(reinterpret_cast<char*>(current.data()), bytes_per_row);
+    while (src->Peek() != std::char_traits<char>::eof()) {
+        auto filter = src->Get();
+        auto read = src->Read(reinterpret_cast<char*>(current.data()), bytes_per_row);
 
-		assert(read == bytes_per_row);
-		if (read != bytes_per_row) {
-			throw GeneralException("Corrupted deflate compressed data");
-		}
+        assert(read == bytes_per_row);
+        if (read != bytes_per_row) {
+            throw GeneralException("Corrupted deflate compressed data");
+        }
 
-		switch (filter) {
-			case PNGFilterTypes::None:
-				break;
-			case PNGFilterTypes::Sub:
-				assert(bytes_per_row <= current.size());
-				for (uint32_t i = 0; (bytes_per_pixel + i) < bytes_per_row; i++) {
-					current[bytes_per_pixel + i] += current[i];
-				}
+        switch (filter) {
+            case PNGFilterTypes::None:
+                break;
+            case PNGFilterTypes::Sub:
+                assert(bytes_per_row <= current.size());
+                for (uint32_t i = 0; (bytes_per_pixel + i) < bytes_per_row; i++) {
+                    current[bytes_per_pixel + i] += current[i];
+                }
 
-				break;
-			case PNGFilterTypes::Up:
-				assert(bytes_per_row <= prior.size());
-				assert(bytes_per_row <= current.size());
-				for (uint32_t i = 0; i < bytes_per_row; i++) {
-					current[i] += prior[i];
-				}
+                break;
+            case PNGFilterTypes::Up:
+                assert(bytes_per_row <= prior.size());
+                assert(bytes_per_row <= current.size());
+                for (uint32_t i = 0; i < bytes_per_row; i++) {
+                    current[i] += prior[i];
+                }
 
-				break;
-			case PNGFilterTypes::Average:
-				assert(bytes_per_pixel <= prior.size());
-				assert(bytes_per_pixel <= current.size());
-				for (uint32_t i = 0; i < bytes_per_pixel; i++) {
-					current[i] += (prior[i] / 2);
-				}
+                break;
+            case PNGFilterTypes::Average:
+                assert(bytes_per_pixel <= prior.size());
+                assert(bytes_per_pixel <= current.size());
+                for (uint32_t i = 0; i < bytes_per_pixel; i++) {
+                    current[i] += (prior[i] / 2);
+                }
 
-				assert(bytes_per_row <= prior.size());
-				assert(bytes_per_row <= current.size());
-				for (uint32_t i = 0; (bytes_per_pixel + i) < bytes_per_row; i++) {
-					uint8_t current_byte = current[i] & 0xFF;
-					uint8_t prior_byte = prior[bytes_per_pixel + i] & 0xFF;
+                assert(bytes_per_row <= prior.size());
+                assert(bytes_per_row <= current.size());
+                for (uint32_t i = 0; (bytes_per_pixel + i) < bytes_per_row; i++) {
+                    uint8_t current_byte = current[i] & 0xFF;
+                    uint8_t prior_byte = prior[bytes_per_pixel + i] & 0xFF;
 
-					// Note:
-					// There used to be safe addition, however this addition is allowed to overflow
-					uint32_t added_value = (current_byte + prior_byte);
-					auto divided_value = (added_value / 2.0f);
-					auto rounded_value = std::floor(divided_value);
-					current[i] += static_cast<uint8_t>(rounded_value);
-				}
+                    // Note:
+                    // There used to be safe addition, however this addition is allowed to overflow
+                    uint32_t added_value = (current_byte + prior_byte);
+                    auto divided_value = (added_value / 2.0f);
+                    auto rounded_value = std::floor(divided_value);
+                    current[i] += static_cast<uint8_t>(rounded_value);
+                }
 
-				break;
-			case PNGFilterTypes::Paeth:
-				assert(bytes_per_pixel <= prior.size());
-				assert(bytes_per_pixel <= current.size());
-				for (uint32_t i = 0; i < bytes_per_pixel; i++) {
-					current[i] += prior[i];
-				}
+                break;
+            case PNGFilterTypes::Paeth:
+                assert(bytes_per_pixel <= prior.size());
+                assert(bytes_per_pixel <= current.size());
+                for (uint32_t i = 0; i < bytes_per_pixel; i++) {
+                    current[i] += prior[i];
+                }
 
-				assert(bytes_per_row <= prior.size());
-				assert(bytes_per_row <= current.size());
-				for (uint32_t i = 0; (bytes_per_pixel + i) < bytes_per_row; i++) {
-					uint8_t a = current[i] & 0xFF;
-					uint8_t b = prior[bytes_per_pixel + i] & 0xFF;
-					uint8_t c = prior[i] & 0xFF;
+                assert(bytes_per_row <= prior.size());
+                assert(bytes_per_row <= current.size());
+                for (uint32_t i = 0; (bytes_per_pixel + i) < bytes_per_row; i++) {
+                    uint8_t a = current[i] & 0xFF;
+                    uint8_t b = prior[bytes_per_pixel + i] & 0xFF;
+                    uint8_t c = prior[i] & 0xFF;
 
-					int32_t p = a + b - c;
-					int32_t pa = std::abs(p - a);
-					int32_t pb = std::abs(p - b);
-					int32_t pc = std::abs(p - c);
+                    int32_t p = a + b - c;
+                    int32_t pa = std::abs(p - a);
+                    int32_t pb = std::abs(p - b);
+                    int32_t pc = std::abs(p - c);
 
-					uint8_t value;
-					if ((pa <= pb) && (pa <= pc)) {
-						value = a;
-					} else if (pb <= pc) {
-						value = b;
-					} else {
-						value = c;
-					}
+                    uint8_t value;
+                    if ((pa <= pb) && (pa <= pc)) {
+                        value = a;
+                    } else if (pb <= pc) {
+                        value = b;
+                    } else {
+                        value = c;
+                    }
 
-					current[i] += value;
-				}
+                    current[i] += value;
+                }
 
-				break;
-			default:
-				spdlog::error("Unknown PNG filter type: {}", filter);
-				break;
-		}
+                break;
+            default:
+                spdlog::error("Unknown PNG filter type: {}", filter);
+                break;
+        }
 
-		result->insert(result.end(), current.begin(), current.end());
-		prior.assign(current.begin(), current.end());
-	}
+        result->insert(result.end(), current.begin(), current.end());
+        prior.assign(current.begin(), current.end());
+    }
 
-	return result;
+    return result;
 }
 
 } // syntax

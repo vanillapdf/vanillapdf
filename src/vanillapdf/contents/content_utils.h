@@ -9,11 +9,11 @@ namespace contents {
 
 class ContentUtils {
 public:
-	template <typename T>
-	static T ConvertTo(const OperationBasePtr& obj) { return ConvertUtils<OperationBasePtr>::ConvertTo<T>(obj); }
+    template <typename T>
+    static T ConvertTo(const OperationBasePtr& obj) { return ConvertUtils<OperationBasePtr>::ConvertTo<T>(obj); }
 
-	template <typename T>
-	static bool IsType(const OperationBasePtr& obj) { return ConvertUtils<OperationBasePtr>::IsType<T>(obj); }
+    template <typename T>
+    static bool IsType(const OperationBasePtr& obj) { return ConvertUtils<OperationBasePtr>::IsType<T>(obj); }
 };
 
 } // contents

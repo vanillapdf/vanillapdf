@@ -10,34 +10,34 @@ namespace syntax {
 
 class TokenDictionaryBase {
 public:
-	virtual ~TokenDictionaryBase();
-	virtual void Initialize() = 0;
-	Token::Type Find(const std::string& set);
+    virtual ~TokenDictionaryBase();
+    virtual void Initialize() = 0;
+    Token::Type Find(const std::string& set);
 
 protected:
-	bool m_initialized = false;
-	//Tree m_dictionary;
-	std::map<std::string, Token::Type> m_dictionary;
+    bool m_initialized = false;
+    //Tree m_dictionary;
+    std::map<std::string, Token::Type> m_dictionary;
 };
 
 class ParserTokenDictionary : public TokenDictionaryBase {
 public:
-	virtual void Initialize() override;
+    virtual void Initialize() override;
 };
 
 class ReverseParserTokenDictionary : public TokenDictionaryBase {
 public:
-	virtual void Initialize() override;
+    virtual void Initialize() override;
 };
 
 class ContentStreamTokenDictionary : public ParserTokenDictionary {
 public:
-	virtual void Initialize() override;
+    virtual void Initialize() override;
 };
 
 class CharacterMapTokenDictionary : public ParserTokenDictionary {
 public:
-	virtual void Initialize() override;
+    virtual void Initialize() override;
 };
 
 } // syntax

@@ -9,132 +9,132 @@ using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 
 VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Create(ArrayObjectHandle** result) {
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try {
-		auto buffer = make_deferred<MixedArrayObject>();
-		auto ptr = buffer.AddRefGet();
-		*result = reinterpret_cast<ArrayObjectHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+    try {
+        auto buffer = make_deferred<MixedArrayObject>();
+        auto ptr = buffer.AddRefGet();
+        *result = reinterpret_cast<ArrayObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_GetValue(ArrayObjectHandle* handle, size_type at, ObjectHandle** result)
 {
-	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	try
-	{
-		auto direct = obj->GetValue(at);
-		auto base = ObjectUtils::GetObjectBase(direct);
-		auto ptr = base.AddRefGet();
-		*result = reinterpret_cast<ObjectHandle*>(ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+    try
+    {
+        auto direct = obj->GetValue(at);
+        auto base = ObjectUtils::GetObjectBase(direct);
+        auto ptr = base.AddRefGet();
+        *result = reinterpret_cast<ObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_SetValue(ArrayObjectHandle* handle, size_type at, ObjectHandle* value) {
-	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
-	Object* data = reinterpret_cast<Object*>(value);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+    MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
+    Object* data = reinterpret_cast<Object*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
 
-	try {
-		auto containable_ptr = static_cast<ContainableObject*>(data);
-		if (containable_ptr == nullptr) {
-			return VANILLAPDF_ERROR_PARAMETER_VALUE;
-		}
+    try {
+        auto containable_ptr = static_cast<ContainableObject*>(data);
+        if (containable_ptr == nullptr) {
+            return VANILLAPDF_ERROR_PARAMETER_VALUE;
+        }
 
-		obj->SetValue(at, containable_ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+        obj->SetValue(at, containable_ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_GetSize(ArrayObjectHandle* handle, size_type* result)
 {
-	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-	*result = obj->GetSize();
-	return VANILLAPDF_ERROR_SUCCESS;
+    *result = obj->GetSize();
+    return VANILLAPDF_ERROR_SUCCESS;
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Append(ArrayObjectHandle* handle, ObjectHandle* value)
 {
-	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
-	Object* data = reinterpret_cast<Object*>(value);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+    MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
+    Object* data = reinterpret_cast<Object*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
 
-	try
-	{
-		auto containable_ptr = static_cast<ContainableObject*>(data);
-		if (containable_ptr == nullptr) {
-			return VANILLAPDF_ERROR_PARAMETER_VALUE;
-		}
+    try
+    {
+        auto containable_ptr = static_cast<ContainableObject*>(data);
+        if (containable_ptr == nullptr) {
+            return VANILLAPDF_ERROR_PARAMETER_VALUE;
+        }
 
-		obj->Append(containable_ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+        obj->Append(containable_ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Insert(ArrayObjectHandle* handle, size_type at, ObjectHandle* value)
 {
-	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
-	Object* data = reinterpret_cast<Object*>(value);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+    MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
+    Object* data = reinterpret_cast<Object*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
 
-	try
-	{
-		auto containable_ptr = static_cast<ContainableObject*>(data);
-		if (containable_ptr == nullptr) {
-			return VANILLAPDF_ERROR_PARAMETER_VALUE;
-		}
+    try
+    {
+        auto containable_ptr = static_cast<ContainableObject*>(data);
+        if (containable_ptr == nullptr) {
+            return VANILLAPDF_ERROR_PARAMETER_VALUE;
+        }
 
-		obj->Insert(at, containable_ptr);
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+        obj->Insert(at, containable_ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayObjectHandle* handle, size_type at)
 {
-	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
-	try
-	{
-		bool removed = obj->Remove(at);
-		if (!removed) {
-			return VANILLAPDF_ERROR_OBJECT_MISSING;
-		}
+    try
+    {
+        bool removed = obj->Remove(at);
+        if (!removed) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
 
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Clear(ArrayObjectHandle* handle) {
-	MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
-	RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    MixedArrayObject* obj = reinterpret_cast<MixedArrayObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
-	try {
-		obj->Clear();
-		return VANILLAPDF_ERROR_SUCCESS;
-	} CATCH_VANILLAPDF_EXCEPTIONS
+    try {
+        obj->Clear();
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_ToObject(ArrayObjectHandle* handle, ObjectHandle** result) {
-	return SafeObjectConvert<MixedArrayObject, Object, ArrayObjectHandle, ObjectHandle>(handle, result);
+    return SafeObjectConvert<MixedArrayObject, Object, ArrayObjectHandle, ObjectHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_FromObject(ObjectHandle* handle, ArrayObjectHandle** result) {
-	return SafeObjectConvert<Object, MixedArrayObject, ObjectHandle, ArrayObjectHandle>(handle, result);
+    return SafeObjectConvert<Object, MixedArrayObject, ObjectHandle, ArrayObjectHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Release(ArrayObjectHandle* handle)
 {
-	return ObjectRelease<MixedArrayObject, ArrayObjectHandle>(handle);
+    return ObjectRelease<MixedArrayObject, ArrayObjectHandle>(handle);
 }

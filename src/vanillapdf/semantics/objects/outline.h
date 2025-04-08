@@ -14,86 +14,86 @@ namespace semantics {
 
 class OutlineItemColor : public HighLevelObject<syntax::ArrayObjectPtr<syntax::RealObjectPtr>> {
 public:
-	explicit OutlineItemColor(syntax::ArrayObjectPtr<syntax::RealObjectPtr> rgb);
+    explicit OutlineItemColor(syntax::ArrayObjectPtr<syntax::RealObjectPtr> rgb);
 
-	syntax::RealObjectPtr Red(void) const;
-	syntax::RealObjectPtr Green(void) const;
-	syntax::RealObjectPtr Blue(void) const;
+    syntax::RealObjectPtr Red(void) const;
+    syntax::RealObjectPtr Green(void) const;
+    syntax::RealObjectPtr Blue(void) const;
 };
 
 class OutlineItemFlags : public HighLevelObject<syntax::IntegerObjectPtr> {
 public:
-	explicit OutlineItemFlags(syntax::IntegerObjectPtr value);
+    explicit OutlineItemFlags(syntax::IntegerObjectPtr value);
 
-	bool Italic(void) const;
-	bool Bold(void) const;
+    bool Italic(void) const;
+    bool Bold(void) const;
 };
 
 class OutlineBase : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
-	enum class Type {
-		Undefined = 0,
-		Outline,
-		Item
-	};
+    enum class Type {
+        Undefined = 0,
+        Outline,
+        Item
+    };
 
-	explicit OutlineBase(syntax::DictionaryObjectPtr root);
-	virtual Type GetOutlineType(void) const noexcept = 0;
+    explicit OutlineBase(syntax::DictionaryObjectPtr root);
+    virtual Type GetOutlineType(void) const noexcept = 0;
 };
 
 class OutlineItem : public OutlineBase {
 public:
-	explicit OutlineItem(syntax::DictionaryObjectPtr root);
-	virtual Type GetOutlineType(void) const noexcept override;
+    explicit OutlineItem(syntax::DictionaryObjectPtr root);
+    virtual Type GetOutlineType(void) const noexcept override;
 
-	syntax::StringObjectPtr Title(void) const;
-	OutlineBasePtr Parent(void) const;
-	bool Prev(OutputOutlineItemPtr& result) const;
-	bool Next(OutputOutlineItemPtr& result) const;
-	bool First(OutputOutlineItemPtr& result) const;
-	bool Last(OutputOutlineItemPtr& result) const;
-	bool Count(syntax::IntegerObjectPtr& result) const;
+    syntax::StringObjectPtr Title(void) const;
+    OutlineBasePtr Parent(void) const;
+    bool Prev(OutputOutlineItemPtr& result) const;
+    bool Next(OutputOutlineItemPtr& result) const;
+    bool First(OutputOutlineItemPtr& result) const;
+    bool Last(OutputOutlineItemPtr& result) const;
+    bool Count(syntax::IntegerObjectPtr& result) const;
 
-	//TODO destinations
-	//bool Destination(syntax::ObjectPtr& result) const
-	//{
-	//	if (!_obj->Contains(constant::Name::Dest))
-	//		return false;
+    //TODO destinations
+    //bool Destination(syntax::ObjectPtr& result) const
+    //{
+    //	if (!_obj->Contains(constant::Name::Dest))
+    //		return false;
 
-	//	result = _obj->Find(constant::Name::Dest);
-	//	return true;
-	//}
+    //	result = _obj->Find(constant::Name::Dest);
+    //	return true;
+    //}
 
-	//TODO action dictionary
-	//bool Action(syntax::ObjectPtr& result) const
-	//{
-	//}
+    //TODO action dictionary
+    //bool Action(syntax::ObjectPtr& result) const
+    //{
+    //}
 
-	//TODO structure hierarchy
-	//bool StructureElement(syntax::ObjectPtr& result) const
-	//{
-	//}
+    //TODO structure hierarchy
+    //bool StructureElement(syntax::ObjectPtr& result) const
+    //{
+    //}
 
-	bool Color(OutputOutlineItemColorPtr& result) const;
-	bool Flags(OutputOutlineItemFlagsPtr& result) const;
+    bool Color(OutputOutlineItemColorPtr& result) const;
+    bool Flags(OutputOutlineItemFlagsPtr& result) const;
 };
 
 class Outline : public OutlineBase {
 public:
-	explicit Outline(syntax::DictionaryObjectPtr root);
-	virtual Type GetOutlineType(void) const noexcept override;
+    explicit Outline(syntax::DictionaryObjectPtr root);
+    virtual Type GetOutlineType(void) const noexcept override;
 
-	bool First(OutputOutlineItemPtr& result) const;
-	bool Last(OutputOutlineItemPtr& result) const;
-	bool Count(syntax::IntegerObjectPtr& result) const;
+    bool First(OutputOutlineItemPtr& result) const;
+    bool Last(OutputOutlineItemPtr& result) const;
+    bool Count(syntax::IntegerObjectPtr& result) const;
 };
 
 inline OutlineBase::Type OutlineItem::GetOutlineType(void) const noexcept {
-	return OutlineBase::Type::Item;
+    return OutlineBase::Type::Item;
 }
 
 inline OutlineBase::Type Outline::GetOutlineType(void) const noexcept {
-	return OutlineBase::Type::Outline;
+    return OutlineBase::Type::Outline;
 }
 
 } // semantics
