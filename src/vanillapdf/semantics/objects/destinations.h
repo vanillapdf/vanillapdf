@@ -11,154 +11,154 @@ namespace semantics {
 
 class DestinationBase : public HighLevelObject<syntax::ObjectPtr> {
 public:
-	enum class Type {
-		Undefined = 0,
-		XYZ,
-		Fit,
-		FitHorizontal,
-		FitVertical,
-		FitRectangle,
-		FitBoundingBox,
-		FitBoundingBoxHorizontal,
-		FitBoundingBoxVertical
-	};
+    enum class Type {
+        Undefined = 0,
+        XYZ,
+        Fit,
+        FitHorizontal,
+        FitVertical,
+        FitRectangle,
+        FitBoundingBox,
+        FitBoundingBoxHorizontal,
+        FitBoundingBoxVertical
+    };
 
 public:
-	explicit DestinationBase(syntax::MixedArrayObjectPtr root);
-	explicit DestinationBase(syntax::DictionaryObjectPtr root);
+    explicit DestinationBase(syntax::MixedArrayObjectPtr root);
+    explicit DestinationBase(syntax::DictionaryObjectPtr root);
 
-	static std::unique_ptr<DestinationBase> Create(syntax::MixedArrayObjectPtr root);
-	static std::unique_ptr<DestinationBase> Create(syntax::DictionaryObjectPtr root);
-	static std::unique_ptr<DestinationBase> Create(syntax::ObjectPtr root);
+    static std::unique_ptr<DestinationBase> Create(syntax::MixedArrayObjectPtr root);
+    static std::unique_ptr<DestinationBase> Create(syntax::DictionaryObjectPtr root);
+    static std::unique_ptr<DestinationBase> Create(syntax::ObjectPtr root);
 
-	syntax::ObjectPtr GetPage() const;
-	bool HasAttribute(const syntax::NameObject& name) const;
-	syntax::ObjectPtr GetAttribute(const syntax::NameObject& name) const;
+    syntax::ObjectPtr GetPage() const;
+    bool HasAttribute(const syntax::NameObject& name) const;
+    syntax::ObjectPtr GetAttribute(const syntax::NameObject& name) const;
 
-	virtual Type GetType() const noexcept = 0;
+    virtual Type GetType() const noexcept = 0;
 };
 
 class XYZDestination : public DestinationBase {
 public:
-	explicit XYZDestination(syntax::MixedArrayObjectPtr root);
-	explicit XYZDestination(syntax::DictionaryObjectPtr root);
-	virtual Type GetType() const noexcept override;
+    explicit XYZDestination(syntax::MixedArrayObjectPtr root);
+    explicit XYZDestination(syntax::DictionaryObjectPtr root);
+    virtual Type GetType() const noexcept override;
 };
 
 class FitDestination : public DestinationBase {
 public:
-	explicit FitDestination(syntax::MixedArrayObjectPtr root);
-	explicit FitDestination(syntax::DictionaryObjectPtr root);
-	virtual Type GetType() const noexcept override;
+    explicit FitDestination(syntax::MixedArrayObjectPtr root);
+    explicit FitDestination(syntax::DictionaryObjectPtr root);
+    virtual Type GetType() const noexcept override;
 };
 
 class FitHorizontalDestination : public DestinationBase {
 public:
-	explicit FitHorizontalDestination(syntax::MixedArrayObjectPtr root);
-	explicit FitHorizontalDestination(syntax::DictionaryObjectPtr root);
-	virtual Type GetType() const noexcept override;
+    explicit FitHorizontalDestination(syntax::MixedArrayObjectPtr root);
+    explicit FitHorizontalDestination(syntax::DictionaryObjectPtr root);
+    virtual Type GetType() const noexcept override;
 };
 
 class FitVerticalDestination : public DestinationBase {
 public:
-	explicit FitVerticalDestination(syntax::MixedArrayObjectPtr root);
-	explicit FitVerticalDestination(syntax::DictionaryObjectPtr root);
-	virtual Type GetType() const noexcept override;
+    explicit FitVerticalDestination(syntax::MixedArrayObjectPtr root);
+    explicit FitVerticalDestination(syntax::DictionaryObjectPtr root);
+    virtual Type GetType() const noexcept override;
 };
 
 class FitRectangleDestination : public DestinationBase {
 public:
-	explicit FitRectangleDestination(syntax::MixedArrayObjectPtr root);
-	explicit FitRectangleDestination(syntax::DictionaryObjectPtr root);
-	virtual Type GetType() const noexcept override;
+    explicit FitRectangleDestination(syntax::MixedArrayObjectPtr root);
+    explicit FitRectangleDestination(syntax::DictionaryObjectPtr root);
+    virtual Type GetType() const noexcept override;
 };
 
 class FitBoundingBoxDestination : public DestinationBase {
 public:
-	explicit FitBoundingBoxDestination(syntax::MixedArrayObjectPtr root);
-	explicit FitBoundingBoxDestination(syntax::DictionaryObjectPtr root);
-	virtual Type GetType() const noexcept override;
+    explicit FitBoundingBoxDestination(syntax::MixedArrayObjectPtr root);
+    explicit FitBoundingBoxDestination(syntax::DictionaryObjectPtr root);
+    virtual Type GetType() const noexcept override;
 };
 
 class FitBoundingBoxHorizontalDestination : public DestinationBase {
 public:
-	explicit FitBoundingBoxHorizontalDestination(syntax::MixedArrayObjectPtr root);
-	explicit FitBoundingBoxHorizontalDestination(syntax::DictionaryObjectPtr root);
-	virtual Type GetType() const noexcept override;
+    explicit FitBoundingBoxHorizontalDestination(syntax::MixedArrayObjectPtr root);
+    explicit FitBoundingBoxHorizontalDestination(syntax::DictionaryObjectPtr root);
+    virtual Type GetType() const noexcept override;
 };
 
 class FitBoundingBoxVerticalDestination : public DestinationBase {
 public:
-	explicit FitBoundingBoxVerticalDestination(syntax::MixedArrayObjectPtr root);
-	explicit FitBoundingBoxVerticalDestination(syntax::DictionaryObjectPtr root);
-	virtual Type GetType() const noexcept override;
+    explicit FitBoundingBoxVerticalDestination(syntax::MixedArrayObjectPtr root);
+    explicit FitBoundingBoxVerticalDestination(syntax::DictionaryObjectPtr root);
+    virtual Type GetType() const noexcept override;
 };
 
 class NamedDestinations : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
-	class Iterator : public BaseIterator<syntax::DictionaryObjectPtr::const_iterator> {
-	public:
-		using BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::BaseIterator;
+    class Iterator : public BaseIterator<syntax::DictionaryObjectPtr::const_iterator> {
+    public:
+        using BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::BaseIterator;
 
-	public:
-		const Iterator& operator++() {
-			++BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_current;
-			return *this;
-		}
+    public:
+        const Iterator& operator++() {
+            ++BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_current;
+            return *this;
+        }
 
-		const Iterator operator++(int) {
-			Iterator temp(BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_current, BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_invalid);
-			++BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_current;
-			return temp;
-		}
+        const Iterator operator++(int) {
+            Iterator temp(BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_current, BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_invalid);
+            ++BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_current;
+            return temp;
+        }
 
-		std::pair<syntax::NameObjectPtr, DestinationPtr> operator*() {
-			return std::pair<syntax::NameObjectPtr, DestinationPtr>(First(), Second());
-		}
+        std::pair<syntax::NameObjectPtr, DestinationPtr> operator*() {
+            return std::pair<syntax::NameObjectPtr, DestinationPtr>(First(), Second());
+        }
 
-		syntax::NameObjectPtr First() const {
-			return BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_current->first;
-		}
+        syntax::NameObjectPtr First() const {
+            return BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_current->first;
+        }
 
-		DestinationPtr Second() const {
-			auto containable = BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_current->second;
-			auto new_destination = DestinationBase::Create(containable);
-			return DestinationPtr(new_destination.release());
-		}
-	};
-
-public:
-	typedef typename std::pair<syntax::NameObjectPtr, DestinationPtr> value_type;
-	typedef Iterator iterator;
-	typedef Iterator const_iterator;
-	typedef typename syntax::DictionaryObjectPtr::size_type size_type;
-	typedef typename syntax::DictionaryObjectPtr::reference reference;
-	typedef typename syntax::DictionaryObjectPtr::const_reference const_reference;
-	typedef typename syntax::DictionaryObjectPtr::difference_type difference_type;
+        DestinationPtr Second() const {
+            auto containable = BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_current->second;
+            auto new_destination = DestinationBase::Create(containable);
+            return DestinationPtr(new_destination.release());
+        }
+    };
 
 public:
-	explicit NamedDestinations(syntax::DictionaryObjectPtr root);
+    typedef typename std::pair<syntax::NameObjectPtr, DestinationPtr> value_type;
+    typedef Iterator iterator;
+    typedef Iterator const_iterator;
+    typedef typename syntax::DictionaryObjectPtr::size_type size_type;
+    typedef typename syntax::DictionaryObjectPtr::reference reference;
+    typedef typename syntax::DictionaryObjectPtr::const_reference const_reference;
+    typedef typename syntax::DictionaryObjectPtr::difference_type difference_type;
 
-	void Insert(const syntax::NameObject& name, DestinationPtr value);
-	bool Contains(const syntax::NameObject& name) const;
-	DestinationPtr Find(const syntax::NameObject& name) const;
+public:
+    explicit NamedDestinations(syntax::DictionaryObjectPtr root);
 
-	// stl compatibility
-	iterator begin() {
-		return Iterator(_obj->begin(), _obj->end());
-	}
+    void Insert(const syntax::NameObject& name, DestinationPtr value);
+    bool Contains(const syntax::NameObject& name) const;
+    DestinationPtr Find(const syntax::NameObject& name) const;
 
-	const_iterator begin() const {
-		return Iterator(_obj->begin(), _obj->end());
-	}
+    // stl compatibility
+    iterator begin() {
+        return Iterator(_obj->begin(), _obj->end());
+    }
 
-	iterator end() {
-		return Iterator(_obj->end(), _obj->end());
-	}
+    const_iterator begin() const {
+        return Iterator(_obj->begin(), _obj->end());
+    }
 
-	const_iterator end() const {
-		return Iterator(_obj->end(), _obj->end());
-	}
+    iterator end() {
+        return Iterator(_obj->end(), _obj->end());
+    }
+
+    const_iterator end() const {
+        return Iterator(_obj->end(), _obj->end());
+    }
 };
 
 } // semantics

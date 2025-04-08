@@ -8,7 +8,7 @@
 #include <openssl/buffer.h>
 
 #if OPENSSL_VERSION_MAJOR >= 3
-	#include <openssl/provider.h>
+    #include <openssl/provider.h>
 #endif /* OPENSSL_VERSION_MAJOR >= 3 */
 
 #include <cctype>
@@ -18,234 +18,234 @@ namespace vanillapdf {
 
 BufferPtr MiscUtils::ToBase64(const Buffer& value) {
 
-	auto memory_bio = BIO_new(BIO_s_mem());
-	if (memory_bio == nullptr) {
-		throw GeneralException("Could not create memory buffer");
-	}
+    auto memory_bio = BIO_new(BIO_s_mem());
+    if (memory_bio == nullptr) {
+        throw GeneralException("Could not create memory buffer");
+    }
 
-	SCOPE_GUARD([memory_bio]() { BIO_free_all(memory_bio); });
+    SCOPE_GUARD([memory_bio]() { BIO_free_all(memory_bio); });
 
-	auto base64_bio = BIO_new(BIO_f_base64());
-	if (base64_bio == nullptr) {
-		throw GeneralException("Could not create base64 filter");
-	}
+    auto base64_bio = BIO_new(BIO_f_base64());
+    if (base64_bio == nullptr) {
+        throw GeneralException("Could not create base64 filter");
+    }
 
-	SCOPE_GUARD([base64_bio]() { BIO_free_all(base64_bio); });
+    SCOPE_GUARD([base64_bio]() { BIO_free_all(base64_bio); });
 
-	// Insert base64 filter into bio chain
-	BIO_push(base64_bio, memory_bio);
+    // Insert base64 filter into bio chain
+    BIO_push(base64_bio, memory_bio);
 
-	//Ignore newlines - write everything in one line
-	BIO_set_flags(base64_bio, BIO_FLAGS_BASE64_NO_NL);
+    //Ignore newlines - write everything in one line
+    BIO_set_flags(base64_bio, BIO_FLAGS_BASE64_NO_NL);
 
-	auto value_size = ValueConvertUtils::SafeConvert<int>(value.size());
-	auto bytes_written = BIO_write(memory_bio, value.data(), value_size);
-	if (bytes_written <= 0) {
-		throw GeneralException("Could not write data");
-	}
+    auto value_size = ValueConvertUtils::SafeConvert<int>(value.size());
+    auto bytes_written = BIO_write(memory_bio, value.data(), value_size);
+    if (bytes_written <= 0) {
+        throw GeneralException("Could not write data");
+    }
 
-	auto flushed = BIO_flush(base64_bio);
-	if (flushed != 1) {
-		throw GeneralException("Could not flush buffer");
-	}
+    auto flushed = BIO_flush(base64_bio);
+    if (flushed != 1) {
+        throw GeneralException("Could not flush buffer");
+    }
 
-	BUF_MEM* memory_buffer = nullptr;
-	auto have_mem_ptr = BIO_get_mem_ptr(memory_bio, &memory_buffer);
-	if (have_mem_ptr != 1) {
-		throw GeneralException("Could not get memory pointer");
-	}
+    BUF_MEM* memory_buffer = nullptr;
+    auto have_mem_ptr = BIO_get_mem_ptr(memory_bio, &memory_buffer);
+    if (have_mem_ptr != 1) {
+        throw GeneralException("Could not get memory pointer");
+    }
 
-	return make_deferred_container<Buffer>(memory_buffer->data, memory_buffer->length);
+    return make_deferred_container<Buffer>(memory_buffer->data, memory_buffer->length);
 }
 
 BufferPtr MiscUtils::FromBase64(const Buffer& value) {
 
-	auto memory_bio = BIO_new(BIO_s_mem());
-	if (memory_bio == nullptr) {
-		throw GeneralException("Could not create memory buffer");
-	}
+    auto memory_bio = BIO_new(BIO_s_mem());
+    if (memory_bio == nullptr) {
+        throw GeneralException("Could not create memory buffer");
+    }
 
-	SCOPE_GUARD([memory_bio]() { BIO_free(memory_bio); });
+    SCOPE_GUARD([memory_bio]() { BIO_free(memory_bio); });
 
-	auto base64_bio = BIO_new(BIO_f_base64());
-	if (base64_bio == nullptr) {
-		throw GeneralException("Could not create base64 filter");
-	}
+    auto base64_bio = BIO_new(BIO_f_base64());
+    if (base64_bio == nullptr) {
+        throw GeneralException("Could not create base64 filter");
+    }
 
-	SCOPE_GUARD([base64_bio]() { BIO_free(base64_bio); });
+    SCOPE_GUARD([base64_bio]() { BIO_free(base64_bio); });
 
-	auto value_size = ValueConvertUtils::SafeConvert<int>(value.size());
-	auto bytes_written = BIO_write(memory_bio, value.data(), value_size);
-	if (bytes_written <= 0) {
-		throw GeneralException("Could not write data into buffer: " + std::to_string(bytes_written));
-	}
+    auto value_size = ValueConvertUtils::SafeConvert<int>(value.size());
+    auto bytes_written = BIO_write(memory_bio, value.data(), value_size);
+    if (bytes_written <= 0) {
+        throw GeneralException("Could not write data into buffer: " + std::to_string(bytes_written));
+    }
 
-	auto flushed = BIO_flush(memory_bio);
-	if (flushed != 1) {
-		throw GeneralException("Could not flush buffer: " + std::to_string(flushed));
-	}
+    auto flushed = BIO_flush(memory_bio);
+    if (flushed != 1) {
+        throw GeneralException("Could not flush buffer: " + std::to_string(flushed));
+    }
 
-	// Insert base64 filter into bio chain
-	BIO_push(base64_bio, memory_bio);
+    // Insert base64 filter into bio chain
+    BIO_push(base64_bio, memory_bio);
 
-	//Ignore newlines - write everything in one line
-	BIO_set_flags(base64_bio, BIO_FLAGS_BASE64_NO_NL);
+    //Ignore newlines - write everything in one line
+    BIO_set_flags(base64_bio, BIO_FLAGS_BASE64_NO_NL);
 
-	BufferPtr result;
-	Buffer read_buffer(constant::BUFFER_SIZE);
+    BufferPtr result;
+    Buffer read_buffer(constant::BUFFER_SIZE);
 
-	for (;;) {
-		auto read_buffer_size = ValueConvertUtils::SafeConvert<int>(read_buffer.size());
-		auto bytes_read = BIO_read(base64_bio, read_buffer.data(), read_buffer_size);
-		if (bytes_read == 0 || bytes_read == -1) {
-			break;
-		}
+    for (;;) {
+        auto read_buffer_size = ValueConvertUtils::SafeConvert<int>(read_buffer.size());
+        auto bytes_read = BIO_read(base64_bio, read_buffer.data(), read_buffer_size);
+        if (bytes_read == 0 || bytes_read == -1) {
+            break;
+        }
 
-		if (bytes_read == -2) {
-			throw GeneralException("Could not read data");
-		}
+        if (bytes_read == -2) {
+            throw GeneralException("Could not read data");
+        }
 
-		// Assume the byte count is positive
-		assert(bytes_read > 0);
+        // Assume the byte count is positive
+        assert(bytes_read > 0);
 
-		// Also not bigger than buffer size
-		auto buffer_size_converted = ValueConvertUtils::SafeConvert<decltype(bytes_read)>(read_buffer.size());
-		assert(bytes_read <= buffer_size_converted); UNUSED(buffer_size_converted);
+        // Also not bigger than buffer size
+        auto buffer_size_converted = ValueConvertUtils::SafeConvert<decltype(bytes_read)>(read_buffer.size());
+        assert(bytes_read <= buffer_size_converted); UNUSED(buffer_size_converted);
 
-		result->insert(result->end(), read_buffer.begin(), read_buffer.begin() + bytes_read);
-	}
+        result->insert(result->end(), read_buffer.begin(), read_buffer.begin() + bytes_read);
+    }
 
-	return result;
+    return result;
 }
 
 BufferPtr MiscUtils::CalculateHash(const Buffer& data, MessageDigestAlgorithm digest_algorithm) {
-	auto memory_bio = BIO_new(BIO_s_mem());
-	if (memory_bio == nullptr) {
-		throw GeneralException("Could not create memory buffer");
-	}
+    auto memory_bio = BIO_new(BIO_s_mem());
+    if (memory_bio == nullptr) {
+        throw GeneralException("Could not create memory buffer");
+    }
 
-	SCOPE_GUARD([memory_bio]() { BIO_free(memory_bio); });
+    SCOPE_GUARD([memory_bio]() { BIO_free(memory_bio); });
 
-	auto md_bio = BIO_new(BIO_f_md());
-	if (md_bio == nullptr) {
-		throw GeneralException("Could not create hash filter");
-	}
+    auto md_bio = BIO_new(BIO_f_md());
+    if (md_bio == nullptr) {
+        throw GeneralException("Could not create hash filter");
+    }
 
-	SCOPE_GUARD([md_bio]() { BIO_free(md_bio); });
+    SCOPE_GUARD([md_bio]() { BIO_free(md_bio); });
 
-	auto algorithm = GetAlgorithm(digest_algorithm);
-	auto md_set = BIO_set_md(md_bio, algorithm);
-	if (md_set != 1) {
-		throw GeneralException("Could not set digest algorithm");
-	}
+    auto algorithm = GetAlgorithm(digest_algorithm);
+    auto md_set = BIO_set_md(md_bio, algorithm);
+    if (md_set != 1) {
+        throw GeneralException("Could not set digest algorithm");
+    }
 
-	// Insert md into bio chain
-	BIO_push(md_bio, memory_bio);
+    // Insert md into bio chain
+    BIO_push(md_bio, memory_bio);
 
-	auto data_size = ValueConvertUtils::SafeConvert<int>(data.size());
-	auto bytes_written = BIO_write(memory_bio, data.data(), data_size);
-	if (bytes_written <= 0) {
-		throw GeneralException("");
-	}
+    auto data_size = ValueConvertUtils::SafeConvert<int>(data.size());
+    auto bytes_written = BIO_write(memory_bio, data.data(), data_size);
+    if (bytes_written <= 0) {
+        throw GeneralException("");
+    }
 
-	auto flushed = BIO_flush(memory_bio);
-	if (flushed != 1) {
-		throw GeneralException("Could not flush buffer");
-	}
+    auto flushed = BIO_flush(memory_bio);
+    if (flushed != 1) {
+        throw GeneralException("Could not flush buffer");
+    }
 
-	BufferPtr hash_buffer = make_deferred_container<Buffer>(EVP_MAX_MD_SIZE);
+    BufferPtr hash_buffer = make_deferred_container<Buffer>(EVP_MAX_MD_SIZE);
 
-	auto hash_buffer_size = ValueConvertUtils::SafeConvert<int>(hash_buffer->size());
-	auto bytes_read = BIO_gets(md_bio, hash_buffer->data(), hash_buffer_size);
-	if (bytes_read <= 0) {
-		throw GeneralException("Could not calculate hash");
-	}
+    auto hash_buffer_size = ValueConvertUtils::SafeConvert<int>(hash_buffer->size());
+    auto bytes_read = BIO_gets(md_bio, hash_buffer->data(), hash_buffer_size);
+    if (bytes_read <= 0) {
+        throw GeneralException("Could not calculate hash");
+    }
 
-	return hash_buffer;
+    return hash_buffer;
 }
 
 std::string MiscUtils::ExtractFilename(const std::string& path) {
-	auto pos = path.rfind('\\');
-	if (pos == std::string::npos) {
-		pos = path.rfind('/');
-		if (pos == std::string::npos) {
-			return path;
-		}
-	}
+    auto pos = path.rfind('\\');
+    if (pos == std::string::npos) {
+        pos = path.rfind('/');
+        if (pos == std::string::npos) {
+            return path;
+        }
+    }
 
-	return std::string(path.begin() + (pos + 1), path.end());
+    return std::string(path.begin() + (pos + 1), path.end());
 }
 
 const EVP_MD* MiscUtils::GetAlgorithm(MessageDigestAlgorithm algorithm) {
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-	if (algorithm == MessageDigestAlgorithm::Undefined) {
-		throw GeneralException("No message digest algorithm was selected");
-	}
+    if (algorithm == MessageDigestAlgorithm::Undefined) {
+        throw GeneralException("No message digest algorithm was selected");
+    }
 
-	if (algorithm == MessageDigestAlgorithm::MDNULL) {
-		return EVP_md_null();
-	}
+    if (algorithm == MessageDigestAlgorithm::MDNULL) {
+        return EVP_md_null();
+    }
 
-	if (algorithm == MessageDigestAlgorithm::MD2) {
-	#ifndef OPENSSL_NO_MD2
-		return EVP_md2();
-	#else
-		throw NotSupportedException("OpenSSL was compiled without MD2 message digest support");
-	#endif
-	}
+    if (algorithm == MessageDigestAlgorithm::MD2) {
+    #ifndef OPENSSL_NO_MD2
+        return EVP_md2();
+    #else
+        throw NotSupportedException("OpenSSL was compiled without MD2 message digest support");
+    #endif
+    }
 
-	if (algorithm == MessageDigestAlgorithm::MD4) {
-		return EVP_md4();
-	}
+    if (algorithm == MessageDigestAlgorithm::MD4) {
+        return EVP_md4();
+    }
 
-	if (algorithm == MessageDigestAlgorithm::MD5) {
-		return EVP_md5();
-	}
+    if (algorithm == MessageDigestAlgorithm::MD5) {
+        return EVP_md5();
+    }
 
-	if (algorithm == MessageDigestAlgorithm::SHA1) {
-		return EVP_sha1();
-	}
+    if (algorithm == MessageDigestAlgorithm::SHA1) {
+        return EVP_sha1();
+    }
 
-	if (algorithm == MessageDigestAlgorithm::SHA224) {
-		return EVP_sha224();
-	}
+    if (algorithm == MessageDigestAlgorithm::SHA224) {
+        return EVP_sha224();
+    }
 
-	if (algorithm == MessageDigestAlgorithm::SHA256) {
-		return EVP_sha256();
-	}
+    if (algorithm == MessageDigestAlgorithm::SHA256) {
+        return EVP_sha256();
+    }
 
-	if (algorithm == MessageDigestAlgorithm::SHA384) {
-		return EVP_sha384();
-	}
+    if (algorithm == MessageDigestAlgorithm::SHA384) {
+        return EVP_sha384();
+    }
 
-	if (algorithm == MessageDigestAlgorithm::SHA512) {
-		return EVP_sha512();
-	}
+    if (algorithm == MessageDigestAlgorithm::SHA512) {
+        return EVP_sha512();
+    }
 
-	if (algorithm == MessageDigestAlgorithm::MDC2) {
-	#ifndef OPENSSL_NO_MDC2
-		return EVP_mdc2();
-	#else
-		throw NotSupportedException("OpenSSL was compiled without MDC2 message digest support");
-	#endif
-	}
+    if (algorithm == MessageDigestAlgorithm::MDC2) {
+    #ifndef OPENSSL_NO_MDC2
+        return EVP_mdc2();
+    #else
+        throw NotSupportedException("OpenSSL was compiled without MDC2 message digest support");
+    #endif
+    }
 
-	if (algorithm == MessageDigestAlgorithm::RIPEMD160) {
-		return EVP_ripemd160();
-	}
+    if (algorithm == MessageDigestAlgorithm::RIPEMD160) {
+        return EVP_ripemd160();
+    }
 
-	if (algorithm == MessageDigestAlgorithm::WHIRLPOOL) {
-		return EVP_whirlpool();
-	}
+    if (algorithm == MessageDigestAlgorithm::WHIRLPOOL) {
+        return EVP_whirlpool();
+    }
 
-	throw GeneralException("Unknown message digest algorithm");
+    throw GeneralException("Unknown message digest algorithm");
 
 #else
 
-	(void) algorithm;
-	throw NotSupportedException("This library was compiled without OpenSSL support");
+    (void) algorithm;
+    throw NotSupportedException("This library was compiled without OpenSSL support");
 
 #endif
 
@@ -255,38 +255,38 @@ void MiscUtils::InitializeOpenSSL() {
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-	static bool initialized = false;
-	if (initialized) {
-		return;
-	}
+    static bool initialized = false;
+    if (initialized) {
+        return;
+    }
 
-	static std::mutex openssl_lock;
-	std::lock_guard<std::mutex> lock(openssl_lock);
-	if (initialized) {
-		return;
-	}
+    static std::mutex openssl_lock;
+    std::lock_guard<std::mutex> lock(openssl_lock);
+    if (initialized) {
+        return;
+    }
 
 #if OPENSSL_VERSION_MAJOR >= 3
 
-	auto legacy_provider = OSSL_PROVIDER_load(nullptr, "legacy");
-	if (legacy_provider == nullptr) {
-		throw GeneralException("Failed to initialize legacy OSSL provider, " + GetLastOpensslError());
-	}
+    auto legacy_provider = OSSL_PROVIDER_load(nullptr, "legacy");
+    if (legacy_provider == nullptr) {
+        throw GeneralException("Failed to initialize legacy OSSL provider, " + GetLastOpensslError());
+    }
 
-	auto default_provider = OSSL_PROVIDER_load(nullptr, "default");
-	if (default_provider == nullptr) {
-		throw GeneralException("Failed to initialize default OSSL provider, " + GetLastOpensslError());
-	}
+    auto default_provider = OSSL_PROVIDER_load(nullptr, "default");
+    if (default_provider == nullptr) {
+        throw GeneralException("Failed to initialize default OSSL provider, " + GetLastOpensslError());
+    }
 
 #endif /* OPENSSL_VERSION_MAJOR >= 3 */
 
-	OpenSSL_add_all_algorithms();
+    OpenSSL_add_all_algorithms();
 
-	initialized = true;
+    initialized = true;
 
 #else
 
-	throw NotSupportedException("This library was compiled without OpenSSL support");
+    throw NotSupportedException("This library was compiled without OpenSSL support");
 
 #endif
 
@@ -296,55 +296,55 @@ std::string MiscUtils::GetLastOpensslError() {
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-	const char* err_file = nullptr;
-	const char* err_data = nullptr;
+    const char* err_file = nullptr;
+    const char* err_data = nullptr;
 
 #if OPENSSL_VERSION_MAJOR >= 3
-	const char* err_func = nullptr;
+    const char* err_func = nullptr;
 #endif /* OPENSSL_VERSION_MAJOR >= 3 */
 
-	int err_line = 0;
-	int err_flags = 0;
+    int err_line = 0;
+    int err_flags = 0;
 
 #if OPENSSL_VERSION_MAJOR >= 3
-	auto err_code = ERR_get_error_all(&err_file, &err_line, &err_func, &err_data, &err_flags);
+    auto err_code = ERR_get_error_all(&err_file, &err_line, &err_func, &err_data, &err_flags);
 #else
-	auto err_code = ERR_get_error_line_data(&err_file, &err_line, &err_data, &err_flags);
+    auto err_code = ERR_get_error_line_data(&err_file, &err_line, &err_data, &err_flags);
 #endif /* OPENSSL_VERSION_MAJOR >= 3 */
 
-	std::stringstream error_message;
+    std::stringstream error_message;
 
-	error_message << "Error: " << '\'' << err_code << '\'' << std::endl;
-	error_message << "File: " << '\'' << err_file << '\'' << std::endl;
-	error_message << "Line: " << err_line << '\'' << std::endl;
+    error_message << "Error: " << '\'' << err_code << '\'' << std::endl;
+    error_message << "File: " << '\'' << err_file << '\'' << std::endl;
+    error_message << "Line: " << err_line << '\'' << std::endl;
 
 #if OPENSSL_VERSION_MAJOR >= 3
-	error_message << "Function: " << '\'' << err_func << '\'' << std::endl;
+    error_message << "Function: " << '\'' << err_func << '\'' << std::endl;
 #endif /* OPENSSL_VERSION_MAJOR >= 3 */
 
-	error_message << "Data: " << '\'' << err_data << '\'' << std::endl;
-	error_message << "Flags: " << '\'' << err_flags << '\'' << std::endl;
+    error_message << "Data: " << '\'' << err_data << '\'' << std::endl;
+    error_message << "Flags: " << '\'' << err_flags << '\'' << std::endl;
 
-	return error_message.str();
+    return error_message.str();
 
 #else
 
-	throw NotSupportedException("This library was compiled without OpenSSL support");
+    throw NotSupportedException("This library was compiled without OpenSSL support");
 
 #endif
 
 }
 
 bool MiscUtils::CaseInsensitiveCompare(const std::string& left, const std::string& right) {
-	if (left.size() != right.size()) {
-		return false;
-	}
+    if (left.size() != right.size()) {
+        return false;
+    }
 
-	auto comparison_predicate = [](unsigned char left, unsigned char right) {
-		return std::toupper(left) == std::toupper(right);
-	};
+    auto comparison_predicate = [](unsigned char left, unsigned char right) {
+        return std::toupper(left) == std::toupper(right);
+    };
 
-	return std::equal(left.begin(), left.end(), right.begin(), comparison_predicate);
+    return std::equal(left.begin(), left.end(), right.begin(), comparison_predicate);
 }
 
 } // vanillapdf

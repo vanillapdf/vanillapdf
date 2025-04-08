@@ -14,21 +14,21 @@ namespace vanillapdf {
 namespace syntax {
 
 FilterBasePtr FilterBase::GetFilterByName(const NameObject& name) {
-	if (name.Equals(constant::Name::FlateDecode)) {
-		return FlateDecodeFilterPtr();
-	} else if (name.Equals(constant::Name::ASCII85Decode)) {
-		return ASCII85DecodeFilterPtr();
-	} else if (name.Equals(constant::Name::ASCIIHexDecode)) {
-		return ASCIIHexDecodeFilterPtr();
-	} else if (name.Equals(constant::Name::DCTDecode)) {
-		return DCTDecodeFilterPtr();
-	} else if (name.Equals(constant::Name::LZWDecode)) {
-		return LZWDecodeFilterPtr();
-	} else if (name.Equals(constant::Name::JPXDecode)) {
-		return JPXDecodeFilterPtr();
-	}
+    if (name.Equals(constant::Name::FlateDecode)) {
+        return FlateDecodeFilterPtr();
+    } else if (name.Equals(constant::Name::ASCII85Decode)) {
+        return ASCII85DecodeFilterPtr();
+    } else if (name.Equals(constant::Name::ASCIIHexDecode)) {
+        return ASCIIHexDecodeFilterPtr();
+    } else if (name.Equals(constant::Name::DCTDecode)) {
+        return DCTDecodeFilterPtr();
+    } else if (name.Equals(constant::Name::LZWDecode)) {
+        return LZWDecodeFilterPtr();
+    } else if (name.Equals(constant::Name::JPXDecode)) {
+        return JPXDecodeFilterPtr();
+    }
 
-	throw GeneralException("Unknown filter type: " + name.GetValue()->ToString());
+    throw GeneralException("Unknown filter type: " + name.GetValue()->ToString());
 }
 
 } // syntax

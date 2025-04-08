@@ -8,45 +8,45 @@ namespace vanillapdf {
 namespace contents {
 
 OperationGeneric::OperationGeneric(const std::vector<syntax::ObjectPtr>& operands, OperatorBasePtr oper)
-	: _operator(oper), _operands(operands) {
+    : _operator(oper), _operands(operands) {
 }
 
 OperatorBasePtr OperationGeneric::GetOperator() const {
-	return _operator;
+    return _operator;
 }
 
 std::vector<syntax::ObjectPtr> OperationGeneric::GetOperands() const {
-	return _operands;
+    return _operands;
 }
 
 types::size_type OperationGeneric::GetOperandsSize() const {
-	return _operands.size();
+    return _operands.size();
 }
 
 syntax::ObjectPtr OperationGeneric::GetOperandAt(types::size_type at) const {
-	return _operands.at(at);
+    return _operands.at(at);
 }
 
 std::string OperationGeneric::ToPdf() const {
-	std::stringstream ss;
+    std::stringstream ss;
 
-	bool first = true;
-	for (auto operand : _operands) {
-		if (!first) {
-			ss << " ";
-		}
+    bool first = true;
+    for (auto operand : _operands) {
+        if (!first) {
+            ss << " ";
+        }
 
-		ss << operand->ToPdf();
-		first = false;
-	}
+        ss << operand->ToPdf();
+        first = false;
+    }
 
-	if (!first) {
-		ss << " ";
-	}
+    if (!first) {
+        ss << " ";
+    }
 
-	ss << _operator->Value();
+    ss << _operator->Value();
 
-	return ss.str();
+    return ss.str();
 }
 
 } // contents

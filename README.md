@@ -1,6 +1,11 @@
 # Vanilla.PDF
 
-[![pipeline status](https://gitlab.com/jurzik/vanillapdf/badges/master/pipeline.svg)](https://gitlab.com/jurzik/vanillapdf/commits/master)
+[![NuGet](https://img.shields.io/nuget/v/vanillapdf)](https://www.nuget.org/packages/vanillapdf) ![NuGet Downloads](https://img.shields.io/nuget/dt/vanillapdf)
+
+## NEW
+
+This repository has been recently open-sourced and might be missing a few pieces here and there.
+If you notice something is not aligned please let us know and we will fix it immediately.
 
 ## About
 
@@ -12,6 +17,10 @@ Automated build and test process eliminates most of the common defects.
 Support, such as bug reports is free and available at your service.
 
 Please visit [vanillapdf.com](http://vanillapdf.com) for more information.
+
+## License
+
+Vanilla.PDF is licensed under the [Apache 2.0 license](LICENSE.txt).
 
 ## FAQ
 

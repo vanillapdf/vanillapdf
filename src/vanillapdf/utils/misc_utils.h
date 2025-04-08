@@ -19,20 +19,20 @@ namespace vanillapdf {
 
 class MiscUtils {
 public:
-	static BufferPtr ToBase64(const Buffer& value);
-	static BufferPtr FromBase64(const Buffer& value);
+    static BufferPtr ToBase64(const Buffer& value);
+    static BufferPtr FromBase64(const Buffer& value);
 
-	static const EVP_MD* GetAlgorithm(MessageDigestAlgorithm algorithm);
-	static BufferPtr CalculateHash(const Buffer& data, MessageDigestAlgorithm digest_algorithm);
+    static const EVP_MD* GetAlgorithm(MessageDigestAlgorithm algorithm);
+    static BufferPtr CalculateHash(const Buffer& data, MessageDigestAlgorithm digest_algorithm);
 
-	static std::string ExtractFilename(const std::string& path);
-	static bool CaseInsensitiveCompare(const std::string& left, const std::string& right);
+    static std::string ExtractFilename(const std::string& path);
+    static bool CaseInsensitiveCompare(const std::string& left, const std::string& right);
 
-	static void InitializeOpenSSL();
-	static std::string GetLastOpensslError();
+    static void InitializeOpenSSL();
+    static std::string GetLastOpensslError();
 
 private:
-	MiscUtils();
+    MiscUtils();
 };
 
 } // vanillapdf

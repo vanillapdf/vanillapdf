@@ -11,40 +11,40 @@ namespace semantics {
 
 class ByteRange : public IUnknown {
 public:
-	explicit ByteRange(syntax::IntegerObjectPtr byte_offset, syntax::IntegerObjectPtr length);
+    explicit ByteRange(syntax::IntegerObjectPtr byte_offset, syntax::IntegerObjectPtr length);
 
-	syntax::IntegerObjectPtr ByteOffset(void) const;
-	syntax::IntegerObjectPtr Length(void) const;
+    syntax::IntegerObjectPtr ByteOffset(void) const;
+    syntax::IntegerObjectPtr Length(void) const;
 
 private:
-	syntax::IntegerObjectPtr m_byte_offset;
-	syntax::IntegerObjectPtr m_length;
+    syntax::IntegerObjectPtr m_byte_offset;
+    syntax::IntegerObjectPtr m_length;
 };
 
 class ByteRangeCollection : public HighLevelObject<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>> {
 public:
-	explicit ByteRangeCollection(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> obj);
+    explicit ByteRangeCollection(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> obj);
 
-	types::size_type GetSize(void) const;
-	ByteRangePtr GetValue(types::size_type at) const;
+    types::size_type GetSize(void) const;
+    ByteRangePtr GetValue(types::size_type at) const;
 };
 
 class DigitalSignature : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
-	explicit DigitalSignature(syntax::DictionaryObjectPtr root);
+    explicit DigitalSignature(syntax::DictionaryObjectPtr root);
 
-	syntax::HexadecimalStringObjectPtr Contents();
-	syntax::NameObjectPtr Filter();
+    syntax::HexadecimalStringObjectPtr Contents();
+    syntax::NameObjectPtr Filter();
 
-	bool ByteRange(OuputByteRangeCollectionPtr& result);
-	bool Reason(syntax::OutputStringObjectPtr& result);
-	bool Location(syntax::OutputStringObjectPtr& result);
-	bool ContactInfo(syntax::OutputStringObjectPtr& result);
-	bool SigningTime(OutputDatePtr& result);
-	bool Name(syntax::OutputStringObjectPtr& result);
-	bool Revision(syntax::OutputIntegerObjectPtr& result);
-	bool SubFilter(syntax::OutputNameObjectPtr& result);
-	bool Certificate(syntax::OutputStringObjectPtr& result);
+    bool ByteRange(OuputByteRangeCollectionPtr& result);
+    bool Reason(syntax::OutputStringObjectPtr& result);
+    bool Location(syntax::OutputStringObjectPtr& result);
+    bool ContactInfo(syntax::OutputStringObjectPtr& result);
+    bool SigningTime(OutputDatePtr& result);
+    bool Name(syntax::OutputStringObjectPtr& result);
+    bool Revision(syntax::OutputIntegerObjectPtr& result);
+    bool SubFilter(syntax::OutputNameObjectPtr& result);
+    bool Certificate(syntax::OutputStringObjectPtr& result);
 };
 
 } // semantics

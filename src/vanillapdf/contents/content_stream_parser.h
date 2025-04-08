@@ -10,17 +10,17 @@ namespace contents {
 
 class ContentStreamParser : public syntax::ParserBase {
 public:
-	ContentStreamParser(WeakReference<syntax::File> file, IInputStreamPtr stream);
-	BaseInstructionCollectionPtr ReadInstructions(void);
+    ContentStreamParser(WeakReference<syntax::File> file, IInputStreamPtr stream);
+    BaseInstructionCollectionPtr ReadInstructions(void);
 
-	syntax::ObjectPtr ReadDirectObject() override;
+    syntax::ObjectPtr ReadDirectObject() override;
 
 private:
-	InstructionBasePtr ReadInstruction(void);
-	OperationBasePtr ReadOperation(void);
-	bool IsOperand(syntax::Token::Type type);
-	OperationBasePtr ReadOperatorReturnOperation(const std::vector<syntax::ObjectPtr>& operands);
-	InlineImageObjectPtr ReadInlineImageObject(void);
+    InstructionBasePtr ReadInstruction(void);
+    OperationBasePtr ReadOperation(void);
+    bool IsOperand(syntax::Token::Type type);
+    OperationBasePtr ReadOperatorReturnOperation(const std::vector<syntax::ObjectPtr>& operands);
+    InlineImageObjectPtr ReadInlineImageObject(void);
 };
 
 } // contents

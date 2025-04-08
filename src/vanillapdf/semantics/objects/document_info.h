@@ -10,36 +10,36 @@ namespace vanillapdf {
 namespace semantics {
 
 enum class DocumentTrapped {
-	Undefined = 0,
-	Unknown,
-	True,
-	False
+    Undefined = 0,
+    Unknown,
+    True,
+    False
 };
 
 class DocumentInfo : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
-	explicit DocumentInfo(syntax::DictionaryObjectPtr root);
+    explicit DocumentInfo(syntax::DictionaryObjectPtr root);
 
-	// optional
-	bool Title(syntax::OutputStringObjectPtr& result) const;
-	bool Author(syntax::OutputStringObjectPtr& result) const;
-	bool Subject(syntax::OutputStringObjectPtr& result) const;
-	bool Keywords(syntax::OutputStringObjectPtr& result) const;
-	bool Creator(syntax::OutputStringObjectPtr& result) const;
-	bool Producer(syntax::OutputStringObjectPtr& result) const;
-	bool CreationDate(OutputDatePtr& result) const;
-	bool ModificationDate(OutputDatePtr& result) const;
-	bool Trapped(DocumentTrapped& result) const;
+    // optional
+    bool Title(syntax::OutputStringObjectPtr& result) const;
+    bool Author(syntax::OutputStringObjectPtr& result) const;
+    bool Subject(syntax::OutputStringObjectPtr& result) const;
+    bool Keywords(syntax::OutputStringObjectPtr& result) const;
+    bool Creator(syntax::OutputStringObjectPtr& result) const;
+    bool Producer(syntax::OutputStringObjectPtr& result) const;
+    bool CreationDate(OutputDatePtr& result) const;
+    bool ModificationDate(OutputDatePtr& result) const;
+    bool Trapped(DocumentTrapped& result) const;
 
-	void SetTitle(syntax::StringObjectPtr value);
-	void SetAuthor(syntax::StringObjectPtr value);
-	void SetSubject(syntax::StringObjectPtr value);
-	void SetKeywords(syntax::StringObjectPtr value);
-	void SetCreator(syntax::StringObjectPtr value);
-	void SetProducer(syntax::StringObjectPtr value);
-	void SetCreationDate(DatePtr value);
-	void SetModificationDate(DatePtr value);
-	void SetTrapped(DocumentTrapped value);
+    void SetTitle(syntax::StringObjectPtr value);
+    void SetAuthor(syntax::StringObjectPtr value);
+    void SetSubject(syntax::StringObjectPtr value);
+    void SetKeywords(syntax::StringObjectPtr value);
+    void SetCreator(syntax::StringObjectPtr value);
+    void SetProducer(syntax::StringObjectPtr value);
+    void SetCreationDate(DatePtr value);
+    void SetModificationDate(DatePtr value);
+    void SetTrapped(DocumentTrapped value);
 };
 
 } // semantics

@@ -9,22 +9,22 @@ namespace semantics {
 
 class PageNodeBase : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
-	enum class NodeType {
-		Undefined = 0,
-		Tree,
-		Object
-	};
+    enum class NodeType {
+        Undefined = 0,
+        Tree,
+        Object
+    };
 
-	explicit PageNodeBase(syntax::DictionaryObjectPtr obj);
-	PageNodeBasePtr GetPageRoot();
+    explicit PageNodeBase(syntax::DictionaryObjectPtr obj);
+    PageNodeBasePtr GetPageRoot();
 
-	bool HasParent(void) const;
-	PageNodeBasePtr GetParent(void) const;
-	void SetParent(PageNodeBasePtr parent);
+    bool HasParent(void) const;
+    PageNodeBasePtr GetParent(void) const;
+    void SetParent(PageNodeBasePtr parent);
 
-	virtual NodeType GetNodeType(void) const noexcept = 0;
+    virtual NodeType GetNodeType(void) const noexcept = 0;
 
-	static PageNodeBasePtr CreatePageNode(syntax::DictionaryObjectPtr obj);
+    static PageNodeBasePtr CreatePageNode(syntax::DictionaryObjectPtr obj);
 };
 
 } // semantics

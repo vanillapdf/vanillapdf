@@ -22,61 +22,61 @@ namespace semantics {
 
 class Document : public IUnknown, public IWeakReferenceable<Document> {
 public:
-	static DocumentPtr Open(const std::string& path);
-	static DocumentPtr OpenFile(syntax::FilePtr holder);
+    static DocumentPtr Open(const std::string& path);
+    static DocumentPtr OpenFile(syntax::FilePtr holder);
 
-	static DocumentPtr Create(const std::string& path);
-	static DocumentPtr CreateFile(syntax::FilePtr holder);
+    static DocumentPtr Create(const std::string& path);
+    static DocumentPtr CreateFile(syntax::FilePtr holder);
 
-	static syntax::ArrayObjectPtr<syntax::HexadecimalStringObjectPtr> GenerateDocumentId();
+    static syntax::ArrayObjectPtr<syntax::HexadecimalStringObjectPtr> GenerateDocumentId();
 
-	~Document();
+    ~Document();
 
-	bool GetDocumentCatalog(OutputCatalogPtr& result) const;
-	bool GetDocumentInfo(OutputDocumentInfoPtr& result) const;
+    bool GetDocumentCatalog(OutputCatalogPtr& result) const;
+    bool GetDocumentInfo(OutputDocumentInfoPtr& result) const;
 
-	void Save(const std::string& path);
-	void Save(syntax::FilePtr destination);
-	void SaveIncremental(const std::string& path);
-	void SaveIncremental(syntax::FilePtr destination);
+    void Save(const std::string& path);
+    void Save(syntax::FilePtr destination);
+    void SaveIncremental(const std::string& path);
+    void SaveIncremental(syntax::FilePtr destination);
 
-	syntax::FilePtr GetFile() const;
+    syntax::FilePtr GetFile() const;
 
-	void AppendDocument(DocumentPtr other);
-	void AppendPage(DocumentPtr other, PageObjectPtr other_page);
+    void AppendDocument(DocumentPtr other);
+    void AppendPage(DocumentPtr other, PageObjectPtr other_page);
 
-	void Sign(syntax::FilePtr destination, DocumentSignatureSettingsPtr options);
+    void Sign(syntax::FilePtr destination, DocumentSignatureSettingsPtr options);
 
-	void AddEncryption(DocumentEncryptionSettingsPtr settings);
-	void RemoveEncryption();
-
-private:
-	syntax::FilePtr m_holder;
-
-	CatalogPtr CreateCatalog();
-	DocumentInfoPtr CreateDocumentInfo();
-	PageTreePtr CreatePageTree(CatalogPtr catalog);
-	NamedDestinationsPtr CreateNameDestinations(CatalogPtr catalog);
-	NameDictionaryPtr CreateNameDictionary(CatalogPtr catalog);
-	InteractiveFormPtr CreateAcroForm(CatalogPtr catalog);
-	NameTreePtr<DestinationPtr> CreateStringDestinations(NameDictionaryPtr dictionary);
-
-	void MergePageDestinations(DocumentPtr other, PageObjectPtr other_page, PageObjectPtr merged_page);
-	void MergeNameDestinations(NamedDestinationsPtr destinations, PageObjectPtr other_page, PageObjectPtr merged_page);
-	void MergeStringDestinations(NameTreePtr<DestinationPtr> destinations, PageObjectPtr other_page, PageObjectPtr merged_page);
-	void AppendStringDestination(syntax::StringObjectPtr key, DestinationPtr value, PageObjectPtr other_page, PageObjectPtr merged_page);
-	void AppendNameDestination(syntax::NameObjectPtr key, DestinationPtr value, PageObjectPtr other_page, PageObjectPtr merged_page);
-
-	void FixDestinationPage(syntax::ObjectPtr cloned_page, PageObjectPtr other_page, PageObjectPtr merged_page);
-	bool IsDestinationReferencingPage(DestinationPtr destination, PageObjectPtr page);
-
-	void ForceObjectInitialization();
-	void ForceObjectInitialization(syntax::ObjectPtr obj);
+    void AddEncryption(DocumentEncryptionSettingsPtr settings);
+    void RemoveEncryption();
 
 private:
-	explicit Document(syntax::FilePtr holder);
+    syntax::FilePtr m_holder;
 
-	mutable OutputCatalogPtr m_catalog;
+    CatalogPtr CreateCatalog();
+    DocumentInfoPtr CreateDocumentInfo();
+    PageTreePtr CreatePageTree(CatalogPtr catalog);
+    NamedDestinationsPtr CreateNameDestinations(CatalogPtr catalog);
+    NameDictionaryPtr CreateNameDictionary(CatalogPtr catalog);
+    InteractiveFormPtr CreateAcroForm(CatalogPtr catalog);
+    NameTreePtr<DestinationPtr> CreateStringDestinations(NameDictionaryPtr dictionary);
+
+    void MergePageDestinations(DocumentPtr other, PageObjectPtr other_page, PageObjectPtr merged_page);
+    void MergeNameDestinations(NamedDestinationsPtr destinations, PageObjectPtr other_page, PageObjectPtr merged_page);
+    void MergeStringDestinations(NameTreePtr<DestinationPtr> destinations, PageObjectPtr other_page, PageObjectPtr merged_page);
+    void AppendStringDestination(syntax::StringObjectPtr key, DestinationPtr value, PageObjectPtr other_page, PageObjectPtr merged_page);
+    void AppendNameDestination(syntax::NameObjectPtr key, DestinationPtr value, PageObjectPtr other_page, PageObjectPtr merged_page);
+
+    void FixDestinationPage(syntax::ObjectPtr cloned_page, PageObjectPtr other_page, PageObjectPtr merged_page);
+    bool IsDestinationReferencingPage(DestinationPtr destination, PageObjectPtr page);
+
+    void ForceObjectInitialization();
+    void ForceObjectInitialization(syntax::ObjectPtr obj);
+
+private:
+    explicit Document(syntax::FilePtr holder);
+
+    mutable OutputCatalogPtr m_catalog;
 };
 
 } // semantics

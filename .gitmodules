@@ -1,7 +1,7 @@
 [submodule "external/vcpkg"]
-	path = external/vcpkg
-	url = https://github.com/microsoft/vcpkg.git
-	branch = master
+    path = external/vcpkg
+    url = https://github.com/microsoft/vcpkg.git
+    branch = master
 [submodule "external/googletest"]
-	path = external/googletest
-	url = https://github.com/google/googletest
+    path = external/googletest
+    url = https://github.com/google/googletest

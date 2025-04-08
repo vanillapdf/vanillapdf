@@ -13,32 +13,32 @@ namespace semantics {
 
 class PageObject : public PageNodeBase {
 public:
-	explicit PageObject(syntax::DictionaryObjectPtr obj);
+    explicit PageObject(syntax::DictionaryObjectPtr obj);
 
-	static PageObjectPtr Create(DocumentPtr document);
-	static PageObjectPtr Create(syntax::DictionaryObjectPtr obj);
+    static PageObjectPtr Create(DocumentPtr document);
+    static PageObjectPtr Create(syntax::DictionaryObjectPtr obj);
 
-	bool GetResources(OutputResourceDictionaryPtr& result) const;
-	void SetResources(ResourceDictionaryPtr resources);
+    bool GetResources(OutputResourceDictionaryPtr& result) const;
+    void SetResources(ResourceDictionaryPtr resources);
 
-	bool GetMediaBox(OutputRectanglePtr& result) const;
-	void SetMediaBox(RectanglePtr);
+    bool GetMediaBox(OutputRectanglePtr& result) const;
+    void SetMediaBox(RectanglePtr);
 
-	bool GetAnnotations(OutputPageAnnotationsPtr& result) const;
-	void SetAnnotations(PageAnnotationsPtr annots);
+    bool GetAnnotations(OutputPageAnnotationsPtr& result) const;
+    void SetAnnotations(PageAnnotationsPtr annots);
 
-	bool GetContents(OutputPageContentsPtr& result) const;
-	void SetContents(PageContentsPtr contents);
+    bool GetContents(OutputPageContentsPtr& result) const;
+    void SetContents(PageContentsPtr contents);
 
-	virtual NodeType GetNodeType(void) const noexcept override { return NodeType::Object; }
+    virtual NodeType GetNodeType(void) const noexcept override { return NodeType::Object; }
 
 private:
-	mutable OutputPageContentsPtr m_contents;
+    mutable OutputPageContentsPtr m_contents;
 };
 
 class PageObjectExtensions {
 public:
-	static bool GetInheritableResources(const PageObject& obj, OutputResourceDictionaryPtr& result);
+    static bool GetInheritableResources(const PageObject& obj, OutputResourceDictionaryPtr& result);
 };
 
 } // semantics

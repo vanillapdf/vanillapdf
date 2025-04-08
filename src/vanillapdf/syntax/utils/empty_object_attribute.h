@@ -8,13 +8,13 @@ namespace syntax {
 
 class EmptyAttribute : public BaseAttribute {
 public:
-	virtual Type GetType(void) const noexcept override {
-		return Type::Empty;
-	}
+    virtual Type GetType(void) const noexcept override {
+        return Type::Empty;
+    }
 
-	virtual EmptyAttribute* Clone(void) const override {
-		return pdf_new EmptyAttribute();
-	}
+    virtual EmptyAttribute* Clone(void) const override {
+        return pdf_new EmptyAttribute();
+    }
 };
 
 } // syntax

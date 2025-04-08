@@ -10,52 +10,52 @@ extern "C"
 {
 #endif
 
-	/**
-	* \file c_font_map.h
-	* \brief This file contains contains class definitions for \ref FontMapHandle
-	*/
+    /**
+    * \file c_font_map.h
+    * \brief This file contains contains class definitions for \ref FontMapHandle
+    */
 
-	/**
-	* \class FontMapHandle
-	* \extends IUnknownHandle
-	* \ingroup group_fonts
-	* \brief
-	* A dictionary that maps resource names to font dictionaries.
-	* \see \ref ResourceDictionaryHandle
-	*/
+    /**
+    * \class FontMapHandle
+    * \extends IUnknownHandle
+    * \ingroup group_fonts
+    * \brief
+    * A dictionary that maps resource names to font dictionaries.
+    * \see \ref ResourceDictionaryHandle
+    */
 
-	/**
-	* \memberof FontMapHandle
-	* @{
-	*/
+    /**
+    * \memberof FontMapHandle
+    * @{
+    */
 
-	/**
-	* \brief Determine if collection contains key \p key_handle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Contains(FontMapHandle* handle, const NameObjectHandle* key_handle, boolean_type* result);
+    /**
+    * \brief Determine if collection contains key \p key_handle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Contains(FontMapHandle* handle, const NameObjectHandle* key_handle, boolean_type* result);
 
-	/**
-	* \brief Find mapped value for key \p key_handle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle* handle, const NameObjectHandle* key_handle, FontHandle** result);
+    /**
+    * \brief Find mapped value for key \p key_handle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle* handle, const NameObjectHandle* key_handle, FontHandle** result);
 
-	/**
-	* \brief Reinterpret current object as \ref IUnknownHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION FontMap_ToUnknown(FontMapHandle* handle, IUnknownHandle** result);
+    /**
+    * \brief Reinterpret current object as \ref IUnknownHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FontMap_ToUnknown(FontMapHandle* handle, IUnknownHandle** result);
 
-	/**
-	* \brief Convert \ref IUnknownHandle to \ref FontMapHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION FontMap_FromUnknown(IUnknownHandle* handle, FontMapHandle** result);
+    /**
+    * \brief Convert \ref IUnknownHandle to \ref FontMapHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FontMap_FromUnknown(IUnknownHandle* handle, FontMapHandle** result);
 
-	/**
-	* \copydoc IUnknown_Release
-	* \see \ref IUnknown_Release
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Release(FontMapHandle* handle);
+    /**
+    * \copydoc IUnknown_Release
+    * \see \ref IUnknown_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Release(FontMapHandle* handle);
 
-	/** @} */
+    /** @} */
 
 #ifdef __cplusplus
 };

@@ -10,9 +10,9 @@ namespace vanillapdf {
 namespace syntax {
 
 struct ObjectStreamEntry {
-	types::big_uint object_number;
-	types::stream_offset offset;
-	ObjectPtr object;
+    types::big_uint object_number;
+    types::stream_offset offset;
+    ObjectPtr object;
 };
 
 using ObjectStreamEntries = std::list<ObjectStreamEntry>;

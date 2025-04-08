@@ -12,18 +12,18 @@ namespace vanillapdf {
 
 class StreamUtils {
 public:
-	static IOutputStreamPtr OutputStreamFromFile(const std::string& filename);
-	static IInputStreamPtr InputStreamFromFile(const std::string& filename);
+    static IOutputStreamPtr OutputStreamFromFile(const std::string& filename);
+    static IInputStreamPtr InputStreamFromFile(const std::string& filename);
 
-	static IInputOutputStreamPtr InputOutputStreamFromFile(const std::string& filename);
-	static IInputOutputStreamPtr InputOutputStreamFromMemory();
+    static IInputOutputStreamPtr InputOutputStreamFromFile(const std::string& filename);
+    static IInputOutputStreamPtr InputOutputStreamFromMemory();
 
-	static IInputStreamPtr InputStreamFromBuffer(BufferPtr data);
-	static BufferPtr InputStreamToBuffer(IInputStreamPtr source);
+    static IInputStreamPtr InputStreamFromBuffer(BufferPtr data);
+    static BufferPtr InputStreamToBuffer(IInputStreamPtr source);
 
-	static SeekDirection ConvertToSeekDirection(std::ios_base::seekdir value);
-	static std::ios_base::seekdir ConvertFromSeekDirection(SeekDirection value);
-	
+    static SeekDirection ConvertToSeekDirection(std::ios_base::seekdir value);
+    static std::ios_base::seekdir ConvertFromSeekDirection(SeekDirection value);
+    
 };
 
 } // vanillapdf

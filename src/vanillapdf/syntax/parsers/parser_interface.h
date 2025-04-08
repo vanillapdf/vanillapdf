@@ -15,19 +15,19 @@ namespace syntax {
 
 class IParser {
 public:
-	virtual XrefBasePtr ReadXref(void) = 0;
-	virtual XrefBasePtr ReadXref(types::stream_offset offset) = 0;
+    virtual XrefBasePtr ReadXref(void) = 0;
+    virtual XrefBasePtr ReadXref(types::stream_offset offset) = 0;
 
-	virtual ObjectStreamEntries ReadObjectStreamEntries(types::big_uint first, types::size_type size) = 0;
+    virtual ObjectStreamEntries ReadObjectStreamEntries(types::big_uint first, types::size_type size) = 0;
 
-	virtual ~IParser() {}
+    virtual ~IParser() {}
 };
 
 class IReverseParser {
 public:
-	virtual types::stream_offset ReadLastXrefOffset() = 0;
+    virtual types::stream_offset ReadLastXrefOffset() = 0;
 
-	virtual ~IReverseParser() {}
+    virtual ~IReverseParser() {}
 };
 
 } // syntax

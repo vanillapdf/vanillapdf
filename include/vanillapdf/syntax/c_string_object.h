@@ -10,205 +10,205 @@ extern "C"
 {
 #endif
 
-	/**
-	* \file c_string_object.h
-	* \brief This file contains class definitions for \ref StringObjectHandle.
-	*/
+    /**
+    * \file c_string_object.h
+    * \brief This file contains class definitions for \ref StringObjectHandle.
+    */
 
-	/**
-	* \class StringObjectHandle
-	* \extends ObjectHandle
-	* \ingroup group_objects
-	* \brief Reprsents human readable text.
-	*/
+    /**
+    * \class StringObjectHandle
+    * \extends ObjectHandle
+    * \ingroup group_objects
+    * \brief Reprsents human readable text.
+    */
 
-	/**
-	* \class HexadecimalStringObjectHandle
-	* \extends StringObjectHandle
-	* \ingroup group_objects
-	* \brief A hexadecimal string is preferable for arbitrary binary data
-	*/
+    /**
+    * \class HexadecimalStringObjectHandle
+    * \extends StringObjectHandle
+    * \ingroup group_objects
+    * \brief A hexadecimal string is preferable for arbitrary binary data
+    */
 
-	/**
-	* \class LiteralStringObjectHandle
-	* \extends StringObjectHandle
-	* \ingroup group_objects
-	* \brief A literal string is preferable for printable data
-	*/
+    /**
+    * \class LiteralStringObjectHandle
+    * \extends StringObjectHandle
+    * \ingroup group_objects
+    * \brief A literal string is preferable for printable data
+    */
 
-	/**
-	* \brief Derived types of \ref StringObjectHandle
-	*/
-	typedef enum {
+    /**
+    * \brief Derived types of \ref StringObjectHandle
+    */
+    typedef enum {
 
-		/**
-		* \brief Undefined unitialized default value, triggers error when used
-		*/
-		StringType_Undefined = 0,
+        /**
+        * \brief Undefined unitialized default value, triggers error when used
+        */
+        StringType_Undefined = 0,
 
-		/**
-		* \copybrief LiteralStringObjectHandle
-		* \see \ref LiteralStringObjectHandle
-		*/
-		StringType_Literal,
+        /**
+        * \copybrief LiteralStringObjectHandle
+        * \see \ref LiteralStringObjectHandle
+        */
+        StringType_Literal,
 
-		/**
-		* \copybrief HexadecimalStringObjectHandle
-		* \see \ref HexadecimalStringObjectHandle
-		*/
-		StringType_Hexadecimal
-	} StringType;
+        /**
+        * \copybrief HexadecimalStringObjectHandle
+        * \see \ref HexadecimalStringObjectHandle
+        */
+        StringType_Hexadecimal
+    } StringType;
 
-	/**
-	* \memberof StringObjectHandle
-	* @{
-	*/
+    /**
+    * \memberof StringObjectHandle
+    * @{
+    */
 
-	/**
-	* \brief Get derived type from current string
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_GetStringType(StringObjectHandle* handle, StringType* result);
+    /**
+    * \brief Get derived type from current string
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StringObject_GetStringType(StringObjectHandle* handle, StringType* result);
 
-	/**
-	* \brief Get strings current value
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_GetValue(StringObjectHandle* handle, BufferHandle** result);
+    /**
+    * \brief Get strings current value
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StringObject_GetValue(StringObjectHandle* handle, BufferHandle** result);
 
-	/**
-	* \brief Set strings new value
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_SetValue(StringObjectHandle* handle, BufferHandle* value);
+    /**
+    * \brief Set strings new value
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StringObject_SetValue(StringObjectHandle* handle, BufferHandle* value);
 
-	/**
-	* \brief Reinterpret current object as \ref ObjectHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_ToObject(StringObjectHandle* handle, ObjectHandle** result);
+    /**
+    * \brief Reinterpret current object as \ref ObjectHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StringObject_ToObject(StringObjectHandle* handle, ObjectHandle** result);
 
-	/**
-	* \brief Convert \ref ObjectHandle to \ref StringObjectHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_FromObject(ObjectHandle* handle, StringObjectHandle** result);
+    /**
+    * \brief Convert \ref ObjectHandle to \ref StringObjectHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StringObject_FromObject(ObjectHandle* handle, StringObjectHandle** result);
 
-	/**
-	* \copydoc Object_Release
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION StringObject_Release(StringObjectHandle* handle);
+    /**
+    * \copydoc Object_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StringObject_Release(StringObjectHandle* handle);
 
-	/** @} */
+    /** @} */
 
-	/**
-	* \memberof LiteralStringObjectHandle
-	* @{
-	*/
+    /**
+    * \memberof LiteralStringObjectHandle
+    * @{
+    */
 
-	/**
-	* \brief Creates a new \ref LiteralStringObjectHandle instance
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_Create(LiteralStringObjectHandle** result);
+    /**
+    * \brief Creates a new \ref LiteralStringObjectHandle instance
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_Create(LiteralStringObjectHandle** result);
 
-	/**
-	* \brief Creates a new \ref LiteralStringObjectHandle instance from PDF encoded data
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromEncodedBuffer(BufferHandle* value, LiteralStringObjectHandle** result);
+    /**
+    * \brief Creates a new \ref LiteralStringObjectHandle instance from PDF encoded data
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromEncodedBuffer(BufferHandle* value, LiteralStringObjectHandle** result);
 
-	/**
-	* \brief Creates a new \ref LiteralStringObjectHandle instance from PDF encoded string data
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromEncodedString(string_type value, LiteralStringObjectHandle** result);
+    /**
+    * \brief Creates a new \ref LiteralStringObjectHandle instance from PDF encoded string data
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromEncodedString(string_type value, LiteralStringObjectHandle** result);
 
-	/**
-	* \brief Creates a new \ref LiteralStringObjectHandle instance from decoded data without PDF syntax
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromDecodedBuffer(BufferHandle* value, LiteralStringObjectHandle** result);
+    /**
+    * \brief Creates a new \ref LiteralStringObjectHandle instance from decoded data without PDF syntax
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromDecodedBuffer(BufferHandle* value, LiteralStringObjectHandle** result);
 
-	/**
-	* \brief Creates a new \ref LiteralStringObjectHandle instance from decoded string data without PDF syntax
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromDecodedString(string_type value, LiteralStringObjectHandle** result);
+    /**
+    * \brief Creates a new \ref LiteralStringObjectHandle instance from decoded string data without PDF syntax
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_CreateFromDecodedString(string_type value, LiteralStringObjectHandle** result);
 
-	/**
-	* \brief Get strings current value
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_GetValue(LiteralStringObjectHandle* handle, BufferHandle** result);
+    /**
+    * \brief Get strings current value
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_GetValue(LiteralStringObjectHandle* handle, BufferHandle** result);
 
-	/**
-	* \brief Set strings new value
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_SetValue(LiteralStringObjectHandle* handle, BufferHandle* value);
+    /**
+    * \brief Set strings new value
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_SetValue(LiteralStringObjectHandle* handle, BufferHandle* value);
 
-	/**
-	* \brief Reinterpret current object as \ref StringObjectHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_ToStringObject(LiteralStringObjectHandle* handle, StringObjectHandle** result);
+    /**
+    * \brief Reinterpret current object as \ref StringObjectHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_ToStringObject(LiteralStringObjectHandle* handle, StringObjectHandle** result);
 
-	/**
-	* \brief Convert \ref IUnknownHandle to \ref LiteralStringObjectHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_FromStringObject(StringObjectHandle* handle, LiteralStringObjectHandle** result);
+    /**
+    * \brief Convert \ref IUnknownHandle to \ref LiteralStringObjectHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_FromStringObject(StringObjectHandle* handle, LiteralStringObjectHandle** result);
 
-	/**
-	* \copydoc StringObject_Release
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_Release(LiteralStringObjectHandle* handle);
+    /**
+    * \copydoc StringObject_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_Release(LiteralStringObjectHandle* handle);
 
-	/** @} */
+    /** @} */
 
-	/**
-	* \memberof HexadecimalStringObjectHandle
-	* @{
-	*/
+    /**
+    * \memberof HexadecimalStringObjectHandle
+    * @{
+    */
 
-	/**
-	* \brief Creates a new HexadecimalStringObject instance
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Create(HexadecimalStringObjectHandle** result);
+    /**
+    * \brief Creates a new HexadecimalStringObject instance
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Create(HexadecimalStringObjectHandle** result);
 
-	/**
-	* \brief Creates a new HexadecimalStringObject instance from encoded data
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_CreateFromEncodedBuffer(BufferHandle* value, HexadecimalStringObjectHandle** result);
+    /**
+    * \brief Creates a new HexadecimalStringObject instance from encoded data
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_CreateFromEncodedBuffer(BufferHandle* value, HexadecimalStringObjectHandle** result);
 
-	/**
-	* \brief Creates a new HexadecimalStringObject instance from encoded string data
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_CreateFromEncodedString(string_type value, HexadecimalStringObjectHandle** result);
+    /**
+    * \brief Creates a new HexadecimalStringObject instance from encoded string data
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_CreateFromEncodedString(string_type value, HexadecimalStringObjectHandle** result);
 
-	/**
-	* \brief Creates a new HexadecimalStringObject instance from decoded data
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_CreateFromDecodedBuffer(BufferHandle* value, HexadecimalStringObjectHandle** result);
+    /**
+    * \brief Creates a new HexadecimalStringObject instance from decoded data
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_CreateFromDecodedBuffer(BufferHandle* value, HexadecimalStringObjectHandle** result);
 
-	/**
-	* \brief Creates a new HexadecimalStringObject instance from decoded string data
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_CreateFromDecodedString(string_type value, HexadecimalStringObjectHandle** result);
+    /**
+    * \brief Creates a new HexadecimalStringObject instance from decoded string data
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_CreateFromDecodedString(string_type value, HexadecimalStringObjectHandle** result);
 
-	/**
-	* \brief Get strings current value
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_GetValue(HexadecimalStringObjectHandle* handle, BufferHandle** result);
+    /**
+    * \brief Get strings current value
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_GetValue(HexadecimalStringObjectHandle* handle, BufferHandle** result);
 
-	/**
-	* \brief Set strings new value
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_SetValue(HexadecimalStringObjectHandle* handle, BufferHandle* value);
+    /**
+    * \brief Set strings new value
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_SetValue(HexadecimalStringObjectHandle* handle, BufferHandle* value);
 
-	/**
-	* \brief Reinterpret current object as \ref StringObjectHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_ToStringObject(HexadecimalStringObjectHandle* handle, StringObjectHandle** result);
+    /**
+    * \brief Reinterpret current object as \ref StringObjectHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_ToStringObject(HexadecimalStringObjectHandle* handle, StringObjectHandle** result);
 
-	/**
-	* \brief Convert \ref IUnknownHandle to \ref HexadecimalStringObjectHandle
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_FromStringObject(StringObjectHandle* handle, HexadecimalStringObjectHandle** result);
+    /**
+    * \brief Convert \ref IUnknownHandle to \ref HexadecimalStringObjectHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_FromStringObject(StringObjectHandle* handle, HexadecimalStringObjectHandle** result);
 
-	/**
-	* \copydoc StringObject_Release
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Release(HexadecimalStringObjectHandle* handle);
+    /**
+    * \copydoc StringObject_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_Release(HexadecimalStringObjectHandle* handle);
 
-	/** @} */
+    /** @} */
 
 #ifdef __cplusplus
 };

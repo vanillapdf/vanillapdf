@@ -25,23 +25,23 @@ set(PACKAGE_VERSION_NAME				"${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERS
 set(PACKAGE_SYSTEM_NAME					"${CMAKE_SYSTEM_NAME}")
 
 if (PLATFORM_IDENTIFIER)
-	set(PACKAGE_SYSTEM_NAME "${PLATFORM_IDENTIFIER}")
+    set(PACKAGE_SYSTEM_NAME "${PLATFORM_IDENTIFIER}")
 else()
 
-	# Special naming convention for windows
-	if(${PACKAGE_SYSTEM_NAME} MATCHES "Windows")
-		if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-			set(PACKAGE_SYSTEM_NAME win64-x64)
-		else()
-			set(PACKAGE_SYSTEM_NAME win32-x86)
-		endif()
-	elseif(${PACKAGE_SYSTEM_NAME} MATCHES "Darwin")
-		set(PACKAGE_SYSTEM_NAME osx)
-	elseif(${PACKAGE_SYSTEM_NAME} MATCHES "Linux")
-		set(PACKAGE_SYSTEM_NAME linux)
-	endif()
+    # Special naming convention for windows
+    if(${PACKAGE_SYSTEM_NAME} MATCHES "Windows")
+        if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+            set(PACKAGE_SYSTEM_NAME win64-x64)
+        else()
+            set(PACKAGE_SYSTEM_NAME win32-x86)
+        endif()
+    elseif(${PACKAGE_SYSTEM_NAME} MATCHES "Darwin")
+        set(PACKAGE_SYSTEM_NAME osx)
+    elseif(${PACKAGE_SYSTEM_NAME} MATCHES "Linux")
+        set(PACKAGE_SYSTEM_NAME linux)
+    endif()
 
-	message(STATUS "Platform identifier was not specified, using CMAKE_SYSTEM_NAME: \"${PACKAGE_SYSTEM_NAME}\"")
+    message(STATUS "Platform identifier was not specified, using CMAKE_SYSTEM_NAME: \"${PACKAGE_SYSTEM_NAME}\"")
 endif()
 
 # Override the default package version name with PROJECT_NAME instead of CPACK_PACKAGE_NAME
@@ -108,76 +108,76 @@ configure_file("${CMAKE_SOURCE_DIR}/nuget/vanillapdf.nuspec.in" "${CMAKE_SOURCE_
 #set(CPACK_PROJECT_CONFIG_FILE ${CMAKE_SOURCE_DIR}/cmake/packaging_runtime.cmake)
 
 if(WIN32)
-	set(CPACK_GENERATOR		"WIX;ZIP")
+    set(CPACK_GENERATOR		"WIX;ZIP")
 
 elseif(APPLE)
-	set(CPACK_GENERATOR		"DragNDrop;TGZ")
-	set(CPACK_SYSTEM_NAME	"OSX")
+    set(CPACK_GENERATOR		"DragNDrop;TGZ")
+    set(CPACK_SYSTEM_NAME	"OSX")
 
 elseif(UNIX)
-	set(CPACK_GENERATOR		"TGZ")
+    set(CPACK_GENERATOR		"TGZ")
 else()
-	# other operating system (not Windows/Apple/Unix)
-	message(FATAL_ERROR "Unsupported platform")
+    # other operating system (not Windows/Apple/Unix)
+    message(FATAL_ERROR "Unsupported platform")
 endif()
 
 # Opt-in to detect and build custom distro packages RHEL/DEB
 if (DETECT_CUSTOM_LINUX_DISTRIBUTION)
 
-	message(STATUS "Detecting custom Linux distribution")
+    message(STATUS "Detecting custom Linux distribution")
 
-	# OS Architecture
-	execute_process(COMMAND uname -m		OUTPUT_VARIABLE PACKAGE_ARCHITECTURE					OUTPUT_STRIP_TRAILING_WHITESPACE)
+    # OS Architecture
+    execute_process(COMMAND uname -m		OUTPUT_VARIABLE PACKAGE_ARCHITECTURE					OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-	if(PACKAGE_ARCHITECTURE STREQUAL "x86_64")
-		if(VANILLAPDF_FORCE_32_BIT)
-			set(PACKAGE_FILENAME_ARCHITECTURE "x86")
-		else(VANILLAPDF_FORCE_32_BIT)
-			set(PACKAGE_FILENAME_ARCHITECTURE "x64")
-		endif(VANILLAPDF_FORCE_32_BIT)
-	endif(PACKAGE_ARCHITECTURE STREQUAL "x86_64")
+    if(PACKAGE_ARCHITECTURE STREQUAL "x86_64")
+        if(VANILLAPDF_FORCE_32_BIT)
+            set(PACKAGE_FILENAME_ARCHITECTURE "x86")
+        else(VANILLAPDF_FORCE_32_BIT)
+            set(PACKAGE_FILENAME_ARCHITECTURE "x64")
+        endif(VANILLAPDF_FORCE_32_BIT)
+    endif(PACKAGE_ARCHITECTURE STREQUAL "x86_64")
 
-	if(PACKAGE_ARCHITECTURE STREQUAL "arm" OR PACKAGE_ARCHITECTURE STREQUAL "armv7l")
-		set(PACKAGE_FILENAME_ARCHITECTURE "arm")
-	endif(PACKAGE_ARCHITECTURE STREQUAL "arm" OR PACKAGE_ARCHITECTURE STREQUAL "armv7l")
+    if(PACKAGE_ARCHITECTURE STREQUAL "arm" OR PACKAGE_ARCHITECTURE STREQUAL "armv7l")
+        set(PACKAGE_FILENAME_ARCHITECTURE "arm")
+    endif(PACKAGE_ARCHITECTURE STREQUAL "arm" OR PACKAGE_ARCHITECTURE STREQUAL "armv7l")
 
-	if(PACKAGE_ARCHITECTURE STREQUAL "aarch64")
-		if(VANILLAPDF_FORCE_32_BIT)
-			set(PACKAGE_FILENAME_ARCHITECTURE "arm")
-		else(VANILLAPDF_FORCE_32_BIT)
-			set(PACKAGE_FILENAME_ARCHITECTURE "arm64")
-		endif(VANILLAPDF_FORCE_32_BIT)
-	endif(PACKAGE_ARCHITECTURE STREQUAL "aarch64")
+    if(PACKAGE_ARCHITECTURE STREQUAL "aarch64")
+        if(VANILLAPDF_FORCE_32_BIT)
+            set(PACKAGE_FILENAME_ARCHITECTURE "arm")
+        else(VANILLAPDF_FORCE_32_BIT)
+            set(PACKAGE_FILENAME_ARCHITECTURE "arm64")
+        endif(VANILLAPDF_FORCE_32_BIT)
+    endif(PACKAGE_ARCHITECTURE STREQUAL "aarch64")
 
-	if(NOT DEFINED PACKAGE_FILENAME_ARCHITECTURE)
-		message(FATAL_ERROR "Unknown platform architecture: ${PACKAGE_ARCHITECTURE}")
-	endif(NOT DEFINED PACKAGE_FILENAME_ARCHITECTURE)
+    if(NOT DEFINED PACKAGE_FILENAME_ARCHITECTURE)
+        message(FATAL_ERROR "Unknown platform architecture: ${PACKAGE_ARCHITECTURE}")
+    endif(NOT DEFINED PACKAGE_FILENAME_ARCHITECTURE)
 
-	# Determine distribution and release
-	file(STRINGS /etc/os-release PACKAGE_DISTRIBUTION REGEX "^ID=")
-	string(REGEX REPLACE "ID=\"?([^\"]*)\"?" "\\1" PACKAGE_DISTRIBUTION "${PACKAGE_DISTRIBUTION}")
+    # Determine distribution and release
+    file(STRINGS /etc/os-release PACKAGE_DISTRIBUTION REGEX "^ID=")
+    string(REGEX REPLACE "ID=\"?([^\"]*)\"?" "\\1" PACKAGE_DISTRIBUTION "${PACKAGE_DISTRIBUTION}")
 
-	message(STATUS "Packaging for OS: ${PACKAGE_DISTRIBUTION}")
+    message(STATUS "Packaging for OS: ${PACKAGE_DISTRIBUTION}")
 
-	if(PACKAGE_DISTRIBUTION STREQUAL "debian" OR PACKAGE_DISTRIBUTION STREQUAL "ubuntu")
-		string(TOLOWER ${PACKAGE_DISTRIBUTION} PACKAGE_DISTRIBUTION)
+    if(PACKAGE_DISTRIBUTION STREQUAL "debian" OR PACKAGE_DISTRIBUTION STREQUAL "ubuntu")
+        string(TOLOWER ${PACKAGE_DISTRIBUTION} PACKAGE_DISTRIBUTION)
 
-		file(STRINGS /etc/os-release OS_VERSION REGEX "^VERSION_ID=")
-		string(REGEX REPLACE "VERSION_ID=\"?([^\"]*)\"?" "\\1" OS_VERSION "${OS_VERSION}")
+        file(STRINGS /etc/os-release OS_VERSION REGEX "^VERSION_ID=")
+        string(REGEX REPLACE "VERSION_ID=\"?([^\"]*)\"?" "\\1" OS_VERSION "${OS_VERSION}")
 
-		set(CPACK_GENERATOR "DEB;TGZ")
-		set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}_${PACKAGE_VERSION_NAME}-${PACKAGE_DISTRIBUTION}.${OS_VERSION}_${PACKAGE_FILENAME_ARCHITECTURE}")
+        set(CPACK_GENERATOR "DEB;TGZ")
+        set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}_${PACKAGE_VERSION_NAME}-${PACKAGE_DISTRIBUTION}.${OS_VERSION}_${PACKAGE_FILENAME_ARCHITECTURE}")
 
-	elseif(PACKAGE_DISTRIBUTION STREQUAL "redhat" OR PACKAGE_DISTRIBUTION STREQUAL "centos" OR PACKAGE_DISTRIBUTION STREQUAL "rocky")
+    elseif(PACKAGE_DISTRIBUTION STREQUAL "redhat" OR PACKAGE_DISTRIBUTION STREQUAL "centos" OR PACKAGE_DISTRIBUTION STREQUAL "rocky")
 
-		# Determine distribution and release
-		file(STRINGS /etc/os-release PLATFORM_ID REGEX "^PLATFORM_ID=")
-		string(REGEX REPLACE "PLATFORM_ID=\"platform:([^\"]*)\"" "\\1" PLATFORM_ID "${PLATFORM_ID}")
+        # Determine distribution and release
+        file(STRINGS /etc/os-release PLATFORM_ID REGEX "^PLATFORM_ID=")
+        string(REGEX REPLACE "PLATFORM_ID=\"platform:([^\"]*)\"" "\\1" PLATFORM_ID "${PLATFORM_ID}")
 
-		set(CPACK_GENERATOR "RPM;TGZ")
-		set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}_${PACKAGE_VERSION_NAME}.${PLATFORM_ID}.${PACKAGE_ARCHITECTURE}")
+        set(CPACK_GENERATOR "RPM;TGZ")
+        set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}_${PACKAGE_VERSION_NAME}.${PLATFORM_ID}.${PACKAGE_ARCHITECTURE}")
 
-	else()
-		message(FATAL_ERROR "Unknown UNIX distribution: ${PACKAGE_DISTRIBUTION}")
-	endif()
+    else()
+        message(FATAL_ERROR "Unknown UNIX distribution: ${PACKAGE_DISTRIBUTION}")
+    endif()
 endif(DETECT_CUSTOM_LINUX_DISTRIBUTION)

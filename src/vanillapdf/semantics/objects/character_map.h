@@ -11,41 +11,41 @@ namespace semantics {
 
 class CharacterMapBase : public HighLevelObject<syntax::StreamObjectPtr> {
 public:
-	enum class Type {
-		Undefined = 0,
-		Embedded,
-		Unicode
-	};
+    enum class Type {
+        Undefined = 0,
+        Embedded,
+        Unicode
+    };
 
 public:
-	explicit CharacterMapBase(syntax::StreamObjectPtr root);
-	virtual CharacterMapBase::Type GetCharacterMapType() const noexcept = 0;
+    explicit CharacterMapBase(syntax::StreamObjectPtr root);
+    virtual CharacterMapBase::Type GetCharacterMapType() const noexcept = 0;
 
-	static std::unique_ptr<CharacterMapBase> Create(syntax::StreamObjectPtr root, WeakReference<Document> doc);
+    static std::unique_ptr<CharacterMapBase> Create(syntax::StreamObjectPtr root, WeakReference<Document> doc);
 };
 
 class EmbeddedCharacterMap : public CharacterMapBase {
 public:
-	explicit EmbeddedCharacterMap(syntax::StreamObjectPtr root);
-	virtual CharacterMapBase::Type GetCharacterMapType() const noexcept override {
-		return Type::Embedded;
-	}
+    explicit EmbeddedCharacterMap(syntax::StreamObjectPtr root);
+    virtual CharacterMapBase::Type GetCharacterMapType() const noexcept override {
+        return Type::Embedded;
+    }
 };
 
 class UnicodeCharacterMap : public CharacterMapBase {
 public:
-	explicit UnicodeCharacterMap(syntax::StreamObjectPtr root);
-	virtual CharacterMapBase::Type GetCharacterMapType() const noexcept override {
-		return Type::Unicode;
-	}
+    explicit UnicodeCharacterMap(syntax::StreamObjectPtr root);
+    virtual CharacterMapBase::Type GetCharacterMapType() const noexcept override {
+        return Type::Unicode;
+    }
 
-	BufferPtr GetMappedValue(BufferPtr key) const;
+    BufferPtr GetMappedValue(BufferPtr key) const;
 
 private:
-	mutable contents::CharacterMapData m_data;
-	mutable bool m_initialized = false;
+    mutable contents::CharacterMapData m_data;
+    mutable bool m_initialized = false;
 
-	void Initialize() const;
+    void Initialize() const;
 };
 
 } // semantics

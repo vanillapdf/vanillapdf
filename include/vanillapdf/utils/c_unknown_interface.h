@@ -10,36 +10,36 @@ extern "C"
 {
 #endif
 
-	/**
-	* \file c_unknown_interface.h
-	* \brief This file contains class definitions for \ref IUnknownHandle interface
-	*/
+    /**
+    * \file c_unknown_interface.h
+    * \brief This file contains class definitions for \ref IUnknownHandle interface
+    */
 
-	/**
-	* \class IUnknownHandle
-	* \ingroup group_utils
-	* \brief Base class for reference counting
-	*/
+    /**
+    * \class IUnknownHandle
+    * \ingroup group_utils
+    * \brief Base class for reference counting
+    */
 
-	/**
-	* \memberof IUnknownHandle
-	* @{
-	*/
+    /**
+    * \memberof IUnknownHandle
+    * @{
+    */
 
-	/**
-	* \brief Increment the internal reference counter.
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IUnknown_AddRef(IUnknownHandle* handle);
+    /**
+    * \brief Increment the internal reference counter.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION IUnknown_AddRef(IUnknownHandle* handle);
 
-	/**
-	* \brief Decrement the internal reference counter.
-	* 
-	* When the internal counter reaches zero the object is deleted.
-	* Releasing already disposed object causes <b>undefined behavior</b>.
-	*/
-	VANILLAPDF_API error_type CALLING_CONVENTION IUnknown_Release(IUnknownHandle* handle);
+    /**
+    * \brief Decrement the internal reference counter.
+    * 
+    * When the internal counter reaches zero the object is deleted.
+    * Releasing already disposed object causes <b>undefined behavior</b>.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION IUnknown_Release(IUnknownHandle* handle);
 
-	/** @} */
+    /** @} */
 
 #ifdef __cplusplus
 };
