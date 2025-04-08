@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Build win-x64
 
 # Controls when the workflow will run
 on:
@@ -17,7 +17,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 
@@ -33,3 +33,13 @@ jobs:
       
       - name: Build installer packages
         run: cmake --build . --config Release --target PACKAGE
+      
+      - name: Upload result artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: install-package
+          path: |
+            ./*.msi
+            ./*.zip
+            ./*.nupkg
+            ./*.sha256
