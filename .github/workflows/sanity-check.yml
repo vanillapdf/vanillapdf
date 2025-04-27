@@ -27,6 +27,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-13]
+        build_type: Release
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -35,12 +36,10 @@ jobs:
         with:
           submodules: recursive
 
-      # Runs a single command using the runners shell
-      - name: Generate CMake project
-        run: cmake .
-
+      # Build the project
       - name: Build project
-        run: make
+        run: cmake --build . --config ${{ matrix.build_type }}
 
+      # Run tests
       - name: Run automated test scenarios
-        run: make test
+        run: ctest --build-config ${{ matrix.build_type }}
