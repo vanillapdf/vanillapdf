@@ -26,7 +26,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-13]
+        os: [ubuntu-latest, windows-latest, macos-13, macos-latest]
         build_type: [Release]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -36,10 +36,14 @@ jobs:
         with:
           submodules: recursive
 
+      # Generate the build files
+      - name: Generate build files
+        run: cmake .
+
       # Build the project
-      - name: Build project
+      - name: Build project in config ${{ matrix.build_type }}
         run: cmake --build . --config ${{ matrix.build_type }}
 
       # Run tests
-      - name: Run automated test scenarios
+      - name: Run automated test scenarios in config ${{ matrix.build_type }}
         run: ctest --build-config ${{ matrix.build_type }}
