@@ -18,14 +18,15 @@ Support, such as bug reports is free and available at your service.
 
 Please visit [vanillapdf.com](http://vanillapdf.com) for more information.
 
+## Build
+
+cmake .
+cmake --build .
+
 ## License
 
 Vanilla.PDF is licensed under the [Apache 2.0 license](LICENSE.txt).
 
-## FAQ
-
-Frequently asked questions are discussed on our [website](https://vanillapdf.com/faq/).
-
 ## Contact
 
-In case of any questions do not hesitate to [Contact us](https://vanillapdf.com/contact/).
+In case of any questions do not hesitate to [Contact us](https://vanillapdf.com/contact/) or directly via [info@vanillapdf.com](mailto:info%40vanillapdf.com).
