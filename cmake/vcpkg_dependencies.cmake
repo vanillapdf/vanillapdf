@@ -11,6 +11,36 @@ if(WIN32)
   set(VANILLPDF_BINARY_DIR ${VCPKG_ROOT}/installed/${VCPKG_TARGET_TRIPLET}/bin)
 endif()
 
+# Set VCPKG_TARGET_TRIPLET automatically if not set
+if(NOT DEFINED VCPKG_TARGET_TRIPLET)
+
+  if(WIN32)
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set(VCPKG_TARGET_TRIPLET "x64-windows")
+    else()
+        set(VCPKG_TARGET_TRIPLET "x86-windows")
+    endif()
+  elseif(APPLE)
+    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+        set(VCPKG_TARGET_TRIPLET "arm64-osx")
+    else()
+        set(VCPKG_TARGET_TRIPLET "x64-osx")
+    endif()
+  elseif(UNIX)
+    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
+      set(VCPKG_TARGET_TRIPLET "arm64-linux")
+    else()
+      set(VCPKG_TARGET_TRIPLET "x64-linux")
+    endif()
+  endif()
+
+  if(NOT DEFINED VCPKG_TARGET_TRIPLET)
+    message(FATAL "VCPKG_TARGET_TRIPLET is not defined and could not be auto-detected")
+  endif()
+
+  message(STATUS "Auto-detected VCPKG_TARGET_TRIPLET=${VCPKG_TARGET_TRIPLET}")
+endif()
+
 message(STATUS "Installing dependencies for ${VCPKG_TARGET_TRIPLET} in ${VCPKG_ROOT}")
 
 execute_process(COMMAND ${VCPKG_EXEC} install "openssl:${VCPKG_TARGET_TRIPLET}" ${VCPKG_TRIPLET_OVERLAY} WORKING_DIRECTORY ${VCPKG_ROOT})
@@ -21,5 +51,5 @@ execute_process(COMMAND ${VCPKG_EXEC} install "benchmark:${VCPKG_TARGET_TRIPLET}
 execute_process(COMMAND ${VCPKG_EXEC} install "spdlog:${VCPKG_TARGET_TRIPLET}" ${VCPKG_TRIPLET_OVERLAY} WORKING_DIRECTORY ${VCPKG_ROOT})
 
 if (COMPILE_SKIA)
-    execute_process(COMMAND ${VCPKG_EXEC} install "skia:${VCPKG_TARGET_TRIPLET}" ${VCPKG_TRIPLET_OVERLAY} WORKING_DIRECTORY ${VCPKG_ROOT})
+  execute_process(COMMAND ${VCPKG_EXEC} install "skia:${VCPKG_TARGET_TRIPLET}" ${VCPKG_TRIPLET_OVERLAY} WORKING_DIRECTORY ${VCPKG_ROOT})
 endif (COMPILE_SKIA)
