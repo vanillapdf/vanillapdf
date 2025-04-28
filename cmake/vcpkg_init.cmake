@@ -1,6 +1,8 @@
 # VCPKG - C++ package management system
 
-set(VCPKG_ROOT "${CMAKE_SOURCE_DIR}/external/vcpkg")
+if(NOT DEFINED VCPKG_ROOT)
+  set(VCPKG_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/external/vcpkg")
+endif()
 
 if(WIN32)
   set(VCPKG_EXEC ${VCPKG_ROOT}/vcpkg.exe)
