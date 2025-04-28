@@ -19,6 +19,9 @@ cmake_minimum_required(VERSION 3.10)
     # required version of CMake to 2.8.4 or higher.  Then teach your project to
     # build on Cygwin without WIN32.
 
+# Store informatio about solution root folder
+set(VANILLAPDF_SOLUTION_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
 # Note: This needs to be included before defining the main project
 # Check for VCPKG - C++ package management system
 include(cmake/vcpkg_init.cmake)
@@ -77,9 +80,6 @@ if(NOT CMAKE_BUILD_TYPE)
       "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
       FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
-
-# Store informatio about solution root folder
-set(VANILLAPDF_SOLUTION_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Include source directories
 add_subdirectory(src/vanillapdf)
