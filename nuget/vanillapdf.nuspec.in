@@ -6,7 +6,7 @@
     <version>@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@</version>
     <authors>Vanilla.PDF Labs s.r.o.</authors>
     <owners>Vanilla.PDF Labs s.r.o.</owners>
-    <license type="file">LICENSE.txt</license>
+    <license type="expression">Apache-2.0</license>
     <icon>images/vanilla_logo.png</icon>
     <readme>README.md</readme>
     <projectUrl>https://vanillapdf.com/</projectUrl>
