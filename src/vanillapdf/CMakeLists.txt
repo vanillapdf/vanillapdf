@@ -1,7 +1,10 @@
 project(vanillapdf LANGUAGES CXX)
 
-# Solution root folder
+# Include listing of all interface files
 include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/files.cmake")
+
+# Additional directories in the root project
+include_directories("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include")
 include_directories("${VANILLAPDF_SOLUTION_SOURCE_DIR}/lib/nlohmann_json/include")
 
 # Include local files in the directory

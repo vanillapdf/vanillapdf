@@ -3,6 +3,9 @@ project(vanillapdf.test LANGUAGES C)
 # Solution root folder
 include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/files.cmake")
 
+# Additional directories in the root project
+include_directories("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include")
+
 # Include local files in the directory
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
