@@ -1,7 +1,7 @@
 project(vanillapdf.tools LANGUAGES C)
 
-include_directories("${CMAKE_SOURCE_DIR}/include")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+# Solution root folder
+include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/files.cmake")
 
 set(VANILLAPDF_TOOLS_SOURCES
     main.c
@@ -79,4 +79,4 @@ add_definitions(-DVANILLAPDF_TOOLS_VERSION_MINOR=${VANILLAPDF_VERSION_MINOR})
 add_definitions(-DVANILLAPDF_TOOLS_VERSION_PATCH=${VANILLAPDF_VERSION_PATCH})
 add_definitions(-DVANILLAPDF_TOOLS_VERSION_BUILD=${VANILLAPDF_VERSION_BUILD})
 
-add_definitions(-DVANILLAPDF_TOOLS_ICON="${CMAKE_SOURCE_DIR}/cmake/vanilla_logo.ico")
+add_definitions(-DVANILLAPDF_TOOLS_ICON="${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/vanilla_logo.ico")

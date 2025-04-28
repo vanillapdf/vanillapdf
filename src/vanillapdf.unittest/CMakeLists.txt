@@ -1,7 +1,7 @@
 project(vanillapdf.unittest LANGUAGES CXX)
 
-include_directories("${CMAKE_SOURCE_DIR}/include")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+# Solution root folder
+include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/files.cmake")
 
 set(VANILLAPDF_UNITTEST_SOURCES
     main.cpp
@@ -63,10 +63,10 @@ add_definitions(-DVANILLAPDF_UNITTEST_VERSION_MINOR=${VANILLAPDF_VERSION_MINOR})
 add_definitions(-DVANILLAPDF_UNITTEST_VERSION_PATCH=${VANILLAPDF_VERSION_PATCH})
 add_definitions(-DVANILLAPDF_UNITTEST_VERSION_BUILD=${VANILLAPDF_VERSION_BUILD})
 
-add_definitions(-DVANILLAPDF_UNITTEST_ICON="${CMAKE_SOURCE_DIR}/cmake/vanilla_logo.ico")
+add_definitions(-DVANILLAPDF_UNITTEST_ICON="${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/vanilla_logo.ico")
 
 # Build GoogleTest from the external repository
-add_subdirectory("${CMAKE_SOURCE_DIR}/external/googletest" build EXCLUDE_FROM_ALL)
+add_subdirectory("${VANILLAPDF_SOLUTION_SOURCE_DIR}/external/googletest" build EXCLUDE_FROM_ALL)
 
 # Use GoogleTest for unit test execution
 include(GoogleTest)

@@ -1,7 +1,7 @@
 project(vanillapdf.test LANGUAGES C)
 
-include_directories("${CMAKE_SOURCE_DIR}/include")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+# Solution root folder
+include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/files.cmake")
 
 set(VANILLAPDF_TEST_SOURCES
     documents.c
@@ -73,13 +73,13 @@ add_definitions(-DVANILLAPDF_TEST_VERSION_MINOR=${VANILLAPDF_VERSION_MINOR})
 add_definitions(-DVANILLAPDF_TEST_VERSION_PATCH=${VANILLAPDF_VERSION_PATCH})
 add_definitions(-DVANILLAPDF_TEST_VERSION_BUILD=${VANILLAPDF_VERSION_BUILD})
 
-add_definitions(-DVANILLAPDF_TEST_ICON="${CMAKE_SOURCE_DIR}/cmake/vanilla_logo.ico")
+add_definitions(-DVANILLAPDF_TEST_ICON="${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/vanilla_logo.ico")
 
 # Python for running the test cases
 find_package (Python3 COMPONENTS Interpreter REQUIRED)
 
 # Case insensitive
-file(GLOB_RECURSE TEST_FILES "${CMAKE_SOURCE_DIR}/test/*.[Pp][Dd][Ff]")
+file(GLOB_RECURSE TEST_FILES "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/*.[Pp][Dd][Ff]")
 
 foreach(TEST_FILE ${TEST_FILES})
     # Get filename from full path
@@ -89,11 +89,11 @@ foreach(TEST_FILE ${TEST_FILES})
     add_test(
         NAME ${TEST_FILENAME}							# test name same with file name
         COMMAND ${Python3_EXECUTABLE}					# reference to python executable
-        "${CMAKE_SOURCE_DIR}/scripts/run_test.py"		# path to run_test python script
+        "${VANILLAPDF_SOLUTION_SOURCE_DIR}/scripts/run_test.py"		# path to run_test python script
         "$<TARGET_FILE:vanillapdf.test>"				# destination of the test executable
         "${TEST_FILE}"									# destination of the source file
-        "${CMAKE_SOURCE_DIR}/scripts/vanilla_test.cfg"	# path to additional configuration file
-        "${CMAKE_SOURCE_DIR}/scripts/VanillaPDF.lic"	# path to license file for test purposes
-        "${CMAKE_SOURCE_DIR}"							# path to root of the source directory
+        "${VANILLAPDF_SOLUTION_SOURCE_DIR}/scripts/vanilla_test.cfg"	# path to additional configuration file
+        "${VANILLAPDF_SOLUTION_SOURCE_DIR}/scripts/VanillaPDF.lic"	# path to license file for test purposes
+        "${VANILLAPDF_SOLUTION_SOURCE_DIR}"							# path to root of the source directory
     )
 endforeach(TEST_FILE)

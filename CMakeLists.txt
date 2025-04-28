@@ -78,6 +78,9 @@ if(NOT CMAKE_BUILD_TYPE)
       FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
 
+# Store informatio about solution root folder
+set(VANILLAPDF_SOLUTION_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
 # Include source directories
 add_subdirectory(src/vanillapdf)
 add_subdirectory(src/vanillapdf.test)
