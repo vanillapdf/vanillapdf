@@ -39,6 +39,7 @@
     <!-- Additional dependencies -->
     <file src="..\LICENSE.txt" target="" />
     <file src="..\CHANGELOG.txt" target="" />
+    <file src="..\NOTICE.md" target="" />
     <file src="vanillapdf.readme.md" target="README.md" />
     <file src="..\cmake\vanilla_logo.png" target="images" />
   </files>
