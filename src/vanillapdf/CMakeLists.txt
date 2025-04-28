@@ -2,10 +2,10 @@ project(vanillapdf LANGUAGES CXX)
 
 # Solution root folder
 include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/files.cmake")
-
-#include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
-#include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 include_directories("${VANILLAPDF_SOLUTION_SOURCE_DIR}/lib/nlohmann_json/include")
+
+# Include local files in the directory
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(VANILLAPDF_PRECOMPILED_SOURCE
     precompiled.cpp

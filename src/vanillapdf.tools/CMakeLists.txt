@@ -3,6 +3,9 @@ project(vanillapdf.tools LANGUAGES C)
 # Solution root folder
 include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/files.cmake")
 
+# Include local files in the directory
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+
 set(VANILLAPDF_TOOLS_SOURCES
     main.c
     extract.c
