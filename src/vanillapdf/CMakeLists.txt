@@ -1,10 +1,10 @@
 project(vanillapdf LANGUAGES CXX)
 
-include_directories("${CMAKE_SOURCE_DIR}/include")
-include_directories("${CMAKE_SOURCE_DIR}/lib/nlohmann_json/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/lib/nlohmann_json/include")
 
-include("${CMAKE_SOURCE_DIR}/include/files.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/include/files.cmake")
 
 set(VANILLAPDF_PRECOMPILED_SOURCE
     precompiled.cpp
@@ -576,7 +576,7 @@ add_definitions(-DVANILLAPDF_BUILD_MONTH=${VANILLAPDF_BUILD_MONTH})
 add_definitions(-DVANILLAPDF_BUILD_YEAR=${VANILLAPDF_BUILD_YEAR})
 
 # This installs required libraries
-include("${CMAKE_SOURCE_DIR}/cmake/vcpkg_dependencies.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/vcpkg_dependencies.cmake")
 
 find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
@@ -642,7 +642,7 @@ endif (OPENJPEG_LIBRARIES)
 # relocation R_X86_64_PC32 against symbol `stderr@@GLIBC_2.2.5' can not be used when making a shared object; recompile with -fPIC
 # https://stackoverflow.com/questions/38296756/what-is-the-idiomatic-way-in-cmake-to-add-the-fpic-compiler-option
 
-#add_subdirectory("${CMAKE_SOURCE_DIR}/external/fmtlib" build EXCLUDE_FROM_ALL)
+#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/external/fmtlib" build EXCLUDE_FROM_ALL)
 
 set(VANILLAPDF_LIBS spdlog::spdlog ${VANILLAPDF_LIBS})
 
@@ -661,9 +661,9 @@ install(FILES ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS} DESTINATION "include/vanillap
 install(FILES ${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS} DESTINATION "include/vanillapdf/semantics")
 install(FILES ${VANILLAPDF_INCLUDE_CONTENTS_HEADERS} DESTINATION "include/vanillapdf/contents")
 
-install(FILES "${CMAKE_SOURCE_DIR}/cmake/README.txt" DESTINATION .)
-install(FILES "${CMAKE_SOURCE_DIR}/LICENSE.txt" DESTINATION .)
-install(FILES "${CMAKE_SOURCE_DIR}/CHANGELOG.txt" DESTINATION .)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/cmake/README.txt" DESTINATION .)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt" DESTINATION .)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/CHANGELOG.txt" DESTINATION .)
 
 # Install dependent libraries on windows
 if(WIN32)
