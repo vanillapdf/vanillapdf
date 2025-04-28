@@ -17,6 +17,9 @@ on:
 permissions:
   contents: read
 
+env:
+  VCPKG_DISABLE_METRICS: 1 # vcpkg is by default sending build metrics, we do not need it here
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
