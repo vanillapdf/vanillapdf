@@ -5,7 +5,7 @@ if(WIN32)
   # For the sake of ease of use, I am overriding default vcpkg triplets (x86-windows, x64-windows)
   # It is possible to keep default triplets untouched and use custom naming (x86-windows-custom)
   # Unfortunately this is not easy to do and lead to incorrect include paths
-  set(VCPKG_TRIPLET_OVERLAY "--overlay-triplets=${CMAKE_SOURCE_DIR}/cmake")
+  set(VCPKG_TRIPLET_OVERLAY "--overlay-triplets=${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake")
   
   set(VANILLPDF_INCLUDE_DIR ${VCPKG_ROOT}/installed/${VCPKG_TARGET_TRIPLET}/include)
   set(VANILLPDF_BINARY_DIR ${VCPKG_ROOT}/installed/${VCPKG_TARGET_TRIPLET}/bin)

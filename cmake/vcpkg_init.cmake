@@ -1,7 +1,7 @@
 # VCPKG - C++ package management system
 
 if(NOT DEFINED VCPKG_ROOT)
-  set(VCPKG_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/external/vcpkg")
+  set(VCPKG_ROOT "${VANILLAPDF_SOLUTION_SOURCE_DIR}/external/vcpkg")
 endif()
 
 if(WIN32)
