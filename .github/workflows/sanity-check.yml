@@ -33,26 +33,8 @@ jobs:
       fail-fast: false
 
       matrix:
-        include:
-          - os: ubuntu-latest
-            build_type: Release
-            bootstrap_cmd: external/vcpkg/bootstrap-vcpkg.sh
-            shell: bash
-
-          - os: macos-13
-            build_type: Release
-            bootstrap_cmd: external/vcpkg/bootstrap-vcpkg.sh
-            shell: bash
-
-          - os: macos-latest
-            build_type: Release
-            bootstrap_cmd: external/vcpkg/bootstrap-vcpkg.sh
-            shell: bash
-
-          - os: windows-latest
-            build_type: Release
-            bootstrap_cmd: external/vcpkg/bootstrap-vcpkg.bat
-            shell: cmd
+        os: [ubuntu-latest, windows-latest, macos-13, macos-latest]
+        build_type: [Release]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -61,10 +43,23 @@ jobs:
         with:
           submodules: recursive
 
-      # Bootstrap vcpkg
-      - name: Bootstrap vcpkg
-        run: ${{ matrix.bootstrap_cmd }}
-        shell: ${{ matrix.shell }}
+      # Bootstrap vcpkg on Windows
+      - name: Bootstrap vcpkg (Windows)
+        if: runner.os == 'Windows'
+        run: ${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.bat
+        shell: cmd
+
+      # Bootstrap vcpkg on Linux
+      - name: Bootstrap vcpkg (Linux)
+        if: runner.os == 'Linux'
+        run: ${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.sh
+        shell: bash
+
+      # Bootstrap vcpkg on macOS
+      - name: Bootstrap vcpkg (macOS)
+      if: runner.os == 'macOS'
+      run: ${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.sh
+      shell: bash
 
       # Generate the build files
       - name: Generate build files
