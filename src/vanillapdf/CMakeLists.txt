@@ -650,7 +650,7 @@ endif (OPENJPEG_LIBRARIES)
 
 set(VANILLAPDF_LIBS spdlog::spdlog ${VANILLAPDF_LIBS})
 
-target_link_libraries(vanillapdf ${VANILLAPDF_LIBS})
+target_link_libraries(vanillapdf PRIVATE ${VANILLAPDF_LIBS})
 
 # Project install targets
 install(TARGETS vanillapdf
