@@ -18,9 +18,8 @@ permissions:
   contents: read
 
 env:
-  VCPKG_ROOT: "external/vcpkg"
+  VCPKG_ROOT: external/vcpkg
   VCPKG_DISABLE_METRICS: 1 # vcpkg is by default sending build metrics, we do not need it here
-  BUILD_DIR: build
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -74,17 +73,12 @@ jobs:
 
       # Generate the build files
       - name: Generate build files
-        run: |
-          cmake \
-          -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
-          -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }} \
-          -B ${{ env.BUILD_DIR }} \
-          -S .
+        run: cmake --preset ${{ matrix.cmake_preset }}
 
       # Build the project
       - name: Build project in config ${{ matrix.build_type }}
-        run: cmake --build ${{ env.BUILD_DIR }} --config ${{ matrix.build_type }}
+        run: cmake --build --preset ${{ matrix.cmake_preset }}
 
       # Run tests
       - name: Run automated test scenarios in config ${{ matrix.build_type }}
-        run: ctest --build-config ${{ matrix.build_type }} --test-dir ${{ env.BUILD_DIR }}
+        run: ctest --preset ${{ matrix.cmake_preset }}
