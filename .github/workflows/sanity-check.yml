@@ -57,9 +57,9 @@ jobs:
 
       # Bootstrap vcpkg on macOS
       - name: Bootstrap vcpkg (macOS)
-      if: runner.os == 'macOS'
-      run: ${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.sh
-      shell: bash
+        if: runner.os == 'macOS'
+        run: ${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.sh
+        shell: bash
 
       # Generate the build files
       - name: Generate build files
