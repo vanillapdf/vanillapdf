@@ -55,7 +55,7 @@ set(VANILLAPDF_BENCHMARK_LIBS
     benchmark::benchmark
 )
 
-target_link_libraries(vanillapdf.benchmark ${VANILLAPDF_BENCHMARK_LIBS})
+target_link_libraries(vanillapdf.benchmark PRIVATE ${VANILLAPDF_BENCHMARK_LIBS})
 
 # We do not need unit test project to be shipped
 #install(TARGETS vanillapdf.benchmark
