@@ -37,19 +37,19 @@ jobs:
         build_type: [Release]
         include:
           - os: ubuntu-latest
-            bootstrap_cmd: "${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.sh"
+            bootstrap_cmd: external/vcpkg/bootstrap-vcpkg.sh
             shell: bash
 
           - os: macos-13
-            bootstrap_cmd: "${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.sh"
+            bootstrap_cmd: external/vcpkg/bootstrap-vcpkg.sh
             shell: bash
 
           - os: macos-latest
-            bootstrap_cmd: "${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.sh"
+            bootstrap_cmd: external/vcpkg/bootstrap-vcpkg.sh
             shell: bash
 
           - os: windows-latest
-            bootstrap_cmd: "${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.bat"
+            bootstrap_cmd: external/vcpkg/bootstrap-vcpkg.bat
             shell: cmd
 
     # Steps represent a sequence of tasks that will be executed as part of the job
