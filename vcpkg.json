@@ -1,0 +1,23 @@
+{
+    "name": "vanillapdf",
+    "version": "2.0.0",
+    "description": "PDF rendering engine using vcpkg-managed dependencies",
+    "dependencies": [
+        "openssl",
+        "libjpeg-turbo",
+        "openjpeg",
+        "zlib",
+        "benchmark",
+        "spdlog",
+        "skia"
+    ],
+    "features": {
+        "skia-support": {
+            "description": "Enable Skia support",
+            "dependencies": [
+                "skia"
+            ]
+        }
+    },
+    "builtin-baseline": "ce613c41372b23b1f51333815feb3edd87ef8a8b"
+}

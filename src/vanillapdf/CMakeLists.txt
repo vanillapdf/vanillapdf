@@ -546,7 +546,7 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSIO
     # Using this library may require additional compiler/linker options.
     # GNU implementation prior to 9.1 requires linking with -lstdc++fs and LLVM implementation prior to LLVM 9.0 requires linking with -lc++fs.
 
-    target_link_libraries(vanillapdf stdc++fs)
+    target_link_libraries(vanillapdf PRIVATE stdc++fs)
 endif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSION_LESS "9.1")
 
 # Set C++ standard to be 17
