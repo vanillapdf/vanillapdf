@@ -33,22 +33,24 @@ jobs:
       fail-fast: false
 
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-13, macos-latest]
-        build_type: [Release]
         include:
           - os: ubuntu-latest
+            build_type: Release
             bootstrap_cmd: external/vcpkg/bootstrap-vcpkg.sh
             shell: bash
 
           - os: macos-13
+            build_type: Release
             bootstrap_cmd: external/vcpkg/bootstrap-vcpkg.sh
             shell: bash
 
           - os: macos-latest
+            build_type: Release
             bootstrap_cmd: external/vcpkg/bootstrap-vcpkg.sh
             shell: bash
 
           - os: windows-latest
+            build_type: Release
             bootstrap_cmd: external/vcpkg/bootstrap-vcpkg.bat
             shell: cmd
 
