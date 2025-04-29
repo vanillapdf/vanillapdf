@@ -18,6 +18,7 @@ permissions:
   contents: read
 
 env:
+  VCPKG_ROOT: "external/vcpkg"
   VCPKG_DISABLE_METRICS: 1 # vcpkg is by default sending build metrics, we do not need it here
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -28,9 +29,28 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      # We would like to see the results of all jobs even in case one of them fails
+      fail-fast: false
+
       matrix:
         os: [ubuntu-latest, windows-latest, macos-13, macos-latest]
         build_type: [Release]
+        include:
+          - os: ubuntu-latest
+            bootstrap_cmd: ${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.sh
+            shell: bash
+
+          - os: macos-13
+            bootstrap_cmd: ${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.sh
+            shell: bash
+
+          - os: macos-latest
+            bootstrap_cmd: ${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.sh
+            shell: bash
+
+          - os: windows-latest
+            bootstrap_cmd: ${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.bat
+            shell: cmd
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -39,9 +59,14 @@ jobs:
         with:
           submodules: recursive
 
+      # Bootstrap vcpkg
+      - name: Bootstrap vcpkg
+        run: ${{ matrix.bootstrap_cmd }}
+        shell: ${{ matrix.shell }}
+
       # Generate the build files
       - name: Generate build files
-        run: cmake .
+        run: cmake -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake .
 
       # Build the project
       - name: Build project in config ${{ matrix.build_type }}
