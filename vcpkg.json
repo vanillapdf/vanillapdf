@@ -8,8 +8,7 @@
         "openjpeg",
         "zlib",
         "benchmark",
-        "spdlog",
-        "skia"
+        "spdlog"
     ],
     "features": {
         "skia-support": {

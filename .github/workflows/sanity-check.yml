@@ -53,6 +53,14 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Install build tools (macOS)
+        if: runner.os == 'macOS'
+        run: brew install autoconf automake autoconf-archive
+
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y autoconf automake libtool pkg-config
+
       # Bootstrap vcpkg on Windows
       - name: Bootstrap vcpkg (Windows)
         if: runner.os == 'Windows'
