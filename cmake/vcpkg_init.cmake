@@ -25,5 +25,8 @@ endif()
 # We are installing packages during the bootstrap process
 set(VCPKG_SUPPRESS_INSTALLED_LIBRARIES_WARNING "1")
 
-# Setup VCPKG toolchain
+# Setup VCPKG toolchain, option for user to change the path if needed
 set(CMAKE_TOOLCHAIN_FILE ${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE STRING "")
+
+# Include the toolchain file, so that the paths for include are set properly
+include(${CMAKE_TOOLCHAIN_FILE})
