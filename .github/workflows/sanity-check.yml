@@ -34,21 +34,18 @@ jobs:
       fail-fast: false
 
       matrix:
-        - os: ubuntu-latest
-          build_type: Release
-          vcpkg_triplet: x64-linux
-
-        - os: macos-latest
-          build_type: Release
-          vcpkg_triplet: arm64-osx
-
-        - os: macos-13
-          build_type: Release
-          vcpkg_triplet: x64-osx
-
-        - os: windows-latest
-          build_type: Release
-          vcpkg_triplet: x64-windows
+        include:
+          - os: ubuntu-latest
+            cmake_preset: linux-x64-gcc
+          
+          - os: macos-latest
+            cmake_preset: macos-arm64
+          
+          - os: macos-13
+            cmake_preset: macos-x64
+          
+          - os: windows-latest
+            cmake_preset: windows-x64-msvc
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
