@@ -50,6 +50,8 @@ if(WIN32)
     )
 endif(WIN32)
 
+find_package(GTest REQUIRED)
+
 set(VANILLAPDF_UNITTEST_LIBS
     vanillapdf
     GTest::gtest
@@ -70,9 +72,6 @@ add_definitions(-DVANILLAPDF_UNITTEST_VERSION_PATCH=${VANILLAPDF_VERSION_PATCH})
 add_definitions(-DVANILLAPDF_UNITTEST_VERSION_BUILD=${VANILLAPDF_VERSION_BUILD})
 
 add_definitions(-DVANILLAPDF_UNITTEST_ICON="${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/vanilla_logo.ico")
-
-# Build GoogleTest from the external repository
-add_subdirectory("${VANILLAPDF_SOLUTION_SOURCE_DIR}/external/googletest" build EXCLUDE_FROM_ALL)
 
 # Use GoogleTest for unit test execution
 include(GoogleTest)
