@@ -16,8 +16,8 @@ set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -DRELEASE"
 if(CMAKE_COMPILER_IS_GNUCXX)
 
     # Enable maximum warning level
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
     
     # GCC warns on pragma region directive, which is only IDE feature
     # It could be solved with #ifdef only for MSVC
