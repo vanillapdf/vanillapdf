@@ -52,11 +52,11 @@ endif(WIN32)
 
 set(VANILLAPDF_UNITTEST_LIBS
     vanillapdf
-    gtest
-    gtest_main
+    GTest::gtest
+    GTest::gtest_main
 )
 
-target_link_libraries(vanillapdf.unittest ${VANILLAPDF_UNITTEST_LIBS})
+target_link_libraries(vanillapdf.unittest PRIVATE ${VANILLAPDF_UNITTEST_LIBS})
 
 # We do not need unit test project to be shipped
 #install(TARGETS vanillapdf.unittest
