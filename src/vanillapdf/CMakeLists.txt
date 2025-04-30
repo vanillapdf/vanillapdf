@@ -579,8 +579,8 @@ add_definitions(-DVANILLAPDF_BUILD_DAY=${VANILLAPDF_BUILD_DAY})
 add_definitions(-DVANILLAPDF_BUILD_MONTH=${VANILLAPDF_BUILD_MONTH})
 add_definitions(-DVANILLAPDF_BUILD_YEAR=${VANILLAPDF_BUILD_YEAR})
 
-# This installs required libraries
-include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/vcpkg_dependencies.cmake")
+# Update 30.04.2025
+# We have switched to vcpkg manifest mode, which makes sure all dependencies are automatically installed
 
 find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
