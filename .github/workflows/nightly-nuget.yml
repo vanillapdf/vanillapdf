@@ -60,7 +60,7 @@ jobs:
         run: nuget pack nuget/vanillapdf.runtime.nuspec
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: nuget-${{ matrix.config.rid }}
           path: |
@@ -85,7 +85,7 @@ jobs:
         run: nuget pack nuget/vanillapdf.nuspec
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: nuget-core
           path: |
