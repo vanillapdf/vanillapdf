@@ -1,32 +1,110 @@
 # Vanilla.PDF
 
-[![NuGet](https://img.shields.io/nuget/v/vanillapdf)](https://www.nuget.org/packages/vanillapdf) ![NuGet Downloads](https://img.shields.io/nuget/dt/vanillapdf)
+[![NuGet](https://img.shields.io/nuget/v/vanillapdf)](https://www.nuget.org/packages/vanillapdf)
+![NuGet Downloads](https://img.shields.io/nuget/dt/vanillapdf)
 
-## NEW
+**Vanilla.PDF** is a modern, high-performance C++ SDK for creating, signing, and modifying PDF documents. Built with efficiency and simplicity in mind, it empowers developers with fine-grained control over PDF internals while maintaining an intuitive API and cross-platform compatibility.
 
-This repository has been recently open-sourced and might be missing a few pieces here and there.
-If you notice something is not aligned please let us know and we will fix it immediately.
+---
 
-## About
+## ✨ Highlights
 
-Vanilla PDF is a cross-platform SDK (Software development kit) for creating and modifying PDF documents.
-While offering supreme control over the document structure, it is blazingly fast with extremely small memory footprint.
-Integration is very easy with pre-packaged binaries for multiple operating systems such as Windows, Linux and Mac.
-Full interface documentation, detailed guide and code samples are available at the product website.
-Automated build and test process eliminates most of the common defects.
-Support, such as bug reports is free and available at your service.
+- ✅ Digitally sign PDF documents with ease
+- ✍️ Modify existing PDFs: metadata, structure, contents
+- 📄 Generate new PDFs with custom pages, text, images, and shapes
+- 🛠️ Tweak PDF internals for advanced use cases
+- 📦 Command-line utility for quick operations (`vanillapdf-tools`)
+- 🚫 No external runtime dependencies
+- ⚙️ Cross-platform binaries for Windows, Linux, and macOS
 
-Please visit [vanillapdf.com](http://vanillapdf.com) for more information.
+---
 
-## Build
+## 📖 About
 
+Vanilla.PDF is a compiled C++ library offering deep PDF manipulation functionality. Whether you're adding a signature, inspecting metadata, tweaking page structure, or generating a fresh document — Vanilla.PDF provides the performance and flexibility needed.
+
+It’s lightweight, blazingly fast, and built for integration:
+- Prebuilt binaries available for major platforms
+- Minimal footprint, no bloated dependencies
+- Comprehensive documentation and tested build process
+
+🔗 [Official Website](http://vanillapdf.com)
+📚 [Documentation](https://vanillapdf.github.io/)
+
+---
+
+## 🚀 Getting Started
+
+### 🔧 Build from Source
+
+```bash
+git clone https://github.com/vanillapdf/vanillapdf.git
+cd vanillapdf
 cmake .
-cmake --build .
+make
+```
 
-## License
+### 📦 CMake Integration
 
-Vanilla.PDF is licensed under the [Apache 2.0 license](LICENSE.txt).
+```cmake
+target_include_directories(myapp PRIVATE path/to/vanillapdf/include)
+target_link_libraries(myapp PRIVATE vanillapdf)
+```
 
-## Contact
+---
 
-In case of any questions do not hesitate to [Contact us](https://vanillapdf.com/contact/) or directly via [info@vanillapdf.com](mailto:info%40vanillapdf.com).
+## 🛠️ Command-line Utility: `vanillapdf-tools`
+
+Vanilla.PDF includes a powerful CLI tool for performing PDF operations directly from the terminal.
+
+### ✅ Example: Sign a PDF
+
+```bash
+./vanillapdf-tools sign -s input.pdf -d signed.pdf -k private_key.p12 -p your_password
+```
+
+### 🔍 Usage
+
+```bash
+./vanillapdf-tools <command> [options]
+```
+
+### 🧰 Commands
+
+- `sign` Digitally sign a PDF
+
+### 🔑 Common Options
+
+| Option | Description |
+|--------|-------------|
+| `-s`   | Path to source PDF file |
+| `-d`   | Destination/output PDF file |
+| `-k`   | Private key file (PKCS#12) |
+| `-p`   | Password for the key |
+
+Use `./vanillapdf-tools --help` for full command reference.
+
+---
+
+## 🔒 License
+
+Vanilla.PDF is released under the [Apache 2.0 License](LICENSE.txt).
+
+---
+
+## 🤝 Contributions
+
+We welcome contributions, feature requests, and bug reports. A [contributing guide](CONTRIBUTING.md) is coming soon. Stay tuned!
+
+---
+
+## 📬 Contact
+
+Questions or support needs?  
+📧 [info@vanillapdf.com](mailto:info@vanillapdf.com)  
+🌐 [vanillapdf.com/contact](https://vanillapdf.com/contact/)
+
+## 🧭 Code of Conduct
+
+We are committed to fostering a welcoming and respectful environment.  
+Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before participating.
