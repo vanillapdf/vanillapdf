@@ -15,7 +15,7 @@
             }
         },
         {
-            "name": "windows-msvc-debug",
+            "name": "windows-x64-msvc-debug",
             "inherits": "default",
             "generator": "Visual Studio 17 2022",
             "architecture": "x64",
@@ -24,7 +24,7 @@
             }
         },
         {
-            "name": "windows-msvc-release",
+            "name": "windows-x64-msvc-release",
             "inherits": "default",
             "generator": "Visual Studio 17 2022",
             "architecture": "x64",
@@ -33,7 +33,7 @@
             }
         },
         {
-            "name": "windows-clang-debug",
+            "name": "windows-x64-clang-debug",
             "inherits": "default",
             "generator": "Visual Studio 17 2022",
             "cacheVariables": {
@@ -43,7 +43,7 @@
             }
         },
         {
-            "name": "windows-clang-release",
+            "name": "windows-x64-clang-release",
             "inherits": "default",
             "generator": "Visual Studio 17 2022",
             "cacheVariables": {
@@ -197,23 +197,23 @@
     ],
     "buildPresets": [
         {
-            "name": "windows-msvc-debug",
-            "configurePreset": "windows-msvc-debug",
+            "name": "windows-x64-msvc-debug",
+            "configurePreset": "windows-x64-msvc-debug",
             "configuration": "Debug"
         },
         {
-            "name": "windows-msvc-release",
-            "configurePreset": "windows-msvc-release",
+            "name": "windows-x64-msvc-release",
+            "configurePreset": "windows-x64-msvc-release",
             "configuration": "Release"
         },
         {
-            "name": "windows-clang-debug",
-            "configurePreset": "windows-clang-debug",
+            "name": "windows-x64-clang-debug",
+            "configurePreset": "windows-x64-clang-debug",
             "configuration": "Debug"
         },
         {
-            "name": "windows-clang-release",
-            "configurePreset": "windows-clang-release",
+            "name": "windows-x64-clang-release",
+            "configurePreset": "windows-x64-clang-release",
             "configuration": "Release"
         },
         {
@@ -275,22 +275,22 @@
     ],
     "testPresets": [
         {
-            "name": "windows-msvc-debug",
-            "configurePreset": "windows-msvc-debug",
+            "name": "windows-x64-msvc-debug",
+            "configurePreset": "windows-x64-msvc-debug",
             "configuration": "Debug"
         },
         {
-            "name": "windows-msvc-release",
-            "configurePreset": "windows-msvc-release",
+            "name": "windows-x64-msvc-release",
+            "configurePreset": "windows-x64-msvc-release",
             "configuration": "Release"
         },
         {
-            "name": "windows-clang-debug",
-            "configurePreset": "windows-clang-debug",
+            "name": "windows-x64-clang-debug",
+            "configurePreset": "windows-x64-clang-debug",
             "configuration": "Debug"
         },
         {
-            "name": "windows-clang-release",
+            "name": "windows-x64-clang-release",
             "configurePreset": "windows-clang-release",
             "configuration": "Release"
         },

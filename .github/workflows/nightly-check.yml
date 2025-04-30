@@ -56,13 +56,14 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Cache vcpkg installed packages
+      - name: Cache vcpkg installed
         uses: actions/cache@v4
         with:
-          path: external/vcpkg/installed
-          key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
+          path: build/vcpkg_installed
+          key: vcpkg-${{ runner.os }}-${{ matrix.cmake_preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-
+          vcpkg-${{ runner.os }}-${{ matrix.cmake_preset }}-
+          vcpkg-${{ runner.os }}-
 
       - name: Install build tools (macOS)
         if: runner.os == 'macOS'

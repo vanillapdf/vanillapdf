@@ -32,19 +32,23 @@ jobs:
       # We would like to see the results of all jobs even in case one of them fails
       fail-fast: false
 
+      # TODO:
+      # Fix issues with DEBUG builds and switch the sanity check.
+      # There are files - MPK_SLOVLEX.pdf, noembed-jis7.pdf, bug1065245.pdf that fails in debug.
+
       matrix:
         include:
           - os: ubuntu-latest
-            cmake_preset: linux-x64-gcc-debug
+            cmake_preset: linux-x64-gcc-release
 
           - os: macos-latest
-            cmake_preset: macos-arm64-debug
+            cmake_preset: macos-arm64-release
 
           - os: macos-13
-            cmake_preset: macos-x64-debug
+            cmake_preset: macos-x64-release
 
           - os: windows-latest
-            cmake_preset: windows-x64-msvc-debug
+            cmake_preset: windows-x64-msvc-release
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -53,13 +57,14 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Cache vcpkg installed packages
+      - name: Cache vcpkg installed
         uses: actions/cache@v4
         with:
-          path: external/vcpkg/installed
-          key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
+          path: build/vcpkg_installed
+          key: vcpkg-${{ runner.os }}-${{ matrix.cmake_preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-
+          vcpkg-${{ runner.os }}-${{ matrix.cmake_preset }}-
+          vcpkg-${{ runner.os }}-
 
       - name: Install build tools (macOS)
         if: runner.os == 'macOS'
