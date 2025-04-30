@@ -59,7 +59,9 @@ jobs:
       - name: Cache vcpkg installed
         uses: actions/cache@v4
         with:
-          path: build/vcpkg_installed
+          path: |
+            build/vcpkg_installed
+            external/vcpkg/packages
           key: vcpkg-${{ runner.os }}-${{ matrix.cmake_preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.cmake_preset }}-
@@ -73,23 +75,9 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y autoconf automake libtool pkg-config
 
-      # Bootstrap vcpkg on Windows
-      - name: Bootstrap vcpkg (Windows)
-        if: runner.os == 'Windows'
-        run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
-        shell: cmd
-
-      # Bootstrap vcpkg on Linux
-      - name: Bootstrap vcpkg (Linux)
-        if: runner.os == 'Linux'
-        run: ${{ github.workspace }}/external/vcpkg/bootstrap-vcpkg.sh
-        shell: bash
-
-      # Bootstrap vcpkg on macOS
-      - name: Bootstrap vcpkg (macOS)
-        if: runner.os == 'macOS'
-        run: ${{ github.workspace }}/external/vcpkg/bootstrap-vcpkg.sh
-        shell: bash
+      # Cross-platform vcpkg bootstrap handling
+      - name: Bootstrap vcpkg
+        uses: ./.github/actions/bootstrap-vcpkg
 
       # Generate the build files
       - name: Generate build files
