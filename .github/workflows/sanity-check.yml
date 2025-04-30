@@ -40,15 +40,19 @@ jobs:
         include:
           - os: ubuntu-latest
             cmake_preset: linux-x64-gcc-release
+            triplet: x64-linux
 
           - os: macos-latest
             cmake_preset: macos-arm64-release
+            triplet: arm64-osx
 
           - os: macos-13
             cmake_preset: macos-x64-release
+            triplet: x64-osx
 
           - os: windows-latest
             cmake_preset: windows-x64-msvc-release
+            triplet: x64-windows
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -61,9 +65,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: build/vcpkg_installed
-          key: vcpkg-${{ runner.os }}-${{ matrix.cmake_preset }}-${{ hashFiles('vcpkg.json') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.cmake_preset }}-
+            vcpkg-${{ runner.os }}-${{ matrix.triplet }}-
             vcpkg-${{ runner.os }}-
 
       - name: Install build tools (macOS)
@@ -102,4 +106,4 @@ jobs:
 
       # Run tests
       - name: Run automated test scenarios in config ${{ matrix.cmake_preset }}
-        run: ctest --preset ${{ matrix.cmake_preset }}
+        run: ctest --preset ${{ matrix.cmake_preset }} --output-on-failure

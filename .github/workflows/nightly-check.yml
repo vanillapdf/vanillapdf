@@ -101,4 +101,4 @@ jobs:
 
       # Run tests
       - name: Run automated test scenarios in config ${{ matrix.cmake_preset }}
-        run: ctest --preset ${{ matrix.cmake_preset }}
+        run: ctest --preset ${{ matrix.cmake_preset }} --output-on-failure
