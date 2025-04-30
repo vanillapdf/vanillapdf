@@ -48,6 +48,11 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=77728
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-psabi")
 
+    # There are quite some parameters defined in functions, however they are not used.
+    # I do not really consider this an issue, as even having the name of the parameter gives you some insights.
+    # Having just the type even if it is currently not used is not a bug for me.
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wunused-parameter")
+
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 if(MSVC)

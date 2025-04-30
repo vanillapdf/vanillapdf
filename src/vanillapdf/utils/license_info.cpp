@@ -299,7 +299,7 @@ bool LicenseInfo::CheckTemporaryExpiration(const std::string& expiration) {
     std::stringstream expiration_stream;
     expiration_stream << expiration;
 
-    tm expiration_tm = { 0 };
+    tm expiration_tm = { };
     expiration_stream >> std::get_time(&expiration_tm, "%Y-%m-%d");
 
     auto expiration_since_epoch = std::mktime(&expiration_tm);
@@ -319,7 +319,7 @@ bool LicenseInfo::CheckUpdateExpiration(const std::string& expiration) {
     std::stringstream expiration_stream;
     expiration_stream << expiration;
 
-    tm expiration_tm = { 0 };
+    tm expiration_tm = { };
     expiration_stream >> std::get_time(&expiration_tm, "%Y-%m-%d");
 
     auto expiration_since_epoch = std::mktime(&expiration_tm);
@@ -333,7 +333,7 @@ bool LicenseInfo::CheckUpdateExpiration(const std::string& expiration) {
     auto build_month = LibraryInfo::BuildMonth();
     auto build_day = LibraryInfo::BuildDay();
 
-    tm build_tm = { 0 };
+    tm build_tm = { };
     build_tm.tm_year = build_year - 1900;
     build_tm.tm_mon = build_month - 1;
     build_tm.tm_mday = build_day;

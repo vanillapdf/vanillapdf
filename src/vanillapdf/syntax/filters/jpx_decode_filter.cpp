@@ -61,7 +61,7 @@ BufferPtr JPXDecodeFilter::Encode(IInputStreamPtr src, types::stream_size, Dicti
 BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr /* = DictionaryObjectPtr() */, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
 
     // Set default decoder parameters
-    opj_dparameters_t parameters = { 0 };
+    opj_dparameters_t parameters = { };
     opj_set_default_decoder_parameters(&parameters);
 
     // Initialize the JPEG2000 decoder

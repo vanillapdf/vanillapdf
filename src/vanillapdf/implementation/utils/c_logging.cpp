@@ -57,7 +57,7 @@ protected:
 private:
     Sink_Log_Function m_sink_callback = nullptr;
     Sink_Flush_Function m_sink_flush = nullptr;
-    void* m_user_data = nullptr;;
+    void* m_user_data = nullptr;
 };
 
 using custom_callback_sink_mt = custom_callback_sink<std::mutex>;
