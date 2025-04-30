@@ -6,13 +6,13 @@
     <version>@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@</version>
     <authors>Vanilla.PDF Labs s.r.o.</authors>
     <owners>Vanilla.PDF Labs s.r.o.</owners>
-    <license type="file">LICENSE.txt</license>
+    <license type="expression">Apache-2.0</license>
     <icon>images/vanilla_logo.png</icon>
     <readme>README.md</readme>
     <projectUrl>https://vanillapdf.com/</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Vanilla.PDF is a cross-platform SDK for creating and modifying PDF documents</description>
-    <copyright>Copyright 2018-2024 Vanilla.PDF Labs s.r.o.</copyright>
+    <copyright>Copyright 2018-2025 Vanilla.PDF Labs s.r.o.</copyright>
     <tags>pdf parsing sign native</tags>
 
     <dependencies>
@@ -24,6 +24,7 @@
         <dependency id="vanillapdf.runtime.win-x64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
 
         <dependency id="vanillapdf.runtime.osx-x64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+        <dependency id="vanillapdf.runtime.osx-arm64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
       </group>
 
       <group targetFramework="netstandard2.0">
@@ -34,6 +35,7 @@
         <dependency id="vanillapdf.runtime.win-x64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
 
         <dependency id="vanillapdf.runtime.osx-x64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+        <dependency id="vanillapdf.runtime.osx-arm64" version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
       </group>
 
     </dependencies>
@@ -51,6 +53,7 @@
     <!-- Additional dependencies -->
     <file src="..\LICENSE.txt" target="" />
     <file src="..\CHANGELOG.txt" target="" />
+    <file src="..\NOTICE.md" target="" />
     <file src="vanillapdf.readme.md" target="README.md" />
     <file src="..\cmake\vanilla_logo.png" target="images" />
   </files>

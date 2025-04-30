@@ -1,10 +1,14 @@
 project(vanillapdf LANGUAGES CXX)
 
-include_directories("${CMAKE_SOURCE_DIR}/include")
-include_directories("${CMAKE_SOURCE_DIR}/lib/nlohmann_json/include")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+# Include listing of all interface files
+include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/files.cmake")
 
-include("${CMAKE_SOURCE_DIR}/include/files.cmake")
+# Additional directories in the root project
+include_directories("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include")
+include_directories("${VANILLAPDF_SOLUTION_SOURCE_DIR}/lib/nlohmann_json/include")
+
+# Include local files in the directory
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(VANILLAPDF_PRECOMPILED_SOURCE
     precompiled.cpp
@@ -542,7 +546,7 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSIO
     # Using this library may require additional compiler/linker options.
     # GNU implementation prior to 9.1 requires linking with -lstdc++fs and LLVM implementation prior to LLVM 9.0 requires linking with -lc++fs.
 
-    target_link_libraries(vanillapdf stdc++fs)
+    target_link_libraries(vanillapdf PRIVATE stdc++fs)
 endif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSION_LESS "9.1")
 
 # Set C++ standard to be 17
@@ -575,8 +579,8 @@ add_definitions(-DVANILLAPDF_BUILD_DAY=${VANILLAPDF_BUILD_DAY})
 add_definitions(-DVANILLAPDF_BUILD_MONTH=${VANILLAPDF_BUILD_MONTH})
 add_definitions(-DVANILLAPDF_BUILD_YEAR=${VANILLAPDF_BUILD_YEAR})
 
-# This installs required libraries
-include("${CMAKE_SOURCE_DIR}/cmake/vcpkg_dependencies.cmake")
+# Update 30.04.2025
+# We have switched to vcpkg manifest mode, which makes sure all dependencies are automatically installed
 
 find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
@@ -642,11 +646,11 @@ endif (OPENJPEG_LIBRARIES)
 # relocation R_X86_64_PC32 against symbol `stderr@@GLIBC_2.2.5' can not be used when making a shared object; recompile with -fPIC
 # https://stackoverflow.com/questions/38296756/what-is-the-idiomatic-way-in-cmake-to-add-the-fpic-compiler-option
 
-#add_subdirectory("${CMAKE_SOURCE_DIR}/external/fmtlib" build EXCLUDE_FROM_ALL)
+#add_subdirectory("${VANILLAPDF_SOLUTION_SOURCE_DIR}/external/fmtlib" build EXCLUDE_FROM_ALL)
 
 set(VANILLAPDF_LIBS spdlog::spdlog ${VANILLAPDF_LIBS})
 
-target_link_libraries(vanillapdf ${VANILLAPDF_LIBS})
+target_link_libraries(vanillapdf PRIVATE ${VANILLAPDF_LIBS})
 
 # Project install targets
 install(TARGETS vanillapdf
@@ -661,9 +665,9 @@ install(FILES ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS} DESTINATION "include/vanillap
 install(FILES ${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS} DESTINATION "include/vanillapdf/semantics")
 install(FILES ${VANILLAPDF_INCLUDE_CONTENTS_HEADERS} DESTINATION "include/vanillapdf/contents")
 
-install(FILES "${CMAKE_SOURCE_DIR}/cmake/README.txt" DESTINATION .)
-install(FILES "${CMAKE_SOURCE_DIR}/LICENSE.txt" DESTINATION .)
-install(FILES "${CMAKE_SOURCE_DIR}/CHANGELOG.txt" DESTINATION .)
+install(FILES "${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/README.txt" DESTINATION .)
+install(FILES "${VANILLAPDF_SOLUTION_SOURCE_DIR}/LICENSE.txt" DESTINATION .)
+install(FILES "${VANILLAPDF_SOLUTION_SOURCE_DIR}/CHANGELOG.txt" DESTINATION .)
 
 # Install dependent libraries on windows
 if(WIN32)

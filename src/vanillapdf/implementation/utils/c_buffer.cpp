@@ -63,7 +63,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Buffer_CopyTo(BufferHandle* handle,
 
     try
     {
-        if (size < 0 || obj->size() > size) {
+        if (size < obj->size()) {
             return VANILLAPDF_ERROR_INSUFFICIENT_SPACE;
         }
 

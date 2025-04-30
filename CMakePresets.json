@@ -1,0 +1,346 @@
+{
+    "version": 8,
+    "configurePresets": [
+        {
+            "name": "default",
+            "displayName": "Base configuration",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/external/vcpkg/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_CXX_STANDARD": "17",
+                "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+                "CMAKE_CXX_EXTENSIONS": "OFF"
+            }
+        },
+        {
+            "name": "windows-x64-msvc-debug",
+            "inherits": "default",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "x64",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-windows"
+            }
+        },
+        {
+            "name": "windows-x64-msvc-release",
+            "inherits": "default",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "x64",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-windows"
+            }
+        },
+        {
+            "name": "windows-x64-clang-debug",
+            "inherits": "default",
+            "generator": "Visual Studio 17 2022",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-windows",
+                "CMAKE_C_COMPILER": "clang-cl",
+                "CMAKE_CXX_COMPILER": "clang-cl"
+            }
+        },
+        {
+            "name": "windows-x64-clang-release",
+            "inherits": "default",
+            "generator": "Visual Studio 17 2022",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-windows",
+                "CMAKE_C_COMPILER": "clang-cl",
+                "CMAKE_CXX_COMPILER": "clang-cl"
+            }
+        },
+        {
+            "name": "linux-x64-gcc-debug",
+            "inherits": "default",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-linux",
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "linux-x64-gcc-release",
+            "inherits": "default",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-linux",
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "linux-arm64-gcc-debug",
+            "inherits": "default",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "arm64-linux",
+                "CMAKE_C_COMPILER": "aarch64-linux-gnu-gcc",
+                "CMAKE_CXX_COMPILER": "aarch64-linux-gnu-g++",
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "linux-arm64-gcc-release",
+            "inherits": "default",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "arm64-linux",
+                "CMAKE_C_COMPILER": "aarch64-linux-gnu-gcc",
+                "CMAKE_CXX_COMPILER": "aarch64-linux-gnu-g++",
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "linux-x64-clang-debug",
+            "inherits": "default",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-linux",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "linux-x64-clang-release",
+            "inherits": "default",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-linux",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "linux-arm64-clang-debug",
+            "inherits": "default",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "arm64-linux",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "linux-arm64-clang-release",
+            "inherits": "default",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "arm64-linux",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "macos-x64-debug",
+            "inherits": "default",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-osx",
+                "CMAKE_OSX_ARCHITECTURES": "x86_64",
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "macos-x64-release",
+            "inherits": "default",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-osx",
+                "CMAKE_OSX_ARCHITECTURES": "x86_64",
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "macos-arm64-debug",
+            "inherits": "default",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "arm64-osx",
+                "CMAKE_OSX_ARCHITECTURES": "arm64",
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "macos-arm64-release",
+            "inherits": "default",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "arm64-osx",
+                "CMAKE_OSX_ARCHITECTURES": "arm64",
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "android-arm64-debug",
+            "inherits": "default",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "",
+                "CMAKE_SYSTEM_NAME": "Android",
+                "CMAKE_SYSTEM_VERSION": "21",
+                "CMAKE_ANDROID_ARCH_ABI": "arm64-v8a",
+                "CMAKE_ANDROID_NDK": "$ENV{ANDROID_NDK_HOME}",
+                "CMAKE_ANDROID_STL_TYPE": "c++_static",
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "android-arm64-release",
+            "inherits": "default",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "",
+                "CMAKE_SYSTEM_NAME": "Android",
+                "CMAKE_SYSTEM_VERSION": "21",
+                "CMAKE_ANDROID_ARCH_ABI": "arm64-v8a",
+                "CMAKE_ANDROID_NDK": "$ENV{ANDROID_NDK_HOME}",
+                "CMAKE_ANDROID_STL_TYPE": "c++_static",
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "windows-x64-msvc-debug",
+            "configurePreset": "windows-x64-msvc-debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "windows-x64-msvc-release",
+            "configurePreset": "windows-x64-msvc-release",
+            "configuration": "Release"
+        },
+        {
+            "name": "windows-x64-clang-debug",
+            "configurePreset": "windows-x64-clang-debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "windows-x64-clang-release",
+            "configurePreset": "windows-x64-clang-release",
+            "configuration": "Release"
+        },
+        {
+            "name": "linux-x64-gcc-debug",
+            "configurePreset": "linux-x64-gcc-debug"
+        },
+        {
+            "name": "linux-x64-gcc-release",
+            "configurePreset": "linux-x64-gcc-release"
+        },
+        {
+            "name": "linux-arm64-gcc-debug",
+            "configurePreset": "linux-arm64-gcc-debug"
+        },
+        {
+            "name": "linux-arm64-gcc-release",
+            "configurePreset": "linux-arm64-gcc-release"
+        },
+        {
+            "name": "linux-x64-clang-debug",
+            "configurePreset": "linux-x64-clang-debug"
+        },
+        {
+            "name": "linux-x64-clang-release",
+            "configurePreset": "linux-x64-clang-release"
+        },
+        {
+            "name": "linux-arm64-clang-debug",
+            "configurePreset": "linux-arm64-clang-debug"
+        },
+        {
+            "name": "linux-arm64-clang-release",
+            "configurePreset": "linux-arm64-clang-release"
+        },
+        {
+            "name": "macos-x64-debug",
+            "configurePreset": "macos-x64-debug"
+        },
+        {
+            "name": "macos-x64-release",
+            "configurePreset": "macos-x64-release"
+        },
+        {
+            "name": "macos-arm64-debug",
+            "configurePreset": "macos-arm64-debug"
+        },
+        {
+            "name": "macos-arm64-release",
+            "configurePreset": "macos-arm64-release"
+        },
+        {
+            "name": "android-arm64-debug",
+            "configurePreset": "android-arm64-debug"
+        },
+        {
+            "name": "android-arm64-release",
+            "configurePreset": "android-arm64-release"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "windows-x64-msvc-debug",
+            "configurePreset": "windows-x64-msvc-debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "windows-x64-msvc-release",
+            "configurePreset": "windows-x64-msvc-release",
+            "configuration": "Release"
+        },
+        {
+            "name": "windows-x64-clang-debug",
+            "configurePreset": "windows-x64-clang-debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "windows-x64-clang-release",
+            "configurePreset": "windows-x64-clang-release",
+            "configuration": "Release"
+        },
+        {
+            "name": "linux-x64-gcc-debug",
+            "configurePreset": "linux-x64-gcc-debug"
+        },
+        {
+            "name": "linux-x64-gcc-release",
+            "configurePreset": "linux-x64-gcc-release"
+        },
+        {
+            "name": "linux-arm64-gcc-debug",
+            "configurePreset": "linux-arm64-gcc-debug"
+        },
+        {
+            "name": "linux-arm64-gcc-release",
+            "configurePreset": "linux-arm64-gcc-release"
+        },
+        {
+            "name": "linux-x64-clang-debug",
+            "configurePreset": "linux-x64-clang-debug"
+        },
+        {
+            "name": "linux-x64-clang-release",
+            "configurePreset": "linux-x64-clang-release"
+        },
+        {
+            "name": "linux-arm64-clang-debug",
+            "configurePreset": "linux-arm64-clang-debug"
+        },
+        {
+            "name": "linux-arm64-clang-release",
+            "configurePreset": "linux-arm64-clang-release"
+        },
+        {
+            "name": "macos-x64-debug",
+            "configurePreset": "macos-x64-debug"
+        },
+        {
+            "name": "macos-x64-release",
+            "configurePreset": "macos-x64-release"
+        },
+        {
+            "name": "macos-arm64-debug",
+            "configurePreset": "macos-arm64-debug"
+        },
+        {
+            "name": "macos-arm64-release",
+            "configurePreset": "macos-arm64-release"
+        }
+    ]
+}

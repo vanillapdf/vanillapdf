@@ -49,10 +49,10 @@ endif()
 set(CPACK_PACKAGE_FILE_NAME 			"${PROJECT_NAME}_${PACKAGE_VERSION_NAME}_${PACKAGE_SYSTEM_NAME}")
 
 # External resources
-set(CPACK_RESOURCE_FILE_LICENSE			${CMAKE_SOURCE_DIR}/LICENSE.txt)
-set(CPACK_RESOURCE_FILE_README			${CMAKE_SOURCE_DIR}/cmake/README.txt)
-#set(CPACK_RESOURCE_FILE_WELCOME			${CMAKE_SOURCE_DIR}/cmake/WELCOME.txt)
-set(CPACK_PACKAGE_ICON					${CMAKE_SOURCE_DIR}/cmake/vanilla_logo.ico)
+set(CPACK_RESOURCE_FILE_LICENSE			${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt)
+set(CPACK_RESOURCE_FILE_README			${CMAKE_CURRENT_SOURCE_DIR}/cmake/README.txt)
+#set(CPACK_RESOURCE_FILE_WELCOME			${CMAKE_CURRENT_SOURCE_DIR}/cmake/WELCOME.txt)
+set(CPACK_PACKAGE_ICON					${CMAKE_CURRENT_SOURCE_DIR}/cmake/vanilla_logo.ico)
 
 # Include checksum file
 set(CPACK_PACKAGE_CHECKSUM				SHA256)
@@ -75,7 +75,7 @@ set(CPACK_FREEBSD_PACKAGE_MAINTAINER	"info@vanillapdf.com")
 # Variables specific to CPack WiX generator
 set(CPACK_WIX_UPGRADE_GUID				"{88E3B5A2-C8B2-4F7C-A7E5-A2B764A9B0E6}")
 
-set(CPACK_WIX_PRODUCT_ICON				${CMAKE_SOURCE_DIR}/cmake/vanilla_logo.ico)
+set(CPACK_WIX_PRODUCT_ICON				${CMAKE_CURRENT_SOURCE_DIR}/cmake/vanilla_logo.ico)
 set(CPACK_WIX_PROGRAM_MENU_FOLDER		"Vanilla.PDF")
 set(CPACK_WIX_CMAKE_PACKAGE_REGISTRY	"Vanilla.PDF")
 
@@ -85,7 +85,7 @@ set(CPACK_WIX_CMAKE_PACKAGE_REGISTRY	"Vanilla.PDF")
 #set(CPACK_NUGET_PACKAGE_HOMEPAGE_URL					"https://vanillapdf.com/")
 #set(CPACK_NUGET_PACKAGE_LICENSE_FILE_NAME				"common/LICENSE.txt")
 #set(CPACK_NUGET_PACKAGE_REQUIRE_LICENSE_ACCEPTANCE		true)
-##set(CPACK_NUGET_PACKAGE_ICON							"${CMAKE_SOURCE_DIR}/cmake/vanilla_logo.png")
+##set(CPACK_NUGET_PACKAGE_ICON							"${CMAKE_CURRENT_SOURCE_DIR}/cmake/vanilla_logo.png")
 #set(CPACK_NUGET_PACKAGE_AUTHORS						"Vanilla.PDF Labs s.r.o.")
 #set(CPACK_NUGET_PACKAGE_OWNERS							"Vanilla.PDF Labs s.r.o.")
 #set(CPACK_NUGET_PACKAGE_TITLE							"vanillapdf.runtime.${PLATFORM_IDENTIFIER}")
@@ -96,16 +96,16 @@ set(CPACK_WIX_CMAKE_PACKAGE_REGISTRY	"Vanilla.PDF")
 # items and the controlling is not sufficient, so let's do it the old way
 
 # Initialize NuGet for current platform
-configure_file("${CMAKE_SOURCE_DIR}/nuget/vanillapdf.runtime.nuspec.in" "${CMAKE_SOURCE_DIR}/nuget/vanillapdf.runtime.nuspec")
-configure_file("${CMAKE_SOURCE_DIR}/nuget/vanillapdf_net.targets.in" "${CMAKE_SOURCE_DIR}/nuget/vanillapdf_net.targets")
-configure_file("${CMAKE_SOURCE_DIR}/nuget/vanillapdf.nuspec.in" "${CMAKE_SOURCE_DIR}/nuget/vanillapdf.nuspec")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/nuget/vanillapdf.runtime.nuspec.in" "${CMAKE_CURRENT_SOURCE_DIR}/nuget/vanillapdf.runtime.nuspec")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/nuget/vanillapdf_net.targets.in" "${CMAKE_CURRENT_SOURCE_DIR}/nuget/vanillapdf_net.targets")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/nuget/vanillapdf.nuspec.in" "${CMAKE_CURRENT_SOURCE_DIR}/nuget/vanillapdf.nuspec")
 
 # This could be useful, however at the time of CPack
 # I am not able to alter some of the properties,
 # such as install target destination
 
 # Allow runtime customizations based on current generator
-#set(CPACK_PROJECT_CONFIG_FILE ${CMAKE_SOURCE_DIR}/cmake/packaging_runtime.cmake)
+#set(CPACK_PROJECT_CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/packaging_runtime.cmake)
 
 if(WIN32)
     set(CPACK_GENERATOR		"WIX;ZIP")

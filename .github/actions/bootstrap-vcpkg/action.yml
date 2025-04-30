@@ -1,0 +1,23 @@
+name: Bootstrap vcpkg
+description: Bootstrap vcpkg for all supported OS
+
+runs:
+  using: "composite"
+  steps:
+    # Bootstrap vcpkg on Windows
+    - name: Bootstrap vcpkg (Windows)
+      if: runner.os == 'Windows'
+      run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
+      shell: cmd
+
+    # Bootstrap vcpkg on Linux
+    - name: Bootstrap vcpkg (Linux)
+      if: runner.os == 'Linux'
+      run: ${{ github.workspace }}/external/vcpkg/bootstrap-vcpkg.sh
+      shell: bash
+
+    # Bootstrap vcpkg on macOS
+    - name: Bootstrap vcpkg (macOS)
+      if: runner.os == 'macOS'
+      run: ${{ github.workspace }}/external/vcpkg/bootstrap-vcpkg.sh
+      shell: bash
