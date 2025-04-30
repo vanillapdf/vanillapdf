@@ -401,11 +401,8 @@ error_type process_license_info(string_type license_file) {
     InputStreamHandle* input_stream = NULL;
     boolean_type is_valid = VANILLAPDF_RV_FALSE;
 
-    RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_IsValid(&is_valid));
-    if (is_valid != VANILLAPDF_RV_FALSE) {
-        print_text("License is enabled by default\n");
-        return VANILLAPDF_TEST_ERROR_FAILURE;
-    }
+    // License is enabled by default since we are running the opensource configuration.
+    // The API is available to keep the backwards compatibility and will be removed on the next major release.
 
     RETURN_ERROR_IF_NOT_SUCCESS(InputStream_CreateFromFile(license_file, &input_stream));
     RETURN_ERROR_IF_NOT_SUCCESS(InputStream_ToBuffer(input_stream, &license_buffer));

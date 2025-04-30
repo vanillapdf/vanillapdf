@@ -13,7 +13,7 @@ extern "C"
 #endif
 
     /**
-    * \file c_object_attributes.h
+    * \file c_object_attribute_list.h
     * \brief This file contains class definitions for multiple object attributes.
     */
 

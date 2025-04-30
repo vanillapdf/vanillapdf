@@ -1,0 +1,93 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Sanity check
+
+# Controls when the workflow will run
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+  push:
+    branches: [ "master" ]
+
+  pull_request:
+    branches: [ "master" ]
+
+# Enable only minimum required permissions
+permissions:
+  contents: read
+
+env:
+  VCPKG_ROOT: external/vcpkg
+  VCPKG_DISABLE_METRICS: 1 # vcpkg is by default sending build metrics, we do not need it here
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  sanity-check:
+    name: sanity-check-${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      # We would like to see the results of all jobs even in case one of them fails
+      fail-fast: false
+
+      # TODO:
+      # Fix issues with DEBUG builds and switch the sanity check.
+      # There are files - MPK_SLOVLEX.pdf, noembed-jis7.pdf, bug1065245.pdf that fails in debug.
+
+      matrix:
+        include:
+          - os: ubuntu-latest
+            cmake_preset: linux-x64-gcc-release
+
+          - os: macos-latest
+            cmake_preset: macos-arm64-release
+
+          - os: macos-13
+            cmake_preset: macos-x64-release
+
+          - os: windows-latest
+            cmake_preset: windows-x64-msvc-release
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache vcpkg installed
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/vcpkg_installed
+            external/vcpkg/packages
+          key: vcpkg-${{ runner.os }}-${{ matrix.cmake_preset }}-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.cmake_preset }}-
+            vcpkg-${{ runner.os }}-
+
+      - name: Install build tools (macOS)
+        if: runner.os == 'macOS'
+        run: brew install autoconf automake autoconf-archive
+
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y autoconf automake libtool pkg-config
+
+      # Cross-platform vcpkg bootstrap handling
+      - name: Bootstrap vcpkg
+        uses: ./.github/actions/bootstrap-vcpkg
+
+      # Generate the build files
+      - name: Generate build files
+        run: cmake --preset ${{ matrix.cmake_preset }}
+
+      # Build the project
+      - name: Build project in config ${{ matrix.cmake_preset }}
+        run: cmake --build --preset ${{ matrix.cmake_preset }}
+
+      # Run tests
+      - name: Run automated test scenarios in config ${{ matrix.cmake_preset }}
+        run: ctest --preset ${{ matrix.cmake_preset }} --output-on-failure

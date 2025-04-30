@@ -20,7 +20,7 @@ static BufferPtr Inflate(IInputStreamPtr input, types::stream_size length, types
 #if defined(VANILLAPDF_HAVE_ZLIB)
 
     int rv = 0;
-    z_stream strm = { 0 };
+    z_stream strm = { };
     BufferPtr result;
     types::stream_size read_total = 0;
     bool expect_errors = (length != errors_after);
@@ -116,7 +116,7 @@ static BufferPtr Deflate(IInputStreamPtr input, types::stream_size length) {
 
     int rv = 0;
     int flush = Z_NO_FLUSH;
-    z_stream strm = { 0 };
+    z_stream strm = { };
     BufferPtr result;
     Buffer in_buffer(constant::BUFFER_SIZE);
     Buffer out_buffer(constant::BUFFER_SIZE);

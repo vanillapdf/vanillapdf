@@ -1,6 +1,12 @@
 project(vanillapdf.benchmark LANGUAGES CXX)
 
-include_directories("${CMAKE_SOURCE_DIR}/include")
+# Solution root folder
+include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/files.cmake")
+
+# Additional directories in the root project
+include_directories("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include")
+
+# Include local files in the directory
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(VANILLAPDF_BENCHMARK_SOURCES
@@ -49,7 +55,7 @@ set(VANILLAPDF_BENCHMARK_LIBS
     benchmark::benchmark
 )
 
-target_link_libraries(vanillapdf.benchmark ${VANILLAPDF_BENCHMARK_LIBS})
+target_link_libraries(vanillapdf.benchmark PRIVATE ${VANILLAPDF_BENCHMARK_LIBS})
 
 # We do not need unit test project to be shipped
 #install(TARGETS vanillapdf.benchmark
@@ -62,4 +68,4 @@ add_definitions(-DVANILLAPDF_BENCHMARK_VERSION_MINOR=${VANILLAPDF_VERSION_MINOR}
 add_definitions(-DVANILLAPDF_BENCHMARK_VERSION_PATCH=${VANILLAPDF_VERSION_PATCH})
 add_definitions(-DVANILLAPDF_BENCHMARK_VERSION_BUILD=${VANILLAPDF_VERSION_BUILD})
 
-add_definitions(-DVANILLAPDF_BENCHMARK_ICON="${CMAKE_SOURCE_DIR}/cmake/vanilla_logo.ico")
+add_definitions(-DVANILLAPDF_BENCHMARK_ICON="${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/vanilla_logo.ico")

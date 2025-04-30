@@ -27,7 +27,7 @@ public:
 
     }
 
-    jpeg_destination_mgr jpeg_manager = {0};
+    jpeg_destination_mgr jpeg_manager = { };
 
     BufferPtr buffer;
     InputOutputStreamPtr stream;
@@ -226,8 +226,8 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
         throw GeneralException("Missing parameter ColorSpace");
     }
 
-    jpeg_compress_struct jpeg = { 0 };
-    jpeg_error_mgr err = { 0 };
+    jpeg_compress_struct jpeg = { };
+    jpeg_error_mgr err = { };
 
     jpeg.err = jpeg_std_error(&err);
     err.error_exit = &error_exit;
@@ -307,8 +307,8 @@ BufferPtr DCTDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 
 #if defined(VANILLAPDF_HAVE_JPEG)
 
-    jpeg_decompress_struct jpeg = {0};
-    jpeg_error_mgr err = {0};
+    jpeg_decompress_struct jpeg = { };
+    jpeg_error_mgr err = { };
 
     jpeg.err = jpeg_std_error(&err);
     err.error_exit = &error_exit;

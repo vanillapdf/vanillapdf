@@ -1,6 +1,16 @@
 # VCPKG - C++ package management system
 
-set(VCPKG_ROOT "${CMAKE_SOURCE_DIR}/external/vcpkg")
+if(NOT DEFINED VCPKG_ROOT)
+  set(VCPKG_ROOT "${VANILLAPDF_SOLUTION_SOURCE_DIR}/external/vcpkg")
+endif()
+
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE AND DEFINED VCPKG_ROOT)
+  set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+endif()
+
+# VCPKG creates abnormal warning, when there are no installed packages
+# We are installing packages during the bootstrap process
+set(VCPKG_SUPPRESS_INSTALLED_LIBRARIES_WARNING "1")
 
 if(WIN32)
   set(VCPKG_EXEC ${VCPKG_ROOT}/vcpkg.exe)
@@ -18,10 +28,3 @@ endif()
 if(NOT EXISTS ${VCPKG_EXEC})
   message(FATAL_ERROR "***** FATAL ERROR: Could not bootstrap vcpkg *****")
 endif()
-
-# VCPKG creates abnormal warning, when there are no installed packages
-# We are installing packages during the bootstrap process
-set(VCPKG_SUPPRESS_INSTALLED_LIBRARIES_WARNING "1")
-
-# Setup VCPKG toolchain
-set(CMAKE_TOOLCHAIN_FILE ${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE STRING "")

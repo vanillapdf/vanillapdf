@@ -599,7 +599,9 @@ BufferPtr EncryptionUtils::GenerateOwnerEncryptionKey(
         if (revision >= 3) {
             for (int i = 1; i < 20; ++i) {
                 BufferPtr key = make_deferred_container<Buffer>(stepc->size());
-                for (int j = 0; j < stepc->size(); ++j) {
+
+                auto stepc_size = stepc->size();
+                for (decltype(stepc_size) j = 0; j < stepc->size(); ++j) {
                     key[j] = (stepc[j] ^ i) & 0xFF;
                 }
 
@@ -790,7 +792,8 @@ BufferPtr EncryptionUtils::CalculateDecryptionCompareDataV3(
     for (Buffer::value_type i = 1; i < 20; ++i) {
         BufferPtr key = make_deferred_container<Buffer>(decryption_key_digest->size());
 
-        for (int j = 0; j < decryption_key_digest->size(); ++j) {
+        auto decryption_key_digest_size = decryption_key_digest->size();
+        for (decltype(decryption_key_digest_size) j = 0; j < decryption_key_digest->size(); ++j) {
             key[j] = (decryption_key_digest[j] ^ i);
         }
 
@@ -1190,7 +1193,8 @@ BufferPtr EncryptionUtils::ComputeAuthenticationOwnerData(const Buffer& pad_pass
         for (Buffer::value_type i = 19; i >= 0; --i) {
             BufferPtr key = make_deferred_container<Buffer>(password_digest.size());
 
-            for (int j = 0; j < password_digest.size(); ++j) {
+            auto password_digest_size = password_digest.size();
+            for (decltype(password_digest_size) j = 0; j < password_digest.size(); ++j) {
                 key[j] = (password_digest[j] ^ i);
             }
 

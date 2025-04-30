@@ -1,6 +1,12 @@
 project(vanillapdf.unittest LANGUAGES CXX)
 
-include_directories("${CMAKE_SOURCE_DIR}/include")
+# Solution root folder
+include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/files.cmake")
+
+# Additional directories in the root project
+include_directories("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include")
+
+# Include local files in the directory
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(VANILLAPDF_UNITTEST_SOURCES
@@ -46,11 +52,11 @@ endif(WIN32)
 
 set(VANILLAPDF_UNITTEST_LIBS
     vanillapdf
-    gtest
-    gtest_main
+    GTest::gtest
+    GTest::gtest_main
 )
 
-target_link_libraries(vanillapdf.unittest ${VANILLAPDF_UNITTEST_LIBS})
+target_link_libraries(vanillapdf.unittest PRIVATE ${VANILLAPDF_UNITTEST_LIBS})
 
 # We do not need unit test project to be shipped
 #install(TARGETS vanillapdf.unittest
@@ -63,10 +69,10 @@ add_definitions(-DVANILLAPDF_UNITTEST_VERSION_MINOR=${VANILLAPDF_VERSION_MINOR})
 add_definitions(-DVANILLAPDF_UNITTEST_VERSION_PATCH=${VANILLAPDF_VERSION_PATCH})
 add_definitions(-DVANILLAPDF_UNITTEST_VERSION_BUILD=${VANILLAPDF_VERSION_BUILD})
 
-add_definitions(-DVANILLAPDF_UNITTEST_ICON="${CMAKE_SOURCE_DIR}/cmake/vanilla_logo.ico")
+add_definitions(-DVANILLAPDF_UNITTEST_ICON="${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/vanilla_logo.ico")
 
 # Build GoogleTest from the external repository
-add_subdirectory("${CMAKE_SOURCE_DIR}/external/googletest" build EXCLUDE_FROM_ALL)
+add_subdirectory("${VANILLAPDF_SOLUTION_SOURCE_DIR}/external/googletest" build EXCLUDE_FROM_ALL)
 
 # Use GoogleTest for unit test execution
 include(GoogleTest)
