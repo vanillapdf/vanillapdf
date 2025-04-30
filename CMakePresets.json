@@ -291,7 +291,7 @@
         },
         {
             "name": "windows-x64-clang-release",
-            "configurePreset": "windows-clang-release",
+            "configurePreset": "windows-x64-clang-release",
             "configuration": "Release"
         },
         {
