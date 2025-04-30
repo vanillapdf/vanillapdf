@@ -1,0 +1,89 @@
+name: Nightly NuGet Packages
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # Every day at 03:00 UTC
+
+  workflow_dispatch:
+
+env:
+  VCPKG_DISABLE_METRICS: 1
+  VCPKG_ROOT: external/vcpkg
+
+jobs:
+  build:
+    name: Build & Package (${{ matrix.config.PLATFORM_IDENTIFIER }})
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { os: windows-latest, platform: "Win32", rid: win-x86, cmake_args: '-DCMAKE_GENERATOR_PLATFORM=Win32 -G "Visual Studio 17 2022"' }
+          - { os: windows-latest, platform: "x64", rid: win-x64, cmake_args: '-DCMAKE_GENERATOR_PLATFORM=x64 -G "Visual Studio 17 2022"' }
+          - { os: macos-13,         platform: "x64", rid: osx-x64, cmake_args: "" }
+          - { os: ubuntu-latest,    platform: "x64", rid: linux-x64, cmake_args: "" }
+          - { os: ubuntu-latest,    platform: "arm64", rid: linux-arm64, cmake_args: "" }
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set nightly version suffix
+        run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
+        shell: bash
+
+      # Cross-platform vcpkg bootstrap handling
+      - name: Bootstrap vcpkg
+        uses: ./.github/actions/bootstrap-vcpkg
+
+      - name: Configure CMake
+        run: |
+          cmake . \
+            -DPLATFORM_IDENTIFIER=${{ matrix.config.rid }} \
+            -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }} \
+            ${{ matrix.config.cmake_args }}
+
+      - name: Build
+        run: cmake --build . --config Release
+
+      - name: Test
+        run: cmake --build . --config Release --target RUN_TESTS
+
+      - name: Prepare package
+        run: cmake --build . --config Release --target PACKAGE
+
+      - name: Build package
+        run: nuget pack nuget/vanillapdf.runtime.nuspec
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: nuget-${{ matrix.config.rid }}
+          path: |
+            *.nupkg
+
+  build-vanillapdf-core:
+    name: Build vanillaPDF Core NuGet Package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set nightly version suffix
+        run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Configure CMake
+        run: cmake . -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
+
+      - name: Build NuGet package
+        run: nuget pack nuget/vanillapdf.nuspec
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: nuget-core
+          path: |
+            *.nupkg
