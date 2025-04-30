@@ -6,6 +6,9 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  contents: write  # Needed for future GitHub release or content access
+
 env:
   VCPKG_DISABLE_METRICS: 1
   VCPKG_ROOT: external/vcpkg
