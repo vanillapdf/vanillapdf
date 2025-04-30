@@ -62,8 +62,8 @@ jobs:
           path: build/vcpkg_installed
           key: vcpkg-${{ runner.os }}-${{ matrix.cmake_preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-          vcpkg-${{ runner.os }}-${{ matrix.cmake_preset }}-
-          vcpkg-${{ runner.os }}-
+            vcpkg-${{ runner.os }}-${{ matrix.cmake_preset }}-
+            vcpkg-${{ runner.os }}-
 
       - name: Install build tools (macOS)
         if: runner.os == 'macOS'
