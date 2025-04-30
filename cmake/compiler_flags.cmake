@@ -51,7 +51,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     # There are quite some parameters defined in functions, however they are not used.
     # I do not really consider this an issue, as even having the name of the parameter gives you some insights.
     # Having just the type even if it is currently not used is not a bug for me.
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wunused-parameter")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-parameter")
 
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
