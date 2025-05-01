@@ -1,46 +1,69 @@
-# How to Contribute
+# Contributing to Vanilla.PDF
 
-First of all, thank you for your interest in VanillaPDF! We'd love to accept your patches and contributions!
+Thank you for considering contributing to **Vanilla.PDF**! Your involvement helps improve the project for everyone. Whether you're fixing bugs, improving documentation, or suggesting new features—we welcome your input.
 
-## How to report a bug
+---
 
-**TODO public issue tracker - Wordpress forum?**
+## 🐞 Reporting Bugs
 
-Create a new thread at the "public issue tracker".
-If you are already a customer with paid support,
-please use the paid support section.
+If you encounter a bug or unexpected behavior, we’d appreciate your report. Please follow these steps:
 
-Bug report should consist of a few useful information:
-* the version of Vanilla.PDF you are using
-* the version of operating system you are using
-* the description of the actual result (what is actually happening) and the expected result (what would you expect to happen instead)
-* snippet of the problematic code
-* source document (if the document is confidential, please use out "document anonymizer")
+1. Visit our public issue tracker (**coming soon**).
+2. If you're a customer with a paid support plan, please use the dedicated support section.
+3. Include the following in your report:
+   - Version of Vanilla.PDF
+   - Operating system and version
+   - Clear description of:
+     - What’s happening
+     - What you expected to happen
+   - Relevant code snippet
+   - Sample PDF (anonymized if needed using our document anonymizer)
 
-Shortly after, you will be notified from the support team.
-Confirmed issues will be assigned internal issue ID
-and you will be notified, when the issue is resolved.
+Still unsure? Reach out to [info@vanillapdf.com](mailto:info@vanillapdf.com)
 
-In any other case please contact the support team
-at [info@vanillapdf.com](mailto:info@vanillapdf.com).
+---
 
-## General feedback and feature requests
+## 💡 Feedback & Feature Requests
 
-If you are missing some crucial feature or have any idea how to make this project better,
-send me an [e-mail](mailto:jzikmund@vanillapdf.com).
+Missing a key feature? Have a great idea?
 
-## Pull requests
+We’d love to hear it — send us a note at [jzikmund@vanillapdf.com](mailto:jzikmund@vanillapdf.com)
 
-**TODO Contributor License Agreement**
+---
 
-Before contemplating having a "substantial code contribution" please discuss it with the team.
+## 🔁 Submitting Pull Requests
 
-For now, the team has set the following limits on pull requests:
-* Contributions beyond the level of a bug fix must be discussed with the team first.
-* Pull requests that do not merge with master branch will be declined.
-* Maintain the existing coding style
-* Contributors must sign the "Contributor License Agreement"
+We welcome contributions! Please follow these guidelines:
 
-You must sign a Contributor License Agreement (CLA) before submitting your pull request.
-To complete the CLA, submit a request via the form and electronically sign the CLA when you receive the email containing the link to the document.
-You need to complete the CLA only once.
+- 🧠 **Discuss major changes first**: For anything beyond a bug fix, contact the team before investing time.
+- 🌳 **Base your PR on the `main` branch**
+- 🧹 **Match the existing coding style**
+- ✅ **Sign your commits** (see below)
+
+---
+
+## ✅ Developer Certificate of Origin (DCO)
+
+By submitting a contribution, you certify the following:
+
+> "I certify that I have the right to submit this code under the open source license indicated in this repository and that I am doing so in good faith."
+
+All commits must be signed off with a `Signed-off-by:` line. You can do this automatically by committing with the `-s` flag:
+
+```bash
+git commit -s -m "Fix PDF metadata encoding"
+```
+
+This will append a line like:
+
+```
+Signed-off-by: Your Name <you@example.com>
+```
+
+For more information, visit [developercertificate.org](https://developercertificate.org)
+
+---
+
+## 🙏 Thank You!
+
+Every bug report, idea, and pull request makes Vanilla.PDF better. We appreciate your time and contributions!
