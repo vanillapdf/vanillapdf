@@ -5,7 +5,7 @@
     ],
     "configurePresets": [
         {
-            "name": "windows-x86-msvc",
+            "name": "windows-x86-msvc-17",
             "inherits": "default",
             "generator": "Visual Studio 17 2022",
             "architecture": "Win32",
@@ -15,7 +15,7 @@
             }
         },
         {
-            "name": "windows-x64-msvc",
+            "name": "windows-x64-msvc-17",
             "inherits": "default",
             "generator": "Visual Studio 17 2022",
             "architecture": "x64",
@@ -71,12 +71,12 @@
     ],
     "buildPresets": [
         {
-            "name": "windows-x86-msvc",
-            "configurePreset": "windows-x86-msvc"
+            "name": "windows-x86-msvc-17",
+            "configurePreset": "windows-x86-msvc-17"
         },
         {
-            "name": "windows-x64-msvc",
-            "configurePreset": "windows-x64-msvc"
+            "name": "windows-x64-msvc-17",
+            "configurePreset": "windows-x64-msvc-17"
         },
         {
             "name": "windows-x64-msvc-ninja",
@@ -97,12 +97,12 @@
     ],
     "testPresets": [
         {
-            "name": "windows-x86-msvc",
-            "configurePreset": "windows-x86-msvc"
+            "name": "windows-x86-msvc-17",
+            "configurePreset": "windows-x86-msvc-17"
         },
         {
-            "name": "windows-x64-msvc",
-            "configurePreset": "windows-x64-msvc"
+            "name": "windows-x64-msvc-17",
+            "configurePreset": "windows-x64-msvc-17"
         },
         {
             "name": "windows-x64-msvc-ninja",
