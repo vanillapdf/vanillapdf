@@ -120,18 +120,23 @@ jobs:
 
       - name: Set nightly version suffix
         run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
+        shell: bash
 
       - name: Configure ${{ matrix.config.preset }}
         run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.configuration }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
+        shell: cmd
 
       - name: Build ${{ matrix.config.preset }}
         run: cmake --build --preset ${{ matrix.config.preset }}
+        shell: cmd
 
       - name: Test ${{ matrix.config.preset }}
-        run: ctest --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }}
+        run: ctest --preset ${{ matrix.config.preset }}
+        shell: cmd
 
       - name: Build NuGet package
         run: nuget pack nuget/vanillapdf.runtime.nuspec
+        shell: cmd
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4

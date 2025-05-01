@@ -102,13 +102,13 @@ jobs:
         run: ./external/vcpkg/bootstrap-vcpkg.sh
         shell: bash
 
-      - name: Configure
+      - name: Configure ${{ matrix.config.preset }}
         run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.configuration }}
 
-      - name: Build
+      - name: Build ${{ matrix.config.preset }}
         run: cmake --build --preset ${{ matrix.config.preset }}
 
-      - name: Test
+      - name: Test ${{ matrix.config.preset }}
         run: ctest --preset ${{ matrix.config.preset }} --output-on-failure
 
 
@@ -147,13 +147,13 @@ jobs:
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
         shell: cmd
 
-      - name: Configure
+      - name: Configure ${{ matrix.config.preset }}
         run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.configuration }}
 
-      - name: Build
+      - name: Build ${{ matrix.config.preset }}
         run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }}
 
-      - name: Test
+      - name: Test ${{ matrix.config.preset }}
         run: ctest --preset ${{ matrix.config.preset }} --output-on-failure
 
 
