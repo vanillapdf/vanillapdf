@@ -15,17 +15,17 @@ env:
 
 jobs:
   build:
-    name: Build & Package (${{ matrix.config.PLATFORM_IDENTIFIER }})
+    name: Build & Package on ${{ matrix.config.preset }}
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
       matrix:
         config:
-          - { os: windows-latest, platform: "Win32", rid: win-x86, cmake_args: '-DCMAKE_GENERATOR_PLATFORM=Win32 -G "Visual Studio 17 2022"' }
-          - { os: windows-latest, platform: "x64", rid: win-x64, cmake_args: '-DCMAKE_GENERATOR_PLATFORM=x64 -G "Visual Studio 17 2022"' }
-          - { os: macos-13,         platform: "x64", rid: osx-x64, cmake_args: "" }
-          - { os: ubuntu-latest,    platform: "x64", rid: linux-x64, cmake_args: "", container: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9' }
-          - { os: ubuntu-latest,    platform: "arm64", rid: linux-arm64, cmake_args: "", container: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9' }
+          - { os: windows-latest, preset: "windows-x64-msvc-release" }
+          - { os: macos-13,       preset: "macos-x64-release" }
+          - { os: macos-latest,   preset: "macos-arm64-release" }
+          - { os: ubuntu-latest,  preset: "linux-x64-gcc-release", container: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9' }
+          - { os: ubuntu-latest,  preset: "linux-arm64-gcc-release", container: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9' }
 
     steps:
       - uses: actions/checkout@v4
@@ -38,14 +38,10 @@ jobs:
           path: |
             build/vcpkg_installed
             external/vcpkg/packages
-          key: vcpkg-${{ runner.os }}-${{ matrix.cmake_preset }}-${{ hashFiles('vcpkg.json') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.cmake_preset }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
-
-      - name: Install build tools (macOS)
-        if: runner.os == 'macOS'
-        run: brew install mono
 
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
@@ -62,15 +58,18 @@ jobs:
       - name: Configure CMake
         run: |
           cmake . \
-            -DPLATFORM_IDENTIFIER=${{ matrix.config.rid }} \
+            -DPLATFORM_IDENTIFIER=${{ matrix.config.preset }} \
             -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }} \
             ${{ matrix.config.cmake_args }}
 
+      - name: Configure CMake
+        run: cmake --preset ${{ matrix.config.preset }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
+        
       - name: Build
-        run: cmake --build . --config Release
+        run: cmake --build --preset ${{ matrix.config.preset }}
 
       - name: Test
-        run: ctest --output-on-failure -C Release
+        run: ctest --preset ${{ matrix.config.preset }}
 
       - name: Build package
         run: nuget pack nuget/vanillapdf.runtime.nuspec
@@ -78,17 +77,35 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: nuget-${{ matrix.config.rid }}
+          name: vanillapdf-runtime-nightly-nuget-${{ matrix.config.preset }}
           path: |
             *.nupkg
 
   build-vanillapdf-core:
     name: Build Vanilla.PDF Core NuGet Package
     runs-on: windows-latest
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { os: windows-latest, preset: "windows-x64-msvc-release" }
+          
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Cache vcpkg installed
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/vcpkg_installed
+            external/vcpkg/packages
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-
           
       - name: Download nuget.exe
         run: curl -L -o nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
@@ -106,6 +123,6 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: nuget-core
+          name: vanillapdf-nightly-nuget
           path: |
             *.nupkg
