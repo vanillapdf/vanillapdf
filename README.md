@@ -44,8 +44,16 @@ It’s lightweight, blazingly fast, and built for integration:
 ```bash
 git clone https://github.com/vanillapdf/vanillapdf.git
 cd vanillapdf
-cmake .
-make
+
+# List available build presets
+cmake --list-presets
+
+# Configure and build using MSVC 64-bit release preset
+cmake --preset windows-x64-msvc-release
+cmake --build --preset windows-x64-msvc-release
+
+# Optional: Run tests
+ctest --preset windows-x64-msvc-release
 ```
 
 ### 📦 CMake Integration
@@ -60,12 +68,6 @@ target_link_libraries(myapp PRIVATE vanillapdf)
 ## 🛠️ Command-line Utility: `vanillapdf-tools`
 
 Vanilla.PDF includes a powerful CLI tool for performing PDF operations directly from the terminal.
-
-### ✅ Example: Sign a PDF
-
-```bash
-./vanillapdf-tools sign -s input.pdf -d signed.pdf -k private_key.p12 -p your_password
-```
 
 ### 🔍 Usage
 
@@ -87,6 +89,12 @@ Vanilla.PDF includes a powerful CLI tool for performing PDF operations directly 
 | `-p`   | Password for the key |
 
 Use `./vanillapdf-tools --help` for full command reference.
+
+### ✅ Example: Sign a PDF
+
+```bash
+./vanillapdf-tools sign -s input.pdf -d signed.pdf -k private_key.p12 -p your_password
+```
 
 ---
 
