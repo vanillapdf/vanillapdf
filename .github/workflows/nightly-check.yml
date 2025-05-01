@@ -120,10 +120,10 @@ jobs:
       max-parallel: 4
       matrix:
         config:
-          - { name: "win.2019-x86", os: windows-2019, preset: "windows-x86-msvc-17", configuration: Release }
-          - { name: "win.2022-x86", os: windows-2022, preset: "windows-x86-msvc-17", configuration: Release }
+          - { name: "win.2019-x86", os: windows-2019, preset: "windows-x86-msvc-16", configuration: Release }
+          - { name: "win.2022-x86", os: windows-2022, preset: "windows-x86-msvc-16", configuration: Release }
           - { name: "win.2025-x86", os: windows-2025, preset: "windows-x86-msvc-17", configuration: Release }
-          - { name: "win.2019-x64", os: windows-2019, preset: "windows-x64-msvc-17", configuration: Release }
+          - { name: "win.2019-x64", os: windows-2019, preset: "windows-x64-msvc-16", configuration: Release }
           - { name: "win.2022-x64", os: windows-2022, preset: "windows-x64-msvc-17", configuration: Release }
           - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-17", configuration: Release }
 
