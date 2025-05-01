@@ -15,7 +15,7 @@ env:
 
 jobs:
   build-runtimes:
-    name: Nightly nuget runtime package for ${{ matrix.config.name }}
+    name: runtime ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
     container: ${{ matrix.config.container }}
 
@@ -23,12 +23,12 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { name: "win.2025-x86", os: windows-2025, preset: "windows-x86-msvc-release" }
-          - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-release" }
-          - { name: "osx.13-x64", os: macos-13,       preset: "macos-x64-release" }
-          - { name: "osx.15-arm64", os: macos-15,   preset: "macos-arm64-release" }
-          - { name: "rocky.9-x64", os: ubuntu-latest,  preset: "linux-x64-gcc-release", container: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9' }
-          - { name: "rocky.9-arm64", os: ubuntu-latest,  preset: "linux-arm64-gcc-release", container: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9' }
+          - { name: "win.2025-x86", os: windows-2025,   preset: "windows-x86-msvc", configuration: Release }
+          - { name: "win.2025-x64", os: windows-2025,   preset: "windows-x64-msvc", configuration: Release }
+          - { name: "osx.13-x64", os: macos-13,         preset: "macos-x64",        configuration: Release }
+          - { name: "osx.15-arm64", os: macos-15,       preset: "macos-arm64",      configuration: Release }
+          - { name: "rocky.9-x64", os: ubuntu-latest,   preset: "linux-x64-gcc",    configuration: Release, container: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9' }
+          - { name: "rocky.9-arm64", os: ubuntu-latest, preset: "linux-arm64-gcc",  configuration: Release, container: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9' }
 
     steps:
       - uses: actions/checkout@v4
@@ -60,7 +60,7 @@ jobs:
 
       # Configure CMake project
       - name: Configure CMake for ${{ matrix.config.preset }}
-        run: cmake --preset ${{ matrix.config.preset }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
+        run: cmake --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
         
       - name: Build using ${{ matrix.config.preset }}
         run: cmake --build --preset ${{ matrix.config.preset }}
@@ -87,7 +87,7 @@ jobs:
 
       matrix:
         config:
-          - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-release" }
+          - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc" }
 
     steps:
       - uses: actions/checkout@v4
@@ -109,7 +109,7 @@ jobs:
         run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
 
       - name: Configure CMake for ${{ matrix.config.preset }}
-        run: cmake --preset ${{ matrix.config.preset }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
+        run: cmake --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
 
       - name: Build NuGet package
         run: nuget pack nuget/vanillapdf.nuspec

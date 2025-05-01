@@ -1,0 +1,72 @@
+{
+    "version": 8,
+     "include": [
+        "shared.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "windows-x86-msvc",
+            "inherits": "default",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "Win32",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x86-windows",
+                "PLATFORM_IDENTIFIER": "win-x86"
+            }
+        },
+        {
+            "name": "windows-x64-msvc",
+            "inherits": "default",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "x64",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-windows",
+                "PLATFORM_IDENTIFIER": "win-x64"
+            }
+        },
+        {
+            "name": "windows-x64-msvc-ninja",
+            "inherits": "default",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "cl",
+                "CMAKE_CXX_COMPILER": "cl",
+                "VCPKG_TARGET_TRIPLET": "x64-windows",
+                "PLATFORM_IDENTIFIER": "win-x64"
+            }
+        },
+        {
+            "name": "windows-x86-msvc-ninja",
+            "inherits": "default",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "cl",
+                "CMAKE_CXX_COMPILER": "cl",
+                "VCPKG_TARGET_TRIPLET": "x86-windows",
+                "PLATFORM_IDENTIFIER": "win-x86"
+            }
+        },
+        {
+            "name": "windows-x64-clang-ninja",
+            "inherits": "default",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang-cl",
+                "CMAKE_CXX_COMPILER": "clang-cl",
+                "VCPKG_TARGET_TRIPLET": "x64-windows",
+                "PLATFORM_IDENTIFIER": "win-x64"
+            }
+        },
+        {
+            "name": "windows-x86-clang-ninja",
+            "inherits": "default",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang-cl",
+                "CMAKE_CXX_COMPILER": "clang-cl",
+                "VCPKG_TARGET_TRIPLET": "x86-windows",
+                "PLATFORM_IDENTIFIER": "win-x86"
+            }
+        }
+    ]
+}

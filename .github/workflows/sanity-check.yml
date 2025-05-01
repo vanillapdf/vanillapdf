@@ -25,8 +25,9 @@ env:
 jobs:
   # This workflow contains a single job called "build"
   sanity-check:
-    name: sanity-check-${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: Configuration ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    container: ${{ matrix.config.container }}
 
     strategy:
       # We would like to see the results of all jobs even in case one of them fails
@@ -37,18 +38,22 @@ jobs:
       # There are files - MPK_SLOVLEX.pdf, noembed-jis7.pdf, bug1065245.pdf that fails in debug.
 
       matrix:
-        include:
-          - os: ubuntu-latest
-            cmake_preset: linux-x64-gcc-release
+        config:
+          # windows
+          - { name: "win.2025-x86"  , os: windows-2025,     preset: "windows-x86-msvc", configuration: Release }
+          - { name: "win.2025-x64"  , os: windows-2025,     preset: "windows-x64-msvc", configuration: Release }
 
-          - os: macos-latest
-            cmake_preset: macos-arm64-release
+          # osx
+          - { name: "osx.13-x64"        , os: macos-13,     preset: "macos-x64",    configuration: Release }
+          - { name: "osx.15-arm64"      , os: macos-15,     preset: "macos-arm64",  configuration: Release }
 
-          - os: macos-13
-            cmake_preset: macos-x64-release
-
-          - os: windows-latest
-            cmake_preset: windows-x64-msvc-release
+          # ubuntu
+          - { name: "ubuntu.24.04-x64",     os: ubuntu-latest,  preset: "linux-x64-gcc",    configuration: Release, container: 'ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:24.04' }
+          - { name: "ubuntu.24.04-arm64",   os: ubuntu-latest,  preset: "linux-arm64-gcc",  configuration: Release, container: 'ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:24.04' }
+          
+          # rockylinux
+          - { name: "rocky.9-x64",      os: ubuntu-latest,  preset: "linux-x64-gcc",    configuration: Release, container: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9' }
+          - { name: "rocky.9-arm64",    os: ubuntu-latest,  preset: "linux-arm64-gcc",  configuration: Release, container: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9' }
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -63,9 +68,9 @@ jobs:
           path: |
             build/vcpkg_installed
             external/vcpkg/packages
-          key: vcpkg-${{ runner.os }}-${{ matrix.cmake_preset }}-${{ hashFiles('vcpkg.json') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.cmake_preset }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
 
       - name: Install build tools (macOS)
@@ -82,12 +87,12 @@ jobs:
 
       # Generate the build files
       - name: Generate build files
-        run: cmake --preset ${{ matrix.cmake_preset }}
+        run: cmake --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }}
 
       # Build the project
-      - name: Build project in config ${{ matrix.cmake_preset }}
-        run: cmake --build --preset ${{ matrix.cmake_preset }}
+      - name: Build project in config ${{ matrix.config.name }}
+        run: cmake --build --preset ${{ matrix.config.preset }}
 
       # Run tests
-      - name: Run automated test scenarios in config ${{ matrix.cmake_preset }}
-        run: ctest --preset ${{ matrix.cmake_preset }} --output-on-failure
+      - name: Run automated test scenarios in config ${{ matrix.config.name }}
+        run: ctest --preset ${{ matrix.config.preset }} --output-on-failure
