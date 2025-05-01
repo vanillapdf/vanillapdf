@@ -60,7 +60,6 @@ find_package(GTest REQUIRED)
 set(VANILLAPDF_UNITTEST_LIBS
     vanillapdf
     GTest::gtest
-    GTest::gtest_main
 )
 
 target_link_libraries(vanillapdf.unittest PRIVATE ${VANILLAPDF_UNITTEST_LIBS})
