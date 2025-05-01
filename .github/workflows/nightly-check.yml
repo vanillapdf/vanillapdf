@@ -21,53 +21,159 @@ env:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  nightly-full-scan:
-    name: Configuration ${{ matrix.config.name }}
-    runs-on: ${{ matrix.config.os }}
-    container:
-      image: ${{ matrix.config.image }}
 
+  linux:
+    name: Nightly Linux Scan (${{ matrix.config.name }})
+    runs-on: ubuntu-latest
     strategy:
-      # We would like to see the results of all jobs even in case one of them fails
       fail-fast: false
-
+      max-parallel: 4
       matrix:
         config:
-          # windows
-          - { name: "win.2019-x86"  , os: windows-2019,     preset: "windows-x86-ninja", configuration: Release }
-          - { name: "win.2022-x86"  , os: windows-2022,     preset: "windows-x86-ninja", configuration: Release }
-          - { name: "win.2025-x86"  , os: windows-2025,     preset: "windows-x86-ninja", configuration: Release }
+          - name: ubuntu.22.04-x64
+            image: ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:22.04
+            platform: linux/amd64
+            preset: linux-x64-gcc
+            configuration: Release
 
-          - { name: "win.2019-x64"  , os: windows-2019,     preset: "windows-x64-ninja", configuration: Release }
-          - { name: "win.2022-x64"  , os: windows-2022,     preset: "windows-x64-ninja", configuration: Release }
-          - { name: "win.2025-x64"  , os: windows-2025,     preset: "windows-x64-ninja", configuration: Release }
+          - name: ubuntu.22.04-arm64
+            image: ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:22.04
+            platform: linux/arm64
+            preset: linux-arm64-gcc
+            configuration: Release
 
-          # osx
-          - { name: "osx.13-x64"        , os: macos-13,     preset: "macos-x64",    configuration: Release }
-          - { name: "osx.14-arm64"      , os: macos-14,     preset: "macos-arm64",  configuration: Release }
-          - { name: "osx.15-arm64"      , os: macos-15,     preset: "macos-arm64",  configuration: Release }
+          - name: ubuntu.24.04-x64
+            image: ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:24.04
+            platform: linux/amd64
+            preset: linux-x64-gcc
+            configuration: Release
 
-          # ubuntu
-          - { name: "ubuntu.22.04-x64",     os: ubuntu-latest,  preset: "linux-x64-gcc",    configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:22.04' }
-          - { name: "ubuntu.22.04-arm64",   os: ubuntu-latest,  preset: "linux-arm64-gcc",  configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:22.04' }
-          - { name: "ubuntu.24.04-x64",     os: ubuntu-latest,  preset: "linux-x64-gcc",    configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:24.04' }
-          - { name: "ubuntu.24.04-arm64",   os: ubuntu-latest,  preset: "linux-arm64-gcc",  configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:24.04' }
-          
-          # rockylinux
-          - { name: "rocky.8-x64",      os: ubuntu-latest,  preset: "linux-x64-gcc",    configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:8' }
-          - { name: "rocky.8-arm64",    os: ubuntu-latest,  preset: "linux-arm64-gcc",  configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:8' }
-          - { name: "rocky.9-x64",      os: ubuntu-latest,  preset: "linux-x64-gcc",    configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9' }
-          - { name: "rocky.9-arm64",    os: ubuntu-latest,  preset: "linux-arm64-gcc",  configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9' }
+          - name: ubuntu.24.04-arm64
+            image: ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:24.04
+            platform: linux/arm64
+            preset: linux-arm64-gcc
+            configuration: Release
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+          - name: rocky.8-x64
+            image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:8
+            platform: linux/amd64
+            preset: linux-x64-gcc
+            configuration: Release
+
+          - name: rocky.8-arm64
+            image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:8
+            platform: linux/arm64
+            preset: linux-arm64-gcc
+            configuration: Release
+
+          - name: rocky.9-x64
+            image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9
+            platform: linux/amd64
+            preset: linux-x64-gcc
+            configuration: Release
+
+          - name: rocky.9-arm64
+            image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9
+            platform: linux/arm64
+            preset: linux-arm64-gcc
+            configuration: Release
+
+    container:
+      image: ${{ matrix.config.image }}
+      options: --platform=${{ matrix.config.platform }}
+
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Cache vcpkg installed
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/vcpkg_installed
+            external/vcpkg/packages
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-
+
+      - name: Bootstrap vcpkg (Linux)
+        run: ${{ github.workspace }}/external/vcpkg/bootstrap-vcpkg.sh
+        shell: bash
+
+      - name: Configure
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.configuration }}
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.config.preset }}
+
+      - name: Test
+        run: ctest --preset ${{ matrix.config.preset }} --output-on-failure
+
+
+  windows:
+    name: Nightly Windows Scan
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        config:
+          - { name: "win.2019-x86", os: windows-2019, preset: "windows-x86-msvc-17", configuration: Release }
+          - { name: "win.2022-x86", os: windows-2022, preset: "windows-x86-msvc-17", configuration: Release }
+          - { name: "win.2025-x86", os: windows-2025, preset: "windows-x86-msvc-17", configuration: Release }
+          - { name: "win.2019-x64", os: windows-2019, preset: "windows-x64-msvc-17", configuration: Release }
+          - { name: "win.2022-x64", os: windows-2022, preset: "windows-x64-msvc-17", configuration: Release }
+          - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-17", configuration: Release }
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/vcpkg_installed
+            external/vcpkg/packages
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-
+
+      - name: Bootstrap vcpkg (Windows)
+        run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
+        shell: cmd
+
+      - name: Configure
+        run: cmake --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }}
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }}
+
+      - name: Test
+        run: ctest --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }} --output-on-failure
+
+
+  macos:
+    name: Nightly macOS Scan
+    runs-on: ${{ matrix.config.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { name: "osx.13-x64", runner: macos-13, preset: "macos-x64", configuration: Release }
+          - { name: "osx.14-arm64", runner: macos-14, preset: "macos-arm64", configuration: Release }
+          - { name: "osx.15-arm64", runner: macos-15, preset: "macos-arm64", configuration: Release }
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache vcpkg
         uses: actions/cache@v4
         with:
           path: |
@@ -79,21 +185,17 @@ jobs:
             vcpkg-${{ runner.os }}-
 
       - name: Install build tools (macOS)
-        if: runner.os == 'macOS'
         run: brew install autoconf automake autoconf-archive
 
-      # Cross-platform vcpkg bootstrap handling
-      - name: Bootstrap vcpkg
-        uses: ./.github/actions/bootstrap-vcpkg
+      - name: Bootstrap vcpkg (macOS)
+        run: ${{ github.workspace }}/external/vcpkg/bootstrap-vcpkg.sh
+        shell: bash
 
-      # Generate the build files
-      - name: Generate build files
+      - name: Configure
         run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.configuration }}
 
-      # Build the project
-      - name: Build project in config ${{ matrix.config.name }}
+      - name: Build
         run: cmake --build --preset ${{ matrix.config.preset }}
 
-      # Run tests
-      - name: Run automated test scenarios in config ${{ matrix.config.name }}
+      - name: Test
         run: ctest --preset ${{ matrix.config.preset }} --output-on-failure

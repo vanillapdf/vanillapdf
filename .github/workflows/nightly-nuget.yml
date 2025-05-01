@@ -15,29 +15,36 @@ env:
   VCPKG_ROOT: external/vcpkg
 
 jobs:
-  build-runtimes:
-    name: ${{ matrix.config.name }}
-    runs-on: ${{ matrix.config.os }}
-    container:
-      image: ${{ matrix.config.image }}
 
+  linux:
+    name: Linux Runtime Builds
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         config:
-          - { name: "win.2025-x86", os: windows-2025,   preset: "windows-x86-ninja", configuration: Release }
-          - { name: "win.2025-x64", os: windows-2025,   preset: "windows-x64-ninja", configuration: Release }
-          - { name: "osx.13-x64", os: macos-13,         preset: "macos-x64",        configuration: Release }
-          - { name: "osx.15-arm64", os: macos-15,       preset: "macos-arm64",      configuration: Release }
-          - { name: "rocky.9-x64", os: ubuntu-latest,   preset: "linux-x64-gcc",    configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9' }
-          - { name: "rocky.9-arm64", os: ubuntu-latest, preset: "linux-arm64-gcc",  configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9' }
+          - name: rocky.9-x64
+            image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9
+            platform: linux/amd64
+            preset: linux-x64-gcc
+            configuration: Release
+
+          - name: rocky.9-arm64
+            image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9
+            platform: linux/arm64
+            preset: linux-arm64-gcc
+            configuration: Release
+
+    container:
+      image: ${{ matrix.config.image }}
+      options: --platform=${{ matrix.config.platform }}
 
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Cache vcpkg installed
+      - name: Cache vcpkg
         uses: actions/cache@v4
         with:
           path: |
@@ -48,31 +55,22 @@ jobs:
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
 
-      # Cross-platform vcpkg bootstrap handling
-      - name: Bootstrap vcpkg
-        uses: ./.github/actions/bootstrap-vcpkg
+      # Bootstrap vcpkg on Linux
+      - name: Bootstrap vcpkg (Linux)
+        run: ${{ github.workspace }}/external/vcpkg/bootstrap-vcpkg.sh
+        shell: bash
 
-      # Cross-platform vcpkg bootstrap handling
       - name: Set nightly version suffix
         run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
 
-      # Configure CMake project
-      - name: Configure CMake for ${{ matrix.config.preset }}
+      - name: Configure
         run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.configuration }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
-        
-      - name: Build using ${{ matrix.config.preset }}
+
+      - name: Build
         run: cmake --build --preset ${{ matrix.config.preset }}
 
-      - name: Test using ${{ matrix.config.preset }}
+      - name: Test
         run: ctest --preset ${{ matrix.config.preset }}
-
-      # In order to build nuget package we need mono and nuget present
-      - name: Install Mono & NuGet (macOS)
-        if: runner.os == 'macOS'
-        run: |
-            brew install mono
-            curl -L https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -o nuget.exe
-            chmod +x nuget.exe
 
       - name: Build NuGet package
         run: nuget pack nuget/vanillapdf.runtime.nuspec
@@ -81,8 +79,135 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: vanillapdf-runtime-nightly-nuget-${{ matrix.config.preset }}-${{ env.DATE_SUFFIX }}
+          path: '*.nupkg'
+
+
+  windows:
+    name: Windows Runtime Builds
+    runs-on: windows-2025
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - name: win.2025-x86
+            preset: windows-x86-msvc-17
+            configuration: Release
+
+          - name: win.2025-x64
+            preset: windows-x64-msvc-17
+            configuration: Release
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
           path: |
-            *.nupkg
+            build/vcpkg_installed
+            external/vcpkg/packages
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-
+
+      # Bootstrap vcpkg on Windows
+      - name: Bootstrap vcpkg (Windows)
+        run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
+        shell: cmd
+
+      - name: Set nightly version suffix
+        run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
+
+      - name: Configure
+        run: cmake --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }}
+
+      - name: Test
+        run: ctest --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }}
+
+      - name: Build NuGet package
+        run: nuget pack nuget/vanillapdf.runtime.nuspec
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: vanillapdf-runtime-nightly-nuget-${{ matrix.config.preset }}-${{ env.DATE_SUFFIX }}
+          path: '*.nupkg'
+
+
+  macos:
+    name: macOS Runtime Builds
+    runs-on: ${{ matrix.config.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - name: osx.13-x64
+            runner: macos-13
+            preset: macos-x64
+            configuration: Release
+
+          - name: osx.15-arm64
+            runner: macos-15
+            preset: macos-arm64
+            configuration: Release
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/vcpkg_installed
+            external/vcpkg/packages
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-
+
+      - name: Install Mono & NuGet
+        run: |
+          brew install mono
+          curl -L https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -o nuget.exe
+          chmod +x nuget.exe
+
+        - name: Verify NuGet installation
+        run: mono ./nuget.exe help
+
+      # Bootstrap vcpkg on macOS
+      - name: Bootstrap vcpkg (macOS)
+        run: ${{ github.workspace }}/external/vcpkg/bootstrap-vcpkg.sh
+        shell: bash
+
+      - name: Set nightly version suffix
+        run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
+
+      - name: Configure
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.configuration }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.config.preset }}
+
+      - name: Test
+        run: ctest --preset ${{ matrix.config.preset }}
+
+      - name: Build NuGet package
+        run: mono ./nuget.exe pack nuget/vanillapdf.runtime.nuspec
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: vanillapdf-runtime-nightly-nuget-${{ matrix.config.preset }}-${{ env.DATE_SUFFIX }}
+          path: '*.nupkg'
+
 
   build-vanillapdf-core:
     name: vanillapdf core
@@ -93,14 +218,14 @@ jobs:
 
       matrix:
         config:
-          - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-ninja" }
+          - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-17", configuration: Release }
 
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Cache vcpkg installed
+      - name: Cache vcpkg
         uses: actions/cache@v4
         with:
           path: |
@@ -111,10 +236,15 @@ jobs:
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
 
+      # Bootstrap vcpkg on Windows
+      - name: Bootstrap vcpkg (Windows)
+        run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
+        shell: cmd
+
       - name: Set nightly version suffix
         run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
 
-      - name: Configure CMake for ${{ matrix.config.preset }}
+      - name: Configure
         run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.configuration }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
 
       - name: Build NuGet package
@@ -124,5 +254,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: vanillapdf-nightly-nuget-${{ env.DATE_SUFFIX }}
-          path: |
-            *.nupkg
+          path: '*.nupkg'
