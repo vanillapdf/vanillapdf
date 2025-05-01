@@ -81,5 +81,65 @@
                 "PLATFORM_IDENTIFIER": "linux-arm-musl"
             }
         }
+    ],
+    "buildPresets": [
+        {
+            "name": "linux-x64-gcc",
+            "configurePreset": "linux-x64-gcc"
+        },
+        {
+            "name": "linux-arm64-gcc",
+            "configurePreset": "linux-arm64-gcc"
+        },
+        {
+            "name": "linux-x64-clang",
+            "configurePreset": "linux-x64-clang"
+        },
+        {
+            "name": "linux-arm64-clang",
+            "configurePreset": "linux-arm64-clang"
+        },
+        {
+            "name": "linux-x64-musl",
+            "configurePreset": "linux-x64-musl"
+        },
+        {
+            "name": "linux-arm64-musl",
+            "configurePreset": "linux-arm64-musl"
+        },
+        {
+            "name": "linux-arm-musl",
+            "configurePreset": "linux-arm-musl"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "linux-x64-gcc",
+            "configurePreset": "linux-x64-gcc"
+        },
+        {
+            "name": "linux-arm64-gcc",
+            "configurePreset": "linux-arm64-gcc"
+        },
+        {
+            "name": "linux-x64-clang",
+            "configurePreset": "linux-x64-clang"
+        },
+        {
+            "name": "linux-arm64-clang",
+            "configurePreset": "linux-arm64-clang"
+        },
+        {
+            "name": "linux-x64-musl",
+            "configurePreset": "linux-x64-musl"
+        },
+        {
+            "name": "linux-arm64-musl",
+            "configurePreset": "linux-arm64-musl"
+        },
+        {
+            "name": "linux-arm-musl",
+            "configurePreset": "linux-arm-musl"
+        }
     ]
 }

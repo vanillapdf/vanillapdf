@@ -5,17 +5,5 @@
         "cmake/presets/linux.json",
         "cmake/presets/macos.json",
         "cmake/presets/android.json"
-    ],
-    "buildPresets": [
-        {
-            "name": "default",
-            "configurePreset": "default"
-        }
-    ],
-    "testPresets": [
-        {
-            "name": "default",
-            "configurePreset": "default"
-        }
     ]
 }

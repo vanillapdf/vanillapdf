@@ -52,5 +52,41 @@
                 "PLATFORM_IDENTIFIER": "android-x86_64"
             }
         }
+    ],
+    "buildPresets": [
+        {
+            "name": "android-arm64",
+            "configurePreset": "android-arm64"
+        },
+        {
+            "name": "android-armv7",
+            "configurePreset": "android-armv7"
+        },
+        {
+            "name": "android-x86",
+            "configurePreset": "android-x86"
+        },
+        {
+            "name": "android-x86_64",
+            "configurePreset": "android-x86_64"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "android-arm64",
+            "configurePreset": "android-arm64"
+        },
+        {
+            "name": "android-armv7",
+            "configurePreset": "android-armv7"
+        },
+        {
+            "name": "android-x86",
+            "configurePreset": "android-x86"
+        },
+        {
+            "name": "android-x86_64",
+            "configurePreset": "android-x86_64"
+        }
     ]
 }
