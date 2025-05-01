@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write  # Needed for future GitHub release or content access
+  packages: read   # Needed to load container images
 
 env:
   VCPKG_DISABLE_METRICS: 1
@@ -15,7 +16,7 @@ env:
 
 jobs:
   build-runtimes:
-    name: runtime ${{ matrix.config.name }}
+    name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
     container: ${{ matrix.config.container }}
 
@@ -79,7 +80,7 @@ jobs:
             *.nupkg
 
   build-vanillapdf-core:
-    name: Nightly nuget package for vanillapdf core
+    name: vanillapdf core
     runs-on: ${{ matrix.config.os }}
 
     strategy:

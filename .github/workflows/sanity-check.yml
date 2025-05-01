@@ -13,9 +13,9 @@ on:
   pull_request:
     branches: [ "master" ]
 
-# Enable only minimum required permissions
 permissions:
-  contents: read
+  contents: read    # Download the repository source code
+  packages: read    # Needed to load container images
 
 env:
   VCPKG_ROOT: external/vcpkg
