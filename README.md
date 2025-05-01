@@ -1,7 +1,11 @@
 # Vanilla.PDF
 
-[![NuGet](https://img.shields.io/nuget/v/vanillapdf)](https://www.nuget.org/packages/vanillapdf)
-![NuGet Downloads](https://img.shields.io/nuget/dt/vanillapdf)
+[![NuGet](https://img.shields.io/nuget/v/vanillapdf?color=blue)](https://www.nuget.org/packages/vanillapdf)
+[![Downloads](https://img.shields.io/nuget/dt/vanillapdf?color=blue)](https://www.nuget.org/packages/vanillapdf)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE.txt)
+[![Build Status](https://github.com/vanillapdf/vanillapdf/actions/workflows/nightly-check.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/nightly-check.yml)
+[![Repo Size](https://img.shields.io/github/repo-size/vanillapdf/vanillapdf)](https://github.com/vanillapdf/vanillapdf)
+[![Docs](https://img.shields.io/badge/docs-available-brightgreen)](https://vanillapdf.github.io/)
 
 **Vanilla.PDF** is a modern, high-performance C++ SDK for creating, signing, and modifying PDF documents. Built with efficiency and simplicity in mind, it empowers developers with fine-grained control over PDF internals while maintaining an intuitive API and cross-platform compatibility.
 
@@ -101,10 +105,10 @@ We welcome contributions, feature requests, and bug reports. A [contributing gui
 ## 📬 Contact
 
 Questions or support needs?  
-📧 [info@vanillapdf.com](mailto:info@vanillapdf.com)  
+📧 [info@vanillapdf.com](mailto:info@vanillapdf.com)
 🌐 [vanillapdf.com/contact](https://vanillapdf.com/contact/)
 
 ## 🧭 Code of Conduct
 
-We are committed to fostering a welcoming and respectful environment.  
+We are committed to fostering a welcoming and respectful environment.
 Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before participating.
