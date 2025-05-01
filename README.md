@@ -32,8 +32,8 @@ It’s lightweight, blazingly fast, and built for integration:
 - Minimal footprint, no bloated dependencies
 - Comprehensive documentation and tested build process
 
-🔗 [Official Website](http://vanillapdf.com)
-📚 [Documentation](https://vanillapdf.github.io/)
+🔗 [Official Website](http://vanillapdf.com)  
+📚 [Documentation](https://vanillapdf.github.io/)  
 
 ---
 
@@ -77,7 +77,7 @@ Vanilla.PDF includes a powerful CLI tool for performing PDF operations directly 
 
 ### 🧰 Commands
 
-- `sign` Digitally sign a PDF
+- `sign` Digitally sign a PDF  
 
 ### 🔑 Common Options
 
@@ -113,7 +113,7 @@ We welcome contributions, feature requests, and bug reports. A [contributing gui
 ## 📬 Contact
 
 Questions or support needs?  
-📧 [info@vanillapdf.com](mailto:info@vanillapdf.com)
+📧 [info@vanillapdf.com](mailto:info@vanillapdf.com)  
 🌐 [vanillapdf.com/contact](https://vanillapdf.com/contact/)
 
 ## 🧭 Code of Conduct
