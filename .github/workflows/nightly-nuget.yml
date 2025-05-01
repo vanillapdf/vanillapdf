@@ -57,7 +57,7 @@ jobs:
 
       # Bootstrap vcpkg on Linux
       - name: Bootstrap vcpkg (Linux)
-        run: ${{ github.workspace }}/external/vcpkg/bootstrap-vcpkg.sh
+        run: ./external/vcpkg/bootstrap-vcpkg.sh
         shell: bash
 
       - name: Set nightly version suffix
@@ -121,14 +121,14 @@ jobs:
       - name: Set nightly version suffix
         run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
 
-      - name: Configure
-        run: cmake --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
+      - name: Configure ${{ matrix.config.preset }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.configuration }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
 
-      - name: Build
-        run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }}
+      - name: Build ${{ matrix.config.preset }}
+        run: cmake --build --preset ${{ matrix.config.preset }}
 
-      - name: Test
-        run: ctest --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }}
+      - name: Test ${{ matrix.config.preset }}
+        run: ctest --preset ${{ matrix.config.preset }}
 
       - name: Build NuGet package
         run: nuget pack nuget/vanillapdf.runtime.nuspec
@@ -179,7 +179,7 @@ jobs:
           curl -L https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -o nuget.exe
           chmod +x nuget.exe
 
-        - name: Verify NuGet installation
+      - name: Verify NuGet installation
         run: mono ./nuget.exe help
 
       # Bootstrap vcpkg on macOS
