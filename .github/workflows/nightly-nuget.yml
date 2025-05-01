@@ -24,21 +24,40 @@ jobs:
           - { os: windows-latest, platform: "Win32", rid: win-x86, cmake_args: '-DCMAKE_GENERATOR_PLATFORM=Win32 -G "Visual Studio 17 2022"' }
           - { os: windows-latest, platform: "x64", rid: win-x64, cmake_args: '-DCMAKE_GENERATOR_PLATFORM=x64 -G "Visual Studio 17 2022"' }
           - { os: macos-13,         platform: "x64", rid: osx-x64, cmake_args: "" }
-          - { os: ubuntu-latest,    platform: "x64", rid: linux-x64, cmake_args: "" }
-          - { os: ubuntu-latest,    platform: "arm64", rid: linux-arm64, cmake_args: "" }
+          - { os: ubuntu-latest,    platform: "x64", rid: linux-x64, cmake_args: "", container: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9' }
+          - { os: ubuntu-latest,    platform: "arm64", rid: linux-arm64, cmake_args: "", container: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9' }
 
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Set nightly version suffix
-        run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
-        shell: bash
+      - name: Cache vcpkg installed
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/vcpkg_installed
+            external/vcpkg/packages
+          key: vcpkg-${{ runner.os }}-${{ matrix.cmake_preset }}-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.cmake_preset }}-
+            vcpkg-${{ runner.os }}-
+
+      - name: Install build tools (macOS)
+        if: runner.os == 'macOS'
+        run: brew install mono
+
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y mono-complete
 
       # Cross-platform vcpkg bootstrap handling
       - name: Bootstrap vcpkg
         uses: ./.github/actions/bootstrap-vcpkg
+
+      - name: Set nightly version suffix
+        run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
+        shell: bash
 
       - name: Configure CMake
         run: |
@@ -51,10 +70,7 @@ jobs:
         run: cmake --build . --config Release
 
       - name: Test
-        run: cmake --build . --config Release --target RUN_TESTS
-
-      - name: Prepare package
-        run: cmake --build . --config Release --target PACKAGE
+        run: ctest --output-on-failure -C Release
 
       - name: Build package
         run: nuget pack nuget/vanillapdf.runtime.nuspec
@@ -67,12 +83,15 @@ jobs:
             *.nupkg
 
   build-vanillapdf-core:
-    name: Build vanillaPDF Core NuGet Package
-    runs-on: ubuntu-latest
+    name: Build Vanilla.PDF Core NuGet Package
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+          
+      - name: Download nuget.exe
+        run: curl -L -o nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
 
       - name: Set nightly version suffix
         run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
