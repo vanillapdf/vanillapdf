@@ -176,6 +176,7 @@ jobs:
       - name: Install Mono & NuGet
         run: |
           brew install mono
+          brew link --overwrite mono
           curl -L https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -o nuget.exe
           chmod +x nuget.exe
 
