@@ -35,13 +35,13 @@ jobs:
       matrix:
         config:
           # windows
-          - { name: "win.2019-x86"  , os: windows-2019,     preset: "windows-x86-msvc-ninja", configuration: Release }
-          - { name: "win.2022-x86"  , os: windows-2022,     preset: "windows-x86-msvc-ninja", configuration: Release }
-          - { name: "win.2025-x86"  , os: windows-2025,     preset: "windows-x86-msvc-ninja", configuration: Release }
+          - { name: "win.2019-x86"  , os: windows-2019,     preset: "windows-x86-ninja", configuration: Release }
+          - { name: "win.2022-x86"  , os: windows-2022,     preset: "windows-x86-ninja", configuration: Release }
+          - { name: "win.2025-x86"  , os: windows-2025,     preset: "windows-x86-ninja", configuration: Release }
 
-          - { name: "win.2019-x64"  , os: windows-2019,     preset: "windows-x64-msvc-ninja", configuration: Release }
-          - { name: "win.2022-x64"  , os: windows-2022,     preset: "windows-x64-msvc-ninja", configuration: Release }
-          - { name: "win.2025-x64"  , os: windows-2025,     preset: "windows-x64-msvc-ninja", configuration: Release }
+          - { name: "win.2019-x64"  , os: windows-2019,     preset: "windows-x64-ninja", configuration: Release }
+          - { name: "win.2022-x64"  , os: windows-2022,     preset: "windows-x64-ninja", configuration: Release }
+          - { name: "win.2025-x64"  , os: windows-2025,     preset: "windows-x64-ninja", configuration: Release }
 
           # osx
           - { name: "osx.13-x64"        , os: macos-13,     preset: "macos-x64",    configuration: Release }
@@ -81,10 +81,6 @@ jobs:
       - name: Install build tools (macOS)
         if: runner.os == 'macOS'
         run: brew install autoconf automake autoconf-archive
-
-      - name: Install dependencies (Linux)
-        if: runner.os == 'Linux'
-        run: apt-get update && apt-get install -y autoconf automake libtool pkg-config
 
       # Cross-platform vcpkg bootstrap handling
       - name: Bootstrap vcpkg

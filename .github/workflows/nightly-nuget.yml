@@ -25,8 +25,8 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { name: "win.2025-x86", os: windows-2025,   preset: "windows-x86-msvc-ninja", configuration: Release }
-          - { name: "win.2025-x64", os: windows-2025,   preset: "windows-x64-msvc-ninja", configuration: Release }
+          - { name: "win.2025-x86", os: windows-2025,   preset: "windows-x86-ninja", configuration: Release }
+          - { name: "win.2025-x64", os: windows-2025,   preset: "windows-x64-ninja", configuration: Release }
           - { name: "osx.13-x64", os: macos-13,         preset: "macos-x64",        configuration: Release }
           - { name: "osx.15-arm64", os: macos-15,       preset: "macos-arm64",      configuration: Release }
           - { name: "rocky.9-x64", os: ubuntu-latest,   preset: "linux-x64-gcc",    configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9' }
@@ -48,10 +48,6 @@ jobs:
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
 
-      - name: Install dependencies (Linux)
-        if: runner.os == 'Linux'
-        run: apt-get update && apt-get install -y mono-complete
-
       # Cross-platform vcpkg bootstrap handling
       - name: Bootstrap vcpkg
         uses: ./.github/actions/bootstrap-vcpkg
@@ -69,6 +65,14 @@ jobs:
 
       - name: Test using ${{ matrix.config.preset }}
         run: ctest --preset ${{ matrix.config.preset }}
+
+      # In order to build nuget package we need mono and nuget present
+      - name: Install Mono & NuGet (macOS)
+        if: runner.os == 'macOS'
+        run: |
+            brew install mono
+            curl -L https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -o nuget.exe
+            chmod +x nuget.exe
 
       - name: Build NuGet package
         run: nuget pack nuget/vanillapdf.runtime.nuspec
@@ -89,7 +93,7 @@ jobs:
 
       matrix:
         config:
-          - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc" }
+          - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-ninja" }
 
     steps:
       - uses: actions/checkout@v4
