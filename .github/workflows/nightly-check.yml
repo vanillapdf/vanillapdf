@@ -25,7 +25,8 @@ jobs:
   nightly-full-scan:
     name: Configuration ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
-    container: ${{ matrix.config.container }}
+    container:
+      image: ${{ matrix.config.image }}
 
     strategy:
       # We would like to see the results of all jobs even in case one of them fails
@@ -34,13 +35,13 @@ jobs:
       matrix:
         config:
           # windows
-          - { name: "win.2019-x86"  , os: windows-2019,     preset: "windows-x86-msvc", configuration: Release }
-          - { name: "win.2022-x86"  , os: windows-2022,     preset: "windows-x86-msvc", configuration: Release }
-          - { name: "win.2025-x86"  , os: windows-2025,     preset: "windows-x86-msvc", configuration: Release }
+          - { name: "win.2019-x86"  , os: windows-2019,     preset: "windows-x86-msvc-ninja", configuration: Release }
+          - { name: "win.2022-x86"  , os: windows-2022,     preset: "windows-x86-msvc-ninja", configuration: Release }
+          - { name: "win.2025-x86"  , os: windows-2025,     preset: "windows-x86-msvc-ninja", configuration: Release }
 
-          - { name: "win.2019-x64"  , os: windows-2019,     preset: "windows-x64-msvc", configuration: Release }
-          - { name: "win.2022-x64"  , os: windows-2022,     preset: "windows-x64-msvc", configuration: Release }
-          - { name: "win.2025-x64"  , os: windows-2025,     preset: "windows-x64-msvc", configuration: Release }
+          - { name: "win.2019-x64"  , os: windows-2019,     preset: "windows-x64-msvc-ninja", configuration: Release }
+          - { name: "win.2022-x64"  , os: windows-2022,     preset: "windows-x64-msvc-ninja", configuration: Release }
+          - { name: "win.2025-x64"  , os: windows-2025,     preset: "windows-x64-msvc-ninja", configuration: Release }
 
           # osx
           - { name: "osx.13-x64"        , os: macos-13,     preset: "macos-x64",    configuration: Release }
@@ -48,16 +49,16 @@ jobs:
           - { name: "osx.15-arm64"      , os: macos-15,     preset: "macos-arm64",  configuration: Release }
 
           # ubuntu
-          - { name: "ubuntu.22.04-x64",     os: ubuntu-latest,  preset: "linux-x64-gcc",    configuration: Release, container: 'ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:22.04' }
-          - { name: "ubuntu.22.04-arm64",   os: ubuntu-latest,  preset: "linux-arm64-gcc",  configuration: Release, container: 'ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:22.04' }
-          - { name: "ubuntu.24.04-x64",     os: ubuntu-latest,  preset: "linux-x64-gcc",    configuration: Release, container: 'ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:24.04' }
-          - { name: "ubuntu.24.04-arm64",   os: ubuntu-latest,  preset: "linux-arm64-gcc",  configuration: Release, container: 'ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:24.04' }
+          - { name: "ubuntu.22.04-x64",     os: ubuntu-latest,  preset: "linux-x64-gcc",    configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:22.04' }
+          - { name: "ubuntu.22.04-arm64",   os: ubuntu-latest,  preset: "linux-arm64-gcc",  configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:22.04' }
+          - { name: "ubuntu.24.04-x64",     os: ubuntu-latest,  preset: "linux-x64-gcc",    configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:24.04' }
+          - { name: "ubuntu.24.04-arm64",   os: ubuntu-latest,  preset: "linux-arm64-gcc",  configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:24.04' }
           
           # rockylinux
-          - { name: "rocky.8-x64",      os: ubuntu-latest,  preset: "linux-x64-gcc",    configuration: Release, container: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:8' }
-          - { name: "rocky.8-arm64",    os: ubuntu-latest,  preset: "linux-arm64-gcc",  configuration: Release, container: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:8' }
-          - { name: "rocky.9-x64",      os: ubuntu-latest,  preset: "linux-x64-gcc",    configuration: Release, container: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9' }
-          - { name: "rocky.9-arm64",    os: ubuntu-latest,  preset: "linux-arm64-gcc",  configuration: Release, container: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9' }
+          - { name: "rocky.8-x64",      os: ubuntu-latest,  preset: "linux-x64-gcc",    configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:8' }
+          - { name: "rocky.8-arm64",    os: ubuntu-latest,  preset: "linux-arm64-gcc",  configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:8' }
+          - { name: "rocky.9-x64",      os: ubuntu-latest,  preset: "linux-x64-gcc",    configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9' }
+          - { name: "rocky.9-arm64",    os: ubuntu-latest,  preset: "linux-arm64-gcc",  configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9' }
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -83,7 +84,7 @@ jobs:
 
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y autoconf automake libtool pkg-config
+        run: apt-get update && apt-get install -y autoconf automake libtool pkg-config
 
       # Cross-platform vcpkg bootstrap handling
       - name: Bootstrap vcpkg
@@ -95,8 +96,8 @@ jobs:
 
       # Build the project
       - name: Build project in config ${{ matrix.config.name }}
-        run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }}
+        run: cmake --build --preset ${{ matrix.config.preset }}
 
       # Run tests
       - name: Run automated test scenarios in config ${{ matrix.config.name }}
-        run: ctest --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }} --output-on-failure
+        run: ctest --preset ${{ matrix.config.preset }} --output-on-failure

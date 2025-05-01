@@ -18,18 +18,19 @@ jobs:
   build-runtimes:
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
-    container: ${{ matrix.config.container }}
+    container:
+      image: ${{ matrix.config.image }}
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - { name: "win.2025-x86", os: windows-2025,   preset: "windows-x86-msvc", configuration: Release }
-          - { name: "win.2025-x64", os: windows-2025,   preset: "windows-x64-msvc", configuration: Release }
+          - { name: "win.2025-x86", os: windows-2025,   preset: "windows-x86-msvc-ninja", configuration: Release }
+          - { name: "win.2025-x64", os: windows-2025,   preset: "windows-x64-msvc-ninja", configuration: Release }
           - { name: "osx.13-x64", os: macos-13,         preset: "macos-x64",        configuration: Release }
           - { name: "osx.15-arm64", os: macos-15,       preset: "macos-arm64",      configuration: Release }
-          - { name: "rocky.9-x64", os: ubuntu-latest,   preset: "linux-x64-gcc",    configuration: Release, container: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9' }
-          - { name: "rocky.9-arm64", os: ubuntu-latest, preset: "linux-arm64-gcc",  configuration: Release, container: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9' }
+          - { name: "rocky.9-x64", os: ubuntu-latest,   preset: "linux-x64-gcc",    configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9' }
+          - { name: "rocky.9-arm64", os: ubuntu-latest, preset: "linux-arm64-gcc",  configuration: Release, image: 'ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9' }
 
     steps:
       - uses: actions/checkout@v4
@@ -49,7 +50,7 @@ jobs:
 
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y mono-complete
+        run: apt-get update && apt-get install -y mono-complete
 
       # Cross-platform vcpkg bootstrap handling
       - name: Bootstrap vcpkg
@@ -64,10 +65,10 @@ jobs:
         run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.configuration }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
         
       - name: Build using ${{ matrix.config.preset }}
-        run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }}
+        run: cmake --build --preset ${{ matrix.config.preset }}
 
       - name: Test using ${{ matrix.config.preset }}
-        run: ctest --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }}
+        run: ctest --preset ${{ matrix.config.preset }}
 
       - name: Build NuGet package
         run: nuget pack nuget/vanillapdf.runtime.nuspec
