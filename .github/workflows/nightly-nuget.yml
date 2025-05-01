@@ -60,13 +60,13 @@ jobs:
 
       # Configure CMake project
       - name: Configure CMake for ${{ matrix.config.preset }}
-        run: cmake --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.configuration }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
         
       - name: Build using ${{ matrix.config.preset }}
-        run: cmake --build --preset ${{ matrix.config.preset }}
+        run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }}
 
       - name: Test using ${{ matrix.config.preset }}
-        run: ctest --preset ${{ matrix.config.preset }}
+        run: ctest --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }}
 
       - name: Build NuGet package
         run: nuget pack nuget/vanillapdf.runtime.nuspec
@@ -109,7 +109,7 @@ jobs:
         run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
 
       - name: Configure CMake for ${{ matrix.config.preset }}
-        run: cmake --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.configuration }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
 
       - name: Build NuGet package
         run: nuget pack nuget/vanillapdf.nuspec
