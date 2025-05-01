@@ -15,6 +15,26 @@
             }
         },
         {
+            "name": "windows-x86-msvc-release",
+            "inherits": "default",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "Win32",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x86-windows",
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "windows-x86-msvc-debug",
+            "inherits": "default",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "Win32",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x86-windows",
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
             "name": "windows-x64-msvc-debug",
             "inherits": "default",
             "generator": "Visual Studio 17 2022",
@@ -197,6 +217,16 @@
     ],
     "buildPresets": [
         {
+            "name": "windows-x86-msvc-debug",
+            "configurePreset": "windows-x86-msvc-debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "windows-x86-msvc-release",
+            "configurePreset": "windows-x86-msvc-release",
+            "configuration": "Release"
+        },
+        {
             "name": "windows-x64-msvc-debug",
             "configurePreset": "windows-x64-msvc-debug",
             "configuration": "Debug"
@@ -274,6 +304,16 @@
         }
     ],
     "testPresets": [
+        {
+            "name": "windows-x86-msvc-debug",
+            "configurePreset": "windows-x86-msvc-debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "windows-x86-msvc-release",
+            "configurePreset": "windows-x86-msvc-release",
+            "configuration": "Release"
+        },
         {
             "name": "windows-x64-msvc-debug",
             "configurePreset": "windows-x64-msvc-debug",
