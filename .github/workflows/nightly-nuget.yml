@@ -132,7 +132,7 @@ jobs:
         run: cmake --build --preset ${{ matrix.config.preset }}
 
       - name: Test ${{ matrix.config.preset }}
-        run: ctest --preset ${{ matrix.config.preset }}
+        run: ctest --preset ${{ matrix.config.preset }} -C ${{ matrix.config.build_type }}
 
       - name: Build NuGet package
         run: nuget pack nuget/vanillapdf.runtime.nuspec
