@@ -1,9 +1,15 @@
 # Require minimum CMAKE version
-cmake_minimum_required(VERSION 3.23)
 
 # Update 29.04.2025
 # Minimum version 3.21 is due vcpkg manifest mode.
-# Minimum version 3.23 is due CMakePresets.json file version 8.
+# Minimum version 3.28 is due CMakePresets.json file version 8.
+cmake_minimum_required(VERSION 3.28)
+
+# Vanilla.PDF is a c++ library built using c++17 standard
+# In order to make it portable across all platforms we strictly adhere to the standard by enforcing it and disabling the extensions
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Store information about solution root folder
 set(VANILLAPDF_SOLUTION_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
