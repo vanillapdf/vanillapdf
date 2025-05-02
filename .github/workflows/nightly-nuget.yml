@@ -17,7 +17,7 @@ env:
 jobs:
 
   linux:
-    name: Linux Runtime Builds
+    name: linux - ${{ matrix.config.name }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -27,13 +27,17 @@ jobs:
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9
             platform: linux/amd64
             preset: linux-x64-gcc
-            configuration: Release
+            build_type: Release
 
           - name: rocky.9-arm64
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9
             platform: linux/arm64
             preset: linux-arm64-gcc
-            configuration: Release
+            build_type: Release
+
+        exclude:
+          - config:
+              name: rocky.9-arm64 # arm64 is currently not supported on the shared runners
 
     container:
       image: ${{ matrix.config.image }}
@@ -48,7 +52,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            build/vcpkg_installed
+            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/packages
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
@@ -64,7 +68,7 @@ jobs:
         run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
 
       - name: Configure
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.configuration }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
 
       - name: Build
         run: cmake --build --preset ${{ matrix.config.preset }}
@@ -83,7 +87,7 @@ jobs:
 
 
   windows:
-    name: Windows Runtime Builds
+    name: windows - ${{ matrix.config.name }}
     runs-on: windows-2025
     strategy:
       fail-fast: false
@@ -91,11 +95,11 @@ jobs:
         config:
           - name: win.2025-x86
             preset: windows-x86-msvc-17
-            configuration: Release
+            build_type: Release
 
           - name: win.2025-x64
             preset: windows-x64-msvc-17
-            configuration: Release
+            build_type: Release
 
     steps:
       - uses: actions/checkout@v4
@@ -106,7 +110,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            build/vcpkg_installed
+            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/packages
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
@@ -116,27 +120,22 @@ jobs:
       # Bootstrap vcpkg on Windows
       - name: Bootstrap vcpkg (Windows)
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
-        shell: cmd
 
       - name: Set nightly version suffix
         run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
         shell: bash
 
       - name: Configure ${{ matrix.config.preset }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.configuration }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
-        shell: cmd
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
 
       - name: Build ${{ matrix.config.preset }}
         run: cmake --build --preset ${{ matrix.config.preset }}
-        shell: cmd
 
       - name: Test ${{ matrix.config.preset }}
         run: ctest --preset ${{ matrix.config.preset }}
-        shell: cmd
 
       - name: Build NuGet package
         run: nuget pack nuget/vanillapdf.runtime.nuspec
-        shell: cmd
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -146,7 +145,7 @@ jobs:
 
 
   macos:
-    name: macOS Runtime Builds
+    name: macOS - ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.runner }}
     strategy:
       fail-fast: false
@@ -155,12 +154,12 @@ jobs:
           - name: osx.13-x64
             runner: macos-13
             preset: macos-x64
-            configuration: Release
+            build_type: Release
 
           - name: osx.15-arm64
             runner: macos-15
             preset: macos-arm64
-            configuration: Release
+            build_type: Release
 
     steps:
       - uses: actions/checkout@v4
@@ -171,7 +170,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            build/vcpkg_installed
+            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/packages
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
@@ -202,7 +201,7 @@ jobs:
         run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
 
       - name: Configure
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.configuration }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
 
       - name: Build
         run: cmake --build --preset ${{ matrix.config.preset }}
@@ -229,7 +228,7 @@ jobs:
 
       matrix:
         config:
-          - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-17", configuration: Release }
+          - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-17", build_type: Release }
 
     steps:
       - uses: actions/checkout@v4
@@ -240,7 +239,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            build/vcpkg_installed
+            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/packages
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
@@ -257,7 +256,7 @@ jobs:
         shell: bash
 
       - name: Configure
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.configuration }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
 
       - name: Build NuGet package
         run: nuget pack nuget/vanillapdf.nuspec

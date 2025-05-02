@@ -23,7 +23,7 @@ env:
 jobs:
 
   linux:
-    name: Nightly Linux Scan (${{ matrix.config.name }})
+    name: linux - ${{ matrix.config.name }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -34,49 +34,62 @@ jobs:
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:22.04
             platform: linux/amd64
             preset: linux-x64-gcc
-            configuration: Release
+            build_type: Release
 
           - name: ubuntu.22.04-arm64
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:22.04
             platform: linux/arm64
             preset: linux-arm64-gcc
-            configuration: Release
+            build_type: Release
 
           - name: ubuntu.24.04-x64
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:24.04
             platform: linux/amd64
             preset: linux-x64-gcc
-            configuration: Release
+            build_type: Release
 
           - name: ubuntu.24.04-arm64
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:24.04
             platform: linux/arm64
             preset: linux-arm64-gcc
-            configuration: Release
+            build_type: Release
 
           - name: rocky.8-x64
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:8
             platform: linux/amd64
             preset: linux-x64-gcc
-            configuration: Release
+            build_type: Release
 
           - name: rocky.8-arm64
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:8
             platform: linux/arm64
             preset: linux-arm64-gcc
-            configuration: Release
+            build_type: Release
 
           - name: rocky.9-x64
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9
             platform: linux/amd64
             preset: linux-x64-gcc
-            configuration: Release
+            build_type: Release
 
           - name: rocky.9-arm64
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9
             platform: linux/arm64
             preset: linux-arm64-gcc
-            configuration: Release
+            build_type: Release
+
+        exclude:
+          - config:
+              name: ubuntu.22.04-arm64 # arm64 is currently not supported on the shared runners
+
+          - config:
+              name: ubuntu.24.04-arm64 # arm64 is currently not supported on the shared runners
+
+          - config:
+              name: rocky.8-arm64 # arm64 is currently not supported on the shared runners
+
+          - config:
+              name: rocky.9-arm64 # arm64 is currently not supported on the shared runners
 
     container:
       image: ${{ matrix.config.image }}
@@ -91,7 +104,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            build/vcpkg_installed
+            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/packages
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
@@ -103,7 +116,7 @@ jobs:
         shell: bash
 
       - name: Configure ${{ matrix.config.preset }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.configuration }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
 
       - name: Build ${{ matrix.config.preset }}
         run: cmake --build --preset ${{ matrix.config.preset }}
@@ -113,19 +126,19 @@ jobs:
 
 
   windows:
-    name: Nightly Windows Scan
+    name: windows - ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
       max-parallel: 4
       matrix:
         config:
-          - { name: "win.2019-x86", os: windows-2019, preset: "windows-x86-msvc-16", configuration: Release }
-          - { name: "win.2022-x86", os: windows-2022, preset: "windows-x86-msvc-17", configuration: Release }
-          - { name: "win.2025-x86", os: windows-2025, preset: "windows-x86-msvc-17", configuration: Release }
-          - { name: "win.2019-x64", os: windows-2019, preset: "windows-x64-msvc-16", configuration: Release }
-          - { name: "win.2022-x64", os: windows-2022, preset: "windows-x64-msvc-17", configuration: Release }
-          - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-17", configuration: Release }
+          - { name: "win.2019-x86", os: windows-2019, preset: "windows-x86-msvc-16", build_type: Release }
+          - { name: "win.2022-x86", os: windows-2022, preset: "windows-x86-msvc-17", build_type: Release }
+          - { name: "win.2025-x86", os: windows-2025, preset: "windows-x86-msvc-17", build_type: Release }
+          - { name: "win.2019-x64", os: windows-2019, preset: "windows-x64-msvc-16", build_type: Release }
+          - { name: "win.2022-x64", os: windows-2022, preset: "windows-x64-msvc-17", build_type: Release }
+          - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-17", build_type: Release }
 
     steps:
       - uses: actions/checkout@v4
@@ -136,7 +149,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            build/vcpkg_installed
+            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/packages
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
@@ -148,25 +161,25 @@ jobs:
         shell: cmd
 
       - name: Configure ${{ matrix.config.preset }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.configuration }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
 
       - name: Build ${{ matrix.config.preset }}
-        run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.configuration }}
+        run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.build_type }}
 
       - name: Test ${{ matrix.config.preset }}
         run: ctest --preset ${{ matrix.config.preset }} --output-on-failure
 
 
   macos:
-    name: Nightly macOS Scan
+    name: macOS - ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.runner }}
     strategy:
       fail-fast: false
       matrix:
         config:
-          - { name: "osx.13-x64", runner: macos-13, preset: "macos-x64", configuration: Release }
-          - { name: "osx.14-arm64", runner: macos-14, preset: "macos-arm64", configuration: Release }
-          - { name: "osx.15-arm64", runner: macos-15, preset: "macos-arm64", configuration: Release }
+          - { name: "osx.13-x64", runner: macos-13, preset: "macos-x64", build_type: Release }
+          - { name: "osx.14-arm64", runner: macos-14, preset: "macos-arm64", build_type: Release }
+          - { name: "osx.15-arm64", runner: macos-15, preset: "macos-arm64", build_type: Release }
 
     steps:
       - uses: actions/checkout@v4
@@ -177,7 +190,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            build/vcpkg_installed
+            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/packages
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
@@ -192,7 +205,7 @@ jobs:
         shell: bash
 
       - name: Configure
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.configuration }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
 
       - name: Build
         run: cmake --build --preset ${{ matrix.config.preset }}
