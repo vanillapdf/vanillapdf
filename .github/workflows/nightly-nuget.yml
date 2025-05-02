@@ -111,7 +111,6 @@ jobs:
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
-            external/vcpkg/packages
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
@@ -132,7 +131,7 @@ jobs:
         run: cmake --build --preset ${{ matrix.config.preset }}
 
       - name: Test ${{ matrix.config.preset }}
-        run: ctest --preset ${{ matrix.config.preset }} -C ${{ matrix.config.build_type }}
+        run: ctest --preset ${{ matrix.config.preset }} --output-on-failure
 
       - name: Build NuGet package
         run: nuget pack nuget/vanillapdf.runtime.nuspec
