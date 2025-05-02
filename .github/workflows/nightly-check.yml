@@ -18,7 +18,7 @@ permissions:
 env:
   VCPKG_ROOT: external/vcpkg
   VCPKG_DISABLE_METRICS: 1 # vcpkg is by default sending build metrics, we do not need it here
-  VCPKG_BINARY_SOURCES: clear;files,external/vcpkg/bincache,readwrite
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
