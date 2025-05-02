@@ -164,7 +164,6 @@ jobs:
 
       - name: Bootstrap vcpkg (Windows)
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
-        shell: cmd
 
       - name: Configure ${{ matrix.config.preset }}
         run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
