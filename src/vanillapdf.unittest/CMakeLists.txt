@@ -72,10 +72,6 @@ add_definitions(-DVANILLAPDF_UNITTEST_VERSION_BUILD=${VANILLAPDF_VERSION_BUILD})
 
 add_definitions(-DVANILLAPDF_UNITTEST_ICON="${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/vanilla_logo.ico")
 
-# Makes a top-level <target> depend on other top-level targets to ensure that they build before <target> does
-# Ensure DLLs are copied *before* test discovery
-add_dependencies(vanillapdf.unittest vanillapdf)
-
 # Use GoogleTest for unit test execution
 include(GoogleTest)
 
@@ -84,6 +80,4 @@ include(GoogleTest)
 # CMake Error at C:/Program Files/CMake/share/cmake-3.31/Modules/GoogleTestAddTests.cmake:132 (message): Error running test executable.
 # DISCOVERY_MODE PRE_TEST delays test discovery until just prior to test execution.
 # This way test discovery occurs in the target environment where the test has a better chance at finding appropriate runtime dependencies.
-#gtest_discover_tests(vanillapdf.unittest DISCOVERY_MODE PRE_TEST)
-
-add_test(NAME vanilla_unittest COMMAND vanillapdf.unittest)
+gtest_discover_tests(vanillapdf.unittest DISCOVERY_MODE PRE_TEST)
