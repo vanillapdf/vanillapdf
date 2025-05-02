@@ -1,0 +1,92 @@
+{
+    "version": 8,
+    "include": [
+        "shared.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "android-arm64",
+            "inherits": "default",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_SYSTEM_NAME": "Android",
+                "CMAKE_SYSTEM_VERSION": "21",
+                "CMAKE_ANDROID_ARCH_ABI": "arm64-v8a",
+                "CMAKE_ANDROID_STL_TYPE": "c++_static",
+                "PLATFORM_IDENTIFIER": "android-arm64"
+            }
+        },
+        {
+            "name": "android-armv7",
+            "inherits": "default",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_SYSTEM_NAME": "Android",
+                "CMAKE_SYSTEM_VERSION": "21",
+                "CMAKE_ANDROID_ARCH_ABI": "armeabi-v7a",
+                "CMAKE_ANDROID_STL_TYPE": "c++_static",
+                "PLATFORM_IDENTIFIER": "android-armv7"
+            }
+        },
+        {
+            "name": "android-x86",
+            "inherits": "default",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_SYSTEM_NAME": "Android",
+                "CMAKE_SYSTEM_VERSION": "21",
+                "CMAKE_ANDROID_ARCH_ABI": "x86",
+                "CMAKE_ANDROID_STL_TYPE": "c++_static",
+                "PLATFORM_IDENTIFIER": "android-x86"
+            }
+        },
+        {
+            "name": "android-x86_64",
+            "inherits": "default",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_SYSTEM_NAME": "Android",
+                "CMAKE_SYSTEM_VERSION": "21",
+                "CMAKE_ANDROID_ARCH_ABI": "x86_64",
+                "CMAKE_ANDROID_STL_TYPE": "c++_static",
+                "PLATFORM_IDENTIFIER": "android-x86_64"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "android-arm64",
+            "configurePreset": "android-arm64"
+        },
+        {
+            "name": "android-armv7",
+            "configurePreset": "android-armv7"
+        },
+        {
+            "name": "android-x86",
+            "configurePreset": "android-x86"
+        },
+        {
+            "name": "android-x86_64",
+            "configurePreset": "android-x86_64"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "android-arm64",
+            "configurePreset": "android-arm64"
+        },
+        {
+            "name": "android-armv7",
+            "configurePreset": "android-armv7"
+        },
+        {
+            "name": "android-x86",
+            "configurePreset": "android-x86"
+        },
+        {
+            "name": "android-x86_64",
+            "configurePreset": "android-x86_64"
+        }
+    ]
+}

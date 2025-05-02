@@ -55,7 +55,6 @@ find_package(GTest REQUIRED)
 set(VANILLAPDF_UNITTEST_LIBS
     vanillapdf
     GTest::gtest
-    GTest::gtest_main
 )
 
 target_link_libraries(vanillapdf.unittest PRIVATE ${VANILLAPDF_UNITTEST_LIBS})
@@ -76,4 +75,9 @@ add_definitions(-DVANILLAPDF_UNITTEST_ICON="${VANILLAPDF_SOLUTION_SOURCE_DIR}/cm
 # Use GoogleTest for unit test execution
 include(GoogleTest)
 
-gtest_discover_tests(vanillapdf.unittest)
+# Update 01.05.2025
+# On GitHub windows runners they are failing with discovering the cases
+# CMake Error at C:/Program Files/CMake/share/cmake-3.31/Modules/GoogleTestAddTests.cmake:132 (message): Error running test executable.
+# DISCOVERY_MODE PRE_TEST delays test discovery until just prior to test execution.
+# This way test discovery occurs in the target environment where the test has a better chance at finding appropriate runtime dependencies.
+gtest_discover_tests(vanillapdf.unittest DISCOVERY_MODE PRE_TEST)
