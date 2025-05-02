@@ -26,6 +26,8 @@
 
 #endif
 
+// codeql[cpp/weak-cryptographic-algorithm] reason: RC4 use is confined to a well-audited legacy compatibility function
+
 namespace vanillapdf {
 namespace syntax {
 
