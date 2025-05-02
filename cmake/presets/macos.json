@@ -1,0 +1,48 @@
+{
+    "version": 8,
+    "include": [
+        "shared.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "macos-x64",
+            "inherits": "default",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-osx",
+                "CMAKE_OSX_ARCHITECTURES": "x86_64",
+                "PLATFORM_IDENTIFIER": "osx-x64"
+            }
+        },
+        {
+            "name": "macos-arm64",
+            "inherits": "default",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "arm64-osx",
+                "CMAKE_OSX_ARCHITECTURES": "arm64",
+                "PLATFORM_IDENTIFIER": "osx-arm64"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "macos-x64",
+            "configurePreset": "macos-x64"
+        },
+        {
+            "name": "macos-arm64",
+            "configurePreset": "macos-arm64"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "macos-x64",
+            "configurePreset": "macos-x64"
+        },
+        {
+            "name": "macos-arm64",
+            "configurePreset": "macos-arm64"
+        }
+    ]
+}
