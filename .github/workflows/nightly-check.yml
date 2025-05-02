@@ -175,11 +175,6 @@ jobs:
       - name: Test ${{ matrix.config.preset }}
         run: ctest --preset ${{ matrix.config.preset }} -C ${{ matrix.config.build_type }} --output-on-failure
 
-      - name: Dump CTestTestfile
-        run: |
-            Get-Content build\${{ matrix.config.preset }}\src\vanillapdf.unittest\CTestTestfile.cmake
-        shell: pwsh
-
 
   macos:
     name: macOS - ${{ matrix.config.name }}

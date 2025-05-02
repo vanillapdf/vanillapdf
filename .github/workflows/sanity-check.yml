@@ -20,6 +20,7 @@ permissions:
 env:
   VCPKG_ROOT: external/vcpkg
   VCPKG_DISABLE_METRICS: 1 # vcpkg is by default sending build metrics, we do not need it here
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -75,8 +76,10 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/packages
+            external/vcpkg/downloads
+            external/vcpkg/vcpkg_installed
+            external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
@@ -122,9 +125,11 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/packages
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
+            external/vcpkg/downloads
+            external/vcpkg/vcpkg_installed
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
@@ -141,7 +146,7 @@ jobs:
         run: cmake --build --preset ${{ matrix.config.preset }}
 
       - name: Test ${{ matrix.config.preset }}
-        run: ctest --preset ${{ matrix.config.preset }} --config ${{ matrix.config.build_type }} --output-on-failure
+        run: ctest --preset ${{ matrix.config.preset }} -C ${{ matrix.config.build_type }} --output-on-failure
 
   macos:
     name: macOS - ${{ matrix.config.name }}
@@ -169,8 +174,10 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/packages
+            external/vcpkg/downloads
+            external/vcpkg/vcpkg_installed
+            external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
