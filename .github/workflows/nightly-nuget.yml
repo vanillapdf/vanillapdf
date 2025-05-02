@@ -13,13 +13,16 @@ permissions:
 env:
   VCPKG_DISABLE_METRICS: 1
   VCPKG_ROOT: external/vcpkg # vcpkg is by default sending build metrics, we do not need it here
-  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
 
 jobs:
 
   linux:
     name: linux - ${{ matrix.config.name }}
     runs-on: ubuntu-latest
+
+    env:
+      VCPKG_BINARY_SOURCES: clear;files,$GITHUB_WORKSPACE/external/vcpkg/bincache,readwrite
+
     strategy:
       fail-fast: false
       matrix:
@@ -57,7 +60,7 @@ jobs:
             external/vcpkg/downloads
             external/vcpkg/vcpkg_installed
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
@@ -92,6 +95,10 @@ jobs:
   windows:
     name: windows - ${{ matrix.config.name }}
     runs-on: windows-2025
+
+    env:
+      VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
+
     strategy:
       fail-fast: false
       matrix:
@@ -152,6 +159,10 @@ jobs:
   macos:
     name: macOS - ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.runner }}
+
+    env:
+      VCPKG_BINARY_SOURCES: clear;files,$GITHUB_WORKSPACE/external/vcpkg/bincache,readwrite
+
     strategy:
       fail-fast: false
       matrix:
@@ -179,7 +190,7 @@ jobs:
             external/vcpkg/downloads
             external/vcpkg/vcpkg_installed
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
@@ -229,6 +240,9 @@ jobs:
   build-vanillapdf-core:
     name: vanillapdf core
     runs-on: ${{ matrix.config.os }}
+
+    env:
+      VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
 
     strategy:
       fail-fast: false

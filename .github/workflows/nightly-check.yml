@@ -18,7 +18,6 @@ permissions:
 env:
   VCPKG_ROOT: external/vcpkg
   VCPKG_DISABLE_METRICS: 1 # vcpkg is by default sending build metrics, we do not need it here
-  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -26,6 +25,10 @@ jobs:
   linux:
     name: linux - ${{ matrix.config.name }}
     runs-on: ubuntu-latest
+
+    env:
+      VCPKG_BINARY_SOURCES: clear;files,$GITHUB_WORKSPACE/external/vcpkg/bincache,readwrite
+
     strategy:
       fail-fast: false
       max-parallel: 4
@@ -109,7 +112,7 @@ jobs:
             external/vcpkg/downloads
             external/vcpkg/vcpkg_installed
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
@@ -131,6 +134,9 @@ jobs:
   windows:
     name: windows - ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
+
+    env:
+      VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
 
     strategy:
       fail-fast: false
@@ -178,6 +184,10 @@ jobs:
   macos:
     name: macOS - ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.runner }}
+
+    env:
+      VCPKG_BINARY_SOURCES: clear;files,$GITHUB_WORKSPACE/external/vcpkg/bincache,readwrite
+
     strategy:
       fail-fast: false
       matrix:
@@ -199,7 +209,7 @@ jobs:
             external/vcpkg/downloads
             external/vcpkg/vcpkg_installed
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
