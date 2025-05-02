@@ -20,6 +20,7 @@ permissions:
 env:
   VCPKG_ROOT: external/vcpkg
   VCPKG_DISABLE_METRICS: 1 # vcpkg is by default sending build metrics, we do not need it here
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -27,9 +28,6 @@ jobs:
   linux:
     name: linux - ${{ matrix.config.name }}
     runs-on: ubuntu-latest
-
-    env:
-      VCPKG_BINARY_SOURCES: clear;files,$GITHUB_WORKSPACE/external/vcpkg/bincache,readwrite
 
     strategy:
       fail-fast: false # We would like to see the results of all jobs even in case one of them fails
@@ -107,9 +105,6 @@ jobs:
     name: windows - ${{ matrix.config.name }}
     runs-on: windows-2025
 
-    env:
-      VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
-
     strategy:
       fail-fast: false # We would like to see the results of all jobs even in case one of them fails
 
@@ -157,9 +152,6 @@ jobs:
   macos:
     name: macOS - ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.runner }}
-
-    env:
-      VCPKG_BINARY_SOURCES: clear;files,$GITHUB_WORKSPACE/external/vcpkg/bincache,readwrite
 
     strategy:
       fail-fast: false # We would like to see the results of all jobs even in case one of them fails
