@@ -170,9 +170,9 @@ jobs:
         run: ctest --preset ${{ matrix.config.preset }} --output-on-failure
 
       - name: Dump CTestTestfile
-      run: |
-          Get-Content build\${{ matrix.config.preset }}\src\vanillapdf.unittest\CTestTestfile.cmake
-      shell: pwsh
+        run: |
+            Get-Content build\${{ matrix.config.preset }}\src\vanillapdf.unittest\CTestTestfile.cmake
+        shell: pwsh
 
 
   macos:
