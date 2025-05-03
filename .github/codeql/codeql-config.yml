@@ -1,0 +1,13 @@
+name: "Vanilla.PDF CodeQL Config"
+
+query-filters:
+
+  # We are using RC4 function for PDF level encryption required by the standard
+  # CodeQL does issue a warning for this usage, however we have to support this.
+  # There is a project, that can delete the warnings in the post-process it's not very clean.
+  # https://github.com/advanced-security/dismiss-alerts
+  # I prefer to disable this rule for the time being.
+  - exclude:
+      id: cpp/weak-cryptographic-algorithm
+    paths:
+      - src/vanillapdf/syntax/utils/encryption.cpp
