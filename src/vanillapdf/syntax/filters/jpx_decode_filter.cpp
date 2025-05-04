@@ -1,8 +1,9 @@
 #include "precompiled.h"
 
 #include "syntax/filters/jpx_decode_filter.h"
-
 #include "syntax/utils/image_metadata_object_attribute.h"
+
+#include "utils/math_utils.h"
 
 #include <openjpeg.h>
 
@@ -131,8 +132,11 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 
         // Use 8 bits per components in the result
 
-        // Calculate the size of the image data
-        size_t image_size = image->x1 * image->y1 * image->numcomps;
+        // Safely multiply rowsize first, to avoid any overflows
+        auto row_size = SafeMultiply<OPJ_UINT32, OPJ_UINT32>(image->x1, image->numcomps);
+
+        // Rowsize multiplied number of rows is the size of the image data
+        auto image_size = SafeMultiply<size_t, OPJ_UINT32>(row_size, image->y1);
 
         std::vector<uint8_t> result;
         result.resize(image_size);
