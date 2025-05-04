@@ -39,7 +39,7 @@ jobs:
 
         exclude:
           - config:
-              name: rocky.9-arm64 # arm64 is currently not supported on the shared runners
+              name: linux-arm64 # arm64 is currently not supported on the shared runners
 
     container:
       image: ${{ matrix.config.image }}
