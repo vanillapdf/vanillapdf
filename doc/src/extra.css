@@ -1,0 +1,308 @@
+/* Extra CSS */
+
+/* Global */
+
+body, table, div, p, dl, a {
+	font-family: 'Open sans', sans-serif;
+	font-weight: 300;
+	font-size: 15pt;
+	line-height: 25pt;
+}
+
+a {
+	font-weight: 400;
+}
+
+ul#main-menu {
+	background-color: #F5F5F5;
+}
+
+a, a:visited,
+div.contents a, div.contents a:visited {
+	color: #7AC942;
+}
+
+/* Page header */
+
+div#titlearea {
+	
+	border-bottom: none;
+	
+	/*
+		Width 100% would mean, that the object larger, if the object has padding
+		To get around this, we need to set the box-sizing property as well
+	*/
+	width: 100%;
+	padding: 40px;
+	box-sizing: border-box;
+}
+
+td#projectlogo {
+	vertical-align: middle;
+}
+
+td#projectlogo {
+	text-align: left;
+}
+
+td#projectlogo img {
+	width: 100%;
+	max-width: 400px;
+}
+
+div#titlearea table {
+	width: 100%;
+}
+
+div#projectname, div#projectname span#projectnumber {
+	font-weight: bold;
+}
+
+div#projectname, div#projectname span#projectnumber, div#projectbrief {
+	text-align: right;
+}
+
+div#projectname {
+	font-family: 'Dosis', sans-serif;
+}
+
+div#projectname span#projectnumber, div#projectbrief {
+	font-family: 'Open sans', sans-serif;
+}
+
+div#projectbrief {
+	font-size: 90%;
+}
+
+div#projectname {
+	font-size: 200%;
+}
+
+/* Navigation bar */
+
+ul#main-menu {
+	background-image: none;
+	padding-left: 40px;
+	padding-right: 40px;
+}
+
+div#nav-path ul {
+	background-image: none;
+	background-color: #F5F5F5;
+}
+
+.sm-dox a, .sm-dox a:focus, .sm-dox a:active, .sm-dox a:hover, .sm-dox a.highlighted {
+	background-image: none;
+	padding: 10px 35px;
+	color: #000000;
+	
+	font-family: 'Open sans', sans-serif;
+	font-size: inherit;
+}
+
+.sm-dox a:focus, .sm-dox a:active, .sm-dox a:hover, .sm-dox a.highlighted {
+	color: #7AC942;
+	background-color: #FFFFFF;
+	text-shadow: none;
+}
+
+li.navelem a.el {
+	font-family: 'Open sans', sans-serif;
+	font-size: 13pt;
+	
+	color: #000000;
+}
+
+li.navelem a.el:focus, li.navelem a.el:active, li.navelem a.el:hover, li.navelem a.el.highlighted {
+	color: #7AC942;
+}
+
+div#MSearchBox {
+	margin-top: 17px;
+}
+
+div#MSearchBox span.right {
+	top: 17px;
+}
+
+/* Header */
+
+div.header {
+	background-image: none;
+	border-bottom: none;
+	background-color: inherit;
+	
+	width: 60%;
+	padding: 0 20px;
+	margin-left: auto;
+	margin-right: auto;
+	
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
+
+div.headertitle {
+	padding: 0px;
+}
+
+div.headertitle div.title {
+	margin: 0px;
+	
+	font-family: 'Dosis', sans-serif;
+	font-size: 25pt;
+	line-height: 110%;
+	font-weight: bold;
+}
+
+div.header div.summary {
+	width: 20%;
+	font-size: 100%;
+}
+
+div.headertitle div.title div.ingroups {
+	margin-top: 10px;
+	font-size: 60%;
+}
+
+/* Body */
+
+body {
+	background-color: #FFFFFF;
+}
+
+h1 {
+	font-family: 'Dosis', sans-serif;
+	font-size: 140%;
+	line-height: 140%;
+}
+
+h2 {
+	font-family: 'Dosis', sans-serif;
+	font-size: 125%;
+	line-height: 125%;
+}
+
+h3 {
+	font-family: 'Dosis', sans-serif;
+	font-size: 110%;
+	line-height: 110%;
+}
+
+blockquote {
+	display: inline-block;
+}
+
+h2.groupheader {
+	color: black;
+}
+
+a.el {
+	font-weight: 400;
+}
+
+div.toc {
+	min-width: 200px;
+	max-width: 30%;
+	width: auto;
+	margin-left: 10%;
+}
+
+div.toc h3 {
+	font-family: 'Open sans', sans-serif;
+	font-size: 100%;
+	color: #000000;
+}
+
+div.toc li {
+	font-family: 'Open sans', sans-serif;
+	font-size: 100%;
+	background-position: 0 0.8em;
+}
+
+div.contents {
+	width: 60%;
+	padding: 0 20px;
+	margin-left: auto;
+	margin-right: auto;
+	
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
+
+.memtitle, div.memproto *, td.memItemLeft *, td.memItemRight * {
+	font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+}
+
+div.dyncontent {
+	margin: 20px;
+}
+
+dl.note, dl.todo {
+	padding-left: 6px;
+}
+
+div.image {
+	text-align: left;
+}
+
+div.line {
+	font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+	font-size: 13pt;
+	line-height: 15pt;
+}
+
+div.line a.code {
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
+}
+
+span.lineno a.line {
+	font-family: inherit;
+}
+
+div.fragment {
+	padding: 10px;
+	margin-left: 20px;
+	
+	/* This wraps the fragment to the text legth */
+	display: table;
+}
+
+span.arrow {
+	width: auto;
+	height: auto;
+	color: #808080;
+}
+
+span.icona, span.icon {
+	width: 0px;
+	height: 0px;
+}
+
+span.icondoc {
+	vertical-align: middle;
+	margin: 5px;
+}
+
+table.directory {
+	width: 100%;
+	font: inherit;
+}
+
+div.directory div.levels {
+	font: inherit;
+}
+
+div.directory td.entry {
+	width: 35%;
+}
+
+div.directory td.desc {
+	width: 65%;
+}
+
+div.directory td.entry, div.directory td.desc {
+	vertical-align: middle;
+	padding: 5px;
+}
