@@ -535,7 +535,6 @@ endif(MSVC)
 
 # Add natvis file embedding
 if(MSVC)
-    #set_property(TARGET vanillapdf APPEND_STRING PROPERTY LINK_FLAGS "/NATVIS:${VANILLAPDF_SOLUTION_SOURCE_DIR}/public.natvis" )
     target_link_options(vanillapdf PRIVATE "/NATVIS:${CMAKE_CURRENT_SOURCE_DIR}/public.natvis")
 endif(MSVC)
 
@@ -629,6 +628,7 @@ endif (ZLIB_FOUND)
 
 if (OPENJPEG_LIBRARIES)
     include_directories(${OPENJPEG_INCLUDE_DIRS})
+    #set(VANILLAPDF_LIBS OpenJPEG::OpenJPEG ${VANILLAPDF_LIBS})
     set(VANILLAPDF_LIBS ${OPENJPEG_LIBRARIES} ${VANILLAPDF_LIBS})
     add_definitions(-DVANILLAPDF_HAVE_OPENJPEG)
     message(STATUS "openjpeg was found without specified version")
@@ -655,6 +655,7 @@ target_link_libraries(vanillapdf PRIVATE ${VANILLAPDF_LIBS})
 
 # Project install targets
 install(TARGETS vanillapdf
+    EXPORT vanillapdfTargets
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
@@ -669,6 +670,9 @@ install(FILES ${VANILLAPDF_INCLUDE_CONTENTS_HEADERS} DESTINATION "include/vanill
 install(FILES "${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/README.txt" DESTINATION .)
 install(FILES "${VANILLAPDF_SOLUTION_SOURCE_DIR}/LICENSE.txt" DESTINATION .)
 install(FILES "${VANILLAPDF_SOLUTION_SOURCE_DIR}/CHANGELOG.txt" DESTINATION .)
+
+# Define installation files and procedures
+include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/vanillapdf_install.cmake")
 
 # Install dependent libraries on windows
 if(WIN32)
