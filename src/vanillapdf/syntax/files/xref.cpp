@@ -207,11 +207,13 @@ void XrefStream::WriteValue(std::ostream& dest, types::big_uint value, int64_t w
     // Check if the value fits inside width
     //auto shifted_value = value >> (width * 8);
 
+    auto width_bits = SafeMultiply<size_t, int64_t>(width, 8);
+
     // The statement 9 >> (8 * 8) actually results in value 9.
     // C++ for some reason does ROR bits instead of SHR
     // Let's handle this using bitset, which does work properly
     std::bitset<sizeof(value) * CHAR_BIT> value_bitstet(value);
-    auto shifted_value_bitset = value_bitstet >> (width * 8);
+    auto shifted_value_bitset = value_bitstet >> width_bits;
     auto shifted_value = shifted_value_bitset.to_ullong();
 
     // This means, that the operation would overflow
