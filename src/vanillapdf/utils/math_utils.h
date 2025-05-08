@@ -5,7 +5,8 @@
 
 #include <cassert>
 #include <limits>
-#include <sstream>
+
+#include <fmt/core.h>
 
 namespace vanillapdf {
 
@@ -49,9 +50,7 @@ ResultType SafeMultiply(ValueType number, ValueType multiplier) {
     // would result in number greater than the operand means,
     // that the multiply operation would overflow.
     if ((std::numeric_limits<ResultType>::max() / converted_multiplier) < converted_number) {
-        std::stringstream ss;
-        ss << "Could not multiply " << converted_number << " by " << converted_multiplier << ". The operation would overflow";
-        throw std::overflow_error(ss.str());
+        throw fmt::format("Could not multiply {} by {}.The operation would overflow", converted_number, converted_multiplier);
     }
 
     // Compute the result
