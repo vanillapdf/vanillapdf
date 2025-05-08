@@ -14,6 +14,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Store information about solution root folder
 set(VANILLAPDF_SOLUTION_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
+# Configurable option, if this is a primary project or just a submodule
+option(VANILLAPDF_STANDALONE "Enable internal vcpkg setup for standalone builds" ON)
+
 # Note: This needs to be included before defining the main project
 # Check for VCPKG - C++ package management system
 include(cmake/vcpkg_init.cmake)

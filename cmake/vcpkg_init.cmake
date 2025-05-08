@@ -1,7 +1,5 @@
 # VCPKG - C++ package management system
 
-set(VANILLAPDF_STANDALONE ON CACHE BOOL "Build with internal vcpkg/bootstrap logic")
-
 if(NOT VANILLAPDF_STANDALONE)
   message(STATUS "VanillaPDF is being built as a vcpkg port or embedded — skipping internal vcpkg logic.")
   return()
