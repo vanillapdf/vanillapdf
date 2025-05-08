@@ -1,5 +1,5 @@
 # Deploy doxygen generated documentation to GitHub Pages site
-name: Deploy doxygen generated documentation
+name: Generate doxygen
 
 on:
   # Runs on pushes targeting the default branch
@@ -29,8 +29,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install Doxygen
+        run: sudo apt-get update && sudo apt-get install -y doxygen
+
       - name: Build doxygen
-        run: doxygen doc/doxyfile
+        run: doxygen doxyfile
+        working-directory: doc
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
