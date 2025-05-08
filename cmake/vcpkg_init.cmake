@@ -1,7 +1,7 @@
 # VCPKG - C++ package management system
 
 if(NOT VANILLAPDF_STANDALONE)
-  message(STATUS "VanillaPDF is being built as a vcpkg port or embedded — skipping internal vcpkg logic.")
+  message(STATUS "VanillaPDF is being built as a vcpkg port or embedded, skipping automatic package management")
   return()
 endif()
 

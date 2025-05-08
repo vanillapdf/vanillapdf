@@ -16,6 +16,8 @@ set(VANILLAPDF_SOLUTION_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Configurable option, if this is a primary project or just a submodule
 option(VANILLAPDF_STANDALONE "Enable internal vcpkg setup for standalone builds" ON)
+option(VANILLAPDF_ENABLE_TESTS "Perform test scenarios to ensure stable releases" ON)
+option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure performance" ON)
 
 # Note: This needs to be included before defining the main project
 # Check for VCPKG - C++ package management system
@@ -78,7 +80,13 @@ endif(NOT CMAKE_BUILD_TYPE)
 
 # Include source directories
 add_subdirectory(src/vanillapdf)
-add_subdirectory(src/vanillapdf.test)
-add_subdirectory(src/vanillapdf.unittest)
 add_subdirectory(src/vanillapdf.tools)
-add_subdirectory(src/vanillapdf.benchmark)
+
+if(VANILLAPDF_ENABLE_TESTS)
+  add_subdirectory(src/vanillapdf.test)
+  add_subdirectory(src/vanillapdf.unittest)
+endif()
+
+if(VANILLAPDF_ENABLE_BENCHMARK)
+  add_subdirectory(src/vanillapdf.benchmark)
+endif()

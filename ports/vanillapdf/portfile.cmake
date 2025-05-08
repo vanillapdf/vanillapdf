@@ -12,6 +12,8 @@ vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
       -DVANILLAPDF_STANDALONE=OFF
+      -DVANILLAPDF_ENABLE_TESTS=OFF
+      -DVANILLAPDF_ENABLE_BENCHMARK=OFF
 )
 
 vcpkg_cmake_install()
