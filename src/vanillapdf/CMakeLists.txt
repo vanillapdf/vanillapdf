@@ -667,9 +667,14 @@ install(FILES ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS} DESTINATION "include/vanillap
 install(FILES ${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS} DESTINATION "include/vanillapdf/semantics")
 install(FILES ${VANILLAPDF_INCLUDE_CONTENTS_HEADERS} DESTINATION "include/vanillapdf/contents")
 
-install(FILES "${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/README.txt" DESTINATION .)
-install(FILES "${VANILLAPDF_SOLUTION_SOURCE_DIR}/LICENSE.txt" DESTINATION .)
-install(FILES "${VANILLAPDF_SOLUTION_SOURCE_DIR}/CHANGELOG.txt" DESTINATION .)
+# Additional metadata for the project, that should be bundled together
+install(FILES
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/README.txt"
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/LICENSE.txt"
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/NOTICE.md"
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/CHANGELOG.txt"
+    DESTINATION "share/vanillapdf"
+)
 
 # Define installation files and procedures
 include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/vanillapdf_install.cmake")
