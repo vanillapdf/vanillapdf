@@ -29,6 +29,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install Doxygen
+        run: choco install doxygen.install -y
+
       - name: Build doxygen
         run: doxygen doc/doxyfile
 
