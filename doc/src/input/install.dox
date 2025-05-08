@@ -1,0 +1,23 @@
+/*!
+\page page_install Installation
+\tableofcontents
+
+Installation packages comes in two variants. Either a self-installing archive or compressed package.
+
+Self-installing archives are very easy to install, as they use the standard installation process for each platform.
+
+\section install_compressed Installing compressed package
+
+Compressed package for UNIX does not include package dependencies runtime, which has to be installed separately.
+
+For debian, the installation would require:
+
+\code{.unparsed}
+apt-get install libjpeg9
+apt-get install libssl1.0.0
+apt-get install zlib1g
+\endcode
+
+After the package contents are extracted, the application should be ready to run.
+
+*/

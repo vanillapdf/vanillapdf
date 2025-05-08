@@ -1,0 +1,115 @@
+/*! 
+\page page_examples Examples
+
+Full example list:
+
+<ul>
+<li>\ref merge.c - File merge
+<li>\ref extract.c - Image extraction
+<li>\ref filter.c - Compression filters
+<li>\ref sign.c - Digital signature
+<li>\ref sign_custom.c - Custom digital signature using interface callbacks
+<li>\ref decrypt.c - File decryption
+<li>\ref write_custom.c - Custom file writer callbacks
+</ul>
+
+Utilities:
+<ul>
+<li>\ref example_print_library_info - Print library info
+<li>\ref example_print_last_error - Print last error
+<li>\ref example_set_license_file - Set license file
+<li>\ref example_print_buffer - Print buffer
+<li>\ref example_test_logging - Test logging
+<li>\ref example_print_date - Print date
+<li>\ref example_enumerate_xref - Enumerate xref
+</ul>
+
+Additional resources:
+
+<ul>
+<li>\ref main.c - Main file for command-line application vanillapdf.tools.
+<li>\ref tools.h - Tools project header file including macro definitions.
+</ul>
+
+*/
+
+/*! 
+\page example_print_library_info Print library info
+\snippet utils.c Print library info
+*/
+
+/*! 
+\page example_print_last_error Print last error
+\snippet utils.c Print last error
+*/
+
+/*! 
+\page example_set_license_file Set license file
+\snippet utils.c Set license file
+*/
+
+/*! 
+\page example_print_buffer Print buffer
+\snippet utils.c Print buffer
+*/
+
+/*! 
+\page example_test_logging Test logging
+\snippet utils.c Test logging
+*/
+
+/*! 
+\page example_print_date Print date
+\snippet documents.c Print date
+*/
+
+/*! 
+\page example_enumerate_xref Enumerate xref
+\snippet files.c Enumerate xref
+*/
+
+/**
+* \example tools.h
+* Tools project header file including macro definitions.
+*/
+
+/**
+* \example main.c
+* Main file for command-line application vanillapdf.tools.
+* Print help and forwards parameters to the separate handlers.
+*/
+
+/**
+* \example merge.c
+* File merge full example.
+*/
+
+/**
+* \example extract.c
+* File image extaction full example.
+*/
+
+/**
+* \example filter.c
+* Example use of compression filters.
+*/
+
+/**
+* \example sign.c
+* Example use of digital signature with PKCS#12 key.
+*/
+
+/**
+* \example sign_custom.c
+* Example use of custom interface callbacks for document signing.
+*/
+
+/**
+* \example decrypt.c
+* Example use of encrypted files, protected with password or certificate.
+*/
+
+/**
+* \example write_custom.c
+* Example use of custom file writer callbacks
+*/
