@@ -1,0 +1,1 @@
+vcpkg install vanillapdf --overlay-ports=vanillapdf/ports

@@ -1,16 +1,15 @@
 # VCPKG - C++ package management system
 
+set(VANILLAPDF_STANDALONE ON CACHE BOOLEAN "Build with internal vcpkg/bootstrap logic")
+
+if(VANILLAPDF_STANDALONE IS OFF)
+  message(STATUS "VanillaPDF is being built as a vcpkg port or embedded — skipping internal vcpkg logic.")
+  return()
+endif()
+
 if(NOT DEFINED VCPKG_ROOT)
   set(VCPKG_ROOT "${VANILLAPDF_SOLUTION_SOURCE_DIR}/external/vcpkg")
 endif()
-
-if(NOT DEFINED CMAKE_TOOLCHAIN_FILE AND DEFINED VCPKG_ROOT)
-  set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
-endif()
-
-# VCPKG creates abnormal warning, when there are no installed packages
-# We are installing packages during the bootstrap process
-set(VCPKG_SUPPRESS_INSTALLED_LIBRARIES_WARNING "1")
 
 if(WIN32)
   set(VCPKG_EXEC ${VCPKG_ROOT}/vcpkg.exe)
@@ -21,8 +20,8 @@ else()
 endif()
 
 if(NOT EXISTS ${VCPKG_EXEC})
-  message("Bootstrapping vcpkg in ${VCPKG_ROOT}")
-  execute_process(COMMAND ${VCPKG_BOOTSTRAP} WORKING_DIRECTORY ${VCPKG_ROOT})
+  message(STATUS "Bootstrapping vcpkg in ${VCPKG_ROOT}")
+  execute_process(COMMAND ${VCPKG_BOOTSTRAP})
 endif()
 
 if(NOT EXISTS ${VCPKG_EXEC})
