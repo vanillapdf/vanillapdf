@@ -535,7 +535,7 @@ endif(MSVC)
 
 # Add natvis file embedding
 if(MSVC)
-    set_property(TARGET vanillapdf APPEND_STRING PROPERTY LINK_FLAGS "/NATVIS:\"${CMAKE_CURRENT_SOURCE_DIR}/public.natvis" )
+    set_property(TARGET vanillapdf APPEND_STRING PROPERTY LINK_FLAGS "/NATVIS:\"${VANILLAPDF_SOLUTION_SOURCE_DIR}/public.natvis" )
 endif(MSVC)
 
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSION_LESS "9.1")
