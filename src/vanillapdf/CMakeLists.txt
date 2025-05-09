@@ -4,7 +4,6 @@ project(vanillapdf LANGUAGES CXX)
 include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/files.cmake")
 
 # Additional directories in the root project
-include_directories("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include")
 include_directories("${VANILLAPDF_SOLUTION_SOURCE_DIR}/lib/nlohmann_json/include")
 
 # Include local files in the directory
@@ -652,6 +651,12 @@ endif (OPENJPEG_LIBRARIES)
 set(VANILLAPDF_LIBS spdlog::spdlog ${VANILLAPDF_LIBS})
 
 target_link_libraries(vanillapdf PRIVATE ${VANILLAPDF_LIBS})
+
+# This includes the public headers in the project as well as publishing them outside to be consumed
+target_include_directories(vanillapdf PUBLIC
+    $<BUILD_INTERFACE:${VANILLAPDF_SOLUTION_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
 
 # Project install targets
 install(TARGETS vanillapdf
