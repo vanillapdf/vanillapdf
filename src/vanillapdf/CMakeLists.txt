@@ -537,6 +537,14 @@ if(MSVC)
     target_link_options(vanillapdf PRIVATE "/NATVIS:${CMAKE_CURRENT_SOURCE_DIR}/public.natvis")
 endif(MSVC)
 
+if (MSVC)
+
+    # Enable PDB generation for debug and release configurations
+    target_compile_options(vanillapdf PRIVATE "/Zi")
+    target_link_options(vanillapdf PRIVATE "/DEBUG")
+
+endif()
+
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSION_LESS "9.1")
     # C++17 filesystem implementation exception for GCC
     # https://en.cppreference.com/w/cpp/filesystem#Notes
