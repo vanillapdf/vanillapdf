@@ -554,6 +554,15 @@ endif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VER
 set_property(TARGET vanillapdf PROPERTY CXX_STANDARD 17)
 set_property(TARGET vanillapdf PROPERTY CXX_STANDARD_REQUIRED ON)
 
+# In case we have the dynamic link configuration add specific definitions
+if(BUILD_SHARED_LIBS)
+
+    target_compile_definitions(vanillapdf
+    PUBLIC VANILLAPDF_CONFIGURATION_DLL
+    PRIVATE VANILLAPDF_EXPORTS)
+
+endif()
+
 # Specify that library should export functions
 add_definitions(-DVANILLAPDF_EXPORTS)
 

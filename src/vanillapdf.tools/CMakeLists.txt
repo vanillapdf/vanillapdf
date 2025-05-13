@@ -72,7 +72,12 @@ if (CMAKE_COMPILER_IS_GNUCC)
 
 endif (CMAKE_COMPILER_IS_GNUCC)
 
-target_link_libraries(vanillapdf.tools ${VANILLAPDF_TOOLS_LIBS})
+target_link_libraries(vanillapdf.tools PRIVATE ${VANILLAPDF_TOOLS_LIBS})
+
+# In case we have the dynamic link configuration add specific definitions
+if(BUILD_SHARED_LIBS)
+    target_compile_definitions(vanillapdf.tools PRIVATE VANILLAPDF_CONFIGURATION_DLL)
+endif()
 
 # Project install targets
 install(TARGETS vanillapdf.tools

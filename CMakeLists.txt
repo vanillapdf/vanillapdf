@@ -19,6 +19,9 @@ option(VANILLAPDF_STANDALONE "Enable internal vcpkg setup for standalone builds"
 option(VANILLAPDF_ENABLE_TESTS "Perform test scenarios to ensure stable releases" ON)
 option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure performance" ON)
 
+# Option if the build should be static/dynamic link
+option(BUILD_SHARED_LIBS "Build vanillapdf as a shared library" ON)
+
 # Note: This needs to be included before defining the main project
 # Check for VCPKG - C++ package management system
 include(cmake/vcpkg_init.cmake)
@@ -57,10 +60,6 @@ include(cmake/compiler_flags.cmake)
 # It creates "CMakePredefinedTargets" folder by default and adds CMake
 # defined projects like INSTALL.vcproj and ZERO_CHECK.vcproj
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-# TODO Support also static library configuration
-# Global compilation definitions
-add_definitions("-DVANILLAPDF_CONFIGURATION_DLL")
 
 set(VANILLAPDF_FORCE_32_BIT CACHE BOOL "OFF")
 
