@@ -683,6 +683,19 @@ install(TARGETS vanillapdf
     ARCHIVE DESTINATION lib
 )
 
+# Install PDBs in vcpkg-style folders
+install(FILES
+    "$<TARGET_PDB_FILE:vanillapdf>"
+    DESTINATION debug/bin
+    CONFIGURATIONS Debug
+)
+
+install(FILES
+    "$<TARGET_PDB_FILE:vanillapdf>"
+    DESTINATION bin
+    CONFIGURATIONS Release RelWithDebInfo MinSizeRel
+)
+
 install(FILES ${VANILLAPDF_INCLUDE_HEADERS} DESTINATION "include/vanillapdf")
 install(FILES ${VANILLAPDF_INCLUDE_UTILS_HEADERS} DESTINATION "include/vanillapdf/utils")
 install(FILES ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS} DESTINATION "include/vanillapdf/syntax")
