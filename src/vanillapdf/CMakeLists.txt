@@ -4,7 +4,6 @@ project(vanillapdf LANGUAGES CXX)
 include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/files.cmake")
 
 # Additional directories in the root project
-include_directories("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include")
 include_directories("${VANILLAPDF_SOLUTION_SOURCE_DIR}/lib/nlohmann_json/include")
 
 # Include local files in the directory
@@ -535,8 +534,16 @@ endif(MSVC)
 
 # Add natvis file embedding
 if(MSVC)
-    set_property(TARGET vanillapdf APPEND_STRING PROPERTY LINK_FLAGS "/NATVIS:public.natvis" )
+    target_link_options(vanillapdf PRIVATE "/NATVIS:${CMAKE_CURRENT_SOURCE_DIR}/public.natvis")
 endif(MSVC)
+
+if (MSVC)
+
+    # Enable PDB generation for debug and release configurations
+    target_compile_options(vanillapdf PRIVATE "/Zi")
+    target_link_options(vanillapdf PRIVATE "/DEBUG")
+
+endif()
 
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSION_LESS "9.1")
     # C++17 filesystem implementation exception for GCC
@@ -554,6 +561,15 @@ endif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VER
 # NOTE: Similar issue here https://github.com/zephyrproject-rtos/zephyr/issues/40023
 set_property(TARGET vanillapdf PROPERTY CXX_STANDARD 17)
 set_property(TARGET vanillapdf PROPERTY CXX_STANDARD_REQUIRED ON)
+
+# In case we have the dynamic link configuration add specific definitions
+if(BUILD_SHARED_LIBS)
+
+    target_compile_definitions(vanillapdf
+    PUBLIC VANILLAPDF_CONFIGURATION_DLL
+    PRIVATE VANILLAPDF_EXPORTS)
+
+endif()
 
 # Specify that library should export functions
 add_definitions(-DVANILLAPDF_EXPORTS)
@@ -628,6 +644,7 @@ endif (ZLIB_FOUND)
 
 if (OPENJPEG_LIBRARIES)
     include_directories(${OPENJPEG_INCLUDE_DIRS})
+    #set(VANILLAPDF_LIBS OpenJPEG::OpenJPEG ${VANILLAPDF_LIBS})
     set(VANILLAPDF_LIBS ${OPENJPEG_LIBRARIES} ${VANILLAPDF_LIBS})
     add_definitions(-DVANILLAPDF_HAVE_OPENJPEG)
     message(STATUS "openjpeg was found without specified version")
@@ -652,12 +669,36 @@ set(VANILLAPDF_LIBS spdlog::spdlog ${VANILLAPDF_LIBS})
 
 target_link_libraries(vanillapdf PRIVATE ${VANILLAPDF_LIBS})
 
+# This includes the public headers in the project as well as publishing them outside to be consumed
+target_include_directories(vanillapdf PUBLIC
+    $<BUILD_INTERFACE:${VANILLAPDF_SOLUTION_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+
 # Project install targets
 install(TARGETS vanillapdf
+    EXPORT vanillapdfTargets
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
 )
+
+if (MSVC)
+
+    # Install PDBs in vcpkg-style folders
+    install(FILES
+        "$<TARGET_PDB_FILE:vanillapdf>"
+        DESTINATION debug/bin
+        CONFIGURATIONS Debug
+    )
+
+    install(FILES
+        "$<TARGET_PDB_FILE:vanillapdf>"
+        DESTINATION bin
+        CONFIGURATIONS Release RelWithDebInfo MinSizeRel
+    )
+
+endif()
 
 install(FILES ${VANILLAPDF_INCLUDE_HEADERS} DESTINATION "include/vanillapdf")
 install(FILES ${VANILLAPDF_INCLUDE_UTILS_HEADERS} DESTINATION "include/vanillapdf/utils")
@@ -665,9 +706,17 @@ install(FILES ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS} DESTINATION "include/vanillap
 install(FILES ${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS} DESTINATION "include/vanillapdf/semantics")
 install(FILES ${VANILLAPDF_INCLUDE_CONTENTS_HEADERS} DESTINATION "include/vanillapdf/contents")
 
-install(FILES "${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/README.txt" DESTINATION .)
-install(FILES "${VANILLAPDF_SOLUTION_SOURCE_DIR}/LICENSE.txt" DESTINATION .)
-install(FILES "${VANILLAPDF_SOLUTION_SOURCE_DIR}/CHANGELOG.txt" DESTINATION .)
+# Additional metadata for the project, that should be bundled together
+install(FILES
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/README.txt"
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/LICENSE.txt"
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/NOTICE.md"
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/CHANGELOG.txt"
+    DESTINATION "share/vanillapdf"
+)
+
+# Define installation files and procedures
+include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/vanillapdf_install.cmake")
 
 # Install dependent libraries on windows
 if(WIN32)

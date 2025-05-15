@@ -14,6 +14,14 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Store information about solution root folder
 set(VANILLAPDF_SOLUTION_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
+# Configurable option, if this is a primary project or just a submodule
+option(VANILLAPDF_STANDALONE "Enable internal vcpkg setup for standalone builds" ON)
+option(VANILLAPDF_ENABLE_TESTS "Perform test scenarios to ensure stable releases" ON)
+option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure performance" ON)
+
+# Option if the build should be static/dynamic link
+option(BUILD_SHARED_LIBS "Build vanillapdf as a shared library" ON)
+
 # Note: This needs to be included before defining the main project
 # Check for VCPKG - C++ package management system
 include(cmake/vcpkg_init.cmake)
@@ -53,10 +61,6 @@ include(cmake/compiler_flags.cmake)
 # defined projects like INSTALL.vcproj and ZERO_CHECK.vcproj
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-# TODO Support also static library configuration
-# Global compilation definitions
-add_definitions("-DVANILLAPDF_CONFIGURATION_DLL")
-
 set(VANILLAPDF_FORCE_32_BIT CACHE BOOL "OFF")
 
 if(VANILLAPDF_FORCE_32_BIT)
@@ -75,7 +79,13 @@ endif(NOT CMAKE_BUILD_TYPE)
 
 # Include source directories
 add_subdirectory(src/vanillapdf)
-add_subdirectory(src/vanillapdf.test)
-add_subdirectory(src/vanillapdf.unittest)
 add_subdirectory(src/vanillapdf.tools)
-add_subdirectory(src/vanillapdf.benchmark)
+
+if(VANILLAPDF_ENABLE_TESTS)
+  add_subdirectory(src/vanillapdf.test)
+  add_subdirectory(src/vanillapdf.unittest)
+endif()
+
+if(VANILLAPDF_ENABLE_BENCHMARK)
+  add_subdirectory(src/vanillapdf.benchmark)
+endif()

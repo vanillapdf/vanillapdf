@@ -59,6 +59,11 @@ set(VANILLAPDF_UNITTEST_LIBS
 
 target_link_libraries(vanillapdf.unittest PRIVATE ${VANILLAPDF_UNITTEST_LIBS})
 
+# In case we have the dynamic link configuration add specific definitions
+if(BUILD_SHARED_LIBS)
+    target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_CONFIGURATION_DLL)
+endif()
+
 # We do not need unit test project to be shipped
 #install(TARGETS vanillapdf.unittest
 #	RUNTIME DESTINATION bin

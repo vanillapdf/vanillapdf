@@ -66,7 +66,12 @@ if (CMAKE_COMPILER_IS_GNUCC)
 
 endif (CMAKE_COMPILER_IS_GNUCC)
 
-target_link_libraries(vanillapdf.test ${VANILLAPDF_TEST_LIBS})
+target_link_libraries(vanillapdf.test PRIVATE ${VANILLAPDF_TEST_LIBS})
+
+# In case we have the dynamic link configuration add specific definitions
+if(BUILD_SHARED_LIBS)
+    target_compile_definitions(vanillapdf.test PRIVATE VANILLAPDF_CONFIGURATION_DLL)
+endif()
 
 # We do not need test project to be shipped
 #install(TARGETS vanillapdf.test
