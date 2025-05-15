@@ -1,6 +1,5 @@
 # Set CDash build name for this build configuration
 
-
 set(COMPILER_BITS "32-bit")
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
