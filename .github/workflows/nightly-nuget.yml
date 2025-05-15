@@ -18,20 +18,20 @@ env:
 jobs:
 
   linux:
-    name: linux - ${{ matrix.config.name }}
+    name: ${{ matrix.config.name }}
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - name: rocky.9-x64
+          - name: linux-x64
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9
             platform: linux/amd64
             preset: linux-x64-gcc
             build_type: Release
 
-          - name: rocky.9-arm64
+          - name: linux-arm64
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9
             platform: linux/arm64
             preset: linux-arm64-gcc
@@ -39,7 +39,7 @@ jobs:
 
         exclude:
           - config:
-              name: rocky.9-arm64 # arm64 is currently not supported on the shared runners
+              name: linux-arm64 # arm64 is currently not supported on the shared runners
 
     container:
       image: ${{ matrix.config.image }}
@@ -68,40 +68,43 @@ jobs:
         shell: bash
 
       - name: Set nightly version suffix
-        run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
+        run: echo "DATE_SUFFIX=nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
 
-      - name: Configure
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
+      - name: Configure ${{ matrix.config.name }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="-${{ env.DATE_SUFFIX }}"
 
-      - name: Build
+      - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }}
 
-      - name: Test
+      - name: Test ${{ matrix.config.name }}
         run: ctest --preset ${{ matrix.config.preset }}
 
-      - name: Build NuGet package
+      - name: Build package ${{ matrix.config.name }}
+        run: cmake --build build/${{ matrix.config.preset }} --target package
+
+      - name: Execute nuget packaging
         run: nuget pack nuget/vanillapdf.runtime.nuspec
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: vanillapdf-runtime-nightly-nuget-${{ matrix.config.preset }}-${{ env.DATE_SUFFIX }}
+          name: vanillapdf-runtime-nightly-nuget-${{ matrix.config.name }}-${{ env.DATE_SUFFIX }}
           path: '*.nupkg'
 
 
   windows:
-    name: windows - ${{ matrix.config.name }}
+    name: ${{ matrix.config.name }}
     runs-on: windows-2025
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - name: win.2025-x86
+          - name: win-x86
             preset: windows-x86-msvc-17
             build_type: Release
 
-          - name: win.2025-x64
+          - name: win-x64
             preset: windows-x64-msvc-17
             build_type: Release
 
@@ -127,42 +130,45 @@ jobs:
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
 
       - name: Set nightly version suffix
-        run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
+        run: echo "DATE_SUFFIX=nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
         shell: bash
 
-      - name: Configure ${{ matrix.config.preset }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
+      - name: Configure ${{ matrix.config.name }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="-${{ env.DATE_SUFFIX }}"
 
-      - name: Build ${{ matrix.config.preset }}
+      - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.build_type }}
 
-      - name: Test ${{ matrix.config.preset }}
+      - name: Test ${{ matrix.config.name }}
         run: ctest --preset ${{ matrix.config.preset }} -C ${{ matrix.config.build_type }} --output-on-failure
 
-      - name: Build NuGet package
+      - name: Build package ${{ matrix.config.name }}
+        run: cmake --build build/${{ matrix.config.preset }} --target package
+
+      - name: Execute nuget packaging
         run: nuget pack nuget/vanillapdf.runtime.nuspec
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: vanillapdf-runtime-nightly-nuget-${{ matrix.config.preset }}-${{ env.DATE_SUFFIX }}
+          name: vanillapdf-runtime-nightly-nuget-${{ matrix.config.name }}-${{ env.DATE_SUFFIX }}
           path: '*.nupkg'
 
 
   macos:
-    name: macOS - ${{ matrix.config.name }}
+    name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.runner }}
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - name: osx.13-x64
+          - name: osx-x64
             runner: macos-13
             preset: macos-x64
             build_type: Release
 
-          - name: osx.15-arm64
+          - name: osx-arm64
             runner: macos-15
             preset: macos-arm64
             build_type: Release
@@ -205,24 +211,27 @@ jobs:
         shell: bash
 
       - name: Set nightly version suffix
-        run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
+        run: echo "DATE_SUFFIX=nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
 
-      - name: Configure
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
+      - name: Configure ${{ matrix.config.name }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="-${{ env.DATE_SUFFIX }}"
 
-      - name: Build
+      - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }}
 
-      - name: Test
+      - name: Test ${{ matrix.config.name }}
         run: ctest --preset ${{ matrix.config.preset }}
 
-      - name: Build NuGet package
+      - name: Build package ${{ matrix.config.name }}
+        run: cmake --build build/${{ matrix.config.preset }} --target package
+
+      - name: Execute nuget packaging
         run: mono ./nuget.exe pack nuget/vanillapdf.runtime.nuspec
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: vanillapdf-runtime-nightly-nuget-${{ matrix.config.preset }}-${{ env.DATE_SUFFIX }}
+          name: vanillapdf-runtime-nightly-nuget-${{ matrix.config.name }}-${{ env.DATE_SUFFIX }}
           path: '*.nupkg'
 
 
@@ -259,13 +268,13 @@ jobs:
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
 
       - name: Set nightly version suffix
-        run: echo "DATE_SUFFIX=-nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
+        run: echo "DATE_SUFFIX=nightly-$(date +'%Y%m%d')" >> $GITHUB_ENV
         shell: bash
 
       - name: Configure
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ env.DATE_SUFFIX }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="-${{ env.DATE_SUFFIX }}"
 
-      - name: Build NuGet package
+      - name: Execute nuget packaging
         run: nuget pack nuget/vanillapdf.nuspec
 
       - name: Upload Artifact
