@@ -9,7 +9,8 @@
         "zlib",
         "benchmark",
         "spdlog",
-        "gtest"
+        "gtest",
+        "nlohmann-json"
     ],
     "features": {
         "skia-support": {

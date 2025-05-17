@@ -3,9 +3,6 @@ project(vanillapdf LANGUAGES CXX)
 # Include listing of all interface files
 include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/files.cmake")
 
-# Additional directories in the root project
-include_directories("${VANILLAPDF_SOLUTION_SOURCE_DIR}/lib/nlohmann_json/include")
-
 # Include local files in the directory
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
@@ -602,7 +599,8 @@ find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(OpenJPEG REQUIRED)
-find_package(spdlog REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 
 if (COMPILE_SKIA)
     find_package(unofficial-skia CONFIG REQUIRED)
@@ -665,7 +663,7 @@ endif (OPENJPEG_LIBRARIES)
 
 #add_subdirectory("${VANILLAPDF_SOLUTION_SOURCE_DIR}/external/fmtlib" build EXCLUDE_FROM_ALL)
 
-set(VANILLAPDF_LIBS spdlog::spdlog ${VANILLAPDF_LIBS})
+set(VANILLAPDF_LIBS spdlog::spdlog nlohmann_json::nlohmann_json ${VANILLAPDF_LIBS})
 
 target_link_libraries(vanillapdf PRIVATE ${VANILLAPDF_LIBS})
 
