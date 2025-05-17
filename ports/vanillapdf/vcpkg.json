@@ -18,7 +18,8 @@
         "libjpeg-turbo",
         "openjpeg",
         "zlib",
-        "spdlog"
+        "spdlog",
+        "nlohmann-json"
     ],
     "default-features": [],
     "features": {

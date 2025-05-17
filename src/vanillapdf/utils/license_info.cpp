@@ -6,7 +6,7 @@
 #include "utils/license_info.h"
 #include "utils/streams/input_stream.h"
 
-#include <nlohmann_json/json.hpp>
+#include <nlohmann/json.hpp>
 
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
