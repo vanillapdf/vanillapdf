@@ -45,13 +45,14 @@ set(VANILLAPDF_VERSION_PATCH 0)
 set(VANILLAPDF_VERSION_BUILD 0)
 set(VANILLAPDF_VERSION_BUILD_SUFFIX "" CACHE STRING "Optional build suffix")
 
-# Package management
-include(cmake/packaging.cmake)
-include(CPack)
+# Define packaging configuration only for standalone
+if (VANILLAPDF_STANDALONE)
 
-# Allow tests to be run
-include(cmake/build_name.cmake)
-include(CTest)
+    # Package management
+    include(cmake/packaging.cmake)
+    include(CPack)
+
+endif()
 
 # Set extended compilator flags
 include(cmake/compiler_flags.cmake)
@@ -82,6 +83,11 @@ add_subdirectory(src/vanillapdf)
 add_subdirectory(src/vanillapdf.tools)
 
 if(VANILLAPDF_ENABLE_TESTS)
+
+  # Allow tests to be run
+  include(cmake/build_name.cmake)
+  include(CTest)
+
   add_subdirectory(src/vanillapdf.test)
   add_subdirectory(src/vanillapdf.unittest)
 endif()
