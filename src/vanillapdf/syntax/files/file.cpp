@@ -197,7 +197,7 @@ void File::InitializeObjectStream(types::big_uint object_stream_number) {
     auto input_stream = body->ToInputStream();
 
     if (body->empty()) {
-        throw GeneralException("Could not find data for the ObjStm " + std::to_string(object_stream_number));
+        LOG_ERROR_AND_THROW_GENERAL("Could not find data for the ObjStm {:d}", object_stream_number);
     }
 
     spdlog::debug("Initializing object stream {}", object_stream_number);

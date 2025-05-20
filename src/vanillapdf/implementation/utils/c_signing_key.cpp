@@ -73,7 +73,7 @@ public:
             case MessageDigestAlgorithm::WHIRLPOOL:
                 algorithm_type = MessageDigestAlgorithmType_WHIRLPOOL; break;
             default:
-                throw GeneralException("Unknown digest algorithm");
+                LOG_ERROR_AND_THROW_GENERAL("Unknown digest algorithm: {:d}", static_cast<int32_t>(algorithm));
         }
 
         error_type rv = m_init(m_user_data, algorithm_type);
