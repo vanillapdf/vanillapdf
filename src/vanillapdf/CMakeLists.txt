@@ -479,7 +479,9 @@ set(VANILLAPDF_ALL_SOURCES
     ${VANILLAPDF_UTILS_SOURCES}
 )
 
-add_library(vanillapdf SHARED
+# vanillapdf supports both SHARED and STATIC builds,
+# which is being configured using BUILD_SHARED_LIBS.
+add_library(vanillapdf
     ${VANILLAPDF_INCLUDE_HEADERS}
     ${VANILLAPDF_INCLUDE_UTILS_HEADERS}
     ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS}
@@ -534,7 +536,7 @@ if(MSVC)
     target_link_options(vanillapdf PRIVATE "/NATVIS:${CMAKE_CURRENT_SOURCE_DIR}/public.natvis")
 endif(MSVC)
 
-if (MSVC)
+if (MSVC AND BUILD_SHARED_LIBS)
 
     # Enable PDB generation for debug and release configurations
     target_compile_options(vanillapdf PRIVATE "/Zi")
@@ -681,7 +683,7 @@ install(TARGETS vanillapdf
     ARCHIVE DESTINATION lib
 )
 
-if (MSVC)
+if (MSVC AND BUILD_SHARED_LIBS)
 
     # Install PDBs in vcpkg-style folders
     install(FILES
