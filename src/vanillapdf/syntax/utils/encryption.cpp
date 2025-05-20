@@ -1190,12 +1190,13 @@ BufferPtr EncryptionUtils::ComputeAuthenticationOwnerData(const Buffer& pad_pass
         // between each byte of the key and the single-byte value of the iteration counter (from 19 to 0).
         BufferPtr encrypted_owner_data = make_deferred_container<Buffer>(*owner_value->GetValue());
 
-        for (Buffer::value_type i = 19; i >= 0; --i) {
+        for (int i = 19; i >= 0; --i) {
             BufferPtr key = make_deferred_container<Buffer>(password_digest.size());
+            auto current_iteration = ValueConvertUtils::SafeConvert<Buffer::value_type>(i);
 
             auto password_digest_size = password_digest.size();
             for (decltype(password_digest_size) j = 0; j < password_digest.size(); ++j) {
-                key[j] = (password_digest[j] ^ i);
+                key[j] = (password_digest[j] ^ current_iteration);
             }
 
             encrypted_owner_data = EncryptionUtils::ComputeRC4(key, encrypted_owner_data);
