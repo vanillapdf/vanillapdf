@@ -606,13 +606,14 @@ find_package(nlohmann_json CONFIG REQUIRED)
 
 if (COMPILE_SKIA)
     find_package(unofficial-skia CONFIG REQUIRED)
-    set(VANILLAPDF_LIBS unofficial::skia::skia ${VANILLAPDF_LIBS})
+    target_link_libraries(vanillapdf PRIVATE unofficial::skia::skia)
 endif (COMPILE_SKIA)
 
 if (OPENSSL_FOUND)
-    include_directories(${OPENSSL_INCLUDE_DIR})
-    set(VANILLAPDF_LIBS OpenSSL::Crypto ${VANILLAPDF_LIBS})
-    add_definitions(-DVANILLAPDF_HAVE_OPENSSL)
+    target_include_directories(vanillapdf PRIVATE ${OPENSSL_INCLUDE_DIR})
+
+    target_link_libraries(vanillapdf PRIVATE OpenSSL::Crypto)
+    target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_OPENSSL)
 
     message(STATUS "OpenSSL ${OPENSSL_VERSION} was found")
 else (OPENSSL_FOUND)
@@ -620,12 +621,13 @@ else (OPENSSL_FOUND)
 endif (OPENSSL_FOUND)
 
 if (JPEG_FOUND)
-    include_directories(${JPEG_INCLUDE_DIR})
+    target_include_directories(vanillapdf PRIVATE ${JPEG_INCLUDE_DIR})
 
     # This is not yet supported on all linux CMake distributions
     # set(VANILLAPDF_LIBS JPEG::JPEG ${VANILLAPDF_LIBS})
-    set(VANILLAPDF_LIBS ${JPEG_LIBRARIES} ${VANILLAPDF_LIBS})
-    add_definitions(-DVANILLAPDF_HAVE_JPEG)
+
+    target_link_libraries(vanillapdf PRIVATE ${JPEG_LIBRARIES})
+    target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_JPEG)
 
     message(STATUS "JPEG library ${JPEG_VERSION} was found")
 else (JPEG_FOUND)
@@ -633,9 +635,10 @@ else (JPEG_FOUND)
 endif (JPEG_FOUND)
 
 if (ZLIB_FOUND)
-    include_directories(${ZLIB_INCLUDE_DIRS})
-    set(VANILLAPDF_LIBS ZLIB::ZLIB ${VANILLAPDF_LIBS})
-    add_definitions(-DVANILLAPDF_HAVE_ZLIB)
+    target_include_directories(vanillapdf PRIVATE ${ZLIB_INCLUDE_DIRS})
+
+    target_link_libraries(vanillapdf PRIVATE ZLIB::ZLIB)
+    target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_ZLIB)
 
     message(STATUS "zlib ${ZLIB_VERSION_STRING} was found")
 else (ZLIB_FOUND)
@@ -643,10 +646,10 @@ else (ZLIB_FOUND)
 endif (ZLIB_FOUND)
 
 if (OPENJPEG_LIBRARIES)
-    include_directories(${OPENJPEG_INCLUDE_DIRS})
+    target_include_directories(vanillapdf PRIVATE ${OPENJPEG_INCLUDE_DIRS})
     #set(VANILLAPDF_LIBS OpenJPEG::OpenJPEG ${VANILLAPDF_LIBS})
-    set(VANILLAPDF_LIBS ${OPENJPEG_LIBRARIES} ${VANILLAPDF_LIBS})
-    add_definitions(-DVANILLAPDF_HAVE_OPENJPEG)
+    target_link_libraries(vanillapdf PRIVATE ${OPENJPEG_LIBRARIES})
+    target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_OPENJPEG)
     message(STATUS "openjpeg was found without specified version")
 else (OPENJPEG_LIBRARIES)
     message(WARNING "Compiling without openjpeg support. jpeg2000 decompression will become unavailable")
@@ -665,9 +668,8 @@ endif (OPENJPEG_LIBRARIES)
 
 #add_subdirectory("${VANILLAPDF_SOLUTION_SOURCE_DIR}/external/fmtlib" build EXCLUDE_FROM_ALL)
 
-set(VANILLAPDF_LIBS spdlog::spdlog nlohmann_json::nlohmann_json ${VANILLAPDF_LIBS})
-
-target_link_libraries(vanillapdf PRIVATE ${VANILLAPDF_LIBS})
+target_link_libraries(vanillapdf PRIVATE spdlog::spdlog)
+target_link_libraries(vanillapdf PRIVATE nlohmann_json::nlohmann_json)
 
 # This includes the public headers in the project as well as publishing them outside to be consumed
 target_include_directories(vanillapdf PUBLIC
