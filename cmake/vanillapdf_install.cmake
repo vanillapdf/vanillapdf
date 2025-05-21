@@ -1,25 +1,44 @@
+include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
+# Install main target
+install(TARGETS vanillapdf
+  EXPORT vanillapdfTargets
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+# Install headers
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
+)
+
+# Export target
 install(EXPORT vanillapdfTargets
   FILE vanillapdfTargets.cmake
   NAMESPACE vanillapdf::
-  DESTINATION lib/cmake/vanillapdf
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/vanillapdf
 )
 
+# Generate and install config file
 configure_package_config_file(
-  "${CMAKE_SOURCE_DIR}/cmake/vanillapdfConfig.cmake.in"
-  "${CMAKE_BINARY_DIR}/vanillapdfConfig.cmake"
-  INSTALL_DESTINATION lib/cmake/vanillapdf
+  ${PROJECT_SOURCE_DIR}/cmake/vanillapdfConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/vanillapdfConfig.cmake
+  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/vanillapdf
 )
 
+# Generate and install version file
 write_basic_package_version_file(
-  "${CMAKE_BINARY_DIR}/vanillapdfConfigVersion.cmake"
-  VERSION ${VANILLAPDF_VERSION_MAJOR}.${VANILLAPDF_VERSION_MINOR}.${VANILLAPDF_VERSION_PATCH}
+  ${CMAKE_CURRENT_BINARY_DIR}/vanillapdfConfigVersion.cmake
+  VERSION ${PROJECT_VERSION}
   COMPATIBILITY SameMajorVersion
 )
 
 install(FILES
-  "${CMAKE_BINARY_DIR}/vanillapdfConfig.cmake"
-  "${CMAKE_BINARY_DIR}/vanillapdfConfigVersion.cmake"
-  DESTINATION lib/cmake/vanillapdf
+  ${CMAKE_CURRENT_BINARY_DIR}/vanillapdfConfig.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/vanillapdfConfigVersion.cmake
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/vanillapdf
 )
