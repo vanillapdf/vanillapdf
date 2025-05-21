@@ -42,3 +42,8 @@ install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/vanillapdfConfigVersion.cmake
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/vanillapdf
 )
+
+install(FILES
+  ${PROJECT_SOURCE_DIR}/cmake/vanillapdfDependencies.cmake
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/vanillapdf
+)
