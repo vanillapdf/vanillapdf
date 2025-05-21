@@ -597,6 +597,12 @@ add_definitions(-DVANILLAPDF_BUILD_YEAR=${VANILLAPDF_BUILD_YEAR})
 # Update 30.04.2025
 # We have switched to vcpkg manifest mode, which makes sure all dependencies are automatically installed
 
+# Prevent POSIX thread detection on MSVC
+# LINK : fatal error LNK1104: cannot open file 'pthread.lib'
+if (MSVC AND NOT BUILD_SHARED_LIBS)
+    set(THREADS_PREFER_PTHREAD_FLAG OFF)
+endif()
+
 find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(JPEG REQUIRED)
