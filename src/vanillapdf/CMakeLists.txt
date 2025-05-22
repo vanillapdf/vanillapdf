@@ -547,8 +547,6 @@ if (MSVC AND BUILD_SHARED_LIBS)
 
 endif()
 
-
-
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSION_LESS "9.1")
     # C++17 filesystem implementation exception for GCC
     # https://en.cppreference.com/w/cpp/filesystem#Notes
@@ -570,8 +568,8 @@ set_property(TARGET vanillapdf PROPERTY CXX_STANDARD_REQUIRED ON)
 if(BUILD_SHARED_LIBS)
 
     target_compile_definitions(vanillapdf
-    PUBLIC VANILLAPDF_CONFIGURATION_DLL
-    PRIVATE VANILLAPDF_EXPORTS)
+        PUBLIC VANILLAPDF_CONFIGURATION_DLL
+        PRIVATE VANILLAPDF_EXPORTS)
 
 endif()
 
@@ -605,6 +603,7 @@ add_definitions(-DVANILLAPDF_BUILD_YEAR=${VANILLAPDF_BUILD_YEAR})
 # Prevent POSIX thread detection on MSVC
 # LINK : fatal error LNK1104: cannot open file 'pthread.lib'
 if (MSVC AND NOT BUILD_SHARED_LIBS)
+    set(CMAKE_THREAD_PREFER_PTHREAD OFF)
     set(THREADS_PREFER_PTHREAD_FLAG OFF)
 endif()
 
