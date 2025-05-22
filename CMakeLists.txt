@@ -24,10 +24,7 @@ option(BUILD_SHARED_LIBS "Build vanillapdf as a shared library" ON)
 
 # Prevent POSIX thread detection on MSVC
 # LINK : fatal error LNK1104: cannot open file 'pthread.lib'
-if (MSVC AND NOT BUILD_SHARED_LIBS)
-    set(CMAKE_THREAD_PREFER_PTHREAD OFF CACHE BOOL "" FORCE)
-    set(THREADS_PREFER_PTHREAD_FLAG OFF CACHE BOOL "" FORCE)
-endif()
+include(cmake/vanillapdfConfigCommon.cmake)
 
 # Note: This needs to be included before defining the main project
 # Check for VCPKG - C++ package management system
