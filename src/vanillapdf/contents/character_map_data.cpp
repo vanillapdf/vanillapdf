@@ -33,10 +33,7 @@ BufferPtr BaseFontRange::GetMappedValue(BufferPtr key) const {
 BufferPtr BaseFontRange::GetMappedValueInternal(BufferPtr key) const {
     if (!Contains(key)) {
 
-        auto error_msg = fmt::format("Key: is out of range: [{},{}]", key->ToHexString(), m_low->GetValue()->ToHexString(), m_high->GetValue()->ToHexString());
-
-        spdlog::error(error_msg);
-        throw GeneralException(error_msg);
+        LOG_ERROR_AND_THROW_GENERAL("Key: is out of range: [{},{}]", key->ToHexString(), m_low->GetValue()->ToHexString(), m_high->GetValue()->ToHexString());
     }
 
     if (ObjectUtils::IsType<HexadecimalStringObjectPtr>(m_dest)) {

@@ -531,9 +531,12 @@ if(MSVC)
 			                               OBJECT_DEPENDS "${PrecompiledBinary}")
 endif(MSVC)
 
-# Add natvis file embedding
 if(MSVC)
+    # Add natvis file embedding
     target_link_options(vanillapdf PRIVATE "/NATVIS:${CMAKE_CURRENT_SOURCE_DIR}/public.natvis")
+
+    # Disable warning about unused parameters
+    target_compile_options(vanillapdf PRIVATE "/wd4100")
 endif(MSVC)
 
 if (MSVC AND BUILD_SHARED_LIBS)
@@ -543,6 +546,8 @@ if (MSVC AND BUILD_SHARED_LIBS)
     target_link_options(vanillapdf PRIVATE "/DEBUG")
 
 endif()
+
+
 
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSION_LESS "9.1")
     # C++17 filesystem implementation exception for GCC

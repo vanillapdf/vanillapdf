@@ -784,7 +784,7 @@ HeaderPtr Parser::ReadHeader(void) {
         }
     }
 
-    throw GeneralException("Could not find PDF header");
+    LOG_ERROR_AND_THROW_GENERAL("Could not find PDF header");
 }
 
 XrefChainPtr Parser::FindAllObjects(void) {
