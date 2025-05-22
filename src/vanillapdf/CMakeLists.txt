@@ -479,7 +479,9 @@ set(VANILLAPDF_ALL_SOURCES
     ${VANILLAPDF_UTILS_SOURCES}
 )
 
-add_library(vanillapdf SHARED
+# vanillapdf supports both SHARED and STATIC builds,
+# which is being configured using BUILD_SHARED_LIBS.
+add_library(vanillapdf
     ${VANILLAPDF_INCLUDE_HEADERS}
     ${VANILLAPDF_INCLUDE_UTILS_HEADERS}
     ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS}
@@ -533,15 +535,17 @@ if(MSVC)
     # Add natvis file embedding
     target_link_options(vanillapdf PRIVATE "/NATVIS:${CMAKE_CURRENT_SOURCE_DIR}/public.natvis")
 
-    # Enable PDB generation for debug and release configurations
-    target_compile_options(vanillapdf PRIVATE "/Zi")
-    target_link_options(vanillapdf PRIVATE "/DEBUG")
-
     # Disable warning about unused parameters
     target_compile_options(vanillapdf PRIVATE "/wd4100")
 endif(MSVC)
 
+if (MSVC AND BUILD_SHARED_LIBS)
 
+    # Enable PDB generation for debug and release configurations
+    target_compile_options(vanillapdf PRIVATE "/Zi")
+    target_link_options(vanillapdf PRIVATE "/DEBUG")
+
+endif()
 
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSION_LESS "9.1")
     # C++17 filesystem implementation exception for GCC
@@ -564,8 +568,8 @@ set_property(TARGET vanillapdf PROPERTY CXX_STANDARD_REQUIRED ON)
 if(BUILD_SHARED_LIBS)
 
     target_compile_definitions(vanillapdf
-    PUBLIC VANILLAPDF_CONFIGURATION_DLL
-    PRIVATE VANILLAPDF_EXPORTS)
+        PUBLIC VANILLAPDF_CONFIGURATION_DLL
+        PRIVATE VANILLAPDF_EXPORTS)
 
 endif()
 
@@ -596,6 +600,13 @@ add_definitions(-DVANILLAPDF_BUILD_YEAR=${VANILLAPDF_BUILD_YEAR})
 # Update 30.04.2025
 # We have switched to vcpkg manifest mode, which makes sure all dependencies are automatically installed
 
+# Prevent POSIX thread detection on MSVC
+# LINK : fatal error LNK1104: cannot open file 'pthread.lib'
+if (MSVC AND NOT BUILD_SHARED_LIBS)
+    set(CMAKE_THREAD_PREFER_PTHREAD OFF)
+    set(THREADS_PREFER_PTHREAD_FLAG OFF)
+endif()
+
 find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(JPEG REQUIRED)
@@ -605,13 +616,14 @@ find_package(nlohmann_json CONFIG REQUIRED)
 
 if (COMPILE_SKIA)
     find_package(unofficial-skia CONFIG REQUIRED)
-    set(VANILLAPDF_LIBS unofficial::skia::skia ${VANILLAPDF_LIBS})
+    target_link_libraries(vanillapdf PRIVATE unofficial::skia::skia)
 endif (COMPILE_SKIA)
 
 if (OPENSSL_FOUND)
-    include_directories(${OPENSSL_INCLUDE_DIR})
-    set(VANILLAPDF_LIBS OpenSSL::Crypto ${VANILLAPDF_LIBS})
-    add_definitions(-DVANILLAPDF_HAVE_OPENSSL)
+    target_include_directories(vanillapdf PRIVATE ${OPENSSL_INCLUDE_DIR})
+
+    target_link_libraries(vanillapdf PRIVATE OpenSSL::Crypto)
+    target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_OPENSSL)
 
     message(STATUS "OpenSSL ${OPENSSL_VERSION} was found")
 else (OPENSSL_FOUND)
@@ -619,12 +631,13 @@ else (OPENSSL_FOUND)
 endif (OPENSSL_FOUND)
 
 if (JPEG_FOUND)
-    include_directories(${JPEG_INCLUDE_DIR})
+    target_include_directories(vanillapdf PRIVATE ${JPEG_INCLUDE_DIR})
 
     # This is not yet supported on all linux CMake distributions
     # set(VANILLAPDF_LIBS JPEG::JPEG ${VANILLAPDF_LIBS})
-    set(VANILLAPDF_LIBS ${JPEG_LIBRARIES} ${VANILLAPDF_LIBS})
-    add_definitions(-DVANILLAPDF_HAVE_JPEG)
+
+    target_link_libraries(vanillapdf PRIVATE ${JPEG_LIBRARIES})
+    target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_JPEG)
 
     message(STATUS "JPEG library ${JPEG_VERSION} was found")
 else (JPEG_FOUND)
@@ -632,9 +645,10 @@ else (JPEG_FOUND)
 endif (JPEG_FOUND)
 
 if (ZLIB_FOUND)
-    include_directories(${ZLIB_INCLUDE_DIRS})
-    set(VANILLAPDF_LIBS ZLIB::ZLIB ${VANILLAPDF_LIBS})
-    add_definitions(-DVANILLAPDF_HAVE_ZLIB)
+    target_include_directories(vanillapdf PRIVATE ${ZLIB_INCLUDE_DIRS})
+
+    target_link_libraries(vanillapdf PRIVATE ZLIB::ZLIB)
+    target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_ZLIB)
 
     message(STATUS "zlib ${ZLIB_VERSION_STRING} was found")
 else (ZLIB_FOUND)
@@ -642,10 +656,10 @@ else (ZLIB_FOUND)
 endif (ZLIB_FOUND)
 
 if (OPENJPEG_LIBRARIES)
-    include_directories(${OPENJPEG_INCLUDE_DIRS})
+    target_include_directories(vanillapdf PRIVATE ${OPENJPEG_INCLUDE_DIRS})
     #set(VANILLAPDF_LIBS OpenJPEG::OpenJPEG ${VANILLAPDF_LIBS})
-    set(VANILLAPDF_LIBS ${OPENJPEG_LIBRARIES} ${VANILLAPDF_LIBS})
-    add_definitions(-DVANILLAPDF_HAVE_OPENJPEG)
+    target_link_libraries(vanillapdf PRIVATE ${OPENJPEG_LIBRARIES})
+    target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_OPENJPEG)
     message(STATUS "openjpeg was found without specified version")
 else (OPENJPEG_LIBRARIES)
     message(WARNING "Compiling without openjpeg support. jpeg2000 decompression will become unavailable")
@@ -664,9 +678,8 @@ endif (OPENJPEG_LIBRARIES)
 
 #add_subdirectory("${VANILLAPDF_SOLUTION_SOURCE_DIR}/external/fmtlib" build EXCLUDE_FROM_ALL)
 
-set(VANILLAPDF_LIBS spdlog::spdlog nlohmann_json::nlohmann_json ${VANILLAPDF_LIBS})
-
-target_link_libraries(vanillapdf PRIVATE ${VANILLAPDF_LIBS})
+target_link_libraries(vanillapdf PRIVATE spdlog::spdlog)
+target_link_libraries(vanillapdf PRIVATE nlohmann_json::nlohmann_json)
 
 # This includes the public headers in the project as well as publishing them outside to be consumed
 target_include_directories(vanillapdf PUBLIC
@@ -682,7 +695,7 @@ install(TARGETS vanillapdf
     ARCHIVE DESTINATION lib
 )
 
-if (MSVC)
+if (MSVC AND BUILD_SHARED_LIBS)
 
     # Install PDBs in vcpkg-style folders
     install(FILES
