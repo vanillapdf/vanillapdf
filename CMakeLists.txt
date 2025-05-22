@@ -22,10 +22,6 @@ option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure perf
 # Option if the build should be static/dynamic link
 option(BUILD_SHARED_LIBS "Build vanillapdf as a shared library" ON)
 
-# Prevent POSIX thread detection on MSVC
-# LINK : fatal error LNK1104: cannot open file 'pthread.lib'
-include(cmake/vanillapdfConfigCommon.cmake)
-
 # Note: This needs to be included before defining the main project
 # Check for VCPKG - C++ package management system
 include(cmake/vcpkg_init.cmake)

@@ -29,11 +29,6 @@ install(FILES
 )
 
 install(FILES
-  ${CMAKE_SOURCE_DIR}/cmake/vanillapdfConfigCommon.cmake
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/vanillapdf
-)
-
-install(FILES
   ${CMAKE_SOURCE_DIR}/cmake/vanillapdfDependencies.cmake
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/vanillapdf
 )
