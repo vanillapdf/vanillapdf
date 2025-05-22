@@ -29,6 +29,13 @@ include(cmake/vcpkg_init.cmake)
 # Define main solution
 project(vanillapdf)
 
+# Prevent POSIX thread detection on MSVC
+# LINK : fatal error LNK1104: cannot open file 'pthread.lib'
+if (MSVC AND NOT BUILD_SHARED_LIBS)
+    set(CMAKE_THREAD_PREFER_PTHREAD OFF)
+    set(THREADS_PREFER_PTHREAD_FLAG OFF)
+endif()
+
 # Prefer files in CMAKE_MODULE_PATH over shipped ones in module directory
 # In the future, they may possibly add conflicting search modules
 # so let's be cautious and prevent it!
