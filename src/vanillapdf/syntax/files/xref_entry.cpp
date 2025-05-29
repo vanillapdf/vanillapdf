@@ -85,10 +85,21 @@ void XrefUsedEntryBase::SetReference(ObjectPtr ref) {
 
     auto weak_ref_xref = ref->GetXrefEntry();
 
-    // TODO: This can happen with XRefStm for example
     if (weak_ref_xref.IsActive() && !weak_ref_xref.IsEmpty()) {
         auto ref_xref = weak_ref_xref.GetReference();
-        assert(ref_xref == this && "Reference another owner");
+
+        // TODO:
+        // This can happen with XRefStm for example, where one object has direct xref table entry
+        // and also hybrid reference stream entry, described in section
+        // 7.5.8.4 Compatibility with Applications That Do Not Support Compressed Reference Streams.
+        // We should probably keep 2 references to xref entry to accommodate this behavior.
+        // Since the time is ticking, let's create and issue in the tracker and keep the note here.
+        if (ref_xref != this) {
+            spdlog::warn("Object {} {} at {} has multiple xref entries",
+                ref_xref->GetObjectNumber(),
+                ref_xref->GetGenerationNumber(),
+                ref->GetOffset());
+        }
     }
 
     ReleaseReference(true);
@@ -137,7 +148,19 @@ void XrefUsedEntryBase::ReleaseReference(bool check_object_xref) {
         auto weak_ref_entry = _reference->GetXrefEntry();
         if (weak_ref_entry.IsActive() && !weak_ref_entry.IsEmpty()) {
             auto ref_entry = weak_ref_entry.GetReference();
-            assert(ref_entry == this && "Reference entry has changed");
+
+            // TODO:
+            // This can happen with XRefStm for example, where one object has direct xref table entry
+            // and also hybrid reference stream entry, described in section
+            // 7.5.8.4 Compatibility with Applications That Do Not Support Compressed Reference Streams.
+            // We should probably keep 2 references to xref entry to accommodate this behavior.
+            // Since the time is ticking, let's create and issue in the tracker and keep the note here.
+            if (ref_entry != this) {
+                spdlog::warn("Object {} {} at {} has multiple xref entries",
+                    ref_entry->GetObjectNumber(),
+                    ref_entry->GetGenerationNumber(),
+                    _reference->GetOffset());
+            }
         }
 
         _reference->ClearXrefEntry(false);
