@@ -108,8 +108,3 @@ foreach(TEST_FILE ${TEST_FILES})
         "${VANILLAPDF_SOLUTION_SOURCE_DIR}"							# path to root of the source directory
     )
 endforeach(TEST_FILE)
-
-# In case we would like to extract code coverage report enable the flag
-if(VANILLAPDF_ENABLE_COVERAGE)
-    enable_coverage_for_target(vanillapdf.test)
-endif()

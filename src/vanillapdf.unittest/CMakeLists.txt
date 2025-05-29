@@ -86,8 +86,3 @@ include(GoogleTest)
 # DISCOVERY_MODE PRE_TEST delays test discovery until just prior to test execution.
 # This way test discovery occurs in the target environment where the test has a better chance at finding appropriate runtime dependencies.
 gtest_discover_tests(vanillapdf.unittest DISCOVERY_MODE PRE_TEST)
-
-# In case we would like to extract code coverage report enable the flag
-if(VANILLAPDF_ENABLE_COVERAGE)
-    enable_coverage_for_target(vanillapdf.unittest)
-endif()
