@@ -535,8 +535,20 @@ if(MSVC)
     # Add natvis file embedding
     target_link_options(vanillapdf PRIVATE "/NATVIS:${CMAKE_CURRENT_SOURCE_DIR}/public.natvis")
 
+    # Enable maximum warning level and treat warnings as errors
+    target_compile_options(vanillapdf PRIVATE "/W4")
+
     # Disable warning about unused parameters
     target_compile_options(vanillapdf PRIVATE "/wd4100")
+
+    if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
+        if(VANILLAPDF_USE_STATIC_CRT)
+            set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded" CACHE STRING "" FORCE)
+        else()
+            set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL" CACHE STRING "" FORCE)
+        endif()
+    endif()
+    
 endif(MSVC)
 
 if (MSVC AND BUILD_SHARED_LIBS)
@@ -545,6 +557,13 @@ if (MSVC AND BUILD_SHARED_LIBS)
     target_compile_options(vanillapdf PRIVATE "/Zi")
     target_link_options(vanillapdf PRIVATE "/DEBUG")
 
+endif()
+
+# Add support for static linking also with GCC and clang
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    if(VANILLAPDF_USE_STATIC_CRT)
+        target_link_options(vanillapdf PRIVATE -static-libstdc++ -static-libgcc)
+    endif()
 endif()
 
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSION_LESS "9.1")
