@@ -599,6 +599,11 @@ target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_BUILD_DAY=${VANILLAPD
 target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_BUILD_MONTH=${VANILLAPDF_BUILD_MONTH})
 target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_BUILD_YEAR=${VANILLAPDF_BUILD_YEAR})
 
+# In case we would like to extract code coverage report enable the flag
+if(VANILLAPDF_ENABLE_COVERAGE)
+    enable_coverage_for_target(vanillapdf)
+endif()
+
 # Update 30.04.2025
 # We have switched to vcpkg manifest mode, which makes sure all dependencies are automatically installed
 

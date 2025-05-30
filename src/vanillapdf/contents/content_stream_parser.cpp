@@ -163,7 +163,12 @@ InstructionBasePtr ContentStreamParser::ReadInstruction(void) {
         // that is part of multiple streams
         // Please be sure, that entry source data are all concatenated into
         // stream and not parsed partially
-        assert(!"Found EndText operation without begin");
+
+        // Update 29.05.2025
+        // The document bug1065245.pdf contains a sequence ET without BT.
+        // Even though it is malformed input, there is not reason to stop the execution with fatal error.
+        // We do log warning as this is non-standard and continue processing.
+        spdlog::warn("Found EndText operation without begin");
     }
 
     if (operation->GetOperationType() == OperationBase::Type::BeginInlineImageObject) {
@@ -179,7 +184,11 @@ InstructionBasePtr ContentStreamParser::ReadInstruction(void) {
                 // that is part of multiple streams
                 // Please be sure, that entry source data are all concatenated into
                 // stream and not parsed partially
-                assert(!"Found BeginText operation without end"); break;
+
+                // Update 29.05.2025
+                // This one was not affected, however I would like to keep the behavior consistent.
+                // Since this is in the same function, let's log a warning that something fishy is going on.
+                spdlog::warn("Found BeginText operation without end"); break;
             }
 
             auto text_operation = ReadOperation();
