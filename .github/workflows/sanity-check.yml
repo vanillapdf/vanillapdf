@@ -27,31 +27,35 @@ jobs:
 
   linux:
     name: linux - ${{ matrix.config.name }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.config.os }}
 
     strategy:
       fail-fast: false # We would like to see the results of all jobs even in case one of them fails
       matrix:
         config:
           - name: rocky.9-x64
+            os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9
             platform: linux/amd64
             preset: linux-x64-gcc
             build_type: Release
 
           - name: rocky.9-arm64
+            os: ubuntu-24.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9
             platform: linux/arm64
             preset: linux-arm64-gcc
             build_type: Release
 
           - name: ubuntu.24.04-x64
+            os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:24.04
             platform: linux/amd64
             preset: linux-x64-gcc
             build_type: Release
 
           - name: ubuntu.24.04-arm64
+            os: ubuntu-24.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:24.04
             platform: linux/arm64
             preset: linux-arm64-gcc
