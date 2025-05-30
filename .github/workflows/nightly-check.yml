@@ -39,12 +39,14 @@ jobs:
             preset: linux-x64-gcc
             build_type: Release
 
-          - name: ubuntu.22.04-arm64
-            os: ubuntu-24.04-arm
-            image: ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:22.04
-            platform: linux/arm64
-            preset: linux-arm64-gcc
-            build_type: Release
+          # TODO:
+          # Ubuntu 22.04 arm image cannot be built on windows due to QEMU bug
+          # - name: ubuntu.22.04-arm64
+          #   os: ubuntu-24.04-arm
+          #   image: ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:22.04
+          #   platform: linux/arm64
+          #   preset: linux-arm64-gcc
+          #   build_type: Release
 
           - name: ubuntu.24.04-x64
             os: ubuntu-24.04
