@@ -45,7 +45,7 @@ Date::Date(syntax::StringObjectPtr root) : HighLevelObject(root) {
 
     std::smatch sm;
     if (!std::regex_match(str, sm, header_regex)) {
-        throw GeneralException("Could not parse datetime: " + str);
+        LOG_ERROR_AND_THROW_GENERAL("Could not parse datetime: {}", str);
     }
 
     auto length = sm.size();
@@ -67,8 +67,7 @@ Date::Date(syntax::StringObjectPtr root) : HighLevelObject(root) {
         } else if (sm[7].str() == "-") {
             m_timezone = Timezone::Earlier;
         } else {
-            assert(false && "Error in regular expression above");
-            throw GeneralException("Could not parse datetime: " + str);
+            LOG_ERROR_AND_THROW_GENERAL("Could not parse datetime: {}",str);
         }
     }
 

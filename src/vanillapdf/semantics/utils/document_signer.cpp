@@ -51,11 +51,11 @@ void DocumentSigner::OnBeforeOutputFlush(IInputOutputStreamPtr output) {
     auto signature_contents_offset = signature_contents->GetOffset();
 
     if (byte_ranges_offset == constant::BAD_OFFSET) {
-        throw GeneralException("Invalid offset for byte range array");
+        LOG_ERROR_AND_THROW_GENERAL("Invalid offset for byte range array: {:d}", byte_ranges_offset);
     }
 
     if (signature_contents_offset == constant::BAD_OFFSET) {
-        throw GeneralException("Invalid offset for signature contents");
+        LOG_ERROR_AND_THROW_GENERAL("Invalid offset for signature contents: {:d}", signature_contents_offset);
     }
 
     auto signature_contents_attribute = signature_contents->GetAttributeAs<SerializationOverrideAttributePtr>(BaseAttribute::Type::SerializationOverride);
@@ -103,7 +103,7 @@ void DocumentSigner::OnBeforeOutputFlush(IInputOutputStreamPtr output) {
 
     std::string signature_encoded = new_signature_contents->ToPdf();
     if (signature_encoded.size() > signature_contents_overriden_value.size()) {
-        throw GeneralException("Pre-allocated signature size is not sufficient");
+        LOG_ERROR_AND_THROW_GENERAL("Pre-allocated signature size is not sufficient");
     }
 
     auto padding_length = signature_contents_overriden_value.size() - signature_encoded.size();
