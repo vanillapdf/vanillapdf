@@ -1,0 +1,28 @@
+# .codecov.yml - Codecov configuration for Vanilla.PDF
+#
+# This file controls how Codecov behaves for this repository:
+# - Posts PR comments with coverage summaries and diffs
+# - Sets pass/fail status checks for project and patch coverage
+# - Helps enforce or improve test coverage over time
+#
+# Current coverage is around 50%, so the configuration is relaxed:
+# - Requires no regression on overall project coverage
+# - Encourages testing of new code, but tolerates moderate gaps
+#
+# Once test coverage improves, you can tighten thresholds.
+
+coverage:
+  status:
+    project:
+      default:
+        target: 50%        # Current overall coverage goal
+        threshold: 5%      # Allow up to 5% drop without failing
+    patch:
+      default:
+        target: auto       # Enforce coverage for new/changed lines
+        threshold: 10%     # Allow up to 10% drop on new code
+
+comment:
+  layout: "reach,diff,flags,files,footer"
+  behavior: default         # Always post PR comment
+  require_changes: false    # Post even if no coverage difference
