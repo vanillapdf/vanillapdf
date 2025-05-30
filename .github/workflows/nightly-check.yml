@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
   schedule:
-    - cron: '0 2 * * *'  # Every day at 2 AM UTC
+    - cron: '0 2 * * 1'  # Every on Monday at 2 AM UTC
 
 # Enable only minimum required permissions
 permissions:
@@ -79,19 +79,6 @@ jobs:
             platform: linux/arm64
             preset: linux-arm64-gcc
             build_type: Release
-
-        exclude:
-          - config:
-              name: ubuntu.22.04-arm64 # arm64 is currently not supported on the shared runners
-
-          - config:
-              name: ubuntu.24.04-arm64 # arm64 is currently not supported on the shared runners
-
-          - config:
-              name: rocky.8-arm64 # arm64 is currently not supported on the shared runners
-
-          - config:
-              name: rocky.9-arm64 # arm64 is currently not supported on the shared runners
 
     container:
       image: ${{ matrix.config.image }}
