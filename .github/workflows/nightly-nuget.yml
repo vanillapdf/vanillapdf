@@ -11,8 +11,8 @@ permissions:
   packages: read   # Needed to load container images
 
 env:
-  VCPKG_ROOT: external/vcpkg # vcpkg is by default sending build metrics, we do not need it here
   VCPKG_DISABLE_METRICS: 1
+  VCPKG_ROOT: external/vcpkg # vcpkg is by default sending build metrics, we do not need it here
   VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
 
 jobs:
@@ -47,6 +47,18 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/${{ matrix.config.preset }}/vcpkg_installed
+            external/vcpkg/downloads
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-
 
       # Bootstrap vcpkg on Linux
       - name: Bootstrap vcpkg (Linux)
@@ -98,6 +110,18 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/${{ matrix.config.preset }}/vcpkg_installed
+            external/vcpkg/downloads
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-
 
       # Bootstrap vcpkg on Windows
       - name: Bootstrap vcpkg (Windows)
@@ -152,6 +176,18 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/${{ matrix.config.preset }}/vcpkg_installed
+            external/vcpkg/downloads
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-
+
       - name: Install Mono & NuGet
         run: |
           # Try installing mono, but continue even if linking fails
@@ -201,9 +237,6 @@ jobs:
     name: vanillapdf core
     runs-on: ${{ matrix.config.os }}
 
-    env:
-      VCPKG_FEATURE_FLAGS: -manifests
-
     strategy:
       fail-fast: false
 
@@ -215,6 +248,18 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/${{ matrix.config.preset }}/vcpkg_installed
+            external/vcpkg/downloads
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-
 
       # Bootstrap vcpkg on Windows
       - name: Bootstrap vcpkg (Windows)

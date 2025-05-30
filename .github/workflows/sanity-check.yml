@@ -79,8 +79,8 @@ jobs:
             external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
-            vcpkg-sanity-${{ runner.os }}-${{ matrix.config.preset }}-
-            vcpkg-sanity-${{ runner.os }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-
 
       # Bootstrap vcpkg on Linux
       - name: Bootstrap vcpkg (Linux)
@@ -128,8 +128,8 @@ jobs:
             external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
-            vcpkg-sanity-${{ runner.os }}-${{ matrix.config.preset }}-
-            vcpkg-sanity-${{ runner.os }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-
 
       # Bootstrap vcpkg on Windows
       - name: Bootstrap vcpkg (Windows)
@@ -176,8 +176,8 @@ jobs:
             external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
-            vcpkg-sanity-${{ runner.os }}-${{ matrix.config.preset }}-
-            vcpkg-sanity-${{ runner.os }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-
 
       - name: Install build tools (macOS)
         run: brew install autoconf automake autoconf-archive

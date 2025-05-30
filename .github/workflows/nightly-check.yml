@@ -18,6 +18,7 @@ permissions:
 env:
   VCPKG_ROOT: external/vcpkg
   VCPKG_DISABLE_METRICS: 1 # vcpkg is by default sending build metrics, we do not need it here
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -32,23 +33,21 @@ jobs:
       matrix:
         config:
           - name: ubuntu.22.04-x64
-            os: ubuntu-latest
+            os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:22.04
             platform: linux/amd64
             preset: linux-x64-gcc
             build_type: Release
 
-          # TODO:
-          # Ubuntu 22.04 arm image cannot be built on windows due to QEMU bug
-          # - name: ubuntu.22.04-arm64
-          #   os: ubuntu-24.04-arm
-          #   image: ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:22.04
-          #   platform: linux/arm64
-          #   preset: linux-arm64-gcc
-          #   build_type: Release
+          - name: ubuntu.22.04-arm64
+            os: ubuntu-24.04-arm
+            image: ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:22.04
+            platform: linux/arm64
+            preset: linux-arm64-gcc
+            build_type: Release
 
           - name: ubuntu.24.04-x64
-            os: ubuntu-latest
+            os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:24.04
             platform: linux/amd64
             preset: linux-x64-gcc
@@ -62,7 +61,7 @@ jobs:
             build_type: Release
 
           - name: rocky.8-x64
-            os: ubuntu-latest
+            os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:8
             platform: linux/amd64
             preset: linux-x64-gcc
@@ -76,7 +75,7 @@ jobs:
             build_type: Release
 
           - name: rocky.9-x64
-            os: ubuntu-latest
+            os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9
             platform: linux/amd64
             preset: linux-x64-gcc
@@ -97,6 +96,18 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/${{ matrix.config.preset }}/vcpkg_installed
+            external/vcpkg/downloads
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-
 
       - name: Bootstrap vcpkg (Linux)
         run: ./external/vcpkg/bootstrap-vcpkg.sh
@@ -133,6 +144,18 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/${{ matrix.config.preset }}/vcpkg_installed
+            external/vcpkg/downloads
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-
+
       - name: Bootstrap vcpkg (Windows)
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
 
@@ -162,6 +185,18 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/${{ matrix.config.preset }}/vcpkg_installed
+            external/vcpkg/downloads
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-
 
       - name: Install build tools (macOS)
         run: brew install autoconf automake autoconf-archive
