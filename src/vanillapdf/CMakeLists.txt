@@ -541,14 +541,6 @@ if(MSVC)
     # Disable warning about unused parameters
     target_compile_options(vanillapdf PRIVATE "/wd4100")
 
-    if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
-        if(VANILLAPDF_USE_STATIC_CRT)
-            set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded" CACHE STRING "" FORCE)
-        else()
-            set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL" CACHE STRING "" FORCE)
-        endif()
-    endif()
-    
 endif(MSVC)
 
 if (MSVC AND BUILD_SHARED_LIBS)

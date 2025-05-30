@@ -54,3 +54,15 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-parameter")
 
 endif(CMAKE_COMPILER_IS_GNUCXX)
+
+if(MSVC)
+
+    # We would like to allow explicit configuration of the CMAKE_MSVC_RUNTIME_LIBRARY
+    if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
+        if(VANILLAPDF_USE_STATIC_CRT)
+            set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded" CACHE STRING "" FORCE)
+        else()
+            set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL" CACHE STRING "" FORCE)
+        endif()
+    endif()
+endif()
