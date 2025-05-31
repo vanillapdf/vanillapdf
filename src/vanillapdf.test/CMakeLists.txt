@@ -79,12 +79,12 @@ endif()
 #)
 
 # Specify version identificators
-add_definitions(-DVANILLAPDF_TEST_VERSION_MAJOR=${VANILLAPDF_VERSION_MAJOR})
-add_definitions(-DVANILLAPDF_TEST_VERSION_MINOR=${VANILLAPDF_VERSION_MINOR})
-add_definitions(-DVANILLAPDF_TEST_VERSION_PATCH=${VANILLAPDF_VERSION_PATCH})
-add_definitions(-DVANILLAPDF_TEST_VERSION_BUILD=${VANILLAPDF_VERSION_BUILD})
+target_compile_definitions(vanillapdf.test PRIVATE -DVANILLAPDF_TEST_VERSION_MAJOR=${VANILLAPDF_VERSION_MAJOR})
+target_compile_definitions(vanillapdf.test PRIVATE -DVANILLAPDF_TEST_VERSION_MINOR=${VANILLAPDF_VERSION_MINOR})
+target_compile_definitions(vanillapdf.test PRIVATE -DVANILLAPDF_TEST_VERSION_PATCH=${VANILLAPDF_VERSION_PATCH})
+target_compile_definitions(vanillapdf.test PRIVATE -DVANILLAPDF_TEST_VERSION_BUILD=${VANILLAPDF_VERSION_BUILD})
 
-add_definitions(-DVANILLAPDF_TEST_ICON="${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/vanilla_logo.ico")
+target_compile_definitions(vanillapdf.test PRIVATE -DVANILLAPDF_TEST_ICON="${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/vanilla_logo.ico")
 
 # Python for running the test cases
 find_package (Python3 COMPONENTS Interpreter REQUIRED)

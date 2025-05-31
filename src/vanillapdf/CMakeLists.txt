@@ -535,8 +535,12 @@ if(MSVC)
     # Add natvis file embedding
     target_link_options(vanillapdf PRIVATE "/NATVIS:${CMAKE_CURRENT_SOURCE_DIR}/public.natvis")
 
+    # Enable maximum warning level and treat warnings as errors
+    target_compile_options(vanillapdf PRIVATE "/W4")
+
     # Disable warning about unused parameters
     target_compile_options(vanillapdf PRIVATE "/wd4100")
+
 endif(MSVC)
 
 if (MSVC AND BUILD_SHARED_LIBS)
@@ -545,6 +549,13 @@ if (MSVC AND BUILD_SHARED_LIBS)
     target_compile_options(vanillapdf PRIVATE "/Zi")
     target_link_options(vanillapdf PRIVATE "/DEBUG")
 
+endif()
+
+# Add support for static linking also with GCC and clang
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    if(VANILLAPDF_USE_STATIC_CRT)
+        target_link_options(vanillapdf PRIVATE -static-libstdc++ -static-libgcc)
+    endif()
 endif()
 
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSION_LESS "9.1")
@@ -558,12 +569,6 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSIO
     target_link_libraries(vanillapdf PRIVATE stdc++fs)
 endif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSION_LESS "9.1")
 
-# Set C++ standard to be 17
-# NOTE: C++20 fails on latest GCC, due to error with atomic variables
-# NOTE: Similar issue here https://github.com/zephyrproject-rtos/zephyr/issues/40023
-set_property(TARGET vanillapdf PROPERTY CXX_STANDARD 17)
-set_property(TARGET vanillapdf PROPERTY CXX_STANDARD_REQUIRED ON)
-
 # In case we have the dynamic link configuration add specific definitions
 if(BUILD_SHARED_LIBS)
 
@@ -573,14 +578,11 @@ if(BUILD_SHARED_LIBS)
 
 endif()
 
-# Specify that library should export functions
-add_definitions(-DVANILLAPDF_EXPORTS)
-
 # Specify version identificators
-add_definitions(-DVANILLAPDF_VERSION_MAJOR=${VANILLAPDF_VERSION_MAJOR})
-add_definitions(-DVANILLAPDF_VERSION_MINOR=${VANILLAPDF_VERSION_MINOR})
-add_definitions(-DVANILLAPDF_VERSION_PATCH=${VANILLAPDF_VERSION_PATCH})
-add_definitions(-DVANILLAPDF_VERSION_BUILD=${VANILLAPDF_VERSION_BUILD})
+target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_VERSION_MAJOR=${VANILLAPDF_VERSION_MAJOR})
+target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_VERSION_MINOR=${VANILLAPDF_VERSION_MINOR})
+target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_VERSION_PATCH=${VANILLAPDF_VERSION_PATCH})
+target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_VERSION_BUILD=${VANILLAPDF_VERSION_BUILD})
 
 # Specify build time identificators
 string(TIMESTAMP VANILLAPDF_BUILD_DAY	"%d" UTC)
@@ -593,9 +595,9 @@ string(REGEX REPLACE "^0*([0-9]+)" "\\1" VANILLAPDF_BUILD_DAY		"${VANILLAPDF_BUI
 string(REGEX REPLACE "^0*([0-9]+)" "\\1" VANILLAPDF_BUILD_MONTH		"${VANILLAPDF_BUILD_MONTH}")
 string(REGEX REPLACE "^0*([0-9]+)" "\\1" VANILLAPDF_BUILD_YEAR		"${VANILLAPDF_BUILD_YEAR}")
 
-add_definitions(-DVANILLAPDF_BUILD_DAY=${VANILLAPDF_BUILD_DAY})
-add_definitions(-DVANILLAPDF_BUILD_MONTH=${VANILLAPDF_BUILD_MONTH})
-add_definitions(-DVANILLAPDF_BUILD_YEAR=${VANILLAPDF_BUILD_YEAR})
+target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_BUILD_DAY=${VANILLAPDF_BUILD_DAY})
+target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_BUILD_MONTH=${VANILLAPDF_BUILD_MONTH})
+target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_BUILD_YEAR=${VANILLAPDF_BUILD_YEAR})
 
 # In case we would like to extract code coverage report enable the flag
 if(VANILLAPDF_ENABLE_COVERAGE)

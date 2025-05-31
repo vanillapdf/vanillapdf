@@ -19,6 +19,9 @@ option(VANILLAPDF_STANDALONE "Enable internal vcpkg setup for standalone builds"
 option(VANILLAPDF_ENABLE_TESTS "Perform test scenarios to ensure stable releases" ON)
 option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure performance" ON)
 
+# Allow build configuration to link using static CRT, dynamic CRT link is default
+option(VANILLAPDF_USE_STATIC_CRT "Use static MSVC runtime (/MT) instead of dynamic (/MD)" OFF)
+
 # Option if the build should be static/dynamic link
 option(BUILD_SHARED_LIBS "Build vanillapdf as a shared library" ON)
 

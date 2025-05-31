@@ -57,32 +57,12 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 
 if(MSVC)
 
-    # Enable maximum warning level and treat warnings as errors
-    add_compile_options(/W4)
-
-    # We want to statically link most of the things on Windows
-    # as it is hell to deploy multiple binaries alongside
-
-    # UPDATE 2022:
-    # Some dependencies such as libjpeg and OpenSSL do not support static CRT
-    # This means that we have to ship CRT libraries in any case
-    # Let's use this and reduce the libvanillapdf size by dynamically linking the CRT
-
-    # Update 2025:
-    # Switching to CMAKE_MSVC_RUNTIME_LIBRARY
-    # set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd")
-    # set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
-    # 
-    # set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MT")
-    # set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-    # 
-    # set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} /MT")
-    # set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} /MT")
-    # 
-    # set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} /MT")
-    # set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /MT")
-
-    # Use static runtime: /MT or /MTd
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STRING "" FORCE)
-
-endif(MSVC)
+    # We would like to allow explicit configuration of the CMAKE_MSVC_RUNTIME_LIBRARY
+    if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
+        if(VANILLAPDF_USE_STATIC_CRT)
+            set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded" CACHE STRING "" FORCE)
+        else()
+            set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL" CACHE STRING "" FORCE)
+        endif()
+    endif()
+endif()
