@@ -201,7 +201,7 @@ jobs:
             vcpkg-${{ runner.os }}-
 
       - name: Install build tools (macOS)
-        run: brew install autoconf automake autoconf-archive
+        run: brew install --quiet autoconf automake autoconf-archive
 
       - name: Bootstrap vcpkg (macOS)
         run: ${{ github.workspace }}/external/vcpkg/bootstrap-vcpkg.sh
