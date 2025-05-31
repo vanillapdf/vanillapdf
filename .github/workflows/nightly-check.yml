@@ -7,6 +7,20 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+  # Run workflow on any push into main branch
+  # only there was a change in the workflow file
+  push:
+    branches: [ "main" ]
+    paths:
+      - '.github/workflows/nightly-check.yml'
+
+  # Run workflow when there is a pull request towards main branch
+  # only there was a change in the workflow file
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - '.github/workflows/nightly-check.yml'
+
   schedule:
     - cron: '0 2 * * 1'  # Every on Monday at 2 AM UTC
 
