@@ -19,27 +19,25 @@ jobs:
 
   linux:
     name: ${{ matrix.config.name }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.config.os }}
 
     strategy:
       fail-fast: false
       matrix:
         config:
           - name: linux-x64
+            os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9
             platform: linux/amd64
             preset: linux-x64-gcc
             build_type: Release
 
           - name: linux-arm64
+            os: ubuntu-24.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9
             platform: linux/arm64
             preset: linux-arm64-gcc
             build_type: Release
-
-        exclude:
-          - config:
-              name: linux-arm64 # arm64 is currently not supported on the shared runners
 
     container:
       image: ${{ matrix.config.image }}

@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
   schedule:
-    - cron: '0 2 * * *'  # Every day at 2 AM UTC
+    - cron: '0 2 * * 1'  # Every on Monday at 2 AM UTC
 
 # Enable only minimum required permissions
 permissions:
@@ -25,7 +25,7 @@ jobs:
 
   linux:
     name: linux - ${{ matrix.config.name }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.config.os }}
 
     strategy:
       fail-fast: false
@@ -33,65 +33,62 @@ jobs:
       matrix:
         config:
           - name: ubuntu.22.04-x64
+            os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:22.04
             platform: linux/amd64
             preset: linux-x64-gcc
             build_type: Release
 
-          - name: ubuntu.22.04-arm64
-            image: ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:22.04
-            platform: linux/arm64
-            preset: linux-arm64-gcc
-            build_type: Release
+          # TODO:
+          # Ubuntu 22.04 arm image cannot be built on windows due to QEMU bug
+          # - name: ubuntu.22.04-arm64
+          #   os: ubuntu-24.04-arm
+          #   image: ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:22.04
+          #   platform: linux/arm64
+          #   preset: linux-arm64-gcc
+          #   build_type: Release
 
           - name: ubuntu.24.04-x64
+            os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:24.04
             platform: linux/amd64
             preset: linux-x64-gcc
             build_type: Release
 
           - name: ubuntu.24.04-arm64
+            os: ubuntu-24.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:24.04
             platform: linux/arm64
             preset: linux-arm64-gcc
             build_type: Release
 
           - name: rocky.8-x64
+            os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:8
             platform: linux/amd64
             preset: linux-x64-gcc
             build_type: Release
 
           - name: rocky.8-arm64
+            os: ubuntu-24.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:8
             platform: linux/arm64
             preset: linux-arm64-gcc
             build_type: Release
 
           - name: rocky.9-x64
+            os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9
             platform: linux/amd64
             preset: linux-x64-gcc
             build_type: Release
 
           - name: rocky.9-arm64
+            os: ubuntu-24.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9
             platform: linux/arm64
             preset: linux-arm64-gcc
             build_type: Release
-
-        exclude:
-          - config:
-              name: ubuntu.22.04-arm64 # arm64 is currently not supported on the shared runners
-
-          - config:
-              name: ubuntu.24.04-arm64 # arm64 is currently not supported on the shared runners
-
-          - config:
-              name: rocky.8-arm64 # arm64 is currently not supported on the shared runners
-
-          - config:
-              name: rocky.9-arm64 # arm64 is currently not supported on the shared runners
 
     container:
       image: ${{ matrix.config.image }}

@@ -21,8 +21,8 @@
             "generator": "Ninja",
             "cacheVariables": {
                 "VCPKG_TARGET_TRIPLET": "arm64-linux",
-                "CMAKE_C_COMPILER": "aarch64-linux-gnu-gcc",
-                "CMAKE_CXX_COMPILER": "aarch64-linux-gnu-g++",
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
                 "PLATFORM_IDENTIFIER": "linux-arm64"
             }
         },
