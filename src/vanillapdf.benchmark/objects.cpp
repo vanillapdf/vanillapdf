@@ -180,3 +180,45 @@ static void BM_StringGetValue_Hexadecimal(benchmark::State& state, Args&&... arg
 BENCHMARK_CAPTURE(BM_StringGetValue_Hexadecimal, string_empty, "");
 BENCHMARK_CAPTURE(BM_StringGetValue_Hexadecimal, string_unpaired, "F");
 BENCHMARK_CAPTURE(BM_StringGetValue_Hexadecimal, string_values, "000A0FF0FF");
+
+template <class ...Args>
+static void BM_CreateFromEncodedString_Hexadecimal(benchmark::State& state, Args&&... args) {
+    auto args_tuple = std::make_tuple(std::move(args)...);
+
+    for (auto _ : state) {
+        HexadecimalStringObjectHandle* string_object = nullptr;
+
+        std::string encoded_string = std::get<0>(args_tuple);
+
+        // Create data from defined value
+        HexadecimalStringObject_CreateFromEncodedString(encoded_string.c_str(), &string_object);
+
+        // Cleanup
+        HexadecimalStringObject_Release(string_object);
+    }
+}
+
+BENCHMARK_CAPTURE(BM_CreateFromEncodedString_Hexadecimal, string_empty, "");
+BENCHMARK_CAPTURE(BM_CreateFromEncodedString_Hexadecimal, string_unpaired, "F");
+BENCHMARK_CAPTURE(BM_CreateFromEncodedString_Hexadecimal, string_values, "000A0FF0FF");
+
+template <class ...Args>
+static void BM_CreateFromEncodedString_Literal(benchmark::State& state, Args&&... args) {
+    auto args_tuple = std::make_tuple(std::move(args)...);
+
+    for (auto _ : state) {
+        LiteralStringObjectHandle* string_object = nullptr;
+
+        std::string encoded_string = std::get<0>(args_tuple);
+
+        // Create data from defined value
+        LiteralStringObject_CreateFromEncodedString(encoded_string.c_str(), &string_object);
+
+        // Cleanup
+        LiteralStringObject_Release(string_object);
+    }
+}
+
+BENCHMARK_CAPTURE(BM_CreateFromEncodedString_Literal, string_empty, "");
+BENCHMARK_CAPTURE(BM_CreateFromEncodedString_Literal, string_basic, "abcdefghijklmnopqrstuvwxyz");
+BENCHMARK_CAPTURE(BM_CreateFromEncodedString_Literal, string_octal, "\\001\\002\\003\\004\\252\\253\\254\\255");
