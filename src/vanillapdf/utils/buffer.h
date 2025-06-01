@@ -66,6 +66,7 @@ public:
     size_t Hash() const;
     BufferPtr Clone(void) const { return make_deferred_container<Buffer>(begin(), end()); }
     std::string ToString(void) const { return std::string(begin(), end()); }
+    std::string_view ToStringView(void) const { return std::string_view(data(), size()); }
     std::string ToHexString(void) const;
     IInputStreamPtr ToInputStream(void) const;
     bool Equals(const Buffer& other) const;

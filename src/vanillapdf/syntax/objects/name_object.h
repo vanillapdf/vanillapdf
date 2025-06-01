@@ -16,17 +16,16 @@ public:
     //NameObject(const NameObject&) = delete;
 
     static NameObjectPtr CreateFromEncoded(BufferPtr value);
-    static NameObjectPtr CreateFromEncoded(const char* value);
     static NameObjectPtr CreateFromEncoded(std::string_view value);
 
     static NameObjectPtr CreateFromDecoded(BufferPtr value);
-    static NameObjectPtr CreateFromDecoded(const char* value);
     static NameObjectPtr CreateFromDecoded(std::string_view value);
 
     virtual void ObserveeChanged(const IModifyObservable*) override;
 
     BufferPtr GetValue() const;
     void SetValue(BufferPtr value);
+    void SetValue(std::string_view value);
 
     bool Equals(const NameObject& other) const;
     virtual bool Equals(ObjectPtr other) const override;
