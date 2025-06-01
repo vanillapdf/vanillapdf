@@ -32,11 +32,13 @@ env:
 jobs:
 
   linux:
-    name: linux - ${{ matrix.config.name }}
+    name: ${{ matrix.config.name }} - ${{ matrix.build_type }}
     runs-on: ${{ matrix.config.os }}
 
     strategy:
       fail-fast: false # We would like to see the results of all jobs even in case one of them fails
+      max-parallel: 4
+
       matrix:
         build_type: [Debug, Release]
 
@@ -102,11 +104,12 @@ jobs:
 
 
   windows:
-    name: windows - ${{ matrix.config.name }}
+    name: ${{ matrix.config.name }} - ${{ matrix.build_type }}
     runs-on: windows-2025
 
     strategy:
       fail-fast: false # We would like to see the results of all jobs even in case one of them fails
+      max-parallel: 4
 
       matrix:
         build_type: [Debug, Release]
@@ -149,11 +152,13 @@ jobs:
         run: ctest --preset ${{ matrix.config.preset }} -C ${{ matrix.build_type }} --output-on-failure
 
   macos:
-    name: macOS - ${{ matrix.config.name }}
+    name: ${{ matrix.config.name }} - ${{ matrix.build_type }}
     runs-on: ${{ matrix.config.runner }}
 
     strategy:
       fail-fast: false # We would like to see the results of all jobs even in case one of them fails
+      max-parallel: 4
+
       matrix:
         build_type: [Debug, Release]
 
