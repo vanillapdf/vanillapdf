@@ -225,3 +225,24 @@ static void BM_CreateFromEncodedString_Literal(benchmark::State& state, Args&&..
 BENCHMARK_CAPTURE(BM_CreateFromEncodedString_Literal, string_empty, "");
 BENCHMARK_CAPTURE(BM_CreateFromEncodedString_Literal, string_basic, "abcdefghijklmnopqrstuvwxyz");
 BENCHMARK_CAPTURE(BM_CreateFromEncodedString_Literal, string_octal, "\\001\\002\\003\\004\\252\\253\\254\\255");
+
+template <class ...Args>
+static void BM_CreateFromEncodedString_Name(benchmark::State& state, Args&&... args) {
+    auto args_tuple = std::make_tuple(std::move(args)...);
+
+    const char* encoded_string = std::get<0>(args_tuple);
+
+    for (auto _ : state) {
+        NameObjectHandle* name_object = nullptr;
+
+        // Create data from defined value
+        NameObject_CreateFromEncodedString(encoded_string, &name_object);
+
+        // Cleanup
+        NameObject_Release(name_object);
+    }
+}
+
+BENCHMARK_CAPTURE(BM_CreateFromEncodedString_Name, string_empty, "");
+BENCHMARK_CAPTURE(BM_CreateFromEncodedString_Name, string_basic, "abcdefghijklmnopqrstuvwxyz");
+BENCHMARK_CAPTURE(BM_CreateFromEncodedString_Name, string_hexadecimal, "#01#02#03#FA#FB#FC#FD#FE#FF");
