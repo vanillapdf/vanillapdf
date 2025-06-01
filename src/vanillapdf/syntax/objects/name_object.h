@@ -17,11 +17,11 @@ public:
 
     static NameObjectPtr CreateFromEncoded(BufferPtr value);
     static NameObjectPtr CreateFromEncoded(const char* value);
-    static NameObjectPtr CreateFromEncoded(const std::string& value);
+    static NameObjectPtr CreateFromEncoded(std::string_view value);
 
     static NameObjectPtr CreateFromDecoded(BufferPtr value);
     static NameObjectPtr CreateFromDecoded(const char* value);
-    static NameObjectPtr CreateFromDecoded(const std::string& value);
+    static NameObjectPtr CreateFromDecoded(std::string_view value);
 
     virtual void ObserveeChanged(const IModifyObservable*) override;
 

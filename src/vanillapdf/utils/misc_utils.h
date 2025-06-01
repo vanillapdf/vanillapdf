@@ -14,6 +14,8 @@
 #include <openssl/ossl_typ.h>
 
 #include <string>
+#include <charconv>
+#include <system_error>
 
 namespace vanillapdf {
 
@@ -30,6 +32,41 @@ public:
 
     static void InitializeOpenSSL();
     static std::string GetLastOpensslError();
+
+    template <typename T>
+    static T FromChars(const char * const first, const char* const last, const int base = 10) {
+
+        T value;
+        auto result = std::from_chars(first, last, value, base);
+        if (result.ec != std::errc()) {
+            LOG_ERROR_AND_THROW_GENERAL("Could not parse {} from {}: {}",
+                typeid(T).name(),
+                first,
+                std::make_error_code(result.ec).message());
+        }
+
+        return value;
+    }
+
+    template <>
+    static double FromChars(const char* const first, const char* const last, const int) {
+
+        double value;
+        auto result = std::from_chars(first, last, value);
+        if (result.ec != std::errc()) {
+            LOG_ERROR_AND_THROW_GENERAL("Could not parse {} from {}: {}",
+                typeid(double).name(),
+                first,
+                std::make_error_code(result.ec).message());
+        }
+
+        return value;
+    }
+
+    template <typename T>
+    static T FromChars(std::string_view str, const int base = 10) {
+        return FromChars<T>(str.data(), str.data() + str.size(), base);
+    }
 
 private:
     MiscUtils();

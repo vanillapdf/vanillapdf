@@ -149,7 +149,9 @@ public:
     Token(Type type, std::string_view chars);
 
     Token::Type GetType(void) const { return _type; }
-    std::string Value() const { return _value; }
+
+    std::string ValueCopy() const { return _value; }
+    std::string_view ValueView() const { return _value; }
 
 private:
     Type _type = Type::UNKNOWN;

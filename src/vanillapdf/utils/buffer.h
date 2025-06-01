@@ -36,7 +36,7 @@ public:
     Buffer() = default;
 
     explicit Buffer(const char * chars);
-    explicit Buffer(const std::string& data);
+    explicit Buffer(std::string_view data);
     Buffer(const value_type * begin, const value_type * end);
     Buffer(size_type count, const value_type& val);
 

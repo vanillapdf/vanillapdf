@@ -11,6 +11,7 @@
 
 #include "utils/character.h"
 #include "utils/math_utils.h"
+#include "utils/misc_utils.h"
 
 #include "utils/streams/input_reverse_stream.h"
 
@@ -500,14 +501,14 @@ XrefEntryBasePtr Parser::ReadTableEntry(types::big_uint objNumber) {
     }
 
     auto peeked_token = PeekTokenSkip();
-    if (peeked_token->Value() == "n") {
+    if (peeked_token->ValueView() == "n") {
         ReadTokenSkip();
         XrefUsedEntryPtr result = make_deferred<XrefUsedEntry>(objNumber, ValueConvertUtils::SafeConvert<types::ushort>(gen_number), ValueConvertUtils::SafeConvert<types::stream_offset>(offset));
         result->SetFile(_file);
         return result;
     }
 
-    if (peeked_token->Value() == "f") {
+    if (peeked_token->ValueView() == "f") {
         ReadTokenSkip();
         XrefFreeEntryPtr result = make_deferred<XrefFreeEntry>(objNumber, ValueConvertUtils::SafeConvert<types::ushort>(gen_number));
         result->SetFile(_file);
@@ -525,8 +526,11 @@ XrefTablePtr Parser::ReadXrefTable() {
         auto revision_base_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
         auto size_token = ReadTokenWithTypeSkip(Token::Type::INTEGER_OBJECT);
 
-        auto revision_base = std::stoull(revision_base_token->Value());
-        auto size = std::stoull(size_token->Value());
+        auto revision_base_token_view = revision_base_token->ValueView();
+        auto size_token_view = size_token->ValueView();
+
+        auto revision_base = MiscUtils::FromChars<types::big_uint>(revision_base_token_view);
+        auto size = MiscUtils::FromChars<types::big_uint>(size_token_view);
 
         for (decltype(size) i = 0; i < size; ++i) {
             auto entry = ReadTableEntry(SafeAddition<types::big_uint>(revision_base, i));
@@ -849,9 +853,11 @@ XrefChainPtr Parser::FindAllObjects(void) {
             continue;
         }
 
-        auto obj_number = std::stoull(first_token->Value());
-        auto gen_number_ul = std::stoul(gen_number_token->Value());
-        auto gen_number = ValueConvertUtils::SafeConvert<types::ushort>(gen_number_ul);
+        auto first_token_view = first_token->ValueView();
+        auto gen_number_token_view = gen_number_token->ValueView();
+
+        auto obj_number = MiscUtils::FromChars<types::big_uint>(first_token_view);
+        auto gen_number = MiscUtils::FromChars<types::ushort>(gen_number_token_view);
 
         auto obj = ReadDirectObject();
         obj->SetOffset(offset_before);

@@ -10,7 +10,7 @@
 namespace vanillapdf {
 
 Buffer::Buffer(const char * chars) : Buffer(chars, std::strlen(chars)) {}
-Buffer::Buffer(const std::string& data) : Buffer(data.begin(), data.end()) {}
+Buffer::Buffer(std::string_view data) : Buffer(data.begin(), data.end()) {}
 Buffer::Buffer(const value_type * begin, const value_type * end) : m_data(begin, end) { assert(m_data.size() > 0); }
 Buffer::Buffer(size_type count, const value_type& val) : m_data(count, val) {}
 

@@ -45,7 +45,7 @@ NameObjectPtr NameObject::CreateFromEncoded(const char* value) {
     return CreateFromEncoded(buffer);
 }
 
-NameObjectPtr NameObject::CreateFromEncoded(const std::string& value) {
+NameObjectPtr NameObject::CreateFromEncoded(std::string_view value) {
     auto buffer = make_deferred_container<Buffer>(value);
     return CreateFromEncoded(buffer);
 }
@@ -64,7 +64,7 @@ NameObjectPtr NameObject::CreateFromDecoded(const char* value) {
     return CreateFromDecoded(buffer);
 }
 
-NameObjectPtr NameObject::CreateFromDecoded(const std::string& value) {
+NameObjectPtr NameObject::CreateFromDecoded(std::string_view value) {
     auto buffer = make_deferred_container<Buffer>(value);
     return CreateFromDecoded(buffer);
 }

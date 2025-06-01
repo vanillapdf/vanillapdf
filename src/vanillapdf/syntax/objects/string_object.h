@@ -20,6 +20,7 @@ public:
 
     virtual BufferPtr GetValue() const = 0;
     virtual void SetValue(BufferPtr value) = 0;
+    virtual void SetValue(std::string_view value) = 0;
 
     virtual StringType GetStringType(void) const noexcept = 0;
     virtual Object::Type GetObjectType(void) const noexcept override { return Object::Type::String; }
@@ -45,11 +46,11 @@ public:
 
     static HexadecimalStringObjectPtr CreateFromEncoded(BufferPtr value);
     static HexadecimalStringObjectPtr CreateFromEncoded(const char * value);
-    static HexadecimalStringObjectPtr CreateFromEncoded(const std::string& value);
+    static HexadecimalStringObjectPtr CreateFromEncoded(std::string_view value);
 
     static HexadecimalStringObjectPtr CreateFromDecoded(BufferPtr value);
     static HexadecimalStringObjectPtr CreateFromDecoded(const char * value);
-    static HexadecimalStringObjectPtr CreateFromDecoded(const std::string& value);
+    static HexadecimalStringObjectPtr CreateFromDecoded(std::string_view value);
 
     virtual void ObserveeChanged(const IModifyObservable*) override;
 
@@ -57,6 +58,7 @@ public:
 
     virtual BufferPtr GetValue() const override;
     virtual void SetValue(BufferPtr value) override;
+    virtual void SetValue(std::string_view value) override;
     virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 
     virtual HexadecimalStringObject* Clone(void) const override;
@@ -65,7 +67,9 @@ public:
 
 private:
     BufferPtr GetRawValue() const;
+
     void SetRawValue(BufferPtr value);
+    void SetRawValue(std::string_view value);
 
     BufferPtr _raw_value;
     mutable BufferPtr _value;
@@ -78,17 +82,18 @@ public:
 
     static LiteralStringObjectPtr CreateFromEncoded(BufferPtr value);
     static LiteralStringObjectPtr CreateFromEncoded(const char * value);
-    static LiteralStringObjectPtr CreateFromEncoded(const std::string& value);
+    static LiteralStringObjectPtr CreateFromEncoded(std::string_view value);
 
     static LiteralStringObjectPtr CreateFromDecoded(BufferPtr value);
     static LiteralStringObjectPtr CreateFromDecoded(const char * value);
-    static LiteralStringObjectPtr CreateFromDecoded(const std::string& value);
+    static LiteralStringObjectPtr CreateFromDecoded(std::string_view value);
 
     virtual void ObserveeChanged(const IModifyObservable*) override;
 
     virtual StringObjectBase::StringType GetStringType(void) const noexcept override { return StringObjectBase::StringType::Literal; }
     virtual BufferPtr GetValue() const override;
     virtual void SetValue(BufferPtr value) override;
+    virtual void SetValue(std::string_view value) override;
     virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 
     virtual LiteralStringObject* Clone(void) const override;
@@ -98,7 +103,9 @@ public:
 private:
     BufferPtr GetRawValue() const;
     BufferPtr GetRawValueDecoded() const;
+
     void SetRawValue(BufferPtr value);
+    void SetRawValue(std::string_view value);
 
     BufferPtr _raw_value;
     mutable BufferPtr _value;
