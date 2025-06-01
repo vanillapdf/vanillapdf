@@ -199,10 +199,8 @@ BufferPtr LiteralStringObject::GetValue() const {
 }
 
 void LiteralStringObject::SetValue(BufferPtr value) {
-    ACCESS_LOCK_GUARD(_access_lock);
-
-    _value->assign(value.begin(), value.end());
-    _value->SetInitialized();
+    auto str = value->ToStringView();
+    SetValue(str);
 }
 
 void LiteralStringObject::SetValue(std::string_view value) {
@@ -386,7 +384,9 @@ BufferPtr LiteralStringObject::GetRawValueDecoded() const {
         // This is 511 in decimal and it's not clear what should be done in such case.
 
         auto value = MiscUtils::FromChars<unsigned char>(octal, 8);
-        result->push_back(value);
+        char converted = reinterpret_cast<char&>(value);
+
+        result->push_back(converted);
         continue;
     }
 
@@ -398,10 +398,8 @@ BufferPtr LiteralStringObject::GetRawValueDecoded() const {
 }
 
 void LiteralStringObject::SetRawValue(BufferPtr value) {
-    ACCESS_LOCK_GUARD(_access_lock);
-
-    _raw_value->assign(value.begin(), value.end());
-    _raw_value->SetInitialized();
+    auto str = value->ToStringView();
+    SetRawValue(str);
 }
 
 void LiteralStringObject::SetRawValue(std::string_view value) {
@@ -445,8 +443,8 @@ BufferPtr HexadecimalStringObject::GetValue() const {
     result->reserve(len);
 
     for (decltype(len) i = 0; i < len; ++i) {
-        auto val = MiscUtils::FromChars<unsigned char>(&hexadecimal[i * 2], &hexadecimal[i * 2 + 2], 16);
-        result->push_back(val);
+        auto value = MiscUtils::FromChars<unsigned char>(&hexadecimal[i * 2], &hexadecimal[i * 2 + 2], 16);
+        result->push_back(value);
     }
 
     if (!m_file.IsEmpty()) {
@@ -466,10 +464,8 @@ BufferPtr HexadecimalStringObject::GetValue() const {
 }
 
 void HexadecimalStringObject::SetValue(BufferPtr value) {
-    ACCESS_LOCK_GUARD(_access_lock);
-
-    _value->assign(value.begin(), value.end());
-    _value->SetInitialized();
+    auto str = value->ToStringView();
+    SetValue(str);
 }
 
 void HexadecimalStringObject::SetValue(std::string_view value) {
@@ -484,10 +480,8 @@ BufferPtr HexadecimalStringObject::GetRawValue() const {
 }
 
 void HexadecimalStringObject::SetRawValue(BufferPtr value) {
-    ACCESS_LOCK_GUARD(_access_lock);
-
-    _raw_value->assign(value.begin(), value.end());
-    _raw_value->SetInitialized();
+    auto str = value->ToStringView();
+    SetRawValue(str);
 }
 
 void HexadecimalStringObject::SetRawValue(std::string_view value) {
