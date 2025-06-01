@@ -653,6 +653,53 @@ namespace xref {
 
 } /* xref */
 
+namespace errors {
+
+    void CheckPrintableErrorText(error_type value, std::string_view expected) {
+        size_type text_size = 0;
+
+        // Get length of the text needed
+        ASSERT_EQ(Errors_GetPrintableErrorTextLength(value, &text_size), VANILLAPDF_ERROR_SUCCESS);
+
+        std::string error_text;
+        error_text.resize(text_size);
+
+        // Extract actual error text representation
+        ASSERT_EQ(Errors_GetPrintableErrorText(value, error_text.data(), text_size), VANILLAPDF_ERROR_SUCCESS);
+
+        // Compare the values
+        EXPECT_STREQ(error_text.data(), expected.data());
+    }
+
+    TEST(Errors, CheckPrintableErrors) {
+
+        // global error states
+        CheckPrintableErrorText(VANILLAPDF_ERROR_SUCCESS, "VANILLAPDF_ERROR_SUCCESS");
+        CheckPrintableErrorText(VANILLAPDF_ERROR_PARAMETER_VALUE, "VANILLAPDF_ERROR_PARAMETER_VALUE");
+        CheckPrintableErrorText(VANILLAPDF_ERROR_NOT_SUPPORTED, "VANILLAPDF_ERROR_NOT_SUPPORTED");
+        CheckPrintableErrorText(VANILLAPDF_ERROR_USER_CANCELLED, "VANILLAPDF_ERROR_USER_CANCELLED");
+        CheckPrintableErrorText(VANILLAPDF_ERROR_ZLIB_DATA, "VANILLAPDF_ERROR_ZLIB_DATA");
+        CheckPrintableErrorText(VANILLAPDF_ERROR_INVALID_LICENSE, "VANILLAPDF_ERROR_INVALID_LICENSE");
+        CheckPrintableErrorText(VANILLAPDF_ERROR_LICENSE_REQUIRED, "VANILLAPDF_ERROR_LICENSE_REQUIRED");
+        CheckPrintableErrorText(VANILLAPDF_ERROR_INSUFFICIENT_SPACE, "VANILLAPDF_ERROR_INSUFFICIENT_SPACE");
+        CheckPrintableErrorText(VANILLAPDF_ERROR_GENERAL, "VANILLAPDF_ERROR_GENERAL");
+
+        // syntax errors
+        CheckPrintableErrorText(VANILLAPDF_ERROR_CONVERSION, "VANILLAPDF_ERROR_CONVERSION");
+        CheckPrintableErrorText(VANILLAPDF_ERROR_FILE_DISPOSED, "VANILLAPDF_ERROR_FILE_DISPOSED");
+        CheckPrintableErrorText(VANILLAPDF_ERROR_FILE_NOT_INITIALIZED, "VANILLAPDF_ERROR_FILE_NOT_INITIALIZED");
+        CheckPrintableErrorText(VANILLAPDF_ERROR_OBJECT_MISSING, "VANILLAPDF_ERROR_OBJECT_MISSING");
+        CheckPrintableErrorText(VANILLAPDF_ERROR_PARSE_EXCEPTION, "VANILLAPDF_ERROR_PARSE_EXCEPTION");
+        CheckPrintableErrorText(VANILLAPDF_ERROR_INVALID_PASSWORD, "VANILLAPDF_ERROR_INVALID_PASSWORD");
+        CheckPrintableErrorText(VANILLAPDF_ERROR_DUPLICATE_KEY, "VANILLAPDF_ERROR_DUPLICATE_KEY");
+
+        // semantic
+        CheckPrintableErrorText(VANILLAPDF_ERROR_OPTIONAL_ENTRY_MISSING, "VANILLAPDF_ERROR_OPTIONAL_ENTRY_MISSING");
+        CheckPrintableErrorText(VANILLAPDF_ERROR_SEMANTIC_CONTEXT, "VANILLAPDF_ERROR_SEMANTIC_CONTEXT");
+    }
+
+} /* errors */
+
 int main(int argc, char *argv[]) {
 
     TestEnvironment* test_environment = new TestEnvironment();
