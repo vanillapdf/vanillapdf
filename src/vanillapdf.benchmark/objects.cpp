@@ -4,13 +4,16 @@ template <class ...Args>
 static void BM_RealObjectToPdf(benchmark::State& state, Args&&... args) {
     auto args_tuple = std::make_tuple(std::move(args)...);
 
+    real_type value = std::get<0>(args_tuple);
+    integer_type precision = std::get<1>(args_tuple);
+
     for (auto _ : state) {
         RealObjectHandle* real_object = nullptr;
         ObjectHandle* base_object = nullptr;
         BufferHandle* object_pdf_buffer = nullptr;
 
         // Create data from defined value
-        RealObject_CreateFromData(std::get<0>(args_tuple), std::get<1>(args_tuple), &real_object);
+        RealObject_CreateFromData(value, precision, &real_object);
 
         // Convert to base object
         RealObject_ToObject(real_object, &base_object);
@@ -32,16 +35,16 @@ template <class ...Args>
 static void BM_HexadecimalStringObjectToPdf(benchmark::State& state, Args&&... args) {
     auto args_tuple = std::make_tuple(std::move(args)...);
 
+    const char* encoded_hex_string = std::get<0>(args_tuple);
+
     for (auto _ : state) {
         HexadecimalStringObjectHandle* hex_string_object = nullptr;
         StringObjectHandle* string_object = nullptr;
         ObjectHandle* base_object = nullptr;
         BufferHandle* object_pdf_buffer = nullptr;
 
-        std::string encoded_hex_string = std::get<0>(args_tuple);
-
         // Create data from defined value
-        HexadecimalStringObject_CreateFromEncodedString(encoded_hex_string.c_str(), &hex_string_object);
+        HexadecimalStringObject_CreateFromEncodedString(encoded_hex_string, &hex_string_object);
 
         // Get base object as it is the only one having ToPdf exposed
         HexadecimalStringObject_ToStringObject(hex_string_object, &string_object);
@@ -66,16 +69,16 @@ template <class ...Args>
 static void BM_LiteralStringObjectToPdf(benchmark::State& state, Args&&... args) {
     auto args_tuple = std::make_tuple(std::move(args)...);
 
+    const char* encoded_literal_string = std::get<0>(args_tuple);
+
     for (auto _ : state) {
         LiteralStringObjectHandle* literal_string_object = nullptr;
         StringObjectHandle* string_object = nullptr;
         ObjectHandle* base_object = nullptr;
         BufferHandle* object_pdf_buffer = nullptr;
 
-        std::string encoded_literal_string = std::get<0>(args_tuple);
-
         // Create data from defined value
-        LiteralStringObject_CreateFromEncodedString(encoded_literal_string.c_str(), &literal_string_object);
+        LiteralStringObject_CreateFromEncodedString(encoded_literal_string, &literal_string_object);
 
         // Get base object as it is the only one having ToPdf exposed
         LiteralStringObject_ToStringObject(literal_string_object, &string_object);
@@ -100,15 +103,15 @@ template <class ...Args>
 static void BM_NameObjectToPdf(benchmark::State& state, Args&&... args) {
     auto args_tuple = std::make_tuple(std::move(args)...);
 
+    const char* encoded_name = std::get<0>(args_tuple);
+
     for (auto _ : state) {
         NameObjectHandle* name_object = nullptr;
         ObjectHandle* base_object = nullptr;
         BufferHandle* object_pdf_buffer = nullptr;
 
-        std::string encoded_name = std::get<0>(args_tuple);
-
         // Create data from defined value
-        NameObject_CreateFromEncodedString(encoded_name.c_str(), &name_object);
+        NameObject_CreateFromEncodedString(encoded_name, &name_object);
 
         // Get base object as it is the only one having ToPdf exposed
         NameObject_ToObject(name_object, &base_object);
@@ -133,14 +136,14 @@ template <class ...Args>
 static void BM_StringGetValue_Literal(benchmark::State& state, Args&&... args) {
     auto args_tuple = std::make_tuple(std::move(args)...);
 
+    const char* encoded_string = std::get<0>(args_tuple);
+
     for (auto _ : state) {
         LiteralStringObjectHandle* string_object = nullptr;
         BufferHandle* value_buffer = nullptr;
 
-        std::string encoded_string = std::get<0>(args_tuple);
-
         // Create data from defined value
-        LiteralStringObject_CreateFromEncodedString(encoded_string.c_str(), &string_object);
+        LiteralStringObject_CreateFromEncodedString(encoded_string, &string_object);
 
         // Get base object as it is the only one having ToPdf exposed
         LiteralStringObject_GetValue(string_object, &value_buffer);
@@ -159,14 +162,14 @@ template <class ...Args>
 static void BM_StringGetValue_Hexadecimal(benchmark::State& state, Args&&... args) {
     auto args_tuple = std::make_tuple(std::move(args)...);
 
+    const char* encoded_string = std::get<0>(args_tuple);
+
     for (auto _ : state) {
         HexadecimalStringObjectHandle* string_object = nullptr;
         BufferHandle* value_buffer = nullptr;
 
-        std::string encoded_string = std::get<0>(args_tuple);
-
         // Create data from defined value
-        HexadecimalStringObject_CreateFromEncodedString(encoded_string.c_str(), &string_object);
+        HexadecimalStringObject_CreateFromEncodedString(encoded_string, &string_object);
 
         // Get base object as it is the only one having ToPdf exposed
         HexadecimalStringObject_GetValue(string_object, &value_buffer);
@@ -185,13 +188,13 @@ template <class ...Args>
 static void BM_CreateFromEncodedString_Hexadecimal(benchmark::State& state, Args&&... args) {
     auto args_tuple = std::make_tuple(std::move(args)...);
 
+    const char* encoded_string = std::get<0>(args_tuple);
+
     for (auto _ : state) {
         HexadecimalStringObjectHandle* string_object = nullptr;
 
-        std::string encoded_string = std::get<0>(args_tuple);
-
         // Create data from defined value
-        HexadecimalStringObject_CreateFromEncodedString(encoded_string.c_str(), &string_object);
+        HexadecimalStringObject_CreateFromEncodedString(encoded_string, &string_object);
 
         // Cleanup
         HexadecimalStringObject_Release(string_object);
@@ -206,13 +209,13 @@ template <class ...Args>
 static void BM_CreateFromEncodedString_Literal(benchmark::State& state, Args&&... args) {
     auto args_tuple = std::make_tuple(std::move(args)...);
 
+    const char* encoded_string = std::get<0>(args_tuple);
+
     for (auto _ : state) {
         LiteralStringObjectHandle* string_object = nullptr;
 
-        std::string encoded_string = std::get<0>(args_tuple);
-
         // Create data from defined value
-        LiteralStringObject_CreateFromEncodedString(encoded_string.c_str(), &string_object);
+        LiteralStringObject_CreateFromEncodedString(encoded_string, &string_object);
 
         // Cleanup
         LiteralStringObject_Release(string_object);
