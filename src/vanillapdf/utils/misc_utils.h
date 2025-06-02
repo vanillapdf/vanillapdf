@@ -34,28 +34,23 @@ public:
     static std::string GetLastOpensslError();
 
     template <typename T>
-    static T FromChars(const char * const first, const char* const last, const int base = 10) {
+    static T FromChars(const char* const first, const char* const last, const int base = 10) {
 
         T value;
-        auto result = std::from_chars(first, last, value, base);
+
+        std::from_chars_result result;
+
+        if constexpr (std::is_floating_point_v<T>) {
+            result = std::from_chars(first, last, value);
+        }
+
+        if constexpr (std::is_integral_v<T>) {
+            result = std::from_chars(first, last, value, base);
+        }
+
         if (result.ec != std::errc()) {
             LOG_ERROR_AND_THROW_GENERAL("Could not parse {} from {}: {}",
                 typeid(T).name(),
-                first,
-                std::make_error_code(result.ec).message());
-        }
-
-        return value;
-    }
-
-    template <>
-    static double FromChars(const char* const first, const char* const last, const int) {
-
-        double value;
-        auto result = std::from_chars(first, last, value);
-        if (result.ec != std::errc()) {
-            LOG_ERROR_AND_THROW_GENERAL("Could not parse {} from {}: {}",
-                typeid(double).name(),
                 first,
                 std::make_error_code(result.ec).message());
         }
