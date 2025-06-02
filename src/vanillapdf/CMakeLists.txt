@@ -197,6 +197,7 @@ set(VANILLAPDF_UTILS_SOURCES
     utils/streams/input_stream.cpp
     utils/streams/output_stream.cpp
     utils/streams/stream_utils.cpp
+    utils/streams/memory_buffer_output_stream.cpp
 )
 
 set(VANILLAPDF_CONTENTS_HEADERS
@@ -351,6 +352,7 @@ set(VANILLAPDF_UTILS_HEADERS
 
     utils/streams/output_stream_interface.h
     utils/streams/output_stream.h
+    utils/streams/memory_buffer_output_stream.h
 
     utils/streams/input_output_stream_interface.h
     utils/streams/input_output_stream.h
