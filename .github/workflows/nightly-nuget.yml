@@ -157,7 +157,7 @@ jobs:
         run: ctest --preset ${{ matrix.config.preset }} -C ${{ matrix.config.build_type }} --output-on-failure
 
       - name: Build package ${{ matrix.config.name }}
-        run: cmake --build build/${{ matrix.config.preset }} --target package
+        run: cmake --build build/${{ matrix.config.preset }} --config ${{ matrix.config.build_type }} --target package
 
       - name: Execute nuget packaging
         run: nuget pack nuget/vanillapdf.runtime.nuspec
