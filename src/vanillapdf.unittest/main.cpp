@@ -12,28 +12,33 @@ TEST(Buffer, CreateRelease) {
     ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 
-TEST(Buffer, CreateFromDataRelease) {
-
-    const char BUFFER_DATA[] = "BUFFER_DATA";
+void BufferCreateAndCheck(std::string_view data) {
 
     BufferHandle* buffer_ptr = nullptr;
     string_type check_data_ptr = nullptr;
     size_type check_data_len = 0;
 
     // Create buffer with data
-    ASSERT_EQ(Buffer_CreateFromData(BUFFER_DATA, sizeof(BUFFER_DATA), &buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_CreateFromData(data.data(), data.size(), &buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(buffer_ptr, nullptr);
 
     // Read data information from buffer
     ASSERT_EQ(Buffer_GetData(buffer_ptr, &check_data_ptr, &check_data_len), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(check_data_ptr, nullptr);
 
     // Verify the data and length returned by Buffer_GetData
-    ASSERT_EQ(check_data_len, sizeof(BUFFER_DATA));
-    EXPECT_STREQ(check_data_ptr, BUFFER_DATA);
+    ASSERT_EQ(check_data_len, data.size());
+    for (uint32_t i = 0; i < data.size(); ++i) {
+        EXPECT_EQ(check_data_ptr[i], data[i]);
+    }
 
     // Release the actual buffer allocation
     ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(Buffer, CreateFromData) {
+    BufferCreateAndCheck("");
+    BufferCreateAndCheck("BUFFER_DATA");
+    BufferCreateAndCheck("\x00\x01\xFE\xFF");
 }
 
 TEST(Buffer, NullCheck) {
