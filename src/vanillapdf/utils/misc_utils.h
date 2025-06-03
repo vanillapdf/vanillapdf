@@ -73,7 +73,7 @@ private:
 #if VANILLAPDF_NO_FROM_CHARS_FLOAT
 
 template <>
-double MiscUtils::FromChars<double>(const char* const first, const char* const last, const int) {
+inline double MiscUtils::FromChars<double>(const char* const first, const char* const last, const int) {
 
     auto string_size = last - first;
     auto string_size_converted = ValueConvertUtils::SafeConvert<size_t>(string_size);
