@@ -1,7 +1,6 @@
 #include "unittest.h"
 
 #include <cstring>
-#include <gtest/gtest.h>
 
 namespace filters {
 
