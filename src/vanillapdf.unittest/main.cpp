@@ -170,6 +170,85 @@ TEST(InputOutputStream, Flush) {
     ASSERT_EQ(InputOutputStream_Release(input_output_stream), VANILLAPDF_ERROR_SUCCESS);
 }
 
+TEST(MemoryBufferOutputStream, CreateRelease) {
+    MemoryBufferOutputStreamHandle* stream_ptr = nullptr;
+
+    ASSERT_EQ(MemoryBufferOutputStream_Create(&stream_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(stream_ptr, nullptr);
+    ASSERT_EQ(MemoryBufferOutputStream_Release(stream_ptr), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(MemoryBufferOutputStream, NullCheck) {
+    EXPECT_EQ(MemoryBufferOutputStream_Create(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(MemoryBufferOutputStream_Release(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
+TEST(MemoryBufferOutputStream, WriteString) {
+    MemoryBufferOutputStreamHandle* stream_ptr = nullptr;
+
+    ASSERT_EQ(MemoryBufferOutputStream_Create(&stream_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(stream_ptr, nullptr);
+
+    ASSERT_EQ(MemoryBufferOutputStream_WriteString(stream_ptr, "M@x!mum h@x0r!ng"), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(MemoryBufferOutputStream_Release(stream_ptr), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(MemoryBufferOutputStream, WriteBuffer) {
+
+    const char TEST_DATA[] = "TEST_DATA\x01\x02\xFF";
+
+    BufferHandle* buffer_ptr = nullptr;
+    MemoryBufferOutputStreamHandle* stream_ptr = nullptr;
+
+    ASSERT_EQ(MemoryBufferOutputStream_Create(&stream_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(stream_ptr, nullptr);
+
+    ASSERT_EQ(Buffer_CreateFromData(TEST_DATA, sizeof(TEST_DATA), &buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(buffer_ptr, nullptr);
+
+    EXPECT_EQ(MemoryBufferOutputStream_WriteBuffer(stream_ptr, buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(MemoryBufferOutputStream_Release(stream_ptr), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(MemoryBufferOutputStream, SetOutputPosition) {
+    MemoryBufferOutputStreamHandle* stream_ptr = nullptr;
+
+    ASSERT_EQ(MemoryBufferOutputStream_Create(&stream_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(stream_ptr, nullptr);
+
+    EXPECT_EQ(MemoryBufferOutputStream_SetOutputPosition(stream_ptr, 0), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(MemoryBufferOutputStream_Release(stream_ptr), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(MemoryBufferOutputStream, GetOutputPosition) {
+
+    const char TEST_DATA[] = "123ABC";
+
+    offset_type stream_position = 0;
+    MemoryBufferOutputStreamHandle* stream_ptr = nullptr;
+
+    ASSERT_EQ(MemoryBufferOutputStream_Create(&stream_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(stream_ptr, nullptr);
+
+    ASSERT_EQ(MemoryBufferOutputStream_WriteString(stream_ptr, TEST_DATA), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(MemoryBufferOutputStream_GetOutputPosition(stream_ptr, &stream_position), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(stream_position, strlen(TEST_DATA));
+
+    ASSERT_EQ(MemoryBufferOutputStream_Release(stream_ptr), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(MemoryBufferOutputStream, Flush) {
+    MemoryBufferOutputStreamHandle* stream_ptr = nullptr;
+
+    ASSERT_EQ(MemoryBufferOutputStream_Create(&stream_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(stream_ptr, nullptr);
+
+    EXPECT_EQ(MemoryBufferOutputStream_Flush(stream_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(MemoryBufferOutputStream_Release(stream_ptr), VANILLAPDF_ERROR_SUCCESS);
+}
+
 namespace xref {
 
 TEST(Xref, CreateRelease) {
