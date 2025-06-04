@@ -35,10 +35,12 @@ public:
 public:
     Buffer() = default;
 
-    explicit Buffer(const char * chars);
-    explicit Buffer(const std::string& data);
-    Buffer(const value_type * begin, const value_type * end);
-    Buffer(size_type count, const value_type& val);
+    explicit Buffer(const char* chars) : m_data(chars, chars + std::strlen(chars)) {}
+    explicit Buffer(std::string_view data) : m_data(data.begin(), data.end()) {}
+
+    Buffer(const char* begin, const char* end) : m_data(begin, end) {}
+    Buffer(const char* begin, size_type len) : m_data(begin, begin + len) {}
+    Buffer(const unsigned char* begin, size_type len) : m_data(begin, begin + len) {}
 
     template <
         typename T,
@@ -52,20 +54,10 @@ public:
     template <typename InputIterator>
     Buffer(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) : m_data(first, last, alloc) {}
 
-    template <
-        typename T,
-        typename = typename std::enable_if<sizeof(T) == sizeof(value_type)>
-    >
-    Buffer(const T * chars, size_type len) : m_data(
-        reinterpret_cast<const value_type *>(&chars[0]),
-        reinterpret_cast<const value_type *>(&chars[len])
-        ) {
-        assert(size() > 0);
-    }
-
     size_t Hash() const;
     BufferPtr Clone(void) const { return make_deferred_container<Buffer>(begin(), end()); }
     std::string ToString(void) const { return std::string(begin(), end()); }
+    std::string_view ToStringView(void) const { return std::string_view(data(), size()); }
     std::string ToHexString(void) const;
     IInputStreamPtr ToInputStream(void) const;
     bool Equals(const Buffer& other) const;

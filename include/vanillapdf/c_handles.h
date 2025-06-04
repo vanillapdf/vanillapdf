@@ -118,6 +118,7 @@ extern "C"
 
     DECLARE_OBJECT_HANDLE(InputStream);
     DECLARE_OBJECT_HANDLE(OutputStream);
+    DECLARE_OBJECT_HANDLE(MemoryBufferOutputStream);
     DECLARE_OBJECT_HANDLE(InputOutputStream);
 
     #pragma endregion

@@ -102,5 +102,22 @@ static void BM_FileSaveParse(benchmark::State& state) {
 
 BENCHMARK(BM_FileSaveParse);
 
-// Run the benchmark
-BENCHMARK_MAIN();
+int main(int argc, char** argv) {
+
+    ::benchmark::Initialize(&argc, argv);
+
+    if (::benchmark::ReportUnrecognizedArguments(argc, argv)) {
+        return 1;
+    }
+
+    // Disable logging for benchmarking
+    auto severity_result = Logging_SetSeverity(LoggingSeverity_Off);
+    if (severity_result != VANILLAPDF_ERROR_SUCCESS) {
+        return 255;
+    }
+
+    ::benchmark::RunSpecifiedBenchmarks();
+    ::benchmark::Shutdown();
+
+    return 0;
+}

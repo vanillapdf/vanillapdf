@@ -83,6 +83,7 @@
 
 #include "vanillapdf/utils/c_input_stream.h"
 #include "vanillapdf/utils/c_output_stream.h"
+#include "vanillapdf/utils/c_memory_buffer_output_stream.h"
 #include "vanillapdf/utils/c_input_output_stream.h"
 
 #endif /* _C_VANILLAPDF_API_H */

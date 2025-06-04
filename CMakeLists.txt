@@ -60,6 +60,9 @@ endif()
 # Set extended compilator flags
 include(cmake/compiler_flags.cmake)
 
+# Enable compiler feature identification macros
+include(cmake/compiler_checks.cmake)
+
 # Allow code coverage configuration
 include(cmake/coverage.cmake)
 

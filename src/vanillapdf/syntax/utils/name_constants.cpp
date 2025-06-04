@@ -7,13 +7,13 @@ namespace vanillapdf {
 namespace constant {
 namespace Name {
 
-const syntax::NameObject AdbePkcs7s3 = syntax::NameObject::CreateFromDecoded(make_deferred_container<Buffer>("adbe.pkcs7.s3", sizeof("adbe.pkcs7.s3") - 1));
-const syntax::NameObject AdbePkcs7s4 = syntax::NameObject::CreateFromDecoded(make_deferred_container<Buffer>("adbe.pkcs7.s4", sizeof("adbe.pkcs7.s4") - 1));
-const syntax::NameObject AdbePkcs7s5 = syntax::NameObject::CreateFromDecoded(make_deferred_container<Buffer>("adbe.pkcs7.s5", sizeof("adbe.pkcs7.s5") - 1));
+const syntax::NameObject AdbePkcs7s3 = syntax::NameObject::CreateFromDecoded("adbe.pkcs7.s3");
+const syntax::NameObject AdbePkcs7s4 = syntax::NameObject::CreateFromDecoded("adbe.pkcs7.s4");
+const syntax::NameObject AdbePkcs7s5 = syntax::NameObject::CreateFromDecoded("adbe.pkcs7.s5");
 
-const syntax::NameObject EntrustPPKEF = syntax::NameObject::CreateFromDecoded(make_deferred_container<Buffer>("Entrust.PPKEF", sizeof("Entrust.PPKEF") - 1));
-const syntax::NameObject AdobePPKLite = syntax::NameObject::CreateFromDecoded(make_deferred_container<Buffer>("Adobe.PPKLite", sizeof("Adobe.PPKLite") - 1));
-const syntax::NameObject AdobePubSec = syntax::NameObject::CreateFromDecoded(make_deferred_container<Buffer>("Adobe.PubSec", sizeof("Adobe.PubSec") - 1));
+const syntax::NameObject EntrustPPKEF = syntax::NameObject::CreateFromDecoded("Entrust.PPKEF");
+const syntax::NameObject AdobePPKLite = syntax::NameObject::CreateFromDecoded("Adobe.PPKLite");
+const syntax::NameObject AdobePubSec = syntax::NameObject::CreateFromDecoded("Adobe.PubSec");
 
 } // Name
 } // constant
@@ -29,7 +29,7 @@ VANILLAPDF_API const NameObjectHandle* NameConstant_AdobePubSec = reinterpret_ca
 
 #define DECLARE_CONST_NAME(name) \
     namespace vanillapdf { namespace constant { namespace Name { \
-    const syntax::NameObject name = syntax::NameObject::CreateFromDecoded(make_deferred_container<Buffer>(#name, sizeof(#name) - 1)); \
+    const syntax::NameObject name = syntax::NameObject::CreateFromDecoded(#name); \
     } /* Name */ } /* constant */ } /* vanillapdf */ \
     VANILLAPDF_API const NameObjectHandle* NameConstant_##name = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::name);
 
