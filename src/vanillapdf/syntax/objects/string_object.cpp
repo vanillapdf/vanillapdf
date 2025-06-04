@@ -5,6 +5,7 @@
 #include "syntax/exceptions/syntax_exceptions.h"
 
 #include "utils/character.h"
+#include "utils/misc_utils.h"
 #include "utils/streams/stream_utils.h"
 
 #include <fmt/core.h>
@@ -31,11 +32,17 @@ LiteralStringObjectPtr LiteralStringObject::CreateFromEncoded(BufferPtr value) {
 }
 
 LiteralStringObjectPtr LiteralStringObject::CreateFromEncoded(const char * value) {
-    return CreateFromEncoded(make_deferred_container<Buffer>(value));
+    LiteralStringObjectPtr result;
+
+    result->SetRawValue(value);
+    return result;
 }
 
-LiteralStringObjectPtr LiteralStringObject::CreateFromEncoded(const std::string& value) {
-    return CreateFromEncoded(make_deferred_container<Buffer>(value));
+LiteralStringObjectPtr LiteralStringObject::CreateFromEncoded(std::string_view value) {
+    LiteralStringObjectPtr result;
+
+    result->SetRawValue(value);
+    return result;
 }
 
 LiteralStringObjectPtr LiteralStringObject::CreateFromDecoded(BufferPtr value) {
@@ -46,11 +53,17 @@ LiteralStringObjectPtr LiteralStringObject::CreateFromDecoded(BufferPtr value) {
 }
 
 LiteralStringObjectPtr LiteralStringObject::CreateFromDecoded(const char * value) {
-    return CreateFromDecoded(make_deferred_container<Buffer>(value));
+    LiteralStringObjectPtr result;
+
+    result->SetValue(value);
+    return result;
 }
 
-LiteralStringObjectPtr LiteralStringObject::CreateFromDecoded(const std::string& value) {
-    return CreateFromDecoded(make_deferred_container<Buffer>(value));
+LiteralStringObjectPtr LiteralStringObject::CreateFromDecoded(std::string_view value) {
+    LiteralStringObjectPtr result;
+
+    result->SetValue(value);
+    return result;
 }
 
 void LiteralStringObject::ObserveeChanged(const IModifyObservable*) {
@@ -60,16 +73,22 @@ void LiteralStringObject::ObserveeChanged(const IModifyObservable*) {
 HexadecimalStringObjectPtr HexadecimalStringObject::CreateFromEncoded(BufferPtr value) {
     HexadecimalStringObjectPtr result;
 
-    result->SetRawValue(value);
+    result->SetRawValue(value->data());
     return result;
 }
 
 HexadecimalStringObjectPtr HexadecimalStringObject::CreateFromEncoded(const char * value) {
-    return CreateFromEncoded(make_deferred_container<Buffer>(value));
+    HexadecimalStringObjectPtr result;
+
+    result->SetRawValue(value);
+    return result;
 }
 
-HexadecimalStringObjectPtr HexadecimalStringObject::CreateFromEncoded(const std::string& value) {
-    return CreateFromEncoded(make_deferred_container<Buffer>(value));
+HexadecimalStringObjectPtr HexadecimalStringObject::CreateFromEncoded(std::string_view value) {
+    HexadecimalStringObjectPtr result;
+
+    result->SetRawValue(value);
+    return result;
 }
 
 HexadecimalStringObjectPtr HexadecimalStringObject::CreateFromDecoded(BufferPtr value) {
@@ -80,11 +99,17 @@ HexadecimalStringObjectPtr HexadecimalStringObject::CreateFromDecoded(BufferPtr 
 }
 
 HexadecimalStringObjectPtr HexadecimalStringObject::CreateFromDecoded(const char * value) {
-    return CreateFromDecoded(make_deferred_container<Buffer>(value));
+    HexadecimalStringObjectPtr result;
+
+    result->SetValue(value);
+    return result;
 }
 
-HexadecimalStringObjectPtr HexadecimalStringObject::CreateFromDecoded(const std::string& value) {
-    return CreateFromDecoded(make_deferred_container<Buffer>(value));
+HexadecimalStringObjectPtr HexadecimalStringObject::CreateFromDecoded(std::string_view value) {
+    HexadecimalStringObjectPtr result;
+
+    result->SetValue(value);
+    return result;
 }
 
 void HexadecimalStringObject::ObserveeChanged(const IModifyObservable*) {
@@ -174,6 +199,11 @@ BufferPtr LiteralStringObject::GetValue() const {
 }
 
 void LiteralStringObject::SetValue(BufferPtr value) {
+    auto str = value->ToStringView();
+    SetValue(str);
+}
+
+void LiteralStringObject::SetValue(std::string_view value) {
     ACCESS_LOCK_GUARD(_access_lock);
 
     _value->assign(value.begin(), value.end());
@@ -353,10 +383,10 @@ BufferPtr LiteralStringObject::GetRawValueDecoded() const {
         // The value can actually overflow 255, as the maximum 3-digit octal value is 777.
         // This is 511 in decimal and it's not clear what should be done in such case.
 
-        int value = stoi(octal, 0, 8);
-        auto converted = ValueConvertUtils::SafeConvert<unsigned char, int>(value);
-        char char_converted = reinterpret_cast<char&>(converted);
-        result->push_back(char_converted);
+        auto value = MiscUtils::FromChars<unsigned char>(octal, 8);
+        char converted = reinterpret_cast<char&>(value);
+
+        result->push_back(converted);
         continue;
     }
 
@@ -368,6 +398,11 @@ BufferPtr LiteralStringObject::GetRawValueDecoded() const {
 }
 
 void LiteralStringObject::SetRawValue(BufferPtr value) {
+    auto str = value->ToStringView();
+    SetRawValue(str);
+}
+
+void LiteralStringObject::SetRawValue(std::string_view value) {
     ACCESS_LOCK_GUARD(_access_lock);
 
     _raw_value->assign(value.begin(), value.end());
@@ -408,10 +443,8 @@ BufferPtr HexadecimalStringObject::GetValue() const {
     result->reserve(len);
 
     for (decltype(len) i = 0; i < len; ++i) {
-        int val = stoi(hexadecimal.substr(i * 2, 2), 0, 16);
-        auto parsed = ValueConvertUtils::SafeConvert<unsigned char, int>(val);
-        char converted = reinterpret_cast<char&>(parsed);
-        result->push_back(converted);
+        auto value = MiscUtils::FromChars<unsigned char>(&hexadecimal[i * 2], &hexadecimal[i * 2 + 2], 16);
+        result->push_back(value);
     }
 
     if (!m_file.IsEmpty()) {
@@ -431,6 +464,11 @@ BufferPtr HexadecimalStringObject::GetValue() const {
 }
 
 void HexadecimalStringObject::SetValue(BufferPtr value) {
+    auto str = value->ToStringView();
+    SetValue(str);
+}
+
+void HexadecimalStringObject::SetValue(std::string_view value) {
     ACCESS_LOCK_GUARD(_access_lock);
 
     _value->assign(value.begin(), value.end());
@@ -442,6 +480,11 @@ BufferPtr HexadecimalStringObject::GetRawValue() const {
 }
 
 void HexadecimalStringObject::SetRawValue(BufferPtr value) {
+    auto str = value->ToStringView();
+    SetRawValue(str);
+}
+
+void HexadecimalStringObject::SetRawValue(std::string_view value) {
     ACCESS_LOCK_GUARD(_access_lock);
 
     _raw_value->assign(value.begin(), value.end());

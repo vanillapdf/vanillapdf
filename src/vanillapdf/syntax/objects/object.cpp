@@ -3,8 +3,9 @@
 #include "syntax/files/xref.h"
 
 #include "syntax/exceptions/syntax_exceptions.h"
+
 #include "utils/streams/output_stream.h"
-#include "utils/streams/output_stream_interface.h"
+#include "utils/streams/memory_buffer_output_stream.h"
 
 #include "syntax/utils/base_object_attribute.h"
 #include "syntax/utils/serialization_override_object_attribute.h"
@@ -44,10 +45,49 @@ std::string Object::ToPdf(void) const {
         return GetOverrideAttribute();
     }
 
-    auto ss = std::make_shared<std::stringstream>();
-    OutputStreamPtr output_stream = make_deferred<OutputStream>(ss);
+    /*
+    * Moving from stringstream to fmt::memory_buffer.
+    * We have made a custom implementation with stream-like interface backed by fmt::memory_buffer.
+    * stringstream is quite heavy, locale dependent monster, that has it's place for many other use-cases.
+    * In our use case all the data are pre-formatted and we only need a buffer to hold them.
+    * We have also done the benchmarking due-dilligence, so this statement is based on solid data evidence.
+    * 
+    * std::stringstream
+    * ------------------------------------------------------------------------------------------
+    * Benchmark                                                Time             CPU   Iterations
+    * ------------------------------------------------------------------------------------------
+    * BM_RealObjectToPdf/no_precision                       1174 ns         1172 ns       746667
+    * BM_RealObjectToPdf/int_precision                      1117 ns         1116 ns       560000
+    * BM_HexadecimalStringObjectToPdf/string_empty          1526 ns         1535 ns       448000
+    * BM_HexadecimalStringObjectToPdf/string_unpaired       1691 ns         1688 ns       407273
+    * BM_HexadecimalStringObjectToPdf/string_values         1833 ns         1842 ns       373333
+    * BM_LiteralStringObjectToPdf/string_empty              2212 ns         2197 ns       298667
+    * BM_LiteralStringObjectToPdf/string_basic              4259 ns         4332 ns       165926
+    * BM_LiteralStringObjectToPdf/string_octal              4684 ns         4708 ns       149333
+    * BM_NameObjectToPdf/string_empty                       1435 ns         1444 ns       497778
+    * BM_NameObjectToPdf/string_basic                       2281 ns         2302 ns       298667
+    * BM_NameObjectToPdf/string_hexadecimal                 2558 ns         2550 ns       263529
+    * 
+    * fmt::memory_buffer
+    * ------------------------------------------------------------------------------------------
+    * Benchmark                                                Time             CPU   Iterations
+    * ------------------------------------------------------------------------------------------
+    * BM_RealObjectToPdf/no_precision                        658 ns          642 ns      1120000
+    * BM_RealObjectToPdf/int_precision                       683 ns          684 ns      1120000
+    * BM_HexadecimalStringObjectToPdf/string_empty          1188 ns         1172 ns       560000
+    * BM_HexadecimalStringObjectToPdf/string_unpaired       1356 ns         1350 ns       497778
+    * BM_HexadecimalStringObjectToPdf/string_values         1483 ns         1465 ns       448000
+    * BM_LiteralStringObjectToPdf/string_empty              1849 ns         1800 ns       373333
+    * BM_LiteralStringObjectToPdf/string_basic              3928 ns         3924 ns       179200
+    * BM_LiteralStringObjectToPdf/string_octal              4183 ns         4143 ns       165926
+    * BM_NameObjectToPdf/string_empty                       1036 ns         1025 ns       640000
+    * BM_NameObjectToPdf/string_basic                       1913 ns         1883 ns       373333
+    * BM_NameObjectToPdf/string_hexadecimal                 2229 ns         2197 ns       320000
+    */
+
+    auto output_stream = make_deferred<MemoryBufferOutputStream>();
     ToPdfStream(output_stream);
-    return ss->str();
+    return output_stream->ToString();
 }
 
 void Object::ToPdfStream(IOutputStreamPtr output) const {

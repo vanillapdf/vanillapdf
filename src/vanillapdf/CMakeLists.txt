@@ -25,6 +25,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES
     implementation/utils/c_license_info.cpp
     implementation/utils/c_logging.cpp
     implementation/utils/c_output_stream.cpp
+    implementation/utils/c_memory_buffer_output_stream.cpp
     implementation/utils/c_pkcs12_key.cpp
     implementation/utils/c_signing_key.cpp
     implementation/utils/c_unknown_interface.cpp
@@ -197,6 +198,7 @@ set(VANILLAPDF_UTILS_SOURCES
     utils/streams/input_stream.cpp
     utils/streams/output_stream.cpp
     utils/streams/stream_utils.cpp
+    utils/streams/memory_buffer_output_stream.cpp
 )
 
 set(VANILLAPDF_CONTENTS_HEADERS
@@ -351,6 +353,7 @@ set(VANILLAPDF_UTILS_HEADERS
 
     utils/streams/output_stream_interface.h
     utils/streams/output_stream.h
+    utils/streams/memory_buffer_output_stream.h
 
     utils/streams/input_output_stream_interface.h
     utils/streams/input_output_stream.h
@@ -598,6 +601,9 @@ string(REGEX REPLACE "^0*([0-9]+)" "\\1" VANILLAPDF_BUILD_YEAR		"${VANILLAPDF_BU
 target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_BUILD_DAY=${VANILLAPDF_BUILD_DAY})
 target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_BUILD_MONTH=${VANILLAPDF_BUILD_MONTH})
 target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_BUILD_YEAR=${VANILLAPDF_BUILD_YEAR})
+
+# Check for compiler features and include compile definitions
+vanillapdf_check_standard_features(vanillapdf)
 
 # In case we would like to extract code coverage report enable the flag
 if(VANILLAPDF_ENABLE_COVERAGE)

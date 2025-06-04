@@ -1,6 +1,9 @@
 #include "precompiled.h"
 
 #include "syntax/parsers/reverse_parser.h"
+#include "syntax/parsers/parser_utils.h"
+
+#include "utils/misc_utils.h"
 
 #include <sstream>
 
@@ -16,10 +19,10 @@ types::stream_offset ReverseParser::ReadLastXrefOffset() {
     auto offset_token = ReadTokenWithTypeSkip(Token::Type::REVERSE_INTEGER_OBJECT);
     ReadTokenWithTypeSkip(Token::Type::REVERSE_START_XREF);
 
-    auto buffer = offset_token->Value();
+    auto buffer = offset_token->ValueCopy();
     std::reverse(buffer.begin(), buffer.end());
-    auto value = std::stoll(buffer);
-    return value;
+
+    return MiscUtils::FromChars<types::stream_offset>(buffer);
 }
 
 TokenPtr ReverseParser::ReadTokenWithTypeSkip(Token::Type type) {
@@ -27,24 +30,20 @@ TokenPtr ReverseParser::ReadTokenWithTypeSkip(Token::Type type) {
     for (;;) {
         auto token = ReadToken();
 
-        if (token->GetType() == type)
+        if (token->GetType() == type) {
             return token;
+        }
 
-        if (token->GetType() == Token::Type::REVERSE_EOL)
+        if (token->GetType() == Token::Type::REVERSE_EOL) {
             continue;
+        }
 
-        std::stringstream ss;
-        ss << "Could not find token type ";
-        ss << static_cast<int>(type);
-        ss << " at offset ";
-        ss << offset;
-        ss << ", instead token type ";
-        ss << static_cast<int>(token->GetType());
-        ss << " with value ";
-        ss << token->Value();
-        ss << " was found";
-
-        throw GeneralException(ss.str());
+        LOG_ERROR_AND_THROW_GENERAL(
+            "Could not find token type {} at offset {}, instead token type {} with value {} was found",
+            static_cast<int>(type),
+            offset,
+            static_cast<int>(token->GetType()),
+            token->ValueView());
     }
 }
 
