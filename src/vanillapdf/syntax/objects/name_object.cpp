@@ -58,7 +58,7 @@ NameObjectPtr NameObject::CreateFromEncoded(std::string_view value) {
 
         if (current == '#') {
             if (i + 3 > buffer_size) {
-                LOG_ERROR_AND_THROW_GENERAL("Could not parse hexadecimal character in NameObject: ", value);
+                LOG_ERROR_AND_THROW_GENERAL("Could not parse hexadecimal character in NameObject: {}", value);
             }
 
             auto current_ptr = value.data() + i;
