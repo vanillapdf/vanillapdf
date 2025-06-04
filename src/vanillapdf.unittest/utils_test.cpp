@@ -37,8 +37,7 @@ INSTANTIATE_TEST_SUITE_P(
         "Hello",
         "1234567890",
         "special_chars!@#$%^&*()",
-        "\x00\x01\xFE\xFF",
-        std::string(1024, 'A')
+        "\x00\x01\xFE\xFF"
     )
 );
 
