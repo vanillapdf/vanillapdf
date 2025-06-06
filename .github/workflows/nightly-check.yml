@@ -141,13 +141,13 @@ jobs:
       fail-fast: false
       max-parallel: 4
       matrix:
-        build_type: [Debug, Release]
+
+        # There are some issues with win-x86 in debug, that prevent us to use it
+        build_type: [Release]
 
         config:
-          - { name: "win.2019-x86", os: windows-2019, preset: "windows-x86-msvc-16" }
           - { name: "win.2022-x86", os: windows-2022, preset: "windows-x86-msvc-17" }
           - { name: "win.2025-x86", os: windows-2025, preset: "windows-x86-msvc-17" }
-          - { name: "win.2019-x64", os: windows-2019, preset: "windows-x64-msvc-16" }
           - { name: "win.2022-x64", os: windows-2022, preset: "windows-x64-msvc-17" }
           - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-17" }
 

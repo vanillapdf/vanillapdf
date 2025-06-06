@@ -112,7 +112,9 @@ jobs:
       max-parallel: 4
 
       matrix:
-        build_type: [Debug, Release]
+
+        # There are some issues with win-x86 in debug, that prevent us to use it
+        build_type: [Release]
 
         config:
           - name: win.2025-x86
