@@ -7,15 +7,21 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+  # Run workflow on any push into main branch
   push:
     branches: [ "main" ]
 
+  # Run workflow when there is a pull request towards main branch
   pull_request:
     branches: [ "main" ]
 
 permissions:
   contents: read    # Download the repository source code
   packages: read    # Needed to load container images
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   VCPKG_ROOT: external/vcpkg
@@ -26,40 +32,40 @@ env:
 jobs:
 
   linux:
-    name: linux - ${{ matrix.config.name }}
+    name: ${{ matrix.config.name }} - ${{ matrix.build_type }}
     runs-on: ${{ matrix.config.os }}
 
     strategy:
       fail-fast: false # We would like to see the results of all jobs even in case one of them fails
+      max-parallel: 4
+
       matrix:
+        build_type: [Debug, Release]
+
         config:
           - name: rocky.9-x64
             os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9
             platform: linux/amd64
             preset: linux-x64-gcc
-            build_type: Release
 
           - name: rocky.9-arm64
             os: ubuntu-24.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9
             platform: linux/arm64
             preset: linux-arm64-gcc
-            build_type: Release
 
           - name: ubuntu.24.04-x64
             os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:24.04
             platform: linux/amd64
             preset: linux-x64-gcc
-            build_type: Release
 
           - name: ubuntu.24.04-arm64
             os: ubuntu-24.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:24.04
             platform: linux/arm64
             preset: linux-arm64-gcc
-            build_type: Release
 
     container:
       image: ${{ matrix.config.image }}
@@ -88,7 +94,7 @@ jobs:
         shell: bash
 
       - name: Generate build files
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
       - name: Build
         run: cmake --build --preset ${{ matrix.config.preset }}
@@ -98,21 +104,24 @@ jobs:
 
 
   windows:
-    name: windows - ${{ matrix.config.name }}
+    name: ${{ matrix.config.name }} - ${{ matrix.build_type }}
     runs-on: windows-2025
 
     strategy:
       fail-fast: false # We would like to see the results of all jobs even in case one of them fails
+      max-parallel: 4
 
       matrix:
+
+        # There are some issues with win-x86 in debug, that prevent us to use it
+        build_type: [Release]
+
         config:
           - name: win.2025-x86
             preset: windows-x86-msvc-17
-            build_type: Release
 
           - name: win.2025-x64
             preset: windows-x64-msvc-17
-            build_type: Release
 
     steps:
       - uses: actions/checkout@v4
@@ -136,31 +145,33 @@ jobs:
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
 
       - name: Generate build files ${{ matrix.config.preset }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
       - name: Build ${{ matrix.config.preset }}
-        run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.build_type }}
+        run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.build_type }}
 
       - name: Test ${{ matrix.config.preset }}
-        run: ctest --preset ${{ matrix.config.preset }} -C ${{ matrix.config.build_type }} --output-on-failure
+        run: ctest --preset ${{ matrix.config.preset }} -C ${{ matrix.build_type }} --output-on-failure
 
   macos:
-    name: macOS - ${{ matrix.config.name }}
+    name: ${{ matrix.config.name }} - ${{ matrix.build_type }}
     runs-on: ${{ matrix.config.runner }}
 
     strategy:
       fail-fast: false # We would like to see the results of all jobs even in case one of them fails
+      max-parallel: 4
+
       matrix:
+        build_type: [Debug, Release]
+
         config:
           - name: osx.13-x64
             runner: macos-13
             preset: macos-x64
-            build_type: Release
 
           - name: osx.15-arm64
             runner: macos-15
             preset: macos-arm64
-            build_type: Release
 
     steps:
       - uses: actions/checkout@v4
@@ -180,7 +191,7 @@ jobs:
             vcpkg-${{ runner.os }}-
 
       - name: Install build tools (macOS)
-        run: brew install autoconf automake autoconf-archive
+        run: brew install --quiet autoconf automake autoconf-archive
 
       # Bootstrap vcpkg on macOS
       - name: Bootstrap vcpkg (macOS)
@@ -188,7 +199,7 @@ jobs:
         shell: bash
 
       - name: Generate build files
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
       - name: Build
         run: cmake --build --preset ${{ matrix.config.preset }}

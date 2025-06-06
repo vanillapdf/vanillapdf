@@ -1,10 +1,26 @@
 name: Nightly NuGet Packages
 
 on:
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+  # Run workflow on any push into main branch
+  # only there was a change in the workflow file
+  push:
+    branches: [ "main" ]
+    paths:
+      - '.github/workflows/nightly-nuget.yml'
+
+  # Run workflow when there is a pull request towards main branch
+  # only there was a change in the workflow file
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - '.github/workflows/nightly-nuget.yml'
+
   schedule:
     - cron: '0 3 * * *'  # Every day at 03:00 UTC
-
-  workflow_dispatch:
 
 permissions:
   contents: write  # Needed for future GitHub release or content access
@@ -141,7 +157,7 @@ jobs:
         run: ctest --preset ${{ matrix.config.preset }} -C ${{ matrix.config.build_type }} --output-on-failure
 
       - name: Build package ${{ matrix.config.name }}
-        run: cmake --build build/${{ matrix.config.preset }} --target package
+        run: cmake --build build/${{ matrix.config.preset }} --config ${{ matrix.config.build_type }} --target package
 
       - name: Execute nuget packaging
         run: nuget pack nuget/vanillapdf.runtime.nuspec
@@ -234,7 +250,7 @@ jobs:
 
 
   build-vanillapdf-core:
-    name: vanillapdf core
+    name: vanillapdf core - ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
 
     strategy:
