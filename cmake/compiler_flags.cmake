@@ -43,23 +43,27 @@ function(vanillapdf_target_compile_defaults TARGET)
         $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>,$<CONFIG:MinSizeRel>>:RELEASE>
     )
 
-    # Enable warning as errors, so we catch whatever possible before public release
-    target_compile_options(${TARGET} PRIVATE
-        # MSVC: apply /WX for Debug and RelWithDebInfo
-        $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:Debug>>:/WX>
-        $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:RelWithDebInfo>>:/WX>
-        $<$<AND:$<C_COMPILER_ID:MSVC>,$<CONFIG:Debug>>:/WX>
-        $<$<AND:$<C_COMPILER_ID:MSVC>,$<CONFIG:RelWithDebInfo>>:/WX>
+    # Warnings as errors for MSVC
+    if(CMAKE_C_COMPILER_ID MATCHES "MSVC" OR CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+        target_compile_options(${TARGET} PRIVATE
+            # MSVC: apply /WX for Debug and RelWithDebInfo
+            $<$<CONFIG:Debug>:/WX>
+            $<$<CONFIG:RelWithDebInfo>:/WX>
+        )
+    endif()
 
-        # GCC/Clang: apply -Werror for all non-Release builds
-        $<$<AND:$<CXX_COMPILER_ID:GNU>,$<NOT:$<CONFIG:Release>>>:-Werror>
-        $<$<AND:$<C_COMPILER_ID:GNU>,$<NOT:$<CONFIG:Release>>>:-Werror>
-        $<$<AND:$<CXX_COMPILER_ID:Clang>,$<NOT:$<CONFIG:Release>>>:-Werror>
-        $<$<AND:$<C_COMPILER_ID:Clang>,$<NOT:$<CONFIG:Release>>>:-Werror>
-    )
+    # Warnings as errors for GCC, Clang, AppleClang (C and C++)
+    if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang|AppleClang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
+        target_compile_options(${TARGET} PRIVATE
+            $<$<CONFIG:Debug>:-Werror>
+            $<$<CONFIG:RelWithDebInfo>:-Werror>
+        )
+    endif()
 
     # GCC/Clang warnings
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+
+        # Apply to both C and C++
         target_compile_options(${TARGET} PRIVATE
 
             # Enable maximum warning level
@@ -70,12 +74,6 @@ function(vanillapdf_target_compile_defaults TARGET)
             # It could be solved with #ifdef only for MSVC
             # All other pragmas are only for suppressing specific warnings on MSVC
             -Wno-unknown-pragmas
-
-            # Variables in constructors should be initialized in order
-            # they were declared. I prefer initializing variables
-            # in order they make sense and are declared as constructor parameters.
-            # This should be harmless unless you take at least a little care.
-            -Wno-reorder
 
             # On Linux arm GCC the entire log is filled with notes:
 
@@ -98,6 +96,16 @@ function(vanillapdf_target_compile_defaults TARGET)
             # I do not really consider this an issue, as even having the name of the parameter gives you some insights.
             # Having just the type even if it is currently not used is not a bug for me.
             -Wno-unused-parameter
+        )
+
+        # Apply only to C++
+        target_compile_options(${TARGET} PRIVATE
+
+            # Variables in constructors should be initialized in order
+            # they were declared. I prefer initializing variables
+            # in order they make sense and are declared as constructor parameters.
+            # This should be harmless unless you take at least a little care.
+            $<$<COMPILE_LANGUAGE:CXX>:-Wno-reorder>
         )
     endif()
 endfunction()
