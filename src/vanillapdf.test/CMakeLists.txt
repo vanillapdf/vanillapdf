@@ -44,6 +44,9 @@ add_executable(vanillapdf.test
     ${VANILLAPDF_TEST_RESOURCE_FILES}
 )
 
+# Configure default compilation parameters, strict warnings, config based definition for DEBUG/RELEASE, etc.
+vanillapdf_target_compile_defaults(vanillapdf.test)
+
 if(WIN32)
     # Copy DLL dependencies on windows to our build directory
     add_custom_command(

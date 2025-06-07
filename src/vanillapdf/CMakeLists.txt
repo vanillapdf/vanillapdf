@@ -535,6 +535,7 @@ if(MSVC)
 endif(MSVC)
 
 if(MSVC)
+
     # Add natvis file embedding
     target_link_options(vanillapdf PRIVATE "/NATVIS:${CMAKE_CURRENT_SOURCE_DIR}/public.natvis")
 
@@ -604,6 +605,9 @@ target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_BUILD_YEAR=${VANILLAP
 
 # Check for compiler features and include compile definitions
 vanillapdf_check_standard_features(vanillapdf)
+
+# Configure default compilation parameters, strict warnings, config based definition for DEBUG/RELEASE, etc.
+vanillapdf_target_compile_defaults(vanillapdf)
 
 # In case we would like to extract code coverage report enable the flag
 if(VANILLAPDF_ENABLE_COVERAGE)

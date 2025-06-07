@@ -2,7 +2,7 @@
 
 include(CheckCXXSourceCompiles)
 
-macro(vanillapdf_check_standard_features TARGET)
+function(vanillapdf_check_standard_features TARGET)
     # Check std::from_chars for float/double
     set(_check_from_chars_float "
         #include <charconv>
@@ -19,4 +19,4 @@ macro(vanillapdf_check_standard_features TARGET)
     endif()
 
     # Add more checks here as needed...
-endmacro()
+endfunction()
