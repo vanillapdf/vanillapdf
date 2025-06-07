@@ -2124,6 +2124,8 @@ void FileWriter::RemoveUnreferencedObjects(XrefChainPtr xref) {
         }
     }
 
+    spdlog::debug("RemoveUnreferencedObjects used: {} / unused: {}", used_count, unused_count);
+
 #endif
 
     // ----- DEBUG END -----

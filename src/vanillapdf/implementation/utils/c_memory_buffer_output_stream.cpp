@@ -66,6 +66,19 @@ VANILLAPDF_API error_type CALLING_CONVENTION MemoryBufferOutputStream_WriteBuffe
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION MemoryBufferOutputStream_WriteBufferRange(MemoryBufferOutputStreamHandle* handle, BufferHandle* data_handle, offset_type length) {
+    MemoryBufferOutputStream* stream = reinterpret_cast<MemoryBufferOutputStream*>(handle);
+    Buffer* data = reinterpret_cast<Buffer*>(data_handle);
+
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(stream);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+
+    try {
+        stream->Write(*data, length);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION MemoryBufferOutputStream_Flush(MemoryBufferOutputStreamHandle* handle) {
     MemoryBufferOutputStream* stream = reinterpret_cast<MemoryBufferOutputStream*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(stream);

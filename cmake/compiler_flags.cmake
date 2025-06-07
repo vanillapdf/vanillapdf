@@ -1,59 +1,23 @@
-# Set additional compiler flags
-
-# Local compilation definitions
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
-
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -DRELEASE")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DRELEASE")
-
-set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} -DRELEASE")
-set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} -DRELEASE")
-
-set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} -DRELEASE")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -DRELEASE")
-
-if(CMAKE_COMPILER_IS_GNUCXX)
-
-    # Enable maximum warning level
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
-    
-    # GCC warns on pragma region directive, which is only IDE feature
-    # It could be solved with #ifdef only for MSVC
-    # All other pragmas are only for suppressing specific warnings on MSVC
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unknown-pragmas")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
-    
-    # Variables in constructors should be initialized in order
-    # they were declared. I prefer initializing variables
-    # in order they make sense and are declared as constructor parameters.
-    # This should be harmless unless you take at least a little care.
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder")
-
-    # On Linux arm GCC the entire log is filled with notes:
-
-    # parameter passing for argument of type 'std::_Rb_tree<vanillapdf::syntax::IndirectReferenceObject,
-    # std::pair<const vanillapdf::syntax::IndirectReferenceObject, bool>,
-    # std::_Select1st<std::pair<const vanillapdf::syntax::IndirectReferenceObject, bool> >,
-    # std::less<vanillapdf::syntax::IndirectReferenceObject>,
-    # std::allocator<std::pair<const vanillapdf::syntax::IndirectReferenceObject, bool> > >::const_iterator' changed in GCC 7.1
-
-    # That warning is telling you that there was a subtle ABI change
-    # (actually a conformance fix) between 6 and 7.1,
-    # such that libraries built with 6.x or earlier may not work properly when called
-    # from code built with 7.x (and vice-versa).
-    # As long as all your C++ code is built with GCC 7.1 or later, you can safely ignore this warning.
-    # To disable it, pass -Wno-psabi to the compiler.
-    # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=77728
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-psabi")
-
-    # There are quite some parameters defined in functions, however they are not used.
-    # I do not really consider this an issue, as even having the name of the parameter gives you some insights.
-    # Having just the type even if it is currently not used is not a bug for me.
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-parameter")
-
-endif(CMAKE_COMPILER_IS_GNUCXX)
+# =====================================================================================
+# \file compiler_flags.cmake
+# \brief Compiler configuration defaults for Vanilla.PDF
+#
+# This file configures optimal compilation behavior for Vanilla.PDF across supported
+# platforms and compilers. It avoids global flag pollution by applying settings
+# per-target through `vanillapdf_target_compile_defaults()`.
+#
+# Features:
+# - Applies DEBUG/RELEASE macros based on build configuration.
+# - Enables `/WX` or `-Werror` to treat warnings as errors (except in Release).
+# - Enables strict warning levels for GCC/Clang.
+# - Disables known noisy or non-critical warnings for improved developer ergonomics.
+# - Configures MSVC CRT linkage via `CMAKE_MSVC_RUNTIME_LIBRARY`.
+#
+# To apply these defaults:
+#   vanillapdf_target_compile_defaults(<target>)
+#
+# This module should be included after target creation.
+# =====================================================================================
 
 if(MSVC)
 
@@ -68,3 +32,80 @@ if(MSVC)
         endif()
     endif()
 endif()
+
+# Utility functions that change the options on per-targer basis
+
+function(vanillapdf_target_compile_defaults TARGET)
+
+    # Define config-specific macros
+    target_compile_definitions(${TARGET} PRIVATE
+        $<$<CONFIG:Debug>:DEBUG>
+        $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>,$<CONFIG:MinSizeRel>>:RELEASE>
+    )
+
+    # Warnings as errors for MSVC
+    if(CMAKE_C_COMPILER_ID MATCHES "MSVC" OR CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+        target_compile_options(${TARGET} PRIVATE
+            # MSVC: apply /WX for Debug and RelWithDebInfo
+            $<$<CONFIG:Debug>:/WX>
+            $<$<CONFIG:RelWithDebInfo>:/WX>
+        )
+    endif()
+
+    # Warnings as errors for GCC, Clang, AppleClang (C and C++)
+    if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang|AppleClang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
+        target_compile_options(${TARGET} PRIVATE
+            $<$<CONFIG:Debug>:-Werror>
+            $<$<CONFIG:RelWithDebInfo>:-Werror>
+        )
+    endif()
+
+    # GCC/Clang warnings
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+
+        # Apply to both C and C++
+        target_compile_options(${TARGET} PRIVATE
+
+            # Enable maximum warning level
+            -Wall
+            -Wextra
+
+            # GCC warns on pragma region directive, which is only IDE feature
+            # It could be solved with #ifdef only for MSVC
+            # All other pragmas are only for suppressing specific warnings on MSVC
+            -Wno-unknown-pragmas
+
+            # On Linux arm GCC the entire log is filled with notes:
+
+            # parameter passing for argument of type 'std::_Rb_tree<vanillapdf::syntax::IndirectReferenceObject,
+            # std::pair<const vanillapdf::syntax::IndirectReferenceObject, bool>,
+            # std::_Select1st<std::pair<const vanillapdf::syntax::IndirectReferenceObject, bool> >,
+            # std::less<vanillapdf::syntax::IndirectReferenceObject>,
+            # std::allocator<std::pair<const vanillapdf::syntax::IndirectReferenceObject, bool> > >::const_iterator' changed in GCC 7.1
+
+            # That warning is telling you that there was a subtle ABI change
+            # (actually a conformance fix) between 6 and 7.1,
+            # such that libraries built with 6.x or earlier may not work properly when called
+            # from code built with 7.x (and vice-versa).
+            # As long as all your C++ code is built with GCC 7.1 or later, you can safely ignore this warning.
+            # To disable it, pass -Wno-psabi to the compiler.
+            # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=77728
+            -Wno-psabi
+
+            # There are quite some parameters defined in functions, however they are not used.
+            # I do not really consider this an issue, as even having the name of the parameter gives you some insights.
+            # Having just the type even if it is currently not used is not a bug for me.
+            -Wno-unused-parameter
+        )
+
+        # Apply only to C++
+        target_compile_options(${TARGET} PRIVATE
+
+            # Variables in constructors should be initialized in order
+            # they were declared. I prefer initializing variables
+            # in order they make sense and are declared as constructor parameters.
+            # This should be harmless unless you take at least a little care.
+            $<$<COMPILE_LANGUAGE:CXX>:-Wno-reorder>
+        )
+    endif()
+endfunction()

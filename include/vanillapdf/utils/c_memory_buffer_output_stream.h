@@ -62,6 +62,11 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION MemoryBufferOutputStream_WriteBuffer(MemoryBufferOutputStreamHandle* handle, BufferHandle* data);
 
     /**
+    * \brief Appends buffer data to current output stream instance up to length specified
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION MemoryBufferOutputStream_WriteBufferRange(MemoryBufferOutputStreamHandle* handle, BufferHandle* data, offset_type length);
+
+    /**
     * \brief Flushes all pending data from the stream to it's destination
     */
     VANILLAPDF_API error_type CALLING_CONVENTION MemoryBufferOutputStream_Flush(MemoryBufferOutputStreamHandle* handle);
