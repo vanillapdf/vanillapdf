@@ -12,8 +12,10 @@ void MemoryBufferOutputStream::Write(const Buffer& data) {
 }
 
 void MemoryBufferOutputStream::Write(const Buffer& data, types::stream_size size) {
+    auto size_converted = ValueConvertUtils::SafeConvert<size_t>(size);
+
     auto str = data.ToStringView();
-    auto substring = str.substr(0, size);
+    auto substring = str.substr(0, size_converted);
 
     m_buffer.append(substring);
     m_position += size;
