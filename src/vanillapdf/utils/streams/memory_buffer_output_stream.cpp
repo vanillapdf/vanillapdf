@@ -18,7 +18,7 @@ void MemoryBufferOutputStream::Write(const Buffer& data, types::stream_size size
     auto substring = str.substr(0, size_converted);
 
     m_buffer.append(substring);
-    m_position += size;
+    m_position += substring.size();
 }
 
 void MemoryBufferOutputStream::Write(std::string_view data) {
