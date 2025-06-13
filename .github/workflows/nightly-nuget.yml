@@ -62,7 +62,7 @@ jobs:
 
       - name: Push all .nupkg to GitHub Packages
         run: |
-            dotnet nuget nupkgs/*.nupkg
+            dotnet nuget push nupkgs/*.nupkg
               --source "${{ vars.NUGET_SOURCE }}"
               --api-key "${{ secrets.GITHUB_TOKEN }}"
               --skip-duplicate
