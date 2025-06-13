@@ -37,9 +37,12 @@ jobs:
       - name: Set nightly version suffix
         id: set-suffix
         run: |
-          BRANCH_NAME="${GITHUB_REF##*/}"
+          # Prefer GITHUB_HEAD_REF (for PRs or workflow_dispatch), fallback to ref name
+          BRANCH_NAME="${GITHUB_HEAD_REF:-${GITHUB_REF##*/}}"
+          # Clean it up for suffix use (remove slashes, lowercase)
+          CLEAN_NAME=$(echo "$BRANCH_NAME" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
           DATE=$(date +'%Y%m%d')
-          echo "nightly_suffix=nightly-${BRANCH_NAME}-${DATE}" >> "$GITHUB_OUTPUT"
+          echo "nightly_suffix=nightly-${CLEAN_NAME}-${DATE}" >> "$GITHUB_OUTPUT"
 
   build-nuget:
     needs: prepare-suffix
