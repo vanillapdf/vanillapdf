@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: read  # Needed for future GitHub release or content access
+  packages: read  # Needed for publishing NuGet packages within organization
 
 env:
   VCPKG_DISABLE_METRICS: 1
