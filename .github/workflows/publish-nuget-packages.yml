@@ -23,7 +23,6 @@ jobs:
       - name: Download NuGet packages
         uses: actions/download-artifact@v4
         with:
-          name: '**'  # or use a specific artifact name
           path: ./nupkgs
 
       - name: Push to GitHub Packages
@@ -43,7 +42,6 @@ jobs:
       - name: Download NuGet packages
         uses: actions/download-artifact@v4
         with:
-          name: '**'
           path: ./nupkgs
 
       - name: Push to NuGet.org
