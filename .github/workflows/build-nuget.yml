@@ -1,0 +1,269 @@
+name: Build NuGet Packages
+
+on:
+  workflow_call:
+    inputs:
+      build_suffix:
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: read  # Needed for future GitHub release or content access
+
+env:
+  VCPKG_DISABLE_METRICS: 1
+  VCPKG_ROOT: external/vcpkg # vcpkg is by default sending build metrics, we do not need it here
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
+
+jobs:
+
+  build-linux:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - name: linux-x64
+            os: ubuntu-24.04
+            image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9
+            platform: linux/amd64
+            preset: linux-x64-gcc
+            build_type: Release
+
+          - name: linux-arm64
+            os: ubuntu-24.04-arm
+            image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9
+            platform: linux/arm64
+            preset: linux-arm64-gcc
+            build_type: Release
+
+    container:
+      image: ${{ matrix.config.image }}
+      options: --platform=${{ matrix.config.platform }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/${{ matrix.config.preset }}/vcpkg_installed
+            external/vcpkg/downloads
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-
+
+      # Bootstrap vcpkg on Linux
+      - name: Bootstrap vcpkg (Linux)
+        run: ./external/vcpkg/bootstrap-vcpkg.sh
+        shell: bash
+
+      - name: Configure ${{ matrix.config.name }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="-${{ inputs.build_suffix }}"
+
+      - name: Build ${{ matrix.config.name }}
+        run: cmake --build --preset ${{ matrix.config.preset }}
+
+      - name: Test ${{ matrix.config.name }}
+        run: ctest --preset ${{ matrix.config.preset }}
+
+      - name: Build package ${{ matrix.config.name }}
+        run: cmake --build build/${{ matrix.config.preset }} --target package
+
+      - name: Execute nuget packaging
+        run: nuget pack nuget/vanillapdf.runtime.nuspec
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: vanillapdf-runtime-nuget-${{ matrix.config.name }}-${{ inputs.build_suffix }}
+          path: '*.nupkg'
+
+
+  build-windows:
+    name: ${{ matrix.config.name }}
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - name: win-x86
+            preset: windows-x86-msvc-17
+            build_type: Release
+
+          - name: win-x64
+            preset: windows-x64-msvc-17
+            build_type: Release
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/${{ matrix.config.preset }}/vcpkg_installed
+            external/vcpkg/downloads
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-
+
+      # Bootstrap vcpkg on Windows
+      - name: Bootstrap vcpkg (Windows)
+        run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
+
+      - name: Configure ${{ matrix.config.name }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="-${{ inputs.build_suffix }}"
+
+      - name: Build ${{ matrix.config.name }}
+        run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.build_type }}
+
+      - name: Test ${{ matrix.config.name }}
+        run: ctest --preset ${{ matrix.config.preset }} -C ${{ matrix.config.build_type }} --output-on-failure
+
+      - name: Build package ${{ matrix.config.name }}
+        run: cmake --build build/${{ matrix.config.preset }} --config ${{ matrix.config.build_type }} --target package
+
+      - name: Execute nuget packaging
+        run: nuget pack nuget/vanillapdf.runtime.nuspec
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: vanillapdf-runtime-nuget-${{ matrix.config.name }}-${{ inputs.build_suffix }}
+          path: '*.nupkg'
+
+
+  build-macos:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.runner }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - name: osx-x64
+            runner: macos-13
+            preset: macos-x64
+            build_type: Release
+
+          - name: osx-arm64
+            runner: macos-15
+            preset: macos-arm64
+            build_type: Release
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/${{ matrix.config.preset }}/vcpkg_installed
+            external/vcpkg/downloads
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-
+
+      - name: Install Mono & NuGet
+        run: |
+          # Try installing mono, but continue even if linking fails
+          if ! brew install mono; then
+            echo "Mono installed, but link failed. Forcing overwrite..."
+            brew link --overwrite mono
+          fi
+          
+          # Download and prepare NuGet
+          curl -L https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -o nuget.exe
+          chmod +x nuget.exe
+
+      - name: Verify NuGet installation
+        run: mono ./nuget.exe help
+
+      # Bootstrap vcpkg on macOS
+      - name: Bootstrap vcpkg (macOS)
+        run: ${{ github.workspace }}/external/vcpkg/bootstrap-vcpkg.sh
+        shell: bash
+
+      - name: Configure ${{ matrix.config.name }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="-${{ inputs.build_suffix }}"
+
+      - name: Build ${{ matrix.config.name }}
+        run: cmake --build --preset ${{ matrix.config.preset }}
+
+      - name: Test ${{ matrix.config.name }}
+        run: ctest --preset ${{ matrix.config.preset }}
+
+      - name: Build package ${{ matrix.config.name }}
+        run: cmake --build build/${{ matrix.config.preset }} --target package
+
+      - name: Execute nuget packaging
+        run: mono ./nuget.exe pack nuget/vanillapdf.runtime.nuspec
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: vanillapdf-runtime-nuget-${{ matrix.config.name }}-${{ inputs.build_suffix }}
+          path: '*.nupkg'
+
+
+  build-vanillapdf-core:
+    name: vanillapdf core - ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        config:
+          - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-17", build_type: Release }
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/${{ matrix.config.preset }}/vcpkg_installed
+            external/vcpkg/downloads
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-
+
+      # Bootstrap vcpkg on Windows
+      - name: Bootstrap vcpkg (Windows)
+        run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
+
+      - name: Configure
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="-${{ inputs.build_suffix }}"
+
+      - name: Execute nuget packaging
+        run: nuget pack nuget/vanillapdf.nuspec
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vanillapdf-nuget-${{ inputs.build_suffix }}
+          path: '*.nupkg'
