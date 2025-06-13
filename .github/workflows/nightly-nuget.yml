@@ -45,7 +45,7 @@ jobs:
     needs: prepare-suffix
     uses: ./.github/workflows/build-nuget.yml
     with:
-      suffix: ${{ needs.prepare-suffix.outputs.nightly_suffix }}
+      build_suffix: ${{ needs.prepare-suffix.outputs.nightly_suffix }}
 
   push-nuget-staging:
     name: Push NuGet Packages
