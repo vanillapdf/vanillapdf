@@ -1,0 +1,52 @@
+name: Publish NuGet packages
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # e.g., v2.0.0
+
+permissions:
+  contents: read
+  packages: write  # Required for pushing to GitHub Packages
+
+jobs:
+  build-nuget:
+    uses: ./.github/workflows/build-nuget.yml
+
+  publish-nuget-github:
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+
+    needs: build-nuget
+    steps:
+      - name: Download NuGet packages
+        uses: actions/download-artifact@v4
+        with:
+          path: ./nupkgs
+
+      - name: Push to GitHub Packages
+        run: |
+          dotnet nuget push nupkgs/*.nupkg \
+            --source "${{ vars.NUGET_SOURCE }}" \
+            --api-key "${{ secrets.GITHUB_TOKEN }}" \
+            --skip-duplicate
+
+  publish-nuget-official:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+
+    needs: publish-nuget-github
+    steps:
+      - name: Download NuGet packages
+        uses: actions/download-artifact@v4
+        with:
+          path: ./nupkgs
+
+      - name: Push to NuGet.org
+        run: |
+          dotnet nuget push nupkgs/**/*.nupkg \
+            --source "${{ vars.NUGET_SOURCE }}" \
+            --api-key "${{ secrets.NUGET_API_KEY }}" \
+            --skip-duplicate
