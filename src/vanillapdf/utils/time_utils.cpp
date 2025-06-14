@@ -65,7 +65,6 @@ BufferPtr TimeUtils::GetCurrentTimeString(const char * format) {
     time_info.tm_hour = time.GetHour();
     time_info.tm_min = time.GetMinute();
     time_info.tm_sec = time.GetSecond();
-    time_info.tm_hour = time.GetHour();
 
     std::ostringstream oss;
     oss << std::put_time(&time_info, format);
