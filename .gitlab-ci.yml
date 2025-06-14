@@ -17,6 +17,7 @@ build-win-x86:
     - cmake --build . --config Release --target ALL_BUILD
     - cmake --build . --config Release --target RUN_TESTS
     - cmake --build . --config Release --target PACKAGE
+    - dotnet restore nuget/vanillapdf.runtime.csproj
     - dotnet pack nuget/vanillapdf.runtime.csproj --no-build
 
   artifacts:
@@ -42,6 +43,7 @@ build-win-x64:
     - cmake --build . --config Release --target ALL_BUILD
     - cmake --build . --config Release --target RUN_TESTS
     - cmake --build . --config Release --target PACKAGE
+    - dotnet restore nuget/vanillapdf.runtime.csproj
     - dotnet pack nuget/vanillapdf.runtime.csproj --no-build
 
   artifacts:
@@ -66,6 +68,7 @@ build-osx-x64:
     - make
     - make test
     - make package
+    - dotnet restore nuget/vanillapdf.runtime.csproj
     - dotnet pack nuget/vanillapdf.runtime.csproj --no-build
 
   artifacts:
@@ -252,6 +255,7 @@ build-linux-x64:
     - make
     - make test
     - make package
+    - dotnet restore nuget/vanillapdf.runtime.csproj
     - dotnet pack nuget/vanillapdf.runtime.csproj --no-build
 
   artifacts:
@@ -275,6 +279,7 @@ build-linux-arm64:
     - make
     - make test
     - make package
+    - dotnet restore nuget/vanillapdf.runtime.csproj
     - dotnet pack nuget/vanillapdf.runtime.csproj --no-build
 
   artifacts:
@@ -293,6 +298,7 @@ build-vanillapdf-nuget:
 
   script:
     - cmake . -DPLATFORM_IDENTIFIER=ubuntu.22.04-x64
+    - dotnet restore nuget/vanillapdf.csproj
     - dotnet pack nuget/vanillapdf.csproj --no-build
 
   artifacts:

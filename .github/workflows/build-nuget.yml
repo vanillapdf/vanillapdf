@@ -86,6 +86,9 @@ jobs:
       - name: Build package ${{ matrix.config.name }}
         run: cmake --build build/${{ matrix.config.preset }} --target package
 
+      - name: Restore NuGet packages
+        run: dotnet restore nuget/vanillapdf.runtime.csproj
+
       - name: Execute nuget packaging
         run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build
 
@@ -144,6 +147,9 @@ jobs:
 
       - name: Build package ${{ matrix.config.name }}
         run: cmake --build build/${{ matrix.config.preset }} --config ${{ matrix.config.build_type }} --target package
+
+      - name: Restore NuGet packages
+        run: dotnet restore nuget/vanillapdf.runtime.csproj
 
       - name: Execute nuget packaging
         run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build
@@ -209,6 +215,9 @@ jobs:
       - name: Build package ${{ matrix.config.name }}
         run: cmake --build build/${{ matrix.config.preset }} --target package
 
+      - name: Restore NuGet packages
+        run: dotnet restore nuget/vanillapdf.runtime.csproj
+
       - name: Execute nuget packaging
         run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build
 
@@ -253,6 +262,9 @@ jobs:
 
       - name: Configure
         run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="-${{ inputs.build_suffix }}"
+
+      - name: Restore NuGet packages
+        run: dotnet restore nuget/vanillapdf.csproj
 
       - name: Execute nuget packaging
         run: dotnet pack nuget/vanillapdf.csproj --no-build
