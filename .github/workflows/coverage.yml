@@ -3,16 +3,28 @@ name: Coverage
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - 'doc/**'
-      - 'nuget/**'
-      - '**/*.md'
+    paths:
+      - '.github/workflows/coverage.yml'
+      - '.codecov.yml'
+      - 'src/**'
+      - 'include/**'
+      - 'cmake/**'
+      - 'scripts/**'
+      - 'CMakeLists.txt'
+      - 'CMakePresets.json'
+      - 'test/**'
 
   pull_request:
-    paths-ignore:
-      - 'doc/**'
-      - 'nuget/**'
-      - '**/*.md'
+    paths:
+      - '.github/workflows/coverage.yml'
+      - '.codecov.yml'
+      - 'src/**'
+      - 'include/**'
+      - 'cmake/**'
+      - 'scripts/**'
+      - 'CMakeLists.txt'
+      - 'CMakePresets.json'
+      - 'test/**'
 
 permissions:
   contents: read  # Download the repository source code
