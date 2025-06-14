@@ -10,18 +10,28 @@ on:
   # Run workflow on any push into main branch
   push:
     branches: [ "main" ]
-    paths-ignore:
-      - 'doc/**'
-      - 'nuget/**'
-      - '**/*.md'
+    paths:
+      - '.github/workflows/sanity-check.yml'
+      - 'src/**'
+      - 'include/**'
+      - 'cmake/**'
+      - 'scripts/**'
+      - 'CMakeLists.txt'
+      - 'CMakePresets.json'
+      - 'test/**'
 
   # Run workflow when there is a pull request towards main branch
   pull_request:
     branches: [ "main" ]
-    paths-ignore:
-      - 'doc/**'
-      - 'nuget/**'
-      - '**/*.md'
+    paths:
+      - '.github/workflows/sanity-check.yml'
+      - 'src/**'
+      - 'include/**'
+      - 'cmake/**'
+      - 'scripts/**'
+      - 'CMakeLists.txt'
+      - 'CMakePresets.json'
+      - 'test/**'
 
 permissions:
   contents: read    # Download the repository source code

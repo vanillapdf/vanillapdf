@@ -14,16 +14,26 @@ name: "CodeQL Advanced"
 on:
   push:
     branches: [ "main" ]
-    paths-ignore:
-      - 'doc/**'
-      - 'nuget/**'
-      - '**/*.md'
+    paths:
+      - '.github/workflows/codeql.yml'
+      - 'src/**'
+      - 'include/**'
+      - 'cmake/**'
+      - 'scripts/**'
+      - 'CMakeLists.txt'
+      - 'CMakePresets.json'
+      - 'test/**'
   pull_request:
     branches: [ "main" ]
-    paths-ignore:
-      - 'doc/**'
-      - 'nuget/**'
-      - '**/*.md'
+    paths:
+      - '.github/workflows/codeql.yml'
+      - 'src/**'
+      - 'include/**'
+      - 'cmake/**'
+      - 'scripts/**'
+      - 'CMakeLists.txt'
+      - 'CMakePresets.json'
+      - 'test/**'
   schedule:
     - cron: '15 22 * * 6'
 
