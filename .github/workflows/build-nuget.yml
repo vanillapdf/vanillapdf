@@ -87,7 +87,7 @@ jobs:
         run: cmake --build build/${{ matrix.config.preset }} --target package
 
       - name: Execute nuget packaging
-        run: nuget pack nuget/vanillapdf.runtime.nuspec
+        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -146,7 +146,7 @@ jobs:
         run: cmake --build build/${{ matrix.config.preset }} --config ${{ matrix.config.build_type }} --target package
 
       - name: Execute nuget packaging
-        run: nuget pack nuget/vanillapdf.runtime.nuspec
+        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -190,20 +190,7 @@ jobs:
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
 
-      - name: Install Mono & NuGet
-        run: |
-          # Try installing mono, but continue even if linking fails
-          if ! brew install mono; then
-            echo "Mono installed, but link failed. Forcing overwrite..."
-            brew link --overwrite mono
-          fi
-          
-          # Download and prepare NuGet
-          curl -L https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -o nuget.exe
-          chmod +x nuget.exe
-
-      - name: Verify NuGet installation
-        run: mono ./nuget.exe help
+      # dotnet is available on macOS runners by default
 
       # Bootstrap vcpkg on macOS
       - name: Bootstrap vcpkg (macOS)
@@ -223,7 +210,7 @@ jobs:
         run: cmake --build build/${{ matrix.config.preset }} --target package
 
       - name: Execute nuget packaging
-        run: mono ./nuget.exe pack nuget/vanillapdf.runtime.nuspec
+        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -268,7 +255,7 @@ jobs:
         run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="-${{ inputs.build_suffix }}"
 
       - name: Execute nuget packaging
-        run: nuget pack nuget/vanillapdf.nuspec
+        run: dotnet pack nuget/vanillapdf.csproj --no-build
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4

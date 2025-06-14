@@ -24,5 +24,5 @@ cd ..\..
 
 :: ------------- NUGET_FINAL -------------
 ::rm vanillapdf.nupkg
-nuget pack vanillapdf.nuspec
+dotnet pack ..\vanillapdf.csproj --no-build
 :: ------------- NUGET_FINAL -------------

@@ -96,9 +96,9 @@ set(CPACK_WIX_CMAKE_PACKAGE_REGISTRY	"Vanilla.PDF")
 # items and the controlling is not sufficient, so let's do it the old way
 
 # Initialize NuGet for current platform
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/nuget/vanillapdf.runtime.nuspec.in" "${CMAKE_CURRENT_SOURCE_DIR}/nuget/vanillapdf.runtime.nuspec")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/nuget/vanillapdf.runtime.csproj.in" "${CMAKE_CURRENT_SOURCE_DIR}/nuget/vanillapdf.runtime.csproj")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/nuget/vanillapdf_net.targets.in" "${CMAKE_CURRENT_SOURCE_DIR}/nuget/vanillapdf_net.targets")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/nuget/vanillapdf.nuspec.in" "${CMAKE_CURRENT_SOURCE_DIR}/nuget/vanillapdf.nuspec")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/nuget/vanillapdf.csproj.in" "${CMAKE_CURRENT_SOURCE_DIR}/nuget/vanillapdf.csproj")
 
 # This could be useful, however at the time of CPack
 # I am not able to alter some of the properties,
