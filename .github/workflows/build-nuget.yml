@@ -7,6 +7,13 @@ on:
         required: false
         type: string
         default: ""
+  # Allow triggering manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      build_suffix:
+        description: "Optional build suffix for version"
+        required: false
+        default: ""
 
 permissions:
   contents: read  # Needed for future GitHub release or content access
