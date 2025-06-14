@@ -10,10 +10,18 @@ on:
   # Run workflow on any push into main branch
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - 'doc/**'
+      - 'nuget/**'
+      - '**/*.md'
 
   # Run workflow when there is a pull request towards main branch
   pull_request:
     branches: [ "main" ]
+    paths-ignore:
+      - 'doc/**'
+      - 'nuget/**'
+      - '**/*.md'
 
 permissions:
   contents: read    # Download the repository source code

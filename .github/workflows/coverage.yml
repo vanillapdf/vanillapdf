@@ -3,8 +3,16 @@ name: Coverage
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'doc/**'
+      - 'nuget/**'
+      - '**/*.md'
 
   pull_request:
+    paths-ignore:
+      - 'doc/**'
+      - 'nuget/**'
+      - '**/*.md'
 
 permissions:
   contents: read  # Download the repository source code
