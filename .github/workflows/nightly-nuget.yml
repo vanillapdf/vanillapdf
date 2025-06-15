@@ -42,7 +42,7 @@ jobs:
           # Clean it up for suffix use (remove slashes, lowercase)
           CLEAN_NAME=$(echo "$BRANCH_NAME" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
           DATE=$(date +'%Y%m%d')
-          echo "nightly_suffix=nightly-${CLEAN_NAME}-${DATE}" >> "$GITHUB_OUTPUT"
+          echo "nightly_suffix=-nightly-${CLEAN_NAME}-${DATE}" >> "$GITHUB_OUTPUT"
 
   build-nuget:
     needs: prepare-suffix

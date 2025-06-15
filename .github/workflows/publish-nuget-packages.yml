@@ -10,8 +10,32 @@ permissions:
   packages: write  # Required for pushing to GitHub Packages
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      build_suffix: ${{ steps.parse.outputs.build_suffix }}
+    steps:
+      - name: Derive build suffix from tag
+        id: parse
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          VERSION="${TAG#v}"
+          EXTRA=""
+          if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(.*)$ ]]; then
+            EXTRA="${BASH_REMATCH[1]}"
+          fi
+          if [[ -n "$EXTRA" ]]; then
+            EXTRA="${EXTRA#-}"
+            echo "build_suffix=-$EXTRA" >> "$GITHUB_OUTPUT"
+          else
+            echo "build_suffix=" >> "$GITHUB_OUTPUT"
+          fi
+
   build-nuget:
+    needs: prepare
     uses: ./.github/workflows/build-nuget.yml
+    with:
+      build_suffix: ${{ needs.prepare.outputs.build_suffix }}
 
   publish-nuget-github:
     runs-on: ubuntu-latest
