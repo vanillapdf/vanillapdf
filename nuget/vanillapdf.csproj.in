@@ -15,6 +15,7 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NoBuild>true</NoBuild>
+    <NoWarn>$(NoWarn);MSB3644</NoWarn>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='native'">
     <PackageReference Include="vanillapdf.runtime.linux-x64" Version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />

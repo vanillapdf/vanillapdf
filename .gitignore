@@ -16,4 +16,5 @@ CMakeSettings.json
 /nuget/build/
 /nuget/archives/
 /nuget/*.nupkg
+/*.nupkg
 /nuget/*.csproj

@@ -8,5 +8,5 @@ Expected result: Successfully extracted 2 packages
 # Step 3 - Restore NuGet packages from the locally built runtime packages
 dotnet restore ../vanillapdf.csproj --source .
 # Step 4 - Build NuGet bundle
-dotnet pack ../vanillapdf.csproj --no-build
+dotnet pack ../vanillapdf.csproj --no-build --output .
 

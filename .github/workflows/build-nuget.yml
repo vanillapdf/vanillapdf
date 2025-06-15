@@ -97,7 +97,7 @@ jobs:
         run: dotnet restore nuget/vanillapdf.runtime.csproj
 
       - name: Execute nuget packaging
-        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build
+        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -162,7 +162,7 @@ jobs:
         run: dotnet restore nuget/vanillapdf.runtime.csproj
 
       - name: Execute nuget packaging
-        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build
+        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -232,7 +232,7 @@ jobs:
         run: dotnet restore nuget/vanillapdf.runtime.csproj
 
       - name: Execute nuget packaging
-        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build
+        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -295,7 +295,7 @@ jobs:
         run: dotnet restore nuget/vanillapdf.csproj --source ./local-packages
 
       - name: Execute nuget packaging
-        run: dotnet pack nuget/vanillapdf.csproj --no-build
+        run: dotnet pack nuget/vanillapdf.csproj --no-build --output .
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4

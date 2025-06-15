@@ -18,7 +18,7 @@ build-win-x86:
     - cmake --build . --config Release --target RUN_TESTS
     - cmake --build . --config Release --target PACKAGE
     - dotnet restore nuget/vanillapdf.runtime.csproj
-    - dotnet pack nuget/vanillapdf.runtime.csproj --no-build
+    - dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
 
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
@@ -44,7 +44,7 @@ build-win-x64:
     - cmake --build . --config Release --target RUN_TESTS
     - cmake --build . --config Release --target PACKAGE
     - dotnet restore nuget/vanillapdf.runtime.csproj
-    - dotnet pack nuget/vanillapdf.runtime.csproj --no-build
+    - dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
 
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
@@ -69,7 +69,7 @@ build-osx-x64:
     - make test
     - make package
     - dotnet restore nuget/vanillapdf.runtime.csproj
-    - dotnet pack nuget/vanillapdf.runtime.csproj --no-build
+    - dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
 
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
@@ -256,7 +256,7 @@ build-linux-x64:
     - make test
     - make package
     - dotnet restore nuget/vanillapdf.runtime.csproj
-    - dotnet pack nuget/vanillapdf.runtime.csproj --no-build
+    - dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
 
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
@@ -280,7 +280,7 @@ build-linux-arm64:
     - make test
     - make package
     - dotnet restore nuget/vanillapdf.runtime.csproj
-    - dotnet pack nuget/vanillapdf.runtime.csproj --no-build
+    - dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
 
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
@@ -299,7 +299,7 @@ build-vanillapdf-nuget:
   script:
     - cmake . -DPLATFORM_IDENTIFIER=ubuntu.22.04-x64
     - dotnet restore nuget/vanillapdf.csproj
-    - dotnet pack nuget/vanillapdf.csproj --no-build
+    - dotnet pack nuget/vanillapdf.csproj --no-build --output .
 
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
