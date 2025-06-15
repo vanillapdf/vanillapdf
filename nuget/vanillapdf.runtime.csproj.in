@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;native</TargetFrameworks>
+    <NoWarn>MSB3644</NoWarn>
     <PackageId>vanillapdf.runtime.@PLATFORM_IDENTIFIER@</PackageId>
     <Version>@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@</Version>
     <Title>vanillapdf</Title>
