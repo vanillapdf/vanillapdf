@@ -275,8 +275,14 @@ jobs:
       - name: Configure
         run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="-${{ inputs.build_suffix }}"
 
+      - name: Download runtime packages
+        uses: actions/download-artifact@v4
+        with:
+          pattern: vanillapdf-runtime-nuget-*-${{ inputs.build_suffix }}
+          path: ./local-packages
+
       - name: Restore NuGet packages
-        run: dotnet restore nuget/vanillapdf.csproj
+        run: dotnet restore nuget/vanillapdf.csproj --source ./local-packages
 
       - name: Execute nuget packaging
         run: dotnet pack nuget/vanillapdf.csproj --no-build
