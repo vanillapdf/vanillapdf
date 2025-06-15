@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;native</TargetFrameworks>
-    <NoWarn>MSB3644</NoWarn>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>vanillapdf.runtime.@PLATFORM_IDENTIFIER@</PackageId>
     <Version>@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@</Version>
     <Title>vanillapdf</Title>
@@ -20,11 +19,10 @@
   <ItemGroup>
     <None Include="vanillapdf_native.targets" Pack="true" PackagePath="build/native/vanillapdf.runtime.@PLATFORM_IDENTIFIER@.targets" />
     <None Include="vanillapdf_net.targets" Pack="true" PackagePath="build/netstandard2.0/vanillapdf.runtime.@PLATFORM_IDENTIFIER@.targets" />
-    <None Include="../build/**/libvanillapdf.dll" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native" Link="libvanillapdf.dll" />
-    <None Include="../build/**/libvanillapdf.so" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native" Link="libvanillapdf.so" />
-    <None Include="../build/**/libvanillapdf.dylib" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native" Link="libvanillapdf.dylib" />
-    <None Include="../build/**/vanillapdf.lib" Pack="true" PackagePath="lib/native/@PLATFORM_IDENTIFIER@" Link="vanillapdf.lib" />
-    <None Include="_._" Pack="true" PackagePath="lib/native" />
+    <None Include="../build/**/libvanillapdf.dll" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.dll" />
+    <None Include="../build/**/libvanillapdf.so" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.so" />
+    <None Include="../build/**/libvanillapdf.dylib" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.dylib" />
+    <None Include="../build/**/vanillapdf.lib" Pack="true" PackagePath="lib/native/@PLATFORM_IDENTIFIER@/vanillapdf.lib" />
     <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0" />
     <None Include="../LICENSE.txt" Pack="true" PackagePath="" />
     <None Include="../CHANGELOG.txt" Pack="true" PackagePath="" />
