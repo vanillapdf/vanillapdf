@@ -27,10 +27,10 @@
     <file src="vanillapdf_net.targets" target="build\netstandard2.0\vanillapdf.runtime.@PLATFORM_IDENTIFIER@.targets" />
 
     <!-- Binary files -->
-    <file src="../build/**/libvanillapdf.dll" target="runtimes\@PLATFORM_IDENTIFIER@\native" />
-    <file src="../build/**/libvanillapdf.so" target="runtimes\@PLATFORM_IDENTIFIER@\native" />
-    <file src="../build/**/libvanillapdf.dylib" target="runtimes\@PLATFORM_IDENTIFIER@\native" />
-    <file src="../build/**/vanillapdf.lib" target="lib\native\@PLATFORM_IDENTIFIER@" />
+    <file src="../build/*/src/**/libvanillapdf.dll" target="runtimes\@PLATFORM_IDENTIFIER@\native" />
+    <file src="../build/*/src/**/libvanillapdf.so" target="runtimes\@PLATFORM_IDENTIFIER@\native" />
+    <file src="../build/*/src/**/libvanillapdf.dylib" target="runtimes\@PLATFORM_IDENTIFIER@\native" />
+    <file src="../build/*/src/**/vanillapdf.lib" target="lib\native\@PLATFORM_IDENTIFIER@" />
 
     <!-- This is a placeholder file, so we can target netstandard without a warning -->
     <file src="_._" target="lib\native" />
