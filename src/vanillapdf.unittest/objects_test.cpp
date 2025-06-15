@@ -91,6 +91,66 @@ TEST(LiteralStringObject, OctalTwoDigitCompare) {
     ASSERT_EQ(LiteralStringObject_Release(literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 
+TEST(LiteralStringObject, EscapeSequences) {
+
+    const char TEST_DATA[] = "\\n\\r\\t\\b\\f\\(\\)\\\\";
+
+    string_type buffer_data = nullptr;
+    size_type buffer_size = 0;
+
+    BufferHandle* buffer_ptr = nullptr;
+    LiteralStringObjectHandle* literal_string_ptr = nullptr;
+
+    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString(TEST_DATA, &literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(literal_string_ptr, nullptr);
+
+    ASSERT_EQ(LiteralStringObject_GetValue(literal_string_ptr, &buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(buffer_ptr, nullptr);
+
+    ASSERT_EQ(Buffer_GetData(buffer_ptr, &buffer_data, &buffer_size), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(buffer_data, nullptr);
+
+    const char EXPECTED[] = { '\n', '\r', '\t', '\b', '\f', '(', ')', '\\' };
+
+    ASSERT_EQ(buffer_size, sizeof(EXPECTED));
+    for (uint32_t i = 0; i < buffer_size; ++i) {
+        EXPECT_EQ(buffer_data[i], EXPECTED[i]);
+    }
+
+    ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_Release(literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(LiteralStringObject, BackslashEOL) {
+
+    const char TEST_DATA[] = "ABC\\\nDEF";
+
+    string_type buffer_data = nullptr;
+    size_type buffer_size = 0;
+
+    BufferHandle* buffer_ptr = nullptr;
+    LiteralStringObjectHandle* literal_string_ptr = nullptr;
+
+    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString(TEST_DATA, &literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(literal_string_ptr, nullptr);
+
+    ASSERT_EQ(LiteralStringObject_GetValue(literal_string_ptr, &buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(buffer_ptr, nullptr);
+
+    ASSERT_EQ(Buffer_GetData(buffer_ptr, &buffer_data, &buffer_size), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(buffer_data, nullptr);
+
+    const char EXPECTED[] = "ABCDEF";
+
+    ASSERT_EQ(buffer_size, strlen(EXPECTED));
+    for (uint32_t i = 0; i < buffer_size; ++i) {
+        EXPECT_EQ(buffer_data[i], EXPECTED[i]);
+    }
+
+    ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_Release(literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
+}
+
 TEST(HexadecimalStringObject, GetValue) {
 
     string_type buffer_data = nullptr;
@@ -405,5 +465,72 @@ INSTANTIATE_TEST_SUITE_P(
         EncodedNameCase{ "Name#23With#23Hashes", "Name#With#Hashes" }
     )
 );
+
+TEST(NameObject, ToPdfEncoding) {
+
+    const char DECODED[] = "A#B C\nD";
+    const char EXPECTED_PDF[] = "/A#23B#20C#0AD";
+
+    BufferHandle* pdf_buffer = nullptr;
+    NameObjectHandle* name_ptr = nullptr;
+    ObjectHandle* base_object = nullptr;
+
+    string_type pdf_data = nullptr;
+    size_type pdf_size = 0;
+
+    ASSERT_EQ(NameObject_CreateFromDecodedString(DECODED, &name_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(name_ptr, nullptr);
+
+    ASSERT_EQ(NameObject_ToObject(name_ptr, &base_object), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(base_object, nullptr);
+
+    ASSERT_EQ(Object_ToPdf(base_object, &pdf_buffer), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(pdf_buffer, nullptr);
+
+    ASSERT_EQ(Buffer_GetData(pdf_buffer, &pdf_data, &pdf_size), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(pdf_data, nullptr);
+
+    ASSERT_EQ(pdf_size, strlen(EXPECTED_PDF));
+    for (uint32_t i = 0; i < pdf_size; ++i) {
+        EXPECT_EQ(pdf_data[i], EXPECTED_PDF[i]);
+    }
+
+    ASSERT_EQ(Buffer_Release(pdf_buffer), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Object_Release(base_object), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_Release(name_ptr), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(NameObject, InvalidEncodedInput) {
+
+    NameObjectHandle* name_ptr = nullptr;
+
+    EXPECT_NE(NameObject_CreateFromEncodedString("Invalid Name", &name_ptr), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(name_ptr, nullptr);
+
+    EXPECT_NE(NameObject_CreateFromEncodedString("#0", &name_ptr), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(name_ptr, nullptr);
+}
+
+TEST(NameObject, Equals) {
+
+    NameObjectHandle* first_ptr = nullptr;
+    NameObjectHandle* second_ptr = nullptr;
+    boolean_type are_equal = VANILLAPDF_RV_FALSE;
+
+    ASSERT_EQ(NameObject_CreateFromDecodedString("Name", &first_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_CreateFromDecodedString("Name", &second_ptr), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(NameObject_Equals(first_ptr, second_ptr, &are_equal), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(are_equal, VANILLAPDF_RV_TRUE);
+
+    ASSERT_EQ(NameObject_Release(second_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_CreateFromDecodedString("Other", &second_ptr), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(NameObject_Equals(first_ptr, second_ptr, &are_equal), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(are_equal, VANILLAPDF_RV_FALSE);
+
+    ASSERT_EQ(NameObject_Release(first_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_Release(second_ptr), VANILLAPDF_ERROR_SUCCESS);
+}
 
 } /* objects */
