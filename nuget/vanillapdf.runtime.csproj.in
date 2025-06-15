@@ -24,7 +24,6 @@
     <None Include="../build/**/libvanillapdf.so" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native" />
     <None Include="../build/**/libvanillapdf.dylib" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native" />
     <None Include="../build/**/vanillapdf.lib" Pack="true" PackagePath="lib/native/@PLATFORM_IDENTIFIER@" />
-    <None Include="_._" Pack="true" PackagePath="lib/native" />
     <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0" />
     <None Include="../LICENSE.txt" Pack="true" PackagePath="" />
     <None Include="../CHANGELOG.txt" Pack="true" PackagePath="" />
