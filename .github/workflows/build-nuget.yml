@@ -60,6 +60,10 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Install ICU dependencies
+        if: runner.os == 'Linux'
+        run: dnf -y install libicu
+
       - name: Cache vcpkg
         uses: actions/cache@v4
         with:
