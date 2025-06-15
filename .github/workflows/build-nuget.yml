@@ -245,6 +245,11 @@ jobs:
     name: vanillapdf core - ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
 
+    needs:
+      - build-linux
+      - build-windows
+      - build-macos
+
     strategy:
       fail-fast: false
 
@@ -284,6 +289,7 @@ jobs:
         with:
           pattern: vanillapdf-runtime-nuget-*-${{ inputs.build_suffix }}
           path: ./local-packages
+          merge-multiple: true
 
       - name: Restore NuGet packages
         run: dotnet restore nuget/vanillapdf.csproj --source ./local-packages
