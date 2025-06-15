@@ -14,6 +14,19 @@ on:
         description: "Optional build suffix for version"
         required: false
         default: ""
+  # Run package build on code changes
+  push:
+    branches: [ "main" ]
+    paths:
+      - '.github/workflows/build-nuget.yml'
+      - 'nuget/**'
+      - 'cmake/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - '.github/workflows/build-nuget.yml'
+      - 'nuget/**'
+      - 'cmake/**'
 
 permissions:
   contents: read  # Needed for future GitHub release or content access
