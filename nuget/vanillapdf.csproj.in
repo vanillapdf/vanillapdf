@@ -15,7 +15,6 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NoBuild>true</NoBuild>
-    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="vanillapdf.runtime.linux-x64" Version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
