@@ -24,8 +24,8 @@
     <None Include="../build/*/src/vanillapdf/Release/libvanillapdf.dll" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.dll" />
 
     <!-- Ninja/unix-style layout -->
-    <None Include="../build/*/libvanillapdf.so" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.so" />
-    <None Include="../build/*/libvanillapdf.dylib" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.dylib" />
+    <None Include="../build/*/src/vanillapdf/libvanillapdf.so" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.so" />
+    <None Include="../build/*/src/vanillapdf/libvanillapdf.dylib" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.dylib" />
     
     <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0" />
     <None Include="../LICENSE.txt" Pack="true" PackagePath="" />
