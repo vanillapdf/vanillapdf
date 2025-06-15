@@ -19,10 +19,10 @@
   <ItemGroup>
     <None Include="vanillapdf_native.targets" Pack="true" PackagePath="build/native/vanillapdf.runtime.@PLATFORM_IDENTIFIER@.targets" />
     <None Include="vanillapdf_net.targets" Pack="true" PackagePath="build/netstandard2.0/vanillapdf.runtime.@PLATFORM_IDENTIFIER@.targets" />
-    <None Include="../build/**/libvanillapdf.dll" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.dll" />
-    <None Include="../build/**/libvanillapdf.so" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.so" />
-    <None Include="../build/**/libvanillapdf.dylib" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.dylib" />
-    <None Include="../build/**/vanillapdf.lib" Pack="true" PackagePath="lib/native/@PLATFORM_IDENTIFIER@/vanillapdf.lib" />
+    <None Include="../build/*/src/vanillapdf/Release/libvanillapdf.dll" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.dll" />
+    <None Include="../build/*/src/vanillapdf/Release/libvanillapdf.so" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.so" />
+    <None Include="../build/*/src/vanillapdf/Release/libvanillapdf.dylib" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.dylib" />
+    <None Include="../build/*/src/vanillapdf/Release/vanillapdf.lib" Pack="true" PackagePath="lib/native/@PLATFORM_IDENTIFIER@/vanillapdf.lib" />
     <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0" />
     <None Include="../LICENSE.txt" Pack="true" PackagePath="" />
     <None Include="../CHANGELOG.txt" Pack="true" PackagePath="" />
