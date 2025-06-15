@@ -292,7 +292,10 @@ jobs:
           merge-multiple: true
 
       - name: Restore NuGet packages
-        run: dotnet restore nuget/vanillapdf.csproj --source ./local-packages
+        run: |
+          dotnet restore nuget/vanillapdf.csproj \
+            --source ./local-packages \
+            --source https://api.nuget.org/v3/index.json
 
       - name: Execute nuget packaging
         run: dotnet pack nuget/vanillapdf.csproj --no-build --output .
