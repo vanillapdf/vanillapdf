@@ -4,6 +4,9 @@
 ./extract_packages.py 1.x.0 build archives
 Expected result: Successfully extracted 2 packages
 
-# Step 2 - Compile windows binaries
-# Step 3 - Build NUGET bundle
-./build.bat
+# Step 2 - Compile Windows binaries
+# Step 3 - Restore NuGet packages from the locally built runtime packages
+dotnet restore ../vanillapdf.csproj --source . --source "https://api.nuget.org/v3/index.json"
+# Step 4 - Build NuGet bundle
+dotnet pack ../vanillapdf.csproj --no-build --output .
+

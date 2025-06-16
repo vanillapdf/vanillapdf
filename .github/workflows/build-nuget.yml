@@ -7,6 +7,7 @@ on:
         required: false
         type: string
         default: ""
+
   # Allow triggering manually from the Actions tab
   workflow_dispatch:
     inputs:
@@ -14,6 +15,21 @@ on:
         description: "Optional build suffix for version"
         required: false
         default: ""
+
+  # Run package build on code changes
+  push:
+    branches: [ "main" ]
+    paths:
+      - '.github/workflows/build-nuget.yml'
+      - 'nuget/**'
+      - 'cmake/**'
+
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - '.github/workflows/build-nuget.yml'
+      - 'nuget/**'
+      - 'cmake/**'
 
 permissions:
   contents: read  # Needed for future GitHub release or content access
@@ -56,6 +72,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Install ICU dependencies
+        if: runner.os == 'Linux'
+        run: dnf -y install libicu
 
       - name: Cache vcpkg
         uses: actions/cache@v4
@@ -75,7 +98,7 @@ jobs:
         shell: bash
 
       - name: Configure ${{ matrix.config.name }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="-${{ inputs.build_suffix }}"
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }}
@@ -86,13 +109,16 @@ jobs:
       - name: Build package ${{ matrix.config.name }}
         run: cmake --build build/${{ matrix.config.preset }} --target package
 
+      - name: Restore NuGet packages
+        run: dotnet restore nuget/vanillapdf.runtime.csproj
+
       - name: Execute nuget packaging
-        run: nuget pack nuget/vanillapdf.runtime.nuspec
+        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: vanillapdf-runtime-nuget-${{ matrix.config.name }}-${{ inputs.build_suffix }}
+          name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix }}
           path: '*.nupkg'
 
 
@@ -116,6 +142,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
 
       - name: Cache vcpkg
         uses: actions/cache@v4
@@ -134,7 +163,7 @@ jobs:
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
 
       - name: Configure ${{ matrix.config.name }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="-${{ inputs.build_suffix }}"
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.build_type }}
@@ -145,13 +174,16 @@ jobs:
       - name: Build package ${{ matrix.config.name }}
         run: cmake --build build/${{ matrix.config.preset }} --config ${{ matrix.config.build_type }} --target package
 
+      - name: Restore NuGet packages
+        run: dotnet restore nuget/vanillapdf.runtime.csproj
+
       - name: Execute nuget packaging
-        run: nuget pack nuget/vanillapdf.runtime.nuspec
+        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: vanillapdf-runtime-nuget-${{ matrix.config.name }}-${{ inputs.build_suffix }}
+          name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix }}
           path: '*.nupkg'
 
 
@@ -177,6 +209,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
 
       - name: Cache vcpkg
         uses: actions/cache@v4
@@ -190,20 +225,7 @@ jobs:
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
 
-      - name: Install Mono & NuGet
-        run: |
-          # Try installing mono, but continue even if linking fails
-          if ! brew install mono; then
-            echo "Mono installed, but link failed. Forcing overwrite..."
-            brew link --overwrite mono
-          fi
-          
-          # Download and prepare NuGet
-          curl -L https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -o nuget.exe
-          chmod +x nuget.exe
-
-      - name: Verify NuGet installation
-        run: mono ./nuget.exe help
+      # dotnet is available on macOS runners by default
 
       # Bootstrap vcpkg on macOS
       - name: Bootstrap vcpkg (macOS)
@@ -211,7 +233,7 @@ jobs:
         shell: bash
 
       - name: Configure ${{ matrix.config.name }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="-${{ inputs.build_suffix }}"
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }}
@@ -222,19 +244,27 @@ jobs:
       - name: Build package ${{ matrix.config.name }}
         run: cmake --build build/${{ matrix.config.preset }} --target package
 
+      - name: Restore NuGet packages
+        run: dotnet restore nuget/vanillapdf.runtime.csproj
+
       - name: Execute nuget packaging
-        run: mono ./nuget.exe pack nuget/vanillapdf.runtime.nuspec
+        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: vanillapdf-runtime-nuget-${{ matrix.config.name }}-${{ inputs.build_suffix }}
+          name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix }}
           path: '*.nupkg'
 
 
   build-vanillapdf-core:
     name: vanillapdf core - ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
+
+    needs:
+      - build-linux
+      - build-windows
+      - build-macos
 
     strategy:
       fail-fast: false
@@ -247,6 +277,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
 
       - name: Cache vcpkg
         uses: actions/cache@v4
@@ -265,13 +299,23 @@ jobs:
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
 
       - name: Configure
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="-${{ inputs.build_suffix }}"
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
+
+      - name: Download runtime packages
+        uses: actions/download-artifact@v4
+        with:
+          pattern: vanillapdf.runtime.*
+          path: nuget/local-packages
+          merge-multiple: true
+
+      - name: Restore NuGet packages
+        run: dotnet restore nuget/vanillapdf.csproj --configfile nuget/nuget.config
 
       - name: Execute nuget packaging
-        run: nuget pack nuget/vanillapdf.nuspec
+        run: dotnet pack nuget/vanillapdf.csproj --no-build --output .
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vanillapdf-nuget-${{ inputs.build_suffix }}
+          name: vanillapdf${{ inputs.build_suffix }}
           path: '*.nupkg'

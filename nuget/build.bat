@@ -24,5 +24,8 @@ cd ..\..
 
 :: ------------- NUGET_FINAL -------------
 ::rm vanillapdf.nupkg
-nuget pack vanillapdf.nuspec
+dotnet restore nuget\vanillapdf.csproj ^
+  --source . ^
+  --source "https://api.nuget.org/v3/index.json"
+dotnet pack nuget\vanillapdf.csproj --no-build --output .
 :: ------------- NUGET_FINAL -------------

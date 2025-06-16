@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>vanillapdf</PackageId>
+    <Version>@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@</Version>
+    <Title>vanillapdf</Title>
+    <Authors>Vanilla.PDF Labs s.r.o.</Authors>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageIcon>images/vanilla_logo.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://vanillapdf.com/</PackageProjectUrl>
+    <Description>Vanilla.PDF is a cross-platform SDK for creating and modifying PDF documents</Description>
+    <Copyright>Copyright 2018-2025 Vanilla.PDF Labs s.r.o.</Copyright>
+    <PackageTags>pdf parsing sign native</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NoBuild>true</NoBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="vanillapdf.runtime.linux-x64" Version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+    <PackageReference Include="vanillapdf.runtime.linux-arm64" Version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+    <PackageReference Include="vanillapdf.runtime.win-x86" Version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+    <PackageReference Include="vanillapdf.runtime.win-x64" Version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+    <PackageReference Include="vanillapdf.runtime.osx-x64" Version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+    <PackageReference Include="vanillapdf.runtime.osx-arm64" Version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="../include/**/*.h" Pack="true" PackagePath="build/native/include" />
+    <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0" />
+    <None Include="../LICENSE.txt" Pack="true" PackagePath="" />
+    <None Include="../CHANGELOG.txt" Pack="true" PackagePath="" />
+    <None Include="../NOTICE.md" Pack="true" PackagePath="" />
+    <None Include="vanillapdf.readme.md" Pack="true" PackagePath="README.md" />
+    <None Include="../cmake/vanilla_logo.png" Pack="true" PackagePath="images" />
+  </ItemGroup>
+</Project>

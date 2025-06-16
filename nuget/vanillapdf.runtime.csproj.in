@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>vanillapdf.runtime.@PLATFORM_IDENTIFIER@</PackageId>
+    <Version>@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_SUFFIX@</Version>
+    <Title>vanillapdf</Title>
+    <Authors>Vanilla.PDF Labs s.r.o.</Authors>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageIcon>images/vanilla_logo.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://vanillapdf.com/</PackageProjectUrl>
+    <Description>Vanilla.PDF is a cross-platform SDK for creating and modifying PDF documents</Description>
+    <Copyright>Copyright 2018-2025 Vanilla.PDF Labs s.r.o.</Copyright>
+    <PackageTags>pdf parsing sign native</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NoBuild>true</NoBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="vanillapdf_native.targets" Pack="true" PackagePath="build/native/vanillapdf.runtime.@PLATFORM_IDENTIFIER@.targets" />
+    <None Include="vanillapdf_net.targets" Pack="true" PackagePath="build/netstandard2.0/vanillapdf.runtime.@PLATFORM_IDENTIFIER@.targets" />
+
+    <!-- MSVC-style layout -->
+    <None Include="../build/*/src/vanillapdf/Release/libvanillapdf.dll" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.dll" />
+
+    <!-- Ninja/unix-style layout -->
+    <None Include="../build/*/src/vanillapdf/libvanillapdf.so" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.so" />
+    <None Include="../build/*/src/vanillapdf/libvanillapdf.dylib" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.dylib" />
+    
+    <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0" />
+    <None Include="../LICENSE.txt" Pack="true" PackagePath="" />
+    <None Include="../CHANGELOG.txt" Pack="true" PackagePath="" />
+    <None Include="../NOTICE.md" Pack="true" PackagePath="" />
+    <None Include="vanillapdf.readme.md" Pack="true" PackagePath="README.md" />
+    <None Include="../cmake/vanilla_logo.png" Pack="true" PackagePath="images" />
+  </ItemGroup>
+</Project>
