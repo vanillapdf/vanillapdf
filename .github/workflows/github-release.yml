@@ -14,6 +14,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Extract tag name and suffix
         id: vars
         run: |
@@ -35,6 +40,7 @@ jobs:
           TAG: ${{ steps.vars.outputs.tag }}
           PRERELEASE: ${{ steps.vars.outputs.prerelease }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
         run: |
           echo "Creating draft release for tag: $TAG"
           if gh release view "$TAG" &>/dev/null; then
