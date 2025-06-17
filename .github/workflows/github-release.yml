@@ -19,43 +19,43 @@ jobs:
       with:
         fetch-depth: 0
 
-      - name: Extract tag name and suffix
-        id: vars
-        run: |
-          TAG="${GITHUB_REF#refs/tags/}"
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          VERSION="${TAG#v}"
-          EXTRA=""
-          if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(.*)$ ]]; then
-            EXTRA="${BASH_REMATCH[1]}"
-          fi
-          if [[ -n "$EXTRA" ]]; then
-            echo "prerelease=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "prerelease=false" >> "$GITHUB_OUTPUT"
-          fi
+    - name: Extract tag name and suffix
+      id: vars
+      run: |
+        TAG="${GITHUB_REF#refs/tags/}"
+        echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+        VERSION="${TAG#v}"
+        EXTRA=""
+        if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(.*)$ ]]; then
+          EXTRA="${BASH_REMATCH[1]}"
+        fi
+        if [[ -n "$EXTRA" ]]; then
+          echo "prerelease=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "prerelease=false" >> "$GITHUB_OUTPUT"
+        fi
 
-      - name: Create release from tag
-        env:
-          TAG: ${{ steps.vars.outputs.tag }}
-          PRERELEASE: ${{ steps.vars.outputs.prerelease }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create release from tag
+      env:
+        TAG: ${{ steps.vars.outputs.tag }}
+        PRERELEASE: ${{ steps.vars.outputs.prerelease }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-        run: |
-          echo "Creating draft release for tag: $TAG"
-          if gh release view "$TAG" &>/dev/null; then
-            echo "Release $TAG already exists. Skipping."
-            exit 0
-          fi
-          if [ "$PRERELEASE" = "true" ]; then
-            gh release create "$TAG" \
-              --title "vanillapdf $TAG" \
-              --generate-notes \
-              --draft \
-              --prerelease
-          else
-            gh release create "$TAG" \
-              --title "vanillapdf $TAG" \
-              --generate-notes \
-              --draft
-          fi
+      run: |
+        echo "Creating draft release for tag: $TAG"
+        if gh release view "$TAG" &>/dev/null; then
+          echo "Release $TAG already exists. Skipping."
+          exit 0
+        fi
+        if [ "$PRERELEASE" = "true" ]; then
+          gh release create "$TAG" \
+            --title "vanillapdf $TAG" \
+            --generate-notes \
+            --draft \
+            --prerelease
+        else
+          gh release create "$TAG" \
+            --title "vanillapdf $TAG" \
+            --generate-notes \
+            --draft
+        fi
