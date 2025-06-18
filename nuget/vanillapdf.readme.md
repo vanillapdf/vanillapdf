@@ -14,7 +14,7 @@
 
 1. Install the NuGet package:
    ```
-   dotnet add package vanillapdf
+   dotnet add package vanillapdf.net
    ```
 2. The correct native runtime will be included automatically based on your target platform and RID.
 3. Refer to our [documentation](https://vanillapdf.github.io/vanillapdf) for usage examples and integration details.
