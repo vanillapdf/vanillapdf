@@ -1,20 +1,33 @@
 # Vanilla.PDF
 
-## About
+**Vanilla.PDF** is a modern, high-performance C++17 library for creating, editing, and digitally signing PDF documents. It is cross-platform and runs natively on Windows, Linux, and macOS — without requiring external dependencies or a runtime.
 
-Vanilla PDF is a cross-platform SDK (Software development kit) for creating and modifying PDF documents.
-While offering supreme control over the document structure, it is blazingly fast with extremely small memory footprint.
-Integration is very easy with pre-packaged binaries for multiple operating systems such as Windows, Linux and Mac.
-Full interface documentation, detailed guide and code samples are available at the product website.
-Automated build and test process eliminates most of the common defects.
-Support, such as bug reports is free and available at your service.
+## Features
 
-Please visit [vanillapdf.com](http://vanillapdf.com) for more information.
+- Create or modify PDF files programmatically
+- Add or validate digital signatures (PAdES)
+- Encrypt and decrypt PDF files
+- Access low-level PDF objects and structure directly
+- Fast and lightweight native runtime for each platform
 
-## FAQ
+## Getting Started
 
-Frequently asked questions are discussed on our [website](https://vanillapdf.com/faq/).
+1. Install the NuGet package:
+   ```
+   dotnet add package vanillapdf.net
+   ```
+2. The correct native runtime will be included automatically based on your target platform and RID.
+3. Refer to our [documentation](https://vanillapdf.github.io/vanillapdf) for usage examples and integration details.
 
-## Contact
+## Resources
 
-In case of any questions do not hesitate to [Contact us](https://vanillapdf.com/contact/).
+- 🔧 [GitHub Repository](https://github.com/vanillapdf/vanillapdf)
+- 📘 [Documentation](https://vanillapdf.github.io/vanillapdf)
+- 💬 [FAQ](https://vanillapdf.com/faq/)
+- 📨 [Contact](https://vanillapdf.com/contact/)
+
+## License
+
+Licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+For changes and release notes, see the [GitHub Releases](https://github.com/vanillapdf/vanillapdf/releases).

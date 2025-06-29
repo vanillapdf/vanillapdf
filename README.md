@@ -108,6 +108,8 @@ We welcome pull requests, feature proposals, and bug reports!
 
 Vanilla.PDF is licensed under the [Apache 2.0 License](LICENSE.txt).
 
+For a complete list of changes, see the [Releases page](https://github.com/vanillapdf/vanillapdf/releases).
+
 ---
 
 ## 💬 Contact & Support
