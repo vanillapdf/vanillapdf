@@ -1,8 +1,9 @@
 # VCPKG - C++ package management system
 
-# For embedded configuration we leave everyting to the parent project
-if(NOT VANILLAPDF_STANDALONE)
-  message(STATUS "VanillaPDF is being built as a vcpkg port or embedded, skipping automatic package management")
+# For embedded configuration we leave everyting to the parent project or when
+# vcpkg initialization is explicitly disabled
+if(NOT VANILLAPDF_STANDALONE OR VANILLAPDF_SKIP_VCPKG_INIT)
+  message(STATUS "Skipping automatic vcpkg initialization")
   return()
 endif()
 

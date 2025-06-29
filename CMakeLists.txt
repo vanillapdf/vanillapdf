@@ -18,6 +18,9 @@ set(VANILLAPDF_SOLUTION_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 option(VANILLAPDF_STANDALONE "Enable internal vcpkg setup for standalone builds" ON)
 option(VANILLAPDF_ENABLE_TESTS "Perform test scenarios to ensure stable releases" ON)
 option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure performance" ON)
+# Option to skip automatic vcpkg initialization. Useful for jobs that only run
+# configure to generate packaging files without building C++ dependencies.
+option(VANILLAPDF_SKIP_VCPKG_INIT "Skip bootstrapping vcpkg during configuration" OFF)
 
 # Allow build configuration to link using static CRT, dynamic CRT link is default
 option(VANILLAPDF_USE_STATIC_CRT "Use static MSVC runtime (/MT) instead of dynamic (/MD)" OFF)

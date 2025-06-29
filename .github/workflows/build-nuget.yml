@@ -282,24 +282,8 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Cache vcpkg
-        uses: actions/cache@v4
-        with:
-          path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
-            external/vcpkg/downloads
-            external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
-          restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-
-
-      # Bootstrap vcpkg on Windows
-      - name: Bootstrap vcpkg (Windows)
-        run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
-
       - name: Configure
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}" -DVANILLAPDF_SKIP_VCPKG_INIT=ON
 
       - name: Download runtime packages
         uses: actions/download-artifact@v4
