@@ -7,9 +7,7 @@
         "libjpeg-turbo",
         "openjpeg",
         "zlib",
-        "benchmark",
         "spdlog",
-        "gtest",
         "nlohmann-json"
     ],
     "features": {
@@ -17,6 +15,18 @@
             "description": "Enable Skia support",
             "dependencies": [
                 "skia"
+            ]
+        },
+        "tests": {
+            "description": "Enable unit and integration tests",
+            "dependencies": [
+                "gtest"
+            ]
+        },
+        "benchmarks": {
+            "description": "Enable performance benchmarking tools",
+            "dependencies": [
+                "benchmark"
             ]
         }
     },
