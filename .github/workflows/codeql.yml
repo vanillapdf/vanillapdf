@@ -29,6 +29,11 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  VCPKG_ROOT: external/vcpkg
+  VCPKG_DISABLE_METRICS: 1
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
+
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
@@ -72,6 +77,21 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: 'true'
+
+    - name: Cache vcpkg
+      uses: actions/cache@v4
+      with:
+        path: |
+          build/**/vcpkg_installed
+          external/vcpkg/downloads
+          external/vcpkg/bincache
+        key: codeql-vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+        restore-keys: |
+          codeql-vcpkg-${{ runner.os }}-
+
+    - name: Bootstrap vcpkg
+      run: ./external/vcpkg/bootstrap-vcpkg.sh
+      shell: bash
 
     # Add any setup steps before running the `github/codeql-action/init` action.
     # This includes steps like installing compilers or runtimes (`actions/setup-node`
