@@ -11,12 +11,6 @@
         "nlohmann-json"
     ],
     "features": {
-        "skia-support": {
-            "description": "Enable Skia support",
-            "dependencies": [
-                "skia"
-            ]
-        },
         "tests": {
             "description": "Enable unit and integration tests",
             "dependencies": [
