@@ -23,6 +23,9 @@ vcpkg_cmake_configure(
 
 vcpkg_cmake_install()
 
+# Ensure debug symbols are copied for proper installation
+vcpkg_copy_pdbs()
+
 vcpkg_cmake_config_fixup(
     PACKAGE_NAME "vanillapdf"
     CONFIG_PATH "lib/cmake/vanillapdf"
