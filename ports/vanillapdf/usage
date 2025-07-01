@@ -19,7 +19,6 @@ Features:
 
 Optional features (must be enabled manually):
 
-- Skia rendering: `--feature=skia-support`
 - Benchmarks: `--feature=benchmarks`
 - Tests: `--feature=tests`
 
