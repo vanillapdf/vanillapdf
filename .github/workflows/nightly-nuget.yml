@@ -11,6 +11,7 @@ on:
     branches: [ "main" ]
     paths:
       - '.github/workflows/nightly-nuget.yml'
+      - 'vcpkg.json'
 
   # Run workflow when there is a pull request towards main branch
   # only there was a change in the workflow file
@@ -18,6 +19,7 @@ on:
     branches: [ "main" ]
     paths:
       - '.github/workflows/nightly-nuget.yml'
+      - 'vcpkg.json'
 
   schedule:
     - cron: '0 3 * * *'  # Every day at 03:00 UTC
