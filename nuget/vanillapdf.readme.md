@@ -10,6 +10,13 @@
 - Access low-level PDF objects and structure directly
 - Fast and lightweight native runtime for each platform
 
+## Supported Platforms & Compilers
+
+- **Windows:** Visual Studio 2019 (MSVC 16.11) or 2022 (MSVC 17.x)
+- **Linux:** GCC 8.1+ or Clang 10+ (x64, ARM64, ARM)
+- **macOS:** AppleClang 15+ (Xcode 15)
+- **Android:** NDK toolchain (arm64-v8a, armeabi-v7a, x86, x86_64)
+
 ## Getting Started
 
 1. Install the NuGet package:
