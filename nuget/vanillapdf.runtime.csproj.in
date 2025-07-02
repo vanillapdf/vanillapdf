@@ -17,7 +17,6 @@
     <NoBuild>true</NoBuild>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="vanillapdf_native.targets" Pack="true" PackagePath="build/native/vanillapdf.runtime.@PLATFORM_IDENTIFIER@.targets" />
     <None Include="vanillapdf_net.targets" Pack="true" PackagePath="buildTransitive/vanillapdf.runtime.@PLATFORM_IDENTIFIER@.targets" />
 
     <!-- MSVC-style layout -->
