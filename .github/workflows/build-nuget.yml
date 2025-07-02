@@ -124,18 +124,25 @@ jobs:
 
   build-windows:
     name: ${{ matrix.config.name }}
-    runs-on: windows-latest
+    runs-on: ${{ matrix.config.os }}
 
     strategy:
       fail-fast: false
       matrix:
         config:
           - name: win-x86
+            os: windows-latest
             preset: windows-x86-msvc-17
             build_type: Release
 
           - name: win-x64
+            os: windows-latest
             preset: windows-x64-msvc-17
+            build_type: Release
+
+          - name: win.11-arm64
+            os: windows-11-arm
+            preset: windows-arm64-msvc-17
             build_type: Release
 
     steps:
@@ -272,6 +279,7 @@ jobs:
       matrix:
         config:
           - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-17", build_type: Release }
+          - { name: "win.11-arm64", os: windows-11-arm, preset: "windows-arm64-msvc-17", build_type: Release }
 
     steps:
       - uses: actions/checkout@v4

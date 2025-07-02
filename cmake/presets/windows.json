@@ -49,6 +49,17 @@
             }
         },
         {
+            "name": "windows-arm64-msvc-17",
+            "inherits": "default",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "ARM64",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "arm64-windows",
+                "PLATFORM_IDENTIFIER": "win-arm64",
+                "VANILLAPDF_USE_STATIC_CRT": "ON"
+            }
+        },
+        {
             "name": "windows-x86-ninja",
             "inherits": "default",
             "generator": "Ninja",
@@ -89,6 +100,10 @@
             "configurePreset": "windows-x64-msvc-17"
         },
         {
+            "name": "windows-arm64-msvc-17",
+            "configurePreset": "windows-arm64-msvc-17"
+        },
+        {
             "name": "windows-x86-ninja",
             "configurePreset": "windows-x86-ninja"
         },
@@ -113,6 +128,10 @@
         {
             "name": "windows-x64-msvc-17",
             "configurePreset": "windows-x64-msvc-17"
+        },
+        {
+            "name": "windows-arm64-msvc-17",
+            "configurePreset": "windows-arm64-msvc-17"
         },
         {
             "name": "windows-x86-ninja",

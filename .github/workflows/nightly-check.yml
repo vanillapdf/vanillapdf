@@ -150,6 +150,7 @@ jobs:
           - { name: "win.2025-x86", os: windows-2025, preset: "windows-x86-msvc-17" }
           - { name: "win.2022-x64", os: windows-2022, preset: "windows-x64-msvc-17" }
           - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-17" }
+          - { name: "win.11-arm64", os: windows-11-arm, preset: "windows-arm64-msvc-17" }
 
     steps:
       - uses: actions/checkout@v4

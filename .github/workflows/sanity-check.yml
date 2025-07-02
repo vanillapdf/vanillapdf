@@ -123,7 +123,7 @@ jobs:
 
   windows:
     name: ${{ matrix.config.name }} - ${{ matrix.build_type }}
-    runs-on: windows-2025
+    runs-on: ${{ matrix.config.os }}
 
     strategy:
       fail-fast: false # We would like to see the results of all jobs even in case one of them fails
@@ -136,10 +136,16 @@ jobs:
 
         config:
           - name: win.2025-x86
+            os: windows-2025
             preset: windows-x86-msvc-17
 
           - name: win.2025-x64
+            os: windows-2025
             preset: windows-x64-msvc-17
+
+          - name: win.11-arm64
+            os: windows-11-arm
+            preset: windows-arm64-msvc-17
 
     steps:
       - uses: actions/checkout@v4
