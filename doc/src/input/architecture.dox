@@ -2,8 +2,10 @@
 \page page_architecture Architecture
 \tableofcontents
 
-The library is writted in standard C++ (currently 14) and can be compiled using
-Visual studio (2015 and 2017) and GCC (tested on Ubuntu 16.04) as well.
+The library is written in standard C++17 and can be compiled using Microsoft
+Visual Studio 2019 (MSVC 16.11) or 2022 (MSVC 17.x), GCC 8.1+, or Clang 10+
+(including AppleClang 15 on macOS 13). Official CMake presets cover Windows,
+Linux, macOS and Android targets.
 
 Build is executed using cross-platform make tool CMake (<https://cmake.org/>).
 CMake also integrates packaging system to provide one-click installable packages for each platform.
