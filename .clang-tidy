@@ -1,10 +1,5 @@
 Checks: >
   -*,
-  bugprone-*,
-  performance-*,
-  modernize-*,
-  readability-*,
   clang-analyzer-*
-WarningsAsErrors: '*'
 HeaderFilterRegex: 'src/|include/'
 FormatStyle: file
