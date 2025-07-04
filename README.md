@@ -48,6 +48,8 @@ ctest --preset windows-x64-msvc-release  # Optional
 ```
 
 > 💡 Use `cmake --list-presets` to explore all available presets.
+> Clang-tidy runs automatically during the build. You can disable it with
+> `-DVANILLAPDF_ENABLE_CLANG_TIDY=OFF` if needed.
 
 ---
 

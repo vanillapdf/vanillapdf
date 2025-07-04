@@ -1,0 +1,13 @@
+option(VANILLAPDF_ENABLE_CLANG_TIDY "Run clang-tidy during the build" ON)
+
+if(VANILLAPDF_ENABLE_CLANG_TIDY)
+    find_program(CLANG_TIDY_EXE NAMES clang-tidy)
+    if(CLANG_TIDY_EXE)
+        set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE};-quiet")
+        set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+        message(STATUS "Enabled clang-tidy")
+    else()
+        message(WARNING "clang-tidy not found; disabling VANILLAPDF_ENABLE_CLANG_TIDY")
+        set(VANILLAPDF_ENABLE_CLANG_TIDY OFF CACHE BOOL "Run clang-tidy during the build" FORCE)
+    endif()
+endif()

@@ -117,6 +117,7 @@ jobs:
       - name: Build
         run: cmake --build --preset ${{ matrix.config.preset }}
 
+
       - name: Test
         run: ctest --preset ${{ matrix.config.preset }} --output-on-failure
 

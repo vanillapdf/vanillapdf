@@ -66,6 +66,9 @@ include(cmake/compiler_checks.cmake)
 # Allow code coverage configuration
 include(cmake/coverage.cmake)
 
+# Allow optional clang-tidy integration
+include(cmake/clang_tidy.cmake)
+
 # Turn on the ability to create folders to organize projects (.vcproj)
 # It creates "CMakePredefinedTargets" folder by default and adds CMake
 # defined projects like INSTALL.vcproj and ZERO_CHECK.vcproj
