@@ -41,8 +41,8 @@ jobs:
         run: |
           # Prefer GITHUB_HEAD_REF (for PRs or workflow_dispatch), fallback to ref name
           BRANCH_NAME="${GITHUB_HEAD_REF:-${GITHUB_REF##*/}}"
-          # Clean it up for suffix use (remove slashes, lowercase)
-          CLEAN_NAME=$(echo "$BRANCH_NAME" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
+          # Clean it up for suffix use (replace '/' and '.' with '-', lowercase)
+          CLEAN_NAME=$(echo "$BRANCH_NAME" | tr '/.' '-' | tr '[:upper:]' '[:lower:]')
           DATE=$(date +'%Y%m%d')
           echo "nightly_suffix=-nightly-${CLEAN_NAME}-${DATE}" >> "$GITHUB_OUTPUT"
 
