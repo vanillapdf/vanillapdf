@@ -23,6 +23,7 @@ on:
       - '.github/workflows/build-nuget.yml'
       - 'nuget/**'
       - 'cmake/**'
+      - 'vcpkg.json'
 
   pull_request:
     branches: [ "main" ]
@@ -30,6 +31,7 @@ on:
       - '.github/workflows/build-nuget.yml'
       - 'nuget/**'
       - 'cmake/**'
+      - 'vcpkg.json'
 
 permissions:
   contents: read  # Needed for future GitHub release or content access
