@@ -3,12 +3,12 @@
 
   <ItemGroup>
     <!-- include the native DLL and mark it for publish -->
-    <Content Include="$(MSBuildThisFileDirectory)..\runtimes\@PLATFORM_IDENTIFIER@\native\*.*">
+    <None Include="$(MSBuildThisFileDirectory)..\runtimes\@PLATFORM_IDENTIFIER@\native\*.*">
       <!-- ensure it gets copied on publish -->
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <!-- exactly where under publish/ it should land -->
       <TargetPath>runtimes/@PLATFORM_IDENTIFIER@/native/%(Filename)%(Extension)</TargetPath>
-    </Content>
+    </None>
   </ItemGroup>
 
 </Project>
