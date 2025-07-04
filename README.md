@@ -47,7 +47,66 @@ cmake --build --preset windows-x64-msvc-release
 ctest --preset windows-x64-msvc-release  # Optional
 ```
 
-> 💡 Use `cmake --list-presets` to explore all available presets.
+### Install Dependencies with vcpkg
+
+If you prefer to use [vcpkg](https://github.com/microsoft/vcpkg) for dependency
+management, bootstrap it and install the required packages:
+
+```bash
+git clone https://github.com/microsoft/vcpkg.git
+cd vcpkg
+./bootstrap-vcpkg.sh
+./vcpkg install openssl libjpeg-turbo
+```
+
+Then configure Vanilla.PDF with the vcpkg toolchain:
+
+```bash
+cmake -S . -B build/vcpkg \
+  -DCMAKE_TOOLCHAIN_FILE=</path/to/vcpkg>/scripts/buildsystems/vcpkg.cmake
+cmake --build build/vcpkg
+```
+
+### Using System Dependencies
+
+If some libraries should come from your package manager or Conan rather than
+vcpkg, enable the matching `VANILLAPDF_EXTERNAL_*` options when configuring:
+
+```bash
+cmake -B build \
+  -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
+  -DVANILLAPDF_EXTERNAL_JPEG=ON
+cmake --build build
+```
+
+Options exist for OpenSSL, libjpeg-turbo, openjpeg, zlib, spdlog,
+nlohmann-json, GTest and Google Benchmark. When these are set, the
+corresponding packages will not be installed by vcpkg and CMake will
+search for them on your system instead. The GTest and Benchmark options
+are only available when tests or benchmarks are enabled.
+
+### Building Debian Packages
+
+On Ubuntu systems you can install all required dependencies with apt and
+produce a `.deb` package directly:
+
+```bash
+sudo apt-get update
+sudo apt-get install libssl-dev libjpeg-turbo8 zlib1g-dev libopenjp2-7-dev \
+  libspdlog-dev nlohmann-json3-dev libgtest-dev libbenchmark-dev
+
+cmake -S . -B build/deb -DCMAKE_BUILD_TYPE=Release \
+  -DVANILLAPDF_STANDALONE=OFF \
+  -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
+  -DVANILLAPDF_EXTERNAL_JPEG=ON \
+  -DVANILLAPDF_EXTERNAL_OPENJPEG=ON \
+  -DVANILLAPDF_EXTERNAL_ZLIB=ON \
+  -DVANILLAPDF_EXTERNAL_SPDLOG=ON \
+  -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=ON \
+  -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_EXTERNAL_GTEST=ON \
+  -DVANILLAPDF_ENABLE_BENCHMARK=ON -DVANILLAPDF_EXTERNAL_BENCHMARK=ON
+cmake --build build/deb --target package
+```
 
 ---
 

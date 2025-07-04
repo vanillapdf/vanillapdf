@@ -51,7 +51,11 @@ if(WIN32)
 endif(WIN32)
 
 # Find google benchmarking library
-find_package(benchmark REQUIRED)
+if (VANILLAPDF_EXTERNAL_BENCHMARK)
+    find_package(benchmark CONFIG REQUIRED)
+else()
+    find_package(benchmark CONFIG REQUIRED)
+endif()
 
 set(VANILLAPDF_BENCHMARK_LIBS
     vanillapdf

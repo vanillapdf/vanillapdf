@@ -1,0 +1,42 @@
+name: Build Debian package
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  deb-package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libssl-dev libjpeg-turbo8 zlib1g-dev libopenjp2-7-dev \
+            libspdlog-dev nlohmann-json3-dev libgtest-dev libbenchmark-dev
+
+      - name: Configure
+        run: |
+          cmake -S . -B build/deb -DCMAKE_BUILD_TYPE=Release \
+            -DVANILLAPDF_STANDALONE=OFF \
+            -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
+            -DVANILLAPDF_EXTERNAL_JPEG=ON \
+            -DVANILLAPDF_EXTERNAL_OPENJPEG=ON \
+            -DVANILLAPDF_EXTERNAL_ZLIB=ON \
+            -DVANILLAPDF_EXTERNAL_SPDLOG=ON \
+            -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=ON \
+            -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_EXTERNAL_GTEST=ON \
+            -DVANILLAPDF_ENABLE_BENCHMARK=ON -DVANILLAPDF_EXTERNAL_BENCHMARK=ON
+
+      - name: Build
+        run: cmake --build build/deb
+
+      - name: Package
+        run: cmake --build build/deb --target package

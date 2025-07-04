@@ -2,7 +2,7 @@
     "name": "vanillapdf",
     "version": "2.1.0",
     "description": "PDF rendering engine using vcpkg-managed dependencies",
-    "dependencies": [
+    "default-features": [
         "openssl",
         "libjpeg-turbo",
         "openjpeg",
@@ -11,6 +11,24 @@
         "nlohmann-json"
     ],
     "features": {
+        "openssl": {
+            "dependencies": [ "openssl" ]
+        },
+        "libjpeg-turbo": {
+            "dependencies": [ "libjpeg-turbo" ]
+        },
+        "openjpeg": {
+            "dependencies": [ "openjpeg" ]
+        },
+        "zlib": {
+            "dependencies": [ "zlib" ]
+        },
+        "spdlog": {
+            "dependencies": [ "spdlog" ]
+        },
+        "nlohmann-json": {
+            "dependencies": [ "nlohmann-json" ]
+        },
         "tests": {
             "description": "Enable unit and integration tests",
             "dependencies": [
