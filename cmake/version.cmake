@@ -1,0 +1,15 @@
+# Version information for Vanilla.PDF
+
+# Set production version
+set(VANILLAPDF_VERSION_MAJOR 2)
+set(VANILLAPDF_VERSION_MINOR 1)
+set(VANILLAPDF_VERSION_PATCH 0)
+set(VANILLAPDF_VERSION_BUILD 0)
+
+# Optional build suffix, used for pre-release builds
+if(NOT DEFINED VANILLAPDF_VERSION_BUILD_SUFFIX)
+    set(VANILLAPDF_VERSION_BUILD_SUFFIX "")
+endif()
+
+# Compose full version string for configuration files
+set(VANILLAPDF_VERSION "${VANILLAPDF_VERSION_MAJOR}.${VANILLAPDF_VERSION_MINOR}.${VANILLAPDF_VERSION_PATCH}${VANILLAPDF_VERSION_BUILD_SUFFIX}")

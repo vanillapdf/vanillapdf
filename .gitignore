@@ -19,3 +19,4 @@ CMakeSettings.json
 /nuget/*.nupkg
 /*.nupkg
 /nuget/*.csproj
+/doc/doxyfile
