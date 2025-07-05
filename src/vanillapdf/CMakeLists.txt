@@ -635,6 +635,7 @@ else ()
 endif()
 
 if (VANILLAPDF_EXTERNAL_OPENJPEG)
+    list(PREPEND CMAKE_MODULE_PATH "${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake")
     find_package(OpenJPEG MODULE REQUIRED)
 else ()
     find_package(OpenJPEG REQUIRED)

@@ -2,6 +2,9 @@ name: Build Debian package
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/build-deb-package.yml
   schedule:
     - cron: '0 3 * * 1'
 
