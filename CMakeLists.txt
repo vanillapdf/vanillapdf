@@ -57,13 +57,15 @@ project(vanillapdf)
 # We can setup custom modules to search for third party dependencies
 # set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-# Set production version
-# It is important project version before including cmake/packaging.cmake
-set(VANILLAPDF_VERSION_MAJOR 2)
-set(VANILLAPDF_VERSION_MINOR 1)
-set(VANILLAPDF_VERSION_PATCH 0)
-set(VANILLAPDF_VERSION_BUILD 0)
-set(VANILLAPDF_VERSION_BUILD_SUFFIX "" CACHE STRING "Optional build suffix")
+# Version information is shared with standalone scripts
+include(cmake/version.cmake)
+
+# Allow overriding the build suffix from the command line
+set(VANILLAPDF_VERSION_BUILD_SUFFIX "${VANILLAPDF_VERSION_BUILD_SUFFIX}" CACHE STRING "Optional build suffix")
+
+# Compose full version string for configuration files using the (possibly) overridden suffix
+set(VANILLAPDF_VERSION
+    "${VANILLAPDF_VERSION_MAJOR}.${VANILLAPDF_VERSION_MINOR}.${VANILLAPDF_VERSION_PATCH}${VANILLAPDF_VERSION_BUILD_SUFFIX}")
 
 # Define packaging configuration only for standalone
 if (VANILLAPDF_STANDALONE)
