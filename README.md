@@ -92,7 +92,7 @@ produce a `.deb` package directly:
 
 ```bash
 sudo apt-get update
-sudo apt-get install libssl-dev libjpeg-turbo8 zlib1g-dev libopenjp2-7-dev \
+sudo apt-get install libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev \
   libspdlog-dev nlohmann-json3-dev libgtest-dev libbenchmark-dev
 
 cmake -S . -B build/deb -DCMAKE_BUILD_TYPE=Release \

@@ -19,8 +19,8 @@ option(VANILLAPDF_STANDALONE "Enable internal vcpkg setup for standalone builds"
 option(VANILLAPDF_ENABLE_TESTS "Perform test scenarios to ensure stable releases" ON)
 option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure performance" ON)
 
-# Allow linking selected dependencies from the system instead of vcpkg
-# Allow linking selected dependencies provided outside of vcpkg
+# Allow linking selected dependencies from the system instead of vcpkg,
+# or provided externally
 option(VANILLAPDF_EXTERNAL_OPENSSL "Use OpenSSL from the system or a package manager" OFF)
 option(VANILLAPDF_EXTERNAL_JPEG "Use libjpeg from the system or a package manager" OFF)
 option(VANILLAPDF_EXTERNAL_OPENJPEG "Use openjpeg from the system or a package manager" OFF)
