@@ -47,6 +47,7 @@ jobs:
             -DVANILLAPDF_EXTERNAL_ZLIB=ON \
             -DVANILLAPDF_EXTERNAL_SPDLOG=OFF \
             -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=OFF \
+            -DDETECT_CUSTOM_LINUX_DISTRIBUTION=ON \
             -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_EXTERNAL_GTEST=OFF \
             -DVANILLAPDF_ENABLE_BENCHMARK=ON -DVANILLAPDF_EXTERNAL_BENCHMARK=OFF
 
@@ -58,3 +59,26 @@ jobs:
 
       - name: Package
         run: cmake --build --preset linux-x64-gcc --target package
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vanillapdf-deb
+          path: build/linux-x64-gcc/*.deb
+
+  install-package:
+    name: Install package
+    runs-on: ubuntu-latest
+    needs: build-package
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: vanillapdf-deb
+          path: ./pkg
+
+      - name: Install .deb
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ./pkg/*.deb
+          sudo ldconfig
