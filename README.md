@@ -107,6 +107,28 @@ cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release \
 cmake --build --preset linux-x64-gcc --target package
 ```
 
+### Building Homebrew Packages
+
+On macOS systems you can use Homebrew to install the required
+dependencies and generate a package:
+
+```bash
+brew install openssl@3 jpeg-turbo zlib
+
+cmake --preset macos-arm64 -DCMAKE_BUILD_TYPE=Release \
+  -DVANILLAPDF_STANDALONE=ON \
+  -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
+  -DVANILLAPDF_EXTERNAL_JPEG=ON \
+  -DVANILLAPDF_EXTERNAL_OPENJPEG=OFF \
+  -DVANILLAPDF_EXTERNAL_ZLIB=ON \
+  -DVANILLAPDF_EXTERNAL_SPDLOG=OFF \
+  -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=OFF \
+  -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_EXTERNAL_GTEST=OFF \
+  -DVANILLAPDF_ENABLE_BENCHMARK=ON -DVANILLAPDF_EXTERNAL_BENCHMARK=OFF
+
+cmake --build --preset macos-arm64 --target package
+```
+
 ---
 
 ## 🔗 CMake Integration (Modern Target-Based)
