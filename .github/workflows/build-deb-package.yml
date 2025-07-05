@@ -5,6 +5,9 @@ on:
   push:
     paths:
       - .github/workflows/build-deb-package.yml
+  pull_request:
+    paths:
+      - .github/workflows/build-deb-package.yml
   schedule:
     - cron: '0 3 * * 1'
 
