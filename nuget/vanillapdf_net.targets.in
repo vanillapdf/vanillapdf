@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-    <ItemGroup>
-        <None Include="$(MSBuildThisFileDirectory)..\..\runtimes\@PLATFORM_IDENTIFIER@\native\*.*">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <Link>runtimes\@PLATFORM_IDENTIFIER@\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
-        </None>
-    </ItemGroup>
+  <ItemGroup>
+    <!-- include the native DLL and mark it for publish -->
+    <None Include="$(MSBuildThisFileDirectory)..\runtimes\@PLATFORM_IDENTIFIER@\native\*.*">
+      <!-- ensure it gets copied on publish -->
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <!-- exactly where under publish/ it should land -->
+      <TargetPath>runtimes/@PLATFORM_IDENTIFIER@/native/%(Filename)%(Extension)</TargetPath>
+    </None>
+  </ItemGroup>
 
 </Project>
