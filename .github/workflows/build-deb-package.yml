@@ -65,3 +65,39 @@ jobs:
         with:
           name: vanillapdf-deb
           path: build/linux-x64-gcc/*.deb
+
+  install-package:
+    name: Install package
+    runs-on: ubuntu-latest
+    needs: build-package
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: vanillapdf-deb
+          path: ./pkg
+
+      - name: Install .deb
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ./pkg/*.deb
+          sudo ldconfig
+
+      - name: Test native library
+        run: |
+          cat <<'EOF' > verify.c
+          #include <stdio.h>
+          #include <dlfcn.h>
+          int main() {
+              void *handle = dlopen("libvanillapdf.so", RTLD_LAZY);
+              if (!handle) { printf("dlopen failed: %s\n", dlerror()); return 1; }
+              if (!dlsym(handle, "LibraryInfo_GetVersionMajor")) {
+                  printf("dlsym failed: %s\n", dlerror());
+                  return 1;
+              }
+              dlclose(handle);
+              return 0;
+          }
+          EOF
+          gcc verify.c -ldl -o verify
+          ./verify
