@@ -47,6 +47,11 @@ cmake --build --preset windows-x64-msvc-release
 ctest --preset windows-x64-msvc-release  # Optional
 ```
 
+If vcpkg cannot be found, configuration fails by default. Pass
+`-DVANILLAPDF_AUTO_VCPKG_CLONE=ON` to automatically clone vcpkg into
+`external/vcpkg`. The bootstrapping step will still run automatically
+when needed.
+
 ### Install Dependencies with vcpkg
 
 If you prefer to use [vcpkg](https://github.com/microsoft/vcpkg) for dependency

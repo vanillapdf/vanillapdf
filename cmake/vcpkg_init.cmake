@@ -11,6 +11,22 @@ if(NOT DEFINED VCPKG_ROOT)
   set(VCPKG_ROOT "${VANILLAPDF_SOLUTION_SOURCE_DIR}/external/vcpkg")
 endif()
 
+# Clone vcpkg when requested
+if(NOT EXISTS "${VCPKG_ROOT}")
+  if(VANILLAPDF_AUTO_VCPKG_CLONE)
+    message(STATUS "Cloning vcpkg into ${VCPKG_ROOT}")
+    execute_process(
+      COMMAND git clone https://github.com/microsoft/vcpkg.git "${VCPKG_ROOT}"
+      RESULT_VARIABLE VANILLAPDF_GIT_CLONE_RESULT
+    )
+    if(NOT VANILLAPDF_GIT_CLONE_RESULT EQUAL 0)
+      message(FATAL_ERROR "***** FATAL ERROR: Failed to clone vcpkg *****")
+    endif()
+  else()
+    message(FATAL_ERROR "***** FATAL ERROR: VCPKG_ROOT not found. Set VCPKG_ROOT or enable VANILLAPDF_AUTO_VCPKG_CLONE *****")
+  endif()
+endif()
+
 # In case we are in STANDALONE configuration and CMAKE_TOOLCHAIN_FILE is not defined, let's try to fallback
 # This only works in case it is defined before the first call to project(), which is our case
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE AND DEFINED VCPKG_ROOT)

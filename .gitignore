@@ -20,3 +20,4 @@ CMakeSettings.json
 /*.nupkg
 /nuget/*.csproj
 /doc/doxyfile
+external/vcpkg/

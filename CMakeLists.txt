@@ -16,6 +16,7 @@ set(VANILLAPDF_SOLUTION_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Configurable option, if this is a primary project or just a submodule
 option(VANILLAPDF_STANDALONE "Enable internal vcpkg setup for standalone builds" ON)
+option(VANILLAPDF_AUTO_VCPKG_CLONE "Automatically clone vcpkg when missing" OFF)
 option(VANILLAPDF_ENABLE_TESTS "Perform test scenarios to ensure stable releases" ON)
 option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure performance" ON)
 
