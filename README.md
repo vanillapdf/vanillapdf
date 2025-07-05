@@ -94,7 +94,7 @@ produce a `.deb` package directly:
 sudo apt-get update
 sudo apt-get install libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev
 
-cmake -S . -B build/deb -DCMAKE_BUILD_TYPE=Release \
+cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release \
   -DVANILLAPDF_STANDALONE=OFF \
   -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
   -DVANILLAPDF_EXTERNAL_JPEG=ON \
@@ -104,7 +104,7 @@ cmake -S . -B build/deb -DCMAKE_BUILD_TYPE=Release \
   -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=OFF \
   -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_EXTERNAL_GTEST=OFF \
   -DVANILLAPDF_ENABLE_BENCHMARK=ON -DVANILLAPDF_EXTERNAL_BENCHMARK=OFF
-cmake --build build/deb --target package
+cmake --build --preset linux-x64-gcc --target package
 ```
 
 ---

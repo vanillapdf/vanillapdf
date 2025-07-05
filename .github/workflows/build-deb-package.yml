@@ -33,7 +33,7 @@ jobs:
 
       - name: Configure
         run: |
-          cmake -S . -B build/deb -DCMAKE_BUILD_TYPE=Release \
+          cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release \
             -DVANILLAPDF_STANDALONE=OFF \
             -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
             -DVANILLAPDF_EXTERNAL_JPEG=ON \
@@ -45,7 +45,7 @@ jobs:
             -DVANILLAPDF_ENABLE_BENCHMARK=ON -DVANILLAPDF_EXTERNAL_BENCHMARK=OFF
 
       - name: Build
-        run: cmake --build build/deb
+        run: cmake --build --preset linux-x64-gcc
 
       - name: Package
-        run: cmake --build build/deb --target package
+        run: cmake --build --preset linux-x64-gcc --target package
