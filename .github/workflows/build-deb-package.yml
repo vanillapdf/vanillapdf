@@ -2,16 +2,19 @@ name: Build Debian package
 
 on:
   workflow_dispatch:
+
   push:
     branches:
       - main
     paths:
       - .github/workflows/build-deb-package.yml
+
   pull_request:
     branches:
       - main
     paths:
       - .github/workflows/build-deb-package.yml
+
   schedule:
     - cron: '0 3 * * 1'
 
@@ -19,7 +22,8 @@ permissions:
   contents: read
 
 jobs:
-  deb-package:
+  build-package:
+    name: Build package
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -32,11 +36,9 @@ jobs:
           sudo apt-get install -y libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev
 
       - name: Configure
-        env:
-          VCPKG_MANIFEST_FEATURES: openjpeg;spdlog;nlohmann-json;tests;benchmarks
         run: |
           cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release \
-            -DVANILLAPDF_STANDALONE=OFF \
+            -DVANILLAPDF_STANDALONE=ON \
             -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
             -DVANILLAPDF_EXTERNAL_JPEG=ON \
             -DVANILLAPDF_EXTERNAL_OPENJPEG=OFF \
