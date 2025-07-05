@@ -30,7 +30,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  VCPKG_ROOT: external/vcpkg
+  VCPKG_ROOT: /usr/local/vcpkg
   VCPKG_DISABLE_METRICS: 1
   VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
 
@@ -83,18 +83,14 @@ jobs:
       with:
         path: |
           build/**/vcpkg_installed
-          external/vcpkg/downloads
-          external/vcpkg/bincache
+          ${{ env.VCPKG_ROOT }}/downloads
+          ${{ env.VCPKG_ROOT }}/bincache
         key: codeql-vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
         restore-keys: |
           codeql-vcpkg-${{ runner.os }}-
 
-    - name: Clone vcpkg
-      run: git clone https://github.com/microsoft/vcpkg.git external/vcpkg
-      shell: bash
-
     - name: Bootstrap vcpkg
-      run: ./external/vcpkg/bootstrap-vcpkg.sh
+      run: ${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.sh
       shell: bash
 
     # Add any setup steps before running the `github/codeql-action/init` action.

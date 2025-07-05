@@ -39,7 +39,7 @@ permissions:
 
 env:
   VCPKG_DISABLE_METRICS: 1
-  VCPKG_ROOT: external/vcpkg # vcpkg is by default sending build metrics, we do not need it here
+  VCPKG_ROOT: /usr/local/vcpkg # preinstalled vcpkg location on Unix runners
   VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
 
 jobs:
@@ -87,16 +87,12 @@ jobs:
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
-            external/vcpkg/downloads
-            external/vcpkg/bincache
+            ${{ env.VCPKG_ROOT }}/downloads
+            ${{ env.VCPKG_ROOT }}/bincache
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
-
-      - name: Clone vcpkg
-        run: git clone https://github.com/microsoft/vcpkg.git external/vcpkg
-        shell: bash
 
       # Bootstrap vcpkg on Linux
       - name: Bootstrap vcpkg (Linux)
@@ -131,6 +127,8 @@ jobs:
   build-windows:
     name: ${{ matrix.config.name }}
     runs-on: windows-latest
+    env:
+      VCPKG_ROOT: C:\\vcpkg
 
     strategy:
       fail-fast: false
@@ -157,15 +155,12 @@ jobs:
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
-            external/vcpkg/downloads
-            external/vcpkg/bincache
+            ${{ env.VCPKG_ROOT }}/downloads
+            ${{ env.VCPKG_ROOT }}/bincache
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
-
-      - name: Clone vcpkg
-        run: git clone https://github.com/microsoft/vcpkg.git external/vcpkg
 
       # Bootstrap vcpkg on Windows
       - name: Bootstrap vcpkg (Windows)
@@ -227,16 +222,12 @@ jobs:
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
-            external/vcpkg/downloads
-            external/vcpkg/bincache
+            ${{ env.VCPKG_ROOT }}/downloads
+            ${{ env.VCPKG_ROOT }}/bincache
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
-
-      - name: Clone vcpkg
-        run: git clone https://github.com/microsoft/vcpkg.git external/vcpkg
-        shell: bash
 
       # dotnet is available on macOS runners by default
 

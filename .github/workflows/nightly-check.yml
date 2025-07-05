@@ -32,7 +32,7 @@ permissions:
   packages: read    # Needed to load container images
 
 env:
-  VCPKG_ROOT: external/vcpkg
+  VCPKG_ROOT: /usr/local/vcpkg
   VCPKG_DISABLE_METRICS: 1 # vcpkg is by default sending build metrics, we do not need it here
   VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
 
@@ -114,19 +114,15 @@ jobs:
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
-            external/vcpkg/downloads
-            external/vcpkg/bincache
+            ${{ env.VCPKG_ROOT }}/downloads
+            ${{ env.VCPKG_ROOT }}/bincache
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
 
-      - name: Clone vcpkg
-        run: git clone https://github.com/microsoft/vcpkg.git external/vcpkg
-        shell: bash
-
       - name: Bootstrap vcpkg (Linux)
-        run: ./external/vcpkg/bootstrap-vcpkg.sh
+        run: ${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.sh
         shell: bash
 
       - name: Configure ${{ matrix.config.preset }}
@@ -142,6 +138,8 @@ jobs:
   windows:
     name: ${{ matrix.config.name }} - ${{ matrix.build_type }}
     runs-on: ${{ matrix.config.os }}
+    env:
+      VCPKG_ROOT: C:\\vcpkg
 
     strategy:
       fail-fast: false
@@ -167,18 +165,15 @@ jobs:
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
-            external/vcpkg/downloads
-            external/vcpkg/bincache
+            ${{ env.VCPKG_ROOT }}/downloads
+            ${{ env.VCPKG_ROOT }}/bincache
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
 
-      - name: Clone vcpkg
-        run: git clone https://github.com/microsoft/vcpkg.git external/vcpkg
-
       - name: Bootstrap vcpkg (Windows)
-        run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
+        run: ${{ env.VCPKG_ROOT }}\\bootstrap-vcpkg.bat
 
       - name: Configure ${{ matrix.config.preset }}
         run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
@@ -214,22 +209,18 @@ jobs:
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
-            external/vcpkg/downloads
-            external/vcpkg/bincache
+            ${{ env.VCPKG_ROOT }}/downloads
+            ${{ env.VCPKG_ROOT }}/bincache
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
 
-      - name: Clone vcpkg
-        run: git clone https://github.com/microsoft/vcpkg.git external/vcpkg
-        shell: bash
-
       - name: Install build tools (macOS)
         run: brew install --quiet autoconf automake autoconf-archive
 
       - name: Bootstrap vcpkg (macOS)
-        run: ${{ github.workspace }}/external/vcpkg/bootstrap-vcpkg.sh
+        run: ${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.sh
         shell: bash
 
       - name: Configure

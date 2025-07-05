@@ -13,7 +13,7 @@ endif()
 
 # Clone vcpkg when requested
 if(NOT EXISTS "${VCPKG_ROOT}")
-  if(VANILLAPDF_AUTO_VCPKG_CLONE)
+  if(VANILLAPDF_AUTO_VCPKG_BOOTSTRAP)
     message(STATUS "Cloning vcpkg into ${VCPKG_ROOT}")
     execute_process(
       COMMAND git clone https://github.com/microsoft/vcpkg.git "${VCPKG_ROOT}"
@@ -23,7 +23,7 @@ if(NOT EXISTS "${VCPKG_ROOT}")
       message(FATAL_ERROR "***** FATAL ERROR: Failed to clone vcpkg *****")
     endif()
   else()
-    message(FATAL_ERROR "***** FATAL ERROR: VCPKG_ROOT not found. Set VCPKG_ROOT or enable VANILLAPDF_AUTO_VCPKG_CLONE *****")
+    message(FATAL_ERROR "***** FATAL ERROR: VCPKG_ROOT not found. Set VCPKG_ROOT or enable VANILLAPDF_AUTO_VCPKG_BOOTSTRAP *****")
   endif()
 endif()
 

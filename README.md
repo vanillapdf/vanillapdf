@@ -48,9 +48,8 @@ ctest --preset windows-x64-msvc-release  # Optional
 ```
 
 If vcpkg cannot be found, configuration fails by default. Pass
-`-DVANILLAPDF_AUTO_VCPKG_CLONE=ON` to automatically clone vcpkg into
-`external/vcpkg`. The bootstrapping step will still run automatically
-when needed.
+`-DVANILLAPDF_AUTO_VCPKG_BOOTSTRAP=ON` to automatically clone and bootstrap
+vcpkg into `external/vcpkg`.
 
 ### Install Dependencies with vcpkg
 
