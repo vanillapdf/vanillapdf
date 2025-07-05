@@ -32,6 +32,8 @@ jobs:
           sudo apt-get install -y libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev
 
       - name: Configure
+        env:
+          VCPKG_MANIFEST_FEATURES: openjpeg;spdlog;nlohmann-json;tests;benchmarks
         run: |
           cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release \
             -DVANILLAPDF_STANDALONE=OFF \

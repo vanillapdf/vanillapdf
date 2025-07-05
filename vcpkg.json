@@ -2,14 +2,7 @@
     "name": "vanillapdf",
     "version": "2.1.0",
     "description": "PDF rendering engine using vcpkg-managed dependencies",
-    "default-features": [
-        "openssl",
-        "libjpeg-turbo",
-        "openjpeg",
-        "zlib",
-        "spdlog",
-        "nlohmann-json"
-    ],
+    "default-features": [],
     "features": {
         "openssl": {
             "description": "OpenSSL crypto and SSL back-end",
