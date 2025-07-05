@@ -1,0 +1,58 @@
+name: Build Homebrew package
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/build-brew-package.yml
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/build-brew-package.yml
+
+  schedule:
+    - cron: '0 3 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  build-package:
+    name: Build package
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install system dependencies
+        run: |
+          brew update
+          brew install openssl@3 jpeg-turbo zlib
+
+      - name: Configure
+        run: |
+          cmake --preset macos-arm64 -DCMAKE_BUILD_TYPE=Release \
+            -DVANILLAPDF_STANDALONE=ON \
+            -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
+            -DVANILLAPDF_EXTERNAL_JPEG=ON \
+            -DVANILLAPDF_EXTERNAL_OPENJPEG=OFF \
+            -DVANILLAPDF_EXTERNAL_ZLIB=ON \
+            -DVANILLAPDF_EXTERNAL_SPDLOG=OFF \
+            -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=OFF \
+            -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_EXTERNAL_GTEST=OFF \
+            -DVANILLAPDF_ENABLE_BENCHMARK=ON -DVANILLAPDF_EXTERNAL_BENCHMARK=OFF
+
+      - name: Build
+        run: cmake --build --preset macos-arm64
+
+      - name: Test
+        run: ctest --preset macos-arm64
+
+      - name: Package
+        run: cmake --build --preset macos-arm64 --target package
