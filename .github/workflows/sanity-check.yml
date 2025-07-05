@@ -113,8 +113,13 @@ jobs:
         run: ./external/vcpkg/bootstrap-vcpkg.sh
         shell: bash
 
+      - name: Prepare CMake arguments
+        if: matrix.build_type == 'Debug'
+        run: echo "CMAKE_ADDITIONAL_ARGS=-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON" >> $GITHUB_ENV
+        shell: bash
+
       - name: Generate build files
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ${{ env.CMAKE_ADDITIONAL_ARGS }}
 
       - name: Build
         run: cmake --build --preset ${{ matrix.config.preset }}
@@ -164,8 +169,13 @@ jobs:
       - name: Bootstrap vcpkg (Windows)
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
 
+      - name: Prepare CMake arguments
+        if: matrix.build_type == 'Debug'
+        run: echo "CMAKE_ADDITIONAL_ARGS=-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON" >> $GITHUB_ENV
+        shell: bash
+
       - name: Generate build files ${{ matrix.config.preset }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ${{ env.CMAKE_ADDITIONAL_ARGS }}
 
       - name: Build ${{ matrix.config.preset }}
         run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.build_type }}
@@ -218,8 +228,13 @@ jobs:
         run: ${{ github.workspace }}/external/vcpkg/bootstrap-vcpkg.sh
         shell: bash
 
+      - name: Prepare CMake arguments
+        if: matrix.build_type == 'Debug'
+        run: echo "CMAKE_ADDITIONAL_ARGS=-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON" >> $GITHUB_ENV
+        shell: bash
+
       - name: Generate build files
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ${{ env.CMAKE_ADDITIONAL_ARGS }}
 
       - name: Build
         run: cmake --build --preset ${{ matrix.config.preset }}

@@ -1,0 +1,18 @@
+option(VANILLAPDF_ENABLE_STACK_SANITIZER "Enable stack sanitizer instrumentation (use with Debug builds)" OFF)
+
+function(enable_stack_sanitizer_for_target target)
+    # Sanitizers are primarily useful while debugging
+    if (VANILLAPDF_ENABLE_STACK_SANITIZER)
+        if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
+            message(STATUS "Stack sanitizer enabled for target: ${target}")
+            target_compile_options(${target} PRIVATE -fsanitize=address -fno-omit-frame-pointer)
+            target_link_options(${target} PRIVATE -fsanitize=address)
+        elseif (MSVC)
+            message(STATUS "Stack sanitizer enabled for target: ${target}")
+            target_compile_options(${target} PRIVATE /fsanitize=address /Zi)
+            target_link_options(${target} PRIVATE /fsanitize=address)
+        else()
+            message(WARNING "Stack sanitizer is not supported for this compiler")
+        endif()
+    endif()
+endfunction()
