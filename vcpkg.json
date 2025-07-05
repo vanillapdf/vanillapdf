@@ -2,37 +2,30 @@
     "name": "vanillapdf",
     "version": "2.1.0",
     "description": "PDF rendering engine using vcpkg-managed dependencies",
-    "default-features": [
-        "openssl",
-        "libjpeg-turbo",
-        "openjpeg",
-        "zlib",
-        "spdlog",
-        "nlohmann-json"
-    ],
+    "default-features": [],
     "features": {
         "openssl": {
-            "description": "OpenSSL crypto and SSL back-end",
+            "description": "Enable encryption and decryption of secure PDF documents using OpenSSL",
             "dependencies": [ "openssl" ]
         },
         "libjpeg-turbo": {
-            "description": "JPEG image library",
+            "description": "Decode JPEG images into bitmaps via libjpeg‑turbo",
             "dependencies": [ "libjpeg-turbo" ]
         },
         "openjpeg": {
-            "description": "OpenJPEG JP2 image codec",
+            "description": "Support JPEG‑2000 images through the OpenJPEG codec",
             "dependencies": [ "openjpeg" ]
         },
         "zlib": {
-            "description": "Zlib compression library",
+            "description": "Decompress PDF objects compressed with zlib",
             "dependencies": [ "zlib" ]
         },
         "spdlog": {
-            "description": "spdlog logging framework",
+            "description": "High-performance logging for diagnostics and debugging",
             "dependencies": [ "spdlog" ]
         },
         "nlohmann-json": {
-            "description": "JSON for Modern C++",
+            "description": "Parse application configuration from JSON files",
             "dependencies": [ "nlohmann-json" ]
         },
         "tests": {

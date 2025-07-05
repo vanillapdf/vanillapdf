@@ -92,20 +92,19 @@ produce a `.deb` package directly:
 
 ```bash
 sudo apt-get update
-sudo apt-get install libssl-dev libjpeg-turbo8 zlib1g-dev libopenjp2-7-dev \
-  libspdlog-dev nlohmann-json3-dev libgtest-dev libbenchmark-dev
+sudo apt-get install libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev
 
-cmake -S . -B build/deb -DCMAKE_BUILD_TYPE=Release \
-  -DVANILLAPDF_STANDALONE=OFF \
+cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release \
+  -DVANILLAPDF_STANDALONE=ON \
   -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
   -DVANILLAPDF_EXTERNAL_JPEG=ON \
-  -DVANILLAPDF_EXTERNAL_OPENJPEG=ON \
+  -DVANILLAPDF_EXTERNAL_OPENJPEG=OFF \
   -DVANILLAPDF_EXTERNAL_ZLIB=ON \
-  -DVANILLAPDF_EXTERNAL_SPDLOG=ON \
-  -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=ON \
-  -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_EXTERNAL_GTEST=ON \
-  -DVANILLAPDF_ENABLE_BENCHMARK=ON -DVANILLAPDF_EXTERNAL_BENCHMARK=ON
-cmake --build build/deb --target package
+  -DVANILLAPDF_EXTERNAL_SPDLOG=OFF \
+  -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=OFF \
+  -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_EXTERNAL_GTEST=OFF \
+  -DVANILLAPDF_ENABLE_BENCHMARK=ON -DVANILLAPDF_EXTERNAL_BENCHMARK=OFF
+cmake --build --preset linux-x64-gcc --target package
 ```
 
 ---
