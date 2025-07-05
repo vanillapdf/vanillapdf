@@ -34,17 +34,8 @@ jobs:
 
       - name: Install system dependencies
         run: |
-          brew update --quiet
-          brew unlink openssl@3 || true
-          for formula in openssl@3 jpeg-turbo zlib; do
-            if brew list --versions "$formula" >/dev/null; then
-              if brew outdated --quiet "$formula" >/dev/null; then
-                brew upgrade --quiet "$formula"
-              fi
-            else
-              brew install --quiet "$formula"
-            fi
-          done
+          brew update
+          brew install openssl@3 jpeg-turbo zlib
 
       - name: Configure
         run: |
