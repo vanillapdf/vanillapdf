@@ -108,6 +108,10 @@ jobs:
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
 
+      - name: Clone vcpkg
+        run: git clone https://github.com/microsoft/vcpkg.git external/vcpkg
+        shell: bash
+
       # Bootstrap vcpkg on Linux
       - name: Bootstrap vcpkg (Linux)
         run: ./external/vcpkg/bootstrap-vcpkg.sh
@@ -160,6 +164,9 @@ jobs:
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
 
+      - name: Clone vcpkg
+        run: git clone https://github.com/microsoft/vcpkg.git external/vcpkg
+
       # Bootstrap vcpkg on Windows
       - name: Bootstrap vcpkg (Windows)
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
@@ -209,6 +216,10 @@ jobs:
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
+
+      - name: Clone vcpkg
+        run: git clone https://github.com/microsoft/vcpkg.git external/vcpkg
+        shell: bash
 
       - name: Install build tools (macOS)
         run: brew install --quiet autoconf automake autoconf-archive
