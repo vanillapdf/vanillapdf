@@ -7,13 +7,14 @@ on:
       - 'v*.*.*'
     branches:
       - "main"
+      - "release/*"
     paths:
       - '.github/workflows/github-pages.yml'
       - 'doc/doxyfile.in'
       - 'cmake/**'
       - 'CMakeLists.txt'
   pull_request:
-    branches: ["main"]
+    branches: ["main", "release/*"]
     paths:
       - '.github/workflows/github-pages.yml'
       - 'doc/doxyfile.in'
