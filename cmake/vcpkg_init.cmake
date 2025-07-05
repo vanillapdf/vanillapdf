@@ -6,9 +6,13 @@ if(NOT VANILLAPDF_STANDALONE)
   return()
 endif()
 
-# In case we are in STANDALONE configuration and VCPKG_ROOT is not defined, let's try to fallback
+# Determine VCPKG_ROOT from cache variable, environment or fallback location
 if(NOT DEFINED VCPKG_ROOT)
-  set(VCPKG_ROOT "${VANILLAPDF_SOLUTION_SOURCE_DIR}/external/vcpkg")
+  if(DEFINED ENV{VCPKG_ROOT})
+    set(VCPKG_ROOT "$ENV{VCPKG_ROOT}")
+  else()
+    set(VCPKG_ROOT "${VANILLAPDF_SOLUTION_SOURCE_DIR}/external/vcpkg")
+  endif()
 endif()
 
 # Clone vcpkg when requested

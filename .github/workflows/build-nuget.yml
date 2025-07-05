@@ -96,11 +96,11 @@ jobs:
 
       # Bootstrap vcpkg on Linux
       - name: Bootstrap vcpkg (Linux)
-        run: ./external/vcpkg/bootstrap-vcpkg.sh
+        run: ${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.sh
         shell: bash
 
       - name: Configure ${{ matrix.config.name }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVCPKG_ROOT=${{ env.VCPKG_ROOT }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }}
@@ -164,10 +164,10 @@ jobs:
 
       # Bootstrap vcpkg on Windows
       - name: Bootstrap vcpkg (Windows)
-        run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
+        run: ${{ env.VCPKG_ROOT }}\\bootstrap-vcpkg.bat
 
       - name: Configure ${{ matrix.config.name }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVCPKG_ROOT=${{ env.VCPKG_ROOT }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.build_type }}
@@ -233,11 +233,11 @@ jobs:
 
       # Bootstrap vcpkg on macOS
       - name: Bootstrap vcpkg (macOS)
-        run: ${{ github.workspace }}/external/vcpkg/bootstrap-vcpkg.sh
+        run: ${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.sh
         shell: bash
 
       - name: Configure ${{ matrix.config.name }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVCPKG_ROOT=${{ env.VCPKG_ROOT }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }}

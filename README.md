@@ -42,11 +42,11 @@
 ```bash
 git clone https://github.com/vanillapdf/vanillapdf.git
 cd vanillapdf
-cmake --preset windows-x64-msvc-release
+cmake --preset windows-x64-msvc-release -DVCPKG_ROOT=</path/to/vcpkg>
 cmake --build --preset windows-x64-msvc-release
 ctest --preset windows-x64-msvc-release  # Optional
 ```
-
+Set `VCPKG_ROOT` to your vcpkg installation or provide it via an environment variable.
 If vcpkg cannot be found, configuration fails by default. Pass
 `-DVANILLAPDF_AUTO_VCPKG_BOOTSTRAP=ON` to automatically clone and bootstrap
 vcpkg into `external/vcpkg`.
