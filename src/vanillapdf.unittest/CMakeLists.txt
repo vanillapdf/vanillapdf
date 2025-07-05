@@ -55,7 +55,11 @@ if(WIN32)
     )
 endif(WIN32)
 
-find_package(GTest REQUIRED)
+if (VANILLAPDF_EXTERNAL_GTEST)
+    find_package(GTest MODULE REQUIRED)
+else()
+    find_package(GTest CONFIG REQUIRED)
+endif()
 
 set(VANILLAPDF_UNITTEST_LIBS
     vanillapdf

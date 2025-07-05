@@ -229,3 +229,4 @@ jobs:
 
       - name: Test
         run: ctest --preset ${{ matrix.config.preset }} --output-on-failure
+

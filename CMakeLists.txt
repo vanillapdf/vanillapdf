@@ -19,6 +19,23 @@ option(VANILLAPDF_STANDALONE "Enable internal vcpkg setup for standalone builds"
 option(VANILLAPDF_ENABLE_TESTS "Perform test scenarios to ensure stable releases" ON)
 option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure performance" ON)
 
+# Allow linking selected dependencies from the system instead of vcpkg
+# Allow linking selected dependencies provided outside of vcpkg
+option(VANILLAPDF_EXTERNAL_OPENSSL "Use OpenSSL from the system or a package manager" OFF)
+option(VANILLAPDF_EXTERNAL_JPEG "Use libjpeg from the system or a package manager" OFF)
+option(VANILLAPDF_EXTERNAL_OPENJPEG "Use openjpeg from the system or a package manager" OFF)
+option(VANILLAPDF_EXTERNAL_ZLIB "Use zlib from the system or a package manager" OFF)
+option(VANILLAPDF_EXTERNAL_SPDLOG "Use spdlog from the system or a package manager" OFF)
+option(VANILLAPDF_EXTERNAL_NLOHMANN_JSON "Use nlohmann-json from the system or a package manager" OFF)
+
+if(VANILLAPDF_ENABLE_TESTS)
+  option(VANILLAPDF_EXTERNAL_GTEST "Use GoogleTest from the system or a package manager" OFF)
+endif()
+
+if(VANILLAPDF_ENABLE_BENCHMARK)
+  option(VANILLAPDF_EXTERNAL_BENCHMARK "Use Google Benchmark from the system or a package manager" OFF)
+endif()
+
 # Allow build configuration to link using static CRT, dynamic CRT link is default
 option(VANILLAPDF_USE_STATIC_CRT "Use static MSVC runtime (/MT) instead of dynamic (/MD)" OFF)
 
