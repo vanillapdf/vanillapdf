@@ -31,6 +31,7 @@ public:
     static bool CaseInsensitiveCompare(const std::string& left, const std::string& right);
 
     static void InitializeOpenSSL();
+    static void CleanupOpenSSL();
     static std::string GetLastOpensslError();
 
     template <typename T>
