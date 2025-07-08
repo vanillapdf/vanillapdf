@@ -3,7 +3,6 @@ name: Generate doxygen
 
 on:
   workflow_call:
-    secrets: inherit
   push:
     branches:
       - "main"

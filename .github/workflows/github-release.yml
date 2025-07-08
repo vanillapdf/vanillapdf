@@ -9,7 +9,6 @@ on:
       prerelease:
         required: true
         type: boolean
-    secrets: inherit
   workflow_dispatch:
     inputs:
       tag:
