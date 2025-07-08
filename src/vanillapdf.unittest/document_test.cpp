@@ -357,6 +357,10 @@ TEST(Document, Sign) {
     ASSERT_EQ(File_Release(destination_file), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(InputOutputStream_Release(destination_io_stream), VANILLAPDF_ERROR_SUCCESS);
 
+    ASSERT_EQ(SigningKey_Release(signing_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PKCS12Key_Release(signature_pkcs12_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_Release(signing_key_data), VANILLAPDF_ERROR_SUCCESS);
+
     ASSERT_EQ(DocumentSignatureSettings_Release(signature_settings), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Document_Release(source_memory_document), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(File_Release(source_memory_file), VANILLAPDF_ERROR_SUCCESS);
